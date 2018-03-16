@@ -1,50 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752307AbeCPRut (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:50:49 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42402 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751902AbeCPRuq (ORCPT
+        id S933119AbeCPQ6u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:58:50 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:54287 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753558AbeCPQ6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:50:46 -0400
-X-Google-Smtp-Source: AG47ELtvGtT0tnWDVqZieoai4Q9U5hMf1fOvaNGA98icKVM2r4NhClxnTh6Jc7DEAIQR8YdHUgLsrQ==
-Date: Fri, 16 Mar 2018 23:20:38 +0530
-From: afzal mohammed <afzal.mohd.ma@gmail.com>
-To: Harald Geyer <harald@ccbib.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
- laptop
-Message-ID: <20180316175038.GA7309@afzalpc>
-References: <20180315162510.11669-1-harald@ccbib.org>
- <20180315162510.11669-6-harald@ccbib.org>
- <20180316063753.GB3415@afzalpc>
+        Fri, 16 Mar 2018 12:58:47 -0400
+X-Google-Smtp-Source: AG47ELsQF6DVdymZ9QH2gbDNvdLkv5A/4XtJmGy/GMxU9nj/wmgHl4T0Nf0h0QCCBXv0qzKIjI+nSXh0nomYB0SGkSQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316063753.GB3415@afzalpc>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAK8P3a2H=LoW5apWNxbqda+JAa33R=tqc7RK=2Uv7J_Xpy+bgg@mail.gmail.com>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-15-linux@dominikbrodowski.net> <CAK8P3a2H=LoW5apWNxbqda+JAa33R=tqc7RK=2Uv7J_Xpy+bgg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Mar 2018 09:58:46 -0700
+X-Google-Sender-Auth: glzYhWKosXtNakKBF5BTjdtUJvo
+Message-ID: <CA+55aFyGtWEZFzUKJO5NZNxeh4Z624P0EOy6u-zisJT354eLeQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/36] fs: add ksys_mount() helper; remove in-kernel
+ calls to sys_mount()
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Mar 15, 2018 at 1:11 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Shouldn't the callers of sys_mount just call do_mount() instead?
 
-On Fri, Mar 16, 2018 at 12:07:53PM +0530, afzal mohammed wrote:
+So for most of these, I'd rather not really change the code and just
+do a direct translation, but I have to agree that "sys_mount ->
+do_mount" might be special.
 
-> Received only patch 4 & 5 in my inbox, receive path was via
-> linux-kernel rather than linux-arm-kernel, but in both archives all
-> patches are seen (though threading seems not right), probably missing
-> patches are due to issue gmail have with LKML,
+As you say, the only thing sys_mount() does is to copy things from
+user space and allocate temporaries, and then call do_mount(). And we
+already use do_mount in other places.
 
-Cover letter plus 1-3 patches was swallowed by spam filter, even your
-reply to me on v1 cover letter subthread was so, dunno whether it has
-something to do with your mail header contents.
+So it translating sys_mount() to do_mount() might just be the right thing to do.
 
-afzal
+Of course, do_mount() still ends up doing yet more "translate user
+mode stuff to kernel stuff", so it's kind o fa confusing half-way
+state where the user mountpoint name is still in user space, and the
+flags are still in the MS namespace, but the device name and the mount
+options have been moved to kernel space.
+
+So I dunno. It might make sense to convert to do_mount(), but in many
+ways ksys_mount() that just passes *everything* as if it was a user
+call is actually more logical, even if it's just pointless churn to
+then copy things.
+
+I do like the mindless "let's just use the SYSCALL_DEFINEx()
+interfaces for in-kernel use" model, exactly because it's so
+black-and-white and doesn't have these kinds of "on one hand.."
+issues.
+
+                   Linus
