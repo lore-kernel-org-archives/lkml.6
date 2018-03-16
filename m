@@ -1,98 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeCPVsg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:48:36 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22920 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbeCPVsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:48:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="28658854"
-Subject: [PATCH 3/3] x86, pkeys, selftests: add a test for pkey 0
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
-        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
-        shuah@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 16 Mar 2018 14:46:59 -0700
-References: <20180316214654.895E24EC@viggo.jf.intel.com>
-In-Reply-To: <20180316214654.895E24EC@viggo.jf.intel.com>
-Message-Id: <20180316214659.FCFEF68B@viggo.jf.intel.com>
+        id S1752283AbeCPVsn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:48:43 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:58591 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751269AbeCPVsj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:48:39 -0400
+From: Ronak Doshi <doshir@vmware.com>
+To: <netdev@vger.kernel.org>
+CC: <ntanaka@vmware.com>, Ronak Doshi <doshir@vmware.com>,
+        Shrikrishna Khare <skhare@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 net 1/2] vmxnet3: avoid xmit reset due to a race in vmxnet3
+Date: Fri, 16 Mar 2018 14:47:54 -0700
+Message-ID: <20180316214754.20650-1-doshir@vmware.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The field txNumDeferred is used by the driver to keep track of the number
+of packets it has pushed to the emulation. The driver increments it on
+pushing the packet to the emulation and the emulation resets it to 0 at
+the end of the transmit.
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+There is a possibility of a race either when (a) ESX is under heavy load or
+(b) workload inside VM is of low packet rate.
 
-Protection key 0 is the default key for all memory and will
-not normally come back from pkey_alloc().  But, you might
-still want pass it to mprotect_pkey().
+This race results in xmit hangs when network coalescing is disabled. This
+change creates a local copy of txNumDeferred and uses it to perform ring
+arithmetic.
 
-This check ensures that you can use pkey 0.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
+Reported-by: Noriho Tanaka <ntanaka@vmware.com>
+Signed-off-by: Ronak Doshi <doshir@vmware.com>
+Acked-by: Shrikrishna Khare <skhare@vmware.com>
 ---
+Changes in v2:
+ - Used lowercase letters for local variables
 
- b/tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/net/vmxnet3/vmxnet3_drv.c | 13 ++++++++-----
+ drivers/net/vmxnet3/vmxnet3_int.h |  4 ++--
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test tools/testing/selftests/x86/protection_keys.c
---- a/tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test	2018-03-16 14:46:40.121285473 -0700
-+++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-16 14:46:40.125285473 -0700
-@@ -1197,6 +1197,35 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	}
- }
- 
-+/*
-+ * pkey 0 is special.  It is allocated by default, so you do not
-+ * have to call pkey_alloc() to use it first.  Make sure that it
-+ * is usable.
-+ */
-+void test_mprotect_with_pkey_0(int *ptr, u16 pkey)
-+{
-+	long size;
-+	int prot;
-+
-+	assert(pkey_last_malloc_record);
-+	size = pkey_last_malloc_record->size;
-+	/*
-+	 * This is a bit of a hack.  But mprotect() requires
-+	 * huge-page-aligned sizes when operating on hugetlbfs.
-+	 * So, make sure that we use something that's a multiple
-+	 * of a huge page when we can.
-+	 */
-+	if (size >= HPAGE_SIZE)
-+		size = HPAGE_SIZE;
-+	prot = pkey_last_malloc_record->prot;
-+
-+	/* Use pkey 0 */
-+	mprotect_pkey(ptr, size, prot, 0);
-+
-+	/* Make sure that we can set it back to the original pkey. */
-+	mprotect_pkey(ptr, size, prot, pkey);
-+}
-+
- void test_ptrace_of_child(int *ptr, u16 pkey)
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 8b39c160743d..b466a422b72d 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -977,6 +977,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
  {
- 	__attribute__((__unused__)) int peek_result;
-@@ -1334,6 +1363,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
- 	test_kernel_gup_of_access_disabled_region,
- 	test_kernel_gup_write_to_write_disabled_region,
- 	test_executing_on_unreadable_memory,
-+	test_mprotect_with_pkey_0,
- 	test_ptrace_of_child,
- 	test_pkey_syscalls_on_non_allocated_pkey,
- 	test_pkey_syscalls_bad_args,
-_
+ 	int ret;
+ 	u32 count;
++	int num_pkts;
++	int tx_num_deferred;
+ 	unsigned long flags;
+ 	struct vmxnet3_tx_ctx ctx;
+ 	union Vmxnet3_GenericDesc *gdesc;
+@@ -1075,12 +1077,12 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ #else
+ 	gdesc = ctx.sop_txd;
+ #endif
++	tx_num_deferred = le32_to_cpu(tq->shared->txNumDeferred);
+ 	if (ctx.mss) {
+ 		gdesc->txd.hlen = ctx.eth_ip_hdr_size + ctx.l4_hdr_size;
+ 		gdesc->txd.om = VMXNET3_OM_TSO;
+ 		gdesc->txd.msscof = ctx.mss;
+-		le32_add_cpu(&tq->shared->txNumDeferred, (skb->len -
+-			     gdesc->txd.hlen + ctx.mss - 1) / ctx.mss);
++		num_pkts = (skb->len - gdesc->txd.hlen + ctx.mss - 1) / ctx.mss;
+ 	} else {
+ 		if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 			gdesc->txd.hlen = ctx.eth_ip_hdr_size;
+@@ -1091,8 +1093,10 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ 			gdesc->txd.om = 0;
+ 			gdesc->txd.msscof = 0;
+ 		}
+-		le32_add_cpu(&tq->shared->txNumDeferred, 1);
++		num_pkts = 1;
+ 	}
++	le32_add_cpu(&tq->shared->txNumDeferred, num_pkts);
++	tx_num_deferred += num_pkts;
+ 
+ 	if (skb_vlan_tag_present(skb)) {
+ 		gdesc->txd.ti = 1;
+@@ -1118,8 +1122,7 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ 
+ 	spin_unlock_irqrestore(&tq->tx_lock, flags);
+ 
+-	if (le32_to_cpu(tq->shared->txNumDeferred) >=
+-					le32_to_cpu(tq->shared->txThreshold)) {
++	if (tx_num_deferred >= le32_to_cpu(tq->shared->txThreshold)) {
+ 		tq->shared->txNumDeferred = 0;
+ 		VMXNET3_WRITE_BAR0_REG(adapter,
+ 				       VMXNET3_REG_TXPROD + tq->qid * 8,
+diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
+index 5ba222920e80..b94fdfd0b6f1 100644
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,10 +69,10 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.11.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.12.0-k"
+ 
+ /* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040b00
++#define VMXNET3_DRIVER_VERSION_NUM      0x01040c00
+ 
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
+-- 
+2.11.0
