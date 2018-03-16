@@ -1,84 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752523AbeCPWGE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 18:06:04 -0400
-Received: from anholt.net ([50.246.234.109]:49042 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751245AbeCPWGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 18:06:02 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH] drm/vc4: Add support for SAND modifier.
-In-Reply-To: <CAPj87rNtcN0PDFViJB_NOVzUeLSWKe9smnQx7RSXwBR1+nm__w@mail.gmail.com>
-References: <20180303013431.1088-1-eric@anholt.net> <CAPj87rNtcN0PDFViJB_NOVzUeLSWKe9smnQx7RSXwBR1+nm__w@mail.gmail.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Fri, 16 Mar 2018 15:05:59 -0700
-Message-ID: <87a7v7ad6g.fsf@anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+        id S1752326AbeCPWHx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 18:07:53 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:54187 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeCPWHv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 18:07:51 -0400
+From: Todd Zullinger <tmz@pobox.com>
+To: Junio C Hamano <gitster@pobox.com>
+Cc: =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?=
+        <avarab@gmail.com>,
+        git@vger.kernel.org, git-packagers@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] RelNotes: add details on Perl module changes
+Date: Fri, 16 Mar 2018 18:07:48 -0400
+Message-Id: <20180316220748.4279-1-tmz@pobox.com>
+X-Mailer: git-send-email 2.17.0.rc0
+In-Reply-To: <xmqq7eqb3nct.fsf@gitster-ct.c.googlers.com>
+X-Pobox-Relay-ID: 779087D8-2966-11E8-A93C-44CE1968708C-09356542!pb-smtp1.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Document changes to core and non-core Perl module handling in 2.17.
+---
+Junio C Hamano <gitster@pobox.com> writes:
 
-Daniel Stone <daniel@fooishbar.org> writes:
-
-> Hey Eric,
->
-> On 3 March 2018 at 01:34, Eric Anholt <eric@anholt.net> wrote:
->> Ccing a couple of folks who are likely to have opinions about
->> drm_fourcc.h additions (Do we have enough docs?  Are the macros OK?),
->> and Bootlin who are likely reviewers.
+>> I haven't wordsmithed it fully, but it should say something along
+>> the lines of ...
 >>
->> The plan is to use these modifiers in VC4 GL imports as well, and for
->> buffers coming from the v4l2 mmal camera driver.  You can find a demo
->> using this in KMS planes at
->> https://github.com/anholt/drm_mmal/commit/sand for now.
+>>  Documentation/RelNotes/2.16.0.txt | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
 >
-> I had a dig through and this seems like the most sensible thing to do
-> if you have a reasonable variety of tile heights. If you only see a
-> couple of combinations in the wild, then hardcoding them as separate
-> modifiers might make things easier than hiving off 24 bits. If you do
-> keep the split though, and especially if you're envisioning future
-> flexible tile formats, maybe something like an 8 code / 48 params
-> split would make more sense.
->
-> Either way, those are just my opinions (you did ask), and I don't see
-> anything really objectionable, so if you think that's a good split
-> then this is:
-> Acked-by: Daniel Stone <daniels@collabora.com>
+> Eh, of course the addition should go to 2.17 release notes ;-)  I
+> just happened to be reviewing a topic forked earlier.
 
-I had been thinking of potentially specifying a meaning for the other 24
-bits (separate U/V plane v stride if set, if we ever get a component
-that needs to do that), so I went ahead and did this, along with a
-couple of fixes due to Ville's patch.
+Maybe something like this?  I had intended to suggest a note about
+NO_PERL_CPAN_FALLBACKS as well, so that's included too.  I don't know if that
+should be expanded to provide more of a hint to users/packagers on platforms
+where these modules are harder to install, letting them know that we now have
+fallbacks to Error and Mail::Address.  That might allow scripts which were
+previously excluded to be included on their platforms.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/RelNotes/2.17.0.txt | 14 ++++++++++++++
+ INSTALL                           |  3 ++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqsP8cACgkQtdYpNtH8
-nuiGzBAArhbN3GxY0Q/DJvWJwKYILAlm6+bL8lmiWh98YpZ0tpREIyYggj21cjoN
-K8idTlkdtpCPkBQ0hAjA48QlX1bA3rGKRyT8AWRk4sOdqIMjZGuEfq3XENsfDvDk
-8q4MObNrdzlYgK2XTj+1I6QG4mpPoZVOCH7KiC+35zVLe0M6OxEX/eL0+nGl1e6i
-5o2QMNUvZAKC8Ml8v5vB/lbFBbIrXUm/+c8MpX8DRS8Qe+OqHEjrjx8VONrHY2dL
-sZ9X902hEJqlWtdvdteh22THolhu+/0YOJcSkzH/k51yitEDLwlC4xjnkdh/4xcx
-7otW5zGUyr2yq5rQiripuYW0aGgiTQSNA+Hh/W8oht5d5ptM7n6usq0ysN2iA+g2
-mw6DCTAST4VFN4SFwzHsy6CCNDQgiK/CQ6w+2TPOJFbCIv32gQJayVP47aH/Q3LV
-mUGLnP8p7iKvTDknH5BivOw9CljBwgy4ICdKnTfJ+NLxEe+VHNAVSEynftE+LLgO
-jU28Hb+COjIZpTCfNNEHEmD5QNzazB1PnYRVo1L0l6hdR4GZC+5sdx00vl/gws5u
-Ieg/x/o7IWUs+drnflhwBcitGBbdM4ICp02Uth1rNs6fx9yguwOFzlCX/W1Cu5dL
-8ySj949Os5KyA2l1O2v7WMJkDCF0+fSNfbhZuY2bIKDYdL1iR4M=
-=edgx
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/Documentation/RelNotes/2.17.0.txt b/Documentation/RelNotes/2.17.0.txt
+index c828d37345..085bf1dba1 100644
+--- a/Documentation/RelNotes/2.17.0.txt
++++ b/Documentation/RelNotes/2.17.0.txt
+@@ -75,6 +75,20 @@ Performance, Internal Implementation, Development Support etc.
+  * The build procedure for perl/ part has been greatly simplified by
+    weaning ourselves off of MakeMaker.
+ 
++ * Perl 5.8 or greater has been required since Git 1.7.4 released in
++   2010, but we continued to assume some core modules may not exist and
++   used a conditional "eval { require <<module>> }"; we no longer do
++   this.  Some platforms (Fedora/RedHat/CentOS, for example) ship Perl
++   without all core modules by default (e.g. Digest::MD5, File::Temp,
++   File::Spec, Net::Domain, Net::SMTP).  Users on such platforms may
++   need to install these additional modules.
++
++ * As a convenience, we install copies of Perl modules we require which
++   are not part of the core Perl distribution (e.g. Error and
++   Mail::Address).  Users and packagers whose operating system provides
++   these modules can set NO_PERL_CPAN_FALLBACKS to avoid installing the
++   bundled modules.
++
+  * In preparation for implementing narrow/partial clone, the machinery
+    for checking object connectivity used by gc and fsck has been
+    taught that a missing object is OK when it is referenced by a
+diff --git a/INSTALL b/INSTALL
+index 60e515eaf7..c39006e8e7 100644
+--- a/INSTALL
++++ b/INSTALL
+@@ -126,7 +126,8 @@ Issues of note:
+ 	  Redhat/Fedora are reported to ship Perl binary package with some
+ 	  core modules stripped away (see http://lwn.net/Articles/477234/),
+ 	  so you might need to install additional packages other than Perl
+-	  itself, e.g. Time::HiRes.
++	  itself, e.g. Digest::MD5, File::Spec, File::Temp, Net::Domain,
++	  Net::SMTP, and Time::HiRes.
+ 
+ 	- git-imap-send needs the OpenSSL library to talk IMAP over SSL if
+ 	  you are using libcurl older than 7.34.0.  Otherwise you can use
+-- 
+2.17.0.rc0
