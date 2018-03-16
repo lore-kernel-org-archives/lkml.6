@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuRgxsRLKw5jAEanM8lvFBJoK1h0yB6Uj03leF1m4OsO5BR7JitHo7yc9n9fsLP4LQ3CykM
-ARC-Seal: i=1; a=rsa-sha256; t=1521215028; cv=none;
+X-Google-Smtp-Source: AG47ELspeZJVFNhCVPGwWDUn/f0cTaeypHWV/Jk46MhqOrLXoC4H4jId3J7lw9UfRIqTbjn1FpCk
+ARC-Seal: i=1; a=rsa-sha256; t=1521215025; cv=none;
         d=google.com; s=arc-20160816;
-        b=ibpRR2dpPHaOVtfSX9d9p2yz4yH/2zATOo9m+z36shcu9VLS2Xm2RTnWsAA9YI9Sa9
-         ocWBjBk2QY1tvaiNLmhSzmKC6tutwXoAWEtffSa15kZfgDgs73D6Ui+unBTZb3hzuZ/8
-         wwHnBlAJiedfIPAWRMaZJdtkYVRigLb+anaMBzNpRgY+bf4xbx3M2ZyQzEtEvDhOMKi+
-         USouSjn5fTqZmq8IDrtcQBwAa2pNkl2hiKMGllwubXnPG9n6lUIIhoXQYl8RWamWLh40
-         dVvquyscVF1Cs0T4kwUjxmIv7057ByVsMtTj9X65DP2XirbhEneb5uwfY/+bd4/mQOST
-         J+3A==
+        b=z7+FThuNv85BDGvE9AUsHIKCUaPbfWNWAvFljH3Pv2Vyns4vHpNMXGJRWJ2Jw/2zhl
+         XidPmYiMlbNt7fhhZa+qEvNnFzPHebDeZMA9qAxW84x5wVIiFdUq2zeHHGuYe5edFLVQ
+         dPJ1LFdXN1WOfls51bx692Kjztxm3d8vI6U+AynpW3FbAF4Whmcj0slMGsuwaWmiRDzT
+         qB2T7ggYBwOzcpx9TPNuYrdnXgaam2CJ7N0Vgu2f8bQRuUAR7ssJUgBODbuQgIWD99qv
+         VDcI+WpBDkHUehrfMiS6IcgnzbcZYw6CF2ImwvLDJ1Fu2AR9uxDIn3dWEDwHlO1XwmiV
+         42Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AUlQcHghYqicWB5ftTTH/FPYLrIhZwAo9JJ/MGA0AiM=;
-        b=bc2UsF9mqudHmXr572KMXJrOskO4pAsWa1SPKyznF9612ZDe5XSpbeauhDmI3q82vw
-         4yGuLpDrzzW5tvbgJFTTwS6BBmakHeb3hTYRNlxOLIxWkG/J6alMZA+hcomxsOAXo7uN
-         dtaGeSxrxjBzNxFw/fFTGtF2ezw3x6/QoDmRn9XX5aqepwkWirQqmYIwOhSqNNzVYRLT
-         +YaK1nLb9KBsn+IlVE6D1XFtygVyM7mIayX8wa1R4xoUlmoRBkm/sZeiS6vlP9hch3i3
-         X3Mjf1UKCkbn9LNDFnV1u1r9qi/y+v0Fpt6BQNdPx0ANj/6ud/jRfd1P/oMqXMKtfPOx
-         hvUQ==
+        bh=3M2nqLZNk1z5yRrn3ELGBwE2J7pcFzruFSxi0H3M2w4=;
+        b=V8tMA7Myb8BAk1jvtgJjsZ5GyjF8QHGFDy64wWL6hrU70pX+WF34/kboRafEAqVJqb
+         6xf2CSdYZGbQBuztkQalYoYvcJOsPuRjqZ7iej/FVKyQYPHQkbjCSorNYP69YKabcIQC
+         fyuB9BKabueJ8i8haZLhhNbBm6XYKfnEmz5SBP84g27ikM3GHvRh9buzdVsdI7+r7+5f
+         m6QgG/O4d8MH41Z+P3FsDmtoH2ece3svg8EsCEKCh4AeRKf6/xrK2ceX9oeEIr1RfNnF
+         ssIaGYUC2aKpq6S+ATL1T0LmDDl4ozXE7xlq3QvVJ9mZJ+TfkWDtMPlNR1NEl+BuYEU8
+         JxAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Christophe Varoqui <christophe.varoqui@opensvc.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+	SCSI ML <linux-scsi@vger.kernel.org>,
+	device-mapper development <dm-devel@redhat.com>,
+	Xose Vazquez Perez <xose.vazquez@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 102/128] clk: renesas: r8a77970: Add LVDS clock
-Date: Fri, 16 Mar 2018 16:24:03 +0100
-Message-Id: <20180316152341.642633807@linuxfoundation.org>
+Subject: [PATCH 4.15 101/128] scsi: dh: add new rdac devices
+Date: Fri, 16 Mar 2018 16:24:02 +0100
+Message-Id: <20180316152341.584575440@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109569746746915?=
-X-GMAIL-MSGID: =?utf-8?q?1595109569746746915?=
+X-GMAIL-THRID: =?utf-8?q?1595109205834642512?=
+X-GMAIL-MSGID: =?utf-8?q?1595109566668528176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +56,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Xose Vazquez Perez <xose.vazquez@gmail.com>
 
 
-[ Upstream commit 64082568dd1e05d349a0d9dfda2bdf6ace3f9f6c ]
+[ Upstream commit 4b3aec2bbbce1c35f50e7475a9fd78d24b9ea4ea ]
 
-I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
-patch for some reason -- add it back...
+Add IBM 3542 and 3552, arrays: FAStT200 and FAStT500.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Add full STK OPENstorage family, arrays: 9176, D173, D178, D210, D220,
+D240 and D280.
 
-Fixes: 8d46e28fb5081b49 ("clk: renesas: cpg-mssr: Add R8A77970 support")
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add STK BladeCtlr family, arrays: B210, B220, B240 and B280.
+
+These changes were done in multipath-tools time ago.
+
+Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Christophe Varoqui <christophe.varoqui@opensvc.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+Cc: SCSI ML <linux-scsi@vger.kernel.org>
+Cc: device-mapper development <dm-devel@redhat.com>
+Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/renesas/r8a77970-cpg-mssr.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/scsi_dh.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -105,6 +105,7 @@ static const struct mssr_mod_clk r8a7797
- 	DEF_MOD("vspd0",		 623,	R8A77970_CLK_S2D1),
- 	DEF_MOD("csi40",		 716,	R8A77970_CLK_CSI0),
- 	DEF_MOD("du0",			 724,	R8A77970_CLK_S2D1),
-+	DEF_MOD("lvds",			 727,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin3",			 808,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin2",			 809,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin1",			 810,	R8A77970_CLK_S2D1),
+--- a/drivers/scsi/scsi_dh.c
++++ b/drivers/scsi/scsi_dh.c
+@@ -56,10 +56,13 @@ static const struct scsi_dh_blist scsi_d
+ 	{"IBM", "1815",			"rdac", },
+ 	{"IBM", "1818",			"rdac", },
+ 	{"IBM", "3526",			"rdac", },
++	{"IBM", "3542",			"rdac", },
++	{"IBM", "3552",			"rdac", },
+ 	{"SGI", "TP9",			"rdac", },
+ 	{"SGI", "IS",			"rdac", },
+-	{"STK", "OPENstorage D280",	"rdac", },
++	{"STK", "OPENstorage",		"rdac", },
+ 	{"STK", "FLEXLINE 380",		"rdac", },
++	{"STK", "BladeCtlr",		"rdac", },
+ 	{"SUN", "CSM",			"rdac", },
+ 	{"SUN", "LCSM100",		"rdac", },
+ 	{"SUN", "STK6580_6780",		"rdac", },
