@@ -1,104 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752950AbeCPTGI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:06:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54696 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751905AbeCPTGG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:06:06 -0400
-Date: Fri, 16 Mar 2018 12:06:04 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: Re: [PATCH v9 09/61] xarray: Replace exceptional entries
-Message-ID: <20180316190604.GF27498@bombadil.infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
- <20180313132639.17387-10-willy@infradead.org>
- <20180316185349.c4ebbwuzlhihec5f@destiny>
+        id S1752678AbeCPTIE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:08:04 -0400
+Received: from verein.lst.de ([213.95.11.211]:48422 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750826AbeCPTIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:08:02 -0400
+Date: Fri, 16 Mar 2018 20:08:01 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 13/15] xfs: communicate lock drop events from
+        xfs_break_layouts()
+Message-ID: <20180316190801.GG3671@lst.de>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112915950.24669.2377167541944853596.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316185349.c4ebbwuzlhihec5f@destiny>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <152112915950.24669.2377167541944853596.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:53:50PM -0400, Josef Bacik wrote:
-> On Tue, Mar 13, 2018 at 06:25:47AM -0700, Matthew Wilcox wrote:
-> > @@ -453,18 +449,14 @@ int ida_get_new_above(struct ida *ida, int start, int *id)
-> >  			new += bit;
-> >  			if (new < 0)
-> >  				return -ENOSPC;
-> > -			if (ebit < BITS_PER_LONG) {
-> > -				bitmap = (void *)((1UL << ebit) |
-> > -						RADIX_TREE_EXCEPTIONAL_ENTRY);
-> > -				radix_tree_iter_replace(root, &iter, slot,
-> > -						bitmap);
-> > -				*id = new;
-> > -				return 0;
-> > +			if (bit < BITS_PER_XA_VALUE) {
-> > +				bitmap = xa_mk_value(1UL << bit);
-> > +			} else {
-> > +				bitmap = this_cpu_xchg(ida_bitmap, NULL);
-> > +				if (!bitmap)
-> > +					return -EAGAIN;
-> > +				__set_bit(bit, bitmap->bitmap);
-> >  			}
-> > -			bitmap = this_cpu_xchg(ida_bitmap, NULL);
-> > -			if (!bitmap)
-> > -				return -EAGAIN;
-> > -			__set_bit(bit, bitmap->bitmap);
-> >  			radix_tree_iter_replace(root, &iter, slot, bitmap);
-> >  		}
-> >  
+On Thu, Mar 15, 2018 at 08:52:39AM -0700, Dan Williams wrote:
+> In preparation for adding a new layout type, teach xfs_break_layouts()
+> to return a positive number if it needed to drop locks while trying to
+> break leases. For all layouts to be successfully broken each layout type
+> needs to be able to assert that the layouts were broken with the locks
+> held.
 > 
-> This threw me off a bit, but we do *id = new below.
+> The existing a xfs_break_layouts() is pushed down a level to
+> xfs_break_leased_layouts() and the new xfs_break_layouts() will
+> coordinate interpreting the return code from the low level 'break'
+> helpers.
 
-Yep.  Fortunately, I have a test-suite for the IDA, so I'm relatively
-sure this works.
+With that the subject line is rather confusing, given that the
+externally visible xfs_break_layouts does not communicate the lock
+drop events.  So maybe this should just be titled something about
+refactoring.  Or just merged into the next patch which reshuffles
+everything again anyway.
 
-> > @@ -495,9 +487,9 @@ void ida_remove(struct ida *ida, int id)
-> >  		goto err;
-> >  
-> >  	bitmap = rcu_dereference_raw(*slot);
-> > -	if (radix_tree_exception(bitmap)) {
-> > +	if (xa_is_value(bitmap)) {
-> >  		btmp = (unsigned long *)slot;
-> > -		offset += RADIX_TREE_EXCEPTIONAL_SHIFT;
-> > +		offset += 1; /* Intimate knowledge of the xa_data encoding */
-> >  		if (offset >= BITS_PER_LONG)
-> >  			goto err;
-> >  	} else {
-> 
-> Ick.
+>  int
+> -xfs_break_layouts(
+> +xfs_break_leased_layouts(
+>  	struct inode		*inode,
+>  	uint			*iolock)
+>  {
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	int			error;
+> -
+> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
+> -				| XFS_MMAPLOCK_EXCL));
+> +	int			did_unlock = 0;
+>  
+>  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
+>  		xfs_iunlock(ip, *iolock);
+> +		did_unlock = 1;
+>  		error = break_layout(inode, true);
+>  		*iolock &= ~XFS_IOLOCK_SHARED;
+>  		*iolock |= XFS_IOLOCK_EXCL;
+>  		xfs_ilock(ip, *iolock);
+>  	}
+>  
+> -	return error;
+> +	if (error < 0)
+> +		return error;
+> +	return did_unlock;
 
-I know.  I feel quite ashamed of this code.  I do have a rewrite to use
-the XArray, but I didn't want to include it as part of *this* merge request.
-And that rewrite decodes the value into an unsigned long, sets the bit,
-reencodes it as an xa_value and stores it.
-
-> > @@ -393,11 +393,11 @@ void ida_check_conv(void)
-> >  	for (i = 0; i < 1000000; i++) {
-> >  		int err = ida_get_new(&ida, &id);
-> >  		if (err == -EAGAIN) {
-> > -			assert((i % IDA_BITMAP_BITS) == (BITS_PER_LONG - 2));
-> > +			assert((i % IDA_BITMAP_BITS) == (BITS_PER_LONG - 1));
-> >  			assert(ida_pre_get(&ida, GFP_KERNEL));
-> >  			err = ida_get_new(&ida, &id);
-> >  		} else {
-> > -			assert((i % IDA_BITMAP_BITS) != (BITS_PER_LONG - 2));
-> > +			assert((i % IDA_BITMAP_BITS) != (BITS_PER_LONG - 1));
-> 
-> Can we just use BITS_PER_XA_VALUE here?
-
-Yes!  I'll change that.
-
-> Reviewed-by: Josef Bacik <jbacik@fb.com>
-
-Thanks!
+And I suspect the cleaner interface would be to just pass a 
+bool *did_unlock argument.
