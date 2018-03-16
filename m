@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521215156-2-7906922101632721651
+X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215145-2-10173470818204610110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215155; b=lmRq5MEF3p5Fe5FlkaicnnEUMHSn9edIrDHpxur2DJAwFbw
-    BcjLV0mtoLFsel8xkDOjekNxLS9ZZ+LhfacNRFwZ0yyKUjLT3O3i46KawACmKSqA
-    65j+Z5WhkSQqY4c58RBwURyrugjeaqDRdvSMDVPVeLXjHLk6Zzc7qRm7GKzTUIEw
-    5N8eq3ULZKD9CTicbR2YE9zOuGvrBFLlaqbnmYFMrVFwoxCbNNRdeaPEdeb+Vtiw
-    oUlPNahsYqhA774HhYLwDIDbzIHL8aVf3qE+rwPjKAISl0UZ5gKgwwjsuEGmNb2c
-    HjYNRBGAiJQleirFB18z5/r266Gk4D/bpX9qg6A==
+    t=1521215144; b=l+5WBq+qQW0tcZk7aooMCBaP65kWlVjGbfP0Gfl2uabrc4p
+    u8pxGXd44ibWRMI2lasH3sy32EU2A1hXUc7F4VwZg+7jzFksS+fJKMTrzjYrKItq
+    UtwWVjabGPmo+/eGQ+ABZIWtvAL44/yhNtCdbynHLXb2M0SPlj2wgsFV4NGpkoue
+    xSxb1BxII7uUmh7ogGk7qP/My3+rkJH6oeRbcSzji/lyku5fwDK0oTnVtavlizOH
+    lOgs28ICi5oGGu7ARdtzdpzIgFrU++2ahUdAMH2eassNKfOG5oid8xPlIqr3Zdqj
+    lBNr1OhxcbAYXP/eHbbMvsUFJS8gUYf56pDbt8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215155; bh=zh/zIQpP2VdaB0Hgo/e8gKoky6
-    /nZ0zB7zpNKwkzD6A=; b=GbBnLvCnYZMXTfTe0DCCgFZM+uzqQ3/FGe4xcgM6C0
-    n7l+9bMttrXJY78+62v3EidBwSri8ZUZB0TsSyD1ANQMxi3JpB7jZzyUVFNgND5S
-    NtAYwsuj2PMgSO9f1P6XgOEHZ6VYQR28rmjf5gHLOANHEuDraeDc5sMmAnSd5lVb
-    xhw3R/r6kPvO1WSwwger7+hd0/ednidGu4uVm3wlH0FNwIDvDYLi0e8pETvcduyY
-    082z3e+820JNCidcgUM+b0xnXMsX3tDJuSBMZ//3i6dqaVQ3oDst4k/LNNMNj5lO
-    CjBAfnHFutaf3pNZf36srdutb/ZAtE75l339nZOkY1rQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215144; bh=lsPXSWtRUhZKTN5zQ/IHDlRoSM
+    P3OQemdcbo/Y2e0/A=; b=SVzRfqlKjfnESziZ1IbSclS7NEIr7MsRMQ6sZdLwIE
+    UH0dam2GDrgvEwTRDaKeU0ILNlmehMDkTZCbvZFUVMoLLRXE62tz7oyOzdnKJTxe
+    /9EfOCFEmVXCnS0qNJ1W51vKMqPGsaqf8/M1oO087X5d9tqlxWpeZNYcCHA29GwV
+    qh4CFQVVsEQK1TFJewcnFEKu9N4LpY1X+EnDA+GxaPNsWzlGdge/glmjjWmAdCZ/
+    /YK+loHtZI+egwg3JFhfVjsKvBGtppOL/R1Fqox13CHuoTT9NeZmE8/Lw6DtJIPQ
+    IKbjlXjB/OfOLApf18+8Rnwg3vRNm+a3D7K77aNBexQw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934524AbeCPPpW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:45:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46324 "EHLO
+        id S1753215AbeCPPp0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:45:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46336 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932967AbeCPPpV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:21 -0400
+        with ESMTP id S965548AbeCPPpY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, SeongJae Park <sj38.park@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 123/128] rcutorture/configinit: Fix build directory error message
-Date: Fri, 16 Mar 2018 16:24:24 +0100
-Message-Id: <20180316152342.555859601@linuxfoundation.org>
+Subject: [PATCH 4.15 114/128] arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
+Date: Fri, 16 Mar 2018 16:24:15 +0100
+Message-Id: <20180316152342.185758068@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -81,35 +82,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: SeongJae Park <sj38.park@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 2adfa4210f8f35cdfb4e08318cc06b99752964c2 ]
+[ Upstream commit f5bbcd533a9d1af97b8a0862a421bb8455f1bf6d ]
 
-The 'configinit.sh' script checks the format of optional argument for the
-build directory, printing an error message if the format is not valid.
-However, the error message uses the wrong variable, indicating an empty
-string even though the user entered a non-empty (but erroneous) string.
-This commit fixes the script to use the correct variable.
+Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
+This allows the driver to reset the PHY during probe and after system
+resume.
 
-Fixes: c87b9c601ac8 ("rcutorture: Add KVM-based test framework")
+This fixes Ethernet operation after resume from s2ram on Salvator-XS,
+where the enable pin of the regulator providing PHY power is connected
+to PRESETn, and PSCI powers down the SoC during system suspend.
 
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+On Salvator-X, the enable pin is always pulled high, but the driver may
+still need to reset the PHY if this wasn't done by the bootloader
+before.
+
+Inspired by patches in the BSP for the individual Salvator-X/XS boards
+by Kazuya Mizuguchi.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/rcutorture/bin/configinit.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -51,7 +51,7 @@ then
- 			mkdir $builddir
- 		fi
- 	else
--		echo Bad build directory: \"$builddir\"
-+		echo Bad build directory: \"$buildloc\"
- 		exit 2
- 	fi
- fi
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -263,6 +263,7 @@
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
