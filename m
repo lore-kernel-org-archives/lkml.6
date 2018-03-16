@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933286AbeCPCz2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:55:28 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55563 "EHLO vern.gendns.com"
+        id S933306AbeCPCzw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:55:52 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55551 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753042AbeCPCyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:54:06 -0400
+        id S1752999AbeCPCyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:54:05 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 26/42] ARM: davinci: dm646x: add new clock init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:42 -0500
-Message-Id: <1521168778-27236-27-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:41 -0500
+Message-Id: <1521168778-27236-26-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,7 +36,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new board-specific clock init in mach-davinci/dm646x.c
+This adds the new board-specific clock init in mach-davinci/dm644x.c
 using the new common clock framework drivers.
 
 The #ifdefs are needed to prevent compile errors until the entire
@@ -48,7 +48,7 @@ Signed-off-by: David Lechner <david@lechnology.com>
 ---
 
 v8 changes:
-- register clkdev lookup for ref_clk and aux_clkin
+- none
 
 v7 changes:
 - add clock platform device declarations
@@ -58,52 +58,79 @@ v7 changes:
 v6 changes:
 - add blank lines between function calls
 
- arch/arm/mach-davinci/board-dm646x-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h          |  1 +
- arch/arm/mach-davinci/dm646x.c           | 85 +++++++++++++++++++++++++++++---
- 3 files changed, 80 insertions(+), 8 deletions(-)
+ arch/arm/mach-davinci/board-dm644x-evm.c  |  2 +
+ arch/arm/mach-davinci/board-neuros-osd2.c |  2 +
+ arch/arm/mach-davinci/board-sffsdr.c      |  2 +
+ arch/arm/mach-davinci/davinci.h           |  1 +
+ arch/arm/mach-davinci/dm644x.c            | 83 +++++++++++++++++++++++++++----
+ 5 files changed, 81 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 2d37f5b..d672804 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -772,6 +772,8 @@ static __init void evm_init(void)
- 	int ret;
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 95b55aa..91c7525 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -768,6 +768,8 @@ static __init void davinci_evm_init(void)
+ 	struct clk *aemif_clk;
  	struct davinci_soc_info *soc_info = &davinci_soc_info;
  
-+	dm646x_register_clocks();
++	dm644x_register_clocks();
 +
- 	ret = dm646x_gpio_register();
+ 	ret = dm644x_gpio_register();
  	if (ret)
  		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
+index f287577..ae17d3e 100644
+--- a/arch/arm/mach-davinci/board-neuros-osd2.c
++++ b/arch/arm/mach-davinci/board-neuros-osd2.c
+@@ -174,6 +174,8 @@ static __init void davinci_ntosd2_init(void)
+ 	struct clk *aemif_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm644x_register_clocks();
++
+ 	ret = dm644x_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
+index 2922da9..933cc08 100644
+--- a/arch/arm/mach-davinci/board-sffsdr.c
++++ b/arch/arm/mach-davinci/board-sffsdr.c
+@@ -134,6 +134,8 @@ static __init void davinci_sffsdr_init(void)
+ {
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm644x_register_clocks();
++
+ 	platform_add_devices(davinci_sffsdr_devices,
+ 			     ARRAY_SIZE(davinci_sffsdr_devices));
+ 	sffsdr_init_i2c();
 diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 2861a6f..a200977 100644
+index c865226..2861a6f 100644
 --- a/arch/arm/mach-davinci/davinci.h
 +++ b/arch/arm/mach-davinci/davinci.h
-@@ -115,6 +115,7 @@ int dm644x_gpio_register(void);
- /* DM646x function declarations */
- void dm646x_init(void);
- void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
-+void dm646x_register_clocks(void);
- void dm646x_init_mcasp0(struct snd_platform_data *pdata);
- void dm646x_init_mcasp1(struct snd_platform_data *pdata);
- int dm646x_init_edma(struct edma_rsv_info *rsv);
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index e1d6e92..553782f 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -8,29 +8,33 @@
+@@ -107,6 +107,7 @@ int dm365_gpio_register(void);
+ /* DM644x function declarations */
+ void dm644x_init(void);
+ void dm644x_init_time(void);
++void dm644x_register_clocks(void);
+ void dm644x_init_asp(void);
+ int dm644x_init_video(struct vpfe_config *, struct vpbe_config *);
+ int dm644x_gpio_register(void);
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 71a16fc..64f5193 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -8,28 +8,31 @@
   * is licensed "as is" without any warranty of any kind, whether express
   * or implied.
   */
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
+-#include <linux/init.h>
 -#include <linux/clk.h>
 -#include <linux/serial_8250.h>
++#include <linux/clk-provider.h>
+ #include <linux/dmaengine.h>
 -#include <linux/platform_device.h>
++#include <linux/init.h>
  #include <linux/platform_data/edma.h>
  #include <linux/platform_data/gpio-davinci.h>
 +#include <linux/platform_device.h>
@@ -132,46 +159,41 @@ index e1d6e92..553782f 100644
 +#include "psc.h"
 +#endif
  
- #define DAVINCI_VPIF_BASE       (0x01C12000)
- 
-@@ -46,6 +50,7 @@
- #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
+ /*
+  * Device specific clocks
+@@ -43,6 +46,7 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
  
 +#ifndef CONFIG_COMMON_CLK
  static struct pll_data pll1_data = {
  	.num       = 1,
  	.phys_base = DAVINCI_PLL1_BASE,
-@@ -356,6 +361,7 @@ static struct clk_lookup dm646x_clks[] = {
- 	CLK(NULL, "vpif1", &vpif1_clk),
+@@ -326,6 +330,7 @@ static struct clk_lookup dm644x_clks[] = {
+ 	CLK("davinci-wdt", NULL, &timer2_clk),
  	CLK(NULL, NULL, NULL),
  };
 +#endif
  
- static struct emac_platform_data dm646x_emac_pdata = {
- 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
-@@ -953,10 +959,73 @@ void __init dm646x_init(void)
- void __init dm646x_init_time(unsigned long ref_clk_rate,
- 			     unsigned long aux_clkin_rate)
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+@@ -934,8 +939,68 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
  {
 +#ifdef CONFIG_COMMON_CLK
 +	struct clk *clk;
 +
-+	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
-+	clk_register_clkdev(clk, "ref_clk", "dm646x-psc");
-+	davinci_timer_init(clk);
++	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
 +
-+	clk = clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
-+	clk_register_clkdev(clk, "aux_clkin", "dm646x-psc");
++	davinci_timer_init(clk);
 +#else
- 	ref_clk.rate = ref_clk_rate;
- 	aux_clkin.rate = aux_clkin_rate;
- 	davinci_clk_init(dm646x_clks);
+ 	davinci_clk_init(dm644x_clks);
  	davinci_timer_init(&timer0_clk);
 +#endif
 +}
 +
-+static struct resource dm646x_pll1_resources[] = {
++static struct resource dm644x_pll1_resources[] = {
 +	{
 +		.start	= DAVINCI_PLL1_BASE,
 +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
@@ -179,14 +201,14 @@ index e1d6e92..553782f 100644
 +	},
 +};
 +
-+static struct platform_device dm646x_pll1_device = {
-+	.name		= "dm646x-pll1",
++static struct platform_device dm644x_pll1_device = {
++	.name		= "dm644x-pll1",
 +	.id		= -1,
-+	.resource	= dm646x_pll1_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_pll1_resources),
++	.resource	= dm644x_pll1_resources,
++	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
 +};
 +
-+static struct resource dm646x_pll2_resources[] = {
++static struct resource dm644x_pll2_resources[] = {
 +	{
 +		.start	= DAVINCI_PLL2_BASE,
 +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
@@ -194,14 +216,14 @@ index e1d6e92..553782f 100644
 +	},
 +};
 +
-+static struct platform_device dm646x_pll2_device = {
-+	.name		= "dm646x-pll2",
++static struct platform_device dm644x_pll2_device = {
++	.name		= "dm644x-pll2",
 +	.id		= -1,
-+	.resource	= dm646x_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_pll2_resources),
++	.resource	= dm644x_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm644x_pll2_resources),
 +};
 +
-+static struct resource dm646x_psc_resources[] = {
++static struct resource dm644x_psc_resources[] = {
 +	{
 +		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
 +		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
@@ -209,20 +231,20 @@ index e1d6e92..553782f 100644
 +	},
 +};
 +
-+static struct platform_device dm646x_psc_device = {
-+	.name		= "dm646x-psc",
++static struct platform_device dm644x_psc_device = {
++	.name		= "dm644x-psc",
 +	.id		= -1,
-+	.resource	= dm646x_psc_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_psc_resources),
++	.resource	= dm644x_psc_resources,
++	.num_resources	= ARRAY_SIZE(dm644x_psc_resources),
 +};
 +
-+void __init dm646x_register_clocks(void)
++void __init dm644x_register_clocks(void)
 +{
-+	platform_device_register(&dm646x_pll1_device);
-+	platform_device_register(&dm646x_pll2_device);
-+	platform_device_register(&dm646x_psc_device);
++	platform_device_register(&dm644x_pll1_device);
++	platform_device_register(&dm644x_pll2_device);
++	platform_device_register(&dm644x_psc_device);
  }
  
- static int __init dm646x_init_devices(void)
+ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
 -- 
 2.7.4
