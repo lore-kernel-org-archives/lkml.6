@@ -1,60 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753945AbeCPOzo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:55:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57206 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754038AbeCPOzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:23 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 2/2] irqchip/gic-v3: Loudly complain about the use of IRQ_TYPE_NONE
-Date: Fri, 16 Mar 2018 14:55:11 +0000
-Message-Id: <20180316145511.28362-3-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180316145511.28362-1-marc.zyngier@arm.com>
-References: <20180316145511.28362-1-marc.zyngier@arm.com>
+        id S1754026AbeCPOzU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:55:20 -0400
+Received: from mail-io0-f175.google.com ([209.85.223.175]:34117 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753622AbeCPOzS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:55:18 -0400
+X-Google-Smtp-Source: AG47ELuip+iWLr7/LbTfdsb4/pkEcy8xpMNS14pM5Y45xTnXEbVBLHsBh+RJEb6MAvOYD2hC462vXwWxyQgDNPkcido=
+MIME-Version: 1.0
+In-Reply-To: <20180316143119.cdjw4dhm6crcjyrd@lakrids.cambridge.arm.com>
+References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
+ <20180316141313.q5vjmj627rv7r7kf@lakrids.cambridge.arm.com> <20180316143119.cdjw4dhm6crcjyrd@lakrids.cambridge.arm.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Fri, 16 Mar 2018 15:55:16 +0100
+Message-ID: <CAAeHK+z12AhRNQMVL5Xza+U=E-7NL3YA3VZmvrN2pGx8O-+a5Q@mail.gmail.com>
+Subject: Re: arm64 kvm built with clang doesn't boot
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
+        kernel-dynamic-tools <kernel-dynamic-tools@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a huge number of broken device trees out there. Just
-grepping through the tree for the use of IRQ_TYPE_NONE in conjunction
-with the GIC is scary.
+On Fri, Mar 16, 2018 at 3:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> FWIW, with that same compiler and patch applied atop of v4.16-rc4, and
+> some bodges around clang not liking the rX register naming in the SMCCC
+> code, I get a kernel that boots on my Juno, though I immediately hit a
+> KASAN splat:
+>
+> [    8.476766] ==================================================================
+> [    8.483990] BUG: KASAN: slab-out-of-bounds in __d_lookup_rcu+0x350/0x400
+> [    8.490664] Read of size 8 at addr ffff8009336e2a30 by task init/1
 
-People just don't realise that IRQ_TYPE_NONE just doesn't exist, and
-you just get whatever junk was there before. So let's make them aware
-of the issue.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic-v3.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 3e9eeb6cb294..5bb7bb22f1c1 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -916,6 +916,9 @@ static int gic_irq_domain_translate(struct irq_domain *d,
- 		}
- 
- 		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
-+
-+		/* Make it clear that broken DTs are... broken */
-+		WARN_ON(*type == IRQ_TYPE_NONE);
- 		return 0;
- 	}
- 
-@@ -925,6 +928,8 @@ static int gic_irq_domain_translate(struct irq_domain *d,
- 
- 		*hwirq = fwspec->param[0];
- 		*type = fwspec->param[1];
-+
-+		WARN_ON(*type == IRQ_TYPE_NONE);
- 		return 0;
- 	}
- 
--- 
-2.14.2
+I see this as well, I'm looking into it. It seems that
+__no_sanitize_address is not defined for clang (defining it doesn't
+help though, so the issue might be deeper).
