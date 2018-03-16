@@ -1,133 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeCPVjP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:39:15 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:3359 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750826AbeCPVjO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:39:14 -0400
-Date: Sat, 17 Mar 2018 08:39:10 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
- case of global reclaim
-Message-ID: <20180316213910.GF7000@dastard>
-References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
- <20180315174903.GM23100@dhcp22.suse.cz>
- <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
- <20180315230313.GM18129@dastard>
- <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
+        id S1751917AbeCPVmt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:42:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751302AbeCPVms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:42:48 -0400
+Subject: Re: [pci PATCH v7 0/5] Add support for unmanaged SR-IOV
+To: Alexander Duyck <alexander.duyck@gmail.com>, bhelgaas@google.com,
+        alexander.h.duyck@intel.com, linux-pci@vger.kernel.org
+Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, mheyne@amazon.de,
+        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
+        hch@lst.de, dwmw@amazon.co.uk
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <a411bbf7-23ba-60e6-2673-4f200f36db9b@redhat.com>
+Date: Fri, 16 Mar 2018 17:42:44 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180315183449.3102.64791.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 11:55:30AM +0300, Kirill Tkhai wrote:
-> On 16.03.2018 02:03, Dave Chinner wrote:
-> > On Thu, Mar 15, 2018 at 10:28:43PM +0300, Kirill Tkhai wrote:
-> >> On 15.03.2018 20:49, Michal Hocko wrote:
-> >>> On Thu 15-03-18 18:01:34, Kirill Tkhai wrote:
-> >>>> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
-> >>>> So, it's called for memcg reclaim too, e.g. this list is shrinked
-> >>>> disproportionality to another lists.
-> >>>>
-> >>>> This looks confusing, so I'm reporting about this.
-> >>>> Consider this patch as RFC.
-> >>>
-> >>> Could you be more specific about the problem you are trying to solve?
-> >>> Because we do skip shrinkers which are not memcg aware by
-> >>> shrink_slab:
-> >>> 		/*
-> >>> 		 * If kernel memory accounting is disabled, we ignore
-> >>> 		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
-> >>> 		 * passing NULL for memcg.
-> >>> 		 */
-> >>> 		if (memcg_kmem_enabled() &&
-> >>> 		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
-> >>> 			continue;
-> >>>
-> >>> Or am I missing something?
-> >>
-> >> sb->s_op->nr_cached_objects is a sub-method of generic super_cache_count().
-> >> super_cache_count() is owned and only called by superblock's shrinker,
-> >> which does have SHRINKER_MEMCG_AWARE flag.
-> > 
-> > Xfs inodes are accounted to memcgs when they are allocated.  All the
-> > memcg reclaim stuff is done at the VFS inode cache level - all the
-> > XFS inode cache shrinker does is clean up inodes that are not
-> > referenced by the VFS inode cache because the memcg aware reclaim
-> > has already freed them.
-> > 
-> > i.e. what the XFS inode cache is doing is perfectly reasonable -
-> > memcg aware inode reclaim is occuring at the VFS level, but on XFS
-> > that does not free the inodes as they are still referenced
-> > internally by XFS. However, once the inode is removed from the VFS
-> > LRU, all memcg information about the inode is destroyed, so there's
-> > nothing in the XFS layers that cares about memcgs.
+On 03/15/2018 02:40 PM, Alexander Duyck wrote:
+> This series is meant to add support for SR-IOV on devices when the VFs are
+> not managed by the kernel. Examples of recent patches attempting to do this
+> include:
+> virto - https://patchwork.kernel.org/patch/10241225/
+> pci-stub - https://patchwork.kernel.org/patch/10109935/
+> vfio - https://patchwork.kernel.org/patch/10103353/
+> uio - https://patchwork.kernel.org/patch/9974031/
 > 
-> So, after inode is removed from LRU, memory still remains accounted
-> to memcg till the time they are actually freed. I personally don't
-> care, just to mention.
->  
-> > Hence when the XFS inode shrinker then called to run a
-> > garbage collection pass on unreferenced inodes - the inodes that
-> > are now unreferenced in the memcg due to the VFS inode shrinker pass
-> > - it frees inodes regardless of the memcg context it was called from
-> > because that information is no longer present in the inode cache.
-> > Hence we just ignore memcgs at this level.
+> Since this is quickly blowing up into a multi-driver problem it is probably
+> best to implement this solution as generically as possible.
 > 
-> But xfs_fs_free_cached_objects() returns number of these freed object
-> as result to super_cache_scan(), so shrinker interprets them as related
-> to a memcg, while they may be related to another memcg. This introduces
-> a disproportion relatively to another shrinkers called to memcg.
-
-In what way? All memcgs see tha same values from the backing cache
-and so try to do the same amount of scanning work. The shrinker
-accounting simply doesn't care where the objects are scanned from,
-as long as it comes from the same place as the calculation of the
-number of objects in the cache it's about to scan.
-
-The memcg accounting, OTOH, is completely divorced from the
-shrinker, so if it's still got too much slab memory accounted to it,
-it will simply run the shrinker again and do some more memory
-reclaim.
-
-XFS does this for IO efficiency purposes, not because it's ideal
-behaviour for memcgs. If we start doing exact memcg-only inode
-reclaim, we're going back to the bad old days where inode reclaim
-causes really nasty small random write storms that essentially
-starve the storage subsystem of all other IO for seconds at a time.
-That is a *far worse problem* from a system performance POV than
-having the memcg memory reclaim run a couple more shrinker passes
-and do a little more work....
-
-> Is there a problem? This is what my patch about.
-
-You've described some theoretical issue, but not described any user
-visible or performance impacting behaviour that users actually care
-about. What reproducable, observable behaviour does it fix/change?
-
-> > So, is there a problem you are actually trying to fix, or is this
-> > simply a "I don't understand how the superblock shrinkers work,
-> > please explain" patch?
+> This series is an attempt to do that. What we do with this patch set is
+> provide a generic framework to enable SR-IOV in the case that the PF driver
+> doesn't support managing the VFs itself.
 > 
-> I work on some shrinker changes, and just want to understand they don't
-> touch anything. 
+> I based my patch set originally on the patch by Mark Rustad but there isn't
+> much left after going through and cleaning out the bits that were no longer
+> needed, and after incorporating the feedback from David Miller. At this point
+> the only items to be fully reused was his patch description which is now
+> present in patch 3 of the set.
+> 
+> This solution is limited in scope to just adding support for devices that
+> provide no functionality for SR-IOV other than allocating the VFs by
+> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
+> for now I am dropping that as the scope of that work is larger then I
+> think I can take on at this time.
+> 
+> v2: Reduced scope back to just virtio_pci and vfio-pci
+>      Broke into 3 patch set from single patch
+>      Changed autoprobe behavior to always set when num_vfs is set non-zero
+> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
+>      Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
+> v4: Dropped vfio-pci patch
+>      Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
+>      Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
+> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
+>      Added new patch that enables pci_sriov_configure_simple
+>      Updated drivers to use pci_sriov_configure_simple
+> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
+>      Updated drivers to drop "#ifdef" checks for IOV
+>      Added pci-pf-stub as place for PF-only drivers to add support
+> v7: Dropped pci_id table explanation from pci-pf-stub driver
+>      Updated pci_sriov_configure_simple to drop need for err value
+>      Fixed comment explaining why pci_sriov_configure_simple is NULL
+> 
+> Cc: Mark Rustad <mark.d.rustad@intel.com>
+> Cc: Maximilian Heyne <mheyne@amazon.de>
+> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+> Cc: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> ---
+> 
+> Alexander Duyck (5):
+>        pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
+>        virtio_pci: Add support for unmanaged SR-IOV on virtio_pci devices
+>        ena: Migrate over to unmanaged SR-IOV support
+>        nvme: Migrate over to unmanaged SR-IOV support
+>        pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
+> 
+> 
+>   drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
+>   drivers/nvme/host/pci.c                      |   20 ----------
+>   drivers/pci/Kconfig                          |   12 ++++++
+>   drivers/pci/Makefile                         |    2 +
+>   drivers/pci/iov.c                            |   31 +++++++++++++++
+>   drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
+>   drivers/virtio/virtio_pci_common.c           |    1
+>   include/linux/pci.h                          |    3 +
+>   include/linux/pci_ids.h                      |    2 +
+>   9 files changed, 107 insertions(+), 46 deletions(-)
+>   create mode 100644 drivers/pci/pci-pf-stub.c
+> 
+> --
+> 
+For what it's worth.
 
-Oh, goody, another person about to learn the hard way that shrinkers
-are far more varied and complex than page reclaim :P
+Good, simpler start for this type of support/effort.
+Thanks for the multiple versions to get to this point.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Donald Dutile <ddutile@redhat.com>
