@@ -1,49 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753093AbeCPOUw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:20:52 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44658 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeCPOUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:20:50 -0400
-Date: Fri, 16 Mar 2018 14:20:43 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
-Message-ID: <20180316142043.GC30522@ZenIV.linux.org.uk>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
- <CAK8P3a2-XfeM5J0dq0kiOSiQC4T4p7cggNbuMDoCmnqjKC9tEQ@mail.gmail.com>
- <CALCETrX_1pxfB10k-uj7vSyXm7hH4MeJiEY=+A3FzViaozb+BA@mail.gmail.com>
- <CA+55aFyJBTaBuA1LjG5RjcD7ZCivYYQWqb3A+HbJZGUdZE9i6w@mail.gmail.com>
- <20180316085423.GH4151@infradead.org>
+        id S1753161AbeCPOWF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:22:05 -0400
+Received: from mga09.intel.com ([134.134.136.24]:65421 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753140AbeCPOWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:22:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,316,1517904000";
+   d="scan'208";a="28539971"
+Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
+ timeout value
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180307132020.30951-1-kishon@ti.com>
+ <20180307132020.30951-8-kishon@ti.com>
+ <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
+ <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
+Date: Fri, 16 Mar 2018 16:21:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316085423.GH4151@infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 01:54:23AM -0700, Christoph Hellwig wrote:
-> On Thu, Mar 15, 2018 at 05:54:27PM -0700, Linus Torvalds wrote:
-> > Yes. And honestly, I'd rather have these kinds of "just change the
-> > calling convention" almost automated patches separately - and then the
-> > cleanups later.
-> > 
-> > Mixing the calling convention change and the cleanup together is just
-> > confusing and potentially causes subtle issues.
+On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
+> Hi,
 > 
-> A lot of the issues here is that the initramfs / do_mount code
-> is written as if it was user space code, but in kernel space.  E.g.
-> using file desriptors etc.
+> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
+>> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
+>>> sdhci has a 10 second timeout to catch devices that stop responding.
+>>> Instead of programming 10 second arbitrary value, calculate the total time
+>>> it would take for the entire transfer to happen and program the timeout
+>>> value accordingly.
+>>>
+>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>> ---
+>>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
+>>>  2 files changed, 50 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 1dd117cbeb6e..baab67bfa39b 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+>>>  		return sg_dma_address(host->data->sg);
+>>>  }
+>>>  
+>>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
+>>> +				  struct mmc_command *cmd,
+>>> +				  unsigned int target_timeout)
+>>> +{
+>>> +	struct mmc_data *data = cmd->data;
+>>> +	struct mmc_host *mmc = host->mmc;
+>>> +	u64 transfer_time;
+>>> +	struct mmc_ios *ios = &mmc->ios;
+>>> +	unsigned char bus_width = 1 << ios->bus_width;
+>>> +	unsigned int blksz;
+>>> +	unsigned int freq;
+>>> +
+>>> +	if (data) {
+>>> +		blksz = data->blksz;
+>>> +		freq = host->mmc->actual_clock ? : host->clock;
+>>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
+>>> +		do_div(transfer_time, freq);
+>>> +		/* multiply by '2' to account for any unknowns */
+>>> +		transfer_time = transfer_time * 2;
+>>> +		/* calculate timeout for the entire data */
+>>> +		host->data_timeout = (data->blocks * ((target_timeout *
+>>> +						       NSEC_PER_USEC) +
+>>> +						       transfer_time));
+>>
+>> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
+>> for timeouts greater than about 4 seconds.
+>>
+>>> +	} else {
+>>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
+>>> +	}
+>>> +
+>>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>
+>> Need to allow for target_timeout == 0 so:
+>>
+>> 	if (host->data_timeout)
+>> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>
+>>> +}
+>>> +
+>>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>  {
+>>>  	u8 count;
+>>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>  		if (count >= 0xF)
+>>>  			break;
+>>>  	}
+>>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
+>>
+>> If you make the changes I suggest for patch 6, then this would
+>> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
+>>
+>> I suggest you factor out the target_timeout calculation e.g.
+>>
+>> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+>> 					 struct mmc_command *cmd,
+>> 					 struct mmc_data *data)
+>> {
+>> 	unsigned int target_timeout;
+>>
+>> 	/* timeout in us */
+>> 	if (!data)
+>> 		target_timeout = cmd->busy_timeout * 1000;
+>> 	else {
+>> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
+>> 		if (host->clock && data->timeout_clks) {
+>> 			unsigned long long val;
+>>
+>> 			/*
+>> 			 * data->timeout_clks is in units of clock cycles.
+>> 			 * host->clock is in Hz.  target_timeout is in us.
+>> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
+>> 			 */
+>> 			val = 1000000ULL * data->timeout_clks;
+>> 			if (do_div(val, host->clock))
+>> 				target_timeout++;
+>> 			target_timeout += val;
+>> 		}
+>> 	}
+>>
+>> 	return target_timeout;
+>> }
+>>
+>> And call it from sdhci_calc_sw_timeout()
+>>
+>>>  
+>>>  	return count;
+>>>  }
+>>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>  		mdelay(1);
+>>>  	}
+>>>  
+>>> -	timeout = jiffies;
+>>> -	if (!cmd->data && cmd->busy_timeout > 9000)
+>>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+>>> -	else
+>>> -		timeout += 10 * HZ;
+>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
+>>> -
+>>>  	host->cmd = cmd;
+>>>  	if (sdhci_data_line_cmd(cmd)) {
+>>>  		WARN_ON(host->data_cmd);
+>>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
+>>>  		flags |= SDHCI_CMD_DATA;
+>>>  
+>>> +	timeout = jiffies;
+>>> +	if (host->data_timeout > 0) {
+>>
+>> This can be just:
+>>
+>> 	if (host->data_timeout) {
+>>
+>>> +		timeout += nsecs_to_jiffies(host->data_timeout);
+>>> +		host->data_timeout = 0;
+>>
+>> It would be better to initialize host->data_timeout = 0 at the top of
+>> sdhci_prepare_data().
+>>
+>> Also still need:
+>>
+>> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
+>> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+> 
+> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
 
-... and I still wonder if it would make more sense to kick that crap
-out into userland.
+Yes, but I was thinking you would only calculate when it was needed.
