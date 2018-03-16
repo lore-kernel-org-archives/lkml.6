@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeCPHXJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:23:09 -0400
-Received: from mail-dm3nam03on0061.outbound.protection.outlook.com ([104.47.41.61]:40064
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1753319AbeCPHXG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:23:06 -0400
+Received: from mail-sn1nam02on0078.outbound.protection.outlook.com ([104.47.36.78]:4026
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753113AbeCPHRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:32 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+        id S1753119AbeCPHRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:35 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 09/28] input: Remove Blackfin input support
-Date: Fri, 16 Mar 2018 15:08:07 +0800
-Message-ID: <1521184106-24475-7-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 10/28] i2c: Remove Blackfin I2C bus support
+Date: Fri, 16 Mar 2018 15:08:08 +0800
+Message-ID: <1521184106-24475-8-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,958 +24,846 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(346002)(39860400002)(396003)(2980300002)(438002)(50944005)(189003)(199004)(6666003)(72206003)(106002)(50226002)(8676002)(47776003)(107886003)(7696005)(8936002)(336012)(51416003)(2950100002)(36756003)(6916009)(6306002)(478600001)(426003)(76176011)(4326008)(966005)(59450400001)(5660300001)(77096007)(2906002)(316002)(26005)(186003)(48376002)(356003)(106466001)(7636002)(2351001)(305945005)(16586007)(86362001)(50466002)(575784001)(246002)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2609;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD023;1:qhSlmMtnBmFVsuaRcw1iG87qY8GCb4bBAJSZJh+c+0B0bDUO6XuKq/0/0mr770BlH71HeBZba3f6JB85nv06FoU4g7XuH2CtCXL6Ij1krByqk+cB7xUUBKdwnISAGW4b
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(346002)(376002)(39860400002)(396003)(2980300002)(438002)(199004)(189003)(478600001)(106002)(336012)(7696005)(51416003)(4326008)(106466001)(305945005)(2351001)(6666003)(6916009)(6306002)(2906002)(5660300001)(59450400001)(76176011)(2950100002)(8936002)(246002)(50226002)(186003)(26005)(50466002)(48376002)(966005)(8676002)(72206003)(316002)(86362001)(47776003)(36756003)(107886003)(7636002)(356003)(16586007)(77096007)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1481;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC016;1:GDcXGp9DoWk2nS1FIFzPd4jdyrsUERX4uadf17ux1/RGzPZRo32ZklhTqW0zbs9XNcmPcquz1vY2MxCp6GdnBx+q/CwflQ1cGOC+eim/7Btrw3EAubtL+IeiTRzWewfT
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f222ff4b-d970-4313-646d-08d58b0dfad6
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BN6PR03MB2609;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;3:6oGqdDhlayQ3MdhBAUK+Ex+kF6AoMl4Ou6O7wN1i6CUWFkZtSm4Kbu8IlQsnLvmGl6vGvzQUKjVnsX/Wz51RiDLE0uZq4tYt6L0IBRZmd/U5jubJbFwNr3F7yFbOCJ16+CW1a1CuB4CuLUyeURl/NIut85zF8L8jDz0K+msm/ohAlYTuwJGwx7DRQ2BXmTVIKJbGV8yw+eNbHPKAOWz0F6vayPhKyoHO1zE2/EdtXWsrIMjq7yWfIhqK+nwFK19higV9jtxM5H+GiMGSTbbLfEGGmWbNzxJkIWKA2PEIQjzG+Z6i2dJ3QqQCSATdAHqVvAjvehk/uTCgjkM1RF3O6w==;25:JGal6yZOkERDm6zreTomJ8AeFa8pcgCCnJ3Ky+rxq7fz6PTr8ScHZE6zVrIqmz7K77wJ+fbv6AUfHOFH8ZHVQ+LgKiJz8yDsM8rOFqtazhtt0O6+f6jqGzjY3z6hxNrET5OOVbLdQL2DFSmRswa5OblXC/SfLBSjHSz2ESTyNhkfanAXwUuLzM4jOd1fvqqYnfxPykUSkqGg4hT76/QYxKuc4cM0tu6ESM2jVuQYoRalkziDoj885tKdyWG38/5CPRLZ5vUw7dx28pil2RJoTSWHO0mvgsgYHdtz1d6NeW1+eVJGsHHj2K0USdki8saa5Yx6dCpnO8bKuKHJtk5WDw==;31:1SWu9RBb4VbN4ghDmyxC089qLcJwA3ZWdVbrgznBXnOC9QTABbNVW1ps4YB4HtStF2Y9fbt/hMY99caK5IU//NRZfZoSL8ZV08wAm/Jcivmzx6IwQvk24gd0CJrY9U/q6Bs3zS59qBikfdOoWxxU34sC6tBjdP0OstcJ7zm2QGaUeeeXPxyYog2WmyyxEV/xdv+V3y6lLGiXAJfnwgRWARtpbfOCg26ZdzreOIaqWc0=
-X-MS-TrafficTypeDiagnostic: BN6PR03MB2609:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;20:8FhA0hlavbVvRargx4j7wbGoP+kuJPI0eL9IsrlblA9sRKgfiSioviDojsHedyUO+X/D+p9WfXxOPRBYTAdRi2N5c+vLuEdKBRUQbNk9AqFLIBgXYg6OE72fO1MhgGoY7JjpI8fODpX3yQOjbDYE5JYDRd+/BaJNvIaMlJdRHCFfLCAHETQtMIz61qtCozFDc1JwpkOosiRO+Nb/IXu12D/Vfbhuq36GJ3pxAhbEy14yXmfBCqXUiZzGbmNWuIWO/Uj7t4Iu09PCpvmHtF3ln93uxQsdGTTJYzfv2sYYL+7fJzPnkDu93jVyoFXziweP750oxqY8Iyjy1r4DTGqorErFOrURc3wU5W9UdIjSVyQxXMn/mc64qLmjbH9BZC8odvSX+o6RSqxQ7OSIJZL7cdzbVRcPYvwaF6mqHqcF91V0BqkCN/IGbmIa4OLCc+bdYXesCci94RS6A6tThK+kre0k60jaZr4rnFlvbh7VqNA7qf4QkZYEhyoMiZdUZGUG;4:mz3kqjvg+shuY/bzcWE7C6I59r/H5/yWarnCd8UVB3yLm1KlB8M+d/BuVJYtt9Vburku7RJbpadkmxOaprlnTSBdcCMZKvgYevlrhQqixrHuyEz4TG/DMLHzhpbnT1rfY8gcvRraHvK7PQ7e9CpqjpjUApCA6wCv7jb5hZslTa7G21vfD8x9QB3laeRenFsGGSJgaBbTlyIpo2BmObbUG6Fo4d/g2Pndq5ZilNhjf4ZYOJGj/I7yOp5aMsczZgFp/O92cJ2euJu+FCO9JoMiGjUgJBJJ3ZzQZyaYi5McwGfhPcrM8zAo7vp3U/uzZxvt
-X-Microsoft-Antispam-PRVS: <BN6PR03MB26098862E05463276EE8E04DE0D70@BN6PR03MB2609.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: e37ceef5-9c74-4d0f-d3b6-08d58b0dfc7e
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1481;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;3:602tklQbfH1+/rOzWA7ZOHo3VxR/NM9bKUA6hecGel8zd/l7l3sGlydd7oRDkYoFKQEq9G9fsGvjIlJYULbdZqiVv6A6se/C3h5+UzZldLtp36jZwl4gkgK+eQhFvNBf0GWO+43VxNTUai5ADYjDkCeJHF7UCRX+sQy3kT0rCqzH4gt0pD9OcIf3EnrwHR+gHk+iqjK+SxDBwywiLdqw0hhtsYrfKDPI20Q5nVBrMsYSIMqWeBLfzAKknjDE9V8ZUK7ZBqBcoAkCx3DMkv9BMXsM/HfoqWT7XfAhRmJMM2svu7kko9O0I55pfuLPD1xKZKKS7uPcXynZz4MYdl6uMA==;25:nqM9T4w8NVSBif1+nixAfbDrzyq/rr1jo1aJQWnNHgIwC7JyE4Nyhr7nkMTmxLIWQgChHOdDcHEHmk/wrrNKjWWAgA9mJn+woC4mQ3h2hLOAb5dEbIxvlWtL6gx84MvnQZiR0YmKwJiQMb7bKVnBRbK9Swn24zI7cFcm98lpX/mb5+CNrK+LPiNxTH+X2MYZ5Ic6VuGyIW2rdyIlqmIRkyEAa3HTkA/J2oL1PyVdaeGBsWOTN8oCjexCSde1GtGRgPCfUgvSqzN9gQ3hfYWRonJpPoK0U8cK8nBVmpl6qj0KNn6YkRqm/GgJXBEwqSng8xpkwZVaQxnyxosVh7SO7Q==;31:cCudFZMQqPj/IcCK6yKpzNdYontfzVu9gyxR7iUWh9aZDsM2Rxd4G1MwfdVLxDCSRG1Tq4ubn9qg7SsZwER6cU+UBZhyZwbIDzay3vegJ/YkoqMbqXVnAQZSiWiz+kBTaQRYcDW9Qd6MtuyAYUfAebe11g+Hyg0+pglmdR49ArER/GEqQNxiLtIERcVzaK/Q+N9F6DlMeqKjZvziyHziF4o6mFacsZNGg/4tscZ4QDQ=
+X-MS-TrafficTypeDiagnostic: BY1PR03MB1481:
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;20:FY2Rs1QRF2t3tHB3WAsvolo1JTdTr7dGRsh6vutupd2gercNdwHmkAblvaJ9q24fkJvReWPFDZLIRBbDvDaPyMcraiaYysmD4anEhHH6Rol+UkADkIGB4a7CZI+zr/zuviH2jSyXuMy+B8A/IRbjKD2KMccQIJ6owwwZ1q4ktOGGGSg1G1pUO4+oAif0SjJmtibnpVxC1ghDyb34HjSBESmSN8vNWXkNOVu3CbJTlpqHbUTGNF7I/btd8iHDICHr+mctO/9N/sKldEMDXNjeE5oDA+/bu8D+8/qXOxNQJ8B8XkvddTQ0cgz73H40s3BgYrCckc0GxADUvyOd0neCov0xMKic0oMky4bj3GMcX98e81qQtD8xL0q9MjVA9O6cq9LOHTOA9Aa1n8n2o4Ks8g/NG6nCQdzsIX5YVUvqzC2E9aCjH1O+/r5chFsIkHj5ySKw6z2aWZ1qSD7PcgEAZMvnKskXa/2zCTfxjZb+8ooy7qThJCK6tNk1lLgv+aWH;4:hxUrc7Wo2XFK8heG2UsW/IdQtP99wZg7MZVDrK6Hi6HlVyM4BBdn8Iw3enmf7KTRMpXecSu4pdtv5IZMr/ty3bofdSSSXQt7OWfMHKogCEEeekzu8fMjaaUwqgHIco2b4fpj1hObCMFzTEbaeA6N2zXCs2AoVw/fUFEYneGLXQ24i2QE5BtEufKi/FAVtwIiu+fqmMo4fNA/maql8YR/QyKHEy5txX5ugoMPhLlap9sAUPbpNiyFLo1Jp4/cNe11fIOpTu+4seeLpRKZHydIJOu1W6igAk/nJafbcbaN2vHsu1Ofcbl9Gek1FRK/S/Z1
+X-Microsoft-Antispam-PRVS: <BY1PR03MB148145ADAE218BA6D5F8C488E0D70@BY1PR03MB1481.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR03MB2609;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2609;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93004095)(3231221)(944501244)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1481;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1481;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2609;23:1VomIN1aqpynJ1lV6tr6mlJRvrDZes/OHcZdzVnaz?=
- =?us-ascii?Q?GHKZaohk+JAvdgr13+Q7VFJIrUjdz1hWZRlPxA5Bwi2LrAJvk8Qc1WgFN6+0?=
- =?us-ascii?Q?OH0VfqPIpOrhx+Rv9qjArhv75Dfw7C4/DSgkVHR6gIcxlyBPyAZMfZq2deC1?=
- =?us-ascii?Q?liRnqSbjfSEuCxgI+wITptXJv5b6O7vgp9fQuQFaUabHvDowY/JYP355N8xH?=
- =?us-ascii?Q?PVgAeAaokJBNgplN3QwWFeINPzOBA+k+70C72TFRTJWJZlJaO0eJbEuI5qx7?=
- =?us-ascii?Q?ghJ1wWvkmkXm5EHgncD4NKIf4hKMEs376f2Oexj0x8pqZGsrZEI4gEq3FTXN?=
- =?us-ascii?Q?UyFsKJdL7opzrSC/uqRn3ixfctESYLP+ItuldwSxB6J14iAs95NP/rf1we0B?=
- =?us-ascii?Q?MtC5F+SirtftMhThwISB8dT3kHQJvU4C7e36CYDDUmq7KpSOK21HHUa7hKsV?=
- =?us-ascii?Q?6ukQql35AgYbeYzFoOsVPusmqdBHSfulsmHem/cLxHxLrikjvD56Ahash6LK?=
- =?us-ascii?Q?DXjHfnyDqdtIIqswtnBWrrGZHo8I7whidueI/oIUaQdcf60+LLFvFDzNbB6t?=
- =?us-ascii?Q?Ixj5zDU1WuVfjfkmKCHYBa3ulzsLYAWA4onB+ZpfU/dM4m9YHtm5iaZcKoti?=
- =?us-ascii?Q?8l7O2XSH+DWBLPRo0hBGCj8szMZ3Z3IxgszV6rBaRD8ReNIyY9gVXf4c5HWR?=
- =?us-ascii?Q?OcNbVKM8838Ck5UcuksmOPw/w2+CbkAppN/Yd8asqHrHY8xVyKGhGzBu8fDk?=
- =?us-ascii?Q?tsdlmLJpfFP4Mmb7zrzZfcihYL29ZnZV6ARtiZ2hRihAeHyGZOdt0rovk1Zj?=
- =?us-ascii?Q?hrycbNEKCUY5YTYf6yjPk7g2rVwx0Vccpg1RD7oYObAjD94UuEZKoezi8w95?=
- =?us-ascii?Q?8Nc2Ec1180xIdWHJt5jx9vrd3Hkf/NyIdq3AOqPEU4IA+Oqouy+HduyhdpAg?=
- =?us-ascii?Q?irhjcbPAEaIXi6E3u7h0hNajF7FwUfHEPsPWfyF/cG+YTS17TvraTp/K/Ig3?=
- =?us-ascii?Q?QMKZPxJYU4D9JQjF3X3Gf5HU+Tim3qEOjbyZEo49RSY1AYtzFYKrTvdHu4WV?=
- =?us-ascii?Q?erbA9205IPAQ0bNPf4vF6uIkiD94wI8AV/4uwXdRE9eUhzkNVNPZcDGxZ/LV?=
- =?us-ascii?Q?zYZkAuwUvs=3D?=
-X-Microsoft-Antispam-Message-Info: ivBcPyk5q0Z9u09R7txE4M/1HZJWwTblGWyvZYavKkU0JwA9LPHFtvyMyFYf8h9TcyS/sfKrYsyPP0f2O1U0YJirHs9IRgEbaB7Vw5ocKFF3olStyq7zBVvLbCysGCyXi72cToPwyKv+i1PEQr9wB2G5tG7XJF/vTnaylQ0MoKVV1RQX47ZWaglt992/1k/z
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;6:CI2fpMDjRmaU6JaG++SEgu9SqF4xlWIG5B532xdefy6pBkC5TGsDhdO9Ol5SDbXwFcKEmjugYTt8EOl2IjvoqAhVA4w6sqOSoT9hSGOaM8wW0XmT9g9C1cGA4Gjoxk0qWdPq7anSA1BdBu5Fi5ltO/BROmlcnaQQaW9y6NwtUGikC4w7XrDLuLRke89A0UbFJba9Ac+77WrBgGrURwObBNYpPwPC/zz7ZhMmXGTjBYweH0/JM0BDeGqQ34A9qyMRHTuH4XFu5pguQ7iDU0Xg98fcKYs9qPg8xkyunClaqCieFsxK2AhZzgWxsCZAgv5W7K1VZkmzcPdMZnhPuUI2zzlHl7Wepf8d7I3Miq4Ib9g=;5:ezHgl/3qGYnuOG1ixtOofiNrhEnuSQ6UxpHJGAedhyOtZVzwtPqh4aGPjf2/MOStvc34zsSx5xjlYPkIxn35mbFMcAq4A9Y6gKPNn93CSUczc+ZnqpdYP8RiERsRgPTm9o2B31jGfKXj/1pzPPOMcG/0PhzcnyD15ilwp+X35qI=;24:7MtGCRQzWgsn3h0OIfwjxNznC//DDLVBJOaTLCyCBb4t5ihGJw/qvndAOgT1cIO8UZfvLAHyS2UCYd3ij0imkHVPSAVljIxuxNRGpS6sHHc=;7:N0oNQjoPoOFCSL3e4vw1SpvVQmv4gdTjA9z3OOO44S+Y+1uOHRWmqs5HB/1Ld3LPGEc8ZfoFkUjwmk/A6TmZFjxKwika5f0lhSOFo4CFsRJKXIcTvcRFbc7TrIh19zNf7O+ASgx+y9jUUwclMPCHqOtfoVwKyh8/p1Y+JYxqeL5UdqOaol1ANHLfVrRzcXMQb1QHCcLQc5vm0FXc0o6Ig0SYqtkc6jljJ6DFGrEg7jrrdGDSAcx0G7AJdojXeU+9
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1481;23:U0pWPwUAPLSvEjVO1qfa3thVrDAHTKT/sFBhMKHhJ?=
+ =?us-ascii?Q?KQ7llnZnM/4JKm6UU4yH3G2BJ5NdU9FpQs1to9FxFrh2F0iO4BUa8Ee/W79e?=
+ =?us-ascii?Q?e4EWjYRQbHhme+bT7JELap+pBLIJBmNImBS0zP+U7d4pvNzG3nCoGHWOiFXW?=
+ =?us-ascii?Q?VXdpab0SK6cCntVSRNPvn2ctFEZ728/M0iOj4WUUQil4ixih34eLsYpEVNxh?=
+ =?us-ascii?Q?YaT/mcDC7H5jiG+LkbNJO2YZK4xOk6UqTPwk1oK9koTBKmzJB7TseXwssfbC?=
+ =?us-ascii?Q?ErJu++p+zdNCmE1/pHdiwrN7hkrQo/W5Vy07g/onWWglrcTT5ybwUgC7hoXp?=
+ =?us-ascii?Q?z5HQlx1qvpUSXmSe/QfXchk0ydxp3l08cfB3dH/kmYNubR+EH8BxJUNhqVXE?=
+ =?us-ascii?Q?ZyAZ/uFv5B86mesLR1NwCxjRPZTc3BQ8L+7qw1rnxR4Co779faH1c5IIFJew?=
+ =?us-ascii?Q?iuzdmv/tJr9EKEZ9Lh40ru+dsCdHBuTFVzMy0k1y/XBGD7J0Iv+0zhn7euYH?=
+ =?us-ascii?Q?hpAIQ2R62nyWdewDxXxcidHgDdjiGXBMz8EGuZXmQWXsB6aN0ma8WsA8+Jos?=
+ =?us-ascii?Q?MLMC0drcHGbVPfdheA6bkmJUe2DuItYrd7MAtj6Kd7AdYTwaU9VyKZ67+DKw?=
+ =?us-ascii?Q?XROivwdK9XELMAelEPdjWa7zEbHDAKT91r9ophDLWXC8tnjNi30xBYll+yK9?=
+ =?us-ascii?Q?KFNCGofEzyZHKTDXYi8k7MqI3pMptu3zgP+tMETa8ojZIFP59ze/WPOBIsx1?=
+ =?us-ascii?Q?2WRTvLt9mIbhtpI9ZaSb0F+JS6LZYiW7s+gaCM7NszDFh3DgWwMQiO5wcQ+o?=
+ =?us-ascii?Q?utO4SSAzeSIQeH6cpvYLMnMd5AM8+fO5ohQpoDPVc8k+XM3+ELOlbCVulvY5?=
+ =?us-ascii?Q?lef9Wakn69fIBsfK/kBy62rpq0QtLHCaKiYegHTZDrMlBcS4pOFgKc4DoDCw?=
+ =?us-ascii?Q?iaaez7Kj6FDdeKAuhpcRV587+9Wbhn1c8sxrlk6cTmkORwJ3qj2QwmxbIGhq?=
+ =?us-ascii?Q?5F4MTw7VPHJPcxB481lpDC5je+8v/PoE8810bec1mpYaou1M89srWll5bmEw?=
+ =?us-ascii?Q?sCwSU8=3D?=
+X-Microsoft-Antispam-Message-Info: 2vyVzXB/gKtP7S0HWefUDWqsHOZbFutJWATJ1kvGduMRb6O8X6fMIfF6qewedRXNz4hvAJ7at7t/ZbLRaXmOplsf+tFlboJnEnURxGMgsjzUQVxiQtwuPX2Jl5JcnV72BfJDR5okDutOfL48lTFRocLzVvZBSekTiNQbuXY2qk0zj62MaXzSm6OHmZYWIfdL
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;6:WGUuhH6yFfeD6RBwjaHVU1toC3ls+kQlJ138rzy6Z04tBpiEv1w7mZLZvbzPD2r2HwlS/qsmiz+ELWhLdK/qk7UxA0PhVI58ehr48BR9BvpHLivQ78BfGSVXo3JqXw1jySZYiHzeRYdSvq08sWZICn3MK6umxO6r9TZ4ato2gmUE2UUQRfI7wgkDmrwbAoNFvcp3k2rgRowI8dOkUIrhjI3atSVUVB7iXu8NbtpAQUgR0pnPWS1yBvKTMF7lhfeVrYhf1OlTU5mdLsBnhzccyxTAevaTOza7OnJyaKbGIEUkZoWKaoit5+Qdu5bNHOQLo67b1Gg72bS7kLCYTa+ToLTjDtihl3uqVpxEWIz64Co=;5:+jVfjRoQWEi2uPvFMv4YhMlwLkNYj3QaL4VJdIlGr7EexJFY5arDWBKIRWGnCLAmbadC6oTPQBavPPrIUNW6KNzMedE4j1aixwmcuLD0EqogblO7Yr//sMcldqT8DZiAGuTrIPRnTjl7N287pZjKR8z9Y3kaoyEeUVtWiqzTPVo=;24:DJcN7UG4pSxDlmJhwMrT1mNU74tfw4diPMBpA58jnVNVhEBumJcO0ReVaiTy2iOiadzOkL3BLBFg2IYI92D88XtF7NqqAyl6nSOG2sOUFPw=;7:9mhpa0YCTrU9ZXVzP37sIqhCkEUTepQ3ZH9TZNrpCW1x5XJJpWoiEc58NQcrcQQh4jHo+np+1OckK08RDxWz4NAvMIxIAgBA5/5wJTyoCJFrG70qdiPd8aHInXnMqLNvMsDVN83meB45c9sr+Y0zRO1lAJLBnpcigtTq6s0Z2Ww/SvP55D0QGeG78ma4rHN3TLn/uHHE61kwBoPevdbRHuscAZCj0Tb6hGVcA3B6soYbmb5YD4yFyb5s9l8lBA5U
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:30.0891
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:32.5275
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f222ff4b-d970-4313-646d-08d58b0dfad6
+X-MS-Exchange-CrossTenant-Network-Message-Id: e37ceef5-9c74-4d0f-d3b6-08d58b0dfc7e
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2609
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1481
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin input support
+Remove Blackfin I2C bus support
 ---
- drivers/input/keyboard/Kconfig            |   9 -
- drivers/input/keyboard/Makefile           |   1 -
- drivers/input/keyboard/bf54x-keys.c       | 396 ------------------------------
- drivers/input/misc/Kconfig                |   9 -
- drivers/input/misc/Makefile               |   1 -
- drivers/input/misc/bfin_rotary.c          | 294 ----------------------
- include/linux/platform_data/bfin_rotary.h | 117 ---------
- 7 files changed, 827 deletions(-)
- delete mode 100644 drivers/input/keyboard/bf54x-keys.c
- delete mode 100644 drivers/input/misc/bfin_rotary.c
- delete mode 100644 include/linux/platform_data/bfin_rotary.h
+ drivers/i2c/busses/Kconfig        |  18 -
+ drivers/i2c/busses/Makefile       |   1 -
+ drivers/i2c/busses/i2c-bfin-twi.c | 737 --------------------------------------
+ 3 files changed, 756 deletions(-)
+ delete mode 100644 drivers/i2c/busses/i2c-bfin-twi.c
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 4c4ab1c..2b469cc 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -157,15 +157,6 @@ config KEYBOARD_QT2160
- 	  This driver can also be built as a module. If so, the module
- 	  will be called qt2160.
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index e2954fb..8ffe2bc 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -445,24 +445,6 @@ config I2C_BRCMSTB
  
--config KEYBOARD_BFIN
--	tristate "Blackfin BF54x keypad support"
--	depends on (BF54x && !BF544)
--	help
--	  Say Y here if you want to use the BF54x keypad.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called bf54x-keys.
--
- config KEYBOARD_CLPS711X
- 	tristate "CLPS711X Keypad support"
- 	depends on OF_GPIO && (ARCH_CLPS711X || COMPILE_TEST)
-diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-index 526e682..8fab920 100644
---- a/drivers/input/keyboard/Makefile
-+++ b/drivers/input/keyboard/Makefile
-@@ -13,7 +13,6 @@ obj-$(CONFIG_KEYBOARD_AMIGA)		+= amikbd.o
- obj-$(CONFIG_KEYBOARD_ATARI)		+= atakbd.o
- obj-$(CONFIG_KEYBOARD_ATKBD)		+= atkbd.o
- obj-$(CONFIG_KEYBOARD_BCM)		+= bcm-keypad.o
--obj-$(CONFIG_KEYBOARD_BFIN)		+= bf54x-keys.o
- obj-$(CONFIG_KEYBOARD_CAP11XX)		+= cap11xx.o
- obj-$(CONFIG_KEYBOARD_CLPS711X)		+= clps711x-keypad.o
- obj-$(CONFIG_KEYBOARD_CROS_EC)		+= cros_ec_keyb.o
-diff --git a/drivers/input/keyboard/bf54x-keys.c b/drivers/input/keyboard/bf54x-keys.c
-deleted file mode 100644
-index 8a07a42..0000000
---- a/drivers/input/keyboard/bf54x-keys.c
-+++ /dev/null
-@@ -1,396 +0,0 @@
--/*
-- * File:         drivers/input/keyboard/bf54x-keys.c
-- * Based on:
-- * Author:       Michael Hennerich <hennerich@blackfin.uclinux.org>
-- *
-- * Created:
-- * Description:  keypad driver for Analog Devices Blackfin BF54x Processors
-- *
-- *
-- * Modified:
-- *               Copyright 2007-2008 Analog Devices Inc.
-- *
-- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see the file COPYING, or write
-- * to the Free Software Foundation, Inc.,
-- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-- */
--
--#include <linux/module.h>
--
--#include <linux/fs.h>
--#include <linux/interrupt.h>
--#include <linux/irq.h>
--#include <linux/slab.h>
--#include <linux/sched.h>
--#include <linux/pm.h>
--#include <linux/sysctl.h>
--#include <linux/proc_fs.h>
--#include <linux/delay.h>
--#include <linux/platform_device.h>
--#include <linux/input.h>
--
--#include <asm/portmux.h>
--#include <mach/bf54x_keys.h>
--
--#define DRV_NAME	"bf54x-keys"
--#define TIME_SCALE	100	/* 100 ns */
--#define	MAX_MULT	(0xFF * TIME_SCALE)
--#define MAX_RC		8	/* Max Row/Col */
--
--static const u16 per_rows[] = {
--	P_KEY_ROW7,
--	P_KEY_ROW6,
--	P_KEY_ROW5,
--	P_KEY_ROW4,
--	P_KEY_ROW3,
--	P_KEY_ROW2,
--	P_KEY_ROW1,
--	P_KEY_ROW0,
--	0
--};
--
--static const u16 per_cols[] = {
--	P_KEY_COL7,
--	P_KEY_COL6,
--	P_KEY_COL5,
--	P_KEY_COL4,
--	P_KEY_COL3,
--	P_KEY_COL2,
--	P_KEY_COL1,
--	P_KEY_COL0,
--	0
--};
--
--struct bf54x_kpad {
--	struct input_dev *input;
--	int irq;
--	unsigned short lastkey;
--	unsigned short *keycode;
--	struct timer_list timer;
--	unsigned int keyup_test_jiffies;
--	unsigned short kpad_msel;
--	unsigned short kpad_prescale;
--	unsigned short kpad_ctl;
--};
--
--static inline int bfin_kpad_find_key(struct bf54x_kpad *bf54x_kpad,
--			struct input_dev *input, u16 keyident)
--{
--	u16 i;
--
--	for (i = 0; i < input->keycodemax; i++)
--		if (bf54x_kpad->keycode[i + input->keycodemax] == keyident)
--			return bf54x_kpad->keycode[i];
--	return -1;
--}
--
--static inline void bfin_keycodecpy(unsigned short *keycode,
--			const unsigned int *pdata_kc,
--			unsigned short keymapsize)
--{
--	unsigned int i;
--
--	for (i = 0; i < keymapsize; i++) {
--		keycode[i] = pdata_kc[i] & 0xffff;
--		keycode[i + keymapsize] = pdata_kc[i] >> 16;
--	}
--}
--
--static inline u16 bfin_kpad_get_prescale(u32 timescale)
--{
--	u32 sclk = get_sclk();
--
--	return ((((sclk / 1000) * timescale) / 1024) - 1);
--}
--
--static inline u16 bfin_kpad_get_keypressed(struct bf54x_kpad *bf54x_kpad)
--{
--	return (bfin_read_KPAD_STAT() & KPAD_PRESSED);
--}
--
--static inline void bfin_kpad_clear_irq(void)
--{
--	bfin_write_KPAD_STAT(0xFFFF);
--	bfin_write_KPAD_ROWCOL(0xFFFF);
--}
--
--static void bfin_kpad_timer(struct timer_list *t)
--{
--	struct bf54x_kpad *bf54x_kpad = from_timer(bf54x_kpad, t, timer);
--
--	if (bfin_kpad_get_keypressed(bf54x_kpad)) {
--		/* Try again later */
--		mod_timer(&bf54x_kpad->timer,
--			  jiffies + bf54x_kpad->keyup_test_jiffies);
--		return;
--	}
--
--	input_report_key(bf54x_kpad->input, bf54x_kpad->lastkey, 0);
--	input_sync(bf54x_kpad->input);
--
--	/* Clear IRQ Status */
--
--	bfin_kpad_clear_irq();
--	enable_irq(bf54x_kpad->irq);
--}
--
--static irqreturn_t bfin_kpad_isr(int irq, void *dev_id)
--{
--	struct platform_device *pdev = dev_id;
--	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
--	struct input_dev *input = bf54x_kpad->input;
--	int key;
--	u16 rowcol = bfin_read_KPAD_ROWCOL();
--
--	key = bfin_kpad_find_key(bf54x_kpad, input, rowcol);
--
--	input_report_key(input, key, 1);
--	input_sync(input);
--
--	if (bfin_kpad_get_keypressed(bf54x_kpad)) {
--		disable_irq_nosync(bf54x_kpad->irq);
--		bf54x_kpad->lastkey = key;
--		mod_timer(&bf54x_kpad->timer,
--			  jiffies + bf54x_kpad->keyup_test_jiffies);
--	} else {
--		input_report_key(input, key, 0);
--		input_sync(input);
--
--		bfin_kpad_clear_irq();
--	}
--
--	return IRQ_HANDLED;
--}
--
--static int bfin_kpad_probe(struct platform_device *pdev)
--{
--	struct bf54x_kpad *bf54x_kpad;
--	struct bfin_kpad_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	struct input_dev *input;
--	int i, error;
--
--	if (!pdata->rows || !pdata->cols || !pdata->keymap) {
--		dev_err(&pdev->dev, "no rows, cols or keymap from pdata\n");
--		return -EINVAL;
--	}
--
--	if (!pdata->keymapsize ||
--	    pdata->keymapsize > (pdata->rows * pdata->cols)) {
--		dev_err(&pdev->dev, "invalid keymapsize\n");
--		return -EINVAL;
--	}
--
--	bf54x_kpad = kzalloc(sizeof(struct bf54x_kpad), GFP_KERNEL);
--	if (!bf54x_kpad)
--		return -ENOMEM;
--
--	platform_set_drvdata(pdev, bf54x_kpad);
--
--	/* Allocate memory for keymap followed by private LUT */
--	bf54x_kpad->keycode = kmalloc(pdata->keymapsize *
--					sizeof(unsigned short) * 2, GFP_KERNEL);
--	if (!bf54x_kpad->keycode) {
--		error = -ENOMEM;
--		goto out;
--	}
--
--	if (!pdata->debounce_time || pdata->debounce_time > MAX_MULT ||
--	    !pdata->coldrive_time || pdata->coldrive_time > MAX_MULT) {
--		dev_warn(&pdev->dev,
--			"invalid platform debounce/columndrive time\n");
--		bfin_write_KPAD_MSEL(0xFF0);	/* Default MSEL	*/
--	} else {
--		bfin_write_KPAD_MSEL(
--			((pdata->debounce_time / TIME_SCALE)
--						& DBON_SCALE) |
--			(((pdata->coldrive_time / TIME_SCALE) << 8)
--						& COLDRV_SCALE));
--
--	}
--
--	if (!pdata->keyup_test_interval)
--		bf54x_kpad->keyup_test_jiffies = msecs_to_jiffies(50);
--	else
--		bf54x_kpad->keyup_test_jiffies =
--			msecs_to_jiffies(pdata->keyup_test_interval);
--
--	if (peripheral_request_list((u16 *)&per_rows[MAX_RC - pdata->rows],
--				    DRV_NAME)) {
--		dev_err(&pdev->dev, "requesting peripherals failed\n");
--		error = -EFAULT;
--		goto out0;
--	}
--
--	if (peripheral_request_list((u16 *)&per_cols[MAX_RC - pdata->cols],
--				    DRV_NAME)) {
--		dev_err(&pdev->dev, "requesting peripherals failed\n");
--		error = -EFAULT;
--		goto out1;
--	}
--
--	bf54x_kpad->irq = platform_get_irq(pdev, 0);
--	if (bf54x_kpad->irq < 0) {
--		error = -ENODEV;
--		goto out2;
--	}
--
--	error = request_irq(bf54x_kpad->irq, bfin_kpad_isr,
--				0, DRV_NAME, pdev);
--	if (error) {
--		dev_err(&pdev->dev, "unable to claim irq %d\n",
--			bf54x_kpad->irq);
--		goto out2;
--	}
--
--	input = input_allocate_device();
--	if (!input) {
--		error = -ENOMEM;
--		goto out3;
--	}
--
--	bf54x_kpad->input = input;
--
--	input->name = pdev->name;
--	input->phys = "bf54x-keys/input0";
--	input->dev.parent = &pdev->dev;
--
--	input->id.bustype = BUS_HOST;
--	input->id.vendor = 0x0001;
--	input->id.product = 0x0001;
--	input->id.version = 0x0100;
--
--	input->keycodesize = sizeof(unsigned short);
--	input->keycodemax = pdata->keymapsize;
--	input->keycode = bf54x_kpad->keycode;
--
--	bfin_keycodecpy(bf54x_kpad->keycode, pdata->keymap, pdata->keymapsize);
--
--	/* setup input device */
--	__set_bit(EV_KEY, input->evbit);
--
--	if (pdata->repeat)
--		__set_bit(EV_REP, input->evbit);
--
--	for (i = 0; i < input->keycodemax; i++)
--		if (bf54x_kpad->keycode[i] <= KEY_MAX)
--			__set_bit(bf54x_kpad->keycode[i], input->keybit);
--	__clear_bit(KEY_RESERVED, input->keybit);
--
--	error = input_register_device(input);
--	if (error) {
--		dev_err(&pdev->dev, "unable to register input device\n");
--		goto out4;
--	}
--
--	/* Init Keypad Key Up/Release test timer */
--
--	timer_setup(&bf54x_kpad->timer, bfin_kpad_timer, 0);
--
--	bfin_write_KPAD_PRESCALE(bfin_kpad_get_prescale(TIME_SCALE));
--
--	bfin_write_KPAD_CTL((((pdata->cols - 1) << 13) & KPAD_COLEN) |
--				(((pdata->rows - 1) << 10) & KPAD_ROWEN) |
--				(2 & KPAD_IRQMODE));
--
--	bfin_write_KPAD_CTL(bfin_read_KPAD_CTL() | KPAD_EN);
--
--	device_init_wakeup(&pdev->dev, 1);
--
--	return 0;
--
--out4:
--	input_free_device(input);
--out3:
--	free_irq(bf54x_kpad->irq, pdev);
--out2:
--	peripheral_free_list((u16 *)&per_cols[MAX_RC - pdata->cols]);
--out1:
--	peripheral_free_list((u16 *)&per_rows[MAX_RC - pdata->rows]);
--out0:
--	kfree(bf54x_kpad->keycode);
--out:
--	kfree(bf54x_kpad);
--
--	return error;
--}
--
--static int bfin_kpad_remove(struct platform_device *pdev)
--{
--	struct bfin_kpad_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
--
--	del_timer_sync(&bf54x_kpad->timer);
--	free_irq(bf54x_kpad->irq, pdev);
--
--	input_unregister_device(bf54x_kpad->input);
--
--	peripheral_free_list((u16 *)&per_rows[MAX_RC - pdata->rows]);
--	peripheral_free_list((u16 *)&per_cols[MAX_RC - pdata->cols]);
--
--	kfree(bf54x_kpad->keycode);
--	kfree(bf54x_kpad);
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_kpad_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
--
--	bf54x_kpad->kpad_msel = bfin_read_KPAD_MSEL();
--	bf54x_kpad->kpad_prescale = bfin_read_KPAD_PRESCALE();
--	bf54x_kpad->kpad_ctl = bfin_read_KPAD_CTL();
--
--	if (device_may_wakeup(&pdev->dev))
--		enable_irq_wake(bf54x_kpad->irq);
--
--	return 0;
--}
--
--static int bfin_kpad_resume(struct platform_device *pdev)
--{
--	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
--
--	bfin_write_KPAD_MSEL(bf54x_kpad->kpad_msel);
--	bfin_write_KPAD_PRESCALE(bf54x_kpad->kpad_prescale);
--	bfin_write_KPAD_CTL(bf54x_kpad->kpad_ctl);
--
--	if (device_may_wakeup(&pdev->dev))
--		disable_irq_wake(bf54x_kpad->irq);
--
--	return 0;
--}
--#else
--# define bfin_kpad_suspend NULL
--# define bfin_kpad_resume  NULL
--#endif
--
--static struct platform_driver bfin_kpad_device_driver = {
--	.driver		= {
--		.name	= DRV_NAME,
--	},
--	.probe		= bfin_kpad_probe,
--	.remove		= bfin_kpad_remove,
--	.suspend	= bfin_kpad_suspend,
--	.resume		= bfin_kpad_resume,
--};
--module_platform_driver(bfin_kpad_device_driver);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
--MODULE_DESCRIPTION("Keypad driver for BF54x Processors");
--MODULE_ALIAS("platform:bf54x-keys");
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 62a1312..e9770f5 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -655,15 +655,6 @@ config INPUT_DM355EVM
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called dm355evm_keys.
+ 	  If you do not need I2C interface, say N.
  
--config INPUT_BFIN_ROTARY
--	tristate "Blackfin Rotary support"
--	depends on BF54x || BF52x
+-config I2C_BLACKFIN_TWI
+-	tristate "Blackfin TWI I2C support"
+-	depends on BLACKFIN
+-	depends on !BF561 && !BF531 && !BF532 && !BF533
 -	help
--	  Say Y here if you want to use the Blackfin Rotary.
+-	  This is the I2C bus driver for Blackfin on-chip TWI interface.
 -
--	  To compile this driver as a module, choose M here: the
--	  module will be called bfin-rotary.
+-	  This driver can also be built as a module.  If so, the module
+-	  will be called i2c-bfin-twi.
 -
- config INPUT_WM831X_ON
- 	tristate "WM831X ON pin"
- 	depends on MFD_WM831X
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index a8f61af..eb9c6c3 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -19,7 +19,6 @@ obj-$(CONFIG_INPUT_ARIZONA_HAPTICS)	+= arizona-haptics.o
- obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
- obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
- obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
--obj-$(CONFIG_INPUT_BFIN_ROTARY)		+= bfin_rotary.o
- obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
- obj-$(CONFIG_INPUT_CM109)		+= cm109.o
- obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
-diff --git a/drivers/input/misc/bfin_rotary.c b/drivers/input/misc/bfin_rotary.c
+-config I2C_BLACKFIN_TWI_CLK_KHZ
+-	int "Blackfin TWI I2C clock (kHz)"
+-	depends on I2C_BLACKFIN_TWI
+-	range 21 400
+-	default 50
+-	help
+-	  The unit of the TWI clock is kHz.
+-
+ config I2C_CADENCE
+ 	tristate "Cadence I2C Controller"
+ 	depends on ARCH_ZYNQ || ARM64 || XTENSA
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 2ce8576..9e475a5 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -38,7 +38,6 @@ obj-$(CONFIG_I2C_AU1550)	+= i2c-au1550.o
+ obj-$(CONFIG_I2C_AXXIA)		+= i2c-axxia.o
+ obj-$(CONFIG_I2C_BCM2835)	+= i2c-bcm2835.o
+ obj-$(CONFIG_I2C_BCM_IPROC)	+= i2c-bcm-iproc.o
+-obj-$(CONFIG_I2C_BLACKFIN_TWI)	+= i2c-bfin-twi.o
+ obj-$(CONFIG_I2C_CADENCE)	+= i2c-cadence.o
+ obj-$(CONFIG_I2C_CBUS_GPIO)	+= i2c-cbus-gpio.o
+ obj-$(CONFIG_I2C_CPM)		+= i2c-cpm.o
+diff --git a/drivers/i2c/busses/i2c-bfin-twi.c b/drivers/i2c/busses/i2c-bfin-twi.c
 deleted file mode 100644
-index 799ce3d..0000000
---- a/drivers/input/misc/bfin_rotary.c
+index ff33431..0000000
+--- a/drivers/i2c/busses/i2c-bfin-twi.c
 +++ /dev/null
-@@ -1,294 +0,0 @@
+@@ -1,737 +0,0 @@
 -/*
-- * Rotary counter driver for Analog Devices Blackfin Processors
+- * Blackfin On-Chip Two Wire Interface Driver
 - *
-- * Copyright 2008-2009 Analog Devices Inc.
+- * Copyright 2005-2007 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- *
 - * Licensed under the GPL-2 or later.
 - */
 -
 -#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/io.h>
--#include <linux/irq.h>
--#include <linux/pm.h>
--#include <linux/platform_device.h>
--#include <linux/input.h>
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/i2c.h>
 -#include <linux/slab.h>
--#include <linux/platform_data/bfin_rotary.h>
+-#include <linux/io.h>
+-#include <linux/mm.h>
+-#include <linux/timer.h>
+-#include <linux/spinlock.h>
+-#include <linux/completion.h>
+-#include <linux/interrupt.h>
+-#include <linux/platform_device.h>
+-#include <linux/delay.h>
 -
+-#include <asm/irq.h>
 -#include <asm/portmux.h>
+-#include <asm/bfin_twi.h>
 -
--#define CNT_CONFIG_OFF		0	/* CNT Config Offset */
--#define CNT_IMASK_OFF		4	/* CNT Interrupt Mask Offset */
--#define CNT_STATUS_OFF		8	/* CNT Status Offset */
--#define CNT_COMMAND_OFF		12	/* CNT Command Offset */
--#define CNT_DEBOUNCE_OFF	16	/* CNT Debounce Offset */
--#define CNT_COUNTER_OFF		20	/* CNT Counter Offset */
--#define CNT_MAX_OFF		24	/* CNT Maximum Count Offset */
--#define CNT_MIN_OFF		28	/* CNT Minimum Count Offset */
+-/* SMBus mode*/
+-#define TWI_I2C_MODE_STANDARD		1
+-#define TWI_I2C_MODE_STANDARDSUB	2
+-#define TWI_I2C_MODE_COMBINED		3
+-#define TWI_I2C_MODE_REPEAT		4
 -
--struct bfin_rot {
--	struct input_dev *input;
--	void __iomem *base;
--	int irq;
--	unsigned int up_key;
--	unsigned int down_key;
--	unsigned int button_key;
--	unsigned int rel_code;
--
--	unsigned short mode;
--	unsigned short debounce;
--
--	unsigned short cnt_config;
--	unsigned short cnt_imask;
--	unsigned short cnt_debounce;
--};
--
--static void report_key_event(struct input_dev *input, int keycode)
+-static void bfin_twi_handle_interrupt(struct bfin_twi_iface *iface,
+-					unsigned short twi_int_status)
 -{
--	/* simulate a press-n-release */
--	input_report_key(input, keycode, 1);
--	input_sync(input);
--	input_report_key(input, keycode, 0);
--	input_sync(input);
--}
+-	unsigned short mast_stat = read_MASTER_STAT(iface);
 -
--static void report_rotary_event(struct bfin_rot *rotary, int delta)
--{
--	struct input_dev *input = rotary->input;
+-	if (twi_int_status & XMTSERV) {
+-		if (iface->writeNum <= 0) {
+-			/* start receive immediately after complete sending in
+-			 * combine mode.
+-			 */
+-			if (iface->cur_mode == TWI_I2C_MODE_COMBINED)
+-				write_MASTER_CTL(iface,
+-					read_MASTER_CTL(iface) | MDIR);
+-			else if (iface->manual_stop)
+-				write_MASTER_CTL(iface,
+-					read_MASTER_CTL(iface) | STOP);
+-			else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
+-				iface->cur_msg + 1 < iface->msg_num) {
+-				if (iface->pmsg[iface->cur_msg + 1].flags &
+-					I2C_M_RD)
+-					write_MASTER_CTL(iface,
+-						read_MASTER_CTL(iface) |
+-						MDIR);
+-				else
+-					write_MASTER_CTL(iface,
+-						read_MASTER_CTL(iface) &
+-						~MDIR);
+-			}
+-		}
+-		/* Transmit next data */
+-		while (iface->writeNum > 0 &&
+-			(read_FIFO_STAT(iface) & XMTSTAT) != XMT_FULL) {
+-			write_XMT_DATA8(iface, *(iface->transPtr++));
+-			iface->writeNum--;
+-		}
+-	}
+-	if (twi_int_status & RCVSERV) {
+-		while (iface->readNum > 0 &&
+-			(read_FIFO_STAT(iface) & RCVSTAT)) {
+-			/* Receive next data */
+-			*(iface->transPtr) = read_RCV_DATA8(iface);
+-			if (iface->cur_mode == TWI_I2C_MODE_COMBINED) {
+-				/* Change combine mode into sub mode after
+-				 * read first data.
+-				 */
+-				iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
+-				/* Get read number from first byte in block
+-				 * combine mode.
+-				 */
+-				if (iface->readNum == 1 && iface->manual_stop)
+-					iface->readNum = *iface->transPtr + 1;
+-			}
+-			iface->transPtr++;
+-			iface->readNum--;
+-		}
 -
--	if (rotary->up_key) {
--		report_key_event(input,
--				 delta > 0 ? rotary->up_key : rotary->down_key);
--	} else {
--		input_report_rel(input, rotary->rel_code, delta);
--		input_sync(input);
+-		if (iface->readNum == 0) {
+-			if (iface->manual_stop) {
+-				/* Temporary workaround to avoid possible bus stall -
+-				 * Flush FIFO before issuing the STOP condition
+-				 */
+-				read_RCV_DATA16(iface);
+-				write_MASTER_CTL(iface,
+-					read_MASTER_CTL(iface) | STOP);
+-			} else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
+-					iface->cur_msg + 1 < iface->msg_num) {
+-				if (iface->pmsg[iface->cur_msg + 1].flags & I2C_M_RD)
+-					write_MASTER_CTL(iface,
+-						read_MASTER_CTL(iface) | MDIR);
+-				else
+-					write_MASTER_CTL(iface,
+-						read_MASTER_CTL(iface) & ~MDIR);
+-			}
+-		}
+-	}
+-	if (twi_int_status & MERR) {
+-		write_INT_MASK(iface, 0);
+-		write_MASTER_STAT(iface, 0x3e);
+-		write_MASTER_CTL(iface, 0);
+-		iface->result = -EIO;
+-
+-		if (mast_stat & LOSTARB)
+-			dev_dbg(&iface->adap.dev, "Lost Arbitration\n");
+-		if (mast_stat & ANAK)
+-			dev_dbg(&iface->adap.dev, "Address Not Acknowledged\n");
+-		if (mast_stat & DNAK)
+-			dev_dbg(&iface->adap.dev, "Data Not Acknowledged\n");
+-		if (mast_stat & BUFRDERR)
+-			dev_dbg(&iface->adap.dev, "Buffer Read Error\n");
+-		if (mast_stat & BUFWRERR)
+-			dev_dbg(&iface->adap.dev, "Buffer Write Error\n");
+-
+-		/* Faulty slave devices, may drive SDA low after a transfer
+-		 * finishes. To release the bus this code generates up to 9
+-		 * extra clocks until SDA is released.
+-		 */
+-
+-		if (read_MASTER_STAT(iface) & SDASEN) {
+-			int cnt = 9;
+-			do {
+-				write_MASTER_CTL(iface, SCLOVR);
+-				udelay(6);
+-				write_MASTER_CTL(iface, 0);
+-				udelay(6);
+-			} while ((read_MASTER_STAT(iface) & SDASEN) && cnt--);
+-
+-			write_MASTER_CTL(iface, SDAOVR | SCLOVR);
+-			udelay(6);
+-			write_MASTER_CTL(iface, SDAOVR);
+-			udelay(6);
+-			write_MASTER_CTL(iface, 0);
+-		}
+-
+-		/* If it is a quick transfer, only address without data,
+-		 * not an err, return 1.
+-		 */
+-		if (iface->cur_mode == TWI_I2C_MODE_STANDARD &&
+-			iface->transPtr == NULL &&
+-			(twi_int_status & MCOMP) && (mast_stat & DNAK))
+-			iface->result = 1;
+-
+-		complete(&iface->complete);
+-		return;
+-	}
+-	if (twi_int_status & MCOMP) {
+-		if (twi_int_status & (XMTSERV | RCVSERV) &&
+-			(read_MASTER_CTL(iface) & MEN) == 0 &&
+-			(iface->cur_mode == TWI_I2C_MODE_REPEAT ||
+-			iface->cur_mode == TWI_I2C_MODE_COMBINED)) {
+-			iface->result = -1;
+-			write_INT_MASK(iface, 0);
+-			write_MASTER_CTL(iface, 0);
+-		} else if (iface->cur_mode == TWI_I2C_MODE_COMBINED) {
+-			if (iface->readNum == 0) {
+-				/* set the read number to 1 and ask for manual
+-				 * stop in block combine mode
+-				 */
+-				iface->readNum = 1;
+-				iface->manual_stop = 1;
+-				write_MASTER_CTL(iface,
+-					read_MASTER_CTL(iface) | (0xff << 6));
+-			} else {
+-				/* set the readd number in other
+-				 * combine mode.
+-				 */
+-				write_MASTER_CTL(iface,
+-					(read_MASTER_CTL(iface) &
+-					(~(0xff << 6))) |
+-					(iface->readNum << 6));
+-			}
+-			/* remove restart bit and enable master receive */
+-			write_MASTER_CTL(iface,
+-				read_MASTER_CTL(iface) & ~RSTART);
+-		} else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
+-				iface->cur_msg + 1 < iface->msg_num) {
+-			iface->cur_msg++;
+-			iface->transPtr = iface->pmsg[iface->cur_msg].buf;
+-			iface->writeNum = iface->readNum =
+-				iface->pmsg[iface->cur_msg].len;
+-			/* Set Transmit device address */
+-			write_MASTER_ADDR(iface,
+-				iface->pmsg[iface->cur_msg].addr);
+-			if (iface->pmsg[iface->cur_msg].flags & I2C_M_RD)
+-				iface->read_write = I2C_SMBUS_READ;
+-			else {
+-				iface->read_write = I2C_SMBUS_WRITE;
+-				/* Transmit first data */
+-				if (iface->writeNum > 0) {
+-					write_XMT_DATA8(iface,
+-						*(iface->transPtr++));
+-					iface->writeNum--;
+-				}
+-			}
+-
+-			if (iface->pmsg[iface->cur_msg].len <= 255) {
+-				write_MASTER_CTL(iface,
+-					(read_MASTER_CTL(iface) &
+-					(~(0xff << 6))) |
+-					(iface->pmsg[iface->cur_msg].len << 6));
+-				iface->manual_stop = 0;
+-			} else {
+-				write_MASTER_CTL(iface,
+-					(read_MASTER_CTL(iface) |
+-					(0xff << 6)));
+-				iface->manual_stop = 1;
+-			}
+-			/* remove restart bit before last message */
+-			if (iface->cur_msg + 1 == iface->msg_num)
+-				write_MASTER_CTL(iface,
+-					read_MASTER_CTL(iface) & ~RSTART);
+-		} else {
+-			iface->result = 1;
+-			write_INT_MASK(iface, 0);
+-			write_MASTER_CTL(iface, 0);
+-		}
+-		complete(&iface->complete);
 -	}
 -}
 -
--static irqreturn_t bfin_rotary_isr(int irq, void *dev_id)
+-/* Interrupt handler */
+-static irqreturn_t bfin_twi_interrupt_entry(int irq, void *dev_id)
 -{
--	struct bfin_rot *rotary = dev_id;
--	int delta;
+-	struct bfin_twi_iface *iface = dev_id;
+-	unsigned long flags;
+-	unsigned short twi_int_status;
 -
--	switch (readw(rotary->base + CNT_STATUS_OFF)) {
--
--	case ICII:
--		break;
--
--	case UCII:
--	case DCII:
--		delta = readl(rotary->base + CNT_COUNTER_OFF);
--		if (delta)
--			report_rotary_event(rotary, delta);
--		break;
--
--	case CZMII:
--		report_key_event(rotary->input, rotary->button_key);
--		break;
--
--	default:
--		break;
+-	spin_lock_irqsave(&iface->lock, flags);
+-	while (1) {
+-		twi_int_status = read_INT_STAT(iface);
+-		if (!twi_int_status)
+-			break;
+-		/* Clear interrupt status */
+-		write_INT_STAT(iface, twi_int_status);
+-		bfin_twi_handle_interrupt(iface, twi_int_status);
 -	}
--
--	writew(W1LCNT_ZERO, rotary->base + CNT_COMMAND_OFF); /* Clear COUNTER */
--	writew(-1, rotary->base + CNT_STATUS_OFF); /* Clear STATUS */
--
+-	spin_unlock_irqrestore(&iface->lock, flags);
 -	return IRQ_HANDLED;
 -}
 -
--static int bfin_rotary_open(struct input_dev *input)
+-/*
+- * One i2c master transfer
+- */
+-static int bfin_twi_do_master_xfer(struct i2c_adapter *adap,
+-				struct i2c_msg *msgs, int num)
 -{
--	struct bfin_rot *rotary = input_get_drvdata(input);
--	unsigned short val;
+-	struct bfin_twi_iface *iface = adap->algo_data;
+-	struct i2c_msg *pmsg;
+-	int rc = 0;
 -
--	if (rotary->mode & ROT_DEBE)
--		writew(rotary->debounce & DPRESCALE,
--			rotary->base + CNT_DEBOUNCE_OFF);
+-	if (!(read_CONTROL(iface) & TWI_ENA))
+-		return -ENXIO;
 -
--	writew(rotary->mode & ~CNTE, rotary->base + CNT_CONFIG_OFF);
+-	if (read_MASTER_STAT(iface) & BUSBUSY)
+-		return -EAGAIN;
 -
--	val = UCIE | DCIE;
--	if (rotary->button_key)
--		val |= CZMIE;
--	writew(val, rotary->base + CNT_IMASK_OFF);
+-	iface->pmsg = msgs;
+-	iface->msg_num = num;
+-	iface->cur_msg = 0;
 -
--	writew(rotary->mode | CNTE, rotary->base + CNT_CONFIG_OFF);
+-	pmsg = &msgs[0];
+-	if (pmsg->flags & I2C_M_TEN) {
+-		dev_err(&adap->dev, "10 bits addr not supported!\n");
+-		return -EINVAL;
+-	}
+-
+-	if (iface->msg_num > 1)
+-		iface->cur_mode = TWI_I2C_MODE_REPEAT;
+-	iface->manual_stop = 0;
+-	iface->transPtr = pmsg->buf;
+-	iface->writeNum = iface->readNum = pmsg->len;
+-	iface->result = 0;
+-	init_completion(&(iface->complete));
+-	/* Set Transmit device address */
+-	write_MASTER_ADDR(iface, pmsg->addr);
+-
+-	/* FIFO Initiation. Data in FIFO should be
+-	 *  discarded before start a new operation.
+-	 */
+-	write_FIFO_CTL(iface, 0x3);
+-	write_FIFO_CTL(iface, 0);
+-
+-	if (pmsg->flags & I2C_M_RD)
+-		iface->read_write = I2C_SMBUS_READ;
+-	else {
+-		iface->read_write = I2C_SMBUS_WRITE;
+-		/* Transmit first data */
+-		if (iface->writeNum > 0) {
+-			write_XMT_DATA8(iface, *(iface->transPtr++));
+-			iface->writeNum--;
+-		}
+-	}
+-
+-	/* clear int stat */
+-	write_INT_STAT(iface, MERR | MCOMP | XMTSERV | RCVSERV);
+-
+-	/* Interrupt mask . Enable XMT, RCV interrupt */
+-	write_INT_MASK(iface, MCOMP | MERR | RCVSERV | XMTSERV);
+-
+-	if (pmsg->len <= 255)
+-		write_MASTER_CTL(iface, pmsg->len << 6);
+-	else {
+-		write_MASTER_CTL(iface, 0xff << 6);
+-		iface->manual_stop = 1;
+-	}
+-
+-	/* Master enable */
+-	write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
+-		(iface->msg_num > 1 ? RSTART : 0) |
+-		((iface->read_write == I2C_SMBUS_READ) ? MDIR : 0) |
+-		((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ > 100) ? FAST : 0));
+-
+-	while (!iface->result) {
+-		if (!wait_for_completion_timeout(&iface->complete,
+-			adap->timeout)) {
+-			iface->result = -1;
+-			dev_err(&adap->dev, "master transfer timeout\n");
+-		}
+-	}
+-
+-	if (iface->result == 1)
+-		rc = iface->cur_msg + 1;
+-	else
+-		rc = iface->result;
+-
+-	return rc;
+-}
+-
+-/*
+- * Generic i2c master transfer entrypoint
+- */
+-static int bfin_twi_master_xfer(struct i2c_adapter *adap,
+-				struct i2c_msg *msgs, int num)
+-{
+-	return bfin_twi_do_master_xfer(adap, msgs, num);
+-}
+-
+-/*
+- * One I2C SMBus transfer
+- */
+-int bfin_twi_do_smbus_xfer(struct i2c_adapter *adap, u16 addr,
+-			unsigned short flags, char read_write,
+-			u8 command, int size, union i2c_smbus_data *data)
+-{
+-	struct bfin_twi_iface *iface = adap->algo_data;
+-	int rc = 0;
+-
+-	if (!(read_CONTROL(iface) & TWI_ENA))
+-		return -ENXIO;
+-
+-	if (read_MASTER_STAT(iface) & BUSBUSY)
+-		return -EAGAIN;
+-
+-	iface->writeNum = 0;
+-	iface->readNum = 0;
+-
+-	/* Prepare datas & select mode */
+-	switch (size) {
+-	case I2C_SMBUS_QUICK:
+-		iface->transPtr = NULL;
+-		iface->cur_mode = TWI_I2C_MODE_STANDARD;
+-		break;
+-	case I2C_SMBUS_BYTE:
+-		if (data == NULL)
+-			iface->transPtr = NULL;
+-		else {
+-			if (read_write == I2C_SMBUS_READ)
+-				iface->readNum = 1;
+-			else
+-				iface->writeNum = 1;
+-			iface->transPtr = &data->byte;
+-		}
+-		iface->cur_mode = TWI_I2C_MODE_STANDARD;
+-		break;
+-	case I2C_SMBUS_BYTE_DATA:
+-		if (read_write == I2C_SMBUS_READ) {
+-			iface->readNum = 1;
+-			iface->cur_mode = TWI_I2C_MODE_COMBINED;
+-		} else {
+-			iface->writeNum = 1;
+-			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
+-		}
+-		iface->transPtr = &data->byte;
+-		break;
+-	case I2C_SMBUS_WORD_DATA:
+-		if (read_write == I2C_SMBUS_READ) {
+-			iface->readNum = 2;
+-			iface->cur_mode = TWI_I2C_MODE_COMBINED;
+-		} else {
+-			iface->writeNum = 2;
+-			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
+-		}
+-		iface->transPtr = (u8 *)&data->word;
+-		break;
+-	case I2C_SMBUS_PROC_CALL:
+-		iface->writeNum = 2;
+-		iface->readNum = 2;
+-		iface->cur_mode = TWI_I2C_MODE_COMBINED;
+-		iface->transPtr = (u8 *)&data->word;
+-		break;
+-	case I2C_SMBUS_BLOCK_DATA:
+-		if (read_write == I2C_SMBUS_READ) {
+-			iface->readNum = 0;
+-			iface->cur_mode = TWI_I2C_MODE_COMBINED;
+-		} else {
+-			iface->writeNum = data->block[0] + 1;
+-			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
+-		}
+-		iface->transPtr = data->block;
+-		break;
+-	case I2C_SMBUS_I2C_BLOCK_DATA:
+-		if (read_write == I2C_SMBUS_READ) {
+-			iface->readNum = data->block[0];
+-			iface->cur_mode = TWI_I2C_MODE_COMBINED;
+-		} else {
+-			iface->writeNum = data->block[0];
+-			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
+-		}
+-		iface->transPtr = (u8 *)&data->block[1];
+-		break;
+-	default:
+-		return -1;
+-	}
+-
+-	iface->result = 0;
+-	iface->manual_stop = 0;
+-	iface->read_write = read_write;
+-	iface->command = command;
+-	init_completion(&(iface->complete));
+-
+-	/* FIFO Initiation. Data in FIFO should be discarded before
+-	 * start a new operation.
+-	 */
+-	write_FIFO_CTL(iface, 0x3);
+-	write_FIFO_CTL(iface, 0);
+-
+-	/* clear int stat */
+-	write_INT_STAT(iface, MERR | MCOMP | XMTSERV | RCVSERV);
+-
+-	/* Set Transmit device address */
+-	write_MASTER_ADDR(iface, addr);
+-
+-	switch (iface->cur_mode) {
+-	case TWI_I2C_MODE_STANDARDSUB:
+-		write_XMT_DATA8(iface, iface->command);
+-		write_INT_MASK(iface, MCOMP | MERR |
+-			((iface->read_write == I2C_SMBUS_READ) ?
+-			RCVSERV : XMTSERV));
+-
+-		if (iface->writeNum + 1 <= 255)
+-			write_MASTER_CTL(iface, (iface->writeNum + 1) << 6);
+-		else {
+-			write_MASTER_CTL(iface, 0xff << 6);
+-			iface->manual_stop = 1;
+-		}
+-		/* Master enable */
+-		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
+-			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ>100) ? FAST : 0));
+-		break;
+-	case TWI_I2C_MODE_COMBINED:
+-		write_XMT_DATA8(iface, iface->command);
+-		write_INT_MASK(iface, MCOMP | MERR | RCVSERV | XMTSERV);
+-
+-		if (iface->writeNum > 0)
+-			write_MASTER_CTL(iface, (iface->writeNum + 1) << 6);
+-		else
+-			write_MASTER_CTL(iface, 0x1 << 6);
+-		/* Master enable */
+-		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN | RSTART |
+-			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ>100) ? FAST : 0));
+-		break;
+-	default:
+-		write_MASTER_CTL(iface, 0);
+-		if (size != I2C_SMBUS_QUICK) {
+-			/* Don't access xmit data register when this is a
+-			 * read operation.
+-			 */
+-			if (iface->read_write != I2C_SMBUS_READ) {
+-				if (iface->writeNum > 0) {
+-					write_XMT_DATA8(iface,
+-						*(iface->transPtr++));
+-					if (iface->writeNum <= 255)
+-						write_MASTER_CTL(iface,
+-							iface->writeNum << 6);
+-					else {
+-						write_MASTER_CTL(iface,
+-							0xff << 6);
+-						iface->manual_stop = 1;
+-					}
+-					iface->writeNum--;
+-				} else {
+-					write_XMT_DATA8(iface, iface->command);
+-					write_MASTER_CTL(iface, 1 << 6);
+-				}
+-			} else {
+-				if (iface->readNum > 0 && iface->readNum <= 255)
+-					write_MASTER_CTL(iface,
+-						iface->readNum << 6);
+-				else if (iface->readNum > 255) {
+-					write_MASTER_CTL(iface, 0xff << 6);
+-					iface->manual_stop = 1;
+-				} else
+-					break;
+-			}
+-		}
+-		write_INT_MASK(iface, MCOMP | MERR |
+-			((iface->read_write == I2C_SMBUS_READ) ?
+-			RCVSERV : XMTSERV));
+-
+-		/* Master enable */
+-		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
+-			((iface->read_write == I2C_SMBUS_READ) ? MDIR : 0) |
+-			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ > 100) ? FAST : 0));
+-		break;
+-	}
+-
+-	while (!iface->result) {
+-		if (!wait_for_completion_timeout(&iface->complete,
+-			adap->timeout)) {
+-			iface->result = -1;
+-			dev_err(&adap->dev, "smbus transfer timeout\n");
+-		}
+-	}
+-
+-	rc = (iface->result >= 0) ? 0 : -1;
+-
+-	return rc;
+-}
+-
+-/*
+- * Generic I2C SMBus transfer entrypoint
+- */
+-int bfin_twi_smbus_xfer(struct i2c_adapter *adap, u16 addr,
+-			unsigned short flags, char read_write,
+-			u8 command, int size, union i2c_smbus_data *data)
+-{
+-	return bfin_twi_do_smbus_xfer(adap, addr, flags,
+-			read_write, command, size, data);
+-}
+-
+-/*
+- * Return what the adapter supports
+- */
+-static u32 bfin_twi_functionality(struct i2c_adapter *adap)
+-{
+-	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
+-	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
+-	       I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_PROC_CALL |
+-	       I2C_FUNC_I2C | I2C_FUNC_SMBUS_I2C_BLOCK;
+-}
+-
+-static const struct i2c_algorithm bfin_twi_algorithm = {
+-	.master_xfer   = bfin_twi_master_xfer,
+-	.smbus_xfer    = bfin_twi_smbus_xfer,
+-	.functionality = bfin_twi_functionality,
+-};
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int i2c_bfin_twi_suspend(struct device *dev)
+-{
+-	struct bfin_twi_iface *iface = dev_get_drvdata(dev);
+-
+-	iface->saved_clkdiv = read_CLKDIV(iface);
+-	iface->saved_control = read_CONTROL(iface);
+-
+-	free_irq(iface->irq, iface);
+-
+-	/* Disable TWI */
+-	write_CONTROL(iface, iface->saved_control & ~TWI_ENA);
 -
 -	return 0;
 -}
 -
--static void bfin_rotary_close(struct input_dev *input)
+-static int i2c_bfin_twi_resume(struct device *dev)
 -{
--	struct bfin_rot *rotary = input_get_drvdata(input);
+-	struct bfin_twi_iface *iface = dev_get_drvdata(dev);
 -
--	writew(0, rotary->base + CNT_CONFIG_OFF);
--	writew(0, rotary->base + CNT_IMASK_OFF);
+-	int rc = request_irq(iface->irq, bfin_twi_interrupt_entry,
+-		0, to_platform_device(dev)->name, iface);
+-	if (rc) {
+-		dev_err(dev, "Can't get IRQ %d !\n", iface->irq);
+-		return -ENODEV;
+-	}
+-
+-	/* Resume TWI interface clock as specified */
+-	write_CLKDIV(iface, iface->saved_clkdiv);
+-
+-	/* Resume TWI */
+-	write_CONTROL(iface, iface->saved_control);
+-
+-	return 0;
 -}
 -
--static void bfin_rotary_free_action(void *data)
--{
--	peripheral_free_list(data);
--}
+-static SIMPLE_DEV_PM_OPS(i2c_bfin_twi_pm,
+-			 i2c_bfin_twi_suspend, i2c_bfin_twi_resume);
+-#define I2C_BFIN_TWI_PM_OPS	(&i2c_bfin_twi_pm)
+-#else
+-#define I2C_BFIN_TWI_PM_OPS	NULL
+-#endif
 -
--static int bfin_rotary_probe(struct platform_device *pdev)
+-static int i2c_bfin_twi_probe(struct platform_device *pdev)
 -{
--	struct device *dev = &pdev->dev;
--	const struct bfin_rotary_platform_data *pdata = dev_get_platdata(dev);
--	struct bfin_rot *rotary;
+-	struct bfin_twi_iface *iface;
+-	struct i2c_adapter *p_adap;
 -	struct resource *res;
--	struct input_dev *input;
--	int error;
+-	int rc;
+-	unsigned int clkhilow;
 -
--	/* Basic validation */
--	if ((pdata->rotary_up_key && !pdata->rotary_down_key) ||
--	    (!pdata->rotary_up_key && pdata->rotary_down_key)) {
--		return -EINVAL;
--	}
--
--	if (pdata->pin_list) {
--		error = peripheral_request_list(pdata->pin_list,
--						dev_name(dev));
--		if (error) {
--			dev_err(dev, "requesting peripherals failed: %d\n",
--				error);
--			return error;
--		}
--
--		error = devm_add_action_or_reset(dev, bfin_rotary_free_action,
--						 pdata->pin_list);
--		if (error) {
--			dev_err(dev, "setting cleanup action failed: %d\n",
--				error);
--			return error;
--		}
--	}
--
--	rotary = devm_kzalloc(dev, sizeof(struct bfin_rot), GFP_KERNEL);
--	if (!rotary)
+-	iface = devm_kzalloc(&pdev->dev, sizeof(struct bfin_twi_iface),
+-			GFP_KERNEL);
+-	if (!iface) {
+-		dev_err(&pdev->dev, "Cannot allocate memory\n");
 -		return -ENOMEM;
+-	}
 -
+-	spin_lock_init(&(iface->lock));
+-
+-	/* Find and map our resources */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rotary->base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(rotary->base))
--		return PTR_ERR(rotary->base);
--
--	input = devm_input_allocate_device(dev);
--	if (!input)
--		return -ENOMEM;
--
--	rotary->input = input;
--
--	rotary->up_key = pdata->rotary_up_key;
--	rotary->down_key = pdata->rotary_down_key;
--	rotary->button_key = pdata->rotary_button_key;
--	rotary->rel_code = pdata->rotary_rel_code;
--
--	rotary->mode = pdata->mode;
--	rotary->debounce = pdata->debounce;
--
--	input->name = pdev->name;
--	input->phys = "bfin-rotary/input0";
--	input->dev.parent = dev;
--
--	input_set_drvdata(input, rotary);
--
--	input->id.bustype = BUS_HOST;
--	input->id.vendor = 0x0001;
--	input->id.product = 0x0001;
--	input->id.version = 0x0100;
--
--	input->open = bfin_rotary_open;
--	input->close = bfin_rotary_close;
--
--	if (rotary->up_key) {
--		__set_bit(EV_KEY, input->evbit);
--		__set_bit(rotary->up_key, input->keybit);
--		__set_bit(rotary->down_key, input->keybit);
--	} else {
--		__set_bit(EV_REL, input->evbit);
--		__set_bit(rotary->rel_code, input->relbit);
+-	iface->regs_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(iface->regs_base)) {
+-		dev_err(&pdev->dev, "Cannot map IO\n");
+-		return PTR_ERR(iface->regs_base);
 -	}
 -
--	if (rotary->button_key) {
--		__set_bit(EV_KEY, input->evbit);
--		__set_bit(rotary->button_key, input->keybit);
--	}
--
--	/* Quiesce the device before requesting irq */
--	bfin_rotary_close(input);
--
--	rotary->irq = platform_get_irq(pdev, 0);
--	if (rotary->irq < 0) {
--		dev_err(dev, "No rotary IRQ specified\n");
+-	iface->irq = platform_get_irq(pdev, 0);
+-	if (iface->irq < 0) {
+-		dev_err(&pdev->dev, "No IRQ specified\n");
 -		return -ENOENT;
 -	}
 -
--	error = devm_request_irq(dev, rotary->irq, bfin_rotary_isr,
--				 0, dev_name(dev), rotary);
--	if (error) {
--		dev_err(dev, "unable to claim irq %d; error %d\n",
--			rotary->irq, error);
--		return error;
+-	p_adap = &iface->adap;
+-	p_adap->nr = pdev->id;
+-	strlcpy(p_adap->name, pdev->name, sizeof(p_adap->name));
+-	p_adap->algo = &bfin_twi_algorithm;
+-	p_adap->algo_data = iface;
+-	p_adap->class = I2C_CLASS_DEPRECATED;
+-	p_adap->dev.parent = &pdev->dev;
+-	p_adap->timeout = 5 * HZ;
+-	p_adap->retries = 3;
+-
+-	rc = peripheral_request_list(
+-			dev_get_platdata(&pdev->dev),
+-			"i2c-bfin-twi");
+-	if (rc) {
+-		dev_err(&pdev->dev, "Can't setup pin mux!\n");
+-		return -EBUSY;
 -	}
 -
--	error = input_register_device(input);
--	if (error) {
--		dev_err(dev, "unable to register input device (%d)\n", error);
--		return error;
+-	rc = devm_request_irq(&pdev->dev, iface->irq, bfin_twi_interrupt_entry,
+-		0, pdev->name, iface);
+-	if (rc) {
+-		dev_err(&pdev->dev, "Can't get IRQ %d !\n", iface->irq);
+-		rc = -ENODEV;
+-		goto out_error;
 -	}
 -
--	platform_set_drvdata(pdev, rotary);
--	device_init_wakeup(dev, 1);
+-	/* Set TWI internal clock as 10MHz */
+-	write_CONTROL(iface, ((get_sclk() / 1000 / 1000 + 5) / 10) & 0x7F);
+-
+-	/*
+-	 * We will not end up with a CLKDIV=0 because no one will specify
+-	 * 20kHz SCL or less in Kconfig now. (5 * 1000 / 20 = 250)
+-	 */
+-	clkhilow = ((10 * 1000 / CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ) + 1) / 2;
+-
+-	/* Set Twi interface clock as specified */
+-	write_CLKDIV(iface, (clkhilow << 8) | clkhilow);
+-
+-	/* Enable TWI */
+-	write_CONTROL(iface, read_CONTROL(iface) | TWI_ENA);
+-
+-	rc = i2c_add_numbered_adapter(p_adap);
+-	if (rc < 0)
+-		goto out_error;
+-
+-	platform_set_drvdata(pdev, iface);
+-
+-	dev_info(&pdev->dev, "Blackfin BF5xx on-chip I2C TWI Controller, "
+-		"regs_base@%p\n", iface->regs_base);
 -
 -	return 0;
+-
+-out_error:
+-	peripheral_free_list(dev_get_platdata(&pdev->dev));
+-	return rc;
 -}
 -
--static int __maybe_unused bfin_rotary_suspend(struct device *dev)
+-static int i2c_bfin_twi_remove(struct platform_device *pdev)
 -{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct bfin_rot *rotary = platform_get_drvdata(pdev);
+-	struct bfin_twi_iface *iface = platform_get_drvdata(pdev);
 -
--	rotary->cnt_config = readw(rotary->base + CNT_CONFIG_OFF);
--	rotary->cnt_imask = readw(rotary->base + CNT_IMASK_OFF);
--	rotary->cnt_debounce = readw(rotary->base + CNT_DEBOUNCE_OFF);
--
--	if (device_may_wakeup(&pdev->dev))
--		enable_irq_wake(rotary->irq);
+-	i2c_del_adapter(&(iface->adap));
+-	peripheral_free_list(dev_get_platdata(&pdev->dev));
 -
 -	return 0;
 -}
 -
--static int __maybe_unused bfin_rotary_resume(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct bfin_rot *rotary = platform_get_drvdata(pdev);
--
--	writew(rotary->cnt_debounce, rotary->base + CNT_DEBOUNCE_OFF);
--	writew(rotary->cnt_imask, rotary->base + CNT_IMASK_OFF);
--	writew(rotary->cnt_config & ~CNTE, rotary->base + CNT_CONFIG_OFF);
--
--	if (device_may_wakeup(&pdev->dev))
--		disable_irq_wake(rotary->irq);
--
--	if (rotary->cnt_config & CNTE)
--		writew(rotary->cnt_config, rotary->base + CNT_CONFIG_OFF);
--
--	return 0;
--}
--
--static SIMPLE_DEV_PM_OPS(bfin_rotary_pm_ops,
--			 bfin_rotary_suspend, bfin_rotary_resume);
--
--static struct platform_driver bfin_rotary_device_driver = {
--	.probe		= bfin_rotary_probe,
+-static struct platform_driver i2c_bfin_twi_driver = {
+-	.probe		= i2c_bfin_twi_probe,
+-	.remove		= i2c_bfin_twi_remove,
 -	.driver		= {
--		.name	= "bfin-rotary",
--		.pm	= &bfin_rotary_pm_ops,
+-		.name	= "i2c-bfin-twi",
+-		.pm	= I2C_BFIN_TWI_PM_OPS,
 -	},
 -};
--module_platform_driver(bfin_rotary_device_driver);
 -
+-static int __init i2c_bfin_twi_init(void)
+-{
+-	return platform_driver_register(&i2c_bfin_twi_driver);
+-}
+-
+-static void __exit i2c_bfin_twi_exit(void)
+-{
+-	platform_driver_unregister(&i2c_bfin_twi_driver);
+-}
+-
+-subsys_initcall(i2c_bfin_twi_init);
+-module_exit(i2c_bfin_twi_exit);
+-
+-MODULE_AUTHOR("Bryan Wu, Sonic Zhang");
+-MODULE_DESCRIPTION("Blackfin BF5xx on-chip I2C TWI Controller Driver");
 -MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
--MODULE_DESCRIPTION("Rotary Counter driver for Blackfin Processors");
--MODULE_ALIAS("platform:bfin-rotary");
-diff --git a/include/linux/platform_data/bfin_rotary.h b/include/linux/platform_data/bfin_rotary.h
-deleted file mode 100644
-index 9882937..0000000
---- a/include/linux/platform_data/bfin_rotary.h
-+++ /dev/null
-@@ -1,117 +0,0 @@
--/*
-- * board initialization should put one of these structures into platform_data
-- * and place the bfin-rotary onto platform_bus named "bfin-rotary".
-- *
-- * Copyright 2008-2010 Analog Devices Inc.
-- *
-- * Licensed under the GPL-2 or later.
-- */
--
--#ifndef _BFIN_ROTARY_H
--#define _BFIN_ROTARY_H
--
--/* mode bitmasks */
--#define ROT_QUAD_ENC	CNTMODE_QUADENC	/* quadrature/grey code encoder mode */
--#define ROT_BIN_ENC	CNTMODE_BINENC	/* binary encoder mode */
--#define ROT_UD_CNT	CNTMODE_UDCNT	/* rotary counter mode */
--#define ROT_DIR_CNT	CNTMODE_DIRCNT	/* direction counter mode */
--
--#define ROT_DEBE	DEBE		/* Debounce Enable */
--
--#define ROT_CDGINV	CDGINV		/* CDG Pin Polarity Invert */
--#define ROT_CUDINV	CUDINV		/* CUD Pin Polarity Invert */
--#define ROT_CZMINV	CZMINV		/* CZM Pin Polarity Invert */
--
--struct bfin_rotary_platform_data {
--	/* set rotary UP KEY_### or BTN_### in case you prefer
--	 * bfin-rotary to send EV_KEY otherwise set 0
--	 */
--	unsigned int rotary_up_key;
--	/* set rotary DOWN KEY_### or BTN_### in case you prefer
--	 * bfin-rotary to send EV_KEY otherwise set 0
--	 */
--	unsigned int rotary_down_key;
--	/* set rotary BUTTON KEY_### or BTN_### */
--	unsigned int rotary_button_key;
--	/* set rotary Relative Axis REL_### in case you prefer
--	 * bfin-rotary to send EV_REL otherwise set 0
--	 */
--	unsigned int rotary_rel_code;
--	unsigned short debounce;	/* 0..17 */
--	unsigned short mode;
--	unsigned short pm_wakeup;
--	unsigned short *pin_list;
--};
--
--/* CNT_CONFIG bitmasks */
--#define CNTE		(1 << 0)	/* Counter Enable */
--#define DEBE		(1 << 1)	/* Debounce Enable */
--#define CDGINV		(1 << 4)	/* CDG Pin Polarity Invert */
--#define CUDINV		(1 << 5)	/* CUD Pin Polarity Invert */
--#define CZMINV		(1 << 6)	/* CZM Pin Polarity Invert */
--#define CNTMODE_SHIFT	8
--#define CNTMODE		(0x7 << CNTMODE_SHIFT)	/* Counter Operating Mode */
--#define ZMZC		(1 << 1)	/* CZM Zeroes Counter Enable */
--#define BNDMODE_SHIFT	12
--#define BNDMODE		(0x3 << BNDMODE_SHIFT)	/* Boundary register Mode */
--#define INPDIS		(1 << 15)	/* CUG and CDG Input Disable */
--
--#define CNTMODE_QUADENC	(0 << CNTMODE_SHIFT)	/* quadrature encoder mode */
--#define CNTMODE_BINENC	(1 << CNTMODE_SHIFT)	/* binary encoder mode */
--#define CNTMODE_UDCNT	(2 << CNTMODE_SHIFT)	/* up/down counter mode */
--#define CNTMODE_DIRCNT	(4 << CNTMODE_SHIFT)	/* direction counter mode */
--#define CNTMODE_DIRTMR	(5 << CNTMODE_SHIFT)	/* direction timer mode */
--
--#define BNDMODE_COMP	(0 << BNDMODE_SHIFT)	/* boundary compare mode */
--#define BNDMODE_ZERO	(1 << BNDMODE_SHIFT)	/* boundary compare and zero mode */
--#define BNDMODE_CAPT	(2 << BNDMODE_SHIFT)	/* boundary capture mode */
--#define BNDMODE_AEXT	(3 << BNDMODE_SHIFT)	/* boundary auto-extend mode */
--
--/* CNT_IMASK bitmasks */
--#define ICIE		(1 << 0)	/* Illegal Gray/Binary Code Interrupt Enable */
--#define UCIE		(1 << 1)	/* Up count Interrupt Enable */
--#define DCIE		(1 << 2)	/* Down count Interrupt Enable */
--#define MINCIE		(1 << 3)	/* Min Count Interrupt Enable */
--#define MAXCIE		(1 << 4)	/* Max Count Interrupt Enable */
--#define COV31IE		(1 << 5)	/* Bit 31 Overflow Interrupt Enable */
--#define COV15IE		(1 << 6)	/* Bit 15 Overflow Interrupt Enable */
--#define CZEROIE		(1 << 7)	/* Count to Zero Interrupt Enable */
--#define CZMIE		(1 << 8)	/* CZM Pin Interrupt Enable */
--#define CZMEIE		(1 << 9)	/* CZM Error Interrupt Enable */
--#define CZMZIE		(1 << 10)	/* CZM Zeroes Counter Interrupt Enable */
--
--/* CNT_STATUS bitmasks */
--#define ICII		(1 << 0)	/* Illegal Gray/Binary Code Interrupt Identifier */
--#define UCII		(1 << 1)	/* Up count Interrupt Identifier */
--#define DCII		(1 << 2)	/* Down count Interrupt Identifier */
--#define MINCII		(1 << 3)	/* Min Count Interrupt Identifier */
--#define MAXCII		(1 << 4)	/* Max Count Interrupt Identifier */
--#define COV31II		(1 << 5)	/* Bit 31 Overflow Interrupt Identifier */
--#define COV15II		(1 << 6)	/* Bit 15 Overflow Interrupt Identifier */
--#define CZEROII		(1 << 7)	/* Count to Zero Interrupt Identifier */
--#define CZMII		(1 << 8)	/* CZM Pin Interrupt Identifier */
--#define CZMEII		(1 << 9)	/* CZM Error Interrupt Identifier */
--#define CZMZII		(1 << 10)	/* CZM Zeroes Counter Interrupt Identifier */
--
--/* CNT_COMMAND bitmasks */
--#define W1LCNT		0xf		/* Load Counter Register */
--#define W1LMIN		0xf0		/* Load Min Register */
--#define W1LMAX		0xf00		/* Load Max Register */
--#define W1ZMONCE	(1 << 12)	/* Enable CZM Clear Counter Once */
--
--#define W1LCNT_ZERO	(1 << 0)	/* write 1 to load CNT_COUNTER with zero */
--#define W1LCNT_MIN	(1 << 2)	/* write 1 to load CNT_COUNTER from CNT_MIN */
--#define W1LCNT_MAX	(1 << 3)	/* write 1 to load CNT_COUNTER from CNT_MAX */
--
--#define W1LMIN_ZERO	(1 << 4)	/* write 1 to load CNT_MIN with zero */
--#define W1LMIN_CNT	(1 << 5)	/* write 1 to load CNT_MIN from CNT_COUNTER */
--#define W1LMIN_MAX	(1 << 7)	/* write 1 to load CNT_MIN from CNT_MAX */
--
--#define W1LMAX_ZERO	(1 << 8)	/* write 1 to load CNT_MAX with zero */
--#define W1LMAX_CNT	(1 << 9)	/* write 1 to load CNT_MAX from CNT_COUNTER */
--#define W1LMAX_MIN	(1 << 10)	/* write 1 to load CNT_MAX from CNT_MIN */
--
--/* CNT_DEBOUNCE bitmasks */
--#define DPRESCALE	0xf		/* Load Counter Register */
--
--#endif
+-MODULE_ALIAS("platform:i2c-bfin-twi");
 -- 
 2.7.4
