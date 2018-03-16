@@ -1,192 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeCPOWF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:22:05 -0400
-Received: from mga09.intel.com ([134.134.136.24]:65421 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753140AbeCPOWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:22:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,316,1517904000";
-   d="scan'208";a="28539971"
-Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
- timeout value
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180307132020.30951-1-kishon@ti.com>
- <20180307132020.30951-8-kishon@ti.com>
- <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
- <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
-Date: Fri, 16 Mar 2018 16:21:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752994AbeCPOVk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:21:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55947 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeCPOVj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:21:39 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-rt-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [RT PATCH 2/2] Revert "cpu_chill: Add a UNINTERRUPTIBLE hrtimer_nanosleep"
+Date: Fri, 16 Mar 2018 15:21:35 +0100
+Message-Id: <20180316142135.9664-2-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316142135.9664-1-bigeasy@linutronix.de>
+References: <20180316142135.9664-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
->> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
->>> sdhci has a 10 second timeout to catch devices that stop responding.
->>> Instead of programming 10 second arbitrary value, calculate the total time
->>> it would take for the entire transfer to happen and program the timeout
->>> value accordingly.
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
->>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
->>>  2 files changed, 50 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 1dd117cbeb6e..baab67bfa39b 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
->>>  		return sg_dma_address(host->data->sg);
->>>  }
->>>  
->>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
->>> +				  struct mmc_command *cmd,
->>> +				  unsigned int target_timeout)
->>> +{
->>> +	struct mmc_data *data = cmd->data;
->>> +	struct mmc_host *mmc = host->mmc;
->>> +	u64 transfer_time;
->>> +	struct mmc_ios *ios = &mmc->ios;
->>> +	unsigned char bus_width = 1 << ios->bus_width;
->>> +	unsigned int blksz;
->>> +	unsigned int freq;
->>> +
->>> +	if (data) {
->>> +		blksz = data->blksz;
->>> +		freq = host->mmc->actual_clock ? : host->clock;
->>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
->>> +		do_div(transfer_time, freq);
->>> +		/* multiply by '2' to account for any unknowns */
->>> +		transfer_time = transfer_time * 2;
->>> +		/* calculate timeout for the entire data */
->>> +		host->data_timeout = (data->blocks * ((target_timeout *
->>> +						       NSEC_PER_USEC) +
->>> +						       transfer_time));
->>
->> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
->> for timeouts greater than about 4 seconds.
->>
->>> +	} else {
->>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
->>> +	}
->>> +
->>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>
->> Need to allow for target_timeout == 0 so:
->>
->> 	if (host->data_timeout)
->> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>
->>> +}
->>> +
->>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>  {
->>>  	u8 count;
->>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>  		if (count >= 0xF)
->>>  			break;
->>>  	}
->>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
->>
->> If you make the changes I suggest for patch 6, then this would
->> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
->>
->> I suggest you factor out the target_timeout calculation e.g.
->>
->> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
->> 					 struct mmc_command *cmd,
->> 					 struct mmc_data *data)
->> {
->> 	unsigned int target_timeout;
->>
->> 	/* timeout in us */
->> 	if (!data)
->> 		target_timeout = cmd->busy_timeout * 1000;
->> 	else {
->> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
->> 		if (host->clock && data->timeout_clks) {
->> 			unsigned long long val;
->>
->> 			/*
->> 			 * data->timeout_clks is in units of clock cycles.
->> 			 * host->clock is in Hz.  target_timeout is in us.
->> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
->> 			 */
->> 			val = 1000000ULL * data->timeout_clks;
->> 			if (do_div(val, host->clock))
->> 				target_timeout++;
->> 			target_timeout += val;
->> 		}
->> 	}
->>
->> 	return target_timeout;
->> }
->>
->> And call it from sdhci_calc_sw_timeout()
->>
->>>  
->>>  	return count;
->>>  }
->>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>  		mdelay(1);
->>>  	}
->>>  
->>> -	timeout = jiffies;
->>> -	if (!cmd->data && cmd->busy_timeout > 9000)
->>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
->>> -	else
->>> -		timeout += 10 * HZ;
->>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
->>> -
->>>  	host->cmd = cmd;
->>>  	if (sdhci_data_line_cmd(cmd)) {
->>>  		WARN_ON(host->data_cmd);
->>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
->>>  		flags |= SDHCI_CMD_DATA;
->>>  
->>> +	timeout = jiffies;
->>> +	if (host->data_timeout > 0) {
->>
->> This can be just:
->>
->> 	if (host->data_timeout) {
->>
->>> +		timeout += nsecs_to_jiffies(host->data_timeout);
->>> +		host->data_timeout = 0;
->>
->> It would be better to initialize host->data_timeout = 0 at the top of
->> sdhci_prepare_data().
->>
->> Also still need:
->>
->> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
->> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
-> 
-> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
+This reverts commit "cpu_chill: Add a UNINTERRUPTIBLE
+hrtimer_nanosleep". Since cpu_chill() is now using schedule_hrtimeout()
+we can remove that change since we have no users for it.
 
-Yes, but I was thinking you would only calculate when it was needed.
+Cc: stable-rt@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/time/hrtimer.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index c0efc22ba635..ce2c2d04cbaa 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1742,13 +1742,12 @@ int nanosleep_copyout(struct restart_block *restart=
+, struct timespec64 *ts)
+ 	return -ERESTART_RESTARTBLOCK;
+ }
+=20
+-static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mo=
+de mode,
+-				unsigned long state)
++static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mo=
+de mode)
+ {
+ 	struct restart_block *restart;
+=20
+ 	do {
+-		set_current_state(state);
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		hrtimer_start_expires(&t->timer, mode);
+=20
+ 		if (likely(t->task))
+@@ -1786,15 +1785,13 @@ static long __sched hrtimer_nanosleep_restart(struc=
+t restart_block *restart)
+ 	hrtimer_init_sleeper_on_stack(&t, restart->nanosleep.clockid,
+ 				      HRTIMER_MODE_ABS, current);
+ 	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
+-	/* cpu_chill() does not care about restart state. */
+-	ret =3D do_nanosleep(&t, HRTIMER_MODE_ABS, TASK_INTERRUPTIBLE);
++	ret =3D do_nanosleep(&t, HRTIMER_MODE_ABS);
+ 	destroy_hrtimer_on_stack(&t.timer);
+ 	return ret;
+ }
+=20
+-static long __hrtimer_nanosleep(const struct timespec64 *rqtp,
+-				const enum hrtimer_mode mode, const clockid_t clockid,
+-				unsigned long state)
++long hrtimer_nanosleep(const struct timespec64 *rqtp,
++		       const enum hrtimer_mode mode, const clockid_t clockid)
+ {
+ 	struct restart_block *restart;
+ 	struct hrtimer_sleeper t;
+@@ -1807,7 +1804,7 @@ static long __hrtimer_nanosleep(const struct timespec=
+64 *rqtp,
+=20
+ 	hrtimer_init_sleeper_on_stack(&t, clockid, mode, current);
+ 	hrtimer_set_expires_range_ns(&t.timer, timespec64_to_ktime(*rqtp), slack);
+-	ret =3D do_nanosleep(&t, mode, state);
++	ret =3D do_nanosleep(&t, mode);
+ 	if (ret !=3D -ERESTART_RESTARTBLOCK)
+ 		goto out;
+=20
+@@ -1826,12 +1823,6 @@ static long __hrtimer_nanosleep(const struct timespe=
+c64 *rqtp,
+ 	return ret;
+ }
+=20
+-long hrtimer_nanosleep(const struct timespec64 *rqtp,
+-		       const enum hrtimer_mode mode, const clockid_t clockid)
+-{
+-	return __hrtimer_nanosleep(rqtp, mode, clockid, TASK_INTERRUPTIBLE);
+-}
+-
+ SYSCALL_DEFINE2(nanosleep, struct timespec __user *, rqtp,
+ 		struct timespec __user *, rmtp)
+ {
+--=20
+2.16.2
