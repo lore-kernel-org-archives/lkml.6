@@ -1,64 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeCPRzJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:55:09 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52708 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752410AbeCPRzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:55:07 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/7] Allwinner A64 DE2 CCU support with dedicated DE2 bus driver
-Date: Sat, 17 Mar 2018 01:53:47 +0800
-Message-Id: <20180316175354.21437-1-icenowy@aosc.io>
+        id S933507AbeCPRL0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:11:26 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43144 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933359AbeCPRHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:07:00 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 05/22] net: socket: add __sys_bind() helper; remove in-kernel call to syscall
+Date: Fri, 16 Mar 2018 18:05:57 +0100
+Message-Id: <20180316170614.5392-6-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset tries to implement the Allwinner A64 DE2 as a bus driver,
-in order to model the fact that the SRAM claim controls the access to
-the whole DE2 memory space.
+Using the net-internal helper __sys_bind() allows us to avoid the
+internal calls to the sys_bind() syscall.
 
-PATCH 1 and PATCH 4 are for the CCU part.
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ include/linux/socket.h | 1 +
+ net/compat.c           | 2 +-
+ net/socket.c           | 9 +++++++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
 
-PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
-implements the bus driver.
-
-PATCH 5 is a modified version of A64 DE2 CCU patch, which uses the A64
-DE2 bus.
-
-PATCH 6 and 7 are just the simplefb patches for A64.
-
-Icenowy Zheng (7):
-  dt-bindings: add compatible string for the A64 DE2 CCU
-  dt-bindings: add binding for the Allwinner A64 DE2 bus
-  bus: add bus driver for accessing Allwinner A64 DE2
-  clk: sunxi-ng: add A64 compatible string
-  arm64: allwinner: a64: add DE2 CCU related device tree nodes
-  arm64: allwinner: a64: add simplefb for A64 SoC
-  arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
-
- .../devicetree/bindings/bus/sun50i-de2-bus.txt     | 37 ++++++++++++
- .../devicetree/bindings/clock/sun8i-de2.txt        |  1 +
- .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |  4 ++
- .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   |  4 ++
- .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    |  4 ++
- .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts |  4 ++
- .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  4 ++
- .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  |  4 ++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 68 ++++++++++++++++++++++
- drivers/bus/Kconfig                                | 10 ++++
- drivers/bus/Makefile                               |  1 +
- drivers/bus/sun50i-de2.c                           | 49 ++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 11 ++--
- 13 files changed, 194 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
- create mode 100644 drivers/bus/sun50i-de2.c
-
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index f8d040434a13..e9cee272da13 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -364,5 +364,6 @@ extern int __sys_sendto(int fd, void __user *buff, size_t len,
+ extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
+ 			 int __user *upeer_addrlen, int flags);
+ extern int __sys_socket(int family, int type, int protocol);
++extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
+ 
+ #endif /* _LINUX_SOCKET_H */
+diff --git a/net/compat.c b/net/compat.c
+index 5b3b74c5812e..bba555b1d863 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -814,7 +814,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = __sys_socket(a0, a1, a[2]);
+ 		break;
+ 	case SYS_BIND:
+-		ret = sys_bind(a0, compat_ptr(a1), a[2]);
++		ret = __sys_bind(a0, compat_ptr(a1), a[2]);
+ 		break;
+ 	case SYS_CONNECT:
+ 		ret = sys_connect(a0, compat_ptr(a1), a[2]);
+diff --git a/net/socket.c b/net/socket.c
+index 07f379e50def..291cdae97341 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1462,7 +1462,7 @@ SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
+  *	the protocol layer (having also checked the address is ok).
+  */
+ 
+-SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
++int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen)
+ {
+ 	struct socket *sock;
+ 	struct sockaddr_storage address;
+@@ -1485,6 +1485,11 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
++{
++	return __sys_bind(fd, umyaddr, addrlen);
++}
++
+ /*
+  *	Perform a listen. Basically, we allow the protocol to do anything
+  *	necessary for a listen, and if that works, we mark the socket as
+@@ -2471,7 +2476,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		err = __sys_socket(a0, a1, a[2]);
+ 		break;
+ 	case SYS_BIND:
+-		err = sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
++		err = __sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
+ 		break;
+ 	case SYS_CONNECT:
+ 		err = sys_connect(a0, (struct sockaddr __user *)a1, a[2]);
 -- 
-2.15.1
+2.16.2
