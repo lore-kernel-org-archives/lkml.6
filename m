@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtxXqIx+uoHro1b4bhlvah9rVR9kr6SBFokNKeslwclaRmfHpw623sHeMlqagqm/7AIuavd
-ARC-Seal: i=1; a=rsa-sha256; t=1521214143; cv=none;
+X-Google-Smtp-Source: AG47ELtJQ9CF9zsRVez2VQ5wSkxInyxqC9iUJEgQi8PhBcub34ACmO5w0NyHY99t+yKSFene+bxq
+ARC-Seal: i=1; a=rsa-sha256; t=1521214140; cv=none;
         d=google.com; s=arc-20160816;
-        b=mMGETuSXjTCYfiM1fpAawMJa4rCH4tDE++pB7aza42KdVteng8BfADsqydPwUYFsLB
-         sBb9ItmLidKcruQHD3zF/lSEx/OC1pbuHqL3ZyNP4A4Umtb0g+8Ovk3g4LpOeLncy/xH
-         46QdsHdFXzTVWHIrpliQUXHTngOlwENOMag0L+omL3X0VIsm574y93s4CGy+j1pvvIS/
-         UhYlXn5ieY6YFZD7phbv51ZJ7RGLCMfZ5ZScaFXDdZVWcwi5zFJ/Db3g910KKzDGz+hJ
-         o+3LHlO7C/oew7VM7+svj74oG+G+PrAQk2EV1vVWEkL8oLv2FaBocUVMHvXUuqbgjCqx
-         XDeQ==
+        b=Gk9bCveQXvL44S3+r+LuN6xk/hYsjriUwwhyP9APKrKYB3VSu3kCIesOg4OG7jmLgi
+         MtQSzV+BMBtX0fm/lPI3/pnfbNDwj3qq0jU199Zvui7QXCQzhMwj9t8EDtGNyVg7fLu7
+         bR2VtJtGoa818OYnwt9RSQ/C7WhOU74j0fgXaEBhtiVNWyAWJGz6oG8bMLA2M+mExEM0
+         Ns+RTqZGmlumb7pc2nvrxYparHg5naJSu4Vpnu7NIvQkyDhLXIeZFPFavPkf8wBVrjBy
+         p3CP9RVQ17Q3ojdxVaK+HS4qy4UmrZNVpF1e3WgbsXmV8bFPxMzmEYcHYphjy5DRY4OR
+         0f7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VHMZzaxwstEZu9HyG7rRb3SWlk8I6fkedj+UjlIVhw0=;
-        b=dXGExl/mHfFqJ7K1HV0DLB+bM96u+PuTgV5D39MpV66GMVv8lSFXQDvuGJNyGHXX2W
-         ua3pTkBpKObzs63sxXrVWMFbVSwSM+wX3yVICoQf7/PNl/uqW0osMbvE7g4lqYfyzQxc
-         f51XmzEarHkzxA8ymWcfMXcJA6a0RiN+Ox8m2Jvs8yqk8fCOxC1lbfbRGSRjG5RZKUnQ
-         hQTRXJOVW2aR8MrIFW6Rp4vuUnDsdtpI4XUhRQBJyErZcJovu+Hir80Cpo8J7vx+hepy
-         4860ACEznVSKexLIDi5UHM56OUKgeF4dV+vd8rEheNH1XoCd4nbucyEZklQxkywTa3oz
-         yBxw==
+        bh=Lf4zu0l7yxgQWGPAI+P8c3D+ekGl09YxXJUYKSlDNH4=;
+        b=PPCccfDqKpccCao9GUpkeZhL2nDW2+DR/XdZb2yTQu95QL7ep51PZebYexrecS67/V
+         l4cj34uuWC+O95iICK5+Sm/uo5eY6mqRYwbp9vM/6by2KHL7CrCaIfGnlFLgcUCQBmls
+         EMq8an/2RvXwL8fSRUIFjB5ROnjoOVr8mmlvApHhYgY44zEo2hM/55DNhLIfYV34DrWH
+         MhFnYWiZqr2bRwCXLLNXJC13p3C0a5plOExi7sRYvm09E6yzSaIqrzW5RcFb1cyVNmsu
+         VLN+IU5bHY6hjChpy9DehBCMszYGl+XVGP009Af9AI5alitbEva4YGpqUUR88aQ6RTnx
+         2hcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Todd Kjos <tkjos@google.com>,
-	Arve Hjonnevag <arve@android.com>,
-	syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com,
-	Joel Fernandes <joelaf@google.com>,
-	Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.4 56/63] staging: android: ashmem: Fix lockdep issue during llseek
-Date: Fri, 16 Mar 2018 16:23:28 +0100
-Message-Id: <20180316152306.137677684@linuxfoundation.org>
+	Frank Mori Hess <fmh6jj@gmail.com>,
+	Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.4 55/63] staging: comedi: fix comedi_nsamples_left.
+Date: Fri, 16 Mar 2018 16:23:27 +0100
+Message-Id: <20180316152305.984404523@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108314094103407?=
-X-GMAIL-MSGID: =?utf-8?q?1595108642101954360?=
+X-GMAIL-THRID: =?utf-8?q?1595108638756515720?=
+X-GMAIL-MSGID: =?utf-8?q?1595108638756515720?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,86 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joel Fernandes <joelaf@google.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
 
-commit cb57469c9573f6018cd1302953dd45d6e05aba7b upstream.
+commit a42ae5905140c324362fe5036ae1dbb16e4d359c upstream.
 
-ashmem_mutex create a chain of dependencies like so:
+A rounding error was causing comedi_nsamples_left to
+return the wrong value when nsamples was not a multiple
+of the scan length.
 
-(1)
-mmap syscall ->
-  mmap_sem ->  (acquired)
-  ashmem_mmap
-  ashmem_mutex (try to acquire)
-  (block)
-
-(2)
-llseek syscall ->
-  ashmem_llseek ->
-  ashmem_mutex ->  (acquired)
-  inode_lock ->
-  inode->i_rwsem (try to acquire)
-  (block)
-
-(3)
-getdents ->
-  iterate_dir ->
-  inode_lock ->
-  inode->i_rwsem   (acquired)
-  copy_to_user ->
-  mmap_sem         (try to acquire)
-
-There is a lock ordering created between mmap_sem and inode->i_rwsem
-causing a lockdep splat [2] during a syzcaller test, this patch fixes
-the issue by unlocking the mutex earlier. Functionally that's Ok since
-we don't need to protect vfs_llseek.
-
-[1] https://patchwork.kernel.org/patch/10185031/
-[2] https://lkml.org/lkml/2018/1/10/48
-
-Acked-by: Todd Kjos <tkjos@google.com>
-Cc: Arve Hjonnevag <arve@android.com>
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
-Signed-off-by: Joel Fernandes <joelaf@google.com>
-Acked-by: Greg Hackmann <ghackmann@google.com>
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ashmem.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/staging/comedi/drivers.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -330,24 +330,23 @@ static loff_t ashmem_llseek(struct file
- 	mutex_lock(&ashmem_mutex);
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -484,8 +484,7 @@ unsigned int comedi_nsamples_left(struct
+ 	struct comedi_cmd *cmd = &async->cmd;
  
- 	if (asma->size == 0) {
--		ret = -EINVAL;
--		goto out;
-+		mutex_unlock(&ashmem_mutex);
-+		return -EINVAL;
- 	}
- 
- 	if (!asma->file) {
--		ret = -EBADF;
--		goto out;
-+		mutex_unlock(&ashmem_mutex);
-+		return -EBADF;
- 	}
- 
-+	mutex_unlock(&ashmem_mutex);
-+
- 	ret = vfs_llseek(asma->file, offset, origin);
- 	if (ret < 0)
--		goto out;
-+		return ret;
- 
- 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
- 	file->f_pos = asma->file->f_pos;
--
--out:
--	mutex_unlock(&ashmem_mutex);
- 	return ret;
- }
- 
+ 	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int nscans = nsamples / cmd->scan_end_arg;
+-		unsigned int scans_left = __comedi_nscans_left(s, nscans);
++		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+ 		unsigned int scan_pos =
+ 		    comedi_bytes_to_samples(s, async->scan_progress);
+ 		unsigned long long samples_left = 0;
