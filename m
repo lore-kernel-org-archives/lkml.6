@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtVbNWZT017aSO2PhzZeYY9jZ9+eZzuSGsCLHvHg+BY1P7PWJcKbBJ1ClrfB0lF5ylLOFBH
-ARC-Seal: i=1; a=rsa-sha256; t=1521214611; cv=none;
+X-Google-Smtp-Source: AG47ELvXSAEI2Ia6yrZ73N+m4n/XcZvR3w0NONZm8bHbD6a/8GK7UiAiMW6eh6NjJzIKx5saU8Ph
+ARC-Seal: i=1; a=rsa-sha256; t=1521214608; cv=none;
         d=google.com; s=arc-20160816;
-        b=VEUNLQnUeYEF0g59iKXD3hojc5E4zxb7THivg15NbG6jJEmW33cyplSOpqJuYuoG9q
-         Vxnh9SoutcuZOTkrpRbBCRMIXjSuNs7BGNW5qikIscSF83EcTQTxwsnk3JHQwVsKvONW
-         SUYDDTLrdya8gl/cvTo7f3h1j4V8ksnwtZZybLlSjCCcTjKDBuHDb167kHGfiyXaiADW
-         XzhHV/2fm8inAJAlePydd+I01vRk0BMctJCklp481G7CgSFK06sPWxhhHDvORRH3xhOH
-         pfACAnGs+4WMjGZYGoOjVxPpOeTi2jBSYJsf+trpsMOhq2+knFiqlANhSCs4Bk/7Tb8j
-         cyjA==
+        b=HZMddqV28UQieiG00Vt/YqA6tjEjuSW27zavVexo733M+az63f/JPE+0UBWlLNizcw
+         PSqhgm27Ca5ibJHU+vpZL3Wf1NeEYEuDu3qufkhEiqPW2wi8l2gywRmjbTct1+RCVoJS
+         CwdIKU3NYtHz6f+2S60c+0Zzm/34iNChCAYCRv6om6FO3juB+7okyZqq+LecPduwzT2P
+         tI3zg5vZgw0TFhdianokbUNYS/A6+DBKffId15hxQlaeVY6A1Y0AejUOkhLRACy4AVx0
+         TayeguNuP4CQuZJjlfQwkQgM9FyoSCam2/+q9Kzhu7uVcVQDp59VrqpCcLVtSAJUiMM4
+         X4eA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ggOEnT9TVVhga6Tp+bIi4M+L0k+FmLjtTdykb37Nhck=;
-        b=JnNxqVBRV1//Ycd4HV4cMxJudYYIvgYjq1lCPNP8gQOw37JRfTX4zcU7spnUJvlmMS
-         dCx3EpPGZShgEAYe4zC7SP5GPdCfvmsgdf2oSoHC9h7VYlS/qsXEjQzvW0t90vH+myvw
-         sunDNvSoVMvpamAgM6ETa9ce4ezIz/+ifrQmZ5S1+Zc6Uw6YqbOaNESyV5FL6C+yC8HB
-         7pYG3bSQi5XkPHxnkQF4wAitz/f5x5rPGn/PDLktHdOE7o9kPCtJv829G5hKoBcOt6Lo
-         Ce940j/1tFeHUIDhTrC8OIUaHMqrkae9eRLITWskjZMPES86H/r0GaKDJ40DizBE9chz
-         GhYA==
+        bh=3Myu2gSD5cxX7eigYUm6cw8pEM7KAVLsGyseoAoj8VY=;
+        b=XchUxjcegHBqa2O31cy6sTsXPusHuJvhicyDyWVQ/C3cDv0iyhFkmD1cjjXo5SGZhH
+         7GfoC/WPx3T11I5AvlG2/dBokdnDGbtiNRJGxuwGLVB7Qr4OJWzJ/hM8EhLJkpBhp4q/
+         +lnxyIhferpVnhtuz+v9d7gHR0poP3KzmT0zr2T2zO0w5/HMy0EUvpbZfbaDUCaIxW2i
+         elCy7THh+bQjDrtYXUq1emd/F7vvBvgGsZ9JaxTl6k7yfaIR2KLFnlPt1LzIPIrXHuaE
+         y/UJBG4K1qtMuQtJAXhvaaOxhOG/4GVNIAAIdBTuXJyP8fA98MAuzJIyYuO3zGEIvDqp
+         aB0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Luca Coelho <luciano.coelho@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 033/109] ARM: dts: koelsch: Move cec_clock to root node
-Date: Fri, 16 Mar 2018 16:23:02 +0100
-Message-Id: <20180316152331.762985823@linuxfoundation.org>
+Subject: [PATCH 4.14 032/109] iwlwifi: mvm: rs: dont override the rate history in the search cycle
+Date: Fri, 16 Mar 2018 16:23:01 +0100
+Message-Id: <20180316152331.715396855@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109132377182024?=
-X-GMAIL-MSGID: =?utf-8?q?1595109132377182024?=
+X-GMAIL-THRID: =?utf-8?q?1595109129726029447?=
+X-GMAIL-MSGID: =?utf-8?q?1595109129726029447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +50,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
 
-[ Upstream commit d72f4f03854d1225c72d682bf0e01377e7016419 ]
+[ Upstream commit 992172e3aec19e5b0ea5b757ba40a146b9282d1e ]
 
-cec-clock is a fixed clock generator that is not controlled by i2c5 and
-thus should not be a child of the i2c5 bus node. Rather, it should be
-a child of the root node of the DT.
+When we are in a search cycle, we try different combinations
+of parameters. Those combinations are called 'columns'.
+When we switch to a new column, we first need to check if
+this column has a suitable rate, if not, we can't try it.
+This means we must not erase the statistics we gathered
+for the previous column until we are sure that we are
+indeed switching column.
 
-Fixes: 02a5ab18d366 ("ARM: dts: koelsch: Add CEC clock for HDMI transmitter")
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The code that tries to switch to a new column first sets
+a whole bunch of things for the new column, and only then
+checks that we can find suitable rates in that column.
+While doing that, the code mistakenly erased the rate
+statistics. This code was right until
+struct iwl_scale_tbl_info grew up for TPC.
+
+Fix this to make sure we don't erase the rate statistics
+until we are sure that we can indeed switch to the new
+column.
+
+Note that this bug is really harmless since it causes a
+change in the behavior only when we can't find any rate
+in the new column which should really not happen. In the
+case we do find a suitable we reset the rate statistics
+a few lines later anyway.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -278,6 +278,12 @@
- 		};
- 	};
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+@@ -1881,12 +1881,10 @@ static int rs_switch_to_column(struct iw
+ 	struct rs_rate *rate = &search_tbl->rate;
+ 	const struct rs_tx_column *column = &rs_tx_columns[col_id];
+ 	const struct rs_tx_column *curr_column = &rs_tx_columns[tbl->column];
+-	u32 sz = (sizeof(struct iwl_scale_tbl_info) -
+-		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
+ 	unsigned long rate_mask = 0;
+ 	u32 rate_idx = 0;
  
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -642,12 +648,6 @@
- 		};
- 	};
+-	memcpy(search_tbl, tbl, sz);
++	memcpy(search_tbl, tbl, offsetof(struct iwl_scale_tbl_info, win));
  
--	cec_clock: cec-clock {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <12000000>;
--	};
--
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
+ 	rate->sgi = column->sgi;
+ 	rate->ant = column->ant;
