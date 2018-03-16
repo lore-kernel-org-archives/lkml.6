@@ -1,59 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934777AbeCPQRL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:17:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39570 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754636AbeCPQRD (ORCPT
+        id S1754867AbeCPQTs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:19:48 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33349 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753964AbeCPQTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:17:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B41760C64
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/18] fm10k: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 12:16:22 -0400
-Message-Id: <1521216991-28706-10-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+        Fri, 16 Mar 2018 12:19:44 -0400
+X-Google-Smtp-Source: AG47ELtIwxicXbZAEs7mrdv5z/H/wHAGmyu1RTe2XA2rwpRBpHcIXFq64V5CMRMSjX0Gjhu3AEYnctkWDbOa4JSxpWY=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKv+Gu_hRsJGT-inrzXmAmabaZiUTL7BowdUrxwSWHJecjeVsg@mail.gmail.com>
+References: <20180302083123.7259-1-ard.biesheuvel@linaro.org> <CAKv+Gu_hRsJGT-inrzXmAmabaZiUTL7BowdUrxwSWHJecjeVsg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Fri, 16 Mar 2018 16:19:43 +0000
+Message-ID: <CAKv+Gu-7MP9OqsQpR+AKzn=yHTH5qv5pa4THy0X5JGr-O+XLDg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] add support for Socionext SynQuacer I2C controller
+To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a
-barrier on some architectures like arm64.
+On 10 March 2018 at 15:01, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 2 March 2018 at 08:31, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
+>> SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
+>>
+>> I think this is good to go now. Wolfram?
+>>
+>
+> Ping?
+>
 
-This ends up CPU observing two barriers back to back before executing
-the register write.
+Ping?
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/net/ethernet/intel/fm10k/fm10k_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_main.c b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-index 8e12aae..8d04e26 100644
---- a/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-@@ -179,7 +179,7 @@ void fm10k_alloc_rx_buffers(struct fm10k_ring *rx_ring, u16 cleaned_count)
- 		wmb();
- 
- 		/* notify hardware of new descriptors */
--		writel(i, rx_ring->tail);
-+		writel_relaxed(i, rx_ring->tail);
- 	}
- }
- 
--- 
-2.7.4
+>> v5:
+>> - add Rob's ack to #1
+>> - drop unnecessary 'platform_set_drvdata(pdev, NULL)' in remove path (#2)
+>>
+>> v4:
+>> - clarify binding that only a single interrupt specifier is expected (#1)
+>> - check return value of clk_prepare_enable() on probe path (#2)
+>> - add Andy's R-b to patch #2
+>>
+>> v3:
+>> - incorporate more of Andy's review comments (#2), especially regarding the
+>>   bus speed and clock source handling for ACPI
+>> - patch #1 unchanged.
+>>
+>> v2:
+>> - incorporate Andy's review comments (#2)
+>> - patch #1 unchanged.
+>>
+>> Ard Biesheuvel (2):
+>>   dt-bindings: i2c: add binding for Socionext SynQuacer I2C
+>>   i2c: add support for Socionext SynQuacer I2C controller
+>>
+>>  Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
+>>  drivers/i2c/busses/Kconfig                              |  10 +
+>>  drivers/i2c/busses/Makefile                             |   1 +
+>>  drivers/i2c/busses/i2c-synquacer.c                      | 791 ++++++++++++++++++++
+>>  4 files changed, 831 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
+>>  create mode 100644 drivers/i2c/busses/i2c-synquacer.c
+>>
+>> --
+>> 2.11.0
+>>
