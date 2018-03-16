@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753078AbeCPUSs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:18:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57118 "EHLO
+        id S1753275AbeCPUS4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:18:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57128 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752771AbeCPUSp (ORCPT
+        with ESMTP id S1752918AbeCPUSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:18:45 -0400
+        Fri, 16 Mar 2018 16:18:48 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: Joerg Roedel <joro@8bytes.org>
 Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 02/10] iommu/amd: turn dev_data_list into a lock less list
-Date: Fri, 16 Mar 2018 21:18:28 +0100
-Message-Id: <20180316201836.7864-3-bigeasy@linutronix.de>
+        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Scott Wood <swood@redhat.com>
+Subject: [PATCH 05/10] Revert "iommu/amd: Avoid locking get_irq_table() from atomic context"
+Date: Fri, 16 Mar 2018 21:18:31 +0100
+Message-Id: <20180316201836.7864-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316201836.7864-1-bigeasy@linutronix.de>
 References: <20180316201836.7864-1-bigeasy@linutronix.de>
@@ -23,101 +24,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-alloc_dev_data() adds new items to dev_data_list and search_dev_data()
-is searching for items in this list. Both protect the access to the list
-with a spinlock.
-There is no need to navigate forth and back within the list and there is
-also no deleting of a specific item. This qualifies the list to become a
-lock less list and as part of this, the spinlock can be removed.
-With this change the ordering of those items within the list is changed:
-before the change new items were added to the end of the list, now they
-are added to the front. I don't think it matters but wanted to mention
-it.
+This reverts commit df42a04b15f1 ("iommu/amd: Avoid locking
+get_irq_table() from atomic context").
+Its goal is to avoid a warning/bug on RT. While I generally support that
+goal this change is colliding with larger rework which accomplishes the
+same goal but different.
 
+Cc: Scott Wood <swood@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/iommu/amd_iommu.c       | 28 ++++++++++------------------
- drivers/iommu/amd_iommu_types.h |  2 +-
- 2 files changed, 11 insertions(+), 19 deletions(-)
+ drivers/iommu/amd_iommu.c | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index b50dcb17c68f..0e57ce2c258b 100644
+index 5191319d9f0a..30ad2a3fbe15 100644
 --- a/drivers/iommu/amd_iommu.c
 +++ b/drivers/iommu/amd_iommu.c
-@@ -83,8 +83,7 @@
- static DEFINE_RWLOCK(amd_iommu_devtable_lock);
-=20
- /* List of all available dev_data structures */
--static LIST_HEAD(dev_data_list);
--static DEFINE_SPINLOCK(dev_data_list_lock);
-+static LLIST_HEAD(dev_data_list);
-=20
- LIST_HEAD(ioapic_map);
- LIST_HEAD(hpet_map);
-@@ -203,40 +202,33 @@ static struct dma_ops_domain* to_dma_ops_domain(struc=
-t protection_domain *domain
- static struct iommu_dev_data *alloc_dev_data(u16 devid)
- {
- 	struct iommu_dev_data *dev_data;
--	unsigned long flags;
-=20
- 	dev_data =3D kzalloc(sizeof(*dev_data), GFP_KERNEL);
- 	if (!dev_data)
- 		return NULL;
-=20
- 	dev_data->devid =3D devid;
--
--	spin_lock_irqsave(&dev_data_list_lock, flags);
--	list_add_tail(&dev_data->dev_data_list, &dev_data_list);
--	spin_unlock_irqrestore(&dev_data_list_lock, flags);
--
- 	ratelimit_default_init(&dev_data->rs);
-=20
-+	llist_add(&dev_data->dev_data_list, &dev_data_list);
- 	return dev_data;
+@@ -3602,22 +3602,7 @@ static void set_dte_irq_entry(u16 devid, struct irq_=
+remap_table *table)
+ 	amd_iommu_dev_table[devid].data[2] =3D dte;
  }
 =20
- static struct iommu_dev_data *search_dev_data(u16 devid)
+-static struct irq_remap_table *get_irq_table(u16 devid)
+-{
+-	struct irq_remap_table *table;
+-
+-	if (WARN_ONCE(!amd_iommu_rlookup_table[devid],
+-		      "%s: no iommu for devid %x\n", __func__, devid))
+-		return NULL;
+-
+-	table =3D irq_lookup_table[devid];
+-	if (WARN_ONCE(!table, "%s: no table for devid %x\n", __func__, devid))
+-		return NULL;
+-
+-	return table;
+-}
+-
+-static struct irq_remap_table *alloc_irq_table(u16 devid, bool ioapic)
++static struct irq_remap_table *get_irq_table(u16 devid, bool ioapic)
  {
- 	struct iommu_dev_data *dev_data;
--	unsigned long flags;
-+	struct llist_node *node;
+ 	struct irq_remap_table *table =3D NULL;
+ 	struct amd_iommu *iommu;
+@@ -3704,7 +3689,7 @@ static int alloc_irq_index(u16 devid, int count, bool=
+ align)
+ 	if (!iommu)
+ 		return -ENODEV;
 =20
--	spin_lock_irqsave(&dev_data_list_lock, flags);
--	list_for_each_entry(dev_data, &dev_data_list, dev_data_list) {
-+	if (llist_empty(&dev_data_list))
-+		return NULL;
-+
-+	node =3D dev_data_list.first;
-+	llist_for_each_entry(dev_data, node, dev_data_list) {
- 		if (dev_data->devid =3D=3D devid)
--			goto out_unlock;
-+			return dev_data;
- 	}
+-	table =3D alloc_irq_table(devid, false);
++	table =3D get_irq_table(devid, false);
+ 	if (!table)
+ 		return -ENODEV;
 =20
--	dev_data =3D NULL;
--
--out_unlock:
--	spin_unlock_irqrestore(&dev_data_list_lock, flags);
--
--	return dev_data;
-+	return NULL;
- }
+@@ -3755,7 +3740,7 @@ static int modify_irte_ga(u16 devid, int index, struc=
+t irte_ga *irte,
+ 	if (iommu =3D=3D NULL)
+ 		return -EINVAL;
 =20
- static int __last_alias(struct pci_dev *pdev, u16 alias, void *data)
-diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_type=
-s.h
-index da886b0095aa..1c9b080276c9 100644
---- a/drivers/iommu/amd_iommu_types.h
-+++ b/drivers/iommu/amd_iommu_types.h
-@@ -627,7 +627,7 @@ struct devid_map {
-  */
- struct iommu_dev_data {
- 	struct list_head list;		  /* For domain->dev_list */
--	struct list_head dev_data_list;	  /* For global dev_data_list */
-+	struct llist_node dev_data_list;  /* For global dev_data_list */
- 	struct protection_domain *domain; /* Domain the device is bound to */
- 	u16 devid;			  /* PCI Device ID */
- 	u16 alias;			  /* Alias Device ID */
+-	table =3D get_irq_table(devid);
++	table =3D get_irq_table(devid, false);
+ 	if (!table)
+ 		return -ENOMEM;
+=20
+@@ -3788,7 +3773,7 @@ static int modify_irte(u16 devid, int index, union ir=
+te *irte)
+ 	if (iommu =3D=3D NULL)
+ 		return -EINVAL;
+=20
+-	table =3D get_irq_table(devid);
++	table =3D get_irq_table(devid, false);
+ 	if (!table)
+ 		return -ENOMEM;
+=20
+@@ -3812,7 +3797,7 @@ static void free_irte(u16 devid, int index)
+ 	if (iommu =3D=3D NULL)
+ 		return;
+=20
+-	table =3D get_irq_table(devid);
++	table =3D get_irq_table(devid, false);
+ 	if (!table)
+ 		return;
+=20
+@@ -4130,7 +4115,7 @@ static int irq_remapping_alloc(struct irq_domain *dom=
+ain, unsigned int virq,
+ 		return ret;
+=20
+ 	if (info->type =3D=3D X86_IRQ_ALLOC_TYPE_IOAPIC) {
+-		if (alloc_irq_table(devid, true))
++		if (get_irq_table(devid, true))
+ 			index =3D info->ioapic_pin;
+ 		else
+ 			ret =3D -ENOMEM;
+@@ -4413,7 +4398,7 @@ int amd_iommu_update_ga(int cpu, bool is_run, void *d=
+ata)
+ 	if (!iommu)
+ 		return -ENODEV;
+=20
+-	irt =3D get_irq_table(devid);
++	irt =3D get_irq_table(devid, false);
+ 	if (!irt)
+ 		return -ENODEV;
+=20
 --=20
 2.16.2
