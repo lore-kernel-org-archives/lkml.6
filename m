@@ -1,24 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934716AbeCPQQz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:16:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38946 "EHLO
+        id S934792AbeCPQRT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:17:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39958 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754347AbeCPQQt (ORCPT
+        with ESMTP id S1754745AbeCPQRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:16:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D8FE260F5F
+        Fri, 16 Mar 2018 12:17:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 846EF60F71
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 03/18] igbvf: eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 12:16:16 -0400
-Message-Id: <1521216991-28706-4-git-send-email-okaya@codeaurora.org>
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 15/18] RDMA/bnxt_re: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 16 Mar 2018 12:16:28 -0400
+Message-Id: <1521216991-28706-16-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
 References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
@@ -28,8 +32,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier
-on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
 This ends up CPU observing two barriers back to back before executing the
 register write.
@@ -39,30 +43,27 @@ writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/igbvf/netdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
-index 4214c15..edb1c34 100644
---- a/drivers/net/ethernet/intel/igbvf/netdev.c
-+++ b/drivers/net/ethernet/intel/igbvf/netdev.c
-@@ -251,7 +251,7 @@ static void igbvf_alloc_rx_buffers(struct igbvf_ring *rx_ring,
- 		 * such as IA-64).
- 		*/
- 		wmb();
--		writel(i, adapter->hw.hw_addr + rx_ring->tail);
-+		writel_relaxed(i, adapter->hw.hw_addr + rx_ring->tail);
- 	}
- }
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+index 8329ec6..4a6b981 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+@@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
  
-@@ -2297,7 +2297,7 @@ static inline void igbvf_tx_queue_adv(struct igbvf_adapter *adapter,
- 
- 	tx_ring->buffer_info[first].next_to_watch = tx_desc;
- 	tx_ring->next_to_use = i;
--	writel(i, adapter->hw.hw_addr + tx_ring->tail);
-+	writel_relaxed(i, adapter->hw.hw_addr + tx_ring->tail);
- 	/* we need this if more than one processor can write to our tail
- 	 * at a time, it synchronizes IO on IA64/Altix systems
- 	 */
+ 	/* ring CMDQ DB */
+ 	wmb();
+-	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+-	       rcfw->cmdq_bar_reg_prod_off);
+-	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+-	       rcfw->cmdq_bar_reg_trig_off);
++	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
++		       rcfw->cmdq_bar_reg_prod_off);
++	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
++		       rcfw->cmdq_bar_reg_trig_off);
+ done:
+ 	spin_unlock_irqrestore(&cmdq->lock, flags);
+ 	/* Return the CREQ response pointer */
 -- 
 2.7.4
