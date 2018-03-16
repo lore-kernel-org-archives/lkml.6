@@ -1,133 +1,188 @@
-Return-Path: <mb@lightnvm.io>
-ARC-Seal: i=1; a=rsa-sha256; t=1521398775; cv=none;
+Return-Path: <geert@linux-m68k.org>
+X-Google-Smtp-Source: AG47ELsBj+s8ViShei+YTepcgWFEXw9sG/8FnR3qzZQjzaXKsCzCiERLt14YcUVuRxYHkz7D2HB2
+ARC-Seal: i=1; a=rsa-sha256; t=1521208373; cv=none;
         d=google.com; s=arc-20160816;
-        b=WwFZ1HRJbzM0sIpn8I+OFxZcu9+Ohf0V2M/Lyju+DKJnkzykA40r9eSgO5GcB257/8
-         Tz2IDUBB1fCHNoeRcdHK/snlNeAAN2fq/WtO+AX3LcyImLML6wqrjfXOGMDck53wsUs6
-         z6Q6lGcVwiMPWGHLYXrQLKtpJw3ryO3kNNMJNtKDNMRdvLoTdSulzWRPIoaq2Sg31OLG
-         jlq2J5xDUOWpxCJjtIctw/wUEO4IqMTIIHyFbKm3K+D1Iwzp9MjuH47sv10dLfzNussF
-         hceSdePQXeyBw7pd0612LLgPTQdMabP8+ecG2eDaYbA9aisPU3bXuVvEciJDF4C/dZFo
-         ckZw==
+        b=kVquvMR+KN7gsNIXHQkomXvuEn417U/LnxsGO7KLEBGVn1UEq51fI5n/uabCFWCzeR
+         LcttfkPN71TqgRa1+Jdptpd09h3mhFL5mNw0YOqy3ebuWcoKg2LLlcZ/4u/eVec+t4WJ
+         slm9Yk/4DmJm7cbOignRzn4uIn5QnZM1TR6loWBj6b4OCu+BdC/xdk14oYftXh2kbyaD
+         3Lh6TyaFygqnYVBME9DEX/o+kTxnuPZKHD8+RFFFy4hwKLsj6fuOtuMOMdjSC6QxQ0v5
+         zaNXYXOJF9dUMIm/k1m6X7ziLEIpDtSIjbuPEyySfljNR5wKc3yqDROk57YyFV7OXO52
+         Pz2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=Og7X/rl3kDVLhesEnkKjOJ+h6/NpuyIJgWyttam9V0g=;
-        b=TfRD2RgIuiZFzMshQ13VDI4vC4epqoeLjANXU1BR7sH64lxZRYphH2eMgpqUrOtxQc
-         BCMipezcBRl61j6IqUHGOy1b6AWTvCgOhVZAcRHmJY6YnffzT/ygef3EcfRuCQzhDOkX
-         W5yn4Qenuu5MFXg+ns0fV0ESevrEUBqeL1UbVZDfFjmVmt3UsLmp9Hs87FeTdV1BSU3a
-         5OACkThIANJnrGGR9CYzC4Fur3DQnXCIR37YWaLCanuXNP6wxEL42cjFIqRnyWhLP0ac
-         10vbffqWLVBpGee/DzmVcjJXQ7NpTAz04dbLqNrqFpmuUwElenYt9Vk7/jE+mMSqtCcn
-         illA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=rN3xL6RWMC1UzzHKayx4CWzSmMsDAZgACKKBp+9D2lc=;
+        b=VNHtEeefgWgsxV7WOn91bqXSOm2M8chNg1lcSsjHymrfKlvXFfPmGKW9wJo2t25VY3
+         GhfYxFxorDDjfDy67/WGr4w7zv31Xp9ML2L1yQWYQxwaVTiKi8FASkV54nWXt+Vo6OdV
+         CFh2KXc88qXoQDh7kagcdkb/0mkqZefNR9AUjfrtJNhIvLsgK4xJ0F/Lv2fnrSIsgHQn
+         rKfrl1+iPf4wcYDWU2qa/XpPLA9lW5TDz7Napi0Cy4vm8VBQGd/WtqmY8Pd0hAHO9SWM
+         dQ5byZh3r9fKQaZ5ePsywo2ipfBDRe4en3T88TtvR2V169j/XMIHjkNxJO80dAq49OUX
+         SHBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@lightnvm-io.20150623.gappssmtp.com header.s=20150623 header.b=fzGsJ6U3;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of mb@lightnvm.io) smtp.mailfrom=mb@lightnvm.io
+       spf=neutral (google.com: 2a02:1800:120:4::f00:13 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@lightnvm-io.20150623.gappssmtp.com header.s=20150623 header.b=fzGsJ6U3;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of mb@lightnvm.io) smtp.mailfrom=mb@lightnvm.io
-X-Google-Smtp-Source: AG47ELtfF1xm8yigRkERzWAMGSfLD7LsbU/8oVlsH3mlWI31Lg5NKUowAlyOblVa2GzgGmqP0ZkvcQ==
-Subject: Re: [PATCH v2 10/21] lightnvm: Remove depends on HAS_DMA in case of
- platform dependency
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Christoph Hellwig
- <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S . Miller" <davem@davemloft.net>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>,
- Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
- Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>,
- Brian Norris <computersforpeace@gmail.com>,
- Marek Vasut <marek.vasut@gmail.com>,
- Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>,
- Ohad Ben-Cohen <ohad@wizery.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>,
- Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org,
- linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
- linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-block@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org
+       spf=neutral (google.com: 2a02:1800:120:4::f00:13 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Tejun Heo <tj@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Stefan Richter <stefanr@s5r6.in-berlin.de>,
+	Alan Tull <atull@kernel.org>,
+	Moritz Fischer <mdf@kernel.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Matias Bjorling <mb@lightnvm.io>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org,
+	linux-usb@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-ide@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net,
+	linux-fpga@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 14/21] mtd: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:47 +0100
+Message-Id: <1521208314-4783-15-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
- <1521208314-4783-11-git-send-email-geert@linux-m68k.org>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <319a2b17-f08e-7219-cf5d-08e2df81d55c@lightnvm.io>
-Date: Sun, 18 Mar 2018 19:46:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1521208314-4783-11-git-send-email-geert@linux-m68k.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595106489861540942?=
-X-GMAIL-MSGID: =?utf-8?q?1595302242311149538?=
+X-GMAIL-THRID: =?utf-8?q?1595102591096739287?=
+X-GMAIL-MSGID: =?utf-8?q?1595102591096739287?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/16/2018 02:51 PM, Geert Uytterhoeven wrote:
-> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-> In most cases this other symbol is an architecture or platform specific
-> symbol, or PCI.
-> 
-> Generic symbols and drivers without platform dependencies keep their
-> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-> cannot work anyway.
-> 
-> This simplifies the dependencies, and allows to improve compile-testing.
-> 
-> Notes:
->    - FSL_FMAN keeps its dependency on HAS_DMA, as it calls set_dma_ops(),
->      which does not exist if HAS_DMA=n (Do we need a dummy? The use of
->      set_dma_ops() in this driver is questionable),
->    - SND_SOC_LPASS_IPQ806X and SND_SOC_LPASS_PLATFORM loose their
->      dependency on HAS_DMA, as they are selected from
->      SND_SOC_APQ8016_SBC.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> ---
-> v2:
->    - Add Reviewed-by, Acked-by,
->    - Drop RFC state,
->    - Split per subsystem.
-> ---
->   drivers/lightnvm/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/lightnvm/Kconfig b/drivers/lightnvm/Kconfig
-> index 10c08982185a572f..9c03f35d9df113c6 100644
-> --- a/drivers/lightnvm/Kconfig
-> +++ b/drivers/lightnvm/Kconfig
-> @@ -4,7 +4,7 @@
->   
->   menuconfig NVM
->   	bool "Open-Channel SSD target support"
-> -	depends on BLOCK && HAS_DMA && PCI
-> +	depends on BLOCK && PCI
->   	select BLK_DEV_NVME
->   	help
->   	  Say Y here to get to enable Open-channel SSDs.
-> 
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-Looks good.
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-Reviewed-by: Matias Bjørling <mb@lightnvm.io>
+This simplifies the dependencies, and allows to improve compile-testing.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+---
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Drop new dependency of MTD_NAND_MARVELL on HAS_DMA,
+  - Split per subsystem.
+---
+ drivers/mtd/nand/Kconfig    | 8 ++------
+ drivers/mtd/spi-nor/Kconfig | 2 +-
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
+index 736ac887303c88ba..55a2f8a2fa90cd87 100644
+--- a/drivers/mtd/nand/Kconfig
++++ b/drivers/mtd/nand/Kconfig
+@@ -46,7 +46,7 @@ config MTD_NAND_DENALI
+ config MTD_NAND_DENALI_PCI
+         tristate "Support Denali NAND controller on Intel Moorestown"
+ 	select MTD_NAND_DENALI
+-	depends on HAS_DMA && PCI
++	depends on PCI
+         help
+           Enable the driver for NAND flash on Intel Moorestown, using the
+           Denali NAND controller core.
+@@ -184,7 +184,6 @@ config MTD_NAND_S3C2410_CLKSTOP
+ config MTD_NAND_TANGO
+ 	tristate "NAND Flash support for Tango chips"
+ 	depends on ARCH_TANGO || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  Enables the NAND Flash controller on Tango chips.
+ 
+@@ -328,7 +327,7 @@ config MTD_NAND_MARVELL
+ 	tristate "NAND controller support on Marvell boards"
+ 	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
+ 		   COMPILE_TEST
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	help
+ 	  This enables the NAND flash controller driver for Marvell boards,
+ 	  including:
+@@ -490,7 +489,6 @@ config MTD_NAND_SH_FLCTL
+ 	tristate "Support for NAND on Renesas SuperH FLCTL"
+ 	depends on SUPERH || COMPILE_TEST
+ 	depends on HAS_IOMEM
+-	depends on HAS_DMA
+ 	help
+ 	  Several Renesas SuperH CPU has FLCTL. This option enables support
+ 	  for NAND Flash using FLCTL.
+@@ -558,7 +556,6 @@ config MTD_NAND_SUNXI
+ config MTD_NAND_HISI504
+ 	tristate "Support for NAND controller on Hisilicon SoC Hip04"
+ 	depends on ARCH_HISI || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  Enables support for NAND controller on Hisilicon SoC Hip04.
+ 
+@@ -572,7 +569,6 @@ config MTD_NAND_QCOM
+ config MTD_NAND_MTK
+ 	tristate "Support for NAND controller on MTK SoCs"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  Enables support for NAND controller on MTK SoCs.
+ 	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
+diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
+index 89da88e591215db1..c493b8230a38c059 100644
+--- a/drivers/mtd/spi-nor/Kconfig
++++ b/drivers/mtd/spi-nor/Kconfig
+@@ -71,7 +71,7 @@ config SPI_FSL_QUADSPI
+ config SPI_HISI_SFC
+ 	tristate "Hisilicon SPI-NOR Flash Controller(SFC)"
+ 	depends on ARCH_HISI || COMPILE_TEST
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	help
+ 	  This enables support for hisilicon SPI-NOR flash controller.
+ 
+-- 
+2.7.4
