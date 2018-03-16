@@ -1,76 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933171AbeCPRXQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:23:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36990 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbeCPRXN (ORCPT
+        id S1753746AbeCPROv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:14:51 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:42922 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933318AbeCPRG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:23:13 -0400
-Subject: Re: [RESEND PATCH v2] sched/fair: Remove check in idle_balance
- against migration_cost
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
-        steven.sistare@oracle.com, joelaf@google.com, jbacik@fb.com,
-        juri.lelli@redhat.com, dhaval.giani@oracle.com, efault@gmx.de,
-        riel@surriel.com
-References: <1521052607-24622-1-git-send-email-rohit.k.jain@oracle.com>
- <20180316143550.GH4064@hirez.programming.kicks-ass.net>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <48b63847-123c-6a28-d558-392b8122cd7e@oracle.com>
-Date: Fri, 16 Mar 2018 10:21:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180316143550.GH4064@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8833 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803160153
+        Fri, 16 Mar 2018 13:06:57 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 21/22] net: socket: add __compat_sys_recvmmsg() helper; remove in-kernel call to compat syscall
+Date: Fri, 16 Mar 2018 18:06:13 +0100
+Message-Id: <20180316170614.5392-22-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Using the net-internal helper __compat_sys_recvmmsg() allows us to avoid
+the internal calls to the compat_sys_recvmmsg() syscall.
 
-On 03/16/2018 07:35 AM, Peter Zijlstra wrote:
-> On Wed, Mar 14, 2018 at 11:36:47AM -0700, Rohit Jain wrote:
->> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
->>
->> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
-> Surely you only need a single on of those.
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ net/compat.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-Oh wow! I don't know how I missed this :) Thanks!
-
->> ---
->>   kernel/sched/fair.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 5eb3ffc..569ea83 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -8804,8 +8804,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
->>   	 */
->>   	rq_unpin_lock(this_rq, rf);
->>   
->> -	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
->> -	    !this_rq->rd->overload) {
->> +	if (!this_rq->rd->overload) {
->>   		rcu_read_lock();
->>   		sd = rcu_dereference_check_sched_domain(this_rq->sd);
->>   		if (sd)
-> I don't think that actually works right on the current tree. In
-> particular look at commit:
->
->    31e77c93e432 ("sched/fair: Update blocked load when newly idle")
-
-OK. I see from LKML the code has moved.
-
-However, when I clone from 
-https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/
-I cannot see the commit.
+diff --git a/net/compat.c b/net/compat.c
+index cdf5b0c1b962..7b2ae42a1598 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -787,9 +787,9 @@ COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len
+ 	return __compat_sys_recvfrom(fd, buf, len, flags, addr, addrlen);
+ }
+ 
+-COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
+-		       unsigned int, vlen, unsigned int, flags,
+-		       struct compat_timespec __user *, timeout)
++static int __compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
++				 unsigned int vlen, unsigned int flags,
++				 struct compat_timespec __user *timeout)
+ {
+ 	int datagrams;
+ 	struct timespec ktspec;
+@@ -809,6 +809,13 @@ COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
+ 	return datagrams;
+ }
+ 
++COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
++		       unsigned int, vlen, unsigned int, flags,
++		       struct compat_timespec __user *, timeout)
++{
++	return __compat_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
++}
++
+ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ {
+ 	u32 a[AUDITSC_ARGS];
+@@ -895,8 +902,8 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = compat_sys_recvmsg(a0, compat_ptr(a1), a[2]);
+ 		break;
+ 	case SYS_RECVMMSG:
+-		ret = compat_sys_recvmmsg(a0, compat_ptr(a1), a[2], a[3],
+-					  compat_ptr(a[4]));
++		ret = __compat_sys_recvmmsg(a0, compat_ptr(a1), a[2], a[3],
++					    compat_ptr(a[4]));
+ 		break;
+ 	case SYS_ACCEPT4:
+ 		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), a[3]);
+-- 
+2.16.2
