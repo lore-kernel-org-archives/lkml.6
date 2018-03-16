@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuxtxCp/G7BlTJ0k03cSV1hEYotLAS4lPt1BgSl20WHySuUIIKYy5yxz5pzR5wDuxEnu4K9
-ARC-Seal: i=1; a=rsa-sha256; t=1521215011; cv=none;
+X-Google-Smtp-Source: AG47ELtC7oY5uCLFVzaN/qIYzFmR1bG8qYRElqIfuoOXK3/Y/1FLIVEQhTuw9Fmt9/2QnhVcgcXe
+ARC-Seal: i=1; a=rsa-sha256; t=1521215008; cv=none;
         d=google.com; s=arc-20160816;
-        b=PXUwEhhAB6hENGW4oa3xdfktBwYi2giYm+23TexoymppTre4HdybSay1ezKl+jkn8v
-         j1dUM6xA2wWDJehBaEVJ+GL+c3iyVlwlATQkRSKIga3clLTd0nMXXlJ0IL22YVRNK5+E
-         UEvMTSB0xvc7tJoDHiRYiG6IvXSl9AoZOafrtas1PmfFN2PVrZXZc6Wfl3Va4IfgxGuG
-         jqJYL7HG1nu4NX4rYFNgHUXrv8O1ewILLDi847AKgFia5qs1cHgT3TflIF4iJ5FBDobf
-         PS47uLS9YycX74YvyrgA1iLJbu9PGTS7MqGmScRiUxoxvuW1KWhL5VEG5Ni1PMsNKmQw
-         PsWw==
+        b=OrzSrEp/PEy5OvkHoG7bHp7pLhRAhm3aSnnonOXgNw+wDhzvigCkmtlnDLHtbyCsEe
+         oHocP75ZAWPi4RW5V4j8+E3GSFJsd6z6MJikgyNkjcck46jW0TBDrzwxgZxEOWz3cgl8
+         kgi4uACnQlMrnnSe0oCIRH/NzO/ogW4ObMXvUkc9VMH3akSRBIu+UH3huMRdcxzkr4s3
+         Fo0LLhlS33bCrAv9wFVfrlrOa73tpYiO2Y+W+8EVA91cGYSGt8j0SjzpjyjGQXE9sM01
+         6MjZw1eQ857d5XW0IGtM60C/ZZqyxQChScAi0ONxCKvsDv3VofzaztgFVnJ08Bp4udR6
+         OGEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ww/cajx/joBZDxiUOLgXn8UK+LdLYd0Qve25EGsHunk=;
-        b=ly4sYlRdekEaHNj0FcZcyXgDEJ+fAgNzoJHG23+y2YLrxJrozKRAt5kPewTcPGgB0Q
-         Pn3ZMmKKSbuUJ5WJpwYKHtg/nUdf7lww/3+9mdlicbPHaog5Y0oSwZN65xY3YxPfYNw3
-         93e0aHpRRXn5tAp4LhthEOWM0ZyLWrsKkmW0Sy/iOajcR6qOcKgtiw+IAGK1zq6LE5gI
-         YmzpeNnvgioOO2TATeBNjWwdJ/TDq/5zR67YhdwHrE+ULmhW0USxWqp1BIwTzAM2x6Va
-         J19JUm8NOFk+1VxCfWh/ZELA0llHMZB8NHw0DsyNTHYIBH20Oags83kn9NmBHpyNExj1
-         j53w==
+        bh=ywWvcA2SH3obzGp8Ty2KhBdpHZUoTf8R11F7EtH4mXI=;
+        b=yVLv9NyascL1pu0JVH+1+QwWzdsT5FY5FalBLYFIA583Vv97pYrjD6Ey5OWZzICFdB
+         rofylzJa8OAU3l1i41MENwIY/HvD5xI0zAMcZ0/OdPeK/2m/5stvI4dv+8nomJ5XCU5T
+         3Fhb8Kp80gw7KJnpekHrT5PS7BSgN9vBZfo/R3si7+8gSwwAb+e1/BbZHfA66vEbyBY2
+         OBFcVqweswd6UCH1o0Zo0miBoZ2pORtAJBttQC4V9R2wBR3NWBR4crIwJKBDsvOvPv/h
+         gkVmFa1DGArCEg4rRtV8qyX04pe6Sx9aYrdamq75SC/TmjoSMh71uFTb8Kf8noDQH+AP
+         8UwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julien BOIBESSOT <julien.boibessot@armadeus.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Vinod Koul <vinod.koul@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 096/128] tools/usbip: fixes build with musl libc toolchain
-Date: Fri, 16 Mar 2018 16:23:57 +0100
-Message-Id: <20180316152341.345441462@linuxfoundation.org>
+Subject: [PATCH 4.15 078/128] dmaengine: amba-pl08x: Use vchan_terminate_vdesc() instead of desc_free
+Date: Fri, 16 Mar 2018 16:23:39 +0100
+Message-Id: <20180316152340.552983019@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109176956118610?=
-X-GMAIL-MSGID: =?utf-8?q?1595109552047977935?=
+X-GMAIL-THRID: =?utf-8?q?1595109185262445571?=
+X-GMAIL-MSGID: =?utf-8?q?1595109548791228257?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +51,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julien BOIBESSOT <julien.boibessot@armadeus.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
 
-[ Upstream commit 77be4c878c72e411ad22af96b6f81dd45c26450a ]
+[ Upstream commit 47d71bc75d072ce25c1063aa629e55e1cfb961b2 ]
 
-Indeed musl doesn't define old SIGCLD signal name but only new one SIGCHLD.
-SIGCHLD is the new POSIX name for that signal so it doesn't change
-anything on other libcs.
+To avoid race with vchan_complete, use the race free way to terminate
+running transfer.
 
-This fixes this kind of build error:
+Implement the device_synchronize callback to make sure that the terminated
+descriptor is freed.
 
-usbipd.c: In function ‘set_signal’:
-usbipd.c:459:12: error: 'SIGCLD' undeclared (first use in this function)
-  sigaction(SIGCLD, &act, NULL);
-            ^~~~~~
-usbipd.c:459:12: note: each undeclared identifier is reported only once
-	for each function it appears in
-Makefile:407: recipe for target 'usbipd.o' failed
-make[3]: *** [usbipd.o] Error 1
-
-Signed-off-by: Julien BOIBESSOT <julien.boibessot@armadeus.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/usb/usbip/src/usbipd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/amba-pl08x.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/tools/usb/usbip/src/usbipd.c
-+++ b/tools/usb/usbip/src/usbipd.c
-@@ -456,7 +456,7 @@ static void set_signal(void)
- 	sigaction(SIGTERM, &act, NULL);
- 	sigaction(SIGINT, &act, NULL);
- 	act.sa_handler = SIG_IGN;
--	sigaction(SIGCLD, &act, NULL);
-+	sigaction(SIGCHLD, &act, NULL);
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -2182,7 +2182,7 @@ static int pl08x_terminate_all(struct dm
+ 	}
+ 	/* Dequeue jobs and free LLIs */
+ 	if (plchan->at) {
+-		pl08x_desc_free(&plchan->at->vd);
++		vchan_terminate_vdesc(&plchan->at->vd);
+ 		plchan->at = NULL;
+ 	}
+ 	/* Dequeue jobs not yet fired as well */
+@@ -2193,6 +2193,13 @@ static int pl08x_terminate_all(struct dm
+ 	return 0;
  }
  
- static const char *pid_file;
++static void pl08x_synchronize(struct dma_chan *chan)
++{
++	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
++
++	vchan_synchronize(&plchan->vc);
++}
++
+ static int pl08x_pause(struct dma_chan *chan)
+ {
+ 	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
+@@ -2773,6 +2780,7 @@ static int pl08x_probe(struct amba_devic
+ 	pl08x->memcpy.device_pause = pl08x_pause;
+ 	pl08x->memcpy.device_resume = pl08x_resume;
+ 	pl08x->memcpy.device_terminate_all = pl08x_terminate_all;
++	pl08x->memcpy.device_synchronize = pl08x_synchronize;
+ 	pl08x->memcpy.src_addr_widths = PL80X_DMA_BUSWIDTHS;
+ 	pl08x->memcpy.dst_addr_widths = PL80X_DMA_BUSWIDTHS;
+ 	pl08x->memcpy.directions = BIT(DMA_MEM_TO_MEM);
+@@ -2802,6 +2810,7 @@ static int pl08x_probe(struct amba_devic
+ 		pl08x->slave.device_pause = pl08x_pause;
+ 		pl08x->slave.device_resume = pl08x_resume;
+ 		pl08x->slave.device_terminate_all = pl08x_terminate_all;
++		pl08x->slave.device_synchronize = pl08x_synchronize;
+ 		pl08x->slave.src_addr_widths = PL80X_DMA_BUSWIDTHS;
+ 		pl08x->slave.dst_addr_widths = PL80X_DMA_BUSWIDTHS;
+ 		pl08x->slave.directions =
