@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvEm/4y3MykfaB2k4QZHOzW/mMmmYSbSenRXZQtOXeTvZJHtjePsHTi9VECiKG6AGHerJtC
-ARC-Seal: i=1; a=rsa-sha256; t=1521214100; cv=none;
+X-Google-Smtp-Source: AG47ELvnrhBVHPWSCZSc5ggt1ELw8UOivmwviLuAxW6IAxvrrFnYgkLTTrjGksBpbfkKqT6qjwFV
+ARC-Seal: i=1; a=rsa-sha256; t=1521214097; cv=none;
         d=google.com; s=arc-20160816;
-        b=FQcmtjbgqbErUN9nY1+Sgh3w67eybthEjtI+t0kL6bWZoyYrxVYLFGuU4MCZaeT4KP
-         HZSh1iqv3l453rTOHz5iqY4yzn+8EJ5gMC4QTMn21HoddhvKvutP3UwbzvjvQ1YX7DL2
-         QSRqJYQaS6n6CtXF6HagyZXTDLOAaU9AYs1aXFH5SgCA8Gly1EEcUr/m0vcAlHG2Lw7P
-         jnnsfcL80zUnbCKVwTGzt3E0ibGuRbb8JOgb22BKDEUzc41s7n+JOdbaGIj5b2BWvtUv
-         FswzqakRamEu7R6H3Rux7lw9KIJzzNEQ4pXflrVPlvaydjHtgs8J+pLbES6Nxgo2ivHI
-         D+rA==
+        b=KYxhY9nfhvY4etfWKS8QWvMdnswHyHhyE92qN3wYBTT1dU+fb2NsnsSPu2BIJdws8I
+         ubMkk3ibB1fnopqklgIcWiUt1KHchOinCvzE9Hkm5k7kTV8Q497oIglbDve9okhPqyyK
+         UEBlh9AVB1NRiEA3ho4nEmBqNEVyYKElz4rd2jzGJA6IubWm50XTNT3p1olvHDhd80Mk
+         xVjs6qSvbVzz2pCvdlSNGsoORA8cZazFpINZKtrBMAerdPK4oyh+bgxT3c4t0KQRBaYc
+         D/SkOpf4pUuinhO/Sj+cEgDj1IjlTV8bNy+Fdpam2Yc5mc+FZcIi4KU5epeeBirGj53H
+         6Yyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fp2lqWDbbvCkBsbcLc20//jC/YozAMkc3BVRBftfvjU=;
-        b=ug+zt8iTicVhblRiZM88WfwqYqtirQm797nOmPs1NHxI0j2bKDjSqFlZKxUAnU4gyO
-         kw6rceUDl29rlKuZGBTOvscy95J4MNHp7QTKKfHfonWtzgYLVKZxZ8GiVaH2m7hoFjmr
-         gp5BbibbM3GBWunpqrIiRjieEXFqeCZraJwxI5VEWoaKyDaGRUXaIW164Rm2EqMjnlgy
-         NJmU0dRDHP7vp8hrC6djooUNgnozzHMENHieCW7L2fCMr2YandnMOz7p7uACvvWXr2qn
-         JrjTRUF1SH6kvs3jvaqW/ujjEWQpKHCHPtq4kfUni7Y/nwkjIIj3wqTDJD+8GlCpEEAN
-         /PBg==
+        bh=B4gkG41waqlhJ9Shi21J2mX4oWvyIbKHHoUN2QADbwQ=;
+        b=K4//JKE4sQsno2MhMksXesP3AJzl2W2+BQ3c8WahlnM5tonpyHw3nUpJhGi1vjTGSD
+         7kcdXVXbF23CTN21ewWPsD55An1ogA99VChQE7tD9F5dJ1LivcMSf3KYWvOb/vQ31frY
+         J3lrrk8Ww11sOJPg9DheM7lrq4W7e41aUG/vJsSVF3KzYlmX6A9B3HMpsw/4WvMThAYE
+         EE4ptx1ypX8wUjO8TFVMgUV2JisfJ621QVHb9qGLZGQ459w6ndF/FhX+bh6mZcF8r57O
+         EFgkzm2BNA0g7Wrj06kQ1c1Gh7zhu7y69VJVNvKliHqRBNGGD7w+Sy+ZaKLEwsSu2BRq
+         1zjA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Justin Chen <justinpopo6@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.4 13/63] MIPS: BMIPS: Do not mask IPIs during suspend
-Date: Fri, 16 Mar 2018 16:22:45 +0100
-Message-Id: <20180316152301.507392406@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.4 12/63] drm/amdgpu: fix KV harvesting
+Date: Fri, 16 Mar 2018 16:22:44 +0100
+Message-Id: <20180316152301.428011454@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108286989969530?=
-X-GMAIL-MSGID: =?utf-8?q?1595108597161396983?=
+X-GMAIL-THRID: =?utf-8?q?1595108594475030018?=
+X-GMAIL-MSGID: =?utf-8?q?1595108594475030018?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +49,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Justin Chen <justinpopo6@gmail.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 06a3f0c9f2725f5d7c63c4203839373c9bd00c28 upstream.
+commit 545b0bcde7fbd3ee408fa842ea0731451dc4bd0a upstream.
 
-Commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on CPU IRQs") fixes an
-issue where disable_irq did not actually disable the irq. The bug caused
-our IPIs to not be disabled, which actually is the correct behavior.
+Always set the graphics values to the max for the
+asic type.  E.g., some 1 RB chips are actually 1 RB chips,
+others are actually harvested 2 RB chips.
 
-With the addition of commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on
-CPU IRQs"), the IPIs were getting disabled going into suspend, thus
-schedule_ipi() was not being called. This caused deadlocks where
-schedulable task were not being scheduled and other cpus were waiting
-for them to do something.
-
-Add the IRQF_NO_SUSPEND flag so an irq_disable will not be called on the
-IPIs during suspend.
-
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
-Fixes: a3e6c1eff548 ("MIPS: IRQ: Fix disabled_irq on CPU IRQs")
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-mips@linux-mips.org
+Fixes: https://bugs.freedesktop.org/show_bug.cgi?id=99353
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/17385/
-[jhogan@kernel.org: checkpatch: wrap long lines and fix commit refs]
-Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/smp-bmips.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c |   30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -166,11 +166,11 @@ static void bmips_prepare_cpus(unsigned
- 		return;
- 	}
- 
--	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi0", NULL))
-+	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
- 		panic("Can't request IPI0 interrupt");
--	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi1", NULL))
-+	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
- 		panic("Can't request IPI1 interrupt");
- }
- 
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+@@ -2104,34 +2104,8 @@ static void gfx_v7_0_gpu_init(struct amd
+ 	case CHIP_KAVERI:
+ 		adev->gfx.config.max_shader_engines = 1;
+ 		adev->gfx.config.max_tile_pipes = 4;
+-		if ((adev->pdev->device == 0x1304) ||
+-		    (adev->pdev->device == 0x1305) ||
+-		    (adev->pdev->device == 0x130C) ||
+-		    (adev->pdev->device == 0x130F) ||
+-		    (adev->pdev->device == 0x1310) ||
+-		    (adev->pdev->device == 0x1311) ||
+-		    (adev->pdev->device == 0x131C)) {
+-			adev->gfx.config.max_cu_per_sh = 8;
+-			adev->gfx.config.max_backends_per_se = 2;
+-		} else if ((adev->pdev->device == 0x1309) ||
+-			   (adev->pdev->device == 0x130A) ||
+-			   (adev->pdev->device == 0x130D) ||
+-			   (adev->pdev->device == 0x1313) ||
+-			   (adev->pdev->device == 0x131D)) {
+-			adev->gfx.config.max_cu_per_sh = 6;
+-			adev->gfx.config.max_backends_per_se = 2;
+-		} else if ((adev->pdev->device == 0x1306) ||
+-			   (adev->pdev->device == 0x1307) ||
+-			   (adev->pdev->device == 0x130B) ||
+-			   (adev->pdev->device == 0x130E) ||
+-			   (adev->pdev->device == 0x1315) ||
+-			   (adev->pdev->device == 0x131B)) {
+-			adev->gfx.config.max_cu_per_sh = 4;
+-			adev->gfx.config.max_backends_per_se = 1;
+-		} else {
+-			adev->gfx.config.max_cu_per_sh = 3;
+-			adev->gfx.config.max_backends_per_se = 1;
+-		}
++		adev->gfx.config.max_cu_per_sh = 8;
++		adev->gfx.config.max_backends_per_se = 2;
+ 		adev->gfx.config.max_sh_per_se = 1;
+ 		adev->gfx.config.max_texture_channel_caches = 4;
+ 		adev->gfx.config.max_gprs = 256;
