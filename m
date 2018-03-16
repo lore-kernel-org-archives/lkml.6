@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtC7oY5uCLFVzaN/qIYzFmR1bG8qYRElqIfuoOXK3/Y/1FLIVEQhTuw9Fmt9/2QnhVcgcXe
-ARC-Seal: i=1; a=rsa-sha256; t=1521215008; cv=none;
+X-Google-Smtp-Source: AG47ELuVrBsSs5vXWrPmS5WQseGBuvF+ZoyIDspqev5dzmnjInVKlCdUZqAzARPtFWidzKSFa0xb
+ARC-Seal: i=1; a=rsa-sha256; t=1521215005; cv=none;
         d=google.com; s=arc-20160816;
-        b=OrzSrEp/PEy5OvkHoG7bHp7pLhRAhm3aSnnonOXgNw+wDhzvigCkmtlnDLHtbyCsEe
-         oHocP75ZAWPi4RW5V4j8+E3GSFJsd6z6MJikgyNkjcck46jW0TBDrzwxgZxEOWz3cgl8
-         kgi4uACnQlMrnnSe0oCIRH/NzO/ogW4ObMXvUkc9VMH3akSRBIu+UH3huMRdcxzkr4s3
-         Fo0LLhlS33bCrAv9wFVfrlrOa73tpYiO2Y+W+8EVA91cGYSGt8j0SjzpjyjGQXE9sM01
-         6MjZw1eQ857d5XW0IGtM60C/ZZqyxQChScAi0ONxCKvsDv3VofzaztgFVnJ08Bp4udR6
-         OGEg==
+        b=Z2wDYuNJhywjyM/FtRCowIhYXGGSaSoTJ2bbJ61EW/zAgIvs9E9IBoO3YvPFCSl3OE
+         FFfxXFGD9XzWMUcNGrbddRsjP5HyHJ28/+nMVa3SDsCeZcW1FX7sGe+jZAs46q3qfKH6
+         kT+0YzURWwyR8uDH/sUAEhw0DOfym+2/AIvCQUSDmZ0+2F7luNxLUFcK9qwrGshBBgUx
+         iDQfJmbLraEsvcKlpSGLQRGY/y4r9wCYgyyfJ9LHJeGodLeFq3WmHQW0JNf/SVnhgHLj
+         xTOswdAzUTb7Jq5AdPkHeFMfDS/+89C+BUFU+ZO/i0VTodGWva0U2klbPvr0EtqdgDPC
+         Gx4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ywWvcA2SH3obzGp8Ty2KhBdpHZUoTf8R11F7EtH4mXI=;
-        b=yVLv9NyascL1pu0JVH+1+QwWzdsT5FY5FalBLYFIA583Vv97pYrjD6Ey5OWZzICFdB
-         rofylzJa8OAU3l1i41MENwIY/HvD5xI0zAMcZ0/OdPeK/2m/5stvI4dv+8nomJ5XCU5T
-         3Fhb8Kp80gw7KJnpekHrT5PS7BSgN9vBZfo/R3si7+8gSwwAb+e1/BbZHfA66vEbyBY2
-         OBFcVqweswd6UCH1o0Zo0miBoZ2pORtAJBttQC4V9R2wBR3NWBR4crIwJKBDsvOvPv/h
-         gkVmFa1DGArCEg4rRtV8qyX04pe6Sx9aYrdamq75SC/TmjoSMh71uFTb8Kf8noDQH+AP
-         8UwA==
+        bh=pWaMIpk+A5z/IpL2k1e+Wo2QmlSvYgks4CrDktmFriE=;
+        b=pz6/s8nuBP1qzp5kqgAkAHCptq88rgMLEixJIAubeFN/8xDW7M3pvVmVAfbzYKw2T4
+         AtBL+y5ubiW4yqND2IT6MIaMVgsZRxq7jTMS6NYQyjCy27On+gTKMGSBSpTflU+iZCw5
+         GPWXHdU6CZrgWw/xDmL21A924mykNd0Ug+gvd2T84oofp+KaVw2Yx+CGcb8zEV6k47f+
+         ZDrmP8kXsGCEhJtfh/RG0p5/HVtXroPRr+QTIMDrL27dFutWxwgXnDzYcuNwaMim02nu
+         PmQAiJfkyUybuu/dGV1a2xy64NHKuCQyOl2QvdgHf33AvpyGdLlCETNg3k96+5ecamDq
+         dskw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
+	Ben Greear <greearb@candelatech.com>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 078/128] dmaengine: amba-pl08x: Use vchan_terminate_vdesc() instead of desc_free
-Date: Fri, 16 Mar 2018 16:23:39 +0100
-Message-Id: <20180316152340.552983019@linuxfoundation.org>
+Subject: [PATCH 4.15 095/128] ath10k: fix invalid STS_CAP_OFFSET_MASK
+Date: Fri, 16 Mar 2018 16:23:56 +0100
+Message-Id: <20180316152341.296178111@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109185262445571?=
-X-GMAIL-MSGID: =?utf-8?q?1595109548791228257?=
+X-GMAIL-THRID: =?utf-8?q?1595109173131822899?=
+X-GMAIL-MSGID: =?utf-8?q?1595109546115179965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,64 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Ben Greear <greearb@candelatech.com>
 
 
-[ Upstream commit 47d71bc75d072ce25c1063aa629e55e1cfb961b2 ]
+[ Upstream commit 8cec57f5277ef0e354e37a0bf909dc71bc1f865b ]
 
-To avoid race with vchan_complete, use the race free way to terminate
-running transfer.
+The 10.4 firmware defines this as a 3-bit field, as does the
+mac80211 stack.  The 4th bit is defined as CONF_IMPLICIT_BF
+at least in the firmware header I have seen.  This patch
+fixes the ath10k wmi header to match the firmware.
 
-Implement the device_synchronize callback to make sure that the terminated
-descriptor is freed.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/amba-pl08x.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/wmi.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2182,7 +2182,7 @@ static int pl08x_terminate_all(struct dm
- 	}
- 	/* Dequeue jobs and free LLIs */
- 	if (plchan->at) {
--		pl08x_desc_free(&plchan->at->vd);
-+		vchan_terminate_vdesc(&plchan->at->vd);
- 		plchan->at = NULL;
- 	}
- 	/* Dequeue jobs not yet fired as well */
-@@ -2193,6 +2193,13 @@ static int pl08x_terminate_all(struct dm
- 	return 0;
- }
+--- a/drivers/net/wireless/ath/ath10k/wmi.h
++++ b/drivers/net/wireless/ath/ath10k/wmi.h
+@@ -5236,7 +5236,8 @@ enum wmi_10_4_vdev_param {
+ #define WMI_VDEV_PARAM_TXBF_MU_TX_BFER BIT(3)
  
-+static void pl08x_synchronize(struct dma_chan *chan)
-+{
-+	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
-+
-+	vchan_synchronize(&plchan->vc);
-+}
-+
- static int pl08x_pause(struct dma_chan *chan)
- {
- 	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
-@@ -2773,6 +2780,7 @@ static int pl08x_probe(struct amba_devic
- 	pl08x->memcpy.device_pause = pl08x_pause;
- 	pl08x->memcpy.device_resume = pl08x_resume;
- 	pl08x->memcpy.device_terminate_all = pl08x_terminate_all;
-+	pl08x->memcpy.device_synchronize = pl08x_synchronize;
- 	pl08x->memcpy.src_addr_widths = PL80X_DMA_BUSWIDTHS;
- 	pl08x->memcpy.dst_addr_widths = PL80X_DMA_BUSWIDTHS;
- 	pl08x->memcpy.directions = BIT(DMA_MEM_TO_MEM);
-@@ -2802,6 +2810,7 @@ static int pl08x_probe(struct amba_devic
- 		pl08x->slave.device_pause = pl08x_pause;
- 		pl08x->slave.device_resume = pl08x_resume;
- 		pl08x->slave.device_terminate_all = pl08x_terminate_all;
-+		pl08x->slave.device_synchronize = pl08x_synchronize;
- 		pl08x->slave.src_addr_widths = PL80X_DMA_BUSWIDTHS;
- 		pl08x->slave.dst_addr_widths = PL80X_DMA_BUSWIDTHS;
- 		pl08x->slave.directions =
+ #define WMI_TXBF_STS_CAP_OFFSET_LSB	4
+-#define WMI_TXBF_STS_CAP_OFFSET_MASK	0xf0
++#define WMI_TXBF_STS_CAP_OFFSET_MASK	0x70
++#define WMI_TXBF_CONF_IMPLICIT_BF       BIT(7)
+ #define WMI_BF_SOUND_DIM_OFFSET_LSB	8
+ #define WMI_BF_SOUND_DIM_OFFSET_MASK	0xf00
+ 
