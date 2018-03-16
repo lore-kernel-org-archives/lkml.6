@@ -1,98 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933377AbeCPRJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:09:29 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43204 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933424AbeCPRHC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:07:02 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 06/22] net: socket: add __sys_connect() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:05:58 +0100
-Message-Id: <20180316170614.5392-7-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        id S1753400AbeCPR4i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:56:38 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:52831 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751829AbeCPR4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:56:36 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 6/7] arm64: allwinner: a64: add simplefb for A64 SoC
+Date: Sat, 17 Mar 2018 01:53:53 +0800
+Message-Id: <20180316175354.21437-7-icenowy@aosc.io>
+In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_connect() allows us to avoid the
-internal calls to the sys_connect() syscall.
+The A64 SoC features two display pipelines, one has a LCD output, the
+other has a HDMI output.
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Add support for simplefb for these pipelines on A64 SoC.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- include/linux/socket.h |  2 ++
- net/compat.c           |  2 +-
- net/socket.c           | 11 ++++++++---
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index e9cee272da13..7daa344d7320 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -365,5 +365,7 @@ extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- 			 int __user *upeer_addrlen, int flags);
- extern int __sys_socket(int family, int type, int protocol);
- extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
-+extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
-+			 int addrlen);
- 
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index bba555b1d863..7ab6352268f3 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -817,7 +817,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_bind(a0, compat_ptr(a1), a[2]);
- 		break;
- 	case SYS_CONNECT:
--		ret = sys_connect(a0, compat_ptr(a1), a[2]);
-+		ret = __sys_connect(a0, compat_ptr(a1), a[2]);
- 		break;
- 	case SYS_LISTEN:
- 		ret = sys_listen(a0, a1);
-diff --git a/net/socket.c b/net/socket.c
-index 291cdae97341..64bdfdf6c6e7 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1633,8 +1633,7 @@ SYSCALL_DEFINE3(accept, int, fd, struct sockaddr __user *, upeer_sockaddr,
-  *	include the -EINPROGRESS status for such sockets.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1f92015503ea..7767d0761b2e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -42,9 +42,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
   */
  
--SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
--		int, addrlen)
-+int __sys_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
-@@ -1660,6 +1659,12 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
- 	return err;
- }
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
  
-+SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
-+		int, addrlen)
-+{
-+	return __sys_connect(fd, uservaddr, addrlen);
-+}
+ / {
+@@ -52,6 +54,30 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
- /*
-  *	Get the local address ('name') of a socket object. Move the obtained
-  *	name to user space.
-@@ -2479,7 +2484,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 		err = __sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
- 		break;
- 	case SYS_CONNECT:
--		err = sys_connect(a0, (struct sockaddr __user *)a1, a[2]);
-+		err = __sys_connect(a0, (struct sockaddr __user *)a1, a[2]);
- 		break;
- 	case SYS_LISTEN:
- 		err = sys_listen(a0, a1);
++		simplefb_lcd: framebuffer-lcd {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0";
++			clocks = <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>;
++			status = "disabled";
++		};
++
++		simplefb_hdmi: framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-hdmi";
++			clocks = <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
++			status = "disabled";
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.16.2
+2.15.1
