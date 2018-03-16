@@ -1,62 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeCPJbF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 05:31:05 -0400
-Received: from h1.radempa.de ([176.9.142.194]:46150 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750793AbeCPJbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:31:03 -0400
-From: Harald Geyer <harald@ccbib.org>
-To: afzal mohammed <afzal.mohd.ma@gmail.com>
-cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: arm64: allwinner: Add support for TERES I laptop
-In-reply-to: <20180315170606.GA3635@afzalpc>
-References: <20180312161050.7647-1-harald@ccbib.org> <20180315170606.GA3635@afzalpc>
-Comments: In-reply-to afzal mohammed <afzal.mohd.ma@gmail.com>
-   message dated "Thu, 15 Mar 2018 22:36:06 +0530."
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1235.1521192655.1@stardust.g4.wien.funkfeuer.at>
-Date: Fri, 16 Mar 2018 10:30:55 +0100
-Message-Id: <E1ewlhQ-0000Jx-6s@stardust.g4.wien.funkfeuer.at>
+        id S1751913AbeCPJii (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 05:38:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41998 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeCPJig (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 05:38:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 12C7A602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v2 00/13] ARM: dts: ipq: updates to enable a few peripherals
+Date: Fri, 16 Mar 2018 15:08:08 +0530
+Message-Id: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+[v2]
+    * Addressed all comments from Abhishek
+    * Removed dk01-c2 and dk04-c5 spinand based boards
+      as support for spinand is not complete
+    * Based all patches on top of Andy's for-next branch
 
-afzal mohammed writes:
-> On Mon, Mar 12, 2018 at 04:10:45PM +0000, Harald Geyer wrote:
-> > This series adds support for the TERES I open hardware laptop produced
-> > by olimex. With these patches and a bootloader capable of setting up
-> > simple framebuffer the laptop is quite useable.
-> 
-> Thanks for the patches
-> 
-> w/ defconfig could reach to prompt via serial console using audio
-> jack.
-> 
-> And just by enabling PWM_SUN4I & FB_SIMPLE, laptop could function
-> standalone as well.
-> 
-> Suggestions (feel free to ignore):
-> 
-> 1. seems currently only review comment pending is on simple
-> framebuffer, perhaps you can proceed removing just that so that a
-> basic bootable system can be achieved at the earliest (iiuc, anyway
-> drm would be the final solution for display)
+[V1]
+    * https://www.spinics.net/lists/arm-kernel/msg631318.html
 
-I'm under the impression that I addressed the concerns regarding simplefb
-satisfactorily. But yes: I hope to get this merged in time for 4.17.
-If simplefb is a problem for that, I'd rather drop it then postpone
-the entire series.
+Sricharan R (13):
+  firmware: qcom: scm: Add ipq4019 soc compatible
+  ARM: dts: ipq4019: Add a few peripheral nodes
+  ARM: dts: ipq4019: Change the max opp frequency
+  ARM: dts: ipq4019: Update ipq4019-dk01.1 board data
+  ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
+  ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3 board file
+  ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c1 board file
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
+  ARM: dts: ipq8074: Add peripheral nodes
+  ARM: dts: ipq8074: Add pcie nodes
+  ARM: dts: ipq8074: Enable few peripherals for hk01 board
 
-Thanks for testing,
-Harald
+ .../devicetree/bindings/firmware/qcom,scm.txt      |   3 +-
+ arch/arm/boot/dts/Makefile                         |   4 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi      |  32 ++-
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts    |  20 ++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts    |   8 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi      | 135 +++++++++++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts    |  65 +++++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts    |  26 ++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi      |  83 +++++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi                | 136 ++++++++++-
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          | 103 ++++++++
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 262 ++++++++++++++++++++-
+ drivers/firmware/qcom_scm.c                        |   3 +
+ 13 files changed, 875 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
