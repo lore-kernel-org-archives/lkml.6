@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753319AbeCPHXG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:23:06 -0400
-Received: from mail-sn1nam02on0078.outbound.protection.outlook.com ([104.47.36.78]:4026
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1753263AbeCPHXC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:23:02 -0400
+Received: from mail-dm3nam03on0051.outbound.protection.outlook.com ([104.47.41.51]:25776
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753119AbeCPHRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753117AbeCPHRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Mar 2018 03:17:35 -0400
 Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
@@ -14,9 +14,9 @@ Authentication-Results: spf=pass (sender IP is 137.71.25.57)
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 10/28] i2c: Remove Blackfin I2C bus support
-Date: Fri, 16 Mar 2018 15:08:08 +0800
-Message-ID: <1521184106-24475-8-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 08/28] Asoc: Remove Blackfin ASOC support
+Date: Fri, 16 Mar 2018 15:08:06 +0800
+Message-ID: <1521184106-24475-6-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,846 +24,5632 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(346002)(376002)(39860400002)(396003)(2980300002)(438002)(199004)(189003)(478600001)(106002)(336012)(7696005)(51416003)(4326008)(106466001)(305945005)(2351001)(6666003)(6916009)(6306002)(2906002)(5660300001)(59450400001)(76176011)(2950100002)(8936002)(246002)(50226002)(186003)(26005)(50466002)(48376002)(966005)(8676002)(72206003)(316002)(86362001)(47776003)(36756003)(107886003)(7636002)(356003)(16586007)(77096007)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1481;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC016;1:GDcXGp9DoWk2nS1FIFzPd4jdyrsUERX4uadf17ux1/RGzPZRo32ZklhTqW0zbs9XNcmPcquz1vY2MxCp6GdnBx+q/CwflQ1cGOC+eim/7Btrw3EAubtL+IeiTRzWewfT
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(346002)(39860400002)(2980300002)(438002)(189003)(199004)(50944005)(2906002)(7696005)(16200700003)(53946003)(336012)(16586007)(2950100002)(6306002)(186003)(6916009)(2351001)(106002)(77096007)(76176011)(426003)(47776003)(5660300001)(107886003)(7636002)(305945005)(51416003)(106466001)(6666003)(356003)(966005)(50466002)(36756003)(316002)(72206003)(59450400001)(478600001)(246002)(26005)(8936002)(48376002)(4326008)(50226002)(5890100001)(8676002)(86362001)(2004002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB3277;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC004;1:NVlCvTFQKUVNYz9WsJNYlMQWWlMgFK2rGrjASYpRt1ntK0Dhx70m76wB0LprX4owM6B5nPaAo9YK8QdN2Pg8GMwxMngAuz57s22ab0r9BKHvDa9ozdAZSu+e6uzEYde8
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e37ceef5-9c74-4d0f-d3b6-08d58b0dfc7e
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1481;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;3:602tklQbfH1+/rOzWA7ZOHo3VxR/NM9bKUA6hecGel8zd/l7l3sGlydd7oRDkYoFKQEq9G9fsGvjIlJYULbdZqiVv6A6se/C3h5+UzZldLtp36jZwl4gkgK+eQhFvNBf0GWO+43VxNTUai5ADYjDkCeJHF7UCRX+sQy3kT0rCqzH4gt0pD9OcIf3EnrwHR+gHk+iqjK+SxDBwywiLdqw0hhtsYrfKDPI20Q5nVBrMsYSIMqWeBLfzAKknjDE9V8ZUK7ZBqBcoAkCx3DMkv9BMXsM/HfoqWT7XfAhRmJMM2svu7kko9O0I55pfuLPD1xKZKKS7uPcXynZz4MYdl6uMA==;25:nqM9T4w8NVSBif1+nixAfbDrzyq/rr1jo1aJQWnNHgIwC7JyE4Nyhr7nkMTmxLIWQgChHOdDcHEHmk/wrrNKjWWAgA9mJn+woC4mQ3h2hLOAb5dEbIxvlWtL6gx84MvnQZiR0YmKwJiQMb7bKVnBRbK9Swn24zI7cFcm98lpX/mb5+CNrK+LPiNxTH+X2MYZ5Ic6VuGyIW2rdyIlqmIRkyEAa3HTkA/J2oL1PyVdaeGBsWOTN8oCjexCSde1GtGRgPCfUgvSqzN9gQ3hfYWRonJpPoK0U8cK8nBVmpl6qj0KNn6YkRqm/GgJXBEwqSng8xpkwZVaQxnyxosVh7SO7Q==;31:cCudFZMQqPj/IcCK6yKpzNdYontfzVu9gyxR7iUWh9aZDsM2Rxd4G1MwfdVLxDCSRG1Tq4ubn9qg7SsZwER6cU+UBZhyZwbIDzay3vegJ/YkoqMbqXVnAQZSiWiz+kBTaQRYcDW9Qd6MtuyAYUfAebe11g+Hyg0+pglmdR49ArER/GEqQNxiLtIERcVzaK/Q+N9F6DlMeqKjZvziyHziF4o6mFacsZNGg/4tscZ4QDQ=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1481:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;20:FY2Rs1QRF2t3tHB3WAsvolo1JTdTr7dGRsh6vutupd2gercNdwHmkAblvaJ9q24fkJvReWPFDZLIRBbDvDaPyMcraiaYysmD4anEhHH6Rol+UkADkIGB4a7CZI+zr/zuviH2jSyXuMy+B8A/IRbjKD2KMccQIJ6owwwZ1q4ktOGGGSg1G1pUO4+oAif0SjJmtibnpVxC1ghDyb34HjSBESmSN8vNWXkNOVu3CbJTlpqHbUTGNF7I/btd8iHDICHr+mctO/9N/sKldEMDXNjeE5oDA+/bu8D+8/qXOxNQJ8B8XkvddTQ0cgz73H40s3BgYrCckc0GxADUvyOd0neCov0xMKic0oMky4bj3GMcX98e81qQtD8xL0q9MjVA9O6cq9LOHTOA9Aa1n8n2o4Ks8g/NG6nCQdzsIX5YVUvqzC2E9aCjH1O+/r5chFsIkHj5ySKw6z2aWZ1qSD7PcgEAZMvnKskXa/2zCTfxjZb+8ooy7qThJCK6tNk1lLgv+aWH;4:hxUrc7Wo2XFK8heG2UsW/IdQtP99wZg7MZVDrK6Hi6HlVyM4BBdn8Iw3enmf7KTRMpXecSu4pdtv5IZMr/ty3bofdSSSXQt7OWfMHKogCEEeekzu8fMjaaUwqgHIco2b4fpj1hObCMFzTEbaeA6N2zXCs2AoVw/fUFEYneGLXQ24i2QE5BtEufKi/FAVtwIiu+fqmMo4fNA/maql8YR/QyKHEy5txX5ugoMPhLlap9sAUPbpNiyFLo1Jp4/cNe11fIOpTu+4seeLpRKZHydIJOu1W6igAk/nJafbcbaN2vHsu1Ofcbl9Gek1FRK/S/Z1
-X-Microsoft-Antispam-PRVS: <BY1PR03MB148145ADAE218BA6D5F8C488E0D70@BY1PR03MB1481.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93004095)(3231221)(944501244)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1481;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1481;
+X-MS-Office365-Filtering-Correlation-Id: 961da423-fa09-486f-fe7d-08d58b0dfb38
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:MWHPR03MB3277;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3277;3:LM8DHaqVeC9aQXXlExznwtYYOcDMZz47n4GmDjCVytMxnFv5n+ehujSGgCnu4mM7uOovXw+AamHw8taPDhIPqx2ofRQnVmRQPPAnGw9mXHmRVy8beuY1wUlceQD7CyJWdK5rLawtLR21e67u8wZhOStSH1JsbaxLynOzkWssZ5e+xVzuMgEuDJlsTv2GsfjaPGhCWEcVQ6iB+lUdNU7YbaOVSl1kUVbN0gc4QkTSooZn8YMcK7oXEqJ13pmIThHOgFyF/+9h8KrCxvYT/3SZZmHSN2noCwSjNeC08fPghZ8OeUcGaAaL2qqK0za7251fXIMuL/7OiuVQaoS3OG/nLg==;25:OnE6mrV+paFokHI0+yHw1tdZkxjolQBvAld0E1GOuTxlsHJBtIejRfCil58oh03PklGsJGeQZuAl320FC/Nx0u2vmsGPS3tacJ1E3voDntS4Np3R3ElTHO91AcpOyhpyBNGtgOYtSnX34PmpZzBYvYPsyg1r1oa5sRYfWFNj/giowj5tzBHEq37JL/Xk0OXtPxexxXxGozJ+XqoXAk0iOVmH1xC0FoG/OE6aoHXaoz5TKrK7qqtUGTjKX6lyDserCCZ2UKCyUO4eIB0fCoprivq1jDA5+f9d1F+1IHK74Fii848iqhVNksq16RSXzfI3LhUEfMNwikOZtz+1lruboQ==;31:rlV/bOOwycoWLwJ/tLiWnfoIk3Ar9IVGj6Hbqhtt+3Y1q7TSh4T1O/yjJWYH2wdQ3qQO8AKLJ/grk3AysW06toX/bM+LDG1vt6dd2uYthgBEiOmXozlRqwVhie6HySHLXeLRyGV6QBKL/W6oi0//ei6W8l5RIvMugyGi1GutiMaAAZ87uGpeiKo0pC5tYVu3/YfgZplfSdGeGpWHhg6kQPvZqlym7z/m+MYdq7wdH60=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB3277:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3277;20:n37xgAtA+/VExVT/pI6R9w2fGyXNlDFcwgK0RydkUeOZCyS/49b5sWQ/zXllz5fjgoRUWiDp2avkgvkn4mA0F7Ozn3aiT3VVNCK0kn/VurEIIT8ZUAH0hcz4VJhK4ZPwfjh1oXkzSazsg/3w3kmN0V4PHnvQhCNrrbGllLJyTmxcppGaaNysfLjYsAeQcSFz9l2fD2rY/Ehp2oK9GjRNcPFU6xPKsnQz4hx6k97fFYSfTxUPp7VvPNwNjPMqIKuSExHHQ1vWxPo71XqFQO710fCX/0qSqAVHw6rsHmFC+/BL7WofW6+X6ToeFf0ugJLBL4gPR/6NsQDS75/nj3iwzhN0K0m4RiiMSb7W6F3OPMHkcTOUKuuGB5P/m2oYpB91XyDfe4fctMzKpBKrQol1IyZmE3NP+OsWo7rj20+HLbO6SbzlFyRLh1exjrv7KvkUf7D0D8r5x39vFgwJ6XBdgPBhC7LCBoxt7gjxQ3KWRrhDn3Mqyus5Lb3c7/rcMHvb;4:+hVVnUjs1NEvh+o0ONSx581iJ0PFHC1KwHAlorLbjuvN14H9awFWVPuRxckWrCs+JrvdrgiKQ1RjuzXo6hwx7YxzJrJyLZtRYrbaUY3kEf6akiY07SeXLlFpc7yatgECwhTF2XyMzej7qXV7m2Iqi8ReVf96q8lFce59m/ShJ3yA8ccB2F8ouereSTm6dSSLrLjLRRgHKyQdpYdVNnZQ7DiRWgk/FCqYUqhWTTjKcZlCwfsaxFrFtsw72oHPdYu5KMf5yWIBFT3GPUcONrP4s1Cu6kBvWzx5HNNGt3Pnv4PU06Bhcr+kL2kynn5uG/d0eIOvITUc6TE2QQb1AmQUz6Pw9QdKnDEtiB2XXd6POvQ=
+X-Microsoft-Antispam-PRVS: <MWHPR03MB3277B34BA891A3F18F591AB0E0D70@MWHPR03MB3277.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(85827821059158);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR03MB3277;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB3277;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1481;23:U0pWPwUAPLSvEjVO1qfa3thVrDAHTKT/sFBhMKHhJ?=
- =?us-ascii?Q?KQ7llnZnM/4JKm6UU4yH3G2BJ5NdU9FpQs1to9FxFrh2F0iO4BUa8Ee/W79e?=
- =?us-ascii?Q?e4EWjYRQbHhme+bT7JELap+pBLIJBmNImBS0zP+U7d4pvNzG3nCoGHWOiFXW?=
- =?us-ascii?Q?VXdpab0SK6cCntVSRNPvn2ctFEZ728/M0iOj4WUUQil4ixih34eLsYpEVNxh?=
- =?us-ascii?Q?YaT/mcDC7H5jiG+LkbNJO2YZK4xOk6UqTPwk1oK9koTBKmzJB7TseXwssfbC?=
- =?us-ascii?Q?ErJu++p+zdNCmE1/pHdiwrN7hkrQo/W5Vy07g/onWWglrcTT5ybwUgC7hoXp?=
- =?us-ascii?Q?z5HQlx1qvpUSXmSe/QfXchk0ydxp3l08cfB3dH/kmYNubR+EH8BxJUNhqVXE?=
- =?us-ascii?Q?ZyAZ/uFv5B86mesLR1NwCxjRPZTc3BQ8L+7qw1rnxR4Co779faH1c5IIFJew?=
- =?us-ascii?Q?iuzdmv/tJr9EKEZ9Lh40ru+dsCdHBuTFVzMy0k1y/XBGD7J0Iv+0zhn7euYH?=
- =?us-ascii?Q?hpAIQ2R62nyWdewDxXxcidHgDdjiGXBMz8EGuZXmQWXsB6aN0ma8WsA8+Jos?=
- =?us-ascii?Q?MLMC0drcHGbVPfdheA6bkmJUe2DuItYrd7MAtj6Kd7AdYTwaU9VyKZ67+DKw?=
- =?us-ascii?Q?XROivwdK9XELMAelEPdjWa7zEbHDAKT91r9ophDLWXC8tnjNi30xBYll+yK9?=
- =?us-ascii?Q?KFNCGofEzyZHKTDXYi8k7MqI3pMptu3zgP+tMETa8ojZIFP59ze/WPOBIsx1?=
- =?us-ascii?Q?2WRTvLt9mIbhtpI9ZaSb0F+JS6LZYiW7s+gaCM7NszDFh3DgWwMQiO5wcQ+o?=
- =?us-ascii?Q?utO4SSAzeSIQeH6cpvYLMnMd5AM8+fO5ohQpoDPVc8k+XM3+ELOlbCVulvY5?=
- =?us-ascii?Q?lef9Wakn69fIBsfK/kBy62rpq0QtLHCaKiYegHTZDrMlBcS4pOFgKc4DoDCw?=
- =?us-ascii?Q?iaaez7Kj6FDdeKAuhpcRV587+9Wbhn1c8sxrlk6cTmkORwJ3qj2QwmxbIGhq?=
- =?us-ascii?Q?5F4MTw7VPHJPcxB481lpDC5je+8v/PoE8810bec1mpYaou1M89srWll5bmEw?=
- =?us-ascii?Q?sCwSU8=3D?=
-X-Microsoft-Antispam-Message-Info: 2vyVzXB/gKtP7S0HWefUDWqsHOZbFutJWATJ1kvGduMRb6O8X6fMIfF6qewedRXNz4hvAJ7at7t/ZbLRaXmOplsf+tFlboJnEnURxGMgsjzUQVxiQtwuPX2Jl5JcnV72BfJDR5okDutOfL48lTFRocLzVvZBSekTiNQbuXY2qk0zj62MaXzSm6OHmZYWIfdL
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1481;6:WGUuhH6yFfeD6RBwjaHVU1toC3ls+kQlJ138rzy6Z04tBpiEv1w7mZLZvbzPD2r2HwlS/qsmiz+ELWhLdK/qk7UxA0PhVI58ehr48BR9BvpHLivQ78BfGSVXo3JqXw1jySZYiHzeRYdSvq08sWZICn3MK6umxO6r9TZ4ato2gmUE2UUQRfI7wgkDmrwbAoNFvcp3k2rgRowI8dOkUIrhjI3atSVUVB7iXu8NbtpAQUgR0pnPWS1yBvKTMF7lhfeVrYhf1OlTU5mdLsBnhzccyxTAevaTOza7OnJyaKbGIEUkZoWKaoit5+Qdu5bNHOQLo67b1Gg72bS7kLCYTa+ToLTjDtihl3uqVpxEWIz64Co=;5:+jVfjRoQWEi2uPvFMv4YhMlwLkNYj3QaL4VJdIlGr7EexJFY5arDWBKIRWGnCLAmbadC6oTPQBavPPrIUNW6KNzMedE4j1aixwmcuLD0EqogblO7Yr//sMcldqT8DZiAGuTrIPRnTjl7N287pZjKR8z9Y3kaoyEeUVtWiqzTPVo=;24:DJcN7UG4pSxDlmJhwMrT1mNU74tfw4diPMBpA58jnVNVhEBumJcO0ReVaiTy2iOiadzOkL3BLBFg2IYI92D88XtF7NqqAyl6nSOG2sOUFPw=;7:9mhpa0YCTrU9ZXVzP37sIqhCkEUTepQ3ZH9TZNrpCW1x5XJJpWoiEc58NQcrcQQh4jHo+np+1OckK08RDxWz4NAvMIxIAgBA5/5wJTyoCJFrG70qdiPd8aHInXnMqLNvMsDVN83meB45c9sr+Y0zRO1lAJLBnpcigtTq6s0Z2Ww/SvP55D0QGeG78ma4rHN3TLn/uHHE61kwBoPevdbRHuscAZCj0Tb6hGVcA3B6soYbmb5YD4yFyb5s9l8lBA5U
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB3277;23:JdcscTEODfUBRNfVKrFXbyXc/U/mNlhe5OO0yliMy?=
+ =?us-ascii?Q?o78b0qmOda/w/TYf3+JcfGsw3xpvtaHrp8SouRKehTZdMa5cN1ieEtdOx+0O?=
+ =?us-ascii?Q?MpPz2C3bAoFECh4xI2R+HCxjoycb6AYqFVa5i9lYeAxVRUr82Dj5zjwEvQQ0?=
+ =?us-ascii?Q?RCwTM5ktbkkNyBUDRkG5HnXCmhEF2dLs8gLSDWgQIQ+DT/fLB6mDW24Gz1la?=
+ =?us-ascii?Q?ARKEm+5c2Eh1YFPjbmyEXbkrClDjTd3+hmV5B77ZIrnvgxZb4er840XQgaT5?=
+ =?us-ascii?Q?320EZzRi/mhfvDfOgLb/p0ui3oQDDZ0uVHsz+GjUi/S9KtXtrSejL9sbn2G5?=
+ =?us-ascii?Q?i8ZpWF5vpS1JTvHBevdskbr3PaU/lt1dE6sWGTFWvfBONnMLlW9ilHTQLidW?=
+ =?us-ascii?Q?1ZZ4OKwovvrF/ntv2IvrehA9LTAgz8Fm0ifPCv7kKFsU9hBk+lfKnjTogUKf?=
+ =?us-ascii?Q?1Ki7lt6NcZduC2lmVe3yA2P4GzJ02K2jrOwGcw3xytrGsRgYufDjqTI8cOxi?=
+ =?us-ascii?Q?2ALo4Tf6X2mZcNYZqCLdRZVgd0rNDL0Cd4z9eGBngLpIRB+aeIfUQwJliI1j?=
+ =?us-ascii?Q?bLbWHMW/PQ/TQOBpqNue9Lns8KAReSB+WpiqtJipYpEte4C3ZeIWpZCO1yZA?=
+ =?us-ascii?Q?ozS7BtpYnUsdt8sJY4kGpTfknZq+fOe/heYTLnkAteOu2GeTSQmmUGaBnhmT?=
+ =?us-ascii?Q?FIEJH1rfRjJlIU5AsNhzWu/LznUgX+F8HCilC4/vqVpq9CK+ouzv5m2uHZhF?=
+ =?us-ascii?Q?8+XXEbfH7FTLPTgj+9G2CJpt/2RfCAgnhmbmxi7lJGWbzcIriMTEQnxFofdu?=
+ =?us-ascii?Q?zzHgFz+zHPey+7xvOfDoadUOi1I/J+JMIkDfR3yREmZT/cTckeBvN7l2J+Kc?=
+ =?us-ascii?Q?eYOCttXb0J1/vOLdDLFWnqadC0Db+7ro6HbSShBVSq1ExedFNcfESjriyrgx?=
+ =?us-ascii?Q?Dw4wu4U21AOYlwHWR9RFkiCgRIIQO6J4SDcsWASTOrkt5ycdLWM7/vQEB9TW?=
+ =?us-ascii?Q?/x9id7K+RmrIaIQx87SHmHrqyl0gB1GmSX2bpJNC6xskapI8nMM4DbGJF1rV?=
+ =?us-ascii?Q?//Z82TMzzg8bRpQcux5lZA/J/P5upvYvWNP58A73I82h3HOCgP7GCOgy4kL7?=
+ =?us-ascii?Q?sz7Ts2z+lj49gSb0rLaQhs0iolE+2TyJOGTOKL7BQxA/mvPIKRsTI2K3n85b?=
+ =?us-ascii?Q?fMiX9HnANiueWQ=3D?=
+X-Microsoft-Antispam-Message-Info: 0ilCXSkw4gCin/fIhmbuSnN5sc0AWLg8qFvsb5gnOS3d1e3Q+wUssQYLyFiBJ6VJ5KVVXwbHzozgv1Goova1ScQE7R0/ZjZm3japBNsQ/4hwVFxpCcRJkigsbCj2NEfwgUJZSEzYHUB2kTHeknEzKZf/0SYxkPekeO3fJmfuOTEirEFZ5/ApCYh5mMVHBLU2
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3277;6:SfSoV7bpeYZa+gSAWoYtQyqY2epuDO7ltZgq6dhDyzIx+IUAp7PiaYOLZ2btvx607hJewA2xQx4SaFYfhwaScljqy55SLVBdkKVAi1f2uWmaj8zaUQ+MGGlEaj9pE+YLARbJdWoM7GNkGZrV2FAenjFy/oTQr0jw+eWVLxLoTaJlhoQVPRvroHKhBDNz8NscVbRph5ajFreDSukNO2F84DPN+UTYirsDueXQpbNk4we31Jpz2u9H7h+madbzcj7e37tPCSY6n6zWP8lyVh0NMTEYjE15xi68Cdu+YXYfDOQZvWuPBwReem7pwuxvffrDhedaqH7Da7VtNQ5ibHsq7rk6YltGBCkFNl+gpj9d1oU=;5:wbBmAj0pUp4TiyK+jcrSVyLVcAgUUB4NpkuYCtcAyDt6oBilN9d47bfK9mfME/ZSzIzC8JufVT/+aX41Zh9mVgu/NjgyS+MjOyIm/58GanCNhJwP1LCi+GojJgc7NBAeDP0frwgqKmYvDvMYbfDlEv9awQx8gHx0nVFjfE0erms=;24:LClaS77SHdlbHHYLqbUs5cfWTJB92nDUDs6XB6NB3sbFg0nVv/wqd0FB92dscizRG62yQr71fbPiUaPMnQhKICVFqDFOOigOBb1daxDInJM=;7:GWDw8VCyp2hyL8skVgoQrO7dZWuZdNBwg8CaDvm85cGPhVfiaFp+cKDsZXf1i8p2GwWrmmdz6/ARqK9f/DyL3fca96kYR6C9XGQf7qUcz7u1LpiBdVYFJShg/iweyskgLN7p8xVv6Ac3u38Fb4C9oiQWpb9GIiUojn44lZXDaHY8XhgZQmuyIwRYQWsCHK3R0OGMx2nuG3JFjSVs3vMFNYZuKRJBouesJ5HhrD49mFvxGZe7QV8PlYo1FDnbma6B
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:32.5275
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:30.5481
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e37ceef5-9c74-4d0f-d3b6-08d58b0dfc7e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 961da423-fa09-486f-fe7d-08d58b0dfb38
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1481
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB3277
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin I2C bus support
+Remove Blackfin ASOC support
 ---
- drivers/i2c/busses/Kconfig        |  18 -
- drivers/i2c/busses/Makefile       |   1 -
- drivers/i2c/busses/i2c-bfin-twi.c | 737 --------------------------------------
- 3 files changed, 756 deletions(-)
- delete mode 100644 drivers/i2c/busses/i2c-bfin-twi.c
+ sound/soc/Kconfig                       |    1 -
+ sound/soc/Makefile                      |    1 -
+ sound/soc/blackfin/Kconfig              |  205 ------
+ sound/soc/blackfin/Makefile             |   40 --
+ sound/soc/blackfin/bf5xx-ac97-pcm.c     |  480 --------------
+ sound/soc/blackfin/bf5xx-ac97.c         |  388 -----------
+ sound/soc/blackfin/bf5xx-ac97.h         |   57 --
+ sound/soc/blackfin/bf5xx-ad1836.c       |  109 ---
+ sound/soc/blackfin/bf5xx-ad193x.c       |  131 ----
+ sound/soc/blackfin/bf5xx-ad1980.c       |  109 ---
+ sound/soc/blackfin/bf5xx-ad73311.c      |  212 ------
+ sound/soc/blackfin/bf5xx-i2s-pcm.c      |  373 -----------
+ sound/soc/blackfin/bf5xx-i2s-pcm.h      |   17 -
+ sound/soc/blackfin/bf5xx-i2s.c          |  391 -----------
+ sound/soc/blackfin/bf5xx-sport.c        | 1102 -------------------------------
+ sound/soc/blackfin/bf5xx-sport.h        |  174 -----
+ sound/soc/blackfin/bf5xx-ssm2602.c      |  126 ----
+ sound/soc/blackfin/bf6xx-i2s.c          |  239 -------
+ sound/soc/blackfin/bf6xx-sport.c        |  425 ------------
+ sound/soc/blackfin/bf6xx-sport.h        |   82 ---
+ sound/soc/blackfin/bfin-eval-adau1373.c |  173 -----
+ sound/soc/blackfin/bfin-eval-adau1701.c |  113 ----
+ sound/soc/blackfin/bfin-eval-adau1x61.c |  142 ----
+ sound/soc/blackfin/bfin-eval-adau1x81.c |  129 ----
+ sound/soc/blackfin/bfin-eval-adav80x.c  |  145 ----
+ 25 files changed, 5364 deletions(-)
+ delete mode 100644 sound/soc/blackfin/Kconfig
+ delete mode 100644 sound/soc/blackfin/Makefile
+ delete mode 100644 sound/soc/blackfin/bf5xx-ac97-pcm.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-ac97.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-ac97.h
+ delete mode 100644 sound/soc/blackfin/bf5xx-ad1836.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-ad193x.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-ad1980.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-ad73311.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-i2s-pcm.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-i2s-pcm.h
+ delete mode 100644 sound/soc/blackfin/bf5xx-i2s.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-sport.c
+ delete mode 100644 sound/soc/blackfin/bf5xx-sport.h
+ delete mode 100644 sound/soc/blackfin/bf5xx-ssm2602.c
+ delete mode 100644 sound/soc/blackfin/bf6xx-i2s.c
+ delete mode 100644 sound/soc/blackfin/bf6xx-sport.c
+ delete mode 100644 sound/soc/blackfin/bf6xx-sport.h
+ delete mode 100644 sound/soc/blackfin/bfin-eval-adau1373.c
+ delete mode 100644 sound/soc/blackfin/bfin-eval-adau1701.c
+ delete mode 100644 sound/soc/blackfin/bfin-eval-adau1x61.c
+ delete mode 100644 sound/soc/blackfin/bfin-eval-adau1x81.c
+ delete mode 100644 sound/soc/blackfin/bfin-eval-adav80x.c
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index e2954fb..8ffe2bc 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -445,24 +445,6 @@ config I2C_BRCMSTB
- 
- 	  If you do not need I2C interface, say N.
- 
--config I2C_BLACKFIN_TWI
--	tristate "Blackfin TWI I2C support"
--	depends on BLACKFIN
--	depends on !BF561 && !BF531 && !BF532 && !BF533
--	help
--	  This is the I2C bus driver for Blackfin on-chip TWI interface.
--
--	  This driver can also be built as a module.  If so, the module
--	  will be called i2c-bfin-twi.
--
--config I2C_BLACKFIN_TWI_CLK_KHZ
--	int "Blackfin TWI I2C clock (kHz)"
--	depends on I2C_BLACKFIN_TWI
--	range 21 400
--	default 50
--	help
--	  The unit of the TWI clock is kHz.
--
- config I2C_CADENCE
- 	tristate "Cadence I2C Controller"
- 	depends on ARCH_ZYNQ || ARM64 || XTENSA
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 2ce8576..9e475a5 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -38,7 +38,6 @@ obj-$(CONFIG_I2C_AU1550)	+= i2c-au1550.o
- obj-$(CONFIG_I2C_AXXIA)		+= i2c-axxia.o
- obj-$(CONFIG_I2C_BCM2835)	+= i2c-bcm2835.o
- obj-$(CONFIG_I2C_BCM_IPROC)	+= i2c-bcm-iproc.o
--obj-$(CONFIG_I2C_BLACKFIN_TWI)	+= i2c-bfin-twi.o
- obj-$(CONFIG_I2C_CADENCE)	+= i2c-cadence.o
- obj-$(CONFIG_I2C_CBUS_GPIO)	+= i2c-cbus-gpio.o
- obj-$(CONFIG_I2C_CPM)		+= i2c-cpm.o
-diff --git a/drivers/i2c/busses/i2c-bfin-twi.c b/drivers/i2c/busses/i2c-bfin-twi.c
+diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
+index 84c3582..41af6b9 100644
+--- a/sound/soc/Kconfig
++++ b/sound/soc/Kconfig
+@@ -45,7 +45,6 @@ source "sound/soc/amd/Kconfig"
+ source "sound/soc/atmel/Kconfig"
+ source "sound/soc/au1x/Kconfig"
+ source "sound/soc/bcm/Kconfig"
+-source "sound/soc/blackfin/Kconfig"
+ source "sound/soc/cirrus/Kconfig"
+ source "sound/soc/davinci/Kconfig"
+ source "sound/soc/dwc/Kconfig"
+diff --git a/sound/soc/Makefile b/sound/soc/Makefile
+index 74cd185..8d92492 100644
+--- a/sound/soc/Makefile
++++ b/sound/soc/Makefile
+@@ -29,7 +29,6 @@ obj-$(CONFIG_SND_SOC)	+= amd/
+ obj-$(CONFIG_SND_SOC)	+= atmel/
+ obj-$(CONFIG_SND_SOC)	+= au1x/
+ obj-$(CONFIG_SND_SOC)	+= bcm/
+-obj-$(CONFIG_SND_SOC)	+= blackfin/
+ obj-$(CONFIG_SND_SOC)	+= cirrus/
+ obj-$(CONFIG_SND_SOC)	+= davinci/
+ obj-$(CONFIG_SND_SOC)	+= dwc/
+diff --git a/sound/soc/blackfin/Kconfig b/sound/soc/blackfin/Kconfig
 deleted file mode 100644
-index ff33431..0000000
---- a/drivers/i2c/busses/i2c-bfin-twi.c
+index 6410aa2..0000000
+--- a/sound/soc/blackfin/Kconfig
 +++ /dev/null
-@@ -1,737 +0,0 @@
+@@ -1,205 +0,0 @@
+-config SND_BF5XX_I2S
+-	tristate "SoC I2S Audio for the ADI Blackfin chip"
+-	depends on BLACKFIN
+-	select SND_BF5XX_SOC_SPORT if !BF60x
+-	select SND_BF6XX_SOC_SPORT if BF60x
+-	help
+-	  Say Y or M if you want to add support for codecs attached to
+-	  the Blackfin SPORT (synchronous serial ports) interface in I2S
+-	  mode (supports single stereo In/Out).
+-	  You will also need to select the audio interfaces to support below.
+-
+-config SND_BF5XX_SOC_SSM2602
+-	tristate "SoC SSM2602 Audio Codec Add-On Card support"
+-	depends on SND_BF5XX_I2S && SND_SOC_I2C_AND_SPI
+-	select SND_BF5XX_SOC_I2S if !BF60x
+-	select SND_BF6XX_SOC_I2S if BF60x
+-	select SND_SOC_SSM2602_SPI if SPI_MASTER
+-	select SND_SOC_SSM2602_I2C if I2C
+-	help
+-	  Say Y if you want to add support for the Analog Devices
+-	  SSM2602 Audio Codec Add-On Card.
+-
+-config SND_SOC_BFIN_EVAL_ADAU1701
+-	tristate "Support for the EVAL-ADAU1701MINIZ board on Blackfin eval boards"
+-	depends on SND_BF5XX_I2S && I2C
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_ADAU1701
+-	help
+-	  Say Y if you want to add support for the Analog Devices EVAL-ADAU1701MINIZ
+-	  board connected to one of the Blackfin evaluation boards like the
+-	  BF5XX-STAMP or BF5XX-EZKIT.
+-
+-config SND_SOC_BFIN_EVAL_ADAU1373
+-	tristate "Support for the EVAL-ADAU1373 board on Blackfin eval boards"
+-	depends on SND_BF5XX_I2S && I2C
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_ADAU1373
+-	help
+-	  Say Y if you want to add support for the Analog Devices EVAL-ADAU1373
+-	  board connected to one of the Blackfin evaluation boards like the
+-	  BF5XX-STAMP or BF5XX-EZKIT.
+-
+-	  Note: This driver assumes that first ADAU1373 DAI is connected to the
+-	  first SPORT port on the BF5XX board.
+-
+-config SND_SOC_BFIN_EVAL_ADAU1X61
+-	tristate "Support for the EVAL-ADAU1X61 board on Blackfin eval boards"
+-	depends on SND_BF5XX_I2S && I2C
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_ADAU1761_I2C
+-	help
+-	  Say Y if you want to add support for the Analog Devices EVAL-ADAU1X61
+-	  board connected to one of the Blackfin evaluation boards like the
+-	  BF5XX-STAMP or BF5XX-EZKIT.
+-
+-	  Note: This driver assumes that the ADAU1X61 is connected to the
+-	  first SPORT port on the BF5XX board.
+-
+-config SND_SOC_BFIN_EVAL_ADAU1X81
+-	tristate "Support for the EVAL-ADAU1X81 boards on Blackfin eval boards"
+-	depends on SND_BF5XX_I2S && I2C
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_ADAU1781_I2C
+-	help
+-	  Say Y if you want to add support for the Analog Devices EVAL-ADAU1X81
+-	  board connected to one of the Blackfin evaluation boards like the
+-	  BF5XX-STAMP or BF5XX-EZKIT.
+-
+-	  Note: This driver assumes that the ADAU1X81 is connected to the
+-	  first SPORT port on the BF5XX board.
+-
+-config SND_SOC_BFIN_EVAL_ADAV80X
+-	tristate "Support for the EVAL-ADAV80X boards on Blackfin eval boards"
+-	depends on SND_BF5XX_I2S && SND_SOC_I2C_AND_SPI
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_ADAV801 if SPI_MASTER
+-	select SND_SOC_ADAV803 if I2C
+-	help
+-	  Say Y if you want to add support for the Analog Devices EVAL-ADAV801 or
+-	  EVAL-ADAV803 board connected to one of the Blackfin evaluation boards
+-	  like the BF5XX-STAMP or BF5XX-EZKIT.
+-
+-	  Note: This driver assumes that the ADAV80X digital record and playback
+-	  interfaces are connected to the first SPORT port on the BF5XX board.
+-
+-config SND_BF5XX_SOC_AD1836
+-	tristate "SoC AD1836 Audio support for BF5xx"
+-	depends on SND_BF5XX_I2S && SPI_MASTER
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_AD1836
+-	help
+-	  Say Y if you want to add support for SoC audio on BF5xx STAMP/EZKIT.
+-
+-config SND_BF5XX_SOC_AD193X
+-	tristate "SoC AD193X Audio support for Blackfin"
+-	depends on SND_BF5XX_I2S && SND_SOC_I2C_AND_SPI
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_AD193X_I2C if I2C
+-	select SND_SOC_AD193X_SPI if SPI_MASTER
+-	help
+-	  Say Y if you want to add support for AD193X codec on Blackfin.
+-	  This driver supports AD1936, AD1937, AD1938 and AD1939.
+-
+-config SND_BF5XX_SOC_AD73311
+-	tristate "SoC AD73311 Audio support for Blackfin"
+-	depends on SND_BF5XX_I2S
+-	select SND_BF5XX_SOC_I2S
+-	select SND_SOC_AD73311
+-	help
+-	  Say Y if you want to add support for AD73311 codec on Blackfin.
+-
+-config SND_BFIN_AD73311_SE
+-	int "PF pin for AD73311L Chip Select"
+-	depends on SND_BF5XX_SOC_AD73311
+-	default 4
+-	help
+-	  Enter the GPIO used to control AD73311's SE pin. Acceptable
+-	  values are 0 to 7
+-
+-config SND_BF5XX_AC97
+-	tristate "SoC AC97 Audio for the ADI BF5xx chip"
+-	depends on BLACKFIN
+-	select AC97_BUS
+-	select SND_SOC_AC97_BUS
+-	select SND_BF5XX_SOC_SPORT
+-	select SND_BF5XX_SOC_AC97
+-	help
+-	  Say Y or M if you want to add support for codecs attached to
+-	  the Blackfin SPORT (synchronous serial ports) interface in slot 16
+-	  mode (pseudo AC97 interface).
+-	  You will also need to select the audio interfaces to support below.
+-
+-	  Note:
+-	  AC97 codecs which do not implement the slot-16 mode will not function
+-	  properly with this driver. This driver is known to work with the
+-	  Analog Devices line of AC97 codecs.
+-
+-config SND_BF5XX_MMAP_SUPPORT
+-	bool "Enable MMAP Support"
+-	depends on SND_BF5XX_AC97
+-	default y
+-	help
+-	  Say y if you want AC97 driver to support mmap mode.
+-	  We introduce an intermediate buffer to simulate mmap.
+-
+-config SND_BF5XX_MULTICHAN_SUPPORT
+-	bool "Enable Multichannel Support"
+-	depends on SND_BF5XX_AC97
+-	default n
+-	help
+-	  Say y if you want AC97 driver to support up to 5.1 channel audio.
+-	  this mode will consume much more memory for DMA.
+-
+-config SND_BF5XX_HAVE_COLD_RESET
+-	bool "BOARD has COLD Reset GPIO"
+-	depends on SND_BF5XX_AC97
+-	default y if BFIN548_EZKIT
+-	default n if !BFIN548_EZKIT
+-
+-config SND_BF5XX_RESET_GPIO_NUM
+-	int "Set a GPIO for cold reset"
+-	depends on SND_BF5XX_HAVE_COLD_RESET
+-	range 0 159
+-	default 19 if BFIN548_EZKIT
+-	default 5 if BFIN537_STAMP
+-	default 0
+-	help
+-	  Set the correct GPIO for RESET the sound chip.
+-
+-config SND_BF5XX_SOC_AD1980
+-	tristate "SoC AD1980/1 Audio support for BF5xx (Obsolete)"
+-	depends on SND_BF5XX_AC97
+-	select SND_BF5XX_SOC_AC97
+-	select SND_SOC_AD1980
+-	help
+-	  Say Y if you want to add support for SoC audio on BF5xx STAMP/EZKIT.
+-
+-	  Warning:
+-	  Because Analog Devices Inc. discontinued the ad1980 sound chip since
+-	  Sep. 2009, this ad1980 driver is not maintained, tested and supported
+-	  by ADI now.
+-
+-config SND_BF5XX_SOC_SPORT
+-	tristate
+-
+-config SND_BF6XX_SOC_SPORT
+-	tristate
+-
+-config SND_BF5XX_SOC_I2S
+-	tristate
+-
+-config SND_BF6XX_SOC_I2S
+-	tristate
+-
+-config SND_BF5XX_SOC_AC97
+-	tristate
+-
+-config SND_BF5XX_SPORT_NUM
+-	int "Set a SPORT for Sound chip"
+-	depends on (SND_BF5XX_SOC_SPORT || SND_BF6XX_SOC_SPORT)
+-	range 0 3 if BF54x
+-	range 0 1 if !BF54x
+-	default 0
+-	help
+-	  Set the correct SPORT for sound chip.
+diff --git a/sound/soc/blackfin/Makefile b/sound/soc/blackfin/Makefile
+deleted file mode 100644
+index ebeb6a9..0000000
+--- a/sound/soc/blackfin/Makefile
++++ /dev/null
+@@ -1,40 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-# Blackfin Platform Support
+-snd-bf5xx-ac97-objs := bf5xx-ac97-pcm.o
+-snd-bf5xx-i2s-objs := bf5xx-i2s-pcm.o
+-snd-soc-bf5xx-sport-objs := bf5xx-sport.o
+-snd-soc-bf6xx-sport-objs := bf6xx-sport.o
+-snd-soc-bf5xx-ac97-objs := bf5xx-ac97.o
+-snd-soc-bf5xx-i2s-objs := bf5xx-i2s.o
+-snd-soc-bf6xx-i2s-objs := bf6xx-i2s.o
+-
+-obj-$(CONFIG_SND_BF5XX_AC97) += snd-bf5xx-ac97.o
+-obj-$(CONFIG_SND_BF5XX_I2S) += snd-bf5xx-i2s.o
+-obj-$(CONFIG_SND_BF5XX_SOC_SPORT) += snd-soc-bf5xx-sport.o
+-obj-$(CONFIG_SND_BF6XX_SOC_SPORT) += snd-soc-bf6xx-sport.o
+-obj-$(CONFIG_SND_BF5XX_SOC_AC97) += snd-soc-bf5xx-ac97.o
+-obj-$(CONFIG_SND_BF5XX_SOC_I2S) += snd-soc-bf5xx-i2s.o
+-obj-$(CONFIG_SND_BF6XX_SOC_I2S) += snd-soc-bf6xx-i2s.o
+-
+-# Blackfin Machine Support
+-snd-ad1836-objs := bf5xx-ad1836.o
+-snd-ad1980-objs := bf5xx-ad1980.o
+-snd-ssm2602-objs := bf5xx-ssm2602.o
+-snd-ad73311-objs := bf5xx-ad73311.o
+-snd-ad193x-objs := bf5xx-ad193x.o
+-snd-soc-bfin-eval-adau1373-objs := bfin-eval-adau1373.o
+-snd-soc-bfin-eval-adau1x61-objs := bfin-eval-adau1x61.o
+-snd-soc-bfin-eval-adau1x81-objs := bfin-eval-adau1x81.o
+-snd-soc-bfin-eval-adau1701-objs := bfin-eval-adau1701.o
+-snd-soc-bfin-eval-adav80x-objs := bfin-eval-adav80x.o
+-
+-obj-$(CONFIG_SND_BF5XX_SOC_AD1836) += snd-ad1836.o
+-obj-$(CONFIG_SND_BF5XX_SOC_AD1980) += snd-ad1980.o
+-obj-$(CONFIG_SND_BF5XX_SOC_SSM2602) += snd-ssm2602.o
+-obj-$(CONFIG_SND_BF5XX_SOC_AD73311) += snd-ad73311.o
+-obj-$(CONFIG_SND_BF5XX_SOC_AD193X) += snd-ad193x.o
+-obj-$(CONFIG_SND_SOC_BFIN_EVAL_ADAU1373) += snd-soc-bfin-eval-adau1373.o
+-obj-$(CONFIG_SND_SOC_BFIN_EVAL_ADAU1X61) += snd-soc-bfin-eval-adau1x61.o
+-obj-$(CONFIG_SND_SOC_BFIN_EVAL_ADAU1X81) += snd-soc-bfin-eval-adau1x81.o
+-obj-$(CONFIG_SND_SOC_BFIN_EVAL_ADAU1701) += snd-soc-bfin-eval-adau1701.o
+-obj-$(CONFIG_SND_SOC_BFIN_EVAL_ADAV80X) += snd-soc-bfin-eval-adav80x.o
+diff --git a/sound/soc/blackfin/bf5xx-ac97-pcm.c b/sound/soc/blackfin/bf5xx-ac97-pcm.c
+deleted file mode 100644
+index 8c1d198..0000000
+--- a/sound/soc/blackfin/bf5xx-ac97-pcm.c
++++ /dev/null
+@@ -1,480 +0,0 @@
 -/*
-- * Blackfin On-Chip Two Wire Interface Driver
+- * File:         sound/soc/blackfin/bf5xx-ac97-pcm.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
 - *
-- * Copyright 2005-2007 Analog Devices Inc.
+- * Created:      Tue June 06 2008
+- * Description:  DMA Driver for AC97 sound chip
 - *
-- * Enter bugs at http://blackfin.uclinux.org/
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/gfp.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/pcm_params.h>
+-#include <sound/soc.h>
+-
+-#include <asm/dma.h>
+-
+-#include "bf5xx-ac97.h"
+-#include "bf5xx-sport.h"
+-
+-static unsigned int ac97_chan_mask[] = {
+-	SP_FL, /* Mono */
+-	SP_STEREO, /* Stereo */
+-	SP_2DOT1, /* 2.1*/
+-	SP_QUAD,/*Quadraquic*/
+-	SP_FL | SP_FR | SP_FC | SP_SL | SP_SR,/*5 channels */
+-	SP_5DOT1, /* 5.1 */
+-};
+-
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-static void bf5xx_mmap_copy(struct snd_pcm_substream *substream,
+-	 snd_pcm_uframes_t count)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	unsigned int chan_mask = ac97_chan_mask[runtime->channels - 1];
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		bf5xx_pcm_to_ac97((struct ac97_frame *)sport->tx_dma_buf +
+-		sport->tx_pos, (__u16 *)runtime->dma_area + sport->tx_pos *
+-		runtime->channels, count, chan_mask);
+-		sport->tx_pos += runtime->period_size;
+-		if (sport->tx_pos >= runtime->buffer_size)
+-			sport->tx_pos %= runtime->buffer_size;
+-		sport->tx_delay_pos = sport->tx_pos;
+-	} else {
+-		bf5xx_ac97_to_pcm((struct ac97_frame *)sport->rx_dma_buf +
+-		sport->rx_pos, (__u16 *)runtime->dma_area + sport->rx_pos *
+-		runtime->channels, count);
+-		sport->rx_pos += runtime->period_size;
+-		if (sport->rx_pos >= runtime->buffer_size)
+-			sport->rx_pos %= runtime->buffer_size;
+-	}
+-}
+-#endif
+-
+-static void bf5xx_dma_irq(void *data)
+-{
+-	struct snd_pcm_substream *pcm = data;
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	struct snd_pcm_runtime *runtime = pcm->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	bf5xx_mmap_copy(pcm, runtime->period_size);
+-	if (pcm->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		if (sport->once == 0) {
+-			snd_pcm_period_elapsed(pcm);
+-			bf5xx_mmap_copy(pcm, runtime->period_size);
+-			sport->once = 1;
+-		}
+-	}
+-#endif
+-	snd_pcm_period_elapsed(pcm);
+-}
+-
+-/* The memory size for pure pcm data is 128*1024 = 0x20000 bytes.
+- * The total rx/tx buffer is for ac97 frame to hold all pcm data
+- * is  0x20000 * sizeof(struct ac97_frame) / 4.
+- */
+-static const struct snd_pcm_hardware bf5xx_pcm_hardware = {
+-	.info			= SNDRV_PCM_INFO_INTERLEAVED |
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-				   SNDRV_PCM_INFO_MMAP |
+-				   SNDRV_PCM_INFO_MMAP_VALID |
+-#endif
+-				   SNDRV_PCM_INFO_BLOCK_TRANSFER,
+-
+-	.period_bytes_min	= 32,
+-	.period_bytes_max	= 0x10000,
+-	.periods_min		= 1,
+-	.periods_max		= PAGE_SIZE/32,
+-	.buffer_bytes_max	= 0x20000, /* 128 kbytes */
+-	.fifo_size		= 16,
+-};
+-
+-static int bf5xx_pcm_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
+-{
+-	size_t size = bf5xx_pcm_hardware.buffer_bytes_max
+-			* sizeof(struct ac97_frame) / 4;
+-
+-	snd_pcm_lib_malloc_pages(substream, size);
+-
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_hw_free(struct snd_pcm_substream *substream)
+-{
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		sport->once = 0;
+-		if (runtime->dma_area)
+-			memset(runtime->dma_area, 0, runtime->buffer_size);
+-		memset(sport->tx_dma_buf, 0, runtime->buffer_size *
+-			sizeof(struct ac97_frame));
+-	} else
+-		memset(sport->rx_dma_buf, 0, runtime->buffer_size *
+-			sizeof(struct ac97_frame));
+-#endif
+-	snd_pcm_lib_free_pages(substream);
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_prepare(struct snd_pcm_substream *substream)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-
+-	/* An intermediate buffer is introduced for implementing mmap for
+-	 * SPORT working in TMD mode(include AC97).
+-	 */
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		sport_set_tx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_tx_dma(sport, sport->tx_dma_buf, runtime->periods,
+-			runtime->period_size * sizeof(struct ac97_frame));
+-	} else {
+-		sport_set_rx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_rx_dma(sport, sport->rx_dma_buf, runtime->periods,
+-			runtime->period_size * sizeof(struct ac97_frame));
+-	}
+-#else
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		sport_set_tx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_tx_dma(sport, runtime->dma_area, runtime->periods,
+-			runtime->period_size * sizeof(struct ac97_frame));
+-	} else {
+-		sport_set_rx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_rx_dma(sport, runtime->dma_area, runtime->periods,
+-			runtime->period_size * sizeof(struct ac97_frame));
+-	}
+-#endif
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	int ret = 0;
+-
+-	pr_debug("%s enter\n", __func__);
+-	switch (cmd) {
+-	case SNDRV_PCM_TRIGGER_START:
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-			bf5xx_mmap_copy(substream, runtime->period_size);
+-			sport->tx_delay_pos = 0;
+-#endif
+-			sport_tx_start(sport);
+-		} else
+-			sport_rx_start(sport);
+-		break;
+-	case SNDRV_PCM_TRIGGER_STOP:
+-	case SNDRV_PCM_TRIGGER_SUSPEND:
+-	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-			sport->tx_pos = 0;
+-#endif
+-			sport_tx_stop(sport);
+-		} else {
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-			sport->rx_pos = 0;
+-#endif
+-			sport_rx_stop(sport);
+-		}
+-		break;
+-	default:
+-		ret = -EINVAL;
+-	}
+-	return ret;
+-}
+-
+-static snd_pcm_uframes_t bf5xx_pcm_pointer(struct snd_pcm_substream *substream)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	unsigned int curr;
+-
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		curr = sport->tx_delay_pos;
+-	else
+-		curr = sport->rx_pos;
+-#else
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		curr = sport_curr_offset_tx(sport) / sizeof(struct ac97_frame);
+-	else
+-		curr = sport_curr_offset_rx(sport) / sizeof(struct ac97_frame);
+-
+-#endif
+-	return curr;
+-}
+-
+-static int bf5xx_pcm_open(struct snd_pcm_substream *substream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(cpu_dai);
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	snd_soc_set_runtime_hwparams(substream, &bf5xx_pcm_hardware);
+-
+-	ret = snd_pcm_hw_constraint_integer(runtime,
+-					    SNDRV_PCM_HW_PARAM_PERIODS);
+-	if (ret < 0)
+-		goto out;
+-
+-	if (sport_handle != NULL)
+-		runtime->private_data = sport_handle;
+-	else {
+-		pr_err("sport_handle is NULL\n");
+-		return -1;
+-	}
+-	return 0;
+-
+- out:
+-	return ret;
+-}
+-
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-static int bf5xx_pcm_mmap(struct snd_pcm_substream *substream,
+-	struct vm_area_struct *vma)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	size_t size = vma->vm_end - vma->vm_start;
+-	vma->vm_start = (unsigned long)runtime->dma_area;
+-	vma->vm_end = vma->vm_start + size;
+-	vma->vm_flags |=  VM_SHARED;
+-	return 0 ;
+-}
+-#else
+-static	int bf5xx_pcm_copy(struct snd_pcm_substream *substream,
+-			   int channel, unsigned long pos,
+-			   void *buf, unsigned long count)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	unsigned int chan_mask = ac97_chan_mask[runtime->channels - 1];
+-	struct ac97_frame *dst;
+-
+-	pr_debug("%s copy pos:0x%lx count:0x%lx\n",
+-			substream->stream ? "Capture" : "Playback", pos, count);
+-	dst = (struct ac97_frame *)runtime->dma_area +
+-		bytes_to_frames(runtime, pos);
+-	count = bytes_to_frames(runtime, count);
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		bf5xx_pcm_to_ac97(dst, buf, count, chan_mask);
+-	else
+-		bf5xx_ac97_to_pcm(dst, buf, count);
+-	return 0;
+-}
+-
+-static	int bf5xx_pcm_copy_user(struct snd_pcm_substream *substream,
+-				int channel, unsigned long pos,
+-				void __user *buf, unsigned long count)
+-{
+-	return bf5xx_pcm_copy(substream, channel, pos, (void *)buf, count);
+-}
+-#endif
+-
+-static const struct snd_pcm_ops bf5xx_pcm_ac97_ops = {
+-	.open		= bf5xx_pcm_open,
+-	.ioctl		= snd_pcm_lib_ioctl,
+-	.hw_params	= bf5xx_pcm_hw_params,
+-	.hw_free	= bf5xx_pcm_hw_free,
+-	.prepare	= bf5xx_pcm_prepare,
+-	.trigger	= bf5xx_pcm_trigger,
+-	.pointer	= bf5xx_pcm_pointer,
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	.mmap		= bf5xx_pcm_mmap,
+-#else
+-	.copy_user	= bf5xx_pcm_copy_user,
+-	.copy_kernel	= bf5xx_pcm_copy,
+-#endif
+-};
+-
+-static int bf5xx_pcm_preallocate_dma_buffer(struct snd_pcm *pcm, int stream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = pcm->private_data;
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(cpu_dai);
+-	struct snd_pcm_substream *substream = pcm->streams[stream].substream;
+-	struct snd_dma_buffer *buf = &substream->dma_buffer;
+-	size_t size = bf5xx_pcm_hardware.buffer_bytes_max
+-			* sizeof(struct ac97_frame) / 4;
+-
+-	buf->dev.type = SNDRV_DMA_TYPE_DEV;
+-	buf->dev.dev = pcm->card->dev;
+-	buf->private_data = NULL;
+-	buf->area = dma_alloc_coherent(pcm->card->dev, size,
+-			&buf->addr, GFP_KERNEL);
+-	if (!buf->area) {
+-		pr_err("Failed to allocate dma memory\n");
+-		pr_err("Please increase uncached DMA memory region\n");
+-		return -ENOMEM;
+-	}
+-	buf->bytes = size;
+-
+-	pr_debug("%s, area:%p, size:0x%08lx\n", __func__,
+-			buf->area, buf->bytes);
+-
+-	if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		sport_handle->tx_buf = buf->area;
+-	else
+-		sport_handle->rx_buf = buf->area;
+-
+-/*
+- * Need to allocate local buffer when enable
+- * MMAP for SPORT working in TMD mode (include AC97).
+- */
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		if (!sport_handle->tx_dma_buf) {
+-			sport_handle->tx_dma_buf = dma_alloc_coherent(NULL, \
+-				size, &sport_handle->tx_dma_phy, GFP_KERNEL);
+-			if (!sport_handle->tx_dma_buf) {
+-				pr_err("Failed to allocate memory for tx dma buf - Please increase uncached DMA memory region\n");
+-				return -ENOMEM;
+-			} else
+-				memset(sport_handle->tx_dma_buf, 0, size);
+-		} else
+-			memset(sport_handle->tx_dma_buf, 0, size);
+-	} else {
+-		if (!sport_handle->rx_dma_buf) {
+-			sport_handle->rx_dma_buf = dma_alloc_coherent(NULL, \
+-				size, &sport_handle->rx_dma_phy, GFP_KERNEL);
+-			if (!sport_handle->rx_dma_buf) {
+-				pr_err("Failed to allocate memory for rx dma buf - Please increase uncached DMA memory region\n");
+-				return -ENOMEM;
+-			} else
+-				memset(sport_handle->rx_dma_buf, 0, size);
+-		} else
+-			memset(sport_handle->rx_dma_buf, 0, size);
+-	}
+-#endif
+-	return 0;
+-}
+-
+-static void bf5xx_pcm_free_dma_buffers(struct snd_pcm *pcm)
+-{
+-	struct snd_pcm_substream *substream;
+-	struct snd_dma_buffer *buf;
+-	int stream;
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	struct snd_soc_pcm_runtime *rtd = pcm->private_data;
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(cpu_dai);
+-	size_t size = bf5xx_pcm_hardware.buffer_bytes_max *
+-		sizeof(struct ac97_frame) / 4;
+-#endif
+-	for (stream = 0; stream < 2; stream++) {
+-		substream = pcm->streams[stream].substream;
+-		if (!substream)
+-			continue;
+-
+-		buf = &substream->dma_buffer;
+-		if (!buf->area)
+-			continue;
+-		dma_free_coherent(NULL, buf->bytes, buf->area, 0);
+-		buf->area = NULL;
+-#if defined(CONFIG_SND_BF5XX_MMAP_SUPPORT)
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		if (sport_handle->tx_dma_buf)
+-			dma_free_coherent(NULL, size, \
+-				sport_handle->tx_dma_buf, 0);
+-		sport_handle->tx_dma_buf = NULL;
+-	} else {
+-
+-		if (sport_handle->rx_dma_buf)
+-			dma_free_coherent(NULL, size, \
+-				sport_handle->rx_dma_buf, 0);
+-		sport_handle->rx_dma_buf = NULL;
+-	}
+-#endif
+-	}
+-}
+-
+-static int bf5xx_pcm_ac97_new(struct snd_soc_pcm_runtime *rtd)
+-{
+-	struct snd_card *card = rtd->card->snd_card;
+-	struct snd_pcm *pcm = rtd->pcm;
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	ret = dma_coerce_mask_and_coherent(card->dev, DMA_BIT_MASK(32));
+-	if (ret)
+-		return ret;
+-
+-	if (pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream) {
+-		ret = bf5xx_pcm_preallocate_dma_buffer(pcm,
+-			SNDRV_PCM_STREAM_PLAYBACK);
+-		if (ret)
+-			goto out;
+-	}
+-
+-	if (pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream) {
+-		ret = bf5xx_pcm_preallocate_dma_buffer(pcm,
+-			SNDRV_PCM_STREAM_CAPTURE);
+-		if (ret)
+-			goto out;
+-	}
+- out:
+-	return ret;
+-}
+-
+-static struct snd_soc_platform_driver bf5xx_ac97_soc_platform = {
+-	.ops			= &bf5xx_pcm_ac97_ops,
+-	.pcm_new	= bf5xx_pcm_ac97_new,
+-	.pcm_free	= bf5xx_pcm_free_dma_buffers,
+-};
+-
+-static int bf5xx_soc_platform_probe(struct platform_device *pdev)
+-{
+-	return devm_snd_soc_register_platform(&pdev->dev,
+-					      &bf5xx_ac97_soc_platform);
+-}
+-
+-static struct platform_driver bf5xx_pcm_driver = {
+-	.driver = {
+-			.name = "bfin-ac97-pcm-audio",
+-	},
+-
+-	.probe = bf5xx_soc_platform_probe,
+-};
+-
+-module_platform_driver(bf5xx_pcm_driver);
+-
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("ADI Blackfin AC97 PCM DMA module");
+-MODULE_LICENSE("GPL");
+diff --git a/sound/soc/blackfin/bf5xx-ac97.c b/sound/soc/blackfin/bf5xx-ac97.c
+deleted file mode 100644
+index a040cfe..0000000
+--- a/sound/soc/blackfin/bf5xx-ac97.c
++++ /dev/null
+@@ -1,388 +0,0 @@
+-/*
+- * bf5xx-ac97.c -- AC97 support for the ADI blackfin chip.
+- *
+- * Author:	Roy Huang
+- * Created:	11th. June 2007
+- * Copyright:	Analog Device Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/interrupt.h>
+-#include <linux/wait.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/ac97_codec.h>
+-#include <sound/initval.h>
+-#include <sound/soc.h>
+-
+-#include <asm/irq.h>
+-#include <asm/portmux.h>
+-#include <linux/mutex.h>
+-#include <linux/gpio.h>
+-
+-#include "bf5xx-sport.h"
+-#include "bf5xx-ac97.h"
+-
+-/* Anomaly notes:
+- *  05000250 -	AD1980 is running in TDM mode and RFS/TFS are generated by SPORT
+- *		contrtoller. But, RFSDIV and TFSDIV are always set to 16*16-1,
+- *		while the max AC97 data size is 13*16. The DIV is always larger
+- *		than data size. AD73311 and ad2602 are not running in TDM mode.
+- *		AD1836 and AD73322 depend on external RFS/TFS only. So, this
+- *		anomaly does not affect blackfin sound drivers.
+-*/
+-
+-static struct sport_device *ac97_sport_handle;
+-
+-void bf5xx_pcm_to_ac97(struct ac97_frame *dst, const __u16 *src,
+-		size_t count, unsigned int chan_mask)
+-{
+-	while (count--) {
+-		dst->ac97_tag = TAG_VALID;
+-		if (chan_mask & SP_FL) {
+-			dst->ac97_pcm_r = *src++;
+-			dst->ac97_tag |= TAG_PCM_RIGHT;
+-		}
+-		if (chan_mask & SP_FR) {
+-			dst->ac97_pcm_l = *src++;
+-			dst->ac97_tag |= TAG_PCM_LEFT;
+-
+-		}
+-#if defined(CONFIG_SND_BF5XX_MULTICHAN_SUPPORT)
+-		if (chan_mask & SP_SR) {
+-			dst->ac97_sl = *src++;
+-			dst->ac97_tag |= TAG_PCM_SL;
+-		}
+-		if (chan_mask & SP_SL) {
+-			dst->ac97_sr = *src++;
+-			dst->ac97_tag |= TAG_PCM_SR;
+-		}
+-		if (chan_mask & SP_LFE) {
+-			dst->ac97_lfe = *src++;
+-			dst->ac97_tag |= TAG_PCM_LFE;
+-		}
+-		if (chan_mask & SP_FC) {
+-			dst->ac97_center = *src++;
+-			dst->ac97_tag |= TAG_PCM_CENTER;
+-		}
+-#endif
+-		dst++;
+-	}
+-}
+-EXPORT_SYMBOL(bf5xx_pcm_to_ac97);
+-
+-void bf5xx_ac97_to_pcm(const struct ac97_frame *src, __u16 *dst,
+-		size_t count)
+-{
+-	while (count--) {
+-		*(dst++) = src->ac97_pcm_l;
+-		*(dst++) = src->ac97_pcm_r;
+-		src++;
+-	}
+-}
+-EXPORT_SYMBOL(bf5xx_ac97_to_pcm);
+-
+-static unsigned int sport_tx_curr_frag(struct sport_device *sport)
+-{
+-	return sport->tx_curr_frag = sport_curr_offset_tx(sport) /
+-			sport->tx_fragsize;
+-}
+-
+-static void enqueue_cmd(struct snd_ac97 *ac97, __u16 addr, __u16 data)
+-{
+-	struct sport_device *sport = ac97_sport_handle;
+-	int *cmd_count = sport->private_data;
+-	int nextfrag = sport_tx_curr_frag(sport);
+-	struct ac97_frame *nextwrite;
+-
+-	sport_incfrag(sport, &nextfrag, 1);
+-
+-	nextwrite = (struct ac97_frame *)(sport->tx_buf +
+-			nextfrag * sport->tx_fragsize);
+-	pr_debug("sport->tx_buf:%p, nextfrag:0x%x nextwrite:%p, cmd_count:%d\n",
+-		sport->tx_buf, nextfrag, nextwrite, cmd_count[nextfrag]);
+-	nextwrite[cmd_count[nextfrag]].ac97_tag |= TAG_CMD;
+-	nextwrite[cmd_count[nextfrag]].ac97_addr = addr;
+-	nextwrite[cmd_count[nextfrag]].ac97_data = data;
+-	++cmd_count[nextfrag];
+-	pr_debug("ac97_sport: Inserting %02x/%04x into fragment %d\n",
+-			addr >> 8, data, nextfrag);
+-}
+-
+-static unsigned short bf5xx_ac97_read(struct snd_ac97 *ac97,
+-	unsigned short reg)
+-{
+-	struct sport_device *sport_handle = ac97_sport_handle;
+-	struct ac97_frame out_frame[2], in_frame[2];
+-
+-	pr_debug("%s enter 0x%x\n", __func__, reg);
+-
+-	/* When dma descriptor is enabled, the register should not be read */
+-	if (sport_handle->tx_run || sport_handle->rx_run) {
+-		pr_err("Could you send a mail to cliff.cai@analog.com "
+-				"to report this?\n");
+-		return -EFAULT;
+-	}
+-
+-	memset(&out_frame, 0, 2 * sizeof(struct ac97_frame));
+-	memset(&in_frame, 0, 2 * sizeof(struct ac97_frame));
+-	out_frame[0].ac97_tag = TAG_VALID | TAG_CMD;
+-	out_frame[0].ac97_addr = ((reg << 8) | 0x8000);
+-	sport_send_and_recv(sport_handle, (unsigned char *)&out_frame,
+-			(unsigned char *)&in_frame,
+-			2 * sizeof(struct ac97_frame));
+-	return in_frame[1].ac97_data;
+-}
+-
+-void bf5xx_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
+-	unsigned short val)
+-{
+-	struct sport_device *sport_handle = ac97_sport_handle;
+-
+-	pr_debug("%s enter 0x%x:0x%04x\n", __func__, reg, val);
+-
+-	if (sport_handle->tx_run) {
+-		enqueue_cmd(ac97, (reg << 8), val); /* write */
+-		enqueue_cmd(ac97, (reg << 8) | 0x8000, 0); /* read back */
+-	} else {
+-		struct ac97_frame frame;
+-		memset(&frame, 0, sizeof(struct ac97_frame));
+-		frame.ac97_tag = TAG_VALID | TAG_CMD;
+-		frame.ac97_addr = (reg << 8);
+-		frame.ac97_data = val;
+-		sport_send_and_recv(sport_handle, (unsigned char *)&frame, \
+-				NULL, sizeof(struct ac97_frame));
+-	}
+-}
+-
+-static void bf5xx_ac97_warm_reset(struct snd_ac97 *ac97)
+-{
+-	struct sport_device *sport_handle = ac97_sport_handle;
+-	u16 gpio = P_IDENT(sport_handle->pin_req[3]);
+-
+-	pr_debug("%s enter\n", __func__);
+-
+-	peripheral_free_list(sport_handle->pin_req);
+-	gpio_request(gpio, "bf5xx-ac97");
+-	gpio_direction_output(gpio, 1);
+-	udelay(2);
+-	gpio_set_value(gpio, 0);
+-	udelay(1);
+-	gpio_free(gpio);
+-	peripheral_request_list(sport_handle->pin_req, "soc-audio");
+-}
+-
+-static void bf5xx_ac97_cold_reset(struct snd_ac97 *ac97)
+-{
+-#ifdef CONFIG_SND_BF5XX_HAVE_COLD_RESET
+-	pr_debug("%s enter\n", __func__);
+-
+-	/* It is specified for bf548-ezkit */
+-	gpio_set_value(CONFIG_SND_BF5XX_RESET_GPIO_NUM, 0);
+-	/* Keep reset pin low for 1 ms */
+-	mdelay(1);
+-	gpio_set_value(CONFIG_SND_BF5XX_RESET_GPIO_NUM, 1);
+-	/* Wait for bit clock recover */
+-	mdelay(1);
+-#else
+-	pr_info("%s: Not implemented\n", __func__);
+-#endif
+-}
+-
+-static struct snd_ac97_bus_ops bf5xx_ac97_ops = {
+-	.read	= bf5xx_ac97_read,
+-	.write	= bf5xx_ac97_write,
+-	.warm_reset	= bf5xx_ac97_warm_reset,
+-	.reset	= bf5xx_ac97_cold_reset,
+-};
+-
+-#ifdef CONFIG_PM
+-static int bf5xx_ac97_suspend(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(dai);
+-
+-	pr_debug("%s : sport %d\n", __func__, dai->id);
+-	if (!dai->active)
+-		return 0;
+-	if (dai->capture_active)
+-		sport_rx_stop(sport);
+-	if (dai->playback_active)
+-		sport_tx_stop(sport);
+-	return 0;
+-}
+-
+-static int bf5xx_ac97_resume(struct snd_soc_dai *dai)
+-{
+-	int ret;
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(dai);
+-
+-	pr_debug("%s : sport %d\n", __func__, dai->id);
+-	if (!dai->active)
+-		return 0;
+-
+-#if defined(CONFIG_SND_BF5XX_MULTICHAN_SUPPORT)
+-	ret = sport_set_multichannel(sport, 16, 0x3FF, 0x3FF, 1);
+-#else
+-	ret = sport_set_multichannel(sport, 16, 0x1F, 0x1F, 1);
+-#endif
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		return -EBUSY;
+-	}
+-
+-	ret = sport_config_rx(sport, IRFS, 0xF, 0, (16*16-1));
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		return -EBUSY;
+-	}
+-
+-	ret = sport_config_tx(sport, ITFS, 0xF, 0, (16*16-1));
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		return -EBUSY;
+-	}
+-
+-	return 0;
+-}
+-
+-#else
+-#define bf5xx_ac97_suspend	NULL
+-#define bf5xx_ac97_resume	NULL
+-#endif
+-
+-static struct snd_soc_dai_driver bfin_ac97_dai = {
+-	.bus_control = true,
+-	.suspend = bf5xx_ac97_suspend,
+-	.resume = bf5xx_ac97_resume,
+-	.playback = {
+-		.stream_name = "AC97 Playback",
+-		.channels_min = 2,
+-#if defined(CONFIG_SND_BF5XX_MULTICHAN_SUPPORT)
+-		.channels_max = 6,
+-#else
+-		.channels_max = 2,
+-#endif
+-		.rates = SNDRV_PCM_RATE_48000,
+-		.formats = SNDRV_PCM_FMTBIT_S16_LE, },
+-	.capture = {
+-		.stream_name = "AC97 Capture",
+-		.channels_min = 2,
+-		.channels_max = 2,
+-		.rates = SNDRV_PCM_RATE_48000,
+-		.formats = SNDRV_PCM_FMTBIT_S16_LE, },
+-};
+-
+-static const struct snd_soc_component_driver bfin_ac97_component = {
+-	.name		= "bfin-ac97",
+-};
+-
+-static int asoc_bfin_ac97_probe(struct platform_device *pdev)
+-{
+-	struct sport_device *sport_handle;
+-	int ret;
+-
+-#ifdef CONFIG_SND_BF5XX_HAVE_COLD_RESET
+-	/* Request PB3 as reset pin */
+-	ret = devm_gpio_request_one(&pdev->dev,
+-				    CONFIG_SND_BF5XX_RESET_GPIO_NUM,
+-				    GPIOF_OUT_INIT_HIGH, "SND_AD198x RESET");
+-	if (ret) {
+-		dev_err(&pdev->dev,
+-			"Failed to request GPIO_%d for reset: %d\n",
+-			CONFIG_SND_BF5XX_RESET_GPIO_NUM, ret);
+-		return ret;
+-	}
+-#endif
+-
+-	sport_handle = sport_init(pdev, 2, sizeof(struct ac97_frame),
+-		PAGE_SIZE);
+-	if (!sport_handle) {
+-		ret = -ENODEV;
+-		goto sport_err;
+-	}
+-
+-	/*SPORT works in TDM mode to simulate AC97 transfers*/
+-#if defined(CONFIG_SND_BF5XX_MULTICHAN_SUPPORT)
+-	ret = sport_set_multichannel(sport_handle, 16, 0x3FF, 0x3FF, 1);
+-#else
+-	ret = sport_set_multichannel(sport_handle, 16, 0x1F, 0x1F, 1);
+-#endif
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		ret = -EBUSY;
+-		goto sport_config_err;
+-	}
+-
+-	ret = sport_config_rx(sport_handle, IRFS, 0xF, 0, (16*16-1));
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		ret = -EBUSY;
+-		goto sport_config_err;
+-	}
+-
+-	ret = sport_config_tx(sport_handle, ITFS, 0xF, 0, (16*16-1));
+-	if (ret) {
+-		pr_err("SPORT is busy!\n");
+-		ret = -EBUSY;
+-		goto sport_config_err;
+-	}
+-
+-	ret = snd_soc_set_ac97_ops(&bf5xx_ac97_ops);
+-	if (ret != 0) {
+-		dev_err(&pdev->dev, "Failed to set AC'97 ops: %d\n", ret);
+-		goto sport_config_err;
+-	}
+-
+-	ret = snd_soc_register_component(&pdev->dev, &bfin_ac97_component,
+-					 &bfin_ac97_dai, 1);
+-	if (ret) {
+-		pr_err("Failed to register DAI: %d\n", ret);
+-		goto sport_config_err;
+-	}
+-
+-	ac97_sport_handle = sport_handle;
+-
+-	return 0;
+-
+-sport_config_err:
+-	sport_done(sport_handle);
+-sport_err:
+-	snd_soc_set_ac97_ops(NULL);
+-
+-	return ret;
+-}
+-
+-static int asoc_bfin_ac97_remove(struct platform_device *pdev)
+-{
+-	struct sport_device *sport_handle = platform_get_drvdata(pdev);
+-
+-	snd_soc_unregister_component(&pdev->dev);
+-	sport_done(sport_handle);
+-	snd_soc_set_ac97_ops(NULL);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver asoc_bfin_ac97_driver = {
+-	.driver = {
+-			.name = "bfin-ac97",
+-	},
+-
+-	.probe = asoc_bfin_ac97_probe,
+-	.remove = asoc_bfin_ac97_remove,
+-};
+-
+-module_platform_driver(asoc_bfin_ac97_driver);
+-
+-MODULE_AUTHOR("Roy Huang");
+-MODULE_DESCRIPTION("AC97 driver for ADI Blackfin");
+-MODULE_LICENSE("GPL");
+diff --git a/sound/soc/blackfin/bf5xx-ac97.h b/sound/soc/blackfin/bf5xx-ac97.h
+deleted file mode 100644
+index a680fdc..0000000
+--- a/sound/soc/blackfin/bf5xx-ac97.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/*
+- * sound/soc/blackfin/bf5xx-ac97.h
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef _BF5XX_AC97_H
+-#define _BF5XX_AC97_H
+-
+-/* Frame format in memory, only support stereo currently */
+-struct ac97_frame {
+-	u16 ac97_tag;		/* slot 0 */
+-	u16 ac97_addr;		/* slot 1 */
+-	u16 ac97_data;		/* slot 2 */
+-	u16 ac97_pcm_l;		/*slot 3:front left*/
+-	u16 ac97_pcm_r;		/*slot 4:front left*/
+-#if defined(CONFIG_SND_BF5XX_MULTICHAN_SUPPORT)
+-	u16 ac97_mdm_l1;
+-	u16 ac97_center;	/*slot 6:center*/
+-	u16 ac97_sl;		/*slot 7:surround left*/
+-	u16 ac97_sr;		/*slot 8:surround right*/
+-	u16 ac97_lfe;		/*slot 9:lfe*/
+-#endif
+-} __attribute__ ((packed));
+-
+-/* Speaker location */
+-#define SP_FL		0x0001
+-#define SP_FR		0x0010
+-#define SP_FC		0x0002
+-#define SP_LFE		0x0020
+-#define SP_SL		0x0004
+-#define SP_SR		0x0040
+-
+-#define SP_STEREO	(SP_FL | SP_FR)
+-#define SP_2DOT1	(SP_FL | SP_FR | SP_LFE)
+-#define SP_QUAD		(SP_FL | SP_FR | SP_SL | SP_SR)
+-#define SP_5DOT1	(SP_FL | SP_FR | SP_FC | SP_LFE | SP_SL | SP_SR)
+-
+-#define TAG_VALID		0x8000
+-#define TAG_CMD			0x6000
+-#define TAG_PCM_LEFT		0x1000
+-#define TAG_PCM_RIGHT		0x0800
+-#define TAG_PCM_MDM_L1		0x0400
+-#define TAG_PCM_CENTER		0x0200
+-#define TAG_PCM_SL		0x0100
+-#define TAG_PCM_SR		0x0080
+-#define TAG_PCM_LFE		0x0040
+-
+-void bf5xx_pcm_to_ac97(struct ac97_frame *dst, const __u16 *src, \
+-		size_t count, unsigned int chan_mask);
+-
+-void bf5xx_ac97_to_pcm(const struct ac97_frame *src, __u16 *dst, \
+-		size_t count);
+-
+-#endif
+diff --git a/sound/soc/blackfin/bf5xx-ad1836.c b/sound/soc/blackfin/bf5xx-ad1836.c
+deleted file mode 100644
+index 864df26..0000000
+--- a/sound/soc/blackfin/bf5xx-ad1836.c
++++ /dev/null
+@@ -1,109 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-ad1836.c
+- * Author:       Barry Song <Barry.Song@analog.com>
+- *
+- * Created:      Aug 4 2009
+- * Description:  Board driver for ad1836 sound chip
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- */
+-
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include <asm/blackfin.h>
+-#include <asm/cacheflush.h>
+-#include <asm/irq.h>
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-
+-#include "../codecs/ad1836.h"
+-
+-static struct snd_soc_card bf5xx_ad1836;
+-
+-static int bf5xx_ad1836_init(struct snd_soc_pcm_runtime *rtd)
+-{
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	unsigned int channel_map[] = {0, 4, 1, 5, 2, 6, 3, 7};
+-	int ret = 0;
+-
+-	/* set cpu DAI channel mapping */
+-	ret = snd_soc_dai_set_channel_map(cpu_dai, ARRAY_SIZE(channel_map),
+-		channel_map, ARRAY_SIZE(channel_map), channel_map);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0xFF, 0xFF, 8, 32);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-#define BF5XX_AD1836_DAIFMT (SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_IB_IF | \
+-				SND_SOC_DAIFMT_CBM_CFM)
+-
+-static struct snd_soc_dai_link bf5xx_ad1836_dai = {
+-	.name = "ad1836",
+-	.stream_name = "AD1836",
+-	.codec_dai_name = "ad1836-hifi",
+-	.platform_name = "bfin-i2s-pcm-audio",
+-	.dai_fmt = BF5XX_AD1836_DAIFMT,
+-	.init = bf5xx_ad1836_init,
+-};
+-
+-static struct snd_soc_card bf5xx_ad1836 = {
+-	.name = "bfin-ad1836",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bf5xx_ad1836_dai,
+-	.num_links = 1,
+-};
+-
+-static int bf5xx_ad1836_driver_probe(struct platform_device *pdev)
+-{
+-	struct snd_soc_card *card = &bf5xx_ad1836;
+-	const char **link_name;
+-	int ret;
+-
+-	link_name = pdev->dev.platform_data;
+-	if (!link_name) {
+-		dev_err(&pdev->dev, "No platform data supplied\n");
+-		return -EINVAL;
+-	}
+-	bf5xx_ad1836_dai.cpu_dai_name = link_name[0];
+-	bf5xx_ad1836_dai.codec_name = link_name[1];
+-
+-	card->dev = &pdev->dev;
+-	platform_set_drvdata(pdev, card);
+-
+-	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret)
+-		dev_err(&pdev->dev, "Failed to register card\n");
+-	return ret;
+-}
+-
+-static struct platform_driver bf5xx_ad1836_driver = {
+-	.driver = {
+-		.name = "bfin-snd-ad1836",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bf5xx_ad1836_driver_probe,
+-};
+-module_platform_driver(bf5xx_ad1836_driver);
+-
+-/* Module information */
+-MODULE_AUTHOR("Barry Song");
+-MODULE_DESCRIPTION("ALSA SoC AD1836 board driver");
+-MODULE_LICENSE("GPL");
+-
+diff --git a/sound/soc/blackfin/bf5xx-ad193x.c b/sound/soc/blackfin/bf5xx-ad193x.c
+deleted file mode 100644
+index 603ad1f..0000000
+--- a/sound/soc/blackfin/bf5xx-ad193x.c
++++ /dev/null
+@@ -1,131 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-ad193x.c
+- * Author:       Barry Song <Barry.Song@analog.com>
+- *
+- * Created:      Thur June 4 2009
+- * Description:  Board driver for ad193x sound chip
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include <asm/blackfin.h>
+-#include <asm/cacheflush.h>
+-#include <asm/irq.h>
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-
+-#include "../codecs/ad193x.h"
+-
+-static struct snd_soc_card bf5xx_ad193x;
+-
+-static int bf5xx_ad193x_link_init(struct snd_soc_pcm_runtime *rtd)
+-{
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int ret;
+-
+-	/* set the codec system clock for DAC and ADC */
+-	ret = snd_soc_dai_set_sysclk(codec_dai, 0, 24576000, SND_SOC_CLOCK_IN);
+-	if (ret < 0)
+-		return ret;
+-
+-	/* set codec DAI slots, 8 channels, all channels are enabled */
+-	ret = snd_soc_dai_set_tdm_slot(codec_dai, 0xFF, 0xFF, 8, 32);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0xFF, 0xFF, 8, 32);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-#define BF5XX_AD193X_DAIFMT (SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_IB_IF | \
+-				SND_SOC_DAIFMT_CBM_CFM)
+-
+-static struct snd_soc_dai_link bf5xx_ad193x_dai[] = {
+-	{
+-		.name = "ad193x",
+-		.stream_name = "AD193X",
+-		.cpu_dai_name = "bfin-i2s.0",
+-		.codec_dai_name ="ad193x-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "spi0.5",
+-		.dai_fmt = BF5XX_AD193X_DAIFMT,
+-		.init = bf5xx_ad193x_link_init,
+-	},
+-	{
+-		.name = "ad193x",
+-		.stream_name = "AD193X",
+-		.cpu_dai_name = "bfin-i2s.1",
+-		.codec_dai_name ="ad193x-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "spi0.5",
+-		.dai_fmt = BF5XX_AD193X_DAIFMT,
+-		.init = bf5xx_ad193x_link_init,
+-	},
+-};
+-
+-static struct snd_soc_card bf5xx_ad193x = {
+-	.name = "bfin-ad193x",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bf5xx_ad193x_dai[CONFIG_SND_BF5XX_SPORT_NUM],
+-	.num_links = 1,
+-};
+-
+-static struct platform_device *bfxx_ad193x_snd_device;
+-
+-static int __init bf5xx_ad193x_init(void)
+-{
+-	int ret;
+-
+-	bfxx_ad193x_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!bfxx_ad193x_snd_device)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(bfxx_ad193x_snd_device, &bf5xx_ad193x);
+-	ret = platform_device_add(bfxx_ad193x_snd_device);
+-
+-	if (ret)
+-		platform_device_put(bfxx_ad193x_snd_device);
+-
+-	return ret;
+-}
+-
+-static void __exit bf5xx_ad193x_exit(void)
+-{
+-	platform_device_unregister(bfxx_ad193x_snd_device);
+-}
+-
+-module_init(bf5xx_ad193x_init);
+-module_exit(bf5xx_ad193x_exit);
+-
+-/* Module information */
+-MODULE_AUTHOR("Barry Song");
+-MODULE_DESCRIPTION("ALSA SoC AD193X board driver");
+-MODULE_LICENSE("GPL");
+-
+diff --git a/sound/soc/blackfin/bf5xx-ad1980.c b/sound/soc/blackfin/bf5xx-ad1980.c
+deleted file mode 100644
+index 0fa81a5..0000000
+--- a/sound/soc/blackfin/bf5xx-ad1980.c
++++ /dev/null
+@@ -1,109 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-ad1980.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
+- *
+- * Created:      Tue June 06 2008
+- * Description:  Board driver for AD1980/1 audio codec
+- *
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-/*
+- * WARNING:
+- *
+- * Because Analog Devices Inc. discontinued the ad1980 sound chip since
+- * Sep. 2009, this ad1980 driver is not maintained, tested and supported
+- * by ADI now.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <asm/dma.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-
+-#include <linux/gpio.h>
+-#include <asm/portmux.h>
+-
+-#include "bf5xx-ac97.h"
+-
+-static struct snd_soc_card bf5xx_board;
+-
+-static struct snd_soc_dai_link bf5xx_board_dai[] = {
+-	{
+-		.name = "AC97",
+-		.stream_name = "AC97 HiFi",
+-		.cpu_dai_name = "bfin-ac97.0",
+-		.codec_dai_name = "ad1980-hifi",
+-		.platform_name = "bfin-ac97-pcm-audio",
+-		.codec_name = "ad1980",
+-	},
+-	{
+-		.name = "AC97",
+-		.stream_name = "AC97 HiFi",
+-		.cpu_dai_name = "bfin-ac97.1",
+-		.codec_dai_name = "ad1980-hifi",
+-		.platform_name = "bfin-ac97-pcm-audio",
+-		.codec_name = "ad1980",
+-	},
+-};
+-
+-static struct snd_soc_card bf5xx_board = {
+-	.name = "bfin-ad1980",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bf5xx_board_dai[CONFIG_SND_BF5XX_SPORT_NUM],
+-	.num_links = 1,
+-};
+-
+-static struct platform_device *bf5xx_board_snd_device;
+-
+-static int __init bf5xx_board_init(void)
+-{
+-	int ret;
+-
+-	bf5xx_board_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!bf5xx_board_snd_device)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(bf5xx_board_snd_device, &bf5xx_board);
+-	ret = platform_device_add(bf5xx_board_snd_device);
+-
+-	if (ret)
+-		platform_device_put(bf5xx_board_snd_device);
+-
+-	return ret;
+-}
+-
+-static void __exit bf5xx_board_exit(void)
+-{
+-	platform_device_unregister(bf5xx_board_snd_device);
+-}
+-
+-module_init(bf5xx_board_init);
+-module_exit(bf5xx_board_exit);
+-
+-/* Module information */
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("ALSA SoC AD1980/1 BF5xx board (Obsolete)");
+-MODULE_LICENSE("GPL");
+diff --git a/sound/soc/blackfin/bf5xx-ad73311.c b/sound/soc/blackfin/bf5xx-ad73311.c
+deleted file mode 100644
+index 786bbdd..0000000
+--- a/sound/soc/blackfin/bf5xx-ad73311.c
++++ /dev/null
+@@ -1,212 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-ad73311.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
+- *
+- * Created:      Thur Sep 25 2008
+- * Description:  Board driver for ad73311 sound chip
+- *
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <linux/delay.h>
+-#include <linux/gpio.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include <asm/blackfin.h>
+-#include <asm/cacheflush.h>
+-#include <asm/irq.h>
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-
+-#include "../codecs/ad73311.h"
+-#include "bf5xx-sport.h"
+-
+-#if CONFIG_SND_BF5XX_SPORT_NUM == 0
+-#define bfin_write_SPORT_TCR1	bfin_write_SPORT0_TCR1
+-#define bfin_read_SPORT_TCR1	bfin_read_SPORT0_TCR1
+-#define bfin_write_SPORT_TCR2	bfin_write_SPORT0_TCR2
+-#define bfin_write_SPORT_TX16	bfin_write_SPORT0_TX16
+-#define bfin_read_SPORT_STAT	bfin_read_SPORT0_STAT
+-#else
+-#define bfin_write_SPORT_TCR1	bfin_write_SPORT1_TCR1
+-#define bfin_read_SPORT_TCR1	bfin_read_SPORT1_TCR1
+-#define bfin_write_SPORT_TCR2	bfin_write_SPORT1_TCR2
+-#define bfin_write_SPORT_TX16	bfin_write_SPORT1_TX16
+-#define bfin_read_SPORT_STAT	bfin_read_SPORT1_STAT
+-#endif
+-
+-#define GPIO_SE CONFIG_SND_BFIN_AD73311_SE
+-
+-static struct snd_soc_card bf5xx_ad73311;
+-
+-static int snd_ad73311_startup(void)
+-{
+-	pr_debug("%s enter\n", __func__);
+-
+-	/* Pull up SE pin on AD73311L */
+-	gpio_set_value(GPIO_SE, 1);
+-	return 0;
+-}
+-
+-static int snd_ad73311_configure(void)
+-{
+-	unsigned short ctrl_regs[6];
+-	unsigned short status = 0;
+-	int count = 0;
+-
+-	/* DMCLK = MCLK = 16.384 MHz
+-	 * SCLK = DMCLK/8 = 2.048 MHz
+-	 * Sample Rate = DMCLK/2048  = 8 KHz
+-	 */
+-	ctrl_regs[0] = AD_CONTROL | AD_WRITE | CTRL_REG_B | REGB_MCDIV(0) | \
+-			REGB_SCDIV(0) | REGB_DIRATE(0);
+-	ctrl_regs[1] = AD_CONTROL | AD_WRITE | CTRL_REG_C | REGC_PUDEV | \
+-			REGC_PUADC | REGC_PUDAC | REGC_PUREF | REGC_REFUSE ;
+-	ctrl_regs[2] = AD_CONTROL | AD_WRITE | CTRL_REG_D | REGD_OGS(2) | \
+-			REGD_IGS(2);
+-	ctrl_regs[3] = AD_CONTROL | AD_WRITE | CTRL_REG_E | REGE_DA(0x1f);
+-	ctrl_regs[4] = AD_CONTROL | AD_WRITE | CTRL_REG_F | REGF_SEEN ;
+-	ctrl_regs[5] = AD_CONTROL | AD_WRITE | CTRL_REG_A | REGA_MODE_DATA;
+-
+-	local_irq_disable();
+-	snd_ad73311_startup();
+-	udelay(1);
+-
+-	bfin_write_SPORT_TCR1(TFSR);
+-	bfin_write_SPORT_TCR2(0xF);
+-	SSYNC();
+-
+-	/* SPORT Tx Register is a 8 x 16 FIFO, all the data can be put to
+-	 * FIFO before enable SPORT to transfer the data
+-	 */
+-	for (count = 0; count < 6; count++)
+-		bfin_write_SPORT_TX16(ctrl_regs[count]);
+-	SSYNC();
+-	bfin_write_SPORT_TCR1(bfin_read_SPORT_TCR1() | TSPEN);
+-	SSYNC();
+-
+-	/* When TUVF is set, the data is already send out */
+-	while (!(status & TUVF) && ++count < 10000) {
+-		udelay(1);
+-		status = bfin_read_SPORT_STAT();
+-		SSYNC();
+-	}
+-	bfin_write_SPORT_TCR1(bfin_read_SPORT_TCR1() & ~TSPEN);
+-	SSYNC();
+-	local_irq_enable();
+-
+-	if (count >= 10000) {
+-		printk(KERN_ERR "ad73311: failed to configure codec\n");
+-		return -1;
+-	}
+-	return 0;
+-}
+-
+-static int bf5xx_probe(struct snd_soc_card *card)
+-{
+-	int err;
+-	if (gpio_request(GPIO_SE, "AD73311_SE")) {
+-		printk(KERN_ERR "%s: Failed ro request GPIO_%d\n", __func__, GPIO_SE);
+-		return -EBUSY;
+-	}
+-
+-	gpio_direction_output(GPIO_SE, 0);
+-
+-	err = snd_ad73311_configure();
+-	if (err < 0)
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-#define BF5XX_AD7311_DAI_FMT (SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_NB_NF | \
+-				SND_SOC_DAIFMT_CBM_CFM)
+-
+-static struct snd_soc_dai_link bf5xx_ad73311_dai[] = {
+-	{
+-		.name = "ad73311",
+-		.stream_name = "AD73311",
+-		.cpu_dai_name = "bfin-i2s.0",
+-		.codec_dai_name = "ad73311-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "ad73311",
+-		.dai_fmt = BF5XX_AD7311_DAI_FMT,
+-	},
+-	{
+-		.name = "ad73311",
+-		.stream_name = "AD73311",
+-		.cpu_dai_name = "bfin-i2s.1",
+-		.codec_dai_name = "ad73311-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "ad73311",
+-		.dai_fmt = BF5XX_AD7311_DAI_FMT,
+-	},
+-};
+-
+-static struct snd_soc_card bf5xx_ad73311 = {
+-	.name = "bfin-ad73311",
+-	.owner = THIS_MODULE,
+-	.probe = bf5xx_probe,
+-	.dai_link = &bf5xx_ad73311_dai[CONFIG_SND_BF5XX_SPORT_NUM],
+-	.num_links = 1,
+-};
+-
+-static struct platform_device *bf5xx_ad73311_snd_device;
+-
+-static int __init bf5xx_ad73311_init(void)
+-{
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	bf5xx_ad73311_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!bf5xx_ad73311_snd_device)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(bf5xx_ad73311_snd_device, &bf5xx_ad73311);
+-	ret = platform_device_add(bf5xx_ad73311_snd_device);
+-
+-	if (ret)
+-		platform_device_put(bf5xx_ad73311_snd_device);
+-
+-	return ret;
+-}
+-
+-static void __exit bf5xx_ad73311_exit(void)
+-{
+-	pr_debug("%s enter\n", __func__);
+-	platform_device_unregister(bf5xx_ad73311_snd_device);
+-}
+-
+-module_init(bf5xx_ad73311_init);
+-module_exit(bf5xx_ad73311_exit);
+-
+-/* Module information */
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("ALSA SoC AD73311 Blackfin");
+-MODULE_LICENSE("GPL");
+-
+diff --git a/sound/soc/blackfin/bf5xx-i2s-pcm.c b/sound/soc/blackfin/bf5xx-i2s-pcm.c
+deleted file mode 100644
+index 51cae76..0000000
+--- a/sound/soc/blackfin/bf5xx-i2s-pcm.c
++++ /dev/null
+@@ -1,373 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-i2s-pcm.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
+- *
+- * Created:      Tue June 06 2008
+- * Description:  DMA driver for i2s codec
+- *
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/gfp.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/pcm_params.h>
+-#include <sound/soc.h>
+-
+-#include <asm/dma.h>
+-
+-#include "bf5xx-sport.h"
+-#include "bf5xx-i2s-pcm.h"
+-
+-static void bf5xx_dma_irq(void *data)
+-{
+-	struct snd_pcm_substream *pcm = data;
+-	snd_pcm_period_elapsed(pcm);
+-}
+-
+-static const struct snd_pcm_hardware bf5xx_pcm_hardware = {
+-	.info			= SNDRV_PCM_INFO_INTERLEAVED |
+-				   SNDRV_PCM_INFO_MMAP_VALID |
+-				   SNDRV_PCM_INFO_BLOCK_TRANSFER,
+-	.period_bytes_min	= 32,
+-	.period_bytes_max	= 0x10000,
+-	.periods_min		= 1,
+-	.periods_max		= PAGE_SIZE/32,
+-	.buffer_bytes_max	= 0x20000, /* 128 kbytes */
+-	.fifo_size		= 16,
+-};
+-
+-static int bf5xx_pcm_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	unsigned int buffer_size = params_buffer_bytes(params);
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	if (dma_data->tdm_mode)
+-		buffer_size = buffer_size / params_channels(params) * 8;
+-
+-	return snd_pcm_lib_malloc_pages(substream, buffer_size);
+-}
+-
+-static int bf5xx_pcm_hw_free(struct snd_pcm_substream *substream)
+-{
+-	snd_pcm_lib_free_pages(substream);
+-
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_prepare(struct snd_pcm_substream *substream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	int period_bytes = frames_to_bytes(runtime, runtime->period_size);
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	if (dma_data->tdm_mode)
+-		period_bytes = period_bytes / runtime->channels * 8;
+-
+-	pr_debug("%s enter\n", __func__);
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		sport_set_tx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_tx_dma(sport, runtime->dma_area,
+-			runtime->periods, period_bytes);
+-	} else {
+-		sport_set_rx_callback(sport, bf5xx_dma_irq, substream);
+-		sport_config_rx_dma(sport, runtime->dma_area,
+-			runtime->periods, period_bytes);
+-	}
+-
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	int ret = 0;
+-
+-	pr_debug("%s enter\n", __func__);
+-	switch (cmd) {
+-	case SNDRV_PCM_TRIGGER_START:
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			sport_tx_start(sport);
+-		else
+-			sport_rx_start(sport);
+-		break;
+-	case SNDRV_PCM_TRIGGER_STOP:
+-	case SNDRV_PCM_TRIGGER_SUSPEND:
+-	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			sport_tx_stop(sport);
+-		else
+-			sport_rx_stop(sport);
+-		break;
+-	default:
+-		ret = -EINVAL;
+-	}
+-
+-	return ret;
+-}
+-
+-static snd_pcm_uframes_t bf5xx_pcm_pointer(struct snd_pcm_substream *substream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct sport_device *sport = runtime->private_data;
+-	unsigned int diff;
+-	snd_pcm_uframes_t frames;
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	pr_debug("%s enter\n", __func__);
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		diff = sport_curr_offset_tx(sport);
+-	} else {
+-		diff = sport_curr_offset_rx(sport);
+-	}
+-
+-	/*
+-	 * TX at least can report one frame beyond the end of the
+-	 * buffer if we hit the wraparound case - clamp to within the
+-	 * buffer as the ALSA APIs require.
+-	 */
+-	if (diff == snd_pcm_lib_buffer_bytes(substream))
+-		diff = 0;
+-
+-	frames = bytes_to_frames(substream->runtime, diff);
+-	if (dma_data->tdm_mode)
+-		frames = frames * runtime->channels / 8;
+-
+-	return frames;
+-}
+-
+-static int bf5xx_pcm_open(struct snd_pcm_substream *substream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(cpu_dai);
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct snd_dma_buffer *buf = &substream->dma_buffer;
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-	int ret;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	pr_debug("%s enter\n", __func__);
+-
+-	snd_soc_set_runtime_hwparams(substream, &bf5xx_pcm_hardware);
+-	if (dma_data->tdm_mode)
+-		runtime->hw.buffer_bytes_max /= 4;
+-	else
+-		runtime->hw.info |= SNDRV_PCM_INFO_MMAP;
+-
+-	ret = snd_pcm_hw_constraint_integer(runtime,
+-			SNDRV_PCM_HW_PARAM_PERIODS);
+-	if (ret < 0)
+-		goto out;
+-
+-	if (sport_handle != NULL) {
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			sport_handle->tx_buf = buf->area;
+-		else
+-			sport_handle->rx_buf = buf->area;
+-
+-		runtime->private_data = sport_handle;
+-	} else {
+-		pr_err("sport_handle is NULL\n");
+-		return -1;
+-	}
+-	return 0;
+-
+- out:
+-	return ret;
+-}
+-
+-static int bf5xx_pcm_mmap(struct snd_pcm_substream *substream,
+-	struct vm_area_struct *vma)
+-{
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	size_t size = vma->vm_end - vma->vm_start;
+-	vma->vm_start = (unsigned long)runtime->dma_area;
+-	vma->vm_end = vma->vm_start + size;
+-	vma->vm_flags |=  VM_SHARED;
+-
+-	return 0 ;
+-}
+-
+-static int bf5xx_pcm_copy(struct snd_pcm_substream *substream,
+-			  int channel, unsigned long pos,
+-			  void *buf, unsigned long count)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	unsigned int sample_size = runtime->sample_bits / 8;
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-	unsigned int i;
+-	void *src, *dst;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	if (dma_data->tdm_mode) {
+-		pos = bytes_to_frames(runtime, pos);
+-		count = bytes_to_frames(runtime, count);
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-			src = buf;
+-			dst = runtime->dma_area;
+-			dst += pos * sample_size * 8;
+-
+-			while (count--) {
+-				for (i = 0; i < runtime->channels; i++) {
+-					memcpy(dst + dma_data->map[i] *
+-						sample_size, src, sample_size);
+-					src += sample_size;
+-				}
+-				dst += 8 * sample_size;
+-			}
+-		} else {
+-			src = runtime->dma_area;
+-			src += pos * sample_size * 8;
+-			dst = buf;
+-
+-			while (count--) {
+-				for (i = 0; i < runtime->channels; i++) {
+-					memcpy(dst, src + dma_data->map[i] *
+-						sample_size, sample_size);
+-					dst += sample_size;
+-				}
+-				src += 8 * sample_size;
+-			}
+-		}
+-	} else {
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-			src = buf;
+-			dst = runtime->dma_area;
+-			dst += pos;
+-		} else {
+-			src = runtime->dma_area;
+-			src += pos;
+-			dst = buf;
+-		}
+-
+-		memcpy(dst, src, count);
+-	}
+-
+-	return 0;
+-}
+-
+-static int bf5xx_pcm_copy_user(struct snd_pcm_substream *substream,
+-			       int channel, unsigned long pos,
+-			       void __user *buf, unsigned long count)
+-{
+-	return bf5xx_pcm_copy(substream, channel, pos, (void *)buf, count);
+-}
+-
+-static int bf5xx_pcm_silence(struct snd_pcm_substream *substream,
+-			     int channel, unsigned long pos,
+-			     unsigned long count)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	unsigned int sample_size = runtime->sample_bits / 8;
+-	void *buf = runtime->dma_area;
+-	struct bf5xx_i2s_pcm_data *dma_data;
+-	unsigned int offset, samples;
+-
+-	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-
+-	if (dma_data->tdm_mode) {
+-		offset = bytes_to_frames(runtime, pos) * 8 * sample_size;
+-		samples = bytes_to_frames(runtime, count) * 8;
+-	} else {
+-		offset = pos;
+-		samples = bytes_to_samples(runtime, count);
+-	}
+-
+-	snd_pcm_format_set_silence(runtime->format, buf + offset, samples);
+-
+-	return 0;
+-}
+-
+-static const struct snd_pcm_ops bf5xx_pcm_i2s_ops = {
+-	.open		= bf5xx_pcm_open,
+-	.ioctl		= snd_pcm_lib_ioctl,
+-	.hw_params	= bf5xx_pcm_hw_params,
+-	.hw_free	= bf5xx_pcm_hw_free,
+-	.prepare	= bf5xx_pcm_prepare,
+-	.trigger	= bf5xx_pcm_trigger,
+-	.pointer	= bf5xx_pcm_pointer,
+-	.mmap		= bf5xx_pcm_mmap,
+-	.copy_user	= bf5xx_pcm_copy_user,
+-	.copy_kernel	= bf5xx_pcm_copy,
+-	.fill_silence	= bf5xx_pcm_silence,
+-};
+-
+-static int bf5xx_pcm_i2s_new(struct snd_soc_pcm_runtime *rtd)
+-{
+-	struct snd_card *card = rtd->card->snd_card;
+-	size_t size = bf5xx_pcm_hardware.buffer_bytes_max;
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	ret = dma_coerce_mask_and_coherent(card->dev, DMA_BIT_MASK(32));
+-	if (ret)
+-		return ret;
+-
+-	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
+-				SNDRV_DMA_TYPE_DEV, card->dev, size, size);
+-}
+-
+-static struct snd_soc_platform_driver bf5xx_i2s_soc_platform = {
+-	.ops		= &bf5xx_pcm_i2s_ops,
+-	.pcm_new	= bf5xx_pcm_i2s_new,
+-};
+-
+-static int bfin_i2s_soc_platform_probe(struct platform_device *pdev)
+-{
+-	return devm_snd_soc_register_platform(&pdev->dev,
+-					      &bf5xx_i2s_soc_platform);
+-}
+-
+-static struct platform_driver bfin_i2s_pcm_driver = {
+-	.driver = {
+-		.name = "bfin-i2s-pcm-audio",
+-	},
+-
+-	.probe = bfin_i2s_soc_platform_probe,
+-};
+-
+-module_platform_driver(bfin_i2s_pcm_driver);
+-
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("ADI Blackfin I2S PCM DMA module");
+-MODULE_LICENSE("GPL");
+diff --git a/sound/soc/blackfin/bf5xx-i2s-pcm.h b/sound/soc/blackfin/bf5xx-i2s-pcm.h
+deleted file mode 100644
+index 1f04352..0000000
+--- a/sound/soc/blackfin/bf5xx-i2s-pcm.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef _BF5XX_TDM_PCM_H
+-#define _BF5XX_TDM_PCM_H
+-
+-#define BFIN_TDM_DAI_MAX_SLOTS 8
+-
+-struct bf5xx_i2s_pcm_data {
+-	unsigned int map[BFIN_TDM_DAI_MAX_SLOTS];
+-	bool tdm_mode;
+-};
+-
+-#endif
+diff --git a/sound/soc/blackfin/bf5xx-i2s.c b/sound/soc/blackfin/bf5xx-i2s.c
+deleted file mode 100644
+index b69aeef..0000000
+--- a/sound/soc/blackfin/bf5xx-i2s.c
++++ /dev/null
+@@ -1,391 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-i2s.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
+- *
+- * Created:      Tue June 06 2008
+- * Description:  Blackfin I2S CPU DAI driver
+- *
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/device.h>
+-#include <linux/delay.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/pcm_params.h>
+-#include <sound/initval.h>
+-#include <sound/soc.h>
+-
+-#include <asm/irq.h>
+-#include <asm/portmux.h>
+-#include <linux/mutex.h>
+-#include <linux/gpio.h>
+-
+-#include "bf5xx-sport.h"
+-#include "bf5xx-i2s-pcm.h"
+-
+-struct bf5xx_i2s_port {
+-	u16 tcr1;
+-	u16 rcr1;
+-	u16 tcr2;
+-	u16 rcr2;
+-	int configured;
+-
+-	unsigned int slots;
+-	unsigned int tx_mask;
+-	unsigned int rx_mask;
+-
+-	struct bf5xx_i2s_pcm_data tx_dma_data;
+-	struct bf5xx_i2s_pcm_data rx_dma_data;
+-};
+-
+-static int bf5xx_i2s_set_dai_fmt(struct snd_soc_dai *cpu_dai,
+-		unsigned int fmt)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(cpu_dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-	int ret = 0;
+-
+-	/* interface format:support I2S,slave mode */
+-	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+-	case SND_SOC_DAIFMT_I2S:
+-		bf5xx_i2s->tcr1 |= TFSR | TCKFE;
+-		bf5xx_i2s->rcr1 |= RFSR | RCKFE;
+-		bf5xx_i2s->tcr2 |= TSFSE;
+-		bf5xx_i2s->rcr2 |= RSFSE;
+-		break;
+-	case SND_SOC_DAIFMT_DSP_A:
+-		bf5xx_i2s->tcr1 |= TFSR;
+-		bf5xx_i2s->rcr1 |= RFSR;
+-		break;
+-	case SND_SOC_DAIFMT_LEFT_J:
+-		ret = -EINVAL;
+-		break;
+-	default:
+-		dev_err(cpu_dai->dev, "%s: Unknown DAI format type\n",
+-			__func__);
+-		ret = -EINVAL;
+-		break;
+-	}
+-
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
+-		break;
+-	case SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_CBM_CFS:
+-	case SND_SOC_DAIFMT_CBS_CFM:
+-		ret = -EINVAL;
+-		break;
+-	default:
+-		dev_err(cpu_dai->dev, "%s: Unknown DAI master type\n",
+-			__func__);
+-		ret = -EINVAL;
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+-static int bf5xx_i2s_hw_params(struct snd_pcm_substream *substream,
+-				struct snd_pcm_hw_params *params,
+-				struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-	int ret = 0;
+-
+-	bf5xx_i2s->tcr2 &= ~0x1f;
+-	bf5xx_i2s->rcr2 &= ~0x1f;
+-	switch (params_format(params)) {
+-	case SNDRV_PCM_FORMAT_S8:
+-		bf5xx_i2s->tcr2 |= 7;
+-		bf5xx_i2s->rcr2 |= 7;
+-		sport_handle->wdsize = 1;
+-		break;
+-	case SNDRV_PCM_FORMAT_S16_LE:
+-		bf5xx_i2s->tcr2 |= 15;
+-		bf5xx_i2s->rcr2 |= 15;
+-		sport_handle->wdsize = 2;
+-		break;
+-	case SNDRV_PCM_FORMAT_S24_LE:
+-		bf5xx_i2s->tcr2 |= 23;
+-		bf5xx_i2s->rcr2 |= 23;
+-		sport_handle->wdsize = 3;
+-		break;
+-	case SNDRV_PCM_FORMAT_S32_LE:
+-		bf5xx_i2s->tcr2 |= 31;
+-		bf5xx_i2s->rcr2 |= 31;
+-		sport_handle->wdsize = 4;
+-		break;
+-	}
+-
+-	if (!bf5xx_i2s->configured) {
+-		/*
+-		 * TX and RX are not independent,they are enabled at the
+-		 * same time, even if only one side is running. So, we
+-		 * need to configure both of them at the time when the first
+-		 * stream is opened.
+-		 *
+-		 * CPU DAI:slave mode.
+-		 */
+-		bf5xx_i2s->configured = 1;
+-		ret = sport_config_rx(sport_handle, bf5xx_i2s->rcr1,
+-				      bf5xx_i2s->rcr2, 0, 0);
+-		if (ret) {
+-			dev_err(dai->dev, "SPORT is busy!\n");
+-			return -EBUSY;
+-		}
+-
+-		ret = sport_config_tx(sport_handle, bf5xx_i2s->tcr1,
+-				      bf5xx_i2s->tcr2, 0, 0);
+-		if (ret) {
+-			dev_err(dai->dev, "SPORT is busy!\n");
+-			return -EBUSY;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static void bf5xx_i2s_shutdown(struct snd_pcm_substream *substream,
+-			       struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-
+-	dev_dbg(dai->dev, "%s enter\n", __func__);
+-	/* No active stream, SPORT is allowed to be configured again. */
+-	if (!dai->active)
+-		bf5xx_i2s->configured = 0;
+-}
+-
+-static int bf5xx_i2s_set_channel_map(struct snd_soc_dai *dai,
+-		unsigned int tx_num, unsigned int *tx_slot,
+-		unsigned int rx_num, unsigned int *rx_slot)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-	unsigned int tx_mapped = 0, rx_mapped = 0;
+-	unsigned int slot;
+-	int i;
+-
+-	if ((tx_num > BFIN_TDM_DAI_MAX_SLOTS) ||
+-			(rx_num > BFIN_TDM_DAI_MAX_SLOTS))
+-		return -EINVAL;
+-
+-	for (i = 0; i < tx_num; i++) {
+-		slot = tx_slot[i];
+-		if ((slot < BFIN_TDM_DAI_MAX_SLOTS) &&
+-				(!(tx_mapped & (1 << slot)))) {
+-			bf5xx_i2s->tx_dma_data.map[i] = slot;
+-			tx_mapped |= 1 << slot;
+-		} else
+-			return -EINVAL;
+-	}
+-	for (i = 0; i < rx_num; i++) {
+-		slot = rx_slot[i];
+-		if ((slot < BFIN_TDM_DAI_MAX_SLOTS) &&
+-				(!(rx_mapped & (1 << slot)))) {
+-			bf5xx_i2s->rx_dma_data.map[i] = slot;
+-			rx_mapped |= 1 << slot;
+-		} else
+-			return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static int bf5xx_i2s_set_tdm_slot(struct snd_soc_dai *dai, unsigned int tx_mask,
+-	unsigned int rx_mask, int slots, int width)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-
+-	if (slots % 8 != 0 || slots > 8)
+-		return -EINVAL;
+-
+-	if (width != 32)
+-		return -EINVAL;
+-
+-	bf5xx_i2s->slots = slots;
+-	bf5xx_i2s->tx_mask = tx_mask;
+-	bf5xx_i2s->rx_mask = rx_mask;
+-
+-	bf5xx_i2s->tx_dma_data.tdm_mode = slots != 0;
+-	bf5xx_i2s->rx_dma_data.tdm_mode = slots != 0;
+-
+-	return sport_set_multichannel(sport_handle, slots, tx_mask, rx_mask, 0);
+-}
+-
+-#ifdef CONFIG_PM
+-static int bf5xx_i2s_suspend(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-
+-	dev_dbg(dai->dev, "%s : sport %d\n", __func__, dai->id);
+-
+-	if (dai->capture_active)
+-		sport_rx_stop(sport_handle);
+-	if (dai->playback_active)
+-		sport_tx_stop(sport_handle);
+-	return 0;
+-}
+-
+-static int bf5xx_i2s_resume(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-	int ret;
+-
+-	dev_dbg(dai->dev, "%s : sport %d\n", __func__, dai->id);
+-
+-	ret = sport_config_rx(sport_handle, bf5xx_i2s->rcr1,
+-				      bf5xx_i2s->rcr2, 0, 0);
+-	if (ret) {
+-		dev_err(dai->dev, "SPORT is busy!\n");
+-		return -EBUSY;
+-	}
+-
+-	ret = sport_config_tx(sport_handle, bf5xx_i2s->tcr1,
+-				      bf5xx_i2s->tcr2, 0, 0);
+-	if (ret) {
+-		dev_err(dai->dev, "SPORT is busy!\n");
+-		return -EBUSY;
+-	}
+-
+-	return sport_set_multichannel(sport_handle, bf5xx_i2s->slots,
+-			bf5xx_i2s->tx_mask, bf5xx_i2s->rx_mask, 0);
+-}
+-
+-#else
+-#define bf5xx_i2s_suspend	NULL
+-#define bf5xx_i2s_resume	NULL
+-#endif
+-
+-static int bf5xx_i2s_dai_probe(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport_handle = snd_soc_dai_get_drvdata(dai);
+-	struct bf5xx_i2s_port *bf5xx_i2s = sport_handle->private_data;
+-	unsigned int i;
+-
+-	for (i = 0; i < BFIN_TDM_DAI_MAX_SLOTS; i++) {
+-		bf5xx_i2s->tx_dma_data.map[i] = i;
+-		bf5xx_i2s->rx_dma_data.map[i] = i;
+-	}
+-
+-	dai->playback_dma_data = &bf5xx_i2s->tx_dma_data;
+-	dai->capture_dma_data = &bf5xx_i2s->rx_dma_data;
+-
+-	return 0;
+-}
+-
+-#define BF5XX_I2S_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 |\
+-		SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 | \
+-		SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 | \
+-		SNDRV_PCM_RATE_96000)
+-
+-#define BF5XX_I2S_FORMATS \
+-	(SNDRV_PCM_FMTBIT_S8 | \
+-	 SNDRV_PCM_FMTBIT_S16_LE | \
+-	 SNDRV_PCM_FMTBIT_S24_LE | \
+-	 SNDRV_PCM_FMTBIT_S32_LE)
+-
+-static const struct snd_soc_dai_ops bf5xx_i2s_dai_ops = {
+-	.shutdown	 = bf5xx_i2s_shutdown,
+-	.hw_params	 = bf5xx_i2s_hw_params,
+-	.set_fmt	 = bf5xx_i2s_set_dai_fmt,
+-	.set_tdm_slot	 = bf5xx_i2s_set_tdm_slot,
+-	.set_channel_map = bf5xx_i2s_set_channel_map,
+-};
+-
+-static struct snd_soc_dai_driver bf5xx_i2s_dai = {
+-	.probe = bf5xx_i2s_dai_probe,
+-	.suspend = bf5xx_i2s_suspend,
+-	.resume = bf5xx_i2s_resume,
+-	.playback = {
+-		.channels_min = 2,
+-		.channels_max = 8,
+-		.rates = BF5XX_I2S_RATES,
+-		.formats = BF5XX_I2S_FORMATS,},
+-	.capture = {
+-		.channels_min = 2,
+-		.channels_max = 8,
+-		.rates = BF5XX_I2S_RATES,
+-		.formats = BF5XX_I2S_FORMATS,},
+-	.ops = &bf5xx_i2s_dai_ops,
+-};
+-
+-static const struct snd_soc_component_driver bf5xx_i2s_component = {
+-	.name		= "bf5xx-i2s",
+-};
+-
+-static int bf5xx_i2s_probe(struct platform_device *pdev)
+-{
+-	struct sport_device *sport_handle;
+-	int ret;
+-
+-	/* configure SPORT for I2S */
+-	sport_handle = sport_init(pdev, 4, 8 * sizeof(u32),
+-		sizeof(struct bf5xx_i2s_port));
+-	if (!sport_handle)
+-		return -ENODEV;
+-
+-	/* register with the ASoC layers */
+-	ret = snd_soc_register_component(&pdev->dev, &bf5xx_i2s_component,
+-					 &bf5xx_i2s_dai, 1);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to register DAI: %d\n", ret);
+-		sport_done(sport_handle);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-static int bf5xx_i2s_remove(struct platform_device *pdev)
+-{
+-	struct sport_device *sport_handle = platform_get_drvdata(pdev);
+-
+-	dev_dbg(&pdev->dev, "%s enter\n", __func__);
+-
+-	snd_soc_unregister_component(&pdev->dev);
+-	sport_done(sport_handle);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver bfin_i2s_driver = {
+-	.probe  = bf5xx_i2s_probe,
+-	.remove = bf5xx_i2s_remove,
+-	.driver = {
+-		.name = "bfin-i2s",
+-	},
+-};
+-
+-module_platform_driver(bfin_i2s_driver);
+-
+-/* Module information */
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("I2S driver for ADI Blackfin");
+-MODULE_LICENSE("GPL");
+-
+diff --git a/sound/soc/blackfin/bf5xx-sport.c b/sound/soc/blackfin/bf5xx-sport.c
+deleted file mode 100644
+index 9dfa124..0000000
+--- a/sound/soc/blackfin/bf5xx-sport.c
++++ /dev/null
+@@ -1,1102 +0,0 @@
+-/*
+- * File:         bf5xx_sport.c
+- * Based on:
+- * Author:       Roy Huang <roy.huang@analog.com>
+- *
+- * Created:      Tue Sep 21 10:52:42 CEST 2004
+- * Description:
+- *               Blackfin SPORT Driver
+- *
+- *               Copyright 2004-2007 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/delay.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/gpio.h>
+-#include <linux/bug.h>
+-#include <linux/module.h>
+-#include <asm/portmux.h>
+-#include <asm/dma.h>
+-#include <asm/blackfin.h>
+-#include <asm/cacheflush.h>
+-
+-#include "bf5xx-sport.h"
+-/* delay between frame sync pulse and first data bit in multichannel mode */
+-#define FRAME_DELAY (1<<12)
+-
+-/* note: multichannel is in units of 8 channels,
+- * tdm_count is # channels NOT / 8 ! */
+-int sport_set_multichannel(struct sport_device *sport,
+-		int tdm_count, u32 tx_mask, u32 rx_mask, int packed)
+-{
+-	pr_debug("%s tdm_count=%d tx_mask:0x%08x rx_mask:0x%08x packed=%d\n",
+-			__func__, tdm_count, tx_mask, rx_mask, packed);
+-
+-	if ((sport->regs->tcr1 & TSPEN) || (sport->regs->rcr1 & RSPEN))
+-		return -EBUSY;
+-
+-	if (tdm_count & 0x7)
+-		return -EINVAL;
+-
+-	if (tdm_count > 32)
+-		return -EINVAL; /* Only support less than 32 channels now */
+-
+-	if (tdm_count) {
+-		sport->regs->mcmc1 = ((tdm_count>>3)-1) << 12;
+-		sport->regs->mcmc2 = FRAME_DELAY | MCMEN | \
+-				(packed ? (MCDTXPE|MCDRXPE) : 0);
+-
+-		sport->regs->mtcs0 = tx_mask;
+-		sport->regs->mrcs0 = rx_mask;
+-		sport->regs->mtcs1 = 0;
+-		sport->regs->mrcs1 = 0;
+-		sport->regs->mtcs2 = 0;
+-		sport->regs->mrcs2 = 0;
+-		sport->regs->mtcs3 = 0;
+-		sport->regs->mrcs3 = 0;
+-	} else {
+-		sport->regs->mcmc1 = 0;
+-		sport->regs->mcmc2 = 0;
+-
+-		sport->regs->mtcs0 = 0;
+-		sport->regs->mrcs0 = 0;
+-	}
+-
+-	sport->regs->mtcs1 = 0; sport->regs->mtcs2 = 0; sport->regs->mtcs3 = 0;
+-	sport->regs->mrcs1 = 0; sport->regs->mrcs2 = 0; sport->regs->mrcs3 = 0;
+-
+-	SSYNC();
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_multichannel);
+-
+-int sport_config_rx(struct sport_device *sport, unsigned int rcr1,
+-		unsigned int rcr2, unsigned int clkdiv, unsigned int fsdiv)
+-{
+-	if ((sport->regs->tcr1 & TSPEN) || (sport->regs->rcr1 & RSPEN))
+-		return -EBUSY;
+-
+-	sport->regs->rcr1 = rcr1;
+-	sport->regs->rcr2 = rcr2;
+-	sport->regs->rclkdiv = clkdiv;
+-	sport->regs->rfsdiv = fsdiv;
+-
+-	SSYNC();
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_rx);
+-
+-int sport_config_tx(struct sport_device *sport, unsigned int tcr1,
+-		unsigned int tcr2, unsigned int clkdiv, unsigned int fsdiv)
+-{
+-	if ((sport->regs->tcr1 & TSPEN) || (sport->regs->rcr1 & RSPEN))
+-		return -EBUSY;
+-
+-	sport->regs->tcr1 = tcr1;
+-	sport->regs->tcr2 = tcr2;
+-	sport->regs->tclkdiv = clkdiv;
+-	sport->regs->tfsdiv = fsdiv;
+-
+-	SSYNC();
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_tx);
+-
+-static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
+-		size_t fragsize, unsigned int cfg,
+-		unsigned int x_count, unsigned int ycount, size_t wdsize)
+-{
+-
+-	int i;
+-
+-	for (i = 0; i < fragcount; ++i) {
+-		desc[i].next_desc_addr  = &(desc[i + 1]);
+-		desc[i].start_addr = (unsigned long)buf + i*fragsize;
+-		desc[i].cfg = cfg;
+-		desc[i].x_count = x_count;
+-		desc[i].x_modify = wdsize;
+-		desc[i].y_count = ycount;
+-		desc[i].y_modify = wdsize;
+-	}
+-
+-	/* make circular */
+-	desc[fragcount-1].next_desc_addr = desc;
+-
+-	pr_debug("setup desc: desc0=%p, next0=%p, desc1=%p,"
+-		"next1=%p\nx_count=%x,y_count=%x,addr=0x%lx,cfs=0x%x\n",
+-		desc, desc[0].next_desc_addr,
+-		desc+1, desc[1].next_desc_addr,
+-		desc[0].x_count, desc[0].y_count,
+-		desc[0].start_addr, desc[0].cfg);
+-}
+-
+-static int sport_start(struct sport_device *sport)
+-{
+-	enable_dma(sport->dma_rx_chan);
+-	enable_dma(sport->dma_tx_chan);
+-	sport->regs->rcr1 |= RSPEN;
+-	sport->regs->tcr1 |= TSPEN;
+-	SSYNC();
+-
+-	return 0;
+-}
+-
+-static int sport_stop(struct sport_device *sport)
+-{
+-	sport->regs->tcr1 &= ~TSPEN;
+-	sport->regs->rcr1 &= ~RSPEN;
+-	SSYNC();
+-
+-	disable_dma(sport->dma_rx_chan);
+-	disable_dma(sport->dma_tx_chan);
+-	return 0;
+-}
+-
+-static inline int sport_hook_rx_dummy(struct sport_device *sport)
+-{
+-	struct dmasg *desc, temp_desc;
+-	unsigned long flags;
+-
+-	if (WARN_ON(!sport->dummy_rx_desc) ||
+-	    WARN_ON(sport->curr_rx_desc == sport->dummy_rx_desc))
+-		return -EINVAL;
+-
+-	/* Maybe the dummy buffer descriptor ring is damaged */
+-	sport->dummy_rx_desc->next_desc_addr = sport->dummy_rx_desc + 1;
+-
+-	local_irq_save(flags);
+-	desc = get_dma_next_desc_ptr(sport->dma_rx_chan);
+-	/* Copy the descriptor which will be damaged to backup */
+-	temp_desc = *desc;
+-	desc->x_count = sport->dummy_count / 2;
+-	desc->y_count = 0;
+-	desc->next_desc_addr = sport->dummy_rx_desc;
+-	local_irq_restore(flags);
+-	/* Waiting for dummy buffer descriptor is already hooked*/
+-	while ((get_dma_curr_desc_ptr(sport->dma_rx_chan) -
+-			sizeof(struct dmasg)) != sport->dummy_rx_desc)
+-		continue;
+-	sport->curr_rx_desc = sport->dummy_rx_desc;
+-	/* Restore the damaged descriptor */
+-	*desc = temp_desc;
+-
+-	return 0;
+-}
+-
+-static inline int sport_rx_dma_start(struct sport_device *sport, int dummy)
+-{
+-	if (dummy) {
+-		sport->dummy_rx_desc->next_desc_addr = sport->dummy_rx_desc;
+-		sport->curr_rx_desc = sport->dummy_rx_desc;
+-	} else
+-		sport->curr_rx_desc = sport->dma_rx_desc;
+-
+-	set_dma_next_desc_addr(sport->dma_rx_chan, sport->curr_rx_desc);
+-	set_dma_x_count(sport->dma_rx_chan, 0);
+-	set_dma_x_modify(sport->dma_rx_chan, 0);
+-	set_dma_config(sport->dma_rx_chan, (DMAFLOW_LARGE | NDSIZE_9 | \
+-				WDSIZE_32 | WNR));
+-	set_dma_curr_addr(sport->dma_rx_chan, sport->curr_rx_desc->start_addr);
+-	SSYNC();
+-
+-	return 0;
+-}
+-
+-static inline int sport_tx_dma_start(struct sport_device *sport, int dummy)
+-{
+-	if (dummy) {
+-		sport->dummy_tx_desc->next_desc_addr = sport->dummy_tx_desc;
+-		sport->curr_tx_desc = sport->dummy_tx_desc;
+-	} else
+-		sport->curr_tx_desc = sport->dma_tx_desc;
+-
+-	set_dma_next_desc_addr(sport->dma_tx_chan, sport->curr_tx_desc);
+-	set_dma_x_count(sport->dma_tx_chan, 0);
+-	set_dma_x_modify(sport->dma_tx_chan, 0);
+-	set_dma_config(sport->dma_tx_chan,
+-			(DMAFLOW_LARGE | NDSIZE_9 | WDSIZE_32));
+-	set_dma_curr_addr(sport->dma_tx_chan, sport->curr_tx_desc->start_addr);
+-	SSYNC();
+-
+-	return 0;
+-}
+-
+-int sport_rx_start(struct sport_device *sport)
+-{
+-	unsigned long flags;
+-	pr_debug("%s enter\n", __func__);
+-	if (sport->rx_run)
+-		return -EBUSY;
+-	if (sport->tx_run) {
+-		/* tx is running, rx is not running */
+-		if (WARN_ON(!sport->dma_rx_desc) ||
+-		    WARN_ON(sport->curr_rx_desc != sport->dummy_rx_desc))
+-			return -EINVAL;
+-		local_irq_save(flags);
+-		while ((get_dma_curr_desc_ptr(sport->dma_rx_chan) -
+-			sizeof(struct dmasg)) != sport->dummy_rx_desc)
+-			continue;
+-		sport->dummy_rx_desc->next_desc_addr = sport->dma_rx_desc;
+-		local_irq_restore(flags);
+-		sport->curr_rx_desc = sport->dma_rx_desc;
+-	} else {
+-		sport_tx_dma_start(sport, 1);
+-		sport_rx_dma_start(sport, 0);
+-		sport_start(sport);
+-	}
+-
+-	sport->rx_run = 1;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_rx_start);
+-
+-int sport_rx_stop(struct sport_device *sport)
+-{
+-	pr_debug("%s enter\n", __func__);
+-
+-	if (!sport->rx_run)
+-		return 0;
+-	if (sport->tx_run) {
+-		/* TX dma is still running, hook the dummy buffer */
+-		sport_hook_rx_dummy(sport);
+-	} else {
+-		/* Both rx and tx dma will be stopped */
+-		sport_stop(sport);
+-		sport->curr_rx_desc = NULL;
+-		sport->curr_tx_desc = NULL;
+-	}
+-
+-	sport->rx_run = 0;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_rx_stop);
+-
+-static inline int sport_hook_tx_dummy(struct sport_device *sport)
+-{
+-	struct dmasg *desc, temp_desc;
+-	unsigned long flags;
+-
+-	if (WARN_ON(!sport->dummy_tx_desc) ||
+-	    WARN_ON(sport->curr_tx_desc == sport->dummy_tx_desc))
+-		return -EINVAL;
+-
+-	sport->dummy_tx_desc->next_desc_addr = sport->dummy_tx_desc + 1;
+-
+-	/* Shorten the time on last normal descriptor */
+-	local_irq_save(flags);
+-	desc = get_dma_next_desc_ptr(sport->dma_tx_chan);
+-	/* Store the descriptor which will be damaged */
+-	temp_desc = *desc;
+-	desc->x_count = sport->dummy_count / 2;
+-	desc->y_count = 0;
+-	desc->next_desc_addr = sport->dummy_tx_desc;
+-	local_irq_restore(flags);
+-	/* Waiting for dummy buffer descriptor is already hooked*/
+-	while ((get_dma_curr_desc_ptr(sport->dma_tx_chan) - \
+-			sizeof(struct dmasg)) != sport->dummy_tx_desc)
+-		continue;
+-	sport->curr_tx_desc = sport->dummy_tx_desc;
+-	/* Restore the damaged descriptor */
+-	*desc = temp_desc;
+-
+-	return 0;
+-}
+-
+-int sport_tx_start(struct sport_device *sport)
+-{
+-	unsigned long flags;
+-	pr_debug("%s: tx_run:%d, rx_run:%d\n", __func__,
+-			sport->tx_run, sport->rx_run);
+-	if (sport->tx_run)
+-		return -EBUSY;
+-	if (sport->rx_run) {
+-		if (WARN_ON(!sport->dma_tx_desc) ||
+-		    WARN_ON(sport->curr_tx_desc != sport->dummy_tx_desc))
+-			return -EINVAL;
+-		/* Hook the normal buffer descriptor */
+-		local_irq_save(flags);
+-		while ((get_dma_curr_desc_ptr(sport->dma_tx_chan) -
+-			sizeof(struct dmasg)) != sport->dummy_tx_desc)
+-			continue;
+-		sport->dummy_tx_desc->next_desc_addr = sport->dma_tx_desc;
+-		local_irq_restore(flags);
+-		sport->curr_tx_desc = sport->dma_tx_desc;
+-	} else {
+-
+-		sport_tx_dma_start(sport, 0);
+-		/* Let rx dma run the dummy buffer */
+-		sport_rx_dma_start(sport, 1);
+-		sport_start(sport);
+-	}
+-	sport->tx_run = 1;
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_tx_start);
+-
+-int sport_tx_stop(struct sport_device *sport)
+-{
+-	if (!sport->tx_run)
+-		return 0;
+-	if (sport->rx_run) {
+-		/* RX is still running, hook the dummy buffer */
+-		sport_hook_tx_dummy(sport);
+-	} else {
+-		/* Both rx and tx dma stopped */
+-		sport_stop(sport);
+-		sport->curr_rx_desc = NULL;
+-		sport->curr_tx_desc = NULL;
+-	}
+-
+-	sport->tx_run = 0;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_tx_stop);
+-
+-static inline int compute_wdsize(size_t wdsize)
+-{
+-	switch (wdsize) {
+-	case 1:
+-		return WDSIZE_8;
+-	case 2:
+-		return WDSIZE_16;
+-	case 4:
+-	default:
+-		return WDSIZE_32;
+-	}
+-}
+-
+-int sport_config_rx_dma(struct sport_device *sport, void *buf,
+-		int fragcount, size_t fragsize)
+-{
+-	unsigned int x_count;
+-	unsigned int y_count;
+-	unsigned int cfg;
+-	dma_addr_t addr;
+-
+-	pr_debug("%s buf:%p, frag:%d, fragsize:0x%lx\n", __func__, \
+-			buf, fragcount, fragsize);
+-
+-	x_count = fragsize / sport->wdsize;
+-	y_count = 0;
+-
+-	/* for fragments larger than 64k words we use 2d dma,
+-	 * denote fragecount as two numbers' mutliply and both of them
+-	 * are less than 64k.*/
+-	if (x_count >= 0x10000) {
+-		int i, count = x_count;
+-
+-		for (i = 16; i > 0; i--) {
+-			x_count = 1 << i;
+-			if ((count & (x_count - 1)) == 0) {
+-				y_count = count >> i;
+-				if (y_count < 0x10000)
+-					break;
+-			}
+-		}
+-		if (i == 0)
+-			return -EINVAL;
+-	}
+-	pr_debug("%s(x_count:0x%x, y_count:0x%x)\n", __func__,
+-			x_count, y_count);
+-
+-	if (sport->dma_rx_desc)
+-		dma_free_coherent(NULL, sport->rx_desc_bytes,
+-					sport->dma_rx_desc, 0);
+-
+-	/* Allocate a new descritor ring as current one. */
+-	sport->dma_rx_desc = dma_alloc_coherent(NULL, \
+-			fragcount * sizeof(struct dmasg), &addr, 0);
+-	sport->rx_desc_bytes = fragcount * sizeof(struct dmasg);
+-
+-	if (!sport->dma_rx_desc) {
+-		pr_err("Failed to allocate memory for rx desc\n");
+-		return -ENOMEM;
+-	}
+-
+-	sport->rx_buf = buf;
+-	sport->rx_fragsize = fragsize;
+-	sport->rx_frags = fragcount;
+-
+-	cfg     = 0x7000 | DI_EN | compute_wdsize(sport->wdsize) | WNR | \
+-		  (DESC_ELEMENT_COUNT << 8); /* large descriptor mode */
+-
+-	if (y_count != 0)
+-		cfg |= DMA2D;
+-
+-	setup_desc(sport->dma_rx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, x_count, y_count, sport->wdsize);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_rx_dma);
+-
+-int sport_config_tx_dma(struct sport_device *sport, void *buf, \
+-		int fragcount, size_t fragsize)
+-{
+-	unsigned int x_count;
+-	unsigned int y_count;
+-	unsigned int cfg;
+-	dma_addr_t addr;
+-
+-	pr_debug("%s buf:%p, fragcount:%d, fragsize:0x%lx\n",
+-			__func__, buf, fragcount, fragsize);
+-
+-	x_count = fragsize/sport->wdsize;
+-	y_count = 0;
+-
+-	/* for fragments larger than 64k words we use 2d dma,
+-	 * denote fragecount as two numbers' mutliply and both of them
+-	 * are less than 64k.*/
+-	if (x_count >= 0x10000) {
+-		int i, count = x_count;
+-
+-		for (i = 16; i > 0; i--) {
+-			x_count = 1 << i;
+-			if ((count & (x_count - 1)) == 0) {
+-				y_count = count >> i;
+-				if (y_count < 0x10000)
+-					break;
+-			}
+-		}
+-		if (i == 0)
+-			return -EINVAL;
+-	}
+-	pr_debug("%s x_count:0x%x, y_count:0x%x\n", __func__,
+-			x_count, y_count);
+-
+-
+-	if (sport->dma_tx_desc) {
+-		dma_free_coherent(NULL, sport->tx_desc_bytes, \
+-				sport->dma_tx_desc, 0);
+-	}
+-
+-	sport->dma_tx_desc = dma_alloc_coherent(NULL, \
+-			fragcount * sizeof(struct dmasg), &addr, 0);
+-	sport->tx_desc_bytes = fragcount * sizeof(struct dmasg);
+-	if (!sport->dma_tx_desc) {
+-		pr_err("Failed to allocate memory for tx desc\n");
+-		return -ENOMEM;
+-	}
+-
+-	sport->tx_buf = buf;
+-	sport->tx_fragsize = fragsize;
+-	sport->tx_frags = fragcount;
+-	cfg     = 0x7000 | DI_EN | compute_wdsize(sport->wdsize) | \
+-		  (DESC_ELEMENT_COUNT << 8); /* large descriptor mode */
+-
+-	if (y_count != 0)
+-		cfg |= DMA2D;
+-
+-	setup_desc(sport->dma_tx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, x_count, y_count, sport->wdsize);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_tx_dma);
+-
+-/* setup dummy dma descriptor ring, which don't generate interrupts,
+- * the x_modify is set to 0 */
+-static int sport_config_rx_dummy(struct sport_device *sport)
+-{
+-	struct dmasg *desc;
+-	unsigned config;
+-
+-	pr_debug("%s entered\n", __func__);
+-	if (L1_DATA_A_LENGTH)
+-		desc = l1_data_sram_zalloc(2 * sizeof(*desc));
+-	else {
+-		dma_addr_t addr;
+-		desc = dma_alloc_coherent(NULL, 2 * sizeof(*desc), &addr, 0);
+-		memset(desc, 0, 2 * sizeof(*desc));
+-	}
+-	if (desc == NULL) {
+-		pr_err("Failed to allocate memory for dummy rx desc\n");
+-		return -ENOMEM;
+-	}
+-	sport->dummy_rx_desc = desc;
+-	desc->start_addr = (unsigned long)sport->dummy_buf;
+-	config = DMAFLOW_LARGE | NDSIZE_9 | compute_wdsize(sport->wdsize)
+-		 | WNR | DMAEN;
+-	desc->cfg = config;
+-	desc->x_count = sport->dummy_count/sport->wdsize;
+-	desc->x_modify = sport->wdsize;
+-	desc->y_count = 0;
+-	desc->y_modify = 0;
+-	memcpy(desc+1, desc, sizeof(*desc));
+-	desc->next_desc_addr = desc + 1;
+-	desc[1].next_desc_addr = desc;
+-	return 0;
+-}
+-
+-static int sport_config_tx_dummy(struct sport_device *sport)
+-{
+-	struct dmasg *desc;
+-	unsigned int config;
+-
+-	pr_debug("%s entered\n", __func__);
+-
+-	if (L1_DATA_A_LENGTH)
+-		desc = l1_data_sram_zalloc(2 * sizeof(*desc));
+-	else {
+-		dma_addr_t addr;
+-		desc = dma_alloc_coherent(NULL, 2 * sizeof(*desc), &addr, 0);
+-		memset(desc, 0, 2 * sizeof(*desc));
+-	}
+-	if (!desc) {
+-		pr_err("Failed to allocate memory for dummy tx desc\n");
+-		return -ENOMEM;
+-	}
+-	sport->dummy_tx_desc = desc;
+-	desc->start_addr = (unsigned long)sport->dummy_buf + \
+-		sport->dummy_count;
+-	config = DMAFLOW_LARGE | NDSIZE_9 |
+-		 compute_wdsize(sport->wdsize) | DMAEN;
+-	desc->cfg = config;
+-	desc->x_count = sport->dummy_count/sport->wdsize;
+-	desc->x_modify = sport->wdsize;
+-	desc->y_count = 0;
+-	desc->y_modify = 0;
+-	memcpy(desc+1, desc, sizeof(*desc));
+-	desc->next_desc_addr = desc + 1;
+-	desc[1].next_desc_addr = desc;
+-	return 0;
+-}
+-
+-unsigned long sport_curr_offset_rx(struct sport_device *sport)
+-{
+-	unsigned long curr = get_dma_curr_addr(sport->dma_rx_chan);
+-
+-	return (unsigned char *)curr - sport->rx_buf;
+-}
+-EXPORT_SYMBOL(sport_curr_offset_rx);
+-
+-unsigned long sport_curr_offset_tx(struct sport_device *sport)
+-{
+-	unsigned long curr = get_dma_curr_addr(sport->dma_tx_chan);
+-
+-	return (unsigned char *)curr - sport->tx_buf;
+-}
+-EXPORT_SYMBOL(sport_curr_offset_tx);
+-
+-void sport_incfrag(struct sport_device *sport, int *frag, int tx)
+-{
+-	++(*frag);
+-	if (tx == 1 && *frag == sport->tx_frags)
+-		*frag = 0;
+-
+-	if (tx == 0 && *frag == sport->rx_frags)
+-		*frag = 0;
+-}
+-EXPORT_SYMBOL(sport_incfrag);
+-
+-void sport_decfrag(struct sport_device *sport, int *frag, int tx)
+-{
+-	--(*frag);
+-	if (tx == 1 && *frag == 0)
+-		*frag = sport->tx_frags;
+-
+-	if (tx == 0 && *frag == 0)
+-		*frag = sport->rx_frags;
+-}
+-EXPORT_SYMBOL(sport_decfrag);
+-
+-static int sport_check_status(struct sport_device *sport,
+-		unsigned int *sport_stat,
+-		unsigned int *rx_stat,
+-		unsigned int *tx_stat)
+-{
+-	int status = 0;
+-
+-	if (sport_stat) {
+-		SSYNC();
+-		status = sport->regs->stat;
+-		if (status & (TOVF|TUVF|ROVF|RUVF))
+-			sport->regs->stat = (status & (TOVF|TUVF|ROVF|RUVF));
+-		SSYNC();
+-		*sport_stat = status;
+-	}
+-
+-	if (rx_stat) {
+-		SSYNC();
+-		status = get_dma_curr_irqstat(sport->dma_rx_chan);
+-		if (status & (DMA_DONE|DMA_ERR))
+-			clear_dma_irqstat(sport->dma_rx_chan);
+-		SSYNC();
+-		*rx_stat = status;
+-	}
+-
+-	if (tx_stat) {
+-		SSYNC();
+-		status = get_dma_curr_irqstat(sport->dma_tx_chan);
+-		if (status & (DMA_DONE|DMA_ERR))
+-			clear_dma_irqstat(sport->dma_tx_chan);
+-		SSYNC();
+-		*tx_stat = status;
+-	}
+-
+-	return 0;
+-}
+-
+-int  sport_dump_stat(struct sport_device *sport, char *buf, size_t len)
+-{
+-	int ret;
+-
+-	ret = snprintf(buf, len,
+-			"sts: 0x%04x\n"
+-			"rx dma %d sts: 0x%04x tx dma %d sts: 0x%04x\n",
+-			sport->regs->stat,
+-			sport->dma_rx_chan,
+-			get_dma_curr_irqstat(sport->dma_rx_chan),
+-			sport->dma_tx_chan,
+-			get_dma_curr_irqstat(sport->dma_tx_chan));
+-	buf += ret;
+-	len -= ret;
+-
+-	ret += snprintf(buf, len,
+-			"curr_rx_desc:0x%p, curr_tx_desc:0x%p\n"
+-			"dma_rx_desc:0x%p, dma_tx_desc:0x%p\n"
+-			"dummy_rx_desc:0x%p, dummy_tx_desc:0x%p\n",
+-			sport->curr_rx_desc, sport->curr_tx_desc,
+-			sport->dma_rx_desc, sport->dma_tx_desc,
+-			sport->dummy_rx_desc, sport->dummy_tx_desc);
+-
+-	return ret;
+-}
+-
+-static irqreturn_t rx_handler(int irq, void *dev_id)
+-{
+-	unsigned int rx_stat;
+-	struct sport_device *sport = dev_id;
+-
+-	pr_debug("%s enter\n", __func__);
+-	sport_check_status(sport, NULL, &rx_stat, NULL);
+-	if (!(rx_stat & DMA_DONE))
+-		pr_err("rx dma is already stopped\n");
+-
+-	if (sport->rx_callback) {
+-		sport->rx_callback(sport->rx_data);
+-		return IRQ_HANDLED;
+-	}
+-
+-	return IRQ_NONE;
+-}
+-
+-static irqreturn_t tx_handler(int irq, void *dev_id)
+-{
+-	unsigned int tx_stat;
+-	struct sport_device *sport = dev_id;
+-	pr_debug("%s enter\n", __func__);
+-	sport_check_status(sport, NULL, NULL, &tx_stat);
+-	if (!(tx_stat & DMA_DONE)) {
+-		pr_err("tx dma is already stopped\n");
+-		return IRQ_HANDLED;
+-	}
+-	if (sport->tx_callback) {
+-		sport->tx_callback(sport->tx_data);
+-		return IRQ_HANDLED;
+-	}
+-
+-	return IRQ_NONE;
+-}
+-
+-static irqreturn_t err_handler(int irq, void *dev_id)
+-{
+-	unsigned int status = 0;
+-	struct sport_device *sport = dev_id;
+-
+-	pr_debug("%s\n", __func__);
+-	if (sport_check_status(sport, &status, NULL, NULL)) {
+-		pr_err("error checking status ??");
+-		return IRQ_NONE;
+-	}
+-
+-	if (status & (TOVF|TUVF|ROVF|RUVF)) {
+-		pr_info("sport status error:%s%s%s%s\n",
+-				status & TOVF ? " TOVF" : "",
+-				status & TUVF ? " TUVF" : "",
+-				status & ROVF ? " ROVF" : "",
+-				status & RUVF ? " RUVF" : "");
+-		if (status & TOVF || status & TUVF) {
+-			disable_dma(sport->dma_tx_chan);
+-			if (sport->tx_run)
+-				sport_tx_dma_start(sport, 0);
+-			else
+-				sport_tx_dma_start(sport, 1);
+-			enable_dma(sport->dma_tx_chan);
+-		} else {
+-			disable_dma(sport->dma_rx_chan);
+-			if (sport->rx_run)
+-				sport_rx_dma_start(sport, 0);
+-			else
+-				sport_rx_dma_start(sport, 1);
+-			enable_dma(sport->dma_rx_chan);
+-		}
+-	}
+-	status = sport->regs->stat;
+-	if (status & (TOVF|TUVF|ROVF|RUVF))
+-		sport->regs->stat = (status & (TOVF|TUVF|ROVF|RUVF));
+-	SSYNC();
+-
+-	if (sport->err_callback)
+-		sport->err_callback(sport->err_data);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-int sport_set_rx_callback(struct sport_device *sport,
+-		       void (*rx_callback)(void *), void *rx_data)
+-{
+-	if (WARN_ON(!rx_callback))
+-		return -EINVAL;
+-	sport->rx_callback = rx_callback;
+-	sport->rx_data = rx_data;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_rx_callback);
+-
+-int sport_set_tx_callback(struct sport_device *sport,
+-		void (*tx_callback)(void *), void *tx_data)
+-{
+-	if (WARN_ON(!tx_callback))
+-		return -EINVAL;
+-	sport->tx_callback = tx_callback;
+-	sport->tx_data = tx_data;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_tx_callback);
+-
+-int sport_set_err_callback(struct sport_device *sport,
+-		void (*err_callback)(void *), void *err_data)
+-{
+-	if (WARN_ON(!err_callback))
+-		return -EINVAL;
+-	sport->err_callback = err_callback;
+-	sport->err_data = err_data;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_err_callback);
+-
+-static int sport_config_pdev(struct platform_device *pdev, struct sport_param *param)
+-{
+-	/* Extract settings from platform data */
+-	struct device *dev = &pdev->dev;
+-	struct bfin_snd_platform_data *pdata = dev->platform_data;
+-	struct resource *res;
+-
+-	param->num = pdev->id;
+-
+-	if (!pdata) {
+-		dev_err(dev, "no platform_data\n");
+-		return -ENODEV;
+-	}
+-	param->pin_req = pdata->pin_req;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "no MEM resource\n");
+-		return -ENODEV;
+-	}
+-	param->regs = (struct sport_register *)res->start;
+-
+-	/* first RX, then TX */
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!res) {
+-		dev_err(dev, "no rx DMA resource\n");
+-		return -ENODEV;
+-	}
+-	param->dma_rx_chan = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-	if (!res) {
+-		dev_err(dev, "no tx DMA resource\n");
+-		return -ENODEV;
+-	}
+-	param->dma_tx_chan = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!res) {
+-		dev_err(dev, "no irq resource\n");
+-		return -ENODEV;
+-	}
+-	param->err_irq = res->start;
+-
+-	return 0;
+-}
+-
+-struct sport_device *sport_init(struct platform_device *pdev,
+-	unsigned int wdsize, unsigned int dummy_count, size_t priv_size)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct sport_param param;
+-	struct sport_device *sport;
+-	int ret;
+-
+-	dev_dbg(dev, "%s enter\n", __func__);
+-
+-	param.wdsize = wdsize;
+-	param.dummy_count = dummy_count;
+-	if (WARN_ON(param.wdsize == 0 || param.dummy_count == 0))
+-		return NULL;
+-
+-	ret = sport_config_pdev(pdev, &param);
+-	if (ret)
+-		return NULL;
+-
+-	if (peripheral_request_list(param.pin_req, "soc-audio")) {
+-		dev_err(dev, "requesting Peripherals failed\n");
+-		return NULL;
+-	}
+-
+-	sport = kzalloc(sizeof(*sport), GFP_KERNEL);
+-	if (!sport) {
+-		dev_err(dev, "failed to allocate for sport device\n");
+-		goto __init_err0;
+-	}
+-
+-	sport->num = param.num;
+-	sport->dma_rx_chan = param.dma_rx_chan;
+-	sport->dma_tx_chan = param.dma_tx_chan;
+-	sport->err_irq = param.err_irq;
+-	sport->regs = param.regs;
+-	sport->pin_req = param.pin_req;
+-
+-	if (request_dma(sport->dma_rx_chan, "SPORT RX Data") == -EBUSY) {
+-		dev_err(dev, "failed to request RX dma %d\n", sport->dma_rx_chan);
+-		goto __init_err1;
+-	}
+-	if (set_dma_callback(sport->dma_rx_chan, rx_handler, sport) != 0) {
+-		dev_err(dev, "failed to request RX irq %d\n", sport->dma_rx_chan);
+-		goto __init_err2;
+-	}
+-
+-	if (request_dma(sport->dma_tx_chan, "SPORT TX Data") == -EBUSY) {
+-		dev_err(dev, "failed to request TX dma %d\n", sport->dma_tx_chan);
+-		goto __init_err2;
+-	}
+-
+-	if (set_dma_callback(sport->dma_tx_chan, tx_handler, sport) != 0) {
+-		dev_err(dev, "failed to request TX irq %d\n", sport->dma_tx_chan);
+-		goto __init_err3;
+-	}
+-
+-	if (request_irq(sport->err_irq, err_handler, IRQF_SHARED, "SPORT err",
+-			sport) < 0) {
+-		dev_err(dev, "failed to request err irq %d\n", sport->err_irq);
+-		goto __init_err3;
+-	}
+-
+-	dev_info(dev, "dma rx:%d tx:%d, err irq:%d, regs:%p\n",
+-			sport->dma_rx_chan, sport->dma_tx_chan,
+-			sport->err_irq, sport->regs);
+-
+-	sport->wdsize = param.wdsize;
+-	sport->dummy_count = param.dummy_count;
+-
+-	sport->private_data = kzalloc(priv_size, GFP_KERNEL);
+-	if (!sport->private_data) {
+-		dev_err(dev, "could not alloc priv data %zu bytes\n", priv_size);
+-		goto __init_err4;
+-	}
+-
+-	if (L1_DATA_A_LENGTH)
+-		sport->dummy_buf = l1_data_sram_zalloc(param.dummy_count * 2);
+-	else
+-		sport->dummy_buf = kzalloc(param.dummy_count * 2, GFP_KERNEL);
+-	if (sport->dummy_buf == NULL) {
+-		dev_err(dev, "failed to allocate dummy buffer\n");
+-		goto __error1;
+-	}
+-
+-	ret = sport_config_rx_dummy(sport);
+-	if (ret) {
+-		dev_err(dev, "failed to config rx dummy ring\n");
+-		goto __error2;
+-	}
+-	ret = sport_config_tx_dummy(sport);
+-	if (ret) {
+-		dev_err(dev, "failed to config tx dummy ring\n");
+-		goto __error3;
+-	}
+-
+-	platform_set_drvdata(pdev, sport);
+-
+-	return sport;
+-__error3:
+-	if (L1_DATA_A_LENGTH)
+-		l1_data_sram_free(sport->dummy_rx_desc);
+-	else
+-		dma_free_coherent(NULL, 2*sizeof(struct dmasg),
+-				sport->dummy_rx_desc, 0);
+-__error2:
+-	if (L1_DATA_A_LENGTH)
+-		l1_data_sram_free(sport->dummy_buf);
+-	else
+-		kfree(sport->dummy_buf);
+-__error1:
+-	kfree(sport->private_data);
+-__init_err4:
+-	free_irq(sport->err_irq, sport);
+-__init_err3:
+-	free_dma(sport->dma_tx_chan);
+-__init_err2:
+-	free_dma(sport->dma_rx_chan);
+-__init_err1:
+-	kfree(sport);
+-__init_err0:
+-	peripheral_free_list(param.pin_req);
+-	return NULL;
+-}
+-EXPORT_SYMBOL(sport_init);
+-
+-void sport_done(struct sport_device *sport)
+-{
+-	if (sport == NULL)
+-		return;
+-
+-	sport_stop(sport);
+-	if (sport->dma_rx_desc)
+-		dma_free_coherent(NULL, sport->rx_desc_bytes,
+-			sport->dma_rx_desc, 0);
+-	if (sport->dma_tx_desc)
+-		dma_free_coherent(NULL, sport->tx_desc_bytes,
+-			sport->dma_tx_desc, 0);
+-
+-#if L1_DATA_A_LENGTH != 0
+-	l1_data_sram_free(sport->dummy_rx_desc);
+-	l1_data_sram_free(sport->dummy_tx_desc);
+-	l1_data_sram_free(sport->dummy_buf);
+-#else
+-	dma_free_coherent(NULL, 2*sizeof(struct dmasg),
+-		sport->dummy_rx_desc, 0);
+-	dma_free_coherent(NULL, 2*sizeof(struct dmasg),
+-		sport->dummy_tx_desc, 0);
+-	kfree(sport->dummy_buf);
+-#endif
+-	free_dma(sport->dma_rx_chan);
+-	free_dma(sport->dma_tx_chan);
+-	free_irq(sport->err_irq, sport);
+-
+-	kfree(sport->private_data);
+-	peripheral_free_list(sport->pin_req);
+-	kfree(sport);
+-}
+-EXPORT_SYMBOL(sport_done);
+-
+-/*
+-* It is only used to send several bytes when dma is not enabled
+- * sport controller is configured but not enabled.
+- * Multichannel cannot works with pio mode */
+-/* Used by ac97 to write and read codec register */
+-int sport_send_and_recv(struct sport_device *sport, u8 *out_data, \
+-		u8 *in_data, int len)
+-{
+-	unsigned short dma_config;
+-	unsigned short status;
+-	unsigned long flags;
+-	unsigned long wait = 0;
+-
+-	pr_debug("%s enter, out_data:%p, in_data:%p len:%d\n", \
+-			__func__, out_data, in_data, len);
+-	pr_debug("tcr1:0x%04x, tcr2:0x%04x, tclkdiv:0x%04x, tfsdiv:0x%04x\n"
+-			"mcmc1:0x%04x, mcmc2:0x%04x\n",
+-			sport->regs->tcr1, sport->regs->tcr2,
+-			sport->regs->tclkdiv, sport->regs->tfsdiv,
+-			sport->regs->mcmc1, sport->regs->mcmc2);
+-	flush_dcache_range((unsigned)out_data, (unsigned)(out_data + len));
+-
+-	/* Enable tx dma */
+-	dma_config = (RESTART | WDSIZE_16 | DI_EN);
+-	set_dma_start_addr(sport->dma_tx_chan, (unsigned long)out_data);
+-	set_dma_x_count(sport->dma_tx_chan, len/2);
+-	set_dma_x_modify(sport->dma_tx_chan, 2);
+-	set_dma_config(sport->dma_tx_chan, dma_config);
+-	enable_dma(sport->dma_tx_chan);
+-
+-	if (in_data != NULL) {
+-		invalidate_dcache_range((unsigned)in_data, \
+-				(unsigned)(in_data + len));
+-		/* Enable rx dma */
+-		dma_config = (RESTART | WDSIZE_16 | WNR | DI_EN);
+-		set_dma_start_addr(sport->dma_rx_chan, (unsigned long)in_data);
+-		set_dma_x_count(sport->dma_rx_chan, len/2);
+-		set_dma_x_modify(sport->dma_rx_chan, 2);
+-		set_dma_config(sport->dma_rx_chan, dma_config);
+-		enable_dma(sport->dma_rx_chan);
+-	}
+-
+-	local_irq_save(flags);
+-	sport->regs->tcr1 |= TSPEN;
+-	sport->regs->rcr1 |= RSPEN;
+-	SSYNC();
+-
+-	status = get_dma_curr_irqstat(sport->dma_tx_chan);
+-	while (status & DMA_RUN) {
+-		udelay(1);
+-		status = get_dma_curr_irqstat(sport->dma_tx_chan);
+-		pr_debug("DMA status:0x%04x\n", status);
+-		if (wait++ > 100)
+-			goto __over;
+-	}
+-	status = sport->regs->stat;
+-	wait = 0;
+-
+-	while (!(status & TXHRE)) {
+-		pr_debug("sport status:0x%04x\n", status);
+-		udelay(1);
+-		status = *(unsigned short *)&sport->regs->stat;
+-		if (wait++ > 1000)
+-			goto __over;
+-	}
+-	/* Wait for the last byte sent out */
+-	udelay(20);
+-	pr_debug("sport status:0x%04x\n", status);
+-
+-__over:
+-	sport->regs->tcr1 &= ~TSPEN;
+-	sport->regs->rcr1 &= ~RSPEN;
+-	SSYNC();
+-	disable_dma(sport->dma_tx_chan);
+-	/* Clear the status */
+-	clear_dma_irqstat(sport->dma_tx_chan);
+-	if (in_data != NULL) {
+-		disable_dma(sport->dma_rx_chan);
+-		clear_dma_irqstat(sport->dma_rx_chan);
+-	}
+-	SSYNC();
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_send_and_recv);
+-
+-MODULE_AUTHOR("Roy Huang");
+-MODULE_DESCRIPTION("SPORT driver for ADI Blackfin");
+-MODULE_LICENSE("GPL");
+diff --git a/sound/soc/blackfin/bf5xx-sport.h b/sound/soc/blackfin/bf5xx-sport.h
+deleted file mode 100644
+index 9fc2192..0000000
+--- a/sound/soc/blackfin/bf5xx-sport.h
++++ /dev/null
+@@ -1,174 +0,0 @@
+-/*
+- * File:         bf5xx_sport.h
+- * Based on:
+- * Author:       Roy Huang <roy.huang@analog.com>
+- *
+- * Created:
+- * Description:
+- *
+- *               Copyright 2004-2007 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-
+-#ifndef __BF5XX_SPORT_H__
+-#define __BF5XX_SPORT_H__
+-
+-#include <linux/types.h>
+-#include <linux/wait.h>
+-#include <linux/workqueue.h>
+-#include <linux/platform_device.h>
+-#include <asm/dma.h>
+-#include <asm/bfin_sport.h>
+-
+-#define DESC_ELEMENT_COUNT 9
+-
+-struct sport_device {
+-	int num;
+-	int dma_rx_chan;
+-	int dma_tx_chan;
+-	int err_irq;
+-	const unsigned short *pin_req;
+-	struct sport_register *regs;
+-
+-	unsigned char *rx_buf;
+-	unsigned char *tx_buf;
+-	unsigned int rx_fragsize;
+-	unsigned int tx_fragsize;
+-	unsigned int rx_frags;
+-	unsigned int tx_frags;
+-	unsigned int wdsize;
+-
+-	/* for dummy dma transfer */
+-	void *dummy_buf;
+-	unsigned int dummy_count;
+-
+-	/* DMA descriptor ring head of current audio stream*/
+-	struct dmasg *dma_rx_desc;
+-	struct dmasg *dma_tx_desc;
+-	unsigned int rx_desc_bytes;
+-	unsigned int tx_desc_bytes;
+-
+-	unsigned int rx_run:1; /* rx is running */
+-	unsigned int tx_run:1; /* tx is running */
+-
+-	struct dmasg *dummy_rx_desc;
+-	struct dmasg *dummy_tx_desc;
+-
+-	struct dmasg *curr_rx_desc;
+-	struct dmasg *curr_tx_desc;
+-
+-	int rx_curr_frag;
+-	int tx_curr_frag;
+-
+-	unsigned int rcr1;
+-	unsigned int rcr2;
+-	int rx_tdm_count;
+-
+-	unsigned int tcr1;
+-	unsigned int tcr2;
+-	int tx_tdm_count;
+-
+-	void (*rx_callback)(void *data);
+-	void *rx_data;
+-	void (*tx_callback)(void *data);
+-	void *tx_data;
+-	void (*err_callback)(void *data);
+-	void *err_data;
+-	unsigned char *tx_dma_buf;
+-	unsigned char *rx_dma_buf;
+-#ifdef CONFIG_SND_BF5XX_MMAP_SUPPORT
+-	dma_addr_t tx_dma_phy;
+-	dma_addr_t rx_dma_phy;
+-	int tx_pos;/*pcm sample count*/
+-	int rx_pos;
+-	unsigned int tx_buffer_size;
+-	unsigned int rx_buffer_size;
+-	int tx_delay_pos;
+-	int once;
+-#endif
+-	void *private_data;
+-};
+-
+-struct sport_param {
+-	int num;
+-	int dma_rx_chan;
+-	int dma_tx_chan;
+-	int err_irq;
+-	const unsigned short *pin_req;
+-	struct sport_register *regs;
+-	unsigned int wdsize;
+-	unsigned int dummy_count;
+-	void *private_data;
+-};
+-
+-struct sport_device *sport_init(struct platform_device *pdev,
+-	unsigned int wdsize, unsigned int dummy_count, size_t priv_size);
+-
+-void sport_done(struct sport_device *sport);
+-
+-/* first use these ...*/
+-
+-/* note: multichannel is in units of 8 channels, tdm_count is number of channels
+- *  NOT / 8 ! all channels are enabled by default */
+-int sport_set_multichannel(struct sport_device *sport, int tdm_count,
+-		u32 tx_mask, u32 rx_mask, int packed);
+-
+-int sport_config_rx(struct sport_device *sport,
+-		unsigned int rcr1, unsigned int rcr2,
+-		unsigned int clkdiv, unsigned int fsdiv);
+-
+-int sport_config_tx(struct sport_device *sport,
+-		unsigned int tcr1, unsigned int tcr2,
+-		unsigned int clkdiv, unsigned int fsdiv);
+-
+-/* ... then these: */
+-
+-/* buffer size (in bytes) == fragcount * fragsize_bytes */
+-
+-/* this is not a very general api, it sets the dma to 2d autobuffer mode */
+-
+-int sport_config_rx_dma(struct sport_device *sport, void *buf,
+-		int fragcount, size_t fragsize_bytes);
+-
+-int sport_config_tx_dma(struct sport_device *sport, void *buf,
+-		int fragcount, size_t fragsize_bytes);
+-
+-int sport_tx_start(struct sport_device *sport);
+-int sport_tx_stop(struct sport_device *sport);
+-int sport_rx_start(struct sport_device *sport);
+-int sport_rx_stop(struct sport_device *sport);
+-
+-/* for use in interrupt handler */
+-unsigned long sport_curr_offset_rx(struct sport_device *sport);
+-unsigned long sport_curr_offset_tx(struct sport_device *sport);
+-
+-void sport_incfrag(struct sport_device *sport, int *frag, int tx);
+-void sport_decfrag(struct sport_device *sport, int *frag, int tx);
+-
+-int sport_set_rx_callback(struct sport_device *sport,
+-		       void (*rx_callback)(void *), void *rx_data);
+-int sport_set_tx_callback(struct sport_device *sport,
+-		       void (*tx_callback)(void *), void *tx_data);
+-int sport_set_err_callback(struct sport_device *sport,
+-		       void (*err_callback)(void *), void *err_data);
+-
+-int sport_send_and_recv(struct sport_device *sport, u8 *out_data, \
+-		u8 *in_data, int len);
+-#endif /* BF53X_SPORT_H */
+diff --git a/sound/soc/blackfin/bf5xx-ssm2602.c b/sound/soc/blackfin/bf5xx-ssm2602.c
+deleted file mode 100644
+index 9c19ccc..0000000
+--- a/sound/soc/blackfin/bf5xx-ssm2602.c
++++ /dev/null
+@@ -1,126 +0,0 @@
+-/*
+- * File:         sound/soc/blackfin/bf5xx-ssm2602.c
+- * Author:       Cliff Cai <Cliff.Cai@analog.com>
+- *
+- * Created:      Tue June 06 2008
+- * Description:  board driver for SSM2602 sound chip
+- *
+- * Modified:
+- *               Copyright 2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-#include <linux/gpio.h>
+-#include "../codecs/ssm2602.h"
+-#include "bf5xx-sport.h"
+-
+-static struct snd_soc_card bf5xx_ssm2602;
+-
+-static int bf5xx_ssm2602_dai_init(struct snd_soc_pcm_runtime *rtd)
+-{
+-	/*
+-	 * If you are using a crystal source which frequency is not 12MHz
+-	 * then modify the below case statement with frequency of the crystal.
+-	 *
+-	 * If you are using the SPORT to generate clocking then this is
+-	 * where to do it.
+-	 */
+-	return snd_soc_dai_set_sysclk(rtd->codec_dai, SSM2602_SYSCLK, 12000000,
+-		SND_SOC_CLOCK_IN);
+-}
+-
+-/* CODEC is master for BCLK and LRC in this configuration. */
+-#define BF5XX_SSM2602_DAIFMT (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | \
+-				SND_SOC_DAIFMT_CBM_CFM)
+-
+-static struct snd_soc_dai_link bf5xx_ssm2602_dai[] = {
+-	{
+-		.name = "ssm2602",
+-		.stream_name = "SSM2602",
+-		.cpu_dai_name = "bfin-i2s.0",
+-		.codec_dai_name = "ssm2602-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "ssm2602.0-001b",
+-		.init = bf5xx_ssm2602_dai_init,
+-		.dai_fmt = BF5XX_SSM2602_DAIFMT,
+-	},
+-	{
+-		.name = "ssm2602",
+-		.stream_name = "SSM2602",
+-		.cpu_dai_name = "bfin-i2s.1",
+-		.codec_dai_name = "ssm2602-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "ssm2602.0-001b",
+-		.init = bf5xx_ssm2602_dai_init,
+-		.dai_fmt = BF5XX_SSM2602_DAIFMT,
+-	},
+-};
+-
+-static struct snd_soc_card bf5xx_ssm2602 = {
+-	.name = "bfin-ssm2602",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bf5xx_ssm2602_dai[CONFIG_SND_BF5XX_SPORT_NUM],
+-	.num_links = 1,
+-};
+-
+-static struct platform_device *bf5xx_ssm2602_snd_device;
+-
+-static int __init bf5xx_ssm2602_init(void)
+-{
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	bf5xx_ssm2602_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!bf5xx_ssm2602_snd_device)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(bf5xx_ssm2602_snd_device, &bf5xx_ssm2602);
+-	ret = platform_device_add(bf5xx_ssm2602_snd_device);
+-
+-	if (ret)
+-		platform_device_put(bf5xx_ssm2602_snd_device);
+-
+-	return ret;
+-}
+-
+-static void __exit bf5xx_ssm2602_exit(void)
+-{
+-	pr_debug("%s enter\n", __func__);
+-	platform_device_unregister(bf5xx_ssm2602_snd_device);
+-}
+-
+-module_init(bf5xx_ssm2602_init);
+-module_exit(bf5xx_ssm2602_exit);
+-
+-/* Module information */
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION("ALSA SoC SSM2602 BF527-EZKIT");
+-MODULE_LICENSE("GPL");
+-
+diff --git a/sound/soc/blackfin/bf6xx-i2s.c b/sound/soc/blackfin/bf6xx-i2s.c
+deleted file mode 100644
+index 819cff1..0000000
+--- a/sound/soc/blackfin/bf6xx-i2s.c
++++ /dev/null
+@@ -1,239 +0,0 @@
+-/*
+- * bf6xx-i2s.c - Analog Devices BF6XX i2s interface driver
+- *
+- * Copyright (c) 2012 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- */
+-
+-#include <linux/device.h>
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <sound/pcm.h>
+-#include <sound/pcm_params.h>
+-#include <sound/soc.h>
+-#include <sound/soc-dai.h>
+-
+-#include "bf6xx-sport.h"
+-
+-struct sport_params param;
+-
+-static int bfin_i2s_set_dai_fmt(struct snd_soc_dai *cpu_dai,
+-		unsigned int fmt)
+-{
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(cpu_dai);
+-	struct device *dev = &sport->pdev->dev;
+-	int ret = 0;
+-
+-	param.spctl &= ~(SPORT_CTL_OPMODE | SPORT_CTL_CKRE | SPORT_CTL_FSR
+-			| SPORT_CTL_LFS | SPORT_CTL_LAFS);
+-	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+-	case SND_SOC_DAIFMT_I2S:
+-		param.spctl |= SPORT_CTL_OPMODE | SPORT_CTL_CKRE
+-			| SPORT_CTL_LFS;
+-		break;
+-	case SND_SOC_DAIFMT_DSP_A:
+-		param.spctl |= SPORT_CTL_FSR;
+-		break;
+-	case SND_SOC_DAIFMT_LEFT_J:
+-		param.spctl |= SPORT_CTL_OPMODE | SPORT_CTL_LFS
+-			| SPORT_CTL_LAFS;
+-		break;
+-	default:
+-		dev_err(dev, "%s: Unknown DAI format type\n", __func__);
+-		ret = -EINVAL;
+-		break;
+-	}
+-
+-	param.spctl &= ~(SPORT_CTL_ICLK | SPORT_CTL_IFS);
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
+-		break;
+-	case SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_CBM_CFS:
+-	case SND_SOC_DAIFMT_CBS_CFM:
+-		ret = -EINVAL;
+-		break;
+-	default:
+-		dev_err(dev, "%s: Unknown DAI master type\n", __func__);
+-		ret = -EINVAL;
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+-static int bfin_i2s_hw_params(struct snd_pcm_substream *substream,
+-				struct snd_pcm_hw_params *params,
+-				struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(dai);
+-	struct device *dev = &sport->pdev->dev;
+-	int ret = 0;
+-
+-	param.spctl &= ~SPORT_CTL_SLEN;
+-	switch (params_format(params)) {
+-	case SNDRV_PCM_FORMAT_S8:
+-		param.spctl |= 0x70;
+-		sport->wdsize = 1;
+-		break;
+-	case SNDRV_PCM_FORMAT_S16_LE:
+-		param.spctl |= 0xf0;
+-		sport->wdsize = 2;
+-		break;
+-	case SNDRV_PCM_FORMAT_S24_LE:
+-		param.spctl |= 0x170;
+-		sport->wdsize = 3;
+-		break;
+-	case SNDRV_PCM_FORMAT_S32_LE:
+-		param.spctl |= 0x1f0;
+-		sport->wdsize = 4;
+-		break;
+-	}
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		ret = sport_set_tx_params(sport, &param);
+-		if (ret) {
+-			dev_err(dev, "SPORT tx is busy!\n");
+-			return ret;
+-		}
+-	} else {
+-		ret = sport_set_rx_params(sport, &param);
+-		if (ret) {
+-			dev_err(dev, "SPORT rx is busy!\n");
+-			return ret;
+-		}
+-	}
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM
+-static int bfin_i2s_suspend(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(dai);
+-
+-	if (dai->capture_active)
+-		sport_rx_stop(sport);
+-	if (dai->playback_active)
+-		sport_tx_stop(sport);
+-	return 0;
+-}
+-
+-static int bfin_i2s_resume(struct snd_soc_dai *dai)
+-{
+-	struct sport_device *sport = snd_soc_dai_get_drvdata(dai);
+-	struct device *dev = &sport->pdev->dev;
+-	int ret;
+-
+-	ret = sport_set_tx_params(sport, &param);
+-	if (ret) {
+-		dev_err(dev, "SPORT tx is busy!\n");
+-		return ret;
+-	}
+-	ret = sport_set_rx_params(sport, &param);
+-	if (ret) {
+-		dev_err(dev, "SPORT rx is busy!\n");
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-#else
+-#define bfin_i2s_suspend NULL
+-#define bfin_i2s_resume NULL
+-#endif
+-
+-#define BFIN_I2S_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 |\
+-		SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 | \
+-		SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 | \
+-		SNDRV_PCM_RATE_96000)
+-
+-#define BFIN_I2S_FORMATS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
+-		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+-
+-static const struct snd_soc_dai_ops bfin_i2s_dai_ops = {
+-	.hw_params	= bfin_i2s_hw_params,
+-	.set_fmt	= bfin_i2s_set_dai_fmt,
+-};
+-
+-static struct snd_soc_dai_driver bfin_i2s_dai = {
+-	.suspend = bfin_i2s_suspend,
+-	.resume = bfin_i2s_resume,
+-	.playback = {
+-		.channels_min = 1,
+-		.channels_max = 2,
+-		.rates = BFIN_I2S_RATES,
+-		.formats = BFIN_I2S_FORMATS,
+-	},
+-	.capture = {
+-		.channels_min = 1,
+-		.channels_max = 2,
+-		.rates = BFIN_I2S_RATES,
+-		.formats = BFIN_I2S_FORMATS,
+-	},
+-	.ops = &bfin_i2s_dai_ops,
+-};
+-
+-static const struct snd_soc_component_driver bfin_i2s_component = {
+-	.name		= "bfin-i2s",
+-};
+-
+-static int bfin_i2s_probe(struct platform_device *pdev)
+-{
+-	struct sport_device *sport;
+-	struct device *dev = &pdev->dev;
+-	int ret;
+-
+-	sport = sport_create(pdev);
+-	if (!sport)
+-		return -ENODEV;
+-
+-	/* register with the ASoC layers */
+-	ret = snd_soc_register_component(dev, &bfin_i2s_component,
+-					 &bfin_i2s_dai, 1);
+-	if (ret) {
+-		dev_err(dev, "Failed to register DAI: %d\n", ret);
+-		sport_delete(sport);
+-		return ret;
+-	}
+-	platform_set_drvdata(pdev, sport);
+-
+-	return 0;
+-}
+-
+-static int bfin_i2s_remove(struct platform_device *pdev)
+-{
+-	struct sport_device *sport = platform_get_drvdata(pdev);
+-
+-	snd_soc_unregister_component(&pdev->dev);
+-	sport_delete(sport);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver bfin_i2s_driver = {
+-	.probe  = bfin_i2s_probe,
+-	.remove = bfin_i2s_remove,
+-	.driver = {
+-		.name = "bfin-i2s",
+-	},
+-};
+-
+-module_platform_driver(bfin_i2s_driver);
+-
+-MODULE_DESCRIPTION("Analog Devices BF6XX i2s interface driver");
+-MODULE_AUTHOR("Scott Jiang <Scott.Jiang.Linux@gmail.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+deleted file mode 100644
+index d2caadf..0000000
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ /dev/null
+@@ -1,425 +0,0 @@
+-/*
+- * bf6xx_sport.c Analog Devices BF6XX SPORT driver
+- *
+- * Copyright (c) 2012 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- */
+-
+-#include <linux/device.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/interrupt.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-
+-#include <asm/blackfin.h>
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-
+-#include "bf6xx-sport.h"
+-
+-int sport_set_tx_params(struct sport_device *sport,
+-			struct sport_params *params)
+-{
+-	if (sport->tx_regs->spctl & SPORT_CTL_SPENPRI)
+-		return -EBUSY;
+-	sport->tx_regs->spctl = params->spctl | SPORT_CTL_SPTRAN;
+-	sport->tx_regs->div = params->div;
+-	SSYNC();
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_tx_params);
+-
+-int sport_set_rx_params(struct sport_device *sport,
+-			struct sport_params *params)
+-{
+-	if (sport->rx_regs->spctl & SPORT_CTL_SPENPRI)
+-		return -EBUSY;
+-	sport->rx_regs->spctl = params->spctl & ~SPORT_CTL_SPTRAN;
+-	sport->rx_regs->div = params->div;
+-	SSYNC();
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_set_rx_params);
+-
+-static int compute_wdsize(size_t wdsize)
+-{
+-	switch (wdsize) {
+-	case 1:
+-		return WDSIZE_8 | PSIZE_8;
+-	case 2:
+-		return WDSIZE_16 | PSIZE_16;
+-	default:
+-		return WDSIZE_32 | PSIZE_32;
+-	}
+-}
+-
+-void sport_tx_start(struct sport_device *sport)
+-{
+-	set_dma_next_desc_addr(sport->tx_dma_chan, sport->tx_desc);
+-	set_dma_config(sport->tx_dma_chan, DMAFLOW_LIST | DI_EN
+-			| compute_wdsize(sport->wdsize) | NDSIZE_6);
+-	enable_dma(sport->tx_dma_chan);
+-	sport->tx_regs->spctl |= SPORT_CTL_SPENPRI;
+-	SSYNC();
+-}
+-EXPORT_SYMBOL(sport_tx_start);
+-
+-void sport_rx_start(struct sport_device *sport)
+-{
+-	set_dma_next_desc_addr(sport->rx_dma_chan, sport->rx_desc);
+-	set_dma_config(sport->rx_dma_chan, DMAFLOW_LIST | DI_EN | WNR
+-			| compute_wdsize(sport->wdsize) | NDSIZE_6);
+-	enable_dma(sport->rx_dma_chan);
+-	sport->rx_regs->spctl |= SPORT_CTL_SPENPRI;
+-	SSYNC();
+-}
+-EXPORT_SYMBOL(sport_rx_start);
+-
+-void sport_tx_stop(struct sport_device *sport)
+-{
+-	sport->tx_regs->spctl &= ~SPORT_CTL_SPENPRI;
+-	SSYNC();
+-	disable_dma(sport->tx_dma_chan);
+-}
+-EXPORT_SYMBOL(sport_tx_stop);
+-
+-void sport_rx_stop(struct sport_device *sport)
+-{
+-	sport->rx_regs->spctl &= ~SPORT_CTL_SPENPRI;
+-	SSYNC();
+-	disable_dma(sport->rx_dma_chan);
+-}
+-EXPORT_SYMBOL(sport_rx_stop);
+-
+-void sport_set_tx_callback(struct sport_device *sport,
+-		void (*tx_callback)(void *), void *tx_data)
+-{
+-	sport->tx_callback = tx_callback;
+-	sport->tx_data = tx_data;
+-}
+-EXPORT_SYMBOL(sport_set_tx_callback);
+-
+-void sport_set_rx_callback(struct sport_device *sport,
+-		void (*rx_callback)(void *), void *rx_data)
+-{
+-	sport->rx_callback = rx_callback;
+-	sport->rx_data = rx_data;
+-}
+-EXPORT_SYMBOL(sport_set_rx_callback);
+-
+-static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
+-		size_t fragsize, unsigned int cfg,
+-		unsigned int count, size_t wdsize)
+-{
+-
+-	int i;
+-
+-	for (i = 0; i < fragcount; ++i) {
+-		desc[i].next_desc_addr  = &(desc[i + 1]);
+-		desc[i].start_addr = (unsigned long)buf + i * fragsize;
+-		desc[i].cfg = cfg;
+-		desc[i].x_count = count;
+-		desc[i].x_modify = wdsize;
+-		desc[i].y_count = 0;
+-		desc[i].y_modify = 0;
+-	}
+-
+-	/* make circular */
+-	desc[fragcount - 1].next_desc_addr = desc;
+-}
+-
+-int sport_config_tx_dma(struct sport_device *sport, void *buf,
+-		int fragcount, size_t fragsize)
+-{
+-	unsigned int count;
+-	unsigned int cfg;
+-	dma_addr_t addr;
+-
+-	count = fragsize / sport->wdsize;
+-
+-	if (sport->tx_desc)
+-		dma_free_coherent(NULL, sport->tx_desc_size,
+-				sport->tx_desc, 0);
+-
+-	sport->tx_desc = dma_alloc_coherent(NULL,
+-			fragcount * sizeof(struct dmasg), &addr, 0);
+-	sport->tx_desc_size = fragcount * sizeof(struct dmasg);
+-	if (!sport->tx_desc)
+-		return -ENOMEM;
+-
+-	sport->tx_buf = buf;
+-	sport->tx_fragsize = fragsize;
+-	sport->tx_frags = fragcount;
+-	cfg = DMAFLOW_LIST | DI_EN | compute_wdsize(sport->wdsize) | NDSIZE_6;
+-
+-	setup_desc(sport->tx_desc, buf, fragcount, fragsize,
+-		   cfg | DMAEN, count, sport->wdsize);
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_tx_dma);
+-
+-int sport_config_rx_dma(struct sport_device *sport, void *buf,
+-		int fragcount, size_t fragsize)
+-{
+-	unsigned int count;
+-	unsigned int cfg;
+-	dma_addr_t addr;
+-
+-	count = fragsize / sport->wdsize;
+-
+-	if (sport->rx_desc)
+-		dma_free_coherent(NULL, sport->rx_desc_size,
+-				sport->rx_desc, 0);
+-
+-	sport->rx_desc = dma_alloc_coherent(NULL,
+-			fragcount * sizeof(struct dmasg), &addr, 0);
+-	sport->rx_desc_size = fragcount * sizeof(struct dmasg);
+-	if (!sport->rx_desc)
+-		return -ENOMEM;
+-
+-	sport->rx_buf = buf;
+-	sport->rx_fragsize = fragsize;
+-	sport->rx_frags = fragcount;
+-	cfg = DMAFLOW_LIST | DI_EN | compute_wdsize(sport->wdsize)
+-		| WNR | NDSIZE_6;
+-
+-	setup_desc(sport->rx_desc, buf, fragcount, fragsize,
+-		   cfg | DMAEN, count, sport->wdsize);
+-	return 0;
+-}
+-EXPORT_SYMBOL(sport_config_rx_dma);
+-
+-unsigned long sport_curr_offset_tx(struct sport_device *sport)
+-{
+-	unsigned long curr = get_dma_curr_addr(sport->tx_dma_chan);
+-
+-	return (unsigned char *)curr - sport->tx_buf;
+-}
+-EXPORT_SYMBOL(sport_curr_offset_tx);
+-
+-unsigned long sport_curr_offset_rx(struct sport_device *sport)
+-{
+-	unsigned long curr = get_dma_curr_addr(sport->rx_dma_chan);
+-
+-	return (unsigned char *)curr - sport->rx_buf;
+-}
+-EXPORT_SYMBOL(sport_curr_offset_rx);
+-
+-static irqreturn_t sport_tx_irq(int irq, void *dev_id)
+-{
+-	struct sport_device *sport = dev_id;
+-	static unsigned long status;
+-
+-	status = get_dma_curr_irqstat(sport->tx_dma_chan);
+-	if (status & (DMA_DONE | DMA_ERR)) {
+-		clear_dma_irqstat(sport->tx_dma_chan);
+-		SSYNC();
+-	}
+-	if (sport->tx_callback)
+-		sport->tx_callback(sport->tx_data);
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t sport_rx_irq(int irq, void *dev_id)
+-{
+-	struct sport_device *sport = dev_id;
+-	unsigned long status;
+-
+-	status = get_dma_curr_irqstat(sport->rx_dma_chan);
+-	if (status & (DMA_DONE | DMA_ERR)) {
+-		clear_dma_irqstat(sport->rx_dma_chan);
+-		SSYNC();
+-	}
+-	if (sport->rx_callback)
+-		sport->rx_callback(sport->rx_data);
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t sport_err_irq(int irq, void *dev_id)
+-{
+-	struct sport_device *sport = dev_id;
+-	struct device *dev = &sport->pdev->dev;
+-
+-	if (sport->tx_regs->spctl & SPORT_CTL_DERRPRI)
+-		dev_err(dev, "sport error: TUVF\n");
+-	if (sport->rx_regs->spctl & SPORT_CTL_DERRPRI)
+-		dev_err(dev, "sport error: ROVF\n");
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int sport_get_resource(struct sport_device *sport)
+-{
+-	struct platform_device *pdev = sport->pdev;
+-	struct device *dev = &pdev->dev;
+-	struct bfin_snd_platform_data *pdata = dev->platform_data;
+-	struct resource *res;
+-
+-	if (!pdata) {
+-		dev_err(dev, "No platform data\n");
+-		return -ENODEV;
+-	}
+-	sport->pin_req = pdata->pin_req;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "No tx MEM resource\n");
+-		return -ENODEV;
+-	}
+-	sport->tx_regs = (struct sport_register *)res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!res) {
+-		dev_err(dev, "No rx MEM resource\n");
+-		return -ENODEV;
+-	}
+-	sport->rx_regs = (struct sport_register *)res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!res) {
+-		dev_err(dev, "No tx DMA resource\n");
+-		return -ENODEV;
+-	}
+-	sport->tx_dma_chan = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-	if (!res) {
+-		dev_err(dev, "No rx DMA resource\n");
+-		return -ENODEV;
+-	}
+-	sport->rx_dma_chan = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!res) {
+-		dev_err(dev, "No tx error irq resource\n");
+-		return -ENODEV;
+-	}
+-	sport->tx_err_irq = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+-	if (!res) {
+-		dev_err(dev, "No rx error irq resource\n");
+-		return -ENODEV;
+-	}
+-	sport->rx_err_irq = res->start;
+-
+-	return 0;
+-}
+-
+-static int sport_request_resource(struct sport_device *sport)
+-{
+-	struct device *dev = &sport->pdev->dev;
+-	int ret;
+-
+-	ret = peripheral_request_list(sport->pin_req, "soc-audio");
+-	if (ret) {
+-		dev_err(dev, "Unable to request sport pin\n");
+-		return ret;
+-	}
+-
+-	ret = request_dma(sport->tx_dma_chan, "SPORT TX Data");
+-	if (ret) {
+-		dev_err(dev, "Unable to allocate DMA channel for sport tx\n");
+-		goto err_tx_dma;
+-	}
+-	set_dma_callback(sport->tx_dma_chan, sport_tx_irq, sport);
+-
+-	ret = request_dma(sport->rx_dma_chan, "SPORT RX Data");
+-	if (ret) {
+-		dev_err(dev, "Unable to allocate DMA channel for sport rx\n");
+-		goto err_rx_dma;
+-	}
+-	set_dma_callback(sport->rx_dma_chan, sport_rx_irq, sport);
+-
+-	ret = request_irq(sport->tx_err_irq, sport_err_irq,
+-			0, "SPORT TX ERROR", sport);
+-	if (ret) {
+-		dev_err(dev, "Unable to allocate tx error IRQ for sport\n");
+-		goto err_tx_irq;
+-	}
+-
+-	ret = request_irq(sport->rx_err_irq, sport_err_irq,
+-			0, "SPORT RX ERROR", sport);
+-	if (ret) {
+-		dev_err(dev, "Unable to allocate rx error IRQ for sport\n");
+-		goto err_rx_irq;
+-	}
+-
+-	return 0;
+-err_rx_irq:
+-	free_irq(sport->tx_err_irq, sport);
+-err_tx_irq:
+-	free_dma(sport->rx_dma_chan);
+-err_rx_dma:
+-	free_dma(sport->tx_dma_chan);
+-err_tx_dma:
+-	peripheral_free_list(sport->pin_req);
+-	return ret;
+-}
+-
+-static void sport_free_resource(struct sport_device *sport)
+-{
+-	free_irq(sport->rx_err_irq, sport);
+-	free_irq(sport->tx_err_irq, sport);
+-	free_dma(sport->rx_dma_chan);
+-	free_dma(sport->tx_dma_chan);
+-	peripheral_free_list(sport->pin_req);
+-}
+-
+-struct sport_device *sport_create(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct sport_device *sport;
+-	int ret;
+-
+-	sport = kzalloc(sizeof(*sport), GFP_KERNEL);
+-	if (!sport)
+-		return NULL;
+-
+-	sport->pdev = pdev;
+-
+-	ret = sport_get_resource(sport);
+-	if (ret)
+-		goto free_data;
+-
+-	ret = sport_request_resource(sport);
+-	if (ret)
+-		goto free_data;
+-
+-	dev_dbg(dev, "SPORT create success\n");
+-	return sport;
+-free_data:
+-	kfree(sport);
+-	return NULL;
+-}
+-EXPORT_SYMBOL(sport_create);
+-
+-void sport_delete(struct sport_device *sport)
+-{
+-	if (sport->tx_desc)
+-		dma_free_coherent(NULL, sport->tx_desc_size,
+-				sport->tx_desc, 0);
+-	if (sport->rx_desc)
+-		dma_free_coherent(NULL, sport->rx_desc_size,
+-				sport->rx_desc, 0);
+-	sport_free_resource(sport);
+-	kfree(sport);
+-}
+-EXPORT_SYMBOL(sport_delete);
+-
+-MODULE_DESCRIPTION("Analog Devices BF6XX SPORT driver");
+-MODULE_AUTHOR("Scott Jiang <Scott.Jiang.Linux@gmail.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/blackfin/bf6xx-sport.h b/sound/soc/blackfin/bf6xx-sport.h
+deleted file mode 100644
+index 307d193..0000000
+--- a/sound/soc/blackfin/bf6xx-sport.h
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/*
+- * bf6xx_sport - Analog Devices BF6XX SPORT driver
+- *
+- * Copyright (c) 2012 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- */
+-
+-#ifndef _BF6XX_SPORT_H_
+-#define _BF6XX_SPORT_H_
+-
+-#include <linux/platform_device.h>
+-#include <asm/bfin_sport3.h>
+-
+-struct sport_device {
+-	struct platform_device *pdev;
+-	const unsigned short *pin_req;
+-	struct sport_register *tx_regs;
+-	struct sport_register *rx_regs;
+-	int tx_dma_chan;
+-	int rx_dma_chan;
+-	int tx_err_irq;
+-	int rx_err_irq;
+-
+-	void (*tx_callback)(void *data);
+-	void *tx_data;
+-	void (*rx_callback)(void *data);
+-	void *rx_data;
+-
+-	struct dmasg *tx_desc;
+-	struct dmasg *rx_desc;
+-	unsigned int tx_desc_size;
+-	unsigned int rx_desc_size;
+-	unsigned char *tx_buf;
+-	unsigned char *rx_buf;
+-	unsigned int tx_fragsize;
+-	unsigned int rx_fragsize;
+-	unsigned int tx_frags;
+-	unsigned int rx_frags;
+-	unsigned int wdsize;
+-};
+-
+-struct sport_params {
+-	u32 spctl;
+-	u32 div;
+-};
+-
+-struct sport_device *sport_create(struct platform_device *pdev);
+-void sport_delete(struct sport_device *sport);
+-int sport_set_tx_params(struct sport_device *sport,
+-		struct sport_params *params);
+-int sport_set_rx_params(struct sport_device *sport,
+-		struct sport_params *params);
+-void sport_tx_start(struct sport_device *sport);
+-void sport_rx_start(struct sport_device *sport);
+-void sport_tx_stop(struct sport_device *sport);
+-void sport_rx_stop(struct sport_device *sport);
+-void sport_set_tx_callback(struct sport_device *sport,
+-	void (*tx_callback)(void *), void *tx_data);
+-void sport_set_rx_callback(struct sport_device *sport,
+-	void (*rx_callback)(void *), void *rx_data);
+-int sport_config_tx_dma(struct sport_device *sport, void *buf,
+-	int fragcount, size_t fragsize);
+-int sport_config_rx_dma(struct sport_device *sport, void *buf,
+-	int fragcount, size_t fragsize);
+-unsigned long sport_curr_offset_tx(struct sport_device *sport);
+-unsigned long sport_curr_offset_rx(struct sport_device *sport);
+-
+-
+-
+-#endif
+diff --git a/sound/soc/blackfin/bfin-eval-adau1373.c b/sound/soc/blackfin/bfin-eval-adau1373.c
+deleted file mode 100644
+index 64b88fd..0000000
+--- a/sound/soc/blackfin/bfin-eval-adau1373.c
++++ /dev/null
+@@ -1,173 +0,0 @@
+-/*
+- * Machine driver for EVAL-ADAU1373 on Analog Devices bfin
+- * evaluation boards.
+- *
+- * Copyright 2011 Analog Devices Inc.
+- * Author: Lars-Peter Clausen <lars@metafoo.de>
 - *
 - * Licensed under the GPL-2 or later.
 - */
 -
 -#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/i2c.h>
--#include <linux/slab.h>
--#include <linux/io.h>
--#include <linux/mm.h>
--#include <linux/timer.h>
--#include <linux/spinlock.h>
--#include <linux/completion.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/delay.h>
+-#include <linux/device.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
 -
--#include <asm/irq.h>
--#include <asm/portmux.h>
--#include <asm/bfin_twi.h>
+-#include "../codecs/adau1373.h"
 -
--/* SMBus mode*/
--#define TWI_I2C_MODE_STANDARD		1
--#define TWI_I2C_MODE_STANDARDSUB	2
--#define TWI_I2C_MODE_COMBINED		3
--#define TWI_I2C_MODE_REPEAT		4
+-static const struct snd_soc_dapm_widget bfin_eval_adau1373_dapm_widgets[] = {
+-	SND_SOC_DAPM_LINE("Line In1", NULL),
+-	SND_SOC_DAPM_LINE("Line In2", NULL),
+-	SND_SOC_DAPM_LINE("Line In3", NULL),
+-	SND_SOC_DAPM_LINE("Line In4", NULL),
 -
--static void bfin_twi_handle_interrupt(struct bfin_twi_iface *iface,
--					unsigned short twi_int_status)
+-	SND_SOC_DAPM_LINE("Line Out1", NULL),
+-	SND_SOC_DAPM_LINE("Line Out2", NULL),
+-	SND_SOC_DAPM_LINE("Stereo Out", NULL),
+-	SND_SOC_DAPM_HP("Headphone", NULL),
+-	SND_SOC_DAPM_HP("Earpiece", NULL),
+-	SND_SOC_DAPM_SPK("Speaker", NULL),
+-};
+-
+-static const struct snd_soc_dapm_route bfin_eval_adau1373_dapm_routes[] = {
+-	{ "AIN1L", NULL, "Line In1" },
+-	{ "AIN1R", NULL, "Line In1" },
+-	{ "AIN2L", NULL, "Line In2" },
+-	{ "AIN2R", NULL, "Line In2" },
+-	{ "AIN3L", NULL, "Line In3" },
+-	{ "AIN3R", NULL, "Line In3" },
+-	{ "AIN4L", NULL, "Line In4" },
+-	{ "AIN4R", NULL, "Line In4" },
+-
+-	/* MICBIAS can be connected via a jumper to the line-in jack, since w
+-	   don't know which one is going to be used, just power both. */
+-	{ "Line In1", NULL, "MICBIAS1" },
+-	{ "Line In2", NULL, "MICBIAS1" },
+-	{ "Line In3", NULL, "MICBIAS1" },
+-	{ "Line In4", NULL, "MICBIAS1" },
+-	{ "Line In1", NULL, "MICBIAS2" },
+-	{ "Line In2", NULL, "MICBIAS2" },
+-	{ "Line In3", NULL, "MICBIAS2" },
+-	{ "Line In4", NULL, "MICBIAS2" },
+-
+-	{ "Line Out1", NULL, "LOUT1L" },
+-	{ "Line Out1", NULL, "LOUT1R" },
+-	{ "Line Out2", NULL, "LOUT2L" },
+-	{ "Line Out2", NULL, "LOUT2R" },
+-	{ "Headphone", NULL, "HPL" },
+-	{ "Headphone", NULL, "HPR" },
+-	{ "Earpiece", NULL, "EP" },
+-	{ "Speaker", NULL, "SPKL" },
+-	{ "Stereo Out", NULL, "SPKR" },
+-};
+-
+-static int bfin_eval_adau1373_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
 -{
--	unsigned short mast_stat = read_MASTER_STAT(iface);
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int ret;
+-	int pll_rate;
 -
--	if (twi_int_status & XMTSERV) {
--		if (iface->writeNum <= 0) {
--			/* start receive immediately after complete sending in
--			 * combine mode.
--			 */
--			if (iface->cur_mode == TWI_I2C_MODE_COMBINED)
--				write_MASTER_CTL(iface,
--					read_MASTER_CTL(iface) | MDIR);
--			else if (iface->manual_stop)
--				write_MASTER_CTL(iface,
--					read_MASTER_CTL(iface) | STOP);
--			else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
--				iface->cur_msg + 1 < iface->msg_num) {
--				if (iface->pmsg[iface->cur_msg + 1].flags &
--					I2C_M_RD)
--					write_MASTER_CTL(iface,
--						read_MASTER_CTL(iface) |
--						MDIR);
--				else
--					write_MASTER_CTL(iface,
--						read_MASTER_CTL(iface) &
--						~MDIR);
--			}
--		}
--		/* Transmit next data */
--		while (iface->writeNum > 0 &&
--			(read_FIFO_STAT(iface) & XMTSTAT) != XMT_FULL) {
--			write_XMT_DATA8(iface, *(iface->transPtr++));
--			iface->writeNum--;
--		}
--	}
--	if (twi_int_status & RCVSERV) {
--		while (iface->readNum > 0 &&
--			(read_FIFO_STAT(iface) & RCVSTAT)) {
--			/* Receive next data */
--			*(iface->transPtr) = read_RCV_DATA8(iface);
--			if (iface->cur_mode == TWI_I2C_MODE_COMBINED) {
--				/* Change combine mode into sub mode after
--				 * read first data.
--				 */
--				iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
--				/* Get read number from first byte in block
--				 * combine mode.
--				 */
--				if (iface->readNum == 1 && iface->manual_stop)
--					iface->readNum = *iface->transPtr + 1;
--			}
--			iface->transPtr++;
--			iface->readNum--;
--		}
--
--		if (iface->readNum == 0) {
--			if (iface->manual_stop) {
--				/* Temporary workaround to avoid possible bus stall -
--				 * Flush FIFO before issuing the STOP condition
--				 */
--				read_RCV_DATA16(iface);
--				write_MASTER_CTL(iface,
--					read_MASTER_CTL(iface) | STOP);
--			} else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
--					iface->cur_msg + 1 < iface->msg_num) {
--				if (iface->pmsg[iface->cur_msg + 1].flags & I2C_M_RD)
--					write_MASTER_CTL(iface,
--						read_MASTER_CTL(iface) | MDIR);
--				else
--					write_MASTER_CTL(iface,
--						read_MASTER_CTL(iface) & ~MDIR);
--			}
--		}
--	}
--	if (twi_int_status & MERR) {
--		write_INT_MASK(iface, 0);
--		write_MASTER_STAT(iface, 0x3e);
--		write_MASTER_CTL(iface, 0);
--		iface->result = -EIO;
--
--		if (mast_stat & LOSTARB)
--			dev_dbg(&iface->adap.dev, "Lost Arbitration\n");
--		if (mast_stat & ANAK)
--			dev_dbg(&iface->adap.dev, "Address Not Acknowledged\n");
--		if (mast_stat & DNAK)
--			dev_dbg(&iface->adap.dev, "Data Not Acknowledged\n");
--		if (mast_stat & BUFRDERR)
--			dev_dbg(&iface->adap.dev, "Buffer Read Error\n");
--		if (mast_stat & BUFWRERR)
--			dev_dbg(&iface->adap.dev, "Buffer Write Error\n");
--
--		/* Faulty slave devices, may drive SDA low after a transfer
--		 * finishes. To release the bus this code generates up to 9
--		 * extra clocks until SDA is released.
--		 */
--
--		if (read_MASTER_STAT(iface) & SDASEN) {
--			int cnt = 9;
--			do {
--				write_MASTER_CTL(iface, SCLOVR);
--				udelay(6);
--				write_MASTER_CTL(iface, 0);
--				udelay(6);
--			} while ((read_MASTER_STAT(iface) & SDASEN) && cnt--);
--
--			write_MASTER_CTL(iface, SDAOVR | SCLOVR);
--			udelay(6);
--			write_MASTER_CTL(iface, SDAOVR);
--			udelay(6);
--			write_MASTER_CTL(iface, 0);
--		}
--
--		/* If it is a quick transfer, only address without data,
--		 * not an err, return 1.
--		 */
--		if (iface->cur_mode == TWI_I2C_MODE_STANDARD &&
--			iface->transPtr == NULL &&
--			(twi_int_status & MCOMP) && (mast_stat & DNAK))
--			iface->result = 1;
--
--		complete(&iface->complete);
--		return;
--	}
--	if (twi_int_status & MCOMP) {
--		if (twi_int_status & (XMTSERV | RCVSERV) &&
--			(read_MASTER_CTL(iface) & MEN) == 0 &&
--			(iface->cur_mode == TWI_I2C_MODE_REPEAT ||
--			iface->cur_mode == TWI_I2C_MODE_COMBINED)) {
--			iface->result = -1;
--			write_INT_MASK(iface, 0);
--			write_MASTER_CTL(iface, 0);
--		} else if (iface->cur_mode == TWI_I2C_MODE_COMBINED) {
--			if (iface->readNum == 0) {
--				/* set the read number to 1 and ask for manual
--				 * stop in block combine mode
--				 */
--				iface->readNum = 1;
--				iface->manual_stop = 1;
--				write_MASTER_CTL(iface,
--					read_MASTER_CTL(iface) | (0xff << 6));
--			} else {
--				/* set the readd number in other
--				 * combine mode.
--				 */
--				write_MASTER_CTL(iface,
--					(read_MASTER_CTL(iface) &
--					(~(0xff << 6))) |
--					(iface->readNum << 6));
--			}
--			/* remove restart bit and enable master receive */
--			write_MASTER_CTL(iface,
--				read_MASTER_CTL(iface) & ~RSTART);
--		} else if (iface->cur_mode == TWI_I2C_MODE_REPEAT &&
--				iface->cur_msg + 1 < iface->msg_num) {
--			iface->cur_msg++;
--			iface->transPtr = iface->pmsg[iface->cur_msg].buf;
--			iface->writeNum = iface->readNum =
--				iface->pmsg[iface->cur_msg].len;
--			/* Set Transmit device address */
--			write_MASTER_ADDR(iface,
--				iface->pmsg[iface->cur_msg].addr);
--			if (iface->pmsg[iface->cur_msg].flags & I2C_M_RD)
--				iface->read_write = I2C_SMBUS_READ;
--			else {
--				iface->read_write = I2C_SMBUS_WRITE;
--				/* Transmit first data */
--				if (iface->writeNum > 0) {
--					write_XMT_DATA8(iface,
--						*(iface->transPtr++));
--					iface->writeNum--;
--				}
--			}
--
--			if (iface->pmsg[iface->cur_msg].len <= 255) {
--				write_MASTER_CTL(iface,
--					(read_MASTER_CTL(iface) &
--					(~(0xff << 6))) |
--					(iface->pmsg[iface->cur_msg].len << 6));
--				iface->manual_stop = 0;
--			} else {
--				write_MASTER_CTL(iface,
--					(read_MASTER_CTL(iface) |
--					(0xff << 6)));
--				iface->manual_stop = 1;
--			}
--			/* remove restart bit before last message */
--			if (iface->cur_msg + 1 == iface->msg_num)
--				write_MASTER_CTL(iface,
--					read_MASTER_CTL(iface) & ~RSTART);
--		} else {
--			iface->result = 1;
--			write_INT_MASK(iface, 0);
--			write_MASTER_CTL(iface, 0);
--		}
--		complete(&iface->complete);
--	}
--}
--
--/* Interrupt handler */
--static irqreturn_t bfin_twi_interrupt_entry(int irq, void *dev_id)
--{
--	struct bfin_twi_iface *iface = dev_id;
--	unsigned long flags;
--	unsigned short twi_int_status;
--
--	spin_lock_irqsave(&iface->lock, flags);
--	while (1) {
--		twi_int_status = read_INT_STAT(iface);
--		if (!twi_int_status)
--			break;
--		/* Clear interrupt status */
--		write_INT_STAT(iface, twi_int_status);
--		bfin_twi_handle_interrupt(iface, twi_int_status);
--	}
--	spin_unlock_irqrestore(&iface->lock, flags);
--	return IRQ_HANDLED;
--}
--
--/*
-- * One i2c master transfer
-- */
--static int bfin_twi_do_master_xfer(struct i2c_adapter *adap,
--				struct i2c_msg *msgs, int num)
--{
--	struct bfin_twi_iface *iface = adap->algo_data;
--	struct i2c_msg *pmsg;
--	int rc = 0;
--
--	if (!(read_CONTROL(iface) & TWI_ENA))
--		return -ENXIO;
--
--	if (read_MASTER_STAT(iface) & BUSBUSY)
--		return -EAGAIN;
--
--	iface->pmsg = msgs;
--	iface->msg_num = num;
--	iface->cur_msg = 0;
--
--	pmsg = &msgs[0];
--	if (pmsg->flags & I2C_M_TEN) {
--		dev_err(&adap->dev, "10 bits addr not supported!\n");
+-	switch (params_rate(params)) {
+-	case 48000:
+-	case 8000:
+-	case 12000:
+-	case 16000:
+-	case 24000:
+-	case 32000:
+-		pll_rate = 48000 * 1024;
+-		break;
+-	case 44100:
+-	case 7350:
+-	case 11025:
+-	case 14700:
+-	case 22050:
+-	case 29400:
+-		pll_rate = 44100 * 1024;
+-		break;
+-	default:
 -		return -EINVAL;
 -	}
 -
--	if (iface->msg_num > 1)
--		iface->cur_mode = TWI_I2C_MODE_REPEAT;
--	iface->manual_stop = 0;
--	iface->transPtr = pmsg->buf;
--	iface->writeNum = iface->readNum = pmsg->len;
--	iface->result = 0;
--	init_completion(&(iface->complete));
--	/* Set Transmit device address */
--	write_MASTER_ADDR(iface, pmsg->addr);
+-	ret = snd_soc_dai_set_pll(codec_dai, ADAU1373_PLL1,
+-			ADAU1373_PLL_SRC_MCLK1, 12288000, pll_rate);
+-	if (ret)
+-		return ret;
 -
--	/* FIFO Initiation. Data in FIFO should be
--	 *  discarded before start a new operation.
--	 */
--	write_FIFO_CTL(iface, 0x3);
--	write_FIFO_CTL(iface, 0);
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAU1373_CLK_SRC_PLL1, pll_rate,
+-			SND_SOC_CLOCK_IN);
 -
--	if (pmsg->flags & I2C_M_RD)
--		iface->read_write = I2C_SMBUS_READ;
--	else {
--		iface->read_write = I2C_SMBUS_WRITE;
--		/* Transmit first data */
--		if (iface->writeNum > 0) {
--			write_XMT_DATA8(iface, *(iface->transPtr++));
--			iface->writeNum--;
--		}
--	}
--
--	/* clear int stat */
--	write_INT_STAT(iface, MERR | MCOMP | XMTSERV | RCVSERV);
--
--	/* Interrupt mask . Enable XMT, RCV interrupt */
--	write_INT_MASK(iface, MCOMP | MERR | RCVSERV | XMTSERV);
--
--	if (pmsg->len <= 255)
--		write_MASTER_CTL(iface, pmsg->len << 6);
--	else {
--		write_MASTER_CTL(iface, 0xff << 6);
--		iface->manual_stop = 1;
--	}
--
--	/* Master enable */
--	write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
--		(iface->msg_num > 1 ? RSTART : 0) |
--		((iface->read_write == I2C_SMBUS_READ) ? MDIR : 0) |
--		((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ > 100) ? FAST : 0));
--
--	while (!iface->result) {
--		if (!wait_for_completion_timeout(&iface->complete,
--			adap->timeout)) {
--			iface->result = -1;
--			dev_err(&adap->dev, "master transfer timeout\n");
--		}
--	}
--
--	if (iface->result == 1)
--		rc = iface->cur_msg + 1;
--	else
--		rc = iface->result;
--
--	return rc;
+-	return ret;
 -}
 -
--/*
-- * Generic i2c master transfer entrypoint
-- */
--static int bfin_twi_master_xfer(struct i2c_adapter *adap,
--				struct i2c_msg *msgs, int num)
+-static int bfin_eval_adau1373_codec_init(struct snd_soc_pcm_runtime *rtd)
 -{
--	return bfin_twi_do_master_xfer(adap, msgs, num);
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	unsigned int pll_rate = 48000 * 1024;
+-	int ret;
+-
+-	ret = snd_soc_dai_set_pll(codec_dai, ADAU1373_PLL1,
+-			ADAU1373_PLL_SRC_MCLK1, 12288000, pll_rate);
+-	if (ret)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAU1373_CLK_SRC_PLL1, pll_rate,
+-			SND_SOC_CLOCK_IN);
+-
+-	return ret;
 -}
--
--/*
-- * One I2C SMBus transfer
-- */
--int bfin_twi_do_smbus_xfer(struct i2c_adapter *adap, u16 addr,
--			unsigned short flags, char read_write,
--			u8 command, int size, union i2c_smbus_data *data)
--{
--	struct bfin_twi_iface *iface = adap->algo_data;
--	int rc = 0;
--
--	if (!(read_CONTROL(iface) & TWI_ENA))
--		return -ENXIO;
--
--	if (read_MASTER_STAT(iface) & BUSBUSY)
--		return -EAGAIN;
--
--	iface->writeNum = 0;
--	iface->readNum = 0;
--
--	/* Prepare datas & select mode */
--	switch (size) {
--	case I2C_SMBUS_QUICK:
--		iface->transPtr = NULL;
--		iface->cur_mode = TWI_I2C_MODE_STANDARD;
--		break;
--	case I2C_SMBUS_BYTE:
--		if (data == NULL)
--			iface->transPtr = NULL;
--		else {
--			if (read_write == I2C_SMBUS_READ)
--				iface->readNum = 1;
--			else
--				iface->writeNum = 1;
--			iface->transPtr = &data->byte;
--		}
--		iface->cur_mode = TWI_I2C_MODE_STANDARD;
--		break;
--	case I2C_SMBUS_BYTE_DATA:
--		if (read_write == I2C_SMBUS_READ) {
--			iface->readNum = 1;
--			iface->cur_mode = TWI_I2C_MODE_COMBINED;
--		} else {
--			iface->writeNum = 1;
--			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
--		}
--		iface->transPtr = &data->byte;
--		break;
--	case I2C_SMBUS_WORD_DATA:
--		if (read_write == I2C_SMBUS_READ) {
--			iface->readNum = 2;
--			iface->cur_mode = TWI_I2C_MODE_COMBINED;
--		} else {
--			iface->writeNum = 2;
--			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
--		}
--		iface->transPtr = (u8 *)&data->word;
--		break;
--	case I2C_SMBUS_PROC_CALL:
--		iface->writeNum = 2;
--		iface->readNum = 2;
--		iface->cur_mode = TWI_I2C_MODE_COMBINED;
--		iface->transPtr = (u8 *)&data->word;
--		break;
--	case I2C_SMBUS_BLOCK_DATA:
--		if (read_write == I2C_SMBUS_READ) {
--			iface->readNum = 0;
--			iface->cur_mode = TWI_I2C_MODE_COMBINED;
--		} else {
--			iface->writeNum = data->block[0] + 1;
--			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
--		}
--		iface->transPtr = data->block;
--		break;
--	case I2C_SMBUS_I2C_BLOCK_DATA:
--		if (read_write == I2C_SMBUS_READ) {
--			iface->readNum = data->block[0];
--			iface->cur_mode = TWI_I2C_MODE_COMBINED;
--		} else {
--			iface->writeNum = data->block[0];
--			iface->cur_mode = TWI_I2C_MODE_STANDARDSUB;
--		}
--		iface->transPtr = (u8 *)&data->block[1];
--		break;
--	default:
--		return -1;
--	}
--
--	iface->result = 0;
--	iface->manual_stop = 0;
--	iface->read_write = read_write;
--	iface->command = command;
--	init_completion(&(iface->complete));
--
--	/* FIFO Initiation. Data in FIFO should be discarded before
--	 * start a new operation.
--	 */
--	write_FIFO_CTL(iface, 0x3);
--	write_FIFO_CTL(iface, 0);
--
--	/* clear int stat */
--	write_INT_STAT(iface, MERR | MCOMP | XMTSERV | RCVSERV);
--
--	/* Set Transmit device address */
--	write_MASTER_ADDR(iface, addr);
--
--	switch (iface->cur_mode) {
--	case TWI_I2C_MODE_STANDARDSUB:
--		write_XMT_DATA8(iface, iface->command);
--		write_INT_MASK(iface, MCOMP | MERR |
--			((iface->read_write == I2C_SMBUS_READ) ?
--			RCVSERV : XMTSERV));
--
--		if (iface->writeNum + 1 <= 255)
--			write_MASTER_CTL(iface, (iface->writeNum + 1) << 6);
--		else {
--			write_MASTER_CTL(iface, 0xff << 6);
--			iface->manual_stop = 1;
--		}
--		/* Master enable */
--		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
--			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ>100) ? FAST : 0));
--		break;
--	case TWI_I2C_MODE_COMBINED:
--		write_XMT_DATA8(iface, iface->command);
--		write_INT_MASK(iface, MCOMP | MERR | RCVSERV | XMTSERV);
--
--		if (iface->writeNum > 0)
--			write_MASTER_CTL(iface, (iface->writeNum + 1) << 6);
--		else
--			write_MASTER_CTL(iface, 0x1 << 6);
--		/* Master enable */
--		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN | RSTART |
--			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ>100) ? FAST : 0));
--		break;
--	default:
--		write_MASTER_CTL(iface, 0);
--		if (size != I2C_SMBUS_QUICK) {
--			/* Don't access xmit data register when this is a
--			 * read operation.
--			 */
--			if (iface->read_write != I2C_SMBUS_READ) {
--				if (iface->writeNum > 0) {
--					write_XMT_DATA8(iface,
--						*(iface->transPtr++));
--					if (iface->writeNum <= 255)
--						write_MASTER_CTL(iface,
--							iface->writeNum << 6);
--					else {
--						write_MASTER_CTL(iface,
--							0xff << 6);
--						iface->manual_stop = 1;
--					}
--					iface->writeNum--;
--				} else {
--					write_XMT_DATA8(iface, iface->command);
--					write_MASTER_CTL(iface, 1 << 6);
--				}
--			} else {
--				if (iface->readNum > 0 && iface->readNum <= 255)
--					write_MASTER_CTL(iface,
--						iface->readNum << 6);
--				else if (iface->readNum > 255) {
--					write_MASTER_CTL(iface, 0xff << 6);
--					iface->manual_stop = 1;
--				} else
--					break;
--			}
--		}
--		write_INT_MASK(iface, MCOMP | MERR |
--			((iface->read_write == I2C_SMBUS_READ) ?
--			RCVSERV : XMTSERV));
--
--		/* Master enable */
--		write_MASTER_CTL(iface, read_MASTER_CTL(iface) | MEN |
--			((iface->read_write == I2C_SMBUS_READ) ? MDIR : 0) |
--			((CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ > 100) ? FAST : 0));
--		break;
--	}
--
--	while (!iface->result) {
--		if (!wait_for_completion_timeout(&iface->complete,
--			adap->timeout)) {
--			iface->result = -1;
--			dev_err(&adap->dev, "smbus transfer timeout\n");
--		}
--	}
--
--	rc = (iface->result >= 0) ? 0 : -1;
--
--	return rc;
--}
--
--/*
-- * Generic I2C SMBus transfer entrypoint
-- */
--int bfin_twi_smbus_xfer(struct i2c_adapter *adap, u16 addr,
--			unsigned short flags, char read_write,
--			u8 command, int size, union i2c_smbus_data *data)
--{
--	return bfin_twi_do_smbus_xfer(adap, addr, flags,
--			read_write, command, size, data);
--}
--
--/*
-- * Return what the adapter supports
-- */
--static u32 bfin_twi_functionality(struct i2c_adapter *adap)
--{
--	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
--	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
--	       I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_PROC_CALL |
--	       I2C_FUNC_I2C | I2C_FUNC_SMBUS_I2C_BLOCK;
--}
--
--static const struct i2c_algorithm bfin_twi_algorithm = {
--	.master_xfer   = bfin_twi_master_xfer,
--	.smbus_xfer    = bfin_twi_smbus_xfer,
--	.functionality = bfin_twi_functionality,
+-static const struct snd_soc_ops bfin_eval_adau1373_ops = {
+-	.hw_params = bfin_eval_adau1373_hw_params,
 -};
 -
--#ifdef CONFIG_PM_SLEEP
--static int i2c_bfin_twi_suspend(struct device *dev)
+-static struct snd_soc_dai_link bfin_eval_adau1373_dai = {
+-	.name = "adau1373",
+-	.stream_name = "adau1373",
+-	.cpu_dai_name = "bfin-i2s.0",
+-	.codec_dai_name = "adau1373-aif1",
+-	.platform_name = "bfin-i2s-pcm-audio",
+-	.codec_name = "adau1373.0-001a",
+-	.ops = &bfin_eval_adau1373_ops,
+-	.init = bfin_eval_adau1373_codec_init,
+-	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+-			SND_SOC_DAIFMT_CBM_CFM,
+-};
+-
+-static struct snd_soc_card bfin_eval_adau1373 = {
+-	.name = "bfin-eval-adau1373",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bfin_eval_adau1373_dai,
+-	.num_links = 1,
+-
+-	.dapm_widgets		= bfin_eval_adau1373_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(bfin_eval_adau1373_dapm_widgets),
+-	.dapm_routes		= bfin_eval_adau1373_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(bfin_eval_adau1373_dapm_routes),
+-};
+-
+-static int bfin_eval_adau1373_probe(struct platform_device *pdev)
 -{
--	struct bfin_twi_iface *iface = dev_get_drvdata(dev);
+-	struct snd_soc_card *card = &bfin_eval_adau1373;
 -
--	iface->saved_clkdiv = read_CLKDIV(iface);
--	iface->saved_control = read_CONTROL(iface);
+-	card->dev = &pdev->dev;
 -
--	free_irq(iface->irq, iface);
--
--	/* Disable TWI */
--	write_CONTROL(iface, iface->saved_control & ~TWI_ENA);
--
--	return 0;
+-	return devm_snd_soc_register_card(&pdev->dev, &bfin_eval_adau1373);
 -}
 -
--static int i2c_bfin_twi_resume(struct device *dev)
+-static struct platform_driver bfin_eval_adau1373_driver = {
+-	.driver = {
+-		.name = "bfin-eval-adau1373",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bfin_eval_adau1373_probe,
+-};
+-
+-module_platform_driver(bfin_eval_adau1373_driver);
+-
+-MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+-MODULE_DESCRIPTION("ALSA SoC bfin adau1373 driver");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:bfin-eval-adau1373");
+diff --git a/sound/soc/blackfin/bfin-eval-adau1701.c b/sound/soc/blackfin/bfin-eval-adau1701.c
+deleted file mode 100644
+index 5c67f72..0000000
+--- a/sound/soc/blackfin/bfin-eval-adau1701.c
++++ /dev/null
+@@ -1,113 +0,0 @@
+-/*
+- * Machine driver for EVAL-ADAU1701MINIZ on Analog Devices bfin
+- * evaluation boards.
+- *
+- * Copyright 2011 Analog Devices Inc.
+- * Author: Lars-Peter Clausen <lars@metafoo.de>
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/device.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include "../codecs/adau1701.h"
+-
+-static const struct snd_soc_dapm_widget bfin_eval_adau1701_dapm_widgets[] = {
+-	SND_SOC_DAPM_SPK("Speaker", NULL),
+-	SND_SOC_DAPM_LINE("Line Out", NULL),
+-	SND_SOC_DAPM_LINE("Line In", NULL),
+-};
+-
+-static const struct snd_soc_dapm_route bfin_eval_adau1701_dapm_routes[] = {
+-	{ "Speaker", NULL, "OUT0" },
+-	{ "Speaker", NULL, "OUT1" },
+-	{ "Line Out", NULL, "OUT2" },
+-	{ "Line Out", NULL, "OUT3" },
+-
+-	{ "IN0", NULL, "Line In" },
+-	{ "IN1", NULL, "Line In" },
+-};
+-
+-static int bfin_eval_adau1701_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
 -{
--	struct bfin_twi_iface *iface = dev_get_drvdata(dev);
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int ret;
 -
--	int rc = request_irq(iface->irq, bfin_twi_interrupt_entry,
--		0, to_platform_device(dev)->name, iface);
--	if (rc) {
--		dev_err(dev, "Can't get IRQ %d !\n", iface->irq);
--		return -ENODEV;
--	}
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAU1701_CLK_SRC_OSC, 12288000,
+-			SND_SOC_CLOCK_IN);
 -
--	/* Resume TWI interface clock as specified */
--	write_CLKDIV(iface, iface->saved_clkdiv);
--
--	/* Resume TWI */
--	write_CONTROL(iface, iface->saved_control);
--
--	return 0;
+-	return ret;
 -}
 -
--static SIMPLE_DEV_PM_OPS(i2c_bfin_twi_pm,
--			 i2c_bfin_twi_suspend, i2c_bfin_twi_resume);
--#define I2C_BFIN_TWI_PM_OPS	(&i2c_bfin_twi_pm)
--#else
--#define I2C_BFIN_TWI_PM_OPS	NULL
--#endif
+-static struct snd_soc_ops bfin_eval_adau1701_ops = {
+-	.hw_params = bfin_eval_adau1701_hw_params,
+-};
 -
--static int i2c_bfin_twi_probe(struct platform_device *pdev)
--{
--	struct bfin_twi_iface *iface;
--	struct i2c_adapter *p_adap;
--	struct resource *res;
--	int rc;
--	unsigned int clkhilow;
+-#define BFIN_EVAL_ADAU1701_DAI_FMT (SND_SOC_DAIFMT_I2S | \
+-				SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM)
 -
--	iface = devm_kzalloc(&pdev->dev, sizeof(struct bfin_twi_iface),
--			GFP_KERNEL);
--	if (!iface) {
--		dev_err(&pdev->dev, "Cannot allocate memory\n");
--		return -ENOMEM;
--	}
--
--	spin_lock_init(&(iface->lock));
--
--	/* Find and map our resources */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	iface->regs_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(iface->regs_base)) {
--		dev_err(&pdev->dev, "Cannot map IO\n");
--		return PTR_ERR(iface->regs_base);
--	}
--
--	iface->irq = platform_get_irq(pdev, 0);
--	if (iface->irq < 0) {
--		dev_err(&pdev->dev, "No IRQ specified\n");
--		return -ENOENT;
--	}
--
--	p_adap = &iface->adap;
--	p_adap->nr = pdev->id;
--	strlcpy(p_adap->name, pdev->name, sizeof(p_adap->name));
--	p_adap->algo = &bfin_twi_algorithm;
--	p_adap->algo_data = iface;
--	p_adap->class = I2C_CLASS_DEPRECATED;
--	p_adap->dev.parent = &pdev->dev;
--	p_adap->timeout = 5 * HZ;
--	p_adap->retries = 3;
--
--	rc = peripheral_request_list(
--			dev_get_platdata(&pdev->dev),
--			"i2c-bfin-twi");
--	if (rc) {
--		dev_err(&pdev->dev, "Can't setup pin mux!\n");
--		return -EBUSY;
--	}
--
--	rc = devm_request_irq(&pdev->dev, iface->irq, bfin_twi_interrupt_entry,
--		0, pdev->name, iface);
--	if (rc) {
--		dev_err(&pdev->dev, "Can't get IRQ %d !\n", iface->irq);
--		rc = -ENODEV;
--		goto out_error;
--	}
--
--	/* Set TWI internal clock as 10MHz */
--	write_CONTROL(iface, ((get_sclk() / 1000 / 1000 + 5) / 10) & 0x7F);
--
--	/*
--	 * We will not end up with a CLKDIV=0 because no one will specify
--	 * 20kHz SCL or less in Kconfig now. (5 * 1000 / 20 = 250)
--	 */
--	clkhilow = ((10 * 1000 / CONFIG_I2C_BLACKFIN_TWI_CLK_KHZ) + 1) / 2;
--
--	/* Set Twi interface clock as specified */
--	write_CLKDIV(iface, (clkhilow << 8) | clkhilow);
--
--	/* Enable TWI */
--	write_CONTROL(iface, read_CONTROL(iface) | TWI_ENA);
--
--	rc = i2c_add_numbered_adapter(p_adap);
--	if (rc < 0)
--		goto out_error;
--
--	platform_set_drvdata(pdev, iface);
--
--	dev_info(&pdev->dev, "Blackfin BF5xx on-chip I2C TWI Controller, "
--		"regs_base@%p\n", iface->regs_base);
--
--	return 0;
--
--out_error:
--	peripheral_free_list(dev_get_platdata(&pdev->dev));
--	return rc;
--}
--
--static int i2c_bfin_twi_remove(struct platform_device *pdev)
--{
--	struct bfin_twi_iface *iface = platform_get_drvdata(pdev);
--
--	i2c_del_adapter(&(iface->adap));
--	peripheral_free_list(dev_get_platdata(&pdev->dev));
--
--	return 0;
--}
--
--static struct platform_driver i2c_bfin_twi_driver = {
--	.probe		= i2c_bfin_twi_probe,
--	.remove		= i2c_bfin_twi_remove,
--	.driver		= {
--		.name	= "i2c-bfin-twi",
--		.pm	= I2C_BFIN_TWI_PM_OPS,
+-static struct snd_soc_dai_link bfin_eval_adau1701_dai[] = {
+-	{
+-		.name = "adau1701",
+-		.stream_name = "adau1701",
+-		.cpu_dai_name = "bfin-i2s.0",
+-		.codec_dai_name = "adau1701",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "adau1701.0-0034",
+-		.ops = &bfin_eval_adau1701_ops,
+-		.dai_fmt = BFIN_EVAL_ADAU1701_DAI_FMT,
+-	},
+-	{
+-		.name = "adau1701",
+-		.stream_name = "adau1701",
+-		.cpu_dai_name = "bfin-i2s.1",
+-		.codec_dai_name = "adau1701",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.codec_name = "adau1701.0-0034",
+-		.ops = &bfin_eval_adau1701_ops,
+-		.dai_fmt = BFIN_EVAL_ADAU1701_DAI_FMT,
 -	},
 -};
 -
--static int __init i2c_bfin_twi_init(void)
+-static struct snd_soc_card bfin_eval_adau1701 = {
+-	.name = "bfin-eval-adau1701",
+-	.owner = THIS_MODULE,
+-	.dai_link = &bfin_eval_adau1701_dai[CONFIG_SND_BF5XX_SPORT_NUM],
+-	.num_links = 1,
+-
+-	.dapm_widgets		= bfin_eval_adau1701_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(bfin_eval_adau1701_dapm_widgets),
+-	.dapm_routes		= bfin_eval_adau1701_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(bfin_eval_adau1701_dapm_routes),
+-};
+-
+-static int bfin_eval_adau1701_probe(struct platform_device *pdev)
 -{
--	return platform_driver_register(&i2c_bfin_twi_driver);
+-	struct snd_soc_card *card = &bfin_eval_adau1701;
+-
+-	card->dev = &pdev->dev;
+-
+-	return devm_snd_soc_register_card(&pdev->dev, &bfin_eval_adau1701);
 -}
 -
--static void __exit i2c_bfin_twi_exit(void)
--{
--	platform_driver_unregister(&i2c_bfin_twi_driver);
--}
+-static struct platform_driver bfin_eval_adau1701_driver = {
+-	.driver = {
+-		.name = "bfin-eval-adau1701",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bfin_eval_adau1701_probe,
+-};
 -
--subsys_initcall(i2c_bfin_twi_init);
--module_exit(i2c_bfin_twi_exit);
+-module_platform_driver(bfin_eval_adau1701_driver);
 -
--MODULE_AUTHOR("Bryan Wu, Sonic Zhang");
--MODULE_DESCRIPTION("Blackfin BF5xx on-chip I2C TWI Controller Driver");
+-MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+-MODULE_DESCRIPTION("ALSA SoC bfin ADAU1701 driver");
 -MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:i2c-bfin-twi");
+-MODULE_ALIAS("platform:bfin-eval-adau1701");
+diff --git a/sound/soc/blackfin/bfin-eval-adau1x61.c b/sound/soc/blackfin/bfin-eval-adau1x61.c
+deleted file mode 100644
+index fddfe00c..0000000
+--- a/sound/soc/blackfin/bfin-eval-adau1x61.c
++++ /dev/null
+@@ -1,142 +0,0 @@
+-/*
+- * Machine driver for EVAL-ADAU1x61MINIZ on Analog Devices bfin
+- * evaluation boards.
+- *
+- * Copyright 2011-2014 Analog Devices Inc.
+- * Author: Lars-Peter Clausen <lars@metafoo.de>
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/device.h>
+-#include <linux/slab.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include "../codecs/adau17x1.h"
+-
+-static const struct snd_soc_dapm_widget bfin_eval_adau1x61_dapm_widgets[] = {
+-	SND_SOC_DAPM_LINE("In 1", NULL),
+-	SND_SOC_DAPM_LINE("In 2", NULL),
+-	SND_SOC_DAPM_LINE("In 3-4", NULL),
+-
+-	SND_SOC_DAPM_LINE("Diff Out L", NULL),
+-	SND_SOC_DAPM_LINE("Diff Out R", NULL),
+-	SND_SOC_DAPM_LINE("Stereo Out", NULL),
+-	SND_SOC_DAPM_HP("Capless HP Out", NULL),
+-};
+-
+-static const struct snd_soc_dapm_route bfin_eval_adau1x61_dapm_routes[] = {
+-	{ "LAUX", NULL, "In 3-4" },
+-	{ "RAUX", NULL, "In 3-4" },
+-	{ "LINP", NULL, "In 1" },
+-	{ "LINN", NULL, "In 1"},
+-	{ "RINP", NULL, "In 2" },
+-	{ "RINN", NULL, "In 2" },
+-
+-	{ "In 1", NULL, "MICBIAS" },
+-	{ "In 2", NULL, "MICBIAS" },
+-
+-	{ "Capless HP Out", NULL, "LHP" },
+-	{ "Capless HP Out", NULL, "RHP" },
+-	{ "Diff Out L", NULL, "LOUT" },
+-	{ "Diff Out R", NULL, "ROUT" },
+-	{ "Stereo Out", NULL, "LOUT" },
+-	{ "Stereo Out", NULL, "ROUT" },
+-};
+-
+-static int bfin_eval_adau1x61_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int pll_rate;
+-	int ret;
+-
+-	switch (params_rate(params)) {
+-	case 48000:
+-	case 8000:
+-	case 12000:
+-	case 16000:
+-	case 24000:
+-	case 32000:
+-	case 96000:
+-		pll_rate = 48000 * 1024;
+-		break;
+-	case 44100:
+-	case 7350:
+-	case 11025:
+-	case 14700:
+-	case 22050:
+-	case 29400:
+-	case 88200:
+-		pll_rate = 44100 * 1024;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	ret = snd_soc_dai_set_pll(codec_dai, ADAU17X1_PLL,
+-			ADAU17X1_PLL_SRC_MCLK, 12288000, pll_rate);
+-	if (ret)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAU17X1_CLK_SRC_PLL, pll_rate,
+-			SND_SOC_CLOCK_IN);
+-
+-	return ret;
+-}
+-
+-static const struct snd_soc_ops bfin_eval_adau1x61_ops = {
+-	.hw_params = bfin_eval_adau1x61_hw_params,
+-};
+-
+-static struct snd_soc_dai_link bfin_eval_adau1x61_dai = {
+-	.name = "adau1x61",
+-	.stream_name = "adau1x61",
+-	.cpu_dai_name = "bfin-i2s.0",
+-	.codec_dai_name = "adau-hifi",
+-	.platform_name = "bfin-i2s-pcm-audio",
+-	.codec_name = "adau1761.0-0038",
+-	.ops = &bfin_eval_adau1x61_ops,
+-	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+-		SND_SOC_DAIFMT_CBM_CFM,
+-};
+-
+-static struct snd_soc_card bfin_eval_adau1x61 = {
+-	.name = "bfin-eval-adau1x61",
+-	.owner = THIS_MODULE,
+-	.driver_name = "eval-adau1x61",
+-	.dai_link = &bfin_eval_adau1x61_dai,
+-	.num_links = 1,
+-
+-	.dapm_widgets = bfin_eval_adau1x61_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(bfin_eval_adau1x61_dapm_widgets),
+-	.dapm_routes = bfin_eval_adau1x61_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(bfin_eval_adau1x61_dapm_routes),
+-	.fully_routed = true,
+-};
+-
+-static int bfin_eval_adau1x61_probe(struct platform_device *pdev)
+-{
+-	bfin_eval_adau1x61.dev = &pdev->dev;
+-
+-	return devm_snd_soc_register_card(&pdev->dev, &bfin_eval_adau1x61);
+-}
+-
+-static struct platform_driver bfin_eval_adau1x61_driver = {
+-	.driver = {
+-		.name = "bfin-eval-adau1x61",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bfin_eval_adau1x61_probe,
+-};
+-module_platform_driver(bfin_eval_adau1x61_driver);
+-
+-MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+-MODULE_DESCRIPTION("ALSA SoC bfin adau1x61 driver");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:bfin-eval-adau1x61");
+diff --git a/sound/soc/blackfin/bfin-eval-adau1x81.c b/sound/soc/blackfin/bfin-eval-adau1x81.c
+deleted file mode 100644
+index 3e01cbe..0000000
+--- a/sound/soc/blackfin/bfin-eval-adau1x81.c
++++ /dev/null
+@@ -1,129 +0,0 @@
+-/*
+- * Machine driver for EVAL-ADAU1x81 on Analog Devices bfin
+- * evaluation boards.
+- *
+- * Copyright 2011-2014 Analog Devices Inc.
+- * Author: Lars-Peter Clausen <lars@metafoo.de>
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/device.h>
+-#include <linux/slab.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-#include <sound/pcm_params.h>
+-
+-#include "../codecs/adau17x1.h"
+-
+-static const struct snd_soc_dapm_widget bfin_eval_adau1x81_dapm_widgets[] = {
+-	SND_SOC_DAPM_LINE("Stereo In", NULL),
+-	SND_SOC_DAPM_LINE("Beep", NULL),
+-
+-	SND_SOC_DAPM_SPK("Speaker", NULL),
+-	SND_SOC_DAPM_HP("Headphone", NULL),
+-};
+-
+-static const struct snd_soc_dapm_route bfin_eval_adau1x81_dapm_routes[] = {
+-	{ "BEEP", NULL, "Beep" },
+-	{ "LMIC", NULL, "Stereo In" },
+-	{ "LMIC", NULL, "Stereo In" },
+-
+-	{ "Headphone", NULL, "AOUTL" },
+-	{ "Headphone", NULL, "AOUTR" },
+-	{ "Speaker", NULL, "SP" },
+-};
+-
+-static int bfin_eval_adau1x81_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int pll_rate;
+-	int ret;
+-
+-	switch (params_rate(params)) {
+-	case 48000:
+-	case 8000:
+-	case 12000:
+-	case 16000:
+-	case 24000:
+-	case 32000:
+-	case 96000:
+-		pll_rate = 48000 * 1024;
+-		break;
+-	case 44100:
+-	case 7350:
+-	case 11025:
+-	case 14700:
+-	case 22050:
+-	case 29400:
+-	case 88200:
+-		pll_rate = 44100 * 1024;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	ret = snd_soc_dai_set_pll(codec_dai, ADAU17X1_PLL,
+-			ADAU17X1_PLL_SRC_MCLK, 12288000, pll_rate);
+-	if (ret)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAU17X1_CLK_SRC_PLL, pll_rate,
+-			SND_SOC_CLOCK_IN);
+-
+-	return ret;
+-}
+-
+-static const struct snd_soc_ops bfin_eval_adau1x81_ops = {
+-	.hw_params = bfin_eval_adau1x81_hw_params,
+-};
+-
+-static struct snd_soc_dai_link bfin_eval_adau1x81_dai = {
+-	.name = "adau1x81",
+-	.stream_name = "adau1x81",
+-	.cpu_dai_name = "bfin-i2s.0",
+-	.codec_dai_name = "adau-hifi",
+-	.platform_name = "bfin-i2s-pcm-audio",
+-	.codec_name = "adau1781.0-0038",
+-	.ops = &bfin_eval_adau1x81_ops,
+-	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+-		SND_SOC_DAIFMT_CBM_CFM,
+-};
+-
+-static struct snd_soc_card bfin_eval_adau1x81 = {
+-	.name = "bfin-eval-adau1x81",
+-	.driver_name = "eval-adau1x81",
+-	.dai_link = &bfin_eval_adau1x81_dai,
+-	.num_links = 1,
+-
+-	.dapm_widgets = bfin_eval_adau1x81_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(bfin_eval_adau1x81_dapm_widgets),
+-	.dapm_routes = bfin_eval_adau1x81_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(bfin_eval_adau1x81_dapm_routes),
+-	.fully_routed = true,
+-};
+-
+-static int bfin_eval_adau1x81_probe(struct platform_device *pdev)
+-{
+-	bfin_eval_adau1x81.dev = &pdev->dev;
+-
+-	return devm_snd_soc_register_card(&pdev->dev, &bfin_eval_adau1x81);
+-}
+-
+-static struct platform_driver bfin_eval_adau1x81_driver = {
+-	.driver = {
+-		.name = "bfin-eval-adau1x81",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bfin_eval_adau1x81_probe,
+-};
+-module_platform_driver(bfin_eval_adau1x81_driver);
+-
+-MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+-MODULE_DESCRIPTION("ALSA SoC bfin adau1x81 driver");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:bfin-eval-adau1x81");
+diff --git a/sound/soc/blackfin/bfin-eval-adav80x.c b/sound/soc/blackfin/bfin-eval-adav80x.c
+deleted file mode 100644
+index 99e5eca..0000000
+--- a/sound/soc/blackfin/bfin-eval-adav80x.c
++++ /dev/null
+@@ -1,145 +0,0 @@
+-/*
+- * Machine driver for EVAL-ADAV801 and EVAL-ADAV803 on Analog Devices bfin
+- * evaluation boards.
+- *
+- * Copyright 2011 Analog Devices Inc.
+- * Author: Lars-Peter Clausen <lars@metafoo.de>
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/module.h>
+-#include <sound/core.h>
+-#include <sound/pcm.h>
+-#include <sound/soc.h>
+-
+-#include "../codecs/adav80x.h"
+-
+-static const struct snd_soc_dapm_widget bfin_eval_adav80x_dapm_widgets[] = {
+-	SND_SOC_DAPM_LINE("Line Out", NULL),
+-	SND_SOC_DAPM_LINE("Line In", NULL),
+-};
+-
+-static const struct snd_soc_dapm_route bfin_eval_adav80x_dapm_routes[] = {
+-	{ "Line Out", NULL, "VOUTL" },
+-	{ "Line Out", NULL, "VOUTR" },
+-
+-	{ "VINL", NULL, "Line In" },
+-	{ "VINR", NULL, "Line In" },
+-};
+-
+-static int bfin_eval_adav80x_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
+-{
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-	int ret;
+-
+-	ret = snd_soc_dai_set_pll(codec_dai, ADAV80X_PLL1, ADAV80X_PLL_SRC_XTAL,
+-			27000000, params_rate(params) * 256);
+-	if (ret)
+-		return ret;
+-
+-	ret = snd_soc_dai_set_sysclk(codec_dai, ADAV80X_CLK_PLL1,
+-			params_rate(params) * 256, SND_SOC_CLOCK_IN);
+-
+-	return ret;
+-}
+-
+-static int bfin_eval_adav80x_codec_init(struct snd_soc_pcm_runtime *rtd)
+-{
+-	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+-
+-	snd_soc_dai_set_sysclk(codec_dai, ADAV80X_CLK_SYSCLK1, 0,
+-	    SND_SOC_CLOCK_OUT);
+-	snd_soc_dai_set_sysclk(codec_dai, ADAV80X_CLK_SYSCLK2, 0,
+-	    SND_SOC_CLOCK_OUT);
+-	snd_soc_dai_set_sysclk(codec_dai, ADAV80X_CLK_SYSCLK3, 0,
+-	    SND_SOC_CLOCK_OUT);
+-
+-	snd_soc_dai_set_sysclk(codec_dai, ADAV80X_CLK_XTAL, 2700000, 0);
+-
+-	return 0;
+-}
+-
+-static const struct snd_soc_ops bfin_eval_adav80x_ops = {
+-	.hw_params = bfin_eval_adav80x_hw_params,
+-};
+-
+-static struct snd_soc_dai_link bfin_eval_adav80x_dais[] = {
+-	{
+-		.name = "adav80x",
+-		.stream_name = "ADAV80x HiFi",
+-		.cpu_dai_name = "bfin-i2s.0",
+-		.codec_dai_name = "adav80x-hifi",
+-		.platform_name = "bfin-i2s-pcm-audio",
+-		.init = bfin_eval_adav80x_codec_init,
+-		.ops = &bfin_eval_adav80x_ops,
+-		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+-				SND_SOC_DAIFMT_CBM_CFM,
+-	},
+-};
+-
+-static struct snd_soc_card bfin_eval_adav80x = {
+-	.name = "bfin-eval-adav80x",
+-	.owner = THIS_MODULE,
+-	.dai_link = bfin_eval_adav80x_dais,
+-	.num_links = ARRAY_SIZE(bfin_eval_adav80x_dais),
+-
+-	.dapm_widgets		= bfin_eval_adav80x_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(bfin_eval_adav80x_dapm_widgets),
+-	.dapm_routes		= bfin_eval_adav80x_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(bfin_eval_adav80x_dapm_routes),
+-};
+-
+-enum bfin_eval_adav80x_type {
+-	BFIN_EVAL_ADAV801,
+-	BFIN_EVAL_ADAV803,
+-};
+-
+-static int bfin_eval_adav80x_probe(struct platform_device *pdev)
+-{
+-	struct snd_soc_card *card = &bfin_eval_adav80x;
+-	const char *codec_name;
+-
+-	switch (platform_get_device_id(pdev)->driver_data) {
+-	case BFIN_EVAL_ADAV801:
+-		codec_name = "spi0.1";
+-		break;
+-	case BFIN_EVAL_ADAV803:
+-		codec_name = "adav803.0-0034";
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	bfin_eval_adav80x_dais[0].codec_name = codec_name;
+-
+-	card->dev = &pdev->dev;
+-
+-	return devm_snd_soc_register_card(&pdev->dev, &bfin_eval_adav80x);
+-}
+-
+-static const struct platform_device_id bfin_eval_adav80x_ids[] = {
+-	{ "bfin-eval-adav801", BFIN_EVAL_ADAV801 },
+-	{ "bfin-eval-adav803", BFIN_EVAL_ADAV803 },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(platform, bfin_eval_adav80x_ids);
+-
+-static struct platform_driver bfin_eval_adav80x_driver = {
+-	.driver = {
+-		.name = "bfin-eval-adav80x",
+-		.pm = &snd_soc_pm_ops,
+-	},
+-	.probe = bfin_eval_adav80x_probe,
+-	.id_table = bfin_eval_adav80x_ids,
+-};
+-
+-module_platform_driver(bfin_eval_adav80x_driver);
+-
+-MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+-MODULE_DESCRIPTION("ALSA SoC bfin adav80x driver");
+-MODULE_LICENSE("GPL");
 -- 
 2.7.4
