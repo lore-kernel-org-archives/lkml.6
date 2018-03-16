@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934733AbeCPQRG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:17:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39480 "EHLO
+        id S1752277AbeCPQWu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:22:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39714 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754538AbeCPQRB (ORCPT
+        with ESMTP id S934727AbeCPQRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:17:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B4C460390
+        Fri, 16 Mar 2018 12:17:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1ADCD60D81
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 08/18] scsi: hpsa: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 12:16:21 -0400
-Message-Id: <1521216991-28706-9-git-send-email-okaya@codeaurora.org>
+        Sinan Kaya <okaya@codeaurora.org>,
+        Harish Patil <harish.patil@cavium.com>,
+        Manish Chopra <manish.chopra@cavium.com>,
+        Dept-GELinuxNICDev@cavium.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 11/18] qlcnic: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 16 Mar 2018 12:16:24 -0400
+Message-Id: <1521216991-28706-12-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
 References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
@@ -41,21 +40,21 @@ writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/scsi/hpsa.h | 2 +-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hpsa.h b/drivers/scsi/hpsa.h
-index 018f980..c7d7e6a 100644
---- a/drivers/scsi/hpsa.h
-+++ b/drivers/scsi/hpsa.h
-@@ -599,7 +599,7 @@ static unsigned long SA5_ioaccel_mode1_completed(struct ctlr_info *h, u8 q)
- 		 * but with current driver design this is easiest.
- 		 */
- 		wmb();
--		writel((q << 24) | rq->current_entry, h->vaddr +
-+		writel_relaxed((q << 24) | rq->current_entry, h->vaddr +
- 				IOACCEL_MODE1_CONSUMER_INDEX);
- 		atomic_dec(&h->commands_outstanding);
- 	}
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+index 46b0372..97c146e7 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -478,7 +478,7 @@ irqreturn_t qlcnic_83xx_clear_legacy_intr(struct qlcnic_adapter *adapter)
+ 	wmb();
+ 
+ 	/* clear the interrupt trigger control register */
+-	writel(0, adapter->isr_int_vec);
++	writel_relaxed(0, adapter->isr_int_vec);
+ 	intr_val = readl(adapter->isr_int_vec);
+ 	do {
+ 		intr_val = readl(adapter->tgt_status_reg);
 -- 
 2.7.4
