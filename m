@@ -1,362 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752920AbeCPKFv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:05:51 -0400
-Received: from mga17.intel.com ([192.55.52.151]:58885 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752362AbeCPKFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:05:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,315,1517904000";
-   d="scan'208";a="25024766"
-Date: Fri, 16 Mar 2018 18:04:13 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
-Message-ID: <20180316100413.vtqwatregzrmhvt3@debian>
-References: <20180223111801.15240-1-tiwei.bie@intel.com>
- <20180223111801.15240-3-tiwei.bie@intel.com>
- <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
- <20180316061047.o2xdyuqhak3mzjyw@debian>
- <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
- <20180316074028.lun2jy45qqnfeymw@debian>
- <02a3da02-8226-ba4e-1b47-d25755b2c429@redhat.com>
+        id S1752893AbeCPKJz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:09:55 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:38745 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751665AbeCPKHx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:07:53 -0400
+X-Originating-IP: 2.224.242.101
+Date: Fri, 16 Mar 2018 11:07:48 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
+Message-ID: <20180316100748.GH16424@w540>
+References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+ <20180315224202.96668-3-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4C6bbPZ6c/S1npyF"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <02a3da02-8226-ba4e-1b47-d25755b2c429@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180315224202.96668-3-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 04:34:28PM +0800, Jason Wang wrote:
-> On 2018年03月16日 15:40, Tiwei Bie wrote:
-> > On Fri, Mar 16, 2018 at 02:44:12PM +0800, Jason Wang wrote:
-> > > On 2018年03月16日 14:10, Tiwei Bie wrote:
-> > > > On Fri, Mar 16, 2018 at 12:03:25PM +0800, Jason Wang wrote:
-> > > > > On 2018年02月23日 19:18, Tiwei Bie wrote:
-> > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > ---
-> > > > > >     drivers/virtio/virtio_ring.c | 699 +++++++++++++++++++++++++++++++++++++------
-> > > > > >     include/linux/virtio_ring.h  |   8 +-
-> > > > > >     2 files changed, 618 insertions(+), 89 deletions(-)
-> > [...]
-> > > > > >     			      cpu_addr, size, direction);
-> > > > > >     }
-> > > > > > -static void vring_unmap_one(const struct vring_virtqueue *vq,
-> > > > > > -			    struct vring_desc *desc)
-> > > > > > +static void vring_unmap_one(const struct vring_virtqueue *vq, void *_desc)
-> > > > > >     {
-> > > > > Let's split the helpers to packed/split version like other helpers?
-> > > > > (Consider the caller has already known the type of vq).
-> > > > Okay.
-> > > > 
-> > > [...]
-> > > 
-> > > > > > +				desc[i].flags = flags;
-> > > > > > +
-> > > > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-> > > > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
-> > > > > If it's a part of chain, we only need to do this for last buffer I think.
-> > > > I'm not sure I've got your point about the "last buffer".
-> > > > But, yes, id just needs to be set for the last desc.
-> > > Right, I think I meant "last descriptor" :)
-> > > 
-> > > > > > +			prev = i;
-> > > > > > +			i++;
-> > > > > It looks to me prev is always i - 1?
-> > > > No. prev will be (vq->vring_packed.num - 1) when i becomes 0.
-> > > Right, so prev = i ? i - 1 : vq->vring_packed.num - 1.
-> > Yes, i wraps together with vq->wrap_counter in following code:
-> > 
-> > > > > > +			if (!indirect && i >= vq->vring_packed.num) {
-> > > > > > +				i = 0;
-> > > > > > +				vq->wrap_counter ^= 1;
-> > > > > > +			}
-> > 
-> > > > > > +		}
-> > > > > > +	}
-> > > > > > +	for (; n < (out_sgs + in_sgs); n++) {
-> > > > > > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-> > > > > > +			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_FROM_DEVICE);
-> > > > > > +			if (vring_mapping_error(vq, addr))
-> > > > > > +				goto unmap_release;
-> > > > > > +
-> > > > > > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
-> > > > > > +					VRING_DESC_F_WRITE |
-> > > > > > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
-> > > > > > +					VRING_DESC_F_USED(!vq->wrap_counter));
-> > > > > > +			if (!indirect && i == head)
-> > > > > > +				head_flags = flags;
-> > > > > > +			else
-> > > > > > +				desc[i].flags = flags;
-> > > > > > +
-> > > > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-> > > > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
-> > > > > > +			prev = i;
-> > > > > > +			i++;
-> > > > > > +			if (!indirect && i >= vq->vring_packed.num) {
-> > > > > > +				i = 0;
-> > > > > > +				vq->wrap_counter ^= 1;
-> > > > > > +			}
-> > > > > > +		}
-> > > > > > +	}
-> > > > > > +	/* Last one doesn't continue. */
-> > > > > > +	if (!indirect && (head + 1) % vq->vring_packed.num == i)
-> > > > > > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> > > > > I can't get the why we need this here.
-> > > > If only one desc is used, we will need to clear the
-> > > > VRING_DESC_F_NEXT flag from the head_flags.
-> > > Yes, I meant why following desc[prev].flags won't work for this?
-> > Because the update of desc[head].flags (in above case,
-> > prev == head) has been delayed. The flags is saved in
-> > head_flags.
-> 
-> Ok, but let's try to avoid modular here e.g tracking the number of sgs in a
-> counter.
-> 
-> And I see lots of duplication in the above two loops, I believe we can unify
-> them with a a single loop. the only difference is dma direction and write
-> flag.
 
-The above implementation for packed ring is basically
-an mirror of the existing implementation in split ring
-as I want to keep the coding style consistent. Below
-is the corresponding code in split ring:
+--4C6bbPZ6c/S1npyF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-static inline int virtqueue_add(struct virtqueue *_vq,
-				struct scatterlist *sgs[],
-				unsigned int total_sg,
-				unsigned int out_sgs,
-				unsigned int in_sgs,
-				void *data,
-				void *ctx,
-				gfp_t gfp)
-{
-	......
+Hello Dmitry
 
-	for (n = 0; n < out_sgs; n++) {
-		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_TO_DEVICE);
-			if (vring_mapping_error(vq, addr))
-				goto unmap_release;
+FYI I am brushing the ecovec board these days as well
+https://www.spinics.net/lists/linux-sh/msg52536.html
 
-			desc[i].flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT);
-			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-			prev = i;
-			i = virtio16_to_cpu(_vq->vdev, desc[i].next);
-		}
-	}
-	for (; n < (out_sgs + in_sgs); n++) {
-		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_FROM_DEVICE);
-			if (vring_mapping_error(vq, addr))
-				goto unmap_release;
+And I have a board to test with but without any display panel, I'm
+afraid.
 
-			desc[i].flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT | VRING_DESC_F_WRITE);
-			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-			prev = i;
-			i = virtio16_to_cpu(_vq->vdev, desc[i].next);
-		}
-	}
+On Thu, Mar 15, 2018 at 03:42:00PM -0700, Dmitry Torokhov wrote:
+> Commit fe79f919f47e ("sh: ecovec24: Use gpio-backlight") removed custom
+> backlight support and switched over to generic gpio-backlight driver. The
+> comment when we run with DVI states "no backlight", but setting
+> gpio_backlight_data.fbdev to NULL actually makes gpio-backlight to react to
+> events from any framebuffer device, not ignore them.
+>
+> We want to get rid of platform data in favor of generic device properties
+> in gpio_backlight driver, so we can not have kernel pointers passed around
+> to tie the framebuffer device to backlight. Assuming that the intent of the
+> above referenced commit was to indeed not export backlight when using DVI,
+> let's switch to conditionally registering backlight device so it is not
+> present at all in DVI case.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  arch/sh/boards/mach-ecovec24/setup.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
+> index 6f929abe0b50f..67633d2d42390 100644
+> --- a/arch/sh/boards/mach-ecovec24/setup.c
+> +++ b/arch/sh/boards/mach-ecovec24/setup.c
+> @@ -368,7 +368,6 @@ static struct platform_device lcdc_device = {
+>  };
+>
+>  static struct gpio_backlight_platform_data gpio_backlight_data = {
+> -	.fbdev = &lcdc_device.dev,
+>  	.gpio = GPIO_PTR1,
+>  	.def_value = 1,
+>  	.name = "backlight",
+> @@ -987,7 +986,6 @@ static struct platform_device *ecovec_devices[] __initdata = {
+>  	&usb1_common_device,
+>  	&usbhs_device,
+>  	&lcdc_device,
+> -	&gpio_backlight_device,
+>  	&ceu0_device,
+>  	&ceu1_device,
+>  	&keysc_device,
+> @@ -1077,6 +1075,8 @@ static int __init arch_setup(void)
+>  {
+>  	struct clk *clk;
+>  	bool cn12_enabled = false;
+> +	bool use_backlight = false;
+> +	int error;
+>
+>  	/* register board specific self-refresh code */
+>  	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF |
+> @@ -1193,9 +1193,6 @@ static int __init arch_setup(void)
+>  		lcdc_info.ch[0].lcd_modes		= ecovec_dvi_modes;
+>  		lcdc_info.ch[0].num_modes		= ARRAY_SIZE(ecovec_dvi_modes);
+>
+> -		/* No backlight */
+> -		gpio_backlight_data.fbdev = NULL;
+> -
+>  		gpio_set_value(GPIO_PTA2, 1);
+>  		gpio_set_value(GPIO_PTU1, 1);
+>  	} else {
+> @@ -1217,6 +1214,8 @@ static int __init arch_setup(void)
+>  		/* enable TouchScreen */
+>  		i2c_register_board_info(0, &ts_i2c_clients, 1);
+>  		irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
+> +
+> +		use_backlight = true;
+>  	}
+>
+>  	/* enable CEU0 */
+> @@ -1431,8 +1430,19 @@ static int __init arch_setup(void)
+>  	gpio_set_value(GPIO_PTG4, 1);
+>  #endif
+>
+> -	return platform_add_devices(ecovec_devices,
+> -				    ARRAY_SIZE(ecovec_devices));
+> +	error = platform_add_devices(ecovec_devices,
+> +				      ARRAY_SIZE(ecovec_devices));
 
-	......
-}
+I would invert this.
+Register the backlight first, then all other devices.
 
-> 
-> > 
-> > > > > > +	else
-> > > > > > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> > > > > > +
-> > > > > > +	if (indirect) {
-> > > > > > +		/* FIXME: to be implemented */
-> > > > > > +
-> > > > > > +		/* Now that the indirect table is filled in, map it. */
-> > > > > > +		dma_addr_t addr = vring_map_single(
-> > > > > > +			vq, desc, total_sg * sizeof(struct vring_packed_desc),
-> > > > > > +			DMA_TO_DEVICE);
-> > > > > > +		if (vring_mapping_error(vq, addr))
-> > > > > > +			goto unmap_release;
-> > > > > > +
-> > > > > > +		head_flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_INDIRECT |
-> > > > > > +					     VRING_DESC_F_AVAIL(wrap_counter) |
-> > > > > > +					     VRING_DESC_F_USED(!wrap_counter));
-> > > > > > +		vq->vring_packed.desc[head].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > > > +		vq->vring_packed.desc[head].len = cpu_to_virtio32(_vq->vdev,
-> > > > > > +				total_sg * sizeof(struct vring_packed_desc));
-> > > > > > +		vq->vring_packed.desc[head].id = cpu_to_virtio32(_vq->vdev, head);
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	/* We're using some buffers from the free list. */
-> > > > > > +	vq->vq.num_free -= descs_used;
-> > > > > > +
-> > > > > > +	/* Update free pointer */
-> > > > > > +	if (indirect) {
-> > > > > > +		n = head + 1;
-> > > > > > +		if (n >= vq->vring_packed.num) {
-> > > > > > +			n = 0;
-> > > > > > +			vq->wrap_counter ^= 1;
-> > > > > > +		}
-> > > > > > +		vq->free_head = n;
-> > > > > detach_buf_packed() does not even touch free_head here, so need to explain
-> > > > > its meaning for packed ring.
-> > > > Above code is for indirect support which isn't really
-> > > > implemented in this patch yet.
-> > > > 
-> > > > For your question, free_head stores the index of the
-> > > > next avail desc. I'll add a comment for it or move it
-> > > > to union and give it a better name in next version.
-> > > Yes, something like avail_idx might be better.
-> > > 
-> > > > > > +	} else
-> > > > > > +		vq->free_head = i;
-> > > > > ID is only valid in the last descriptor in the list, so head + 1 should be
-> > > > > ok too?
-> > > > I don't really get your point. The vq->free_head stores
-> > > > the index of the next avail desc.
-> > > I think I get your idea now, free_head has two meanings:
-> > > 
-> > > - next avail index
-> > > - buffer id
-> > In my design, free_head is just the index of the next
-> > avail desc.
-> > 
-> > Driver can set anything to buffer ID.
-> 
-> Then you need another method to track id to context e.g hashing.
 
-I keep the context in desc_state[desc_idx]. So there is
-no extra method needed to track the context.
+> +	if (error)
+> +		return error;
+> +
+> +	if (use_backlight) {
+> +		error = platform_device_add(&gpio_backlight_device);
+> +		if (error)
+> +			pr_warn("%s: failed to register backlight: %d\n",
+> +				error);
 
-> 
-> >   And in my design,
-> > I save desc index in buffer ID.
-> > 
-> > I'll add comments for them.
-> > 
-> > > If I'm correct, let's better add a comment for this.
-> > > 
-> > > > > > +
-> > > > > > +	/* Store token and indirect buffer state. */
-> > > > > > +	vq->desc_state[head].num = descs_used;
-> > > > > > +	vq->desc_state[head].data = data;
-> > > > > > +	if (indirect)
-> > > > > > +		vq->desc_state[head].indir_desc = desc;
-> > > > > > +	else
-> > > > > > +		vq->desc_state[head].indir_desc = ctx;
-> > > > > > +
-> > > > > > +	virtio_wmb(vq->weak_barriers);
-> > > > > Let's add a comment to explain the barrier here.
-> > > > Okay.
-> > > > 
-> > > > > > +	vq->vring_packed.desc[head].flags = head_flags;
-> > > > > > +	vq->num_added++;
-> > > > > > +
-> > > > > > +	pr_debug("Added buffer head %i to %p\n", head, vq);
-> > > > > > +	END_USE(vq);
-> > > > > > +
-> > > > > > +	return 0;
-> > > > > > +
-> > > > > > +unmap_release:
-> > > > > > +	err_idx = i;
-> > > > > > +	i = head;
-> > > > > > +
-> > > > > > +	for (n = 0; n < total_sg; n++) {
-> > > > > > +		if (i == err_idx)
-> > > > > > +			break;
-> > > > > > +		vring_unmap_one(vq, &desc[i]);
-> > > > > > +		i++;
-> > > > > > +		if (!indirect && i >= vq->vring_packed.num)
-> > > > > > +			i = 0;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	vq->wrap_counter = wrap_counter;
-> > > > > > +
-> > > > > > +	if (indirect)
-> > > > > > +		kfree(desc);
-> > > > > > +
-> > > > > > +	END_USE(vq);
-> > > > > > +	return -EIO;
-> > > > > > +}
-> > [...]
-> > > > > > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
-> > > > > >     	if (!queue) {
-> > > > > >     		/* Try to get a single page. You are my only hope! */
-> > > > > > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
-> > > > > > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
-> > > > > > +							     packed),
-> > > > > >     					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
-> > > > > >     	}
-> > > > > >     	if (!queue)
-> > > > > >     		return NULL;
-> > > > > > -	queue_size_in_bytes = vring_size(num, vring_align);
-> > > > > > -	vring_init(&vring, num, queue, vring_align);
-> > > > > > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
-> > > > > > +	if (packed)
-> > > > > > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
-> > > > > > +	else
-> > > > > > +		vring_init(&vring.vring_split, num, queue, vring_align);
-> > > > > Let's rename vring_init to vring_init_split() like other helpers?
-> > > > The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
-> > > > I don't think we can rename it.
-> > > I see, then this need more thoughts to unify the API.
-> > My thought is to keep the old API as is, and introduce
-> > new types and helpers for packed ring.
-> 
-> I admit it's not a fault of this patch. But we'd better think of this in the
-> future, consider we may have new kinds of ring.
-> 
-> > 
-> > More details can be found in this patch:
-> > https://lkml.org/lkml/2018/2/23/243
-> > (PS. The type which has bit fields is just for reference,
-> >   and will be changed in next version.)
-> > 
-> > Do you have any other suggestions?
-> 
-> No.
+Could you use dev_warn here? Also the format is wrong, I assume you
+are missing a '__func__' as second function argument.
 
-Hmm.. Sorry, I didn't describe my question well.
-I mean do you have any suggestions about the API
-design for packed ring in uapi header? Currently
-I introduced below two new helpers:
+Also, you may want to return error.
 
-static inline void vring_packed_init(struct vring_packed *vr, unsigned int num,
-				     void *p, unsigned long align);
-static inline unsigned vring_packed_size(unsigned int num, unsigned long align);
+Thanks
+   j
 
-When new rings are introduced in the future, above
-helpers can't be reused. Maybe we should make the
-helpers be able to determine the ring type?
+> +	}
+> +
+> +	return 0;
+>  }
+>  arch_initcall(arch_setup);
+>
+> --
+> 2.16.2.804.g6dcf76e118-goog
+>
 
-Best regards,
-Tiwei Bie
+--4C6bbPZ6c/S1npyF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Thanks
-> 
-> > 
-> > Best regards,
-> > Tiwei Bie
-> > 
-> > > > > > -	vq = __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-> > > > > > -				   notify, callback, name);
-> > > > > > +	vq = __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
-> > > > > > +				   context, notify, callback, name);
-> > > > > >     	if (!vq) {
-> > > > > >     		vring_free_queue(vdev, queue_size_in_bytes, queue,
-> > > > > >     				 dma_addr);
-> > [...]
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJaq5d0AAoJEHI0Bo8WoVY8FZwQALafMWWFab8POcd/wZFZepB/
+S1nvQ/R6ORZHSMKFCNoEntXf85ysbY/vdxsd7NqAOU9rVtxTYqvW6QVKupS9rzVS
+uLEycAL4OA4ILyQe3FG97Xrm3TWMedPmsFSvePgu6RqMdVAv8vSUMnFewciZ5D8K
+92AzOKoKOzd9fxnNWlJsH5DkDBIes8ixMtE7P//9TBGvNiSW3b7UbBa4uPtfJssY
+5qCiioRwC0mCdZurq5ICtMg4bS3h7OTbXEhWEYdFUhsQR3PPcYFg3w14ylstk8WO
+uo2/uD1Ok1kZGn0iKWkqZVhAM2pkmWpQPy2mwAE+8Z4RWLDCyysSKwRAlhle+wg6
+rKPIykUmpbwdwFDnLbeHBz0pK3rLTWYqmHQI7luvjGdfeRF5rJYo8Ia5H/Pje2dj
+UUybdLF0OWBlQQDkOzPWmN5C7qAVhd4O2KtazYviTDClan6twwk8foslsf6p6Uym
+IE08v+6gVBOfc/HMFX7KlDChUwv0iAwbS8lYFSBzr/aonhyqzNZGB3m1ll6uyvj6
+gEff0DDSmCPwAVSowXLezCViQ6TcnlbxXH5as4P/rF/ddvsI3yhsVOvfvw3w7AqX
+BxzkYB6uwRWfYVu9hQz3b4lRs47ZjHP92XfvyHJmenxWuuQ0xMZbO30Oqv26mGEE
+qCAZhh2zZyF8DuFys8Bn
+=Sto0
+-----END PGP SIGNATURE-----
+
+--4C6bbPZ6c/S1npyF--
