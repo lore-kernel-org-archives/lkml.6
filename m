@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeCPEIt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 00:08:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48934 "EHLO
+        id S1751792AbeCPEI7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 00:08:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49028 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeCPEIr (ORCPT
+        with ESMTP id S1750748AbeCPEIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 00:08:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B10260452
+        Fri, 16 Mar 2018 00:08:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53966603AF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From: Rajendra Nayak <rnayak@codeaurora.org>
@@ -15,9 +15,9 @@ To: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
         ulf.hansson@linaro.org
 Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 1/7] PM / OPP: Add dev_pm_opp_get_of_node()
-Date: Fri, 16 Mar 2018 09:38:18 +0530
-Message-Id: <20180316040824.21472-2-rnayak@codeaurora.org>
+Subject: [PATCH 2/7] soc: qcom: rpmpd: Add a powerdomain driver to model corners
+Date: Fri, 16 Mar 2018 09:38:19 +0530
+Message-Id: <20180316040824.21472-3-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180316040824.21472-1-rnayak@codeaurora.org>
 References: <20180316040824.21472-1-rnayak@codeaurora.org>
@@ -25,69 +25,379 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+The powerdomains for corners just pass the performance state set by the
+consumers to the RPM (Remote Power manager) which then takes care
+of setting the appropriate voltage on the corresponding rails to
+meet the performance needs.
 
-This adds a new helper to let the power domain drivers to access
-opp->np, so that they can read platform specific properties from the
-node.
+We add all powerdomain data needed on msm8996 here. This driver can easily
+be extended by adding data for other qualcomm SoCs as well.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/opp/of.c       | 19 +++++++++++++++++++
- include/linux/pm_opp.h |  5 +++++
- 2 files changed, 24 insertions(+)
+ .../devicetree/bindings/power/qcom,rpmpd.txt       |  14 +
+ drivers/soc/qcom/Kconfig                           |   9 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/rpmpd.c                           | 299 +++++++++++++++++++++
+ 4 files changed, 323 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+ create mode 100644 drivers/soc/qcom/rpmpd.c
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 21265af55117..b17715bc3c0a 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -736,3 +736,22 @@ struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev,
- 	return opp;
- }
- EXPORT_SYMBOL_GPL(of_dev_pm_opp_find_required_opp);
+diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+new file mode 100644
+index 000000000000..4d7a4a1f054f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+@@ -0,0 +1,14 @@
++Qualcomm RPM Powerdomains
 +
-+/**
-+ * dev_pm_opp_get_of_node() - Gets the DT node corresponding to an opp
-+ * @opp:	opp for which DT node has to be returned for
-+ *
-+ * Return: DT node corresponding to the opp, else 0 on success.
-+ *
-+ * The caller needs to put the node of_node_put() after using it.
++* For RPM powerdomains, we communicate a performance state to RPM
++which then translates it into a corresponding voltage on a rail
++
++Required Properties:
++ - compatible: Should be one of the following
++	* qcom,rpmpd-msm8996: RPM Powerdomain for the msm8996 family of SoC
++ - power-domain-cells: number of cells in power domain specifier
++	must be 1.
++ - domain-performance-state: One or more nodes describing the performance-states
++	supported by the powerdomain.
++	For domain-performance-state bindings refer to
++	Documentation/devicetree/bindings/power/power_domain.txt
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index e050eb83341d..6e1a0ed7ea3f 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -55,6 +55,15 @@ config QCOM_RMTFS_MEM
+ 
+ 	  Say y here if you intend to boot the modem remoteproc.
+ 
++config QCOM_RPMPD
++	tristate "Qualcomm RPM Powerdomain driver"
++	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
++	help
++	  QCOM RPM powerdomain driver to support powerdomain with
++	  performance states. The driver communicates a performance state
++	  value to RPM which then translates it into corresponding voltage
++	  for the voltage rail.
++
+ config QCOM_SMEM
+ 	tristate "Qualcomm Shared Memory Manager (SMEM)"
+ 	depends on ARCH_QCOM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index dcebf2814e6d..12c48a3ea106 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -12,3 +12,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
++obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+new file mode 100644
+index 000000000000..c8754d867c33
+--- /dev/null
++++ b/drivers/soc/qcom/rpmpd.c
+@@ -0,0 +1,299 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
 + */
-+struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
-+{
-+	if (IS_ERR_OR_NULL(opp)) {
-+		pr_err("%s: Invalid parameters\n", __func__);
-+		return NULL;
++
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/pm_domain.h>
++#include <linux/mfd/qcom_rpm.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/soc/qcom/smd-rpm.h>
++
++#include <dt-bindings/mfd/qcom-rpm.h>
++
++#define domain_to_rpmpd(domain) container_of(domain, struct rpmpd, pd)
++
++/* Resource types */
++#define RPMPD_SMPA 0x61706d73
++#define RPMPD_LDOA 0x616f646c
++
++/* Operation Keys */
++#define KEY_CORNER		0x6e726f63 /* corn */
++#define KEY_ENABLE		0x6e657773 /* swen */
++#define KEY_FLOOR_CORNER	0x636676   /* vfc */
++
++#define DEFINE_RPMPD_CORN_SMPA(_platform, _name, _active, r_id)		\
++	static struct rpmpd _platform##_##_active;			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = {	.name = #_name,	},				\
++		.peer = &_platform##_##_active,				\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	};								\
++	static struct rpmpd _platform##_##_active = {			\
++		.pd = { .name = #_active, },				\
++		.peer = &_platform##_##_name,				\
++		.active_only = true,					\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
 +	}
 +
-+	return of_node_get(opp->np);
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_get_of_node);
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 528a7d9cf2ef..099b31960dec 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -300,6 +300,7 @@ void dev_pm_opp_of_cpumask_remove_table(const struct cpumask *cpumask);
- int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
- struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
- struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np);
-+struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
- #else
- static inline int dev_pm_opp_of_add_table(struct device *dev)
- {
-@@ -338,6 +339,10 @@ static inline struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *
- {
- 	return NULL;
- }
-+static inline struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
++#define DEFINE_RPMPD_CORN_LDOA(_platform, _name, r_id)			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = RPMPD_LDOA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	}
++
++#define DEFINE_RPMPD_VFC(_platform, _name, r_id, r_type)		\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = r_type,					\
++		.res_id = r_id,						\
++		.key = KEY_FLOOR_CORNER,				\
++	}
++
++#define DEFINE_RPMPD_VFC_SMPA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_SMPA)
++
++#define DEFINE_RPMPD_VFC_LDOA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_LDOA)
++
++struct rpmpd_req {
++	__le32 key;
++	__le32 nbytes;
++	__le32 value;
++};
++
++struct rpmpd {
++	struct generic_pm_domain pd;
++	struct rpmpd *peer;
++	const bool active_only;
++	unsigned long corner;
++	bool enabled;
++	const char *res_name;
++	const int res_type;
++	const int res_id;
++	struct qcom_smd_rpm *rpm;
++	__le32 key;
++};
++
++struct rpmpd_desc {
++	struct rpmpd **rpmpds;
++	size_t num_pds;
++};
++
++static DEFINE_MUTEX(rpmpd_lock);
++
++/* msm8996 RPM powerdomains */
++DEFINE_RPMPD_CORN_SMPA(msm8996, vddcx, vddcx_ao, 1);
++DEFINE_RPMPD_CORN_SMPA(msm8996, vddmx, vddmx_ao, 2);
++DEFINE_RPMPD_CORN_LDOA(msm8996, vddsscx, 26);
++
++DEFINE_RPMPD_VFC_SMPA(msm8996, vddcx_vfc, 1);
++DEFINE_RPMPD_VFC_LDOA(msm8996, vddsscx_vfc, 26);
++
++static struct rpmpd *msm8996_rpmpds[] = {
++	[0] = &msm8996_vddcx,
++	[1] = &msm8996_vddcx_ao,
++	[2] = &msm8996_vddcx_vfc,
++	[3] = &msm8996_vddmx,
++	[4] = &msm8996_vddmx_ao,
++	[5] = &msm8996_vddsscx,
++	[6] = &msm8996_vddsscx_vfc,
++};
++
++static const struct rpmpd_desc msm8996_desc = {
++	.rpmpds = msm8996_rpmpds,
++	.num_pds = ARRAY_SIZE(msm8996_rpmpds),
++};
++
++static const struct of_device_id rpmpd_match_table[] = {
++	{ .compatible = "qcom,rpmpd-msm8996", .data = &msm8996_desc },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rpmpd_match_table);
++
++static int rpmpd_send_enable(struct rpmpd *pd, bool enable)
 +{
-+	return NULL;
++	struct rpmpd_req req = {
++		.key = KEY_ENABLE,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(enable),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, QCOM_RPM_ACTIVE_STATE, pd->res_type,
++				  pd->res_id, &req, sizeof(req));
 +}
- #endif
- 
- #endif		/* __LINUX_OPP_H__ */
++
++static int rpmpd_send_corner(struct rpmpd *pd, int state, unsigned int corner)
++{
++	struct rpmpd_req req = {
++		.key = pd->key,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(corner),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, state, pd->res_type, pd->res_id,
++				  &req, sizeof(req));
++};
++
++static void to_active_sleep(struct rpmpd *pd, unsigned long corner,
++			    unsigned long *active, unsigned long *sleep)
++{
++	*active = corner;
++
++	if (pd->active_only)
++		*sleep = 0;
++	else
++		*sleep = *active;
++}
++
++static int rpmpd_aggregate_corner(struct rpmpd *pd)
++{
++	int ret;
++	struct rpmpd *peer = pd->peer;
++	unsigned long active_corner, sleep_corner;
++	unsigned long this_corner = 0, this_sleep_corner = 0;
++	unsigned long peer_corner = 0, peer_sleep_corner = 0;
++
++	to_active_sleep(pd, pd->corner, &this_corner, &this_sleep_corner);
++
++	if (peer && peer->enabled)
++		to_active_sleep(peer, peer->corner, &peer_corner,
++				&peer_sleep_corner);
++
++	active_corner = max(this_corner, peer_corner);
++
++	ret = rpmpd_send_corner(pd, QCOM_RPM_ACTIVE_STATE, active_corner);
++	if (ret)
++		return ret;
++
++	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
++
++	return rpmpd_send_corner(pd, QCOM_RPM_SLEEP_STATE, sleep_corner);
++}
++
++static int rpmpd_power_on(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, true);
++	if (ret)
++		goto out;
++
++	pd->enabled = true;
++
++	if (pd->corner)
++		ret = rpmpd_aggregate_corner(pd);
++
++out:
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_power_off(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, false);
++	if (!ret)
++		pd->enabled = false;
++
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_probe(struct platform_device *pdev)
++{
++	int i;
++	size_t num;
++	struct genpd_onecell_data *data;
++	struct qcom_smd_rpm *rpm;
++	struct rpmpd **rpmpds;
++	const struct rpmpd_desc *desc;
++
++	rpm = dev_get_drvdata(pdev->dev.parent);
++	if (!rpm) {
++		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
++		return -ENODEV;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpmpds = desc->rpmpds;
++	num = desc->num_pds;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
++				     GFP_KERNEL);
++	data->num_domains = num;
++
++	for (i = 0; i < num; i++) {
++		if (!rpmpds[i])
++			continue;
++
++		rpmpds[i]->rpm = rpm;
++		rpmpds[i]->pd.power_off = rpmpd_power_off;
++		rpmpds[i]->pd.power_on = rpmpd_power_on;
++		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
++
++		data->domains[i] = &rpmpds[i]->pd;
++	}
++
++	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
++}
++
++static int rpmpd_remove(struct platform_device *pdev)
++{
++	of_genpd_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static struct platform_driver rpmpd_driver = {
++	.driver = {
++		.name = "qcom-rpmpd",
++		.of_match_table = rpmpd_match_table,
++	},
++	.probe = rpmpd_probe,
++	.remove = rpmpd_remove,
++};
++
++static int __init rpmpd_init(void)
++{
++	return platform_driver_register(&rpmpd_driver);
++}
++core_initcall(rpmpd_init);
++
++static void __exit rpmpd_exit(void)
++{
++	platform_driver_unregister(&rpmpd_driver);
++}
++module_exit(rpmpd_exit);
++
++MODULE_DESCRIPTION("Qualcomm RPM Power Domain Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-rpmpd");
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
