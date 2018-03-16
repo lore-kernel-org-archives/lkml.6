@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuIQUwShuukTKB8eD/VXPAHbs4wVp3vI44m5XlFbn/1deeFYfjx6MNAn+vjvIFQ0+NtSyvc
-ARC-Seal: i=1; a=rsa-sha256; t=1521213822; cv=none;
+X-Google-Smtp-Source: AG47ELsQMDajMJfOwkOXpKjQSyr8HgF8RFlu9kLsccKGsOo7PIwAtv2ePCdmmVaR/lBEan1gyT1a
+ARC-Seal: i=1; a=rsa-sha256; t=1521213816; cv=none;
         d=google.com; s=arc-20160816;
-        b=0CfMBwp5ESgSl0IzzCVgX3OrGgRn2rF9HXI5jFX5oqbQAq5L8ggP+OQRdObGc9+CZN
-         KelxUuMVF4Eqmg/BvwMPhdI0wwYXz7p/ccxvR8rDG6uW9JvXcEPIH7SdrvHUOINtyihr
-         7rqE7fIJ5LZamG1stPFTwjQopa8A9aCMKDaYmbt2Ttd79KGPwswsakb0Kcy4aiDIXxhw
-         2HcKWEIQzja9PHL+NqzAlzALgwug6NZ1i6auJFsSiKdPvVKjulxZauDQF8Znm+Hsf9cA
-         iqavcdWSM4byAZW4TF4x6pscyAAJRKdoieXtjXcy7/HJXvCUp/S0wJBKlQfwwUP1oong
-         nz/Q==
+        b=KM7+OeBpK9OcwraiMaGN3aPvqMGFX15qEIhIBSyJGcOzw9xX4qMdFjWCva8htHzXmw
+         WG1QR/xNDoe7/wybOslCJK73mM8ICsuB6+Py+AplI32SKJcGT+96tT+f96Zvlm6bhJUF
+         2OVoYQ7NHWNKK3Yg3HfOyTA/r+Ricnl5rTfPGd9H/fLNx0dxLxUGjpMQIVz7N0VUScet
+         wsPMyOMxUoGyqvvgCL2E3HMTT8i7Bi8SsZJS9mJ3AcukraMTr166OgmVoWaEUkgg7a2z
+         Q8zNY97k3wRJhfr6q2nf29WNLDijiLeGIALXaxA59av2p7JGIPoT7d4zyyPmWtmcjMCa
+         W+WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nQLmdp5rSBmldHYfZr6eetCKZWtw7hB3DX3NO99e/aY=;
-        b=R4AJBMez8a9Bx9FJMZSsZzQYrpY25oxdgovCPk4cFWweHUoI++aMaAnDAhDq5XJd5J
-         7MqH6d0SB87q7VD3KNFy/yQ0G5dZVB/vAmUjD12xRlzz6ElSYT8g/+uwuCKlXy8CMyQz
-         PRWgHZecxGyeBy8sjsZFtyrxsQYihEEvDlY6/TsGbxPP8JIy2f5AIUZQVJmBKLsWaTpf
-         ndsOZYHU7U/o9WNlyYMA9TbKCIXLEJz5yEpmrZj1s0m9/M398+ceUd1Pc0QFBEwo9LLu
-         XecHy6XPW0hY/Qxc6tp4f2jl/RGCXQlFvwINgIuKuJEWM9O8M0Ff2CXa4hQ0u6dYHl9H
-         uzuA==
+        bh=oktGr2fdMQM5HO+t4OOTNSAU+omRrHkKs6tOxo8Z/Kg=;
+        b=b8kfiZknZZXpqIdaq4d+10RVLr2VSbIr6Loz5UsmCtgo3GW20dP79nL1645xkCyKca
+         ZQjKY9OrotaofW3l3X7u8ZAOL4BW+Y2xUFX/w41qU0J8v6BHV0seX0MwCsMJWQiJXB1v
+         6uxQ+2x7b6kWDcX+31RPJAaptKvlLU4Os6Y2IaT2g4BCGMgCVQ/roRkOMUl36v03BbRh
+         PM/YhpjNfrb7DkiLHngI2glX72XoumhgpSOwLfgCMohxGF9C9BQecqrA33EMdV2xlZx7
+         ZB3a85pgtmG5sleB59olkCAIrl/SlyLRQ7eb+3rNPZjSWpgcui2Sl7S5QghX6UXILYrR
+         zK2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 3.18 09/25] netfilter: IDLETIMER: be syzkaller friendly
-Date: Fri, 16 Mar 2018 16:22:56 +0100
-Message-Id: <20180316152233.134076007@linuxfoundation.org>
+	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
+	Nicolai Stange <nstange@suse.de>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 06/25] ALSA: seq: More protection for concurrent write and ioctl races
+Date: Fri, 16 Mar 2018 16:22:53 +0100
+Message-Id: <20180316152233.019267900@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108304690754494?=
-X-GMAIL-MSGID: =?utf-8?q?1595108304690754494?=
+X-GMAIL-THRID: =?utf-8?q?1595108299103257252?=
+X-GMAIL-MSGID: =?utf-8?q?1595108299103257252?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,123 +50,174 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit cfc2c740533368b96e2be5e0a4e8c3cace7d9814 upstream.
+commit 7bd80091567789f1c0cb70eb4737aac8bcd2b6b9 upstream.
 
-We had one report from syzkaller [1]
+This patch is an attempt for further hardening against races between
+the concurrent write and ioctls.  The previous fix d15d662e89fc
+("ALSA: seq: Fix racy pool initializations") covered the race of the
+pool initialization at writer and the pool resize ioctl by the
+client->ioctl_mutex (CVE-2018-1000004).  However, basically this mutex
+should be applied more widely to the whole write operation for
+avoiding the unexpected pool operations by another thread.
 
-First issue is that INIT_WORK() should be done before mod_timer()
-or we risk timer being fired too soon, even with a 1 second timer.
+The only change outside snd_seq_write() is the additional mutex
+argument to helper functions, so that we can unlock / relock the given
+mutex temporarily during schedule() call for blocking write.
 
-Second issue is that we need to reject too big info->timeout
-to avoid overflows in msecs_to_jiffies(info->timeout * 1000), or
-risk looping, if result after overflow is 0.
-
-[1]
-WARNING: CPU: 1 PID: 5129 at kernel/workqueue.c:1444 __queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 5129 Comm: syzkaller159866 Not tainted 4.16.0-rc1+ #230
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x257 lib/dump_stack.c:53
- panic+0x1e4/0x41c kernel/panic.c:183
- __warn+0x1dc/0x200 kernel/panic.c:547
- report_bug+0x211/0x2d0 lib/bug.c:184
- fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
- fixup_bug arch/x86/kernel/traps.c:247 [inline]
- do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
- do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
- invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
-RIP: 0010:__queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-RSP: 0018:ffff8801db507538 EFLAGS: 00010006
-RAX: ffff8801aeb46080 RBX: ffff8801db530200 RCX: ffffffff81481404
-RDX: 0000000000000100 RSI: ffffffff86b42640 RDI: 0000000000000082
-RBP: ffff8801db507758 R08: 1ffff1003b6a0de5 R09: 000000000000000c
-R10: ffff8801db5073f0 R11: 0000000000000020 R12: 1ffff1003b6a0eb6
-R13: ffff8801b1067ae0 R14: 00000000000001f8 R15: dffffc0000000000
- queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1488
- queue_work include/linux/workqueue.h:488 [inline]
- schedule_work include/linux/workqueue.h:546 [inline]
- idletimer_tg_expired+0x44/0x60 net/netfilter/xt_IDLETIMER.c:116
- call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:541 [inline]
- smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:777 [inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x5e/0xba kernel/locking/spinlock.c:184
-RSP: 0018:ffff8801c20173c8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000006
-RDX: 1ffffffff0d592cd RSI: 1ffff10035d68d23 RDI: 0000000000000282
-RBP: ffff8801c20173d8 R08: 1ffff10038402e47 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8820e5c8
-R13: ffff8801b1067ad8 R14: ffff8801aea7c268 R15: ffff8801aea7c278
- __debug_object_init+0x235/0x1040 lib/debugobjects.c:378
- debug_object_init+0x17/0x20 lib/debugobjects.c:391
- __init_work+0x2b/0x60 kernel/workqueue.c:506
- idletimer_tg_create net/netfilter/xt_IDLETIMER.c:152 [inline]
- idletimer_tg_checkentry+0x691/0xb00 net/netfilter/xt_IDLETIMER.c:213
- xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
- check_target net/ipv6/netfilter/ip6_tables.c:533 [inline]
- find_check_entry.isra.7+0x935/0xcf0 net/ipv6/netfilter/ip6_tables.c:575
- translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:744
- do_replace net/ipv6/netfilter/ip6_tables.c:1160 [inline]
- do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1686
- nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
- nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
- ipv6_setsockopt+0x10b/0x130 net/ipv6/ipv6_sockglue.c:927
- udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
- sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2976
- SYSC_setsockopt net/socket.c:1850 [inline]
- SyS_setsockopt+0x189/0x360 net/socket.c:1829
- do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
+Reported-by: 范龙飞 <long7573@126.com>
+Reported-by: Nicolai Stange <nstange@suse.de>
+Reviewed-and-tested-by: Nicolai Stange <nstange@suse.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_IDLETIMER.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/core/seq/seq_clientmgr.c |   18 +++++++++++-------
+ sound/core/seq/seq_fifo.c      |    2 +-
+ sound/core/seq/seq_memory.c    |   14 ++++++++++----
+ sound/core/seq/seq_memory.h    |    3 ++-
+ 4 files changed, 24 insertions(+), 13 deletions(-)
 
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -146,11 +146,11 @@ static int idletimer_tg_create(struct id
- 		    (unsigned long) info->timer);
- 	info->timer->refcnt = 1;
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -919,7 +919,8 @@ int snd_seq_dispatch_event(struct snd_se
+ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
+ 					struct snd_seq_event *event,
+ 					struct file *file, int blocking,
+-					int atomic, int hop)
++					int atomic, int hop,
++					struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	int err;
+@@ -957,7 +958,8 @@ static int snd_seq_client_enqueue_event(
+ 		return -ENXIO; /* queue is not allocated */
  
-+	INIT_WORK(&info->timer->work, idletimer_tg_work);
-+
- 	mod_timer(&info->timer->timer,
- 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+ 	/* allocate an event cell */
+-	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
++	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
++				file, mutexp);
+ 	if (err < 0)
+ 		return err;
  
--	INIT_WORK(&info->timer->work, idletimer_tg_work);
--
- 	return 0;
+@@ -1026,12 +1028,11 @@ static ssize_t snd_seq_write(struct file
+ 		return -ENXIO;
  
- out_free_attr:
-@@ -191,7 +191,10 @@ static int idletimer_tg_checkentry(const
- 		pr_debug("timeout value is zero\n");
- 		return -EINVAL;
+ 	/* allocate the pool now if the pool is not allocated yet */ 
++	mutex_lock(&client->ioctl_mutex);
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+-		mutex_lock(&client->ioctl_mutex);
+ 		err = snd_seq_pool_init(client->pool);
+-		mutex_unlock(&client->ioctl_mutex);
+ 		if (err < 0)
+-			return -ENOMEM;
++			goto out;
  	}
--
-+	if (info->timeout >= INT_MAX / 1000) {
-+		pr_debug("timeout value is too big\n");
-+		return -EINVAL;
-+	}
- 	if (info->label[0] == '\0' ||
- 	    strnlen(info->label,
- 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
+ 
+ 	/* only process whole events */
+@@ -1082,7 +1083,7 @@ static ssize_t snd_seq_write(struct file
+ 		/* ok, enqueue it */
+ 		err = snd_seq_client_enqueue_event(client, &event, file,
+ 						   !(file->f_flags & O_NONBLOCK),
+-						   0, 0);
++						   0, 0, &client->ioctl_mutex);
+ 		if (err < 0)
+ 			break;
+ 
+@@ -1093,6 +1094,8 @@ static ssize_t snd_seq_write(struct file
+ 		written += len;
+ 	}
+ 
++ out:
++	mutex_unlock(&client->ioctl_mutex);
+ 	return written ? written : err;
+ }
+ 
+@@ -2355,7 +2358,8 @@ static int kernel_client_enqueue(int cli
+ 	if (! cptr->accept_output)
+ 		result = -EPERM;
+ 	else /* send it */
+-		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
++		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
++						      atomic, hop, NULL);
+ 
+ 	snd_seq_client_unlock(cptr);
+ 	return result;
+--- a/sound/core/seq/seq_fifo.c
++++ b/sound/core/seq/seq_fifo.c
+@@ -123,7 +123,7 @@ int snd_seq_fifo_event_in(struct snd_seq
+ 		return -EINVAL;
+ 
+ 	snd_use_lock_use(&f->use_lock);
+-	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
++	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
+ 	if (err < 0) {
+ 		if ((err == -ENOMEM) || (err == -EAGAIN))
+ 			atomic_inc(&f->overflow);
+--- a/sound/core/seq/seq_memory.c
++++ b/sound/core/seq/seq_memory.c
+@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_ev
+  */
+ static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
+ 			      struct snd_seq_event_cell **cellp,
+-			      int nonblock, struct file *file)
++			      int nonblock, struct file *file,
++			      struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	unsigned long flags;
+@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		add_wait_queue(&pool->output_sleep, &wait);
+ 		spin_unlock_irq(&pool->lock);
++		if (mutexp)
++			mutex_unlock(mutexp);
+ 		schedule();
++		if (mutexp)
++			mutex_lock(mutexp);
+ 		spin_lock_irq(&pool->lock);
+ 		remove_wait_queue(&pool->output_sleep, &wait);
+ 		/* interrupted? */
+@@ -288,7 +293,7 @@ __error:
+  */
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+ 		      struct snd_seq_event_cell **cellp, int nonblock,
+-		      struct file *file)
++		      struct file *file, struct mutex *mutexp)
+ {
+ 	int ncells, err;
+ 	unsigned int extlen;
+@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_poo
+ 	if (ncells >= pool->total_elements)
+ 		return -ENOMEM;
+ 
+-	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
++	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_poo
+ 			int size = sizeof(struct snd_seq_event);
+ 			if (len < size)
+ 				size = len;
+-			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
++			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
++						 mutexp);
+ 			if (err < 0)
+ 				goto __error;
+ 			if (cell->event.data.ext.ptr == NULL)
+--- a/sound/core/seq/seq_memory.h
++++ b/sound/core/seq/seq_memory.h
+@@ -66,7 +66,8 @@ struct snd_seq_pool {
+ void snd_seq_cell_free(struct snd_seq_event_cell *cell);
+ 
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+-		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
++		      struct snd_seq_event_cell **cellp, int nonblock,
++		      struct file *file, struct mutex *mutexp);
+ 
+ /* return number of unused (free) cells */
+ static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
