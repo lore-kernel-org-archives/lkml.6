@@ -1,45 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753340AbeCPHht (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:37:49 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:20644 "EHLO
+        id S1753422AbeCPHiU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:38:20 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:20830 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753098AbeCPHhn (ORCPT
+        with ESMTP id S1753209AbeCPHhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:37:43 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOa3029139
+        Fri, 16 Mar 2018 03:37:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOa8029139
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
 Cc: Michal Marek <michal.lkml@markovi.net>,
         Nicolas Pitre <nicolas.pitre@linaro.org>, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 0/7] kbuild: various fix, clean-up, improvements of CONFIG_TRIM_UNUSED_KSYMS
-Date: Fri, 16 Mar 2018 16:37:08 +0900
-Message-Id: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 5/7] kbuild: move CONFIG_TRIM_UNUSED_KSYMS code unneeded for external module
+Date: Fri, 16 Mar 2018 16:37:13 +0900
+Message-Id: <1521185836-19120-6-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The external module building does not need to parse this code because
+KBUILD_MODULES is always set anyway.
 
-Masahiro Yamada (7):
-  kbuild: clear LDFLAGS in the top Makefile
-  kbuild: remove wrong 'touch' in adjust_autoksyms.sh
-  kbuild: move 'scripts' target below
-  kbuild: restore touching autoksyms.h to the top Makefile
-  kbuild: move CONFIG_TRIM_UNUSED_KSYMS code unneeded for external
-    module
-  kbuild: move include/config/ksym/* to include/ksym/*
-  kbuild: link vmlinux only once for CONFIG_TRIM_UNUSED_KSYMS
+Move this code inside the "ifeq ($(KBUILD_EXTMOD),) ... endif" block.
 
- .gitignore                  |  1 +
- Makefile                    | 64 ++++++++++++++++++++++-----------------------
- scripts/Kbuild.include      |  2 +-
- scripts/adjust_autoksyms.sh |  5 +---
- scripts/basic/fixdep.c      |  8 +++---
- scripts/kconfig/Makefile    |  2 --
- 6 files changed, 39 insertions(+), 43 deletions(-)
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+---
 
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ Makefile | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 0a3895c..ef42adb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -614,13 +614,6 @@ else
+ include/config/auto.conf: ;
+ endif # $(dot-config)
+ 
+-# For the kernel to actually contain only the needed exported symbols,
+-# we have to build modules as well to determine what those symbols are.
+-# (this can be evaluated only once include/config/auto.conf has been included)
+-ifdef CONFIG_TRIM_UNUSED_KSYMS
+-  KBUILD_MODULES := 1
+-endif
+-
+ # The all: target is the default when no target is given on the
+ # command line.
+ # This allow a user to issue only 'make' to build a kernel including modules
+@@ -1021,6 +1014,13 @@ ifdef CONFIG_TRIM_UNUSED_KSYMS
+ 	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
+ endif
+ 
++# For the kernel to actually contain only the needed exported symbols,
++# we have to build modules as well to determine what those symbols are.
++# (this can be evaluated only once include/config/auto.conf has been included)
++ifdef CONFIG_TRIM_UNUSED_KSYMS
++  KBUILD_MODULES := 1
++endif
++
+ autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
+ 
+ $(autoksyms_h):
 -- 
 2.7.4
