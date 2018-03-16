@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4022873-1521236991-2-11644681674767904072
+X-Cyrus-Session-Id: sloti22d1t05-3921380-1521234524-2-6542388524401925707
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -13,85 +13,153 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521236991; b=YvmUYAGWtXAXAbB1k+/hvD1K0vEEedSzJSWTiPOmQv1sEyB
-    OT4cprvCDyURESRUeMFBZXFMGDN0Xy50+/y5uiEw+3XEC2oqSTWrERlBArurxke2
-    Twa83PYS9HdBrVz9Y8sin/T06wgGqxiEUmD9WYuIz6NtKgf4yHkyAiHc7GwXcrE5
-    Stn+Vfw68A0+nn5TvJ0x8FA3W4L+Ndz38XzhT6Yi71lTFD/arwRGzVkPd+yMEHz1
-    18DeY86zAmh2oQ3vj7RZcHd2EkwX372ahsPauEan2mbXPgnD/KU1fdXGsbIF1CDI
-    McDQ0KkrbDcrSKXfEVqsSBROwxU8K/1mRpYDdmQ==
+    t=1521234524; b=K1Bda8yMMUTEpK3tQT/iKhUPZW2j+ld5PsivRPnKmJ7QU7c
+    iO+UMOE3bRJs0mxvWt03GtS5hEhwMsUIBXzlC3rCuRgM6GJQr12faEi632jwIfGP
+    KMXLDND5UmdvGdRa1IhZhExnV1KIywRCrU3IIHQGigJ/JhfgKvpZ4IrLpNYlx3mc
+    kKtOXzQOkMVp3jFY/qOBetdUrpDaui4ZozPjaxnWWfDWVWmJcOKQt/pNKIK2lj4X
+    65yTQWF7wUUdmpBAU12qgDAMxbTOBShyA7d/iIjc+YusCXiDs/1NIhd2loq5jxnr
+    qwf5UDXmlt3PDsEuYYYx2EA8+5Cz/75STBoMLbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=to:cc:subject:from:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521236991; bh=yuDp4bV+VZ8BuVGGKftPH8I7oZ
-    GoiDzuI+Yb0bXOzwE=; b=DRLUuyARCkRytsCjXvAd9ZvcWuoQTVsyuuoFrFfreK
-    YfqCY4zAze4be3RMZ2AtKMPC8C9W5rwPz9FTyQdrZskpsd6lSBQapPoTegnqf7W5
-    n8pZQnFjWa50fUWjyn7cVQBxuqVqj5TnRnJmZtQzOjgUxQHNW4ELKOig/fURy6Rq
-    bEYfYzMCKCe7pwqsfiwOugR59TPBZS+F9vvlob1jh64AiRQIJr6B/rnfVGbKELWY
-    WpUzZGzY9n7gWb3K5lCK9XC5I0DKve07X6IdIKFVfN+XmEDq+mbVVjW718UAk2tk
-    Mc78yWkK8Y9Drv3ISFat1/wOTMGOCoh6ER17cjfxtMcg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=N5UMdDoT x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521234524; bh=JyZLku324xsmIyw7zYw1Alow6J
+    Pylmgg6aJrzMgpnus=; b=X0J7mYfHndpWxBlDVHkXyPaBc2MIfMnVDLs4Ff6HG5
+    7vn5BKP7Tl9yDgN9elenlCjEghlAqfooj2Ca4igJVKTv6XFoGi25VkVZLMExxYz5
+    /erH1NQsxsLHjYqYX/l95QTU/4fsVPJZ7GsHyNcSiLSdSXBr4KAaocwcIlWnh1IR
+    qbIqlkfrGzywYV8SBMR0nRBZDatMrJCHRN5XAXWddbtq0Er0HXJYjyXPI7Ro5o2X
+    8wv0H13zgeaXidQ032kpyDkHMg93greldgWkKx/hEYm+fnrVXqAiG5dKL09uDmXc
+    gD4q3iWFPn6RXoss7b3Ys39XFrL94EgTyiCR6TLK0eVA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=N5UMdDoT x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751724AbeCPVtf (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 17:49:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:36124 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751753AbeCPVtc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 17:49:32 -0400
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] libata: blacklist Micron 500IT SSD with MU01 firmware
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1521210819-9225-1-git-send-email-sudipm.mukherjee@gmail.com>
-        <yq137106mo9.fsf@oracle.com> <20180316205559.GA29406@sudip-laptop>
-Date: Fri, 16 Mar 2018 17:49:25 -0400
-In-Reply-To: <20180316205559.GA29406@sudip-laptop> (Sudip Mukherjee's message
-        of "Fri, 16 Mar 2018 20:55:59 +0000")
-Message-ID: <yq1y3ir668q.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8833 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=606
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803160153
+        id S1750826AbeCPVIj (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 17:08:39 -0400
+Received: from mga17.intel.com ([192.55.52.151]:22081 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeCPVIi (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:08:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="212069018"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Eric Wheeler <linux-mm@lists.ewheeler.net>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [PATCHv2] mm/shmem: Do not wait for lock_page() in shmem_unused_huge_shrink()
+Date: Sat, 17 Mar 2018 00:08:30 +0300
+Message-Id: <20180316210830.43738-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+shmem_unused_huge_shrink() gets called from reclaim path. Waiting for page
+lock may lead to deadlock there.
 
-Sudip,
+There was a bug report that may be attributed to this:
 
->> Any reason to believe this deficiency is limited to MU01 firmware?
->
-> Not really. But we also use MG02 firmware and afaik, Micron has
-> confirmed that MG02 is a fixed one.  I have only mentioned MU01 as I
-> know it has the problem.
+http://lkml.kernel.org/r/alpine.LRH.2.11.1801242349220.30642@mail.ewheeler.net
 
-Let me ask...
+Replace lock_page() with trylock_page() and skip the page if we failed
+to lock it. We will get to the page on the next scan.
 
+We can test for the PageTransHuge() outside the page lock as we only
+need protection against splitting the page under us. Holding pin oni
+the page is enough for this.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Eric Wheeler <linux-mm@lists.ewheeler.net>
+Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
+Cc: stable@vger.kernel.org # v4.8+
+---
+ mm/shmem.c | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 1907688b75ee..b85919243399 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -493,36 +493,45 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
+ 		info = list_entry(pos, struct shmem_inode_info, shrinklist);
+ 		inode = &info->vfs_inode;
+ 
+-		if (nr_to_split && split >= nr_to_split) {
+-			iput(inode);
+-			continue;
+-		}
++		if (nr_to_split && split >= nr_to_split)
++			goto leave;
+ 
+-		page = find_lock_page(inode->i_mapping,
++		page = find_get_page(inode->i_mapping,
+ 				(inode->i_size & HPAGE_PMD_MASK) >> PAGE_SHIFT);
+ 		if (!page)
+ 			goto drop;
+ 
++		/* No huge page at the end of the file: nothing to split */
+ 		if (!PageTransHuge(page)) {
+-			unlock_page(page);
+ 			put_page(page);
+ 			goto drop;
+ 		}
+ 
++		/*
++		 * Leave the inode on the list if we failed to lock
++		 * the page at this time.
++		 *
++		 * Waiting for the lock may lead to deadlock in the
++		 * reclaim path.
++		 */
++		if (!trylock_page(page)) {
++			put_page(page);
++			goto leave;
++		}
++
+ 		ret = split_huge_page(page);
+ 		unlock_page(page);
+ 		put_page(page);
+ 
+-		if (ret) {
+-			/* split failed: leave it on the list */
+-			iput(inode);
+-			continue;
+-		}
++		/* If split failed leave the inode on the list */
++		if (ret)
++			goto leave;
+ 
+ 		split++;
+ drop:
+ 		list_del_init(&info->shrinklist);
+ 		removed++;
++leave:
+ 		iput(inode);
+ 	}
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.16.1
