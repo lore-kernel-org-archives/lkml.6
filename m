@@ -1,37 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvIbrigAFNUIHmOw1u2iJmGmUXRjZbJJohhsVXB2M41y1kp3AaanUhj+aTZdksE35c5gCse
-ARC-Seal: i=1; a=rsa-sha256; t=1521214083; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IAuXLC/5/gPY6pk1NHWQge2z+CU0b1Dzc8AxmfAPPkzKKq5RJFmKOxKbmSPxDIinQw
-         CdvOGNsfZjg0h1plA2RTvBVHgVoZSGKWo2wcEuk1YZ4Ohfq3eQPVLwkiNQu/C9c51xtF
-         KAYoSPC4fLtWRWzLMvQzBjCZ/QHM5pFvG5LlICGjnxr68i7jHBWl7BKJQXaz6ZW5AwWV
-         4FmezhzWECWnHOro1Wrjb5TTuaEkt/KucKSj8PvpJTECPlOWnj/4Ic8tlqPKT7N+IXsP
-         l6jice2nJtIrJqraH/uky0i1tifiYh+eP40RxVrusk8DnAXqNrknly4P9jQUXAb1jWYk
-         4orQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=pSviIB40JARJvkghbouLX99UWsVmDua+oBzGrb6FVMw=;
-        b=ShXuyxyo1ztq0uqUG78ov5Bp7XYabl8HQnCLtCgIX69NrxzgBddECYcPHKyq0FHemp
-         jx+PKbnQjkSQiCRxPfCzNMEuWiBqXFBmK9iX1SW0Z45vPxyqCZ0gU0F33JN6tZv60TeM
-         SSDCca6M8jJrOlcnxi69MinMQfILSsiLDDX9WRDonwPuqONFQaNxPX/34fBtLXs7/fEl
-         A7S9Cyywo93+li0VgpELUkBu1CCCKsYevefcIzY5hE4BhqQEcD6Sp4o+z4Gpv8OZOo4R
-         IWJgvLfJs7Eki9gZTkTY07OqVTbxLL+T35wAX9DGFztbEZ71D4S+b82AtixRfGf4S1KT
-         mgLA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3278546-1521214070-2-167509823691214642
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214069; b=Brok1BBtHK15LBJPf5y6i6TFxvp6NbU8SY4/DIkhLK9Rd+T
+    wEpQ8YWFxG98shynZfhaYboG2OkCh2Qmc/lfBg38xa5PvsHQ5dXQzdh+qRPAbZUv
+    j4nitmU4jHlGo7gfqgmoLrYdleiq+JINs0Fjl9FhHRvu18X/8DbvmjXHl0F845ac
+    VbvP3zcOTWnSA7WqE21uUeY7ZAF3SLWZZsV7jq9/p0f6GlL5WYahcE+f5r2iW1/Y
+    EJLq7QHy4g7edaFk/mmUJ50Hu7PDkpwoL3w+SdCnPKh4f0fQegX9fTH8AD3HjmBF
+    AYw6CBbiQqyUVxuz6HJJjWI6z6Kw2tUsJv5dTVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214069; bh=4VHeFIFvwiB6rJJy8fQeTy2nEd
+    0Vr2AYJ87pdBFblOk=; b=YUubnqnk1vJKScZINtRXyDpYKpshvx9cFG2amKZ6u7
+    c1Omy44vjvtQEkkHuGbl0P08KQA/1xieMP5meVolw128ydZJCXoRAq14XZUkzqmr
+    YIDRnTbINkA+7nRFn8sh7Bssii/efUWt8ImxnZmFq6X2ybGMEkugE1zUJQXX9xVi
+    +qB+l9qEJjwBvtUZ8gQ1gocyTDX/CjpjJzlg32rJXXmWhmJzeqSDqhdPDOCQZ8tO
+    rMaeOsScFx4RMoDO/ZzG2nVprEaKNZ78gjA6A5FlxyHCviCuxz9Gyl7QVagXdj77
+    ItOVFHolY4umvAbPPK+h+kASe9h8GtMDOFWG2wh9R1Jg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932666AbeCPP1q (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:27:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34784 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754267AbeCPP1o (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	syzbot+e783f671527912cd9403@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 34/63] netfilter: add back stackpointer size checks
-Date: Fri, 16 Mar 2018 16:23:06 +0100
-Message-Id: <20180316152303.772488841@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 26/63] nospec: Include <asm/barrier.h> dependency
+Date: Fri, 16 Mar 2018 16:22:58 +0100
+Message-Id: <20180316152302.923159611@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -39,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108579155830036?=
-X-GMAIL-MSGID: =?utf-8?q?1595108579155830036?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,75 +92,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 57ebd808a97d7c5b1e1afb937c2db22beba3c1f8 upstream.
+commit eb6174f6d1be16b19cfa43dac296bfed003ce1a6 upstream.
 
-The rationale for removing the check is only correct for rulesets
-generated by ip(6)tables.
+The nospec.h header expects the per-architecture header file
+<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
+that dependency to prevent inadvertent fallback to the default
+array_index_mask_nospec() implementation.
 
-In iptables, a jump can only occur to a user-defined chain, i.e.
-because we size the stack based on number of user-defined chains we
-cannot exceed stack size.
+The default implementation may not provide a full mitigation
+on architectures that perform data value speculation.
 
-However, the underlying binary format has no such restriction,
-and the validation step only ensures that the jump target is a
-valid rule start point.
-
-IOW, its possible to build a rule blob that has no user-defined
-chains but does contain a jump.
-
-If this happens, no jump stack gets allocated and crash occurs
-because no jumpstack was allocated.
-
-Fixes: 7814b6ec6d0d6 ("netfilter: xtables: don't save/restore jumpstack offset")
-Reported-by: syzbot+e783f671527912cd9403@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter/arp_tables.c |    4 ++++
- net/ipv4/netfilter/ip_tables.c  |    4 ++++
- net/ipv6/netfilter/ip6_tables.c |    4 ++++
- 3 files changed, 12 insertions(+)
+ include/linux/nospec.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/netfilter/arp_tables.c
-+++ b/net/ipv4/netfilter/arp_tables.c
-@@ -329,6 +329,10 @@ unsigned int arpt_do_table(struct sk_buf
- 			}
- 			if (table_base + v
- 			    != arpt_next_entry(e)) {
-+				if (unlikely(stackidx >= private->stacksize)) {
-+					verdict = NF_DROP;
-+					break;
-+				}
- 				jumpstack[stackidx++] = e;
- 			}
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -5,6 +5,7 @@
  
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -408,6 +408,10 @@ ipt_do_table(struct sk_buff *skb,
- 			}
- 			if (table_base + v != ipt_next_entry(e) &&
- 			    !(e->ip.flags & IPT_F_GOTO)) {
-+				if (unlikely(stackidx >= private->stacksize)) {
-+					verdict = NF_DROP;
-+					break;
-+				}
- 				jumpstack[stackidx++] = e;
- 				pr_debug("Pushed %p into pos %u\n",
- 					 e, stackidx - 1);
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -425,6 +425,10 @@ ip6t_do_table(struct sk_buff *skb,
- 			}
- 			if (table_base + v != ip6t_next_entry(e) &&
- 			    !(e->ipv6.flags & IP6T_F_GOTO)) {
-+				if (unlikely(stackidx >= private->stacksize)) {
-+					verdict = NF_DROP;
-+					break;
-+				}
- 				jumpstack[stackidx++] = e;
- 			}
+ #ifndef _LINUX_NOSPEC_H
+ #define _LINUX_NOSPEC_H
++#include <asm/barrier.h>
  
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
