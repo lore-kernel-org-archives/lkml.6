@@ -1,113 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeCPVmt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:42:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751302AbeCPVms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:42:48 -0400
-Subject: Re: [pci PATCH v7 0/5] Add support for unmanaged SR-IOV
-To: Alexander Duyck <alexander.duyck@gmail.com>, bhelgaas@google.com,
-        alexander.h.duyck@intel.com, linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com, mheyne@amazon.de,
-        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
-        hch@lst.de, dwmw@amazon.co.uk
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
-From: Don Dutile <ddutile@redhat.com>
-Message-ID: <a411bbf7-23ba-60e6-2673-4f200f36db9b@redhat.com>
-Date: Fri, 16 Mar 2018 17:42:44 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751567AbeCPVpM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:45:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46984 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeCPVpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:45:10 -0400
+Date: Fri, 16 Mar 2018 14:44:54 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 03/36] mm: use do_futex() instead of sys_futex() in
+ mm_release()
+Message-ID: <20180316214454.GB20184@localhost.localdomain>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-4-linux@dominikbrodowski.net>
+ <20180316184348.GA20184@localhost.localdomain>
+ <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180315183449.3102.64791.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 02:40 PM, Alexander Duyck wrote:
-> This series is meant to add support for SR-IOV on devices when the VFs are
-> not managed by the kernel. Examples of recent patches attempting to do this
-> include:
-> virto - https://patchwork.kernel.org/patch/10241225/
-> pci-stub - https://patchwork.kernel.org/patch/10109935/
-> vfio - https://patchwork.kernel.org/patch/10103353/
-> uio - https://patchwork.kernel.org/patch/9974031/
+On Fri, Mar 16, 2018 at 07:03:53PM +0000, Andy Lutomirski wrote:
+> On Fri, Mar 16, 2018 at 6:43 PM, Darren Hart <dvhart@infradead.org> wrote:
+> > On Thu, Mar 15, 2018 at 08:04:56PM +0100, Dominik Brodowski wrote:
+> >> sys_futex() is a wrapper to do_futex() which does not modify any
+> >> values here:
+> >>
+> >> - uaddr, val and val3 are kept the same
+> >>
+> >> - op is masked with FUTEX_CMD_MASK, but is always set to FUTEX_WAKE.
+> >>   Therefore, val2 is always 0.
+> >>
+> >> - as utime is set to NULL, *timeout is NULL
+> >>
+> >> Cc: Thomas Gleixner <tglx@linutronix.de>
+> >> Cc: Ingo Molnar <mingo@redhat.com>
+> >> Cc: Peter Zijlstra <peterz@infradead.org>
+> >> Cc: Darren Hart <dvhart@infradead.org>
+> >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> >
+> > Hi Dominik,
+> >
+> > I'm missing the "why" part here. What is it you are trying to address?
+> >
+> > do_futex is not currently in use outside of the futex implementation,
+> > while sys_futex is. This decouples the interface from the
+> > implementation. While this is perhaps less critical within the
+> > kernel, I don't see a compelling reason to increase the coupling
+> > between the mm and futex implementations.
+> >
+> > Without a compelling WHY, Nack from me.
+> >
 > 
-> Since this is quickly blowing up into a multi-driver problem it is probably
-> best to implement this solution as generically as possible.
-> 
-> This series is an attempt to do that. What we do with this patch set is
-> provide a generic framework to enable SR-IOV in the case that the PF driver
-> doesn't support managing the VFs itself.
-> 
-> I based my patch set originally on the patch by Mark Rustad but there isn't
-> much left after going through and cleaning out the bits that were no longer
-> needed, and after incorporating the feedback from David Miller. At this point
-> the only items to be fully reused was his patch description which is now
-> present in patch 3 of the set.
-> 
-> This solution is limited in scope to just adding support for devices that
-> provide no functionality for SR-IOV other than allocating the VFs by
-> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
-> for now I am dropping that as the scope of that work is larger then I
-> think I can take on at this time.
-> 
-> v2: Reduced scope back to just virtio_pci and vfio-pci
->      Broke into 3 patch set from single patch
->      Changed autoprobe behavior to always set when num_vfs is set non-zero
-> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
->      Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
-> v4: Dropped vfio-pci patch
->      Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
->      Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
-> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
->      Added new patch that enables pci_sriov_configure_simple
->      Updated drivers to use pci_sriov_configure_simple
-> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
->      Updated drivers to drop "#ifdef" checks for IOV
->      Added pci-pf-stub as place for PF-only drivers to add support
-> v7: Dropped pci_id table explanation from pci-pf-stub driver
->      Updated pci_sriov_configure_simple to drop need for err value
->      Fixed comment explaining why pci_sriov_configure_simple is NULL
-> 
-> Cc: Mark Rustad <mark.d.rustad@intel.com>
-> Cc: Maximilian Heyne <mheyne@amazon.de>
-> Cc: Liang-Min Wang <liang-min.wang@intel.com>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> ---
-> 
-> Alexander Duyck (5):
->        pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
->        virtio_pci: Add support for unmanaged SR-IOV on virtio_pci devices
->        ena: Migrate over to unmanaged SR-IOV support
->        nvme: Migrate over to unmanaged SR-IOV support
->        pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
-> 
-> 
->   drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
->   drivers/nvme/host/pci.c                      |   20 ----------
->   drivers/pci/Kconfig                          |   12 ++++++
->   drivers/pci/Makefile                         |    2 +
->   drivers/pci/iov.c                            |   31 +++++++++++++++
->   drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
->   drivers/virtio/virtio_pci_common.c           |    1
->   include/linux/pci.h                          |    3 +
->   include/linux/pci_ids.h                      |    2 +
->   9 files changed, 107 insertions(+), 46 deletions(-)
->   create mode 100644 drivers/pci/pci-pf-stub.c
-> 
-> --
-> 
-For what it's worth.
+> We want to make some changes to the way that the syscall entry code
+> invokes syscalls, and these changes will make it impossible to call
+> sys_xyz() functions from the kernel.  So we can make sys_futex() be a
+> trivial wrapper around a new ksys_futex(), or we can do a patch like
+> this.
 
-Good, simpler start for this type of support/effort.
-Thanks for the multiple versions to get to this point.
+I dug up the cover letter and got the motivation and withdraw my
+objection. I understand the motivation to put the motivation in the
+cover letter in a large series, but I think there should have been
+something indicating the need for this change in the individual patches,
+even just a single line like Andy's first sentence above.
 
-Reviewed-by: Donald Dutile <ddutile@redhat.com>
+Thanks,
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
