@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvZo18ff5ddSDVy+J4zSZgC/s3YYj6XnJzdnjE/cNefFpIx01Eh0i7tLeVtyZdymVpK1A2
-ARC-Seal: i=1; a=rsa-sha256; t=1521214386; cv=none;
+X-Google-Smtp-Source: AG47ELvc8c8gIOuoa4eyvgDaj1nbM3c1KE7PFIciJw55bgltglJWHEubHwcNj+TPtxUc2RuSTacg
+ARC-Seal: i=1; a=rsa-sha256; t=1521214383; cv=none;
         d=google.com; s=arc-20160816;
-        b=uuU0NjNI/7qqG9oOuKikyLeqgWgxgtfne/HnMLR/BbNqT/s2aZQaJ3jdb5V+A2xQxR
-         ZjeLlj75ghEzW8ebjXkstuFMlB6IFHKPR+jecKvcpPYozeJawvTsPJ/LI6DWlHUeBSle
-         cY6eB1wG1SQGODK6/vESwikX7AOJrcf1nPvSURDLNjOhlKwG6j/BNKrvAQTd8Cha3qjX
-         LfOI/uv1Dk0Vt+j8mtBRnek45gPzGK3+SNnwx4pUCgN4o+a/pVuZEBol6jZEFbYelkod
-         ZVLtXXAbVQCAvY5CDFdYG0I1qkbRVPEqWl4rtTgL16vlfjq8XaIpoiS35v/vq9MZmI/L
-         H1xw==
+        b=T9v0RaJLRLsK1VY1SYxpXjTe6er/bOErWXCtpvokuFaOKlfYrIxnT6PM3t56J7YXdC
+         ExNPmY9pZVBZgsSLZIeuX3oPX3iKSR5yxQtngMCyOpZue8vUFJBymYVhbr30Ezk1AOS1
+         UIYm0T/K22hayO6u4J9x0JYXHAYkhn0RL1MXrosLtjyf1vx5NL81SqBK9fx2v7gDeCdy
+         KOXn8wBQTizBntdC3iGW1iWsdgOGVFD9icZP4bq7ZP9TwpoSmDXDofDFtGRJT4VXTDhP
+         2QAeL0VOXebNclCwpgAZCS9/uR+B+SwwjT4KnT022rSHIqyW/l7hETjDbGKQEB80Nl01
+         z7jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xO+mhNWsTgdkbuneA+aaa33VFqpObuGA1nLTLohTxlM=;
-        b=hOceLJByLYkOqp9huy1sxn+HlejH8N0eJl9HhRnJl5CHSpRgPU7Mqge5vDysA8o8J+
-         MHvlM6WmjczWlyibe4wNHC4swDcd12+Dn4ZjCoBFN3CxWAG6Rz5gA6jK/VfeDG1zyhKg
-         LQaPZNgiKGoZMORRiqPVgvtboTbOst4d7vWsqPdvcjxfjm5gdj/13/UvHn5sQSleY9R8
-         ZdSQR6eKI2ik20leRlvQS2F4+s1tcZfTL75bOGxJlxJoSIWuV5E7tdLxqXVviLRQS+uP
-         VxT4LUpe9X4ZzrQbN+L/eO9NJznf1uVm8I/h1rdzpVwfEE8EiWVDcUg5coAbfnEG0r5C
-         2P4A==
+        bh=IdknCDyjaxyuI+3FILbqewgVq/Jfbh27rKj9ZEifkwA=;
+        b=EU+YOnhaUVaGAWafVZEJQnuqSGtp0U9dFfP0rIDrfCil16tKnFht2i8wi+byLBeB8f
+         TZAs4oX5G0aJmvAOuEzIGpwdZAffv/utstGYxomPhOPdEbl+miLNQ6nLKPyHSutQCSRB
+         0qsb2EFt6/fcRHtEIV/h+mfgCnyRB/Y/r4yImlfS6ZSzKG5NSvYIrE3h9ORibptjxsO2
+         DVrDZCRRdcWgsAyqrPuRSEUy2/0dgZEh2LBvV1eJt+pXrmEbBWOYCHa0yzKzPFh2cPg+
+         NXd65eYkZNt2/RPfUpbDLjxLucKS7vEG3Cl+a/3ffyLkYqblku7jITBsUYXBR4FuSVm8
+         yBwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jonas Danielsson <jonas@orbital-systems.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 4.9 74/86] tty/serial: atmel: add new version check for usart
-Date: Fri, 16 Mar 2018 16:23:37 +0100
-Message-Id: <20180316152322.355218175@linuxfoundation.org>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Subject: [PATCH 4.9 73/86] serial: sh-sci: prevent lockup on full TTY buffers
+Date: Fri, 16 Mar 2018 16:23:36 +0100
+Message-Id: <20180316152322.278253230@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108308157129909?=
-X-GMAIL-MSGID: =?utf-8?q?1595108896590938786?=
+X-GMAIL-THRID: =?utf-8?q?1595108493927910261?=
+X-GMAIL-MSGID: =?utf-8?q?1595108893258272321?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jonas Danielsson <jonas@orbital-systems.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-commit fd63a8903a2c40425a9811c3371dd4d0f42c0ad3 upstream.
+commit 7842055bfce4bf0170d0f61df8b2add8399697be upstream.
 
-On our at91sam9260 based board the usart0 and usart1 ports report
-their versions (ATMEL_US_VERSION) as 0x10302. This version is not
-included in the current checks in the driver.
+When the TTY buffers fill up to the configured maximum, a system lockup
+occurs:
 
-Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+[  598.820128] INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  598.825796]  0-...!: (1 GPs behind) idle=5a6/2/0 softirq=1974/1974 fqs=1
+[  598.832577]  (detected by 3, t=62517 jiffies, g=296, c=295, q=126)
+[  598.838755] Task dump for CPU 0:
+[  598.841977] swapper/0       R  running task        0     0      0 0x00000022
+[  598.849023] Call trace:
+[  598.851476]  __switch_to+0x98/0xb0
+[  598.854870]            (null)
+
+This can be prevented by doing a dummy read of the RX data register.
+
+This issue affects both HSCIF and SCIF ports. Reported for R-Car H3 ES2.0;
+reproduced and fixed on H3 ES1.1. Probably affects other R-Car platforms
+as well.
+
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: stable <stable@vger.kernel.org>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/atmel_serial.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/serial/sh-sci.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1780,6 +1780,7 @@ static void atmel_get_ip_name(struct uar
- 		switch (version) {
- 		case 0x302:
- 		case 0x10213:
-+		case 0x10302:
- 			dev_dbg(port->dev, "This version is usart\n");
- 			atmel_port->has_frac_baudrate = true;
- 			atmel_port->has_hw_timer = true;
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -935,6 +935,8 @@ static void sci_receive_chars(struct uar
+ 		/* Tell the rest of the system the news. New characters! */
+ 		tty_flip_buffer_push(tport);
+ 	} else {
++		/* TTY buffers full; read from RX reg to prevent lockup */
++		serial_port_in(port, SCxRDR);
+ 		serial_port_in(port, SCxSR); /* dummy read */
+ 		sci_clear_SCxSR(port, SCxSR_RDxF_CLEAR(port));
+ 	}
