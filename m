@@ -1,12 +1,12 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4051070-1521240511-2-14593846616125645927
+X-Cyrus-Session-Id: sloti22d1t05-4051070-1521240526-2-8475715895570985651
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES roca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -14,50 +14,50 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521240510; b=J/WaOZrAHeOzgkgOyXmSYEWvPVS36mJI2rrF/T4cu/PNiV0
-    1S8AEuGCnxcgLeOooUiHudvLxe4vTRfx0SqK5GVP1ZiNrecooYEnolGQIQxMGZDv
-    mzUrRlFGMEPLHTmZdkaokn6IQnsMkpX1ud9GrNkFDunMXro0DWzWSj5Lsz0Ewn37
-    NlaV0hLBCaUoJ4Fmbi8gRdZMW3+kLS4PDZs2UMWGdrozVWfeuNIGuINjyEvEvx3a
-    sjkm7ViWNSkKY8DJPf3X0NgPh/GuTa7yb3erkBWkFYM2A5+bWMqzDpst8pr5oj2w
-    cEOGGJpE5CPsPNgDAYeh6gL9lwqcWWAWTAdgU1w==
+    t=1521240526; b=b0BGbpSiDZePwfAiaIPCTQEdKbi6iZdbXZCteTxI9Servkh
+    50AM569XdruJCUTaJ2xx9cBOXrOybsDTOYJ47j2rk4V0Drcuuz0uu4bxK3Q4TEeC
+    BkyB+oYeDfA96WeFFwX5spH4uMRNlQ9gMGR5YegS2oFJjsUO8EOsVoqRZJBl6hnX
+    WMOu3ot+or+r+/KElYTAjGkvqU5HeEjzrJNr2BlNrAKgaKOjByR6bwt0spqgOohv
+    1CBp56H6XSHSm4uOrvxb4ERd4Vxz6JahzqN4LvL81Sw8hhl2d6g1HU0/Lu2KPFEO
+    pVS+OZdEbJl/dkSB1PrT8Qor7EzDPmHZlxUXJ5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521240510; bh=G
-    b7V+iKZ7udt4gXW+gkiC7zruCLi3neBt+3HH84VJ/k=; b=vMkh1a3q9fhIuU/WC
-    iE1bTXwz1EIB0WYrqZ/tc9o5SwvRovz7uIP1vWi1H8oSZb3cMycip9sFRzbnvS54
-    6w2MWqj3M3okW1TmV2kNXK/h8kSjKI+6/TzA3b7NKAnqwTZnXpXTk4n5rVXvGNsV
-    p5K/WkOjJ5hz/+FCMBMQBDYz4WpN36y58csfytHCsABgTcsNvPG7IuM4+9mta5jV
-    wevr+I391J//FOapuCw1w9QuXYmQyqQiHzQDhbIG5py3ja8ktGuksnSHfCQ8mMVD
-    aVFAFlSqi7Hc1n+akQY0+bQjyn67IS6UliPuzq55vnVXB5jO2NWJ4b2V41lWVCyo
-    7cvLQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=NtD94AB2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521240526; bh=q
+    xZfHaoPFze8Euk5uF4NgGA4jLuvTvFO9y6rbAabhNE=; b=KA+mT87B8DYmgeM8W
+    j/eID5SxpVocSKRPeNcbXq3miqe9AqwxClaK3Z57vpm5e4NLzeYKyeU610kkak78
+    yS2eug2yqKLDNxsQYBPsduhROhWtZy1uIvlPvXlWCi8N54wpM2bnoYsoL8dx3bBu
+    Toqax7yLFeppER/u2+UMEushfow+EPH/8ibo7llxnD6alboQMOfcFyJHEBvkaKzZ
+    1sXcpJSI0rNA9JWhKT03svRCxlg07S7FHqR4iQSpXXlWNR5bs4C52ps8BBFhSvLy
+    aTsZRlz6QIZ1CWegifn15KReUm4vO5YVM9a+AfIlogjG7CgMtcQsEst7mfKBPkRq
+    OYsRA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JOHOQkEw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J0up7QF/;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TnjSO+pt;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=NtD94AB2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JOHOQkEw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J0up7QF/;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TnjSO+pt;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELtakd1t349UyGFNecLrdFkGHfB24nxz25tObHnuKJC9iXBiU+gKTop5selKM4l5IfMhjSQ69w==
-Date: Fri, 16 Mar 2018 19:48:18 -0300
+X-Google-Smtp-Source: AG47ELu6RWiEKdPHNoCngrSdKiq87xjz6cK5ncS4ffY0C/6oKmFH0lew5iokskuisdQp3kiHLONbgA==
+Date: Fri, 16 Mar 2018 19:48:33 -0300
 From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 To: John Syne <john3909@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
  Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
@@ -65,10 +65,12 @@ To: John Syne <john3909@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
  linux-kernel@vger.kernel.org, Barry Song <21cnbao@gmail.com>
-Subject: [PATCH v2 0/8] staging:iio:ade7854: Cleanup on I2C/SPI code
-Message-ID: <cover.1521239766.git.rodrigosiqueiramelo@gmail.com>
+Subject: [PATCH v2 1/8] staging:iio:ade7854: Fix error handling on read/write
+Message-ID: <c6329504bb92726dd1ca45cd5b44e180e86a407e.1521239766.git.rodrigosiqueiramelo@gmail.com>
+References: <cover.1521239766.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
+In-Reply-To: <cover.1521239766.git.rodrigosiqueiramelo@gmail.com>
 User-Agent: NeoMutt/20180223
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -90,46 +92,163 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchset reworks the I2C/SPI code from meter module. The set of
-patches try to reduce the code duplication and make the communication
-reliable. The current version of the module had many code duplications,
-which make the code more error-prone and hard to read. Jonh Syne
-identified some wrong error handling and fixed it in his patches; in
-this series of patches I analyzed Jonh's fixes, and use it in the new
-code.
+The original code does not correctly handle the error related to I2C
+read and write. This patch fixes the error handling related to all
+read/write functions for I2C. This patch is an adaptation of the John
+Syne patches.
 
-It is important to highlight that meter module is under observation, due
-to the lack of hardware and the old design of the chip. However, John
-has the hardware for testing and interest to help to update the code
-[1]. As a result, this patchset represents the first work effort to
-update the meter module in the staging.
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: John Syne <john3909@gmail.com>
+---
+ drivers/staging/iio/meter/ade7854-i2c.c | 24 ++++++++++++------------
+ drivers/staging/iio/meter/ade7854.c     | 10 +++++-----
+ 2 files changed, 17 insertions(+), 17 deletions(-)
 
-1 - https://marc.info/?l=linux-iio&m=152046885922153&w=2
-
-Changes in V2:
- - Reorganize the patchset to make easier to backport fixes.
- - Adds two commits at the beginning of the patchset. First, fixes bugs
-   related to wrong verification in read/write I2C operations. Second,
-   adjust the incorrect amount of data read.
- - Removes unnecessary code in read/write functions for SPI and I2C
-   during the rework.
-
-Rodrigo Siqueira (8):
-  staging:iio:ade7854: Fix error handling on read/write
-  staging:iio:ade7854: Fix the wrong number of bits to read
-  staging:iio:ade7854: Rework I2C write function
-  staging:iio:ade7854: Rework SPI write function
-  staging:iio:ade7854: Replace many functions for one function
-  staging:iio:ade7854: Rework I2C read function
-  staging:iio:ade7854: Rework SPI read function
-  staging:iio:ade7854: Remove read_reg_* duplications
-
- drivers/staging/iio/meter/ade7854-i2c.c | 238 +++++++++-------------------
- drivers/staging/iio/meter/ade7854-spi.c | 268 +++++++-------------------------
- drivers/staging/iio/meter/ade7854.c     |  40 ++---
- drivers/staging/iio/meter/ade7854.h     |  23 +--
- 4 files changed, 159 insertions(+), 410 deletions(-)
-
+diff --git a/drivers/staging/iio/meter/ade7854-i2c.c b/drivers/staging/iio/meter/ade7854-i2c.c
+index 317e4f0d8176..4437f1e33261 100644
+--- a/drivers/staging/iio/meter/ade7854-i2c.c
++++ b/drivers/staging/iio/meter/ade7854-i2c.c
+@@ -31,7 +31,7 @@ static int ade7854_i2c_write_reg_8(struct device *dev,
+ 	ret = i2c_master_send(st->i2c, st->tx, 3);
+ 	mutex_unlock(&st->buf_lock);
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static int ade7854_i2c_write_reg_16(struct device *dev,
+@@ -51,7 +51,7 @@ static int ade7854_i2c_write_reg_16(struct device *dev,
+ 	ret = i2c_master_send(st->i2c, st->tx, 4);
+ 	mutex_unlock(&st->buf_lock);
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static int ade7854_i2c_write_reg_24(struct device *dev,
+@@ -72,7 +72,7 @@ static int ade7854_i2c_write_reg_24(struct device *dev,
+ 	ret = i2c_master_send(st->i2c, st->tx, 5);
+ 	mutex_unlock(&st->buf_lock);
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static int ade7854_i2c_write_reg_32(struct device *dev,
+@@ -94,7 +94,7 @@ static int ade7854_i2c_write_reg_32(struct device *dev,
+ 	ret = i2c_master_send(st->i2c, st->tx, 6);
+ 	mutex_unlock(&st->buf_lock);
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static int ade7854_i2c_read_reg_8(struct device *dev,
+@@ -110,11 +110,11 @@ static int ade7854_i2c_read_reg_8(struct device *dev,
+ 	st->tx[1] = reg_address & 0xFF;
+ 
+ 	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	ret = i2c_master_recv(st->i2c, st->rx, 1);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	*val = st->rx[0];
+@@ -136,11 +136,11 @@ static int ade7854_i2c_read_reg_16(struct device *dev,
+ 	st->tx[1] = reg_address & 0xFF;
+ 
+ 	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	ret = i2c_master_recv(st->i2c, st->rx, 2);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	*val = (st->rx[0] << 8) | st->rx[1];
+@@ -162,11 +162,11 @@ static int ade7854_i2c_read_reg_24(struct device *dev,
+ 	st->tx[1] = reg_address & 0xFF;
+ 
+ 	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	ret = i2c_master_recv(st->i2c, st->rx, 3);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
+@@ -188,11 +188,11 @@ static int ade7854_i2c_read_reg_32(struct device *dev,
+ 	st->tx[1] = reg_address & 0xFF;
+ 
+ 	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	ret = i2c_master_recv(st->i2c, st->rx, 3);
+-	if (ret)
++	if (ret < 0)
+ 		goto out;
+ 
+ 	*val = (st->rx[0] << 24) | (st->rx[1] << 16) |
+diff --git a/drivers/staging/iio/meter/ade7854.c b/drivers/staging/iio/meter/ade7854.c
+index 90d07cdca4b8..0193ae3aae29 100644
+--- a/drivers/staging/iio/meter/ade7854.c
++++ b/drivers/staging/iio/meter/ade7854.c
+@@ -33,7 +33,7 @@ static ssize_t ade7854_read_8bit(struct device *dev,
+ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+ 
+ 	ret = st->read_reg_8(dev, this_attr->address, &val);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	return sprintf(buf, "%u\n", val);
+@@ -50,7 +50,7 @@ static ssize_t ade7854_read_16bit(struct device *dev,
+ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+ 
+ 	ret = st->read_reg_16(dev, this_attr->address, &val);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	return sprintf(buf, "%u\n", val);
+@@ -67,7 +67,7 @@ static ssize_t ade7854_read_24bit(struct device *dev,
+ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+ 
+ 	ret = st->read_reg_24(dev, this_attr->address, &val);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	return sprintf(buf, "%u\n", val);
+@@ -84,7 +84,7 @@ static ssize_t ade7854_read_32bit(struct device *dev,
+ 	struct ade7854_state *st = iio_priv(indio_dev);
+ 
+ 	ret = st->read_reg_32(dev, this_attr->address, &val);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	return sprintf(buf, "%u\n", val);
+@@ -416,7 +416,7 @@ static int ade7854_set_irq(struct device *dev, bool enable)
+ 	u32 irqen;
+ 
+ 	ret = st->read_reg_32(dev, ADE7854_MASK0, &irqen);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	if (enable)
 -- 
 2.16.2
 
