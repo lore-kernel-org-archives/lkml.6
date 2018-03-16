@@ -1,115 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933550AbeCPRNQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:13:16 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43118 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753748AbeCPRG7 (ORCPT
+        id S1752917AbeCPSFu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:05:50 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38279 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752795AbeCPSFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:06:59 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 02/22] net: socket: add __sys_sendto() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:05:54 +0100
-Message-Id: <20180316170614.5392-3-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        Fri, 16 Mar 2018 14:05:49 -0400
+X-Google-Smtp-Source: AG47ELv2KqOjtR6WtcJsLl7EpSWpCqu0C8QqOnDLvVc6e+6d1O4NP3y11B/f61qVtQShde+XU0zjcg==
+From: Junio C Hamano <gitster@pobox.com>
+To: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+Cc: git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Subject: Re: [ANNOUNCE] Git v2.17.0-rc0
+References: <xmqqwoyc3kir.fsf@gitster-ct.c.googlers.com>
+        <87fu50e0ht.fsf@evledraar.gmail.com>
+Date: Fri, 16 Mar 2018 11:05:45 -0700
+In-Reply-To: <87fu50e0ht.fsf@evledraar.gmail.com> (=?utf-8?B?IsOGdmFyIEFy?=
+ =?utf-8?B?bmZqw7Zyw7A=?= Bjarmason"'s
+        message of "Fri, 16 Mar 2018 12:14:06 +0100")
+Message-ID: <xmqqbmfn3ngm.fsf@gitster-ct.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_sendto() allows us to avoid the
-internal calls to the sys_sendto() syscall.
+Ævar Arnfjörð Bjarmason <avarab@gmail.com> writes:
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/socket.h |  3 +++
- net/compat.c           |  3 ++-
- net/socket.c           | 19 ++++++++++++-------
- 3 files changed, 17 insertions(+), 8 deletions(-)
+> On Fri, Mar 16 2018, Junio C. Hamano jotted:
+>
+>>       gitweb: hard-depend on the Digest::MD5 5.8 module
+>
+> I've just noticed this now, but while this module is in 5.8 RedHat's
+> butchered perl doesn't have it in the base system, thus this introduces
+> the do-we-even-care regression that git's full test suite won't pass on
+> a RedHat (or CentOS) base system, because the gitweb tests will fail to
+> "use" Digest::MD5.
+>
+> I'm slightly leaning towards not caring about it, since there's no other
+> perl distributor that does this sort of split-out of the core, and if
+> you're on a RedHat system they're solving your package problems, so this
+> really only impacts the edge case of git developers and redhat
+> packagers, both of whom can just do "yum install -y perl-Digest-MD5" to
+> fix it.
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 40cc93b91628..54b85abc7265 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -358,5 +358,8 @@ extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
- extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
- 			  unsigned int flags, struct sockaddr __user *addr,
- 			  int __user *addr_len);
-+extern int __sys_sendto(int fd, void __user *buff, size_t len,
-+			unsigned int flags, struct sockaddr __user *addr,
-+			int addr_len);
+Thanks for noting.  I agree that this is not something that requires
+more than a mention near the beginning of release notes.
+
+I haven't wordsmithed it fully, but it should say something along
+the lines of ...
+
+ Documentation/RelNotes/2.16.0.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/RelNotes/2.16.0.txt b/Documentation/RelNotes/2.16.0.txt
+index 8f0461eefd..8b4c24200b 100644
+--- a/Documentation/RelNotes/2.16.0.txt
++++ b/Documentation/RelNotes/2.16.0.txt
+@@ -6,6 +6,16 @@ Backward compatibility notes and other notable changes.
+  * Use of an empty string as a pathspec element that is used for
+    'everything matches' is now an error.
  
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index 2d8186c277b2..fc82982d9b84 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -838,7 +838,8 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = sys_send(a0, compat_ptr(a1), a[2], a[3]);
- 		break;
- 	case SYS_SENDTO:
--		ret = sys_sendto(a0, compat_ptr(a1), a[2], a[3], compat_ptr(a[4]), a[5]);
-+		ret = __sys_sendto(a0, compat_ptr(a1), a[2], a[3],
-+				   compat_ptr(a[4]), a[5]);
- 		break;
- 	case SYS_RECV:
- 		ret = compat_sys_recv(a0, compat_ptr(a1), a[2], a[3]);
-diff --git a/net/socket.c b/net/socket.c
-index 712d99d8680f..3f037a21ba5e 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1711,10 +1711,8 @@ SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
-  *	space and check the user space data area is readable before invoking
-  *	the protocol.
-  */
--
--SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
--		unsigned int, flags, struct sockaddr __user *, addr,
--		int, addr_len)
-+int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
-+		 struct sockaddr __user *addr,  int addr_len)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
-@@ -1752,6 +1750,13 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
- 	return err;
- }
- 
-+SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
-+		unsigned int, flags, struct sockaddr __user *, addr,
-+		int, addr_len)
-+{
-+	return __sys_sendto(fd, buff, len, flags, addr, addr_len);
-+}
++ * Part of Git that depends on Perl have required at least Perl 5.8
++   since Git v1.7.4 released in 2010, but we used to assume some core
++   modules from Perl distribution may not exist on the system and did
++   a conditional "eval { require <<module>> }"; we no longer do this.
++   On a platform that ships a stripped-down Perl by default, the user
++   may have to install modules the platform chooses not to ship as
++   part of its core (e.g. Digest::MD5, File::Temp, File::Spec,
++   Net::SMTP, NET::Domain).  RedHat/CentOS excludes Digest::MD5 from
++   its base installation, for example.
 +
- /*
-  *	Send a datagram down a socket.
-  */
-@@ -1759,7 +1764,7 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
- SYSCALL_DEFINE4(send, int, fd, void __user *, buff, size_t, len,
- 		unsigned int, flags)
- {
--	return sys_sendto(fd, buff, len, flags, NULL, 0);
-+	return __sys_sendto(fd, buff, len, flags, NULL, 0);
- }
  
- /*
-@@ -2484,8 +2489,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 		err = sys_send(a0, (void __user *)a1, a[2], a[3]);
- 		break;
- 	case SYS_SENDTO:
--		err = sys_sendto(a0, (void __user *)a1, a[2], a[3],
--				 (struct sockaddr __user *)a[4], a[5]);
-+		err = __sys_sendto(a0, (void __user *)a1, a[2], a[3],
-+				   (struct sockaddr __user *)a[4], a[5]);
- 		break;
- 	case SYS_RECV:
- 		err = sys_recv(a0, (void __user *)a1, a[2], a[3]);
--- 
-2.16.2
+ Updates since v2.15
+ -------------------
