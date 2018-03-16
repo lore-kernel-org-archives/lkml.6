@@ -1,61 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753333AbeCPK1C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:27:02 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:40841 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751736AbeCPK06 (ORCPT
+        id S1753382AbeCPK1J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:27:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35036 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751736AbeCPK1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:26:58 -0400
-Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
-To: John Fastabend <john.fastabend@gmail.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
- <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
- <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
- <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
- <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Message-ID: <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
-Date: Fri, 16 Mar 2018 11:26:47 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Fri, 16 Mar 2018 06:27:04 -0400
 MIME-Version: 1.0
-In-Reply-To: <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Fri, 16 Mar 2018 15:57:03 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v2 10/13] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2
+ board file
+In-Reply-To: <1521193101-4586-11-git-send-email-sricharan@codeaurora.org>
+References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
+ <1521193101-4586-11-git-send-email-sricharan@codeaurora.org>
+Message-ID: <0a8267721c841603894cbe50fe51560b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.03.18 23:30, John Fastabend wrote:
->> I have reproduced it using two USB network cards connected to each other. The test tool sends UDP packets containing a counter and listens on the other interface, it is available at
->> https://github.com/jakob-tsd/pfifo_stress/blob/master/pfifo_stress.py
->>
+On 2018-03-16 15:08, Sricharan R wrote:
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+
+  Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+
+> ---
+>  arch/arm/boot/dts/Makefile                      |  1 +
+>  arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts | 26 
+> +++++++++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
 > 
-> Great thanks, can you also run this with taskset to bind to
-> a single CPU,
-> 
->   # taskset 0x1 ./pifof_stress.py
-> 
-> And let me know if you still see the OOO.
-
-Interesting. Looks like it depends on which core it runs on. CPU0 is 
-clean, CPU1 is not.
-
-Clean:	taskset --cpu-list 0 ./pfifo_stress.py
-
-Broken:	taskset --cpu-list 1 ./pfifo_stress.py
-
-Maybe related: CPU0 is where USB interrupts are handled:
-
-> root@rk3399-q7:~# cat /proc/interrupts           
->            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5
-> 217:    2175353          0          0          0          0          0     GICv3 142 Level     xhci-hcd:usb5
-Thanks,
-Jakob
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 8c93fd0..0844087 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -750,6 +750,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+>  	qcom-ipq4019-ap.dk04.1-c1.dtb \
+>  	qcom-ipq4019-ap.dk04.1-c3.dtb \
+>  	qcom-ipq4019-ap.dk07.1-c1.dtb \
+> +	qcom-ipq4019-ap.dk07.1-c2.dtb \
+>  	qcom-ipq8064-ap148.dtb \
+>  	qcom-msm8660-surf.dtb \
+>  	qcom-msm8960-cdp.dtb \
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+> b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+> new file mode 100644
+> index 0000000..c1e909c
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#include "qcom-ipq4019-ap.dk07.1.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1-C2";
+> +
+> +	soc {
+> +		pinctrl@1000000 {
+> +			serial_1_pins: serial1_pinmux {
+> +				mux {
+> +					pins = "gpio8", "gpio9";
+> +					function = "blsp_uart1";
+> +					bias-disable;
+> +				};
+> +			};
+> +		};
+> +
+> +		serial@78b0000 {
+> +			pinctrl-0 = <&serial_1_pins>;
+> +			pinctrl-names = "default";
+> +			status = "ok";
+> +		};
+> +	};
+> +};
