@@ -1,154 +1,495 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2602457-1520927440-2-7089178316054526723
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='cz',
-  MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520927440; b=qrymGNUO7FQ0337xlmFJnIZwsHVUMnBiP9Oh3aYRsMpN5S6
-    BQI1VESz4pjtRq/9FemyVoknx34Uw7CxBxgRQgjfwAo7Yr+fYariXbfG0Z3ePF7j
-    stO6w9MQedemjAvnDVUqNdkJHF1VEFyj3tqANSplprHabumQNwZEjNMxgxCBdHjF
-    bqwpqC4ucxDEeOlf59oo5Or4J4ZxG8l7ScjHoi+cmuxJHHxZuHhrUAaJwH3k033Y
-    HHHG2l8twINuxRAg7KbNwYP5nY8DGTyjupxONvFciQjKls60LjbWn+LlEV9qJcdk
-    kVs+9n/Pnmcd59/97cr1js90F6uMxo4ZR5WM4Uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520927440; bh=byEht+FVladAeY9b6BSVJSTVn8
-    edQH6BPFHNRDySXLI=; b=Vd+8IZkoJs0JlTaC2f9UY0rKGB/BMernUhSB3x+p99
-    IGFjF+/6BgxSzuaxe9IjeTVYFuFN0FCeoFRQ5qjG06DykyvuX+PhxfatpdSgXNJA
-    rhr3CLVnaTGN+yoe7YFGnUKavZvdBZfieDa0tYQ5CoDKeorKdL/Y5nJ3IvGLnPtj
-    9ZJTXIUYicaCBQ1fSlZ2Jd+QEuOni4RWe8eNUgrMzmZS4QuKqUEB2MgNp6IB4MZg
-    RP0RCdZfHdA3Gaaudzzi+BgZmDiCdixw4TPNUvKJ2C6UytuF35M6+wJw9ZZrzyiv
-    uJKrOrNagR/OLj4WO9RJeUJ8H/qbo7EnxKQ0WiELQz+A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ucw.cz header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ucw.cz header.result=pass header_is_org_domain=yes
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AG47ELt9v16klZ7ONCSWK7mjcjA7dRoNXaHFONeoPrjdlCwZT3DR5LWCaevy3XXLmRgzuOnBzp/r
+ARC-Seal: i=1; a=rsa-sha256; t=1521186420; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FlsIz5wy3BX5oHvU8OhDmRSY46Uq+gwcGz8f6W49ZyuhxsPb+xC9JP87LELrKwKyN0
+         bUx7P8jCNc+CMgpJzWBWFYh2YU7HjO7ZUHYVQmI/E/9SYXjNA3RJW0YnkK+W5BGHAGQc
+         ViBynN74PyLLOou9i4Gls7ww10Qq2N3u1HQ5Abr2qcZVfBLSbZJHBW0eQM/0N4uyBFIn
+         TuhwIRixX2dT9XNMozNlh3DftJit1vG63O1/+QIq+6VMxIypt7LfIqQ0ZANp6hOylUYl
+         B9jcbBQykzSgav+Yvg6gCDzvjW4mfGMeuCmC+VswLJvWcWM5NNAowLP/KlOIVlZ6LjR1
+         f8Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=243cu+aJzHn5fwI5lZmqj/FMl+OvWIY6pbUcRDE+lQs=;
+        b=ksZd+xCDVtejyQSABanxScFPYkEKcMroRil+Q7h3tf7L+wGRVl1mZ+1412TJVh9iaq
+         OTWfemjKgojdTYBilpyneWY1v++i2q8jZFS/O6VVHvxhdImShAyl5OMrxyOrTN6hRwWs
+         YfNRj8mqfGA/1n0CxCu6YhnVGyvV2mm+kEWFTm81xb+mRP0+ybDqXj61FCWHKjIvivSu
+         MbJ7AGK9kVfjevjKDbNofDowwQ5GwwspI8gkuh35jq2c2wHIONpx4iGjYk+/DYkGnCgf
+         Em2/ZqJOfBwV6SgL0xqd1PsGGOvVrzBAOnFrxY10iL4P9ZzzzICIzhY87dHW/+6lDPDt
+         jdBA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeCMHu0 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 03:50:26 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45293 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751997AbeCMHuZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 03:50:25 -0400
-Date: Tue, 13 Mar 2018 08:50:22 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Matthias Schiffer <mschiffer@universe-factory.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Matthieu CASTET <matthieu.castet@parrot.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness
- setting when setting delay_off=0
-Message-ID: <20180313075022.GA13394@amd>
-References: <20180204003029.2lkcmh6wvzpnlrls@sasha-lappy>
- <20180204090531.GA29468@amd>
- <20180204111500.GB14797@kroah.com>
- <20180204171736.GA1388@amd>
- <20180206020210.m6gl7vai4p6azb6s@sasha-lappy>
- <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
- <f072a5c1-95f1-e81b-c629-ebdea723e6f4@universe-factory.net>
- <20180312152811.GB16944@kroah.com>
- <5747831a-b237-aa2c-cb47-9773cd2b5956@universe-factory.net>
- <0cd72fe4-2b98-e6f7-6ae7-530524786cec@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
-Content-Disposition: inline
-In-Reply-To: <0cd72fe4-2b98-e6f7-6ae7-530524786cec@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1753229AbeCPHrA (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Fri, 16 Mar 2018 03:47:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48936 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752014AbeCPHq6 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:46:58 -0400
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: dri-devel@lists.freedesktop.org
+Cc: qemu-devel@nongnu.org, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK),
+        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING
+        FRAMEWORK),
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH v2] Add udmabuf misc device
+Date: Fri, 16 Mar 2018 08:46:49 +0100
+Message-Id: <20180316074650.5415-1-kraxel@redhat.com>
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595079572079958094?=
+X-GMAIL-MSGID: =?utf-8?q?1595079572079958094?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+A driver to let userspace turn iovecs into dma-bufs.
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use case:  Allows qemu create dmabufs for the vga framebuffer or
+virtio-gpu ressources.  Then they can be passed around to display
+those guest things on the host.  To spice client for classic full
+framebuffer display, and hopefully some day to wayland server for
+seamless guest window display.
 
-Hi!
+Those dma-bufs are accounted against user's shm mlock bucket as the
+pages are effectively locked in memory.
 
-> > At least 7b6af2c531 ("leds: core: Fix regression caused by commit
-> > 2b83ff96f51d") is missing, causing visible regressions (LEDs not workin=
-g at
-> > all) on some OpenWrt devices. This was fixed in 4.4.121 by reverting the
-> > offending commit, but if I followed the discussion correctly, 4.9 should
-> > get the follow-up commit 7b6af2c531 instead (like 4.14 already did).
-> >=20
-> > Jacek's mail I replied to mentions that eb1610b4c273 ("led: core: Fix
-> > blink_brightness setting race") should be included in 4.9 as well, but I
-> > don't know the impact of the issue it fixes.
->=20
-> It doesn't fix any reported issue, but is just an improvement
-> aiming at preventing potential races while changing blink brightness.
->=20
-> After taking closer look it turns out that for the patches in question
-> to apply cleanly we need in 4.9 also a patch which introduces atomic
-> bit fields for blink flags.
->=20
-> Effectively, here is the list of patches required in 4.9 stable:
->=20
-> Revert "led: core: Fix brightness setting when setting delay_off=3D0"
->=20
-> followed by:
->=20
-> a9c6ce57ec ("led: core: Use atomic bit-field for the blink-flags")
-> eb1610b4c2 ("led: core: Fix blink_brightness setting race")
-> 2b83ff96f5 ("led: core: Fix brightness setting when setting delay_off=3D0=
-")
-> 7b6af2c531 ("leds: core: Fix regression caused by commit 2b83ff96f51d")
+Cc: David Airlie <airlied@linux.ie>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/uapi/linux/udmabuf.h                      |  23 ++
+ drivers/dma-buf/udmabuf.c                         | 261 ++++++++++++++++++++++
+ tools/testing/selftests/drivers/dma-buf/udmabuf.c |  69 ++++++
+ drivers/dma-buf/Kconfig                           |   7 +
+ drivers/dma-buf/Makefile                          |   1 +
+ tools/testing/selftests/drivers/dma-buf/Makefile  |   5 +
+ 6 files changed, 366 insertions(+)
+ create mode 100644 include/uapi/linux/udmabuf.h
+ create mode 100644 drivers/dma-buf/udmabuf.c
+ create mode 100644 tools/testing/selftests/drivers/dma-buf/udmabuf.c
+ create mode 100644 tools/testing/selftests/drivers/dma-buf/Makefile
 
-For the record... there's no serious problem in LED subsystem in
-v4.9. Just leave LED subsystem alone in v4.9-stable (reverting any
-patches that were backported by some kind of bot that did not even
-test them), and things will be fine.
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+diff --git a/include/uapi/linux/udmabuf.h b/include/uapi/linux/udmabuf.h
+new file mode 100644
+index 0000000000..54ceba203a
+--- /dev/null
++++ b/include/uapi/linux/udmabuf.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_UDMABUF_H
++#define _UAPI_LINUX_UDMABUF_H
++
++#include <linux/types.h>
++#include <linux/ioctl.h>
++
++struct udmabuf_iovec {
++	__u64 base;
++	__u64 len;
++};
++
++#define UDMABUF_FLAGS_CLOEXEC	0x01
++
++struct udmabuf_create {
++	__u32 flags;
++	__u32 niov;
++	struct udmabuf_iovec iovs[];
++};
++
++#define UDMABUF_CREATE _IOW(0x42, 0x23, struct udmabuf_create)
++
++#endif /* _UAPI_LINUX_UDMABUF_H */
+diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+new file mode 100644
+index 0000000000..664ab4ee4e
+--- /dev/null
++++ b/drivers/dma-buf/udmabuf.c
+@@ -0,0 +1,261 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/miscdevice.h>
++#include <linux/dma-buf.h>
++#include <linux/highmem.h>
++#include <linux/cred.h>
++
++#include <uapi/linux/udmabuf.h>
++
++struct udmabuf {
++	u32 pagecount;
++	struct page **pages;
++	struct user_struct *owner;
++};
++
++static int udmabuf_vm_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct udmabuf *ubuf = vma->vm_private_data;
++
++	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
++		return VM_FAULT_SIGBUS;
++
++	vmf->page = ubuf->pages[vmf->pgoff];
++	get_page(vmf->page);
++	return 0;
++}
++
++static const struct vm_operations_struct udmabuf_vm_ops = {
++	.fault = udmabuf_vm_fault,
++};
++
++static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
++{
++	struct udmabuf *ubuf = buf->priv;
++
++	if ((vma->vm_flags & VM_SHARED) == 0)
++		return -EINVAL;
++
++	vma->vm_ops = &udmabuf_vm_ops;
++	vma->vm_private_data = ubuf;
++	return 0;
++}
++
++static struct sg_table *map_udmabuf(struct dma_buf_attachment *at,
++				    enum dma_data_direction direction)
++{
++	struct udmabuf *ubuf = at->dmabuf->priv;
++	struct sg_table *sg;
++
++	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
++	if (!sg)
++		goto err1;
++	if (sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->pagecount,
++				      0, ubuf->pagecount << PAGE_SHIFT,
++				      GFP_KERNEL) < 0)
++		goto err2;
++	if (!dma_map_sg(at->dev, sg->sgl, sg->nents, direction))
++		goto err3;
++
++	return sg;
++
++err3:
++	sg_free_table(sg);
++err2:
++	kfree(sg);
++err1:
++	return ERR_PTR(-ENOMEM);
++}
++
++static void unmap_udmabuf(struct dma_buf_attachment *at,
++			  struct sg_table *sg,
++			  enum dma_data_direction direction)
++{
++	sg_free_table(sg);
++	kfree(sg);
++}
++
++static void release_udmabuf(struct dma_buf *buf)
++{
++	struct udmabuf *ubuf = buf->priv;
++	pgoff_t pg;
++
++	for (pg = 0; pg < ubuf->pagecount; pg++)
++		put_page(ubuf->pages[pg]);
++	user_shm_unlock(ubuf->pagecount << PAGE_SHIFT, ubuf->owner);
++	free_uid(ubuf->owner);
++	kfree(ubuf->pages);
++	kfree(ubuf);
++}
++
++static void *kmap_atomic_udmabuf(struct dma_buf *buf, unsigned long page_num)
++{
++	struct udmabuf *ubuf = buf->priv;
++	struct page *page = ubuf->pages[page_num];
++
++	return kmap_atomic(page);
++}
++
++static void *kmap_udmabuf(struct dma_buf *buf, unsigned long page_num)
++{
++	struct udmabuf *ubuf = buf->priv;
++	struct page *page = ubuf->pages[page_num];
++
++	return kmap(page);
++}
++
++static struct dma_buf_ops udmabuf_ops = {
++	.map_dma_buf	  = map_udmabuf,
++	.unmap_dma_buf	  = unmap_udmabuf,
++	.release	  = release_udmabuf,
++	.map_atomic	  = kmap_atomic_udmabuf,
++	.map		  = kmap_udmabuf,
++	.mmap		  = mmap_udmabuf,
++};
++
++static long udmabuf_ioctl_create(struct file *filp, unsigned long arg)
++{
++	struct udmabuf_create create;
++	struct udmabuf_iovec *iovs;
++	struct udmabuf *ubuf;
++	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
++	struct dma_buf *buf;
++	pgoff_t pgoff, pgcnt;
++	u32 iov, flags;
++	int ret;
++
++	if (copy_from_user(&create, (void __user *)arg,
++			   sizeof(struct udmabuf_create)))
++		return -EFAULT;
++
++	iovs = kmalloc_array(create.niov, sizeof(struct udmabuf_iovec),
++			     GFP_KERNEL);
++	if (!iovs)
++		return -ENOMEM;
++
++	arg += offsetof(struct udmabuf_create, iovs);
++	ret = -EFAULT;
++	if (copy_from_user(iovs, (void __user *)arg,
++			   create.niov * sizeof(struct udmabuf_iovec)))
++		goto err_free_iovs;
++
++	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
++	if (!ubuf)
++		goto err_free_iovs;
++
++	ret = -EINVAL;
++	for (iov = 0; iov < create.niov; iov++) {
++		if (!IS_ALIGNED(iovs[iov].base, PAGE_SIZE))
++			goto err_free_buf;
++		if (!IS_ALIGNED(iovs[iov].len, PAGE_SIZE))
++			goto err_free_buf;
++		ubuf->pagecount += iovs[iov].len >> PAGE_SHIFT;
++	}
++
++	/* this effectively mlocks the pages so account it accordingly */
++	ret = -ENOMEM;
++	ubuf->owner = current_user();
++	if (!user_shm_lock(ubuf->pagecount << PAGE_SHIFT, ubuf->owner))
++		goto err_free_buf;
++
++	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page*),
++				    GFP_KERNEL);
++	if (!ubuf->pages)
++		goto err_shm_unlock;
++
++	pgoff = 0;
++	for (iov = 0; iov < create.niov; iov++) {
++		pgcnt = iovs[iov].len >> PAGE_SHIFT;
++		while (pgcnt > 0) {
++			ret = get_user_pages_fast(iovs[iov].base, pgcnt,
++						  true, /* write */
++						  ubuf->pages + pgoff);
++			if (ret < 0)
++				goto err_put_pages;
++			pgoff += ret;
++			pgcnt -= ret;
++		}
++	}
++
++	exp_info.ops  = &udmabuf_ops;
++	exp_info.size = ubuf->pagecount << PAGE_SHIFT;
++	exp_info.priv = ubuf;
++
++	buf = dma_buf_export(&exp_info);
++	if (IS_ERR(buf)) {
++		ret = PTR_ERR(buf);
++		goto err_put_pages;
++	}
++
++	flags = 0;
++	if (create.flags & UDMABUF_FLAGS_CLOEXEC)
++		flags |= O_CLOEXEC;
++
++	kfree(iovs);
++	return dma_buf_fd(buf, flags);
++
++err_put_pages:
++	while (pgoff > 0)
++		put_page(ubuf->pages[--pgoff]);
++err_shm_unlock:
++	user_shm_unlock(ubuf->pagecount << PAGE_SHIFT, ubuf->owner);
++err_free_buf:
++	free_uid(ubuf->owner);
++	kfree(ubuf->pages);
++	kfree(ubuf);
++err_free_iovs:
++	kfree(iovs);
++	return ret;
++}
++
++static long udmabuf_ioctl(struct file *filp, unsigned int ioctl,
++				  unsigned long arg)
++{
++	long ret;
++
++	switch (ioctl) {
++	case UDMABUF_CREATE:
++		ret = udmabuf_ioctl_create(filp, arg);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++	return ret;
++}
++
++static const struct file_operations udmabuf_fops = {
++	.owner		= THIS_MODULE,
++	.unlocked_ioctl = udmabuf_ioctl,
++};
++
++static struct miscdevice udmabuf_misc = {
++	.minor          = MISC_DYNAMIC_MINOR,
++	.name           = "udmabuf",
++	.fops           = &udmabuf_fops,
++};
++
++static int __init udmabuf_dev_init(void)
++{
++	return misc_register(&udmabuf_misc);
++}
++
++static void __exit udmabuf_dev_exit(void)
++{
++	misc_deregister(&udmabuf_misc);
++}
++
++module_init(udmabuf_dev_init)
++module_exit(udmabuf_dev_exit)
++
++MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/tools/testing/selftests/drivers/dma-buf/udmabuf.c b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+new file mode 100644
+index 0000000000..3472c8ee49
+--- /dev/null
++++ b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+@@ -0,0 +1,69 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <malloc.h>
++
++#include <sys/ioctl.h>
++#include <linux/udmabuf.h>
++
++#define TEST_PREFIX	"drivers/dma-buf/udmabuf"
++#define NUM_PAGES       4
++
++int main(int argc, char *argv[])
++{
++	struct udmabuf_create *create;
++	void *mem;
++	int dev, fd;
++
++	dev = open("/dev/udmabuf", O_RDWR);
++	if (dev < 0) {
++		printf("%s: [skip]\n", TEST_PREFIX);
++		exit(77);
++	}
++
++	mem = memalign(getpagesize(), getpagesize() * NUM_PAGES);
++	if (mem == NULL) {
++		printf("%s: [FAIL]\n", TEST_PREFIX);
++		exit (1);
++	}
++
++	create = malloc(sizeof(struct udmabuf_create) +
++			sizeof(struct udmabuf_iovec));
++	create->flags = 0;
++	create->niov  = 1;
++
++	/* should fail (base not page aligned) */
++	create->iovs[0].base = (intptr_t)mem + getpagesize()/2;
++	create->iovs[0].len  = getpagesize();
++	fd = ioctl(dev, UDMABUF_CREATE, create);
++	if (fd >= 0) {
++		printf("%s: [FAIL]\n", TEST_PREFIX);
++		exit(1);
++	}
++
++	/* should fail (size not multiple of page) */
++	create->iovs[0].base = (intptr_t)mem;
++	create->iovs[0].len  = getpagesize()/2;
++	fd = ioctl(dev, UDMABUF_CREATE, create);
++	if (fd >= 0) {
++		printf("%s: [FAIL]\n", TEST_PREFIX);
++		exit(1);
++	}
++
++	/* should work */
++	create->iovs[0].base = (intptr_t)mem;
++	create->iovs[0].len  = getpagesize() * NUM_PAGES;
++	fd = ioctl(dev, UDMABUF_CREATE, create);
++	if (fd < 0) {
++		printf("%s: [FAIL]\n", TEST_PREFIX);
++		exit(1);
++	}
++	close(fd);
++
++	fprintf(stderr, "%s: ok\n", TEST_PREFIX);
++	close(dev);
++	return 0;
++}
+diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+index ed3b785bae..19be3ec62d 100644
+--- a/drivers/dma-buf/Kconfig
++++ b/drivers/dma-buf/Kconfig
+@@ -30,4 +30,11 @@ config SW_SYNC
+ 	  WARNING: improper use of this can result in deadlocking kernel
+ 	  drivers from userspace. Intended for test and debug only.
+ 
++config UDMABUF
++	bool "userspace dmabuf misc driver"
++	default n
++	depends on DMA_SHARED_BUFFER
++	---help---
++	  A driver to let userspace turn iovs into dma-bufs.
++
+ endmenu
+diff --git a/drivers/dma-buf/Makefile b/drivers/dma-buf/Makefile
+index c33bf88631..0913a6ccab 100644
+--- a/drivers/dma-buf/Makefile
++++ b/drivers/dma-buf/Makefile
+@@ -1,3 +1,4 @@
+ obj-y := dma-buf.o dma-fence.o dma-fence-array.o reservation.o seqno-fence.o
+ obj-$(CONFIG_SYNC_FILE)		+= sync_file.o
+ obj-$(CONFIG_SW_SYNC)		+= sw_sync.o sync_debug.o
++obj-$(CONFIG_UDMABUF)		+= udmabuf.o
+diff --git a/tools/testing/selftests/drivers/dma-buf/Makefile b/tools/testing/selftests/drivers/dma-buf/Makefile
+new file mode 100644
+index 0000000000..4154c3d7aa
+--- /dev/null
++++ b/tools/testing/selftests/drivers/dma-buf/Makefile
+@@ -0,0 +1,5 @@
++CFLAGS += -I../../../../../usr/include/
++
++TEST_GEN_PROGS := udmabuf
++
++include ../../lib.mk
+-- 
+2.9.3
 
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqngr4ACgkQMOfwapXb+vJOAwCglQhsELLghisDZKNOd4Ql6uht
-SQEAnA/KmCxz/hDnc1hUasIKmbEwcXD2
-=LInh
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
