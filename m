@@ -1,62 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753252AbeCPKMi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:12:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38332 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeCPKLa (ORCPT
+        id S1752826AbeCPKQh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:16:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43635 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751637AbeCPKQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:11:30 -0400
-Date: Fri, 16 Mar 2018 11:11:24 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-Message-ID: <20180316101124.GB4064@hirez.programming.kicks-ass.net>
-References: <1519917189.13866.6.camel@synopsys.com>
- <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
- <20180315082720.GT4064@hirez.programming.kicks-ass.net>
- <1521106770.11552.70.camel@synopsys.com>
+        Fri, 16 Mar 2018 06:16:36 -0400
+Date: Fri, 16 Mar 2018 11:16:33 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Joe Smith <codesoldier1@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Guidelines for Submitting an RFC PATCH
+Message-ID: <20180316101633.GA2378@amd>
+References: <CABGNeczK4Jdw5aAoT62-SZsKrYTTKh+pUgMZWcCa59c5YqZgXg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
 Content-Disposition: inline
-In-Reply-To: <1521106770.11552.70.camel@synopsys.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CABGNeczK4Jdw5aAoT62-SZsKrYTTKh+pUgMZWcCa59c5YqZgXg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 09:39:31AM +0000, Alexey Brodkin wrote:
-> Hi Peter,
-> 
-> On Thu, 2018-03-15 at 09:27 +0100, Peter Zijlstra wrote:
-> > On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
-> > > +CC Peter since we have his attention ;-)
-> > 
-> > Yeah, timezone collision there, I typically sleep at 1am ;-)
-> > 
-> > > On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
-> > > > Hi Vineet,
-> > > > 
-> > > > Just noticed that in comments for smp_call_function_many() it is said that
-> > > > preemption must be disabled during its execution. And that function gets executed
-> > > > among other ways like that:
-> > > > -------------------------->8-----------------------
-> > > >    flush_tlb_range()
-> > > >      -> on_each_cpu_mask()
-> > > >           -> smp_call_function_many()
-> > > > -------------------------->8-----------------------
-> > > 
-> > > In general I prefer not to - Peter what say you ?
-> > 
-> > The comment with smp_call_function_many() is correct, it relies on
-> > preemption being disabled in a number of ways. I would expect
-> > this_cpu_ptr() for example to complain when used with preemption
-> > enabled (CONFIG_DEBUG_PREEMPT).
 
-So on_each_cpu_mask() already disables preemption around calling
-smp_call_function_many().
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon 2018-03-12 16:01:08, Joe Smith wrote:
+> Hi All,
+>=20
+> What are the guidelines for submitting an RFC patch? If a developer
+> wants to get early input on a design is it fine to submit a patch that
+> is in reasonable shape but does not fully meets the requirements of a
+> regular patch, for example, the patch consists of a series of patches,
+> it only compiles when all patches in the series are applied. Going
+> through the process of meeting all the patch requirements for an RFC
+> patch seems too much.
+
+There are not many guidelines for that. Just mark it RFC :-).
+
+Series that only compiles when full would be fine for example. (But
+you may get complains from 0 day testing bots, not sure).
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqrmYEACgkQMOfwapXb+vLwvACgpB1MXHFf0OETYia7nFVRW4XA
+F7gAn10mFUGl0CdrlVlPlUX854YAOehc
+=vzEr
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
