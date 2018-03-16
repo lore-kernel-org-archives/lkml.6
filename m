@@ -1,109 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753699AbeCPK6R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:58:17 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35907 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753179AbeCPK6P (ORCPT
+        id S1753808AbeCPLC0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:02:26 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41628 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753534AbeCPLCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:58:15 -0400
-X-Google-Smtp-Source: AG47ELuH+0eHTsgQEcLE2hmJOPh1XbsPskGRev+SJ9J8qSF3j3s3jNtcg+CtWQniLlOsp/SUmFp60Q==
-Date: Fri, 16 Mar 2018 11:58:11 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Masaki Ota <masaki.ota@jp.alps.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3
- and v6 protocols
-Message-ID: <20180316105811.t2nkwowqs66f6ji6@pali>
-References: <20180312230915.26050-1-pali.rohar@gmail.com>
- <20180312231335.fnfxgenu22utr3z6@pali>
- <TYXPR01MB0719092EDE164BA6C576A1C7C7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
- <20180314225816.634w64kggycj67ec@pali>
- <TYXPR01MB07191C487C66BA03E5D9AB3DC7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+        Fri, 16 Mar 2018 07:02:24 -0400
+X-Google-Smtp-Source: AG47ELsT0ZpCx1G2XsCB9d6peyTT97znSIluTWvWz5/q4F7n4iGkCTHsbAhm3x8dswQauDiOxhWuFk5+6dPdHi0PEtI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <TYXPR01MB07191C487C66BA03E5D9AB3DC7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com>
+References: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com>
+From: Balbir Singh <bsingharora@gmail.com>
+Date: Fri, 16 Mar 2018 22:02:22 +1100
+Message-ID: <CAKTCnzmSCT+VecdSRpyY2Rb_AW2ngCi3UTZfLE3VOLNSQn6vsA@mail.gmail.com>
+Subject: Re: [PATCH v4] mm, pkey: treat pkey-0 special
+To: Ram Pai <linuxram@us.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Ingo Molnar <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+        <linuxppc-dev@lists.ozlabs.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
+        "Haren Myneni/Beaverton/IBM" <hbabu@us.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        fweimer@redhat.com, msuchanek@suse.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ulrich.Weigand@de.ibm.com,
+        Ram Pai <ram.n.pai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2GAwNio021563
 
-Great, thank you. Enabling that RAW/extended/SP4 mode is done by
-sequence E6, E6, E6, F3, C8, F3, 14 (written in page 35) and it matches
-what function alps_trackstick_enter_extended_mode_v3_v6() in my patch is
-doing. So is correct.
+On Fri, Mar 16, 2018 at 9:33 PM, Ram Pai <linuxram@us.ibm.com> wrote:
+> Applications need the ability to associate an address-range with some
+> key and latter revert to its initial default key. Pkey-0 comes close to
+> providing this function but falls short, because the current
+> implementation disallows applications to explicitly associate pkey-0 to
+> the address range.
+>
+> Clarify the semantics of pkey-0 and provide the corresponding
+> implementation.
+>
+> Pkey-0 is special with the following semantics.
+> (a) it is implicitly allocated and can never be freed. It always exists.
+> (b) it is the default key assigned to any address-range.
+> (c) it can be explicitly associated with any address-range.
+>
+> Tested on powerpc only. Could not test on x86.
 
-On page 36 I see that there is described Method 1 for reporting stick
-data which prevents cursor jumps. Seems that kernel uses Method 2.
-Method 1 depends on some prioritization.
 
-Do you have some information how to activate Method 1? Sometimes I
-observe that problem with "cursor jumps" and from Method 1 could prevent
-it. So I would like to try experimenting...
+Ram,
 
-On Wednesday 14 March 2018 23:56:46 Masaki Ota wrote:
-> Hi, Pali,
-> 
-> I have added Appendix.
-> According to this spec documents, SP raw mode is SP 4 byte mode.
-> I think Extended mode meaning is almost all the same as Raw mode.
-> The description of how to set is written in Page 35.
-> 
-> Best Regards,
-> Masaki Ota
-> -----Original Message-----
-> From: Pali Rohár [mailto:pali.rohar@gmail.com] 
-> Sent: Thursday, March 15, 2018 7:58 AM
-> To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3 and v6 protocols
-> 
-> Hi! Thank you for information.
-> 
-> Your PS/2 Aux Port Control description seems to really matches. Just there is reverse order of bits. Bit 0 in description is highest, therefore matches BIT(7) macro.
-> 
-> Bit 6 in description (BIT(1) in code) describes SP Extended Mode which alps.c enabled. And in that description is written:
-> 
-> "If 1 SP is extended packet format (driver must set SP raw mode and GP absolute mode)."
-> 
-> Do you have any idea what "SP raw mode" is? How to set it? For me it looks like it could be that extended mode of trackstick itself.
-> 
-> "GP absolute mode" I guess is GlidePoint absolute mode, therefore enable
-> 6 byte absolute mode for touchpad.
-> 
-> And for Bit 7 (BIT(0)) is written:
-> 
-> This bit is used with the PS/2 Aux port to use the Pass-Thru mode ( see appendix A ). Do you have some information about this appendix A?
-> 
-> On Wednesday 14 March 2018 10:21:43 Masaki Ota wrote:
-> > Hi, Pali,
-> > 
-> > I just picked up the spec which relates with trackstic.
-> > 
-> > Best Regards,
-> > Masaki Ota
-> > -----Original Message-----
-> > From: Pali Rohár [mailto:pali.rohar@gmail.com]
-> > Sent: Tuesday, March 13, 2018 8:14 AM
-> > To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>; Dmitry Torokhov 
-> > <dmitry.torokhov@gmail.com>
-> > Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization 
-> > for v3 and v6 protocols
-> > 
-> > Masaki, if you have access to the internal ALPS v3 / Rushmore 
-> > documentation, I would like to have a review of this patch or 
-> > confirmation of those information :-)
-> 
-> --
-> Pali Rohár
-> pali.rohar@gmail.com
+I was wondering if we should check the AMOR values on the ppc side to make sure
+that pkey0 is indeed available for use as default. I am still of the
+opinion that we
+should consider non-0 default pkey in the long run. I'm OK with the patches for
+now, but really 0 is not special except for it being the default bit
+values present
+in the PTE.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+The patches themselves look OK to me
+
+Balbir Singh.
