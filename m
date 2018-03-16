@@ -1,70 +1,41 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3328118-1521214838-2-4898869537810713902
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214837; b=uGbF2d/kzoPtojg6LsETvU3Jf+sUistSsJfcerJHDusmyMU
-    PZFL8us0dwcEYudlzMdNAJIcEsKIjZlyua8Dy3UbK1f0W4Ek3yHUyNqmtSZaHax1
-    4snagVSWxjRxcWD8JOC8UiEimb/notOSn5QXF1/c9+l/EmtvH/IdJtvZrkFq97Fa
-    rg72Ioj7nBbtYb5uRlDUGC+XktRI1e2vPcvXSYHYNs6H9eG7RWFXXp3XlzERrcv+
-    zye9b922tYgAFuSaKFCpTzuTbzjvRRpRq+2yyk/Fq74HL7FD871YR3/XoUV2IpFn
-    Fe8nDyno8TAOqcJBLVumLRWSdiwHuRRGEUGgT6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214837; bh=3Hm8lwaD6qT0n1yIOBYMrx3u8+
-    vIezIRedzJzHgPpIA=; b=caQvYsHV8WTb8QfyrTP0JB1A8yEF4iJ0kpTniPHko0
-    X+mVK+6U714GcyOeiHv4lWsEeZ1a2jdn+iAXf/ud30fHdkjXpmydsxkphRBQFwBp
-    HoQ4RR+UQDO/99xZ1tUhLc3yBOrEsaF03OsmAjCGqt+z2tw+7GgUUJTV5xccAjWo
-    2GWNyetdg2Lybzgps+pJqeJnty5Kln/R3y0JSgq/MnMIfOeRYzbJERw3QwRvttJ1
-    MzVtL2sFobEVodLu2Q8OrGzlnKtrGweGz6uC6Rst8bOsxz+/UIJrjNCUdAvtvGOy
-    7yXTNZVqiPywNR1QPAomxXPrEioqK6lZMbw3hyHaq0CQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965045AbeCPPkZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:40:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43566 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964989AbeCPPkY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:40:24 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtZYZG3Wfr9suiVI1iAUSgURPSi/Gmn/T23WbUaft1B1CJCUaK/sVUMV0wKE+9W6S74fs4z
+ARC-Seal: i=1; a=rsa-sha256; t=1521214835; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Dx7Uwg6ayTCsmSafXl+42IywNKCJ9fVmFxqCwzOsb4XcTaOySWPtzQBA1/qWXZAcqz
+         J/+5E1PUsyplfIj0OB5Nc3aLTPRzDfboTCEI7Z0UV+JwpEwkt2z1lFVH/5yqzId7khcH
+         F/ph9eDbN18Ha2YE0OVMYwqx+SoWa14KtzisstHGJbmjpGTxGQaLfCF8wbcSpor/F6Ac
+         Ji9DgRmntroS30ELOQ1cxhOWlwEOCFVAVHdoQUcbBB+iliA96hjMCQTkDnHQyAXVsHjQ
+         qRheHJPENMJDbtTd8Xj2k4zrgPQemRYYcdwhRWRGh8vU8EGlw7z1ZLpEjLfndbtcVx/M
+         cOzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=YD+Larh5RchNuT9+82+WCU2MnlwBdE2KXaza5ooT4XA=;
+        b=WYDoo1vW1BIcGBYAbE6Wgqs5rRjNumuXq2dLk2JqZlf0b8BTO5HHy/vNRPdCjank3v
+         YNgYiwtUU7KA1fDuMwfrT7upV7i/8dCee3xXIofk45afSh6PFmVnWXVpZr1pxrH3UZj6
+         2j0U+uLFFfx2MhJ7oF2YGWaxS7A/oM7+64Hvd0fyPI7VSbBJDhrGayrjRYjbXiD6GGW9
+         ZhJVnEeIrLqLMEmd9qzqAv2ygiKyvV2wPyOhpE+NgfCKH9kvnF4YAkQHGgs7S6tzcuxD
+         R56QUfaUIVSmm+rejYLftkN3GX32fZnY8fhyHLL6S8pgG8ZaCOgqWr1cVeefC3QhesKV
+         7eew==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 030/128] HID: multitouch: Only look at non touch fields in first packet of a frame
-Date: Fri, 16 Mar 2018 16:22:51 +0100
-Message-Id: <20180316152338.045316429@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Shashank Sharma <shashank.sharma@intel.com>,
+	Andrzej Hajda <a.hajda@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	linux-media@vger.kernel.org,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 034/128] video/hdmi: Allow "empty" HDMI infoframes
+Date: Fri, 16 Mar 2018 16:22:55 +0100
+Message-Id: <20180316152338.318270447@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -72,9 +43,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109099207244373?=
+X-GMAIL-MSGID: =?utf-8?q?1595109367469316338?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,87 +54,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: "Ville Syrj‰l‰" <ville.syrjala@linux.intel.com>
 
 
-[ Upstream commit 55746d28d66860bccaae20a67b55b9d5db7c14af ]
+[ Upstream commit 593f4b19a094c4426bd1e1e3cbab87a48bd13c71 ]
 
-Devices in "single finger hybrid mode" will send one report per finger,
-on some devices only the first report of such a multi-packet frame will
-contain a value for BTN_LEFT, in subsequent reports (if multiple fingers
-are down) the value is always 0, causing hid-mt to report BTN_LEFT going
-1 - 0 - 1 - 0 when pressing a clickpad and putting down a second finger.
-This happens for example on USB 0603:0002 mt touchpads.
+HDMI 2.0 Appendix F suggest that we should keep sending the infoframe
+when switching from 3D to 2D mode, even if the infoframe isn't strictly
+necessary (ie. not needed to transmit the VIC or stereo information).
+This is a workaround against some sinks that fail to realize that they
+should switch from 3D to 2D mode when the source stop transmitting
+the infoframe.
 
-This commit fixes this by only reporting non touch fields for the first
-packet of a (possibly) multi-packet frame.
+v2: Handle unpack() as well
+    Pull the length calculation into a helper
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Shashank Sharma <shashank.sharma@intel.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-media@vger.kernel.org
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com> #v1
+Signed-off-by: Ville Syrj√§l√§ <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171113170427.4150-2-ville.syrjala@linux.intel.com
+Reviewed-by: Shashank Sharma <shashank.sharma@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-multitouch.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/video/hdmi.c |   51 +++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 65ea23be9677..397592959238 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -778,9 +778,11 @@ static int mt_touch_event(struct hid_device *hid, struct hid_field *field,
+--- a/drivers/video/hdmi.c
++++ b/drivers/video/hdmi.c
+@@ -321,6 +321,17 @@ int hdmi_vendor_infoframe_init(struct hd
  }
+ EXPORT_SYMBOL(hdmi_vendor_infoframe_init);
  
- static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
--				struct hid_usage *usage, __s32 value)
-+				struct hid_usage *usage, __s32 value,
-+				bool first_packet)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
-+	__s32 cls = td->mtclass.name;
- 	__s32 quirks = td->mtclass.quirks;
- 	struct input_dev *input = field->hidinput->input;
- 
-@@ -837,6 +839,15 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 			break;
- 
- 		default:
-+			/*
-+			 * For Win8 PTP touchpads we should only look at
-+			 * non finger/touch events in the first_packet of
-+			 * a (possible) multi-packet frame.
-+			 */
-+			if ((cls == MT_CLS_WIN_8 || cls == MT_CLS_WIN_8_DUAL) &&
-+			    !first_packet)
-+				return;
++static int hdmi_vendor_infoframe_length(const struct hdmi_vendor_infoframe *frame)
++{
++	/* for side by side (half) we also need to provide 3D_Ext_Data */
++	if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
++		return 6;
++	else if (frame->vic != 0 || frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID)
++		return 5;
++	else
++		return 4;
++}
 +
- 			if (usage->type)
- 				input_event(input, usage->type, usage->code,
- 						value);
-@@ -856,6 +867,7 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
- 	struct hid_field *field;
-+	bool first_packet;
- 	unsigned count;
- 	int r, n;
+ /**
+  * hdmi_vendor_infoframe_pack() - write a HDMI vendor infoframe to binary buffer
+  * @frame: HDMI infoframe
+@@ -341,19 +352,11 @@ ssize_t hdmi_vendor_infoframe_pack(struc
+ 	u8 *ptr = buffer;
+ 	size_t length;
  
-@@ -874,6 +886,7 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- 			td->num_expected = value;
+-	/* empty info frame */
+-	if (frame->vic == 0 && frame->s3d_struct == HDMI_3D_STRUCTURE_INVALID)
+-		return -EINVAL;
+-
+ 	/* only one of those can be supplied */
+ 	if (frame->vic != 0 && frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID)
+ 		return -EINVAL;
+ 
+-	/* for side by side (half) we also need to provide 3D_Ext_Data */
+-	if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
+-		frame->length = 6;
+-	else
+-		frame->length = 5;
++	frame->length = hdmi_vendor_infoframe_length(frame);
+ 
+ 	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
+ 
+@@ -372,14 +375,16 @@ ssize_t hdmi_vendor_infoframe_pack(struc
+ 	ptr[5] = 0x0c;
+ 	ptr[6] = 0x00;
+ 
+-	if (frame->vic) {
+-		ptr[7] = 0x1 << 5;	/* video format */
+-		ptr[8] = frame->vic;
+-	} else {
++	if (frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID) {
+ 		ptr[7] = 0x2 << 5;	/* video format */
+ 		ptr[8] = (frame->s3d_struct & 0xf) << 4;
+ 		if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
+ 			ptr[9] = (frame->s3d_ext_data & 0xf) << 4;
++	} else if (frame->vic) {
++		ptr[7] = 0x1 << 5;	/* video format */
++		ptr[8] = frame->vic;
++	} else {
++		ptr[7] = 0x0 << 5;	/* video format */
  	}
  
-+	first_packet = td->num_received == 0;
- 	for (r = 0; r < report->maxfield; r++) {
- 		field = report->field[r];
- 		count = field->report_count;
-@@ -883,7 +896,7 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
+ 	hdmi_infoframe_set_checksum(buffer, length);
+@@ -1165,7 +1170,7 @@ hdmi_vendor_any_infoframe_unpack(union h
  
- 		for (n = 0; n < count; n++)
- 			mt_process_mt_event(hid, field, &field->usage[n],
--					field->value[n]);
-+					    field->value[n], first_packet);
+ 	if (ptr[0] != HDMI_INFOFRAME_TYPE_VENDOR ||
+ 	    ptr[1] != 1 ||
+-	    (ptr[2] != 5 && ptr[2] != 6))
++	    (ptr[2] != 4 && ptr[2] != 5 && ptr[2] != 6))
+ 		return -EINVAL;
+ 
+ 	length = ptr[2];
+@@ -1193,16 +1198,22 @@ hdmi_vendor_any_infoframe_unpack(union h
+ 
+ 	hvf->length = length;
+ 
+-	if (hdmi_video_format == 0x1) {
+-		hvf->vic = ptr[4];
+-	} else if (hdmi_video_format == 0x2) {
++	if (hdmi_video_format == 0x2) {
++		if (length != 5 && length != 6)
++			return -EINVAL;
+ 		hvf->s3d_struct = ptr[4] >> 4;
+ 		if (hvf->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF) {
+-			if (length == 6)
+-				hvf->s3d_ext_data = ptr[5] >> 4;
+-			else
++			if (length != 6)
+ 				return -EINVAL;
++			hvf->s3d_ext_data = ptr[5] >> 4;
+ 		}
++	} else if (hdmi_video_format == 0x1) {
++		if (length != 5)
++			return -EINVAL;
++		hvf->vic = ptr[4];
++	} else {
++		if (length != 4)
++			return -EINVAL;
  	}
  
- 	if (td->num_received >= td->num_expected)
--- 
-2.16.2
+ 	return 0;
