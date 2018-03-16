@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933231AbeCPCyO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:54:14 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55576 "EHLO vern.gendns.com"
+        id S1753103AbeCPCyM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:54:12 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55539 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753062AbeCPCyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:54:08 -0400
+        id S1751877AbeCPCyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:54:04 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 27/42] ARM: davinci: da8xx: add new USB PHY clock init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:43 -0500
-Message-Id: <1521168778-27236-28-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 24/42] ARM: davinci: dm365: add new clock init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:40 -0500
+Message-Id: <1521168778-27236-25-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,196 +36,194 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new USB PHY clock init in mach-davinci/usb-da8xx.c using
-the new common clock framework drivers.
+This adds the new board-specific clock init in mach-davinci/dm365.c
+using the new common clock framework drivers.
 
 The #ifdefs are needed to prevent compile errors until the entire
 ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
 
 Signed-off-by: David Lechner <david@lechnology.com>
 ---
 
 v8 changes:
-- rebased on "ARM: davinci: DA8XX: fix oops in USB PHY driver due to stack
-  allocated platform platform_data"
+- none
 
 v7 changes:
-- register platform device instead of registering clocks directly
-- USB PHY clocks now treated as single device instead of registering them
-  separately
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
 
 v6 changes:
-- rename stuff to match changes in "clk: davinci: New driver for TI DA8XX USB
-  PHY clocks"
-- take advantage of syscon lookup changes in "mfd: syscon: Add syscon_register()
-  function"
+- add blank lines between function calls
 
- arch/arm/mach-davinci/board-da830-evm.c     |  8 +++++++-
- arch/arm/mach-davinci/board-omapl138-hawk.c |  9 +++++++--
- arch/arm/mach-davinci/da8xx-dt.c            |  8 +++++++-
- arch/arm/mach-davinci/include/mach/da8xx.h  |  1 +
- arch/arm/mach-davinci/usb-da8xx.c           | 26 ++++++++++++++++++++++++--
- 5 files changed, 46 insertions(+), 6 deletions(-)
+ arch/arm/mach-davinci/board-dm365-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h         |  1 +
+ arch/arm/mach-davinci/dm365.c           | 88 ++++++++++++++++++++++++++++-----
+ 3 files changed, 79 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 3973124..6e77c45 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -110,6 +110,12 @@ static __init void da830_evm_usb_init(void)
+diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
+index 0ac085b..36b69a1 100644
+--- a/arch/arm/mach-davinci/board-dm365-evm.c
++++ b/arch/arm/mach-davinci/board-dm365-evm.c
+@@ -741,6 +741,8 @@ static __init void dm365_evm_init(void)
  {
  	int ret;
  
-+#ifdef CONFIG_COMMON_CLK
-+	ret = da8xx_register_usb_phy_clocks();
-+	if (ret)
-+		pr_warn("%s: USB PHY CLK registration failed: %d\n",
-+			__func__, ret);
-+#else
- 	/* USB_REFCLKIN is not used. */
- 	ret = da8xx_register_usb20_phy_clk(false);
++	dm365_register_clocks();
++
+ 	ret = dm365_gpio_register();
  	if (ret)
-@@ -120,7 +126,7 @@ static __init void da830_evm_usb_init(void)
- 	if (ret)
- 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
- 			__func__, ret);
--
-+#endif
- 	ret = da8xx_register_usb_phy();
- 	if (ret)
- 		pr_warn("%s: USB PHY registration failed: %d\n",
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index eb09e33..6a866d2 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -231,7 +231,12 @@ static __init void omapl138_hawk_usb_init(void)
- 		pr_warn("%s: USB 1.1 PinMux setup failed: %d\n", __func__, ret);
- 		return;
- 	}
--
-+#ifdef CONFIG_COMMON_CLK
-+	ret = da8xx_register_usb_phy_clocks();
-+	if (ret)
-+		pr_warn("%s: USB PHY CLK registration failed: %d\n",
-+			__func__, ret);
-+#else
- 	ret = da8xx_register_usb20_phy_clk(false);
- 	if (ret)
- 		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
-@@ -241,7 +246,7 @@ static __init void omapl138_hawk_usb_init(void)
- 	if (ret)
- 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
- 			__func__, ret);
--
-+#endif
- 	ret = da8xx_register_usb_phy();
- 	if (ret)
- 		pr_warn("%s: USB PHY registration failed: %d\n",
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index 91dd9cb..c4edf05 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -69,6 +69,12 @@ static void __init da850_init_machine(void)
- 
- 	da850_register_clocks();
- 
-+#ifdef CONFIG_COMMON_CLK
-+	ret = da8xx_register_usb_phy_clocks();
-+	if (ret)
-+		pr_warn("%s: USB PHY CLK registration failed: %d\n",
-+			__func__, ret);
-+#else
- 	ret = da8xx_register_usb20_phy_clk(false);
- 	if (ret)
- 		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
-@@ -77,7 +83,7 @@ static void __init da850_init_machine(void)
- 	if (ret)
- 		pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
- 			__func__, ret);
--
-+#endif
- 	ret = da850_register_sata_refclk(sata_refclkpn);
- 	if (ret)
- 		pr_warn("%s: registering SATA REFCLK failed: %d",
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 612e454..5d7b1de 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -106,6 +106,7 @@ int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
- int da8xx_register_usb_refclkin(int rate);
- int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
- int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
-+int da8xx_register_usb_phy_clocks(void);
- int da850_register_sata_refclk(int rate);
- int da8xx_register_emac(void);
- int da8xx_register_uio_pruss(void);
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index 67d634b..d0ba725 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -2,29 +2,35 @@
- /*
-  * DA8xx USB
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 6b6abf0a..c865226 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
+ /* DM365 function declarations */
+ void dm365_init(void);
+ void dm365_init_time(void);
++void dm365_register_clocks(void);
+ void dm365_init_asp(void);
+ void dm365_init_vc(void);
+ void dm365_init_ks(struct davinci_ks_platform_data *pdata);
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 871372a..93067e1 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -12,32 +12,35 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
   */
+-#include <linux/init.h>
 -#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
 +#include <linux/clk-provider.h>
- #include <linux/delay.h>
  #include <linux/dma-mapping.h>
- #include <linux/init.h>
- #include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/phy/phy.h>
-+#include <linux/platform_data/clk-da8xx-cfgchip.h>
- #include <linux/platform_data/phy-da8xx-usb.h>
- #include <linux/platform_data/usb-davinci.h>
- #include <linux/platform_device.h>
- #include <linux/usb/musb.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/keyscan-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
  
--#include <mach/clock.h>
- #include <mach/common.h>
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
  #include <mach/cputype.h>
- #include <mach/da8xx.h>
+-#include "psc.h"
+-#include <mach/mux.h>
  #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
  
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
 +#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
++#include "clock.h"
++#include "psc.h"
 +#endif
  
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+ #define DM365_RTC_BASE			0x01c69000
+@@ -54,6 +57,7 @@
+ #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
+ #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
  
 +#ifndef CONFIG_COMMON_CLK
- static struct clk *usb20_clk;
+ static struct pll_data pll1_data = {
+ 	.num		= 1,
+ 	.phys_base	= DAVINCI_PLL1_BASE,
+@@ -485,7 +489,7 @@ static struct clk_lookup dm365_clks[] = {
+ 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
+-
 +#endif
+ /*----------------------------------------------------------------------*/
  
- static struct da8xx_usb_phy_platform_data da8xx_usb_phy_pdata;
+ #define INTMUX		0x18
+@@ -1171,8 +1175,68 @@ void __init dm365_init(void)
  
-@@ -136,6 +142,7 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct clk usb_refclkin = {
- 	.name		= "usb_refclkin",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -362,3 +369,18 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
- 
- 	return ret;
- }
+ void __init dm365_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm365_clks);
+ 	davinci_timer_init(&timer0_clk);
 +#endif
-+static struct platform_device da8xx_usb_phy_clks_device = {
-+	.name		= "da830-usb-phy-clks",
-+	.id		= -1,
++}
++
++static struct resource dm365_pll1_resources[] = {
++	{
++		.start	= DAVINCI_PLL1_BASE,
++		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
-+int __init da8xx_register_usb_phy_clocks(void)
++static struct platform_device dm365_pll1_device = {
++	.name		= "dm365-pll1",
++	.id		= -1,
++	.resource	= dm365_pll1_resources,
++	.num_resources	= ARRAY_SIZE(dm365_pll1_resources),
++};
++
++static struct resource dm365_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm365_pll2_device = {
++	.name		= "dm365-pll2",
++	.id		= -1,
++	.resource	= dm365_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm365_pll2_resources),
++};
++
++static struct resource dm365_psc_resources[] = {
++	{
++		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
++		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm365_psc_device = {
++	.name		= "dm365-psc",
++	.id		= -1,
++	.resource	= dm365_psc_resources,
++	.num_resources	= ARRAY_SIZE(dm365_psc_resources),
++};
++
++void __init dm365_register_clocks(void)
 +{
-+	struct da8xx_cfgchip_clk_platform_data pdata;
-+
-+	pdata.cfgchip = da8xx_get_cfgchip();
-+	da8xx_usb_phy_clks_device.dev.platform_data = &pdata;
-+
-+	return platform_device_register(&da8xx_usb_phy_clks_device);
-+}
++	platform_device_register(&dm365_pll1_device);
++	platform_device_register(&dm365_pll2_device);
++	platform_device_register(&dm365_psc_device);
+ }
+ 
+ static struct resource dm365_vpss_resources[] = {
 -- 
 2.7.4
