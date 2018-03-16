@@ -1,57 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752836AbeCPTEr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:04:47 -0400
-Received: from verein.lst.de ([213.95.11.211]:48406 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750921AbeCPTEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:04:45 -0400
-Date: Fri, 16 Mar 2018 20:04:43 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
-Message-ID: <20180316190443.GF3671@lst.de>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1752902AbeCPTFh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:05:37 -0400
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:37488 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752130AbeCPTFf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:05:35 -0400
+X-Google-Smtp-Source: AG47ELtoTyn4fWKtL0owJmrf7fHJtzQaflb9GnBT8/WIJmBv+pm+cpj+muGO4dV7w6/fx2ZQB5XZeg==
+Date: Fri, 16 Mar 2018 15:05:33 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH v9 11/61] xarray: Add definition of struct xarray
+Message-ID: <20180316190531.kpepu5eaimnnixf5@destiny>
+References: <20180313132639.17387-1-willy@infradead.org>
+ <20180313132639.17387-12-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180313132639.17387-12-willy@infradead.org>
+User-Agent: NeoMutt/20170714 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
-> In preparation for adding coordination between truncate operations and
-> busy dax-pages, extend xfs_break_layouts() to assume it must be called
-> with the mmap lock held. This locking scheme will be required for
-> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
-> pages mapped into the file's address space).
+On Tue, Mar 13, 2018 at 06:25:49AM -0700, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> This is a direct replacement for struct radix_tree_root.  Some of the
+> struct members have changed name; convert those, and use a #define so
+> that radix_tree users continue to work without change.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-This requirement wasn't really there in the last series, why do we
-require it now?
+Reviewed-by: Josef Bacik <jbacik@fb.com>
 
-As far as I can tell all we'd need is to just drop this assert:
+Thanks,
 
-> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
-> +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
-> +				| XFS_MMAPLOCK_EXCL));
-
-entirely.
-
->  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
->  		xfs_iunlock(ip, *iolock);
->  		error = break_layout(inode, true);
-> -		*iolock = XFS_IOLOCK_EXCL;
-> +		*iolock &= ~XFS_IOLOCK_SHARED;
-> +		*iolock |= XFS_IOLOCK_EXCL;
->  		xfs_ilock(ip, *iolock);
-
-And take this one hunk from your patch.
-
-To enable the DAX use case.
+Josef
