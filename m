@@ -1,235 +1,323 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3162421-1521079090-2-16773935274864888749
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521079089; b=Eqqh/7n9ZHnqxhW5y1Qy8VVDAg6kVpRwK/+qZ9QLJLdel63
-    5GIWIfRlxYstExsm9GOkpCpOiKejWIFTcKClHd/WruvRUQpZtZmr7CwPMYM19kTw
-    UNYuCoIFXMGNFCwEl6TC6gCRx3JNDZTQ1lYw1Ixtdn1vxATjE/2zRq97OvQp1zLF
-    X2buMregv6/0cRnAbI8xERCobQ6WPpTH0+EtCj6u/bENXZREojCXh1ExH8zRs+jT
-    eIGvinmwR/XFf8twfEmp0hJr8CO+QswcYMZekmYgYpAwjfn7DHr56/XCB283eWIx
-    OqMEIgLee7Yew1LOD44FwvOc2naCTVz2/UVbP2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:references:in-reply-to:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521079089; bh=y7nVuMG+z+Q6cxInEbwFQBRkgNtgY5pgEzdWOQ
-    pF+aU=; b=p4Kk1hr3kA0doVL5nY0ceG+L5MUaC1bLJS0gohmSHaOn5BTmpjwU8p
-    fgrcnAswzDyvqLZLdt3WZWMYs3ennlfPsohZ2fspGSa7qFSwTR4YJb+aVeNrr+El
-    7IBOu5r/bbJBbOA6VmQZ7HMaFF9BmX+488YDujNyKj0vySHNlk0h/CNNc4AoPnB6
-    OS2RgtjpUO+Hzk5pPtlu+Raw2TBZHq4yMQu2HITrGwNWPGdJmRaxwprqlOjHyZch
-    AgVyhwWppaI5VNxabucGkQEuerxme7jYXsOrrrf3KwUm2JLDqaBGGQys/BZjlwoa
-    Wrb48pwZQtFkfg6WR2l+Fyz+cW3AgcRQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=Eq4iqJJw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WvRSLZU3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=Eq4iqJJw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WvRSLZU3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeCOB54 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 21:57:56 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:46944 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeCOB5y (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Wed, 14 Mar 2018 21:57:54 -0400
-X-Google-Smtp-Source: AG47ELs0Et/1aAVeiEkGoL+HXq7SqgBSiwyLiGchOiH5vqk3vBncD1tVvxNN9DvTAIUpAXl4+zTRR3gnmCh+48gNt0M=
-MIME-Version: 1.0
-References: <20180315014817.142930-1-djkurtz@chromium.org>
-In-Reply-To: <20180315014817.142930-1-djkurtz@chromium.org>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Thu, 15 Mar 2018 01:57:41 +0000
-Message-ID: <CAGS+omAk+SQRVg2KyZYrtAfSZ-i_MhyUbN2tLTWQe0TLfnPq+A@mail.gmail.com>
-Subject: Re: [PATCH v2] earlycon: Fix __earlycon_table stride... again
-To: peter@hurleysoftware.com, Rob Herring <robh@kernel.org>
-Cc: adurbin@chromium.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Grant Likely <grant.likely@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, frowand.list@gmail.com,
-        jslaby@suse.com, Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-ccpol: medium
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521204657; cv=none;
+        d=google.com; s=arc-20160816;
+        b=MBB0gx1Y9NawQcGOFw1YPATRFvEZFeSf1ZC7XaRx/B+mO7m4niCrclq8vEzoTJv/p9
+         g5E8+LbEBac0YCaGGQGcbtQyOjK7KgAk+LnRv/L/rFdPHD5geO50Kbq2zkydHpgd3R78
+         qleskfAkFxJie8hmI2dEYL7Nqj4DAxFO0ND5P0dZHIqYA99SeKBJOMVsuB4B8naDpfBC
+         6ePPoewKGOqa/PppX8q7y+J/+QrJLj4tEPnfIjd4VtemxmIRMF4H9dlBoxucLR8cPrJP
+         H9IwcuR51rcuNJAlTiq+/mZrxYUbZi8y73hIThg1uprLURM14VQ+PZ8kC7eDGj6Nx5IC
+         teUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=pcrGgpuVYaZ3vwBam6tlRHF23vwNdGOq/EZ7W0BgkFc=;
+        b=GjObFDu+quiCb1UJxHS3vcenWOp1HJhlw2gYoSZTkdd5WpZznOqqlbr7EZZQIoTYNp
+         9roKL9DM9rDI3fqc3Lp1IyCdCyWPQ9BfTuHqQ4ZGiNTLii12qaIIrrtxltcWrCKzLWmw
+         ecjxsLcaWmjk4OYV11KAguJ2pauGRDksG9XU3Iwv8oVOvqNdJzShMpA88HM7mZeOTm9f
+         MKd7Nj8TgnVEUrbD8yn8+4yqPAk2x+bZ1Uh9FHfOs+Oc8ByzbW/5xOwcpRc1C59hpV8K
+         WQrYfJUdLmdcKnUPguOmL2Tr1g3f0iAiThDwHR0T3GPv2ZeOifzTVDneumwQH1RbWv6P
+         aWTw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AG47ELuw0sFHO2BfR2gbBaxlvTTbXnZddBTS8/SZxjOMkPfwh8TC2VM4YNcBfQFYys0nnBS+Twrq/g==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	gregkh@linuxfoundation.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: serge@hallyn.com,
+	avagin@virtuozzo.com,
+	ktkhai@virtuozzo.com,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2] netns: send uevent messages
+Date: Fri, 16 Mar 2018 13:50:30 +0100
+Message-Id: <20180316125030.23624-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595098694946431538?=
+X-GMAIL-MSGID: =?utf-8?q?1595098694946431538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 7:48 PM Daniel Kurtz <djkurtz@chromium.org> wrote:
+This patch adds a receive method to NETLINK_KOBJECT_UEVENT netlink sockets
+to allow sending uevent messages into the network namespace the socket
+belongs to.
 
-> Commit 470ca0de69fe ("serial: earlycon: Enable earlycon without command
-> line param") added EARLYCON_TABLE().
+Currently non-initial network namespaces are already isolated and don't
+receive uevents. There are a number of cases where it is beneficial for a
+sufficiently privileged userspace process to send a uevent into a network
+namespace.
 
-> Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") referenced
-> commit 07fca0e57fca92 ("tracing: Properly align linker defined symbols")
-> and tried to fix EARLYCON_TABLE() using __aligned(32).
+One such use case would be debugging and fuzzing of a piece of software
+which listens and reacts to uevents. By running a copy of that software
+inside a network namespace, specific uevents could then be presented to it.
+More concretely, this would allow for easy testing of udevd/ueventd.
 
-> However, the fix copied just works around compiler behavior.  In fact, it
-> was subsequently re-implemented for tracing using a table of pointers in
-> commit 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with
-> pointer array"), commit 654986462939 ("tracepoints: Fix section alignment
-> using pointer array") and commit e4a9ea5ee7c8 ("tracing: Replace
-> trace_event struct array with pointer array").
+This will also allow some piece of software to run components inside a
+separate network namespace and then effectively filter what that software
+can receive. Some examples of software that do directly listen to uevents
+and that we have in the past attempted to run inside a network namespace
+are rbd (CEPH client) or the X server.
 
-> Let's do the same "array of pointers to structs" approach for
-> EARLYCON_TABLE.
+Implementation:
+The implementation has been kept as simple as possible from the kernel's
+perspective. Specifically, a simple input method uevent_net_rcv() is added
+to NETLINK_KOBJECT_UEVENT sockets which completely reuses existing
+af_netlink infrastructure and does neither add an additional netlink family
+nor requires any user-visible changes.
 
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+For example, by using netlink_rcv_skb() we can make use of existing netlink
+infrastructure to report back informative error messages to userspace.
 
-Oops, I forgot to add:
+Furthermore, this implementation does not introduce any overhead for
+existing uevent generating codepaths. The struct netns gets a new uevent
+socket member that records the uevent socket associated with that network
+namespace including its position in the uevent socket list. Since we record
+the uevent socket for each network namespace in struct net we don't have to
+walk the whole uevent socket list. Instead we can directly retrieve the
+relevant uevent socket and send the message. At exit time we can now also
+trivially remove the uevent socket from the uevent socket list. This keeps
+the codepath very performant without introducing needless overhead and even
+makes older codepaths faster.
 
-Suggested-by: Aaron Durbin <adurbin@chromium.org>
+Uevent sequence numbers are kept global. When a uevent message is sent to
+another network namespace the implementation will simply increment the
+global uevent sequence number and append it to the received uevent. This
+has the advantage that the kernel will never need to parse the received
+uevent message to replace any existing uevent sequence numbers. Instead it
+is up to the userspace process to remove any existing uevent sequence
+numbers in case the uevent message to be sent contains any.
 
-> ---
-> Changes since v1:
->   * Change __earlycon_table to an array of pointers.
+Security:
+In order for a caller to send uevent messages to a target network namespace
+the caller must have CAP_SYS_ADMIN in the owning user namespace of the
+target network namespace. Additionally, any received uevent message is
+verified to not exceed size UEVENT_BUFFER_SIZE. This includes the space
+needed to append the uevent sequence number.
 
-> Note: I do not have a convenient system to test the of/fdt.c part of this
-> patch, so would apreciate help verifying it.  Thanks!
+Testing:
+This patch has been tested and verified to work with the following udev
+implementations:
+1. CentOS 6 with udevd version 147
+2. Debian Sid with systemd-udevd version 237
+3. Android 7.1.1 with ueventd
 
->   drivers/of/fdt.c                  |  7 +++++--
->   drivers/tty/serial/earlycon.c     |  6 ++++--
->   include/asm-generic/vmlinux.lds.h |  2 +-
->   include/linux/serial_core.h       | 21 ++++++++++++++-------
->   4 files changed, 24 insertions(+), 12 deletions(-)
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+Changelog v1->v2:
+* Add the whole struct uevent_sock to struct net not just the socket
+  member. Since struct uevent_sock records the position of the uevent
+  socket in the uevent socket list we can trivially remove it from the
+  uevent socket list during cleanup. This speeds up the old removal
+  codepath. list_del() will hitl __list_del_entry_valid() in its call chain
+  which will validate that the element is a member of the list. If it isn't
+  it will take care that the list is not modified.
+Changelog v0->v1:
+* Hold mutex_lock() until uevent is sent to preserve uevent message
+  ordering. See udev and commit for reference:
 
-> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> index 84aa9d676375..6da20b9688f7 100644
-> --- a/drivers/of/fdt.c
-> +++ b/drivers/of/fdt.c
-> @@ -942,7 +942,7 @@ int __init early_init_dt_scan_chosen_stdout(void)
->          int offset;
->          const char *p, *q, *options = NULL;
->          int l;
-> -       const struct earlycon_id *match;
-> +       const struct earlycon_id **p_match;
->          const void *fdt = initial_boot_params;
+  commit 7b60a18da393ed70db043a777fd9e6d5363077c4
+  Author: Andrew Vagin <avagin@openvz.org>
+  Date:   Wed Mar 7 14:49:56 2012 +0400
 
->          offset = fdt_path_offset(fdt, "/chosen");
-> @@ -969,7 +969,10 @@ int __init early_init_dt_scan_chosen_stdout(void)
->                  return 0;
->          }
+      uevent: send events in correct order according to seqnum (v3)
 
-> -       for (match = __earlycon_table; match < __earlycon_table_end;
-match++) {
-> +       for (p_match = __earlycon_table; p_match < __earlycon_table_end;
-> +            p_match++) {
-> +               const struct earlycon_id *match = *p_match;
-> +
->                  if (!match->compatible[0])
->                          continue;
+      The queue handling in the udev daemon assumes that the events are
+      ordered.
+---
+ include/linux/kobject.h     |  6 +++
+ include/net/net_namespace.h |  4 +-
+ lib/kobject_uevent.c        | 98 ++++++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 93 insertions(+), 15 deletions(-)
 
-> diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
-> index a24278380fec..22683393a0f2 100644
-> --- a/drivers/tty/serial/earlycon.c
-> +++ b/drivers/tty/serial/earlycon.c
-> @@ -169,7 +169,7 @@ static int __init register_earlycon(char *buf, const
-struct earlycon_id *match)
->    */
->   int __init setup_earlycon(char *buf)
->   {
-> -       const struct earlycon_id *match;
-> +       const struct earlycon_id **p_match;
-
->          if (!buf || !buf[0])
->                  return -EINVAL;
-> @@ -177,7 +177,9 @@ int __init setup_earlycon(char *buf)
->          if (early_con.flags & CON_ENABLED)
->                  return -EALREADY;
-
-> -       for (match = __earlycon_table; match < __earlycon_table_end;
-match++) {
-> +       for (p_match = __earlycon_table; p_match < __earlycon_table_end;
-> +            p_match++) {
-> +               const struct earlycon_id *match = *p_match;
->                  size_t len = strlen(match->name);
-
->                  if (strncmp(buf, match->name, len))
-> diff --git a/include/asm-generic/vmlinux.lds.h
-b/include/asm-generic/vmlinux.lds.h
-> index 1ab0e520d6fc..e17de55c2542 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -179,7 +179,7 @@
->   #endif
-
->   #ifdef CONFIG_SERIAL_EARLYCON
-> -#define EARLYCON_TABLE() STRUCT_ALIGN();                       \
-> +#define EARLYCON_TABLE() . = ALIGN(8);                         \
->                           VMLINUX_SYMBOL(__earlycon_table) = .;  \
->                           KEEP(*(__earlycon_table))              \
->                           VMLINUX_SYMBOL(__earlycon_table_end) = .;
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-> index b32df49a3bd5..93b7add47087 100644
-> --- a/include/linux/serial_core.h
-> +++ b/include/linux/serial_core.h
-> @@ -351,10 +351,10 @@ struct earlycon_id {
->          char    name[16];
->          char    compatible[128];
->          int     (*setup)(struct earlycon_device *, const char *options);
-> -} __aligned(32);
-> +};
-
-> -extern const struct earlycon_id __earlycon_table[];
-> -extern const struct earlycon_id __earlycon_table_end[];
-> +extern const struct earlycon_id *__earlycon_table[];
-> +extern const struct earlycon_id *__earlycon_table_end[];
-
->   #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
->   #define EARLYCON_USED_OR_UNUSED        __used
-> @@ -362,12 +362,19 @@ extern const struct earlycon_id
-__earlycon_table_end[];
->   #define EARLYCON_USED_OR_UNUSED        __maybe_unused
->   #endif
-
-> -#define OF_EARLYCON_DECLARE(_name, compat, fn)                         \
-> -       static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name) \
-> -            EARLYCON_USED_OR_UNUSED __section(__earlycon_table)        \
-> +#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)             \
-> +       static const struct earlycon_id unique_id                       \
-> +            EARLYCON_USED_OR_UNUSED __initdata                         \
->                  = { .name = __stringify(_name),                         \
->                      .compatible = compat,                               \
-> -                   .setup = fn  }
-> +                   .setup = fn  };                                     \
-> +       static const struct earlycon_id EARLYCON_USED_OR_UNUSED         \
-> +               __section(__earlycon_table)                             \
-> +               * const __PASTE(__p, unique_id) = &unique_id
-> +
-> +#define OF_EARLYCON_DECLARE(_name, compat, fn)                         \
-> +       _OF_EARLYCON_DECLARE(_name, compat, fn,                         \
-> +                            __UNIQUE_ID(__earlycon_##_name))
-
->   #define EARLYCON_DECLARE(_name, fn)    OF_EARLYCON_DECLARE(_name, "", fn)
-
-> --
-> 2.16.2.804.g6dcf76e118-goog
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..c572c7abc609 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -39,6 +39,12 @@ extern char uevent_helper[];
+ /* counter to tag the uevent, read only except for the kobject core */
+ extern u64 uevent_seqnum;
+ 
++/* uevent socket */
++struct uevent_sock {
++	struct list_head list;
++	struct sock *sk;
++};
++
+ /*
+  * The actions here must match the index to the string array
+  * in lib/kobject_uevent.c
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index f306b2aa15a4..abd7d91bffac 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -40,7 +40,7 @@ struct net_device;
+ struct sock;
+ struct ctl_table_header;
+ struct net_generic;
+-struct sock;
++struct uevent_sock;
+ struct netns_ipvs;
+ 
+ 
+@@ -79,6 +79,8 @@ struct net {
+ 	struct sock 		*rtnl;			/* rtnetlink socket */
+ 	struct sock		*genl_sock;
+ 
++	struct uevent_sock	*uevent_sock;		/* uevent socket */
++
+ 	struct list_head 	dev_base_head;
+ 	struct hlist_head 	*dev_name_head;
+ 	struct hlist_head	*dev_index_head;
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 9fe6ec8fda28..53e9123474c0 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -25,6 +25,7 @@
+ #include <linux/uuid.h>
+ #include <linux/ctype.h>
+ #include <net/sock.h>
++#include <net/netlink.h>
+ #include <net/net_namespace.h>
+ 
+ 
+@@ -33,10 +34,6 @@ u64 uevent_seqnum;
+ char uevent_helper[UEVENT_HELPER_PATH_LEN] = CONFIG_UEVENT_HELPER_PATH;
+ #endif
+ #ifdef CONFIG_NET
+-struct uevent_sock {
+-	struct list_head list;
+-	struct sock *sk;
+-};
+ static LIST_HEAD(uevent_sock_list);
+ #endif
+ 
+@@ -602,12 +599,88 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ EXPORT_SYMBOL_GPL(add_uevent_var);
+ 
+ #if defined(CONFIG_NET)
++static int uevent_net_broadcast(struct sock *usk, struct sk_buff *skb,
++				struct netlink_ext_ack *extack)
++{
++	int ret;
++	/* u64 to chars: 2^64 - 1 = 21 chars */
++	char buf[sizeof("SEQNUM=") + 21];
++	struct sk_buff *skbc;
++
++	/* bump and prepare sequence number */
++	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", ++uevent_seqnum);
++	if (ret < 0 || (size_t)ret >= sizeof(buf))
++		return -ENOMEM;
++	ret++;
++
++	/* verify message does not overflow */
++	if ((skb->len + ret) > UEVENT_BUFFER_SIZE) {
++		NL_SET_ERR_MSG(extack, "uevent message too big");
++		return -EINVAL;
++	}
++
++	/* copy skb and extend to accommodate sequence number */
++	skbc = skb_copy_expand(skb, 0, ret, GFP_KERNEL);
++	if (!skbc)
++		return -ENOMEM;
++
++	/* append sequence number */
++	skb_put_data(skbc, buf, ret);
++
++	/* remove msg header */
++	skb_pull(skbc, NLMSG_HDRLEN);
++
++	/* set portid 0 to inform userspace message comes from kernel */
++	NETLINK_CB(skbc).portid = 0;
++	NETLINK_CB(skbc).dst_group = 1;
++
++	ret = netlink_broadcast(usk, skbc, 0, 1, GFP_KERNEL);
++	/* ENOBUFS should be handled in userspace */
++	if (ret == -ENOBUFS || ret == -ESRCH)
++		ret = 0;
++
++	return ret;
++}
++
++static int uevent_net_rcv_skb(struct sk_buff *skb, struct nlmsghdr *nlh,
++			      struct netlink_ext_ack *extack)
++{
++	int ret;
++	struct net *net;
++
++	if (!nlmsg_data(nlh))
++		return -EINVAL;
++
++	/*
++	 * Verify that we are allowed to send messages to the target
++	 * network namespace. The caller must have CAP_SYS_ADMIN in the
++	 * owning user namespace of the target network namespace.
++	 */
++	net = sock_net(NETLINK_CB(skb).sk);
++	if (!netlink_ns_capable(skb, net->user_ns, CAP_SYS_ADMIN)) {
++		NL_SET_ERR_MSG(extack, "missing CAP_SYS_ADMIN capability");
++		return -EPERM;
++	}
++
++	mutex_lock(&uevent_sock_mutex);
++	ret = uevent_net_broadcast(net->uevent_sock->sk, skb, extack);
++	mutex_unlock(&uevent_sock_mutex);
++
++	return ret;
++}
++
++static void uevent_net_rcv(struct sk_buff *skb)
++{
++	netlink_rcv_skb(skb, &uevent_net_rcv_skb);
++}
++
+ static int uevent_net_init(struct net *net)
+ {
+ 	struct uevent_sock *ue_sk;
+ 	struct netlink_kernel_cfg cfg = {
+ 		.groups	= 1,
+-		.flags	= NL_CFG_F_NONROOT_RECV,
++		.input = uevent_net_rcv,
++		.flags	= NL_CFG_F_NONROOT_RECV
+ 	};
+ 
+ 	ue_sk = kzalloc(sizeof(*ue_sk), GFP_KERNEL);
+@@ -621,6 +694,9 @@ static int uevent_net_init(struct net *net)
+ 		kfree(ue_sk);
+ 		return -ENODEV;
+ 	}
++
++	net->uevent_sock = ue_sk;
++
+ 	mutex_lock(&uevent_sock_mutex);
+ 	list_add_tail(&ue_sk->list, &uevent_sock_list);
+ 	mutex_unlock(&uevent_sock_mutex);
+@@ -629,22 +705,16 @@ static int uevent_net_init(struct net *net)
+ 
+ static void uevent_net_exit(struct net *net)
+ {
+-	struct uevent_sock *ue_sk;
++	struct uevent_sock *ue_sk = net->uevent_sock;
+ 
+ 	mutex_lock(&uevent_sock_mutex);
+-	list_for_each_entry(ue_sk, &uevent_sock_list, list) {
+-		if (sock_net(ue_sk->sk) == net)
+-			goto found;
+-	}
+-	mutex_unlock(&uevent_sock_mutex);
+-	return;
+-
+-found:
+ 	list_del(&ue_sk->list);
+ 	mutex_unlock(&uevent_sock_mutex);
+ 
+ 	netlink_kernel_release(ue_sk->sk);
+ 	kfree(ue_sk);
++
++	return;
+ }
+ 
+ static struct pernet_operations uevent_net_ops = {
+-- 
+2.15.1
