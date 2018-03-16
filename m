@@ -1,80 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeCPXFr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 19:05:47 -0400
-Received: from linode.aoot.com ([69.164.194.13]:54470 "EHLO linode.aoot.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751454AbeCPXFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 19:05:46 -0400
-From: "Steve Wise" <swise@opengridcomputing.com>
-To: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
-        <timur@codeaurora.org>, <sulrich@codeaurora.org>
-Cc: <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>,
-        "'Jason Gunthorpe'" <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org> <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com> <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
-In-Reply-To: <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
-Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 18:05:44 -0500
-Message-ID: <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
+        id S1752401AbeCPXVw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 19:21:52 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:36454 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbeCPXVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 19:21:51 -0400
+X-Google-Smtp-Source: AG47ELtqT6vXCjURcHxb1nkpCaJDgGmJxM1XolEXWWNrjWrBj4eJqYOPv5bn3jVhHnN0bJvaNPuNng==
+Date: Sat, 17 Mar 2018 02:21:47 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH -mm] proc: fixup test for read
+Message-ID: <20180316232147.GA20146@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6heAYll0hoCDc6xe6TXMBTg
-Content-Language: en-us
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On 3/16/2018 5:05 PM, Steve Wise wrote:
-> >> Code includes wmb() followed by writel(). writel() already has a barrier
-> > on
-> >> some architectures like arm64.
-> >>
-> >> This ends up CPU observing two barriers back to back before executing
-> the
-> >> register write.
-> >>
-> >> Since code already has an explicit barrier call, changing writel() to
-> >> writel_relaxed().
-> >>
-> >> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> >
-> > NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
-> > writeX().
-> >
-> > I was just looking at this with Chelsio developers, and they said the
-> > writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
-> > get rid of the extra barrier for all architectures.
-> 
-> OK. I can do that but isn't the problem at PowerPC adaptation?
-> 
-> /*
->  * We don't do relaxed operations yet, at least not with this semantic
->  */
-> #define readb_relaxed(addr)	readb(addr)
-> #define readw_relaxed(addr)	readw(addr)
-> #define readl_relaxed(addr)	readl(addr)
-> #define readq_relaxed(addr)	readq(addr)
-> #define writeb_relaxed(v, addr)	writeb(v, addr)
-> #define writew_relaxed(v, addr)	writew(v, addr)
-> #define writel_relaxed(v, addr)	writel(v, addr)
-> #define writeq_relaxed(v, addr)	writeq(v, addr)
-> 
-> Why don't we fix the PowerPC's relaxed operators? Is that a bigger task?
+/proc/kmsg can and will block if read under root.
 
-I don't know the answer, but perhaps the proper fix is to correctly implement these for PPC?
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
+ tools/testing/selftests/proc/read.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> >From API perspective both __raw_writeX() and writeX_relaxed() are
-> correct.
-> It is just PowerPC doesn't seem the follow the definition yet.
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -54,7 +54,8 @@ static void f_reg(DIR *d, const char *filename)
+ 	int fd;
+ 	ssize_t rv;
+ 
+-	fd = openat(dirfd(d), filename, O_RDONLY);
++	/* read from /proc/kmsg can block */
++	fd = openat(dirfd(d), filename, O_RDONLY|O_NONBLOCK);
+ 	if (fd == -1)
+ 		return;
+ 	rv = read(fd, buf, sizeof(buf));
