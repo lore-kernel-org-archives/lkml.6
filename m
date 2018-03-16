@@ -1,77 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751951AbeCPVqV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:46:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeCPVqT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:46:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFC2F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
- on weakly-ordered archs
-To: Steve Wise <swise@opengridcomputing.com>, netdev@vger.kernel.org,
-        timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>,
-        "'Jason Gunthorpe'" <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
- <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
- <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
-Date: Fri, 16 Mar 2018 17:46:16 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752172AbeCPVsg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:48:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:22920 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751269AbeCPVsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:48:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="28658854"
+Subject: [PATCH 3/3] x86, pkeys, selftests: add a test for pkey 0
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
+        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
+        shuah@kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 16 Mar 2018 14:46:59 -0700
+References: <20180316214654.895E24EC@viggo.jf.intel.com>
+In-Reply-To: <20180316214654.895E24EC@viggo.jf.intel.com>
+Message-Id: <20180316214659.FCFEF68B@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/2018 5:05 PM, Steve Wise wrote:
->> Code includes wmb() followed by writel(). writel() already has a barrier
-> on
->> some architectures like arm64.
->>
->> This ends up CPU observing two barriers back to back before executing the
->> register write.
->>
->> Since code already has an explicit barrier call, changing writel() to
->> writel_relaxed().
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> 
-> NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
-> writeX().  
-> 
-> I was just looking at this with Chelsio developers, and they said the
-> writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
-> get rid of the extra barrier for all architectures.
 
-OK. I can do that but isn't the problem at PowerPC adaptation?
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-/*
- * We don't do relaxed operations yet, at least not with this semantic
- */
-#define readb_relaxed(addr)	readb(addr)
-#define readw_relaxed(addr)	readw(addr)
-#define readl_relaxed(addr)	readl(addr)
-#define readq_relaxed(addr)	readq(addr)
-#define writeb_relaxed(v, addr)	writeb(v, addr)
-#define writew_relaxed(v, addr)	writew(v, addr)
-#define writel_relaxed(v, addr)	writel(v, addr)
-#define writeq_relaxed(v, addr)	writeq(v, addr)
+Protection key 0 is the default key for all memory and will
+not normally come back from pkey_alloc().  But, you might
+still want pass it to mprotect_pkey().
 
-Why don't we fix the PowerPC's relaxed operators? Is that a bigger task?
+This check ensures that you can use pkey 0.
 
->From API perspective both __raw_writeX() and writeX_relaxed() are correct.
-It is just PowerPC doesn't seem the follow the definition yet.
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>
+---
+
+ b/tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test tools/testing/selftests/x86/protection_keys.c
+--- a/tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test	2018-03-16 14:46:40.121285473 -0700
++++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-16 14:46:40.125285473 -0700
+@@ -1197,6 +1197,35 @@ void test_pkey_alloc_exhaust(int *ptr, u
+ 	}
+ }
+ 
++/*
++ * pkey 0 is special.  It is allocated by default, so you do not
++ * have to call pkey_alloc() to use it first.  Make sure that it
++ * is usable.
++ */
++void test_mprotect_with_pkey_0(int *ptr, u16 pkey)
++{
++	long size;
++	int prot;
++
++	assert(pkey_last_malloc_record);
++	size = pkey_last_malloc_record->size;
++	/*
++	 * This is a bit of a hack.  But mprotect() requires
++	 * huge-page-aligned sizes when operating on hugetlbfs.
++	 * So, make sure that we use something that's a multiple
++	 * of a huge page when we can.
++	 */
++	if (size >= HPAGE_SIZE)
++		size = HPAGE_SIZE;
++	prot = pkey_last_malloc_record->prot;
++
++	/* Use pkey 0 */
++	mprotect_pkey(ptr, size, prot, 0);
++
++	/* Make sure that we can set it back to the original pkey. */
++	mprotect_pkey(ptr, size, prot, pkey);
++}
++
+ void test_ptrace_of_child(int *ptr, u16 pkey)
+ {
+ 	__attribute__((__unused__)) int peek_result;
+@@ -1334,6 +1363,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
+ 	test_kernel_gup_of_access_disabled_region,
+ 	test_kernel_gup_write_to_write_disabled_region,
+ 	test_executing_on_unreadable_memory,
++	test_mprotect_with_pkey_0,
+ 	test_ptrace_of_child,
+ 	test_pkey_syscalls_on_non_allocated_pkey,
+ 	test_pkey_syscalls_bad_args,
+_
