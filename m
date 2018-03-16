@@ -1,115 +1,248 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1222381-1521412896-2-5171672245689374815
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521412895; b=rJWio35Gu3v9r3ICDqwnakgSQRUIXiOIM4QPE06uOdX3Rf7
-    sIz26s056INzmMiOSkSriA4JIdUpzDz3LR0I0ZgbmgH/z2mCLwrPgD47ZsxRKY0Y
-    czIOku6VSHHRVf5Q3ZDhRI2TuU89H4O7RYg0veznr9FSUuBeQtdwnubBcq4iN/Lr
-    62wSN2yON3TLMAReV951Fi5wTsEbI5dN+FMo5Eun1LPnVZDKRe3THuTJ0AmxVd2N
-    Rtg/QonqgzOO3RI6jzngvM3is+VT+EUrSdErCAIdhZ18k0zJihrlyruSs8yPiTZA
-    f1Ng3lCco9eapvDf11+LL2zBNmAqHxeL22xWAGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521412895; bh=e3FFCDIWx/eBX7h+JE/wT1qR/l2qvSTM2WC7JCwqPVQ=; b=j
-    sPIq3mPV2ovN7iwCu4xRuCD4tezLhKr5vz+QIy/nc+/oVYV8ljlOkVJ5nNlubu7I
-    17ChAmLp7CG3pVs+mBNAnn9ugqXAIZUtdyT3nLQt1z8W0NZBY4gsEUAjxn3sJnd0
-    lBXBr/JfUfwAMVkTqAn/KVVrKkiLVLvs7Cy6CFB+WwIMTCk+pxiP/JCQkahwBZ+a
-    DdVYcuSwecjIF0ehFesL0z+H9l8Cm4sDH+11P6sVB9weh02zfexw7orxQfstFPvm
-    vRIu6MUot4heB1KxdgNjxEL+81hnyuT4WuqCAAPz3d9VVS+TvVx1RMRWLNvH2aYx
-    9bfPVkbQdqF/wXq6d0xFA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Xos+mRkA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=i5BZloiN;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Xos+mRkA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=i5BZloiN;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754638AbeCRWlc (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 18 Mar 2018 18:41:32 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44171 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754383AbeCRWla (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 18 Mar 2018 18:41:30 -0400
-X-Google-Smtp-Source: AG47ELtgOjK7DYHkqHa4+LGk+CloB4c2o6Tbk0iZw7eJrQyM0lKCK3onCacGTawBZrIfdMi2c2UbtQ==
-Subject: Re: [PATCH 4.15 000/128] 4.15.11-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180316152336.199007505@linuxfoundation.org>
- <20180318102526.GC30164@kroah.com> <20180318111523.GB4607@kroah.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <76a09f16-a4a3-c860-7c9e-2a6a6ffe0b73@roeck-us.net>
-Date: Sun, 18 Mar 2018 15:41:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <naresh.kamboju@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521228983; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FK0f0f38FNNfbJViSV8WYGRRbMbPA6pg97sYKBBRzgd4z+8aSp2ArPUsJypAF46edC
+         HeyK53dkbRCUBZWpu8InWh8aVYMsM7xIuYRfQ2iPDzRLAIkwDeAkw84iW7BKbdvZrzhq
+         JZgetqjEcPcGIuBVauDKtBLHdYDKYqgfoeVODZd3rkJ2dQTD0a/u0YA6oM97xGAX7HAM
+         ztDYyyQKjLOM+NHnsLszQgCiNqWMjnPsACRLgLKfF2TWX1JeseXufCP/0uaAlXn4yfj5
+         IZ5gYhTr4g1p6RUnp5whnYDw11Lm9MDOOA5/z8OXvJUYMFPTO8s60Ec9PZoVQVOe/Zbu
+         Mfxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=PBwotVWOtJATM0MA1GOib44e+f40aIgciVKRMFgZuGQ=;
+        b=L6Hk+FX5249KmSbM2FH0GS+0mdzBWatwyX1yqZ5SpB2QJjAUUEj0oB9LM1+p3LHJxI
+         cXuM2fBJEPx2dq9U/+peTOaqOXaU8kP/tHbzxUCS5Dysh1cdW3knRB5lY0YSthV0ppJk
+         nKTEjBKNzON7xKmmjQ7A2bnr0TlN6pM+vmLigCrYqRcLOjfeNA4e8C/ZHmBdsLjTdR1n
+         GzKH8eMlFtAiZvGAaZReBKIxu+ZLAeEV3C3xoT+IWuVaJC8GCnGEFH2aXEEQ6ug68Cbr
+         x++OncN5Y5PUhzjYX/pGJ0srlVGwEHk+1G0E0Q9tsYULJztc/JCsfknHkbtuNLkmXdou
+         8qKQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=OIukIGEq;
+       spf=pass (google.com: domain of naresh.kamboju@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=naresh.kamboju@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=OIukIGEq;
+       spf=pass (google.com: domain of naresh.kamboju@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=naresh.kamboju@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELvJc0qjC7Q+s0etJNK57Vcu6Z+iVmdmhRAh/9sOjyyIfyOwvyepOo3iXWihtnVTqU6sxKDg/0wq/jo0xTq7H7k=
 MIME-Version: 1.0
-In-Reply-To: <20180318111523.GB4607@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
+References: <20180316152336.199007505@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 17 Mar 2018 01:06:21 +0530
+Message-ID: <CA+G9fYs81eFKnN9411PQtkHsvtVRLWhPH_Txx7PCkVH=0sutvg@mail.gmail.com>
+Subject: Re: [PATCH 4.15 000/128] 4.15.11-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>, Shuah Khan <shuahkh@osg.samsung.com>,
+	lkft-triage@lists.linaro.org, patches@kernelci.org,
+	linux- stable <stable@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>,
+	peter.ujfalusi@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595109395590505536?=
+X-GMAIL-MSGID: =?utf-8?q?1595124203446757570?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/18/2018 04:15 AM, Greg Kroah-Hartman wrote:
-> On Sun, Mar 18, 2018 at 11:25:26AM +0100, Greg Kroah-Hartman wrote:
->> On Fri, Mar 16, 2018 at 04:22:21PM +0100, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 4.15.11 release.
->>> There are 128 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Sun Mar 18 15:22:57 UTC 2018.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.11-rc1.gz
->>
->> -rc2 is out to fix a build error on some configs:
->>   	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.11-rc2.gz
-> 
-> And -rc3 is out that at least builds properly:
->    	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.11-rc3.gz
-> 
+On 16 March 2018 at 20:52, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.15.11 release.
+> There are 128 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun Mar 18 15:22:57 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.15.11-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> -------------
+> Pseudo-Shortlog of commits:
+>
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>     Linux 4.15.11-rc1
+>
+> Anusha Srivatsa <anusha.srivatsa@intel.com>
+>     drm/i915/glk: Disable Guc and HuC on GLK
+>
+> Sinan Kaya <okaya@codeaurora.org>
+>     dmaengine: qcom_hidma: check pending interrupts
+>
+> Arnd Bergmann <arnd@arndb.de>
+>     IB/mlx5: revisit -Wmaybe-uninitialized warning
+>
+> Mimi Zohar <zohar@linux.vnet.ibm.com>
+>     ima: relax requiring a file signature for new files with zero length
+>
+> Davidlohr Bueso <dave@stgolabs.net>
+>     locking/locktorture: Fix num reader/writer corner cases
+>
+> SeongJae Park <sj38.park@gmail.com>
+>     rcutorture/configinit: Fix build directory error message
+>
+> Mahesh Bandewar <maheshb@google.com>
+>     ipvlan: add L2 check for packets arriving via virtual devices
+>
+> Christophe Leroy <christophe.leroy@c-s.fr>
+>     Fix misannotated out-of-line _copy_to_user()
+>
+> Adrian Hunter <adrian.hunter@intel.com>
+>     mmc: mmc_test: Ensure command queue is disabled for testing
+>
+> Dan Carpenter <dan.carpenter@oracle.com>
+>     ASoC: nuc900: Fix a loop timeout test
+>
+> Horia Geant=C4=83 <horia.geanta@nxp.com>
+>     crypto: caam/qi - use correct print specifier for size_t
+>
+> Luca Coelho <luciano.coelho@intel.com>
+>     mac80211: remove BUG() when interface type is invalid
+>
+> Adiel Aloni <adiel.aloni@intel.com>
+>     mac80211_hwsim: enforce PS_MANUAL_POLL to be set after PS_ENABLED
+>
+> Chris Wilson <chris@chris-wilson.co.uk>
+>     agp/intel: Flush all chipset writes after updating the GGTT
+>
+> Geert Uytterhoeven <geert+renesas@glider.be>
+>     arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
+>
+> Nicholas Piggin <npiggin@gmail.com>
+>     powerpc/64: Don't trace irqs-off at interrupt return to soft-disabled=
+ context
+>
+> Josh Poimboeuf <jpoimboe@redhat.com>
+>     powerpc/modules: Don't try to restore r2 after a sibling call
+>
+> Yong Zhao <yong.zhao@amd.com>
+>     drm/amdkfd: Fix memory leaks in kfd topology
+>
+> Stephen Hemminger <stephen@networkplumber.org>
+>     veth: set peer GSO values
+>
+> John Fastabend <john.fastabend@gmail.com>
+>     net: sched: drop qdisc_reset from dev_graft_qdisc
+>
+> Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+>     virtio_net: Disable interrupts if napi_complete_done rescheduled napi
+>
+> Gustavo A. R. Silva <garsilva@embeddedor.com>
+>     media: davinci: vpif_capture: add NULL check on devm_kzalloc return v=
+alue
+>
+> Dan Carpenter <dan.carpenter@oracle.com>
+>     media: cpia2: Fix a couple off by one bugs
+>
+> Heinz Mauelshagen <heinzm@redhat.com>
+>     dm raid: fix raid set size revalidation
+>
+> Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>     media: vsp1: Prevent suspending and resuming DRM pipelines
+>
+> Ioana Radulescu <ruxandra.radulescu@nxp.com>
+>     staging: fsl-dpaa2/eth: Fix access to FAS field
+>
+> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>     clk: renesas: r8a77970: Add LVDS clock
+>
+> Xose Vazquez Perez <xose.vazquez@gmail.com>
+>     scsi: dh: add new rdac devices
+>
+> Xose Vazquez Perez <xose.vazquez@gmail.com>
+>     scsi: devinfo: apply to HP XP the same flags as Hitachi VSP
+>
+> Bart Van Assche <bart.vanassche@wdc.com>
+>     scsi: core: scsi_get_device_flags_keyed(): Always return device flags
+>
+> Michael Chan <michael.chan@broadcom.com>
+>     bnxt_en: Don't print "Link speed -1 no longer supported" messages.
+>
+> Tobias Jordan <Tobias.Jordan@elektrobit.com>
+>     spi: sun6i: disable/unprepare clocks on remove
+>
+> Julien BOIBESSOT <julien.boibessot@armadeus.com>
+>     tools/usbip: fixes build with musl libc toolchain
+>
+> Ben Greear <greearb@candelatech.com>
+>     ath10k: fix invalid STS_CAP_OFFSET_MASK
+>
+> Limin Zhu <liminzhu@marvell.com>
+>     mwifiex: cfg80211: do not change virtual interface during scan proces=
+sing
+>
+> Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>     clk: qcom: msm8916: fix mnd_width for codec_digcodec
+>
+> Dan Carpenter <dan.carpenter@oracle.com>
+>     bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
+>
+> Christian K=C3=B6nig <christian.koenig@amd.com>
+>     drm/amdgpu: fix amdgpu_sync_resv v2
+>
+> Monk Liu <Monk.Liu@amd.com>
+>     drm/amdgpu:fix virtual dce bug
+>
+> Sara Sharon <sara.sharon@intel.com>
+>     iwlwifi: mvm: avoid dumping assert log when device is stopped
+>
+> Thomas Richter <tmricht@linux.vnet.ibm.com>
+>     perf annotate: Fix objdump comment parsing for Intel mov dissassembly
+>
+> Thomas Richter <tmricht@linux.vnet.ibm.com>
+>     perf annotate: Fix unnecessary memory allocation for s390x
+>
+> Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>     pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to 0x3 when usi=
+ng STP_ISEN_1_D
+>
+> Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>     pinctrl: sh-pfc: r8a7791: Add can_clk function
+>
+> Jernej Skrabec <jernej.skrabec@siol.net>
+>     drm/sun4i: Fix format mask in DE2 driver
+>
+> Axel Lin <axel.lin@ingics.com>
+>     pwm: stmpe: Fix wrong register offset for hwpwm=3D2 case
+>
+> Li Dongyang <dongyang.li@anu.edu.au>
+>     scsi: ses: don't ask for diagnostic pages repeatedly during probe
+>
+> James Smart <jsmart2021@gmail.com>
+>     scsi: lpfc: Fix crash during driver unload with running nvme traffic
+>
+> Monk Liu <Monk.Liu@amd.com>
+>     drm/amdgpu:fix random missing of FLR NOTIFY
+>
+> Brijesh Singh <brijesh.singh@amd.com>
+>     KVM: X86: Restart the guest when insn_len is zero and SEV is enabled
+>
+> Peter Ujfalusi <peter.ujfalusi@ti.com>
+>     dmaengine: amba-pl08x: Use vchan_terminate_vdesc() instead of desc_fr=
+ee
+>
+> Peter Ujfalusi <peter.ujfalusi@ti.com>
+>     dmaengine: bcm2835-dma: Use vchan_terminate_vdesc() instead of desc_f=
+ree
 
-For v4.15.10-127-g19c3db0:
+arm and arm64 build broken due to this patch for 4.15 and 4.14
 
-Build results:
-	total: 147 pass: 147 fail: 0
-Qemu test results:
-	total: 141 pass: 141 fail: 0
-
-Guenter
+drivers/dma/bcm2835-dma.c:815:3: error: implicit declaration of function
+'vchan_terminate_vdesc' [-Werror=3Dimplicit-function-declaration]
+   vchan_terminate_vdesc(&c->desc->vd);
+   ^
+cc1: some warnings being treated as errors
