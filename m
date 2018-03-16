@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215571-2-6129190673391420017
+X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215561-2-13046129765625891357
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215570; b=T8t1pwkuV0MDsWw3pr+npY4/G9PnAjIJlFnQGBIMaNoRpEx
-    1sQSrxscSOTIK4DkPzl5yLPX+CfD1xOOpkOe0NqJIuHQzGT3QzmJVdlgEuq/Kx4b
-    UgaBoMPYH4EHO6c2iL0E8nXOeKl6TPhESmNmqgqwYwmni4z6anPbROjhGskKaz08
-    6Ch8wijd4fn5uC1K2rP7x2u+nWaExfZfd7gx27d1vg+ictqzcx6HrCZ02fj6nHTv
-    tTadAWif6cG/PB7teJLW9sKgeCb6wSp0W2E5JlVGqtV5ldc3Vj1bEWmh28B29XVC
-    IZ4y+U44D1WicalXaprtMHxR5WEKOcWH2fTkkWw==
+    t=1521215555; b=HpRpjm1R9a00lrmley4HN/S4ZmfMQC5F+3u+qxASeSkgZmj
+    g4rtB4BppwazAEu1E2BpGT1d9/axQ1MikfY1ZLfiM6TEA9AsgLSeNRu+VzYGUqnT
+    fgsABq/71sPbsNikjRK2slhSz1LYg0i/dl4+4Gm6ezch06O2Tvr4r38PpePum1PD
+    1qT19aaCKp17EYtjl+mzRMQpR0ygtp/7B5wl2ZU5kIYQATARWRG+ONh/0NyG2SX8
+    v8vxdmncT5dV8dMjn8tdUFeaNNeZze8qvoMyPapsB4wTXi0a0xmSW6grInPgmTLl
+    w7NLSByYhFLiP7mqcEhDlbKre0/5LakRLvNZSfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215570; bh=L9Hv6b8n9f6uHoOfm88dD2vUtO
-    lFOrtDnWEqbG72cig=; b=nXwyTn2+JczFNXLOzW40M0AetteM/Fd6M/1MCTrYy4
-    pTLbLpQseGuu7eGrBPYypCXUjr+Bx5hG/vuzn9CPCbY/JMybO8lFpiXFPqdctQgt
-    3npQnNLp7cJ3Zs0fMfQVa7+yk41BFcudn8+FgIuJvxHslx0a/uTp3s1EEaZ7Spi9
-    jptluvxATLVeD1uXYsByxklrsKylZJ3gGlftB/MJ+HIeZhLInXD9pfA5XBNe0S/x
-    ArYB6D1kJ+JI8J9WgJkLq1ODsksNOODLWS8ne5PkoKJEsm/ONKCXfjodzg0DE+TO
-    WdNr8wt4cxt3fcvEx5yLCAgCNHO2AvTcYp+jvMR+ONpg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215555; bh=hYrCcHsAuSekIHPgUBop8ma6R9
+    rHSLomomX0f8c6EKs=; b=CaBA2CuxJUQJQcUtnSaUhHna6BQQA9HLvBmhI6ekQU
+    W8ZThcdh6ZCOSuOSK7m50wkMg+v0HMvGkewGO4jPxmNezX7jHDlNTIju+HoQMYrv
+    I/xTiE2jtGr9/1yQ7jt+oGYedA2nJfD9/XvKIIBMboACgwATVh7EPgpMZg4abP/J
+    RVlIaFBjgH47gmC/XOKSGkC9haTfAcaqJKwbIgAvoZ6WN+29cLqjL6PrqpYQpDJB
+    cl51cOYpsP7MOzbCqjl9E8Hi9v7OvXz1fW7K8PC42ckTMH4Dlui760F743jkiV+u
+    nGl35afwgUlNxR4GKsxK32IQiLg35ajNyhQT7iqlQT9g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965389AbeCPPoR (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:44:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45864 "EHLO
+        id S1754132AbeCPPwT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:52:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965372AbeCPPoL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:11 -0400
+        with ESMTP id S965406AbeCPPoU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 109/128] net: sched: drop qdisc_reset from dev_graft_qdisc
-Date: Fri, 16 Mar 2018 16:24:10 +0100
-Message-Id: <20180316152341.971330169@linuxfoundation.org>
+Subject: [PATCH 4.15 112/128] powerpc/modules: Dont try to restore r2 after a sibling call
+Date: Fri, 16 Mar 2018 16:24:13 +0100
+Message-Id: <20180316152342.100812759@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -81,100 +82,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
 
-[ Upstream commit 7bbde83b1860c28a1cc35516352c4e7e5172c29a ]
+[ Upstream commit b9eab08d012fa093947b230f9a87257c27fb829b ]
 
-In qdisc_graft_qdisc a "new" qdisc is attached and the 'qdisc_destroy'
-operation is called on the old qdisc. The destroy operation will wait
-a rcu grace period and call qdisc_rcu_free(). At which point
-gso_cpu_skb is free'd along with all stats so no need to zero stats
-and gso_cpu_skb from the graft operation itself.
+When attempting to load a livepatch module, I got the following error:
 
-Further after dropping the qdisc locks we can not continue to call
-qdisc_reset before waiting an rcu grace period so that the qdisc is
-detached from all cpus. By removing the qdisc_reset() here we get
-the correct property of waiting an rcu grace period and letting the
-qdisc_destroy operation clean up the qdisc correctly.
+  module_64: patch_module: Expect noop after relocate, got 3c820000
 
-Note, a refcnt greater than 1 would cause the destroy operation to
-be aborted however if this ever happened the reference to the qdisc
-would be lost and we would have a memory leak.
+The error was triggered by the following code in
+unregister_netdevice_queue():
 
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  14c:   00 00 00 48     b       14c <unregister_netdevice_queue+0x14c>
+                         14c: R_PPC64_REL24      net_set_todo
+  150:   00 00 82 3c     addis   r4,r2,0
+
+GCC didn't insert a nop after the branch to net_set_todo() because it's
+a sibling call, so it never returns.  The nop isn't needed after the
+branch in that case.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Reviewed-and-tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_generic.c |   28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ arch/powerpc/include/asm/code-patching.h |    1 +
+ arch/powerpc/kernel/module_64.c          |   12 +++++++++++-
+ arch/powerpc/lib/code-patching.c         |    5 +++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -762,10 +762,6 @@ struct Qdisc *dev_graft_qdisc(struct net
- 	root_lock = qdisc_lock(oqdisc);
- 	spin_lock_bh(root_lock);
+--- a/arch/powerpc/include/asm/code-patching.h
++++ b/arch/powerpc/include/asm/code-patching.h
+@@ -33,6 +33,7 @@ int patch_branch(unsigned int *addr, uns
+ int patch_instruction(unsigned int *addr, unsigned int instr);
  
--	/* Prune old scheduler */
--	if (oqdisc && refcount_read(&oqdisc->refcnt) <= 1)
--		qdisc_reset(oqdisc);
--
- 	/* ... and graft new one */
- 	if (qdisc == NULL)
- 		qdisc = &noop_qdisc;
-@@ -916,6 +912,16 @@ static bool some_qdisc_is_busy(struct ne
- 	return false;
+ int instr_is_relative_branch(unsigned int instr);
++int instr_is_relative_link_branch(unsigned int instr);
+ int instr_is_branch_to_addr(const unsigned int *instr, unsigned long addr);
+ unsigned long branch_target(const unsigned int *instr);
+ unsigned int translate_branch(const unsigned int *dest,
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -487,7 +487,17 @@ static bool is_early_mcount_callsite(u32
+    restore r2. */
+ static int restore_r2(u32 *instruction, struct module *me)
+ {
+-	if (is_early_mcount_callsite(instruction - 1))
++	u32 *prev_insn = instruction - 1;
++
++	if (is_early_mcount_callsite(prev_insn))
++		return 1;
++
++	/*
++	 * Make sure the branch isn't a sibling call.  Sibling calls aren't
++	 * "link" branches and they don't return, so they don't need the r2
++	 * restore afterwards.
++	 */
++	if (!instr_is_relative_link_branch(*prev_insn))
+ 		return 1;
+ 
+ 	if (*instruction != PPC_INST_NOP) {
+--- a/arch/powerpc/lib/code-patching.c
++++ b/arch/powerpc/lib/code-patching.c
+@@ -302,6 +302,11 @@ int instr_is_relative_branch(unsigned in
+ 	return instr_is_branch_iform(instr) || instr_is_branch_bform(instr);
  }
  
-+static void dev_qdisc_reset(struct net_device *dev,
-+			    struct netdev_queue *dev_queue,
-+			    void *none)
++int instr_is_relative_link_branch(unsigned int instr)
 +{
-+	struct Qdisc *qdisc = dev_queue->qdisc_sleeping;
-+
-+	if (qdisc)
-+		qdisc_reset(qdisc);
++	return instr_is_relative_branch(instr) && (instr & BRANCH_SET_LINK);
 +}
 +
- /**
-  * 	dev_deactivate_many - deactivate transmissions on several devices
-  * 	@head: list of devices to deactivate
-@@ -926,7 +932,6 @@ static bool some_qdisc_is_busy(struct ne
- void dev_deactivate_many(struct list_head *head)
+ static unsigned long branch_iform_target(const unsigned int *instr)
  {
- 	struct net_device *dev;
--	bool sync_needed = false;
- 
- 	list_for_each_entry(dev, head, close_list) {
- 		netdev_for_each_tx_queue(dev, dev_deactivate_queue,
-@@ -936,20 +941,25 @@ void dev_deactivate_many(struct list_hea
- 					     &noop_qdisc);
- 
- 		dev_watchdog_down(dev);
--		sync_needed |= !dev->dismantle;
- 	}
- 
- 	/* Wait for outstanding qdisc-less dev_queue_xmit calls.
- 	 * This is avoided if all devices are in dismantle phase :
- 	 * Caller will call synchronize_net() for us
- 	 */
--	if (sync_needed)
--		synchronize_net();
-+	synchronize_net();
- 
- 	/* Wait for outstanding qdisc_run calls. */
--	list_for_each_entry(dev, head, close_list)
-+	list_for_each_entry(dev, head, close_list) {
- 		while (some_qdisc_is_busy(dev))
- 			yield();
-+		/* The new qdisc is assigned at this point so we can safely
-+		 * unwind stale skb lists and qdisc statistics
-+		 */
-+		netdev_for_each_tx_queue(dev, dev_qdisc_reset, NULL);
-+		if (dev_ingress_queue(dev))
-+			dev_qdisc_reset(dev, dev_ingress_queue(dev), NULL);
-+	}
- }
- 
- void dev_deactivate(struct net_device *dev)
+ 	signed long imm;
