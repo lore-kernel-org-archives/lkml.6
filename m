@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933146AbeCPCxv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:53:51 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55424 "EHLO vern.gendns.com"
+        id S933180AbeCPCx5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:53:57 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55465 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933065AbeCPCxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:53:46 -0400
+        id S933065AbeCPCxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:53:52 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 14/42] clk: davinci: Add platform information for TI DM365 PSC
-Date: Thu, 15 Mar 2018 21:52:30 -0500
-Message-Id: <1521168778-27236-15-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
+Date: Thu, 15 Mar 2018 21:52:34 -0500
+Message-Id: <1521168778-27236-19-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,52 +36,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds platform-specific declarations for the PSC clocks on TI
-DM365 based systems.
+This adds a new driver for the gate and multiplexer clocks in the
+CFGCHIPn syscon registers on TI DA8XX-type SoCs.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v8 changes:
-- drop use of __init and __initconst attributes
-- add parent clock mappings
+- register clkdev lookup for async1 and async3
 
 v7 changes:
-- split registration function into two, one for each PSC
-- add platform_device_id table
-- don't wrap lines for readability
-- add LPSC_ALWAYS_ENABLED flag to timer0 clock
+- convert to platform device
 
 v6 changes:
-- change how clkdev lookups are declared
+- added DIV4.5 and ASYNC1 clocks
+- refactored code to be more generic
+- added functions for registering clocks from board files (no longer device
+  tree only)
+- use pr_fmt macro
 
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/psc-dm365.c | 96 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/psc.c       |  1 +
- drivers/clk/davinci/psc.h       |  1 +
- 4 files changed, 99 insertions(+)
- create mode 100644 drivers/clk/davinci/psc-dm365.c
+ drivers/clk/davinci/Makefile                    |   2 +
+ drivers/clk/davinci/da8xx-cfgchip.c             | 439 ++++++++++++++++++++++++
+ include/linux/platform_data/clk-da8xx-cfgchip.h |  21 ++
+ 3 files changed, 462 insertions(+)
+ create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
+ create mode 100644 include/linux/platform_data/clk-da8xx-cfgchip.h
 
 diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index e0da5c3..78dc1eb 100644
+index 6c388d4..11178b7 100644
 --- a/drivers/clk/davinci/Makefile
 +++ b/drivers/clk/davinci/Makefile
-@@ -13,4 +13,5 @@ obj-y += psc.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
- endif
-diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
++obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
 new file mode 100644
-index 0000000..3ad915f
+index 0000000..f0bdfea
 --- /dev/null
-+++ b/drivers/clk/davinci/psc-dm365.c
-@@ -0,0 +1,96 @@
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -0,0 +1,439 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * PSC clock descriptions for TI DaVinci DM365
++ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
 + *
 + * Copyright (C) 2018 David Lechner <david@lechnology.com>
 + */
@@ -90,113 +92,460 @@ index 0000000..3ad915f
 +#include <linux/clk.h>
 +#include <linux/clkdev.h>
 +#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_data/clk-da8xx-cfgchip.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+#include "psc.h"
++/* --- Gate clocks --- */
 +
-+LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
-+LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
-+LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
-+LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
-+LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
-+LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
-+LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
-+LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
-+LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
-+LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
-+LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
-+LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
-+/* REVISIT: gpio-davinci.c should be modified to drop con_id */
-+LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
-+LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
-+LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
-+LPSC_CLKDEV1(spi3_clkdev,		NULL,		"spi_davinci.3");
-+LPSC_CLKDEV1(spi4_clkdev,		NULL,		"spi_davinci.4");
-+LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
-+					"fck",		"davinci_mdio.0");
-+LPSC_CLKDEV1(voice_codec_clkdev,	NULL,		"davinci_voicecodec");
-+LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
-+LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++#define DA8XX_GATE_CLOCK_IS_DIV4P5	BIT(1)
 +
-+static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
-+	LPSC(1,  0, vpss_slave,  pll1_sysclk5, vpss_slave_clkdev,  0),
-+	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
-+	LPSC(6,  0, spi1,        pll1_sysclk4, spi1_clkdev,        0),
-+	LPSC(7,  0, mmcsd1,      pll1_sysclk4, mmcsd1_clkdev,      0),
-+	LPSC(8,  0, asp0,        pll1_sysclk4, asp0_clkdev,        0),
-+	LPSC(9,  0, usb,         pll1_auxclk,  usb_clkdev,         0),
-+	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
-+	LPSC(11, 0, spi2,        pll1_sysclk4, spi2_clkdev,        0),
-+	LPSC(12, 0, rto,         pll1_sysclk4, NULL,               0),
-+	LPSC(14, 0, aemif,       pll1_sysclk4, aemif_clkdev,       0),
-+	LPSC(15, 0, mmcsd0,      pll1_sysclk8, mmcsd0_clkdev,      0),
-+	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
-+	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
-+	LPSC(20, 0, uart1,       pll1_sysclk4, uart1_clkdev,       0),
-+	LPSC(22, 0, spi0,        pll1_sysclk4, spi0_clkdev,        0),
-+	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
-+	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
-+	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
-+	LPSC(26, 0, gpio,        pll1_sysclk4, gpio_clkdev,        0),
-+	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
-+	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
-+	/* REVISIT: why can't this be disabled? */
-+	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
-+	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
-+	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
-+	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
-+	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
-+	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
-+	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
-+	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
-+	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
++struct da8xx_cfgchip_gate_clk_info {
++	const char *name;
++	u32 cfgchip;
++	u32 bit;
++	u32 flags;
++};
++
++struct da8xx_cfgchip_gate_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
++
++#define to_da8xx_cfgchip_gate_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
++
++static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
++}
++
++static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
++}
++
++static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return !!(val & clk->mask);
++}
++
++static unsigned long da8xx_cfgchip_div4p5_recalc_rate(struct clk_hw *hw,
++						      unsigned long parent_rate)
++{
++	/* this clock divides by 4.5 */
++	return parent_rate * 2 / 9;
++}
++
++static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
++	.enable		= da8xx_cfgchip_gate_clk_enable,
++	.disable	= da8xx_cfgchip_gate_clk_disable,
++	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
++};
++
++static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
++	.enable		= da8xx_cfgchip_gate_clk_enable,
++	.disable	= da8xx_cfgchip_gate_clk_disable,
++	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
++	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
++};
++
++static struct da8xx_cfgchip_gate_clk * __init
++da8xx_cfgchip_gate_clk_register(struct device *dev,
++				const struct da8xx_cfgchip_gate_clk_info *info,
++				struct regmap *regmap)
++{
++	struct clk *parent;
++	const char *parent_name;
++	struct da8xx_cfgchip_gate_clk *gate;
++	struct clk_init_data init;
++	int ret;
++
++	parent = devm_clk_get(dev, NULL);
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	parent_name = __clk_get_name(parent);
++
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = info->name;
++	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
++		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
++	else
++		init.ops = &da8xx_cfgchip_gate_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = 0;
++
++	gate->hw.init = &init;
++	gate->regmap = regmap;
++	gate->reg = info->cfgchip;
++	gate->mask = info->bit;
++
++	ret = devm_clk_hw_register(dev, &gate->hw);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	return gate;
++}
++
++static const struct da8xx_cfgchip_gate_clk_info da8xx_tbclksync_info __initconst = {
++	.name = "ehrpwm_tbclk",
++	.cfgchip = CFGCHIP(1),
++	.bit = CFGCHIP1_TBCLKSYNC,
++};
++
++static int __init da8xx_cfgchip_register_tbclk(struct device *dev,
++					       struct regmap *regmap)
++{
++	struct da8xx_cfgchip_gate_clk *gate;
++
++	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_tbclksync_info,
++					       regmap);
++	if (IS_ERR(gate))
++		return PTR_ERR(gate);
++
++	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.0");
++	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.1");
++
++	return 0;
++}
++
++static const struct da8xx_cfgchip_gate_clk_info da8xx_div4p5ena_info __initconst = {
++	.name = "div4.5",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_DIV45PENA,
++	.flags = DA8XX_GATE_CLOCK_IS_DIV4P5,
++};
++
++static int __init da8xx_cfgchip_register_div4p5(struct device *dev,
++						struct regmap *regmap)
++{
++	struct da8xx_cfgchip_gate_clk *gate;
++
++	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_div4p5ena_info, regmap);
++	if (IS_ERR(gate))
++		return PTR_ERR(gate);
++
++	return 0;
++}
++
++static int __init
++of_da8xx_cfgchip_gate_clk_init(struct device *dev,
++			       const struct da8xx_cfgchip_gate_clk_info *info,
++			       struct regmap *regmap)
++{
++	struct da8xx_cfgchip_gate_clk *gate;
++
++	gate = da8xx_cfgchip_gate_clk_register(dev, info, regmap);
++	if (IS_ERR(gate))
++		return PTR_ERR(gate);
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, gate);
++}
++
++static int __init of_da8xx_tbclksync_init(struct device *dev,
++					  struct regmap *regmap)
++{
++	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_tbclksync_info, regmap);
++}
++
++static int __init of_da8xx_div4p5ena_init(struct device *dev,
++					  struct regmap *regmap)
++{
++	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_div4p5ena_info, regmap);
++}
++
++/* --- MUX clocks --- */
++
++struct da8xx_cfgchip_mux_clk_info {
++	const char *name;
++	const char *parent0;
++	const char *parent1;
++	u32 cfgchip;
++	u32 bit;
++};
++
++struct da8xx_cfgchip_mux_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
++
++#define to_da8xx_cfgchip_mux_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
++
++static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val = index ? clk->mask : 0;
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
++}
++
++static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return (val & clk->mask) ? 1 : 0;
++}
++
++static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
++	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
++	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
++};
++
++static struct da8xx_cfgchip_mux_clk * __init
++da8xx_cfgchip_mux_clk_register(struct device *dev,
++			       const struct da8xx_cfgchip_mux_clk_info *info,
++			       struct regmap *regmap)
++{
++	const char * const parent_names[] = { info->parent0, info->parent1 };
++	struct da8xx_cfgchip_mux_clk *mux;
++	struct clk_init_data init;
++	int ret;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = info->name;
++	init.ops = &da8xx_cfgchip_mux_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++	init.flags = 0;
++
++	mux->hw.init = &init;
++	mux->regmap = regmap;
++	mux->reg = info->cfgchip;
++	mux->mask = info->bit;
++
++	ret = devm_clk_hw_register(dev, &mux->hw);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	return mux;
++}
++
++static const struct da8xx_cfgchip_mux_clk_info da850_async1_info __initconst = {
++	.name = "async1",
++	.parent0 = "pll0_sysclk3",
++	.parent1 = "div4.5",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_EMA_CLKSRC,
++};
++
++static int __init da8xx_cfgchip_register_async1(struct device *dev,
++						struct regmap *regmap)
++{
++	struct da8xx_cfgchip_mux_clk *mux;
++
++	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async1_info, regmap);
++	if (IS_ERR(mux))
++		return PTR_ERR(mux);
++
++	clk_hw_register_clkdev(&mux->hw, "async1", "da850-psc0");
++
++	return 0;
++}
++
++static const struct da8xx_cfgchip_mux_clk_info da850_async3_info __initconst = {
++	.name = "async3",
++	.parent0 = "pll0_sysclk2",
++	.parent1 = "pll1_sysclk2",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_ASYNC3_CLKSRC,
++};
++
++static int __init da850_cfgchip_register_async3(struct device *dev,
++						struct regmap *regmap)
++{
++	struct da8xx_cfgchip_mux_clk *mux;
++	struct clk_hw *parent;
++
++	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async3_info, regmap);
++	if (IS_ERR(mux))
++		return PTR_ERR(mux);
++
++	clk_hw_register_clkdev(&mux->hw, "async3", "da850-psc1");
++
++	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
++	parent = clk_hw_get_parent_by_index(&mux->hw, 1);
++	if (parent)
++		clk_set_parent(mux->hw.clk, parent->clk);
++	else
++		dev_warn(dev, "Failed to find async3 parent clock\n");
++
++	return 0;
++}
++
++static int __init
++of_da8xx_cfgchip_init_mux_clock(struct device *dev,
++				const struct da8xx_cfgchip_mux_clk_info *info,
++				struct regmap *regmap)
++{
++	struct da8xx_cfgchip_mux_clk *mux;
++
++	mux = da8xx_cfgchip_mux_clk_register(dev, info, regmap);
++	if (IS_ERR(mux))
++		return PTR_ERR(mux);
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &mux->hw);
++}
++
++static int __init of_da850_async1_init(struct device *dev, struct regmap *regmap)
++{
++	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async1_info, regmap);
++}
++
++static int __init of_da850_async3_init(struct device *dev, struct regmap *regmap)
++{
++	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async3_info, regmap);
++}
++
++/* --- platform device --- */
++
++static const struct of_device_id da8xx_cfgchip_of_match[] = {
++	{
++		.compatible = "ti,da830-tbclksync",
++		.data = of_da8xx_tbclksync_init,
++	},
++	{
++		.compatible = "ti,da830-div4p5ena",
++		.data = of_da8xx_div4p5ena_init,
++	},
++	{
++		.compatible = "ti,da850-async1-clksrc",
++		.data = of_da850_async1_init,
++	},
++	{
++		.compatible = "ti,da850-async3-clksrc",
++		.data = of_da850_async3_init,
++	},
 +	{ }
 +};
 +
-+static int dm365_psc_init(struct device *dev, void __iomem *base)
++static const struct platform_device_id da8xx_cfgchip_id_table[] = {
++	{
++		.name = "da830-tbclksync",
++		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_tbclk,
++	},
++	{
++		.name = "da830-div4p5ena",
++		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_div4p5,
++	},
++	{
++		.name = "da850-async1-clksrc",
++		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_async1,
++	},
++	{
++		.name = "da850-async3-clksrc",
++		.driver_data = (kernel_ulong_t)da850_cfgchip_register_async3,
++	},
++	{ }
++};
++
++typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
++
++static int da8xx_cfgchip_probe(struct platform_device *pdev)
 +{
-+	return davinci_psc_register_clocks(dev, dm365_psc_info, 52, base);
++	struct device *dev = &pdev->dev;
++	struct da8xx_cfgchip_clk_platform_data *pdata = dev->platform_data;
++	const struct of_device_id *of_id;
++	da8xx_cfgchip_init clk_init = NULL;
++	struct regmap *regmap = NULL;
++
++	of_id = of_match_device(da8xx_cfgchip_of_match, dev);
++	if (of_id) {
++		struct device_node *parent;
++
++		clk_init = of_id->data;
++		parent = of_get_parent(dev->of_node);
++		regmap = syscon_node_to_regmap(parent);
++		of_node_put(parent);
++	} else if (pdev->id_entry && pdata) {
++		clk_init = (void *)pdev->id_entry->driver_data;
++		regmap = pdata->cfgchip;
++	}
++
++	if (!clk_init) {
++		dev_err(dev, "unable to find driver data\n");
++		return -EINVAL;
++	}
++
++	if (IS_ERR_OR_NULL(regmap)) {
++		dev_err(dev, "no regmap for CFGCHIP syscon\n");
++		return regmap ? PTR_ERR(regmap) : -ENOENT;
++	}
++
++	return clk_init(dev, regmap);
 +}
 +
-+static struct clk_bulk_data dm365_psc_parent_clks[] = {
-+	{ .id = "pll1_sysclk1" },
-+	{ .id = "pll1_sysclk3" },
-+	{ .id = "pll1_sysclk4" },
-+	{ .id = "pll1_sysclk5" },
-+	{ .id = "pll1_sysclk8" },
-+	{ .id = "pll2_sysclk2" },
-+	{ .id = "pll2_sysclk4" },
-+	{ .id = "pll1_auxclk"  },
++static struct platform_driver da8xx_cfgchip_driver = {
++	.probe		= da8xx_cfgchip_probe,
++	.driver		= {
++		.name		= "da8xx-cfgchip-clk",
++		.of_match_table	= da8xx_cfgchip_of_match,
++	},
++	.id_table	= da8xx_cfgchip_id_table,
 +};
 +
-+const struct davinci_psc_init_data dm365_psc_init_data = {
-+	.parent_clks		= dm365_psc_parent_clks,
-+	.num_parent_clks	= ARRAY_SIZE(dm365_psc_parent_clks),
-+	.psc_init		= &dm365_psc_init,
++static int __init da8xx_cfgchip_driver_init(void)
++{
++	return platform_driver_register(&da8xx_cfgchip_driver);
++}
++
++/* has to be postcore_initcall because PSC devices depend on the async3 clock */
++postcore_initcall(da8xx_cfgchip_driver_init);
+diff --git a/include/linux/platform_data/clk-da8xx-cfgchip.h b/include/linux/platform_data/clk-da8xx-cfgchip.h
+new file mode 100644
+index 0000000..de0f77d
+--- /dev/null
++++ b/include/linux/platform_data/clk-da8xx-cfgchip.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * clk-da8xx-cfgchip - TI DaVinci DA8xx CFGCHIP clock driver
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#ifndef __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
++#define __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
++
++#include <linux/regmap.h>
++
++/**
++ * da8xx_cfgchip_clk_platform_data
++ * @cfgchip: CFGCHIP syscon regmap
++ */
++struct da8xx_cfgchip_clk_platform_data {
++	struct regmap *cfgchip;
 +};
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 0825b62..7bcf316 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -493,6 +493,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
- 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
- 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
- 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
-+	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-index d672e72..4f6210e 100644
---- a/drivers/clk/davinci/psc.h
-+++ b/drivers/clk/davinci/psc.h
-@@ -101,5 +101,6 @@ extern const struct davinci_psc_init_data da850_psc1_init_data;
- extern const struct davinci_psc_init_data of_da850_psc0_init_data;
- extern const struct davinci_psc_init_data of_da850_psc1_init_data;
- extern const struct davinci_psc_init_data dm355_psc_init_data;
-+extern const struct davinci_psc_init_data dm365_psc_init_data;
- 
- #endif /* __CLK_DAVINCI_PSC_H__ */
++
++#endif /* __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__ */
 -- 
 2.7.4
