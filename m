@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752964AbeCPOha (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:37:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59227 "EHLO
+        id S1753066AbeCPOiu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:38:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42247 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbeCPOhW (ORCPT
+        with ESMTP id S1752551AbeCPOis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:37:22 -0400
-Date: Fri, 16 Mar 2018 07:36:53 -0700
-From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-7eb709f29593aced51901cb53565477762800722@git.kernel.org>
-Cc: hpa@zytor.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org
-Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mark.rutland@arm.com
-In-Reply-To: <20180315170129.GX4043@hirez.programming.kicks-ass.net>
-References: <20180315170129.GX4043@hirez.programming.kicks-ass.net>
+        Fri, 16 Mar 2018 10:38:48 -0400
+Date: Fri, 16 Mar 2018 07:37:23 -0700
+From: tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-bbb68468641547d56c83012670bcaf77f3dacd64@git.kernel.org>
+Cc: mark.rutland@arm.com, alexey.budankov@linux.intel.com, hpa@zytor.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, hpa@zytor.com, jolsa@redhat.com,
+        mark.rutland@arm.com, alexey.budankov@linux.intel.com
+In-Reply-To: <20180316131741.3svgr64yibc6vsid@lakrids.cambridge.arm.com>
+References: <20180316131741.3svgr64yibc6vsid@lakrids.cambridge.arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf: Fix sibling iteration
-Git-Commit-ID: 7eb709f29593aced51901cb53565477762800722
+Subject: [tip:perf/core] perf/core: Clear sibling list of detached events
+Git-Commit-ID: bbb68468641547d56c83012670bcaf77f3dacd64
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,459 +33,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7eb709f29593aced51901cb53565477762800722
-Gitweb:     https://git.kernel.org/tip/7eb709f29593aced51901cb53565477762800722
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Thu, 15 Mar 2018 17:36:56 +0100
+Commit-ID:  bbb68468641547d56c83012670bcaf77f3dacd64
+Gitweb:     https://git.kernel.org/tip/bbb68468641547d56c83012670bcaf77f3dacd64
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Fri, 16 Mar 2018 12:51:40 +0000
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 16 Mar 2018 15:34:10 +0100
+CommitDate: Fri, 16 Mar 2018 15:34:24 +0100
 
-perf: Fix sibling iteration
+perf/core: Clear sibling list of detached events
 
-Mark noticed that the change to sibling_list changed some iteration
-semantics; because previously we used group_list as list entry,
-sibling events would always have an empty sibling_list.
+When perf_group_dettach() is called on a group leader, it updates each
+sibling's group_leader field to point to that sibling, effectively
+upgrading each siblnig to a group leader. After perf_group_detach has
+completed, the caller may free the leader event.
 
-But because we now use sibling_list for both list head and list entry,
-siblings will report as having siblings.
+We only remove siblings from the group leader's sibling_list when the
+leader has a non-empty group_node. This was fine prior to commit:
 
-Fix this with a custom for_each_sibling_event() iterator.
+  8343aae66167df67 ("perf/core: Remove perf_event::group_entry")
 
-Fixes: 8343aae66167 ("perf/core: Remove perf_event::group_entry")
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+... as the sibling's sibling_list would be empty. However, now that we
+use the sibling_list field as both the list head and the list entry,
+this leaves each sibling with a non-empty sibling list, including the
+stale leader event.
+
+If perf_group_detach() is subsequently called on a sibling, it will
+appear to be a group leader, and we'll walk the sibling_list,
+potentially dereferencing these stale events. In 0day testing, this has
+been observed to result in kernel panics.
+
+Let's avoid this by always removing siblings from the sibling list when
+we promote them to leaders.
+
+Fixes: 8343aae66167df67 ("perf/core: Remove perf_event::group_entry")
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: vincent.weaver@maine.edu
-Cc: alexander.shishkin@linux.intel.com
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: torvalds@linux-foundation.org
-Cc: alexey.budankov@linux.intel.com
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: valery.cherepennikov@intel.com
+Cc: linux-tip-commits@vger.kernel.org
 Cc: eranian@google.com
 Cc: acme@redhat.com
-Cc: linux-tip-commits@vger.kernel.org
+Cc: alexander.shishkin@linux.intel.com
 Cc: davidcc@google.com
 Cc: kan.liang@intel.com
 Cc: Dmitry.Prohorov@intel.com
-Cc: jolsa@redhat.com
-Link: https://lkml.kernel.org/r/20180315170129.GX4043@hirez.programming.kicks-ass.net
-
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: https://lkml.kernel.org/r/20180316131741.3svgr64yibc6vsid@lakrids.cambridge.arm.com
 ---
- arch/alpha/kernel/perf_event.c           |  2 +-
- arch/arm/mach-imx/mmdc.c                 |  2 +-
- arch/arm/mm/cache-l2x0-pmu.c             |  2 +-
- arch/mips/kernel/perf_event_mipsxx.c     |  2 +-
- arch/powerpc/perf/core-book3s.c          |  2 +-
- arch/powerpc/perf/core-fsl-emb.c         |  2 +-
- arch/sparc/kernel/perf_event.c           |  2 +-
- arch/x86/events/core.c                   |  2 +-
- arch/x86/events/intel/uncore.c           |  2 +-
- drivers/bus/arm-cci.c                    |  2 +-
- drivers/bus/arm-ccn.c                    |  4 ++--
- drivers/perf/arm_dsu_pmu.c               |  2 +-
- drivers/perf/arm_pmu.c                   |  2 +-
- drivers/perf/hisilicon/hisi_uncore_pmu.c |  2 +-
- drivers/perf/qcom_l2_pmu.c               |  6 ++----
- drivers/perf/qcom_l3_pmu.c               |  2 +-
- drivers/perf/xgene_pmu.c                 |  4 ++--
- include/linux/perf_event.h               |  4 ++++
- kernel/events/core.c                     | 34 +++++++++++++++-----------------
- 19 files changed, 40 insertions(+), 40 deletions(-)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/perf_event.c b/arch/alpha/kernel/perf_event.c
-index 435864c24479..5613aa378a83 100644
---- a/arch/alpha/kernel/perf_event.c
-+++ b/arch/alpha/kernel/perf_event.c
-@@ -351,7 +351,7 @@ static int collect_events(struct perf_event *group, int max_count,
- 		evtype[n] = group->hw.event_base;
- 		current_idx[n++] = PMC_NO_INDEX;
- 	}
--	list_for_each_entry(pe, &group->sibling_list, sibling_list) {
-+	for_each_sibling_event(pe, group) {
- 		if (!is_software_event(pe) && pe->state != PERF_EVENT_STATE_OFF) {
- 			if (n >= max_count)
- 				return -1;
-diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
-index 27a9ca20933e..04b3bf71de94 100644
---- a/arch/arm/mach-imx/mmdc.c
-+++ b/arch/arm/mach-imx/mmdc.c
-@@ -269,7 +269,7 @@ static bool mmdc_pmu_group_is_valid(struct perf_event *event)
- 			return false;
- 	}
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (!mmdc_pmu_group_event_is_valid(sibling, pmu, &counter_mask))
- 			return false;
- 	}
-diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
-index 3a89ea4c2b57..afe5b4c7b164 100644
---- a/arch/arm/mm/cache-l2x0-pmu.c
-+++ b/arch/arm/mm/cache-l2x0-pmu.c
-@@ -293,7 +293,7 @@ static bool l2x0_pmu_group_is_valid(struct perf_event *event)
- 	else if (!is_software_event(leader))
- 		return false;
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (sibling->pmu == pmu)
- 			num_hw++;
- 		else if (!is_software_event(sibling))
-diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
-index 46097ff3208b..ee73550f0b9a 100644
---- a/arch/mips/kernel/perf_event_mipsxx.c
-+++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -711,7 +711,7 @@ static int validate_group(struct perf_event *event)
- 	if (mipsxx_pmu_alloc_counter(&fake_cpuc, &leader->hw) < 0)
- 		return -EINVAL;
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (mipsxx_pmu_alloc_counter(&fake_cpuc, &sibling->hw) < 0)
- 			return -EINVAL;
- 	}
-diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-index 7c1f66050433..f8908ea4ea73 100644
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1426,7 +1426,7 @@ static int collect_events(struct perf_event *group, int max_count,
- 		flags[n] = group->hw.event_base;
- 		events[n++] = group->hw.config;
- 	}
--	list_for_each_entry(event, &group->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, group) {
- 		if (event->pmu->task_ctx_nr == perf_hw_context &&
- 		    event->state != PERF_EVENT_STATE_OFF) {
- 			if (n >= max_count)
-diff --git a/arch/powerpc/perf/core-fsl-emb.c b/arch/powerpc/perf/core-fsl-emb.c
-index 94c2e63662c6..85f1d18e5fd3 100644
---- a/arch/powerpc/perf/core-fsl-emb.c
-+++ b/arch/powerpc/perf/core-fsl-emb.c
-@@ -277,7 +277,7 @@ static int collect_events(struct perf_event *group, int max_count,
- 		ctrs[n] = group;
- 		n++;
- 	}
--	list_for_each_entry(event, &group->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, group) {
- 		if (!is_software_event(event) &&
- 		    event->state != PERF_EVENT_STATE_OFF) {
- 			if (n >= max_count)
-diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index a0a86d369119..d3149baaa33c 100644
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -1342,7 +1342,7 @@ static int collect_events(struct perf_event *group, int max_count,
- 		events[n] = group->hw.event_base;
- 		current_idx[n++] = PIC_NO_INDEX;
- 	}
--	list_for_each_entry(event, &group->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, group) {
- 		if (!is_software_event(event) &&
- 		    event->state != PERF_EVENT_STATE_OFF) {
- 			if (n >= max_count)
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 77a4125b6b1f..bfc8f43909c1 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -990,7 +990,7 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
- 	if (!dogrp)
- 		return n;
- 
--	list_for_each_entry(event, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, leader) {
- 		if (!is_x86_event(event) ||
- 		    event->state <= PERF_EVENT_STATE_OFF)
- 			continue;
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 9e374cd22ad2..a7956fc7ca1d 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -354,7 +354,7 @@ uncore_collect_events(struct intel_uncore_box *box, struct perf_event *leader,
- 	if (!dogrp)
- 		return n;
- 
--	list_for_each_entry(event, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, leader) {
- 		if (!is_box_event(box, event) ||
- 		    event->state <= PERF_EVENT_STATE_OFF)
- 			continue;
-diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-index c98435bdb64f..c4c0c8560cce 100644
---- a/drivers/bus/arm-cci.c
-+++ b/drivers/bus/arm-cci.c
-@@ -1311,7 +1311,7 @@ validate_group(struct perf_event *event)
- 	if (!validate_event(event->pmu, &fake_pmu, leader))
- 		return -EINVAL;
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (!validate_event(event->pmu, &fake_pmu, sibling))
- 			return -EINVAL;
- 	}
-diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
-index 1c310a4be000..65b7e4042ece 100644
---- a/drivers/bus/arm-ccn.c
-+++ b/drivers/bus/arm-ccn.c
-@@ -846,11 +846,11 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
- 			!is_software_event(event->group_leader))
- 		return -EINVAL;
- 
--	list_for_each_entry(sibling, &event->group_leader->sibling_list,
--			sibling_list)
-+	for_each_sibling_event(sibling, event->group_leader) {
- 		if (sibling->pmu != event->pmu &&
- 				!is_software_event(sibling))
- 			return -EINVAL;
-+	}
- 
- 	return 0;
- }
-diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
-index 660680d78147..660cb8ac886a 100644
---- a/drivers/perf/arm_dsu_pmu.c
-+++ b/drivers/perf/arm_dsu_pmu.c
-@@ -536,7 +536,7 @@ static bool dsu_pmu_validate_group(struct perf_event *event)
- 	memset(fake_hw.used_mask, 0, sizeof(fake_hw.used_mask));
- 	if (!dsu_pmu_validate_event(event->pmu, &fake_hw, leader))
- 		return false;
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (!dsu_pmu_validate_event(event->pmu, &fake_hw, sibling))
- 			return false;
- 	}
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 628d7a7b9526..344e2083e941 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -311,7 +311,7 @@ validate_group(struct perf_event *event)
- 	if (!validate_event(event->pmu, &fake_pmu, leader))
- 		return -EINVAL;
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (!validate_event(event->pmu, &fake_pmu, sibling))
- 			return -EINVAL;
- 	}
-diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-index e3356087fd76..44df61397a38 100644
---- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-@@ -82,7 +82,7 @@ static bool hisi_validate_event_group(struct perf_event *event)
- 			counters++;
- 	}
- 
--	list_for_each_entry(sibling, &event->group_leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, event->group_leader) {
- 		if (is_software_event(sibling))
- 			continue;
- 		if (sibling->pmu != event->pmu)
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 5e535a718965..1a7889f63c9a 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -534,8 +534,7 @@ static int l2_cache_event_init(struct perf_event *event)
- 		return -EINVAL;
- 	}
- 
--	list_for_each_entry(sibling, &event->group_leader->sibling_list,
--			    sibling_list)
-+	for_each_sibling_event(sibling, event->group_leader) {
- 		if (sibling->pmu != event->pmu &&
- 		    !is_software_event(sibling)) {
- 			dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
-@@ -571,8 +570,7 @@ static int l2_cache_event_init(struct perf_event *event)
- 		return -EINVAL;
- 	}
- 
--	list_for_each_entry(sibling, &event->group_leader->sibling_list,
--			    sibling_list) {
-+	for_each_sibling_event(sibling, event->group_leader) {
- 		if ((sibling != event) &&
- 		    !is_software_event(sibling) &&
- 		    (L2_EVT_GROUP(sibling->attr.config) ==
-diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
-index 5dedf4b1a552..2dc63d61f2ea 100644
---- a/drivers/perf/qcom_l3_pmu.c
-+++ b/drivers/perf/qcom_l3_pmu.c
-@@ -468,7 +468,7 @@ static bool qcom_l3_cache__validate_event_group(struct perf_event *event)
- 	counters = event_num_counters(event);
- 	counters += event_num_counters(leader);
- 
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (is_software_event(sibling))
- 			continue;
- 		if (sibling->pmu != event->pmu)
-diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-index f1f4a56cab5e..6bdb1dad805f 100644
---- a/drivers/perf/xgene_pmu.c
-+++ b/drivers/perf/xgene_pmu.c
-@@ -949,11 +949,11 @@ static int xgene_perf_event_init(struct perf_event *event)
- 			!is_software_event(event->group_leader))
- 		return -EINVAL;
- 
--	list_for_each_entry(sibling, &event->group_leader->sibling_list,
--			sibling_list)
-+	for_each_sibling_event(sibling, event->group_leader) {
- 		if (sibling->pmu != event->pmu &&
- 				!is_software_event(sibling))
- 			return -EINVAL;
-+	}
- 
- 	return 0;
- }
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 2bb200e1bbea..ff39ab011376 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -536,6 +536,10 @@ struct pmu_event_list {
- 	struct list_head	list;
- };
- 
-+#define for_each_sibling_event(sibling, event)			\
-+	if ((event)->group_leader == (event))			\
-+		list_for_each_entry((sibling), &(event)->sibling_list, sibling_list)
-+
- /**
-  * struct perf_event - performance event kernel representation:
-  */
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3b4c7792a6ac..4d7a460d6669 100644
+index 4d7a460d6669..2776a660db15 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -643,7 +643,7 @@ static void perf_event_update_sibling_time(struct perf_event *leader)
- {
- 	struct perf_event *sibling;
+@@ -1906,12 +1906,12 @@ static void perf_group_detach(struct perf_event *event)
+ 	list_for_each_entry_safe(sibling, tmp, &event->sibling_list, sibling_list) {
  
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list)
-+	for_each_sibling_event(sibling, leader)
- 		perf_event_update_time(sibling);
- }
+ 		sibling->group_leader = sibling;
++		list_del_init(&sibling->sibling_list);
  
-@@ -1828,7 +1828,7 @@ static void perf_group_attach(struct perf_event *event)
+ 		/* Inherit group flags from the previous leader */
+ 		sibling->group_caps = event->group_caps;
  
- 	perf_event__header_size(group_leader);
+ 		if (!RB_EMPTY_NODE(&event->group_node)) {
+-			list_del_init(&sibling->sibling_list);
+ 			add_event_to_groups(sibling, event->ctx);
  
--	list_for_each_entry(pos, &group_leader->sibling_list, sibling_list)
-+	for_each_sibling_event(pos, group_leader)
- 		perf_event__header_size(pos);
- }
- 
-@@ -1928,7 +1928,7 @@ static void perf_group_detach(struct perf_event *event)
- out:
- 	perf_event__header_size(event->group_leader);
- 
--	list_for_each_entry(tmp, &event->group_leader->sibling_list, sibling_list)
-+	for_each_sibling_event(tmp, event->group_leader)
- 		perf_event__header_size(tmp);
- }
- 
-@@ -1951,13 +1951,13 @@ static inline int __pmu_filter_match(struct perf_event *event)
-  */
- static inline int pmu_filter_match(struct perf_event *event)
- {
--	struct perf_event *child;
-+	struct perf_event *sibling;
- 
- 	if (!__pmu_filter_match(event))
- 		return 0;
- 
--	list_for_each_entry(child, &event->sibling_list, sibling_list) {
--		if (!__pmu_filter_match(child))
-+	for_each_sibling_event(sibling, event) {
-+		if (!__pmu_filter_match(sibling))
- 			return 0;
- 	}
- 
-@@ -2031,7 +2031,7 @@ group_sched_out(struct perf_event *group_event,
- 	/*
- 	 * Schedule out siblings (if any):
- 	 */
--	list_for_each_entry(event, &group_event->sibling_list, sibling_list)
-+	for_each_sibling_event(event, group_event)
- 		event_sched_out(event, cpuctx, ctx);
- 
- 	perf_pmu_enable(ctx->pmu);
-@@ -2310,7 +2310,7 @@ group_sched_in(struct perf_event *group_event,
- 	/*
- 	 * Schedule in siblings as one group (if any):
- 	 */
--	list_for_each_entry(event, &group_event->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, group_event) {
- 		if (event_sched_in(event, cpuctx, ctx)) {
- 			partial_group = event;
- 			goto group_error;
-@@ -2326,7 +2326,7 @@ group_error:
- 	 * partial group before returning:
- 	 * The events up to the failed event are scheduled out normally.
- 	 */
--	list_for_each_entry(event, &group_event->sibling_list, sibling_list) {
-+	for_each_sibling_event(event, group_event) {
- 		if (event == partial_group)
- 			break;
- 
-@@ -3863,7 +3863,7 @@ static void __perf_event_read(void *info)
- 
- 	pmu->read(event);
- 
--	list_for_each_entry(sub, &event->sibling_list, sibling_list) {
-+	for_each_sibling_event(sub, event) {
- 		if (sub->state == PERF_EVENT_STATE_ACTIVE) {
- 			/*
- 			 * Use sibling's PMU rather than @event's since
-@@ -4711,7 +4711,7 @@ static int __perf_read_group_add(struct perf_event *leader,
- 	if (read_format & PERF_FORMAT_ID)
- 		values[n++] = primary_event_id(leader);
- 
--	list_for_each_entry(sub, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sub, leader) {
- 		values[n++] += perf_event_count(sub);
- 		if (read_format & PERF_FORMAT_ID)
- 			values[n++] = primary_event_id(sub);
-@@ -4905,7 +4905,7 @@ static void perf_event_for_each(struct perf_event *event,
- 	event = event->group_leader;
- 
- 	perf_event_for_each_child(event, func);
--	list_for_each_entry(sibling, &event->sibling_list, sibling_list)
-+	for_each_sibling_event(sibling, event)
- 		perf_event_for_each_child(sibling, func);
- }
- 
-@@ -6077,7 +6077,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
- 
- 	__output_copy(handle, values, n * sizeof(u64));
- 
--	list_for_each_entry(sub, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sub, leader) {
- 		n = 0;
- 
- 		if ((sub != event) &&
-@@ -10662,8 +10662,7 @@ SYSCALL_DEFINE5(perf_event_open,
- 		perf_remove_from_context(group_leader, 0);
- 		put_ctx(gctx);
- 
--		list_for_each_entry(sibling, &group_leader->sibling_list,
--				    sibling_list) {
-+		for_each_sibling_event(sibling, group_leader) {
- 			perf_remove_from_context(sibling, 0);
- 			put_ctx(gctx);
- 		}
-@@ -10684,8 +10683,7 @@ SYSCALL_DEFINE5(perf_event_open,
- 		 * By installing siblings first we NO-OP because they're not
- 		 * reachable through the group lists.
- 		 */
--		list_for_each_entry(sibling, &group_leader->sibling_list,
--				    sibling_list) {
-+		for_each_sibling_event(sibling, group_leader) {
- 			perf_event__state_init(sibling);
- 			perf_install_in_context(ctx, sibling, sibling->cpu);
- 			get_ctx(ctx);
-@@ -11324,7 +11322,7 @@ static int inherit_group(struct perf_event *parent_event,
- 	 * case inherit_event() will create individual events, similar to what
- 	 * perf_group_detach() would do anyway.
- 	 */
--	list_for_each_entry(sub, &parent_event->sibling_list, sibling_list) {
-+	for_each_sibling_event(sub, parent_event) {
- 		child_ctr = inherit_event(sub, parent, parent_ctx,
- 					    child, leader, child_ctx);
- 		if (IS_ERR(child_ctr))
+ 			if (sibling->state == PERF_EVENT_STATE_ACTIVE) {
