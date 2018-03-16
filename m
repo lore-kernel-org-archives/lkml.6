@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvWP4MOukh5229dhnSop3F999KZ/SWH1Ggr5dofNxftDYz/MQy6uDNVDyPgtOkvihjZdV2g
-ARC-Seal: i=1; a=rsa-sha256; t=1521213833; cv=none;
+X-Google-Smtp-Source: AG47ELtSHjLuo/Q5CGKJ1RiActyDoTvgzH1fjaUuVSCUSFKSp+x7yiirEUrinREnw2w5ePNZhfk0
+ARC-Seal: i=1; a=rsa-sha256; t=1521213830; cv=none;
         d=google.com; s=arc-20160816;
-        b=yGTWlDN5a6AtMZYOZP3whzCEfTAguSZNe4z7+U5L+j8p9IRf2BmrgIBRKeT0PdYm2q
-         g89Vv2rvErcJeZrZA/4F5fX6fD5MNtUN5reB8syMPdtYbSjMTs1GagkWePYY9qvpk6HY
-         +l3VhDMnDQJzKIciWCGQptWcqpgADHe704RiFB19mBfi7lJMcOoxVyTzRQULuSL6IWaT
-         Jsey/91JPJIeD0ydwLeXUM3+F5cmcN5HYs3ZNnatmcryonke5Rzl0xEgpYp3c3ikxbzB
-         mQMAB9RLKQY0aGKo8LT7DDv3R5B2omRNDzusB0uc9nQSaMTl2wSYAzV308uehLwFF7eC
-         dVUQ==
+        b=CV64t4VlqmNOTjaJSL6RpApKQO45bKc0wcYBnjwcXXOtlA92VE2XWpKLZ+Q38vuZDN
+         55ObK+mLDTYNUl+yMsvD1+2JgsjiTLmiTsVkRJRwibzQT13tSze7lJzIa0LwIgujVz5D
+         aLOL5UoyBSK2XAW9LZysyhw0OHIYTf1zgfL9ssd7tIMrOykJAalnKq5ZwvqjhOb4atKg
+         hL9HOk7JwvQOIWHqAoDRZEsl+6fQwW7lTmloVg00NL25lCHvRDDTSkUxBZLaLCVGM8ES
+         mEmxfh0Tv46DTp9pQJwoKpZyRB1i7uxjwbepHfMRJWyHeQ679sAZ9YT5DO/0lnnyGdr1
+         5POQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RzCT8kyb21WzMRdU8QzJ1H7hcij8dS1IY1F6RQAurJg=;
-        b=kWj73Wm8w0DinnUEmJ89nHqnUwkqMaSHpU26V5YFHpL4HV+2z3JMsviedOF3NRdN59
-         OQFNwEVw4fQMERW1DvUZjFPzDyUoUNTfU4Ww37ODqEfBTjsTohNbkZ1gZ+3B9kuRU/IZ
-         Jv7ykaS/pgpwwqLN5HMlxChY9Wcg7xuvK4Lkw7jtJ7/NgQ+IDYGSzePxkXiJP1yeEYfn
-         ghLN7KSD2CEJwNdwdWvcCbEvAqIEUa3a/1mwqTtF3ncwyYsm5v9onU/P+3e1FhTR+Lg5
-         acpuZtk6ZabLnHhlI7hs1NYcLh22qzsGgw1hGG08kNYrKFPUW8oiTnlKNgI6keyfGD6q
-         qWKg==
+        bh=4Do/+IvxXyD7p4XiOmVJWMFyw+SwWn34h+0668m+8vs=;
+        b=ZKrKLVOUOSmKqMBfpvSB3ero93ILVxqBtEsJ9fHfOIE2zgRWNoK3hToLzty4funJ0W
+         wRS+qo7Bg3J3asSx5Vbn0U11ZD+pyXLzAlWqdiaEispkNUQwJXFeJCgne2TDJ3W+QImc
+         +g4By8oGvMDpjhvwLz2i31XpomiPDQ8woEsEjGur7N48HQM07nLhmts+TKxkVCdGqfDn
+         F2K9x+1CA9BWkZUrxEvoxXeGa9nX60uMlv6jxH3STq62FFzEXkEsgLrpURpJok8X2UNo
+         5Sny3xoablj8Rrgn7YlA+kU9uv9EcWkNzUNETiXnrYLKdUzrVw5pew651mAQn4DnXao6
+         15Ow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Danilo Krummrich <danilokrummrich@dk-develop.de>
-Subject: [PATCH 3.18 21/25] usb: quirks: add control message delay for 1b1c:1b20
-Date: Fri, 16 Mar 2018 16:23:08 +0100
-Message-Id: <20180316152233.607744351@linuxfoundation.org>
+	Todd Kjos <tkjos@google.com>,
+	Arve Hjonnevag <arve@android.com>,
+	syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com,
+	Joel Fernandes <joelaf@google.com>,
+	Greg Hackmann <ghackmann@google.com>
+Subject: [PATCH 3.18 20/25] staging: android: ashmem: Fix lockdep issue during llseek
+Date: Fri, 16 Mar 2018 16:23:07 +0100
+Message-Id: <20180316152233.570461348@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
@@ -39,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108316565102090?=
-X-GMAIL-MSGID: =?utf-8?q?1595108316565102090?=
+X-GMAIL-THRID: =?utf-8?q?1595108314094103407?=
+X-GMAIL-MSGID: =?utf-8?q?1595108314094103407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,83 +52,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
+From: Joel Fernandes <joelaf@google.com>
 
-commit cb88a0588717ba6c756cb5972d75766b273a6817 upstream.
+commit cb57469c9573f6018cd1302953dd45d6e05aba7b upstream.
 
-Corsair Strafe RGB keyboard does not respond to usb control messages
-sometimes and hence generates timeouts.
+ashmem_mutex create a chain of dependencies like so:
 
-Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
-Strafe RGB keyboard") tried to fix those timeouts by adding
-USB_QUIRK_DELAY_INIT.
+(1)
+mmap syscall ->
+  mmap_sem ->  (acquired)
+  ashmem_mmap
+  ashmem_mutex (try to acquire)
+  (block)
 
-Unfortunately, even with this quirk timeouts of usb_control_msg()
-can still be seen, but with a lower frequency (approx. 1 out of 15):
+(2)
+llseek syscall ->
+  ashmem_llseek ->
+  ashmem_mutex ->  (acquired)
+  inode_lock ->
+  inode->i_rwsem (try to acquire)
+  (block)
 
-[   29.103520] usb 1-8: string descriptor 0 read error: -110
-[   34.363097] usb 1-8: can't set config #1, error -110
+(3)
+getdents ->
+  iterate_dir ->
+  inode_lock ->
+  inode->i_rwsem   (acquired)
+  copy_to_user ->
+  mmap_sem         (try to acquire)
 
-Adding further delays to different locations where usb control
-messages are issued just moves the timeouts to other locations,
-e.g.:
+There is a lock ordering created between mmap_sem and inode->i_rwsem
+causing a lockdep splat [2] during a syzcaller test, this patch fixes
+the issue by unlocking the mutex earlier. Functionally that's Ok since
+we don't need to protect vfs_llseek.
 
-[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
-[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
+[1] https://patchwork.kernel.org/patch/10185031/
+[2] https://lkml.org/lkml/2018/1/10/48
 
-The only way to reliably avoid those issues is having a pause after
-each usb control message. In approx. 200 boot cycles no more timeouts
-were seen.
-
-Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
-to have the delay in hub_port_connect() after hub_port_init().
-
-The overall boot time seems not to be influenced by these additional
-delays, even on fast machines and lightweight distributions.
-
-Fixes: de3af5bf259d ("usb: quirks: add delay init quirk for Corsair Strafe RGB keyboard")
+Acked-by: Todd Kjos <tkjos@google.com>
+Cc: Arve Hjonnevag <arve@android.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
+Signed-off-by: Joel Fernandes <joelaf@google.com>
+Acked-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/message.c |    4 ++++
- drivers/usb/core/quirks.c  |    3 ++-
- include/linux/usb/quirks.h |    3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/staging/android/ashmem.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -147,6 +147,10 @@ int usb_control_msg(struct usb_device *d
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -330,24 +330,23 @@ static loff_t ashmem_llseek(struct file
+ 	mutex_lock(&ashmem_mutex);
  
- 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
+ 	if (asma->size == 0) {
+-		ret = -EINVAL;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EINVAL;
+ 	}
  
-+	/* Linger a bit, prior to the next control message. */
-+	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+		msleep(200);
+ 	if (!asma->file) {
+-		ret = -EBADF;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EBADF;
+ 	}
+ 
++	mutex_unlock(&ashmem_mutex);
 +
- 	kfree(dr);
+ 	ret = vfs_llseek(asma->file, offset, origin);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
  
+ 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
+ 	file->f_pos = asma->file->f_pos;
+-
+-out:
+-	mutex_unlock(&ashmem_mutex);
  	return ret;
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -219,7 +219,8 @@ static const struct usb_device_id usb_qu
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ }
  
- 	/* Corsair Strafe RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -56,4 +56,7 @@
-  */
- #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
- 
-+/* Device needs a pause after every control message. */
-+#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
