@@ -1,66 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751870AbeCPUrw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:47:52 -0400
-Received: from bm.shmanahar.org ([80.68.91.236]:42384 "EHLO bm.shmanahar.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750877AbeCPUru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:47:50 -0400
-Date: Fri, 16 Mar 2018 20:40:02 +0000
-From: Nick Dyer <nick@shmanahar.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] Input: atmel_mxt_ts - do not pass suspend mode in
- platform data
-Message-ID: <20180316204002.GA24333@bm.shmanahar.org>
-References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
- <20180312190907.174301-2-dmitry.torokhov@gmail.com>
- <20180314205123.GA26353@lava.h.shmanahar.org>
- <20180315235621.GA60361@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315235621.GA60361@dtor-ws>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751917AbeCPUvb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:51:31 -0400
+Received: from [195.159.176.226] ([195.159.176.226]:39817 "EHLO
+        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1750826AbeCPUva (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 16:51:30 -0400
+X-Injected-Via-Gmane: http://gmane.org/
+To: linux-kernel@vger.kernel.org
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] net: ethernet: arc: Fix a potential memory leak if an
+ optional regulator is deferred
+Date: Fri, 16 Mar 2018 21:51:21 +0100
+Message-ID: <89a63178-a08a-5023-a045-018b4d7b11bc@wanadoo.fr>
+References: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
+ <20180316.152712.1584177628223195375.davem@davemloft.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Complaints-To: usenet@blaine.gmane.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+In-Reply-To: <20180316.152712.1584177628223195375.davem@davemloft.net>
+Content-Language: fr
+Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 04:56:21PM -0700, Dmitry Torokhov wrote:
-> On Wed, Mar 14, 2018 at 08:51:24PM +0000, Nick Dyer wrote:
-> > On Mon, Mar 12, 2018 at 12:08:54PM -0700, Dmitry Torokhov wrote:
-> > > The way we are supposed to put controller to sleep and wake it up does not
-> > > depend on the platform, but rather on controller itself. Controllers using
-> > > T9 require manipulating T9 control register, while others, using newer
-> > > T100, should be put to sleep by adjusting T7 power config.
-> > 
-> > I'm afraid this is actually a misconception. If you look at object table
-> > for the older T9 device, you'll find it has the T7 object and it in fact
-> > works exactly the same way as the T100-based device.
-> > 
-> > The MXT_SUSPEND_T9_CTRL is in there because on your older Pixel devices
-> > the config saved into NVRAM on the touch controller has a zero byte in
-> > the T9 CTRL setting, meaning the touch controller will never wake up
-> > unless the driver knows to write 0x83 into it.
-> 
-> Ah, OK, I see. I would really like to drop this pdata->suspend_mode
-> stuff and I do not want to create "pixel-screwed-up" property either...
-> I guess for the time being I'll put a DMI quirk for Link to restore T9
-> control method, and then look into cleaning it all up. We have quite a
-> bit different code in chromeos kernel trees and I'd like to reconcile
-> it.
+Le 16/03/2018 à 20:27, David Miller a écrit :
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Date: Wed, 14 Mar 2018 22:09:34 +0100
+>
+>> diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
+>> index 16f9bee992fe..8ee9dfd0e363 100644
+>> --- a/drivers/net/ethernet/arc/emac_rockchip.c
+>> +++ b/drivers/net/ethernet/arc/emac_rockchip.c
+>> @@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
+>>   	/* Optional regulator for PHY */
+>>   	priv->regulator = devm_regulator_get_optional(dev, "phy");
+>>   	if (IS_ERR(priv->regulator)) {
+>> -		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
+>> -			return -EPROBE_DEFER;
+>> +		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
+>> +			ret = -EPROBE_DEFER;
+>> +			goto out_clk_disable;
+>> +		}
+> Please build test your changes.
+>
+> There is no 'ret' variable in this function, perhaps you meant 'err'.
+>
+Yes, obviously, this is 'err'.
 
-Yes, it would be great to get rid of it. The driver does have the
-ability to download configuration via the firmware loader interface. So
-you would be able to grab a copy of the config by saving it with
-mxt-app, tweak it to ensure that the T9 CTRL byte is set correctly, then
-ship it somehow (presumably it could be added to linux-firmware). This
-would override what's currently stored in NVRAM on all those units and
-mean we could remove the T9_CTRL stuff.
+I apologize. I usually build-test all my patches before submission.
+This one seems to have gone out of my normal process.
 
-I'm happy to talk you through sorting that out in more detail if you
-want to give it a go. I don't have any Pixel 1 hardware available at the
-moment, unfortunately.
+Can you fix it yourself or do you want me to re-submit?
 
-N
+CJ
