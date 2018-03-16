@@ -1,41 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934563AbeCPP4Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:56:24 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:59582 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753976AbeCPP4T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:56:19 -0400
-Date: Fri, 16 Mar 2018 23:56:10 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: hash.h: Prevent use of req->result in ahash
- update
-Message-ID: <20180316155610.GG7095@gondor.apana.org.au>
-References: <CGME20180307104934eucas1p18af0e65a519299997b5d2f7fb78cd39f@eucas1p1.samsung.com>
- <7850c31c-8703-51fb-0710-3b4920935bfc@partner.samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7850c31c-8703-51fb-0710-3b4920935bfc@partner.samsung.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S965354AbeCPP5h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:57:37 -0400
+Received: from mout01.posteo.de ([185.67.36.65]:54899 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934612AbeCPP5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 11:57:35 -0400
+From: Martin Kepplinger <martink@posteo.de>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martink@posteo.de>
+Subject: [PATCH] README: Improve documentation descriptions
+Date: Fri, 16 Mar 2018 16:57:07 +0100
+Message-Id: <20180316155707.28426-1-martink@posteo.de>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 11:49:33AM +0100, Kamil Konieczny wrote:
-> Prevent improper use of req->result field in ahash update, init, export and
-> import functions in drivers code. A driver should use ahash request context
-> if it needs to save internal state.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+"This file" indeed was moved once, but at some point "this file", the
+top-level README, becomes a file in itself. Now that time has come :)
 
-Patch applied.  Thanks.
+Let's describe how things are, and suggest reading "this file" first,
+"this file" simply being a the admin-guide README file, not a file that
+was once moved.
+
+Signed-off-by: Martin Kepplinger <martink@posteo.de>
+---
+
+That's at least my opinion :)
+
+thanks
+                         martin
+
+
+ README | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/README b/README
+index b2ba4aaa3a71..12b4674a483c 100644
+--- a/README
++++ b/README
+@@ -1,10 +1,9 @@
+ Linux kernel
+ ============
+ 
+-This file was moved to Documentation/admin-guide/README.rst
+-
+-Please notice that there are several guides for kernel developers and users.
+-These guides can be rendered in a number of formats, like HTML and PDF.
++There are several guides for kernel developers and users. These guides can
++be rendered in a number of formats, like HTML and PDF. Please read
++Documentation/admin-guide/README.rst first.
+ 
+ In order to build the documentation, use ``make htmldocs`` or
+ ``make pdfdocs``.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.2
