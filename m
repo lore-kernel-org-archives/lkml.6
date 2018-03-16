@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtBGWv+CnOwj9kqmBewJMLy1MUxiI0YvH+6msRlbNYuHEf2+r/Wc2vIDe7mL440YZojEGkM
-ARC-Seal: i=1; a=rsa-sha256; t=1521214954; cv=none;
+X-Google-Smtp-Source: AG47ELt7iIsXDnM6LR6qJ3JeWRJKl8tZSbWfBzqrmwGtQzkI0wNGX3h5306aFFIC6NdQmgRZDOMv
+ARC-Seal: i=1; a=rsa-sha256; t=1521214951; cv=none;
         d=google.com; s=arc-20160816;
-        b=WyBaO6Jz/tRXhgu3cqeAjY0ywaz8F0mxcpJGGsz6tHdcJIUUraLN4SsMrwsxKPbEKd
-         yHcGLlHxNFG4RFWMIHyiRi4W14LRWbeRVUnam1sA0V8sstX/ViFjskFgMFuPdpI6H8pb
-         0R02lQhvCGEI5oSdEkCFXXMW9hXp20ZQRtCt0OLslyYxqUUGJhV1/Ry7ZtSevimnZFbG
-         KqjlPkn5L2ITqSkJG4N+sSrP9hHQJrVZ/gnUXK0gl+Z+LN5iNzhAn68cyrYJRq5tN+G1
-         kmp81kI751YcSAno9mjK3oNGTW8u4pMEWLzH7Wx5sWR0YR6UCYAg46aCTzqPfvjo/m+q
-         3UnQ==
+        b=kchjY7z8f7BNGEAZqe34SlBi3I7oAZgiSD/exN1QjR0nUJZ09CD/LJXI4uBSN5YG1M
+         TbP5JiNseRytMKp93L0AX9GX/1Kmz1Lk+eNuB6FePmVNZHu0ltB8IKxZCiQH+I0we3P7
+         iovSL0PcHC8rPmu3jigHCYDKgm7AWwh5hjkGXvUcjoumR1zcTUzSHRsq7lkaj9Yni3n+
+         OCw9wEmGDODb2TPj6DKtybaF6Sc52AynLmO9GeyuXmaIDPkGGQiJKHXeWhF9/3HSJswv
+         21fhliEeXqSwPwhkoUUF+aQSNufYHV0voiHJ+NongBKj9Vw8ufRKD0nnB2rJZmjqwolL
+         Ec5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2lVOVby/CtyFfaha15D1XNgkyu25p90Lhnwgbr6XjvM=;
-        b=KiANuu+Tk73oVE8gLAFgGmk23VQWqFAY/4t+49nMX8eoGtqH01Qdg+OV6k2SIRX4g+
-         9jkwM6LRqPM8YU+dDQIUpx2zHV42qTK85/ar9T9YLt7cBoK3z3fdjifXsj3dMS2yzpVv
-         4Z/iryXvFYvv1EkJB3qxyfcBcaYyo2p4Z5sWFHRti5YL4y9iqGUcHpPH5sUdv6bi1GoF
-         l8n6QhuE3Y/EGcHz2AdTHykqzK+8PNzagIIZcBvHEnXkqsTTIxI6saOKLpEku5KX/ovO
-         Gy8KCfuIBxOcAs48KVEJMVP0ev/xJa0B/D1aPHZEqeixckC5zWmgKbHA6SqaS+SE/jQ3
-         Pqeg==
+        bh=k6rnElQP/EyY40/yj1yjyBD0NSoKxKKPT1OUpTRk3ws=;
+        b=cf4iGe169r6Rbc3DHYFG7peZCf6oD+BD/rNoHCk6cCOB1Yuy0weWQLlDMZLjLSGFip
+         U1sC/BGJ0jym+NUZssjcpmx22Tn+SF5fxknVbbHnujbkntdgSTIXElA6ry0EQfReTz/I
+         ctF1gaST/RrtbbJJ8S6NRPFmgvJNwkUrLzauOx2W+8um16bBm7SzY+q1rwPzqRJ1F0bX
+         +4NxuBqarDRD2tGT0W//rfY/yg68s4pxDhkiBQsd5NCmdh/FBAwaVYnR6AAXl9imKzV9
+         t6NQQbXbb0eMblch3GmeEmZ4ojxFt8nfSPAhRz8VXxgKdhmadGJoEqJmZSmr69X4VJld
+         E71Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Manikanta Pubbisetty <mpubbise@qti.qualcomm.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Matt Ranostay <matt.ranostay@konsulko.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 075/128] ath10k: update tdls teardown state to target
-Date: Fri, 16 Mar 2018 16:23:36 +0100
-Message-Id: <20180316152340.426356878@linuxfoundation.org>
+Subject: [PATCH 4.15 074/128] iio: health: max30102: Add power enable parameter to get_temp function
+Date: Fri, 16 Mar 2018 16:23:35 +0100
+Message-Id: <20180316152340.389768937@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109120990958333?=
-X-GMAIL-MSGID: =?utf-8?q?1595109491934435758?=
+X-GMAIL-THRID: =?utf-8?q?1595109117575127443?=
+X-GMAIL-MSGID: =?utf-8?q?1595109488914022567?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +51,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Manikanta Pubbisetty <mpubbise@qti.qualcomm.com>
+From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
 
-[ Upstream commit 424ea0d174e82365f85c6770225dba098b8f1d5f ]
+[ Upstream commit a9c47abbdd71dceeaf1b923e5ce10e700e036905 ]
 
-It is required to update the teardown state of the peer when
-a tdls link with that peer is terminated. This information is
-useful for the target to perform some cleanups wrt the tdls peer.
+Chip must not be in shutdown for reading temperature, so briefly leave
+shutdown if buffer is not already running
 
-Without proper cleanup, target assumes that the peer is connected and
-blocks future connection requests, updating the teardown state of the
-peer addresses the problem.
-
-Tested this change on QCA9888 with 10.4-3.5.1-00018 fw version.
-
-Signed-off-by: Manikanta Pubbisetty <mpubbise@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/iio/health/max30102.c |   36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6201,6 +6201,16 @@ static int ath10k_sta_state(struct ieee8
- 			   "mac vdev %d peer delete %pM sta %pK (sta gone)\n",
- 			   arvif->vdev_id, sta->addr, sta);
+--- a/drivers/iio/health/max30102.c
++++ b/drivers/iio/health/max30102.c
+@@ -329,20 +329,31 @@ static int max30102_read_temp(struct max
+ 	return 0;
+ }
  
-+		if (sta->tdls) {
-+			ret = ath10k_mac_tdls_peer_update(ar, arvif->vdev_id,
-+							  sta,
-+							  WMI_TDLS_PEER_STATE_TEARDOWN);
-+			if (ret)
-+				ath10k_warn(ar, "failed to update tdls peer state for %pM state %d: %i\n",
-+					    sta->addr,
-+					    WMI_TDLS_PEER_STATE_TEARDOWN, ret);
-+		}
+-static int max30102_get_temp(struct max30102_data *data, int *val)
++static int max30102_get_temp(struct max30102_data *data, int *val, bool en)
+ {
+ 	int ret;
+ 
++	if (en) {
++		ret = max30102_set_powermode(data, true);
++		if (ret)
++			return ret;
++	}
 +
- 		ret = ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
- 		if (ret)
- 			ath10k_warn(ar, "failed to delete peer %pM for vdev %d: %i\n",
+ 	/* start acquisition */
+ 	ret = regmap_update_bits(data->regmap, MAX30102_REG_TEMP_CONFIG,
+ 				 MAX30102_REG_TEMP_CONFIG_TEMP_EN,
+ 				 MAX30102_REG_TEMP_CONFIG_TEMP_EN);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	msleep(35);
++	ret = max30102_read_temp(data, val);
++
++out:
++	if (en)
++		max30102_set_powermode(data, false);
+ 
+-	return max30102_read_temp(data, val);
++	return ret;
+ }
+ 
+ static int max30102_read_raw(struct iio_dev *indio_dev,
+@@ -355,20 +366,19 @@ static int max30102_read_raw(struct iio_
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		/*
+-		 * Temperature reading can only be acquired while engine
+-		 * is running
++		 * Temperature reading can only be acquired when not in
++		 * shutdown; leave shutdown briefly when buffer not running
+ 		 */
+ 		mutex_lock(&indio_dev->mlock);
+-
+ 		if (!iio_buffer_enabled(indio_dev))
+-			ret = -EBUSY;
+-		else {
+-			ret = max30102_get_temp(data, val);
+-			if (!ret)
+-				ret = IIO_VAL_INT;
+-		}
+-
++			ret = max30102_get_temp(data, val, true);
++		else
++			ret = max30102_get_temp(data, val, false);
+ 		mutex_unlock(&indio_dev->mlock);
++		if (ret)
++			return ret;
++
++		ret = IIO_VAL_INT;
+ 		break;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = 1000;  /* 62.5 */
