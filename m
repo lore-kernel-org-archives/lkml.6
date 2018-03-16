@@ -1,75 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753808AbeCPLC0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:02:26 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41628 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753534AbeCPLCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:02:24 -0400
-X-Google-Smtp-Source: AG47ELsT0ZpCx1G2XsCB9d6peyTT97znSIluTWvWz5/q4F7n4iGkCTHsbAhm3x8dswQauDiOxhWuFk5+6dPdHi0PEtI=
+        id S1753730AbeCPLDC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:03:02 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:33098 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753322AbeCPLDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 07:03:01 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Brian Norris <briannorris@chromium.org>, dianders@chromium.org,
+        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
+        hl@rock-chips.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 6/6] drm/rockchip: cdn-dp: remove the DP phy switch
+Date: Fri, 16 Mar 2018 12:02:53 +0100
+Message-ID: <1866837.JGGNoqQO1N@phil>
+In-Reply-To: <20180216120956.19034-6-enric.balletbo@collabora.com>
+References: <20180216120956.19034-1-enric.balletbo@collabora.com> <20180216120956.19034-6-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com>
-References: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com>
-From: Balbir Singh <bsingharora@gmail.com>
-Date: Fri, 16 Mar 2018 22:02:22 +1100
-Message-ID: <CAKTCnzmSCT+VecdSRpyY2Rb_AW2ngCi3UTZfLE3VOLNSQn6vsA@mail.gmail.com>
-Subject: Re: [PATCH v4] mm, pkey: treat pkey-0 special
-To: Ram Pai <linuxram@us.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Ingo Molnar <mingo@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
-        "Haren Myneni/Beaverton/IBM" <hbabu@us.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-        fweimer@redhat.com, msuchanek@suse.com,
-        Thomas Gleixner <tglx@linutronix.de>, Ulrich.Weigand@de.ibm.com,
-        Ram Pai <ram.n.pai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 9:33 PM, Ram Pai <linuxram@us.ibm.com> wrote:
-> Applications need the ability to associate an address-range with some
-> key and latter revert to its initial default key. Pkey-0 comes close to
-> providing this function but falls short, because the current
-> implementation disallows applications to explicitly associate pkey-0 to
-> the address range.
->
-> Clarify the semantics of pkey-0 and provide the corresponding
-> implementation.
->
-> Pkey-0 is special with the following semantics.
-> (a) it is implicitly allocated and can never be freed. It always exists.
-> (b) it is the default key assigned to any address-range.
-> (c) it can be explicitly associated with any address-range.
->
-> Tested on powerpc only. Could not test on x86.
+Am Freitag, 16. Februar 2018, 13:09:56 CET schrieb Enric Balletbo i Serra:
+> From: Chris Zhong <zyw@rock-chips.com>
+> 
+> There are 2 Type-c PHYs in RK3399, but only one DP controller. Hence
+> only one PHY can connect to DP controller at one time, the other should
+> be disconnected. The GRF_SOC_CON26 register has a switch bit to do it,
+> set this bit means enable PHY 1, clear this bit means enable PHY 0.
+> 
+> If the board has 2 Type-C ports, the DP driver get the phy id from
+> devm_of_phy_get_by_index, and then control this switch according to
+> this id. But some others board only has one Type-C port, it may be PHY 0
+> or PHY 1. The dts node id can not tell us the correct PHY id. Hence move
+> this switch to PHY driver, the PHY driver can distinguish between PHY 0
+> and PHY 1, and then write the correct register bit.
+> 
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
+applied to drm-misc with a note stating where the rest of the series
+went to.
 
-Ram,
-
-I was wondering if we should check the AMOR values on the ppc side to make sure
-that pkey0 is indeed available for use as default. I am still of the
-opinion that we
-should consider non-0 default pkey in the long run. I'm OK with the patches for
-now, but really 0 is not special except for it being the default bit
-values present
-in the PTE.
-
-The patches themselves look OK to me
-
-Balbir Singh.
+Thanks
+Heiko
