@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELsepMfCidgF+p8H5p6aKGL6enR1E7coEC2ZUQUfTNpQsQUdJc5xQ6nLqFpH31AmW0ZE5ezb
-ARC-Seal: i=1; a=rsa-sha256; t=1521228604; cv=none;
+X-Google-Smtp-Source: AG47ELv6vRt5g8Sdy7ws+gp3t2NfSt4NMFJCntPhVhH2647rmJXPy6Z2aaLFJEYpnvn72Y1ccXz7
+ARC-Seal: i=1; a=rsa-sha256; t=1521228605; cv=none;
         d=google.com; s=arc-20160816;
-        b=HInC+T6AzujDiAa6AZ28tMlEVqPRDkvTIndDxP7VM0DZ0M0lh9avux4/G1qqTtGovE
-         DfBtWhXkuOt39m2eElWsdSUEsCbYrZKji8TTLGFVdvtYR6HLwf8sZZlLeY+I7HhKo7BQ
-         Z0IZrWpvtbxaUWbueOoXjENtvdVIIpzBPpJTAwL7dAH8fI6F/i23S2flOaslXRnDpsWo
-         i1VR9JFfWfbQSqC1TH+ijsGBG483FaPctXYppuTYWE8XaI4ERiehtoOGQwCcJuPSZpAO
-         ZPMD72gtj4SCRIqdXQirVsWXQqSrRt2WrXxxtZemit5IgTwEmqiGoG+V0A4w357WActn
-         X51A==
+        b=CN5uVdZbCaDGkLrk55lrbEdoN+RYA9j3LUuwq7XT5kUwpdlmc3weJD7k7YTlb4EyJe
+         F/nnjbPwtUDBxJ4hms0g8zQtGjmWMtO4AyterHMRzSoi1/AokkM5gxCiY0dnta187KvI
+         35y3FXFZSbGQ/KBstjjRGBE5L5tT8NOgOULxL8aFkt+yOfWo2vUaxD3GdmZGz9GCctqR
+         ACrXtb9tQyXbgOpbiL3liuVcyKtsAVMJaBdx5qwZcM42+vmnqpdA5Y6pUi4I3QQBlJeN
+         cxFo3vY4MX6qLHbsFibMdsWLFo69r7xa1SAi7DiENASL/r5FN+QnFWZc12L5PJyOnncY
+         hZAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=+Nm20vfM6DCcJoMA0+5AZwJaYVt5DbZUP88AFOdkYkk=;
-        b=EAE5kJ4wPnpLMoIdb1uzoj7t0V4+k7WQRYkm5uo283MnYUiEi2SFu15doERFPvZF9H
-         d74o9JhEzrXA8CIQrzVlgrwMldrgrnP0VhKVN1SFkEP3tfwNZKBFCpa6YUVQ9Ssbo8Ej
-         5CrgDIIM6+lPUsaYPGQ8I7e7GtNubY1bSLtwLSc1O99iVmeNx5vTKpAnZIP8yo4fLAB8
-         lnuxKRzbkyrp3YhP1McOowQM+sJM/WCHALesV3pW4HAZnTWB18K7symHSCLRQ4JRS7tS
-         zQDKoG/YtlBeY0B72zpwr4aZVDXga46VQo0ShzWs0iM8m45r5qWxpsHkfZcCQrK9fjYj
-         5GZQ==
+        bh=P/7avdWRPq23ii7BDhhKqJ9eSs2btE/xtB/VZszFiVg=;
+        b=aO48ICZMmMFaN+sKsH3s9RLJpI+qPrSo8OxUiYnDKG1ARMJwRzIXnGQXG4BiFSwOmo
+         aW2EsqQQw+hpPstPyf571oweLMct3G+pr8hhuI70KX3uWZVfl7+xAW6yQ8wB1zXMFoh5
+         30641PUmnfhRugqEdq+g2TvJe8juadDRjvdidGWvI00mraiUETs8d1+KuGANd6AZTXot
+         sg//H6hOfK6F8678+OQFHawTO8HpKItQVusBlx/iIi0Og6lw96hToIwPGxPPX3/8azSJ
+         pEClfjVLL0qfK2VupysggbsLJbxWzvlLM0B1niW4+13RWGcTvT4ncUo7mbCVA+h/696K
+         6UFA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=gJtq8Xuj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=G19usqW+;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=gJtq8Xuj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=G19usqW+;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,94 +57,80 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 12/35] x86/32: Use tss.sp1 as cpu_current_top_of_stack
-Date: Fri, 16 Mar 2018 20:29:30 +0100
-Message-Id: <1521228593-3820-13-git-send-email-joro@8bytes.org>
+Subject: [PATCH 11/35] x86/entry/32: Simplify debug entry point
+Date: Fri, 16 Mar 2018 20:29:29 +0100
+Message-Id: <1521228593-3820-12-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123805550280769?=
-X-GMAIL-MSGID: =?utf-8?q?1595123805550280769?=
+X-GMAIL-THRID: =?utf-8?q?1595123805895109259?=
+X-GMAIL-MSGID: =?utf-8?q?1595123805895109259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Now that we store the task-stack in tss.sp1 we can also use
-it as cpu_current_top_of_stack. This unifies the handling
-with x86-64.
+The common exception entry code now handles the
+entry-from-sysenter stack situation and makes sure to leave
+with the same stack as it entered the kernel.
+
+So there is no need anymore for the special handling in the
+debug entry code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/processor.h   | 4 ----
- arch/x86/include/asm/thread_info.h | 2 --
- arch/x86/kernel/cpu/common.c       | 4 ----
- arch/x86/kernel/process_32.c       | 6 ------
- 4 files changed, 16 deletions(-)
+ arch/x86/entry/entry_32.S | 35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 513f960..b7c238e 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -374,12 +374,8 @@ DECLARE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw);
- #define __KERNEL_TSS_LIMIT	\
- 	(IO_BITMAP_OFFSET + IO_BITMAP_BYTES + sizeof(unsigned long) - 1)
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 4133f95..3c4822a 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1221,41 +1221,12 @@ END(common_exception)
  
--#ifdef CONFIG_X86_32
--DECLARE_PER_CPU(unsigned long, cpu_current_top_of_stack);
--#else
- /* The RO copy can't be accessed with this_cpu_xyz(), so use the RW copy. */
- #define cpu_current_top_of_stack cpu_tss_rw.x86_tss.sp1
--#endif
+ ENTRY(debug)
+ 	/*
+-	 * #DB can happen at the first instruction of
+-	 * entry_SYSENTER_32 or in Xen's SYSENTER prologue.  If this
+-	 * happens, then we will be running on a very small stack.  We
+-	 * need to detect this condition and switch to the thread
+-	 * stack before calling any C code at all.
+-	 *
+-	 * If you edit this code, keep in mind that NMIs can happen in here.
++	 * Entry from sysenter is now handled in common_exception
+ 	 */
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-
+-	SAVE_ALL
+-	ENCODE_FRAME_POINTER
+-	xorl	%edx, %edx			# error code 0
+-	movl	%esp, %eax			# pt_regs pointer
+-
+-	/* Are we currently on the SYSENTER stack? */
+-	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+-	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+-	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
+-	cmpl	$SIZEOF_entry_stack, %ecx
+-	jb	.Ldebug_from_sysenter_stack
+-
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	jmp	ret_from_exception
+-
+-.Ldebug_from_sysenter_stack:
+-	/* We're on the SYSENTER stack.  Switch off. */
+-	movl	%esp, %ebx
+-	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	movl	%ebx, %esp
+-	jmp	ret_from_exception
++	pushl	$do_debug
++	jmp	common_exception
+ END(debug)
  
  /*
-  * Save the original ist values for checking stack pointers during debugging
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index eda3b68..ea7e118 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -207,9 +207,7 @@ static inline int arch_within_stack_frames(const void * const stack,
- 
- #else /* !__ASSEMBLY__ */
- 
--#ifdef CONFIG_X86_64
- # define cpu_current_top_of_stack (cpu_tss_rw + TSS_sp1)
--#endif
- 
- #endif
- 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a0ed348..de1c595 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1503,10 +1503,6 @@ EXPORT_PER_CPU_SYMBOL(__preempt_count);
-  * the top of the kernel stack.  Use an extra percpu variable to track the
-  * top of the kernel stack directly.
-  */
--DEFINE_PER_CPU(unsigned long, cpu_current_top_of_stack) =
--	(unsigned long)&init_thread_union + THREAD_SIZE;
--EXPORT_PER_CPU_SYMBOL(cpu_current_top_of_stack);
--
- #ifdef CONFIG_CC_STACKPROTECTOR
- DEFINE_PER_CPU_ALIGNED(struct stack_canary, stack_canary);
- #endif
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 3f3a8c6..8c29fd5 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -290,12 +290,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	update_sp0(next_p);
- 	refresh_sysenter_cs(next);
- 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
--	/*
--	 * TODO: Find a way to let cpu_current_top_of_stack point to
--	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
--	 * iret exceptions.
--	 */
--	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
- 
- 	/*
- 	 * Restore %gs if needed (which is common)
 -- 
 2.7.4
