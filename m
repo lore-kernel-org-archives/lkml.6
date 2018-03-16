@@ -1,164 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752742AbeCPSCn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:02:43 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38230 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeCPSCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:02:42 -0400
-X-Google-Smtp-Source: AG47ELsVu7SiSdDQ87ykLtCWodFAMtPHDte+jVLb9e/4K3iVXRPA74QJmrQqFAths+u/69tHB22U/g==
-Reply-To: monstr@monstr.eu
-Subject: Re: Bug: Microblaze stopped booting after
- 0fa1c579349fdd90173381712ad78aa99c09d38b
-To: Rob Herring <robh@kernel.org>
-Cc: "Alvaro G. M." <alvaro.gamez@hazent.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
- <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
- <20180312075252.GA15895@salem.gmr.ssr.upm.es>
- <242c2823-258b-d3bb-cd0a-e4eee6b979c6@monstr.eu>
- <4d5dc903-0e88-e1b9-9761-43a84865c45b@monstr.eu>
- <CAL_JsqLY5+Za_TjxyoH_ozoi8S-6L47eZ94W8qdV9DsO4HLXHw@mail.gmail.com>
-From: Michal Simek <monstr@monstr.eu>
-Message-ID: <c46e343b-ad1e-b2f3-b1da-3f17e7b47845@monstr.eu>
-Date: Fri, 16 Mar 2018 19:02:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751771AbeCPRqM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:46:12 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34406 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750921AbeCPRqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:46:10 -0400
+Date: Fri, 16 Mar 2018 18:45:29 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive
+ summary
+Message-ID: <20180316174529.GG5852@pd.tnic>
+References: <20180315154448.16222-1-bp@alien8.de>
+ <20180315154448.16222-9-bp@alien8.de>
+ <20180315190132.2d653yu7ezf2zplh@treble>
+ <20180316114849.GD5852@pd.tnic>
+ <CA+55aFwmi38uJyir_e_TTDObBGg55WsTB_0AqcVHzgU=+Fy=ag@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLY5+Za_TjxyoH_ozoi8S-6L47eZ94W8qdV9DsO4HLXHw@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="KiKbsc5sA1WdcQw0KLwjVYMmOZ0otTgKu"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwmi38uJyir_e_TTDObBGg55WsTB_0AqcVHzgU=+Fy=ag@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---KiKbsc5sA1WdcQw0KLwjVYMmOZ0otTgKu
-Content-Type: multipart/mixed; boundary="JEmNhZhh2duBwoAKSOm0HiQhAOuQvPqkn";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Rob Herring <robh@kernel.org>
-Cc: "Alvaro G. M." <alvaro.gamez@hazent.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <c46e343b-ad1e-b2f3-b1da-3f17e7b47845@monstr.eu>
-Subject: Re: Bug: Microblaze stopped booting after
- 0fa1c579349fdd90173381712ad78aa99c09d38b
-References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
- <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
- <20180312075252.GA15895@salem.gmr.ssr.upm.es>
- <242c2823-258b-d3bb-cd0a-e4eee6b979c6@monstr.eu>
- <4d5dc903-0e88-e1b9-9761-43a84865c45b@monstr.eu>
- <CAL_JsqLY5+Za_TjxyoH_ozoi8S-6L47eZ94W8qdV9DsO4HLXHw@mail.gmail.com>
-In-Reply-To: <CAL_JsqLY5+Za_TjxyoH_ozoi8S-6L47eZ94W8qdV9DsO4HLXHw@mail.gmail.com>
+On Fri, Mar 16, 2018 at 10:22:29AM -0700, Linus Torvalds wrote:
+> The reason we do that
+> 
+>         printk(KERN_DEFAULT "CR2: %016lx\n", address);
+> 
+> is because WE ARE NOT PRINTING OUT THE CURRENT CR2 REGISTER!
 
---JEmNhZhh2duBwoAKSOm0HiQhAOuQvPqkn
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Whoopsie!
 
-On 16.3.2018 16:18, Rob Herring wrote:
-> On Wed, Mar 14, 2018 at 10:04 AM, Michal Simek <monstr@monstr.eu> wrote=
-:
->> On 12.3.2018 11:21, Michal Simek wrote:
->>> On 12.3.2018 08:52, Alvaro G. M. wrote:
->>>> On Fri, Mar 09, 2018 at 01:05:11PM -0600, Rob Herring wrote:
->>>>> On Fri, Mar 9, 2018 at 6:51 AM, Alvaro G. M. <alvaro.gamez@hazent.c=
-om> wrote:
->>>>>> Hi,
->>>>>>
->>>>>> I've found via git bisect that 0fa1c579349fdd90173381712ad78aa99c0=
-9d38b
->>>>>> makes microblaze unbootable.
->>>>>>
->>>>>> I'm sorry I can't provide any console output, as nothing appears a=
-t all,
->>>>>> even when setting earlyprintk (or at least I wasn't able to get an=
-ything
->>>>>> back!).
->>>>>
->>>>> Ah, looks like microblaze doesn't set CONFIG_NO_BOOTMEM and so
->>>>> memblock_virt_alloc() doesn't work for CONFIG_HAVE_MEMBLOCK &&
->>>>> !CONFIG_NO_BOOTMEM. AFAICT, microblaze doesn't really need bootmem =
-and
->>>>> it can be removed, but I'm still investigating. Can you try out thi=
-s
->>>>> branch[1].
->>>>>
->>>>> Rob
->>>>>
->>>>> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
->>>>> microblaze-fixes
->>>>
->>>> Hi, Rob!
->>>>
->>>> This branch does indeed solve the issue. My microblaze system is now=
+Doh, __show_regs() reads CR2 again and there's a big fat window
+in-between...
 
->>>> booting as it did before, and everything seems normal now. Thanks!
->>>>
->>>> Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
->>>>
->>>
->>> I have tested it and I can also confirm that your two patches are fix=
-ing
->>> issue with
->>>
->>> 809d0e2c: 00240034 26000000 746f6f62 206d656d    4.$....&bootmem
->>> 809d0e3c: 6f6c6c61 666f2063 33353220 62203830    alloc of 25308 b
->>> 809d0e4c: 73657479 69616620 2164656c 00000000    ytes failed!....
->>> 809d0e5c: 00000000 0029003c 06000000 6e72654b    ....<.).....Kern
->>> 809d0e6c: 70206c65 63696e61 6e202d20 7320746f    el panic - not s
->>>
->>> Can you please update that second commit with reasonable description =
-and
->>> send it out? I will take it via my tree and will send pull request to=
- Linus.
->>>
->>
->> I couldn't wait to fix current issue till 4.16 is done that's why I ha=
-ve
->> sent that patches with updated commit message to lkml.
->=20
-> Thanks for writing my commit msg. :) I got distracted looking at
-> whether other arches got broken too and didn't get this sent out.
->=20
-> BTW, there is a more simple fix of just moving setup_memory() call to
-> before unflattening if you prefer for 4.16.
+> This is really damn important.
+> 
+> The "address" register contains the CR2 value as it was read *very*
+> early in the page fault case, before we enabled interrupts, and before
+> we did various random things that can cause further page faults and
+> change CR2!
+> 
+> So the executive summary that does __show_regs() may end up showing
+> something completely different than the actual faulting address,
+> because we might have taken a vmalloc-space exception in the meantime,
+> for example.
+> 
+> Do *NOT* get rid of that thing.
 
-I have sent pull request to Linus with your two patches and a lot of
-architectures is setting this up that's why not a problem. I need to
-also look at the rest of your patches and how in-kernel dtb is handled
-because there is a size limit which was fine for years but we have
-reached the case that it is not enough. Simple extension is easy but not
-generic solution.
+Reverted.
 
-Thanks,
-Michal
+> You're better off getting rid of the CR2 line from __show_regs(),
+> because it can be dangerously confusing. It's not actually part of the
+> saved register state at all, it's something entirely different. It's
+> like showing the current eflags rather than the eflags saved on the
+> faulting stack.
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+Yeah, __show_regs() goes and gets a bunch of registers at the time
+__show_regs() runs. Which is ok for those which don't change in between
+but CR2 is special.
 
+We probably could improve that situation by having a struct fault_regs
+or so wrapping pt_regs and adding a bunch of fields like CR2 etc. Fault
+handlers would then populate fault_regs at fault time while we're atomic
+and then hand this struct down to the printing path.
 
+The printing path would fill out the rest and this way we won't have any
+of that monkey business anymore.
 
---JEmNhZhh2duBwoAKSOm0HiQhAOuQvPqkn--
+Thoughts?
 
---KiKbsc5sA1WdcQw0KLwjVYMmOZ0otTgKu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+-- 
+Regards/Gruss,
+    Boris.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlqsBroACgkQykllyylKDCHWWACeJzvB8l9G5rRkuH+/eRJE2Wjv
-dBsAoI+5yULw7/Jaqd83js70Y72PtuWm
-=XjM6
------END PGP SIGNATURE-----
-
---KiKbsc5sA1WdcQw0KLwjVYMmOZ0otTgKu--
+Good mailing practices for 400: avoid top-posting and trim the reply.
