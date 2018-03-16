@@ -1,79 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeCPUgq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:36:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753169AbeCPUf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:35:57 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 11/14] mm/hmm: move hmm_pfns_clear() closer to where it is use
-Date: Fri, 16 Mar 2018 16:35:49 -0400
-Message-Id: <20180316203552.4155-2-jglisse@redhat.com>
-In-Reply-To: <20180316203552.4155-1-jglisse@redhat.com>
-References: <20180316203552.4155-1-jglisse@redhat.com>
+        id S1753530AbeCPUhC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:37:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751672AbeCPUhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 16:37:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916E820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        mark.rutland@arm.com, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        sean.wang@mediatek.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <cover.1518895232.git.sean.wang@mediatek.com>
+ <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
+Message-ID: <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 01/15] dt-bindings: clock: mediatek: add missing required
+ #reset-cells
+Date: Fri, 16 Mar 2018 13:36:58 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+Quoting sean.wang@mediatek.com (2018-02-17 11:54:36)
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> All ethsys, pciesys and ssusbsys internally include reset controller, so
+> explicitly add back these missing cell definitions to related bindings
+> and examples.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-Move hmm_pfns_clear() closer to where it is use to make it clear it
-is not use by page table walkers.
-
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
----
- mm/hmm.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 857eec622c98..3a708f500b80 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -297,14 +297,6 @@ static int hmm_pfns_bad(unsigned long addr,
- 	return 0;
- }
- 
--static void hmm_pfns_clear(uint64_t *pfns,
--			   unsigned long addr,
--			   unsigned long end)
--{
--	for (; addr < end; addr += PAGE_SIZE, pfns++)
--		*pfns = 0;
--}
--
- /*
-  * hmm_vma_walk_hole() - handle a range back by no pmd or no pte
-  * @start: range virtual start address (inclusive)
-@@ -463,6 +455,14 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	return 0;
- }
- 
-+static void hmm_pfns_clear(uint64_t *pfns,
-+			   unsigned long addr,
-+			   unsigned long end)
-+{
-+	for (; addr < end; addr += PAGE_SIZE, pfns++)
-+		*pfns = 0;
-+}
-+
- static void hmm_pfns_special(struct hmm_range *range)
- {
- 	unsigned long addr = range->start, i = 0;
--- 
-2.14.3
+Acked-by: Stephen Boyd <sboyd@kernel.org>
