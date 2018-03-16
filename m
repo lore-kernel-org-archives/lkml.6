@@ -1,65 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933500AbeCPRNP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:13:15 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43116 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753754AbeCPRG7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:06:59 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 17/22] net: socket: replace call to sys_recv() with __sys_recvfrom()
-Date: Fri, 16 Mar 2018 18:06:09 +0100
-Message-Id: <20180316170614.5392-18-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        id S1753421AbeCPSQp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:16:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752959AbeCPSOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 14:14:35 -0400
+From: Waiman Long <longman@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v5 6/9] test_sysctl: Add range clamping test
+Date: Fri, 16 Mar 2018 14:13:47 -0400
+Message-Id: <1521224030-2185-7-git-send-email-longman@redhat.com>
+In-Reply-To: <1521224030-2185-1-git-send-email-longman@redhat.com>
+References: <1521224030-2185-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sys_recv() merely expands the parameters to __sys_recvfrom() by NULL and
-NULL. Open-code this in the two places which used sys_recv() as a wrapper
-to __sys_recvfrom().
+Add a range clamping test to verify that the input value will be
+clamped if it exceeds the builtin maximum or minimum value.
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Below is the expected test run result:
+
+Running test: sysctl_test_0006 - run #0
+Checking range minimum clamping ... ok
+Checking range maximum clamping ... ok
+Checking range minimum clamping ... ok
+Checking range maximum clamping ... ok
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- net/compat.c | 3 ++-
- net/socket.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ lib/test_sysctl.c                        | 29 ++++++++++++++++++
+ tools/testing/selftests/sysctl/sysctl.sh | 52 ++++++++++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
-diff --git a/net/compat.c b/net/compat.c
-index d55982ff5c59..9e0d030063ad 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -755,7 +755,8 @@ COMPAT_SYSCALL_DEFINE3(recvmsg, int, fd, struct compat_msghdr __user *, msg, uns
+diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
+index 3dd801c..7bb4cf7 100644
+--- a/lib/test_sysctl.c
++++ b/lib/test_sysctl.c
+@@ -38,12 +38,18 @@
  
- COMPAT_SYSCALL_DEFINE4(recv, int, fd, void __user *, buf, compat_size_t, len, unsigned int, flags)
+ static int i_zero;
+ static int i_one_hundred = 100;
++static int signed_min = -10;
++static int signed_max = 10;
++static unsigned int unsigned_min = 10;
++static unsigned int unsigned_max = 30;
+ 
+ struct test_sysctl_data {
+ 	int int_0001;
+ 	int int_0002;
+ 	int int_0003[4];
++	int range_0001;
+ 
++	unsigned int urange_0001;
+ 	unsigned int uint_0001;
+ 
+ 	char string_0001[65];
+@@ -58,6 +64,9 @@ struct test_sysctl_data {
+ 	.int_0003[2] = 2,
+ 	.int_0003[3] = 3,
+ 
++	.range_0001 = 0,
++	.urange_0001 = 20,
++
+ 	.uint_0001 = 314,
+ 
+ 	.string_0001 = "(none)",
+@@ -102,6 +111,26 @@ struct test_sysctl_data {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dostring,
+ 	},
++	{
++		.procname	= "range_0001",
++		.data		= &test_data.range_0001,
++		.maxlen		= sizeof(test_data.range_0001),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.flags		= CTL_FLAGS_CLAMP_RANGE_SIGNED,
++		.extra1		= &signed_min,
++		.extra2		= &signed_max,
++	},
++	{
++		.procname	= "urange_0001",
++		.data		= &test_data.urange_0001,
++		.maxlen		= sizeof(test_data.urange_0001),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.flags		= CTL_FLAGS_CLAMP_RANGE_UNSIGNED,
++		.extra1		= &unsigned_min,
++		.extra2		= &unsigned_max,
++	},
+ 	{ }
+ };
+ 
+diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+index ec232c3..1aa1bba 100755
+--- a/tools/testing/selftests/sysctl/sysctl.sh
++++ b/tools/testing/selftests/sysctl/sysctl.sh
+@@ -34,6 +34,7 @@ ALL_TESTS="$ALL_TESTS 0002:1:1"
+ ALL_TESTS="$ALL_TESTS 0003:1:1"
+ ALL_TESTS="$ALL_TESTS 0004:1:1"
+ ALL_TESTS="$ALL_TESTS 0005:3:1"
++ALL_TESTS="$ALL_TESTS 0006:1:1"
+ 
+ test_modprobe()
  {
--	return sys_recv(fd, buf, len, flags | MSG_CMSG_COMPAT);
-+	return __sys_recvfrom(fd, buf, len, flags | MSG_CMSG_COMPAT, NULL,
-+			      NULL);
+@@ -543,6 +544,38 @@ run_stringtests()
+ 	test_rc
  }
  
- COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len,
-diff --git a/net/socket.c b/net/socket.c
-index c4fb60be194b..34cf4b163f8f 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2566,7 +2566,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 				   (struct sockaddr __user *)a[4], a[5]);
- 		break;
- 	case SYS_RECV:
--		err = sys_recv(a0, (void __user *)a1, a[2], a[3]);
-+		err = __sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
-+				     NULL, NULL);
- 		break;
- 	case SYS_RECVFROM:
- 		err = __sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
++# TARGET, RANGE_MIN & RANGE_MAX need to be defined before running test.
++run_range_clamping_test()
++{
++	rc=0
++
++	echo -n "Checking range minimum clamping ... "
++	VAL=$((RANGE_MIN - 1))
++	echo -n $VAL > "${TARGET}" 2> /dev/null
++	EXITVAL=$?
++	NEWVAL=$(cat "${TARGET}")
++	if [[ $EXITVAL -ne 0 || $NEWVAL -ne $RANGE_MIN ]]; then
++		echo "FAIL" >&2
++		rc=1
++	else
++		echo "ok"
++	fi
++
++	echo -n "Checking range maximum clamping ... "
++	VAL=$((RANGE_MAX + 1))
++	echo -n $VAL > "${TARGET}" 2> /dev/null
++	EXITVAL=$?
++	NEWVAL=$(cat "${TARGET}")
++	if [[ $EXITVAL -ne 0 || $NEWVAL -ne $RANGE_MAX ]]; then
++		echo "FAIL" >&2
++		rc=1
++	else
++		echo "ok"
++	fi
++
++	test_rc
++}
++
+ sysctl_test_0001()
+ {
+ 	TARGET="${SYSCTL}/int_0001"
+@@ -600,6 +633,25 @@ sysctl_test_0005()
+ 	run_limit_digit_int_array
+ }
+ 
++sysctl_test_0006()
++{
++	TARGET="${SYSCTL}/range_0001"
++	ORIG=$(cat "${TARGET}")
++	RANGE_MIN=-10
++	RANGE_MAX=10
++
++	run_range_clamping_test
++	set_orig
++
++	TARGET="${SYSCTL}/urange_0001"
++	ORIG=$(cat "${TARGET}")
++	RANGE_MIN=10
++	RANGE_MAX=30
++
++	run_range_clamping_test
++	set_orig
++}
++
+ list_tests()
+ {
+ 	echo "Test ID list:"
 -- 
-2.16.2
+1.8.3.1
