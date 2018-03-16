@@ -1,22 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753306AbeCPHSg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:18:36 -0400
-Received: from mail-bn3nam01on0053.outbound.protection.outlook.com ([104.47.33.53]:42626
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1753292AbeCPHS3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:18:29 -0400
+Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:19184
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753098AbeCPHRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:41 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=analog.com;
+        id S1753153AbeCPHRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:44 -0400
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 12/28] video: Remove Blackfin video support
-Date: Fri, 16 Mar 2018 15:08:10 +0800
-Message-ID: <1521184106-24475-10-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 13/28] cpufreq: Remove Blackfin CPU frequency support
+Date: Fri, 16 Mar 2018 15:08:11 +0800
+Message-ID: <1521184106-24475-11-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,6939 +20,2917 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(39380400002)(376002)(2980300002)(438002)(50944005)(199004)(189003)(2906002)(107886003)(478600001)(72206003)(966005)(77096007)(26005)(356003)(16799955002)(16586007)(76176011)(7636002)(59450400001)(51416003)(575784001)(86362001)(50226002)(305945005)(15188155005)(7696005)(316002)(5660300001)(5890100001)(106002)(8936002)(426003)(47776003)(8676002)(246002)(50466002)(36756003)(48376002)(4326008)(336012)(6916009)(6666003)(106466001)(186003)(2950100002)(6306002)(2351001)(53946003)(16200700003)(2004002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2612;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD020;1:28R+go/HyFbUp/VHvKz7ojTD/OtISYycBVzVYjYwdudSgLSQf5mG5uapybWDqMhVFxudGuuppdrP2pcnXBKrQNeEno/RURe38XCSZmb+rQ6BUjAblSEHvYzEb+L5VCNp
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(2980300002)(438002)(199004)(189003)(55674003)(106002)(5660300001)(336012)(47776003)(72206003)(2351001)(16586007)(2906002)(76176011)(6666003)(2950100002)(6346003)(6916009)(26005)(59450400001)(77096007)(426003)(478600001)(7696005)(316002)(186003)(51416003)(8676002)(356003)(107886003)(246002)(8936002)(86362001)(50226002)(50466002)(48376002)(36756003)(106466001)(4326008)(53946003)(16200700003)(305945005)(7636002)(2004002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1483;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC002;1:6VCCFdl5UWPglHzcylyzvHhpbvOFVe2sUDn9fRiNIYW+T9Ndib5/DALn2RVBL9g91M2PvYg6Dcg97kWPnLRk8bmBvch99O6mw0wxzBL4lUQZS279ZzsNPNSfrZd1KkM7
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c1fb316a-b33f-40cd-9cc8-08d58b0dfe0a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BN6PR03MB2612;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2612;3:2qUTS1AF1Ve/Yf/oNTTutgxMIe7oTMWK1KlmhOGhjeYTGnsbLWM3RUuRZ93q4nWF6aqth8XfdLMNQbPXIuBND4IMxCGCcCuN/gQOqmDQMxicjjioCRSI2Isw1uPsxcw151QiPz5qfaRpZvV4rjauUOcUvcSeDAZB53/U1F3lNEiAzyPnfxkcx7mcBoFUCGWKMwFbeoel8qHeMVOBr+liO3PnlbpWood5IlLhD2/+kLx6CpbteeaRHN6PfdRj720wqLXftQlsxrVXMXRNpPof7dN1PWarqWxo7XWO+g/ODLUny0G5vSlhoEimg43AeUBqvdMa0c4B4F2yJ9QQZPdT2A==;25:OM+jdSrUbtG/lTJJP3s/+cpmPlt++AxqSQ1OGLjBqSo3jC7MJPRgERSiezbzFic5O9++u7EVudUbakWJClHWUcEtEOU9CGY0dUcvo+nuOEi7LfrzY4e9Dl0acOObpZn5yMRfO5QbAQpVVK2v/U6LkKSUlsiVkixlGZaZK3YPlhvUgOTtGiWB+w/BRpJ3xLp6H/NtsQ5+ndWWdDph+9+yJmzXTrOW+tE+VSqS8nWklI61i7Bq8rPPDoHuUDCmPSx61Ix3VnSY7CIw3UKXyB5b5KKM3TYGOdY+LAA1IqUrvHBVaXD0bxuAXBoo/aBFGSZV5JBC7zW/YndVbevkmAauoQ==;31:3XqUhGw7yp2VxH5rFP5BaaZz+DrcTMyMFtR5frU7rmQv75qoKjNfc0q1/LOCwnlUIckBXiZAM8kbvkPE+pSDOGsS42HejG9YhsVdahHLvuoGGgtnchQDPoUS5yNbWmMdC6Hjl25zy1LrqaJPBBV3i5ApSpe65GRwM2Kb5dgMCY9c2ra7N01AUSxUTkBlYKbKKnKX/BG3Mp4PjHwbiASB0bA6Cn8EHQpNfnmEwYYmAwU=
-X-MS-TrafficTypeDiagnostic: BN6PR03MB2612:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2612;20:cF3OSck/kwtrIDM6LomVRk5dwzwgS+Zji8o5UIVVCzn5iWZx1YmcKtDNEtd6iud8gUE1dvudbN7gw6l2uOZaBc6h9rASL3qZd43dS4ulgTEXDfU0DZJlYMCYgvbV2cmMsVFJ54et2n/I026h8CW0jreayJOfnkxZxdqrYd2qnmoAvm6ZMn6H1Mr+vOK0hFvfFvG5Gg9co1ypF6+WZxWmyfu4ip+3Qf9DfDpmsPc8Q+gXwv95CGGOgOjM0XOD4GKXTaTK/YVa3EC2ihvcxG1uj1t8vQedgYaKr1meqnCAG7/TqnR2DMMps7wQP1oOjkLtDI1AHSfvX0G5wLELTSHPx9zYWJdE4cOyfv1F8Hqu5po+KpoUgy/UUN+PGPJRlX/8OxnAjJVN2DKX5TLsO97D/KjfO7zFfMNE8GYYfoWLa74o09eUBBVmj5pdQNQlHw6zoC+3wHT5XDhR/ueijSDQ4EqD3xFHaQnH7mk7cJd+Rv504TQiVZA7/ZtFapojWuuh;4:YajalFhmRE1EUHe7THybL8pTbFBLAa7pGlrTXMNLPCM7aaCBM9SJ0OUdun3EVM+DVM0+Agq4KgaA6VF5fAHYuGMthBsDGp5gkkCZDsiyFGZ+xs8CPlxu8W1XJWyV6RDUwyN3vjHYk/KSClJfDhNBKbXbMjyI01TC4jy5YZq+q7Wvaog6fn4R2BppPtc0+ra6YRY9y7fZqH8nSq/vxP1LpwDYKmIxwpvXKjtUkjux7C+sIuTQLJbNA5Nm6+EuY+bQcEjTPyZIBKJ/wEgz/sGxTsco52/0VqW6Iku19EuG4JOSqBUzkX3BSPYsQYWeRaso
-X-Microsoft-Antispam-PRVS: <BN6PR03MB26124B8A1B0D932DB778303BE0D70@BN6PR03MB2612.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR03MB2612;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2612;
+X-MS-Office365-Filtering-Correlation-Id: 86aabac8-cbb9-4120-638d-08d58b0dff3b
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1483;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;3:qoCVH3MBD8Uy39HMDkd55TKwuxI99asi/06YfjZBlumkVZ72PtFzWmnNIEPAcVJWTG8PwKpEPuq9Oo6ZaORm4/cgg9QsCXUa+E7h/YgxgtQplwqfTExv/WwkY6g48ybDZrVvSgsyzqHaw50JW94Jz1YPOCgDdqIbfCrW7p8sLyIqvXGAGXKpKbhdX+kmrFYVhyLciS1CvfVDCF0JGJc+UjtW+y8bRjDQrqRihBvZbuwx+usXOQ70g/bG74U4b3LCnk7fk0FV5eiWrbjB9C9hI2OY0WJVJKMslXdyIE6uJjNLo0DNGHXT2pauVYmIAMetLNWEZQyW3buhu3wOngO4zQ==;25:xwT29tj6vSUwvW/akJcHvUjtiJtPCzz5UJymJXI2L11taULCqrIoCKIbJYGfvHnJuQ7VE6KdaHGsYv9omZTjZgukVpVrchAAVdKra/ptRs+GItiGXBoEFzKr6J5+Z+w+Vj0aLbLL9BA3/OVBP0qs9SfRurQ5saKDgEaO5HUkuHKPNjJgdZqmbkEKvYLyrnhYNBZAiyMSZF2hK/j1vEZkFhz7q7dmLFVCIZWEzB6cB5HxBq+kHdendz3j4lIU8kB8gwgcIwS9azctRN3esh0Ne4oFnnAFUqAIPocJV1xvoFmwgJijWBBzDzr1cw9UbzU7J2m4fdSg44hAt85JgbjCBg==;31:n3m+E4jyW+hkyy3aWm6gx7UWhfASy2V0JTxFONUAhoLPQo1nS+KF3BfWAYBYFFeG3Fs6KSTN3pC1muDHZPJlhbpTqsgEpX6aHnWZ4+Q0f0ej+E6GAaqO+EI/OskxDtwFtO2VMZfR5O1Q4/X1nWw8HvyVAzKXtlJNgfRva6zUh1LnIPantaF9R9yKEDZNXY8AB6Op/4SzjwL52vmOoSieU3Nj0vVOE/AQUsQViAnNgw4=
+X-MS-TrafficTypeDiagnostic: BY1PR03MB1483:
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;20:14CtbfZNUDXkjrcPLVzkaXM3nVpf7UBxdol3gYlZzLgqlJJ08xmTsDkh0sctszxTZPlBxawSDYeWkEV5yR2vAEDVy0nsH5aA2HAXt+YMzHl2nILBLmhJakGr0T2JWe6QXPVmEbU3B6Ry4LQFQcP+fMA26YGPz33JBT25fxX/sBZOcuk9xIi1H1sWsMyobdQifMCWqO2mb2cwbs4VadPf5WUZUiedaqB3h5RIvpWvcrv8en48K5HhKYSyBu0uNaMxUL2U4vpZqmah+krDx7upPBhOd+SPMtECqD/RB0iSrDXyTSTWWc8Kv6K/PV+f+WW/ww0HWK7tOP52ShLWjNHdiWfXuCJI2q3ici/ElZGP+UgJ57xxPhScxDhZACZlXWR1XQB3ShaNmwmQdnh2DMHiboKXyt05Sxn8QN5woLjLLxa5ck9jWdsWOp2ZPFTP//diK0TFIOLtzZ0uzKHZ5g3uqTxHkJzFLX8bviwTI4rWBV0qV6zgtQJ4vK6jLgbBvAFZ;4:gU8Vo6YQ9mg7tTA35h6VG1Ycq2KfaJhCKyTK+lzj1Ue/aglcunODGPQdtjs+TtDcGbvc5DmlKFLROz4//U7XC/vwHd30zh3wYOEtB9UCDJTjaxqmpmn6fGAORjQHGbh1mZ2cqBZvk8f3APmEBKElFjurKaeGIXsjriIxsGdiWRQYcaGAHnKEQh0UNQgIvei93lJ7/7//TE0NKN+1TZ/USkK8G9QN+G6DnWHi1UahV0qgW4W9WLudNKix6oEISvrI5D/4lq2dFL4dCYIKgfQmN3HZ580ttFyqoJh2WQse/eIeYeh0WCppcoIn1InsdF1z6V/OH0S9Xai+xUHMZBIcaXOyHs6qFAdpaqbiq1pJuOA0WCz7VqVPN4GSgm1ppHZ4/JyW5gjT4exgNz+pZs0gJvkvL+3ArQwxEgtT2jPYZSA=
+X-Microsoft-Antispam-PRVS: <BY1PR03MB1483D9EA35EC0DD06FBE20BDE0D70@BY1PR03MB1483.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(209352067349851)(232431446821674)(767451399110)(228905959029699);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501281)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1483;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1483;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2612;23:F5+GvkD6Pn55eC7TGZaMCGUYU93OoBedrlgLjlLTq?=
- =?us-ascii?Q?byRyKL7kwPgce8d43x/tqGsOS88WxUMtFQZQG8kBoHbL+taoY6NwM3Cuwsto?=
- =?us-ascii?Q?mQwr2dOFmldpFwtb+v/LSBLivlMABaWPruZpzh6Zb7zd1ag1pwUuLdk40IIm?=
- =?us-ascii?Q?ShCbFAZ+jnEqSQmHnnCb/MIQ/mD3KN6Z3dtE+fhh5jsSlL3UT8JJsjNUl8x4?=
- =?us-ascii?Q?FjV7lTtpgh0jAEt/OjofmhdGg29M845/Wwe+HlnaJTJ46yqhp/2gPcjwZw8Z?=
- =?us-ascii?Q?q2cPMLJD6MBVt1wRGXAiz8KXPZG8vrbGA+1t4o/5tOcpbi4LspZA8QyBRZ20?=
- =?us-ascii?Q?n5nkVZ09XAdxJEMdwDXWNhIWXCalT5lPXIy5/JMlb011u4v0aZ8Av7jFPRYk?=
- =?us-ascii?Q?aupTeY8cfFwftns6RBBYODcVfYF2wTODmO+j5rfFSBnhAU+i/874UFFtLpUH?=
- =?us-ascii?Q?XTzjE80TtLRSxh1LcFxUL0UckqcwS0TAQp5O9c6/Zp5hT3RsiZHqC+FE0tu6?=
- =?us-ascii?Q?t/VgOw6jp1KvKw+2WJy3weYdyEiaFbIsIwLx24fzfa2qAWnCj610mS8QSokU?=
- =?us-ascii?Q?ZuFi8KY3QwRle8gxowoXGbyOTmdbXicJjF2msVVcdNphcCcOzbgXYhgU/SGB?=
- =?us-ascii?Q?XJ7QpqcalOTw+tDwiCIdFy+MCW47nbVQqHxIcb/2ElUwNr55IT4gWAKJfhB6?=
- =?us-ascii?Q?9xP6I2cLBAUXYEvhkUMKkl8Gv3+1lRL5t0AVOT3mqy44uCMi0m2+Q44iKPdo?=
- =?us-ascii?Q?Y3DNnp97evdiNXLvryxoY5gLDGJsu8ZXbJR/j+ZnbF2KIgrCHEMRfeVqY+9e?=
- =?us-ascii?Q?WJ6XTHhPgFz2JvoNb3jQ+eMNe0hI+Zbih9Fvh5GO4glrRNq0ManJ55Eo1a54?=
- =?us-ascii?Q?r1MShT+QhjT+qpTCQe6AWoO4UIHVNu+B5Qwh/27lEcQHhAiFjVQLQEuVqvJB?=
- =?us-ascii?Q?pREQaGAkwqhtpES1jHhPCLQFzSSVaMksHMosEuuvO1NjbFQLUbqqheQVZCrO?=
- =?us-ascii?Q?r2Kck1Rd6crS59ukguwCPmQ2zCtZAK80kM51DxkIfAWiCEzIJKejL3DhM2Ns?=
- =?us-ascii?Q?BqhJKDqMrtthF2MMZ8aClrPQvT4QGa01hRYBUZ9BCrRuYBpIzmrV9Raaakq6?=
- =?us-ascii?Q?f3E3ZMt4UPl/ndJUhzFadc74UKv/o0Z3EbjfAxTb/g3wTAKOyw8wsQ7r7u1I?=
- =?us-ascii?Q?ZH5jfJv49qVb64OUVWRHUw6Gdcxwn5WOr+u5XzqeJ97ThYhQhZUpejtUW1IR?=
- =?us-ascii?Q?/Lg4bjxzBGG9Tq17rCUtMXJrk3zgHroSWItzRM3?=
-X-Microsoft-Antispam-Message-Info: l96M3Jisd1aX8z94j43f7lVnqeUd70j9ulcn+6Q460wvskKNpI6w5zOCgex3v4GicVAYnzYzmM2p+YPn867xM7nzN+6oEgT2N8UTWkyVFA5N3UhWfJ3MGPNBnvgROG9yKDFrlUUE80BsaId2UxLyOa+JVDZkwfUNDOze4j3lt/0DgtY22LMM6HrRIvfo8hKY
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2612;6:9S0HllZ5a/ZlJaHD0GVuvcx7Kbher3jjy0w8FYXgyzcM2J/FsM0W1rtkFSgI9d9HWJ/uatVvddS0SxC7vWBmkXqr1JLIKMFlkqnM2N5UoML0vb5iu+94rsb+/plaoulmTWpcFvFzTEMeRRKMB1LD6c9Y6ra/KfLeX2Vil4URyyHqONgzGKnCgP3viTnkpzZ1OT6sWsxHUgd2wyi5+Va6AqBv9LZ80frCoN+a22l2eSME2Q8/kDPZn3S1u2rjIybkptatt+Eiwb2qIBSXG9ICn6k9eNrcEB0LcmahAzbSYDQwA/oywHosBCIjAZuXlbpvvsiXS9yxJjG1/Y4huZ3rSv6b/5Vj6eCUZ+hRfDHgnrY=;5:pj4fFXgrEpK9hZnZxZ4H/1IJiiUP5G1n/Oo7XpWksWJi+u82E1nEw4EWt3Rx5hTjltwtam3qPlduzkQ3GXfidq7X3biFlZjivjUOsfLneR7HT+jSABM0uWjec3POm5PF/D0gDHthP/1gXi1npcmSb3yDEVopBT4O8mBf14ajomw=;24:MBbI5Z9DosTcc+nfDfrCwmFeo4BSBVFlWJpo93Jy6AxvDN7MvwwvC9ucxTINyrC3zkhZPJ8MQxtkOSo/rb8eMH8yd3WQ2tZ1S4MNvlaRR7k=;7:ZhJdZMMq4/xA1IbuhOb1+Fk97QenZpGKgy9CU3zR3YoO2rIXGIuYUcb2ggBgG0dI/zw43iABys06lEVgeFLi2ckysdCWqDEoxGGwcpoJjxf8IUffY+ROD6hkfNiXmqnBkLlgf/0hNj/8pMVQX/n0KHBdhIvAZ149tShz0hyKujG/od6zyxrG8q4+yTtECGSWRavRu8ywYRcTivnehOIhWIgd4RvN4Y9cJ9HuiRs4MrAS1qxLsP8vH7FD/3u7F1S4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1483;23:JswMHx2ba5HsiuOmO2p3+4tGWC+05I4QiBK9c8Qd7?=
+ =?us-ascii?Q?XPhf8G68Yv8oB37Iv+noRtBuIAKc13/UBUtFLFm5OfkRrlPXyEcKiucF01XB?=
+ =?us-ascii?Q?Pz0PSzXunWQ8DqP1rlZ1+LtOvpP9NPE1qvg5OH10wDkAlrw93mevbkmRnQJN?=
+ =?us-ascii?Q?ND+os3qrIwb2lfEYNYKeUTRXKmoZ4mdC0GTutSMFcPGXev1leFEjI47OlnOH?=
+ =?us-ascii?Q?nVCWJlJnzhcp+5NbyXjK6ZQlhZWB7sNK4chcm/LFtUDCLUgc1GFDAFJBoll7?=
+ =?us-ascii?Q?gyzHJWHLol/+OU7fmWSVXEOR9jFeN/eRjmt+MtLOpTNoB4vNJ91qhrIkFF5+?=
+ =?us-ascii?Q?iYy8V/+o2UWR2W4PHhg0KBSNY9LtzH0wZ6AHSpSKkwalTgzTlVi2iUhih8Y9?=
+ =?us-ascii?Q?nHCssRAQaUfXO9bxLCshMOHmIn91Qsub6Bpz96wFu88XM+TTO2EHbCRxkRyd?=
+ =?us-ascii?Q?p/v/umDxUJl2H1kfbx42uKDnnr6vRBLel4XRvf3XF/PnOIQpH6w59mqaEjhO?=
+ =?us-ascii?Q?0RB1SJJG5W8v250WSiie5xMONgceWIMO/3aPrF3kommNIH5oA4RSTG3JAWj2?=
+ =?us-ascii?Q?Y/F3u0IW2t7Fb3QTSipIrQplvi4RTeNg7zvFYxATYvoOm3gBB4N4rzOtyZIx?=
+ =?us-ascii?Q?wMc6qooNIuGQWYdUIzK1R6oYLCW4JD4K3Y5tSJ7ohrjRrhjthabCljGDJtJ9?=
+ =?us-ascii?Q?gd2KeDiGZ76J/aMUURO1Us5jaEBcM1OEOOYZOb+VTFBo+8O+EnwpYuB9mXej?=
+ =?us-ascii?Q?rTXzEIh01mrAdsTnMyxLJF8c5zI6kpdi8aQr3jHjv65e93TAHeklWN7hqs2/?=
+ =?us-ascii?Q?ICB0JCwbpCGFv3WwCdhZW5DKFMc43rtw5+xJzgs0UFEtxf5+MA9EsImO9XFo?=
+ =?us-ascii?Q?0D110dwl4pMw4/WD8ozKDXVpjgsAuwKhO9rvE65EheJuBFrnzR7racayUCYf?=
+ =?us-ascii?Q?s5SkUxy3RtCIXGzU7xXTBAnCTGujVz0hSq7IDZAKvH+uIhSgSlOuTxYBRHGJ?=
+ =?us-ascii?Q?e6An7jYWiYmGgNn1K2e4WY04Uz1VRpBgLKVzbPr+vYZm8TiExPuR+L70+4mu?=
+ =?us-ascii?Q?pdJoOHnPlrKQCjYpJWpGv+2PmENjjvlVwjVFNcX45j8uXMCXbm2zSBBcj5cm?=
+ =?us-ascii?Q?+mDrDtfAQIIFR74z/eOK/Ykwx7MqXPT?=
+X-Microsoft-Antispam-Message-Info: UPWN4MX0qRbPnQ7YAdOFxIaqeW3T1kgixB/abIs+t2R8cTOkZz5Nrr6g6qldXhfHHOARtQ/91groh5ft+/M4eZR/XrYrawrPsSIEQXC7EwEVuf1EBo/1r1JvtOxDNhagxWxY8UosI8xsVvB2WlJLNRxViBScyNVxULfgwD5vvWKhTF7PaDDPJt2TZZcKPptN
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;6:EeyLRMHKj6lFYcQGSubQFEX+DVVq/2vv+tN52VD5BpZtWd07RvkbnWQChVVJU/b+x8N1Cf8jOJxNCsq5wjIB3AYXoU/krhMMXM4hbEzuqur3TQATprTqh8ei2FpZBpCvADBW64EvQHV08aO/V99WAR6drYlDhbmZqOjUofY+A+O+sKYo4aF7dIwm9rlnzTG8QV/sVkHKrcbgu7oTdTCq09ziR52URevuxR196d6Jy2vKwLLyUcetWNAatzoB1OTHA+AqTUmNhlfakIJhCrtQFPgwB//GWdFts2bwpk47L0b91tHLfyWUHnk4skhyWrnoeXUqSnN80ZtrAModbjt7D2TunPqriM60xyJMx/QDULE=;5:FtViPutfLOYlb3vZc9/1HmELTf4LzLjJZ9Cv8LSmhYigIcoxOCfAgAiWwGwFH+0ydLLf54vRaxIIhKy8592Sr/2I5LpsBsDru6fVKen3w5WOHcJiou/o36fapgXuYqqOJoucREmYKi4d7R27lv6iSeBDezW3nKsSRUsndcp8Sg4=;24:dL/Wm7G3k/L1R2aDAl317P+YQWykpF0+n3VgOusa+t+Xmzvr0FYlLels5IXMqmXo9vC2j4ErwyUZG5DzaKUjyuUdAwRnuXVK7l4in40PjkM=;7:/0HVDkfVUgRMRNT9wQqucRCDlpDVWq8O9ZYVsOply4htuoBpWaoirYd4dQEbPMpmKBtIJxCFFj31lLJJsu/ws03W7jDKJrh9rZPU53k5K1ge6ADhUnYt1m609SatlqQgEKoGoUKYg3BnnDpTjuaP6ctG/GH957xGbaNKQHpHIDGSE0tdPUpr9rtjN/Qz6lADWsqCmBxTQVBPGWIh1vQXoDeAeCGfmmoSiT+p/o/DSjuZ52eCuxgTN4s3dSWGXgqu
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:35.4021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:37.1031
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1fb316a-b33f-40cd-9cc8-08d58b0dfe0a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86aabac8-cbb9-4120-638d-08d58b0dff3b
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2612
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1483
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin video support
+Remove Blackfin CPU frequency support
 ---
- drivers/video/console/Kconfig                |    2 +-
- drivers/video/fbdev/Kconfig                  |   83 --
- drivers/video/fbdev/Makefile                 |    5 -
- drivers/video/fbdev/bf537-lq035.c            |  891 --------------------
- drivers/video/fbdev/bf54x-lq043fb.c          |  764 -----------------
- drivers/video/fbdev/bfin-lq035q1-fb.c        |  864 --------------------
- drivers/video/fbdev/bfin-t350mcqb-fb.c       |  669 ---------------
- drivers/video/fbdev/bfin_adv7393fb.c         |  828 -------------------
- drivers/video/fbdev/bfin_adv7393fb.h         |  319 --------
- drivers/video/logo/Kconfig                   |   10 -
- drivers/video/logo/Makefile                  |    2 -
- drivers/video/logo/logo.c                    |    8 -
- drivers/video/logo/logo_blackfin_clut224.ppm | 1127 --------------------------
- drivers/video/logo/logo_blackfin_vga16.ppm   | 1127 --------------------------
- include/linux/fb.h                           |    3 +-
- include/linux/linux_logo.h                   |    2 -
- 16 files changed, 2 insertions(+), 6702 deletions(-)
- delete mode 100644 drivers/video/fbdev/bf537-lq035.c
- delete mode 100644 drivers/video/fbdev/bf54x-lq043fb.c
- delete mode 100644 drivers/video/fbdev/bfin-lq035q1-fb.c
- delete mode 100644 drivers/video/fbdev/bfin-t350mcqb-fb.c
- delete mode 100644 drivers/video/fbdev/bfin_adv7393fb.c
- delete mode 100644 drivers/video/fbdev/bfin_adv7393fb.h
- delete mode 100644 drivers/video/logo/logo_blackfin_clut224.ppm
- delete mode 100644 drivers/video/logo/logo_blackfin_vga16.ppm
+ drivers/cpufreq/Makefile           |    1 -
+ drivers/cpufreq/blackfin-cpufreq.c |  217 ---
+ drivers/cpufreq/cpufreq.c          | 2612 ------------------------------------
+ 3 files changed, 2830 deletions(-)
+ delete mode 100644 drivers/cpufreq/blackfin-cpufreq.c
+ delete mode 100644 drivers/cpufreq/cpufreq.c
 
-diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-index 7f1f1fb..8309b04 100644
---- a/drivers/video/console/Kconfig
-+++ b/drivers/video/console/Kconfig
-@@ -7,7 +7,7 @@ menu "Console display driver support"
- config VGA_CONSOLE
- 	bool "VGA text console" if EXPERT || !X86
- 	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
--		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
-+		!SUPERH && !AVR32 && !MN10300 && !CRIS && \
- 		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
- 		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC
- 	default y
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 11e699f..b52a459 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -580,77 +580,6 @@ config FB_VGA16
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called vga16fb.
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index c60c1e1..43e4254 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -100,7 +100,6 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
  
--config FB_BF54X_LQ043
--	tristate "SHARP LQ043 TFT LCD (BF548 EZKIT)"
--	depends on FB && (BF54x) && !BF542
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	help
--	 This is the framebuffer device driver for a SHARP LQ043T1DG01 TFT LCD
--
--config FB_BFIN_T350MCQB
--	tristate "Varitronix COG-T350MCQB TFT LCD display (BF527 EZKIT)"
--	depends on FB && BLACKFIN
--	select BFIN_GPTIMERS
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	help
--	 This is the framebuffer device driver for a Varitronix VL-PS-COG-T350MCQB-01 display TFT LCD
--	 This display is a QVGA 320x240 24-bit RGB display interfaced by an 8-bit wide PPI
--	 It uses PPI[0..7] PPI_FS1, PPI_FS2 and PPI_CLK.
--
--config FB_BFIN_LQ035Q1
--	tristate "SHARP LQ035Q1DH02 TFT LCD"
--	depends on FB && BLACKFIN && SPI
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	select BFIN_GPTIMERS
--	help
--	  This is the framebuffer device driver for a SHARP LQ035Q1DH02 TFT display found on
--	  the Blackfin Landscape LCD EZ-Extender Card.
--	  This display is a QVGA 320x240 18-bit RGB display interfaced by an 16-bit wide PPI
--	  It uses PPI[0..15] PPI_FS1, PPI_FS2 and PPI_CLK.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called bfin-lq035q1-fb.
--
--config FB_BF537_LQ035
--	tristate "SHARP LQ035 TFT LCD (BF537 STAMP)"
--	depends on FB && (BF534 || BF536 || BF537) && I2C_BLACKFIN_TWI
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	select BFIN_GPTIMERS
--	help
--	  This is the framebuffer device for a SHARP LQ035Q7DB03 TFT LCD
--	  attached to a BF537.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called bf537-lq035.
--
--config FB_BFIN_7393
--	tristate "Blackfin ADV7393 Video encoder"
--	depends on FB && BLACKFIN
--	select I2C
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	help
--	  This is the framebuffer device for a ADV7393 video encoder
--	  attached to a Blackfin on the PPI port.
--	  If your Blackfin board has a ADV7393 select Y.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called bfin_adv7393fb.
--
--choice
--	prompt  "Video mode support"
--	depends on FB_BFIN_7393
--	default NTSC
--
- config NTSC
- 	bool 'NTSC 720x480'
- 
-@@ -671,18 +600,6 @@ config PAL_YCBCR
- 
- endchoice
- 
--choice
--	prompt  "Size of ADV7393 frame buffer memory Single/Double Size"
--	depends on (FB_BFIN_7393)
--	default ADV7393_1XMEM
--
--config ADV7393_1XMEM
--	bool 'Single'
--
--config ADV7393_2XMEM
--	bool 'Double'
--endchoice
--
- config FB_STI
- 	tristate "HP STI frame buffer device support"
- 	depends on FB && PARISC
-diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
-index 115961e..55282a2 100644
---- a/drivers/video/fbdev/Makefile
-+++ b/drivers/video/fbdev/Makefile
-@@ -136,11 +136,6 @@ obj-$(CONFIG_FB_VESA)             += vesafb.o
- obj-$(CONFIG_FB_EFI)              += efifb.o
- obj-$(CONFIG_FB_VGA16)            += vga16fb.o
- obj-$(CONFIG_FB_OF)               += offb.o
--obj-$(CONFIG_FB_BF537_LQ035)      += bf537-lq035.o
--obj-$(CONFIG_FB_BF54X_LQ043)	  += bf54x-lq043fb.o
--obj-$(CONFIG_FB_BFIN_LQ035Q1)     += bfin-lq035q1-fb.o
--obj-$(CONFIG_FB_BFIN_T350MCQB)	  += bfin-t350mcqb-fb.o
--obj-$(CONFIG_FB_BFIN_7393)        += bfin_adv7393fb.o
- obj-$(CONFIG_FB_MX3)		  += mx3fb.o
- obj-$(CONFIG_FB_DA8XX)		  += da8xx-fb.o
- obj-$(CONFIG_FB_MXS)		  += mxsfb.o
-diff --git a/drivers/video/fbdev/bf537-lq035.c b/drivers/video/fbdev/bf537-lq035.c
+ ##################################################################################
+ # Other platform drivers
+-obj-$(CONFIG_BFIN_CPU_FREQ)		+= blackfin-cpufreq.o
+ obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
+ obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
+ obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
+diff --git a/drivers/cpufreq/blackfin-cpufreq.c b/drivers/cpufreq/blackfin-cpufreq.c
 deleted file mode 100644
-index ef29fb4..0000000
---- a/drivers/video/fbdev/bf537-lq035.c
+index 12e97d8..0000000
+--- a/drivers/cpufreq/blackfin-cpufreq.c
 +++ /dev/null
-@@ -1,891 +0,0 @@
+@@ -1,217 +0,0 @@
 -/*
-- * Analog Devices Blackfin(BF537 STAMP) + SHARP TFT LCD.
-- * http://docs.blackfin.uclinux.org/doku.php?id=hw:cards:tft-lcd
+- * Blackfin core clock scaling
 - *
-- * Copyright 2006-2010 Analog Devices Inc.
-- * Licensed under the GPL-2.
+- * Copyright 2008-2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/types.h>
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/cpufreq.h>
+-#include <linux/fs.h>
+-#include <linux/delay.h>
+-#include <asm/blackfin.h>
+-#include <asm/time.h>
+-#include <asm/dpmc.h>
+-
+-
+-/* this is the table of CCLK frequencies, in Hz */
+-/* .driver_data is the entry in the auxiliary dpm_state_table[] */
+-static struct cpufreq_frequency_table bfin_freq_table[] = {
+-	{
+-		.frequency = CPUFREQ_TABLE_END,
+-		.driver_data = 0,
+-	},
+-	{
+-		.frequency = CPUFREQ_TABLE_END,
+-		.driver_data = 1,
+-	},
+-	{
+-		.frequency = CPUFREQ_TABLE_END,
+-		.driver_data = 2,
+-	},
+-	{
+-		.frequency = CPUFREQ_TABLE_END,
+-		.driver_data = 0,
+-	},
+-};
+-
+-static struct bfin_dpm_state {
+-	unsigned int csel; /* system clock divider */
+-	unsigned int tscale; /* change the divider on the core timer interrupt */
+-} dpm_state_table[3];
+-
+-#if defined(CONFIG_CYCLES_CLOCKSOURCE)
+-/*
+- * normalized to maximum frequency offset for CYCLES,
+- * used in time-ts cycles clock source, but could be used
+- * somewhere also.
+- */
+-unsigned long long __bfin_cycles_off;
+-unsigned int __bfin_cycles_mod;
+-#endif
+-
+-/**************************************************************************/
+-static void __init bfin_init_tables(unsigned long cclk, unsigned long sclk)
+-{
+-
+-	unsigned long csel, min_cclk;
+-	int index;
+-
+-	/* Anomaly 273 seems to still exist on non-BF54x w/dcache turned on */
+-#if ANOMALY_05000273 || ANOMALY_05000274 || \
+-	(!(defined(CONFIG_BF54x) || defined(CONFIG_BF60x)) \
+-	&& defined(CONFIG_BFIN_EXTMEM_DCACHEABLE))
+-	min_cclk = sclk * 2;
+-#else
+-	min_cclk = sclk;
+-#endif
+-
+-#ifndef CONFIG_BF60x
+-	csel = ((bfin_read_PLL_DIV() & CSEL) >> 4);
+-#else
+-	csel = bfin_read32(CGU0_DIV) & 0x1F;
+-#endif
+-
+-	for (index = 0;  (cclk >> index) >= min_cclk && csel <= 3 && index < 3; index++, csel++) {
+-		bfin_freq_table[index].frequency = cclk >> index;
+-#ifndef CONFIG_BF60x
+-		dpm_state_table[index].csel = csel << 4; /* Shift now into PLL_DIV bitpos */
+-#else
+-		dpm_state_table[index].csel = csel;
+-#endif
+-		dpm_state_table[index].tscale =  (TIME_SCALE >> index) - 1;
+-
+-		pr_debug("cpufreq: freq:%d csel:0x%x tscale:%d\n",
+-						 bfin_freq_table[index].frequency,
+-						 dpm_state_table[index].csel,
+-						 dpm_state_table[index].tscale);
+-	}
+-	return;
+-}
+-
+-static void bfin_adjust_core_timer(void *info)
+-{
+-	unsigned int tscale;
+-	unsigned int index = *(unsigned int *)info;
+-
+-	/* we have to adjust the core timer, because it is using cclk */
+-	tscale = dpm_state_table[index].tscale;
+-	bfin_write_TSCALE(tscale);
+-	return;
+-}
+-
+-static unsigned int bfin_getfreq_khz(unsigned int cpu)
+-{
+-	/* Both CoreA/B have the same core clock */
+-	return get_cclk() / 1000;
+-}
+-
+-#ifdef CONFIG_BF60x
+-static int cpu_set_cclk(int cpu, unsigned long new)
+-{
+-	struct clk *clk;
+-	int ret;
+-
+-	clk = clk_get(NULL, "CCLK");
+-	if (IS_ERR(clk))
+-		return -ENODEV;
+-
+-	ret = clk_set_rate(clk, new);
+-	clk_put(clk);
+-	return ret;
+-}
+-#endif
+-
+-static int bfin_target(struct cpufreq_policy *policy, unsigned int index)
+-{
+-#ifndef CONFIG_BF60x
+-	unsigned int plldiv;
+-#endif
+-	static unsigned long lpj_ref;
+-	static unsigned int  lpj_ref_freq;
+-	unsigned int old_freq, new_freq;
+-	int ret = 0;
+-
+-#if defined(CONFIG_CYCLES_CLOCKSOURCE)
+-	cycles_t cycles;
+-#endif
+-
+-	old_freq = bfin_getfreq_khz(0);
+-	new_freq = bfin_freq_table[index].frequency;
+-
+-#ifndef CONFIG_BF60x
+-	plldiv = (bfin_read_PLL_DIV() & SSEL) | dpm_state_table[index].csel;
+-	bfin_write_PLL_DIV(plldiv);
+-#else
+-	ret = cpu_set_cclk(policy->cpu, new_freq * 1000);
+-	if (ret != 0) {
+-		WARN_ONCE(ret, "cpufreq set freq failed %d\n", ret);
+-		return ret;
+-	}
+-#endif
+-	on_each_cpu(bfin_adjust_core_timer, &index, 1);
+-#if defined(CONFIG_CYCLES_CLOCKSOURCE)
+-	cycles = get_cycles();
+-	SSYNC();
+-	cycles += 10; /* ~10 cycles we lose after get_cycles() */
+-	__bfin_cycles_off += (cycles << __bfin_cycles_mod) - (cycles << index);
+-	__bfin_cycles_mod = index;
+-#endif
+-	if (!lpj_ref_freq) {
+-		lpj_ref = loops_per_jiffy;
+-		lpj_ref_freq = old_freq;
+-	}
+-	if (new_freq != old_freq) {
+-		loops_per_jiffy = cpufreq_scale(lpj_ref,
+-				lpj_ref_freq, new_freq);
+-	}
+-
+-	return ret;
+-}
+-
+-static int __bfin_cpu_init(struct cpufreq_policy *policy)
+-{
+-
+-	unsigned long cclk, sclk;
+-
+-	cclk = get_cclk() / 1000;
+-	sclk = get_sclk() / 1000;
+-
+-	if (policy->cpu == CPUFREQ_CPU)
+-		bfin_init_tables(cclk, sclk);
+-
+-	policy->cpuinfo.transition_latency = 50000; /* 50us assumed */
+-
+-	return cpufreq_table_validate_and_show(policy, bfin_freq_table);
+-}
+-
+-static struct cpufreq_driver bfin_driver = {
+-	.verify = cpufreq_generic_frequency_table_verify,
+-	.target_index = bfin_target,
+-	.get = bfin_getfreq_khz,
+-	.init = __bfin_cpu_init,
+-	.name = "bfin cpufreq",
+-	.attr = cpufreq_generic_attr,
+-};
+-
+-static int __init bfin_cpu_init(void)
+-{
+-	return cpufreq_register_driver(&bfin_driver);
+-}
+-
+-static void __exit bfin_cpu_exit(void)
+-{
+-	cpufreq_unregister_driver(&bfin_driver);
+-}
+-
+-MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
+-MODULE_DESCRIPTION("cpufreq driver for Blackfin");
+-MODULE_LICENSE("GPL");
+-
+-module_init(bfin_cpu_init);
+-module_exit(bfin_cpu_exit);
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+deleted file mode 100644
+index de33ebf..0000000
+--- a/drivers/cpufreq/cpufreq.c
++++ /dev/null
+@@ -1,2612 +0,0 @@
+-/*
+- *  linux/drivers/cpufreq/cpufreq.c
+- *
+- *  Copyright (C) 2001 Russell King
+- *            (C) 2002 - 2003 Dominik Brodowski <linux@brodo.de>
+- *            (C) 2013 Viresh Kumar <viresh.kumar@linaro.org>
+- *
+- *  Oct 2005 - Ashok Raj <ashok.raj@intel.com>
+- *	Added handling for CPU hotplug
+- *  Feb 2006 - Jacob Shin <jacob.shin@amd.com>
+- *	Fix handling for CPU hotplug -- affected CPUs
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - */
 -
 -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 -
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/mm.h>
+-#include <linux/cpu.h>
+-#include <linux/cpufreq.h>
 -#include <linux/delay.h>
--#include <linux/fb.h>
--#include <linux/ioport.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/gpio.h>
--#include <linux/interrupt.h>
--#include <linux/sched.h>
--#include <linux/timer.h>
 -#include <linux/device.h>
--#include <linux/backlight.h>
--#include <linux/lcd.h>
--#include <linux/i2c.h>
--#include <linux/spinlock.h>
--#include <linux/dma-mapping.h>
+-#include <linux/init.h>
+-#include <linux/kernel_stat.h>
+-#include <linux/module.h>
+-#include <linux/mutex.h>
 -#include <linux/slab.h>
--#include <linux/platform_device.h>
+-#include <linux/suspend.h>
+-#include <linux/syscore_ops.h>
+-#include <linux/tick.h>
+-#include <trace/events/power.h>
 -
--#include <asm/blackfin.h>
--#include <asm/irq.h>
--#include <asm/dpmc.h>
--#include <asm/dma.h>
--#include <asm/portmux.h>
+-static LIST_HEAD(cpufreq_policy_list);
 -
--#define NO_BL 1
--
--#define MAX_BRIGHENESS	95
--#define MIN_BRIGHENESS	5
--#define NBR_PALETTE	256
--
--static const unsigned short ppi_pins[] = {
--	P_PPI0_CLK, P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15, 0
--};
--
--static unsigned char *fb_buffer;          /* RGB Buffer */
--static unsigned long *dma_desc_table;
--static int t_conf_done, lq035_open_cnt;
--static DEFINE_SPINLOCK(bfin_lq035_lock);
--
--static int landscape;
--module_param(landscape, int, 0);
--MODULE_PARM_DESC(landscape,
--	"LANDSCAPE use 320x240 instead of Native 240x320 Resolution");
--
--static int bgr;
--module_param(bgr, int, 0);
--MODULE_PARM_DESC(bgr,
--	"BGR use 16-bit BGR-565 instead of RGB-565");
--
--static int nocursor = 1;
--module_param(nocursor, int, 0644);
--MODULE_PARM_DESC(nocursor, "cursor enable/disable");
--
--static unsigned long current_brightness;  /* backlight */
--
--/* AD5280 vcomm */
--static unsigned char vcomm_value = 150;
--static struct i2c_client *ad5280_client;
--
--static void set_vcomm(void)
+-static inline bool policy_is_inactive(struct cpufreq_policy *policy)
 -{
--	int nr;
+-	return cpumask_empty(policy->cpus);
+-}
 -
--	if (!ad5280_client)
+-/* Macros to iterate over CPU policies */
+-#define for_each_suitable_policy(__policy, __active)			 \
+-	list_for_each_entry(__policy, &cpufreq_policy_list, policy_list) \
+-		if ((__active) == !policy_is_inactive(__policy))
+-
+-#define for_each_active_policy(__policy)		\
+-	for_each_suitable_policy(__policy, true)
+-#define for_each_inactive_policy(__policy)		\
+-	for_each_suitable_policy(__policy, false)
+-
+-#define for_each_policy(__policy)			\
+-	list_for_each_entry(__policy, &cpufreq_policy_list, policy_list)
+-
+-/* Iterate over governors */
+-static LIST_HEAD(cpufreq_governor_list);
+-#define for_each_governor(__governor)				\
+-	list_for_each_entry(__governor, &cpufreq_governor_list, governor_list)
+-
+-/**
+- * The "cpufreq driver" - the arch- or hardware-dependent low
+- * level driver of CPUFreq support, and its spinlock. This lock
+- * also protects the cpufreq_cpu_data array.
+- */
+-static struct cpufreq_driver *cpufreq_driver;
+-static DEFINE_PER_CPU(struct cpufreq_policy *, cpufreq_cpu_data);
+-static DEFINE_RWLOCK(cpufreq_driver_lock);
+-
+-/* Flag to suspend/resume CPUFreq governors */
+-static bool cpufreq_suspended;
+-
+-static inline bool has_target(void)
+-{
+-	return cpufreq_driver->target_index || cpufreq_driver->target;
+-}
+-
+-/* internal prototypes */
+-static unsigned int __cpufreq_get(struct cpufreq_policy *policy);
+-static int cpufreq_init_governor(struct cpufreq_policy *policy);
+-static void cpufreq_exit_governor(struct cpufreq_policy *policy);
+-static int cpufreq_start_governor(struct cpufreq_policy *policy);
+-static void cpufreq_stop_governor(struct cpufreq_policy *policy);
+-static void cpufreq_governor_limits(struct cpufreq_policy *policy);
+-
+-/**
+- * Two notifier lists: the "policy" list is involved in the
+- * validation process for a new CPU frequency policy; the
+- * "transition" list for kernel code that needs to handle
+- * changes to devices when the CPU clock speed changes.
+- * The mutex locks both lists.
+- */
+-static BLOCKING_NOTIFIER_HEAD(cpufreq_policy_notifier_list);
+-static struct srcu_notifier_head cpufreq_transition_notifier_list;
+-
+-static bool init_cpufreq_transition_notifier_list_called;
+-static int __init init_cpufreq_transition_notifier_list(void)
+-{
+-	srcu_init_notifier_head(&cpufreq_transition_notifier_list);
+-	init_cpufreq_transition_notifier_list_called = true;
+-	return 0;
+-}
+-pure_initcall(init_cpufreq_transition_notifier_list);
+-
+-static int off __read_mostly;
+-static int cpufreq_disabled(void)
+-{
+-	return off;
+-}
+-void disable_cpufreq(void)
+-{
+-	off = 1;
+-}
+-static DEFINE_MUTEX(cpufreq_governor_mutex);
+-
+-bool have_governor_per_policy(void)
+-{
+-	return !!(cpufreq_driver->flags & CPUFREQ_HAVE_GOVERNOR_PER_POLICY);
+-}
+-EXPORT_SYMBOL_GPL(have_governor_per_policy);
+-
+-struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy)
+-{
+-	if (have_governor_per_policy())
+-		return &policy->kobj;
+-	else
+-		return cpufreq_global_kobject;
+-}
+-EXPORT_SYMBOL_GPL(get_governor_parent_kobj);
+-
+-static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
+-{
+-	u64 idle_time;
+-	u64 cur_wall_time;
+-	u64 busy_time;
+-
+-	cur_wall_time = jiffies64_to_nsecs(get_jiffies_64());
+-
+-	busy_time = kcpustat_cpu(cpu).cpustat[CPUTIME_USER];
+-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
+-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
+-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
+-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
+-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
+-
+-	idle_time = cur_wall_time - busy_time;
+-	if (wall)
+-		*wall = div_u64(cur_wall_time, NSEC_PER_USEC);
+-
+-	return div_u64(idle_time, NSEC_PER_USEC);
+-}
+-
+-u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy)
+-{
+-	u64 idle_time = get_cpu_idle_time_us(cpu, io_busy ? wall : NULL);
+-
+-	if (idle_time == -1ULL)
+-		return get_cpu_idle_time_jiffy(cpu, wall);
+-	else if (!io_busy)
+-		idle_time += get_cpu_iowait_time_us(cpu, wall);
+-
+-	return idle_time;
+-}
+-EXPORT_SYMBOL_GPL(get_cpu_idle_time);
+-
+-__weak void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
+-		unsigned long max_freq)
+-{
+-}
+-EXPORT_SYMBOL_GPL(arch_set_freq_scale);
+-
+-/*
+- * This is a generic cpufreq init() routine which can be used by cpufreq
+- * drivers of SMP systems. It will do following:
+- * - validate & show freq table passed
+- * - set policies transition latency
+- * - policy->cpus with all possible CPUs
+- */
+-int cpufreq_generic_init(struct cpufreq_policy *policy,
+-		struct cpufreq_frequency_table *table,
+-		unsigned int transition_latency)
+-{
+-	int ret;
+-
+-	ret = cpufreq_table_validate_and_show(policy, table);
+-	if (ret) {
+-		pr_err("%s: invalid frequency table: %d\n", __func__, ret);
+-		return ret;
+-	}
+-
+-	policy->cpuinfo.transition_latency = transition_latency;
+-
+-	/*
+-	 * The driver only supports the SMP configuration where all processors
+-	 * share the clock and voltage and clock.
+-	 */
+-	cpumask_setall(policy->cpus);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_generic_init);
+-
+-struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = per_cpu(cpufreq_cpu_data, cpu);
+-
+-	return policy && cpumask_test_cpu(cpu, policy->cpus) ? policy : NULL;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw);
+-
+-unsigned int cpufreq_generic_get(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+-
+-	if (!policy || IS_ERR(policy->clk)) {
+-		pr_err("%s: No %s associated to cpu: %d\n",
+-		       __func__, policy ? "clk" : "policy", cpu);
+-		return 0;
+-	}
+-
+-	return clk_get_rate(policy->clk) / 1000;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_generic_get);
+-
+-/**
+- * cpufreq_cpu_get: returns policy for a cpu and marks it busy.
+- *
+- * @cpu: cpu to find policy for.
+- *
+- * This returns policy for 'cpu', returns NULL if it doesn't exist.
+- * It also increments the kobject reference count to mark it busy and so would
+- * require a corresponding call to cpufreq_cpu_put() to decrement it back.
+- * If corresponding call cpufreq_cpu_put() isn't made, the policy wouldn't be
+- * freed as that depends on the kobj count.
+- *
+- * Return: A valid policy on success, otherwise NULL on failure.
+- */
+-struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = NULL;
+-	unsigned long flags;
+-
+-	if (WARN_ON(cpu >= nr_cpu_ids))
+-		return NULL;
+-
+-	/* get the cpufreq driver */
+-	read_lock_irqsave(&cpufreq_driver_lock, flags);
+-
+-	if (cpufreq_driver) {
+-		/* get the CPU */
+-		policy = cpufreq_cpu_get_raw(cpu);
+-		if (policy)
+-			kobject_get(&policy->kobj);
+-	}
+-
+-	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	return policy;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_cpu_get);
+-
+-/**
+- * cpufreq_cpu_put: Decrements the usage count of a policy
+- *
+- * @policy: policy earlier returned by cpufreq_cpu_get().
+- *
+- * This decrements the kobject reference count incremented earlier by calling
+- * cpufreq_cpu_get().
+- */
+-void cpufreq_cpu_put(struct cpufreq_policy *policy)
+-{
+-	kobject_put(&policy->kobj);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_cpu_put);
+-
+-/*********************************************************************
+- *            EXTERNALLY AFFECTING FREQUENCY CHANGES                 *
+- *********************************************************************/
+-
+-/**
+- * adjust_jiffies - adjust the system "loops_per_jiffy"
+- *
+- * This function alters the system "loops_per_jiffy" for the clock
+- * speed change. Note that loops_per_jiffy cannot be updated on SMP
+- * systems as each CPU might be scaled differently. So, use the arch
+- * per-CPU loops_per_jiffy value wherever possible.
+- */
+-static void adjust_jiffies(unsigned long val, struct cpufreq_freqs *ci)
+-{
+-#ifndef CONFIG_SMP
+-	static unsigned long l_p_j_ref;
+-	static unsigned int l_p_j_ref_freq;
+-
+-	if (ci->flags & CPUFREQ_CONST_LOOPS)
 -		return;
 -
--	nr = i2c_smbus_write_byte_data(ad5280_client, 0x00, vcomm_value);
--	if (nr)
--		pr_err("i2c_smbus_write_byte_data fail: %d\n", nr);
--}
--
--static int ad5280_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
--{
--	int ret;
--	if (!i2c_check_functionality(client->adapter,
--				     I2C_FUNC_SMBUS_BYTE_DATA)) {
--		dev_err(&client->dev, "SMBUS Byte Data not Supported\n");
--		return -EIO;
+-	if (!l_p_j_ref_freq) {
+-		l_p_j_ref = loops_per_jiffy;
+-		l_p_j_ref_freq = ci->old;
+-		pr_debug("saving %lu as reference value for loops_per_jiffy; freq is %u kHz\n",
+-			 l_p_j_ref, l_p_j_ref_freq);
 -	}
--
--	ret = i2c_smbus_write_byte_data(client, 0x00, vcomm_value);
--	if (ret) {
--		dev_err(&client->dev, "write fail: %d\n", ret);
--		return ret;
+-	if (val == CPUFREQ_POSTCHANGE && ci->old != ci->new) {
+-		loops_per_jiffy = cpufreq_scale(l_p_j_ref, l_p_j_ref_freq,
+-								ci->new);
+-		pr_debug("scaling loops_per_jiffy to %lu for frequency %u kHz\n",
+-			 loops_per_jiffy, ci->new);
 -	}
--
--	ad5280_client = client;
--
--	return 0;
--}
--
--static int ad5280_remove(struct i2c_client *client)
--{
--	ad5280_client = NULL;
--	return 0;
--}
--
--static const struct i2c_device_id ad5280_id[] = {
--	{"bf537-lq035-ad5280", 0},
--	{}
--};
--
--MODULE_DEVICE_TABLE(i2c, ad5280_id);
--
--static struct i2c_driver ad5280_driver = {
--	.driver = {
--		.name = "bf537-lq035-ad5280",
--	},
--	.probe = ad5280_probe,
--	.remove = ad5280_remove,
--	.id_table = ad5280_id,
--};
--
--#ifdef CONFIG_PNAV10
--#define MOD GPIO_PH13
--
--#define bfin_write_TIMER_LP_CONFIG	bfin_write_TIMER0_CONFIG
--#define bfin_write_TIMER_LP_WIDTH	bfin_write_TIMER0_WIDTH
--#define bfin_write_TIMER_LP_PERIOD	bfin_write_TIMER0_PERIOD
--#define bfin_read_TIMER_LP_COUNTER	bfin_read_TIMER0_COUNTER
--#define TIMDIS_LP			TIMDIS0
--#define TIMEN_LP			TIMEN0
--
--#define bfin_write_TIMER_SPS_CONFIG	bfin_write_TIMER1_CONFIG
--#define bfin_write_TIMER_SPS_WIDTH	bfin_write_TIMER1_WIDTH
--#define bfin_write_TIMER_SPS_PERIOD	bfin_write_TIMER1_PERIOD
--#define TIMDIS_SPS			TIMDIS1
--#define TIMEN_SPS			TIMEN1
--
--#define bfin_write_TIMER_SP_CONFIG	bfin_write_TIMER5_CONFIG
--#define bfin_write_TIMER_SP_WIDTH	bfin_write_TIMER5_WIDTH
--#define bfin_write_TIMER_SP_PERIOD	bfin_write_TIMER5_PERIOD
--#define TIMDIS_SP			TIMDIS5
--#define TIMEN_SP			TIMEN5
--
--#define bfin_write_TIMER_PS_CLS_CONFIG	bfin_write_TIMER2_CONFIG
--#define bfin_write_TIMER_PS_CLS_WIDTH	bfin_write_TIMER2_WIDTH
--#define bfin_write_TIMER_PS_CLS_PERIOD	bfin_write_TIMER2_PERIOD
--#define TIMDIS_PS_CLS			TIMDIS2
--#define TIMEN_PS_CLS			TIMEN2
--
--#define bfin_write_TIMER_REV_CONFIG	bfin_write_TIMER3_CONFIG
--#define bfin_write_TIMER_REV_WIDTH	bfin_write_TIMER3_WIDTH
--#define bfin_write_TIMER_REV_PERIOD	bfin_write_TIMER3_PERIOD
--#define TIMDIS_REV			TIMDIS3
--#define TIMEN_REV			TIMEN3
--#define bfin_read_TIMER_REV_COUNTER	bfin_read_TIMER3_COUNTER
--
--#define	FREQ_PPI_CLK         (5*1024*1024)  /* PPI_CLK 5MHz */
--
--#define TIMERS {P_TMR0, P_TMR1, P_TMR2, P_TMR3, P_TMR5, 0}
--
--#else
--
--#define UD      GPIO_PF13	/* Up / Down */
--#define MOD     GPIO_PF10
--#define LBR     GPIO_PF14	/* Left Right */
--
--#define bfin_write_TIMER_LP_CONFIG	bfin_write_TIMER6_CONFIG
--#define bfin_write_TIMER_LP_WIDTH	bfin_write_TIMER6_WIDTH
--#define bfin_write_TIMER_LP_PERIOD	bfin_write_TIMER6_PERIOD
--#define bfin_read_TIMER_LP_COUNTER	bfin_read_TIMER6_COUNTER
--#define TIMDIS_LP			TIMDIS6
--#define TIMEN_LP			TIMEN6
--
--#define bfin_write_TIMER_SPS_CONFIG	bfin_write_TIMER1_CONFIG
--#define bfin_write_TIMER_SPS_WIDTH	bfin_write_TIMER1_WIDTH
--#define bfin_write_TIMER_SPS_PERIOD	bfin_write_TIMER1_PERIOD
--#define TIMDIS_SPS			TIMDIS1
--#define TIMEN_SPS			TIMEN1
--
--#define bfin_write_TIMER_SP_CONFIG	bfin_write_TIMER0_CONFIG
--#define bfin_write_TIMER_SP_WIDTH	bfin_write_TIMER0_WIDTH
--#define bfin_write_TIMER_SP_PERIOD	bfin_write_TIMER0_PERIOD
--#define TIMDIS_SP			TIMDIS0
--#define TIMEN_SP			TIMEN0
--
--#define bfin_write_TIMER_PS_CLS_CONFIG	bfin_write_TIMER7_CONFIG
--#define bfin_write_TIMER_PS_CLS_WIDTH	bfin_write_TIMER7_WIDTH
--#define bfin_write_TIMER_PS_CLS_PERIOD	bfin_write_TIMER7_PERIOD
--#define TIMDIS_PS_CLS			TIMDIS7
--#define TIMEN_PS_CLS			TIMEN7
--
--#define bfin_write_TIMER_REV_CONFIG	bfin_write_TIMER5_CONFIG
--#define bfin_write_TIMER_REV_WIDTH	bfin_write_TIMER5_WIDTH
--#define bfin_write_TIMER_REV_PERIOD	bfin_write_TIMER5_PERIOD
--#define TIMDIS_REV			TIMDIS5
--#define TIMEN_REV			TIMEN5
--#define bfin_read_TIMER_REV_COUNTER	bfin_read_TIMER5_COUNTER
--
--#define	FREQ_PPI_CLK         (6*1000*1000)  /* PPI_CLK 6MHz */
--#define TIMERS {P_TMR0, P_TMR1, P_TMR5, P_TMR6, P_TMR7, 0}
--
--#endif
--
--#define LCD_X_RES			240 /* Horizontal Resolution */
--#define LCD_Y_RES			320 /* Vertical Resolution */
--
--#define LCD_BBP				16  /* Bit Per Pixel */
--
--/* the LCD and the DMA start counting differently;
-- * since one starts at 0 and the other starts at 1,
-- * we have a difference of 1 between START_LINES
-- * and U_LINES.
-- */
--#define START_LINES       8   /* lines for field flyback or field blanking signal */
--#define U_LINES           9   /* number of undisplayed blanking lines */
--
--#define FRAMES_PER_SEC    (60)
--
--#define DCLKS_PER_FRAME   (FREQ_PPI_CLK/FRAMES_PER_SEC)
--#define DCLKS_PER_LINE    (DCLKS_PER_FRAME/(LCD_Y_RES+U_LINES))
--
--#define PPI_CONFIG_VALUE  (PORT_DIR|XFR_TYPE|DLEN_16|POLS)
--#define PPI_DELAY_VALUE   (0)
--#define TIMER_CONFIG      (PWM_OUT|PERIOD_CNT|TIN_SEL|CLK_SEL)
--
--#define ACTIVE_VIDEO_MEM_OFFSET	(LCD_X_RES*START_LINES*(LCD_BBP/8))
--#define ACTIVE_VIDEO_MEM_SIZE	(LCD_Y_RES*LCD_X_RES*(LCD_BBP/8))
--#define TOTAL_VIDEO_MEM_SIZE	((LCD_Y_RES+U_LINES)*LCD_X_RES*(LCD_BBP/8))
--#define TOTAL_DMA_DESC_SIZE	(2 * sizeof(u32) * (LCD_Y_RES + U_LINES))
--
--static void start_timers(void) /* CHECK with HW */
--{
--	unsigned long flags;
--
--	local_irq_save(flags);
--
--	bfin_write_TIMER_ENABLE(TIMEN_REV);
--	SSYNC();
--
--	while (bfin_read_TIMER_REV_COUNTER() <= 11)
--		continue;
--	bfin_write_TIMER_ENABLE(TIMEN_LP);
--	SSYNC();
--
--	while (bfin_read_TIMER_LP_COUNTER() < 3)
--		continue;
--	bfin_write_TIMER_ENABLE(TIMEN_SP|TIMEN_SPS|TIMEN_PS_CLS);
--	SSYNC();
--	t_conf_done = 1;
--	local_irq_restore(flags);
--}
--
--static void config_timers(void)
--{
--	/* Stop timers */
--	bfin_write_TIMER_DISABLE(TIMDIS_SP|TIMDIS_SPS|TIMDIS_REV|
--				 TIMDIS_LP|TIMDIS_PS_CLS);
--	SSYNC();
--
--	/* LP, timer 6 */
--	bfin_write_TIMER_LP_CONFIG(TIMER_CONFIG|PULSE_HI);
--	bfin_write_TIMER_LP_WIDTH(1);
--
--	bfin_write_TIMER_LP_PERIOD(DCLKS_PER_LINE);
--	SSYNC();
--
--	/* SPS, timer 1 */
--	bfin_write_TIMER_SPS_CONFIG(TIMER_CONFIG|PULSE_HI);
--	bfin_write_TIMER_SPS_WIDTH(DCLKS_PER_LINE*2);
--	bfin_write_TIMER_SPS_PERIOD((DCLKS_PER_LINE * (LCD_Y_RES+U_LINES)));
--	SSYNC();
--
--	/* SP, timer 0 */
--	bfin_write_TIMER_SP_CONFIG(TIMER_CONFIG|PULSE_HI);
--	bfin_write_TIMER_SP_WIDTH(1);
--	bfin_write_TIMER_SP_PERIOD(DCLKS_PER_LINE);
--	SSYNC();
--
--	/* PS & CLS, timer 7 */
--	bfin_write_TIMER_PS_CLS_CONFIG(TIMER_CONFIG);
--	bfin_write_TIMER_PS_CLS_WIDTH(LCD_X_RES + START_LINES);
--	bfin_write_TIMER_PS_CLS_PERIOD(DCLKS_PER_LINE);
--
--	SSYNC();
--
--#ifdef NO_BL
--	/* REV, timer 5 */
--	bfin_write_TIMER_REV_CONFIG(TIMER_CONFIG|PULSE_HI);
--
--	bfin_write_TIMER_REV_WIDTH(DCLKS_PER_LINE);
--	bfin_write_TIMER_REV_PERIOD(DCLKS_PER_LINE*2);
--
--	SSYNC();
 -#endif
 -}
 -
--static void config_ppi(void)
+-static void __cpufreq_notify_transition(struct cpufreq_policy *policy,
+-		struct cpufreq_freqs *freqs, unsigned int state)
 -{
--	bfin_write_PPI_DELAY(PPI_DELAY_VALUE);
--	bfin_write_PPI_COUNT(LCD_X_RES-1);
--	/* 0x10 -> PORT_CFG -> 2 or 3 frame syncs */
--	bfin_write_PPI_CONTROL((PPI_CONFIG_VALUE|0x10) & (~POLS));
--}
+-	BUG_ON(irqs_disabled());
 -
--static int config_dma(void)
--{
--	u32 i;
+-	if (cpufreq_disabled())
+-		return;
 -
--	if (landscape) {
+-	freqs->flags = cpufreq_driver->flags;
+-	pr_debug("notification %u of frequency transition to %u kHz\n",
+-		 state, freqs->new);
 -
--		for (i = 0; i < U_LINES; ++i) {
--			/* blanking lines point to first line of fb_buffer */
--			dma_desc_table[2*i] = (unsigned long)&dma_desc_table[2*i+2];
--			dma_desc_table[2*i+1] = (unsigned long)fb_buffer;
+-	switch (state) {
+-
+-	case CPUFREQ_PRECHANGE:
+-		/* detect if the driver reported a value as "old frequency"
+-		 * which is not equal to what the cpufreq core thinks is
+-		 * "old frequency".
+-		 */
+-		if (!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
+-			if ((policy) && (policy->cpu == freqs->cpu) &&
+-			    (policy->cur) && (policy->cur != freqs->old)) {
+-				pr_debug("Warning: CPU frequency is %u, cpufreq assumed %u kHz\n",
+-					 freqs->old, policy->cur);
+-				freqs->old = policy->cur;
+-			}
 -		}
--
--		for (i = U_LINES; i < U_LINES + LCD_Y_RES; ++i) {
--			/* visible lines */
--			dma_desc_table[2*i] = (unsigned long)&dma_desc_table[2*i+2];
--			dma_desc_table[2*i+1] = (unsigned long)fb_buffer +
--						(LCD_Y_RES+U_LINES-1-i)*2;
--		}
--
--		/* last descriptor points to first */
--		dma_desc_table[2*(LCD_Y_RES+U_LINES-1)] = (unsigned long)&dma_desc_table[0];
--
--		set_dma_x_count(CH_PPI, LCD_X_RES);
--		set_dma_x_modify(CH_PPI, LCD_Y_RES * (LCD_BBP / 8));
--		set_dma_y_count(CH_PPI, 0);
--		set_dma_y_modify(CH_PPI, 0);
--		set_dma_next_desc_addr(CH_PPI, (void *)dma_desc_table[0]);
--		set_dma_config(CH_PPI, DMAFLOW_LARGE | NDSIZE_4 | WDSIZE_16);
--
--	} else {
--
--		set_dma_config(CH_PPI, set_bfin_dma_config(DIR_READ,
--				DMA_FLOW_AUTO,
--				INTR_DISABLE,
--				DIMENSION_2D,
--				DATA_SIZE_16,
--				DMA_NOSYNC_KEEP_DMA_BUF));
--		set_dma_x_count(CH_PPI, LCD_X_RES);
--		set_dma_x_modify(CH_PPI, LCD_BBP / 8);
--		set_dma_y_count(CH_PPI, LCD_Y_RES+U_LINES);
--		set_dma_y_modify(CH_PPI, LCD_BBP / 8);
--		set_dma_start_addr(CH_PPI, (unsigned long) fb_buffer);
--	}
--
--	return 0;
--}
--
--static int request_ports(void)
--{
--	u16 tmr_req[] = TIMERS;
--
--	/*
--		UD:      PF13
--		MOD:     PF10
--		LBR:     PF14
--		PPI_CLK: PF15
--	*/
--
--	if (peripheral_request_list(ppi_pins, KBUILD_MODNAME)) {
--		pr_err("requesting PPI peripheral failed\n");
--		return -EBUSY;
--	}
--
--	if (peripheral_request_list(tmr_req, KBUILD_MODNAME)) {
--		peripheral_free_list(ppi_pins);
--		pr_err("requesting timer peripheral failed\n");
--		return -EBUSY;
--	}
--
--#if (defined(UD) && defined(LBR))
--	if (gpio_request_one(UD, GPIOF_OUT_INIT_LOW, KBUILD_MODNAME)) {
--		pr_err("requesting GPIO %d failed\n", UD);
--		return -EBUSY;
--	}
--
--	if (gpio_request_one(LBR, GPIOF_OUT_INIT_HIGH, KBUILD_MODNAME)) {
--		pr_err("requesting GPIO %d failed\n", LBR);
--		gpio_free(UD);
--		return -EBUSY;
--	}
--#endif
--
--	if (gpio_request_one(MOD, GPIOF_OUT_INIT_HIGH, KBUILD_MODNAME)) {
--		pr_err("requesting GPIO %d failed\n", MOD);
--#if (defined(UD) && defined(LBR))
--		gpio_free(LBR);
--		gpio_free(UD);
--#endif
--		return -EBUSY;
--	}
--
--	SSYNC();
--	return 0;
--}
--
--static void free_ports(void)
--{
--	u16 tmr_req[] = TIMERS;
--
--	peripheral_free_list(ppi_pins);
--	peripheral_free_list(tmr_req);
--
--#if defined(UD) && defined(LBR)
--	gpio_free(LBR);
--	gpio_free(UD);
--#endif
--	gpio_free(MOD);
--}
--
--static struct fb_info bfin_lq035_fb;
--
--static struct fb_var_screeninfo bfin_lq035_fb_defined = {
--	.bits_per_pixel		= LCD_BBP,
--	.activate		= FB_ACTIVATE_TEST,
--	.xres			= LCD_X_RES,	/*default portrait mode RGB*/
--	.yres			= LCD_Y_RES,
--	.xres_virtual		= LCD_X_RES,
--	.yres_virtual		= LCD_Y_RES,
--	.height			= -1,
--	.width			= -1,
--	.left_margin		= 0,
--	.right_margin		= 0,
--	.upper_margin		= 0,
--	.lower_margin		= 0,
--	.red			= {11, 5, 0},
--	.green			= {5, 6, 0},
--	.blue			= {0, 5, 0},
--	.transp		= {0, 0, 0},
--};
--
--static struct fb_fix_screeninfo bfin_lq035_fb_fix = {
--	.id		= KBUILD_MODNAME,
--	.smem_len	= ACTIVE_VIDEO_MEM_SIZE,
--	.type		= FB_TYPE_PACKED_PIXELS,
--	.visual		= FB_VISUAL_TRUECOLOR,
--	.xpanstep	= 0,
--	.ypanstep	= 0,
--	.line_length	= LCD_X_RES*(LCD_BBP/8),
--	.accel		= FB_ACCEL_NONE,
--};
--
--
--static int bfin_lq035_fb_open(struct fb_info *info, int user)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&bfin_lq035_lock, flags);
--	lq035_open_cnt++;
--	spin_unlock_irqrestore(&bfin_lq035_lock, flags);
--
--	if (lq035_open_cnt <= 1) {
--		bfin_write_PPI_CONTROL(0);
--		SSYNC();
--
--		set_vcomm();
--		config_dma();
--		config_ppi();
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		SSYNC();
--		bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() | PORT_EN);
--		SSYNC();
--
--		if (!t_conf_done) {
--			config_timers();
--			start_timers();
--		}
--		/* gpio_set_value(MOD,1); */
--	}
--
--	return 0;
--}
--
--static int bfin_lq035_fb_release(struct fb_info *info, int user)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&bfin_lq035_lock, flags);
--	lq035_open_cnt--;
--	spin_unlock_irqrestore(&bfin_lq035_lock, flags);
--
--
--	if (lq035_open_cnt <= 0) {
--
--		bfin_write_PPI_CONTROL(0);
--		SSYNC();
--
--		disable_dma(CH_PPI);
--	}
--
--	return 0;
--}
--
--
--static int bfin_lq035_fb_check_var(struct fb_var_screeninfo *var,
--				   struct fb_info *info)
--{
--	switch (var->bits_per_pixel) {
--	case 16:/* DIRECTCOLOUR, 64k */
--		var->red.offset = info->var.red.offset;
--		var->green.offset = info->var.green.offset;
--		var->blue.offset = info->var.blue.offset;
--		var->red.length = info->var.red.length;
--		var->green.length = info->var.green.length;
--		var->blue.length = info->var.blue.length;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->transp.msb_right = 0;
--		var->red.msb_right = 0;
--		var->green.msb_right = 0;
--		var->blue.msb_right = 0;
+-		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
+-				CPUFREQ_PRECHANGE, freqs);
+-		adjust_jiffies(CPUFREQ_PRECHANGE, freqs);
 -		break;
--	default:
--		pr_debug("%s: depth not supported: %u BPP\n", __func__,
--			 var->bits_per_pixel);
--		return -EINVAL;
--	}
 -
--	if (info->var.xres != var->xres ||
--	    info->var.yres != var->yres ||
--	    info->var.xres_virtual != var->xres_virtual ||
--	    info->var.yres_virtual != var->yres_virtual) {
--		pr_debug("%s: Resolution not supported: X%u x Y%u\n",
--			 __func__, var->xres, var->yres);
--		return -EINVAL;
+-	case CPUFREQ_POSTCHANGE:
+-		adjust_jiffies(CPUFREQ_POSTCHANGE, freqs);
+-		pr_debug("FREQ: %lu - CPU: %lu\n",
+-			 (unsigned long)freqs->new, (unsigned long)freqs->cpu);
+-		trace_cpu_frequency(freqs->new, freqs->cpu);
+-		cpufreq_stats_record_transition(policy, freqs->new);
+-		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
+-				CPUFREQ_POSTCHANGE, freqs);
+-		if (likely(policy) && likely(policy->cpu == freqs->cpu))
+-			policy->cur = freqs->new;
+-		break;
 -	}
+-}
+-
+-/**
+- * cpufreq_notify_transition - call notifier chain and adjust_jiffies
+- * on frequency transition.
+- *
+- * This function calls the transition notifiers and the "adjust_jiffies"
+- * function. It is called twice on all CPU frequency changes that have
+- * external effects.
+- */
+-static void cpufreq_notify_transition(struct cpufreq_policy *policy,
+-		struct cpufreq_freqs *freqs, unsigned int state)
+-{
+-	for_each_cpu(freqs->cpu, policy->cpus)
+-		__cpufreq_notify_transition(policy, freqs, state);
+-}
+-
+-/* Do post notifications when there are chances that transition has failed */
+-static void cpufreq_notify_post_transition(struct cpufreq_policy *policy,
+-		struct cpufreq_freqs *freqs, int transition_failed)
+-{
+-	cpufreq_notify_transition(policy, freqs, CPUFREQ_POSTCHANGE);
+-	if (!transition_failed)
+-		return;
+-
+-	swap(freqs->old, freqs->new);
+-	cpufreq_notify_transition(policy, freqs, CPUFREQ_PRECHANGE);
+-	cpufreq_notify_transition(policy, freqs, CPUFREQ_POSTCHANGE);
+-}
+-
+-void cpufreq_freq_transition_begin(struct cpufreq_policy *policy,
+-		struct cpufreq_freqs *freqs)
+-{
 -
 -	/*
--	 *  Memory limit
+-	 * Catch double invocations of _begin() which lead to self-deadlock.
+-	 * ASYNC_NOTIFICATION drivers are left out because the cpufreq core
+-	 * doesn't invoke _begin() on their behalf, and hence the chances of
+-	 * double invocations are very low. Moreover, there are scenarios
+-	 * where these checks can emit false-positive warnings in these
+-	 * drivers; so we avoid that by skipping them altogether.
 -	 */
+-	WARN_ON(!(cpufreq_driver->flags & CPUFREQ_ASYNC_NOTIFICATION)
+-				&& current == policy->transition_task);
 -
--	if ((info->fix.line_length * var->yres_virtual) > info->fix.smem_len) {
--		pr_debug("%s: Memory Limit requested yres_virtual = %u\n",
--			 __func__, var->yres_virtual);
--		return -ENOMEM;
+-wait:
+-	wait_event(policy->transition_wait, !policy->transition_ongoing);
+-
+-	spin_lock(&policy->transition_lock);
+-
+-	if (unlikely(policy->transition_ongoing)) {
+-		spin_unlock(&policy->transition_lock);
+-		goto wait;
 -	}
 -
--	return 0;
+-	policy->transition_ongoing = true;
+-	policy->transition_task = current;
+-
+-	spin_unlock(&policy->transition_lock);
+-
+-	cpufreq_notify_transition(policy, freqs, CPUFREQ_PRECHANGE);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_freq_transition_begin);
+-
+-void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
+-		struct cpufreq_freqs *freqs, int transition_failed)
+-{
+-	if (unlikely(WARN_ON(!policy->transition_ongoing)))
+-		return;
+-
+-	cpufreq_notify_post_transition(policy, freqs, transition_failed);
+-
+-	policy->transition_ongoing = false;
+-	policy->transition_task = NULL;
+-
+-	wake_up(&policy->transition_wait);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_freq_transition_end);
+-
+-/*
+- * Fast frequency switching status count.  Positive means "enabled", negative
+- * means "disabled" and 0 means "not decided yet".
+- */
+-static int cpufreq_fast_switch_count;
+-static DEFINE_MUTEX(cpufreq_fast_switch_lock);
+-
+-static void cpufreq_list_transition_notifiers(void)
+-{
+-	struct notifier_block *nb;
+-
+-	pr_info("Registered transition notifiers:\n");
+-
+-	mutex_lock(&cpufreq_transition_notifier_list.mutex);
+-
+-	for (nb = cpufreq_transition_notifier_list.head; nb; nb = nb->next)
+-		pr_info("%pF\n", nb->notifier_call);
+-
+-	mutex_unlock(&cpufreq_transition_notifier_list.mutex);
 -}
 -
--static int bfin_lq035_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
+-/**
+- * cpufreq_enable_fast_switch - Enable fast frequency switching for policy.
+- * @policy: cpufreq policy to enable fast frequency switching for.
+- *
+- * Try to enable fast frequency switching for @policy.
+- *
+- * The attempt will fail if there is at least one transition notifier registered
+- * at this point, as fast frequency switching is quite fundamentally at odds
+- * with transition notifiers.  Thus if successful, it will make registration of
+- * transition notifiers fail going forward.
+- */
+-void cpufreq_enable_fast_switch(struct cpufreq_policy *policy)
 -{
--	if (nocursor)
--		return 0;
--	else
--		return -EINVAL;	/* just to force soft_cursor() call */
+-	lockdep_assert_held(&policy->rwsem);
+-
+-	if (!policy->fast_switch_possible)
+-		return;
+-
+-	mutex_lock(&cpufreq_fast_switch_lock);
+-	if (cpufreq_fast_switch_count >= 0) {
+-		cpufreq_fast_switch_count++;
+-		policy->fast_switch_enabled = true;
+-	} else {
+-		pr_warn("CPU%u: Fast frequency switching not enabled\n",
+-			policy->cpu);
+-		cpufreq_list_transition_notifiers();
+-	}
+-	mutex_unlock(&cpufreq_fast_switch_lock);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_enable_fast_switch);
+-
+-/**
+- * cpufreq_disable_fast_switch - Disable fast frequency switching for policy.
+- * @policy: cpufreq policy to disable fast frequency switching for.
+- */
+-void cpufreq_disable_fast_switch(struct cpufreq_policy *policy)
+-{
+-	mutex_lock(&cpufreq_fast_switch_lock);
+-	if (policy->fast_switch_enabled) {
+-		policy->fast_switch_enabled = false;
+-		if (!WARN_ON(cpufreq_fast_switch_count <= 0))
+-			cpufreq_fast_switch_count--;
+-	}
+-	mutex_unlock(&cpufreq_fast_switch_lock);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
+-
+-/**
+- * cpufreq_driver_resolve_freq - Map a target frequency to a driver-supported
+- * one.
+- * @target_freq: target frequency to resolve.
+- *
+- * The target to driver frequency mapping is cached in the policy.
+- *
+- * Return: Lowest driver-supported frequency greater than or equal to the
+- * given target_freq, subject to policy (min/max) and driver limitations.
+- */
+-unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy,
+-					 unsigned int target_freq)
+-{
+-	target_freq = clamp_val(target_freq, policy->min, policy->max);
+-	policy->cached_target_freq = target_freq;
+-
+-	if (cpufreq_driver->target_index) {
+-		int idx;
+-
+-		idx = cpufreq_frequency_table_target(policy, target_freq,
+-						     CPUFREQ_RELATION_L);
+-		policy->cached_resolved_idx = idx;
+-		return policy->freq_table[idx].frequency;
+-	}
+-
+-	if (cpufreq_driver->resolve_freq)
+-		return cpufreq_driver->resolve_freq(policy, target_freq);
+-
+-	return target_freq;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
+-
+-unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
+-{
+-	unsigned int latency;
+-
+-	if (policy->transition_delay_us)
+-		return policy->transition_delay_us;
+-
+-	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+-	if (latency) {
+-		/*
+-		 * For platforms that can change the frequency very fast (< 10
+-		 * us), the above formula gives a decent transition delay. But
+-		 * for platforms where transition_latency is in milliseconds, it
+-		 * ends up giving unrealistic values.
+-		 *
+-		 * Cap the default transition delay to 10 ms, which seems to be
+-		 * a reasonable amount of time after which we should reevaluate
+-		 * the frequency.
+-		 */
+-		return min(latency * LATENCY_MULTIPLIER, (unsigned int)10000);
+-	}
+-
+-	return LATENCY_MULTIPLIER;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+-
+-/*********************************************************************
+- *                          SYSFS INTERFACE                          *
+- *********************************************************************/
+-static ssize_t show_boost(struct kobject *kobj,
+-				 struct attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "%d\n", cpufreq_driver->boost_enabled);
 -}
 -
--static int bfin_lq035_fb_setcolreg(u_int regno, u_int red, u_int green,
--				   u_int blue, u_int transp,
--				   struct fb_info *info)
+-static ssize_t store_boost(struct kobject *kobj, struct attribute *attr,
+-				  const char *buf, size_t count)
 -{
--	if (regno >= NBR_PALETTE)
+-	int ret, enable;
+-
+-	ret = sscanf(buf, "%d", &enable);
+-	if (ret != 1 || enable < 0 || enable > 1)
 -		return -EINVAL;
 -
--	if (info->var.grayscale)
--		/* grayscale = 0.30*R + 0.59*G + 0.11*B */
--		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
--
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
--
--		u32 value;
--		/* Place color in the pseudopalette */
--		if (regno > 16)
--			return -EINVAL;
--
--		red   >>= (16 - info->var.red.length);
--		green >>= (16 - info->var.green.length);
--		blue  >>= (16 - info->var.blue.length);
--
--		value = (red   << info->var.red.offset) |
--			(green << info->var.green.offset)|
--			(blue  << info->var.blue.offset);
--		value &= 0xFFFF;
--
--		((u32 *) (info->pseudo_palette))[regno] = value;
--
+-	if (cpufreq_boost_trigger_state(enable)) {
+-		pr_err("%s: Cannot %s BOOST!\n",
+-		       __func__, enable ? "enable" : "disable");
+-		return -EINVAL;
 -	}
 -
--	return 0;
+-	pr_debug("%s: cpufreq BOOST %s\n",
+-		 __func__, enable ? "enabled" : "disabled");
+-
+-	return count;
+-}
+-define_one_global_rw(boost);
+-
+-static struct cpufreq_governor *find_governor(const char *str_governor)
+-{
+-	struct cpufreq_governor *t;
+-
+-	for_each_governor(t)
+-		if (!strncasecmp(str_governor, t->name, CPUFREQ_NAME_LEN))
+-			return t;
+-
+-	return NULL;
 -}
 -
--static struct fb_ops bfin_lq035_fb_ops = {
--	.owner			= THIS_MODULE,
--	.fb_open		= bfin_lq035_fb_open,
--	.fb_release		= bfin_lq035_fb_release,
--	.fb_check_var		= bfin_lq035_fb_check_var,
--	.fb_fillrect		= cfb_fillrect,
--	.fb_copyarea		= cfb_copyarea,
--	.fb_imageblit		= cfb_imageblit,
--	.fb_cursor		= bfin_lq035_fb_cursor,
--	.fb_setcolreg		= bfin_lq035_fb_setcolreg,
--};
--
--static int bl_get_brightness(struct backlight_device *bd)
+-/**
+- * cpufreq_parse_governor - parse a governor string
+- */
+-static int cpufreq_parse_governor(char *str_governor,
+-				  struct cpufreq_policy *policy)
 -{
--	return current_brightness;
--}
+-	if (cpufreq_driver->setpolicy) {
+-		if (!strncasecmp(str_governor, "performance", CPUFREQ_NAME_LEN)) {
+-			policy->policy = CPUFREQ_POLICY_PERFORMANCE;
+-			return 0;
+-		}
 -
--static const struct backlight_ops bfin_lq035fb_bl_ops = {
--	.get_brightness	= bl_get_brightness,
--};
+-		if (!strncasecmp(str_governor, "powersave", CPUFREQ_NAME_LEN)) {
+-			policy->policy = CPUFREQ_POLICY_POWERSAVE;
+-			return 0;
+-		}
+-	} else {
+-		struct cpufreq_governor *t;
 -
--static struct backlight_device *bl_dev;
+-		mutex_lock(&cpufreq_governor_mutex);
 -
--static int bfin_lcd_get_power(struct lcd_device *dev)
--{
--	return 0;
--}
+-		t = find_governor(str_governor);
+-		if (!t) {
+-			int ret;
 -
--static int bfin_lcd_set_power(struct lcd_device *dev, int power)
--{
--	return 0;
--}
+-			mutex_unlock(&cpufreq_governor_mutex);
 -
--static int bfin_lcd_get_contrast(struct lcd_device *dev)
--{
--	return (int)vcomm_value;
--}
+-			ret = request_module("cpufreq_%s", str_governor);
+-			if (ret)
+-				return -EINVAL;
 -
--static int bfin_lcd_set_contrast(struct lcd_device *dev, int contrast)
--{
--	if (contrast > 255)
--		contrast = 255;
--	if (contrast < 0)
--		contrast = 0;
+-			mutex_lock(&cpufreq_governor_mutex);
 -
--	vcomm_value = (unsigned char)contrast;
--	set_vcomm();
--	return 0;
--}
+-			t = find_governor(str_governor);
+-		}
+-		if (t && !try_module_get(t->owner))
+-			t = NULL;
 -
--static int bfin_lcd_check_fb(struct lcd_device *lcd, struct fb_info *fi)
--{
--	if (!fi || (fi == &bfin_lq035_fb))
--		return 1;
--	return 0;
--}
+-		mutex_unlock(&cpufreq_governor_mutex);
 -
--static struct lcd_ops bfin_lcd_ops = {
--	.get_power	= bfin_lcd_get_power,
--	.set_power	= bfin_lcd_set_power,
--	.get_contrast	= bfin_lcd_get_contrast,
--	.set_contrast	= bfin_lcd_set_contrast,
--	.check_fb	= bfin_lcd_check_fb,
--};
--
--static struct lcd_device *lcd_dev;
--
--static int bfin_lq035_probe(struct platform_device *pdev)
--{
--	struct backlight_properties props;
--	dma_addr_t dma_handle;
--	int ret;
--
--	if (request_dma(CH_PPI, KBUILD_MODNAME)) {
--		pr_err("couldn't request PPI DMA\n");
--		return -EFAULT;
+-		if (t) {
+-			policy->governor = t;
+-			return 0;
+-		}
 -	}
 -
--	if (request_ports()) {
--		pr_err("couldn't request gpio port\n");
--		ret = -EFAULT;
--		goto out_ports;
--	}
+-	return -EINVAL;
+-}
 -
--	fb_buffer = dma_alloc_coherent(NULL, TOTAL_VIDEO_MEM_SIZE,
--				       &dma_handle, GFP_KERNEL);
--	if (fb_buffer == NULL) {
--		pr_err("couldn't allocate dma buffer\n");
--		ret = -ENOMEM;
--		goto out_dma_coherent;
--	}
+-/**
+- * cpufreq_per_cpu_attr_read() / show_##file_name() -
+- * print out cpufreq information
+- *
+- * Write out information from cpufreq_driver->policy[cpu]; object must be
+- * "unsigned int".
+- */
 -
--	if (L1_DATA_A_LENGTH)
--		dma_desc_table = l1_data_sram_zalloc(TOTAL_DMA_DESC_SIZE);
+-#define show_one(file_name, object)			\
+-static ssize_t show_##file_name				\
+-(struct cpufreq_policy *policy, char *buf)		\
+-{							\
+-	return sprintf(buf, "%u\n", policy->object);	\
+-}
+-
+-show_one(cpuinfo_min_freq, cpuinfo.min_freq);
+-show_one(cpuinfo_max_freq, cpuinfo.max_freq);
+-show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
+-show_one(scaling_min_freq, min);
+-show_one(scaling_max_freq, max);
+-
+-__weak unsigned int arch_freq_get_on_cpu(int cpu)
+-{
+-	return 0;
+-}
+-
+-static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+-{
+-	ssize_t ret;
+-	unsigned int freq;
+-
+-	freq = arch_freq_get_on_cpu(policy->cpu);
+-	if (freq)
+-		ret = sprintf(buf, "%u\n", freq);
+-	else if (cpufreq_driver && cpufreq_driver->setpolicy &&
+-			cpufreq_driver->get)
+-		ret = sprintf(buf, "%u\n", cpufreq_driver->get(policy->cpu));
 -	else
--		dma_desc_table = dma_alloc_coherent(NULL, TOTAL_DMA_DESC_SIZE,
--						    &dma_handle, 0);
--
--	if (dma_desc_table == NULL) {
--		pr_err("couldn't allocate dma descriptor\n");
--		ret = -ENOMEM;
--		goto out_table;
--	}
--
--	bfin_lq035_fb.screen_base = (void *)fb_buffer;
--	bfin_lq035_fb_fix.smem_start = (int)fb_buffer;
--	if (landscape) {
--		bfin_lq035_fb_defined.xres = LCD_Y_RES;
--		bfin_lq035_fb_defined.yres = LCD_X_RES;
--		bfin_lq035_fb_defined.xres_virtual = LCD_Y_RES;
--		bfin_lq035_fb_defined.yres_virtual = LCD_X_RES;
--
--		bfin_lq035_fb_fix.line_length = LCD_Y_RES*(LCD_BBP/8);
--	} else {
--		bfin_lq035_fb.screen_base += ACTIVE_VIDEO_MEM_OFFSET;
--		bfin_lq035_fb_fix.smem_start += ACTIVE_VIDEO_MEM_OFFSET;
--	}
--
--	bfin_lq035_fb_defined.green.msb_right = 0;
--	bfin_lq035_fb_defined.red.msb_right   = 0;
--	bfin_lq035_fb_defined.blue.msb_right  = 0;
--	bfin_lq035_fb_defined.green.offset    = 5;
--	bfin_lq035_fb_defined.green.length    = 6;
--	bfin_lq035_fb_defined.red.length      = 5;
--	bfin_lq035_fb_defined.blue.length     = 5;
--
--	if (bgr) {
--		bfin_lq035_fb_defined.red.offset  = 0;
--		bfin_lq035_fb_defined.blue.offset = 11;
--	} else {
--		bfin_lq035_fb_defined.red.offset  = 11;
--		bfin_lq035_fb_defined.blue.offset = 0;
--	}
--
--	bfin_lq035_fb.fbops = &bfin_lq035_fb_ops;
--	bfin_lq035_fb.var = bfin_lq035_fb_defined;
--
--	bfin_lq035_fb.fix = bfin_lq035_fb_fix;
--	bfin_lq035_fb.flags = FBINFO_DEFAULT;
--
--
--	bfin_lq035_fb.pseudo_palette = devm_kzalloc(&pdev->dev,
--						    sizeof(u32) * 16,
--						    GFP_KERNEL);
--	if (bfin_lq035_fb.pseudo_palette == NULL) {
--		pr_err("failed to allocate pseudo_palette\n");
--		ret = -ENOMEM;
--		goto out_table;
--	}
--
--	if (fb_alloc_cmap(&bfin_lq035_fb.cmap, NBR_PALETTE, 0) < 0) {
--		pr_err("failed to allocate colormap (%d entries)\n",
--			NBR_PALETTE);
--		ret = -EFAULT;
--		goto out_table;
--	}
--
--	if (register_framebuffer(&bfin_lq035_fb) < 0) {
--		pr_err("unable to register framebuffer\n");
--		ret = -EINVAL;
--		goto out_reg;
--	}
--
--	i2c_add_driver(&ad5280_driver);
--
--	memset(&props, 0, sizeof(props));
--	props.type = BACKLIGHT_RAW;
--	props.max_brightness = MAX_BRIGHENESS;
--	bl_dev = backlight_device_register("bf537-bl", NULL, NULL,
--					   &bfin_lq035fb_bl_ops, &props);
--
--	lcd_dev = lcd_device_register(KBUILD_MODNAME, &pdev->dev, NULL,
--				      &bfin_lcd_ops);
--	if (IS_ERR(lcd_dev)) {
--		pr_err("unable to register lcd\n");
--		ret = PTR_ERR(lcd_dev);
--		goto out_lcd;
--	}
--	lcd_dev->props.max_contrast = 255,
--
--	pr_info("initialized");
--
--	return 0;
--out_lcd:
--	unregister_framebuffer(&bfin_lq035_fb);
--out_reg:
--	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
--out_table:
--	dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
--	fb_buffer = NULL;
--out_dma_coherent:
--	free_ports();
--out_ports:
--	free_dma(CH_PPI);
+-		ret = sprintf(buf, "%u\n", policy->cur);
 -	return ret;
 -}
 -
--static int bfin_lq035_remove(struct platform_device *pdev)
--{
--	if (fb_buffer != NULL)
--		dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+-static int cpufreq_set_policy(struct cpufreq_policy *policy,
+-				struct cpufreq_policy *new_policy);
 -
--	if (L1_DATA_A_LENGTH)
--		l1_data_sram_free(dma_desc_table);
--	else
--		dma_free_coherent(NULL, TOTAL_DMA_DESC_SIZE, NULL, 0);
--
--	bfin_write_TIMER_DISABLE(TIMEN_SP|TIMEN_SPS|TIMEN_PS_CLS|
--				 TIMEN_LP|TIMEN_REV);
--	t_conf_done = 0;
--
--	free_dma(CH_PPI);
--
--
--	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
--
--
--	lcd_device_unregister(lcd_dev);
--	backlight_device_unregister(bl_dev);
--
--	unregister_framebuffer(&bfin_lq035_fb);
--	i2c_del_driver(&ad5280_driver);
--
--	free_ports();
--
--	pr_info("unregistered LCD driver\n");
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_lq035_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	if (lq035_open_cnt > 0) {
--		bfin_write_PPI_CONTROL(0);
--		SSYNC();
--		disable_dma(CH_PPI);
--	}
--
--	return 0;
--}
--
--static int bfin_lq035_resume(struct platform_device *pdev)
--{
--	if (lq035_open_cnt > 0) {
--		bfin_write_PPI_CONTROL(0);
--		SSYNC();
--
--		config_dma();
--		config_ppi();
--
--		enable_dma(CH_PPI);
--		bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() | PORT_EN);
--		SSYNC();
--
--		config_timers();
--		start_timers();
--	} else {
--		t_conf_done = 0;
--	}
--
--	return 0;
--}
--#else
--# define bfin_lq035_suspend	NULL
--# define bfin_lq035_resume	NULL
--#endif
--
--static struct platform_driver bfin_lq035_driver = {
--	.probe = bfin_lq035_probe,
--	.remove = bfin_lq035_remove,
--	.suspend = bfin_lq035_suspend,
--	.resume = bfin_lq035_resume,
--	.driver = {
--		.name = KBUILD_MODNAME,
--	},
--};
--
--static int __init bfin_lq035_driver_init(void)
--{
--	request_module("i2c-bfin-twi");
--	return platform_driver_register(&bfin_lq035_driver);
--}
--module_init(bfin_lq035_driver_init);
--
--static void __exit bfin_lq035_driver_cleanup(void)
--{
--	platform_driver_unregister(&bfin_lq035_driver);
--}
--module_exit(bfin_lq035_driver_cleanup);
--
--MODULE_DESCRIPTION("SHARP LQ035Q7DB03 TFT LCD Driver");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/bf54x-lq043fb.c b/drivers/video/fbdev/bf54x-lq043fb.c
-deleted file mode 100644
-index 8f1f97c..0000000
---- a/drivers/video/fbdev/bf54x-lq043fb.c
-+++ /dev/null
-@@ -1,764 +0,0 @@
--/*
-- * File:         drivers/video/bf54x-lq043.c
-- * Based on:
-- * Author:       Michael Hennerich <hennerich@blackfin.uclinux.org>
-- *
-- * Created:
-- * Description:  ADSP-BF54x Framebuffer driver
-- *
-- *
-- * Modified:
-- *               Copyright 2007-2008 Analog Devices Inc.
-- *
-- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see the file COPYING, or write
-- * to the Free Software Foundation, Inc.,
-- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-/**
+- * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
 - */
+-#define store_one(file_name, object)			\
+-static ssize_t store_##file_name					\
+-(struct cpufreq_policy *policy, const char *buf, size_t count)		\
+-{									\
+-	int ret, temp;							\
+-	struct cpufreq_policy new_policy;				\
+-									\
+-	memcpy(&new_policy, policy, sizeof(*policy));			\
+-									\
+-	ret = sscanf(buf, "%u", &new_policy.object);			\
+-	if (ret != 1)							\
+-		return -EINVAL;						\
+-									\
+-	temp = new_policy.object;					\
+-	ret = cpufreq_set_policy(policy, &new_policy);		\
+-	if (!ret)							\
+-		policy->user_policy.object = temp;			\
+-									\
+-	return ret ? ret : count;					\
+-}
 -
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/mm.h>
--#include <linux/tty.h>
--#include <linux/slab.h>
--#include <linux/delay.h>
--#include <linux/fb.h>
--#include <linux/ioport.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/sched.h>
--#include <linux/timer.h>
--#include <linux/device.h>
--#include <linux/backlight.h>
--#include <linux/lcd.h>
--#include <linux/spinlock.h>
--#include <linux/dma-mapping.h>
--#include <linux/platform_device.h>
--#include <linux/gpio.h>
+-store_one(scaling_min_freq, min);
+-store_one(scaling_max_freq, max);
 -
--#include <asm/blackfin.h>
--#include <asm/irq.h>
--#include <asm/dpmc.h>
--#include <asm/dma-mapping.h>
--#include <asm/dma.h>
--#include <asm/portmux.h>
--
--#include <mach/bf54x-lq043.h>
--
--#define NO_BL_SUPPORT
--
--#define DRIVER_NAME "bf54x-lq043"
--static char driver_name[] = DRIVER_NAME;
--
--#define BFIN_LCD_NBR_PALETTE_ENTRIES	256
--
--#define EPPI0_18 {P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2, P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3, \
-- P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7, P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, \
-- P_PPI0_D11, P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15, P_PPI0_D16, P_PPI0_D17, 0}
--
--#define EPPI0_24 {P_PPI0_D18, P_PPI0_D19, P_PPI0_D20, P_PPI0_D21, P_PPI0_D22, P_PPI0_D23, 0}
--
--struct bfin_bf54xfb_info {
--	struct fb_info *fb;
--	struct device *dev;
--
--	struct bfin_bf54xfb_mach_info *mach_info;
--
--	unsigned char *fb_buffer;	/* RGB Buffer */
--
--	dma_addr_t dma_handle;
--	int lq043_open_cnt;
--	int irq;
--	spinlock_t lock;	/* lock */
--};
--
--static int nocursor;
--module_param(nocursor, int, 0644);
--MODULE_PARM_DESC(nocursor, "cursor enable/disable");
--
--static int outp_rgb666;
--module_param(outp_rgb666, int, 0);
--MODULE_PARM_DESC(outp_rgb666, "Output 18-bit RGB666");
--
--#define LCD_X_RES		480	/*Horizontal Resolution */
--#define LCD_Y_RES		272	/* Vertical Resolution */
--
--#define LCD_BPP			24	/* Bit Per Pixel */
--#define	DMA_BUS_SIZE		32
--
--/* 	-- Horizontal synchronizing --
-- *
-- * Timing characteristics taken from the SHARP LQ043T1DG01 datasheet
-- * (LCY-W-06602A Page 9 of 22)
-- *
-- * Clock Frequency 	1/Tc Min 7.83 Typ 9.00 Max 9.26 MHz
-- *
-- * Period 		TH - 525 - Clock
-- * Pulse width 		THp - 41 - Clock
-- * Horizontal period 	THd - 480 - Clock
-- * Back porch 		THb - 2 - Clock
-- * Front porch 		THf - 2 - Clock
-- *
-- * -- Vertical synchronizing --
-- * Period 		TV - 286 - Line
-- * Pulse width 		TVp - 10 - Line
-- * Vertical period 	TVd - 272 - Line
-- * Back porch 		TVb - 2 - Line
-- * Front porch 		TVf - 2 - Line
+-/**
+- * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
 - */
+-static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
+-					char *buf)
+-{
+-	unsigned int cur_freq = __cpufreq_get(policy);
 -
--#define	LCD_CLK         	(8*1000*1000)	/* 8MHz */
+-	if (cur_freq)
+-		return sprintf(buf, "%u\n", cur_freq);
 -
--/* # active data to transfer after Horizontal Delay clock */
--#define EPPI_HCOUNT		LCD_X_RES
+-	return sprintf(buf, "<unknown>\n");
+-}
 -
--/* # active lines to transfer after Vertical Delay clock */
--#define EPPI_VCOUNT		LCD_Y_RES
--
--/* Samples per Line = 480 (active data) + 45 (padding) */
--#define EPPI_LINE		525
--
--/* Lines per Frame = 272 (active data) + 14 (padding) */
--#define EPPI_FRAME		286
--
--/* FS1 (Hsync) Width (Typical)*/
--#define EPPI_FS1W_HBL		41
--
--/* FS1 (Hsync) Period (Typical) */
--#define EPPI_FS1P_AVPL		EPPI_LINE
--
--/* Horizontal Delay clock after assertion of Hsync (Typical) */
--#define EPPI_HDELAY		43
--
--/* FS2 (Vsync) Width    = FS1 (Hsync) Period * 10 */
--#define EPPI_FS2W_LVB		(EPPI_LINE * 10)
--
-- /* FS2 (Vsync) Period   = FS1 (Hsync) Period * Lines per Frame */
--#define EPPI_FS2P_LAVF		(EPPI_LINE * EPPI_FRAME)
--
--/* Vertical Delay after assertion of Vsync (2 Lines) */
--#define EPPI_VDELAY		12
--
--#define EPPI_CLIP		0xFF00FF00
--
--/* EPPI Control register configuration value for RGB out
-- * - EPPI as Output
-- * GP 2 frame sync mode,
-- * Internal Clock generation disabled, Internal FS generation enabled,
-- * Receives samples on EPPI_CLK raising edge, Transmits samples on EPPI_CLK falling edge,
-- * FS1 & FS2 are active high,
-- * DLEN = 6 (24 bits for RGB888 out) or 5 (18 bits for RGB666 out)
-- * DMA Unpacking disabled when RGB Formating is enabled, otherwise DMA unpacking enabled
-- * Swapping Enabled,
-- * One (DMA) Channel Mode,
-- * RGB Formatting Enabled for RGB666 output, disabled for RGB888 output
-- * Regular watermark - when FIFO is 100% full,
-- * Urgent watermark - when FIFO is 75% full
+-/**
+- * show_scaling_governor - show the current policy for the specified CPU
 - */
--
--#define EPPI_CONTROL		(0x20136E2E | SWAPEN)
--
--static inline u16 get_eppi_clkdiv(u32 target_ppi_clk)
+-static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 -{
--	u32 sclk = get_sclk();
--
--	/* EPPI_CLK = (SCLK) / (2 * (EPPI_CLKDIV[15:0] + 1)) */
--
--	return (((sclk / target_ppi_clk) / 2) - 1);
+-	if (policy->policy == CPUFREQ_POLICY_POWERSAVE)
+-		return sprintf(buf, "powersave\n");
+-	else if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
+-		return sprintf(buf, "performance\n");
+-	else if (policy->governor)
+-		return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
+-				policy->governor->name);
+-	return -EINVAL;
 -}
 -
--static void config_ppi(struct bfin_bf54xfb_info *fbi)
--{
--
--	u16 eppi_clkdiv = get_eppi_clkdiv(LCD_CLK);
--
--	bfin_write_EPPI0_FS1W_HBL(EPPI_FS1W_HBL);
--	bfin_write_EPPI0_FS1P_AVPL(EPPI_FS1P_AVPL);
--	bfin_write_EPPI0_FS2W_LVB(EPPI_FS2W_LVB);
--	bfin_write_EPPI0_FS2P_LAVF(EPPI_FS2P_LAVF);
--	bfin_write_EPPI0_CLIP(EPPI_CLIP);
--
--	bfin_write_EPPI0_FRAME(EPPI_FRAME);
--	bfin_write_EPPI0_LINE(EPPI_LINE);
--
--	bfin_write_EPPI0_HCOUNT(EPPI_HCOUNT);
--	bfin_write_EPPI0_HDELAY(EPPI_HDELAY);
--	bfin_write_EPPI0_VCOUNT(EPPI_VCOUNT);
--	bfin_write_EPPI0_VDELAY(EPPI_VDELAY);
--
--	bfin_write_EPPI0_CLKDIV(eppi_clkdiv);
--
--/*
-- * DLEN = 6 (24 bits for RGB888 out) or 5 (18 bits for RGB666 out)
-- * RGB Formatting Enabled for RGB666 output, disabled for RGB888 output
+-/**
+- * store_scaling_governor - store policy for the specified CPU
 - */
--	if (outp_rgb666)
--		bfin_write_EPPI0_CONTROL((EPPI_CONTROL & ~DLENGTH) | DLEN_18 |
--					 RGB_FMT_EN);
--	else
--		bfin_write_EPPI0_CONTROL(((EPPI_CONTROL & ~DLENGTH) | DLEN_24) &
--					 ~RGB_FMT_EN);
--
--
--}
--
--static int config_dma(struct bfin_bf54xfb_info *fbi)
--{
--
--	set_dma_config(CH_EPPI0,
--		       set_bfin_dma_config(DIR_READ, DMA_FLOW_AUTO,
--					   INTR_DISABLE, DIMENSION_2D,
--					   DATA_SIZE_32,
--					   DMA_NOSYNC_KEEP_DMA_BUF));
--	set_dma_x_count(CH_EPPI0, (LCD_X_RES * LCD_BPP) / DMA_BUS_SIZE);
--	set_dma_x_modify(CH_EPPI0, DMA_BUS_SIZE / 8);
--	set_dma_y_count(CH_EPPI0, LCD_Y_RES);
--	set_dma_y_modify(CH_EPPI0, DMA_BUS_SIZE / 8);
--	set_dma_start_addr(CH_EPPI0, (unsigned long)fbi->fb_buffer);
--
--	return 0;
--}
--
--static int request_ports(struct bfin_bf54xfb_info *fbi)
--{
--
--	u16 eppi_req_18[] = EPPI0_18;
--	u16 disp = fbi->mach_info->disp;
--
--	if (gpio_request_one(disp, GPIOF_OUT_INIT_HIGH, DRIVER_NAME)) {
--		printk(KERN_ERR "Requesting GPIO %d failed\n", disp);
--		return -EFAULT;
--	}
--
--	if (peripheral_request_list(eppi_req_18, DRIVER_NAME)) {
--		printk(KERN_ERR "Requesting Peripherals failed\n");
--		gpio_free(disp);
--		return -EFAULT;
--	}
--
--	if (!outp_rgb666) {
--
--		u16 eppi_req_24[] = EPPI0_24;
--
--		if (peripheral_request_list(eppi_req_24, DRIVER_NAME)) {
--			printk(KERN_ERR "Requesting Peripherals failed\n");
--			peripheral_free_list(eppi_req_18);
--			gpio_free(disp);
--			return -EFAULT;
--		}
--	}
--
--	return 0;
--}
--
--static void free_ports(struct bfin_bf54xfb_info *fbi)
--{
--
--	u16 eppi_req_18[] = EPPI0_18;
--
--	gpio_free(fbi->mach_info->disp);
--
--	peripheral_free_list(eppi_req_18);
--
--	if (!outp_rgb666) {
--		u16 eppi_req_24[] = EPPI0_24;
--		peripheral_free_list(eppi_req_24);
--	}
--}
--
--static int bfin_bf54x_fb_open(struct fb_info *info, int user)
--{
--	struct bfin_bf54xfb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--	fbi->lq043_open_cnt++;
--
--	if (fbi->lq043_open_cnt <= 1) {
--
--		bfin_write_EPPI0_CONTROL(0);
--		SSYNC();
--
--		config_dma(fbi);
--		config_ppi(fbi);
--
--		/* start dma */
--		enable_dma(CH_EPPI0);
--		bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() | EPPI_EN);
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_bf54x_fb_release(struct fb_info *info, int user)
--{
--	struct bfin_bf54xfb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--
--	fbi->lq043_open_cnt--;
--
--	if (fbi->lq043_open_cnt <= 0) {
--
--		bfin_write_EPPI0_CONTROL(0);
--		SSYNC();
--		disable_dma(CH_EPPI0);
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_bf54x_fb_check_var(struct fb_var_screeninfo *var,
--				   struct fb_info *info)
--{
--
--	switch (var->bits_per_pixel) {
--	case 24:/* TRUECOLOUR, 16m */
--		var->red.offset = 16;
--		var->green.offset = 8;
--		var->blue.offset = 0;
--		var->red.length = var->green.length = var->blue.length = 8;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->transp.msb_right = 0;
--		var->red.msb_right = 0;
--		var->green.msb_right = 0;
--		var->blue.msb_right = 0;
--		break;
--	default:
--		pr_debug("%s: depth not supported: %u BPP\n", __func__,
--			 var->bits_per_pixel);
--		return -EINVAL;
--	}
--
--	if (info->var.xres != var->xres || info->var.yres != var->yres ||
--	    info->var.xres_virtual != var->xres_virtual ||
--	    info->var.yres_virtual != var->yres_virtual) {
--		pr_debug("%s: Resolution not supported: X%u x Y%u \n",
--			 __func__, var->xres, var->yres);
--		return -EINVAL;
--	}
--
--	/*
--	 *  Memory limit
--	 */
--
--	if ((info->fix.line_length * var->yres_virtual) > info->fix.smem_len) {
--		pr_debug("%s: Memory Limit requested yres_virtual = %u\n",
--			 __func__, var->yres_virtual);
--		return -ENOMEM;
--	}
--
--	return 0;
--}
--
--int bfin_bf54x_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
--{
--	if (nocursor)
--		return 0;
--	else
--		return -EINVAL;	/* just to force soft_cursor() call */
--}
--
--static int bfin_bf54x_fb_setcolreg(u_int regno, u_int red, u_int green,
--				   u_int blue, u_int transp,
--				   struct fb_info *info)
--{
--	if (regno >= BFIN_LCD_NBR_PALETTE_ENTRIES)
--		return -EINVAL;
--
--	if (info->var.grayscale) {
--		/* grayscale = 0.30*R + 0.59*G + 0.11*B */
--		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
--	}
--
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
--
--		u32 value;
--		/* Place color in the pseudopalette */
--		if (regno > 16)
--			return -EINVAL;
--
--		red >>= (16 - info->var.red.length);
--		green >>= (16 - info->var.green.length);
--		blue >>= (16 - info->var.blue.length);
--
--		value = (red << info->var.red.offset) |
--		    (green << info->var.green.offset) |
--		    (blue << info->var.blue.offset);
--		value &= 0xFFFFFF;
--
--		((u32 *) (info->pseudo_palette))[regno] = value;
--
--	}
--
--	return 0;
--}
--
--static struct fb_ops bfin_bf54x_fb_ops = {
--	.owner = THIS_MODULE,
--	.fb_open = bfin_bf54x_fb_open,
--	.fb_release = bfin_bf54x_fb_release,
--	.fb_check_var = bfin_bf54x_fb_check_var,
--	.fb_fillrect = cfb_fillrect,
--	.fb_copyarea = cfb_copyarea,
--	.fb_imageblit = cfb_imageblit,
--	.fb_cursor = bfin_bf54x_fb_cursor,
--	.fb_setcolreg = bfin_bf54x_fb_setcolreg,
--};
--
--#ifndef NO_BL_SUPPORT
--static int bl_get_brightness(struct backlight_device *bd)
--{
--	return 0;
--}
--
--static const struct backlight_ops bfin_lq043fb_bl_ops = {
--	.get_brightness = bl_get_brightness,
--};
--
--static struct backlight_device *bl_dev;
--
--static int bfin_lcd_get_power(struct lcd_device *dev)
--{
--	return 0;
--}
--
--static int bfin_lcd_set_power(struct lcd_device *dev, int power)
--{
--	return 0;
--}
--
--static int bfin_lcd_get_contrast(struct lcd_device *dev)
--{
--	return 0;
--}
--
--static int bfin_lcd_set_contrast(struct lcd_device *dev, int contrast)
--{
--
--	return 0;
--}
--
--static int bfin_lcd_check_fb(struct lcd_device *dev, struct fb_info *fi)
--{
--	if (!fi || (fi == &bfin_bf54x_fb))
--		return 1;
--	return 0;
--}
--
--static struct lcd_ops bfin_lcd_ops = {
--	.get_power = bfin_lcd_get_power,
--	.set_power = bfin_lcd_set_power,
--	.get_contrast = bfin_lcd_get_contrast,
--	.set_contrast = bfin_lcd_set_contrast,
--	.check_fb = bfin_lcd_check_fb,
--};
--
--static struct lcd_device *lcd_dev;
--#endif
--
--static irqreturn_t bfin_bf54x_irq_error(int irq, void *dev_id)
--{
--	/*struct bfin_bf54xfb_info *info = dev_id;*/
--
--	u16 status = bfin_read_EPPI0_STATUS();
--
--	bfin_write_EPPI0_STATUS(0xFFFF);
--
--	if (status) {
--		bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() & ~EPPI_EN);
--		disable_dma(CH_EPPI0);
--
--		/* start dma */
--		enable_dma(CH_EPPI0);
--		bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() | EPPI_EN);
--		bfin_write_EPPI0_STATUS(0xFFFF);
--	}
--
--	return IRQ_HANDLED;
--}
--
--static int bfin_bf54x_probe(struct platform_device *pdev)
--{
--#ifndef NO_BL_SUPPORT
--	struct backlight_properties props;
--#endif
--	struct bfin_bf54xfb_info *info;
--	struct fb_info *fbinfo;
--	int ret;
--
--	printk(KERN_INFO DRIVER_NAME ": FrameBuffer initializing...\n");
--
--	if (request_dma(CH_EPPI0, "CH_EPPI0") < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": couldn't request CH_EPPI0 DMA\n");
--		ret = -EFAULT;
--		goto out1;
--	}
--
--	fbinfo =
--	    framebuffer_alloc(sizeof(struct bfin_bf54xfb_info), &pdev->dev);
--	if (!fbinfo) {
--		ret = -ENOMEM;
--		goto out2;
--	}
--
--	info = fbinfo->par;
--	info->fb = fbinfo;
--	info->dev = &pdev->dev;
--	spin_lock_init(&info->lock);
--
--	platform_set_drvdata(pdev, fbinfo);
--
--	strcpy(fbinfo->fix.id, driver_name);
--
--	info->mach_info = pdev->dev.platform_data;
--
--	if (info->mach_info == NULL) {
--		dev_err(&pdev->dev,
--			"no platform data for lcd, cannot attach\n");
--		ret = -EINVAL;
--		goto out3;
--	}
--
--	fbinfo->fix.type = FB_TYPE_PACKED_PIXELS;
--	fbinfo->fix.type_aux = 0;
--	fbinfo->fix.xpanstep = 0;
--	fbinfo->fix.ypanstep = 0;
--	fbinfo->fix.ywrapstep = 0;
--	fbinfo->fix.accel = FB_ACCEL_NONE;
--	fbinfo->fix.visual = FB_VISUAL_TRUECOLOR;
--
--	fbinfo->var.nonstd = 0;
--	fbinfo->var.activate = FB_ACTIVATE_NOW;
--	fbinfo->var.height = info->mach_info->height;
--	fbinfo->var.width = info->mach_info->width;
--	fbinfo->var.accel_flags = 0;
--	fbinfo->var.vmode = FB_VMODE_NONINTERLACED;
--
--	fbinfo->fbops = &bfin_bf54x_fb_ops;
--	fbinfo->flags = FBINFO_FLAG_DEFAULT;
--
--	fbinfo->var.xres = info->mach_info->xres.defval;
--	fbinfo->var.xres_virtual = info->mach_info->xres.defval;
--	fbinfo->var.yres = info->mach_info->yres.defval;
--	fbinfo->var.yres_virtual = info->mach_info->yres.defval;
--	fbinfo->var.bits_per_pixel = info->mach_info->bpp.defval;
--
--	fbinfo->var.upper_margin = 0;
--	fbinfo->var.lower_margin = 0;
--	fbinfo->var.vsync_len = 0;
--
--	fbinfo->var.left_margin = 0;
--	fbinfo->var.right_margin = 0;
--	fbinfo->var.hsync_len = 0;
--
--	fbinfo->var.red.offset = 16;
--	fbinfo->var.green.offset = 8;
--	fbinfo->var.blue.offset = 0;
--	fbinfo->var.transp.offset = 0;
--	fbinfo->var.red.length = 8;
--	fbinfo->var.green.length = 8;
--	fbinfo->var.blue.length = 8;
--	fbinfo->var.transp.length = 0;
--	fbinfo->fix.smem_len = info->mach_info->xres.max *
--	    info->mach_info->yres.max * info->mach_info->bpp.max / 8;
--
--	fbinfo->fix.line_length = fbinfo->var.xres_virtual *
--	    fbinfo->var.bits_per_pixel / 8;
--
--	info->fb_buffer =
--	    dma_alloc_coherent(NULL, fbinfo->fix.smem_len, &info->dma_handle,
--			       GFP_KERNEL);
--
--	if (NULL == info->fb_buffer) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": couldn't allocate dma buffer.\n");
--		ret = -ENOMEM;
--		goto out3;
--	}
--
--	fbinfo->screen_base = (void *)info->fb_buffer;
--	fbinfo->fix.smem_start = (int)info->fb_buffer;
--
--	fbinfo->fbops = &bfin_bf54x_fb_ops;
--
--	fbinfo->pseudo_palette = devm_kzalloc(&pdev->dev, sizeof(u32) * 16,
--					      GFP_KERNEL);
--	if (!fbinfo->pseudo_palette) {
--		printk(KERN_ERR DRIVER_NAME
--		       "Fail to allocate pseudo_palette\n");
--
--		ret = -ENOMEM;
--		goto out4;
--	}
--
--	if (fb_alloc_cmap(&fbinfo->cmap, BFIN_LCD_NBR_PALETTE_ENTRIES, 0)
--	    < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       "Fail to allocate colormap (%d entries)\n",
--		       BFIN_LCD_NBR_PALETTE_ENTRIES);
--		ret = -EFAULT;
--		goto out4;
--	}
--
--	if (request_ports(info)) {
--		printk(KERN_ERR DRIVER_NAME ": couldn't request gpio port.\n");
--		ret = -EFAULT;
--		goto out6;
--	}
--
--	info->irq = platform_get_irq(pdev, 0);
--	if (info->irq < 0) {
--		ret = -EINVAL;
--		goto out7;
--	}
--
--	if (request_irq(info->irq, bfin_bf54x_irq_error, 0,
--			"PPI ERROR", info) < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": unable to request PPI ERROR IRQ\n");
--		ret = -EFAULT;
--		goto out7;
--	}
--
--	if (register_framebuffer(fbinfo) < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": unable to register framebuffer.\n");
--		ret = -EINVAL;
--		goto out8;
--	}
--#ifndef NO_BL_SUPPORT
--	memset(&props, 0, sizeof(struct backlight_properties));
--	props.type = BACKLIGHT_RAW;
--	props.max_brightness = 255;
--	bl_dev = backlight_device_register("bf54x-bl", NULL, NULL,
--					   &bfin_lq043fb_bl_ops, &props);
--	if (IS_ERR(bl_dev)) {
--		printk(KERN_ERR DRIVER_NAME
--			": unable to register backlight.\n");
--		ret = -EINVAL;
--		unregister_framebuffer(fbinfo);
--		goto out8;
--	}
--
--	lcd_dev = lcd_device_register(DRIVER_NAME, &pdev->dev, NULL, &bfin_lcd_ops);
--	lcd_dev->props.max_contrast = 255, printk(KERN_INFO "Done.\n");
--#endif
--
--	return 0;
--
--out8:
--	free_irq(info->irq, info);
--out7:
--	free_ports(info);
--out6:
--	fb_dealloc_cmap(&fbinfo->cmap);
--out4:
--	dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
--			  info->dma_handle);
--out3:
--	framebuffer_release(fbinfo);
--out2:
--	free_dma(CH_EPPI0);
--out1:
--
--	return ret;
--}
--
--static int bfin_bf54x_remove(struct platform_device *pdev)
--{
--
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_bf54xfb_info *info = fbinfo->par;
--
--	free_dma(CH_EPPI0);
--	free_irq(info->irq, info);
--
--	if (info->fb_buffer != NULL)
--		dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
--				  info->dma_handle);
--
--	fb_dealloc_cmap(&fbinfo->cmap);
--
--#ifndef NO_BL_SUPPORT
--	lcd_device_unregister(lcd_dev);
--	backlight_device_unregister(bl_dev);
--#endif
--
--	unregister_framebuffer(fbinfo);
--
--	free_ports(info);
--
--	printk(KERN_INFO DRIVER_NAME ": Unregister LCD driver.\n");
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_bf54x_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() & ~EPPI_EN);
--	disable_dma(CH_EPPI0);
--	bfin_write_EPPI0_STATUS(0xFFFF);
--
--	return 0;
--}
--
--static int bfin_bf54x_resume(struct platform_device *pdev)
--{
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_bf54xfb_info *info = fbinfo->par;
--
--	if (info->lq043_open_cnt) {
--
--		bfin_write_EPPI0_CONTROL(0);
--		SSYNC();
--
--		config_dma(info);
--		config_ppi(info);
--
--		/* start dma */
--		enable_dma(CH_EPPI0);
--		bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() | EPPI_EN);
--	}
--
--	return 0;
--}
--#else
--#define bfin_bf54x_suspend	NULL
--#define bfin_bf54x_resume	NULL
--#endif
--
--static struct platform_driver bfin_bf54x_driver = {
--	.probe = bfin_bf54x_probe,
--	.remove = bfin_bf54x_remove,
--	.suspend = bfin_bf54x_suspend,
--	.resume = bfin_bf54x_resume,
--	.driver = {
--		   .name = DRIVER_NAME,
--		   },
--};
--module_platform_driver(bfin_bf54x_driver);
--
--MODULE_DESCRIPTION("Blackfin BF54x TFT LCD Driver");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/bfin-lq035q1-fb.c b/drivers/video/fbdev/bfin-lq035q1-fb.c
-deleted file mode 100644
-index b459354..0000000
---- a/drivers/video/fbdev/bfin-lq035q1-fb.c
-+++ /dev/null
-@@ -1,864 +0,0 @@
--/*
-- * Blackfin LCD Framebuffer driver SHARP LQ035Q1DH02
-- *
-- * Copyright 2008-2009 Analog Devices Inc.
-- * Licensed under the GPL-2 or later.
-- */
--
--#define DRIVER_NAME "bfin-lq035q1"
--#define pr_fmt(fmt) DRIVER_NAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/fb.h>
--#include <linux/gpio.h>
--#include <linux/slab.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/device.h>
--#include <linux/backlight.h>
--#include <linux/lcd.h>
--#include <linux/dma-mapping.h>
--#include <linux/platform_device.h>
--#include <linux/spi/spi.h>
--
--#include <asm/blackfin.h>
--#include <asm/irq.h>
--#include <asm/dma.h>
--#include <asm/portmux.h>
--#include <asm/gptimers.h>
--
--#include <asm/bfin-lq035q1.h>
--
--#if defined(BF533_FAMILY) || defined(BF538_FAMILY)
--#define TIMER_HSYNC_id			TIMER1_id
--#define TIMER_HSYNCbit			TIMER1bit
--#define TIMER_HSYNC_STATUS_TRUN		TIMER_STATUS_TRUN1
--#define TIMER_HSYNC_STATUS_TIMIL	TIMER_STATUS_TIMIL1
--#define TIMER_HSYNC_STATUS_TOVF		TIMER_STATUS_TOVF1
--
--#define TIMER_VSYNC_id			TIMER2_id
--#define TIMER_VSYNCbit			TIMER2bit
--#define TIMER_VSYNC_STATUS_TRUN		TIMER_STATUS_TRUN2
--#define TIMER_VSYNC_STATUS_TIMIL	TIMER_STATUS_TIMIL2
--#define TIMER_VSYNC_STATUS_TOVF		TIMER_STATUS_TOVF2
--#else
--#define TIMER_HSYNC_id			TIMER0_id
--#define TIMER_HSYNCbit			TIMER0bit
--#define TIMER_HSYNC_STATUS_TRUN		TIMER_STATUS_TRUN0
--#define TIMER_HSYNC_STATUS_TIMIL	TIMER_STATUS_TIMIL0
--#define TIMER_HSYNC_STATUS_TOVF		TIMER_STATUS_TOVF0
--
--#define TIMER_VSYNC_id			TIMER1_id
--#define TIMER_VSYNCbit			TIMER1bit
--#define TIMER_VSYNC_STATUS_TRUN		TIMER_STATUS_TRUN1
--#define TIMER_VSYNC_STATUS_TIMIL	TIMER_STATUS_TIMIL1
--#define TIMER_VSYNC_STATUS_TOVF		TIMER_STATUS_TOVF1
--#endif
--
--#define LCD_X_RES		320	/* Horizontal Resolution */
--#define LCD_Y_RES		240	/* Vertical Resolution */
--#define	DMA_BUS_SIZE		16
--#define U_LINE			4	/* Blanking Lines */
--
--
--/* Interface 16/18-bit TFT over an 8-bit wide PPI using a small Programmable Logic Device (CPLD)
-- * http://blackfin.uclinux.org/gf/project/stamp/frs/?action=FrsReleaseBrowse&frs_package_id=165
-- */
--
--
--#define BFIN_LCD_NBR_PALETTE_ENTRIES	256
--
--#define PPI_TX_MODE			0x2
--#define PPI_XFER_TYPE_11		0xC
--#define PPI_PORT_CFG_01			0x10
--#define PPI_POLS_1			0x8000
--
--#define LQ035_INDEX			0x74
--#define LQ035_DATA			0x76
--
--#define LQ035_DRIVER_OUTPUT_CTL		0x1
--#define LQ035_SHUT_CTL			0x11
--
--#define LQ035_DRIVER_OUTPUT_MASK	(LQ035_LR | LQ035_TB | LQ035_BGR | LQ035_REV)
--#define LQ035_DRIVER_OUTPUT_DEFAULT	(0x2AEF & ~LQ035_DRIVER_OUTPUT_MASK)
--
--#define LQ035_SHUT			(1 << 0)	/* Shutdown */
--#define LQ035_ON			(0 << 0)	/* Shutdown */
--
--struct bfin_lq035q1fb_info {
--	struct fb_info *fb;
--	struct device *dev;
--	struct spi_driver spidrv;
--	struct bfin_lq035q1fb_disp_info *disp_info;
--	unsigned char *fb_buffer;	/* RGB Buffer */
--	dma_addr_t dma_handle;
--	int lq035_open_cnt;
--	int irq;
--	spinlock_t lock;	/* lock */
--	u32 pseudo_pal[16];
--
--	u32 lcd_bpp;
--	u32 h_actpix;
--	u32 h_period;
--	u32 h_pulse;
--	u32 h_start;
--	u32 v_lines;
--	u32 v_pulse;
--	u32 v_period;
--};
--
--static int nocursor;
--module_param(nocursor, int, 0644);
--MODULE_PARM_DESC(nocursor, "cursor enable/disable");
--
--struct spi_control {
--	unsigned short mode;
--};
--
--static int lq035q1_control(struct spi_device *spi, unsigned char reg, unsigned short value)
+-static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
+-					const char *buf, size_t count)
 -{
 -	int ret;
--	u8 regs[3] = { LQ035_INDEX, 0, 0 };
--	u8 dat[3] = { LQ035_DATA, 0, 0 };
+-	char	str_governor[16];
+-	struct cpufreq_policy new_policy;
 -
--	if (!spi)
--		return -ENODEV;
+-	memcpy(&new_policy, policy, sizeof(*policy));
 -
--	regs[2] = reg;
--	dat[1] = value >> 8;
--	dat[2] = value & 0xFF;
--
--	ret = spi_write(spi, regs, ARRAY_SIZE(regs));
--	ret |= spi_write(spi, dat, ARRAY_SIZE(dat));
--	return ret;
--}
--
--static int lq035q1_spidev_probe(struct spi_device *spi)
--{
--	int ret;
--	struct spi_control *ctl;
--	struct bfin_lq035q1fb_info *info = container_of(spi->dev.driver,
--						struct bfin_lq035q1fb_info,
--						spidrv.driver);
--
--	ctl = kzalloc(sizeof(*ctl), GFP_KERNEL);
--
--	if (!ctl)
--		return -ENOMEM;
--
--	ctl->mode = (info->disp_info->mode &
--		LQ035_DRIVER_OUTPUT_MASK) | LQ035_DRIVER_OUTPUT_DEFAULT;
--
--	ret = lq035q1_control(spi, LQ035_SHUT_CTL, LQ035_ON);
--	ret |= lq035q1_control(spi, LQ035_DRIVER_OUTPUT_CTL, ctl->mode);
--	if (ret) {
--		kfree(ctl);
--		return ret;
--	}
--
--	spi_set_drvdata(spi, ctl);
--
--	return 0;
--}
--
--static int lq035q1_spidev_remove(struct spi_device *spi)
--{
--	return lq035q1_control(spi, LQ035_SHUT_CTL, LQ035_SHUT);
--}
--
--#ifdef CONFIG_PM_SLEEP
--static int lq035q1_spidev_suspend(struct device *dev)
--{
--	struct spi_device *spi = to_spi_device(dev);
--
--	return lq035q1_control(spi, LQ035_SHUT_CTL, LQ035_SHUT);
--}
--
--static int lq035q1_spidev_resume(struct device *dev)
--{
--	struct spi_device *spi = to_spi_device(dev);
--	struct spi_control *ctl = spi_get_drvdata(spi);
--	int ret;
--
--	ret = lq035q1_control(spi, LQ035_DRIVER_OUTPUT_CTL, ctl->mode);
--	if (ret)
--		return ret;
--
--	return lq035q1_control(spi, LQ035_SHUT_CTL, LQ035_ON);
--}
--
--static SIMPLE_DEV_PM_OPS(lq035q1_spidev_pm_ops, lq035q1_spidev_suspend,
--	lq035q1_spidev_resume);
--#define LQ035Q1_SPIDEV_PM_OPS (&lq035q1_spidev_pm_ops)
--
--#else
--#define LQ035Q1_SPIDEV_PM_OPS NULL
--#endif
--
--/* Power down all displays on reboot, poweroff or halt */
--static void lq035q1_spidev_shutdown(struct spi_device *spi)
--{
--	lq035q1_control(spi, LQ035_SHUT_CTL, LQ035_SHUT);
--}
--
--static int lq035q1_backlight(struct bfin_lq035q1fb_info *info, unsigned arg)
--{
--	if (info->disp_info->use_bl)
--		gpio_set_value(info->disp_info->gpio_bl, arg);
--
--	return 0;
--}
--
--static int bfin_lq035q1_calc_timing(struct bfin_lq035q1fb_info *fbi)
--{
--	unsigned long clocks_per_pix, cpld_pipeline_delay_cor;
--
--	/*
--	 * Interface 16/18-bit TFT over an 8-bit wide PPI using a small
--	 * Programmable Logic Device (CPLD)
--	 * http://blackfin.uclinux.org/gf/project/stamp/frs/?action=FrsReleaseBrowse&frs_package_id=165
--	 */
--
--	switch (fbi->disp_info->ppi_mode) {
--	case USE_RGB565_16_BIT_PPI:
--		fbi->lcd_bpp = 16;
--		clocks_per_pix = 1;
--		cpld_pipeline_delay_cor = 0;
--		break;
--	case USE_RGB565_8_BIT_PPI:
--		fbi->lcd_bpp = 16;
--		clocks_per_pix = 2;
--		cpld_pipeline_delay_cor = 3;
--		break;
--	case USE_RGB888_8_BIT_PPI:
--		fbi->lcd_bpp = 24;
--		clocks_per_pix = 3;
--		cpld_pipeline_delay_cor = 5;
--		break;
--	default:
--		return -EINVAL;
--	}
--
--	/*
--	 * HS and VS timing parameters (all in number of PPI clk ticks)
--	 */
--
--	fbi->h_actpix = (LCD_X_RES * clocks_per_pix);	/* active horizontal pixel */
--	fbi->h_period = (336 * clocks_per_pix);		/* HS period */
--	fbi->h_pulse = (2 * clocks_per_pix);				/* HS pulse width */
--	fbi->h_start = (7 * clocks_per_pix + cpld_pipeline_delay_cor);	/* first valid pixel */
--
--	fbi->v_lines = (LCD_Y_RES + U_LINE);		/* total vertical lines */
--	fbi->v_pulse = (2 * clocks_per_pix);		/* VS pulse width (1-5 H_PERIODs) */
--	fbi->v_period =	(fbi->h_period * fbi->v_lines);	/* VS period */
--
--	return 0;
--}
--
--static void bfin_lq035q1_config_ppi(struct bfin_lq035q1fb_info *fbi)
--{
--	unsigned ppi_pmode;
--
--	if (fbi->disp_info->ppi_mode == USE_RGB565_16_BIT_PPI)
--		ppi_pmode = DLEN_16;
--	else
--		ppi_pmode = (DLEN_8 | PACK_EN);
--
--	bfin_write_PPI_DELAY(fbi->h_start);
--	bfin_write_PPI_COUNT(fbi->h_actpix - 1);
--	bfin_write_PPI_FRAME(fbi->v_lines);
--
--	bfin_write_PPI_CONTROL(PPI_TX_MODE |	   /* output mode , PORT_DIR */
--				PPI_XFER_TYPE_11 | /* sync mode XFR_TYPE */
--				PPI_PORT_CFG_01 |  /* two frame sync PORT_CFG */
--				ppi_pmode |	   /* 8/16 bit data length / PACK_EN? */
--				PPI_POLS_1);	   /* faling edge syncs POLS */
--}
--
--static inline void bfin_lq035q1_disable_ppi(void)
--{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() & ~PORT_EN);
--}
--
--static inline void bfin_lq035q1_enable_ppi(void)
--{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() | PORT_EN);
--}
--
--static void bfin_lq035q1_start_timers(void)
--{
--	enable_gptimers(TIMER_VSYNCbit | TIMER_HSYNCbit);
--}
--
--static void bfin_lq035q1_stop_timers(void)
--{
--	disable_gptimers(TIMER_HSYNCbit | TIMER_VSYNCbit);
--
--	set_gptimer_status(0, TIMER_HSYNC_STATUS_TRUN | TIMER_VSYNC_STATUS_TRUN |
--				TIMER_HSYNC_STATUS_TIMIL | TIMER_VSYNC_STATUS_TIMIL |
--				 TIMER_HSYNC_STATUS_TOVF | TIMER_VSYNC_STATUS_TOVF);
--
--}
--
--static void bfin_lq035q1_init_timers(struct bfin_lq035q1fb_info *fbi)
--{
--
--	bfin_lq035q1_stop_timers();
--
--	set_gptimer_period(TIMER_HSYNC_id, fbi->h_period);
--	set_gptimer_pwidth(TIMER_HSYNC_id, fbi->h_pulse);
--	set_gptimer_config(TIMER_HSYNC_id, TIMER_MODE_PWM | TIMER_PERIOD_CNT |
--				      TIMER_TIN_SEL | TIMER_CLK_SEL|
--				      TIMER_EMU_RUN);
--
--	set_gptimer_period(TIMER_VSYNC_id, fbi->v_period);
--	set_gptimer_pwidth(TIMER_VSYNC_id, fbi->v_pulse);
--	set_gptimer_config(TIMER_VSYNC_id, TIMER_MODE_PWM | TIMER_PERIOD_CNT |
--				      TIMER_TIN_SEL | TIMER_CLK_SEL |
--				      TIMER_EMU_RUN);
--
--}
--
--static void bfin_lq035q1_config_dma(struct bfin_lq035q1fb_info *fbi)
--{
--
--
--	set_dma_config(CH_PPI,
--		       set_bfin_dma_config(DIR_READ, DMA_FLOW_AUTO,
--					   INTR_DISABLE, DIMENSION_2D,
--					   DATA_SIZE_16,
--					   DMA_NOSYNC_KEEP_DMA_BUF));
--	set_dma_x_count(CH_PPI, (LCD_X_RES * fbi->lcd_bpp) / DMA_BUS_SIZE);
--	set_dma_x_modify(CH_PPI, DMA_BUS_SIZE / 8);
--	set_dma_y_count(CH_PPI, fbi->v_lines);
--
--	set_dma_y_modify(CH_PPI, DMA_BUS_SIZE / 8);
--	set_dma_start_addr(CH_PPI, (unsigned long)fbi->fb_buffer);
--
--}
--
--static const u16 ppi0_req_16[] = {P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--			    P_PPI0_D0, P_PPI0_D1, P_PPI0_D2,
--			    P_PPI0_D3, P_PPI0_D4, P_PPI0_D5,
--			    P_PPI0_D6, P_PPI0_D7, P_PPI0_D8,
--			    P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--			    P_PPI0_D12, P_PPI0_D13, P_PPI0_D14,
--			    P_PPI0_D15, 0};
--
--static const u16 ppi0_req_8[] = {P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--			    P_PPI0_D0, P_PPI0_D1, P_PPI0_D2,
--			    P_PPI0_D3, P_PPI0_D4, P_PPI0_D5,
--			    P_PPI0_D6, P_PPI0_D7, 0};
--
--static inline void bfin_lq035q1_free_ports(unsigned ppi16)
--{
--	if (ppi16)
--		peripheral_free_list(ppi0_req_16);
--	else
--		peripheral_free_list(ppi0_req_8);
--
--	if (ANOMALY_05000400)
--		gpio_free(P_IDENT(P_PPI0_FS3));
--}
--
--static int bfin_lq035q1_request_ports(struct platform_device *pdev,
--				      unsigned ppi16)
--{
--	int ret;
--	/* ANOMALY_05000400 - PPI Does Not Start Properly In Specific Mode:
--	 * Drive PPI_FS3 Low
--	 */
--	if (ANOMALY_05000400) {
--		int ret = gpio_request_one(P_IDENT(P_PPI0_FS3),
--					GPIOF_OUT_INIT_LOW, "PPI_FS3");
--		if (ret)
--			return ret;
--	}
--
--	if (ppi16)
--		ret = peripheral_request_list(ppi0_req_16, DRIVER_NAME);
--	else
--		ret = peripheral_request_list(ppi0_req_8, DRIVER_NAME);
--
--	if (ret) {
--		dev_err(&pdev->dev, "requesting peripherals failed\n");
--		return -EFAULT;
--	}
--
--	return 0;
--}
--
--static int bfin_lq035q1_fb_open(struct fb_info *info, int user)
--{
--	struct bfin_lq035q1fb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--	fbi->lq035_open_cnt++;
--
--	if (fbi->lq035_open_cnt <= 1) {
--
--		bfin_lq035q1_disable_ppi();
--		SSYNC();
--
--		bfin_lq035q1_config_dma(fbi);
--		bfin_lq035q1_config_ppi(fbi);
--		bfin_lq035q1_init_timers(fbi);
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_lq035q1_enable_ppi();
--		bfin_lq035q1_start_timers();
--		lq035q1_backlight(fbi, 1);
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_lq035q1_fb_release(struct fb_info *info, int user)
--{
--	struct bfin_lq035q1fb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--
--	fbi->lq035_open_cnt--;
--
--	if (fbi->lq035_open_cnt <= 0) {
--		lq035q1_backlight(fbi, 0);
--		bfin_lq035q1_disable_ppi();
--		SSYNC();
--		disable_dma(CH_PPI);
--		bfin_lq035q1_stop_timers();
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_lq035q1_fb_check_var(struct fb_var_screeninfo *var,
--				     struct fb_info *info)
--{
--	struct bfin_lq035q1fb_info *fbi = info->par;
--
--	if (var->bits_per_pixel == fbi->lcd_bpp) {
--		var->red.offset = info->var.red.offset;
--		var->green.offset = info->var.green.offset;
--		var->blue.offset = info->var.blue.offset;
--		var->red.length = info->var.red.length;
--		var->green.length = info->var.green.length;
--		var->blue.length = info->var.blue.length;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->transp.msb_right = 0;
--		var->red.msb_right = 0;
--		var->green.msb_right = 0;
--		var->blue.msb_right = 0;
--	} else {
--		pr_debug("%s: depth not supported: %u BPP\n", __func__,
--			 var->bits_per_pixel);
--		return -EINVAL;
--	}
--
--	if (info->var.xres != var->xres || info->var.yres != var->yres ||
--	    info->var.xres_virtual != var->xres_virtual ||
--	    info->var.yres_virtual != var->yres_virtual) {
--		pr_debug("%s: Resolution not supported: X%u x Y%u \n",
--			 __func__, var->xres, var->yres);
--		return -EINVAL;
--	}
--
--	/*
--	 *  Memory limit
--	 */
--
--	if ((info->fix.line_length * var->yres_virtual) > info->fix.smem_len) {
--		pr_debug("%s: Memory Limit requested yres_virtual = %u\n",
--			 __func__, var->yres_virtual);
--		return -ENOMEM;
--	}
--
--
--	return 0;
--}
--
--int bfin_lq035q1_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
--{
--	if (nocursor)
--		return 0;
--	else
--		return -EINVAL;	/* just to force soft_cursor() call */
--}
--
--static int bfin_lq035q1_fb_setcolreg(u_int regno, u_int red, u_int green,
--				   u_int blue, u_int transp,
--				   struct fb_info *info)
--{
--	if (regno >= BFIN_LCD_NBR_PALETTE_ENTRIES)
+-	ret = sscanf(buf, "%15s", str_governor);
+-	if (ret != 1)
 -		return -EINVAL;
 -
--	if (info->var.grayscale) {
--		/* grayscale = 0.30*R + 0.59*G + 0.11*B */
--		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
--	}
+-	if (cpufreq_parse_governor(str_governor, &new_policy))
+-		return -EINVAL;
 -
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
+-	ret = cpufreq_set_policy(policy, &new_policy);
 -
--		u32 value;
--		/* Place color in the pseudopalette */
--		if (regno > 16)
--			return -EINVAL;
+-	if (new_policy.governor)
+-		module_put(new_policy.governor->owner);
 -
--		red >>= (16 - info->var.red.length);
--		green >>= (16 - info->var.green.length);
--		blue >>= (16 - info->var.blue.length);
--
--		value = (red << info->var.red.offset) |
--		    (green << info->var.green.offset) |
--		    (blue << info->var.blue.offset);
--		value &= 0xFFFFFF;
--
--		((u32 *) (info->pseudo_palette))[regno] = value;
--
--	}
--
--	return 0;
+-	return ret ? ret : count;
 -}
 -
--static struct fb_ops bfin_lq035q1_fb_ops = {
--	.owner = THIS_MODULE,
--	.fb_open = bfin_lq035q1_fb_open,
--	.fb_release = bfin_lq035q1_fb_release,
--	.fb_check_var = bfin_lq035q1_fb_check_var,
--	.fb_fillrect = cfb_fillrect,
--	.fb_copyarea = cfb_copyarea,
--	.fb_imageblit = cfb_imageblit,
--	.fb_cursor = bfin_lq035q1_fb_cursor,
--	.fb_setcolreg = bfin_lq035q1_fb_setcolreg,
--};
--
--static irqreturn_t bfin_lq035q1_irq_error(int irq, void *dev_id)
--{
--	/*struct bfin_lq035q1fb_info *info = (struct bfin_lq035q1fb_info *)dev_id;*/
--
--	u16 status = bfin_read_PPI_STATUS();
--	bfin_write_PPI_STATUS(-1);
--
--	if (status) {
--		bfin_lq035q1_disable_ppi();
--		disable_dma(CH_PPI);
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_lq035q1_enable_ppi();
--		bfin_write_PPI_STATUS(-1);
--	}
--
--	return IRQ_HANDLED;
--}
--
--static int bfin_lq035q1_probe(struct platform_device *pdev)
--{
--	struct bfin_lq035q1fb_info *info;
--	struct fb_info *fbinfo;
--	u32 active_video_mem_offset;
--	int ret;
--
--	ret = request_dma(CH_PPI, DRIVER_NAME"_CH_PPI");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "PPI DMA unavailable\n");
--		goto out1;
--	}
--
--	fbinfo = framebuffer_alloc(sizeof(*info), &pdev->dev);
--	if (!fbinfo) {
--		ret = -ENOMEM;
--		goto out2;
--	}
--
--	info = fbinfo->par;
--	info->fb = fbinfo;
--	info->dev = &pdev->dev;
--	spin_lock_init(&info->lock);
--
--	info->disp_info = pdev->dev.platform_data;
--
--	platform_set_drvdata(pdev, fbinfo);
--
--	ret = bfin_lq035q1_calc_timing(info);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed PPI Mode\n");
--		goto out3;
--	}
--
--	strcpy(fbinfo->fix.id, DRIVER_NAME);
--
--	fbinfo->fix.type = FB_TYPE_PACKED_PIXELS;
--	fbinfo->fix.type_aux = 0;
--	fbinfo->fix.xpanstep = 0;
--	fbinfo->fix.ypanstep = 0;
--	fbinfo->fix.ywrapstep = 0;
--	fbinfo->fix.accel = FB_ACCEL_NONE;
--	fbinfo->fix.visual = FB_VISUAL_TRUECOLOR;
--
--	fbinfo->var.nonstd = 0;
--	fbinfo->var.activate = FB_ACTIVATE_NOW;
--	fbinfo->var.height = -1;
--	fbinfo->var.width = -1;
--	fbinfo->var.accel_flags = 0;
--	fbinfo->var.vmode = FB_VMODE_NONINTERLACED;
--
--	fbinfo->var.xres = LCD_X_RES;
--	fbinfo->var.xres_virtual = LCD_X_RES;
--	fbinfo->var.yres = LCD_Y_RES;
--	fbinfo->var.yres_virtual = LCD_Y_RES;
--	fbinfo->var.bits_per_pixel = info->lcd_bpp;
--
--	if (info->disp_info->mode & LQ035_BGR) {
--		if (info->lcd_bpp == 24) {
--			fbinfo->var.red.offset = 0;
--			fbinfo->var.green.offset = 8;
--			fbinfo->var.blue.offset = 16;
--		} else {
--			fbinfo->var.red.offset = 0;
--			fbinfo->var.green.offset = 5;
--			fbinfo->var.blue.offset = 11;
--		}
--	} else {
--		if (info->lcd_bpp == 24) {
--			fbinfo->var.red.offset = 16;
--			fbinfo->var.green.offset = 8;
--			fbinfo->var.blue.offset = 0;
--		} else {
--			fbinfo->var.red.offset = 11;
--			fbinfo->var.green.offset = 5;
--			fbinfo->var.blue.offset = 0;
--		}
--	}
--
--	fbinfo->var.transp.offset = 0;
--
--	if (info->lcd_bpp == 24) {
--		fbinfo->var.red.length = 8;
--		fbinfo->var.green.length = 8;
--		fbinfo->var.blue.length = 8;
--	} else {
--		fbinfo->var.red.length = 5;
--		fbinfo->var.green.length = 6;
--		fbinfo->var.blue.length = 5;
--	}
--
--	fbinfo->var.transp.length = 0;
--
--	active_video_mem_offset = ((U_LINE / 2) * LCD_X_RES * (info->lcd_bpp / 8));
--
--	fbinfo->fix.smem_len = LCD_X_RES * LCD_Y_RES * info->lcd_bpp / 8
--				+ active_video_mem_offset;
--
--	fbinfo->fix.line_length = fbinfo->var.xres_virtual *
--	    fbinfo->var.bits_per_pixel / 8;
--
--
--	fbinfo->fbops = &bfin_lq035q1_fb_ops;
--	fbinfo->flags = FBINFO_FLAG_DEFAULT;
--
--	info->fb_buffer =
--	    dma_alloc_coherent(NULL, fbinfo->fix.smem_len, &info->dma_handle,
--			       GFP_KERNEL);
--
--	if (NULL == info->fb_buffer) {
--		dev_err(&pdev->dev, "couldn't allocate dma buffer\n");
--		ret = -ENOMEM;
--		goto out3;
--	}
--
--	fbinfo->screen_base = (void *)info->fb_buffer + active_video_mem_offset;
--	fbinfo->fix.smem_start = (int)info->fb_buffer + active_video_mem_offset;
--
--	fbinfo->fbops = &bfin_lq035q1_fb_ops;
--
--	fbinfo->pseudo_palette = &info->pseudo_pal;
--
--	ret = fb_alloc_cmap(&fbinfo->cmap, BFIN_LCD_NBR_PALETTE_ENTRIES, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to allocate colormap (%d entries)\n",
--		       BFIN_LCD_NBR_PALETTE_ENTRIES);
--		goto out4;
--	}
--
--	ret = bfin_lq035q1_request_ports(pdev,
--			info->disp_info->ppi_mode == USE_RGB565_16_BIT_PPI);
--	if (ret) {
--		dev_err(&pdev->dev, "couldn't request gpio port\n");
--		goto out6;
--	}
--
--	info->irq = platform_get_irq(pdev, 0);
--	if (info->irq < 0) {
--		ret = -EINVAL;
--		goto out7;
--	}
--
--	ret = request_irq(info->irq, bfin_lq035q1_irq_error, 0,
--			DRIVER_NAME" PPI ERROR", info);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "unable to request PPI ERROR IRQ\n");
--		goto out7;
--	}
--
--	info->spidrv.driver.name = DRIVER_NAME"-spi";
--	info->spidrv.probe    = lq035q1_spidev_probe;
--	info->spidrv.remove   = lq035q1_spidev_remove;
--	info->spidrv.shutdown = lq035q1_spidev_shutdown;
--	info->spidrv.driver.pm = LQ035Q1_SPIDEV_PM_OPS;
--
--	ret = spi_register_driver(&info->spidrv);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "couldn't register SPI Interface\n");
--		goto out8;
--	}
--
--	if (info->disp_info->use_bl) {
--		ret = gpio_request_one(info->disp_info->gpio_bl,
--					GPIOF_OUT_INIT_LOW, "LQ035 Backlight");
--
--		if (ret) {
--			dev_err(&pdev->dev, "failed to request GPIO %d\n",
--				info->disp_info->gpio_bl);
--			goto out9;
--		}
--	}
--
--	ret = register_framebuffer(fbinfo);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "unable to register framebuffer\n");
--		goto out10;
--	}
--
--	dev_info(&pdev->dev, "%dx%d %d-bit RGB FrameBuffer initialized\n",
--		LCD_X_RES, LCD_Y_RES, info->lcd_bpp);
--
--	return 0;
--
-- out10:
--	if (info->disp_info->use_bl)
--		gpio_free(info->disp_info->gpio_bl);
-- out9:
--	spi_unregister_driver(&info->spidrv);
-- out8:
--	free_irq(info->irq, info);
-- out7:
--	bfin_lq035q1_free_ports(info->disp_info->ppi_mode ==
--				USE_RGB565_16_BIT_PPI);
-- out6:
--	fb_dealloc_cmap(&fbinfo->cmap);
-- out4:
--	dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
--			  info->dma_handle);
-- out3:
--	framebuffer_release(fbinfo);
-- out2:
--	free_dma(CH_PPI);
-- out1:
--
--	return ret;
--}
--
--static int bfin_lq035q1_remove(struct platform_device *pdev)
--{
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_lq035q1fb_info *info = fbinfo->par;
--
--	if (info->disp_info->use_bl)
--		gpio_free(info->disp_info->gpio_bl);
--
--	spi_unregister_driver(&info->spidrv);
--
--	unregister_framebuffer(fbinfo);
--
--	free_dma(CH_PPI);
--	free_irq(info->irq, info);
--
--	if (info->fb_buffer != NULL)
--		dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
--				  info->dma_handle);
--
--	fb_dealloc_cmap(&fbinfo->cmap);
--
--	bfin_lq035q1_free_ports(info->disp_info->ppi_mode ==
--				USE_RGB565_16_BIT_PPI);
--
--	framebuffer_release(fbinfo);
--
--	dev_info(&pdev->dev, "unregistered LCD driver\n");
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_lq035q1_suspend(struct device *dev)
--{
--	struct fb_info *fbinfo = dev_get_drvdata(dev);
--	struct bfin_lq035q1fb_info *info = fbinfo->par;
--
--	if (info->lq035_open_cnt) {
--		lq035q1_backlight(info, 0);
--		bfin_lq035q1_disable_ppi();
--		SSYNC();
--		disable_dma(CH_PPI);
--		bfin_lq035q1_stop_timers();
--		bfin_write_PPI_STATUS(-1);
--	}
--
--	return 0;
--}
--
--static int bfin_lq035q1_resume(struct device *dev)
--{
--	struct fb_info *fbinfo = dev_get_drvdata(dev);
--	struct bfin_lq035q1fb_info *info = fbinfo->par;
--
--	if (info->lq035_open_cnt) {
--		bfin_lq035q1_disable_ppi();
--		SSYNC();
--
--		bfin_lq035q1_config_dma(info);
--		bfin_lq035q1_config_ppi(info);
--		bfin_lq035q1_init_timers(info);
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_lq035q1_enable_ppi();
--		bfin_lq035q1_start_timers();
--		lq035q1_backlight(info, 1);
--	}
--
--	return 0;
--}
--
--static const struct dev_pm_ops bfin_lq035q1_dev_pm_ops = {
--	.suspend = bfin_lq035q1_suspend,
--	.resume  = bfin_lq035q1_resume,
--};
--#endif
--
--static struct platform_driver bfin_lq035q1_driver = {
--	.probe   = bfin_lq035q1_probe,
--	.remove  = bfin_lq035q1_remove,
--	.driver = {
--		.name = DRIVER_NAME,
--#ifdef CONFIG_PM
--		.pm   = &bfin_lq035q1_dev_pm_ops,
--#endif
--	},
--};
--
--module_platform_driver(bfin_lq035q1_driver);
--
--MODULE_DESCRIPTION("Blackfin TFT LCD Driver");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/bfin-t350mcqb-fb.c b/drivers/video/fbdev/bfin-t350mcqb-fb.c
-deleted file mode 100644
-index e5ee4d9..0000000
---- a/drivers/video/fbdev/bfin-t350mcqb-fb.c
-+++ /dev/null
-@@ -1,669 +0,0 @@
--/*
-- * File:         drivers/video/bfin-t350mcqb-fb.c
-- * Based on:
-- * Author:       Michael Hennerich <hennerich@blackfin.uclinux.org>
-- *
-- * Created:
-- * Description:  Blackfin LCD Framebuffer driver
-- *
-- *
-- * Modified:
-- *               Copyright 2004-2007 Analog Devices Inc.
-- *
-- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see the file COPYING, or write
-- * to the Free Software Foundation, Inc.,
-- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-/**
+- * show_scaling_driver - show the cpufreq driver currently loaded
 - */
--
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/gfp.h>
--#include <linux/fb.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/device.h>
--#include <linux/backlight.h>
--#include <linux/lcd.h>
--#include <linux/dma-mapping.h>
--#include <linux/platform_device.h>
--
--#include <asm/blackfin.h>
--#include <asm/irq.h>
--#include <asm/dma-mapping.h>
--#include <asm/dma.h>
--#include <asm/portmux.h>
--#include <asm/gptimers.h>
--
--#define NO_BL_SUPPORT
--
--#define LCD_X_RES		320	/* Horizontal Resolution */
--#define LCD_Y_RES		240	/* Vertical Resolution */
--#define LCD_BPP			24	/* Bit Per Pixel */
--
--#define	DMA_BUS_SIZE		16
--#define	LCD_CLK         	(12*1000*1000)	/* 12MHz */
--
--#define CLOCKS_PER_PIX		3
--
--	/*
--	 * HS and VS timing parameters (all in number of PPI clk ticks)
--	 */
--
--#define U_LINE		1				/* Blanking Lines */
--
--#define H_ACTPIX	(LCD_X_RES * CLOCKS_PER_PIX)	/* active horizontal pixel */
--#define H_PERIOD	(408 * CLOCKS_PER_PIX)		/* HS period */
--#define H_PULSE		90				/* HS pulse width */
--#define H_START		204				/* first valid pixel */
--
--#define	V_LINES		(LCD_Y_RES + U_LINE)		/* total vertical lines */
--#define V_PULSE		(3 * H_PERIOD)			/* VS pulse width (1-5 H_PERIODs) */
--#define V_PERIOD	(H_PERIOD * V_LINES)		/* VS period */
--
--#define ACTIVE_VIDEO_MEM_OFFSET	(U_LINE * H_ACTPIX)
--
--#define BFIN_LCD_NBR_PALETTE_ENTRIES	256
--
--#define DRIVER_NAME "bfin-t350mcqb"
--static char driver_name[] = DRIVER_NAME;
--
--struct bfin_t350mcqbfb_info {
--	struct fb_info *fb;
--	struct device *dev;
--	unsigned char *fb_buffer;	/* RGB Buffer */
--	dma_addr_t dma_handle;
--	int lq043_open_cnt;
--	int irq;
--	spinlock_t lock;	/* lock */
--	u32 pseudo_pal[16];
--};
--
--static int nocursor;
--module_param(nocursor, int, 0644);
--MODULE_PARM_DESC(nocursor, "cursor enable/disable");
--
--#define PPI_TX_MODE		0x2
--#define PPI_XFER_TYPE_11	0xC
--#define PPI_PORT_CFG_01		0x10
--#define PPI_PACK_EN		0x80
--#define PPI_POLS_1		0x8000
--
--static void bfin_t350mcqb_config_ppi(struct bfin_t350mcqbfb_info *fbi)
+-static ssize_t show_scaling_driver(struct cpufreq_policy *policy, char *buf)
 -{
--	bfin_write_PPI_DELAY(H_START);
--	bfin_write_PPI_COUNT(H_ACTPIX-1);
--	bfin_write_PPI_FRAME(V_LINES);
--
--	bfin_write_PPI_CONTROL(PPI_TX_MODE |	   /* output mode , PORT_DIR */
--				PPI_XFER_TYPE_11 | /* sync mode XFR_TYPE */
--				PPI_PORT_CFG_01 |  /* two frame sync PORT_CFG */
--				PPI_PACK_EN |	   /* packing enabled PACK_EN */
--				PPI_POLS_1);	   /* faling edge syncs POLS */
+-	return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n", cpufreq_driver->name);
 -}
 -
--static inline void bfin_t350mcqb_disable_ppi(void)
--{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() & ~PORT_EN);
--}
--
--static inline void bfin_t350mcqb_enable_ppi(void)
--{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() | PORT_EN);
--}
--
--static void bfin_t350mcqb_start_timers(void)
--{
--	unsigned long flags;
--
--	local_irq_save(flags);
--		enable_gptimers(TIMER1bit);
--		enable_gptimers(TIMER0bit);
--	local_irq_restore(flags);
--}
--
--static void bfin_t350mcqb_stop_timers(void)
--{
--	disable_gptimers(TIMER0bit | TIMER1bit);
--
--	set_gptimer_status(0, TIMER_STATUS_TRUN0 | TIMER_STATUS_TRUN1 |
--				TIMER_STATUS_TIMIL0 | TIMER_STATUS_TIMIL1 |
--				 TIMER_STATUS_TOVF0 | TIMER_STATUS_TOVF1);
--
--}
--
--static void bfin_t350mcqb_init_timers(void)
--{
--
--	bfin_t350mcqb_stop_timers();
--
--	set_gptimer_period(TIMER0_id, H_PERIOD);
--	set_gptimer_pwidth(TIMER0_id, H_PULSE);
--	set_gptimer_config(TIMER0_id, TIMER_MODE_PWM | TIMER_PERIOD_CNT |
--				      TIMER_TIN_SEL | TIMER_CLK_SEL|
--				      TIMER_EMU_RUN);
--
--	set_gptimer_period(TIMER1_id, V_PERIOD);
--	set_gptimer_pwidth(TIMER1_id, V_PULSE);
--	set_gptimer_config(TIMER1_id, TIMER_MODE_PWM | TIMER_PERIOD_CNT |
--				      TIMER_TIN_SEL | TIMER_CLK_SEL |
--				      TIMER_EMU_RUN);
--
--}
--
--static void bfin_t350mcqb_config_dma(struct bfin_t350mcqbfb_info *fbi)
--{
--
--	set_dma_config(CH_PPI,
--		       set_bfin_dma_config(DIR_READ, DMA_FLOW_AUTO,
--					   INTR_DISABLE, DIMENSION_2D,
--					   DATA_SIZE_16,
--					   DMA_NOSYNC_KEEP_DMA_BUF));
--	set_dma_x_count(CH_PPI, (LCD_X_RES * LCD_BPP) / DMA_BUS_SIZE);
--	set_dma_x_modify(CH_PPI, DMA_BUS_SIZE / 8);
--	set_dma_y_count(CH_PPI, V_LINES);
--
--	set_dma_y_modify(CH_PPI, DMA_BUS_SIZE / 8);
--	set_dma_start_addr(CH_PPI, (unsigned long)fbi->fb_buffer);
--
--}
--
--static	u16 ppi0_req_8[] = {P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--			    P_PPI0_D0, P_PPI0_D1, P_PPI0_D2,
--			    P_PPI0_D3, P_PPI0_D4, P_PPI0_D5,
--			    P_PPI0_D6, P_PPI0_D7, 0};
--
--static int bfin_t350mcqb_request_ports(int action)
--{
--	if (action) {
--		if (peripheral_request_list(ppi0_req_8, DRIVER_NAME)) {
--			printk(KERN_ERR "Requesting Peripherals failed\n");
--			return -EFAULT;
--		}
--	} else
--		peripheral_free_list(ppi0_req_8);
--
--	return 0;
--}
--
--static int bfin_t350mcqb_fb_open(struct fb_info *info, int user)
--{
--	struct bfin_t350mcqbfb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--	fbi->lq043_open_cnt++;
--
--	if (fbi->lq043_open_cnt <= 1) {
--
--		bfin_t350mcqb_disable_ppi();
--		SSYNC();
--
--		bfin_t350mcqb_config_dma(fbi);
--		bfin_t350mcqb_config_ppi(fbi);
--		bfin_t350mcqb_init_timers();
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_t350mcqb_enable_ppi();
--		bfin_t350mcqb_start_timers();
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_t350mcqb_fb_release(struct fb_info *info, int user)
--{
--	struct bfin_t350mcqbfb_info *fbi = info->par;
--
--	spin_lock(&fbi->lock);
--
--	fbi->lq043_open_cnt--;
--
--	if (fbi->lq043_open_cnt <= 0) {
--		bfin_t350mcqb_disable_ppi();
--		SSYNC();
--		disable_dma(CH_PPI);
--		bfin_t350mcqb_stop_timers();
--	}
--
--	spin_unlock(&fbi->lock);
--
--	return 0;
--}
--
--static int bfin_t350mcqb_fb_check_var(struct fb_var_screeninfo *var,
--				   struct fb_info *info)
--{
--
--	switch (var->bits_per_pixel) {
--	case 24:/* TRUECOLOUR, 16m */
--		var->red.offset = 0;
--		var->green.offset = 8;
--		var->blue.offset = 16;
--		var->red.length = var->green.length = var->blue.length = 8;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->transp.msb_right = 0;
--		var->red.msb_right = 0;
--		var->green.msb_right = 0;
--		var->blue.msb_right = 0;
--		break;
--	default:
--		pr_debug("%s: depth not supported: %u BPP\n", __func__,
--			 var->bits_per_pixel);
--		return -EINVAL;
--	}
--
--	if (info->var.xres != var->xres || info->var.yres != var->yres ||
--	    info->var.xres_virtual != var->xres_virtual ||
--	    info->var.yres_virtual != var->yres_virtual) {
--		pr_debug("%s: Resolution not supported: X%u x Y%u \n",
--			 __func__, var->xres, var->yres);
--		return -EINVAL;
--	}
--
--	/*
--	 *  Memory limit
--	 */
--
--	if ((info->fix.line_length * var->yres_virtual) > info->fix.smem_len) {
--		pr_debug("%s: Memory Limit requested yres_virtual = %u\n",
--			 __func__, var->yres_virtual);
--		return -ENOMEM;
--	}
--
--	return 0;
--}
--
--int bfin_t350mcqb_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
--{
--	if (nocursor)
--		return 0;
--	else
--		return -EINVAL;	/* just to force soft_cursor() call */
--}
--
--static int bfin_t350mcqb_fb_setcolreg(u_int regno, u_int red, u_int green,
--				   u_int blue, u_int transp,
--				   struct fb_info *info)
--{
--	if (regno >= BFIN_LCD_NBR_PALETTE_ENTRIES)
--		return -EINVAL;
--
--	if (info->var.grayscale) {
--		/* grayscale = 0.30*R + 0.59*G + 0.11*B */
--		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
--	}
--
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
--
--		u32 value;
--		/* Place color in the pseudopalette */
--		if (regno > 16)
--			return -EINVAL;
--
--		red >>= (16 - info->var.red.length);
--		green >>= (16 - info->var.green.length);
--		blue >>= (16 - info->var.blue.length);
--
--		value = (red << info->var.red.offset) |
--		    (green << info->var.green.offset) |
--		    (blue << info->var.blue.offset);
--		value &= 0xFFFFFF;
--
--		((u32 *) (info->pseudo_palette))[regno] = value;
--
--	}
--
--	return 0;
--}
--
--static struct fb_ops bfin_t350mcqb_fb_ops = {
--	.owner = THIS_MODULE,
--	.fb_open = bfin_t350mcqb_fb_open,
--	.fb_release = bfin_t350mcqb_fb_release,
--	.fb_check_var = bfin_t350mcqb_fb_check_var,
--	.fb_fillrect = cfb_fillrect,
--	.fb_copyarea = cfb_copyarea,
--	.fb_imageblit = cfb_imageblit,
--	.fb_cursor = bfin_t350mcqb_fb_cursor,
--	.fb_setcolreg = bfin_t350mcqb_fb_setcolreg,
--};
--
--#ifndef NO_BL_SUPPORT
--static int bl_get_brightness(struct backlight_device *bd)
--{
--	return 0;
--}
--
--static const struct backlight_ops bfin_lq043fb_bl_ops = {
--	.get_brightness = bl_get_brightness,
--};
--
--static struct backlight_device *bl_dev;
--
--static int bfin_lcd_get_power(struct lcd_device *dev)
--{
--	return 0;
--}
--
--static int bfin_lcd_set_power(struct lcd_device *dev, int power)
--{
--	return 0;
--}
--
--static int bfin_lcd_get_contrast(struct lcd_device *dev)
--{
--	return 0;
--}
--
--static int bfin_lcd_set_contrast(struct lcd_device *dev, int contrast)
--{
--
--	return 0;
--}
--
--static int bfin_lcd_check_fb(struct lcd_device *dev, struct fb_info *fi)
--{
--	if (!fi || (fi == &bfin_t350mcqb_fb))
--		return 1;
--	return 0;
--}
--
--static struct lcd_ops bfin_lcd_ops = {
--	.get_power = bfin_lcd_get_power,
--	.set_power = bfin_lcd_set_power,
--	.get_contrast = bfin_lcd_get_contrast,
--	.set_contrast = bfin_lcd_set_contrast,
--	.check_fb = bfin_lcd_check_fb,
--};
--
--static struct lcd_device *lcd_dev;
--#endif
--
--static irqreturn_t bfin_t350mcqb_irq_error(int irq, void *dev_id)
--{
--	/*struct bfin_t350mcqbfb_info *info = (struct bfin_t350mcqbfb_info *)dev_id;*/
--
--	u16 status = bfin_read_PPI_STATUS();
--	bfin_write_PPI_STATUS(0xFFFF);
--
--	if (status) {
--		bfin_t350mcqb_disable_ppi();
--		disable_dma(CH_PPI);
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_t350mcqb_enable_ppi();
--		bfin_write_PPI_STATUS(0xFFFF);
--	}
--
--	return IRQ_HANDLED;
--}
--
--static int bfin_t350mcqb_probe(struct platform_device *pdev)
--{
--#ifndef NO_BL_SUPPORT
--	struct backlight_properties props;
--#endif
--	struct bfin_t350mcqbfb_info *info;
--	struct fb_info *fbinfo;
--	int ret;
--
--	printk(KERN_INFO DRIVER_NAME ": %dx%d %d-bit RGB FrameBuffer initializing...\n",
--					 LCD_X_RES, LCD_Y_RES, LCD_BPP);
--
--	if (request_dma(CH_PPI, "CH_PPI") < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": couldn't request CH_PPI DMA\n");
--		ret = -EFAULT;
--		goto out1;
--	}
--
--	fbinfo =
--	    framebuffer_alloc(sizeof(struct bfin_t350mcqbfb_info), &pdev->dev);
--	if (!fbinfo) {
--		ret = -ENOMEM;
--		goto out2;
--	}
--
--	info = fbinfo->par;
--	info->fb = fbinfo;
--	info->dev = &pdev->dev;
--	spin_lock_init(&info->lock);
--
--	platform_set_drvdata(pdev, fbinfo);
--
--	strcpy(fbinfo->fix.id, driver_name);
--
--	fbinfo->fix.type = FB_TYPE_PACKED_PIXELS;
--	fbinfo->fix.type_aux = 0;
--	fbinfo->fix.xpanstep = 0;
--	fbinfo->fix.ypanstep = 0;
--	fbinfo->fix.ywrapstep = 0;
--	fbinfo->fix.accel = FB_ACCEL_NONE;
--	fbinfo->fix.visual = FB_VISUAL_TRUECOLOR;
--
--	fbinfo->var.nonstd = 0;
--	fbinfo->var.activate = FB_ACTIVATE_NOW;
--	fbinfo->var.height = 53;
--	fbinfo->var.width = 70;
--	fbinfo->var.accel_flags = 0;
--	fbinfo->var.vmode = FB_VMODE_NONINTERLACED;
--
--	fbinfo->var.xres = LCD_X_RES;
--	fbinfo->var.xres_virtual = LCD_X_RES;
--	fbinfo->var.yres = LCD_Y_RES;
--	fbinfo->var.yres_virtual = LCD_Y_RES;
--	fbinfo->var.bits_per_pixel = LCD_BPP;
--
--	fbinfo->var.red.offset = 0;
--	fbinfo->var.green.offset = 8;
--	fbinfo->var.blue.offset = 16;
--	fbinfo->var.transp.offset = 0;
--	fbinfo->var.red.length = 8;
--	fbinfo->var.green.length = 8;
--	fbinfo->var.blue.length = 8;
--	fbinfo->var.transp.length = 0;
--	fbinfo->fix.smem_len = LCD_X_RES * LCD_Y_RES * LCD_BPP / 8;
--
--	fbinfo->fix.line_length = fbinfo->var.xres_virtual *
--	    fbinfo->var.bits_per_pixel / 8;
--
--
--	fbinfo->fbops = &bfin_t350mcqb_fb_ops;
--	fbinfo->flags = FBINFO_FLAG_DEFAULT;
--
--	info->fb_buffer = dma_alloc_coherent(NULL, fbinfo->fix.smem_len +
--				ACTIVE_VIDEO_MEM_OFFSET,
--				&info->dma_handle, GFP_KERNEL);
--
--	if (NULL == info->fb_buffer) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": couldn't allocate dma buffer.\n");
--		ret = -ENOMEM;
--		goto out3;
--	}
--
--	fbinfo->screen_base = (void *)info->fb_buffer + ACTIVE_VIDEO_MEM_OFFSET;
--	fbinfo->fix.smem_start = (int)info->fb_buffer + ACTIVE_VIDEO_MEM_OFFSET;
--
--	fbinfo->fbops = &bfin_t350mcqb_fb_ops;
--
--	fbinfo->pseudo_palette = &info->pseudo_pal;
--
--	if (fb_alloc_cmap(&fbinfo->cmap, BFIN_LCD_NBR_PALETTE_ENTRIES, 0)
--	    < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       "Fail to allocate colormap (%d entries)\n",
--		       BFIN_LCD_NBR_PALETTE_ENTRIES);
--		ret = -EFAULT;
--		goto out4;
--	}
--
--	if (bfin_t350mcqb_request_ports(1)) {
--		printk(KERN_ERR DRIVER_NAME ": couldn't request gpio port.\n");
--		ret = -EFAULT;
--		goto out6;
--	}
--
--	info->irq = platform_get_irq(pdev, 0);
--	if (info->irq < 0) {
--		ret = -EINVAL;
--		goto out7;
--	}
--
--	ret = request_irq(info->irq, bfin_t350mcqb_irq_error, 0,
--			"PPI ERROR", info);
--	if (ret < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": unable to request PPI ERROR IRQ\n");
--		goto out7;
--	}
--
--	if (register_framebuffer(fbinfo) < 0) {
--		printk(KERN_ERR DRIVER_NAME
--		       ": unable to register framebuffer.\n");
--		ret = -EINVAL;
--		goto out8;
--	}
--#ifndef NO_BL_SUPPORT
--	memset(&props, 0, sizeof(struct backlight_properties));
--	props.type = BACKLIGHT_RAW;
--	props.max_brightness = 255;
--	bl_dev = backlight_device_register("bf52x-bl", NULL, NULL,
--					   &bfin_lq043fb_bl_ops, &props);
--	if (IS_ERR(bl_dev)) {
--		printk(KERN_ERR DRIVER_NAME
--			": unable to register backlight.\n");
--		ret = -EINVAL;
--		unregister_framebuffer(fbinfo);
--		goto out8;
--	}
--
--	lcd_dev = lcd_device_register(DRIVER_NAME, NULL, &bfin_lcd_ops);
--	lcd_dev->props.max_contrast = 255, printk(KERN_INFO "Done.\n");
--#endif
--
--	return 0;
--
--out8:
--	free_irq(info->irq, info);
--out7:
--	bfin_t350mcqb_request_ports(0);
--out6:
--	fb_dealloc_cmap(&fbinfo->cmap);
--out4:
--	dma_free_coherent(NULL, fbinfo->fix.smem_len + ACTIVE_VIDEO_MEM_OFFSET,
--			 info->fb_buffer, info->dma_handle);
--out3:
--	framebuffer_release(fbinfo);
--out2:
--	free_dma(CH_PPI);
--out1:
--
--	return ret;
--}
--
--static int bfin_t350mcqb_remove(struct platform_device *pdev)
--{
--
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_t350mcqbfb_info *info = fbinfo->par;
--
--	unregister_framebuffer(fbinfo);
--
--	free_dma(CH_PPI);
--	free_irq(info->irq, info);
--
--	if (info->fb_buffer != NULL)
--		dma_free_coherent(NULL, fbinfo->fix.smem_len +
--			ACTIVE_VIDEO_MEM_OFFSET, info->fb_buffer,
--			info->dma_handle);
--
--	fb_dealloc_cmap(&fbinfo->cmap);
--
--#ifndef NO_BL_SUPPORT
--	lcd_device_unregister(lcd_dev);
--	backlight_device_unregister(bl_dev);
--#endif
--
--	bfin_t350mcqb_request_ports(0);
--
--	framebuffer_release(fbinfo);
--
--	printk(KERN_INFO DRIVER_NAME ": Unregister LCD driver.\n");
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_t350mcqb_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_t350mcqbfb_info *fbi = fbinfo->par;
--
--	if (fbi->lq043_open_cnt) {
--		bfin_t350mcqb_disable_ppi();
--		disable_dma(CH_PPI);
--		bfin_t350mcqb_stop_timers();
--		bfin_write_PPI_STATUS(-1);
--	}
--
--
--	return 0;
--}
--
--static int bfin_t350mcqb_resume(struct platform_device *pdev)
--{
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct bfin_t350mcqbfb_info *fbi = fbinfo->par;
--
--	if (fbi->lq043_open_cnt) {
--		bfin_t350mcqb_config_dma(fbi);
--		bfin_t350mcqb_config_ppi(fbi);
--		bfin_t350mcqb_init_timers();
--
--		/* start dma */
--		enable_dma(CH_PPI);
--		bfin_t350mcqb_enable_ppi();
--		bfin_t350mcqb_start_timers();
--	}
--
--	return 0;
--}
--#else
--#define bfin_t350mcqb_suspend	NULL
--#define bfin_t350mcqb_resume	NULL
--#endif
--
--static struct platform_driver bfin_t350mcqb_driver = {
--	.probe = bfin_t350mcqb_probe,
--	.remove = bfin_t350mcqb_remove,
--	.suspend = bfin_t350mcqb_suspend,
--	.resume = bfin_t350mcqb_resume,
--	.driver = {
--		   .name = DRIVER_NAME,
--		   },
--};
--module_platform_driver(bfin_t350mcqb_driver);
--
--MODULE_DESCRIPTION("Blackfin TFT LCD Driver");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/bfin_adv7393fb.c b/drivers/video/fbdev/bfin_adv7393fb.c
-deleted file mode 100644
-index 542ffad..0000000
---- a/drivers/video/fbdev/bfin_adv7393fb.c
-+++ /dev/null
-@@ -1,828 +0,0 @@
--/*
-- * Frame buffer driver for ADV7393/2 video encoder
-- *
-- * Copyright 2006-2009 Analog Devices Inc.
-- * Licensed under the GPL-2 or late.
+-/**
+- * show_scaling_available_governors - show the available CPUfreq governors
 - */
--
--/*
-- * TODO: Remove Globals
-- * TODO: Code Cleanup
-- */
--
--#define DRIVER_NAME "bfin-adv7393"
--
--#define pr_fmt(fmt) DRIVER_NAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/mm.h>
--#include <linux/tty.h>
--#include <linux/slab.h>
--#include <linux/delay.h>
--#include <linux/fb.h>
--#include <linux/ioport.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/sched.h>
--#include <asm/blackfin.h>
--#include <asm/irq.h>
--#include <asm/dma.h>
--#include <linux/uaccess.h>
--#include <linux/gpio.h>
--#include <asm/portmux.h>
--
--#include <linux/dma-mapping.h>
--#include <linux/proc_fs.h>
--#include <linux/platform_device.h>
--#include <linux/i2c.h>
--
--#include "bfin_adv7393fb.h"
--
--static int mode = VMODE;
--static int mem = VMEM;
--static int nocursor = 1;
--
--static const unsigned short ppi_pins[] = {
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15,
--	0
--};
--
--/*
-- * card parameters
-- */
--
--static struct bfin_adv7393_fb_par {
--	/* structure holding blackfin / adv7393 parameters when
--	   screen is blanked */
--	struct {
--		u8 Mode;	/* ntsc/pal/? */
--	} vga_state;
--	atomic_t ref_count;
--} bfin_par;
--
--/* --------------------------------------------------------------------- */
--
--static struct fb_var_screeninfo bfin_adv7393_fb_defined = {
--	.xres = 720,
--	.yres = 480,
--	.xres_virtual = 720,
--	.yres_virtual = 480,
--	.bits_per_pixel = 16,
--	.activate = FB_ACTIVATE_TEST,
--	.height = -1,
--	.width = -1,
--	.left_margin = 0,
--	.right_margin = 0,
--	.upper_margin = 0,
--	.lower_margin = 0,
--	.vmode = FB_VMODE_INTERLACED,
--	.red = {11, 5, 0},
--	.green = {5, 6, 0},
--	.blue = {0, 5, 0},
--	.transp = {0, 0, 0},
--};
--
--static struct fb_fix_screeninfo bfin_adv7393_fb_fix = {
--	.id = "BFIN ADV7393",
--	.smem_len = 720 * 480 * 2,
--	.type = FB_TYPE_PACKED_PIXELS,
--	.visual = FB_VISUAL_TRUECOLOR,
--	.xpanstep = 0,
--	.ypanstep = 0,
--	.line_length = 720 * 2,
--	.accel = FB_ACCEL_NONE
--};
--
--static struct fb_ops bfin_adv7393_fb_ops = {
--	.owner = THIS_MODULE,
--	.fb_open = bfin_adv7393_fb_open,
--	.fb_release = bfin_adv7393_fb_release,
--	.fb_check_var = bfin_adv7393_fb_check_var,
--	.fb_pan_display = bfin_adv7393_fb_pan_display,
--	.fb_blank = bfin_adv7393_fb_blank,
--	.fb_fillrect = cfb_fillrect,
--	.fb_copyarea = cfb_copyarea,
--	.fb_imageblit = cfb_imageblit,
--	.fb_cursor = bfin_adv7393_fb_cursor,
--	.fb_setcolreg = bfin_adv7393_fb_setcolreg,
--};
--
--static int dma_desc_list(struct adv7393fb_device *fbdev, u16 arg)
+-static ssize_t show_scaling_available_governors(struct cpufreq_policy *policy,
+-						char *buf)
 -{
--	if (arg == BUILD) {	/* Build */
--		fbdev->vb1 = l1_data_sram_zalloc(sizeof(struct dmasg));
--		if (fbdev->vb1 == NULL)
--			goto error;
+-	ssize_t i = 0;
+-	struct cpufreq_governor *t;
 -
--		fbdev->av1 = l1_data_sram_zalloc(sizeof(struct dmasg));
--		if (fbdev->av1 == NULL)
--			goto error;
--
--		fbdev->vb2 = l1_data_sram_zalloc(sizeof(struct dmasg));
--		if (fbdev->vb2 == NULL)
--			goto error;
--
--		fbdev->av2 = l1_data_sram_zalloc(sizeof(struct dmasg));
--		if (fbdev->av2 == NULL)
--			goto error;
--
--		/* Build linked DMA descriptor list */
--		fbdev->vb1->next_desc_addr = fbdev->av1;
--		fbdev->av1->next_desc_addr = fbdev->vb2;
--		fbdev->vb2->next_desc_addr = fbdev->av2;
--		fbdev->av2->next_desc_addr = fbdev->vb1;
--
--		/* Save list head */
--		fbdev->descriptor_list_head = fbdev->av2;
--
--		/* Vertical Blanking Field 1 */
--		fbdev->vb1->start_addr = VB_DUMMY_MEMORY_SOURCE;
--		fbdev->vb1->cfg = DMA_CFG_VAL;
--
--		fbdev->vb1->x_count =
--		    fbdev->modes[mode].xres + fbdev->modes[mode].boeft_blank;
--
--		fbdev->vb1->x_modify = 0;
--		fbdev->vb1->y_count = fbdev->modes[mode].vb1_lines;
--		fbdev->vb1->y_modify = 0;
--
--		/* Active Video Field 1 */
--
--		fbdev->av1->start_addr = (unsigned long)fbdev->fb_mem;
--		fbdev->av1->cfg = DMA_CFG_VAL;
--		fbdev->av1->x_count =
--		    fbdev->modes[mode].xres + fbdev->modes[mode].boeft_blank;
--		fbdev->av1->x_modify = fbdev->modes[mode].bpp / 8;
--		fbdev->av1->y_count = fbdev->modes[mode].a_lines;
--		fbdev->av1->y_modify =
--		    (fbdev->modes[mode].xres - fbdev->modes[mode].boeft_blank +
--		     1) * (fbdev->modes[mode].bpp / 8);
--
--		/* Vertical Blanking Field 2 */
--
--		fbdev->vb2->start_addr = VB_DUMMY_MEMORY_SOURCE;
--		fbdev->vb2->cfg = DMA_CFG_VAL;
--		fbdev->vb2->x_count =
--		    fbdev->modes[mode].xres + fbdev->modes[mode].boeft_blank;
--
--		fbdev->vb2->x_modify = 0;
--		fbdev->vb2->y_count = fbdev->modes[mode].vb2_lines;
--		fbdev->vb2->y_modify = 0;
--
--		/* Active Video Field 2 */
--
--		fbdev->av2->start_addr =
--		    (unsigned long)fbdev->fb_mem + fbdev->line_len;
--
--		fbdev->av2->cfg = DMA_CFG_VAL;
--
--		fbdev->av2->x_count =
--		    fbdev->modes[mode].xres + fbdev->modes[mode].boeft_blank;
--
--		fbdev->av2->x_modify = (fbdev->modes[mode].bpp / 8);
--		fbdev->av2->y_count = fbdev->modes[mode].a_lines;
--
--		fbdev->av2->y_modify =
--		    (fbdev->modes[mode].xres - fbdev->modes[mode].boeft_blank +
--		     1) * (fbdev->modes[mode].bpp / 8);
--
--		return 1;
+-	if (!has_target()) {
+-		i += sprintf(buf, "performance powersave");
+-		goto out;
 -	}
 -
--error:
--	l1_data_sram_free(fbdev->vb1);
--	l1_data_sram_free(fbdev->av1);
--	l1_data_sram_free(fbdev->vb2);
--	l1_data_sram_free(fbdev->av2);
--
--	return 0;
--}
--
--static int bfin_config_dma(struct adv7393fb_device *fbdev)
--{
--	BUG_ON(!(fbdev->fb_mem));
--
--	set_dma_x_count(CH_PPI, fbdev->descriptor_list_head->x_count);
--	set_dma_x_modify(CH_PPI, fbdev->descriptor_list_head->x_modify);
--	set_dma_y_count(CH_PPI, fbdev->descriptor_list_head->y_count);
--	set_dma_y_modify(CH_PPI, fbdev->descriptor_list_head->y_modify);
--	set_dma_start_addr(CH_PPI, fbdev->descriptor_list_head->start_addr);
--	set_dma_next_desc_addr(CH_PPI,
--			       fbdev->descriptor_list_head->next_desc_addr);
--	set_dma_config(CH_PPI, fbdev->descriptor_list_head->cfg);
--
--	return 1;
--}
--
--static void bfin_disable_dma(void)
--{
--	bfin_write_DMA0_CONFIG(bfin_read_DMA0_CONFIG() & ~DMAEN);
--}
--
--static void bfin_config_ppi(struct adv7393fb_device *fbdev)
--{
--	if (ANOMALY_05000183) {
--		bfin_write_TIMER2_CONFIG(WDTH_CAP);
--		bfin_write_TIMER_ENABLE(TIMEN2);
+-	for_each_governor(t) {
+-		if (i >= (ssize_t) ((PAGE_SIZE / sizeof(char))
+-		    - (CPUFREQ_NAME_LEN + 2)))
+-			goto out;
+-		i += scnprintf(&buf[i], CPUFREQ_NAME_PLEN, "%s ", t->name);
 -	}
--
--	bfin_write_PPI_CONTROL(0x381E);
--	bfin_write_PPI_FRAME(fbdev->modes[mode].tot_lines);
--	bfin_write_PPI_COUNT(fbdev->modes[mode].xres +
--			     fbdev->modes[mode].boeft_blank - 1);
--	bfin_write_PPI_DELAY(fbdev->modes[mode].aoeft_blank - 1);
+-out:
+-	i += sprintf(&buf[i], "\n");
+-	return i;
 -}
 -
--static void bfin_enable_ppi(void)
+-ssize_t cpufreq_show_cpus(const struct cpumask *mask, char *buf)
 -{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() | PORT_EN);
--}
+-	ssize_t i = 0;
+-	unsigned int cpu;
 -
--static void bfin_disable_ppi(void)
--{
--	bfin_write_PPI_CONTROL(bfin_read_PPI_CONTROL() & ~PORT_EN);
--}
--
--static inline int adv7393_write(struct i2c_client *client, u8 reg, u8 value)
--{
--	return i2c_smbus_write_byte_data(client, reg, value);
--}
--
--static inline int adv7393_read(struct i2c_client *client, u8 reg)
--{
--	return i2c_smbus_read_byte_data(client, reg);
--}
--
--static int
--adv7393_write_block(struct i2c_client *client,
--		    const u8 *data, unsigned int len)
--{
--	int ret = -1;
--	u8 reg;
--
--	while (len >= 2) {
--		reg = *data++;
--		ret = adv7393_write(client, reg, *data++);
--		if (ret < 0)
+-	for_each_cpu(cpu, mask) {
+-		if (i)
+-			i += scnprintf(&buf[i], (PAGE_SIZE - i - 2), " ");
+-		i += scnprintf(&buf[i], (PAGE_SIZE - i - 2), "%u", cpu);
+-		if (i >= (PAGE_SIZE - 5))
 -			break;
--		len -= 2;
 -	}
+-	i += sprintf(&buf[i], "\n");
+-	return i;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_show_cpus);
 -
--	return ret;
+-/**
+- * show_related_cpus - show the CPUs affected by each transition even if
+- * hw coordination is in use
+- */
+-static ssize_t show_related_cpus(struct cpufreq_policy *policy, char *buf)
+-{
+-	return cpufreq_show_cpus(policy->related_cpus, buf);
 -}
 -
--static int adv7393_mode(struct i2c_client *client, u16 mode)
+-/**
+- * show_affected_cpus - show the CPUs affected by each transition
+- */
+-static ssize_t show_affected_cpus(struct cpufreq_policy *policy, char *buf)
 -{
--	switch (mode) {
--	case POWER_ON:		/* ADV7393 Sleep mode OFF */
--		adv7393_write(client, 0x00, 0x1E);
--		break;
--	case POWER_DOWN:	/* ADV7393 Sleep mode ON */
--		adv7393_write(client, 0x00, 0x1F);
--		break;
--	case BLANK_OFF:		/* Pixel Data Valid */
--		adv7393_write(client, 0x82, 0xCB);
--		break;
--	case BLANK_ON:		/* Pixel Data Invalid */
--		adv7393_write(client, 0x82, 0x8B);
--		break;
--	default:
+-	return cpufreq_show_cpus(policy->cpus, buf);
+-}
+-
+-static ssize_t store_scaling_setspeed(struct cpufreq_policy *policy,
+-					const char *buf, size_t count)
+-{
+-	unsigned int freq = 0;
+-	unsigned int ret;
+-
+-	if (!policy->governor || !policy->governor->store_setspeed)
 -		return -EINVAL;
--		break;
--	}
--	return 0;
--}
 -
--static irqreturn_t ppi_irq_error(int irq, void *dev_id)
--{
+-	ret = sscanf(buf, "%u", &freq);
+-	if (ret != 1)
+-		return -EINVAL;
 -
--	struct adv7393fb_device *fbdev = (struct adv7393fb_device *)dev_id;
--
--	u16 status = bfin_read_PPI_STATUS();
--
--	pr_debug("%s: PPI Status = 0x%X\n", __func__, status);
--
--	if (status) {
--		bfin_disable_dma();	/* TODO: Check Sequence */
--		bfin_disable_ppi();
--		bfin_clear_PPI_STATUS();
--		bfin_config_dma(fbdev);
--		bfin_enable_ppi();
--	}
--
--	return IRQ_HANDLED;
--
--}
--
--static int proc_output(char *buf)
--{
--	char *p = buf;
--
--	p += sprintf(p,
--		"Usage:\n"
--		"echo 0x[REG][Value] > adv7393\n"
--		"example: echo 0x1234 >adv7393\n"
--		"writes 0x34 into Register 0x12\n");
--
--	return p - buf;
--}
--
--static ssize_t
--adv7393_read_proc(struct file *file, char __user *buf,
--		  size_t size, loff_t *ppos)
--{
--	static const char message[] = "Usage:\n"
--		"echo 0x[REG][Value] > adv7393\n"
--		"example: echo 0x1234 >adv7393\n"
--		"writes 0x34 into Register 0x12\n";
--	return simple_read_from_buffer(buf, size, ppos, message,
--					sizeof(message));
--}
--
--static ssize_t
--adv7393_write_proc(struct file *file, const char __user * buffer,
--		   size_t count, loff_t *ppos)
--{
--	struct adv7393fb_device *fbdev = PDE_DATA(file_inode(file));
--	unsigned int val;
--	int ret;
--
--	ret = kstrtouint_from_user(buffer, count, 0, &val);
--	if (ret)
--		return -EFAULT;
--
--	adv7393_write(fbdev->client, val >> 8, val & 0xff);
+-	policy->governor->store_setspeed(policy, freq);
 -
 -	return count;
 -}
 -
--static const struct file_operations fops = {
--	.read = adv7393_read_proc,
--	.write = adv7393_write_proc,
--	.llseek = default_llseek,
+-static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, char *buf)
+-{
+-	if (!policy->governor || !policy->governor->show_setspeed)
+-		return sprintf(buf, "<unsupported>\n");
+-
+-	return policy->governor->show_setspeed(policy, buf);
+-}
+-
+-/**
+- * show_bios_limit - show the current cpufreq HW/BIOS limitation
+- */
+-static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
+-{
+-	unsigned int limit;
+-	int ret;
+-	if (cpufreq_driver->bios_limit) {
+-		ret = cpufreq_driver->bios_limit(policy->cpu, &limit);
+-		if (!ret)
+-			return sprintf(buf, "%u\n", limit);
+-	}
+-	return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
+-}
+-
+-cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
+-cpufreq_freq_attr_ro(cpuinfo_min_freq);
+-cpufreq_freq_attr_ro(cpuinfo_max_freq);
+-cpufreq_freq_attr_ro(cpuinfo_transition_latency);
+-cpufreq_freq_attr_ro(scaling_available_governors);
+-cpufreq_freq_attr_ro(scaling_driver);
+-cpufreq_freq_attr_ro(scaling_cur_freq);
+-cpufreq_freq_attr_ro(bios_limit);
+-cpufreq_freq_attr_ro(related_cpus);
+-cpufreq_freq_attr_ro(affected_cpus);
+-cpufreq_freq_attr_rw(scaling_min_freq);
+-cpufreq_freq_attr_rw(scaling_max_freq);
+-cpufreq_freq_attr_rw(scaling_governor);
+-cpufreq_freq_attr_rw(scaling_setspeed);
+-
+-static struct attribute *default_attrs[] = {
+-	&cpuinfo_min_freq.attr,
+-	&cpuinfo_max_freq.attr,
+-	&cpuinfo_transition_latency.attr,
+-	&scaling_min_freq.attr,
+-	&scaling_max_freq.attr,
+-	&affected_cpus.attr,
+-	&related_cpus.attr,
+-	&scaling_governor.attr,
+-	&scaling_driver.attr,
+-	&scaling_available_governors.attr,
+-	&scaling_setspeed.attr,
+-	NULL
 -};
 -
--static int bfin_adv7393_fb_probe(struct i2c_client *client,
--				 const struct i2c_device_id *id)
+-#define to_policy(k) container_of(k, struct cpufreq_policy, kobj)
+-#define to_attr(a) container_of(a, struct freq_attr, attr)
+-
+-static ssize_t show(struct kobject *kobj, struct attribute *attr, char *buf)
 -{
--	int ret = 0;
--	struct proc_dir_entry *entry;
+-	struct cpufreq_policy *policy = to_policy(kobj);
+-	struct freq_attr *fattr = to_attr(attr);
+-	ssize_t ret;
 -
--	struct adv7393fb_device *fbdev = NULL;
--
--	if (mem > 2) {
--		dev_err(&client->dev, "mem out of allowed range [1;2]\n");
--		return -EINVAL;
--	}
--
--	if (mode >= ARRAY_SIZE(known_modes)) {
--		dev_err(&client->dev, "mode %d: not supported", mode);
--		return -EFAULT;
--	}
--
--	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
--	if (!fbdev) {
--		dev_err(&client->dev, "failed to allocate device private record");
--		return -ENOMEM;
--	}
--
--	i2c_set_clientdata(client, fbdev);
--
--	fbdev->modes = known_modes;
--	fbdev->client = client;
--
--	fbdev->fb_len =
--	    mem * fbdev->modes[mode].xres * fbdev->modes[mode].xres *
--	    (fbdev->modes[mode].bpp / 8);
--
--	fbdev->line_len =
--	    fbdev->modes[mode].xres * (fbdev->modes[mode].bpp / 8);
--
--	/* Workaround "PPI Does Not Start Properly In Specific Mode" */
--	if (ANOMALY_05000400) {
--		ret = gpio_request_one(P_IDENT(P_PPI0_FS3), GPIOF_OUT_INIT_LOW,
--					"PPI0_FS3");
--		if (ret) {
--			dev_err(&client->dev, "PPI0_FS3 GPIO request failed\n");
--			ret = -EBUSY;
--			goto free_fbdev;
--		}
--	}
--
--	if (peripheral_request_list(ppi_pins, DRIVER_NAME)) {
--		dev_err(&client->dev, "requesting PPI peripheral failed\n");
--		ret = -EFAULT;
--		goto free_gpio;
--	}
--
--	fbdev->fb_mem =
--	    dma_alloc_coherent(NULL, fbdev->fb_len, &fbdev->dma_handle,
--			       GFP_KERNEL);
--
--	if (NULL == fbdev->fb_mem) {
--		dev_err(&client->dev, "couldn't allocate dma buffer (%d bytes)\n",
--		       (u32) fbdev->fb_len);
--		ret = -ENOMEM;
--		goto free_ppi_pins;
--	}
--
--	fbdev->info.screen_base = (void *)fbdev->fb_mem;
--	bfin_adv7393_fb_fix.smem_start = (int)fbdev->fb_mem;
--
--	bfin_adv7393_fb_fix.smem_len = fbdev->fb_len;
--	bfin_adv7393_fb_fix.line_length = fbdev->line_len;
--
--	if (mem > 1)
--		bfin_adv7393_fb_fix.ypanstep = 1;
--
--	bfin_adv7393_fb_defined.red.length = 5;
--	bfin_adv7393_fb_defined.green.length = 6;
--	bfin_adv7393_fb_defined.blue.length = 5;
--
--	bfin_adv7393_fb_defined.xres = fbdev->modes[mode].xres;
--	bfin_adv7393_fb_defined.yres = fbdev->modes[mode].yres;
--	bfin_adv7393_fb_defined.xres_virtual = fbdev->modes[mode].xres;
--	bfin_adv7393_fb_defined.yres_virtual = mem * fbdev->modes[mode].yres;
--	bfin_adv7393_fb_defined.bits_per_pixel = fbdev->modes[mode].bpp;
--
--	fbdev->info.fbops = &bfin_adv7393_fb_ops;
--	fbdev->info.var = bfin_adv7393_fb_defined;
--	fbdev->info.fix = bfin_adv7393_fb_fix;
--	fbdev->info.par = &bfin_par;
--	fbdev->info.flags = FBINFO_DEFAULT;
--
--	fbdev->info.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
--	if (!fbdev->info.pseudo_palette) {
--		dev_err(&client->dev, "failed to allocate pseudo_palette\n");
--		ret = -ENOMEM;
--		goto free_fb_mem;
--	}
--
--	if (fb_alloc_cmap(&fbdev->info.cmap, BFIN_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
--		dev_err(&client->dev, "failed to allocate colormap (%d entries)\n",
--			   BFIN_LCD_NBR_PALETTE_ENTRIES);
--		ret = -EFAULT;
--		goto free_palette;
--	}
--
--	if (request_dma(CH_PPI, "BF5xx_PPI_DMA") < 0) {
--		dev_err(&client->dev, "unable to request PPI DMA\n");
--		ret = -EFAULT;
--		goto free_cmap;
--	}
--
--	if (request_irq(IRQ_PPI_ERROR, ppi_irq_error, 0,
--			"PPI ERROR", fbdev) < 0) {
--		dev_err(&client->dev, "unable to request PPI ERROR IRQ\n");
--		ret = -EFAULT;
--		goto free_ch_ppi;
--	}
--
--	fbdev->open = 0;
--
--	ret = adv7393_write_block(client, fbdev->modes[mode].adv7393_i2c_initd,
--				fbdev->modes[mode].adv7393_i2c_initd_len);
--
--	if (ret) {
--		dev_err(&client->dev, "i2c attach: init error\n");
--		goto free_irq_ppi;
--	}
--
--
--	if (register_framebuffer(&fbdev->info) < 0) {
--		dev_err(&client->dev, "unable to register framebuffer\n");
--		ret = -EFAULT;
--		goto free_irq_ppi;
--	}
--
--	dev_info(&client->dev, "fb%d: %s frame buffer device\n",
--	       fbdev->info.node, fbdev->info.fix.id);
--	dev_info(&client->dev, "fb memory address : 0x%p\n", fbdev->fb_mem);
--
--	entry = proc_create_data("driver/adv7393", 0, NULL, &fops, fbdev);
--	if (!entry) {
--		dev_err(&client->dev, "unable to create /proc entry\n");
--		ret = -EFAULT;
--		goto free_fb;
--	}
--	return 0;
--
--free_fb:
--	unregister_framebuffer(&fbdev->info);
--free_irq_ppi:
--	free_irq(IRQ_PPI_ERROR, fbdev);
--free_ch_ppi:
--	free_dma(CH_PPI);
--free_cmap:
--	fb_dealloc_cmap(&fbdev->info.cmap);
--free_palette:
--	kfree(fbdev->info.pseudo_palette);
--free_fb_mem:
--	dma_free_coherent(NULL, fbdev->fb_len, fbdev->fb_mem,
--			  fbdev->dma_handle);
--free_ppi_pins:
--	peripheral_free_list(ppi_pins);
--free_gpio:
--	if (ANOMALY_05000400)
--		gpio_free(P_IDENT(P_PPI0_FS3));
--free_fbdev:
--	kfree(fbdev);
+-	down_read(&policy->rwsem);
+-	ret = fattr->show(policy, buf);
+-	up_read(&policy->rwsem);
 -
 -	return ret;
 -}
 -
--static int bfin_adv7393_fb_open(struct fb_info *info, int user)
+-static ssize_t store(struct kobject *kobj, struct attribute *attr,
+-		     const char *buf, size_t count)
 -{
--	struct adv7393fb_device *fbdev = to_adv7393fb_device(info);
+-	struct cpufreq_policy *policy = to_policy(kobj);
+-	struct freq_attr *fattr = to_attr(attr);
+-	ssize_t ret = -EINVAL;
 -
--	fbdev->info.screen_base = (void *)fbdev->fb_mem;
--	if (!fbdev->info.screen_base) {
--		dev_err(&fbdev->client->dev, "unable to map device\n");
--		return -ENOMEM;
+-	cpus_read_lock();
+-
+-	if (cpu_online(policy->cpu)) {
+-		down_write(&policy->rwsem);
+-		ret = fattr->store(policy, buf, count);
+-		up_write(&policy->rwsem);
 -	}
 -
--	fbdev->open = 1;
--	dma_desc_list(fbdev, BUILD);
--	adv7393_mode(fbdev->client, BLANK_OFF);
--	bfin_config_ppi(fbdev);
--	bfin_config_dma(fbdev);
--	bfin_enable_ppi();
+-	cpus_read_unlock();
+-
+-	return ret;
+-}
+-
+-static void cpufreq_sysfs_release(struct kobject *kobj)
+-{
+-	struct cpufreq_policy *policy = to_policy(kobj);
+-	pr_debug("last reference is dropped\n");
+-	complete(&policy->kobj_unregister);
+-}
+-
+-static const struct sysfs_ops sysfs_ops = {
+-	.show	= show,
+-	.store	= store,
+-};
+-
+-static struct kobj_type ktype_cpufreq = {
+-	.sysfs_ops	= &sysfs_ops,
+-	.default_attrs	= default_attrs,
+-	.release	= cpufreq_sysfs_release,
+-};
+-
+-static void add_cpu_dev_symlink(struct cpufreq_policy *policy, unsigned int cpu)
+-{
+-	struct device *dev = get_cpu_device(cpu);
+-
+-	if (!dev)
+-		return;
+-
+-	if (cpumask_test_and_set_cpu(cpu, policy->real_cpus))
+-		return;
+-
+-	dev_dbg(dev, "%s: Adding symlink\n", __func__);
+-	if (sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq"))
+-		dev_err(dev, "cpufreq symlink creation failed\n");
+-}
+-
+-static void remove_cpu_dev_symlink(struct cpufreq_policy *policy,
+-				   struct device *dev)
+-{
+-	dev_dbg(dev, "%s: Removing symlink\n", __func__);
+-	sysfs_remove_link(&dev->kobj, "cpufreq");
+-}
+-
+-static int cpufreq_add_dev_interface(struct cpufreq_policy *policy)
+-{
+-	struct freq_attr **drv_attr;
+-	int ret = 0;
+-
+-	/* set up files for this cpu device */
+-	drv_attr = cpufreq_driver->attr;
+-	while (drv_attr && *drv_attr) {
+-		ret = sysfs_create_file(&policy->kobj, &((*drv_attr)->attr));
+-		if (ret)
+-			return ret;
+-		drv_attr++;
+-	}
+-	if (cpufreq_driver->get) {
+-		ret = sysfs_create_file(&policy->kobj, &cpuinfo_cur_freq.attr);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
+-	if (ret)
+-		return ret;
+-
+-	if (cpufreq_driver->bios_limit) {
+-		ret = sysfs_create_file(&policy->kobj, &bios_limit.attr);
+-		if (ret)
+-			return ret;
+-	}
 -
 -	return 0;
 -}
 -
--static int bfin_adv7393_fb_release(struct fb_info *info, int user)
+-__weak struct cpufreq_governor *cpufreq_default_governor(void)
 -{
--	struct adv7393fb_device *fbdev = to_adv7393fb_device(info);
--
--	adv7393_mode(fbdev->client, BLANK_ON);
--	bfin_disable_dma();
--	bfin_disable_ppi();
--	dma_desc_list(fbdev, DESTRUCT);
--	fbdev->open = 0;
--	return 0;
+-	return NULL;
 -}
 -
--static int
--bfin_adv7393_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
+-static int cpufreq_init_policy(struct cpufreq_policy *policy)
 -{
+-	struct cpufreq_governor *gov = NULL;
+-	struct cpufreq_policy new_policy;
 -
--	switch (var->bits_per_pixel) {
--	case 16:/* DIRECTCOLOUR, 64k */
--		var->red.offset = info->var.red.offset;
--		var->green.offset = info->var.green.offset;
--		var->blue.offset = info->var.blue.offset;
--		var->red.length = info->var.red.length;
--		var->green.length = info->var.green.length;
--		var->blue.length = info->var.blue.length;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->transp.msb_right = 0;
--		var->red.msb_right = 0;
--		var->green.msb_right = 0;
--		var->blue.msb_right = 0;
--		break;
--	default:
--		pr_debug("%s: depth not supported: %u BPP\n", __func__,
--			 var->bits_per_pixel);
--		return -EINVAL;
+-	memcpy(&new_policy, policy, sizeof(*policy));
+-
+-	/* Update governor of new_policy to the governor used before hotplug */
+-	gov = find_governor(policy->last_governor);
+-	if (gov) {
+-		pr_debug("Restoring governor %s for cpu %d\n",
+-				policy->governor->name, policy->cpu);
+-	} else {
+-		gov = cpufreq_default_governor();
+-		if (!gov)
+-			return -ENODATA;
 -	}
 -
--	if (info->var.xres != var->xres ||
--	    info->var.yres != var->yres ||
--	    info->var.xres_virtual != var->xres_virtual ||
--	    info->var.yres_virtual != var->yres_virtual) {
--		pr_debug("%s: Resolution not supported: X%u x Y%u\n",
--			 __func__, var->xres, var->yres);
--		return -EINVAL;
+-	new_policy.governor = gov;
+-
+-	/* Use the default policy if there is no last_policy. */
+-	if (cpufreq_driver->setpolicy) {
+-		if (policy->last_policy)
+-			new_policy.policy = policy->last_policy;
+-		else
+-			cpufreq_parse_governor(gov->name, &new_policy);
+-	}
+-	/* set default policy */
+-	return cpufreq_set_policy(policy, &new_policy);
+-}
+-
+-static int cpufreq_add_policy_cpu(struct cpufreq_policy *policy, unsigned int cpu)
+-{
+-	int ret = 0;
+-
+-	/* Has this CPU been taken care of already? */
+-	if (cpumask_test_cpu(cpu, policy->cpus))
+-		return 0;
+-
+-	down_write(&policy->rwsem);
+-	if (has_target())
+-		cpufreq_stop_governor(policy);
+-
+-	cpumask_set_cpu(cpu, policy->cpus);
+-
+-	if (has_target()) {
+-		ret = cpufreq_start_governor(policy);
+-		if (ret)
+-			pr_err("%s: Failed to start governor\n", __func__);
+-	}
+-	up_write(&policy->rwsem);
+-	return ret;
+-}
+-
+-static void handle_update(struct work_struct *work)
+-{
+-	struct cpufreq_policy *policy =
+-		container_of(work, struct cpufreq_policy, update);
+-	unsigned int cpu = policy->cpu;
+-	pr_debug("handle_update for cpu %u called\n", cpu);
+-	cpufreq_update_policy(cpu);
+-}
+-
+-static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy;
+-	int ret;
+-
+-	policy = kzalloc(sizeof(*policy), GFP_KERNEL);
+-	if (!policy)
+-		return NULL;
+-
+-	if (!alloc_cpumask_var(&policy->cpus, GFP_KERNEL))
+-		goto err_free_policy;
+-
+-	if (!zalloc_cpumask_var(&policy->related_cpus, GFP_KERNEL))
+-		goto err_free_cpumask;
+-
+-	if (!zalloc_cpumask_var(&policy->real_cpus, GFP_KERNEL))
+-		goto err_free_rcpumask;
+-
+-	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
+-				   cpufreq_global_kobject, "policy%u", cpu);
+-	if (ret) {
+-		pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
+-		goto err_free_real_cpus;
+-	}
+-
+-	INIT_LIST_HEAD(&policy->policy_list);
+-	init_rwsem(&policy->rwsem);
+-	spin_lock_init(&policy->transition_lock);
+-	init_waitqueue_head(&policy->transition_wait);
+-	init_completion(&policy->kobj_unregister);
+-	INIT_WORK(&policy->update, handle_update);
+-
+-	policy->cpu = cpu;
+-	return policy;
+-
+-err_free_real_cpus:
+-	free_cpumask_var(policy->real_cpus);
+-err_free_rcpumask:
+-	free_cpumask_var(policy->related_cpus);
+-err_free_cpumask:
+-	free_cpumask_var(policy->cpus);
+-err_free_policy:
+-	kfree(policy);
+-
+-	return NULL;
+-}
+-
+-static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
+-{
+-	struct kobject *kobj;
+-	struct completion *cmp;
+-
+-	down_write(&policy->rwsem);
+-	cpufreq_stats_free_table(policy);
+-	kobj = &policy->kobj;
+-	cmp = &policy->kobj_unregister;
+-	up_write(&policy->rwsem);
+-	kobject_put(kobj);
+-
+-	/*
+-	 * We need to make sure that the underlying kobj is
+-	 * actually not referenced anymore by anybody before we
+-	 * proceed with unloading.
+-	 */
+-	pr_debug("waiting for dropping of refcount\n");
+-	wait_for_completion(cmp);
+-	pr_debug("wait complete\n");
+-}
+-
+-static void cpufreq_policy_free(struct cpufreq_policy *policy)
+-{
+-	unsigned long flags;
+-	int cpu;
+-
+-	/* Remove policy from list */
+-	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-	list_del(&policy->policy_list);
+-
+-	for_each_cpu(cpu, policy->related_cpus)
+-		per_cpu(cpufreq_cpu_data, cpu) = NULL;
+-	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	cpufreq_policy_put_kobj(policy);
+-	free_cpumask_var(policy->real_cpus);
+-	free_cpumask_var(policy->related_cpus);
+-	free_cpumask_var(policy->cpus);
+-	kfree(policy);
+-}
+-
+-static int cpufreq_online(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy;
+-	bool new_policy;
+-	unsigned long flags;
+-	unsigned int j;
+-	int ret;
+-
+-	pr_debug("%s: bringing CPU%u online\n", __func__, cpu);
+-
+-	/* Check if this CPU already has a policy to manage it */
+-	policy = per_cpu(cpufreq_cpu_data, cpu);
+-	if (policy) {
+-		WARN_ON(!cpumask_test_cpu(cpu, policy->related_cpus));
+-		if (!policy_is_inactive(policy))
+-			return cpufreq_add_policy_cpu(policy, cpu);
+-
+-		/* This is the only online CPU for the policy.  Start over. */
+-		new_policy = false;
+-		down_write(&policy->rwsem);
+-		policy->cpu = cpu;
+-		policy->governor = NULL;
+-		up_write(&policy->rwsem);
+-	} else {
+-		new_policy = true;
+-		policy = cpufreq_policy_alloc(cpu);
+-		if (!policy)
+-			return -ENOMEM;
+-	}
+-
+-	cpumask_copy(policy->cpus, cpumask_of(cpu));
+-
+-	/* call driver. From then on the cpufreq must be able
+-	 * to accept all calls to ->verify and ->setpolicy for this CPU
+-	 */
+-	ret = cpufreq_driver->init(policy);
+-	if (ret) {
+-		pr_debug("initialization failed\n");
+-		goto out_free_policy;
+-	}
+-
+-	down_write(&policy->rwsem);
+-
+-	if (new_policy) {
+-		/* related_cpus should at least include policy->cpus. */
+-		cpumask_copy(policy->related_cpus, policy->cpus);
 -	}
 -
 -	/*
--	 *  Memory limit
+-	 * affected cpus must always be the one, which are online. We aren't
+-	 * managing offline cpus here.
 -	 */
+-	cpumask_and(policy->cpus, policy->cpus, cpu_online_mask);
 -
--	if ((info->fix.line_length * var->yres_virtual) > info->fix.smem_len) {
--		pr_debug("%s: Memory Limit requested yres_virtual = %u\n",
--			 __func__, var->yres_virtual);
--		return -ENOMEM;
+-	if (new_policy) {
+-		policy->user_policy.min = policy->min;
+-		policy->user_policy.max = policy->max;
+-
+-		for_each_cpu(j, policy->related_cpus) {
+-			per_cpu(cpufreq_cpu_data, j) = policy;
+-			add_cpu_dev_symlink(policy, j);
+-		}
+-	} else {
+-		policy->min = policy->user_policy.min;
+-		policy->max = policy->user_policy.max;
 -	}
 -
--	return 0;
--}
--
--static int
--bfin_adv7393_fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
--{
--	int dy;
--	u32 dmaaddr;
--	struct adv7393fb_device *fbdev = to_adv7393fb_device(info);
--
--	if (!var || !info)
--		return -EINVAL;
--
--	if (var->xoffset - info->var.xoffset) {
--		/* No support for X panning for now! */
--		return -EINVAL;
--	}
--	dy = var->yoffset - info->var.yoffset;
--
--	if (dy) {
--		pr_debug("%s: Panning screen of %d lines\n", __func__, dy);
--
--		dmaaddr = fbdev->av1->start_addr;
--		dmaaddr += (info->fix.line_length * dy);
--		/* TODO: Wait for current frame to finished */
--
--		fbdev->av1->start_addr = (unsigned long)dmaaddr;
--		fbdev->av2->start_addr = (unsigned long)dmaaddr + fbdev->line_len;
+-	if (cpufreq_driver->get && !cpufreq_driver->setpolicy) {
+-		policy->cur = cpufreq_driver->get(policy->cpu);
+-		if (!policy->cur) {
+-			pr_err("%s: ->get() failed\n", __func__);
+-			goto out_exit_policy;
+-		}
 -	}
 -
--	return 0;
+-	/*
+-	 * Sometimes boot loaders set CPU frequency to a value outside of
+-	 * frequency table present with cpufreq core. In such cases CPU might be
+-	 * unstable if it has to run on that frequency for long duration of time
+-	 * and so its better to set it to a frequency which is specified in
+-	 * freq-table. This also makes cpufreq stats inconsistent as
+-	 * cpufreq-stats would fail to register because current frequency of CPU
+-	 * isn't found in freq-table.
+-	 *
+-	 * Because we don't want this change to effect boot process badly, we go
+-	 * for the next freq which is >= policy->cur ('cur' must be set by now,
+-	 * otherwise we will end up setting freq to lowest of the table as 'cur'
+-	 * is initialized to zero).
+-	 *
+-	 * We are passing target-freq as "policy->cur - 1" otherwise
+-	 * __cpufreq_driver_target() would simply fail, as policy->cur will be
+-	 * equal to target-freq.
+-	 */
+-	if ((cpufreq_driver->flags & CPUFREQ_NEED_INITIAL_FREQ_CHECK)
+-	    && has_target()) {
+-		/* Are we running at unknown frequency ? */
+-		ret = cpufreq_frequency_table_get_index(policy, policy->cur);
+-		if (ret == -EINVAL) {
+-			/* Warn user and fix it */
+-			pr_warn("%s: CPU%d: Running at unlisted freq: %u KHz\n",
+-				__func__, policy->cpu, policy->cur);
+-			ret = __cpufreq_driver_target(policy, policy->cur - 1,
+-				CPUFREQ_RELATION_L);
 -
--}
--
--/* 0 unblank, 1 blank, 2 no vsync, 3 no hsync, 4 off */
--static int bfin_adv7393_fb_blank(int blank, struct fb_info *info)
--{
--	struct adv7393fb_device *fbdev = to_adv7393fb_device(info);
--
--	switch (blank) {
--
--	case VESA_NO_BLANKING:
--		/* Turn on panel */
--		adv7393_mode(fbdev->client, BLANK_OFF);
--		break;
--
--	case VESA_VSYNC_SUSPEND:
--	case VESA_HSYNC_SUSPEND:
--	case VESA_POWERDOWN:
--		/* Turn off panel */
--		adv7393_mode(fbdev->client, BLANK_ON);
--		break;
--
--	default:
--		return -EINVAL;
--		break;
--	}
--	return 0;
--}
--
--int bfin_adv7393_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
--{
--	if (nocursor)
--		return 0;
--	else
--		return -EINVAL;	/* just to force soft_cursor() call */
--}
--
--static int bfin_adv7393_fb_setcolreg(u_int regno, u_int red, u_int green,
--				     u_int blue, u_int transp,
--				     struct fb_info *info)
--{
--	if (regno >= BFIN_LCD_NBR_PALETTE_ENTRIES)
--		return -EINVAL;
--
--	if (info->var.grayscale)
--		/* grayscale = 0.30*R + 0.59*G + 0.11*B */
--		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
--
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
--		u32 value;
--		/* Place color in the pseudopalette */
--		if (regno > 16)
--			return -EINVAL;
--
--		red   >>= (16 - info->var.red.length);
--		green >>= (16 - info->var.green.length);
--		blue  >>= (16 - info->var.blue.length);
--
--		value = (red   << info->var.red.offset) |
--			(green << info->var.green.offset)|
--			(blue  << info->var.blue.offset);
--		value &= 0xFFFF;
--
--		((u32 *) (info->pseudo_palette))[regno] = value;
+-			/*
+-			 * Reaching here after boot in a few seconds may not
+-			 * mean that system will remain stable at "unknown"
+-			 * frequency for longer duration. Hence, a BUG_ON().
+-			 */
+-			BUG_ON(ret);
+-			pr_warn("%s: CPU%d: Unlisted initial frequency changed to: %u KHz\n",
+-				__func__, policy->cpu, policy->cur);
+-		}
 -	}
 -
--	return 0;
--}
+-	if (new_policy) {
+-		ret = cpufreq_add_dev_interface(policy);
+-		if (ret)
+-			goto out_exit_policy;
 -
--static int bfin_adv7393_fb_remove(struct i2c_client *client)
--{
--	struct adv7393fb_device *fbdev = i2c_get_clientdata(client);
+-		cpufreq_stats_create_table(policy);
 -
--	adv7393_mode(client, POWER_DOWN);
--
--	if (fbdev->fb_mem)
--		dma_free_coherent(NULL, fbdev->fb_len, fbdev->fb_mem, fbdev->dma_handle);
--	free_dma(CH_PPI);
--	free_irq(IRQ_PPI_ERROR, fbdev);
--	unregister_framebuffer(&fbdev->info);
--	remove_proc_entry("driver/adv7393", NULL);
--	fb_dealloc_cmap(&fbdev->info.cmap);
--	kfree(fbdev->info.pseudo_palette);
--
--	if (ANOMALY_05000400)
--		gpio_free(P_IDENT(P_PPI0_FS3));	/* FS3 */
--	peripheral_free_list(ppi_pins);
--	kfree(fbdev);
--
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_adv7393_fb_suspend(struct device *dev)
--{
--	struct adv7393fb_device *fbdev = dev_get_drvdata(dev);
--
--	if (fbdev->open) {
--		bfin_disable_dma();
--		bfin_disable_ppi();
--		dma_desc_list(fbdev, DESTRUCT);
--	}
--	adv7393_mode(fbdev->client, POWER_DOWN);
--
--	return 0;
--}
--
--static int bfin_adv7393_fb_resume(struct device *dev)
--{
--	struct adv7393fb_device *fbdev = dev_get_drvdata(dev);
--
--	adv7393_mode(fbdev->client, POWER_ON);
--
--	if (fbdev->open) {
--		dma_desc_list(fbdev, BUILD);
--		bfin_config_ppi(fbdev);
--		bfin_config_dma(fbdev);
--		bfin_enable_ppi();
+-		write_lock_irqsave(&cpufreq_driver_lock, flags);
+-		list_add(&policy->policy_list, &cpufreq_policy_list);
+-		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
 -	}
 -
+-	ret = cpufreq_init_policy(policy);
+-	if (ret) {
+-		pr_err("%s: Failed to initialize policy for cpu: %d (%d)\n",
+-		       __func__, cpu, ret);
+-		/* cpufreq_policy_free() will notify based on this */
+-		new_policy = false;
+-		goto out_exit_policy;
+-	}
+-
+-	up_write(&policy->rwsem);
+-
+-	kobject_uevent(&policy->kobj, KOBJ_ADD);
+-
+-	/* Callback for handling stuff after policy is ready */
+-	if (cpufreq_driver->ready)
+-		cpufreq_driver->ready(policy);
+-
+-	pr_debug("initialization complete\n");
+-
 -	return 0;
+-
+-out_exit_policy:
+-	up_write(&policy->rwsem);
+-
+-	if (cpufreq_driver->exit)
+-		cpufreq_driver->exit(policy);
+-
+-	for_each_cpu(j, policy->real_cpus)
+-		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+-
+-out_free_policy:
+-	cpufreq_policy_free(policy);
+-	return ret;
 -}
 -
--static const struct dev_pm_ops bfin_adv7393_dev_pm_ops = {
--	.suspend = bfin_adv7393_fb_suspend,
--	.resume  = bfin_adv7393_fb_resume,
--};
--#endif
--
--static const struct i2c_device_id bfin_adv7393_id[] = {
--	{DRIVER_NAME, 0},
--	{}
--};
--
--MODULE_DEVICE_TABLE(i2c, bfin_adv7393_id);
--
--static struct i2c_driver bfin_adv7393_fb_driver = {
--	.driver = {
--		.name = DRIVER_NAME,
--#ifdef CONFIG_PM
--		.pm   = &bfin_adv7393_dev_pm_ops,
--#endif
--	},
--	.probe = bfin_adv7393_fb_probe,
--	.remove = bfin_adv7393_fb_remove,
--	.id_table = bfin_adv7393_id,
--};
--
--static int __init bfin_adv7393_fb_driver_init(void)
--{
--#if IS_ENABLED(CONFIG_I2C_BLACKFIN_TWI)
--	request_module("i2c-bfin-twi");
--#else
--	request_module("i2c-gpio");
--#endif
--
--	return i2c_add_driver(&bfin_adv7393_fb_driver);
--}
--module_init(bfin_adv7393_fb_driver_init);
--
--static void __exit bfin_adv7393_fb_driver_cleanup(void)
--{
--	i2c_del_driver(&bfin_adv7393_fb_driver);
--}
--module_exit(bfin_adv7393_fb_driver_cleanup);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
--MODULE_DESCRIPTION("Frame buffer driver for ADV7393/2 Video Encoder");
--
--module_param(mode, int, 0);
--MODULE_PARM_DESC(mode,
--	"Video Mode (0=NTSC,1=PAL,2=NTSC 640x480,3=PAL 640x480,4=NTSC YCbCr input,5=PAL YCbCr input)");
--
--module_param(mem, int, 0);
--MODULE_PARM_DESC(mem,
--	"Size of frame buffer memory 1=Single 2=Double Size (allows y-panning / frame stacking)");
--
--module_param(nocursor, int, 0644);
--MODULE_PARM_DESC(nocursor, "cursor enable/disable");
-diff --git a/drivers/video/fbdev/bfin_adv7393fb.h b/drivers/video/fbdev/bfin_adv7393fb.h
-deleted file mode 100644
-index afd0380..0000000
---- a/drivers/video/fbdev/bfin_adv7393fb.h
-+++ /dev/null
-@@ -1,319 +0,0 @@
--/*
-- * Frame buffer driver for ADV7393/2 video encoder
-- *
-- * Copyright 2006-2009 Analog Devices Inc.
-- * Licensed under the GPL-2 or late.
+-/**
+- * cpufreq_add_dev - the cpufreq interface for a CPU device.
+- * @dev: CPU device.
+- * @sif: Subsystem interface structure pointer (not used)
 - */
+-static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
+-{
+-	struct cpufreq_policy *policy;
+-	unsigned cpu = dev->id;
+-	int ret;
 -
--#ifndef __BFIN_ADV7393FB_H__
--#define __BFIN_ADV7393FB_H__
+-	dev_dbg(dev, "%s: adding CPU%u\n", __func__, cpu);
 -
--#define BFIN_LCD_NBR_PALETTE_ENTRIES	256
--
--#ifdef CONFIG_NTSC
--# define VMODE 0
--#endif
--#ifdef CONFIG_PAL
--# define VMODE 1
--#endif
--#ifdef CONFIG_NTSC_640x480
--# define VMODE 2
--#endif
--#ifdef CONFIG_PAL_640x480
--# define VMODE 3
--#endif
--#ifdef CONFIG_NTSC_YCBCR
--# define VMODE 4
--#endif
--#ifdef CONFIG_PAL_YCBCR
--# define VMODE 5
--#endif
--
--#ifndef VMODE
--# define VMODE 1
--#endif
--
--#ifdef CONFIG_ADV7393_2XMEM
--# define VMEM 2
--#else
--# define VMEM 1
--#endif
--
--#if defined(CONFIG_BF537) || defined(CONFIG_BF536) || defined(CONFIG_BF534)
--# define DMA_CFG_VAL	0x7935	/* Set Sync Bit */
--# define VB_DUMMY_MEMORY_SOURCE	L1_DATA_B_START
--#else
--# define DMA_CFG_VAL	0x7915
--# define VB_DUMMY_MEMORY_SOURCE	BOOT_ROM_START
--#endif
--
--enum {
--	DESTRUCT,
--	BUILD,
--};
--
--enum {
--	POWER_ON,
--	POWER_DOWN,
--	BLANK_ON,
--	BLANK_OFF,
--};
--
--struct adv7393fb_modes {
--	const s8 name[25];	/* Full name */
--	u16 xres;		/* Active Horizonzal Pixels  */
--	u16 yres;		/* Active Vertical Pixels  */
--	u16 bpp;
--	u16 vmode;
--	u16 a_lines;		/* Active Lines per Field */
--	u16 vb1_lines;		/* Vertical Blanking Field 1 Lines */
--	u16 vb2_lines;		/* Vertical Blanking Field 2 Lines */
--	u16 tot_lines;		/* Total Lines per Frame */
--	u16 boeft_blank;	/* Before Odd/Even Field Transition No. of Blank Pixels */
--	u16 aoeft_blank;	/* After Odd/Even Field Transition No. of Blank Pixels */
--	const s8 *adv7393_i2c_initd;
--	u16 adv7393_i2c_initd_len;
--};
--
--static const u8 init_NTSC_TESTPATTERN[] = {
--	0x00, 0x1E,	/* Power up all DACs and PLL */
--	0x01, 0x00,	/* SD-Only Mode */
--	0x80, 0x10,	/* SSAF Luma Filter Enabled, NTSC Mode */
--	0x82, 0xCB,	/* Step control on, pixel data valid, pedestal on, PrPb SSAF on, CVBS/YC output */
--	0x84, 0x40,	/* SD Color Bar Test Pattern Enabled, DAC 2 = Luma, DAC 3 = Chroma */
--};
--
--static const u8 init_NTSC[] = {
--	0x00, 0x1E,	/* Power up all DACs and PLL */
--	0xC3, 0x26,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC5, 0x12,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC2, 0x4A,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC6, 0x5E,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xBD, 0x19,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xBF, 0x42,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0x8C, 0x1F,	/* NTSC Subcarrier Frequency */
--	0x8D, 0x7C,	/* NTSC Subcarrier Frequency */
--	0x8E, 0xF0,	/* NTSC Subcarrier Frequency */
--	0x8F, 0x21,	/* NTSC Subcarrier Frequency */
--	0x01, 0x00,	/* SD-Only Mode */
--	0x80, 0x30,	/* SSAF Luma Filter Enabled, NTSC Mode */
--	0x82, 0x8B,	/* Step control on, pixel data invalid, pedestal on, PrPb SSAF on, CVBS/YC output */
--	0x87, 0x80,	/* SD Color Bar Test Pattern Enabled, DAC 2 = Luma, DAC 3 = Chroma */
--	0x86, 0x82,
--	0x8B, 0x11,
--	0x88, 0x20,
--	0x8A, 0x0d,
--};
--
--static const u8 init_PAL[] = {
--	0x00, 0x1E,	/* Power up all DACs and PLL */
--	0xC3, 0x26,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC5, 0x12,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC2, 0x4A,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xC6, 0x5E,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xBD, 0x19,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0xBF, 0x42,	/* Program RGB->YCrCb Color Space conversion matrix */
--	0x8C, 0xCB,	/* PAL Subcarrier Frequency */
--	0x8D, 0x8A,	/* PAL Subcarrier Frequency */
--	0x8E, 0x09,	/* PAL Subcarrier Frequency */
--	0x8F, 0x2A,	/* PAL Subcarrier Frequency */
--	0x01, 0x00,	/* SD-Only Mode */
--	0x80, 0x11,	/* SSAF Luma Filter Enabled, PAL Mode */
--	0x82, 0x8B,	/* Step control on, pixel data invalid, pedestal on, PrPb SSAF on, CVBS/YC output */
--	0x87, 0x80,	/* SD Color Bar Test Pattern Enabled, DAC 2 = Luma, DAC 3 = Chroma */
--	0x86, 0x82,
--	0x8B, 0x11,
--	0x88, 0x20,
--	0x8A, 0x0d,
--};
--
--static const u8 init_NTSC_YCbCr[] = {
--	0x00, 0x1E,	/* Power up all DACs and PLL */
--	0x8C, 0x1F,	/* NTSC Subcarrier Frequency */
--	0x8D, 0x7C,	/* NTSC Subcarrier Frequency */
--	0x8E, 0xF0,	/* NTSC Subcarrier Frequency */
--	0x8F, 0x21,	/* NTSC Subcarrier Frequency */
--	0x01, 0x00,	/* SD-Only Mode */
--	0x80, 0x30,	/* SSAF Luma Filter Enabled, NTSC Mode */
--	0x82, 0x8B,	/* Step control on, pixel data invalid, pedestal on, PrPb SSAF on, CVBS/YC output */
--	0x87, 0x00,	/* DAC 2 = Luma, DAC 3 = Chroma */
--	0x86, 0x82,
--	0x8B, 0x11,
--	0x88, 0x08,
--	0x8A, 0x0d,
--};
--
--static const u8 init_PAL_YCbCr[] = {
--	0x00, 0x1E,	/* Power up all DACs and PLL */
--	0x8C, 0xCB,	/* PAL Subcarrier Frequency */
--	0x8D, 0x8A,	/* PAL Subcarrier Frequency */
--	0x8E, 0x09,	/* PAL Subcarrier Frequency */
--	0x8F, 0x2A,	/* PAL Subcarrier Frequency */
--	0x01, 0x00,	/* SD-Only Mode */
--	0x80, 0x11,	/* SSAF Luma Filter Enabled, PAL Mode */
--	0x82, 0x8B,	/* Step control on, pixel data invalid, pedestal on, PrPb SSAF on, CVBS/YC output */
--	0x87, 0x00,	/* DAC 2 = Luma, DAC 3 = Chroma */
--	0x86, 0x82,
--	0x8B, 0x11,
--	0x88, 0x08,
--	0x8A, 0x0d,
--};
--
--static struct adv7393fb_modes known_modes[] = {
--	/* NTSC 720x480 CRT */
--	{
--		.name = "NTSC 720x480",
--		.xres = 720,
--		.yres = 480,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 240,
--		.vb1_lines = 22,
--		.vb2_lines = 23,
--		.tot_lines = 525,
--		.boeft_blank = 16,
--		.aoeft_blank = 122,
--		.adv7393_i2c_initd = init_NTSC,
--		.adv7393_i2c_initd_len = sizeof(init_NTSC)
--	},
--	/* PAL 720x480 CRT */
--	{
--		.name = "PAL 720x576",
--		.xres = 720,
--		.yres = 576,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 288,
--		.vb1_lines = 24,
--		.vb2_lines = 25,
--		.tot_lines = 625,
--		.boeft_blank = 12,
--		.aoeft_blank = 132,
--		.adv7393_i2c_initd = init_PAL,
--		.adv7393_i2c_initd_len = sizeof(init_PAL)
--	},
--	/* NTSC 640x480 CRT Experimental */
--	{
--		.name = "NTSC 640x480",
--		.xres = 640,
--		.yres = 480,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 240,
--		.vb1_lines = 22,
--		.vb2_lines = 23,
--		.tot_lines = 525,
--		.boeft_blank = 16 + 40,
--		.aoeft_blank = 122 + 40,
--		.adv7393_i2c_initd = init_NTSC,
--		.adv7393_i2c_initd_len = sizeof(init_NTSC)
--	},
--	/* PAL 640x480 CRT Experimental */
--	{
--		.name = "PAL 640x480",
--		.xres = 640,
--		.yres = 480,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 288 - 20,
--		.vb1_lines = 24 + 20,
--		.vb2_lines = 25 + 20,
--		.tot_lines = 625,
--		.boeft_blank = 12 + 40,
--		.aoeft_blank = 132 + 40,
--		.adv7393_i2c_initd = init_PAL,
--		.adv7393_i2c_initd_len = sizeof(init_PAL)
--	},
--	/* NTSC 720x480 YCbCR */
--	{
--		.name = "NTSC 720x480 YCbCR",
--		.xres = 720,
--		.yres = 480,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 240,
--		.vb1_lines = 22,
--		.vb2_lines = 23,
--		.tot_lines = 525,
--		.boeft_blank = 16,
--		.aoeft_blank = 122,
--		.adv7393_i2c_initd = init_NTSC_YCbCr,
--		.adv7393_i2c_initd_len = sizeof(init_NTSC_YCbCr)
--	},
--	/* PAL 720x480 CRT */
--	{
--		.name = "PAL 720x576 YCbCR",
--		.xres = 720,
--		.yres = 576,
--		.bpp = 16,
--		.vmode = FB_VMODE_INTERLACED,
--		.a_lines = 288,
--		.vb1_lines = 24,
--		.vb2_lines = 25,
--		.tot_lines = 625,
--		.boeft_blank = 12,
--		.aoeft_blank = 132,
--		.adv7393_i2c_initd = init_PAL_YCbCr,
--		.adv7393_i2c_initd_len = sizeof(init_PAL_YCbCr)
+-	if (cpu_online(cpu)) {
+-		ret = cpufreq_online(cpu);
+-		if (ret)
+-			return ret;
 -	}
+-
+-	/* Create sysfs link on CPU registration */
+-	policy = per_cpu(cpufreq_cpu_data, cpu);
+-	if (policy)
+-		add_cpu_dev_symlink(policy, cpu);
+-
+-	return 0;
+-}
+-
+-static int cpufreq_offline(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy;
+-	int ret;
+-
+-	pr_debug("%s: unregistering CPU %u\n", __func__, cpu);
+-
+-	policy = cpufreq_cpu_get_raw(cpu);
+-	if (!policy) {
+-		pr_debug("%s: No cpu_data found\n", __func__);
+-		return 0;
+-	}
+-
+-	down_write(&policy->rwsem);
+-	if (has_target())
+-		cpufreq_stop_governor(policy);
+-
+-	cpumask_clear_cpu(cpu, policy->cpus);
+-
+-	if (policy_is_inactive(policy)) {
+-		if (has_target())
+-			strncpy(policy->last_governor, policy->governor->name,
+-				CPUFREQ_NAME_LEN);
+-		else
+-			policy->last_policy = policy->policy;
+-	} else if (cpu == policy->cpu) {
+-		/* Nominate new CPU */
+-		policy->cpu = cpumask_any(policy->cpus);
+-	}
+-
+-	/* Start governor again for active policy */
+-	if (!policy_is_inactive(policy)) {
+-		if (has_target()) {
+-			ret = cpufreq_start_governor(policy);
+-			if (ret)
+-				pr_err("%s: Failed to start governor\n", __func__);
+-		}
+-
+-		goto unlock;
+-	}
+-
+-	if (cpufreq_driver->stop_cpu)
+-		cpufreq_driver->stop_cpu(policy);
+-
+-	if (has_target())
+-		cpufreq_exit_governor(policy);
+-
+-	/*
+-	 * Perform the ->exit() even during light-weight tear-down,
+-	 * since this is a core component, and is essential for the
+-	 * subsequent light-weight ->init() to succeed.
+-	 */
+-	if (cpufreq_driver->exit) {
+-		cpufreq_driver->exit(policy);
+-		policy->freq_table = NULL;
+-	}
+-
+-unlock:
+-	up_write(&policy->rwsem);
+-	return 0;
+-}
+-
+-/**
+- * cpufreq_remove_dev - remove a CPU device
+- *
+- * Removes the cpufreq interface for a CPU device.
+- */
+-static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
+-{
+-	unsigned int cpu = dev->id;
+-	struct cpufreq_policy *policy = per_cpu(cpufreq_cpu_data, cpu);
+-
+-	if (!policy)
+-		return;
+-
+-	if (cpu_online(cpu))
+-		cpufreq_offline(cpu);
+-
+-	cpumask_clear_cpu(cpu, policy->real_cpus);
+-	remove_cpu_dev_symlink(policy, dev);
+-
+-	if (cpumask_empty(policy->real_cpus))
+-		cpufreq_policy_free(policy);
+-}
+-
+-/**
+- *	cpufreq_out_of_sync - If actual and saved CPU frequency differs, we're
+- *	in deep trouble.
+- *	@policy: policy managing CPUs
+- *	@new_freq: CPU frequency the CPU actually runs at
+- *
+- *	We adjust to current frequency first, and need to clean up later.
+- *	So either call to cpufreq_update_policy() or schedule handle_update()).
+- */
+-static void cpufreq_out_of_sync(struct cpufreq_policy *policy,
+-				unsigned int new_freq)
+-{
+-	struct cpufreq_freqs freqs;
+-
+-	pr_debug("Warning: CPU frequency out of sync: cpufreq and timing core thinks of %u, is %u kHz\n",
+-		 policy->cur, new_freq);
+-
+-	freqs.old = policy->cur;
+-	freqs.new = new_freq;
+-
+-	cpufreq_freq_transition_begin(policy, &freqs);
+-	cpufreq_freq_transition_end(policy, &freqs, 0);
+-}
+-
+-/**
+- * cpufreq_quick_get - get the CPU frequency (in kHz) from policy->cur
+- * @cpu: CPU number
+- *
+- * This is the last known freq, without actually getting it from the driver.
+- * Return value will be same as what is shown in scaling_cur_freq in sysfs.
+- */
+-unsigned int cpufreq_quick_get(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy;
+-	unsigned int ret_freq = 0;
+-	unsigned long flags;
+-
+-	read_lock_irqsave(&cpufreq_driver_lock, flags);
+-
+-	if (cpufreq_driver && cpufreq_driver->setpolicy && cpufreq_driver->get) {
+-		ret_freq = cpufreq_driver->get(cpu);
+-		read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-		return ret_freq;
+-	}
+-
+-	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	policy = cpufreq_cpu_get(cpu);
+-	if (policy) {
+-		ret_freq = policy->cur;
+-		cpufreq_cpu_put(policy);
+-	}
+-
+-	return ret_freq;
+-}
+-EXPORT_SYMBOL(cpufreq_quick_get);
+-
+-/**
+- * cpufreq_quick_get_max - get the max reported CPU frequency for this CPU
+- * @cpu: CPU number
+- *
+- * Just return the max possible frequency for a given CPU.
+- */
+-unsigned int cpufreq_quick_get_max(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	unsigned int ret_freq = 0;
+-
+-	if (policy) {
+-		ret_freq = policy->max;
+-		cpufreq_cpu_put(policy);
+-	}
+-
+-	return ret_freq;
+-}
+-EXPORT_SYMBOL(cpufreq_quick_get_max);
+-
+-static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
+-{
+-	unsigned int ret_freq = 0;
+-
+-	if (!cpufreq_driver->get)
+-		return ret_freq;
+-
+-	ret_freq = cpufreq_driver->get(policy->cpu);
+-
+-	/*
+-	 * Updating inactive policies is invalid, so avoid doing that.  Also
+-	 * if fast frequency switching is used with the given policy, the check
+-	 * against policy->cur is pointless, so skip it in that case too.
+-	 */
+-	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
+-		return ret_freq;
+-
+-	if (ret_freq && policy->cur &&
+-		!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
+-		/* verify no discrepancy between actual and
+-					saved value exists */
+-		if (unlikely(ret_freq != policy->cur)) {
+-			cpufreq_out_of_sync(policy, ret_freq);
+-			schedule_work(&policy->update);
+-		}
+-	}
+-
+-	return ret_freq;
+-}
+-
+-/**
+- * cpufreq_get - get the current CPU frequency (in kHz)
+- * @cpu: CPU number
+- *
+- * Get the CPU current (static) CPU frequency
+- */
+-unsigned int cpufreq_get(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	unsigned int ret_freq = 0;
+-
+-	if (policy) {
+-		down_read(&policy->rwsem);
+-
+-		if (!policy_is_inactive(policy))
+-			ret_freq = __cpufreq_get(policy);
+-
+-		up_read(&policy->rwsem);
+-
+-		cpufreq_cpu_put(policy);
+-	}
+-
+-	return ret_freq;
+-}
+-EXPORT_SYMBOL(cpufreq_get);
+-
+-static unsigned int cpufreq_update_current_freq(struct cpufreq_policy *policy)
+-{
+-	unsigned int new_freq;
+-
+-	new_freq = cpufreq_driver->get(policy->cpu);
+-	if (!new_freq)
+-		return 0;
+-
+-	if (!policy->cur) {
+-		pr_debug("cpufreq: Driver did not initialize current freq\n");
+-		policy->cur = new_freq;
+-	} else if (policy->cur != new_freq && has_target()) {
+-		cpufreq_out_of_sync(policy, new_freq);
+-	}
+-
+-	return new_freq;
+-}
+-
+-static struct subsys_interface cpufreq_interface = {
+-	.name		= "cpufreq",
+-	.subsys		= &cpu_subsys,
+-	.add_dev	= cpufreq_add_dev,
+-	.remove_dev	= cpufreq_remove_dev,
 -};
 -
--struct adv7393fb_regs {
+-/*
+- * In case platform wants some specific frequency to be configured
+- * during suspend..
+- */
+-int cpufreq_generic_suspend(struct cpufreq_policy *policy)
+-{
+-	int ret;
 -
+-	if (!policy->suspend_freq) {
+-		pr_debug("%s: suspend_freq not defined\n", __func__);
+-		return 0;
+-	}
+-
+-	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
+-			policy->suspend_freq);
+-
+-	ret = __cpufreq_driver_target(policy, policy->suspend_freq,
+-			CPUFREQ_RELATION_H);
+-	if (ret)
+-		pr_err("%s: unable to set suspend-freq: %u. err: %d\n",
+-				__func__, policy->suspend_freq, ret);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(cpufreq_generic_suspend);
+-
+-/**
+- * cpufreq_suspend() - Suspend CPUFreq governors
+- *
+- * Called during system wide Suspend/Hibernate cycles for suspending governors
+- * as some platforms can't change frequency after this point in suspend cycle.
+- * Because some of the devices (like: i2c, regulators, etc) they use for
+- * changing frequency are suspended quickly after this point.
+- */
+-void cpufreq_suspend(void)
+-{
+-	struct cpufreq_policy *policy;
+-
+-	if (!cpufreq_driver)
+-		return;
+-
+-	if (!has_target() && !cpufreq_driver->suspend)
+-		goto suspend;
+-
+-	pr_debug("%s: Suspending Governors\n", __func__);
+-
+-	for_each_active_policy(policy) {
+-		if (has_target()) {
+-			down_write(&policy->rwsem);
+-			cpufreq_stop_governor(policy);
+-			up_write(&policy->rwsem);
+-		}
+-
+-		if (cpufreq_driver->suspend && cpufreq_driver->suspend(policy))
+-			pr_err("%s: Failed to suspend driver: %p\n", __func__,
+-				policy);
+-	}
+-
+-suspend:
+-	cpufreq_suspended = true;
+-}
+-
+-/**
+- * cpufreq_resume() - Resume CPUFreq governors
+- *
+- * Called during system wide Suspend/Hibernate cycle for resuming governors that
+- * are suspended with cpufreq_suspend().
+- */
+-void cpufreq_resume(void)
+-{
+-	struct cpufreq_policy *policy;
+-	int ret;
+-
+-	if (!cpufreq_driver)
+-		return;
+-
+-	if (unlikely(!cpufreq_suspended))
+-		return;
+-
+-	cpufreq_suspended = false;
+-
+-	if (!has_target() && !cpufreq_driver->resume)
+-		return;
+-
+-	pr_debug("%s: Resuming Governors\n", __func__);
+-
+-	for_each_active_policy(policy) {
+-		if (cpufreq_driver->resume && cpufreq_driver->resume(policy)) {
+-			pr_err("%s: Failed to resume driver: %p\n", __func__,
+-				policy);
+-		} else if (has_target()) {
+-			down_write(&policy->rwsem);
+-			ret = cpufreq_start_governor(policy);
+-			up_write(&policy->rwsem);
+-
+-			if (ret)
+-				pr_err("%s: Failed to start governor for policy: %p\n",
+-				       __func__, policy);
+-		}
+-	}
+-}
+-
+-/**
+- *	cpufreq_get_current_driver - return current driver's name
+- *
+- *	Return the name string of the currently loaded cpufreq driver
+- *	or NULL, if none.
+- */
+-const char *cpufreq_get_current_driver(void)
+-{
+-	if (cpufreq_driver)
+-		return cpufreq_driver->name;
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_get_current_driver);
+-
+-/**
+- *	cpufreq_get_driver_data - return current driver data
+- *
+- *	Return the private data of the currently loaded cpufreq
+- *	driver, or NULL if no cpufreq driver is loaded.
+- */
+-void *cpufreq_get_driver_data(void)
+-{
+-	if (cpufreq_driver)
+-		return cpufreq_driver->driver_data;
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_get_driver_data);
+-
+-/*********************************************************************
+- *                     NOTIFIER LISTS INTERFACE                      *
+- *********************************************************************/
+-
+-/**
+- *	cpufreq_register_notifier - register a driver with cpufreq
+- *	@nb: notifier function to register
+- *      @list: CPUFREQ_TRANSITION_NOTIFIER or CPUFREQ_POLICY_NOTIFIER
+- *
+- *	Add a driver to one of two lists: either a list of drivers that
+- *      are notified about clock rate changes (once before and once after
+- *      the transition), or a list of drivers that are notified about
+- *      changes in cpufreq policy.
+- *
+- *	This function may sleep, and has the same return conditions as
+- *	blocking_notifier_chain_register.
+- */
+-int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list)
+-{
+-	int ret;
+-
+-	if (cpufreq_disabled())
+-		return -EINVAL;
+-
+-	WARN_ON(!init_cpufreq_transition_notifier_list_called);
+-
+-	switch (list) {
+-	case CPUFREQ_TRANSITION_NOTIFIER:
+-		mutex_lock(&cpufreq_fast_switch_lock);
+-
+-		if (cpufreq_fast_switch_count > 0) {
+-			mutex_unlock(&cpufreq_fast_switch_lock);
+-			return -EBUSY;
+-		}
+-		ret = srcu_notifier_chain_register(
+-				&cpufreq_transition_notifier_list, nb);
+-		if (!ret)
+-			cpufreq_fast_switch_count--;
+-
+-		mutex_unlock(&cpufreq_fast_switch_lock);
+-		break;
+-	case CPUFREQ_POLICY_NOTIFIER:
+-		ret = blocking_notifier_chain_register(
+-				&cpufreq_policy_notifier_list, nb);
+-		break;
+-	default:
+-		ret = -EINVAL;
+-	}
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(cpufreq_register_notifier);
+-
+-/**
+- *	cpufreq_unregister_notifier - unregister a driver with cpufreq
+- *	@nb: notifier block to be unregistered
+- *	@list: CPUFREQ_TRANSITION_NOTIFIER or CPUFREQ_POLICY_NOTIFIER
+- *
+- *	Remove a driver from the CPU frequency notifier list.
+- *
+- *	This function may sleep, and has the same return conditions as
+- *	blocking_notifier_chain_unregister.
+- */
+-int cpufreq_unregister_notifier(struct notifier_block *nb, unsigned int list)
+-{
+-	int ret;
+-
+-	if (cpufreq_disabled())
+-		return -EINVAL;
+-
+-	switch (list) {
+-	case CPUFREQ_TRANSITION_NOTIFIER:
+-		mutex_lock(&cpufreq_fast_switch_lock);
+-
+-		ret = srcu_notifier_chain_unregister(
+-				&cpufreq_transition_notifier_list, nb);
+-		if (!ret && !WARN_ON(cpufreq_fast_switch_count >= 0))
+-			cpufreq_fast_switch_count++;
+-
+-		mutex_unlock(&cpufreq_fast_switch_lock);
+-		break;
+-	case CPUFREQ_POLICY_NOTIFIER:
+-		ret = blocking_notifier_chain_unregister(
+-				&cpufreq_policy_notifier_list, nb);
+-		break;
+-	default:
+-		ret = -EINVAL;
+-	}
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(cpufreq_unregister_notifier);
+-
+-
+-/*********************************************************************
+- *                              GOVERNORS                            *
+- *********************************************************************/
+-
+-/**
+- * cpufreq_driver_fast_switch - Carry out a fast CPU frequency switch.
+- * @policy: cpufreq policy to switch the frequency for.
+- * @target_freq: New frequency to set (may be approximate).
+- *
+- * Carry out a fast frequency switch without sleeping.
+- *
+- * The driver's ->fast_switch() callback invoked by this function must be
+- * suitable for being called from within RCU-sched read-side critical sections
+- * and it is expected to select the minimum available frequency greater than or
+- * equal to @target_freq (CPUFREQ_RELATION_L).
+- *
+- * This function must not be called if policy->fast_switch_enabled is unset.
+- *
+- * Governors calling this function must guarantee that it will never be invoked
+- * twice in parallel for the same policy and that it will never be called in
+- * parallel with either ->target() or ->target_index() for the same policy.
+- *
+- * Returns the actual frequency set for the CPU.
+- *
+- * If 0 is returned by the driver's ->fast_switch() callback to indicate an
+- * error condition, the hardware configuration must be preserved.
+- */
+-unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+-					unsigned int target_freq)
+-{
+-	target_freq = clamp_val(target_freq, policy->min, policy->max);
+-
+-	return cpufreq_driver->fast_switch(policy, target_freq);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_driver_fast_switch);
+-
+-/* Must set freqs->new to intermediate frequency */
+-static int __target_intermediate(struct cpufreq_policy *policy,
+-				 struct cpufreq_freqs *freqs, int index)
+-{
+-	int ret;
+-
+-	freqs->new = cpufreq_driver->get_intermediate(policy, index);
+-
+-	/* We don't need to switch to intermediate freq */
+-	if (!freqs->new)
+-		return 0;
+-
+-	pr_debug("%s: cpu: %d, switching to intermediate freq: oldfreq: %u, intermediate freq: %u\n",
+-		 __func__, policy->cpu, freqs->old, freqs->new);
+-
+-	cpufreq_freq_transition_begin(policy, freqs);
+-	ret = cpufreq_driver->target_intermediate(policy, index);
+-	cpufreq_freq_transition_end(policy, freqs, ret);
+-
+-	if (ret)
+-		pr_err("%s: Failed to change to intermediate frequency: %d\n",
+-		       __func__, ret);
+-
+-	return ret;
+-}
+-
+-static int __target_index(struct cpufreq_policy *policy, int index)
+-{
+-	struct cpufreq_freqs freqs = {.old = policy->cur, .flags = 0};
+-	unsigned int intermediate_freq = 0;
+-	unsigned int newfreq = policy->freq_table[index].frequency;
+-	int retval = -EINVAL;
+-	bool notify;
+-
+-	if (newfreq == policy->cur)
+-		return 0;
+-
+-	notify = !(cpufreq_driver->flags & CPUFREQ_ASYNC_NOTIFICATION);
+-	if (notify) {
+-		/* Handle switching to intermediate frequency */
+-		if (cpufreq_driver->get_intermediate) {
+-			retval = __target_intermediate(policy, &freqs, index);
+-			if (retval)
+-				return retval;
+-
+-			intermediate_freq = freqs.new;
+-			/* Set old freq to intermediate */
+-			if (intermediate_freq)
+-				freqs.old = freqs.new;
+-		}
+-
+-		freqs.new = newfreq;
+-		pr_debug("%s: cpu: %d, oldfreq: %u, new freq: %u\n",
+-			 __func__, policy->cpu, freqs.old, freqs.new);
+-
+-		cpufreq_freq_transition_begin(policy, &freqs);
+-	}
+-
+-	retval = cpufreq_driver->target_index(policy, index);
+-	if (retval)
+-		pr_err("%s: Failed to change cpu frequency: %d\n", __func__,
+-		       retval);
+-
+-	if (notify) {
+-		cpufreq_freq_transition_end(policy, &freqs, retval);
+-
+-		/*
+-		 * Failed after setting to intermediate freq? Driver should have
+-		 * reverted back to initial frequency and so should we. Check
+-		 * here for intermediate_freq instead of get_intermediate, in
+-		 * case we haven't switched to intermediate freq at all.
+-		 */
+-		if (unlikely(retval && intermediate_freq)) {
+-			freqs.old = intermediate_freq;
+-			freqs.new = policy->restore_freq;
+-			cpufreq_freq_transition_begin(policy, &freqs);
+-			cpufreq_freq_transition_end(policy, &freqs, 0);
+-		}
+-	}
+-
+-	return retval;
+-}
+-
+-int __cpufreq_driver_target(struct cpufreq_policy *policy,
+-			    unsigned int target_freq,
+-			    unsigned int relation)
+-{
+-	unsigned int old_target_freq = target_freq;
+-	int index;
+-
+-	if (cpufreq_disabled())
+-		return -ENODEV;
+-
+-	/* Make sure that target_freq is within supported range */
+-	target_freq = clamp_val(target_freq, policy->min, policy->max);
+-
+-	pr_debug("target for CPU %u: %u kHz, relation %u, requested %u kHz\n",
+-		 policy->cpu, target_freq, relation, old_target_freq);
+-
+-	/*
+-	 * This might look like a redundant call as we are checking it again
+-	 * after finding index. But it is left intentionally for cases where
+-	 * exactly same freq is called again and so we can save on few function
+-	 * calls.
+-	 */
+-	if (target_freq == policy->cur)
+-		return 0;
+-
+-	/* Save last value to restore later on errors */
+-	policy->restore_freq = policy->cur;
+-
+-	if (cpufreq_driver->target)
+-		return cpufreq_driver->target(policy, target_freq, relation);
+-
+-	if (!cpufreq_driver->target_index)
+-		return -EINVAL;
+-
+-	index = cpufreq_frequency_table_target(policy, target_freq, relation);
+-
+-	return __target_index(policy, index);
+-}
+-EXPORT_SYMBOL_GPL(__cpufreq_driver_target);
+-
+-int cpufreq_driver_target(struct cpufreq_policy *policy,
+-			  unsigned int target_freq,
+-			  unsigned int relation)
+-{
+-	int ret = -EINVAL;
+-
+-	down_write(&policy->rwsem);
+-
+-	ret = __cpufreq_driver_target(policy, target_freq, relation);
+-
+-	up_write(&policy->rwsem);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_driver_target);
+-
+-__weak struct cpufreq_governor *cpufreq_fallback_governor(void)
+-{
+-	return NULL;
+-}
+-
+-static int cpufreq_init_governor(struct cpufreq_policy *policy)
+-{
+-	int ret;
+-
+-	/* Don't start any governor operations if we are entering suspend */
+-	if (cpufreq_suspended)
+-		return 0;
+-	/*
+-	 * Governor might not be initiated here if ACPI _PPC changed
+-	 * notification happened, so check it.
+-	 */
+-	if (!policy->governor)
+-		return -EINVAL;
+-
+-	/* Platform doesn't want dynamic frequency switching ? */
+-	if (policy->governor->dynamic_switching &&
+-	    cpufreq_driver->flags & CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING) {
+-		struct cpufreq_governor *gov = cpufreq_fallback_governor();
+-
+-		if (gov) {
+-			pr_warn("Can't use %s governor as dynamic switching is disallowed. Fallback to %s governor\n",
+-				policy->governor->name, gov->name);
+-			policy->governor = gov;
+-		} else {
+-			return -EINVAL;
+-		}
+-	}
+-
+-	if (!try_module_get(policy->governor->owner))
+-		return -EINVAL;
+-
+-	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-
+-	if (policy->governor->init) {
+-		ret = policy->governor->init(policy);
+-		if (ret) {
+-			module_put(policy->governor->owner);
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static void cpufreq_exit_governor(struct cpufreq_policy *policy)
+-{
+-	if (cpufreq_suspended || !policy->governor)
+-		return;
+-
+-	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-
+-	if (policy->governor->exit)
+-		policy->governor->exit(policy);
+-
+-	module_put(policy->governor->owner);
+-}
+-
+-static int cpufreq_start_governor(struct cpufreq_policy *policy)
+-{
+-	int ret;
+-
+-	if (cpufreq_suspended)
+-		return 0;
+-
+-	if (!policy->governor)
+-		return -EINVAL;
+-
+-	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-
+-	if (cpufreq_driver->get && !cpufreq_driver->setpolicy)
+-		cpufreq_update_current_freq(policy);
+-
+-	if (policy->governor->start) {
+-		ret = policy->governor->start(policy);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	if (policy->governor->limits)
+-		policy->governor->limits(policy);
+-
+-	return 0;
+-}
+-
+-static void cpufreq_stop_governor(struct cpufreq_policy *policy)
+-{
+-	if (cpufreq_suspended || !policy->governor)
+-		return;
+-
+-	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-
+-	if (policy->governor->stop)
+-		policy->governor->stop(policy);
+-}
+-
+-static void cpufreq_governor_limits(struct cpufreq_policy *policy)
+-{
+-	if (cpufreq_suspended || !policy->governor)
+-		return;
+-
+-	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-
+-	if (policy->governor->limits)
+-		policy->governor->limits(policy);
+-}
+-
+-int cpufreq_register_governor(struct cpufreq_governor *governor)
+-{
+-	int err;
+-
+-	if (!governor)
+-		return -EINVAL;
+-
+-	if (cpufreq_disabled())
+-		return -ENODEV;
+-
+-	mutex_lock(&cpufreq_governor_mutex);
+-
+-	err = -EBUSY;
+-	if (!find_governor(governor->name)) {
+-		err = 0;
+-		list_add(&governor->governor_list, &cpufreq_governor_list);
+-	}
+-
+-	mutex_unlock(&cpufreq_governor_mutex);
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_register_governor);
+-
+-void cpufreq_unregister_governor(struct cpufreq_governor *governor)
+-{
+-	struct cpufreq_policy *policy;
+-	unsigned long flags;
+-
+-	if (!governor)
+-		return;
+-
+-	if (cpufreq_disabled())
+-		return;
+-
+-	/* clear last_governor for all inactive policies */
+-	read_lock_irqsave(&cpufreq_driver_lock, flags);
+-	for_each_inactive_policy(policy) {
+-		if (!strcmp(policy->last_governor, governor->name)) {
+-			policy->governor = NULL;
+-			strcpy(policy->last_governor, "\0");
+-		}
+-	}
+-	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	mutex_lock(&cpufreq_governor_mutex);
+-	list_del(&governor->governor_list);
+-	mutex_unlock(&cpufreq_governor_mutex);
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_unregister_governor);
+-
+-
+-/*********************************************************************
+- *                          POLICY INTERFACE                         *
+- *********************************************************************/
+-
+-/**
+- * cpufreq_get_policy - get the current cpufreq_policy
+- * @policy: struct cpufreq_policy into which the current cpufreq_policy
+- *	is written
+- *
+- * Reads the current cpufreq policy.
+- */
+-int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu)
+-{
+-	struct cpufreq_policy *cpu_policy;
+-	if (!policy)
+-		return -EINVAL;
+-
+-	cpu_policy = cpufreq_cpu_get(cpu);
+-	if (!cpu_policy)
+-		return -EINVAL;
+-
+-	memcpy(policy, cpu_policy, sizeof(*policy));
+-
+-	cpufreq_cpu_put(cpu_policy);
+-	return 0;
+-}
+-EXPORT_SYMBOL(cpufreq_get_policy);
+-
+-/*
+- * policy : current policy.
+- * new_policy: policy to be set.
+- */
+-static int cpufreq_set_policy(struct cpufreq_policy *policy,
+-				struct cpufreq_policy *new_policy)
+-{
+-	struct cpufreq_governor *old_gov;
+-	int ret;
+-
+-	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
+-		 new_policy->cpu, new_policy->min, new_policy->max);
+-
+-	memcpy(&new_policy->cpuinfo, &policy->cpuinfo, sizeof(policy->cpuinfo));
+-
+-	/*
+-	* This check works well when we store new min/max freq attributes,
+-	* because new_policy is a copy of policy with one field updated.
+-	*/
+-	if (new_policy->min > new_policy->max)
+-		return -EINVAL;
+-
+-	/* verify the cpu speed can be set within this limit */
+-	ret = cpufreq_driver->verify(new_policy);
+-	if (ret)
+-		return ret;
+-
+-	/* adjust if necessary - all reasons */
+-	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
+-			CPUFREQ_ADJUST, new_policy);
+-
+-	/*
+-	 * verify the cpu speed can be set within this limit, which might be
+-	 * different to the first one
+-	 */
+-	ret = cpufreq_driver->verify(new_policy);
+-	if (ret)
+-		return ret;
+-
+-	/* notification of the new policy */
+-	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
+-			CPUFREQ_NOTIFY, new_policy);
+-
+-	policy->min = new_policy->min;
+-	policy->max = new_policy->max;
+-
+-	policy->cached_target_freq = UINT_MAX;
+-
+-	pr_debug("new min and max freqs are %u - %u kHz\n",
+-		 policy->min, policy->max);
+-
+-	if (cpufreq_driver->setpolicy) {
+-		policy->policy = new_policy->policy;
+-		pr_debug("setting range\n");
+-		return cpufreq_driver->setpolicy(new_policy);
+-	}
+-
+-	if (new_policy->governor == policy->governor) {
+-		pr_debug("cpufreq: governor limits update\n");
+-		cpufreq_governor_limits(policy);
+-		return 0;
+-	}
+-
+-	pr_debug("governor switch\n");
+-
+-	/* save old, working values */
+-	old_gov = policy->governor;
+-	/* end old governor */
+-	if (old_gov) {
+-		cpufreq_stop_governor(policy);
+-		cpufreq_exit_governor(policy);
+-	}
+-
+-	/* start new governor */
+-	policy->governor = new_policy->governor;
+-	ret = cpufreq_init_governor(policy);
+-	if (!ret) {
+-		ret = cpufreq_start_governor(policy);
+-		if (!ret) {
+-			pr_debug("cpufreq: governor change\n");
+-			return 0;
+-		}
+-		cpufreq_exit_governor(policy);
+-	}
+-
+-	/* new governor failed, so re-start old one */
+-	pr_debug("starting governor %s failed\n", policy->governor->name);
+-	if (old_gov) {
+-		policy->governor = old_gov;
+-		if (cpufreq_init_governor(policy))
+-			policy->governor = NULL;
+-		else
+-			cpufreq_start_governor(policy);
+-	}
+-
+-	return ret;
+-}
+-
+-/**
+- *	cpufreq_update_policy - re-evaluate an existing cpufreq policy
+- *	@cpu: CPU which shall be re-evaluated
+- *
+- *	Useful for policy notifiers which have different necessities
+- *	at different times.
+- */
+-void cpufreq_update_policy(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	struct cpufreq_policy new_policy;
+-
+-	if (!policy)
+-		return;
+-
+-	down_write(&policy->rwsem);
+-
+-	if (policy_is_inactive(policy))
+-		goto unlock;
+-
+-	pr_debug("updating policy for CPU %u\n", cpu);
+-	memcpy(&new_policy, policy, sizeof(*policy));
+-	new_policy.min = policy->user_policy.min;
+-	new_policy.max = policy->user_policy.max;
+-
+-	/*
+-	 * BIOS might change freq behind our back
+-	 * -> ask driver for current freq and notify governors about a change
+-	 */
+-	if (cpufreq_driver->get && !cpufreq_driver->setpolicy) {
+-		if (cpufreq_suspended)
+-			goto unlock;
+-
+-		new_policy.cur = cpufreq_update_current_freq(policy);
+-		if (WARN_ON(!new_policy.cur))
+-			goto unlock;
+-	}
+-
+-	cpufreq_set_policy(policy, &new_policy);
+-
+-unlock:
+-	up_write(&policy->rwsem);
+-
+-	cpufreq_cpu_put(policy);
+-}
+-EXPORT_SYMBOL(cpufreq_update_policy);
+-
+-/*********************************************************************
+- *               BOOST						     *
+- *********************************************************************/
+-static int cpufreq_boost_set_sw(int state)
+-{
+-	struct cpufreq_policy *policy;
+-	int ret = -EINVAL;
+-
+-	for_each_active_policy(policy) {
+-		if (!policy->freq_table)
+-			continue;
+-
+-		ret = cpufreq_frequency_table_cpuinfo(policy,
+-						      policy->freq_table);
+-		if (ret) {
+-			pr_err("%s: Policy frequency update failed\n",
+-			       __func__);
+-			break;
+-		}
+-
+-		down_write(&policy->rwsem);
+-		policy->user_policy.max = policy->max;
+-		cpufreq_governor_limits(policy);
+-		up_write(&policy->rwsem);
+-	}
+-
+-	return ret;
+-}
+-
+-int cpufreq_boost_trigger_state(int state)
+-{
+-	unsigned long flags;
+-	int ret = 0;
+-
+-	if (cpufreq_driver->boost_enabled == state)
+-		return 0;
+-
+-	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-	cpufreq_driver->boost_enabled = state;
+-	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	ret = cpufreq_driver->set_boost(state);
+-	if (ret) {
+-		write_lock_irqsave(&cpufreq_driver_lock, flags);
+-		cpufreq_driver->boost_enabled = !state;
+-		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-		pr_err("%s: Cannot %s BOOST\n",
+-		       __func__, state ? "enable" : "disable");
+-	}
+-
+-	return ret;
+-}
+-
+-static bool cpufreq_boost_supported(void)
+-{
+-	return likely(cpufreq_driver) && cpufreq_driver->set_boost;
+-}
+-
+-static int create_boost_sysfs_file(void)
+-{
+-	int ret;
+-
+-	ret = sysfs_create_file(cpufreq_global_kobject, &boost.attr);
+-	if (ret)
+-		pr_err("%s: cannot register global BOOST sysfs file\n",
+-		       __func__);
+-
+-	return ret;
+-}
+-
+-static void remove_boost_sysfs_file(void)
+-{
+-	if (cpufreq_boost_supported())
+-		sysfs_remove_file(cpufreq_global_kobject, &boost.attr);
+-}
+-
+-int cpufreq_enable_boost_support(void)
+-{
+-	if (!cpufreq_driver)
+-		return -EINVAL;
+-
+-	if (cpufreq_boost_supported())
+-		return 0;
+-
+-	cpufreq_driver->set_boost = cpufreq_boost_set_sw;
+-
+-	/* This will get removed on driver unregister */
+-	return create_boost_sysfs_file();
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
+-
+-int cpufreq_boost_enabled(void)
+-{
+-	return cpufreq_driver->boost_enabled;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_boost_enabled);
+-
+-/*********************************************************************
+- *               REGISTER / UNREGISTER CPUFREQ DRIVER                *
+- *********************************************************************/
+-static enum cpuhp_state hp_online;
+-
+-static int cpuhp_cpufreq_online(unsigned int cpu)
+-{
+-	cpufreq_online(cpu);
+-
+-	return 0;
+-}
+-
+-static int cpuhp_cpufreq_offline(unsigned int cpu)
+-{
+-	cpufreq_offline(cpu);
+-
+-	return 0;
+-}
+-
+-/**
+- * cpufreq_register_driver - register a CPU Frequency driver
+- * @driver_data: A struct cpufreq_driver containing the values#
+- * submitted by the CPU Frequency driver.
+- *
+- * Registers a CPU Frequency driver to this core code. This code
+- * returns zero on success, -EEXIST when another driver got here first
+- * (and isn't unregistered in the meantime).
+- *
+- */
+-int cpufreq_register_driver(struct cpufreq_driver *driver_data)
+-{
+-	unsigned long flags;
+-	int ret;
+-
+-	if (cpufreq_disabled())
+-		return -ENODEV;
+-
+-	if (!driver_data || !driver_data->verify || !driver_data->init ||
+-	    !(driver_data->setpolicy || driver_data->target_index ||
+-		    driver_data->target) ||
+-	     (driver_data->setpolicy && (driver_data->target_index ||
+-		    driver_data->target)) ||
+-	     (!!driver_data->get_intermediate != !!driver_data->target_intermediate))
+-		return -EINVAL;
+-
+-	pr_debug("trying to register driver %s\n", driver_data->name);
+-
+-	/* Protect against concurrent CPU online/offline. */
+-	cpus_read_lock();
+-
+-	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-	if (cpufreq_driver) {
+-		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-		ret = -EEXIST;
+-		goto out;
+-	}
+-	cpufreq_driver = driver_data;
+-	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-
+-	if (driver_data->setpolicy)
+-		driver_data->flags |= CPUFREQ_CONST_LOOPS;
+-
+-	if (cpufreq_boost_supported()) {
+-		ret = create_boost_sysfs_file();
+-		if (ret)
+-			goto err_null_driver;
+-	}
+-
+-	ret = subsys_interface_register(&cpufreq_interface);
+-	if (ret)
+-		goto err_boost_unreg;
+-
+-	if (!(cpufreq_driver->flags & CPUFREQ_STICKY) &&
+-	    list_empty(&cpufreq_policy_list)) {
+-		/* if all ->init() calls failed, unregister */
+-		ret = -ENODEV;
+-		pr_debug("%s: No CPU initialized for driver %s\n", __func__,
+-			 driver_data->name);
+-		goto err_if_unreg;
+-	}
+-
+-	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN,
+-						   "cpufreq:online",
+-						   cpuhp_cpufreq_online,
+-						   cpuhp_cpufreq_offline);
+-	if (ret < 0)
+-		goto err_if_unreg;
+-	hp_online = ret;
+-	ret = 0;
+-
+-	pr_debug("driver %s up and running\n", driver_data->name);
+-	goto out;
+-
+-err_if_unreg:
+-	subsys_interface_unregister(&cpufreq_interface);
+-err_boost_unreg:
+-	remove_boost_sysfs_file();
+-err_null_driver:
+-	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-	cpufreq_driver = NULL;
+-	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-out:
+-	cpus_read_unlock();
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_register_driver);
+-
+-/**
+- * cpufreq_unregister_driver - unregister the current CPUFreq driver
+- *
+- * Unregister the current CPUFreq driver. Only call this if you have
+- * the right to do so, i.e. if you have succeeded in initialising before!
+- * Returns zero if successful, and -EINVAL if the cpufreq_driver is
+- * currently not initialised.
+- */
+-int cpufreq_unregister_driver(struct cpufreq_driver *driver)
+-{
+-	unsigned long flags;
+-
+-	if (!cpufreq_driver || (driver != cpufreq_driver))
+-		return -EINVAL;
+-
+-	pr_debug("unregistering driver %s\n", driver->name);
+-
+-	/* Protect against concurrent cpu hotplug */
+-	cpus_read_lock();
+-	subsys_interface_unregister(&cpufreq_interface);
+-	remove_boost_sysfs_file();
+-	cpuhp_remove_state_nocalls_cpuslocked(hp_online);
+-
+-	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-
+-	cpufreq_driver = NULL;
+-
+-	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-	cpus_read_unlock();
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
+-
+-/*
+- * Stop cpufreq at shutdown to make sure it isn't holding any locks
+- * or mutexes when secondary CPUs are halted.
+- */
+-static struct syscore_ops cpufreq_syscore_ops = {
+-	.shutdown = cpufreq_suspend,
 -};
 -
--struct adv7393fb_device {
--	struct fb_info info;	/* FB driver info record */
+-struct kobject *cpufreq_global_kobject;
+-EXPORT_SYMBOL(cpufreq_global_kobject);
 -
--	struct i2c_client *client;
+-static int __init cpufreq_core_init(void)
+-{
+-	if (cpufreq_disabled())
+-		return -ENODEV;
 -
--	struct dmasg *descriptor_list_head;
--	struct dmasg *vb1;
--	struct dmasg *av1;
--	struct dmasg *vb2;
--	struct dmasg *av2;
+-	cpufreq_global_kobject = kobject_create_and_add("cpufreq", &cpu_subsys.dev_root->kobj);
+-	BUG_ON(!cpufreq_global_kobject);
 -
--	dma_addr_t dma_handle;
+-	register_syscore_ops(&cpufreq_syscore_ops);
 -
--	struct fb_info bfin_adv7393_fb;
--
--	struct adv7393fb_modes *modes;
--
--	struct adv7393fb_regs *regs;	/* Registers memory map */
--	size_t regs_len;
--	size_t fb_len;
--	size_t line_len;
--	u16 open;
--	u16 *fb_mem;		/* RGB Buffer */
--
--};
--
--#define to_adv7393fb_device(_info) \
--	  (_info ? container_of(_info, struct adv7393fb_device, info) : NULL);
--
--static int bfin_adv7393_fb_open(struct fb_info *info, int user);
--static int bfin_adv7393_fb_release(struct fb_info *info, int user);
--static int bfin_adv7393_fb_check_var(struct fb_var_screeninfo *var,
--				     struct fb_info *info);
--
--static int bfin_adv7393_fb_pan_display(struct fb_var_screeninfo *var,
--				       struct fb_info *info);
--
--static int bfin_adv7393_fb_blank(int blank, struct fb_info *info);
--
--static void bfin_config_ppi(struct adv7393fb_device *fbdev);
--static int bfin_config_dma(struct adv7393fb_device *fbdev);
--static void bfin_disable_dma(void);
--static void bfin_enable_ppi(void);
--static void bfin_disable_ppi(void);
--
--static inline int adv7393_write(struct i2c_client *client, u8 reg, u8 value);
--static inline int adv7393_read(struct i2c_client *client, u8 reg);
--static int adv7393_write_block(struct i2c_client *client, const u8 *data,
--			       unsigned int len);
--
--int bfin_adv7393_fb_cursor(struct fb_info *info, struct fb_cursor *cursor);
--static int bfin_adv7393_fb_setcolreg(u_int, u_int, u_int, u_int,
--				     u_int, struct fb_info *info);
--
--#endif
-diff --git a/drivers/video/logo/Kconfig b/drivers/video/logo/Kconfig
-index 0037104..723a649 100644
---- a/drivers/video/logo/Kconfig
-+++ b/drivers/video/logo/Kconfig
-@@ -27,16 +27,6 @@ config LOGO_LINUX_CLUT224
- 	bool "Standard 224-color Linux logo"
- 	default y
- 
--config LOGO_BLACKFIN_VGA16
--	bool "16-colour Blackfin Processor Linux logo"
--	depends on BLACKFIN
--	default y
--
--config LOGO_BLACKFIN_CLUT224
--	bool "224-colour Blackfin Processor Linux logo"
--	depends on BLACKFIN
--	default y
--
- config LOGO_DEC_CLUT224
- 	bool "224-color Digital Equipment Corporation Linux logo"
- 	depends on MACH_DECSTATION || ALPHA
-diff --git a/drivers/video/logo/Makefile b/drivers/video/logo/Makefile
-index 6194373..7bba02c 100644
---- a/drivers/video/logo/Makefile
-+++ b/drivers/video/logo/Makefile
-@@ -5,8 +5,6 @@ obj-$(CONFIG_LOGO)			+= logo.o
- obj-$(CONFIG_LOGO_LINUX_MONO)		+= logo_linux_mono.o
- obj-$(CONFIG_LOGO_LINUX_VGA16)		+= logo_linux_vga16.o
- obj-$(CONFIG_LOGO_LINUX_CLUT224)	+= logo_linux_clut224.o
--obj-$(CONFIG_LOGO_BLACKFIN_CLUT224)	+= logo_blackfin_clut224.o
--obj-$(CONFIG_LOGO_BLACKFIN_VGA16)	+= logo_blackfin_vga16.o
- obj-$(CONFIG_LOGO_DEC_CLUT224)		+= logo_dec_clut224.o
- obj-$(CONFIG_LOGO_MAC_CLUT224)		+= logo_mac_clut224.o
- obj-$(CONFIG_LOGO_PARISC_CLUT224)	+= logo_parisc_clut224.o
-diff --git a/drivers/video/logo/logo.c b/drivers/video/logo/logo.c
-index 4d50bfd..05b613e 100644
---- a/drivers/video/logo/logo.c
-+++ b/drivers/video/logo/logo.c
-@@ -63,10 +63,6 @@ const struct linux_logo * __ref fb_find_logo(int depth)
- 		/* Generic Linux logo */
- 		logo = &logo_linux_vga16;
- #endif
--#ifdef CONFIG_LOGO_BLACKFIN_VGA16
--		/* Blackfin processor logo */
--		logo = &logo_blackfin_vga16;
--#endif
- #ifdef CONFIG_LOGO_SUPERH_VGA16
- 		/* SuperH Linux logo */
- 		logo = &logo_superh_vga16;
-@@ -78,10 +74,6 @@ const struct linux_logo * __ref fb_find_logo(int depth)
- 		/* Generic Linux logo */
- 		logo = &logo_linux_clut224;
- #endif
--#ifdef CONFIG_LOGO_BLACKFIN_CLUT224
--		/* Blackfin Linux logo */
--		logo = &logo_blackfin_clut224;
--#endif
- #ifdef CONFIG_LOGO_DEC_CLUT224
- 		/* DEC Linux logo on MIPS/MIPS64 or ALPHA */
- 		logo = &logo_dec_clut224;
-diff --git a/drivers/video/logo/logo_blackfin_clut224.ppm b/drivers/video/logo/logo_blackfin_clut224.ppm
-deleted file mode 100644
-index dc9a50a..0000000
---- a/drivers/video/logo/logo_blackfin_clut224.ppm
-+++ /dev/null
-@@ -1,1127 +0,0 @@
--P3
--# This was generated by the GIMP & Netpbm tools
--# gimp linux_bf.svg (create 80x80 save as linux_bf.ppm)
--# pnmquant 224 linux_bf.ppm | pnmnoraw > logo_blackfin_clut224.ppm
--#
--80 80
--255
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--1 1 1  3 3 3  4 6 6  6 6 6  4 6 6  3 3 3
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  2 2 2  10 10 10  26 26 27
--44 44 45  66 66 66  78 81 81  78 81 81  75 75 76  60 60 60
--39 39 39  20 20 20  6 6 6  1 1 1  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  2 2 2  14 14 14  47 47 47  84 84 84  75 75 76
--47 47 47  12 12 12  0 0 0  0 0 0  0 0 0  20 20 20
--53 54 54  81 81 82  74 74 74  31 31 31  6 6 6  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--4 4 4  34 34 35  84 84 84  60 60 60  4 4 4  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  17 18 18  75 75 76  66 66 66  17 18 18
--1 1 1  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  3 3 3
--42 42 43  84 84 84  8 8 8  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 3 3  36 40 40  10 16 16  0 0 0  31 31 31  84 84 84
--29 29 30  2 2 2  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  1 1 1  26 27 27
--84 84 84  3 3 3  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--15 19 19  114 115 115  110 114 114  44 46 46  0 0 0  12 12 12
--90 87 86  24 24 24  1 1 1  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  8 8 8  75 75 76
--14 14 14  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--30 40 40  133 133 133  129 130 130  78 85 85  23 31 30  0 0 0
--19 19 19  78 81 81  13 13 13  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  26 27 27  81 81 82
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--36 40 40  89 90 91  55 63 63  23 31 30  4 6 6  0 0 0
--0 0 0  60 60 60  47 47 47  2 2 2  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  2 2 2  53 54 54  34 34 35
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--4 10 10  7 9 9  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  1 1 1  84 84 84  13 13 13  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  4 6 6  78 81 81  2 2 2
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  65 64 64  36 36 36  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  10 11 11  81 81 82  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  12 12 12  67 70 70  4 4 4  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  16 16 16  81 81 82  0 0 0
--0 0 0  0 0 0  4 10 10  44 50 50  18 21 21  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 1 1  78 85 85  120 121 122  7 9 9  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  82 82 81  12 12 12  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  81 81 82  0 0 0
--0 0 0  2 2 2  8 8 8  55 63 63  108 110 110  52 58 58
--0 0 0  0 0 0  0 0 0  0 0 0  42 42 43  129 130 130
--140 142 143  114 115 115  110 114 114  129 130 130  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  75 75 76  24 24 24  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  74 74 74  0 0 0
--4 6 6  167 168 167  196 196 197  196 196 197  61 65 66  78 85 85
--0 0 0  0 0 0  0 0 0  118 118 118  202 202 203  219 219 219
--219 219 219  214 214 215  187 187 188  78 85 85  29 33 34  0 0 0
--0 0 0  0 0 0  0 0 0  60 60 60  39 39 39  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  72 71 71  0 0 0
--185 185 184  244 245 245  250 251 252  251 251 252  247 248 249  36 36 36
--0 0 0  0 0 0  13 13 13  243 243 241  252 252 252  253 253 253
--253 253 253  252 252 252  247 247 246  193 193 194  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  42 42 43  50 51 51  1 1 1
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  78 81 81  0 0 0
--247 247 246  193 193 194  95 97 97  193 193 194  255 255 255  237 237 238
--0 0 0  0 0 0  202 202 203  255 255 255  247 247 246  108 107 107
--82 85 86  167 168 167  255 255 255  248 248 249  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  34 34 35  56 56 56  2 2 2
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  78 81 81  0 0 0
--250 250 251  50 51 51  153 154 155  150 151 151  244 245 245  244 245 245
--44 50 50  84 89 89  153 154 155  255 255 255  140 142 143  0 0 0
--149 149 150  156 155 156  237 237 238  254 254 254  67 70 70  0 0 0
--0 0 0  0 0 0  0 0 0  39 39 39  47 47 47  1 1 1
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  19 19 19  81 81 82  0 0 0
--248 248 249  34 34 35  72 71 71  165 165 165  202 202 203  244 245 245
--10 16 16  82 85 86  89 90 91  255 255 255  95 97 97  0 0 0
--0 0 0  53 54 54  177 177 174  255 255 255  127 127 126  0 0 0
--0 0 0  0 0 0  0 0 0  39 39 39  36 36 36  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  14 14 14  78 81 81  0 0 0
--243 243 243  89 90 91  0 0 0  36 40 40  201 147 55  241 205 27
--241 205 27  241 205 27  241 205 27  238 192 33  108 110 110  0 0 0
--0 0 0  0 0 0  191 190 190  254 254 254  34 34 35  0 0 0
--0 0 0  0 0 0  0 0 0  42 42 43  42 42 43  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  10 10 10  75 75 76  0 0 0
--202 202 203  218 217 217  21 19 17  230 165 41  199 129 48  213 157 40
--244 212 23  243 206 27  180 121 62  243 206 27  244 209 25  226 179 40
--15 10 7  103 103 103  254 254 254  251 251 252  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  17 18 18  58 58 58  2 2 2
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  9 9 9  84 84 84  0 0 0
--0 0 0  226 226 219  213 157 40  244 209 25  245 211 23  245 211 23
--245 214 38  245 214 38  245 211 23  245 211 23  245 211 23  244 212 23
--244 212 23  241 205 27  226 179 40  196 196 197  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  74 74 74  4 6 6
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  7 7 7  84 84 84  0 0 0
--54 42 32  213 157 40  243 206 27  245 211 23  245 211 23  245 211 23
--245 215 41  245 214 35  245 211 23  245 211 23  245 214 35  245 215 41
--245 214 35  245 211 23  245 211 23  238 204 29  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  81 81 82  12 12 12
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  4 6 6  74 74 74  0 0 0
--201 147 55  241 205 27  245 211 23  245 211 23  245 211 23  245 213 29
--245 214 38  245 211 23  245 211 23  245 214 35  245 215 41  245 215 41
--245 213 29  142 83 36  142 83 36  244 209 25  1 1 1  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  74 74 74  25 25 26
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  4 4 4  72 71 71  6 6 6
--213 157 40  244 209 25  245 211 23  245 211 23  245 211 23  245 213 29
--244 212 23  245 211 23  245 214 35  245 215 41  245 215 41  245 213 29
--142 83 36  142 83 36  238 192 33  241 205 27  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  44 44 44  49 50 50
--2 2 2  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  3 3 3  65 64 64  17 18 18
--199 129 48  199 129 48  245 211 23  245 211 23  245 211 23  245 211 23
--245 211 23  244 212 23  245 214 38  245 214 38  142 83 36  142 83 36
--142 83 36  245 211 23  244 210 23  230 165 41  0 0 0  0 0 0
--78 81 81  114 115 115  73 79 79  0 0 0  3 3 3  81 81 82
--9 9 9  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  1 1 1  49 50 50  29 29 30
--90 87 86  199 129 48  173 101 51  173 101 51  245 211 23  245 211 23
--245 211 23  230 165 41  142 83 36  142 83 36  142 83 36  245 211 23
--244 210 23  241 205 27  230 165 41  175 173 165  3 3 3  0 0 0
--44 46 46  118 118 118  118 118 118  108 110 110  0 0 0  75 75 76
--28 28 28  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  1 1 1  52 53 53  26 26 27
--118 118 118  175 173 165  199 129 48  173 101 51  173 101 51  173 101 51
--173 101 51  142 83 36  173 101 51  245 211 23  244 209 25  238 204 29
--213 157 40  214 196 166  227 227 227  214 214 215  120 121 122  0 0 0
--0 0 0  108 110 110  118 118 118  118 118 118  0 0 0  23 23 23
--66 66 66  4 6 6  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  7 7 7  75 75 76  4 4 4
--127 127 126  205 205 205  181 181 181  199 129 48  226 179 40  244 209 25
--244 209 25  244 209 25  243 206 27  238 192 33  213 157 40  187 166 103
--234 234 234  248 248 249  251 252 252  248 248 249  214 214 215  0 0 0
--0 0 0  0 0 0  103 103 103  100 103 103  0 0 0  0 0 0
--78 81 81  24 24 24  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  26 27 27  82 82 81  0 0 0
--146 146 147  234 234 234  222 221 221  178 178 179  180 121 62  213 157 40
--213 157 40  213 157 40  201 147 55  180 121 62  219 219 219  243 243 241
--253 253 253  255 255 255  255 255 255  255 255 255  250 250 251  120 121 122
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--20 20 20  72 71 71  8 8 8  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  10 10 10  75 75 76  22 22 22  0 0 0
--205 205 205  253 253 253  247 248 249  212 211 212  178 178 179  161 161 162
--165 165 165  181 181 181  205 205 205  227 227 227  244 245 245  254 254 254
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  239 239 240
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  67 70 70  39 39 39  2 2 2  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  4 4 4  50 51 51  60 60 60  0 0 0  16 16 16
--249 250 251  255 255 255  255 255 255  240 240 240  209 210 210  193 193 194
--200 200 197  212 211 212  231 231 231  246 247 248  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  253 253 253
--153 154 155  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  3 3 3  84 84 84  20 20 20  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--2 2 2  33 33 34  81 81 82  0 0 0  0 0 0  231 231 231
--255 255 255  255 255 255  255 255 255  253 253 253  234 234 234  222 221 221
--227 227 227  237 237 238  250 250 251  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--240 240 240  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  26 27 27  72 71 71  8 8 8  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  1 1 1
--21 21 22  84 84 84  7 7 7  0 0 0  150 151 151  252 252 252
--255 255 255  255 255 255  255 255 255  255 255 255  252 252 252  244 245 245
--246 247 248  253 253 253  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--251 251 252  9 9 9  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  65 64 64  47 47 47  3 3 3
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  12 12 12
--75 75 76  26 26 27  0 0 0  1 1 1  239 239 240  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  202 202 203  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  84 84 84  28 28 29
--1 1 1  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  4 4 4  55 55 55
--60 60 60  0 0 0  0 0 0  95 97 97  248 248 249  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  244 245 245  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  14 14 14  82 82 81
--15 15 15  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  1 1 1  29 29 30  84 84 84
--0 0 0  0 0 0  0 0 0  156 155 156  247 247 246  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  247 247 246  240 240 240  232 232 233  232 232 233
--243 243 243  253 253 253  53 54 54  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  44 44 44
--60 60 60  6 6 6  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  10 10 10  81 81 82  14 14 14
--0 0 0  0 0 0  6 6 6  150 151 151  214 214 215  250 251 252
--255 255 255  255 255 255  255 255 255  246 247 248  218 217 217  214 214 215
--218 217 217  244 245 245  255 255 255  255 255 255  255 255 255  250 248 249
--232 232 233  214 214 215  196 196 197  182 183 184  181 181 181  181 181 181
--187 187 188  240 240 240  232 232 233  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--78 81 81  34 34 35  1 1 1  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  1 1 1  39 39 39  74 74 74  0 0 0
--0 0 0  0 0 0  60 60 60  161 161 162  200 200 197  229 229 230
--251 251 252  255 255 255  255 255 255  255 255 255  243 243 241  214 214 215
--248 248 249  255 255 255  255 255 255  255 255 255  255 255 255  254 254 254
--239 239 240  214 214 215  193 193 194  182 183 184  178 178 179  176 177 177
--176 177 177  182 183 184  248 248 249  14 14 14  0 0 0  61 65 66
--10 16 16  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--10 10 10  84 84 84  13 13 13  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  10 11 11  82 82 81  7 7 7  0 0 0
--0 0 0  0 0 0  165 165 165  229 229 230  249 250 251  254 254 254
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  253 253 253  240 240 240  227 227 227  205 205 205
--181 181 181  176 177 177  191 190 190  227 227 227  0 0 0  44 50 50
--84 89 89  61 65 66  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  58 58 58  49 50 50  3 3 3  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  1 1 1  36 36 36  66 66 66  0 0 0  29 33 34
--0 3 3  26 27 27  234 234 234  254 254 254  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--254 254 254  253 253 254  252 253 253  253 253 254  253 254 254  253 254 254
--254 254 254  255 255 255  255 255 255  255 255 255  255 255 255  251 251 252
--227 227 227  187 187 188  176 177 177  222 221 221  13 13 13  0 0 0
--12 15 14  73 79 79  36 40 40  0 0 0  0 0 0  0 0 0
--0 0 0  1 1 1  90 87 86  17 18 18  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  7 7 7  78 81 81  12 12 12  23 31 30  52 58 58
--0 0 0  209 210 210  253 253 253  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  254 254 254
--251 251 252  150 151 151  103 103 103  129 130 130  196 196 197  250 250 251
--252 252 253  254 254 254  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  240 240 240  193 193 194  196 196 197  229 229 230  0 0 0
--0 0 0  4 10 10  30 40 40  0 3 3  0 0 0  0 0 0
--0 0 0  0 0 0  47 47 47  53 54 54  3 3 3  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  23 23 23  81 81 82  0 0 0  52 58 58  36 40 40
--42 42 43  250 250 251  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  254 254 254
--227 227 227  7 7 7  7 7 7  7 7 7  7 7 7  44 44 45
--156 155 156  249 250 251  253 253 253  254 254 254  255 255 255  255 255 255
--255 255 255  255 255 255  247 247 246  222 221 221  239 239 240  0 0 0
--30 40 40  44 50 50  23 31 30  29 33 34  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  90 87 86  16 16 16  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--2 2 2  50 51 51  42 42 43  29 33 34  52 58 58  0 0 0
--232 232 233  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  254 254 254
--250 251 252  44 44 44  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  56 56 56  209 210 210  252 252 253  254 254 254  255 255 255
--255 255 255  255 255 255  255 255 255  254 253 253  249 250 251  146 146 147
--36 40 40  44 50 50  36 40 40  67 70 70  61 65 66  0 0 0
--0 0 0  0 0 0  0 0 0  55 55 55  44 44 45  1 1 1
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--10 10 10  81 81 82  1 1 1  52 58 58  44 50 50  52 53 53
--251 251 252  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  254 254 254
--253 253 253  187 187 188  8 8 8  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  19 19 19  178 178 179  252 252 253  254 254 254
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  237 237 238
--10 16 16  30 40 40  0 3 3  23 31 30  84 89 89  0 0 0
--0 0 0  0 0 0  0 0 0  3 3 3  81 81 82  9 9 9
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--29 29 30  72 71 71  10 16 16  52 58 58  0 0 0  222 221 221
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--254 254 254  251 251 252  95 97 97  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  10 10 10  161 161 162  251 252 252
--254 254 254  255 255 255  255 255 255  255 255 255  255 255 255  248 248 249
--0 0 0  0 0 0  0 0 0  0 0 0  84 89 89  0 3 3
--0 0 0  0 0 0  0 0 0  0 0 0  74 74 74  26 27 27
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  4 4 4
--65 64 64  20 20 20  20 25 25  30 40 40  0 0 0  247 247 246
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  253 253 254  222 221 221  9 9 9  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  8 8 8  149 149 150
--252 252 253  254 254 254  255 255 255  255 255 255  255 255 255  252 252 252
--0 0 0  0 0 0  0 0 0  0 0 0  73 79 79  12 15 14
--0 0 0  0 0 0  0 0 0  0 0 0  36 36 36  58 58 58
--3 3 3  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  20 20 20
--74 74 74  0 0 0  4 10 10  4 10 10  36 36 36  252 252 252
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  227 227 227  253 253 253  255 255 255
--255 255 255  254 254 254  250 251 252  65 64 64  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  8 8 8
--146 146 147  251 252 252  254 254 254  255 255 255  255 255 255  253 254 254
--0 0 0  0 0 0  0 0 0  0 0 0  52 58 58  10 16 16
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  82 82 81
--9 9 9  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  4 6 6  65 64 64
--25 25 25  0 3 3  30 40 40  0 0 0  187 187 188  254 254 254
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  193 193 194  253 252 252  255 255 255
--255 255 255  255 255 255  252 253 253  129 130 130  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--8 8 8  149 149 150  252 252 253  254 254 254  255 255 255  254 254 254
--52 53 53  0 0 0  0 0 0  0 0 0  20 25 25  2 5 4
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  81 81 82
--20 20 20  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  26 26 27  81 81 82
--0 0 0  18 21 21  73 79 79  0 0 0  237 237 238  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  182 183 184  255 255 255  255 255 255
--255 255 255  255 255 255  253 253 253  176 177 177  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  8 8 8  153 154 155  251 252 252  254 254 254  255 255 255
--150 151 151  0 0 0  0 0 0  0 0 0  20 25 25  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  65 64 64
--33 33 34  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  6 6 6  67 70 70  20 20 20
--0 0 0  23 31 30  82 85 86  0 0 0  247 247 246  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  182 183 184  255 255 255  255 255 255
--255 255 255  255 255 255  253 254 254  214 214 215  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  8 8 8  156 155 156  252 252 253  254 254 254
--167 168 167  0 0 0  0 0 0  0 0 0  67 70 70  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  47 47 47
--44 44 44  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  21 21 22  75 75 76  0 0 0
--0 0 0  29 33 34  84 89 89  0 0 0  248 248 249  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  248 248 249  181 181 181  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  240 240 240  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  8 8 8  161 161 162  251 252 252
--185 185 184  4 4 4  0 0 0  10 11 11  100 103 103  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  36 36 36
--55 55 55  2 2 2  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  33 33 34  50 51 51  0 0 0
--0 0 0  9 11 11  82 85 86  10 16 16  248 248 249  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  245 244 245  179 180 181  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  251 252 252  20 20 20  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  10 10 10  161 161 162
--205 205 205  17 18 18  0 0 0  95 97 97  78 81 81  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  36 36 36
--53 54 54  1 1 1  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  31 31 31  58 58 58  0 0 0
--0 0 0  0 0 0  67 70 70  78 81 81  248 248 249  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  234 234 234  179 180 181  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  251 252 252  23 23 23  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--10 11 11  84 84 84  161 161 162  209 210 210  229 229 230  237 237 238
--202 202 203  26 26 27  9 11 11  44 50 50  0 0 0  4 6 6
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  52 53 53
--39 39 39  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  23 23 23  78 81 81  213 157 40
--243 206 27  243 206 27  54 42 32  73 79 79  222 221 221  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  238 238 236  178 178 179  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  251 252 253  36 36 36  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  84 84 84
--222 221 221  251 252 252  252 253 253  253 253 253  253 254 254  252 252 253
--146 146 147  140 142 143  156 155 156  110 114 114  26 27 27  82 85 86
--84 89 89  95 97 97  36 40 40  0 0 0  0 0 0  74 74 74
--23 23 23  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  2 2 2  14 14 14
--24 24 24  26 26 27  26 26 27  26 26 27  25 25 26  21 21 22
--7 7 7  0 0 0  1 1 1  34 34 35  238 192 33  244 210 23
--244 212 23  244 212 23  244 210 23  88 79 47  200 200 197  254 254 254
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  244 245 245  179 180 181  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  252 252 253  36 36 36  7 7 7
--7 7 7  7 7 7  7 7 7  8 8 8  149 149 150  251 251 252
--252 252 253  253 253 253  253 253 253  250 248 249  239 223 156  239 223 156
--120 121 122  182 183 184  176 177 177  120 121 122  33 33 34  3 3 3
--0 0 0  67 70 70  146 146 147  20 25 25  1 1 1  82 82 81
--9 9 9  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  19 19 19  89 90 91
--146 146 147  150 151 151  150 151 151  150 151 151  150 151 151  129 130 130
--58 58 58  6 6 6  14 14 14  201 147 55  245 211 23  245 213 29
--245 214 35  245 215 41  245 213 29  244 210 23  142 83 36  232 232 233
--254 254 254  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  185 185 184  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  251 252 252  50 51 51  7 7 7
--7 7 7  7 7 7  7 7 7  146 146 147  251 252 252  252 253 253
--251 252 253  239 239 240  171 168 154  129 130 130  137 136 134  175 173 165
--221 218 200  65 64 64  22 22 22  186 186 187  114 115 115  26 26 27
--2 2 2  0 0 0  61 65 66  31 33 27  238 192 33  108 96 91
--9 9 9  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  2 2 2  52 53 53  178 178 179
--21 21 22  7 7 7  7 7 7  7 7 7  7 7 7  118 118 118
--137 136 134  36 36 36  65 64 64  243 206 27  244 212 23  245 215 41
--245 215 41  245 215 41  245 215 41  244 209 25  244 209 25  1 1 1
--219 219 219  253 253 253  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  214 214 215  255 255 255  255 255 255
--255 255 255  255 255 255  254 254 254  252 252 253  50 51 51  7 7 7
--7 7 7  7 7 7  84 84 84  250 251 252  252 253 253  251 251 252
--167 168 167  22 22 22  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  34 34 35  187 187 188  103 103 103
--29 29 30  3 3 3  7 9 9  238 204 29  245 215 41  245 214 35
--28 28 28  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  7 7 7  90 87 86  178 178 179
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  16 16 16
--193 193 194  133 133 133  187 166 103  245 218 76  245 218 76  245 216 51
--245 216 51  245 218 76  246 224 96  245 218 76  245 218 76  245 218 76
--25 25 25  186 186 187  252 252 252  254 254 254  254 254 254  253 254 254
--254 254 254  254 254 254  254 254 254  246 247 248  254 254 254  253 254 254
--254 254 254  254 254 254  253 254 254  251 252 252  36 36 36  7 7 7
--7 7 7  20 20 20  229 229 230  253 253 253  252 253 253  178 178 179
--10 10 10  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  42 42 43  196 196 197
--118 118 118  33 33 34  238 204 29  245 215 41  245 215 41  245 215 41
--49 50 50  1 1 1  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  17 18 18  120 121 122  137 136 134
--7 7 7  7 7 7  34 34 35  20 20 20  7 7 7  7 7 7
--202 202 203  209 206 202  193 187 162  193 187 162  248 234 156  245 218 76
--245 218 76  248 234 156  193 187 162  193 187 162  193 187 162  214 196 166
--240 219 129  95 97 97  196 196 197  186 186 187  187 187 188  196 196 197
--252 252 253  251 252 253  212 211 212  187 187 188  196 196 197  251 252 252
--218 217 217  187 187 188  191 190 190  250 251 252  24 24 24  7 7 7
--7 7 7  110 114 114  252 252 253  253 254 254  250 251 252  89 90 91
--89 90 91  129 130 130  127 127 126  44 44 44  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  49 50 50
--202 202 203  214 196 166  245 216 51  245 214 38  245 214 35  245 214 38
--58 58 58  2 2 2  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  31 31 31  156 155 156  82 82 81
--7 7 7  10 10 10  237 237 238  66 66 66  7 7 7  25 25 25
--247 248 249  81 81 82  7 7 7  31 31 31  247 237 174  245 218 76
--246 226 108  200 200 197  7 7 7  7 7 7  7 7 7  137 136 134
--247 237 174  193 193 194  72 71 71  7 7 7  7 7 7  8 8 8
--196 196 197  250 251 252  67 70 70  7 7 7  84 84 84  244 245 245
--47 47 47  7 7 7  118 118 118  249 250 251  12 12 12  7 7 7
--9 9 9  218 217 217  253 253 253  254 254 254  252 253 253  251 251 252
--249 250 251  237 237 238  95 97 97  9 9 9  15 15 15  95 97 97
--47 47 47  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--66 66 66  240 230 197  246 226 108  245 214 38  245 211 23  244 212 23
--65 64 64  3 3 3  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  2 2 2  52 53 53  185 185 184  25 25 25
--7 7 7  60 60 60  240 240 240  14 14 14  7 7 7  84 84 84
--247 248 249  23 23 23  7 7 7  94 91 88  248 234 156  245 218 76
--248 234 156  127 127 126  7 7 7  7 7 7  7 7 7  167 168 167
--251 248 240  65 64 64  7 7 7  7 7 7  7 7 7  7 7 7
--84 84 84  243 243 243  15 15 15  7 7 7  140 142 143  146 146 147
--7 7 7  33 33 34  237 237 238  243 243 243  21 21 22  120 121 122
--218 217 217  252 252 253  254 254 254  253 253 254  252 253 253  251 252 252
--247 248 249  72 71 71  7 7 7  58 58 58  222 221 221  248 248 249
--75 75 76  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  82 82 81  246 239 193  246 226 108  245 216 51  245 214 38
--238 192 33  21 21 22  1 1 1  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  8 8 8  90 87 86  182 183 184  7 7 7
--7 7 7  120 121 122  187 187 188  7 7 7  7 7 7  146 146 147
--205 205 205  7 7 7  7 7 7  153 153 148  240 219 129  246 224 96
--246 239 193  39 39 39  60 60 60  108 110 110  7 7 7  202 202 203
--227 227 227  7 7 7  7 7 7  205 205 205  89 90 91  7 7 7
--120 121 122  193 193 194  7 7 7  7 7 7  186 186 187  25 25 25
--7 7 7  167 168 167  251 251 252  243 243 243  214 214 215  250 251 252
--251 252 253  254 254 254  253 253 253  219 219 219  140 140 139  140 140 139
--118 118 118  7 7 7  52 53 53  237 237 238  247 247 246  176 177 177
--8 8 8  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  95 97 97  246 239 193  246 226 108  245 216 51
--245 214 38  201 147 55  31 31 31  103 103 103  103 103 103  72 71 71
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  17 18 18  127 127 126  140 140 139  7 7 7
--7 7 7  17 18 18  17 18 18  7 7 7  95 97 97  244 245 245
--146 146 147  7 7 7  7 7 7  200 200 197  246 226 108  240 219 129
--194 194 184  7 7 7  140 140 139  89 90 91  7 7 7  232 232 233
--165 165 165  7 7 7  31 31 31  249 250 251  39 39 39  7 7 7
--176 177 177  133 133 133  7 7 7  22 22 22  108 110 110  7 7 7
--72 71 71  251 252 252  252 253 253  250 251 252  247 248 249  205 205 205
--251 252 253  254 254 254  252 252 253  84 84 84  7 7 7  7 7 7
--7 7 7  7 7 7  140 142 143  247 248 249  140 140 139  14 14 14
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  16 16 16
--14 14 14  7 7 7  7 7 7  114 115 115  246 239 193  246 224 96
--245 216 51  245 216 51  243 235 220  176 177 177  185 185 184  229 229 230
--47 47 47  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  31 31 31  156 155 156  90 87 86  7 7 7
--7 7 7  7 7 7  7 7 7  31 31 31  243 243 241  247 247 246
--84 84 84  7 7 7  26 27 27  246 239 193  246 226 108  248 234 156
--108 110 110  7 7 7  212 211 212  44 44 44  22 22 22  249 250 251
--108 107 107  7 7 7  89 90 91  238 238 236  114 115 115  118 118 118
--231 231 231  75 75 76  7 7 7  34 34 35  10 11 11  12 12 12
--214 214 215  253 253 253  253 253 253  200 200 197  31 31 31  103 103 103
--252 252 253  252 253 253  218 217 217  9 9 9  7 7 7  7 7 7
--7 7 7  7 7 7  25 25 25  39 39 39  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  103 103 103  234 234 234
--181 181 181  7 7 7  7 7 7  7 7 7  133 133 133  247 237 174
--246 224 96  246 226 108  185 185 184  177 177 174  153 154 155  181 181 181
--140 140 139  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  1 1 1  49 50 50  186 186 187  28 28 28  7 7 7
--12 12 12  22 22 22  7 7 7  7 7 7  108 107 107  247 247 246
--25 25 25  7 7 7  90 87 86  247 237 174  246 226 108  246 239 193
--28 28 28  44 44 44  237 237 238  9 9 9  53 54 54  249 250 251
--49 50 50  7 7 7  153 153 148  249 241 199  214 196 166  185 185 184
--229 229 230  19 19 19  7 7 7  7 7 7  7 7 7  103 103 103
--251 252 253  254 254 254  253 253 253  150 151 151  7 7 7  187 187 188
--252 252 253  251 251 252  103 103 103  7 7 7  7 7 7  7 7 7
--7 7 7  23 23 23  17 18 18  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  12 12 12  153 153 148  246 239 193  249 241 199
--161 161 162  9 9 9  84 84 84  108 110 110  25 25 25  153 153 148
--247 237 174  246 224 96  218 217 217  165 165 165  182 183 184  193 193 194
--114 115 115  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  4 4 4  74 74 74  181 181 181  7 7 7  7 7 7
--110 114 114  200 200 197  7 7 7  7 7 7  60 60 60  209 210 210
--7 7 7  7 7 7  146 146 147  248 234 156  248 234 156  177 177 174
--7 7 7  118 118 118  193 193 194  7 7 7  84 84 84  232 232 233
--8 8 8  7 7 7  209 210 210  221 218 200  193 187 162  219 219 219
--200 200 197  7 7 7  7 7 7  7 7 7  7 7 7  95 97 97
--251 252 252  254 254 254  252 253 253  118 118 118  29 29 30  247 248 249
--252 252 253  227 227 227  16 16 16  7 7 7  7 7 7  7 7 7
--100 103 103  218 217 217  219 218 214  7 7 7  7 7 7  7 7 7
--7 7 7  21 21 22  185 185 184  246 239 193  248 234 156  240 230 197
--60 60 60  194 194 184  246 239 193  249 241 199  137 136 134  10 10 10
--171 168 154  248 234 156  248 234 156  226 226 219  209 210 210  249 241 199
--28 28 28  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  13 13 13  108 110 110  146 146 147  7 7 7  7 7 7
--167 168 167  140 140 139  7 7 7  7 7 7  120 121 122  146 146 147
--7 7 7  7 7 7  194 194 184  240 219 129  247 237 174  95 97 97
--7 7 7  95 97 97  90 87 86  7 7 7  118 118 118  176 177 177
--7 7 7  28 28 28  248 248 249  44 44 45  7 7 7  167 168 167
--140 140 139  7 7 7  36 36 36  74 74 74  7 7 7  65 64 64
--251 252 253  254 254 254  251 252 252  81 81 82  108 110 110  251 252 252
--251 251 252  127 127 126  7 7 7  7 7 7  8 8 8  140 140 139
--181 181 181  140 140 139  221 218 200  7 7 7  7 7 7  7 7 7
--34 34 35  209 210 210  231 231 231  246 239 193  247 237 174  194 194 184
--227 227 227  249 241 199  240 219 129  248 234 156  153 153 148  7 7 7
--13 13 13  185 185 184  248 234 156  245 218 76  245 216 51  245 214 38
--31 31 31  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  31 31 31  153 154 155  89 90 91  7 7 7  8 8 8
--232 232 233  82 82 81  7 7 7  7 7 7  179 180 181  89 90 91
--7 7 7  24 24 24  243 235 220  248 234 156  240 230 197  20 20 20
--7 7 7  7 7 7  7 7 7  7 7 7  149 149 150  118 118 118
--7 7 7  90 87 86  229 229 230  7 7 7  7 7 7  229 229 230
--82 82 81  7 7 7  95 97 97  100 103 103  7 7 7  34 34 35
--251 252 252  253 253 254  251 251 252  47 47 47  193 193 194  251 252 252
--239 239 240  23 23 23  7 7 7  13 13 13  165 165 165  234 234 234
--149 149 150  146 114 101  200 200 197  7 7 7  7 7 7  52 53 53
--227 227 227  167 168 167  16 16 16  214 196 166  248 234 156  243 235 220
--219 219 219  156 155 156  247 237 174  246 239 193  75 75 76  7 7 7
--60 60 60  227 227 227  243 235 220  240 219 129  245 218 76  245 213 29
--16 16 16  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--1 1 1  49 50 50  185 185 184  33 33 34  7 7 7  10 11 11
--56 56 56  16 16 16  7 7 7  10 10 10  237 237 238  26 27 27
--7 7 7  55 55 55  185 185 184  221 218 200  167 168 167  7 7 7
--20 20 20  39 39 39  10 11 11  7 7 7  181 181 181  58 58 58
--7 7 7  103 103 103  133 133 133  7 7 7  44 44 44  247 248 249
--24 24 24  7 7 7  156 155 156  129 130 130  7 7 7  9 9 9
--244 245 245  252 253 253  237 237 238  34 34 35  248 248 249  251 251 252
--161 161 162  7 7 7  24 24 24  187 187 188  212 211 212  67 70 70
--187 187 188  173 170 143  209 206 202  10 10 10  95 97 97  237 237 238
--129 130 130  8 8 8  89 90 91  246 239 193  247 237 174  177 177 174
--17 18 18  137 136 134  249 241 199  219 218 214  10 10 10  95 97 97
--243 243 243  150 151 151  31 31 31  221 218 200  240 219 129  53 54 54
--3 3 3  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--4 4 4  72 71 71  182 183 184  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  12 12 12  161 161 162  209 210 210  7 7 7
--7 7 7  7 7 7  7 7 7  187 187 188  82 82 81  7 7 7
--146 146 147  247 248 249  17 18 18  7 7 7  212 211 212  47 47 47
--7 7 7  7 7 7  7 7 7  8 8 8  146 146 147  205 205 205
--7 7 7  7 7 7  214 214 215  156 155 156  7 7 7  7 7 7
--218 217 217  251 252 252  186 186 187  110 114 114  249 250 251  248 248 249
--75 75 76  34 34 35  205 205 205  129 130 130  16 16 16  7 7 7
--156 155 156  214 196 166  240 230 197  243 243 241  227 227 227  74 74 74
--7 7 7  29 29 30  226 226 219  249 241 199  175 173 165  14 14 14
--9 9 9  221 218 200  246 239 193  153 153 148  146 146 147  246 247 248
--110 114 114  7 7 7  7 7 7  42 42 43  193 193 194  95 97 97
--19 19 19  1 1 1  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--6 6 6  84 84 84  140 142 143  7 7 7  7 7 7  7 7 7
--7 7 7  20 20 20  177 177 174  249 241 199  149 149 150  7 7 7
--7 7 7  7 7 7  10 11 11  226 226 219  13 13 13  8 8 8
--219 218 214  219 218 214  7 7 7  8 8 8  238 238 236  200 200 197
--13 13 13  7 7 7  13 13 13  161 161 162  243 235 220  146 146 147
--7 7 7  29 29 30  232 232 233  176 177 177  7 7 7  7 7 7
--182 183 184  237 237 238  129 130 130  167 168 167  176 177 177  202 202 203
--10 11 11  95 97 97  44 44 45  7 7 7  7 7 7  7 7 7
--75 75 76  226 226 219  243 235 220  156 155 156  24 24 24  7 7 7
--7 7 7  176 177 177  247 247 246  200 200 197  17 18 18  7 7 7
--49 50 50  246 239 193  248 234 156  251 248 240  239 239 240  84 84 84
--7 7 7  7 7 7  7 7 7  7 7 7  60 60 60  187 187 188
--84 84 84  14 14 14  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--4 4 4  53 54 54  137 136 134  156 155 156  161 161 162  161 161 162
--167 168 167  239 223 156  240 219 129  246 226 108  239 223 156  239 223 156
--239 223 156  239 223 156  214 196 166  239 223 156  193 187 162  193 187 162
--248 234 156  239 223 156  193 187 162  193 187 162  248 234 156  248 234 156
--214 196 166  193 187 162  214 196 166  248 234 156  240 219 129  214 196 166
--193 187 162  193 187 162  171 168 154  146 146 147  137 136 134  137 136 134
--161 161 162  209 210 210  65 64 64  202 202 203  179 180 181  140 140 139
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  60 60 60  39 39 39  7 7 7  7 7 7  7 7 7
--66 66 66  249 250 251  202 202 203  16 16 16  7 7 7  7 7 7
--23 23 23  243 235 220  246 239 193  226 226 219  52 53 53  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  75 75 76
--176 177 177  66 66 66  9 9 9  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  10 10 10  28 28 29  34 34 35  36 36 36  36 36 36
--44 44 45  146 114 101  241 207 50  241 207 50  241 207 50  241 211 63
--241 211 63  241 211 63  241 211 63  241 211 63  241 211 63  245 216 51
--245 216 51  245 216 51  241 211 63  241 211 63  245 216 51  241 211 63
--245 218 76  245 218 76  245 216 51  245 215 41  245 214 38  241 207 50
--241 211 63  201 147 55  88 79 47  29 29 30  34 34 35  42 42 43
--103 103 103  191 190 190  75 75 76  196 196 197  200 200 197  65 64 64
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--90 87 86  146 146 147  19 19 19  7 7 7  7 7 7  7 7 7
--7 7 7  90 87 86  140 140 139  31 31 31  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--103 103 103  161 161 162  53 54 54  7 7 7  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  12 12 12  50 51 51  146 114 101  180 121 62  199 129 48
--201 147 55  213 157 40  213 157 40  230 165 41  226 179 40  226 179 40
--238 192 33  241 205 27  244 209 25  244 210 23  244 212 23  245 211 23
--245 211 23  245 211 23  245 211 23  244 209 25  238 204 29  226 179 40
--213 157 40  199 129 48  54 42 32  0 0 0  4 6 6  44 44 45
--150 151 151  129 130 130  137 136 134  205 205 205  202 202 203  8 8 8
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  129 130 130  146 146 147  47 47 47  4 4 4  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  2 2 2  12 12 12  28 28 29  49 50 50
--74 74 74  108 96 91  180 121 62  180 121 62  199 129 48  201 147 55
--213 157 40  230 165 41  226 179 40  238 192 33  241 205 27  241 205 27
--243 206 27  243 206 27  241 205 27  238 204 29  226 179 40  213 157 40
--199 129 48  199 129 48  21 19 17  65 64 64  103 103 103  167 168 167
--202 202 203  24 24 24  193 193 194  229 229 230  140 140 139  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  8 8 8  156 155 156  133 133 133  36 36 36  3 3 3
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  1 1 1
--4 4 4  10 11 11  21 21 22  39 39 39  60 60 60  108 96 91
--180 121 62  199 129 48  199 129 48  213 157 40  230 165 41  226 179 40
--226 179 40  226 179 40  226 179 40  226 179 40  213 157 40  199 129 48
--180 121 62  99 91 79  72 71 71  56 56 56  129 130 130  167 168 167
--21 21 22  17 18 18  231 231 231  229 229 230  52 53 53  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  13 13 13  176 177 177  120 121 122  33 33 34
--2 2 2  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  2 2 2  8 8 8
--21 21 22  47 47 47  99 91 79  180 121 62  199 129 48  199 129 48
--201 147 55  213 157 40  213 157 40  201 147 55  199 129 48  180 121 62
--99 91 79  26 26 27  9 9 9  60 60 60  186 186 187  31 31 31
--7 7 7  60 60 60  243 243 243  209 210 210  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  7 7 7  7 7 7  7 7 7
--7 7 7  7 7 7  7 7 7  26 27 27  193 193 194  108 110 110
--22 22 22  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  1 1 1  8 8 8  24 24 24  58 58 58  108 96 91
--180 121 62  180 121 62  180 121 62  180 121 62  180 121 62  72 71 71
--15 15 15  0 0 0  4 6 6  75 75 76  156 155 156  24 24 24
--24 24 24  108 107 107  232 232 233  137 136 134  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  24 24 24  24 24 24
--24 24 24  24 24 24  24 24 24  24 24 24  58 58 58  176 177 177
--60 60 60  3 3 3
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  2 2 2  12 12 12
--26 27 27  44 44 44  55 55 55  50 51 51  29 29 30  8 8 8
--0 0 0  0 0 0  3 3 3  47 47 47  127 127 126  150 151 151
--150 151 151  140 142 143  129 130 130  140 142 143  150 151 151  150 151 151
--150 151 151  150 151 151  150 151 151  150 151 151  150 151 151  150 151 151
--150 151 151  150 151 151  153 154 155  161 161 162  165 165 165  167 168 167
--177 177 174  167 168 167  161 161 162  156 155 156  150 151 151  150 151 151
--150 151 151  150 151 151  150 151 151  150 151 151  150 151 151  150 151 151
--150 151 151  150 151 151  150 151 151  150 151 151  150 151 151  150 151 151
--150 151 151  150 151 151  150 151 151  150 151 151  149 149 150  127 127 126
--44 44 45  2 2 2
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  2 2 2  1 1 1  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  7 7 7  21 21 22  25 25 26
--25 25 26  24 24 24  20 20 20  23 23 24  25 25 26  26 26 27
--26 26 27  26 26 27  26 26 27  26 26 27  26 26 27  26 26 27
--26 26 27  26 26 27  26 26 27  26 26 27  26 26 27  26 27 27
--28 28 29  26 27 27  26 26 27  26 26 27  26 26 27  26 26 27
--26 26 27  26 26 27  26 26 27  26 26 27  26 26 27  26 26 27
--26 26 27  26 26 27  26 26 27  26 26 27  26 26 27  26 26 27
--26 26 27  26 26 27  26 26 27  26 26 27  25 25 26  21 21 22
--7 7 7  0 0 0
-diff --git a/drivers/video/logo/logo_blackfin_vga16.ppm b/drivers/video/logo/logo_blackfin_vga16.ppm
-deleted file mode 100644
-index 1352b02..0000000
---- a/drivers/video/logo/logo_blackfin_vga16.ppm
-+++ /dev/null
-@@ -1,1127 +0,0 @@
--P3
--# This was generated by the GIMP & Netpbm tools
--# gimp linux_bf.svg (create 80x80 save as linux_bf.ppm)
--# ppmquant -mapfile clut_vga16.ppm linux_bf.ppm | pnmnoraw > logo_blackfin_vga16.ppm
--#
--80 80
--255
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  85 85 85  85 85 85  85 85 85  85 85 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  85 85 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  85 85 85  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  170 170 170  170 170 170  85 85 85  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--170 170 170  85 85 85  85 85 85  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  170 170 170  170 170 170  170 170 170  85 85 85  85 85 85
--0 0 0  0 0 0  0 0 0  85 85 85  170 170 170  255 255 255
--255 255 255  255 255 255  170 170 170  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 170 170  255 255 255  255 255 255  255 255 255  255 255 255  0 0 0
--0 0 0  0 0 0  0 0 0  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--255 255 255  170 170 170  85 85 85  170 170 170  255 255 255  255 255 255
--0 0 0  0 0 0  170 170 170  255 255 255  255 255 255  85 85 85
--85 85 85  170 170 170  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--255 255 255  85 85 85  170 170 170  170 170 170  255 255 255  255 255 255
--85 85 85  85 85 85  170 170 170  255 255 255  170 170 170  0 0 0
--170 170 170  170 170 170  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--255 255 255  0 0 0  85 85 85  170 170 170  170 170 170  255 255 255
--0 0 0  85 85 85  85 85 85  255 255 255  85 85 85  0 0 0
--0 0 0  85 85 85  170 170 170  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--255 255 255  85 85 85  0 0 0  0 0 0  255 85 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  85 85 85  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 170 170  255 255 255  0 0 0  255 85 85  170 85 0  170 85 0
--255 255 85  255 255 85  170 85 0  255 255 85  255 255 85  255 255 85
--0 0 0  85 85 85  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  255 255 255  255 85 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  255 85 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 85 0  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  170 85 0  85 85 85  255 255 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--255 85 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--170 85 0  85 85 85  255 255 85  255 255 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 85 0  170 85 0  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  170 85 0  170 85 0
--170 85 0  255 255 85  255 255 85  255 85 85  0 0 0  0 0 0
--85 85 85  85 85 85  85 85 85  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--85 85 85  170 85 0  170 85 0  170 85 0  255 255 85  255 255 85
--255 255 85  255 85 85  170 85 0  170 85 0  170 85 0  255 255 85
--255 255 85  255 255 85  255 85 85  170 170 170  0 0 0  0 0 0
--85 85 85  85 85 85  85 85 85  85 85 85  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--85 85 85  170 170 170  170 85 0  170 85 0  170 85 0  170 85 0
--170 85 0  170 85 0  170 85 0  255 255 85  255 255 85  255 255 85
--255 85 85  170 170 170  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  85 85 85  85 85 85  85 85 85  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 170 170  170 170 170  170 170 170  170 85 0  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 85 85  170 170 170
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--170 170 170  255 255 255  255 255 255  170 170 170  170 85 0  255 85 85
--255 85 85  255 85 85  255 85 85  255 85 85  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--170 170 170  255 255 255  255 255 255  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  0 0 0  0 0 0
--255 255 255  255 255 255  255 255 255  255 255 255  170 170 170  170 170 170
--170 170 170  170 170 170  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  170 170 170  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--85 85 85  0 0 0  0 0 0  85 85 85  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  255 255 255  255 255 255  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  170 170 170  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  255 255 255  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  170 170 170
--170 170 170  170 170 170  170 170 170  255 255 255  0 0 0  85 85 85
--85 85 85  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  170 170 170  170 170 170  255 255 255  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  0 0 0  85 85 85
--0 0 0  170 170 170  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  170 170 170  85 85 85  170 170 170  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  170 170 170  170 170 170  255 255 255  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  85 85 85  0 0 0
--0 0 0  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--170 170 170  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  85 85 85  0 0 0
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  170 170 170
--0 0 0  85 85 85  0 0 0  85 85 85  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  85 85 85  85 85 85  85 85 85
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  170 170 170  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  85 85 85  0 0 0  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  170 170 170
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--170 170 170  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  170 170 170  255 255 255  255 255 255  255 255 255  255 255 255
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  85 85 85  0 0 0  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  170 170 170
--170 170 170  0 0 0  0 0 0  85 85 85  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  170 170 170  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 85 0
--255 255 85  255 255 85  0 0 0  85 85 85  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--170 170 170  170 170 170  170 170 170  85 85 85  0 0 0  85 85 85
--85 85 85  85 85 85  0 0 0  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  85 85 85  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 85  170 170 170
--85 85 85  170 170 170  170 170 170  85 85 85  0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--85 85 85  0 0 0  0 0 0  170 85 0  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  170 85 0  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--255 255 255  255 255 255  170 170 170  170 170 170  170 170 170  170 170 170
--255 255 255  85 85 85  0 0 0  170 170 170  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  0 0 0  255 255 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--170 170 170  0 0 0  85 85 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  0 0 0
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  85 85 85  255 255 255  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0  0 0 0  255 255 85  255 255 85  255 255 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--170 170 170  170 170 170  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--0 0 0  170 170 170  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  0 0 0  0 0 0
--0 0 0  0 0 0  255 255 255  255 255 255  255 255 255  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  170 170 170
--85 85 85  0 0 0  255 255 85  255 255 85  255 255 85  255 255 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--170 170 170  170 170 170  170 170 170  170 170 170  255 255 85  255 255 85
--255 255 85  255 255 85  170 170 170  170 170 170  170 170 170  170 170 170
--255 255 85  85 85 85  170 170 170  170 170 170  170 170 170  170 170 170
--255 255 255  255 255 255  170 170 170  170 170 170  170 170 170  255 255 255
--255 255 255  170 170 170  170 170 170  255 255 255  0 0 0  0 0 0
--0 0 0  85 85 85  255 255 255  255 255 255  255 255 255  85 85 85
--85 85 85  170 170 170  170 170 170  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--170 170 170  170 170 170  255 255 85  255 255 85  255 255 85  255 255 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0  255 255 255  85 85 85  0 0 0  0 0 0
--255 255 255  85 85 85  0 0 0  0 0 0  255 255 255  255 255 85
--255 255 85  170 170 170  0 0 0  0 0 0  0 0 0  170 170 170
--255 255 255  170 170 170  85 85 85  0 0 0  0 0 0  0 0 0
--170 170 170  255 255 255  85 85 85  0 0 0  85 85 85  255 255 255
--85 85 85  0 0 0  85 85 85  255 255 255  0 0 0  0 0 0
--0 0 0  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  85 85 85  0 0 0  0 0 0  85 85 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  255 255 255  255 255 85  255 255 85  255 255 85  255 255 85
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  170 170 170  0 0 0
--0 0 0  85 85 85  255 255 255  0 0 0  0 0 0  85 85 85
--255 255 255  0 0 0  0 0 0  85 85 85  255 255 85  255 255 85
--255 255 85  85 85 85  0 0 0  0 0 0  0 0 0  170 170 170
--255 255 255  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  255 255 255  0 0 0  0 0 0  170 170 170  170 170 170
--0 0 0  0 0 0  255 255 255  255 255 255  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  85 85 85  0 0 0  85 85 85  255 255 255  255 255 255
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  255 255 255  255 255 85  255 255 85  255 255 85
--255 255 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  170 170 170  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  170 170 170
--170 170 170  0 0 0  0 0 0  170 170 170  255 255 85  255 255 85
--255 255 255  0 0 0  85 85 85  85 85 85  0 0 0  170 170 170
--255 255 255  0 0 0  0 0 0  170 170 170  85 85 85  0 0 0
--85 85 85  170 170 170  0 0 0  0 0 0  170 170 170  0 0 0
--0 0 0  170 170 170  255 255 255  255 255 255  255 255 255  255 255 255
--255 255 255  255 255 255  255 255 255  255 255 255  170 170 170  170 170 170
--85 85 85  0 0 0  85 85 85  255 255 255  255 255 255  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  255 255 255  255 255 85  255 255 85
--255 255 85  170 85 0  0 0 0  85 85 85  85 85 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  255 255 255
--170 170 170  0 0 0  0 0 0  170 170 170  255 255 85  255 255 85
--170 170 170  0 0 0  170 170 170  85 85 85  0 0 0  255 255 255
--170 170 170  0 0 0  0 0 0  255 255 255  0 0 0  0 0 0
--170 170 170  170 170 170  0 0 0  0 0 0  85 85 85  0 0 0
--85 85 85  255 255 255  255 255 255  255 255 255  255 255 255  170 170 170
--255 255 255  255 255 255  255 255 255  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  255 255 255  255 255 85
--255 255 85  255 255 85  255 255 255  170 170 170  170 170 170  255 255 255
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  255 255 255  255 255 255
--85 85 85  0 0 0  0 0 0  255 255 255  255 255 85  255 255 85
--85 85 85  0 0 0  255 255 255  85 85 85  0 0 0  255 255 255
--85 85 85  0 0 0  85 85 85  255 255 255  85 85 85  85 85 85
--255 255 255  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--255 255 255  255 255 255  255 255 255  170 170 170  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--255 255 85  255 255 85  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  255 255 255
--0 0 0  0 0 0  85 85 85  255 255 85  255 255 85  255 255 255
--0 0 0  85 85 85  255 255 255  0 0 0  85 85 85  255 255 255
--85 85 85  0 0 0  170 170 170  255 255 255  170 170 170  170 170 170
--255 255 255  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  170 170 170  0 0 0  170 170 170
--255 255 255  255 255 255  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  255 255 255
--170 170 170  0 0 0  85 85 85  85 85 85  0 0 0  170 170 170
--255 255 85  255 255 85  255 255 255  170 170 170  170 170 170  170 170 170
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  170 170 170  0 0 0  0 0 0
--85 85 85  170 170 170  0 0 0  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  170 170 170  255 255 85  255 255 85  170 170 170
--0 0 0  85 85 85  170 170 170  0 0 0  85 85 85  255 255 255
--0 0 0  0 0 0  170 170 170  170 170 170  170 170 170  255 255 255
--170 170 170  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  85 85 85  0 0 0  255 255 255
--255 255 255  255 255 255  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  255 255 255  255 255 255  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  255 255 85  255 255 255
--85 85 85  170 170 170  255 255 255  255 255 255  170 170 170  0 0 0
--170 170 170  255 255 85  255 255 85  255 255 255  170 170 170  255 255 255
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  170 170 170  0 0 0  0 0 0
--170 170 170  170 170 170  0 0 0  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  170 170 170  255 255 85  255 255 255  85 85 85
--0 0 0  85 85 85  85 85 85  0 0 0  85 85 85  170 170 170
--0 0 0  0 0 0  255 255 255  85 85 85  0 0 0  170 170 170
--170 170 170  0 0 0  0 0 0  85 85 85  0 0 0  85 85 85
--255 255 255  255 255 255  255 255 255  85 85 85  85 85 85  255 255 255
--255 255 255  85 85 85  0 0 0  0 0 0  0 0 0  170 170 170
--170 170 170  170 170 170  255 255 255  0 0 0  0 0 0  0 0 0
--0 0 0  170 170 170  255 255 255  255 255 255  255 255 85  170 170 170
--255 255 255  255 255 255  255 255 85  255 255 85  170 170 170  0 0 0
--0 0 0  170 170 170  255 255 85  255 255 85  255 255 85  255 255 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  85 85 85  0 0 0  0 0 0
--255 255 255  85 85 85  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0  255 255 255  255 255 85  255 255 255  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  85 85 85  255 255 255  0 0 0  0 0 0  255 255 255
--85 85 85  0 0 0  85 85 85  85 85 85  0 0 0  0 0 0
--255 255 255  255 255 255  255 255 255  85 85 85  170 170 170  255 255 255
--255 255 255  0 0 0  0 0 0  0 0 0  170 170 170  255 255 255
--170 170 170  85 85 85  170 170 170  0 0 0  0 0 0  85 85 85
--255 255 255  170 170 170  0 0 0  170 170 170  255 255 85  255 255 255
--255 255 255  170 170 170  255 255 255  255 255 255  85 85 85  0 0 0
--85 85 85  255 255 255  255 255 255  255 255 85  255 255 85  255 255 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  0 0 0
--85 85 85  0 0 0  0 0 0  0 0 0  255 255 255  0 0 0
--0 0 0  85 85 85  170 170 170  255 255 255  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  85 85 85  170 170 170  0 0 0  85 85 85  255 255 255
--0 0 0  0 0 0  170 170 170  170 170 170  0 0 0  0 0 0
--255 255 255  255 255 255  255 255 255  0 0 0  255 255 255  255 255 255
--170 170 170  0 0 0  0 0 0  170 170 170  255 255 255  85 85 85
--170 170 170  170 170 170  170 170 170  0 0 0  85 85 85  255 255 255
--170 170 170  0 0 0  85 85 85  255 255 255  255 255 85  170 170 170
--0 0 0  170 170 170  255 255 255  255 255 255  0 0 0  85 85 85
--255 255 255  170 170 170  0 0 0  170 170 170  255 255 85  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  85 85 85  0 0 0
--170 170 170  255 255 255  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  170 170 170
--0 0 0  0 0 0  255 255 255  170 170 170  0 0 0  0 0 0
--255 255 255  255 255 255  170 170 170  85 85 85  255 255 255  255 255 255
--85 85 85  0 0 0  170 170 170  170 170 170  0 0 0  0 0 0
--170 170 170  170 170 170  255 255 255  255 255 255  255 255 255  85 85 85
--0 0 0  0 0 0  255 255 255  255 255 255  170 170 170  0 0 0
--0 0 0  170 170 170  255 255 255  170 170 170  170 170 170  255 255 255
--85 85 85  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  255 255 255  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  255 255 255  0 0 0  0 0 0
--255 255 255  255 255 255  0 0 0  0 0 0  255 255 255  170 170 170
--0 0 0  0 0 0  0 0 0  170 170 170  255 255 255  170 170 170
--0 0 0  0 0 0  255 255 255  170 170 170  0 0 0  0 0 0
--170 170 170  255 255 255  170 170 170  170 170 170  170 170 170  170 170 170
--0 0 0  85 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--85 85 85  255 255 255  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  170 170 170  255 255 255  170 170 170  0 0 0  0 0 0
--85 85 85  255 255 255  255 255 85  255 255 255  255 255 255  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--85 85 85  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  255 255 85  255 255 85  255 255 85  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--255 255 85  170 170 170  170 170 170  170 170 170  255 255 85  255 255 85
--170 170 170  170 170 170  170 170 170  255 255 85  255 255 85  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  85 85 85  170 170 170  170 170 170  170 170 170
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  255 255 255  170 170 170  0 0 0  0 0 0  0 0 0
--0 0 0  255 255 255  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--170 170 170  85 85 85  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  85 85 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 85 85  85 85 85  0 0 0  0 0 0  0 0 0
--85 85 85  170 170 170  85 85 85  170 170 170  170 170 170  85 85 85
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  170 170 170  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  170 170 170  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--85 85 85  170 170 170  85 85 85  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  85 85 85  85 85 85  170 85 0  170 85 0
--170 85 0  255 85 85  255 85 85  255 85 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 85 85  170 85 0  85 85 85  0 0 0  0 0 0  85 85 85
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  170 170 170  170 170 170  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  85 85 85
--85 85 85  85 85 85  170 85 0  170 85 0  170 85 0  170 85 0
--255 85 85  255 85 85  255 255 85  255 255 85  255 255 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 255 85  255 85 85
--170 85 0  170 85 0  0 0 0  85 85 85  85 85 85  170 170 170
--170 170 170  0 0 0  170 170 170  255 255 255  170 170 170  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  170 170 170  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  85 85 85
--170 85 0  170 85 0  170 85 0  255 85 85  255 85 85  255 255 85
--255 255 85  255 255 85  255 255 85  255 255 85  255 85 85  170 85 0
--170 85 0  85 85 85  85 85 85  85 85 85  170 170 170  170 170 170
--0 0 0  0 0 0  255 255 255  255 255 255  85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  170 170 170  85 85 85  0 0 0
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  170 85 0  170 85 0  170 85 0
--170 85 0  255 85 85  255 85 85  255 85 85  170 85 0  170 85 0
--85 85 85  0 0 0  0 0 0  85 85 85  170 170 170  0 0 0
--0 0 0  85 85 85  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  170 170 170  85 85 85
--0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  85 85 85
--170 85 0  170 85 0  170 85 0  170 85 0  170 85 0  85 85 85
--0 0 0  0 0 0  0 0 0  85 85 85  170 170 170  0 0 0
--0 0 0  85 85 85  255 255 255  170 170 170  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  85 85 85  170 170 170
--85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  85 85 85  85 85 85  85 85 85  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  85 85 85  85 85 85  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  170 170 170
--170 170 170  170 170 170  170 170 170  170 170 170  170 170 170  85 85 85
--85 85 85  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0  0 0 0  0 0 0  0 0 0  0 0 0
--0 0 0  0 0 0
-diff --git a/include/linux/fb.h b/include/linux/fb.h
-index f577d3c..0c20da7 100644
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -571,8 +571,7 @@ static inline struct apertures_struct *alloc_apertures(unsigned int max_num) {
- 
- #elif defined(__i386__) || defined(__alpha__) || defined(__x86_64__) ||	\
- 	defined(__hppa__) || defined(__sh__) || defined(__powerpc__) ||	\
--	defined(__avr32__) || defined(__bfin__) || defined(__arm__) ||	\
--	defined(__aarch64__)
-+	defined(__avr32__) || defined(__arm__) || defined(__aarch64__)
- 
- #define fb_readb __raw_readb
- #define fb_readw __raw_readw
-diff --git a/include/linux/linux_logo.h b/include/linux/linux_logo.h
-index 5e3581d..9e1ec52 100644
---- a/include/linux/linux_logo.h
-+++ b/include/linux/linux_logo.h
-@@ -36,8 +36,6 @@ struct linux_logo {
- extern const struct linux_logo logo_linux_mono;
- extern const struct linux_logo logo_linux_vga16;
- extern const struct linux_logo logo_linux_clut224;
--extern const struct linux_logo logo_blackfin_vga16;
--extern const struct linux_logo logo_blackfin_clut224;
- extern const struct linux_logo logo_dec_clut224;
- extern const struct linux_logo logo_mac_clut224;
- extern const struct linux_logo logo_parisc_clut224;
+-	return 0;
+-}
+-module_param(off, int, 0444);
+-core_initcall(cpufreq_core_init);
 -- 
 2.7.4
