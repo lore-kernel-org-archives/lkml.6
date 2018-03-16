@@ -1,69 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752324AbeCPIM3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 04:12:29 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:32889 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeCPIMZ (ORCPT
+        id S1752892AbeCPIPC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 04:15:02 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43120 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751726AbeCPIO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 04:12:25 -0400
-X-Google-Smtp-Source: AG47ELuo8SEU4XQETlMm5l94KRg8/rlOFcR0EQO3McqqjbKr4vRsSIJU5Sf9p7FbaWbYMliUv1HNXyfEirzrwF0jUyA=
+        Fri, 16 Mar 2018 04:14:59 -0400
+X-Google-Smtp-Source: AG47ELs5oy6pub9/z+eJWZfBT8bhYaKRPGN4aOtl6BNECxOuoQR9ER5qEFkgbpXRr/U59EP16E6oOnltE9jzLTAZe0g=
 MIME-Version: 1.0
-In-Reply-To: <2f2e0cd4-02ca-0e01-7003-e519a7706ee4@alum.mit.edu>
-References: <20180314143529.1456168-1-arnd@arndb.de> <20180314143656.1495602-1-arnd@arndb.de>
- <20180314143656.1495602-6-arnd@arndb.de> <2f2e0cd4-02ca-0e01-7003-e519a7706ee4@alum.mit.edu>
+In-Reply-To: <CABeXuvrFkASp1g5LDW0MsENqtHRiT=Vp=F5GN3XdhGzaXkHNsw@mail.gmail.com>
+References: <20180316132529.45126501@canb.auug.org.au> <CABeXuvrFkASp1g5LDW0MsENqtHRiT=Vp=F5GN3XdhGzaXkHNsw@mail.gmail.com>
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 16 Mar 2018 09:12:24 +0100
-X-Google-Sender-Auth: vmGn-eQtB0VxUZyEGIIJv8ZOj4E
-Message-ID: <CAK8P3a3GNHBbQpB23p1+b8L=Cg2gDkOz9h_EaWA22B+E+1ropA@mail.gmail.com>
-Subject: Re: [PATCH 06/16] arch: remove tile port
-To: Chris Metcalf <metcalf@alum.mit.edu>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
+Date: Fri, 16 Mar 2018 09:14:58 +0100
+X-Google-Sender-Auth: muRpoytff5tF9FyuVkCfycwvjAY
+Message-ID: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the y2038 tree
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+        Heiko Carstens <heiko.carstens@de.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 2:23 AM, Chris Metcalf <metcalf@alum.mit.edu> wrote:
-> On 3/14/2018 10:36 AM, Arnd Bergmann wrote:
->>
->> The Tile architecture port was added by Chris Metcalf in 2010, and
->> maintained until early 2018 when he orphaned it due to his departure
->> from Mellanox, and nobody else stepped up to maintain it. The product
->> line is still around in the form of the BlueField SoC, but no longer
->> uses the Tile architecture.
->>
->> There are also still products for sale with Tile-GX SoCs, notably the
->> Mikrotik CCR router family. The products all use old (linux-3.3) kernels
->> with lots of patches and won't be upgraded by their manufacturers. There
->> have been efforts to port both OpenWRT and Debian to these, but both
->> projects have stalled and are very unlikely to be continued in the future.
->>
->> Given that we are reasonably sure that nobody is still using the port
->> with an upstream kernel any more, it seems better to remove it now while
->> the port is in a good shape than to let it bitrot for a few years first.
+On Fri, Mar 16, 2018 at 6:23 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> Hi Arnd,
 >
->
-> Arnd, thanks for dealing with this.
->
-> There are a number of tile-specific driver files that are mostly called out
-> in the MAINTAINERS file.  I would expect you should also delete those.
->
->
-> -F:    drivers/char/tile-srom.c
-> -F:    drivers/edac/tile_edac.c
-> -F:    drivers/net/ethernet/tile/
-> -F:    drivers/rtc/rtc-tile.c
-> -F:    drivers/tty/hvc/hvc_tile.c
-> -F:    drivers/tty/serial/tilegx.c
-> -F:    drivers/usb/host/*-tilegx.c
-> -F:    include/linux/usb/tilegx.h
+> Do you want me to send the fix as a patch or should I re-post the series?
 
-Right. I covered all of those in my follow-up driver series, see
-https://lkml.org/lkml/2018/3/14/579
+Please send a fix relative to linux-next. Due to my travel next week, I might
+not be able to apply it right away but maybe Stephen can add it on top until
+I get back.
 
-It's all in linux-next as of yesterday, but thanks for paying attention here.
+      Arnd
 
-       Arnd
+> On Thu, Mar 15, 2018 at 7:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi Arnd,
+>>
+>> After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
+>> failed like this:
+>>
+>> In file included from include/linux/elf.h:5:0,
+>>                  from include/linux/module.h:15,
+>>                  from init/main.c:16:
+>> arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_regs'
+>>
+>> Caused by commit
+>>
+>>   f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
+>>
