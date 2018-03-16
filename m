@@ -1,247 +1,288 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753269AbeCPHl4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:41:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40907 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753120AbeCPHly (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:41:54 -0400
-X-Google-Smtp-Source: AG47ELv9muBGWiz9j74Lud2nHIKzbs8Cj0U3d9XUBi/aYS8o3+jE3KzEBVgV95S8YqhFLU3gOOPjsQ==
-Date: Fri, 16 Mar 2018 08:41:50 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Joe Perches <joe@perches.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
-Message-ID: <20180316074150.GE25297@phenom.ffwll.local>
-Mail-Followup-To: Joe Perches <joe@perches.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
+        id S1753353AbeCPHmG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:42:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:64798 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753120AbeCPHmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:42:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
+   d="scan'208";a="211869577"
+Date: Fri, 16 Mar 2018 15:40:29 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
+Message-ID: <20180316074028.lun2jy45qqnfeymw@debian>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-3-tiwei.bie@intel.com>
+ <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
+ <20180316061047.o2xdyuqhak3mzjyw@debian>
+ <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
-> drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
-> arguments that can be removed by creating separate functins.
+On Fri, Mar 16, 2018 at 02:44:12PM +0800, Jason Wang wrote:
+> On 2018年03月16日 14:10, Tiwei Bie wrote:
+> > On Fri, Mar 16, 2018 at 12:03:25PM +0800, Jason Wang wrote:
+> > > On 2018年02月23日 19:18, Tiwei Bie wrote:
+> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > ---
+> > > >    drivers/virtio/virtio_ring.c | 699 +++++++++++++++++++++++++++++++++++++------
+> > > >    include/linux/virtio_ring.h  |   8 +-
+> > > >    2 files changed, 618 insertions(+), 89 deletions(-)
+[...]
+> > > >    			      cpu_addr, size, direction);
+> > > >    }
+> > > > -static void vring_unmap_one(const struct vring_virtqueue *vq,
+> > > > -			    struct vring_desc *desc)
+> > > > +static void vring_unmap_one(const struct vring_virtqueue *vq, void *_desc)
+> > > >    {
+> > > Let's split the helpers to packed/split version like other helpers?
+> > > (Consider the caller has already known the type of vq).
+> > Okay.
+> > 
 > 
-> Create specific functions for these calls to reduce x86/64 defconfig
-> size by ~20k.
+> [...]
 > 
-> Modify the existing macros to use the specific calls.
+> > > > +				desc[i].flags = flags;
+> > > > +
+> > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
+> > > If it's a part of chain, we only need to do this for last buffer I think.
+> > I'm not sure I've got your point about the "last buffer".
+> > But, yes, id just needs to be set for the last desc.
 > 
-> new:
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
+> Right, I think I meant "last descriptor" :)
 > 
-> old:
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
+> > 
+> > > > +			prev = i;
+> > > > +			i++;
+> > > It looks to me prev is always i - 1?
+> > No. prev will be (vq->vring_packed.num - 1) when i becomes 0.
 > 
-> Miscellanea:
-> 
-> o intel_display requires a change to use the specific calls.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> Right, so prev = i ? i - 1 : vq->vring_packed.num - 1.
 
-Impressed with the size of the bikeshed piled on top of this I decided to
-cut this all short by merging it.
+Yes, i wraps together with vq->wrap_counter in following code:
 
-Thanks for the patch.
--Daniel
-> ---
->  drivers/gpu/drm/drm_print.c          | 28 +++++++++++++++++++++-------
->  drivers/gpu/drm/i915/intel_display.c | 15 ++++-----------
->  include/drm/drm_print.h              | 27 ++++++++++++++-------------
->  3 files changed, 39 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> index 781518fd88e3..79abf6d5b4db 100644
-> --- a/drivers/gpu/drm/drm_print.c
-> +++ b/drivers/gpu/drm/drm_print.c
-> @@ -89,23 +89,37 @@ void drm_dev_printk(const struct device *dev, const char *level,
->  }
->  EXPORT_SYMBOL(drm_dev_printk);
->  
-> -void drm_printk(const char *level, unsigned int category,
-> -		const char *format, ...)
-> +void drm_dbg(unsigned int category, const char *format, ...)
->  {
->  	struct va_format vaf;
->  	va_list args;
->  
-> -	if (category != DRM_UT_NONE && !(drm_debug & category))
-> +	if (!(drm_debug & category))
->  		return;
->  
->  	va_start(args, format);
->  	vaf.fmt = format;
->  	vaf.va = &args;
->  
-> -	printk("%s" "[" DRM_NAME ":%ps]%s %pV",
-> -	       level, __builtin_return_address(0),
-> -	       strcmp(level, KERN_ERR) == 0 ? " *ERROR*" : "", &vaf);
-> +	printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
-> +	       __builtin_return_address(0), &vaf);
-> +
-> +	va_end(args);
-> +}
-> +EXPORT_SYMBOL(drm_dbg);
-> +
-> +void drm_err(const char *format, ...)
-> +{
-> +	struct va_format vaf;
-> +	va_list args;
-> +
-> +	va_start(args, format);
-> +	vaf.fmt = format;
-> +	vaf.va = &args;
-> +
-> +	printk(KERN_ERR "[" DRM_NAME ":%ps] *ERROR* %pV",
-> +	       __builtin_return_address(0), &vaf);
->  
->  	va_end(args);
->  }
-> -EXPORT_SYMBOL(drm_printk);
-> +EXPORT_SYMBOL(drm_err);
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 2933ad38094f..d8e522e3cd39 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -11059,24 +11059,17 @@ intel_compare_link_m_n(const struct intel_link_m_n *m_n,
->  static void __printf(3, 4)
->  pipe_config_err(bool adjust, const char *name, const char *format, ...)
->  {
-> -	char *level;
-> -	unsigned int category;
->  	struct va_format vaf;
->  	va_list args;
->  
-> -	if (adjust) {
-> -		level = KERN_DEBUG;
-> -		category = DRM_UT_KMS;
-> -	} else {
-> -		level = KERN_ERR;
-> -		category = DRM_UT_NONE;
-> -	}
-> -
->  	va_start(args, format);
->  	vaf.fmt = format;
->  	vaf.va = &args;
->  
-> -	drm_printk(level, category, "mismatch in %s %pV", name, &vaf);
-> +	if (adjust)
-> +		drm_dbg(DRM_UT_KMS, "mismatch in %s %pV", name, &vaf);
-> +	else
-> +		drm_err("mismatch in %s %pV", name, &vaf);
->  
->  	va_end(args);
->  }
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index 2a4a42e59a47..3a40c5a3a5fa 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -200,9 +200,10 @@ __printf(6, 7)
->  void drm_dev_printk(const struct device *dev, const char *level,
->  		    unsigned int category, const char *function_name,
->  		    const char *prefix, const char *format, ...);
-> -__printf(3, 4)
-> -void drm_printk(const char *level, unsigned int category,
-> -		const char *format, ...);
-> +__printf(2, 3)
-> +void drm_dbg(unsigned int category, const char *format, ...);
-> +__printf(1, 2)
-> +void drm_err(const char *format, ...);
->  
->  /* Macros to make printk easier */
->  
-> @@ -236,7 +237,7 @@ void drm_printk(const char *level, unsigned int category,
->  	drm_dev_printk(dev, KERN_ERR, DRM_UT_NONE, __func__, " *ERROR*",\
->  		       fmt, ##__VA_ARGS__)
->  #define DRM_ERROR(fmt, ...)						\
-> -	drm_printk(KERN_ERR, DRM_UT_NONE, fmt,	##__VA_ARGS__)
-> +	drm_err(fmt, ##__VA_ARGS__)
->  
->  /**
->   * Rate limited error output.  Like DRM_ERROR() but won't flood the log.
-> @@ -279,40 +280,40 @@ void drm_printk(const char *level, unsigned int category,
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_CORE, __func__, "", fmt,	\
->  		       ##args)
->  #define DRM_DEBUG(fmt, ...)						\
-> -	drm_printk(KERN_DEBUG, DRM_UT_CORE, fmt, ##__VA_ARGS__)
-> +	drm_dbg(DRM_UT_CORE, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_DEBUG_DRIVER(dev, fmt, args...)				\
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_DRIVER, __func__, "",	\
->  		       fmt, ##args)
->  #define DRM_DEBUG_DRIVER(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
-> +	drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_DEBUG_KMS(dev, fmt, args...)				\
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_KMS, __func__, "", fmt,	\
->  		       ##args)
-> -#define DRM_DEBUG_KMS(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_KMS, fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_KMS(fmt, ...)						\
-> +	drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_DEBUG_PRIME(dev, fmt, args...)				\
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_PRIME, __func__, "",	\
->  		       fmt, ##args)
->  #define DRM_DEBUG_PRIME(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_PRIME, fmt, ##__VA_ARGS__)
-> +	drm_dbg(DRM_UT_PRIME, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_DEBUG_ATOMIC(dev, fmt, args...)				\
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ATOMIC, __func__, "",	\
->  		       fmt, ##args)
->  #define DRM_DEBUG_ATOMIC(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
-> +	drm_dbg(DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_DEBUG_VBL(dev, fmt, args...)				\
->  	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_VBL, __func__, "", fmt,	\
->  		       ##args)
-> -#define DRM_DEBUG_VBL(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_VBL, fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_VBL(fmt, ...)						\
-> +	drm_dbg(DRM_UT_VBL, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEBUG_LEASE(fmt, ...)					\
-> -	drm_printk(KERN_DEBUG, DRM_UT_LEASE, fmt, ##__VA_ARGS__)
-> +	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
->  
->  #define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, level, fmt, args...)	\
->  ({									\
-> -- 
-> 2.15.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > > +			if (!indirect && i >= vq->vring_packed.num) {
+> > > > +				i = 0;
+> > > > +				vq->wrap_counter ^= 1;
+> > > > +			}
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+> > > > +		}
+> > > > +	}
+> > > > +	for (; n < (out_sgs + in_sgs); n++) {
+> > > > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> > > > +			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_FROM_DEVICE);
+> > > > +			if (vring_mapping_error(vq, addr))
+> > > > +				goto unmap_release;
+> > > > +
+> > > > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
+> > > > +					VRING_DESC_F_WRITE |
+> > > > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
+> > > > +					VRING_DESC_F_USED(!vq->wrap_counter));
+> > > > +			if (!indirect && i == head)
+> > > > +				head_flags = flags;
+> > > > +			else
+> > > > +				desc[i].flags = flags;
+> > > > +
+> > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
+> > > > +			prev = i;
+> > > > +			i++;
+> > > > +			if (!indirect && i >= vq->vring_packed.num) {
+> > > > +				i = 0;
+> > > > +				vq->wrap_counter ^= 1;
+> > > > +			}
+> > > > +		}
+> > > > +	}
+> > > > +	/* Last one doesn't continue. */
+> > > > +	if (!indirect && (head + 1) % vq->vring_packed.num == i)
+> > > > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> > > I can't get the why we need this here.
+> > If only one desc is used, we will need to clear the
+> > VRING_DESC_F_NEXT flag from the head_flags.
+> 
+> Yes, I meant why following desc[prev].flags won't work for this?
+
+Because the update of desc[head].flags (in above case,
+prev == head) has been delayed. The flags is saved in
+head_flags.
+
+> 
+> > 
+> > > > +	else
+> > > > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> > > > +
+> > > > +	if (indirect) {
+> > > > +		/* FIXME: to be implemented */
+> > > > +
+> > > > +		/* Now that the indirect table is filled in, map it. */
+> > > > +		dma_addr_t addr = vring_map_single(
+> > > > +			vq, desc, total_sg * sizeof(struct vring_packed_desc),
+> > > > +			DMA_TO_DEVICE);
+> > > > +		if (vring_mapping_error(vq, addr))
+> > > > +			goto unmap_release;
+> > > > +
+> > > > +		head_flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_INDIRECT |
+> > > > +					     VRING_DESC_F_AVAIL(wrap_counter) |
+> > > > +					     VRING_DESC_F_USED(!wrap_counter));
+> > > > +		vq->vring_packed.desc[head].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > > > +		vq->vring_packed.desc[head].len = cpu_to_virtio32(_vq->vdev,
+> > > > +				total_sg * sizeof(struct vring_packed_desc));
+> > > > +		vq->vring_packed.desc[head].id = cpu_to_virtio32(_vq->vdev, head);
+> > > > +	}
+> > > > +
+> > > > +	/* We're using some buffers from the free list. */
+> > > > +	vq->vq.num_free -= descs_used;
+> > > > +
+> > > > +	/* Update free pointer */
+> > > > +	if (indirect) {
+> > > > +		n = head + 1;
+> > > > +		if (n >= vq->vring_packed.num) {
+> > > > +			n = 0;
+> > > > +			vq->wrap_counter ^= 1;
+> > > > +		}
+> > > > +		vq->free_head = n;
+> > > detach_buf_packed() does not even touch free_head here, so need to explain
+> > > its meaning for packed ring.
+> > Above code is for indirect support which isn't really
+> > implemented in this patch yet.
+> > 
+> > For your question, free_head stores the index of the
+> > next avail desc. I'll add a comment for it or move it
+> > to union and give it a better name in next version.
+> 
+> Yes, something like avail_idx might be better.
+> 
+> > 
+> > > > +	} else
+> > > > +		vq->free_head = i;
+> > > ID is only valid in the last descriptor in the list, so head + 1 should be
+> > > ok too?
+> > I don't really get your point. The vq->free_head stores
+> > the index of the next avail desc.
+> 
+> I think I get your idea now, free_head has two meanings:
+> 
+> - next avail index
+> - buffer id
+
+In my design, free_head is just the index of the next
+avail desc.
+
+Driver can set anything to buffer ID. And in my design,
+I save desc index in buffer ID.
+
+I'll add comments for them.
+
+> 
+> If I'm correct, let's better add a comment for this.
+> 
+> > 
+> > > > +
+> > > > +	/* Store token and indirect buffer state. */
+> > > > +	vq->desc_state[head].num = descs_used;
+> > > > +	vq->desc_state[head].data = data;
+> > > > +	if (indirect)
+> > > > +		vq->desc_state[head].indir_desc = desc;
+> > > > +	else
+> > > > +		vq->desc_state[head].indir_desc = ctx;
+> > > > +
+> > > > +	virtio_wmb(vq->weak_barriers);
+> > > Let's add a comment to explain the barrier here.
+> > Okay.
+> > 
+> > > > +	vq->vring_packed.desc[head].flags = head_flags;
+> > > > +	vq->num_added++;
+> > > > +
+> > > > +	pr_debug("Added buffer head %i to %p\n", head, vq);
+> > > > +	END_USE(vq);
+> > > > +
+> > > > +	return 0;
+> > > > +
+> > > > +unmap_release:
+> > > > +	err_idx = i;
+> > > > +	i = head;
+> > > > +
+> > > > +	for (n = 0; n < total_sg; n++) {
+> > > > +		if (i == err_idx)
+> > > > +			break;
+> > > > +		vring_unmap_one(vq, &desc[i]);
+> > > > +		i++;
+> > > > +		if (!indirect && i >= vq->vring_packed.num)
+> > > > +			i = 0;
+> > > > +	}
+> > > > +
+> > > > +	vq->wrap_counter = wrap_counter;
+> > > > +
+> > > > +	if (indirect)
+> > > > +		kfree(desc);
+> > > > +
+> > > > +	END_USE(vq);
+> > > > +	return -EIO;
+> > > > +}
+[...]
+> > > > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
+> > > >    	if (!queue) {
+> > > >    		/* Try to get a single page. You are my only hope! */
+> > > > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
+> > > > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
+> > > > +							     packed),
+> > > >    					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
+> > > >    	}
+> > > >    	if (!queue)
+> > > >    		return NULL;
+> > > > -	queue_size_in_bytes = vring_size(num, vring_align);
+> > > > -	vring_init(&vring, num, queue, vring_align);
+> > > > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
+> > > > +	if (packed)
+> > > > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
+> > > > +	else
+> > > > +		vring_init(&vring.vring_split, num, queue, vring_align);
+> > > Let's rename vring_init to vring_init_split() like other helpers?
+> > The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
+> > I don't think we can rename it.
+> 
+> I see, then this need more thoughts to unify the API.
+
+My thought is to keep the old API as is, and introduce
+new types and helpers for packed ring.
+
+More details can be found in this patch:
+https://lkml.org/lkml/2018/2/23/243
+(PS. The type which has bit fields is just for reference,
+ and will be changed in next version.)
+
+Do you have any other suggestions?
+
+Best regards,
+Tiwei Bie
+
+> 
+> > 
+> > > > -	vq = __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
+> > > > -				   notify, callback, name);
+> > > > +	vq = __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
+> > > > +				   context, notify, callback, name);
+> > > >    	if (!vq) {
+> > > >    		vring_free_queue(vdev, queue_size_in_bytes, queue,
+> > > >    				 dma_addr);
+[...]
