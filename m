@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753008AbeCPChT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:37:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752912AbeCPChS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:37:18 -0400
-From: Honggang LI <honli@redhat.com>
-To: dledford@redhat.com, jgg@ziepe.ca, matanb@mellanox.com,
-        leonro@mellanox.com, linux-rdma@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, noaos@mellanox.com, honli@redhat.com
-Subject: [PATCH] IB/mlx5: Set the default active rate and width to QDR and 4X
-Date: Fri, 16 Mar 2018 10:37:13 +0800
-Message-Id: <20180316023713.30323-1-honli@redhat.com>
+        id S932929AbeCPChb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:37:31 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33443 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932862AbeCPCh3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:37:29 -0400
+X-Google-Smtp-Source: AG47ELu/x/iwNFgkRGBvZV9o4mawRWzeuZ1Lv8GtXoSI1ik/UdztneKAANdg3Ig/IglFeLPXx5PpZg==
+Date: Thu, 15 Mar 2018 22:37:27 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+cc: linux-kbuild@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] kbuild: clear LDFLAGS in the top Makefile
+In-Reply-To: <1521166725-24157-2-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1803152237070.28583@knanqh.ubzr>
+References: <1521166725-24157-1-git-send-email-yamada.masahiro@socionext.com> <1521166725-24157-2-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honggang Li <honli@redhat.com>
+On Fri, 16 Mar 2018, Masahiro Yamada wrote:
 
-commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-active_speed in RoCE"). Before this patch applied, the mlx5_ib
-driver set default active_width and active_speed to IB_WIDTH_4X
-and IB_SPEED_QDR.
+> Currently LDFLAGS is not cleared, so same flags are accumulated in
+> LDFLAGS when the top Makefile is recursively invoked.
+> 
+> I found unneeded rebuild for ARCH=arm64 when CONFIG_TRIM_UNUSED_KSYMS
+> is enabled.  If include/generated/autoksyms.h is updated, the top
+> Makefile is recursively invoked, then arch/arm64/Makefile adds one
+> more '-maarch64linux'.  Due to the command line change, modules are
+> rebuilt needlessly.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-When the RoCE port is down, the RoCE port did not negotiate the
-active width with remote side. The active width is zero. If run
-ibstat to require the port status, ibstat will panic as it read
-invalid width from sys file.
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
-This patch restores the original behavior.
 
-Fixes: f1b65df5a232 ("IB/mlx5: Add support for active_width and active_speed in RoCE").
-Signed-off-by: Honggang Li <honli@redhat.com>
----
- drivers/infiniband/hw/mlx5/main.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index 033b6af90de9..a48e9730fab8 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -388,6 +388,9 @@ static int mlx5_query_port_roce(struct ib_device *device, u8 port_num,
- 	if (err)
- 		goto out;
- 
-+	props->active_width     = IB_WIDTH_4X;
-+	props->active_speed     = IB_SPEED_QDR;
-+
- 	translate_eth_proto_oper(eth_prot_oper, &props->active_speed,
- 				 &props->active_width);
- 
--- 
-2.14.GIT
+> ---
+> 
+> Changes in v2: None
+> 
+>  Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index d9bb6dd6..ac8755d 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -437,6 +437,7 @@ KBUILD_CFLAGS_KERNEL :=
+>  KBUILD_AFLAGS_MODULE  := -DMODULE
+>  KBUILD_CFLAGS_MODULE  := -DMODULE
+>  KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
+> +LDFLAGS :=
+>  GCC_PLUGINS_CFLAGS :=
+>  
+>  export ARCH SRCARCH CONFIG_SHELL HOSTCC HOSTCFLAGS CROSS_COMPILE AS LD CC
+> -- 
+> 2.7.4
+> 
+> 
