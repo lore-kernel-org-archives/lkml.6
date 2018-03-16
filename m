@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932528AbeCPDlj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 23:41:39 -0400
-Received: from vern.gendns.com ([206.190.152.46]:57122 "EHLO vern.gendns.com"
+        id S1752703AbeCPDl6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 23:41:58 -0400
+Received: from vern.gendns.com ([206.190.152.46]:57134 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932302AbeCPDlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 23:41:36 -0400
+        id S1751620AbeCPDlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 23:41:55 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 41/42] ARM: davinci: da8xx-dt: switch to device tree clocks
-Date: Thu, 15 Mar 2018 21:52:57 -0500
-Message-Id: <1521168778-27236-42-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 31/42] ARM: davinci: switch to common clock framework
+Date: Thu, 15 Mar 2018 21:52:47 -0500
+Message-Id: <1521168778-27236-32-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,8 +36,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes all of the clock init code from da8xx-dt.c. This includes
-all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
+
+A few macros had to be moved to prevent compilation errors.
 
 Signed-off-by: David Lechner <david@lechnology.com>
 ---
@@ -46,123 +49,98 @@ v8 changes:
 - none
 
 v7 changes:
-- rebased
-- drop of_platform_default_populate(NULL, NULL, NULL)
-- add change in pm_domain.c
-
-Note: I didn't see this until it was too late, but Bartosz has an interesting
-alternative for the legacy PM domain stuff at
-https://github.com/brgl/linux/commit/0197b11512e44206708f4bd320c369a2a163e82d
+- s/compile/compilation and space instead of tab
+- add PM_GENERIC_DOMAINS dependencies
 
 v6 changes:
-- removed misleading statement from commit message
+- clean up indent on Common objects section
 
- arch/arm/mach-davinci/da8xx-dt.c  | 58 ---------------------------------------
- arch/arm/mach-davinci/pm_domain.c |  5 ++++
- 2 files changed, 5 insertions(+), 58 deletions(-)
+ arch/arm/Kconfig                | 5 ++++-
+ arch/arm/mach-davinci/Makefile  | 4 ++--
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index 088bc5c..23ac410 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -19,67 +19,10 @@
- #include "cp_intc.h"
- #include <mach/da8xx.h>
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 7e3d535..563fade 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -608,13 +608,16 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB
+ 	select HAVE_IDE
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e81780..8725d8b 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,8 +5,8 @@
+ #
  
--static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
--	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
--	{}
--};
--
--static struct aemif_platform_data aemif_data = {
--	.dev_lookup = da850_aemif_auxdata_lookup,
--};
--
--static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
--	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
--	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
--		       NULL),
--	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
--	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
--	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
--	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
--	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
--	{}
--};
--
- #ifdef CONFIG_ARCH_DAVINCI_DA850
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
+-			   usb.o common.o sram.o aemif.o
++obj-y 					:= time.o serial.o usb.o \
++					   common.o sram.o aemif.o
  
- static void __init da850_init_machine(void)
- {
--	/* All existing boards use 100MHz SATA refclkpn */
--	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
--
--	int ret;
--
--	da850_register_clocks();
--
--	ret = da8xx_register_usb_phy_clocks();
--	if (ret)
--		pr_warn("%s: USB PHY CLK registration failed: %d\n",
--			__func__, ret);
--
--	ret = da850_register_sata_refclk(sata_refclkpn);
--	if (ret)
--		pr_warn("%s: registering SATA REFCLK failed: %d",
--			__func__, ret);
--
--	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
- 	davinci_pm_init();
- 	pdata_quirks_init();
- }
-@@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
  
- DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
- 	.map_io		= da850_init,
--	.init_time	= da850_init_time,
- 	.init_machine	= da850_init_machine,
- 	.dt_compat	= da850_boards_compat,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-index 78eac2c..e251fd5 100644
---- a/arch/arm/mach-davinci/pm_domain.c
-+++ b/arch/arm/mach-davinci/pm_domain.c
-@@ -13,6 +13,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_clock.h>
- #include <linux/platform_device.h>
-+#include <linux/of.h>
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5..2d05856 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
  
- static struct dev_pm_domain davinci_pm_domain = {
- 	.ops = {
-@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index a200977..a227f80 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
  
- static int __init davinci_pm_runtime_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
 +
-+	/* Use pm_clk as fallback if we're not using genpd. */
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09..b58707c 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
  
- 	return 0;
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
 -- 
 2.7.4
