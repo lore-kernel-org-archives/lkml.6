@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtLjq5i6+B6903JFdAUG4pIZEiGiBQtplaMVEH21SUvCbo4a6T3nQqWPV7TD1KGvrYhlQQi
+X-Google-Smtp-Source: AG47ELuRMAFeGsNUky0EwvAXHv2N8WklHf1EXMR7XPIBk9GAtSiVWLjCwoTxG7THGJE7gXMls36A
 ARC-Seal: i=1; a=rsa-sha256; t=1521214683; cv=none;
         d=google.com; s=arc-20160816;
-        b=DxYfHyjRykx4KwiwQruQh2jon/XFOTwRr2gi+UkTPD1K3MThSz1+lOdA9FYzjGgGQb
-         CYv3N4uyP4/uLe/OpOCEOcO51sg3Vmyp4hh6zLwk5/5jwgTSfn7MBzMsGLodmfHXetPK
-         n4IuOnTQ90kSsMx986KXvvMtty7nxXaiMIwfFBfJfW/ZPaFAbSXweshYdxQluiYbLwOR
-         gJBW6gm+o1SayeTaDuafUVUP1Ni/ZliLXaAFozOURnQ0K/G6qCSpYAUFP8GnZDcDmfzG
-         /Sbnb/+MZoeu0zHR5sooON3WetZuWB1ttAOp1G1twQhgVPfnwnq3BRgUQKHAfk6DHsud
-         J8+A==
+        b=XNpAozOZ2RZ0cBsAJ9Woq0/G+WbXd5mXkiMMi9zA/mMDbXgQfBhtgS2TKVzDMO9+kf
+         KYODzOTyw0IekiicYAxLLWkgjl4nQ/8QsXGnretgY6bnkX1N2PFM4hCmOBVgzrkwM6H5
+         7Mi9qXt537Z/iBjVf6L6ICzQpxJhB4rYWMgIhjA3c4gXeTx8OlOSHSrFfzt+fBrEOzY+
+         DG4rISpPt0DN3ZjOnOK9tdR+wwsT6U2jEPT4yXaW0JdzRh6cL64qEugQzHBYijOh5T51
+         TunGH6Lqfcpm42uXt85JTNNBQFBD53uZ9a9k6cXM3t+O0zZYEl8LaTWFuqHPg/HHMkf/
+         RA0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fJaHUCOZ07aa2qEyGZP3vRHmtGBQlxt4mv/wad9QdZQ=;
-        b=MEL/mUFos069/bs8Z5ttIqXc71RD8xddTSpsTPkxNCM72ZZambtk8o7W5L3nGIzHR5
-         i9bRcWkgmhRaO350Dr1UYe07b3zAax3+kvsYLf0oJwts/gK14Y2wb201l/B3bkV9o4u4
-         X/cfKtb3HA27nwL1Fwd4yRSmvpwdiEIPE7Nh1IbSmqmmzrKx3TuRF6/cnxouVEMfFwCS
-         pq/6Gky8a5Cv7vHfCqZ2xktfBzofqa0KoCK5mAZKf8HbuYiK+AEC14R6go0ZOuPSXsIV
-         FVFQ9mndsLfnYvfxeAVg5WnIThVFWZ5p4qLc+4MdzpbvmDbt4Gp8E3DRpav+BUITmqDT
-         e0yg==
+        bh=rcRpeHKEY3TYIyHCnPiYWjA7eg1lySW6ttXBREUAlbA=;
+        b=JngTiu50Cw5GnIFy4Q6O8t7du3GcPt6La6DHKbRQXpU+uQeCNdLfMlLfUJ+E0o4C4i
+         NQnzKvBEkdktvZI7jBcIEmNV5cgv42CKKu+iQKRudgN6zPZEF6zplacgEcqv1Df/7eTr
+         GA+vgCOcAeFseOVaeN98gCYGzhKTwxRc4kcZp5vugz0MnsbBBChydo8+QTZe5f888ld8
+         OnM32mOQeiPKfLJ6eka6sblRXF+zsvIBPeRHpUfz+pa4utmbyiKcG4SMoy30k4oyvYZ7
+         RFhWIIXPCSOOrxGvXjy+GirDp/+kG95ZgGJQH3x4p5a+fJu6gVbvfPihraLU36q9Zys9
+         Id7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yong Zhao <yong.zhao@amd.com>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Oded Gabbay <oded.gabbay@gmail.com>,
+	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 092/109] drm/amdkfd: Fix memory leaks in kfd topology
-Date: Fri, 16 Mar 2018 16:24:01 +0100
-Message-Id: <20180316152334.916800946@linuxfoundation.org>
+Subject: [PATCH 4.14 089/109] virtio_net: Disable interrupts if napi_complete_done rescheduled napi
+Date: Fri, 16 Mar 2018 16:23:58 +0100
+Message-Id: <20180316152334.770534110@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109208601226104?=
-X-GMAIL-MSGID: =?utf-8?q?1595109208601226104?=
+X-GMAIL-THRID: =?utf-8?q?1595109207160623399?=
+X-GMAIL-MSGID: =?utf-8?q?1595109207160623399?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,76 +52,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yong Zhao <yong.zhao@amd.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
 
-[ Upstream commit 5108d768408abc80e4e8d99f5b406a73cb04056b ]
+[ Upstream commit fdaa767aefc1685f9a41e91f447c9aea94103df6 ]
 
-Kobject created using kobject_create_and_add() can be freed using
-kobject_put() when there is no referenece any more. However,
-kobject memory allocated with kzalloc() has to set up a release
-callback in order to free it when the counter decreases to 0.
-Otherwise it causes memory leak.
+Since commit 39e6c8208d7b ("net: solve a NAPI race") napi has been able
+to be rescheduled within napi_complete_done() even in non-busypoll case,
+but virtnet_poll() always enabled interrupts before complete, and when
+napi was rescheduled within napi_complete_done() it did not disable
+interrupts.
+This caused more interrupts when event idx is disabled.
 
-Signed-off-by: Yong Zhao <yong.zhao@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+According to commit cbdadbbf0c79 ("virtio_net: fix race in RX VQ
+processing") we cannot place virtqueue_enable_cb_prepare() after
+NAPI_STATE_SCHED is cleared, so disable interrupts again if
+napi_complete_done() returned false.
+
+Tested with vhost-user of OVS 2.7 on host, which does not have the event
+idx feature.
+
+* Before patch:
+
+$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
+MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.150.253 () port 0 AF_INET
+Socket  Message  Elapsed      Messages
+Size    Size     Time         Okay Errors   Throughput
+bytes   bytes    secs            #      #   10^6bits/sec
+
+212992    1472   60.00     32763206      0    6430.32
+212992           60.00     23384299           4589.56
+
+Interrupts on guest: 9872369
+Packets/interrupt:   2.37
+
+* After patch
+
+$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
+MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.150.253 () port 0 AF_INET
+Socket  Message  Elapsed      Messages
+Size    Size     Time         Okay Errors   Throughput
+bytes   bytes    secs            #      #   10^6bits/sec
+
+212992    1472   60.00     32794646      0    6436.49
+212992           60.00     32793501           6436.27
+
+Interrupts on guest: 4941299
+Packets/interrupt:   6.64
+
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_topology.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/virtio_net.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-@@ -501,11 +501,17 @@ static ssize_t sysprops_show(struct kobj
- 	return ret;
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -260,9 +260,12 @@ static void virtqueue_napi_complete(stru
+ 	int opaque;
+ 
+ 	opaque = virtqueue_enable_cb_prepare(vq);
+-	if (napi_complete_done(napi, processed) &&
+-	    unlikely(virtqueue_poll(vq, opaque)))
+-		virtqueue_napi_schedule(napi, vq);
++	if (napi_complete_done(napi, processed)) {
++		if (unlikely(virtqueue_poll(vq, opaque)))
++			virtqueue_napi_schedule(napi, vq);
++	} else {
++		virtqueue_disable_cb(vq);
++	}
  }
  
-+static void kfd_topology_kobj_release(struct kobject *kobj)
-+{
-+	kfree(kobj);
-+}
-+
- static const struct sysfs_ops sysprops_ops = {
- 	.show = sysprops_show,
- };
- 
- static struct kobj_type sysprops_type = {
-+	.release = kfd_topology_kobj_release,
- 	.sysfs_ops = &sysprops_ops,
- };
- 
-@@ -541,6 +547,7 @@ static const struct sysfs_ops iolink_ops
- };
- 
- static struct kobj_type iolink_type = {
-+	.release = kfd_topology_kobj_release,
- 	.sysfs_ops = &iolink_ops,
- };
- 
-@@ -568,6 +575,7 @@ static const struct sysfs_ops mem_ops =
- };
- 
- static struct kobj_type mem_type = {
-+	.release = kfd_topology_kobj_release,
- 	.sysfs_ops = &mem_ops,
- };
- 
-@@ -607,6 +615,7 @@ static const struct sysfs_ops cache_ops
- };
- 
- static struct kobj_type cache_type = {
-+	.release = kfd_topology_kobj_release,
- 	.sysfs_ops = &cache_ops,
- };
- 
-@@ -729,6 +738,7 @@ static const struct sysfs_ops node_ops =
- };
- 
- static struct kobj_type node_type = {
-+	.release = kfd_topology_kobj_release,
- 	.sysfs_ops = &node_ops,
- };
- 
+ static void skb_xmit_done(struct virtqueue *vq)
