@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsr5sjna4eZZTY7mUnlTOQyloYlik0jNt8e9Ff7N/BJYSV0UND0CBYVQmT6q6rhwuL/yb7X
+X-Google-Smtp-Source: AG47ELu28UVeg2OrnbRr6v/vY8BetPYOrwjv09ZjcKSh+AhyL+O14SijQvf/fqS+EpADXaQmZzTb
 ARC-Seal: i=1; a=rsa-sha256; t=1521214263; cv=none;
         d=google.com; s=arc-20160816;
-        b=s1OpO7FKbEz34OSWRKkdJaQfJq8Z6i1xAaGeT5M1QtUZ8tomVw/JzMoB9yqWr94VEk
-         Y1si0S3YMj9zcpST2MLgMYpy9qQoxywxI3nVYvK2vNsFUU7MXKfFpYKf5GjkFXux8awT
-         PClBNzwLG1F9NZWM40KA8aBJX25pUXspIhEft44hdbvCkjnB5KWJDXjhtLkHSVyjPNLK
-         /WM9wgZ7VPQTqTKZUrJl9TcBTJZ7dEHeXErLx74UhKT/R92ymAEH0Gtf82NtFG9Ln4Af
-         pPLBOIzapfKN9ju/YgZoY+AhhGyyHntp8R02A7Jr6CG822V0MNrefFjL2Ry82LpHVGzA
-         n4YQ==
+        b=hHbT2YrzxKJBTz3esI2sY4szxh+3htmP3ALns4uFO9KObsVNEvNjrvapaBEVLuGw+X
+         QJSDgmWEzjA6HfRd+41G4VuDis7XurxppVlls51srojfjfC8I4/Qk8yVzxUHpsOcWS8b
+         2uaD5P4cia3eUi2T3BGJ6rq3UsX1OekK5dHnsYkqTRfb6psZBpRj3yxYTAxuvJptfLcV
+         6vO0HyDhZZgLm8dEU+pmULMJg7DEIjCy6kDtq0f+DRzqnJn/nfnk+b6iona89lJ+hJp+
+         1nIQLnpQ1ybrfcMs4Jo/UUsAevT5iRugEeI8wBIe9vAg9CVqmN4obnXM3AzP5DVgcP69
+         Zekg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XBHB2qL143kwZ7/3alYEv4mM1MJ8A44/ENJVOUyJuc0=;
-        b=sgrNXl70T4Zy+IwiajTyP61EagYCNkmXnl/guMUOT6SujicCvo/vhen48oETCbzayg
-         eNNbI/kK4UA57y8Fi+reFUfTLIPqOm7JWtMJeXwnFLoBFqeIN8UyiJyEng0N7+gBc9xt
-         2f+KORouoW+U7UUG5bgj+WWLvJtWtNLk5NA8ZGx6wvEo/Ug9oOnVnh5fOxP4AArkwcIF
-         y7xOTRIKdBrEOoG98NASFgsN/tGtHIac4OjUzBQZdfhu4mmzq61MN20EX+avoZW6Fx1s
-         qRWTG11LWo7ZNmwaszgQG8cIL118LcnddUJDyx6aoI12KoQYPR++CvM+lDWjFoetX4Up
-         fFhg==
+        bh=8wYmbgKZX0zEioD0smPbs58UmJ76L8QJDo4LPF5Y9d4=;
+        b=O0K5cBTXGPtREuP6U6yLSjnJ4IjcpmtIwLr33lZMg9bSqBQxvoPdU+EDsmt0f53/dT
+         797tayVgKiUITgxKs+Q3q7dceT9DoxlOPNsHLcUK/L/CTluM5JktTJprqdJmz8UeVNkV
+         HEzvbEZlZBWNklXGqGtX8nr4VFFCaYDqmBDUDVsp1NlFkad5fPxLPI9C6inI4OplM3pU
+         dHasWg28m/ibP6t7hTsOcZw7VizJGMzfBcQ5d8tunt6iyfnjzkrO5FVRNqg5bu6gXRwx
+         x/noiE/juuBzgC/7gpMlNmnHtRnQ5WLflvuWUbUhNe1xNYV6Wds3g9X1NeIWCEeBJzdy
+         Sv4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <kernellwp@gmail.com>,
-	kvm <kvm@vger.kernel.org>,
-	=?UTF-8?q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.9 30/86] x86/spectre_v2: Dont check microcode versions when running under hypervisors
-Date: Fri, 16 Mar 2018 16:22:53 +0100
-Message-Id: <20180316152319.440878939@linuxfoundation.org>
+	Benjamin Berg <bberg@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 31/86] ALSA: hda/realtek: Limit mic boost on T480
+Date: Fri, 16 Mar 2018 16:22:54 +0100
+Message-Id: <20180316152319.500268894@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -46,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108767836984209?=
-X-GMAIL-MSGID: =?utf-8?q?1595108767836984209?=
+X-GMAIL-THRID: =?utf-8?q?1595108767689516038?=
+X-GMAIL-MSGID: =?utf-8?q?1595108767689516038?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,52 +49,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Benjamin Berg <bberg@redhat.com>
 
-commit 36268223c1e9981d6cfc33aff8520b3bde4b8114 upstream.
+commit 85981dfd6b0a0fd9ed87ca4a525981b67c21f098 upstream.
 
-As:
+The internal mic boost on the T480 is too high. Fix this by applying the
+ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the machine to limit the gain.
 
- 1) It's known that hypervisors lie about the environment anyhow (host
-    mismatch)
-
- 2) Even if the hypervisor (Xen, KVM, VMWare, etc) provided a valid
-    "correct" value, it all gets to be very murky when migration happens
-    (do you provide the "new" microcode of the machine?).
-
-And in reality the cloud vendors are the ones that should make sure that
-the microcode that is running is correct and we should just sing lalalala
-and trust them.
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm <kvm@vger.kernel.org>
-Cc: Krčmář <rkrcmar@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226213019.GE9497@char.us.oracle.com
+Signed-off-by: Benjamin Berg <bberg@redhat.com>
+Tested-by: Benjamin Berg <bberg@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -103,6 +103,13 @@ static bool bad_spectre_microcode(struct
- {
- 	int i;
- 
-+	/*
-+	 * We know that the hypervisor lie to us on the microcode version so
-+	 * we may as well hope that it is running the correct version.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
-+		return false;
-+
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5788,6 +5788,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
++	SND_PCI_QUIRK(0x17aa, 0x225d, "Thinkpad T480", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
