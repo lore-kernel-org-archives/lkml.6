@@ -1,43 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932890AbeCPAug (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 20:50:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932227AbeCPAuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 20:50:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14D1204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Fri, 16 Mar 2018 08:49:34 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm@kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        Bai Ping <ping.bai@nxp.com>, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: imx: select ARM_CPU_SUSPEND for CPU_IDLE as well
-Message-ID: <20180316004933.GN26859@dragon>
-References: <20180315151345.3089601-1-arnd@arndb.de>
- <20180315151345.3089601-2-arnd@arndb.de>
+        id S932988AbeCPAvG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 20:51:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58096 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932227AbeCPAvE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 20:51:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE5D860AFB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 6/7] e1000: eliminate duplicate barriers on weakly-ordered
+ archs
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Netdev <netdev@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-6-git-send-email-okaya@codeaurora.org>
+ <CAKgT0UfJwYFy5g_2TE5W4MgdEvyH2CvBAS2imdw9UUiumuUOhQ@mail.gmail.com>
+ <39dc5bb4-02b1-bf7e-fbfc-17fc484e4fb7@codeaurora.org>
+ <CAKgT0UcfEwL9Jas149a=h3R4zeu4oA=uywJ9dpYD9kDdnpWQFA@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <95118f6e-d406-f2b6-dc67-249dc5f648f9@codeaurora.org>
+Date: Thu, 15 Mar 2018 20:50:58 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315151345.3089601-2-arnd@arndb.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAKgT0UcfEwL9Jas149a=h3R4zeu4oA=uywJ9dpYD9kDdnpWQFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 04:13:19PM +0100, Arnd Bergmann wrote:
-> The cpuidle support calls cpu_suspend(), which is compiled conditionally,
-> and fails to link unless something selects CONFIG_ARM_CPU_SUSPEND.
+On 3/15/2018 8:25 PM, Alexander Duyck wrote:
+> On Thu, Mar 15, 2018 at 4:30 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> On 3/14/2018 9:41 PM, Alexander Duyck wrote:
+>>>>  }
+>>>>
+>>> So you missed the writel in e1000_xmit_frame. You should probably get
+>>> that one too while you are doing these updates. The wmb() is in
+>>> e1000_tx_queue().
+>>>
+>>
+>> I brought wmb() outside along with the next descriptor assignment to be
+>> similar to the rest of the other code.
+>>
+>> if wmb() and writel() are not visible in the same function, let's not touch
+>> the code.
 > 
-> arch/arm/mach-imx/cpuidle-imx6sx.o: In function `imx6sx_enter_wait':
-> cpuidle-imx6sx.c:(.text+0x6c): undefined reference to `cpu_suspend'
+> Maybe for e1000 we should just skip the driver entirely. Odds are you
+> aren't going to have any e1000 parts running on ARM anyway since most
+> of them are legacy PCI or PCI-X parts that were made over 10 years
+> ago. Most of your efforts would probably be best spent on igb, igbvf,
+> ixgbe, ixgbevf, i40e, i40evf, and fm10k.
 > 
-> This adds an explicit select statement here.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Sure. I'll drop it.
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
