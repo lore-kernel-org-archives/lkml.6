@@ -1,23 +1,23 @@
 Return-Path: <geert@linux-m68k.org>
-X-Google-Smtp-Source: AG47ELtSR9VJVRkO3iNuoOuRbAvfCOgB9E9OaZwTszpUCnfHdzZjkejYrr0ZcRW2YrLUkk9uQPuJ
+X-Google-Smtp-Source: AG47ELvuG875/7xa5VKblPNcP20cGJqcskEwp6z8Ng4057U0fXeee+9FmGBS67u2DD58rklZPPP7
 ARC-Seal: i=1; a=rsa-sha256; t=1521208366; cv=none;
         d=google.com; s=arc-20160816;
-        b=JT9C8S795+oBu3SkTHxJ0x/PVnLk6DkY29zb6ZI55k+AckzqKlPMmRX7zMaKpE3KOq
-         Muixp01DA7147fTv3oH2wlpForaoQruElurDcSg5Es/1dS4RB1y99qq4udbdkkNVFfH0
-         r2lzbjVnmE+xeV4SD3ZqQDboj94AzjwStHDJXbkGf/leu989oW9wK1HZrKnYdLKxA4Na
-         7+cFdC6S5g37R/K0xMbjyWOeDGcCzON3PiyU4TezhvN81uJRqdT6YSnEqmKEvLaIg+m3
-         ktUij2SfduJbmTxnlE0b40jTjczyPm2krnTQpeMujCvazTFfZq9A8IE7TwwfQRXpmHUM
-         oseQ==
+        b=DW5Oipwp0kSgTpPOB2wdEg4zhhlS6mHAizHZsfDnSKaqyH9VFMkr6XY+aSFaB1g+AH
+         dCb4iYUFk4+MJI6aTTMHbqG6+rW53exIC9vePvjeHPZuZ5GkNltz8NpksCfijlIUFR9O
+         0/Zey0lSmxF8EihJLChyMZB0uwn51+1pJsyg0aUhBCb2+nSC4cv7+oC2J4+d1xe1QQuB
+         LJqKTXbyPs5lVPC7zAI41DgEMMZhXke2NvI+hg787Ei9Zf4p7fpND/pQbfb2Ybh6+UMZ
+         ZgaQSSHMXznQqCdxUjqKsnhOkzqlf/E4+C0wFmOzMxzxmhQvQUm6AQhYft+MRmEcO+kN
+         1tXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=nOkbAnf9WrhCYGLM+ocVUgJUmCBmVbag9xWlRf37JPs=;
-        b=RIUuyE1iA+U/56vHd3E7b/C2KcWVbxdv+ag+NVkEI3jn6JaDns0so1wMUQldYG/PiC
-         R0sKelIm7V6xkhOT3NikII7CJwW5jwIKn7yra2Bl0SMiaQQFwRbH4a/WY/xD36GcdQL8
-         LHTn+y3PWkja4VGUvi+NZ6bcqdie2c67yqYfSEmwHEOGhyvHVt0/CwJVZHb0vqXAzD3k
-         gzykXuvwZn7tFTe2mB45V2axO2oNBT2KXlOvwwhOjrLDWwzwzJc1jsXRbKHHKRtK3zqr
-         6CQ39GCx2fMpvY3KI7/NG6llay+LaCoig6HhwKcc5+rb5YFU63OUOmtHT71gbReEMOrG
-         pDhA==
+        bh=+DvVLish3WvRORH899m3hjXCyadPlaEDJj2YuoGfK20=;
+        b=mOHM8AFLYlznP6VmsXvDGOJzYPWNnTlquQ4hW69+jmQguhoA3oPpHJIAwZkhVJURL2
+         PqR4ydqpfHnFrPSGTKJO5EuyANZRvpVJmBzrmIxtPe4yOlk/rmjZdrOvNPC4cGSePr/q
+         kPDrlxNEEkEetg4IX64lkAMtwZccQrmq5F5LlfaYu0douMa+M/wXICfrJ+zriCJ16ysz
+         lpbNjRpE4aFGEJQDV2TQjVDHw+zq5twwcQ7/gDLcBPwAJHmzFo+cXl7RO3wtYQ7O/yUW
+         R1CV0XTsFTVoeuiIfbZXGdp7HNOldB5hqwgxOZQnylh8xm42ioiOstkA9K0lRWV4Fzj4
+         OOJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 2a02:1800:110:4::f00:1a is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 Authentication-Results: mx.google.com;
@@ -80,15 +80,15 @@ Cc: iommu@lists.linux-foundation.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 12/21] media: Remove depends on HAS_DMA in case of platform dependency
-Date: Fri, 16 Mar 2018 14:51:45 +0100
-Message-Id: <1521208314-4783-13-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v2 15/21] net: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:48 +0100
+Message-Id: <1521208314-4783-16-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595102583853818003?=
-X-GMAIL-MSGID: =?utf-8?q?1595102583853818003?=
+X-GMAIL-THRID: =?utf-8?q?1595102583772500389?=
+X-GMAIL-MSGID: =?utf-8?q?1595102583772500389?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,8 +104,9 @@ cannot work anyway.
 This simplifies the dependencies, and allows to improve compile-testing.
 
 Note:
-  - The various VIDEOBUF*DMA* symbols had to loose their dependencies on
-    HAS_DMA, as they are selected by several individual drivers.
+  - FSL_FMAN keeps its dependency on HAS_DMA, as it calls set_dma_ops().
+    set_dma_ops() does not exist if NO_DMA=y, and its use in this driver
+    is questionable.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
@@ -114,557 +115,223 @@ Acked-by: Robin Murphy <robin.murphy@arm.com>
 v2:
   - Add Reviewed-by, Acked-by,
   - Drop RFC state,
-  - Drop dependency of VIDEOBUF{,2}_DMA_{CONTIG,SG} on HAS_DMA,
-  - Drop new dependencies of VIDEO_IPU3_CIO2 and DVB_C8SECTPFE on
-    HAS_DMA,
   - Split per subsystem.
 ---
- drivers/media/common/videobuf2/Kconfig       |  2 --
- drivers/media/pci/dt3155/Kconfig             |  1 -
- drivers/media/pci/intel/ipu3/Kconfig         |  1 -
- drivers/media/pci/solo6x10/Kconfig           |  1 -
- drivers/media/pci/sta2x11/Kconfig            |  1 -
- drivers/media/pci/tw5864/Kconfig             |  1 -
- drivers/media/pci/tw686x/Kconfig             |  1 -
- drivers/media/platform/Kconfig               | 40 +++++++++-------------------
- drivers/media/platform/am437x/Kconfig        |  2 +-
- drivers/media/platform/atmel/Kconfig         |  4 +--
- drivers/media/platform/blackfin/Kconfig      |  1 -
- drivers/media/platform/davinci/Kconfig       |  6 -----
- drivers/media/platform/marvell-ccic/Kconfig  |  3 +--
- drivers/media/platform/rcar-vin/Kconfig      |  2 +-
- drivers/media/platform/soc_camera/Kconfig    |  3 +--
- drivers/media/platform/sti/c8sectpfe/Kconfig |  2 +-
- drivers/media/v4l2-core/Kconfig              |  2 --
- drivers/staging/media/davinci_vpfe/Kconfig   |  1 -
- drivers/staging/media/omap4iss/Kconfig       |  1 -
- 19 files changed, 20 insertions(+), 55 deletions(-)
+ drivers/net/ethernet/amd/Kconfig                | 2 +-
+ drivers/net/ethernet/apm/xgene-v2/Kconfig       | 1 -
+ drivers/net/ethernet/apm/xgene/Kconfig          | 1 -
+ drivers/net/ethernet/arc/Kconfig                | 6 ++++--
+ drivers/net/ethernet/broadcom/Kconfig           | 2 --
+ drivers/net/ethernet/calxeda/Kconfig            | 2 +-
+ drivers/net/ethernet/hisilicon/Kconfig          | 2 +-
+ drivers/net/ethernet/marvell/Kconfig            | 8 +++-----
+ drivers/net/ethernet/mellanox/mlxsw/Kconfig     | 2 +-
+ drivers/net/ethernet/renesas/Kconfig            | 2 --
+ drivers/net/wireless/broadcom/brcm80211/Kconfig | 1 -
+ drivers/net/wireless/quantenna/qtnfmac/Kconfig  | 2 +-
+ 12 files changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/media/common/videobuf2/Kconfig b/drivers/media/common/videobuf2/Kconfig
-index 17c32ea58395d78f..4ed11b46676ac4d0 100644
---- a/drivers/media/common/videobuf2/Kconfig
-+++ b/drivers/media/common/videobuf2/Kconfig
-@@ -12,7 +12,6 @@ config VIDEOBUF2_MEMOPS
+diff --git a/drivers/net/ethernet/amd/Kconfig b/drivers/net/ethernet/amd/Kconfig
+index d5c15e8bb3de706b..f273af136fc7c995 100644
+--- a/drivers/net/ethernet/amd/Kconfig
++++ b/drivers/net/ethernet/amd/Kconfig
+@@ -173,7 +173,7 @@ config SUNLANCE
  
- config VIDEOBUF2_DMA_CONTIG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF2_CORE
- 	select VIDEOBUF2_MEMOPS
- 	select DMA_SHARED_BUFFER
-@@ -25,7 +24,6 @@ config VIDEOBUF2_VMALLOC
- 
- config VIDEOBUF2_DMA_SG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF2_CORE
- 	select VIDEOBUF2_MEMOPS
- 
-diff --git a/drivers/media/pci/dt3155/Kconfig b/drivers/media/pci/dt3155/Kconfig
-index 5145e0dfa2aa9e12..858b0f2f15bef9c8 100644
---- a/drivers/media/pci/dt3155/Kconfig
-+++ b/drivers/media/pci/dt3155/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_DT3155
- 	tristate "DT3155 frame grabber"
- 	depends on PCI && VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	default n
- 	---help---
-diff --git a/drivers/media/pci/intel/ipu3/Kconfig b/drivers/media/pci/intel/ipu3/Kconfig
-index a82d3fe277d2cdec..2533ec1cb1177715 100644
---- a/drivers/media/pci/intel/ipu3/Kconfig
-+++ b/drivers/media/pci/intel/ipu3/Kconfig
-@@ -4,7 +4,6 @@ config VIDEO_IPU3_CIO2
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	depends on X86 || COMPILE_TEST
- 	depends on MEDIA_CONTROLLER
--	depends on HAS_DMA
- 	depends on ACPI
- 	select V4L2_FWNODE
- 	select VIDEOBUF2_DMA_SG
-diff --git a/drivers/media/pci/solo6x10/Kconfig b/drivers/media/pci/solo6x10/Kconfig
-index 0fb91dc7ca73529e..d9e06a6bf1ebc1a7 100644
---- a/drivers/media/pci/solo6x10/Kconfig
-+++ b/drivers/media/pci/solo6x10/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_SOLO6X10
- 	tristate "Bluecherry / Softlogic 6x10 capture cards (MPEG-4/H.264)"
- 	depends on PCI && VIDEO_DEV && SND && I2C
--	depends on HAS_DMA
+ config AMD_XGBE
+ 	tristate "AMD 10GbE Ethernet driver"
+-	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM && HAS_DMA
++	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM
+ 	depends on X86 || ARM64 || COMPILE_TEST
  	select BITREVERSE
- 	select FONT_SUPPORT
- 	select FONT_8x16
-diff --git a/drivers/media/pci/sta2x11/Kconfig b/drivers/media/pci/sta2x11/Kconfig
-index e03587b1af714199..7b856395ede9295c 100644
---- a/drivers/media/pci/sta2x11/Kconfig
-+++ b/drivers/media/pci/sta2x11/Kconfig
-@@ -1,7 +1,6 @@
- config STA2X11_VIP
- 	tristate "STA2X11 VIP Video For Linux"
- 	depends on STA2X11
+ 	select CRC32
+diff --git a/drivers/net/ethernet/apm/xgene-v2/Kconfig b/drivers/net/ethernet/apm/xgene-v2/Kconfig
+index 1205861b631896a0..eedd3f3dd22e2201 100644
+--- a/drivers/net/ethernet/apm/xgene-v2/Kconfig
++++ b/drivers/net/ethernet/apm/xgene-v2/Kconfig
+@@ -1,6 +1,5 @@
+ config NET_XGENE_V2
+ 	tristate "APM X-Gene SoC Ethernet-v2 Driver"
 -	depends on HAS_DMA
- 	select VIDEO_ADV7180 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEOBUF2_DMA_CONTIG
- 	depends on PCI && VIDEO_V4L2 && VIRT_TO_BUS
-diff --git a/drivers/media/pci/tw5864/Kconfig b/drivers/media/pci/tw5864/Kconfig
-index 87c8f327e2d49dfa..760fb11dfeaef47b 100644
---- a/drivers/media/pci/tw5864/Kconfig
-+++ b/drivers/media/pci/tw5864/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_TW5864
- 	tristate "Techwell TW5864 video/audio grabber and encoder"
- 	depends on VIDEO_DEV && PCI && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
- 	  Support for boards based on Techwell TW5864 chip which provides
-diff --git a/drivers/media/pci/tw686x/Kconfig b/drivers/media/pci/tw686x/Kconfig
-index 34ff37712313b780..da8bfee71b44cca5 100644
---- a/drivers/media/pci/tw686x/Kconfig
-+++ b/drivers/media/pci/tw686x/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_TW686X
- 	tristate "Intersil/Techwell TW686x video capture cards"
- 	depends on PCI && VIDEO_DEV && VIDEO_V4L2 && SND
--	depends on HAS_DMA
- 	select VIDEOBUF2_VMALLOC
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEOBUF2_DMA_SG
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 614fbef08ddcabb0..a45e91006bab80a8 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -36,7 +36,7 @@ source "drivers/media/platform/blackfin/Kconfig"
- config VIDEO_SH_VOU
- 	tristate "SuperH VOU video output driver"
- 	depends on MEDIA_CAMERA_SUPPORT
--	depends on VIDEO_DEV && I2C && HAS_DMA
-+	depends on VIDEO_DEV && I2C
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
+ 	depends on ARCH_XGENE || COMPILE_TEST
  	help
-@@ -85,7 +85,7 @@ config VIDEO_MUX
- config VIDEO_OMAP3
- 	tristate "OMAP 3 Camera support"
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API && ARCH_OMAP3
--	depends on HAS_DMA && OF
-+	depends on OF
- 	depends on OMAP_IOMMU
- 	select ARM_DMA_USE_IOMMU
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -102,7 +102,7 @@ config VIDEO_OMAP3_DEBUG
- 
- config VIDEO_PXA27x
- 	tristate "PXA27x Quick Capture Interface driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on PXA27x || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select SG_SPLIT
-@@ -112,7 +112,7 @@ config VIDEO_PXA27x
- 
- config VIDEO_QCOM_CAMSS
- 	tristate "Qualcomm 8x16 V4L2 Camera Subsystem driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select V4L2_FWNODE
-@@ -122,7 +122,6 @@ config VIDEO_S3C_CAMIF
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on PM
- 	depends on ARCH_S3C64XX || PLAT_S3C24XX || COMPILE_TEST
+ 	  This is the Ethernet driver for the on-chip ethernet interface
+diff --git a/drivers/net/ethernet/apm/xgene/Kconfig b/drivers/net/ethernet/apm/xgene/Kconfig
+index afccb033177b3923..e4e33c900b577161 100644
+--- a/drivers/net/ethernet/apm/xgene/Kconfig
++++ b/drivers/net/ethernet/apm/xgene/Kconfig
+@@ -1,6 +1,5 @@
+ config NET_XGENE
+ 	tristate "APM X-Gene SoC Ethernet Driver"
 -	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
+ 	depends on ARCH_XGENE || COMPILE_TEST
+ 	select PHYLIB
+ 	select MDIO_XGENE
+diff --git a/drivers/net/ethernet/arc/Kconfig b/drivers/net/ethernet/arc/Kconfig
+index e743ddf46343302f..5d0ab8e74b680cc6 100644
+--- a/drivers/net/ethernet/arc/Kconfig
++++ b/drivers/net/ethernet/arc/Kconfig
+@@ -24,7 +24,8 @@ config ARC_EMAC_CORE
+ config ARC_EMAC
+ 	tristate "ARC EMAC support"
+ 	select ARC_EMAC_CORE
+-	depends on OF_IRQ && OF_NET && HAS_DMA && (ARC || COMPILE_TEST)
++	depends on OF_IRQ && OF_NET
++	depends on ARC || COMPILE_TEST
  	---help---
- 	  This is a v4l2 driver for s3c24xx and s3c64xx SoC series camera
-@@ -133,7 +132,7 @@ config VIDEO_S3C_CAMIF
- 
- config VIDEO_STM32_DCMI
- 	tristate "STM32 Digital Camera Memory Interface (DCMI) support"
--	depends on VIDEO_V4L2 && OF && HAS_DMA
-+	depends on VIDEO_V4L2 && OF
- 	depends on ARCH_STM32 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-@@ -155,7 +154,6 @@ config VIDEO_TI_CAL
- 	tristate "TI CAL (Camera Adaptation Layer) driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on SOC_DRA7XX || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
- 	default n
-@@ -183,7 +181,6 @@ if V4L_MEM2MEM_DRIVERS
- config VIDEO_CODA
- 	tristate "Chips&Media Coda multi-standard codec IP"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && (ARCH_MXC || COMPILE_TEST)
--	depends on HAS_DMA
- 	select SRAM
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEOBUF2_VMALLOC
-@@ -201,7 +198,6 @@ config VIDEO_MEDIATEK_JPEG
- 	depends on MTK_IOMMU_V1 || COMPILE_TEST
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
+ 	  On some legacy ARC (Synopsys) FPGA boards such as ARCAngel4/ML50x
+ 	  non-standard on-chip ethernet device ARC EMAC 10/100 is used.
+@@ -33,7 +34,8 @@ config ARC_EMAC
+ config EMAC_ROCKCHIP
+ 	tristate "Rockchip EMAC support"
+ 	select ARC_EMAC_CORE
+-	depends on OF_IRQ && OF_NET && REGULATOR && HAS_DMA && (ARCH_ROCKCHIP || COMPILE_TEST)
++	depends on OF_IRQ && OF_NET && REGULATOR
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
  	---help---
-@@ -213,7 +209,7 @@ config VIDEO_MEDIATEK_JPEG
+ 	  Support for Rockchip RK3036/RK3066/RK3188 EMAC ethernet controllers.
+ 	  This selects Rockchip SoC glue layer support for the
+diff --git a/drivers/net/ethernet/broadcom/Kconfig b/drivers/net/ethernet/broadcom/Kconfig
+index af75156919edfead..4c3bfde6e8de00f2 100644
+--- a/drivers/net/ethernet/broadcom/Kconfig
++++ b/drivers/net/ethernet/broadcom/Kconfig
+@@ -157,7 +157,6 @@ config BGMAC
+ config BGMAC_BCMA
+ 	tristate "Broadcom iProc GBit BCMA support"
+ 	depends on BCMA && BCMA_HOST_SOC
+-	depends on HAS_DMA
+ 	depends on BCM47XX || ARCH_BCM_5301X || COMPILE_TEST
+ 	select BGMAC
+ 	select PHYLIB
+@@ -170,7 +169,6 @@ config BGMAC_BCMA
  
- config VIDEO_MEDIATEK_VPU
- 	tristate "Mediatek Video Processor Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ config BGMAC_PLATFORM
+ 	tristate "Broadcom iProc GBit platform support"
+-	depends on HAS_DMA
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
+ 	depends on OF
+ 	select BGMAC
+diff --git a/drivers/net/ethernet/calxeda/Kconfig b/drivers/net/ethernet/calxeda/Kconfig
+index 07d2201530d26c85..9fdd496b90ff47cb 100644
+--- a/drivers/net/ethernet/calxeda/Kconfig
++++ b/drivers/net/ethernet/calxeda/Kconfig
+@@ -1,6 +1,6 @@
+ config NET_CALXEDA_XGMAC
+ 	tristate "Calxeda 1G/10G XGMAC Ethernet driver"
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	depends on ARCH_HIGHBANK || COMPILE_TEST
+ 	select CRC32
+ 	help
+diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
+index 8bcf470ff5f38a4e..fb1a7251f45d3369 100644
+--- a/drivers/net/ethernet/hisilicon/Kconfig
++++ b/drivers/net/ethernet/hisilicon/Kconfig
+@@ -5,7 +5,7 @@
+ config NET_VENDOR_HISILICON
+ 	bool "Hisilicon devices"
+ 	default y
+-	depends on (OF || ACPI) && HAS_DMA
++	depends on OF || ACPI
+ 	depends on ARM || ARM64 || COMPILE_TEST
  	---help---
- 	    This driver provides downloading VPU firmware and
-@@ -229,7 +225,6 @@ config VIDEO_MEDIATEK_MDP
- 	depends on MTK_IOMMU || COMPILE_TEST
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	  If you have a network (Ethernet) card belonging to this class, say Y.
+diff --git a/drivers/net/ethernet/marvell/Kconfig b/drivers/net/ethernet/marvell/Kconfig
+index ebe5c91489355c9e..0704a1900bbca444 100644
+--- a/drivers/net/ethernet/marvell/Kconfig
++++ b/drivers/net/ethernet/marvell/Kconfig
+@@ -18,8 +18,8 @@ if NET_VENDOR_MARVELL
+ 
+ config MV643XX_ETH
+ 	tristate "Marvell Discovery (643XX) and Orion ethernet support"
+-	depends on (MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST) && INET
 -	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	select VIDEO_MEDIATEK_VPU
-@@ -244,7 +239,7 @@ config VIDEO_MEDIATEK_MDP
- config VIDEO_MEDIATEK_VCODEC
- 	tristate "Mediatek Video Codec driver"
- 	depends on MTK_IOMMU || COMPILE_TEST
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -271,7 +266,6 @@ config VIDEO_SAMSUNG_S5P_G2D
- 	tristate "Samsung S5P and EXYNOS4 G2D 2d graphics accelerator driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	default n
-@@ -283,7 +277,6 @@ config VIDEO_SAMSUNG_S5P_JPEG
- 	tristate "Samsung S5P/Exynos3250/Exynos4 JPEG codec driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
++	depends on MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST
++	depends on INET
+ 	select PHYLIB
+ 	select MVMDIO
  	---help---
-@@ -294,7 +287,6 @@ config VIDEO_SAMSUNG_S5P_MFC
- 	tristate "Samsung S5P MFC Video Codec"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+@@ -58,7 +58,6 @@ config MVNETA_BM_ENABLE
+ config MVNETA
+ 	tristate "Marvell Armada 370/38x/XP/37xx network interface support"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
 -	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	default n
- 	help
-@@ -304,7 +296,6 @@ config VIDEO_MX2_EMMAPRP
- 	tristate "MX2 eMMa-PrP support"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on SOC_IMX27 || COMPILE_TEST
+ 	select MVMDIO
+ 	select PHYLINK
+ 	---help---
+@@ -84,7 +83,6 @@ config MVNETA_BM
+ config MVPP2
+ 	tristate "Marvell Armada 375/7K/8K network interface support"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
 -	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	help
-@@ -316,7 +307,6 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- 	tristate "Samsung Exynos G-Scaler driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	help
-@@ -325,7 +315,6 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- config VIDEO_STI_BDISP
- 	tristate "STMicroelectronics BDISP 2D blitter driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	depends on ARCH_STI || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -335,7 +324,6 @@ config VIDEO_STI_BDISP
- config VIDEO_STI_HVA
- 	tristate "STMicroelectronics HVA multi-format video encoder V4L2 driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	depends on ARCH_STI || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -362,7 +350,6 @@ config VIDEO_STI_DELTA
- 	tristate "STMicroelectronics DELTA multi-format video decoder V4L2 driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_STI || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 		This V4L2 driver enables DELTA multi-format video decoder
- 		of STMicroelectronics STiH4xx SoC series allowing hardware
-@@ -408,7 +395,7 @@ config VIDEO_SH_VEU
+ 	select MVMDIO
+ 	---help---
+ 	  This driver supports the network interface units in the
+@@ -92,7 +90,7 @@ config MVPP2
  
- config VIDEO_RENESAS_FDP1
- 	tristate "Renesas Fine Display Processor"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
- 	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -422,7 +409,7 @@ config VIDEO_RENESAS_FDP1
+ config PXA168_ETH
+ 	tristate "Marvell pxa168 ethernet support"
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	depends on CPU_PXA168 || ARCH_BERLIN || COMPILE_TEST
+ 	select PHYLIB
+ 	---help---
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+index d56eea3105090051..b591c8cc9896ccb7 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+@@ -30,7 +30,7 @@ config MLXSW_CORE_THERMAL
  
- config VIDEO_RENESAS_JPU
- 	tristate "Renesas JPEG Processing Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
+ config MLXSW_PCI
+ 	tristate "PCI bus implementation for Mellanox Technologies Switch ASICs"
+-	depends on PCI && HAS_DMA && HAS_IOMEM && MLXSW_CORE
++	depends on PCI && HAS_IOMEM && MLXSW_CORE
+ 	default m
+ 	---help---
+ 	  This is PCI bus implementation for Mellanox Technologies Switch ASICs.
+diff --git a/drivers/net/ethernet/renesas/Kconfig b/drivers/net/ethernet/renesas/Kconfig
+index 27be51f0a421b43e..f3f7477043ce1061 100644
+--- a/drivers/net/ethernet/renesas/Kconfig
++++ b/drivers/net/ethernet/renesas/Kconfig
+@@ -17,7 +17,6 @@ if NET_VENDOR_RENESAS
+ 
+ config SH_ETH
+ 	tristate "Renesas SuperH Ethernet support"
+-	depends on HAS_DMA
+ 	depends on ARCH_RENESAS || SUPERH || COMPILE_TEST
+ 	select CRC32
+ 	select MII
+@@ -31,7 +30,6 @@ config SH_ETH
+ 
+ config RAVB
+ 	tristate "Renesas Ethernet AVB support"
+-	depends on HAS_DMA
  	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -447,7 +434,7 @@ config VIDEO_RENESAS_FCP
- 
- config VIDEO_RENESAS_VSP1
- 	tristate "Renesas VSP1 Video Processing Engine"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on (ARCH_RENESAS && OF) || COMPILE_TEST
- 	depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -460,7 +447,7 @@ config VIDEO_RENESAS_VSP1
- 
- config VIDEO_ROCKCHIP_RGA
- 	tristate "Rockchip Raster 2d Graphic Acceleration Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select V4L2_MEM2MEM_DEV
-@@ -477,7 +464,6 @@ config VIDEO_TI_VPE
- 	tristate "TI VPE (Video Processing Engine) driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on SOC_DRA7XX || COMPILE_TEST
+ 	select CRC32
+ 	select MII
+diff --git a/drivers/net/wireless/broadcom/brcm80211/Kconfig b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+index 9d99eb42d9176f0f..6acba67bca07abd7 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/Kconfig
++++ b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+@@ -60,7 +60,6 @@ config BRCMFMAC_PCIE
+ 	bool "PCIE bus interface support for FullMAC driver"
+ 	depends on BRCMFMAC
+ 	depends on PCI
 -	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	select VIDEO_TI_VPDMA
-@@ -496,7 +482,7 @@ config VIDEO_TI_VPE_DEBUG
- 
- config VIDEO_QCOM_VENUS
- 	tristate "Qualcomm Venus V4L2 encoder/decoder driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
- 	select QCOM_MDT_LOADER if ARCH_QCOM
- 	select QCOM_SCM if ARCH_QCOM
-@@ -638,7 +624,7 @@ if SDR_PLATFORM_DRIVERS
- 
- config VIDEO_RCAR_DRIF
- 	tristate "Renesas Digitial Radio Interface (DRIF)"
--	depends on VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_V4L2
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_VMALLOC
- 	---help---
-diff --git a/drivers/media/platform/am437x/Kconfig b/drivers/media/platform/am437x/Kconfig
-index 160e77e9a0fbfa61..f4ce1176e4dc8179 100644
---- a/drivers/media/platform/am437x/Kconfig
-+++ b/drivers/media/platform/am437x/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_AM437X_VPFE
- 	tristate "TI AM437x VPFE video capture driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on SOC_AM43XX || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/atmel/Kconfig b/drivers/media/platform/atmel/Kconfig
-index 55de751e5f51500b..a211ef20f77eadba 100644
---- a/drivers/media/platform/atmel/Kconfig
-+++ b/drivers/media/platform/atmel/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_ATMEL_ISC
- 	tristate "ATMEL Image Sensor Controller (ISC) support"
--	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select REGMAP_MMIO
-@@ -11,7 +11,7 @@ config VIDEO_ATMEL_ISC
- 
- config VIDEO_ATMEL_ISI
- 	tristate "ATMEL Image Sensor Interface (ISI) support"
--	depends on VIDEO_V4L2 && OF && HAS_DMA
-+	depends on VIDEO_V4L2 && OF
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/blackfin/Kconfig b/drivers/media/platform/blackfin/Kconfig
-index 68fa90151b8f40f2..cc239972fa2c3228 100644
---- a/drivers/media/platform/blackfin/Kconfig
-+++ b/drivers/media/platform/blackfin/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_BLACKFIN_CAPTURE
- 	tristate "Blackfin Video Capture Driver"
- 	depends on VIDEO_V4L2 && BLACKFIN && I2C
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	help
- 	  V4L2 bridge driver for Blackfin video capture device.
-diff --git a/drivers/media/platform/davinci/Kconfig b/drivers/media/platform/davinci/Kconfig
-index 55982e681d779d3a..6273853a86f900c3 100644
---- a/drivers/media/platform/davinci/Kconfig
-+++ b/drivers/media/platform/davinci/Kconfig
-@@ -2,7 +2,6 @@ config VIDEO_DAVINCI_VPIF_DISPLAY
- 	tristate "TI DaVinci VPIF V4L2-Display driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEO_ADV7343 if MEDIA_SUBDRV_AUTOSELECT
-@@ -19,7 +18,6 @@ config VIDEO_DAVINCI_VPIF_CAPTURE
- 	tristate "TI DaVinci VPIF video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-@@ -35,7 +33,6 @@ config VIDEO_DM6446_CCDC
- 	tristate "TI DM6446 CCDC video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -52,7 +49,6 @@ config VIDEO_DM355_CCDC
- 	tristate "TI DM355 CCDC video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -68,7 +64,6 @@ config VIDEO_DM355_CCDC
- config VIDEO_DM365_ISIF
- 	tristate "TI DM365 ISIF video capture driver"
- 	depends on VIDEO_V4L2 && ARCH_DAVINCI
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -82,7 +77,6 @@ config VIDEO_DM365_ISIF
- config VIDEO_DAVINCI_VPBE_DISPLAY
- 	tristate "TI DaVinci VPBE V4L2-Display driver"
- 	depends on VIDEO_V4L2 && ARCH_DAVINCI
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	help
-diff --git a/drivers/media/platform/marvell-ccic/Kconfig b/drivers/media/platform/marvell-ccic/Kconfig
-index 4bf5bd1e90d69fea..7f7868bc6fcbee87 100644
---- a/drivers/media/platform/marvell-ccic/Kconfig
-+++ b/drivers/media/platform/marvell-ccic/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_CAFE_CCIC
- 	tristate "Marvell 88ALP01 (Cafe) CMOS Camera Controller support"
- 	depends on PCI && I2C && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEO_OV7670
- 	select VIDEOBUF2_VMALLOC
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -14,7 +13,7 @@ config VIDEO_CAFE_CCIC
- config VIDEO_MMP_CAMERA
- 	tristate "Marvell Armada 610 integrated camera controller support"
- 	depends on ARCH_MMP && I2C && VIDEO_V4L2
--	depends on HAS_DMA && BROKEN
-+	depends on BROKEN
- 	select VIDEO_OV7670
- 	select I2C_GPIO
- 	select VIDEOBUF2_DMA_SG
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..9064337a4bd9fc66 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_RCAR_VIN
- 	tristate "R-Car Video Input (VIN) Driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && MEDIA_CONTROLLER
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/soc_camera/Kconfig b/drivers/media/platform/soc_camera/Kconfig
-index f5979c12ad618f4a..669d116b8f09b2aa 100644
---- a/drivers/media/platform/soc_camera/Kconfig
-+++ b/drivers/media/platform/soc_camera/Kconfig
-@@ -18,9 +18,8 @@ config SOC_CAMERA_PLATFORM
- 
- config VIDEO_SH_MOBILE_CEU
- 	tristate "SuperH Mobile CEU Interface driver"
--	depends on VIDEO_DEV && SOC_CAMERA && HAS_DMA && HAVE_CLK
-+	depends on VIDEO_DEV && SOC_CAMERA && HAVE_CLK
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select SOC_CAMERA_SCALE_CROP
- 	---help---
-diff --git a/drivers/media/platform/sti/c8sectpfe/Kconfig b/drivers/media/platform/sti/c8sectpfe/Kconfig
-index 740190f8a3b606d3..7420a50572d347ef 100644
---- a/drivers/media/platform/sti/c8sectpfe/Kconfig
-+++ b/drivers/media/platform/sti/c8sectpfe/Kconfig
-@@ -1,6 +1,6 @@
- config DVB_C8SECTPFE
- 	tristate "STMicroelectronics C8SECTPFE DVB support"
--	depends on PINCTRL && DVB_CORE && I2C && HAS_DMA
-+	depends on PINCTRL && DVB_CORE && I2C
- 	depends on ARCH_STI || ARCH_MULTIPLATFORM || COMPILE_TEST
+ 	select BRCMFMAC_PROTO_MSGBUF
  	select FW_LOADER
- 	select DEBUG_FS
-diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
-index 8e37e7c5e0f7e25a..bbbbc42af3dee4a1 100644
---- a/drivers/media/v4l2-core/Kconfig
-+++ b/drivers/media/v4l2-core/Kconfig
-@@ -65,7 +65,6 @@ config VIDEOBUF_GEN
- 
- config VIDEOBUF_DMA_SG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF_GEN
- 
- config VIDEOBUF_VMALLOC
-@@ -74,7 +73,6 @@ config VIDEOBUF_VMALLOC
- 
- config VIDEOBUF_DMA_CONTIG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF_GEN
- 
- config VIDEOBUF_DVB
-diff --git a/drivers/staging/media/davinci_vpfe/Kconfig b/drivers/staging/media/davinci_vpfe/Kconfig
-index f40a06954a92eaec..0da8d7a5f57f818f 100644
---- a/drivers/staging/media/davinci_vpfe/Kconfig
-+++ b/drivers/staging/media/davinci_vpfe/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_DM365_VPFE
- 	tristate "DM365 VPFE Media Controller Capture Driver"
- 	depends on VIDEO_V4L2 && ARCH_DAVINCI_DM365 && !VIDEO_DM365_ISIF
--	depends on HAS_DMA
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	depends on VIDEO_DAVINCI_VPBE_DISPLAY
- 	select VIDEOBUF2_DMA_CONTIG
-diff --git a/drivers/staging/media/omap4iss/Kconfig b/drivers/staging/media/omap4iss/Kconfig
-index 46183464ee79f896..dbdb1ae82fdab323 100644
---- a/drivers/staging/media/omap4iss/Kconfig
-+++ b/drivers/staging/media/omap4iss/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_OMAP4
- 	tristate "OMAP 4 Camera support"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && I2C && ARCH_OMAP4
--	depends on HAS_DMA
- 	select MFD_SYSCON
- 	select VIDEOBUF2_DMA_CONTIG
  	---help---
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/Kconfig b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+index 025fa6018550895a..8d1492a90bd135c0 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/Kconfig
++++ b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+@@ -7,7 +7,7 @@ config QTNFMAC
+ config QTNFMAC_PEARL_PCIE
+ 	tristate "Quantenna QSR10g PCIe support"
+ 	default n
+-	depends on HAS_DMA && PCI && CFG80211
++	depends on PCI && CFG80211
+ 	select QTNFMAC
+ 	select FW_LOADER
+ 	select CRC32
 -- 
 2.7.4
