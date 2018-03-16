@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuKZBcmTXhhF18IUh3b05hAV8vD8Zf7qBTbSE8SNiesKru4U29euaNXegzKPUfmJ8x/Fcf2
-ARC-Seal: i=1; a=rsa-sha256; t=1521214106; cv=none;
+X-Google-Smtp-Source: AG47ELvEm/4y3MykfaB2k4QZHOzW/mMmmYSbSenRXZQtOXeTvZJHtjePsHTi9VECiKG6AGHerJtC
+ARC-Seal: i=1; a=rsa-sha256; t=1521214100; cv=none;
         d=google.com; s=arc-20160816;
-        b=gyJgQC5raWcUvYgTbGAYYmCpLw717fj+LCuMucnCaPjqT11H9T08mBkCYAIoZgo6Jv
-         1aaxxuv2SmvxLfj0fHUa/JjKvKmusISu9gpd8+JbzKJaSbGCE1Ohy2S2BW8iOXWSsX9F
-         qxLJXgmPUphuoZOX71TBTkPAzBr7qYviksftzaqbtBdzRuZaXKNuvMRX+bIev/Z8xvca
-         w6C8qv3cM2p4k046W6yJAepvnMoGHEhE/76QU+Xr4Zzy3ByCYWg3OIAzG1CJTvNLOxPI
-         ylqa83BnRlDBPkP+aFvsRLSsEtEpyBNhxuNcJ1JvULfXyJSXTSFSW1EkR9ySA5abV6Uf
-         43LQ==
+        b=FQcmtjbgqbErUN9nY1+Sgh3w67eybthEjtI+t0kL6bWZoyYrxVYLFGuU4MCZaeT4KP
+         HZSh1iqv3l453rTOHz5iqY4yzn+8EJ5gMC4QTMn21HoddhvKvutP3UwbzvjvQ1YX7DL2
+         QSRqJYQaS6n6CtXF6HagyZXTDLOAaU9AYs1aXFH5SgCA8Gly1EEcUr/m0vcAlHG2Lw7P
+         jnnsfcL80zUnbCKVwTGzt3E0ibGuRbb8JOgb22BKDEUzc41s7n+JOdbaGIj5b2BWvtUv
+         FswzqakRamEu7R6H3Rux7lw9KIJzzNEQ4pXflrVPlvaydjHtgs8J+pLbES6Nxgo2ivHI
+         D+rA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BPO/Dx5hrLZ8A6f4TJUpWOWxKMcZIGKgpX49B3xg4Ik=;
-        b=fnkfmDOuAgiOHpluVbLXT8ZDJZvXK9PoHFZYKEgsP7kj0dyC3BViivQQ3OTh/ndcMY
-         5Zly6etkZYG6kiL6EAZLKZgn5OSbAh7kpzdnXhX5YEX9CkIZHHbPqo9+6W1La8TZS0hF
-         HK9Ne/Jslt43XfUbnTcI2REwnLoNoVW8Wl3zs8AxQl5bU2sXGhd/BHclLv/urTPLbG8T
-         Pi480PZgpJwBHeAC9TsQfZ1K3fYtoqbVhvksam0Tf2W/Gko20niEajDIb9zR/LSvIbgf
-         pz1yAFDiScrlCkb7CT12K0EBx+D/Emm8Hzwfjv1yrpxHS6wqKkSVSHDT7W4QLpg6RjfX
-         +GyA==
+        bh=fp2lqWDbbvCkBsbcLc20//jC/YozAMkc3BVRBftfvjU=;
+        b=ug+zt8iTicVhblRiZM88WfwqYqtirQm797nOmPs1NHxI0j2bKDjSqFlZKxUAnU4gyO
+         kw6rceUDl29rlKuZGBTOvscy95J4MNHp7QTKKfHfonWtzgYLVKZxZ8GiVaH2m7hoFjmr
+         gp5BbibbM3GBWunpqrIiRjieEXFqeCZraJwxI5VEWoaKyDaGRUXaIW164Rm2EqMjnlgy
+         NJmU0dRDHP7vp8hrC6djooUNgnozzHMENHieCW7L2fCMr2YandnMOz7p7uACvvWXr2qn
+         JrjTRUF1SH6kvs3jvaqW/ujjEWQpKHCHPtq4kfUni7Y/nwkjIIj3wqTDJD+8GlCpEEAN
+         /PBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	David Daney <david.daney@cavium.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	"Steven J. Hill" <Steven.Hill@cavium.com>,
+	Justin Chen <justinpopo6@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	linux-mips@linux-mips.org,
 	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.4 15/63] MIPS: OCTEON: irq: Check for null return on kzalloc allocation
-Date: Fri, 16 Mar 2018 16:22:47 +0100
-Message-Id: <20180316152301.710281577@linuxfoundation.org>
+Subject: [PATCH 4.4 13/63] MIPS: BMIPS: Do not mask IPIs during suspend
+Date: Fri, 16 Mar 2018 16:22:45 +0100
+Message-Id: <20180316152301.507392406@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108602604550470?=
-X-GMAIL-MSGID: =?utf-8?q?1595108602604550470?=
+X-GMAIL-THRID: =?utf-8?q?1595108286989969530?=
+X-GMAIL-MSGID: =?utf-8?q?1595108597161396983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Justin Chen <justinpopo6@gmail.com>
 
-commit 902f4d067a50ccf645a58dd5fb1d113b6e0f9b5b upstream.
+commit 06a3f0c9f2725f5d7c63c4203839373c9bd00c28 upstream.
 
-The allocation of host_data is not null checked, leading to a null
-pointer dereference if the allocation fails. Fix this by adding a null
-check and return with -ENOMEM.
+Commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on CPU IRQs") fixes an
+issue where disable_irq did not actually disable the irq. The bug caused
+our IPIs to not be disabled, which actually is the correct behavior.
 
-Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: "Steven J. Hill" <Steven.Hill@cavium.com>
+With the addition of commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on
+CPU IRQs"), the IPIs were getting disabled going into suspend, thus
+schedule_ipi() was not being called. This caused deadlocks where
+schedulable task were not being scheduled and other cpus were waiting
+for them to do something.
+
+Add the IRQF_NO_SUSPEND flag so an irq_disable will not be called on the
+IPIs during suspend.
+
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+Fixes: a3e6c1eff548 ("MIPS: IRQ: Fix disabled_irq on CPU IRQs")
+Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/18658/
+Cc: stable@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/17385/
+[jhogan@kernel.org: checkpatch: wrap long lines and fix commit refs]
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/cavium-octeon/octeon-irq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/kernel/smp-bmips.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/mips/cavium-octeon/octeon-irq.c
-+++ b/arch/mips/cavium-octeon/octeon-irq.c
-@@ -2246,6 +2246,8 @@ static int __init octeon_irq_init_cib(st
+--- a/arch/mips/kernel/smp-bmips.c
++++ b/arch/mips/kernel/smp-bmips.c
+@@ -166,11 +166,11 @@ static void bmips_prepare_cpus(unsigned
+ 		return;
  	}
  
- 	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
-+	if (!host_data)
-+		return -ENOMEM;
- 	raw_spin_lock_init(&host_data->lock);
+-	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi0", NULL))
++	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
+ 		panic("Can't request IPI0 interrupt");
+-	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi1", NULL))
++	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
+ 		panic("Can't request IPI1 interrupt");
+ }
  
- 	addr = of_get_address(ciu_node, 0, NULL, NULL);
