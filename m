@@ -1,115 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeCPQiY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:38:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35726 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750749AbeCPQiV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:38:21 -0400
-Subject: Re: [mm] b33ddf50eb: INFO:trying_to_register_non-static_key
-To: kernel test robot <fengguang.wu@intel.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, lkp@01.org
-References: <20180316102359.pzjwi24hbkhnyk2a@inn>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Fri, 16 Mar 2018 17:38:06 +0100
+        id S1753312AbeCPQjw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:39:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60418 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752559AbeCPQju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:39:50 -0400
+Subject: Re: [PATCH 0/2] irqchip/gic*: Complain about the use of IRQ_TYPE_NONE
+To: Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180316145511.28362-1-marc.zyngier@arm.com>
+ <5f274a06-3a9c-7d41-2e4d-9733e4ac6078@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <399d5e06-c530-6a29-8a4d-9e8ca62167c4@arm.com>
+Date: Fri, 16 Mar 2018 16:39:47 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180316102359.pzjwi24hbkhnyk2a@inn>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+In-Reply-To: <5f274a06-3a9c-7d41-2e4d-9733e4ac6078@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031616-0008-0000-0000-000004DF0B67
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031616-0009-0000-0000-00001E721AD9
-Message-Id: <7a638500-ce14-809a-6b40-79f32537b818@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803160202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/2018 11:23, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
+On 16/03/18 16:19, Robin Murphy wrote:
+> On 16/03/18 14:55, Marc Zyngier wrote:
+>> Grepping through the dts files, the documentation, and reviewing
+>> patches, one can only notice the use of IRQ_TYPE_NONE in interrupt
+>> specifiers. At least for the GIC, this doesn't mean anything. The
+>> unsuspecting driver will end-up with whatever was there before, and
+>> there is a 50% probability that it is not what it wants.
+>>
+>> I'd love to fix it myself, but I also have a 50% probability of
+>> getting it wrong. In order to make the user aware they are walking on
+>> thin ice, let's add some warnings. Hopefully, they'll be annoying
+>> enough that people will fix their firmware. Croudsourcing debugging...
 > 
-> commit: b33ddf50ebcc740b990dd2e0e8ff0b92c7acf58e ("mm: Protect mm_rb tree with a rwlock")
-> url: https://github.com/0day-ci/linux/commits/Laurent-Dufour/Speculative-page-faults/20180316-151833
+> I guess there's also the alternative nuclear option of breaking their 
+> build ;)
 > 
+> Robin.
 > 
-> in testcase: boot
+> ----->8-----
+> diff --git a/include/dt-bindings/interrupt-controller/irq.h 
+> b/include/dt-bindings/interrupt-controller/irq.h
+> index a8b310555f14..de79af80d01e 100644
+> --- a/include/dt-bindings/interrupt-controller/irq.h
+> +++ b/include/dt-bindings/interrupt-controller/irq.h
+> @@ -10,7 +10,7 @@
+>   #ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
+>   #define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
 > 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 4G
+> -#define IRQ_TYPE_NONE		0
+> +#define IRQ_TYPE_NONE		"This is nonsense and needs fixing"
+>   #define IRQ_TYPE_EDGE_RISING	1
+>   #define IRQ_TYPE_EDGE_FALLING	2
+>   #define IRQ_TYPE_EDGE_BOTH	(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING)
 > 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +----------------------------------------+------------+------------+
-> |                                        | 7f3f7b4e80 | b33ddf50eb |
-> +----------------------------------------+------------+------------+
-> | boot_successes                         | 8          | 0          |
-> | boot_failures                          | 0          | 6          |
-> | INFO:trying_to_register_non-static_key | 0          | 6          |
-> +----------------------------------------+------------+------------+
-> 
-> 
-> 
-> [   22.218186] INFO: trying to register non-static key.
-> [   22.220252] the code is fine but needs lockdep annotation.
-> [   22.222471] turning off the locking correctness validator.
-> [   22.224839] CPU: 0 PID: 1 Comm: init Not tainted 4.16.0-rc4-next-20180309-00017-gb33ddf5 #1
-> [   22.228528] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   22.232443] Call Trace:
-> [   22.234234]  dump_stack+0x85/0xbc
-> [   22.236085]  register_lock_class+0x237/0x477
-> [   22.238057]  __lock_acquire+0xd0/0xf15
-> [   22.240032]  lock_acquire+0x19c/0x1ce
-> [   22.241927]  ? do_mmap+0x3aa/0x3ff
-> [   22.243749]  mmap_region+0x37a/0x4c0
-> [   22.245619]  ? do_mmap+0x3aa/0x3ff
-> [   22.247425]  do_mmap+0x3aa/0x3ff
-> [   22.249175]  vm_mmap_pgoff+0xa1/0xea
-> [   22.251083]  elf_map+0x6d/0x134
-> [   22.252873]  load_elf_binary+0x56f/0xe07
-> [   22.254853]  search_binary_handler+0x75/0x1f8
-> [   22.256934]  do_execveat_common+0x661/0x92b
-> [   22.259164]  ? rest_init+0x22e/0x22e
-> [   22.261082]  do_execve+0x1f/0x21
-> [   22.262884]  kernel_init+0x5a/0xf0
-> [   22.264722]  ret_from_fork+0x3a/0x50
-> [   22.303240] systemd[1]: RTC configured in localtime, applying delta of 480 minutes to system time.
-> [   22.313544] systemd[1]: Failed to insert module 'autofs4': No such file or directory
 
-Thanks a lot for reporting this.
+What really annoys me with this patch is that you haven't put a SoB on it...
 
-I found the issue introduced in that patch.
-I mistakenly remove in the call to seqcount_init(&vma->vm_sequence) in
-__vma_link_rb().
-This doesn't have a functional impact as the vm_sequence is incremented
-monotonically.
-
-I'll fix that in the next series.
-
-Laurent.
+	M.
+-- 
+Jazz is not dead. It just smells funny...
