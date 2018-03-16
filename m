@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsPIMqLtI9VupyhhfwbnT66JrXMhPkh8wP/MD/1SBZqXWtbF+O9iZrA1LhkI+IrpLdrVi55
-ARC-Seal: i=1; a=rsa-sha256; t=1521214542; cv=none;
+X-Google-Smtp-Source: AG47ELtL1fAM6YQGs7swsS6VMSNU2G4oWOxXeMx0X9NMGFa+VK9w7vHhlNHoOZNZi1G4EIMI5n73
+ARC-Seal: i=1; a=rsa-sha256; t=1521214539; cv=none;
         d=google.com; s=arc-20160816;
-        b=CckHk53Qru/3BoesuwGUrLi4092p6a9CWoF648o44ie8V6jAmXXALjIBWbAoFyhQ2j
-         PV5oYHvxANq7sDDEmOSl3Nw0cXzmA1Y2IjDrJpJxqE+GO0V3ft8OxY9sKmQrcKpsjFGG
-         6loK0f9Dnqkns9luVmZrAfg9VKogsuqqbmFKNK5s4wGqCDiDqm4UCa7eRUOn59vEfTdT
-         NEGVCFRY/FVmpd7o+9BiMt5R329qwlMpvSQwdcX3RczDaJ8BlodnuljhU5O9z4jtqv05
-         oUiIQCfh21IiKO5vNQ1cwBpr+r5c3WY/ETX+7baYZPFML6fKzEfi2FfhLj3XZWYmrpup
-         9r6A==
+        b=GyjbmjoepFgNz7q7iuCewg2V9KRFzV2KGbNRFzM9lJUtsKFugZh3XPzULApHOKhmf5
+         ppt6u6wt+KvDW8PMC9xcM3yH1tfLNAzynJrDJdCy0ltFRLhrLi/2gjM/eKPuqRJRm2vY
+         9BuSYlXYxOldlgg7THEy4Db3dCKj2yyo0ZEiewBD7QZ73D8b/M9gJgjH85SeMTNobUU0
+         2SPxbZHHt4roCs0KCVrgTfqBSycJIDdIV3pPSKokNfA790w4i73nG2nxAbc4nywbX3ZA
+         CERr/9VVeh/gE04WyctrgBZ1Gw5B0GAJJ2JY7cPErMv4CRROmltSTxXjB9IUnyWA3nJg
+         lt3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NtKdXYLKy2tVStg10wsUMGyBoJoX0R8J7h1DJDGN6N0=;
-        b=guoskimOGzH/vCaGrle2UwvkjoKMcVW59/jBXMeKyJS1/fXNBjiga5uiLt6qxWnKGf
-         y638+18/AeE6qicYi5w+/uNsuS1tJc3vdxRbI8quN+4Drdq5OEO1gHyNqy7m2npEI8jw
-         9LW0BjxT1fYxyQJKdAcsfcYnfpkz+cWnkGL8U9QyGkOI93C1935a2fokvcyH53SRJ13F
-         Fim4wrCa6lvCVqm/v4RJElB1n0ax8lFVEpvrk8m/u6WvprDRKFi9myamHNtZB+Xr0llk
-         oF/I6AY0uy2qXCWv2v1PgxzQ026hCkD1gnMRejG36tUSwIyRUeqM/GsqBHOiVxCqO96W
-         SmtQ==
+        bh=+4BwCB/h9AJ/hJt0PmQhwKGCIovR/ubPNIyOrPJb02k=;
+        b=mY0O62DKoMr6sVa7vv38sRKUv84zgzzjhXt1hrGRSTmktoxDh5xGjc0AtacfyZDRy5
+         73QtF6DSbbSirG5gl3fk58Qpbi4INC+6l9TWfo2XIm4mve0kBu3pozPEIMoNKFfxVB8F
+         7CngpkXA45XNR6WpFJBAvjT/aWO2KzJ35jB9dCovJINepzlwahRSf95XmrhWnEq6xoY4
+         /53v3Q3zehor/6ULpjJxR3eISadOHEb0i0FzartZGpYnzGcD821qyvJpjimdpMuanzPv
+         xHsfnjF7VXhy9OUjZZ2EijsXeUPKbOYTuTyWQx2r7OGQ27jSHslW0cuWAx0xpFgecICO
+         rS2A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>,
+	Colin Ian King <colin.king@canonical.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/109] test_firmware: fix setting old custom fw path back on exit
-Date: Fri, 16 Mar 2018 16:23:13 +0100
-Message-Id: <20180316152332.364725590@linuxfoundation.org>
+Subject: [PATCH 4.14 043/109] crypto: cavium - fix memory leak on info
+Date: Fri, 16 Mar 2018 16:23:12 +0100
+Message-Id: <20180316152332.314598267@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109060118425146?=
-X-GMAIL-MSGID: =?utf-8?q?1595109060118425146?=
+X-GMAIL-THRID: =?utf-8?q?1595109057362691680?=
+X-GMAIL-MSGID: =?utf-8?q?1595109057362691680?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 65c79230576873b312c3599479c1e42355c9f349 ]
+[ Upstream commit 87aae50af730a28dc1d8846d86dca5e9aa724a9f ]
 
-The file /sys/module/firmware_class/parameters/path can be used
-to set a custom firmware path. The fw_filesystem.sh script creates
-a temporary directory to add a test firmware file to be used during
-testing, in order for this to work it uses the custom path syfs file
-and it was supposed to reset back the file on execution exit. The
-script failed to do this due to a typo, it was using OLD_PATH instead
-of OLD_FWPATH, since its inception since v3.17.
+The object info is being leaked on an error return path, fix this
+by setting ret to -ENOMEM and exiting via the request_cleanup path
+that will free info.
 
-Its not as easy to just keep the old setting, it turns out that
-resetting an empty setting won't actually do what we want, we need
-to check if it was empty and set an empty space.
+Detected by CoverityScan, CID#1408439 ("Resource Leak")
 
-Without this we end up having the temporary path always set after
-we run these tests.
-
-Fixes: 0a8adf58475 ("test: add firmware_class loader test")
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: c694b233295b ("crypto: cavium - Add the Virtual Function driver for CPT")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/firmware/fw_filesystem.sh |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/crypto/cavium/cpt/cptvf_reqmanager.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -45,7 +45,10 @@ test_finish()
- 	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
- 		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
- 	fi
--	echo -n "$OLD_PATH" >/sys/module/firmware_class/parameters/path
-+	if [ "$OLD_FWPATH" = "" ]; then
-+		OLD_FWPATH=" "
-+	fi
-+	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
- 	rm -f "$FW"
- 	rmdir "$FWPATH"
- }
+--- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
++++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+@@ -459,7 +459,8 @@ int process_request(struct cpt_vf *cptvf
+ 	info->completion_addr = kzalloc(sizeof(union cpt_res_s), GFP_KERNEL);
+ 	if (unlikely(!info->completion_addr)) {
+ 		dev_err(&pdev->dev, "Unable to allocate memory for completion_addr\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto request_cleanup;
+ 	}
+ 
+ 	result = (union cpt_res_s *)info->completion_addr;
