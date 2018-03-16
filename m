@@ -1,78 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeCPMSB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 08:18:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:55152 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeCPMR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:17:59 -0400
-Subject: Re: [PATCH v2 02/13] ARM: dts: ipq4019: Add a few peripheral nodes
-To: Sricharan R <sricharan@codeaurora.org>, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, sboyd@codeaurora.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org
-References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
- <1521193101-4586-3-git-send-email-sricharan@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <eb50deb1-0530-866f-502e-e675cdd1e732@arm.com>
-Date: Fri, 16 Mar 2018 12:17:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752106AbeCPMUu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 08:20:50 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39802 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeCPMUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 08:20:48 -0400
+Date: Fri, 16 Mar 2018 13:20:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] kernel/rtmutex: Handle non enqueued waiters gracefully
+ in remove_waiter()
+Message-ID: <20180316122041.GE4064@hirez.programming.kicks-ass.net>
+References: <20180312142845.m4ohqyg3mak34umf@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1521193101-4586-3-git-send-email-sricharan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312142845.m4ohqyg3mak34umf@linutronix.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/18 09:38, Sricharan R wrote:
-> Now with the driver updates for some peripherals being there,
-> add i2c, spi, pcie, bam, qpic-nand, scm nodes to enhance the available
-> peripheral support.
+On Mon, Mar 12, 2018 at 03:28:45PM +0100, Sebastian Andrzej Siewior wrote:
+> In -RT task_blocks_on_rt_mutex() may return with -EAGAIN due to
+> (->pi_blocked_on == PI_WAKEUP_INPROGRESS) before it added itself as a
+> waiter. In such a case we must not call remove_waiter() because without
+> a waiter it will trigger the BUG_ON() statement.
 > 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> This was initially reported by Yimin Deng. Thomas Gleixner fixed it then
+> with an explicit check for waiters before calling remove_waiter() with
+> the following note:
+> 
+> | Guard it with rt_mutex_has_waiters(). This is a quick fix which is
+> | easy to backport. The proper fix is to have a central check in
+> | remove_waiter() so we can call it unconditionally.
+> 
+> This is the suggested change.
+> Now that it is possible to call remove_waiter() unconditionally I also
+> remove that check from rt_mutex_slowlock().
+> 
+> Link: https://lkml.kernel.org/r/CAAh1qt=DCL9aUXNxanP5BKtiPp3m+qj4yB+gDohhXPVFCxWwzg@mail.gmail.com
+> Reported-and-debugged-by: Yimin Deng <yimin11.deng@gmail.com>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > ---
->  arch/arm/boot/dts/qcom-ipq4019.dtsi | 134 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 134 insertions(+)
+>  kernel/locking/rtmutex.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> index 10d112a..e38fffa 100644
-> --- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> +++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> @@ -25,7 +25,9 @@
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+> index 65cc0cb984e6..57d28d8f5280 100644
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -1068,12 +1068,15 @@ static void mark_wakeup_next_waiter(struct wake_q_head *wake_q,
+>  static void remove_waiter(struct rt_mutex *lock,
+>  			  struct rt_mutex_waiter *waiter)
+>  {
+> -	bool is_top_waiter = (waiter == rt_mutex_top_waiter(lock));
 
-[...]
+I'm a little confused, but isn't it easier to make rt_mutex_top_waiter()
+return NULL if there aren't in fact any waiters?
 
-> +		pcie0: pci@40000000 {
-> +			compatible = "qcom,pcie-ipq4019", "snps,dw-pcie";
-> +			reg =  <0x40000000 0xf1d
-> +				0x40000f20 0xa8
-> +				0x80000 0x2000
-> +				0x40100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <0>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
-> +				  0x82000000 0 0x48000000 0x48000000 0 0x10000000>;
-> +
-> +			interrupts = <GIC_SPI 141 IRQ_TYPE_NONE>;
-
-There is no such thing as IRQ_TYPE_NONE. Please replace this with the
-actual trigger information.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+diff --git a/kernel/locking/rtmutex_common.h b/kernel/locking/rtmutex_common.h
+index 68686b3ec3c1..70bcafc385c4 100644
+--- a/kernel/locking/rtmutex_common.h
++++ b/kernel/locking/rtmutex_common.h
+@@ -52,11 +52,13 @@ static inline int rt_mutex_has_waiters(struct rt_mutex *lock)
+ static inline struct rt_mutex_waiter *
+ rt_mutex_top_waiter(struct rt_mutex *lock)
+ {
+-	struct rt_mutex_waiter *w;
++	struct rb_node *leftmost = rb_first_cached(&lock->waiters);
++	struct rt_mutex_waiter *w = NULL;
+ 
+-	w = rb_entry(lock->waiters.rb_leftmost,
+-		     struct rt_mutex_waiter, tree_entry);
+-	BUG_ON(w->lock != lock);
++	if (leftmost) {
++		w = rb_entry(leftmost, struct rt_mutex_waiter, tree_entry);
++		BUG_ON(w->lock != lock);
++	}
+ 
+ 	return w;
+ }
