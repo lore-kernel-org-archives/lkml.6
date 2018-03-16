@@ -1,266 +1,440 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3872688-1519937513-2-18074634873627762898
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='edu', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519937512; b=N0P5tAUdPQyWCKKM8vL5OVf4qUqHTx6+8n2c8Xmb9X5nVYo
-    jwsjdwqdNJbRonOTAj6CuclL57Ev9H2PVUqt7wsR5aB/ElOULROeLaSbNo9IUrw6
-    Q7HGnXkWtlWh7i7YWShYhUxjsG5Brvy479iKzpdLwxNXTHYuhoghJmSQ3a8xUvRl
-    rEdU57qUQWsCGC6JLcDfzPprhXczjptjeiuDyWv/dBpY0i1kBMWM71BNAqCvs0YJ
-    wJ94hPz82+LhN3XEZmpS9X/7UsLffj77/SU4MK4xZjFEhveLCPUZ3IV/0AO8NBZJ
-    rhWizr7hzUSm3GE1kbnJip+QmKDTyJItt36N7rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519937512; bh=D45VrMlq9sg2jL08G416NqIhyHz6dLTsi6JKpCc6Y9A=; b=t
-    loQ3unwzWe84IvUfsKWvErDJwhYYTdkk7vLGOl0/xyv5hUIbUx2m5kfLwoaJeajN
-    4SCEcnY8hLu60vpJHqgy+issaSdB0cqktav4K2aA3cfuncOjiw5+xloDU0fxlMvn
-    EgD8So+2VSxm+h3UillFjdbhWHDKwzTNFEsAcvLMxNlikLOYaiSez5GmCGEHxA0i
-    vXQSvC73MyCh+qWGSXNx9+uKYRu29ca74SKuxGeeFXLItK7/LGj+tVcDzOTlBBRJ
-    3vPb5RFhNMQ7a3kWlfn4ckn9cP3KAmbhn1NVLVb8SQ9ep8M6JM1BqfLtMpvLZD/T
-    G5ZS7TO1ujHgK11kSMibA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=csail.mit.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=csail.mit.edu header.result=pass header_org.domain=mit.edu header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=csail.mit.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=csail.mit.edu header.result=pass header_org.domain=mit.edu header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161768AbeCAUvs (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 15:51:48 -0500
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:48371 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1161710AbeCAUvk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 15:51:40 -0500
-Subject: Re: [PATCH 4.13 28/43] SMB3: Validate negotiate request must always
- be signed
-To: Steve French <smfrench@gmail.com>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtTsyYDiD/047aE6CTK1agR2VWRfNB5UcMno3U6J3Cyn/lGKbq7GHSXpl8miFHinJHTNNIh
+ARC-Seal: i=1; a=rsa-sha256; t=1521214213; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0q5TQIZwyn6i7RBmKZ/Afofv/TvyufltfCF+8IA1RFO9bi1IzJ2CTyf8A2k9LiTrXJ
+         vR6HKZrYGLLVkxpPGfCZ3SyMsryHg955URQzliqmPAfUxfXQyrI7uUU6YNpvK03taTgs
+         5eS1uYih6181qTYXM1vM2CM+api2btvV5F4If1lDHf2/svcb5R+SMEWfnk/QseWbV6fn
+         gxYlgWwB75MJFpjVblM+Lw5LKYaPka58v9n1NWh4XoIRTbOlwGlkbBINun3MiewCyNxC
+         IO9SACWlH1yHuvcDu0vzJXbT/ZQwMJhuyJTjDqAds1xmprNUb3poyhs6TBx4rZJbLKTf
+         Usfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=13b0vhh3up72VRztCIzuRF3Iam5kO0SiVL7ENFriPto=;
+        b=uMwV667U4fVcrakJrGSbEYMapn721ZwWHq9RoBAaj+Ps8UVzzHG3STBoTggR258hkj
+         oS4/6UnVctsmtlqR11OmMs3K61ttOrGT+jD5CPjB8ZfaeQfoJEvwg1vKj8aJLige553R
+         kggl9NasowYeptn1beL9DZmd7hZG5iCNWfkfpaVDu7HiutxXSuC9kLIDLP5b/CCWa/gU
+         XrC+5Dy244gOwem6h2N6F53+U7/oN/l9Bdp0/4xh5f1Ipc+DjsnqHbWyit9PHGzUscyw
+         soj6NYbgxRIfTcbpiNbBRd8wIR4DIXe2tWNE05LVpSvBBtIIIlfz5QmsfYzZQqOCdZID
+         pQyw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Backlund <tmb@mageia.org>,
-        =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovskiy <pshilov@microsoft.com>,
-        CIFS <linux-cifs@vger.kernel.org>
-References: <20171031095530.520746935@linuxfoundation.org>
- <20171031095531.633196173@linuxfoundation.org>
- <97340c9a-0ea2-0d3d-cf26-58c799d76cae@mageia.org>
- <20171101151803.GB31285@kroah.com>
- <4ba67095-4075-688f-d3fb-157847aee4d9@csail.mit.edu>
- <28ffc363-5140-5685-d288-6e3dc07c6369@csail.mit.edu>
- <20180227085428.GA16879@kroah.com>
- <b20cbd94-ce9b-cb2c-dc95-a6821376823f@csail.mit.edu>
- <20180227124050.GB31888@kroah.com>
- <6bca5a97-f581-86b8-12ad-77147619d519@csail.mit.edu>
- <CAH2r5mt91WGHDk-+LP4EBTEfAOmrY2k6_X7KKjc0D+LcDCfxRw@mail.gmail.com>
- <CAH2r5ms9mpdYOFYQo5gck9XAsTzZpHe75GHCgd_xCc25suSBHQ@mail.gmail.com>
-From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <188c02d6-e27f-235c-a833-021f7304161b@csail.mit.edu>
-Date: Thu, 1 Mar 2018 12:51:09 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuahkh@osg.samsung.com,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.9 00/86] 4.9.88-stable review
+Date: Fri, 16 Mar 2018 16:22:23 +0100
+Message-Id: <20180316152317.167709497@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <CAH2r5ms9mpdYOFYQo5gck9XAsTzZpHe75GHCgd_xCc25suSBHQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.88-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.88-rc1
+X-KernelTest-Deadline: 2018-03-18T15:23+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108715713522943?=
+X-GMAIL-MSGID: =?utf-8?q?1595108715713522943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 3/1/18 12:12 PM, Steve French wrote:
-> So far I haven't been able to reproduce this on the current 4.9 stable
-> tree with vers=3.0 or with default (vers=1.0 for these older kernels).
-> 
+This is the start of the stable review cycle for the 4.9.88 release.
+There are 86 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Maybe the problem also depends on the particular version of Windows
-that hosts the SMB shares? I'm using Windows Server 2016 (Version
-1607, OS Build 14393.693). With vers=3.0, the issue is reproducible
-every time, but vers=1.0 works fine.
+Responses should be made by Sun Mar 18 15:22:47 UTC 2018.
+Anything received after that time might be too late.
 
-Regards,
-Srivatsa
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.88-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-> On Tue, Feb 27, 2018 at 11:56 AM, Steve French <smfrench@gmail.com> wrote:
->> This shouldn't be too hard to figure out if willing to backport a
->> slightly larger set of fixes to the older stable, but I don't have a
->> system running 4.9 stable.
->>
->> Is this the correct stable tree branch?
->> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/log/?h=linux-4.9.y
->>
->> On Tue, Feb 27, 2018 at 11:45 AM, Srivatsa S. Bhat
->> <srivatsa@csail.mit.edu> wrote:
->>> On 2/27/18 4:40 AM, Greg Kroah-Hartman wrote:
->>>> On Tue, Feb 27, 2018 at 01:22:31AM -0800, Srivatsa S. Bhat wrote:
->>>>> On 2/27/18 12:54 AM, Greg Kroah-Hartman wrote:
->>>>>> On Mon, Feb 26, 2018 at 07:44:28PM -0800, Srivatsa S. Bhat wrote:
->>>>>>> On 1/3/18 6:15 PM, Srivatsa S. Bhat wrote:
->>>>>>>> On 11/1/17 8:18 AM, Greg Kroah-Hartman wrote:
->>>>>>>>> On Tue, Oct 31, 2017 at 03:02:11PM +0200, Thomas Backlund wrote:
->>>>>>>>>> Den 31.10.2017 kl. 11:55, skrev Greg Kroah-Hartman:
->>>>>>>>>>> 4.13-stable review patch.  If anyone has any objections, please let me know.
->>>>>>>>>>>
->>>>>>>>>>> ------------------
->>>>>>>>>>>
->>>>>>>>>>> From: Steve French <smfrench@gmail.com>
->>>>>>>>>>>
->>>>>>>>>>> commit 4587eee04e2ac7ac3ac9fa2bc164fb6e548f99cd upstream.
->>>>>>>>>>>
->>>>>>>>>>> According to MS-SMB2 3.2.55 validate_negotiate request must
->>>>>>>>>>> always be signed. Some Windows can fail the request if you send it unsigned
->>>>>>>>>>>
->>>>>>>>>>> See kernel bugzilla bug 197311
->>>>>>>>>>>
->>>>>>>>>>> Acked-by: Ronnie Sahlberg <lsahlber.redhat.com>
->>>>>>>>>>> Signed-off-by: Steve French <smfrench@gmail.com>
->>>>>>>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>>>>>>>
->>>>>>>>>>> ---
->>>>>>>>>>>   fs/cifs/smb2pdu.c |    3 +++
->>>>>>>>>>>   1 file changed, 3 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> --- a/fs/cifs/smb2pdu.c
->>>>>>>>>>> +++ b/fs/cifs/smb2pdu.c
->>>>>>>>>>> @@ -1963,6 +1963,9 @@ SMB2_ioctl(const unsigned int xid, struc
->>>>>>>>>>>        } else
->>>>>>>>>>>                iov[0].iov_len = get_rfc1002_length(req) + 4;
->>>>>>>>>>> +      /* validate negotiate request must be signed - see MS-SMB2 3.2.5.5 */
->>>>>>>>>>> +      if (opcode == FSCTL_VALIDATE_NEGOTIATE_INFO)
->>>>>>>>>>> +              req->hdr.sync_hdr.Flags |= SMB2_FLAGS_SIGNED;
->>>>>>>>>>>        rc = SendReceive2(xid, ses, iov, n_iov, &resp_buftype, flags, &rsp_iov);
->>>>>>>>>>>        cifs_small_buf_release(req);
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> This one needs to be backported to all stable kernels as the commit that
->>>>>>>>>> introduced the regression:
->>>>>>>>>> '
->>>>>>>>>> 0603c96f3af50e2f9299fa410c224ab1d465e0f9
->>>>>>>>>> SMB: Validate negotiate (to protect against downgrade) even if signing off
->>>>>>>>>>
->>>>>>>>>> is backported in stable trees as of: 4.9.53, 4.4.90, 3.18.73
->>>>>>>>>
->>>>>>>>> Oh wait, it breaks the builds on older kernels, that's why I didn't
->>>>>>>>> apply it :)
->>>>>>>>>
->>>>>>>>> Can you provide me with a working backport?
->>>>>>>>>
->>>>>>>>
->>>>>>>> Hi Steve,
->>>>>>>>
->>>>>>>> Is there a version of this fix available for stable kernels?
->>>>>>>>
->>>>>>>
->>>>>>> Hi Greg,
->>>>>>>
->>>>>>> Mounting SMB3 shares continues to fail for me on 4.4.118 and 4.9.84
->>>>>>> due to the issues that I have described in detail on this mail thread.
->>>>>>>
->>>>>>> Since there is no apparent fix for this bug on stable kernels, could
->>>>>>> you please consider reverting the original commit that caused this
->>>>>>> regression?
->>>>>>>
->>>>>>> That commit was intended to enhance security, which is probably why it
->>>>>>> was backported to stable kernels in the first place; but instead it
->>>>>>> ends up breaking basic functionality itself (mounting). So in the
->>>>>>> absence of a proper fix, I don't see much of an option but to revert
->>>>>>> that commit.
->>>>>>>
->>>>>>> So, please consider reverting the following:
->>>>>>>
->>>>>>> commit 02ef29f9cbb616bf419 "SMB: Validate negotiate (to protect
->>>>>>> against downgrade) even if signing off" on 4.4.118
->>>>>>>
->>>>>>> commit 0e1b85a41a25ac888fb "SMB: Validate negotiate (to protect
->>>>>>> against downgrade) even if signing off" on 4.9.84
->>>>>>>
->>>>>>> They correspond to commit 0603c96f3af50e2f9299fa410c224ab1d465e0f9
->>>>>>> upstream. Both these patches should revert cleanly.
->>>>>>
->>>>>> Do you still have this same problem on 4.14 and 4.15?  If so, the issue
->>>>>> needs to get fixed there, not papered-over by reverting these old
->>>>>> changes, as you will hit the issue again in the future when you update
->>>>>> to a newer kernel version.
->>>>>>
->>>>>
->>>>> 4.14 and 4.15 work great! (I had mentioned this is in my original bug
->>>>> report but forgot to summarize it here, sorry).
->>>>
->>>>
->>>> Then what is the bugfix that should be applied here in order to keep
->>>> things working with these patches applied?
->>>>
->>>
->>> That would be the one mentioned in the subject line of this thread :)
->>> However, a working backport of that fix is not available for 4.4 and
->>> 4.9, hence the trouble.
->>>
->>> It looks like we are reconstructing elements of this email thread all
->>> over again, so let me quickly summarize the status so far:
->>>
->>> In 4.14/4.15/mainline,
->>> - commit 0603c96f3af50e2f9 (SMB: Validate negotiate (to protect against
->>>   downgrade) even if signing off) caused mount regression with SMB v3.
->>>
->>> - commit 4587eee04e2ac7ac3 (SMB3: Validate negotiate request must
->>>   always be signed) fixed the issue.
->>>
->>> - [ There was a lot of code churn in the CIFS/SMB codebase between
->>>     these two commits in mainline. ]
->>>
->>> In this email thread, you backported the fix to stable 4.13. Thomas
->>> noticed that the problematic commit had also made it to stable series
->>> such as 4.4 and 4.9, and requested a backport of the fix to those
->>> trees as well. However, a straight-forward backport of the fix to 4.4
->>> and 4.9 breaks the build, so no fix was available for those kernels.
->>>
->>> I investigated this and tried to produce a working backport of the fix
->>> to 4.4 and 4.9, but didn't succeed, despite trying several variations
->>> as well as suggestions from Aurelien [1][2]. So, given that there is
->>> still no known fix for the mount regression on 4.4 and 4.9 stable
->>> series at this point, I decided to request a revert of the problematic
->>> commit that caused the regression in those kernels.
->>>
->>> [1]. https://lkml.org/lkml/2018/1/3/892
->>> [2]. https://lkml.org/lkml/2018/1/29/1009
->>>
->>> Regards,
->>> Srivatsa
->>
->>
->>
->> --
->> Thanks,
->>
->> Steve
-> 
-> 
-> 
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.88-rc1
+
+Koen Vandeputte <koen.vandeputte@ncentric.com>
+    PCI: dwc: Fix enumeration end when reaching root subordinate
+
+Greentime Hu <green.hu@gmail.com>
+    earlycon: add reg-offset to physical address before mapping
+
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+    serial: core: mark port as initialized in autoconfig
+
+Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+    serial: 8250_pci: Add Brainboxes UC-260 4 port serial device
+
+Xinyong <xinyong.fang@linux.alibaba.com>
+    usb: gadget: f_fs: Fix use-after-free in ffs_fs_kill_sb()
+
+Pete Zaitcev <zaitcev@kotori.zaitcev.us>
+    usb: usbmon: Read text within supplied buffer size
+
+Danilo Krummrich <danilokrummrich@dk-develop.de>
+    usb: quirks: add control message delay for 1b1c:1b20
+
+Colin Ian King <colin.king@canonical.com>
+    usbip: vudc: fix null pointer dereference on udc->lock
+
+Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+    USB: storage: Add JMicron bridge 152d:2567 to unusual_devs.h
+
+Joel Fernandes <joelaf@google.com>
+    staging: android: ashmem: Fix lockdep issue during llseek
+
+Frank Mori Hess <fmh6jj@gmail.com>
+    staging: comedi: fix comedi_nsamples_left.
+
+Oliver Neukum <oneukum@suse.com>
+    uas: fix comparison for error code
+
+Jonas Danielsson <jonas@orbital-systems.com>
+    tty/serial: atmel: add new version check for usart
+
+Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+    serial: sh-sci: prevent lockup on full TTY buffers
+
+Hans de Goede <hdegoede@redhat.com>
+    ASoC: rt5651: Fix regcache sync errors on resume
+
+Fabio Estevam <fabio.estevam@nxp.com>
+    ASoC: sgtl5000: Fix suspend/resume
+
+H.J. Lu <hjl.tools@gmail.com>
+    x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/module: Detect and skip invalid relocations
+
+Trond Myklebust <trond.myklebust@primarydata.com>
+    NFS: Fix unstable write completion
+
+Trond Myklebust <trond.myklebust@primarydata.com>
+    NFS: Fix an incorrect type in struct nfs_direct_req
+
+Quinn Tran <quinn.tran@cavium.com>
+    scsi: qla2xxx: Replace fcport alloc with qla2x00_alloc_fcport
+
+Clay McClure <clay@daemons.net>
+    ubi: Fix race condition between ubi volume creation and udev
+
+Tahsin Erdogan <tahsin@google.com>
+    ext4: inplace xattr block update fails to deduplicate blocks
+
+Florian Westphal <fw@strlen.de>
+    netfilter: x_tables: pack percpu counter allocations
+
+Florian Westphal <fw@strlen.de>
+    netfilter: x_tables: pass xt_counters struct to counter allocator
+
+Florian Westphal <fw@strlen.de>
+    netfilter: x_tables: pass xt_counters struct instead of packet counter
+
+Florian Westphal <fw@strlen.de>
+    netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
+
+Florian Westphal <fw@strlen.de>
+    netfilter: bridge: ebt_among: add missing match size checks
+
+Florian Westphal <fw@strlen.de>
+    netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets
+
+Eric Dumazet <edumazet@google.com>
+    netfilter: IDLETIMER: be syzkaller friendly
+
+Paolo Abeni <pabeni@redhat.com>
+    netfilter: nat: cope with negative port range
+
+Paolo Abeni <pabeni@redhat.com>
+    netfilter: x_tables: fix missing timer initialization in xt_LED
+
+Florian Westphal <fw@strlen.de>
+    netfilter: add back stackpointer size checks
+
+Philipp Zabel <p.zabel@pengutronix.de>
+    tc358743: fix register i2c_rd/wr function fix
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: tca8418_keypad - remove double read of key event register
+
+Arnd Bergmann <arnd@arndb.de>
+    ARM: omap2: hide omap3_save_secure_ram on non-OMAP3 builds
+
+Jerry Hoemann <jerry.hoemann@hpe.com>
+    watchdog: hpwdt: Remove legacy NMI sourcing.
+
+Arnd Bergmann <arnd@arndb.de>
+    watchdog: hpwdt: fix unused variable warning
+
+Jerry Hoemann <jerry.hoemann@hpe.com>
+    watchdog: hpwdt: Check source of NMI
+
+Jerry Hoemann <jerry.hoemann@hpe.com>
+    watchdog: hpwdt: SMBIOS check
+
+Peter Zijlstra <peterz@infradead.org>
+    x86/paravirt, objtool: Annotate indirect calls
+
+Ingo Molnar <mingo@kernel.org>
+    x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
+
+Peter Zijlstra <peterz@infradead.org>
+    x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
+
+Peter Zijlstra <peterz@infradead.org>
+    x86/speculation, objtool: Annotate indirect calls/jumps for objtool
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/retpoline: Support retpoline builds with Clang
+
+David Woodhouse <dwmw@amazon.co.uk>
+    x86/speculation: Use IBRS if available before calling into firmware
+
+David Woodhouse <dwmw@amazon.co.uk>
+    Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+
+Dan Williams <dan.j.williams@intel.com>
+    nospec: Include <asm/barrier.h> dependency
+
+Dan Williams <dan.j.williams@intel.com>
+    nospec: Kill array_index_nospec_mask_check()
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    ALSA: hda: add dock and led support for HP ProBook 640 G2
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    ALSA: hda: add dock and led support for HP EliteBook 820 G3
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: More protection for concurrent write and ioctl races
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: Don't allow resizing pool in use
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    ALSA: hda/realtek - Make dock sound work on ThinkPad L570
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
+
+Benjamin Berg <bberg@redhat.com>
+    ALSA: hda/realtek: Limit mic boost on T480
+
+Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+    x86/spectre_v2: Don't check microcode versions when running under hypervisors
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf tools: Fix trigger class trigger_on()
+
+Seunghun Han <kkamagui@gmail.com>
+    x86/MCE: Serialize sysfs changes
+
+Michael Lyle <mlyle@lyle.org>
+    bcache: don't attach backing with duplicate UUID
+
+Tang Junhui <tang.junhui@zte.com.cn>
+    bcache: fix crashes in duplicate cache device register
+
+Sergey Gorenko <sergeygo@mellanox.com>
+    IB/mlx5: Fix incorrect size of klms in the memory region
+
+James Hogan <jhogan@kernel.org>
+    kbuild: Handle builtin dtb file names containing hyphens
+
+David Hildenbrand <david@redhat.com>
+    KVM: s390: fix memory overwrites when not using SCA entries
+
+Tiwei Bie <tiwei.bie@intel.com>
+    virtio_ring: fix num_free handling in error case
+
+Ross Zwisler <ross.zwisler@linux.intel.com>
+    loop: Fix lost writes caused by missing flag
+
+Zhang Bo <zbsdta@126.com>
+    Input: matrix_keypad - fix race when disabling interrupts
+
+Colin Ian King <colin.king@canonical.com>
+    MIPS: OCTEON: irq: Check for null return on kzalloc allocation
+
+Colin Ian King <colin.king@canonical.com>
+    MIPS: ath25: Check for kzalloc allocation failure
+
+Justin Chen <justinpopo6@gmail.com>
+    MIPS: BMIPS: Do not mask IPIs during suspend
+
+James Zhu <James.Zhu@amd.com>
+    drm/amdgpu:Always save uvd vcpu_bo in VM Mode
+
+James Zhu <James.Zhu@amd.com>
+    drm/amdgpu:Correct max uvd handles
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu: fix KV harvesting
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/radeon: fix KV harvesting
+
+Rex Zhu <Rex.Zhu@amd.com>
+    drm/amdgpu: Notify sbios device ready before send request
+
+Lukas Wunner <lukas@wunner.de>
+    drm/amdgpu: Fix deadlock on runtime suspend
+
+Lukas Wunner <lukas@wunner.de>
+    drm/radeon: Fix deadlock on runtime suspend
+
+Lukas Wunner <lukas@wunner.de>
+    drm/nouveau: Fix deadlock on runtime suspend
+
+Lukas Wunner <lukas@wunner.de>
+    drm: Allow determining if current task is output poll worker
+
+Lukas Wunner <lukas@wunner.de>
+    workqueue: Allow retrieval of current task's work struct
+
+Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+    drm/i915: Always call to intel_display_set_init_power() in resume_early.
+
+himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+    scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+
+Stefan Brüns <stefan.bruens@rwth-aachen.de>
+    drm/i915: Try EDID bitbanging on HDMI after failed read
+
+Leon Romanovsky <leonro@mellanox.com>
+    RDMA/mlx5: Fix integer overflow while resizing CQ
+
+Leon Romanovsky <leonro@mellanox.com>
+    RDMA/ucma: Check that user doesn't overflow QP state
+
+Leon Romanovsky <leonro@mellanox.com>
+    RDMA/ucma: Limit possible option size
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                       |   4 +-
+ arch/arm/mach-omap2/omap-secure.c              |   2 +
+ arch/mips/ath25/board.c                        |   2 +
+ arch/mips/cavium-octeon/octeon-irq.c           |   2 +
+ arch/mips/kernel/smp-bmips.c                   |   8 +-
+ arch/s390/kvm/kvm-s390.c                       |   1 +
+ arch/x86/Makefile                              |   5 +-
+ arch/x86/entry/entry_32.S                      |   3 +-
+ arch/x86/entry/entry_64.S                      |   3 +-
+ arch/x86/include/asm/apm.h                     |   6 +
+ arch/x86/include/asm/asm-prototypes.h          |   3 -
+ arch/x86/include/asm/cpufeatures.h             |   1 +
+ arch/x86/include/asm/efi.h                     |  17 +-
+ arch/x86/include/asm/nospec-branch.h           | 138 ++++++-
+ arch/x86/include/asm/paravirt.h                |  16 +-
+ arch/x86/include/asm/paravirt_types.h          |   5 +-
+ arch/x86/kernel/cpu/bugs.c                     |  12 +-
+ arch/x86/kernel/cpu/intel.c                    |   7 +
+ arch/x86/kernel/cpu/mcheck/mce.c               |  22 +-
+ arch/x86/kernel/head_64.S                      |   2 +
+ arch/x86/kernel/machine_kexec_64.c             |   1 +
+ arch/x86/kernel/module.c                       |  14 +
+ arch/x86/lib/Makefile                          |   1 -
+ arch/x86/lib/retpoline.S                       |  56 ---
+ arch/x86/tools/relocs.c                        |   3 +
+ drivers/block/loop.c                           |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c       |   3 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  58 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c        |  13 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c          |  30 +-
+ drivers/gpu/drm/drm_probe_helper.c             |  20 +
+ drivers/gpu/drm/i915/i915_drv.c                |   2 +
+ drivers/gpu/drm/i915/intel_hdmi.c              |  14 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.c    |  18 +-
+ drivers/gpu/drm/radeon/cik.c                   |  31 +-
+ drivers/gpu/drm/radeon/radeon_connectors.c     |  74 ++--
+ drivers/infiniband/core/ucma.c                 |   6 +
+ drivers/infiniband/hw/mlx5/cq.c                |   7 +-
+ drivers/infiniband/hw/mlx5/mr.c                |   2 +-
+ drivers/input/keyboard/matrix_keypad.c         |   4 +-
+ drivers/input/keyboard/tca8418_keypad.c        |   2 -
+ drivers/md/bcache/super.c                      |  27 +-
+ drivers/media/i2c/tc358743.c                   |   2 +-
+ drivers/mtd/ubi/vmt.c                          |  15 +-
+ drivers/pci/host/pcie-designware.c             |   2 +-
+ drivers/scsi/qla2xxx/qla_init.c                |   1 +
+ drivers/scsi/qla2xxx/qla_target.c              |   2 +-
+ drivers/staging/android/ashmem.c               |  15 +-
+ drivers/staging/comedi/drivers.c               |   3 +-
+ drivers/tty/serial/8250/8250_pci.c             |  11 +
+ drivers/tty/serial/atmel_serial.c              |   1 +
+ drivers/tty/serial/earlycon.c                  |   3 +-
+ drivers/tty/serial/serial_core.c               |   2 +
+ drivers/tty/serial/sh-sci.c                    |   2 +
+ drivers/usb/core/message.c                     |   4 +
+ drivers/usb/core/quirks.c                      |   3 +-
+ drivers/usb/gadget/function/f_fs.c             |   1 -
+ drivers/usb/mon/mon_text.c                     | 126 +++---
+ drivers/usb/storage/uas.c                      |   2 +-
+ drivers/usb/storage/unusual_devs.h             |   7 +
+ drivers/usb/usbip/vudc_sysfs.c                 |   8 +-
+ drivers/virtio/virtio_ring.c                   |   2 -
+ drivers/watchdog/hpwdt.c                       | 507 +------------------------
+ fs/ext4/xattr.c                                |   3 +-
+ fs/nfs/direct.c                                |   2 +-
+ fs/nfs/write.c                                 |  83 ++--
+ include/drm/drm_crtc_helper.h                  |   1 +
+ include/linux/compiler-clang.h                 |   5 +
+ include/linux/compiler-gcc.h                   |   4 +
+ include/linux/init.h                           |   8 +-
+ include/linux/netfilter/x_tables.h             |  38 +-
+ include/linux/nospec.h                         |  23 +-
+ include/linux/usb/quirks.h                     |   3 +
+ include/linux/workqueue.h                      |   1 +
+ kernel/workqueue.c                             |  16 +
+ net/bridge/netfilter/ebt_among.c               |  21 +-
+ net/bridge/netfilter/ebtables.c                |  13 +-
+ net/ipv4/netfilter/arp_tables.c                |  20 +-
+ net/ipv4/netfilter/ip_tables.c                 |  23 +-
+ net/ipv6/netfilter/ip6_tables.c                |  21 +-
+ net/ipv6/netfilter/nf_nat_l3proto_ipv6.c       |   4 +
+ net/netfilter/nf_nat_proto_common.c            |   7 +-
+ net/netfilter/x_tables.c                       |  55 +++
+ net/netfilter/xt_IDLETIMER.c                   |   9 +-
+ net/netfilter/xt_LED.c                         |  12 +-
+ scripts/Makefile.lib                           |   8 +-
+ sound/core/seq/seq_clientmgr.c                 |  21 +-
+ sound/core/seq/seq_fifo.c                      |   2 +-
+ sound/core/seq/seq_memory.c                    |  14 +-
+ sound/core/seq/seq_memory.h                    |   3 +-
+ sound/pci/hda/patch_conexant.c                 |   2 +
+ sound/pci/hda/patch_realtek.c                  |  18 +
+ sound/soc/codecs/rt5651.c                      |   1 +
+ sound/soc/codecs/sgtl5000.c                    |  11 +
+ tools/perf/util/trigger.h                      |   9 +-
+ 95 files changed, 876 insertions(+), 951 deletions(-)
