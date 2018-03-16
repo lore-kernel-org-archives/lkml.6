@@ -1,89 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeCPPSh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:18:37 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:46233 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeCPPSf (ORCPT
+        id S1753205AbeCPPSs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:18:48 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44928 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752678AbeCPPSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:18:35 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/3]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
-Date: Fri, 16 Mar 2018 16:16:36 +0100
-Message-Id: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 16 Mar 2018 11:18:46 -0400
+X-Google-Smtp-Source: AG47ELuQZ8Z1+r+sEIVRURs2bF6pxkDUIXYZJPrK1VCOoUtyyVVn649sA4evhEeE/uZN5C65vphLMM/A/9soyf95mHY=
+MIME-Version: 1.0
+In-Reply-To: <20170714142900.1c91949c@gandalf.local.home>
+References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
+ <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com> <20170714142900.1c91949c@gandalf.local.home>
+From: Francis Deslauriers <francis.deslauriers@efficios.com>
+Date: Fri, 16 Mar 2018 11:18:25 -0400
+X-Google-Sender-Auth: 9OIzml_Y2Xarfo3p1lbnJnj7Oy0
+Message-ID: <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe blacklist
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-   (hopefully) last iteration, with Niklas' Reviewed-by tags.
+Hi Steven,
 
-Simply drop an un-necessary #ifdef guard for CONFIG_OF in driver's code as
-suggested by Niklas.
+I completely forgot about this issue until recently when I encountered it again.
+Instrumenting the ftrace_ops_assist_func symbol and some other symbol
+seems to be causing problems.
 
-Time to talk how this series will go in?
-I assume bindings and driver through DRM tree, while Simon is to pick up
-the Eagle DTS update once the first two patches will get in. Is this ok for
-both DRM and Renesas side? Also I assume before bindings gets accepted someone
-from devicetree list should ack them, correct?
+Placing kretprobes like in the following configuration crashes my
+kernel (4.16.0-rc5) on a Qemu/KVM virtual machine:
 
-Simon: as Niklas suggested, I have now listed the series dependencies below
-the commit message. It is my understanding that is not necessary to resend
-his series with that commit squashed on top (which I also prefer not to).
+config 1:
+echo "r:event_1 __fdget" >> kprobe_events
+echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
 
-Thanks
-   j
+config 2:
+echo "r:event_1 __fdget_pos" >> kprobe_events
+echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
 
-v5 -> v6:
-- Drop check for CONFIG_OF as it is a Kconfig dependency
-- Add Niklas Reviewed-by tags
-- List [3/3] depenencies below commit message to ease integration
+config 3:
+echo 'r:event_1 arch_dup_task_struct' >> kprobe_events
+echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
 
-v4 -> v5:
-- Fix punctuation in bindings documentation
-- Add small statement to bindings document to clarify the chip has no
-  control bus
-- Print regulator name in enable/disable routines error path
-- Add Andrzej Reviewed-by tag
+config 4:
+echo 'r:event_1 sys_open' >> kprobe_events
+echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
 
-v3 -> v4:
-- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
-- Improve power enable/disable routines as suggested by Andrzej and Sergei
-- Change "pdwn" gpio initialization to use the logical output level
-- Change Kconfig description
+Here is my kernel config [1]:
 
-v2 -> v3:
-- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
--- Rework bindings to describe multiple input/output ports
--- Rename driver and remove "lvds-decoder" references
--- Rework Eagle DTS to use new bindings
+In a previous email [2], you mentioned that you would like to add the
+ftrace-related symbols to a section to un-blacklist them all at once
+on demand but wanted to discuss it at Linux Plumbers. Do you still
+think that it's the right approach?
 
-v1 -> v2:
-- Drop support for THC63LVD1024
+I can easily test any patch regarding this issue.
 
-Jacopo Mondi (3):
-  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-  drm: bridge: Add thc63lvd1024 LVDS decoder driver
-  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
+[1] http://paste.ubuntu.com/p/BJWvgMnW8z/
+[2] https://lkml.org/lkml/2017/7/14/568
 
- .../bindings/display/bridge/thine,thc63lvd1024.txt |  66 ++++++
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  33 ++-
- drivers/gpu/drm/bridge/Kconfig                     |   6 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c              | 255 +++++++++++++++++++++
- 5 files changed, 358 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+Thank you,
 
---
-2.7.4
+2017-07-14 14:29 GMT-04:00 Steven Rostedt <rostedt@goodmis.org>:
+> On Fri, 14 Jul 2017 10:58:35 -0400
+> Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
+>
+>> This function is called when a kprobe is hit. Thus it should be
+>> blacklisted to prevent kprobe to be triggered by kprobes.
+>>
+>> Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+>> ---
+>>  kernel/trace/ftrace.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+>> index b308be3..c473d9b 100644
+>> --- a/kernel/trace/ftrace.c
+>> +++ b/kernel/trace/ftrace.c
+>> @@ -36,6 +36,7 @@
+>>
+>>  #include <trace/events/sched.h>
+>>
+>> +#include <asm/kprobes.h>
+>>  #include <asm/sections.h>
+>>  #include <asm/setup.h>
+>>
+>> @@ -5739,6 +5740,7 @@ static void ftrace_ops_assist_func(unsigned long ip, unsigned long parent_ip,
+>>       preempt_enable_notrace();
+>>       trace_clear_recursion(bit);
+>>  }
+>> +NOKPROBE_SYMBOL(ftrace_ops_assist_func);
+>
+> Continuing from what I said in the other email, this is fixing a
+> symptom and not the problem. The real fix will be much more involved. I
+> have a good idea on how to accomplish it too.
+>
+> -- Steve
+>
+>
+>>
+>>  /**
+>>   * ftrace_ops_get_func - get the function a trampoline should call
+>
+
+
+
+-- 
+Francis Deslauriers
+Software developer
+EfficiOS inc.
