@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933029AbeCPCxe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:53:34 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55327 "EHLO vern.gendns.com"
+        id S933001AbeCPCxc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:53:32 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55308 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932984AbeCPCx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:53:29 -0400
+        id S932973AbeCPCx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:53:28 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 03/42] clk: davinci: Add platform information for TI DA830 PLL
-Date: Thu, 15 Mar 2018 21:52:19 -0500
-Message-Id: <1521168778-27236-4-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 01/42] dt-bindings: clock: Add new bindings for TI Davinci PLL clocks
+Date: Thu, 15 Mar 2018 21:52:17 -0500
+Message-Id: <1521168778-27236-2-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,142 +36,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds platform-specific declarations for the PLL clocks on TI DA830/
-OMAP-L137/AM17XX SoCs.
+This adds a new binding for the PLL IP blocks in the mach-davinci
+family of processors. Currently, only da850 has device tree support
+but these bindings can also work for other SoCs in this family just
+by adding new compatible strings.
+
+Note: Although these PLL controllers are very similar to the TI Keystone
+SoCs, we are not re-using those bindings. The Keystone bindings use a
+legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+have a slightly different PLL register layout and a number of quirks
+that can't be handled by the existing bindings, so the keystone bindings
+could not be used as-is anyway.
 
 Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
 v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
+- None
 
 v7 changes:
-- include clkdev lookup registration here instead of in mach-davinci
-- Add platform_device_id lookup
+- None (there was some debate about having child nodes, but the consensus was
+  that this is "good enough" as it is)
 
 v6 changes:
-- Added da830_pll_info with controller-specific information
-- Add empty lines between function calls
+- Added clock-names property
+- Added ti,clkmode-square-wave property
+- Added pllout child node
+- Added obsclk child node
+- Expanded examples
 
 
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/pll-da830.c | 70 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |  1 +
- drivers/clk/davinci/pll.h       |  4 +++
- 4 files changed, 76 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-da830.c
+ .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96 ++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index d9673bd..9061e19 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -2,4 +2,5 @@
- 
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
-+obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- endif
-diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
 new file mode 100644
-index 0000000..929a3d3
+index 0000000..36998e1
 --- /dev/null
-+++ b/drivers/clk/davinci/pll-da830.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DA830/OMAP-L137/AM17XX
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+@@ -0,0 +1,96 @@
++Binding for TI DaVinci PLL Controllers
 +
-+#include <linux/clkdev.h>
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
++The PLL provides clocks to most of the components on the SoC. In addition
++to the PLL itself, this controller also contains bypasses, gates, dividers,
++an multiplexers for various clock signals.
 +
-+#include "pll.h"
++Required properties:
++- compatible: shall be one of:
++	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
++	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
++- reg: physical base address and size of the controller's register area.
++- clocks: phandles corresponding to the clock names
++- clock-names: names of the clock sources - depends on compatible string
++	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
++	- for "ti,da850-pll1", shall be "clksrc"
 +
-+static const struct davinci_pll_clk_info da830_pll_info = {
-+	.name = "pll0",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
-+};
++Optional properties:
++- ti,clkmode-square-wave: Indicates that the the board is supplying a square
++	wave input on the OSCIN pin instead of using a crystal oscillator.
++	This property is only valid when compatible = "ti,da850-pll0".
 +
-+/*
-+ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
-+ * meaning that we could change the divider as long as we keep the correct
-+ * ratio between all of the clocks, but we don't support that because there is
-+ * currently not a need for it.
-+ */
 +
-+SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0);
-+SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
-+SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
++Optional child nodes:
 +
-+int da830_pll_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
++pllout
++	Describes the main PLL clock output (before POSTDIV). The node name must
++	be "pllout".
 +
-+	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
++	Required properties:
++	- #clock-cells: shall be 0
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc1");
++sysclk
++	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
++	domains. The node name must be "sysclk". Consumers of this node should
++	use "n" in "SYSCLKn" as the index parameter for the clock cell.
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk3, base);
-+	clk_register_clkdev(clk, "pll0_sysclk3", "da830-psc0");
++	Required properties:
++	- #clock-cells: shall be 1
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk4, base);
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da830-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da830-psc1");
++auxclk
++	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
++	This child node is only valid when compatible = "ti,da850-pll0".
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk5, base);
-+	clk_register_clkdev(clk, "pll0_sysclk5", "da830-psc1");
++	Required properties:
++	- #clock-cells: shall be 0
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk6, base);
-+	clk_register_clkdev(clk, "pll0_sysclk6", "da830-psc0");
++obsclk
++	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk7, base);
++	Required properties:
++	- #clock-cells: shall be 0
 +
-+	clk = davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
 +
-+	return 0;
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 22ee95c..eaf8049 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -775,6 +775,7 @@ static const struct of_device_id davinci_pll_of_match[] = {
- };
- 
- static const struct platform_device_id davinci_pll_id_table[] = {
-+	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 52103ae..0de2c61 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -117,4 +117,8 @@ int of_davinci_pll_init(struct device *dev,
- 			u8 max_sysclk_id,
- 			void __iomem *base);
- 
-+/* Platform-specific callbacks */
++Examples:
 +
-+int da830_pll_init(struct device *dev, void __iomem *base);
++	pll0: clock-controller@11000 {
++		compatible = "ti,da850-pll0";
++		reg = <0x11000 0x1000>;
++		clocks = <&ref_clk>, <&pll1_sysclk 3>;
++		clock-names = "clksrc", "extclksrc";
++		ti,clkmode-square-wave;
 +
- #endif /* __CLK_DAVINCI_PLL_H___ */
++		pll0_pllout: pllout {
++			#clock-cells = <0>;
++		};
++
++		pll0_sysclk: sysclk {
++			#clock-cells = <1>;
++		};
++
++		pll0_auxclk: auxclk {
++			#clock-cells = <0>;
++		};
++
++		pll0_obsclk: obsclk {
++			#clock-cells = <0>;
++		};
++	};
++
++	pll1: clock-controller@21a000 {
++		compatible = "ti,da850-pll1";
++		reg = <0x21a000 0x1000>;
++		clocks = <&ref_clk>;
++		clock-names = "clksrc";
++
++		pll0_sysclk: sysclk {
++			#clock-cells = <1>;
++		};
++
++		pll0_obsclk: obsclk {
++			#clock-cells = <0>;
++		};
++	};
++
++Also see:
++- Documentation/devicetree/bindings/clock/clock-bindings.txt
 -- 
 2.7.4
