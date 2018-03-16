@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752884AbeCPGqa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 02:46:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48520 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750814AbeCPGq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 02:46:29 -0400
-Subject: Re: [PATCH net-next] tuntap: XDP_TX can use native XDP
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1520997820-8289-1-git-send-email-jasowang@redhat.com>
- <20180314053424-mutt-send-email-mst@kernel.org>
- <21e53c2b-6677-fc9a-0771-e895da1c257f@redhat.com>
- <20180315153150-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <9b895dba-71bf-8053-610b-83ecb6d36879@redhat.com>
-Date: Fri, 16 Mar 2018 14:46:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752999AbeCPGrp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 02:47:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57201 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750826AbeCPGrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 02:47:43 -0400
+Date: Fri, 16 Mar 2018 07:47:31 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888
+ output.
+Message-ID: <20180316064731.muiw5yumhmfnwxg2@flea>
+References: <1521121410-17103-1-git-send-email-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <20180315153150-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="55qzmh7lq24dy5mx"
+Content-Disposition: inline
+In-Reply-To: <1521121410-17103-1-git-send-email-giulio.benetti@micronovasrl.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--55qzmh7lq24dy5mx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2018年03月15日 21:32, Michael S. Tsirkin wrote:
-> On Thu, Mar 15, 2018 at 04:39:25PM +0800, Jason Wang wrote:
->>
->> On 2018年03月14日 11:37, Michael S. Tsirkin wrote:
->>>>    			return NULL;
->>>>    		case XDP_TX:
->>>> -			xdp_xmit = true;
->>>> -			/* fall through */
->>>> +			get_page(alloc_frag->page);
->>>> +			alloc_frag->offset += buflen;
->>>> +			if (tun_xdp_xmit(tun->dev, &xdp))
->>>> +				goto err_redirect;
->>>> +			tun_xdp_flush(tun->dev);
->>> Why do we have to flush here though?
->>> It might be a good idea to document the reason in a code comment.
->>>
->> ndo_xdp_xmit() does not touch doorbell, so we need a ndo_xdp_flush() here.
->> It's the assumption of XDP API I think, so not sure it's worth to mention it
->> here.
->>
->> Thanks
-> Can't one flush we called after multiple xmit calls?
+Hi Giulio,
 
-We can and could be another patch on top. But I want to unify it with 
-the batching of XDP_REDIRECT by e.g let vhost submit more than one 
-packets through msg.control in sendmsg().
+On Thu, Mar 15, 2018 at 02:43:30PM +0100, Giulio Benetti wrote:
+> The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setting
+> for the needed pins.
+>=20
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-Thanks
+Like we discussed last time, we only merge this kind of patches if
+there's an immediate user.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--55qzmh7lq24dy5mx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqraIIACgkQ0rTAlCFN
+r3TsTQ//aVAtfYmdxajp7kPWYUnUM183XdCsZdfdMaXpRxePj/8hrX+c8ajc2wlh
+7MCqz4hwX2neJHIzgD407cJPgk8lgmG7I82rKxiMyahtrTrRCtd9cvCxcJiYU7Zz
+d2udNrvS7VQVME+A1Kr+W5MNCfPHJ4rJ9hexidojEIswVmJ1w05ZjleHy3T/QpFw
+jis8tvPSamLstNfW9WaKPqXA6HMM+NEqFXCI1EYXRHLkJo6htkkIbyn38JPg4OSl
+KcVwUT6+h6Qh9WKeQ3lDdwLijJEmXfFINwL6aBU7ITyGXOjj7lKdO6cRZpEonbpz
+GU6NT37JnQb2Iu0vynECw5i26SMfcxg3Lj4kBObU3FBhDTUM99W0HgLnnSbRYnua
+xeRpQ34pQGmq/SSjL6PiumWMy8a41CGoB1TrX4Xtzx5vIS1aj3YKgiGZubfrRxNT
+YPjhJ3Ly9Nq1EFO8Xyv4Vmee1U1xW9SSNqazLxZ7ZR09E4SjTkIOlS4JdT2UsBKe
+IHdCVt9RmhzU4E1Ry/mpPsIbvqUp//rVFe6uj8Jm6I4flV4kwT3SfNZ9QBTAAVJf
+BLcGc731NZZF0jAX4duRqUokWQaOKk65TI/OZC9Ro9yiOqg6vNpPlq+JYZw0xx65
+W0UVN5ZBI8bSbEDN+D7vFhpD5DnQkmChoViWWaW2mFD1s5aN0BM=
+=zACC
+-----END PGP SIGNATURE-----
+
+--55qzmh7lq24dy5mx--
