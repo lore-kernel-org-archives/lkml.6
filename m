@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3555996-1521221718-2-1626063551768623138
+X-Cyrus-Session-Id: sloti22d1t05-3555996-1521221671-2-16589964579577909773
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521221717; b=G0EA4ya51Ei7GdpfFT5erQHko312TUZu765NsqGlJLBoaNH
-    JB/e446NjX8KppSrCV5USbJNpvX5qz+0b9X/Loodx/jyH13MU/FhtnweDZwoFnYI
-    gaa7oULWLpIrmDqftZmAU6ROwE+ZRRPSAEfjtdtSt5qVpcYZSKI4T1R0Jx0pB8q1
-    1cZt0GDfiiQBftJurOtAhdySV3cAp5CXZSxRnCudEOfhpWNRjjsBkhr2VMS9o0Y2
-    FKUCfPVfM6AGFCButXsWcy1anW3oVCMp9BOn1jfr4qWrm8oQh1ORg2SjENHb8XcP
-    i4Gr+C68Jr49NgqQyHerjkxZ6t7QS/UGIlikkvw==
+    t=1521221670; b=Uzoy60xOoJ5EH6n4/7rck2zPOX2KYf0fbKnPWM3/+YENUcX
+    hpVEgwL3869AVlqzsd5/2h59ds208baQpkmQl54f+qu7fYxzBySmnjD0kEyaJ/wh
+    B7gPi2paPQS/gI+xKx78ajOMnE5xT70rcoIOOZBoz1BXXj+eLBKi1gMHamX1zIln
+    a3cWnMWrzUyx9Wg47UPCHk5fwNcdmYzqthHbs8OQdfPcmC6n60lZmlF0qdJ/w41c
+    yekqurHnGsdkCFXzcyDH/P5lpCwv3gQXrszNknZh6S2Sv/cjsQsTwzVIHbtxsqi1
+    u+Fo/izZw7VH7wtDcahYJZiyFnv+snNVl4azEDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521221717; bh=kkVYLl3ybmgwHvzrGsYeGhrKAJ
-    /7oQXiTCVgMLYtNtk=; b=o2DNN7tryAKUpmAwlsPDplEKJ0pITGEhPUglPKU28u
-    IICuZtlAlEId8avzTiPAWjc7jG8w1w4JnIq6Y9rnw/swXE4Caa+Pf71wV42xJGC2
-    8zT97y9fNXRGqhLYkPf234a22CzVmDhbjy2MUxZudPwon+tMpJbOsjxQG69vjEXd
-    zU+ptsfZToyMFU4fSRa85pTox17GIn6DjH0ksAJ75y5FaSmi0pjro5I22EP6HST8
-    6LvpdBSBq5d7avvK4N02DEi7yJq9ShBjwQbxwn6I6RBQRrPTBnuvij5xVsGq88Ss
-    7RCNM8JaDnM/RgQZbKV08eIPYv18W+xF419Z+1Lgfn5A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521221670; bh=0YdSRuqgC6OTplfVSHGgPFbrPL
+    GueWcNwiqkPJAHyRI=; b=qs4UrfouhqFUzoX5AUEQoU85P5dZStptJXoP1sxRAT
+    7hxGKXuIaqc55DwOme6MKvUq/UXJb0dF8qdoEo11xfMhzatdmJOLnd070vNxdzkE
+    6eAy9ptUCGRW273slHx2dMM1RcN48ghXh/41bE6uziToR9twWCAjoTcquLmescIJ
+    q0e3FB9yl/MMi/6N6bNf7kRPSXX24fAFH4EhSj0Vi0cjwmDCKRuJyp3g5Ybp7jTp
+    UsB+xmtukvMdaayjf4xUNgM9wvrL5b7G1kV08l6gAVqGb7l3N16B8M2rLYtL/yiw
+    N84qPCJTOl0prs1a+OfbNilO12/ZtVZqLE8MaP4JsPdA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753033AbeCPRej (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 13:34:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34050 "EHLO
+        id S1751014AbeCPReN (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 13:34:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34092 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754188AbeCPP1C (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:02 -0400
+        with ESMTP id S1753920AbeCPP1I (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Ismo Toijala <ismo.toijala@gmail.com>,
         Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>,
         Lyude Paul <lyude@redhat.com>, Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 4.4 06/63] drm: Allow determining if current task is output poll worker
-Date: Fri, 16 Mar 2018 16:22:38 +0100
-Message-Id: <20180316152300.761879094@linuxfoundation.org>
+Subject: [PATCH 4.4 08/63] drm/radeon: Fix deadlock on runtime suspend
+Date: Fri, 16 Mar 2018 16:22:40 +0100
+Message-Id: <20180316152301.007767775@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -84,70 +84,213 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit 25c058ccaf2ebbc3e250ec1e199e161f91fe27d4 upstream.
+commit 15734feff2bdac24aa3266c437cffa42851990e3 upstream.
 
-Introduce a helper to determine if the current task is an output poll
-worker.
+radeon's ->runtime_suspend hook calls drm_kms_helper_poll_disable(),
+which waits for the output poll worker to finish if it's running.
 
-This allows us to fix a long-standing deadlock in several DRM drivers
-wherein the ->runtime_suspend callback waits for the output poll worker
-to finish and the worker in turn calls a ->detect callback which waits
-for runtime suspend to finish.  The ->detect callback is invoked from
-multiple call sites and waiting for runtime suspend to finish is the
-correct thing to do except if it's executing in the context of the
-worker.
+The output poll worker meanwhile calls pm_runtime_get_sync() in
+radeon's ->detect hooks, which waits for the ongoing suspend to finish,
+causing a deadlock.
 
-v2: Expand kerneldoc to specifically mention deadlock between
-    output poll worker and autosuspend worker as use case. (Lyude)
+Fix by not acquiring a runtime PM ref if the ->detect hooks are called
+in the output poll worker's context.  This is safe because the poll
+worker is only enabled while runtime active and we know that
+->runtime_suspend waits for it to finish.
 
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Ben Skeggs <bskeggs@redhat.com>
+Stack trace for posterity:
+
+  INFO: task kworker/0:3:31847 blocked for more than 120 seconds
+  Workqueue: events output_poll_execute [drm_kms_helper]
+  Call Trace:
+   schedule+0x3c/0x90
+   rpm_resume+0x1e2/0x690
+   __pm_runtime_resume+0x3f/0x60
+   radeon_lvds_detect+0x39/0xf0 [radeon]
+   output_poll_execute+0xda/0x1e0 [drm_kms_helper]
+   process_one_work+0x14b/0x440
+   worker_thread+0x48/0x4a0
+
+  INFO: task kworker/2:0:10493 blocked for more than 120 seconds.
+  Workqueue: pm pm_runtime_work
+  Call Trace:
+   schedule+0x3c/0x90
+   schedule_timeout+0x1b3/0x240
+   wait_for_common+0xc2/0x180
+   wait_for_completion+0x1d/0x20
+   flush_work+0xfc/0x1a0
+   __cancel_work_timer+0xa5/0x1d0
+   cancel_delayed_work_sync+0x13/0x20
+   drm_kms_helper_poll_disable+0x1f/0x30 [drm_kms_helper]
+   radeon_pmops_runtime_suspend+0x3d/0xa0 [radeon]
+   pci_pm_runtime_suspend+0x61/0x1a0
+   vga_switcheroo_runtime_suspend+0x21/0x70
+   __rpm_callback+0x32/0x70
+   rpm_callback+0x24/0x80
+   rpm_suspend+0x12b/0x640
+   pm_runtime_work+0x6f/0xb0
+   process_one_work+0x14b/0x440
+   worker_thread+0x48/0x4a0
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=94147
+Fixes: 10ebc0bc0934 ("drm/radeon: add runtime PM support (v2)")
+Cc: stable@vger.kernel.org # v3.13+: 27d4ee03078a: workqueue: Allow retrieval of current task's work struct
+Cc: stable@vger.kernel.org # v3.13+: 25c058ccaf2e: drm: Allow determining if current task is output poll worker
+Cc: Ismo Toijala <ismo.toijala@gmail.com>
 Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Dave Airlie <airlied@redhat.com>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/3549ce32e7f1467102e70d3e9cbf70c46bfe108e.1518593424.git.lukas@wunner.de
+Link: https://patchwork.freedesktop.org/patch/msgid/64ea02c44f91dda19bc563902b97bbc699040392.1518338789.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_probe_helper.c |   20 ++++++++++++++++++++
- include/drm/drm_crtc_helper.h      |    1 +
- 2 files changed, 21 insertions(+)
+ drivers/gpu/drm/radeon/radeon_connectors.c |   74 +++++++++++++++++++----------
+ 1 file changed, 49 insertions(+), 25 deletions(-)
 
---- a/drivers/gpu/drm/drm_probe_helper.c
-+++ b/drivers/gpu/drm/drm_probe_helper.c
-@@ -412,6 +412,26 @@ out:
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -891,9 +891,11 @@ radeon_lvds_detect(struct drm_connector
+ 	enum drm_connector_status ret = connector_status_disconnected;
+ 	int r;
+ 
+-	r = pm_runtime_get_sync(connector->dev->dev);
+-	if (r < 0)
+-		return connector_status_disconnected;
++	if (!drm_kms_helper_is_poll_worker()) {
++		r = pm_runtime_get_sync(connector->dev->dev);
++		if (r < 0)
++			return connector_status_disconnected;
++	}
+ 
+ 	if (encoder) {
+ 		struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
+@@ -916,8 +918,12 @@ radeon_lvds_detect(struct drm_connector
+ 	/* check acpi lid status ??? */
+ 
+ 	radeon_connector_update_scratch_regs(connector, ret);
+-	pm_runtime_mark_last_busy(connector->dev->dev);
+-	pm_runtime_put_autosuspend(connector->dev->dev);
++
++	if (!drm_kms_helper_is_poll_worker()) {
++		pm_runtime_mark_last_busy(connector->dev->dev);
++		pm_runtime_put_autosuspend(connector->dev->dev);
++	}
++
+ 	return ret;
  }
  
- /**
-+ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
-+ *
-+ * Determine if %current task is an output poll worker.  This can be used
-+ * to select distinct code paths for output polling versus other contexts.
-+ *
-+ * One use case is to avoid a deadlock between the output poll worker and
-+ * the autosuspend worker wherein the latter waits for polling to finish
-+ * upon calling drm_kms_helper_poll_disable(), while the former waits for
-+ * runtime suspend to finish upon calling pm_runtime_get_sync() in a
-+ * connector ->detect hook.
-+ */
-+bool drm_kms_helper_is_poll_worker(void)
-+{
-+	struct work_struct *work = current_work();
-+
-+	return work && work->func == output_poll_execute;
-+}
-+EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
-+
-+/**
-  * drm_kms_helper_poll_disable - disable output polling
-  * @dev: drm_device
-  *
---- a/include/drm/drm_crtc_helper.h
-+++ b/include/drm/drm_crtc_helper.h
-@@ -241,5 +241,6 @@ extern void drm_kms_helper_hotplug_event
- extern void drm_kms_helper_poll_disable(struct drm_device *dev);
- extern void drm_kms_helper_poll_enable(struct drm_device *dev);
- extern void drm_kms_helper_poll_enable_locked(struct drm_device *dev);
-+extern bool drm_kms_helper_is_poll_worker(void);
+@@ -1020,9 +1026,11 @@ radeon_vga_detect(struct drm_connector *
+ 	enum drm_connector_status ret = connector_status_disconnected;
+ 	int r;
  
- #endif
+-	r = pm_runtime_get_sync(connector->dev->dev);
+-	if (r < 0)
+-		return connector_status_disconnected;
++	if (!drm_kms_helper_is_poll_worker()) {
++		r = pm_runtime_get_sync(connector->dev->dev);
++		if (r < 0)
++			return connector_status_disconnected;
++	}
+ 
+ 	encoder = radeon_best_single_encoder(connector);
+ 	if (!encoder)
+@@ -1089,8 +1097,10 @@ radeon_vga_detect(struct drm_connector *
+ 	radeon_connector_update_scratch_regs(connector, ret);
+ 
+ out:
+-	pm_runtime_mark_last_busy(connector->dev->dev);
+-	pm_runtime_put_autosuspend(connector->dev->dev);
++	if (!drm_kms_helper_is_poll_worker()) {
++		pm_runtime_mark_last_busy(connector->dev->dev);
++		pm_runtime_put_autosuspend(connector->dev->dev);
++	}
+ 
+ 	return ret;
+ }
+@@ -1153,9 +1163,11 @@ radeon_tv_detect(struct drm_connector *c
+ 	if (!radeon_connector->dac_load_detect)
+ 		return ret;
+ 
+-	r = pm_runtime_get_sync(connector->dev->dev);
+-	if (r < 0)
+-		return connector_status_disconnected;
++	if (!drm_kms_helper_is_poll_worker()) {
++		r = pm_runtime_get_sync(connector->dev->dev);
++		if (r < 0)
++			return connector_status_disconnected;
++	}
+ 
+ 	encoder = radeon_best_single_encoder(connector);
+ 	if (!encoder)
+@@ -1167,8 +1179,12 @@ radeon_tv_detect(struct drm_connector *c
+ 	if (ret == connector_status_connected)
+ 		ret = radeon_connector_analog_encoder_conflict_solve(connector, encoder, ret, false);
+ 	radeon_connector_update_scratch_regs(connector, ret);
+-	pm_runtime_mark_last_busy(connector->dev->dev);
+-	pm_runtime_put_autosuspend(connector->dev->dev);
++
++	if (!drm_kms_helper_is_poll_worker()) {
++		pm_runtime_mark_last_busy(connector->dev->dev);
++		pm_runtime_put_autosuspend(connector->dev->dev);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1230,9 +1246,11 @@ radeon_dvi_detect(struct drm_connector *
+ 	enum drm_connector_status ret = connector_status_disconnected;
+ 	bool dret = false, broken_edid = false;
+ 
+-	r = pm_runtime_get_sync(connector->dev->dev);
+-	if (r < 0)
+-		return connector_status_disconnected;
++	if (!drm_kms_helper_is_poll_worker()) {
++		r = pm_runtime_get_sync(connector->dev->dev);
++		if (r < 0)
++			return connector_status_disconnected;
++	}
+ 
+ 	if (radeon_connector->detected_hpd_without_ddc) {
+ 		force = true;
+@@ -1415,8 +1433,10 @@ out:
+ 	}
+ 
+ exit:
+-	pm_runtime_mark_last_busy(connector->dev->dev);
+-	pm_runtime_put_autosuspend(connector->dev->dev);
++	if (!drm_kms_helper_is_poll_worker()) {
++		pm_runtime_mark_last_busy(connector->dev->dev);
++		pm_runtime_put_autosuspend(connector->dev->dev);
++	}
+ 
+ 	return ret;
+ }
+@@ -1666,9 +1686,11 @@ radeon_dp_detect(struct drm_connector *c
+ 	if (radeon_dig_connector->is_mst)
+ 		return connector_status_disconnected;
+ 
+-	r = pm_runtime_get_sync(connector->dev->dev);
+-	if (r < 0)
+-		return connector_status_disconnected;
++	if (!drm_kms_helper_is_poll_worker()) {
++		r = pm_runtime_get_sync(connector->dev->dev);
++		if (r < 0)
++			return connector_status_disconnected;
++	}
+ 
+ 	if (!force && radeon_check_hpd_status_unchanged(connector)) {
+ 		ret = connector->status;
+@@ -1755,8 +1777,10 @@ radeon_dp_detect(struct drm_connector *c
+ 	}
+ 
+ out:
+-	pm_runtime_mark_last_busy(connector->dev->dev);
+-	pm_runtime_put_autosuspend(connector->dev->dev);
++	if (!drm_kms_helper_is_poll_worker()) {
++		pm_runtime_mark_last_busy(connector->dev->dev);
++		pm_runtime_put_autosuspend(connector->dev->dev);
++	}
+ 
+ 	return ret;
+ }
