@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221924-2-7669260088619949485
+X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221920-4-7681668269225586409
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521221924; b=pqDJnJZoumzwiWRLIbUWjWFrVDz2SKLkoVBEoPU6rmChbRi
-    JnHirFYkPvU8lf8k71ysS0atedhXbbMBrekxhCVbHqhhfwITLXp7Qm5J+GB/AKO1
-    EvXA6lbUt+z2rNAPLBVuJ42vTTYpd3LK/L6gaMHK0vAvgDCZfvKCFSCgTFuyeZwT
-    5GuuHRKJQLu4BEuhrCwAQWTQv5UXOWAc9zf5ejD1iWuty6Ha8gmq4CVSrAZv+jAA
-    jcT4I4lnWeTJHEygQVJ4+YuPFdaJN/0tNvVwaeKpGkXc7E4+4E/XWoE2Fih42ecx
-    Vo9qYPQenDzx+xv6NZIpA5e9AYwB/YCdHsB+14A==
+    t=1521221920; b=eoAJVA0bSKttmrWUBHsVIRGVhPxwxTODeSP6GHaIwQ0nXsQ
+    iTuv8ZAmeWvcREdw+HZlZ8ZrQzWVr/N6dQPzazAbiFPRNIQyGhtJSvBjJj185uIB
+    pthFtuuq24T36nfR6tVymie+EP6inP151P5EFDm7BBlGNqCfS/UuZsX48EzSUaqp
+    lt4lykFPMJOgsXn34EnB/RmWmL0rD34uytxjbEy+v/BiLsE8n9Bx9GzYwuaBlSyP
+    5nseXEt85cNDnFZ/XoX7WdQhHSiKmpvmp7lUOQRzuOyxcJ1zKGsgjcgF1z68J0pw
+    40WlfXOoNTYvaXP5lNQZLtQSr29RAhAtsBbYHOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521221924; bh=gpo7PQwJwmxEvecfCcGchFa1lp
-    84z4lQrQAiEWlbQf4=; b=atYxmUuWONbtmMnMTusoGU0/LVgYTQbDl76/cH+Rzo
-    903ckKcYc3F2OjI0kbDL+FYQowX4kr2UBaWFioTBFoZAD3+MvwK8Nli4ZJtHUy3S
-    s7LMd4KJJ1FEFi4Q/rcOu64Ja+SdLRr4Kw1jgfKl8L0bLbjuJaD+tZwMv462KLwt
-    w/DGSBpE3t6j+uYJkOel5FZSI9got7ax5PBlTrJz2ezmfmop2zWHTxxlZcAe5hwT
-    L/Dn2K3ao749NxtUlq5H6eN7qQbn6Le/T56lPFlS1fXVp03F/TGvLET5aGMK1p00
-    7Dlg4TFjGhuoSskMjgjG3RB2aI9i06YqIeARzDayVnxw==
+    :list-id; s=arctest; t=1521221920; bh=HzwZgifk3/i3MMH8xLKODhXB+Y
+    VjT7T2KVWF35HZIw8=; b=OfjDTB+dza2v/OlrtKZkTWZXMIt6niZCTmEzsZDGDg
+    CMXW3jTgHnNSmYjiGPvWQCt0gr1viGW1pKarycDbM4wt7bwSHWqLv/obMx+YlYfE
+    u14WqqrxMp5qmjw8SmrVi8Hd5vc6ABCTd0ghsGLWksRSOMP1ZF2HUD/9MLvGyPwk
+    RQXweKdwlqfHLH1f7+0do3lpGB0UZsHVXml6enTy44HJnViha/0kFRAvGqc1hbjY
+    4fQM+0niCMulKGmRzH17l8R+wxSKTX74GR+4zt0Y+tNN+nDywf1gPK7y1MF7kyzu
+    3Zb8kjoR8EzzSLIMdwzLm8B+Oi/T59FUr2YA1nkqIZAA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,26 +49,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753250AbeCPPXZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:23:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60864 "EHLO
+        id S1753323AbeCPPXa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:23:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752655AbeCPPXW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:23:22 -0400
+        with ESMTP id S1752655AbeCPPX2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:23:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3.18 01/25] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
-Date: Fri, 16 Mar 2018 16:22:48 +0100
-Message-Id: <20180316152232.810047126@linuxfoundation.org>
+        stable@vger.kernel.org, Zhang Bo <zbsdta@126.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 3.18 03/25] Input: matrix_keypad - fix race when disabling interrupts
+Date: Fri, 16 Mar 2018 16:22:50 +0100
+Message-Id: <20180316152232.898976977@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -81,118 +80,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+From: Zhang Bo <zbsdta@126.com>
 
-commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
+commit ea4f7bd2aca9f68470e9aac0fc9432fd180b1fe7 upstream.
 
-This patch fixes NULL pointer crash due to active timer running for abort
-IOCB.
+If matrix_keypad_stop() is executing and the keypad interrupt is triggered,
+disable_row_irqs() may be called by both matrix_keypad_interrupt() and
+matrix_keypad_stop() at the same time, causing interrupts to be disabled
+twice and the keypad being "stuck" after resuming.
 
->From crash dump analysis it was discoverd that get_next_timer_interrupt()
-encountered a corrupted entry on the timer list.
+Take lock when setting keypad->stopped to ensure that ISR will not race
+with matrix_keypad_stop() disabling interrupts.
 
- #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
-    [exception RIP: get_next_timer_interrupt+440]
-    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
-    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
-    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
-    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
-    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
-    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-
-Looking at the assembly of get_next_timer_interrupt(), address came
-from %r8 (ffff95e1f6451188) which is pointing to list_head with single
-entry at ffff95e5ff621178.
-
- 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
- 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
- 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
- 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
- 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
-
- crash> rd ffff95e1f6451188 10
- ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
- ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
- ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
- ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
- ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
-
- crash> rd ffff95e5ff621178 10
- ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
- ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
- ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
- ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
- ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
-
- ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
-
- CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
- ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
-   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
-   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
-   FREE / [ALLOCATED]
-    ffff95e5ff621080  (cpu 6 cache)
-
-Examining the contents of that memory reveals a pointer to a constant string
-in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
-
- crash> rd ffffffffc059277c 20
- ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
- ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
- ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
- ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
- ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
- ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
- ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
- ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
- ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
- ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
-
- crash> struct -ox srb_iocb
- struct srb_iocb {
-           union {
-               struct {...} logio;
-               struct {...} els_logo;
-               struct {...} tmf;
-               struct {...} fxiocb;
-               struct {...} abt;
-               struct ct_arg ctarg;
-               struct {...} mbx;
-               struct {...} nack;
-    [0x0 ] } u;
-    [0xb8] struct timer_list timer;
-    [0x108] void (*timeout)(void *);
- }
- SIZE: 0x110
-
- crash> ! bc
- ibase=16
- obase=10
- B8+40
- F8
-
-The object is a srb_t, and at offset 0xf8 within that structure
-(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
-
-Cc: <stable@vger.kernel.org> #4.4+
-Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Zhang Bo <zbsdta@126.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/keyboard/matrix_keypad.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *
- 	srb_t *sp = (srb_t *)ptr;
- 	struct srb_iocb *abt = &sp->u.iocb_cmd;
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -216,8 +216,10 @@ static void matrix_keypad_stop(struct in
+ {
+ 	struct matrix_keypad *keypad = input_get_drvdata(dev);
  
-+	del_timer(&sp->u.iocb_cmd.timer);
- 	complete(&abt->u.abt.comp);
- }
- 
++	spin_lock_irq(&keypad->lock);
+ 	keypad->stopped = true;
+-	mb();
++	spin_unlock_irq(&keypad->lock);
++
+ 	flush_work(&keypad->work.work);
+ 	/*
+ 	 * matrix_keypad_scan() will leave IRQs enabled;
