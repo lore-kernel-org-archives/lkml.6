@@ -1,67 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeCPORZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:17:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752317AbeCPORX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:17:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3117E20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Fri, 16 Mar 2018 15:17:20 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT][PATCH v4 3/7] sched: idle: Do not stop the tick before
- cpuidle_idle_call()
-Message-ID: <20180316141719.GB20981@lerouge>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan>
- <3550231.xNMJN5JcLx@aspire.rjw.lan>
- <20180315181858.GA14983@lerouge>
- <CAJZ5v0jGi_ewnJXxwuY1-y6Ti64Y601A4DQuDhtMJ+riYPJpzA@mail.gmail.com>
- <CAJZ5v0hGsXV8HTKC8iS0pD6VLoe8pDutos7NhWPU+wid_q7Now@mail.gmail.com>
+        id S1752769AbeCPOTJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:19:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57459 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbeCPOTH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:19:07 -0400
+Date: Fri, 16 Mar 2018 07:18:51 -0700
+From: tip-bot for Rajvi Jingar <tipbot@zytor.com>
+Message-ID: <tip-fc804f65d46236c211f530174904c1ed70db5888@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, rajvi.jingar@intel.com, hpa@zytor.com,
+        tglx@linutronix.de, christopher.s.hall@intel.com, mingo@kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, rajvi.jingar@intel.com,
+        christopher.s.hall@intel.com, mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <1520530116-4925-1-git-send-email-rajvi.jingar@intel.com>
+References: <1520530116-4925-1-git-send-email-rajvi.jingar@intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/tsc: Convert ART in nanoseconds to TSC
+Git-Commit-ID: fc804f65d46236c211f530174904c1ed70db5888
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hGsXV8HTKC8iS0pD6VLoe8pDutos7NhWPU+wid_q7Now@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 10:12:57PM +0100, Rafael J. Wysocki wrote:
-> On Thu, Mar 15, 2018 at 9:41 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > On Thu, Mar 15, 2018 at 7:19 PM, Frederic Weisbecker
-> > <frederic@kernel.org> wrote:
-> >> On Mon, Mar 12, 2018 at 10:53:25AM +0100, Rafael J. Wysocki wrote:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >>> Make cpuidle_idle_call() decide whether or not to stop the tick.
-> >>>
-> >>> First, the cpuidle_enter_s2idle() path deals with the tick (and with
-> >>> the entire timekeeping for that matter) by itself and it doesn't need
-> >>> the tick to be stopped beforehand.
-> >>
-> >> Not sure you meant timekeeping either :)
-> >
-> > Yeah, I meant nohz.
-> 
-> Well, not really. :-)
-> 
-> It is the entire timekeeping this time, as it can be suspended
-> entirely in that code path.
+Commit-ID:  fc804f65d46236c211f530174904c1ed70db5888
+Gitweb:     https://git.kernel.org/tip/fc804f65d46236c211f530174904c1ed70db5888
+Author:     Rajvi Jingar <rajvi.jingar@intel.com>
+AuthorDate: Thu, 8 Mar 2018 09:28:36 -0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 16 Mar 2018 15:14:35 +0100
 
-Fair point.
+x86/tsc: Convert ART in nanoseconds to TSC
 
-Thanks!
+Device drivers use get_device_system_crosststamp() to produce precise
+system/device cross-timestamps. The PHC clock and ALSA interfaces, for
+example, make the cross-timestamps available to user applications.  On
+Intel platforms, get_device_system_crosststamp() requires a TSC value
+derived from ART (Always Running Timer) to compute the monotonic raw and
+realtime system timestamps.
+
+Starting with Intel Goldmont platforms, the PCIe root complex supports the
+PTM time sync protocol. PTM requires all timestamps to be in units of
+nanoseconds. The Intel root complex hardware propagates system time derived
+from ART in units of nanoseconds performing the conversion as follows:
+
+     ART_NS = ART * 1e9 / <crystal frequency>
+
+When user software requests a cross-timestamp, the system timestamps
+(generally read from device registers) must be converted to TSC by the
+driver software as follows:
+
+    TSC = ART_NS * TSC_KHZ / 1e6
+
+This is valid when CPU feature flag X86_FEATURE_TSC_KNOWN_FREQ is set
+indicating that tsc_khz is derived from CPUID[15H]. Drivers should check
+whether this flag is set before conversion to TSC is attempted.
+
+Suggested-by: Christopher S. Hall <christopher.s.hall@intel.com>
+Signed-off-by: Rajvi Jingar <rajvi.jingar@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Link: https://lkml.kernel.org/r/1520530116-4925-1-git-send-email-rajvi.jingar@intel.com
+
+---
+ arch/x86/include/asm/tsc.h |  1 +
+ arch/x86/kernel/tsc.c      | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index cf5d53c3f9ea..2701d221583a 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -31,6 +31,7 @@ static inline cycles_t get_cycles(void)
+ }
+ 
+ extern struct system_counterval_t convert_art_to_tsc(u64 art);
++extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
+ 
+ extern void tsc_early_delay_calibrate(void);
+ extern void tsc_init(void);
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index fb4302738410..ef32297ff17e 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1179,6 +1179,45 @@ struct system_counterval_t convert_art_to_tsc(u64 art)
+ }
+ EXPORT_SYMBOL(convert_art_to_tsc);
+ 
++/**
++ * convert_art_ns_to_tsc() - Convert ART in nanoseconds to TSC.
++ * @art_ns: ART (Always Running Timer) in unit of nanoseconds
++ *
++ * PTM requires all timestamps to be in units of nanoseconds. When user
++ * software requests a cross-timestamp, this function converts system timestamp
++ * to TSC.
++ *
++ * This is valid when CPU feature flag X86_FEATURE_TSC_KNOWN_FREQ is set
++ * indicating the tsc_khz is derived from CPUID[15H]. Drivers should check
++ * that this flag is set before conversion to TSC is attempted.
++ *
++ * Return:
++ * struct system_counterval_t - system counter value with the pointer to the
++ *	corresponding clocksource
++ *	@cycles:	System counter value
++ *	@cs:		Clocksource corresponding to system counter value. Used
++ *			by timekeeping code to verify comparibility of two cycle
++ *			values.
++ */
++
++struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
++{
++	u64 tmp, res, rem;
++
++	rem = do_div(art_ns, USEC_PER_SEC);
++
++	res = art_ns * tsc_khz;
++	tmp = rem * tsc_khz;
++
++	do_div(tmp, USEC_PER_SEC);
++	res += tmp;
++
++	return (struct system_counterval_t) { .cs = art_related_clocksource,
++					      .cycles = res};
++}
++EXPORT_SYMBOL(convert_art_ns_to_tsc);
++
++
+ static void tsc_refine_calibration_work(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
+ /**
