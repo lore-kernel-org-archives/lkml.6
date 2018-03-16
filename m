@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtSmuLpXhzD6Avbeeebru3w4eWtaJncgbjK5bRm52PNzJKNpOadr1zb714a2o2twvKiZCIG
-ARC-Seal: i=1; a=rsa-sha256; t=1521214914; cv=none;
+X-Google-Smtp-Source: AG47ELv4BwFsjCWQo48173QBzDLSzj5CdzaFYEgaCuBU0xYJ8iOKiye73M8gbZPK5sfowZpCnCuH
+ARC-Seal: i=1; a=rsa-sha256; t=1521214912; cv=none;
         d=google.com; s=arc-20160816;
-        b=NahniqeA8Mq4Jc3ftc6s8c0g0/26BdJx6j8Z70eu5JAl3SpUTYJnCpoX1Z6yA/0spV
-         GIKtGr/6Sc5DjkpTM1rgs6hzKY2ZvDwma1Z6CeDXN+XZSZITe0r8klfHv8/qvNr72qyY
-         GFU353CvrF57S4QN+UQSSvPDbUQYoOnCLOcNwtwZptfEv6Re12BjvdkIwLPaYNQ4i2IL
-         XW8JuT+C5iMNTNkFEMjPgpGy+3VDyW/QMGDKHy0HM/lCmRI+5ori6tE3x7K+SZSHmJSF
-         HGUaypTDH2V/YMAM4ao112sB3a/BDhRFGuLZDqRyg5qIJ0lRrRNfUROLQedbkRnNfpK3
-         Zw+Q==
+        b=YbVyTyYCdyH4OM5Z1HRACOxplwiM4rjsF0jszrySbzIUfgn1zAR4thC7K3p+85h4GR
+         pMVBwOFsM692ZClm8SyTlNT/4KfIEFSrSBXKhBL7hGybN9Ci6aJvUlYysEqPtitAhTLu
+         ALJDuSbHwKRMu7sXVVYTRnTsSZ+HTiGJoq7hiYQ9AKdDI65fE4LNDxpPkw0OQf/4OMYG
+         tnZeAnaV8snlebdsETH5Nn+L8stkXM1ow1tlqaHNidQzu0OYHbdy39Kh6HtLpx4Wq8yS
+         XLdt9pnIyQbefjmIBiW2EXHfrvpLVMh0560kpezDcGngjTOY0cDrgoHGeCc8l8+M3OP+
+         PYpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pGu6MNZF1tNvp1V4ewFZuuFoUb28hHF0vatu+CSwd1c=;
-        b=u1pJaRs/PKYaN3bAL4M/i5EfkC90qGsSqJfsV9BzaRdVUsQDnrLs+OEbqceTQsH+em
-         /gg/02MNYqfv357yWKrN9NrgZo6jxpg1C9LAmXDSKkoda7fs9LLX6jBbtnGJbbKnGwJ9
-         jzVs5DevpB3JSxKHupevsDbQpqrVKgT9xRY8VrWnZp1x13gu+S7s4NeFX/8K59ozcJwU
-         P23MP3AXxHjcef/zw6f98Jh14BE8AfL6CDPi7QBZChkQxOcqeEU8EEcTmes7vmY9uNBg
-         +KW0PZFWM7cOSkBjQ5Nkdh2GL2F/RZWbUmDUCKgLW0+41/1eQkiSrDeH55wL4cyfI1Tu
-         jDww==
+        bh=QP9kMTYJ18SB3w0bq6MEQsp+BEIpkJ9d5ykM2M6KtTw=;
+        b=wI7hvj1jnaRHxszRVbpRuD6X52advtPmtMqTbBCvJW1EzOZfSAtAaul3fywzuXYQuK
+         NG6aWl+xLccA8ZfhZeTcbYZG/lm9JqJP/DxLiWUE0oEwP0HDqkkFhcdMUWYP9fEsQCiS
+         Iw4NdkPY1VKc+SEhrh7QscAHh7EnhsohaeN6JqPzXoo8WESm04U302DbIpvBjHkB6F41
+         ulnGdvTIder1BxIKYWcr1s/euWKnyfhvuWSFGgNio6zEPSKhEjzYK4qn+nu3aacZ/B0i
+         47l89oeJ9cRegymX0RUQXO/IHJAg3vItNph4UEkPt4zQbNiHDgLlScZsmwozi6PgWz7r
+         FOSw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Andrew F. Davis" <afd@ti.com>,
 	Tony Lindgren <tony@atomide.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 062/128] ARM: dts: omap3-n900: Fix the audio CODECs reset pin
-Date: Fri, 16 Mar 2018 16:23:23 +0100
-Message-Id: <20180316152339.880368668@linuxfoundation.org>
+Subject: [PATCH 4.15 061/128] ARM: dts: am335x-pepper: Fix the audio CODECs reset pin
+Date: Fri, 16 Mar 2018 16:23:22 +0100
+Message-Id: <20180316152339.841601712@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109083759069731?=
-X-GMAIL-MSGID: =?utf-8?q?1595109450704451043?=
+X-GMAIL-THRID: =?utf-8?q?1595109081244207453?=
+X-GMAIL-MSGID: =?utf-8?q?1595109447571255660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,38 +53,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: "Andrew F. Davis" <afd@ti.com>
 
 
-[ Upstream commit 7be4b5dc7ffa9499ac6ef33a5ffa9ff43f9b7057 ]
+[ Upstream commit e153db03c6b7a035c797bcdf35262586f003ee93 ]
 
 The correct DT property for specifying a GPIO used for reset
 is "reset-gpios", fix this here.
 
-Fixes: 14e3e295b2b9 ("ARM: dts: omap3-n900: Add TLV320AIC3X support")
+Fixes: 4341881d0562 ("ARM: dts: Add devicetree for Gumstix Pepper board")
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/omap3-n900.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/am335x-pepper.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -558,7 +558,7 @@
- 	tlv320aic3x: tlv320aic3x@18 {
- 		compatible = "ti,tlv320aic3x";
- 		reg = <0x18>;
--		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
-+		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
- 		ai3x-gpio-func = <
- 			0 /* AIC3X_GPIO1_FUNC_DISABLED */
- 			5 /* AIC3X_GPIO2_FUNC_DIGITAL_MIC_INPUT */
-@@ -575,7 +575,7 @@
- 	tlv320aic3x_aux: tlv320aic3x@19 {
- 		compatible = "ti,tlv320aic3x";
- 		reg = <0x19>;
--		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
-+		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
+--- a/arch/arm/boot/dts/am335x-pepper.dts
++++ b/arch/arm/boot/dts/am335x-pepper.dts
+@@ -139,7 +139,7 @@
+ &audio_codec {
+ 	status = "okay";
  
- 		AVDD-supply = <&vmmc2>;
- 		DRVDD-supply = <&vmmc2>;
+-	gpio-reset = <&gpio1 16 GPIO_ACTIVE_LOW>;
++	reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
+ 	AVDD-supply = <&ldo3_reg>;
+ 	IOVDD-supply = <&ldo3_reg>;
+ 	DRVDD-supply = <&ldo3_reg>;
