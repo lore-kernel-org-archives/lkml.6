@@ -1,130 +1,117 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521242408; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KGBSXJ31olksYWl1a21rgJCu4py8jxrTzggrLsuuJrt28S7NLFsY6CwNqiXKmyfDuI
-         JNoB3XvABIb8uxifKrJQdeYZp4t86YqwVH/A7fYUTR1njjztQz5kPVFDsGbFnktraYVq
-         QU/Uv5y3zx4PMZL66SyMg8xFrAmdrcuCXw8ep9OCgBbHuFFtk4+zEMZtMb74IZ0EfuYp
-         oU0yDWN62SKjGaGlM9j7rmMp33p2dHuJNRNKAf16n0fkTQQVY1HAfDufJTCF9RDYa/FB
-         DdrVBgUt/JwINCLbzPbLyZqJh1ugAaw2aDxjOpt7xbqkwCaYhq0558Ka+NqGx3Hu6JwM
-         mMtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=93lMHNwuHhly4AqHgwatF5shgWfeWzbLyegldNFK7/I=;
-        b=KLXzIogurFQaBmz21IUwj9207iveVcLdFBzhpXipdb+vvSlDcfyf1735/VUHJDp7xP
-         Z7CQ7E3s4LeXj6oxCMNPnCWRObR8p483phqjWng6NsTngZynSjC93jeYQt2UDMwnY3pP
-         +bM/bjt/itHb6BLsjnAOQ3Gfg64BNrid+auUA7YqczobA5EjW6KSJdZYZlbSF9YS/+mX
-         MyPdaBUYoFEX97aJEdXV538jtNRL1AF+P7LNrsa0uOdJLF10nhd5St6NHVl0mw0MEF2p
-         tJ+rhg7yWSJcQu6sQWg9ifrhamSdSFATAgWkfWX8Y4MUwc+gxCEqMrr8Bgujtc7DSJPc
-         P3iw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELsbiRrt+JT3vvTJ1PULZVrTDYf2XPTtbj4+40wVB5i/GXoRjuUr1yxtGHhILCEaG/nBHIiQ2Q==
-Message-ID: <5aac5127.10afdf0a.54669.fe7b@mx.google.com>
-Date: Fri, 16 Mar 2018 16:20:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Kernel: v4.4.121-64-gd7facaec9c1e
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3555996-1521221785-2-2768853054882278627
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521221784; b=j7PMOyjea+jseeE51tNANuXRfI/saq2DJKGkUk6JJ59Bu+R
+    vs88k4FepZzEdbqqM07fcxZUQ6G3G/9x/Db1oOURER/3R8sIrrvSfOrnH9EAJtFz
+    Pos2SFzP4ESsbWpvzdL3ksYNAiUZCJvPIn++9QpCpkzHtfpqeEbokk5k54I6CZiZ
+    m45FKtR7GIE4g5JPxUbDXZ2IghzHxIOAQEMs1z2JDWKtCAKJvR9FC4mZ4wtZgG5W
+    Zshm1S7SK48jMyFn28hTh1H3A/MFBWE1C3cCeC/LpniKIzkBkEydfInoBkDZoHCt
+    xbM+HWsvIl4lu+SwFY9G7EYJJknGaLXqbRve2Wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521221784; bh=MnK9T/4VQvzcgEiRc2s0AjXE03
+    V/eaTJuKgOBJjYE8M=; b=Tw4DM8YsMFTlsKwGSVw0kxLh+q6gCon4MLl7PGHjfW
+    +aA1G3nyP4lKSlW37z4hvLdxTVaRllkDapdL4+Ytim6v//gKBaBzBJiglIaWnxag
+    pLZMidtDnHdzCbAM25CNNi8boKgWqbX8kqWfah7bkWpudhEe5K2AzZAnxQ4pdeGC
+    ZiikeKh5www3Xon30RaSZ7MunJgeZDwYBLI6RKr6+WtA1KSCLDc+pL5mmhhcNF4E
+    gtyShrbPLPEE7F1P6tyIKS6bRwNtP4E6K+yf6FS/lM/Xu1nui9NAQnaiL0z0uA7D
+    NwE3Vj8SSnmjhpvP7EM7ZkP/6+udl+pBlMtXcN/OX5/g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753500AbeCPRgI (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 13:36:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33968 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753340AbeCPP0s (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:48 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.4 01/63] RDMA/ucma: Limit possible option size
+Date: Fri, 16 Mar 2018 16:22:33 +0100
+Message-Id: <20180316152300.134957368@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 00/63] 4.4.122-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595108525093354259?=
-X-GMAIL-MSGID: =?utf-8?q?1595138279987929980?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 101 boots: 2 failed, 79 passed with 17 offline,=
- 3 untried/unknown (v4.4.121-64-gd7facaec9c1e)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.121-64-gd7facaec9c1e/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.121-64-gd7facaec9c1e/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.121-64-gd7facaec9c1e
-Git Commit: d7facaec9c1eb3d2703ce89b2ab81207eb7a4e6c
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 54 unique boards, 20 SoC families, 16 builds out of 178
+From: Leon Romanovsky <leonro@mellanox.com>
 
-Boot Regressions Detected:
+commit 6a21dfc0d0db7b7e0acedce67ca533a6eb19283c upstream.
 
-arm:
+Users of ucma are supposed to provide size of option level,
+in most paths it is supposed to be equal to u8 or u16, but
+it is not the case for the IB path record, where it can be
+multiple of struct ib_path_rec_data.
 
-    multi_v7_defconfig:
-        tegra124-nyan-big:
-            lab-collabora: new failure (last pass: v4.4.121)
+This patch takes simplest possible approach and prevents providing
+values more than possible to allocate.
 
-    tegra_defconfig:
-        tegra124-nyan-big:
-            lab-collabora: new failure (last pass: v4.4.121)
-
-Boot Failures Detected:
-
-arm:
-
-    multi_v7_defconfig
-        tegra124-nyan-big: 1 failed lab
-
-    tegra_defconfig
-        tegra124-nyan-big: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
+Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
+Fixes: 7ce86409adcd ("RDMA/ucma: Allow user space to set service type")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1274,6 +1274,9 @@ static ssize_t ucma_set_option(struct uc
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
++	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
++		return -EINVAL;
++
+ 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
+ 			     cmd.optlen);
+ 	if (IS_ERR(optval)) {
