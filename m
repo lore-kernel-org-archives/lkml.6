@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvd/8AMb+KJrV2cWVT01+BUoDojhZbraau7YuOf+tW3TOt2y4MmrnQBqbDFE7J7weTu4HuD
-ARC-Seal: i=1; a=rsa-sha256; t=1521228612; cv=none;
+X-Google-Smtp-Source: AG47ELvno9DgQbRlBlNXfZ+w2yOBXVB6B8wy071O5hnUt0l0j4RmVORp6/Ej3BsanZxXvlIQME3f
+ARC-Seal: i=1; a=rsa-sha256; t=1521228613; cv=none;
         d=google.com; s=arc-20160816;
-        b=JAggwjNc5E5ASwHMXcO/go52grJJEK8WZLpLl8BHS8J5E3Wst8anXDjPxzipXEhKm8
-         Ja/LiEKo4NLmuS0B8gSubLzLzGgAAf3Wo8bbbQdgA7aMXSDWur5nEy/Kbw0uPqtharqT
-         qdO4RU8SWMJNEq3HhpbcPbpwIXPqu4TyhqoWJnif5523xJl35Qe7e7VKvHnjrVphZ9dT
-         oWhzDWfD1rmcktU5U6m0Jfnvd2tZmCiJCyI4VdomrxI7jFedcCsisWstNsXhdpIRM8pb
-         DMTDA7RssVOOmGoibtfC9uR7xz8CLX+5ABZLj1FtBJFmixz2ogJNKtA371Fbw6/xignD
-         zE5w==
+        b=d1kJFw9DSJP63/v1JnuxbwN2pcVLcvqAVgTbtU+qMENv5jf93vjAUsLMw4doeDV82H
+         CESC0eCglLiZn6fVqgt9AD9kAxMxGtxWBmJNyUNHs13eFlbT11kRNXwwg7iEbhnio05M
+         OOvDDTKSbCcVMIx7f+82hXgHtfMUkyylHNnyRfiOY1+cGKZmykg2ju2tK3cASuwftW0u
+         w49R8huKXokFlLk6HgK8XE/yRiunYpGCUmsBues3dVW5vTcY9HaAgPy5aDe2UJBYEUXA
+         vTw8RInBX2NdlVdiC1iztWnYIFTCdXAXQ59dB9BL25kzFa4w0jpk9dwGui/n5Glr3UTY
+         XDNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=Bb0yXFnnfWeJuIId9R35QPqjkYX4kDq1nzrBg7fvyCM=;
-        b=d4gM55uIHc6dU08s2V4DXa+jBcVqvjJOx6Tg/jfEXjL95cBZCuUkn7Emz1v6UBJ25P
-         s8NL0NF+/zRbFbLCF3f2Mg1ZzVMV2HutV/nMZ3WZRtBLpSuyXLG3/WxksodGDuFfxzdz
-         kZJjcJ8U9Mtx/pY46dXDz5EoHprkDu+6s+VOCds6YgQ672MUwFtvKE/PzdFVbEM7Nlwm
-         cyCGgOrQbn68n7hK+gG5NrLiI80q2MVfhd4cjNl5WrUmrCa4FeKTxvSNNuTmpNoZPDWQ
-         tieb0Fzw3Q7zHmg3o7hxN2UROmzU7Tlc8qqbuPSqel+WqAOeoEaPl9J4DwFx3Jhaw+i8
-         sRJw==
+        bh=6pKXJr3dQB+EZKAI6Uh1IKsDamXmlHYF3SRvL1fh3Yw=;
+        b=fkrMILaStRz3RzvRoLeJ+Vg8K+A2S6s/JXu3+BhOFI96OZNf+SG7EkhC03l2FzZZqf
+         0hIrIixPA/jhfEihWOXqGlIDu6FBuZnRJwsSrj5aKxr3egOhEL3WzsMwX5BkeWdGuiOK
+         LwWT/b9gXT5IibFMOECFG6qCaaH4hI3HXFbcPVznjvmaOGchRscy8L+pft3qW4mtdbfJ
+         D/rBb6AontkAA5Uaa/JSMuTppp9uA6u7+VMIQOOL7HYpwOuq1KGMmr/dbuQ6tjctMPtT
+         1quRm7GFBkQCjpu1X9VdaKJsSuo2JV2Jmoqd1/gT3uv+sscn35J3vOR6ILnf1RyIlmky
+         P+yA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=d648/3Kd;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NeSCcwVf;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=d648/3Kd;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NeSCcwVf;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,55 +57,39 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 34/35] x86/mm/pti: Add Warning when booting on a PCID capable CPU
-Date: Fri, 16 Mar 2018 20:29:52 +0100
-Message-Id: <1521228593-3820-35-git-send-email-joro@8bytes.org>
+Subject: [PATCH 33/35] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
+Date: Fri, 16 Mar 2018 20:29:51 +0100
+Message-Id: <1521228593-3820-34-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123814075618195?=
-X-GMAIL-MSGID: =?utf-8?q?1595123814075618195?=
+X-GMAIL-THRID: =?utf-8?q?1595123814616371996?=
+X-GMAIL-MSGID: =?utf-8?q?1595123814616371996?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Warn the user in case the performance can be significantly
-improved by switching to a 64-bit kernel.
+Allow PTI to be compiled on x86_32.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/pti.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ security/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 3ffd923..8f5aa0d 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -385,6 +385,22 @@ void __init pti_init(void)
- 
- 	pr_info("enabled\n");
- 
-+#ifdef CONFIG_X86_32
-+	if (boot_cpu_has(X86_FEATURE_PCID)) {
-+		/* Use printk to work around pr_fmt() */
-+		printk(KERN_WARNING "\n");
-+		printk(KERN_WARNING "************************************************************\n");
-+		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
-+		printk(KERN_WARNING "**                                                        **\n");
-+		printk(KERN_WARNING "** You are using 32-bit PTI on a 64-bit PCID-capable CPU. **\n");
-+		printk(KERN_WARNING "** Your performance will increase dramatically if you     **\n");
-+		printk(KERN_WARNING "** switch to a 64-bit kernel!                             **\n");
-+		printk(KERN_WARNING "**                                                        **\n");
-+		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
-+		printk(KERN_WARNING "************************************************************\n");
-+	}
-+#endif
-+
- 	pti_clone_user_shared();
- 	pti_clone_entry_text();
- 	pti_setup_espfix64();
+diff --git a/security/Kconfig b/security/Kconfig
+index b0cb9a5..93d85fd 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -57,7 +57,7 @@ config SECURITY_NETWORK
+ config PAGE_TABLE_ISOLATION
+ 	bool "Remove the kernel mapping in user mode"
+ 	default y
+-	depends on X86_64 && !UML
++	depends on X86 && !UML
+ 	help
+ 	  This feature reduces the number of hardware side channels by
+ 	  ensuring that the majority of kernel addresses are not mapped
 -- 
 2.7.4
