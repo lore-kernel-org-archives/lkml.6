@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753176AbeCPJjO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 05:39:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43780 "EHLO
+        id S1753220AbeCPJjS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 05:39:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43884 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753126AbeCPJjH (ORCPT
+        with ESMTP id S1753182AbeCPJjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:39:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B50760FED
+        Fri, 16 Mar 2018 05:39:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABB8660FF8
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,9 +19,9 @@ To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         absahu@codeaurora.org
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v2 05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-Date: Fri, 16 Mar 2018 15:08:13 +0530
-Message-Id: <1521193101-4586-6-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v2 06/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
+Date: Fri, 16 Mar 2018 15:08:14 +0530
+Message-Id: <1521193101-4586-7-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
 References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
@@ -29,146 +29,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the common parts for the dk04 boards.
-
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi | 129 ++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+ arch/arm/boot/dts/Makefile                      |  1 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b59e99b..4f209fb 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -747,6 +747,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-apq8084-ifc6540.dtb \
+ 	qcom-apq8084-mtp.dtb \
+ 	qcom-ipq4019-ap.dk01.1-c1.dtb \
++	qcom-ipq4019-ap.dk04.1-c1.dtb \
+ 	qcom-ipq8064-ap148.dtb \
+ 	qcom-msm8660-surf.dtb \
+ 	qcom-msm8960-cdp.dtb \
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
 new file mode 100644
-index 0000000..96ce081
+index 0000000..871ac3f
 --- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
-@@ -0,0 +1,129 @@
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+@@ -0,0 +1,20 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+#include "qcom-ipq4019.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
++#include "qcom-ipq4019-ap.dk04.1.dtsi"
 +
 +/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1";
-+	compatible = "qcom,ipq4019";
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>; /* 256MB */
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		rsvd1@87000000 {
-+			/* Reserved for other subsystem */
-+			reg = <0x87000000 0x500000>;
-+			no-map;
-+		};
-+
-+		wifi_dump@87500000 {
-+			reg = <0x87500000 0x600000>;
-+			no-map;
-+		};
-+
-+		rsvd2@87B00000 {
-+			/* Reserved for other subsystem */
-+			reg = <0x87B00000 0x500000>;
-+			no-map;
-+		};
-+	};
++	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C1";
 +
 +	soc {
-+		pinctrl@1000000 {
-+			serial_0_pins: serial0_pinmux {
-+				mux {
-+					pins = "gpio16", "gpio17";
-+					function = "blsp_uart0";
-+					bias-disable;
-+				};
-+			};
-+
-+			serial_1_pins: serial1_pinmux {
-+				mux {
-+					pins = "gpio8", "gpio9",
-+						"gpio10", "gpio11";
-+					function = "blsp_uart1";
-+					bias-disable;
-+				};
-+			};
-+
-+			spi_0_pins: spi_0_pinmux {
-+				pinmux {
-+					function = "blsp_spi0";
-+					pins = "gpio13", "gpio14", "gpio15";
-+					bias-disable;
-+				};
-+				pinmux_cs {
-+					function = "gpio";
-+					pins = "gpio12";
-+					bias-disable;
-+					output-high;
-+				};
-+			};
-+
-+			i2c_0_pins: i2c_0_pinmux {
-+				mux {
-+					pins = "gpio20", "gpio21";
-+					function = "blsp_i2c0";
-+					bias-disable;
-+				};
-+			};
-+
-+			nand_pins: nand_pins {
-+				mux {
-+					pins = "gpio53", "gpio55", "gpio56",
-+						"gpio57", "gpio58", "gpio59",
-+						"gpio60", "gpio62", "gpio63",
-+						"gpio64", "gpio65", "gpio66",
-+						"gpio67", "gpio68", "gpio69";
-+					function = "qpic";
-+				};
-+			};
++		qpic_bam: dma@7984000 {
++			status = "ok";
 +		};
 +
-+		serial@78af000 {
-+			pinctrl-0 = <&serial_0_pins>;
++		nand: qpic-nand@79b0000 {
++			pinctrl-0 = <&nand_pins>;
 +			pinctrl-names = "default";
 +			status = "ok";
-+		};
-+
-+		serial@78b0000 {
-+			pinctrl-0 = <&serial_1_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		blsp_dma: dma@7884000 {
-+			status = "ok";
-+		};
-+
-+		spi_0: spi@78b5000 { /* BLSP1 QUP1 */
-+			pinctrl-0 = <&spi_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+			cs-gpios = <&tlmm 12 0>;
-+
-+			m25p80@0 {
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				reg = <0>;
-+				compatible = "n25q128a11";
-+				spi-max-frequency = <24000000>;
-+			};
-+		};
-+
-+		pcie0: pci@40000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 38 0x1>;
 +		};
 +	};
 +};
