@@ -1,130 +1,130 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-947063-1521799234-2-17012710865010935750
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3849152-1521230816-2-7224393292590134275
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 1.1
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  RCVD_IN_SBL_CSS 3.335, RCVD_IN_SORBS_WEB 1.5, SPF_PASS -0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799234; b=QT2oP6UUnrywEqLHnsAmubKga1BIu4+Dr+ffJ+hPjPxaa7z
-    ajbxI9ylhZmZuDVfofy0fPQ4j/M/pNWEHTaM0cHuqWa8a24CGajP+E+lA1DIKayy
-    l04qAfryzuqJRKxpSCE4B5HJxDGhOiigDsqCo4BU5Q3fxXqY802MUaBCTAsnCbXI
-    SfX4Gid6I+cEhiW8bXeQGjSPUIYTqdQsdwBr1kjwM+JTrWe+Q5G02MlTXzJgv23t
-    t11tSTmfCgjI51PJ7dCV45inb3/KPd1D/eHM9CyNIOAbp0nqEvulPcWdwl1UN8KP
-    wilNpSOvGtQZPqr0GRZWhimhcPpGdg3rKXb3T+A==
+    t=1521230816; b=FIAvkbe6+4mWeLds7rhVc1jR0/lsOG5Np/7L3/d7D6AgWAE
+    dbqWGAOR0bBUVQWe9CEgnOccqbh3uHaKo5pXySofpb0acLcjgD6FQA6nLjsNHXhV
+    UcPru6AvbNeVvrYVk3U5Ul8MQ5JAuy3U9zln6joYJEubOPcVYpZf9fYUK/CDcBNm
+    iXNLWuQxJheasMd0a4RBwbXGEGrHfVnjqQL6D9GR/czpb2xgCIYY6k58i8trQq6R
+    zNank54PH0nQZGd1RO2VOyt0tnl9K7PvMylAvzHzxV4lMp8c32wr9H1KZISREUvn
+    xInw0clqJC2QNdPqVFxh/FDA5rXDNH5ihTFz3qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799234; bh=b1GUtae8QB50yJz9D3jaSgqXN0
-    2a16T6BfI3CDNMPUw=; b=mhGXwk7/j/rNKJjnnyx5lho/alzjYCBI4G1mtCrc4S
-    6Q2OeeXhtsXWNpWVTiUAtosrRm4dwuex/iBuEOj7fOnfXWzhGPnOi3ar8/mdEr6t
-    ytM3c+6FAclCRZHAMuCm6ifM7084O+MnEmyxzMUkKiAQ3vxlTnYTJZ0d8S0cwTD8
-    rNPtoIU1RfZv0jyuqyK7LHpY5/zP9ljBBzlB1Lry51PEeEY6NHk1c/9A7ct6g4rX
-    aiWPXqGVAsxGUL2fOlSVR/Kur7232D+cgUohyExTzYnDP4t+7M2Q4gPg4wvITqgp
-    w+WvINRXDIrLnO4Z9JBbxayRh+k60BNzsw6LTj9GWyVg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521230816; bh=S
+    Krho046VL8MXEpWlfwSQuHZxg2nTmpMdUZUSYrDSTU=; b=iITHKgKRosUSxbGPk
+    MXoF0YAtxNavSbCEAzy3iJXiOSZ2yuwbupQHv/6+INI/yCx+GYf0w15g7eOGnRm/
+    1ojP0c5HaaOhfnuD4O1LMbJMeJkQl9MhWlaPAX5TLqTAPJ7Q+5lQKqgShh6pgRti
+    aCralmgjAWgG06FGVbe4J8mEwmET5ei7Im7E/EgXI5d2jp9Rq2CBCF1EntR2E8Sl
+    +kggjpXiEnyW7TvdZKfD3+LoGjTOltAmgeb2XuQNEHN0Yt/Em60MnS/S3z+ZwSQN
+    d0Jvf/hgDqChRhCYTXBYqSfn7aWI7k3v92MwJcWCVdDUmta9t9e3JhwbREhVFXd5
+    8quZQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=nixNvzXo x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sNdF/U0X;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=nixNvzXo x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753247AbeCWKAa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36544 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752933AbeCWKA2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:28 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tsang-Shian Lin <thlin@realtek.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Birming Chiu <birming@realtek.com>,
-        Shaofu <shaofu@realtek.com>,
-        Steven Ting <steventing@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 13/77] rtlwifi: rtl_pci: Fix the bug when inactiveps is enabled.
-Date: Fri, 23 Mar 2018 10:53:47 +0100
-Message-Id: <20180323094143.101641203@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
-References: <20180323094142.260022880@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sNdF/U0X;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELsFIaoiHgWLVmXp9/WOGaIe2AcEZQDdzHgX8nJ0opJF6oO4vgj6ztrkxIs7v9DujghTRKuZDA==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: jic23@kernel.org
+Subject: [PATCH v2 0/9] Staging: iio: accel: adis16201 driver cleanup
+Date: Sat, 17 Mar 2018 01:36:17 +0530
+Message-Id: <1521230786-18155-1-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+ gregkh@linuxfoundation.org, 21cnbao@gmail.com, linux-kernel@vger.kernel.org,
+ Himanshu Jha <himanshujha199640@gmail.com>, pmeerw@pmeerw.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+The following patch series cleans up miscellaneous code fragments and 
+then the driver is moved from staging to mainline IIO subsytem directory.
+Note that the last patch to move driver is *not* generated using '-M' flag,
+which is used for detecting renames, since it may help reviewers to
+suggest more cleanups/fix while pointing inline to the patch, the 
+necessary changes. The framing of patch is made consistent with the
+datasheet naming where possible.
 
-------------------
+For all the patches:
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+https://marc.info/?l=linux-iio&m=151775804702998&w=2
 
-From: Tsang-Shian Lin <thlin@realtek.com>
+Himanshu Jha (9):
+  Staging: iio: accel: adis16201: Rename few macro definitions
+  Staging: iio: accel: adis16201: Remove unnecessary comments
+  Staging: iio: accel: adis16201: Add _REG suffix to reisters
+  Staging: iio: accel: adis16201: Group register definitions
+  Staging: iio: accel: adis16201: Add comments about units in read_raw()
+  Staging: iio: accel: adis16201: Use sign_extend32 function
+  Staging: iio: accel: adis16201: Prefer reverse christmas tree ordering
+  Staging: iio: accel: adis16201: Adjust argument to match open
+    parentheses
+  Staging: iio: accel: adis16201: Move adis16201 driver out of staging
 
+ drivers/iio/accel/Kconfig             |  12 ++
+ drivers/iio/accel/Makefile            |   1 +
+ drivers/iio/accel/adis16201.c         | 327 +++++++++++++++++++++++++++++
+ drivers/staging/iio/accel/Kconfig     |  12 --
+ drivers/staging/iio/accel/Makefile    |   1 -
+ drivers/staging/iio/accel/adis16201.c | 385 ----------------------------------
+ 6 files changed, 340 insertions(+), 398 deletions(-)
+ create mode 100644 drivers/iio/accel/adis16201.c
+ delete mode 100644 drivers/staging/iio/accel/adis16201.c
 
-[ Upstream commit b7573a0a27bfa8270dea9b145448f6884b7cacc1 ]
+-- 
+2.7.4
 
-Reset the driver current tx read/write index to zero when inactiveps
-nic out of sync with HW state. Wrong driver tx read/write index will
-cause Tx fail.
-
-Signed-off-by: Tsang-Shian Lin <thlin@realtek.com>
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>
-Cc: Birming Chiu <birming@realtek.com>
-Cc: Shaofu <shaofu@realtek.com>
-Cc: Steven Ting <steventing@realtek.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/realtek/rtlwifi/pci.c |    7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -1568,7 +1568,14 @@ int rtl_pci_reset_trx_ring(struct ieee80
- 				dev_kfree_skb_irq(skb);
- 				ring->idx = (ring->idx + 1) % ring->entries;
- 			}
-+
-+			if (rtlpriv->use_new_trx_flow) {
-+				rtlpci->tx_ring[i].cur_tx_rp = 0;
-+				rtlpci->tx_ring[i].cur_tx_wp = 0;
-+			}
-+
- 			ring->idx = 0;
-+			ring->entries = rtlpci->txringcount[i];
- 		}
- 	}
- 	spin_unlock_irqrestore(&rtlpriv->locks.irq_th_lock, flags);
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
