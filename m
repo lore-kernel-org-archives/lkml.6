@@ -1,82 +1,100 @@
-Return-Path: <oleg@redhat.com>
-X-Google-Smtp-Source: AG47ELucoJB4UqpEhqz+8/Goj4RAJHDkwShE5peAA1L4tuBd0gsueKoN+dH240mBQDBIbSMKhUi9
-ARC-Seal: i=1; a=rsa-sha256; t=1521124251; cv=none;
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELs/AwTfHVBD8C8v4QU8vxiZQSpZRE01Eh7wcuf6A+7u+vmFCT5yr5TdP+Nm8xxB/Yyfp6L0
+ARC-Seal: i=1; a=rsa-sha256; t=1521192410; cv=none;
         d=google.com; s=arc-20160816;
-        b=Kz8nvRtqfw6FUsTceUn8iWYYhgRc+ZP5VDhdt3iBa8Ci3WnbjreF+6SR/+xrANQuxW
-         ADabte523zkIDefAJsXm1Hc7wdrk47VPBU746ucNyUw9BrZbDELmiX9POVIfn4fCZKlL
-         QINVb7a7xSGmyhQwviBgIxmMRTKSUiKSCCg4teM94kGgogUQayLe1FYvFrBEgfVIdaLa
-         rn+KweUSbk5C23tR+r/3ohzo3692ZMryEQNm8SXzbPbmaLd5JEg6Mb+h8I8q6QFWlmYF
-         O2QbeDmaPszF7bojlwhj4isBAwI+WGfCPuh+Nfx2pcN/kMPZDTGtN8hk9guYBwoRj/J7
-         MqyQ==
+        b=Rl1nvMatIgte5Zhhne34YoA2DczflGxeNHWpi7ESJCL4vxXRnjZDPHqeJ8bUJKocZX
+         3z4QPQniY2AaOkBjS5n0pYtIdlRglaNC6zvwZE6Wj4H0RFrmll1czqejSHBwwSyI6W3K
+         Yz/A8z8dJI/ApcAdMQD61x/zuQBgXV+mC/JJkhEupIPXyM3M6IfXUMoaOikosNn7GOJl
+         di3vSfMpvobpQWproFviHHHxnGBalb/mc8wTEcxTwIvXOVV5xc8h02pog1ie8IfwJ0Jd
+         kyWB00twziIsWXBj/tna0CZP7GirWmRtjVKA3uHX/kKyngwpmoWSdtFq3yc+yslt25TL
+         AJxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=S+8/4aWzDnxSh8CQ3Gynj9atr7wQPoq35FsQGOpztoU=;
-        b=ZDKSYMz+F9kIyTqfLxu4PRr5w//R5Row6SovHIZBHfg4Pb+PQHvtKw/omJUYUll7cm
-         m3Ode0jAbItu8GD8lW5pINVsZw7Nky1VsmbFtSvG+n0+Di7dv+KypS5FTGCofNNrOFzI
-         gzNqh0FPb/nLHFbnTIyHovg4TQL6Pb2pajq/7GRikppL9wUP6avtReUX8/rjIqc8f0TQ
-         dikSlkY1sXJO/J8RENMXO8kvtB8FBmCbfpvomkkszgg1dadWKB5p3vxCgQ9fHd/5S+KV
-         OG6iqHdIVUx7swejaQU1vKVl6JNZ7oJe+9K75rTD5B84E6qZGuBG5si23jnRBIbAkxE+
-         VKow==
+        h=message-id:content-language:content-transfer-encoding:in-reply-to
+         :mime-version:user-agent:date:references:cc:to:subject:from
+         :arc-authentication-results;
+        bh=P8XPhFrG1W2aZYHic2nMCIc//ASp6LBjgFyR6AFFHxo=;
+        b=IHFP28TsKccGHmtY2KtJIwifzoo7T2gBWbuxF1VvkfIrpylme/6VMPeWGLKRQ1EyzG
+         KdO9mi5M+W5K0uukpafciNcRInPHQ87b+v2Lt9Kz+ZyicFfo+qbgdrmRa7CGa1DnEcAw
+         vbvSvJgPcflE5moydq08VvcMhAcqynh/Tqm+/phsvnqCMzYwbxJWPlstMc+4yslNGQqk
+         JJBMuXWQ2PwAtsVgFIzyvj5hHamTFIQIL6nvVJvR5Z3NAmNhZ7dtK2bCdsT4k8Zi6ejn
+         ZiAuGOjr4tM/P/0piSOYD6IjaOdGyCEllOSP8vylp+g/IBVFDqAfsR9QJ+6h7FjPcUAV
+         RPkw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of oleg@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=oleg@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of oleg@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=oleg@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Thu, 15 Mar 2018 15:30:45 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-	acme@kernel.org, ananth@linux.vnet.ibm.com,
-	akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-	alexis.berlemont@gmail.com, corbet@lwn.net,
-	dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-	huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
-	jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
-	kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
-	kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-	milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-	naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com,
-	pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
-	tmricht@linux.vnet.ibm.com, willy@infradead.org,
-	yao.jin@linux.intel.com, fengguang.wu@intel.com
+       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Subject: Re: [PATCH 5/8] trace_uprobe: Support SDT markers having reference
  count (semaphore)
-Message-ID: <20180315143044.GA19643@redhat.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
  <20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
- <20180315142120.GA19218@redhat.com>
+ <20180315142120.GA19218@redhat.com> <20180315143044.GA19643@redhat.com>
+Date: Fri, 16 Mar 2018 14:58:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315142120.GA19218@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180315143044.GA19643@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031609-0012-0000-0000-000005BFD826
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031609-0013-0000-0000-0000193BE594
+Message-Id: <3b303a2d-35dd-9178-fc03-de9f2d588797@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160115
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827101403620100?=
-X-GMAIL-MSGID: =?utf-8?q?1595014383310666425?=
+X-GMAIL-MSGID: =?utf-8?q?1595085852832024515?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/15, Oleg Nesterov wrote:
->
-> > +static struct vm_area_struct *
-> > +sdt_find_vma(struct mm_struct *mm, struct trace_uprobe *tu)
-> > +{
-> > +	struct vm_area_struct *tmp;
-> > +
-> > +	for (tmp = mm->mmap; tmp != NULL; tmp = tmp->vm_next)
-> > +		if (sdt_valid_vma(tu, tmp))
-> > +			return tmp;
-> > +
-> > +	return NULL;
->
-> I can't understand the logic... Lets ignore sdt_valid_vma() for now.
-> The caller has uprobe_map_info, why it can't simply do
-> vma = find_vma(uprobe_map_info->vaddr)? and then check sdt_valid_vma().
 
-Note to mention that sdt_find_vma() can return NULL but the callers do
-vma_offset_to_vaddr(vma) without any check.
 
-Oleg.
+On 03/15/2018 08:00 PM, Oleg Nesterov wrote:
+> On 03/15, Oleg Nesterov wrote:
+>>> +static struct vm_area_struct *
+>>> +sdt_find_vma(struct mm_struct *mm, struct trace_uprobe *tu)
+>>> +{
+>>> +	struct vm_area_struct *tmp;
+>>> +
+>>> +	for (tmp = mm->mmap; tmp != NULL; tmp = tmp->vm_next)
+>>> +		if (sdt_valid_vma(tu, tmp))
+>>> +			return tmp;
+>>> +
+>>> +	return NULL;
+>> I can't understand the logic... Lets ignore sdt_valid_vma() for now.
+>> The caller has uprobe_map_info, why it can't simply do
+>> vma = find_vma(uprobe_map_info->vaddr)? and then check sdt_valid_vma().
+> Note to mention that sdt_find_vma() can return NULL but the callers do
+> vma_offset_to_vaddr(vma) without any check.
+
+If the "mm" we are passing to sdt_find_vma() is returned by
+uprobe_build_map_info(ref_ctr_offset), sdt_find_vma() must
+_not_ return NULL.
+
+Thanks for the review,
+Ravi
