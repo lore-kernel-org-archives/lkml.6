@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215561-2-13046129765625891357
+X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215540-2-2134079488416962573
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215555; b=HpRpjm1R9a00lrmley4HN/S4ZmfMQC5F+3u+qxASeSkgZmj
-    g4rtB4BppwazAEu1E2BpGT1d9/axQ1MikfY1ZLfiM6TEA9AsgLSeNRu+VzYGUqnT
-    fgsABq/71sPbsNikjRK2slhSz1LYg0i/dl4+4Gm6ezch06O2Tvr4r38PpePum1PD
-    1qT19aaCKp17EYtjl+mzRMQpR0ygtp/7B5wl2ZU5kIYQATARWRG+ONh/0NyG2SX8
-    v8vxdmncT5dV8dMjn8tdUFeaNNeZze8qvoMyPapsB4wTXi0a0xmSW6grInPgmTLl
-    w7NLSByYhFLiP7mqcEhDlbKre0/5LakRLvNZSfg==
+    t=1521215539; b=oAvq/GvbTinXL0esAq/vLHO3rawWw1O9IQzzo6v/ePttHts
+    V495/dUqwT2p8IVitORPCXhpUJCZ+9W5yYrOBLeiKciuezdC/D9y5y+XtG+WpfmZ
+    E77jg0I9mcPkfb0yA0UpIk54uAMh5nA03hFOyUcel5moRCtO0KLjqzB/C0F20+cp
+    2x5E2XMvCtpPJVfqzeVCySBe1uMc403NtJ9FrhIrkLIu41OudRSuv9667oP8I4qG
+    j9DVSmMR0Z0Mj34uH6iWfr4vYBFpBkqF81A630m+dCptjzOLmSCl1HMUxHniQR3i
+    2nBDChxx75R2Fosep+mbGSUAmYLWReQBjJMB7Qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215555; bh=hYrCcHsAuSekIHPgUBop8ma6R9
-    rHSLomomX0f8c6EKs=; b=CaBA2CuxJUQJQcUtnSaUhHna6BQQA9HLvBmhI6ekQU
-    W8ZThcdh6ZCOSuOSK7m50wkMg+v0HMvGkewGO4jPxmNezX7jHDlNTIju+HoQMYrv
-    I/xTiE2jtGr9/1yQ7jt+oGYedA2nJfD9/XvKIIBMboACgwATVh7EPgpMZg4abP/J
-    RVlIaFBjgH47gmC/XOKSGkC9haTfAcaqJKwbIgAvoZ6WN+29cLqjL6PrqpYQpDJB
-    cl51cOYpsP7MOzbCqjl9E8Hi9v7OvXz1fW7K8PC42ckTMH4Dlui760F743jkiV+u
-    nGl35afwgUlNxR4GKsxK32IQiLg35ajNyhQT7iqlQT9g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215539; bh=q56fqQirj/EjTXBckbsDXNtO8w
+    EZqL+uNYq5i0b2Amk=; b=OAOljrflI84wHENiGpdouBHqc/gBY0HP1xqzos8RSR
+    32mbiQbCKzpd7PKFrVc5el4UGqAokACKgJDpEwgazroUlNa4PO+dohGlB5XneVM/
+    olhDIMBbFaDUkNHz2TGNqt0ev+mzT5Tit+du7Vc8JwWHTd3mairMU/ARXoxnvWW3
+    M2/tQbu2V88g2egQbqj+91wDKhlRE6+OaPv0wpMflC2t+jDXAnIQFcEAfy1l5Kw6
+    di8xgutH9RMbvDfU4yxCcMqwo+BgOsg8HxPH5pZTgDdmJ2XdE8/cJzy7qI/8q4qA
+    cG9vIzDTxhLSsbq4ShCTPCDeIhxgUCZJ2+BUczOtP8NA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeCPPwT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:52:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45918 "EHLO
+        id S965414AbeCPPoZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:44:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965406AbeCPPoU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:20 -0400
+        with ESMTP id S964834AbeCPPoX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 112/128] powerpc/modules: Dont try to restore r2 after a sibling call
-Date: Fri, 16 Mar 2018 16:24:13 +0100
-Message-Id: <20180316152342.100812759@linuxfoundation.org>
+Subject: [PATCH 4.15 113/128] powerpc/64: Dont trace irqs-off at interrupt return to soft-disabled context
+Date: Fri, 16 Mar 2018 16:24:14 +0100
+Message-Id: <20180316152342.149010619@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -82,80 +81,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
 
-[ Upstream commit b9eab08d012fa093947b230f9a87257c27fb829b ]
+[ Upstream commit acb1feab320e38588fccc568e3767761f494976f ]
 
-When attempting to load a livepatch module, I got the following error:
+When an interrupt is returning to a soft-disabled context (which can
+happen for non-maskable interrupts or synchronous interrupts), it goes
+through the motions of soft-disabling again, including calling
+TRACE_DISABLE_INTS (i.e., trace_hardirqs_off()).
 
-  module_64: patch_module: Expect noop after relocate, got 3c820000
+This is not necessary, because we must already be soft-disabled in the
+interrupt context, it also may be causing crashes in the irq tracing
+code to re-enter as an nmi. Replace it with a warning to ensure that
+soft-interrupts are still disabled.
 
-The error was triggered by the following code in
-unregister_netdevice_queue():
-
-  14c:   00 00 00 48     b       14c <unregister_netdevice_queue+0x14c>
-                         14c: R_PPC64_REL24      net_set_todo
-  150:   00 00 82 3c     addis   r4,r2,0
-
-GCC didn't insert a nop after the branch to net_set_todo() because it's
-a sibling call, so it never returns.  The nop isn't needed after the
-branch in that case.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Reviewed-and-tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Fixes: 7c0482e3d055 ("powerpc/irq: Fix another case of lazy IRQ state getting out of sync")
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/code-patching.h |    1 +
- arch/powerpc/kernel/module_64.c          |   12 +++++++++++-
- arch/powerpc/lib/code-patching.c         |    5 +++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/entry_64.S |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/include/asm/code-patching.h
-+++ b/arch/powerpc/include/asm/code-patching.h
-@@ -33,6 +33,7 @@ int patch_branch(unsigned int *addr, uns
- int patch_instruction(unsigned int *addr, unsigned int instr);
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -939,9 +939,13 @@ END_FTR_SECTION_IFSET(CPU_FTR_HAS_PPR)
+ 	beq	1f
+ 	rlwinm	r7,r7,0,~PACA_IRQ_HARD_DIS
+ 	stb	r7,PACAIRQHAPPENED(r13)
+-1:	li	r0,0
+-	stb	r0,PACASOFTIRQEN(r13);
+-	TRACE_DISABLE_INTS
++1:
++#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_BUG)
++	/* The interrupt should not have soft enabled. */
++	lbz	r7,PACASOFTIRQEN(r13)
++1:	tdnei	r7,0
++	EMIT_BUG_ENTRY 1b,__FILE__,__LINE__,BUGFLAG_WARNING
++#endif
+ 	b	.Ldo_restore
  
- int instr_is_relative_branch(unsigned int instr);
-+int instr_is_relative_link_branch(unsigned int instr);
- int instr_is_branch_to_addr(const unsigned int *instr, unsigned long addr);
- unsigned long branch_target(const unsigned int *instr);
- unsigned int translate_branch(const unsigned int *dest,
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -487,7 +487,17 @@ static bool is_early_mcount_callsite(u32
-    restore r2. */
- static int restore_r2(u32 *instruction, struct module *me)
- {
--	if (is_early_mcount_callsite(instruction - 1))
-+	u32 *prev_insn = instruction - 1;
-+
-+	if (is_early_mcount_callsite(prev_insn))
-+		return 1;
-+
-+	/*
-+	 * Make sure the branch isn't a sibling call.  Sibling calls aren't
-+	 * "link" branches and they don't return, so they don't need the r2
-+	 * restore afterwards.
-+	 */
-+	if (!instr_is_relative_link_branch(*prev_insn))
- 		return 1;
- 
- 	if (*instruction != PPC_INST_NOP) {
---- a/arch/powerpc/lib/code-patching.c
-+++ b/arch/powerpc/lib/code-patching.c
-@@ -302,6 +302,11 @@ int instr_is_relative_branch(unsigned in
- 	return instr_is_branch_iform(instr) || instr_is_branch_bform(instr);
- }
- 
-+int instr_is_relative_link_branch(unsigned int instr)
-+{
-+	return instr_is_relative_branch(instr) && (instr & BRANCH_SET_LINK);
-+}
-+
- static unsigned long branch_iform_target(const unsigned int *instr)
- {
- 	signed long imm;
+ 	/*
