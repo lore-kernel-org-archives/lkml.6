@@ -1,37 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvnL/6f7AbqulL6RTqRRR6x2djzH7ENys4YnXzp3BEPTEmvZSLzHn4pAiWv2ydriQEynIn1
-ARC-Seal: i=1; a=rsa-sha256; t=1521214046; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LxtX4YKQmC2RDVpST26Yiwq0vcszF2WmZVQ5B6u03yAfEv0QrqZ2YfxlrPm6BJAKZ9
-         BCCrEgEzmrRVQjN5H/DSBSrFUn10BJVsJkn0d2Srf/ZFT2daKuA8c6zAHGMrkyZmaCFh
-         1QcDlof5tIw/Q7+Uzv7lt7d3aPmqYhESDNvAon+a2ph6vzxOCfsUROsxagcg+WQwa0Vu
-         xUs8xoXvVDF+L48B/NeEo9EP8OcS2EPjwghRviriOO3crvIcGN3WgznI7Qltyq03cbFp
-         VxOs5J4p2MHe7x1+HsQWVqt0y4dWn4bgncGDF0SyDKexUGUEBemjeHAUZWvZzeYlAHyO
-         sdoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=VpslRA0AlsFSB2vl1gDieOtWC9kCkrsa7+rRoL9KKDU=;
-        b=YQQDx9rTKAuORVaNk7h4aPJr8Wh3cikUmy/870fmxNJsNqRWzmnte6nAOQv8dxUyGW
-         L5NzXAlkRFTzG/bTKG9eRzvxxp1dJFRkprvLAF3hR3rnDretMuto7KQLF4HsJC/+HfKZ
-         dsoYaLLge5HLSalwqzK76AKwCceeJeECpLdom5es6vZzfXUCYoUNbfz3Vzzx9iiwwl/v
-         YdyZONE8CLKxcQ+OR1XTGrd+uXn06ASVt5R+Vck2bnhsB4H1rkSRlyHHsFJBgaKkV5u0
-         65+qTVBa8q8YI/1qRkLam2ntlKTxpIii6+MfMb5yQzEeuw3IFDmzm80Iyl/h899b+guN
-         gWTQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3278546-1521214025-2-930751666248180826
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214024; b=mL51wJib9KWlMcuvpKyMVjJa9lTPwbTTKMQf5M141jtGURS
+    8OQ1+flcA15LmWQRdn+9vE2fXlwr00m4Bk+S/D3FxeDF8CsgZwB+ojPO4g9WvZma
+    IdgiCqmP9yO7PVcanyZoclH8CL3j+A45oYt9Vr95/s5Vx6P507/Kn+GJlS+5G/Mu
+    7o1muHNvEDwCt7k5+9CrOtO23aS7X1u3nwfQx7lGsHhWV87+U0tV++y8DZ9ILXMI
+    tSSPcLfCMU66RPaTFTCcgzXhm5JH8GZsjstF0ozZD3yKHT0aFoa7hwbTUY5ZxASz
+    ijTEqAr5fy1SB8QU2pGgtXEk7IJ6QgoIBr6d3Qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214024; bh=nX5NhQODCY3hBv59Aa/41XMaTI
+    SZAVDwJBSQhHoEkC0=; b=v+KKLzKXArRaxtjrjfHysL9eqUc2llYyzW1o7Dz94h
+    xQZWSOYazHbj/2nlMvBRCq+gSB/vtWGQVyscpJTY2jDyDUv0yBeacJ2X6ubkKKGB
+    4uSU7cfp3IKNTOfjoa+Ey4w+7oeuQg5Co1mKRPUvKSVSO4YspXNLuiPkjr1uqJG+
+    aYQA/lT6kn4mgsRDMDLZQiQb/dO3hPZoqK5pB4zk65GSMnOX69iC3PHyDDLw1xNf
+    I/6FoO775JywrOpAxPxzGvpgf6rn+iyTFK/OfOSDqgw616GzijMWuqltRBPgrszz
+    THyLX24OZd/By1VBlTDExX5g1HbUfyYhn2PCldxtfApQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753983AbeCPP07 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:26:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34020 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754152AbeCPP05 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Nicolai Stange <nstange@suse.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 22/63] ALSA: seq: Dont allow resizing pool in use
-Date: Fri, 16 Mar 2018 16:22:54 +0100
-Message-Id: <20180316152302.553681772@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 04/63] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+Date: Fri, 16 Mar 2018 16:22:36 +0100
+Message-Id: <20180316152300.519998508@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -39,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108296499067445?=
-X-GMAIL-MSGID: =?utf-8?q?1595108540113884954?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +82,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit d85739367c6d56e475c281945c68fdb05ca74b4c upstream.
+commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
 
-This is a fix for a (sort of) fallout in the recent commit
-d15d662e89fc ("ALSA: seq: Fix racy pool initializations") for
-CVE-2018-1000004.
-As the pool resize deletes the existing cells, it may lead to a race
-when another thread is writing concurrently, eventually resulting a
-UAF.
+This patch fixes NULL pointer crash due to active timer running for abort
+IOCB.
 
-A simple workaround is not to allow the pool resizing when the pool is
-in use.  It's an invalid behavior in anyway.
+>From crash dump analysis it was discoverd that get_next_timer_interrupt()
+encountered a corrupted entry on the timer list.
 
-Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
-Reported-by: 范龙飞 <long7573@126.com>
-Reported-by: Nicolai Stange <nstange@suse.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+ #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
+    [exception RIP: get_next_timer_interrupt+440]
+    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
+    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
+    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
+    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
+    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
+    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+
+Looking at the assembly of get_next_timer_interrupt(), address came
+from %r8 (ffff95e1f6451188) which is pointing to list_head with single
+entry at ffff95e5ff621178.
+
+ 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
+ 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
+ 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
+ 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
+ 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
+
+ crash> rd ffff95e1f6451188 10
+ ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
+ ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
+ ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
+ ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
+ ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
+
+ crash> rd ffff95e5ff621178 10
+ ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
+ ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
+ ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
+ ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
+ ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
+
+ ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
+
+ CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
+ ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
+   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
+   FREE / [ALLOCATED]
+    ffff95e5ff621080  (cpu 6 cache)
+
+Examining the contents of that memory reveals a pointer to a constant string
+in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
+
+ crash> rd ffffffffc059277c 20
+ ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
+ ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
+ ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
+ ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
+ ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
+ ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
+ ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
+ ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
+ ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
+ ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
+
+ crash> struct -ox srb_iocb
+ struct srb_iocb {
+           union {
+               struct {...} logio;
+               struct {...} els_logo;
+               struct {...} tmf;
+               struct {...} fxiocb;
+               struct {...} abt;
+               struct ct_arg ctarg;
+               struct {...} mbx;
+               struct {...} nack;
+    [0x0 ] } u;
+    [0xb8] struct timer_list timer;
+    [0x108] void (*timeout)(void *);
+ }
+ SIZE: 0x110
+
+ crash> ! bc
+ ibase=16
+ obase=10
+ B8+40
+ F8
+
+The object is a srb_t, and at offset 0xf8 within that structure
+(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
+
+Cc: <stable@vger.kernel.org> #4.4+
+Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_clientmgr.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1924,6 +1924,9 @@ static int snd_seq_ioctl_set_client_pool
- 	    (! snd_seq_write_pool_allocated(client) ||
- 	     info.output_pool != client->pool->size)) {
- 		if (snd_seq_write_pool_allocated(client)) {
-+			/* is the pool in use? */
-+			if (atomic_read(&client->pool->counter))
-+				return -EBUSY;
- 			/* remove all existing cells */
- 			snd_seq_pool_mark_closing(client->pool);
- 			snd_seq_queue_client_leave_cells(client->number);
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *
+ 	srb_t *sp = (srb_t *)ptr;
+ 	struct srb_iocb *abt = &sp->u.iocb_cmd;
+ 
++	del_timer(&sp->u.iocb_cmd.timer);
+ 	complete(&abt->u.abt.comp);
+ }
+ 
