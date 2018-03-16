@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuxFB1nUScpKnoxiL58oVz4brgtNKgMVHsGblK/D18ODifUaV235tOzLFthxCV93tKcLj9n
-ARC-Seal: i=1; a=rsa-sha256; t=1521214368; cv=none;
+X-Google-Smtp-Source: AG47ELv2gWmU4M7G1F8wAdSnn3oKUPOEcnUY3pBAZXigKu8/pDedC0tQxcwmpirPfBypqoYFhV6c
+ARC-Seal: i=1; a=rsa-sha256; t=1521214365; cv=none;
         d=google.com; s=arc-20160816;
-        b=F0wHzQQuHDDzCLuYkvP1GEWTqeUFxpiQZoxnChFVE4V5IelCHeccUDxwwiD14rrPxN
-         ulR+4S/kdu1tCCRuhqSR1FYz8Ctg/lK1CMbfOWBSwuSSzNC6vs0zICOBd4kz2kfWhUF5
-         z9EQefanAD7GxmwWvdDJG+Y9CkQR+ZczoXyQiVMT7HYALR1NphCyMlSC4XcT0pBlV0ZV
-         dTToj2llP5i47E0sMn/6/uEUxsKUtNvuz2JAZz3Q9ab42p/hDCyU/x6Tea0gc92OqqGC
-         4y2PRhZ1EhUFSTI+qNUjg971E51MHGs2XZic7iBx18M57JDGdXmeejt6ez9weKc3Zd/N
-         i3Uw==
+        b=dTwx2JUBFNOQ6LZlR69+CZboUj8dkGp+2HSuZpYbdxwfMTNv7GncGnFzngTsUec/5q
+         AkFuQD97J150hdEyxmakpK48OhwykLJgeXgmFZlo7QUrzoy4GqAUX6Y3fKngvQR8+KZQ
+         Z/tA3sX9Ux2Fw59P52BxQTzgMJCRe0JKKSAKxwUSa4V0DIcF2liYlmeOZdlIBMsoseiO
+         hJ+KRJtYKfbgGcBW26ytiEcu5UyzTYSURhaRZOBKRle7xoa8t+kz8x1hVSB3Gp/N/el9
+         crvfvvKeoCfoNSAdy3hHFmOp2GGeUpQwKqWuLUINl9GAoHONt/WWfoXfuvN81nA54Id/
+         oZ0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UdpBa96UFw5E81eJ8tuxvYai6KGkacfNt1V4Oozds3E=;
-        b=MGwmzB6TK74AvNyMe5HFYDJGvt0/qtRPlvynxrWtBgnGwT/iOVUn8xW929eyVeJyiG
-         xjOj4+YEIgujRQ3ml48RS69xf/nEk6y1vBC6qXF/Zyqua1t8wfIfFz8otcDlXCRW7Epv
-         A3u/keNa8Om7ke54PLLxKcBhzVZhZ/UbhJcSwU9LQSA138rC3cSidQKy8kS4eGNIe2t0
-         HUGoSoThisr/UVkOoo0XlzN8b5tQ+fyqbYQfYRVlxhUr5f2DKLJCnVjQi0ErL6LpQnae
-         Bj9R7GhWypmX1oB++7+trabs7Rrc3jcZD3LqdwIinh5/l6aB/d1NaooW3XvZqaK8uwvh
-         tGOg==
+        bh=BE1GAs4Kg1vWrTuosrQoQ3Qn3a4T5FwAxZmbbu16G2Y=;
+        b=vdqRd8gc5uils6TJ3mBpX3XmftfCukFlPd9ottbrZCbngZNrXtqriuQ2ldaMshH+87
+         yj8bv4l1Nwjo1um6asmW1RPrfiB60eq/QkggJY8Xw0fg3K0EloR+EDshYRDG4oNllt32
+         MN0hIX1N5zfH78ekaLGnaileJYKO0a1IZC2Rfmyti8X39ZpMkgUqKPp3W5MreORCfJxf
+         yS+su/LoNfw+TKPt9MVBpm2L2OaqGkeKDvXl7f+bQiob9FrCpS4KPpDknJZ9guEBP3Os
+         h0RtxuZ7o/Y41RfQrbcTTca6sQVFGvbtyRrPlbkPAav6DKN4F0TE3NquIkYuqN1deGKi
+         i5Jg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	jeyu@kernel.org,
-	live-patching@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 4.9 69/86] x86/module: Detect and skip invalid relocations
-Date: Fri, 16 Mar 2018 16:23:32 +0100
-Message-Id: <20180316152322.014506339@linuxfoundation.org>
+	Scott Mayhew <smayhew@redhat.com>,
+	Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: [PATCH 4.9 68/86] NFS: Fix unstable write completion
+Date: Fri, 16 Mar 2018 16:23:31 +0100
+Message-Id: <20180316152321.959682435@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -46,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108487521219025?=
-X-GMAIL-MSGID: =?utf-8?q?1595108878297148549?=
+X-GMAIL-THRID: =?utf-8?q?1595108875088099694?=
+X-GMAIL-MSGID: =?utf-8?q?1595108875088099694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,73 +49,144 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-commit eda9cec4c9a12208a6f69fbe68f72a6311d50032 upstream.
+commit c4f24df942a181699c5bab01b8e5e82b925f77f3 upstream.
 
-There have been some cases where external tooling (e.g., kpatch-build)
-creates a corrupt relocation which targets the wrong address.  This is a
-silent failure which can corrupt memory in unexpected places.
+We do want to respect the FLUSH_SYNC argument to nfs_commit_inode() to
+ensure that all outstanding COMMIT requests to the inode in question are
+complete. Currently we may exit early from both nfs_commit_inode() and
+nfs_write_inode() even if there are COMMIT requests in flight, or unstable
+writes on the commit list.
 
-On x86, the bytes of data being overwritten by relocations are always
-initialized to zero beforehand.  Use that knowledge to add sanity checks
-to detect such cases before they corrupt memory.
+In order to get the right semantics w.r.t. sync_inode(), we don't need
+to have nfs_commit_inode() reset the inode dirty flags when called from
+nfs_wb_page() and/or nfs_wb_all(). We just need to ensure that
+nfs_write_inode() leaves them in the right state if there are outstanding
+commits, or stable pages.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: jeyu@kernel.org
-Cc: live-patching@vger.kernel.org
-Link: http://lkml.kernel.org/r/37450d6c6225e54db107fba447ce9e56e5f758e9.1509713553.git.jpoimboe@redhat.com
-[ Restructured the messages, as it's unclear whether the relocation or the target is corrupted. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: Scott Mayhew <smayhew@redhat.com>
+Fixes: dc4fd9ab01ab ("nfs: don't wait on commit in nfs_commit_inode()...")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/module.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fs/nfs/write.c |   83 +++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 43 insertions(+), 40 deletions(-)
 
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -171,19 +171,27 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 		case R_X86_64_NONE:
- 			break;
- 		case R_X86_64_64:
-+			if (*(u64 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u64 *)loc = val;
- 			break;
- 		case R_X86_64_32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u32 *)loc = val;
- 			if (val != *(u32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_32S:
-+			if (*(s32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(s32 *)loc = val;
- 			if ((s64)val != *(s32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			val -= (u64)loc;
- 			*(u32 *)loc = val;
- #if 0
-@@ -199,6 +207,11 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 	}
- 	return 0;
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1847,40 +1847,43 @@ int nfs_generic_commit_list(struct inode
+ 	return status;
+ }
  
-+invalid_relocation:
-+	pr_err("x86/modules: Skipping invalid relocation target, existing value is nonzero for type %d, loc %p, val %Lx\n",
-+	       (int)ELF64_R_TYPE(rel[i].r_info), loc, val);
-+	return -ENOEXEC;
+-int nfs_commit_inode(struct inode *inode, int how)
++static int __nfs_commit_inode(struct inode *inode, int how,
++		struct writeback_control *wbc)
+ {
+ 	LIST_HEAD(head);
+ 	struct nfs_commit_info cinfo;
+ 	int may_wait = how & FLUSH_SYNC;
+-	int error = 0;
+-	int res;
++	int ret, nscan;
+ 
+ 	nfs_init_cinfo_from_inode(&cinfo, inode);
+ 	nfs_commit_begin(cinfo.mds);
+-	res = nfs_scan_commit(inode, &head, &cinfo);
+-	if (res)
+-		error = nfs_generic_commit_list(inode, &head, how, &cinfo);
++	for (;;) {
++		ret = nscan = nfs_scan_commit(inode, &head, &cinfo);
++		if (ret <= 0)
++			break;
++		ret = nfs_generic_commit_list(inode, &head, how, &cinfo);
++		if (ret < 0)
++			break;
++		ret = 0;
++		if (wbc && wbc->sync_mode == WB_SYNC_NONE) {
++			if (nscan < wbc->nr_to_write)
++				wbc->nr_to_write -= nscan;
++			else
++				wbc->nr_to_write = 0;
++		}
++		if (nscan < INT_MAX)
++			break;
++		cond_resched();
++	}
+ 	nfs_commit_end(cinfo.mds);
+-	if (res == 0)
+-		return res;
+-	if (error < 0)
+-		goto out_error;
+-	if (!may_wait)
+-		goto out_mark_dirty;
+-	error = wait_on_commit(cinfo.mds);
+-	if (error < 0)
+-		return error;
+-	return res;
+-out_error:
+-	res = error;
+-	/* Note: If we exit without ensuring that the commit is complete,
+-	 * we must mark the inode as dirty. Otherwise, future calls to
+-	 * sync_inode() with the WB_SYNC_ALL flag set will fail to ensure
+-	 * that the data is on the disk.
+-	 */
+-out_mark_dirty:
+-	__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+-	return res;
++	if (ret || !may_wait)
++		return ret;
++	return wait_on_commit(cinfo.mds);
++}
 +
- overflow:
- 	pr_err("overflow in relocation type %d val %Lx\n",
- 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
++int nfs_commit_inode(struct inode *inode, int how)
++{
++	return __nfs_commit_inode(inode, how, NULL);
+ }
+ EXPORT_SYMBOL_GPL(nfs_commit_inode);
+ 
+@@ -1890,11 +1893,11 @@ int nfs_write_inode(struct inode *inode,
+ 	int flags = FLUSH_SYNC;
+ 	int ret = 0;
+ 
+-	/* no commits means nothing needs to be done */
+-	if (!nfsi->commit_info.ncommit)
+-		return ret;
+-
+ 	if (wbc->sync_mode == WB_SYNC_NONE) {
++		/* no commits means nothing needs to be done */
++		if (!nfsi->commit_info.ncommit)
++			goto check_requests_outstanding;
++
+ 		/* Don't commit yet if this is a non-blocking flush and there
+ 		 * are a lot of outstanding writes for this mapping.
+ 		 */
+@@ -1905,16 +1908,16 @@ int nfs_write_inode(struct inode *inode,
+ 		flags = 0;
+ 	}
+ 
+-	ret = nfs_commit_inode(inode, flags);
+-	if (ret >= 0) {
+-		if (wbc->sync_mode == WB_SYNC_NONE) {
+-			if (ret < wbc->nr_to_write)
+-				wbc->nr_to_write -= ret;
+-			else
+-				wbc->nr_to_write = 0;
+-		}
+-		return 0;
+-	}
++	ret = __nfs_commit_inode(inode, flags, wbc);
++	if (!ret) {
++		if (flags & FLUSH_SYNC)
++			return 0;
++	} else if (nfsi->commit_info.ncommit)
++		goto out_mark_dirty;
++
++check_requests_outstanding:
++	if (!atomic_read(&nfsi->commit_info.rpcs_out))
++		return ret;
+ out_mark_dirty:
+ 	__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+ 	return ret;
