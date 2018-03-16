@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsnPPeuZan6g9zIir9e5ZEU0/+EAgDl3hXWR5j8IdJ7y/5biPWYSjNB/iQ3wmw7+vcPkRun
-ARC-Seal: i=1; a=rsa-sha256; t=1521214653; cv=none;
+X-Google-Smtp-Source: AG47ELsO59XhYThqjLrn6loRzR0crcnaunk5GCromYlXl6XKDqrp/UuGLUIcKb/IKQRr1pA3oYJp
+ARC-Seal: i=1; a=rsa-sha256; t=1521214650; cv=none;
         d=google.com; s=arc-20160816;
-        b=XEyM03tamIVEi2BMEm19I5NDhkaQWEVSn0iDEhPTh3HefdsrM8ZSD1V9w6bbMAmdBl
-         fexj10m3L7yInK+7DivOskDwgkDTn0sH6ZiIO/0jnX2+AuR2kKlAUmUbx+DbLWSqS7yo
-         9Ikqu/5/zP6/9Z1xk93ZqJJ8GzTgeXTQ/uFW1ytPUpJpPm/+2wVRuMXPYvVhXJfklGL1
-         Rv57rzJ8RDS1490mVKJ811RpRM14jovqhVo2Usz5cAWHxqltQLFBfi4YB94yGwVXKi65
-         g/nWjqosKgcAV5wtRK7xEDxcrtKUjivbMLWNNrOTQs8INVNGU5FKobRimyxO8+Lqeao3
-         uJlw==
+        b=TmI4suMAhhQeeKlAw4JGqo6G9RzvmbzxJCxo/E3wkt3QM86HfnsaeKbh2nCtEn+DuS
+         KBOWo/zjwtf7Rv+tCTIgunQIzxgWDaQYmoFDg4lXCBvcAoJDV1lBReVX3lb/aLqFhN4w
+         aWzrhz2mV2TJcSNfH1LbNyFvGcTGNJPBTj1k+tuGuTm8cIp+mniNQmcsqyg3kdPzHcrA
+         NzKtKshDYes43GYLgwOAgm+h8r8ND8xTObDFU4WZ+cKjr2C4WLm6ptnostM/YMCavqlT
+         NaU/3ynDek6NfmfTslo5/0Qr7IVUMbksFqNBrs8/3IFujjQoYaEDnCt/uHVtgh/hYfYQ
+         KvBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TEHNhVyLd7+0xbXW+jJhLIGaImk34WDTOpePxj4eMRA=;
-        b=cA20+nvPXN3jrDopnJnl1DcxkOhdfuabS8PF0jLmIUcpmXoCxRbTuCSOPDA1EQ6uXA
-         4to+WnGv74nsgThwFWaTf71K2bDYlBO8/R+r+h76wmJvHMbyGDShovI+Y6SjqX7hYSwx
-         cFsBfIPcb8BrNtOdo431zR5ycJ27kvPJVUMXI8KNcBwrWMnaitgyriO9BHkvQncpdRm6
-         yfFvyRynR6FirjKvIo4rRbTB7rzNcxuFiXESmKyTfRno0M1Gukt88GAv3PLcMby5g7qG
-         PSj1nYMyQAGNYRCUeuXBXhCZTiuLB5CeDp32JDWicEDuxCrCR/GaDdzorvL/8Ld+VXjv
-         8s0Q==
+        bh=HBEhu8WGDZNudt/sUhn+0/Kf7WSrxVx8ZWmZRAq6vzI=;
+        b=Vy5JsA51vRPaNgvmgEFn5ujX9SJEHH2qoAhuettAKgoZ74GEQiRlJLjDh/A4qP5DkS
+         Uur9fXYjfxNMRt0cNh5QdBlL+gqGFVkm0HG+ZyG+7DXcsbDXW1GUfPRgder/ZuHJH75F
+         GSD8XGZwM07rylOEyrI/uF8OPK7bl4SMT2yX3iHvEi/RbJIn3FNf+YFcreTjz5mJwrp0
+         WO0Pe5OxbxecpcdbovliMgtfJsy1+SslLXRos90aqQ8MVLhg4d9hg9F7qwYP3rjTcNPC
+         doYHgw4hcrQM4MIem794nMFsKbv7kk5aQT7GrpBTA+PinHpaGKhe/Ak7Fdzmi+p4tDJ9
+         /5jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julien BOIBESSOT <julien.boibessot@armadeus.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
+	Ben Greear <greearb@candelatech.com>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 079/109] tools/usbip: fixes build with musl libc toolchain
-Date: Fri, 16 Mar 2018 16:23:48 +0100
-Message-Id: <20180316152334.257925032@linuxfoundation.org>
+Subject: [PATCH 4.14 078/109] ath10k: fix invalid STS_CAP_OFFSET_MASK
+Date: Fri, 16 Mar 2018 16:23:47 +0100
+Message-Id: <20180316152334.206742347@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109176956118610?=
-X-GMAIL-MSGID: =?utf-8?q?1595109176956118610?=
+X-GMAIL-THRID: =?utf-8?q?1595109173131822899?=
+X-GMAIL-MSGID: =?utf-8?q?1595109173131822899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julien BOIBESSOT <julien.boibessot@armadeus.com>
+From: Ben Greear <greearb@candelatech.com>
 
 
-[ Upstream commit 77be4c878c72e411ad22af96b6f81dd45c26450a ]
+[ Upstream commit 8cec57f5277ef0e354e37a0bf909dc71bc1f865b ]
 
-Indeed musl doesn't define old SIGCLD signal name but only new one SIGCHLD.
-SIGCHLD is the new POSIX name for that signal so it doesn't change
-anything on other libcs.
+The 10.4 firmware defines this as a 3-bit field, as does the
+mac80211 stack.  The 4th bit is defined as CONF_IMPLICIT_BF
+at least in the firmware header I have seen.  This patch
+fixes the ath10k wmi header to match the firmware.
 
-This fixes this kind of build error:
-
-usbipd.c: In function ‘set_signal’:
-usbipd.c:459:12: error: 'SIGCLD' undeclared (first use in this function)
-  sigaction(SIGCLD, &act, NULL);
-            ^~~~~~
-usbipd.c:459:12: note: each undeclared identifier is reported only once
-	for each function it appears in
-Makefile:407: recipe for target 'usbipd.o' failed
-make[3]: *** [usbipd.o] Error 1
-
-Signed-off-by: Julien BOIBESSOT <julien.boibessot@armadeus.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/usb/usbip/src/usbipd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/wmi.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/usb/usbip/src/usbipd.c
-+++ b/tools/usb/usbip/src/usbipd.c
-@@ -456,7 +456,7 @@ static void set_signal(void)
- 	sigaction(SIGTERM, &act, NULL);
- 	sigaction(SIGINT, &act, NULL);
- 	act.sa_handler = SIG_IGN;
--	sigaction(SIGCLD, &act, NULL);
-+	sigaction(SIGCHLD, &act, NULL);
- }
+--- a/drivers/net/wireless/ath/ath10k/wmi.h
++++ b/drivers/net/wireless/ath/ath10k/wmi.h
+@@ -5235,7 +5235,8 @@ enum wmi_10_4_vdev_param {
+ #define WMI_VDEV_PARAM_TXBF_MU_TX_BFER BIT(3)
  
- static const char *pid_file;
+ #define WMI_TXBF_STS_CAP_OFFSET_LSB	4
+-#define WMI_TXBF_STS_CAP_OFFSET_MASK	0xf0
++#define WMI_TXBF_STS_CAP_OFFSET_MASK	0x70
++#define WMI_TXBF_CONF_IMPLICIT_BF       BIT(7)
+ #define WMI_BF_SOUND_DIM_OFFSET_LSB	8
+ #define WMI_BF_SOUND_DIM_OFFSET_MASK	0xf00
+ 
