@@ -1,55 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753052AbeCPIQW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 04:16:22 -0400
-Received: from mga04.intel.com ([192.55.52.120]:1833 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751598AbeCPIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 04:16:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
-   d="scan'208";a="25006369"
-Date: Fri, 16 Mar 2018 16:15:34 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Martin Brandenburg <martin@omnibond.com>
-Cc: kbuild-all@01.org, Mike Marshall <hubcap@omnibond.com>,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH martinbrandenburg] orangefs: orangefs_write_end() can be
- static
-Message-ID: <20180316081534.GA15547@lkp-wsm-ep2>
-References: <201803161633.LJb0owl8%fengguang.wu@intel.com>
+        id S1753011AbeCPIT2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 04:19:28 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40777 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751665AbeCPIT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 04:19:26 -0400
+X-Google-Smtp-Source: AG47ELt2HeMVap7K73ZLrbEbv1+GQrITysHoM+ScA6HdKrkjix0zpN1z7pGXC6gK7A1DeY4M7KFmUOm2j40Jr1B9g3Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201803161633.LJb0owl8%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180316004843.GM26859@dragon>
+References: <20180315151345.3089601-1-arnd@arndb.de> <20180316004843.GM26859@dragon>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 16 Mar 2018 09:19:25 +0100
+X-Google-Sender-Auth: 9NP3BiWFWYIq2wcxBhFjDjhGdP0
+Message-ID: <CAK8P3a0aUHZ+64N1bDk+uozmMqQEVDgYRLhb1qZt42dqo7hbmA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: imx: fix imx6sll-only build
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: arm-soc <arm@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>, linux-imx@nxp.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bai Ping <ping.bai@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 16, 2018 at 1:48 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Thu, Mar 15, 2018 at 04:13:18PM +0100, Arnd Bergmann wrote:
+>> When selecting SOC_IMX6SLL but not SOC_IMX6SL, we get a link error:
+>>
+>> arch/arm/mach-imx/mach-imx6sl.o: In function `imx6sl_init_late':
+>> mach-imx6sl.c:(.init.text+0x14): undefined reference to `imx6sl_cpuidle_init'
+>>
+>> This adds the missing line to the Makefile to also build the cpuidle
+>> support that we need here.
+>>
+>> Fixes: dee5dee2a5b2 ("ARM: imx: Add basic msl support for imx6sll")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-Fixes: 27dd09ddfeca ("orangefs: implement writepage")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. Applied both now.
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index b9b9d65..9999151 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -85,7 +85,7 @@ static int orangefs_readpage(struct file *file, struct page *page)
- 	return ret;
- }
- 
--int orangefs_write_end(struct file *file, struct address_space *mapping,
-+static int orangefs_write_end(struct file *file, struct address_space *mapping,
-     loff_t pos, unsigned len, unsigned copied, struct page *page, void *fsdata)
- {
- 	int r;
+      Arnd
