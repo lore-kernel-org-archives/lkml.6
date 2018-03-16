@@ -1,64 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752947AbeCPC0E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:26:04 -0400
-Received: from ozlabs.org ([103.22.144.67]:42425 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751466AbeCPC0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:26:03 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 16 Mar 2018 13:25:29 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>, <heiko.carstens@de.ibm.com>
-Subject: linux-next: build failure after merge of the y2038 tree
-Message-ID: <20180316132529.45126501@canb.auug.org.au>
+        id S932673AbeCPCcZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:32:25 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:37594 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbeCPCcY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:32:24 -0400
+X-Google-Smtp-Source: AG47ELvpcB5eV9KoABPGqSBNpb6CMFIF3tcJWowOSSI091ZOmY4SlHjbFtFsGg7Wgvt7Xc8VYQPtfA==
+Date: Thu, 15 Mar 2018 22:32:22 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+cc: linux-kbuild@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] kbuild: link vmlinux only once for
+ CONFIG_TRIM_UNUSED_KSYMS
+In-Reply-To: <1521166725-24157-8-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1803152229070.28583@knanqh.ubzr>
+References: <1521166725-24157-1-git-send-email-yamada.masahiro@socionext.com> <1521166725-24157-8-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5ZRLpJR4xNCkH3bZP8CRY14"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5ZRLpJR4xNCkH3bZP8CRY14
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 16 Mar 2018, Masahiro Yamada wrote:
 
-Hi Arnd,
+> +# Recurse until adjust_autoksyms.sh is satisfied
+> +PHONY += autoksyms_recursive
+> +autoksyms_recursive: $(vmlinux-deps)
+> +	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh  \
+>  	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
+> -endif
+>  
+>  # For the kernel to actually contain only the needed exported symbols,
+>  # we have to build modules as well to determine what those symbols are.
+> @@ -1034,7 +1024,13 @@ cmd_link-vmlinux =                                                 \
+>  	$(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
+>  	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+>  
+> -vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
+> +vmlinux: scripts/link-vmlinux.sh autoksyms_recursive $(vmlinux-deps) FORCE
 
-After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
-failed like this:
+Don't you have to make the autoksyms_recursive dependency conditional on 
+CONFIG_TRIM_UNUSED_KSYMS?
 
-In file included from include/linux/elf.h:5:0,
-                 from include/linux/module.h:15,
-                 from init/main.c:16:
-arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_re=
-gs'
 
-Caused by commit
-
-  f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5ZRLpJR4xNCkH3bZP8CRY14
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqrKxkACgkQAVBC80lX
-0GxGUAf/TO6OACPRD1h7hm/aoE0a6NqBesrxMP9hsw0GE2WLQvKaZiBSf+vpNZSs
-BwjWtuXTZw6v0pjMs2xy1beNgtGR0mimIi292Xm9s5HpWnjnsypBURjWfJInvUv6
-3Z6FKdHlV5CGmptieivPQCLVf6WVrnQeAojZLrwJKfAixwbvM1J7c8myFDadIXea
-y5imG7hZZuliGz++nr9dsvoDnt2xL5MyltGb411J3e48h0gSNFolhfy/fxHAccLm
-GAkTL5f0WWR5Uqq/tWi+Z8XvQ5JO2gvKc70ktsbuC80p3nVomhEI4ykaxUIUrFSl
-CP/706sRfWj9ByWxgGN/KP8XclZP/Q==
-=4ztu
------END PGP SIGNATURE-----
-
---Sig_/5ZRLpJR4xNCkH3bZP8CRY14--
+Nicolas
