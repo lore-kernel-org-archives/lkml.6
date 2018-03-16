@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtA/Vv+p1libZKKaWYGM+sZTtn5ZKq37tXQIa//PcKmDe1Az3XQhpK2AQWa6Q+S4pp2fePc
-ARC-Seal: i=1; a=rsa-sha256; t=1521214305; cv=none;
+X-Google-Smtp-Source: AG47ELsO+8SOqwoHvz6pOIHY7PUL1kUXkcW3jG4U6PKBEyfNsBjmESGz8ANgFuQ4dsFQoXPjwFwE
+ARC-Seal: i=1; a=rsa-sha256; t=1521214302; cv=none;
         d=google.com; s=arc-20160816;
-        b=IVNoMiBWPzkKQdi0KHJEJMM6ngL+Li8Ug3LintDZKQwp0JZ7Y/jtd7foLbTW46Hled
-         MjIs2yOu21hHNv75KuOFmEv0kIofn9kQPGfM6vxW0J4X0lJQzczlL20FHs5y5zTBjilI
-         6u1zzebYfJuTkJq7VoOJzRui50QSDdlf+Hm5P4tABjdq8xb8STj2xLokPN6bfY6npGA0
-         tH+uSBVxgkljiLxtDGc0HnAMBseMFRAcghu1xoZ3h7V8pLVpEp2bTYljQ7aOcih08a5G
-         dj4JuazvDNj2iHsHgMisKagl3aLkzhVL+uaYJerHSqyX1u4zWPXF9TjCs0+Tl4F4NmLr
-         tWEQ==
+        b=kT7xSTfzr+TzoC2udR0ysTnuVDe7EyWsHBNUwoGI0x2aZ0BJ6KB0ZmRSpD/UI82SHg
+         BD4cGGNV5pFiwU1Vkk9jytWkd2rRwQy5NaLP3ZSvLSXHD3LvO6F+S684siBSa5tslF8B
+         HmsgqymduDk+XfFEpMBr8kmbFjhKfIrfchJvlxsJB38FUZl8FL43kCltyVTeTOb+cuiW
+         MLdRD+7CyTxBVt7vrSS2f1jMz4rtXScrotBZEtxjuzzxUFvVM4P9k4c38iyvh/WSby07
+         mu3NEg5fgtg2TzzAqCexYo/phFQ5ZMTxTalHPqUg6pOvf1ryfa7eHJEdrjpj3ChBwS4g
+         LoeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GQqCoQf8cXVCkfp1TvT8uHnp1MytoCtCCwcCxOJVg8U=;
-        b=nFWnjlsTj27iXWUdkuyqP/h/gSyFS/s1WLwSDKNj/4sJvwelAoEmZiLzU49v4yGYtT
-         g6e8OFO+ZJW5qtXL3grllqkiHMIX6tS4wmkBevkKTnzqNRppKFv0YLWovrddlzgb1kUb
-         7Qv64NxCcaS+SlqYhz5TegE8OlTdliPHTFr6M/gF57pghCyIIpQe0h1B6VKGqKXBEkcS
-         pNIFEEKraCQlyzV6mIziyyXhvnt+2Q06h/DV5EtbmPCgj93an1fzwEDtlXtJMFGUpGs+
-         eN+S1XgdsibCpC+VSnNbppeLfgh+f9oBlQ39D6z1ED2GSJGMirr3VT5+fHpkB4t/0Iqx
-         DWTA==
+        bh=txC+v43bK5NGyt1r7RBe2J4VdGGN5vHd3fOSWWhkSRc=;
+        b=Fcw3s9RTrSm5O8r6MMFxj5XSxydciqLejUNgPjB+ATCtOymEA+3J3dL2yexdfVH+gT
+         93XzOct8OPq2GKBy84tBHGgZMdbh8ouR8kts3IlxndCUtdsrktGtTWLopoLsadszfZEb
+         kGpejMVLnNoSOPxqwCsBI/PN3ImXJZw5peaYZ+h8LkIHujWzUKZm3hGjTzFKIQTZ4/1u
+         y6cqycGo4eEX6psodnNdo9hPN4XcilSbc/1RMTUXBMskwf3Wql0Zjiao/oC75pEss/r0
+         Npj764zXw9CX2Zd6/3vU0zU8xkvc/v+t/qRXQunAh1YeTFfSeCrRq3h2qaKWwMzvDgqu
+         RGwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Zhu <James.Zhu@amd.com>,
-	Leo Liu <leo.liu@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 15/86] drm/amdgpu:Correct max uvd handles
-Date: Fri, 16 Mar 2018 16:22:38 +0100
-Message-Id: <20180316152318.346823930@linuxfoundation.org>
+Subject: [PATCH 4.9 14/86] drm/amdgpu: fix KV harvesting
+Date: Fri, 16 Mar 2018 16:22:37 +0100
+Message-Id: <20180316152318.237997308@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108811396791046?=
-X-GMAIL-MSGID: =?utf-8?q?1595108811396791046?=
+X-GMAIL-THRID: =?utf-8?q?1595108594475030018?=
+X-GMAIL-MSGID: =?utf-8?q?1595108808292569847?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,32 +49,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Zhu <James.Zhu@amd.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 0e5ee33d2a54e4c55fe92857f23e1cbb0440d6de upstream.
+commit 545b0bcde7fbd3ee408fa842ea0731451dc4bd0a upstream.
 
-Max uvd handles should use adev->uvd.max_handles instead of
-AMDGPU_MAX_UVD_HANDLES here.
+Always set the graphics values to the max for the
+asic type.  E.g., some 1 RB chips are actually 1 RB chips,
+others are actually harvested 2 RB chips.
 
-Signed-off-by: James Zhu <James.Zhu@amd.com>
-Reviewed-by: Leo Liu <leo.liu@amd.com>
+Fixes: https://bugs.freedesktop.org/show_bug.cgi?id=99353
 Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c |   30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-@@ -277,7 +277,7 @@ int amdgpu_uvd_suspend(struct amdgpu_dev
- 		if (atomic_read(&adev->uvd.handles[i]))
- 			break;
- 
--	if (i == AMDGPU_MAX_UVD_HANDLES)
-+	if (i == adev->uvd.max_handles)
- 		return 0;
- 
- 	cancel_delayed_work_sync(&adev->uvd.idle_work);
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+@@ -4475,34 +4475,8 @@ static void gfx_v7_0_gpu_early_init(stru
+ 	case CHIP_KAVERI:
+ 		adev->gfx.config.max_shader_engines = 1;
+ 		adev->gfx.config.max_tile_pipes = 4;
+-		if ((adev->pdev->device == 0x1304) ||
+-		    (adev->pdev->device == 0x1305) ||
+-		    (adev->pdev->device == 0x130C) ||
+-		    (adev->pdev->device == 0x130F) ||
+-		    (adev->pdev->device == 0x1310) ||
+-		    (adev->pdev->device == 0x1311) ||
+-		    (adev->pdev->device == 0x131C)) {
+-			adev->gfx.config.max_cu_per_sh = 8;
+-			adev->gfx.config.max_backends_per_se = 2;
+-		} else if ((adev->pdev->device == 0x1309) ||
+-			   (adev->pdev->device == 0x130A) ||
+-			   (adev->pdev->device == 0x130D) ||
+-			   (adev->pdev->device == 0x1313) ||
+-			   (adev->pdev->device == 0x131D)) {
+-			adev->gfx.config.max_cu_per_sh = 6;
+-			adev->gfx.config.max_backends_per_se = 2;
+-		} else if ((adev->pdev->device == 0x1306) ||
+-			   (adev->pdev->device == 0x1307) ||
+-			   (adev->pdev->device == 0x130B) ||
+-			   (adev->pdev->device == 0x130E) ||
+-			   (adev->pdev->device == 0x1315) ||
+-			   (adev->pdev->device == 0x131B)) {
+-			adev->gfx.config.max_cu_per_sh = 4;
+-			adev->gfx.config.max_backends_per_se = 1;
+-		} else {
+-			adev->gfx.config.max_cu_per_sh = 3;
+-			adev->gfx.config.max_backends_per_se = 1;
+-		}
++		adev->gfx.config.max_cu_per_sh = 8;
++		adev->gfx.config.max_backends_per_se = 2;
+ 		adev->gfx.config.max_sh_per_se = 1;
+ 		adev->gfx.config.max_texture_channel_caches = 4;
+ 		adev->gfx.config.max_gprs = 256;
