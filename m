@@ -1,73 +1,72 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3527515-1521362005-2-16414784528049101313
+X-Cyrus-Session-Id: sloti22d1t05-3849152-1521230841-2-3550108692188268913
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 1.1
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  RCVD_IN_SBL_CSS 3.335, RCVD_IN_SORBS_WEB 1.5, SPF_PASS -0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521362005; b=GkdWjgDVYuqAdN9WswulugHoTO4Jn90Vzml0y6ECu0xYTcH
-    fbl7LJvAV82nOhKDapL1MGoH/LY4mniFgIucL12HLjDB/An+S84w1v/FSrRK9Vyg
-    vPBtzaRrcG9GKSPZM8bPDheFe2f6c9E5O1PWULGpuwrncME6/dA0I3Kv36BMtJUo
-    McwjVlNWjA0ym9ZDEBxTj7qgpInZyURgS1VCbSHXejeNxFlWNXlZWPBsTLPIYiHF
-    5BriMstv8ob3soUhR10jOOQoRa5y0dWxaOgPVh6uWn5xDXSv8F0ZWcOyPEI2U80k
-    oP4AQx1NIyFJ2rSEL8YmH3O/7UhGKdTPm0Rdilg==
+    t=1521230841; b=dWPY/Ndml2B7D1OYoRUmsQ1mmfb4M8b2BMu4HVNAZYmBTQ+
+    IhKR0f7ET+j46aXTpJxoHTfihjCEcf/FoM/bwjp+BrgXqhafjDumm4atwZuab7g8
+    2ssnY1/Cu7eGHez4epfmtpTsoUUC2azCJKrDuM3CUi74bPZ9aJzFOXSoklgpdCxY
+    D8+KWX5AWHqXeE8BTXxB8Lg1RV/85Y8gqyhM5l3LoeZNyhKKbOVuH185tbOI5wu+
+    S7IrPo/l/uVEETdTKlQPZdkiBE+HHj93r2+LE0GeVo7OyH7RGlGYujxgXA5m/WS1
+    zXQZjI4TZJTS8JxyrnrO9eS2vmWZvc+70azDqFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521362005; bh=T
-    1cqFAez+YSNPAQl05zl7iGdYKFm2zhCcnFX35Sz9EQ=; b=ILNVcCTzcndLeH/D3
-    1WQc935257EInhY0324EtnMsAD7CuZ0bUCNCYFRcgEebSvoFfg6kOgpxLsGAPr+x
-    is4C66szxNc5rAy4/sgcnWczPmQ0Un+m4u31zUKAzAN23V2hQ5rQerGXcE58TRsf
-    rx+S7bBjFCuFiaoIV6hZW28eAh6PhUM4sYdUDFy6nFT7oRcaPsMKoDEmUUJjTWVr
-    UDvgHbXPLaSbAF9hWO6WxWhwJ3IkG+8GZC8Gjw59AZl+VAONPuCNHP7n2gjhujeR
-    jyk3HMsWeOFf3sPgipQVy24XC7FDAGnkxl/pBqAAE/f6QCz9W+WXtPB4Kgow5blA
-    JsOGQ==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521230841; bh=m
+    nmrIRA+uY6lBjpZiOIOQc8/QYGih8uviNrvoo2ANmc=; b=vBKZoyb+N0tTL17qf
+    AdVAnoF8/ppEWs6tZYnX55xKr0pSXAjohhHvNxeKIodxdRt9BMsHJ+Idxs+z/XYo
+    Ikga8HvIeNnvxmtL1RiaGOJt0FJ3MsQHMkktcq4P0X10RJmY/hiIFpQWku7n5xHN
+    h9ckhWiToKMAye70oKtsWNMrAIqhq2QlwPH11iI2kzb1YaQuOWuIqqHcesfm7LF9
+    FNDw+8EhUQMw9ovgI8dMkKJHYNROoiQF3DJBw/h8iQiND+06GMlsD42qW4IeyUFM
+    ZdIG/hQQsHPPs0CNb2GazdKswxrzADX10exsNcd6GzNYWOdRHMLuMCLkdmKe5Vps
+    yqCiQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gIzb8Tg/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HzwRmXA9;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gIzb8Tg/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HzwRmXA9;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0820021720
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 18 Mar 2018 08:33:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Subject: Re: [PATCH v2 6/9] Staging: iio: accel: adis16201: Use
- sign_extend32 function
-Message-ID: <20180318083314.3b444790@archlinux>
-In-Reply-To: <1521230786-18155-7-git-send-email-himanshujha199640@gmail.com>
+X-Google-Smtp-Source: AG47ELsKPHEdPuraDo88FY6OfesgTfTBcqg1X1c6Bc/cHhmBkzpi+pyePkx3vtAEfLBIe6O/+lD95g==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: jic23@kernel.org
+Subject: [PATCH v2 5/9] Staging: iio: accel: adis16201: Add comments about
+ units in read_raw()
+Date: Sat, 17 Mar 2018 01:36:22 +0530
+Message-Id: <1521230786-18155-6-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521230786-18155-1-git-send-email-himanshujha199640@gmail.com>
 References: <1521230786-18155-1-git-send-email-himanshujha199640@gmail.com>
- <1521230786-18155-7-git-send-email-himanshujha199640@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -81,7 +80,8 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
 Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
  Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
  gregkh@linuxfoundation.org, 21cnbao@gmail.com, linux-kernel@vger.kernel.org,
- pmeerw@pmeerw.net
+ Himanshu Jha <himanshujha199640@gmail.com>, pmeerw@pmeerw.net
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -90,42 +90,96 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, 17 Mar 2018 01:36:23 +0530
-Himanshu Jha <himanshujha199640@gmail.com> wrote:
+Clarify the conversion and formation of resultant data in the
+adis16201_read_raw() with sufficient comments and remove the unnecessary
+comments.
 
-> Use sign_extned32() for 32 bit sign extending rather than hard coding.
-> 
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+---
+v2:
+   -clarify voltage base conversions.
 
-Great, applied.
+ drivers/staging/iio/accel/adis16201.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-Thanks,
-
-Jonathan
-
-> ---
-> v2:
->    -no change in this patch.
-> 
->  drivers/staging/iio/accel/adis16201.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
-> index 97150ea..298bf90 100644
-> --- a/drivers/staging/iio/accel/adis16201.c
-> +++ b/drivers/staging/iio/accel/adis16201.c
-> @@ -173,9 +173,8 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
->  		ret = adis_read_reg_16(st, addr, &val16);
->  		if (ret)
->  			return ret;
-> -		val16 &= (1 << bits) - 1;
-> -		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
-> -		*val = val16;
-> +
-> +		*val = sign_extend32(val16, bits - 1);
->  		return IIO_VAL_INT;
->  	}
->  
+diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+index 8de3f27..97150ea 100644
+--- a/drivers/staging/iio/accel/adis16201.c
++++ b/drivers/staging/iio/accel/adis16201.c
+@@ -120,31 +120,43 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+ 		switch (chan->type) {
+ 		case IIO_VOLTAGE:
+ 			if (chan->channel == 0) {
++			/* Voltage base units are mV hence 1.22 mV */
+ 				*val = 1;
+-				*val2 = 220000; /* 1.22 mV */
++				*val2 = 220000;
+ 			} else {
++			/* Voltage base units are mV hence 0.61 mV */
+ 				*val = 0;
+-				*val2 = 610000; /* 0.610 mV */
++				*val2 = 610000;
+ 			}
+ 			return IIO_VAL_INT_PLUS_MICRO;
+ 		case IIO_TEMP:
+-			*val = -470; /* 0.47 C */
++			*val = -470;
+ 			*val2 = 0;
+ 			return IIO_VAL_INT_PLUS_MICRO;
+ 		case IIO_ACCEL:
++			/*
++			 * IIO base unit for sensitivity of accelerometer
++			 * is milli g.
++			 * 1 LSB represents 0.244 mg.
++			 */
+ 			*val = 0;
+-			*val2 = IIO_G_TO_M_S_2(462400); /* 0.4624 mg */
++			*val2 = IIO_G_TO_M_S_2(462400);
+ 			return IIO_VAL_INT_PLUS_NANO;
+ 		case IIO_INCLI:
+ 			*val = 0;
+-			*val2 = 100000; /* 0.1 degree */
++			*val2 = 100000;
+ 			return IIO_VAL_INT_PLUS_MICRO;
+ 		default:
+ 			return -EINVAL;
+ 		}
+ 		break;
+ 	case IIO_CHAN_INFO_OFFSET:
+-		*val = 25000 / -470 - 1278; /* 25 C = 1278 */
++		/*
++		 * The raw ADC value is 1278 when the temperature
++		 * is 25 degrees and the scale factor per milli
++		 * degree celcius is -470.
++		 */
++		*val = 25000 / -470 - 1278;
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+ 		switch (chan->type) {
+@@ -252,13 +264,11 @@ static int adis16201_probe(struct spi_device *spi)
+ 	struct adis *st;
+ 	struct iio_dev *indio_dev;
+ 
+-	/* setup the industrialio driver allocated elements */
+ 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 
+ 	st = iio_priv(indio_dev);
+-	/* this is only used for removal purposes */
+ 	spi_set_drvdata(spi, indio_dev);
+ 
+ 	indio_dev->name = spi->dev.driver->name;
+@@ -277,7 +287,6 @@ static int adis16201_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Get the device into a sane initial state */
+ 	ret = adis_initial_startup(st);
+ 	if (ret)
+ 		goto error_cleanup_buffer_trigger;
+-- 
+2.7.4
 
 _______________________________________________
 devel mailing list
