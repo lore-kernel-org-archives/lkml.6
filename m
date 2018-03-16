@@ -1,32 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753015AbeCPTAZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:00:25 -0400
-Received: from verein.lst.de ([213.95.11.211]:48380 "EHLO newverein.lst.de"
+        id S1753133AbeCPTAn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:00:43 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29291 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752884AbeCPTAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:00:22 -0400
-Date: Fri, 16 Mar 2018 20:00:21 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Jeff Moyer <jmoyer@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/15] xfs, dax: introduce xfs_dax_aops
-Message-ID: <20180316190021.GD3671@lst.de>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112910519.24669.5862622842481813804.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1752966AbeCPTAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:00:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="25330856"
+Subject: Re: [PATCH 13/22] signal: Move addr_lsb into the _sigfault union for
+ clarity
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+References: <87k1wimybi.fsf_-_@xmission.com>
+ <20180116004009.31036-13-ebiederm@xmission.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        linux-arch@vger.kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
+Date: Fri, 16 Mar 2018 12:00:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152112910519.24669.5862622842481813804.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180116004009.31036-13-ebiederm@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+On 01/15/2018 04:40 PM, Eric W. Biederman wrote:
+> The addr_lsb fields is only valid and available when the
+> signal is SIGBUS and the si_code is BUS_MCEERR_AR or BUS_MCEERR_AO.
+> Document this with a comment and place the field in the _sigfault union
+> to make this clear.
+> 
+> All of the fields stay in the same physical location so both the old
+> and new definitions of struct siginfo will continue to work.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This breaks the ABI and breaks protection keys.  The physical locations
+*DO* change.
+
+Before this patch:
+
+#define si_pkey         _sifields._sigfault._pkey
+(gdb) print &((siginfo_t *)0)->_sifields._sigfault._pkey
+$1 = (__u32 *) 0x20 <irq_stack_union+32>
+
+and after:
+
++#define si_pkey                _sifields._sigfault._addr_pkey._pkey
+(gdb) print &((siginfo_t *)0)->_sifields._sigfault._addr_pkey._pkey
+$1 = (__u32 *) 0x1c
+
+Can we revert this, please?
