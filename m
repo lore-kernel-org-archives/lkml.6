@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753350AbeCPPCF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:02:05 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:35487 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751014AbeCPPCC (ORCPT
+        id S1752275AbeCPPHu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:07:50 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:10441 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeCPPHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:02:02 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "peterz@infradead.org" <peterz@infradead.org>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-Thread-Topic: Do we need to disable preemption in flush_tlb_range()?
-Thread-Index: AQHTsW/Ph/wHPbUur0SfkKmu1J1Lq6PQL76AgADLfoCAABQpAIABmz4AgABRA4A=
-Date: Fri, 16 Mar 2018 15:01:22 +0000
-Message-ID: <1521212481.4805.2.camel@synopsys.com>
-References: <1519917189.13866.6.camel@synopsys.com>
-         <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
-         <20180315082720.GT4064@hirez.programming.kicks-ass.net>
-         <1521106770.11552.70.camel@synopsys.com>
-         <20180316101124.GB4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180316101124.GB4064@hirez.programming.kicks-ass.net>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.67]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <44DB983CB1008B4F89AD99B8A38C0138@internal.synopsys.com>
+        Fri, 16 Mar 2018 11:07:49 -0400
+Subject: Re: [v2] ARM: davinci: fix the GPIO lookup for omapl138-hawk
+To: David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20180301103448.27233-1-brgl@bgdev.pl>
+ <2641a421-9823-c0bb-93d9-ca0c64060c51@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <e0cad8b8-c2fe-0a66-411f-d478e145ade4@ti.com>
+Date: Fri, 16 Mar 2018 20:35:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <2641a421-9823-c0bb-93d9-ca0c64060c51@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2GF2ff1011716
 
-Hi Peter,
-
-On Fri, 2018-03-16 at 11:11 +0100, Peter Zijlstra wrote:
-> On Thu, Mar 15, 2018 at 09:39:31AM +0000, Alexey Brodkin wrote:
-> > Hi Peter,
-> > 
-> > On Thu, 2018-03-15 at 09:27 +0100, Peter Zijlstra wrote:
-> > > On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
-> > > > +CC Peter since we have his attention ;-)
-> > > 
-> > > Yeah, timezone collision there, I typically sleep at 1am ;-)
-> > > 
-> > > > On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
-> > > > > Hi Vineet,
-> > > > > 
-> > > > > Just noticed that in comments for smp_call_function_many() it is said that
-> > > > > preemption must be disabled during its execution. And that function gets executed
-> > > > > among other ways like that:
-> > > > > -------------------------->8-----------------------
-> > > > >    flush_tlb_range()
-> > > > >      -> on_each_cpu_mask()
-> > > > >           -> smp_call_function_many()
-> > > > > -------------------------->8-----------------------
-> > > > 
-> > > > In general I prefer not to - Peter what say you ?
-> > > 
-> > > The comment with smp_call_function_many() is correct, it relies on
-> > > preemption being disabled in a number of ways. I would expect
-> > > this_cpu_ptr() for example to complain when used with preemption
-> > > enabled (CONFIG_DEBUG_PREEMPT).
+On Thursday 15 March 2018 10:05 PM, David Lechner wrote:
+> On 03/01/2018 04:34 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> The GPIO chip is called davinci_gpio.0 in legacy mode. Fix it, so that
+>> mmc can correctly lookup the wp and cp gpios.
+>>
+>> Fixes: c69f43fb4f26 ("ARM: davinci: hawk: use gpio descriptor for mmc
+>> pins")
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+>> ---
+>> v1 -> v2:
+>> - added the Fixes: tag
+>>
+>>   arch/arm/mach-davinci/board-omapl138-hawk.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c
+>> b/arch/arm/mach-davinci/board-omapl138-hawk.c
+>> index a3e78074be70..62eb7d668890 100644
+>> --- a/arch/arm/mach-davinci/board-omapl138-hawk.c
+>> +++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+>> @@ -127,8 +127,8 @@ static struct gpiod_lookup_table mmc_gpios_table = {
+>>       .dev_id = "da830-mmc.0",
+>>       .table = {
+>>           /* CD: gpio3_12: gpio60: chip 1 contains gpio range 32-63*/
+>> -        GPIO_LOOKUP("davinci_gpio.1", 28, "cd", GPIO_ACTIVE_LOW),
+>> -        GPIO_LOOKUP("davinci_gpio.1", 29, "wp", GPIO_ACTIVE_LOW),
+>> +        GPIO_LOOKUP("davinci_gpio.0", 28, "cd", GPIO_ACTIVE_LOW),
+>> +        GPIO_LOOKUP("davinci_gpio.0", 29, "wp", GPIO_ACTIVE_LOW),
+>>       },
+>>   };
+>>  
 > 
-> So on_each_cpu_mask() already disables preemption around calling
-> smp_call_function_many().
+> Does board-da830-evm.c need the same fix? It also uses "davinci_gpio.1".
 
-Right that happens in get_cpu() so then we're golden here.
-Thanks for pointing out - was not clear immediately from the code :)
+Yes. looks like fixes are needed here and other places. I will send
+patches since I have ability to test them.
 
--Alexey
+Thanks,
+Sekhar
