@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtwKpfz9+JdkpQaQeRXzFaMVQl+dYOBKWe61C0yUfJ6iARViG2zx8sXalUWjcYumeGR6sLh
-ARC-Seal: i=1; a=rsa-sha256; t=1521214885; cv=none;
+X-Google-Smtp-Source: AG47ELvFtWifHMePfA3R6frPU+hOEVT2UiguwbARzUeYoEG34QvnEGHb8SbMbb0iKCIg3OgglV1f
+ARC-Seal: i=1; a=rsa-sha256; t=1521214882; cv=none;
         d=google.com; s=arc-20160816;
-        b=dwxeuqUi1ogdcYZDYAzDSg0pziUmSnI3dCX1QLaaAlqN/vkfymdywm6VijGzWbfOYQ
-         63Mj2JYEAAshweAmq9H1Ez2LNirDwgK/pLzBZKsQHwClEmTKqox1qb9x44cURkWNjq6L
-         i7kEOO/s7pf6sZdUMWVDHKHQSnBr3HNsILELGLkmAZddsV7vYgbV7Zy30pSd292EC4Bh
-         lj7KZGK1joEJP1KFMwRSGGF9R3llpUjjP5L2kAOAlreZEHq8qJ7X8fB0ZI0hDgNPmK1F
-         kz0CNCnH2ChU0UTzVcR7gjRF4qXn43ldVBBIAvMhhf7El89AC2Xi/A4Nald7CjrXqG5d
-         rBhQ==
+        b=q7bbNJVW+Ww2gV87AEebHo/k3x5IfkaMk+d0giFvE4yu72SgEa3fH87GjbgUOZ1gep
+         uBQyvEoe2SzQ5Q0bYEpAGRNuz3dlLDVNJLnCWDEdpoYXhkigXw1t5/xDIQ0L4rJ2MkEE
+         +BuNA0ppcFv10ufjd9hd8yVqXkBO5b39JwmmgCt+i66ySCZYGs3LaNfae3uGglc7cEGN
+         CvT5n5Tf3TJO6c4MYoXG9l8SkAfTFtxX7xghJhTyOq7zBxMLR9n3AZxaM2ijS65SNF+y
+         s73EbSnEtdLrfM1ghZbwQY/JNookKiHvv7HBWEvCmP2IgZL0qzoGaUORAB6uqd81BoOJ
+         jvUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gZddgH/t4AnktH2PSexwBGQ6KIvxgKtv0zc4/XBzmCE=;
-        b=g85WmzbQfEnZlBhImqKWGFNeuTaD+sCJYDlMAVCw5yEKoJ9mEN6Oy6jOLIXiOcBDHD
-         1M3okewOZBSPe7R/fkzc2htO7gALLtT1SURPgAxiVFxnVWKKkHhw3A1YjcceM5fRisqi
-         aclfS28uTw88jhwcCfClabGBYDYb5GxPFO6vB12dF/mprEFSeyg2NQISy+IOq1TBnAL3
-         ZL9SPEA/fNdX5Kr1R3TLQGyxhkdSDlV6Nf+zfodtqa2IWSeJiFtcnh2DT/3iMyhvTxg3
-         5NQHOuubjtDB7DKJ8xrf+MjshbRvMr+ZnpHjyHK5hOrlq8Xzua3SsqTiZRpDjI9mVz+w
-         kGzQ==
+        bh=NIBSHVsUzpf29ql4D8L0IHyRQe0Tka+Q+4NbVidNVmg=;
+        b=i4C/I2dzyZ5AH+cge5PCtzdYz4d637EA+ciXi3a5OCINglM1TGExFJvGEAvaWyRn1g
+         cW/Vo2afNIAF4iKK0zBA7wBiDMOMyKjYFR7oO8C0FOtNR5+NpeT1fls2Kcq1uIxOtpjc
+         cnRpacOGVZp/WOLHKVwK1j9hO9nU+f7p0xh71EnbZ2MdJUIld1rXTAre2RJveSjqatZh
+         ToH+uPVDYBuuz6ZZALBv/8CjfbyEMLlwLdK6D/d3N2uNLNStPpGb/by1xLN2fx9k++ud
+         dSEeclQUcNwlK9XsyOWfZi6sf+fESb2cpzLYlDQlX+NZrKAUF+KLrMZicxEVStQdkyBl
+         pgZw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Keith Packard <keithp@keithp.com>,
-	Sean Paul <seanpaul@chromium.org>,
-	Dave Airlie <airlied@redhat.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 053/128] drm/vblank: Fix vblank timestamp debugs
-Date: Fri, 16 Mar 2018 16:23:14 +0100
-Message-Id: <20180316152339.496220104@linuxfoundation.org>
+Subject: [PATCH 4.15 052/128] test_firmware: fix setting old custom fw path back on exit
+Date: Fri, 16 Mar 2018 16:23:13 +0100
+Message-Id: <20180316152339.452678554@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109419983324293?=
-X-GMAIL-MSGID: =?utf-8?q?1595109419983324293?=
+X-GMAIL-THRID: =?utf-8?q?1595109060118425146?=
+X-GMAIL-MSGID: =?utf-8?q?1595109416767345910?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,54 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Ville Syrj‰l‰" <ville.syrjala@linux.intel.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 
 
-[ Upstream commit bcbec31ce500fe036f75a19bca5c73bfa6dd420b ]
+[ Upstream commit 65c79230576873b312c3599479c1e42355c9f349 ]
 
-We're currently calling ktime_to_timespec64() on stack garbage
-hence the debug output for vblank timestamps also contains garbage.
-Let's assing something to the ktime_t first before we go converting
-it to a timespec.
+The file /sys/module/firmware_class/parameters/path can be used
+to set a custom firmware path. The fw_filesystem.sh script creates
+a temporary directory to add a test firmware file to be used during
+testing, in order for this to work it uses the custom path syfs file
+and it was supposed to reset back the file on execution exit. The
+script failed to do this due to a typo, it was using OLD_PATH instead
+of OLD_FWPATH, since its inception since v3.17.
 
-While at it micro-optimize the ktime_to_timespec64() calls away
-when vblank debugging isn't enabled.
+Its not as easy to just keep the old setting, it turns out that
+resetting an empty setting won't actually do what we want, we need
+to check if it was empty and set an empty space.
 
-Fixes: 67680d3c0464 ("drm: vblank: use ktime_t instead of timeval")
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Keith Packard <keithp@keithp.com>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Ville Syrj√§l√§ <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171113150210.11311-1-ville.syrjala@linux.intel.com
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Without this we end up having the temporary path always set after
+we run these tests.
+
+Fixes: 0a8adf58475 ("test: add firmware_class loader test")
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_vblank.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ tools/testing/selftests/firmware/fw_filesystem.sh |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -663,14 +663,16 @@ bool drm_calc_vbltimestamp_from_scanoutp
- 	delta_ns = div_s64(1000000LL * (vpos * mode->crtc_htotal + hpos),
- 			   mode->crtc_clock);
- 
--	/* save this only for debugging purposes */
--	ts_etime = ktime_to_timespec64(etime);
--	ts_vblank_time = ktime_to_timespec64(*vblank_time);
- 	/* Subtract time delta from raw timestamp to get final
- 	 * vblank_time timestamp for end of vblank.
- 	 */
--	etime = ktime_sub_ns(etime, delta_ns);
--	*vblank_time = etime;
-+	*vblank_time = ktime_sub_ns(etime, delta_ns);
-+
-+	if ((drm_debug & DRM_UT_VBL) == 0)
-+		return true;
-+
-+	ts_etime = ktime_to_timespec64(etime);
-+	ts_vblank_time = ktime_to_timespec64(*vblank_time);
- 
- 	DRM_DEBUG_VBL("crtc %u : v p(%d,%d)@ %lld.%06ld -> %lld.%06ld [e %d us, %d rep]\n",
- 		      pipe, hpos, vpos,
+--- a/tools/testing/selftests/firmware/fw_filesystem.sh
++++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+@@ -45,7 +45,10 @@ test_finish()
+ 	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
+ 		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
+ 	fi
+-	echo -n "$OLD_PATH" >/sys/module/firmware_class/parameters/path
++	if [ "$OLD_FWPATH" = "" ]; then
++		OLD_FWPATH=" "
++	fi
++	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
+ 	rm -f "$FW"
+ 	rmdir "$FWPATH"
+ }
