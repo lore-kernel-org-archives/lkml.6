@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvi/3Ox8iq/rcqsIbhrbsrIuN9DwMN77PPITiOlexMbJoIsQtj48Ms4xdC5HIP6xoZJs4+Y
-ARC-Seal: i=1; a=rsa-sha256; t=1521214997; cv=none;
+X-Google-Smtp-Source: AG47ELsJu02Wh9oTUv/W6o9WMnOlU3vzXII1jFITPje/dDGffkxNO7m1DW4JwJb+3TP8aqVPzzre
+ARC-Seal: i=1; a=rsa-sha256; t=1521214994; cv=none;
         d=google.com; s=arc-20160816;
-        b=jZDtv9wxG2jL28JOze+wtC+0GvdgliPcIMCtExDNLoudZMfTqkoinn0hGmVpaTkOHs
-         DeNlqV1KpmK5Yz4XWu3IdzF1l7p1wRB40xQ+cJmtaA3OZMPbteauYmZmloA+E2jP0NdJ
-         G26M4BR4+XHOwDYeSrVdcDrJMcLDTZWO62GOHOh7G07BTyhpvFqGUmib02eK7nK1SE4N
-         vtPkE8lK3Y5/jRuXKP02OuM5rzwEkqoVSVm5qLWWsUDabjHwDcoB9V3JOc1VY7wmlwVv
-         HKXjp/noLft8X/EZXehDnSBR6AayIC/QcecIRRK9psthhMaa4pQPM1olMZ9yiRLMjIoH
-         qqEQ==
+        b=LMI/FY0/496HHrDImqcH94n1ITQuDEWPOtuadE3OonY1RnZ3urkqHT6DCy5gt+jQZj
+         CXZZ0LzuaCps9Fn6rW/pFiakrvAxrmhTGpbneRLkwkhNn94HUjnDiWf86qC7wtYii2/t
+         839i+VtD7FL50GE11+hs4i7CAVhuJc36Lv/0uXJQlwpRUFiExOvKCYKCOo7xs7uw8/uV
+         9S1DipqrOW7Qa1dUMcRIdvmLCkzhsfw6Nhg6XK/UDCQxNmf8DY+h597msTZ5SnDbkQVg
+         wcgz1zdeXaGvEnvdVz/ZOwzagqryfhhf7VErH7s5iRIhhBvzpszgUzlraWTZd5ieXgzY
+         Xcsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uYP7Hw7RphgTe5vWvcVu5fzrb8puPvdX1j6Gupv1Ugo=;
-        b=Dn78VwMhZSXMKtDg3ygGc5Le1CS/N/kjHhRH3wx7+M3POhGheci9dfrk3Fvfqm+aUh
-         lBPq4Y5BpYO79ao/jWPgb3Wt73qwMbXvtmfqTbVy3Al7hDvi5aNxi4qPLaWArHiO4CYh
-         1HLicjWSWpUTFHGBJ5A1Uh+Bn/ba3zSaebJHsYdV9Crl3FqKsufmLNkXJsyEf5agOACc
-         N6QA42JM8mn5RQ/4KVdME5Ylp8DyPrTxn28x8IPSz76IEJOS4ZRYlHXqow4GUwuvUWVY
-         fB19kYH9zhSpSoEWVexhEZLwzHoFWJW9nBlIQFaNW77xCJJWreV2HEkuo3sPm0qUvILz
-         05sQ==
+        bh=ZtDPPOXUrw4ydZYafn2Mc5mCj5w2TOFBMxioQ8remPg=;
+        b=SLrhxjnDpNvXFbTVguhh9j/Urtk3PzRznYZrW+FsdVGm93f3CAuoeSL5XoTmiAUQmi
+         K6CUB01hgLunmse5jmr18XLj7zDwYNfvvkpiPlqU/v3T31LvyPLZLCaS143ZRTq3qB7G
+         ygF8dFHLm6bhDRyqS6HUyaoe7hdtVzeOJPgRkbDpvCoknc6tciQAiZQo6dakLShrE1DI
+         f7uyDIy6OI6S0eOO299n95HRtqT4/UHRt5OcBR5JwOosTkIul398zmx0iwp7SzGHVZRQ
+         qNDNXZ3MhQgVXMXPnY2xBtt85OXtvobWPKPbLjTgoUjUDOCeAazS0HPfNvBD8+LY0/pZ
+         kysQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Michael Chan <michael.chan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Andres Rodriguez <andresx7@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 092/128] bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
-Date: Fri, 16 Mar 2018 16:23:53 +0100
-Message-Id: <20180316152341.132311918@linuxfoundation.org>
+Subject: [PATCH 4.15 091/128] drm/amdgpu: fix amdgpu_sync_resv v2
+Date: Fri, 16 Mar 2018 16:23:52 +0100
+Message-Id: <20180316152341.090731364@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109536783199250?=
-X-GMAIL-MSGID: =?utf-8?q?1595109536783199250?=
+X-GMAIL-THRID: =?utf-8?q?1595109534219532544?=
+X-GMAIL-MSGID: =?utf-8?q?1595109534219532544?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "Christian König" <christian.koenig@amd.com>
 
 
-[ Upstream commit 92425c40676d498efccae6fecdb8f8e4dcf7e4a4 ]
+[ Upstream commit d4b7648d6d1774f961f3f6a758d9b009f1f34f05 ]
 
-Smatch warns that:
+Fixes a bug introduced by AMDGPU_GEM_CREATE_EXPLICIT_SYNC. We still need
+to wait for pipelined moves in the shared fences list.
 
-    drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:160 bnxt_tc_parse_actions()
-    error: uninitialized symbol 'rc'.
+v2: fix typo
 
-"rc" is either uninitialized or set to zero here so we can just remove
-the check.
-
-Fixes: 8c95f773b4a3 ("bnxt_en: add support for Flower based vxlan encap/decap offload")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Christian KÃ¶nig <christian.koenig@amd.com>
+Reviewed-by: Andres Rodriguez <andresx7@gmail.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sync.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
-@@ -148,9 +148,6 @@ static int bnxt_tc_parse_actions(struct
- 		}
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sync.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sync.c
+@@ -191,9 +191,6 @@ int amdgpu_sync_resv(struct amdgpu_devic
+ 	f = reservation_object_get_excl(resv);
+ 	r = amdgpu_sync_fence(adev, sync, f);
  
--	if (rc)
--		return rc;
+-	if (explicit_sync)
+-		return r;
 -
- 	if (actions->flags & BNXT_TC_ACTION_FLAG_FWD) {
- 		if (actions->flags & BNXT_TC_ACTION_FLAG_TUNNEL_ENCAP) {
- 			/* dst_fid is PF's fid */
-@@ -164,7 +161,7 @@ static int bnxt_tc_parse_actions(struct
+ 	flist = reservation_object_get_list(resv);
+ 	if (!flist || r)
+ 		return r;
+@@ -212,11 +209,11 @@ int amdgpu_sync_resv(struct amdgpu_devic
+ 			     (fence_owner == AMDGPU_FENCE_OWNER_VM)))
+ 				continue;
+ 
+-			/* Ignore fence from the same owner as
++			/* Ignore fence from the same owner and explicit one as
+ 			 * long as it isn't undefined.
+ 			 */
+ 			if (owner != AMDGPU_FENCE_OWNER_UNDEFINED &&
+-			    fence_owner == owner)
++			    (fence_owner == owner || explicit_sync))
+ 				continue;
  		}
- 	}
  
--	return rc;
-+	return 0;
- }
- 
- #define GET_KEY(flow_cmd, key_type)					\
