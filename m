@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuwKS52OagOkJfKrXVKMBQKz0BJzyX+2Md8779zP1YX4PDTJ5NC5PuS4Myk3XeZ7fiuwIyX
-ARC-Seal: i=1; a=rsa-sha256; t=1521214522; cv=none;
+X-Google-Smtp-Source: AG47ELtK5rTez3tLVIjs2gh4DNZF0aUoGeMJ0I9R+S/iYo38DBCnXFvmxc5RVALBgvrwXJJgehNl
+ARC-Seal: i=1; a=rsa-sha256; t=1521214519; cv=none;
         d=google.com; s=arc-20160816;
-        b=cBmY4zbqKK6gEn8Iiy2AXBmimqKC34u5J6oMGa0hBwcCTKYWxaRwDA+gpTApIHopy7
-         cMFlkNiDFO1MpLzTIpFfVGK9oobTNDf3mq1s584qOyhof+X0FMU3iOyf+PcIKfF3hqCk
-         J+w0xt5yN3T6fiTJ4iVw321xFQrtu0C3J6UeyonvT5OC+7+McorXkyubFF5GKCl/JDNv
-         l4N3mDK060vCQmEo1GTSAA/8hbPR6bkc/fqqoxvVEzmyUCYBcN6J2gRBmEooyEvYfYL5
-         s/F8THpGhZojVGs4XiXPPtkvRDEhRZ96ZURQLl0txVTThvREXCVnFm2i6Ms3u+ZHVjL+
-         CDtw==
+        b=z9id5VNTfyI/eAyqu2xJxhB6Kv8gyVWd0g/xL99AAxIbPOUFC2hqMT3Djq8mJGnUKG
+         eGP80LoYpAtfO+dQ9okboNivXfOqheIUB17ipj4L7S4KUJe9v14G9oWTpS29cQoLB5Gr
+         WFWS25Z3LV9LDXq4k8sa3UolVA/WyBbQFNSpDK3sXkc8yt4c+8yd6eRPzGIjyauwawGr
+         rvBucnQI9OJMXoMQjmRpTIMVm/b+B/Wk5AjHRJEgYPzmTFa5LmngwbXyFFLOfnv9Ms4J
+         OneZAoJT1rC23cnp+rNjP7tRjQVmoYXSBhnYOraeKPETTKZDSRwdGrFcHAFGuNejOJYl
+         Bgxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ImngWB5javFA7da371JltbXxjUyFLUB81ictUSYYnpk=;
-        b=ytEuu/q6RJYt2ABIKCctK018TbgdvFNykl2/N3RMeXN/RzA0oIe4VnquiYzyvuV+25
-         bn/fdNPcAfw8qYT1IUnPhJ8If/ipY0yrByttSqZTuSijYqIfb7USzTI8t0+wxcHZHyow
-         txGM8T3HUyw+c6BG9b99a8aoCbIQe5Na11blpp0ucq5auOc1YXtdgArqAqN69sXRiH38
-         sfnVLUCyQasOvre6QF60qUTICdmUHhCR563VooXDifmFdA8oc6YItiqZewLn6ihZkSnp
-         2yWk8JMSO0RqcSPfB8fpty2FNXoFrAbo4N+3GJXQkCrQtypQWksdRuynd6sDyYToYyJA
-         cJhA==
+        bh=r3cMkc5ya1i+CgJwj/bO725ODuOU9S1MPTub//lnAA4=;
+        b=MkF6+PuhkUt1H2ooPby1OXdQZ5LVdivAxNYD9f2P76/xd7uz9quYFsQa/wlKqJ7Asz
+         q0F6LJr2hu/Tt5Yjy0YoXX6AVIjWUSqP/s7X3j8DCb3XYVMQra891A4oy6WVRQjp9E4Q
+         QV4sWU2riHiHj0sJC5T4/EH59JmBhnAvyHImj6XS2eQSyYlUtZNV6xxDgkGwqTwT0OgU
+         Im2kEZbPvS55Ij3zbV7vQ/dhHxebTXzxqCXMSVGOJjKgMsx6xGnQFLYaBOZR9uoobq+i
+         yRlmWCxijedQxN3fU8Ua7n8fcsshG1AWpg9lLbUPKzyaVtBbohMuiDuDCGHwsnm7zM5S
+         ElSg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Oded Gabbay <oded.gabbay@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 037/109] staging: rtl8822be: fix missing null check on dev_alloc_skb return
-Date: Fri, 16 Mar 2018 16:23:06 +0100
-Message-Id: <20180316152331.960159777@linuxfoundation.org>
+Subject: [PATCH 4.14 036/109] drm/amdgpu: fix get_max_engine_clock_in_mhz
+Date: Fri, 16 Mar 2018 16:23:05 +0100
+Message-Id: <20180316152331.913173753@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109039358682188?=
-X-GMAIL-MSGID: =?utf-8?q?1595109039358682188?=
+X-GMAIL-THRID: =?utf-8?q?1595109036390378967?=
+X-GMAIL-MSGID: =?utf-8?q?1595109036390378967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
 
-[ Upstream commit 3eb23426e1749a0483bc4c9b18e51f657569e3ed ]
+[ Upstream commit a9efcc19161e20623c285fac967a32842972cebe ]
 
-dev_alloc_skb can potentially return NULL, so add a null check to
-avoid a null pointer dereference on skb
+Use proper powerplay function. This fixes OpenCL initialization
+problems.
 
-Detected by CoverityScan, CID#1454558 ("Dereference on null return")
-
-Fixes: 7e5b796cde7e ("staging: r8822be: Add the driver code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/rtlwifi/rtl8822be/fw.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-@@ -464,6 +464,8 @@ bool rtl8822b_halmac_cb_write_data_rsvd_
- 	int count;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
+@@ -265,6 +265,9 @@ uint32_t get_max_engine_clock_in_mhz(str
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)kgd;
  
- 	skb = dev_alloc_skb(size);
-+	if (!skb)
-+		return false;
- 	memcpy((u8 *)skb_put(skb, size), buf, size);
- 
- 	if (!_rtl8822be_send_bcn_or_cmd_packet(rtlpriv->hw, skb, BEACON_QUEUE))
+-	/* The sclk is in quantas of 10kHz */
+-	return adev->pm.dpm.dyn_state.max_clock_voltage_on_ac.sclk / 100;
++	/* the sclk is in quantas of 10kHz */
++	if (amdgpu_sriov_vf(adev))
++		return adev->clock.default_sclk / 100;
++
++	return amdgpu_dpm_get_sclk(adev, false) / 100;
+ }
