@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215540-2-2134079488416962573
+X-Cyrus-Session-Id: sloti22d1t05-3366930-1521215528-5-7344311504549180538
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215539; b=oAvq/GvbTinXL0esAq/vLHO3rawWw1O9IQzzo6v/ePttHts
-    V495/dUqwT2p8IVitORPCXhpUJCZ+9W5yYrOBLeiKciuezdC/D9y5y+XtG+WpfmZ
-    E77jg0I9mcPkfb0yA0UpIk54uAMh5nA03hFOyUcel5moRCtO0KLjqzB/C0F20+cp
-    2x5E2XMvCtpPJVfqzeVCySBe1uMc403NtJ9FrhIrkLIu41OudRSuv9667oP8I4qG
-    j9DVSmMR0Z0Mj34uH6iWfr4vYBFpBkqF81A630m+dCptjzOLmSCl1HMUxHniQR3i
-    2nBDChxx75R2Fosep+mbGSUAmYLWReQBjJMB7Qg==
+    t=1521215527; b=bjnpjIbumKDS9Kyqm7t5MAKVYINn7RyF3TADQ4AwMyr3R8i
+    e41KeBrgLfgq93bnqCBWwsmvuCsSkvphWGFD0wKQB5vF/BnCCJOduoyYyWVjlz/1
+    W7CgIPcyIKNZUnRc7AK1q1Im7cOKYx4HV+yef9lwpAWp4wEhrUWYmmKqfbd5wKK+
+    ylhlhXfhDVpLQ6ENXDHiejeUjzYu9RB+wWX/U2dNXsQDh3fsXrZqPLVxuXla8O4Z
+    dq23zvdRMKYx8OQBF1KA3EnqW0Y9EDIPk8IsrERJHbSXSR+PombN3e0BdhBW5BqH
+    0TIcauV8H0/sVBaX7p2td0p+zJCv9OaMLgz/SoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215539; bh=q56fqQirj/EjTXBckbsDXNtO8w
-    EZqL+uNYq5i0b2Amk=; b=OAOljrflI84wHENiGpdouBHqc/gBY0HP1xqzos8RSR
-    32mbiQbCKzpd7PKFrVc5el4UGqAokACKgJDpEwgazroUlNa4PO+dohGlB5XneVM/
-    olhDIMBbFaDUkNHz2TGNqt0ev+mzT5Tit+du7Vc8JwWHTd3mairMU/ARXoxnvWW3
-    M2/tQbu2V88g2egQbqj+91wDKhlRE6+OaPv0wpMflC2t+jDXAnIQFcEAfy1l5Kw6
-    di8xgutH9RMbvDfU4yxCcMqwo+BgOsg8HxPH5pZTgDdmJ2XdE8/cJzy7qI/8q4qA
-    cG9vIzDTxhLSsbq4ShCTPCDeIhxgUCZJ2+BUczOtP8NA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215527; bh=qR7SHuFOQwDHDK3j8+6gpFsHmc
+    J1MDWIovMNQZEbLlk=; b=l5zjtz2aIcyFPAdH9gxoSbHTiBN+m1r/HCZpyIHk5i
+    k5uYZ7wsVWrANdkJ51qclSDYsh22Sg8V12dvmY7oyLMriKuyQGm7/mXt0ZPremyx
+    UEZqKK7zoCla0UEu1+dCvbCj3vaf5PV/LHxtNZ5zMJzsFS8g6rverIUkTRHoVAGj
+    vkZpYr1dBDNGkkcgDIOdEI2RkzAQwfinynXsIQ3KkLHRJsMDaZ2nkVqclnkCbJhf
+    2vyGs6IdkMrweODSxg+Xb8yRZJNOQhPPuSG5loL9DLUCixiJCAxzm4FJv/zBY42u
+    iCql+UJVqlojejU2ycfDpV6vuHncr0uBo0J4zWYhxnVQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965414AbeCPPoZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:44:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45930 "EHLO
+        id S1754095AbeCPPvy (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:51:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964834AbeCPPoX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:23 -0400
+        with ESMTP id S1753521AbeCPPob (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Li Dongyang <dongyang.li@anu.edu.au>,
+        Jason Ozolins <jason.ozolins@hpe.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 113/128] powerpc/64: Dont trace irqs-off at interrupt return to soft-disabled context
-Date: Fri, 16 Mar 2018 16:24:14 +0100
-Message-Id: <20180316152342.149010619@linuxfoundation.org>
+Subject: [PATCH 4.15 082/128] scsi: ses: dont ask for diagnostic pages repeatedly during probe
+Date: Fri, 16 Mar 2018 16:23:43 +0100
+Message-Id: <20180316152340.721657702@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -81,46 +82,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Li Dongyang <dongyang.li@anu.edu.au>
 
 
-[ Upstream commit acb1feab320e38588fccc568e3767761f494976f ]
+[ Upstream commit 9c0a50022b8ac7e863e6ec8342fa476fe5d1d75c ]
 
-When an interrupt is returning to a soft-disabled context (which can
-happen for non-maskable interrupts or synchronous interrupts), it goes
-through the motions of soft-disabling again, including calling
-TRACE_DISABLE_INTS (i.e., trace_hardirqs_off()).
+We are testing if there is a match with the ses device in a loop by
+calling ses_match_to_enclosure(), which will issue scsi receive
+diagnostics commands to the ses device for every device on the same
+host.  On one of our boxes with 840 disks, it takes a long time to load
+the driver:
 
-This is not necessary, because we must already be soft-disabled in the
-interrupt context, it also may be causing crashes in the irq tracing
-code to re-enter as an nmi. Replace it with a warning to ensure that
-soft-interrupts are still disabled.
+[root@g1b-oss06 ~]# time modprobe ses
 
-Fixes: 7c0482e3d055 ("powerpc/irq: Fix another case of lazy IRQ state getting out of sync")
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+real	40m48.247s
+user	0m0.001s
+sys	0m0.196s
+
+With the patch:
+
+[root@g1b-oss06 ~]# time modprobe ses
+
+real	0m17.915s
+user	0m0.008s
+sys	0m0.053s
+
+Note that we still need to refresh page 10 when we see a new disk to
+create the link.
+
+Signed-off-by: Li Dongyang <dongyang.li@anu.edu.au>
+Tested-by: Jason Ozolins <jason.ozolins@hpe.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/entry_64.S |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/scsi/ses.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -939,9 +939,13 @@ END_FTR_SECTION_IFSET(CPU_FTR_HAS_PPR)
- 	beq	1f
- 	rlwinm	r7,r7,0,~PACA_IRQ_HARD_DIS
- 	stb	r7,PACAIRQHAPPENED(r13)
--1:	li	r0,0
--	stb	r0,PACASOFTIRQEN(r13);
--	TRACE_DISABLE_INTS
-+1:
-+#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_BUG)
-+	/* The interrupt should not have soft enabled. */
-+	lbz	r7,PACASOFTIRQEN(r13)
-+1:	tdnei	r7,0
-+	EMIT_BUG_ENTRY 1b,__FILE__,__LINE__,BUGFLAG_WARNING
-+#endif
- 	b	.Ldo_restore
+--- a/drivers/scsi/ses.c
++++ b/drivers/scsi/ses.c
+@@ -615,13 +615,16 @@ static void ses_enclosure_data_process(s
+ }
  
- 	/*
+ static void ses_match_to_enclosure(struct enclosure_device *edev,
+-				   struct scsi_device *sdev)
++				   struct scsi_device *sdev,
++				   int refresh)
+ {
++	struct scsi_device *edev_sdev = to_scsi_device(edev->edev.parent);
+ 	struct efd efd = {
+ 		.addr = 0,
+ 	};
+ 
+-	ses_enclosure_data_process(edev, to_scsi_device(edev->edev.parent), 0);
++	if (refresh)
++		ses_enclosure_data_process(edev, edev_sdev, 0);
+ 
+ 	if (scsi_is_sas_rphy(sdev->sdev_target->dev.parent))
+ 		efd.addr = sas_get_address(sdev);
+@@ -652,7 +655,7 @@ static int ses_intf_add(struct device *c
+ 		struct enclosure_device *prev = NULL;
+ 
+ 		while ((edev = enclosure_find(&sdev->host->shost_gendev, prev)) != NULL) {
+-			ses_match_to_enclosure(edev, sdev);
++			ses_match_to_enclosure(edev, sdev, 1);
+ 			prev = edev;
+ 		}
+ 		return -ENODEV;
+@@ -768,7 +771,7 @@ page2_not_supported:
+ 	shost_for_each_device(tmp_sdev, sdev->host) {
+ 		if (tmp_sdev->lun != 0 || scsi_device_enclosure(tmp_sdev))
+ 			continue;
+-		ses_match_to_enclosure(edev, tmp_sdev);
++		ses_match_to_enclosure(edev, tmp_sdev, 0);
+ 	}
+ 
+ 	return 0;
