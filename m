@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsxsyKdIYPMzUe8eIh+QaJ9TgyWSC6D9dBMWdHetIFNmk6EYxYEvm3Z4aMDYqxPTOu2PkhJ
-ARC-Seal: i=1; a=rsa-sha256; t=1521214117; cv=none;
+X-Google-Smtp-Source: AG47ELuEOui7ZCVtZ5l0mrhMVZkaw3H6rz14lHWdG94ACfqElTlNITAWYJg2Y9PFLxJj6iAcKG1I
+ARC-Seal: i=1; a=rsa-sha256; t=1521214114; cv=none;
         d=google.com; s=arc-20160816;
-        b=bZ7QRX2uK9fS9Lp1ifueJ1shFy6Rvpz/wbqo7eE2jDoA0G7cwH8hc8cTKIH8qYF4aO
-         81SKR2j+hB9CdDuWRjL8Lf00aQyoi9Wp2i8pqJgRdxFLCVI1MhBQBdEq9bMKfHGof3sT
-         dnhRh09Z8XzY0AsZMgFHpe3Pt+14R6ZMa2Bc8UB7IuDowUf9sRYoC8FbZHn4WyeGa5ST
-         oU44A/6Px6L2W5Ye3J34d+rUg0jG4bBgmhXXxHCQ9znxLUDiSWuHWMQCesmYa329NQNF
-         PRPoa0KpLcJLwQNN4bqKn+/Epg4jr6lZAELwxdI8ym/9ooV6sWPSl21bFR9krx7YXYy9
-         3Cpg==
+        b=BgxQa2Kv8nfd4ki2FHM7RIOuNwRzU8j6338jm2QPIxjfzXCiN/ScrvJRGfJre3XpzU
+         /TwTujlJ/3fRZguXoCu1n9pcHi0dhDpV/+pQXMefkDmwUG4PGg+72oRf9YLcUHmA04mf
+         ceS3fFKoerCwbINVKFniBYwEz/CXDOx7Oz6pGhhmRZ0iSU6/2Cr/Kx65sKvwsomsy1b2
+         8okMVpNybITduDP4fiZ7dGGzwKcc4s3fh5j5Fgs74L/gJKKeiYyouyoCPaQ7WfZYpuIS
+         3/4jwDVeF1fqcxKrCm/g+I3fcKZ2T3B0zWlQiMNteNtOQCXBb83oM8erhkgnVAeujePP
+         A5DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=I+k/01ryMVhD99kKBnlJpkU3m28xNSTYkfZ8us25ZTs=;
-        b=pYYT67PK8BVq0neFHZvoKl4ZvfxjexIoYn6zsTgOm0F28/AUGlMk7u5T7h2Qma8nvE
-         1V+xs/Ux9TxntLfIUwl4da8TJMSeB/wdTAFLac7RanhVgl4HwcCIhZzxvW1QqWxSaH4s
-         hg6sRHcC8DpxkdVIdJM82NhK2fPZOSnWUzCl1FqMbMAqYMXxpjutYgtSJC3E6MEsP0d7
-         KhdrVtFEYzE1MexjIOxdQ3PD1XX7dUqZmy1r7917OxweT8MKe4gNCjPDSDodwSwtxIZG
-         QxyeWNYAlempEXKLqgwd823zJag/YEatxiQYOg2If9Pl0OgcaNXheNmvmYFOMmK+ZXW+
-         q4rQ==
+        bh=B6f7yUlgEad58RRW7z8UibXqv/Y7Osc/W5IHAf2vWfw=;
+        b=R+EuUiWOx2pSquhINPjXnMu7gI5R9fEHzng3xAIDWeAS2e80IYE2e4iyv1ovsSO0LR
+         n454ERWphKH9jEwwgDKHyNWm1VkuSJdxLKxwK7C9WUPCy736C/UkOB16mj6MREHd9FMv
+         sWlsdjXC/j40qkUyAZI9VzCdSG3Q6fSwkY2kSVXKgqv+MuCJf1wbnGA0fZ+H2mAWOBlI
+         zbUElNMp04cnnQR83vDZpgCdGMT/vu3OGN/9Tcvmi3+N2OuY1hoxkHBdou8XzS4Ih7T+
+         HalGCu0UO8Hxzeb1P3XId/pzK80ipLdCRUpAdyz/Hw8/rZupx7lJeKq0sdKO/vCC74XY
+         WpWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Mike Lothian <mike@fireburn.co.uk>,
-	Lyude Paul <lyude@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 4.4 09/63] drm/amdgpu: Fix deadlock on runtime suspend
-Date: Fri, 16 Mar 2018 16:22:41 +0100
-Message-Id: <20180316152301.110599992@linuxfoundation.org>
+	James Hogan <jhogan@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.4 18/63] kbuild: Handle builtin dtb file names containing hyphens
+Date: Fri, 16 Mar 2018 16:22:50 +0100
+Message-Id: <20180316152302.085094735@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108614541590658?=
-X-GMAIL-MSGID: =?utf-8?q?1595108614541590658?=
+X-GMAIL-THRID: =?utf-8?q?1595108611771881527?=
+X-GMAIL-MSGID: =?utf-8?q?1595108611771881527?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,149 +55,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: James Hogan <jhogan@kernel.org>
 
-commit aa0aad57909eb321746325951d66af88a83bc956 upstream.
+commit 55fe6da9efba102866e2fb5b40b04b6a4b26c19e upstream.
 
-amdgpu's ->runtime_suspend hook calls drm_kms_helper_poll_disable(),
-which waits for the output poll worker to finish if it's running.
+cmd_dt_S_dtb constructs the assembly source to incorporate a devicetree
+FDT (that is, the .dtb file) as binary data in the kernel image. This
+assembly source contains labels before and after the binary data. The
+label names incorporate the file name of the corresponding .dtb file.
+Hyphens are not legal characters in labels, so .dtb files built into the
+kernel with hyphens in the file name result in errors like the
+following:
 
-The output poll worker meanwhile calls pm_runtime_get_sync() in
-amdgpu's ->detect hooks, which waits for the ongoing suspend to finish,
-causing a deadlock.
+bcm3368-netgear-cvg834g.dtb.S: Assembler messages:
+bcm3368-netgear-cvg834g.dtb.S:5: Error: : no such section
+bcm3368-netgear-cvg834g.dtb.S:5: Error: junk at end of line, first unrecognized character is `-'
+bcm3368-netgear-cvg834g.dtb.S:6: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_begin:'
+bcm3368-netgear-cvg834g.dtb.S:8: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_end:'
+bcm3368-netgear-cvg834g.dtb.S:9: Error: : no such section
+bcm3368-netgear-cvg834g.dtb.S:9: Error: junk at end of line, first unrecognized character is `-'
 
-Fix by not acquiring a runtime PM ref if the ->detect hooks are called
-in the output poll worker's context.  This is safe because the poll
-worker is only enabled while runtime active and we know that
-->runtime_suspend waits for it to finish.
+Fix this by updating cmd_dt_S_dtb to transform all hyphens from the file
+name to underscores when constructing the labels.
 
-Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
-Cc: stable@vger.kernel.org # v4.2+: 27d4ee03078a: workqueue: Allow retrieval of current task's work struct
-Cc: stable@vger.kernel.org # v4.2+: 25c058ccaf2e: drm: Allow determining if current task is output poll worker
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Tested-by: Mike Lothian <mike@fireburn.co.uk>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/4c9bf72aacae1eef062bd134cd112e0770a7f121.1518338789.git.lukas@wunner.de
+As of v4.16-rc2, 1139 .dts files across ARM64, ARM, MIPS and PowerPC
+contain hyphens in their names, but the issue only currently manifests
+on Broadcom MIPS platforms, as that is the only place where such files
+are built into the kernel. For example when CONFIG_DT_NETGEAR_CVG834G=y,
+or on BMIPS kernels when the dtbs target is used (in the latter case it
+admittedly shouldn't really build all the dtb.o files, but thats a
+separate issue).
+
+Fixes: 695835511f96 ("MIPS: BMIPS: rename bcm96358nb4ser to bcm6358-neufbox4-sercom")
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Reviewed-by: Frank Rowand <frowand.list@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Kevin Cernekee <cernekee@gmail.com>
+Cc: <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |   58 ++++++++++++++++---------
- 1 file changed, 38 insertions(+), 20 deletions(-)
+ scripts/Makefile.lib |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-@@ -739,9 +739,11 @@ amdgpu_connector_lvds_detect(struct drm_
- 	enum drm_connector_status ret = connector_status_disconnected;
- 	int r;
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -270,11 +270,11 @@ cmd_dt_S_dtb=						\
+ 	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
+ 	echo '.section .dtb.init.rodata,"a"';		\
+ 	echo '.balign STRUCT_ALIGNMENT';		\
+-	echo '.global __dtb_$(*F)_begin';		\
+-	echo '__dtb_$(*F)_begin:';			\
++	echo '.global __dtb_$(subst -,_,$(*F))_begin';	\
++	echo '__dtb_$(subst -,_,$(*F))_begin:';		\
+ 	echo '.incbin "$<" ';				\
+-	echo '__dtb_$(*F)_end:';			\
+-	echo '.global __dtb_$(*F)_end';			\
++	echo '__dtb_$(subst -,_,$(*F))_end:';		\
++	echo '.global __dtb_$(subst -,_,$(*F))_end';	\
+ 	echo '.balign STRUCT_ALIGNMENT'; 		\
+ ) > $@
  
--	r = pm_runtime_get_sync(connector->dev->dev);
--	if (r < 0)
--		return connector_status_disconnected;
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		r = pm_runtime_get_sync(connector->dev->dev);
-+		if (r < 0)
-+			return connector_status_disconnected;
-+	}
- 
- 	if (encoder) {
- 		struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
-@@ -760,8 +762,12 @@ amdgpu_connector_lvds_detect(struct drm_
- 	/* check acpi lid status ??? */
- 
- 	amdgpu_connector_update_scratch_regs(connector, ret);
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
-+
- 	return ret;
- }
- 
-@@ -862,9 +868,11 @@ amdgpu_connector_vga_detect(struct drm_c
- 	enum drm_connector_status ret = connector_status_disconnected;
- 	int r;
- 
--	r = pm_runtime_get_sync(connector->dev->dev);
--	if (r < 0)
--		return connector_status_disconnected;
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		r = pm_runtime_get_sync(connector->dev->dev);
-+		if (r < 0)
-+			return connector_status_disconnected;
-+	}
- 
- 	encoder = amdgpu_connector_best_single_encoder(connector);
- 	if (!encoder)
-@@ -918,8 +926,10 @@ amdgpu_connector_vga_detect(struct drm_c
- 	amdgpu_connector_update_scratch_regs(connector, ret);
- 
- out:
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return ret;
- }
-@@ -981,9 +991,11 @@ amdgpu_connector_dvi_detect(struct drm_c
- 	enum drm_connector_status ret = connector_status_disconnected;
- 	bool dret = false, broken_edid = false;
- 
--	r = pm_runtime_get_sync(connector->dev->dev);
--	if (r < 0)
--		return connector_status_disconnected;
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		r = pm_runtime_get_sync(connector->dev->dev);
-+		if (r < 0)
-+			return connector_status_disconnected;
-+	}
- 
- 	if (!force && amdgpu_connector_check_hpd_status_unchanged(connector)) {
- 		ret = connector->status;
-@@ -1108,8 +1120,10 @@ out:
- 	amdgpu_connector_update_scratch_regs(connector, ret);
- 
- exit:
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return ret;
- }
-@@ -1351,9 +1365,11 @@ amdgpu_connector_dp_detect(struct drm_co
- 	struct drm_encoder *encoder = amdgpu_connector_best_single_encoder(connector);
- 	int r;
- 
--	r = pm_runtime_get_sync(connector->dev->dev);
--	if (r < 0)
--		return connector_status_disconnected;
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		r = pm_runtime_get_sync(connector->dev->dev);
-+		if (r < 0)
-+			return connector_status_disconnected;
-+	}
- 
- 	if (!force && amdgpu_connector_check_hpd_status_unchanged(connector)) {
- 		ret = connector->status;
-@@ -1421,8 +1437,10 @@ amdgpu_connector_dp_detect(struct drm_co
- 
- 	amdgpu_connector_update_scratch_regs(connector, ret);
- out:
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return ret;
- }
