@@ -1,84 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeCPRkv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:40:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40348 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751576AbeCPRku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:40:50 -0400
-Date: Fri, 16 Mar 2018 12:40:49 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive
- summary
-Message-ID: <20180316174049.3dj3hsau5y4ukbd4@treble>
-References: <20180315154448.16222-1-bp@alien8.de>
- <20180315154448.16222-9-bp@alien8.de>
- <20180315190132.2d653yu7ezf2zplh@treble>
- <20180316114849.GD5852@pd.tnic>
- <CA+55aFwmi38uJyir_e_TTDObBGg55WsTB_0AqcVHzgU=+Fy=ag@mail.gmail.com>
+        id S1752633AbeCPS0w convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:26:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbeCPS0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 14:26:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0153F20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwmi38uJyir_e_TTDObBGg55WsTB_0AqcVHzgU=+Fy=ag@mail.gmail.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Transfer-Encoding: 8BIT
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lina Iyer <ilina@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180307190249.GW93895@bjorns-mbp-2.lan>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+References: <20180226175802.20052-1-ilina@codeaurora.org>
+ <20180226175802.20052-3-ilina@codeaurora.org>
+ <20180305231455.GJ18510@minitux> <20180306155703.GA4930@codeaurora.org>
+ <20180307190249.GW93895@bjorns-mbp-2.lan>
+Message-ID: <152122480915.70929.13116557401450122973@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Date: Fri, 16 Mar 2018 11:26:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 10:22:29AM -0700, Linus Torvalds wrote:
-> On Fri, Mar 16, 2018 at 4:48 AM, Borislav Petkov <bp@alien8.de> wrote:
-> > On Thu, Mar 15, 2018 at 02:01:32PM -0500, Josh Poimboeuf wrote:
-> >> no_context() has the following line, right before it calls oops_end():
-> >>
-> >>       /* Executive summary in case the body of the oops scrolled away */
-> >>       printk(KERN_DEFAULT "CR2: %016lx\n", address);
-> >>
-> >> I think that line can now be removed, since the executive summary
-> >> __show_regs() will include CR2.
-> >
-> > Good idea. Done.
+Quoting Bjorn Andersson (2018-03-07 11:02:49)
+> On Tue 06 Mar 07:57 PST 2018, Lina Iyer wrote:
 > 
-> NOOOO!
+> > On Mon, Mar 05 2018 at 16:15 -0700, Bjorn Andersson wrote:
+> > > On Mon 26 Feb 09:58 PST 2018, Lina Iyer wrote:
 > 
-> Guys, %cr2 CAN AND DOES CHANGE!
+> > > As such I think you should just describe only the 0x85fe0000 + 0x20000
+> > > region here and to support the dynamic aspect of this from a system
+> > > point of view you can have the boot loader read the information at
+> > > 0xc3f000c and adjust the reserved memory. (Or just keep the step of
+> > > manually update the dts without caring about the indirection)
+> > > 
+> > It would be incorrect and very board specific to just use the 0x85fe000
+> > as the address. It is not how the SoC defines the location. Upon request
+> > earlier, this memory location was added in DT and the location is
+> > typical reference platform usage only.
+> > 
 > 
-> The reason we do that
+> The problem is that as the db resides in a chunk of memory in the middle
+> of what Linux considers System RAM the DTS must specify this region as
+> reserved. Which means that as you, like described above, update the
+> dictionary something (in your scheme a person) has to update the
+> reserved-memory region as well.
 > 
->         printk(KERN_DEFAULT "CR2: %016lx\n", address);
-> 
-> is because WE ARE NOT PRINTING OUT THE CURRENT CR2 REGISTER!
+> That's why I'm proposing that the appropriate implementation for this
+> is to have the boot loader to the dictionary part of this and Linux only
+> care about the actual reserved-memory region. This way you would still
+> implement the dictionary lookup on a system level, but the Linux
+> part no longer depend on a human updating the DTS to match the values of
+> the dictionary.
 
-Good point.  I missed the fact that no_context() isn't printing the
-current CR2.
+Agreed. I thought SMEM had a similar design of a cookie in IMEM to
+indicate location and size because coordinating changes across all the
+various software images is a hard problem. But coordinating between
+linux and the linux bootloader shouldn't be as hard.
 
-> This is really damn important.
 > 
-> The "address" register contains the CR2 value as it was read *very*
-> early in the page fault case, before we enabled interrupts, and before
-> we did various random things that can cause further page faults and
-> change CR2!
 > 
-> So the executive summary that does __show_regs() may end up showing
-> something completely different than the actual faulting address,
-> because we might have taken a vmalloc-space exception in the meantime,
-> for example.
+> But if we stick with the approach of describing both these and hoping
+> that the values in the first region matches the second (or should we add
+> a sanity check in probe?). The memory reserve defined as 0xc3f000c + 8
+> looks strange, is this system ram as well and what other things resides
+> in that same page?
 > 
-> Do *NOT* get rid of that thing.
-> 
-> You're better off getting rid of the CR2 line from __show_regs(),
-> because it can be dangerously confusing. It's not actually part of the
-> saved register state at all, it's something entirely different. It's
-> like showing the current eflags rather than the eflags saved on the
-> faulting stack.
 
-True, it's probably best to remove it.  The only time we need CR2's
-value is presumably when it would have already been printed in
-no_context(), and so it primarily just adds confusion as you said.
-
--- 
-Josh
+Doesn't look like it could be RAM, the address is not very close to the
+other one so I would guess it's something like IMEM. And there are two
+32-bit numbers to describe address and size?
