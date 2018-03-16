@@ -1,89 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeCPMnq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 08:43:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45443 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750749AbeCPMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:43:44 -0400
-Date: Fri, 16 Mar 2018 13:43:42 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] seq_file: account everything
-Message-ID: <20180316124342.GB11461@dhcp22.suse.cz>
-References: <20180310085252.GB17121@avx2>
+        id S1752557AbeCPMoI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 08:44:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45858 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751245AbeCPMoG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 08:44:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDE6760592
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v2 11/13] ARM: dts: ipq8074: Add peripheral nodes
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
+ <1521193101-4586-12-git-send-email-sricharan@codeaurora.org>
+ <28b883a75162ccc8f3a212880a683714@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <7c452695-6647-12ea-01bb-1ec4ab2c5cb6@codeaurora.org>
+Date: Fri, 16 Mar 2018 18:13:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180310085252.GB17121@avx2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <28b883a75162ccc8f3a212880a683714@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 10-03-18 11:52:52, Alexey Dobriyan wrote:
-> All it takes to open a file and read 1 byte from it.
+
+
+On 3/16/2018 4:17 PM, Abhishek Sahu wrote:
+> On 2018-03-16 15:08, Sricharan R wrote:
+>> Add serial, i2c, bam, spi, qpic peripheral nodes.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 105 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 105 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> index 2bc5dec..806fc56 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> @@ -124,6 +124,111 @@
+>>              clock-names = "core", "iface";
+>>              status = "disabled";
+>>          };
+>> +
+>> +        blsp_dma: dma@7884000 {
+>> +            compatible = "qcom,bam-v1.7.0";
+>> +            reg = <0x07884000 0x2b000>;
 > 
-> seq_file will be allocated along with any private allocations,
-> and more importantly seq file buffer which is 1 page by default.
- 
-OOM badness heuristic will not know about this memory when choosing an
-oom victim so we might kill a wrong victim which is not all that great
-but at least the consumption will be contained within a memcg which
-sounds like the sufficient protection for now. This is the case
-basically for all kmem charges...
-
-The seq file life time should be bound to a process life time so this is
-OK.
-
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
+>  we can remove leading zero. s/0x07884000/0x7884000
 > 
->  fs/seq_file.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>> +            interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&gcc GCC_BLSP1_AHB_CLK>;
+>> +            clock-names = "bam_clk";
+>> +            #dma-cells = <1>;
+>> +            qcom,ee = <0>;
+>> +        };
+>> +
+>> +        serial_blsp0: serial@78af000 {
+>> +            compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+>> +            reg = <0x78af000 0x200>;
+>> +            interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
+>> +                 <&gcc GCC_BLSP1_AHB_CLK>;
+>> +            clock-names = "core", "iface";
+>> +            status = "disabled";
+>> +        };
+>> +
+>> +        serial_blsp2: serial@78B1000 {
 > 
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -29,7 +29,7 @@ static void seq_set_overflow(struct seq_file *m)
->  
->  static void *seq_buf_alloc(unsigned long size)
->  {
-> -	return kvmalloc(size, GFP_KERNEL);
-> +	return kvmalloc(size, GFP_KERNEL_ACCOUNT);
->  }
->  
->  /**
-> @@ -566,7 +566,7 @@ static void single_stop(struct seq_file *p, void *v)
->  int single_open(struct file *file, int (*show)(struct seq_file *, void *),
->  		void *data)
->  {
-> -	struct seq_operations *op = kmalloc(sizeof(*op), GFP_KERNEL);
-> +	struct seq_operations *op = kmalloc(sizeof(*op), GFP_KERNEL_ACCOUNT);
->  	int res = -ENOMEM;
->  
->  	if (op) {
-> @@ -628,7 +628,7 @@ void *__seq_open_private(struct file *f, const struct seq_operations *ops,
->  	void *private;
->  	struct seq_file *seq;
->  
-> -	private = kzalloc(psize, GFP_KERNEL);
-> +	private = kzalloc(psize, GFP_KERNEL_ACCOUNT);
->  	if (private == NULL)
->  		goto out;
->  
-> @@ -1112,5 +1112,5 @@ EXPORT_SYMBOL(seq_hlist_next_percpu);
->  
->  void __init seq_file_init(void)
->  {
-> -	seq_file_cache = KMEM_CACHE(seq_file, SLAB_PANIC);
-> +	seq_file_cache = KMEM_CACHE(seq_file, SLAB_ACCOUNT|SLAB_PANIC);
->  }
+>  For maintaining uniformity, we can have all address in lower case
+>  s/78B1000/78b1000
+> 
+>> +            compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+>> +            reg = <0x78B1000 0x200>;
+> 
+>  same thing, here also
+> 
+>> +            interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
+>> +                <&gcc GCC_BLSP1_AHB_CLK>;
+>> +            clock-names = "core", "iface";
+>> +            dmas = <&blsp_dma 4>,
+>> +                <&blsp_dma 5>;
+>> +            dma-names = "tx", "rx";
+>> +            status = "disabled";
+>> +        };
+>> +
+>> +        spi_0: spi@78b5000 {
+>> +            compatible = "qcom,spi-qup-v2.2.1";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +            reg = <0x78b5000 0x600>;
+>> +            interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+>> +            spi-max-frequency = <50000000>;
+>> +            clocks = <&gcc GCC_BLSP1_QUP1_SPI_APPS_CLK>,
+>> +                <&gcc GCC_BLSP1_AHB_CLK>;
+>> +            clock-names = "core", "iface";
+>> +            dmas = <&blsp_dma 12>, <&blsp_dma 13>;
+>> +            dma-names = "tx", "rx";
+>> +            status = "disabled";
+>> +        };
+>> +
+>> +        i2c_0: i2c@78b6000 {
+>> +            compatible = "qcom,i2c-qup-v2.2.1";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +            reg = <0x78b6000 0x600>;
+>> +            interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+>> +                <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
+>> +            clock-names = "iface", "core";
+>> +            clock-frequency  = <400000>;
+> 
+>  remove one extra space. clock-frequency = <400000>;
+> 
+>> +            dmas = <&blsp_dma 15>, <&blsp_dma 14>;
+>> +            dma-names = "rx", "tx";
+>> +            status = "disabled";
+>> +        };
+>> +
+>> +        i2c_1: i2c@78b7000 {
+>> +            compatible = "qcom,i2c-qup-v2.2.1";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +            reg = <0x78b7000 0x600>;
+>> +            interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+>> +                <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
+>> +            clock-names = "iface", "core";
+>> +            clock-frequency  = <100000>;
+> 
+>  remove one extra space. clock-frequency = <100000>;
+> 
+>  with above changes.
+> 
+>  Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+> 
 
+ Sure, will take care of all the above. Thanks
+
+Regards,
+ Sricharan
 -- 
-Michal Hocko
-SUSE Labs
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
