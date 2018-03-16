@@ -1,83 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753945AbeCPL0i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:26:38 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55446 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753884AbeCPLZ4 (ORCPT
+        id S1753680AbeCPLaA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:30:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33146 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeCPL36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:25:56 -0400
-X-Google-Smtp-Source: AG47ELtjWEHqPXvIBNpWArvRNHS6qWoHEfYozPiw8gGvtZztTra9DAuM0lUYPaLQ9YNzkbYMT8keBA==
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net
-Cc: juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 3/4 v4] cpufreq/schedutil: add rt utilization tracking
-Date: Fri, 16 Mar 2018 12:25:40 +0100
-Message-Id: <1521199541-15308-4-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
-References: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+        Fri, 16 Mar 2018 07:29:58 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 16 Mar 2018 16:59:56 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v2 02/13] ARM: dts: ipq4019: Add a few peripheral nodes
+In-Reply-To: <1521193101-4586-3-git-send-email-sricharan@codeaurora.org>
+References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
+ <1521193101-4586-3-git-send-email-sricharan@codeaurora.org>
+Message-ID: <663e744bc9d77fc9c7fac1d8e450c5aa@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add both cfs and rt utilization when selecting an OPP as rt can preempt and
-steal cfs's running time
+On 2018-03-16 15:08, Sricharan R wrote:
+> Now with the driver updates for some peripherals being there,
+> add i2c, spi, pcie, bam, qpic-nand, scm nodes to enhance the available
+> peripheral support.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/cpufreq_schedutil.c | 4 +++-
- kernel/sched/sched.h             | 7 +++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 89fe78e..7ce0643 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -56,6 +56,7 @@ struct sugov_cpu {
- 	/* The fields below are only needed when sharing a policy: */
- 	unsigned long		util_cfs;
- 	unsigned long		util_dl;
-+	unsigned long util_rt;
- 	unsigned long		max;
- 
- 	/* The field below is for single-CPU policies only: */
-@@ -178,6 +179,7 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- 	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
- 	sg_cpu->util_cfs = cpu_util_cfs(rq);
- 	sg_cpu->util_dl  = cpu_util_dl(rq);
-+	sg_cpu->util_rt  = cpu_util_rt(rq);
- }
- 
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-@@ -190,7 +192,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- 	} else {
- 		util = sg_cpu->util_dl;
- 		if (rq->cfs.h_nr_running)
--			util += sg_cpu->util_cfs;
-+			util += sg_cpu->util_cfs + sg_cpu->util_rt;
- 	}
- 
- 	/*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index a8003a9..b8784be 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2186,4 +2186,11 @@ static inline unsigned long cpu_util_cfs(struct rq *rq)
- {
- 	return rq->cfs.avg.util_avg;
- }
-+
-+static inline unsigned long cpu_util_rt(struct rq *rq)
-+{
-+	return rq->rt.avg.util_avg;
-+}
-+
-+
- #endif
--- 
-2.7.4
+> ---
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi | 134 
+> ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 134 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> index 10d112a..e38fffa 100644
+> --- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> +++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> @@ -25,7 +25,9 @@
+> 
+>  	aliases {
+>  		spi0 = &spi_0;
+> +		spi1 = &spi_1;
+>  		i2c0 = &i2c_0;
+> +		i2c1 = &i2c_1;
+>  	};
+> 
+>  	cpus {
+> @@ -104,6 +106,12 @@
+>  		};
+>  	};
+> 
+> +	firmware {
+> +		scm {
+> +			compatible = "qcom,scm-ipq4019";
+> +		};
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv7-timer";
+>  		interrupts = <1 2 0xf08>,
+> @@ -172,6 +180,22 @@
+>  			clock-names = "core", "iface";
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+> +			dmas = <&blsp_dma 5>, <&blsp_dma 4>;
+> +			dma-names = "rx", "tx";
+> +			status = "disabled";
+> +		};
+> +
+> +		spi_1: spi@78b6000 { /* BLSP1 QUP2 */
+> +			compatible = "qcom,spi-qup-v2.2.1";
+> +			reg = <0x78b6000 0x600>;
+> +			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_BLSP1_QUP2_SPI_APPS_CLK>,
+> +				<&gcc GCC_BLSP1_AHB_CLK>;
+> +			clock-names = "core", "iface";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			dmas = <&blsp_dma 7>, <&blsp_dma 6>;
+> +			dma-names = "rx", "tx";
+>  			status = "disabled";
+>  		};
+> 
+> @@ -184,9 +208,24 @@
+>  			clock-names = "iface", "core";
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+> +			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
+> +			dma-names = "rx", "tx";
+>  			status = "disabled";
+>  		};
+> 
+> +		i2c_1: i2c@78b8000 { /* BLSP1 QUP4 */
+> +			compatible = "qcom,i2c-qup-v2.2.1";
+> +			reg = <0x78b8000 0x600>;
+> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+> +				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
+> +			clock-names = "iface", "core";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			dmas = <&blsp_dma 11>, <&blsp_dma 10>;
+> +			dma-names = "rx", "tx";
+> +			status = "disabled";
+> +		};
+> 
+>  		cryptobam: dma@8e04000 {
+>  			compatible = "qcom,bam-v1.7.0";
+> @@ -293,6 +332,101 @@
+>  			reg = <0x4ab000 0x4>;
+>  		};
+> 
+> +		pcie0: pci@40000000 {
+> +			compatible = "qcom,pcie-ipq4019", "snps,dw-pcie";
+> +			reg =  <0x40000000 0xf1d
+> +				0x40000f20 0xa8
+> +				0x80000 0x2000
+> +				0x40100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "parf", "config";
+> +			device_type = "pci";
+> +			linux,pci-domain = <0>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
+> +				  0x82000000 0 0x48000000 0x48000000 0 0x10000000>;
+> +
+> +			interrupts = <GIC_SPI 141 IRQ_TYPE_NONE>;
+> +			interrupt-names = "msi";
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a 
+> */
+> +					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+> +					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+> +					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
+> +			clocks = <&gcc GCC_PCIE_AHB_CLK>,
+> +				 <&gcc GCC_PCIE_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE_AXI_S_CLK>;
+> +			clock-names = "aux",
+> +				      "master_bus",
+> +				      "slave_bus";
+> +
+> +			resets = <&gcc PCIE_AXI_M_ARES>,
+> +				 <&gcc PCIE_AXI_S_ARES>,
+> +				 <&gcc PCIE_PIPE_ARES>,
+> +				 <&gcc PCIE_AXI_M_VMIDMT_ARES>,
+> +				 <&gcc PCIE_AXI_S_XPU_ARES>,
+> +				 <&gcc PCIE_PARF_XPU_ARES>,
+> +				 <&gcc PCIE_PHY_ARES>,
+> +				 <&gcc PCIE_AXI_M_STICKY_ARES>,
+> +				 <&gcc PCIE_PIPE_STICKY_ARES>,
+> +				 <&gcc PCIE_PWR_ARES>,
+> +				 <&gcc PCIE_AHB_ARES>,
+> +				 <&gcc PCIE_PHY_AHB_ARES>;
+> +			reset-names = "axi_m",
+> +				      "axi_s",
+> +				      "pipe",
+> +				      "axi_m_vmid",
+> +				      "axi_s_xpu",
+> +				      "parf",
+> +				      "phy",
+> +				      "axi_m_sticky",
+> +				      "pipe_sticky",
+> +				      "pwr",
+> +				      "ahb",
+> +				      "phy_ahb";
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		qpic_bam: dma@7984000 {
+> +			compatible = "qcom,bam-v1.7.0";
+> +			reg = <0x7984000 0x1a000>;
+> +			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_QPIC_CLK>;
+> +			clock-names = "bam_clk";
+> +			#dma-cells = <1>;
+> +			qcom,ee = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		nand: qpic-nand@79b0000 {
+> +			compatible = "qcom,ipq4019-nand";
+> +			reg = <0x79b0000 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&gcc GCC_QPIC_CLK>,
+> +				 <&gcc GCC_QPIC_AHB_CLK>;
+> +			clock-names = "core", "aon";
+> +
+> +			dmas = <&qpic_bam 0>,
+> +			       <&qpic_bam 1>,
+> +			       <&qpic_bam 2>;
+> +			dma-names = "tx", "rx", "cmd";
+> +			status = "disabled";
+> +
+> +			nand@0 {
+> +				reg = <0>;
+> +
+> +				nand-ecc-strength = <4>;
+> +				nand-ecc-step-size = <512>;
+> +				nand-bus-width = <8>;
+> +			};
+> +		};
+> +
+>  		wifi0: wifi@a000000 {
+>  			compatible = "qcom,ipq4019-wifi";
+>  			reg = <0xa000000 0x200000>;
