@@ -1,98 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752851AbeCPSyr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:54:47 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:19179 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeCPSyp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:54:45 -0400
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: enable vlan rx vlan
- offload
-To: David Miller <davem@davemloft.net>, <andrew@lunn.ch>
-CC: <netdev@vger.kernel.org>, <nsekhar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <20180315201550.21487-1-grygorii.strashko@ti.com>
- <20180316002935.GB13119@lunn.ch>
- <20180316.143739.424933240477251284.davem@davemloft.net>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <00940f18-3426-4aa4-2fe2-cd2efbe7647f@ti.com>
-Date: Fri, 16 Mar 2018 13:54:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752430AbeCPS7p (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:59:45 -0400
+Received: from verein.lst.de ([213.95.11.211]:48337 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751480AbeCPS7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 14:59:43 -0400
+Date: Fri, 16 Mar 2018 19:59:42 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jeff Moyer <jmoyer@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/15] fs, dax: prepare for dax-specific
+        address_space_operations
+Message-ID: <20180316185942.GB3671@lst.de>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112909383.24669.7898033239205318865.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180316.143739.424933240477251284.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152112909383.24669.7898033239205318865.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Looks good,
 
-
-On 03/16/2018 01:37 PM, David Miller wrote:
-> From: Andrew Lunn <andrew@lunn.ch>
-> Date: Fri, 16 Mar 2018 01:29:35 +0100
-> 
->> On Thu, Mar 15, 2018 at 03:15:50PM -0500, Grygorii Strashko wrote:
->>> In VLAN_AWARE mode CPSW can insert VLAN header encapsulation word on Host
->>> port 0 egress (RX) before the packet data if RX_VLAN_ENCAP bit is set in
->>> CPSW_CONTROL register. VLAN header encapsulation word has following format:
->>>
->>>   HDR_PKT_Priority bits 29-31 - Header Packet VLAN prio (Highest prio: 7)
->>>   HDR_PKT_CFI 	  bits 28 - Header Packet VLAN CFI bit.
->>>   HDR_PKT_Vid 	  bits 27-16 - Header Packet VLAN ID
->>>   PKT_Type         bits 8-9 - Packet Type. Indicates whether the packet is
->>>                   	VLAN-tagged, priority-tagged, or non-tagged.
->>> 	00: VLAN-tagged packet
->>> 	01: Reserved
->>> 	10: Priority-tagged packet
->>> 	11: Non-tagged packet
->>>
->>> This feature can be used to implement TX VLAN offload in case of
->>> VLAN-tagged packets and to insert VLAN tag in case Non-tagged packet was
->>> received on port with PVID set. As per documentation, CPSW never modifies
->>> packet data on Host egress (RX) and as result, without this feature
->>> enabled, Host port will not be able to receive properly packets which
->>> entered switch non-tagged through external Port with PVID set (when
->>> non-tagged packet forwarded from external Port with PVID set to another
->>> external Port - packet will be VLAN tagged properly).
->>
->> So, i think it is time to discuss the future of this driver. It should
->> really be replaced by a switchdev/DSA driver. There are plenty of
->> carrots for a new driver: Better statistics, working ethtool support
->> for all the PHYs, better user experience, etc. But maybe now it is
->> time for the stick. Should we Maintainers decide that no new features
->> should be added to the existing drivers, just bug fixes?
-> 
-> Andrew, I totally share your concerns.
-> 
-> However, I think the reality is that at best we can strongly urge
-> people to do such a large amount of work such as writing a new
-> switchdev/DSA driver for this cpsw hardware.
-> 
-> We can't really compel them.
-> 
-> And a stick could have the opposite of it's intended effect.  If still
-> nobody wants to do the switchdev/DSA driver, then this existing one
-> rots and even worse we can end up with an out-of-tree version of this
-> driver that has the changes (such as this one) that people want.
-
-Yeh :( This one was created to satisfy real customer use case.
-So we'll have to carry it internally any way, but having it in LKML will 
-allow to involve broader number of people in review, testing and fixing.
-And the same code will have to be part of dsa switch driver also - it 
-will be just more stable at time of migration to dsa.
-
-> 
-> I'd like to see the switchdev/DSA driver for cpsw as much as you do,
-> but I am not convinced that rejecting patches like this one will
-> necessarily make that happen.
-
-+1. Hope this work will be started as soon as possible.
-
--- 
-regards,
--grygorii
+Reviewed-by: Christoph Hellwig <hch@lst.de>
