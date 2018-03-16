@@ -1,106 +1,104 @@
-Return-Path: <geert@linux-m68k.org>
-X-Google-Smtp-Source: AG47ELvOLaPVRaw6N1ZhFRdrZkjKS5URa1K0aXHWuzCk/sizRgtJeQPTdl/HuOB67aS/kNa+pNkx
-ARC-Seal: i=1; a=rsa-sha256; t=1521208189; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AGMUnwnEaMAM1mQgqJX7TOXbpdqGJLSfHUZbPLrlyMWeEJf9rDY1X2eUPUDBmXSMgV
-         b2SKBwKruM4DA9QWSJQ7FsBbzMajAyB282HTTiXTJZYG/UMNn6fc0AvQrolhOz7HVAFA
-         7Vsdw/9qRuRSBotED4FgtsmQQJ0ap7RvgdtaYhL4BQcLUKCgsz4MvEhbWPgSrrlepGuh
-         SsuOpCh0JCzRVviWqSwkfFVEezYSiYob+CTPPGEMMtm8zjTs3osZIS5Y6gssEgDjCTkm
-         efTFQRXjcI8J2RKT/9ec2hd/O2HOSGjFzWKqOrvh6gDwMWBqtreaCuXH+UVxs65lUteq
-         s0dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=NY/gbJmxr/BIiLZaK+n5Ln7z3lRodDKnY7nIG1UyY4w=;
-        b=ZVPCeb4YxgAW0PdXZaBHaV6MUuBvcOBWy/M4WykaYGFHB/kmDqzI6OhU8iwYVtg97q
-         zNTxX76SFzRccwv6jIx63dGFcOPTCyZrvDUcfyfg+007EyxWae0HxjX3zs0sMuEUxKfd
-         mJfjCEn8rs9gaYvPSVl4Yglfcf44u6AFnUIyU9xjDuJXcZ0MXSDVW7tC3efGUhFtbHfh
-         yqjikZJmfApR1LsRRt4pgWx0nPvW5RcphTfTalhh8qwZCLOOhdMXrSOaY79U8Lm9Vp87
-         W5cUsO/AGh6tBY5BV4DVzHYxp7+mZqfWVW9Th1FldUGehMWM9Wb9qQJfSX79P32MJVs9
-         Ga+Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 2a02:1800:110:4::f00:19 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 2a02:1800:110:4::f00:19 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: iommu@lists.linux-foundation.org,
-	linux-usb@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 3/5] usb: gadget: Add NO_DMA dummies for DMA mapping API
-Date: Fri, 16 Mar 2018 14:25:42 +0100
-Message-Id: <1521206744-1504-4-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521206744-1504-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3171573-1521210909-2-14323264749230662965
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521210908; b=gjhistn7/5Ufw2mTkViiJukHg/6OQDbTPpIwdEyK1dgo2va
+    LZS4ntLqzeOsZEbgarvqKGHd/6CZyMX89PAFYa/FDKq0ONcdM7pNBFMguFs+inEJ
+    l2UYW60jOgieC3MiroqHXuD7A7dhWgQ2alSG/Hem8x5STVPJ+dL1xx99aaIdNKN3
+    5ACj715GTMJ4SFR29CkLDqj9/2p0N2EGCgFensW17MKb2aTFJMu/hHOf46dw46su
+    PiRqX3HO7d5neLfM84EClBrUt7jIE31g0B2Y3zdNMX9t2AASCCh+1izptAyLpSb7
+    3IHzk0pCescXBu4uviHV4Dm7Inmn4iEBgyrFe8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521210908; bh=+mIzqX7puu+hAKMc+ATDgI2U1o
+    nACaBi+StIObQtf1M=; b=XJ7/3++WfwiHZE4Io100aN+LLV8vp9vwnF9Npn3koc
+    Lzm1v5RIiTPYwlv956O2XKTr3imPq7aJaSZDfPuqNdLwA0uO/AjaQUvroVzNVCB/
+    SD25JSN7WyLrcYzhkdsy9vk8umGIzt9/5imoEpOykgzU5i8MGdHGX8Jispm5m9mm
+    To/x2c8p4/YT84zEp5Ob6S9yNPqfbW4dVE28r+gSOg/BeatUlay71axZD5T4b7X7
+    hgD9UrdG8VnYToeTVzQUfwJb8wVLnu1TxNU5E7zCM+6/9WBHnH/LN7A7orhAE/e8
+    FJ7EIysCeigVV7Aon2eU9JRuMv5EHuqB4zEgnLMPv1Fg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752492AbeCPOex (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 10:34:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43126 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbeCPOev (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 16 Mar 2018 10:34:51 -0400
+Date: Fri, 16 Mar 2018 15:34:50 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] usb: gadget: Add NO_DMA dummies for DMA mapping
+ API
+Message-ID: <20180316143450.GC29333@kroah.com>
 References: <1521206744-1504-1-git-send-email-geert@linux-m68k.org>
+ <1521206744-1504-4-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521206744-1504-4-git-send-email-geert@linux-m68k.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595102398755040638?=
-X-GMAIL-MSGID: =?utf-8?q?1595102398755040638?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add dummies for usb_gadget_{,un}map_request{,_by_dev}(), to allow
-compile-testing if NO_DMA=y.
+On Fri, Mar 16, 2018 at 02:25:42PM +0100, Geert Uytterhoeven wrote:
+> Add dummies for usb_gadget_{,un}map_request{,_by_dev}(), to allow
+> compile-testing if NO_DMA=y.
+> 
+> This prevents the following from showing up later:
+> 
+>     ERROR: "usb_gadget_unmap_request_by_dev" [drivers/usb/renesas_usbhs/renesas_usbhs.ko] undefined!
+>     ERROR: "usb_gadget_map_request_by_dev" [drivers/usb/renesas_usbhs/renesas_usbhs.ko] undefined!
+>     ERROR: "usb_gadget_map_request" [drivers/usb/mtu3/mtu3.ko] undefined!
+>     ERROR: "usb_gadget_unmap_request" [drivers/usb/mtu3/mtu3.ko] undefined!
+>     ERROR: "usb_gadget_map_request" [drivers/usb/gadget/udc/renesas_usb3.ko] undefined!
+>     ERROR: "usb_gadget_unmap_request" [drivers/usb/gadget/udc/renesas_usb3.ko] undefined!
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-This prevents the following from showing up later:
-
-    ERROR: "usb_gadget_unmap_request_by_dev" [drivers/usb/renesas_usbhs/renesas_usbhs.ko] undefined!
-    ERROR: "usb_gadget_map_request_by_dev" [drivers/usb/renesas_usbhs/renesas_usbhs.ko] undefined!
-    ERROR: "usb_gadget_map_request" [drivers/usb/mtu3/mtu3.ko] undefined!
-    ERROR: "usb_gadget_unmap_request" [drivers/usb/mtu3/mtu3.ko] undefined!
-    ERROR: "usb_gadget_map_request" [drivers/usb/gadget/udc/renesas_usb3.ko] undefined!
-    ERROR: "usb_gadget_unmap_request" [drivers/usb/gadget/udc/renesas_usb3.ko] undefined!
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
----
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state.
----
- include/linux/usb/gadget.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 66a5cff7ee142d6a..b68e7f9b210be122 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -805,6 +805,7 @@ int usb_otg_descriptor_init(struct usb_gadget *gadget,
- 
- /* utility to simplify map/unmap of usb_requests to/from DMA */
- 
-+#ifdef	CONFIG_HAS_DMA
- extern int usb_gadget_map_request_by_dev(struct device *dev,
- 		struct usb_request *req, int is_in);
- extern int usb_gadget_map_request(struct usb_gadget *gadget,
-@@ -814,6 +815,17 @@ extern void usb_gadget_unmap_request_by_dev(struct device *dev,
- 		struct usb_request *req, int is_in);
- extern void usb_gadget_unmap_request(struct usb_gadget *gadget,
- 		struct usb_request *req, int is_in);
-+#else /* !CONFIG_HAS_DMA */
-+static inline int usb_gadget_map_request_by_dev(struct device *dev,
-+		struct usb_request *req, int is_in) { return -ENOSYS; }
-+static inline int usb_gadget_map_request(struct usb_gadget *gadget,
-+		struct usb_request *req, int is_in) { return -ENOSYS; }
-+
-+static inline void usb_gadget_unmap_request_by_dev(struct device *dev,
-+		struct usb_request *req, int is_in) { }
-+static inline void usb_gadget_unmap_request(struct usb_gadget *gadget,
-+		struct usb_request *req, int is_in) { }
-+#endif /* !CONFIG_HAS_DMA */
- 
- /*-------------------------------------------------------------------------*/
- 
--- 
-2.7.4
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
