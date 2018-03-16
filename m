@@ -1,59 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753754AbeCPKie (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:38:34 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:49092 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753735AbeCPKic (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:38:32 -0400
-Date: Fri, 16 Mar 2018 11:25:06 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: "Zhang, Ning A" <ning.a.zhang@intel.com>
-Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>
-Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
-Message-ID: <20180316102506.GA769@light.dominikbrodowski.net>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
- <1521190870.1367.33.camel@intel.com>
+        id S1753765AbeCPKiy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:38:54 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:60926 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752296AbeCPKiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:38:52 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: kishon@ti.com, groeck@chromium.org, gwendal@chromium.org,
+        kernel@collabora.com, vicencb@gmail.com, devicetree@vger.kernel.org,
+        Pierre-Hugues Husson <phh@phh.me>, Jianqun Xu <jay.xu@rock-chips.com>,
+        Kever Yang <kever.yang@rock-chips.com>, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/6] arm64: dts: rockchip: enable typec-phy for rk3399-firefly.
+Date: Fri, 16 Mar 2018 11:38:44 +0100
+Message-ID: <1887626.1ycpCmxoJD@phil>
+In-Reply-To: <20180301152515.20940-5-enric.balletbo@collabora.com>
+References: <20180301152515.20940-1-enric.balletbo@collabora.com> <20180301152515.20940-5-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521190870.1367.33.camel@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 09:01:11AM +0000, Zhang, Ning A wrote:
-> 在 2018-03-15四的 20:04 +0100，Dominik Brodowski写道：
-> > Here is a re-spin of the first set of patches which reduce the number of
-> > syscall invocations from within the kernel; the RFC may be found at
-> > 
-> > The rationale for this change is described in patch 1 as follows:
-> > 
-> > 	The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
-> > 	and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
-> > 	through kernel entry points, but not from the kernel itself. This
-> > 	will allow cleanups and optimizations to the entry paths *and* to
-> > 	the parts of the kernel code which currently need to pretend to be
-> > 	userspace in order to make use of syscalls.
+Am Donnerstag, 1. M�rz 2018, 16:25:13 CET schrieb Enric Balletbo i Serra:
+> Commit c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port
+> support for rk3399") caused a regression regarding the USB3. During boot,
+> the following message appears a few times:
 > 
-> I think this is really bad to change syscalls one by one, to do_*
+>       dwc3: failed to initialize core
 > 
-> why not change SYSCALL_DEFINEx to define kernel wrappers?
+> The driver is deferred waiting for the typec-phy, but this never happens
+> beause is disabled. So, enable it.
+> 
+> Fixes: c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port support for rk3399")
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Basically, for two reasons: First, only a subset of all syscalls require
-such wrappers -- only about a third of all syscalls are called from within
-the kernel at the moment (rough guess). Second, and more important: We want
-to reduce the amount of such usage; see, e.g., the messages by Christoph and
-Arnd in this thread.
+[Same blurb as in patch 3/6]
+I've amended the message a bit to clarify that the offending commit
+has been reverted for now and this change is needed for reenabling it
+and also dropped the Fixes tag.
 
-Thanks,
-	Dominik
+I've also moved the node to a better place - if in doubt please sort
+the "&foo {" things alphabetically.
+
+I've applied the result in my 4.17 branch, but may move that to 4.18
+depending on timing. The reenablement of the otg-port will be in
+4.18 only anyway.
+
+
+Heiko
