@@ -1,71 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeCPHzN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:55:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbeCPHzL (ORCPT
+        id S1752945AbeCPHzj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:55:39 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54963 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeCPHzi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:55:11 -0400
-Date: Fri, 16 Mar 2018 08:55:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: arc_usr_cmpxchg and preemption
-Message-ID: <20180316075508.GY4043@hirez.programming.kicks-ass.net>
-References: <1521045375.11552.27.camel@synopsys.com>
- <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
- <20180314175352.GP4064@hirez.programming.kicks-ass.net>
- <1521059931.11552.51.camel@synopsys.com>
- <20180315081845.GS4064@hirez.programming.kicks-ass.net>
- <1521105128.11552.64.camel@synopsys.com>
- <20180315112829.GW4064@hirez.programming.kicks-ass.net>
- <1521140611.6358.29.camel@synopsys.com>
+        Fri, 16 Mar 2018 03:55:38 -0400
+Date: Fri, 16 Mar 2018 08:55:13 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+cc: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: linux-next: build warning after merge of the tip tree
+In-Reply-To: <20180316163716.5525294f@canb.auug.org.au>
+Message-ID: <alpine.DEB.2.21.1803160854470.1598@nanos.tec.linutronix.de>
+References: <20180316163716.5525294f@canb.auug.org.au>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521140611.6358.29.camel@synopsys.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 07:03:32PM +0000, Alexey Brodkin wrote:
-> > I think there's a bunch of architectures that are in the same boat.
-> > m68k, arm, mips was mentioned. Sure, the moment an arch has hardware
-> > support you don't need the syscall anymore.
+On Fri, 16 Mar 2018, Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> Here's a brief analysis:
-> ARM:  Looks like they got rid of that stuff in v4.4, see
->       commit db695c0509d6 ("ARM: remove user cmpxchg syscall").
-
-Oh shiny, that's why I couldn't find it. I had distinct memories of them
-having one though.
-
-> M68K: That's even uglier implementation which is really asking for
->       a facelift, look at sys_atomic_cmpxchg_32() here:
->       https://elixir.bootlin.com/linux/latest/source/arch/m68k/kernel/sys_m68k.c#L461
-
-Yes, I found that code, it's something special allright.
-
-> MIPS: They do it via special sysmips syscall which among other things
->       might handle MIPS_ATOMIC_SET with mips_atomic_set()
+> After merging the tip tree, yesterday's linux-next build (x86_64 allnoconfig)
+> produced this warning:
 > 
-> I don't immediately see if there're others but really I'm not sure if it even worth trying to
-> clean-up all that since efforts might be spent pointlessly.
+> kernel/cpu.c:129:13: warning: 'cpuhp_is_ap_state' defined but not used [-Wunused-function]
+>  static bool cpuhp_is_ap_state(enum cpuhp_state state)
+>              ^~~~~~~~~~~~~~~~~
 > 
-> > I was just thinking it would be good to have a common implementation (if
-> > possible) rather than 4-5 different copies of basically the same thing.
+> Introduced by commit
 > 
-> From above I would conclude that only M68K might benefit from new
-> library implementation. BTW M68K uses a bit different ABI compared to
-> ARC for that syscall so it will be really atomic_cmpxchg_32()
-> libfunction called from those syscalls, but now I think that's exactly
-> what you meant initially, correct?
+>   17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
 
-Right. In any case, I won't insist, but if it's very little effort, it
-might well be worth getting rid of that m68k magic.
+Fix is queued already. Did not make it into the branch you pull yet.
+
+Thanks,
+
+	tglx
