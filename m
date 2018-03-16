@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuxPHPzVKPElYFTQYusbaQsAE2EZC56vnO9kM7IMnqaTfy0oemI7eSrA4SVjDIPcTAsSXwv
-ARC-Seal: i=1; a=rsa-sha256; t=1521214517; cv=none;
+X-Google-Smtp-Source: AG47ELtIPtmKdvQ2WakED2LeuiCmeqCz28Y0LSyrH2iy0IQNX1WiaZf5Ljcr8TQ/S7XaF1DS78uC
+ARC-Seal: i=1; a=rsa-sha256; t=1521214511; cv=none;
         d=google.com; s=arc-20160816;
-        b=j/VC7QJohLJAXIlhrl+vzCHvneLFfi2OTn6uLi6jRxMN7CeF3NivkESEC8KorGVUo2
-         n8atMl341/rqAhPlbi9VNPAqHAjIPm1J/sOKaQpIpONmDJ2jiwtc/AkaqP9aqkboxGMY
-         N9/rYxnuTpyaWc8USST7CMcuZig5fXq3e5QAj317lburWtmzgzcnYSSIqsDG/JUjVWYF
-         gcjN0F7NZ6ybPa3hSkoDoQ3A1xhfazVvakX+SgCVN/gsfpWfJnQLdTiZfEackbquyO3p
-         09AOfHJh7q5YHO7/AE3VL8pdDlNsGUHkXECoGSCq96owlE7r5LvhpqFW96GhPJIytRNM
-         PtMg==
+        b=HQpAZId5c+MBAn64DP9+6spgFumdVeR6/ez9ot89eV+F8+CrgJ/4KJ4NVYhEwyiBYE
+         p7NqEy5uoU8TJy7lnrj0RyNxExu5PoSM5GttYVKCWRFvqeXU6lV5/6qzMN7uo+TPqrTP
+         vxlILOra0Sea3OqruSp5vIhEZhvgF+xpqCxF6v7XAg6gwrKOsGGMFzbi+2/j6N4h64/o
+         qx4dYUffnvb2jHSOfSOo/GfmDNsgFVMPW0O9HryJkUKdsMQhuzceEWqe0dGciBe7z6eZ
+         vwdrPt2VrWNUW+K9Bmf5OQqq1gYc8jgg2KmXjFo7MfZr7iq0+zfcQzfZidbL1+JBahf4
+         Iqnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rRg61HXCYUrB4/wkIhALbQKi2we5zLtyfXnteoHbkZg=;
-        b=PYOQkrq2ar5clL1lcEZRL2A254V9cOHAeSwm7b0aGmtPqCAiXhMvtjTmP6c4/yX83/
-         6z+5pB2dhU4YZr2OT6xv3tyCcOOrBNM851cD8IC5jqBnvzLmBNYilsjY6wHFYbrrmzCS
-         eJgAb17STd8MXbNnzpd6+ulf9azr3iuUHTa+vMzM4RzR/Hl74QEZsyvwzTD1BU52wkq7
-         1VblWpb20hrthD0Gu/6AbghNogLZav/v2ojOknYoNcywR4/T2ax/yGrG80fslQW20lzd
-         VpiMt5xetBMT49GpW6rUK0rBE52C6XLlhJWljmBLngMqvnzx2Ty5l9V8us1afIMmIEzK
-         jOpw==
+        bh=Yxpap60CwzPJsSSXFlsenjZFmSOrqH09U03rjVfUAl4=;
+        b=uoQrJTJPal7yMZErB0YvgHnvcBHAxNuEM7/hDvnBL06ytQLn8mF8lvA9xB81kcsWEU
+         EIbUlmpFhZ68m8lcSRQfC1uKTp+PH2Oqz34xJZ015dt0rDLzKcdTch7w3c23W2Ok9pe0
+         Mfbu/jMykzNn0Da5YBBJu9Q8AsS1CPt+hwDpNTI8AA5OH7R/t3JfiH/YFsz4/VoluVGk
+         O4BSKv7cozr4WMhDUO/cYFUg7wot22ad7pNZ0WRsu9djN8u9EUS8WGi/rNTqgf+afgjI
+         LX7JMdese69ZXG1t7786O/rG3oQ0G0SiJ/x2aD57lSbLaskLXVxclmM3OIVzs7xN9uzS
+         BD1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,26 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	CK Hu <ck.hu@mediatek.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Ben Skeggs <bskeggs@redhat.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 027/109] drm/edid: set ELD connector type in drm_edid_to_eld()
-Date: Fri, 16 Mar 2018 16:22:56 +0100
-Message-Id: <20180316152331.439090371@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.14 009/109] xhci: Fix front USB ports on ASUS PRIME B350M-A
+Date: Fri, 16 Mar 2018 16:22:38 +0100
+Message-Id: <20180316152330.341561997@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -55,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109033394870150?=
-X-GMAIL-MSGID: =?utf-8?q?1595109033394870150?=
+X-GMAIL-THRID: =?utf-8?q?1595109027503736277?=
+X-GMAIL-MSGID: =?utf-8?q?1595109027503736277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -64,68 +49,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jani Nikula <jani.nikula@intel.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
+commit 191edc5e2e515aab1075a3f0ef23599e80be5f59 upstream.
 
-[ Upstream commit 1d1c36650752b7fb81cee515a9bba4131cac4b7c ]
+When a USB device gets plugged on ASUS PRIME B350M-A's front ports, the
+xHC stops working:
+[  549.114587] xhci_hcd 0000:02:00.0: WARN: xHC CMD_RUN timeout
+[  549.114608] suspend_common(): xhci_pci_suspend+0x0/0xc0 returns -110
+[  549.114638] xhci_hcd 0000:02:00.0: can't suspend (hcd_pci_runtime_suspend returned -110)
 
-Since drm_edid_to_eld() knows the connector type, we can set the type in
-ELD while at it. Most connectors this gets called on are not DP
-encoders, and with the HDMI type being 0, this does not change behaviour
-for non-DP.
+Delay before running xHC command CMD_RUN can workaround the issue.
 
-For i915 having this in place earlier would have saved a considerable
-amount of debugging that lead to the fix 2d8f63297b9f ("drm/i915: always
-update ELD connector type after get modes"). I don't see other drivers,
-even the ones calling drm_edid_to_eld() on DP connectors, setting the
-connector type in ELD.
+Use a new quirk to make the delay only targets to the affected xHC.
 
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: CK Hu <ck.hu@mediatek.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Mark Yao <mark.yao@rock-chips.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Vincent Abriou <vincent.abriou@st.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Eric Anholt <eric@anholt.net>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/d527b31619528c477c2c136f25cdf118bc0cfc1d.1509545641.git.jani.nikula@intel.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/drm_edid.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -3823,8 +3823,7 @@ EXPORT_SYMBOL(drm_edid_get_monitor_name)
-  * @edid: EDID to parse
-  *
-  * Fill the ELD (EDID-Like Data) buffer for passing to the audio driver. The
-- * Conn_Type, HDCP and Port_ID ELD fields are left for the graphics driver to
-- * fill in.
-+ * HDCP and Port_ID ELD fields are left for the graphics driver to fill in.
-  */
- void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
- {
-@@ -3905,6 +3904,12 @@ void drm_edid_to_eld(struct drm_connecto
- 	}
- 	eld[5] |= total_sad_count << 4;
+---
+ drivers/usb/host/xhci-pci.c |    3 +++
+ drivers/usb/host/xhci.c     |    3 +++
+ drivers/usb/host/xhci.h     |    1 +
+ 3 files changed, 7 insertions(+)
+
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -134,6 +134,9 @@ static void xhci_pci_quirks(struct devic
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD && usb_amd_find_chipset_info())
+ 		xhci->quirks |= XHCI_AMD_PLL_FIX;
  
-+	if (connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort ||
-+	    connector->connector_type == DRM_MODE_CONNECTOR_eDP)
-+		eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |= DRM_ELD_CONN_TYPE_DP;
-+	else
-+		eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |= DRM_ELD_CONN_TYPE_HDMI;
++	if (pdev->vendor == PCI_VENDOR_ID_AMD && pdev->device == 0x43bb)
++		xhci->quirks |= XHCI_SUSPEND_DELAY;
 +
- 	eld[DRM_ELD_BASELINE_ELD_LEN] =
- 		DIV_ROUND_UP(drm_eld_calc_baseline_block_size(eld), 4);
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
+ 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
  
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -887,6 +887,9 @@ int xhci_suspend(struct xhci_hcd *xhci,
+ 	clear_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
+ 	del_timer_sync(&xhci->shared_hcd->rh_timer);
+ 
++	if (xhci->quirks & XHCI_SUSPEND_DELAY)
++		usleep_range(1000, 1500);
++
+ 	spin_lock_irq(&xhci->lock);
+ 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+ 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1830,6 +1830,7 @@ struct xhci_hcd {
+ #define XHCI_LIMIT_ENDPOINT_INTERVAL_7	(1 << 26)
+ /* Reserved. It was XHCI_U2_DISABLE_WAKE */
+ #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
++#define XHCI_SUSPEND_DELAY	(1 << 30)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
