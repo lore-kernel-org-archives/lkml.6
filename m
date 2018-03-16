@@ -1,98 +1,238 @@
-Return-Path: <kernel-hardening-return-12668-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsABRlGpwHcZL5y2a7Tx43QbkeKO0MWr/uqhZJ+yQEm2vHP9H32/jGaNEuqNVHDXF8jRJD+
-ARC-Seal: i=1; a=rsa-sha256; t=1521222936; cv=none;
+Return-Path: <kernel-hardening-return-12670-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsSuRg0mM3NEUMEkwhot7E+FmLbEZXSxMEcs6lUURtbR/92TiNr7K972rmbdzGIaGlZHco7
+ARC-Seal: i=1; a=rsa-sha256; t=1521228464; cv=none;
         d=google.com; s=arc-20160816;
-        b=RbKbCmCOHJxg+E8INqMPo75eEhX2n/3BGwH0fuup6QuZ5FLtegjD9BpkVWyQudE+OU
-         42FQ14QU+pUzddWEukdBPdbqxPYlh9+ysakBbIvOQBth8yf980T5e+SFAgir4BSWLlUi
-         lxXR7MOfBYYOKTzXbWnJE6vFCzzsVUjksewshAE7YHQduq/J/ykqQrtkpnR8QSVuotZa
-         F1ozLQ9lccsPLJSo1LFf7Da9rDwfIxyJIgOl9TqAhw6a6acRn/0EZ29dAqlYc/EgQQNZ
-         y5kEj9ai2SADnpgsqmsXdIHLIMu2zztlHhTwfP9C0HbZHJJgpYtvUEgBlPeOmul5J8cy
-         i0kg==
+        b=hlEkRMfINL1MNaLQE6D/pNvrr545zjSppi6mPBmt8jN92HeFbqLkC8am7FdEUjZ7PX
+         aOc65KklpjZTF9Yd++YRsP5PuRY9v9H/SVRR4HIS23qsB2Q3HjOmQYIASauJh0Ks6u1v
+         84ZIksShcGlhKmD5YeYDULiuSKKGf9vDJdAT7wBIlevSyJwuTVblpbXhtJXeA/i2us22
+         87D6PS7stcvQXTcXSmPbQFdn8q78bwfm//aoYSAX5ovKbkWhsxxUxWKZEpG2rrCua+g+
+         vC8XWV+vKtFgUk05iHJXV8HAcWj1MlNzQKa5dAArF36/z4LrCsT07elndnDaav6riSUf
+         di5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=iER4zW0pEvjByyiW5Z2yip4eHODY+XiNg+gnvBUhfy8=;
-        b=tDjHekbPR7WR6+2+/2Y3e3actXKDGiI6PsIIWm8RNRJrsZp2Jh1D+2CUlPvk9UyHrh
-         S9hSh/7HBk7r+Ka9P6eZbGAVeBQzD+am+MiatpJsSGwTht0oLeJrh65iUckTqwOy2PsP
-         88iF1UMhHfQO0EZaqqEXL9HUtHslN9lneph3SHbEpTQXYyrZwm0A4dwkww9rDwfuP4m5
-         4aFTIGr+JJ0hRFI1iKVFX87Ioq33l4T2R18Is+RR1Ot3RN04E1vW+4YqmnVxh6mKmhZ8
-         XMrsHvVpG8ilph6HpE+FXZ/LCpYiyuZPOglTrdic8gl65fzIMslM+jnBPPJ6bEI5tHj0
-         mTcg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=5L9+zuxG+b36uQSq6IhNHxK41MqVBGzpS8ttiuArc1s=;
+        b=VbMt4o91vgVTpG1hrOsRW0gcIFSL/uQs8kAjAZK7AN0tSwLKG8u3eUluLVoipntTXI
+         oouIjuJtWXU1jwZ0EFvUyIEHYS5Yp6UQi6JgsLPWFEV87KMrDnZRowhC7i84KJZ05gAx
+         5QSv5XVTEG9m/BLrK4mW0eCoD/oD96BOd8pPNlyOLCX0u55y2TFxoarx9Ka/hkSDXx2F
+         5ao99v4RTC3ZL2hFOq9nx/2KOwC9nwi7+ZjiuM0Hnlw6Vn4tRTI5Qwsnhs5kfnbn3nEc
+         gBqYPEl1ZYIZNgJKWFdMau947DfC9LL18HALY7CKAQ9cXlIWHhVZ9c+V4gCqub74TgAI
+         xdMA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12668-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12668-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LMRBOsE+;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=TkZkM4yB;
+       spf=pass (google.com: domain of kernel-hardening-return-12670-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12670-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12668-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12668-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LMRBOsE+;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=TkZkM4yB;
+       spf=pass (google.com: domain of kernel-hardening-return-12670-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12670-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 16 Mar 2018 17:55:02 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <20180316175502.GE30522@ZenIV.linux.org.uk>
+References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
+ <ab2933a2-ca7b-eb3b-744d-bc037b1be688@redhat.com> <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
+ <20180316175502.GE30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Mar 2018 12:27:23 -0700
+X-Google-Sender-Auth: Zy2xB92P7knWH7iwjXSS7fSrqDc
+Message-ID: <CA+55aFzsrVF7W+YQye=EeF4Wk3yDOTbb_vSiM8s1zkKbE4JV4Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] Remove false-positive VLAs when using max()
+To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Florian Weimer <fweimer@redhat.com>, Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	David Laight <David.Laight@aculab.com>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	linux-input <linux-input@vger.kernel.org>,
-	linux-btrfs <linux-btrfs@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Randy Dunlap <rdunlap@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	David Laight <David.Laight@aculab.com>, Ian Abbott <abbotti@mev.co.uk>,
+	linux-input <linux-input@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>,
 	Network Development <netdev@vger.kernel.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v5 0/2] Remove false-positive VLAs when using max()
-Message-ID: <20180316175502.GE30522@ZenIV.linux.org.uk>
-References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
- <ab2933a2-ca7b-eb3b-744d-bc037b1be688@redhat.com>
- <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: multipart/mixed; boundary="0000000000000f128e05678c999d"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595034368078500739?=
-X-GMAIL-MSGID: =?utf-8?q?1595117862352897160?=
+X-GMAIL-MSGID: =?utf-8?q?1595123658439458526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 10:29:16AM -0700, Linus Torvalds wrote:
->    t.c: In function ‘test’:
->    t.c:6:6: error: argument to variable-length array is too large
-> [-Werror=vla-larger-than=]
->      int array[(1,100)];
-> 
-> Gcc people are crazy.
+--0000000000000f128e05678c999d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-That's not them, that's C standard regarding ICE.  1,100 is *not* a
-constant expression as far as the standard is concerned, and that
-type is actually a VLA with the size that can be optimized into
-a compiler-calculated value.
+On Fri, Mar 16, 2018 at 10:55 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> That's not them, that's C standard regarding ICE.
 
-Would you argue that in
-void foo(char c)
-{
-	int a[(c<<1) + 10 - c + 2 - c];
+Yes. The C standard talks about "integer constant expression". I know.
+It's come up in this very thread before.
 
-a is not a VLA?  Sure, compiler probably would be able to reduce
-that expression to 12, but demanding that to be recognized means
-that compiler must do a bunch of optimizations in the middle of
-typechecking.
+The C standard at no point talks about - or forbids - "variable length
+arrays". That never comes up in the whole standard, I checked.
 
-expr, constant_expression is not a constant_expression.  And in
-this particular case the standard is not insane - the only reason
-for using that is typechecking and _that_ can be achieved without
-violating 6.6p6:
-	sizeof(expr,0) * 0 + ICE
-*is* an integer constant expression, and it gives you exact same
-typechecking.  So if somebody wants to play odd games, they can
-do that just fine, without complicating the logics for compilers...
+So we are right now hindered by a _syntactic_ check, without any way
+to have a _semantic_ check.
+
+That's my problem. The warnings are misleading and imply semantics.
+
+And apparently there is no way to actually check semantics.
+
+> 1,100 is *not* a constant expression as far as the standard is concerned,
+
+I very much know.
+
+But it sure isn't "variable" either as far as the standard is
+concerned, because the standard doesn't even have that concept (it
+uses "variable" for argument numbers and for variables).
+
+So being pedantic doesn't really change anything.
+
+> Would you argue that in
+> void foo(char c)
+> {
+>         int a[(c<<1) + 10 - c + 2 - c];
+
+Yeah, I don't think that even counts as a constant value, even if it
+can be optimized to one. I would not at all be unhppy to see
+__builtin_constant_p() to return zero.
+
+But that is very much different from the syntax issue.
+
+So I would like to get some way to get both type-checking and constant
+checking without the annoying syntax issue.
+
+> expr, constant_expression is not a constant_expression.  And in
+> this particular case the standard is not insane - the only reason
+> for using that is typechecking and _that_ can be achieved without
+> violating 6.6p6:
+>         sizeof(expr,0) * 0 + ICE
+> *is* an integer constant expression, and it gives you exact same
+> typechecking.  So if somebody wants to play odd games, they can
+> do that just fine, without complicating the logics for compilers...
+
+Now that actually looks like a good trick. Maybe we can use that
+instead of the comma expression that causes problems.
+
+And using sizeof() to make sure that __builtin_choose_expression()
+really gets an integer constant expression and that there should be no
+ambiguity looks good.
+
+Hmm.
+
+This works for me, and I'm being *very* careful (those casts to
+pointer types are inside that sizeof, because it's not an integral
+type, and non-integral casts are not valid in an ICE either) but
+somebody needs to check gcc-4.4:
+
+  #define __typecheck(a,b) \
+        (!!(sizeof((typeof(a)*)1=3D=3D(typeof(b)*)1)))
+
+  #define __no_side_effects(a,b) \
+        (__builtin_constant_p(a)&&__builtin_constant_p(b))
+
+  #define __safe_cmp(a,b) \
+        (__typecheck(a,b) && __no_side_effects(a,b))
+
+  #define __cmp(a,b,op) ((a)op(b)?(a):(b))
+
+  #define __cmp_once(a,b,op) ({ \
+        typeof(a) __a =3D (a);            \
+        typeof(b) __b =3D (b);            \
+        __cmp(__a,__b,op); })
+
+  #define __careful_cmp(a,b,op) \
+        __builtin_choose_expr(__safe_cmp(a,b), __cmp(a,b,op),
+__cmp_once(a,b,op))
+
+  #define min(a,b)              __careful_cmp(a,b,<)
+  #define max(a,b)              __careful_cmp(a,b,>)
+  #define min_t(t,a,b)  __careful_cmp((t)(a),(t)(b),<)
+  #define max_t(t,a,b)  __careful_cmp((t)(a),(t)(b),>)
+
+and yes, it does cause new warnings for that
+
+    comparison between =E2=80=98enum tis_defaults=E2=80=99 and =E2=80=98enu=
+m tpm2_const=E2=80=99
+
+in drivers/char/tpm/tpm_tis_core.h due to
+
+   #define TIS_TIMEOUT_A_MAX       max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
+
+but technically that warning is actually correct, I'm just confused
+why gcc cares about the cast placement or something.
+
+That warning is easy to fix by turning it into a "max_t(int, enum1,
+enum2)' and that is technically the right thing to do, it's just not
+warned about for some odd reason with the current code.
+
+Kees - is there some online "gcc-4.4 checker" somewhere? This does
+seem to work with my gcc. I actually tested some of those files you
+pointed at now.
+
+                  Linus
+
+--0000000000000f128e05678c999d
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jeubye0x0
+
+IGluY2x1ZGUvbGludXgva2VybmVsLmggfCA3NyArKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyks
+IDU3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgva2VybmVsLmggYi9p
+bmNsdWRlL2xpbnV4L2tlcm5lbC5oCmluZGV4IDNmZDI5MTUwMzU3Ni4uMjNjMzFiZjFkN2ZiIDEw
+MDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2tlcm5lbC5oCisrKyBiL2luY2x1ZGUvbGludXgva2Vy
+bmVsLmgKQEAgLTc4NywzNyArNzg3LDI5IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBmdHJhY2VfZHVt
+cChlbnVtIGZ0cmFjZV9kdW1wX21vZGUgb29wc19kdW1wX21vZGUpIHsgfQogICogc3RyaWN0IHR5
+cGUtY2hlY2tpbmcuLiBTZWUgdGhlCiAgKiAidW5uZWNlc3NhcnkiIHBvaW50ZXIgY29tcGFyaXNv
+bi4KICAqLwotI2RlZmluZSBfX21pbih0MSwgdDIsIG1pbjEsIG1pbjIsIHgsIHkpICh7CQlcCi0J
+dDEgbWluMSA9ICh4KTsJCQkJCVwKLQl0MiBtaW4yID0gKHkpOwkJCQkJXAotCSh2b2lkKSAoJm1p
+bjEgPT0gJm1pbjIpOwkJCVwKLQltaW4xIDwgbWluMiA/IG1pbjEgOiBtaW4yOyB9KQorI2RlZmlu
+ZSBfX3R5cGVjaGVjayhhLGIpIFwKKwkoISEoc2l6ZW9mKCh0eXBlb2YoYSkqKTE9PSh0eXBlb2Yo
+YikqKTEpKSkKIAotLyoqCi0gKiBtaW4gLSByZXR1cm4gbWluaW11bSBvZiB0d28gdmFsdWVzIG9m
+IHRoZSBzYW1lIG9yIGNvbXBhdGlibGUgdHlwZXMKLSAqIEB4OiBmaXJzdCB2YWx1ZQotICogQHk6
+IHNlY29uZCB2YWx1ZQotICovCi0jZGVmaW5lIG1pbih4LCB5KQkJCQkJXAotCV9fbWluKHR5cGVv
+Zih4KSwgdHlwZW9mKHkpLAkJCVwKLQkgICAgICBfX1VOSVFVRV9JRChtaW4xXyksIF9fVU5JUVVF
+X0lEKG1pbjJfKSwJXAotCSAgICAgIHgsIHkpCisjZGVmaW5lIF9fbm9fc2lkZV9lZmZlY3RzKGEs
+YikgXAorCShfX2J1aWx0aW5fY29uc3RhbnRfcChhKSYmX19idWlsdGluX2NvbnN0YW50X3AoYikp
+CiAKLSNkZWZpbmUgX19tYXgodDEsIHQyLCBtYXgxLCBtYXgyLCB4LCB5KSAoewkJXAotCXQxIG1h
+eDEgPSAoeCk7CQkJCQlcCi0JdDIgbWF4MiA9ICh5KTsJCQkJCVwKLQkodm9pZCkgKCZtYXgxID09
+ICZtYXgyKTsJCQlcCi0JbWF4MSA+IG1heDIgPyBtYXgxIDogbWF4MjsgfSkKKyNkZWZpbmUgX19z
+YWZlX2NtcChhLGIpIFwKKwkoX190eXBlY2hlY2soYSxiKSAmJiBfX25vX3NpZGVfZWZmZWN0cyhh
+LGIpKQogCi0vKioKLSAqIG1heCAtIHJldHVybiBtYXhpbXVtIG9mIHR3byB2YWx1ZXMgb2YgdGhl
+IHNhbWUgb3IgY29tcGF0aWJsZSB0eXBlcwotICogQHg6IGZpcnN0IHZhbHVlCi0gKiBAeTogc2Vj
+b25kIHZhbHVlCi0gKi8KLSNkZWZpbmUgbWF4KHgsIHkpCQkJCQlcCi0JX19tYXgodHlwZW9mKHgp
+LCB0eXBlb2YoeSksCQkJXAotCSAgICAgIF9fVU5JUVVFX0lEKG1heDFfKSwgX19VTklRVUVfSUQo
+bWF4Ml8pLAlcCi0JICAgICAgeCwgeSkKKyNkZWZpbmUgX19jbXAoYSxiLG9wKSAoKGEpb3AoYik/
+KGEpOihiKSkKKworI2RlZmluZSBfX2NtcF9vbmNlKGEsYixvcCkgKHsJXAorCXR5cGVvZihhKSBf
+X2EgPSAoYSk7CVwKKwl0eXBlb2YoYikgX19iID0gKGIpOwlcCisJX19jbXAoX19hLF9fYixvcCk7
+IH0pCisKKyNkZWZpbmUgX19jYXJlZnVsX2NtcChhLGIsb3ApIFwKKwlfX2J1aWx0aW5fY2hvb3Nl
+X2V4cHIoX19zYWZlX2NtcChhLGIpLCBfX2NtcChhLGIsb3ApLCBfX2NtcF9vbmNlKGEsYixvcCkp
+CisKKyNkZWZpbmUgbWluKGEsYikJX19jYXJlZnVsX2NtcChhLGIsPCkKKyNkZWZpbmUgbWF4KGEs
+YikJX19jYXJlZnVsX2NtcChhLGIsPikKKyNkZWZpbmUgbWluX3QodCxhLGIpCV9fY2FyZWZ1bF9j
+bXAoKHQpKGEpLCh0KShiKSw8KQorI2RlZmluZSBtYXhfdCh0LGEsYikJX19jYXJlZnVsX2NtcCgo
+dCkoYSksKHQpKGIpLD4pCiAKIC8qKgogICogbWluMyAtIHJldHVybiBtaW5pbXVtIG9mIHRocmVl
+IHZhbHVlcwpAQCAtODU2LDM1ICs4NDgsNiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZnRyYWNlX2R1
+bXAoZW51bSBmdHJhY2VfZHVtcF9tb2RlIG9vcHNfZHVtcF9tb2RlKSB7IH0KICAqLwogI2RlZmlu
+ZSBjbGFtcCh2YWwsIGxvLCBoaSkgbWluKCh0eXBlb2YodmFsKSltYXgodmFsLCBsbyksIGhpKQog
+Ci0vKgotICogLi5hbmQgaWYgeW91IGNhbid0IHRha2UgdGhlIHN0cmljdAotICogdHlwZXMsIHlv
+dSBjYW4gc3BlY2lmeSBvbmUgeW91cnNlbGYuCi0gKgotICogT3Igbm90IHVzZSBtaW4vbWF4L2Ns
+YW1wIGF0IGFsbCwgb2YgY291cnNlLgotICovCi0KLS8qKgotICogbWluX3QgLSByZXR1cm4gbWlu
+aW11bSBvZiB0d28gdmFsdWVzLCB1c2luZyB0aGUgc3BlY2lmaWVkIHR5cGUKLSAqIEB0eXBlOiBk
+YXRhIHR5cGUgdG8gdXNlCi0gKiBAeDogZmlyc3QgdmFsdWUKLSAqIEB5OiBzZWNvbmQgdmFsdWUK
+LSAqLwotI2RlZmluZSBtaW5fdCh0eXBlLCB4LCB5KQkJCQlcCi0JX19taW4odHlwZSwgdHlwZSwJ
+CQkJXAotCSAgICAgIF9fVU5JUVVFX0lEKG1pbjFfKSwgX19VTklRVUVfSUQobWluMl8pLAlcCi0J
+ICAgICAgeCwgeSkKLQotLyoqCi0gKiBtYXhfdCAtIHJldHVybiBtYXhpbXVtIG9mIHR3byB2YWx1
+ZXMsIHVzaW5nIHRoZSBzcGVjaWZpZWQgdHlwZQotICogQHR5cGU6IGRhdGEgdHlwZSB0byB1c2UK
+LSAqIEB4OiBmaXJzdCB2YWx1ZQotICogQHk6IHNlY29uZCB2YWx1ZQotICovCi0jZGVmaW5lIG1h
+eF90KHR5cGUsIHgsIHkpCQkJCVwKLQlfX21heCh0eXBlLCB0eXBlLAkJCQlcCi0JICAgICAgX19V
+TklRVUVfSUQobWluMV8pLCBfX1VOSVFVRV9JRChtaW4yXyksCVwKLQkgICAgICB4LCB5KQotCiAv
+KioKICAqIGNsYW1wX3QgLSByZXR1cm4gYSB2YWx1ZSBjbGFtcGVkIHRvIGEgZ2l2ZW4gcmFuZ2Ug
+dXNpbmcgYSBnaXZlbiB0eXBlCiAgKiBAdHlwZTogdGhlIHR5cGUgb2YgdmFyaWFibGUgdG8gdXNl
+Cg==
+--0000000000000f128e05678c999d--
