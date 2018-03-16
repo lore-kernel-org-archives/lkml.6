@@ -1,166 +1,186 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2392938-1521185206-2-7824549961653820389
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2161282-1521181859-2-6568468831484888875
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES roensk.us-ascii, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521185205; b=gXOCA7hSLda4tA3TrfUIcwRjuW4KW7VCV3nJzL/zfo7qC+a
-    Dqnlv/lJ4j2/oAH5JCvVqAcBp/cXxMLk/BILYvHRFDb5XUJwzcVetF1dDbAESj2R
-    bkBFrTwhRRvbrer3thNRTupLHidhgUmzeFsekdektjFcMjZYHmm2o4gGp3D6X2Ha
-    HcuDPVxpCYM+HFBFME0xqmB6G9AVFf+6gKNJLbxltW6IZAUegSvtqT9+bSWUf3e6
-    bl+AFvtqgxKogTN7ctOdcsqYA1LlX6L4lIc8ZqzBayWLDXCIYPAgH3fnPQSV8/DO
-    jl7lJ/gN/xbmWChXFnxfvWI40Xf5AltPhq2mpIw==
+    t=1521181858; b=uVd/niz+nprSDJguVcYRDY1b2Qerzvv4U0OJh1e0yv22zH3
+    kRjm7VHpnMjEUilLTN4EKScS3Mm0dgStAYFAk8aWg+WUDgnhmr3KJcZAc8vBcOIi
+    mwFgQdpJ6zQ1e3mOHRPPXPiINWkmkP2fUBcaGE7OC1x37SAA0/u7TwbszAtDwosd
+    ID+VX2TpNQIH8UjYhveB63FjkLE9BgmGBxD2UUqiYv8q2zqMQhCCqGe/ZME77Ena
+    i3QKCKv7Es5vwJ9yrTszkgZnvAvqmuxqXBHLRpnZMu4IRtz1RuO6trh486R+cYyD
+    8NIBj+YUnF2H2dhoWHD9pBrVPRDyC2CBHTNGDWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=arctest; t=1521185205; bh=Vk3I/6hNhSr1YW59yMNAVj+B/t
-    2GipRtyvURIkZkISE=; b=qBDEhY1mTTVfbszP1hyDK03HqAMR5eBDIiTJslp/PY
-    FLai0kSRHwU5Qs2bLwYF5yiu6XhLpISBtkEC3EzJd1WzXMzEOXs+VDlz73/RoRlD
-    oXDglBxVfxlFrJIZSxBTz1+6oDiZsd0wwcDXm6bke/BVEhc6ECFihp9G4pXCzKwf
-    Gqd7555K+q6GcLfXcOCMRRJYtHEirYs5F2rNGI/A9BwBpc1VYhjjV+LCOVn/aT66
-    7REEN8JABAw1rdbUYspJmXliIZFt9gEch25ONJffJPCdArgQDD4Pg4egRFS7P5YM
-    bqo1pm50DuBXaIxQ6fTsli6xyy9QX0KSyX53GJP2Ydow==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521181858; bh=i
+    H1HVy7C43VX1xeQ/f7uP9/XlrnMJ/QnRkPGOIfyDCk=; b=paF1QalA45SLguGwk
+    od4CFWx1nutTa/uiZL/wv3HgnpPV2c+hYs+rF8Biu6c14MWj/mDxHC0ktOZT6AXr
+    49HFDrJFDOYxGBjrPzaViNThFT6FYXz18ThglBCGTDL9sErj0kI24tGo2y9nvnQ5
+    en7L6iuVp7O5XiGexlWxlVE3ZDRwx+utXKN4b7e6MmaoG3pqaqfGTgJ89IQ1WwVp
+    Bxr4BnHbVsgTmx8ZIZG8CBQhjKmIwzfa5nvWpXYrZXQA+7YSz5PCtejSYzN5L6cn
+    ObSotsOqDYSf4bpE2SNyhCSkihX0U8yoc6zGI0HmncD9J5cviEIB4oKobMQL3kYy
+    ACiaQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753222AbeCPH0N (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 03:26:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753128AbeCPH0L (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:26:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4079721741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] perf-probe: Fix to convert array type collectly
-Date: Fri, 16 Mar 2018 16:25:47 +0900
-Message-Id: <152118514751.28861.9842632501370007663.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	wsa@the-dreams.de
+Subject: [PATCH 2/6] staging: ks7010: Factor out code into helper methods.
+Date: Thu, 15 Mar 2018 23:30:31 -0700
+Message-Id: <20180316063035.3037-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.2
+X-Provags-ID: V03:K0:nbLu5DOHpteVs3U3rcE0NtnI60T+OJ2H6IvbMRJ+1nnZ1PrPtY2
+ 4+hifWI9/V/25OxbjqmUeOAdfHUu70QQ77fSVOT8AgeK2Ffe9iHEIQTQ4nIrZaDxXun5rBS
+ VpO4vmoMBosX2qY7lsemtMG8htOZwDBBHnwoVxZRjbJm4KnJ7KC5qWVKjILGTIJlXD55cvA
+ Ots445p0wPRQfzm4suCiQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:wAKU8HO2EkQ=:xzkfFDtqoQndxrIj9j4NTZ
+ wWWmMQCY7AihgO+y6lBNIVshJn8qHlAm99uLxebA9tcmZURF0WvrjZh+WHRFvmRf050LP4dxz
+ v9X5zAdiETiQ7S9qvXXmg8gl3xbZuqe8BkGiVGvB3VRlQIVLl6EjAlAbVQk2FNwVrps8CInjV
+ meyPHkkTi3UXrVZqJXFFAsNc+LwxS/E2Pm/QWDbVvVZz2CgbFDCYM5yCoJcqdz66OKvCcjd1j
+ vptSn8xPpa9zDjjT5mokI6A0xk5sutMb8SvaroP296TqqkIjRg/Jyj8ndPnfokmPmxz1ckiNt
+ g8g81VLFgNLvzCl740NaOQAzc6ogoYZjp2OhxQ729Vyt8yy712X5DB79ktLYbMekTG8l79/m1
+ JZXVBnfcVl8QDLv0KFUwGTA3+zqE9vAXCuhjXg15tQfdxtV3LEhatHcOtUYuoydiNjXkJw/rb
+ ee+00jeak0DUMb1lJr2YYhHekfsHq7uDUXRg2RonlRwxXdF9SXOEeT27Tm3it2DtlCTZvVSLU
+ tAhNmmz8BZ6xLxMA65uqd4WMkyehgBcw5++5O98Tz0dzd57LXAvni6tNWHM/+Xr0Xw6nYigKL
+ yepTG5eaKrVM86AnHfFAg0o4z3nQRt3YiYcIbg2vLIDXtF/CcX52PzBrdpljiSocV76YlVVpo
+ QHqXS0rxDy6IghCRpyzG5M5/3myAgubT6MhKd9owDJUh5pUubGH3keOOCity/ihX7FDI7gZZl
+ qrvDZ5NTTp7vWNCkV3oRPHvWyHUnD4layvBW8w==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
+ linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix to convert array element type collectly.
-Current perf-probe converts the type of array-elements
-incorrectly. It always converts the types as a pointer
-of array. This passes the "array" type DIE to the type
-converter so that it can get correct "element of array"
-type DIE from it.
+Some cases in the switch statement in get_ap_information() are indented
+as much as five levels, which makes the code difficult to read because
+of all the wrapping.  Factor them out into helper methods.
 
-E.g.
-  ====
-  $ cat hello.c
-  #include <stdio.h>
-
-  void foo(int a[])
-  {
-	  printf("%d\n", a[1]);
-  }
-
-  void main()
-  {
-	  int a[3] = {4, 5, 6};
-	  printf("%d\n", a[0]);
-	  foo(a);
-  }
-
-  $ gcc -g hello.c -o hello
-  $ perf probe -x ./hello -D "foo a[1]"
-  ====
-
-Without this fix, above outputs
-  ====
-  p:probe_hello/foo /tmp/hello:0x4d3 a=+4(-8(%bp)):u64
-  ====
-The "u64" means "int *", but a[1] is "int".
-
-With this,
-  ====
-  p:probe_hello/foo /tmp/hello:0x4d3 a=+4(-8(%bp)):s32
-  ====
-So, "int" correctly converted to "s32"
-
-Fixes: b2a3c12b7442 ("perf probe: Support tracing an entry of array")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- tools/perf/util/probe-finder.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c | 46 +++++++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index a5731de0e5eb..c37fbef1711d 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -423,20 +423,20 @@ static int convert_variable_fields(Dwarf_Die *vr_die, const char *varname,
- 		pr_warning("Failed to get the type of %s.\n", varname);
- 		return -ENOENT;
- 	}
--	pr_debug2("Var real type: (%x)\n", (unsigned)dwarf_dieoffset(&type));
-+	pr_debug2("Var real type: %s (%x)\n", dwarf_diename(&type),
-+		  (unsigned)dwarf_dieoffset(&type));
- 	tag = dwarf_tag(&type);
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index a946ce76f899..948d45280d18 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -238,6 +238,30 @@ static u8 read_ie(unsigned char *bp, u8 max, u8 *body, char *name)
+ 	return size;
+ }
  
- 	if (field->name[0] == '[' &&
- 	    (tag == DW_TAG_array_type || tag == DW_TAG_pointer_type)) {
--		if (field->next)
--			/* Save original type for next field */
--			memcpy(die_mem, &type, sizeof(*die_mem));
-+		/* Save original type for next field or type */
-+		memcpy(die_mem, &type, sizeof(*die_mem));
- 		/* Get the type of this array */
- 		if (die_get_real_type(&type, &type) == NULL) {
- 			pr_warning("Failed to get the type of %s.\n", varname);
- 			return -ENOENT;
- 		}
--		pr_debug2("Array real type: (%x)\n",
-+		pr_debug2("Array real type: %s (%x)\n", dwarf_diename(&type),
- 			 (unsigned)dwarf_dieoffset(&type));
- 		if (tag == DW_TAG_pointer_type) {
- 			ref = zalloc(sizeof(struct probe_trace_arg_ref));
-@@ -448,9 +448,6 @@ static int convert_variable_fields(Dwarf_Die *vr_die, const char *varname,
- 				*ref_ptr = ref;
- 		}
- 		ref->offset += dwarf_bytesize(&type) * field->index;
--		if (!field->next)
--			/* Save vr_die for converting types */
--			memcpy(die_mem, vr_die, sizeof(*die_mem));
- 		goto next;
- 	} else if (tag == DW_TAG_pointer_type) {
- 		/* Check the pointer and dereference */
++static void read_ie_ext_supp_rates(struct local_ap_t *ap, unsigned char *bp)
++{
++	if ((*(bp + 1) + ap->rate_set.size) <= RATE_SET_MAX_SIZE) {
++		memcpy(&ap->rate_set.body[ap->rate_set.size],
++		       bp + 2, *(bp + 1));
++		ap->rate_set.size += *(bp + 1);
++	} else {
++		DPRINTK(1, "size over :: rate size=%d\n",
++			(*(bp + 1) + ap->rate_set.size));
++		memcpy(&ap->rate_set.body[ap->rate_set.size], bp + 2,
++		       RATE_SET_MAX_SIZE - ap->rate_set.size);
++		ap->rate_set.size += (RATE_SET_MAX_SIZE - ap->rate_set.size);
++	}
++}
++
++static void read_ie_wpa(struct local_ap_t *ap, unsigned char *bp)
++{
++	if (memcmp(bp + 2, CIPHER_ID_WPA_WEP40, 4) == 0) { /* WPA OUI check */
++		ap->wpa_ie.id = *bp;
++		ap->wpa_ie.size = read_ie(bp, RSN_IE_BODY_MAX,
++					  ap->wpa_ie.body, "wpa");
++	}
++}
++
+ static
+ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
+ 		       struct local_ap_t *ap)
+@@ -273,20 +297,7 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
+ 			break;
+ 		case WLAN_EID_SUPP_RATES:
+ 		case WLAN_EID_EXT_SUPP_RATES:
+-			if ((*(bp + 1) + ap->rate_set.size) <=
+-			    RATE_SET_MAX_SIZE) {
+-				memcpy(&ap->rate_set.body[ap->rate_set.size],
+-				       bp + 2, *(bp + 1));
+-				ap->rate_set.size += *(bp + 1);
+-			} else {
+-				DPRINTK(1, "size over :: rate size=%d\n",
+-					(*(bp + 1) + ap->rate_set.size));
+-				memcpy(&ap->rate_set.body[ap->rate_set.size],
+-				       bp + 2,
+-				       RATE_SET_MAX_SIZE - ap->rate_set.size);
+-				ap->rate_set.size +=
+-				    (RATE_SET_MAX_SIZE - ap->rate_set.size);
+-			}
++			read_ie_ext_supp_rates(ap, bp);
+ 			break;
+ 		case WLAN_EID_DS_PARAMS:
+ 			break;
+@@ -296,12 +307,7 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
+ 						  ap->rsn_ie.body, "rsn");
+ 			break;
+ 		case WLAN_EID_VENDOR_SPECIFIC: /* WPA */
+-			if (memcmp(bp + 2, CIPHER_ID_WPA_WEP40, 4) == 0) { /* WPA OUI check */
+-				ap->wpa_ie.id = *bp;
+-				ap->wpa_ie.size = read_ie(bp, RSN_IE_BODY_MAX,
+-							  ap->wpa_ie.body,
+-							  "wpa");
+-			}
++			read_ie_wpa(ap, bp);
+ 			break;
+ 
+ 		case WLAN_EID_FH_PARAMS:
+-- 
+2.16.2
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
