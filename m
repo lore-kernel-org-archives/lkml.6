@@ -1,84 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753455AbeCPQwT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:52:19 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:40432 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753241AbeCPQv5 (ORCPT
+        id S1753497AbeCPQwY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:52:24 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:55013 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753481AbeCPQwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:51:57 -0400
-X-Google-Smtp-Source: AG47ELvNC+/wtWd7Dee0fGdfG82TcRGDQjAU1fyWFGDPmpWHXPnCjawME/y35x0MBZoQrK5gvXy2UQ==
-References: <20180313113311.8617-3-rui.silva@linaro.org> <201803150338.2LzbxAYM%fengguang.wu@intel.com> <m3a7v98z5u.fsf@linaro.org> <20180316161011.yelt3mqkqo7qnlnn@kekkonen.localdomain>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Rui Miguel Silva <rui.silva@linaro.org>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        mchehab@kernel.org, hverkuil@xs4all.nl, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>
-Subject: Re: [PATCH v3 2/2] media: ov2680: Add Omnivision OV2680 sensor driver
-In-reply-to: <20180316161011.yelt3mqkqo7qnlnn@kekkonen.localdomain>
-Date: Fri, 16 Mar 2018 16:51:53 +0000
-Message-ID: <m3woyc6k0m.fsf@linaro.org>
+        Fri, 16 Mar 2018 12:52:20 -0400
+X-Google-Smtp-Source: AG47ELv7GES3TAfdvwT9aX3WBxZ1I4llbxTgHmfx68UIv82Z3mcJAi4qCQ8ssWPSkT/7eOzQ8ZCg27miSD49QFcH6b0=
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
+ <26a25069-ea1d-5fb3-549c-ab653f454a30@arm.com> <CAAeHK+zq4-mw3pCNf3nob3gN-s+aWVq7vUy1p8yY4bU4QYNNMg@mail.gmail.com>
+ <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
+In-Reply-To: <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 16 Mar 2018 16:52:08 +0000
+Message-ID: <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
+Subject: Re: arm64 kvm built with clang doesn't boot
+To: marc.zyngier@arm.com
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Greg Hackmann <ghackmann@google.com>, christoffer.dall@linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        kernel-dynamic-tools <kernel-dynamic-tools@google.com>,
+        Sami Tolvanen <samitolvanen@google.com>, takahiro.akashi@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
-On Fri 16 Mar 2018 at 16:10, Sakari Ailus wrote:
-> On Thu, Mar 15, 2018 at 09:29:33AM +0000, Rui Miguel Silva 
-> wrote:
->> Hi,
->> On Wed 14 Mar 2018 at 19:39, kbuild test robot wrote:
->> > Hi Rui,
->> > 
->> > I love your patch! Yet something to improve:
->> > 
->> > [auto build test ERROR on v4.16-rc4]
->> > [cannot apply to next-20180314]
->> > [if your patch is applied to the wrong git tree, please drop 
->> > us a note
->> > to help improve the system]
->> > 
->> > url: 
->> > https://github.com/0day-ci/linux/commits/Rui-Miguel-Silva/media-Introduce-Omnivision-OV2680-driver/20180315-020617
->> > config: sh-allmodconfig (attached as .config)
->> > compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->> > reproduce:
->> >         wget
->> > https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
->> > -O ~/bin/make.cross
->> >         chmod +x ~/bin/make.cross
->> >         # save the attached .config to linux build tree
->> >         make.cross ARCH=sh
->> > 
->> > All errors (new ones prefixed by >>):
->> > 
->> >    drivers/media/i2c/ov2680.c: In function 'ov2680_set_fmt':
->> > > > drivers/media/i2c/ov2680.c:713:9: error: implicit 
->> > > > declaration of
->> > > > function 'v4l2_find_nearest_size'; did you mean
->> > > > 'v4l2_find_nearest_format'?
->> > > > [-Werror=implicit-function-declaration]
->> >      mode = v4l2_find_nearest_size(ov2680_mode_data,
->> >             ^~~~~~~~~~~~~~~~~~~~~~
->> >             v4l2_find_nearest_format
->> 
->> As requested by maintainer this series depend on this patch 
->> [0], which
->> introduce this macro. I am not sure of the status of that patch 
->> though.
->
-> No need to worry about that, the sensor driver will just be 
-> merged after
-> the dependencies are in. Mauro said he'd handle the pull request 
-> early next
-> week.
++ Sami (Google), Takahiro (Linaro)
 
-Great, Many thanks for everything.
+Just so I fully understand the problem enough to articulate it, we'd be
+looking for the compiler to keep the jump tables for speed (I would guess
+-fno-jump-tables would emit an if-else chain) but only emit relative jumps
+(not absolute jumps)?
 
----
-Cheers,
-	Rui
+> Perhaps Nick can comment on whether something like
+-fno-absolute-addressing would be feasible in clang.
+
+Checked with some of my LLVM friends.  They mentioned that this is tricky
+because you need to move the addresses of the jump table from a data
+section back into the text section.
+
+Looks like LLVM has an interesting method
+`shouldPutJumpTableInFunctionSection` [0]. Unfortunately, it gets
+overridden for ELF to always return false. [1]
+
+It looks like there's also a flag `no-jump-tables` [2].  Looks like Sami
+has used this in the past in kvm. [3]
+
+It's still probably possible to add this to LLVM, so I can pursue that with
+LLVM devs.
+
+> But just for the reference, I'm using 4.16-rc4 with a patch to fix SMCCC
+issues that you mentioned.
+
+Is this in regards to: commit "arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
+hardening support"? Has anyone tried to upstream a fix for this?  We
+probably want to be very explicit with register widths here.
+
+[0]
+https://github.com/llvm-mirror/llvm/blob/a5bd54307b1adacb3df297b9b8010979b9afa4d7/lib/Target/TargetLoweringObjectFile.cpp#L280
+[1]
+https://github.com/llvm-mirror/llvm/blob/e7676fec11b02e4b698b5ffc99e1901246a7bf66/lib/CodeGen/TargetLoweringObjectFileImpl.cpp#L494
+[2]
+https://github.com/llvm-mirror/llvm/blob/11f5adb29bf90bc1a40b8bb512afcff4b1ac0f56/lib/Transforms/Utils/SimplifyCFG.cpp#L5233
+[3] https://patchwork.kernel.org/patch/10060301/
+
+--
+Thanks,
+~Nick Desaulniers
