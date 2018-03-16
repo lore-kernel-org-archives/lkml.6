@@ -1,84 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753448AbeCPQu2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:50:28 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:37297 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeCPQuX (ORCPT
+        id S1753445AbeCPQv7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:51:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753026AbeCPQvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:50:23 -0400
-X-Google-Smtp-Source: AG47ELvEMlT2558K1TF3eBLaoC6cdpFldP9BHMNQLb0UGdPP/rGAnEfuh/2vRB5PpoFrga8b2h8Ppg==
-Date: Fri, 16 Mar 2018 12:50:21 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Alexandru M Stan <amstan@chromium.org>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>, briannorris@chromium.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        dianders@chromium.org, linux-rockchip@lists.infradead.org,
-        marcheu@chromium.org, hoegsberg@chromium.org,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Yakir Yang <kuankuan.y@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, zain wang <wzz@rock-chips.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/2] Add backlight-pwm-passthru in analogix DP driver
-Message-ID: <20180316165021.GG223881@art_vandelay>
-References: <20180316025659.217423-1-amstan@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316025659.217423-1-amstan@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 16 Mar 2018 12:51:54 -0400
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
+        Jiandi An <anjiandi@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Fri, 16 Mar 2018 12:51:46 -0400
+In-Reply-To: <1521134981.5348.62.camel@HansenPartnership.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+         <1520448953.10396.565.camel@linux.vnet.ibm.com>
+         <1520449719.5558.28.camel@HansenPartnership.com>
+         <1520450495.10396.587.camel@linux.vnet.ibm.com>
+         <1520451662.24314.5.camel@HansenPartnership.com>
+         <1520461156.10396.654.camel@linux.vnet.ibm.com>
+         <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+         <1520615461.12216.6.camel@HansenPartnership.com>
+         <1520891598.3547.190.camel@linux.vnet.ibm.com>
+         <1520893847.4522.62.camel@HansenPartnership.com>
+         <1520897400.3547.253.camel@linux.vnet.ibm.com>
+         <1520899605.4522.67.camel@HansenPartnership.com>
+         <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
+         <1521038471.4508.25.camel@HansenPartnership.com>
+         <1521047286.3547.470.camel@linux.vnet.ibm.com>
+         <1521048306.4508.56.camel@HansenPartnership.com>
+         <1521130749.3547.608.camel@linux.vnet.ibm.com>
+         <1521133728.5348.51.camel@HansenPartnership.com>
+         <1521134074.3547.629.camel@linux.vnet.ibm.com>
+         <1521134981.5348.62.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031616-0040-0000-0000-000004220C32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031616-0041-0000-0000-000026251A60
+Message-Id: <1521219106.3503.54.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 07:56:57PM -0700, Alexandru M Stan wrote:
-> I noticed that the backlight on the ASUS Chromebook Flip C101 (bob) is
-> flickering.
+On Thu, 2018-03-15 at 10:29 -0700, James Bottomley wrote:
+> On Thu, 2018-03-15 at 13:14 -0400, Mimi Zohar wrote:
+> > On Thu, 2018-03-15 at 10:08 -0700, James Bottomley wrote:
+> > > 
+> > > On Thu, 2018-03-15 at 12:19 -0400, Mimi Zohar wrote:
+> > 
+> > > 
+> > > > 
+> > > > If EFI is extending the TPM, will the events be added to the TPM
+> > > > event log or to the IMA measurement list?
+> > > 
+> > > I'm not proposing any changes to the tpm_pcr_extend API.  At the
+> > > moment it does an extend without logging, so that's what it will do
+> > > in the EFI driver case as well.  That means logging is still the
+> > > responsibility of the caller.
+> > 
+> > Does EFI support extending multiple TPM banks?
 > 
-> We're sending it a high frequency pwm signal, but the EDP panel decided to
-> "parse" the signal, read the duty cycle, then make its own signal that
-> it sends to the LEDs.
+> The specs are here:
 > 
-> So even though we send a nice high refresh rate at 1200Hz, the panel backlight
-> flickers at 200Hz (which is not even divisible by the 60Hz refresh rate).
+> https://trustedcomputinggroup.org/tcg-efi-protocol-specification/
 > 
-> The fix for that is to enable the EDP_BACKLIGHT_FREQ_PWM_PIN_PASSTHRU bit from
-> the DPCD EDP registers. This makes the panel actually follow the signal
-> we're giving it.
-> 
-> This series includes the optional dt binding to enable this fix
-> (backlight-pwm-passthru) and the corresponding code in the analogix
-> drm/bridge driver.
-> 
+> As I said, I'm not planning to change the tpm_pcr_.. API.  At the
+> moment for a TPM2 we extend all banks in the tpm_pcr_extend() API, so
+> that's what we'll continue to do ... including extending the sha256
+> banks with the sha1 hash, which seems to be our current practice.
 
-Thanks for sending these patches!
+Thanks, what you're planning on doing is a lot clearer now.
 
-With Archit and Daniel's comments addressed, feel free to add my 
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> 
-> Alexandru M Stan (2):
->   dt-bindings: analogix-dp: Add backlight-pwm-passthru
->   drm/bridge: analogix: Enable EDP_BACKLIGHT_FREQ_PWM_PIN_PASSTHRU
-> 
->  .../bindings/display/bridge/analogix_dp.txt        |  4 ++
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 48 ++++++++++++++++++++++
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  1 +
->  3 files changed, 53 insertions(+)
-> 
-> -- 
-> 2.13.5
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Mimi
