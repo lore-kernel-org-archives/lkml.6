@@ -1,118 +1,106 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2220729-1521445169-2-6676726992368710914
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521445169; b=vMabDvDWRHh8cM5CpSE+kBjIsZethw8ZHHMvix9LT0bucI4
-    r3/f3xyDhFgsKURhoY3wIs52ajy2+aGOl+0PcYz5cm1zgCnVSWgA+8WTK8U1euFs
-    AjeM3jX7T6OXNaeLZF8LbuzcjvpZRUfmen5vNha/5joU/9hidjm+Njf+2yW1FSv5
-    Wvk35+1TbE0nVFTkYai56Z8U+w3BzZU39tVDggb+nmPyiF3ZXu7e3LerC+qi2nQp
-    x+PQmeO9lFuBOur4ypTROe+W3gQ+E6SAxigZkPDYk+hWY9O1o961QGRyJybet16H
-    ycUK9QmLXQ5eN92kaqn0crhS7DI0zlnjcrJeOhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521445169; bh=tFo6iTY8ZAHKfq5eIfrna0SFb2
-    XyW436G4WxaryGdWU=; b=QFfnDl3gyv2FcjkQXPjl0Q/x9VezhQfZgk6oFnrxHd
-    RHux/yZzyExGDDEIRzrB6sB6IANKjoyhh0q/J1oXyd+UckeyD0PHHkOzjKY43l1x
-    ZQeAZO6jtJE2aivSgMv2GGBo03oWRooiCf1GTxtHtGtF8a+dyBqOV/CWJghHN4at
-    Z/MQhnLsr8d+GbVBVbmMg5Ga07QfFmADuBAXlh93+8Sb9LF2dr6zF+MnN8ozMBHb
-    C0LeqwLba2/Df471RNMcT4aTtkONKXQ1xuqIynzLhTUUsw1O0qsBeWgUp8TRRXKp
-    14V01DiihUmavBTm6o/1t5dw4JLfqWWIzZTGsUv+9eHg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpefirhgvghcumfhrohgrhhdqjfgrrhhtmhgrnhcuoehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvddvtdenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpefirhgvghcumfhrohgrhhdqjfgrrhhtmhgrnhcuoehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvddvtdenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932366AbeCSHj0 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 03:39:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37316 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932380AbeCSHj0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 03:39:26 -0400
-Date: Mon, 19 Mar 2018 08:39:25 +0100
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuTPaXwFOjqxxxT3Vj1879DTWyhkxgI7xdVvTOaE0HuAgyuT9QSKeL09z83yQbjl9cJE5v7
+ARC-Seal: i=1; a=rsa-sha256; t=1521214623; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CtHWGtw7+ro4+8i2ow3xpc+l2pBDN6YlzyTlFZlAINlYdTX9IRWOVtdTImRnjBOEEc
+         BwcBhaP4Tt/SfDgm2kPYonL/NB8dEJOhmDIkJGp8O+teCXFka2+3Lx58Og/2UllNqHzn
+         M3x+MpWCjD5Np7Nhy6qRVopWUUSnmRd+yKFbSAh9IW5CzDvXf7R1+BzG+NDYl83Mk9Oe
+         l/dpVYsy6jBskBgNXD2aoNGsoho9A6vzPHKuBdHZYSjC11vHzYgg+EDloYjbAa5hlnaE
+         D/Ywqc9HB3d/qRgeTHG92KHqr0ItrZsBZg4E2gZ6SatB2ZDMPjFZI/okNC8doHYwCDdB
+         S62Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=QiDlWsAiug0qfahJeLO09wR3Z6LXc0QrtGgy2uHdVxE=;
+        b=KSqXbTiYYNzKtGVaihxJBn4TvGUPy0fBeF1VnA4zE0XAgv9x17oe4qWlPeo8QgRiDG
+         xtVTBeVnRH6nKBcgTQ0FhPztXEZms1+TZLvc0lTVcqa5kSK4Kc7LIvrJG/DmfbyHfhGP
+         Yo3xtJTOgMlemqzOYJYfSMZa54YwgR3qGq3YxRtjdULbkkdJTSZAEypW6Thf9ANEnfsS
+         OcHS/aRl8EMgo/Hp3wYWn6yuTcYvYFL5Um6vb6noXn+RWcQOWMxLRxlb+845hKx9vxXV
+         l06iV4WYrjzZMoJXLVVzON5QMwwtali5z5eN/cPFvHqPWusiAVBWDYv4D0yhQuaixueS
+         Zt7w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/109] 4.14.28-stable review
-Message-ID: <20180319073925.GB30340@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Eric Anholt <eric@anholt.net>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 064/109] dmaengine: bcm2835-dma: Use vchan_terminate_vdesc() instead of desc_free
+Date: Fri, 16 Mar 2018 16:23:33 +0100
+Message-Id: <20180316152333.462064800@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
- <20180318102454.GB30164@kroah.com>
- <20180318111442.GA4607@kroah.com>
- <3113502c-0d76-e625-4216-03726117d05f@roeck-us.net>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3113502c-0d76-e625-4216-03726117d05f@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109144645401566?=
+X-GMAIL-MSGID: =?utf-8?q?1595109144645401566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Mar 18, 2018 at 03:39:38PM -0700, Guenter Roeck wrote:
-> On 03/18/2018 04:14 AM, Greg Kroah-Hartman wrote:
-> > On Sun, Mar 18, 2018 at 11:24:54AM +0100, Greg Kroah-Hartman wrote:
-> > > On Fri, Mar 16, 2018 at 04:22:29PM +0100, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 4.14.28 release.
-> > > > There are 109 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sun Mar 18 15:22:53 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.28-rc1.gz
-> > > > or in the git tree and branch at:
-> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > > > and the diffstat can be found below.
-> > > 
-> > > -rc2 is out to fix a build problem on some configs:
-> > >   	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.28-rc2.gz
-> > 
-> > Ok, that sucked, let's try this again...
-> > 
-> > -rc3 is out, and this time it at least passed _my_ build tests:
-> >    	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.28-rc3.gz
-> > 
-> 
-> For v4.14.27-108-gde586f0:
-> 
-> Build results:
-> 	total: 145 pass: 145 fail: 0
-> Qemu test results:
-> 	total: 141 pass: 141 fail: 0
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks for testing both of these again and letting me know.
+------------------
 
-greg k-h
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+
+
+[ Upstream commit de92436ac40ffe9933230aa503e24dbb5ede9201 ]
+
+To avoid race with vchan_complete, use the race free way to terminate
+running transfer.
+
+Implement the device_synchronize callback to make sure that the terminated
+descriptor is freed.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/dma/bcm2835-dma.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -812,7 +812,7 @@ static int bcm2835_dma_terminate_all(str
+ 	 * c->desc is NULL and exit.)
+ 	 */
+ 	if (c->desc) {
+-		bcm2835_dma_desc_free(&c->desc->vd);
++		vchan_terminate_vdesc(&c->desc->vd);
+ 		c->desc = NULL;
+ 		bcm2835_dma_abort(c->chan_base);
+ 
+@@ -836,6 +836,13 @@ static int bcm2835_dma_terminate_all(str
+ 	return 0;
+ }
+ 
++static void bcm2835_dma_synchronize(struct dma_chan *chan)
++{
++	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
++
++	vchan_synchronize(&c->vc);
++}
++
+ static int bcm2835_dma_chan_init(struct bcm2835_dmadev *d, int chan_id,
+ 				 int irq, unsigned int irq_flags)
+ {
+@@ -942,6 +949,7 @@ static int bcm2835_dma_probe(struct plat
+ 	od->ddev.device_prep_dma_memcpy = bcm2835_dma_prep_dma_memcpy;
+ 	od->ddev.device_config = bcm2835_dma_slave_config;
+ 	od->ddev.device_terminate_all = bcm2835_dma_terminate_all;
++	od->ddev.device_synchronize = bcm2835_dma_synchronize;
+ 	od->ddev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	od->ddev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	od->ddev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV) |
