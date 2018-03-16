@@ -1,79 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeCPXEn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 19:04:43 -0400
-Received: from linode.aoot.com ([69.164.194.13]:54456 "EHLO linode.aoot.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbeCPXEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 19:04:42 -0400
-From: "Steve Wise" <swise@opengridcomputing.com>
-To: "'Jason Gunthorpe'" <jgg@ziepe.ca>
-Cc: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
-        <timur@codeaurora.org>, <sulrich@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org> <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com> <20180316221347.GA958@ziepe.ca>
-In-Reply-To: <20180316221347.GA958@ziepe.ca>
-Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 18:04:40 -0500
-Message-ID: <004401d3bd7b$2a2e70b0$7e8b5210$@opengridcomputing.com>
+        id S1752704AbeCPXEy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 19:04:54 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38990 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeCPXEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 19:04:50 -0400
+X-Google-Smtp-Source: AG47ELsvY3wXVvrhty9mEDdl9/jR0a+R8ul3XeMJzQST2tTZRbNpCA3oinn35YTenPLKIVSPOhWrTQ==
+Date: Fri, 16 Mar 2018 16:04:49 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jan Kara <jack@suse.cz>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory-failure: fix section mismatch
+Message-ID: <20180316230448.GA37438@google.com>
+References: <20180304071613.16899-1-nick.desaulniers@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6heAYll0hoCtp09oKTR6VDQ
-Content-Language: en-us
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180304071613.16899-1-nick.desaulniers@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Fri, Mar 16, 2018 at 04:05:10PM -0500, Steve Wise wrote:
-> > > Code includes wmb() followed by writel(). writel() already has a
-barrier
-> > on
-> > > some architectures like arm64.
-> > >
-> > > This ends up CPU observing two barriers back to back before executing
-> the
-> > > register write.
-> > >
-> > > Since code already has an explicit barrier call, changing writel() to
-> > > writel_relaxed().
-> > >
-> > > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> >
-> > NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is
-just
-> > writeX().
-> 
-> ?? Why is changing writex() to writeX() a NAK then?
+El Sat, Mar 03, 2018 at 11:16:11PM -0800 Nick Desaulniers ha dit:
 
-Because I want it correct for PPC as well.
-
+> Clang complains when a variable is declared extern twice, but with two
+> different sections. num_poisoned_pages is marked extern and __read_mostly
+> in include/linux/swapops.h, but only extern in include/linux/mm.h. Some
+> c source files must include both, and thus see the conflicting
+> declarations.
 > 
-> > I was just looking at this with Chelsio developers, and they said the
-> > writeX() should be replaced with __raw_writeX(), not writeX_relaxed(),
-to
-> > get rid of the extra barrier for all architectures.
+> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+> ---
+>  include/linux/mm.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> That doesn't seem semanticaly sane.
-> 
-> __raw_writeX() should not appear in driver code, IMHO. Only the arch
-> code can know what the exact semantics of that accessor are..
-> 
-> If ppc can't use writel_relaxed to optimize then we probably need yet
-> another io accessor semantic defined :(
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ad06d42adb1a..bd4bd59f02c1 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
+>  extern int sysctl_memory_failure_early_kill;
+>  extern int sysctl_memory_failure_recovery;
+>  extern void shake_page(struct page *p, int access);
+> -extern atomic_long_t num_poisoned_pages;
+> +extern atomic_long_t num_poisoned_pages __read_mostly;
+>  extern int soft_offline_page(struct page *page, int flags);
 
-
-Anybody understand why the PPC implementation of writeX_relaxed() isn't
-relaxed?
-
-
-Steve.
+An equivalent patch was posted by Guenter Roeck and has been picked up
+by Andrew: https://patchwork.kernel.org/patch/10243919/
