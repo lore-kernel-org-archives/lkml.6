@@ -1,16 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752158AbeCPMm1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 08:42:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42924 "EHLO
+        id S1752192AbeCPMnP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 08:43:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44330 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbeCPMmZ (ORCPT
+        with ESMTP id S1750826AbeCPMnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:42:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B01E060591
+        Fri, 16 Mar 2018 08:43:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E898F60591
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v2 12/13] ARM: dts: ipq8074: Add pcie nodes
+Subject: Re: [PATCH v2 13/13] ARM: dts: ipq8074: Enable few peripherals for
+ hk01 board
 To: Abhishek Sahu <absahu@codeaurora.org>
 Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
@@ -19,15 +20,15 @@ Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
- <1521193101-4586-13-git-send-email-sricharan@codeaurora.org>
- <69ff9b14b9b2fe4d90a02ca629059af2@codeaurora.org>
+ <1521193101-4586-14-git-send-email-sricharan@codeaurora.org>
+ <7284d03a864202fd0baaeeea093068ee@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <28faf397-5d28-0ec2-15b1-2a39b2eb426f@codeaurora.org>
-Date: Fri, 16 Mar 2018 18:12:18 +0530
+Message-ID: <5bb08fe8-7a3c-6a75-c385-df8f3890c4a0@codeaurora.org>
+Date: Fri, 16 Mar 2018 18:13:06 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <69ff9b14b9b2fe4d90a02ca629059af2@codeaurora.org>
+In-Reply-To: <7284d03a864202fd0baaeeea093068ee@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -37,94 +38,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Abhishek,
 
-On 3/16/2018 4:50 PM, Abhishek Sahu wrote:
+On 3/16/2018 4:27 PM, Abhishek Sahu wrote:
 > On 2018-03-16 15:08, Sricharan R wrote:
->> The driver/phy support for ipq8074 is available now.
->> So enabling the nodes in DT.
->>
 >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 >> ---
->>  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 157 +++++++++++++++++++++++++++++++++-
->>  1 file changed, 156 insertions(+), 1 deletion(-)
+>>  arch/arm64/boot/dts/qcom/ipq8074-hk01.dts | 103 ++++++++++++++++++++++++++++++
+>>  1 file changed, 103 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> index 806fc56..7562650 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> @@ -24,7 +24,7 @@
->>          ranges = <0 0 0 0xffffffff>;
->>          compatible = "simple-bus";
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> index 6a838b5..81dff867 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> +++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> @@ -21,6 +21,7 @@
 >>
->> -        pinctrl@1000000 {
->> +        tlmm: pinctrl@1000000 {
->>              compatible = "qcom,ipq8074-pinctrl";
->>              reg = <0x1000000 0x300000>;
->>              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->> @@ -229,6 +229,161 @@
->>              dma-names = "tx", "rx", "cmd";
->>              status = "disabled";
+>>      aliases {
+>>          serial0 = &blsp1_uart5;
+>> +        serial1 = &serial_blsp2;
+>>      };
+>>
+>>      chosen {
+>> @@ -41,6 +42,47 @@
+>>                      bias-disable;
+>>                  };
+>>              };
+>> +
+>> +             i2c_0_pins: i2c_0_pinmux {
+>> +                  mux {
+>> +                       pins = "gpio42", "gpio43";
+>> +                       function = "blsp1_i2c";
+>> +                       drive-strength = <8>;
+>> +                       bias-disable;
+>> +                  };
+>> +             };
+>> +
+>> +             spi_0_pins: spi_0_pins {
+>> +                  mux {
+>> +                       pins = "gpio38", "gpio39", "gpio40", "gpio41";
+>> +                       function = "blsp0_spi";
+>> +                       drive-strength = <8>;
+>> +                       bias-disable;
+>> +                  };
+>> +             };
+>> +
+>> +             hsuart_pins: hsuart_pins {
+>> +                  mux {
+>> +                       pins = "gpio46", "gpio47", "gpio48", "gpio49";
+>> +                       function = "blsp2_uart";
+>> +                       drive-strength = <8>;
+>> +                       bias-disable;
+>> +                  };
+>> +             };
+>> +
+>> +             qpic_pins: qpic_pins {
+>> +                mux {
+>> +                       pins = "gpio1", "gpio3", "gpio4",
+>> +                          "gpio5", "gpio6", "gpio7",
+>> +                          "gpio8", "gpio10", "gpio11",
+>> +                          "gpio12", "gpio13", "gpio14",
+>> +                          "gpio15", "gpio16", "gpio17";
+>> +                       function = "qpic";
+>> +                       drive-strength = <8>;
+>> +                       bias-disable;
+>> +                  };
+>> +            };
+>> +
+>>          };
+>>
+>>          serial@78b3000 {
+>> @@ -48,5 +90,66 @@
+>>              pinctrl-names = "default";
+>>              status = "ok";
 >>          };
 >> +
->> +        pcie_phy0: phy@86000 {
->> +            compatible = "qcom,ipq8074-qmp-pcie-phy";
->> +            reg = <0x86000 0x1000>;
->> +            #phy-cells = <0>;
->> +            clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
->> +            clock-names = "pipe_clk";
->> +            clock-output-names = "pcie20_phy0_pipe_clk";
+>> +        spi@78b5000 {
+>> +             pinctrl-0 = <&spi_0_pins>;
+>> +             pinctrl-names = "default";
+>> +             status = "ok";
 >> +
->> +            resets = <&gcc GCC_PCIE0_PHY_BCR>,
->> +                <&gcc GCC_PCIE0PHY_PHY_BCR>;
->> +            reset-names = "phy",
->> +                      "common";
->> +            status = "disabled";
+>> +             m25p80@0 {
+>> +                  #address-cells = <1>;
+>> +                  #size-cells = <1>;
+>> +                  compatible = "n25q128a11", "jedec,spi-nor";
+>> +                  reg = <0>;
+>> +                  spi-max-frequency = <50000000>;
+>> +             };
 >> +        };
 >> +
->> +        pcie0: pci@20000000 {
->> +            compatible = "qcom,pcie-ipq8074";
->> +            reg =  <0x20000000 0xf1d
->> +                0x20000F20 0xa8
+>> +        serial@78B1000 {
 > 
->  s/0x20000F20/0x20000f20
-
-ok
-
+>  s/78B1000/78b1000
 > 
->> +                0x80000 0x2000
->> +                0x20100000 0x1000>;
->> +            reg-names = "dbi", "elbi", "parf", "config";
->> +            device_type = "pci";
->> +            linux,pci-domain = <0>;
->> +            bus-range = <0x00 0xff>;
->> +            num-lanes = <1>;
->> +            #address-cells = <3>;
->> +            #size-cells = <2>;
->> +
->> +            phys = <&pcie_phy0>;
->> +            phy-names = "pciephy";
->> +
->> +            ranges = <0x81000000 0 0x20200000 0x20200000
->> +                  0 0x00100000   /* downstream I/O */
-> 
->  we can remove trailing zeros from address.
->  s/0x00100000/0x100000
-> 
->> +                  0x82000000 0 0x20300000 0x20300000
->> +                  0 0x00d00000>; /* non-prefetchable memory */
-> 
->  s/0x00d00000/0xd00000
-> 
->  Same changes are for PCIE1 also.
-
- ok
-
-> 
->  With that.
-> 
+>  With that,
 >  Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+> 
 
- Thanks.
+ ok, Thanks.
 
 Regards,
  Sricharan
