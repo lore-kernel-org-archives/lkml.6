@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeCPHiR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:38:17 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:20835 "EHLO
+        id S1753437AbeCPHio (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:38:44 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:20832 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753316AbeCPHhs (ORCPT
+        with ESMTP id S1751624AbeCPHhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Mar 2018 03:37:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOaA029139
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOa9029139
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
 Cc: Michal Marek <michal.lkml@markovi.net>,
         Nicolas Pitre <nicolas.pitre@linaro.org>, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 7/7] kbuild: link vmlinux only once for CONFIG_TRIM_UNUSED_KSYMS
-Date: Fri, 16 Mar 2018 16:37:15 +0900
-Message-Id: <1521185836-19120-8-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 6/7] kbuild: move include/config/ksym/* to include/ksym/*
+Date: Fri, 16 Mar 2018 16:37:14 +0900
+Message-Id: <1521185836-19120-7-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
@@ -24,124 +24,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_TRIM_UNUSED_KSYMS is enabled and the kernel is built from
-a pristine state, the vmlinux is linked twice.
+The idea of using fixdep was inspired by Kconfig, but autoksyms
+belongs to a different group.  So, I want to move those touched
+files under include/config/ksym/ to include/ksym/.
 
-[1] A user runs 'make'
-
-[2] First build with empty autoksyms.h
-
-[3] adjust_autoksyms.sh updates autoksyms.h and recurses 'make vmlinux'
-
-  --------(begin sub-make)--------
-  [4] Second build with new autoksyms.h
-
-  [5] link-vmlinux.sh is invoked because vmlinux is missing
-  ---------(end sub-make)---------
-
-[6] link-vmlinux.sh is invoked again despite vmlinux is up-to-date.
-
-The reason of [6] is probably because Make already decided to update
-vmlinux at the time of [2] because vmlinux was missing when Make
-built up the dependency graph.
-
-Because if_changed is implemented based on $?, this issue can be
-narrowed down to how Make handles $?.
-
-You can test it with the following simple code:
-
-[Test Makefile]
-  A: B
-          @echo newer prerequisite: $?
-          cp B A
-
-  B: C
-          cp C B
-          touch A
-
-[Result]
-  $ rm -f A B
-  $ touch C
-  $ make
-  cp C B
-  touch A
-  newer prerequisite: B
-  cp B A
-
-Here, 'A' has been touched in the recipe of 'B'.  So, the dependency
-'A: B' has already been met before the recipe of 'A' is executed.
-However, Make does not notice the fact that the recipe of 'B' also
-updates 'A' as a side-effect.
-
-The situation is similar in this case; the vmlinux has actually been
-updated in the vmlinux_prereq target.  Make cannot predict this, so
-judges the vmlinux is old.
-
-link-vmlinux.sh is costly, so it is better to not run it when unneeded.
-Split CONFIG_TRIM_UNUSED_KSYMS recursion to a dedicated target.
-
-The reason of commit 2441e78b1919 ("kbuild: better abstract vmlinux
-sequential prerequisites") was to cater to CONFIG_BUILD_DOCSRC, but
-it was later removed by commit 184892925118 ("samples: move blackfin
-gptimers-example from Documentation").
+The directory include/ksym/ can be removed by 'make clean' because
+it is meaningless for the external module building.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Acked-by: Nicolas Pitre <nico@linaro.org>
 ---
 
-Changes in v4:
-  - typo fix link-vmlinus.sh -> link-vmlinux.sh
-
-Changes in v3:
-  - autoksyms_recursive should be surrounded by
-    ifdef CONFIG_TRIM_UNUSED_KSYMS
-
+Changes in v4: None
+Changes in v3: None
 Changes in v2:
-  - Discard my wrong change to adjust_autoksyms.sh
-  - Add more commit log to explain how Make is working
+ - Rebase on linux-next
+   (resolve a conflict to https://patchwork.kernel.org/patch/10204653/)
 
- Makefile | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ .gitignore                  | 1 +
+ Makefile                    | 2 +-
+ scripts/Kbuild.include      | 2 +-
+ scripts/adjust_autoksyms.sh | 2 +-
+ scripts/basic/fixdep.c      | 8 ++++----
+ 5 files changed, 8 insertions(+), 7 deletions(-)
 
+diff --git a/.gitignore b/.gitignore
+index 1be78fd..85bcc26 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -87,6 +87,7 @@ modules.builtin
+ #
+ include/config
+ include/generated
++include/ksym
+ arch/*/include/generated
+ 
+ # stgit generated dirs
 diff --git a/Makefile b/Makefile
-index 5fee703..ff62b8e 100644
+index ef42adb..5fee703 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -998,17 +998,9 @@ export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Doc
+@@ -1338,7 +1338,7 @@ endif # CONFIG_MODULES
+ # make distclean Remove editor backup files, patch leftover files and the like
  
- vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
+ # Directories & files removed with 'make clean'
+-CLEAN_DIRS  += $(MODVERDIR)
++CLEAN_DIRS  += $(MODVERDIR) include/ksym
  
--# Include targets which we want to execute sequentially if the rest of the
--# kernel build went well. If CONFIG_TRIM_UNUSED_KSYMS is set, this might be
--# evaluated more than once.
--PHONY += vmlinux_prereq
--vmlinux_prereq: $(vmlinux-deps) FORCE
--ifdef CONFIG_HEADERS_CHECK
--	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
--endif
--ifdef CONFIG_GDB_SCRIPTS
--	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
--endif
-+# Recurse until adjust_autoksyms.sh is satisfied
-+PHONY += autoksyms_recursive
-+autoksyms_recursive: $(vmlinux-deps)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
- 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
- 	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
-@@ -1034,7 +1026,13 @@ cmd_link-vmlinux =                                                 \
- 	$(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
- 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+ # Directories & files removed with 'make mrproper'
+ MRPROPER_DIRS  += include/config usr/include include/generated          \
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index f9c2f07..cce31ee 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -366,7 +366,7 @@ ksym_dep_filter =                                                            \
+ 	    $(CPP) $(call flags_nodeps,a_flags) -D__KSYM_DEPS__ $< ;;        \
+ 	  boot*|build*|cpp_its_S|*cpp_lds_S|dtc|host*|vdso*) : ;;            \
+ 	  *) echo "Don't know how to preprocess $(1)" >&2; false ;;          \
+-	esac | tr ";" "\n" | sed -n 's/^.*=== __KSYM_\(.*\) ===.*$$/KSYM_\1/p'
++	esac | tr ";" "\n" | sed -n 's/^.*=== __KSYM_\(.*\) ===.*$$/_\1/p'
  
--vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
-+vmlinux: scripts/link-vmlinux.sh autoksyms_recursive $(vmlinux-deps) FORCE
-+ifdef CONFIG_HEADERS_CHECK
-+	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
-+endif
-+ifdef CONFIG_GDB_SCRIPTS
-+	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
-+endif
- 	+$(call if_changed,link-vmlinux)
+ cmd_and_fixdep =                                                             \
+ 	$(echo-cmd) $(cmd_$(1));                                             \
+diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+index e0dd0d5..f11cae6 100755
+--- a/scripts/adjust_autoksyms.sh
++++ b/scripts/adjust_autoksyms.sh
+@@ -80,7 +80,7 @@ sort "$cur_ksyms_file" "$new_ksyms_file" | uniq -u |
+ sed -n 's/^#define __KSYM_\(.*\) 1/\1/p' | tr "A-Z_" "a-z/" |
+ while read sympath; do
+ 	if [ -z "$sympath" ]; then continue; fi
+-	depfile="include/config/ksym/${sympath}.h"
++	depfile="include/ksym/${sympath}.h"
+ 	mkdir -p "$(dirname "$depfile")"
+ 	touch "$depfile"
+ 	echo $((count += 1))
+diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+index 449b68c..f387538 100644
+--- a/scripts/basic/fixdep.c
++++ b/scripts/basic/fixdep.c
+@@ -113,11 +113,11 @@ static void usage(void)
+ /*
+  * Print out a dependency path from a symbol name
+  */
+-static void print_config(const char *m, int slen)
++static void print_dep(const char *m, int slen, const char *dir)
+ {
+ 	int c, i;
  
- # Build samples along the rest of the kernel
+-	printf("    $(wildcard include/config/");
++	printf("    $(wildcard %s/", dir);
+ 	for (i = 0; i < slen; i++) {
+ 		c = m[i];
+ 		if (c == '_')
+@@ -140,7 +140,7 @@ static void do_extra_deps(void)
+ 			fprintf(stderr, "fixdep: bad data on stdin\n");
+ 			exit(1);
+ 		}
+-		print_config(buf, len - 1);
++		print_dep(buf, len - 1, "include/ksym");
+ 	}
+ }
+ 
+@@ -208,7 +208,7 @@ static void use_config(const char *m, int slen)
+ 	    return;
+ 
+ 	define_config(m, slen, hash);
+-	print_config(m, slen);
++	print_dep(m, slen, "include/config");
+ }
+ 
+ /* test if s ends in sub */
 -- 
 2.7.4
