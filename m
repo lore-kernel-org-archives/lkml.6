@@ -1,111 +1,85 @@
-Return-Path: <kernel-hardening-return-12658-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtBF3tHH/JRXvx3rvaBQPF9vpwogMjzVP4B05+n6+13X/0fM+ImWOfcAXuv+iYYmp5bcQDH
-ARC-Seal: i=1; a=rsa-sha256; t=1521174394; cv=none;
+Return-Path: <kernel-hardening-return-12662-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELviU0geqfMgHlOw7A8GE6toXYk3xVPLyArMh99eu5n1JuAZgdHp9ifVBsrUbzS4bYHM/Jfd
+ARC-Seal: i=1; a=rsa-sha256; t=1521200904; cv=none;
         d=google.com; s=arc-20160816;
-        b=0dCO30gFzl1sg0tejZSI3KjNBliqhbekuO8/yhVW7vRwIfbdIMY11a2bcIN6T8EMfT
-         i3+DC5chyTH6VjPqjYtN4kcShVWt7PM12KGwz+zy23RPk8NRmDtWnf05QRg0si/9b/PM
-         487xeOPJtas6TfmYF6dUq065K/8u7ie4V60EWXuZ1KMgEm1Km64XiEDmUnSjkpRG2/SF
-         tenD7g74rHhwGCWnmYSCk0eeX+exiD6ImNhGT5NLunqadzUAGR/BSxCy/3mrbm1qoq71
-         g8MHkDReVX4okLVOVGeMA/fYGAuymmSyXbEHyRwmsXxa7rGnx2q2tdYvrvVhb05ve5py
-         5ZIw==
+        b=yQUsxU2ilS3Wjx6c4dfCeVkd5HClUCaD0SCtw+UHPiVktwpqOlXTqq7FyXxmeVwjVH
+         tNASwZb2xa8Ddlznu0m6uiaywDXz8xzLNPWY7q5E53PlYPRsIP/RnH4qtKd3igy8g1Ms
+         I9UeiKRIccT4NCCbzfMz+9SuhkQp2RwgAGOeQlmnwJoI84+S20tONiKImdM0z6hEnkkQ
+         4EVAPUdA2zjSx8x+51RtQOI+OSjZR2eYpYI1GgFG3L1207RZ6ASmcd+bcMm6yqlX7Mxq
+         HgTLS6tCZMYs7vHHqS9et6UzMIBvSj8Wqlv8VZx0TN2v30pISv7Y3hXRL8t50XiZw09I
+         Zsiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=g16ym/nd7GNeGq39SRZ3sMEIfgv0YoIJRI/vc2tPF8Q=;
-        b=uAmlfaOa/GzO2DPIL/1q29QaWLT4V6XRrYVUzBAn/8nF7fzCH16HE2p1QRRb06YF5X
-         FRogxIeDHJI8Bk3inZ6bMPE9g6GkYIzEoXfZaxIfgM4w9DQblwqOYxvLgl1ByvBEIGpD
-         S9GrgZ8QBewfrd44zAefHC8OJZI0bDeeBIhZTrn/nxnPHLgp7piKfXG/TCGokc0Xw5ba
-         X4KoDNgINdPGpnUlOxbX7AxXlrZcIQf60zYrk1wAuW4fpcFBj7qu2gabE7+Oduuqhuf3
-         EhNG2pdTkNOiu3dkIkBThSQW5SnFqwpZvnGykB2zTSYu65iqbFSXKo+kGkOQfQKMy9+J
-         QnzQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=765LG/Pp4ssaIhjFliEu+yaepDFDN9/4UIh1XPMQX7U=;
+        b=tRqsb6Zdbj6rrW3JwR7xNlqgvt1+R3FT/OOQi642htD3GCGbYn4QevKipZIBjmGlLA
+         kzvQZxXlS8AeVo+w6r7YFa8WYAibeEbbQqKCS4mZdIhRaJyem2aawRPfA4Wpm4fQjAtw
+         sLqTDKh4RzKQiPC1CkfS7G4zwI6se2J4gzgBQS3GEd7sXcKrKwbn6gRjB7wK5LTt1dfo
+         WwSKt1iOw2x/bNfyxEcZfLuKT/YzSNWVmDPJSSTOb4t8XKINwhJ/BEHy9+8HKx1IAkzQ
+         3+KitF97hdhkABFFuhqqEhk5l1PQs6WxSAvlwa16Nztf8BiNuZuCnOoPKvh9u5w7aMDB
+         6h4g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=LCtqeYCQ;
-       spf=pass (google.com: domain of kernel-hardening-return-12658-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12658-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-12662-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12662-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=LCtqeYCQ;
-       spf=pass (google.com: domain of kernel-hardening-return-12658-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12658-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-12662-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12662-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	David Laight <David.Laight@aculab.com>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	linux-input@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCH v5 0/2] Remove false-positive VLAs when using max()
-Date: Thu, 15 Mar 2018 21:25:57 -0700
-Message-Id: <1521174359-46392-1-git-send-email-keescook@chromium.org>
-X-Mailer: git-send-email 2.7.4
+Subject: Re: [PATCH v5 0/2] Remove false-positive VLAs when using max()
+To: Kees Cook <keescook@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, David Laight <David.Laight@aculab.com>,
+ Ian Abbott <abbotti@mev.co.uk>, linux-input@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
+From: Florian Weimer <fweimer@redhat.com>
+Message-ID: <ab2933a2-ca7b-eb3b-744d-bc037b1be688@redhat.com>
+Date: Fri, 16 Mar 2018 12:47:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521174359-46392-1-git-send-email-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595034368078500739?=
-X-GMAIL-MSGID: =?utf-8?q?1595066961299947624?=
+X-GMAIL-MSGID: =?utf-8?q?1595094758961318146?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Patch 1 adds const_max_t(), patch 2 uses it in all the places max()
-was used for stack arrays. Commit log from patch 1:
+On 03/16/2018 05:25 AM, Kees Cook wrote:
+> In the effort to remove all VLAs from the kernel[1], it is desirable to
+> build with -Wvla. However, this warning is overly pessimistic, in that
+> it is only happy with stack array sizes that are declared as constant
+> expressions, and not constant values. One case of this is the evaluation
+> of the max() macro which, due to its construction, ends up converting
+> constant expression arguments into a constant value result. Attempts
+> to adjust the behavior of max() ran afoul of version-dependent compiler
+> behavior[2].
 
----snip---
-kernel.h: Introduce const_max_t() for VLA removal
+I find this commit message confusing.  VLAs have precisely defined 
+semantics which differ from other arrays, and these differences can be 
+observable (maybe not in the kernel, but certainly for userspace), so 
+the compiler has to treat a VLA as such even if the length is a constant 
+known at compile time.  (The original intent of the warning probably was 
+a portability check anyway.)
 
-In the effort to remove all VLAs from the kernel[1], it is desirable to
-build with -Wvla. However, this warning is overly pessimistic, in that
-it is only happy with stack array sizes that are declared as constant
-expressions, and not constant values. One case of this is the evaluation
-of the max() macro which, due to its construction, ends up converting
-constant expression arguments into a constant value result. Attempts
-to adjust the behavior of max() ran afoul of version-dependent compiler
-behavior[2].
+If you want to catch stack frames which have unbounded size, 
+-Werror=stack-usage=1000 or -Werror=vla-larger-than=1000 (with the 
+constant adjusted as needed) might be the better approach.
 
-To work around this and still gain -Wvla coverage, this patch introduces
-a new macro, const_max_t(), for use in these cases of stack array size
-declaration, where the constant expressions are retained. Since this means
-losing the double-evaluation protections of the max() macro, this macro is
-designed to explicitly fail if used on non-constant arguments.
-
-Older compilers will fail with the unhelpful message:
-
-    error: first argument to ‘__builtin_choose_expr’ not a constant
-
-Newer compilers will fail with a hopefully more helpful message:
-
-    error: call to ‘__error_non_const_arg’ declared with attribute error: const_max_t() used with non-constant expression
-
-To gain the ability to compare differing types, the desired type must
-be explicitly declared, as with the existing max_t() macro. This is
-needed when comparing different enum types and to allow things like:
-
-    int foo[const_max_t(size_t, 6, sizeof(something))];
-
-[1] https://lkml.org/lkml/2018/3/7/621
-[2] https://lkml.org/lkml/2018/3/10/170
----eol---
-
-Hopefully this reads well as a summary from all the things that got tried.
-I've tested this on allmodconfig builds with gcc 4.4.4 and 6.3.0, with and
-without -Wvla.
-
--Kees
-
-v5: explicit type argument
-v4: forced size_t type
+Thanks,
+Florian
