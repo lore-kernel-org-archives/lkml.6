@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELskvvTr+WxrG8E35FPIvqAwwisDLg7ywe12YbUAODnSuJEMexMODA+Jjan9PDgh73WKuCyW
-ARC-Seal: i=1; a=rsa-sha256; t=1521214357; cv=none;
+X-Google-Smtp-Source: AG47ELtygP3sVrmcho7EbN221ne8wFM0J6QMB8oJ6Ma73ftU/h3euq7TxRuY5l0MEhi5IUy0lllI
+ARC-Seal: i=1; a=rsa-sha256; t=1521214354; cv=none;
         d=google.com; s=arc-20160816;
-        b=ICESu0TutBfs05ULSvoPpLQwqjS3F94GJwI15YTxTAfVJeIluGZHG8GK2AR9XU3Pav
-         62vNLmHJoIEaWrCYJnX9MKzIuv9/v2l/PYu8bYrjL7W0LAXI/jzQa8mgR2Kdew4GYn3g
-         /NMFroUz6TS1RyAmYVgFqo/xPCag+FqUL+durPmLaG9L4+p16NAZ5qACRFiDNLMD9mK6
-         uPaPILUcF+xane+lChCkb8L+lYyYnTqUhkZDqg1JcwlSdaNsLtxi9O881utbPh0v2Ja7
-         32LLpY2JJGWxt+tD4hiy3TOOfxUHpG6PIlC/w4/hc7IJSoPMMAupsfGfU3HKhxyXXiuZ
-         D8mg==
+        b=0NZ72MdRWkNUySe+xB5VOIoDKt466rJjTeD1ac22oQHONp2TvwaowAj+LVfmecDPLO
+         ubItOvNbydHPIodb0DdEhHMGO6bJXbE7gzwpsM3jhAjSR8rLkcPpb6C2s8mJ+Z5npO0Z
+         X7rY3bOXqE+aO5yA+/37lXPHy0bDT4wtPK0kS0XEkJVpG0WD4ZzxqdIHiPwxJC4YBKLp
+         UiyPYx+/dXqJYWIRSkpF0wRpN5lDgy+FEiOTW+bGdsexYhD1RR5RRBOSvbjIdSXoMIW2
+         Ch4VzfOEzlSvS0RDCZwRM4wPAHiHobGadeVpE12A3kTglVC3OHBu4ZRg97TxUmLXgzVJ
+         wbbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rwCx8kmwCbVmKkL/BS45rv3v4rKX0KvmZljrsixpB0c=;
-        b=oH3TJHfvGdetH7908S89l/BtmJkvEE2ubGfarrYqtVWbZ3zoJWaoZq7fhPXwBt065M
-         CYifFwkxdgg/jrGUvRmuQfx9TKAfIPe7sQdbbOW7pITId9dSVbWWVXAbIMvU95bDTSlA
-         YT6v9Z9I56okqSpzmEiTmJQahPHvYz2JGv0lZQKBm5byL15lt7Op/zK1dmTHc6K44UX2
-         fFGiiyTeyhC7dMe7XOTL3eole7wsN31hyRptIobAn4q4ndkPOCaqmsYVTXQlDgyqf4uT
-         sXpWwkISMykuDbM1gfqfB4Ozo+DDdiHLX+loD6yTFjJvep350K3pscpql42JAziFDIZx
-         gzAw==
+        bh=DShnVNkXXZREQchijAe6hswxI47FKvKob+M7GqFBfOc=;
+        b=VZ669WYEEmOnFEQpuBntIAERPRBxYjn0GkQzIHwjzS6W69/UclFad1KK5oz62ESLuF
+         QMHzFTQUnoxC7NqT33gkdgxxlHneY4LXTEFqSbeXV5x6xCT5R0B8SdRrq8jRK+yK8JvF
+         wj8DSbT4tB31Jhf/oUOFnNvVl78LT+RGs2SRgbc7KciC5Ylgck8F53aO8vMbCd/ZYLT7
+         XPQhAcApgHZAuLzpLvvcYoVetMfqre8xtmkXA7c428ZdjCmVJ//r9+11nlWM2FOlv/FG
+         h9sAWs/WvUZFj73ng61FGxvoOsMCgJZOJxPaV4DG+enwx9c5pbu6PEk1Oq1c+llpczOJ
+         IXEw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Clay McClure <clay@daemons.net>,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 65/86] ubi: Fix race condition between ubi volume creation and udev
-Date: Fri, 16 Mar 2018 16:23:28 +0100
-Message-Id: <20180316152321.777135868@linuxfoundation.org>
+	Tahsin Erdogan <tahsin@google.com>,
+	Theodore Tso <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Tommi Rantala <tommi.t.rantala@nokia.com>
+Subject: [PATCH 4.9 64/86] ext4: inplace xattr block update fails to deduplicate blocks
+Date: Fri, 16 Mar 2018 16:23:27 +0100
+Message-Id: <20180316152321.687698483@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108481339588180?=
-X-GMAIL-MSGID: =?utf-8?q?1595108865892026995?=
+X-GMAIL-THRID: =?utf-8?q?1595108677136778773?=
+X-GMAIL-MSGID: =?utf-8?q?1595108862931120311?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,58 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Clay McClure <clay@daemons.net>
+From: Tahsin Erdogan <tahsin@google.com>
 
-commit a51a0c8d213594bc094cb8e54aad0cb6d7f7b9a6 upstream.
+commit ec00022030da5761518476096626338bd67df57a upstream.
 
-Similar to commit 714fb87e8bc0 ("ubi: Fix race condition between ubi
-device creation and udev"), we should make the volume active before
-registering it.
+When an xattr block has a single reference, block is updated inplace
+and it is reinserted to the cache. Later, a cache lookup is performed
+to see whether an existing block has the same contents. This cache
+lookup will most of the time return the just inserted entry so
+deduplication is not achieved.
 
-Signed-off-by: Clay McClure <clay@daemons.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Running the following test script will produce two xattr blocks which
+can be observed in "File ACL: " line of debugfs output:
+
+  mke2fs -b 1024 -I 128 -F -O extent /dev/sdb 1G
+  mount /dev/sdb /mnt/sdb
+
+  touch /mnt/sdb/{x,y}
+
+  setfattr -n user.1 -v aaa /mnt/sdb/x
+  setfattr -n user.2 -v bbb /mnt/sdb/x
+
+  setfattr -n user.1 -v aaa /mnt/sdb/y
+  setfattr -n user.2 -v bbb /mnt/sdb/y
+
+  debugfs -R 'stat x' /dev/sdb | cat
+  debugfs -R 'stat y' /dev/sdb | cat
+
+This patch defers the reinsertion to the cache so that we can locate
+other blocks with the same contents.
+
+Signed-off-by: Tahsin Erdogan <tahsin@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/vmt.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/ext4/xattr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -265,6 +265,12 @@ int ubi_create_volume(struct ubi_device
- 			vol->last_eb_bytes = vol->usable_leb_size;
- 	}
- 
-+	/* Make volume "available" before it becomes accessible via sysfs */
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = vol;
-+	ubi->vol_count += 1;
-+	spin_unlock(&ubi->volumes_lock);
-+
- 	/* Register character device for the volume */
- 	cdev_init(&vol->cdev, &ubi_vol_cdev_operations);
- 	vol->cdev.owner = THIS_MODULE;
-@@ -304,11 +310,6 @@ int ubi_create_volume(struct ubi_device
- 	if (err)
- 		goto out_sysfs;
- 
--	spin_lock(&ubi->volumes_lock);
--	ubi->volumes[vol_id] = vol;
--	ubi->vol_count += 1;
--	spin_unlock(&ubi->volumes_lock);
--
- 	ubi_volume_notify(ubi, vol, UBI_VOLUME_ADDED);
- 	self_check_volumes(ubi);
- 	return err;
-@@ -328,6 +329,10 @@ out_sysfs:
- out_cdev:
- 	cdev_del(&vol->cdev);
- out_mapping:
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = NULL;
-+	ubi->vol_count -= 1;
-+	spin_unlock(&ubi->volumes_lock);
- 	if (do_free)
- 		ubi_eba_destroy_table(eba_tbl);
- out_acc:
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -837,8 +837,6 @@ ext4_xattr_block_set(handle_t *handle, s
+ 				if (!IS_LAST_ENTRY(s->first))
+ 					ext4_xattr_rehash(header(s->base),
+ 							  s->here);
+-				ext4_xattr_cache_insert(ext4_mb_cache,
+-					bs->bh);
+ 			}
+ 			ext4_xattr_block_csum_set(inode, bs->bh);
+ 			unlock_buffer(bs->bh);
+@@ -959,6 +957,7 @@ inserted:
+ 		} else if (bs->bh && s->base == bs->bh->b_data) {
+ 			/* We were modifying this block in-place. */
+ 			ea_bdebug(bs->bh, "keeping this block");
++			ext4_xattr_cache_insert(ext4_mb_cache, bs->bh);
+ 			new_bh = bs->bh;
+ 			get_bh(new_bh);
+ 		} else {
