@@ -1,110 +1,82 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-247771-1521118491-2-5192183491561707891
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  SUSPICIOUS_RECIPS 2.51, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521118491; b=Rmb1p500Xr6+0TW8ziKlE3R6CMq/Mk6cztjTXORcMRK8v1T
-    6W7nF7omvSNvtYTQ1fflw2xH+JyshcBEmpB3Mi8nmeVM4t94kWUuqVQ2QJfKF7fa
-    IVsoFrI4XKNu+TqVzeZ59BM67NmF8wZPy+eBl6iMUksoUW1b/EcYWDGEzQ6OKv3i
-    ZZPjaO5wH39gCdaP5zznTpI8+vPauQ7Ic4rERFf1XJt5v1hyMqi43t/TMNvolUZo
-    uDLrxu4u+GyQ4jtHRVUJ49MkTtjVaJOqPQpheZLVMAVu8TIami1noSkpcVSJEb0x
-    sK/LaKESuVzM1i90uNsAiMU1Z7yGYZUyfegxcqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521118491; bh=WTl3P1YM5chOXuxT/c3JgzDaNJ
-    rYRlUg7qrzYL+Zcwo=; b=vKjcF75XEdxR7fXn/F2hBLzY2ISo9Xx/TS7F+Cg+O5
-    GnaAqfn7YjiEgRN5GbcevPaCQ5q0d2kv/MOu49GZmzrPedfIlRYSHTCOHn8T6iqt
-    bEW9iNIPnXp+0075KdFXQPBzce+Pid3/jVWbFWWUqpnfkt5W7JihEN3ls921F25+
-    MIXBc43Dbo0e9do5X+c2cqv7v/+6OqQRQTtTnDZxbABhSsdlWb0hECJJlvCEdrqX
-    3Y5JnJsIYxuGuafdae9kAxsbWESI8b7DrKFEe/t3qfxvGcJazCUbyLPuoZjKfMMh
-    i2Lr2QZR91764QiT3BcC2BeGG611vpRBYi+z+ZL/UQvw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=AmXiEev2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=AmXiEev2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=AmXiEev2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=AmXiEev2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752352AbeCOMyU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 08:54:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeCOMyQ (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Mar 2018 08:54:16 -0400
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-0.3 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,SUSPICIOUS_RECIPS,T_DKIM_INVALID autolearn=no autolearn_force=no
-        version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC74A600C1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 11/16] treewide: simplify Kconfig dependencies for removed archs
-References: <20180314143529.1456168-1-arnd@arndb.de>
-        <20180314144614.1632190-1-arnd@arndb.de>
-Date: Thu, 15 Mar 2018 14:54:07 +0200
-In-Reply-To: <20180314144614.1632190-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Wed, 14 Mar 2018 15:43:46 +0100")
-Message-ID: <873711zehc.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Return-Path: <sboyd@kernel.org>
+X-Google-Smtp-Source: AG47ELvecRlVvpRiSUpPMH4V1tsij2pNA7gOdVCjcF9OGAcKkUKqybtQjzviNpHOQl1bH562/h0j
+ARC-Seal: i=1; a=rsa-sha256; t=1521241374; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nSbNzMvmQElAkYBj5NyqR7gSLycD4VpyX6ieTFBHPxpepfUKk+Tb0kD3HAf9luQxdP
+         wAGWEoA+pdpnTRtHBMbBHQfGT44MfnsRpPMXh1b4dhL8iwII40Je+7mRKTzoh9RpyYDj
+         FLrg4h+VniUW0oFrCEl3iVxOYRyworoOqaPCem4nFKCSp2r5qAmueBvB5nPG80+866ku
+         xusNCiu6bY1GSo9roNXC6HB/ubkfASjScM2IKHAokb2uoX1wuHOxmprXvHzEB72qk1OU
+         yswokLbXRSJimXCBChVLhzWFu1T5rvs5dHv9ky1LoLYb/+P2ueLJQihCPqxJYEkRCEJZ
+         iuxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=date:subject:user-agent:message-id:references:cc:in-reply-to:from
+         :to:content-transfer-encoding:mime-version:dmarc-filter
+         :arc-authentication-results;
+        bh=u+9H73bxhZduD56a0qK8ea63Z7LQuzM9F55rSANVa6s=;
+        b=J0FkVL8FSSWG+9rJBEuRlrugRvnQLrZIvqXSf503SXZLJ04W64tA9ta3Q9Hhm0Pb1K
+         vNubN7Hk2OCUEm/FhNpN/l2Fgr6YsimrIDqKwVivOWwSj4r0RU6VbqtvSrh3x9oJxGxK
+         lBU+/HES6wMRaEcdXsRixUKOzOyN2oCxm1p4oafIh3PWqj4MGHnXiVjDOOVBE7VRjbYt
+         fnjJ8QdO8QwOSNns/hz9I6nNF8JrSa+sabMlb2bzoX7+19JdcQ5pyRXqNa7MciQfc6Mw
+         0S23MfDhsYVmGL8lAXhgBNs3hEvWjSDn/PJwW5vCBLT7GAsnrs3SKafx4q/kjtJ5m72z
+         C1Aw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of sboyd@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sboyd@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of sboyd@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sboyd@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9157221742
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+ DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Sudeep Holla <sudeep.holla@arm.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Alexey Klimov <klimov.linux@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ linux-clk@vger.kernel.org
+References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
+ <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+Message-ID: <152124137391.242365.17144416413429914606@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 16/20] clk: add support for clocks provided by SCMI
+Date: Fri, 16 Mar 2018 16:02:53 -0700
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593209598817960240?=
+X-GMAIL-MSGID: =?utf-8?q?1595137196025836542?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Quoting Sudeep Holla (2018-02-23 08:23:46)
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> new file mode 100644
+> index 000000000000..1e4d7a57779b
+> --- /dev/null
+> +++ b/drivers/clk/clk-scmi.c
+> +                       hws[idx] =3D &sclk->hw;
+> +               }
+> +       }
+> +
+> +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data=
+);
 
-> A lot of Kconfig symbols have architecture specific dependencies.
-> In those cases that depend on architectures we have already removed,
-> they can be omitted.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+devm_of_clk_add_hw_provider?
 
-[...]
+> +}
+> +
+> +static void scmi_clocks_remove(struct scmi_device *sdev)
+> +{
+> +       struct device *dev =3D &sdev->dev;
+> +       struct device_node *np =3D dev->of_node;
+> +
+> +       of_clk_del_provider(np);
+> +}
+> +
 
->  drivers/net/wireless/cisco/Kconfig   |  2 +-
+Drop?
 
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-
--- 
-Kalle Valo
+You can keep my acked-by otherwise.
