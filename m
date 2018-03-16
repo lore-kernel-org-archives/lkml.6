@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtTnUwKh2QtpPNH4+R1XBa1EgxlbaRUAgfIrSAsZ02v86lONAIR7d5n/Nkr3O03NmjG0PwP
-ARC-Seal: i=1; a=rsa-sha256; t=1521214374; cv=none;
+X-Google-Smtp-Source: AG47ELshgTmJLZUIZ7Vwpw4TKpt5zhwZgICQT5AYtycuUgdRGjHHP/nUmi75pKSIHjfJIv6KLZL3
+ARC-Seal: i=1; a=rsa-sha256; t=1521214371; cv=none;
         d=google.com; s=arc-20160816;
-        b=OcKRekk4zyuSKuixxqsM35m25Ylqz3ErWxEsBoSfrZ2C/U0ZBUE2mTQAGcR1Y0CwDO
-         qOuGmSeBz+NJ4TUMLjVoFdsE/3gyyfgtdOSroZe5xwgIrVJPmKpaoWNH79B70Yp9faRN
-         kstLJB6Rs3pWf5gTu1bIVPw+RE0Yle5LZ66aPE6iXk7bnJbEYwjNkb+X/rkCa1orByFD
-         4QuXAsfNMS4IE77tq6wVtC5IfupMl9JJ/8cq1Sm32UPEsqkQGxfVScE3lR3QkqXZVu1H
-         /FSno+AS9DApINDcnGmL9+5U/kokbS0s7v3D5PfbPnul/Gz/W741Gd7zB/EvLEKsUdSe
-         uqPw==
+        b=qxsTHassi29ROAcDQwaO7hRMiO3YaGqVDl2gKwr6ES0vwuU5VEYz4rooaqzAaveRhf
+         SMYPJ2zL65x2qTQTGjvDIeCHEpEpoyewoSRxIRi0lZjS4i06ZJR+JO653B702I2N96LA
+         0r0SEpct7w6twRb3LeoSKQAquH9uBn1jYqxJboS7kd0tc5mTC8zd4Ko+myToXLD5ykdV
+         3WcKUR3+3WH3NWOR7GlDqV8S/FEjmLW2r7cOXG458yiYprjoL7U6mG63LP/qAVBhMYWq
+         hkQ18G3upcniKTYeMyi+lAb1C8/vQhIjQ318wJgZE8W4LAzea6aMvARkHILPZiTjv5u8
+         dFuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JSzBA4UxvbVZ77egFwhUBglTZnke4m25gp+Hc9uYbis=;
-        b=xF8Hq3GhM/KUUE5mDaSMSFuNO7t6iwljNeV6rvRAOE+jl9dTbNO2zc9QPPlToTZui3
-         A6lBGJzgT8VFddU5+nud79lFeRXz/DhijEgJhg+97ToXaL4KirZ0BxRU7Cz7XeyrjlXQ
-         3bM+W84NcfcE0CtCshG8FjbAJcVLRkcGv+KgQ7hilRlTuxMadeK4ZIz7PGvIBRPj9X9H
-         UJVHB8dU9R5MK9vFaODQK3NguuPKgtnrOTJdP5Qz+ybHd4puZ2hKf1JsscPAG+5eOgif
-         Ma7umI+cVIKWhQUxW7HdVlPttK7mJwZwz0H6Dq/RClZ37a5feqSrm2aeL5FMRa1yR0Mm
-         +VOg==
+        bh=1SJ30rZICdCmJivrPkX/ojY7bouFE/ijq3OQlBsWWbo=;
+        b=ORRfmYbeCqS3yFbSSFTP6ukZUlNQ+VaCN+MyObW2Uo1+WpQScaMCmaKBDFArRhWeUD
+         1dPHgvw6IoP4j2WJY5QRckUFwZDw7VmqQhibKV+gelQBVoNg5kpd9+ICkUfkzAt1AAUZ
+         f1Qp8LU64cJjM69aYVNOjf8rMmZzN+BSRALCtoQ6AgQr1WLyk7IJ+MFk1IjwKpTeUxI7
+         DQ/zrE+I/essY4LRAQ3l1h+utRp5G4Tg88XK4TMLdk7T71iFi68ctshuPpWO9rGlX7Rb
+         nladF7jCUTj5htY42GFARDqkoGR+qPpQnjil/IaSt0v/8q9gsCkRwvRLS+wgz/RwEFKq
+         6HJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH 4.9 71/86] ASoC: sgtl5000: Fix suspend/resume
-Date: Fri, 16 Mar 2018 16:23:34 +0100
-Message-Id: <20180316152322.155265430@linuxfoundation.org>
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.9 70/86] x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Date: Fri, 16 Mar 2018 16:23:33 +0100
+Message-Id: <20180316152322.088738569@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108883859769271?=
-X-GMAIL-MSGID: =?utf-8?q?1595108883859769271?=
+X-GMAIL-THRID: =?utf-8?q?1595108490440452142?=
+X-GMAIL-MSGID: =?utf-8?q?1595108880970531368?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,58 +50,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: H.J. Lu <hjl.tools@gmail.com>
 
-commit a8992973edbb2555e956b90f6fe97c4bc14d761d upstream.
+commit b21ebf2fb4cde1618915a97cc773e287ff49173e upstream.
 
-Commit 8419caa72702 ("ASoC: sgtl5000: Do not disable regulators in
-SND_SOC_BIAS_OFF") causes the sgtl5000 to fail after a suspend/resume
-sequence:
+On i386, there are 2 types of PLTs, PIC and non-PIC.  PIE and shared
+objects must use PIC PLT.  To use PIC PLT, you need to load
+_GLOBAL_OFFSET_TABLE_ into EBX first.  There is no need for that on
+x86-64 since x86-64 uses PC-relative PLT.
 
-Playing WAVE '/media/a2002011001-e02.wav' : Signed 16 bit Little
-Endian, Rate 44100 Hz, Stereo
-aplay: pcm_write:2051: write error: Input/output error
+On x86-64, for 32-bit PC-relative branches, we can generate PLT32
+relocation, instead of PC32 relocation, which can also be used as
+a marker for 32-bit PC-relative branches.  Linker can always reduce
+PLT32 relocation to PC32 if function is defined locally.   Local
+functions should use PC32 relocation.  As far as Linux kernel is
+concerned, R_X86_64_PLT32 can be treated the same as R_X86_64_PC32
+since Linux kernel doesn't use PLT.
 
-The problem is caused by the fact that the aforementioned commit
-dropped the cache handling, so re-introduce the register map
-resync to fix the problem.
+R_X86_64_PLT32 for 32-bit PC-relative branches has been enabled in
+binutils master branch which will become binutils 2.31.
 
-Suggested-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: <stable@vger.kernel.org>
+[ hjl is working on having better documentation on this all, but a few
+  more notes from him:
+
+   "PLT32 relocation is used as marker for PC-relative branches. Because
+    of EBX, it looks odd to generate PLT32 relocation on i386 when EBX
+    doesn't have GOT.
+
+    As for symbol resolution, PLT32 and PC32 relocations are almost
+    interchangeable. But when linker sees PLT32 relocation against a
+    protected symbol, it can resolved locally at link-time since it is
+    used on a branch instruction. Linker can't do that for PC32
+    relocation"
+
+  but for the kernel use, the two are basically the same, and this
+  commit gets things building and working with the current binutils
+  master   - Linus ]
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/sgtl5000.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/kernel/machine_kexec_64.c |    1 +
+ arch/x86/kernel/module.c           |    1 +
+ arch/x86/tools/relocs.c            |    3 +++
+ 3 files changed, 5 insertions(+)
 
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -774,15 +774,26 @@ static int sgtl5000_pcm_hw_params(struct
- static int sgtl5000_set_bias_level(struct snd_soc_codec *codec,
- 				   enum snd_soc_bias_level level)
- {
-+	struct sgtl5000_priv *sgtl = snd_soc_codec_get_drvdata(codec);
-+	int ret;
-+
- 	switch (level) {
- 	case SND_SOC_BIAS_ON:
- 	case SND_SOC_BIAS_PREPARE:
- 	case SND_SOC_BIAS_STANDBY:
-+		regcache_cache_only(sgtl->regmap, false);
-+		ret = regcache_sync(sgtl->regmap);
-+		if (ret) {
-+			regcache_cache_only(sgtl->regmap, true);
-+			return ret;
-+		}
-+
- 		snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
- 				    SGTL5000_REFTOP_POWERUP,
- 				    SGTL5000_REFTOP_POWERUP);
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -524,6 +524,7 @@ int arch_kexec_apply_relocations_add(con
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_PC32:
++		case R_X86_64_PLT32:
+ 			value -= (u64)address;
+ 			*(u32 *)location = value;
+ 			break;
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -190,6 +190,7 @@ int apply_relocate_add(Elf64_Shdr *sechd
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_PC32:
++		case R_X86_64_PLT32:
+ 			if (*(u32 *)loc != 0)
+ 				goto invalid_relocation;
+ 			val -= (u64)loc;
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -769,9 +769,12 @@ static int do_reloc64(struct section *se
  		break;
- 	case SND_SOC_BIAS_OFF:
-+		regcache_cache_only(sgtl->regmap, true);
- 		snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
- 				    SGTL5000_REFTOP_POWERUP, 0);
- 		break;
+ 
+ 	case R_X86_64_PC32:
++	case R_X86_64_PLT32:
+ 		/*
+ 		 * PC relative relocations don't need to be adjusted unless
+ 		 * referencing a percpu symbol.
++		 *
++		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
+ 		 */
+ 		if (is_percpu_sym(sym, symname))
+ 			add_reloc(&relocs32neg, offset);
