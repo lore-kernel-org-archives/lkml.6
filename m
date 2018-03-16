@@ -1,154 +1,113 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELuamGvpa4XLTxz1YqNZl9PEDxEFnGHswhHlJVBYBqOUwTYqK1wQdNBmzlhpo3e8rzFFBICt
-ARC-Seal: i=1; a=rsa-sha256; t=1520498670; cv=none;
-        d=google.com; s=arc-20160816;
-        b=z+WKhLvOHX93obzUUqMT3xiMxHEiJBEFc/ryK8ULFrKRz7/C3U20dmanoTSle81aND
-         xf0MkrF0XwszYeMtY4ezbDakEFLo+zbukJgPK+/r/LGk3eCKV5aQz2IIp4lU6L+62ggB
-         BTM5zLYuwiGwCF2nAW0CWyr3uZs4cjQ7eV5JU1e/1HBtl6jDx3cDkSLRGkUug0yQeYYm
-         JM6JJ376GMuL0xdTlkeynKPXBuNbxLOw7anqw5GJASsx94v+82iW7F5cGw2ttXcCeSHn
-         pqRc663iB27728c0la2sXMsl/KMhnVr86duiZKPZnTwzBK9aH4jchJYhk7jQ9vdTUv3J
-         S0TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dmarc-filter:arc-authentication-results;
-        bh=sliGKI2MPPEEFbY5Sc7eWDMOQD4FncA2T51tJ1qIG5c=;
-        b=0lIm9ma1DSWnaofQQUtI+nc8hHzlH1MBjcqmaZWtgwrJSNl3knbI0KSNFLx+k82vm7
-         m/XiprxKwsMxGFGC2SJT0stCCforR8wnk79zvbPSZyJaXX856Ty7WF8DBxL+GoEe4OLZ
-         Fu+94M2xuXGkdvZmnQwdVM6Zqql91TqYq6MWC6iL9J6ir/wIgA9eyNg9HekshLyHSyWe
-         PQylscSiwpmjwjHsHn7R+BYp6yJo/xJzBKriOCn9XzwH/Z1bVSKf/iVgMFdSmQjgjTK7
-         4BMFKu7AmFk4I7Ipnk3OHJRiI12w/RDzmH0pHFsrCjxEnNr18Tlm+u90PHv4cZfgbPtU
-         gxeA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3238001-1521211505-2-13541883561045026894
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521211504; b=BfR8BrATUsPUR5nCxmWisE2+965UKh8+4XaJi88miNUbMMw
+    nD4DSZD+VZbldPP4WeWMcn9HI9BHbXxWTfniXqRHfCJKOSsaSc/He6HyjsOUYTYx
+    V9pk18acDPAcS7Bb/zaFkupSpH4XXhzrEP0JnNOHS9qMYgk29W8+skQUS7mmYxtw
+    qPIoVP2MJLiQq4/GoEsaDtS1FWb0oU9v8yGlrID6bcdJ8jDFcZw0LSTWNfj4iw60
+    FO9KXfMXAJatgcwSsep/G2nUDhu31cvT0cGj7zPFiq3Kd8DESGOHSl2Jiex32Xjz
+    yI4sFbDKsu2ixCzuS2UHxrgVLKuG2u5x7G0ZqOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1521211504; bh=+Wxv+iA2NCIvGxAkQW98XAmK6nvI3GgBO1tr+75Qye8=; b=L
+    Dxyk4AM7gLX589vTfBukmHf5TguBzSfSrLL9KHgCWx69x/BQhI6uiuy7zKk89ffe
+    U8oJAQim/4Dd0/dGGHOp/hXFk8FYno6FFzh8njwd+wVG6kqg4KfZb2HpNtZhnsMv
+    8zrbtDppMZCcXknxT2maZKRquhEXUJZgY8wBtN9MoTGL3phHg/y68YQ2yCEiPdCY
+    YwUNjP1z2wpG0jwUX0eYc9Z4rYnGvXcEV70PlPdzcJXFw37YqQySjFzMlRgPOhUB
+    PYn92XWzY9qTPwQI/MjMWAUQkeAngh0HTGeDcsUSYM3Z3ZrN2b6/ocDJH40CsRLb
+    b25OQlpRzsNRV1U+v4Tvg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=kGGI+VZP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=kGGI+VZP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935527AbeCHIoa (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 8 Mar 2018 03:44:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935490AbeCHIo3 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:44:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DD82172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: [PATCH v5 01/19] [BUGFIX] tracing: probeevent: Fix to support minus offset from symbol
-Date: Thu,  8 Mar 2018 17:44:05 +0900
-Message-Id: <152049864528.7289.5084202890843376447.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152049860385.7289.14079393589900496424.stgit@devbox>
-References: <152049860385.7289.14079393589900496424.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1751943AbeCPOoe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 10:44:34 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:36235 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbeCPOod (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 16 Mar 2018 10:44:33 -0400
+From: Roger Quadros <rogerq@ti.com>
+To: <balbi@kernel.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] usb: dwc3: core: Fix broken system suspend/resume on AM437x
+Date: Fri, 16 Mar 2018 16:44:27 +0200
+Message-ID: <1521211467-6872-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594358414300063310?=
-X-GMAIL-MSGID: =?utf-8?q?1594358414300063310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In Documentation/trace/kprobetrace.txt, it says
+On TI's AM437x, the DWC3 controller looses state after a
+system suspend/resume. We are re-initializing the controller
+but we miss restoring the PRTCAP register. This causes
+USB host to break on AM437x after a system suspend/resume.
 
- @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+Fix this by restoring the PRTCAP register on system resume.
 
-However, the parser doesn't parse minus offset correctly, since
-commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-unsigned") drops minus ("-") offset support for kprobe probe
-address usage.
-
-This fixes the traceprobe_split_symbol_offset() to parse minus
-offset again with checking the offset range, and add a minus
-offset check in kprobe probe address usage.
-
-Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- Changes in v3:
-  - Use kstrtol instead of kstrtoul. (Thanks Namhyung!)
- Changes in v4:
-  - Fix to decode sign. (Thanks Namhyung!)
-  - Fix to check UINT_MAX for kprobe offset.
----
- kernel/trace/trace_kprobe.c |    4 ++--
- kernel/trace/trace_probe.c  |    8 +++-----
- kernel/trace/trace_probe.h  |    2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/usb/dwc3/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 5ce9b8cf7be3..1cd3fb4d70f8 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -667,7 +667,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 	char *symbol = NULL, *event = NULL, *group = NULL;
- 	int maxactive = 0;
- 	char *arg;
--	unsigned long offset = 0;
-+	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
- 
-@@ -755,7 +755,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 		symbol = argv[1];
- 		/* TODO: support .init module functions */
- 		ret = traceprobe_split_symbol_offset(symbol, &offset);
--		if (ret) {
-+		if (ret || offset < 0 || offset > UINT_MAX) {
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index d59357308677..daf54bda4dc8 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_function(const struct fetch_type *type,
- }
- 
- /* Split symbol and offset. */
--int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-+int traceprobe_split_symbol_offset(char *symbol, long *offset)
- {
- 	char *tmp;
- 	int ret;
-@@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
- 	if (!offset)
- 		return -EINVAL;
- 
--	tmp = strchr(symbol, '+');
-+	tmp = strpbrk(symbol, "+-");
- 	if (tmp) {
--		/* skip sign because kstrtoul doesn't accept '+' */
--		ret = kstrtoul(tmp + 1, 0, offset);
-+		ret = kstrtol(tmp, 0, offset);
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index e8890c0..5becd7f 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1374,6 +1374,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
  		if (ret)
  			return ret;
--
- 		*tmp = '\0';
- 	} else
- 		*offset = 0;
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 0745f895f780..75daff22ccea 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -365,7 +365,7 @@ extern int traceprobe_conflict_field_name(const char *name,
- extern void traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
  
--extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-+extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
- 
- /* Sum up total data length for dynamic arraies (strings) */
- static nokprobe_inline int
++		dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_DEVICE);
+ 		spin_lock_irqsave(&dwc->lock, flags);
+ 		dwc3_gadget_resume(dwc);
+ 		spin_unlock_irqrestore(&dwc->lock, flags);
+@@ -1384,6 +1385,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+ 			ret = dwc3_core_init(dwc);
+ 			if (ret)
+ 				return ret;
++			dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
+ 		}
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_OTG:
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
