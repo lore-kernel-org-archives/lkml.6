@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuVVfTmo2C9BcXnJ3fyqCCG8C6DuPvfaUZjVm6kadOOZLRpUYjVJbaprSgNS2eX4YtgunJV
-ARC-Seal: i=1; a=rsa-sha256; t=1521214285; cv=none;
+X-Google-Smtp-Source: AG47ELv+5jbeQ7EqotbQR+MPx9UJVwSw2ch1RT39z4/scKz9V8dYy2giQQOB8edQDHhJztjoJzDF
+ARC-Seal: i=1; a=rsa-sha256; t=1521214282; cv=none;
         d=google.com; s=arc-20160816;
-        b=ArNxpy865wxWYnxar2pJx/BthzCi0sOynLjeC9HzyiooCfpAIcVo+2CGQTloqFVgBw
-         41ICXBM0OrTc6gp0yOZqVFuwD7jrDALHp9v/5c4xFQQ4Rjg4yY7w6/eE2Jdap20mFxC4
-         2mAE9cHqV9bYNhIcnN3v5wJGSL3Frj9DqsHxE6WZ7NvttNCHftChtk//Fzea25oWYU9M
-         Oz286WW+FMWAOx0ykCPhv7brH8bxyOnzFfl2t9MNWFo4HuYIs91ZYCAzsVdLlguDMRiE
-         WEwt+efVAZ8ooJWrIlzGYi8yZNHSIKb921urikAnuHocn3C+FO7/4zmyivkD/ZZouCSS
-         cE2Q==
+        b=eOGPsXC3FpyKP0E7tZ2OPJUnyCVgYwC3eyPLfuY4egIOxxCmyqqM9J/73+o+/8kthA
+         UF0Gm8tPdMGPrVnqSW/Yyd7IWf91zFiGoZoetrk36FRAN3cRxLGX5F5S4iy6qk27ZVs5
+         bLD4eG+ohxpR81TbdjfyQAfpCEFTNd+zLS7WUJRbcx+uuyBrYCc8kEwQHifK8RC+GGPU
+         b9/roOLQW0YAaGiaXpx1RouSlkKAKkeikEnrt2HFFzoVJGN9jNfP3kTzyM8OFtTsoTs9
+         fLAf6xI8me3TT+wJJaZzhIOWvwTYEP82xfzTluJWfWv1t+47Oja3ProNEmGf8SEjAqjU
+         zaoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Gytr+Xd5NT33+Ni6t3/IRQ6h6n60GaacKJiswXljZqU=;
-        b=FY/0osFyYkC4YbTDEJ6rIDYvWNNDtlt2K45hKNQtd0WJnIAEPwh0nsewGn8Uu/IOVL
-         aMq1CYet/DZDioq6oPQjMaWVKaFHth1iRsX22m5OXZ3oCkW8db+JxDBXXKSR9zCgdQWi
-         UDQ6UrhQitpHndQjiXiaLIe2wqTEUSxQFmQczINuL/Z+UWy6EYdRXQTerCSa16xllHdS
-         /eQ0KJDN6B0GyRDeiJ/s+oDqkS5PoPJWjcF121dyXP9aLFzcDGYtnA+JMMqbLCWB2Qll
-         dhOJcE95YPXOF92j5itYfWvWaPnDTJwOIWNqz7/gIXPf7r137RxS7kfNcqU5/m1gjL5Y
-         39Qg==
+        bh=Zfumq461tpsRXBzfGBe+HAND36EwQxO5lEHyLieZdoU=;
+        b=fzVJXSBI936P1uvvEE6hB0NnOCx+QLAit0SCozENJPZ+dgU5aAPmccL2aYqJBDnkEg
+         xl3cnmYCD7CTvaI/TbNxoIjeamJXzZOzYYFrYfRhG2OHTy7THBFsVfmHhw8t8YQGV0jh
+         Ku7WFkxEi3BrWOnc3Swarjeca4d9u6wdB6VEesyWjrmC+l8eRiWQAKyZFiCX/YVlIVDN
+         Ra6Dv3w4G2um9KozSrTWVwqEnFgBllfc/h2h0vrY9vR/jvTUoaSoZPf7Jw66Xmg6FdsJ
+         V4isIyyU1nPpiCFPTunU6FI4/NGYRN3d9DlXt6xpBG1GuMrwRBfU3nrJ7OITedZXQJ2p
+         qHRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
@@ -34,15 +34,14 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	David Woodhouse <dwmw2@infradead.org>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Will Deacon <will.deacon@arm.com>,
 	linux-arch@vger.kernel.org,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 39/86] nospec: Include <asm/barrier.h> dependency
-Date: Fri, 16 Mar 2018 16:23:02 +0100
-Message-Id: <20180316152320.039234992@linuxfoundation.org>
+Subject: [PATCH 4.9 38/86] nospec: Kill array_index_nospec_mask_check()
+Date: Fri, 16 Mar 2018 16:23:01 +0100
+Message-Id: <20180316152319.963285633@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -52,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108559026857789?=
-X-GMAIL-MSGID: =?utf-8?q?1595108790801741788?=
+X-GMAIL-THRID: =?utf-8?q?1595108788167231018?=
+X-GMAIL-MSGID: =?utf-8?q?1595108788167231018?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,17 +62,24 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit eb6174f6d1be16b19cfa43dac296bfed003ce1a6 upstream.
+commit 1d91c1d2c80cb70e2e553845e278b87a960c04da upstream.
 
-The nospec.h header expects the per-architecture header file
-<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
-that dependency to prevent inadvertent fallback to the default
-array_index_mask_nospec() implementation.
+There are multiple problems with the dynamic sanity checking in
+array_index_nospec_mask_check():
 
-The default implementation may not provide a full mitigation
-on architectures that perform data value speculation.
+* It causes unnecessary overhead in the 32-bit case since integer sized
+  @index values will no longer cause the check to be compiled away like
+  in the 64-bit case.
 
-Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+* In the 32-bit case it may trigger with user controllable input when
+  the expectation is that should only trigger during development of new
+  kernel enabling.
+
+* The macro reuses the input parameter in multiple locations which is
+  broken if someone passes an expression like 'index++' to
+  array_index_nospec().
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -82,26 +88,53 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: http://lkml.kernel.org/r/151881604278.17395.6605847763178076520.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/nospec.h |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/nospec.h |   22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
 --- a/include/linux/nospec.h
 +++ b/include/linux/nospec.h
-@@ -5,6 +5,7 @@
+@@ -30,26 +30,6 @@ static inline unsigned long array_index_
+ #endif
  
- #ifndef _LINUX_NOSPEC_H
- #define _LINUX_NOSPEC_H
-+#include <asm/barrier.h>
- 
- /**
-  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+ /*
+- * Warn developers about inappropriate array_index_nospec() usage.
+- *
+- * Even if the CPU speculates past the WARN_ONCE branch, the
+- * sign bit of @index is taken into account when generating the
+- * mask.
+- *
+- * This warning is compiled out when the compiler can infer that
+- * @index and @size are less than LONG_MAX.
+- */
+-#define array_index_mask_nospec_check(index, size)				\
+-({										\
+-	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
+-	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
+-		_mask = 0;							\
+-	else									\
+-		_mask = array_index_mask_nospec(index, size);			\
+-	_mask;									\
+-})
+-
+-/*
+  * array_index_nospec - sanitize an array index after a bounds check
+  *
+  * For a code sequence like:
+@@ -67,7 +47,7 @@ static inline unsigned long array_index_
+ ({									\
+ 	typeof(index) _i = (index);					\
+ 	typeof(size) _s = (size);					\
+-	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
++	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
+ 									\
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
