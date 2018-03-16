@@ -1,47 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeCPIT2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 04:19:28 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40777 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeCPIT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 04:19:26 -0400
-X-Google-Smtp-Source: AG47ELt2HeMVap7K73ZLrbEbv1+GQrITysHoM+ScA6HdKrkjix0zpN1z7pGXC6gK7A1DeY4M7KFmUOm2j40Jr1B9g3Q=
+        id S1753078AbeCPIVo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 04:21:44 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6650 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751783AbeCPIVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 04:21:43 -0400
+Subject: Re: [PATCH 1/1] f2fs: release locks before return in
+ f2fs_ioc_gc_range()
+To: sunqiuyang <sunqiuyang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180313114250.29211-1-sunqiuyang@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <63c81dbc-e561-aa5a-a375-ae14bca5f4ac@huawei.com>
+Date: Fri, 16 Mar 2018 16:21:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180316004843.GM26859@dragon>
-References: <20180315151345.3089601-1-arnd@arndb.de> <20180316004843.GM26859@dragon>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 16 Mar 2018 09:19:25 +0100
-X-Google-Sender-Auth: 9NP3BiWFWYIq2wcxBhFjDjhGdP0
-Message-ID: <CAK8P3a0aUHZ+64N1bDk+uozmMqQEVDgYRLhb1qZt42dqo7hbmA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: imx: fix imx6sll-only build
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: arm-soc <arm@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>, linux-imx@nxp.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bai Ping <ping.bai@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180313114250.29211-1-sunqiuyang@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 1:48 AM, Shawn Guo <shawnguo@kernel.org> wrote:
-> On Thu, Mar 15, 2018 at 04:13:18PM +0100, Arnd Bergmann wrote:
->> When selecting SOC_IMX6SLL but not SOC_IMX6SL, we get a link error:
->>
->> arch/arm/mach-imx/mach-imx6sl.o: In function `imx6sl_init_late':
->> mach-imx6sl.c:(.init.text+0x14): undefined reference to `imx6sl_cpuidle_init'
->>
->> This adds the missing line to the Makefile to also build the cpuidle
->> support that we need here.
->>
->> Fixes: dee5dee2a5b2 ("ARM: imx: Add basic msl support for imx6sll")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Acked-by: Shawn Guo <shawnguo@kernel.org>
+On 2018/3/13 19:42, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
+> 
+> Currently, we will leave the kernel with locks still held when the gc_range
+> is invalid. This patch fixes the bug.
+> 
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
 
-Thanks. Applied both now.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-      Arnd
+Thanks,
