@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELuLVXjdxE3lsK8jpHnOHDRg1vMbcSk1J6thsxtuce6mShVKnUia4yhnwf5D62ZvBL7u/oZ6
-ARC-Seal: i=1; a=rsa-sha256; t=1521228609; cv=none;
+X-Google-Smtp-Source: AG47ELswQtGYLmcQBRLjFOBuqbTettHk2Qc21nGAkS23RB9uOxu6sayuaV0yWFhkQkJjqroIPdC8
+ARC-Seal: i=1; a=rsa-sha256; t=1521228610; cv=none;
         d=google.com; s=arc-20160816;
-        b=rP+ptTRyE979hTVgATdIoLNR9eMQA0Im3tHHZBvWFbGDtgBD5z0tUSfAFFbZ0ZoKMY
-         KuKoyW2VNiyCuuTjL8sTa5C/uZN2BebtMLCHV45kzBE0Jm63mCMOlSzlBllwNjzPzQ5l
-         XJI9Z+Asi+jrYJgnSHg/1HeFqGGgVSVOwaQgzau+VFbgpUnlID+2ljJ3IOIv1I9W5uOV
-         bG38njEc3fBemwJx85Q/IPX4Ab1O2mC/YERC9+D8yi08mp/LKHKaRyeBjNxpbW/lwQdy
-         XWOi8Y8H4mocXmFDwzOYsmBQdlCJwjZ8KR8xSA0K43u2lWRahsrmw6pHddeOqPr0LaWl
-         1MaA==
+        b=Js4H3TQJZnIZDo3lgpoBSDddlY1qHvamuWSbCDbKPwOaH0x0LROZqp2T/9izM4JZqi
+         0nwpbEba6CEJcBWJGz+00yf8yWvx23VQ6+CGrUINZ6rRjHGni3tGS7drXuAXA4JA9Pyk
+         kJuBJb8z7RlksLT0S/JFUVEBf2pvr9CayvD9bUBcs43M1wkgRmEnzwWHD0EfV6E7FPYV
+         1oJK4Wnm4+d1DMXQmn3OA8EYv1wTaBtfGWll/IOKtfyXgcleNtR+gmsoiu/bzmVKxNgP
+         VRIaLgw6xNyAerZAGpxFfzSp1fQMyztq1rrMvJ57LzI9NirHddMa+S87wtD8spGUpBBR
+         p6tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=TBtohe2X5SHsmPjdTDHZdNzRuX9gI4sKHKxpvfjShHc=;
-        b=VXXYe1dvvV8cHauGieHRiFZQCK+ZY0XbfEsK+pfFpEjx1VZvAVekRxLBBTJpWzV2b2
-         UYLKaIY//lGVkBCWMzTZ1i7710ELV1Ie5cpVS07BZsI/E3eBSHCoac6oqo13oPCkDc7F
-         oiacryHZth/VGHvmFA368VlGLPcCiJiq/ERWeY/BV5saiuGvuZEZybAN0DWLq7g0BS7e
-         6nvX1GSt4v1yYvhZPii1P5JFOYxVfr10WJfYq55YpCy9ZAuCkGjoPOaVPd0D/6kgB9WN
-         SqphA+OSd0xvu5syP9/LXoiTWuYfGeQ92zjy+xN+579ZdKY7TeguS/A8+BKN6w2VO2lv
-         cMuQ==
+        bh=sBmnEAPtOXXVsp27L6zoCbiR5jvnoXrdbebyRH4BDuY=;
+        b=ZMtP05KP/d0EOvxXMG79lJ6VbZB/uXiwPV6KPDcObZUDiP9T2TFNAIt8NVLyXb3guS
+         imSWqKPrZxb+iD1r4Uvge1d1WC2r+bslzEvVzpjPqptNLOJL+E3WHfsFpVQrtB/ypDry
+         nWFht3nHrA7cMQ+YwrRCEt+5boMZUzoUddjcuqlPyrhkOmAQNLvbPoHe2CqEn2htSCvr
+         4IMZvfgnPGEUc/A5BnP2oK82u4DqD50y5nxk0bdgOBio5CTCtJU5acD8AEej8lC1jLu4
+         6IegkswPrKgWd2Ynz4D4+Ibj64HqvJ08DXLf2tjJIaF7S6dJSSW4XCoCFPHJ1Q1poRoS
+         P64Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V0klQ7HM;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ZRLxPqiy;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V0klQ7HM;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ZRLxPqiy;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,72 +57,52 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 27/35] x86/mm/dump_pagetables: Define INIT_PGD
-Date: Fri, 16 Mar 2018 20:29:45 +0100
-Message-Id: <1521228593-3820-28-git-send-email-joro@8bytes.org>
+Subject: [PATCH 25/35] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
+Date: Fri, 16 Mar 2018 20:29:43 +0100
+Message-Id: <1521228593-3820-26-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123810895760732?=
-X-GMAIL-MSGID: =?utf-8?q?1595123810895760732?=
+X-GMAIL-THRID: =?utf-8?q?1595123811965834549?=
+X-GMAIL-MSGID: =?utf-8?q?1595123811965834549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Define INIT_PGD to point to the correct initial page-table
-for 32 and 64 bit and use it where needed. This fixes the
-build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
+Move it out of the X86_64 specific processor defines so
+that its visible for 32bit too.
 
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/dump_pagetables.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/processor-flags.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 2a4849e..2151ebb 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -105,6 +105,8 @@ static struct addr_marker address_markers[] = {
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
- };
+diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
+index 625a52a..02c2cbd 100644
+--- a/arch/x86/include/asm/processor-flags.h
++++ b/arch/x86/include/asm/processor-flags.h
+@@ -39,10 +39,6 @@
+ #define CR3_PCID_MASK	0xFFFull
+ #define CR3_NOFLUSH	BIT_ULL(63)
  
-+#define INIT_PGD	((pgd_t *) &init_top_pgt)
-+
- #else /* CONFIG_X86_64 */
- 
- enum address_markers_idx {
-@@ -133,6 +135,8 @@ static struct addr_marker address_markers[] = {
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
- };
- 
-+#define INIT_PGD	(swapper_pg_dir)
-+
- #endif /* !CONFIG_X86_64 */
- 
- /* Multipliers for offsets within the PTEs */
-@@ -478,11 +482,7 @@ static inline bool is_hypervisor_range(int idx)
- static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
- 				       bool checkwx, bool dmesg)
- {
--#ifdef CONFIG_X86_64
--	pgd_t *start = (pgd_t *) &init_top_pgt;
--#else
--	pgd_t *start = swapper_pg_dir;
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-# define X86_CR3_PTI_PCID_USER_BIT	11
 -#endif
-+	pgd_t *start = INIT_PGD;
- 	pgprotval_t prot;
- 	int i;
- 	struct pg_state st = {};
-@@ -543,7 +543,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
- static void ptdump_walk_user_pgd_level_checkwx(void)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
--	pgd_t *pgd = (pgd_t *) &init_top_pgt;
-+	pgd_t *pgd = INIT_PGD;
+-
+ #else
+ /*
+  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
+@@ -53,4 +49,8 @@
+ #define CR3_NOFLUSH	0
+ #endif
  
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++# define X86_CR3_PTI_PCID_USER_BIT	11
++#endif
++
+ #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
 -- 
 2.7.4
