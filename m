@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELufFpLy8gavHYEQLbT/YYbZLbXmywjtjL5DTRgNgON95yW5tNVSgwFOIkl30KrQjf1tunDo
-ARC-Seal: i=1; a=rsa-sha256; t=1521214732; cv=none;
+X-Google-Smtp-Source: AG47ELuzOaO9Zer5p/B1AHKhHKi5Dl3CA8Wp/r4Si2xddfnDsDWLEXFpLn4XoJyB+sTBraoYoJrs
+ARC-Seal: i=1; a=rsa-sha256; t=1521214729; cv=none;
         d=google.com; s=arc-20160816;
-        b=FCg2ZvBtEuUBmbhWXUJwAIQ99iyAsg7Iu+LhswhrzySLctV+guEfBeBHD/EbYZhGPU
-         zO4JXCe8t2ycA6Ltap0q4yhx0h4F0vNwtOwOJ1LajnG21JMCkpddftWKHPJzvalbJOma
-         xVUiv9yFaPsgxA3USeugMNyPe6xTiplxOAVOAD/8qNxdflTAyh8zcXVgFukvpdsZDcrp
-         PvNz4pNcF8At3nUg/fNCLEq/QV941kp4dZELDisdrxtLUNjKRxkKdCne4E3BXAr9lkL9
-         cys+7vS4wp5NlHeenTrgRkRuZE0D0v6Uz/c/bqM30HFgfSbU5fKXA8GhjMqTMTrOJ1rb
-         +V5A==
+        b=JnAlLY+1LBMxZXmGNP5KeblLUu+KpJxivaXdlJpQHiEpMnBN/JlSbH2tRap0LCKhCN
+         mQorotfCoXnRFwMoqUW7Vgt3WczO+kBwJ+9uqv3uLN8MNxTcKOGOQMxHTudKJca+HRYo
+         FnV4HphREmoDfSHF/nOjnPluJ2vyEvsYM0IBeB4Md5rFdVHvEGei9SJXJFEAdWnQKEIs
+         IvJt2yn0LDwGj5FZqaTTjbCTu+eZzXNW171YX6x68cDX4906MeHNvej/PyybE6weEhA9
+         pyrpK3C1zTZsh8uM5JkIzGwDGo//Z+kJhGF8/FYQgY9Bm/cVd+Mjmh4Ksi5yv+MLaqlB
+         VAfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=giqgu/iJXNB9c0cqQyuN6TESnxTmcALblVCwc8f5LxY=;
-        b=i2R4mE0b4PhxgoSgMFHJ4NFx2L5OBEmYbHp5w+jZr2gsZNMRnMAujmkpkBAnUMBqxY
-         bnKWW81zgsNXltSkSX/UCyx+ErCXzn6MKtT563GO4QPoQa1opqfCoPyUkHHEJRnYNCK4
-         +Kth9rH6PqJkjMkK+wklyUItf5IuJNj2YVgGQnzPMQ+djnTpU1QnUvlyKhEvdf4f+qY6
-         Tm9yahzO+47HRyjWcX9D1eV1nkRR8tKXUfaruKVpkyWTFbD/TaQlV0ZNoZ6QZu+91H5G
-         WSZdO0QYcI3Yo9IyVnXe2H3BJmN3OMx+gdUK2ZyR6o/SusBzIfoe4ofuoTBrU02qMVTZ
-         llSA==
+        bh=7SEA738idDuSi478Lbw2bOUH3TBCDM7MyDWmIy0mofU=;
+        b=wKkJqoDTC2zlJR/tODkhqzPbL3BeBZ3imlruLM/8fAl/TlKV2sBlNMAB1H8HhSr1/7
+         3IbjKlgRCcNBHu+2ISPF+PppTVJUDVhCErP/tu6iQYPfnbC+vdGtLCwsUC4TH4R/dkDH
+         qk65Ra5G7Fo9eDHqzzbhQu98AZQOSt/KPW1SulbrgzJVAlFWgJ3RgN105zdX13nfZnn/
+         ptHPdb3CIqne1RxlYZHsCRQqAhrFVBaDgYEYViy54RhDaa4SjwzvQBioeU7DXS5fPmRY
+         XJUikn1KSfB5+a7Sf/oDpjtIK8VaHQZ06WY7h5CpQRYoOUKfr0eihmXf5zyRTWHXPCxc
+         JacA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Richter <tmricht@linux.vnet.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 063/109] cpufreq: Fix governor module removal race
-Date: Fri, 16 Mar 2018 16:23:32 +0100
-Message-Id: <20180316152333.395213939@linuxfoundation.org>
+Subject: [PATCH 4.14 072/109] perf annotate: Fix unnecessary memory allocation for s390x
+Date: Fri, 16 Mar 2018 16:23:41 +0100
+Message-Id: <20180316152333.904246358@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109259104693147?=
-X-GMAIL-MSGID: =?utf-8?q?1595109259104693147?=
+X-GMAIL-THRID: =?utf-8?q?1595109256388362279?=
+X-GMAIL-MSGID: =?utf-8?q?1595109256388362279?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,54 +54,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
 
-[ Upstream commit a8b149d32b663c1a4105273295184b78f53d33cf ]
+[ Upstream commit 36c263607d36c6a3788c09301d9f5fe35404048a ]
 
-It is possible to remove a cpufreq governor module after
-cpufreq_parse_governor() has returned success in
-store_scaling_governor() and before cpufreq_set_policy()
-acquires a reference to it, because the governor list is
-not protected during that period and nothing prevents the
-governor from being unregistered then.
+This patch fixes a bug introduced with commit d9f8dfa9baf9 ("perf
+annotate s390: Implement jump types for perf annotate").
 
-Prevent that from happening by acquiring an extra reference
-to the governor module temporarily in cpufreq_parse_governor(),
-under cpufreq_governor_mutex, and dropping it in
-store_scaling_governor(), when cpufreq_set_policy() returns.
+'perf annotate' displays annotated assembler output by reading output of
+command objdump and parsing the disassembled lines. For each shown
+mnemonic this function sequence is executed:
 
-Note that the second cpufreq_parse_governor() call site is fine,
-because it only cares about the policy member of new_policy.
+  disasm_line__new()
+  |
+  +--> disasm_line__init_ins()
+       |
+       +--> ins__find()
+            |
+            +--> arch->associate_instruction_ops()
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The s390x specific function assigned to function pointer
+associate_instruction_ops refers to function s390__associate_ins_ops().
+
+This function checks for supported mnemonics and assigns a NULL pointer
+to unsupported mnemonics.  However even the NULL pointer is added to the
+architecture dependend instruction array.
+
+This leads to an extremely large architecture instruction array
+(due to array resize logic in function arch__grow_instructions()).
+
+Depending on the objdump output being parsed the array can end up
+with several ten-thousand elements.
+
+This patch checks if a mnemonic is supported and only adds supported
+ones into the architecture instruction array. The array does not contain
+elements with NULL pointers anymore.
+
+Before the patch (With some debug printf output):
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxbb
+
+real	8m49.679s
+user	7m13.008s
+sys	0m1.649s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxbb | tail -1
+__ins__find sorted:1 nr_instructions:87433 ins:0x341583c0
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 87433.
+
+After the patch (With some printf debug output:)
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxaa
+
+real	1m24.553s
+user	0m0.587s
+sys	0m1.530s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxaa | tail -1
+__ins__find sorted:1 nr_instructions:56 ins:0x3f406570
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 56 which is sensible.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20171124094637.55558-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cpufreq.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/arch/s390/annotate/instructions.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -631,6 +631,8 @@ static int cpufreq_parse_governor(char *
- 			*governor = t;
- 			err = 0;
- 		}
-+		if (t && !try_module_get(t->owner))
-+			t = NULL;
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -16,7 +16,8 @@ static struct ins_ops *s390__associate_i
+ 	if (!strcmp(name, "br"))
+ 		ops = &ret_ops;
  
- 		mutex_unlock(&cpufreq_governor_mutex);
- 	}
-@@ -759,6 +761,10 @@ static ssize_t store_scaling_governor(st
- 		return -EINVAL;
- 
- 	ret = cpufreq_set_policy(policy, &new_policy);
-+
-+	if (new_policy.governor)
-+		module_put(new_policy.governor->owner);
-+
- 	return ret ? ret : count;
+-	arch__associate_ins_ops(arch, name, ops);
++	if (ops)
++		arch__associate_ins_ops(arch, name, ops);
+ 	return ops;
  }
  
