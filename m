@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753424AbeCPUVA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:21:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57125 "EHLO
+        id S1752437AbeCPUVb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:21:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57115 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752869AbeCPUSr (ORCPT
+        with ESMTP id S1752730AbeCPUSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:18:47 -0400
+        Fri, 16 Mar 2018 16:18:45 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: Joerg Roedel <joro@8bytes.org>
 Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 04/10] iommu/amd: split irq_lookup_table out of the amd_iommu_devtable_lock
-Date: Fri, 16 Mar 2018 21:18:30 +0100
-Message-Id: <20180316201836.7864-5-bigeasy@linutronix.de>
+        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH 01/10] iommu/amd: take into account that alloc_dev_data() may return NULL
+Date: Fri, 16 Mar 2018 21:18:27 +0100
+Message-Id: <20180316201836.7864-2-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316201836.7864-1-bigeasy@linutronix.de>
 References: <20180316201836.7864-1-bigeasy@linutronix.de>
@@ -23,53 +24,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function get_irq_table() reads/writes irq_lookup_table while holding
-the amd_iommu_devtable_lock. It also modifies
-amd_iommu_dev_table[].data[2].
-set_dte_entry() is using amd_iommu_dev_table[].data[0|1] (under the
-domain->lock) so it should be okay. The access to the iommu is
-serialized with its own (iommu's) lock.
+find_dev_data() does not check whether the return value alloc_dev_data()
+is NULL. This was okay once because the pointer was returned once as-is.
+Since commit df3f7a6e8e85 ("iommu/amd: Use is_attach_deferred
+call-back") the pointer may be used within find_dev_data() so a NULL
+check is required.
 
-So split out get_irq_table() out of amd_iommu_devtable_lock's lock. The
-new lock is a raw_spin_lock because modify_irte_ga() is called while
-desc->lock is held (which is raw).
-
+Cc: Baoquan He <bhe@redhat.com>
+Fixes: df3f7a6e8e85 ("iommu/amd: Use is_attach_deferred call-back")
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/iommu/amd_iommu.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/iommu/amd_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 692b2e3b9af1..5191319d9f0a 100644
+index 05f55903dbf6..b50dcb17c68f 100644
 --- a/drivers/iommu/amd_iommu.c
 +++ b/drivers/iommu/amd_iommu.c
-@@ -82,6 +82,7 @@
+@@ -310,6 +310,8 @@ static struct iommu_dev_data *find_dev_data(u16 devid)
 =20
- static DEFINE_RWLOCK(amd_iommu_devtable_lock);
- static DEFINE_SPINLOCK(pd_bitmap_lock);
-+static DEFINE_RAW_SPINLOCK(iommu_table_lock);
+ 	if (dev_data =3D=3D NULL) {
+ 		dev_data =3D alloc_dev_data(devid);
++		if (!dev_data)
++			return NULL;
 =20
- /* List of all available dev_data structures */
- static LLIST_HEAD(dev_data_list);
-@@ -3623,7 +3624,7 @@ static struct irq_remap_table *alloc_irq_table(u16 de=
-vid, bool ioapic)
- 	unsigned long flags;
- 	u16 alias;
-=20
--	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
-+	raw_spin_lock_irqsave(&iommu_table_lock, flags);
-=20
- 	iommu =3D amd_iommu_rlookup_table[devid];
- 	if (!iommu)
-@@ -3688,7 +3689,7 @@ static struct irq_remap_table *alloc_irq_table(u16 de=
-vid, bool ioapic)
- 	iommu_completion_wait(iommu);
-=20
- out_unlock:
--	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
-+	raw_spin_unlock_irqrestore(&iommu_table_lock, flags);
-=20
- 	return table;
- }
+ 		if (translation_pre_enabled(iommu))
+ 			dev_data->defer_attach =3D true;
 --=20
 2.16.2
