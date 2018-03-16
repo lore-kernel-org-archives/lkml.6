@@ -1,60 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753435AbeCPOuY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:50:24 -0400
-Received: from mail-io0-f180.google.com ([209.85.223.180]:44159 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753328AbeCPOuV (ORCPT
+        id S1753510AbeCPOvB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:51:01 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36155 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753484AbeCPOu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:50:21 -0400
-X-Google-Smtp-Source: AG47ELsAOTy5WeA/Qp1/yD18UPCjERh7zjLx0ckXjMRrjpD7J6a5JH+fhZ+3D918S/mgvc30UDRieJuv2bzWcfNXFnc=
+        Fri, 16 Mar 2018 10:50:56 -0400
+X-Google-Smtp-Source: AG47ELs20zY0OBqvUwybZLoFTz/9sZBgzc4Gsa/14itxu02qRRNMbJdgHGsJdsLkFfOfdvJY5X98OQ==
+Subject: Re: [PATCH v5 1/3] x86/msr: Add AMD Core Perf Extension MSRs
+To: Radim Krcmar <rkrcmar@redhat.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: kvm@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Len Brown <len.brown@intel.com>, Kyle Huey <me@kylehuey.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <cover.1517850302.git.Janakarajan.Natarajan@amd.com>
+ <7cf7bd5fa6d24cd46a9ea50024b0010bf3d01088.1517850303.git.Janakarajan.Natarajan@amd.com>
+ <20180306210338.GD12128@flask>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <150643f7-b464-0bd0-6ae8-6403b4d34700@redhat.com>
+Date: Fri, 16 Mar 2018 15:50:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180316141313.q5vjmj627rv7r7kf@lakrids.cambridge.arm.com>
-References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
- <20180316141313.q5vjmj627rv7r7kf@lakrids.cambridge.arm.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Fri, 16 Mar 2018 15:50:19 +0100
-Message-ID: <CAAeHK+ydD1TWpUkvFojwaP_F1B+UYtT_YW6G94JriXvZdu6zwQ@mail.gmail.com>
-Subject: Re: arm64 kvm built with clang doesn't boot
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        kernel-dynamic-tools <kernel-dynamic-tools@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180306210338.GD12128@flask>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 3:13 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> I think that patch is our best bet currently, but to save ourselves pain
-> in future it would be *really* nice if GCC and clang could provide an
-> option line -fno-absolute-addressing that would implicitly disable any
-> feature that would generate an absolute address as jump tables do.
->
+On 06/03/2018 22:03, Radim Krcmar wrote:
+>>  /* Fam 15h MSRs */
+>>  #define MSR_F15H_PERF_CTL		0xc0010200
+>> +#define MSR_F15H_PERF_CTL0		MSR_F15H_PERF_CTL
+>> +#define MSR_F15H_PERF_CTL1		(MSR_F15H_PERF_CTL + 2)
+>> +#define MSR_F15H_PERF_CTL2		(MSR_F15H_PERF_CTL + 4)
+>> +#define MSR_F15H_PERF_CTL3		(MSR_F15H_PERF_CTL + 6)
+>> +#define MSR_F15H_PERF_CTL4		(MSR_F15H_PERF_CTL + 8)
+>> +#define MSR_F15H_PERF_CTL5		(MSR_F15H_PERF_CTL + 10)
+>> +
+>>  #define MSR_F15H_PERF_CTR		0xc0010201
+>> +#define MSR_F15H_PERF_CTR0		MSR_F15H_PERF_CTR
+>> +#define MSR_F15H_PERF_CTR1		(MSR_F15H_PERF_CTR + 2)
+>> +#define MSR_F15H_PERF_CTR2		(MSR_F15H_PERF_CTR + 4)
+>> +#define MSR_F15H_PERF_CTR3		(MSR_F15H_PERF_CTR + 6)
+>> +#define MSR_F15H_PERF_CTR4		(MSR_F15H_PERF_CTR + 8)
+>> +#define MSR_F15H_PERF_CTR5		(MSR_F15H_PERF_CTR + 10)
+>> +
+> x86 maintainers,
+> 
+> are you ok with this going through the kvm tree?
 
-Let me know if you want me to mail that patch again.
+Boris, can you ack these new MSRs?
 
-Perhaps Nick can comment on whether something like
--fno-absolute-addressing would be feasible in clang. Although even if
-it gets implemented, it won't fix the already released clang versions.
+Thanks,
 
-> With v4.15 (and clang 5.0.0), I did not have to disable jump labels to
-> get a kernel booting on a Juno platform, though I did have to pass
-> -fno-jump-tables to the hyp code.
->
-> Which kernel version and clang version are you using?
-
-I've rechecked and I think I was wrong here. I disabled
-COFNIG_JUMP_LABEL while trying to get the kernel booting before I
-added the kvm flags. It seems it's not needed after all.
-
-But just for the reference, I'm using 4.16-rc4 with a patch to fix
-SMCCC issues that you mentioned. As for clang, I'm using LLVM revision
-325711 (a couple of weeks old).
+Paolo
