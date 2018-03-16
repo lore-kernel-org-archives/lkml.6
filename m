@@ -1,337 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754094AbeCPPYg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:24:36 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49339 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753018AbeCPPYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:24:33 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-Date: Fri, 16 Mar 2018 16:16:38 +0100
-Message-Id: <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S932391AbeCPPZV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:25:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932327AbeCPPZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 11:25:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370BD2177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 16 Mar 2018 11:25:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
+ blacklist
+Message-ID: <20180316112517.66bdd85a@gandalf.local.home>
+In-Reply-To: <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
+References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
+        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
+        <20170714142900.1c91949c@gandalf.local.home>
+        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-output converter.
+On Fri, 16 Mar 2018 11:18:25 -0400
+Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/gpu/drm/bridge/Kconfig        |   6 +
- drivers/gpu/drm/bridge/Makefile       |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
- 3 files changed, 262 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+> Hi Steven,
+> 
+> I completely forgot about this issue until recently when I encountered it again.
+> Instrumenting the ftrace_ops_assist_func symbol and some other symbol
+> seems to be causing problems.
+> 
+> Placing kretprobes like in the following configuration crashes my
+> kernel (4.16.0-rc5) on a Qemu/KVM virtual machine:
+> 
+> config 1:
+> echo "r:event_1 __fdget" >> kprobe_events
+> echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
+> 
+> config 2:
+> echo "r:event_1 __fdget_pos" >> kprobe_events
+> echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
+> 
+> config 3:
+> echo 'r:event_1 arch_dup_task_struct' >> kprobe_events
+> echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
+> 
+> config 4:
+> echo 'r:event_1 sys_open' >> kprobe_events
+> echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
+> 
+> Here is my kernel config [1]:
+> 
+> In a previous email [2], you mentioned that you would like to add the
+> ftrace-related symbols to a section to un-blacklist them all at once
+> on demand but wanted to discuss it at Linux Plumbers. Do you still
+> think that it's the right approach?
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 3b99d5a..5815a20 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -92,6 +92,12 @@ config DRM_SII9234
- 	  It is an I2C driver, that detects connection of MHL bridge
- 	  and starts encapsulation of HDMI signal.
- 
-+config DRM_THINE_THC63LVD1024
-+	tristate "Thine THC63LVD1024 LVDS decoder bridge"
-+	depends on OF
-+	---help---
-+	  Thine THC63LVD1024 LVDS/parallel converter driver.
-+
- config DRM_TOSHIBA_TC358767
- 	tristate "Toshiba TC358767 eDP bridge"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 373eb28..fd90b16 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
- obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
- obj-$(CONFIG_DRM_SII902X) += sii902x.o
- obj-$(CONFIG_DRM_SII9234) += sii9234.o
-+obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
- obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-new file mode 100644
-index 0000000..02a54c2
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-@@ -0,0 +1,255 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * THC63LVD1024 LVDS to parallel data DRM bridge driver.
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ */
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_graph.h>
-+#include <linux/regulator/consumer.h>
-+
-+enum {
-+	THC63_LVDS_IN0,
-+	THC63_LVDS_IN1,
-+	THC63_DIGITAL_OUT0,
-+	THC63_DIGITAL_OUT1,
-+};
-+
-+static const char * const thc63_reg_names[] = {
-+	"vcc", "lvcc", "pvcc", "cvcc",
-+};
-+
-+struct thc63_dev {
-+	struct device *dev;
-+
-+	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
-+
-+	struct gpio_desc *pdwn;
-+	struct gpio_desc *oe;
-+
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next;
-+};
-+
-+static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct thc63_dev, bridge);
-+}
-+
-+static int thc63_attach(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+
-+	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
-+}
-+
-+static void thc63_enable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	struct regulator *vcc;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		if (regulator_enable(vcc))
-+			goto error_vcc_enable;
-+	}
-+
-+	if (thc63->pdwn)
-+		gpiod_set_value(thc63->pdwn, 0);
-+
-+	if (thc63->oe)
-+		gpiod_set_value(thc63->oe, 1);
-+
-+	return;
-+
-+error_vcc_enable:
-+	dev_err(thc63->dev, "Failed to enable regulator %s\n",
-+		thc63_reg_names[i]);
-+
-+	for (i = i - 1; i >= 0; i--) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		regulator_disable(vcc);
-+	}
-+}
-+
-+static void thc63_disable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	struct regulator *vcc;
-+	int i;
-+
-+	if (thc63->oe)
-+		gpiod_set_value(thc63->oe, 0);
-+
-+	if (thc63->pdwn)
-+		gpiod_set_value(thc63->pdwn, 1);
-+
-+	for (i = ARRAY_SIZE(thc63->vccs) - 1; i >= 0; i--) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		if (regulator_disable(vcc))
-+			dev_dbg(thc63->dev,
-+				"Failed to disable regulator %s\n",
-+				thc63_reg_names[i]);
-+	}
-+}
-+
-+struct drm_bridge_funcs thc63_bridge_func = {
-+	.attach	= thc63_attach,
-+	.enable = thc63_enable,
-+	.disable = thc63_disable,
-+};
-+
-+static int thc63_parse_dt(struct thc63_dev *thc63)
-+{
-+	struct device_node *thc63_out;
-+	struct device_node *remote;
-+	int ret = 0;
-+
-+	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-+						  THC63_DIGITAL_OUT0, -1);
-+	if (!thc63_out) {
-+		dev_err(thc63->dev, "Missing endpoint in Port@%u\n",
-+			THC63_DIGITAL_OUT0);
-+		return -ENODEV;
-+	}
-+
-+	remote = of_graph_get_remote_port_parent(thc63_out);
-+	if (!remote) {
-+		dev_err(thc63->dev, "Endpoint in Port@%u unconnected\n",
-+			THC63_DIGITAL_OUT0);
-+		ret = -ENODEV;
-+		goto error_put_out_node;
-+	}
-+
-+	if (!of_device_is_available(remote)) {
-+		dev_err(thc63->dev, "Port@%u remote endpoint is disabled\n",
-+			THC63_DIGITAL_OUT0);
-+		ret = -ENODEV;
-+		goto error_put_remote_node;
-+	}
-+
-+	thc63->next = of_drm_find_bridge(remote);
-+	if (!thc63->next)
-+		ret = -EPROBE_DEFER;
-+
-+error_put_remote_node:
-+	of_node_put(remote);
-+error_put_out_node:
-+	of_node_put(thc63_out);
-+
-+	return ret;
-+}
-+
-+static int thc63_gpio_init(struct thc63_dev *thc63)
-+{
-+	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
-+	if (IS_ERR(thc63->oe)) {
-+		dev_err(thc63->dev, "Unable to get \"oe-gpios\"\n");
-+		return PTR_ERR(thc63->oe);
-+	}
-+
-+	thc63->pdwn = devm_gpiod_get_optional(thc63->dev, "pdwn",
-+					      GPIOD_OUT_HIGH);
-+	if (IS_ERR(thc63->pdwn)) {
-+		dev_err(thc63->dev, "Unable to get \"pdwn-gpios\"\n");
-+		return PTR_ERR(thc63->pdwn);
-+	}
-+
-+	return 0;
-+}
-+
-+static int thc63_regulator_init(struct thc63_dev *thc63)
-+{
-+	struct regulator **reg;
-+	int i;
-+
-+	reg = &thc63->vccs[0];
-+	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
-+		*reg = devm_regulator_get_optional(thc63->dev,
-+						   thc63_reg_names[i]);
-+		if (IS_ERR(*reg)) {
-+			if (PTR_ERR(*reg) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+			*reg = NULL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int thc63_probe(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63;
-+	int ret;
-+
-+	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
-+	if (!thc63)
-+		return -ENOMEM;
-+
-+	thc63->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, thc63);
-+
-+	ret = thc63_regulator_init(thc63);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc63_gpio_init(thc63);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc63_parse_dt(thc63);
-+	if (ret)
-+		return ret;
-+
-+	thc63->bridge.driver_private = thc63;
-+	thc63->bridge.of_node = pdev->dev.of_node;
-+	thc63->bridge.funcs = &thc63_bridge_func;
-+
-+	drm_bridge_add(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+static int thc63_remove(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id thc63_match[] = {
-+	{ .compatible = "thine,thc63lvd1024", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, thc63_match);
-+
-+static struct platform_driver thc63_driver = {
-+	.probe	= thc63_probe,
-+	.remove	= thc63_remove,
-+	.driver	= {
-+		.name		= "thc63lvd1024",
-+		.of_match_table	= thc63_match,
-+	},
-+};
-+module_platform_driver(thc63_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+We probably didn't discuss it (as there was a lot to discuss, and this
+was probably overshadowed by that). But yes, you should not probe
+ftrace called functions. That is guaranteed to crash and that crash is
+not a bug, but a feature.
+
+The ftrace and ring buffer files should be blacklisted from being
+probed. Perhaps the entire directory.
+
+Anyway, I don't see this as much of an urgent matter, as it's one of
+those "Patient: Doc, it hurts when I do this. Doc: Don't do that"
+cases. And there's a lot of urgent issues that currently need to be
+dealt with.
+
+-- Steve
+
+
+> 
+> I can easily test any patch regarding this issue.
+> 
+> [1] http://paste.ubuntu.com/p/BJWvgMnW8z/
+> [2] https://lkml.org/lkml/2017/7/14/568
+> 
+> Thank you,
+> 
+> 2017-07-14 14:29 GMT-04:00 Steven Rostedt <rostedt@goodmis.org>:
+> > On Fri, 14 Jul 2017 10:58:35 -0400
+> > Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
+> >  
+> >> This function is called when a kprobe is hit. Thus it should be
+> >> blacklisted to prevent kprobe to be triggered by kprobes.
+> >>
+> >> Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+> >> ---
+> >>  kernel/trace/ftrace.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> >> index b308be3..c473d9b 100644
+> >> --- a/kernel/trace/ftrace.c
+> >> +++ b/kernel/trace/ftrace.c
+> >> @@ -36,6 +36,7 @@
+> >>
+> >>  #include <trace/events/sched.h>
+> >>
+> >> +#include <asm/kprobes.h>
+> >>  #include <asm/sections.h>
+> >>  #include <asm/setup.h>
+> >>
+> >> @@ -5739,6 +5740,7 @@ static void ftrace_ops_assist_func(unsigned long ip, unsigned long parent_ip,
+> >>       preempt_enable_notrace();
+> >>       trace_clear_recursion(bit);
+> >>  }
+> >> +NOKPROBE_SYMBOL(ftrace_ops_assist_func);  
+> >
+> > Continuing from what I said in the other email, this is fixing a
+> > symptom and not the problem. The real fix will be much more involved. I
+> > have a good idea on how to accomplish it too.
+> >
+> > -- Steve
+> >
+> >  
+> >>
+> >>  /**
+> >>   * ftrace_ops_get_func - get the function a trampoline should call  
+> >  
+> 
+> 
+> 
