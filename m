@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753081AbeCPCyK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:54:10 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55526 "EHLO vern.gendns.com"
+        id S933269AbeCPCyz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:54:55 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55587 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933065AbeCPCyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:54:02 -0400
+        id S1753072AbeCPCyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:54:09 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 23/42] ARM: davinci: dm355: add new clock init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:39 -0500
-Message-Id: <1521168778-27236-24-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 28/42] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:44 -0500
+Message-Id: <1521168778-27236-29-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,207 +36,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new board-specific clock init in mach-davinci/dm355.c
+This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
 using the new common clock framework drivers.
 
 The #ifdefs are needed to prevent compile errors until the entire
 ARCH_DAVINCI is converted.
 
-Also clean up the #includes since we are adding some here.
+Also, the #includes are sorted since we are adding some here.
 
 Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v8 changes:
 - none
 
 v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
+- none
 
 v6 changes:
-- add blank lines between function calls
+- none
 
- arch/arm/mach-davinci/board-dm355-evm.c     |  2 +
- arch/arm/mach-davinci/board-dm355-leopard.c |  2 +
- arch/arm/mach-davinci/davinci.h             |  1 +
- arch/arm/mach-davinci/dm355.c               | 88 +++++++++++++++++++++++++----
- 4 files changed, 81 insertions(+), 12 deletions(-)
+ arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-index cb30637..ea03ddc 100644
---- a/arch/arm/mach-davinci/board-dm355-evm.c
-+++ b/arch/arm/mach-davinci/board-dm355-evm.c
-@@ -384,6 +384,8 @@ static __init void dm355_evm_init(void)
- 	struct clk *aemif;
- 	int ret;
- 
-+	dm355_register_clocks();
-+
- 	ret = dm355_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
-index 59743bd..09f8216 100644
---- a/arch/arm/mach-davinci/board-dm355-leopard.c
-+++ b/arch/arm/mach-davinci/board-dm355-leopard.c
-@@ -233,6 +233,8 @@ static __init void dm355_leopard_init(void)
- 	struct clk *aemif;
- 	int ret;
- 
-+	dm355_register_clocks();
-+
- 	ret = dm355_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 270cef8..6b6abf0a 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -84,6 +84,7 @@ int davinci_init_wdt(void);
- /* DM355 function declarations */
- void dm355_init(void);
- void dm355_init_time(void);
-+void dm355_register_clocks(void);
- void dm355_init_spi0(unsigned chipselect_mask,
- 		const struct spi_board_info *info, unsigned len);
- void dm355_init_asp1(u32 evt_enable);
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 0da7516..f53e07a 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -8,31 +8,34 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 78390c6..73de449 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -10,25 +10,30 @@
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
   */
 -#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
 -#include <linux/platform_device.h>
+-#include <linux/dma-contiguous.h>
+-#include <linux/serial_8250.h>
+ #include <linux/ahci_platform.h>
 +#include <linux/clk-provider.h>
- #include <linux/dma-mapping.h>
+ #include <linux/clk.h>
+-#include <linux/reboot.h>
++#include <linux/clkdev.h>
++#include <linux/dma-contiguous.h>
  #include <linux/dmaengine.h>
--#include <linux/spi/spi.h>
 +#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/spi-davinci.h>
 +#include <linux/platform_device.h>
++#include <linux/reboot.h>
 +#include <linux/serial_8250.h>
-+#include <linux/spi/spi.h>
  
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
--#include "psc.h"
--#include <mach/mux.h>
- #include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
 -#include <mach/time.h>
-+#include <mach/mux.h>
- #include <mach/serial.h>
--#include <mach/common.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/clock.h>
 +#include <mach/time.h>
- 
++
 +#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
+ #include "cpuidle.h"
+ #include "sram.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
 -#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
 +#endif
  
- #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
- #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
-@@ -43,6 +46,7 @@
-  */
- #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -382,7 +386,7 @@ static struct clk_lookup dm355_clks[] = {
- 	CLK(NULL, "usb", &usb_clk),
- 	CLK(NULL, NULL, NULL),
- };
--
-+#endif
- /*----------------------------------------------------------------------*/
- 
- static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
-@@ -1046,8 +1050,68 @@ void __init dm355_init(void)
- 
- void __init dm355_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm355_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm355_pll1_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL1_BASE,
-+		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm355_pll1_device = {
-+	.name		= "dm355-pll1",
-+	.id		= -1,
-+	.resource	= dm355_pll1_resources,
-+	.num_resources	= ARRAY_SIZE(dm355_pll1_resources),
-+};
-+
-+static struct resource dm355_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm355_pll2_device = {
-+	.name		= "dm355-pll2",
-+	.id		= -1,
-+	.resource	= dm355_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm355_pll2_resources),
-+};
-+
-+static struct resource dm355_psc_resources[] = {
-+	{
-+		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
-+		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm355_psc_device = {
-+	.name		= "dm355-psc",
-+	.id		= -1,
-+	.resource	= dm355_psc_resources,
-+	.num_resources	= ARRAY_SIZE(dm355_psc_resources),
-+};
-+
-+void __init dm355_register_clocks(void)
-+{
-+	platform_device_register(&dm355_pll1_device);
-+	platform_device_register(&dm355_pll2_device);
-+	platform_device_register(&dm355_psc_device);
+ #define DA8XX_TPCC_BASE			0x01c00000
+ #define DA8XX_TPTC0_BASE		0x01c08000
+@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
  }
  
- int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
++#ifndef CONFIG_COMMON_CLK
+ static struct clk sata_refclk = {
+ 	.name		= "sata_refclk",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
+ 
+ 	return 0;
+ }
++#else
++int __init da850_register_sata_refclk(int rate)
++{
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return clk_register_clkdev(clk, "refclk", "ahci_da850");
++}
++#endif
+ 
+ static struct resource da850_sata_resources[] = {
+ 	{
 -- 
 2.7.4
