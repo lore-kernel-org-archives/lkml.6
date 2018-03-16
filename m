@@ -1,86 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeCPQbM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:31:12 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45116 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752878AbeCPQbJ (ORCPT
+        id S1752943AbeCPQdf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:33:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43160 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752815AbeCPQd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:31:09 -0400
-X-Google-Smtp-Source: AG47ELtpjffRXNJCEFGjmpgS+ywnUu3WMzxprPmcquAfS+nLINByoFMa03Yz1JrOPKkLw0m4xCrSCw==
-Date: Fri, 16 Mar 2018 09:31:07 -0700
-From: Moritz Fischer <mdf@kernel.org>
-To: Paolo Pisati <p.pisati@gmail.com>
-Cc: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt: bindings: fpga: add lattice machxo2 slave spi
- binding description
-Message-ID: <20180316163107.67gaxcjksn76ztmn@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
-References: <1521215669-23874-1-git-send-email-p.pisati@gmail.com>
- <1521215669-23874-2-git-send-email-p.pisati@gmail.com>
+        Fri, 16 Mar 2018 12:33:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DDFC60F78
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [Intel-wired-lan] [PATCH v3 09/18] fm10k: Eliminate duplicate
+ barriers on weakly-ordered archs
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Netdev <netdev@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+ <1521216991-28706-10-git-send-email-okaya@codeaurora.org>
+ <CAKgT0UcKdCpzFgX4qn7EdYnedOsJa9as5g24tfb6qFLXTxZ29A@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <2d346b70-70d4-5996-24ce-94031ee68c90@codeaurora.org>
+Date: Fri, 16 Mar 2018 12:33:14 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521215669-23874-2-git-send-email-p.pisati@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAKgT0UcKdCpzFgX4qn7EdYnedOsJa9as5g24tfb6qFLXTxZ29A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 04:54:28PM +0100, Paolo Pisati wrote:
-> Add dt binding documentation details for Lattice MachXO2 FPGA configuration
-> over Slave SPI interface.
+On 3/16/2018 12:30 PM, Alexander Duyck wrote:
+> On Fri, Mar 16, 2018 at 9:16 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> Code includes wmb() followed by writel(). writel() already has a
+>> barrier on some architectures like arm64.
+>>
+>> This ends up CPU observing two barriers back to back before executing
+>> the register write.
+>>
+>> Since code already has an explicit barrier call, changing writel() to
+>> writel_relaxed().
+>>
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 > 
-> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  .../bindings/fpga/lattice-machxo2-spi.txt          | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
+> You can update the writel call in fm10k_tx_map as well.
 > 
-> diff --git a/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-> new file mode 100644
-> index 0000000..a8c362e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-> @@ -0,0 +1,29 @@
-> +Lattice MachXO2 Slave SPI FPGA Manager
-> +
-> +Lattice MachXO2 FPGAs support a method of loading the bitstream over
-> +'slave SPI' interface.
-Nit: a 'slave SPI'
-> +
-> +See 'MachXO2ProgrammingandConfigurationUsageGuide.pdf' on www.latticesemi.com
-> +
-> +Required properties:
-> +- compatible: should contain "lattice,machxo2-slave-spi"
-> +- reg: spi chip select of the FPGA
-> +
-> +Example for full FPGA configuration:
-> +
-> +	fpga-region0 {
-> +		compatible = "fpga-region";
-> +		fpga-mgr = <&fpga_mgr_spi>;
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x1>;
-> +	};
-> +
-> +	spi1: spi@2000 {
-> +        ...
-> +
-> +		fpga_mgr_spi: fpga-mgr@0 {
-> +			compatible = "lattice,machxo2-slave-spi";
-> +			spi-max-frequency = <8000000>;
-> +			reg = <0>;
-> +		};
-> +	};
-> -- 
-> 2.7.4
+> Of the drivers updated in drivers/net/ethernet/intel/* it looks like
+> this is the only one that still requires any additional changes.
+
+will do. thanks for the feedback.
+
+> 
+> Thanks.
+> 
+> - Alex
 > 
 
-Thanks,
 
-Moritz
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
