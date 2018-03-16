@@ -1,68 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeCPBG3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 21:06:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41744 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932649AbeCPBFI (ORCPT
+        id S1752881AbeCPBLu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 21:11:50 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:41816 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751497AbeCPBLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 21:05:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 275CB60BFA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: netdev@vger.kernel.org, timur@ocdeaurora.org, sulrich@ocdeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] igbvf: eliminate duplicate barriers on weakly-ordered archs
-Date: Thu, 15 Mar 2018 21:04:53 -0400
-Message-Id: <1521162296-19729-4-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521162296-19729-1-git-send-email-okaya@codeaurora.org>
-References: <1521162296-19729-1-git-send-email-okaya@codeaurora.org>
+        Thu, 15 Mar 2018 21:11:47 -0400
+X-Google-Smtp-Source: AG47ELsbHQpER/D/5wdOZMNeHaEZdbb48tWGqgl0yMJNA4gqtH/4rRkMb1xG/FJ6j7dmy8zNF4bTmxLS05p6NuYmdxk=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180314174442.lclslnqc3egfjg4c@armageddon.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+ <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+ <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
+ <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
+ <CAAeHK+y3hJ4jAByvfGDYyNb_RZ3_As4r-FCyZL9u69Vv_HS2AA@mail.gmail.com> <20180314174442.lclslnqc3egfjg4c@armageddon.cambridge.arm.com>
+From: Evgenii Stepanov <eugenis@google.com>
+Date: Thu, 15 Mar 2018 18:11:46 -0700
+Message-ID: <CAFKCwrgOY6YUZk4=y-a-H8-H8HpXoSwYmQr+wRwLafF-Ji=c6Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Jacob Bramley <Jacob.Bramley@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Lee Smith <Lee.Smith@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier
-on some architectures like arm64.
+On Wed, Mar 14, 2018 at 10:44 AM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+> On Wed, Mar 14, 2018 at 04:45:20PM +0100, Andrey Konovalov wrote:
+>> On Fri, Mar 9, 2018 at 6:42 PM, Evgenii Stepanov <eugenis@google.com> wrote:
+>> > On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>> >> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>> >>> I'm not yet convinced these functions need to allow tagged pointers.
+>> >>> They are not doing memory accesses but rather dealing with the memory
+>> >>> range, hence an untagged pointer is better suited. There is probably a
+>> >>> reason why the "start" argument is "unsigned long" vs "void __user *"
+>> >>> (in the kernel, not the man page).
+>> >>
+>> >> So that would make the user to untag pointers before passing to these syscalls.
+>> >>
+>> >> Evgeniy, would that be possible to untag pointers in HWASan before
+>> >> using memory subsystem syscalls? Is there a reason for untagging them
+>> >> in the kernel?
+>> >
+>> > Generally, no. It's possible to intercept a libc call using symbol
+>> > interposition, but I don't know how to rewrite arguments of a raw
+>> > system call other than through ptrace, and that creates more problems
+>> > than it solves.
+>
+> With these patches, we are trying to relax the user/kernel ABI so that
+> tagged pointers can be passed into the kernel. Since this is a new ABI
+> (or an extension to the existing one), it might be ok to change the libc
+> so that the top byte is zeroed on specific syscalls before issuing the
+> SVC.
+>
+> I agree that it is problematic for HWASan if it only relies on
+> overriding malloc/free.
+>
+>> > AFAIU, it's valid for a program to pass an address obtained from
+>> > malloc or, better, posix_memalign to an mm syscall like mprotect().
+>> > These arguments are pointers from the userspace point of view.
+>>
+>> Catalin, do you think this is a good reason to have the untagging done
+>> in the kernel?
+>
+> malloc() or posix_memalign() are C library implementations and it's the
+> C library (or overridden functions) setting a tag on the returned
+> pointers. Since the TBI hardware feature allows memory accesses with a
+> non-zero tag, we could allow them in the kernel for syscalls performing
+> such accesses on behalf of the user (e.g. get_user/put_user would not
+> need to clear the tag).
+>
+> madvise(), OTOH, does not perform a memory access on behalf of the user,
+> it's just advising the kernel about a range of virtual addresses. That's
+> where I think, from an ABI perspective, it doesn't make much sense to
+> allow tags into the kernel for these syscalls (even if it's simpler from
+> a user space perspective).
+>
+> (but I don't have a very strong opinion on this ;))
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
-
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/net/ethernet/intel/igbvf/netdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
-index 4214c15..edb1c34 100644
---- a/drivers/net/ethernet/intel/igbvf/netdev.c
-+++ b/drivers/net/ethernet/intel/igbvf/netdev.c
-@@ -251,7 +251,7 @@ static void igbvf_alloc_rx_buffers(struct igbvf_ring *rx_ring,
- 		 * such as IA-64).
- 		*/
- 		wmb();
--		writel(i, adapter->hw.hw_addr + rx_ring->tail);
-+		writel_relaxed(i, adapter->hw.hw_addr + rx_ring->tail);
- 	}
- }
- 
-@@ -2297,7 +2297,7 @@ static inline void igbvf_tx_queue_adv(struct igbvf_adapter *adapter,
- 
- 	tx_ring->buffer_info[first].next_to_watch = tx_desc;
- 	tx_ring->next_to_use = i;
--	writel(i, adapter->hw.hw_addr + tx_ring->tail);
-+	writel_relaxed(i, adapter->hw.hw_addr + tx_ring->tail);
- 	/* we need this if more than one processor can write to our tail
- 	 * at a time, it synchronizes IO on IA64/Altix systems
- 	 */
--- 
-2.7.4
+I don't have a strong opinion on this, either.
+Ideally, I would like tags to be fully transparent for user space
+code. MM syscalls used on a malloc/memalign address are not a very
+common pattern, so it might be OK to not allow tags there. But all
+such code will have to be changed with explicit knowledge of TBI.
