@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvBFUHN0f56765N3+Nsx1yPUnNsVN5Rr0tda5x1BdN3muhhASGEubBXket7s0Rvj5YqvVCG
-ARC-Seal: i=1; a=rsa-sha256; t=1521215019; cv=none;
+X-Google-Smtp-Source: AG47ELuM9Ipq1468kZQzWDj3xwIGTpeP+6tM8pJqSJAcXZOVF396GggcGgEg9eYacYFEFk0QV2sX
+ARC-Seal: i=1; a=rsa-sha256; t=1521215017; cv=none;
         d=google.com; s=arc-20160816;
-        b=qIM8eF8S6DZL02RqlzNXZhSfwDpnPvBlBPquUjb0OpmANjOk/mY/VLoHrQT5fdayjN
-         4KPn/QOu1GMJsxiMho2BXd1PPzsXIlM+2j35y/ZrlwHy8rG621MC+GjKhmPAH0QhjC6f
-         7GlCJ0+KcY/ykTBpvvTlz+NbXB+nqsKtp0Ys7o8zTpBkJbvSAYS9Lz/k4D4Bg7iL/dLw
-         JHYPo83Hehq8wuv9Mk1rCkfBTZLkiHmkeZzn62AkG3GYQ9I8vvpKDYJxE2l6xVMTMMTS
-         bW59GnHJxYwOa5XabRBSZ6icK1TM2mFnkpkSjjdanvuNn03I/QjH7GvurZrf4JJBACBB
-         35aA==
+        b=wb+ZaRV+q5IQx0mOY3TE7NvWRsqu3xWrUGO7rE+PgM7NdUAFJV8I+XKs7ODgK+L7Ly
+         LS8OfcMuH3ZOltXBUJ7R+7DuZzl84oonDNhtOXLXYG2fNobmq/XylrUM4+OSh93vjWQA
+         VpnCDK1/YhB4cBgvI8YEnDquDh2ObEPI8AZD5GAI7vOaVLmRq5SAWuLgaKhCguB/pUql
+         ZOOkmIlyAXeH4cFcKrCMzzXajB8fLrMn01LNk33UyMTqwWmNgSRiV9DITkTf4WFz8jiE
+         XFjI9J/6Jw4QmJDLfQ1r7y5ady53eKxZQWNIk+HP5dm91sEJUWNX+3O6B+EtvdU6hoKt
+         RH5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZV0NwuqYWQQ3BDmsxgRbyqTFjaHVTzDin/Nw/VTUc0U=;
-        b=TumjjlJoXsXKEKU8HZtzYFmyvb2iyysR82XSQZ9FtRyw+AEr5u4VVGY335AkLZjVMA
-         pSwldD2Mdncqjqy2JRIRg2Zig4apQSdq3SeC8boJ8QDKxX+dZ3dFoSJ3+TRueIFqHqHn
-         xPjl6/h5leYlbJ1nORDsSKmuRpR4rfq3vO+R4dM163hpfDvD2GrXDGBQ6xsLll1YK/ph
-         /1jCnbQ+jgCOyQ5zzOLEBm5epYQRsZd86c/iNQA6pF3WFWQ3M2WvknXCF6B5rDI80uUZ
-         AmuJEM6s0sMi/t5iPAj3/lLl1IxEbuziDaPZcz+mWaZOm+A3bH/6++3ie2ktWJ7busIm
-         ghvw==
+        bh=5+hzjfk3OWPjvJANd4HPmv5XnY+WjrPxfspbsMQ3eSQ=;
+        b=Y+cloOPAa3NM6sT9SeEj7FvIPXGdisaODDgo2QTNuN9K7oor6Ikli7sTPvyJxRb1v9
+         qq7UICPYdrX9K6TxuDuByTd3g483im1RIPipXT/zTrcH/8zjLlP5NJtR4dMsZApXZ+z7
+         /3J41UklU/TYDUWujmO4UVTt9kf3eIzGPRKubmBWQ9WVfcxzEIrOpRAkcitPUrXoxMjB
+         rRPWGwtH/WTiAEjUQ5XFTDhrbtnsu2QjP2t+U5TgviJGaRnxThjEaNIx2Bn5O5bFNKOJ
+         HkNRO7hX8Ev14avKq82Onm/AnHSBBNAmiA2I59Jm/M4QhaLo28i12VqnqYhjKq/srIx+
+         qaOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 099/128] scsi: core: scsi_get_device_flags_keyed(): Always return device flags
-Date: Fri, 16 Mar 2018 16:24:00 +0100
-Message-Id: <20180316152341.489161158@linuxfoundation.org>
+Subject: [PATCH 4.15 098/128] bnxt_en: Dont print "Link speed -1 no longer supported" messages.
+Date: Fri, 16 Mar 2018 16:23:59 +0100
+Message-Id: <20180316152341.435859136@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109192059346605?=
-X-GMAIL-MSGID: =?utf-8?q?1595109560723341673?=
+X-GMAIL-THRID: =?utf-8?q?1595109183231827266?=
+X-GMAIL-MSGID: =?utf-8?q?1595109557737733394?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,48 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
 
-[ Upstream commit a44c9d36509c83cf64f33b93f6ab2e63822c01eb ]
+[ Upstream commit a8168b6cee6e9334dfebb4b9108e8d73794f6088 ]
 
-Since scsi_get_device_flags_keyed() callers do not check whether or not
-the returned value is an error code, change that function such that it
-returns a flags value even if the 'key' argument is invalid.  Note:
-since commit 28a0bc4120d3 ("scsi: sd: Implement blacklist option for
-WRITE SAME w/ UNMAP") bit 31 is a valid device information flag so
-checking whether bit 31 is set in the return value is not sufficient to
-tell the difference between an error code and a flags value.
+On some dual port NICs, the 2 ports have to be configured with compatible
+link speeds.  Under some conditions, a port's configured speed may no
+longer be supported.  The firmware will send a message to the driver
+when this happens.
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Improve this logic that prints out the warning by only printing it if
+we can determine the link speed that is no longer supported.  If the
+speed is unknown or it is in autoneg mode, skip the warning message.
+
+Reported-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Tested-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_devinfo.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -590,17 +590,12 @@ blist_flags_t scsi_get_device_flags_keye
- 				int key)
- {
- 	struct scsi_dev_info_list *devinfo;
--	int err;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1706,12 +1706,16 @@ static int bnxt_async_event_process(stru
  
- 	devinfo = scsi_dev_info_list_find(vendor, model, key);
- 	if (!IS_ERR(devinfo))
- 		return devinfo->flags;
+ 		if (BNXT_VF(bp))
+ 			goto async_event_process_exit;
+-		if (data1 & 0x20000) {
++
++		/* print unsupported speed warning in forced speed mode only */
++		if (!(link_info->autoneg & BNXT_AUTONEG_SPEED) &&
++		    (data1 & 0x20000)) {
+ 			u16 fw_speed = link_info->force_link_speed;
+ 			u32 speed = bnxt_fw_to_ethtool_speed(fw_speed);
  
--	err = PTR_ERR(devinfo);
--	if (err != -ENOENT)
--		return err;
--
--	/* nothing found, return nothing */
-+	/* key or device not found: return nothing */
- 	if (key != SCSI_DEVINFO_GLOBAL)
- 		return 0;
- 
+-			netdev_warn(bp->dev, "Link speed %d no longer supported\n",
+-				    speed);
++			if (speed != SPEED_UNKNOWN)
++				netdev_warn(bp->dev, "Link speed %d no longer supported\n",
++					    speed);
+ 		}
+ 		set_bit(BNXT_LINK_SPEED_CHNG_SP_EVENT, &bp->sp_event);
+ 		/* fall thru */
