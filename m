@@ -1,111 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeCPArz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 20:47:55 -0400
-Received: from mga09.intel.com ([134.134.136.24]:33444 "EHLO mga09.intel.com"
+        id S1752924AbeCPAtq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 20:49:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932588AbeCPAry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 20:47:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
-   d="scan'208";a="211771404"
-Subject: Re: [PATCH dts/arm/aspeed-g5 v1] ARM: dts: aspeed-g5: Add IPMI KCS
- node
-To: joel@jms.id.au, andrew@aj.id.au
-References: <1520399090-2455-1-git-send-email-haiyue.wang@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <9231baaf-e77c-c517-bca2-083070a53342@linux.intel.com>
-Date: Fri, 16 Mar 2018 08:47:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752640AbeCPAto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 20:49:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA40821742
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Fri, 16 Mar 2018 08:48:45 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        Bai Ping <ping.bai@nxp.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: imx: fix imx6sll-only build
+Message-ID: <20180316004843.GM26859@dragon>
+References: <20180315151345.3089601-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <1520399090-2455-1-git-send-email-haiyue.wang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315151345.3089601-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joel and Andrew,
+On Thu, Mar 15, 2018 at 04:13:18PM +0100, Arnd Bergmann wrote:
+> When selecting SOC_IMX6SLL but not SOC_IMX6SL, we get a link error:
+> 
+> arch/arm/mach-imx/mach-imx6sl.o: In function `imx6sl_init_late':
+> mach-imx6sl.c:(.init.text+0x14): undefined reference to `imx6sl_cpuidle_init'
+> 
+> This adds the missing line to the Makefile to also build the cpuidle
+> support that we need here.
+> 
+> Fixes: dee5dee2a5b2 ("ARM: imx: Add basic msl support for imx6sll")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Have time to review this patch ? Hope for your comments. :-)
-
-BR,
-Haiyue
-
-On 2018-03-07 13:04, Haiyue Wang wrote:
-> The IPMI KCS device part of the LPC interface and is used for
-> communication with the host processor.
->
-> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> ---
->   arch/arm/boot/dts/aspeed-g5.dtsi | 43 +++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 42 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-> index 8eac57c..f443169 100644
-> --- a/arch/arm/boot/dts/aspeed-g5.dtsi
-> +++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-> @@ -267,8 +267,40 @@
->   				ranges = <0x0 0x1e789000 0x1000>;
->   
->   				lpc_bmc: lpc-bmc@0 {
-> -					compatible = "aspeed,ast2500-lpc-bmc";
-> +					compatible = "aspeed,ast2500-lpc-bmc", "simple-mfd", "syscon";
->   					reg = <0x0 0x80>;
-> +					reg-io-width = <4>;
-> +
-> +					#address-cells = <1>;
-> +					#size-cells = <1>;
-> +					ranges = <0x0 0x0 0x80>;
-> +
-> +					kcs1: kcs1@0 {
-> +						compatible = "aspeed,ast2500-kcs-bmc";
-> +						reg = <0x0 0x80>;
-> +						interrupts = <8>;
-> +						kcs_chan = <1>;
-> +						kcs_addr = <0x0>;
-> +						status = "disabled";
-> +					};
-> +
-> +					kcs2: kcs2@0 {
-> +						compatible = "aspeed,ast2500-kcs-bmc";
-> +						reg = <0x0 0x80>;
-> +						interrupts = <8>;
-> +						kcs_chan = <2>;
-> +						kcs_addr = <0x0>;
-> +						status = "disabled";
-> +					};
-> +
-> +					kcs3: kcs3@0 {
-> +						compatible = "aspeed,ast2500-kcs-bmc";
-> +						reg = <0x0 0x80>;
-> +						interrupts = <8>;
-> +						kcs_chan = <3>;
-> +						kcs_addr = <0x0>;
-> +						status = "disabled";
-> +					};
->   				};
->   
->   				lpc_host: lpc-host@80 {
-> @@ -294,6 +326,15 @@
->   						status = "disabled";
->   					};
->   
-> +					kcs4: kcs4@0 {
-> +						compatible = "aspeed,ast2500-kcs-bmc";
-> +						reg = <0x0 0xa0>;
-> +						interrupts = <8>;
-> +						kcs_chan = <4>;
-> +						kcs_addr = <0x0>;
-> +						status = "disabled";
-> +					};
-> +
->   					lhc: lhc@20 {
->   						compatible = "aspeed,ast2500-lhc";
->   						reg = <0x20 0x24 0x48 0x8>;
+Acked-by: Shawn Guo <shawnguo@kernel.org>
