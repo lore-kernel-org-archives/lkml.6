@@ -1,148 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933391AbeCPC7g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:59:36 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55380 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932984AbeCPCxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:53:39 -0400
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
-        David Lechner <david@lechnology.com>
-Subject: [PATCH v8 09/42] dt-bindings: clock: New bindings for TI Davinci PSC
-Date: Thu, 15 Mar 2018 21:52:25 -0500
-Message-Id: <1521168778-27236-10-git-send-email-david@lechnology.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1753072AbeCPC7r (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:59:47 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42926 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752404AbeCPC7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:59:45 -0400
+X-Google-Smtp-Source: AG47ELtl9WMM8p3hd7ipXWjPRuLPfeWt9WXKDu+kIhqqHu2vo0J24aaiz0ncvTam11BqhW4ilkgNoQ==
+From: Alexandru M Stan <amstan@chromium.org>
+To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sean Paul <seanpaul@chromium.org>
+Cc: devicetree@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>, briannorris@chromium.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, linux-rockchip@lists.infradead.org,
+        marcheu@chromium.org, hoegsberg@chromium.org,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Alexandru M Stan <amstan@chromium.org>,
+        Yakir Yang <kuankuan.y@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        zain wang <wzz@rock-chips.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 2/2] drm/bridge: analogix: Enable EDP_BACKLIGHT_FREQ_PWM_PIN_PASSTHRU
+Date: Thu, 15 Mar 2018 19:56:59 -0700
+Message-Id: <20180316025659.217423-3-amstan@chromium.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180316025659.217423-1-amstan@chromium.org>
+References: <20180316025659.217423-1-amstan@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new binding for the Power Sleep Controller (PSC) for the
-mach-davinci family of processors.
+Configure the DPCD registers for the backlight to respect the pwm frequency
+of the input. We sometimes don't want it to generate its own.
 
-Note: Although TI Keystone has a very similar PSC, we are not using the
-existing bindings. Keystone is using a legacy one-node-per-clock binding
-(actually two nodes if you count the separate reset binding for the same
-IP block). Also, some davinci LPSCs have quirks that aren't handled by
-the keystone bindings, so we would be adding one compatible string per
-clock with quirks instead of just a new compatible string for each
-controller.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
 ---
 
-v8 changes:
-- None
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 48 ++++++++++++++++++++++
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  1 +
+ 2 files changed, 49 insertions(+)
 
-v7 changes:
-- Fixed clock-names property typo
-- Added #power-domain-cells property
-
-v6 changes:
-- added clocks and clock-names properties
-- expanded examples
-
-
- .../devicetree/bindings/clock/ti/davinci/psc.txt   | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-new file mode 100644
-index 0000000..dae4ad8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-@@ -0,0 +1,71 @@
-+Binding for TI DaVinci Power Sleep Controller (PSC)
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 5c52307146c7..b830403be8eb 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -916,6 +916,46 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int analogix_dp_backlight_pwm_passthru(struct analogix_dp_device *dp)
++{
++	u8 value;
++	const u8 expected_cap = DP_EDP_BACKLIGHT_BRIGHTNESS_PWM_PIN_CAP |
++				DP_EDP_BACKLIGHT_FREQ_PWM_PIN_PASSTHRU_CAP;
++	int ret = 0;
 +
-+The PSC provides power management, clock gating and reset functionality. It is
-+primarily used for clocking.
++	ret = drm_dp_dpcd_readb(&dp->aux, DP_EDP_BACKLIGHT_ADJUSTMENT_CAP,
++				&value);
++	if (ret != 1) {
++		DRM_DEV_ERROR(dp->dev,
++			"backlight PWM passthru: Can't read BACKLIGHT_ADJUSTMENT_CAP\n");
++		return ret;
++	}
 +
-+Required properties:
-+- compatible: shall be one of:
-+	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
-+	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
-+- reg: physical base address and size of the controller's register area
-+- #clock-cells: from common clock binding; shall be set to 1
-+- #power-domain-cells: from generic power domain binding; shall be set to 1.
-+- clocks: phandles to clocks corresponding to the clock-names property
-+- clock-names: list of parent clock names - depends on compatible value
-+	- for "ti,da850-psc0", shall be "pll0_sysclk1", "pll0_sysclk2",
-+	  "pll0_sysclk4", "pll0_sysclk6", "async1"
-+	- for "ti,da850-psc1", shall be "pll0_sysclk2", "pll0_sysclk4", "async3"
++	if ((value & expected_cap) != expected_cap) {
++		DRM_DEV_ERROR(dp->dev,
++			"panel doesn't support backlight PWM passthru, BACKLIGHT_ADJUSTMENT_CAP=0x%02x\n",
++			value);
++		return -1;
++	}
 +
-+Optional properties:
-+- #reset-cells: from reset binding; shall be set to 1 - only applicable when
-+  at least one local domain provides a local reset.
++	ret = drm_dp_dpcd_readb(&dp->aux, DP_EDP_BACKLIGHT_MODE_SET_REGISTER,
++				&value);
++	if (ret != 1) {
++		DRM_DEV_ERROR(dp->dev,
++			"backlight PWM passthru: Can't read BACKLIGHT_MODE_SET_REGISTER\n");
++		return ret;
++	}
 +
-+Consumers:
++	value |= DP_EDP_BACKLIGHT_FREQ_PWM_PIN_PASSTHRU_ENABLE;
++	ret = drm_dp_dpcd_writeb(&dp->aux, DP_EDP_BACKLIGHT_MODE_SET_REGISTER,
++				 value);
++	if (ret != 1) {
++		DRM_DEV_ERROR(dp->dev,
++			"backlight PWM passthru: Can't write BACKLIGHT_MODE_SET_REGISTER\n");
++	}
++	return ret;
++}
 +
-+	Clock, power domain and reset consumers shall use the local power domain
-+	module ID (LPSC) as the index corresponding to the clock cell. Refer to
-+	the device-specific datasheet to find these numbers. NB: Most local
-+	domains	only provide a clock/power domain and not a reset.
+ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ {
+ 	int ret;
+@@ -954,6 +994,12 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
+ 	if (dp->psr_enable)
+ 		analogix_dp_enable_sink_psr(dp);
 +
-+Examples:
-+
-+	psc0: clock-controller@10000 {
-+		compatible = "ti,da850-psc0";
-+		reg = <0x10000 0x1000>;
-+		#clock-cells = <1>;
-+		#power-domain-cells = <1>;
-+		#reset-cells = <1>;
-+		clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
-+			 <&pll0_sysclk 4>, <&pll0_sysclk 6>, <&async1_clk>;
-+		clock_names = "pll0_sysclk1", "pll0_sysclk2",
-+			      "pll0_sysclk4", "pll0_sysclk6", "async1";
-+	};
-+	psc1: clock-controller@227000 {
-+		compatible = "ti,da850-psc1";
-+		reg = <0x227000 0x1000>;
-+		#clock-cells = <1>;
-+		#power-domain-cells = <1>;
-+		clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>, <&async3_clk>;
-+		clock_names = "pll0_sysclk2", "pll0_sysclk4", "async3";
-+	};
-+
-+	/* consumer */
-+	dsp: dsp@11800000 {
-+		compatible = "ti,da850-dsp";
-+		reg = <0x11800000 0x40000>,
-+		      <0x11e00000 0x8000>,
-+		      <0x11f00000 0x8000>,
-+		      <0x01c14044 0x4>,
-+		      <0x01c14174 0x8>;
-+		reg-names = "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig";
-+		interrupt-parent = <&intc>;
-+		interrupts = <28>;
-+		clocks = <&psc0 15>;
-+		power-domains = <&psc0 15>;
-+		resets = <&psc0 15>;
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+- Documentation/devicetree/bindings/power/power_domain.txt
-+- Documentation/devicetree/bindings/reset/reset.txt
++	if (dp->backlight_pwm_passthru) {
++		if (analogix_dp_backlight_pwm_passthru(dp) != 1)
++			DRM_DEV_ERROR(dp->dev,
++				 "Could not enable backlight pwm pin passthru.\n");
++	}
+ }
+ 
+ /*
+@@ -1424,6 +1470,8 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 	if (IS_ERR(dp->reg_base))
+ 		return ERR_CAST(dp->reg_base);
+ 
++	dp->backlight_pwm_passthru =
++	       of_property_read_bool(dev->of_node, "backlight-pwm-passthru");
+ 	dp->force_hpd = of_property_read_bool(dev->of_node, "force-hpd");
+ 
+ 	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index 6a96ef7e6934..aea51413e78e 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -171,6 +171,7 @@ struct analogix_dp_device {
+ 	struct phy		*phy;
+ 	int			dpms_mode;
+ 	int			hpd_gpio;
++	bool			backlight_pwm_passthru;
+ 	bool                    force_hpd;
+ 	bool			psr_enable;
+ 	bool			fast_train_support;
 -- 
-2.7.4
+2.13.5
