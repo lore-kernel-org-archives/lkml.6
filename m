@@ -1,81 +1,278 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeCPGjR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 02:39:17 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:38093 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750748AbeCPGjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 02:39:16 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37873194"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <sfr@canb.auug.org.au>
-CC: <tglx@linutronix.de>, <mingo@elte.hu>, <peterz@infradead.org>,
-        <jiangshanlai@gmail.com>, Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH] kernel/cpu: Move cpuhp_is_atomic_state() into #ifdef CONFIG_SMP
-Date: Fri, 16 Mar 2018 14:38:52 +0800
-Message-ID: <20180316063852.22701-1-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
+        id S1751746AbeCPGlP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 02:41:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41080 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750814AbeCPGlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 02:41:13 -0400
+Date: Fri, 16 Mar 2018 14:41:02 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
+Message-ID: <20180316064102.GA26732@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+ <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
+ <20180309152556.0ccf3cb1@ThinkPad>
+ <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
+ <20180315073422.GA1876@dhcp-128-65.nay.redhat.com>
+ <20180315111341.6faa90e8@ThinkPad>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: C829F486A799.A0549
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315111341.6faa90e8@ThinkPad>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
-removed the last use of cpuhp_is_atomic_state() in common case, that caused
-Kernel produced a warning:
+On 03/15/18 at 11:13am, Philipp Rudo wrote:
+> Hi Dave,
+> 
+> On Thu, 15 Mar 2018 15:34:22 +0800
+> Dave Young <dyoung@redhat.com> wrote:
+> 
+> > On 03/12/18 at 03:40pm, Dave Young wrote:
+> > > Hi Philipp,
+> > > On 03/09/18 at 03:25pm, Philipp Rudo wrote:  
+> > > > Hi Dave,
+> > > > 
+> > > > On Fri, 9 Mar 2018 13:19:40 +0800
+> > > > Dave Young <dyoung@redhat.com> wrote:
+> > > >   
+> > > > > Hi Philipp,
+> > > > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:  
+> > > > > > 
+> > > > > > Hi everybody
+> > > > > > 
+> > > > > > following the discussion with Dave and AKASHI, here are the common code
+> > > > > > patches extracted from my recent patch set (Add kexec_file_load support to
+> > > > > > s390) [1]. The patches were extracted to allow upstream integration together
+> > > > > > with AKASHI's common code patches before the arch code gets adjusted to the
+> > > > > > new base.
+> > > > > > 
+> > > > > > The reason for this series is to prepare common code for adding
+> > > > > > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
+> > > > > > field during purgatory load. In detail this series contains:
+> > > > > > 
+> > > > > > Patch #1&2: Minor cleanups/fixes.
+> > > > > > 
+> > > > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+> > > > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+> > > > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+> > > > > > depending on the section. With these patches the section address will be
+> > > > > > calculated verbosely and sh_offset will contain the offset of the section
+> > > > > > in the stripped purgatory binary (purgatory_buf).
+> > > > > > 
+> > > > > > Patch #10: Allows architectures to set the purgatory load address. This
+> > > > > > patch is important for s390 as the kernel and purgatory have to be loaded
+> > > > > > to fixed addresses. In current code this is impossible as the purgatory
+> > > > > > load is opaque to the architecture.
+> > > > > > 
+> > > > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
+> > > > > > directory to allow reuse in other architectures.
+> > > > > > 
+> > > > > > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
+> > > > > > requested changes only affected s390 code). Please note that I had to touch
+> > > > > > arch code for x86 and power a little. In theory this should not change the
+> > > > > > behavior but I don't have a way to test it. Cross-compiling with
+> > > > > > defconfig [2] works fine for both.
+> > > > > > 
+> > > > > > Thanks
+> > > > > > Philipp
+> > > > > > 
+> > > > > > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
+> > > > > > [2] On x86 with the orc unwinder and stack validation turned off. objtool
+> > > > > >     SEGFAULTs on s390...
+> > > > > > 
+> > > > > > Philipp Rudo (11):
+> > > > > >   kexec_file: Silence compile warnings
+> > > > > >   kexec_file: Remove checks in kexec_purgatory_load
+> > > > > >   kexec_file: Make purgatory_info->ehdr const
+> > > > > >   kexec_file: Search symbols in read-only kexec_purgatory
+> > > > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+> > > > > >   kexec_file: Split up __kexec_load_puragory
+> > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+> > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+> > > > > >   kexec_file: Remove mis-use of sh_offset field
+> > > > > >   kexec_file: Allow archs to set purgatory load address
+> > > > > >   kexec_file: Move purgatories sha256 to common code
+> > > > > > 
+> > > > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+> > > > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+> > > > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+> > > > > >  arch/x86/purgatory/Makefile                    |   3 +
+> > > > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
+> > > > > >  include/linux/kexec.h                          |  38 +--
+> > > > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+> > > > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
+> > > > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+> > > > > >  9 files changed, 244 insertions(+), 271 deletions(-)
+> > > > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> > > > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > > > > > 
+> > > > > > -- 
+> > > > > > 2.13.5
+> > > > > >     
+> > > > > 
+> > > > > I did a test on x86, but it failed:
+> > > > > [   15.636489] kexec: Undefined symbol: memcpy
+> > > > > [   15.636496] kexec-bzImage64: Loading purgatory failed
+> > > > > [   33.603356] kexec: Undefined symbol: memcpy
+> > > > > [   33.603362] kexec-bzImage64: Loading purgatory failed
+> > > > > 
+> > > > > I think this relates to the sha256 splitting patch.  
+> > > > 
+> > > > I looked into this a little closer and i think i understood what happens. 
+> > > > 
+> > > > There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
+> > > > in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
+> > > > switching to linux/string.h there is no more definition for it. Leaving us with
+> > > > 
+> > > > $ readelf -s purgatory.ro
+> > > > [...]
+> > > >  45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
+> > > > [...]
+> > > > 
+> > > > To solve this problem I see two possibilities (example patches are at the end of
+> > > > the mail):
+> > > > 
+> > > > 1) Have arch dependent includes in lib/sha256.c
+> > > > 2) Add makefile magic so memcpy is defined
+> > > > 
+> > > > With both solutions the resulting purgatory.ro looks good. However both
+> > > > solutions aren't perfect. For example in 2) i had too mix the linux/string.h
+> > > > header with arch/x86/boot/string.c, because lib/string.c has too many
+> > > > dependencies and does not compile in the purgatory. On the other hand having
+> > > > arch dependent includes isn't that nice either ...
+> > > > 
+> > > > What's your opinion on this?  
+> > > 
+> > > Looks like it is a mess, maybe the 1st one is better although it is also
+> > > ugly.  Ccing Ingo see if he has some idea about this.   
+> > 
+> > Maybe something like below is better if no other idea:
+> > 
+> > diff --git a/arch/x86/boot/string_builtin.c b/arch/x86/boot/string_builtin.c
+> > new file mode 100644
+> > index 000000000000..9099f949fb41
+> > --- /dev/null
+> > +++ b/arch/x86/boot/string_builtin.c
+> > @@ -0,0 +1,11 @@
+> > +#include <linux/types.h>
+> > +
+> > +void *memcpy(void *dst, const void *src, size_t len)
+> > +{
+> > +	return __builtin_memcpy(dst, src, len);
+> > +}
+> > +
+> > +void *memset(void *dst, int c, size_t len)
+> > +{
+> > +	return __builtin_memset(dst, c, len);
+> > +}
+> > diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
+> > index d886b1fa36f0..e12c78fcd59f 100644
+> > --- a/arch/x86/purgatory/string.c
+> > +++ b/arch/x86/purgatory/string.c
+> > @@ -11,3 +11,4 @@
+> >   */
+> > 
+> >  #include "../boot/string.c"
+> > +#include "../boot/string_builtin.c"
+> 
+> Looks like a good idea to me. Just to be sure, with this suggestion
+> lib/sha256.c stays unchanged, i.e. it includes linux/string.h?
 
-  'cpuhp_is_ap_state' defined but not used
+Yes, I assumed so, one thing is I noticed linux/string.h uses __kernel_size_t, but
+the boot/string.h use _size_t.
 
-So, Move it into #ifdef CONFIG_SMP
+> 
+> The only thing I don't really like is adding the extra boot/string.builtin.c
+> file. For my taste adding the two functions directly to purgatory/string.c would
+> be nicer. However in the end it's "not my problem".
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
- kernel/cpu.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+string.c is also included in boot/compressed/string.c which defines its
+own version of memcpy.  And in the boot/compressed/string.c version it
+calls warn() which is a special function for decompressor used only.
+I'm not sure how to merge them with one string.c now.
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index a1860d42aacf..db7ec7572348 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -126,15 +126,6 @@ struct cpuhp_step {
- static DEFINE_MUTEX(cpuhp_state_mutex);
- static struct cpuhp_step cpuhp_hp_states[];
- 
--static bool cpuhp_is_ap_state(enum cpuhp_state state)
--{
--	/*
--	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
--	 * purposes as that state is handled explicitly in cpu_down.
--	 */
--	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
--}
--
- static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
- {
- 	return cpuhp_hp_states + state;
-@@ -247,6 +238,15 @@ static inline void complete_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
- 	complete(done);
- }
- 
-+static bool cpuhp_is_ap_state(enum cpuhp_state state)
-+{
-+	/*
-+	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
-+	 * purposes as that state is handled explicitly in cpu_down.
-+	 */
-+	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
-+}
-+
- /*
-  * The former STARTING/DYING states, ran with IRQs disabled and must not fail.
-  */
--- 
-2.14.3
+> 
+> Thanks
+> Philipp
+> 
+> > >   
+> > > > 
+> > > > Thanks
+> > > > Philipp
+> > > > 
+> > > > -----
+> > > > Example solution 1
+> > > > 
+> > > > --- a/lib/sha256.c
+> > > > +++ b/lib/sha256.c
+> > > > @@ -17,9 +17,14 @@
+> > > >  
+> > > >  #include <linux/bitops.h>
+> > > >  #include <linux/sha256.h>
+> > > > -#include <linux/string.h>
+> > > >  #include <asm/byteorder.h>
+> > > >  
+> > > > +#ifdef CONFIG_X86
+> > > > +#include "../arch/x86/boot/string.h"
+> > > > +#else
+> > > > +#include <linux/string.h>
+> > > > +#endif /* CONFIG_X86 */
+> > > > +
+> > > >  static inline u32 Ch(u32 x, u32 y, u32 z)
+> > > >  {
+> > > >  	return z ^ (x & (y ^ z));
+> > > > 
+> > > > -----
+> > > > Example solution 2
+> > > > 
+> > > > --- a/arch/x86/purgatory/Makefile
+> > > > +++ b/arch/x86/purgatory/Makefile
+> > > > @@ -1,7 +1,8 @@
+> > > >  # SPDX-License-Identifier: GPL-2.0
+> > > >  OBJECT_FILES_NON_STANDARD := y
+> > > >  
+> > > > -purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string.o
+> > > > +purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o \
+> > > > +	string.o memcpy_$(BITS).o memset_$(BITS).o
+> > > >  
+> > > >  targets += $(purgatory-y)
+> > > >  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+> > > > @@ -9,6 +10,15 @@ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+> > > >  $(obj)/sha256.o: $(srctree)/lib/sha256.c
+> > > >  	$(call if_changed_rule,cc_o_c)
+> > > >  
+> > > > +$(obj)/string.o: $(srctree)/arch/x86/boot/string.c
+> > > > +	$(call if_changed_rule,cc_o_c)
+> > > > +
+> > > > +$(obj)/memset_$(BITS).o: $(srctree)/arch/x86/lib/memset_$(BITS).S
+> > > > +	$(call if_changed_rule,as_o_S)
+> > > > +
+> > > > +$(obj)/memcpy_$(BITS).o: $(srctree)/arch/x86/lib/memcpy_$(BITS).S
+> > > > +	$(call if_changed_rule,as_o_S)
+> > > > +
+> > > >  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+> > > >  targets += purgatory.ro
+> > > >  
+> > > >   
+> > > 
+> > > Thanks
+> > > Dave  
+> > 
+> 
+
+Thanks
+Dave
