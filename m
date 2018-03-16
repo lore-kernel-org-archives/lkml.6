@@ -1,110 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeCPRVu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:21:50 -0400
-Received: from muru.com ([72.249.23.125]:60726 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932101AbeCPRV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:21:26 -0400
-Date: Fri, 16 Mar 2018 10:21:21 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v6 0/5] Add coupled regulators mechanism
-Message-ID: <20180316172121.GT5799@atomide.com>
-References: <CGME20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e@eucas1p1.samsung.com>
- <1520598128-11768-1-git-send-email-m.purski@samsung.com>
- <20180309124234.GC5252@sirena.org.uk>
- <20180309155827.GS5799@atomide.com>
- <c6f43013-3d2e-afbc-9be8-2e07f58fda98@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6f43013-3d2e-afbc-9be8-2e07f58fda98@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S933420AbeCPRHB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:07:01 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:42926 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932399AbeCPRG5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:06:57 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 08/22] net: socket: add __sys_getsockname() helper; remove in-kernel call to syscall
+Date: Fri, 16 Mar 2018 18:06:00 +0100
+Message-Id: <20180316170614.5392-9-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Maciej Purski <m.purski@samsung.com> [180312 12:24]:
-> On 03/09/2018 04:58 PM, Tony Lindgren wrote:
-> > * Mark Brown <broonie@kernel.org> [180309 12:43]:
-> > > On Fri, Mar 09, 2018 at 01:22:02PM +0100, Maciej Purski wrote:
-> > > 
-> > > > I would like to kindly ask Fabio Estevam and Tony Lindgren to test the patch
-> > > > series on their boards.
-> > 
-> > I gave it a quick try and this set still causes at least mmc0
-> > to fail for me.
->
-> Thanks. Here's a small patch, which adds some debugs. Maybe they will reveal,
-> where the problem is.
+Using the net-internal helper __sys_getsockname() allows us to avoid the
+internal calls to the sys_getsockname() syscall.
 
-Sorry for the delay, now back from ELC. I tried applying this on
-top of Linux next + your six patches but it fails to apply. Do
-I need something else too?
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ include/linux/socket.h |  2 ++
+ net/compat.c           |  2 +-
+ net/socket.c           | 14 ++++++++++----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
-Regards,
-
-Tony
-
-
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index f1f11cf..0e80ba5 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -2280,7 +2280,6 @@ int regulator_enable(struct regulator *regulator)
->  {
->  	struct regulator_dev *rdev = regulator->rdev;
->  	int ret = 0;
-> -	int ret2;
-> 
->  	if (rdev->coupling_desc.n_resolved != rdev->coupling_desc.n_coupled) {
->  		rdev_err(rdev, "not all coupled regulators registered\n");
-> @@ -2298,15 +2297,9 @@ int regulator_enable(struct regulator *regulator)
-> 
->  	regulator_lock_dependent(rdev);
->  	ret = _regulator_enable(rdev);
-> -	ret2 = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
-> +	regulator_balance_voltage(rdev, PM_SUSPEND_ON);
->  	regulator_unlock_dependent(rdev);
-> 
-> -	if (ret2 != 0) {
-> -		rdev_err(rdev,
-> -			"balancing failed when trying to enable regulator: %d",
-> -			ret2);
-> -	}
-> -
->  	if (ret != 0 && rdev->supply)
->  		regulator_disable(rdev->supply);
-> 
-> @@ -3149,7 +3142,7 @@ static int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
->  		ret = regulator_set_voltage_unlocked(rdev->supply,
->  				best_supply_uV, INT_MAX, state);
->  		if (ret)
-> -			dev_err(&rdev->dev, "Failed to decrease supply voltage: %d\n",
-> +			dev_warn(&rdev->dev, "Failed to decrease supply voltage: %d\n",
->  					ret);
->  		/* No need to fail here */
->  		ret = 0;
-> @@ -3332,11 +3325,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
->  		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
->  						 best_uV, state);
-> 
-> -		if (ret < 0) {
-> -			rdev_err(rdev,
-> -				"Failed to set voltage with error: %d", ret);
-> +		if (ret < 0)
->  			goto out;
-> -		}
->  	}
-> 
->  out:
-> 
-> 
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 7e37af25509d..ef0226a61b03 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -368,5 +368,7 @@ extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
+ extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
+ 			 int addrlen);
+ extern int __sys_listen(int fd, int backlog);
++extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
++			     int __user *usockaddr_len);
+ 
+ #endif /* _LINUX_SOCKET_H */
+diff --git a/net/compat.c b/net/compat.c
+index c80cb973f383..efd28d02608c 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -826,7 +826,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
+ 		break;
+ 	case SYS_GETSOCKNAME:
+-		ret = sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]));
++		ret = __sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]));
+ 		break;
+ 	case SYS_GETPEERNAME:
+ 		ret = sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
+diff --git a/net/socket.c b/net/socket.c
+index 67d9d70a4734..b61e0d20f37b 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1675,8 +1675,8 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
+  *	name to user space.
+  */
+ 
+-SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
+-		int __user *, usockaddr_len)
++int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
++		      int __user *usockaddr_len)
+ {
+ 	struct socket *sock;
+ 	struct sockaddr_storage address;
+@@ -1701,6 +1701,12 @@ SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
++		int __user *, usockaddr_len)
++{
++	return __sys_getsockname(fd, usockaddr, usockaddr_len);
++}
++
+ /*
+  *	Get the remote address ('name') of a socket object. Move the obtained
+  *	name to user space.
+@@ -2500,8 +2506,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		break;
+ 	case SYS_GETSOCKNAME:
+ 		err =
+-		    sys_getsockname(a0, (struct sockaddr __user *)a1,
+-				    (int __user *)a[2]);
++		    __sys_getsockname(a0, (struct sockaddr __user *)a1,
++				      (int __user *)a[2]);
+ 		break;
+ 	case SYS_GETPEERNAME:
+ 		err =
+-- 
+2.16.2
