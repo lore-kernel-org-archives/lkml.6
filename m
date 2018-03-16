@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuBrfZjdtslohuKr/NxMu0cfI7ZXAwOxgvkLNz+EzlYnyh1vnQhq9ga+oZFBxyYFfB2K7jc
-ARC-Seal: i=1; a=rsa-sha256; t=1521214348; cv=none;
+X-Google-Smtp-Source: AG47ELvpLbptjExqjxJhnqwlnliSQ5bLgGgISmwr/KgsPXLvPPbGsinoI+wz2CUBlH/ADBRPNLbd
+ARC-Seal: i=1; a=rsa-sha256; t=1521214345; cv=none;
         d=google.com; s=arc-20160816;
-        b=WC0Bvddo0DKcdw/HiLgPsp5EOymszzhNT/7qGJXRx8u0SeHyip83V7cVuJ5a2fU2cI
-         /PmR9qykiRcntPGOJc7fXEwstrk767xxjwG4EMGxjbvrHdo40lLODfPNf3oh73CXuO57
-         YwxghNLCqOGWFMTk6hjuYGdzsKU9dVvc9S0he2n4ZZt8WUH1A07KhdSRSF81mLZGzHgf
-         /29bJGmZwqM0NDjEkZkAWHmrLcP7teqSI1MvzMno79OUYJYYoEB2yW3TMCG9MDOdNQXh
-         eFHO1OGci3vda6RQpAegl69zf8C4tMxGopWiVcjJ3B5OvzsdKJ/ReuGvB6ZxofHvtagj
-         EsYw==
+        b=cQwkwp0gN/gFoM565lp0xJptPRYpLXShKEe+aqN+5QxMXmj21B785ake1zPrhYXz1x
+         PnhWvoVdXPh73n6QuDMjcQfSgsaavMYdcrBFeDHAIMrZYm55nfZLMBRf5lroB7uXvu9U
+         UCSFnCQOksNgmlB5ACgByH/0X3vwqXMJRmVw8qBSAoefHTlajU0wXi4EGvvwMtQP3aUv
+         r8+X7z1Wtr7X41WM0lrVhOgCldDbtGvHh9AbwTg38AasyjYvB246OrPl1owyb7XUKyb2
+         Mfz7wN5p4iFeHPAay0NoqcaNHqMY4xZvPHHKb1kGJke1qzFfIN81uxffElEUoEJERIKC
+         XNlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X7ApD6Lph2yKUs3bFhby+teuTrG1pRTP58dAsXJXNbE=;
-        b=Kw8tV9Tt41oxhYmbgL6Tu8+UFV1VwAxpUGe03L3lUwO8Jfox8Vg8Z+v2G4kXGXgR1l
-         Zj6agz0BDbTvJ1mKEynZ+A8z6SyxQ5a/Myc0Z78mJvyPhQ0ldk67hw+CFPdHK6q5jklB
-         1wS+EaV0B8DWjQ+aXT/jSfyt58cjLk0frnK1z21+WJ7kgEfVYaGFgVm0t/Xphl76iV57
-         iFVG4Vl3EqG8KSx1FKwnZZsHPBH/Pi+YIjbc9C0LhI+S8ZPbDv8RvyQ5RRSBROAk/sgk
-         FOfaEMGjQgPci0Ca0O+rV+UTkEIAULnGY9AkERtO16qo+fWXLoRHQOg4fGfW4jL4u2MZ
-         uYTQ==
+        bh=9CMWIK+F5zug8tdnf5ReBmXoIvGA3yioeFykeLzIHGU=;
+        b=ItUK8wsJ2s6CDYVjWYFqdPXE2nPmWHg8tnME/K4eFKshoEJip54kv52BXqAjObfBg3
+         4nnLv0K0lEWCDeyg59hNFjyK9Mf96ikww423xSG5eoeDUyYzohVA7DMR+I5XAcJHGODt
+         eu7goVl7lj6sLA+UZWitfMQ546zyj8YyOP53DOFm2ywNnFD7QGUvNUu36h3LTo7Arr9c
+         BInuAKkdiI8wXqZXY1o2GajzJssy5QRr/BrCoFML4iU25Thou1GPoLYTtGgTvgOMK/Ug
+         H85F4vzogK62VYeUpdFljpJNFJP5Ot3D1QEAQ2a9g8kbuiWye4pli5NjXeWFX9YFFkL+
+         PHnw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	arjan.van.de.ven@intel.com,
-	bp@alien8.de,
-	dave.hansen@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 45/86] x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
-Date: Fri, 16 Mar 2018 16:23:08 +0100
-Message-Id: <20180316152320.495213037@linuxfoundation.org>
+	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 62/86] netfilter: x_tables: pass xt_counters struct to counter allocator
+Date: Fri, 16 Mar 2018 16:23:25 +0100
+Message-Id: <20180316152321.581568157@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -51,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108857207652737?=
-X-GMAIL-MSGID: =?utf-8?q?1595108857207652737?=
+X-GMAIL-THRID: =?utf-8?q?1595108670870923583?=
+X-GMAIL-MSGID: =?utf-8?q?1595108854123041881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,71 +50,146 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit d72f4e29e6d84b7ec02ae93088aa459ac70e733b upstream.
+commit f28e15bacedd444608e25421c72eb2cf4527c9ca upstream.
 
-firmware_restrict_branch_speculation_*() recently started using
-preempt_enable()/disable(), but those are relatively high level
-primitives and cause build failures on some 32-bit builds.
+Keeps some noise away from a followup patch.
 
-Since we want to keep <asm/nospec-branch.h> low level, convert
-them to macros to avoid header hell...
-
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/nospec-branch.h |   26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ include/linux/netfilter/x_tables.h |   27 +--------------------------
+ net/ipv4/netfilter/arp_tables.c    |    5 +----
+ net/ipv4/netfilter/ip_tables.c     |    5 +----
+ net/ipv6/netfilter/ip6_tables.c    |    5 +----
+ net/netfilter/x_tables.c           |   30 ++++++++++++++++++++++++++++++
+ 5 files changed, 34 insertions(+), 38 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -257,20 +257,22 @@ static inline void indirect_branch_predi
- /*
-  * With retpoline, we must use IBRS to restrict branch prediction
-  * before calling into firmware.
+--- a/include/linux/netfilter/x_tables.h
++++ b/include/linux/netfilter/x_tables.h
+@@ -376,32 +376,7 @@ static inline unsigned long ifname_compa
+ }
+ 
+ 
+-/* On SMP, ip(6)t_entry->counters.pcnt holds address of the
+- * real (percpu) counter.  On !SMP, its just the packet count,
+- * so nothing needs to be done there.
+- *
+- * xt_percpu_counter_alloc returns the address of the percpu
+- * counter, or 0 on !SMP. We force an alignment of 16 bytes
+- * so that bytes/packets share a common cache line.
+- *
+- * Hence caller must use IS_ERR_VALUE to check for error, this
+- * allows us to return 0 for single core systems without forcing
+- * callers to deal with SMP vs. NONSMP issues.
+- */
+-static inline unsigned long xt_percpu_counter_alloc(void)
+-{
+-	if (nr_cpu_ids > 1) {
+-		void __percpu *res = __alloc_percpu(sizeof(struct xt_counters),
+-						    sizeof(struct xt_counters));
+-
+-		if (res == NULL)
+-			return -ENOMEM;
+-
+-		return (__force unsigned long) res;
+-	}
+-
+-	return 0;
+-}
++bool xt_percpu_counter_alloc(struct xt_counters *counters);
+ void xt_percpu_counter_free(struct xt_counters *cnt);
+ 
+ static inline struct xt_counters *
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -423,13 +423,10 @@ find_check_entry(struct arpt_entry *e, c
+ {
+ 	struct xt_entry_target *t;
+ 	struct xt_target *target;
+-	unsigned long pcnt;
+ 	int ret;
+ 
+-	pcnt = xt_percpu_counter_alloc();
+-	if (IS_ERR_VALUE(pcnt))
++	if (!xt_percpu_counter_alloc(&e->counters))
+ 		return -ENOMEM;
+-	e->counters.pcnt = pcnt;
+ 
+ 	t = arpt_get_target(e);
+ 	target = xt_request_find_target(NFPROTO_ARP, t->u.user.name,
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -548,12 +548,9 @@ find_check_entry(struct ipt_entry *e, st
+ 	unsigned int j;
+ 	struct xt_mtchk_param mtpar;
+ 	struct xt_entry_match *ematch;
+-	unsigned long pcnt;
+ 
+-	pcnt = xt_percpu_counter_alloc();
+-	if (IS_ERR_VALUE(pcnt))
++	if (!xt_percpu_counter_alloc(&e->counters))
+ 		return -ENOMEM;
+-	e->counters.pcnt = pcnt;
+ 
+ 	j = 0;
+ 	mtpar.net	= net;
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -578,12 +578,9 @@ find_check_entry(struct ip6t_entry *e, s
+ 	unsigned int j;
+ 	struct xt_mtchk_param mtpar;
+ 	struct xt_entry_match *ematch;
+-	unsigned long pcnt;
+ 
+-	pcnt = xt_percpu_counter_alloc();
+-	if (IS_ERR_VALUE(pcnt))
++	if (!xt_percpu_counter_alloc(&e->counters))
+ 		return -ENOMEM;
+-	e->counters.pcnt = pcnt;
+ 
+ 	j = 0;
+ 	mtpar.net	= net;
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1619,6 +1619,36 @@ void xt_proto_fini(struct net *net, u_in
+ }
+ EXPORT_SYMBOL_GPL(xt_proto_fini);
+ 
++/**
++ * xt_percpu_counter_alloc - allocate x_tables rule counter
 + *
-+ * (Implemented as CPP macros due to header hell.)
-  */
--static inline void firmware_restrict_branch_speculation_start(void)
--{
--	preempt_disable();
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
--			      X86_FEATURE_USE_IBRS_FW);
--}
-+#define firmware_restrict_branch_speculation_start()			\
-+do {									\
-+	preempt_disable();						\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
-+			      X86_FEATURE_USE_IBRS_FW);			\
-+} while (0)
- 
--static inline void firmware_restrict_branch_speculation_end(void)
--{
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
--			      X86_FEATURE_USE_IBRS_FW);
--	preempt_enable();
--}
-+#define firmware_restrict_branch_speculation_end()			\
-+do {									\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
-+			      X86_FEATURE_USE_IBRS_FW);			\
-+	preempt_enable();						\
-+} while (0)
- 
- #endif /* __ASSEMBLY__ */
- 
++ * @counter: pointer to counter struct inside the ip(6)/arpt_entry struct
++ *
++ * On SMP, the packet counter [ ip(6)t_entry->counters.pcnt ] will then
++ * contain the address of the real (percpu) counter.
++ *
++ * Rule evaluation needs to use xt_get_this_cpu_counter() helper
++ * to fetch the real percpu counter.
++ *
++ * returns false on error.
++ */
++bool xt_percpu_counter_alloc(struct xt_counters *counter)
++{
++	void __percpu *res;
++
++	if (nr_cpu_ids <= 1)
++		return true;
++
++	res = __alloc_percpu(sizeof(struct xt_counters),
++			     sizeof(struct xt_counters));
++	if (!res)
++		return false;
++
++	counter->pcnt = (__force unsigned long)res;
++	return true;
++}
++EXPORT_SYMBOL_GPL(xt_percpu_counter_alloc);
++
+ void xt_percpu_counter_free(struct xt_counters *counters)
+ {
+ 	unsigned long pcnt = counters->pcnt;
