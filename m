@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv2BlrNAQXVlGRMAOEl6sIyu0UpmeNEtrKdu7sUrT4X1SNkwFMl09xzvpEb1dof3SV3zpr0
-ARC-Seal: i=1; a=rsa-sha256; t=1521214774; cv=none;
+X-Google-Smtp-Source: AG47ELsEes4AZZau6ux/XO7uU6ptDAyiYqphaRpdlbH4FaVvzmz5vPT3xduQ+Gg7SjwJ/4y6lYxu
+ARC-Seal: i=1; a=rsa-sha256; t=1521214772; cv=none;
         d=google.com; s=arc-20160816;
-        b=gDRGxANczh611ReY3SyK/oEuYO+CFRnUxQtYvSMEx51jWulBJeDIokW1itE8b1BQvB
-         bkxG9L1hNx+fAKRt8SNzQloGQdjqZCMSoDSsS9kXH6WT0DyPTYMC40qWIj+Za+ErnyfT
-         p0EvcJ+OVO6xjsGkBgAjkgFVJykIjlPFcg+bxXHe1wd5o5v/xPE+mZUjDBnwtEN2HwlB
-         0cv5M7mEL5kQE0tNGV7Oq+EwJdkPnMCJzhThr3fzxTmj64rIhKM1KVjcXZiiqjXmbFM7
-         cicRessQ5IIAevVtPbvo23Y9XZOsAOhvzWuYFrzzvBVjdNiMQIScOFrqc8mBsKomFzFW
-         +lzA==
+        b=tEVpQ1FJcYGKNxV9FPC8ix9eyFFtNk/cAt1cwWRrjvpfFmR+gz7qnnRmz5mBKBoOg8
+         Z8I2Ad6mU/41ac3BVMidalpdMrMXHSZhV1OBXm9IY9ju/vPInXMOX0yg+So6TOx2jQ1Q
+         dDyP+lxOivhdqy8wYB+tEcoH9vuZSCeehU+20y4c4HGyLnARPEIPzPGmROI3CM2Bdlns
+         95m3OIOA/EWPbcYnJQfTxrFLoXf9FWsQ+KSR85tGS/hyQUahdjZd0JY9E9A0agvn+HvO
+         2L6EFVGHkRvg/nYWRUu+xak2FzODw1uelFNYRjxPh2Sese+MlNNwgUJcSFSjFnyg0nFP
+         8niw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KdxdUt5yJSQU5STBcsKGLSb2KRg4e7wKMPZC+v1zgGQ=;
-        b=rzGJXnUgkB5UXqrKBZ0ydKyZiUqIzeFWovzLyybZqIZtSWJbUmwaUTmqi7hl8sI2qM
-         SB0IXbLXiaAu72w9TtIqLg7TF/I7tVX1DdO9XXd2XJIbaJbOi96Mi/e9Vkobgei6CYa8
-         GyhXW4vJOLdKxf+CKcaMOa2bdDtBx6PPsVFuYNu+C2lIOg/eaAxF/KUZcxlsEJGzI7Ko
-         10hiklXA3ePrAraXIm9mUN5/FZGlDIgvUbMXF2CjrWb3lPgbDTqj42dReQGpIXvsapok
-         pze1boSLZj33WnmPcL42y75tOwauubIEXtfusUTKLC3BCTAczUXYJOFoRpuGjxlpYAh2
-         bfIg==
+        bh=L84Y1r64jX6icNJpi02WBkf0q8fNPb2a6awXT/Vto74=;
+        b=XkNmBcIxQiCyVrxR7kITkD0WdylDsRTSlDSPWZulHX2X0Na7s90QgKS/UyUmbeVnwB
+         r56MVA0yB+x02QeBdKO1dyXm+pVDpggCoa8AhxCwHM7BZeGj/aAKbZPHzYi8029SqS+g
+         fWkAqLJZIawLmjCDVUErzFA79c4B/+elH1ywJbyHcXuQDlCpAWHpA16/iS88kuz8pzds
+         CoAq6+lxIIDXCu7OAt83GzIaGKvNTVLjs2Th4sQr5ttPzlkL5I/Y3sGPv06WRrhDueKR
+         hzErXJr4fqe5fSPF1mfeE9CUejqSLRm81N6m/4AHVtw6xmd18mAgQ4fVM+ffHnsmpfyg
+         oP3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Teijo Kinnunen <teijo.kinnunen@code-q.fi>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.15 015/128] USB: storage: Add JMicron bridge 152d:2567 to unusual_devs.h
-Date: Fri, 16 Mar 2018 16:22:36 +0100
-Message-Id: <20180316152337.144888382@linuxfoundation.org>
+	"David.butterfield" <david.butterfield@wdc.com>,
+	Damien Le Moal <damien.lemoal@wdc.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 014/128] scsi: sd_zbc: Fix potential memory leak
+Date: Fri, 16 Mar 2018 16:22:35 +0100
+Message-Id: <20180316152337.075974962@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108644866552778?=
-X-GMAIL-MSGID: =?utf-8?q?1595109303799528716?=
+X-GMAIL-THRID: =?utf-8?q?1595109300677505902?=
+X-GMAIL-MSGID: =?utf-8?q?1595109300677505902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +51,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit 5126a504b63d82785eaece3a9c30c660b313785a upstream.
+commit 4b433924b2755a94f99258c178684a0e05c344de upstream.
 
-This USB-SATA controller seems to be similar with JMicron bridge
-152d:2566 already on the list. Adding it here fixes "Invalid
-field in cdb" errors.
+Rework sd_zbc_check_zone_size() to avoid a memory leak due to an early
+return if sd_zbc_report_zones() fails.
 
-Signed-off-by: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+Reported-by: David.butterfield <david.butterfield@wdc.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Cc: stable@vger.kernel.org
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/unusual_devs.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/scsi/sd_zbc.c |   35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2124,6 +2124,13 @@ UNUSUAL_DEV(  0x152d, 0x2566, 0x0114, 0x
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_BROKEN_FUA ),
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -486,7 +486,7 @@ static int sd_zbc_check_capacity(struct
+  */
+ static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ {
+-	u64 zone_blocks;
++	u64 zone_blocks = 0;
+ 	sector_t block = 0;
+ 	unsigned char *buf;
+ 	unsigned char *rec;
+@@ -504,10 +504,8 @@ static int sd_zbc_check_zone_size(struct
  
-+/* Reported by Teijo Kinnunen <teijo.kinnunen@code-q.fi> */
-+UNUSUAL_DEV(  0x152d, 0x2567, 0x0117, 0x0117,
-+		"JMicron",
-+		"USB to ATA/ATAPI Bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BROKEN_FUA ),
-+
- /* Reported-by George Cherian <george.cherian@cavium.com> */
- UNUSUAL_DEV(0x152d, 0x9561, 0x0000, 0x9999,
- 		"JMicron",
+ 	/* Do a report zone to get the same field */
+ 	ret = sd_zbc_report_zones(sdkp, buf, SD_ZBC_BUF_SIZE, 0);
+-	if (ret) {
+-		zone_blocks = 0;
+-		goto out;
+-	}
++	if (ret)
++		goto out_free;
+ 
+ 	same = buf[4] & 0x0f;
+ 	if (same > 0) {
+@@ -547,7 +545,7 @@ static int sd_zbc_check_zone_size(struct
+ 			ret = sd_zbc_report_zones(sdkp, buf,
+ 						  SD_ZBC_BUF_SIZE, block);
+ 			if (ret)
+-				return ret;
++				goto out_free;
+ 		}
+ 
+ 	} while (block < sdkp->capacity);
+@@ -555,35 +553,32 @@ static int sd_zbc_check_zone_size(struct
+ 	zone_blocks = sdkp->zone_blocks;
+ 
+ out:
+-	kfree(buf);
+-
+ 	if (!zone_blocks) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Devices with non constant zone "
+ 				  "size are not supported\n");
+-		return -ENODEV;
+-	}
+-
+-	if (!is_power_of_2(zone_blocks)) {
++		ret = -ENODEV;
++	} else if (!is_power_of_2(zone_blocks)) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Devices with non power of 2 zone "
+ 				  "size are not supported\n");
+-		return -ENODEV;
+-	}
+-
+-	if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
++		ret = -ENODEV;
++	} else if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Zone size too large\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++	} else {
++		sdkp->zone_blocks = zone_blocks;
++		sdkp->zone_shift = ilog2(zone_blocks);
+ 	}
+ 
+-	sdkp->zone_blocks = zone_blocks;
+-	sdkp->zone_shift = ilog2(zone_blocks);
++out_free:
++	kfree(buf);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int sd_zbc_setup(struct scsi_disk *sdkp)
