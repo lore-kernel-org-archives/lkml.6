@@ -1,69 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753378AbeCPPUi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:20:38 -0400
-Received: from vern.gendns.com ([206.190.152.46]:57229 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753340AbeCPPUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:20:36 -0400
-Subject: Re: [PATCH] ARM: davinci: DA8XX: fix oops in USB PHY driver due to
- stack allocated platform platform_data
-To: Sekhar Nori <nsekhar@ti.com>, linux-arm-kernel@lists.infradead.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org
-References: <1521136976-32730-1-git-send-email-david@lechnology.com>
- <382a269a-f486-8c1a-23b2-9620a01a073c@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c8ece16e-7335-f99e-8602-5f0be6897a1d@lechnology.com>
-Date: Fri, 16 Mar 2018 10:20:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753622AbeCPPV6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:21:58 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:54401 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753236AbeCPPV4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 11:21:56 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+Date: Fri, 16 Mar 2018 16:16:37 +0100
+Message-Id: <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <382a269a-f486-8c1a-23b2-9620a01a073c@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/16/2018 05:17 AM, Sekhar Nori wrote:
-> On Thursday 15 March 2018 11:32 PM, David Lechner wrote:
->> This fixes a possible kernel oops due to using stack allocated platform
->> data for the USB PHY driver on DA8XX devices. If the platform device
->> probe is deferred, then we get a corrupt pointer for the platform data.
->>
->> We now use a global static struct for the platform data so that the
->> platform data pointer does not get written over.
->>
->> Tested on OMAP-L138 LCDK board using legacy board file.
-> 
-> Oops. That should have been caught in review.
-> 
->>
->> Fixes: 9b504750923cb ("ARM: davinci: da8xx: Add USB PHY platform device")
-> 
-> The offending commit seems to be bdec5a6b5789 ("ARM: da8xx: use platform
-> data for CFGCHIP syscon regmap") in my tree which should be in
-> linux-next. I don't think we have this issue in mainline. Right?
+Document Thine THC63LVD1024 LVDS decoder device tree bindings.
 
-You are right. I'm not sure how I got that older commit. The issue is not
-in mainline yet.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 ++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
 
-> 
->> Signed-off-by: David Lechner <david@lechnology.com>
-> 
-> Thanks,
-> Sekhar
-> 
+diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+new file mode 100644
+index 0000000..8225c6a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+@@ -0,0 +1,66 @@
++Thine Electronics THC63LVD1024 LVDS decoder
++-------------------------------------------
++
++The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
++to parallel data outputs. The chip supports single/dual input/output modes,
++handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
++
++Single or dual operation modes, output data mapping and DDR output modes are
++configured through input signals and the chip does not expose any control bus.
++
++Required properties:
++- compatible: Shall be "thine,thc63lvd1024"
++
++Optional properties:
++- vcc-supply: Power supply for TTL output and digital circuitry
++- cvcc-supply: Power supply for TTL CLOCKOUT signal
++- lvcc-supply: Power supply for LVDS inputs
++- pvcc-supply: Power supply for PLL circuitry
++- pdwn-gpios: Power down GPIO signal. Active low
++- oe-gpios: Output enable GPIO signal. Active high
++
++The THC63LVD1024 video port connections are modeled according
++to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
++
++Required video port nodes:
++- Port@0: First LVDS input port
++- Port@2: First digital CMOS/TTL parallel output
++
++Optional video port nodes:
++- Port@1: Second LVDS input port
++- Port@3: Second digital CMOS/TTL parallel output
++
++Example:
++--------
++
++	thc63lvd1024: lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++
++		vcc-supply = <&reg_lvds_vcc>;
++		lvcc-supply = <&reg_lvds_lvcc>;
++
++		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				lvds_dec_in_0: endpoint {
++					remote-endpoint = <&lvds_out>;
++				};
++			};
++
++			port@2{
++				reg = <2>;
++
++				lvds_dec_out_2: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++
++			};
++
++		};
++	};
+-- 
+2.7.4
