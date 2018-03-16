@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuRjLynDaPE4xctTOBr+E+KDiHd1bySPlNI155COtafBWxxmqdvUAPKVzmmp5DyBcGNR0pj
-ARC-Seal: i=1; a=rsa-sha256; t=1521215085; cv=none;
+X-Google-Smtp-Source: AG47ELtghbk8Hw3ha80hsKoQS9Chhyz4oT5FcT4JzmSHJZ45k6jfGaeEo26u1scYtKgrvLhRHwyc
+ARC-Seal: i=1; a=rsa-sha256; t=1521215082; cv=none;
         d=google.com; s=arc-20160816;
-        b=cWZ/HsLtBQY/lPjqTLkDaSbeo27il9mriVoU3Wy0tKFgdUAksBx8NV1tsiVxl0NlyD
-         kcs4pI/NlAiZmy+X4kjtBtc5vOnuEdgfXx+o9URWTgW4rjkkYrmpsSrPivnJ7NplNctq
-         X5U1BGQ9r1OXyZM326RLKt8bmwZstXD1EGFvME0I7jsyaYY7WMsMOqGFSrG/Jhby7cBC
-         2TYqxo0W+zpvOWOrSWgePf/1USek5aqHGULiy60tD8KF/yV10Hi99YC+KozfjEvtc0SF
-         XTTpbsXAFu90GQzjJlGF4XBSbECa38OLsBlr/vyOn8rnmFBjmEeyVsLxD6i2I5vXE84q
-         0xfw==
+        b=WLAS075B5WKy0oKXsXbGLMB/kDtwkEcT4cBi3EwTjMKXI3Y614/l8JQiPyBnum/yfE
+         OmhrST+DMWrqT6Y0ouVkgHSZynTIPc8Xp+QSXAe5mBZw5d53YbTilwTGNCU2ooJSvBOk
+         8Pl7dR842TKOr1Fy4JJgBni60b+MJWnEB+1VwgrMc80AwNeRR+37l0hxgMmM7a/5w9tp
+         YNs2LwOsi99ZcM3G/oTfc43xjKTZy+UKpmc5dH/xZUjtHZmu8P5+TqD8YtqLRDcDWzzL
+         TC5a+GC0NRfDljD4pB9OOMs+u/k+IttL9kfWXt/BG27lJD9MHs2kQXNqvYCyIXq+6dw5
+         J3+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=syFgWdKGeStMahP8DTHF2hNMTy4rvb5Pl9GxH3GDYRk=;
-        b=cLaBjQrObrOeDkLEYYQHXrfE7lb6nf2Rq4b3yoiJ6JXFvhFbrufNIxmhDkEwT3lanz
-         hO+8QN+sQWco13JSJlB0kHcGHTIu9toMs1msgHO5FCwIJahurxKDZc3Btsm6ubAygBem
-         W//dgIIwIzexDffkWGboFHUEcYEA96VWerycK378a83n4Wz2FZuTowq0FtJ5lRO2m+Vx
-         OLuQDZJIYguydeo+ZBHEu5P0QdPSBtYqJVMiRZ0Pj5nD+geThI0exSLNLv6CD6Jlp8uw
-         eziOBWJQ2zegKKtMtrgUYFmKEXwPLZWDR8ndVicErioCtakM7p/QJ5ciCpE1tz6OGoAa
-         nxug==
+        bh=krizd8V4gWSxAhx4q0OGrizbtycx97prRk3N6E99zIQ=;
+        b=jOSKScGKT5oijFBzqQ3W6aPxZTcrfCg0CgmOI51ObfXucGoTkObW2DCTYqBsGq8/SE
+         cSYeCB3IKg3oM2u3RR/c1mI7jHYllJAWraGE19MjNx8phDsSjAlO6mz7fS1Mo4pXyYl6
+         H1vqRKtY5as7H9D1BhSsKCEWNQGb5mgsc5R50kEXVVJZUDJtPQnIxnZEskpEB0JROWyt
+         +d58KmU9iI705RFWMXbhfdL2DccNb+aFzjXyjWA1rrak0RMZbZvnUxJ6KIOSe4UFWFK+
+         GHNeR5K03ihM958FM+6haa57I96d1gXu8VpPXL0jnpkDmMOrTRS2UIdZqksIbRpXrdys
+         /kNA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-	Mika Kuoppala <mika.kuoppala@intel.com>,
-	drm-intel-fixes@lists.freedesktop.org,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 115/128] agp/intel: Flush all chipset writes after updating the GGTT
-Date: Fri, 16 Mar 2018 16:24:16 +0100
-Message-Id: <20180316152342.225086171@linuxfoundation.org>
+Subject: [PATCH 4.15 076/128] cpufreq: Fix governor module removal race
+Date: Fri, 16 Mar 2018 16:23:37 +0100
+Message-Id: <20180316152340.471679903@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109222877537471?=
-X-GMAIL-MSGID: =?utf-8?q?1595109629182417549?=
+X-GMAIL-THRID: =?utf-8?q?1595109259104693147?=
+X-GMAIL-MSGID: =?utf-8?q?1595109626470997005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,44 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
 
-[ Upstream commit 8516673a996870ea0ceb337ee4f83c33c5ec3111 ]
+[ Upstream commit a8b149d32b663c1a4105273295184b78f53d33cf ]
 
-Before accessing the GGTT we must flush the PTE writes and make them
-visible to the chipset, or else the indirect access may end up in the
-wrong page. In commit 3497971a71d8 ("agp/intel: Flush chipset writes
-after updating a single PTE"), we noticed corruption of the uploads for
-pwrite and for capturing GPU error states, but it was presumed that the
-explicit calls to intel_gtt_chipset_flush() were sufficient for the
-execbuffer path. However, we have not been flushing the chipset between
-the PTE writes and access via the GTT itself.
+It is possible to remove a cpufreq governor module after
+cpufreq_parse_governor() has returned success in
+store_scaling_governor() and before cpufreq_set_policy()
+acquires a reference to it, because the governor list is
+not protected during that period and nothing prevents the
+governor from being unregistered then.
 
-For simplicity, do the flush after any PTE update rather than try and
-batch the flushes on a just-in-time basis.
+Prevent that from happening by acquiring an extra reference
+to the governor module temporarily in cpufreq_parse_governor(),
+under cpufreq_governor_mutex, and dropping it in
+store_scaling_governor(), when cpufreq_set_policy() returns.
 
-References: 3497971a71d8 ("agp/intel: Flush chipset writes after updating a single PTE")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Mika Kuoppala <mika.kuoppala@intel.com>
-Cc: drm-intel-fixes@lists.freedesktop.org
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171208214616.30147-1-chris@chris-wilson.co.uk
+Note that the second cpufreq_parse_governor() call site is fine,
+because it only cares about the policy member of new_policy.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/agp/intel-gtt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cpufreq/cpufreq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/char/agp/intel-gtt.c
-+++ b/drivers/char/agp/intel-gtt.c
-@@ -872,6 +872,8 @@ void intel_gtt_insert_sg_entries(struct
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -637,6 +637,8 @@ static int cpufreq_parse_governor(char *
+ 			*governor = t;
+ 			err = 0;
  		}
++		if (t && !try_module_get(t->owner))
++			t = NULL;
+ 
+ 		mutex_unlock(&cpufreq_governor_mutex);
  	}
- 	wmb();
-+	if (intel_private.driver->chipset_flush)
-+		intel_private.driver->chipset_flush();
+@@ -765,6 +767,10 @@ static ssize_t store_scaling_governor(st
+ 		return -EINVAL;
+ 
+ 	ret = cpufreq_set_policy(policy, &new_policy);
++
++	if (new_policy.governor)
++		module_put(new_policy.governor->owner);
++
+ 	return ret ? ret : count;
  }
- EXPORT_SYMBOL(intel_gtt_insert_sg_entries);
  
