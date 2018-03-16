@@ -1,64 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753378AbeCPK36 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:29:58 -0400
-Received: from ozlabs.org ([103.22.144.67]:50153 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753318AbeCPK35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:29:57 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>,
-        Josh Sklar <sklar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>, "Paul Mackerras" <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Use common error handling code in setup_new_fdt()
-In-Reply-To: <1521126196.22221.10.camel@perches.com>
-References: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net> <87fu52jqtc.fsf@morokweng.localdomain> <20180315115753.rjejlkrp3fhdxbyk@mwanda> <1521126196.22221.10.camel@perches.com>
-Date: Fri, 16 Mar 2018 21:29:53 +1100
-Message-ID: <878tasfh3y.fsf@concordia.ellerman.id.au>
+        id S1753201AbeCPKby (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:31:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38526 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752733AbeCPKbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:31:52 -0400
+Date: Fri, 16 Mar 2018 11:31:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: tglx@linutronix.de, Dmitry.Prohorov@intel.com,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        jolsa@redhat.com, torvalds@linux-foundation.org, mingo@kernel.org,
+        vincent.weaver@maine.edu, kan.liang@intel.com, eranian@google.com,
+        davidcc@google.com, valery.cherepennikov@intel.com,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [PATCH] perf: Fix sibling iteration
+Message-ID: <20180316103129.GC4064@hirez.programming.kicks-ass.net>
+References: <tip-8343aae66167df6708128a778e750d48dbe31302@git.kernel.org>
+ <20180315170129.GX4043@hirez.programming.kicks-ass.net>
+ <0be54adb-a7be-cd2f-dfcb-4166dfe432ea@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0be54adb-a7be-cd2f-dfcb-4166dfe432ea@linux.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joe Perches <joe@perches.com> writes:
-> On Thu, 2018-03-15 at 14:57 +0300, Dan Carpenter wrote:
->> On Wed, Mar 14, 2018 at 06:22:07PM -0300, Thiago Jung Bauermann wrote:
->> > SF Markus Elfring <elfring@users.sourceforge.net> writes:
->> > > From: Markus Elfring <elfring@users.sourceforge.net>
->> > > Date: Sun, 11 Mar 2018 09:03:42 +0100
->> > > 
->> > > Add a jump target so that a bit of exception handling can be better reused
->> > > at the end of this function.
->> > > 
->> > > This issue was detected by using the Coccinelle software.
->> > > 
->> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> > > ---
->> > >  arch/powerpc/kernel/machine_kexec_file_64.c | 28 ++++++++++++----------------
->> > >  1 file changed, 12 insertions(+), 16 deletions(-)
->> > 
->> > I liked it. Thanks!
->> > 
->> > Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
->> 
->> You know that compilers already re-use string constants so this doesn't
->> actually save memory?
->
-> And modern compilers create their own jump labels
-> so this doesn't change object code either?
+On Fri, Mar 16, 2018 at 12:59:34PM +0300, Alexey Budankov wrote:
+> Hi,
+> On 15.03.2018 20:01, Peter Zijlstra wrote:
+> > Subject: perf: Fix sibling iteration
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > Date: Thu Mar 15 17:36:56 CET 2018
+> > 
+> > Mark noticed that the change to sibling_list changed some iteration
+> > semantics; because previously we used group_list as list entry,
+> > sibling events would always have an empty sibling_list.
+> > 
+> > But because we now use sibling_list for both list head and list entry,
+> > siblings will report as having siblings.
+> > 
+> > Fix this with a custom for_each_sibling_event() iterator.
+> > 
+> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > Fixes: 8343aae66167 ("perf/core: Remove perf_event::group_entry")
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> 
+> Applied to tip repo and run testing on Fedora 27/x86_64 (client skylake 8 cores):
 
-I must have missed the memo about us only changing source code if it
-results in better object code.
-
-cheers
+There is at least one more known issue with that patch, but neither Mark
+nor me could reproduce so far, so we don't know if we're right about the
+cause.
