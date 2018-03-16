@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuQMHfVz3qcZF71Pb07QYjyuXX/b+xj4s6JaOkkhcPjd9MNqqAIha1IEdcilusLcL1vzr/4
-ARC-Seal: i=1; a=rsa-sha256; t=1521214454; cv=none;
+X-Google-Smtp-Source: AG47ELsYlIj4giEvbElwS4P0fWVCNC2kBwqqbuD5mjGTvUwpHtR4rU271yuLF0SmNr1llba7clED
+ARC-Seal: i=1; a=rsa-sha256; t=1521214451; cv=none;
         d=google.com; s=arc-20160816;
-        b=h/oyGr60ZCowV7xb7Vk17BOQs5tfKZXh749+lWtFDfZFYOkQ7ifD7kJd3Anu1oWAm9
-         /NDYlu2mCZV2Ih8QBDJM+IE4AiunEQWlCDF55TBVy2p0vBSkMkQ/yb/LrmT3UZpKFZkb
-         Ivcr18PsmM9qqAbIHHzUonR0zuOD44jzzWhWSj5mGwECAdmQ591Rayfm0/wZX+J0u7wB
-         m96l2ukfZfmsLYjpyQNpCsk9221k6bv87XklByfThTCZQPfHSOXulJpiNoLdGBs3sFlD
-         W5/iLy5gXDtnTGiIZJYnsZYa1V18q4fBn35g8D88Bxs3hNx8idR1Y31/VOp32vAzeO3P
-         DJOA==
+        b=TlYtIKF6e/KB6rYBbXsVHwFNE3kXjuw6R/27EMD7B25q3mmnc49qssdkuSZLcGJIJ5
+         j2edcDHXLD8jrbZesN8ObyD51T1zP4vMeyLbCazE96iNj63QuW8g4VByN2fbEeoodEJ1
+         VFGxD1vdl6L9ovJL22iXeU9kj6O9kfAI2aLwmmtfOurugUtafVS6eztaszy42onc7dlR
+         zUTtEkBq/5z8QntM2WMjQcGh3wQeQf7IvnoxKaMsNkcuDDPT4m2yzNCHz3XT9GYmwl03
+         NBwPApfRk8hac1mlggkUchKkL832ui2/a9t6FoJ4yUYH2TM4bY/c6JZc0VvYxmVRdcvD
+         +R1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NIHdpCuGGhg6fKIOK1579xl2zD0hC61i02LMS7LSa4w=;
-        b=A7Se8mTOIPqerxFifhhsyJv6NeaFEDxM+ELfZ2TBKJx9VGFj9zs57ierxENGDSY4ZX
-         2GF9KSBnm7lgOAy6HDcCsCai93tvGt32dpafXprYE4SDkPgot42/dg7n+epH5ck1oNcI
-         HpBvnyPXzw04bVcZ30KrpAW8vGnaNS6VswQSRoH9HJdhOiHLS8xPF3VioJd6GwfC5PEE
-         dpMUZ0dBRbSE7YXnme3yV5dUSc6u7Ur+FmzXA3ouSmGEIBSLmI6gsZpqLLcCQ0162uyt
-         FSxY9+fYPY4daUDQUNBq2lypB/0sNyt6HDlMiYDnxdPBNxm39Nsalk3rHVdBzmLWAxZM
-         EsKw==
+        bh=gTG+ss9j6fHZN1nM43YDcXfAfvp3ph4fopCgS8qxDUQ=;
+        b=sJJmecRMcFy9pjQmFtbJiJvCGM/ye2TYYfoBD5vRfA+ynFla4wkDe6le57bOjiJTFy
+         boKU7MJ3qsCf7l85oG5dJmpHD9YR2/panrnk4XqQeNRIBSEAFp8hcVHP+313E+TwdDU2
+         YQtHfbFPV1M0SpzFddizBamcgyuVFaU9xFDYt/ouOR4dVOcTU+gp8GQV6JzYr50wK0Es
+         E7uefGSFmS/2Nhr2gYbng/+8BzH7kn41zq4ENuaKvpBCZ2fPvehGofLppaQTGUQ8uyZ0
+         AP1OOjMiujmLUCkQCebzEtH4M3rqMDAUYxVkygKqLDrdARE1o1aWJf12EgmTK1Z9j0a8
+         40yQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Oliver Neukum <oneukum@suse.com>,
-	stable@kernel.org,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 4.14 013/109] uas: fix comparison for error code
-Date: Fri, 16 Mar 2018 16:22:42 +0100
-Message-Id: <20180316152330.645422547@linuxfoundation.org>
+	Jonas Danielsson <jonas@orbital-systems.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: [PATCH 4.14 012/109] tty/serial: atmel: add new version check for usart
+Date: Fri, 16 Mar 2018 16:22:41 +0100
+Message-Id: <20180316152330.531099215@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108310839479923?=
-X-GMAIL-MSGID: =?utf-8?q?1595108967640643593?=
+X-GMAIL-THRID: =?utf-8?q?1595108308157129909?=
+X-GMAIL-MSGID: =?utf-8?q?1595108964964685557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Jonas Danielsson <jonas@orbital-systems.com>
 
-commit 9a513c905bb95bef79d96feb08621c1ec8d8c4bb upstream.
+commit fd63a8903a2c40425a9811c3371dd4d0f42c0ad3 upstream.
 
-A typo broke the comparison.
+On our at91sam9260 based board the usart0 and usart1 ports report
+their versions (ATMEL_US_VERSION) as 0x10302. This version is not
+included in the current checks in the driver.
 
-Fixes: cbeef22fd611 ("usb: uas: unconditionally bring back host after reset")
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-CC: stable@kernel.org
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
+Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/atmel_serial.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1076,7 +1076,7 @@ static int uas_post_reset(struct usb_int
- 		return 0;
- 
- 	err = uas_configure_endpoints(devinfo);
--	if (err && err != ENODEV)
-+	if (err && err != -ENODEV)
- 		shost_printk(KERN_ERR, shost,
- 			     "%s: alloc streams error %d after reset",
- 			     __func__, err);
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1763,6 +1763,7 @@ static void atmel_get_ip_name(struct uar
+ 		switch (version) {
+ 		case 0x302:
+ 		case 0x10213:
++		case 0x10302:
+ 			dev_dbg(port->dev, "This version is usart\n");
+ 			atmel_port->has_frac_baudrate = true;
+ 			atmel_port->has_hw_timer = true;
