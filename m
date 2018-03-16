@@ -1,53 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753730AbeCPLDC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:03:02 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:33098 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753322AbeCPLDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:03:01 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Brian Norris <briannorris@chromium.org>, dianders@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        hl@rock-chips.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 6/6] drm/rockchip: cdn-dp: remove the DP phy switch
-Date: Fri, 16 Mar 2018 12:02:53 +0100
-Message-ID: <1866837.JGGNoqQO1N@phil>
-In-Reply-To: <20180216120956.19034-6-enric.balletbo@collabora.com>
-References: <20180216120956.19034-1-enric.balletbo@collabora.com> <20180216120956.19034-6-enric.balletbo@collabora.com>
+        id S1753568AbeCPLLr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:11:47 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42736 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeCPLLp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 07:11:45 -0400
+X-Google-Smtp-Source: AG47ELvuizPKckP0YrgKxuXPrFbxO7ermGxszL/Wbvbe/q+sONX7Kxp72f1RUpGX/9ltCdS79A/OvA==
+Date: Fri, 16 Mar 2018 11:11:40 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org, Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 0/4] gpio-backlight: remove platform data support
+Message-ID: <20180316111140.ez6lmyx4ntf2nbxz@holly.lan>
+References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 16. Februar 2018, 13:09:56 CET schrieb Enric Balletbo i Serra:
-> From: Chris Zhong <zyw@rock-chips.com>
+On Thu, Mar 15, 2018 at 03:41:58PM -0700, Dmitry Torokhov wrote:
+> Hi,
 > 
-> There are 2 Type-c PHYs in RK3399, but only one DP controller. Hence
-> only one PHY can connect to DP controller at one time, the other should
-> be disconnected. The GRF_SOC_CON26 register has a switch bit to do it,
-> set this bit means enable PHY 1, clear this bit means enable PHY 0.
-> 
-> If the board has 2 Type-C ports, the DP driver get the phy id from
-> devm_of_phy_get_by_index, and then control this switch according to
-> this id. But some others board only has one Type-C port, it may be PHY 0
-> or PHY 1. The dts node id can not tell us the correct PHY id. Hence move
-> this switch to PHY driver, the PHY driver can distinguish between PHY 0
-> and PHY 1, and then write the correct register bit.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> This series attempts to remove platform data support from gpio_blackllist
+> driver and switch it over to generic device properties/GPIO tables.
+> The only user of platform data was SuperH Ecovec24 board; please take a
+> look at patch #2 that tries to only register backlight when the board is
+> using LDC and not DVI.
 
-applied to drm-misc with a note stating where the rest of the series
-went to.
+Can't comment on patch #2 but, from the backlight side of things I have
+no objections.
 
-Thanks
-Heiko
+
+Daniel.
+
+> 
+> Please note that I do not have the hardware (do we even care about
+> ecovec24? I'd like to rip out platform data support from tsc2007 as
+> well, but ecovec24 is using custom pendown handler and GPIOs have
+> to be switched off from interrupt mode to GPIO and back in that
+> pendown handler, which is all quite messy. If we do not care about
+> this board I'd much rather removed that custom pendown).
+> 
+> Thanks!
+> 
+> Dmitry Torokhov (4):
+>   backlight: gpio_backlight: use generic device properties
+>   sh: ecovec24: conditionally register backlight device
+>   sh: ecovec24: convert backlight to use device properties
+>   backlight: gpio_backlight: remove platform data support
+> 
+>  arch/sh/boards/mach-ecovec24/setup.c         | 47 ++++++----
+>  drivers/video/backlight/gpio_backlight.c     | 93 +++-----------------
+>  include/linux/platform_data/gpio_backlight.h | 20 -----
+>  3 files changed, 46 insertions(+), 114 deletions(-)
+>  delete mode 100644 include/linux/platform_data/gpio_backlight.h
+> 
+> -- 
+> Dmitry
+> 
