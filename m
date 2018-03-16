@@ -1,18 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753292AbeCPHS3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:18:29 -0400
-Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:19184
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1753278AbeCPHSY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:18:24 -0400
+Received: from mail-bn3nam01on0068.outbound.protection.outlook.com ([104.47.33.68]:50422
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753153AbeCPHRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753154AbeCPHRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Mar 2018 03:17:44 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 13/28] cpufreq: Remove Blackfin CPU frequency support
-Date: Fri, 16 Mar 2018 15:08:11 +0800
-Message-ID: <1521184106-24475-11-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 15/28] spi: Remove Blackfin SPI bus support
+Date: Fri, 16 Mar 2018 15:08:13 +0800
+Message-ID: <1521184106-24475-13-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -20,2917 +24,3495 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(2980300002)(438002)(199004)(189003)(55674003)(106002)(5660300001)(336012)(47776003)(72206003)(2351001)(16586007)(2906002)(76176011)(6666003)(2950100002)(6346003)(6916009)(26005)(59450400001)(77096007)(426003)(478600001)(7696005)(316002)(186003)(51416003)(8676002)(356003)(107886003)(246002)(8936002)(86362001)(50226002)(50466002)(48376002)(36756003)(106466001)(4326008)(53946003)(16200700003)(305945005)(7636002)(2004002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1483;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC002;1:6VCCFdl5UWPglHzcylyzvHhpbvOFVe2sUDn9fRiNIYW+T9Ndib5/DALn2RVBL9g91M2PvYg6Dcg97kWPnLRk8bmBvch99O6mw0wxzBL4lUQZS279ZzsNPNSfrZd1KkM7
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39380400002)(39860400002)(2980300002)(438002)(189003)(199004)(50466002)(36756003)(107886003)(53946003)(16200700003)(6306002)(478600001)(47776003)(48376002)(106002)(2906002)(426003)(26005)(575784001)(86362001)(5660300001)(77096007)(72206003)(966005)(356003)(8936002)(305945005)(186003)(4326008)(51416003)(6916009)(2950100002)(316002)(7696005)(8676002)(7636002)(2351001)(246002)(59450400001)(50226002)(336012)(16586007)(106466001)(76176011)(6666003)(551934003)(2004002)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2624;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD016;1:hoSOs81uecoo1HjK/LupMHsO4PFd6PGHKXXHmze97S2S4NE9q78G0s9feWS9wkTfR6h3NChBNFS6bJfvvZaIoeJMadOERiaVn5Vb3FNiU3Lq+b3hmto90ITr6mgDAwBY
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 86aabac8-cbb9-4120-638d-08d58b0dff3b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1483;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;3:qoCVH3MBD8Uy39HMDkd55TKwuxI99asi/06YfjZBlumkVZ72PtFzWmnNIEPAcVJWTG8PwKpEPuq9Oo6ZaORm4/cgg9QsCXUa+E7h/YgxgtQplwqfTExv/WwkY6g48ybDZrVvSgsyzqHaw50JW94Jz1YPOCgDdqIbfCrW7p8sLyIqvXGAGXKpKbhdX+kmrFYVhyLciS1CvfVDCF0JGJc+UjtW+y8bRjDQrqRihBvZbuwx+usXOQ70g/bG74U4b3LCnk7fk0FV5eiWrbjB9C9hI2OY0WJVJKMslXdyIE6uJjNLo0DNGHXT2pauVYmIAMetLNWEZQyW3buhu3wOngO4zQ==;25:xwT29tj6vSUwvW/akJcHvUjtiJtPCzz5UJymJXI2L11taULCqrIoCKIbJYGfvHnJuQ7VE6KdaHGsYv9omZTjZgukVpVrchAAVdKra/ptRs+GItiGXBoEFzKr6J5+Z+w+Vj0aLbLL9BA3/OVBP0qs9SfRurQ5saKDgEaO5HUkuHKPNjJgdZqmbkEKvYLyrnhYNBZAiyMSZF2hK/j1vEZkFhz7q7dmLFVCIZWEzB6cB5HxBq+kHdendz3j4lIU8kB8gwgcIwS9azctRN3esh0Ne4oFnnAFUqAIPocJV1xvoFmwgJijWBBzDzr1cw9UbzU7J2m4fdSg44hAt85JgbjCBg==;31:n3m+E4jyW+hkyy3aWm6gx7UWhfASy2V0JTxFONUAhoLPQo1nS+KF3BfWAYBYFFeG3Fs6KSTN3pC1muDHZPJlhbpTqsgEpX6aHnWZ4+Q0f0ej+E6GAaqO+EI/OskxDtwFtO2VMZfR5O1Q4/X1nWw8HvyVAzKXtlJNgfRva6zUh1LnIPantaF9R9yKEDZNXY8AB6Op/4SzjwL52vmOoSieU3Nj0vVOE/AQUsQViAnNgw4=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1483:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;20:14CtbfZNUDXkjrcPLVzkaXM3nVpf7UBxdol3gYlZzLgqlJJ08xmTsDkh0sctszxTZPlBxawSDYeWkEV5yR2vAEDVy0nsH5aA2HAXt+YMzHl2nILBLmhJakGr0T2JWe6QXPVmEbU3B6Ry4LQFQcP+fMA26YGPz33JBT25fxX/sBZOcuk9xIi1H1sWsMyobdQifMCWqO2mb2cwbs4VadPf5WUZUiedaqB3h5RIvpWvcrv8en48K5HhKYSyBu0uNaMxUL2U4vpZqmah+krDx7upPBhOd+SPMtECqD/RB0iSrDXyTSTWWc8Kv6K/PV+f+WW/ww0HWK7tOP52ShLWjNHdiWfXuCJI2q3ici/ElZGP+UgJ57xxPhScxDhZACZlXWR1XQB3ShaNmwmQdnh2DMHiboKXyt05Sxn8QN5woLjLLxa5ck9jWdsWOp2ZPFTP//diK0TFIOLtzZ0uzKHZ5g3uqTxHkJzFLX8bviwTI4rWBV0qV6zgtQJ4vK6jLgbBvAFZ;4:gU8Vo6YQ9mg7tTA35h6VG1Ycq2KfaJhCKyTK+lzj1Ue/aglcunODGPQdtjs+TtDcGbvc5DmlKFLROz4//U7XC/vwHd30zh3wYOEtB9UCDJTjaxqmpmn6fGAORjQHGbh1mZ2cqBZvk8f3APmEBKElFjurKaeGIXsjriIxsGdiWRQYcaGAHnKEQh0UNQgIvei93lJ7/7//TE0NKN+1TZ/USkK8G9QN+G6DnWHi1UahV0qgW4W9WLudNKix6oEISvrI5D/4lq2dFL4dCYIKgfQmN3HZ580ttFyqoJh2WQse/eIeYeh0WCppcoIn1InsdF1z6V/OH0S9Xai+xUHMZBIcaXOyHs6qFAdpaqbiq1pJuOA0WCz7VqVPN4GSgm1ppHZ4/JyW5gjT4exgNz+pZs0gJvkvL+3ArQwxEgtT2jPYZSA=
-X-Microsoft-Antispam-PRVS: <BY1PR03MB1483D9EA35EC0DD06FBE20BDE0D70@BY1PR03MB1483.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(209352067349851)(232431446821674)(767451399110)(228905959029699);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501281)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1483;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1483;
+X-MS-Office365-Filtering-Correlation-Id: 39cc2197-6d85-4862-94b5-08d58b0e00a0
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:MWHPR03MB2624;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2624;3:a+dJS0kByny+RoSc/eyTSY7ezfhK6m1wGdSHEpRJt3YwAC6hM1rTcQJJ9xhyCq+jEJCiVmv/7OMZtoSiQv4QEA1TOrsrQ5dJzSa/dEZ8hn8YOyAzxDFJPf9CyMOGpafvNgquI9OhiFww0hwPqDUyfU77Krlvn3oCiMeBa/mVj2SSWBJwtH54hPY2Txi9u68TUxGwnqdyPo9bj1zzrPqWclBm4ttCPA3rK2YFgsm6Xpuu/0hC/3qYpuUd9R7Ggb7xTyLI8ftKlxnspXYyEZy6QAzb/RLODX8yFUN1MFOzdd6W50sr8GWtuKjjAk3NgZYNaEQOmuR7Y5q3tIS/UapIWQ==;25:TNiV5C6cGoVvRdabcjnMBZNYToFxd4S8FNjBcaotXLVBvy65bIAc70UaaZwJ5ROBAaaeKTApOIzIJqcFe/l3KulYvGo0kgv2oC5LAR7gPFbajp1sKAl6rYtD1GlkaN8r2LOkwATa87s9qHkDeNTtg/ec+vO/Q7NmpfDQUOxdU5IklHp8r262vz/oImaIIx2SnSCTsiuH67GkU0BziUpgABZ8ntONSxFl+35y20lIg5KPJcof/duWryhHcvZzIdC409fs2nu/wmSc/roBOtQNyPNGogoyJZaWxR1xDmBC2iDAWs1ypLEYLx2AjtBzHEFpu4DScmaZ5gpjjCfaMXmE+Q==;31:yGPZ/xX+uZKI73gsx1ysBqkus/A0UFLaFq6ETXdFw7gbAKzCiyPhgnFQt1X6xILLy3rpO8kD6DIKsKbPJp0gg6vPuDVKAI3oDeQ4+Nwiu2NiXlQ4mV+fUE207QBUd0AL7x/dme0w0Xmtpme/7AtYumkmplBTc++LXq7kq1Wm7YenLi2/2wWLsQJoz8a8by9AcAoT/Xt8sGGwjZ38nmgUYZ3nqIfP4VB0jNOUt6HBPBE=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB2624:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2624;20:vJBET5uXH5vvjQtxxQMTEhUedCjslW939+lATWTc1Y4WOwWiqGPMgbprTNOKAvvwzxg+sQpra0Ssku11iNpH4kY2KLzaDYm+21NjFxsQ0I/VabuhUds3W8yk3jkCFmHUvepjZRDkzMWg8OYxwxwcld8PcBXYEDmjGQQqL8yYIxZcjDBJExIK5xcuAqF8Ez3gslaFo/r8yef+wlmroDzZAbCl5fD2XMDN4MQiWCy0oBWJZLPT9bT/NvDZYS7p5Ag/cWwral1m3JJkAGGkl42LOPhQqW0iHQe0xys1h1RNSPxmS2qudqr8waYwIYnQv7LdYW72ULPHGYat1blLrQZVDA0fc4RT+gyGYCuLoUmiL/I91Q8Ei7OudU3pV34auaevqP//Yvqcx8zuh7lNTZx08Z+gRKFEXwtHUHVeH8xCirt55gZWj35NtM2E7vII+U3RAPH76jUEtZJxjNGDCB/EEJt05v6fGVd3n6jGH4vHBlSA7P4vPFngrKbgCiqKXb0S;4:3yjsDfLBvEO1Cqn/0lFHxa/KHgtsw6aa1SBQlEJu/2aHYqAF1BfVUeZyXOzm+e+aLgWTjkkeJQ8NrDXvHcGCAv+HoYwtRxAFd2fbbfusHdGDl0j2m74G3qC2s2x7EAmI6g9Vc7+JYm9uG/zGi6zH2Uc9W9IdHorUHIsERzUJN1XFJMqWeJv9b9Me0fcBI+wjh+znmoOyWEne7UWbI8NvxyPEUZpIPnaW3bf06jfm95rxNMd/Ud7rZ2Kbx2PGyFzGixbG6K2BSN7zzLX+Yw/eVJaFHcRZXcizh4+2GuzAycMt4PKRWZfXxkTg18xuequO/4uG2lD2fQLvc0yVshCoE1q+tUYjjxjfGMN4t96HEw65tFWRm9ymnPH3BeB5Hlzr
+X-Microsoft-Antispam-PRVS: <MWHPR03MB2624DF05C4D93FE99FFF451BE0D70@MWHPR03MB2624.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(85827821059158)(17755550239193);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501244)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR03MB2624;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2624;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1483;23:JswMHx2ba5HsiuOmO2p3+4tGWC+05I4QiBK9c8Qd7?=
- =?us-ascii?Q?XPhf8G68Yv8oB37Iv+noRtBuIAKc13/UBUtFLFm5OfkRrlPXyEcKiucF01XB?=
- =?us-ascii?Q?Pz0PSzXunWQ8DqP1rlZ1+LtOvpP9NPE1qvg5OH10wDkAlrw93mevbkmRnQJN?=
- =?us-ascii?Q?ND+os3qrIwb2lfEYNYKeUTRXKmoZ4mdC0GTutSMFcPGXev1leFEjI47OlnOH?=
- =?us-ascii?Q?nVCWJlJnzhcp+5NbyXjK6ZQlhZWB7sNK4chcm/LFtUDCLUgc1GFDAFJBoll7?=
- =?us-ascii?Q?gyzHJWHLol/+OU7fmWSVXEOR9jFeN/eRjmt+MtLOpTNoB4vNJ91qhrIkFF5+?=
- =?us-ascii?Q?iYy8V/+o2UWR2W4PHhg0KBSNY9LtzH0wZ6AHSpSKkwalTgzTlVi2iUhih8Y9?=
- =?us-ascii?Q?nHCssRAQaUfXO9bxLCshMOHmIn91Qsub6Bpz96wFu88XM+TTO2EHbCRxkRyd?=
- =?us-ascii?Q?p/v/umDxUJl2H1kfbx42uKDnnr6vRBLel4XRvf3XF/PnOIQpH6w59mqaEjhO?=
- =?us-ascii?Q?0RB1SJJG5W8v250WSiie5xMONgceWIMO/3aPrF3kommNIH5oA4RSTG3JAWj2?=
- =?us-ascii?Q?Y/F3u0IW2t7Fb3QTSipIrQplvi4RTeNg7zvFYxATYvoOm3gBB4N4rzOtyZIx?=
- =?us-ascii?Q?wMc6qooNIuGQWYdUIzK1R6oYLCW4JD4K3Y5tSJ7ohrjRrhjthabCljGDJtJ9?=
- =?us-ascii?Q?gd2KeDiGZ76J/aMUURO1Us5jaEBcM1OEOOYZOb+VTFBo+8O+EnwpYuB9mXej?=
- =?us-ascii?Q?rTXzEIh01mrAdsTnMyxLJF8c5zI6kpdi8aQr3jHjv65e93TAHeklWN7hqs2/?=
- =?us-ascii?Q?ICB0JCwbpCGFv3WwCdhZW5DKFMc43rtw5+xJzgs0UFEtxf5+MA9EsImO9XFo?=
- =?us-ascii?Q?0D110dwl4pMw4/WD8ozKDXVpjgsAuwKhO9rvE65EheJuBFrnzR7racayUCYf?=
- =?us-ascii?Q?s5SkUxy3RtCIXGzU7xXTBAnCTGujVz0hSq7IDZAKvH+uIhSgSlOuTxYBRHGJ?=
- =?us-ascii?Q?e6An7jYWiYmGgNn1K2e4WY04Uz1VRpBgLKVzbPr+vYZm8TiExPuR+L70+4mu?=
- =?us-ascii?Q?pdJoOHnPlrKQCjYpJWpGv+2PmENjjvlVwjVFNcX45j8uXMCXbm2zSBBcj5cm?=
- =?us-ascii?Q?+mDrDtfAQIIFR74z/eOK/Ykwx7MqXPT?=
-X-Microsoft-Antispam-Message-Info: UPWN4MX0qRbPnQ7YAdOFxIaqeW3T1kgixB/abIs+t2R8cTOkZz5Nrr6g6qldXhfHHOARtQ/91groh5ft+/M4eZR/XrYrawrPsSIEQXC7EwEVuf1EBo/1r1JvtOxDNhagxWxY8UosI8xsVvB2WlJLNRxViBScyNVxULfgwD5vvWKhTF7PaDDPJt2TZZcKPptN
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;6:EeyLRMHKj6lFYcQGSubQFEX+DVVq/2vv+tN52VD5BpZtWd07RvkbnWQChVVJU/b+x8N1Cf8jOJxNCsq5wjIB3AYXoU/krhMMXM4hbEzuqur3TQATprTqh8ei2FpZBpCvADBW64EvQHV08aO/V99WAR6drYlDhbmZqOjUofY+A+O+sKYo4aF7dIwm9rlnzTG8QV/sVkHKrcbgu7oTdTCq09ziR52URevuxR196d6Jy2vKwLLyUcetWNAatzoB1OTHA+AqTUmNhlfakIJhCrtQFPgwB//GWdFts2bwpk47L0b91tHLfyWUHnk4skhyWrnoeXUqSnN80ZtrAModbjt7D2TunPqriM60xyJMx/QDULE=;5:FtViPutfLOYlb3vZc9/1HmELTf4LzLjJZ9Cv8LSmhYigIcoxOCfAgAiWwGwFH+0ydLLf54vRaxIIhKy8592Sr/2I5LpsBsDru6fVKen3w5WOHcJiou/o36fapgXuYqqOJoucREmYKi4d7R27lv6iSeBDezW3nKsSRUsndcp8Sg4=;24:dL/Wm7G3k/L1R2aDAl317P+YQWykpF0+n3VgOusa+t+Xmzvr0FYlLels5IXMqmXo9vC2j4ErwyUZG5DzaKUjyuUdAwRnuXVK7l4in40PjkM=;7:/0HVDkfVUgRMRNT9wQqucRCDlpDVWq8O9ZYVsOply4htuoBpWaoirYd4dQEbPMpmKBtIJxCFFj31lLJJsu/ws03W7jDKJrh9rZPU53k5K1ge6ADhUnYt1m609SatlqQgEKoGoUKYg3BnnDpTjuaP6ctG/GH957xGbaNKQHpHIDGSE0tdPUpr9rtjN/Qz6lADWsqCmBxTQVBPGWIh1vQXoDeAeCGfmmoSiT+p/o/DSjuZ52eCuxgTN4s3dSWGXgqu
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2624;23:X6SrWpK46brHawrkmEz4Bbr86loaFNmFYSc7mBLoD?=
+ =?us-ascii?Q?rgpQmnaGSMzfITUs0KaClUDwzUqkECmXxCBV/IZ6ekaHsMSdqpqZtKjhild5?=
+ =?us-ascii?Q?QSVJsJx6rxSJEC5zVDKL+Ktz16Y/UXoMM6C85QkNbK0khxcKsLBP0PFRufBS?=
+ =?us-ascii?Q?wSJyekFYMWSQ/I8rMDqJYvGywOJRNCwUVjbxZ8FMkOpHDWP5EkDFHhtjS+lQ?=
+ =?us-ascii?Q?Nbl5ZT6aVfkygmoDi8mQsApeZeDo6VQSUQlW1x7DZC34obSVsZ+IdzbRhtDV?=
+ =?us-ascii?Q?3x9c4vrPp3P8zt/WM/yLhDzG4Khco2NjcHp3qr3HcSCH59qmJHS9lAjo+HIg?=
+ =?us-ascii?Q?6WA6QiiXorazp9Ef/dDoDuem929Emi6fGQ7l8ufW8MBY25xBIQgCsQ/SxEPP?=
+ =?us-ascii?Q?oAQj87X5UjFbW4Cc+c9/0GVF8izwe2rmu2Zxrvy7ZVci2SSKD6a6c60VF1lW?=
+ =?us-ascii?Q?hnXbIdMU0y3PsQKMaM5zfAtCa6DpYOacHB4zz+JdKeAvuCuxTi4vCzvf8+/y?=
+ =?us-ascii?Q?CxaGnJOmm0sN/yPiqhmzy4GMeNqtwZR7Rx+A7PYkEerElCPAmX0z/fZtGrWS?=
+ =?us-ascii?Q?jxYUQiFZCIsBvANvC6n9asMxMYyhEuZlVezRCN73gvX4fmrxD3z9pZisKh/q?=
+ =?us-ascii?Q?78JyrXzyAqTW8YwVNmoSl8o6UsJBSleVlkwDOQK4OFXu3A3xn3WRmJ0VucB1?=
+ =?us-ascii?Q?7fSXbMpjVKQ0UO9KYIeCV66t1l9JdPZ854EPmfWaJNGQ5iX5Ic/qyN651apA?=
+ =?us-ascii?Q?cAkVwWTlxb1KiJoIvMdWE4v89fj0EZXxyTfm32pR/7IAKxHKBPdfpVng1g7Y?=
+ =?us-ascii?Q?JsylHT9r7vs7x/WKMFW8bXSejy2usHEv5iyhqa3b1jxsblpIi3VJmTyQ7Z70?=
+ =?us-ascii?Q?JsRUPpJ+RoR6398JpiTpmmLzwsDD9HBys8kE4FNHayDkIfe+x0GRH2fs6jTy?=
+ =?us-ascii?Q?4j7ajgDHVHukNEJjL0rWNzVr/JHFTn7m5SithrKEYthYIW5GOSukX4BF1FWA?=
+ =?us-ascii?Q?C1ifsbWk/SwFdS7AOCFKiRPDj6kOo8Gk4ZPGmAxVuEWyo7A8nYLb2orntpX6?=
+ =?us-ascii?Q?XRrzeC6ds26cUinDuCZ/nkyuEst2jINKYuy0fr8oehcANDlGRUkaLmrXlaTy?=
+ =?us-ascii?Q?AfD/sZ9RKrLqb2vf40dBuht3zy44sQIRrA92VGi4X3f4ujeUtGGz8DDktwsI?=
+ =?us-ascii?Q?JH9UEDuUKpsxWQ=3D?=
+X-Microsoft-Antispam-Message-Info: gGjpYjKZbmiC6qEYjFcKzWKNHOt6WSSUs9kh9KSI57qxWbSNXsxI0Lm9moSa6Ueo9KacMbf7B4AZXzfHX5OIOfLVLoNPMx2T/OcZWFDpVgJwG2HA7pL6YU32Uv+EnEmxy1oheOFlGtYFBHD7cyJSEDtIkIZgDJ2aU7VrxBgVmcLS4HioToTnbvO7O+EHfAXY
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2624;6:6QKOvqwrfruiSHhIatU+IS9SZKwkxeMJjHJ81zX9Cu3GNU1L5auAjH0KmDHteTbpUssuFl8KSej/6Q3b8t27cI+30XhBcCQfTVBtmnnMnr8qrxTsa0fprdcQpHfI4GxL6U+CKB0qUDGDfCkDFKcf32+fFTYAYslEKbjrM1EYZo+X5dbBUucDiJzAsOwgL2+W+cisAys3OI+rK3bwCttqKOIMrOqhTVE0FSRjHUhWB34Yphtd9BXTZgaEUti5Ni2ZO1YGuYhQXyRuyu4E+dLfDHMvwrWbPP4i+kEA09JYC5V+Lu+tCB0t+IGi24wTo0rmyiy5JI/cVg4TTD9p9L7gwdfi6aU8vi+I/fx0p/s1Ico=;5:HJ7EGiTaYn2IHy4JF3Lr2vjnIB+eYkv6DB2pYZrSF2sqmQz+MIKyW0ymGrUY7f95QyIrDfmAJZacZM6akXWg9qkK77egDYNIKpGwMVt0f0XuiA7MUA7nHm6hTib1cdqUNXXngUQUOqBarrkdtBlNSy3QPUIadRXeP6iRYxxjhZk=;24:wv72mJZ9AEkF/6QBytSyXl8p8Y4lMjG/8RlWcYJBfEVGQDIJFEc3ro4o8dvY4Wz7guCL3/xeuFGsWHVEIGh9gVKeOgbr9FkHcihh5dKSHI0=;7:QlUmxvimGJqwFSUPBeFgj1KA9w15C+A+l6KH6NrxtRWVgS7aH6mM1mdJ70gG7csiiZpfNj4mCOqQiqQYp2VA3AA+GjSIvcc+fJaDI05Ja4SNrXzpCS30h6XNQQQ2o2KCGllgow7Algg8fsvKxjzLwOyOKfyZ6W0aJ1R1OBoo9MbpGRBRx+FqfcDf7dvGM7Mow+2mjNiiIwPqFKlZrsN5vBM6rF6d7duHyum1+E7dB+QQcHEezrsZzNNffQ4OALC0
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:37.1031
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:39.8028
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86aabac8-cbb9-4120-638d-08d58b0dff3b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39cc2197-6d85-4862-94b5-08d58b0e00a0
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1483
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2624
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin CPU frequency support
+Remove Blackfin SPI bus support
 ---
- drivers/cpufreq/Makefile           |    1 -
- drivers/cpufreq/blackfin-cpufreq.c |  217 ---
- drivers/cpufreq/cpufreq.c          | 2612 ------------------------------------
- 3 files changed, 2830 deletions(-)
- delete mode 100644 drivers/cpufreq/blackfin-cpufreq.c
- delete mode 100644 drivers/cpufreq/cpufreq.c
+ drivers/spi/Kconfig          |   19 -
+ drivers/spi/Makefile         |    2 -
+ drivers/spi/spi-adi-v3.c     |  984 ----------------------------
+ drivers/spi/spi-bfin-sport.c |  919 --------------------------
+ drivers/spi/spi-bfin5xx.c    | 1462 ------------------------------------------
+ 5 files changed, 3386 deletions(-)
+ delete mode 100644 drivers/spi/spi-adi-v3.c
+ delete mode 100644 drivers/spi/spi-bfin-sport.c
+ delete mode 100644 drivers/spi/spi-bfin5xx.c
 
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index c60c1e1..43e4254 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -100,7 +100,6 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 6037839..1263014 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -115,25 +115,6 @@ config SPI_BCM2835AUX
+ 	  "universal SPI master", and the regular SPI controller.
+ 	  This driver is for the universal/auxiliary SPI controller.
  
- ##################################################################################
- # Other platform drivers
--obj-$(CONFIG_BFIN_CPU_FREQ)		+= blackfin-cpufreq.o
- obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
- obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
- obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
-diff --git a/drivers/cpufreq/blackfin-cpufreq.c b/drivers/cpufreq/blackfin-cpufreq.c
+-config SPI_BFIN5XX
+-	tristate "SPI controller driver for ADI Blackfin5xx"
+-	depends on BLACKFIN && !BF60x
+-	help
+-	  This is the SPI controller master driver for Blackfin 5xx processor.
+-
+-config SPI_ADI_V3
+-	tristate "SPI controller v3 for ADI"
+-	depends on BF60x
+-	help
+-	  This is the SPI controller v3 master driver
+-	  found on Blackfin 60x processor.
+-
+-config SPI_BFIN_SPORT
+-	tristate "SPI bus via Blackfin SPORT"
+-	depends on BLACKFIN
+-	help
+-	  Enable support for a SPI bus via the Blackfin SPORT peripheral.
+-
+ config SPI_BCM53XX
+ 	tristate "Broadcom BCM53xx SPI controller"
+ 	depends on ARCH_BCM_5301X
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 34c5f28..31ee30d 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -24,9 +24,7 @@ obj-$(CONFIG_SPI_BCM53XX)		+= spi-bcm53xx.o
+ obj-$(CONFIG_SPI_BCM63XX)		+= spi-bcm63xx.o
+ obj-$(CONFIG_SPI_BCM63XX_HSSPI)		+= spi-bcm63xx-hsspi.o
+ obj-$(CONFIG_SPI_BCM_QSPI)		+= spi-iproc-qspi.o spi-brcmstb-qspi.o spi-bcm-qspi.o
+-obj-$(CONFIG_SPI_BFIN5XX)		+= spi-bfin5xx.o
+ obj-$(CONFIG_SPI_ADI_V3)                += spi-adi-v3.o
+-obj-$(CONFIG_SPI_BFIN_SPORT)		+= spi-bfin-sport.o
+ obj-$(CONFIG_SPI_BITBANG)		+= spi-bitbang.o
+ obj-$(CONFIG_SPI_BUTTERFLY)		+= spi-butterfly.o
+ obj-$(CONFIG_SPI_CADENCE)		+= spi-cadence.o
+diff --git a/drivers/spi/spi-adi-v3.c b/drivers/spi/spi-adi-v3.c
 deleted file mode 100644
-index 12e97d8..0000000
---- a/drivers/cpufreq/blackfin-cpufreq.c
+index a16b25d..0000000
+--- a/drivers/spi/spi-adi-v3.c
 +++ /dev/null
-@@ -1,217 +0,0 @@
+@@ -1,984 +0,0 @@
 -/*
-- * Blackfin core clock scaling
+- * Analog Devices SPI3 controller driver
 - *
-- * Copyright 2008-2011 Analog Devices Inc.
-- *
-- * Licensed under the GPL-2 or later.
-- */
--
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/types.h>
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/cpufreq.h>
--#include <linux/fs.h>
--#include <linux/delay.h>
--#include <asm/blackfin.h>
--#include <asm/time.h>
--#include <asm/dpmc.h>
--
--
--/* this is the table of CCLK frequencies, in Hz */
--/* .driver_data is the entry in the auxiliary dpm_state_table[] */
--static struct cpufreq_frequency_table bfin_freq_table[] = {
--	{
--		.frequency = CPUFREQ_TABLE_END,
--		.driver_data = 0,
--	},
--	{
--		.frequency = CPUFREQ_TABLE_END,
--		.driver_data = 1,
--	},
--	{
--		.frequency = CPUFREQ_TABLE_END,
--		.driver_data = 2,
--	},
--	{
--		.frequency = CPUFREQ_TABLE_END,
--		.driver_data = 0,
--	},
--};
--
--static struct bfin_dpm_state {
--	unsigned int csel; /* system clock divider */
--	unsigned int tscale; /* change the divider on the core timer interrupt */
--} dpm_state_table[3];
--
--#if defined(CONFIG_CYCLES_CLOCKSOURCE)
--/*
-- * normalized to maximum frequency offset for CYCLES,
-- * used in time-ts cycles clock source, but could be used
-- * somewhere also.
-- */
--unsigned long long __bfin_cycles_off;
--unsigned int __bfin_cycles_mod;
--#endif
--
--/**************************************************************************/
--static void __init bfin_init_tables(unsigned long cclk, unsigned long sclk)
--{
--
--	unsigned long csel, min_cclk;
--	int index;
--
--	/* Anomaly 273 seems to still exist on non-BF54x w/dcache turned on */
--#if ANOMALY_05000273 || ANOMALY_05000274 || \
--	(!(defined(CONFIG_BF54x) || defined(CONFIG_BF60x)) \
--	&& defined(CONFIG_BFIN_EXTMEM_DCACHEABLE))
--	min_cclk = sclk * 2;
--#else
--	min_cclk = sclk;
--#endif
--
--#ifndef CONFIG_BF60x
--	csel = ((bfin_read_PLL_DIV() & CSEL) >> 4);
--#else
--	csel = bfin_read32(CGU0_DIV) & 0x1F;
--#endif
--
--	for (index = 0;  (cclk >> index) >= min_cclk && csel <= 3 && index < 3; index++, csel++) {
--		bfin_freq_table[index].frequency = cclk >> index;
--#ifndef CONFIG_BF60x
--		dpm_state_table[index].csel = csel << 4; /* Shift now into PLL_DIV bitpos */
--#else
--		dpm_state_table[index].csel = csel;
--#endif
--		dpm_state_table[index].tscale =  (TIME_SCALE >> index) - 1;
--
--		pr_debug("cpufreq: freq:%d csel:0x%x tscale:%d\n",
--						 bfin_freq_table[index].frequency,
--						 dpm_state_table[index].csel,
--						 dpm_state_table[index].tscale);
--	}
--	return;
--}
--
--static void bfin_adjust_core_timer(void *info)
--{
--	unsigned int tscale;
--	unsigned int index = *(unsigned int *)info;
--
--	/* we have to adjust the core timer, because it is using cclk */
--	tscale = dpm_state_table[index].tscale;
--	bfin_write_TSCALE(tscale);
--	return;
--}
--
--static unsigned int bfin_getfreq_khz(unsigned int cpu)
--{
--	/* Both CoreA/B have the same core clock */
--	return get_cclk() / 1000;
--}
--
--#ifdef CONFIG_BF60x
--static int cpu_set_cclk(int cpu, unsigned long new)
--{
--	struct clk *clk;
--	int ret;
--
--	clk = clk_get(NULL, "CCLK");
--	if (IS_ERR(clk))
--		return -ENODEV;
--
--	ret = clk_set_rate(clk, new);
--	clk_put(clk);
--	return ret;
--}
--#endif
--
--static int bfin_target(struct cpufreq_policy *policy, unsigned int index)
--{
--#ifndef CONFIG_BF60x
--	unsigned int plldiv;
--#endif
--	static unsigned long lpj_ref;
--	static unsigned int  lpj_ref_freq;
--	unsigned int old_freq, new_freq;
--	int ret = 0;
--
--#if defined(CONFIG_CYCLES_CLOCKSOURCE)
--	cycles_t cycles;
--#endif
--
--	old_freq = bfin_getfreq_khz(0);
--	new_freq = bfin_freq_table[index].frequency;
--
--#ifndef CONFIG_BF60x
--	plldiv = (bfin_read_PLL_DIV() & SSEL) | dpm_state_table[index].csel;
--	bfin_write_PLL_DIV(plldiv);
--#else
--	ret = cpu_set_cclk(policy->cpu, new_freq * 1000);
--	if (ret != 0) {
--		WARN_ONCE(ret, "cpufreq set freq failed %d\n", ret);
--		return ret;
--	}
--#endif
--	on_each_cpu(bfin_adjust_core_timer, &index, 1);
--#if defined(CONFIG_CYCLES_CLOCKSOURCE)
--	cycles = get_cycles();
--	SSYNC();
--	cycles += 10; /* ~10 cycles we lose after get_cycles() */
--	__bfin_cycles_off += (cycles << __bfin_cycles_mod) - (cycles << index);
--	__bfin_cycles_mod = index;
--#endif
--	if (!lpj_ref_freq) {
--		lpj_ref = loops_per_jiffy;
--		lpj_ref_freq = old_freq;
--	}
--	if (new_freq != old_freq) {
--		loops_per_jiffy = cpufreq_scale(lpj_ref,
--				lpj_ref_freq, new_freq);
--	}
--
--	return ret;
--}
--
--static int __bfin_cpu_init(struct cpufreq_policy *policy)
--{
--
--	unsigned long cclk, sclk;
--
--	cclk = get_cclk() / 1000;
--	sclk = get_sclk() / 1000;
--
--	if (policy->cpu == CPUFREQ_CPU)
--		bfin_init_tables(cclk, sclk);
--
--	policy->cpuinfo.transition_latency = 50000; /* 50us assumed */
--
--	return cpufreq_table_validate_and_show(policy, bfin_freq_table);
--}
--
--static struct cpufreq_driver bfin_driver = {
--	.verify = cpufreq_generic_frequency_table_verify,
--	.target_index = bfin_target,
--	.get = bfin_getfreq_khz,
--	.init = __bfin_cpu_init,
--	.name = "bfin cpufreq",
--	.attr = cpufreq_generic_attr,
--};
--
--static int __init bfin_cpu_init(void)
--{
--	return cpufreq_register_driver(&bfin_driver);
--}
--
--static void __exit bfin_cpu_exit(void)
--{
--	cpufreq_unregister_driver(&bfin_driver);
--}
--
--MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
--MODULE_DESCRIPTION("cpufreq driver for Blackfin");
--MODULE_LICENSE("GPL");
--
--module_init(bfin_cpu_init);
--module_exit(bfin_cpu_exit);
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-deleted file mode 100644
-index de33ebf..0000000
---- a/drivers/cpufreq/cpufreq.c
-+++ /dev/null
-@@ -1,2612 +0,0 @@
--/*
-- *  linux/drivers/cpufreq/cpufreq.c
-- *
-- *  Copyright (C) 2001 Russell King
-- *            (C) 2002 - 2003 Dominik Brodowski <linux@brodo.de>
-- *            (C) 2013 Viresh Kumar <viresh.kumar@linaro.org>
-- *
-- *  Oct 2005 - Ashok Raj <ashok.raj@intel.com>
-- *	Added handling for CPU hotplug
-- *  Feb 2006 - Jacob Shin <jacob.shin@amd.com>
-- *	Fix handling for CPU hotplug -- affected CPUs
+- * Copyright (c) 2014 Analog Devices Inc.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - */
 -
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
--#include <linux/cpu.h>
--#include <linux/cpufreq.h>
+-#include <linux/clk.h>
 -#include <linux/delay.h>
 -#include <linux/device.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/errno.h>
+-#include <linux/gpio.h>
 -#include <linux/init.h>
--#include <linux/kernel_stat.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/ioport.h>
 -#include <linux/module.h>
--#include <linux/mutex.h>
+-#include <linux/platform_device.h>
 -#include <linux/slab.h>
--#include <linux/suspend.h>
--#include <linux/syscore_ops.h>
--#include <linux/tick.h>
--#include <trace/events/power.h>
+-#include <linux/spi/spi.h>
+-#include <linux/spi/adi_spi3.h>
+-#include <linux/types.h>
 -
--static LIST_HEAD(cpufreq_policy_list);
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
 -
--static inline bool policy_is_inactive(struct cpufreq_policy *policy)
+-enum adi_spi_state {
+-	START_STATE,
+-	RUNNING_STATE,
+-	DONE_STATE,
+-	ERROR_STATE
+-};
+-
+-struct adi_spi_master;
+-
+-struct adi_spi_transfer_ops {
+-	void (*write) (struct adi_spi_master *);
+-	void (*read) (struct adi_spi_master *);
+-	void (*duplex) (struct adi_spi_master *);
+-};
+-
+-/* runtime info for spi master */
+-struct adi_spi_master {
+-	/* SPI framework hookup */
+-	struct spi_master *master;
+-
+-	/* Regs base of SPI controller */
+-	struct adi_spi_regs __iomem *regs;
+-
+-	/* Pin request list */
+-	u16 *pin_req;
+-
+-	/* Message Transfer pump */
+-	struct tasklet_struct pump_transfers;
+-
+-	/* Current message transfer state info */
+-	struct spi_message *cur_msg;
+-	struct spi_transfer *cur_transfer;
+-	struct adi_spi_device *cur_chip;
+-	unsigned transfer_len;
+-
+-	/* transfer buffer */
+-	void *tx;
+-	void *tx_end;
+-	void *rx;
+-	void *rx_end;
+-
+-	/* dma info */
+-	unsigned int tx_dma;
+-	unsigned int rx_dma;
+-	dma_addr_t tx_dma_addr;
+-	dma_addr_t rx_dma_addr;
+-	unsigned long dummy_buffer; /* used in unidirectional transfer */
+-	unsigned long tx_dma_size;
+-	unsigned long rx_dma_size;
+-	int tx_num;
+-	int rx_num;
+-
+-	/* store register value for suspend/resume */
+-	u32 control;
+-	u32 ssel;
+-
+-	unsigned long sclk;
+-	enum adi_spi_state state;
+-
+-	const struct adi_spi_transfer_ops *ops;
+-};
+-
+-struct adi_spi_device {
+-	u32 control;
+-	u32 clock;
+-	u32 ssel;
+-
+-	u8 cs;
+-	u16 cs_chg_udelay; /* Some devices require > 255usec delay */
+-	u32 cs_gpio;
+-	u32 tx_dummy_val; /* tx value for rx only transfer */
+-	bool enable_dma;
+-	const struct adi_spi_transfer_ops *ops;
+-};
+-
+-static void adi_spi_enable(struct adi_spi_master *drv_data)
 -{
--	return cpumask_empty(policy->cpus);
+-	u32 ctl;
+-
+-	ctl = ioread32(&drv_data->regs->control);
+-	ctl |= SPI_CTL_EN;
+-	iowrite32(ctl, &drv_data->regs->control);
 -}
 -
--/* Macros to iterate over CPU policies */
--#define for_each_suitable_policy(__policy, __active)			 \
--	list_for_each_entry(__policy, &cpufreq_policy_list, policy_list) \
--		if ((__active) == !policy_is_inactive(__policy))
--
--#define for_each_active_policy(__policy)		\
--	for_each_suitable_policy(__policy, true)
--#define for_each_inactive_policy(__policy)		\
--	for_each_suitable_policy(__policy, false)
--
--#define for_each_policy(__policy)			\
--	list_for_each_entry(__policy, &cpufreq_policy_list, policy_list)
--
--/* Iterate over governors */
--static LIST_HEAD(cpufreq_governor_list);
--#define for_each_governor(__governor)				\
--	list_for_each_entry(__governor, &cpufreq_governor_list, governor_list)
--
--/**
-- * The "cpufreq driver" - the arch- or hardware-dependent low
-- * level driver of CPUFreq support, and its spinlock. This lock
-- * also protects the cpufreq_cpu_data array.
-- */
--static struct cpufreq_driver *cpufreq_driver;
--static DEFINE_PER_CPU(struct cpufreq_policy *, cpufreq_cpu_data);
--static DEFINE_RWLOCK(cpufreq_driver_lock);
--
--/* Flag to suspend/resume CPUFreq governors */
--static bool cpufreq_suspended;
--
--static inline bool has_target(void)
+-static void adi_spi_disable(struct adi_spi_master *drv_data)
 -{
--	return cpufreq_driver->target_index || cpufreq_driver->target;
+-	u32 ctl;
+-
+-	ctl = ioread32(&drv_data->regs->control);
+-	ctl &= ~SPI_CTL_EN;
+-	iowrite32(ctl, &drv_data->regs->control);
 -}
 -
--/* internal prototypes */
--static unsigned int __cpufreq_get(struct cpufreq_policy *policy);
--static int cpufreq_init_governor(struct cpufreq_policy *policy);
--static void cpufreq_exit_governor(struct cpufreq_policy *policy);
--static int cpufreq_start_governor(struct cpufreq_policy *policy);
--static void cpufreq_stop_governor(struct cpufreq_policy *policy);
--static void cpufreq_governor_limits(struct cpufreq_policy *policy);
--
--/**
-- * Two notifier lists: the "policy" list is involved in the
-- * validation process for a new CPU frequency policy; the
-- * "transition" list for kernel code that needs to handle
-- * changes to devices when the CPU clock speed changes.
-- * The mutex locks both lists.
-- */
--static BLOCKING_NOTIFIER_HEAD(cpufreq_policy_notifier_list);
--static struct srcu_notifier_head cpufreq_transition_notifier_list;
--
--static bool init_cpufreq_transition_notifier_list_called;
--static int __init init_cpufreq_transition_notifier_list(void)
+-/* Caculate the SPI_CLOCK register value based on input HZ */
+-static u32 hz_to_spi_clock(u32 sclk, u32 speed_hz)
 -{
--	srcu_init_notifier_head(&cpufreq_transition_notifier_list);
--	init_cpufreq_transition_notifier_list_called = true;
+-	u32 spi_clock = sclk / speed_hz;
+-
+-	if (spi_clock)
+-		spi_clock--;
+-	return spi_clock;
+-}
+-
+-static int adi_spi_flush(struct adi_spi_master *drv_data)
+-{
+-	unsigned long limit = loops_per_jiffy << 1;
+-
+-	/* wait for stop and clear stat */
+-	while (!(ioread32(&drv_data->regs->status) & SPI_STAT_SPIF) && --limit)
+-		cpu_relax();
+-
+-	iowrite32(0xFFFFFFFF, &drv_data->regs->status);
+-
+-	return limit;
+-}
+-
+-/* Chip select operation functions for cs_change flag */
+-static void adi_spi_cs_active(struct adi_spi_master *drv_data, struct adi_spi_device *chip)
+-{
+-	if (likely(chip->cs < MAX_CTRL_CS)) {
+-		u32 reg;
+-		reg = ioread32(&drv_data->regs->ssel);
+-		reg &= ~chip->ssel;
+-		iowrite32(reg, &drv_data->regs->ssel);
+-	} else {
+-		gpio_set_value(chip->cs_gpio, 0);
+-	}
+-}
+-
+-static void adi_spi_cs_deactive(struct adi_spi_master *drv_data,
+-				struct adi_spi_device *chip)
+-{
+-	if (likely(chip->cs < MAX_CTRL_CS)) {
+-		u32 reg;
+-		reg = ioread32(&drv_data->regs->ssel);
+-		reg |= chip->ssel;
+-		iowrite32(reg, &drv_data->regs->ssel);
+-	} else {
+-		gpio_set_value(chip->cs_gpio, 1);
+-	}
+-
+-	/* Move delay here for consistency */
+-	if (chip->cs_chg_udelay)
+-		udelay(chip->cs_chg_udelay);
+-}
+-
+-/* enable or disable the pin muxed by GPIO and SPI CS to work as SPI CS */
+-static inline void adi_spi_cs_enable(struct adi_spi_master *drv_data,
+-					struct adi_spi_device *chip)
+-{
+-	if (chip->cs < MAX_CTRL_CS) {
+-		u32 reg;
+-		reg = ioread32(&drv_data->regs->ssel);
+-		reg |= chip->ssel >> 8;
+-		iowrite32(reg, &drv_data->regs->ssel);
+-	}
+-}
+-
+-static inline void adi_spi_cs_disable(struct adi_spi_master *drv_data,
+-					struct adi_spi_device *chip)
+-{
+-	if (chip->cs < MAX_CTRL_CS) {
+-		u32 reg;
+-		reg = ioread32(&drv_data->regs->ssel);
+-		reg &= ~(chip->ssel >> 8);
+-		iowrite32(reg, &drv_data->regs->ssel);
+-	}
+-}
+-
+-/* stop controller and re-config current chip*/
+-static void adi_spi_restore_state(struct adi_spi_master *drv_data)
+-{
+-	struct adi_spi_device *chip = drv_data->cur_chip;
+-
+-	/* Clear status and disable clock */
+-	iowrite32(0xFFFFFFFF, &drv_data->regs->status);
+-	iowrite32(0x0, &drv_data->regs->rx_control);
+-	iowrite32(0x0, &drv_data->regs->tx_control);
+-	adi_spi_disable(drv_data);
+-
+-	/* Load the registers */
+-	iowrite32(chip->control, &drv_data->regs->control);
+-	iowrite32(chip->clock, &drv_data->regs->clock);
+-
+-	adi_spi_enable(drv_data);
+-	drv_data->tx_num = drv_data->rx_num = 0;
+-	/* we always choose tx transfer initiate */
+-	iowrite32(SPI_RXCTL_REN, &drv_data->regs->rx_control);
+-	iowrite32(SPI_TXCTL_TEN | SPI_TXCTL_TTI, &drv_data->regs->tx_control);
+-	adi_spi_cs_active(drv_data, chip);
+-}
+-
+-/* discard invalid rx data and empty rfifo */
+-static inline void dummy_read(struct adi_spi_master *drv_data)
+-{
+-	while (!(ioread32(&drv_data->regs->status) & SPI_STAT_RFE))
+-		ioread32(&drv_data->regs->rfifo);
+-}
+-
+-static void adi_spi_u8_write(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->tx < drv_data->tx_end) {
+-		iowrite32(*(u8 *)(drv_data->tx++), &drv_data->regs->tfifo);
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		ioread32(&drv_data->regs->rfifo);
+-	}
+-}
+-
+-static void adi_spi_u8_read(struct adi_spi_master *drv_data)
+-{
+-	u32 tx_val = drv_data->cur_chip->tx_dummy_val;
+-
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(tx_val, &drv_data->regs->tfifo);
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u8 *)(drv_data->rx++) = ioread32(&drv_data->regs->rfifo);
+-	}
+-}
+-
+-static void adi_spi_u8_duplex(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(*(u8 *)(drv_data->tx++), &drv_data->regs->tfifo);
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u8 *)(drv_data->rx++) = ioread32(&drv_data->regs->rfifo);
+-	}
+-}
+-
+-static const struct adi_spi_transfer_ops adi_spi_transfer_ops_u8 = {
+-	.write  = adi_spi_u8_write,
+-	.read   = adi_spi_u8_read,
+-	.duplex = adi_spi_u8_duplex,
+-};
+-
+-static void adi_spi_u16_write(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->tx < drv_data->tx_end) {
+-		iowrite32(*(u16 *)drv_data->tx, &drv_data->regs->tfifo);
+-		drv_data->tx += 2;
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		ioread32(&drv_data->regs->rfifo);
+-	}
+-}
+-
+-static void adi_spi_u16_read(struct adi_spi_master *drv_data)
+-{
+-	u32 tx_val = drv_data->cur_chip->tx_dummy_val;
+-
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(tx_val, &drv_data->regs->tfifo);
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u16 *)drv_data->rx = ioread32(&drv_data->regs->rfifo);
+-		drv_data->rx += 2;
+-	}
+-}
+-
+-static void adi_spi_u16_duplex(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(*(u16 *)drv_data->tx, &drv_data->regs->tfifo);
+-		drv_data->tx += 2;
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u16 *)drv_data->rx = ioread32(&drv_data->regs->rfifo);
+-		drv_data->rx += 2;
+-	}
+-}
+-
+-static const struct adi_spi_transfer_ops adi_spi_transfer_ops_u16 = {
+-	.write  = adi_spi_u16_write,
+-	.read   = adi_spi_u16_read,
+-	.duplex = adi_spi_u16_duplex,
+-};
+-
+-static void adi_spi_u32_write(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->tx < drv_data->tx_end) {
+-		iowrite32(*(u32 *)drv_data->tx, &drv_data->regs->tfifo);
+-		drv_data->tx += 4;
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		ioread32(&drv_data->regs->rfifo);
+-	}
+-}
+-
+-static void adi_spi_u32_read(struct adi_spi_master *drv_data)
+-{
+-	u32 tx_val = drv_data->cur_chip->tx_dummy_val;
+-
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(tx_val, &drv_data->regs->tfifo);
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u32 *)drv_data->rx = ioread32(&drv_data->regs->rfifo);
+-		drv_data->rx += 4;
+-	}
+-}
+-
+-static void adi_spi_u32_duplex(struct adi_spi_master *drv_data)
+-{
+-	dummy_read(drv_data);
+-	while (drv_data->rx < drv_data->rx_end) {
+-		iowrite32(*(u32 *)drv_data->tx, &drv_data->regs->tfifo);
+-		drv_data->tx += 4;
+-		while (ioread32(&drv_data->regs->status) & SPI_STAT_RFE)
+-			cpu_relax();
+-		*(u32 *)drv_data->rx = ioread32(&drv_data->regs->rfifo);
+-		drv_data->rx += 4;
+-	}
+-}
+-
+-static const struct adi_spi_transfer_ops adi_spi_transfer_ops_u32 = {
+-	.write  = adi_spi_u32_write,
+-	.read   = adi_spi_u32_read,
+-	.duplex = adi_spi_u32_duplex,
+-};
+-
+-
+-/* test if there is more transfer to be done */
+-static void adi_spi_next_transfer(struct adi_spi_master *drv)
+-{
+-	struct spi_message *msg = drv->cur_msg;
+-	struct spi_transfer *t = drv->cur_transfer;
+-
+-	/* Move to next transfer */
+-	if (t->transfer_list.next != &msg->transfers) {
+-		drv->cur_transfer = list_entry(t->transfer_list.next,
+-			       struct spi_transfer, transfer_list);
+-		drv->state = RUNNING_STATE;
+-	} else {
+-		drv->state = DONE_STATE;
+-		drv->cur_transfer = NULL;
+-	}
+-}
+-
+-static void adi_spi_giveback(struct adi_spi_master *drv_data)
+-{
+-	struct adi_spi_device *chip = drv_data->cur_chip;
+-
+-	adi_spi_cs_deactive(drv_data, chip);
+-	spi_finalize_current_message(drv_data->master);
+-}
+-
+-static int adi_spi_setup_transfer(struct adi_spi_master *drv)
+-{
+-	struct spi_transfer *t = drv->cur_transfer;
+-	u32 cr, cr_width;
+-
+-	if (t->tx_buf) {
+-		drv->tx = (void *)t->tx_buf;
+-		drv->tx_end = drv->tx + t->len;
+-	} else {
+-		drv->tx = NULL;
+-	}
+-
+-	if (t->rx_buf) {
+-		drv->rx = t->rx_buf;
+-		drv->rx_end = drv->rx + t->len;
+-	} else {
+-		drv->rx = NULL;
+-	}
+-
+-	drv->transfer_len = t->len;
+-
+-	/* bits per word setup */
+-	switch (t->bits_per_word) {
+-	case 8:
+-		cr_width = SPI_CTL_SIZE08;
+-		drv->ops = &adi_spi_transfer_ops_u8;
+-		break;
+-	case 16:
+-		cr_width = SPI_CTL_SIZE16;
+-		drv->ops = &adi_spi_transfer_ops_u16;
+-		break;
+-	case 32:
+-		cr_width = SPI_CTL_SIZE32;
+-		drv->ops = &adi_spi_transfer_ops_u32;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-	cr = ioread32(&drv->regs->control) & ~SPI_CTL_SIZE;
+-	cr |= cr_width;
+-	iowrite32(cr, &drv->regs->control);
+-
+-	/* speed setup */
+-	iowrite32(hz_to_spi_clock(drv->sclk, t->speed_hz), &drv->regs->clock);
 -	return 0;
 -}
--pure_initcall(init_cpufreq_transition_notifier_list);
 -
--static int off __read_mostly;
--static int cpufreq_disabled(void)
+-static int adi_spi_dma_xfer(struct adi_spi_master *drv_data)
 -{
--	return off;
+-	struct spi_transfer *t = drv_data->cur_transfer;
+-	struct spi_message *msg = drv_data->cur_msg;
+-	struct adi_spi_device *chip = drv_data->cur_chip;
+-	u32 dma_config;
+-	unsigned long word_count, word_size;
+-	void *tx_buf, *rx_buf;
+-
+-	switch (t->bits_per_word) {
+-	case 8:
+-		dma_config = WDSIZE_8 | PSIZE_8;
+-		word_count = drv_data->transfer_len;
+-		word_size = 1;
+-		break;
+-	case 16:
+-		dma_config = WDSIZE_16 | PSIZE_16;
+-		word_count = drv_data->transfer_len / 2;
+-		word_size = 2;
+-		break;
+-	default:
+-		dma_config = WDSIZE_32 | PSIZE_32;
+-		word_count = drv_data->transfer_len / 4;
+-		word_size = 4;
+-		break;
+-	}
+-
+-	if (!drv_data->rx) {
+-		tx_buf = drv_data->tx;
+-		rx_buf = &drv_data->dummy_buffer;
+-		drv_data->tx_dma_size = drv_data->transfer_len;
+-		drv_data->rx_dma_size = sizeof(drv_data->dummy_buffer);
+-		set_dma_x_modify(drv_data->tx_dma, word_size);
+-		set_dma_x_modify(drv_data->rx_dma, 0);
+-	} else if (!drv_data->tx) {
+-		drv_data->dummy_buffer = chip->tx_dummy_val;
+-		tx_buf = &drv_data->dummy_buffer;
+-		rx_buf = drv_data->rx;
+-		drv_data->tx_dma_size = sizeof(drv_data->dummy_buffer);
+-		drv_data->rx_dma_size = drv_data->transfer_len;
+-		set_dma_x_modify(drv_data->tx_dma, 0);
+-		set_dma_x_modify(drv_data->rx_dma, word_size);
+-	} else {
+-		tx_buf = drv_data->tx;
+-		rx_buf = drv_data->rx;
+-		drv_data->tx_dma_size = drv_data->rx_dma_size
+-					= drv_data->transfer_len;
+-		set_dma_x_modify(drv_data->tx_dma, word_size);
+-		set_dma_x_modify(drv_data->rx_dma, word_size);
+-	}
+-
+-	drv_data->tx_dma_addr = dma_map_single(&msg->spi->dev,
+-				(void *)tx_buf,
+-				drv_data->tx_dma_size,
+-				DMA_TO_DEVICE);
+-	if (dma_mapping_error(&msg->spi->dev,
+-				drv_data->tx_dma_addr))
+-		return -ENOMEM;
+-
+-	drv_data->rx_dma_addr = dma_map_single(&msg->spi->dev,
+-				(void *)rx_buf,
+-				drv_data->rx_dma_size,
+-				DMA_FROM_DEVICE);
+-	if (dma_mapping_error(&msg->spi->dev,
+-				drv_data->rx_dma_addr)) {
+-		dma_unmap_single(&msg->spi->dev,
+-				drv_data->tx_dma_addr,
+-				drv_data->tx_dma_size,
+-				DMA_TO_DEVICE);
+-		return -ENOMEM;
+-	}
+-
+-	dummy_read(drv_data);
+-	set_dma_x_count(drv_data->tx_dma, word_count);
+-	set_dma_x_count(drv_data->rx_dma, word_count);
+-	set_dma_start_addr(drv_data->tx_dma, drv_data->tx_dma_addr);
+-	set_dma_start_addr(drv_data->rx_dma, drv_data->rx_dma_addr);
+-	dma_config |= DMAFLOW_STOP | RESTART | DI_EN;
+-	set_dma_config(drv_data->tx_dma, dma_config);
+-	set_dma_config(drv_data->rx_dma, dma_config | WNR);
+-	enable_dma(drv_data->tx_dma);
+-	enable_dma(drv_data->rx_dma);
+-
+-	iowrite32(SPI_RXCTL_REN | SPI_RXCTL_RDR_NE,
+-			&drv_data->regs->rx_control);
+-	iowrite32(SPI_TXCTL_TEN | SPI_TXCTL_TTI | SPI_TXCTL_TDR_NF,
+-			&drv_data->regs->tx_control);
+-
+-	return 0;
 -}
--void disable_cpufreq(void)
+-
+-static int adi_spi_pio_xfer(struct adi_spi_master *drv_data)
 -{
--	off = 1;
--}
--static DEFINE_MUTEX(cpufreq_governor_mutex);
+-	struct spi_message *msg = drv_data->cur_msg;
 -
--bool have_governor_per_policy(void)
--{
--	return !!(cpufreq_driver->flags & CPUFREQ_HAVE_GOVERNOR_PER_POLICY);
--}
--EXPORT_SYMBOL_GPL(have_governor_per_policy);
+-	if (!drv_data->rx) {
+-		/* write only half duplex */
+-		drv_data->ops->write(drv_data);
+-		if (drv_data->tx != drv_data->tx_end)
+-			return -EIO;
+-	} else if (!drv_data->tx) {
+-		/* read only half duplex */
+-		drv_data->ops->read(drv_data);
+-		if (drv_data->rx != drv_data->rx_end)
+-			return -EIO;
+-	} else {
+-		/* full duplex mode */
+-		drv_data->ops->duplex(drv_data);
+-		if (drv_data->tx != drv_data->tx_end)
+-			return -EIO;
+-	}
 -
--struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy)
--{
--	if (have_governor_per_policy())
--		return &policy->kobj;
--	else
--		return cpufreq_global_kobject;
--}
--EXPORT_SYMBOL_GPL(get_governor_parent_kobj);
--
--static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
--{
--	u64 idle_time;
--	u64 cur_wall_time;
--	u64 busy_time;
--
--	cur_wall_time = jiffies64_to_nsecs(get_jiffies_64());
--
--	busy_time = kcpustat_cpu(cpu).cpustat[CPUTIME_USER];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
--
--	idle_time = cur_wall_time - busy_time;
--	if (wall)
--		*wall = div_u64(cur_wall_time, NSEC_PER_USEC);
--
--	return div_u64(idle_time, NSEC_PER_USEC);
+-	if (!adi_spi_flush(drv_data))
+-		return -EIO;
+-	msg->actual_length += drv_data->transfer_len;
+-	tasklet_schedule(&drv_data->pump_transfers);
+-	return 0;
 -}
 -
--u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy)
+-static void adi_spi_pump_transfers(unsigned long data)
 -{
--	u64 idle_time = get_cpu_idle_time_us(cpu, io_busy ? wall : NULL);
--
--	if (idle_time == -1ULL)
--		return get_cpu_idle_time_jiffy(cpu, wall);
--	else if (!io_busy)
--		idle_time += get_cpu_iowait_time_us(cpu, wall);
--
--	return idle_time;
--}
--EXPORT_SYMBOL_GPL(get_cpu_idle_time);
--
--__weak void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
--		unsigned long max_freq)
--{
--}
--EXPORT_SYMBOL_GPL(arch_set_freq_scale);
--
--/*
-- * This is a generic cpufreq init() routine which can be used by cpufreq
-- * drivers of SMP systems. It will do following:
-- * - validate & show freq table passed
-- * - set policies transition latency
-- * - policy->cpus with all possible CPUs
-- */
--int cpufreq_generic_init(struct cpufreq_policy *policy,
--		struct cpufreq_frequency_table *table,
--		unsigned int transition_latency)
--{
+-	struct adi_spi_master *drv_data = (struct adi_spi_master *)data;
+-	struct spi_message *msg = NULL;
+-	struct spi_transfer *t = NULL;
+-	struct adi_spi_device *chip = NULL;
 -	int ret;
 -
--	ret = cpufreq_table_validate_and_show(policy, table);
--	if (ret) {
--		pr_err("%s: invalid frequency table: %d\n", __func__, ret);
--		return ret;
+-	/* Get current state information */
+-	msg = drv_data->cur_msg;
+-	t = drv_data->cur_transfer;
+-	chip = drv_data->cur_chip;
+-
+-	/* Handle for abort */
+-	if (drv_data->state == ERROR_STATE) {
+-		msg->status = -EIO;
+-		adi_spi_giveback(drv_data);
+-		return;
 -	}
 -
--	policy->cpuinfo.transition_latency = transition_latency;
+-	if (drv_data->state == RUNNING_STATE) {
+-		if (t->delay_usecs)
+-			udelay(t->delay_usecs);
+-		if (t->cs_change)
+-			adi_spi_cs_deactive(drv_data, chip);
+-		adi_spi_next_transfer(drv_data);
+-		t = drv_data->cur_transfer;
+-	}
+-	/* Handle end of message */
+-	if (drv_data->state == DONE_STATE) {
+-		msg->status = 0;
+-		adi_spi_giveback(drv_data);
+-		return;
+-	}
 -
--	/*
--	 * The driver only supports the SMP configuration where all processors
--	 * share the clock and voltage and clock.
--	 */
--	cpumask_setall(policy->cpus);
+-	if ((t->len == 0) || (t->tx_buf == NULL && t->rx_buf == NULL)) {
+-		/* Schedule next transfer tasklet */
+-		tasklet_schedule(&drv_data->pump_transfers);
+-		return;
+-	}
 -
+-	ret = adi_spi_setup_transfer(drv_data);
+-	if (ret) {
+-		msg->status = ret;
+-		adi_spi_giveback(drv_data);
+-	}
+-
+-	iowrite32(0xFFFFFFFF, &drv_data->regs->status);
+-	adi_spi_cs_active(drv_data, chip);
+-	drv_data->state = RUNNING_STATE;
+-
+-	if (chip->enable_dma)
+-		ret = adi_spi_dma_xfer(drv_data);
+-	else
+-		ret = adi_spi_pio_xfer(drv_data);
+-	if (ret) {
+-		msg->status = ret;
+-		adi_spi_giveback(drv_data);
+-	}
+-}
+-
+-static int adi_spi_transfer_one_message(struct spi_master *master,
+-					struct spi_message *m)
+-{
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(master);
+-
+-	drv_data->cur_msg = m;
+-	drv_data->cur_chip = spi_get_ctldata(drv_data->cur_msg->spi);
+-	adi_spi_restore_state(drv_data);
+-
+-	drv_data->state = START_STATE;
+-	drv_data->cur_transfer = list_entry(drv_data->cur_msg->transfers.next,
+-					    struct spi_transfer, transfer_list);
+-
+-	tasklet_schedule(&drv_data->pump_transfers);
 -	return 0;
 -}
--EXPORT_SYMBOL_GPL(cpufreq_generic_init);
 -
--struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu)
+-#define MAX_SPI_SSEL	7
+-
+-static const u16 ssel[][MAX_SPI_SSEL] = {
+-	{P_SPI0_SSEL1, P_SPI0_SSEL2, P_SPI0_SSEL3,
+-	P_SPI0_SSEL4, P_SPI0_SSEL5,
+-	P_SPI0_SSEL6, P_SPI0_SSEL7},
+-
+-	{P_SPI1_SSEL1, P_SPI1_SSEL2, P_SPI1_SSEL3,
+-	P_SPI1_SSEL4, P_SPI1_SSEL5,
+-	P_SPI1_SSEL6, P_SPI1_SSEL7},
+-
+-	{P_SPI2_SSEL1, P_SPI2_SSEL2, P_SPI2_SSEL3,
+-	P_SPI2_SSEL4, P_SPI2_SSEL5,
+-	P_SPI2_SSEL6, P_SPI2_SSEL7},
+-};
+-
+-static int adi_spi_setup(struct spi_device *spi)
 -{
--	struct cpufreq_policy *policy = per_cpu(cpufreq_cpu_data, cpu);
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(spi->master);
+-	struct adi_spi_device *chip = spi_get_ctldata(spi);
+-	u32 ctl_reg = SPI_CTL_ODM | SPI_CTL_PSSE;
+-	int ret = -EINVAL;
 -
--	return policy && cpumask_test_cpu(cpu, policy->cpus) ? policy : NULL;
--}
--EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw);
+-	if (!chip) {
+-		struct adi_spi3_chip *chip_info = spi->controller_data;
 -
--unsigned int cpufreq_generic_get(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+-		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+-		if (!chip)
+-			return -ENOMEM;
 -
--	if (!policy || IS_ERR(policy->clk)) {
--		pr_err("%s: No %s associated to cpu: %d\n",
--		       __func__, policy ? "clk" : "policy", cpu);
--		return 0;
--	}
+-		if (chip_info) {
+-			if (chip_info->control & ~ctl_reg) {
+-				dev_err(&spi->dev,
+-					"do not set bits that the SPI framework manages\n");
+-				goto error;
+-			}
+-			chip->control = chip_info->control;
+-			chip->cs_chg_udelay = chip_info->cs_chg_udelay;
+-			chip->tx_dummy_val = chip_info->tx_dummy_val;
+-			chip->enable_dma = chip_info->enable_dma;
+-		}
+-		chip->cs = spi->chip_select;
 -
--	return clk_get_rate(policy->clk) / 1000;
--}
--EXPORT_SYMBOL_GPL(cpufreq_generic_get);
--
--/**
-- * cpufreq_cpu_get: returns policy for a cpu and marks it busy.
-- *
-- * @cpu: cpu to find policy for.
-- *
-- * This returns policy for 'cpu', returns NULL if it doesn't exist.
-- * It also increments the kobject reference count to mark it busy and so would
-- * require a corresponding call to cpufreq_cpu_put() to decrement it back.
-- * If corresponding call cpufreq_cpu_put() isn't made, the policy wouldn't be
-- * freed as that depends on the kobj count.
-- *
-- * Return: A valid policy on success, otherwise NULL on failure.
-- */
--struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = NULL;
--	unsigned long flags;
--
--	if (WARN_ON(cpu >= nr_cpu_ids))
--		return NULL;
--
--	/* get the cpufreq driver */
--	read_lock_irqsave(&cpufreq_driver_lock, flags);
--
--	if (cpufreq_driver) {
--		/* get the CPU */
--		policy = cpufreq_cpu_get_raw(cpu);
--		if (policy)
--			kobject_get(&policy->kobj);
--	}
--
--	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
--
--	return policy;
--}
--EXPORT_SYMBOL_GPL(cpufreq_cpu_get);
--
--/**
-- * cpufreq_cpu_put: Decrements the usage count of a policy
-- *
-- * @policy: policy earlier returned by cpufreq_cpu_get().
-- *
-- * This decrements the kobject reference count incremented earlier by calling
-- * cpufreq_cpu_get().
-- */
--void cpufreq_cpu_put(struct cpufreq_policy *policy)
--{
--	kobject_put(&policy->kobj);
--}
--EXPORT_SYMBOL_GPL(cpufreq_cpu_put);
--
--/*********************************************************************
-- *            EXTERNALLY AFFECTING FREQUENCY CHANGES                 *
-- *********************************************************************/
--
--/**
-- * adjust_jiffies - adjust the system "loops_per_jiffy"
-- *
-- * This function alters the system "loops_per_jiffy" for the clock
-- * speed change. Note that loops_per_jiffy cannot be updated on SMP
-- * systems as each CPU might be scaled differently. So, use the arch
-- * per-CPU loops_per_jiffy value wherever possible.
-- */
--static void adjust_jiffies(unsigned long val, struct cpufreq_freqs *ci)
--{
--#ifndef CONFIG_SMP
--	static unsigned long l_p_j_ref;
--	static unsigned int l_p_j_ref_freq;
--
--	if (ci->flags & CPUFREQ_CONST_LOOPS)
--		return;
--
--	if (!l_p_j_ref_freq) {
--		l_p_j_ref = loops_per_jiffy;
--		l_p_j_ref_freq = ci->old;
--		pr_debug("saving %lu as reference value for loops_per_jiffy; freq is %u kHz\n",
--			 l_p_j_ref, l_p_j_ref_freq);
--	}
--	if (val == CPUFREQ_POSTCHANGE && ci->old != ci->new) {
--		loops_per_jiffy = cpufreq_scale(l_p_j_ref, l_p_j_ref_freq,
--								ci->new);
--		pr_debug("scaling loops_per_jiffy to %lu for frequency %u kHz\n",
--			 loops_per_jiffy, ci->new);
--	}
--#endif
--}
--
--static void __cpufreq_notify_transition(struct cpufreq_policy *policy,
--		struct cpufreq_freqs *freqs, unsigned int state)
--{
--	BUG_ON(irqs_disabled());
--
--	if (cpufreq_disabled())
--		return;
--
--	freqs->flags = cpufreq_driver->flags;
--	pr_debug("notification %u of frequency transition to %u kHz\n",
--		 state, freqs->new);
--
--	switch (state) {
--
--	case CPUFREQ_PRECHANGE:
--		/* detect if the driver reported a value as "old frequency"
--		 * which is not equal to what the cpufreq core thinks is
--		 * "old frequency".
--		 */
--		if (!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
--			if ((policy) && (policy->cpu == freqs->cpu) &&
--			    (policy->cur) && (policy->cur != freqs->old)) {
--				pr_debug("Warning: CPU frequency is %u, cpufreq assumed %u kHz\n",
--					 freqs->old, policy->cur);
--				freqs->old = policy->cur;
+-		if (chip->cs < MAX_CTRL_CS) {
+-			chip->ssel = (1 << chip->cs) << 8;
+-			ret = peripheral_request(ssel[spi->master->bus_num]
+-					[chip->cs-1], dev_name(&spi->dev));
+-			if (ret) {
+-				dev_err(&spi->dev, "peripheral_request() error\n");
+-				goto error;
+-			}
+-		} else {
+-			chip->cs_gpio = chip->cs - MAX_CTRL_CS;
+-			ret = gpio_request_one(chip->cs_gpio, GPIOF_OUT_INIT_HIGH,
+-						dev_name(&spi->dev));
+-			if (ret) {
+-				dev_err(&spi->dev, "gpio_request_one() error\n");
+-				goto error;
 -			}
 -		}
--		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
--				CPUFREQ_PRECHANGE, freqs);
--		adjust_jiffies(CPUFREQ_PRECHANGE, freqs);
--		break;
--
--	case CPUFREQ_POSTCHANGE:
--		adjust_jiffies(CPUFREQ_POSTCHANGE, freqs);
--		pr_debug("FREQ: %lu - CPU: %lu\n",
--			 (unsigned long)freqs->new, (unsigned long)freqs->cpu);
--		trace_cpu_frequency(freqs->new, freqs->cpu);
--		cpufreq_stats_record_transition(policy, freqs->new);
--		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
--				CPUFREQ_POSTCHANGE, freqs);
--		if (likely(policy) && likely(policy->cpu == freqs->cpu))
--			policy->cur = freqs->new;
--		break;
--	}
--}
--
--/**
-- * cpufreq_notify_transition - call notifier chain and adjust_jiffies
-- * on frequency transition.
-- *
-- * This function calls the transition notifiers and the "adjust_jiffies"
-- * function. It is called twice on all CPU frequency changes that have
-- * external effects.
-- */
--static void cpufreq_notify_transition(struct cpufreq_policy *policy,
--		struct cpufreq_freqs *freqs, unsigned int state)
--{
--	for_each_cpu(freqs->cpu, policy->cpus)
--		__cpufreq_notify_transition(policy, freqs, state);
--}
--
--/* Do post notifications when there are chances that transition has failed */
--static void cpufreq_notify_post_transition(struct cpufreq_policy *policy,
--		struct cpufreq_freqs *freqs, int transition_failed)
--{
--	cpufreq_notify_transition(policy, freqs, CPUFREQ_POSTCHANGE);
--	if (!transition_failed)
--		return;
--
--	swap(freqs->old, freqs->new);
--	cpufreq_notify_transition(policy, freqs, CPUFREQ_PRECHANGE);
--	cpufreq_notify_transition(policy, freqs, CPUFREQ_POSTCHANGE);
--}
--
--void cpufreq_freq_transition_begin(struct cpufreq_policy *policy,
--		struct cpufreq_freqs *freqs)
--{
--
--	/*
--	 * Catch double invocations of _begin() which lead to self-deadlock.
--	 * ASYNC_NOTIFICATION drivers are left out because the cpufreq core
--	 * doesn't invoke _begin() on their behalf, and hence the chances of
--	 * double invocations are very low. Moreover, there are scenarios
--	 * where these checks can emit false-positive warnings in these
--	 * drivers; so we avoid that by skipping them altogether.
--	 */
--	WARN_ON(!(cpufreq_driver->flags & CPUFREQ_ASYNC_NOTIFICATION)
--				&& current == policy->transition_task);
--
--wait:
--	wait_event(policy->transition_wait, !policy->transition_ongoing);
--
--	spin_lock(&policy->transition_lock);
--
--	if (unlikely(policy->transition_ongoing)) {
--		spin_unlock(&policy->transition_lock);
--		goto wait;
+-		spi_set_ctldata(spi, chip);
 -	}
 -
--	policy->transition_ongoing = true;
--	policy->transition_task = current;
+-	/* force a default base state */
+-	chip->control &= ctl_reg;
 -
--	spin_unlock(&policy->transition_lock);
+-	if (spi->mode & SPI_CPOL)
+-		chip->control |= SPI_CTL_CPOL;
+-	if (spi->mode & SPI_CPHA)
+-		chip->control |= SPI_CTL_CPHA;
+-	if (spi->mode & SPI_LSB_FIRST)
+-		chip->control |= SPI_CTL_LSBF;
+-	chip->control |= SPI_CTL_MSTR;
+-	/* we choose software to controll cs */
+-	chip->control &= ~SPI_CTL_ASSEL;
 -
--	cpufreq_notify_transition(policy, freqs, CPUFREQ_PRECHANGE);
+-	chip->clock = hz_to_spi_clock(drv_data->sclk, spi->max_speed_hz);
+-
+-	adi_spi_cs_enable(drv_data, chip);
+-	adi_spi_cs_deactive(drv_data, chip);
+-
+-	return 0;
+-error:
+-	if (chip) {
+-		kfree(chip);
+-		spi_set_ctldata(spi, NULL);
+-	}
+-
+-	return ret;
 -}
--EXPORT_SYMBOL_GPL(cpufreq_freq_transition_begin);
 -
--void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
--		struct cpufreq_freqs *freqs, int transition_failed)
+-static void adi_spi_cleanup(struct spi_device *spi)
 -{
--	if (unlikely(WARN_ON(!policy->transition_ongoing)))
+-	struct adi_spi_device *chip = spi_get_ctldata(spi);
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(spi->master);
+-
+-	if (!chip)
 -		return;
 -
--	cpufreq_notify_post_transition(policy, freqs, transition_failed);
--
--	policy->transition_ongoing = false;
--	policy->transition_task = NULL;
--
--	wake_up(&policy->transition_wait);
--}
--EXPORT_SYMBOL_GPL(cpufreq_freq_transition_end);
--
--/*
-- * Fast frequency switching status count.  Positive means "enabled", negative
-- * means "disabled" and 0 means "not decided yet".
-- */
--static int cpufreq_fast_switch_count;
--static DEFINE_MUTEX(cpufreq_fast_switch_lock);
--
--static void cpufreq_list_transition_notifiers(void)
--{
--	struct notifier_block *nb;
--
--	pr_info("Registered transition notifiers:\n");
--
--	mutex_lock(&cpufreq_transition_notifier_list.mutex);
--
--	for (nb = cpufreq_transition_notifier_list.head; nb; nb = nb->next)
--		pr_info("%pF\n", nb->notifier_call);
--
--	mutex_unlock(&cpufreq_transition_notifier_list.mutex);
--}
--
--/**
-- * cpufreq_enable_fast_switch - Enable fast frequency switching for policy.
-- * @policy: cpufreq policy to enable fast frequency switching for.
-- *
-- * Try to enable fast frequency switching for @policy.
-- *
-- * The attempt will fail if there is at least one transition notifier registered
-- * at this point, as fast frequency switching is quite fundamentally at odds
-- * with transition notifiers.  Thus if successful, it will make registration of
-- * transition notifiers fail going forward.
-- */
--void cpufreq_enable_fast_switch(struct cpufreq_policy *policy)
--{
--	lockdep_assert_held(&policy->rwsem);
--
--	if (!policy->fast_switch_possible)
--		return;
--
--	mutex_lock(&cpufreq_fast_switch_lock);
--	if (cpufreq_fast_switch_count >= 0) {
--		cpufreq_fast_switch_count++;
--		policy->fast_switch_enabled = true;
+-	if (chip->cs < MAX_CTRL_CS) {
+-		peripheral_free(ssel[spi->master->bus_num]
+-					[chip->cs-1]);
+-		adi_spi_cs_disable(drv_data, chip);
 -	} else {
--		pr_warn("CPU%u: Fast frequency switching not enabled\n",
--			policy->cpu);
--		cpufreq_list_transition_notifiers();
--	}
--	mutex_unlock(&cpufreq_fast_switch_lock);
--}
--EXPORT_SYMBOL_GPL(cpufreq_enable_fast_switch);
--
--/**
-- * cpufreq_disable_fast_switch - Disable fast frequency switching for policy.
-- * @policy: cpufreq policy to disable fast frequency switching for.
-- */
--void cpufreq_disable_fast_switch(struct cpufreq_policy *policy)
--{
--	mutex_lock(&cpufreq_fast_switch_lock);
--	if (policy->fast_switch_enabled) {
--		policy->fast_switch_enabled = false;
--		if (!WARN_ON(cpufreq_fast_switch_count <= 0))
--			cpufreq_fast_switch_count--;
--	}
--	mutex_unlock(&cpufreq_fast_switch_lock);
--}
--EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
--
--/**
-- * cpufreq_driver_resolve_freq - Map a target frequency to a driver-supported
-- * one.
-- * @target_freq: target frequency to resolve.
-- *
-- * The target to driver frequency mapping is cached in the policy.
-- *
-- * Return: Lowest driver-supported frequency greater than or equal to the
-- * given target_freq, subject to policy (min/max) and driver limitations.
-- */
--unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy,
--					 unsigned int target_freq)
--{
--	target_freq = clamp_val(target_freq, policy->min, policy->max);
--	policy->cached_target_freq = target_freq;
--
--	if (cpufreq_driver->target_index) {
--		int idx;
--
--		idx = cpufreq_frequency_table_target(policy, target_freq,
--						     CPUFREQ_RELATION_L);
--		policy->cached_resolved_idx = idx;
--		return policy->freq_table[idx].frequency;
+-		gpio_free(chip->cs_gpio);
 -	}
 -
--	if (cpufreq_driver->resolve_freq)
--		return cpufreq_driver->resolve_freq(policy, target_freq);
--
--	return target_freq;
--}
--EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
--
--unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
--{
--	unsigned int latency;
--
--	if (policy->transition_delay_us)
--		return policy->transition_delay_us;
--
--	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
--	if (latency) {
--		/*
--		 * For platforms that can change the frequency very fast (< 10
--		 * us), the above formula gives a decent transition delay. But
--		 * for platforms where transition_latency is in milliseconds, it
--		 * ends up giving unrealistic values.
--		 *
--		 * Cap the default transition delay to 10 ms, which seems to be
--		 * a reasonable amount of time after which we should reevaluate
--		 * the frequency.
--		 */
--		return min(latency * LATENCY_MULTIPLIER, (unsigned int)10000);
--	}
--
--	return LATENCY_MULTIPLIER;
--}
--EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
--
--/*********************************************************************
-- *                          SYSFS INTERFACE                          *
-- *********************************************************************/
--static ssize_t show_boost(struct kobject *kobj,
--				 struct attribute *attr, char *buf)
--{
--	return sprintf(buf, "%d\n", cpufreq_driver->boost_enabled);
+-	kfree(chip);
+-	spi_set_ctldata(spi, NULL);
 -}
 -
--static ssize_t store_boost(struct kobject *kobj, struct attribute *attr,
--				  const char *buf, size_t count)
+-static irqreturn_t adi_spi_tx_dma_isr(int irq, void *dev_id)
 -{
--	int ret, enable;
+-	struct adi_spi_master *drv_data = dev_id;
+-	u32 dma_stat = get_dma_curr_irqstat(drv_data->tx_dma);
+-	u32 tx_ctl;
 -
--	ret = sscanf(buf, "%d", &enable);
--	if (ret != 1 || enable < 0 || enable > 1)
--		return -EINVAL;
--
--	if (cpufreq_boost_trigger_state(enable)) {
--		pr_err("%s: Cannot %s BOOST!\n",
--		       __func__, enable ? "enable" : "disable");
--		return -EINVAL;
--	}
--
--	pr_debug("%s: cpufreq BOOST %s\n",
--		 __func__, enable ? "enabled" : "disabled");
--
--	return count;
--}
--define_one_global_rw(boost);
--
--static struct cpufreq_governor *find_governor(const char *str_governor)
--{
--	struct cpufreq_governor *t;
--
--	for_each_governor(t)
--		if (!strncasecmp(str_governor, t->name, CPUFREQ_NAME_LEN))
--			return t;
--
--	return NULL;
--}
--
--/**
-- * cpufreq_parse_governor - parse a governor string
-- */
--static int cpufreq_parse_governor(char *str_governor,
--				  struct cpufreq_policy *policy)
--{
--	if (cpufreq_driver->setpolicy) {
--		if (!strncasecmp(str_governor, "performance", CPUFREQ_NAME_LEN)) {
--			policy->policy = CPUFREQ_POLICY_PERFORMANCE;
--			return 0;
--		}
--
--		if (!strncasecmp(str_governor, "powersave", CPUFREQ_NAME_LEN)) {
--			policy->policy = CPUFREQ_POLICY_POWERSAVE;
--			return 0;
--		}
+-	clear_dma_irqstat(drv_data->tx_dma);
+-	if (dma_stat & DMA_DONE) {
+-		drv_data->tx_num++;
 -	} else {
--		struct cpufreq_governor *t;
+-		dev_err(&drv_data->master->dev,
+-				"spi tx dma error: %d\n", dma_stat);
+-		if (drv_data->tx)
+-			drv_data->state = ERROR_STATE;
+-	}
+-	tx_ctl = ioread32(&drv_data->regs->tx_control);
+-	tx_ctl &= ~SPI_TXCTL_TDR_NF;
+-	iowrite32(tx_ctl, &drv_data->regs->tx_control);
+-	return IRQ_HANDLED;
+-}
 -
--		mutex_lock(&cpufreq_governor_mutex);
+-static irqreturn_t adi_spi_rx_dma_isr(int irq, void *dev_id)
+-{
+-	struct adi_spi_master *drv_data = dev_id;
+-	struct spi_message *msg = drv_data->cur_msg;
+-	u32 dma_stat = get_dma_curr_irqstat(drv_data->rx_dma);
 -
--		t = find_governor(str_governor);
--		if (!t) {
--			int ret;
+-	clear_dma_irqstat(drv_data->rx_dma);
+-	if (dma_stat & DMA_DONE) {
+-		drv_data->rx_num++;
+-		/* we may fail on tx dma */
+-		if (drv_data->state != ERROR_STATE)
+-			msg->actual_length += drv_data->transfer_len;
+-	} else {
+-		drv_data->state = ERROR_STATE;
+-		dev_err(&drv_data->master->dev,
+-				"spi rx dma error: %d\n", dma_stat);
+-	}
+-	iowrite32(0, &drv_data->regs->tx_control);
+-	iowrite32(0, &drv_data->regs->rx_control);
+-	if (drv_data->rx_num != drv_data->tx_num)
+-		dev_dbg(&drv_data->master->dev,
+-				"dma interrupt missing: tx=%d,rx=%d\n",
+-				drv_data->tx_num, drv_data->rx_num);
+-	tasklet_schedule(&drv_data->pump_transfers);
+-	return IRQ_HANDLED;
+-}
 -
--			mutex_unlock(&cpufreq_governor_mutex);
+-static int adi_spi_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct adi_spi3_master *info = dev_get_platdata(dev);
+-	struct spi_master *master;
+-	struct adi_spi_master *drv_data;
+-	struct resource *mem, *res;
+-	unsigned int tx_dma, rx_dma;
+-	struct clk *sclk;
+-	int ret;
 -
--			ret = request_module("cpufreq_%s", str_governor);
--			if (ret)
--				return -EINVAL;
--
--			mutex_lock(&cpufreq_governor_mutex);
--
--			t = find_governor(str_governor);
--		}
--		if (t && !try_module_get(t->owner))
--			t = NULL;
--
--		mutex_unlock(&cpufreq_governor_mutex);
--
--		if (t) {
--			policy->governor = t;
--			return 0;
--		}
+-	if (!info) {
+-		dev_err(dev, "platform data missing!\n");
+-		return -ENODEV;
 -	}
 -
--	return -EINVAL;
+-	sclk = devm_clk_get(dev, "spi");
+-	if (IS_ERR(sclk)) {
+-		dev_err(dev, "can not get spi clock\n");
+-		return PTR_ERR(sclk);
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!res) {
+-		dev_err(dev, "can not get tx dma resource\n");
+-		return -ENXIO;
+-	}
+-	tx_dma = res->start;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-	if (!res) {
+-		dev_err(dev, "can not get rx dma resource\n");
+-		return -ENXIO;
+-	}
+-	rx_dma = res->start;
+-
+-	/* allocate master with space for drv_data */
+-	master = spi_alloc_master(dev, sizeof(*drv_data));
+-	if (!master) {
+-		dev_err(dev, "can not alloc spi_master\n");
+-		return -ENOMEM;
+-	}
+-	platform_set_drvdata(pdev, master);
+-
+-	/* the mode bits supported by this driver */
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
+-
+-	master->bus_num = pdev->id;
+-	master->num_chipselect = info->num_chipselect;
+-	master->cleanup = adi_spi_cleanup;
+-	master->setup = adi_spi_setup;
+-	master->transfer_one_message = adi_spi_transfer_one_message;
+-	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+-				     SPI_BPW_MASK(8);
+-
+-	drv_data = spi_master_get_devdata(master);
+-	drv_data->master = master;
+-	drv_data->tx_dma = tx_dma;
+-	drv_data->rx_dma = rx_dma;
+-	drv_data->pin_req = info->pin_req;
+-	drv_data->sclk = clk_get_rate(sclk);
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	drv_data->regs = devm_ioremap_resource(dev, mem);
+-	if (IS_ERR(drv_data->regs)) {
+-		ret = PTR_ERR(drv_data->regs);
+-		goto err_put_master;
+-	}
+-
+-	/* request tx and rx dma */
+-	ret = request_dma(tx_dma, "SPI_TX_DMA");
+-	if (ret) {
+-		dev_err(dev, "can not request SPI TX DMA channel\n");
+-		goto err_put_master;
+-	}
+-	set_dma_callback(tx_dma, adi_spi_tx_dma_isr, drv_data);
+-
+-	ret = request_dma(rx_dma, "SPI_RX_DMA");
+-	if (ret) {
+-		dev_err(dev, "can not request SPI RX DMA channel\n");
+-		goto err_free_tx_dma;
+-	}
+-	set_dma_callback(drv_data->rx_dma, adi_spi_rx_dma_isr, drv_data);
+-
+-	/* request CLK, MOSI and MISO */
+-	ret = peripheral_request_list(drv_data->pin_req, "adi-spi3");
+-	if (ret < 0) {
+-		dev_err(dev, "can not request spi pins\n");
+-		goto err_free_rx_dma;
+-	}
+-
+-	iowrite32(SPI_CTL_MSTR | SPI_CTL_CPHA, &drv_data->regs->control);
+-	iowrite32(0x0000FE00, &drv_data->regs->ssel);
+-	iowrite32(0x0, &drv_data->regs->delay);
+-
+-	tasklet_init(&drv_data->pump_transfers,
+-			adi_spi_pump_transfers, (unsigned long)drv_data);
+-	/* register with the SPI framework */
+-	ret = devm_spi_register_master(dev, master);
+-	if (ret) {
+-		dev_err(dev, "can not  register spi master\n");
+-		goto err_free_peripheral;
+-	}
+-
+-	return ret;
+-
+-err_free_peripheral:
+-	peripheral_free_list(drv_data->pin_req);
+-err_free_rx_dma:
+-	free_dma(rx_dma);
+-err_free_tx_dma:
+-	free_dma(tx_dma);
+-err_put_master:
+-	spi_master_put(master);
+-
+-	return ret;
 -}
 -
--/**
-- * cpufreq_per_cpu_attr_read() / show_##file_name() -
-- * print out cpufreq information
-- *
-- * Write out information from cpufreq_driver->policy[cpu]; object must be
-- * "unsigned int".
-- */
--
--#define show_one(file_name, object)			\
--static ssize_t show_##file_name				\
--(struct cpufreq_policy *policy, char *buf)		\
--{							\
--	return sprintf(buf, "%u\n", policy->object);	\
--}
--
--show_one(cpuinfo_min_freq, cpuinfo.min_freq);
--show_one(cpuinfo_max_freq, cpuinfo.max_freq);
--show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
--show_one(scaling_min_freq, min);
--show_one(scaling_max_freq, max);
--
--__weak unsigned int arch_freq_get_on_cpu(int cpu)
+-static int adi_spi_remove(struct platform_device *pdev)
 -{
+-	struct spi_master *master = platform_get_drvdata(pdev);
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(master);
+-
+-	adi_spi_disable(drv_data);
+-	peripheral_free_list(drv_data->pin_req);
+-	free_dma(drv_data->rx_dma);
+-	free_dma(drv_data->tx_dma);
 -	return 0;
 -}
 -
--static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+-#ifdef CONFIG_PM
+-static int adi_spi_suspend(struct device *dev)
 -{
--	ssize_t ret;
--	unsigned int freq;
+-	struct spi_master *master = dev_get_drvdata(dev);
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(master);
 -
--	freq = arch_freq_get_on_cpu(policy->cpu);
--	if (freq)
--		ret = sprintf(buf, "%u\n", freq);
--	else if (cpufreq_driver && cpufreq_driver->setpolicy &&
--			cpufreq_driver->get)
--		ret = sprintf(buf, "%u\n", cpufreq_driver->get(policy->cpu));
+-	spi_master_suspend(master);
+-
+-	drv_data->control = ioread32(&drv_data->regs->control);
+-	drv_data->ssel = ioread32(&drv_data->regs->ssel);
+-
+-	iowrite32(SPI_CTL_MSTR | SPI_CTL_CPHA, &drv_data->regs->control);
+-	iowrite32(0x0000FE00, &drv_data->regs->ssel);
+-	dma_disable_irq(drv_data->rx_dma);
+-	dma_disable_irq(drv_data->tx_dma);
+-
+-	return 0;
+-}
+-
+-static int adi_spi_resume(struct device *dev)
+-{
+-	struct spi_master *master = dev_get_drvdata(dev);
+-	struct adi_spi_master *drv_data = spi_master_get_devdata(master);
+-	int ret = 0;
+-
+-	/* bootrom may modify spi and dma status when resume in spi boot mode */
+-	disable_dma(drv_data->rx_dma);
+-
+-	dma_enable_irq(drv_data->rx_dma);
+-	dma_enable_irq(drv_data->tx_dma);
+-	iowrite32(drv_data->control, &drv_data->regs->control);
+-	iowrite32(drv_data->ssel, &drv_data->regs->ssel);
+-
+-	ret = spi_master_resume(master);
+-	if (ret) {
+-		free_dma(drv_data->rx_dma);
+-		free_dma(drv_data->tx_dma);
+-	}
+-
+-	return ret;
+-}
+-#endif
+-static const struct dev_pm_ops adi_spi_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(adi_spi_suspend, adi_spi_resume)
+-};
+-
+-MODULE_ALIAS("platform:adi-spi3");
+-static struct platform_driver adi_spi_driver = {
+-	.driver	= {
+-		.name	= "adi-spi3",
+-		.pm     = &adi_spi_pm_ops,
+-	},
+-	.remove		= adi_spi_remove,
+-};
+-
+-module_platform_driver_probe(adi_spi_driver, adi_spi_probe);
+-
+-MODULE_DESCRIPTION("Analog Devices SPI3 controller driver");
+-MODULE_AUTHOR("Scott Jiang <Scott.Jiang.Linux@gmail.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
+deleted file mode 100644
+index 01d0ba9..0000000
+--- a/drivers/spi/spi-bfin-sport.c
++++ /dev/null
+@@ -1,919 +0,0 @@
+-/*
+- * SPI bus via the Blackfin SPORT peripheral
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- *
+- * Copyright 2009-2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/delay.h>
+-#include <linux/device.h>
+-#include <linux/gpio.h>
+-#include <linux/io.h>
+-#include <linux/ioport.h>
+-#include <linux/irq.h>
+-#include <linux/errno.h>
+-#include <linux/interrupt.h>
+-#include <linux/platform_device.h>
+-#include <linux/spi/spi.h>
+-#include <linux/workqueue.h>
+-
+-#include <asm/portmux.h>
+-#include <asm/bfin5xx_spi.h>
+-#include <asm/blackfin.h>
+-#include <asm/bfin_sport.h>
+-#include <asm/cacheflush.h>
+-
+-#define DRV_NAME	"bfin-sport-spi"
+-#define DRV_DESC	"SPI bus via the Blackfin SPORT"
+-
+-MODULE_AUTHOR("Cliff Cai");
+-MODULE_DESCRIPTION(DRV_DESC);
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:bfin-sport-spi");
+-
+-enum bfin_sport_spi_state {
+-	START_STATE,
+-	RUNNING_STATE,
+-	DONE_STATE,
+-	ERROR_STATE,
+-};
+-
+-struct bfin_sport_spi_master_data;
+-
+-struct bfin_sport_transfer_ops {
+-	void (*write) (struct bfin_sport_spi_master_data *);
+-	void (*read) (struct bfin_sport_spi_master_data *);
+-	void (*duplex) (struct bfin_sport_spi_master_data *);
+-};
+-
+-struct bfin_sport_spi_master_data {
+-	/* Driver model hookup */
+-	struct device *dev;
+-
+-	/* SPI framework hookup */
+-	struct spi_master *master;
+-
+-	/* Regs base of SPI controller */
+-	struct sport_register __iomem *regs;
+-	int err_irq;
+-
+-	/* Pin request list */
+-	u16 *pin_req;
+-
+-	struct work_struct pump_messages;
+-	spinlock_t lock;
+-	struct list_head queue;
+-	int busy;
+-	bool run;
+-
+-	/* Message Transfer pump */
+-	struct tasklet_struct pump_transfers;
+-
+-	/* Current message transfer state info */
+-	enum bfin_sport_spi_state state;
+-	struct spi_message *cur_msg;
+-	struct spi_transfer *cur_transfer;
+-	struct bfin_sport_spi_slave_data *cur_chip;
+-	union {
+-		void *tx;
+-		u8 *tx8;
+-		u16 *tx16;
+-	};
+-	void *tx_end;
+-	union {
+-		void *rx;
+-		u8 *rx8;
+-		u16 *rx16;
+-	};
+-	void *rx_end;
+-
+-	int cs_change;
+-	struct bfin_sport_transfer_ops *ops;
+-};
+-
+-struct bfin_sport_spi_slave_data {
+-	u16 ctl_reg;
+-	u16 baud;
+-	u16 cs_chg_udelay;	/* Some devices require > 255usec delay */
+-	u32 cs_gpio;
+-	u16 idle_tx_val;
+-	struct bfin_sport_transfer_ops *ops;
+-};
+-
+-static void
+-bfin_sport_spi_enable(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	bfin_write_or(&drv_data->regs->tcr1, TSPEN);
+-	bfin_write_or(&drv_data->regs->rcr1, TSPEN);
+-	SSYNC();
+-}
+-
+-static void
+-bfin_sport_spi_disable(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	bfin_write_and(&drv_data->regs->tcr1, ~TSPEN);
+-	bfin_write_and(&drv_data->regs->rcr1, ~TSPEN);
+-	SSYNC();
+-}
+-
+-/* Caculate the SPI_BAUD register value based on input HZ */
+-static u16
+-bfin_sport_hz_to_spi_baud(u32 speed_hz)
+-{
+-	u_long clk, sclk = get_sclk();
+-	int div = (sclk / (2 * speed_hz)) - 1;
+-
+-	if (div < 0)
+-		div = 0;
+-
+-	clk = sclk / (2 * (div + 1));
+-
+-	if (clk > speed_hz)
+-		div++;
+-
+-	return div;
+-}
+-
+-/* Chip select operation functions for cs_change flag */
+-static void
+-bfin_sport_spi_cs_active(struct bfin_sport_spi_slave_data *chip)
+-{
+-	gpio_direction_output(chip->cs_gpio, 0);
+-}
+-
+-static void
+-bfin_sport_spi_cs_deactive(struct bfin_sport_spi_slave_data *chip)
+-{
+-	gpio_direction_output(chip->cs_gpio, 1);
+-	/* Move delay here for consistency */
+-	if (chip->cs_chg_udelay)
+-		udelay(chip->cs_chg_udelay);
+-}
+-
+-static void
+-bfin_sport_spi_stat_poll_complete(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	unsigned long timeout = jiffies + HZ;
+-	while (!(bfin_read(&drv_data->regs->stat) & RXNE)) {
+-		if (!time_before(jiffies, timeout))
+-			break;
+-	}
+-}
+-
+-static void
+-bfin_sport_spi_u8_writer(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	u16 dummy;
+-
+-	while (drv_data->tx < drv_data->tx_end) {
+-		bfin_write(&drv_data->regs->tx16, *drv_data->tx8++);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		dummy = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static void
+-bfin_sport_spi_u8_reader(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	u16 tx_val = drv_data->cur_chip->idle_tx_val;
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tx16, tx_val);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		*drv_data->rx8++ = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static void
+-bfin_sport_spi_u8_duplex(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tx16, *drv_data->tx8++);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		*drv_data->rx8++ = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static struct bfin_sport_transfer_ops bfin_sport_transfer_ops_u8 = {
+-	.write  = bfin_sport_spi_u8_writer,
+-	.read   = bfin_sport_spi_u8_reader,
+-	.duplex = bfin_sport_spi_u8_duplex,
+-};
+-
+-static void
+-bfin_sport_spi_u16_writer(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	u16 dummy;
+-
+-	while (drv_data->tx < drv_data->tx_end) {
+-		bfin_write(&drv_data->regs->tx16, *drv_data->tx16++);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		dummy = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static void
+-bfin_sport_spi_u16_reader(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	u16 tx_val = drv_data->cur_chip->idle_tx_val;
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tx16, tx_val);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		*drv_data->rx16++ = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static void
+-bfin_sport_spi_u16_duplex(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tx16, *drv_data->tx16++);
+-		bfin_sport_spi_stat_poll_complete(drv_data);
+-		*drv_data->rx16++ = bfin_read(&drv_data->regs->rx16);
+-	}
+-}
+-
+-static struct bfin_sport_transfer_ops bfin_sport_transfer_ops_u16 = {
+-	.write  = bfin_sport_spi_u16_writer,
+-	.read   = bfin_sport_spi_u16_reader,
+-	.duplex = bfin_sport_spi_u16_duplex,
+-};
+-
+-/* stop controller and re-config current chip */
+-static void
+-bfin_sport_spi_restore_state(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	struct bfin_sport_spi_slave_data *chip = drv_data->cur_chip;
+-
+-	bfin_sport_spi_disable(drv_data);
+-	dev_dbg(drv_data->dev, "restoring spi ctl state\n");
+-
+-	bfin_write(&drv_data->regs->tcr1, chip->ctl_reg);
+-	bfin_write(&drv_data->regs->tclkdiv, chip->baud);
+-	SSYNC();
+-
+-	bfin_write(&drv_data->regs->rcr1, chip->ctl_reg & ~(ITCLK | ITFS));
+-	SSYNC();
+-
+-	bfin_sport_spi_cs_active(chip);
+-}
+-
+-/* test if there is more transfer to be done */
+-static enum bfin_sport_spi_state
+-bfin_sport_spi_next_transfer(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	struct spi_message *msg = drv_data->cur_msg;
+-	struct spi_transfer *trans = drv_data->cur_transfer;
+-
+-	/* Move to next transfer */
+-	if (trans->transfer_list.next != &msg->transfers) {
+-		drv_data->cur_transfer =
+-		    list_entry(trans->transfer_list.next,
+-			       struct spi_transfer, transfer_list);
+-		return RUNNING_STATE;
+-	}
+-
+-	return DONE_STATE;
+-}
+-
+-/*
+- * caller already set message->status;
+- * dma and pio irqs are blocked give finished message back
+- */
+-static void
+-bfin_sport_spi_giveback(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	struct bfin_sport_spi_slave_data *chip = drv_data->cur_chip;
+-	unsigned long flags;
+-	struct spi_message *msg;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-	msg = drv_data->cur_msg;
+-	drv_data->state = START_STATE;
+-	drv_data->cur_msg = NULL;
+-	drv_data->cur_transfer = NULL;
+-	drv_data->cur_chip = NULL;
+-	schedule_work(&drv_data->pump_messages);
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	if (!drv_data->cs_change)
+-		bfin_sport_spi_cs_deactive(chip);
+-
+-	if (msg->complete)
+-		msg->complete(msg->context);
+-}
+-
+-static irqreturn_t
+-sport_err_handler(int irq, void *dev_id)
+-{
+-	struct bfin_sport_spi_master_data *drv_data = dev_id;
+-	u16 status;
+-
+-	dev_dbg(drv_data->dev, "%s enter\n", __func__);
+-	status = bfin_read(&drv_data->regs->stat) & (TOVF | TUVF | ROVF | RUVF);
+-
+-	if (status) {
+-		bfin_write(&drv_data->regs->stat, status);
+-		SSYNC();
+-
+-		bfin_sport_spi_disable(drv_data);
+-		dev_err(drv_data->dev, "status error:%s%s%s%s\n",
+-			status & TOVF ? " TOVF" : "",
+-			status & TUVF ? " TUVF" : "",
+-			status & ROVF ? " ROVF" : "",
+-			status & RUVF ? " RUVF" : "");
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static void
+-bfin_sport_spi_pump_transfers(unsigned long data)
+-{
+-	struct bfin_sport_spi_master_data *drv_data = (void *)data;
+-	struct spi_message *message = NULL;
+-	struct spi_transfer *transfer = NULL;
+-	struct spi_transfer *previous = NULL;
+-	struct bfin_sport_spi_slave_data *chip = NULL;
+-	unsigned int bits_per_word;
+-	u32 tranf_success = 1;
+-	u32 transfer_speed;
+-	u8 full_duplex = 0;
+-
+-	/* Get current state information */
+-	message = drv_data->cur_msg;
+-	transfer = drv_data->cur_transfer;
+-	chip = drv_data->cur_chip;
+-
+-	transfer_speed = bfin_sport_hz_to_spi_baud(transfer->speed_hz);
+-	bfin_write(&drv_data->regs->tclkdiv, transfer_speed);
+-	SSYNC();
+-
+-	/*
+-	 * if msg is error or done, report it back using complete() callback
+-	 */
+-
+-	 /* Handle for abort */
+-	if (drv_data->state == ERROR_STATE) {
+-		dev_dbg(drv_data->dev, "transfer: we've hit an error\n");
+-		message->status = -EIO;
+-		bfin_sport_spi_giveback(drv_data);
+-		return;
+-	}
+-
+-	/* Handle end of message */
+-	if (drv_data->state == DONE_STATE) {
+-		dev_dbg(drv_data->dev, "transfer: all done!\n");
+-		message->status = 0;
+-		bfin_sport_spi_giveback(drv_data);
+-		return;
+-	}
+-
+-	/* Delay if requested at end of transfer */
+-	if (drv_data->state == RUNNING_STATE) {
+-		dev_dbg(drv_data->dev, "transfer: still running ...\n");
+-		previous = list_entry(transfer->transfer_list.prev,
+-				      struct spi_transfer, transfer_list);
+-		if (previous->delay_usecs)
+-			udelay(previous->delay_usecs);
+-	}
+-
+-	if (transfer->len == 0) {
+-		/* Move to next transfer of this msg */
+-		drv_data->state = bfin_sport_spi_next_transfer(drv_data);
+-		/* Schedule next transfer tasklet */
+-		tasklet_schedule(&drv_data->pump_transfers);
+-	}
+-
+-	if (transfer->tx_buf != NULL) {
+-		drv_data->tx = (void *)transfer->tx_buf;
+-		drv_data->tx_end = drv_data->tx + transfer->len;
+-		dev_dbg(drv_data->dev, "tx_buf is %p, tx_end is %p\n",
+-			transfer->tx_buf, drv_data->tx_end);
+-	} else
+-		drv_data->tx = NULL;
+-
+-	if (transfer->rx_buf != NULL) {
+-		full_duplex = transfer->tx_buf != NULL;
+-		drv_data->rx = transfer->rx_buf;
+-		drv_data->rx_end = drv_data->rx + transfer->len;
+-		dev_dbg(drv_data->dev, "rx_buf is %p, rx_end is %p\n",
+-			transfer->rx_buf, drv_data->rx_end);
+-	} else
+-		drv_data->rx = NULL;
+-
+-	drv_data->cs_change = transfer->cs_change;
+-
+-	/* Bits per word setup */
+-	bits_per_word = transfer->bits_per_word;
+-	if (bits_per_word == 16)
+-		drv_data->ops = &bfin_sport_transfer_ops_u16;
 -	else
--		ret = sprintf(buf, "%u\n", policy->cur);
--	return ret;
--}
+-		drv_data->ops = &bfin_sport_transfer_ops_u8;
+-	bfin_write(&drv_data->regs->tcr2, bits_per_word - 1);
+-	bfin_write(&drv_data->regs->tfsdiv, bits_per_word - 1);
+-	bfin_write(&drv_data->regs->rcr2, bits_per_word - 1);
 -
--static int cpufreq_set_policy(struct cpufreq_policy *policy,
--				struct cpufreq_policy *new_policy);
+-	drv_data->state = RUNNING_STATE;
 -
--/**
-- * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
-- */
--#define store_one(file_name, object)			\
--static ssize_t store_##file_name					\
--(struct cpufreq_policy *policy, const char *buf, size_t count)		\
--{									\
--	int ret, temp;							\
--	struct cpufreq_policy new_policy;				\
--									\
--	memcpy(&new_policy, policy, sizeof(*policy));			\
--									\
--	ret = sscanf(buf, "%u", &new_policy.object);			\
--	if (ret != 1)							\
--		return -EINVAL;						\
--									\
--	temp = new_policy.object;					\
--	ret = cpufreq_set_policy(policy, &new_policy);		\
--	if (!ret)							\
--		policy->user_policy.object = temp;			\
--									\
--	return ret ? ret : count;					\
--}
+-	if (drv_data->cs_change)
+-		bfin_sport_spi_cs_active(chip);
 -
--store_one(scaling_min_freq, min);
--store_one(scaling_max_freq, max);
+-	dev_dbg(drv_data->dev,
+-		"now pumping a transfer: width is %d, len is %d\n",
+-		bits_per_word, transfer->len);
 -
--/**
-- * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
-- */
--static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
--					char *buf)
--{
--	unsigned int cur_freq = __cpufreq_get(policy);
+-	/* PIO mode write then read */
+-	dev_dbg(drv_data->dev, "doing IO transfer\n");
 -
--	if (cur_freq)
--		return sprintf(buf, "%u\n", cur_freq);
+-	bfin_sport_spi_enable(drv_data);
+-	if (full_duplex) {
+-		/* full duplex mode */
+-		BUG_ON((drv_data->tx_end - drv_data->tx) !=
+-		       (drv_data->rx_end - drv_data->rx));
+-		drv_data->ops->duplex(drv_data);
 -
--	return sprintf(buf, "<unknown>\n");
--}
+-		if (drv_data->tx != drv_data->tx_end)
+-			tranf_success = 0;
+-	} else if (drv_data->tx != NULL) {
+-		/* write only half duplex */
 -
--/**
-- * show_scaling_governor - show the current policy for the specified CPU
-- */
--static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
--{
--	if (policy->policy == CPUFREQ_POLICY_POWERSAVE)
--		return sprintf(buf, "powersave\n");
--	else if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
--		return sprintf(buf, "performance\n");
--	else if (policy->governor)
--		return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
--				policy->governor->name);
--	return -EINVAL;
--}
+-		drv_data->ops->write(drv_data);
 -
--/**
-- * store_scaling_governor - store policy for the specified CPU
-- */
--static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
--					const char *buf, size_t count)
--{
--	int ret;
--	char	str_governor[16];
--	struct cpufreq_policy new_policy;
+-		if (drv_data->tx != drv_data->tx_end)
+-			tranf_success = 0;
+-	} else if (drv_data->rx != NULL) {
+-		/* read only half duplex */
 -
--	memcpy(&new_policy, policy, sizeof(*policy));
+-		drv_data->ops->read(drv_data);
+-		if (drv_data->rx != drv_data->rx_end)
+-			tranf_success = 0;
+-	}
+-	bfin_sport_spi_disable(drv_data);
 -
--	ret = sscanf(buf, "%15s", str_governor);
--	if (ret != 1)
--		return -EINVAL;
--
--	if (cpufreq_parse_governor(str_governor, &new_policy))
--		return -EINVAL;
--
--	ret = cpufreq_set_policy(policy, &new_policy);
--
--	if (new_policy.governor)
--		module_put(new_policy.governor->owner);
--
--	return ret ? ret : count;
--}
--
--/**
-- * show_scaling_driver - show the cpufreq driver currently loaded
-- */
--static ssize_t show_scaling_driver(struct cpufreq_policy *policy, char *buf)
--{
--	return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n", cpufreq_driver->name);
--}
--
--/**
-- * show_scaling_available_governors - show the available CPUfreq governors
-- */
--static ssize_t show_scaling_available_governors(struct cpufreq_policy *policy,
--						char *buf)
--{
--	ssize_t i = 0;
--	struct cpufreq_governor *t;
--
--	if (!has_target()) {
--		i += sprintf(buf, "performance powersave");
--		goto out;
+-	if (!tranf_success) {
+-		dev_dbg(drv_data->dev, "IO write error!\n");
+-		drv_data->state = ERROR_STATE;
+-	} else {
+-		/* Update total byte transferred */
+-		message->actual_length += transfer->len;
+-		/* Move to next transfer of this msg */
+-		drv_data->state = bfin_sport_spi_next_transfer(drv_data);
+-		if (drv_data->cs_change)
+-			bfin_sport_spi_cs_deactive(chip);
 -	}
 -
--	for_each_governor(t) {
--		if (i >= (ssize_t) ((PAGE_SIZE / sizeof(char))
--		    - (CPUFREQ_NAME_LEN + 2)))
--			goto out;
--		i += scnprintf(&buf[i], CPUFREQ_NAME_PLEN, "%s ", t->name);
--	}
--out:
--	i += sprintf(&buf[i], "\n");
--	return i;
+-	/* Schedule next transfer tasklet */
+-	tasklet_schedule(&drv_data->pump_transfers);
 -}
 -
--ssize_t cpufreq_show_cpus(const struct cpumask *mask, char *buf)
+-/* pop a msg from queue and kick off real transfer */
+-static void
+-bfin_sport_spi_pump_messages(struct work_struct *work)
 -{
--	ssize_t i = 0;
--	unsigned int cpu;
+-	struct bfin_sport_spi_master_data *drv_data;
+-	unsigned long flags;
+-	struct spi_message *next_msg;
 -
--	for_each_cpu(cpu, mask) {
--		if (i)
--			i += scnprintf(&buf[i], (PAGE_SIZE - i - 2), " ");
--		i += scnprintf(&buf[i], (PAGE_SIZE - i - 2), "%u", cpu);
--		if (i >= (PAGE_SIZE - 5))
--			break;
--	}
--	i += sprintf(&buf[i], "\n");
--	return i;
--}
--EXPORT_SYMBOL_GPL(cpufreq_show_cpus);
+-	drv_data = container_of(work, struct bfin_sport_spi_master_data, pump_messages);
 -
--/**
-- * show_related_cpus - show the CPUs affected by each transition even if
-- * hw coordination is in use
-- */
--static ssize_t show_related_cpus(struct cpufreq_policy *policy, char *buf)
--{
--	return cpufreq_show_cpus(policy->related_cpus, buf);
--}
--
--/**
-- * show_affected_cpus - show the CPUs affected by each transition
-- */
--static ssize_t show_affected_cpus(struct cpufreq_policy *policy, char *buf)
--{
--	return cpufreq_show_cpus(policy->cpus, buf);
--}
--
--static ssize_t store_scaling_setspeed(struct cpufreq_policy *policy,
--					const char *buf, size_t count)
--{
--	unsigned int freq = 0;
--	unsigned int ret;
--
--	if (!policy->governor || !policy->governor->store_setspeed)
--		return -EINVAL;
--
--	ret = sscanf(buf, "%u", &freq);
--	if (ret != 1)
--		return -EINVAL;
--
--	policy->governor->store_setspeed(policy, freq);
--
--	return count;
--}
--
--static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, char *buf)
--{
--	if (!policy->governor || !policy->governor->show_setspeed)
--		return sprintf(buf, "<unsupported>\n");
--
--	return policy->governor->show_setspeed(policy, buf);
--}
--
--/**
-- * show_bios_limit - show the current cpufreq HW/BIOS limitation
-- */
--static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
--{
--	unsigned int limit;
--	int ret;
--	if (cpufreq_driver->bios_limit) {
--		ret = cpufreq_driver->bios_limit(policy->cpu, &limit);
--		if (!ret)
--			return sprintf(buf, "%u\n", limit);
--	}
--	return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
--}
--
--cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
--cpufreq_freq_attr_ro(cpuinfo_min_freq);
--cpufreq_freq_attr_ro(cpuinfo_max_freq);
--cpufreq_freq_attr_ro(cpuinfo_transition_latency);
--cpufreq_freq_attr_ro(scaling_available_governors);
--cpufreq_freq_attr_ro(scaling_driver);
--cpufreq_freq_attr_ro(scaling_cur_freq);
--cpufreq_freq_attr_ro(bios_limit);
--cpufreq_freq_attr_ro(related_cpus);
--cpufreq_freq_attr_ro(affected_cpus);
--cpufreq_freq_attr_rw(scaling_min_freq);
--cpufreq_freq_attr_rw(scaling_max_freq);
--cpufreq_freq_attr_rw(scaling_governor);
--cpufreq_freq_attr_rw(scaling_setspeed);
--
--static struct attribute *default_attrs[] = {
--	&cpuinfo_min_freq.attr,
--	&cpuinfo_max_freq.attr,
--	&cpuinfo_transition_latency.attr,
--	&scaling_min_freq.attr,
--	&scaling_max_freq.attr,
--	&affected_cpus.attr,
--	&related_cpus.attr,
--	&scaling_governor.attr,
--	&scaling_driver.attr,
--	&scaling_available_governors.attr,
--	&scaling_setspeed.attr,
--	NULL
--};
--
--#define to_policy(k) container_of(k, struct cpufreq_policy, kobj)
--#define to_attr(a) container_of(a, struct freq_attr, attr)
--
--static ssize_t show(struct kobject *kobj, struct attribute *attr, char *buf)
--{
--	struct cpufreq_policy *policy = to_policy(kobj);
--	struct freq_attr *fattr = to_attr(attr);
--	ssize_t ret;
--
--	down_read(&policy->rwsem);
--	ret = fattr->show(policy, buf);
--	up_read(&policy->rwsem);
--
--	return ret;
--}
--
--static ssize_t store(struct kobject *kobj, struct attribute *attr,
--		     const char *buf, size_t count)
--{
--	struct cpufreq_policy *policy = to_policy(kobj);
--	struct freq_attr *fattr = to_attr(attr);
--	ssize_t ret = -EINVAL;
--
--	cpus_read_lock();
--
--	if (cpu_online(policy->cpu)) {
--		down_write(&policy->rwsem);
--		ret = fattr->store(policy, buf, count);
--		up_write(&policy->rwsem);
--	}
--
--	cpus_read_unlock();
--
--	return ret;
--}
--
--static void cpufreq_sysfs_release(struct kobject *kobj)
--{
--	struct cpufreq_policy *policy = to_policy(kobj);
--	pr_debug("last reference is dropped\n");
--	complete(&policy->kobj_unregister);
--}
--
--static const struct sysfs_ops sysfs_ops = {
--	.show	= show,
--	.store	= store,
--};
--
--static struct kobj_type ktype_cpufreq = {
--	.sysfs_ops	= &sysfs_ops,
--	.default_attrs	= default_attrs,
--	.release	= cpufreq_sysfs_release,
--};
--
--static void add_cpu_dev_symlink(struct cpufreq_policy *policy, unsigned int cpu)
--{
--	struct device *dev = get_cpu_device(cpu);
--
--	if (!dev)
+-	/* Lock queue and check for queue work */
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-	if (list_empty(&drv_data->queue) || !drv_data->run) {
+-		/* pumper kicked off but no work to do */
+-		drv_data->busy = 0;
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
 -		return;
+-	}
 -
--	if (cpumask_test_and_set_cpu(cpu, policy->real_cpus))
+-	/* Make sure we are not already running a message */
+-	if (drv_data->cur_msg) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
 -		return;
+-	}
 -
--	dev_dbg(dev, "%s: Adding symlink\n", __func__);
--	if (sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq"))
--		dev_err(dev, "cpufreq symlink creation failed\n");
+-	/* Extract head of queue */
+-	next_msg = list_entry(drv_data->queue.next,
+-		struct spi_message, queue);
+-
+-	drv_data->cur_msg = next_msg;
+-
+-	/* Setup the SSP using the per chip configuration */
+-	drv_data->cur_chip = spi_get_ctldata(drv_data->cur_msg->spi);
+-
+-	list_del_init(&drv_data->cur_msg->queue);
+-
+-	/* Initialize message state */
+-	drv_data->cur_msg->state = START_STATE;
+-	drv_data->cur_transfer = list_entry(drv_data->cur_msg->transfers.next,
+-					    struct spi_transfer, transfer_list);
+-	bfin_sport_spi_restore_state(drv_data);
+-	dev_dbg(drv_data->dev, "got a message to pump, "
+-		"state is set to: baud %d, cs_gpio %i, ctl 0x%x\n",
+-		drv_data->cur_chip->baud, drv_data->cur_chip->cs_gpio,
+-		drv_data->cur_chip->ctl_reg);
+-
+-	dev_dbg(drv_data->dev,
+-		"the first transfer len is %d\n",
+-		drv_data->cur_transfer->len);
+-
+-	/* Mark as busy and launch transfers */
+-	tasklet_schedule(&drv_data->pump_transfers);
+-
+-	drv_data->busy = 1;
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
 -}
 -
--static void remove_cpu_dev_symlink(struct cpufreq_policy *policy,
--				   struct device *dev)
+-/*
+- * got a msg to transfer, queue it in drv_data->queue.
+- * And kick off message pumper
+- */
+-static int
+-bfin_sport_spi_transfer(struct spi_device *spi, struct spi_message *msg)
 -{
--	dev_dbg(dev, "%s: Removing symlink\n", __func__);
--	sysfs_remove_link(&dev->kobj, "cpufreq");
--}
+-	struct bfin_sport_spi_master_data *drv_data = spi_master_get_devdata(spi->master);
+-	unsigned long flags;
 -
--static int cpufreq_add_dev_interface(struct cpufreq_policy *policy)
--{
--	struct freq_attr **drv_attr;
--	int ret = 0;
+-	spin_lock_irqsave(&drv_data->lock, flags);
 -
--	/* set up files for this cpu device */
--	drv_attr = cpufreq_driver->attr;
--	while (drv_attr && *drv_attr) {
--		ret = sysfs_create_file(&policy->kobj, &((*drv_attr)->attr));
--		if (ret)
--			return ret;
--		drv_attr++;
--	}
--	if (cpufreq_driver->get) {
--		ret = sysfs_create_file(&policy->kobj, &cpuinfo_cur_freq.attr);
--		if (ret)
--			return ret;
+-	if (!drv_data->run) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return -ESHUTDOWN;
 -	}
 -
--	ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
--	if (ret)
--		return ret;
+-	msg->actual_length = 0;
+-	msg->status = -EINPROGRESS;
+-	msg->state = START_STATE;
 -
--	if (cpufreq_driver->bios_limit) {
--		ret = sysfs_create_file(&policy->kobj, &bios_limit.attr);
--		if (ret)
--			return ret;
--	}
+-	dev_dbg(&spi->dev, "adding an msg in transfer()\n");
+-	list_add_tail(&msg->queue, &drv_data->queue);
+-
+-	if (drv_data->run && !drv_data->busy)
+-		schedule_work(&drv_data->pump_messages);
+-
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
 -
 -	return 0;
 -}
 -
--__weak struct cpufreq_governor *cpufreq_default_governor(void)
+-/* Called every time common spi devices change state */
+-static int
+-bfin_sport_spi_setup(struct spi_device *spi)
 -{
--	return NULL;
--}
--
--static int cpufreq_init_policy(struct cpufreq_policy *policy)
--{
--	struct cpufreq_governor *gov = NULL;
--	struct cpufreq_policy new_policy;
--
--	memcpy(&new_policy, policy, sizeof(*policy));
--
--	/* Update governor of new_policy to the governor used before hotplug */
--	gov = find_governor(policy->last_governor);
--	if (gov) {
--		pr_debug("Restoring governor %s for cpu %d\n",
--				policy->governor->name, policy->cpu);
--	} else {
--		gov = cpufreq_default_governor();
--		if (!gov)
--			return -ENODATA;
--	}
--
--	new_policy.governor = gov;
--
--	/* Use the default policy if there is no last_policy. */
--	if (cpufreq_driver->setpolicy) {
--		if (policy->last_policy)
--			new_policy.policy = policy->last_policy;
--		else
--			cpufreq_parse_governor(gov->name, &new_policy);
--	}
--	/* set default policy */
--	return cpufreq_set_policy(policy, &new_policy);
--}
--
--static int cpufreq_add_policy_cpu(struct cpufreq_policy *policy, unsigned int cpu)
--{
--	int ret = 0;
--
--	/* Has this CPU been taken care of already? */
--	if (cpumask_test_cpu(cpu, policy->cpus))
--		return 0;
--
--	down_write(&policy->rwsem);
--	if (has_target())
--		cpufreq_stop_governor(policy);
--
--	cpumask_set_cpu(cpu, policy->cpus);
--
--	if (has_target()) {
--		ret = cpufreq_start_governor(policy);
--		if (ret)
--			pr_err("%s: Failed to start governor\n", __func__);
--	}
--	up_write(&policy->rwsem);
--	return ret;
--}
--
--static void handle_update(struct work_struct *work)
--{
--	struct cpufreq_policy *policy =
--		container_of(work, struct cpufreq_policy, update);
--	unsigned int cpu = policy->cpu;
--	pr_debug("handle_update for cpu %u called\n", cpu);
--	cpufreq_update_policy(cpu);
--}
--
--static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
--{
--	struct cpufreq_policy *policy;
+-	struct bfin_sport_spi_slave_data *chip, *first = NULL;
 -	int ret;
 -
--	policy = kzalloc(sizeof(*policy), GFP_KERNEL);
--	if (!policy)
--		return NULL;
+-	/* Only alloc (or use chip_info) on first setup */
+-	chip = spi_get_ctldata(spi);
+-	if (chip == NULL) {
+-		struct bfin5xx_spi_chip *chip_info;
 -
--	if (!alloc_cpumask_var(&policy->cpus, GFP_KERNEL))
--		goto err_free_policy;
--
--	if (!zalloc_cpumask_var(&policy->related_cpus, GFP_KERNEL))
--		goto err_free_cpumask;
--
--	if (!zalloc_cpumask_var(&policy->real_cpus, GFP_KERNEL))
--		goto err_free_rcpumask;
--
--	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
--				   cpufreq_global_kobject, "policy%u", cpu);
--	if (ret) {
--		pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
--		goto err_free_real_cpus;
--	}
--
--	INIT_LIST_HEAD(&policy->policy_list);
--	init_rwsem(&policy->rwsem);
--	spin_lock_init(&policy->transition_lock);
--	init_waitqueue_head(&policy->transition_wait);
--	init_completion(&policy->kobj_unregister);
--	INIT_WORK(&policy->update, handle_update);
--
--	policy->cpu = cpu;
--	return policy;
--
--err_free_real_cpus:
--	free_cpumask_var(policy->real_cpus);
--err_free_rcpumask:
--	free_cpumask_var(policy->related_cpus);
--err_free_cpumask:
--	free_cpumask_var(policy->cpus);
--err_free_policy:
--	kfree(policy);
--
--	return NULL;
--}
--
--static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
--{
--	struct kobject *kobj;
--	struct completion *cmp;
--
--	down_write(&policy->rwsem);
--	cpufreq_stats_free_table(policy);
--	kobj = &policy->kobj;
--	cmp = &policy->kobj_unregister;
--	up_write(&policy->rwsem);
--	kobject_put(kobj);
--
--	/*
--	 * We need to make sure that the underlying kobj is
--	 * actually not referenced anymore by anybody before we
--	 * proceed with unloading.
--	 */
--	pr_debug("waiting for dropping of refcount\n");
--	wait_for_completion(cmp);
--	pr_debug("wait complete\n");
--}
--
--static void cpufreq_policy_free(struct cpufreq_policy *policy)
--{
--	unsigned long flags;
--	int cpu;
--
--	/* Remove policy from list */
--	write_lock_irqsave(&cpufreq_driver_lock, flags);
--	list_del(&policy->policy_list);
--
--	for_each_cpu(cpu, policy->related_cpus)
--		per_cpu(cpufreq_cpu_data, cpu) = NULL;
--	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--
--	cpufreq_policy_put_kobj(policy);
--	free_cpumask_var(policy->real_cpus);
--	free_cpumask_var(policy->related_cpus);
--	free_cpumask_var(policy->cpus);
--	kfree(policy);
--}
--
--static int cpufreq_online(unsigned int cpu)
--{
--	struct cpufreq_policy *policy;
--	bool new_policy;
--	unsigned long flags;
--	unsigned int j;
--	int ret;
--
--	pr_debug("%s: bringing CPU%u online\n", __func__, cpu);
--
--	/* Check if this CPU already has a policy to manage it */
--	policy = per_cpu(cpufreq_cpu_data, cpu);
--	if (policy) {
--		WARN_ON(!cpumask_test_cpu(cpu, policy->related_cpus));
--		if (!policy_is_inactive(policy))
--			return cpufreq_add_policy_cpu(policy, cpu);
--
--		/* This is the only online CPU for the policy.  Start over. */
--		new_policy = false;
--		down_write(&policy->rwsem);
--		policy->cpu = cpu;
--		policy->governor = NULL;
--		up_write(&policy->rwsem);
--	} else {
--		new_policy = true;
--		policy = cpufreq_policy_alloc(cpu);
--		if (!policy)
+-		chip = first = kzalloc(sizeof(*chip), GFP_KERNEL);
+-		if (!chip)
 -			return -ENOMEM;
--	}
 -
--	cpumask_copy(policy->cpus, cpumask_of(cpu));
--
--	/* call driver. From then on the cpufreq must be able
--	 * to accept all calls to ->verify and ->setpolicy for this CPU
--	 */
--	ret = cpufreq_driver->init(policy);
--	if (ret) {
--		pr_debug("initialization failed\n");
--		goto out_free_policy;
--	}
--
--	down_write(&policy->rwsem);
--
--	if (new_policy) {
--		/* related_cpus should at least include policy->cpus. */
--		cpumask_copy(policy->related_cpus, policy->cpus);
--	}
--
--	/*
--	 * affected cpus must always be the one, which are online. We aren't
--	 * managing offline cpus here.
--	 */
--	cpumask_and(policy->cpus, policy->cpus, cpu_online_mask);
--
--	if (new_policy) {
--		policy->user_policy.min = policy->min;
--		policy->user_policy.max = policy->max;
--
--		for_each_cpu(j, policy->related_cpus) {
--			per_cpu(cpufreq_cpu_data, j) = policy;
--			add_cpu_dev_symlink(policy, j);
--		}
--	} else {
--		policy->min = policy->user_policy.min;
--		policy->max = policy->user_policy.max;
--	}
--
--	if (cpufreq_driver->get && !cpufreq_driver->setpolicy) {
--		policy->cur = cpufreq_driver->get(policy->cpu);
--		if (!policy->cur) {
--			pr_err("%s: ->get() failed\n", __func__);
--			goto out_exit_policy;
--		}
--	}
--
--	/*
--	 * Sometimes boot loaders set CPU frequency to a value outside of
--	 * frequency table present with cpufreq core. In such cases CPU might be
--	 * unstable if it has to run on that frequency for long duration of time
--	 * and so its better to set it to a frequency which is specified in
--	 * freq-table. This also makes cpufreq stats inconsistent as
--	 * cpufreq-stats would fail to register because current frequency of CPU
--	 * isn't found in freq-table.
--	 *
--	 * Because we don't want this change to effect boot process badly, we go
--	 * for the next freq which is >= policy->cur ('cur' must be set by now,
--	 * otherwise we will end up setting freq to lowest of the table as 'cur'
--	 * is initialized to zero).
--	 *
--	 * We are passing target-freq as "policy->cur - 1" otherwise
--	 * __cpufreq_driver_target() would simply fail, as policy->cur will be
--	 * equal to target-freq.
--	 */
--	if ((cpufreq_driver->flags & CPUFREQ_NEED_INITIAL_FREQ_CHECK)
--	    && has_target()) {
--		/* Are we running at unknown frequency ? */
--		ret = cpufreq_frequency_table_get_index(policy, policy->cur);
--		if (ret == -EINVAL) {
--			/* Warn user and fix it */
--			pr_warn("%s: CPU%d: Running at unlisted freq: %u KHz\n",
--				__func__, policy->cpu, policy->cur);
--			ret = __cpufreq_driver_target(policy, policy->cur - 1,
--				CPUFREQ_RELATION_L);
--
+-		/* platform chip_info isn't required */
+-		chip_info = spi->controller_data;
+-		if (chip_info) {
 -			/*
--			 * Reaching here after boot in a few seconds may not
--			 * mean that system will remain stable at "unknown"
--			 * frequency for longer duration. Hence, a BUG_ON().
+-			 * DITFS and TDTYPE are only thing we don't set, but
+-			 * they probably shouldn't be changed by people.
 -			 */
--			BUG_ON(ret);
--			pr_warn("%s: CPU%d: Unlisted initial frequency changed to: %u KHz\n",
--				__func__, policy->cpu, policy->cur);
+-			if (chip_info->ctl_reg || chip_info->enable_dma) {
+-				ret = -EINVAL;
+-				dev_err(&spi->dev, "don't set ctl_reg/enable_dma fields\n");
+-				goto error;
+-			}
+-			chip->cs_chg_udelay = chip_info->cs_chg_udelay;
+-			chip->idle_tx_val = chip_info->idle_tx_val;
 -		}
 -	}
 -
--	if (new_policy) {
--		ret = cpufreq_add_dev_interface(policy);
--		if (ret)
--			goto out_exit_policy;
+-	/* translate common spi framework into our register
+-	 * following configure contents are same for tx and rx.
+-	 */
 -
--		cpufreq_stats_create_table(policy);
+-	if (spi->mode & SPI_CPHA)
+-		chip->ctl_reg &= ~TCKFE;
+-	else
+-		chip->ctl_reg |= TCKFE;
 -
--		write_lock_irqsave(&cpufreq_driver_lock, flags);
--		list_add(&policy->policy_list, &cpufreq_policy_list);
--		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--	}
+-	if (spi->mode & SPI_LSB_FIRST)
+-		chip->ctl_reg |= TLSBIT;
+-	else
+-		chip->ctl_reg &= ~TLSBIT;
 -
--	ret = cpufreq_init_policy(policy);
--	if (ret) {
--		pr_err("%s: Failed to initialize policy for cpu: %d (%d)\n",
--		       __func__, cpu, ret);
--		/* cpufreq_policy_free() will notify based on this */
--		new_policy = false;
--		goto out_exit_policy;
--	}
+-	/* Sport in master mode */
+-	chip->ctl_reg |= ITCLK | ITFS | TFSR | LATFS | LTFS;
 -
--	up_write(&policy->rwsem);
+-	chip->baud = bfin_sport_hz_to_spi_baud(spi->max_speed_hz);
 -
--	kobject_uevent(&policy->kobj, KOBJ_ADD);
+-	chip->cs_gpio = spi->chip_select;
+-	ret = gpio_request(chip->cs_gpio, spi->modalias);
+-	if (ret)
+-		goto error;
 -
--	/* Callback for handling stuff after policy is ready */
--	if (cpufreq_driver->ready)
--		cpufreq_driver->ready(policy);
+-	dev_dbg(&spi->dev, "setup spi chip %s, width is %d\n",
+-			spi->modalias, spi->bits_per_word);
+-	dev_dbg(&spi->dev, "ctl_reg is 0x%x, GPIO is %i\n",
+-			chip->ctl_reg, spi->chip_select);
 -
--	pr_debug("initialization complete\n");
+-	spi_set_ctldata(spi, chip);
 -
--	return 0;
+-	bfin_sport_spi_cs_deactive(chip);
 -
--out_exit_policy:
--	up_write(&policy->rwsem);
+-	return ret;
 -
--	if (cpufreq_driver->exit)
--		cpufreq_driver->exit(policy);
--
--	for_each_cpu(j, policy->real_cpus)
--		remove_cpu_dev_symlink(policy, get_cpu_device(j));
--
--out_free_policy:
--	cpufreq_policy_free(policy);
+- error:
+-	kfree(first);
 -	return ret;
 -}
--
--/**
-- * cpufreq_add_dev - the cpufreq interface for a CPU device.
-- * @dev: CPU device.
-- * @sif: Subsystem interface structure pointer (not used)
-- */
--static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
--{
--	struct cpufreq_policy *policy;
--	unsigned cpu = dev->id;
--	int ret;
--
--	dev_dbg(dev, "%s: adding CPU%u\n", __func__, cpu);
--
--	if (cpu_online(cpu)) {
--		ret = cpufreq_online(cpu);
--		if (ret)
--			return ret;
--	}
--
--	/* Create sysfs link on CPU registration */
--	policy = per_cpu(cpufreq_cpu_data, cpu);
--	if (policy)
--		add_cpu_dev_symlink(policy, cpu);
--
--	return 0;
--}
--
--static int cpufreq_offline(unsigned int cpu)
--{
--	struct cpufreq_policy *policy;
--	int ret;
--
--	pr_debug("%s: unregistering CPU %u\n", __func__, cpu);
--
--	policy = cpufreq_cpu_get_raw(cpu);
--	if (!policy) {
--		pr_debug("%s: No cpu_data found\n", __func__);
--		return 0;
--	}
--
--	down_write(&policy->rwsem);
--	if (has_target())
--		cpufreq_stop_governor(policy);
--
--	cpumask_clear_cpu(cpu, policy->cpus);
--
--	if (policy_is_inactive(policy)) {
--		if (has_target())
--			strncpy(policy->last_governor, policy->governor->name,
--				CPUFREQ_NAME_LEN);
--		else
--			policy->last_policy = policy->policy;
--	} else if (cpu == policy->cpu) {
--		/* Nominate new CPU */
--		policy->cpu = cpumask_any(policy->cpus);
--	}
--
--	/* Start governor again for active policy */
--	if (!policy_is_inactive(policy)) {
--		if (has_target()) {
--			ret = cpufreq_start_governor(policy);
--			if (ret)
--				pr_err("%s: Failed to start governor\n", __func__);
--		}
--
--		goto unlock;
--	}
--
--	if (cpufreq_driver->stop_cpu)
--		cpufreq_driver->stop_cpu(policy);
--
--	if (has_target())
--		cpufreq_exit_governor(policy);
--
--	/*
--	 * Perform the ->exit() even during light-weight tear-down,
--	 * since this is a core component, and is essential for the
--	 * subsequent light-weight ->init() to succeed.
--	 */
--	if (cpufreq_driver->exit) {
--		cpufreq_driver->exit(policy);
--		policy->freq_table = NULL;
--	}
--
--unlock:
--	up_write(&policy->rwsem);
--	return 0;
--}
--
--/**
-- * cpufreq_remove_dev - remove a CPU device
-- *
-- * Removes the cpufreq interface for a CPU device.
-- */
--static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
--{
--	unsigned int cpu = dev->id;
--	struct cpufreq_policy *policy = per_cpu(cpufreq_cpu_data, cpu);
--
--	if (!policy)
--		return;
--
--	if (cpu_online(cpu))
--		cpufreq_offline(cpu);
--
--	cpumask_clear_cpu(cpu, policy->real_cpus);
--	remove_cpu_dev_symlink(policy, dev);
--
--	if (cpumask_empty(policy->real_cpus))
--		cpufreq_policy_free(policy);
--}
--
--/**
-- *	cpufreq_out_of_sync - If actual and saved CPU frequency differs, we're
-- *	in deep trouble.
-- *	@policy: policy managing CPUs
-- *	@new_freq: CPU frequency the CPU actually runs at
-- *
-- *	We adjust to current frequency first, and need to clean up later.
-- *	So either call to cpufreq_update_policy() or schedule handle_update()).
-- */
--static void cpufreq_out_of_sync(struct cpufreq_policy *policy,
--				unsigned int new_freq)
--{
--	struct cpufreq_freqs freqs;
--
--	pr_debug("Warning: CPU frequency out of sync: cpufreq and timing core thinks of %u, is %u kHz\n",
--		 policy->cur, new_freq);
--
--	freqs.old = policy->cur;
--	freqs.new = new_freq;
--
--	cpufreq_freq_transition_begin(policy, &freqs);
--	cpufreq_freq_transition_end(policy, &freqs, 0);
--}
--
--/**
-- * cpufreq_quick_get - get the CPU frequency (in kHz) from policy->cur
-- * @cpu: CPU number
-- *
-- * This is the last known freq, without actually getting it from the driver.
-- * Return value will be same as what is shown in scaling_cur_freq in sysfs.
-- */
--unsigned int cpufreq_quick_get(unsigned int cpu)
--{
--	struct cpufreq_policy *policy;
--	unsigned int ret_freq = 0;
--	unsigned long flags;
--
--	read_lock_irqsave(&cpufreq_driver_lock, flags);
--
--	if (cpufreq_driver && cpufreq_driver->setpolicy && cpufreq_driver->get) {
--		ret_freq = cpufreq_driver->get(cpu);
--		read_unlock_irqrestore(&cpufreq_driver_lock, flags);
--		return ret_freq;
--	}
--
--	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
--
--	policy = cpufreq_cpu_get(cpu);
--	if (policy) {
--		ret_freq = policy->cur;
--		cpufreq_cpu_put(policy);
--	}
--
--	return ret_freq;
--}
--EXPORT_SYMBOL(cpufreq_quick_get);
--
--/**
-- * cpufreq_quick_get_max - get the max reported CPU frequency for this CPU
-- * @cpu: CPU number
-- *
-- * Just return the max possible frequency for a given CPU.
-- */
--unsigned int cpufreq_quick_get_max(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--	unsigned int ret_freq = 0;
--
--	if (policy) {
--		ret_freq = policy->max;
--		cpufreq_cpu_put(policy);
--	}
--
--	return ret_freq;
--}
--EXPORT_SYMBOL(cpufreq_quick_get_max);
--
--static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
--{
--	unsigned int ret_freq = 0;
--
--	if (!cpufreq_driver->get)
--		return ret_freq;
--
--	ret_freq = cpufreq_driver->get(policy->cpu);
--
--	/*
--	 * Updating inactive policies is invalid, so avoid doing that.  Also
--	 * if fast frequency switching is used with the given policy, the check
--	 * against policy->cur is pointless, so skip it in that case too.
--	 */
--	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
--		return ret_freq;
--
--	if (ret_freq && policy->cur &&
--		!(cpufreq_driver->flags & CPUFREQ_CONST_LOOPS)) {
--		/* verify no discrepancy between actual and
--					saved value exists */
--		if (unlikely(ret_freq != policy->cur)) {
--			cpufreq_out_of_sync(policy, ret_freq);
--			schedule_work(&policy->update);
--		}
--	}
--
--	return ret_freq;
--}
--
--/**
-- * cpufreq_get - get the current CPU frequency (in kHz)
-- * @cpu: CPU number
-- *
-- * Get the CPU current (static) CPU frequency
-- */
--unsigned int cpufreq_get(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--	unsigned int ret_freq = 0;
--
--	if (policy) {
--		down_read(&policy->rwsem);
--
--		if (!policy_is_inactive(policy))
--			ret_freq = __cpufreq_get(policy);
--
--		up_read(&policy->rwsem);
--
--		cpufreq_cpu_put(policy);
--	}
--
--	return ret_freq;
--}
--EXPORT_SYMBOL(cpufreq_get);
--
--static unsigned int cpufreq_update_current_freq(struct cpufreq_policy *policy)
--{
--	unsigned int new_freq;
--
--	new_freq = cpufreq_driver->get(policy->cpu);
--	if (!new_freq)
--		return 0;
--
--	if (!policy->cur) {
--		pr_debug("cpufreq: Driver did not initialize current freq\n");
--		policy->cur = new_freq;
--	} else if (policy->cur != new_freq && has_target()) {
--		cpufreq_out_of_sync(policy, new_freq);
--	}
--
--	return new_freq;
--}
--
--static struct subsys_interface cpufreq_interface = {
--	.name		= "cpufreq",
--	.subsys		= &cpu_subsys,
--	.add_dev	= cpufreq_add_dev,
--	.remove_dev	= cpufreq_remove_dev,
--};
 -
 -/*
-- * In case platform wants some specific frequency to be configured
-- * during suspend..
+- * callback for spi framework.
+- * clean driver specific data
 - */
--int cpufreq_generic_suspend(struct cpufreq_policy *policy)
+-static void
+-bfin_sport_spi_cleanup(struct spi_device *spi)
 -{
--	int ret;
+-	struct bfin_sport_spi_slave_data *chip = spi_get_ctldata(spi);
 -
--	if (!policy->suspend_freq) {
--		pr_debug("%s: suspend_freq not defined\n", __func__);
--		return 0;
--	}
--
--	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
--			policy->suspend_freq);
--
--	ret = __cpufreq_driver_target(policy, policy->suspend_freq,
--			CPUFREQ_RELATION_H);
--	if (ret)
--		pr_err("%s: unable to set suspend-freq: %u. err: %d\n",
--				__func__, policy->suspend_freq, ret);
--
--	return ret;
--}
--EXPORT_SYMBOL(cpufreq_generic_suspend);
--
--/**
-- * cpufreq_suspend() - Suspend CPUFreq governors
-- *
-- * Called during system wide Suspend/Hibernate cycles for suspending governors
-- * as some platforms can't change frequency after this point in suspend cycle.
-- * Because some of the devices (like: i2c, regulators, etc) they use for
-- * changing frequency are suspended quickly after this point.
-- */
--void cpufreq_suspend(void)
--{
--	struct cpufreq_policy *policy;
--
--	if (!cpufreq_driver)
+-	if (!chip)
 -		return;
 -
--	if (!has_target() && !cpufreq_driver->suspend)
--		goto suspend;
+-	gpio_free(chip->cs_gpio);
 -
--	pr_debug("%s: Suspending Governors\n", __func__);
+-	kfree(chip);
+-}
 -
--	for_each_active_policy(policy) {
--		if (has_target()) {
--			down_write(&policy->rwsem);
--			cpufreq_stop_governor(policy);
--			up_write(&policy->rwsem);
--		}
+-static int
+-bfin_sport_spi_init_queue(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	INIT_LIST_HEAD(&drv_data->queue);
+-	spin_lock_init(&drv_data->lock);
 -
--		if (cpufreq_driver->suspend && cpufreq_driver->suspend(policy))
--			pr_err("%s: Failed to suspend driver: %p\n", __func__,
--				policy);
+-	drv_data->run = false;
+-	drv_data->busy = 0;
+-
+-	/* init transfer tasklet */
+-	tasklet_init(&drv_data->pump_transfers,
+-		     bfin_sport_spi_pump_transfers, (unsigned long)drv_data);
+-
+-	INIT_WORK(&drv_data->pump_messages, bfin_sport_spi_pump_messages);
+-
+-	return 0;
+-}
+-
+-static int
+-bfin_sport_spi_start_queue(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-
+-	if (drv_data->run || drv_data->busy) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return -EBUSY;
 -	}
 -
--suspend:
--	cpufreq_suspended = true;
+-	drv_data->run = true;
+-	drv_data->cur_msg = NULL;
+-	drv_data->cur_transfer = NULL;
+-	drv_data->cur_chip = NULL;
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	schedule_work(&drv_data->pump_messages);
+-
+-	return 0;
 -}
 -
--/**
-- * cpufreq_resume() - Resume CPUFreq governors
-- *
-- * Called during system wide Suspend/Hibernate cycle for resuming governors that
-- * are suspended with cpufreq_suspend().
-- */
--void cpufreq_resume(void)
+-static inline int
+-bfin_sport_spi_stop_queue(struct bfin_sport_spi_master_data *drv_data)
 -{
--	struct cpufreq_policy *policy;
--	int ret;
+-	unsigned long flags;
+-	unsigned limit = 500;
+-	int status = 0;
 -
--	if (!cpufreq_driver)
--		return;
--
--	if (unlikely(!cpufreq_suspended))
--		return;
--
--	cpufreq_suspended = false;
--
--	if (!has_target() && !cpufreq_driver->resume)
--		return;
--
--	pr_debug("%s: Resuming Governors\n", __func__);
--
--	for_each_active_policy(policy) {
--		if (cpufreq_driver->resume && cpufreq_driver->resume(policy)) {
--			pr_err("%s: Failed to resume driver: %p\n", __func__,
--				policy);
--		} else if (has_target()) {
--			down_write(&policy->rwsem);
--			ret = cpufreq_start_governor(policy);
--			up_write(&policy->rwsem);
--
--			if (ret)
--				pr_err("%s: Failed to start governor for policy: %p\n",
--				       __func__, policy);
--		}
--	}
--}
--
--/**
-- *	cpufreq_get_current_driver - return current driver's name
-- *
-- *	Return the name string of the currently loaded cpufreq driver
-- *	or NULL, if none.
-- */
--const char *cpufreq_get_current_driver(void)
--{
--	if (cpufreq_driver)
--		return cpufreq_driver->name;
--
--	return NULL;
--}
--EXPORT_SYMBOL_GPL(cpufreq_get_current_driver);
--
--/**
-- *	cpufreq_get_driver_data - return current driver data
-- *
-- *	Return the private data of the currently loaded cpufreq
-- *	driver, or NULL if no cpufreq driver is loaded.
-- */
--void *cpufreq_get_driver_data(void)
--{
--	if (cpufreq_driver)
--		return cpufreq_driver->driver_data;
--
--	return NULL;
--}
--EXPORT_SYMBOL_GPL(cpufreq_get_driver_data);
--
--/*********************************************************************
-- *                     NOTIFIER LISTS INTERFACE                      *
-- *********************************************************************/
--
--/**
-- *	cpufreq_register_notifier - register a driver with cpufreq
-- *	@nb: notifier function to register
-- *      @list: CPUFREQ_TRANSITION_NOTIFIER or CPUFREQ_POLICY_NOTIFIER
-- *
-- *	Add a driver to one of two lists: either a list of drivers that
-- *      are notified about clock rate changes (once before and once after
-- *      the transition), or a list of drivers that are notified about
-- *      changes in cpufreq policy.
-- *
-- *	This function may sleep, and has the same return conditions as
-- *	blocking_notifier_chain_register.
-- */
--int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list)
--{
--	int ret;
--
--	if (cpufreq_disabled())
--		return -EINVAL;
--
--	WARN_ON(!init_cpufreq_transition_notifier_list_called);
--
--	switch (list) {
--	case CPUFREQ_TRANSITION_NOTIFIER:
--		mutex_lock(&cpufreq_fast_switch_lock);
--
--		if (cpufreq_fast_switch_count > 0) {
--			mutex_unlock(&cpufreq_fast_switch_lock);
--			return -EBUSY;
--		}
--		ret = srcu_notifier_chain_register(
--				&cpufreq_transition_notifier_list, nb);
--		if (!ret)
--			cpufreq_fast_switch_count--;
--
--		mutex_unlock(&cpufreq_fast_switch_lock);
--		break;
--	case CPUFREQ_POLICY_NOTIFIER:
--		ret = blocking_notifier_chain_register(
--				&cpufreq_policy_notifier_list, nb);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL(cpufreq_register_notifier);
--
--/**
-- *	cpufreq_unregister_notifier - unregister a driver with cpufreq
-- *	@nb: notifier block to be unregistered
-- *	@list: CPUFREQ_TRANSITION_NOTIFIER or CPUFREQ_POLICY_NOTIFIER
-- *
-- *	Remove a driver from the CPU frequency notifier list.
-- *
-- *	This function may sleep, and has the same return conditions as
-- *	blocking_notifier_chain_unregister.
-- */
--int cpufreq_unregister_notifier(struct notifier_block *nb, unsigned int list)
--{
--	int ret;
--
--	if (cpufreq_disabled())
--		return -EINVAL;
--
--	switch (list) {
--	case CPUFREQ_TRANSITION_NOTIFIER:
--		mutex_lock(&cpufreq_fast_switch_lock);
--
--		ret = srcu_notifier_chain_unregister(
--				&cpufreq_transition_notifier_list, nb);
--		if (!ret && !WARN_ON(cpufreq_fast_switch_count >= 0))
--			cpufreq_fast_switch_count++;
--
--		mutex_unlock(&cpufreq_fast_switch_lock);
--		break;
--	case CPUFREQ_POLICY_NOTIFIER:
--		ret = blocking_notifier_chain_unregister(
--				&cpufreq_policy_notifier_list, nb);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL(cpufreq_unregister_notifier);
--
--
--/*********************************************************************
-- *                              GOVERNORS                            *
-- *********************************************************************/
--
--/**
-- * cpufreq_driver_fast_switch - Carry out a fast CPU frequency switch.
-- * @policy: cpufreq policy to switch the frequency for.
-- * @target_freq: New frequency to set (may be approximate).
-- *
-- * Carry out a fast frequency switch without sleeping.
-- *
-- * The driver's ->fast_switch() callback invoked by this function must be
-- * suitable for being called from within RCU-sched read-side critical sections
-- * and it is expected to select the minimum available frequency greater than or
-- * equal to @target_freq (CPUFREQ_RELATION_L).
-- *
-- * This function must not be called if policy->fast_switch_enabled is unset.
-- *
-- * Governors calling this function must guarantee that it will never be invoked
-- * twice in parallel for the same policy and that it will never be called in
-- * parallel with either ->target() or ->target_index() for the same policy.
-- *
-- * Returns the actual frequency set for the CPU.
-- *
-- * If 0 is returned by the driver's ->fast_switch() callback to indicate an
-- * error condition, the hardware configuration must be preserved.
-- */
--unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
--					unsigned int target_freq)
--{
--	target_freq = clamp_val(target_freq, policy->min, policy->max);
--
--	return cpufreq_driver->fast_switch(policy, target_freq);
--}
--EXPORT_SYMBOL_GPL(cpufreq_driver_fast_switch);
--
--/* Must set freqs->new to intermediate frequency */
--static int __target_intermediate(struct cpufreq_policy *policy,
--				 struct cpufreq_freqs *freqs, int index)
--{
--	int ret;
--
--	freqs->new = cpufreq_driver->get_intermediate(policy, index);
--
--	/* We don't need to switch to intermediate freq */
--	if (!freqs->new)
--		return 0;
--
--	pr_debug("%s: cpu: %d, switching to intermediate freq: oldfreq: %u, intermediate freq: %u\n",
--		 __func__, policy->cpu, freqs->old, freqs->new);
--
--	cpufreq_freq_transition_begin(policy, freqs);
--	ret = cpufreq_driver->target_intermediate(policy, index);
--	cpufreq_freq_transition_end(policy, freqs, ret);
--
--	if (ret)
--		pr_err("%s: Failed to change to intermediate frequency: %d\n",
--		       __func__, ret);
--
--	return ret;
--}
--
--static int __target_index(struct cpufreq_policy *policy, int index)
--{
--	struct cpufreq_freqs freqs = {.old = policy->cur, .flags = 0};
--	unsigned int intermediate_freq = 0;
--	unsigned int newfreq = policy->freq_table[index].frequency;
--	int retval = -EINVAL;
--	bool notify;
--
--	if (newfreq == policy->cur)
--		return 0;
--
--	notify = !(cpufreq_driver->flags & CPUFREQ_ASYNC_NOTIFICATION);
--	if (notify) {
--		/* Handle switching to intermediate frequency */
--		if (cpufreq_driver->get_intermediate) {
--			retval = __target_intermediate(policy, &freqs, index);
--			if (retval)
--				return retval;
--
--			intermediate_freq = freqs.new;
--			/* Set old freq to intermediate */
--			if (intermediate_freq)
--				freqs.old = freqs.new;
--		}
--
--		freqs.new = newfreq;
--		pr_debug("%s: cpu: %d, oldfreq: %u, new freq: %u\n",
--			 __func__, policy->cpu, freqs.old, freqs.new);
--
--		cpufreq_freq_transition_begin(policy, &freqs);
--	}
--
--	retval = cpufreq_driver->target_index(policy, index);
--	if (retval)
--		pr_err("%s: Failed to change cpu frequency: %d\n", __func__,
--		       retval);
--
--	if (notify) {
--		cpufreq_freq_transition_end(policy, &freqs, retval);
--
--		/*
--		 * Failed after setting to intermediate freq? Driver should have
--		 * reverted back to initial frequency and so should we. Check
--		 * here for intermediate_freq instead of get_intermediate, in
--		 * case we haven't switched to intermediate freq at all.
--		 */
--		if (unlikely(retval && intermediate_freq)) {
--			freqs.old = intermediate_freq;
--			freqs.new = policy->restore_freq;
--			cpufreq_freq_transition_begin(policy, &freqs);
--			cpufreq_freq_transition_end(policy, &freqs, 0);
--		}
--	}
--
--	return retval;
--}
--
--int __cpufreq_driver_target(struct cpufreq_policy *policy,
--			    unsigned int target_freq,
--			    unsigned int relation)
--{
--	unsigned int old_target_freq = target_freq;
--	int index;
--
--	if (cpufreq_disabled())
--		return -ENODEV;
--
--	/* Make sure that target_freq is within supported range */
--	target_freq = clamp_val(target_freq, policy->min, policy->max);
--
--	pr_debug("target for CPU %u: %u kHz, relation %u, requested %u kHz\n",
--		 policy->cpu, target_freq, relation, old_target_freq);
+-	spin_lock_irqsave(&drv_data->lock, flags);
 -
 -	/*
--	 * This might look like a redundant call as we are checking it again
--	 * after finding index. But it is left intentionally for cases where
--	 * exactly same freq is called again and so we can save on few function
--	 * calls.
+-	 * This is a bit lame, but is optimized for the common execution path.
+-	 * A wait_queue on the drv_data->busy could be used, but then the common
+-	 * execution path (pump_messages) would be required to call wake_up or
+-	 * friends on every SPI message. Do this instead
 -	 */
--	if (target_freq == policy->cur)
+-	drv_data->run = false;
+-	while (!list_empty(&drv_data->queue) && drv_data->busy && limit--) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		msleep(10);
+-		spin_lock_irqsave(&drv_data->lock, flags);
+-	}
+-
+-	if (!list_empty(&drv_data->queue) || drv_data->busy)
+-		status = -EBUSY;
+-
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	return status;
+-}
+-
+-static inline int
+-bfin_sport_spi_destroy_queue(struct bfin_sport_spi_master_data *drv_data)
+-{
+-	int status;
+-
+-	status = bfin_sport_spi_stop_queue(drv_data);
+-	if (status)
+-		return status;
+-
+-	flush_work(&drv_data->pump_messages);
+-
+-	return 0;
+-}
+-
+-static int bfin_sport_spi_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct bfin5xx_spi_master *platform_info;
+-	struct spi_master *master;
+-	struct resource *res, *ires;
+-	struct bfin_sport_spi_master_data *drv_data;
+-	int status;
+-
+-	platform_info = dev_get_platdata(dev);
+-
+-	/* Allocate master with space for drv_data */
+-	master = spi_alloc_master(dev, sizeof(*master) + 16);
+-	if (!master) {
+-		dev_err(dev, "cannot alloc spi_master\n");
+-		return -ENOMEM;
+-	}
+-
+-	drv_data = spi_master_get_devdata(master);
+-	drv_data->master = master;
+-	drv_data->dev = dev;
+-	drv_data->pin_req = platform_info->pin_req;
+-
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
+-	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
+-	master->bus_num = pdev->id;
+-	master->num_chipselect = platform_info->num_chipselect;
+-	master->cleanup = bfin_sport_spi_cleanup;
+-	master->setup = bfin_sport_spi_setup;
+-	master->transfer = bfin_sport_spi_transfer;
+-
+-	/* Find and map our resources */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(dev, "cannot get IORESOURCE_MEM\n");
+-		status = -ENOENT;
+-		goto out_error_get_res;
+-	}
+-
+-	drv_data->regs = ioremap(res->start, resource_size(res));
+-	if (drv_data->regs == NULL) {
+-		dev_err(dev, "cannot map registers\n");
+-		status = -ENXIO;
+-		goto out_error_ioremap;
+-	}
+-
+-	ires = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!ires) {
+-		dev_err(dev, "cannot get IORESOURCE_IRQ\n");
+-		status = -ENODEV;
+-		goto out_error_get_ires;
+-	}
+-	drv_data->err_irq = ires->start;
+-
+-	/* Initial and start queue */
+-	status = bfin_sport_spi_init_queue(drv_data);
+-	if (status) {
+-		dev_err(dev, "problem initializing queue\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	status = bfin_sport_spi_start_queue(drv_data);
+-	if (status) {
+-		dev_err(dev, "problem starting queue\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	status = request_irq(drv_data->err_irq, sport_err_handler,
+-		0, "sport_spi_err", drv_data);
+-	if (status) {
+-		dev_err(dev, "unable to request sport err irq\n");
+-		goto out_error_irq;
+-	}
+-
+-	status = peripheral_request_list(drv_data->pin_req, DRV_NAME);
+-	if (status) {
+-		dev_err(dev, "requesting peripherals failed\n");
+-		goto out_error_peripheral;
+-	}
+-
+-	/* Register with the SPI framework */
+-	platform_set_drvdata(pdev, drv_data);
+-	status = spi_register_master(master);
+-	if (status) {
+-		dev_err(dev, "problem registering spi master\n");
+-		goto out_error_master;
+-	}
+-
+-	dev_info(dev, "%s, regs_base@%p\n", DRV_DESC, drv_data->regs);
+-	return 0;
+-
+- out_error_master:
+-	peripheral_free_list(drv_data->pin_req);
+- out_error_peripheral:
+-	free_irq(drv_data->err_irq, drv_data);
+- out_error_irq:
+- out_error_queue_alloc:
+-	bfin_sport_spi_destroy_queue(drv_data);
+- out_error_get_ires:
+-	iounmap(drv_data->regs);
+- out_error_ioremap:
+- out_error_get_res:
+-	spi_master_put(master);
+-
+-	return status;
+-}
+-
+-/* stop hardware and remove the driver */
+-static int bfin_sport_spi_remove(struct platform_device *pdev)
+-{
+-	struct bfin_sport_spi_master_data *drv_data = platform_get_drvdata(pdev);
+-	int status = 0;
+-
+-	if (!drv_data)
 -		return 0;
 -
--	/* Save last value to restore later on errors */
--	policy->restore_freq = policy->cur;
+-	/* Remove the queue */
+-	status = bfin_sport_spi_destroy_queue(drv_data);
+-	if (status)
+-		return status;
 -
--	if (cpufreq_driver->target)
--		return cpufreq_driver->target(policy, target_freq, relation);
+-	/* Disable the SSP at the peripheral and SOC level */
+-	bfin_sport_spi_disable(drv_data);
 -
--	if (!cpufreq_driver->target_index)
--		return -EINVAL;
+-	/* Disconnect from the SPI framework */
+-	spi_unregister_master(drv_data->master);
 -
--	index = cpufreq_frequency_table_target(policy, target_freq, relation);
+-	peripheral_free_list(drv_data->pin_req);
 -
--	return __target_index(policy, index);
--}
--EXPORT_SYMBOL_GPL(__cpufreq_driver_target);
--
--int cpufreq_driver_target(struct cpufreq_policy *policy,
--			  unsigned int target_freq,
--			  unsigned int relation)
--{
--	int ret = -EINVAL;
--
--	down_write(&policy->rwsem);
--
--	ret = __cpufreq_driver_target(policy, target_freq, relation);
--
--	up_write(&policy->rwsem);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(cpufreq_driver_target);
--
--__weak struct cpufreq_governor *cpufreq_fallback_governor(void)
--{
--	return NULL;
+-	return 0;
 -}
 -
--static int cpufreq_init_governor(struct cpufreq_policy *policy)
+-#ifdef CONFIG_PM_SLEEP
+-static int bfin_sport_spi_suspend(struct device *dev)
 -{
--	int ret;
+-	struct bfin_sport_spi_master_data *drv_data = dev_get_drvdata(dev);
+-	int status;
 -
--	/* Don't start any governor operations if we are entering suspend */
--	if (cpufreq_suspended)
--		return 0;
--	/*
--	 * Governor might not be initiated here if ACPI _PPC changed
--	 * notification happened, so check it.
--	 */
--	if (!policy->governor)
--		return -EINVAL;
+-	status = bfin_sport_spi_stop_queue(drv_data);
+-	if (status)
+-		return status;
 -
--	/* Platform doesn't want dynamic frequency switching ? */
--	if (policy->governor->dynamic_switching &&
--	    cpufreq_driver->flags & CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING) {
--		struct cpufreq_governor *gov = cpufreq_fallback_governor();
+-	/* stop hardware */
+-	bfin_sport_spi_disable(drv_data);
 -
--		if (gov) {
--			pr_warn("Can't use %s governor as dynamic switching is disallowed. Fallback to %s governor\n",
--				policy->governor->name, gov->name);
--			policy->governor = gov;
+-	return status;
+-}
+-
+-static int bfin_sport_spi_resume(struct device *dev)
+-{
+-	struct bfin_sport_spi_master_data *drv_data = dev_get_drvdata(dev);
+-	int status;
+-
+-	/* Enable the SPI interface */
+-	bfin_sport_spi_enable(drv_data);
+-
+-	/* Start the queue running */
+-	status = bfin_sport_spi_start_queue(drv_data);
+-	if (status)
+-		dev_err(drv_data->dev, "problem resuming queue\n");
+-
+-	return status;
+-}
+-
+-static SIMPLE_DEV_PM_OPS(bfin_sport_spi_pm_ops, bfin_sport_spi_suspend,
+-			bfin_sport_spi_resume);
+-
+-#define BFIN_SPORT_SPI_PM_OPS		(&bfin_sport_spi_pm_ops)
+-#else
+-#define BFIN_SPORT_SPI_PM_OPS		NULL
+-#endif
+-
+-static struct platform_driver bfin_sport_spi_driver = {
+-	.driver	= {
+-		.name	= DRV_NAME,
+-		.pm	= BFIN_SPORT_SPI_PM_OPS,
+-	},
+-	.probe   = bfin_sport_spi_probe,
+-	.remove  = bfin_sport_spi_remove,
+-};
+-module_platform_driver(bfin_sport_spi_driver);
+diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
+deleted file mode 100644
+index 249c7a3..0000000
+--- a/drivers/spi/spi-bfin5xx.c
++++ /dev/null
+@@ -1,1462 +0,0 @@
+-/*
+- * Blackfin On-Chip SPI Driver
+- *
+- * Copyright 2004-2010 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/delay.h>
+-#include <linux/device.h>
+-#include <linux/gpio.h>
+-#include <linux/slab.h>
+-#include <linux/io.h>
+-#include <linux/ioport.h>
+-#include <linux/irq.h>
+-#include <linux/errno.h>
+-#include <linux/interrupt.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/spi/spi.h>
+-#include <linux/workqueue.h>
+-
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-#include <asm/bfin5xx_spi.h>
+-#include <asm/cacheflush.h>
+-
+-#define DRV_NAME	"bfin-spi"
+-#define DRV_AUTHOR	"Bryan Wu, Luke Yang"
+-#define DRV_DESC	"Blackfin on-chip SPI Controller Driver"
+-#define DRV_VERSION	"1.0"
+-
+-MODULE_AUTHOR(DRV_AUTHOR);
+-MODULE_DESCRIPTION(DRV_DESC);
+-MODULE_LICENSE("GPL");
+-
+-#define START_STATE	((void *)0)
+-#define RUNNING_STATE	((void *)1)
+-#define DONE_STATE	((void *)2)
+-#define ERROR_STATE	((void *)-1)
+-
+-struct bfin_spi_master_data;
+-
+-struct bfin_spi_transfer_ops {
+-	void (*write) (struct bfin_spi_master_data *);
+-	void (*read) (struct bfin_spi_master_data *);
+-	void (*duplex) (struct bfin_spi_master_data *);
+-};
+-
+-struct bfin_spi_master_data {
+-	/* Driver model hookup */
+-	struct platform_device *pdev;
+-
+-	/* SPI framework hookup */
+-	struct spi_master *master;
+-
+-	/* Regs base of SPI controller */
+-	struct bfin_spi_regs __iomem *regs;
+-
+-	/* Pin request list */
+-	u16 *pin_req;
+-
+-	/* BFIN hookup */
+-	struct bfin5xx_spi_master *master_info;
+-
+-	struct work_struct pump_messages;
+-	spinlock_t lock;
+-	struct list_head queue;
+-	int busy;
+-	bool running;
+-
+-	/* Message Transfer pump */
+-	struct tasklet_struct pump_transfers;
+-
+-	/* Current message transfer state info */
+-	struct spi_message *cur_msg;
+-	struct spi_transfer *cur_transfer;
+-	struct bfin_spi_slave_data *cur_chip;
+-	size_t len_in_bytes;
+-	size_t len;
+-	void *tx;
+-	void *tx_end;
+-	void *rx;
+-	void *rx_end;
+-
+-	/* DMA stuffs */
+-	int dma_channel;
+-	int dma_mapped;
+-	int dma_requested;
+-	dma_addr_t rx_dma;
+-	dma_addr_t tx_dma;
+-
+-	int irq_requested;
+-	int spi_irq;
+-
+-	size_t rx_map_len;
+-	size_t tx_map_len;
+-	u8 n_bytes;
+-	u16 ctrl_reg;
+-	u16 flag_reg;
+-
+-	int cs_change;
+-	const struct bfin_spi_transfer_ops *ops;
+-};
+-
+-struct bfin_spi_slave_data {
+-	u16 ctl_reg;
+-	u16 baud;
+-	u16 flag;
+-
+-	u8 chip_select_num;
+-	u8 enable_dma;
+-	u16 cs_chg_udelay;	/* Some devices require > 255usec delay */
+-	u32 cs_gpio;
+-	u16 idle_tx_val;
+-	u8 pio_interrupt;	/* use spi data irq */
+-	const struct bfin_spi_transfer_ops *ops;
+-};
+-
+-static void bfin_spi_enable(struct bfin_spi_master_data *drv_data)
+-{
+-	bfin_write_or(&drv_data->regs->ctl, BIT_CTL_ENABLE);
+-}
+-
+-static void bfin_spi_disable(struct bfin_spi_master_data *drv_data)
+-{
+-	bfin_write_and(&drv_data->regs->ctl, ~BIT_CTL_ENABLE);
+-}
+-
+-/* Caculate the SPI_BAUD register value based on input HZ */
+-static u16 hz_to_spi_baud(u32 speed_hz)
+-{
+-	u_long sclk = get_sclk();
+-	u16 spi_baud = (sclk / (2 * speed_hz));
+-
+-	if ((sclk % (2 * speed_hz)) > 0)
+-		spi_baud++;
+-
+-	if (spi_baud < MIN_SPI_BAUD_VAL)
+-		spi_baud = MIN_SPI_BAUD_VAL;
+-
+-	return spi_baud;
+-}
+-
+-static int bfin_spi_flush(struct bfin_spi_master_data *drv_data)
+-{
+-	unsigned long limit = loops_per_jiffy << 1;
+-
+-	/* wait for stop and clear stat */
+-	while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_SPIF) && --limit)
+-		cpu_relax();
+-
+-	bfin_write(&drv_data->regs->stat, BIT_STAT_CLR);
+-
+-	return limit;
+-}
+-
+-/* Chip select operation functions for cs_change flag */
+-static void bfin_spi_cs_active(struct bfin_spi_master_data *drv_data, struct bfin_spi_slave_data *chip)
+-{
+-	if (likely(chip->chip_select_num < MAX_CTRL_CS))
+-		bfin_write_and(&drv_data->regs->flg, ~chip->flag);
+-	else
+-		gpio_set_value(chip->cs_gpio, 0);
+-}
+-
+-static void bfin_spi_cs_deactive(struct bfin_spi_master_data *drv_data,
+-                                 struct bfin_spi_slave_data *chip)
+-{
+-	if (likely(chip->chip_select_num < MAX_CTRL_CS))
+-		bfin_write_or(&drv_data->regs->flg, chip->flag);
+-	else
+-		gpio_set_value(chip->cs_gpio, 1);
+-
+-	/* Move delay here for consistency */
+-	if (chip->cs_chg_udelay)
+-		udelay(chip->cs_chg_udelay);
+-}
+-
+-/* enable or disable the pin muxed by GPIO and SPI CS to work as SPI CS */
+-static inline void bfin_spi_cs_enable(struct bfin_spi_master_data *drv_data,
+-                                      struct bfin_spi_slave_data *chip)
+-{
+-	if (chip->chip_select_num < MAX_CTRL_CS)
+-		bfin_write_or(&drv_data->regs->flg, chip->flag >> 8);
+-}
+-
+-static inline void bfin_spi_cs_disable(struct bfin_spi_master_data *drv_data,
+-                                       struct bfin_spi_slave_data *chip)
+-{
+-	if (chip->chip_select_num < MAX_CTRL_CS)
+-		bfin_write_and(&drv_data->regs->flg, ~(chip->flag >> 8));
+-}
+-
+-/* stop controller and re-config current chip*/
+-static void bfin_spi_restore_state(struct bfin_spi_master_data *drv_data)
+-{
+-	struct bfin_spi_slave_data *chip = drv_data->cur_chip;
+-
+-	/* Clear status and disable clock */
+-	bfin_write(&drv_data->regs->stat, BIT_STAT_CLR);
+-	bfin_spi_disable(drv_data);
+-	dev_dbg(&drv_data->pdev->dev, "restoring spi ctl state\n");
+-
+-	SSYNC();
+-
+-	/* Load the registers */
+-	bfin_write(&drv_data->regs->ctl, chip->ctl_reg);
+-	bfin_write(&drv_data->regs->baud, chip->baud);
+-
+-	bfin_spi_enable(drv_data);
+-	bfin_spi_cs_active(drv_data, chip);
+-}
+-
+-/* used to kick off transfer in rx mode and read unwanted RX data */
+-static inline void bfin_spi_dummy_read(struct bfin_spi_master_data *drv_data)
+-{
+-	(void) bfin_read(&drv_data->regs->rdbr);
+-}
+-
+-static void bfin_spi_u8_writer(struct bfin_spi_master_data *drv_data)
+-{
+-	/* clear RXS (we check for RXS inside the loop) */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->tx < drv_data->tx_end) {
+-		bfin_write(&drv_data->regs->tdbr, (*(u8 *) (drv_data->tx++)));
+-		/* wait until transfer finished.
+-		   checking SPIF or TXS may not guarantee transfer completion */
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		/* discard RX data and clear RXS */
+-		bfin_spi_dummy_read(drv_data);
+-	}
+-}
+-
+-static void bfin_spi_u8_reader(struct bfin_spi_master_data *drv_data)
+-{
+-	u16 tx_val = drv_data->cur_chip->idle_tx_val;
+-
+-	/* discard old RX data and clear RXS */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tdbr, tx_val);
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		*(u8 *) (drv_data->rx++) = bfin_read(&drv_data->regs->rdbr);
+-	}
+-}
+-
+-static void bfin_spi_u8_duplex(struct bfin_spi_master_data *drv_data)
+-{
+-	/* discard old RX data and clear RXS */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tdbr, (*(u8 *) (drv_data->tx++)));
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		*(u8 *) (drv_data->rx++) = bfin_read(&drv_data->regs->rdbr);
+-	}
+-}
+-
+-static const struct bfin_spi_transfer_ops bfin_bfin_spi_transfer_ops_u8 = {
+-	.write  = bfin_spi_u8_writer,
+-	.read   = bfin_spi_u8_reader,
+-	.duplex = bfin_spi_u8_duplex,
+-};
+-
+-static void bfin_spi_u16_writer(struct bfin_spi_master_data *drv_data)
+-{
+-	/* clear RXS (we check for RXS inside the loop) */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->tx < drv_data->tx_end) {
+-		bfin_write(&drv_data->regs->tdbr, (*(u16 *) (drv_data->tx)));
+-		drv_data->tx += 2;
+-		/* wait until transfer finished.
+-		   checking SPIF or TXS may not guarantee transfer completion */
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		/* discard RX data and clear RXS */
+-		bfin_spi_dummy_read(drv_data);
+-	}
+-}
+-
+-static void bfin_spi_u16_reader(struct bfin_spi_master_data *drv_data)
+-{
+-	u16 tx_val = drv_data->cur_chip->idle_tx_val;
+-
+-	/* discard old RX data and clear RXS */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tdbr, tx_val);
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		*(u16 *) (drv_data->rx) = bfin_read(&drv_data->regs->rdbr);
+-		drv_data->rx += 2;
+-	}
+-}
+-
+-static void bfin_spi_u16_duplex(struct bfin_spi_master_data *drv_data)
+-{
+-	/* discard old RX data and clear RXS */
+-	bfin_spi_dummy_read(drv_data);
+-
+-	while (drv_data->rx < drv_data->rx_end) {
+-		bfin_write(&drv_data->regs->tdbr, (*(u16 *) (drv_data->tx)));
+-		drv_data->tx += 2;
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-			cpu_relax();
+-		*(u16 *) (drv_data->rx) = bfin_read(&drv_data->regs->rdbr);
+-		drv_data->rx += 2;
+-	}
+-}
+-
+-static const struct bfin_spi_transfer_ops bfin_bfin_spi_transfer_ops_u16 = {
+-	.write  = bfin_spi_u16_writer,
+-	.read   = bfin_spi_u16_reader,
+-	.duplex = bfin_spi_u16_duplex,
+-};
+-
+-/* test if there is more transfer to be done */
+-static void *bfin_spi_next_transfer(struct bfin_spi_master_data *drv_data)
+-{
+-	struct spi_message *msg = drv_data->cur_msg;
+-	struct spi_transfer *trans = drv_data->cur_transfer;
+-
+-	/* Move to next transfer */
+-	if (trans->transfer_list.next != &msg->transfers) {
+-		drv_data->cur_transfer =
+-		    list_entry(trans->transfer_list.next,
+-			       struct spi_transfer, transfer_list);
+-		return RUNNING_STATE;
+-	} else
+-		return DONE_STATE;
+-}
+-
+-/*
+- * caller already set message->status;
+- * dma and pio irqs are blocked give finished message back
+- */
+-static void bfin_spi_giveback(struct bfin_spi_master_data *drv_data)
+-{
+-	struct bfin_spi_slave_data *chip = drv_data->cur_chip;
+-	unsigned long flags;
+-	struct spi_message *msg;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-	msg = drv_data->cur_msg;
+-	drv_data->cur_msg = NULL;
+-	drv_data->cur_transfer = NULL;
+-	drv_data->cur_chip = NULL;
+-	schedule_work(&drv_data->pump_messages);
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	msg->state = NULL;
+-
+-	if (!drv_data->cs_change)
+-		bfin_spi_cs_deactive(drv_data, chip);
+-
+-	/* Not stop spi in autobuffer mode */
+-	if (drv_data->tx_dma != 0xFFFF)
+-		bfin_spi_disable(drv_data);
+-
+-	if (msg->complete)
+-		msg->complete(msg->context);
+-}
+-
+-/* spi data irq handler */
+-static irqreturn_t bfin_spi_pio_irq_handler(int irq, void *dev_id)
+-{
+-	struct bfin_spi_master_data *drv_data = dev_id;
+-	struct bfin_spi_slave_data *chip = drv_data->cur_chip;
+-	struct spi_message *msg = drv_data->cur_msg;
+-	int n_bytes = drv_data->n_bytes;
+-	int loop = 0;
+-
+-	/* wait until transfer finished. */
+-	while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_RXS))
+-		cpu_relax();
+-
+-	if ((drv_data->tx && drv_data->tx >= drv_data->tx_end) ||
+-		(drv_data->rx && drv_data->rx >= (drv_data->rx_end - n_bytes))) {
+-		/* last read */
+-		if (drv_data->rx) {
+-			dev_dbg(&drv_data->pdev->dev, "last read\n");
+-			if (!(n_bytes % 2)) {
+-				u16 *buf = (u16 *)drv_data->rx;
+-				for (loop = 0; loop < n_bytes / 2; loop++)
+-					*buf++ = bfin_read(&drv_data->regs->rdbr);
+-			} else {
+-				u8 *buf = (u8 *)drv_data->rx;
+-				for (loop = 0; loop < n_bytes; loop++)
+-					*buf++ = bfin_read(&drv_data->regs->rdbr);
+-			}
+-			drv_data->rx += n_bytes;
+-		}
+-
+-		msg->actual_length += drv_data->len_in_bytes;
+-		if (drv_data->cs_change)
+-			bfin_spi_cs_deactive(drv_data, chip);
+-		/* Move to next transfer */
+-		msg->state = bfin_spi_next_transfer(drv_data);
+-
+-		disable_irq_nosync(drv_data->spi_irq);
+-
+-		/* Schedule transfer tasklet */
+-		tasklet_schedule(&drv_data->pump_transfers);
+-		return IRQ_HANDLED;
+-	}
+-
+-	if (drv_data->rx && drv_data->tx) {
+-		/* duplex */
+-		dev_dbg(&drv_data->pdev->dev, "duplex: write_TDBR\n");
+-		if (!(n_bytes % 2)) {
+-			u16 *buf = (u16 *)drv_data->rx;
+-			u16 *buf2 = (u16 *)drv_data->tx;
+-			for (loop = 0; loop < n_bytes / 2; loop++) {
+-				*buf++ = bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, *buf2++);
+-			}
 -		} else {
--			return -EINVAL;
+-			u8 *buf = (u8 *)drv_data->rx;
+-			u8 *buf2 = (u8 *)drv_data->tx;
+-			for (loop = 0; loop < n_bytes; loop++) {
+-				*buf++ = bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, *buf2++);
+-			}
+-		}
+-	} else if (drv_data->rx) {
+-		/* read */
+-		dev_dbg(&drv_data->pdev->dev, "read: write_TDBR\n");
+-		if (!(n_bytes % 2)) {
+-			u16 *buf = (u16 *)drv_data->rx;
+-			for (loop = 0; loop < n_bytes / 2; loop++) {
+-				*buf++ = bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, chip->idle_tx_val);
+-			}
+-		} else {
+-			u8 *buf = (u8 *)drv_data->rx;
+-			for (loop = 0; loop < n_bytes; loop++) {
+-				*buf++ = bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, chip->idle_tx_val);
+-			}
+-		}
+-	} else if (drv_data->tx) {
+-		/* write */
+-		dev_dbg(&drv_data->pdev->dev, "write: write_TDBR\n");
+-		if (!(n_bytes % 2)) {
+-			u16 *buf = (u16 *)drv_data->tx;
+-			for (loop = 0; loop < n_bytes / 2; loop++) {
+-				bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, *buf++);
+-			}
+-		} else {
+-			u8 *buf = (u8 *)drv_data->tx;
+-			for (loop = 0; loop < n_bytes; loop++) {
+-				bfin_read(&drv_data->regs->rdbr);
+-				bfin_write(&drv_data->regs->tdbr, *buf++);
+-			}
 -		}
 -	}
 -
--	if (!try_module_get(policy->governor->owner))
--		return -EINVAL;
+-	if (drv_data->tx)
+-		drv_data->tx += n_bytes;
+-	if (drv_data->rx)
+-		drv_data->rx += n_bytes;
 -
--	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+-	return IRQ_HANDLED;
+-}
 -
--	if (policy->governor->init) {
--		ret = policy->governor->init(policy);
--		if (ret) {
--			module_put(policy->governor->owner);
--			return ret;
--		}
+-static irqreturn_t bfin_spi_dma_irq_handler(int irq, void *dev_id)
+-{
+-	struct bfin_spi_master_data *drv_data = dev_id;
+-	struct bfin_spi_slave_data *chip = drv_data->cur_chip;
+-	struct spi_message *msg = drv_data->cur_msg;
+-	unsigned long timeout;
+-	unsigned short dmastat = get_dma_curr_irqstat(drv_data->dma_channel);
+-	u16 spistat = bfin_read(&drv_data->regs->stat);
+-
+-	dev_dbg(&drv_data->pdev->dev,
+-		"in dma_irq_handler dmastat:0x%x spistat:0x%x\n",
+-		dmastat, spistat);
+-
+-	if (drv_data->rx != NULL) {
+-		u16 cr = bfin_read(&drv_data->regs->ctl);
+-		/* discard old RX data and clear RXS */
+-		bfin_spi_dummy_read(drv_data);
+-		bfin_write(&drv_data->regs->ctl, cr & ~BIT_CTL_ENABLE); /* Disable SPI */
+-		bfin_write(&drv_data->regs->ctl, cr & ~BIT_CTL_TIMOD); /* Restore State */
+-		bfin_write(&drv_data->regs->stat, BIT_STAT_CLR); /* Clear Status */
 -	}
 -
--	return 0;
--}
--
--static void cpufreq_exit_governor(struct cpufreq_policy *policy)
--{
--	if (cpufreq_suspended || !policy->governor)
--		return;
--
--	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
--
--	if (policy->governor->exit)
--		policy->governor->exit(policy);
--
--	module_put(policy->governor->owner);
--}
--
--static int cpufreq_start_governor(struct cpufreq_policy *policy)
--{
--	int ret;
--
--	if (cpufreq_suspended)
--		return 0;
--
--	if (!policy->governor)
--		return -EINVAL;
--
--	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
--
--	if (cpufreq_driver->get && !cpufreq_driver->setpolicy)
--		cpufreq_update_current_freq(policy);
--
--	if (policy->governor->start) {
--		ret = policy->governor->start(policy);
--		if (ret)
--			return ret;
--	}
--
--	if (policy->governor->limits)
--		policy->governor->limits(policy);
--
--	return 0;
--}
--
--static void cpufreq_stop_governor(struct cpufreq_policy *policy)
--{
--	if (cpufreq_suspended || !policy->governor)
--		return;
--
--	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
--
--	if (policy->governor->stop)
--		policy->governor->stop(policy);
--}
--
--static void cpufreq_governor_limits(struct cpufreq_policy *policy)
--{
--	if (cpufreq_suspended || !policy->governor)
--		return;
--
--	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
--
--	if (policy->governor->limits)
--		policy->governor->limits(policy);
--}
--
--int cpufreq_register_governor(struct cpufreq_governor *governor)
--{
--	int err;
--
--	if (!governor)
--		return -EINVAL;
--
--	if (cpufreq_disabled())
--		return -ENODEV;
--
--	mutex_lock(&cpufreq_governor_mutex);
--
--	err = -EBUSY;
--	if (!find_governor(governor->name)) {
--		err = 0;
--		list_add(&governor->governor_list, &cpufreq_governor_list);
--	}
--
--	mutex_unlock(&cpufreq_governor_mutex);
--	return err;
--}
--EXPORT_SYMBOL_GPL(cpufreq_register_governor);
--
--void cpufreq_unregister_governor(struct cpufreq_governor *governor)
--{
--	struct cpufreq_policy *policy;
--	unsigned long flags;
--
--	if (!governor)
--		return;
--
--	if (cpufreq_disabled())
--		return;
--
--	/* clear last_governor for all inactive policies */
--	read_lock_irqsave(&cpufreq_driver_lock, flags);
--	for_each_inactive_policy(policy) {
--		if (!strcmp(policy->last_governor, governor->name)) {
--			policy->governor = NULL;
--			strcpy(policy->last_governor, "\0");
--		}
--	}
--	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
--
--	mutex_lock(&cpufreq_governor_mutex);
--	list_del(&governor->governor_list);
--	mutex_unlock(&cpufreq_governor_mutex);
--}
--EXPORT_SYMBOL_GPL(cpufreq_unregister_governor);
--
--
--/*********************************************************************
-- *                          POLICY INTERFACE                         *
-- *********************************************************************/
--
--/**
-- * cpufreq_get_policy - get the current cpufreq_policy
-- * @policy: struct cpufreq_policy into which the current cpufreq_policy
-- *	is written
-- *
-- * Reads the current cpufreq policy.
-- */
--int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu)
--{
--	struct cpufreq_policy *cpu_policy;
--	if (!policy)
--		return -EINVAL;
--
--	cpu_policy = cpufreq_cpu_get(cpu);
--	if (!cpu_policy)
--		return -EINVAL;
--
--	memcpy(policy, cpu_policy, sizeof(*policy));
--
--	cpufreq_cpu_put(cpu_policy);
--	return 0;
--}
--EXPORT_SYMBOL(cpufreq_get_policy);
--
--/*
-- * policy : current policy.
-- * new_policy: policy to be set.
-- */
--static int cpufreq_set_policy(struct cpufreq_policy *policy,
--				struct cpufreq_policy *new_policy)
--{
--	struct cpufreq_governor *old_gov;
--	int ret;
--
--	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
--		 new_policy->cpu, new_policy->min, new_policy->max);
--
--	memcpy(&new_policy->cpuinfo, &policy->cpuinfo, sizeof(policy->cpuinfo));
+-	clear_dma_irqstat(drv_data->dma_channel);
 -
 -	/*
--	* This check works well when we store new min/max freq attributes,
--	* because new_policy is a copy of policy with one field updated.
--	*/
--	if (new_policy->min > new_policy->max)
--		return -EINVAL;
--
--	/* verify the cpu speed can be set within this limit */
--	ret = cpufreq_driver->verify(new_policy);
--	if (ret)
--		return ret;
--
--	/* adjust if necessary - all reasons */
--	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
--			CPUFREQ_ADJUST, new_policy);
--
--	/*
--	 * verify the cpu speed can be set within this limit, which might be
--	 * different to the first one
+-	 * wait for the last transaction shifted out.  HRM states:
+-	 * at this point there may still be data in the SPI DMA FIFO waiting
+-	 * to be transmitted ... software needs to poll TXS in the SPI_STAT
+-	 * register until it goes low for 2 successive reads
 -	 */
--	ret = cpufreq_driver->verify(new_policy);
--	if (ret)
--		return ret;
--
--	/* notification of the new policy */
--	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
--			CPUFREQ_NOTIFY, new_policy);
--
--	policy->min = new_policy->min;
--	policy->max = new_policy->max;
--
--	policy->cached_target_freq = UINT_MAX;
--
--	pr_debug("new min and max freqs are %u - %u kHz\n",
--		 policy->min, policy->max);
--
--	if (cpufreq_driver->setpolicy) {
--		policy->policy = new_policy->policy;
--		pr_debug("setting range\n");
--		return cpufreq_driver->setpolicy(new_policy);
+-	if (drv_data->tx != NULL) {
+-		while ((bfin_read(&drv_data->regs->stat) & BIT_STAT_TXS) ||
+-		       (bfin_read(&drv_data->regs->stat) & BIT_STAT_TXS))
+-			cpu_relax();
 -	}
 -
--	if (new_policy->governor == policy->governor) {
--		pr_debug("cpufreq: governor limits update\n");
--		cpufreq_governor_limits(policy);
--		return 0;
--	}
+-	dev_dbg(&drv_data->pdev->dev,
+-		"in dma_irq_handler dmastat:0x%x spistat:0x%x\n",
+-		dmastat, bfin_read(&drv_data->regs->stat));
 -
--	pr_debug("governor switch\n");
--
--	/* save old, working values */
--	old_gov = policy->governor;
--	/* end old governor */
--	if (old_gov) {
--		cpufreq_stop_governor(policy);
--		cpufreq_exit_governor(policy);
--	}
--
--	/* start new governor */
--	policy->governor = new_policy->governor;
--	ret = cpufreq_init_governor(policy);
--	if (!ret) {
--		ret = cpufreq_start_governor(policy);
--		if (!ret) {
--			pr_debug("cpufreq: governor change\n");
--			return 0;
--		}
--		cpufreq_exit_governor(policy);
--	}
--
--	/* new governor failed, so re-start old one */
--	pr_debug("starting governor %s failed\n", policy->governor->name);
--	if (old_gov) {
--		policy->governor = old_gov;
--		if (cpufreq_init_governor(policy))
--			policy->governor = NULL;
--		else
--			cpufreq_start_governor(policy);
--	}
--
--	return ret;
--}
--
--/**
-- *	cpufreq_update_policy - re-evaluate an existing cpufreq policy
-- *	@cpu: CPU which shall be re-evaluated
-- *
-- *	Useful for policy notifiers which have different necessities
-- *	at different times.
-- */
--void cpufreq_update_policy(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--	struct cpufreq_policy new_policy;
--
--	if (!policy)
--		return;
--
--	down_write(&policy->rwsem);
--
--	if (policy_is_inactive(policy))
--		goto unlock;
--
--	pr_debug("updating policy for CPU %u\n", cpu);
--	memcpy(&new_policy, policy, sizeof(*policy));
--	new_policy.min = policy->user_policy.min;
--	new_policy.max = policy->user_policy.max;
--
--	/*
--	 * BIOS might change freq behind our back
--	 * -> ask driver for current freq and notify governors about a change
--	 */
--	if (cpufreq_driver->get && !cpufreq_driver->setpolicy) {
--		if (cpufreq_suspended)
--			goto unlock;
--
--		new_policy.cur = cpufreq_update_current_freq(policy);
--		if (WARN_ON(!new_policy.cur))
--			goto unlock;
--	}
--
--	cpufreq_set_policy(policy, &new_policy);
--
--unlock:
--	up_write(&policy->rwsem);
--
--	cpufreq_cpu_put(policy);
--}
--EXPORT_SYMBOL(cpufreq_update_policy);
--
--/*********************************************************************
-- *               BOOST						     *
-- *********************************************************************/
--static int cpufreq_boost_set_sw(int state)
--{
--	struct cpufreq_policy *policy;
--	int ret = -EINVAL;
--
--	for_each_active_policy(policy) {
--		if (!policy->freq_table)
--			continue;
--
--		ret = cpufreq_frequency_table_cpuinfo(policy,
--						      policy->freq_table);
--		if (ret) {
--			pr_err("%s: Policy frequency update failed\n",
--			       __func__);
+-	timeout = jiffies + HZ;
+-	while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_SPIF))
+-		if (!time_before(jiffies, timeout)) {
+-			dev_warn(&drv_data->pdev->dev, "timeout waiting for SPIF\n");
 -			break;
+-		} else
+-			cpu_relax();
+-
+-	if ((dmastat & DMA_ERR) && (spistat & BIT_STAT_RBSY)) {
+-		msg->state = ERROR_STATE;
+-		dev_err(&drv_data->pdev->dev, "dma receive: fifo/buffer overflow\n");
+-	} else {
+-		msg->actual_length += drv_data->len_in_bytes;
+-
+-		if (drv_data->cs_change)
+-			bfin_spi_cs_deactive(drv_data, chip);
+-
+-		/* Move to next transfer */
+-		msg->state = bfin_spi_next_transfer(drv_data);
+-	}
+-
+-	/* Schedule transfer tasklet */
+-	tasklet_schedule(&drv_data->pump_transfers);
+-
+-	/* free the irq handler before next transfer */
+-	dev_dbg(&drv_data->pdev->dev,
+-		"disable dma channel irq%d\n",
+-		drv_data->dma_channel);
+-	dma_disable_irq_nosync(drv_data->dma_channel);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static void bfin_spi_pump_transfers(unsigned long data)
+-{
+-	struct bfin_spi_master_data *drv_data = (struct bfin_spi_master_data *)data;
+-	struct spi_message *message = NULL;
+-	struct spi_transfer *transfer = NULL;
+-	struct spi_transfer *previous = NULL;
+-	struct bfin_spi_slave_data *chip = NULL;
+-	unsigned int bits_per_word;
+-	u16 cr, cr_width = 0, dma_width, dma_config;
+-	u32 tranf_success = 1;
+-	u8 full_duplex = 0;
+-
+-	/* Get current state information */
+-	message = drv_data->cur_msg;
+-	transfer = drv_data->cur_transfer;
+-	chip = drv_data->cur_chip;
+-
+-	/*
+-	 * if msg is error or done, report it back using complete() callback
+-	 */
+-
+-	 /* Handle for abort */
+-	if (message->state == ERROR_STATE) {
+-		dev_dbg(&drv_data->pdev->dev, "transfer: we've hit an error\n");
+-		message->status = -EIO;
+-		bfin_spi_giveback(drv_data);
+-		return;
+-	}
+-
+-	/* Handle end of message */
+-	if (message->state == DONE_STATE) {
+-		dev_dbg(&drv_data->pdev->dev, "transfer: all done!\n");
+-		message->status = 0;
+-		bfin_spi_flush(drv_data);
+-		bfin_spi_giveback(drv_data);
+-		return;
+-	}
+-
+-	/* Delay if requested at end of transfer */
+-	if (message->state == RUNNING_STATE) {
+-		dev_dbg(&drv_data->pdev->dev, "transfer: still running ...\n");
+-		previous = list_entry(transfer->transfer_list.prev,
+-				      struct spi_transfer, transfer_list);
+-		if (previous->delay_usecs)
+-			udelay(previous->delay_usecs);
+-	}
+-
+-	/* Flush any existing transfers that may be sitting in the hardware */
+-	if (bfin_spi_flush(drv_data) == 0) {
+-		dev_err(&drv_data->pdev->dev, "pump_transfers: flush failed\n");
+-		message->status = -EIO;
+-		bfin_spi_giveback(drv_data);
+-		return;
+-	}
+-
+-	if (transfer->len == 0) {
+-		/* Move to next transfer of this msg */
+-		message->state = bfin_spi_next_transfer(drv_data);
+-		/* Schedule next transfer tasklet */
+-		tasklet_schedule(&drv_data->pump_transfers);
+-		return;
+-	}
+-
+-	if (transfer->tx_buf != NULL) {
+-		drv_data->tx = (void *)transfer->tx_buf;
+-		drv_data->tx_end = drv_data->tx + transfer->len;
+-		dev_dbg(&drv_data->pdev->dev, "tx_buf is %p, tx_end is %p\n",
+-			transfer->tx_buf, drv_data->tx_end);
+-	} else {
+-		drv_data->tx = NULL;
+-	}
+-
+-	if (transfer->rx_buf != NULL) {
+-		full_duplex = transfer->tx_buf != NULL;
+-		drv_data->rx = transfer->rx_buf;
+-		drv_data->rx_end = drv_data->rx + transfer->len;
+-		dev_dbg(&drv_data->pdev->dev, "rx_buf is %p, rx_end is %p\n",
+-			transfer->rx_buf, drv_data->rx_end);
+-	} else {
+-		drv_data->rx = NULL;
+-	}
+-
+-	drv_data->rx_dma = transfer->rx_dma;
+-	drv_data->tx_dma = transfer->tx_dma;
+-	drv_data->len_in_bytes = transfer->len;
+-	drv_data->cs_change = transfer->cs_change;
+-
+-	/* Bits per word setup */
+-	bits_per_word = transfer->bits_per_word;
+-	if (bits_per_word == 16) {
+-		drv_data->n_bytes = bits_per_word/8;
+-		drv_data->len = (transfer->len) >> 1;
+-		cr_width = BIT_CTL_WORDSIZE;
+-		drv_data->ops = &bfin_bfin_spi_transfer_ops_u16;
+-	} else if (bits_per_word == 8) {
+-		drv_data->n_bytes = bits_per_word/8;
+-		drv_data->len = transfer->len;
+-		drv_data->ops = &bfin_bfin_spi_transfer_ops_u8;
+-	}
+-	cr = bfin_read(&drv_data->regs->ctl) & ~(BIT_CTL_TIMOD | BIT_CTL_WORDSIZE);
+-	cr |= cr_width;
+-	bfin_write(&drv_data->regs->ctl, cr);
+-
+-	dev_dbg(&drv_data->pdev->dev,
+-		"transfer: drv_data->ops is %p, chip->ops is %p, u8_ops is %p\n",
+-		drv_data->ops, chip->ops, &bfin_bfin_spi_transfer_ops_u8);
+-
+-	message->state = RUNNING_STATE;
+-	dma_config = 0;
+-
+-	bfin_write(&drv_data->regs->baud, hz_to_spi_baud(transfer->speed_hz));
+-
+-	bfin_write(&drv_data->regs->stat, BIT_STAT_CLR);
+-	bfin_spi_cs_active(drv_data, chip);
+-
+-	dev_dbg(&drv_data->pdev->dev,
+-		"now pumping a transfer: width is %d, len is %d\n",
+-		cr_width, transfer->len);
+-
+-	/*
+-	 * Try to map dma buffer and do a dma transfer.  If successful use,
+-	 * different way to r/w according to the enable_dma settings and if
+-	 * we are not doing a full duplex transfer (since the hardware does
+-	 * not support full duplex DMA transfers).
+-	 */
+-	if (!full_duplex && drv_data->cur_chip->enable_dma
+-				&& drv_data->len > 6) {
+-
+-		unsigned long dma_start_addr, flags;
+-
+-		disable_dma(drv_data->dma_channel);
+-		clear_dma_irqstat(drv_data->dma_channel);
+-
+-		/* config dma channel */
+-		dev_dbg(&drv_data->pdev->dev, "doing dma transfer\n");
+-		set_dma_x_count(drv_data->dma_channel, drv_data->len);
+-		if (cr_width == BIT_CTL_WORDSIZE) {
+-			set_dma_x_modify(drv_data->dma_channel, 2);
+-			dma_width = WDSIZE_16;
+-		} else {
+-			set_dma_x_modify(drv_data->dma_channel, 1);
+-			dma_width = WDSIZE_8;
 -		}
 -
--		down_write(&policy->rwsem);
--		policy->user_policy.max = policy->max;
--		cpufreq_governor_limits(policy);
--		up_write(&policy->rwsem);
+-		/* poll for SPI completion before start */
+-		while (!(bfin_read(&drv_data->regs->stat) & BIT_STAT_SPIF))
+-			cpu_relax();
+-
+-		/* dirty hack for autobuffer DMA mode */
+-		if (drv_data->tx_dma == 0xFFFF) {
+-			dev_dbg(&drv_data->pdev->dev,
+-				"doing autobuffer DMA out.\n");
+-
+-			/* no irq in autobuffer mode */
+-			dma_config =
+-			    (DMAFLOW_AUTO | RESTART | dma_width | DI_EN);
+-			set_dma_config(drv_data->dma_channel, dma_config);
+-			set_dma_start_addr(drv_data->dma_channel,
+-					(unsigned long)drv_data->tx);
+-			enable_dma(drv_data->dma_channel);
+-
+-			/* start SPI transfer */
+-			bfin_write(&drv_data->regs->ctl, cr | BIT_CTL_TIMOD_DMA_TX);
+-
+-			/* just return here, there can only be one transfer
+-			 * in this mode
+-			 */
+-			message->status = 0;
+-			bfin_spi_giveback(drv_data);
+-			return;
+-		}
+-
+-		/* In dma mode, rx or tx must be NULL in one transfer */
+-		dma_config = (RESTART | dma_width | DI_EN);
+-		if (drv_data->rx != NULL) {
+-			/* set transfer mode, and enable SPI */
+-			dev_dbg(&drv_data->pdev->dev, "doing DMA in to %p (size %zx)\n",
+-				drv_data->rx, drv_data->len_in_bytes);
+-
+-			/* invalidate caches, if needed */
+-			if (bfin_addr_dcacheable((unsigned long) drv_data->rx))
+-				invalidate_dcache_range((unsigned long) drv_data->rx,
+-							(unsigned long) (drv_data->rx +
+-							drv_data->len_in_bytes));
+-
+-			dma_config |= WNR;
+-			dma_start_addr = (unsigned long)drv_data->rx;
+-			cr |= BIT_CTL_TIMOD_DMA_RX | BIT_CTL_SENDOPT;
+-
+-		} else if (drv_data->tx != NULL) {
+-			dev_dbg(&drv_data->pdev->dev, "doing DMA out.\n");
+-
+-			/* flush caches, if needed */
+-			if (bfin_addr_dcacheable((unsigned long) drv_data->tx))
+-				flush_dcache_range((unsigned long) drv_data->tx,
+-						(unsigned long) (drv_data->tx +
+-						drv_data->len_in_bytes));
+-
+-			dma_start_addr = (unsigned long)drv_data->tx;
+-			cr |= BIT_CTL_TIMOD_DMA_TX;
+-
+-		} else
+-			BUG();
+-
+-		/* oh man, here there be monsters ... and i dont mean the
+-		 * fluffy cute ones from pixar, i mean the kind that'll eat
+-		 * your data, kick your dog, and love it all.  do *not* try
+-		 * and change these lines unless you (1) heavily test DMA
+-		 * with SPI flashes on a loaded system (e.g. ping floods),
+-		 * (2) know just how broken the DMA engine interaction with
+-		 * the SPI peripheral is, and (3) have someone else to blame
+-		 * when you screw it all up anyways.
+-		 */
+-		set_dma_start_addr(drv_data->dma_channel, dma_start_addr);
+-		set_dma_config(drv_data->dma_channel, dma_config);
+-		local_irq_save(flags);
+-		SSYNC();
+-		bfin_write(&drv_data->regs->ctl, cr);
+-		enable_dma(drv_data->dma_channel);
+-		dma_enable_irq(drv_data->dma_channel);
+-		local_irq_restore(flags);
+-
+-		return;
 -	}
 -
--	return ret;
--}
+-	/*
+-	 * We always use SPI_WRITE mode (transfer starts with TDBR write).
+-	 * SPI_READ mode (transfer starts with RDBR read) seems to have
+-	 * problems with setting up the output value in TDBR prior to the
+-	 * start of the transfer.
+-	 */
+-	bfin_write(&drv_data->regs->ctl, cr | BIT_CTL_TXMOD);
 -
--int cpufreq_boost_trigger_state(int state)
--{
--	unsigned long flags;
--	int ret = 0;
+-	if (chip->pio_interrupt) {
+-		/* SPI irq should have been disabled by now */
 -
--	if (cpufreq_driver->boost_enabled == state)
--		return 0;
+-		/* discard old RX data and clear RXS */
+-		bfin_spi_dummy_read(drv_data);
 -
--	write_lock_irqsave(&cpufreq_driver_lock, flags);
--	cpufreq_driver->boost_enabled = state;
--	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-		/* start transfer */
+-		if (drv_data->tx == NULL)
+-			bfin_write(&drv_data->regs->tdbr, chip->idle_tx_val);
+-		else {
+-			int loop;
+-			if (bits_per_word == 16) {
+-				u16 *buf = (u16 *)drv_data->tx;
+-				for (loop = 0; loop < bits_per_word / 16;
+-						loop++) {
+-					bfin_write(&drv_data->regs->tdbr, *buf++);
+-				}
+-			} else if (bits_per_word == 8) {
+-				u8 *buf = (u8 *)drv_data->tx;
+-				for (loop = 0; loop < bits_per_word / 8; loop++)
+-					bfin_write(&drv_data->regs->tdbr, *buf++);
+-			}
 -
--	ret = cpufreq_driver->set_boost(state);
--	if (ret) {
--		write_lock_irqsave(&cpufreq_driver_lock, flags);
--		cpufreq_driver->boost_enabled = !state;
--		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+-			drv_data->tx += drv_data->n_bytes;
+-		}
 -
--		pr_err("%s: Cannot %s BOOST\n",
--		       __func__, state ? "enable" : "disable");
+-		/* once TDBR is empty, interrupt is triggered */
+-		enable_irq(drv_data->spi_irq);
+-		return;
 -	}
 -
--	return ret;
--}
+-	/* IO mode */
+-	dev_dbg(&drv_data->pdev->dev, "doing IO transfer\n");
 -
--static bool cpufreq_boost_supported(void)
--{
--	return likely(cpufreq_driver) && cpufreq_driver->set_boost;
--}
+-	if (full_duplex) {
+-		/* full duplex mode */
+-		BUG_ON((drv_data->tx_end - drv_data->tx) !=
+-		       (drv_data->rx_end - drv_data->rx));
+-		dev_dbg(&drv_data->pdev->dev,
+-			"IO duplex: cr is 0x%x\n", cr);
 -
--static int create_boost_sysfs_file(void)
--{
--	int ret;
+-		drv_data->ops->duplex(drv_data);
 -
--	ret = sysfs_create_file(cpufreq_global_kobject, &boost.attr);
--	if (ret)
--		pr_err("%s: cannot register global BOOST sysfs file\n",
--		       __func__);
+-		if (drv_data->tx != drv_data->tx_end)
+-			tranf_success = 0;
+-	} else if (drv_data->tx != NULL) {
+-		/* write only half duplex */
+-		dev_dbg(&drv_data->pdev->dev,
+-			"IO write: cr is 0x%x\n", cr);
 -
--	return ret;
--}
+-		drv_data->ops->write(drv_data);
 -
--static void remove_boost_sysfs_file(void)
--{
--	if (cpufreq_boost_supported())
--		sysfs_remove_file(cpufreq_global_kobject, &boost.attr);
--}
+-		if (drv_data->tx != drv_data->tx_end)
+-			tranf_success = 0;
+-	} else if (drv_data->rx != NULL) {
+-		/* read only half duplex */
+-		dev_dbg(&drv_data->pdev->dev,
+-			"IO read: cr is 0x%x\n", cr);
 -
--int cpufreq_enable_boost_support(void)
--{
--	if (!cpufreq_driver)
--		return -EINVAL;
--
--	if (cpufreq_boost_supported())
--		return 0;
--
--	cpufreq_driver->set_boost = cpufreq_boost_set_sw;
--
--	/* This will get removed on driver unregister */
--	return create_boost_sysfs_file();
--}
--EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
--
--int cpufreq_boost_enabled(void)
--{
--	return cpufreq_driver->boost_enabled;
--}
--EXPORT_SYMBOL_GPL(cpufreq_boost_enabled);
--
--/*********************************************************************
-- *               REGISTER / UNREGISTER CPUFREQ DRIVER                *
-- *********************************************************************/
--static enum cpuhp_state hp_online;
--
--static int cpuhp_cpufreq_online(unsigned int cpu)
--{
--	cpufreq_online(cpu);
--
--	return 0;
--}
--
--static int cpuhp_cpufreq_offline(unsigned int cpu)
--{
--	cpufreq_offline(cpu);
--
--	return 0;
--}
--
--/**
-- * cpufreq_register_driver - register a CPU Frequency driver
-- * @driver_data: A struct cpufreq_driver containing the values#
-- * submitted by the CPU Frequency driver.
-- *
-- * Registers a CPU Frequency driver to this core code. This code
-- * returns zero on success, -EEXIST when another driver got here first
-- * (and isn't unregistered in the meantime).
-- *
-- */
--int cpufreq_register_driver(struct cpufreq_driver *driver_data)
--{
--	unsigned long flags;
--	int ret;
--
--	if (cpufreq_disabled())
--		return -ENODEV;
--
--	if (!driver_data || !driver_data->verify || !driver_data->init ||
--	    !(driver_data->setpolicy || driver_data->target_index ||
--		    driver_data->target) ||
--	     (driver_data->setpolicy && (driver_data->target_index ||
--		    driver_data->target)) ||
--	     (!!driver_data->get_intermediate != !!driver_data->target_intermediate))
--		return -EINVAL;
--
--	pr_debug("trying to register driver %s\n", driver_data->name);
--
--	/* Protect against concurrent CPU online/offline. */
--	cpus_read_lock();
--
--	write_lock_irqsave(&cpufreq_driver_lock, flags);
--	if (cpufreq_driver) {
--		write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--		ret = -EEXIST;
--		goto out;
--	}
--	cpufreq_driver = driver_data;
--	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--
--	if (driver_data->setpolicy)
--		driver_data->flags |= CPUFREQ_CONST_LOOPS;
--
--	if (cpufreq_boost_supported()) {
--		ret = create_boost_sysfs_file();
--		if (ret)
--			goto err_null_driver;
+-		drv_data->ops->read(drv_data);
+-		if (drv_data->rx != drv_data->rx_end)
+-			tranf_success = 0;
 -	}
 -
--	ret = subsys_interface_register(&cpufreq_interface);
--	if (ret)
--		goto err_boost_unreg;
--
--	if (!(cpufreq_driver->flags & CPUFREQ_STICKY) &&
--	    list_empty(&cpufreq_policy_list)) {
--		/* if all ->init() calls failed, unregister */
--		ret = -ENODEV;
--		pr_debug("%s: No CPU initialized for driver %s\n", __func__,
--			 driver_data->name);
--		goto err_if_unreg;
+-	if (!tranf_success) {
+-		dev_dbg(&drv_data->pdev->dev,
+-			"IO write error!\n");
+-		message->state = ERROR_STATE;
+-	} else {
+-		/* Update total byte transferred */
+-		message->actual_length += drv_data->len_in_bytes;
+-		/* Move to next transfer of this msg */
+-		message->state = bfin_spi_next_transfer(drv_data);
+-		if (drv_data->cs_change && message->state != DONE_STATE) {
+-			bfin_spi_flush(drv_data);
+-			bfin_spi_cs_deactive(drv_data, chip);
+-		}
 -	}
 -
--	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN,
--						   "cpufreq:online",
--						   cpuhp_cpufreq_online,
--						   cpuhp_cpufreq_offline);
--	if (ret < 0)
--		goto err_if_unreg;
--	hp_online = ret;
--	ret = 0;
--
--	pr_debug("driver %s up and running\n", driver_data->name);
--	goto out;
--
--err_if_unreg:
--	subsys_interface_unregister(&cpufreq_interface);
--err_boost_unreg:
--	remove_boost_sysfs_file();
--err_null_driver:
--	write_lock_irqsave(&cpufreq_driver_lock, flags);
--	cpufreq_driver = NULL;
--	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--out:
--	cpus_read_unlock();
--	return ret;
+-	/* Schedule next transfer tasklet */
+-	tasklet_schedule(&drv_data->pump_transfers);
 -}
--EXPORT_SYMBOL_GPL(cpufreq_register_driver);
 -
--/**
-- * cpufreq_unregister_driver - unregister the current CPUFreq driver
-- *
-- * Unregister the current CPUFreq driver. Only call this if you have
-- * the right to do so, i.e. if you have succeeded in initialising before!
-- * Returns zero if successful, and -EINVAL if the cpufreq_driver is
-- * currently not initialised.
-- */
--int cpufreq_unregister_driver(struct cpufreq_driver *driver)
+-/* pop a msg from queue and kick off real transfer */
+-static void bfin_spi_pump_messages(struct work_struct *work)
 -{
+-	struct bfin_spi_master_data *drv_data;
 -	unsigned long flags;
 -
--	if (!cpufreq_driver || (driver != cpufreq_driver))
--		return -EINVAL;
+-	drv_data = container_of(work, struct bfin_spi_master_data, pump_messages);
 -
--	pr_debug("unregistering driver %s\n", driver->name);
+-	/* Lock queue and check for queue work */
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-	if (list_empty(&drv_data->queue) || !drv_data->running) {
+-		/* pumper kicked off but no work to do */
+-		drv_data->busy = 0;
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return;
+-	}
 -
--	/* Protect against concurrent cpu hotplug */
--	cpus_read_lock();
--	subsys_interface_unregister(&cpufreq_interface);
--	remove_boost_sysfs_file();
--	cpuhp_remove_state_nocalls_cpuslocked(hp_online);
+-	/* Make sure we are not already running a message */
+-	if (drv_data->cur_msg) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return;
+-	}
 -
--	write_lock_irqsave(&cpufreq_driver_lock, flags);
+-	/* Extract head of queue */
+-	drv_data->cur_msg = list_entry(drv_data->queue.next,
+-				       struct spi_message, queue);
 -
--	cpufreq_driver = NULL;
+-	/* Setup the SSP using the per chip configuration */
+-	drv_data->cur_chip = spi_get_ctldata(drv_data->cur_msg->spi);
+-	bfin_spi_restore_state(drv_data);
 -
--	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
--	cpus_read_unlock();
+-	list_del_init(&drv_data->cur_msg->queue);
 -
--	return 0;
+-	/* Initial message state */
+-	drv_data->cur_msg->state = START_STATE;
+-	drv_data->cur_transfer = list_entry(drv_data->cur_msg->transfers.next,
+-					    struct spi_transfer, transfer_list);
+-
+-	dev_dbg(&drv_data->pdev->dev,
+-		"got a message to pump, state is set to: baud "
+-		"%d, flag 0x%x, ctl 0x%x\n",
+-		drv_data->cur_chip->baud, drv_data->cur_chip->flag,
+-		drv_data->cur_chip->ctl_reg);
+-
+-	dev_dbg(&drv_data->pdev->dev,
+-		"the first transfer len is %d\n",
+-		drv_data->cur_transfer->len);
+-
+-	/* Mark as busy and launch transfers */
+-	tasklet_schedule(&drv_data->pump_transfers);
+-
+-	drv_data->busy = 1;
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
 -}
--EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
 -
 -/*
-- * Stop cpufreq at shutdown to make sure it isn't holding any locks
-- * or mutexes when secondary CPUs are halted.
+- * got a msg to transfer, queue it in drv_data->queue.
+- * And kick off message pumper
 - */
--static struct syscore_ops cpufreq_syscore_ops = {
--	.shutdown = cpufreq_suspend,
+-static int bfin_spi_transfer(struct spi_device *spi, struct spi_message *msg)
+-{
+-	struct bfin_spi_master_data *drv_data = spi_master_get_devdata(spi->master);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-
+-	if (!drv_data->running) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return -ESHUTDOWN;
+-	}
+-
+-	msg->actual_length = 0;
+-	msg->status = -EINPROGRESS;
+-	msg->state = START_STATE;
+-
+-	dev_dbg(&spi->dev, "adding an msg in transfer() \n");
+-	list_add_tail(&msg->queue, &drv_data->queue);
+-
+-	if (drv_data->running && !drv_data->busy)
+-		schedule_work(&drv_data->pump_messages);
+-
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	return 0;
+-}
+-
+-#define MAX_SPI_SSEL	7
+-
+-static const u16 ssel[][MAX_SPI_SSEL] = {
+-	{P_SPI0_SSEL1, P_SPI0_SSEL2, P_SPI0_SSEL3,
+-	P_SPI0_SSEL4, P_SPI0_SSEL5,
+-	P_SPI0_SSEL6, P_SPI0_SSEL7},
+-
+-	{P_SPI1_SSEL1, P_SPI1_SSEL2, P_SPI1_SSEL3,
+-	P_SPI1_SSEL4, P_SPI1_SSEL5,
+-	P_SPI1_SSEL6, P_SPI1_SSEL7},
+-
+-	{P_SPI2_SSEL1, P_SPI2_SSEL2, P_SPI2_SSEL3,
+-	P_SPI2_SSEL4, P_SPI2_SSEL5,
+-	P_SPI2_SSEL6, P_SPI2_SSEL7},
 -};
 -
--struct kobject *cpufreq_global_kobject;
--EXPORT_SYMBOL(cpufreq_global_kobject);
--
--static int __init cpufreq_core_init(void)
+-/* setup for devices (may be called multiple times -- not just first setup) */
+-static int bfin_spi_setup(struct spi_device *spi)
 -{
--	if (cpufreq_disabled())
--		return -ENODEV;
+-	struct bfin5xx_spi_chip *chip_info;
+-	struct bfin_spi_slave_data *chip = NULL;
+-	struct bfin_spi_master_data *drv_data = spi_master_get_devdata(spi->master);
+-	u16 bfin_ctl_reg;
+-	int ret = -EINVAL;
 -
--	cpufreq_global_kobject = kobject_create_and_add("cpufreq", &cpu_subsys.dev_root->kobj);
--	BUG_ON(!cpufreq_global_kobject);
+-	/* Only alloc (or use chip_info) on first setup */
+-	chip_info = NULL;
+-	chip = spi_get_ctldata(spi);
+-	if (chip == NULL) {
+-		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+-		if (!chip) {
+-			dev_err(&spi->dev, "cannot allocate chip data\n");
+-			ret = -ENOMEM;
+-			goto error;
+-		}
 -
--	register_syscore_ops(&cpufreq_syscore_ops);
+-		chip->enable_dma = 0;
+-		chip_info = spi->controller_data;
+-	}
+-
+-	/* Let people set non-standard bits directly */
+-	bfin_ctl_reg = BIT_CTL_OPENDRAIN | BIT_CTL_EMISO |
+-		BIT_CTL_PSSE | BIT_CTL_GM | BIT_CTL_SZ;
+-
+-	/* chip_info isn't always needed */
+-	if (chip_info) {
+-		/* Make sure people stop trying to set fields via ctl_reg
+-		 * when they should actually be using common SPI framework.
+-		 * Currently we let through: WOM EMISO PSSE GM SZ.
+-		 * Not sure if a user actually needs/uses any of these,
+-		 * but let's assume (for now) they do.
+-		 */
+-		if (chip_info->ctl_reg & ~bfin_ctl_reg) {
+-			dev_err(&spi->dev,
+-				"do not set bits in ctl_reg that the SPI framework manages\n");
+-			goto error;
+-		}
+-		chip->enable_dma = chip_info->enable_dma != 0
+-		    && drv_data->master_info->enable_dma;
+-		chip->ctl_reg = chip_info->ctl_reg;
+-		chip->cs_chg_udelay = chip_info->cs_chg_udelay;
+-		chip->idle_tx_val = chip_info->idle_tx_val;
+-		chip->pio_interrupt = chip_info->pio_interrupt;
+-	} else {
+-		/* force a default base state */
+-		chip->ctl_reg &= bfin_ctl_reg;
+-	}
+-
+-	/* translate common spi framework into our register */
+-	if (spi->mode & SPI_CPOL)
+-		chip->ctl_reg |= BIT_CTL_CPOL;
+-	if (spi->mode & SPI_CPHA)
+-		chip->ctl_reg |= BIT_CTL_CPHA;
+-	if (spi->mode & SPI_LSB_FIRST)
+-		chip->ctl_reg |= BIT_CTL_LSBF;
+-	/* we dont support running in slave mode (yet?) */
+-	chip->ctl_reg |= BIT_CTL_MASTER;
+-
+-	/*
+-	 * Notice: for blackfin, the speed_hz is the value of register
+-	 * SPI_BAUD, not the real baudrate
+-	 */
+-	chip->baud = hz_to_spi_baud(spi->max_speed_hz);
+-	chip->chip_select_num = spi->chip_select;
+-	if (chip->chip_select_num < MAX_CTRL_CS) {
+-		if (!(spi->mode & SPI_CPHA))
+-			dev_warn(&spi->dev,
+-				"Warning: SPI CPHA not set: Slave Select not under software control!\n"
+-				"See Documentation/blackfin/bfin-spi-notes.txt\n");
+-
+-		chip->flag = (1 << spi->chip_select) << 8;
+-	} else
+-		chip->cs_gpio = chip->chip_select_num - MAX_CTRL_CS;
+-
+-	if (chip->enable_dma && chip->pio_interrupt) {
+-		dev_err(&spi->dev,
+-			"enable_dma is set, do not set pio_interrupt\n");
+-		goto error;
+-	}
+-	/*
+-	 * if any one SPI chip is registered and wants DMA, request the
+-	 * DMA channel for it
+-	 */
+-	if (chip->enable_dma && !drv_data->dma_requested) {
+-		/* register dma irq handler */
+-		ret = request_dma(drv_data->dma_channel, "BFIN_SPI_DMA");
+-		if (ret) {
+-			dev_err(&spi->dev,
+-				"Unable to request BlackFin SPI DMA channel\n");
+-			goto error;
+-		}
+-		drv_data->dma_requested = 1;
+-
+-		ret = set_dma_callback(drv_data->dma_channel,
+-			bfin_spi_dma_irq_handler, drv_data);
+-		if (ret) {
+-			dev_err(&spi->dev, "Unable to set dma callback\n");
+-			goto error;
+-		}
+-		dma_disable_irq(drv_data->dma_channel);
+-	}
+-
+-	if (chip->pio_interrupt && !drv_data->irq_requested) {
+-		ret = request_irq(drv_data->spi_irq, bfin_spi_pio_irq_handler,
+-			0, "BFIN_SPI", drv_data);
+-		if (ret) {
+-			dev_err(&spi->dev, "Unable to register spi IRQ\n");
+-			goto error;
+-		}
+-		drv_data->irq_requested = 1;
+-		/* we use write mode, spi irq has to be disabled here */
+-		disable_irq(drv_data->spi_irq);
+-	}
+-
+-	if (chip->chip_select_num >= MAX_CTRL_CS) {
+-		/* Only request on first setup */
+-		if (spi_get_ctldata(spi) == NULL) {
+-			ret = gpio_request(chip->cs_gpio, spi->modalias);
+-			if (ret) {
+-				dev_err(&spi->dev, "gpio_request() error\n");
+-				goto pin_error;
+-			}
+-			gpio_direction_output(chip->cs_gpio, 1);
+-		}
+-	}
+-
+-	dev_dbg(&spi->dev, "setup spi chip %s, width is %d, dma is %d\n",
+-			spi->modalias, spi->bits_per_word, chip->enable_dma);
+-	dev_dbg(&spi->dev, "ctl_reg is 0x%x, flag_reg is 0x%x\n",
+-			chip->ctl_reg, chip->flag);
+-
+-	spi_set_ctldata(spi, chip);
+-
+-	dev_dbg(&spi->dev, "chip select number is %d\n", chip->chip_select_num);
+-	if (chip->chip_select_num < MAX_CTRL_CS) {
+-		ret = peripheral_request(ssel[spi->master->bus_num]
+-		                         [chip->chip_select_num-1], spi->modalias);
+-		if (ret) {
+-			dev_err(&spi->dev, "peripheral_request() error\n");
+-			goto pin_error;
+-		}
+-	}
+-
+-	bfin_spi_cs_enable(drv_data, chip);
+-	bfin_spi_cs_deactive(drv_data, chip);
+-
+-	return 0;
+-
+- pin_error:
+-	if (chip->chip_select_num >= MAX_CTRL_CS)
+-		gpio_free(chip->cs_gpio);
+-	else
+-		peripheral_free(ssel[spi->master->bus_num]
+-			[chip->chip_select_num - 1]);
+- error:
+-	if (chip) {
+-		if (drv_data->dma_requested)
+-			free_dma(drv_data->dma_channel);
+-		drv_data->dma_requested = 0;
+-
+-		kfree(chip);
+-		/* prevent free 'chip' twice */
+-		spi_set_ctldata(spi, NULL);
+-	}
+-
+-	return ret;
+-}
+-
+-/*
+- * callback for spi framework.
+- * clean driver specific data
+- */
+-static void bfin_spi_cleanup(struct spi_device *spi)
+-{
+-	struct bfin_spi_slave_data *chip = spi_get_ctldata(spi);
+-	struct bfin_spi_master_data *drv_data = spi_master_get_devdata(spi->master);
+-
+-	if (!chip)
+-		return;
+-
+-	if (chip->chip_select_num < MAX_CTRL_CS) {
+-		peripheral_free(ssel[spi->master->bus_num]
+-					[chip->chip_select_num-1]);
+-		bfin_spi_cs_disable(drv_data, chip);
+-	} else
+-		gpio_free(chip->cs_gpio);
+-
+-	kfree(chip);
+-	/* prevent free 'chip' twice */
+-	spi_set_ctldata(spi, NULL);
+-}
+-
+-static int bfin_spi_init_queue(struct bfin_spi_master_data *drv_data)
+-{
+-	INIT_LIST_HEAD(&drv_data->queue);
+-	spin_lock_init(&drv_data->lock);
+-
+-	drv_data->running = false;
+-	drv_data->busy = 0;
+-
+-	/* init transfer tasklet */
+-	tasklet_init(&drv_data->pump_transfers,
+-		     bfin_spi_pump_transfers, (unsigned long)drv_data);
+-
+-	INIT_WORK(&drv_data->pump_messages, bfin_spi_pump_messages);
 -
 -	return 0;
 -}
--module_param(off, int, 0444);
--core_initcall(cpufreq_core_init);
+-
+-static int bfin_spi_start_queue(struct bfin_spi_master_data *drv_data)
+-{
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-
+-	if (drv_data->running || drv_data->busy) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		return -EBUSY;
+-	}
+-
+-	drv_data->running = true;
+-	drv_data->cur_msg = NULL;
+-	drv_data->cur_transfer = NULL;
+-	drv_data->cur_chip = NULL;
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	schedule_work(&drv_data->pump_messages);
+-
+-	return 0;
+-}
+-
+-static int bfin_spi_stop_queue(struct bfin_spi_master_data *drv_data)
+-{
+-	unsigned long flags;
+-	unsigned limit = 500;
+-	int status = 0;
+-
+-	spin_lock_irqsave(&drv_data->lock, flags);
+-
+-	/*
+-	 * This is a bit lame, but is optimized for the common execution path.
+-	 * A wait_queue on the drv_data->busy could be used, but then the common
+-	 * execution path (pump_messages) would be required to call wake_up or
+-	 * friends on every SPI message. Do this instead
+-	 */
+-	drv_data->running = false;
+-	while ((!list_empty(&drv_data->queue) || drv_data->busy) && limit--) {
+-		spin_unlock_irqrestore(&drv_data->lock, flags);
+-		msleep(10);
+-		spin_lock_irqsave(&drv_data->lock, flags);
+-	}
+-
+-	if (!list_empty(&drv_data->queue) || drv_data->busy)
+-		status = -EBUSY;
+-
+-	spin_unlock_irqrestore(&drv_data->lock, flags);
+-
+-	return status;
+-}
+-
+-static int bfin_spi_destroy_queue(struct bfin_spi_master_data *drv_data)
+-{
+-	int status;
+-
+-	status = bfin_spi_stop_queue(drv_data);
+-	if (status != 0)
+-		return status;
+-
+-	flush_work(&drv_data->pump_messages);
+-
+-	return 0;
+-}
+-
+-static int bfin_spi_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct bfin5xx_spi_master *platform_info;
+-	struct spi_master *master;
+-	struct bfin_spi_master_data *drv_data;
+-	struct resource *res;
+-	int status = 0;
+-
+-	platform_info = dev_get_platdata(dev);
+-
+-	/* Allocate master with space for drv_data */
+-	master = spi_alloc_master(dev, sizeof(*drv_data));
+-	if (!master) {
+-		dev_err(&pdev->dev, "can not alloc spi_master\n");
+-		return -ENOMEM;
+-	}
+-
+-	drv_data = spi_master_get_devdata(master);
+-	drv_data->master = master;
+-	drv_data->master_info = platform_info;
+-	drv_data->pdev = pdev;
+-	drv_data->pin_req = platform_info->pin_req;
+-
+-	/* the spi->mode bits supported by this driver: */
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
+-	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
+-	master->bus_num = pdev->id;
+-	master->num_chipselect = platform_info->num_chipselect;
+-	master->cleanup = bfin_spi_cleanup;
+-	master->setup = bfin_spi_setup;
+-	master->transfer = bfin_spi_transfer;
+-
+-	/* Find and map our resources */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(dev, "Cannot get IORESOURCE_MEM\n");
+-		status = -ENOENT;
+-		goto out_error_get_res;
+-	}
+-
+-	drv_data->regs = ioremap(res->start, resource_size(res));
+-	if (drv_data->regs == NULL) {
+-		dev_err(dev, "Cannot map IO\n");
+-		status = -ENXIO;
+-		goto out_error_ioremap;
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (res == NULL) {
+-		dev_err(dev, "No DMA channel specified\n");
+-		status = -ENOENT;
+-		goto out_error_free_io;
+-	}
+-	drv_data->dma_channel = res->start;
+-
+-	drv_data->spi_irq = platform_get_irq(pdev, 0);
+-	if (drv_data->spi_irq < 0) {
+-		dev_err(dev, "No spi pio irq specified\n");
+-		status = -ENOENT;
+-		goto out_error_free_io;
+-	}
+-
+-	/* Initial and start queue */
+-	status = bfin_spi_init_queue(drv_data);
+-	if (status != 0) {
+-		dev_err(dev, "problem initializing queue\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	status = bfin_spi_start_queue(drv_data);
+-	if (status != 0) {
+-		dev_err(dev, "problem starting queue\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	status = peripheral_request_list(drv_data->pin_req, DRV_NAME);
+-	if (status != 0) {
+-		dev_err(&pdev->dev, ": Requesting Peripherals failed\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	/* Reset SPI registers. If these registers were used by the boot loader,
+-	 * the sky may fall on your head if you enable the dma controller.
+-	 */
+-	bfin_write(&drv_data->regs->ctl, BIT_CTL_CPHA | BIT_CTL_MASTER);
+-	bfin_write(&drv_data->regs->flg, 0xFF00);
+-
+-	/* Register with the SPI framework */
+-	platform_set_drvdata(pdev, drv_data);
+-	status = spi_register_master(master);
+-	if (status != 0) {
+-		dev_err(dev, "problem registering spi master\n");
+-		goto out_error_queue_alloc;
+-	}
+-
+-	dev_info(dev, "%s, Version %s, regs@%p, dma channel@%d\n",
+-		DRV_DESC, DRV_VERSION, drv_data->regs,
+-		drv_data->dma_channel);
+-	return status;
+-
+-out_error_queue_alloc:
+-	bfin_spi_destroy_queue(drv_data);
+-out_error_free_io:
+-	iounmap(drv_data->regs);
+-out_error_ioremap:
+-out_error_get_res:
+-	spi_master_put(master);
+-
+-	return status;
+-}
+-
+-/* stop hardware and remove the driver */
+-static int bfin_spi_remove(struct platform_device *pdev)
+-{
+-	struct bfin_spi_master_data *drv_data = platform_get_drvdata(pdev);
+-	int status = 0;
+-
+-	if (!drv_data)
+-		return 0;
+-
+-	/* Remove the queue */
+-	status = bfin_spi_destroy_queue(drv_data);
+-	if (status != 0)
+-		return status;
+-
+-	/* Disable the SSP at the peripheral and SOC level */
+-	bfin_spi_disable(drv_data);
+-
+-	/* Release DMA */
+-	if (drv_data->master_info->enable_dma) {
+-		if (dma_channel_active(drv_data->dma_channel))
+-			free_dma(drv_data->dma_channel);
+-	}
+-
+-	if (drv_data->irq_requested) {
+-		free_irq(drv_data->spi_irq, drv_data);
+-		drv_data->irq_requested = 0;
+-	}
+-
+-	/* Disconnect from the SPI framework */
+-	spi_unregister_master(drv_data->master);
+-
+-	peripheral_free_list(drv_data->pin_req);
+-
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int bfin_spi_suspend(struct device *dev)
+-{
+-	struct bfin_spi_master_data *drv_data = dev_get_drvdata(dev);
+-	int status = 0;
+-
+-	status = bfin_spi_stop_queue(drv_data);
+-	if (status != 0)
+-		return status;
+-
+-	drv_data->ctrl_reg = bfin_read(&drv_data->regs->ctl);
+-	drv_data->flag_reg = bfin_read(&drv_data->regs->flg);
+-
+-	/*
+-	 * reset SPI_CTL and SPI_FLG registers
+-	 */
+-	bfin_write(&drv_data->regs->ctl, BIT_CTL_CPHA | BIT_CTL_MASTER);
+-	bfin_write(&drv_data->regs->flg, 0xFF00);
+-
+-	return 0;
+-}
+-
+-static int bfin_spi_resume(struct device *dev)
+-{
+-	struct bfin_spi_master_data *drv_data = dev_get_drvdata(dev);
+-	int status = 0;
+-
+-	bfin_write(&drv_data->regs->ctl, drv_data->ctrl_reg);
+-	bfin_write(&drv_data->regs->flg, drv_data->flag_reg);
+-
+-	/* Start the queue running */
+-	status = bfin_spi_start_queue(drv_data);
+-	if (status != 0) {
+-		dev_err(dev, "problem starting queue (%d)\n", status);
+-		return status;
+-	}
+-
+-	return 0;
+-}
+-
+-static SIMPLE_DEV_PM_OPS(bfin_spi_pm_ops, bfin_spi_suspend, bfin_spi_resume);
+-
+-#define BFIN_SPI_PM_OPS		(&bfin_spi_pm_ops)
+-#else
+-#define BFIN_SPI_PM_OPS		NULL
+-#endif
+-
+-MODULE_ALIAS("platform:bfin-spi");
+-static struct platform_driver bfin_spi_driver = {
+-	.driver	= {
+-		.name	= DRV_NAME,
+-		.pm	= BFIN_SPI_PM_OPS,
+-	},
+-	.probe		= bfin_spi_probe,
+-	.remove		= bfin_spi_remove,
+-};
+-
+-static int __init bfin_spi_init(void)
+-{
+-	return platform_driver_register(&bfin_spi_driver);
+-}
+-subsys_initcall(bfin_spi_init);
+-
+-static void __exit bfin_spi_exit(void)
+-{
+-	platform_driver_unregister(&bfin_spi_driver);
+-}
+-module_exit(bfin_spi_exit);
 -- 
 2.7.4
