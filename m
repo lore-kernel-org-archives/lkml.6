@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3MtLrjjstUWQXfrJyXdEZr3/2ShDDTCU+rrzylcQNJOhSqpy+GSzIuVkBYgLK7fEzNktW
-ARC-Seal: i=1; a=rsa-sha256; t=1521214151; cv=none;
+X-Google-Smtp-Source: AG47ELtsTwDrh7PTXvh8QBPCoHAcxfj1V95u/LuenlpEYV4xwPnYKEkAsDvp8eWDBmKispFi7CDW
+ARC-Seal: i=1; a=rsa-sha256; t=1521214146; cv=none;
         d=google.com; s=arc-20160816;
-        b=LyCFndtmEafyy3Lz7nth7K0eSQYWyn8FW4rsV6/4VDjZxAlw/Of5qItZzo2EyB1z73
-         88pKrfEkfJZ3Kkgf2TvZAbfXnNdPX7WY6vz3cJi660q9T6Dtkydp0L9W6nXWU6mJrWo2
-         zmei22Yj6jr7sJc4Zyg61nbBAjkgyLLaNM5u+/dKpDpszr+ZvwXoiz+AzLM69ICq/OrD
-         voNrq647M9HtL81+KqA1FSQx+bQXeTI63SRuk59KmeWNBHCI9lvhk49HhiPG4ZtCU4s5
-         5iZ82+llONM34RbDTAzxtkMVnMpKSuOAR+JGiqfD3JhgXC63qkMJgV62pUAOzlB1zNk8
-         RXDg==
+        b=N2doI5fe/Ekc7+lM0yeIBHhrm9gd4sCBNtbcarL+yOL4u22UncvI5y9xhDkkTItaz2
+         i6TUGiUoOWhmLKjjF9aPkgIWFvSI5Qr+30orEMT6udyOoDc05B6ibYbDWNujD6qP7y8C
+         E+VcDruob/vooWngR4ZDu8914AYTReU/jKpytGO064MEFA3dzfuIAFGq8udyntH8ahFW
+         OtwiE7xOy+Yn8/3JzZNIwjcnJPO7dJxP6bE8yKghqCP7t964UCKEpj0fqX3omtA8OnpL
+         Fht8J3ahMRCtHT9J+vej7M/zsZEFXVUYQWURN8j4BXjPROyCrvSeTJUNkE4ShazFYzK/
+         dMHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LQu54BTznzytzXozP7DUJiIwaauL74nnSA1FxPlBJC0=;
-        b=LwYEDfHIOV2bAQUZFNdspHkU67+cu4QSdeTu0HeSjJ5qqMSZVaI84PRgyVy9xy6tJ+
-         mSLfj4tNMiYd+BvZINoRCw38f0HqegBUYP5Vm741UducRyb+4ddd3yNNJi8QKONvc93c
-         tXH5xbPF8R7Qi84ZujdaZ2YPN6IQmhXI7F+egTxDN39qVGpi3yW86ILuSH3F7fk94HGp
-         YvF2S9JI4oVCsNcRNU8WK7ySBPer4MDjLW9GXq3GwVlhXkITK2uWMwpOEWLZrY77AulQ
-         gNf8prvJperlnwr30VDqc5Co+w0VOo752psMr/1u9V7V5dS5ImmzRpXT1VxkDeRr4ZPN
-         iESQ==
+        bh=LxVwDSfGaqIO88hu5STh2JYZ+0do6evMhIVrew9OS6g=;
+        b=px5OgWZz/+anepk5t2aHb4LUdASjc9xkayxUwx3wfqU7hh6CXMEUIaJc0J6R4yPIot
+         ZGom10ceh9+28hbQuGTL5cOpkRsQAnLwsL/bbISf529HRIjddqZrPZ6kulwLLtngLpC7
+         gL4TEA+w4PvbpihFzfCNDfddlPBffZqEvA6olzSmqVtXVUXaORKOt3WVRkE22EieqT6w
+         +qFSKLuCVrX7DacVEDuII68nR8WAW4H41TCuzbMKdNrU5M3od/XA8+3QnqfjFWsg1P9E
+         jCs23k2ZPDfgHmJ5Cbon+tpgRjQbmk7119oyC/aUwvtY06EWp/BtZuWx37jfSnTmfT8S
+         N9VQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Westphal <fw@strlen.de>,
-	Daniel J Blueman <daniel@quora.org>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 41/63] netfilter: use skb_to_full_sk in ip_route_me_harder
-Date: Fri, 16 Mar 2018 16:23:13 +0100
-Message-Id: <20180316152304.521252528@linuxfoundation.org>
+	Teijo Kinnunen <teijo.kinnunen@code-q.fi>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 57/63] USB: storage: Add JMicron bridge 152d:2567 to unusual_devs.h
+Date: Fri, 16 Mar 2018 16:23:29 +0100
+Message-Id: <20180316152306.269013669@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108650693573632?=
-X-GMAIL-MSGID: =?utf-8?q?1595108650693573632?=
+X-GMAIL-THRID: =?utf-8?q?1595108644866552778?=
+X-GMAIL-MSGID: =?utf-8?q?1595108644866552778?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
 
-commit 29e09229d9f26129a39462fae0ddabc4d9533989 upstream.
+commit 5126a504b63d82785eaece3a9c30c660b313785a upstream.
 
-inet_sk(skb->sk) is illegal in case skb is attached to request socket.
+This USB-SATA controller seems to be similar with JMicron bridge
+152d:2566 already on the list. Adding it here fixes "Invalid
+field in cdb" errors.
 
-Fixes: ca6fb0651883 ("tcp: attach SYNACK messages to request sockets instead of listener")
-Reported by: Daniel J Blueman <daniel@quora.org>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Tested-by: Daniel J Blueman <daniel@quora.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+Cc: stable@vger.kernel.org
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/usb/storage/unusual_devs.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/net/ipv4/netfilter.c
-+++ b/net/ipv4/netfilter.c
-@@ -23,7 +23,8 @@ int ip_route_me_harder(struct net *net,
- 	struct rtable *rt;
- 	struct flowi4 fl4 = {};
- 	__be32 saddr = iph->saddr;
--	__u8 flags = skb->sk ? inet_sk_flowi_flags(skb->sk) : 0;
-+	const struct sock *sk = skb_to_full_sk(skb);
-+	__u8 flags = sk ? inet_sk_flowi_flags(sk) : 0;
- 	unsigned int hh_len;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2142,6 +2142,13 @@ UNUSUAL_DEV(  0x22b8, 0x3010, 0x0001, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_FIX_CAPACITY | US_FL_IGNORE_RESIDUE ),
  
- 	if (addr_type == RTN_UNSPEC)
-@@ -39,7 +40,7 @@ int ip_route_me_harder(struct net *net,
- 	fl4.daddr = iph->daddr;
- 	fl4.saddr = saddr;
- 	fl4.flowi4_tos = RT_TOS(iph->tos);
--	fl4.flowi4_oif = skb->sk ? skb->sk->sk_bound_dev_if : 0;
-+	fl4.flowi4_oif = sk ? sk->sk_bound_dev_if : 0;
- 	fl4.flowi4_mark = skb->mark;
- 	fl4.flowi4_flags = flags;
- 	rt = ip_route_output_key(net, &fl4);
-@@ -58,7 +59,7 @@ int ip_route_me_harder(struct net *net,
- 	    xfrm_decode_session(skb, flowi4_to_flowi(&fl4), AF_INET) == 0) {
- 		struct dst_entry *dst = skb_dst(skb);
- 		skb_dst_set(skb, NULL);
--		dst = xfrm_lookup(net, dst, flowi4_to_flowi(&fl4), skb->sk, 0);
-+		dst = xfrm_lookup(net, dst, flowi4_to_flowi(&fl4), sk, 0);
- 		if (IS_ERR(dst))
- 			return PTR_ERR(dst);
- 		skb_dst_set(skb, dst);
++/* Reported by Teijo Kinnunen <teijo.kinnunen@code-q.fi> */
++UNUSUAL_DEV(  0x152d, 0x2567, 0x0117, 0x0117,
++		"JMicron",
++		"USB to ATA/ATAPI Bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BROKEN_FUA ),
++
+ /* Reported-by George Cherian <george.cherian@cavium.com> */
+ UNUSUAL_DEV(0x152d, 0x9561, 0x0000, 0x9999,
+ 		"JMicron",
