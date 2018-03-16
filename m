@@ -1,233 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeCPQT4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:19:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750982AbeCPQTx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:19:53 -0400
-Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
- interpretive execution
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
- <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
- <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
- <5ed8017b-0168-9a50-234b-cfe9258eab72@linux.vnet.ibm.com>
- <17683324-f6e4-4328-54c1-1fce572faecd@linux.vnet.ibm.com>
- <8e10f1cb-3722-d231-2603-b7867420ac0a@linux.vnet.ibm.com>
- <5dd1bcd3-5d17-37c1-1184-7f75a1fd32bc@linux.vnet.ibm.com>
- <68e9e3ea-f99a-da88-5e56-21e38b438b4f@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Fri, 16 Mar 2018 12:09:39 -0400
+        id S1751424AbeCPQUV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:20:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:59684 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752999AbeCPQTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:19:47 -0400
+Subject: Re: [PATCH 0/2] irqchip/gic*: Complain about the use of IRQ_TYPE_NONE
+To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180316145511.28362-1-marc.zyngier@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5f274a06-3a9c-7d41-2e4d-9733e4ac6078@arm.com>
+Date: Fri, 16 Mar 2018 16:19:44 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <68e9e3ea-f99a-da88-5e56-21e38b438b4f@linux.vnet.ibm.com>
+In-Reply-To: <20180316145511.28362-1-marc.zyngier@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031616-0020-0000-0000-00000D99A67C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008685; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003939; UDB=6.00510966; IPR=6.00783227;
- MB=3.00020075; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 16:09:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031616-0021-0000-0000-000060851CBA
-Message-Id: <c2af69b7-2d62-fbc6-e281-905490b3157e@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803160199
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/16/2018 03:51 AM, Pierre Morel wrote:
-> On 16/03/2018 00:39, Tony Krowiak wrote:
->> On 03/15/2018 01:56 PM, Pierre Morel wrote:
->>> On 15/03/2018 18:21, Tony Krowiak wrote:
->>>> On 03/15/2018 11:45 AM, Pierre Morel wrote:
->>>>> On 15/03/2018 16:26, Tony Krowiak wrote:
->>>>>> On 03/15/2018 09:00 AM, Pierre Morel wrote:
->>>>>>> On 14/03/2018 22:57, Halil Pasic wrote:
->>>>>>>>
->>>>>>>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
->>>>>>>>> The VFIO AP device model exploits interpretive execution of AP
->>>>>>>>> instructions (APIE) to provide guests passthrough access to AP
->>>>>>>>> devices. This patch introduces a new device attribute in the
->>>>>>>>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
->>>>>>>>> the VFIO AP device defined on the guest.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>>>>>>>> ---
->>>>>>>> [..]
->>>>>>>>
->>>>>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>>>>>>>> index a60c45b..bc46b67 100644
->>>>>>>>> --- a/arch/s390/kvm/kvm-s390.c
->>>>>>>>> +++ b/arch/s390/kvm/kvm-s390.c
->>>>>>>>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct 
->>>>>>>>> kvm *kvm, struct kvm_device_attr *attr)
->>>>>>>>> sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
->>>>>>>>>           VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping 
->>>>>>>>> support");
->>>>>>>>>           break;
->>>>>>>>> +    case KVM_S390_VM_CRYPTO_INTERPRET_AP:
->>>>>>>>> +        if (attr->addr) {
->>>>>>>>> +            if (!test_kvm_cpu_feat(kvm, 
->>>>>>>>> KVM_S390_VM_CPU_FEAT_AP))
->>>>>>>> Unlock mutex before returning?
->>>>>>>>
->>>>>>>> Maybe flip conditions (don't allow manipulating apie if feature 
->>>>>>>> not there).
->>>>>>>> Clearing the anyways clear apie if feature not there ain't too 
->>>>>>>> bad, but
->>>>>>>> rejecting the operation appears nicer to me.
->>>>>>>>
->>>>>>>>> +                return -EOPNOTSUPP;
->>>>>>>>> +            kvm->arch.crypto.apie = 1;
->>>>>>>>> +            VM_EVENT(kvm, 3, "%s",
->>>>>>>>> +                 "ENABLE: AP interpretive execution");
->>>>>>>>> +        } else {
->>>>>>>>> +            kvm->arch.crypto.apie = 0;
->>>>>>>>> +            VM_EVENT(kvm, 3, "%s",
->>>>>>>>> +                 "DISABLE: AP interpretive execution");
->>>>>>>>> +        }
->>>>>>>>> +        break;
->>>>>>>>>       default:
->>>>>>>>>           mutex_unlock(&kvm->lock);
->>>>>>>>>           return -ENXIO;
->>>>>>>> I wonder how the loop after this switch works for 
->>>>>>>> KVM_S390_VM_CRYPTO_INTERPRET_AP:
->>>>>>>>
->>>>>>>>          kvm_for_each_vcpu(i, vcpu, kvm) {
->>>>>>>>                  kvm_s390_vcpu_crypto_setup(vcpu);
->>>>>>>>                  exit_sie(vcpu);
->>>>>>>>          }
->>>>>>>>
->>>>>>>>  From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
->>>>>>>>
->>>>>>>>          if (kvm->created_vcpus) {
->>>>>>>>                  mutex_unlock(&kvm->lock);
->>>>>>>>                  return -EBUSY;
->>>>>>>> and from the aforementioned loop I guess ECA.28 can be changed
->>>>>>>> for a running guest.
->>>>>>>>
->>>>>>>> If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
->>>>>>>> changed (set) these will be taken out of SIE by exit_sie(). 
->>>>>>>> Then for the
->>>>>>>> corresponding threads the control probably goes to QEMU (the 
->>>>>>>> emulator in
->>>>>>>> the userspace). And it puts that vcpu back into the SIE, and 
->>>>>>>> then that
->>>>>>>> cpu starts acting according to the new ECA.28 value. While 
->>>>>>>> other vcpus
->>>>>>>> may still work with the old value of ECA.28.
->>>>>>>>
->>>>>>>> I'm not saying what I describe above is necessarily something 
->>>>>>>> broken.
->>>>>>>> But I would like to have it explained, why is it OK -- provided 
->>>>>>>> I did not
->>>>>>>> make any errors in my reasoning (assumptions included).
->>>>>>>>
->>>>>>>> Can you help me understand this code?
->>>>>>>>
->>>>>>>> Regards,
->>>>>>>> Halil
->>>>>>>>
->>>>>>>> [..]
->>>>>>>>
->>>>>>>
->>>>>>> I have the same concerns as Halil.
->>>>>>>
->>>>>>> We do not need to change the virtulization type
->>>>>>> (hardware/software) on the fly for the current use case.
->>>>>>>
->>>>>>> Couldn't we delay this until we have one and in between only 
->>>>>>> make the vCPU hotplug clean?
->>>>>>>
->>>>>>> We only need to let the door open for the day we have such a use 
->>>>>>> case.
->>>>>> Are you suggesting this code be removed? If so, then where and 
->>>>>> under what conditions would
->>>>>> you suggest setting ECA.28 given you objected to setting it based 
->>>>>> on whether the
->>>>>> AP feature is installed?
->>>>>
->>>>> I would only call kvm_s390_vcpu_crypto_setup() from inside 
->>>>> kvm_arch_vcpu_init()
->>>>> as it is already.
->>>> It is not called from kvm_arch_vcpu_init(), it is called from 
->>>> kvm_arch_vcpu_setup(). 
->>>
->>> hum, sorry for this.
->>> However, the idea pertains, not to call this function from inside an 
->>> ioctl changing crypto parameters, but only during vcpu creation.
->> Unfortunately, the ioctl does not get called until after the vcpus 
->> are created (see my comments below)
->
-> That is why I think you should not change the ECA field from the 
-> crypto ioctl but only during the vcpu initialization phase.
-By what means do you suggest we do that?
->
->
->>>
->>>
->>>
->>>> Also,
->>>> this loop was already here, I did not put it in. Assuming whomever 
->>>> put it there did so
->>>> for a reason, it is not my place to remove it. According to a trace 
->>>> I ran, the calls to this
->>>> function occur after the vcpus are created. Consequently, the 
->>>> kvm_s390_vcpu_crypto_setup()
->>>> function would not be called without the loop and neither the key 
->>>> wrapping support nor the
->>>> ECA_APIE would be configured in the vcpu's SIE descriptor.
->>>>
->>>> If you have a better idea for where/how to set this flag, I'm all
->>>> ears. It would be nice if it could be set before the vcpus are 
->>>> created, but I haven't
->>>> found a good candidate. I suspect that the loop was put in to make 
->>>> sure that all vcpus
->>>> get updated regardless of whether they are running or not, but I 
->>>> don't know what happens
->>>> after a vcpu is kicked out of SIE. I suspect, as Halil surmised, 
->>>> that QEMU
->>>> restores the vcpus to SIE. This would seemingly cause the 
->>>> kvm_arch_vcpu_setup() to get
->>>> called at which time the ECA_APIE value as well as the key wrapping 
->>>> values will get set.
->>>> If somebody has knowledge of the flow here, please feel free to 
->>>> pitch in.
->>>>>
->>>>>
->>>>>
->>>>>>>
->>>>>>>
->>>>>>> Pierre
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>
->>>>>
->>>>
->>>
->>
->
+On 16/03/18 14:55, Marc Zyngier wrote:
+> Grepping through the dts files, the documentation, and reviewing
+> patches, one can only notice the use of IRQ_TYPE_NONE in interrupt
+> specifiers. At least for the GIC, this doesn't mean anything. The
+> unsuspecting driver will end-up with whatever was there before, and
+> there is a 50% probability that it is not what it wants.
+> 
+> I'd love to fix it myself, but I also have a 50% probability of
+> getting it wrong. In order to make the user aware they are walking on
+> thin ice, let's add some warnings. Hopefully, they'll be annoying
+> enough that people will fix their firmware. Croudsourcing debugging...
+
+I guess there's also the alternative nuclear option of breaking their 
+build ;)
+
+Robin.
+
+----->8-----
+diff --git a/include/dt-bindings/interrupt-controller/irq.h 
+b/include/dt-bindings/interrupt-controller/irq.h
+index a8b310555f14..de79af80d01e 100644
+--- a/include/dt-bindings/interrupt-controller/irq.h
++++ b/include/dt-bindings/interrupt-controller/irq.h
+@@ -10,7 +10,7 @@
+  #ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
+  #define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
+
+-#define IRQ_TYPE_NONE		0
++#define IRQ_TYPE_NONE		"This is nonsense and needs fixing"
+  #define IRQ_TYPE_EDGE_RISING	1
+  #define IRQ_TYPE_EDGE_FALLING	2
+  #define IRQ_TYPE_EDGE_BOTH	(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING)
