@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933333AbeCPRK0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:10:26 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43198 "EHLO
+        id S1753825AbeCPRLW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:11:22 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43158 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933419AbeCPRHC (ORCPT
+        with ESMTP id S933388AbeCPRHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:07:02 -0400
+        Fri, 16 Mar 2018 13:07:00 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         davem@davemloft.net
 Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 07/22] net: socket: add __sys_listen() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:05:59 +0100
-Message-Id: <20180316170614.5392-8-linux@dominikbrodowski.net>
+Subject: [PATCH -next 01/22] net: socket: add __sys_recvfrom() helper; remove in-kernel call to syscall
+Date: Fri, 16 Mar 2018 18:05:53 +0100
+Message-Id: <20180316170614.5392-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
 References: <20180316170614.5392-1-linux@dominikbrodowski.net>
@@ -21,75 +21,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_listen() allows us to avoid the
-internal calls to the sys_listen() syscall.
+Using the net-internal helper __sys_recvfrom() allows us to avoid the
+internal calls to the sys_recvfrom() syscall.
 
 Cc: David S. Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- include/linux/socket.h | 1 +
- net/compat.c           | 2 +-
- net/socket.c           | 9 +++++++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ include/linux/socket.h |  6 ++++++
+ net/compat.c           |  3 ++-
+ net/socket.c           | 21 +++++++++++++--------
+ 3 files changed, 21 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 7daa344d7320..7e37af25509d 100644
+index 9286a5a8c60c..40cc93b91628 100644
 --- a/include/linux/socket.h
 +++ b/include/linux/socket.h
-@@ -367,5 +367,6 @@ extern int __sys_socket(int family, int type, int protocol);
- extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
- extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
- 			 int addrlen);
-+extern int __sys_listen(int fd, int backlog);
- 
+@@ -353,4 +353,10 @@ extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen
+ 			  unsigned int flags, struct timespec *timeout);
+ extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
+ 			  unsigned int vlen, unsigned int flags);
++
++/* helpers which do the actual work for syscalls */
++extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
++			  unsigned int flags, struct sockaddr __user *addr,
++			  int __user *addr_len);
++
  #endif /* _LINUX_SOCKET_H */
 diff --git a/net/compat.c b/net/compat.c
-index 7ab6352268f3..c80cb973f383 100644
+index 22381719718c..2d8186c277b2 100644
 --- a/net/compat.c
 +++ b/net/compat.c
-@@ -820,7 +820,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_connect(a0, compat_ptr(a1), a[2]);
- 		break;
- 	case SYS_LISTEN:
--		ret = sys_listen(a0, a1);
-+		ret = __sys_listen(a0, a1);
- 		break;
- 	case SYS_ACCEPT:
- 		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
+@@ -760,7 +760,8 @@ COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len
+ 		       unsigned int, flags, struct sockaddr __user *, addr,
+ 		       int __user *, addrlen)
+ {
+-	return sys_recvfrom(fd, buf, len, flags | MSG_CMSG_COMPAT, addr, addrlen);
++	return __sys_recvfrom(fd, buf, len, flags | MSG_CMSG_COMPAT, addr,
++			      addrlen);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
 diff --git a/net/socket.c b/net/socket.c
-index 64bdfdf6c6e7..67d9d70a4734 100644
+index a93c99b518ca..712d99d8680f 100644
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -1496,7 +1496,7 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
-  *	ready for listening.
+@@ -1767,10 +1767,8 @@ SYSCALL_DEFINE4(send, int, fd, void __user *, buff, size_t, len,
+  *	sender. We verify the buffers are writable and if needed move the
+  *	sender address from kernel to user space.
   */
- 
--SYSCALL_DEFINE2(listen, int, fd, int, backlog)
-+int __sys_listen(int fd, int backlog)
+-
+-SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
+-		unsigned int, flags, struct sockaddr __user *, addr,
+-		int __user *, addr_len)
++int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
++		   struct sockaddr __user *addr, int __user *addr_len)
  {
  	struct socket *sock;
- 	int err, fput_needed;
-@@ -1517,6 +1517,11 @@ SYSCALL_DEFINE2(listen, int, fd, int, backlog)
+ 	struct iovec iov;
+@@ -1810,6 +1808,13 @@ SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
  	return err;
  }
  
-+SYSCALL_DEFINE2(listen, int, fd, int, backlog)
++SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
++		unsigned int, flags, struct sockaddr __user *, addr,
++		int __user *, addr_len)
 +{
-+	return __sys_listen(fd, backlog);
++	return __sys_recvfrom(fd, ubuf, size, flags, addr, addr_len);
 +}
 +
  /*
-  *	For accept, we attempt to create a new socket, set up the link
-  *	with the client, wake up the client, then return the new
-@@ -2487,7 +2492,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 		err = __sys_connect(a0, (struct sockaddr __user *)a1, a[2]);
+  *	Receive a datagram from a socket.
+  */
+@@ -1817,7 +1822,7 @@ SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
+ SYSCALL_DEFINE4(recv, int, fd, void __user *, ubuf, size_t, size,
+ 		unsigned int, flags)
+ {
+-	return sys_recvfrom(fd, ubuf, size, flags, NULL, NULL);
++	return __sys_recvfrom(fd, ubuf, size, flags, NULL, NULL);
+ }
+ 
+ /*
+@@ -2486,9 +2491,9 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		err = sys_recv(a0, (void __user *)a1, a[2], a[3]);
  		break;
- 	case SYS_LISTEN:
--		err = sys_listen(a0, a1);
-+		err = __sys_listen(a0, a1);
+ 	case SYS_RECVFROM:
+-		err = sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
+-				   (struct sockaddr __user *)a[4],
+-				   (int __user *)a[5]);
++		err = __sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
++				     (struct sockaddr __user *)a[4],
++				     (int __user *)a[5]);
  		break;
- 	case SYS_ACCEPT:
- 		err = __sys_accept4(a0, (struct sockaddr __user *)a1,
+ 	case SYS_SHUTDOWN:
+ 		err = sys_shutdown(a0, a1);
 -- 
 2.16.2
