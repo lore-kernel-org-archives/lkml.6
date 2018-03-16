@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3278546-1521214094-2-4257699271347628836
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daen,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214093; b=DKLisCgdSTpW6HEduUS3XoY2+ZcEY22eoTrKVkxWATIexi/
-    4z6xeObyEwILS0//Bu36DauR3sgGbe4256sm3fRl6J1JpsY8Hgh9SRql80gmoL1W
-    SwTrH0zFAYBn3bYUxc689nR5B6XPuUmS1SjeqKtPIWDUu/VGHjAxHrc+fSQrGy0+
-    5lhrcJlmwoTR35zobH3Jx7bGS+Go7c9QZ6nn7+KMhXKspi/r9ob6FPY1uES7nxew
-    g6oqYf/3a86HQa/muy8JwBikA8ocCq3mVonRVLgNPfvZOeZ1Zc/GLWZ0FAImLkuH
-    nVEwtJ/3468EIf41Hdv2TNZn/mjmEBS+8lfPf5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214093; bh=UsbB1VLgu8hyBNper8iOiDbygQ
-    3JIpnOnGzxjRrOfSM=; b=JZABPuMcp3oiE1we4Cgn43poG+CpwwM9jieHK18V+t
-    5kt5KNGBtcz+ZZYQixR8qXKtaRdcY32EIH4S8Z5KqSyRrt4TGsY80w40HHmvpStx
-    +/iuLcKoo7EzYqqf3pnUFqzjWuLZkGJnjFWOcqX2aWuc5Ezb/3vlldEq100CdeD3
-    4UdDXcZCpXLPb8pl6AYuecEvj9XzIhaK93WRYA3fHlgILkC7rldWbWHe2C4+mBJr
-    NyNrgeqoYwAW+7HUCwOxIVgALl3jJtXnZywQIbJO99FkivmWaP6MMMZ5SbQ0bU1c
-    CHc4OwwO3b0NJdslFxI383jXWfI9jrAW5FJOZGQuQoTw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932787AbeCPP2J (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:28:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34946 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932785AbeCPP2G (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:28:06 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELursnR8q6MixuKhbHuWprPABMsC9MY/HRIXhB6WUQ9Y0QAe3aEHyRJKQMKu/z9SmDKrH4ZH
+ARC-Seal: i=1; a=rsa-sha256; t=1521214092; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wcE+pCuIj7Ny9cztqpVpcMc9kWmdudHMwCQ9HIF7KTb9957ItStc85pjOj8jhd/L/i
+         azyPGIYQ1x07pDVoR+Gahd54UCpx3yFlt6uxBg9iLEtyYJGw84tBxJRl/5l2gbgTRDQ3
+         NL7CdgFExT3ncqktshK5YnywlGgkwynsqnCtKV7exaqYAVXS4QL29BwVAagSqwHt64u3
+         ZJjgXUZYnf4hFuVjas082ihzuwWVOpUVZkAdD8WUskfgi65ay2/mdHmB7EZT2474rCEj
+         Gv0duJGaQjlhdLkr40KWrKSF0j+4UjkioracOKqaVO/cyD9n7qlKwB6JTVbo9sknbPoZ
+         IMBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=fzyOK1E3gpNEuUjUdQna3Zigt0Hs3hzP4OAU47QWYCk=;
+        b=BklBMRVMsWG1AmHYF73PBxt7PUT85jp66bmuDJL4ro+eN4VXFXOg5FsjOY42yBvKMS
+         6BAG+CL8vjYLo3+IB3+nvZm0EWHGb0iFPanIEyWpO7/YlELcsM78laM4JqcG89M4xWc/
+         XIOViQZgpL/AeyWPM1Vm2csZgnQbg8QmR45duJz7ohpm7qTSSlFLPhkBxjn+m9Ztm/TI
+         +PKLZSS3FK3S9K6gNw8bDCrS7CbdSawdGun5zDs3TaSa9TxySLn1Z/wXm3aS2I0Yadhn
+         Nj3QtxBP0N05gm4bjIbKaYEEykVN2Qps9IQLmM6VYnyVyuxbj6kquFd723p2jb4m0lXc
+         tVRg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com,
-        Paolo Abeni <pabeni@redhat.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 35/63] netfilter: x_tables: fix missing timer initialization in xt_LED
-Date: Fri, 16 Mar 2018 16:23:07 +0100
-Message-Id: <20180316152303.882305874@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	syzkaller <syzkaller@googlegroups.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.4 37/63] netfilter: IDLETIMER: be syzkaller friendly
+Date: Fri, 16 Mar 2018 16:23:09 +0100
+Message-Id: <20180316152304.170528259@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108304690754494?=
+X-GMAIL-MSGID: =?utf-8?q?1595108588420527332?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,100 +50,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 10414014bc085aac9f787a5890b33b5605fbcfc4 upstream.
+commit cfc2c740533368b96e2be5e0a4e8c3cace7d9814 upstream.
 
-syzbot reported that xt_LED may try to use the ledinternal->timer
-without previously initializing it:
+We had one report from syzkaller [1]
 
-------------[ cut here ]------------
-kernel BUG at kernel/time/timer.c:958!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 1826 Comm: kworker/1:2 Not tainted 4.15.0+ #306
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
-RIP: 0010:__mod_timer kernel/time/timer.c:958 [inline]
-RIP: 0010:mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102
-RSP: 0018:ffff8801d24fe9f8 EFLAGS: 00010293
-RAX: ffff8801d25246c0 RBX: ffff8801aec6cb50 RCX: ffffffff816052c6
-RDX: 0000000000000000 RSI: 00000000fffbd14b RDI: ffff8801aec6cb68
-RBP: ffff8801d24fec98 R08: 0000000000000000 R09: 1ffff1003a49fd6c
-R10: ffff8801d24feb28 R11: 0000000000000005 R12: dffffc0000000000
-R13: ffff8801d24fec70 R14: 00000000fffbd14b R15: ffff8801af608f90
-FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000206d6fd0 CR3: 0000000006a22001 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+First issue is that INIT_WORK() should be done before mod_timer()
+or we risk timer being fired too soon, even with a 1 second timer.
+
+Second issue is that we need to reject too big info->timeout
+to avoid overflows in msecs_to_jiffies(info->timeout * 1000), or
+risk looping, if result after overflow is 0.
+
+[1]
+WARNING: CPU: 1 PID: 5129 at kernel/workqueue.c:1444 __queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 5129 Comm: syzkaller159866 Not tainted 4.16.0-rc1+ #230
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
-  led_tg+0x1db/0x2e0 net/netfilter/xt_LED.c:75
-  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
-  ip6table_raw_hook+0x65/0x80 net/ipv6/netfilter/ip6table_raw.c:42
-  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
-  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
-  nf_hook.constprop.27+0x3f6/0x830 include/linux/netfilter.h:243
-  NF_HOOK include/linux/netfilter.h:286 [inline]
-  ndisc_send_skb+0xa51/0x1370 net/ipv6/ndisc.c:491
-  ndisc_send_ns+0x38a/0x870 net/ipv6/ndisc.c:633
-  addrconf_dad_work+0xb9e/0x1320 net/ipv6/addrconf.c:4008
-  process_one_work+0xbbf/0x1af0 kernel/workqueue.c:2113
-  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
-Code: 85 2a 0b 00 00 4d 8b 3c 24 4d 85 ff 75 9f 4c 8b bd 60 fd ff ff e8 bb
-57 10 00 65 ff 0d 94 9a a1 7e e9 d9 fc ff ff e8 aa 57 10 00 <0f> 0b e8 a3
-57 10 00 e9 14 fb ff ff e8 99 57 10 00 4c 89 bd 70
-RIP: __mod_timer kernel/time/timer.c:958 [inline] RSP: ffff8801d24fe9f8
-RIP: mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102 RSP: ffff8801d24fe9f8
----[ end trace f661ab06f5dd8b3d ]---
+ <IRQ>
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x257 lib/dump_stack.c:53
+ panic+0x1e4/0x41c kernel/panic.c:183
+ __warn+0x1dc/0x200 kernel/panic.c:547
+ report_bug+0x211/0x2d0 lib/bug.c:184
+ fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+ fixup_bug arch/x86/kernel/traps.c:247 [inline]
+ do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+ invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
+RIP: 0010:__queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
+RSP: 0018:ffff8801db507538 EFLAGS: 00010006
+RAX: ffff8801aeb46080 RBX: ffff8801db530200 RCX: ffffffff81481404
+RDX: 0000000000000100 RSI: ffffffff86b42640 RDI: 0000000000000082
+RBP: ffff8801db507758 R08: 1ffff1003b6a0de5 R09: 000000000000000c
+R10: ffff8801db5073f0 R11: 0000000000000020 R12: 1ffff1003b6a0eb6
+R13: ffff8801b1067ae0 R14: 00000000000001f8 R15: dffffc0000000000
+ queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1488
+ queue_work include/linux/workqueue.h:488 [inline]
+ schedule_work include/linux/workqueue.h:546 [inline]
+ idletimer_tg_expired+0x44/0x60 net/netfilter/xt_IDLETIMER.c:116
+ call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
+ expire_timers kernel/time/timer.c:1363 [inline]
+ __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
+ run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+ invoke_softirq kernel/softirq.c:365 [inline]
+ irq_exit+0x1cc/0x200 kernel/softirq.c:405
+ exiting_irq arch/x86/include/asm/apic.h:541 [inline]
+ smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
+ apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:777 [inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x5e/0xba kernel/locking/spinlock.c:184
+RSP: 0018:ffff8801c20173c8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
+RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000006
+RDX: 1ffffffff0d592cd RSI: 1ffff10035d68d23 RDI: 0000000000000282
+RBP: ffff8801c20173d8 R08: 1ffff10038402e47 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8820e5c8
+R13: ffff8801b1067ad8 R14: ffff8801aea7c268 R15: ffff8801aea7c278
+ __debug_object_init+0x235/0x1040 lib/debugobjects.c:378
+ debug_object_init+0x17/0x20 lib/debugobjects.c:391
+ __init_work+0x2b/0x60 kernel/workqueue.c:506
+ idletimer_tg_create net/netfilter/xt_IDLETIMER.c:152 [inline]
+ idletimer_tg_checkentry+0x691/0xb00 net/netfilter/xt_IDLETIMER.c:213
+ xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
+ check_target net/ipv6/netfilter/ip6_tables.c:533 [inline]
+ find_check_entry.isra.7+0x935/0xcf0 net/ipv6/netfilter/ip6_tables.c:575
+ translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:744
+ do_replace net/ipv6/netfilter/ip6_tables.c:1160 [inline]
+ do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1686
+ nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+ nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+ ipv6_setsockopt+0x10b/0x130 net/ipv6/ipv6_sockglue.c:927
+ udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
+ sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2976
+ SYSC_setsockopt net/socket.c:1850 [inline]
+ SyS_setsockopt+0x189/0x360 net/socket.c:1829
+ do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
 
-The ledinternal struct can be shared between several different
-xt_LED targets, but the related timer is currently initialized only
-if the first target requires it. Fix it by unconditionally
-initializing the timer struct.
-
-v1 -> v2: call del_timer_sync() unconditionally, too.
-
-Fixes: 268cb38e1802 ("netfilter: x_tables: add LED trigger target")
-Reported-by: syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzkaller <syzkaller@googlegroups.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_LED.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ net/netfilter/xt_IDLETIMER.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/net/netfilter/xt_LED.c
-+++ b/net/netfilter/xt_LED.c
-@@ -141,10 +141,11 @@ static int led_tg_check(const struct xt_
- 		goto exit_alloc;
+--- a/net/netfilter/xt_IDLETIMER.c
++++ b/net/netfilter/xt_IDLETIMER.c
+@@ -147,11 +147,11 @@ static int idletimer_tg_create(struct id
+ 		    (unsigned long) info->timer);
+ 	info->timer->refcnt = 1;
+ 
++	INIT_WORK(&info->timer->work, idletimer_tg_work);
++
+ 	mod_timer(&info->timer->timer,
+ 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+ 
+-	INIT_WORK(&info->timer->work, idletimer_tg_work);
+-
+ 	return 0;
+ 
+ out_free_attr:
+@@ -192,7 +192,10 @@ static int idletimer_tg_checkentry(const
+ 		pr_debug("timeout value is zero\n");
+ 		return -EINVAL;
  	}
- 
--	/* See if we need to set up a timer */
--	if (ledinfo->delay > 0)
--		setup_timer(&ledinternal->timer, led_timeout_callback,
--			    (unsigned long)ledinternal);
-+	/* Since the letinternal timer can be shared between multiple targets,
-+	 * always set it up, even if the current target does not need it
-+	 */
-+	setup_timer(&ledinternal->timer, led_timeout_callback,
-+		    (unsigned long)ledinternal);
- 
- 	list_add_tail(&ledinternal->list, &xt_led_triggers);
- 
-@@ -181,8 +182,7 @@ static void led_tg_destroy(const struct
- 
- 	list_del(&ledinternal->list);
- 
--	if (ledinfo->delay > 0)
--		del_timer_sync(&ledinternal->timer);
-+	del_timer_sync(&ledinternal->timer);
- 
- 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
- 
+-
++	if (info->timeout >= INT_MAX / 1000) {
++		pr_debug("timeout value is too big\n");
++		return -EINVAL;
++	}
+ 	if (info->label[0] == '\0' ||
+ 	    strnlen(info->label,
+ 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
