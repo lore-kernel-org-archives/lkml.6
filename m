@@ -1,320 +1,310 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeCPVKz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:10:55 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40137 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbeCPVIx (ORCPT
+        id S1751665AbeCPVWR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:22:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38164 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751542AbeCPVWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:08:53 -0400
-X-Google-Smtp-Source: AG47ELsPis0X8fxEcgsmRc6WgAIipeNm6bJC739Ng9y+kOVbifk7numOZD/WH8Tq2oZiEJmA+oyKTA==
-Date: Fri, 16 Mar 2018 14:08:51 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-cc: Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [patch -mm 2/6] mm, memcg: replace cgroup aware oom killer mount
- option with tunable
-In-Reply-To: <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.20.1803161407150.211123@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 16 Mar 2018 17:22:15 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v7 1/2] hwmon: (ucd9000) Add gpio chip interface
+Date: Fri, 16 Mar 2018 16:22:05 -0500
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1521235326-24310-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1521235326-24310-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18031621-2213-0000-0000-00000280ED17
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008686; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01004043; UDB=6.00511029; IPR=6.00783332;
+ MB=3.00020079; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 21:22:13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031621-2214-0000-0000-0000596FE2CC
+Message-Id: <1521235326-24310-2-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160250
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that each mem cgroup on the system has a memory.oom_policy tunable to
-specify oom kill selection behavior, remove the needless "groupoom" mount
-option that requires (1) the entire system to be forced, perhaps
-unnecessarily, perhaps unexpectedly, into a single oom policy that
-differs from the traditional per process selection, and (2) a remount to
-change.
+From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 
-Instead of enabling the cgroup aware oom killer with the "groupoom" mount
-option, set the mem cgroup subtree's memory.oom_policy to "cgroup".
+Add a struct gpio_chip and define some methods so that this device's
+I/O can be accessed via /sys/class/gpio.
 
-The heuristic used to select a process or cgroup to kill from is
-controlled by the oom mem cgroup's memory.oom_policy.  This means that if
-a descendant mem cgroup has an oom policy of "none", for example, and an
-oom condition originates in an ancestor with an oom policy of "cgroup",
-the selection logic will treat all descendant cgroups as indivisible
-memory consumers.
-
-For example, consider an example where each mem cgroup has "memory" set
-in cgroup.controllers:
-
-	mem cgroup	cgroup.procs
-	==========	============
-	/cg1		1 process consuming 250MB
-	/cg2		3 processes consuming 100MB each
-	/cg3/cg31	2 processes consuming 100MB each
-	/cg3/cg32	2 processes consuming 100MB each
-
-If the root mem cgroup's memory.oom_policy is "none", the process from
-/cg1 is chosen as the victim.  If memory.oom_policy is "cgroup", a process
-from /cg2 is chosen because it is in the single indivisible memory
-consumer with the greatest usage.  This policy of "cgroup" is identical to
-to the current "groupoom" mount option, now removed.
-
-Note that /cg3 is not the chosen victim when the oom mem cgroup policy is
-"cgroup" because cgroups are treated individually without regard to
-hierarchical /cg3/memory.current usage.  This will be addressed in a
-follow-up patch.
-
-This has the added benefit of allowing descendant cgroups to control their
-own oom policies if they have memory.oom_policy file permissions without
-being restricted to the system-wide policy.  In the above example, /cg2
-and /cg3 can be either "none" or "cgroup" with the same results: the
-selection heuristic depends only on the policy of the oom mem cgroup.  If
-/cg2 or /cg3 themselves are oom, however, the policy is controlled by
-their own oom policies, either process aware or cgroup aware.
-
-Signed-off-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- Documentation/cgroup-v2.txt | 78 +++++++++++++++++++------------------
- include/linux/cgroup-defs.h |  5 ---
- include/linux/memcontrol.h  |  5 +++
- kernel/cgroup/cgroup.c      | 13 +------
- mm/memcontrol.c             | 19 +++++----
- 5 files changed, 56 insertions(+), 64 deletions(-)
+ drivers/hwmon/pmbus/ucd9000.c | 212 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
 
-diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
---- a/Documentation/cgroup-v2.txt
-+++ b/Documentation/cgroup-v2.txt
-@@ -1076,6 +1076,17 @@ PAGE_SIZE multiple when read back.
- 	Documentation/filesystems/proc.txt).  This is the same policy as if
- 	memory cgroups were not even mounted.
+diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+index b74dbec..ef2c5bf 100644
+--- a/drivers/hwmon/pmbus/ucd9000.c
++++ b/drivers/hwmon/pmbus/ucd9000.c
+@@ -27,6 +27,8 @@
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
+ #include <linux/pmbus.h>
++#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include "pmbus.h"
  
-+	If "cgroup", the OOM killer will compare mem cgroups as indivisible
-+	memory consumers; that is, they will compare mem cgroup usage rather
-+	than process memory footprint.  See the "OOM Killer" section below.
-+
-+	When an OOM condition occurs, the policy is dictated by the mem
-+	cgroup that is OOM (the root mem cgroup for a system-wide OOM
-+	condition).  If a descendant mem cgroup has a policy of "none", for
-+	example, for an OOM condition in a mem cgroup with policy "cgroup",
-+	the heuristic will still compare mem cgroups as indivisible memory
-+	consumers.
-+
-   memory.events
- 	A read-only flat-keyed file which exists on non-root cgroups.
- 	The following entries are defined.  Unless specified
-@@ -1282,43 +1293,36 @@ belonging to the affected files to ensure correct memory ownership.
- OOM Killer
- ~~~~~~~~~~
+ enum chips { ucd9000, ucd90120, ucd90124, ucd90160, ucd9090, ucd90910 };
+@@ -35,8 +37,18 @@
+ #define UCD9000_NUM_PAGES		0xd6
+ #define UCD9000_FAN_CONFIG_INDEX	0xe7
+ #define UCD9000_FAN_CONFIG		0xe8
++#define UCD9000_GPIO_SELECT		0xfa
++#define UCD9000_GPIO_CONFIG		0xfb
+ #define UCD9000_DEVICE_ID		0xfd
  
--Cgroup v2 memory controller implements a cgroup-aware OOM killer.
--It means that it treats cgroups as first class OOM entities.
--
--Cgroup-aware OOM logic is turned off by default and requires
--passing the "groupoom" option on mounting cgroupfs. It can also
--by remounting cgroupfs with the following command::
--
--  # mount -o remount,groupoom $MOUNT_POINT
--
--Under OOM conditions the memory controller tries to make the best
--choice of a victim, looking for a memory cgroup with the largest
--memory footprint, considering leaf cgroups and cgroups with the
--memory.oom_group option set, which are considered to be an indivisible
--memory consumers.
--
--By default, OOM killer will kill the biggest task in the selected
--memory cgroup. A user can change this behavior by enabling
--the per-cgroup memory.oom_group option. If set, it causes
--the OOM killer to kill all processes attached to the cgroup,
--except processes with oom_score_adj set to -1000.
--
--This affects both system- and cgroup-wide OOMs. For a cgroup-wide OOM
--the memory controller considers only cgroups belonging to the sub-tree
--of the OOM'ing cgroup.
--
--Leaf cgroups and cgroups with oom_group option set are compared based
--on their cumulative memory usage. The root cgroup is treated as a
--leaf memory cgroup as well, so it is compared with other leaf memory
--cgroups. Due to internal implementation restrictions the size of
--the root cgroup is the cumulative sum of oom_badness of all its tasks
--(in other words oom_score_adj of each task is obeyed). Relying on
--oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can lead to over- or
--underestimation of the root cgroup consumption and it is therefore
--discouraged. This might change in the future, however.
--
--If there are no cgroups with the enabled memory controller,
--the OOM killer is using the "traditional" process-based approach.
-+Cgroup v2 memory controller implements an optional cgroup-aware out of
-+memory killer, which treats cgroups as indivisible OOM entities.
++/* GPIO CONFIG bits */
++#define UCD9000_GPIO_CONFIG_ENABLE	BIT(0)
++#define UCD9000_GPIO_CONFIG_OUT_ENABLE	BIT(1)
++#define UCD9000_GPIO_CONFIG_OUT_VALUE	BIT(2)
++#define UCD9000_GPIO_CONFIG_STATUS	BIT(3)
++#define UCD9000_GPIO_INPUT		0
++#define UCD9000_GPIO_OUTPUT		1
 +
-+This policy is controlled by memory.oom_policy.  When a memory cgroup is
-+out of memory, its memory.oom_policy will dictate how the OOM killer will
-+select a process, or cgroup, to kill.  Likewise, when the system is OOM,
-+the policy is dictated by the root mem cgroup.
-+
-+There are currently two available oom policies:
-+
-+ - "none": default, choose the largest single memory hogging process to
-+   oom kill, as traditionally the OOM killer has always done.
-+
-+ - "cgroup": choose the cgroup with the largest memory footprint from the
-+   subtree as an OOM victim and kill at least one process, depending on
-+   memory.oom_group, from it.
-+
-+When selecting a cgroup as a victim, the OOM killer will kill the process
-+with the largest memory footprint.  A user can control this behavior by
-+enabling the per-cgroup memory.oom_group option.  If set, it causes the
-+OOM killer to kill all processes attached to the cgroup, except processes
-+with /proc/pid/oom_score_adj set to -1000 (oom disabled).
-+
-+The root cgroup is treated as a leaf memory cgroup as well, so it is
-+compared with other leaf memory cgroups. Due to internal implementation
-+restrictions the size of the root cgroup is the cumulative sum of
-+oom_badness of all its tasks (in other words oom_score_adj of each task
-+is obeyed). Relying on oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can
-+lead to over- or underestimation of the root cgroup consumption and it is
-+therefore discouraged. This might change in the future, however.
+ #define UCD9000_MON_TYPE(x)	(((x) >> 5) & 0x07)
+ #define UCD9000_MON_PAGE(x)	((x) & 0x0f)
  
- Please, note that memory charges are not migrating if tasks
- are moved between different memory cgroups. Moving tasks with
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -81,11 +81,6 @@ enum {
- 	 * Enable cpuset controller in v1 cgroup to use v2 behavior.
- 	 */
- 	CGRP_ROOT_CPUSET_V2_MODE = (1 << 4),
--
--	/*
--	 * Enable cgroup-aware OOM killer.
--	 */
--	CGRP_GROUP_OOM = (1 << 5),
+@@ -47,9 +59,17 @@
+ 
+ #define UCD9000_NUM_FAN		4
+ 
++#define UCD9000_GPIO_NAME_LEN	16
++#define UCD9090_NUM_GPIOS	23
++#define UCD901XX_NUM_GPIOS	26
++#define UCD90910_NUM_GPIOS	26
++
+ struct ucd9000_data {
+ 	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
+ 	struct pmbus_driver_info info;
++#ifdef CONFIG_GPIOLIB
++	struct gpio_chip gpio;
++#endif
  };
+ #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
  
- /* cftype->flags */
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -64,6 +64,11 @@ enum memcg_oom_policy {
- 	 * oom_badness()
- 	 */
- 	MEMCG_OOM_POLICY_NONE,
-+	/*
-+	 * Local cgroup usage is used to select a target cgroup, treating each
-+	 * mem cgroup as an indivisible consumer
-+	 */
-+	MEMCG_OOM_POLICY_CGROUP,
+@@ -149,6 +169,196 @@ static int ucd9000_read_byte_data(struct i2c_client *client, int page, int reg)
  };
+ MODULE_DEVICE_TABLE(of, ucd9000_of_match);
  
- struct mem_cgroup_reclaim_cookie {
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1732,9 +1732,6 @@ static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
- 		if (!strcmp(token, "nsdelegate")) {
- 			*root_flags |= CGRP_ROOT_NS_DELEGATE;
- 			continue;
--		} else if (!strcmp(token, "groupoom")) {
--			*root_flags |= CGRP_GROUP_OOM;
--			continue;
- 		}
- 
- 		pr_err("cgroup2: unknown option \"%s\"\n", token);
-@@ -1751,11 +1748,6 @@ static void apply_cgroup_root_flags(unsigned int root_flags)
- 			cgrp_dfl_root.flags |= CGRP_ROOT_NS_DELEGATE;
- 		else
- 			cgrp_dfl_root.flags &= ~CGRP_ROOT_NS_DELEGATE;
--
--		if (root_flags & CGRP_GROUP_OOM)
--			cgrp_dfl_root.flags |= CGRP_GROUP_OOM;
--		else
--			cgrp_dfl_root.flags &= ~CGRP_GROUP_OOM;
- 	}
- }
- 
-@@ -1763,8 +1755,6 @@ static int cgroup_show_options(struct seq_file *seq, struct kernfs_root *kf_root
- {
- 	if (cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
- 		seq_puts(seq, ",nsdelegate");
--	if (cgrp_dfl_root.flags & CGRP_GROUP_OOM)
--		seq_puts(seq, ",groupoom");
- 	return 0;
- }
- 
-@@ -5932,8 +5922,7 @@ static struct kobj_attribute cgroup_delegate_attr = __ATTR_RO(delegate);
- static ssize_t features_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "nsdelegate\n"
--					"groupoom\n");
-+	return snprintf(buf, PAGE_SIZE, "nsdelegate\n");
- }
- static struct kobj_attribute cgroup_features_attr = __ATTR_RO(features);
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2811,14 +2811,14 @@ bool mem_cgroup_select_oom_victim(struct oom_control *oc)
- 	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		return false;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return false;
--
- 	if (oc->memcg)
- 		root = oc->memcg;
- 	else
- 		root = root_mem_cgroup;
- 
-+	if (root->oom_policy != MEMCG_OOM_POLICY_CGROUP)
-+		return false;
++#ifdef CONFIG_GPIOLIB
++static int ucd9000_gpio_read_config(struct i2c_client *client,
++				    unsigned int offset)
++{
++	int ret;
 +
- 	select_victim_memcg(root, oc);
- 
- 	return oc->chosen_memcg;
-@@ -5425,9 +5425,6 @@ static int memory_oom_group_show(struct seq_file *m, void *v)
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
- 	bool oom_group = memcg->oom_group;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return -ENOTSUPP;
--
- 	seq_printf(m, "%d\n", oom_group);
- 
- 	return 0;
-@@ -5441,9 +5438,6 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
- 	int oom_group;
- 	int err;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return -ENOTSUPP;
--
- 	err = kstrtoint(strstrip(buf), 0, &oom_group);
- 	if (err)
- 		return err;
-@@ -5554,9 +5548,12 @@ static int memory_oom_policy_show(struct seq_file *m, void *v)
- 	enum memcg_oom_policy policy = READ_ONCE(memcg->oom_policy);
- 
- 	switch (policy) {
-+	case MEMCG_OOM_POLICY_CGROUP:
-+		seq_puts(m, "none [cgroup]\n");
++	/* No page set required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_SELECT, offset);
++	if (ret < 0)
++		return ret;
++
++	return i2c_smbus_read_byte_data(client, UCD9000_GPIO_CONFIG);
++}
++
++static int ucd9000_gpio_get(struct gpio_chip *gc, unsigned int offset)
++{
++	struct i2c_client *client  = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	return !!(ret & UCD9000_GPIO_CONFIG_STATUS);
++}
++
++static void ucd9000_gpio_set(struct gpio_chip *gc, unsigned int offset,
++			     int value)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0) {
++		dev_dbg(&client->dev, "failed to read GPIO %d config: %d\n",
++			offset, ret);
++		return;
++	}
++
++	if (value) {
++		if (ret & UCD9000_GPIO_CONFIG_STATUS)
++			return;
++
++		ret |= UCD9000_GPIO_CONFIG_STATUS;
++	} else {
++		if (!(ret & UCD9000_GPIO_CONFIG_STATUS))
++			return;
++
++		ret &= ~UCD9000_GPIO_CONFIG_STATUS;
++	}
++
++	ret |= UCD9000_GPIO_CONFIG_ENABLE;
++
++	/* Page set not required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
++	if (ret < 0) {
++		dev_dbg(&client->dev, "Failed to write GPIO %d config: %d\n",
++			offset, ret);
++		return;
++	}
++
++	ret &= ~UCD9000_GPIO_CONFIG_ENABLE;
++
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
++	if (ret < 0)
++		dev_dbg(&client->dev, "Failed to write GPIO %d config: %d\n",
++			offset, ret);
++}
++
++static int ucd9000_gpio_get_direction(struct gpio_chip *gc,
++				      unsigned int offset)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	return !(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE);
++}
++
++static int ucd9000_gpio_set_direction(struct gpio_chip *gc,
++				      unsigned int offset, bool direction_out,
++				      int requested_out)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret, config, out_val;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	if (direction_out) {
++		out_val = requested_out ? UCD9000_GPIO_CONFIG_OUT_VALUE : 0;
++
++		if (ret & UCD9000_GPIO_CONFIG_OUT_ENABLE) {
++			if ((ret & UCD9000_GPIO_CONFIG_OUT_VALUE) == out_val)
++				return 0;
++		} else {
++			ret |= UCD9000_GPIO_CONFIG_OUT_ENABLE;
++		}
++
++		if (out_val)
++			ret |= UCD9000_GPIO_CONFIG_OUT_VALUE;
++		else
++			ret &= ~UCD9000_GPIO_CONFIG_OUT_VALUE;
++
++	} else {
++		if (!(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE))
++			return 0;
++
++		ret &= ~UCD9000_GPIO_CONFIG_OUT_ENABLE;
++	}
++
++	ret |= UCD9000_GPIO_CONFIG_ENABLE;
++	config = ret;
++
++	/* Page set not required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
++	if (ret < 0)
++		return ret;
++
++	config &= ~UCD9000_GPIO_CONFIG_ENABLE;
++
++	return i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
++}
++
++static int ucd9000_gpio_direction_input(struct gpio_chip *gc,
++					unsigned int offset)
++{
++	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_INPUT, 0);
++}
++
++static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
++					 unsigned int offset, int val)
++{
++	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_OUTPUT,
++					  val);
++}
++
++static void ucd9000_probe_gpio(struct i2c_client *client,
++			       const struct i2c_device_id *mid,
++			       struct ucd9000_data *data)
++{
++	int rc;
++
++	switch (mid->driver_data) {
++	case ucd9090:
++		data->gpio.ngpio = UCD9090_NUM_GPIOS;
 +		break;
- 	case MEMCG_OOM_POLICY_NONE:
- 	default:
--		seq_puts(m, "[none]\n");
-+		seq_puts(m, "[none] cgroup\n");
- 	};
- 	return 0;
- }
-@@ -5570,6 +5567,8 @@ static ssize_t memory_oom_policy_write(struct kernfs_open_file *of,
- 	buf = strstrip(buf);
- 	if (!memcmp("none", buf, min(sizeof("none")-1, nbytes)))
- 		memcg->oom_policy = MEMCG_OOM_POLICY_NONE;
-+	else if (!memcmp("cgroup", buf, min(sizeof("cgroup")-1, nbytes)))
-+		memcg->oom_policy = MEMCG_OOM_POLICY_CGROUP;
- 	else
- 		ret = -EINVAL;
++	case ucd90120:
++	case ucd90124:
++	case ucd90160:
++		data->gpio.ngpio = UCD901XX_NUM_GPIOS;
++		break;
++	case ucd90910:
++		data->gpio.ngpio = UCD90910_NUM_GPIOS;
++		break;
++	default:
++		return; /* GPIO support is optional. */
++	}
++
++	/*
++	 * Pinmux support has not been added to the new gpio_chip.
++	 * This support should be added when possible given the mux
++	 * behavior of these IO devices.
++	 */
++	data->gpio.label = client->name;
++	data->gpio.get_direction = ucd9000_gpio_get_direction;
++	data->gpio.direction_input = ucd9000_gpio_direction_input;
++	data->gpio.direction_output = ucd9000_gpio_direction_output;
++	data->gpio.get = ucd9000_gpio_get;
++	data->gpio.set = ucd9000_gpio_set;
++	data->gpio.can_sleep = true;
++	data->gpio.base = -1;
++	data->gpio.parent = &client->dev;
++
++	rc = devm_gpiochip_add_data(&client->dev, &data->gpio, client);
++	if (rc)
++		dev_warn(&client->dev, "Could not add gpiochip: %d\n", rc);
++}
++#else
++static void ucd9000_probe_gpio(struct i2c_client *client,
++			       const struct i2c_device_id *mid,
++			       struct ucd9000_data *data)
++{
++}
++#endif /* CONFIG_GPIOLIB */
++
+ static int ucd9000_probe(struct i2c_client *client,
+ 			 const struct i2c_device_id *id)
+ {
+@@ -263,6 +473,8 @@ static int ucd9000_probe(struct i2c_client *client,
+ 		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
+ 	}
  
++	ucd9000_probe_gpio(client, mid, data);
++
+ 	return pmbus_do_probe(client, mid, info);
+ }
+ 
+-- 
+1.8.3.1
