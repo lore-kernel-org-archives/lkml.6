@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221816-2-8840083287749812861
+X-Cyrus-Session-Id: sloti22d1t05-3555996-1521221809-5-1000453670104523050
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521221815; b=K2zAAFgOhhunq6w6YWMffwOyyxf5rtX0TJ6H4O00DsqSWKF
-    VvlcH9hCbiQrLhLDgQCtoiZhRLG5/d9QYDyTuBcfVi4rW+zdxw3+gPmXWEUIH4/j
-    0RVkQw+RcxkW5mI6n/O775Zxb5HoiFg+qrnQoyYMsG7A4pbyLLb4bEr7ZlfO0TV2
-    TrnQ6sVDxi5n4B/DJOVIsOVzJx3DPCLoa8tdJxrBt7+5iBstSrAAmDw7igtX5jTr
-    aj0zEwhBh0g/iO8jPGbCaGjAP1nAYrp6j3jyOOo2N6QkDROZcNe5P6kGrmegZF86
-    uAJ1YtFFSYAIgJOnQh+lacuh7X/mA1ywsJ8h9EQ==
+    t=1521221809; b=Tau7KH/UsF++dW2fTl3TLioT5MFVEEzG9Vb3shsigRPNYT6
+    TXrEThwvIpJNaf2B1R0ob7tPZarBlP1mMY/TyQMo9DvhSAm77RfWS7x4otiqeJ4z
+    2gFUBHT/VJnMWXF40s3wOMAWqmjkLV2HvRrQRpUhHjFXUk5/iuRZcULIeIxSGO4r
+    o7maviiBFlH70T5HCLqwOW5PjZKJDW7QG5SWb6EB/CXZNQoRd42HSXX71DZ4iCqk
+    xTUv9qWGAOPhmNvYesEVnUuIyWsBROymvrfSpXMWuVM6r5LfUoPXzOL2oXolQrcR
+    thqLgigjaBNgsBeFNjv0zoXiIMNVvha4uw6ijGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521221815; bh=PlOQNxLzWVExa9qZ0qc1svfk3u
-    Wr4rMEzO6YsnOy3Wo=; b=f6W/TPMDTACWvMBs2/xqjiWg9zewR7AgOt3W2+AFsn
-    kloyJQx88b1l0oFEXDxYCXKopeRq4TomweVvfJGpwzr78ViX6suy8as5fBdNV0Ut
-    e3fWC8/VysUT5zll0PzDir0iCd7mn8TEyiCGREYChnErD2QMEPZM+SX9OQyLSPxe
-    smhycSjXnKYwQmIVLBwCSmhy+UvpPXOzAaE3S3q6Ucviijuk3ci09m4rxIqR1sxF
-    gqI8/ucZAPC342pWEmQDV3uxIcr58n2nQWv45x2bO8Xg1lRoG3dPms967SFD8pTB
-    0J4nmKULRO8W4+9LqPfoLgsxA6iyABQ8msWVGvAGCTgQ==
+    :list-id; s=arctest; t=1521221809; bh=K61mrNrdzR8UBmdgxxnZ3SW5u7
+    WPpuQ9YHc+WviPN+A=; b=Lxvn1vxj07TcRUBBPpJg3iybIYqLvr5P3i0yl7mJUL
+    FsKkAcfTHQuMfWZhPDVx+AABNOCyBWY2gc48EVYPNlveE5FGkiZj/w99hmqz+VA5
+    tBiYOc0oOJJzaMopFrWEAR2Ij5WGfri5t6htqpAMsROtj3/KVzOd3ql3kh7DHluz
+    aUiGo9WeDNnR38PXtVgoNqpLOqaLSPw2Z4xzgrrSw2pRWjviLKM1HAwpTZBUimO8
+    kFJ4jtFq08sW1hBS7kPA9zyxG/0oX4G4uWRdVD9tsjw5y125j+bV//72jzzOxlI8
+    K06s3qaIpuDomceLC9+j4qixskfv3cxIURCoebKcoFKg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,24 +49,23 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932544AbeCPP0i (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:26:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33912 "EHLO
+        id S1753051AbeCPRgb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 13:36:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33942 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932450AbeCPP0g (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:36 -0400
+        with ESMTP id S1754053AbeCPP0m (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, jeyu@kernel.org,
-        live-patching@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 3.18 15/25] x86/module: Detect and skip invalid relocations
-Date: Fri, 16 Mar 2018 16:23:02 +0100
-Message-Id: <20180316152233.381119508@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Subject: [PATCH 3.18 17/25] serial: sh-sci: prevent lockup on full TTY buffers
+Date: Fri, 16 Mar 2018 16:23:04 +0100
+Message-Id: <20180316152233.456424538@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
@@ -84,73 +83,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-commit eda9cec4c9a12208a6f69fbe68f72a6311d50032 upstream.
+commit 7842055bfce4bf0170d0f61df8b2add8399697be upstream.
 
-There have been some cases where external tooling (e.g., kpatch-build)
-creates a corrupt relocation which targets the wrong address.  This is a
-silent failure which can corrupt memory in unexpected places.
+When the TTY buffers fill up to the configured maximum, a system lockup
+occurs:
 
-On x86, the bytes of data being overwritten by relocations are always
-initialized to zero beforehand.  Use that knowledge to add sanity checks
-to detect such cases before they corrupt memory.
+[  598.820128] INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  598.825796]  0-...!: (1 GPs behind) idle=5a6/2/0 softirq=1974/1974 fqs=1
+[  598.832577]  (detected by 3, t=62517 jiffies, g=296, c=295, q=126)
+[  598.838755] Task dump for CPU 0:
+[  598.841977] swapper/0       R  running task        0     0      0 0x00000022
+[  598.849023] Call trace:
+[  598.851476]  __switch_to+0x98/0xb0
+[  598.854870]            (null)
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: jeyu@kernel.org
-Cc: live-patching@vger.kernel.org
-Link: http://lkml.kernel.org/r/37450d6c6225e54db107fba447ce9e56e5f758e9.1509713553.git.jpoimboe@redhat.com
-[ Restructured the messages, as it's unclear whether the relocation or the target is corrupted. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+This can be prevented by doing a dummy read of the RX data register.
+
+This issue affects both HSCIF and SCIF ports. Reported for R-Car H3 ES2.0;
+reproduced and fixed on H3 ES1.1. Probably affects other R-Car platforms
+as well.
+
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/module.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/tty/serial/sh-sci.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -167,19 +167,27 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 		case R_X86_64_NONE:
- 			break;
- 		case R_X86_64_64:
-+			if (*(u64 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u64 *)loc = val;
- 			break;
- 		case R_X86_64_32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u32 *)loc = val;
- 			if (val != *(u32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_32S:
-+			if (*(s32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(s32 *)loc = val;
- 			if ((s64)val != *(s32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			val -= (u64)loc;
- 			*(u32 *)loc = val;
- #if 0
-@@ -195,6 +203,11 @@ int apply_relocate_add(Elf64_Shdr *sechd
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -736,6 +736,8 @@ static void sci_receive_chars(struct uar
+ 		/* Tell the rest of the system the news. New characters! */
+ 		tty_flip_buffer_push(tport);
+ 	} else {
++		/* TTY buffers full; read from RX reg to prevent lockup */
++		serial_port_in(port, SCxRDR);
+ 		serial_port_in(port, SCxSR); /* dummy read */
+ 		serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
  	}
- 	return 0;
- 
-+invalid_relocation:
-+	pr_err("x86/modules: Skipping invalid relocation target, existing value is nonzero for type %d, loc %p, val %Lx\n",
-+	       (int)ELF64_R_TYPE(rel[i].r_info), loc, val);
-+	return -ENOEXEC;
-+
- overflow:
- 	pr_err("overflow in relocation type %d val %Lx\n",
- 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
