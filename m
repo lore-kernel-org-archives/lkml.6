@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeCPDl6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 23:41:58 -0400
-Received: from vern.gendns.com ([206.190.152.46]:57134 "EHLO vern.gendns.com"
+        id S932627AbeCPDmP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 23:42:15 -0400
+Received: from vern.gendns.com ([206.190.152.46]:57148 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751620AbeCPDlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 23:41:55 -0400
+        id S1752168AbeCPDmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 23:42:13 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 31/42] ARM: davinci: switch to common clock framework
-Date: Thu, 15 Mar 2018 21:52:47 -0500
-Message-Id: <1521168778-27236-32-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 36/42] ARM: davinci: dm644x: Remove legacy clock init
+Date: Thu, 15 Mar 2018 21:52:52 -0500
+Message-Id: <1521168778-27236-37-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,111 +36,369 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches ARCH_DAVINCI to use the common clock framework. The legacy
-clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
-drivers/clk/davinci/ are used instead.
-
-A few macros had to be moved to prevent compilation errors.
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/dm644x.c.
 
 Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v8 changes:
 - none
 
 v7 changes:
-- s/compile/compilation and space instead of tab
-- add PM_GENERIC_DOMAINS dependencies
+- rebased
+- add davinci prefix to commit message
 
 v6 changes:
-- clean up indent on Common objects section
+- rebased
 
- arch/arm/Kconfig                | 5 ++++-
- arch/arm/mach-davinci/Makefile  | 4 ++--
- arch/arm/mach-davinci/clock.h   | 4 ----
- arch/arm/mach-davinci/davinci.h | 4 ++++
- arch/arm/mach-davinci/psc.h     | 2 --
- 5 files changed, 10 insertions(+), 9 deletions(-)
+ arch/arm/mach-davinci/dm644x.c | 300 -----------------------------------------
+ 1 file changed, 300 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d535..563fade 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -608,13 +608,16 @@ config ARCH_S3C24XX
- config ARCH_DAVINCI
- 	bool "TI DaVinci"
- 	select ARCH_HAS_HOLES_MEMORYMODEL
--	select CLKDEV_LOOKUP
-+	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
- 	select GPIOLIB
- 	select HAVE_IDE
-+	select PM_GENERIC_DOMAINS if PM
-+	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select RESET_CONTROLLER
- 	select USE_OF
- 	select ZONE_DMA
- 	help
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index 4e81780..8725d8b 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -5,8 +5,8 @@
- #
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 64f5193..6d3a0e8 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -29,11 +29,6 @@
+ #include "davinci.h"
+ #include "mux.h"
  
- # Common objects
--obj-y 			:= time.o clock.o serial.o psc.o \
--			   usb.o common.o sram.o aemif.o
-+obj-y 					:= time.o serial.o usb.o \
-+					   common.o sram.o aemif.o
- 
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
- 
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index d7894d5..2d05856 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -12,10 +12,6 @@
- #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
- #define __ARCH_ARM_DAVINCI_CLOCK_H
- 
--#define DAVINCI_PLL1_BASE 0x01c40800
--#define DAVINCI_PLL2_BASE 0x01c40c00
--#define MAX_PLL 2
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
 -
- /* PLL/Reset register offsets */
- #define PLLCTL          0x100
- #define PLLCTL_PLLEN    BIT(0)
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index a200977..a227f80 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -35,6 +35,10 @@
- #include <media/davinci/vpbe.h>
- #include <media/davinci/vpbe_osd.h>
+ /*
+  * Device specific clocks
+  */
+@@ -46,292 +41,6 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
  
-+#define DAVINCI_PLL1_BASE		0x01c40800
-+#define DAVINCI_PLL2_BASE		0x01c40c00
-+#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
-+
- #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
- #define SYSMOD_VDAC_CONFIG		0x2c
- #define SYSMOD_VIDCLKCTL		0x38
-diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
-index 8af9f09..b58707c 100644
---- a/arch/arm/mach-davinci/psc.h
-+++ b/arch/arm/mach-davinci/psc.h
-@@ -27,8 +27,6 @@
- #ifndef __ASM_ARCH_PSC_H
- #define __ASM_ARCH_PSC_H
- 
--#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll1_data = {
+-	.num       = 1,
+-	.phys_base = DAVINCI_PLL1_BASE,
+-};
 -
- /* Power and Sleep Controller (PSC) Domains */
- #define DAVINCI_GPSC_ARMDOMAIN		0
- #define DAVINCI_GPSC_DSPDOMAIN		1
+-static struct pll_data pll2_data = {
+-	.num       = 2,
+-	.phys_base = DAVINCI_PLL2_BASE,
+-};
+-
+-static struct clk ref_clk = {
+-	.name = "ref_clk",
+-	.rate = DM644X_REF_FREQ,
+-};
+-
+-static struct clk pll1_clk = {
+-	.name = "pll1",
+-	.parent = &ref_clk,
+-	.pll_data = &pll1_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll1_sysclk1 = {
+-	.name = "pll1_sysclk1",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll1_sysclk2 = {
+-	.name = "pll1_sysclk2",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll1_sysclk3 = {
+-	.name = "pll1_sysclk3",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV3,
+-};
+-
+-static struct clk pll1_sysclk5 = {
+-	.name = "pll1_sysclk5",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV5,
+-};
+-
+-static struct clk pll1_aux_clk = {
+-	.name = "pll1_aux_clk",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll1_sysclkbp = {
+-	.name = "pll1_sysclkbp",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk pll2_clk = {
+-	.name = "pll2",
+-	.parent = &ref_clk,
+-	.pll_data = &pll2_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll2_sysclk1 = {
+-	.name = "pll2_sysclk1",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll2_sysclk2 = {
+-	.name = "pll2_sysclk2",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll2_sysclkbp = {
+-	.name = "pll2_sysclkbp",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk dsp_clk = {
+-	.name = "dsp",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DAVINCI_LPSC_GEM,
+-	.domain = DAVINCI_GPSC_DSPDOMAIN,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk arm_clk = {
+-	.name = "arm",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_ARM,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk vicp_clk = {
+-	.name = "vicp",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_IMCOP,
+-	.domain = DAVINCI_GPSC_DSPDOMAIN,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk vpss_master_clk = {
+-	.name = "vpss_master",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DAVINCI_LPSC_VPSSMSTR,
+-	.flags = CLK_PSC,
+-};
+-
+-static struct clk vpss_slave_clk = {
+-	.name = "vpss_slave",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DAVINCI_LPSC_VPSSSLV,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name = "uart0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name = "uart1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name = "uart2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART2,
+-};
+-
+-static struct clk emac_clk = {
+-	.name = "emac",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_EMAC_WRAPPER,
+-};
+-
+-static struct clk i2c_clk = {
+-	.name = "i2c",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_I2C,
+-};
+-
+-static struct clk ide_clk = {
+-	.name = "ide",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_ATA,
+-};
+-
+-static struct clk asp_clk = {
+-	.name = "asp0",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_McBSP,
+-};
+-
+-static struct clk mmcsd_clk = {
+-	.name = "mmcsd",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_MMC_SD,
+-};
+-
+-static struct clk spi_clk = {
+-	.name = "spi",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_SPI,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name = "gpio",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_GPIO,
+-};
+-
+-static struct clk usb_clk = {
+-	.name = "usb",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_USB,
+-};
+-
+-static struct clk vlynq_clk = {
+-	.name = "vlynq",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_VLYNQ,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name = "aemif",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_AEMIF,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name = "pwm0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM0,
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name = "pwm1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM1,
+-};
+-
+-static struct clk pwm2_clk = {
+-	.name = "pwm2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM2,
+-};
+-
+-static struct clk timer0_clk = {
+-	.name = "timer0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER0,
+-};
+-
+-static struct clk timer1_clk = {
+-	.name = "timer1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER1,
+-};
+-
+-static struct clk timer2_clk = {
+-	.name = "timer2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER2,
+-	.usecount = 1,              /* REVISIT: why can't this be disabled? */
+-};
+-
+-static struct clk_lookup dm644x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
+-	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "vicp", &vicp_clk),
+-	CLK("vpss", "master", &vpss_master_clk),
+-	CLK("vpss", "slave", &vpss_slave_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK("serial8250.0", NULL, &uart0_clk),
+-	CLK("serial8250.1", NULL, &uart1_clk),
+-	CLK("serial8250.2", NULL, &uart2_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("davinci_mdio.0", "fck", &emac_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK("davinci-mcbsp", NULL, &asp_clk),
+-	CLK("dm6441-mmc.0", NULL, &mmcsd_clk),
+-	CLK(NULL, "spi", &spi_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK(NULL, "vlynq", &vlynq_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("davinci-wdt", NULL, &timer2_clk),
+-	CLK(NULL, NULL, NULL),
+-};
+-#endif
+-
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+ 	.ctrl_mod_reg_offset	= DM644X_EMAC_CNTRL_MOD_OFFSET,
+@@ -824,8 +533,6 @@ static struct davinci_id dm644x_ids[] = {
+ 	},
+ };
+ 
+-static u32 dm644x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
+-
+ /*
+  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+@@ -910,8 +617,6 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
+ 	.jtag_id_reg		= 0x01c40028,
+ 	.ids			= dm644x_ids,
+ 	.ids_num		= ARRAY_SIZE(dm644x_ids),
+-	.psc_bases		= dm644x_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(dm644x_psc_bases),
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm644x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
+@@ -939,16 +644,11 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
+ {
+-#ifdef CONFIG_COMMON_CLK
+ 	struct clk *clk;
+ 
+ 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
+ 
+ 	davinci_timer_init(clk);
+-#else
+-	davinci_clk_init(dm644x_clks);
+-	davinci_timer_init(&timer0_clk);
+-#endif
+ }
+ 
+ static struct resource dm644x_pll1_resources[] = {
 -- 
 2.7.4
