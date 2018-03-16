@@ -1,68 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753250AbeCPK1A (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:27:00 -0400
-Received: from ozlabs.org ([103.22.144.67]:34451 "EHLO ozlabs.org"
+        id S1753407AbeCPK1b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:27:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36176 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750982AbeCPK06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:26:58 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Dan Carpenter <dan.carpenter@oracle.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>,
-        Josh Sklar <sklar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Use common error handling code in setup_new_fdt()
-In-Reply-To: <20180315115753.rjejlkrp3fhdxbyk@mwanda>
-References: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net> <87fu52jqtc.fsf@morokweng.localdomain> <20180315115753.rjejlkrp3fhdxbyk@mwanda>
-Date: Fri, 16 Mar 2018 21:26:53 +1100
-Message-ID: <87bmfofh8y.fsf@concordia.ellerman.id.au>
+        id S1752544AbeCPK12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:27:28 -0400
+Date: Fri, 16 Mar 2018 11:27:25 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Jia He <hejianet@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>, Daniel Vacek <neelx@redhat.com>,
+        linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH] Revert "mm/memblock.c: hardcode the end_pfn being -1"
+Message-ID: <20180316102725.GG23100@dhcp22.suse.cz>
+References: <1521168966-5245-1-git-send-email-hejianet@gmail.com>
+ <20180316090647.GC23100@dhcp22.suse.cz>
+ <d0c53509-98b3-11a8-2bf2-b43cdd67b5de@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0c53509-98b3-11a8-2bf2-b43cdd67b5de@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-> On Wed, Mar 14, 2018 at 06:22:07PM -0300, Thiago Jung Bauermann wrote:
->> SF Markus Elfring <elfring@users.sourceforge.net> writes:
->> > From: Markus Elfring <elfring@users.sourceforge.net>
->> > Date: Sun, 11 Mar 2018 09:03:42 +0100
->> >
->> > Add a jump target so that a bit of exception handling can be better reused
->> > at the end of this function.
->> >
->> > This issue was detected by using the Coccinelle software.
->> >
->> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> > ---
->> >  arch/powerpc/kernel/machine_kexec_file_64.c | 28 ++++++++++++----------------
->> >  1 file changed, 12 insertions(+), 16 deletions(-)
->> 
->> I liked it. Thanks!
->> 
->> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
->
-> You know that compilers already re-use string constants so this doesn't
-> actually save memory?
+On Fri 16-03-18 17:26:57, Jia He wrote:
+> 
+> 
+> On 3/16/2018 5:06 PM, Michal Hocko Wrote:
+> > On Thu 15-03-18 19:56:06, Jia He wrote:
+> > > This reverts commit 379b03b7fa05f7db521b7732a52692448a3c34fe.
+> > > 
+> > > Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
+> > > alignment") introduced boot hang issues in arm/arm64 machines, so
+> > > Ard Biesheuvel reverted in commit 3e04040df6d4. But there is a
+> > > preparation patch for commit 864b75f9d6b0. So just revert it for
+> > > the sake of caution.
+> > Why? Is there anything wrong with this one?
+> I don't think there might be anything wrong. Justin for the sake of caution.
+> Please ignore this patch if you prefer to keep 379b03b7fa.
 
-Sure, but it's still clearer to only have the string appear once in the
-code.
+We do not revert just if the patch is correct. I do not have strong
+preference for the patch but I also do not see anything wrong with it.
 
-> Also we should be preserving the error codes
-> instead of always returning -EINVAL.
+> But seems parameter *max_pfn* is useless and can be removed in this case?
 
-The error codes come from libfdt code, so they don't necessarily make
-sense in the kernel. eg. FDT_ERR_NOSPACE == 3 == ESRCH.
+A patch for that is already sitting in mmotm tree
 
-Perhaps we should be trying harder to convert them, but that's a
-criticism of the original code not this patch.
+> Cheers,
+> Jia
+> > > Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+> > > ---
+> > >   mm/memblock.c | 10 +++++-----
+> > >   1 file changed, 5 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index b6ba6b7..5a9ca2a 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -1107,7 +1107,7 @@ unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
+> > >   	struct memblock_type *type = &memblock.memory;
+> > >   	unsigned int right = type->cnt;
+> > >   	unsigned int mid, left = 0;
+> > > -	phys_addr_t addr = PFN_PHYS(++pfn);
+> > > +	phys_addr_t addr = PFN_PHYS(pfn + 1);
+> > >   	do {
+> > >   		mid = (right + left) / 2;
+> > > @@ -1118,15 +1118,15 @@ unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
+> > >   				  type->regions[mid].size))
+> > >   			left = mid + 1;
+> > >   		else {
+> > > -			/* addr is within the region, so pfn is valid */
+> > > -			return pfn;
+> > > +			/* addr is within the region, so pfn + 1 is valid */
+> > > +			return min(pfn + 1, max_pfn);
+> > >   		}
+> > >   	} while (left < right);
+> > >   	if (right == type->cnt)
+> > > -		return -1UL;
+> > > +		return max_pfn;
+> > >   	else
+> > > -		return PHYS_PFN(type->regions[right].base);
+> > > +		return min(PHYS_PFN(type->regions[right].base), max_pfn);
+> > >   }
+> > >   /**
+> > > -- 
+> > > 2.7.4
+> > > 
 
-cheers
+-- 
+Michal Hocko
+SUSE Labs
