@@ -1,154 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932871AbeCPBSF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 21:18:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932341AbeCPBSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 21:18:04 -0400
-Message-ID: <1521163082.18703.191.camel@redhat.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the
- rdma-fixes tree
-From: Doug Ledford <dledford@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        id S932932AbeCPBSn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 21:18:43 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52473 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932341AbeCPBSm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 21:18:42 -0400
+X-Google-Smtp-Source: AG47ELtWS36sTTPxWSbGG1+QaydZ7Bp/Xju4gSkmIu1Q1i7G21PxuXhHI5v0HKmzOuWTlPhyyWdIXW6/xWiicsrYarU=
+MIME-Version: 1.0
+In-Reply-To: <cover.1521103167.git.zong@andestech.com>
+References: <cover.1521103167.git.zong@andestech.com>
+From: Zong Li <zongbox@gmail.com>
+Date: Fri, 16 Mar 2018 09:18:41 +0800
+Message-ID: <CA+ZOyaiNM5bWWTDMBMjy-8N8=FwEaecxx16CyxvNTKEQ8jk0cQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+To: Zong Li <zong@andestech.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, albert@sifive.com,
+        linux-riscv@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Bloch <markb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
-Date: Thu, 15 Mar 2018 21:18:02 -0400
-In-Reply-To: <20180316115610.3d7f232a@canb.auug.org.au>
-References: <20180316115610.3d7f232a@canb.auug.org.au>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-yqb1IDlM9mzkCVAXBMGC"
-Mime-Version: 1.0
+        greentime@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-yqb1IDlM9mzkCVAXBMGC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2018-03-16 at 11:56 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   drivers/infiniband/hw/mlx5/main.c
->=20
-> between commit:
->=20
->   42cea83f9524 ("IB/mlx5: Fix cleanup order on unload")
->=20
-> from the rdma-fixes tree and commit:
->=20
->   b5ca15ad7e61 ("IB/mlx5: Add proper representors support")
->=20
-> from the net-next tree.
-
-We are aware of the merge conflict.  This is a result of the fact that
-code had been submitted to the for-next area (the representors support)
-and after that an issue was found by the syzkaller bot that deserved rc
-fix status and which conflicted.  The fixup you list below is
-insufficient to fix the merge conflict.  The full fixup can be found in
-the rdma tree from where I merged the for-rc branch into the for-next
-branch and created a complete fixup of the merge conflict.  The problem
-is that one patch change the device init stage flow, while the other
-patch duplicates the normal device init stage flow to the representor
-device stage flow.  To resolve the fix, you not only have to resolve the
-contextual diffs, but you have to duplicate the changes to the normal
-device stage flow into the representor device stage flow.  It is very
-far from a trivial merge.  We were planning on talking to Dave about
-this issue tomorrow, but you beat us to raising the issue ;-).
-
-Here's the commit (from the rdma git repo) with the proper merge fix
-(although it also has other minor merge stuff that needs to be ignored):
-
-2d873449a202 (Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next)
-
-> I fixed it up (see below and the merge fix patch as well) and can
-> carry the fix as necessary. This is now fixed as far as linux-next is
-> concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 16 Mar 2018 11:54:01 +1100
-> Subject: [PATCH] IB/mlx5: merge fix for "Fix cleanup order on unload"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+2018-03-15 16:50 GMT+08:00 Zong Li <zong@andestech.com>:
+> These patches resolve the some issues of loadable module.
+>   - symbol out of ranges
+>   - unknown relocation types
+>
+> The reference of external variable and function symbols
+> cannot exceed 32-bit offset ranges in kernel module.
+> The module only can work on the 32-bit OS or the 64-bit
+> OS with sv32 virtual addressing.
+>
+> These patches will generate the .got, .got.plt and
+> .plt sections during loading module, let it can refer
+> to the symbol which locate more than 32-bit offset.
+> These sections depend on the relocation types:
+>  - R_RISCV_GOT_HI20
+>  - R_RISCV_CALL_PLT
+>
+> These patches also support more relocation types
+>  - R_RISCV_CALL
+>  - R_RISCV_HI20
+>  - R_RISCV_LO12_I
+>  - R_RISCV_LO12_S
+>  - R_RISCV_RVC_BRANCH
+>  - R_RISCV_RVC_JUMP
+>  - R_RISCV_ALIGN
+>  - R_RISCV_ADD32
+>  - R_RISCV_SUB32
+>
+> This is the list of testing modules:
+> # lsmod
+> btrfs 7876158 0 - Live 0xffffffd00745d000
+> ramoops 90806 0 - Live 0xffffffd0024b8000
+> lzo 10554 0 - Live 0xffffffd002050000
+> zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+> zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+> zram 101300 0 - Live 0xffffffd0021b8000
+> xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+> xor 33246 1 btrfs, Live 0xffffffd002042000
+> xfs 4395343 0 - Live 0xffffffd00399e000
+> tun 252041 0 - Live 0xffffffd0038e0000
+> test_user_copy 5265 0 - Live 0xffffffd003783000
+> test_static_keys 19606 0 - Live 0xffffffd003717000
+> test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+> test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+> test_module 1557 0 - Live 0xffffffd003646000
+> test_kmod 49100 0 - Live 0xffffffd0035f2000
+> test_bpf 1599301 0 - Live 0xffffffd003000000
+> test_bitmap 4403 0 - Live 0xffffffd002dd8000
+> reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+> raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+> netdevsim 65401 0 - Live 0xffffffd002910000
+>
+> Signed-off-by: Zong Li <zong@andestech.com>
 > ---
->  drivers/infiniband/hw/mlx5/ib_rep.c  | 6 +++---
->  drivers/infiniband/hw/mlx5/mlx5_ib.h | 3 +--
->  2 files changed, 4 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/infiniband/hw/mlx5/ib_rep.c b/drivers/infiniband/hw/=
-mlx5/ib_rep.c
-> index 61cc3d7db257..7fb997dadd80 100644
-> --- a/drivers/infiniband/hw/mlx5/ib_rep.c
-> +++ b/drivers/infiniband/hw/mlx5/ib_rep.c
-> @@ -33,9 +33,9 @@ static const struct mlx5_ib_profile rep_profile =3D {
->  	STAGE_CREATE(MLX5_IB_STAGE_IB_REG,
->  		     mlx5_ib_stage_ib_reg_init,
->  		     mlx5_ib_stage_ib_reg_cleanup),
-> -	STAGE_CREATE(MLX5_IB_STAGE_UMR_RESOURCES,
-> -		     mlx5_ib_stage_umr_res_init,
-> -		     mlx5_ib_stage_umr_res_cleanup),
-> +	STAGE_CREATE(MLX5_IB_STAGE_POST_IB_REG_UMR,
-> +		     mlx5_ib_stage_post_ib_reg_umr_init,
-> +		     NULL),
->  	STAGE_CREATE(MLX5_IB_STAGE_CLASS_ATTR,
->  		     mlx5_ib_stage_class_attr_init,
->  		     NULL),
-> diff --git a/drivers/infiniband/hw/mlx5/mlx5_ib.h b/drivers/infiniband/hw=
-/mlx5/mlx5_ib.h
-> index 7ec753ec7962..c45a7abdbe3e 100644
-> --- a/drivers/infiniband/hw/mlx5/mlx5_ib.h
-> +++ b/drivers/infiniband/hw/mlx5/mlx5_ib.h
-> @@ -1071,8 +1071,7 @@ int mlx5_ib_stage_bfrag_init(struct mlx5_ib_dev *de=
-v);
->  void mlx5_ib_stage_bfrag_cleanup(struct mlx5_ib_dev *dev);
->  int mlx5_ib_stage_ib_reg_init(struct mlx5_ib_dev *dev);
->  void mlx5_ib_stage_ib_reg_cleanup(struct mlx5_ib_dev *dev);
-> -int mlx5_ib_stage_umr_res_init(struct mlx5_ib_dev *dev);
-> -void mlx5_ib_stage_umr_res_cleanup(struct mlx5_ib_dev *dev);
-> +int mlx5_ib_stage_post_ib_reg_umr_init(struct mlx5_ib_dev *dev);
->  int mlx5_ib_stage_class_attr_init(struct mlx5_ib_dev *dev);
->  void __mlx5_ib_remove(struct mlx5_ib_dev *dev,
->  		      const struct mlx5_ib_profile *profile,
-> --=20
+> Change in v2:
+>  - Add compile option 'mno-relax' for build kernel module
+>  - Just fail on ALIGN type, this is unexpected type with mno-relax.
+>
+> Zong Li (11):
+>   RISC-V: Add sections of PLT and GOT for kernel module
+>   RISC-V: Add section of GOT.PLT for kernel module
+>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>   RISC-V: Support CALL relocation type in kernel module
+>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>   RISC-V: Support ALIGN relocation type in kernel module
+>   RISC-V: Support ADD32 relocation type in kernel module
+>   RISC-V: Support SUB32 relocation type in kernel module
+>   RISC-V: Enable module support in defconfig
+>   RISC-V: Add definition of relocation types
+>
+>  arch/riscv/Kconfig                  |   5 +
+>  arch/riscv/Makefile                 |   5 +
+>  arch/riscv/configs/defconfig        |   2 +
+>  arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
+>  arch/riscv/include/uapi/asm/elf.h   |   7 ++
+>  arch/riscv/kernel/Makefile          |   1 +
+>  arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
+>  arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
+>  arch/riscv/kernel/module.lds        |   8 ++
+>  9 files changed, 470 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/module.h
+>  create mode 100644 arch/riscv/kernel/module-sections.c
+>  create mode 100644 arch/riscv/kernel/module.lds
+>
+> --
 > 2.16.1
->=20
+>
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-yqb1IDlM9mzkCVAXBMGC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Hi,
 
------BEGIN PGP SIGNATURE-----
+The ALIGN relocation type is just fail and print the error message on
+v2 version,
+Because I think that it will not exist in module which building with
+'mno-relax ' option,
+The behavior of check alignment will become a redundant thing.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqrG0oACgkQuCajMw5X
-L91gmA/+NdQdzglKRQ0OvrLFkfH2iEaHWQOfKtxPnVj9fQ/We1v2lyKSeY6IuabD
-pL652ZppLllywgiHUN+2zUAbbUYVa7UzVOsjWlDHg0/6185nJrcg7F3lRtcF5PMV
-oJL0kaSl4tJOR74JqCtJ7TKCwRz0iaiB/z4CfMVBaCxu55NtvrR9y6197v/FE8Dv
-XiN+zAvBCPuDG6IDQurr7abXR8qDqzIlmuhx60GgQEzQHT/ibQZve50ZWoMPmguV
-+bRH86S8PZNy/HV/pmfmVgCQ0HBoO1cyVKY7VSUmQcc7PJ6GcuerTmhxo18r9mWb
-704suukQ0/CPArJwVaZWEkhUcM8Rq0diyO42PTipaPIU7yuZmDrG1tUWzRkFDTb3
-3NFOvGaR2PGcg0FCZWfrawUhim4PxvSVodfh/UtgjU7spMJxxNbEMt0ssM9j5UlY
-aJ3Ya5iWoZ7j4QdkJiRS6kFy73m9GtgrZvDnnTK8FCMUD3q6drFI7RD5rf4Zs8ZL
-ORZZAzdUEszhNp4V8NU8gXVowRA3KV3vHqJja9QGj4Es5f4P8k2vOeiOzpMJHwXU
-U1X9vBN9in4t+4O0vpsjjvR0iJ+B9l1pLUb9+ue0FViTwlGA8P6JtE7UiW05soay
-ydBKv4C5lwnz+Q8rgFHiUNA+kXmyDrBKkZRL87Q/et4PIT60qns=
-=p3nB
------END PGP SIGNATURE-----
-
---=-yqb1IDlM9mzkCVAXBMGC--
+Thanks a lot.
