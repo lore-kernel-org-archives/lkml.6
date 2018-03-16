@@ -1,146 +1,293 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753741AbeCPUjS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:39:18 -0400
-Received: from mail-by2nam03on0059.outbound.protection.outlook.com ([104.47.42.59]:55584
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752514AbeCPUhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:37:54 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com;
-From: Babu Moger <babu.moger@amd.com>
-To: joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, babu.moger@amd.com
-Subject: [PATCH v2 1/5] KVM: VMX: Fix the module parameters for vmx
-Date: Fri, 16 Mar 2018 16:37:22 -0400
-Message-Id: <1521232646-79580-2-git-send-email-babu.moger@amd.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1521232646-79580-1-git-send-email-babu.moger@amd.com>
-References: <1521232646-79580-1-git-send-email-babu.moger@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: BN6PR17CA0018.namprd17.prod.outlook.com
- (2603:10b6:404:65::28) To MWHPR12MB1776.namprd12.prod.outlook.com
- (2603:10b6:300:113::7)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 15ee58ec-bbce-4cf6-3882-08d58b7dca51
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR12MB1776;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;3:WVEOA/L7e0wkJ023PUkYd92KGB4vJJSbaFmnoImvyvGfJf0V5eh67V+0MlXripyRBE90pfXoMBcS16wZygQhLZ/7FiyFMuNpXgewTfO6w6VDL/b+eBVbZJaB/nx7EP/fv1XNe0ONKhwYYruA/qmRvo5iJizyGShzwCmFsnD447vyNjMQKsfdZxd8xgc9m/ZZXJ4CqlzX1lBOB58Nhr0lX7ueXZWZ2KjL0SggCqAWJMo63XqsPr4DKgzWCSrFsz09;25:JFTlX8xUHr7+O/+Dgvtlhl6BXLXNcLYmkGETf4fdgzCYx2rP21+Y+4YlZ19vBrvwMeM0g5vZTxSxNl29CeojnlfMsaL+zxY+hYi94CxxmqF8mOWrHruM8nN4JjEeErJ/infb/1rIIC2GQMfR0UzIT7tDr3DB4N4UsdHfIfxNEHoy7/BIqDftNOPVmlcVT12JSBcjVmRNB1umJMqg1tiDWoXn7QDV3U/gEQnJnyst0JyWxKiiF9pZl5H9JdjSoV3gBJjd2iXnPSa2KJYt74o2lg4V4ruGL2mPGF68SYiMA3h9cxEtgawMA2X5KjwYD+MWDBrxaCJYEFvvh/YpOYc5bQ==;31:DbVMyt60zCtgMuKbM8frgZ/rxDWVrPTngIZkr2gxAhh0EAWB84LlzvMUvjkJ4eOShZdvOnLkY4Py3mocvWFaO8+FiGvz3J2z4bXuJDCcfvafmIXd85Ia5rqL5UO6j4oPSYiD/bo220/3MKBEZIBuxY/fkE31XrmxVpcGqJla7Z7tG1FTmdNglSdRuBrG83wSVbFf0XMesv1q0s3ukTXzZrcxW9/QPzPWfKkoiP/OjmY=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1776:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:Quh+enu6pLPwwBDijQmh+vVVzPT2fOA0Q/+XrTiOdPdaH2nhkpydNjYvCsveen+iGdghmWnpCginnw8xpYzuKFaW04YBNKbAUv65hGognN6n+VJuCNTIoGHE2Kv3pUXzBTzwCs9KhB9Y4jGzQgnyYQ3wZfiz/c/7LoKqyEW0OLBtBSKtSzWqb15kxvmKNMl62C26fcrW1zxitfM/eUMpOHdyN4Yoa7wQ6g3L4X6jgFxmzM1IEXVLMcO+DjL7l9ziIZqGHKx1D7YJqJf62vXDXA4ADDr6B87xOUzoRbKmZYio+0LWYr1iC2wZVx35fMzEaEtza1RBT5BcR9Mu/m9CSGVtFo59rr0fzeWWZMp16gg7PUS6QeQXIefaYDiHP741KZ3MaFRIuj5Q7JtBsrhkL6iSxa7HK4ZvBtRaXV+DPC9eVixWrhdIuowj/hNOvrCdKbjqVtewByrzExsWVSb4zUyZ90eI/PSqvmVnGrOO+qLNjGKHPetwY7hAg2AtxfwM;4:3fbSOqN/73eciENpMYvWjujiURKqP91CBIvbnSj4MUo1cQvqi8hDbirCS8PrstB1RuVm1Sk66TFDlYlHMrhFg3F3WiTMOAxB1I7zMNYAn+8oLf3B4tdWZU9+8pUFDWrJPMGJ8FLoRLbHCiWazjh6vjwgOfpvq3JanxkmMbNgbMM8Ojf2idyTEgKXC69QFxddP/1QAIE17rNIRCvTlk1uhnx2JXoQeCBIEjU9coBezTWiAdY0+NcI+onQjS+9volx+h401wvPhU6sK3sNm5ayTPak1H31bHd/UHVnn3VPQDd5Mgj/+NKScRdBEDdpi25e
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1776B52C727E1E6FF586AE1395D70@MWHPR12MB1776.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1776;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1776;
-X-Forefront-PRVS: 0613912E23
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(39860400002)(346002)(39380400002)(189003)(199004)(81166006)(8676002)(81156014)(50226002)(6116002)(7736002)(186003)(16526019)(3846002)(26005)(305945005)(106356001)(2950100002)(16586007)(478600001)(4720700003)(386003)(6666003)(25786009)(316002)(59450400001)(66066001)(97736004)(8936002)(4326008)(50466002)(48376002)(52116002)(51416003)(7696005)(68736007)(53936002)(76176011)(72206003)(36756003)(105586002)(53416004)(2906002)(6486002)(47776003)(5660300001)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1776;H:linux-pyp0.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1776;23:TEOD/WcK0YBCknSBoRebCNaD6FQkgjSgHd0xWfL0X?=
- =?us-ascii?Q?brVqjwNc7PceDv7ox9b/oQhz2tdcz/Ms8BuI0DEcrPijJJbI89BTvUVlduWS?=
- =?us-ascii?Q?EA7gIq9JKyv1Kb9BRVDhmrDWup7kU+jIPYaoiVMRTV4+e0l9y9JMdR+0HNax?=
- =?us-ascii?Q?3P2JD1i+irDV9RVH442VObdV8zuIL0l4QadXKuAHS6Tbt2tpdBmfR+4wrUqw?=
- =?us-ascii?Q?LrSh9E6ZOWHu9jy6wOhyUxlD/AKfxY+n1zyp61DnY372upX2hSQc34XEc/oy?=
- =?us-ascii?Q?/dZ++4qpQojv/FoANNOSCYJbKZP8QiXFscIDZLfctTQrXzyUHRe/suEkLZ7c?=
- =?us-ascii?Q?aG+9bLdTrl1p9cwQeia8L8ZhWtw9aA+WXDCWzWWgo9vXfyeA1U7DaXaFqCve?=
- =?us-ascii?Q?KNt9KDEI1f9x0sCu2mIIIEHnYs9Rg/2vZsMKHUToGHcN8xD6osYlCc12PWa4?=
- =?us-ascii?Q?9ZLIxveSVfiSRbdqYSNpVYCT+Bx4oSkK+ZQzhJYD5niboMzWvUE+JSazAQ+X?=
- =?us-ascii?Q?TijRFXP7Sv4QV4BVzp7yBR5syWKCnIu924Xc7dCCaq+XASoUDgzCr7uvCOHQ?=
- =?us-ascii?Q?Dw1b8NKrx8qnk5GDPPEc/PcD+hBhNA7kuc/+A8ubZTZ40jUmLgxNFz4p2dcY?=
- =?us-ascii?Q?AYU3gv8TP1h42rOqitHG4Q7jX0ut+kWPlsRVIuzPcb43hRL9NVsbWGT13+Dh?=
- =?us-ascii?Q?SXD3cEcv2e4qkSvZm31z8JRy4Vpaf5mzk2xaKUjykG2P9WJEmIiVKrFFXzKU?=
- =?us-ascii?Q?HL+qpivjgv+9o3zpIQ13Y6dIhL9vqZJMFDYfTcQUvy+eXEZgjbGxqcWp7Otg?=
- =?us-ascii?Q?W9678n+Nl1kmRiPV3yY0usjlVUY18L7fK+lk8/S8JUIYnsGOsacgZbZS0Yv1?=
- =?us-ascii?Q?6cnKyFDRH0/o20iiPbf1Gx+/8mEDgKl+86pvCcY5cqkW9jsoMA1bzQGPCXUg?=
- =?us-ascii?Q?uEkjnutdiDRyAeCUvG8p0AyBpj2WkiVO3yMx3UzjC1MP3+7OX6OZj/Thw+hk?=
- =?us-ascii?Q?Dwgkvs5uERyk9xp5kmQ0hi26YgUM+ERCzLp7c844bHPAJhCc0BHandsI9VrA?=
- =?us-ascii?Q?loICRVNbqxh05I3IrZKLoU+DNXDOtHWteGFRX9XaRispzVEr4J1M7j3hCeOH?=
- =?us-ascii?Q?t6HxOJ9IPXif4cxzkXlwW7cZGPbjEhwCxIUCn8U2egu/9r2qTKqhg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: iF0rD9SRRlXX2vJdue/d/+iADOBcYw1+hH81BvP1OT3XX6YW0R9OFYF2ixaOHE39DJuV4ixQauouKNFTaS4//6h3xd2DhkwMO4J0aYgkcG69ahN5KY3QVaxqrnlrmTvS9R73jZXmhzK8OQFtPJn2sc+1dqgmdzOSbp+rB7VW59iXX1vg9cKCGDAWaVpm/3+s
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;6:p87091nwq/uFtfZ9jxAeAUMxQ8XwwS0d+RYyEkCTJDJKTH9/1SZYM7jWThowa4jRmvfhO3oxQk9zXY4vRFaRFViCs7XVgoSdU0Nq5EAAZm1WUDS78mGmForAYefK/HfLSLXGaCiVaGGy4jFMs8fzTYw71c5uA0pXLuwW6puhdrad6I8GOXH52x3gHzgqgO+JwJv8QeWtd03rxutJHIVTvVgGus75jDFLE8JQESlVJST3idwZfoQVUew6iOPUPSCRqRfdV8hEQXHOBu+aS5cldun5Jj5d0mzHQ+uMY5m39Olz5DgBUGz+o2htzuM5LIPqhL+488QvGFdN1gJhPkaeJuBmb1yIGUzJHKg79kzHU5A=;5:Vqhe6EgWoX9i6VNonoPwpFw1c0xdQAK/iPBJV1PyCZqeSly8tKt7JDMaJolBgwa1g/h48yQinxH//5A6mz2yHZmMZhdWKVu0+A03fOAim9qHcfHbDjy1EFIESM/RiGiVQRr5H7EOrWoYZAdPjoSbvUcF6iGGjIC7RJU1yEGuBl4=;24:oCLIi6q3cSVte8zpLBtfsssy20+SpryRj5BrZgRwjfnHJP0r7sf4fa+Mjdbb66sK5NpgbROLwu9hbFWLPWievYOqBF0ee3VWb7E96d1FGXg=;7:L0bxcWo/b0d4tkf9bllixpVznPOWZOrZAEVXOZvOzTLyNY5Bo2VzzqwL7JZOYDUHcW5sKx/Al3pAUN4nM9Tj1Rh9x5uSMANhbRQh/IFt6cY8IM0NXkvctwftEOwXuTdTv7RQjBo1VJtLZpWndWMD0s6uvuHp9zZGKvMrWxRfCNxmb+/dykNf8mFd6q1DtuNdEAKvHkIAy5jj1q12qtZZekC1JZGbZxbO7B4do4EUwAwHzsRTv5qWQ90mFzIaC3j6
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:lcBJXjm7aLu9ozHV5gyOFLv7WV2pk5H9+9Nw8mbKogCRFQBZ1DkMUi3tmmLwZoG756HMxkCbYiEKniGH/xu6un/zvR0+21rODCCzsu62TrhLxX1U2gHxiTFJc1dGrZW4TrmsnN30IHj45w9acHRDbtRPJE4WWQFi5U2pYWoln3RqfU/hZfXmO+Sh10akEvus7dRtwRqTfmCbj/ITc1vecEhtmATrsQHewXh4+AKq4JHl9XzD6+4stzhfttgVVc4H
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 20:37:50.9599 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15ee58ec-bbce-4cf6-3882-08d58b7dca51
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1776
+        id S1753779AbeCPUje (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:39:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753749AbeCPUj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 16:39:28 -0400
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: [PATCH v6 01/12] MODSIGN: Export module signature definitions
+Date: Fri, 16 Mar 2018 17:38:26 -0300
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18031620-8235-0000-0000-00000D2BE07A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008686; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01004029; UDB=6.00511020; IPR=6.00783318;
+ MB=3.00020079; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 20:39:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031620-8236-0000-0000-00004016E2E4
+Message-Id: <20180316203837.10174-2-bauerman@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160243
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vmx module parameters are supposed to be unsigned variants.
+IMA will use the module_signature format for append signatures, so export
+the relevant definitions and factor out the code which verifies that the
+appended signature trailer is valid.
 
-Also fixed the checkpatch errors like the one below.
+Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+and be able to use validate_module_sig() without having to depend on
+CONFIG_MODULE_SIG.
 
-WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
-+module_param(ple_gap, uint, S_IRUGO);
-
-Signed-off-by: Babu Moger <babu.moger@amd.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Jessica Yu <jeyu@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ include/linux/module.h           |  3 --
+ include/linux/module_signature.h | 44 +++++++++++++++++++++++
+ init/Kconfig                     |  6 +++-
+ kernel/Makefile                  |  2 +-
+ kernel/module.c                  |  1 +
+ kernel/module_signing.c          | 77 ++++++++++++++++++----------------------
+ 6 files changed, 85 insertions(+), 48 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index c829d89..c9a9080 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -163,24 +163,24 @@
- #define KVM_VMX_DEFAULT_PLE_WINDOW_MAX    \
- 		INT_MAX / KVM_VMX_DEFAULT_PLE_WINDOW_GROW
+diff --git a/include/linux/module.h b/include/linux/module.h
+index d44df9b2c131..275cbc2579eb 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -24,9 +24,6 @@
+ #include <linux/percpu.h>
+ #include <asm/module.h>
  
--static int ple_gap = KVM_VMX_DEFAULT_PLE_GAP;
--module_param(ple_gap, int, S_IRUGO);
-+static uint ple_gap = KVM_VMX_DEFAULT_PLE_GAP;
-+module_param(ple_gap, uint, 0444);
+-/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
+-#define MODULE_SIG_STRING "~Module signature appended~\n"
+-
+ /* Not Yet Implemented */
+ #define MODULE_SUPPORTED_DEVICE(name)
  
--static int ple_window = KVM_VMX_DEFAULT_PLE_WINDOW;
--module_param(ple_window, int, S_IRUGO);
-+static uint ple_window = KVM_VMX_DEFAULT_PLE_WINDOW;
-+module_param(ple_window, uint, 0444);
+diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
+new file mode 100644
+index 000000000000..890135437b6b
+--- /dev/null
++++ b/include/linux/module_signature.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Module signature handling.
++ *
++ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#ifndef _LINUX_MODULE_SIGNATURE_H
++#define _LINUX_MODULE_SIGNATURE_H
++
++/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
++#define MODULE_SIG_STRING "~Module signature appended~\n"
++
++enum pkey_id_type {
++	PKEY_ID_PGP,		/* OpenPGP generated key ID */
++	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
++	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
++};
++
++/*
++ * Module signature information block.
++ *
++ * The constituents of the signature section are, in order:
++ *
++ *	- Signer's name
++ *	- Key identifier
++ *	- Signature data
++ *	- Information block
++ */
++struct module_signature {
++	u8	algo;		/* Public-key crypto algorithm [0] */
++	u8	hash;		/* Digest algorithm [0] */
++	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
++	u8	signer_len;	/* Length of signer's name [0] */
++	u8	key_id_len;	/* Length of key identifier [0] */
++	u8	__pad[3];
++	__be32	sig_len;	/* Length of signature data */
++};
++
++int validate_module_sig(const struct module_signature *ms, size_t file_len);
++int mod_verify_sig(const void *mod, unsigned long *_modlen);
++
++#endif /* _LINUX_MODULE_SIGNATURE_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index e37f4b2a6445..56a9679671b5 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1760,7 +1760,7 @@ config MODULE_SRCVERSION_ALL
+ config MODULE_SIG
+ 	bool "Module signature verification"
+ 	depends on MODULES
+-	select SYSTEM_DATA_VERIFICATION
++	select MODULE_SIG_FORMAT
+ 	help
+ 	  Check modules for valid signatures upon load: the signature
+ 	  is simply appended to the module. For more information see
+@@ -1775,6 +1775,10 @@ config MODULE_SIG
+ 	  debuginfo strip done by some packagers (such as rpmbuild) and
+ 	  inclusion into an initramfs that wants the module size reduced.
  
- /* Default doubles per-vcpu window every exit. */
--static int ple_window_grow = KVM_VMX_DEFAULT_PLE_WINDOW_GROW;
--module_param(ple_window_grow, int, S_IRUGO);
-+static uint ple_window_grow = KVM_VMX_DEFAULT_PLE_WINDOW_GROW;
-+module_param(ple_window_grow, uint, 0444);
++config MODULE_SIG_FORMAT
++	def_bool n
++	select SYSTEM_DATA_VERIFICATION
++
+ config MODULE_SIG_FORCE
+ 	bool "Require modules to be validly signed"
+ 	depends on MODULE_SIG
+diff --git a/kernel/Makefile b/kernel/Makefile
+index f85ae5dfa474..a4c7a7a0cce7 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -58,7 +58,7 @@ obj-y += up.o
+ endif
+ obj-$(CONFIG_UID16) += uid16.o
+ obj-$(CONFIG_MODULES) += module.o
+-obj-$(CONFIG_MODULE_SIG) += module_signing.o
++obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signing.o
+ obj-$(CONFIG_KALLSYMS) += kallsyms.o
+ obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
+ obj-$(CONFIG_CRASH_CORE) += crash_core.o
+diff --git a/kernel/module.c b/kernel/module.c
+index ad2d420024f6..292eee54e390 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -19,6 +19,7 @@
+ #include <linux/export.h>
+ #include <linux/extable.h>
+ #include <linux/moduleloader.h>
++#include <linux/module_signature.h>
+ #include <linux/trace_events.h>
+ #include <linux/init.h>
+ #include <linux/kallsyms.h>
+diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+index 937c844bee4a..a7c2c461c598 100644
+--- a/kernel/module_signing.c
++++ b/kernel/module_signing.c
+@@ -11,36 +11,41 @@
  
- /* Default resets per-vcpu window every exit to ple_window. */
--static int ple_window_shrink = KVM_VMX_DEFAULT_PLE_WINDOW_SHRINK;
--module_param(ple_window_shrink, int, S_IRUGO);
-+static uint ple_window_shrink = KVM_VMX_DEFAULT_PLE_WINDOW_SHRINK;
-+module_param(ple_window_shrink, uint, 0444);
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
++#include <linux/module_signature.h>
+ #include <linux/string.h>
+ #include <linux/verification.h>
+ #include <crypto/public_key.h>
+ #include "module-internal.h"
  
- /* Default is to compute the maximum so we can never overflow. */
--static int ple_window_actual_max = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
--static int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
--module_param(ple_window_max, int, S_IRUGO);
-+static uint ple_window_actual_max = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
-+static uint ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
-+module_param(ple_window_max, uint, 0444);
+-enum pkey_id_type {
+-	PKEY_ID_PGP,		/* OpenPGP generated key ID */
+-	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
+-	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
+-};
+-
+-/*
+- * Module signature information block.
++/**
++ * validate_module_sig - validate that the given signature is sane
+  *
+- * The constituents of the signature section are, in order:
+- *
+- *	- Signer's name
+- *	- Key identifier
+- *	- Signature data
+- *	- Information block
++ * @ms:		Signature to validate.
++ * @file_len:	Size of the file to which @ms is appended.
+  */
+-struct module_signature {
+-	u8	algo;		/* Public-key crypto algorithm [0] */
+-	u8	hash;		/* Digest algorithm [0] */
+-	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+-	u8	signer_len;	/* Length of signer's name [0] */
+-	u8	key_id_len;	/* Length of key identifier [0] */
+-	u8	__pad[3];
+-	__be32	sig_len;	/* Length of signature data */
+-};
++int validate_module_sig(const struct module_signature *ms, size_t file_len)
++{
++	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
++		return -EBADMSG;
++
++	if (ms->id_type != PKEY_ID_PKCS7) {
++		pr_err("Module is not signed with expected PKCS#7 message\n");
++		return -ENOPKG;
++	}
++
++	if (ms->algo != 0 ||
++	    ms->hash != 0 ||
++	    ms->signer_len != 0 ||
++	    ms->key_id_len != 0 ||
++	    ms->__pad[0] != 0 ||
++	    ms->__pad[1] != 0 ||
++	    ms->__pad[2] != 0) {
++		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
++		return -EBADMSG;
++	}
++
++	return 0;
++}
  
- extern const ulong vmx_return;
- 
-@@ -6640,7 +6640,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
- 	return ret;
- }
- 
--static int __grow_ple_window(int val)
-+static uint __grow_ple_window(uint val)
+ /*
+  * Verify the signature on a module.
+@@ -49,6 +54,7 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
  {
- 	if (ple_window_grow < 1)
- 		return ple_window;
-@@ -6655,7 +6655,7 @@ static int __grow_ple_window(int val)
- 	return val;
- }
+ 	struct module_signature ms;
+ 	size_t modlen = *_modlen, sig_len;
++	int ret;
  
--static int __shrink_ple_window(int val, int modifier, int minimum)
-+static uint __shrink_ple_window(uint val, uint modifier, uint minimum)
- {
- 	if (modifier < 1)
- 		return ple_window;
--- 
-1.8.3.1
+ 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
+ 
+@@ -56,30 +62,15 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 		return -EBADMSG;
+ 
+ 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+-	modlen -= sizeof(ms);
++
++	ret = validate_module_sig(&ms, modlen);
++	if (ret)
++		return ret;
+ 
+ 	sig_len = be32_to_cpu(ms.sig_len);
+-	if (sig_len >= modlen)
+-		return -EBADMSG;
+-	modlen -= sig_len;
++	modlen -= sig_len + sizeof(ms);
+ 	*_modlen = modlen;
+ 
+-	if (ms.id_type != PKEY_ID_PKCS7) {
+-		pr_err("Module is not signed with expected PKCS#7 message\n");
+-		return -ENOPKG;
+-	}
+-
+-	if (ms.algo != 0 ||
+-	    ms.hash != 0 ||
+-	    ms.signer_len != 0 ||
+-	    ms.key_id_len != 0 ||
+-	    ms.__pad[0] != 0 ||
+-	    ms.__pad[1] != 0 ||
+-	    ms.__pad[2] != 0) {
+-		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
+-		return -EBADMSG;
+-	}
+-
+ 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+ 				      NULL, VERIFYING_MODULE_SIGNATURE,
+ 				      NULL, NULL);
