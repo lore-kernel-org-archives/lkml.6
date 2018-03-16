@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsfh75lwJgJVghGyk5wvIet6SyvbGvd4HYHvMbBiNF8uYKYcJyoz2KKbbSWQp6G6jMiFCug
-ARC-Seal: i=1; a=rsa-sha256; t=1521214319; cv=none;
+X-Google-Smtp-Source: AG47ELts9T8zZU6SIrTa2scSa6pbduNaxL/JdLy3r1QB50B9oZKXL8NWKIM1ef4ggLx/k3qHk/j4
+ARC-Seal: i=1; a=rsa-sha256; t=1521214316; cv=none;
         d=google.com; s=arc-20160816;
-        b=0mH5YHSN6axQt00UmQggSowLjwNZBp4Yp+q+4XANReFV2YeRSulflebaU4EFE8FHMX
-         CIwjbWBvWr9O3FIn5ebXBRLNoH/qnQtIANyT4hJQWXS+0tQSyJ9+aqH2AmbYRy5p8/qJ
-         vA6o5f+hdy12p7MF69xC0w3oU7DNRkxtcsgSdh4HeZb5ntbWErD5HJ4HNgwXQcR0QI6f
-         gwwR2RuI4mMD2DgePOB7pn3SwVBgzyOD/3/qz9SkYbYCtg3TXk03lZjiWuTWF4f/GxLv
-         gqFexsZS62EqyUEmvha7cwrFGLV6Y/D8xe+qoHbfwRnWGAef/svuhVgy3UVRrRkvCElP
-         aA/g==
+        b=yWF2mQ7V3szJcMVknBmWGKNF7l1NxRFaIApN9urcEhYI7ymQ/1ukdVCvqZArfTDunR
+         2VuThxqhKcB6hfelsyYjzQPPtzYQ3CSYYEKP68BJlSYuy7o+PIcYnH/t7qxzvIE0qCrs
+         hhyZU/qwmpy8e/yZ7dJ+7VvWICvVdwydV0SncsPbofA5KARlaGxncaIC3AjDJgnjXSjC
+         nF/y6EEMLkyFIydov9NPJnf5ciVSqsLCuvUroF88P6a65Iwmose7hcasy8j/hM4RzlX6
+         ti90Wj3fKfqqbvcVJCo3ObCsfSa2ntOJ8Cv2NFu7JJOehGf3BC8GHSo5zh063jDZ6oXk
+         upGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=M0Z6M4mnyEYvsj9fJElnO3dRTFFdQOqmcnpLbl8G4hs=;
-        b=xns+Ndz8nzeBdqffxmr342oT0UPRxp5vyYqYzD1e0X9ZIN7B8Z6y7xdnOHqmx4HtyX
-         5fISvjP516udfe50gHhLektbwnkOWC/X0O27zHjvFiooolppeHAkZsOqm/yJdaY8AyhM
-         fWyvkgJfQsuZLFFwbgRaMzHkVOcruantP6onPuBOJX1LdPn+Gvas0sflaGK6SKJlpv34
-         QVhyYQmYU9eVKkPLGtvi7i/W5lKyHuBvXOuoGzkSPbnvvbkuptoFWbatz3U0Ndo4Z8Eu
-         OJAma7azE0/f4YdC0VsJRfA2J+1GoxZYwuSTzxa0v+kRnAoWuVqjJQtvxah0UDx6nz8g
-         ZPOA==
+        bh=Jer0p39QTM0yYE70//mKIqJj1FaBkSEZLI3hXbRkv8s=;
+        b=yCPqEvt0GQeEOnvyzRKHfSYYwOleX3d/jQK1SKrgowGVPaeUCL7egKRGiftBfanHrz
+         Znq6UyK9K3UvoT2ybk17LyMKnyk8vtWGRNOGTQyhC4lw0TKPsULDYFSNm/QwuB5KfZsi
+         096Rlmby9/QF28WnX4KwLM8NEhlQeqSacRc3dujZLDMEF1KjlcSyYmhXJknNWxFy8KNf
+         DeLEhpy4ZUbv5kzFABkM8ESJuScLNx5JADPPY3q8qrb0R72GbZo/nvraFG/wUNAXOX3I
+         wmWEmizi48+feu9dD9PwnECC+fs9De8Jm4pyLCAB9gXPylU7N6xp3Ku+WiKOlYmrQYk8
+         IJCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Hans Verkuil <hansverk@cisco.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 53/86] [media] tc358743: fix register i2c_rd/wr function fix
-Date: Fri, 16 Mar 2018 16:23:16 +0100
-Message-Id: <20180316152320.963513071@linuxfoundation.org>
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 44/86] x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
+Date: Fri, 16 Mar 2018 16:23:07 +0100
+Message-Id: <20180316152320.444560453@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -44,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108576405352824?=
-X-GMAIL-MSGID: =?utf-8?q?1595108826822884913?=
+X-GMAIL-THRID: =?utf-8?q?1595108823278614581?=
+X-GMAIL-MSGID: =?utf-8?q?1595108823278614581?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,36 +59,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit f2c61f98e0b5f8b53b8fb860e5dcdd661bde7d0b upstream.
+commit bd89004f6305cbf7352238f61da093207ee518d6 upstream.
 
-The below mentioned fix contains a small but severe bug,
-fix it to make the driver work again.
+The objtool retpoline validation found this indirect jump. Seeing how
+it's on CPU bringup before we run userspace it should be safe, annotate
+it.
 
-Fixes: 3538aa6ecfb2 ("[media] tc358743: fix register i2c_rd/wr functions")
-
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/tc358743.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/head_64.S |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/i2c/tc358743.c
-+++ b/drivers/media/i2c/tc358743.c
-@@ -222,7 +222,7 @@ static void i2c_wr8(struct v4l2_subdev *
- static void i2c_wr8_and_or(struct v4l2_subdev *sd, u16 reg,
- 		u8 mask, u8 val)
- {
--	i2c_wrreg(sd, reg, (i2c_rdreg(sd, reg, 2) & mask) | val, 2);
-+	i2c_wrreg(sd, reg, (i2c_rdreg(sd, reg, 1) & mask) | val, 1);
- }
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -22,6 +22,7 @@
+ #include <asm/nops.h>
+ #include "../entry/calling.h"
+ #include <asm/export.h>
++#include <asm/nospec-branch.h>
  
- static u16 i2c_rd16(struct v4l2_subdev *sd, u16 reg)
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/asm-offsets.h>
+@@ -200,6 +201,7 @@ ENTRY(secondary_startup_64)
+ 
+ 	/* Ensure I am executing from virtual addresses */
+ 	movq	$1f, %rax
++	ANNOTATE_RETPOLINE_SAFE
+ 	jmp	*%rax
+ 1:
+ 
