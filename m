@@ -1,128 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752950AbeCPSRe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:17:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752914AbeCPSOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:14:35 -0400
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        id S1752238AbeCPSTl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:19:41 -0400
+Received: from mga11.intel.com ([192.55.52.93]:53019 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeCPSTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 14:19:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="212277278"
+Message-ID: <1521224375.23017.41.camel@linux.intel.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 5/9] ipc: Clamp semmni to the real IPCMNI limit
-Date: Fri, 16 Mar 2018 14:13:46 -0400
-Message-Id: <1521224030-2185-6-git-send-email-longman@redhat.com>
-In-Reply-To: <1521224030-2185-1-git-send-email-longman@redhat.com>
-References: <1521224030-2185-1-git-send-email-longman@redhat.com>
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date: Fri, 16 Mar 2018 20:19:35 +0200
+In-Reply-To: <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+References: <1520330185.10722.401.camel@linux.intel.com>
+         <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
+         <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+         <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
+         <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+         <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+         <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+         <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+         <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+         <1521119343.10722.665.camel@linux.intel.com>
+         <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For SysV semaphores, the semmni value is the last part of the 4-element
-sem number array. To make semmni behave in a similar way to msgmni
-and shmmni, we can't directly use the _minmax handler. Instead,
-a special sem specific handler is added to check the last argument
-to make sure that it is clamped to the [0, IPCMNI] range and prints
-a warning message once when an out-of-range value is being written.
-This does require duplicating some of the code in the _minmax handlers.
+On Thu, 2018-03-15 at 16:26 +0100, Petr Mladek wrote:
+> On Thu 2018-03-15 15:09:03, Andy Shevchenko wrote:
+> > On Wed, 2018-03-14 at 15:09 +0100, Petr Mladek wrote:
+> > > We already prevent crash when dereferencing some obviously broken
+> > > pointers. But the handling is not consistent. Sometimes we print
+> > > "(null)"
+> > > only for pure NULL pointer, sometimes for pointers in the first
+> > > page and 
+> > 
+> > 
+> > > sometimes also for pointers in the last page (error codes).
+> > 
+> > I still think that printing a hex value of the error code is much
+> > better
+> > than some odd "(efault)".
+> 
+> Do you mean (err:0e)? Google gives rather confusing answers for this.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- ipc/ipc_sysctl.c | 12 +++++++++++-
- ipc/sem.c        | 25 +++++++++++++++++++++++++
- ipc/util.h       |  4 ++++
- 3 files changed, 40 insertions(+), 1 deletion(-)
+More like "(0xHHHH)" (we have already more than 512 error code numbers.
 
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index 088721e..0ad7088 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -88,12 +88,22 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
- }
- 
-+static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
-+	void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret = proc_ipc_dointvec(table, write, buffer, lenp, ppos);
-+
-+	sem_check_semmni(table, current->nsproxy->ipc_ns);
-+	return ret;
-+}
-+
- #else
- #define proc_ipc_doulongvec_minmax NULL
- #define proc_ipc_dointvec	   NULL
- #define proc_ipc_dointvec_minmax   NULL
- #define proc_ipc_dointvec_minmax_orphans   NULL
- #define proc_ipc_auto_msgmni	   NULL
-+#define proc_ipc_sem_dointvec	   NULL
- #endif
- 
- static int zero;
-@@ -177,7 +187,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.data		= &init_ipc_ns.sem_ctls,
- 		.maxlen		= 4*sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_ipc_dointvec,
-+		.proc_handler	= proc_ipc_sem_dointvec,
- 	},
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	{
-diff --git a/ipc/sem.c b/ipc/sem.c
-index a4af049..faf2caa 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -2337,3 +2337,28 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it)
- 	return 0;
- }
- #endif
-+
-+#ifdef CONFIG_PROC_SYSCTL
-+/*
-+ * Check to see if semmni is out of range and clamp it if necessary.
-+ */
-+void sem_check_semmni(struct ctl_table *table, struct ipc_namespace *ns)
-+{
-+	bool clamped = false;
-+
-+	/*
-+	 * Clamp semmni to the range [0, IPCMNI].
-+	 */
-+	if (ns->sc_semmni < 0) {
-+		ns->sc_semmni = 0;
-+		clamped = true;
-+	}
-+	if (ns->sc_semmni > IPCMNI) {
-+		ns->sc_semmni = IPCMNI;
-+		clamped = true;
-+	}
-+	if (clamped)
-+		pr_warn_ratelimited("sysctl: \"sem[3]\" was set out of range [%d, %d], clamped to %d.\n",
-+				     0, IPCMNI, ns->sc_semmni);
-+}
-+#endif
-diff --git a/ipc/util.h b/ipc/util.h
-index 89b8ec1..af57394 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -206,6 +206,10 @@ int ipcget(struct ipc_namespace *ns, struct ipc_ids *ids,
- void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
- 		void (*free)(struct ipc_namespace *, struct kern_ipc_perm *));
- 
-+#ifdef CONFIG_PROC_SYSCTL
-+extern void sem_check_semmni(struct ctl_table *table, struct ipc_namespace *ns);
-+#endif
-+
- #ifdef CONFIG_COMPAT
- #include <linux/compat.h>
- struct compat_ipc_perm {
+
+> I am not super excited about (efault). But it seems to be less
+> cryptic and the style is more similar to (null).
+> 
+> Best Regards,
+> Petr
+
 -- 
-1.8.3.1
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
