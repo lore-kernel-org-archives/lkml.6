@@ -1,201 +1,1657 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeCPHOc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:14:32 -0400
-Received: from mga04.intel.com ([192.55.52.120]:63853 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751094AbeCPHOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:14:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
-   d="gz'50?scan'50,208,50";a="26174769"
-Date: Fri, 16 Mar 2018 15:13:49 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: kbuild-all@01.org, linux-kbuild@vger.kernel.org,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] kbuild: move 'scripts' target below
-Message-ID: <201803161556.k5e67tZ5%fengguang.wu@intel.com>
-References: <1521045861-22418-4-git-send-email-yamada.masahiro@socionext.com>
+        id S1753049AbeCPHR0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:17:26 -0400
+Received: from mail-dm3nam03on0053.outbound.protection.outlook.com ([104.47.41.53]:50208
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751094AbeCPHRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:23 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
+From: Aaron Wu <aaron.wu@analog.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 03/28] media: Remove Blackfin media support
+Date: Fri, 16 Mar 2018 15:08:01 +0800
+Message-ID: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <1521045861-22418-4-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(39860400002)(39380400002)(396003)(376002)(346002)(2980300002)(438002)(189003)(199004)(106466001)(48376002)(50466002)(106002)(2906002)(2351001)(5890100001)(47776003)(16586007)(316002)(4326008)(72206003)(478600001)(5660300001)(51416003)(8936002)(7696005)(7636002)(59450400001)(305945005)(8676002)(246002)(36756003)(86362001)(575784001)(50226002)(186003)(336012)(356003)(6666003)(426003)(107886003)(77096007)(26005)(6916009)(53946003)(2004002)(579004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2621;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD006;1:NPuZMRfh7z5XDqMj4yb7/8BvIQgfO1RCXNxYPl+yq22vVmf/PFP6ERc3U3JjyHWEotQMGj/LlgcqD0avwXUM1rFZQgeRl06R1sA5COivzDQ5C7lXcxfvxGz2++/1C9/p
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 62f6d76a-02f6-4ac8-1c3b-08d58b0df52c
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:MWHPR03MB2621;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2621;3:ZAXLEyZbsQB0rkTm/iihgoiFFWTFBoCymYn5eIOhZj3R9M+qU+j9W/u0hG52ON/mCU7NR6LyBngjphRnD6vdVJZr66PmMyToTaiRrHFwJ5xlVsqA+aLs065kPvRX9kbB0cNsRwUoCQcfVPGKrgx0g1NIlcIQAybddRiS1nTdCohuFsvFJOb+CKzcmjrYul3+x1FgoheGCPF5R+jgP1T5/a6TX91PLP626q1yrO0S/g0pIk+Qg+44CbJEeLCcXn+8LNqaqeHu/Bj2be5IMLIgWahaSWsHezkC1QSEHAC5OC3xIJj/9vNlHSeKIdBxyaSFppVI2bUeIJsJs+g11pazdQ==;25:+Grv7vI0GKUGfkh4XJsJZXrG2oOrfjSLOmF6YGWWFZv38i6qUoHLvKxouYvLGPhqB3DHOL5O7u5DBv92KybV4UcUWPrh+iMwCgozNZ23SJ5aNvNlW0cqnfCxjWWSLpFYveUeRxofThFia3uI7NN4plnYmK1brBEe3FVNEHbvmdFH1NN5UjxiKPIqbNtpezfIrxvLZLx/9cayFOryA2lLNNYxpuYkEhuMex2Vz0I9CG/swwaRvyNFUmE+20Rj6rG+eUMkxo0LQ9jK8Ky4YZ3sWuZNit8CQVNTruyRaVUK9We3LljYE6l82bZXA2nnmhTF7Dyk+8w6ofDr9wqOdBsmYQ==;31:xHvrW5p8fRN+5DFAjGfHj+gwdYEtqS5tGeeNKqS3C/sO4vZU3QaHMlSbu+s/IcLimbvUsUzQbDWLHxek/QSS+wvGaDNjfmPxrOswHE+jusz03RZdjq5XI+RDB677fcCiikOqubh3JaPT7JRIKnqg6QZwOPkBhWgWk3BqA6NXB8fxkRCuD9iVuSMPPwvNyL1LRJnHEyt5YhSnauy7DhuTFOL/ESN+xwldfM22DPkTGmk=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB2621:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2621;20:uMWO5bQYq84tNuupVJBxn28dzJhyEFlZLjErJy72cKrrSxUdy3EJsGM3xXRxOFPElc3DOGfEmU7aUy+0dcZ2zLrV+ksBDX7HGBfiIbUCbh8TesIr5/MtdBLX/cOnT6YCyqXYJ4zToosW8cqYr1htRm8hPu6A5TxxmrXmglnHyfOg/VAdtoRcPYe42l4QI3atnpf8yqPPTP32YLs3L51Q4Cw+bIZsQOX6HLqh+oZsl/6mGFYe07SXaFJgR+1SSXmlnvsdfEJMZ8lvj7FxDIb03IkfsFxX+fw/42npjsQtphUsjgSQJxQ1xc45FgOsw28711ML2HDrwi98KcqqzzoM/JqDV1ZqfXFGzlQOxOROzPTbiaeiKXMyaL0BgeRmJYGI2SHc072fNkXLaEamK81quQcv0a4BctO0z/wOJ0aQn8QVIUeL5xnWAXmPzwJkDQR9227QDj3XR/BETr5ykBaEhz/JcTpxtGqY+mK2T+T64/M+j9sMvHp4ixoKfBIXX8lX;4:PNgIKB7AfzGpAWeMPFp39MjJdMzRRjQ1f8H1Ylf+ElZ3TFHLki8F2il85pBeyMtSKBF6UpnBXbfh+NytbIkcXjXu8bbvYFDjMTzl22T9iXiPPlQgUsldNew7Dt47s9oAaLFAx3UMIFAZYUs2oAmZoRJ9jyZZm7cE6/EF7EWnS5P7OnH2E0FA9pb6rR3bMX4nJ0iQV8R0uE6WbGU/Ca/raLZ7q+W76QubeKX6nuONNxrd+g3RkHtte935WC1ZGTpti+kJE1ngPQKSTC3SIyG1B/UbCxZVotKMCGh/1NIzfRrp/2K77Fh+nz2RnII1OgQvpHlgTSULRSRT+gsBmr6DaT9AOmUWlGpiWq0ilPsjka8=
+X-Microsoft-Antispam-PRVS: <MWHPR03MB26217F33C6CE95D261000011E0D70@MWHPR03MB2621.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(85827821059158);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR03MB2621;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2621;
+X-Forefront-PRVS: 0613912E23
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2621;23:qVjD4OIOYLA56bDhnNA4UbhnN+QhIZPUbGoNc5MAE?=
+ =?us-ascii?Q?vj4MBrzXp4uWPDLNm500a+2Nngp5FrTwmQsXwlyDoRENwp93KOtzB5s0hJUX?=
+ =?us-ascii?Q?/hM+TzfIgh47nEWcXRX79nut+jzik0utCc8p6ATzwXkoQDy6c3/0bXFktSy7?=
+ =?us-ascii?Q?ZjgDDGysc9eJ2+6wK+4s3oFsZz2T02ctXYwFwdEHn2kYvTjlCo9mFrKEKaag?=
+ =?us-ascii?Q?szrKctpANrTd3PgouxbvxsutdHWzjLGDm2kM8NDVaphYD0+UG3NPSzvYPctD?=
+ =?us-ascii?Q?fQwLiuqrw3kA9jADZlWL6tHsCJeawFgE8GROv5gQA1KAmo/QwBgIs/yp5f9f?=
+ =?us-ascii?Q?3wDCFNRW7wHnLqLHevqmZTUa4bofpuiBMgqDYVVg5D4cXcGW6GCXb1vfe2Vz?=
+ =?us-ascii?Q?9DrXVAKKVBQdtzMLGAycFdtq/mp8tXC8GA+P71o8YmKuik2G0VkX4vb0MwqI?=
+ =?us-ascii?Q?h529XQwk/4/rVKm/PDgeMN8dY1UQURsBW9o0iir8hvY3A3BmRA37+H1twekm?=
+ =?us-ascii?Q?dRY53MDBb/1+WCYZ3rIiXyz7bOTxhtfueZH9VDANQUu3rKw3vLhWixFmNp4P?=
+ =?us-ascii?Q?fWsrB0+OX0U6MV8yGPcmGJNRE0TRbkZr2B8sgUD9mwoK4iuEv9Q2SFFAjqMl?=
+ =?us-ascii?Q?+iFvH77LBP3b8l8A37dLD9EzY2KoAdEy8jlHAiFaYfzADXtZpWOpGb/LMhCt?=
+ =?us-ascii?Q?Ay3cflP+hwUWm++U9MRALGtHca76wFec+nn7FXb/wRsHm7o4MLU4DNrBlJPi?=
+ =?us-ascii?Q?wGcIzilG9O9wxJz18WbBAQLktl3h9aEK9uFe4gKX9rHAxe0ZB6HLhP8uBp0G?=
+ =?us-ascii?Q?KGX64gbEohKI8UOx4SOJn/m5K8AgZ0AVfL4rTALUWPg/U9aPZ4qv2fhb5GLn?=
+ =?us-ascii?Q?C7R4PU4e43mDLcdZR0JmR4jKbAJ0/K/ZNpcyAP+pNuf8nNWxVqgIEgopBBw4?=
+ =?us-ascii?Q?a3cAtOF7AB73/uWJWcA10qMyrhbTqJ/TotK+Pl7XQpxd7qRFprYOy8jllj6X?=
+ =?us-ascii?Q?lmgnlAkoErFqCRVIavaNXJhwg5+4iCShYYe1Ee4bcM0Vapc28KNzAFhZWeMS?=
+ =?us-ascii?Q?CJpO0VxQFqf5p6c1fGFC8sD1QjkPbTzYIpAh3mC4fC/eR27m0KiinU7bLIKp?=
+ =?us-ascii?Q?sQNRwnqDiAzgE+nVrrMFoIwYqHG22tq+KoZDmORPERby4CfRGkeEA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: zaC7Fp4ZQTXS96zY74CiaGFQr+nd92U3EJQs4G3eN0LatalF1ET/4Fuj9Pr2Yk+T2ROvC00fyd5ugfxt4jz1WwNFF/vZc5TLMLEZ2lCSy4UC1pv4bsjj7/UbTWkQZK3c0VIziuZipCAobNiV6LveyoP95rSz+9nCVm26ByOkf2BVcYzCtB3FiSNzY7K/16+2
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2621;6:0oX29M+gWsGYXfTF3ykUU6x5qmYah+K+x87q2awjPZBJv8D0Zhyj+AgOdL9lQbDTLcHC64ARXguHMEFruVt+2Ul/+osqwkxDat8iYDJD3BaG3pytU57ZamcBZavrySiJ84o7W6ZLnKkvuxlRxl+A0qLnTUBkNj5w1vS38vpGKL0vbvxYVpDx0iR5bL+h49QnnK6nFRGKFfpxBG5F3Q+HB50+RVaD9Bm8RxjQZ8VWHh5/k1vV59emkRVfqQnlfcogffLeDHshR5I8FO5K4HcYmjEXgAW2bAH/QqZ+o2WXEbLMFYFttqGt1BRvt53KCXoJim7qbjjG9W9DqVdfnoFoZWRU2F0vfqxrT3MbzsJqP1w=;5:oVJ4SBul07ZA7QEOMKdjltM/0eglWQgReVDD+ZE+5ir1ddmSqRWr3y6pLYg+Oj+8dF9C/3Tenl6vMiEzgu01Zv8/+yfQzaW3dO03oXh9OB4VRrhcdf6mlzlkvTfxUHTgGM6KE0L7pxtSiJvGDHEQnTmCP+La8gbQuvL2yw3rp9c=;24:vNUdJRAQ0fZFKOY3E1eTQ27cfstyMuudCaxazlxHdaQCNRgIUkblnTV5Ig9lwLKAZWaUJgh9l4Uqv8Wv6yrZKWBtNUP1NfOl8t3/JWe/7Dc=;7:vn3wwt3bJ7y+XFbSniOZFGchWcjw5jkS+0CkBV0HLERZ1gk0GRDdTvhAcW0X6n0ajxO8Ja2ZR0XQKZoqsvC/0czl6wfpbo3P7ZJHqNFNxYsn4KU2lm5sp6aGcD6xP0xJwg4QV4GjrxG6VlFHRAidqEVW35Zl87no0MyVVS11xZRg1oKVARYtm8ZHefWEhUZqrPeeRHalWMaNB0DZVIqSy+j4TQacsW1nJ7dLID0niiX0XgepyZbgEQH+aafNpckJ
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:20.5845
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62f6d76a-02f6-4ac8-1c3b-08d58b0df52c
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2621
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Masahiro,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.16-rc5 next-20180315]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/kbuild-various-fix-clean-up-improvements-of-CONFIG_TRIM_UNUSED_KSYMS/20180316-123605
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-Note: the linux-review/Masahiro-Yamada/kbuild-various-fix-clean-up-improvements-of-CONFIG_TRIM_UNUSED_KSYMS/20180316-123605 HEAD 4825fb9eaae4e9ae97e48daeaa1bdcad6ea8b12f builds fine.
-      It only hurts bisectibility.
-
-All errors (new ones prefixed by >>):
-
->> make[1]: *** No rule to make target 'autoksyms', needed by 'scripts'.
-   make[1]: Target '_all' not remade because of errors.
-
+Remove Blackfin media support
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/media/platform/Kconfig                 |   2 -
+ drivers/media/platform/Makefile                |   2 -
+ drivers/media/platform/blackfin/Kconfig        |  16 -
+ drivers/media/platform/blackfin/Makefile       |   2 -
+ drivers/media/platform/blackfin/bfin_capture.c | 989 -------------------------
+ drivers/media/platform/blackfin/ppi.c          | 361 ---------
+ include/media/blackfin/bfin_capture.h          |  39 -
+ include/media/blackfin/ppi.h                   |  94 ---
+ 8 files changed, 1505 deletions(-)
+ delete mode 100644 drivers/media/platform/blackfin/Kconfig
+ delete mode 100644 drivers/media/platform/blackfin/Makefile
+ delete mode 100644 drivers/media/platform/blackfin/bfin_capture.c
+ delete mode 100644 drivers/media/platform/blackfin/ppi.c
+ delete mode 100644 include/media/blackfin/bfin_capture.h
+ delete mode 100644 include/media/blackfin/ppi.h
 
---VS++wcV0S1rZb1Fb
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---VS++wcV0S1rZb1Fb--
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 614fbef..00158b3 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -31,8 +31,6 @@ source "drivers/media/platform/davinci/Kconfig"
+ 
+ source "drivers/media/platform/omap/Kconfig"
+ 
+-source "drivers/media/platform/blackfin/Kconfig"
+-
+ config VIDEO_SH_VOU
+ 	tristate "SuperH VOU video output driver"
+ 	depends on MEDIA_CAMERA_SUPPORT
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 7f30804..e2b5cb3 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -53,8 +53,6 @@ obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+ 
+ obj-y					+= stm32/
+ 
+-obj-y                                   += blackfin/
+-
+ obj-y					+= davinci/
+ 
+ obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+diff --git a/drivers/media/platform/blackfin/Kconfig b/drivers/media/platform/blackfin/Kconfig
+deleted file mode 100644
+index 68fa901..0000000
+--- a/drivers/media/platform/blackfin/Kconfig
++++ /dev/null
+@@ -1,16 +0,0 @@
+-config VIDEO_BLACKFIN_CAPTURE
+-	tristate "Blackfin Video Capture Driver"
+-	depends on VIDEO_V4L2 && BLACKFIN && I2C
+-	depends on HAS_DMA
+-	select VIDEOBUF2_DMA_CONTIG
+-	help
+-	  V4L2 bridge driver for Blackfin video capture device.
+-	  Choose PPI or EPPI as its interface.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin_capture.
+-
+-config VIDEO_BLACKFIN_PPI
+-	tristate
+-	depends on VIDEO_BLACKFIN_CAPTURE
+-	default VIDEO_BLACKFIN_CAPTURE
+diff --git a/drivers/media/platform/blackfin/Makefile b/drivers/media/platform/blackfin/Makefile
+deleted file mode 100644
+index 30421bc..0000000
+--- a/drivers/media/platform/blackfin/Makefile
++++ /dev/null
+@@ -1,2 +0,0 @@
+-obj-$(CONFIG_VIDEO_BLACKFIN_CAPTURE) += bfin_capture.o
+-obj-$(CONFIG_VIDEO_BLACKFIN_PPI)     += ppi.o
+diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
+deleted file mode 100644
+index 41f1791..0000000
+--- a/drivers/media/platform/blackfin/bfin_capture.c
++++ /dev/null
+@@ -1,989 +0,0 @@
+-/*
+- * Analog Devices video capture driver
+- *
+- * Copyright (c) 2011 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#include <linux/completion.h>
+-#include <linux/delay.h>
+-#include <linux/errno.h>
+-#include <linux/fs.h>
+-#include <linux/i2c.h>
+-#include <linux/init.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/mm.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-#include <linux/time.h>
+-#include <linux/types.h>
+-
+-#include <media/v4l2-common.h>
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+-#include <media/v4l2-ioctl.h>
+-#include <media/videobuf2-dma-contig.h>
+-
+-#include <asm/dma.h>
+-
+-#include <media/blackfin/bfin_capture.h>
+-#include <media/blackfin/ppi.h>
+-
+-#define CAPTURE_DRV_NAME        "bfin_capture"
+-
+-struct bcap_format {
+-	char *desc;
+-	u32 pixelformat;
+-	u32 mbus_code;
+-	int bpp; /* bits per pixel */
+-	int dlen; /* data length for ppi in bits */
+-};
+-
+-struct bcap_buffer {
+-	struct vb2_v4l2_buffer vb;
+-	struct list_head list;
+-};
+-
+-struct bcap_device {
+-	/* capture device instance */
+-	struct v4l2_device v4l2_dev;
+-	/* v4l2 control handler */
+-	struct v4l2_ctrl_handler ctrl_handler;
+-	/* device node data */
+-	struct video_device video_dev;
+-	/* sub device instance */
+-	struct v4l2_subdev *sd;
+-	/* capture config */
+-	struct bfin_capture_config *cfg;
+-	/* ppi interface */
+-	struct ppi_if *ppi;
+-	/* current input */
+-	unsigned int cur_input;
+-	/* current selected standard */
+-	v4l2_std_id std;
+-	/* current selected dv_timings */
+-	struct v4l2_dv_timings dv_timings;
+-	/* used to store pixel format */
+-	struct v4l2_pix_format fmt;
+-	/* bits per pixel*/
+-	int bpp;
+-	/* data length for ppi in bits */
+-	int dlen;
+-	/* used to store sensor supported format */
+-	struct bcap_format *sensor_formats;
+-	/* number of sensor formats array */
+-	int num_sensor_formats;
+-	/* pointing to current video buffer */
+-	struct bcap_buffer *cur_frm;
+-	/* buffer queue used in videobuf2 */
+-	struct vb2_queue buffer_queue;
+-	/* queue of filled frames */
+-	struct list_head dma_queue;
+-	/* used in videobuf2 callback */
+-	spinlock_t lock;
+-	/* used to access capture device */
+-	struct mutex mutex;
+-	/* used to wait ppi to complete one transfer */
+-	struct completion comp;
+-	/* prepare to stop */
+-	bool stop;
+-	/* vb2 buffer sequence counter */
+-	unsigned sequence;
+-};
+-
+-static const struct bcap_format bcap_formats[] = {
+-	{
+-		.desc        = "YCbCr 4:2:2 Interleaved UYVY",
+-		.pixelformat = V4L2_PIX_FMT_UYVY,
+-		.mbus_code   = MEDIA_BUS_FMT_UYVY8_2X8,
+-		.bpp         = 16,
+-		.dlen        = 8,
+-	},
+-	{
+-		.desc        = "YCbCr 4:2:2 Interleaved YUYV",
+-		.pixelformat = V4L2_PIX_FMT_YUYV,
+-		.mbus_code   = MEDIA_BUS_FMT_YUYV8_2X8,
+-		.bpp         = 16,
+-		.dlen        = 8,
+-	},
+-	{
+-		.desc        = "YCbCr 4:2:2 Interleaved UYVY",
+-		.pixelformat = V4L2_PIX_FMT_UYVY,
+-		.mbus_code   = MEDIA_BUS_FMT_UYVY8_1X16,
+-		.bpp         = 16,
+-		.dlen        = 16,
+-	},
+-	{
+-		.desc        = "RGB 565",
+-		.pixelformat = V4L2_PIX_FMT_RGB565,
+-		.mbus_code   = MEDIA_BUS_FMT_RGB565_2X8_LE,
+-		.bpp         = 16,
+-		.dlen        = 8,
+-	},
+-	{
+-		.desc        = "RGB 444",
+-		.pixelformat = V4L2_PIX_FMT_RGB444,
+-		.mbus_code   = MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE,
+-		.bpp         = 16,
+-		.dlen        = 8,
+-	},
+-
+-};
+-#define BCAP_MAX_FMTS ARRAY_SIZE(bcap_formats)
+-
+-static irqreturn_t bcap_isr(int irq, void *dev_id);
+-
+-static struct bcap_buffer *to_bcap_vb(struct vb2_v4l2_buffer *vb)
+-{
+-	return container_of(vb, struct bcap_buffer, vb);
+-}
+-
+-static int bcap_init_sensor_formats(struct bcap_device *bcap_dev)
+-{
+-	struct v4l2_subdev_mbus_code_enum code = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
+-	struct bcap_format *sf;
+-	unsigned int num_formats = 0;
+-	int i, j;
+-
+-	while (!v4l2_subdev_call(bcap_dev->sd, pad,
+-				enum_mbus_code, NULL, &code)) {
+-		num_formats++;
+-		code.index++;
+-	}
+-	if (!num_formats)
+-		return -ENXIO;
+-
+-	sf = kcalloc(num_formats, sizeof(*sf), GFP_KERNEL);
+-	if (!sf)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_formats; i++) {
+-		code.index = i;
+-		v4l2_subdev_call(bcap_dev->sd, pad,
+-				enum_mbus_code, NULL, &code);
+-		for (j = 0; j < BCAP_MAX_FMTS; j++)
+-			if (code.code == bcap_formats[j].mbus_code)
+-				break;
+-		if (j == BCAP_MAX_FMTS) {
+-			/* we don't allow this sensor working with our bridge */
+-			kfree(sf);
+-			return -EINVAL;
+-		}
+-		sf[i] = bcap_formats[j];
+-	}
+-	bcap_dev->sensor_formats = sf;
+-	bcap_dev->num_sensor_formats = num_formats;
+-	return 0;
+-}
+-
+-static void bcap_free_sensor_formats(struct bcap_device *bcap_dev)
+-{
+-	bcap_dev->num_sensor_formats = 0;
+-	kfree(bcap_dev->sensor_formats);
+-	bcap_dev->sensor_formats = NULL;
+-}
+-
+-static int bcap_queue_setup(struct vb2_queue *vq,
+-				unsigned int *nbuffers, unsigned int *nplanes,
+-				unsigned int sizes[], struct device *alloc_devs[])
+-{
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vq);
+-
+-	if (vq->num_buffers + *nbuffers < 2)
+-		*nbuffers = 2;
+-
+-	if (*nplanes)
+-		return sizes[0] < bcap_dev->fmt.sizeimage ? -EINVAL : 0;
+-
+-	*nplanes = 1;
+-	sizes[0] = bcap_dev->fmt.sizeimage;
+-
+-	return 0;
+-}
+-
+-static int bcap_buffer_prepare(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vb->vb2_queue);
+-	unsigned long size = bcap_dev->fmt.sizeimage;
+-
+-	if (vb2_plane_size(vb, 0) < size) {
+-		v4l2_err(&bcap_dev->v4l2_dev, "buffer too small (%lu < %lu)\n",
+-				vb2_plane_size(vb, 0), size);
+-		return -EINVAL;
+-	}
+-	vb2_set_plane_payload(vb, 0, size);
+-
+-	vbuf->field = bcap_dev->fmt.field;
+-
+-	return 0;
+-}
+-
+-static void bcap_buffer_queue(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vb->vb2_queue);
+-	struct bcap_buffer *buf = to_bcap_vb(vbuf);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&bcap_dev->lock, flags);
+-	list_add_tail(&buf->list, &bcap_dev->dma_queue);
+-	spin_unlock_irqrestore(&bcap_dev->lock, flags);
+-}
+-
+-static void bcap_buffer_cleanup(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vb->vb2_queue);
+-	struct bcap_buffer *buf = to_bcap_vb(vbuf);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&bcap_dev->lock, flags);
+-	list_del_init(&buf->list);
+-	spin_unlock_irqrestore(&bcap_dev->lock, flags);
+-}
+-
+-static int bcap_start_streaming(struct vb2_queue *vq, unsigned int count)
+-{
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vq);
+-	struct ppi_if *ppi = bcap_dev->ppi;
+-	struct bcap_buffer *buf, *tmp;
+-	struct ppi_params params;
+-	dma_addr_t addr;
+-	int ret;
+-
+-	/* enable streamon on the sub device */
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_stream, 1);
+-	if (ret && (ret != -ENOIOCTLCMD)) {
+-		v4l2_err(&bcap_dev->v4l2_dev, "stream on failed in subdev\n");
+-		goto err;
+-	}
+-
+-	/* set ppi params */
+-	params.width = bcap_dev->fmt.width;
+-	params.height = bcap_dev->fmt.height;
+-	params.bpp = bcap_dev->bpp;
+-	params.dlen = bcap_dev->dlen;
+-	params.ppi_control = bcap_dev->cfg->ppi_control;
+-	params.int_mask = bcap_dev->cfg->int_mask;
+-	if (bcap_dev->cfg->inputs[bcap_dev->cur_input].capabilities
+-			& V4L2_IN_CAP_DV_TIMINGS) {
+-		struct v4l2_bt_timings *bt = &bcap_dev->dv_timings.bt;
+-
+-		params.hdelay = bt->hsync + bt->hbackporch;
+-		params.vdelay = bt->vsync + bt->vbackporch;
+-		params.line = V4L2_DV_BT_FRAME_WIDTH(bt);
+-		params.frame = V4L2_DV_BT_FRAME_HEIGHT(bt);
+-	} else if (bcap_dev->cfg->inputs[bcap_dev->cur_input].capabilities
+-			& V4L2_IN_CAP_STD) {
+-		params.hdelay = 0;
+-		params.vdelay = 0;
+-		if (bcap_dev->std & V4L2_STD_525_60) {
+-			params.line = 858;
+-			params.frame = 525;
+-		} else {
+-			params.line = 864;
+-			params.frame = 625;
+-		}
+-	} else {
+-		params.hdelay = 0;
+-		params.vdelay = 0;
+-		params.line = params.width + bcap_dev->cfg->blank_pixels;
+-		params.frame = params.height;
+-	}
+-	ret = ppi->ops->set_params(ppi, &params);
+-	if (ret < 0) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Error in setting ppi params\n");
+-		goto err;
+-	}
+-
+-	/* attach ppi DMA irq handler */
+-	ret = ppi->ops->attach_irq(ppi, bcap_isr);
+-	if (ret < 0) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Error in attaching interrupt handler\n");
+-		goto err;
+-	}
+-
+-	bcap_dev->sequence = 0;
+-
+-	reinit_completion(&bcap_dev->comp);
+-	bcap_dev->stop = false;
+-
+-	/* get the next frame from the dma queue */
+-	bcap_dev->cur_frm = list_entry(bcap_dev->dma_queue.next,
+-					struct bcap_buffer, list);
+-	/* remove buffer from the dma queue */
+-	list_del_init(&bcap_dev->cur_frm->list);
+-	addr = vb2_dma_contig_plane_dma_addr(&bcap_dev->cur_frm->vb.vb2_buf,
+-						0);
+-	/* update DMA address */
+-	ppi->ops->update_addr(ppi, (unsigned long)addr);
+-	/* enable ppi */
+-	ppi->ops->start(ppi);
+-
+-	return 0;
+-
+-err:
+-	list_for_each_entry_safe(buf, tmp, &bcap_dev->dma_queue, list) {
+-		list_del(&buf->list);
+-		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
+-	}
+-
+-	return ret;
+-}
+-
+-static void bcap_stop_streaming(struct vb2_queue *vq)
+-{
+-	struct bcap_device *bcap_dev = vb2_get_drv_priv(vq);
+-	struct ppi_if *ppi = bcap_dev->ppi;
+-	int ret;
+-
+-	bcap_dev->stop = true;
+-	wait_for_completion(&bcap_dev->comp);
+-	ppi->ops->stop(ppi);
+-	ppi->ops->detach_irq(ppi);
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_stream, 0);
+-	if (ret && (ret != -ENOIOCTLCMD))
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"stream off failed in subdev\n");
+-
+-	/* release all active buffers */
+-	if (bcap_dev->cur_frm)
+-		vb2_buffer_done(&bcap_dev->cur_frm->vb.vb2_buf,
+-				VB2_BUF_STATE_ERROR);
+-
+-	while (!list_empty(&bcap_dev->dma_queue)) {
+-		bcap_dev->cur_frm = list_entry(bcap_dev->dma_queue.next,
+-						struct bcap_buffer, list);
+-		list_del_init(&bcap_dev->cur_frm->list);
+-		vb2_buffer_done(&bcap_dev->cur_frm->vb.vb2_buf,
+-				VB2_BUF_STATE_ERROR);
+-	}
+-}
+-
+-static const struct vb2_ops bcap_video_qops = {
+-	.queue_setup            = bcap_queue_setup,
+-	.buf_prepare            = bcap_buffer_prepare,
+-	.buf_cleanup            = bcap_buffer_cleanup,
+-	.buf_queue              = bcap_buffer_queue,
+-	.wait_prepare           = vb2_ops_wait_prepare,
+-	.wait_finish            = vb2_ops_wait_finish,
+-	.start_streaming        = bcap_start_streaming,
+-	.stop_streaming         = bcap_stop_streaming,
+-};
+-
+-static irqreturn_t bcap_isr(int irq, void *dev_id)
+-{
+-	struct ppi_if *ppi = dev_id;
+-	struct bcap_device *bcap_dev = ppi->priv;
+-	struct vb2_v4l2_buffer *vbuf = &bcap_dev->cur_frm->vb;
+-	struct vb2_buffer *vb = &vbuf->vb2_buf;
+-	dma_addr_t addr;
+-
+-	spin_lock(&bcap_dev->lock);
+-
+-	if (!list_empty(&bcap_dev->dma_queue)) {
+-		vb->timestamp = ktime_get_ns();
+-		if (ppi->err) {
+-			vb2_buffer_done(vb, VB2_BUF_STATE_ERROR);
+-			ppi->err = false;
+-		} else {
+-			vbuf->sequence = bcap_dev->sequence++;
+-			vb2_buffer_done(vb, VB2_BUF_STATE_DONE);
+-		}
+-		bcap_dev->cur_frm = list_entry(bcap_dev->dma_queue.next,
+-				struct bcap_buffer, list);
+-		list_del_init(&bcap_dev->cur_frm->list);
+-	} else {
+-		/* clear error flag, we will get a new frame */
+-		if (ppi->err)
+-			ppi->err = false;
+-	}
+-
+-	ppi->ops->stop(ppi);
+-
+-	if (bcap_dev->stop) {
+-		complete(&bcap_dev->comp);
+-	} else {
+-		addr = vb2_dma_contig_plane_dma_addr(
+-				&bcap_dev->cur_frm->vb.vb2_buf, 0);
+-		ppi->ops->update_addr(ppi, (unsigned long)addr);
+-		ppi->ops->start(ppi);
+-	}
+-
+-	spin_unlock(&bcap_dev->lock);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int bcap_querystd(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_STD))
+-		return -ENODATA;
+-
+-	return v4l2_subdev_call(bcap_dev->sd, video, querystd, std);
+-}
+-
+-static int bcap_g_std(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_STD))
+-		return -ENODATA;
+-
+-	*std = bcap_dev->std;
+-	return 0;
+-}
+-
+-static int bcap_s_std(struct file *file, void *priv, v4l2_std_id std)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-	int ret;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_STD))
+-		return -ENODATA;
+-
+-	if (vb2_is_busy(&bcap_dev->buffer_queue))
+-		return -EBUSY;
+-
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_std, std);
+-	if (ret < 0)
+-		return ret;
+-
+-	bcap_dev->std = std;
+-	return 0;
+-}
+-
+-static int bcap_enum_dv_timings(struct file *file, void *priv,
+-				struct v4l2_enum_dv_timings *timings)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_DV_TIMINGS))
+-		return -ENODATA;
+-
+-	timings->pad = 0;
+-
+-	return v4l2_subdev_call(bcap_dev->sd, pad,
+-			enum_dv_timings, timings);
+-}
+-
+-static int bcap_query_dv_timings(struct file *file, void *priv,
+-				struct v4l2_dv_timings *timings)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_DV_TIMINGS))
+-		return -ENODATA;
+-
+-	return v4l2_subdev_call(bcap_dev->sd, video,
+-				query_dv_timings, timings);
+-}
+-
+-static int bcap_g_dv_timings(struct file *file, void *priv,
+-				struct v4l2_dv_timings *timings)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_DV_TIMINGS))
+-		return -ENODATA;
+-
+-	*timings = bcap_dev->dv_timings;
+-	return 0;
+-}
+-
+-static int bcap_s_dv_timings(struct file *file, void *priv,
+-				struct v4l2_dv_timings *timings)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_input input;
+-	int ret;
+-
+-	input = bcap_dev->cfg->inputs[bcap_dev->cur_input];
+-	if (!(input.capabilities & V4L2_IN_CAP_DV_TIMINGS))
+-		return -ENODATA;
+-
+-	if (vb2_is_busy(&bcap_dev->buffer_queue))
+-		return -EBUSY;
+-
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_dv_timings, timings);
+-	if (ret < 0)
+-		return ret;
+-
+-	bcap_dev->dv_timings = *timings;
+-	return 0;
+-}
+-
+-static int bcap_enum_input(struct file *file, void *priv,
+-				struct v4l2_input *input)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct bfin_capture_config *config = bcap_dev->cfg;
+-	int ret;
+-	u32 status;
+-
+-	if (input->index >= config->num_inputs)
+-		return -EINVAL;
+-
+-	*input = config->inputs[input->index];
+-	/* get input status */
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, g_input_status, &status);
+-	if (!ret)
+-		input->status = status;
+-	return 0;
+-}
+-
+-static int bcap_g_input(struct file *file, void *priv, unsigned int *index)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-
+-	*index = bcap_dev->cur_input;
+-	return 0;
+-}
+-
+-static int bcap_s_input(struct file *file, void *priv, unsigned int index)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct bfin_capture_config *config = bcap_dev->cfg;
+-	struct bcap_route *route;
+-	int ret;
+-
+-	if (vb2_is_busy(&bcap_dev->buffer_queue))
+-		return -EBUSY;
+-
+-	if (index >= config->num_inputs)
+-		return -EINVAL;
+-
+-	route = &config->routes[index];
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_routing,
+-				route->input, route->output, 0);
+-	if ((ret < 0) && (ret != -ENOIOCTLCMD)) {
+-		v4l2_err(&bcap_dev->v4l2_dev, "Failed to set input\n");
+-		return ret;
+-	}
+-	bcap_dev->cur_input = index;
+-	/* if this route has specific config, update ppi control */
+-	if (route->ppi_control)
+-		config->ppi_control = route->ppi_control;
+-	return 0;
+-}
+-
+-static int bcap_try_format(struct bcap_device *bcap,
+-				struct v4l2_pix_format *pixfmt,
+-				struct bcap_format *bcap_fmt)
+-{
+-	struct bcap_format *sf = bcap->sensor_formats;
+-	struct bcap_format *fmt = NULL;
+-	struct v4l2_subdev_pad_config pad_cfg;
+-	struct v4l2_subdev_format format = {
+-		.which = V4L2_SUBDEV_FORMAT_TRY,
+-	};
+-	int ret, i;
+-
+-	for (i = 0; i < bcap->num_sensor_formats; i++) {
+-		fmt = &sf[i];
+-		if (pixfmt->pixelformat == fmt->pixelformat)
+-			break;
+-	}
+-	if (i == bcap->num_sensor_formats)
+-		fmt = &sf[0];
+-
+-	v4l2_fill_mbus_format(&format.format, pixfmt, fmt->mbus_code);
+-	ret = v4l2_subdev_call(bcap->sd, pad, set_fmt, &pad_cfg,
+-				&format);
+-	if (ret < 0)
+-		return ret;
+-	v4l2_fill_pix_format(pixfmt, &format.format);
+-	if (bcap_fmt) {
+-		for (i = 0; i < bcap->num_sensor_formats; i++) {
+-			fmt = &sf[i];
+-			if (format.format.code == fmt->mbus_code)
+-				break;
+-		}
+-		*bcap_fmt = *fmt;
+-	}
+-	pixfmt->bytesperline = pixfmt->width * fmt->bpp / 8;
+-	pixfmt->sizeimage = pixfmt->bytesperline * pixfmt->height;
+-	return 0;
+-}
+-
+-static int bcap_enum_fmt_vid_cap(struct file *file, void  *priv,
+-					struct v4l2_fmtdesc *fmt)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct bcap_format *sf = bcap_dev->sensor_formats;
+-
+-	if (fmt->index >= bcap_dev->num_sensor_formats)
+-		return -EINVAL;
+-
+-	fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	strlcpy(fmt->description,
+-		sf[fmt->index].desc,
+-		sizeof(fmt->description));
+-	fmt->pixelformat = sf[fmt->index].pixelformat;
+-	return 0;
+-}
+-
+-static int bcap_try_fmt_vid_cap(struct file *file, void *priv,
+-					struct v4l2_format *fmt)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_pix_format *pixfmt = &fmt->fmt.pix;
+-
+-	return bcap_try_format(bcap_dev, pixfmt, NULL);
+-}
+-
+-static int bcap_g_fmt_vid_cap(struct file *file, void *priv,
+-				struct v4l2_format *fmt)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-
+-	fmt->fmt.pix = bcap_dev->fmt;
+-	return 0;
+-}
+-
+-static int bcap_s_fmt_vid_cap(struct file *file, void *priv,
+-				struct v4l2_format *fmt)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	struct v4l2_subdev_format format = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
+-	struct bcap_format bcap_fmt;
+-	struct v4l2_pix_format *pixfmt = &fmt->fmt.pix;
+-	int ret;
+-
+-	if (vb2_is_busy(&bcap_dev->buffer_queue))
+-		return -EBUSY;
+-
+-	/* see if format works */
+-	ret = bcap_try_format(bcap_dev, pixfmt, &bcap_fmt);
+-	if (ret < 0)
+-		return ret;
+-
+-	v4l2_fill_mbus_format(&format.format, pixfmt, bcap_fmt.mbus_code);
+-	ret = v4l2_subdev_call(bcap_dev->sd, pad, set_fmt, NULL, &format);
+-	if (ret < 0)
+-		return ret;
+-	bcap_dev->fmt = *pixfmt;
+-	bcap_dev->bpp = bcap_fmt.bpp;
+-	bcap_dev->dlen = bcap_fmt.dlen;
+-	return 0;
+-}
+-
+-static int bcap_querycap(struct file *file, void  *priv,
+-				struct v4l2_capability *cap)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-
+-	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
+-	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+-	strlcpy(cap->driver, CAPTURE_DRV_NAME, sizeof(cap->driver));
+-	strlcpy(cap->bus_info, "Blackfin Platform", sizeof(cap->bus_info));
+-	strlcpy(cap->card, bcap_dev->cfg->card_name, sizeof(cap->card));
+-	return 0;
+-}
+-
+-static int bcap_g_parm(struct file *file, void *fh,
+-				struct v4l2_streamparm *a)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-
+-	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	return v4l2_subdev_call(bcap_dev->sd, video, g_parm, a);
+-}
+-
+-static int bcap_s_parm(struct file *file, void *fh,
+-				struct v4l2_streamparm *a)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-
+-	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	return v4l2_subdev_call(bcap_dev->sd, video, s_parm, a);
+-}
+-
+-static int bcap_log_status(struct file *file, void *priv)
+-{
+-	struct bcap_device *bcap_dev = video_drvdata(file);
+-	/* status for sub devices */
+-	v4l2_device_call_all(&bcap_dev->v4l2_dev, 0, core, log_status);
+-	return 0;
+-}
+-
+-static const struct v4l2_ioctl_ops bcap_ioctl_ops = {
+-	.vidioc_querycap         = bcap_querycap,
+-	.vidioc_g_fmt_vid_cap    = bcap_g_fmt_vid_cap,
+-	.vidioc_enum_fmt_vid_cap = bcap_enum_fmt_vid_cap,
+-	.vidioc_s_fmt_vid_cap    = bcap_s_fmt_vid_cap,
+-	.vidioc_try_fmt_vid_cap  = bcap_try_fmt_vid_cap,
+-	.vidioc_enum_input       = bcap_enum_input,
+-	.vidioc_g_input          = bcap_g_input,
+-	.vidioc_s_input          = bcap_s_input,
+-	.vidioc_querystd         = bcap_querystd,
+-	.vidioc_s_std            = bcap_s_std,
+-	.vidioc_g_std            = bcap_g_std,
+-	.vidioc_s_dv_timings     = bcap_s_dv_timings,
+-	.vidioc_g_dv_timings     = bcap_g_dv_timings,
+-	.vidioc_query_dv_timings = bcap_query_dv_timings,
+-	.vidioc_enum_dv_timings  = bcap_enum_dv_timings,
+-	.vidioc_reqbufs          = vb2_ioctl_reqbufs,
+-	.vidioc_create_bufs      = vb2_ioctl_create_bufs,
+-	.vidioc_querybuf         = vb2_ioctl_querybuf,
+-	.vidioc_qbuf             = vb2_ioctl_qbuf,
+-	.vidioc_dqbuf            = vb2_ioctl_dqbuf,
+-	.vidioc_expbuf           = vb2_ioctl_expbuf,
+-	.vidioc_streamon         = vb2_ioctl_streamon,
+-	.vidioc_streamoff        = vb2_ioctl_streamoff,
+-	.vidioc_g_parm           = bcap_g_parm,
+-	.vidioc_s_parm           = bcap_s_parm,
+-	.vidioc_log_status       = bcap_log_status,
+-};
+-
+-static const struct v4l2_file_operations bcap_fops = {
+-	.owner = THIS_MODULE,
+-	.open = v4l2_fh_open,
+-	.release = vb2_fop_release,
+-	.unlocked_ioctl = video_ioctl2,
+-	.mmap = vb2_fop_mmap,
+-#ifndef CONFIG_MMU
+-	.get_unmapped_area = vb2_fop_get_unmapped_area,
+-#endif
+-	.poll = vb2_fop_poll
+-};
+-
+-static int bcap_probe(struct platform_device *pdev)
+-{
+-	struct bcap_device *bcap_dev;
+-	struct video_device *vfd;
+-	struct i2c_adapter *i2c_adap;
+-	struct bfin_capture_config *config;
+-	struct vb2_queue *q;
+-	struct bcap_route *route;
+-	int ret;
+-
+-	config = pdev->dev.platform_data;
+-	if (!config || !config->num_inputs) {
+-		v4l2_err(pdev->dev.driver, "Unable to get board config\n");
+-		return -ENODEV;
+-	}
+-
+-	bcap_dev = kzalloc(sizeof(*bcap_dev), GFP_KERNEL);
+-	if (!bcap_dev)
+-		return -ENOMEM;
+-
+-	bcap_dev->cfg = config;
+-
+-	bcap_dev->ppi = ppi_create_instance(pdev, config->ppi_info);
+-	if (!bcap_dev->ppi) {
+-		v4l2_err(pdev->dev.driver, "Unable to create ppi\n");
+-		ret = -ENODEV;
+-		goto err_free_dev;
+-	}
+-	bcap_dev->ppi->priv = bcap_dev;
+-
+-	vfd = &bcap_dev->video_dev;
+-	/* initialize field of video device */
+-	vfd->release            = video_device_release_empty;
+-	vfd->fops               = &bcap_fops;
+-	vfd->ioctl_ops          = &bcap_ioctl_ops;
+-	vfd->tvnorms            = 0;
+-	vfd->v4l2_dev           = &bcap_dev->v4l2_dev;
+-	strncpy(vfd->name, CAPTURE_DRV_NAME, sizeof(vfd->name));
+-
+-	ret = v4l2_device_register(&pdev->dev, &bcap_dev->v4l2_dev);
+-	if (ret) {
+-		v4l2_err(pdev->dev.driver,
+-				"Unable to register v4l2 device\n");
+-		goto err_free_ppi;
+-	}
+-	v4l2_info(&bcap_dev->v4l2_dev, "v4l2 device registered\n");
+-
+-	bcap_dev->v4l2_dev.ctrl_handler = &bcap_dev->ctrl_handler;
+-	ret = v4l2_ctrl_handler_init(&bcap_dev->ctrl_handler, 0);
+-	if (ret) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Unable to init control handler\n");
+-		goto err_unreg_v4l2;
+-	}
+-
+-	spin_lock_init(&bcap_dev->lock);
+-	/* initialize queue */
+-	q = &bcap_dev->buffer_queue;
+-	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	q->io_modes = VB2_MMAP | VB2_DMABUF;
+-	q->drv_priv = bcap_dev;
+-	q->buf_struct_size = sizeof(struct bcap_buffer);
+-	q->ops = &bcap_video_qops;
+-	q->mem_ops = &vb2_dma_contig_memops;
+-	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+-	q->lock = &bcap_dev->mutex;
+-	q->min_buffers_needed = 1;
+-	q->dev = &pdev->dev;
+-
+-	ret = vb2_queue_init(q);
+-	if (ret)
+-		goto err_free_handler;
+-
+-	mutex_init(&bcap_dev->mutex);
+-	init_completion(&bcap_dev->comp);
+-
+-	/* init video dma queues */
+-	INIT_LIST_HEAD(&bcap_dev->dma_queue);
+-
+-	vfd->lock = &bcap_dev->mutex;
+-	vfd->queue = q;
+-
+-	/* register video device */
+-	ret = video_register_device(&bcap_dev->video_dev, VFL_TYPE_GRABBER, -1);
+-	if (ret) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Unable to register video device\n");
+-		goto err_free_handler;
+-	}
+-	video_set_drvdata(&bcap_dev->video_dev, bcap_dev);
+-	v4l2_info(&bcap_dev->v4l2_dev, "video device registered as: %s\n",
+-			video_device_node_name(vfd));
+-
+-	/* load up the subdevice */
+-	i2c_adap = i2c_get_adapter(config->i2c_adapter_id);
+-	if (!i2c_adap) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Unable to find i2c adapter\n");
+-		ret = -ENODEV;
+-		goto err_unreg_vdev;
+-
+-	}
+-	bcap_dev->sd = v4l2_i2c_new_subdev_board(&bcap_dev->v4l2_dev,
+-						 i2c_adap,
+-						 &config->board_info,
+-						 NULL);
+-	if (bcap_dev->sd) {
+-		int i;
+-
+-		/* update tvnorms from the sub devices */
+-		for (i = 0; i < config->num_inputs; i++)
+-			vfd->tvnorms |= config->inputs[i].std;
+-	} else {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Unable to register sub device\n");
+-		ret = -ENODEV;
+-		goto err_unreg_vdev;
+-	}
+-
+-	v4l2_info(&bcap_dev->v4l2_dev, "v4l2 sub device registered\n");
+-
+-	/*
+-	 * explicitly set input, otherwise some boards
+-	 * may not work at the state as we expected
+-	 */
+-	route = &config->routes[0];
+-	ret = v4l2_subdev_call(bcap_dev->sd, video, s_routing,
+-				route->input, route->output, 0);
+-	if ((ret < 0) && (ret != -ENOIOCTLCMD)) {
+-		v4l2_err(&bcap_dev->v4l2_dev, "Failed to set input\n");
+-		goto err_unreg_vdev;
+-	}
+-	bcap_dev->cur_input = 0;
+-	/* if this route has specific config, update ppi control */
+-	if (route->ppi_control)
+-		config->ppi_control = route->ppi_control;
+-
+-	/* now we can probe the default state */
+-	if (config->inputs[0].capabilities & V4L2_IN_CAP_STD) {
+-		v4l2_std_id std;
+-		ret = v4l2_subdev_call(bcap_dev->sd, video, g_std, &std);
+-		if (ret) {
+-			v4l2_err(&bcap_dev->v4l2_dev,
+-					"Unable to get std\n");
+-			goto err_unreg_vdev;
+-		}
+-		bcap_dev->std = std;
+-	}
+-	if (config->inputs[0].capabilities & V4L2_IN_CAP_DV_TIMINGS) {
+-		struct v4l2_dv_timings dv_timings;
+-		ret = v4l2_subdev_call(bcap_dev->sd, video,
+-				g_dv_timings, &dv_timings);
+-		if (ret) {
+-			v4l2_err(&bcap_dev->v4l2_dev,
+-					"Unable to get dv timings\n");
+-			goto err_unreg_vdev;
+-		}
+-		bcap_dev->dv_timings = dv_timings;
+-	}
+-	ret = bcap_init_sensor_formats(bcap_dev);
+-	if (ret) {
+-		v4l2_err(&bcap_dev->v4l2_dev,
+-				"Unable to create sensor formats table\n");
+-		goto err_unreg_vdev;
+-	}
+-	return 0;
+-err_unreg_vdev:
+-	video_unregister_device(&bcap_dev->video_dev);
+-err_free_handler:
+-	v4l2_ctrl_handler_free(&bcap_dev->ctrl_handler);
+-err_unreg_v4l2:
+-	v4l2_device_unregister(&bcap_dev->v4l2_dev);
+-err_free_ppi:
+-	ppi_delete_instance(bcap_dev->ppi);
+-err_free_dev:
+-	kfree(bcap_dev);
+-	return ret;
+-}
+-
+-static int bcap_remove(struct platform_device *pdev)
+-{
+-	struct v4l2_device *v4l2_dev = platform_get_drvdata(pdev);
+-	struct bcap_device *bcap_dev = container_of(v4l2_dev,
+-						struct bcap_device, v4l2_dev);
+-
+-	bcap_free_sensor_formats(bcap_dev);
+-	video_unregister_device(&bcap_dev->video_dev);
+-	v4l2_ctrl_handler_free(&bcap_dev->ctrl_handler);
+-	v4l2_device_unregister(v4l2_dev);
+-	ppi_delete_instance(bcap_dev->ppi);
+-	kfree(bcap_dev);
+-	return 0;
+-}
+-
+-static struct platform_driver bcap_driver = {
+-	.driver = {
+-		.name  = CAPTURE_DRV_NAME,
+-	},
+-	.probe = bcap_probe,
+-	.remove = bcap_remove,
+-};
+-module_platform_driver(bcap_driver);
+-
+-MODULE_DESCRIPTION("Analog Devices blackfin video capture driver");
+-MODULE_AUTHOR("Scott Jiang <Scott.Jiang.Linux@gmail.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/platform/blackfin/ppi.c b/drivers/media/platform/blackfin/ppi.c
+deleted file mode 100644
+index d3dc765..0000000
+--- a/drivers/media/platform/blackfin/ppi.c
++++ /dev/null
+@@ -1,361 +0,0 @@
+-/*
+- * ppi.c Analog Devices Parallel Peripheral Interface driver
+- *
+- * Copyright (c) 2011 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/slab.h>
+-#include <linux/platform_device.h>
+-
+-#include <asm/bfin_ppi.h>
+-#include <asm/blackfin.h>
+-#include <asm/cacheflush.h>
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-
+-#include <media/blackfin/ppi.h>
+-
+-static int ppi_attach_irq(struct ppi_if *ppi, irq_handler_t handler);
+-static void ppi_detach_irq(struct ppi_if *ppi);
+-static int ppi_start(struct ppi_if *ppi);
+-static int ppi_stop(struct ppi_if *ppi);
+-static int ppi_set_params(struct ppi_if *ppi, struct ppi_params *params);
+-static void ppi_update_addr(struct ppi_if *ppi, unsigned long addr);
+-
+-static const struct ppi_ops ppi_ops = {
+-	.attach_irq = ppi_attach_irq,
+-	.detach_irq = ppi_detach_irq,
+-	.start = ppi_start,
+-	.stop = ppi_stop,
+-	.set_params = ppi_set_params,
+-	.update_addr = ppi_update_addr,
+-};
+-
+-static irqreturn_t ppi_irq_err(int irq, void *dev_id)
+-{
+-	struct ppi_if *ppi = dev_id;
+-	const struct ppi_info *info = ppi->info;
+-
+-	switch (info->type) {
+-	case PPI_TYPE_PPI:
+-	{
+-		struct bfin_ppi_regs *reg = info->base;
+-		unsigned short status;
+-
+-		/* register on bf561 is cleared when read
+-		 * others are W1C
+-		 */
+-		status = bfin_read16(&reg->status);
+-		if (status & 0x3000)
+-			ppi->err = true;
+-		bfin_write16(&reg->status, 0xff00);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI:
+-	{
+-		struct bfin_eppi_regs *reg = info->base;
+-		unsigned short status;
+-
+-		status = bfin_read16(&reg->status);
+-		if (status & 0x2)
+-			ppi->err = true;
+-		bfin_write16(&reg->status, 0xffff);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI3:
+-	{
+-		struct bfin_eppi3_regs *reg = info->base;
+-		unsigned long stat;
+-
+-		stat = bfin_read32(&reg->stat);
+-		if (stat & 0x2)
+-			ppi->err = true;
+-		bfin_write32(&reg->stat, 0xc0ff);
+-		break;
+-	}
+-	default:
+-		break;
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int ppi_attach_irq(struct ppi_if *ppi, irq_handler_t handler)
+-{
+-	const struct ppi_info *info = ppi->info;
+-	int ret;
+-
+-	ret = request_dma(info->dma_ch, "PPI_DMA");
+-
+-	if (ret) {
+-		pr_err("Unable to allocate DMA channel for PPI\n");
+-		return ret;
+-	}
+-	set_dma_callback(info->dma_ch, handler, ppi);
+-
+-	if (ppi->err_int) {
+-		ret = request_irq(info->irq_err, ppi_irq_err, 0, "PPI ERROR", ppi);
+-		if (ret) {
+-			pr_err("Unable to allocate IRQ for PPI\n");
+-			free_dma(info->dma_ch);
+-		}
+-	}
+-	return ret;
+-}
+-
+-static void ppi_detach_irq(struct ppi_if *ppi)
+-{
+-	const struct ppi_info *info = ppi->info;
+-
+-	if (ppi->err_int)
+-		free_irq(info->irq_err, ppi);
+-	free_dma(info->dma_ch);
+-}
+-
+-static int ppi_start(struct ppi_if *ppi)
+-{
+-	const struct ppi_info *info = ppi->info;
+-
+-	/* enable DMA */
+-	enable_dma(info->dma_ch);
+-
+-	/* enable PPI */
+-	ppi->ppi_control |= PORT_EN;
+-	switch (info->type) {
+-	case PPI_TYPE_PPI:
+-	{
+-		struct bfin_ppi_regs *reg = info->base;
+-		bfin_write16(&reg->control, ppi->ppi_control);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI:
+-	{
+-		struct bfin_eppi_regs *reg = info->base;
+-		bfin_write32(&reg->control, ppi->ppi_control);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI3:
+-	{
+-		struct bfin_eppi3_regs *reg = info->base;
+-		bfin_write32(&reg->ctl, ppi->ppi_control);
+-		break;
+-	}
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	SSYNC();
+-	return 0;
+-}
+-
+-static int ppi_stop(struct ppi_if *ppi)
+-{
+-	const struct ppi_info *info = ppi->info;
+-
+-	/* disable PPI */
+-	ppi->ppi_control &= ~PORT_EN;
+-	switch (info->type) {
+-	case PPI_TYPE_PPI:
+-	{
+-		struct bfin_ppi_regs *reg = info->base;
+-		bfin_write16(&reg->control, ppi->ppi_control);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI:
+-	{
+-		struct bfin_eppi_regs *reg = info->base;
+-		bfin_write32(&reg->control, ppi->ppi_control);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI3:
+-	{
+-		struct bfin_eppi3_regs *reg = info->base;
+-		bfin_write32(&reg->ctl, ppi->ppi_control);
+-		break;
+-	}
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	/* disable DMA */
+-	clear_dma_irqstat(info->dma_ch);
+-	disable_dma(info->dma_ch);
+-
+-	SSYNC();
+-	return 0;
+-}
+-
+-static int ppi_set_params(struct ppi_if *ppi, struct ppi_params *params)
+-{
+-	const struct ppi_info *info = ppi->info;
+-	int dma32 = 0;
+-	int dma_config, bytes_per_line;
+-	int hcount, hdelay, samples_per_line;
+-
+-#ifdef CONFIG_PINCTRL
+-	static const char * const pin_state[] = {"8bit", "16bit", "24bit"};
+-	struct pinctrl *pctrl;
+-	struct pinctrl_state *pstate;
+-
+-	if (params->dlen > 24 || params->dlen <= 0)
+-		return -EINVAL;
+-	pctrl = devm_pinctrl_get(ppi->dev);
+-	if (IS_ERR(pctrl))
+-		return PTR_ERR(pctrl);
+-	pstate = pinctrl_lookup_state(pctrl,
+-				      pin_state[(params->dlen + 7) / 8 - 1]);
+-	if (pinctrl_select_state(pctrl, pstate))
+-		return -EINVAL;
+-#endif
+-
+-	bytes_per_line = params->width * params->bpp / 8;
+-	/* convert parameters unit from pixels to samples */
+-	hcount = params->width * params->bpp / params->dlen;
+-	hdelay = params->hdelay * params->bpp / params->dlen;
+-	samples_per_line = params->line * params->bpp / params->dlen;
+-	if (params->int_mask == 0xFFFFFFFF)
+-		ppi->err_int = false;
+-	else
+-		ppi->err_int = true;
+-
+-	dma_config = (DMA_FLOW_STOP | RESTART | DMA2D | DI_EN_Y);
+-	ppi->ppi_control = params->ppi_control & ~PORT_EN;
+-	if (!(ppi->ppi_control & PORT_DIR))
+-		dma_config |= WNR;
+-	switch (info->type) {
+-	case PPI_TYPE_PPI:
+-	{
+-		struct bfin_ppi_regs *reg = info->base;
+-
+-		if (params->ppi_control & DMA32)
+-			dma32 = 1;
+-
+-		bfin_write16(&reg->control, ppi->ppi_control);
+-		bfin_write16(&reg->count, samples_per_line - 1);
+-		bfin_write16(&reg->frame, params->frame);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI:
+-	{
+-		struct bfin_eppi_regs *reg = info->base;
+-
+-		if ((params->ppi_control & PACK_EN)
+-			|| (params->ppi_control & 0x38000) > DLEN_16)
+-			dma32 = 1;
+-
+-		bfin_write32(&reg->control, ppi->ppi_control);
+-		bfin_write16(&reg->line, samples_per_line);
+-		bfin_write16(&reg->frame, params->frame);
+-		bfin_write16(&reg->hdelay, hdelay);
+-		bfin_write16(&reg->vdelay, params->vdelay);
+-		bfin_write16(&reg->hcount, hcount);
+-		bfin_write16(&reg->vcount, params->height);
+-		break;
+-	}
+-	case PPI_TYPE_EPPI3:
+-	{
+-		struct bfin_eppi3_regs *reg = info->base;
+-
+-		if ((params->ppi_control & PACK_EN)
+-			|| (params->ppi_control & 0x70000) > DLEN_16)
+-			dma32 = 1;
+-
+-		bfin_write32(&reg->ctl, ppi->ppi_control);
+-		bfin_write32(&reg->line, samples_per_line);
+-		bfin_write32(&reg->frame, params->frame);
+-		bfin_write32(&reg->hdly, hdelay);
+-		bfin_write32(&reg->vdly, params->vdelay);
+-		bfin_write32(&reg->hcnt, hcount);
+-		bfin_write32(&reg->vcnt, params->height);
+-		if (params->int_mask)
+-			bfin_write32(&reg->imsk, params->int_mask & 0xFF);
+-		if (ppi->ppi_control & PORT_DIR) {
+-			u32 hsync_width, vsync_width, vsync_period;
+-
+-			hsync_width = params->hsync
+-					* params->bpp / params->dlen;
+-			vsync_width = params->vsync * samples_per_line;
+-			vsync_period = samples_per_line * params->frame;
+-			bfin_write32(&reg->fs1_wlhb, hsync_width);
+-			bfin_write32(&reg->fs1_paspl, samples_per_line);
+-			bfin_write32(&reg->fs2_wlvb, vsync_width);
+-			bfin_write32(&reg->fs2_palpf, vsync_period);
+-		}
+-		break;
+-	}
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	if (dma32) {
+-		dma_config |= WDSIZE_32 | PSIZE_32;
+-		set_dma_x_count(info->dma_ch, bytes_per_line >> 2);
+-		set_dma_x_modify(info->dma_ch, 4);
+-		set_dma_y_modify(info->dma_ch, 4);
+-	} else {
+-		dma_config |= WDSIZE_16 | PSIZE_16;
+-		set_dma_x_count(info->dma_ch, bytes_per_line >> 1);
+-		set_dma_x_modify(info->dma_ch, 2);
+-		set_dma_y_modify(info->dma_ch, 2);
+-	}
+-	set_dma_y_count(info->dma_ch, params->height);
+-	set_dma_config(info->dma_ch, dma_config);
+-
+-	SSYNC();
+-	return 0;
+-}
+-
+-static void ppi_update_addr(struct ppi_if *ppi, unsigned long addr)
+-{
+-	set_dma_start_addr(ppi->info->dma_ch, addr);
+-}
+-
+-struct ppi_if *ppi_create_instance(struct platform_device *pdev,
+-			const struct ppi_info *info)
+-{
+-	struct ppi_if *ppi;
+-
+-	if (!info || !info->pin_req)
+-		return NULL;
+-
+-#ifndef CONFIG_PINCTRL
+-	if (peripheral_request_list(info->pin_req, KBUILD_MODNAME)) {
+-		dev_err(&pdev->dev, "request peripheral failed\n");
+-		return NULL;
+-	}
+-#endif
+-
+-	ppi = kzalloc(sizeof(*ppi), GFP_KERNEL);
+-	if (!ppi) {
+-		peripheral_free_list(info->pin_req);
+-		return NULL;
+-	}
+-	ppi->ops = &ppi_ops;
+-	ppi->info = info;
+-	ppi->dev = &pdev->dev;
+-
+-	pr_info("ppi probe success\n");
+-	return ppi;
+-}
+-EXPORT_SYMBOL(ppi_create_instance);
+-
+-void ppi_delete_instance(struct ppi_if *ppi)
+-{
+-	peripheral_free_list(ppi->info->pin_req);
+-	kfree(ppi);
+-}
+-EXPORT_SYMBOL(ppi_delete_instance);
+-
+-MODULE_DESCRIPTION("Analog Devices PPI driver");
+-MODULE_AUTHOR("Scott Jiang <Scott.Jiang.Linux@gmail.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/include/media/blackfin/bfin_capture.h b/include/media/blackfin/bfin_capture.h
+deleted file mode 100644
+index a999a397..0000000
+--- a/include/media/blackfin/bfin_capture.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _BFIN_CAPTURE_H_
+-#define _BFIN_CAPTURE_H_
+-
+-#include <linux/i2c.h>
+-
+-struct v4l2_input;
+-struct ppi_info;
+-
+-struct bcap_route {
+-	u32 input;
+-	u32 output;
+-	u32 ppi_control;
+-};
+-
+-struct bfin_capture_config {
+-	/* card name */
+-	char *card_name;
+-	/* inputs available at the sub device */
+-	struct v4l2_input *inputs;
+-	/* number of inputs supported */
+-	int num_inputs;
+-	/* routing information for each input */
+-	struct bcap_route *routes;
+-	/* i2c bus adapter no */
+-	int i2c_adapter_id;
+-	/* i2c subdevice board info */
+-	struct i2c_board_info board_info;
+-	/* ppi board info */
+-	const struct ppi_info *ppi_info;
+-	/* ppi control */
+-	unsigned long ppi_control;
+-	/* ppi interrupt mask */
+-	u32 int_mask;
+-	/* horizontal blanking pixels */
+-	int blank_pixels;
+-};
+-
+-#endif
+diff --git a/include/media/blackfin/ppi.h b/include/media/blackfin/ppi.h
+deleted file mode 100644
+index 987e49e..0000000
+--- a/include/media/blackfin/ppi.h
++++ /dev/null
+@@ -1,94 +0,0 @@
+-/*
+- * Analog Devices PPI header file
+- *
+- * Copyright (c) 2011 Analog Devices Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#ifndef _PPI_H_
+-#define _PPI_H_
+-
+-#include <linux/interrupt.h>
+-#include <asm/blackfin.h>
+-#include <asm/bfin_ppi.h>
+-
+-/* EPPI */
+-#ifdef EPPI_EN
+-#define PORT_EN EPPI_EN
+-#define PORT_DIR EPPI_DIR
+-#define DMA32 0
+-#define PACK_EN PACKEN
+-#endif
+-
+-/* EPPI3 */
+-#ifdef EPPI0_CTL2
+-#define PORT_EN EPPI_CTL_EN
+-#define PORT_DIR EPPI_CTL_DIR
+-#define PACK_EN EPPI_CTL_PACKEN
+-#define DMA32 0
+-#define DLEN_8 EPPI_CTL_DLEN08
+-#define DLEN_16 EPPI_CTL_DLEN16
+-#endif
+-
+-struct ppi_if;
+-
+-struct ppi_params {
+-	u32 width;              /* width in pixels */
+-	u32 height;             /* height in lines */
+-	u32 hdelay;             /* delay after the HSYNC in pixels */
+-	u32 vdelay;             /* delay after the VSYNC in lines */
+-	u32 line;               /* total pixels per line */
+-	u32 frame;              /* total lines per frame */
+-	u32 hsync;              /* HSYNC length in pixels */
+-	u32 vsync;              /* VSYNC length in lines */
+-	int bpp;                /* bits per pixel */
+-	int dlen;               /* data length for ppi in bits */
+-	u32 ppi_control;        /* ppi configuration */
+-	u32 int_mask;           /* interrupt mask */
+-};
+-
+-struct ppi_ops {
+-	int (*attach_irq)(struct ppi_if *ppi, irq_handler_t handler);
+-	void (*detach_irq)(struct ppi_if *ppi);
+-	int (*start)(struct ppi_if *ppi);
+-	int (*stop)(struct ppi_if *ppi);
+-	int (*set_params)(struct ppi_if *ppi, struct ppi_params *params);
+-	void (*update_addr)(struct ppi_if *ppi, unsigned long addr);
+-};
+-
+-enum ppi_type {
+-	PPI_TYPE_PPI,
+-	PPI_TYPE_EPPI,
+-	PPI_TYPE_EPPI3,
+-};
+-
+-struct ppi_info {
+-	enum ppi_type type;
+-	int dma_ch;
+-	int irq_err;
+-	void __iomem *base;
+-	const unsigned short *pin_req;
+-};
+-
+-struct ppi_if {
+-	struct device *dev;
+-	unsigned long ppi_control;
+-	const struct ppi_ops *ops;
+-	const struct ppi_info *info;
+-	bool err_int; /* if we need request error interrupt */
+-	bool err; /* if ppi has fifo error */
+-	void *priv;
+-};
+-
+-struct ppi_if *ppi_create_instance(struct platform_device *pdev,
+-			const struct ppi_info *info);
+-void ppi_delete_instance(struct ppi_if *ppi);
+-#endif
+-- 
+2.7.4
