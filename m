@@ -1,83 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753400AbeCPR4i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:56:38 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52831 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751829AbeCPR4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:56:36 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 6/7] arm64: allwinner: a64: add simplefb for A64 SoC
-Date: Sat, 17 Mar 2018 01:53:53 +0800
-Message-Id: <20180316175354.21437-7-icenowy@aosc.io>
-In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
+        id S933500AbeCPRNP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:13:15 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43116 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753754AbeCPRG7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:06:59 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 17/22] net: socket: replace call to sys_recv() with __sys_recvfrom()
+Date: Fri, 16 Mar 2018 18:06:09 +0100
+Message-Id: <20180316170614.5392-18-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A64 SoC features two display pipelines, one has a LCD output, the
-other has a HDMI output.
+sys_recv() merely expands the parameters to __sys_recvfrom() by NULL and
+NULL. Open-code this in the two places which used sys_recv() as a wrapper
+to __sys_recvfrom().
 
-Add support for simplefb for these pipelines on A64 SoC.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ net/compat.c | 3 ++-
+ net/socket.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 1f92015503ea..7767d0761b2e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -42,9 +42,11 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
+diff --git a/net/compat.c b/net/compat.c
+index d55982ff5c59..9e0d030063ad 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -755,7 +755,8 @@ COMPAT_SYSCALL_DEFINE3(recvmsg, int, fd, struct compat_msghdr __user *, msg, uns
  
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
+ COMPAT_SYSCALL_DEFINE4(recv, int, fd, void __user *, buf, compat_size_t, len, unsigned int, flags)
+ {
+-	return sys_recv(fd, buf, len, flags | MSG_CMSG_COMPAT);
++	return __sys_recvfrom(fd, buf, len, flags | MSG_CMSG_COMPAT, NULL,
++			      NULL);
+ }
  
- / {
-@@ -52,6 +54,30 @@
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-+	chosen {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		simplefb_lcd: framebuffer-lcd {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer0-lcd0";
-+			clocks = <&display_clocks CLK_MIXER0>,
-+				 <&ccu CLK_TCON0>;
-+			status = "disabled";
-+		};
-+
-+		simplefb_hdmi: framebuffer-hdmi {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer1-lcd1-hdmi";
-+			clocks = <&display_clocks CLK_MIXER1>,
-+				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len,
+diff --git a/net/socket.c b/net/socket.c
+index c4fb60be194b..34cf4b163f8f 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2566,7 +2566,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 				   (struct sockaddr __user *)a[4], a[5]);
+ 		break;
+ 	case SYS_RECV:
+-		err = sys_recv(a0, (void __user *)a1, a[2], a[3]);
++		err = __sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
++				     NULL, NULL);
+ 		break;
+ 	case SYS_RECVFROM:
+ 		err = __sys_recvfrom(a0, (void __user *)a1, a[2], a[3],
 -- 
-2.15.1
+2.16.2
