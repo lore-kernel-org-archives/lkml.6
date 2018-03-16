@@ -1,86 +1,73 @@
-Return-Path: <kernel-hardening-return-12677-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELt+I1x3ArJpY6YT+MQARgKE7Dqzwb6dT/VLef6KdutPdV/XiMShEvAs6LosSc3sMqB3VUtl
-ARC-Seal: i=1; a=rsa-sha256; t=1521231947; cv=none;
+Return-Path: <kernel-hardening-return-12666-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELu/GWC6TcVSavLyPbZnExMVQXtcGNtg79nhvaalLgTpFGYv8fvTteTJlbfX2GnTw4FUQjlS
+ARC-Seal: i=1; a=rsa-sha256; t=1521221546; cv=none;
         d=google.com; s=arc-20160816;
-        b=MYUrr1LkhFI9Lz220kvmmL30u1fs6++0EkFIv3cO0TtZUzCGTcXJuGCvvcpipszWdz
-         1L+mj9Vu7dNiL/bQvXNpc7aJwGXz+NZwTnh9IDZIV2tFNXcfj0lF5wHOk2jNeFWpB2TQ
-         xHrh5MQMWFsqXXXlYtl2nzsT65WJ4gGzfUFu17TEg+QTTr8QXahel/xAMvp6xEFJvm1x
-         b+u3npU8o+MAirdUb4qFjF2a4zbyNYf/rc/sP3+BsKgMjLPxkjBikpsLrkwLzmZrNR5g
-         J2CnTTq7Znfjurf/C1F0gkj2WNA7HKBLOg+79If2aiFxt/EVZThDE08uD4ZYbcZYKnl+
-         aqlg==
+        b=rBhgcRK4h7xBEhuhSr8hO82kiQOrOruwCA77a1LeYrqIhNXagz7JLfCb2+fCzuCfPb
+         46NMb6lYb7Y/FUt7yWKH14WiASAp1O52GMzIjw0dAaXNKB3Zb8K1a2OG151gfmkLkKwX
+         LuLDNB3xfSQKyQzQgTSSJ57YKY3UUCSoM4mQ8gqzbtQE+em62u8Wa+8ZXt3wqHIbSwuC
+         wmnhcuJ6t7FeFHYgCDKHMK6PW5efF1WCqE9//X6hJXLvR08K9CbdUFlyJeY6YZnoJgaP
+         DzIORIcGzUfTSEK4e0dN7m+2wQp6RQ/mo1ocrQTcF+wd+Z8ZlxPItPtr3yXdUqM5xnjL
+         eUjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=B7SYsUU2KYaw3OS6eJAaEVYDxGMBq9q/5/NmUhI2ocU=;
-        b=reGw9qg0qb3soH+nPRSiSmoRRyT0zrJq+PuZLc0EoGXmSE0WDkWn0Vy+1E3Ph2Xn2Y
-         FT7sX2b0bcJtENfyMBBclilwajeKATXnFFO49vw48Y6tQlQsRqQa2cpEUV97d8QlGDV9
-         1wMzqJ7N89Q2oDvQUBntuTUshXNsApvBZIoQKF6IePEkW4oPLOTHjjolc52B+nAY+SbP
-         +b0rJLDQYyB6BiK/20JVUxx1pJn5SAE4IGCFDTCQJrVWnCcGT154+eVU9IH9IB9jNZUi
-         zyGUXqXCkT4kVJW2bLndiytOk38jvoQHXcklBpN8DG9wilidpVTj+SCas6L8O2lxmTcT
-         DcLw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=gV3g5gCSVfvVDraoEHrp9hJFA7Yy0Ue+BkzixFi2Dzc=;
+        b=WSsIEuRgP+5XXxHPpQ+9flYlgbV4YZmwn+NInOuhoAVJV/mHYXPXfWQpT1tN6pS8RR
+         LvV8h1HmzaamZR1T3JCKAJdvVAmv9B5bfnkH1sOu9OeYvwkpuwRAhOCf49EWKBeb53wD
+         X7T/JClXoOCIwX+W3OH8Op9/CyPM6CiznU5Ipaat3AQ9EyZWUiYsa9heBesZdQpHIJvX
+         A1y7MhnDgTu9EAGOij3C4C7t+yZHlk5pGFw5HBQXDOhp+9fDYrmRDLRb4kXW1ruOPZku
+         N0RNhdW+adILDaVDorr8/uIjW42ZIkZbMvp/uWs7atnWWg33vK93A5V/bpkpZUx/oJZx
+         9Reg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iaq6ym3/;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=WxQGLT5L;
-       spf=pass (google.com: domain of kernel-hardening-return-12677-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12677-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12666-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12666-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iaq6ym3/;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=WxQGLT5L;
-       spf=pass (google.com: domain of kernel-hardening-return-12677-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12677-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12666-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12666-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <a37f7b0da04f4ede9fac2c88f7079a8a@AcuMS.aculab.com>
-References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
- <ab2933a2-ca7b-eb3b-744d-bc037b1be688@redhat.com> <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
- <a37f7b0da04f4ede9fac2c88f7079a8a@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 16 Mar 2018 13:25:26 -0700
-X-Google-Sender-Auth: KAVq3SYkYefZGUKKtMf3qu7pTK4
-Message-ID: <CA+55aFwzgO9w8Dj1NoCViz6JTwVLWhWabLq_cvzJ1-woEBfJMg@mail.gmail.com>
 Subject: Re: [PATCH v5 0/2] Remove false-positive VLAs when using max()
-To: David Laight <David.Laight@aculab.com>
-Cc: Florian Weimer <fweimer@redhat.com>, Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Randy Dunlap <rdunlap@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Ian Abbott <abbotti@mev.co.uk>, linux-input <linux-input@vger.kernel.org>,
-	linux-btrfs <linux-btrfs@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, David Laight <David.Laight@aculab.com>,
+ Ian Abbott <abbotti@mev.co.uk>, linux-input <linux-input@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>
+References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
+ <ab2933a2-ca7b-eb3b-744d-bc037b1be688@redhat.com>
+ <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
+From: Florian Weimer <fweimer@redhat.com>
+Message-ID: <707292bf-b69d-8d25-b70d-dda0a23e1c04@redhat.com>
+Date: Fri, 16 Mar 2018 18:32:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFx92dXg-qnrjGS2Rsna6TE5HSPBgGpSA3cv4n_n3RqBzA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595034368078500739?=
-X-GMAIL-MSGID: =?utf-8?q?1595127310862853875?=
+X-GMAIL-MSGID: =?utf-8?q?1595116404241515590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 10:44 AM, David Laight <David.Laight@aculab.com> wrote:
->
-> I looked at the generated code for one of the constant sized VLA that
-> the compiler barfed at.
-> It seemed to subtract constants from %sp separately for the VLA.
-> So it looks like the compiler treats them as VLA even though it
-> knows the size.
-> That is probably missing optimisation.
+On 03/16/2018 06:29 PM, Linus Torvalds wrote:
 
-Looking at the code is definitely an option.
+> Gcc people are crazy.
 
-In fact, instead of depending on -Wvla, we could just make 'objtool'
-warn about real variable-sized stack frames.
+End of discussion from me.  This is not acceptable.
 
-That said, if that "sizeof()" trick of Al's actually works with older
-gcc versions too (it *should*, but it's not like
-__builtin_choose_expr() and __builtin_constant_p() have well-defined
-rules in the standard), that may just be the solution.
-
-And if gcc ends up generating bad code for those "constant sized vlas"
-anyway, then -Wvla would effectively warn about that code generation
-problem.
-
-              Linus
+Florian
