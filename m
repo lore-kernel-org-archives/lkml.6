@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeCPHXL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:23:11 -0400
-Received: from mail-cys01nam02on0065.outbound.protection.outlook.com ([104.47.37.65]:7438
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1753375AbeCPHXJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:23:09 -0400
+Received: from mail-dm3nam03on0061.outbound.protection.outlook.com ([104.47.41.61]:40064
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753100AbeCPHRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:30 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+        id S1753113AbeCPHRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:32 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 06/28] mmc: Remove Blackfin SD host support
-Date: Fri, 16 Mar 2018 15:08:04 +0800
-Message-ID: <1521184106-24475-4-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 09/28] input: Remove Blackfin input support
+Date: Fri, 16 Mar 2018 15:08:07 +0800
+Message-ID: <1521184106-24475-7-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,788 +24,958 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(39380400002)(346002)(396003)(2980300002)(438002)(199004)(189003)(186003)(336012)(107886003)(86362001)(316002)(16586007)(2906002)(106002)(426003)(6666003)(6916009)(8676002)(2950100002)(36756003)(8936002)(246002)(106466001)(72206003)(2351001)(305945005)(4326008)(50226002)(26005)(478600001)(76176011)(50466002)(5660300001)(7696005)(59450400001)(51416003)(48376002)(77096007)(7636002)(47776003)(356003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1484;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD026;1:nkLqI3TQzhzjePy9GUBUCuZnP2mHT+5K2MIuWoh7XPywrPyZZOOTscxztmQq5HzJ/8b5hutXm0AETT4bQtKWY9TZE9rxskFsXP+H404AMi9uOA01mFMku0SP2ad4OW7h
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(346002)(39860400002)(396003)(2980300002)(438002)(50944005)(189003)(199004)(6666003)(72206003)(106002)(50226002)(8676002)(47776003)(107886003)(7696005)(8936002)(336012)(51416003)(2950100002)(36756003)(6916009)(6306002)(478600001)(426003)(76176011)(4326008)(966005)(59450400001)(5660300001)(77096007)(2906002)(316002)(26005)(186003)(48376002)(356003)(106466001)(7636002)(2351001)(305945005)(16586007)(86362001)(50466002)(575784001)(246002)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2609;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD023;1:qhSlmMtnBmFVsuaRcw1iG87qY8GCb4bBAJSZJh+c+0B0bDUO6XuKq/0/0mr770BlH71HeBZba3f6JB85nv06FoU4g7XuH2CtCXL6Ij1krByqk+cB7xUUBKdwnISAGW4b
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d5ee30a3-6f59-4bfc-9a7c-08d58b0df911
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1484;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;3:bCsr+fU6hF2Ru2vv4sh1oZMFNvr2vNwiGJEoWYpGN1RjtQzraIXTWYOoF6IOQLdiKChm3LQTa+/nRxo1LeLWI6qPiZWH3k1iC8fkBUH0kFFlOkxAYu/4bSryRHjGRURQbhnZcyuJkjN7kDeZdAi5X04GzmeJGQTY2gF2y6lPsAnfop5ZW+4q46dhKBbH7DWX+kIxlKBJ8JpMZCU2J9eYMnQ6Tee6qbwjBjjlYRA9W2mlc7n9yD/At1OulQKzLbn/NHXLJbCWz9Xffoza2o3344gn8/pUI0V4v0cUpHWbtL8qgORBnWNV5pzisLjMCaDs1m4LI3ujtUleKP8ACvZ3hw==;25:jP50fke6e5QHmHBRqsBUBvcaDBST49qjofTvftkP+USOt0KYZ9m1+KbgsLn75sU/2sD/O98HyTIWAYHDP+we8r4XJAl+A2zW9wD/HJ+46FbS/nakCCS2gpXNei2c0+32AnNRxWTF75QOSiBqTj6Z2SkWYy8kHBKaCsUudOBGVIxMYfpYQ1KV62dKaYt+moRNuTvt8wDLssKk5ZLr6Ab12ndcIS9KiCHxZW+Xqv0NCVZVEbp/uv59Jk+T0vctiXEyC3i2Unphy3iWdip86fztK/7dTqI4Iy0A8NBeEGL8pBLhRoDY1oaMX5j/zTFzWUtXd9/KeKt67Vc9MEFzQN1dVg==;31:CdldUWa4jPrStb0jeIiCeJj3y09YinyyDz2uuH0GKtO2qgVdToHYDDCD7mCDo81KeTMKuWlPDeL4GIi4m1JbByLZs/8/Pj4pvSltKasMqdbmSW+lBJUnDy7ibeWVYuz9Ae6HPg6nb5/Xhti8NZ8lGBX/S38hjaJIaampPyMIGBt9DpeLI+rR9kL1Lt+fpv/AlYgEAs+GbYOtwjmCvHHTpUk4AJAs8JeNuR68jtltRUY=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1484:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;20:hhDKnlJoqQsbQ79IFaJ+mSlcLzTbwtgGKfcEZqdZBntsLvCTHoNZCThhvo7Nq47KLBWymVerWzyKGaepL2OPsutw2qM36XUtffRmhlrYFq6aXuNilYe4E5ebReaQCQmlRuCDCO7Xsk+KkT9ucwnsIMs0SweidGhDjjq4yUOvlV4PzqNCqd0CIOHl1MzkJmyJpHcfe7AD6HjpcWyZ2O2RFJFbl80ZwfVvNqJoyLe9NbaXKB7xFlyhSrqNEvkEgadDT/5yGvJj2SuIESrygrz0kj6HTV0sb/n/VSgQXSP18zkwyyD49i2bZquwizjPeiovDxgCU7Cy64ncP773aSkmNQQ20Goyu3Tb1i9stM9CDbwViI+aiJMbwCOLEoWh392d7WYlFO+XrOvIVr4VIVLXHny3nV6TDBZ2rSE1lVOSQwaiMVpo0z//Iu/WBqAU/AMK7fbqYXvpK81zTLY+6hcxZQv7Uy9U6GdMOGE8plCPB7kWhmKVJ4aNy/jqBek1YBVH;4:G/ARFJK3b4jHwHbGTxAiiXzuy9ipeE/lbyFi8nIehnbXM1z5BrZYPbq3Xph+GBjibBBAjnHuMsT1P/4HpM6jF+H5lUiaM3DeIS0Iu5q88PZ9v1pMX5scSUCVvXDMnosBSK0aUBVmjH2FJ0jO1359ClGJa6S0jCYGhyGjFwm+8qBp7wTdBoge4X417m47i6QNgriroNwgGtxsk5hszQpVyL0NDa7VX9ELzAcjTmepP62Iwes0/VjeLXD0mL7Sa7LZxU8/PXTZtiraSbuSs0dVJcJsDJuQcyRa9lOSv5kXgqr5stgl4JHZl15N3pkobGiw
-X-Microsoft-Antispam-PRVS: <BY1PR03MB14845FBE45D0A5FEB274D2D5E0D70@BY1PR03MB1484.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: f222ff4b-d970-4313-646d-08d58b0dfad6
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BN6PR03MB2609;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;3:6oGqdDhlayQ3MdhBAUK+Ex+kF6AoMl4Ou6O7wN1i6CUWFkZtSm4Kbu8IlQsnLvmGl6vGvzQUKjVnsX/Wz51RiDLE0uZq4tYt6L0IBRZmd/U5jubJbFwNr3F7yFbOCJ16+CW1a1CuB4CuLUyeURl/NIut85zF8L8jDz0K+msm/ohAlYTuwJGwx7DRQ2BXmTVIKJbGV8yw+eNbHPKAOWz0F6vayPhKyoHO1zE2/EdtXWsrIMjq7yWfIhqK+nwFK19higV9jtxM5H+GiMGSTbbLfEGGmWbNzxJkIWKA2PEIQjzG+Z6i2dJ3QqQCSATdAHqVvAjvehk/uTCgjkM1RF3O6w==;25:JGal6yZOkERDm6zreTomJ8AeFa8pcgCCnJ3Ky+rxq7fz6PTr8ScHZE6zVrIqmz7K77wJ+fbv6AUfHOFH8ZHVQ+LgKiJz8yDsM8rOFqtazhtt0O6+f6jqGzjY3z6hxNrET5OOVbLdQL2DFSmRswa5OblXC/SfLBSjHSz2ESTyNhkfanAXwUuLzM4jOd1fvqqYnfxPykUSkqGg4hT76/QYxKuc4cM0tu6ESM2jVuQYoRalkziDoj885tKdyWG38/5CPRLZ5vUw7dx28pil2RJoTSWHO0mvgsgYHdtz1d6NeW1+eVJGsHHj2K0USdki8saa5Yx6dCpnO8bKuKHJtk5WDw==;31:1SWu9RBb4VbN4ghDmyxC089qLcJwA3ZWdVbrgznBXnOC9QTABbNVW1ps4YB4HtStF2Y9fbt/hMY99caK5IU//NRZfZoSL8ZV08wAm/Jcivmzx6IwQvk24gd0CJrY9U/q6Bs3zS59qBikfdOoWxxU34sC6tBjdP0OstcJ7zm2QGaUeeeXPxyYog2WmyyxEV/xdv+V3y6lLGiXAJfnwgRWARtpbfOCg26ZdzreOIaqWc0=
+X-MS-TrafficTypeDiagnostic: BN6PR03MB2609:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;20:8FhA0hlavbVvRargx4j7wbGoP+kuJPI0eL9IsrlblA9sRKgfiSioviDojsHedyUO+X/D+p9WfXxOPRBYTAdRi2N5c+vLuEdKBRUQbNk9AqFLIBgXYg6OE72fO1MhgGoY7JjpI8fODpX3yQOjbDYE5JYDRd+/BaJNvIaMlJdRHCFfLCAHETQtMIz61qtCozFDc1JwpkOosiRO+Nb/IXu12D/Vfbhuq36GJ3pxAhbEy14yXmfBCqXUiZzGbmNWuIWO/Uj7t4Iu09PCpvmHtF3ln93uxQsdGTTJYzfv2sYYL+7fJzPnkDu93jVyoFXziweP750oxqY8Iyjy1r4DTGqorErFOrURc3wU5W9UdIjSVyQxXMn/mc64qLmjbH9BZC8odvSX+o6RSqxQ7OSIJZL7cdzbVRcPYvwaF6mqHqcF91V0BqkCN/IGbmIa4OLCc+bdYXesCci94RS6A6tThK+kre0k60jaZr4rnFlvbh7VqNA7qf4QkZYEhyoMiZdUZGUG;4:mz3kqjvg+shuY/bzcWE7C6I59r/H5/yWarnCd8UVB3yLm1KlB8M+d/BuVJYtt9Vburku7RJbpadkmxOaprlnTSBdcCMZKvgYevlrhQqixrHuyEz4TG/DMLHzhpbnT1rfY8gcvRraHvK7PQ7e9CpqjpjUApCA6wCv7jb5hZslTa7G21vfD8x9QB3laeRenFsGGSJgaBbTlyIpo2BmObbUG6Fo4d/g2Pndq5ZilNhjf4ZYOJGj/I7yOp5aMsczZgFp/O92cJ2euJu+FCO9JoMiGjUgJBJJ3ZzQZyaYi5McwGfhPcrM8zAo7vp3U/uzZxvt
+X-Microsoft-Antispam-PRVS: <BN6PR03MB26098862E05463276EE8E04DE0D70@BN6PR03MB2609.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1484;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1484;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR03MB2609;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2609;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1484;23:rScLn2R39Jla61nEqziaRA/gnGzc6ocTeGY4y3XWW?=
- =?us-ascii?Q?oFD4aMkRWTdRDGNdO1QEI9i6Ka7STth7M6Yj0O2TX6HdJl9CgeIOgha1gKqo?=
- =?us-ascii?Q?7hfhybo0js7qQVWcMsk2kfcDyHryUJmLRw6a74yL3klXS9LDoRhYH7Rsyers?=
- =?us-ascii?Q?5+E2hs34Zc+4agHXop4vu/8IoqvZM4Dkd5u2exVC532gBBeSa+KxLJuZ42p3?=
- =?us-ascii?Q?CxGFpftTnl6TC9nk7Z3gkp2Rye/vAhybM21UWYYkU4lVKmF7krQ7XM4kKPYM?=
- =?us-ascii?Q?T1ES2Y855IC4vY2b6DnMjXdnghHQ29DMV7MDOpeq5OEV5srTE05QbeD99hRk?=
- =?us-ascii?Q?Xac0P2RTP4c79pKPJk772ROfNvx+04OfmMg1aS0EAAyy3EPf8hrMhv+zouBb?=
- =?us-ascii?Q?nlYnQ7jvCEmzU7TXAzDII/wOsF6D250V1Ii9/Z988v0YNwCZ5kE5Cw2vDTtl?=
- =?us-ascii?Q?MWenfH4/HF6QR/8ruTkLd41Kn70EGFopbPJJjy2A2GAVDK9HLj/KC4S9y3NT?=
- =?us-ascii?Q?HkA9q6ddgjQpiTbnz7znhjOFfE0kSkH84hjDsfakwUEAQhbGKc3o7E4ZWfLA?=
- =?us-ascii?Q?5eYM2w9Jb1vBH4p/wTxNpY0KFFB1cTpy5Qfz78GnS+7vzqE30RPfnridJ+7o?=
- =?us-ascii?Q?MCowTYwdDfL8TptYQyq1+MBuduhUvrIQoNBcPd33uraz+VGv319MBTRk/46o?=
- =?us-ascii?Q?9xWUGK0KQViH1YFmuIGnGK5tD4FMQo+sYX/2UfhUwpxRb0BGyBatVeXbkCRQ?=
- =?us-ascii?Q?NGf2W7ZGKUjc4hK9AsUG1xnoTGuiPSzJJ9Z+S9WO3VzfQRJXXM6XBPQOyXth?=
- =?us-ascii?Q?FDcPYIVPRzmpq0oNRt598BdEsERlYGI5vuIxWwQhThfm8op93oXvX69IJyj/?=
- =?us-ascii?Q?fT46I0KwK5uERW9eaNOhEywnhDr1YNutrmDQjX6eBhkGp/mtOE/HUz13rFAA?=
- =?us-ascii?Q?HApslG3WvQ9EEFgNIyfKs76N7vSyv49FAjYvRTZzhCOyOyXjKe1N62Uwqset?=
- =?us-ascii?Q?lHmtbZGulnRjiDFffZUH/9z?=
-X-Microsoft-Antispam-Message-Info: tfz2scQTBcGUL4IEA/uz5B7FJ7O++J8PqP5bd9U6cm2bqk5ZKg4EytY8oj9i+8ENrqV0Im7pR+4MZcv482W10jj9xk1LCS8YRLl6C+xNMNdglVhnlkYCrr8rW7+v6MDtLbebWaGJIuSTDaewU6EZ990jdeoKg1Nt8tDhYKgWy/2nA/UE0y3qCWXhYcGVN9Qy
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;6:ieqSa2vi6PF0Y+4yrabQdhASTcJd7g9xK0XgSmQjzJY8t8IgagPc82LyXls++ouu82BvGqiTAL5cJ9AUfZ20BWBcOoth9kGsGPB74hUX2cFAj0Nar368GK/htmYgBvsrkuwBM2J+bqd1kX13CnbBSkVs3C0RFjmX2//MgA8DRFguWS8iXx8SVxqUY1Z41GJSJPdImVq/tdwEetfG63jdFxq/AC8BgWBJh+r/c7VItrz7Vh71v6HHqpS9Y38TFKgfQOQ700Q/g44MFXUso1lDzW+DHTrMfHB70rtnM1cl5SV3mChyqKfdzJBs+Z6w8ykqbMVWdOqYa/C4PUPAmYUbrzLoNsUSlvOMEQ6qEOrEfwg=;5:pTKj7uqvYQkBFvnxMGSq22L5DpsCVRMFTAEH3NXFopzKHOWQtn14F1gAZ5ioRiX8FEJhZnQemwM8NvmLmUNVpRYF8uqdrZ8XwXYhzL0fsT69abgE0BpKBMx2bbGus6A6Mc9/pRKWLIxwqp2s8wEkSd7atnQLU8m7Q0+BSl9rDXs=;24:/90+Z78Fuwr2LiPXxIh2UAvZxQoECc3mLm1cCTy2Hx/kDXQwj8xD1xsR925C1ssClEH4sUGWsJ0AWlHbpMvq9aM0FqGu8rBl+8kKilSmfjw=;7:Mmv+gVOiysx0UN+JfYGIBKyzBRuKy9tP9hQ2NJjNAqIBBpUYwolZ/JN5vMfhUR2i2TWWmKplc+17dkeEnKh3OBprOKthNVuZKq9E3yXeNEZDfhzDoNiVQzRHfTF5+1GHjBJrBeNhwgebGCgjUNi1ozbudGUDOXGqyoshp9iTFW10aAiCBFlel5f6PLerXQ7aQ1tDLcQ+ogOX/SxuqXDf5A9dfKamloWamHHIAOWganwgI0S/WSf+q3ktStdZPwaG
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2609;23:1VomIN1aqpynJ1lV6tr6mlJRvrDZes/OHcZdzVnaz?=
+ =?us-ascii?Q?GHKZaohk+JAvdgr13+Q7VFJIrUjdz1hWZRlPxA5Bwi2LrAJvk8Qc1WgFN6+0?=
+ =?us-ascii?Q?OH0VfqPIpOrhx+Rv9qjArhv75Dfw7C4/DSgkVHR6gIcxlyBPyAZMfZq2deC1?=
+ =?us-ascii?Q?liRnqSbjfSEuCxgI+wITptXJv5b6O7vgp9fQuQFaUabHvDowY/JYP355N8xH?=
+ =?us-ascii?Q?PVgAeAaokJBNgplN3QwWFeINPzOBA+k+70C72TFRTJWJZlJaO0eJbEuI5qx7?=
+ =?us-ascii?Q?ghJ1wWvkmkXm5EHgncD4NKIf4hKMEs376f2Oexj0x8pqZGsrZEI4gEq3FTXN?=
+ =?us-ascii?Q?UyFsKJdL7opzrSC/uqRn3ixfctESYLP+ItuldwSxB6J14iAs95NP/rf1we0B?=
+ =?us-ascii?Q?MtC5F+SirtftMhThwISB8dT3kHQJvU4C7e36CYDDUmq7KpSOK21HHUa7hKsV?=
+ =?us-ascii?Q?6ukQql35AgYbeYzFoOsVPusmqdBHSfulsmHem/cLxHxLrikjvD56Ahash6LK?=
+ =?us-ascii?Q?DXjHfnyDqdtIIqswtnBWrrGZHo8I7whidueI/oIUaQdcf60+LLFvFDzNbB6t?=
+ =?us-ascii?Q?Ixj5zDU1WuVfjfkmKCHYBa3ulzsLYAWA4onB+ZpfU/dM4m9YHtm5iaZcKoti?=
+ =?us-ascii?Q?8l7O2XSH+DWBLPRo0hBGCj8szMZ3Z3IxgszV6rBaRD8ReNIyY9gVXf4c5HWR?=
+ =?us-ascii?Q?OcNbVKM8838Ck5UcuksmOPw/w2+CbkAppN/Yd8asqHrHY8xVyKGhGzBu8fDk?=
+ =?us-ascii?Q?tsdlmLJpfFP4Mmb7zrzZfcihYL29ZnZV6ARtiZ2hRihAeHyGZOdt0rovk1Zj?=
+ =?us-ascii?Q?hrycbNEKCUY5YTYf6yjPk7g2rVwx0Vccpg1RD7oYObAjD94UuEZKoezi8w95?=
+ =?us-ascii?Q?8Nc2Ec1180xIdWHJt5jx9vrd3Hkf/NyIdq3AOqPEU4IA+Oqouy+HduyhdpAg?=
+ =?us-ascii?Q?irhjcbPAEaIXi6E3u7h0hNajF7FwUfHEPsPWfyF/cG+YTS17TvraTp/K/Ig3?=
+ =?us-ascii?Q?QMKZPxJYU4D9JQjF3X3Gf5HU+Tim3qEOjbyZEo49RSY1AYtzFYKrTvdHu4WV?=
+ =?us-ascii?Q?erbA9205IPAQ0bNPf4vF6uIkiD94wI8AV/4uwXdRE9eUhzkNVNPZcDGxZ/LV?=
+ =?us-ascii?Q?zYZkAuwUvs=3D?=
+X-Microsoft-Antispam-Message-Info: ivBcPyk5q0Z9u09R7txE4M/1HZJWwTblGWyvZYavKkU0JwA9LPHFtvyMyFYf8h9TcyS/sfKrYsyPP0f2O1U0YJirHs9IRgEbaB7Vw5ocKFF3olStyq7zBVvLbCysGCyXi72cToPwyKv+i1PEQr9wB2G5tG7XJF/vTnaylQ0MoKVV1RQX47ZWaglt992/1k/z
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2609;6:CI2fpMDjRmaU6JaG++SEgu9SqF4xlWIG5B532xdefy6pBkC5TGsDhdO9Ol5SDbXwFcKEmjugYTt8EOl2IjvoqAhVA4w6sqOSoT9hSGOaM8wW0XmT9g9C1cGA4Gjoxk0qWdPq7anSA1BdBu5Fi5ltO/BROmlcnaQQaW9y6NwtUGikC4w7XrDLuLRke89A0UbFJba9Ac+77WrBgGrURwObBNYpPwPC/zz7ZhMmXGTjBYweH0/JM0BDeGqQ34A9qyMRHTuH4XFu5pguQ7iDU0Xg98fcKYs9qPg8xkyunClaqCieFsxK2AhZzgWxsCZAgv5W7K1VZkmzcPdMZnhPuUI2zzlHl7Wepf8d7I3Miq4Ib9g=;5:ezHgl/3qGYnuOG1ixtOofiNrhEnuSQ6UxpHJGAedhyOtZVzwtPqh4aGPjf2/MOStvc34zsSx5xjlYPkIxn35mbFMcAq4A9Y6gKPNn93CSUczc+ZnqpdYP8RiERsRgPTm9o2B31jGfKXj/1pzPPOMcG/0PhzcnyD15ilwp+X35qI=;24:7MtGCRQzWgsn3h0OIfwjxNznC//DDLVBJOaTLCyCBb4t5ihGJw/qvndAOgT1cIO8UZfvLAHyS2UCYd3ij0imkHVPSAVljIxuxNRGpS6sHHc=;7:N0oNQjoPoOFCSL3e4vw1SpvVQmv4gdTjA9z3OOO44S+Y+1uOHRWmqs5HB/1Ld3LPGEc8ZfoFkUjwmk/A6TmZFjxKwika5f0lhSOFo4CFsRJKXIcTvcRFbc7TrIh19zNf7O+ASgx+y9jUUwclMPCHqOtfoVwKyh8/p1Y+JYxqeL5UdqOaol1ANHLfVrRzcXMQb1QHCcLQc5vm0FXc0o6Ig0SYqtkc6jljJ6DFGrEg7jrrdGDSAcx0G7AJdojXeU+9
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:26.9033
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:30.0891
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5ee30a3-6f59-4bfc-9a7c-08d58b0df911
+X-MS-Exchange-CrossTenant-Network-Message-Id: f222ff4b-d970-4313-646d-08d58b0dfad6
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1484
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2609
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin SD host support
+Remove Blackfin input support
 ---
- drivers/mmc/host/Kconfig    |  19 --
- drivers/mmc/host/Makefile   |   1 -
- drivers/mmc/host/bfin_sdh.c | 679 --------------------------------------------
- 3 files changed, 699 deletions(-)
- delete mode 100644 drivers/mmc/host/bfin_sdh.c
+ drivers/input/keyboard/Kconfig            |   9 -
+ drivers/input/keyboard/Makefile           |   1 -
+ drivers/input/keyboard/bf54x-keys.c       | 396 ------------------------------
+ drivers/input/misc/Kconfig                |   9 -
+ drivers/input/misc/Makefile               |   1 -
+ drivers/input/misc/bfin_rotary.c          | 294 ----------------------
+ include/linux/platform_data/bfin_rotary.h | 117 ---------
+ 7 files changed, 827 deletions(-)
+ delete mode 100644 drivers/input/keyboard/bf54x-keys.c
+ delete mode 100644 drivers/input/misc/bfin_rotary.c
+ delete mode 100644 include/linux/platform_data/bfin_rotary.h
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 620c2d9..b4fd5d4 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -646,25 +646,6 @@ config MMC_VIA_SDMMC
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 4c4ab1c..2b469cc 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -157,15 +157,6 @@ config KEYBOARD_QT2160
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called qt2160.
  
- 	  If unsure, say N.
- 
--config SDH_BFIN
--	tristate "Blackfin Secure Digital Host support"
--	depends on (BF54x && !BF544) || (BF51x && !BF512)
+-config KEYBOARD_BFIN
+-	tristate "Blackfin BF54x keypad support"
+-	depends on (BF54x && !BF544)
 -	help
--	  If you say yes here you will get support for the Blackfin on-chip
--	  Secure Digital Host interface.  This includes support for MMC and
--	  SD cards.
+-	  Say Y here if you want to use the BF54x keypad.
 -
 -	  To compile this driver as a module, choose M here: the
--	  module will be called bfin_sdh.
+-	  module will be called bf54x-keys.
 -
--	  If unsure, say N.
--
--config SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND
--	bool "Blackfin EZkit Missing SDH_CMD Pull Up Resistor Workaround"
--	depends on SDH_BFIN
--	help
--	  If you say yes here SD-Cards may work on the EZkit.
--
- config MMC_CAVIUM_OCTEON
- 	tristate "Cavium OCTEON SD/MMC Card Interface support"
- 	depends on CAVIUM_OCTEON_SOC
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 84cd138..f563cc0 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -43,7 +43,6 @@ obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
- obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
--obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
- octeon-mmc-objs := cavium.o cavium-octeon.o
- obj-$(CONFIG_MMC_CAVIUM_OCTEON) += octeon-mmc.o
- thunderx-mmc-objs := cavium.o cavium-thunderx.o
-diff --git a/drivers/mmc/host/bfin_sdh.c b/drivers/mmc/host/bfin_sdh.c
+ config KEYBOARD_CLPS711X
+ 	tristate "CLPS711X Keypad support"
+ 	depends on OF_GPIO && (ARCH_CLPS711X || COMPILE_TEST)
+diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+index 526e682..8fab920 100644
+--- a/drivers/input/keyboard/Makefile
++++ b/drivers/input/keyboard/Makefile
+@@ -13,7 +13,6 @@ obj-$(CONFIG_KEYBOARD_AMIGA)		+= amikbd.o
+ obj-$(CONFIG_KEYBOARD_ATARI)		+= atakbd.o
+ obj-$(CONFIG_KEYBOARD_ATKBD)		+= atkbd.o
+ obj-$(CONFIG_KEYBOARD_BCM)		+= bcm-keypad.o
+-obj-$(CONFIG_KEYBOARD_BFIN)		+= bf54x-keys.o
+ obj-$(CONFIG_KEYBOARD_CAP11XX)		+= cap11xx.o
+ obj-$(CONFIG_KEYBOARD_CLPS711X)		+= clps711x-keypad.o
+ obj-$(CONFIG_KEYBOARD_CROS_EC)		+= cros_ec_keyb.o
+diff --git a/drivers/input/keyboard/bf54x-keys.c b/drivers/input/keyboard/bf54x-keys.c
 deleted file mode 100644
-index 526231e..0000000
---- a/drivers/mmc/host/bfin_sdh.c
+index 8a07a42..0000000
+--- a/drivers/input/keyboard/bf54x-keys.c
 +++ /dev/null
-@@ -1,679 +0,0 @@
+@@ -1,396 +0,0 @@
 -/*
-- * bfin_sdh.c - Analog Devices Blackfin SDH Controller
+- * File:         drivers/input/keyboard/bf54x-keys.c
+- * Based on:
+- * Author:       Michael Hennerich <hennerich@blackfin.uclinux.org>
 - *
-- * Copyright (C) 2007-2009 Analog Device Inc.
+- * Created:
+- * Description:  keypad driver for Analog Devices Blackfin BF54x Processors
 - *
-- * Licensed under the GPL-2 or later.
+- *
+- * Modified:
+- *               Copyright 2007-2008 Analog Devices Inc.
+- *
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 - */
 -
--#define DRIVER_NAME	"bfin-sdh"
--
 -#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/ioport.h>
--#include <linux/platform_device.h>
--#include <linux/delay.h>
+-
+-#include <linux/fs.h>
 -#include <linux/interrupt.h>
--#include <linux/dma-mapping.h>
--#include <linux/mmc/host.h>
+-#include <linux/irq.h>
+-#include <linux/slab.h>
+-#include <linux/sched.h>
+-#include <linux/pm.h>
+-#include <linux/sysctl.h>
 -#include <linux/proc_fs.h>
--#include <linux/gfp.h>
+-#include <linux/delay.h>
+-#include <linux/platform_device.h>
+-#include <linux/input.h>
 -
--#include <asm/cacheflush.h>
--#include <asm/dma.h>
 -#include <asm/portmux.h>
--#include <asm/bfin_sdh.h>
+-#include <mach/bf54x_keys.h>
 -
--#if defined(CONFIG_BF51x) || defined(__ADSPBF60x__)
--#define bfin_read_SDH_CLK_CTL		bfin_read_RSI_CLK_CTL
--#define bfin_write_SDH_CLK_CTL		bfin_write_RSI_CLK_CTL
--#define bfin_write_SDH_ARGUMENT		bfin_write_RSI_ARGUMENT
--#define bfin_write_SDH_COMMAND		bfin_write_RSI_COMMAND
--#define bfin_write_SDH_DATA_TIMER	bfin_write_RSI_DATA_TIMER
--#define bfin_read_SDH_RESPONSE0		bfin_read_RSI_RESPONSE0
--#define bfin_read_SDH_RESPONSE1		bfin_read_RSI_RESPONSE1
--#define bfin_read_SDH_RESPONSE2		bfin_read_RSI_RESPONSE2
--#define bfin_read_SDH_RESPONSE3		bfin_read_RSI_RESPONSE3
--#define bfin_write_SDH_DATA_LGTH	bfin_write_RSI_DATA_LGTH
--#define bfin_read_SDH_DATA_CTL		bfin_read_RSI_DATA_CTL
--#define bfin_write_SDH_DATA_CTL		bfin_write_RSI_DATA_CTL
--#define bfin_read_SDH_DATA_CNT		bfin_read_RSI_DATA_CNT
--#define bfin_write_SDH_STATUS_CLR	bfin_write_RSI_STATUS_CLR
--#define bfin_read_SDH_E_STATUS		bfin_read_RSI_E_STATUS
--#define bfin_write_SDH_E_STATUS		bfin_write_RSI_E_STATUS
--#define bfin_read_SDH_STATUS		bfin_read_RSI_STATUS
--#define bfin_write_SDH_MASK0		bfin_write_RSI_MASK0
--#define bfin_write_SDH_E_MASK		bfin_write_RSI_E_MASK
--#define bfin_read_SDH_CFG		bfin_read_RSI_CFG
--#define bfin_write_SDH_CFG		bfin_write_RSI_CFG
--# if defined(__ADSPBF60x__)
--#  define bfin_read_SDH_BLK_SIZE	bfin_read_RSI_BLKSZ
--#  define bfin_write_SDH_BLK_SIZE	bfin_write_RSI_BLKSZ
--# else
--#  define bfin_read_SDH_PWR_CTL		bfin_read_RSI_PWR_CTL
--#  define bfin_write_SDH_PWR_CTL	bfin_write_RSI_PWR_CTL
--# endif
--#endif
+-#define DRV_NAME	"bf54x-keys"
+-#define TIME_SCALE	100	/* 100 ns */
+-#define	MAX_MULT	(0xFF * TIME_SCALE)
+-#define MAX_RC		8	/* Max Row/Col */
 -
--struct sdh_host {
--	struct mmc_host		*mmc;
--	spinlock_t		lock;
--	struct resource		*res;
--	void __iomem		*base;
--	int			irq;
--	int			stat_irq;
--	int			dma_ch;
--	int			dma_dir;
--	struct dma_desc_array	*sg_cpu;
--	dma_addr_t		sg_dma;
--	int			dma_len;
--
--	unsigned long		sclk;
--	unsigned int		imask;
--	unsigned int		power_mode;
--	unsigned int		clk_div;
--
--	struct mmc_request	*mrq;
--	struct mmc_command	*cmd;
--	struct mmc_data		*data;
+-static const u16 per_rows[] = {
+-	P_KEY_ROW7,
+-	P_KEY_ROW6,
+-	P_KEY_ROW5,
+-	P_KEY_ROW4,
+-	P_KEY_ROW3,
+-	P_KEY_ROW2,
+-	P_KEY_ROW1,
+-	P_KEY_ROW0,
+-	0
 -};
 -
--static struct bfin_sd_host *get_sdh_data(struct platform_device *pdev)
--{
--	return pdev->dev.platform_data;
--}
--
--static void sdh_stop_clock(struct sdh_host *host)
--{
--	bfin_write_SDH_CLK_CTL(bfin_read_SDH_CLK_CTL() & ~CLK_E);
--	SSYNC();
--}
--
--static void sdh_enable_stat_irq(struct sdh_host *host, unsigned int mask)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&host->lock, flags);
--	host->imask |= mask;
--	bfin_write_SDH_MASK0(mask);
--	SSYNC();
--	spin_unlock_irqrestore(&host->lock, flags);
--}
--
--static void sdh_disable_stat_irq(struct sdh_host *host, unsigned int mask)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&host->lock, flags);
--	host->imask &= ~mask;
--	bfin_write_SDH_MASK0(host->imask);
--	SSYNC();
--	spin_unlock_irqrestore(&host->lock, flags);
--}
--
--static int sdh_setup_data(struct sdh_host *host, struct mmc_data *data)
--{
--	unsigned int length;
--	unsigned int data_ctl;
--	unsigned int dma_cfg;
--	unsigned int cycle_ns, timeout;
--
--	dev_dbg(mmc_dev(host->mmc), "%s enter flags: 0x%x\n", __func__, data->flags);
--	host->data = data;
--	data_ctl = 0;
--	dma_cfg = 0;
--
--	length = data->blksz * data->blocks;
--	bfin_write_SDH_DATA_LGTH(length);
--
--	if (data->flags & MMC_DATA_READ)
--		data_ctl |= DTX_DIR;
--	/* Only supports power-of-2 block size */
--	if (data->blksz & (data->blksz - 1))
--		return -EINVAL;
--#ifndef RSI_BLKSZ
--	data_ctl |= ((ffs(data->blksz) - 1) << 4);
--#else
--        bfin_write_SDH_BLK_SIZE(data->blksz);
--#endif
--
--	bfin_write_SDH_DATA_CTL(data_ctl);
--	/* the time of a host clock period in ns */
--	cycle_ns = 1000000000 / (host->sclk / (2 * (host->clk_div + 1)));
--	timeout = data->timeout_ns / cycle_ns;
--	timeout += data->timeout_clks;
--	bfin_write_SDH_DATA_TIMER(timeout);
--	SSYNC();
--
--	if (data->flags & MMC_DATA_READ) {
--		host->dma_dir = DMA_FROM_DEVICE;
--		dma_cfg |= WNR;
--	} else
--		host->dma_dir = DMA_TO_DEVICE;
--
--	sdh_enable_stat_irq(host, (DAT_CRC_FAIL | DAT_TIME_OUT | DAT_END));
--	host->dma_len = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len, host->dma_dir);
--#if defined(CONFIG_BF54x) || defined(CONFIG_BF60x)
--	dma_cfg |= DMAFLOW_ARRAY | RESTART | WDSIZE_32 | DMAEN;
--# ifdef RSI_BLKSZ
--	dma_cfg |= PSIZE_32 | NDSIZE_3;
--# else
--	dma_cfg |= NDSIZE_5;
--# endif
--	{
--		struct scatterlist *sg;
--		int i;
--		for_each_sg(data->sg, sg, host->dma_len, i) {
--			host->sg_cpu[i].start_addr = sg_dma_address(sg);
--			host->sg_cpu[i].cfg = dma_cfg;
--			host->sg_cpu[i].x_count = sg_dma_len(sg) / 4;
--			host->sg_cpu[i].x_modify = 4;
--			dev_dbg(mmc_dev(host->mmc), "%d: start_addr:0x%lx, "
--				"cfg:0x%lx, x_count:0x%lx, x_modify:0x%lx\n",
--				i, host->sg_cpu[i].start_addr,
--				host->sg_cpu[i].cfg, host->sg_cpu[i].x_count,
--				host->sg_cpu[i].x_modify);
--		}
--	}
--	flush_dcache_range((unsigned int)host->sg_cpu,
--		(unsigned int)host->sg_cpu +
--			host->dma_len * sizeof(struct dma_desc_array));
--	/* Set the last descriptor to stop mode */
--	host->sg_cpu[host->dma_len - 1].cfg &= ~(DMAFLOW | NDSIZE);
--	host->sg_cpu[host->dma_len - 1].cfg |= DI_EN;
--
--	set_dma_curr_desc_addr(host->dma_ch, (unsigned long *)host->sg_dma);
--	set_dma_x_count(host->dma_ch, 0);
--	set_dma_x_modify(host->dma_ch, 0);
--	SSYNC();
--	set_dma_config(host->dma_ch, dma_cfg);
--#elif defined(CONFIG_BF51x)
--	/* RSI DMA doesn't work in array mode */
--	dma_cfg |= WDSIZE_32 | DMAEN;
--	set_dma_start_addr(host->dma_ch, sg_dma_address(&data->sg[0]));
--	set_dma_x_count(host->dma_ch, length / 4);
--	set_dma_x_modify(host->dma_ch, 4);
--	SSYNC();
--	set_dma_config(host->dma_ch, dma_cfg);
--#endif
--	bfin_write_SDH_DATA_CTL(bfin_read_SDH_DATA_CTL() | DTX_DMA_E | DTX_E);
--
--	SSYNC();
--
--	dev_dbg(mmc_dev(host->mmc), "%s exit\n", __func__);
--	return 0;
--}
--
--static void sdh_start_cmd(struct sdh_host *host, struct mmc_command *cmd)
--{
--	unsigned int sdh_cmd;
--	unsigned int stat_mask;
--
--	dev_dbg(mmc_dev(host->mmc), "%s enter cmd: 0x%p\n", __func__, cmd);
--	WARN_ON(host->cmd != NULL);
--	host->cmd = cmd;
--
--	sdh_cmd = 0;
--	stat_mask = 0;
--
--	sdh_cmd |= cmd->opcode;
--
--	if (cmd->flags & MMC_RSP_PRESENT) {
--		sdh_cmd |= CMD_RSP;
--		stat_mask |= CMD_RESP_END;
--	} else {
--		stat_mask |= CMD_SENT;
--	}
--
--	if (cmd->flags & MMC_RSP_136)
--		sdh_cmd |= CMD_L_RSP;
--
--	stat_mask |= CMD_CRC_FAIL | CMD_TIME_OUT;
--
--	sdh_enable_stat_irq(host, stat_mask);
--
--	bfin_write_SDH_ARGUMENT(cmd->arg);
--	bfin_write_SDH_COMMAND(sdh_cmd | CMD_E);
--	bfin_write_SDH_CLK_CTL(bfin_read_SDH_CLK_CTL() | CLK_E);
--	SSYNC();
--}
--
--static void sdh_finish_request(struct sdh_host *host, struct mmc_request *mrq)
--{
--	dev_dbg(mmc_dev(host->mmc), "%s enter\n", __func__);
--	host->mrq = NULL;
--	host->cmd = NULL;
--	host->data = NULL;
--	mmc_request_done(host->mmc, mrq);
--}
--
--static int sdh_cmd_done(struct sdh_host *host, unsigned int stat)
--{
--	struct mmc_command *cmd = host->cmd;
--	int ret = 0;
--
--	dev_dbg(mmc_dev(host->mmc), "%s enter cmd: %p\n", __func__, cmd);
--	if (!cmd)
--		return 0;
--
--	host->cmd = NULL;
--
--	if (cmd->flags & MMC_RSP_PRESENT) {
--		cmd->resp[0] = bfin_read_SDH_RESPONSE0();
--		if (cmd->flags & MMC_RSP_136) {
--			cmd->resp[1] = bfin_read_SDH_RESPONSE1();
--			cmd->resp[2] = bfin_read_SDH_RESPONSE2();
--			cmd->resp[3] = bfin_read_SDH_RESPONSE3();
--		}
--	}
--	if (stat & CMD_TIME_OUT)
--		cmd->error = -ETIMEDOUT;
--	else if (stat & CMD_CRC_FAIL && cmd->flags & MMC_RSP_CRC)
--		cmd->error = -EILSEQ;
--
--	sdh_disable_stat_irq(host, (CMD_SENT | CMD_RESP_END | CMD_TIME_OUT | CMD_CRC_FAIL));
--
--	if (host->data && !cmd->error) {
--		if (host->data->flags & MMC_DATA_WRITE) {
--			ret = sdh_setup_data(host, host->data);
--			if (ret)
--				return 0;
--		}
--
--		sdh_enable_stat_irq(host, DAT_END | RX_OVERRUN | TX_UNDERRUN | DAT_TIME_OUT);
--	} else
--		sdh_finish_request(host, host->mrq);
--
--	return 1;
--}
--
--static int sdh_data_done(struct sdh_host *host, unsigned int stat)
--{
--	struct mmc_data *data = host->data;
--
--	dev_dbg(mmc_dev(host->mmc), "%s enter stat: 0x%x\n", __func__, stat);
--	if (!data)
--		return 0;
--
--	disable_dma(host->dma_ch);
--	dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
--		     host->dma_dir);
--
--	if (stat & DAT_TIME_OUT)
--		data->error = -ETIMEDOUT;
--	else if (stat & DAT_CRC_FAIL)
--		data->error = -EILSEQ;
--	else if (stat & (RX_OVERRUN | TX_UNDERRUN))
--		data->error = -EIO;
--
--	if (!data->error)
--		data->bytes_xfered = data->blocks * data->blksz;
--	else
--		data->bytes_xfered = 0;
--
--	bfin_write_SDH_STATUS_CLR(DAT_END_STAT | DAT_TIMEOUT_STAT | \
--			DAT_CRC_FAIL_STAT | DAT_BLK_END_STAT | RX_OVERRUN | TX_UNDERRUN);
--	bfin_write_SDH_DATA_CTL(0);
--	SSYNC();
--
--	host->data = NULL;
--	if (host->mrq->stop) {
--		sdh_stop_clock(host);
--		sdh_start_cmd(host, host->mrq->stop);
--	} else {
--		sdh_finish_request(host, host->mrq);
--	}
--
--	return 1;
--}
--
--static void sdh_request(struct mmc_host *mmc, struct mmc_request *mrq)
--{
--	struct sdh_host *host = mmc_priv(mmc);
--	int ret = 0;
--
--	dev_dbg(mmc_dev(host->mmc), "%s enter, mrp:%p, cmd:%p\n", __func__, mrq, mrq->cmd);
--	WARN_ON(host->mrq != NULL);
--
--	spin_lock(&host->lock);
--	host->mrq = mrq;
--	host->data = mrq->data;
--
--	if (mrq->data && mrq->data->flags & MMC_DATA_READ) {
--		ret = sdh_setup_data(host, mrq->data);
--		if (ret)
--			goto data_err;
--	}
--
--	sdh_start_cmd(host, mrq->cmd);
--data_err:
--	spin_unlock(&host->lock);
--}
--
--static void sdh_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
--{
--	struct sdh_host *host;
--	u16 clk_ctl = 0;
--#ifndef RSI_BLKSZ
--	u16 pwr_ctl = 0;
--#endif
--	u16 cfg;
--	host = mmc_priv(mmc);
--
--	spin_lock(&host->lock);
--
--	cfg = bfin_read_SDH_CFG();
--	cfg |= MWE;
--	switch (ios->bus_width) {
--	case MMC_BUS_WIDTH_4:
--#ifndef RSI_BLKSZ
--		cfg &= ~PD_SDDAT3;
--#endif
--		cfg |= PUP_SDDAT3;
--		/* Enable 4 bit SDIO */
--		cfg |= SD4E;
--		clk_ctl |= WIDE_BUS_4;
--		break;
--	case MMC_BUS_WIDTH_8:
--#ifndef RSI_BLKSZ
--		cfg &= ~PD_SDDAT3;
--#endif
--		cfg |= PUP_SDDAT3;
--		/* Disable 4 bit SDIO */
--		cfg &= ~SD4E;
--		clk_ctl |= BYTE_BUS_8;
--		break;
--	default:
--		cfg &= ~PUP_SDDAT3;
--		/* Disable 4 bit SDIO */
--		cfg &= ~SD4E;
--	}
--	bfin_write_SDH_CFG(cfg);
--
--	host->power_mode = ios->power_mode;
--#ifndef RSI_BLKSZ
--	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
--		pwr_ctl |= ROD_CTL;
--# ifndef CONFIG_SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND
--		pwr_ctl |= SD_CMD_OD;
--# endif
--	}
--
--	if (ios->power_mode != MMC_POWER_OFF)
--		pwr_ctl |= PWR_ON;
--	else
--		pwr_ctl &= ~PWR_ON;
--
--	bfin_write_SDH_PWR_CTL(pwr_ctl);
--#else
--# ifndef CONFIG_SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND
--	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
--		cfg |= SD_CMD_OD;
--	else
--		cfg &= ~SD_CMD_OD;
--# endif
--
--	if (ios->power_mode != MMC_POWER_OFF)
--		cfg |= PWR_ON;
--	else
--		cfg &= ~PWR_ON;
--
--	bfin_write_SDH_CFG(cfg);
--#endif
--	SSYNC();
--
--	if (ios->power_mode == MMC_POWER_ON && ios->clock) {
--		unsigned char clk_div;
--		clk_div = (get_sclk() / ios->clock - 1) / 2;
--		clk_div = min_t(unsigned char, clk_div, 0xFF);
--		clk_ctl |= clk_div;
--		clk_ctl |= CLK_E;
--		host->clk_div = clk_div;
--		bfin_write_SDH_CLK_CTL(clk_ctl);
--	} else
--		sdh_stop_clock(host);
--
--	/* set up sdh interrupt mask*/
--	if (ios->power_mode == MMC_POWER_ON)
--		bfin_write_SDH_MASK0(DAT_END | DAT_TIME_OUT | DAT_CRC_FAIL |
--			RX_OVERRUN | TX_UNDERRUN | CMD_SENT | CMD_RESP_END |
--			CMD_TIME_OUT | CMD_CRC_FAIL);
--	else
--		bfin_write_SDH_MASK0(0);
--	SSYNC();
--
--	spin_unlock(&host->lock);
--
--	dev_dbg(mmc_dev(host->mmc), "SDH: clk_div = 0x%x actual clock:%ld expected clock:%d\n",
--		host->clk_div,
--		host->clk_div ? get_sclk() / (2 * (host->clk_div + 1)) : 0,
--		ios->clock);
--}
--
--static const struct mmc_host_ops sdh_ops = {
--	.request	= sdh_request,
--	.set_ios	= sdh_set_ios,
+-static const u16 per_cols[] = {
+-	P_KEY_COL7,
+-	P_KEY_COL6,
+-	P_KEY_COL5,
+-	P_KEY_COL4,
+-	P_KEY_COL3,
+-	P_KEY_COL2,
+-	P_KEY_COL1,
+-	P_KEY_COL0,
+-	0
 -};
 -
--static irqreturn_t sdh_dma_irq(int irq, void *devid)
--{
--	struct sdh_host *host = devid;
+-struct bf54x_kpad {
+-	struct input_dev *input;
+-	int irq;
+-	unsigned short lastkey;
+-	unsigned short *keycode;
+-	struct timer_list timer;
+-	unsigned int keyup_test_jiffies;
+-	unsigned short kpad_msel;
+-	unsigned short kpad_prescale;
+-	unsigned short kpad_ctl;
+-};
 -
--	dev_dbg(mmc_dev(host->mmc), "%s enter, irq_stat: 0x%04lx\n", __func__,
--		get_dma_curr_irqstat(host->dma_ch));
--	clear_dma_irqstat(host->dma_ch);
--	SSYNC();
+-static inline int bfin_kpad_find_key(struct bf54x_kpad *bf54x_kpad,
+-			struct input_dev *input, u16 keyident)
+-{
+-	u16 i;
+-
+-	for (i = 0; i < input->keycodemax; i++)
+-		if (bf54x_kpad->keycode[i + input->keycodemax] == keyident)
+-			return bf54x_kpad->keycode[i];
+-	return -1;
+-}
+-
+-static inline void bfin_keycodecpy(unsigned short *keycode,
+-			const unsigned int *pdata_kc,
+-			unsigned short keymapsize)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < keymapsize; i++) {
+-		keycode[i] = pdata_kc[i] & 0xffff;
+-		keycode[i + keymapsize] = pdata_kc[i] >> 16;
+-	}
+-}
+-
+-static inline u16 bfin_kpad_get_prescale(u32 timescale)
+-{
+-	u32 sclk = get_sclk();
+-
+-	return ((((sclk / 1000) * timescale) / 1024) - 1);
+-}
+-
+-static inline u16 bfin_kpad_get_keypressed(struct bf54x_kpad *bf54x_kpad)
+-{
+-	return (bfin_read_KPAD_STAT() & KPAD_PRESSED);
+-}
+-
+-static inline void bfin_kpad_clear_irq(void)
+-{
+-	bfin_write_KPAD_STAT(0xFFFF);
+-	bfin_write_KPAD_ROWCOL(0xFFFF);
+-}
+-
+-static void bfin_kpad_timer(struct timer_list *t)
+-{
+-	struct bf54x_kpad *bf54x_kpad = from_timer(bf54x_kpad, t, timer);
+-
+-	if (bfin_kpad_get_keypressed(bf54x_kpad)) {
+-		/* Try again later */
+-		mod_timer(&bf54x_kpad->timer,
+-			  jiffies + bf54x_kpad->keyup_test_jiffies);
+-		return;
+-	}
+-
+-	input_report_key(bf54x_kpad->input, bf54x_kpad->lastkey, 0);
+-	input_sync(bf54x_kpad->input);
+-
+-	/* Clear IRQ Status */
+-
+-	bfin_kpad_clear_irq();
+-	enable_irq(bf54x_kpad->irq);
+-}
+-
+-static irqreturn_t bfin_kpad_isr(int irq, void *dev_id)
+-{
+-	struct platform_device *pdev = dev_id;
+-	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
+-	struct input_dev *input = bf54x_kpad->input;
+-	int key;
+-	u16 rowcol = bfin_read_KPAD_ROWCOL();
+-
+-	key = bfin_kpad_find_key(bf54x_kpad, input, rowcol);
+-
+-	input_report_key(input, key, 1);
+-	input_sync(input);
+-
+-	if (bfin_kpad_get_keypressed(bf54x_kpad)) {
+-		disable_irq_nosync(bf54x_kpad->irq);
+-		bf54x_kpad->lastkey = key;
+-		mod_timer(&bf54x_kpad->timer,
+-			  jiffies + bf54x_kpad->keyup_test_jiffies);
+-	} else {
+-		input_report_key(input, key, 0);
+-		input_sync(input);
+-
+-		bfin_kpad_clear_irq();
+-	}
 -
 -	return IRQ_HANDLED;
 -}
 -
--static irqreturn_t sdh_stat_irq(int irq, void *devid)
+-static int bfin_kpad_probe(struct platform_device *pdev)
 -{
--	struct sdh_host *host = devid;
--	unsigned int status;
--	int handled = 0;
+-	struct bf54x_kpad *bf54x_kpad;
+-	struct bfin_kpad_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct input_dev *input;
+-	int i, error;
 -
--	dev_dbg(mmc_dev(host->mmc), "%s enter\n", __func__);
--
--	spin_lock(&host->lock);
--
--	status = bfin_read_SDH_E_STATUS();
--	if (status & SD_CARD_DET) {
--		mmc_detect_change(host->mmc, 0);
--		bfin_write_SDH_E_STATUS(SD_CARD_DET);
--	}
--	status = bfin_read_SDH_STATUS();
--	if (status & (CMD_SENT | CMD_RESP_END | CMD_TIME_OUT | CMD_CRC_FAIL)) {
--		handled |= sdh_cmd_done(host, status);
--		bfin_write_SDH_STATUS_CLR(CMD_SENT_STAT | CMD_RESP_END_STAT | \
--				CMD_TIMEOUT_STAT | CMD_CRC_FAIL_STAT);
--		SSYNC();
+-	if (!pdata->rows || !pdata->cols || !pdata->keymap) {
+-		dev_err(&pdev->dev, "no rows, cols or keymap from pdata\n");
+-		return -EINVAL;
 -	}
 -
--	status = bfin_read_SDH_STATUS();
--	if (status & (DAT_END | DAT_TIME_OUT | DAT_CRC_FAIL | RX_OVERRUN | TX_UNDERRUN))
--		handled |= sdh_data_done(host, status);
+-	if (!pdata->keymapsize ||
+-	    pdata->keymapsize > (pdata->rows * pdata->cols)) {
+-		dev_err(&pdev->dev, "invalid keymapsize\n");
+-		return -EINVAL;
+-	}
 -
--	spin_unlock(&host->lock);
+-	bf54x_kpad = kzalloc(sizeof(struct bf54x_kpad), GFP_KERNEL);
+-	if (!bf54x_kpad)
+-		return -ENOMEM;
 -
--	dev_dbg(mmc_dev(host->mmc), "%s exit\n\n", __func__);
+-	platform_set_drvdata(pdev, bf54x_kpad);
 -
--	return IRQ_RETVAL(handled);
--}
--
--static void sdh_reset(void)
--{
--#if defined(CONFIG_BF54x)
--	/* Secure Digital Host shares DMA with Nand controller */
--	bfin_write_DMAC1_PERIMUX(bfin_read_DMAC1_PERIMUX() | 0x1);
--#endif
--
--	bfin_write_SDH_CFG(bfin_read_SDH_CFG() | CLKS_EN);
--	SSYNC();
--
--	/* Disable card inserting detection pin. set MMC_CAP_NEEDS_POLL, and
--	 * mmc stack will do the detection.
--	 */
--	bfin_write_SDH_CFG((bfin_read_SDH_CFG() & 0x1F) | (PUP_SDDAT | PUP_SDDAT3));
--	SSYNC();
--}
--
--static int sdh_probe(struct platform_device *pdev)
--{
--	struct mmc_host *mmc;
--	struct sdh_host *host;
--	struct bfin_sd_host *drv_data = get_sdh_data(pdev);
--	int ret;
--
--	if (!drv_data) {
--		dev_err(&pdev->dev, "missing platform driver data\n");
--		ret = -EINVAL;
+-	/* Allocate memory for keymap followed by private LUT */
+-	bf54x_kpad->keycode = kmalloc(pdata->keymapsize *
+-					sizeof(unsigned short) * 2, GFP_KERNEL);
+-	if (!bf54x_kpad->keycode) {
+-		error = -ENOMEM;
 -		goto out;
 -	}
 -
--	mmc = mmc_alloc_host(sizeof(struct sdh_host), &pdev->dev);
--	if (!mmc) {
--		ret = -ENOMEM;
--		goto out;
+-	if (!pdata->debounce_time || pdata->debounce_time > MAX_MULT ||
+-	    !pdata->coldrive_time || pdata->coldrive_time > MAX_MULT) {
+-		dev_warn(&pdev->dev,
+-			"invalid platform debounce/columndrive time\n");
+-		bfin_write_KPAD_MSEL(0xFF0);	/* Default MSEL	*/
+-	} else {
+-		bfin_write_KPAD_MSEL(
+-			((pdata->debounce_time / TIME_SCALE)
+-						& DBON_SCALE) |
+-			(((pdata->coldrive_time / TIME_SCALE) << 8)
+-						& COLDRV_SCALE));
+-
 -	}
 -
--	mmc->ops = &sdh_ops;
--#if defined(CONFIG_BF51x)
--	mmc->max_segs = 1;
--#else
--	mmc->max_segs = PAGE_SIZE / sizeof(struct dma_desc_array);
--#endif
--#ifdef RSI_BLKSZ
--	mmc->max_seg_size = -1;
--#else
--	mmc->max_seg_size = 1 << 16;
--#endif
--	mmc->max_blk_size = 1 << 11;
--	mmc->max_blk_count = 1 << 11;
--	mmc->max_req_size = PAGE_SIZE;
--	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
--	mmc->f_max = get_sclk();
--	mmc->f_min = mmc->f_max >> 9;
--	mmc->caps = MMC_CAP_4_BIT_DATA | MMC_CAP_NEEDS_POLL;
--	host = mmc_priv(mmc);
--	host->mmc = mmc;
--	host->sclk = get_sclk();
+-	if (!pdata->keyup_test_interval)
+-		bf54x_kpad->keyup_test_jiffies = msecs_to_jiffies(50);
+-	else
+-		bf54x_kpad->keyup_test_jiffies =
+-			msecs_to_jiffies(pdata->keyup_test_interval);
 -
--	spin_lock_init(&host->lock);
--	host->irq = drv_data->irq_int0;
--	host->dma_ch = drv_data->dma_chan;
+-	if (peripheral_request_list((u16 *)&per_rows[MAX_RC - pdata->rows],
+-				    DRV_NAME)) {
+-		dev_err(&pdev->dev, "requesting peripherals failed\n");
+-		error = -EFAULT;
+-		goto out0;
+-	}
 -
--	ret = request_dma(host->dma_ch, DRIVER_NAME "DMA");
--	if (ret) {
--		dev_err(&pdev->dev, "unable to request DMA channel\n");
+-	if (peripheral_request_list((u16 *)&per_cols[MAX_RC - pdata->cols],
+-				    DRV_NAME)) {
+-		dev_err(&pdev->dev, "requesting peripherals failed\n");
+-		error = -EFAULT;
 -		goto out1;
 -	}
 -
--	ret = set_dma_callback(host->dma_ch, sdh_dma_irq, host);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to request DMA irq\n");
+-	bf54x_kpad->irq = platform_get_irq(pdev, 0);
+-	if (bf54x_kpad->irq < 0) {
+-		error = -ENODEV;
 -		goto out2;
 -	}
 -
--	host->sg_cpu = dma_alloc_coherent(&pdev->dev, PAGE_SIZE, &host->sg_dma, GFP_KERNEL);
--	if (host->sg_cpu == NULL) {
--		ret = -ENOMEM;
+-	error = request_irq(bf54x_kpad->irq, bfin_kpad_isr,
+-				0, DRV_NAME, pdev);
+-	if (error) {
+-		dev_err(&pdev->dev, "unable to claim irq %d\n",
+-			bf54x_kpad->irq);
 -		goto out2;
 -	}
 -
--	platform_set_drvdata(pdev, mmc);
--
--	ret = request_irq(host->irq, sdh_stat_irq, 0, "SDH Status IRQ", host);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to request status irq\n");
+-	input = input_allocate_device();
+-	if (!input) {
+-		error = -ENOMEM;
 -		goto out3;
 -	}
 -
--	ret = peripheral_request_list(drv_data->pin_req, DRIVER_NAME);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to request peripheral pins\n");
+-	bf54x_kpad->input = input;
+-
+-	input->name = pdev->name;
+-	input->phys = "bf54x-keys/input0";
+-	input->dev.parent = &pdev->dev;
+-
+-	input->id.bustype = BUS_HOST;
+-	input->id.vendor = 0x0001;
+-	input->id.product = 0x0001;
+-	input->id.version = 0x0100;
+-
+-	input->keycodesize = sizeof(unsigned short);
+-	input->keycodemax = pdata->keymapsize;
+-	input->keycode = bf54x_kpad->keycode;
+-
+-	bfin_keycodecpy(bf54x_kpad->keycode, pdata->keymap, pdata->keymapsize);
+-
+-	/* setup input device */
+-	__set_bit(EV_KEY, input->evbit);
+-
+-	if (pdata->repeat)
+-		__set_bit(EV_REP, input->evbit);
+-
+-	for (i = 0; i < input->keycodemax; i++)
+-		if (bf54x_kpad->keycode[i] <= KEY_MAX)
+-			__set_bit(bf54x_kpad->keycode[i], input->keybit);
+-	__clear_bit(KEY_RESERVED, input->keybit);
+-
+-	error = input_register_device(input);
+-	if (error) {
+-		dev_err(&pdev->dev, "unable to register input device\n");
 -		goto out4;
 -	}
 -
--	sdh_reset();
+-	/* Init Keypad Key Up/Release test timer */
 -
--	mmc_add_host(mmc);
+-	timer_setup(&bf54x_kpad->timer, bfin_kpad_timer, 0);
+-
+-	bfin_write_KPAD_PRESCALE(bfin_kpad_get_prescale(TIME_SCALE));
+-
+-	bfin_write_KPAD_CTL((((pdata->cols - 1) << 13) & KPAD_COLEN) |
+-				(((pdata->rows - 1) << 10) & KPAD_ROWEN) |
+-				(2 & KPAD_IRQMODE));
+-
+-	bfin_write_KPAD_CTL(bfin_read_KPAD_CTL() | KPAD_EN);
+-
+-	device_init_wakeup(&pdev->dev, 1);
+-
 -	return 0;
 -
 -out4:
--	free_irq(host->irq, host);
+-	input_free_device(input);
 -out3:
--	mmc_remove_host(mmc);
--	dma_free_coherent(&pdev->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
+-	free_irq(bf54x_kpad->irq, pdev);
 -out2:
--	free_dma(host->dma_ch);
+-	peripheral_free_list((u16 *)&per_cols[MAX_RC - pdata->cols]);
 -out1:
--	mmc_free_host(mmc);
-- out:
--	return ret;
+-	peripheral_free_list((u16 *)&per_rows[MAX_RC - pdata->rows]);
+-out0:
+-	kfree(bf54x_kpad->keycode);
+-out:
+-	kfree(bf54x_kpad);
+-
+-	return error;
 -}
 -
--static int sdh_remove(struct platform_device *pdev)
+-static int bfin_kpad_remove(struct platform_device *pdev)
 -{
--	struct mmc_host *mmc = platform_get_drvdata(pdev);
+-	struct bfin_kpad_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
 -
--	if (mmc) {
--		struct sdh_host *host = mmc_priv(mmc);
+-	del_timer_sync(&bf54x_kpad->timer);
+-	free_irq(bf54x_kpad->irq, pdev);
 -
--		mmc_remove_host(mmc);
+-	input_unregister_device(bf54x_kpad->input);
 -
--		sdh_stop_clock(host);
--		free_irq(host->irq, host);
--		free_dma(host->dma_ch);
--		dma_free_coherent(&pdev->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
+-	peripheral_free_list((u16 *)&per_rows[MAX_RC - pdata->rows]);
+-	peripheral_free_list((u16 *)&per_cols[MAX_RC - pdata->cols]);
 -
--		mmc_free_host(mmc);
--	}
+-	kfree(bf54x_kpad->keycode);
+-	kfree(bf54x_kpad);
 -
 -	return 0;
 -}
 -
 -#ifdef CONFIG_PM
--static int sdh_suspend(struct platform_device *dev, pm_message_t state)
+-static int bfin_kpad_suspend(struct platform_device *pdev, pm_message_t state)
 -{
--	struct bfin_sd_host *drv_data = get_sdh_data(dev);
+-	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
 -
--	peripheral_free_list(drv_data->pin_req);
+-	bf54x_kpad->kpad_msel = bfin_read_KPAD_MSEL();
+-	bf54x_kpad->kpad_prescale = bfin_read_KPAD_PRESCALE();
+-	bf54x_kpad->kpad_ctl = bfin_read_KPAD_CTL();
+-
+-	if (device_may_wakeup(&pdev->dev))
+-		enable_irq_wake(bf54x_kpad->irq);
 -
 -	return 0;
 -}
 -
--static int sdh_resume(struct platform_device *dev)
+-static int bfin_kpad_resume(struct platform_device *pdev)
 -{
--	struct bfin_sd_host *drv_data = get_sdh_data(dev);
--	int ret = 0;
+-	struct bf54x_kpad *bf54x_kpad = platform_get_drvdata(pdev);
 -
--	ret = peripheral_request_list(drv_data->pin_req, DRIVER_NAME);
--	if (ret) {
--		dev_err(&dev->dev, "unable to request peripheral pins\n");
--		return ret;
--	}
+-	bfin_write_KPAD_MSEL(bf54x_kpad->kpad_msel);
+-	bfin_write_KPAD_PRESCALE(bf54x_kpad->kpad_prescale);
+-	bfin_write_KPAD_CTL(bf54x_kpad->kpad_ctl);
 -
--	sdh_reset();
--	return ret;
+-	if (device_may_wakeup(&pdev->dev))
+-		disable_irq_wake(bf54x_kpad->irq);
+-
+-	return 0;
 -}
 -#else
--# define sdh_suspend NULL
--# define sdh_resume  NULL
+-# define bfin_kpad_suspend NULL
+-# define bfin_kpad_resume  NULL
 -#endif
 -
--static struct platform_driver sdh_driver = {
--	.probe   = sdh_probe,
--	.remove  = sdh_remove,
--	.suspend = sdh_suspend,
--	.resume  = sdh_resume,
--	.driver  = {
--		.name = DRIVER_NAME,
+-static struct platform_driver bfin_kpad_device_driver = {
+-	.driver		= {
+-		.name	= DRV_NAME,
 -	},
+-	.probe		= bfin_kpad_probe,
+-	.remove		= bfin_kpad_remove,
+-	.suspend	= bfin_kpad_suspend,
+-	.resume		= bfin_kpad_resume,
+-};
+-module_platform_driver(bfin_kpad_device_driver);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
+-MODULE_DESCRIPTION("Keypad driver for BF54x Processors");
+-MODULE_ALIAS("platform:bf54x-keys");
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 62a1312..e9770f5 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -655,15 +655,6 @@ config INPUT_DM355EVM
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called dm355evm_keys.
+ 
+-config INPUT_BFIN_ROTARY
+-	tristate "Blackfin Rotary support"
+-	depends on BF54x || BF52x
+-	help
+-	  Say Y here if you want to use the Blackfin Rotary.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin-rotary.
+-
+ config INPUT_WM831X_ON
+ 	tristate "WM831X ON pin"
+ 	depends on MFD_WM831X
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index a8f61af..eb9c6c3 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -19,7 +19,6 @@ obj-$(CONFIG_INPUT_ARIZONA_HAPTICS)	+= arizona-haptics.o
+ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
+ obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
+ obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
+-obj-$(CONFIG_INPUT_BFIN_ROTARY)		+= bfin_rotary.o
+ obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
+ obj-$(CONFIG_INPUT_CM109)		+= cm109.o
+ obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
+diff --git a/drivers/input/misc/bfin_rotary.c b/drivers/input/misc/bfin_rotary.c
+deleted file mode 100644
+index 799ce3d..0000000
+--- a/drivers/input/misc/bfin_rotary.c
++++ /dev/null
+@@ -1,294 +0,0 @@
+-/*
+- * Rotary counter driver for Analog Devices Blackfin Processors
+- *
+- * Copyright 2008-2009 Analog Devices Inc.
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/irq.h>
+-#include <linux/pm.h>
+-#include <linux/platform_device.h>
+-#include <linux/input.h>
+-#include <linux/slab.h>
+-#include <linux/platform_data/bfin_rotary.h>
+-
+-#include <asm/portmux.h>
+-
+-#define CNT_CONFIG_OFF		0	/* CNT Config Offset */
+-#define CNT_IMASK_OFF		4	/* CNT Interrupt Mask Offset */
+-#define CNT_STATUS_OFF		8	/* CNT Status Offset */
+-#define CNT_COMMAND_OFF		12	/* CNT Command Offset */
+-#define CNT_DEBOUNCE_OFF	16	/* CNT Debounce Offset */
+-#define CNT_COUNTER_OFF		20	/* CNT Counter Offset */
+-#define CNT_MAX_OFF		24	/* CNT Maximum Count Offset */
+-#define CNT_MIN_OFF		28	/* CNT Minimum Count Offset */
+-
+-struct bfin_rot {
+-	struct input_dev *input;
+-	void __iomem *base;
+-	int irq;
+-	unsigned int up_key;
+-	unsigned int down_key;
+-	unsigned int button_key;
+-	unsigned int rel_code;
+-
+-	unsigned short mode;
+-	unsigned short debounce;
+-
+-	unsigned short cnt_config;
+-	unsigned short cnt_imask;
+-	unsigned short cnt_debounce;
 -};
 -
--module_platform_driver(sdh_driver);
+-static void report_key_event(struct input_dev *input, int keycode)
+-{
+-	/* simulate a press-n-release */
+-	input_report_key(input, keycode, 1);
+-	input_sync(input);
+-	input_report_key(input, keycode, 0);
+-	input_sync(input);
+-}
 -
--MODULE_DESCRIPTION("Blackfin Secure Digital Host Driver");
--MODULE_AUTHOR("Cliff Cai, Roy Huang");
+-static void report_rotary_event(struct bfin_rot *rotary, int delta)
+-{
+-	struct input_dev *input = rotary->input;
+-
+-	if (rotary->up_key) {
+-		report_key_event(input,
+-				 delta > 0 ? rotary->up_key : rotary->down_key);
+-	} else {
+-		input_report_rel(input, rotary->rel_code, delta);
+-		input_sync(input);
+-	}
+-}
+-
+-static irqreturn_t bfin_rotary_isr(int irq, void *dev_id)
+-{
+-	struct bfin_rot *rotary = dev_id;
+-	int delta;
+-
+-	switch (readw(rotary->base + CNT_STATUS_OFF)) {
+-
+-	case ICII:
+-		break;
+-
+-	case UCII:
+-	case DCII:
+-		delta = readl(rotary->base + CNT_COUNTER_OFF);
+-		if (delta)
+-			report_rotary_event(rotary, delta);
+-		break;
+-
+-	case CZMII:
+-		report_key_event(rotary->input, rotary->button_key);
+-		break;
+-
+-	default:
+-		break;
+-	}
+-
+-	writew(W1LCNT_ZERO, rotary->base + CNT_COMMAND_OFF); /* Clear COUNTER */
+-	writew(-1, rotary->base + CNT_STATUS_OFF); /* Clear STATUS */
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int bfin_rotary_open(struct input_dev *input)
+-{
+-	struct bfin_rot *rotary = input_get_drvdata(input);
+-	unsigned short val;
+-
+-	if (rotary->mode & ROT_DEBE)
+-		writew(rotary->debounce & DPRESCALE,
+-			rotary->base + CNT_DEBOUNCE_OFF);
+-
+-	writew(rotary->mode & ~CNTE, rotary->base + CNT_CONFIG_OFF);
+-
+-	val = UCIE | DCIE;
+-	if (rotary->button_key)
+-		val |= CZMIE;
+-	writew(val, rotary->base + CNT_IMASK_OFF);
+-
+-	writew(rotary->mode | CNTE, rotary->base + CNT_CONFIG_OFF);
+-
+-	return 0;
+-}
+-
+-static void bfin_rotary_close(struct input_dev *input)
+-{
+-	struct bfin_rot *rotary = input_get_drvdata(input);
+-
+-	writew(0, rotary->base + CNT_CONFIG_OFF);
+-	writew(0, rotary->base + CNT_IMASK_OFF);
+-}
+-
+-static void bfin_rotary_free_action(void *data)
+-{
+-	peripheral_free_list(data);
+-}
+-
+-static int bfin_rotary_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	const struct bfin_rotary_platform_data *pdata = dev_get_platdata(dev);
+-	struct bfin_rot *rotary;
+-	struct resource *res;
+-	struct input_dev *input;
+-	int error;
+-
+-	/* Basic validation */
+-	if ((pdata->rotary_up_key && !pdata->rotary_down_key) ||
+-	    (!pdata->rotary_up_key && pdata->rotary_down_key)) {
+-		return -EINVAL;
+-	}
+-
+-	if (pdata->pin_list) {
+-		error = peripheral_request_list(pdata->pin_list,
+-						dev_name(dev));
+-		if (error) {
+-			dev_err(dev, "requesting peripherals failed: %d\n",
+-				error);
+-			return error;
+-		}
+-
+-		error = devm_add_action_or_reset(dev, bfin_rotary_free_action,
+-						 pdata->pin_list);
+-		if (error) {
+-			dev_err(dev, "setting cleanup action failed: %d\n",
+-				error);
+-			return error;
+-		}
+-	}
+-
+-	rotary = devm_kzalloc(dev, sizeof(struct bfin_rot), GFP_KERNEL);
+-	if (!rotary)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rotary->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(rotary->base))
+-		return PTR_ERR(rotary->base);
+-
+-	input = devm_input_allocate_device(dev);
+-	if (!input)
+-		return -ENOMEM;
+-
+-	rotary->input = input;
+-
+-	rotary->up_key = pdata->rotary_up_key;
+-	rotary->down_key = pdata->rotary_down_key;
+-	rotary->button_key = pdata->rotary_button_key;
+-	rotary->rel_code = pdata->rotary_rel_code;
+-
+-	rotary->mode = pdata->mode;
+-	rotary->debounce = pdata->debounce;
+-
+-	input->name = pdev->name;
+-	input->phys = "bfin-rotary/input0";
+-	input->dev.parent = dev;
+-
+-	input_set_drvdata(input, rotary);
+-
+-	input->id.bustype = BUS_HOST;
+-	input->id.vendor = 0x0001;
+-	input->id.product = 0x0001;
+-	input->id.version = 0x0100;
+-
+-	input->open = bfin_rotary_open;
+-	input->close = bfin_rotary_close;
+-
+-	if (rotary->up_key) {
+-		__set_bit(EV_KEY, input->evbit);
+-		__set_bit(rotary->up_key, input->keybit);
+-		__set_bit(rotary->down_key, input->keybit);
+-	} else {
+-		__set_bit(EV_REL, input->evbit);
+-		__set_bit(rotary->rel_code, input->relbit);
+-	}
+-
+-	if (rotary->button_key) {
+-		__set_bit(EV_KEY, input->evbit);
+-		__set_bit(rotary->button_key, input->keybit);
+-	}
+-
+-	/* Quiesce the device before requesting irq */
+-	bfin_rotary_close(input);
+-
+-	rotary->irq = platform_get_irq(pdev, 0);
+-	if (rotary->irq < 0) {
+-		dev_err(dev, "No rotary IRQ specified\n");
+-		return -ENOENT;
+-	}
+-
+-	error = devm_request_irq(dev, rotary->irq, bfin_rotary_isr,
+-				 0, dev_name(dev), rotary);
+-	if (error) {
+-		dev_err(dev, "unable to claim irq %d; error %d\n",
+-			rotary->irq, error);
+-		return error;
+-	}
+-
+-	error = input_register_device(input);
+-	if (error) {
+-		dev_err(dev, "unable to register input device (%d)\n", error);
+-		return error;
+-	}
+-
+-	platform_set_drvdata(pdev, rotary);
+-	device_init_wakeup(dev, 1);
+-
+-	return 0;
+-}
+-
+-static int __maybe_unused bfin_rotary_suspend(struct device *dev)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct bfin_rot *rotary = platform_get_drvdata(pdev);
+-
+-	rotary->cnt_config = readw(rotary->base + CNT_CONFIG_OFF);
+-	rotary->cnt_imask = readw(rotary->base + CNT_IMASK_OFF);
+-	rotary->cnt_debounce = readw(rotary->base + CNT_DEBOUNCE_OFF);
+-
+-	if (device_may_wakeup(&pdev->dev))
+-		enable_irq_wake(rotary->irq);
+-
+-	return 0;
+-}
+-
+-static int __maybe_unused bfin_rotary_resume(struct device *dev)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct bfin_rot *rotary = platform_get_drvdata(pdev);
+-
+-	writew(rotary->cnt_debounce, rotary->base + CNT_DEBOUNCE_OFF);
+-	writew(rotary->cnt_imask, rotary->base + CNT_IMASK_OFF);
+-	writew(rotary->cnt_config & ~CNTE, rotary->base + CNT_CONFIG_OFF);
+-
+-	if (device_may_wakeup(&pdev->dev))
+-		disable_irq_wake(rotary->irq);
+-
+-	if (rotary->cnt_config & CNTE)
+-		writew(rotary->cnt_config, rotary->base + CNT_CONFIG_OFF);
+-
+-	return 0;
+-}
+-
+-static SIMPLE_DEV_PM_OPS(bfin_rotary_pm_ops,
+-			 bfin_rotary_suspend, bfin_rotary_resume);
+-
+-static struct platform_driver bfin_rotary_device_driver = {
+-	.probe		= bfin_rotary_probe,
+-	.driver		= {
+-		.name	= "bfin-rotary",
+-		.pm	= &bfin_rotary_pm_ops,
+-	},
+-};
+-module_platform_driver(bfin_rotary_device_driver);
+-
 -MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
+-MODULE_DESCRIPTION("Rotary Counter driver for Blackfin Processors");
+-MODULE_ALIAS("platform:bfin-rotary");
+diff --git a/include/linux/platform_data/bfin_rotary.h b/include/linux/platform_data/bfin_rotary.h
+deleted file mode 100644
+index 9882937..0000000
+--- a/include/linux/platform_data/bfin_rotary.h
++++ /dev/null
+@@ -1,117 +0,0 @@
+-/*
+- * board initialization should put one of these structures into platform_data
+- * and place the bfin-rotary onto platform_bus named "bfin-rotary".
+- *
+- * Copyright 2008-2010 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#ifndef _BFIN_ROTARY_H
+-#define _BFIN_ROTARY_H
+-
+-/* mode bitmasks */
+-#define ROT_QUAD_ENC	CNTMODE_QUADENC	/* quadrature/grey code encoder mode */
+-#define ROT_BIN_ENC	CNTMODE_BINENC	/* binary encoder mode */
+-#define ROT_UD_CNT	CNTMODE_UDCNT	/* rotary counter mode */
+-#define ROT_DIR_CNT	CNTMODE_DIRCNT	/* direction counter mode */
+-
+-#define ROT_DEBE	DEBE		/* Debounce Enable */
+-
+-#define ROT_CDGINV	CDGINV		/* CDG Pin Polarity Invert */
+-#define ROT_CUDINV	CUDINV		/* CUD Pin Polarity Invert */
+-#define ROT_CZMINV	CZMINV		/* CZM Pin Polarity Invert */
+-
+-struct bfin_rotary_platform_data {
+-	/* set rotary UP KEY_### or BTN_### in case you prefer
+-	 * bfin-rotary to send EV_KEY otherwise set 0
+-	 */
+-	unsigned int rotary_up_key;
+-	/* set rotary DOWN KEY_### or BTN_### in case you prefer
+-	 * bfin-rotary to send EV_KEY otherwise set 0
+-	 */
+-	unsigned int rotary_down_key;
+-	/* set rotary BUTTON KEY_### or BTN_### */
+-	unsigned int rotary_button_key;
+-	/* set rotary Relative Axis REL_### in case you prefer
+-	 * bfin-rotary to send EV_REL otherwise set 0
+-	 */
+-	unsigned int rotary_rel_code;
+-	unsigned short debounce;	/* 0..17 */
+-	unsigned short mode;
+-	unsigned short pm_wakeup;
+-	unsigned short *pin_list;
+-};
+-
+-/* CNT_CONFIG bitmasks */
+-#define CNTE		(1 << 0)	/* Counter Enable */
+-#define DEBE		(1 << 1)	/* Debounce Enable */
+-#define CDGINV		(1 << 4)	/* CDG Pin Polarity Invert */
+-#define CUDINV		(1 << 5)	/* CUD Pin Polarity Invert */
+-#define CZMINV		(1 << 6)	/* CZM Pin Polarity Invert */
+-#define CNTMODE_SHIFT	8
+-#define CNTMODE		(0x7 << CNTMODE_SHIFT)	/* Counter Operating Mode */
+-#define ZMZC		(1 << 1)	/* CZM Zeroes Counter Enable */
+-#define BNDMODE_SHIFT	12
+-#define BNDMODE		(0x3 << BNDMODE_SHIFT)	/* Boundary register Mode */
+-#define INPDIS		(1 << 15)	/* CUG and CDG Input Disable */
+-
+-#define CNTMODE_QUADENC	(0 << CNTMODE_SHIFT)	/* quadrature encoder mode */
+-#define CNTMODE_BINENC	(1 << CNTMODE_SHIFT)	/* binary encoder mode */
+-#define CNTMODE_UDCNT	(2 << CNTMODE_SHIFT)	/* up/down counter mode */
+-#define CNTMODE_DIRCNT	(4 << CNTMODE_SHIFT)	/* direction counter mode */
+-#define CNTMODE_DIRTMR	(5 << CNTMODE_SHIFT)	/* direction timer mode */
+-
+-#define BNDMODE_COMP	(0 << BNDMODE_SHIFT)	/* boundary compare mode */
+-#define BNDMODE_ZERO	(1 << BNDMODE_SHIFT)	/* boundary compare and zero mode */
+-#define BNDMODE_CAPT	(2 << BNDMODE_SHIFT)	/* boundary capture mode */
+-#define BNDMODE_AEXT	(3 << BNDMODE_SHIFT)	/* boundary auto-extend mode */
+-
+-/* CNT_IMASK bitmasks */
+-#define ICIE		(1 << 0)	/* Illegal Gray/Binary Code Interrupt Enable */
+-#define UCIE		(1 << 1)	/* Up count Interrupt Enable */
+-#define DCIE		(1 << 2)	/* Down count Interrupt Enable */
+-#define MINCIE		(1 << 3)	/* Min Count Interrupt Enable */
+-#define MAXCIE		(1 << 4)	/* Max Count Interrupt Enable */
+-#define COV31IE		(1 << 5)	/* Bit 31 Overflow Interrupt Enable */
+-#define COV15IE		(1 << 6)	/* Bit 15 Overflow Interrupt Enable */
+-#define CZEROIE		(1 << 7)	/* Count to Zero Interrupt Enable */
+-#define CZMIE		(1 << 8)	/* CZM Pin Interrupt Enable */
+-#define CZMEIE		(1 << 9)	/* CZM Error Interrupt Enable */
+-#define CZMZIE		(1 << 10)	/* CZM Zeroes Counter Interrupt Enable */
+-
+-/* CNT_STATUS bitmasks */
+-#define ICII		(1 << 0)	/* Illegal Gray/Binary Code Interrupt Identifier */
+-#define UCII		(1 << 1)	/* Up count Interrupt Identifier */
+-#define DCII		(1 << 2)	/* Down count Interrupt Identifier */
+-#define MINCII		(1 << 3)	/* Min Count Interrupt Identifier */
+-#define MAXCII		(1 << 4)	/* Max Count Interrupt Identifier */
+-#define COV31II		(1 << 5)	/* Bit 31 Overflow Interrupt Identifier */
+-#define COV15II		(1 << 6)	/* Bit 15 Overflow Interrupt Identifier */
+-#define CZEROII		(1 << 7)	/* Count to Zero Interrupt Identifier */
+-#define CZMII		(1 << 8)	/* CZM Pin Interrupt Identifier */
+-#define CZMEII		(1 << 9)	/* CZM Error Interrupt Identifier */
+-#define CZMZII		(1 << 10)	/* CZM Zeroes Counter Interrupt Identifier */
+-
+-/* CNT_COMMAND bitmasks */
+-#define W1LCNT		0xf		/* Load Counter Register */
+-#define W1LMIN		0xf0		/* Load Min Register */
+-#define W1LMAX		0xf00		/* Load Max Register */
+-#define W1ZMONCE	(1 << 12)	/* Enable CZM Clear Counter Once */
+-
+-#define W1LCNT_ZERO	(1 << 0)	/* write 1 to load CNT_COUNTER with zero */
+-#define W1LCNT_MIN	(1 << 2)	/* write 1 to load CNT_COUNTER from CNT_MIN */
+-#define W1LCNT_MAX	(1 << 3)	/* write 1 to load CNT_COUNTER from CNT_MAX */
+-
+-#define W1LMIN_ZERO	(1 << 4)	/* write 1 to load CNT_MIN with zero */
+-#define W1LMIN_CNT	(1 << 5)	/* write 1 to load CNT_MIN from CNT_COUNTER */
+-#define W1LMIN_MAX	(1 << 7)	/* write 1 to load CNT_MIN from CNT_MAX */
+-
+-#define W1LMAX_ZERO	(1 << 8)	/* write 1 to load CNT_MAX with zero */
+-#define W1LMAX_CNT	(1 << 9)	/* write 1 to load CNT_MAX from CNT_COUNTER */
+-#define W1LMAX_MIN	(1 << 10)	/* write 1 to load CNT_MAX from CNT_MIN */
+-
+-/* CNT_DEBOUNCE bitmasks */
+-#define DPRESCALE	0xf		/* Load Counter Register */
+-
+-#endif
 -- 
 2.7.4
