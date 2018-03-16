@@ -1,105 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753732AbeCPKiW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:38:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35022 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753324AbeCPKfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:35:43 -0400
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: davem@davemloft.net, kishon@ti.com, linux@armlinux.org.uk,
-        gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net,
-        sebastian.hesselbarth@gmail.com
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH net-next 05/10] phy: cp110-comphy: 2.5G SGMII mode
-Date: Fri, 16 Mar 2018 11:33:46 +0100
-Message-Id: <20180316103351.16616-6-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180316103351.16616-1-antoine.tenart@bootlin.com>
-References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
+        id S1753754AbeCPKie (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:38:34 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:49092 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753735AbeCPKic (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:38:32 -0400
+Date: Fri, 16 Mar 2018 11:25:06 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: "Zhang, Ning A" <ning.a.zhang@intel.com>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>
+Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
+Message-ID: <20180316102506.GA769@light.dominikbrodowski.net>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <1521190870.1367.33.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521190870.1367.33.camel@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allow the CP100 comphy to configure some lanes in the
-2.5G SGMII mode. This mode is quite close to SGMII and uses nearly the
-same code path.
+On Fri, Mar 16, 2018 at 09:01:11AM +0000, Zhang, Ning A wrote:
+> 在 2018-03-15四的 20:04 +0100，Dominik Brodowski写道：
+> > Here is a re-spin of the first set of patches which reduce the number of
+> > syscall invocations from within the kernel; the RFC may be found at
+> > 
+> > The rationale for this change is described in patch 1 as follows:
+> > 
+> > 	The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
+> > 	and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
+> > 	through kernel entry points, but not from the kernel itself. This
+> > 	will allow cleanups and optimizations to the entry paths *and* to
+> > 	the parts of the kernel code which currently need to pretend to be
+> > 	userspace in order to make use of syscalls.
+> 
+> I think this is really bad to change syscalls one by one, to do_*
+> 
+> why not change SYSCALL_DEFINEx to define kernel wrappers?
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Basically, for two reasons: First, only a subset of all syscalls require
+such wrappers -- only about a third of all syscalls are called from within
+the kernel at the moment (rough guess). Second, and more important: We want
+to reduce the amount of such usage; see, e.g., the messages by Christoph and
+Arnd in this thread.
 
-diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-index a0d522154cdf..4ef429250d7b 100644
---- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-@@ -135,19 +135,25 @@ struct mvebu_comhy_conf {
- static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
- 	/* lane 0 */
- 	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
-+	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
- 	/* lane 1 */
- 	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_SGMII, 0x1),
-+	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_2500SGMII, 0x1),
- 	/* lane 2 */
- 	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_SGMII, 0x1),
-+	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_2500SGMII, 0x1),
- 	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_10GKR, 0x1),
- 	/* lane 3 */
- 	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_SGMII, 0x2),
-+	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_2500SGMII, 0x2),
- 	/* lane 4 */
- 	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_SGMII, 0x2),
-+	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_2500SGMII, 0x2),
- 	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_10GKR, 0x2),
- 	MVEBU_COMPHY_CONF(4, 1, PHY_MODE_SGMII, 0x1),
- 	/* lane 5 */
- 	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_SGMII, 0x1),
-+	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_2500SGMII, 0x1),
- };
- 
- struct mvebu_comphy_priv {
-@@ -206,6 +212,10 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
- 	if (mode == PHY_MODE_10GKR)
- 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xe) |
- 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xe);
-+	else if (mode == PHY_MODE_2500SGMII)
-+		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x8) |
-+		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x8) |
-+		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
- 	else if (mode == PHY_MODE_SGMII)
- 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x6) |
- 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x6) |
-@@ -296,13 +306,13 @@ static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
- 	return 0;
- }
- 
--static int mvebu_comphy_set_mode_sgmii(struct phy *phy)
-+static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
- {
- 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
- 	struct mvebu_comphy_priv *priv = lane->priv;
- 	u32 val;
- 
--	mvebu_comphy_ethernet_init_reset(lane, PHY_MODE_SGMII);
-+	mvebu_comphy_ethernet_init_reset(lane, mode);
- 
- 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
- 	val &= ~MVEBU_COMPHY_RX_CTRL1_CLK8T_EN;
-@@ -487,7 +497,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
- 
- 	switch (lane->mode) {
- 	case PHY_MODE_SGMII:
--		ret = mvebu_comphy_set_mode_sgmii(phy);
-+	case PHY_MODE_2500SGMII:
-+		ret = mvebu_comphy_set_mode_sgmii(phy, lane->mode);
- 		break;
- 	case PHY_MODE_10GKR:
- 		ret = mvebu_comphy_set_mode_10gkr(phy);
--- 
-2.14.3
+Thanks,
+	Dominik
