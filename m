@@ -1,38 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuqPY+qJWR3PwmOzx0pmioiN3DXIp0DIHrXlEIQf1+ucScwVXspjHTKmxDpFDrT5Sdhp//8
-ARC-Seal: i=1; a=rsa-sha256; t=1521214876; cv=none;
-        d=google.com; s=arc-20160816;
-        b=mKX3CqQ4FqVq55ON6TRZ7C9xGYIeAtv4gm9IE9AZp31ubnacuClz7k9+FYs49KS7pW
-         6c1hSICSfGa48+BinrXkvWxcwFajR4M6FEuS5VLq5sqcL2c+k36GTmSBlWkFcHbrKEh6
-         ovlHMykhXaMFhC0nfQxT4Brr+JEdajSOFmb3fK9dGcV21K/CxqYtKaD7D6ciVRs6f+lN
-         UGJc+xuklW90JKlV1sJr+KGsZ/VdFhCCIBqs15b4dOt2ZLw/hDtXKdQmboP0nhRk7y/i
-         Ur7nJRrXzG1+qID2hQSNcNrYv6QVJznBlGiGKFmrDiTFwR0OwjCzQNo9tbXrKHNT1Ydd
-         dJUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=lamVeDP/JW4Wjbeg4ktQBiDaWQhtLI2HyJI3VxE0q/8=;
-        b=gufr7FvJK3PVYuRrKjAc+rZmGU+65UcoKQrhZ6kYZNhdQmFdWwFVdO+H1LdRMcFhJW
-         a5yaICvLqh36kjA5d0FeDbEMZQZqxHockNZXsR/cPhIV2w2bJPsbVxmPkOi2f25+VPX+
-         M8F/8d9qaHOxq6Hx8I+TZF1hOwXDl+x7U2f6j3R7L0M7UXYwLRrtTmsPpGliI7hPPl/I
-         GY5F0agsy+OVrbp00E06ool91a7Db1HZH+gSbX4j2R/Cn2qfPBxgiRWEN3jAMykbHG0R
-         cxQjq52hIrvnzOPk6HUJZpsRIi1JShp8VALtd5d/gq+NsdNRo+ZP8VXW2PqDwHn2Ju7g
-         Lt5Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214876-2-14060875865947305827
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214875; b=Lj8d22Olgcq1OgBtfhToshYlo3h3lkgKNuoMjpjxhvoJfxu
+    /kxwrVPTJHZ5SdVaMyCyvpGYus7voy71MgbllAdZSA3S1U67cNL8OhC7nr6IR7cI
+    iHbJbQpC3GfXi7YMB+IWeLs9UySEnZpmf5OvMOn+cGkZAhHKQN+a1Sb/Q3OkxsAs
+    CtPbaoLH87sW4BUvGh5yb4DUooa8Aeh7cfqWdBNfHUwUG8gCSD473vhzOcSILw67
+    7wphep0QSJJyHlahfLFd23xvw7WV0ZeOaUjQLwh6Kt08PL6AnkE/0PtL4HgCdt0z
+    R5s65iUVuvtW+B1xg7bnKFFilYYTwbEqK1XMbXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214875; bh=CXrccDbiFMDQ4QxnyIa7C+fr46
+    YI8J6v8PjyJkoDZVM=; b=pdtqs70uPqXolissQITSDB9dre3CuKueQ1sIUEFO+k
+    jOjdTSV4NgZMUzT+5fj/KcBWtDZqgSs3G1+Jv/voasDcV3t4lLxki/JAyRPA02U1
+    RZfloLP0jLz4sHfafJL7gLySZxd4fuxO0JVMpQQrhR+U0QKxqcCqc77lMVmLqx0A
+    t/fqIonD0mfRO+VRAy9Bfy/YkSSENoOwPU9vBWdzqNCfTOKDTcqZhH2d6mW3yEej
+    bVDE4U3N4CBl/W8ba3jUtisBuMTRngydm9TuOaOXo7RP9xCv1xNxADS+JFBuen6w
+    8JcHJ8nJGCnIWFsdRnw6P5ZCeInc7jxXO5Pc+m/rX3xw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965148AbeCPPlH (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:41:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43850 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964834AbeCPPlF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:41:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Stephan Mueller <smueller@chronox.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 050/128] crypto: keywrap - Add missing ULL suffixes for 64-bit constants
-Date: Fri, 16 Mar 2018 16:23:11 +0100
-Message-Id: <20180316152339.334377062@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 038/128] ARM: dts: koelsch: Move cec_clock to root node
+Date: Fri, 16 Mar 2018 16:22:59 +0100
+Message-Id: <20180316152338.584297883@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -40,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109410608854101?=
-X-GMAIL-MSGID: =?utf-8?q?1595109410608854101?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +82,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Simon Horman <horms+renesas@verge.net.au>
 
 
-[ Upstream commit c9683276dd89906ca9b65696d09104d542171421 ]
+[ Upstream commit d72f4f03854d1225c72d682bf0e01377e7016419 ]
 
-On 32-bit (e.g. with m68k-linux-gnu-gcc-4.1):
+cec-clock is a fixed clock generator that is not controlled by i2c5 and
+thus should not be a child of the i2c5 bus node. Rather, it should be
+a child of the root node of the DT.
 
-    crypto/keywrap.c: In function ‘crypto_kw_decrypt’:
-    crypto/keywrap.c:191: warning: integer constant is too large for ‘long’ type
-    crypto/keywrap.c: In function ‘crypto_kw_encrypt’:
-    crypto/keywrap.c:224: warning: integer constant is too large for ‘long’ type
-
-Fixes: 9e49451d7a15365d ("crypto: keywrap - simplify code")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Stephan Mueller <smueller@chronox.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 02a5ab18d366 ("ARM: dts: koelsch: Add CEC clock for HDMI transmitter")
+Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/keywrap.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/crypto/keywrap.c
-+++ b/crypto/keywrap.c
-@@ -188,7 +188,7 @@ static int crypto_kw_decrypt(struct blkc
- 	}
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -278,6 +278,12 @@
+ 		};
+ 	};
  
- 	/* Perform authentication check */
--	if (block.A != cpu_to_be64(0xa6a6a6a6a6a6a6a6))
-+	if (block.A != cpu_to_be64(0xa6a6a6a6a6a6a6a6ULL))
- 		ret = -EBADMSG;
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
++
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -640,12 +646,6 @@
+ 		};
+ 	};
  
- 	memzero_explicit(&block, sizeof(struct crypto_kw_block));
-@@ -221,7 +221,7 @@ static int crypto_kw_encrypt(struct blkc
- 	 * Place the predefined IV into block A -- for encrypt, the caller
- 	 * does not need to provide an IV, but he needs to fetch the final IV.
- 	 */
--	block.A = cpu_to_be64(0xa6a6a6a6a6a6a6a6);
-+	block.A = cpu_to_be64(0xa6a6a6a6a6a6a6a6ULL);
- 
- 	/*
- 	 * src scatterlist is read-only. dst scatterlist is r/w. During the
+-	cec_clock: cec-clock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <12000000>;
+-	};
+-
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
