@@ -1,39 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752865AbeCPOJU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:09:20 -0400
-Received: from ozlabs.org ([103.22.144.67]:57249 "EHLO ozlabs.org"
+        id S1751912AbeCPONI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:13:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60681 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752843AbeCPOIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:08:53 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>
-Cc: linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 04/21] powerpc: Mark both tmp variables as unused
-In-Reply-To: <3f881ec2-eb0f-77e6-f1c5-95530b8f84ad@c-s.fr>
-References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-5-malat@debian.org> <3f881ec2-eb0f-77e6-f1c5-95530b8f84ad@c-s.fr>
-Date: Sat, 17 Mar 2018 01:08:49 +1100
-Message-ID: <87tvtgglji.fsf@concordia.ellerman.id.au>
+        id S1750991AbeCPONH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:13:07 -0400
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 4.16-rc6
+Date: Fri, 16 Mar 2018 15:10:37 +0100
+Message-Id: <cover.1521208695.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
+Hi,
 
-> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
->> Since the value of `tmp` is never intended to be read, declare both `tmp`
->> variables as unused. Fix warning (treated as error in W=1):
->
-> What about using fault_in_pages_readable() instead ?
+there's an important revert in this pull request that needs to go to
+stable as it causes a corruption on big endian machines. The other fix
+is for FIEMAP incorrectly reporting shared extents before a sync and one
+fix for a crash in raid56.
 
-Yeah that looks like it would work.
+So far we got only one report about the BE corruption, the stable
+kernels were out for like a week, so hopefully the scope of the damage
+is low.
 
-I'd be happy to take a tested patch :D
+Please pull, thanks.
 
-cheers
+----------------------------------------------------------------
+The following changes since commit 1f250e929a9c9332fd6ea34da684afee73837cfe:
+
+  Btrfs: fix log replay failure after unlink and link combination (2018-03-01 16:18:40 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.16-rc5-tag
+
+for you to fetch changes up to 093e037ca88e1767693bc6bcb2df3f49c6be68c7:
+
+  Revert "btrfs: use proper endianness accessors for super_copy" (2018-03-16 14:49:44 +0100)
+
+----------------------------------------------------------------
+David Sterba (1):
+      Revert "btrfs: use proper endianness accessors for super_copy"
+
+Dmitriy Gorokh (1):
+      btrfs: Fix NULL pointer exception in find_bio_stripe
+
+Edmund Nadolski (1):
+      btrfs: add missing initialization in btrfs_check_shared
+
+ fs/btrfs/backref.c     |  1 +
+ fs/btrfs/raid56.c      |  1 +
+ fs/btrfs/sysfs.c       |  8 +++++---
+ fs/btrfs/transaction.c | 20 ++++++++------------
+ 4 files changed, 15 insertions(+), 15 deletions(-)
