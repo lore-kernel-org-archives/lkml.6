@@ -1,53 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754844AbeCPQGS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:06:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35854 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754537AbeCPQGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:06:16 -0400
-Date: Fri, 16 Mar 2018 17:06:09 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-Message-ID: <20180316160609.GD5180@flask>
-References: <20180316142220.32506-1-vkuznets@redhat.com>
- <20180316142220.32506-8-vkuznets@redhat.com>
+        id S934649AbeCPQKo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:10:44 -0400
+Received: from mga11.intel.com ([192.55.52.93]:46225 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934626AbeCPQKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:10:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,316,1517904000";
+   d="scan'208";a="183419170"
+Date: Fri, 16 Mar 2018 18:10:12 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        mchehab@kernel.org, hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>
+Subject: Re: [PATCH v3 2/2] media: ov2680: Add Omnivision OV2680 sensor driver
+Message-ID: <20180316161011.yelt3mqkqo7qnlnn@kekkonen.localdomain>
+References: <20180313113311.8617-3-rui.silva@linaro.org>
+ <201803150338.2LzbxAYM%fengguang.wu@intel.com>
+ <m3a7v98z5u.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180316142220.32506-8-vkuznets@redhat.com>
+In-Reply-To: <m3a7v98z5u.fsf@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-16 15:22+0100, Vitaly Kuznetsov:
-> Enlightened VMCS is just a structure in memory, the main benefit
-> besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
-> mask: we tell the underlying hypervisor which fields were modified
-> since VMEXIT so there's no need to inspect them all.
+On Thu, Mar 15, 2018 at 09:29:33AM +0000, Rui Miguel Silva wrote:
+> Hi,
+> On Wed 14 Mar 2018 at 19:39, kbuild test robot wrote:
+> > Hi Rui,
+> > 
+> > I love your patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on v4.16-rc4]
+> > [cannot apply to next-20180314]
+> > [if your patch is applied to the wrong git tree, please drop us a note
+> > to help improve the system]
+> > 
+> > url: https://github.com/0day-ci/linux/commits/Rui-Miguel-Silva/media-Introduce-Omnivision-OV2680-driver/20180315-020617
+> > config: sh-allmodconfig (attached as .config)
+> > compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> > reproduce:
+> >         wget
+> > https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> > -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=sh
+> > 
+> > All errors (new ones prefixed by >>):
+> > 
+> >    drivers/media/i2c/ov2680.c: In function 'ov2680_set_fmt':
+> > > > drivers/media/i2c/ov2680.c:713:9: error: implicit declaration of
+> > > > function 'v4l2_find_nearest_size'; did you mean
+> > > > 'v4l2_find_nearest_format'?
+> > > > [-Werror=implicit-function-declaration]
+> >      mode = v4l2_find_nearest_size(ov2680_mode_data,
+> >             ^~~~~~~~~~~~~~~~~~~~~~
+> >             v4l2_find_nearest_format
 > 
-> Tight CPUID loop test shows significant speedup:
-> Before: 18890 cycles
-> After: 8304 cycles
-> 
-> Static key is being used to avoid performance penalty for non-Hyper-V
-> deployments.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
+> As requested by maintainer this series depend on this patch [0], which
+> introduce this macro. I am not sure of the status of that patch though.
 
-Looks good, thanks.
+No need to worry about that, the sensor driver will just be merged after
+the dependencies are in. Mauro said he'd handle the pull request early next
+week.
 
-Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
