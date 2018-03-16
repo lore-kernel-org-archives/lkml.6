@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215514-2-1051159608703646408
+X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215204-2-2748988457736947489
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215513; b=NM24+2eGLAAfOQJLdb8WiGykdwf7wUzXN7hw+kRHvDwZ/P2
-    hgJTnMaRzsZ6NgoaLS5QpUNdzsJXtqkjA5qPQE07wwzeE9q0jMVPnPkJ53wz5rCF
-    4e1MvrncuX22wWylzOAIPfEUk2gpXn39aHi2BnHo5KEzIhWkmqqc7BQk/hriqfhh
-    +aGDDryVG0aBLDZPmUrOx/5uEdJVKpjeiPNkyZv3ZJc4CGOzUNTziys94VFJZt3F
-    6oqr3ic+gaGoV66fgkeJLg4w+PC2HJkgEhM8OdGU1BBSx28JQkPMp4Ll2FV4i1hI
-    9MLWd8dzsmkRY1jXpWrEOL1pWydt1nS6TcnrRnQ==
+    t=1521215204; b=QWJewF0G+ycaxEpMwBAhN11aTow8tap/ZaJBWkySbuQuwqn
+    uSvSPCtopBqoJUnGGGXP5yX+rGLHMH02tTIZ0swt9P8IU7RWHmMLvEelpLcJQc1V
+    VkERxZzW5pcUmx8tHJyw7l0ntOYKUwd0eg1T6LlKARMFGaR2WsyjCFUUp3s+CC7y
+    Of5JL3Vzkmyssu3xJAdUV6KezAbXp5FfNdgRJ36gGLyihb3uQWx1iksKN+2K3hTy
+    6bW3Ves3Vuc9TozbuglY0T2jeiAWlrB4TJ0r9oJgexIBFXOLlHv/OXkwfKgu2mfI
+    pIgYcUxvHmf3QQvaBnKX9j5zuLAXyKYHxBiWs5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215513; bh=cTqJJ74otfNfjgnJrsaSKw32X6
-    v+rANMKNsBkvrPmxI=; b=VHleXtKWIvgaMk1wq6JocWb/uBvFLVZW5v/PxuLt1I
-    IuyYNV7PYyz8iZor6/PJ+TIM2Se13phQsMZ8CN782PAbgwVw6Nx/OnZyS0MEdSAl
-    CoY6vcijSzPosMm5jAJqtyQmtBtFRUt6Jh4i71aZ/qr1ouMWADoU1DSE/b7tEDu2
-    GRfXl+cc8Zl4zXYg5dOp92qtbHwsVZli6bFws/1i6yIJalAm5rwJIRDCgQl2PxyA
-    Tfdrk1TCAJXBucCvXM9Q+Ww/5jCeZkB1RzkROxSEY2vghrebF0p1hXVMB/DMuESN
-    BZiQ7om0E6ew9BMANWGkupA48PAeRdI2VCnU+c9FjkZQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215204; bh=t96k751oe5z4MVALufbJvVjVy5
+    SEsI4fz55nVq8oZKs=; b=TRsLX7RCwpcH1T5Le4pnj4ulvC95YaStFPBwOaF0yQ
+    uN++hjMDIgj/YCA9ouiP0EiIo45J+kZB+yZEZTcvd9awnJa6J4FOuTJIy/6h8ajB
+    TFzJZJdADivNoGXSFTSkfNXzHY11DUZUHdzPHWIVCK+TJR+sJFGybsTVPkvqFveP
+    SxPmT0y6d9dAwnTfVEha9HUT97HyszQZHD+Nyz+ScUXtbxylj5lFHM30yPlcrsvz
+    fLuM2N9xjMIpyn184DoTPOyU8DBSfjBN0St7Ydlz80ZYSsic4sXwvn+sW+hjAmzL
+    4VuPp8OApLiyZ7azS3snEVKXXDyEaCFhKpLZ11a9iuxA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,23 +49,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754102AbeCPPoc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:44:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45962 "EHLO
+        id S933239AbeCPPpM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:45:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934548AbeCPPo2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:28 -0400
+        with ESMTP id S932967AbeCPPpK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 081/128] scsi: lpfc: Fix crash during driver unload with running nvme traffic
-Date: Fri, 16 Mar 2018 16:23:42 +0100
-Message-Id: <20180316152340.674900786@linuxfoundation.org>
+Subject: [PATCH 4.15 119/128] ASoC: nuc900: Fix a loop timeout test
+Date: Fri, 16 Mar 2018 16:24:20 +0100
+Message-Id: <20180316152342.382640213@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -83,110 +81,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 3386f4bdd243ad5a9094d390297602543abe9902 ]
+[ Upstream commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 ]
 
-When the driver is unloading, the nvme transport could be in the process
-of submitting new requests, will send abort requests to terminate
-associations, or may make LS-related requests.  The driver's abort and
-request entry points currently is ignorant of the unloading state and is
-starting the requests even though the infrastructure to complete them
-continues to teardown.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout == -1.
 
-Change the entry points for new requests to check whether unloading and
-if so, reject the requests. Abort routines check unloading, and if so,
-noop the request. An abort is noop'd as the teardown paths are already
-aborting/terminating the io outstanding at the time the teardown
-initiated.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_nvme.c  |   14 ++++++++++++++
- drivers/scsi/lpfc/lpfc_nvmet.c |   11 +++++++++++
- 2 files changed, 25 insertions(+)
+ sound/soc/nuc900/nuc900-ac97.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_nvme.c
-+++ b/drivers/scsi/lpfc/lpfc_nvme.c
-@@ -419,6 +419,9 @@ lpfc_nvme_ls_req(struct nvme_fc_local_po
- 	if (vport->load_flag & FC_UNLOADING)
- 		return -ENODEV;
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(s
  
-+	if (vport->load_flag & FC_UNLOADING)
-+		return -ENODEV;
-+
- 	ndlp = lpfc_findnode_did(vport, pnvme_rport->port_id);
- 	if (!ndlp || !NLP_CHK_NODE_ACT(ndlp)) {
- 		lpfc_printf_vlog(vport, KERN_ERR, LOG_NODE | LOG_NVME_IOERR,
-@@ -534,6 +537,9 @@ lpfc_nvme_ls_abort(struct nvme_fc_local_
- 	vport = lport->vport;
- 	phba = vport->phba;
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
  
-+	if (vport->load_flag & FC_UNLOADING)
-+		return;
-+
- 	ndlp = lpfc_findnode_did(vport, pnvme_rport->port_id);
- 	if (!ndlp) {
- 		lpfc_printf_vlog(vport, KERN_ERR, LOG_NVME_ABTS,
-@@ -1260,6 +1266,11 @@ lpfc_nvme_fcp_io_submit(struct nvme_fc_l
- 		goto out_fail;
- 	}
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd
  
-+	if (vport->load_flag & FC_UNLOADING) {
-+		ret = -ENODEV;
-+		goto out_fail;
-+	}
-+
- 	/* Validate pointers. */
- 	if (!pnvme_lport || !pnvme_rport || !freqpriv) {
- 		lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_IOERR | LOG_NODE,
-@@ -1487,6 +1498,9 @@ lpfc_nvme_fcp_abort(struct nvme_fc_local
- 	vport = lport->vport;
- 	phba = vport->phba;
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
  
-+	if (vport->load_flag & FC_UNLOADING)
-+		return;
-+
- 	/* Announce entry to new IO submit field. */
- 	lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_ABTS,
- 			 "6002 Abort Request to rport DID x%06x "
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -635,6 +635,9 @@ lpfc_nvmet_xmt_ls_rsp(struct nvmet_fc_ta
- 	if (phba->pport->load_flag & FC_UNLOADING)
- 		return -ENODEV;
- 
-+	if (phba->pport->load_flag & FC_UNLOADING)
-+		return -ENODEV;
-+
- 	lpfc_printf_log(phba, KERN_INFO, LOG_NVME_DISC,
- 			"6023 NVMET LS rsp oxid x%x\n", ctxp->oxid);
- 
-@@ -721,6 +724,11 @@ lpfc_nvmet_xmt_fcp_op(struct nvmet_fc_ta
- 		goto aerr;
- 	}
- 
-+	if (phba->pport->load_flag & FC_UNLOADING) {
-+		rc = -ENODEV;
-+		goto aerr;
-+	}
-+
- #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
- 	if (ctxp->ts_cmd_nvme) {
- 		if (rsp->op == NVMET_FCOP_RSP)
-@@ -822,6 +830,9 @@ lpfc_nvmet_xmt_fcp_abort(struct nvmet_fc
- 
- 	if (phba->pport->load_flag & FC_UNLOADING)
- 		return;
-+
-+	if (phba->pport->load_flag & FC_UNLOADING)
-+		return;
- 
- 	lpfc_printf_log(phba, KERN_INFO, LOG_NVME_ABTS,
- 			"6103 NVMET Abort op: oxri x%x flg x%x ste %d\n",
+ 	if (!timeout)
