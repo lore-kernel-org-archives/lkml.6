@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELsndsnTQ9DR/GgovZ0IAYvidMpm+bbY5izAFr6ixobgdy2JyGZnD/vZm8OVqkTzTfGnJyjO
-ARC-Seal: i=1; a=rsa-sha256; t=1521228611; cv=none;
+X-Google-Smtp-Source: AG47ELuLVXjdxE3lsK8jpHnOHDRg1vMbcSk1J6thsxtuce6mShVKnUia4yhnwf5D62ZvBL7u/oZ6
+ARC-Seal: i=1; a=rsa-sha256; t=1521228609; cv=none;
         d=google.com; s=arc-20160816;
-        b=H/IoaSWMoZbI0Ipjgc6P6FLQOO3RcOJZ6Z0CZmvrhY6h7+us+OP0qkBs0yhFVWMcy4
-         7IDgKWpodvnYyrZBdpAlWMSzES8pHCkdsdw0bDqHhgmgalIc8iFeq0W9speqURafo2uT
-         2FZKh/ZzbG35/8xipurvLG56EWSsNr7b1yu9tjiymw7nV0lNpFi1ZAdfbEQY+SpM3PH6
-         4llHXHhb3MwnvIbMotoQpm9W55wv9/mbT2z4+ChldXlCqvnz9wz3IcgPFX//Zzbdbsy4
-         PrtpfVOiucV5gNht65k+WGVCBXApMNUH1y0YgI+D4Nra2LptmrzEBdnmpuKSNEl7PHZN
-         5zIw==
+        b=rP+ptTRyE979hTVgATdIoLNR9eMQA0Im3tHHZBvWFbGDtgBD5z0tUSfAFFbZ0ZoKMY
+         KuKoyW2VNiyCuuTjL8sTa5C/uZN2BebtMLCHV45kzBE0Jm63mCMOlSzlBllwNjzPzQ5l
+         XJI9Z+Asi+jrYJgnSHg/1HeFqGGgVSVOwaQgzau+VFbgpUnlID+2ljJ3IOIv1I9W5uOV
+         bG38njEc3fBemwJx85Q/IPX4Ab1O2mC/YERC9+D8yi08mp/LKHKaRyeBjNxpbW/lwQdy
+         XWOi8Y8H4mocXmFDwzOYsmBQdlCJwjZ8KR8xSA0K43u2lWRahsrmw6pHddeOqPr0LaWl
+         1MaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=kOeFMKXkH7neppHZYCDuThqU38nRGeLHl0Mw/ynSVtA=;
-        b=A7FpLquwY8cAk+p5/HKtlDlS8p2feHCoPEXKFb9y7yra/d4NOfFK7GqH+pSoGNyERH
-         lc/nZqclzzbUGhK45JqojiUloYxIklVb2qqz7uu/Dum7/6P1jeO5LAaKS3f2NX64H0S/
-         AhuWPoGFOHsu3OS4CqGpmZrE/2ciiYMHptTq0yVCnXKgGrf79bgGQPnQUtMRglvlO00P
-         JpRx1i01SNNGxbb2K5mZlpex/043B3pK84aDLR/W9xwZ7HDATSf6SfPEP/27sMQVvyeS
-         5Ae0/swrb7n6Jfzf6qrY8sCETEQeflZRh43LWcBqOuMKr0F0sJU4zc4YCfIklT8c6X3Y
-         CWjQ==
+        bh=TBtohe2X5SHsmPjdTDHZdNzRuX9gI4sKHKxpvfjShHc=;
+        b=VXXYe1dvvV8cHauGieHRiFZQCK+ZY0XbfEsK+pfFpEjx1VZvAVekRxLBBTJpWzV2b2
+         UYLKaIY//lGVkBCWMzTZ1i7710ELV1Ie5cpVS07BZsI/E3eBSHCoac6oqo13oPCkDc7F
+         oiacryHZth/VGHvmFA368VlGLPcCiJiq/ERWeY/BV5saiuGvuZEZybAN0DWLq7g0BS7e
+         6nvX1GSt4v1yYvhZPii1P5JFOYxVfr10WJfYq55YpCy9ZAuCkGjoPOaVPd0D/6kgB9WN
+         SqphA+OSd0xvu5syP9/LXoiTWuYfGeQ92zjy+xN+579ZdKY7TeguS/A8+BKN6w2VO2lv
+         cMuQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=YDpJTyLY;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V0klQ7HM;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=YDpJTyLY;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V0klQ7HM;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,223 +57,72 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 28/35] x86/pgtable/pae: Use separate kernel PMDs for user page-table
-Date: Fri, 16 Mar 2018 20:29:46 +0100
-Message-Id: <1521228593-3820-29-git-send-email-joro@8bytes.org>
+Subject: [PATCH 27/35] x86/mm/dump_pagetables: Define INIT_PGD
+Date: Fri, 16 Mar 2018 20:29:45 +0100
+Message-Id: <1521228593-3820-28-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123812183661351?=
-X-GMAIL-MSGID: =?utf-8?q?1595123812183661351?=
+X-GMAIL-THRID: =?utf-8?q?1595123810895760732?=
+X-GMAIL-MSGID: =?utf-8?q?1595123810895760732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-We need separate kernel PMDs in the user page-table when PTI
-is enabled to map the per-process LDT for user-space.
+Define INIT_PGD to point to the correct initial page-table
+for 32 and 64 bit and use it where needed. This fixes the
+build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/pgtable.c | 100 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 81 insertions(+), 19 deletions(-)
+ arch/x86/mm/dump_pagetables.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index a81d42e..d95bc7b 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -177,6 +177,14 @@ static void pgd_dtor(pgd_t *pgd)
-  */
- #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 2a4849e..2151ebb 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -105,6 +105,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
-+/*
-+ * We allocate separate PMDs for the kernel part of the user page-table
-+ * when PTI is enabled. We need them to map the per-process LDT into the
-+ * user-space page-table.
-+ */
-+#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
-+					KERNEL_PGD_PTRS : 0)
++#define INIT_PGD	((pgd_t *) &init_top_pgt)
 +
- void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- {
- 	paravirt_alloc_pmd(mm, __pa(pmd) >> PAGE_SHIFT);
-@@ -197,14 +205,14 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ #else /* CONFIG_X86_64 */
  
- /* No need to prepopulate any pagetable entries in non-PAE modes. */
- #define PREALLOCATED_PMDS	0
--
-+#define PREALLOCATED_USER_PMDS	 0
- #endif	/* CONFIG_X86_PAE */
+ enum address_markers_idx {
+@@ -133,6 +135,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
--static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
++#define INIT_PGD	(swapper_pg_dir)
++
+ #endif /* !CONFIG_X86_64 */
+ 
+ /* Multipliers for offsets within the PTEs */
+@@ -478,11 +482,7 @@ static inline bool is_hypervisor_range(int idx)
+ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
+ 				       bool checkwx, bool dmesg)
  {
+-#ifdef CONFIG_X86_64
+-	pgd_t *start = (pgd_t *) &init_top_pgt;
+-#else
+-	pgd_t *start = swapper_pg_dir;
+-#endif
++	pgd_t *start = INIT_PGD;
+ 	pgprotval_t prot;
  	int i;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++)
-+	for(i = 0; i < count; i++)
- 		if (pmds[i]) {
- 			pgtable_pmd_page_dtor(virt_to_page(pmds[i]));
- 			free_page((unsigned long)pmds[i]);
-@@ -212,7 +220,7 @@ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 		}
- }
- 
--static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+ 	struct pg_state st = {};
+@@ -543,7 +543,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ static void ptdump_walk_user_pgd_level_checkwx(void)
  {
- 	int i;
- 	bool failed = false;
-@@ -221,7 +229,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	if (mm == &init_mm)
- 		gfp &= ~__GFP_ACCOUNT;
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-	pgd_t *pgd = (pgd_t *) &init_top_pgt;
++	pgd_t *pgd = INIT_PGD;
  
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
-+	for(i = 0; i < count; i++) {
- 		pmd_t *pmd = (pmd_t *)__get_free_page(gfp);
- 		if (!pmd)
- 			failed = true;
-@@ -236,7 +244,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	}
- 
- 	if (failed) {
--		free_pmds(mm, pmds);
-+		free_pmds(mm, pmds, count);
- 		return -ENOMEM;
- 	}
- 
-@@ -249,23 +257,38 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-  * preallocate which never got a corresponding vma will need to be
-  * freed manually.
-  */
-+static void mop_up_one_pmd(struct mm_struct *mm, pgd_t *pgdp)
-+{
-+	pgd_t pgd = *pgdp;
-+
-+	if (pgd_val(pgd) != 0) {
-+		pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+
-+		*pgdp = native_make_pgd(0);
-+
-+		paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
-+		pmd_free(mm, pmd);
-+		mm_dec_nr_pmds(mm);
-+	}
-+}
-+
- static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
- {
- 	int i;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
--		pgd_t pgd = pgdp[i];
-+	for(i = 0; i < PREALLOCATED_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i]);
- 
--		if (pgd_val(pgd) != 0) {
--			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
- 
--			pgdp[i] = native_make_pgd(0);
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
- 
--			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
--			pmd_free(mm, pmd);
--			mm_dec_nr_pmds(mm);
--		}
--	}
-+	pgdp = kernel_to_user_pgdp(pgdp);
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i + KERNEL_PGD_BOUNDARY]);
-+#endif
- }
- 
- static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
-@@ -291,6 +314,38 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
- 	}
- }
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+	pgd_t *s_pgd = kernel_to_user_pgdp(swapper_pg_dir);
-+	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
-+	p4d_t *u_p4d;
-+	pud_t *u_pud;
-+	int i;
-+
-+	u_p4d = p4d_offset(u_pgd, 0);
-+	u_pud = pud_offset(u_p4d, 0);
-+
-+	s_pgd += KERNEL_PGD_BOUNDARY;
-+	u_pud += KERNEL_PGD_BOUNDARY;
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++, u_pud++, s_pgd++) {
-+		pmd_t *pmd = pmds[i];
-+
-+		memcpy(pmd, (pmd_t *)pgd_page_vaddr(*s_pgd),
-+		       sizeof(pmd_t) * PTRS_PER_PMD);
-+
-+		pud_populate(mm, u_pud, pmd);
-+	}
-+
-+}
-+#else
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+}
-+#endif
- /*
-  * Xen paravirt assumes pgd table should be in one page. 64 bit kernel also
-  * assumes that pgd should be in one page.
-@@ -371,6 +426,7 @@ static inline void _pgd_free(pgd_t *pgd)
- pgd_t *pgd_alloc(struct mm_struct *mm)
- {
- 	pgd_t *pgd;
-+	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
- 	pmd_t *pmds[PREALLOCATED_PMDS];
- 
- 	pgd = _pgd_alloc();
-@@ -380,12 +436,15 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 
- 	mm->pgd = pgd;
- 
--	if (preallocate_pmds(mm, pmds) != 0)
-+	if (preallocate_pmds(mm, pmds, PREALLOCATED_PMDS) != 0)
- 		goto out_free_pgd;
- 
--	if (paravirt_pgd_alloc(mm) != 0)
-+	if (preallocate_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS) != 0)
- 		goto out_free_pmds;
- 
-+	if (paravirt_pgd_alloc(mm) != 0)
-+		goto out_free_user_pmds;
-+
- 	/*
- 	 * Make sure that pre-populating the pmds is atomic with
- 	 * respect to anything walking the pgd_list, so that they
-@@ -395,13 +454,16 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 
- 	pgd_ctor(mm, pgd);
- 	pgd_prepopulate_pmd(mm, pgd, pmds);
-+	pgd_prepopulate_user_pmd(mm, pgd, u_pmds);
- 
- 	spin_unlock(&pgd_lock);
- 
- 	return pgd;
- 
-+out_free_user_pmds:
-+	free_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS);
- out_free_pmds:
--	free_pmds(mm, pmds);
-+	free_pmds(mm, pmds, PREALLOCATED_PMDS);
- out_free_pgd:
- 	_pgd_free(pgd);
- out:
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
