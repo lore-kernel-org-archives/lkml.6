@@ -1,107 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932914AbeCPCvy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:51:54 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:55487 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932651AbeCPCvw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:51:52 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37866834"
-Subject: Re: [RFC PATCH v2] ACPI / processor: Fix possible CPUs map
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <rafael@kernel.org>,
-        <dedekind1@gmail.com>, Ming Lei <ming.lei@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20180315030756.5548-1-douly.fnst@cn.fujitsu.com>
- <alpine.DEB.2.21.1803151436200.1525@nanos.tec.linutronix.de>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <cb79c370-8c6f-2ef7-9a0a-ed33bd485113@cn.fujitsu.com>
-Date: Fri, 16 Mar 2018 10:51:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803151436200.1525@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 78D7248AE761.AA798
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        id S933146AbeCPCxv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:53:51 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55424 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933065AbeCPCxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:53:46 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>
+Subject: [PATCH v8 14/42] clk: davinci: Add platform information for TI DM365 PSC
+Date: Thu, 15 Mar 2018 21:52:30 -0500
+Message-Id: <1521168778-27236-15-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+This adds platform-specific declarations for the PSC clocks on TI
+DM365 based systems.
 
-At 03/15/2018 09:45 PM, Thomas Gleixner wrote:
-[...]
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
 
-> I tested this on a machine which claims to have gazillion of hotplugable
-> CPUs:
+v8 changes:
+- drop use of __init and __initconst attributes
+- add parent clock mappings
 
-I really appreciate your test.
+v7 changes:
+- split registration function into two, one for each PSC
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
 
-> 
-> 	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
-> 	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
-> 	smp: Brought up 2 nodes, 32 CPUs
-> 
-> Now with your patch applied it's still saying:
-> 
-> 	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
-> 	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
-> 	smp: Brought up 2 nodes, 32 CPUs
-> 
-> and the above code runs later on and the result is:
-> 
-> 	nr_unique_ids 1 nr_cpu_ids 152
-> 	Allowing 1 possible CPU
-> 
-> which subsequently causes the machine to die as we have already 32 CPUs
-> online.
-> 
+v6 changes:
+- change how clkdev lookups are declared
 
-That is so interesting, it proofs that this strategy is risky.
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm365.c | 96 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c       |  1 +
+ drivers/clk/davinci/psc.h       |  1 +
+ 4 files changed, 99 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm365.c
 
-I've been wondering how to determine the number of possible CPUs. Due to
-the diversity of ACPI in different systems, that seems impossible. Why 
-don't I change my mind? Here is a new strategy and I think it is more
-reasonable and minimally invasive.
-
-   As we all know, we reset possible CPUs in the prefill_possible_map(),
-   If CONFIG_HOTPLUG_CPU = y :
-       nr_possible_CPUs = num_processors + disabled_cpus.
-
-   Before the prefill_possible_map(), *Fix the inaccurate disabled_cpus*:
-
-     1) For each disabled CPUs, get it's processor id from ACPI MADT
-
-     2) Check whether this processor id is existed in ACPI namespace or not.
-        If false, disabled_cpus--;
-
-I will show you the code and test it later. And IMO, the code logic in
-prefill_possible_map() is a little mess, will try to sort it out first.
-
-> So nr_unique_ids is not what it should be and even if it would be the code
-> runs way too late. It needs to run _before_ setup_percpu() is invoked to
-> scale everything correctly.
-> 
-
-Yes, Got it.
-
-Thanks,
-	dou
-
-> Thanks,
-> 
-> 	tglx
-> 
-> 
-> 
-> 
-> 
-> 
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index e0da5c3..78dc1eb 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -13,4 +13,5 @@ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+new file mode 100644
+index 0000000..3ad915f
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM365
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
++LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
++LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++LPSC_CLKDEV1(spi3_clkdev,		NULL,		"spi_davinci.3");
++LPSC_CLKDEV1(spi4_clkdev,		NULL,		"spi_davinci.4");
++LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
++					"fck",		"davinci_mdio.0");
++LPSC_CLKDEV1(voice_codec_clkdev,	NULL,		"davinci_voicecodec");
++LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++
++static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
++	LPSC(1,  0, vpss_slave,  pll1_sysclk5, vpss_slave_clkdev,  0),
++	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
++	LPSC(6,  0, spi1,        pll1_sysclk4, spi1_clkdev,        0),
++	LPSC(7,  0, mmcsd1,      pll1_sysclk4, mmcsd1_clkdev,      0),
++	LPSC(8,  0, asp0,        pll1_sysclk4, asp0_clkdev,        0),
++	LPSC(9,  0, usb,         pll1_auxclk,  usb_clkdev,         0),
++	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
++	LPSC(11, 0, spi2,        pll1_sysclk4, spi2_clkdev,        0),
++	LPSC(12, 0, rto,         pll1_sysclk4, NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk4, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd0,      pll1_sysclk8, mmcsd0_clkdev,      0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_sysclk4, uart1_clkdev,       0),
++	LPSC(22, 0, spi0,        pll1_sysclk4, spi0_clkdev,        0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk4, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
++	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
++	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
++	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
++	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
++	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
++	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
++	{ }
++};
++
++static int dm365_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, dm365_psc_info, 52, base);
++}
++
++static struct clk_bulk_data dm365_psc_parent_clks[] = {
++	{ .id = "pll1_sysclk1" },
++	{ .id = "pll1_sysclk3" },
++	{ .id = "pll1_sysclk4" },
++	{ .id = "pll1_sysclk5" },
++	{ .id = "pll1_sysclk8" },
++	{ .id = "pll2_sysclk2" },
++	{ .id = "pll2_sysclk4" },
++	{ .id = "pll1_auxclk"  },
++};
++
++const struct davinci_psc_init_data dm365_psc_init_data = {
++	.parent_clks		= dm365_psc_parent_clks,
++	.num_parent_clks	= ARRAY_SIZE(dm365_psc_parent_clks),
++	.psc_init		= &dm365_psc_init,
++};
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 0825b62..7bcf316 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -493,6 +493,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
+ 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
++	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index d672e72..4f6210e 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -101,5 +101,6 @@ extern const struct davinci_psc_init_data da850_psc1_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc0_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
+ extern const struct davinci_psc_init_data dm355_psc_init_data;
++extern const struct davinci_psc_init_data dm365_psc_init_data;
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
+-- 
+2.7.4
