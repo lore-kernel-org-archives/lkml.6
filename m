@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2539098-1521191440-2-7942008431067467331
+X-Cyrus-Session-Id: sloti22d1t05-2571388-1521191437-2-9269322982968596180
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -14,22 +14,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521191439; b=g9nn37rHXxAi5lir6O53dGHi1iWy0iN4UJY7urm1d2rqVAm
-    ALzCXgyLpsOkD+fRKJuMmWfXX/s4Jho3LeXOtrOq8KEBTFl8GEnmw/ht2ggNRAL/
-    UvfdNzPRavH7NGYCUxr6YgytjDL5cumCMOoxepC1LyO09qJvd67zu5h3ncrp8zRJ
-    NMTQvqh5mv08B7oIDit+Bqicluwn+mOY1U359gJRLCfrfdv0bvPhaun+yWWTEhfA
-    J+4G7xGXPMzGaEs4JMdld8mWlrAZntkR8Vnsc9U37qeEKxmpCSmAZz7ADWg7gFwC
-    zkEMp2+g42qaGlr9wedLkJ3yUT5b9RBkajfDqEA==
+    t=1521191436; b=Jm1PF/l7rr9NNcAcI8S9DRDJPW2BhTua25Eo4IEoqY1d0Dz
+    alcldlPG697EtLeGTh6MO4BFpHFiy+9W6r44wZCawfvBlAUsHqgPK41/mUQXf9R8
+    Hqy0ROpWrprcvzrWG3wweorPgynpk3Y9XA6vdd8gjpqVTLmYo2QjQAcrbgguPm7c
+    IvCvwGT8YlvRNvqOMWn/Q+M/4H73S+uNG7inKK6/3vtneLEWDmgehyxeyqGR8FPh
+    +48B8WDNcfsKKT2+UbKu7k+W+/+cBat6zNk9MxNNnq2w0TNxRmYITr6X+X2haaLv
+    GuUGYWY2NN2JCnh+6zcT8Pkl/YOtZRII8CtuX+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1521191439; bh=yruhlk6AP3Bp7SyBjSBV17F0RUIWqP0t8dk
-    DR23PFdI=; b=rMiPbKoazCDKeG6Ac1h6DF0Yaj8/DxXcAn3P/LKqAu4CVCsKKdh
-    VX5ZjUe73aC4pI6p2fCH3VZAGAwq7mo8gcRfSsNOc7IIxotPlR7fJTRUKOBEASUx
-    rMy7vHWbsboYE0FlivUNFSIZuCycfw/iAq8Xii+Odp3BWmimEyS91Ot6JqnYXkpx
-    beQ6/1D8i1PUzhrFyoAVAMdhQPNQqbcWmolv7ggqTlT46IR9CzQfSbg8sG1UD605
-    4bFL5XaQRoDMtYd5DQDcDinOi5v4VpuWg4hIi5exaxDEo98NqZZBZOFdRThjBcyr
-    qQIx/j+x4Fd8x0KGbB/qpNN4edpcVdERMUg==
+    s=arctest; t=1521191436; bh=s50vkaymqNTUKMgzjdo4/2DPGguZWQrMLoK
+    CuCdUI/4=; b=fYTWHFcfhuJMDWK51c7bU3rXhE8RWYBcwAngS1oqSDLw+ycYhyp
+    fG4/gBmq75cD3FbCxKJJn3EaqWGCIRqIHOKEZLsW0qYV1RF0Gi4KLxwSDjfdgB3K
+    +Ckm4DD9lzldsv0m1bD+b+hzBCAc/TDJinXvQ2WitF33qJxTEex5W5DFh//V+Rzc
+    j/9D+WzTwnLevMHnr5FeE6JFNk0m79O/qOkrVqum0hgRC+uB9TT/bGuJnRJffbyu
+    B+7JtidmLhikL0k+MoCfXNsp/bLLy+Wh14vBjYoWFCHU0/jXqNCrNBMt0zJ4DdUi
+    iJnIb8PVqxInC5I72ELzwtGsxh7LNYqQTBg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -50,12 +50,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753277AbeCPJG2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 05:06:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52408 "EHLO mx1.redhat.com"
+        id S1753047AbeCPJGd (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 05:06:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45072 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751094AbeCPJG0 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:06:26 -0400
+        id S1751094AbeCPJGa (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Fri, 16 Mar 2018 05:06:30 -0400
 From: Richard Guy Briggs <rgb@redhat.com>
 To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
         viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
         eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
         madzcar@gmail.com, Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak32 V2 03/13] audit: log container info of syscalls
-Date: Fri, 16 Mar 2018 05:00:30 -0400
-Message-Id: <6768d20c636df65534f8d325529669bb30a58382.1521179281.git.rgb@redhat.com>
+Subject: [RFC PATCH ghak32 V2 04/13] audit: add containerid filtering
+Date: Fri, 16 Mar 2018 05:00:31 -0400
+Message-Id: <b933f93762435990e9b1e6d5aebf15f186ac8951.1521179281.git.rgb@redhat.com>
 In-Reply-To: <cover.1521179281.git.rgb@redhat.com>
 References: <cover.1521179281.git.rgb@redhat.com>
 In-Reply-To: <cover.1521179281.git.rgb@redhat.com>
@@ -79,107 +79,187 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Create a new audit record AUDIT_CONTAINER_INFO to document the container
-ID of a process if it is present.
+Implement container ID filtering using the AUDIT_CONTAINERID field name
+to send an 8-character string representing a u64 since the value field
+is only u32.
 
-Called from audit_log_exit(), syscalls are covered.
+Sending it as two u32 was considered, but gathering and comparing two
+fields was more complex.
 
-A sample raw event:
-type=SYSCALL msg=audit(1519924845.499:257): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=56374e1cef30 a2=241 a3=1b6 items=2 ppid=606 pid=635 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="tmpcontainerid"
-type=CWD msg=audit(1519924845.499:257): cwd="/root"
-type=PATH msg=audit(1519924845.499:257): item=0 name="/tmp/" inode=13863 dev=00:27 mode=041777 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype= PARENT cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-type=PATH msg=audit(1519924845.499:257): item=1 name="/tmp/tmpcontainerid" inode=17729 dev=00:27 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-type=PROCTITLE msg=audit(1519924845.499:257): proctitle=62617368002D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E7461696E65726964
-type=CONTAINER_INFO msg=audit(1519924845.499:257): op=task contid=123458
+The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER.
 
-See: https://github.com/linux-audit/audit-kernel/issues/32
+This requires support from userspace to be useful.
+See: https://github.com/linux-audit/audit-userspace/issues/40
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- include/linux/audit.h      |  5 +++++
- include/uapi/linux/audit.h |  1 +
- kernel/audit.c             | 20 ++++++++++++++++++++
- kernel/auditsc.c           |  2 ++
- 4 files changed, 28 insertions(+)
+ include/linux/audit.h      |  1 +
+ include/uapi/linux/audit.h |  5 ++++-
+ kernel/audit.h             |  1 +
+ kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/auditsc.c           |  3 +++
+ 5 files changed, 56 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/audit.h b/include/linux/audit.h
-index fe4ba3f..3acbe9d 100644
+index 3acbe9d..f10ca1b 100644
 --- a/include/linux/audit.h
 +++ b/include/linux/audit.h
-@@ -154,6 +154,8 @@ extern void		    audit_log_link_denied(const char *operation,
- extern int audit_log_task_context(struct audit_buffer *ab);
- extern void audit_log_task_info(struct audit_buffer *ab,
- 				struct task_struct *tsk);
-+extern int audit_log_container_info(struct task_struct *tsk,
-+				     struct audit_context *context);
- 
- extern int		    audit_update_lsm_rules(void);
- 
-@@ -205,6 +207,9 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
- static inline void audit_log_task_info(struct audit_buffer *ab,
- 				       struct task_struct *tsk)
- { }
-+static inline int audit_log_container_info(struct task_struct *tsk,
-+					    struct audit_context *context);
-+{ }
- #define audit_enabled 0
- #endif /* CONFIG_AUDIT */
- 
+@@ -76,6 +76,7 @@ struct audit_field {
+ 	u32				type;
+ 	union {
+ 		u32			val;
++		u64			val64;
+ 		kuid_t			uid;
+ 		kgid_t			gid;
+ 		struct {
 diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 921a71f..e83ccbd 100644
+index e83ccbd..8443a8f 100644
 --- a/include/uapi/linux/audit.h
 +++ b/include/uapi/linux/audit.h
-@@ -115,6 +115,7 @@
- #define AUDIT_REPLACE		1329	/* Replace auditd if this packet unanswerd */
- #define AUDIT_KERN_MODULE	1330	/* Kernel Module events */
- #define AUDIT_FANOTIFY		1331	/* Fanotify access decision */
-+#define AUDIT_CONTAINER_INFO	1332	/* Container ID information */
+@@ -262,6 +262,7 @@
+ #define AUDIT_LOGINUID_SET	24
+ #define AUDIT_SESSIONID	25	/* Session ID */
+ #define AUDIT_FSTYPE	26	/* FileSystem Type */
++#define AUDIT_CONTAINERID	27	/* Container ID */
  
- #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
- #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 3f2f143..a12f21f 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2049,6 +2049,26 @@ void audit_log_session_info(struct audit_buffer *ab)
- 	audit_log_format(ab, " auid=%u ses=%u", auid, sessionid);
+ 				/* These are ONLY useful when checking
+ 				 * at syscall exit time (AUDIT_AT_EXIT). */
+@@ -342,6 +343,7 @@ enum {
+ #define AUDIT_FEATURE_BITMAP_SESSIONID_FILTER	0x00000010
+ #define AUDIT_FEATURE_BITMAP_LOST_RESET		0x00000020
+ #define AUDIT_FEATURE_BITMAP_FILTER_FS		0x00000040
++#define AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER	0x00000080
+ 
+ #define AUDIT_FEATURE_BITMAP_ALL (AUDIT_FEATURE_BITMAP_BACKLOG_LIMIT | \
+ 				  AUDIT_FEATURE_BITMAP_BACKLOG_WAIT_TIME | \
+@@ -349,7 +351,8 @@ enum {
+ 				  AUDIT_FEATURE_BITMAP_EXCLUDE_EXTEND | \
+ 				  AUDIT_FEATURE_BITMAP_SESSIONID_FILTER | \
+ 				  AUDIT_FEATURE_BITMAP_LOST_RESET | \
+-				  AUDIT_FEATURE_BITMAP_FILTER_FS)
++				  AUDIT_FEATURE_BITMAP_FILTER_FS | \
++				  AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER)
+ 
+ /* deprecated: AUDIT_VERSION_* */
+ #define AUDIT_VERSION_LATEST 		AUDIT_FEATURE_BITMAP_ALL
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 214e149..aaa651a 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -234,6 +234,7 @@ static inline int audit_hash_ino(u32 ino)
+ 
+ extern int audit_match_class(int class, unsigned syscall);
+ extern int audit_comparator(const u32 left, const u32 op, const u32 right);
++extern int audit_comparator64(const u64 left, const u32 op, const u64 right);
+ extern int audit_uid_comparator(kuid_t left, u32 op, kuid_t right);
+ extern int audit_gid_comparator(kgid_t left, u32 op, kgid_t right);
+ extern int parent_len(const char *path);
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index d7a807e..c4c8746 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -410,6 +410,7 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
+ 	/* FALL THROUGH */
+ 	case AUDIT_ARCH:
+ 	case AUDIT_FSTYPE:
++	case AUDIT_CONTAINERID:
+ 		if (f->op != Audit_not_equal && f->op != Audit_equal)
+ 			return -EINVAL;
+ 		break;
+@@ -584,6 +585,14 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
+ 			}
+ 			entry->rule.exe = audit_mark;
+ 			break;
++		case AUDIT_CONTAINERID:
++			if (f->val != sizeof(u64))
++				goto exit_free;
++			str = audit_unpack_string(&bufp, &remain, f->val);
++			if (IS_ERR(str))
++				goto exit_free;
++			f->val64 = ((u64 *)str)[0];
++			break;
+ 		}
+ 	}
+ 
+@@ -666,6 +675,11 @@ static struct audit_rule_data *audit_krule_to_data(struct audit_krule *krule)
+ 			data->buflen += data->values[i] =
+ 				audit_pack_string(&bufp, audit_mark_path(krule->exe));
+ 			break;
++		case AUDIT_CONTAINERID:
++			data->buflen += data->values[i] = sizeof(u64);
++			for (i = 0; i < sizeof(u64); i++)
++				((char *)bufp)[i] = ((char *)&f->val64)[i];
++			break;
+ 		case AUDIT_LOGINUID_SET:
+ 			if (krule->pflags & AUDIT_LOGINUID_LEGACY && !f->val) {
+ 				data->fields[i] = AUDIT_LOGINUID;
+@@ -752,6 +766,10 @@ static int audit_compare_rule(struct audit_krule *a, struct audit_krule *b)
+ 			if (!gid_eq(a->fields[i].gid, b->fields[i].gid))
+ 				return 1;
+ 			break;
++		case AUDIT_CONTAINERID:
++			if (a->fields[i].val64 != b->fields[i].val64)
++				return 1;
++			break;
+ 		default:
+ 			if (a->fields[i].val != b->fields[i].val)
+ 				return 1;
+@@ -1210,6 +1228,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
+ 	}
  }
  
-+/*
-+ * audit_log_container_info - report container info
-+ * @tsk: task to be recorded
-+ * @context: task or local context for record
-+ */
-+int audit_log_container_info(struct task_struct *tsk, struct audit_context *context)
++int audit_comparator64(u64 left, u32 op, u64 right)
 +{
-+	struct audit_buffer *ab;
-+
-+	if (!audit_containerid_set(tsk))
++	switch (op) {
++	case Audit_equal:
++		return (left == right);
++	case Audit_not_equal:
++		return (left != right);
++	case Audit_lt:
++		return (left < right);
++	case Audit_le:
++		return (left <= right);
++	case Audit_gt:
++		return (left > right);
++	case Audit_ge:
++		return (left >= right);
++	case Audit_bitmask:
++		return (left & right);
++	case Audit_bittest:
++		return ((left & right) == right);
++	default:
++		BUG();
 +		return 0;
-+	/* Generate AUDIT_CONTAINER_INFO with container ID */
-+	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER_INFO);
-+	if (!ab)
-+		return -ENOMEM;
-+	audit_log_format(ab, "contid=%llu", audit_get_containerid(tsk));
-+	audit_log_end(ab);
-+	return 0;
++	}
 +}
 +
- void audit_log_key(struct audit_buffer *ab, char *key)
+ int audit_uid_comparator(kuid_t left, u32 op, kuid_t right)
  {
- 	audit_log_format(ab, " key=");
+ 	switch (op) {
+@@ -1348,6 +1391,10 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 				result = audit_comparator(audit_loginuid_set(current),
+ 							  f->op, f->val);
+ 				break;
++			case AUDIT_CONTAINERID:
++				result = audit_comparator64(audit_get_containerid(current),
++							      f->op, f->val64);
++				break;
+ 			case AUDIT_MSGTYPE:
+ 				result = audit_comparator(msgtype, f->op, f->val);
+ 				break;
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index a6b0a52..65be110 100644
+index 65be110..2bba324 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -1453,6 +1453,8 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
- 
- 	audit_log_proctitle(tsk, context);
- 
-+	audit_log_container_info(tsk, context);
-+
- 	/* Send end of event record to help user space know we are finished */
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
- 	if (ab)
+@@ -614,6 +614,9 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 		case AUDIT_LOGINUID_SET:
+ 			result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+ 			break;
++		case AUDIT_CONTAINERID:
++			result = audit_comparator64(audit_get_containerid(tsk), f->op, f->val64);
++			break;
+ 		case AUDIT_SUBJ_USER:
+ 		case AUDIT_SUBJ_ROLE:
+ 		case AUDIT_SUBJ_TYPE:
 -- 
 1.8.3.1
 
