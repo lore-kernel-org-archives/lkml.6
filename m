@@ -1,107 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753089AbeCPOF5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:05:57 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:44205 "EHLO hermes.aosc.io"
+        id S1752927AbeCPOI5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:08:57 -0400
+Received: from mga12.intel.com ([192.55.52.136]:32243 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752702AbeCPOFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:05:53 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 9/9] arm64: allwinner: h6: add support for Pine H64 board
-Date: Fri, 16 Mar 2018 22:02:15 +0800
-Message-Id: <20180316140215.28663-10-icenowy@aosc.io>
-In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io>
+        id S1752048AbeCPOIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:08:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,316,1517904000";
+   d="scan'208";a="38020613"
+Date: Fri, 16 Mar 2018 16:08:50 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
+Message-ID: <20180316140850.GC9616@linux.intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+ <20180310082428.31519-8-tomas.winkler@intel.com>
+ <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
-features:
+On Thu, Mar 15, 2018 at 11:28:55PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> > > Add tpm2_pcr_extend function to tpm2-cmd.c with signature required by
+> > > tpm-interface.c. It wraps the original open code implementation. The
+> > > original original tpm2_pcr_extend function is renamed and made static,
+> > > called only from new tpm2_pcr_extend.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > This might concern some of the earlier patches too but please use exact
+> > names for functions in the short and long summary i.e.
+> > 
+> >   tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
+> > 
+> > Check this also for your long descriptions and previous that I gave reviewed-
+> > by (I think they were otherwise fine). And you refer to a function in text use
+> > parentheses after the name. I don't like hastily written commit messages.
+> 
+> 
+> Yeah,  got little tired of describing the obvious. but you are right.
+> Tomas
 
-- 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
-accessible)
-- AXP805 PMIC
-- Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
-compatible with the "Euler" on Pine A64) and "Expansion" pin header
-- 2 USB 2.0 ports and 1 USB 3.0 ports
-- Audio jack
-- MicroSD slot and eMMC module slot
-- on-board SPI NOR flash
-- 1Gbps Ethernet port (via RTL8211E PHY)
-- HDMI port
+Might sound nit picking but a solid git log is useful tool.
 
-Adds initial support for it, including the UART on the Expansion pin
-header.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
----
-No changes in v4.
-
-Changes in v3:
-- SPDX license identifier fix.
-- Add Andre's Reviewed-by/Tested-by tags.
-
-Changes in v2:
-- Switch to SPDX license identifier.
-
- arch/arm64/boot/dts/allwinner/Makefile             |  1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 29 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index f505227b0250..addf245226f6 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-new file mode 100644
-index 000000000000..d36de5eb81f3
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h6.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Pine H64";
-+	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_ph_pins>;
-+	status = "okay";
-+};
--- 
-2.15.1
+/Jarkko
