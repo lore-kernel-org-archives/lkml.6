@@ -1,73 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753523AbeCPQwn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:52:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36240 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751448AbeCPQwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:52:41 -0400
-Date: Fri, 16 Mar 2018 17:52:39 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Erica Bugden <ebugden@efficios.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: uprobes misses breakpoint insertion into VM_WRITE mappings
-Message-ID: <20180316165239.GA28462@redhat.com>
-References: <670124481.11073.1521146881571.JavaMail.zimbra@efficios.com>
+        id S1752805AbeCPSMM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:12:12 -0400
+Received: from mail-yw0-f178.google.com ([209.85.161.178]:44056 "EHLO
+        mail-yw0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751558AbeCPSML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 14:12:11 -0400
+X-Google-Smtp-Source: AG47ELsiuQ7siB2k6+imEYksM+vZswzYx2Q/ttdynpq1bpjGbC0SRhtqWk7MH4+XWvJ27xlBsD/rVcp+zKNwxkLRJH8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670124481.11073.1521146881571.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1521140611.6358.29.camel@synopsys.com>
+References: <1521045375.11552.27.camel@synopsys.com> <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+ <20180314175352.GP4064@hirez.programming.kicks-ass.net> <1521059931.11552.51.camel@synopsys.com>
+ <20180315081845.GS4064@hirez.programming.kicks-ass.net> <1521105128.11552.64.camel@synopsys.com>
+ <20180315112829.GW4064@hirez.programming.kicks-ass.net> <1521140611.6358.29.camel@synopsys.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Fri, 16 Mar 2018 11:12:09 -0700
+Message-ID: <CAMo8BfLLfiVO4yQLRtjz_KCNx-FTnPY-4wWQjHPrJeMgBf+DbQ@mail.gmail.com>
+Subject: Re: arc_usr_cmpxchg and preemption
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>,
+        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15, Mathieu Desnoyers wrote:
+> On Thu, Mar 15, 2018 at 12:03 PM, Alexey Brodkin <Alexey.Brodkin@synopsys.com> wrote:
+> Here's a brief analysis:
+> ARM:  Looks like they got rid of that stuff in v4.4, see
+>       commit db695c0509d6 ("ARM: remove user cmpxchg syscall").
 >
-> Hi,
+> M68K: That's even uglier implementation which is really asking for
+>       a facelift, look at sys_atomic_cmpxchg_32() here:
+>       https://elixir.bootlin.com/linux/latest/source/arch/m68k/kernel/sys_m68k.c#L461
 >
-> Erica has been working on extending test-cases for uprobes, and found
-> something unexpected:
+> MIPS: They do it via special sysmips syscall which among other things
+>       might handle MIPS_ATOMIC_SET with mips_atomic_set()
 >
-> Since commit e40cfce626a5 "uprobes: Restrict valid_vma(false) to skip VM_SHARED vmas"
-> uprobes does not insert breakpoints into mappings mprotect'd as writeable.
+> I don't immediately see if there're others but really I'm not sure if it even worth trying to
+> clean-up all that since efforts might be spent pointlessly.
 
-Not really, VM_WRITE was illegal from the very beginning, this commit only
-affects the "is_register == false" case.
+xtensa is another one. We used to have a buggy implementation in
+arch/xtensa/kernel/entry.S:fast_syscall_xtensa which we still keep
+disabled by default, just in case somebody wanted backwards
+compatibility. I don't think it's worth fixing.
 
-> This issue can be reproduced by compiling a library without PIC (not using GOT),
-> and then concurrently:
->
-> A) Load the library (dynamic loader mprotect the code as writeable to do
->    the relocations, and then mprotect as executable),
->
-> B) Enable a uprobe through perf.
->
-> (it is a race window between the two mprotect syscalls)
->
-> It appears that the following restriction in valid_vma() is responsible
-> for this behavior:
->
->         if (is_register)
->                 flags |= VM_WRITE;
->
-> I don't figure a clear explanation for this flag based on the function
-> comment nor the commit changelog. Any idea on whether this is really
-> needed ?
-
-Because we do not want to modify the writable area. If nothing else, this
-can break the application which writes to the page we are going to replace.
-
-> Note that on uprobes unregister, it allows removing a breakpoint event
-> on a writeable mapping,
-
-Yes. Because a probed apllication can do mprotect() after the kernel installs
-the breakpoint. And we have to remove this breakpoint in any case, even if
-this is unsafe too.
-
-Oleg.
+-- 
+Thanks.
+-- Max
