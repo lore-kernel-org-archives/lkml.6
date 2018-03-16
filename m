@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753255AbeCPOWn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:22:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753236AbeCPOWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753231AbeCPOWi (ORCPT <rfc822;w@1wt.eu>);
         Fri, 16 Mar 2018 10:22:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753208AbeCPOWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:22:34 -0400
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -17,76 +17,192 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         Bandan Das <bsd@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
         Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/7] x86/hyper-v: detect nested features
-Date: Fri, 16 Mar 2018 15:22:19 +0100
-Message-Id: <20180316142220.32506-7-vkuznets@redhat.com>
+Subject: [PATCH v4 4/7] x86/hyper-v: allocate and use Virtual Processor Assist Pages
+Date: Fri, 16 Mar 2018 15:22:17 +0100
+Message-Id: <20180316142220.32506-5-vkuznets@redhat.com>
 In-Reply-To: <20180316142220.32506-1-vkuznets@redhat.com>
 References: <20180316142220.32506-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TLFS 5.0 says: "Support for an enlightened VMCS interface is reported with
-CPUID leaf 0x40000004. If an enlightened VMCS interface is supported,
- additional nested enlightenments may be discovered by reading the CPUID
-leaf 0x4000000A (see 2.4.11)."
+Virtual Processor Assist Pages usage allows us to do optimized EOI
+processing for APIC, enable Enlightened VMCS support in KVM and more.
+struct hv_vp_assist_page is defined according to the Hyper-V TLFS v5.0b.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 ---
- arch/x86/include/asm/hyperv-tlfs.h | 4 ++++
- arch/x86/include/asm/mshyperv.h    | 1 +
- arch/x86/kernel/cpu/mshyperv.c     | 4 ++++
- 3 files changed, 9 insertions(+)
+Changes since v3:
+- remove vfree() from hv_cpu_die() [Thomas Gleixner]
+- free hv_vp_assist_page() in the error path [Thomas Gleixner]
+  While on it, add cpuhp_remove_state() call when we fail to allocate
+  hypercall page to make the error path complete.
+- check hv_vp_assist_page != NULL in hv_get_vp_assist_page()
+  [Thomas Gleixner]
+---
+ arch/x86/hyperv/hv_init.c          | 43 +++++++++++++++++++++++++++++++++++---
+ arch/x86/include/asm/hyperv-tlfs.h | 13 ++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 13 ++++++++++++
+ 3 files changed, 66 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 07e0547ae8b8..99139c8e952b 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -21,6 +21,7 @@
- #define HYPERV_CPUID_FEATURES			0x40000003
- #define HYPERV_CPUID_ENLIGHTMENT_INFO		0x40000004
- #define HYPERV_CPUID_IMPLEMENT_LIMITS		0x40000005
-+#define HYPERV_CPUID_NESTED_FEATURES		0x4000000A
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 4b82bc206929..c17e2a36aab7 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -88,6 +88,9 @@ EXPORT_SYMBOL_GPL(hyperv_cs);
+ u32 *hv_vp_index;
+ EXPORT_SYMBOL_GPL(hv_vp_index);
  
- #define HYPERV_HYPERVISOR_PRESENT_BIT		0x80000000
- #define HYPERV_CPUID_MIN			0x40000005
-@@ -339,6 +340,9 @@ struct hv_tsc_emulation_status {
- #define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
- 		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
- 
-+/* Hyper-V Enlightened VMCS version mask in nested features CPUID */
-+#define HV_X64_ENLIGHTENED_VMCS_VERSION		0xff
++struct hv_vp_assist_page **hv_vp_assist_page;
++EXPORT_SYMBOL_GPL(hv_vp_assist_page);
 +
- #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
- #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
+ u32 hv_max_vp_index;
  
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 3f162353f180..57c65315b60b 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -13,6 +13,7 @@ struct ms_hyperv_info {
- 	u32 features;
- 	u32 misc_features;
- 	u32 hints;
-+	u32 nested_features;
- 	u32 max_vp_index;
- 	u32 max_lp_index;
- };
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 0dfc568c110c..8432bf215e30 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -208,6 +208,10 @@ static void __init ms_hyperv_init_platform(void)
- 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
+ static int hv_cpu_init(unsigned int cpu)
+@@ -101,6 +104,23 @@ static int hv_cpu_init(unsigned int cpu)
+ 	if (msr_vp_index > hv_max_vp_index)
+ 		hv_max_vp_index = msr_vp_index;
+ 
++	if (!hv_vp_assist_page)
++		return 0;
++
++	if (!hv_vp_assist_page[smp_processor_id()])
++		hv_vp_assist_page[smp_processor_id()] =
++			__vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL);
++
++	if (hv_vp_assist_page[smp_processor_id()]) {
++		u64 val;
++
++		val = vmalloc_to_pfn(hv_vp_assist_page[smp_processor_id()]);
++		val = (val << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) |
++			HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
++
++		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, val);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -198,6 +218,9 @@ static int hv_cpu_die(unsigned int cpu)
+ 	struct hv_reenlightenment_control re_ctrl;
+ 	unsigned int new_cpu;
+ 
++	if (hv_vp_assist_page && hv_vp_assist_page[cpu])
++		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
++
+ 	if (hv_reenlightenment_cb == NULL)
+ 		return 0;
+ 
+@@ -224,6 +247,7 @@ void hyperv_init(void)
+ {
+ 	u64 guest_id, required_msrs;
+ 	union hv_x64_msr_hypercall_contents hypercall_msr;
++	int cpuhp;
+ 
+ 	if (x86_hyper_type != X86_HYPER_MS_HYPERV)
+ 		return;
+@@ -241,9 +265,17 @@ void hyperv_init(void)
+ 	if (!hv_vp_index)
+ 		return;
+ 
+-	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
+-			      hv_cpu_init, hv_cpu_die) < 0)
++	hv_vp_assist_page = kcalloc(num_possible_cpus(),
++				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
++	if (!hv_vp_assist_page) {
++		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+ 		goto free_vp_index;
++	}
++
++	cpuhp = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
++				  hv_cpu_init, hv_cpu_die);
++	if (cpuhp < 0)
++		goto free_vp_assist_page;
+ 
+ 	/*
+ 	 * Setup the hypercall page and enable hypercalls.
+@@ -256,7 +288,7 @@ void hyperv_init(void)
+ 	hv_hypercall_pg  = __vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL_RX);
+ 	if (hv_hypercall_pg == NULL) {
+ 		wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
+-		goto free_vp_index;
++		goto remove_cpuhp_state;
  	}
  
-+	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
-+		ms_hyperv.nested_features =
-+			cpuid_eax(HYPERV_CPUID_NESTED_FEATURES);
+ 	rdmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+@@ -304,6 +336,11 @@ void hyperv_init(void)
+ 
+ 	return;
+ 
++remove_cpuhp_state:
++	cpuhp_remove_state(cpuhp);
++free_vp_assist_page:
++	kfree(hv_vp_assist_page);
++	hv_vp_assist_page = NULL;
+ free_vp_index:
+ 	kfree(hv_vp_index);
+ 	hv_vp_index = NULL;
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index acdec9a957db..41eac22db5e3 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -163,6 +163,9 @@
+ /* Recommend using the newer ExProcessorMasks interface */
+ #define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
+ 
++/* Recommend using enlightened VMCS */
++#define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED    (1 << 14)
 +
- #ifdef CONFIG_X86_LOCAL_APIC
- 	if (ms_hyperv.features & HV_X64_ACCESS_FREQUENCY_MSRS &&
- 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+ /*
+  * Crash notification flag.
+  */
+@@ -476,6 +479,16 @@ struct hv_timer_message_payload {
+ 	__u64 delivery_time;	/* When the message was delivered */
+ };
+ 
++/* Define virtual processor assist page structure. */
++struct hv_vp_assist_page {
++	__u32 apic_assist;
++	__u32 reserved;
++	__u64 vtl_control[2];
++	__u64 nested_enlightenments_control[2];
++	__u32 enlighten_vmentry;
++	__u64 current_nested_vmcs;
++};
++
+ #define HV_STIMER_ENABLE		(1ULL << 0)
+ #define HV_STIMER_PERIODIC		(1ULL << 1)
+ #define HV_STIMER_LAZY			(1ULL << 2)
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 38cfbe9a5794..3f162353f180 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -218,6 +218,15 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+  */
+ extern u32 *hv_vp_index;
+ extern u32 hv_max_vp_index;
++extern struct hv_vp_assist_page **hv_vp_assist_page;
++
++static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
++{
++	if (!hv_vp_assist_page)
++		return NULL;
++
++	return hv_vp_assist_page[cpu];
++}
+ 
+ /**
+  * hv_cpu_number_to_vp_number() - Map CPU to VP.
+@@ -254,6 +263,10 @@ static inline void hyperv_setup_mmu_ops(void) {}
+ static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
+ static inline void clear_hv_tscchange_cb(void) {}
+ static inline void hyperv_stop_tsc_emulation(void) {};
++static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
++{
++	return NULL;
++}
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
 -- 
 2.14.3
