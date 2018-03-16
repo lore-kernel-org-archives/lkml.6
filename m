@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753892AbeCPUkG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:40:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52438 "EHLO
+        id S1753921AbeCPUkN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:40:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51710 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753566AbeCPUj4 (ORCPT
+        by vger.kernel.org with ESMTP id S1753566AbeCPUkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:39:56 -0400
+        Fri, 16 Mar 2018 16:40:08 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -20,20 +20,20 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v6 06/12] integrity: Introduce asymmetric_sig_has_known_key()
-Date: Fri, 16 Mar 2018 17:38:31 -0300
+Subject: [PATCH v6 08/12] ima: Export func_tokens
+Date: Fri, 16 Mar 2018 17:38:33 -0300
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18031620-0012-0000-0000-000015E8E1CC
+x-cbid: 18031620-0028-0000-0000-0000094FE1F2
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008686; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.01004029; UDB=6.00511020; IPR=6.00783318;
- MB=3.00020079; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 20:39:53
+ MB=3.00020079; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 20:40:05
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031620-0013-0000-0000-000051E62A69
-Message-Id: <20180316203837.10174-7-bauerman@linux.vnet.ibm.com>
+x-cbparentid: 18031620-0029-0000-0000-000039FEBBE1
+Message-Id: <20180316203837.10174-9-bauerman@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -45,113 +45,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IMA will only look for a modsig if the xattr sig references a key which is
-not in the expected kernel keyring. To that end, introduce
-asymmetric_sig_has_known_key().
-
-The logic of extracting the key used in the xattr sig is factored out from
-asymmetric_verify() so that it can be used by the new function.
+ima_read_modsig() will need it so that it can show an error message.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/digsig_asymmetric.c | 44 +++++++++++++++++++++++++---------
- security/integrity/integrity.h         |  8 +++++++
- 2 files changed, 41 insertions(+), 11 deletions(-)
+ security/integrity/ima/ima.h        |  2 ++
+ security/integrity/ima/ima_policy.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index ab6a029062a1..241647970c19 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -79,26 +79,48 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
- 	return key;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 4bafa6a97967..99f2bab15009 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -196,6 +196,8 @@ enum ima_hooks {
+ 	__ima_hooks(__ima_hook_enumify)
+ };
+ 
++extern const char *const func_tokens[];
++
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 51a4cd999a49..833da24c7009 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -992,6 +992,12 @@ void ima_delete_rules(void)
+ 	}
  }
  
--int asymmetric_verify(struct key *keyring, const char *sig,
--		      int siglen, const char *data, int datalen)
-+static struct key *asymmetric_key_from_sig(struct key *keyring, const char *sig,
-+					   int siglen)
++#define __ima_hook_stringify(str)	(#str),
++
++const char *const func_tokens[] = {
++	__ima_hooks(__ima_hook_stringify)
++};
++
+ #ifdef	CONFIG_IMA_READ_POLICY
+ enum {
+ 	mask_exec = 0, mask_write, mask_read, mask_append
+@@ -1004,12 +1010,6 @@ static const char *const mask_tokens[] = {
+ 	"MAY_APPEND"
+ };
+ 
+-#define __ima_hook_stringify(str)	(#str),
+-
+-static const char *const func_tokens[] = {
+-	__ima_hooks(__ima_hook_stringify)
+-};
+-
+ void *ima_policy_start(struct seq_file *m, loff_t *pos)
  {
--	struct public_key_signature pks;
--	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
--	struct key *key;
--	int ret = -ENOMEM;
-+	const struct signature_v2_hdr *hdr = (struct signature_v2_hdr *) sig;
- 
- 	if (siglen <= sizeof(*hdr))
--		return -EBADMSG;
-+		return ERR_PTR(-EBADMSG);
- 
- 	siglen -= sizeof(*hdr);
- 
- 	if (siglen != be16_to_cpu(hdr->sig_size))
--		return -EBADMSG;
-+		return ERR_PTR(-EBADMSG);
- 
- 	if (hdr->hash_algo >= HASH_ALGO__LAST)
--		return -ENOPKG;
-+		return ERR_PTR(-ENOPKG);
-+
-+	return request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+}
-+
-+bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
-+				  int siglen)
-+{
-+	struct key *key;
-+
-+	key = asymmetric_key_from_sig(keyring, sig, siglen);
-+	if (IS_ERR_OR_NULL(key))
-+		return false;
-+
-+	key_put(key);
-+
-+	return true;
-+}
-+
-+int asymmetric_verify(struct key *keyring, const char *sig,
-+		      int siglen, const char *data, int datalen)
-+{
-+	struct public_key_signature pks;
-+	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
-+	struct key *key;
-+	int ret = -ENOMEM;
- 
--	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+	key = asymmetric_key_from_sig(keyring, sig, siglen);
- 	if (IS_ERR(key))
- 		return PTR_ERR(key);
- 
-@@ -109,7 +131,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pks.digest = (u8 *)data;
- 	pks.digest_size = datalen;
- 	pks.s = hdr->sig;
--	pks.s_size = siglen;
-+	pks.s_size = siglen - sizeof(*hdr);
- 	ret = verify_signature(key, &pks);
- 	key_put(key);
- 	pr_debug("%s() = %d\n", __func__, ret);
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 2d245f44ca26..4c381b992e11 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -179,12 +179,20 @@ static inline int integrity_init_keyring(const unsigned int id)
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
- int asymmetric_verify(struct key *keyring, const char *sig,
- 		      int siglen, const char *data, int datalen);
-+bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
-+				  int siglen);
- #else
- static inline int asymmetric_verify(struct key *keyring, const char *sig,
- 				    int siglen, const char *data, int datalen)
- {
- 	return -EOPNOTSUPP;
- }
-+
-+static inline bool asymmetric_sig_has_known_key(struct key *keyring,
-+						const char *sig, int siglen)
-+{
-+	return false;
-+}
- #endif
- 
- #ifdef CONFIG_IMA_LOAD_X509
+ 	loff_t l = *pos;
