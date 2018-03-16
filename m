@@ -1,71 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753974AbeCPOyo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:54:44 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:59188 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753723AbeCPOyG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:06 -0400
-Date: Fri, 16 Mar 2018 22:53:51 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Megha Dey <megha.dey@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        davem@davemloft.net
-Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Message-ID: <20180316145351.GA6231@gondor.apana.org.au>
-References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
- <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
- <20180118113905.GA19904@gondor.apana.org.au>
- <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S932094AbeCPOzY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:55:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:57192 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753917AbeCPOzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:55:22 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 1/2] irqchip/gic: Loudly complain about the use of IRQ_TYPE_NONE
+Date: Fri, 16 Mar 2018 14:55:10 +0000
+Message-Id: <20180316145511.28362-2-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180316145511.28362-1-marc.zyngier@arm.com>
+References: <20180316145511.28362-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 04:44:21PM -0800, Megha Dey wrote:
->
-> > So the mcryptd template is in fact completely superfluous.  You
-> > can remove it and just have all the main encrypt/decrypt functions
-> > invoke the underlying encrypt/decrypt function directly and achieve
-> > the same result.
-> > 
-> > Am I missing something?
-> 
-> Hi Herbert,
-> 
-> After discussing with Tim, it seems like the mcryptd is responsible for
-> queuing up the encrypt requests and dispatching them to the actual
-> multi-buffer raw algorithm.  It also flushes the queue
-> if we wait too long without new requests coming in to force dispatch of
-> the requests in queue.
-> 
-> Its function is analogous to cryptd but it has its own multi-lane twists
-> so we haven't reused the cryptd interface.
+There is a huge number of broken device trees out there. Just
+grepping through the tree for the use of IRQ_TYPE_NONE in conjunction
+with the GIC is scary.
 
-I have taken a deeper look and I'm even more convinced now that
-mcryptd is simply not needed in your current model.
+People just don't realise that IRQ_TYPE_NONE just doesn't exist, and
+you just get whatever junk was there before. So let's make them aware
+of the issue.
 
-The only reason you would need mcryptd is if you need to limit
-the rate of requests going into the underlying mb algorithm.
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ drivers/irqchip/irq-gic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-However, it doesn't do that all.  Even though it seems to have a
-batch size of 10, but because it immediately reschedules itself
-after the batch runs out, it's essentially just dumping all requests
-at the underlying algorithm as fast as they're coming in.  The
-underlying algorithm doesn't have need throttling anyway because
-it'll do the work when the queue is full synchronously.
-
-So why not just get rid of mcryptd completely and expose the
-underlying algorithm as a proper async skcipher/hash?
-
-Thanks,
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 79801c24800b..ac2e62d613d1 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -1011,6 +1011,9 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+ 			*hwirq += 16;
+ 
+ 		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
++
++		/* Make it clear that broken DTs are... broken */
++		WARN_ON(*type == IRQ_TYPE_NONE);
+ 		return 0;
+ 	}
+ 
+@@ -1020,6 +1023,8 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+ 
+ 		*hwirq = fwspec->param[0];
+ 		*type = fwspec->param[1];
++
++		WARN_ON(*type == IRQ_TYPE_NONE);
+ 		return 0;
+ 	}
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.2
