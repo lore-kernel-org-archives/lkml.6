@@ -1,62 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeCPVi4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:38:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45242 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751236AbeCPVix (ORCPT
+        id S1752061AbeCPVjP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:39:15 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:3359 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750826AbeCPVjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:38:53 -0400
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v6 00/12] Appended signatures support for IMA appraisal
-In-reply-to: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Date: Fri, 16 Mar 2018 18:38:38 -0300
+        Fri, 16 Mar 2018 17:39:14 -0400
+Date: Sat, 17 Mar 2018 08:39:10 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180316213910.GF7000@dastard>
+References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+ <20180315174903.GM23100@dhcp22.suse.cz>
+ <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
+ <20180315230313.GM18129@dastard>
+ <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18031621-0016-0000-0000-00000867EAAB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008687; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01004048; UDB=6.00511032; IPR=6.00783338;
- MB=3.00020080; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 21:38:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031621-0017-0000-0000-00003DDF48B5
-Message-Id: <87zi37og4h.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803160253
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 16, 2018 at 11:55:30AM +0300, Kirill Tkhai wrote:
+> On 16.03.2018 02:03, Dave Chinner wrote:
+> > On Thu, Mar 15, 2018 at 10:28:43PM +0300, Kirill Tkhai wrote:
+> >> On 15.03.2018 20:49, Michal Hocko wrote:
+> >>> On Thu 15-03-18 18:01:34, Kirill Tkhai wrote:
+> >>>> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
+> >>>> So, it's called for memcg reclaim too, e.g. this list is shrinked
+> >>>> disproportionality to another lists.
+> >>>>
+> >>>> This looks confusing, so I'm reporting about this.
+> >>>> Consider this patch as RFC.
+> >>>
+> >>> Could you be more specific about the problem you are trying to solve?
+> >>> Because we do skip shrinkers which are not memcg aware by
+> >>> shrink_slab:
+> >>> 		/*
+> >>> 		 * If kernel memory accounting is disabled, we ignore
+> >>> 		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
+> >>> 		 * passing NULL for memcg.
+> >>> 		 */
+> >>> 		if (memcg_kmem_enabled() &&
+> >>> 		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+> >>> 			continue;
+> >>>
+> >>> Or am I missing something?
+> >>
+> >> sb->s_op->nr_cached_objects is a sub-method of generic super_cache_count().
+> >> super_cache_count() is owned and only called by superblock's shrinker,
+> >> which does have SHRINKER_MEMCG_AWARE flag.
+> > 
+> > Xfs inodes are accounted to memcgs when they are allocated.  All the
+> > memcg reclaim stuff is done at the VFS inode cache level - all the
+> > XFS inode cache shrinker does is clean up inodes that are not
+> > referenced by the VFS inode cache because the memcg aware reclaim
+> > has already freed them.
+> > 
+> > i.e. what the XFS inode cache is doing is perfectly reasonable -
+> > memcg aware inode reclaim is occuring at the VFS level, but on XFS
+> > that does not free the inodes as they are still referenced
+> > internally by XFS. However, once the inode is removed from the VFS
+> > LRU, all memcg information about the inode is destroyed, so there's
+> > nothing in the XFS layers that cares about memcgs.
+> 
+> So, after inode is removed from LRU, memory still remains accounted
+> to memcg till the time they are actually freed. I personally don't
+> care, just to mention.
+>  
+> > Hence when the XFS inode shrinker then called to run a
+> > garbage collection pass on unreferenced inodes - the inodes that
+> > are now unreferenced in the memcg due to the VFS inode shrinker pass
+> > - it frees inodes regardless of the memcg context it was called from
+> > because that information is no longer present in the inode cache.
+> > Hence we just ignore memcgs at this level.
+> 
+> But xfs_fs_free_cached_objects() returns number of these freed object
+> as result to super_cache_scan(), so shrinker interprets them as related
+> to a memcg, while they may be related to another memcg. This introduces
+> a disproportion relatively to another shrinkers called to memcg.
 
-Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
+In what way? All memcgs see tha same values from the backing cache
+and so try to do the same amount of scanning work. The shrinker
+accounting simply doesn't care where the objects are scanned from,
+as long as it comes from the same place as the calculation of the
+number of objects in the cache it's about to scan.
 
-> Now the modsig is only ignored if it references a signature that is not
-> present in IMA's keyring (or if there's a parsing error, obviously). If the
+The memcg accounting, OTOH, is completely divorced from the
+shrinker, so if it's still got too much slab memory accounted to it,
+it will simply run the shrinker again and do some more memory
+reclaim.
 
-The above should read "Now the modsig is only ignored if it references a
-*key* that is not present in IMA's keyring".
+XFS does this for IO efficiency purposes, not because it's ideal
+behaviour for memcgs. If we start doing exact memcg-only inode
+reclaim, we're going back to the bad old days where inode reclaim
+causes really nasty small random write storms that essentially
+starve the storage subsystem of all other IO for seconds at a time.
+That is a *far worse problem* from a system performance POV than
+having the memcg memory reclaim run a couple more shrinker passes
+and do a little more work....
 
-Sorry, I only noticed the mistake after sending the emails.
+> Is there a problem? This is what my patch about.
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+You've described some theoretical issue, but not described any user
+visible or performance impacting behaviour that users actually care
+about. What reproducable, observable behaviour does it fix/change?
+
+> > So, is there a problem you are actually trying to fix, or is this
+> > simply a "I don't understand how the superblock shrinkers work,
+> > please explain" patch?
+> 
+> I work on some shrinker changes, and just want to understand they don't
+> touch anything. 
+
+Oh, goody, another person about to learn the hard way that shrinkers
+are far more varied and complex than page reclaim :P
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
