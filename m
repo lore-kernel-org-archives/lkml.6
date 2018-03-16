@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt1jP4T6bIRHsl/6PMGEN7I+EK/fRhttJ1LxSCdHiGMFqPiuN2nuTGTs82q7Ioi/o6neXRo
-ARC-Seal: i=1; a=rsa-sha256; t=1521214985; cv=none;
+X-Google-Smtp-Source: AG47ELvjbxt/NX6BWUy+NLopq8vfeY2oXDIvnAfyNCJBrFV8u4U50J1G+02h8nL2zNqoJwMom33q
+ARC-Seal: i=1; a=rsa-sha256; t=1521214982; cv=none;
         d=google.com; s=arc-20160816;
-        b=GtGSOoCj+J3TrVPRIaKvqRb9fUh1U+fcrytbaHZ2SbKPYB+MHJNPHpA8h+o1vGtLmo
-         cKxfBLXTCGLC0oMCdZQc5Wa5UIlghccM8McYb4IojwrIje1Z9k3Fk+0xusi1T9xptpsB
-         SxP32zvmZAFqTFhL0dVd8iqrMgjxrx/4K+NaCspCWYWCgcwAr1FOPVPMrK6ZdcXMOy9N
-         iKdHcOthR6nSFIcu7DHYJ55TBGtdNkgvnuuZXPxQCB1xiGe6m1UTA3CPPMzGLq1rv22H
-         mYtHWqjypUWsXP5cfGt+Igd5GVd3fVvA/m2qY8i7DH9tXl4YWPE/MPLluoCkwn6pewvK
-         BEFA==
+        b=AL4TsiJEN5uMVD5JRwnae0uCEMU+1rtKpvtYd09Q0iyFG5ha22ZwNxbqqQyNvoi0td
+         RnK4nStTY5Cbow1KR7jLv4Qa01A9bvGNuslFtmk36boII9Il/bgV7RpmEGDVA/7RB5/j
+         ZJ8XpYFX9yGK1GKDudB8QiGajZEdIfCawHqheEsDzpSC0/K9SN1sWhjPXfwtMZgcRYbt
+         4+8Ec2sPMosZTT9ebbUZjy5D1Isj4QuIZNxHQ1qzqYNgDXE+q53gPAacqalV6shLUxK7
+         hXIyLw94U5c0CwYca8eXfBpGrPGxGI6I5YAFZoUWL2Vjx0Tc7VhrurMiHG7GYUxtyF4t
+         Xyow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zOuBx/se6zq3oQxmT98MHwSpcj8YjJ4jEwIGtlsFj3I=;
-        b=BSs3wR2QmD07/dd1bnPcC7H5Qr6ymL1ou8L0y8/R7iepVvxosmyqvWcL9hYkpg0KLQ
-         /loKC0m6MNN6fR7FrT+x9ueIR9cS1iVZ/bphorVryoGzTYLrkUYKrgPOLyMtTQeP+fMG
-         YSYJxC//FR33vHqUHm1spn+quuMtfbl/McID7lPY6BOA8Pq/5yv5qlgZjvRjrdL04XHy
-         Rv4gCf4BWPNYEIdzztMk7c6d8m60kE8y3j3hSG/XBUXHzDjFgKHO8aiRKPWzrF9tFqwZ
-         98kM10NYmTavumTlx1VdcXcQYpX9zNQs/M15EePMHHkb4RUlN3riS644aWi7Bc/zSLak
-         UUVQ==
+        bh=eJozvPFDu77guxFPsifjAFrIvPH8MWFbIsFfKiS9TxA=;
+        b=DbehLEyhQOfe41F2bxB5zY/f9KA8YEJb2rQPHcurvlE+LD0pkE5WinOVWsbpKphQt9
+         uRfgFRMXNuDDh2/ct5z2Ujm0IsXfcZXS3YwX2gKSxqGbfBUU2m0QFUfs2IV0LYyaYqPf
+         hPHKVUld8oeWyoUyWkwxqATJXKBtayAgEvlLAymQkFsqDVjECTVP6G69hU/bH3epR5RB
+         bjdX/wo7cZEBndSs1UWFmP+8ulb72lpKf6/ua7A9uyLG08cgGqWzsIbgUs4tDEdqmTZf
+         YU6lZvCrqibrxykI1WJGd63XGgJM0K1F8CtmzCq1YDj/Io8Bj4yUM9w3rE/NUxRp9zTF
+         iMsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -33,9 +33,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 088/128] perf annotate: Fix objdump comment parsing for Intel mov dissassembly
-Date: Fri, 16 Mar 2018 16:23:49 +0100
-Message-Id: <20180316152340.960643455@linuxfoundation.org>
+Subject: [PATCH 4.15 087/128] perf annotate: Fix unnecessary memory allocation for s390x
+Date: Fri, 16 Mar 2018 16:23:48 +0100
+Message-Id: <20180316152340.917059783@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109147936331066?=
-X-GMAIL-MSGID: =?utf-8?q?1595109524775963879?=
+X-GMAIL-THRID: =?utf-8?q?1595109256388362279?=
+X-GMAIL-MSGID: =?utf-8?q?1595109521575071366?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,72 +57,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
 
-[ Upstream commit 35a8a148d8c1ee9e5ae18f9565a880490f816f89 ]
+[ Upstream commit 36c263607d36c6a3788c09301d9f5fe35404048a ]
 
-The command 'perf annotate' parses the output of objdump and also
-investigates the comments produced by objdump. For example the
-output of objdump produces (on x86):
+This patch fixes a bug introduced with commit d9f8dfa9baf9 ("perf
+annotate s390: Implement jump types for perf annotate").
 
-23eee:  4c 8b 3d 13 01 21 00 mov 0x210113(%rip),%r15
-                                # 234008 <stderr@@GLIBC_2.2.5+0x9a8>
+'perf annotate' displays annotated assembler output by reading output of
+command objdump and parsing the disassembled lines. For each shown
+mnemonic this function sequence is executed:
 
-and the function mov__parse() is called to investigate the complete
-line. Mov__parse() breaks this line into several parts and finally
-calls function comment__symbol() to parse the data after the comment
-character '#'. Comment__symbol() expects a hexadecimal address followed
-by a symbol in '<' and '>' brackets.
+  disasm_line__new()
+  |
+  +--> disasm_line__init_ins()
+       |
+       +--> ins__find()
+            |
+            +--> arch->associate_instruction_ops()
 
-However the 2nd parameter given to function comment__symbol()
-always points to the comment character '#'. The address parsing
-always returns 0 because the character '#' is not a digit and
-strtoull() fails without being noticed.
+The s390x specific function assigned to function pointer
+associate_instruction_ops refers to function s390__associate_ins_ops().
 
-Fix this by advancing the second parameter to function comment__symbol()
-by one byte before invocation and add an error check after strtoull()
-has been called.
+This function checks for supported mnemonics and assigns a NULL pointer
+to unsupported mnemonics.  However even the NULL pointer is added to the
+architecture dependend instruction array.
+
+This leads to an extremely large architecture instruction array
+(due to array resize logic in function arch__grow_instructions()).
+
+Depending on the objdump output being parsed the array can end up
+with several ten-thousand elements.
+
+This patch checks if a mnemonic is supported and only adds supported
+ones into the architecture instruction array. The array does not contain
+elements with NULL pointers anymore.
+
+Before the patch (With some debug printf output):
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxbb
+
+real	8m49.679s
+user	7m13.008s
+sys	0m1.649s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxbb | tail -1
+__ins__find sorted:1 nr_instructions:87433 ins:0x341583c0
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 87433.
+
+After the patch (With some printf debug output:)
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxaa
+
+real	1m24.553s
+user	0m0.587s
+sys	0m1.530s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxaa | tail -1
+__ins__find sorted:1 nr_instructions:56 ins:0x3f406570
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 56 which is sensible.
 
 Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
 Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Fixes: 6de783b6f50f ("perf annotate: Resolve symbols using objdump comment")
-Link: http://lkml.kernel.org/r/20171128075632.72182-1-tmricht@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/20171124094637.55558-1-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/annotate.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/arch/s390/annotate/instructions.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -322,6 +322,8 @@ static int comment__symbol(char *raw, ch
- 		return 0;
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -18,7 +18,8 @@ static struct ins_ops *s390__associate_i
+ 	if (!strcmp(name, "br"))
+ 		ops = &ret_ops;
  
- 	*addrp = strtoull(comment, &endptr, 16);
-+	if (endptr == comment)
-+		return 0;
- 	name = strchr(endptr, '<');
- 	if (name == NULL)
- 		return -1;
-@@ -435,8 +437,8 @@ static int mov__parse(struct arch *arch,
- 		return 0;
- 
- 	comment = ltrim(comment);
--	comment__symbol(ops->source.raw, comment, &ops->source.addr, &ops->source.name);
--	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
-+	comment__symbol(ops->source.raw, comment + 1, &ops->source.addr, &ops->source.name);
-+	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
- 	return 0;
- 
-@@ -480,7 +482,7 @@ static int dec__parse(struct arch *arch
- 		return 0;
- 
- 	comment = ltrim(comment);
--	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
-+	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
- 	return 0;
+-	arch__associate_ins_ops(arch, name, ops);
++	if (ops)
++		arch__associate_ins_ops(arch, name, ops);
+ 	return ops;
  }
+ 
