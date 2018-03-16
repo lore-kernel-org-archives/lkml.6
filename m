@@ -1,64 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeCPM3O (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 08:29:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59690 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751546AbeCPM3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:29:11 -0400
-Subject: Re: [PATCH] KVM: x86: Fix device passthrough when SME is active
-To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Brijesh Singh <brijesh.singh@amd.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180308231731.27881.84826.stgit@tlendack-t1.amdoffice.net>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <505b4128-2336-7d81-791a-6e95acdd2a62@redhat.com>
-Date: Fri, 16 Mar 2018 13:29:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751665AbeCPMhl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 08:37:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44962 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750748AbeCPMhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 08:37:40 -0400
+Date: Fri, 16 Mar 2018 13:37:37 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dave Hansen <dave.hansen@intel.com>, Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH -mm] mm: Fix race between swapoff and mincore
+Message-ID: <20180316123737.GJ23100@dhcp22.suse.cz>
+References: <20180313012036.1597-1-ying.huang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180308231731.27881.84826.stgit@tlendack-t1.amdoffice.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313012036.1597-1-ying.huang@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/2018 00:17, Tom Lendacky wrote:
-> When using device passthrough with SME active, the MMIO range that is
-> mapped for the device should not be mapped encrypted.  Add a check in
-> set_spte() to insure that a page is not mapped encrypted if that page
-> is a device MMIO page as indicated by kvm_is_mmio_pfn().
+On Tue 13-03-18 09:20:36, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> Cc: <stable@vger.kernel.org> # 4.14.x-
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> >From commit 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB
+> trunks") on, after swapoff, the address_space associated with the swap
+> device will be freed.  So swap_address_space() users which touch the
+> address_space need some kind of mechanism to prevent the address_space
+> from being freed during accessing.
+> 
+> When mincore process unmapped range for swapped shmem pages, it
+> doesn't hold the lock to prevent swap device from being swapoff.  So
+> the following race is possible,
+> 
+> CPU1					CPU2
+> do_mincore()				swapoff()
+>   walk_page_range()
+>     mincore_unmapped_range()
+>       __mincore_unmapped_range
+>         mincore_page
+> 	  as = swap_address_space()
+>           ...				  exit_swap_address_space()
+>           ...				    kvfree(spaces)
+> 	  find_get_page(as)
+> 
+> The address space may be accessed after being freed.
+> 
+> To fix the race, get_swap_device()/put_swap_device() is used to
+> enclose find_get_page() to check whether the swap entry is valid and
+> prevent the swap device from being swapoff during accessing.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+
+Fixes: 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB  trunks")
+
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Hugh Dickins <hughd@google.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
 > ---
->  arch/x86/kvm/mmu.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  mm/mincore.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index f551962..763bb3b 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -2770,8 +2770,10 @@ static int set_spte(struct kvm_vcpu *vcpu, u64 *sptep,
->  	else
->  		pte_access &= ~ACC_WRITE_MASK;
->  
-> +	if (!kvm_is_mmio_pfn(pfn))
-> +		spte |= shadow_me_mask;
+> diff --git a/mm/mincore.c b/mm/mincore.c
+> index fc37afe226e6..a66f2052c7b1 100644
+> --- a/mm/mincore.c
+> +++ b/mm/mincore.c
+> @@ -68,8 +68,16 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
+>  		 */
+>  		if (radix_tree_exceptional_entry(page)) {
+>  			swp_entry_t swp = radix_to_swp_entry(page);
+> -			page = find_get_page(swap_address_space(swp),
+> -					     swp_offset(swp));
+> +			struct swap_info_struct *si;
 > +
->  	spte |= (u64)pfn << PAGE_SHIFT;
-> -	spte |= shadow_me_mask;
->  
->  	if (pte_access & ACC_WRITE_MASK) {
->  
+> +			/* Prevent swap device to being swapoff under us */
+> +			si = get_swap_device(swp);
+> +			if (si) {
+> +				page = find_get_page(swap_address_space(swp),
+> +						     swp_offset(swp));
+> +				put_swap_device(si);
+> +			} else
+> +				page = NULL;
+>  		}
+>  	} else
+>  		page = find_get_page(mapping, pgoff);
+> -- 
+> 2.15.1
 > 
 
-No, I'm applying it.
-
-Paolo
+-- 
+Michal Hocko
+SUSE Labs
