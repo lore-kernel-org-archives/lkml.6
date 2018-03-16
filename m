@@ -1,68 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeCPQrz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:47:55 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:40655 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeCPQrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:47:53 -0400
-X-Google-Smtp-Source: AG47ELsc7t1fLXd8PakLD9G96eg/9buk5Dgft7QnmGmvNTcxrIl4XJT90+UXOBETqH0Rw5HFNGbLM1HcikW3EdRksUc=
-MIME-Version: 1.0
-In-Reply-To: <20180316142043.GC30522@ZenIV.linux.org.uk>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
- <CAK8P3a2-XfeM5J0dq0kiOSiQC4T4p7cggNbuMDoCmnqjKC9tEQ@mail.gmail.com>
- <CALCETrX_1pxfB10k-uj7vSyXm7hH4MeJiEY=+A3FzViaozb+BA@mail.gmail.com>
- <CA+55aFyJBTaBuA1LjG5RjcD7ZCivYYQWqb3A+HbJZGUdZE9i6w@mail.gmail.com>
- <20180316085423.GH4151@infradead.org> <20180316142043.GC30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 16 Mar 2018 09:47:52 -0700
-X-Google-Sender-Auth: jREQBH2Pw2_BZ4OYpGBhX8o_YdE
-Message-ID: <CA+55aFwCTRNCm26RKtBti9rYZghsrt4G8eeG=Byj4dZrzr-PEw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753474AbeCPQsR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:48:17 -0400
+Received: from mail.phycore.de ([217.6.246.34]:46824 "EHLO root.phytec.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753282AbeCPQsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:48:12 -0400
+From: Daniel Schultz <d.schultz@phytec.de>
+To: lee.jones@linaro.org
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, xsf@rock-chips.com,
+        tony.xie@rock-chips.com, w.egorov@phytec.de,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] mfd: rk808: Refactor shutdown functions
+Date: Fri, 16 Mar 2018 17:48:10 +0100
+Message-Id: <1521218891-26616-1-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 16.03.2018 17:48:11,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 16.03.2018 17:48:11,
+        Serialize complete at 16.03.2018 17:48:11
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 7:20 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Mar 16, 2018 at 01:54:23AM -0700, Christoph Hellwig wrote:
->>
->> A lot of the issues here is that the initramfs / do_mount code
->> is written as if it was user space code, but in kernel space.  E.g.
->> using file desriptors etc.
+Since all three shutdown functions have almost the same code, all logic
+from the shutdown functions can be refactored to a new function
+"rk808_update_bits", which can update a register by a given address and
+bitmask.
 
-Yeah, some of it could probably pass a 'struct filp *' around instead.
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+Changes:
+	v2: Re-submit with recipients from Rockchip.
+	v3: - Added devicetree property to enable the PMIC reset seperate from 
+	      "rockchip,system-power-controller".
+	    - Dropped the first patch of this serie.
+	v4: Splitted refactoring and the new reset feature.
 
-So there are definitely things we could do once we no longer use the
-raw system calls anyway.
+ drivers/mfd/rk808.c | 47 ++++++++++++++---------------------------------
+ 1 file changed, 14 insertions(+), 33 deletions(-)
 
-> ... and I still wonder if it would make more sense to kick that crap
-> out into userland.
-
-Oh, no, let's not do that. Even if we were to still maintain control
-of user space, it would mean yet another nasty special case for the
-compiler and linker scripts and for our initrd generation.
-
-And if we were to spin it out entirely (aka udevd and friends), it
-would become one of those nasty situations where there's some *very*
-odd code that we need to keep compatibility with because you might run
-a new kernel and some old "pre-init user code" stuff.
-
-I'd much rather just make it look more like kernel code.
-
-And maybe remove some code entirely. Christ, we still have the logic
-in there to change *floppies* if the ramdisk doesn't fit on a single
-floppy disk.  Does it work? Probably not, since presumably it hasn't
-been used in ages. But it's still there.
-
-So some of the ioctl's etc are due to insanely old legacy cases.
-
-                 Linus
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 216fbf6..ae014ee 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -369,58 +369,39 @@ static const struct regmap_irq_chip rk818_irq_chip = {
+ 
+ static struct i2c_client *rk808_i2c_client;
+ 
+-static void rk805_device_shutdown(void)
++static void rk808_update_bits(unsigned int reg, unsigned int bit_mask)
+ {
+ 	int ret;
+ 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+ 
+ 	if (!rk808) {
+ 		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk805, so do nothing here\n");
++			 "have no %s, so do nothing here\n",
++			 rk808->regmap_irq_chip->name);
+ 		return;
+ 	}
+ 
+ 	ret = regmap_update_bits(rk808->regmap,
+-				 RK805_DEV_CTRL_REG,
+-				 DEV_OFF, DEV_OFF);
++				 reg,
++				 bit_mask, bit_mask);
+ 	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++		dev_err(&rk808_i2c_client->dev,
++			"can't write to register 0x%x: %x!\n", reg, ret);
+ }
+ 
+-static void rk808_device_shutdown(void)
++static void rk805_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+-
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk808, so do nothing here\n");
+-		return;
+-	}
++	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
++}
+ 
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK808_DEVCTRL_REG,
+-				 DEV_OFF_RST, DEV_OFF_RST);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++static void rk808_device_shutdown(void)
++{
++	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
+ }
+ 
+ static void rk818_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+-
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk818, so do nothing here\n");
+-		return;
+-	}
+-
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK818_DEVCTRL_REG,
+-				 DEV_OFF, DEV_OFF);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
+ }
+ 
+ static const struct of_device_id rk808_of_match[] = {
+-- 
+2.7.4
