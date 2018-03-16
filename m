@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3741325-1521368210-2-7665059097178401299
+X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221482-2-7829623260721412992
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,27 +8,27 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521368210; b=mYjShgbvgQWCAMftPwwmZtC4Ly8INljLmbvy7dxJnpsSqQN
-    Vtp/jfJ/PC3g+oFZ+26bbbkUekkJKWWY+0kbAWDh24Il41bocD+RbMG5LhUeQCws
-    ZHRRr4JKW3aGWjhkyHaegddGos7ncSkrsovEyomJXOyXxH8TZlnfNM+EF0cLLr/F
-    TuAGK4rOUddDCbqaZ6NbGAJ+pe1PcK0YW7aHfgc60IIk1mhNyuNic5dsrqPjPPK0
-    Kf1iX8Z+KPTpKomBVKx/e11zAnxoPvGjrSeAzEJQ64lv/XyVQdGKUe2LI/vc8bib
-    mcvAsxNG0SGchaRU1Hpo9S9/rIPEq0ltCtlQU2w==
+    t=1521221481; b=tynOhmdqrRmwmx92fsC7t4YLbrEKs+NLP5bVzaKApXy2P+G
+    cdBuYG44cdqw9y1vPh3164RqORrpB//Mt2rtWWkdvv7S8IQFgW0Fa0zl7w9vc0EI
+    ZDZK3dkrE31nbDO7KhgdinQsA9k8Mb/ZZK3Zs3w08e4W57MX81dEhdINZlC2ofv6
+    eISTwS0GDBlcBcDwl+4TxP8PS7LkyHdtPNCP0zg3E6/MYqciEZzMBUkvak5d9bBK
+    itnUPrgyyFFXe6EdlK6q7U61AYZPN6dOk8WnoidSxPBsXqlYBIu1wz5k1SjOvmEJ
+    feIPW9Z/16z0oXvmPKEknhPKiRTTNPDRwcUkC7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521368210; bh=6YgjKTcYxp6/yFNa3ouU+H5T03
-    ybi0G1k4NY1HXEcb8=; b=Okf12vCW15RrR75baMtw9HRQRm7HFUeGFFikgd4+ve
-    FSDHJ+bVBpjkDva1VZn2awcFI/mXonD8DYUuWQBVhOCgjnvIRFLsnkP+VJ8tr2b0
-    NmKkAWtBYaVfuVbY9Fh82PxPfUbUYz2fFJZorZjSVYNVtIPzAZPg66cXyMWyz/5l
-    l5bjJQXrnuw31hiTurARkf77ehyhd9kDAKjCvwr9f6y/XoAbs6WQz4sJKZovYr5q
-    kIJr9kkVUcYXzEQPyLHsrKDDgnPyvjVVznQGZ7OGL129kaeelc16Et25PLC7r5MW
-    IsqzaAwaiYQ3lUOFxzLNJCDDLfvwVaIe5hyKVhao02OA==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521221481; bh=VFfTqhR3d2ZoXk0WuYdr0eY/eS
+    RePEDaf309iP9RbFc=; b=De8agbqiOCOpENCYbh2gxQZnsdFFQzRsJ0ua9dLM83
+    dxVgI2ZSbAfzhMjf5tw8fiWqFG8AxV5oQlX8jaCNYVyAH6tKNXNih6A6hv/8LRzZ
+    kPbAdw8D0iz4JMPiAwDUpQppmkSZmsfCvU8vVmPvtpdAatWEEngsK2skvMQLaRW1
+    oAufzYnbeIP5RjVJh42U34nMqKMQbxrmJXRTz8Lkg4lDcBQNroqTgz+vX93kIWSF
+    m2i11wVqypM9AhNXOrWyvjFSmEmVH61RRUECmZjRqUQdQK2myNWJqHPvuqVTU9+4
+    KBH754GfxBgR0xVSOTCklspsly8QA1uLDumcrGXXwtaA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,62 +49,76 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752015AbeCRKQs (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 18 Mar 2018 06:16:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36370 "EHLO
+        id S1754103AbeCPP1x (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:27:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeCRKQs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 18 Mar 2018 06:16:48 -0400
-Date: Sun, 18 Mar 2018 11:16:47 +0100
+        with ESMTP id S932712AbeCPP1t (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/63] 4.4.122-stable review
-Message-ID: <20180318101647.GF13276@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.4 29/63] watchdog: hpwdt: fix unused variable warning
+Date: Fri, 16 Mar 2018 16:23:01 +0100
+Message-Id: <20180316152303.262268098@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
- <20180316180531.GA18177@flashbox>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316180531.GA18177@flashbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 11:05:31AM -0700, Nathan Chancellor wrote:
-> On Fri, Mar 16, 2018 at 04:22:32PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.122 release.
-> > There are 63 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun Mar 18 15:22:41 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.122-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> >
-> 
-> Merged, compiled, and flashed onto my OnePlus 5 (unfortunately, my Pixel
-> 2 XL is going in for an RMA).
-> 
-> No initial issues noticed in general usage or dmesg.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Great, thanks for testing and letting me know, and sorry about your
-Pixel 2 :(
+------------------
 
-greg k-h
+From: Arnd Bergmann <arnd@arndb.de>
+
+commit aeebc6ba88ba3758ad95467ff6191fabf2074c13 upstream.
+
+The new hpwdt_my_nmi() function is used conditionally, which produces
+a harmless warning in some configurations:
+
+drivers/watchdog/hpwdt.c:478:12: error: 'hpwdt_my_nmi' defined but not used [-Werror=unused-function]
+
+This moves it inside of the #ifdef that protects its caller, to silence
+the warning.
+
+Fixes: 621174a92851 ("watchdog: hpwdt: Check source of NMI")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/watchdog/hpwdt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -474,12 +474,12 @@ static int hpwdt_time_left(void)
+ 	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
+ }
+ 
++#ifdef CONFIG_HPWDT_NMI_DECODING
+ static int hpwdt_my_nmi(void)
+ {
+ 	return ioread8(hpwdt_nmistat) & 0x6;
+ }
+ 
+-#ifdef CONFIG_HPWDT_NMI_DECODING
+ /*
+  *	NMI Handler
+  */
