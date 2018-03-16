@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsuPNldeStQ619e3tOPy9goWlN1zMAj0c/zGVwapy9AOM4l4dwOD8YdZDnnyCd9nzznhuSs
-ARC-Seal: i=1; a=rsa-sha256; t=1521214291; cv=none;
+X-Google-Smtp-Source: AG47ELsFk8yUn7l9+/6WPaDJGSLQY+lwYYxXibhXsRdOxn/HW1GXjEjEov73g5JnhBhuDADQz0YC
+ARC-Seal: i=1; a=rsa-sha256; t=1521214288; cv=none;
         d=google.com; s=arc-20160816;
-        b=hJkVHk11Q5IRLVIAMNFygzjCYanB61HqYfP4wYEUN9shCTaN+hBBYx6jxTf1foMBbE
-         Tv7zudYu/zZJ2vSy4NN/HOrp2VF02MrhjixMLwEc0vCQhuzUc7TnKbjHTP0fOKQCnhwp
-         b3+Jpx9jzVIWON6Sm49IeJSZYrhVKi52paU9OrnHk0jBZwl6nQk/ymb3wHQLpKWI4BKe
-         DvR5goUZTLWSxQEyO6cHpRfli0TojK7HkF0t5oYGYbxYrqxWm5lFjOTjJIWTZ46p7J/I
-         IXGKHQ3Q1kzfateC+8gIpGTvfeBIRjQVLMUQNpsvRAII5+XmGVcekQmprtUctRWfoe2z
-         Y82g==
+        b=K/wOW8rJyia2bADqChR1ZLmQOIWdKIrQQtqSzFkMWa6/CvTyHXWdiY4wx7lWsFZCRB
+         H2SVVUyvHJv+Vnsy6F15yj3xn8ELbJkMcNEcCE250NmVoE41Sb0xoHrmbrv74ld4Q7Yi
+         OgKZee+F/Vzrj0nAnIv+Ki3iOYrd1fdJkZT0cOwPfAxS0yMBGgXx6M2q+BS+JAHUURJg
+         czHAn4a/LZnIl8iVf9GOA0Rgb0byrafkjy5ECtIfe2nBc8wEjkT/fDE4sRKtj7VOVpIu
+         Oe2dT8x5HMEwXV/sbyy4TK+N0+4HuUjWImGXSokT/X4RTkTGFlJlcmMvDz3oeagh4U0p
+         +4PQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=o6W2R/n1g7pWX5faZtfPda/Z/9c1p3MYoeRcDJJh0f4=;
-        b=MH+2E1KFratshFMBorYdBXWp8E4ghxoGxBu/aK7SPKTMIM1fqDuQTx/qJiqwj7g/1Q
-         SZyFP6OVDvL5qfifPJRWRVx7xxYC8ELT9yNaaEY3sfucwAYIf5O280XpK7G2bztCMJ1s
-         oFg4b+/kvSHMLL4XbX1NifKnv/PG1xKzsDLWrq6EzQKS++8zyGuxCImzzu2YHYwSyITJ
-         aFpjYf8vT3I4BAfBh6KrYFfS7MvGAHJG4p2d4P99HhxCXLfFudLiqaGS60X4u7C/gsJ3
-         tKeFmdHNcsEjwnqkNDyzNX1zONbavXIO4X8CQl7gLDbN70sGljhNgHlgSQ5gbTSPgwg9
-         IMbA==
+        bh=7KXoMP06blcXFNegwwecJY9+O9rlTLA3DrgcKb54lqc=;
+        b=YeCSQ8R0J1Ourozfukjbg1gzTvWVgqNVEHw7ui6FXThXWEMY5F7R93ZeEiGdyyurUM
+         Zqv2L5jFvODKqV0tHKHGOY3P8TiYMtndH0zW/ijXV9dOyjXOLwmcUW3RYV3r4DErNUKV
+         g8NJHoMiTCwcr1ue7NyvOMKN4MG+/38hw28sU0rEkPzhlEHe6qroq1wIGpxDEPE+luUb
+         AbYFpjsJVWhDZq0826vVoxJoYFnGipZnpAIxC24dSO7SNVxgi8PPhJbjxhEhdvZ7oZFt
+         TyXLXUL4cRnLeMTaLM56QKorvt3N+bWLaA5VdhB5e+2bJ4E2QluOOrYIrz28VTI3dPw7
+         mG5A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -39,9 +39,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	pbonzini@redhat.com,
 	rkrcmar@redhat.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 41/86] x86/speculation: Use IBRS if available before calling into firmware
-Date: Fri, 16 Mar 2018 16:23:04 +0100
-Message-Id: <20180316152320.170938513@linuxfoundation.org>
+Subject: [PATCH 4.9 40/86] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+Date: Fri, 16 Mar 2018 16:23:03 +0100
+Message-Id: <20180316152320.108440373@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108797191140981?=
-X-GMAIL-MSGID: =?utf-8?q?1595108797191140981?=
+X-GMAIL-THRID: =?utf-8?q?1595108793714083460?=
+X-GMAIL-MSGID: =?utf-8?q?1595108793714083460?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,19 +62,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit dd84441a797150dcc49298ec95c459a8891d8bb1 upstream.
+commit d1c99108af3c5992640aa2afa7d2e88c3775c06e upstream.
 
-Retpoline means the kernel is safe because it has no indirect branches.
-But firmware isn't, so use IBRS for firmware calls if it's available.
+This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+the RSB filling out of line and calling it, we waste one RSB slot for
+returning from the function itself, which means one fewer actual function
+call we can make if we're doing the Skylake abomination of call-depth
+counting.
 
-Block preemption while IBRS is set, although in practice the call sites
-already had to be doing that.
-
-Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
-code, from an NMI handler. I don't want to touch that with a bargepole.
+It also changed the number of RSB stuffings we do on vmexit from 32,
+which was correct, to 16. Let's just stop with the bikeshedding; it
+didn't actually *fix* anything anyway.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: arjan.van.de.ven@intel.com
@@ -85,194 +86,223 @@ Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
 Cc: pbonzini@redhat.com
 Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-2-git-send-email-dwmw@amazon.co.uk
+Link: http://lkml.kernel.org/r/1519037457-7643-4-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/apm.h           |    6 +++++
- arch/x86/include/asm/cpufeatures.h   |    1 
- arch/x86/include/asm/efi.h           |   17 +++++++++++++--
- arch/x86/include/asm/nospec-branch.h |   39 ++++++++++++++++++++++++++---------
- arch/x86/kernel/cpu/bugs.c           |   12 +++++++++-
- 5 files changed, 63 insertions(+), 12 deletions(-)
+ arch/x86/entry/entry_32.S             |    3 -
+ arch/x86/entry/entry_64.S             |    3 -
+ arch/x86/include/asm/asm-prototypes.h |    3 -
+ arch/x86/include/asm/nospec-branch.h  |   70 ++++++++++++++++++++++++++++++----
+ arch/x86/lib/Makefile                 |    1 
+ arch/x86/lib/retpoline.S              |   56 ---------------------------
+ 6 files changed, 65 insertions(+), 71 deletions(-)
 
---- a/arch/x86/include/asm/apm.h
-+++ b/arch/x86/include/asm/apm.h
-@@ -6,6 +6,8 @@
- #ifndef _ASM_X86_MACH_DEFAULT_APM_H
- #define _ASM_X86_MACH_DEFAULT_APM_H
- 
-+#include <asm/nospec-branch.h>
-+
- #ifdef APM_ZERO_SEGS
- #	define APM_DO_ZERO_SEGS \
- 		"pushl %%ds\n\t" \
-@@ -31,6 +33,7 @@ static inline void apm_bios_call_asm(u32
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -237,8 +237,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
  	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -43,6 +46,7 @@ static inline void apm_bios_call_asm(u32
- 		  "=S" (*esi)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- }
+-	/* Clobbers %ebx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
  
- static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
-@@ -55,6 +59,7 @@ static inline bool apm_bios_call_simple_
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
+ 	/* restore callee-saved registers */
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -331,8 +331,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
  	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -67,6 +72,7 @@ static inline bool apm_bios_call_simple_
- 		  "=S" (si)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- 	return error;
- }
+-	/* Clobbers %rbx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
  
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -203,6 +203,7 @@
- #define X86_FEATURE_KAISER	( 7*32+31) /* CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
- 
- #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -5,6 +5,7 @@
- #include <asm/pgtable.h>
- #include <asm/processor-flags.h>
- #include <asm/tlb.h>
-+#include <asm/nospec-branch.h>
- 
- /*
-  * We map the EFI regions needed for runtime services non-contiguously,
-@@ -35,8 +36,18 @@
- 
- extern unsigned long asmlinkage efi_call_phys(void *, ...);
- 
--#define arch_efi_call_virt_setup()	kernel_fpu_begin()
--#define arch_efi_call_virt_teardown()	kernel_fpu_end()
-+#define arch_efi_call_virt_setup()					\
-+({									\
-+	kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
-+})
-+
-+#define arch_efi_call_virt_teardown()					\
-+({									\
-+	firmware_restrict_branch_speculation_end();			\
-+	kernel_fpu_end();						\
-+})
-+
- 
- /*
-  * Wrap all the virtual calls in a way that forces the parameters on the stack.
-@@ -72,6 +83,7 @@ struct efi_scratch {
- 	efi_sync_low_kernel_mappings();					\
- 	preempt_disable();						\
- 	__kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (efi_scratch.use_pgd) {					\
- 		efi_scratch.prev_cr3 = read_cr3();			\
-@@ -90,6 +102,7 @@ struct efi_scratch {
- 		__flush_tlb_all();					\
- 	}								\
- 									\
-+	firmware_restrict_branch_speculation_end();			\
- 	__kernel_fpu_end();						\
- 	preempt_enable();						\
- })
+ 	/* restore callee-saved registers */
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -37,7 +37,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-asmlinkage void __fill_rsb(void);
+-asmlinkage void __clear_rsb(void);
+-
+ #endif /* CONFIG_RETPOLINE */
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -219,17 +219,38 @@ static inline void vmexit_fill_RSB(void)
- #endif
- }
+@@ -8,6 +8,50 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
  
-+#define alternative_msr_write(_msr, _val, _feature)		\
-+	asm volatile(ALTERNATIVE("",				\
-+				 "movl %[msr], %%ecx\n\t"	\
-+				 "movl %[val], %%eax\n\t"	\
-+				 "movl $0, %%edx\n\t"		\
-+				 "wrmsr",			\
-+				 _feature)			\
-+		     : : [msr] "i" (_msr), [val] "i" (_val)	\
-+		     : "eax", "ecx", "edx", "memory")
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * We define a CPP macro such that it can be used from both .S files and
++ * inline assembly. It's possible to do a .macro and then include that
++ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
++ */
 +
- static inline void indirect_branch_prediction_barrier(void)
- {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
-+			      X86_FEATURE_USE_IBPB);
-+}
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
 +
 +/*
-+ * With retpoline, we must use IBRS to restrict branch prediction
-+ * before calling into firmware.
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version — two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
 + */
-+static inline void firmware_restrict_branch_speculation_start(void)
-+{
-+	preempt_disable();
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-+			      X86_FEATURE_USE_IBRS_FW);
-+}
++#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
++	mov	$(nr/2), reg;			\
++771:						\
++	call	772f;				\
++773:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	773b;				\
++772:						\
++	call	774f;				\
++775:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	775b;				\
++774:						\
++	dec	reg;				\
++	jnz	771b;				\
++	add	$(BITS_PER_LONG/8) * nr, sp;
 +
-+static inline void firmware_restrict_branch_speculation_end(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+			      X86_FEATURE_USE_IBRS_FW);
-+	preempt_enable();
- }
+ #ifdef __ASSEMBLY__
  
- #endif /* __ASSEMBLY__ */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -299,6 +299,15 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
- 	}
-+
-+	/*
-+	 * Retpoline means the kernel is safe because it has no indirect
-+	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
-+		pr_info("Enabling Restricted Speculation for firmware calls\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -325,8 +334,9 @@ ssize_t cpu_show_spectre_v2(struct devic
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 		       spectre_v2_module_string());
- }
+ /*
+@@ -78,10 +122,17 @@
  #endif
+ .endm
+ 
+-/* This clobbers the BX register */
+-.macro FILL_RETURN_BUFFER nr:req ftr:req
++ /*
++  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
++  * monstrosity above, manually.
++  */
++.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ALTERNATIVE "", "call __clear_rsb", \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
++		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
++		\ftr
++.Lskip_rsb_\@:
+ #endif
+ .endm
+ 
+@@ -156,10 +207,15 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
+ {
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
+-			  "call __fill_rsb",
+-			  X86_FEATURE_RETPOLINE,
+-			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
++	unsigned long loops;
++
++	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
++		      ALTERNATIVE("jmp 910f",
++				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
++				  X86_FEATURE_RETPOLINE)
++		      "910:"
++		      : "=r" (loops), ASM_CALL_CONSTRAINT
++		      : : "memory" );
+ #endif
+ }
+ 
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -26,7 +26,6 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
+ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
+-OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,7 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+-#include <asm/bitsperlong.h>
+ 
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
+-
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version - two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-.macro STUFF_RSB nr:req sp:req
+-	mov	$(\nr / 2), %_ASM_BX
+-	.align 16
+-771:
+-	call	772f
+-773:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	773b
+-	.align 16
+-772:
+-	call	774f
+-775:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	775b
+-	.align 16
+-774:
+-	dec	%_ASM_BX
+-	jnz	771b
+-	add	$((BITS_PER_LONG/8) * \nr), \sp
+-.endm
+-
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-ENTRY(__fill_rsb)
+-	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
+-	ret
+-END(__fill_rsb)
+-EXPORT_SYMBOL_GPL(__fill_rsb)
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-
+-ENTRY(__clear_rsb)
+-	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
+-	ret
+-END(__clear_rsb)
+-EXPORT_SYMBOL_GPL(__clear_rsb)
