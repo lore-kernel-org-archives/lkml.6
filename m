@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753313AbeCPHUe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:20:34 -0400
-Received: from mail-cys01nam02on0062.outbound.protection.outlook.com ([104.47.37.62]:36992
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1753135AbeCPHRg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:17:36 -0400
+Received: from mail-by2nam01on0068.outbound.protection.outlook.com ([104.47.34.68]:15321
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753186AbeCPHSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:18:02 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+        id S1751094AbeCPHR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:26 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 27/28] documentation: Remove Blackfin documentation
-Date: Fri, 16 Mar 2018 15:08:25 +0800
-Message-ID: <1521184106-24475-25-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 04/28] tty: Remove Blackfin tty and uart support
+Date: Fri, 16 Mar 2018 15:08:02 +0800
+Message-ID: <1521184106-24475-2-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,791 +24,3408 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(346002)(39860400002)(376002)(2980300002)(438002)(50944005)(377424004)(199004)(189003)(6306002)(19625735003)(347745004)(246002)(47776003)(107886003)(16799955002)(316002)(15188155005)(59450400001)(106002)(53946003)(336012)(5660300001)(36756003)(8936002)(72206003)(305945005)(186003)(426003)(76176011)(50226002)(106466001)(560934005)(7696005)(51416003)(48376002)(478600001)(16586007)(2906002)(8676002)(26005)(356003)(6916009)(7636002)(4326008)(50466002)(86362001)(575784001)(6666003)(2950100002)(966005)(2351001)(77096007)(19627235001)(19623215001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3274;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC008;1:N9P3s0pm9zjPt31xOMexqVBWy1arsNm5wilkCQdsyb0UCPN9FxJFYqfy+sP84E6MHC9lSJ9JKSyTNKjqk9F9secKyQ4qr4xAHi/ySM4TO0EzKXxGlh9OgKdZyj+2gnuU
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(39380400002)(2980300002)(438002)(189003)(199004)(36756003)(356003)(26005)(2351001)(7696005)(478600001)(51416003)(59450400001)(6306002)(76176011)(48376002)(8936002)(106466001)(50466002)(5890100001)(106002)(77096007)(50226002)(336012)(8676002)(5660300001)(4326008)(426003)(316002)(47776003)(246002)(305945005)(966005)(72206003)(107886003)(186003)(575784001)(86362001)(6916009)(16200700003)(6666003)(53946003)(2950100002)(7636002)(2906002)(16586007)(21314002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB1487;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD016;1:k8Z5BaJUUeeWSFKIkiEh25EV//e3UmNI8izmOisyxmcb3CKroUWVuy3kbxLJchWsFjfRfHGhlqgUXh+EROUrmgvEpM+nBMIPVcuRtq8VI56fGjRp32CTx7/o7ew0h87b
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 36fb63c2-079b-4eb5-696e-08d58b0e0bfe
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM5PR03MB3274;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3274;3:wxgcm6XSZH0pTycmQTlNyPpeZYG1qWkZ7ccoMmEEOZS3dA94ylheAUu+atq9uA9COyy3JRoinVO726IAwu5FEnhz3aFzAwAZyPO4qK+JIa10yR7HM4hQSdp9FyueU++xDWCc2hrpJay/guuh82CdXTHIOS7U/JyhGDY/xet4vWCcq26E0yHClDDzr1X1nFETuhfhZVgHaQEAG7VXHRKR+j0sCsZd2X9lLhMJFb47h8A2plyMj3GA4WzaMDD+rYKaMgNFC4qTCOZORTtHWE7KAky61KxP2JJmjkWjohUpeGFmNDYObVrTay0jqwNZTTyGegXzrs6oJiLinW2UAKpEew==;25:e0cUKUzU+57HW27po1VXBhyybUBp7u5sLNbfJV6I5R5Wbr7i13oKES8y5ZL2IVDCG68JFazJleHHrmLUezcJ9xU9IK8UhhoIL2EWr2GpTlmI1yAxVTqjUQ2OfGpyascmhXYZ2YTyF9rw+yhFRnI/isuqmXwPzyPR/CgwfDtf1C/bJbxjHd5Ua8HFMxEvsDv0ae60n8qJuHXmwE/nJveQl/trQFhqWxe/CoM8r43cIqkl0ITeCcZV0jbfuEQqrXK+AdqyimN4PTvkiFRu0n6sgqDKzFS48ZHK385eaCMnPmqaEXTw5hdt1x8BzO9ngKV85aQtuxEZ1jDvOleG0m2qLg==;31:LWkb+koKW+OgKDmyJ4Hxtg9kH9RuEaTENPg5BTergq52zbZd5K2SYXteg/YOQJtWbl0Dik0PrnADVN4Ta1fXFqaQ6uBtVsgvkGtHbc/s7zHB/xYHjQG8p5YtgKUA+aRkPFGNTiJ7wVRnFVGbide6/b0697Fw596ehQZlz0Xjl/ETnVyGnKAmfoXNrD6DevVo9EzA6v5k5pHSxcch2WrvBtIFIL1EmNI1nmwtWRWGqBU=
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3274:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3274;20:alLbm97W58VkMIkUsrXhDZPUkEGtrqYUw+V7GH3QVDIUTob4HHjOKCZdoNKoqzGemi/hcF85QMJzfGt+H1g0OkpTAyn4hygID0ymRamGRYnkVczsxJv1WBT79jR1HZ1I8glIPQF4CsX6E4h05LGCCgvky38rhDIvjZVam2zFXJBJJnOw2qjARtjr60fgmDPoJJonQJ8yrl4m/VLjS+HDIYKDZUtvC+/8bgbNFrQii5rAtrcpjqeuiYMzjrXLPHdO83GFj9+Z13E4JUKOVUqhIQDHGMWF4oZvJUsLBytIcKswwlM5GZqQLMaVHZCFSdMBg/K4ItZ/T50dB/1Wjpz/6xIflf5dZdWaIKOuNW0/qmrhtlSRs1jb+37mnBvJCIefdiqVvK7G84emkIcbsVMCVTLcCdy+Y0lFtdTmVRqxpJV9LMwvPn0pQRtslrFLsV8Vuuea0pmtPUJxFoOMWhl2gxM4AmIoBJgpnjGfqh506i755Hrfi7k9MAvQOKJskbU8;4:fTN85p3KPVElGBJdYABesE1WcTws0hVYWwIfSxTAwP5dyKhFSpn85yBboWggzsBnBSv4G0cgw1SiutIwsVco5qVGW690RAy8xPaW96Fd441U3K8ZG9fTKaOpw+cN/U9nKtLGl9l6mgk8dKk+BKoBmHp99fyjPkLU79gQIB1a5+GgsZ0TDVz7j/n3FYfYPr8i/1k/GtrKuP3BUmu0Oiu10zJBz6LLPw5a6r/Aqm5F7xKlCfVvzgR5rT8Azcm5fpEbubViuqEht9cunE2IVMcvuqCe7wNxnZbbp38UDYusid7iGTI68pe5n6jBqrDKO29/xGKzjFBiXnpZric8NKB63LQefbtPa6px95M2DzR+BAgMtmcicIZvMgmpia1RijNdXc1LUh60zhCsiCm+SxepIzlLxkyUvS8M8A/DASIFHaU=
-X-Microsoft-Antispam-PRVS: <DM5PR03MB3274094C912B055E69B3337CE0D70@DM5PR03MB3274.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(31051911155226)(240166546044246)(232431446821674)(108721460000369);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501244)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR03MB3274;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB3274;
+X-MS-Office365-Filtering-Correlation-Id: 09b17c72-5e11-4847-e0c0-08d58b0df6a4
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY1PR03MB1487;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1487;3:q9Poqfj5vtDlzstYbtS+jDP5FsnQcJRKKD7LZSWf5ccNKGX6HHBZfCntblN97PRyRCRxmeERBDl00DDDWvK8fzLSHFIbC9NIoYk1RHBHlRj/Z9c5BsC+/aUQYdjgQJsewDjymqHgI3yyG6/kGVb/Sh5WZX6+fv1yJjyWRdwFgS7Nn1EoZIyGKcXr5OmhPgIcTQP5wbWVgtosrgnLJPA/lmhlNPn2wF28Oh4JnQ+M1jI5UdQz0qX1+1ojzEiUtWp3XKIVc8u3WVFnD4mQelVUnnnjUU6EffhrYbiye2Pg1lLBJFkshMrXceFlro3DmVGskiX63V7d1r2loRoDwldbYw==;25:XDE1JpNaYwKdVfPNvT+I0JNLT6thdZ5q6fh++vIf84NXjEV00nMRnj4Tsk7d3j6DKevIm+10GCRAgGOuj/tYUczmo7mPFoLW+q39xWj+bzVsDldQ+lIdaaGCzuvuceXS+qBYn2YeVqEeK4wtfs1pJ13rgWkz+npywUePJY1H+yccKBzNJGD2pCtYvPZj5e+NWuVlkZjACT2e8F4sX5oE5FaN8zBwI6N6RO7pcKTbJdozLLzhfatD3TyaBos93Do1O/RPzOtJ1gTJ+N5dZ59FdHvTJlW1IH4jhP/U/8psCuozLMzOzPa5Ghlv8E4rHkbACEa0e/Ajgl97oVlGboK/gg==;31:F1zRoNWTXUHiZXbNZKou9VevqasZjvdPcK5sMHCVE7b21iSCFyUOxaTuL78KqVf9ZFotapw7SAhXhUMeocezJRfvsppKaK+/w2scPLsqQVNFodKpDTNYln4hdbtLr7mvIBIhhDVNTG1NNqxb1HWKHTok87znlGHZyG0ou02JjKrDIF6HoGMIe1HNYYsSmnr2MblWqidyfDqdmdks97aotgrmeEeHmwuWGUYiF+hGhvo=
+X-MS-TrafficTypeDiagnostic: CY1PR03MB1487:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1487;20:KqzENX2yahNPXFfJnP+UOR7uUyiBHwE0UNRWDqGGoYprDIQByqXFJZZinUABAkYf1zMP0ClvOqOaw12H6fngiWWUMIDkVW9NLPVMSGSNr+60qTfNlRwo/D3kI7rHNaS1jsZQoc39TRRueKVN5/vUQ3duko8EPqE3+n4CXss9N4a+yylTwuub97bh7mj3yRq4pg5xkAmhvDOX2u5FfY46h37mTbhBUanGvJs6dHSJajRrwog90xV2V9aWYli7tJyIiQ8kIVZU1QyodcsF5yBlrvLSHgLQJ2d4/pvHSuC4gyw7KiaR+UzrsrHQdHUgXSmXBtp1f5UGMnuznV+qahi+TMXnkf/IKSB+fpYH3SZ3ROZ3F1QJU6eVL94yEiBHrWJxYC+zyfKwtmFw+eUi+zq9H3EJCNZlLDonHxqZzaGCTNfzQNbAI0FIVIsEUZriNK+CJL0Zizm7dijqtP9eJDm0lw3vtlNxf1oVMJqe7bgI26F8pJcvCO3Ub8o8DRY5THv4;4:WLm34VIIbhaDuXDbUURBkuivFlWsP2Yn/Io99aTJ93+4kmeA0rKobeqM0GPQHtOhE4vZ38zMls5r+Rw6pDwyD8ctYvdqyuYta1HBSOF5l0WFogmvwF0PudRj7IXvYdyWyYL3FY3y1C77RWz1QRfz3n8mCu56quHfcMBrazmT3V+YR29PkqK28ydGVWtfaYagY/sBwOny8Ngxb9d3JAZI0N1rY8yADDKPeY929qwsIKen4GvA8l3Oq2ybWEeNQWplY/as3HNkn6qqAHtT6/XIYvGAhoUpix4Qmki9i1i29ivsPUz0xBsrsWz7JgwYaqtorFY/rLOOpe+Z+YUT8gNX9OBqhIpXfCXtL358do/zX3/BmjKcNRpeabaGw2yv9t97
+X-Microsoft-Antispam-PRVS: <CY1PR03MB1487166FA542A2394EC7D233E0D70@CY1PR03MB1487.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(270121546159015)(158342451672863)(232431446821674);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501244)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY1PR03MB1487;BCL:0;PCL:0;RULEID:;SRVR:CY1PR03MB1487;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3274;23:3ON+4Cp1kkk0G2ZGdGXD9qn2V+LlxFgU6LnWLb0KJ?=
- =?us-ascii?Q?nUf31Vg770a9QziW+a3DO46RQZuVmfiPJfUpxq05sUhgQvhYjKQa3kZUTeOb?=
- =?us-ascii?Q?sYkL3OvfMsEYGQut9j048XJQzfcqOFMbTO1xsShAG5px8EqFpIAMJ7ykExTP?=
- =?us-ascii?Q?Z0epQJtjYxKLu9w2GyWLI3dq4IoKKP3x/cWc+ElncwUtElOHT67YDn8e96RK?=
- =?us-ascii?Q?7yMj79bXRBD8T93sCNB6rekddEO/1vioqkN6RUc7ipBYaJfsiEUHw2DAkM70?=
- =?us-ascii?Q?JEwEGwbQRXmj8OSizX6NG2s90IaXA1+7S6dWdHmdROXuhQ6dR2EWvHQ2UZZl?=
- =?us-ascii?Q?g1whHcwZ6WNb4yyYV5DtiwIFz/YDac+EN0yUxIjtenLFvRIc6rhjz9h/DxAs?=
- =?us-ascii?Q?Kdv7M/rae6DVmGA3t9wWm9y4HurLzUBu2+d3NRPv7aqDiig2ajN0DDCz9J+h?=
- =?us-ascii?Q?cZchpWooalWJrLUPjQ6g8dG8zZzZclGmprgmMpIA2PeChTMP83xtq6qU8Ivc?=
- =?us-ascii?Q?EKSn3gsUOXSrHrafAQW/0DAn/FcaIMKT40P6rhXGFhQ8Qxi+/5ChhgI7pkGt?=
- =?us-ascii?Q?ZO5olVlXWeGj5k0Kw0w5JFncXzoXZET58vb2zxue4Pr/MiAdfWEsRfGLFcuL?=
- =?us-ascii?Q?hTeVuDrAzfs0X5lObSZaVBxHOOsLgM3yCvATFGDtfS6y8Sv9VAlnSy/mNNKI?=
- =?us-ascii?Q?6kY+lbl7xPzCJIZT/nf0DHlQ+YYf6RwW88k5ixjWtbYCAOOstOHg0oFZTcbP?=
- =?us-ascii?Q?wlLWHiqH253DTopybvEg3nuE410wz5lwPfZIyQUpDmWB/gP/Dh7XYus7a5qr?=
- =?us-ascii?Q?vMkD5lrZ7GdSAJbtKKu36ZHB/JRXDDqpCE/ULEM8xjTUSFD76Djt6P9ylJUo?=
- =?us-ascii?Q?6LJjKjGEIJk/1QVnGBURAkAELWGk3RlDUg1tPbGPib20Czs1mqnS4zGy2qjw?=
- =?us-ascii?Q?EaeleY60vLJkG8Z1cBQB12RrosGzBU9MWRKN8F+Hb8EMD4+yrKSZtusaA3nP?=
- =?us-ascii?Q?9VjARIrZ/xW1PYOXid/snOgOxiTRL/2se+YNWBhRBkCuK1lDJjVyJahCNmfm?=
- =?us-ascii?Q?wJtFzQVLS7WPA2lDfvsl3s081XHFvVAzcMZ8C0dHkkY/dImJh3q2WjMhKNwl?=
- =?us-ascii?Q?Au1gf8KjKHx6ei///C9HQCyECihgT2nJPjXIW9C4M6/MSgbkN4lpy5QGRYaN?=
- =?us-ascii?Q?w2enJWlguZU++FAPgGNBmEd9Q6N0z+RKizLl4jGyPNmCqBTLt+OPLEN844dU?=
- =?us-ascii?Q?1ca5TAQmYauQUo8GvjnaZ9TWRQoxDIbOnatp0cB8DwfocnSpbW+8tTGNilev?=
- =?us-ascii?Q?1I5UUF46zTUyB6J4YALptI=3D?=
-X-Microsoft-Antispam-Message-Info: 78FgpshNHzuqrrP5LdT1gGlPeaRiVVPLgTPg9O8EYS7WE+Xcm3OJNbuiOohBny2FgkiCqZmrw8yPUvCwMVOBeGoVERQtxU9WewPfjpFj6wBDPbCDtNF552nqkyf5qGol7H9VRDB2aCnU5GHntSAVj0ofKYN5z4O1r/2Rn/Wxmccc/w3tiv6cp+uyRsuaDCY+
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3274;6:/iJMMc2CXLcXtA/8cPI5J4gDBy3fcTHcFz4Wgux5IQyiVML0CiHoW9HWoSAdXfkJXYL+9s4jm1nVVAf/Gfr475qtFwgUqLahGofsbHHKpUKMRzn6G1NdBps0Mf5xSwUh+ONosF6/P4o9k4zh1FeE7TZuTbMzeEU6EpLkoMvYs2ffSA2nP9zcNrqbrzE6On7MAd8XuZ84rl98INwujx/2snZMBPhyMBTYAlwpjx4PTqj/3faSksBOIvt8+mFx6KnImr+julthzq/g7JQlh0Vl46JU8mGibDxu8vg1ptmxiqIMD2HxFf0EklE3uqytYWkpehHc2ghu6PWqvxgznivq2oj6B2xhVAgIc4G0r9EOnEM=;5:CLgemQF1GT1wBPlYwnT1lG5RNnSMyKeZ3DnURJaYPWdxM0g9jQAtCdVwS7Z4dO90cDr1uT9gGqMy7fDQjsqmo9EwAsZguyRhtDFH0NsyKIaMabv/6Ld4PrHOaQV4o7cD4jNEZk/N1g+RN3slI5/Z1WSF6z8cVzwoonJ9pispnfQ=;24:bV+5KXtQOyFJX3ENEEUP5fEFp9jKr/WDA3TJGmqxuLGnERHd7FE8JLLY/GYlFdruvEbb8wEbFen9LKRAnrbAZrmk93Mv9K4NtptLIOzIDbk=;7:L5f1OkEp8h/W7Hoy6ZrV0AvYfE/KeCvTFSlLPKDoYzTWW/rV+P2X1zDqWqBudUXp/jLAlH26siHI6ytytffUWwS1KvBW2JXUQXZRVBFNBrk5MaWHvX7DHurzgkRcRKG11zCKenbNytB9kJNQ+om1GG/7ynvCnWnu/BYZG/2jc8HAM7rVnSjpr9oJiQ98DPTWOCk6ONRv50tCobA5BSamlGnWi0iNVHobwUt2J0Go/sUHeY71TMh3YwHJ6bHTsaeo
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR03MB1487;23:pnK8oX8pOFFSb3kvWAlQSNQZ88sw9WDliqaQTMc4G?=
+ =?us-ascii?Q?QJLEy0qJyrVt91A0FIdyFo1krBA1v1uKSBiCYd6yInT9Tc2Lun33cai7bX9i?=
+ =?us-ascii?Q?WcAYDdCE9T1HrEL5kOYwyt3atwVShjZoqZ12fzkVdcrhgyRnDT8+5QO/4hse?=
+ =?us-ascii?Q?uAKZHrfC6898jhVSN1qmQDmZ5u0jYt/YweC8eK2FNmDI4z0VvRPY68VZ0Q5J?=
+ =?us-ascii?Q?z7ezDIN++FbJwqWPXP1ozDVuvXVGyr138rl+BrTjMHaAsXTUVpsGhXoefS1g?=
+ =?us-ascii?Q?gookwksiiV/yYvCLYIFfmN2ReO4B1wEcoVDBe0uX2DWMxy09jZAbFvmaHBZH?=
+ =?us-ascii?Q?JCcbksRgGSeusVbiDV42jnK7B/jmvs3+Y9bmriqaupSh+mNChxBCpp19q7KK?=
+ =?us-ascii?Q?/F5PNHFRQ3vc4vXQINKjnGFRlsVnFKArJiVUXLwBilE6Sx3YuGEp+kGWQr9v?=
+ =?us-ascii?Q?uDt0cMDw/7hN1PSKV4W5VghizmUxXtyY0oUob+FiD4HYPYw5Kx+i8/iwjS+B?=
+ =?us-ascii?Q?Wr1sW5525t06JEU2r10M3jY6iwLwHZ75qluum2PkRDfsioZQ7J59ZsIWTZqp?=
+ =?us-ascii?Q?MsWGYBSiMIFFtIWii7LVxtoZTMnPDRyT7LtRI7v8/CYx2TkwLxYaXDWu/YgF?=
+ =?us-ascii?Q?0Svw445eC1OsBnZ9oXRZiaehSPu106+k8nX1OxqYe+lcIDkA/hsdYyTgGqxX?=
+ =?us-ascii?Q?L+4Ti+cx5Gzn7cAx2MAxLWyQFioBxP5MHF3ix43wUb8b85kEmJ9k1jaZ8af5?=
+ =?us-ascii?Q?a8CoduHusZCa9159LeZKGC/mZns5I6+bXf4+Az623irIOB9I6z5Xw9vuc4JL?=
+ =?us-ascii?Q?361Z7vVvd989w0Lb0USiyobjs1cPg7WcGB9mnwdyUB6mKZ+NUPYrR0iV78h5?=
+ =?us-ascii?Q?F67SuZVqrRS9sBg1RSH/tNDsI6cChAZmeWTT/vMrKRJgLcH6pI2KrS9kDPT1?=
+ =?us-ascii?Q?C3En/3Q4oaJAxZ5DrxdXB6p9sIUoe0nkHDbfPQ3RgK54SO/yLGQHztybVVEa?=
+ =?us-ascii?Q?NoS2TJxAgF6OViMBlKmt+4Lm8Yap9kq/fM0pAoYYLXHdjsCUepElb8AuJA2u?=
+ =?us-ascii?Q?FFNLoCRNEoEQX6WXGfl6X7W5hEgg9ZEPSXZusJnl2GyaxoBf8kNsQIuf29lm?=
+ =?us-ascii?Q?xH5iMOSXiou5o+DEbLJamqKlUrtdnFn4OhT/MHE+UqMIun6VddILPbeltpmG?=
+ =?us-ascii?Q?uT/P2YOQbzG5KPqZBZUKIsUzDPiLzumFIxA?=
+X-Microsoft-Antispam-Message-Info: 4yiHwVCkRc7LLAIOENpGFBykAeCqwDJiioVnXrWpb/QAf5cK6mmVXKxpv8nI0nPQueUidesm4lipvMoF0uSIlC+sjwXBqGe8xpyaJ2KAKJiO/f0NJRBnaQBY5ys0eCSpT2CWK5vvRzvochBHvuUWNP2lgphy2z1+hoB3SDAHKVjp2Ny15CMKpdqQ3tsGtMp1
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1487;6:MFmqoTtp9RvexegWQ/kBc5cJhJSNzgVbV6sM7ViiL5094L1kJ4DI4TCdb9EXe+ydvIVXSw03Oa615cF1qeuoJd0og0m8Si4I9Km8mqMINd5CXuqV3Kv2QpVnc42K0LAQ/lYWYb9KBuTbheGjUykvHuwtS17VN1KqnpIShURcpx2FNTZ9EqUnl28gENlqDT1pszAhHq2e7Dqy11fUvX3MAxAelRva38izq/iw6iP8xKq/3f9brBDxEOWATgeJo+xZYDKrvN0Vi5Nk9F8+B0Q+xUHCquGx37qtZktFcpCHl4HsAczTZdJJhCnVywGLY6DQtav8H7sSOIyN/N4jwMKDvp6lk6NbJITJ/HnTzlVNOWk=;5:mYzAY8q+v6kikqUdIT9qMZnW0TI2OEnTSP14S4Zf321WAJn55KTvN+fN/Uu7WjWRuhLDuvJeRqSYIsTnQYo4MVUNToVxSsX4fD8rrBZkiDktUSEpDwjOEqZQ2OfyxJ8iIi4wDKBbw8x/Z5vnOFco4L/lUVKd9BtOJ7ljQJGWwOw=;24:Sx+p3E9uxCpL5+TDu7Hpz6St3DzTIH6K0iyesaqt2gLCHT+rp1nBWStT339ZV/Bbk+3bzqvTy0EWdI0M3AJfrjMcP0ijHQb/UgURWEdD+z4=;7:BhSJhnPv/7yojUmBMi8WxesPQyMuQryx2iYnRWW9iYuZ7fDXaeW7vmtKGnHl8oJXyrrep6TzZp4CJJAsht3yabnlyPHwoygRgRxUvntaipu0LfQ8AWd7DJ+R0sg/hZL2fCItPRsHCrUeVhs4gYz+zHwSMe/66nQuLRWi36CLQfG/dqjV6G7pUrzhisqaSsYN7w74hKyg77pUyWvDpliNtgk5Q56J9ZgrNfg9c4vZzJoxIxPcirUyO4on8qZIibFg
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:58.4514
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:22.8665
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36fb63c2-079b-4eb5-696e-08d58b0e0bfe
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09b17c72-5e11-4847-e0c0-08d58b0df6a4
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3274
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB1487
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin documentation
+Remove Blackfin tty and uart support
 ---
- Documentation/00-INDEX                             |  2 -
- Documentation/admin-guide/kernel-parameters.rst    |  1 -
- Documentation/admin-guide/kernel-parameters.txt    |  2 +-
- Documentation/blackfin/00-INDEX                    |  6 --
- Documentation/blackfin/bfin-gpio-notes.txt         | 71 ----------------------
- Documentation/blackfin/bfin-spi-notes.txt          | 16 -----
- .../driver-api/usb/writing_musb_glue_layer.rst     |  3 -
- .../features/core/BPF-JIT/arch-support.txt         |  1 -
- .../core/generic-idle-thread/arch-support.txt      |  1 -
- .../features/core/jump-labels/arch-support.txt     |  1 -
- .../features/core/tracehook/arch-support.txt       |  1 -
- .../features/debug/KASAN/arch-support.txt          |  1 -
- .../debug/gcov-profile-all/arch-support.txt        |  1 -
- Documentation/features/debug/kgdb/arch-support.txt |  1 -
- .../debug/kprobes-on-ftrace/arch-support.txt       |  1 -
- .../features/debug/kprobes/arch-support.txt        |  1 -
- .../features/debug/kretprobes/arch-support.txt     |  1 -
- .../features/debug/optprobes/arch-support.txt      |  1 -
- .../features/debug/stackprotector/arch-support.txt |  1 -
- .../features/debug/uprobes/arch-support.txt        |  1 -
- .../debug/user-ret-profiler/arch-support.txt       |  1 -
- .../features/io/dma-api-debug/arch-support.txt     |  1 -
- .../features/io/dma-contiguous/arch-support.txt    |  1 -
- .../features/io/sg-chain/arch-support.txt          |  1 -
- .../features/lib/strncasecmp/arch-support.txt      |  1 -
- .../locking/cmpxchg-local/arch-support.txt         |  1 -
- .../features/locking/lockdep/arch-support.txt      |  1 -
- .../locking/queued-rwlocks/arch-support.txt        |  1 -
- .../locking/queued-spinlocks/arch-support.txt      |  1 -
- .../locking/rwsem-optimized/arch-support.txt       |  1 -
- .../features/perf/kprobes-event/arch-support.txt   |  1 -
- .../features/perf/perf-regs/arch-support.txt       |  1 -
- .../features/perf/perf-stackdump/arch-support.txt  |  1 -
- .../sched/membarrier-sync-core/arch-support.txt    |  1 -
- .../features/sched/numa-balancing/arch-support.txt |  1 -
- .../seccomp/seccomp-filter/arch-support.txt        |  1 -
- .../time/arch-tick-broadcast/arch-support.txt      |  1 -
- .../features/time/clockevents/arch-support.txt     |  1 -
- .../time/context-tracking/arch-support.txt         |  1 -
- .../features/time/irq-time-acct/arch-support.txt   |  1 -
- .../time/modern-timekeeping/arch-support.txt       |  1 -
- .../features/time/virt-cpuacct/arch-support.txt    |  1 -
- .../features/vm/ELF-ASLR/arch-support.txt          |  1 -
- .../features/vm/PG_uncached/arch-support.txt       |  1 -
- Documentation/features/vm/THP/arch-support.txt     |  1 -
- Documentation/features/vm/TLB/arch-support.txt     |  1 -
- .../features/vm/huge-vmap/arch-support.txt         |  1 -
- .../features/vm/ioremap_prot/arch-support.txt      |  1 -
- .../features/vm/numa-memblock/arch-support.txt     |  1 -
- .../features/vm/pte_special/arch-support.txt       |  1 -
- 50 files changed, 1 insertion(+), 143 deletions(-)
- delete mode 100644 Documentation/blackfin/00-INDEX
- delete mode 100644 Documentation/blackfin/bfin-gpio-notes.txt
- delete mode 100644 Documentation/blackfin/bfin-spi-notes.txt
+ drivers/tty/Kconfig                  |   13 -
+ drivers/tty/Makefile                 |    1 -
+ drivers/tty/bfin_jtag_comm.c         |  353 --------
+ drivers/tty/hvc/Kconfig              |    9 -
+ drivers/tty/hvc/Makefile             |    1 -
+ drivers/tty/hvc/hvc_bfin_jtag.c      |  104 ---
+ drivers/tty/serial/Kconfig           |  149 ----
+ drivers/tty/serial/Makefile          |    2 -
+ drivers/tty/serial/bfin_sport_uart.c |  937 --------------------
+ drivers/tty/serial/bfin_sport_uart.h |   86 --
+ drivers/tty/serial/bfin_uart.c       | 1551 ----------------------------------
+ include/uapi/linux/serial_core.h     |    6 -
+ 12 files changed, 3212 deletions(-)
+ delete mode 100644 drivers/tty/bfin_jtag_comm.c
+ delete mode 100644 drivers/tty/hvc/hvc_bfin_jtag.c
+ delete mode 100644 drivers/tty/serial/bfin_sport_uart.c
+ delete mode 100644 drivers/tty/serial/bfin_sport_uart.h
+ delete mode 100644 drivers/tty/serial/bfin_uart.c
 
-diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
-index 7f3a072..2956d7f 100644
---- a/Documentation/00-INDEX
-+++ b/Documentation/00-INDEX
-@@ -66,8 +66,6 @@ backlight/
- 	- directory with info on controlling backlights in flat panel displays
- bcache.txt
- 	- Block-layer cache on fast SSDs to improve slow (raid) I/O performance.
--blackfin/
--	- directory with documentation for the Blackfin arch.
- block/
- 	- info on the Block I/O (BIO) layer.
- blockdev/
-diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
-index 7242cbd..b8d0bc0 100644
---- a/Documentation/admin-guide/kernel-parameters.rst
-+++ b/Documentation/admin-guide/kernel-parameters.rst
-@@ -89,7 +89,6 @@ parameter is applicable::
- 	APM	Advanced Power Management support is enabled.
- 	ARM	ARM architecture is enabled.
- 	AX25	Appropriate AX.25 support is enabled.
--	BLACKFIN Blackfin architecture is enabled.
- 	CLK	Common clock infrastructure is enabled.
- 	CMA	Contiguous Memory Area support is enabled.
- 	DRM	Direct Rendering Management support is enabled.
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1d1d53f..0d9b5b7 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1025,7 +1025,7 @@
- 			address. The serial port must already be setup
- 			and configured. Options are not yet supported.
+diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+index b811442..f298179 100644
+--- a/drivers/tty/Kconfig
++++ b/drivers/tty/Kconfig
+@@ -151,19 +151,6 @@ config LEGACY_PTY_COUNT
+ 	  When not in use, each legacy PTY occupies 12 bytes on 32-bit
+ 	  architectures and 24 bytes on 64-bit architectures.
  
--	earlyprintk=	[X86,SH,BLACKFIN,ARM,M68k,S390]
-+	earlyprintk=	[X86,SH,ARM,M68k,S390]
- 			earlyprintk=vga
- 			earlyprintk=efi
- 			earlyprintk=sclp
-diff --git a/Documentation/blackfin/00-INDEX b/Documentation/blackfin/00-INDEX
+-config BFIN_JTAG_COMM
+-	tristate "Blackfin JTAG Communication"
+-	depends on BLACKFIN
+-	help
+-	  Add support for emulating a TTY device over the Blackfin JTAG.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin_jtag_comm.
+-
+-config BFIN_JTAG_COMM_CONSOLE
+-	bool "Console on Blackfin JTAG"
+-	depends on BFIN_JTAG_COMM=y
+-
+ config SERIAL_NONSTANDARD
+ 	bool "Non-standard serial port support"
+ 	depends on HAS_IOMEM
+diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+index 8ce3a86..42054c7 100644
+--- a/drivers/tty/Makefile
++++ b/drivers/tty/Makefile
+@@ -20,7 +20,6 @@ obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
+ 
+ # tty drivers
+ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
+-obj-$(CONFIG_BFIN_JTAG_COMM)	+= bfin_jtag_comm.o
+ obj-$(CONFIG_CYCLADES)		+= cyclades.o
+ obj-$(CONFIG_ISI)		+= isicom.o
+ obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
+diff --git a/drivers/tty/bfin_jtag_comm.c b/drivers/tty/bfin_jtag_comm.c
 deleted file mode 100644
-index 265a1ef..0000000
---- a/Documentation/blackfin/00-INDEX
+index c369bf2..0000000
+--- a/drivers/tty/bfin_jtag_comm.c
 +++ /dev/null
-@@ -1,6 +0,0 @@
--00-INDEX
--	- This file
--bfin-gpio-notes.txt
--	- Notes in developing/using bfin-gpio driver.
--bfin-spi-notes.txt
--	- Notes for using bfin spi bus driver.
-diff --git a/Documentation/blackfin/bfin-gpio-notes.txt b/Documentation/blackfin/bfin-gpio-notes.txt
-deleted file mode 100644
-index d245f39..0000000
---- a/Documentation/blackfin/bfin-gpio-notes.txt
-+++ /dev/null
-@@ -1,71 +0,0 @@
+@@ -1,353 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
 -/*
-- * File:         Documentation/blackfin/bfin-gpio-notes.txt
-- * Based on:
-- * Author:
+- * TTY over Blackfin JTAG Communication
 - *
-- * Created:      $Id: bfin-gpio-note.txt 2008-11-24 16:42 grafyang $
-- * Description:  This file contains the notes in developing/using bfin-gpio.
+- * Copyright 2008-2009 Analog Devices Inc.
 - *
-- *
-- * Rev:
-- *
-- * Modified:
-- *               Copyright 2004-2008 Analog Devices Inc.
-- *
-- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
-- *
+- * Enter bugs at http://blackfin.uclinux.org/
 - */
 -
+-#define DRV_NAME "bfin-jtag-comm"
+-#define DEV_NAME "ttyBFJC"
+-#define pr_fmt(fmt) DRV_NAME ": " fmt
 -
--1. Blackfin GPIO introduction
+-#include <linux/circ_buf.h>
+-#include <linux/console.h>
+-#include <linux/delay.h>
+-#include <linux/err.h>
+-#include <linux/kernel.h>
+-#include <linux/kthread.h>
+-#include <linux/module.h>
+-#include <linux/mutex.h>
+-#include <linux/sched.h>
+-#include <linux/slab.h>
+-#include <linux/tty.h>
+-#include <linux/tty_driver.h>
+-#include <linux/tty_flip.h>
+-#include <linux/atomic.h>
 -
--    There are many GPIO pins on Blackfin. Most of these pins are muxed to
--    multi-functions. They can be configured as peripheral, or just as GPIO,
--    configured to input with interrupt enabled, or output.
+-#define pr_init(fmt, args...) ({ static const __initconst char __fmt[] = fmt; printk(__fmt, ## args); })
 -
--    For detailed information, please see "arch/blackfin/kernel/bfin_gpio.c",
--    or the relevant HRM.
+-/* See the Debug/Emulation chapter in the HRM */
+-#define EMUDOF   0x00000001	/* EMUDAT_OUT full & valid */
+-#define EMUDIF   0x00000002	/* EMUDAT_IN full & valid */
+-#define EMUDOOVF 0x00000004	/* EMUDAT_OUT overflow */
+-#define EMUDIOVF 0x00000008	/* EMUDAT_IN overflow */
 -
+-static inline uint32_t bfin_write_emudat(uint32_t emudat)
+-{
+-	__asm__ __volatile__("emudat = %0;" : : "d"(emudat));
+-	return emudat;
+-}
 -
--2. Avoiding resource conflict
+-static inline uint32_t bfin_read_emudat(void)
+-{
+-	uint32_t emudat;
+-	__asm__ __volatile__("%0 = emudat;" : "=d"(emudat));
+-	return emudat;
+-}
 -
--    Followed function groups are used to avoiding resource conflict,
--    - Use the pin as peripheral,
--	int peripheral_request(unsigned short per, const char *label);
--	int peripheral_request_list(const unsigned short per[], const char *label);
--	void peripheral_free(unsigned short per);
--	void peripheral_free_list(const unsigned short per[]);
--    - Use the pin as GPIO,
--	int bfin_gpio_request(unsigned gpio, const char *label);
--	void bfin_gpio_free(unsigned gpio);
--    - Use the pin as GPIO interrupt,
--	int bfin_gpio_irq_request(unsigned gpio, const char *label);
--	void bfin_gpio_irq_free(unsigned gpio);
+-static inline uint32_t bfin_write_emudat_chars(char a, char b, char c, char d)
+-{
+-	return bfin_write_emudat((a << 0) | (b << 8) | (c << 16) | (d << 24));
+-}
 -
--    The request functions will record the function state for a certain pin,
--    the free functions will clear its function state.
--    Once a pin is requested, it can't be requested again before it is freed by
--    previous caller, otherwise kernel will dump stacks, and the request
--    function fail.
--    These functions are wrapped by other functions, most of the users need not
--    care.
+-#define CIRC_SIZE 2048	/* see comment in tty_io.c:do_tty_write() */
+-#define CIRC_MASK (CIRC_SIZE - 1)
+-#define circ_empty(circ)     ((circ)->head == (circ)->tail)
+-#define circ_free(circ)      CIRC_SPACE((circ)->head, (circ)->tail, CIRC_SIZE)
+-#define circ_cnt(circ)       CIRC_CNT((circ)->head, (circ)->tail, CIRC_SIZE)
+-#define circ_byte(circ, idx) ((circ)->buf[(idx) & CIRC_MASK])
 -
+-static struct tty_driver *bfin_jc_driver;
+-static struct task_struct *bfin_jc_kthread;
+-static struct tty_port port;
+-static volatile struct circ_buf bfin_jc_write_buf;
 -
--3. But there are some exceptions
--    - Kernel permit the identical GPIO be requested both as GPIO and GPIO
--    interrupt.
--    Some drivers, like gpio-keys, need this behavior. Kernel only print out
--    warning messages like,
--	bfin-gpio: GPIO 24 is already reserved by gpio-keys: BTN0, and you are
--configuring it as IRQ!
+-static int
+-bfin_jc_emudat_manager(void *arg)
+-{
+-	uint32_t inbound_len = 0, outbound_len = 0;
 -
--        Note: Consider the case that, if there are two drivers need the
--	identical GPIO, one of them use it as GPIO, the other use it as
--	GPIO interrupt. This will really cause resource conflict. So if
--	there is any abnormal driver behavior, please check the bfin-gpio
--	warning messages.
+-	while (!kthread_should_stop()) {
+-		struct tty_struct *tty = tty_port_tty_get(&port);
+-		/* no one left to give data to, so sleep */
+-		if (tty == NULL && circ_empty(&bfin_jc_write_buf)) {
+-			pr_debug("waiting for readers\n");
+-			__set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule();
+-			continue;
+-		}
 -
--    - Kernel permit the identical GPIO be requested from the same driver twice.
+-		/* no data available, so just chill */
+-		if (!(bfin_read_DBGSTAT() & EMUDIF) && circ_empty(&bfin_jc_write_buf)) {
+-			pr_debug("waiting for data (in_len = %i) (circ: %i %i)\n",
+-				inbound_len, bfin_jc_write_buf.tail, bfin_jc_write_buf.head);
+-			tty_kref_put(tty);
+-			if (inbound_len)
+-				schedule();
+-			else
+-				schedule_timeout_interruptible(HZ);
+-			continue;
+-		}
 -
+-		/* if incoming data is ready, eat it */
+-		if (bfin_read_DBGSTAT() & EMUDIF) {
+-			uint32_t emudat = bfin_read_emudat();
+-			if (inbound_len == 0) {
+-				pr_debug("incoming length: 0x%08x\n", emudat);
+-				inbound_len = emudat;
+-			} else {
+-				size_t num_chars = (4 <= inbound_len ? 4 : inbound_len);
+-				pr_debug("  incoming data: 0x%08x (pushing %zu)\n", emudat, num_chars);
+-				inbound_len -= num_chars;
+-				tty_insert_flip_string(&port, (unsigned char *)&emudat, num_chars);
+-				tty_flip_buffer_push(&port);
+-			}
+-		}
 -
+-		/* if outgoing data is ready, post it */
+-		if (!(bfin_read_DBGSTAT() & EMUDOF) && !circ_empty(&bfin_jc_write_buf)) {
+-			if (outbound_len == 0) {
+-				outbound_len = circ_cnt(&bfin_jc_write_buf);
+-				bfin_write_emudat(outbound_len);
+-				pr_debug("outgoing length: 0x%08x\n", outbound_len);
+-			} else {
+-				int tail = bfin_jc_write_buf.tail;
+-				size_t ate = (4 <= outbound_len ? 4 : outbound_len);
+-				uint32_t emudat =
+-				bfin_write_emudat_chars(
+-					circ_byte(&bfin_jc_write_buf, tail + 0),
+-					circ_byte(&bfin_jc_write_buf, tail + 1),
+-					circ_byte(&bfin_jc_write_buf, tail + 2),
+-					circ_byte(&bfin_jc_write_buf, tail + 3)
+-				);
+-				bfin_jc_write_buf.tail += ate;
+-				outbound_len -= ate;
+-				if (tty)
+-					tty_wakeup(tty);
+-				pr_debug("  outgoing data: 0x%08x (pushing %zu)\n", emudat, ate);
+-			}
+-		}
+-		tty_kref_put(tty);
+-	}
 -
-diff --git a/Documentation/blackfin/bfin-spi-notes.txt b/Documentation/blackfin/bfin-spi-notes.txt
-deleted file mode 100644
-index eae6eaf..0000000
---- a/Documentation/blackfin/bfin-spi-notes.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--SPI Chip Select behavior:
+-	__set_current_state(TASK_RUNNING);
+-	return 0;
+-}
 -
--With the Blackfin on-chip SPI peripheral, there is some logic tied to the CPHA
--bit whether the Slave Select Line is controlled by hardware (CPHA=0) or
--controlled by software (CPHA=1). However, the Linux SPI bus driver assumes that
--the Slave Select is always under software control and being asserted during
--the entire SPI transfer. - And not just bits_per_word duration.
+-static int
+-bfin_jc_open(struct tty_struct *tty, struct file *filp)
+-{
+-	unsigned long flags;
 -
--In most cases you can utilize SPI MODE_3 instead of MODE_0 to work-around this
--behavior. If your SPI slave device in question requires SPI MODE_0 or MODE_2
--timing, you can utilize the GPIO controlled SPI Slave Select option instead.
--In this case, you should use GPIO based CS for all of your slaves and not just
--the ones using mode 0 or 2 in order to guarantee correct CS toggling behavior.
+-	spin_lock_irqsave(&port.lock, flags);
+-	port.count++;
+-	spin_unlock_irqrestore(&port.lock, flags);
+-	tty_port_tty_set(&port, tty);
+-	wake_up_process(bfin_jc_kthread);
+-	return 0;
+-}
 -
--You can even use the same pin whose peripheral role is a SSEL,
--but use it as a GPIO instead.
-diff --git a/Documentation/driver-api/usb/writing_musb_glue_layer.rst b/Documentation/driver-api/usb/writing_musb_glue_layer.rst
-index e90e8fa..5bf7152 100644
---- a/Documentation/driver-api/usb/writing_musb_glue_layer.rst
-+++ b/Documentation/driver-api/usb/writing_musb_glue_layer.rst
-@@ -718,6 +718,3 @@ http://www.maximintegrated.com/app-notes/index.mvp/id/1822
+-static void
+-bfin_jc_close(struct tty_struct *tty, struct file *filp)
+-{
+-	unsigned long flags;
+-	bool last;
+-
+-	spin_lock_irqsave(&port.lock, flags);
+-	last = --port.count == 0;
+-	spin_unlock_irqrestore(&port.lock, flags);
+-	if (last)
+-		tty_port_tty_set(&port, NULL);
+-	wake_up_process(bfin_jc_kthread);
+-}
+-
+-/* XXX: we dont handle the put_char() case where we must handle count = 1 */
+-static int
+-bfin_jc_circ_write(const unsigned char *buf, int count)
+-{
+-	int i;
+-	count = min(count, circ_free(&bfin_jc_write_buf));
+-	pr_debug("going to write chunk of %i bytes\n", count);
+-	for (i = 0; i < count; ++i)
+-		circ_byte(&bfin_jc_write_buf, bfin_jc_write_buf.head + i) = buf[i];
+-	bfin_jc_write_buf.head += i;
+-	return i;
+-}
+-
+-#ifndef CONFIG_BFIN_JTAG_COMM_CONSOLE
+-# define console_lock()
+-# define console_unlock()
+-#endif
+-static int
+-bfin_jc_write(struct tty_struct *tty, const unsigned char *buf, int count)
+-{
+-	int i;
+-	console_lock();
+-	i = bfin_jc_circ_write(buf, count);
+-	console_unlock();
+-	wake_up_process(bfin_jc_kthread);
+-	return i;
+-}
+-
+-static void
+-bfin_jc_flush_chars(struct tty_struct *tty)
+-{
+-	wake_up_process(bfin_jc_kthread);
+-}
+-
+-static int
+-bfin_jc_write_room(struct tty_struct *tty)
+-{
+-	return circ_free(&bfin_jc_write_buf);
+-}
+-
+-static int
+-bfin_jc_chars_in_buffer(struct tty_struct *tty)
+-{
+-	return circ_cnt(&bfin_jc_write_buf);
+-}
+-
+-static const struct tty_operations bfin_jc_ops = {
+-	.open            = bfin_jc_open,
+-	.close           = bfin_jc_close,
+-	.write           = bfin_jc_write,
+-	/*.put_char        = bfin_jc_put_char,*/
+-	.flush_chars     = bfin_jc_flush_chars,
+-	.write_room      = bfin_jc_write_room,
+-	.chars_in_buffer = bfin_jc_chars_in_buffer,
+-};
+-
+-static int __init bfin_jc_init(void)
+-{
+-	int ret;
+-
+-	bfin_jc_kthread = kthread_create(bfin_jc_emudat_manager, NULL, DRV_NAME);
+-	if (IS_ERR(bfin_jc_kthread))
+-		return PTR_ERR(bfin_jc_kthread);
+-
+-	ret = -ENOMEM;
+-
+-	bfin_jc_write_buf.head = bfin_jc_write_buf.tail = 0;
+-	bfin_jc_write_buf.buf = kmalloc(CIRC_SIZE, GFP_KERNEL);
+-	if (!bfin_jc_write_buf.buf)
+-		goto err_buf;
+-
+-	bfin_jc_driver = alloc_tty_driver(1);
+-	if (!bfin_jc_driver)
+-		goto err_driver;
+-
+-	tty_port_init(&port);
+-
+-	bfin_jc_driver->driver_name  = DRV_NAME;
+-	bfin_jc_driver->name         = DEV_NAME;
+-	bfin_jc_driver->type         = TTY_DRIVER_TYPE_SERIAL;
+-	bfin_jc_driver->subtype      = SERIAL_TYPE_NORMAL;
+-	bfin_jc_driver->init_termios = tty_std_termios;
+-	tty_set_operations(bfin_jc_driver, &bfin_jc_ops);
+-	tty_port_link_device(&port, bfin_jc_driver, 0);
+-
+-	ret = tty_register_driver(bfin_jc_driver);
+-	if (ret)
+-		goto err;
+-
+-	pr_init(KERN_INFO DRV_NAME ": initialized\n");
+-
+-	return 0;
+-
+- err:
+-	tty_port_destroy(&port);
+-	put_tty_driver(bfin_jc_driver);
+- err_driver:
+-	kfree(bfin_jc_write_buf.buf);
+- err_buf:
+-	kthread_stop(bfin_jc_kthread);
+-	return ret;
+-}
+-module_init(bfin_jc_init);
+-
+-static void __exit bfin_jc_exit(void)
+-{
+-	kthread_stop(bfin_jc_kthread);
+-	kfree(bfin_jc_write_buf.buf);
+-	tty_unregister_driver(bfin_jc_driver);
+-	put_tty_driver(bfin_jc_driver);
+-	tty_port_destroy(&port);
+-}
+-module_exit(bfin_jc_exit);
+-
+-#if defined(CONFIG_BFIN_JTAG_COMM_CONSOLE) || defined(CONFIG_EARLY_PRINTK)
+-static void
+-bfin_jc_straight_buffer_write(const char *buf, unsigned count)
+-{
+-	unsigned ate = 0;
+-	while (bfin_read_DBGSTAT() & EMUDOF)
+-		continue;
+-	bfin_write_emudat(count);
+-	while (ate < count) {
+-		while (bfin_read_DBGSTAT() & EMUDOF)
+-			continue;
+-		bfin_write_emudat_chars(buf[ate], buf[ate+1], buf[ate+2], buf[ate+3]);
+-		ate += 4;
+-	}
+-}
+-#endif
+-
+-#ifdef CONFIG_BFIN_JTAG_COMM_CONSOLE
+-static void
+-bfin_jc_console_write(struct console *co, const char *buf, unsigned count)
+-{
+-	if (bfin_jc_kthread == NULL)
+-		bfin_jc_straight_buffer_write(buf, count);
+-	else
+-		bfin_jc_circ_write(buf, count);
+-}
+-
+-static struct tty_driver *
+-bfin_jc_console_device(struct console *co, int *index)
+-{
+-	*index = co->index;
+-	return bfin_jc_driver;
+-}
+-
+-static struct console bfin_jc_console = {
+-	.name    = DEV_NAME,
+-	.write   = bfin_jc_console_write,
+-	.device  = bfin_jc_console_device,
+-	.flags   = CON_ANYTIME | CON_PRINTBUFFER,
+-	.index   = -1,
+-};
+-
+-static int __init bfin_jc_console_init(void)
+-{
+-	register_console(&bfin_jc_console);
+-	return 0;
+-}
+-console_initcall(bfin_jc_console_init);
+-#endif
+-
+-#ifdef CONFIG_EARLY_PRINTK
+-static void __init
+-bfin_jc_early_write(struct console *co, const char *buf, unsigned int count)
+-{
+-	bfin_jc_straight_buffer_write(buf, count);
+-}
+-
+-static struct console bfin_jc_early_console __initdata = {
+-	.name   = "early_BFJC",
+-	.write   = bfin_jc_early_write,
+-	.flags   = CON_ANYTIME | CON_PRINTBUFFER,
+-	.index   = -1,
+-};
+-
+-struct console * __init
+-bfin_jc_early_init(unsigned int port, unsigned int cflag)
+-{
+-	return &bfin_jc_early_console;
+-}
+-#endif
+-
+-MODULE_AUTHOR("Mike Frysinger <vapier@gentoo.org>");
+-MODULE_DESCRIPTION("TTY over Blackfin JTAG Communication");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/tty/hvc/Kconfig b/drivers/tty/hvc/Kconfig
+index fec457e..3bade5a 100644
+--- a/drivers/tty/hvc/Kconfig
++++ b/drivers/tty/hvc/Kconfig
+@@ -88,15 +88,6 @@ config HVC_DCC
+ 	 driver. This console is used through a JTAG only on ARM. If you don't have
+ 	 a JTAG then you probably don't want this option.
  
- Texas Instruments USB Configuration Wiki Page:
- http://processors.wiki.ti.com/index.php/Usbgeneralpage
+-config HVC_BFIN_JTAG
+-	bool "Blackfin JTAG console"
+-	depends on BLACKFIN
+-	select HVC_DRIVER
+-	help
+-	 This console uses the Blackfin JTAG to create a console under the
+-	 the HVC driver.  If you don't have JTAG, then you probably don't
+-	 want this option.
 -
--Analog Devices Blackfin MUSB Configuration:
--http://docs.blackfin.uclinux.org/doku.php?id=linux-kernel:drivers:musb
-diff --git a/Documentation/features/core/BPF-JIT/arch-support.txt b/Documentation/features/core/BPF-JIT/arch-support.txt
-index 5575d2d..740879c 100644
---- a/Documentation/features/core/BPF-JIT/arch-support.txt
-+++ b/Documentation/features/core/BPF-JIT/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/core/generic-idle-thread/arch-support.txt b/Documentation/features/core/generic-idle-thread/arch-support.txt
-index abb5f27..eff8cc3 100644
---- a/Documentation/features/core/generic-idle-thread/arch-support.txt
-+++ b/Documentation/features/core/generic-idle-thread/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ok  |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/core/jump-labels/arch-support.txt b/Documentation/features/core/jump-labels/arch-support.txt
-index dbdaffc..7f90c27 100644
---- a/Documentation/features/core/jump-labels/arch-support.txt
-+++ b/Documentation/features/core/jump-labels/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/core/tracehook/arch-support.txt b/Documentation/features/core/tracehook/arch-support.txt
-index dfb638c..9239b54 100644
---- a/Documentation/features/core/tracehook/arch-support.txt
-+++ b/Documentation/features/core/tracehook/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ok  |
-     |         c6x: |  ok  |
-     |        cris: | TODO |
-     |         frv: |  ok  |
-diff --git a/Documentation/features/debug/KASAN/arch-support.txt b/Documentation/features/debug/KASAN/arch-support.txt
-index 3406fae..38f2b5f 100644
---- a/Documentation/features/debug/KASAN/arch-support.txt
-+++ b/Documentation/features/debug/KASAN/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/gcov-profile-all/arch-support.txt b/Documentation/features/debug/gcov-profile-all/arch-support.txt
-index 830dbe8..d5f6330 100644
---- a/Documentation/features/debug/gcov-profile-all/arch-support.txt
-+++ b/Documentation/features/debug/gcov-profile-all/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/kgdb/arch-support.txt b/Documentation/features/debug/kgdb/arch-support.txt
-index 0217bf6..1100345 100644
---- a/Documentation/features/debug/kgdb/arch-support.txt
-+++ b/Documentation/features/debug/kgdb/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ok  |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-index 1e84be3c..250248d 100644
---- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-+++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/kprobes/arch-support.txt b/Documentation/features/debug/kprobes/arch-support.txt
-index 529f66e..a23d2f3 100644
---- a/Documentation/features/debug/kprobes/arch-support.txt
-+++ b/Documentation/features/debug/kprobes/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/kretprobes/arch-support.txt b/Documentation/features/debug/kretprobes/arch-support.txt
-index 4335324..145f65b 100644
---- a/Documentation/features/debug/kretprobes/arch-support.txt
-+++ b/Documentation/features/debug/kretprobes/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/optprobes/arch-support.txt b/Documentation/features/debug/optprobes/arch-support.txt
-index f559f1b..6a4bb93 100644
---- a/Documentation/features/debug/optprobes/arch-support.txt
-+++ b/Documentation/features/debug/optprobes/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/stackprotector/arch-support.txt b/Documentation/features/debug/stackprotector/arch-support.txt
-index 59a4c9f..38f2ed4 100644
---- a/Documentation/features/debug/stackprotector/arch-support.txt
-+++ b/Documentation/features/debug/stackprotector/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/uprobes/arch-support.txt b/Documentation/features/debug/uprobes/arch-support.txt
-index 53ed42b..6f617f7 100644
---- a/Documentation/features/debug/uprobes/arch-support.txt
-+++ b/Documentation/features/debug/uprobes/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/debug/user-ret-profiler/arch-support.txt b/Documentation/features/debug/user-ret-profiler/arch-support.txt
-index 1494439..6b772ed0 100644
---- a/Documentation/features/debug/user-ret-profiler/arch-support.txt
-+++ b/Documentation/features/debug/user-ret-profiler/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/io/dma-api-debug/arch-support.txt b/Documentation/features/io/dma-api-debug/arch-support.txt
-index 6be9206..1c07e83b 100644
---- a/Documentation/features/io/dma-api-debug/arch-support.txt
-+++ b/Documentation/features/io/dma-api-debug/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: |  ok  |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/io/dma-contiguous/arch-support.txt b/Documentation/features/io/dma-contiguous/arch-support.txt
-index 0eb08e1..2d86648 100644
---- a/Documentation/features/io/dma-contiguous/arch-support.txt
-+++ b/Documentation/features/io/dma-contiguous/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
-index 514ad34..62bc1e0 100644
---- a/Documentation/features/io/sg-chain/arch-support.txt
-+++ b/Documentation/features/io/sg-chain/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/lib/strncasecmp/arch-support.txt b/Documentation/features/lib/strncasecmp/arch-support.txt
-index 532c6f0..d71b852 100644
---- a/Documentation/features/lib/strncasecmp/arch-support.txt
-+++ b/Documentation/features/lib/strncasecmp/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/locking/cmpxchg-local/arch-support.txt b/Documentation/features/locking/cmpxchg-local/arch-support.txt
-index f3eec26..4e9f51b 100644
---- a/Documentation/features/locking/cmpxchg-local/arch-support.txt
-+++ b/Documentation/features/locking/cmpxchg-local/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/locking/lockdep/arch-support.txt b/Documentation/features/locking/lockdep/arch-support.txt
-index 9756abc..4632644 100644
---- a/Documentation/features/locking/lockdep/arch-support.txt
-+++ b/Documentation/features/locking/lockdep/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ok  |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/locking/queued-rwlocks/arch-support.txt b/Documentation/features/locking/queued-rwlocks/arch-support.txt
-index 62f4ee5..1cf417e 100644
---- a/Documentation/features/locking/queued-rwlocks/arch-support.txt
-+++ b/Documentation/features/locking/queued-rwlocks/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
-index 321b32f..aea2efa 100644
---- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
-+++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/locking/rwsem-optimized/arch-support.txt b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-index 79bfa4d..7414867 100644
---- a/Documentation/features/locking/rwsem-optimized/arch-support.txt
-+++ b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/perf/kprobes-event/arch-support.txt b/Documentation/features/perf/kprobes-event/arch-support.txt
-index 00f1606..f0f6cec 100644
---- a/Documentation/features/perf/kprobes-event/arch-support.txt
-+++ b/Documentation/features/perf/kprobes-event/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/perf/perf-regs/arch-support.txt b/Documentation/features/perf/perf-regs/arch-support.txt
-index 7d516ea..6b305e6 100644
---- a/Documentation/features/perf/perf-regs/arch-support.txt
-+++ b/Documentation/features/perf/perf-regs/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/perf/perf-stackdump/arch-support.txt b/Documentation/features/perf/perf-stackdump/arch-support.txt
-index f974b8d..cafa704 100644
---- a/Documentation/features/perf/perf-stackdump/arch-support.txt
-+++ b/Documentation/features/perf/perf-stackdump/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/sched/membarrier-sync-core/arch-support.txt b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
-index 2c815a7..ccbfb24 100644
---- a/Documentation/features/sched/membarrier-sync-core/arch-support.txt
-+++ b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
-@@ -33,7 +33,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/sched/numa-balancing/arch-support.txt b/Documentation/features/sched/numa-balancing/arch-support.txt
-index 1d3c0f6..54fa603 100644
---- a/Documentation/features/sched/numa-balancing/arch-support.txt
-+++ b/Documentation/features/sched/numa-balancing/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ..  |
-     |         arm: |  ..  |
-     |       arm64: |  ..  |
--    |    blackfin: |  ..  |
-     |         c6x: |  ..  |
-     |        cris: |  ..  |
-     |         frv: |  ..  |
-diff --git a/Documentation/features/seccomp/seccomp-filter/arch-support.txt b/Documentation/features/seccomp/seccomp-filter/arch-support.txt
-index a32d5b2..dc0a901 100644
---- a/Documentation/features/seccomp/seccomp-filter/arch-support.txt
-+++ b/Documentation/features/seccomp/seccomp-filter/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/time/arch-tick-broadcast/arch-support.txt b/Documentation/features/time/arch-tick-broadcast/arch-support.txt
-index caee8f6..ca3aa5c 100644
---- a/Documentation/features/time/arch-tick-broadcast/arch-support.txt
-+++ b/Documentation/features/time/arch-tick-broadcast/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/time/clockevents/arch-support.txt b/Documentation/features/time/clockevents/arch-support.txt
-index 1cd87f6..8535d3c 100644
---- a/Documentation/features/time/clockevents/arch-support.txt
-+++ b/Documentation/features/time/clockevents/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ok  |
-     |         c6x: |  ok  |
-     |        cris: |  ok  |
-     |         frv: | TODO |
-diff --git a/Documentation/features/time/context-tracking/arch-support.txt b/Documentation/features/time/context-tracking/arch-support.txt
-index e6d7c7b..cffcf08 100644
---- a/Documentation/features/time/context-tracking/arch-support.txt
-+++ b/Documentation/features/time/context-tracking/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/time/irq-time-acct/arch-support.txt b/Documentation/features/time/irq-time-acct/arch-support.txt
-index 15c6071..9b1ab68 100644
---- a/Documentation/features/time/irq-time-acct/arch-support.txt
-+++ b/Documentation/features/time/irq-time-acct/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/time/modern-timekeeping/arch-support.txt b/Documentation/features/time/modern-timekeeping/arch-support.txt
-index baee761..fe4df2f 100644
---- a/Documentation/features/time/modern-timekeeping/arch-support.txt
-+++ b/Documentation/features/time/modern-timekeeping/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: | TODO |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: |  ok  |
-     |        cris: | TODO |
-     |         frv: |  ok  |
-diff --git a/Documentation/features/time/virt-cpuacct/arch-support.txt b/Documentation/features/time/virt-cpuacct/arch-support.txt
-index 9129530..304b941 100644
---- a/Documentation/features/time/virt-cpuacct/arch-support.txt
-+++ b/Documentation/features/time/virt-cpuacct/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/vm/ELF-ASLR/arch-support.txt b/Documentation/features/vm/ELF-ASLR/arch-support.txt
-index f6829af..3efb2ae 100644
---- a/Documentation/features/vm/ELF-ASLR/arch-support.txt
-+++ b/Documentation/features/vm/ELF-ASLR/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/vm/PG_uncached/arch-support.txt b/Documentation/features/vm/PG_uncached/arch-support.txt
-index 1a09ea9..aadc97f 100644
---- a/Documentation/features/vm/PG_uncached/arch-support.txt
-+++ b/Documentation/features/vm/PG_uncached/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/vm/THP/arch-support.txt b/Documentation/features/vm/THP/arch-support.txt
-index d170e62..76cfb97 100644
---- a/Documentation/features/vm/THP/arch-support.txt
-+++ b/Documentation/features/vm/THP/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: |  ..  |
-     |         c6x: |  ..  |
-     |        cris: |  ..  |
-     |         frv: |  ..  |
-diff --git a/Documentation/features/vm/TLB/arch-support.txt b/Documentation/features/vm/TLB/arch-support.txt
-index abfab40..3a6546a 100644
---- a/Documentation/features/vm/TLB/arch-support.txt
-+++ b/Documentation/features/vm/TLB/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: |  ..  |
-     |        cris: |  ..  |
-     |         frv: |  ..  |
-diff --git a/Documentation/features/vm/huge-vmap/arch-support.txt b/Documentation/features/vm/huge-vmap/arch-support.txt
-index f81f09b..fe1e3b2 100644
---- a/Documentation/features/vm/huge-vmap/arch-support.txt
-+++ b/Documentation/features/vm/huge-vmap/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: | TODO |
-     |         arm: | TODO |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/vm/ioremap_prot/arch-support.txt b/Documentation/features/vm/ioremap_prot/arch-support.txt
-index 0cc3e11..d42dbe0 100644
---- a/Documentation/features/vm/ioremap_prot/arch-support.txt
-+++ b/Documentation/features/vm/ioremap_prot/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: | TODO |
-     |       arm64: | TODO |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
-diff --git a/Documentation/features/vm/numa-memblock/arch-support.txt b/Documentation/features/vm/numa-memblock/arch-support.txt
-index 9a3fdac..bb9cd30 100644
---- a/Documentation/features/vm/numa-memblock/arch-support.txt
-+++ b/Documentation/features/vm/numa-memblock/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ..  |
-     |         arm: |  ..  |
-     |       arm64: |  ..  |
--    |    blackfin: |  ..  |
-     |         c6x: |  ..  |
-     |        cris: |  ..  |
-     |         frv: |  ..  |
-diff --git a/Documentation/features/vm/pte_special/arch-support.txt b/Documentation/features/vm/pte_special/arch-support.txt
-index dfaa39e..f7b7626 100644
---- a/Documentation/features/vm/pte_special/arch-support.txt
-+++ b/Documentation/features/vm/pte_special/arch-support.txt
-@@ -10,7 +10,6 @@
-     |         arc: |  ok  |
-     |         arm: |  ok  |
-     |       arm64: |  ok  |
--    |    blackfin: | TODO |
-     |         c6x: | TODO |
-     |        cris: | TODO |
-     |         frv: | TODO |
+ config HVCS
+ 	tristate "IBM Hypervisor Virtual Console Server support"
+ 	depends on PPC_PSERIES && HVC_CONSOLE
+diff --git a/drivers/tty/hvc/Makefile b/drivers/tty/hvc/Makefile
+index 0b02ec7..b82f9f6 100644
+--- a/drivers/tty/hvc/Makefile
++++ b/drivers/tty/hvc/Makefile
+@@ -10,5 +10,4 @@ obj-$(CONFIG_HVC_IRQ)		+= hvc_irq.o
+ obj-$(CONFIG_HVC_XEN)		+= hvc_xen.o
+ obj-$(CONFIG_HVC_IUCV)		+= hvc_iucv.o
+ obj-$(CONFIG_HVC_UDBG)		+= hvc_udbg.o
+-obj-$(CONFIG_HVC_BFIN_JTAG)	+= hvc_bfin_jtag.o
+ obj-$(CONFIG_HVCS)		+= hvcs.o
+diff --git a/drivers/tty/hvc/hvc_bfin_jtag.c b/drivers/tty/hvc/hvc_bfin_jtag.c
+deleted file mode 100644
+index dd7cae4..0000000
+--- a/drivers/tty/hvc/hvc_bfin_jtag.c
++++ /dev/null
+@@ -1,104 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Console via Blackfin JTAG Communication
+- *
+- * Copyright 2008-2011 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- */
+-
+-#include <linux/console.h>
+-#include <linux/delay.h>
+-#include <linux/err.h>
+-#include <linux/init.h>
+-#include <linux/moduleparam.h>
+-#include <linux/types.h>
+-
+-#include "hvc_console.h"
+-
+-/* See the Debug/Emulation chapter in the HRM */
+-#define EMUDOF   0x00000001	/* EMUDAT_OUT full & valid */
+-#define EMUDIF   0x00000002	/* EMUDAT_IN full & valid */
+-#define EMUDOOVF 0x00000004	/* EMUDAT_OUT overflow */
+-#define EMUDIOVF 0x00000008	/* EMUDAT_IN overflow */
+-
+-/* Helper functions to glue the register API to simple C operations */
+-static inline uint32_t bfin_write_emudat(uint32_t emudat)
+-{
+-	__asm__ __volatile__("emudat = %0;" : : "d"(emudat));
+-	return emudat;
+-}
+-
+-static inline uint32_t bfin_read_emudat(void)
+-{
+-	uint32_t emudat;
+-	__asm__ __volatile__("%0 = emudat;" : "=d"(emudat));
+-	return emudat;
+-}
+-
+-/* Send data to the host */
+-static int hvc_bfin_put_chars(uint32_t vt, const char *buf, int count)
+-{
+-	static uint32_t outbound_len;
+-	uint32_t emudat;
+-	int ret;
+-
+-	if (bfin_read_DBGSTAT() & EMUDOF)
+-		return 0;
+-
+-	if (!outbound_len) {
+-		outbound_len = count;
+-		bfin_write_emudat(outbound_len);
+-		return 0;
+-	}
+-
+-	ret = min(outbound_len, (uint32_t)4);
+-	memcpy(&emudat, buf, ret);
+-	bfin_write_emudat(emudat);
+-	outbound_len -= ret;
+-
+-	return ret;
+-}
+-
+-/* Receive data from the host */
+-static int hvc_bfin_get_chars(uint32_t vt, char *buf, int count)
+-{
+-	static uint32_t inbound_len;
+-	uint32_t emudat;
+-	int ret;
+-
+-	if (!(bfin_read_DBGSTAT() & EMUDIF))
+-		return 0;
+-	emudat = bfin_read_emudat();
+-
+-	if (!inbound_len) {
+-		inbound_len = emudat;
+-		return 0;
+-	}
+-
+-	ret = min(inbound_len, (uint32_t)4);
+-	memcpy(buf, &emudat, ret);
+-	inbound_len -= ret;
+-
+-	return ret;
+-}
+-
+-/* Glue the HVC layers to the Blackfin layers */
+-static const struct hv_ops hvc_bfin_get_put_ops = {
+-	.get_chars = hvc_bfin_get_chars,
+-	.put_chars = hvc_bfin_put_chars,
+-};
+-
+-static int __init hvc_bfin_console_init(void)
+-{
+-	hvc_instantiate(0, 0, &hvc_bfin_get_put_ops);
+-	return 0;
+-}
+-console_initcall(hvc_bfin_console_init);
+-
+-static int __init hvc_bfin_init(void)
+-{
+-	hvc_alloc(0, 0, &hvc_bfin_get_put_ops, 128);
+-	return 0;
+-}
+-device_initcall(hvc_bfin_init);
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 3682fd3..b9b6450 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -498,92 +498,6 @@ config SERIAL_SA1100_CONSOLE
+ 	  your boot loader (lilo or loadlin) about how to pass options to the
+ 	  kernel at boot time.)
+ 
+-config SERIAL_BFIN
+-	tristate "Blackfin serial port support"
+-	depends on BLACKFIN
+-	select SERIAL_CORE
+-	select SERIAL_BFIN_UART0 if (BF531 || BF532 || BF533 || BF561)
+-	help
+-	  Add support for the built-in UARTs on the Blackfin.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module is named bfin_uart.ko.
+-
+-config SERIAL_BFIN_CONSOLE
+-	bool "Console on Blackfin serial port"
+-	depends on SERIAL_BFIN=y
+-	select SERIAL_CORE_CONSOLE
+-
+-choice
+-	prompt "UART Mode"
+-	depends on SERIAL_BFIN
+-	default SERIAL_BFIN_DMA
+-	help
+-	  This driver supports the built-in serial ports of the Blackfin family
+-	  of CPUs
+-
+-config SERIAL_BFIN_DMA
+-	bool "DMA mode"
+-	depends on !DMA_UNCACHED_NONE && KGDB_SERIAL_CONSOLE=n
+-	help
+-	  This driver works under DMA mode. If this option is selected, the
+-	  blackfin simple dma driver is also enabled.
+-
+-config SERIAL_BFIN_PIO
+-	bool "PIO mode"
+-	help
+-	  This driver works under PIO mode.
+-
+-endchoice
+-
+-config SERIAL_BFIN_UART0
+-	bool "Enable UART0"
+-	depends on SERIAL_BFIN
+-	help
+-	  Enable UART0
+-
+-config BFIN_UART0_CTSRTS
+-	bool "Enable UART0 hardware flow control"
+-	depends on SERIAL_BFIN_UART0
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_UART1
+-	bool "Enable UART1"
+-	depends on SERIAL_BFIN && (!BF531 && !BF532 && !BF533 && !BF561)
+-	help
+-	  Enable UART1
+-
+-config BFIN_UART1_CTSRTS
+-	bool "Enable UART1 hardware flow control"
+-	depends on SERIAL_BFIN_UART1
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_UART2
+-	bool "Enable UART2"
+-	depends on SERIAL_BFIN && (BF54x || BF538 || BF539)
+-	help
+-	  Enable UART2
+-
+-config BFIN_UART2_CTSRTS
+-	bool "Enable UART2 hardware flow control"
+-	depends on SERIAL_BFIN_UART2
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_UART3
+-	bool "Enable UART3"
+-	depends on SERIAL_BFIN && (BF54x)
+-	help
+-	  Enable UART3
+-
+-config BFIN_UART3_CTSRTS
+-	bool "Enable UART3 hardware flow control"
+-	depends on SERIAL_BFIN_UART3
+-	help
+-	  Enable hardware flow control in the driver.
+-
+ config SERIAL_IMX
+ 	tristate "IMX serial port support"
+ 	depends on HAS_DMA
+@@ -1242,69 +1156,6 @@ config SERIAL_SC16IS7XX_SPI
+           This is additional support to exsisting driver.
+           You must select at least one bus for the driver to be built.
+ 
+-config SERIAL_BFIN_SPORT
+-	tristate "Blackfin SPORT emulate UART"
+-	depends on BLACKFIN
+-	select SERIAL_CORE
+-	help
+-	  Enable SPORT emulate UART on Blackfin series.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin_sport_uart.
+-
+-config SERIAL_BFIN_SPORT_CONSOLE
+-	bool "Console on Blackfin sport emulated uart"
+-	depends on SERIAL_BFIN_SPORT=y
+-	select SERIAL_CORE_CONSOLE
+-
+-config SERIAL_BFIN_SPORT0_UART
+-	bool "Enable UART over SPORT0"
+-	depends on SERIAL_BFIN_SPORT && !(BF542 || BF544)
+-	help
+-	  Enable UART over SPORT0
+-
+-config SERIAL_BFIN_SPORT0_UART_CTSRTS
+-	bool "Enable UART over SPORT0 hardware flow control"
+-	depends on SERIAL_BFIN_SPORT0_UART
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_SPORT1_UART
+-	bool "Enable UART over SPORT1"
+-	depends on SERIAL_BFIN_SPORT
+-	help
+-	  Enable UART over SPORT1
+-
+-config SERIAL_BFIN_SPORT1_UART_CTSRTS
+-	bool "Enable UART over SPORT1 hardware flow control"
+-	depends on SERIAL_BFIN_SPORT1_UART
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_SPORT2_UART
+-	bool "Enable UART over SPORT2"
+-	depends on SERIAL_BFIN_SPORT && (BF54x || BF538 || BF539)
+-	help
+-	  Enable UART over SPORT2
+-
+-config SERIAL_BFIN_SPORT2_UART_CTSRTS
+-	bool "Enable UART over SPORT2 hardware flow control"
+-	depends on SERIAL_BFIN_SPORT2_UART
+-	help
+-	  Enable hardware flow control in the driver.
+-
+-config SERIAL_BFIN_SPORT3_UART
+-	bool "Enable UART over SPORT3"
+-	depends on SERIAL_BFIN_SPORT && (BF54x || BF538 || BF539)
+-	help
+-	  Enable UART over SPORT3
+-
+-config SERIAL_BFIN_SPORT3_UART_CTSRTS
+-	bool "Enable UART over SPORT3 hardware flow control"
+-	depends on SERIAL_BFIN_SPORT3_UART
+-	help
+-	  Enable hardware flow control in the driver.
+-
+ config SERIAL_TIMBERDALE
+ 	tristate "Support for timberdale UART"
+ 	select SERIAL_CORE
+diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+index 842d185..1342ffc 100644
+--- a/drivers/tty/serial/Makefile
++++ b/drivers/tty/serial/Makefile
+@@ -29,8 +29,6 @@ obj-$(CONFIG_SERIAL_PXA_NON8250) += pxa.o
+ obj-$(CONFIG_SERIAL_PNX8XXX) += pnx8xxx_uart.o
+ obj-$(CONFIG_SERIAL_SA1100) += sa1100.o
+ obj-$(CONFIG_SERIAL_BCM63XX) += bcm63xx_uart.o
+-obj-$(CONFIG_SERIAL_BFIN) += bfin_uart.o
+-obj-$(CONFIG_SERIAL_BFIN_SPORT) += bfin_sport_uart.o
+ obj-$(CONFIG_SERIAL_SAMSUNG) += samsung.o
+ obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
+ obj-$(CONFIG_SERIAL_MAX310X) += max310x.o
+diff --git a/drivers/tty/serial/bfin_sport_uart.c b/drivers/tty/serial/bfin_sport_uart.c
+deleted file mode 100644
+index 4ccca5d..0000000
+--- a/drivers/tty/serial/bfin_sport_uart.c
++++ /dev/null
+@@ -1,937 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Blackfin On-Chip Sport Emulated UART Driver
+- *
+- * Copyright 2006-2009 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- */
+-
+-/*
+- * This driver and the hardware supported are in term of EE-191 of ADI.
+- * http://www.analog.com/static/imported-files/application_notes/EE191.pdf 
+- * This application note describe how to implement a UART on a Sharc DSP,
+- * but this driver is implemented on Blackfin Processor.
+- * Transmit Frame Sync is not used by this driver to transfer data out.
+- */
+-
+-/* #define DEBUG */
+-
+-#define DRV_NAME "bfin-sport-uart"
+-#define DEVICE_NAME	"ttySS"
+-#define pr_fmt(fmt) DRV_NAME ": " fmt
+-
+-#include <linux/module.h>
+-#include <linux/ioport.h>
+-#include <linux/io.h>
+-#include <linux/init.h>
+-#include <linux/console.h>
+-#include <linux/sysrq.h>
+-#include <linux/slab.h>
+-#include <linux/platform_device.h>
+-#include <linux/tty.h>
+-#include <linux/tty_flip.h>
+-#include <linux/serial_core.h>
+-#include <linux/gpio.h>
+-
+-#include <asm/bfin_sport.h>
+-#include <asm/delay.h>
+-#include <asm/portmux.h>
+-
+-#include "bfin_sport_uart.h"
+-
+-struct sport_uart_port {
+-	struct uart_port	port;
+-	int			err_irq;
+-	unsigned short		csize;
+-	unsigned short		rxmask;
+-	unsigned short		txmask1;
+-	unsigned short		txmask2;
+-	unsigned char		stopb;
+-/*	unsigned char		parib; */
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-	int cts_pin;
+-	int rts_pin;
+-#endif
+-};
+-
+-static int sport_uart_tx_chars(struct sport_uart_port *up);
+-static void sport_stop_tx(struct uart_port *port);
+-
+-static inline void tx_one_byte(struct sport_uart_port *up, unsigned int value)
+-{
+-	pr_debug("%s value:%x, mask1=0x%x, mask2=0x%x\n", __func__, value,
+-		up->txmask1, up->txmask2);
+-
+-	/* Place Start and Stop bits */
+-	__asm__ __volatile__ (
+-		"%[val] <<= 1;"
+-		"%[val] = %[val] & %[mask1];"
+-		"%[val] = %[val] | %[mask2];"
+-		: [val]"+d"(value)
+-		: [mask1]"d"(up->txmask1), [mask2]"d"(up->txmask2)
+-		: "ASTAT"
+-	);
+-	pr_debug("%s value:%x\n", __func__, value);
+-
+-	SPORT_PUT_TX(up, value);
+-}
+-
+-static inline unsigned char rx_one_byte(struct sport_uart_port *up)
+-{
+-	unsigned int value;
+-	unsigned char extract;
+-	u32 tmp_mask1, tmp_mask2, tmp_shift, tmp;
+-
+-	if ((up->csize + up->stopb) > 7)
+-		value = SPORT_GET_RX32(up);
+-	else
+-		value = SPORT_GET_RX(up);
+-
+-	pr_debug("%s value:%x, cs=%d, mask=0x%x\n", __func__, value,
+-		up->csize, up->rxmask);
+-
+-	/* Extract data */
+-	__asm__ __volatile__ (
+-		"%[extr] = 0;"
+-		"%[mask1] = %[rxmask];"
+-		"%[mask2] = 0x0200(Z);"
+-		"%[shift] = 0;"
+-		"LSETUP(.Lloop_s, .Lloop_e) LC0 = %[lc];"
+-		".Lloop_s:"
+-		"%[tmp] = extract(%[val], %[mask1].L)(Z);"
+-		"%[tmp] <<= %[shift];"
+-		"%[extr] = %[extr] | %[tmp];"
+-		"%[mask1] = %[mask1] - %[mask2];"
+-		".Lloop_e:"
+-		"%[shift] += 1;"
+-		: [extr]"=&d"(extract), [shift]"=&d"(tmp_shift), [tmp]"=&d"(tmp),
+-		  [mask1]"=&d"(tmp_mask1), [mask2]"=&d"(tmp_mask2)
+-		: [val]"d"(value), [rxmask]"d"(up->rxmask), [lc]"a"(up->csize)
+-		: "ASTAT", "LB0", "LC0", "LT0"
+-	);
+-
+-	pr_debug("	extract:%x\n", extract);
+-	return extract;
+-}
+-
+-static int sport_uart_setup(struct sport_uart_port *up, int size, int baud_rate)
+-{
+-	int tclkdiv, rclkdiv;
+-	unsigned int sclk = get_sclk();
+-
+-	/* Set TCR1 and TCR2, TFSR is not enabled for uart */
+-	SPORT_PUT_TCR1(up, (LATFS | ITFS | TFSR | TLSBIT | ITCLK));
+-	SPORT_PUT_TCR2(up, size + 1);
+-	pr_debug("%s TCR1:%x, TCR2:%x\n", __func__, SPORT_GET_TCR1(up), SPORT_GET_TCR2(up));
+-
+-	/* Set RCR1 and RCR2 */
+-	SPORT_PUT_RCR1(up, (RCKFE | LARFS | LRFS | RFSR | IRCLK));
+-	SPORT_PUT_RCR2(up, (size + 1) * 2 - 1);
+-	pr_debug("%s RCR1:%x, RCR2:%x\n", __func__, SPORT_GET_RCR1(up), SPORT_GET_RCR2(up));
+-
+-	tclkdiv = sclk / (2 * baud_rate) - 1;
+-	/* The actual uart baud rate of devices vary between +/-2%. The sport
+-	 * RX sample rate should be faster than the double of the worst case,
+-	 * otherwise, wrong data are received. So, set sport RX clock to be
+-	 * 3% faster.
+-	 */
+-	rclkdiv = sclk / (2 * baud_rate * 2 * 97 / 100) - 1;
+-	SPORT_PUT_TCLKDIV(up, tclkdiv);
+-	SPORT_PUT_RCLKDIV(up, rclkdiv);
+-	SSYNC();
+-	pr_debug("%s sclk:%d, baud_rate:%d, tclkdiv:%d, rclkdiv:%d\n",
+-			__func__, sclk, baud_rate, tclkdiv, rclkdiv);
+-
+-	return 0;
+-}
+-
+-static irqreturn_t sport_uart_rx_irq(int irq, void *dev_id)
+-{
+-	struct sport_uart_port *up = dev_id;
+-	struct tty_port *port = &up->port.state->port;
+-	unsigned int ch;
+-
+-	spin_lock(&up->port.lock);
+-
+-	while (SPORT_GET_STAT(up) & RXNE) {
+-		ch = rx_one_byte(up);
+-		up->port.icount.rx++;
+-
+-		if (!uart_handle_sysrq_char(&up->port, ch))
+-			tty_insert_flip_char(port, ch, TTY_NORMAL);
+-	}
+-
+-	spin_unlock(&up->port.lock);
+-
+-	/* XXX this won't deadlock with lowlat? */
+-	tty_flip_buffer_push(port);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t sport_uart_tx_irq(int irq, void *dev_id)
+-{
+-	struct sport_uart_port *up = dev_id;
+-
+-	spin_lock(&up->port.lock);
+-	sport_uart_tx_chars(up);
+-	spin_unlock(&up->port.lock);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t sport_uart_err_irq(int irq, void *dev_id)
+-{
+-	struct sport_uart_port *up = dev_id;
+-	unsigned int stat = SPORT_GET_STAT(up);
+-
+-	spin_lock(&up->port.lock);
+-
+-	/* Overflow in RX FIFO */
+-	if (stat & ROVF) {
+-		up->port.icount.overrun++;
+-		tty_insert_flip_char(&up->port.state->port, 0, TTY_OVERRUN);
+-		SPORT_PUT_STAT(up, ROVF); /* Clear ROVF bit */
+-	}
+-	/* These should not happen */
+-	if (stat & (TOVF | TUVF | RUVF)) {
+-		pr_err("SPORT Error:%s %s %s\n",
+-		       (stat & TOVF) ? "TX overflow" : "",
+-		       (stat & TUVF) ? "TX underflow" : "",
+-		       (stat & RUVF) ? "RX underflow" : "");
+-		SPORT_PUT_TCR1(up, SPORT_GET_TCR1(up) & ~TSPEN);
+-		SPORT_PUT_RCR1(up, SPORT_GET_RCR1(up) & ~RSPEN);
+-	}
+-	SSYNC();
+-
+-	spin_unlock(&up->port.lock);
+-	/* XXX we don't push the overrun bit to TTY? */
+-
+-	return IRQ_HANDLED;
+-}
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-static unsigned int sport_get_mctrl(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-	if (up->cts_pin < 0)
+-		return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+-
+-	/* CTS PIN is negative assertive. */
+-	if (SPORT_UART_GET_CTS(up))
+-		return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+-	else
+-		return TIOCM_DSR | TIOCM_CAR;
+-}
+-
+-static void sport_set_mctrl(struct uart_port *port, unsigned int mctrl)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-	if (up->rts_pin < 0)
+-		return;
+-
+-	/* RTS PIN is negative assertive. */
+-	if (mctrl & TIOCM_RTS)
+-		SPORT_UART_ENABLE_RTS(up);
+-	else
+-		SPORT_UART_DISABLE_RTS(up);
+-}
+-
+-/*
+- * Handle any change of modem status signal.
+- */
+-static irqreturn_t sport_mctrl_cts_int(int irq, void *dev_id)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)dev_id;
+-	unsigned int status;
+-
+-	status = sport_get_mctrl(&up->port);
+-	uart_handle_cts_change(&up->port, status & TIOCM_CTS);
+-
+-	return IRQ_HANDLED;
+-}
+-#else
+-static unsigned int sport_get_mctrl(struct uart_port *port)
+-{
+-	pr_debug("%s enter\n", __func__);
+-	return TIOCM_CTS | TIOCM_CD | TIOCM_DSR;
+-}
+-
+-static void sport_set_mctrl(struct uart_port *port, unsigned int mctrl)
+-{
+-	pr_debug("%s enter\n", __func__);
+-}
+-#endif
+-
+-/* Reqeust IRQ, Setup clock */
+-static int sport_startup(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-	int ret;
+-
+-	pr_debug("%s enter\n", __func__);
+-	ret = request_irq(up->port.irq, sport_uart_rx_irq, 0,
+-		"SPORT_UART_RX", up);
+-	if (ret) {
+-		dev_err(port->dev, "unable to request SPORT RX interrupt\n");
+-		return ret;
+-	}
+-
+-	ret = request_irq(up->port.irq+1, sport_uart_tx_irq, 0,
+-		"SPORT_UART_TX", up);
+-	if (ret) {
+-		dev_err(port->dev, "unable to request SPORT TX interrupt\n");
+-		goto fail1;
+-	}
+-
+-	ret = request_irq(up->err_irq, sport_uart_err_irq, 0,
+-		"SPORT_UART_STATUS", up);
+-	if (ret) {
+-		dev_err(port->dev, "unable to request SPORT status interrupt\n");
+-		goto fail2;
+-	}
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-	if (up->cts_pin >= 0) {
+-		if (request_irq(gpio_to_irq(up->cts_pin),
+-			sport_mctrl_cts_int,
+-			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
+-			0, "BFIN_SPORT_UART_CTS", up)) {
+-			up->cts_pin = -1;
+-			dev_info(port->dev, "Unable to attach BlackFin UART over SPORT CTS interrupt. So, disable it.\n");
+-		}
+-	}
+-	if (up->rts_pin >= 0) {
+-		if (gpio_request(up->rts_pin, DRV_NAME)) {
+-			dev_info(port->dev, "fail to request RTS PIN at GPIO_%d\n", up->rts_pin);
+-			up->rts_pin = -1;
+-		} else
+-			gpio_direction_output(up->rts_pin, 0);
+-	}
+-#endif
+-
+-	return 0;
+- fail2:
+-	free_irq(up->port.irq+1, up);
+- fail1:
+-	free_irq(up->port.irq, up);
+-
+-	return ret;
+-}
+-
+-/*
+- * sport_uart_tx_chars
+- *
+- * ret 1 means need to enable sport.
+- * ret 0 means do nothing.
+- */
+-static int sport_uart_tx_chars(struct sport_uart_port *up)
+-{
+-	struct circ_buf *xmit = &up->port.state->xmit;
+-
+-	if (SPORT_GET_STAT(up) & TXF)
+-		return 0;
+-
+-	if (up->port.x_char) {
+-		tx_one_byte(up, up->port.x_char);
+-		up->port.icount.tx++;
+-		up->port.x_char = 0;
+-		return 1;
+-	}
+-
+-	if (uart_circ_empty(xmit) || uart_tx_stopped(&up->port)) {
+-		/* The waiting loop to stop SPORT TX from TX interrupt is
+-		 * too long. This may block SPORT RX interrupts and cause
+-		 * RX FIFO overflow. So, do stop sport TX only after the last
+-		 * char in TX FIFO is moved into the shift register.
+-		 */
+-		if (SPORT_GET_STAT(up) & TXHRE)
+-			sport_stop_tx(&up->port);
+-		return 0;
+-	}
+-
+-	while(!(SPORT_GET_STAT(up) & TXF) && !uart_circ_empty(xmit)) {
+-		tx_one_byte(up, xmit->buf[xmit->tail]);
+-		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE -1);
+-		up->port.icount.tx++;
+-	}
+-
+-	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+-		uart_write_wakeup(&up->port);
+-
+-	return 1;
+-}
+-
+-static unsigned int sport_tx_empty(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-	unsigned int stat;
+-
+-	stat = SPORT_GET_STAT(up);
+-	pr_debug("%s stat:%04x\n", __func__, stat);
+-	if (stat & TXHRE) {
+-		return TIOCSER_TEMT;
+-	} else
+-		return 0;
+-}
+-
+-static void sport_stop_tx(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	pr_debug("%s enter\n", __func__);
+-
+-	if (!(SPORT_GET_TCR1(up) & TSPEN))
+-		return;
+-
+-	/* Although the hold register is empty, last byte is still in shift
+-	 * register and not sent out yet. So, put a dummy data into TX FIFO.
+-	 * Then, sport tx stops when last byte is shift out and the dummy
+-	 * data is moved into the shift register.
+-	 */
+-	SPORT_PUT_TX(up, 0xffff);
+-	while (!(SPORT_GET_STAT(up) & TXHRE))
+-		cpu_relax();
+-
+-	SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) & ~TSPEN));
+-	SSYNC();
+-
+-	return;
+-}
+-
+-static void sport_start_tx(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	pr_debug("%s enter\n", __func__);
+-
+-	/* Write data into SPORT FIFO before enable SPROT to transmit */
+-	if (sport_uart_tx_chars(up)) {
+-		/* Enable transmit, then an interrupt will generated */
+-		SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) | TSPEN));
+-		SSYNC();
+-	}
+-
+-	pr_debug("%s exit\n", __func__);
+-}
+-
+-static void sport_stop_rx(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	pr_debug("%s enter\n", __func__);
+-	/* Disable sport to stop rx */
+-	SPORT_PUT_RCR1(up, (SPORT_GET_RCR1(up) & ~RSPEN));
+-	SSYNC();
+-}
+-
+-static void sport_break_ctl(struct uart_port *port, int break_state)
+-{
+-	pr_debug("%s enter\n", __func__);
+-}
+-
+-static void sport_shutdown(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	dev_dbg(port->dev, "%s enter\n", __func__);
+-
+-	/* Disable sport */
+-	SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) & ~TSPEN));
+-	SPORT_PUT_RCR1(up, (SPORT_GET_RCR1(up) & ~RSPEN));
+-	SSYNC();
+-
+-	free_irq(up->port.irq, up);
+-	free_irq(up->port.irq+1, up);
+-	free_irq(up->err_irq, up);
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-	if (up->cts_pin >= 0)
+-		free_irq(gpio_to_irq(up->cts_pin), up);
+-	if (up->rts_pin >= 0)
+-		gpio_free(up->rts_pin);
+-#endif
+-}
+-
+-static const char *sport_type(struct uart_port *port)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	pr_debug("%s enter\n", __func__);
+-	return up->port.type == PORT_BFIN_SPORT ? "BFIN-SPORT-UART" : NULL;
+-}
+-
+-static void sport_release_port(struct uart_port *port)
+-{
+-	pr_debug("%s enter\n", __func__);
+-}
+-
+-static int sport_request_port(struct uart_port *port)
+-{
+-	pr_debug("%s enter\n", __func__);
+-	return 0;
+-}
+-
+-static void sport_config_port(struct uart_port *port, int flags)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	pr_debug("%s enter\n", __func__);
+-	up->port.type = PORT_BFIN_SPORT;
+-}
+-
+-static int sport_verify_port(struct uart_port *port, struct serial_struct *ser)
+-{
+-	pr_debug("%s enter\n", __func__);
+-	return 0;
+-}
+-
+-static void sport_set_termios(struct uart_port *port,
+-		struct ktermios *termios, struct ktermios *old)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-	unsigned long flags;
+-	int i;
+-
+-	pr_debug("%s enter, c_cflag:%08x\n", __func__, termios->c_cflag);
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-	if (old == NULL && up->cts_pin != -1)
+-		termios->c_cflag |= CRTSCTS;
+-	else if (up->cts_pin == -1)
+-		termios->c_cflag &= ~CRTSCTS;
+-#endif
+-
+-	switch (termios->c_cflag & CSIZE) {
+-	case CS8:
+-		up->csize = 8;
+-		break;
+-	case CS7:
+-		up->csize = 7;
+-		break;
+-	case CS6:
+-		up->csize = 6;
+-		break;
+-	case CS5:
+-		up->csize = 5;
+-		break;
+-	default:
+-		pr_warn("requested word length not supported\n");
+-		break;
+-	}
+-
+-	if (termios->c_cflag & CSTOPB) {
+-		up->stopb = 1;
+-	}
+-	if (termios->c_cflag & PARENB) {
+-		pr_warn("PAREN bit is not supported yet\n");
+-		/* up->parib = 1; */
+-	}
+-
+-	spin_lock_irqsave(&up->port.lock, flags);
+-
+-	port->read_status_mask = 0;
+-
+-	/*
+-	 * Characters to ignore
+-	 */
+-	port->ignore_status_mask = 0;
+-
+-	/* RX extract mask */
+-	up->rxmask = 0x01 | (((up->csize + up->stopb) * 2 - 1) << 0x8);
+-	/* TX masks, 8 bit data and 1 bit stop for example:
+-	 * mask1 = b#0111111110
+-	 * mask2 = b#1000000000
+-	 */
+-	for (i = 0, up->txmask1 = 0; i < up->csize; i++)
+-		up->txmask1 |= (1<<i);
+-	up->txmask2 = (1<<i);
+-	if (up->stopb) {
+-		++i;
+-		up->txmask2 |= (1<<i);
+-	}
+-	up->txmask1 <<= 1;
+-	up->txmask2 <<= 1;
+-	/* uart baud rate */
+-	port->uartclk = uart_get_baud_rate(port, termios, old, 0, get_sclk()/16);
+-
+-	/* Disable UART */
+-	SPORT_PUT_TCR1(up, SPORT_GET_TCR1(up) & ~TSPEN);
+-	SPORT_PUT_RCR1(up, SPORT_GET_RCR1(up) & ~RSPEN);
+-
+-	sport_uart_setup(up, up->csize + up->stopb, port->uartclk);
+-
+-	/* driver TX line high after config, one dummy data is
+-	 * necessary to stop sport after shift one byte
+-	 */
+-	SPORT_PUT_TX(up, 0xffff);
+-	SPORT_PUT_TX(up, 0xffff);
+-	SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) | TSPEN));
+-	SSYNC();
+-	while (!(SPORT_GET_STAT(up) & TXHRE))
+-		cpu_relax();
+-	SPORT_PUT_TCR1(up, SPORT_GET_TCR1(up) & ~TSPEN);
+-	SSYNC();
+-
+-	/* Port speed changed, update the per-port timeout. */
+-	uart_update_timeout(port, termios->c_cflag, port->uartclk);
+-
+-	/* Enable sport rx */
+-	SPORT_PUT_RCR1(up, SPORT_GET_RCR1(up) | RSPEN);
+-	SSYNC();
+-
+-	spin_unlock_irqrestore(&up->port.lock, flags);
+-}
+-
+-static const struct uart_ops sport_uart_ops = {
+-	.tx_empty	= sport_tx_empty,
+-	.set_mctrl	= sport_set_mctrl,
+-	.get_mctrl	= sport_get_mctrl,
+-	.stop_tx	= sport_stop_tx,
+-	.start_tx	= sport_start_tx,
+-	.stop_rx	= sport_stop_rx,
+-	.break_ctl	= sport_break_ctl,
+-	.startup	= sport_startup,
+-	.shutdown	= sport_shutdown,
+-	.set_termios	= sport_set_termios,
+-	.type		= sport_type,
+-	.release_port	= sport_release_port,
+-	.request_port	= sport_request_port,
+-	.config_port	= sport_config_port,
+-	.verify_port	= sport_verify_port,
+-};
+-
+-#define BFIN_SPORT_UART_MAX_PORTS 4
+-
+-static struct sport_uart_port *bfin_sport_uart_ports[BFIN_SPORT_UART_MAX_PORTS];
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CONSOLE
+-#define CLASS_BFIN_SPORT_CONSOLE	"bfin-sport-console"
+-
+-static int __init
+-sport_uart_console_setup(struct console *co, char *options)
+-{
+-	struct sport_uart_port *up;
+-	int baud = 57600;
+-	int bits = 8;
+-	int parity = 'n';
+-# ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-	int flow = 'r';
+-# else
+-	int flow = 'n';
+-# endif
+-
+-	/* Check whether an invalid uart number has been specified */
+-	if (co->index < 0 || co->index >= BFIN_SPORT_UART_MAX_PORTS)
+-		return -ENODEV;
+-
+-	up = bfin_sport_uart_ports[co->index];
+-	if (!up)
+-		return -ENODEV;
+-
+-	if (options)
+-		uart_parse_options(options, &baud, &parity, &bits, &flow);
+-
+-	return uart_set_options(&up->port, co, baud, parity, bits, flow);
+-}
+-
+-static void sport_uart_console_putchar(struct uart_port *port, int ch)
+-{
+-	struct sport_uart_port *up = (struct sport_uart_port *)port;
+-
+-	while (SPORT_GET_STAT(up) & TXF)
+-		barrier();
+-
+-	tx_one_byte(up, ch);
+-}
+-
+-/*
+- * Interrupts are disabled on entering
+- */
+-static void
+-sport_uart_console_write(struct console *co, const char *s, unsigned int count)
+-{
+-	struct sport_uart_port *up = bfin_sport_uart_ports[co->index];
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&up->port.lock, flags);
+-
+-	if (SPORT_GET_TCR1(up) & TSPEN)
+-		uart_console_write(&up->port, s, count, sport_uart_console_putchar);
+-	else {
+-		/* dummy data to start sport */
+-		while (SPORT_GET_STAT(up) & TXF)
+-			barrier();
+-		SPORT_PUT_TX(up, 0xffff);
+-		/* Enable transmit, then an interrupt will generated */
+-		SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) | TSPEN));
+-		SSYNC();
+-
+-		uart_console_write(&up->port, s, count, sport_uart_console_putchar);
+-
+-		/* Although the hold register is empty, last byte is still in shift
+-		 * register and not sent out yet. So, put a dummy data into TX FIFO.
+-		 * Then, sport tx stops when last byte is shift out and the dummy
+-		 * data is moved into the shift register.
+-		 */
+-		while (SPORT_GET_STAT(up) & TXF)
+-			barrier();
+-		SPORT_PUT_TX(up, 0xffff);
+-		while (!(SPORT_GET_STAT(up) & TXHRE))
+-			barrier();
+-
+-		/* Stop sport tx transfer */
+-		SPORT_PUT_TCR1(up, (SPORT_GET_TCR1(up) & ~TSPEN));
+-		SSYNC();
+-	}
+-
+-	spin_unlock_irqrestore(&up->port.lock, flags);
+-}
+-
+-static struct uart_driver sport_uart_reg;
+-
+-static struct console sport_uart_console = {
+-	.name		= DEVICE_NAME,
+-	.write		= sport_uart_console_write,
+-	.device		= uart_console_device,
+-	.setup		= sport_uart_console_setup,
+-	.flags		= CON_PRINTBUFFER,
+-	.index		= -1,
+-	.data		= &sport_uart_reg,
+-};
+-
+-#define SPORT_UART_CONSOLE	(&sport_uart_console)
+-#else
+-#define SPORT_UART_CONSOLE	NULL
+-#endif /* CONFIG_SERIAL_BFIN_SPORT_CONSOLE */
+-
+-
+-static struct uart_driver sport_uart_reg = {
+-	.owner		= THIS_MODULE,
+-	.driver_name	= DRV_NAME,
+-	.dev_name	= DEVICE_NAME,
+-	.major		= 204,
+-	.minor		= 84,
+-	.nr		= BFIN_SPORT_UART_MAX_PORTS,
+-	.cons		= SPORT_UART_CONSOLE,
+-};
+-
+-#ifdef CONFIG_PM
+-static int sport_uart_suspend(struct device *dev)
+-{
+-	struct sport_uart_port *sport = dev_get_drvdata(dev);
+-
+-	dev_dbg(dev, "%s enter\n", __func__);
+-	if (sport)
+-		uart_suspend_port(&sport_uart_reg, &sport->port);
+-
+-	return 0;
+-}
+-
+-static int sport_uart_resume(struct device *dev)
+-{
+-	struct sport_uart_port *sport = dev_get_drvdata(dev);
+-
+-	dev_dbg(dev, "%s enter\n", __func__);
+-	if (sport)
+-		uart_resume_port(&sport_uart_reg, &sport->port);
+-
+-	return 0;
+-}
+-
+-static const struct dev_pm_ops bfin_sport_uart_dev_pm_ops = {
+-	.suspend	= sport_uart_suspend,
+-	.resume		= sport_uart_resume,
+-};
+-#endif
+-
+-static int sport_uart_probe(struct platform_device *pdev)
+-{
+-	struct resource *res;
+-	struct sport_uart_port *sport;
+-	int ret = 0;
+-
+-	dev_dbg(&pdev->dev, "%s enter\n", __func__);
+-
+-	if (pdev->id < 0 || pdev->id >= BFIN_SPORT_UART_MAX_PORTS) {
+-		dev_err(&pdev->dev, "Wrong sport uart platform device id.\n");
+-		return -ENOENT;
+-	}
+-
+-	if (bfin_sport_uart_ports[pdev->id] == NULL) {
+-		bfin_sport_uart_ports[pdev->id] =
+-			kzalloc(sizeof(struct sport_uart_port), GFP_KERNEL);
+-		sport = bfin_sport_uart_ports[pdev->id];
+-		if (!sport) {
+-			dev_err(&pdev->dev,
+-				"Fail to malloc sport_uart_port\n");
+-			return -ENOMEM;
+-		}
+-
+-		ret = peripheral_request_list(dev_get_platdata(&pdev->dev),
+-						DRV_NAME);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"Fail to request SPORT peripherals\n");
+-			goto out_error_free_mem;
+-		}
+-
+-		spin_lock_init(&sport->port.lock);
+-		sport->port.fifosize  = SPORT_TX_FIFO_SIZE,
+-		sport->port.ops       = &sport_uart_ops;
+-		sport->port.line      = pdev->id;
+-		sport->port.iotype    = UPIO_MEM;
+-		sport->port.flags     = UPF_BOOT_AUTOCONF;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (res == NULL) {
+-			dev_err(&pdev->dev, "Cannot get IORESOURCE_MEM\n");
+-			ret = -ENOENT;
+-			goto out_error_free_peripherals;
+-		}
+-
+-		sport->port.membase = ioremap(res->start, resource_size(res));
+-		if (!sport->port.membase) {
+-			dev_err(&pdev->dev, "Cannot map sport IO\n");
+-			ret = -ENXIO;
+-			goto out_error_free_peripherals;
+-		}
+-		sport->port.mapbase = res->start;
+-
+-		sport->port.irq = platform_get_irq(pdev, 0);
+-		if ((int)sport->port.irq < 0) {
+-			dev_err(&pdev->dev, "No sport RX/TX IRQ specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-
+-		sport->err_irq = platform_get_irq(pdev, 1);
+-		if (sport->err_irq < 0) {
+-			dev_err(&pdev->dev, "No sport status IRQ specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+-		if (res == NULL)
+-			sport->cts_pin = -1;
+-		else
+-			sport->cts_pin = res->start;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_IO, 1);
+-		if (res == NULL)
+-			sport->rts_pin = -1;
+-		else
+-			sport->rts_pin = res->start;
+-#endif
+-	}
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CONSOLE
+-	if (!is_early_platform_device(pdev)) {
+-#endif
+-		sport = bfin_sport_uart_ports[pdev->id];
+-		sport->port.dev = &pdev->dev;
+-		dev_set_drvdata(&pdev->dev, sport);
+-		ret = uart_add_one_port(&sport_uart_reg, &sport->port);
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CONSOLE
+-	}
+-#endif
+-	if (!ret)
+-		return 0;
+-
+-	if (sport) {
+-out_error_unmap:
+-		iounmap(sport->port.membase);
+-out_error_free_peripherals:
+-		peripheral_free_list(dev_get_platdata(&pdev->dev));
+-out_error_free_mem:
+-		kfree(sport);
+-		bfin_sport_uart_ports[pdev->id] = NULL;
+-	}
+-
+-	return ret;
+-}
+-
+-static int sport_uart_remove(struct platform_device *pdev)
+-{
+-	struct sport_uart_port *sport = platform_get_drvdata(pdev);
+-
+-	dev_dbg(&pdev->dev, "%s enter\n", __func__);
+-	dev_set_drvdata(&pdev->dev, NULL);
+-
+-	if (sport) {
+-		uart_remove_one_port(&sport_uart_reg, &sport->port);
+-		iounmap(sport->port.membase);
+-		peripheral_free_list(dev_get_platdata(&pdev->dev));
+-		kfree(sport);
+-		bfin_sport_uart_ports[pdev->id] = NULL;
+-	}
+-
+-	return 0;
+-}
+-
+-static struct platform_driver sport_uart_driver = {
+-	.probe		= sport_uart_probe,
+-	.remove		= sport_uart_remove,
+-	.driver		= {
+-		.name	= DRV_NAME,
+-#ifdef CONFIG_PM
+-		.pm	= &bfin_sport_uart_dev_pm_ops,
+-#endif
+-	},
+-};
+-
+-#ifdef CONFIG_SERIAL_BFIN_SPORT_CONSOLE
+-static struct early_platform_driver early_sport_uart_driver __initdata = {
+-	.class_str = CLASS_BFIN_SPORT_CONSOLE,
+-	.pdrv = &sport_uart_driver,
+-	.requested_id = EARLY_PLATFORM_ID_UNSET,
+-};
+-
+-static int __init sport_uart_rs_console_init(void)
+-{
+-	early_platform_driver_register(&early_sport_uart_driver, DRV_NAME);
+-
+-	early_platform_driver_probe(CLASS_BFIN_SPORT_CONSOLE,
+-		BFIN_SPORT_UART_MAX_PORTS, 0);
+-
+-	register_console(&sport_uart_console);
+-
+-	return 0;
+-}
+-console_initcall(sport_uart_rs_console_init);
+-#endif
+-
+-static int __init sport_uart_init(void)
+-{
+-	int ret;
+-
+-	pr_info("Blackfin uart over sport driver\n");
+-
+-	ret = uart_register_driver(&sport_uart_reg);
+-	if (ret) {
+-		pr_err("failed to register %s:%d\n",
+-				sport_uart_reg.driver_name, ret);
+-		return ret;
+-	}
+-
+-	ret = platform_driver_register(&sport_uart_driver);
+-	if (ret) {
+-		pr_err("failed to register sport uart driver:%d\n", ret);
+-		uart_unregister_driver(&sport_uart_reg);
+-	}
+-
+-	return ret;
+-}
+-module_init(sport_uart_init);
+-
+-static void __exit sport_uart_exit(void)
+-{
+-	platform_driver_unregister(&sport_uart_driver);
+-	uart_unregister_driver(&sport_uart_reg);
+-}
+-module_exit(sport_uart_exit);
+-
+-MODULE_AUTHOR("Sonic Zhang, Roy Huang");
+-MODULE_DESCRIPTION("Blackfin serial over SPORT driver");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/tty/serial/bfin_sport_uart.h b/drivers/tty/serial/bfin_sport_uart.h
+deleted file mode 100644
+index 4b12f45..0000000
+--- a/drivers/tty/serial/bfin_sport_uart.h
++++ /dev/null
+@@ -1,86 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Blackfin On-Chip Sport Emulated UART Driver
+- *
+- * Copyright 2006-2008 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- */
+-
+-/*
+- * This driver and the hardware supported are in term of EE-191 of ADI.
+- * http://www.analog.com/static/imported-files/application_notes/EE191.pdf 
+- * This application note describe how to implement a UART on a Sharc DSP,
+- * but this driver is implemented on Blackfin Processor.
+- * Transmit Frame Sync is not used by this driver to transfer data out.
+- */
+-
+-#ifndef _BFIN_SPORT_UART_H
+-#define _BFIN_SPORT_UART_H
+-
+-#define OFFSET_TCR1		0x00	/* Transmit Configuration 1 Register */
+-#define OFFSET_TCR2		0x04	/* Transmit Configuration 2 Register */
+-#define OFFSET_TCLKDIV		0x08	/* Transmit Serial Clock Divider Register */
+-#define OFFSET_TFSDIV		0x0C	/* Transmit Frame Sync Divider Register */
+-#define OFFSET_TX		0x10	/* Transmit Data Register		*/
+-#define OFFSET_RX		0x18	/* Receive Data Register		*/
+-#define OFFSET_RCR1		0x20	/* Receive Configuration 1 Register	*/
+-#define OFFSET_RCR2		0x24	/* Receive Configuration 2 Register	*/
+-#define OFFSET_RCLKDIV		0x28	/* Receive Serial Clock Divider Register */
+-#define OFFSET_RFSDIV		0x2c	/* Receive Frame Sync Divider Register */
+-#define OFFSET_STAT		0x30	/* Status Register			*/
+-
+-#define SPORT_GET_TCR1(sport)		bfin_read16(((sport)->port.membase + OFFSET_TCR1))
+-#define SPORT_GET_TCR2(sport)		bfin_read16(((sport)->port.membase + OFFSET_TCR2))
+-#define SPORT_GET_TCLKDIV(sport)	bfin_read16(((sport)->port.membase + OFFSET_TCLKDIV))
+-#define SPORT_GET_TFSDIV(sport)		bfin_read16(((sport)->port.membase + OFFSET_TFSDIV))
+-#define SPORT_GET_TX(sport)		bfin_read16(((sport)->port.membase + OFFSET_TX))
+-#define SPORT_GET_RX(sport)		bfin_read16(((sport)->port.membase + OFFSET_RX))
+-/*
+- * If another interrupt fires while doing a 32-bit read from RX FIFO,
+- * a fake RX underflow error will be generated.  So disable interrupts
+- * to prevent interruption while reading the FIFO.
+- */
+-#define SPORT_GET_RX32(sport) \
+-({ \
+-	unsigned int __ret; \
+-	unsigned long flags; \
+-	if (ANOMALY_05000473) \
+-		local_irq_save(flags); \
+-	__ret = bfin_read32((sport)->port.membase + OFFSET_RX); \
+-	if (ANOMALY_05000473) \
+-		local_irq_restore(flags); \
+-	__ret; \
+-})
+-#define SPORT_GET_RCR1(sport)		bfin_read16(((sport)->port.membase + OFFSET_RCR1))
+-#define SPORT_GET_RCR2(sport)		bfin_read16(((sport)->port.membase + OFFSET_RCR2))
+-#define SPORT_GET_RCLKDIV(sport)	bfin_read16(((sport)->port.membase + OFFSET_RCLKDIV))
+-#define SPORT_GET_RFSDIV(sport)		bfin_read16(((sport)->port.membase + OFFSET_RFSDIV))
+-#define SPORT_GET_STAT(sport)		bfin_read16(((sport)->port.membase + OFFSET_STAT))
+-
+-#define SPORT_PUT_TCR1(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_TCR1), v)
+-#define SPORT_PUT_TCR2(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_TCR2), v)
+-#define SPORT_PUT_TCLKDIV(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_TCLKDIV), v)
+-#define SPORT_PUT_TFSDIV(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_TFSDIV), v)
+-#define SPORT_PUT_TX(sport, v)		bfin_write16(((sport)->port.membase + OFFSET_TX), v)
+-#define SPORT_PUT_RX(sport, v)		bfin_write16(((sport)->port.membase + OFFSET_RX), v)
+-#define SPORT_PUT_RCR1(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_RCR1), v)
+-#define SPORT_PUT_RCR2(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_RCR2), v)
+-#define SPORT_PUT_RCLKDIV(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_RCLKDIV), v)
+-#define SPORT_PUT_RFSDIV(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_RFSDIV), v)
+-#define SPORT_PUT_STAT(sport, v)	bfin_write16(((sport)->port.membase + OFFSET_STAT), v)
+-
+-#define SPORT_TX_FIFO_SIZE	8
+-
+-#define SPORT_UART_GET_CTS(x)		gpio_get_value(x->cts_pin)
+-#define SPORT_UART_DISABLE_RTS(x)	gpio_set_value(x->rts_pin, 1)
+-#define SPORT_UART_ENABLE_RTS(x)	gpio_set_value(x->rts_pin, 0)
+-
+-#if defined(CONFIG_SERIAL_BFIN_SPORT0_UART_CTSRTS) \
+-	|| defined(CONFIG_SERIAL_BFIN_SPORT1_UART_CTSRTS) \
+-	|| defined(CONFIG_SERIAL_BFIN_SPORT2_UART_CTSRTS) \
+-	|| defined(CONFIG_SERIAL_BFIN_SPORT3_UART_CTSRTS)
+-# define CONFIG_SERIAL_BFIN_SPORT_CTSRTS
+-#endif
+-
+-#endif /* _BFIN_SPORT_UART_H */
+diff --git a/drivers/tty/serial/bfin_uart.c b/drivers/tty/serial/bfin_uart.c
+deleted file mode 100644
+index 4755fa6..0000000
+--- a/drivers/tty/serial/bfin_uart.c
++++ /dev/null
+@@ -1,1551 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Blackfin On-Chip Serial Driver
+- *
+- * Copyright 2006-2011 Analog Devices Inc.
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+- */
+-
+-#if defined(CONFIG_SERIAL_BFIN_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#define SUPPORT_SYSRQ
+-#endif
+-
+-#define DRIVER_NAME "bfin-uart"
+-#define pr_fmt(fmt) DRIVER_NAME ": " fmt
+-
+-#include <linux/module.h>
+-#include <linux/ioport.h>
+-#include <linux/gfp.h>
+-#include <linux/io.h>
+-#include <linux/init.h>
+-#include <linux/console.h>
+-#include <linux/sysrq.h>
+-#include <linux/platform_device.h>
+-#include <linux/tty.h>
+-#include <linux/tty_flip.h>
+-#include <linux/serial_core.h>
+-#include <linux/gpio.h>
+-#include <linux/irq.h>
+-#include <linux/kgdb.h>
+-#include <linux/slab.h>
+-#include <linux/dma-mapping.h>
+-
+-#include <asm/portmux.h>
+-#include <asm/cacheflush.h>
+-#include <asm/dma.h>
+-#include <asm/bfin_serial.h>
+-
+-#ifdef CONFIG_SERIAL_BFIN_MODULE
+-# undef CONFIG_EARLY_PRINTK
+-#endif
+-
+-/* UART name and device definitions */
+-#define BFIN_SERIAL_DEV_NAME	"ttyBF"
+-#define BFIN_SERIAL_MAJOR	204
+-#define BFIN_SERIAL_MINOR	64
+-
+-static struct bfin_serial_port *bfin_serial_ports[BFIN_UART_NR_PORTS];
+-
+-#if defined(CONFIG_KGDB_SERIAL_CONSOLE) || \
+-	defined(CONFIG_KGDB_SERIAL_CONSOLE_MODULE)
+-
+-# ifndef CONFIG_SERIAL_BFIN_PIO
+-#  error KGDB only support UART in PIO mode.
+-# endif
+-
+-static int kgdboc_port_line;
+-static int kgdboc_break_enabled;
+-#endif
+-/*
+- * Setup for console. Argument comes from the menuconfig
+- */
+-#define DMA_RX_XCOUNT		512
+-#define DMA_RX_YCOUNT		(PAGE_SIZE / DMA_RX_XCOUNT)
+-
+-#define DMA_RX_FLUSH_JIFFIES	(HZ / 50)
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-static void bfin_serial_dma_tx_chars(struct bfin_serial_port *uart);
+-#else
+-static void bfin_serial_tx_chars(struct bfin_serial_port *uart);
+-#endif
+-
+-static void bfin_serial_reset_irda(struct uart_port *port);
+-
+-#if defined(SERIAL_BFIN_CTSRTS) || \
+-	defined(SERIAL_BFIN_HARD_CTSRTS)
+-static unsigned int bfin_serial_get_mctrl(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	if (uart->cts_pin < 0)
+-		return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+-
+-	/* CTS PIN is negative assertive. */
+-	if (UART_GET_CTS(uart))
+-		return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+-	else
+-		return TIOCM_DSR | TIOCM_CAR;
+-}
+-
+-static void bfin_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	if (uart->rts_pin < 0)
+-		return;
+-
+-	/* RTS PIN is negative assertive. */
+-	if (mctrl & TIOCM_RTS)
+-		UART_ENABLE_RTS(uart);
+-	else
+-		UART_DISABLE_RTS(uart);
+-}
+-
+-/*
+- * Handle any change of modem status signal.
+- */
+-static irqreturn_t bfin_serial_mctrl_cts_int(int irq, void *dev_id)
+-{
+-	struct bfin_serial_port *uart = dev_id;
+-	struct uart_port *uport = &uart->port;
+-	unsigned int status = bfin_serial_get_mctrl(uport);
+-#ifdef SERIAL_BFIN_HARD_CTSRTS
+-
+-	UART_CLEAR_SCTS(uart);
+-	if (uport->hw_stopped) {
+-		if (status) {
+-			uport->hw_stopped = 0;
+-			uart_write_wakeup(uport);
+-		}
+-	} else {
+-		if (!status)
+-			uport->hw_stopped = 1;
+-	}
+-#else
+-	uart_handle_cts_change(uport, status & TIOCM_CTS);
+-#endif
+-
+-	return IRQ_HANDLED;
+-}
+-#else
+-static unsigned int bfin_serial_get_mctrl(struct uart_port *port)
+-{
+-	return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+-}
+-
+-static void bfin_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
+-{
+-}
+-#endif
+-
+-/*
+- * interrupts are disabled on entry
+- */
+-static void bfin_serial_stop_tx(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-	struct circ_buf *xmit = &uart->port.state->xmit;
+-#endif
+-
+-	while (!(UART_GET_LSR(uart) & TEMT))
+-		cpu_relax();
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-	disable_dma(uart->tx_dma_channel);
+-	xmit->tail = (xmit->tail + uart->tx_count) & (UART_XMIT_SIZE - 1);
+-	uart->port.icount.tx += uart->tx_count;
+-	uart->tx_count = 0;
+-	uart->tx_done = 1;
+-#else
+-#if defined(CONFIG_BF54x) || defined(CONFIG_BF60x)
+-	/* Clear TFI bit */
+-	UART_PUT_LSR(uart, TFI);
+-#endif
+-	UART_CLEAR_IER(uart, ETBEI);
+-#endif
+-}
+-
+-/*
+- * port is locked and interrupts are disabled
+- */
+-static void bfin_serial_start_tx(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	struct tty_struct *tty = uart->port.state->port.tty;
+-
+-	/*
+-	 * To avoid losting RX interrupt, we reset IR function
+-	 * before sending data.
+-	 */
+-	if (tty->termios.c_line == N_IRDA)
+-		bfin_serial_reset_irda(port);
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-	if (uart->tx_done)
+-		bfin_serial_dma_tx_chars(uart);
+-#else
+-	UART_SET_IER(uart, ETBEI);
+-	bfin_serial_tx_chars(uart);
+-#endif
+-}
+-
+-/*
+- * Interrupts are enabled
+- */
+-static void bfin_serial_stop_rx(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-	UART_CLEAR_IER(uart, ERBFI);
+-}
+-
+-#if ANOMALY_05000363 && defined(CONFIG_SERIAL_BFIN_PIO)
+-# define UART_GET_ANOMALY_THRESHOLD(uart)    ((uart)->anomaly_threshold)
+-# define UART_SET_ANOMALY_THRESHOLD(uart, v) ((uart)->anomaly_threshold = (v))
+-#else
+-# define UART_GET_ANOMALY_THRESHOLD(uart)    0
+-# define UART_SET_ANOMALY_THRESHOLD(uart, v)
+-#endif
+-
+-#ifdef CONFIG_SERIAL_BFIN_PIO
+-static void bfin_serial_rx_chars(struct bfin_serial_port *uart)
+-{
+-	unsigned int status, ch, flg;
+-	static u64 anomaly_start;
+-
+-	status = UART_GET_LSR(uart);
+-	UART_CLEAR_LSR(uart);
+-
+-	ch = UART_GET_CHAR(uart);
+-	uart->port.icount.rx++;
+-
+-#if defined(CONFIG_KGDB_SERIAL_CONSOLE) || \
+-	defined(CONFIG_KGDB_SERIAL_CONSOLE_MODULE)
+-	if (kgdb_connected && kgdboc_port_line == uart->port.line
+-		&& kgdboc_break_enabled)
+-		if (ch == 0x3) {/* Ctrl + C */
+-			kgdb_breakpoint();
+-			return;
+-		}
+-
+-	if (!uart->port.state)
+-		return;
+-#endif
+-	if (ANOMALY_05000363) {
+-		/* The BF533 (and BF561) family of processors have a nice anomaly
+-		 * where they continuously generate characters for a "single" break.
+-		 * We have to basically ignore this flood until the "next" valid
+-		 * character comes across.  Due to the nature of the flood, it is
+-		 * not possible to reliably catch bytes that are sent too quickly
+-		 * after this break.  So application code talking to the Blackfin
+-		 * which sends a break signal must allow at least 1.5 character
+-		 * times after the end of the break for things to stabilize.  This
+-		 * timeout was picked as it must absolutely be larger than 1
+-		 * character time +/- some percent.  So 1.5 sounds good.  All other
+-		 * Blackfin families operate properly.  Woo.
+-		 */
+-		if (anomaly_start > 0) {
+-			u64 curr, nsecs, threshold_ns;
+-
+-			if ((~ch & (~ch + 1)) & 0xff)
+-				goto known_good_char;
+-
+-			curr = ktime_get_ns();
+-			nsecs = curr - anomaly_start;
+-			if (nsecs >> 32)
+-				goto known_good_char;
+-
+-			threshold_ns = UART_GET_ANOMALY_THRESHOLD(uart)
+-							* NSEC_PER_USEC;
+-			if (nsecs > threshold_ns)
+-				goto known_good_char;
+-
+-			if (ch)
+-				anomaly_start = 0;
+-			else
+-				anomaly_start = curr;
+-
+-			return;
+-
+- known_good_char:
+-			status &= ~BI;
+-			anomaly_start = 0;
+-		}
+-	}
+-
+-	if (status & BI) {
+-		if (ANOMALY_05000363)
+-			if (bfin_revid() < 5)
+-				anomaly_start = ktime_get_ns();
+-		uart->port.icount.brk++;
+-		if (uart_handle_break(&uart->port))
+-			goto ignore_char;
+-		status &= ~(PE | FE);
+-	}
+-	if (status & PE)
+-		uart->port.icount.parity++;
+-	if (status & OE)
+-		uart->port.icount.overrun++;
+-	if (status & FE)
+-		uart->port.icount.frame++;
+-
+-	status &= uart->port.read_status_mask;
+-
+-	if (status & BI)
+-		flg = TTY_BREAK;
+-	else if (status & PE)
+-		flg = TTY_PARITY;
+-	else if (status & FE)
+-		flg = TTY_FRAME;
+-	else
+-		flg = TTY_NORMAL;
+-
+-	if (uart_handle_sysrq_char(&uart->port, ch))
+-		goto ignore_char;
+-
+-	uart_insert_char(&uart->port, status, OE, ch, flg);
+-
+- ignore_char:
+-	tty_flip_buffer_push(&uart->port.state->port);
+-}
+-
+-static void bfin_serial_tx_chars(struct bfin_serial_port *uart)
+-{
+-	struct circ_buf *xmit = &uart->port.state->xmit;
+-
+-	if (uart_circ_empty(xmit) || uart_tx_stopped(&uart->port)) {
+-#if defined(CONFIG_BF54x) || defined(CONFIG_BF60x)
+-		/* Clear TFI bit */
+-		UART_PUT_LSR(uart, TFI);
+-#endif
+-		/* Anomaly notes:
+-		 *  05000215 -	we always clear ETBEI within last UART TX
+-		 *		interrupt to end a string. It is always set
+-		 *		when start a new tx.
+-		 */
+-		UART_CLEAR_IER(uart, ETBEI);
+-		return;
+-	}
+-
+-	if (uart->port.x_char) {
+-		UART_PUT_CHAR(uart, uart->port.x_char);
+-		uart->port.icount.tx++;
+-		uart->port.x_char = 0;
+-	}
+-
+-	while ((UART_GET_LSR(uart) & THRE) && xmit->tail != xmit->head) {
+-		UART_PUT_CHAR(uart, xmit->buf[xmit->tail]);
+-		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+-		uart->port.icount.tx++;
+-	}
+-
+-	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+-		uart_write_wakeup(&uart->port);
+-}
+-
+-static irqreturn_t bfin_serial_rx_int(int irq, void *dev_id)
+-{
+-	struct bfin_serial_port *uart = dev_id;
+-
+-	while (UART_GET_LSR(uart) & DR)
+-		bfin_serial_rx_chars(uart);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t bfin_serial_tx_int(int irq, void *dev_id)
+-{
+-	struct bfin_serial_port *uart = dev_id;
+-
+-	spin_lock(&uart->port.lock);
+-	if (UART_GET_LSR(uart) & THRE)
+-		bfin_serial_tx_chars(uart);
+-	spin_unlock(&uart->port.lock);
+-
+-	return IRQ_HANDLED;
+-}
+-#endif
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-static void bfin_serial_dma_tx_chars(struct bfin_serial_port *uart)
+-{
+-	struct circ_buf *xmit = &uart->port.state->xmit;
+-
+-	uart->tx_done = 0;
+-
+-	if (uart_circ_empty(xmit) || uart_tx_stopped(&uart->port)) {
+-		uart->tx_count = 0;
+-		uart->tx_done = 1;
+-		return;
+-	}
+-
+-	if (uart->port.x_char) {
+-		UART_PUT_CHAR(uart, uart->port.x_char);
+-		uart->port.icount.tx++;
+-		uart->port.x_char = 0;
+-	}
+-
+-	uart->tx_count = CIRC_CNT(xmit->head, xmit->tail, UART_XMIT_SIZE);
+-	if (uart->tx_count > (UART_XMIT_SIZE - xmit->tail))
+-		uart->tx_count = UART_XMIT_SIZE - xmit->tail;
+-	blackfin_dcache_flush_range((unsigned long)(xmit->buf+xmit->tail),
+-					(unsigned long)(xmit->buf+xmit->tail+uart->tx_count));
+-	set_dma_config(uart->tx_dma_channel,
+-		set_bfin_dma_config(DIR_READ, DMA_FLOW_STOP,
+-			INTR_ON_BUF,
+-			DIMENSION_LINEAR,
+-			DATA_SIZE_8,
+-			DMA_SYNC_RESTART));
+-	set_dma_start_addr(uart->tx_dma_channel, (unsigned long)(xmit->buf+xmit->tail));
+-	set_dma_x_count(uart->tx_dma_channel, uart->tx_count);
+-	set_dma_x_modify(uart->tx_dma_channel, 1);
+-	SSYNC();
+-	enable_dma(uart->tx_dma_channel);
+-
+-	UART_SET_IER(uart, ETBEI);
+-}
+-
+-static void bfin_serial_dma_rx_chars(struct bfin_serial_port *uart)
+-{
+-	int i, flg, status;
+-
+-	status = UART_GET_LSR(uart);
+-	UART_CLEAR_LSR(uart);
+-
+-	uart->port.icount.rx +=
+-		CIRC_CNT(uart->rx_dma_buf.head, uart->rx_dma_buf.tail,
+-		UART_XMIT_SIZE);
+-
+-	if (status & BI) {
+-		uart->port.icount.brk++;
+-		if (uart_handle_break(&uart->port))
+-			goto dma_ignore_char;
+-		status &= ~(PE | FE);
+-	}
+-	if (status & PE)
+-		uart->port.icount.parity++;
+-	if (status & OE)
+-		uart->port.icount.overrun++;
+-	if (status & FE)
+-		uart->port.icount.frame++;
+-
+-	status &= uart->port.read_status_mask;
+-
+-	if (status & BI)
+-		flg = TTY_BREAK;
+-	else if (status & PE)
+-		flg = TTY_PARITY;
+-	else if (status & FE)
+-		flg = TTY_FRAME;
+-	else
+-		flg = TTY_NORMAL;
+-
+-	for (i = uart->rx_dma_buf.tail; ; i++) {
+-		if (i >= UART_XMIT_SIZE)
+-			i = 0;
+-		if (i == uart->rx_dma_buf.head)
+-			break;
+-		if (!uart_handle_sysrq_char(&uart->port, uart->rx_dma_buf.buf[i]))
+-			uart_insert_char(&uart->port, status, OE,
+-				uart->rx_dma_buf.buf[i], flg);
+-	}
+-
+- dma_ignore_char:
+-	tty_flip_buffer_push(&uart->port.state->port);
+-}
+-
+-void bfin_serial_rx_dma_timeout(struct timer_list *t)
+-{
+-	struct bfin_serial_port *uart = from_timer(uart, t, rx_dma_timer);
+-	int x_pos, pos;
+-	unsigned long flags;
+-
+-	dma_disable_irq_nosync(uart->rx_dma_channel);
+-	spin_lock_irqsave(&uart->rx_lock, flags);
+-
+-	/* 2D DMA RX buffer ring is used. Because curr_y_count and
+-	 * curr_x_count can't be read as an atomic operation,
+-	 * curr_y_count should be read before curr_x_count. When
+-	 * curr_x_count is read, curr_y_count may already indicate
+-	 * next buffer line. But, the position calculated here is
+-	 * still indicate the old line. The wrong position data may
+-	 * be smaller than current buffer tail, which cause garbages
+-	 * are received if it is not prohibit.
+-	 */
+-	uart->rx_dma_nrows = get_dma_curr_ycount(uart->rx_dma_channel);
+-	x_pos = get_dma_curr_xcount(uart->rx_dma_channel);
+-	uart->rx_dma_nrows = DMA_RX_YCOUNT - uart->rx_dma_nrows;
+-	if (uart->rx_dma_nrows == DMA_RX_YCOUNT || x_pos == 0)
+-		uart->rx_dma_nrows = 0;
+-	x_pos = DMA_RX_XCOUNT - x_pos;
+-	if (x_pos == DMA_RX_XCOUNT)
+-		x_pos = 0;
+-
+-	pos = uart->rx_dma_nrows * DMA_RX_XCOUNT + x_pos;
+-	/* Ignore receiving data if new position is in the same line of
+-	 * current buffer tail and small.
+-	 */
+-	if (pos > uart->rx_dma_buf.tail ||
+-		uart->rx_dma_nrows < (uart->rx_dma_buf.tail/DMA_RX_XCOUNT)) {
+-		uart->rx_dma_buf.head = pos;
+-		bfin_serial_dma_rx_chars(uart);
+-		uart->rx_dma_buf.tail = uart->rx_dma_buf.head;
+-	}
+-
+-	spin_unlock_irqrestore(&uart->rx_lock, flags);
+-	dma_enable_irq(uart->rx_dma_channel);
+-
+-	mod_timer(&(uart->rx_dma_timer), jiffies + DMA_RX_FLUSH_JIFFIES);
+-}
+-
+-static irqreturn_t bfin_serial_dma_tx_int(int irq, void *dev_id)
+-{
+-	struct bfin_serial_port *uart = dev_id;
+-	struct circ_buf *xmit = &uart->port.state->xmit;
+-
+-	spin_lock(&uart->port.lock);
+-	if (!(get_dma_curr_irqstat(uart->tx_dma_channel)&DMA_RUN)) {
+-		disable_dma(uart->tx_dma_channel);
+-		clear_dma_irqstat(uart->tx_dma_channel);
+-		/* Anomaly notes:
+-		 *  05000215 -	we always clear ETBEI within last UART TX
+-		 *		interrupt to end a string. It is always set
+-		 *		when start a new tx.
+-		 */
+-		UART_CLEAR_IER(uart, ETBEI);
+-		uart->port.icount.tx += uart->tx_count;
+-		if (!(xmit->tail == 0 && xmit->head == 0)) {
+-			xmit->tail = (xmit->tail + uart->tx_count) & (UART_XMIT_SIZE - 1);
+-
+-			if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+-				uart_write_wakeup(&uart->port);
+-		}
+-
+-		bfin_serial_dma_tx_chars(uart);
+-	}
+-
+-	spin_unlock(&uart->port.lock);
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t bfin_serial_dma_rx_int(int irq, void *dev_id)
+-{
+-	struct bfin_serial_port *uart = dev_id;
+-	unsigned int irqstat;
+-	int x_pos, pos;
+-
+-	spin_lock(&uart->rx_lock);
+-	irqstat = get_dma_curr_irqstat(uart->rx_dma_channel);
+-	clear_dma_irqstat(uart->rx_dma_channel);
+-
+-	uart->rx_dma_nrows = get_dma_curr_ycount(uart->rx_dma_channel);
+-	x_pos = get_dma_curr_xcount(uart->rx_dma_channel);
+-	uart->rx_dma_nrows = DMA_RX_YCOUNT - uart->rx_dma_nrows;
+-	if (uart->rx_dma_nrows == DMA_RX_YCOUNT || x_pos == 0)
+-		uart->rx_dma_nrows = 0;
+-
+-	pos = uart->rx_dma_nrows * DMA_RX_XCOUNT;
+-	if (pos > uart->rx_dma_buf.tail ||
+-		uart->rx_dma_nrows < (uart->rx_dma_buf.tail/DMA_RX_XCOUNT)) {
+-		uart->rx_dma_buf.head = pos;
+-		bfin_serial_dma_rx_chars(uart);
+-		uart->rx_dma_buf.tail = uart->rx_dma_buf.head;
+-	}
+-
+-	spin_unlock(&uart->rx_lock);
+-
+-	return IRQ_HANDLED;
+-}
+-#endif
+-
+-/*
+- * Return TIOCSER_TEMT when transmitter is not busy.
+- */
+-static unsigned int bfin_serial_tx_empty(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	unsigned int lsr;
+-
+-	lsr = UART_GET_LSR(uart);
+-	if (lsr & TEMT)
+-		return TIOCSER_TEMT;
+-	else
+-		return 0;
+-}
+-
+-static void bfin_serial_break_ctl(struct uart_port *port, int break_state)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	u32 lcr = UART_GET_LCR(uart);
+-	if (break_state)
+-		lcr |= SB;
+-	else
+-		lcr &= ~SB;
+-	UART_PUT_LCR(uart, lcr);
+-	SSYNC();
+-}
+-
+-static int bfin_serial_startup(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-	dma_addr_t dma_handle;
+-
+-	if (request_dma(uart->rx_dma_channel, "BFIN_UART_RX") < 0) {
+-		printk(KERN_NOTICE "Unable to attach Blackfin UART RX DMA channel\n");
+-		return -EBUSY;
+-	}
+-
+-	if (request_dma(uart->tx_dma_channel, "BFIN_UART_TX") < 0) {
+-		printk(KERN_NOTICE "Unable to attach Blackfin UART TX DMA channel\n");
+-		free_dma(uart->rx_dma_channel);
+-		return -EBUSY;
+-	}
+-
+-	set_dma_callback(uart->rx_dma_channel, bfin_serial_dma_rx_int, uart);
+-	set_dma_callback(uart->tx_dma_channel, bfin_serial_dma_tx_int, uart);
+-
+-	uart->rx_dma_buf.buf = (unsigned char *)dma_alloc_coherent(NULL, PAGE_SIZE, &dma_handle, GFP_DMA);
+-	uart->rx_dma_buf.head = 0;
+-	uart->rx_dma_buf.tail = 0;
+-	uart->rx_dma_nrows = 0;
+-
+-	set_dma_config(uart->rx_dma_channel,
+-		set_bfin_dma_config(DIR_WRITE, DMA_FLOW_AUTO,
+-				INTR_ON_ROW, DIMENSION_2D,
+-				DATA_SIZE_8,
+-				DMA_SYNC_RESTART));
+-	set_dma_x_count(uart->rx_dma_channel, DMA_RX_XCOUNT);
+-	set_dma_x_modify(uart->rx_dma_channel, 1);
+-	set_dma_y_count(uart->rx_dma_channel, DMA_RX_YCOUNT);
+-	set_dma_y_modify(uart->rx_dma_channel, 1);
+-	set_dma_start_addr(uart->rx_dma_channel, (unsigned long)uart->rx_dma_buf.buf);
+-	enable_dma(uart->rx_dma_channel);
+-
+-	uart->rx_dma_timer.expires = jiffies + DMA_RX_FLUSH_JIFFIES;
+-	add_timer(&(uart->rx_dma_timer));
+-#else
+-# if defined(CONFIG_KGDB_SERIAL_CONSOLE) || \
+-	defined(CONFIG_KGDB_SERIAL_CONSOLE_MODULE)
+-	if (kgdboc_port_line == uart->port.line && kgdboc_break_enabled)
+-		kgdboc_break_enabled = 0;
+-	else {
+-# endif
+-	if (request_irq(uart->rx_irq, bfin_serial_rx_int, 0,
+-	     "BFIN_UART_RX", uart)) {
+-		printk(KERN_NOTICE "Unable to attach BlackFin UART RX interrupt\n");
+-		return -EBUSY;
+-	}
+-
+-	if (request_irq
+-	    (uart->tx_irq, bfin_serial_tx_int, 0,
+-	     "BFIN_UART_TX", uart)) {
+-		printk(KERN_NOTICE "Unable to attach BlackFin UART TX interrupt\n");
+-		free_irq(uart->rx_irq, uart);
+-		return -EBUSY;
+-	}
+-
+-# ifdef CONFIG_BF54x
+-	{
+-		/*
+-		 * UART2 and UART3 on BF548 share interrupt PINs and DMA
+-		 * controllers with SPORT2 and SPORT3. UART rx and tx
+-		 * interrupts are generated in PIO mode only when configure
+-		 * their peripheral mapping registers properly, which means
+-		 * request corresponding DMA channels in PIO mode as well.
+-		 */
+-		unsigned uart_dma_ch_rx, uart_dma_ch_tx;
+-
+-		switch (uart->rx_irq) {
+-		case IRQ_UART3_RX:
+-			uart_dma_ch_rx = CH_UART3_RX;
+-			uart_dma_ch_tx = CH_UART3_TX;
+-			break;
+-		case IRQ_UART2_RX:
+-			uart_dma_ch_rx = CH_UART2_RX;
+-			uart_dma_ch_tx = CH_UART2_TX;
+-			break;
+-		default:
+-			uart_dma_ch_rx = uart_dma_ch_tx = 0;
+-			break;
+-		}
+-
+-		if (uart_dma_ch_rx &&
+-			request_dma(uart_dma_ch_rx, "BFIN_UART_RX") < 0) {
+-			printk(KERN_NOTICE"Fail to attach UART interrupt\n");
+-			free_irq(uart->rx_irq, uart);
+-			free_irq(uart->tx_irq, uart);
+-			return -EBUSY;
+-		}
+-		if (uart_dma_ch_tx &&
+-			request_dma(uart_dma_ch_tx, "BFIN_UART_TX") < 0) {
+-			printk(KERN_NOTICE "Fail to attach UART interrupt\n");
+-			free_dma(uart_dma_ch_rx);
+-			free_irq(uart->rx_irq, uart);
+-			free_irq(uart->tx_irq, uart);
+-			return -EBUSY;
+-		}
+-	}
+-# endif
+-# if defined(CONFIG_KGDB_SERIAL_CONSOLE) || \
+-	defined(CONFIG_KGDB_SERIAL_CONSOLE_MODULE)
+-	}
+-# endif
+-#endif
+-
+-#ifdef SERIAL_BFIN_CTSRTS
+-	if (uart->cts_pin >= 0) {
+-		if (request_irq(gpio_to_irq(uart->cts_pin),
+-			bfin_serial_mctrl_cts_int,
+-			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
+-			0, "BFIN_UART_CTS", uart)) {
+-			uart->cts_pin = -1;
+-			pr_info("Unable to attach BlackFin UART CTS interrupt. So, disable it.\n");
+-		}
+-	}
+-	if (uart->rts_pin >= 0) {
+-		if (gpio_request(uart->rts_pin, DRIVER_NAME)) {
+-			pr_info("fail to request RTS PIN at GPIO_%d\n", uart->rts_pin);
+-			uart->rts_pin = -1;
+-		} else
+-			gpio_direction_output(uart->rts_pin, 0);
+-	}
+-#endif
+-#ifdef SERIAL_BFIN_HARD_CTSRTS
+-	if (uart->cts_pin >= 0) {
+-		if (request_irq(uart->status_irq, bfin_serial_mctrl_cts_int,
+-			0, "BFIN_UART_MODEM_STATUS", uart)) {
+-			uart->cts_pin = -1;
+-			dev_info(port->dev, "Unable to attach BlackFin UART Modem Status interrupt.\n");
+-		}
+-
+-		/* CTS RTS PINs are negative assertive. */
+-		UART_PUT_MCR(uart, UART_GET_MCR(uart) | ACTS);
+-		UART_SET_IER(uart, EDSSI);
+-	}
+-#endif
+-
+-	UART_SET_IER(uart, ERBFI);
+-	return 0;
+-}
+-
+-static void bfin_serial_shutdown(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-	disable_dma(uart->tx_dma_channel);
+-	free_dma(uart->tx_dma_channel);
+-	disable_dma(uart->rx_dma_channel);
+-	free_dma(uart->rx_dma_channel);
+-	del_timer(&(uart->rx_dma_timer));
+-	dma_free_coherent(NULL, PAGE_SIZE, uart->rx_dma_buf.buf, 0);
+-#else
+-#ifdef CONFIG_BF54x
+-	switch (uart->port.irq) {
+-	case IRQ_UART3_RX:
+-		free_dma(CH_UART3_RX);
+-		free_dma(CH_UART3_TX);
+-		break;
+-	case IRQ_UART2_RX:
+-		free_dma(CH_UART2_RX);
+-		free_dma(CH_UART2_TX);
+-		break;
+-	default:
+-		break;
+-	}
+-#endif
+-	free_irq(uart->rx_irq, uart);
+-	free_irq(uart->tx_irq, uart);
+-#endif
+-
+-#ifdef SERIAL_BFIN_CTSRTS
+-	if (uart->cts_pin >= 0)
+-		free_irq(gpio_to_irq(uart->cts_pin), uart);
+-	if (uart->rts_pin >= 0)
+-		gpio_free(uart->rts_pin);
+-#endif
+-#ifdef SERIAL_BFIN_HARD_CTSRTS
+-	if (uart->cts_pin >= 0)
+-		free_irq(uart->status_irq, uart);
+-#endif
+-}
+-
+-static void
+-bfin_serial_set_termios(struct uart_port *port, struct ktermios *termios,
+-		   struct ktermios *old)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	unsigned long flags;
+-	unsigned int baud, quot;
+-	unsigned int ier, lcr = 0;
+-	unsigned long timeout;
+-
+-#ifdef SERIAL_BFIN_CTSRTS
+-	if (old == NULL && uart->cts_pin != -1)
+-		termios->c_cflag |= CRTSCTS;
+-	else if (uart->cts_pin == -1)
+-		termios->c_cflag &= ~CRTSCTS;
+-#endif
+-
+-	switch (termios->c_cflag & CSIZE) {
+-	case CS8:
+-		lcr = WLS(8);
+-		break;
+-	case CS7:
+-		lcr = WLS(7);
+-		break;
+-	case CS6:
+-		lcr = WLS(6);
+-		break;
+-	case CS5:
+-		lcr = WLS(5);
+-		break;
+-	default:
+-		printk(KERN_ERR "%s: word length not supported\n",
+-			__func__);
+-	}
+-
+-	/* Anomaly notes:
+-	 *  05000231 -  STOP bit is always set to 1 whatever the user is set.
+-	 */
+-	if (termios->c_cflag & CSTOPB) {
+-		if (ANOMALY_05000231)
+-			printk(KERN_WARNING "STOP bits other than 1 is not "
+-				"supported in case of anomaly 05000231.\n");
+-		else
+-			lcr |= STB;
+-	}
+-	if (termios->c_cflag & PARENB)
+-		lcr |= PEN;
+-	if (!(termios->c_cflag & PARODD))
+-		lcr |= EPS;
+-	if (termios->c_cflag & CMSPAR)
+-		lcr |= STP;
+-
+-	spin_lock_irqsave(&uart->port.lock, flags);
+-
+-	port->read_status_mask = OE;
+-	if (termios->c_iflag & INPCK)
+-		port->read_status_mask |= (FE | PE);
+-	if (termios->c_iflag & (IGNBRK | BRKINT | PARMRK))
+-		port->read_status_mask |= BI;
+-
+-	/*
+-	 * Characters to ignore
+-	 */
+-	port->ignore_status_mask = 0;
+-	if (termios->c_iflag & IGNPAR)
+-		port->ignore_status_mask |= FE | PE;
+-	if (termios->c_iflag & IGNBRK) {
+-		port->ignore_status_mask |= BI;
+-		/*
+-		 * If we're ignoring parity and break indicators,
+-		 * ignore overruns too (for real raw support).
+-		 */
+-		if (termios->c_iflag & IGNPAR)
+-			port->ignore_status_mask |= OE;
+-	}
+-
+-	baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk/16);
+-	quot = uart_get_divisor(port, baud);
+-
+-	/* If discipline is not IRDA, apply ANOMALY_05000230 */
+-	if (termios->c_line != N_IRDA)
+-		quot -= ANOMALY_05000230;
+-
+-	UART_SET_ANOMALY_THRESHOLD(uart, USEC_PER_SEC / baud * 15);
+-
+-	/* Wait till the transfer buffer is empty */
+-	timeout = jiffies + msecs_to_jiffies(10);
+-	while (UART_GET_GCTL(uart) & UCEN && !(UART_GET_LSR(uart) & TEMT))
+-		if (time_after(jiffies, timeout)) {
+-			dev_warn(port->dev, "timeout waiting for TX buffer empty\n");
+-			break;
+-		}
+-
+-	/* Disable UART */
+-	ier = UART_GET_IER(uart);
+-	UART_PUT_GCTL(uart, UART_GET_GCTL(uart) & ~UCEN);
+-	UART_DISABLE_INTS(uart);
+-
+-	/* Set DLAB in LCR to Access CLK */
+-	UART_SET_DLAB(uart);
+-
+-	UART_PUT_CLK(uart, quot);
+-	SSYNC();
+-
+-	/* Clear DLAB in LCR to Access THR RBR IER */
+-	UART_CLEAR_DLAB(uart);
+-
+-	UART_PUT_LCR(uart, (UART_GET_LCR(uart) & ~LCR_MASK) | lcr);
+-
+-	/* Enable UART */
+-	UART_ENABLE_INTS(uart, ier);
+-	UART_PUT_GCTL(uart, UART_GET_GCTL(uart) | UCEN);
+-
+-	/* Port speed changed, update the per-port timeout. */
+-	uart_update_timeout(port, termios->c_cflag, baud);
+-
+-	spin_unlock_irqrestore(&uart->port.lock, flags);
+-}
+-
+-static const char *bfin_serial_type(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-	return uart->port.type == PORT_BFIN ? "BFIN-UART" : NULL;
+-}
+-
+-/*
+- * Release the memory region(s) being used by 'port'.
+- */
+-static void bfin_serial_release_port(struct uart_port *port)
+-{
+-}
+-
+-/*
+- * Request the memory region(s) being used by 'port'.
+- */
+-static int bfin_serial_request_port(struct uart_port *port)
+-{
+-	return 0;
+-}
+-
+-/*
+- * Configure/autoconfigure the port.
+- */
+-static void bfin_serial_config_port(struct uart_port *port, int flags)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-	if (flags & UART_CONFIG_TYPE &&
+-	    bfin_serial_request_port(&uart->port) == 0)
+-		uart->port.type = PORT_BFIN;
+-}
+-
+-/*
+- * Verify the new serial_struct (for TIOCSSERIAL).
+- * The only change we allow are to the flags and type, and
+- * even then only between PORT_BFIN and PORT_UNKNOWN
+- */
+-static int
+-bfin_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
+-{
+-	return 0;
+-}
+-
+-/*
+- * Enable the IrDA function if tty->ldisc.num is N_IRDA.
+- * In other cases, disable IrDA function.
+- */
+-static void bfin_serial_set_ldisc(struct uart_port *port,
+-				  struct ktermios *termios)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	unsigned int val;
+-
+-	switch (termios->c_line) {
+-	case N_IRDA:
+-		val = UART_GET_GCTL(uart);
+-		val |= (UMOD_IRDA | RPOLC);
+-		UART_PUT_GCTL(uart, val);
+-		break;
+-	default:
+-		val = UART_GET_GCTL(uart);
+-		val &= ~(UMOD_MASK | RPOLC);
+-		UART_PUT_GCTL(uart, val);
+-	}
+-}
+-
+-static void bfin_serial_reset_irda(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	unsigned int val;
+-
+-	val = UART_GET_GCTL(uart);
+-	val &= ~(UMOD_MASK | RPOLC);
+-	UART_PUT_GCTL(uart, val);
+-	SSYNC();
+-	val |= (UMOD_IRDA | RPOLC);
+-	UART_PUT_GCTL(uart, val);
+-	SSYNC();
+-}
+-
+-#ifdef CONFIG_CONSOLE_POLL
+-/* Anomaly notes:
+- *  05000099 -  Because we only use THRE in poll_put and DR in poll_get,
+- *		losing other bits of UART_LSR is not a problem here.
+- */
+-static void bfin_serial_poll_put_char(struct uart_port *port, unsigned char chr)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-
+-	while (!(UART_GET_LSR(uart) & THRE))
+-		cpu_relax();
+-
+-	UART_CLEAR_DLAB(uart);
+-	UART_PUT_CHAR(uart, (unsigned char)chr);
+-}
+-
+-static int bfin_serial_poll_get_char(struct uart_port *port)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	unsigned char chr;
+-
+-	while (!(UART_GET_LSR(uart) & DR))
+-		cpu_relax();
+-
+-	UART_CLEAR_DLAB(uart);
+-	chr = UART_GET_CHAR(uart);
+-
+-	return chr;
+-}
+-#endif
+-
+-static struct uart_ops bfin_serial_pops = {
+-	.tx_empty	= bfin_serial_tx_empty,
+-	.set_mctrl	= bfin_serial_set_mctrl,
+-	.get_mctrl	= bfin_serial_get_mctrl,
+-	.stop_tx	= bfin_serial_stop_tx,
+-	.start_tx	= bfin_serial_start_tx,
+-	.stop_rx	= bfin_serial_stop_rx,
+-	.break_ctl	= bfin_serial_break_ctl,
+-	.startup	= bfin_serial_startup,
+-	.shutdown	= bfin_serial_shutdown,
+-	.set_termios	= bfin_serial_set_termios,
+-	.set_ldisc	= bfin_serial_set_ldisc,
+-	.type		= bfin_serial_type,
+-	.release_port	= bfin_serial_release_port,
+-	.request_port	= bfin_serial_request_port,
+-	.config_port	= bfin_serial_config_port,
+-	.verify_port	= bfin_serial_verify_port,
+-#ifdef CONFIG_CONSOLE_POLL
+-	.poll_put_char	= bfin_serial_poll_put_char,
+-	.poll_get_char	= bfin_serial_poll_get_char,
+-#endif
+-};
+-
+-#if defined(CONFIG_SERIAL_BFIN_CONSOLE) || defined(CONFIG_EARLY_PRINTK)
+-/*
+- * If the port was already initialised (eg, by a boot loader),
+- * try to determine the current setup.
+- */
+-static void __init
+-bfin_serial_console_get_options(struct bfin_serial_port *uart, int *baud,
+-			   int *parity, int *bits)
+-{
+-	unsigned int status;
+-
+-	status = UART_GET_IER(uart) & (ERBFI | ETBEI);
+-	if (status == (ERBFI | ETBEI)) {
+-		/* ok, the port was enabled */
+-		u32 lcr, clk;
+-
+-		lcr = UART_GET_LCR(uart);
+-
+-		*parity = 'n';
+-		if (lcr & PEN) {
+-			if (lcr & EPS)
+-				*parity = 'e';
+-			else
+-				*parity = 'o';
+-		}
+-		*bits = ((lcr & WLS_MASK) >> WLS_OFFSET) + 5;
+-
+-		/* Set DLAB in LCR to Access CLK */
+-		UART_SET_DLAB(uart);
+-
+-		clk = UART_GET_CLK(uart);
+-
+-		/* Clear DLAB in LCR to Access THR RBR IER */
+-		UART_CLEAR_DLAB(uart);
+-
+-		*baud = get_sclk() / (16*clk);
+-	}
+-	pr_debug("%s:baud = %d, parity = %c, bits= %d\n", __func__, *baud, *parity, *bits);
+-}
+-
+-static struct uart_driver bfin_serial_reg;
+-
+-static void bfin_serial_console_putchar(struct uart_port *port, int ch)
+-{
+-	struct bfin_serial_port *uart = (struct bfin_serial_port *)port;
+-	while (!(UART_GET_LSR(uart) & THRE))
+-		barrier();
+-	UART_PUT_CHAR(uart, ch);
+-}
+-
+-#endif /* defined (CONFIG_SERIAL_BFIN_CONSOLE) ||
+-		 defined (CONFIG_EARLY_PRINTK) */
+-
+-#ifdef CONFIG_SERIAL_BFIN_CONSOLE
+-#define CLASS_BFIN_CONSOLE	"bfin-console"
+-/*
+- * Interrupts are disabled on entering
+- */
+-static void
+-bfin_serial_console_write(struct console *co, const char *s, unsigned int count)
+-{
+-	struct bfin_serial_port *uart = bfin_serial_ports[co->index];
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&uart->port.lock, flags);
+-	uart_console_write(&uart->port, s, count, bfin_serial_console_putchar);
+-	spin_unlock_irqrestore(&uart->port.lock, flags);
+-
+-}
+-
+-static int __init
+-bfin_serial_console_setup(struct console *co, char *options)
+-{
+-	struct bfin_serial_port *uart;
+-	int baud = 57600;
+-	int bits = 8;
+-	int parity = 'n';
+-# if defined(SERIAL_BFIN_CTSRTS) || \
+-	defined(SERIAL_BFIN_HARD_CTSRTS)
+-	int flow = 'r';
+-# else
+-	int flow = 'n';
+-# endif
+-
+-	/*
+-	 * Check whether an invalid uart number has been specified, and
+-	 * if so, search for the first available port that does have
+-	 * console support.
+-	 */
+-	if (co->index < 0 || co->index >= BFIN_UART_NR_PORTS)
+-		return -ENODEV;
+-
+-	uart = bfin_serial_ports[co->index];
+-	if (!uart)
+-		return -ENODEV;
+-
+-	if (options)
+-		uart_parse_options(options, &baud, &parity, &bits, &flow);
+-	else
+-		bfin_serial_console_get_options(uart, &baud, &parity, &bits);
+-
+-	return uart_set_options(&uart->port, co, baud, parity, bits, flow);
+-}
+-
+-static struct console bfin_serial_console = {
+-	.name		= BFIN_SERIAL_DEV_NAME,
+-	.write		= bfin_serial_console_write,
+-	.device		= uart_console_device,
+-	.setup		= bfin_serial_console_setup,
+-	.flags		= CON_PRINTBUFFER,
+-	.index		= -1,
+-	.data		= &bfin_serial_reg,
+-};
+-#define BFIN_SERIAL_CONSOLE	(&bfin_serial_console)
+-#else
+-#define BFIN_SERIAL_CONSOLE	NULL
+-#endif /* CONFIG_SERIAL_BFIN_CONSOLE */
+-
+-#ifdef	CONFIG_EARLY_PRINTK
+-static struct bfin_serial_port bfin_earlyprintk_port;
+-#define CLASS_BFIN_EARLYPRINTK	"bfin-earlyprintk"
+-
+-/*
+- * Interrupts are disabled on entering
+- */
+-static void
+-bfin_earlyprintk_console_write(struct console *co, const char *s, unsigned int count)
+-{
+-	unsigned long flags;
+-
+-	if (bfin_earlyprintk_port.port.line != co->index)
+-		return;
+-
+-	spin_lock_irqsave(&bfin_earlyprintk_port.port.lock, flags);
+-	uart_console_write(&bfin_earlyprintk_port.port, s, count,
+-		bfin_serial_console_putchar);
+-	spin_unlock_irqrestore(&bfin_earlyprintk_port.port.lock, flags);
+-}
+-
+-/*
+- * This should have a .setup or .early_setup in it, but then things get called
+- * without the command line options, and the baud rate gets messed up - so
+- * don't let the common infrastructure play with things. (see calls to setup
+- * & earlysetup in ./kernel/printk.c:register_console()
+- */
+-static struct console bfin_early_serial_console __initdata = {
+-	.name = "early_BFuart",
+-	.write = bfin_earlyprintk_console_write,
+-	.device = uart_console_device,
+-	.flags = CON_PRINTBUFFER,
+-	.index = -1,
+-	.data  = &bfin_serial_reg,
+-};
+-#endif
+-
+-static struct uart_driver bfin_serial_reg = {
+-	.owner			= THIS_MODULE,
+-	.driver_name		= DRIVER_NAME,
+-	.dev_name		= BFIN_SERIAL_DEV_NAME,
+-	.major			= BFIN_SERIAL_MAJOR,
+-	.minor			= BFIN_SERIAL_MINOR,
+-	.nr			= BFIN_UART_NR_PORTS,
+-	.cons			= BFIN_SERIAL_CONSOLE,
+-};
+-
+-static int bfin_serial_suspend(struct platform_device *pdev, pm_message_t state)
+-{
+-	struct bfin_serial_port *uart = platform_get_drvdata(pdev);
+-
+-	return uart_suspend_port(&bfin_serial_reg, &uart->port);
+-}
+-
+-static int bfin_serial_resume(struct platform_device *pdev)
+-{
+-	struct bfin_serial_port *uart = platform_get_drvdata(pdev);
+-
+-	return uart_resume_port(&bfin_serial_reg, &uart->port);
+-}
+-
+-static int bfin_serial_probe(struct platform_device *pdev)
+-{
+-	struct resource *res;
+-	struct bfin_serial_port *uart = NULL;
+-	int ret = 0;
+-
+-	if (pdev->id < 0 || pdev->id >= BFIN_UART_NR_PORTS) {
+-		dev_err(&pdev->dev, "Wrong bfin uart platform device id.\n");
+-		return -ENOENT;
+-	}
+-
+-	if (bfin_serial_ports[pdev->id] == NULL) {
+-
+-		uart = kzalloc(sizeof(*uart), GFP_KERNEL);
+-		if (!uart) {
+-			dev_err(&pdev->dev,
+-				"fail to malloc bfin_serial_port\n");
+-			return -ENOMEM;
+-		}
+-		bfin_serial_ports[pdev->id] = uart;
+-
+-#ifdef CONFIG_EARLY_PRINTK
+-		if (!(bfin_earlyprintk_port.port.membase
+-			&& bfin_earlyprintk_port.port.line == pdev->id)) {
+-			/*
+-			 * If the peripheral PINs of current port is allocated
+-			 * in earlyprintk probe stage, don't do it again.
+-			 */
+-#endif
+-		ret = peripheral_request_list(
+-			dev_get_platdata(&pdev->dev),
+-			DRIVER_NAME);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"fail to request bfin serial peripherals\n");
+-			goto out_error_free_mem;
+-		}
+-#ifdef CONFIG_EARLY_PRINTK
+-		}
+-#endif
+-
+-		spin_lock_init(&uart->port.lock);
+-		uart->port.uartclk   = get_sclk();
+-		uart->port.fifosize  = BFIN_UART_TX_FIFO_SIZE;
+-		uart->port.ops       = &bfin_serial_pops;
+-		uart->port.line      = pdev->id;
+-		uart->port.iotype    = UPIO_MEM;
+-		uart->port.flags     = UPF_BOOT_AUTOCONF;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (res == NULL) {
+-			dev_err(&pdev->dev, "Cannot get IORESOURCE_MEM\n");
+-			ret = -ENOENT;
+-			goto out_error_free_peripherals;
+-		}
+-
+-		uart->port.membase = ioremap(res->start, resource_size(res));
+-		if (!uart->port.membase) {
+-			dev_err(&pdev->dev, "Cannot map uart IO\n");
+-			ret = -ENXIO;
+-			goto out_error_free_peripherals;
+-		}
+-		uart->port.mapbase = res->start;
+-
+-		uart->tx_irq = platform_get_irq(pdev, 0);
+-		if (uart->tx_irq < 0) {
+-			dev_err(&pdev->dev, "No uart TX IRQ specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-
+-		uart->rx_irq = platform_get_irq(pdev, 1);
+-		if (uart->rx_irq < 0) {
+-			dev_err(&pdev->dev, "No uart RX IRQ specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-		uart->port.irq = uart->rx_irq;
+-
+-		uart->status_irq = platform_get_irq(pdev, 2);
+-		if (uart->status_irq < 0) {
+-			dev_err(&pdev->dev, "No uart status IRQ specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-
+-#ifdef CONFIG_SERIAL_BFIN_DMA
+-		spin_lock_init(&uart->rx_lock);
+-		uart->tx_done	    = 1;
+-		uart->tx_count	    = 0;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-		if (res == NULL) {
+-			dev_err(&pdev->dev, "No uart TX DMA channel specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-		uart->tx_dma_channel = res->start;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-		if (res == NULL) {
+-			dev_err(&pdev->dev, "No uart RX DMA channel specified\n");
+-			ret = -ENOENT;
+-			goto out_error_unmap;
+-		}
+-		uart->rx_dma_channel = res->start;
+-
+-		timer_setup(&uart->rx_dma_timer, bfin_serial_rx_dma_timeout, 0);
+-#endif
+-
+-#if defined(SERIAL_BFIN_CTSRTS) || \
+-	defined(SERIAL_BFIN_HARD_CTSRTS)
+-		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+-		if (res == NULL)
+-			uart->cts_pin = -1;
+-		else
+-			uart->cts_pin = res->start;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_IO, 1);
+-		if (res == NULL)
+-			uart->rts_pin = -1;
+-		else
+-			uart->rts_pin = res->start;
+-#endif
+-	}
+-
+-#ifdef CONFIG_SERIAL_BFIN_CONSOLE
+-	if (!is_early_platform_device(pdev)) {
+-#endif
+-		uart = bfin_serial_ports[pdev->id];
+-		uart->port.dev = &pdev->dev;
+-		dev_set_drvdata(&pdev->dev, uart);
+-		ret = uart_add_one_port(&bfin_serial_reg, &uart->port);
+-#ifdef CONFIG_SERIAL_BFIN_CONSOLE
+-	}
+-#endif
+-
+-	if (!ret)
+-		return 0;
+-
+-	if (uart) {
+-out_error_unmap:
+-		iounmap(uart->port.membase);
+-out_error_free_peripherals:
+-		peripheral_free_list(dev_get_platdata(&pdev->dev));
+-out_error_free_mem:
+-		kfree(uart);
+-		bfin_serial_ports[pdev->id] = NULL;
+-	}
+-
+-	return ret;
+-}
+-
+-static int bfin_serial_remove(struct platform_device *pdev)
+-{
+-	struct bfin_serial_port *uart = platform_get_drvdata(pdev);
+-
+-	dev_set_drvdata(&pdev->dev, NULL);
+-
+-	if (uart) {
+-		uart_remove_one_port(&bfin_serial_reg, &uart->port);
+-		iounmap(uart->port.membase);
+-		peripheral_free_list(dev_get_platdata(&pdev->dev));
+-		kfree(uart);
+-		bfin_serial_ports[pdev->id] = NULL;
+-	}
+-
+-	return 0;
+-}
+-
+-static struct platform_driver bfin_serial_driver = {
+-	.probe		= bfin_serial_probe,
+-	.remove		= bfin_serial_remove,
+-	.suspend	= bfin_serial_suspend,
+-	.resume		= bfin_serial_resume,
+-	.driver		= {
+-		.name	= DRIVER_NAME,
+-	},
+-};
+-
+-#if defined(CONFIG_SERIAL_BFIN_CONSOLE)
+-static struct early_platform_driver early_bfin_serial_driver __initdata = {
+-	.class_str = CLASS_BFIN_CONSOLE,
+-	.pdrv = &bfin_serial_driver,
+-	.requested_id = EARLY_PLATFORM_ID_UNSET,
+-};
+-
+-static int __init bfin_serial_rs_console_init(void)
+-{
+-	early_platform_driver_register(&early_bfin_serial_driver, DRIVER_NAME);
+-
+-	early_platform_driver_probe(CLASS_BFIN_CONSOLE, BFIN_UART_NR_PORTS, 0);
+-
+-	register_console(&bfin_serial_console);
+-
+-	return 0;
+-}
+-console_initcall(bfin_serial_rs_console_init);
+-#endif
+-
+-#ifdef CONFIG_EARLY_PRINTK
+-/*
+- * Memory can't be allocated dynamically during earlyprink init stage.
+- * So, do individual probe for earlyprink with a static uart port variable.
+- */
+-static int bfin_earlyprintk_probe(struct platform_device *pdev)
+-{
+-	struct resource *res;
+-	int ret;
+-
+-	if (pdev->id < 0 || pdev->id >= BFIN_UART_NR_PORTS) {
+-		dev_err(&pdev->dev, "Wrong earlyprintk platform device id.\n");
+-		return -ENOENT;
+-	}
+-
+-	ret = peripheral_request_list(dev_get_platdata(&pdev->dev),
+-					DRIVER_NAME);
+-	if (ret) {
+-		dev_err(&pdev->dev,
+-				"fail to request bfin serial peripherals\n");
+-			return ret;
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "Cannot get IORESOURCE_MEM\n");
+-		ret = -ENOENT;
+-		goto out_error_free_peripherals;
+-	}
+-
+-	bfin_earlyprintk_port.port.membase = ioremap(res->start,
+-						     resource_size(res));
+-	if (!bfin_earlyprintk_port.port.membase) {
+-		dev_err(&pdev->dev, "Cannot map uart IO\n");
+-		ret = -ENXIO;
+-		goto out_error_free_peripherals;
+-	}
+-	bfin_earlyprintk_port.port.mapbase = res->start;
+-	bfin_earlyprintk_port.port.line = pdev->id;
+-	bfin_earlyprintk_port.port.uartclk = get_sclk();
+-	bfin_earlyprintk_port.port.fifosize  = BFIN_UART_TX_FIFO_SIZE;
+-	spin_lock_init(&bfin_earlyprintk_port.port.lock);
+-
+-	return 0;
+-
+-out_error_free_peripherals:
+-	peripheral_free_list(dev_get_platdata(&pdev->dev));
+-
+-	return ret;
+-}
+-
+-static struct platform_driver bfin_earlyprintk_driver = {
+-	.probe		= bfin_earlyprintk_probe,
+-	.driver		= {
+-		.name	= DRIVER_NAME,
+-		.owner	= THIS_MODULE,
+-	},
+-};
+-
+-static struct early_platform_driver early_bfin_earlyprintk_driver __initdata = {
+-	.class_str = CLASS_BFIN_EARLYPRINTK,
+-	.pdrv = &bfin_earlyprintk_driver,
+-	.requested_id = EARLY_PLATFORM_ID_UNSET,
+-};
+-
+-struct console __init *bfin_earlyserial_init(unsigned int port,
+-						unsigned int cflag)
+-{
+-	struct ktermios t;
+-	char port_name[20];
+-
+-	if (port < 0 || port >= BFIN_UART_NR_PORTS)
+-		return NULL;
+-
+-	/*
+-	 * Only probe resource of the given port in earlyprintk boot arg.
+-	 * The expected port id should be indicated in port name string.
+-	 */
+-	snprintf(port_name, 20, DRIVER_NAME ".%d", port);
+-	early_platform_driver_register(&early_bfin_earlyprintk_driver,
+-		port_name);
+-	early_platform_driver_probe(CLASS_BFIN_EARLYPRINTK, 1, 0);
+-
+-	if (!bfin_earlyprintk_port.port.membase)
+-		return NULL;
+-
+-#ifdef CONFIG_SERIAL_BFIN_CONSOLE
+-	/*
+-	 * If we are using early serial, don't let the normal console rewind
+-	 * log buffer, since that causes things to be printed multiple times
+-	 */
+-	bfin_serial_console.flags &= ~CON_PRINTBUFFER;
+-#endif
+-
+-	bfin_early_serial_console.index = port;
+-	t.c_cflag = cflag;
+-	t.c_iflag = 0;
+-	t.c_oflag = 0;
+-	t.c_lflag = ICANON;
+-	t.c_line = port;
+-	bfin_serial_set_termios(&bfin_earlyprintk_port.port, &t, &t);
+-
+-	return &bfin_early_serial_console;
+-}
+-#endif /* CONFIG_EARLY_PRINTK */
+-
+-static int __init bfin_serial_init(void)
+-{
+-	int ret;
+-
+-	pr_info("Blackfin serial driver\n");
+-
+-	ret = uart_register_driver(&bfin_serial_reg);
+-	if (ret) {
+-		pr_err("failed to register %s:%d\n",
+-			bfin_serial_reg.driver_name, ret);
+-	}
+-
+-	ret = platform_driver_register(&bfin_serial_driver);
+-	if (ret) {
+-		pr_err("fail to register bfin uart\n");
+-		uart_unregister_driver(&bfin_serial_reg);
+-	}
+-
+-	return ret;
+-}
+-
+-static void __exit bfin_serial_exit(void)
+-{
+-	platform_driver_unregister(&bfin_serial_driver);
+-	uart_unregister_driver(&bfin_serial_reg);
+-}
+-
+-
+-module_init(bfin_serial_init);
+-module_exit(bfin_serial_exit);
+-
+-MODULE_AUTHOR("Sonic Zhang, Aubrey Li");
+-MODULE_DESCRIPTION("Blackfin generic serial port driver");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS_CHARDEV_MAJOR(BFIN_SERIAL_MAJOR);
+-MODULE_ALIAS("platform:bfin-uart");
+diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+index 1c8413f..82712d0 100644
+--- a/include/uapi/linux/serial_core.h
++++ b/include/uapi/linux/serial_core.h
+@@ -155,9 +155,6 @@
+ /* Xilinx uartlite */
+ #define PORT_UARTLITE	74
+ 
+-/* Blackfin bf5xx */
+-#define PORT_BFIN	75
+-
+ /* Micrel KS8695 */
+ #define PORT_KS8695	76
+ 
+@@ -167,9 +164,6 @@
+ /* Freescale ColdFire */
+ #define PORT_MCF	78
+ 
+-/* Blackfin SPORT */
+-#define PORT_BFIN_SPORT		79
+-
+ /* MN10300 on-chip UART numbers */
+ #define PORT_MN10300		80
+ #define PORT_MN10300_CTS	81
 -- 
 2.7.4
