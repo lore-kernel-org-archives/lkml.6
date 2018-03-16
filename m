@@ -1,110 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751572AbeCPLzi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:55:38 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46497 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbeCPLzf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:55:35 -0400
-X-Google-Smtp-Source: AG47ELtpMJe4OnWGVjRUhV/TGerZ/OP4JrpmYxhzczlC4qOUuBYl2SLAWBY8nu/GiE58By0Zbqj6Ug==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Reply-To: monstr@monstr.eu
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Michal Simek <monstr@monstr.eu>
-Subject: [GIT PULL] arch/microblaze fixes for 4.16-rc6
-Message-ID: <b30cd129-e617-ffe8-18a6-127d558a1abd@monstr.eu>
-Date: Fri, 16 Mar 2018 12:55:28 +0100
+        id S1751866AbeCPLz7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:55:59 -0400
+Received: from mail.phycore.de ([217.6.246.34]:46555 "EHLO root.phytec.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751758AbeCPLz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 07:55:58 -0400
+Subject: Re: [PATCH v3] mfd: rk808: Add restart functionality
+To: Daniel Schultz <d.schultz@phytec.de>, lee.jones@linaro.org
+Cc: zhangqing@rock-chips.com, xsf@rock-chips.com, tony.xie@rock-chips.com,
+        linux-kernel@vger.kernel.org
+References: <1521188783-14985-1-git-send-email-d.schultz@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <5cec78da-9b76-12fa-703a-bbaa90a6d58c@phytec.de>
+Date: Fri, 16 Mar 2018 12:49:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="SalikHoWNf2FWRTOVfV5WCm2UCS7MowbC"
+In-Reply-To: <1521188783-14985-1-git-send-email-d.schultz@phytec.de>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 16.03.2018 12:49:08,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 16.03.2018 12:49:08,
+        Serialize complete at 16.03.2018 12:49:08
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---SalikHoWNf2FWRTOVfV5WCm2UCS7MowbC
-Content-Type: multipart/mixed; boundary="tUeaOPzPESdBDkBe85Syic2uDehf5HpKy";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-ID: <b30cd129-e617-ffe8-18a6-127d558a1abd@monstr.eu>
-Subject: [GIT PULL] arch/microblaze fixes for 4.16-rc6
+Hi Daniel,
 
---tUeaOPzPESdBDkBe85Syic2uDehf5HpKy
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Am 16.03.2018 um 09:26 schrieb Daniel Schultz:
+> When using Rockchip SoCs with rk805/808/818 PMICs, restarts are realized by
+> setting the reset registers in the "Clock and Reset Unit".
+>
+> Since all three shutdown functions have almost the same code, all logic
+> from the shutdown functions can be refactored to a new function
+> "rk808_update_bits", which can update a register by a given address and
+> bitmask.
+>
+> After that, notifier blocks and the restart functions were added to the
+> driver. Like the shutdown function, the restart is bound to the
+> "rockchip,system-power-controller" device tree property and can easily
+> revoked to the software restart by removing the property.
+can you please split the changes into separate patches? One patch for
+the refactoring of the shutdown functions and one for the new
+system-reset-controller binding.
 
-Hi,
-
-please pull the following fixes to your tree to fix current issues.
-
-Thanks,
-Michal
-
-The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f=
-51:
-
-  Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
-
-are available in the git repository at:
-
-  git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-4.16-rc6
-
-for you to fetch changes up to 101646a24a2f9cdb61d7732459fbf068a7bbb542:
-
-  microblaze: switch to NO_BOOTMEM (2018-03-16 12:51:27 +0100)
-
-----------------------------------------------------------------
-Microblaze fixes for 4.16-rc6
-
-- Use NO_BOOTMEM to fix boot issue
-- Fix opt lib endian dependencies
-
-----------------------------------------------------------------
-Michal Simek (1):
-      microblaze: Setup dependencies for ASM optimized lib functions
-
-Rob Herring (2):
-      microblaze: remove unused alloc_maybe_bootmem
-      microblaze: switch to NO_BOOTMEM
-
- arch/microblaze/Kconfig             |  1 +
- arch/microblaze/Kconfig.platform    |  2 +-
- arch/microblaze/include/asm/setup.h |  1 -
- arch/microblaze/lib/fastcopy.S      |  4 ----
- arch/microblaze/mm/init.c           | 64
-++++++-------------------------------------------------
- 5 files changed, 8 insertions(+), 64 deletions(-)
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---tUeaOPzPESdBDkBe85Syic2uDehf5HpKy--
-
---SalikHoWNf2FWRTOVfV5WCm2UCS7MowbC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlqrsLAACgkQykllyylKDCFFdQCbBY9DstyXAaWYbjHWBHzxKeZQ
-iKcAnRNa2S1pE9ISi4Sf+WwuSY+70SZV
-=fVJh
------END PGP SIGNATURE-----
-
---SalikHoWNf2FWRTOVfV5WCm2UCS7MowbC--
+Regards,
+Wadim
