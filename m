@@ -1,114 +1,198 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521234008; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iYUI4NUrb8ymW0bvTJWIpJCPKaS97NWLK2/KwZc1RfjxcIg1B8piieSr/jpjLE8a75
-         9hY78GjYfgjFM7ALYLXyqZniRLJNyxtb3qxZmlHsAqhZZp0lb4fgA3of2kEWhJCXnT19
-         E0Ds/pTCHVpbPGo1mwAv2WfVzBxvEq8jKX8yPUXMF/AutdH4Pib047Vf6Hch722eRhbw
-         5dDcE8DEA8200BXp/nX6NJoGjOFArHLo0iUFl457ZdcP76w6K9ObReG957zqr0jJ9MGx
-         ygXUaNo3QRI+yB+n1AWBEZMloEZV7X13xddDzwZr1bT89ys7nZDMqyik2XFtorkuTaFF
-         o6FA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=lrqYO2JW9kGtklcSD+765RaibltLiGl9vsQCpB93Pt4=;
-        b=CTd2m+PlzFC/xuoq8A6OiXujV8/p1EwiP/VFXChCxk+sz8ZIXGOi/TNsmSCUC0I4U3
-         ZYtpXeTPC9i5ORoR7SCPuUAMZvrqoXsdpOz8kFYa00ErdEIfJ7dV9DCnDlyUvFbkp708
-         6qnoCMdnCZyfqmRpDyP4/biz1OncQNizu4RDm7SoC17QjQimsq6ZpRGE68iln4npOAcX
-         jXUwiJ9jtduJYJ86vS7tO3NOyNFofADu/VL/JtXT8j/tWa9bpeXD4PkLl33g3p9j3XFX
-         +eqZCQrU99wvABUqw8Mh3P2CGogsa5PJFfkysqPN3hZ2mLgB0q8Up8RVghWyT5iDtQ4e
-         UOQQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELsOfsZMdZ+wGp/3R+E1duNjt/FvV399HydCgygkUs4gCmmgmvmRGi6OMvrkGGY01vUzrj0V8w==
-Message-ID: <5aac3057.c1a31c0a.4eeff.5272@mx.google.com>
-Date: Fri, 16 Mar 2018 14:00:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-3.18.y
-X-Kernelci-Kernel: v3.18.99-26-g3074344a1906
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221924-2-7669260088619949485
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521221924; b=pqDJnJZoumzwiWRLIbUWjWFrVDz2SKLkoVBEoPU6rmChbRi
+    JnHirFYkPvU8lf8k71ysS0atedhXbbMBrekxhCVbHqhhfwITLXp7Qm5J+GB/AKO1
+    EvXA6lbUt+z2rNAPLBVuJ42vTTYpd3LK/L6gaMHK0vAvgDCZfvKCFSCgTFuyeZwT
+    5GuuHRKJQLu4BEuhrCwAQWTQv5UXOWAc9zf5ejD1iWuty6Ha8gmq4CVSrAZv+jAA
+    jcT4I4lnWeTJHEygQVJ4+YuPFdaJN/0tNvVwaeKpGkXc7E4+4E/XWoE2Fih42ecx
+    Vo9qYPQenDzx+xv6NZIpA5e9AYwB/YCdHsB+14A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521221924; bh=gpo7PQwJwmxEvecfCcGchFa1lp
+    84z4lQrQAiEWlbQf4=; b=atYxmUuWONbtmMnMTusoGU0/LVgYTQbDl76/cH+Rzo
+    903ckKcYc3F2OjI0kbDL+FYQowX4kr2UBaWFioTBFoZAD3+MvwK8Nli4ZJtHUy3S
+    s7LMd4KJJ1FEFi4Q/rcOu64Ja+SdLRr4Kw1jgfKl8L0bLbjuJaD+tZwMv462KLwt
+    w/DGSBpE3t6j+uYJkOel5FZSI9got7ax5PBlTrJz2ezmfmop2zWHTxxlZcAe5hwT
+    L/Dn2K3ao749NxtUlq5H6eN7qQbn6Le/T56lPFlS1fXVp03F/TGvLET5aGMK1p00
+    7Dlg4TFjGhuoSskMjgjG3RB2aI9i06YqIeARzDayVnxw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753250AbeCPPXZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:23:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60864 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752655AbeCPPXW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:23:22 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 01/25] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+Date: Fri, 16 Mar 2018 16:22:48 +0100
+Message-Id: <20180316152232.810047126@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
-Subject: Re: [PATCH 3.18 00/25] 3.18.100-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595108276054795320?=
-X-GMAIL-MSGID: =?utf-8?q?1595129471308167095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-3.18.y boot: 62 boots: 2 failed, 52 passed with 8 offline (=
-v3.18.99-26-g3074344a1906)
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--3.18.y/kernel/v3.18.99-26-g3074344a1906/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
-y/kernel/v3.18.99-26-g3074344a1906/
+------------------
 
-Tree: stable-rc
-Branch: linux-3.18.y
-Git Describe: v3.18.99-26-g3074344a1906
-Git Commit: 3074344a190695d392821dec4555e5ceacd2e22f
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 32 unique boards, 13 SoC families, 14 builds out of 167
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-Boot Regressions Detected:
+commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
 
-arm:
+This patch fixes NULL pointer crash due to active timer running for abort
+IOCB.
 
-    exynos_defconfig:
-        exynos5420-arndale-octa:
-            lab-baylibre-seattle: failing since 10 days (last pass: v3.18.9=
-6-14-g9fdaa6623e85 - first fail: v3.18.98)
+>From crash dump analysis it was discoverd that get_next_timer_interrupt()
+encountered a corrupted entry on the timer list.
 
-    multi_v7_defconfig:
-        tegra124-nyan-big:
-            lab-collabora: new failure (last pass: v3.18.99)
+ #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
+    [exception RIP: get_next_timer_interrupt+440]
+    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
+    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
+    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
+    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
+    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
+    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
 
-Boot Failures Detected:
+Looking at the assembly of get_next_timer_interrupt(), address came
+from %r8 (ffff95e1f6451188) which is pointing to list_head with single
+entry at ffff95e5ff621178.
 
-arm:
+ 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
+ 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
+ 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
+ 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
+ 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
 
-    multi_v7_defconfig
-        tegra124-nyan-big: 1 failed lab
+ crash> rd ffff95e1f6451188 10
+ ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
+ ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
+ ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
+ ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
+ ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
 
-    exynos_defconfig
-        exynos5420-arndale-octa: 1 failed lab
+ crash> rd ffff95e5ff621178 10
+ ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
+ ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
+ ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
+ ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
+ ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
 
-Offline Platforms:
+ ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
 
-arm:
+ CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
+ ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
+   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
+   FREE / [ALLOCATED]
+    ffff95e5ff621080  (cpu 6 cache)
 
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
+Examining the contents of that memory reveals a pointer to a constant string
+in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
 
-    multi_v7_defconfig:
-        am335x-boneblack: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
+ crash> rd ffffffffc059277c 20
+ ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
+ ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
+ ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
+ ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
+ ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
+ ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
+ ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
+ ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
+ ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
+ ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
 
-    sama5_defconfig:
-        at91-sama5d4ek: 1 offline lab
+ crash> struct -ox srb_iocb
+ struct srb_iocb {
+           union {
+               struct {...} logio;
+               struct {...} els_logo;
+               struct {...} tmf;
+               struct {...} fxiocb;
+               struct {...} abt;
+               struct ct_arg ctarg;
+               struct {...} mbx;
+               struct {...} nack;
+    [0x0 ] } u;
+    [0xb8] struct timer_list timer;
+    [0x108] void (*timeout)(void *);
+ }
+ SIZE: 0x110
 
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
+ crash> ! bc
+ ibase=16
+ obase=10
+ B8+40
+ F8
 
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
+The object is a srb_t, and at offset 0xf8 within that structure
+(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
 
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
+Cc: <stable@vger.kernel.org> #4.4+
+Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/scsi/qla2xxx/qla_init.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *
+ 	srb_t *sp = (srb_t *)ptr;
+ 	struct srb_iocb *abt = &sp->u.iocb_cmd;
+ 
++	del_timer(&sp->u.iocb_cmd.timer);
+ 	complete(&abt->u.abt.comp);
+ }
+ 
