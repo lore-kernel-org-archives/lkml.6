@@ -1,90 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeCPXFJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 19:05:09 -0400
-Received: from anholt.net ([50.246.234.109]:49586 "EHLO anholt.net"
+        id S1752869AbeCPXFr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 19:05:47 -0400
+Received: from linode.aoot.com ([69.164.194.13]:54470 "EHLO linode.aoot.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751413AbeCPXFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 19:05:06 -0400
-From: Eric Anholt <eric@anholt.net>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH] drm/vc4_validate: Remove VLA usage
-In-Reply-To: <20180313143151.GA27486@embeddedgus>
-References: <20180313143151.GA27486@embeddedgus>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Fri, 16 Mar 2018 16:05:03 -0700
-Message-ID: <87y3irvcyo.fsf@anholt.net>
+        id S1751454AbeCPXFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 19:05:46 -0400
+From: "Steve Wise" <swise@opengridcomputing.com>
+To: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
+        <timur@codeaurora.org>, <sulrich@codeaurora.org>
+Cc: <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>,
+        "'Jason Gunthorpe'" <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org> <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com> <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
+In-Reply-To: <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
+Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 16 Mar 2018 18:05:44 -0500
+Message-ID: <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6heAYll0hoCDc6xe6TXMBTg
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+> 
+> On 3/16/2018 5:05 PM, Steve Wise wrote:
+> >> Code includes wmb() followed by writel(). writel() already has a barrier
+> > on
+> >> some architectures like arm64.
+> >>
+> >> This ends up CPU observing two barriers back to back before executing
+> the
+> >> register write.
+> >>
+> >> Since code already has an explicit barrier call, changing writel() to
+> >> writel_relaxed().
+> >>
+> >> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> >
+> > NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
+> > writeX().
+> >
+> > I was just looking at this with Chelsio developers, and they said the
+> > writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
+> > get rid of the extra barrier for all architectures.
+> 
+> OK. I can do that but isn't the problem at PowerPC adaptation?
+> 
+> /*
+>  * We don't do relaxed operations yet, at least not with this semantic
+>  */
+> #define readb_relaxed(addr)	readb(addr)
+> #define readw_relaxed(addr)	readw(addr)
+> #define readl_relaxed(addr)	readl(addr)
+> #define readq_relaxed(addr)	readq(addr)
+> #define writeb_relaxed(v, addr)	writeb(v, addr)
+> #define writew_relaxed(v, addr)	writew(v, addr)
+> #define writel_relaxed(v, addr)	writel(v, addr)
+> #define writeq_relaxed(v, addr)	writeq(v, addr)
+> 
+> Why don't we fix the PowerPC's relaxed operators? Is that a bigger task?
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
+I don't know the answer, but perhaps the proper fix is to correctly implement these for PPC?
 
-> In preparation to enabling -Wvla, remove VLA. In this particular
-> case use macro ARRAY_SIZE so the length of array _bo_ can be
-> computed at preprocessing time.
->
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> or a security flaw. Also, in general, as code evolves it is easy to
-> lose track of how big a VLA can get. Thus, we can end up having runtime
-> failures that are hard to debug.
->
-> Also, fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_validate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_validate.c b/drivers/gpu/drm/vc4/vc4=
-_validate.c
-> index 2db485a..eec76af 100644
-> --- a/drivers/gpu/drm/vc4/vc4_validate.c
-> +++ b/drivers/gpu/drm/vc4/vc4_validate.c
-> @@ -753,7 +753,7 @@ validate_gl_shader_rec(struct drm_device *dev,
->  		28, /* cs */
->  	};
->  	uint32_t shader_reloc_count =3D ARRAY_SIZE(shader_reloc_offsets);
-> -	struct drm_gem_cma_object *bo[shader_reloc_count + 8];
-> +	struct drm_gem_cma_object *bo[ARRAY_SIZE(shader_reloc_offsets) + 8];
->  	uint32_t nr_attributes, nr_relocs, packet_size;
->  	int i;
->=20=20
-> --=20
-> 2.7.4
 
-It's a shame that the compiler is warning about this when it's obviously
-a compile-time constant.  Regardless, reviewed and applied.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqsTZ8ACgkQtdYpNtH8
-nug9bRAAjIn9pFHNaYECvcVFU6UJG/EKYMUvognThedYEk8I6Lak8CeFI8nZMXfx
-QyAphxjxCSn9LFbxHQ28RjuWGztOP44EHjDvpesKFThHSjQnoAhfiC5/WYFUOMqK
-4PK12fMtXMhGWLRIkIzUYUWer2q4Dkf6oeRTkwyu8WJfJ8xsAx1pcUCXw1m4kWdW
-vh5pK0lDJ+eXAVn0SWHx4RXFmF7iEyh5JuqbkjlKjylW5V5Rquy4vZKxTHw3jwBG
-JCLoi7c4iRPFwlTJTFgTYMA5dwJv1XKhXMVMxAQcrnCnCZFY0D8NA7PmgVPXSXyB
-SWOMUAOr5OqLnd5OcAFlqglBGJZOAJOKJdl/Rb3tNkPGke5E5hICH67vdrimldLc
-ZIrDRGTS4Fjq2gaQ6phorV3Ade1S8nqX0RonoOQnAedl3W923lURhj5RciEylEiS
-yJvU7kunhzsdfPbOdVWZozoj+BqssCKgxiD+T96I3vy4XP2R+8gSjFFkiSaNzibL
-EF1+NaCd7JESRld2jEolMYbLHtrrXOSqlfw2HAQV+lzqjXWby3NO7v2hzLti7Wmj
-3nHIYEXko/sKS73Zk4MJ0LiMQI/DfsnAF6EQzGXVO7uohHDBIqZUZzmdC+UE/c68
-wN6EyKbWp2mOchlae3HDUg7jLBMbwHFxwsU1RhtKTLCudjtrObM=
-=NzNK
------END PGP SIGNATURE-----
---=-=-=--
+> 
+> >From API perspective both __raw_writeX() and writeX_relaxed() are
+> correct.
+> It is just PowerPC doesn't seem the follow the definition yet.
