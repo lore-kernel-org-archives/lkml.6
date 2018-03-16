@@ -1,147 +1,93 @@
-Return-Path: <SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AG47ELvqtP/XYAH66b1mu+ntoTZjohgGAsJw8tkNensWr2MqZvRkEaVa7/UObjUvx+v8yyPRwYnA
-ARC-Seal: i=1; a=rsa-sha256; t=1521131580; cv=none;
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELv5TmtsQrYhFn1Gt2Cca0/b5YpbxiqI7odrB+iel4YcUK7YKlS7Y3xM70IIkphbMvJeGBGm
+ARC-Seal: i=1; a=rsa-sha256; t=1521190640; cv=none;
         d=google.com; s=arc-20160816;
-        b=j7Y4YrZ8BtgIhIHhDZ28f8EMCiIbCZUtB13UNRTyRZufJ6knl4M1M+xa86XXfN6+ts
-         APmIJcWlrc71wEQ0Wa6TluVOa26CkkHt6q4k7FcYkbIamoEiNv7DxLmYrePzIpFxOo4f
-         zxbyRAA+Ki8OvBP/bFGjBVzxbtMgXODbQdVpPDxlrky1/YnUchYr+jW3FyLw2GVzT1Sb
-         3QauaLUu8BH/lIRiN8Z4UFkZuT36uqvvT6T5oT3QIVuGUw0NsxB18rvyAxsHV8bQ00CM
-         4AI9pv20qd06NkBD7Dgjyw78aJRC+9eEpSeuttJBExAMQKXmhrMOzVaySNljl/acdEqP
-         J6gw==
+        b=QE5jtHh8gRV8Z5UThC/vUTqG08YGMCfX7sK/s40mmmSbxyH8zVZH9B80dywE3o1JIV
+         gZLabVJNtpCR1SEH8/LY0+1GuOiLMWs9sC3bPZo2ilUJtYksHTwRk3NtMTbdHl0D4AtJ
+         m0BOgEh8evoAI0C66Vj0k9oHYEgIHyEyr+2yDRjFMXo655/Gyxyjt2VjtaEShwRaj/p5
+         AHY+QhWiLP9ZrIEIZePRTHCC1ECBV3YszpA+1xxW0QXrxtStxX1N0M++86520TAIXodS
+         pl5ov4dZdC3X/8J9V+wDjeJ0ygxJf1Nan4PoWNdmEz0dI5QqlWQpgq/HCBTgUg6xfo9W
+         GeMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=message-id:content-language:content-transfer-encoding:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=hVGw4AyqMQxV2Q6S23g/OTAIRXdEJV1epeYv2NjCvo8=;
-        b=z30sBqm7q23bdWYtzlPiSM97bXyqkgkoMO/yLdYjlrsF322VfrdWwb7ppFIL1DMVnK
-         O8cC4hQgce0y2AaSP6NCoUmvDnpCCClEIHJ6IkzKYwgrRMTGIenakjN4qBUL9dYJ24TE
-         nU8C8Ff/O+DSIIFVX9+9v3QBsoHfxFx10cWsxVzLHC+gBLab/6cpPzz1b0yMpfVSomE+
-         Wy5CgUdg6H01KTPeH9H0aSioZqmB21C3RUou+W3yzxZ4nxCsOdPLsvFRAMyYxTr12dLH
-         nL8ZW4mYIBzkuC1lLbLsEUriTKmoFuJlqZA9oq39GbCWeFRO9FgKi1bjpaU1zfbpoR0c
-         YMBw==
+        bh=5ZWkYHrG9fN2fPsQ6Nj145IJQZIL9cBI12HHKsgxjsM=;
+        b=0r0p43bjtnU6D3nuR+HlNM6usuAjpRsNFcFgTKJt213TantiFgjlb7cYuiAprH8wmZ
+         XYdBpnNKfJEBtT7tab66/xxjcdXWGzZeORUijuhAuSAxWY4baYX1SHHts8DKjdnn6D1O
+         Y2SvHi/pI3FdzneSrsYLJni8CzRdmqxk6w1pv+f3+TBMY8D46Medj0OwbjWO+r8EA9sA
+         rcvXytfaZU633WVXePzo0OkdJ81+SR6nCHBEUX7JxXrehDyP+npIBBEdoyH55/JRiyMG
+         IZ7Pq8IBokOSbd+CzDKagoeaq5T8AIRpuZJRznpYNvawotavKPELauYQ88986dqbwarB
+         1fTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ddtq=gf=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ddtq=gf=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3461E204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 15 Mar 2018 12:32:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
- srikar@linux.vnet.ibm.com, acme@kernel.org, ananth@linux.vnet.ibm.com,
- akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
- alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
- gregkh@linuxfoundation.org, huawei.libin@huawei.com, hughd@google.com,
- jack@suse.cz, jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
- kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
- kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
- milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
- naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
- tglx@linutronix.de, tmricht@linux.vnet.ibm.com, willy@infradead.org,
- yao.jin@linux.intel.com, fengguang.wu@intel.com
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Subject: Re: [PATCH 4/8] Uprobe: Export uprobe_map_info along with
  uprobe_{build/free}_map_info()
-Message-ID: <20180315123255.17a8d997@vmware.local.home>
-In-Reply-To: <20180313125603.19819-5-ravi.bangoria@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com, acme@kernel.org, ananth@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+        gregkh@linuxfoundation.org, huawei.libin@huawei.com, hughd@google.com,
+        jack@suse.cz, jglisse@redhat.com, jolsa@redhat.com,
+        kan.liang@intel.com, kirill.shutemov@linux.intel.com,
+        kjlx@templeofstupid.com, kstewart@linuxfoundation.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@suse.com, milian.wolff@kdab.com,
+        mingo@redhat.com, namhyung@kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        pc@us.ibm.com, pombredanne@nexb.com, tglx@linutronix.de,
+        tmricht@linux.vnet.ibm.com, willy@infradead.org,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
-	<20180313125603.19819-5-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180313125603.19819-5-ravi.bangoria@linux.vnet.ibm.com>
+ <20180315123255.17a8d997@vmware.local.home>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Fri, 16 Mar 2018 14:29:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180315123255.17a8d997@vmware.local.home>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031608-0040-0000-0000-00000441D761
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031608-0041-0000-0000-000020E4E4E1
+Message-Id: <635d8d6d-0d2d-98a6-5fe4-44185aa560d8@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160110
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827156987945249?=
-X-GMAIL-MSGID: =?utf-8?q?1595022068030953763?=
+X-GMAIL-MSGID: =?utf-8?q?1595083996777461641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 13 Mar 2018 18:25:59 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
 
-> These exported data structure and functions will be used by other
-> files in later patches.
 
-I'm reluctantly OK with the above.
+On 03/15/2018 10:02 PM, Steven Rostedt wrote:
+> On Tue, 13 Mar 2018 18:25:59 +0530
+> Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+>
+>> These exported data structure and functions will be used by other
+>> files in later patches.
+> I'm reluctantly OK with the above.
+>
+>> No functionality changes.
+> Please remove this line. There are functionality changes. Turning a
+> static inline into an exported function *is* a functionality change.
 
-> 
-> No functionality changes.
+Sure. Will change it.
 
-Please remove this line. There are functionality changes. Turning a
-static inline into an exported function *is* a functionality change.
-
--- Steve
-
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-> ---
->  include/linux/uprobes.h |  9 +++++++++
->  kernel/events/uprobes.c | 14 +++-----------
->  2 files changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index 0a294e9..7bd2760 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -109,12 +109,19 @@ enum rp_check {
->  	RP_CHECK_RET,
->  };
->  
-> +struct address_space;
->  struct xol_area;
->  
->  struct uprobes_state {
->  	struct xol_area		*xol_area;
->  };
->  
-> +struct uprobe_map_info {
-> +	struct uprobe_map_info *next;
-> +	struct mm_struct *mm;
-> +	unsigned long vaddr;
-> +};
-> +
->  extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern bool is_swbp_insn(uprobe_opcode_t *insn);
-> @@ -149,6 +156,8 @@ struct uprobes_state {
->  extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
->  extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
->  					 void *src, unsigned long len);
-> +extern struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info);
-> +extern struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping, loff_t offset, bool is_register);
->  #else /* !CONFIG_UPROBES */
->  struct uprobes_state {
->  };
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 081b88c1..e7830b8 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -695,23 +695,15 @@ static void delete_uprobe(struct uprobe *uprobe)
->  	put_uprobe(uprobe);
->  }
->  
-> -struct uprobe_map_info {
-> -	struct uprobe_map_info *next;
-> -	struct mm_struct *mm;
-> -	unsigned long vaddr;
-> -};
-> -
-> -static inline struct uprobe_map_info *
-> -uprobe_free_map_info(struct uprobe_map_info *info)
-> +struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info)
->  {
->  	struct uprobe_map_info *next = info->next;
->  	kfree(info);
->  	return next;
->  }
->  
-> -static struct uprobe_map_info *
-> -uprobe_build_map_info(struct address_space *mapping, loff_t offset,
-> -		      bool is_register)
-> +struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping,
-> +					      loff_t offset, bool is_register)
->  {
->  	unsigned long pgoff = offset >> PAGE_SHIFT;
->  	struct vm_area_struct *vma;
+Thanks for the review,
+Ravi
