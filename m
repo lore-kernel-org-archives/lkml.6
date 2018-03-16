@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753746AbeCPROv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:14:51 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:42922 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933318AbeCPRG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:06:57 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 21/22] net: socket: add __compat_sys_recvmmsg() helper; remove in-kernel call to compat syscall
-Date: Fri, 16 Mar 2018 18:06:13 +0100
-Message-Id: <20180316170614.5392-22-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        id S932989AbeCPQ6h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:58:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53089 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932891AbeCPQ6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:58:34 -0400
+Date: Fri, 16 Mar 2018 16:58:31 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, luto@kernel.org, mingo@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH v2 02/36] kernel: use kernel_wait4() instead of
+ sys_wait4()
+Message-ID: <20180316165831.GV4449@wotan.suse.de>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-3-linux@dominikbrodowski.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315190529.20943-3-linux@dominikbrodowski.net>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __compat_sys_recvmmsg() allows us to avoid
-the internal calls to the compat_sys_recvmmsg() syscall.
+On Thu, Mar 15, 2018 at 08:04:55PM +0100, Dominik Brodowski wrote:
+> diff --git a/kernel/umh.c b/kernel/umh.c
+> index 18e5fa4b0e71..f4b557cadf08 100644
+> --- a/kernel/umh.c
+> +++ b/kernel/umh.c
+> @@ -135,7 +135,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+>  		 *
+>  		 * Thus the __user pointer cast is valid here.
+>  		 */
+> -		sys_wait4(pid, (int __user *)&ret, 0, NULL);
+> +		kernel_wait4(pid, (int __user *)&ret, 0, NULL);
+>  
+>  		/*
+>  		 * If ret is 0, either call_usermodehelper_exec_async failed and
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- net/compat.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+There is also a reference to sys_wait4() usage on umh.c:
 
-diff --git a/net/compat.c b/net/compat.c
-index cdf5b0c1b962..7b2ae42a1598 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -787,9 +787,9 @@ COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len
- 	return __compat_sys_recvfrom(fd, buf, len, flags, addr, addrlen);
- }
- 
--COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
--		       unsigned int, vlen, unsigned int, flags,
--		       struct compat_timespec __user *, timeout)
-+static int __compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
-+				 unsigned int vlen, unsigned int flags,
-+				 struct compat_timespec __user *timeout)
- {
- 	int datagrams;
- 	struct timespec ktspec;
-@@ -809,6 +809,13 @@ COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
- 	return datagrams;
- }
- 
-+COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
-+		       unsigned int, vlen, unsigned int, flags,
-+		       struct compat_timespec __user *, timeout)
-+{
-+	return __compat_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
-+}
-+
- COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- {
- 	u32 a[AUDITSC_ARGS];
-@@ -895,8 +902,8 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = compat_sys_recvmsg(a0, compat_ptr(a1), a[2]);
- 		break;
- 	case SYS_RECVMMSG:
--		ret = compat_sys_recvmmsg(a0, compat_ptr(a1), a[2], a[3],
--					  compat_ptr(a[4]));
-+		ret = __compat_sys_recvmmsg(a0, compat_ptr(a1), a[2], a[3],
-+					    compat_ptr(a[4]));
- 		break;
- 	case SYS_ACCEPT4:
- 		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), a[3]);
--- 
-2.16.2
+        /* If SIGCLD is ignored sys_wait4 won't populate the status. */         
+        kernel_sigaction(SIGCHLD, SIG_DFL);     
+
+Does that remain true for kernel_wait4()? If so that comment should be updated
+as well.
+
+I don't see any kdoc for kernel_wait4(), can you update it and also clarify to
+recommend it so that other users do the same? In fact not a kernel helper
+which just takes no last argument, and passes NULL to kernel_wait4() as well?
+
+  Luis
