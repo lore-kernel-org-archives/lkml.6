@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuIa/jmVnqKEEvw8DzTCazNW4r1+vf8eYplRZmHNYGF9VBvestWLqCWGZwLPR8Q6gdtnAK5
-ARC-Seal: i=1; a=rsa-sha256; t=1521214186; cv=none;
+X-Google-Smtp-Source: AG47ELs47+B3nJnsC2zWo4vTVvQ9zc4SIikT+Luyp99veNMBonHsoNbImUlMcDGVluL8KML5QNHG
+ARC-Seal: i=1; a=rsa-sha256; t=1521214183; cv=none;
         d=google.com; s=arc-20160816;
-        b=qPauwBeWAhbRsk+RvF3Ot2hJWz7JwW8xwNYeUTtnwz+CWkcyiqvcx8VeyVyowqmODE
-         xxj2MUfhjoWJcYvBhhlRmMwNODxzUMIhJPP8E+bX1ZWGgzlnDsRyrU2YFySEsTUKlGFU
-         ybSQ3DO5tfOIcAlO+DpHkQc6LRBdmVVTmAWmj88sjHyxV+TcFzUkKXtX+BX0kv0CDYNr
-         6MA/oR5Itk2iovqstXrHM26K9xbqPBT6NtsOkidK/B0byZoygd3RKqC39LL0kjVa29qs
-         ujXeMo1Ub1knXs3OIiSMBO9hNP3lsQAOfUcsR6CYvfR1bDd4NkbK6xSx7Rvumoy2TVxe
-         3GyQ==
+        b=cY3G0LSqqqF4qwbRCYAgEumZPGqj51jgd41WSSG9Rxvt1nWErCyKYXonJ59mk/gtal
+         gxJPVkWORgFQVHLPorEA776Gqtdi8g7uKjHM5hst2DC7A3lH5MzqAWYoLsBFDhhRO8WG
+         n13Obo5qzIrADsfCSIgThUHouevi6crQapOQYS8rqL3HoUwG7d8Z4E1rQaQP81LuQJcr
+         ii5+uUUUJ7XZQkrhgZl6B1miz5yaTLFxC31b/HRhoxUluz+Nw3IxHfoIbOO6RUm16OpX
+         2aKkYHXO6uRlTfWno+vPopGPXrCxdrMCq9Cgfo71BIbbuygdQsLK6OMDPF4ZBQjHb9G/
+         NeOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Cr8RtctnGSuDMI9kR+6ldufhQ5+dNMkAtQ9NImPVZhc=;
-        b=zvSVmXlpsCUG65N9NWFAg51NW4dYeO+w80BaA0uxNy+iDhn2jItCDJyj3FA3eNy1fp
-         0wfJWOHCv8OeVhz6T0EotfcWQoy9nPS2e3IGmdlSOeKIjd+CXKlSweQcxUqK/uAdOAtn
-         NwhyxGiOUMBObiFeQHoWsQSAEf2GYgxxlsY6OLeobY9prCWvex2eY0OoRL1Wwd5YD82U
-         tRf+0iyFn1eEDvXGylCkJnIALxmF0BDIN8DIDBy6owaRZmgr6OpyYCbdBArjGspG/YaP
-         ZK7RvBekbzHDHJYSzTRPauMEZwMxQ32670jbKrn+xbFTpnk9kzrP7Y9m5hTxpoEFobsu
-         fLhA==
+        bh=PJQfOBHYk83aQ9sZhIBCxh6Ex4yAsznT3H1RmAmod4Q=;
+        b=l58N3Ln+/P5UrbAjUPiK3iP1mtGwPlUEvSyKi1oHtCqOu53Uf+56PJW221LR6g2Gb/
+         S+Tql4tg4tfh7eAQykE6+scXBYE/wVHKqQwxHwGUiHhyVwlvxWbj/BG4vHEwkoLyqAU0
+         Blnm4PMCwoC105B9N4TbjPhKjICGPVjcl4Otru8QRP5kvagGC9t/SxloCDP08vXfcRD3
+         kjX0hcIZ3dGXP0sJ+TyHBBv9E0Ta7EWpIYmjqGfqLjRhLeiC/1r+MApG9cCLUPWx7nCM
+         ocYGz/sCZAXMlG/HydGYxRwDb6tZOhfMz4RXP5a2KFLMFDPCdMZtvrYofmAOS3p4qr6g
+         u8ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.4 48/63] NFS: Fix an incorrect type in struct nfs_direct_req
-Date: Fri, 16 Mar 2018 16:23:20 +0100
-Message-Id: <20180316152305.014966435@linuxfoundation.org>
+	Quinn Tran <quinn.tran@cavium.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 47/63] scsi: qla2xxx: Replace fcport alloc with qla2x00_alloc_fcport
+Date: Fri, 16 Mar 2018 16:23:19 +0100
+Message-Id: <20180316152304.947780386@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108686704578677?=
-X-GMAIL-MSGID: =?utf-8?q?1595108686704578677?=
+X-GMAIL-THRID: =?utf-8?q?1595108683086425811?=
+X-GMAIL-MSGID: =?utf-8?q?1595108683086425811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,31 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit d9ee65539d3eabd9ade46cca1780e3309ad0f907 upstream.
+commit 063b36d6b0ad74c748d536f5cb47bac2f850a0fa upstream.
 
-The start offset needs to be of type loff_t.
+Current code manually allocate an fcport structure that is not properly
+initialize. Replace kzalloc with qla2x00_alloc_fcport, so that all
+fields are initialized.  Also set set scan flag to port found
 
-Fixed: 5fadeb47dcc5c ("nfs: count DIO good bytes correctly with mirroring")
-Cc: stable@vger.kernel.org # v4.0+
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/direct.c |    2 +-
+ drivers/scsi/qla2xxx/qla_target.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -86,9 +86,9 @@ struct nfs_direct_req {
- 	struct nfs_direct_mirror mirrors[NFS_PAGEIO_DESCRIPTOR_MIRROR_MAX];
- 	int			mirror_count;
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -5502,7 +5502,7 @@ static fc_port_t *qlt_get_port_database(
+ 	fc_port_t *fcport;
+ 	int rc;
  
-+	loff_t			io_start;	/* Start offset for I/O */
- 	ssize_t			count,		/* bytes actually processed */
- 				bytes_left,	/* bytes left to be sent */
--				io_start,	/* start of IO */
- 				error;		/* any reported error */
- 	struct completion	completion;	/* wait for i/o completion */
- 
+-	fcport = kzalloc(sizeof(*fcport), GFP_KERNEL);
++	fcport = qla2x00_alloc_fcport(vha, GFP_KERNEL);
+ 	if (!fcport) {
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf06f,
+ 		    "qla_target(%d): Allocation of tmp FC port failed",
