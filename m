@@ -1,69 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214109-2-6900195013505215118
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214109; b=ruy+D/8Wzn6CsEVvt9XDS96Ljjt5lcjCLAftvfZeKFGcp+J
-    gJNNoQG//DcNUshMaTgdIesBg7LSfZ6+uNh3nMDmzzHnPddgGpF1DLmii7lls+eB
-    9T6gVYxS6WF3AN4HA+OYwu0FPQbc9JeQtKpjARSvmsRr+h2SGKeVlVuoP214txNg
-    y1tQ5j+FQXMh82zPvJpOVFkwKHEGaKNTL55mUvmzOi37WxIb1XZKunvi1VwFL+d7
-    jgwpGcBMbXKshBImBW/T/ounAir+ET2U2wUxrszBISNgwv9GCKryjcLAPjys/H/E
-    KMN+NpBOCawfsKnkc0y+aO25I3tB5BGkEle+kWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214109; bh=k2fZLwGNh6r2TRSHMyUsXztaDN
-    RHYwD2BOhsM2WRUWw=; b=Khp7jgFe2SDzy3HonKWj40/VG5a9NhpyW7cGIaY5rM
-    Iw6q3iuCwmH+0WYqHpeo1kQL9SVp4OLJtHhhyUVuAy9iOMqDSFskQWz7HXkFbs00
-    BJLf3ot6GxefOX35Jb7lWWOS99wwtcHvK+7/mWKHz5aSN255LXkT3Mat7GNAzxN+
-    nlW8KEFo0PNQDLPI34m2d/ucu+1p6LBbUa2yzq2asfcrTlOnEbs2M0hm3XOSG6cP
-    s9DfRwn0giwukNtSV9ursA/s5bh0ZfzyNQf3qzySg15Jx0z9qLGxABQ2yLlFyVLa
-    tepzaxhxEyOQDNbU6e4JW2l0jYAD26QlKG3TaeuP/Ttw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeCPP2Y (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:28:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35280 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932832AbeCPP2X (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:28:23 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuKZBcmTXhhF18IUh3b05hAV8vD8Zf7qBTbSE8SNiesKru4U29euaNXegzKPUfmJ8x/Fcf2
+ARC-Seal: i=1; a=rsa-sha256; t=1521214106; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gyJgQC5raWcUvYgTbGAYYmCpLw717fj+LCuMucnCaPjqT11H9T08mBkCYAIoZgo6Jv
+         1aaxxuv2SmvxLfj0fHUa/JjKvKmusISu9gpd8+JbzKJaSbGCE1Ohy2S2BW8iOXWSsX9F
+         qxLJXgmPUphuoZOX71TBTkPAzBr7qYviksftzaqbtBdzRuZaXKNuvMRX+bIev/Z8xvca
+         w6C8qv3cM2p4k046W6yJAepvnMoGHEhE/76QU+Xr4Zzy3ByCYWg3OIAzG1CJTvNLOxPI
+         ylqa83BnRlDBPkP+aFvsRLSsEtEpyBNhxuNcJ1JvULfXyJSXTSFSW1EkR9ySA5abV6Uf
+         43LQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=BPO/Dx5hrLZ8A6f4TJUpWOWxKMcZIGKgpX49B3xg4Ik=;
+        b=fnkfmDOuAgiOHpluVbLXT8ZDJZvXK9PoHFZYKEgsP7kj0dyC3BViivQQ3OTh/ndcMY
+         5Zly6etkZYG6kiL6EAZLKZgn5OSbAh7kpzdnXhX5YEX9CkIZHHbPqo9+6W1La8TZS0hF
+         HK9Ne/Jslt43XfUbnTcI2REwnLoNoVW8Wl3zs8AxQl5bU2sXGhd/BHclLv/urTPLbG8T
+         Pi480PZgpJwBHeAC9TsQfZ1K3fYtoqbVhvksam0Tf2W/Gko20niEajDIb9zR/LSvIbgf
+         pz1yAFDiScrlCkb7CT12K0EBx+D/Emm8Hzwfjv1yrpxHS6wqKkSVSHDT7W4QLpg6RjfX
+         +GyA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.4 14/63] MIPS: ath25: Check for kzalloc allocation failure
-Date: Fri, 16 Mar 2018 16:22:46 +0100
-Message-Id: <20180316152301.624796460@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Colin Ian King <colin.king@canonical.com>,
+	David Daney <david.daney@cavium.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	"Steven J. Hill" <Steven.Hill@cavium.com>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.4 15/63] MIPS: OCTEON: irq: Check for null return on kzalloc allocation
+Date: Fri, 16 Mar 2018 16:22:47 +0100
+Message-Id: <20180316152301.710281577@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -71,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108602604550470?=
+X-GMAIL-MSGID: =?utf-8?q?1595108602604550470?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -83,33 +55,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Colin Ian King <colin.king@canonical.com>
 
-commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
+commit 902f4d067a50ccf645a58dd5fb1d113b6e0f9b5b upstream.
 
-Currently there is no null check on a failed allocation of board_data,
-and hence a null pointer dereference will occurr. Fix this by checking
-for the out of memory null pointer.
+The allocation of host_data is not null checked, leading to a null
+pointer dereference if the allocation fails. Fix this by adding a null
+check and return with -ENOMEM.
 
-Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: David Daney <david.daney@cavium.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: "Steven J. Hill" <Steven.Hill@cavium.com>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.19+
-Patchwork: https://patchwork.linux-mips.org/patch/18657/
+Cc: <stable@vger.kernel.org> # 4.0+
+Patchwork: https://patchwork.linux-mips.org/patch/18658/
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ath25/board.c |    2 ++
+ arch/mips/cavium-octeon/octeon-irq.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/arch/mips/ath25/board.c
-+++ b/arch/mips/ath25/board.c
-@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2246,6 +2246,8 @@ static int __init octeon_irq_init_cib(st
  	}
  
- 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
-+	if (!board_data)
-+		goto error;
- 	ath25_board.config = (struct ath25_boarddata *)board_data;
- 	memcpy_fromio(board_data, bcfg, 0x100);
- 	if (broken_boarddata) {
+ 	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
++	if (!host_data)
++		return -ENOMEM;
+ 	raw_spin_lock_init(&host_data->lock);
+ 
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
