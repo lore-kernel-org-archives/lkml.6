@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs/CpWXoc8Uz336D/aAiFaFNRrM7+AAglzO3PWMWeuzpTYXPKYzG11iibNv62nTBU/p8ric
-ARC-Seal: i=1; a=rsa-sha256; t=1521214752; cv=none;
+X-Google-Smtp-Source: AG47ELsHoK9FtMLCBGP3XwvYtqbzUl6AW16GwoXG8DhINpD3jYcub30TPyuje5lmwgR3T20yf491
+ARC-Seal: i=1; a=rsa-sha256; t=1521214749; cv=none;
         d=google.com; s=arc-20160816;
-        b=bZiHU1NkOYCv19ead04JgvsZzTnai5ePn7PkGOrwqXUbRxQoCeKNrI6P2NemofBfnM
-         4Il54uCasRN9WClE9IbUwV4I2PnqgnGL1tLTfHrdXounovcGWg6qDBe2MeOub0QE9zw5
-         b9qVrBS0l4p9miB6K2GK3qZCLgvlCW/fdWNcuBqm5Yynq/XivvzcahoTcHjfQqfmZhNX
-         qSyhy2zobA4WqZuZhk18bYXxtfx/UTCkB0jEQ/wodgd5Pz27znNGgIAv+dYsnNyKEdAA
-         leGkdZtq1Bvk8qWmFd0InW4agg1rZPXE4zEQ85ZkGgNcM0QtRb63vy7sLliuAJktQTqy
-         o5Tg==
+        b=JwWBQSaU9/yyLsIGbbIXOPHRCYGljyp6BqKh8w8Oq9CE89CAPmezlwVWXC8q5H0qoY
+         56jOA0O+hiRx4eG4YGqLauZG0l9ir3hjMnKwi7o70mZEzdPEiB98rcGbNTl05EDhYl6o
+         mFIS51iWdgSYImWK4jI0RStJP6dbUWfwQ+ZMtoqcwLPVGhwm2F0tFR8QJohcrLG9ZwSm
+         U3AcBU5hy8OT8i8WyMP9DEuvXEtWKLnq3sjeik56S2SjPF8pKKWnVwEz9JZgIqlypG54
+         hqQPtF+Iqn9i+gxBAfEZaoDWbikTQut1MBydxjfzS53eGrPcuyNdmrOWDz44FzaAywMX
+         +C2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=twi7R1apnwLYHP3znhzOwMIqgK7Hvy3IFfBikVhFddc=;
-        b=sR3N6rZubZXKysuh5QRLa4fJZlC5H3IPqBhT/mdFWm081Qwv1hATvjeKmgYIfq8jwN
-         3R66WoaA2MFiEPZrAr1ZO2gLMcqmnW/eK8dkWi1aoCuypZxHY2spUIM7pwvVoNQ2PPIY
-         QWI5an3LtwOh3IcSAlq31NVJlNmDVOWJb5g2nwdV1xLp9QFWl9gmOyKgWTjrcRhbtVqA
-         2zyopCfwW8mLW1soAk4yLaNQh/7od+08i1xmdaORsc+rGTW5IDVauT/H9SNc3Yp+ypz7
-         mrrwOHcu99VSRK5tZo3gIqB2p62gIqSso0G3845J+0hSmVkPuS36u3RHMF2617xvXBS7
-         IU+Q==
+        bh=urA3f7pS8Z/ZZyLtadXe9CFv7orjvgbaLUdNcRF/XrI=;
+        b=OJHL/3cCTsLwfRsGY4XpE070pvVW5YWU8BpWhgQ3XookRAWCpLyNvYy6Zq65EbCfet
+         SKRYCNEvXKEwQI/yq0ZTQ6VpoTOgXIDmfokoTik/JfVgqPPHMFwBs6HaDe92sOAVa1YI
+         UkDJPuEQxEI3C2TZ+heZp4kfzV/J6yfSEBEuZxAHhXLsn093v6prfZUwLtQJyXPsxirI
+         IbADBUfqEa/a6UBNmwogwQCNk9Au0Li/yZqyxSZzs1O+eV62oaA8uBeKchYNKsi4pQb5
+         y5Jl7FxviZvnYpoEcEYnyya9HiDMsq+5VGzFUJoc4H+PKeJq7GGlQEP4UV+fWAF/frSd
+         94sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Anusha Srivatsa <anusha.srivatsa@intel.com>
-Subject: [PATCH 4.14 109/109] drm/i915/glk: Disable Guc and HuC on GLK
-Date: Fri, 16 Mar 2018 16:24:18 +0100
-Message-Id: <20180316152335.767835309@linuxfoundation.org>
+	Sinan Kaya <okaya@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 108/109] dmaengine: qcom_hidma: check pending interrupts
+Date: Fri, 16 Mar 2018 16:24:17 +0100
+Message-Id: <20180316152335.715008179@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109280552218707?=
-X-GMAIL-MSGID: =?utf-8?q?1595109280552218707?=
+X-GMAIL-THRID: =?utf-8?q?1595109277054772044?=
+X-GMAIL-MSGID: =?utf-8?q?1595109277054772044?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,99 +50,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anusha Srivatsa <anusha.srivatsa@intel.com>
+From: Sinan Kaya <okaya@codeaurora.org>
 
-commit 2afba81c7909ac259720c0d3e7616cf54d4a5368 upstream.
 
-Since the firmwares are not yet released to public repo,
-disable them on Geminilake.
+[ Upstream commit 38680bc6b1e3592bc9e18adc1d6e259667df27ce ]
 
-v2: Remove the firmware versions (Michal)
+Driver is missing the interrupts if two requests are queued up at the same
+time as the interrupt handler is servicing a request that was just
+delivered.
 
-v3: Remove unwanted defines (Rodrigo)
-Correct commit message (Michal)
+The ISR clears the interrupt at the end but it could be clearing the
+interrupt for an outstanding event. Therefore, second interrupt never
+arrives.
 
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Anusha Srivatsa <anusha.srivatsa@intel.com>
-Fixes: 90f192c8241e ("drm/i915/GuC/GLK: Load GuC on GLK")
-Fixes: db5ba0d8931e ("drm/i915/GLK/HuC: Load HuC on GLK")
-Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1515006225-13003-1-git-send-email-anusha.srivatsa@intel.com
-(cherry picked from commit a76050a4837860fcadb6ca11d69d41e08f4090d8)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Clear the interrupt first and then check for completions.
+
+Also, make sure that request start and interrupt clear do not overlap in
+time by using a spinlock.
+
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_guc_loader.c |    9 ---------
- drivers/gpu/drm/i915/intel_huc.c        |   11 -----------
- 2 files changed, 20 deletions(-)
+ drivers/dma/qcom/hidma_ll.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_guc_loader.c
-+++ b/drivers/gpu/drm/i915/intel_guc_loader.c
-@@ -61,9 +61,6 @@
- #define KBL_FW_MAJOR 9
- #define KBL_FW_MINOR 14
- 
--#define GLK_FW_MAJOR 10
--#define GLK_FW_MINOR 56
--
- #define GUC_FW_PATH(platform, major, minor) \
-        "i915/" __stringify(platform) "_guc_ver" __stringify(major) "_" __stringify(minor) ".bin"
- 
-@@ -76,8 +73,6 @@ MODULE_FIRMWARE(I915_BXT_GUC_UCODE);
- #define I915_KBL_GUC_UCODE GUC_FW_PATH(kbl, KBL_FW_MAJOR, KBL_FW_MINOR)
- MODULE_FIRMWARE(I915_KBL_GUC_UCODE);
- 
--#define I915_GLK_GUC_UCODE GUC_FW_PATH(glk, GLK_FW_MAJOR, GLK_FW_MINOR)
--
- 
- static u32 get_gttype(struct drm_i915_private *dev_priv)
+--- a/drivers/dma/qcom/hidma_ll.c
++++ b/drivers/dma/qcom/hidma_ll.c
+@@ -393,6 +393,8 @@ static int hidma_ll_reset(struct hidma_l
+  */
+ static void hidma_ll_int_handler_internal(struct hidma_lldev *lldev, int cause)
  {
-@@ -406,10 +401,6 @@ int intel_guc_select_fw(struct intel_guc
- 		guc->fw.path = I915_KBL_GUC_UCODE;
- 		guc->fw.major_ver_wanted = KBL_FW_MAJOR;
- 		guc->fw.minor_ver_wanted = KBL_FW_MINOR;
--	} else if (IS_GEMINILAKE(dev_priv)) {
--		guc->fw.path = I915_GLK_GUC_UCODE;
--		guc->fw.major_ver_wanted = GLK_FW_MAJOR;
--		guc->fw.minor_ver_wanted = GLK_FW_MINOR;
- 	} else {
- 		DRM_ERROR("No GuC firmware known for platform with GuC!\n");
- 		return -ENOENT;
---- a/drivers/gpu/drm/i915/intel_huc.c
-+++ b/drivers/gpu/drm/i915/intel_huc.c
-@@ -52,10 +52,6 @@
- #define KBL_HUC_FW_MINOR 00
- #define KBL_BLD_NUM 1810
- 
--#define GLK_HUC_FW_MAJOR 02
--#define GLK_HUC_FW_MINOR 00
--#define GLK_BLD_NUM 1748
--
- #define HUC_FW_PATH(platform, major, minor, bld_num) \
- 	"i915/" __stringify(platform) "_huc_ver" __stringify(major) "_" \
- 	__stringify(minor) "_" __stringify(bld_num) ".bin"
-@@ -72,9 +68,6 @@ MODULE_FIRMWARE(I915_BXT_HUC_UCODE);
- 	KBL_HUC_FW_MINOR, KBL_BLD_NUM)
- MODULE_FIRMWARE(I915_KBL_HUC_UCODE);
- 
--#define I915_GLK_HUC_UCODE HUC_FW_PATH(glk, GLK_HUC_FW_MAJOR, \
--	GLK_HUC_FW_MINOR, GLK_BLD_NUM)
--
- /**
-  * huc_ucode_xfer() - DMA's the firmware
-  * @dev_priv: the drm_i915_private device
-@@ -171,10 +164,6 @@ void intel_huc_select_fw(struct intel_hu
- 		huc->fw.path = I915_KBL_HUC_UCODE;
- 		huc->fw.major_ver_wanted = KBL_HUC_FW_MAJOR;
- 		huc->fw.minor_ver_wanted = KBL_HUC_FW_MINOR;
--	} else if (IS_GEMINILAKE(dev_priv)) {
--		huc->fw.path = I915_GLK_HUC_UCODE;
--		huc->fw.major_ver_wanted = GLK_HUC_FW_MAJOR;
--		huc->fw.minor_ver_wanted = GLK_HUC_FW_MINOR;
- 	} else {
- 		DRM_ERROR("No HuC firmware known for platform with HuC!\n");
++	unsigned long irqflags;
++
+ 	if (cause & HIDMA_ERR_INT_MASK) {
+ 		dev_err(lldev->dev, "error 0x%x, disabling...\n",
+ 				cause);
+@@ -410,6 +412,10 @@ static void hidma_ll_int_handler_interna
  		return;
+ 	}
+ 
++	spin_lock_irqsave(&lldev->lock, irqflags);
++	writel_relaxed(cause, lldev->evca + HIDMA_EVCA_IRQ_CLR_REG);
++	spin_unlock_irqrestore(&lldev->lock, irqflags);
++
+ 	/*
+ 	 * Fine tuned for this HW...
+ 	 *
+@@ -421,9 +427,6 @@ static void hidma_ll_int_handler_interna
+ 	 * Try to consume as many EVREs as possible.
+ 	 */
+ 	hidma_handle_tre_completion(lldev);
+-
+-	/* We consumed TREs or there are pending TREs or EVREs. */
+-	writel_relaxed(cause, lldev->evca + HIDMA_EVCA_IRQ_CLR_REG);
+ }
+ 
+ irqreturn_t hidma_ll_inthandler(int chirq, void *arg)
