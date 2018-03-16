@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215198-2-10546637287383391908
+X-Cyrus-Session-Id: sloti22d1t05-3303463-1521215179-2-9141646839008389539
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215198; b=kBhtkzj1F6hHcStaHy/vVyy76kpOEH3cOAoLAao5ietoacS
-    Lacxk5pWls6J2AbibfyUznwJbyykRhnns3YFL++6hNTznVoBmopqiE4/8h7NrJ/P
-    FKQGxIY22gbmIHGtcNy2eGnyBZvPU0Dw3LG8a6JlCSmsiykUc1gRoc7htLlHghoJ
-    HiEAaAr2t7CSy1SOpi+slrJAGeDoTaKkXCqnQz0j2c/lGUP3YGCy6AMQDLPjbm2N
-    2xzNwOXjyzEctyjof2o7StlTRceVY0gzqNNvb8i+atADweJrbRLKkmFOk0EQgrzO
-    PSffUOoE4j9CkYvM08siQ9fxYWgjahRG4ubTJgQ==
+    t=1521215178; b=qF468FYbpJu27h5HYBgsuw5kx4qAwPyirO3nagxXAe+DndZ
+    AcCY16PVRZxR4wxE3DPDHhl9o1gLUa8+8IMyyd+uPEUGzgXLWMJam0BJTygzbX+8
+    IGB7F0akXuOC9M/dCRg9FOwfiidCHA6wBc+KHpQTU3EcAn7s7CkBvXDVHrWzQB1q
+    zAlu59tYjloq+BEW9Y5HfsKCcRoXzkwR0+dwWfAmeLSgXVhwdu0xX6jhp6h1toGA
+    Apu4R102h3Cy5ZjidwzOgMvpphaXflgDLaqeCYDtL4iNIl0tuU2QzBl7qYgwJr8q
+    q8OIS13PYJL6IR8JzpC4AWGcIgiLVmIDfIvB8bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215198; bh=ECk3nVpFIPQEzm6NrpTOnbR4FU
-    C7JRjUcITFEb2xo98=; b=Lg1cPv2ChfD4kJpgi2Ps4Y61GmUal6J+ZTcGjH1ZJP
-    UBXEpiN0D99biNhdrv1NYzf1Ayp35Afn+nXmu3QTFYiI7Ap7ruhkEf5UAzOYyCQQ
-    7FCPA+os8BN/7y353n83eGxQJiKQIaMn3EpdcJDEBTrSlPF10AdYdzT3Q+w0eAuM
-    Um7xpcupl2i0Q/cIQSjdYpWJuJQS0vSJB8i7kak72mdEkQbySg1+dMZVP0cBJKcI
-    lnYyEKdRJfEwoG6oON8uufOyTYIrKbEqd9HRuLf1hecEFzQ33mP5+pWUb40UCH2e
-    PP3mBURhYa5hb5DWX5+6fINAEQ+8CqNm4DoawlRyVsNg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521215178; bh=jKiQkc5uKKa+S2kjl+3SfpqYIl
+    DMEEDmu/kb7zYEKCE=; b=iBLvVGxNIi0XGqW1R4lqlnuOKnjBM4mpLZDwwGPuFq
+    +YFlFs7ZbNIF4ErehgCBlT9a0XGCNeOEDOySIRNtdXEJv5JvK3dM9XnB77ZyP8Gd
+    ozTp33+nAKd6fgh/MXLv2kVPsn1Wj+cr7rUSWq1KW6b1dGV4A5iXw9x3D20KTsw0
+    AT/lVA3uI02/E1a06Pskt4gsA+i8Y7DBQQUwiqreguALkz1g1PKKP7Py063G2VUk
+    XEJCu9vn9bxHiwbyPYLiJPWh5NdqD8Q6+tJjXcZx575geviIu2vDOb333/DqBLKL
+    6bvTL/7MAREo4USB/2OifBHxXWkJNMXHWyDEX1vDDlOQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934430AbeCPPqZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:46:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46252 "EHLO
+        id S965114AbeCPPqC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:46:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933389AbeCPPpN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:13 -0400
+        with ESMTP id S934430AbeCPPpT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Amit Sikka <amit.sikka@ericsson.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 120/128] mmc: mmc_test: Ensure command queue is disabled for testing
-Date: Fri, 16 Mar 2018 16:24:21 +0100
-Message-Id: <20180316152342.427291611@linuxfoundation.org>
+Subject: [PATCH 4.15 122/128] ipvlan: add L2 check for packets arriving via virtual devices
+Date: Fri, 16 Mar 2018 16:24:23 +0100
+Message-Id: <20180316152342.514138115@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -81,43 +82,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Mahesh Bandewar <maheshb@google.com>
 
 
-[ Upstream commit 23a185254ace8e63dc4ca36e0315aed9440ae749 ]
+[ Upstream commit 92ff42645028fa6f9b8aa767718457b9264316b4 ]
 
-mmc_test disables the command queue because none of the tests use the
-command queue. However the Reset Test will re-enable it, so disable it in
-that case too.
+Packets that don't have dest mac as the mac of the master device should
+not be entertained by the IPvlan rx-handler. This is mostly true as the
+packet path mostly takes care of that, except when the master device is
+a virtual device. As demonstrated in the following case -
 
-Fixes: 9d4579a85c84 ("mmc: mmc_test: Disable Command Queue while mmc_test is used")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+  ip netns add ns1
+  ip link add ve1 type veth peer name ve2
+  ip link add link ve2 name iv1 type ipvlan mode l2
+  ip link set dev iv1 netns ns1
+  ip link set ve1 up
+  ip link set ve2 up
+  ip -n ns1 link set iv1 up
+  ip addr add 192.168.10.1/24 dev ve1
+  ip -n ns1 addr 192.168.10.2/24 dev iv1
+  ping -c2 192.168.10.2
+  <Works!>
+  ip neigh show dev ve1
+  ip neigh show 192.168.10.2 lladdr <random> dev ve1
+  ping -c2 192.168.10.2
+  <Still works! Wrong!!>
+
+This patch adds that missing check in the IPvlan rx-handler.
+
+Reported-by: Amit Sikka <amit.sikka@ericsson.com>
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/mmc_test.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/ipvlan/ipvlan_core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/mmc/core/mmc_test.c
-+++ b/drivers/mmc/core/mmc_test.c
-@@ -2328,10 +2328,17 @@ static int mmc_test_reset(struct mmc_tes
- 	int err;
- 
- 	err = mmc_hw_reset(host);
--	if (!err)
-+	if (!err) {
-+		/*
-+		 * Reset will re-enable the card's command queue, but tests
-+		 * expect it to be disabled.
-+		 */
-+		if (card->ext_csd.cmdq_en)
-+			mmc_cmdq_disable(card);
- 		return RESULT_OK;
--	else if (err == -EOPNOTSUPP)
-+	} else if (err == -EOPNOTSUPP) {
- 		return RESULT_UNSUP_HOST;
-+	}
- 
- 	return RESULT_FAIL;
- }
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -322,6 +322,10 @@ static int ipvlan_rcv_frame(struct ipvl_
+ 		if (dev_forward_skb(ipvlan->dev, skb) == NET_RX_SUCCESS)
+ 			success = true;
+ 	} else {
++		if (!ether_addr_equal_64bits(eth_hdr(skb)->h_dest,
++					     ipvlan->phy_dev->dev_addr))
++			skb->pkt_type = PACKET_OTHERHOST;
++
+ 		ret = RX_HANDLER_ANOTHER;
+ 		success = true;
+ 	}
