@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214643-2-3551872207750695704
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214642; b=P6brEYZUy2kxx5WWp5dIztdr66gYkQ4Lq0exf0t0iBq36wX
-    jhvww9MaT22q2oraFpxkv+0uNYmyL3HhsfhGKI643BShoFSFxVe/kZPwKZ1RUSIw
-    Se/AknoCpQH/1WPPj3Zs57BS7ZupWKPlgFFN49fuPymWyEMuml3seIgWEdr72uxc
-    sUJxKXRR56o+DMJOH8BVBCkgg64ayjDjsNjZ2LUsBmK5SFQUuoxJ2HAOzJzaKkYp
-    NphWuviw5YbrDBo+H4PHogHi+QSv11BHdYy7CG6EDL58tSgJbZlTbXE1GE+NW8eN
-    E28Ux36cZYsULqvcSel3+QROEMo3nKU6l+U7rWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214642; bh=6pXg3gg/TavSUSB3rOtDSHOzPZ
-    rtZd8c4za/VtNv2BY=; b=vgUf+6VOFQ/jh45GP0EWBh1Mt/qCJV32CeFVyVb/z+
-    5kaSddxl3g4DeznxP91+OmBdqpfgVxkcuzqW6EUuadhK949uamdbqY7iaCSVonXK
-    XfgFgot69KH5a2jM8upM+MBv3nOHXW0wnJODKIYvnRWm8ztmOGyMKswnNmLvkOZl
-    n8undepCoNcXMhwui/je94sHzeKot3JyosX/NHzy4JFwY7rEALOxRlO+golNEyqi
-    dxiQBSfd5YHGDxWCND37jcbu/MBdWOG6mdMyc4uG8W3xOWYHMjX3lnEtU+0z6tw4
-    Fq5sliC+Bg6JMHBAa0iRQQWpkPQev88bidCphJzpEWOg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934415AbeCPPhT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:37:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40980 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934414AbeCPPhR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:37:17 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtX431UJ5slwAxk5s8mt/bgZuSS3jlQmUBu1aODIUqXgSbAHD8CmujtBd4AmFyM4mG17JWj
+ARC-Seal: i=1; a=rsa-sha256; t=1521214634; cv=none;
+        d=google.com; s=arc-20160816;
+        b=IZZUBOjmoKazgJluAfR7hNK54LCXVzHeXuRFNH/rwgSLMK0nk20TfvSzo1Ayk2Yv+u
+         DQqZWAWAXunj8btt/JDX4Okqy8yceSi6roq4/LSG+RmbP5dwTN+gZyQarJH04i9PrDF4
+         oAUOyHgjQBgjhVDGkjsTJlVMWHeISZU0T51I4wwuFR0+5ZXaAHGH4RLsjbI6dPCBuXlJ
+         j9IE+9+qoOr1iwivIpoRgyDNG/jkUq7ShAmK94kHVmJh8zilriP6qWG6xYA+F3dVzaVB
+         /RaJj/7HHFxKPnRC7V5gZJf0NRsKgqBUQVzwCoqC6qq3BdQh4WDqteAs3I19yxjnERP0
+         zpNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=FTixEfjeYvunf87pW3WIH+MIrJZ3i/BzS29EzPC4YVo=;
+        b=tW9OvFJwaAMTdiOJvKN81KnnLhGNtk1yaBXkGP0aOjjwScdkmPihYPyWWMtGREneVQ
+         pD377YOmEh/UNcnPB2B5BhPNU68NeYSaOeM9d+iws0G2YGsrKV4UZG4MD+MFMgpdpnpz
+         Zf3jgTsFjZaAdqgw9MBFpVj0rZzhEz35Mi5wsH0yu/20a2XTy+f6c5WGUB19F9i0sZ5x
+         6RzFp19QZLjwAvzzG8S2U2yG0UBuy2X/M+n1a+9t4CtdfDtQtVcB4G9R1P6DaF5qR8rR
+         XYDU8MPLNtK33L+IKfRQmViw50OAuBRPR3q97tOcmhpt8XJ2QcN+UAmWuMChJReFA5BF
+         Rseg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Limin Zhu <liminzhu@marvell.com>,
-        Xinming Hu <huxm@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/109] mwifiex: cfg80211: do not change virtual interface during scan processing
-Date: Fri, 16 Mar 2018 16:23:46 +0100
-Message-Id: <20180316152334.161595342@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 076/109] clk: qcom: msm8916: fix mnd_width for codec_digcodec
+Date: Fri, 16 Mar 2018 16:23:45 +0100
+Message-Id: <20180316152334.107955167@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109156723385177?=
+X-GMAIL-MSGID: =?utf-8?q?1595109156723385177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,45 +50,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Limin Zhu <liminzhu@marvell.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
-[ Upstream commit c61cfe49f0f0f0d1f8b56d0b045838d597e8c3a3 ]
+[ Upstream commit d8e488e8242ecf129eebc440c92d800a99ca109d ]
 
-(1) Change virtual interface operation in cfg80211 process reset and
-reinitilize private data structure.
-(2) Scan result event processed in main process will dereference private
-data structure concurrently, ocassionly crash the kernel.
+This patch fixes missing mnd_width for codec_digital clk, this is now set to
+8 inline with datasheet.
 
-The cornel case could be trigger by below steps:
-(1) wpa_cli mlan0 scan
-(2) ./hostapd mlan0.conf
-
-Cfg80211 asynchronous scan procedure is not all the time operated
-under rtnl lock, here we add the protect to serialize the cfg80211
-scan and change_virtual interface operation.
-
-Signed-off-by: Limin Zhu <liminzhu@marvell.com>
-Signed-off-by: Xinming Hu <huxm@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/qcom/gcc-msm8916.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -1116,6 +1116,12 @@ mwifiex_cfg80211_change_virtual_intf(str
- 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
- 	enum nl80211_iftype curr_iftype = dev->ieee80211_ptr->iftype;
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1438,6 +1438,7 @@ static const struct freq_tbl ftbl_codec_
  
-+	if (priv->scan_request) {
-+		mwifiex_dbg(priv->adapter, ERROR,
-+			    "change virtual interface: scan in process\n");
-+		return -EBUSY;
-+	}
-+
- 	switch (curr_iftype) {
- 	case NL80211_IFTYPE_ADHOC:
- 		switch (type) {
+ static struct clk_rcg2 codec_digcodec_clk_src = {
+ 	.cmd_rcgr = 0x1c09c,
++	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
+ 	.freq_tbl = ftbl_codec_clk,
