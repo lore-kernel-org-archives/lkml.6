@@ -1,67 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752541AbeCPQXu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:23:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56419 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbeCPQXr (ORCPT
+        id S1752031AbeCPQY2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:24:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39144 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934698AbeCPQQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:23:47 -0400
-Date: Fri, 16 Mar 2018 17:23:44 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [RT PATCH 1/2 v2] kernel/cpu_chill: use schedule_hrtimeout()
-Message-ID: <20180316162344.v5yzinu6jtuwbc3v@linutronix.de>
-References: <20180316142135.9664-1-bigeasy@linutronix.de>
- <alpine.DEB.2.21.1803161549390.1598@nanos.tec.linutronix.de>
+        Fri, 16 Mar 2018 12:16:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 083AE60F71
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 05/18] ixgbevf: keep writel() closer to wmb()
+Date: Fri, 16 Mar 2018 12:16:18 -0400
+Message-Id: <1521216991-28706-6-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803161549390.1598@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a task calls cpu_chill() and gets woken up by a regular or spurious
-wakeup and has a signal pending, then it exits the sleep loop in
-do_nanosleep() and sets up the restart block. If restart->nanosleep.type is
-not TI_NONE then this results in accessing a stale user pointer from a
-previously interrupted syscall and a copy to user based on the stale
-pointer or a BUG() when 'type' is not supported in nanosleep_copyout().
+Remove ixgbevf_write_tail() in favor of moving writel() close to
+wmb().
 
-Instead all this trouble, use schedule_hrtimeout().
-
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- kernel/time/hrtimer.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 6c77643eaf02..c0efc22ba635 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1873,14 +1873,13 @@ COMPAT_SYSCALL_DEFINE2(nanosleep, struct compat_timespec __user *, rqtp,
-  */
- void cpu_chill(void)
- {
--	struct timespec64 tu = {
--		.tv_nsec = NSEC_PER_MSEC,
--	};
-+	ktime_t chill_time;
- 	unsigned int freeze_flag = current->flags & PF_NOFREEZE;
- 
-+	chill_time = ktime_set(0, NSEC_PER_MSEC);
-+	set_current_state(TASK_UNINTERRUPTIBLE);
- 	current->flags |= PF_NOFREEZE;
--	__hrtimer_nanosleep(&tu, HRTIMER_MODE_REL_HARD, CLOCK_MONOTONIC,
--			    TASK_UNINTERRUPTIBLE);
-+	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
- 	if (!freeze_flag)
- 		current->flags &= ~PF_NOFREEZE;
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
+index f695242..11e893e 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
+@@ -244,11 +244,6 @@ static inline u16 ixgbevf_desc_unused(struct ixgbevf_ring *ring)
+ 	return ((ntc > ntu) ? 0 : ring->count) + ntc - ntu - 1;
  }
+ 
+-static inline void ixgbevf_write_tail(struct ixgbevf_ring *ring, u32 value)
+-{
+-	writel(value, ring->tail);
+-}
+-
+ #define IXGBEVF_RX_DESC(R, i)	\
+ 	(&(((union ixgbe_adv_rx_desc *)((R)->desc))[i]))
+ #define IXGBEVF_TX_DESC(R, i)	\
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 9b3d43d..6bf778a 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -659,7 +659,7 @@ static void ixgbevf_alloc_rx_buffers(struct ixgbevf_ring *rx_ring,
+ 		 * such as IA-64).
+ 		 */
+ 		wmb();
+-		ixgbevf_write_tail(rx_ring, i);
++		writel(i, rx_ring->tail);
+ 	}
+ }
+ 
+@@ -3644,7 +3644,7 @@ static void ixgbevf_tx_map(struct ixgbevf_ring *tx_ring,
+ 	tx_ring->next_to_use = i;
+ 
+ 	/* notify HW of packet */
+-	ixgbevf_write_tail(tx_ring, i);
++	writel(i, tx_ring->tail);
+ 
+ 	return;
+ dma_error:
 -- 
-2.16.2
+2.7.4
