@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsbA7NydqXadrzyNgetlJZZVAM/BLMrMrkiu5J/XkTauAwQSgbxHCT1AS8Nc69LovkIPApG
-ARC-Seal: i=1; a=rsa-sha256; t=1521214471; cv=none;
+X-Google-Smtp-Source: AG47ELsgNp0eYY3nQ7hWDBldHNcwGfbJn5uqmj25YwQLuUtiIzy6F1FB8zrP9aqCGaD0QfUnE89j
+ARC-Seal: i=1; a=rsa-sha256; t=1521214468; cv=none;
         d=google.com; s=arc-20160816;
-        b=L4HDm575ELePRRIT+5t416TgLoXWT0nghqOzB7zHchxptxCsAA+W+6FNIkPTCYmPYu
-         yk3u96Z7hEGitcQpAp/r4aeVR+tpoMkHkRjnHQ/bGKE18on2fSbI6SBs5GjysYuvJHWO
-         daU6NUmXzuknEy/feREAsF/UQ83HUBgwmYESwd7MdN7p8tMv3bNpEqfW9uT9fB/WLJuz
-         2UrZxkrXXlJXvclH8/7b4uuKloiEKhoOL1wcMQ4lwP9M72Qr+gwuN69ED2M6+qh/6kVr
-         GTluPFEGItmsN+geWQDE7vOjtMssvsVGqvm0O71aquvZGYqoczr2a+E4I5vIzv0dCu3d
-         u8Iw==
+        b=TObZZUnbyhtpgNJROekGPAtlCHzdvvpljKUZKqLnAKZiRY3jd+jVfJ4LrA9Kt8KIUp
+         RE/AZE1ZWTSWxLQbbLoXKjS87FdFrFQf4ky7LCCYnvVaESyaRz5g6ReIp5zuuAjeaMSM
+         ePlKPhebbdF3tiJHCHLfSG8f2TYS2AAvoYZ4iIvWzRA1U76RRQFt35Q1z+I/x/Xcv2NR
+         S5V4sxaLTiGp1BbUbFDM53ayHQ7EDtbKlUPjfB9rH7yqIRvZro0IcQyCZ6OASIdjxYzr
+         s366/H83dwkkLoK+yIHfD7eig1+1KoSNFsClVZzh7URJcFyXVi0yujysJKNi+wGBpKUe
+         4JRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=s6pa9uZY21OWX4Nb/GkNe0jPmgFAHCsOePJ47s+hAsQ=;
-        b=fHgQbBbIG3HjneuYd5z2c3bHivUqPvQa2+zh3RrO6/03wOkj789jHM2aQimtlPJDqZ
-         i/zjogv+FvfsSXJTSHLOfLDgHeKe7CDkik5OJYWUuPBui9uZdCoD8dvC+dB+GGcQ1tGN
-         2okBq7KOy6Lw/wIm1nWwOuuQrG41X0Nvof6kneXeh9wIJqPOB4+bJTRjD1iBXp9NK8G1
-         7xZCP6T3WytvzzB2+/6cL7E2fAK+q7Hzzh9uSs+fR0okhfVdZXC7PEMnPMzSW8XLqVe7
-         IutizYUCp3pNlF4xZ8V6uggR0FD5D/G0PN6I2VlkAhxKUuqr2Eppo/s1NTM9DPuflccp
-         ovUw==
+        bh=olBELvh8ioKfbZC3ytkMw7qCP4wTn5OToXi2snbO010=;
+        b=hYDiXDA/doVU13mjviOovNcA5vctGoR31hL9+4rORi0L4yPziyHzTYAEzQ4XWJgiik
+         nhisBkI3SVyZa81+Ixx5eRswzJR+9pMuD+2VdO7wKqaPrvM+r6pXXysTSvMr2TCWdQVQ
+         N82ZmQvwVB8Es/z8PHK57Tp7JyxaqKW01vOEucJD5ie99u9+X6AkcAh1FH+H3LyUlz5G
+         MLSssteZ3giYXhZwY/aot7D9fjAlaliTxUdldROuWYRk2xkX8drlnL38Tg6xDZXqtxEg
+         d4+Deao+NbJZV99PmKsyFgbnNT7S6yqBViZ7v7bh/b4Cm7tUw0ND0C0gd2gOJTLDZaMb
+         AQdA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fredrik Noring <noring@nocrew.org>,
-	Pete Zaitcev <zaitcev@redhat.com>
-Subject: [PATCH 4.14 019/109] usb: usbmon: Read text within supplied buffer size
-Date: Fri, 16 Mar 2018 16:22:48 +0100
-Message-Id: <20180316152331.000616179@linuxfoundation.org>
+	Danilo Krummrich <danilokrummrich@dk-develop.de>
+Subject: [PATCH 4.14 018/109] usb: quirks: add control message delay for 1b1c:1b20
+Date: Fri, 16 Mar 2018 16:22:47 +0100
+Message-Id: <20180316152330.951548543@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108322348681273?=
-X-GMAIL-MSGID: =?utf-8?q?1595108986285202958?=
+X-GMAIL-THRID: =?utf-8?q?1595108316565102090?=
+X-GMAIL-MSGID: =?utf-8?q?1595108982678119810?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,181 +48,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pete Zaitcev <zaitcev@kotori.zaitcev.us>
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
-commit a5f596830e27e15f7a0ecd6be55e433d776986d8 upstream.
+commit cb88a0588717ba6c756cb5972d75766b273a6817 upstream.
 
-This change fixes buffer overflows and silent data corruption with the
-usbmon device driver text file read operations.
+Corsair Strafe RGB keyboard does not respond to usb control messages
+sometimes and hence generates timeouts.
 
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
-Cc: stable <stable@vger.kernel.org>
+Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
+Strafe RGB keyboard") tried to fix those timeouts by adding
+USB_QUIRK_DELAY_INIT.
+
+Unfortunately, even with this quirk timeouts of usb_control_msg()
+can still be seen, but with a lower frequency (approx. 1 out of 15):
+
+[   29.103520] usb 1-8: string descriptor 0 read error: -110
+[   34.363097] usb 1-8: can't set config #1, error -110
+
+Adding further delays to different locations where usb control
+messages are issued just moves the timeouts to other locations,
+e.g.:
+
+[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
+[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
+
+The only way to reliably avoid those issues is having a pause after
+each usb control message. In approx. 200 boot cycles no more timeouts
+were seen.
+
+Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
+to have the delay in hub_port_connect() after hub_port_init().
+
+The overall boot time seems not to be influenced by these additional
+delays, even on fast machines and lightweight distributions.
+
+Fixes: de3af5bf259d ("usb: quirks: add delay init quirk for Corsair Strafe RGB keyboard")
+Cc: stable@vger.kernel.org
+Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/mon/mon_text.c |  124 +++++++++++++++++++++++++++------------------
- 1 file changed, 77 insertions(+), 47 deletions(-)
+ drivers/usb/core/message.c |    4 ++++
+ drivers/usb/core/quirks.c  |    3 ++-
+ include/linux/usb/quirks.h |    3 +++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -85,6 +85,8 @@ struct mon_reader_text {
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -150,6 +150,10 @@ int usb_control_msg(struct usb_device *d
  
- 	wait_queue_head_t wait;
- 	int printf_size;
-+	size_t printf_offset;
-+	size_t printf_togo;
- 	char *printf_buf;
- 	struct mutex printf_lock;
+ 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
  
-@@ -376,75 +378,103 @@ err_alloc:
- 	return rc;
- }
++	/* Linger a bit, prior to the next control message. */
++	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
++		msleep(200);
++
+ 	kfree(dr);
  
--/*
-- * For simplicity, we read one record in one system call and throw out
-- * what does not fit. This means that the following does not work:
-- *   dd if=/dbg/usbmon/0t bs=10
-- * Also, we do not allow seeks and do not bother advancing the offset.
-- */
-+static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
-+    char __user * const buf, const size_t nbytes)
-+{
-+	const size_t togo = min(nbytes, rp->printf_togo);
-+
-+	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
-+		return -EFAULT;
-+	rp->printf_togo -= togo;
-+	rp->printf_offset += togo;
-+	return togo;
-+}
-+
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_t(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
+ 	return ret;
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -229,7 +229,8 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
  
--	ep = mon_text_read_wait(rp, file);
--	if (IS_ERR(ep))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
--
--	mon_text_read_head_t(rp, &ptr, ep);
--	mon_text_read_statset(rp, &ptr, ep);
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
+ 	/* Corsair Strafe RGB */
+-	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
++	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
  
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+	if (rp->printf_togo == 0) {
-+
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_t(rp, &ptr, ep);
-+		mon_text_read_statset(rp, &ptr, ep);
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
-+	}
-+
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
+ 	/* Corsair K70 LUX */
+ 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -57,4 +57,7 @@
+  */
+ #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
  
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_u(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
- 
--	ep = mon_text_read_wait(rp, file);
--	if (IS_ERR(ep))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
- 
--	mon_text_read_head_u(rp, &ptr, ep);
--	if (ep->type == 'E') {
--		mon_text_read_statset(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
--		mon_text_read_isostat(rp, &ptr, ep);
--		mon_text_read_isodesc(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
--		mon_text_read_intstat(rp, &ptr, ep);
--	} else {
--		mon_text_read_statset(rp, &ptr, ep);
-+	if (rp->printf_togo == 0) {
++/* Device needs a pause after every control message. */
++#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
 +
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_u(rp, &ptr, ep);
-+		if (ep->type == 'E') {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
-+			mon_text_read_isostat(rp, &ptr, ep);
-+			mon_text_read_isodesc(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
-+			mon_text_read_intstat(rp, &ptr, ep);
-+		} else {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		}
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
- 	}
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
- 
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
- 
- static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
+ #endif /* __LINUX_USB_QUIRKS_H */
