@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6oUUAKVhXXGTZct9cZyvgxBWuyRzV1hP+bRqdlYx1hnsIo7GH0anSURuXIc6Kp87Rxab2
-ARC-Seal: i=1; a=rsa-sha256; t=1521214988; cv=none;
+X-Google-Smtp-Source: AG47ELt1jP4T6bIRHsl/6PMGEN7I+EK/fRhttJ1LxSCdHiGMFqPiuN2nuTGTs82q7Ioi/o6neXRo
+ARC-Seal: i=1; a=rsa-sha256; t=1521214985; cv=none;
         d=google.com; s=arc-20160816;
-        b=uDV0Rbuj8Y65Yg69VAG63rJthNwzskWVUS98+zxnu8E2CCel7Jzsbpu2kzx+YKAr7+
-         WNrcGsPlt83ZNjONe13NH3IswjSulpxcConwv1VBtdg+ki7caBe5IhXyofEUdRB4dpfw
-         sPtb3n5bWQaSl6rzdtIbZ6xyLcMxRPbAevHCt4qKJ7jlQzvpujYzv3acuzNGWUSvgnmk
-         6M6goG2whmPnXFx2vtMSt4ozfWzG9eidxAQucwwoPaBdnE4mk9Js4JYcKXlm0mKHdg9k
-         WvEPvNae7b5HEPQwhtUt9ahDD5f9WxznZeAhHq89/SEC+ngB/azXESD4Jjj8kLLmxpv8
-         +BCA==
+        b=GtGSOoCj+J3TrVPRIaKvqRb9fUh1U+fcrytbaHZ2SbKPYB+MHJNPHpA8h+o1vGtLmo
+         cKxfBLXTCGLC0oMCdZQc5Wa5UIlghccM8McYb4IojwrIje1Z9k3Fk+0xusi1T9xptpsB
+         SxP32zvmZAFqTFhL0dVd8iqrMgjxrx/4K+NaCspCWYWCgcwAr1FOPVPMrK6ZdcXMOy9N
+         iKdHcOthR6nSFIcu7DHYJ55TBGtdNkgvnuuZXPxQCB1xiGe6m1UTA3CPPMzGLq1rv22H
+         mYtHWqjypUWsXP5cfGt+Igd5GVd3fVvA/m2qY8i7DH9tXl4YWPE/MPLluoCkwn6pewvK
+         BEFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iD+CtoaoxW6HGcJ6YSL/dmqp6jDKjiiggSm0mjNVzYk=;
-        b=0CaHXf19Oi32eZ0E9Go48b/SqIDUwxKa0Du+nHy9dqVJlzg+3LcU7KJ1uS0my3MNYB
-         Zx2jpd02HP16k0O4U2PNgyYH7WSD8TSfuVoBM9Ygk1Eob6jcTAF0R0GeAjyiw+WVzgZ9
-         b/NaPZE+d7pF1gsM+zKXPucrnMrcoeiBspIvtwgH/X+FHoUhNNQ1lW1eQNiuEMa+qt3I
-         XIJkF1z1oBRAGveGgSy2XGMlfNmBgUfsjTnGPTd/x2CdFEWL6idwhNnXxwlvpXI5xcNL
-         +vblsindy3YupTQtlo7fxvADGr8hGB4YNaGsphRld2HBuM74U08gn4xBomD1XVd/TRPu
-         Bmwg==
+        bh=zOuBx/se6zq3oQxmT98MHwSpcj8YjJ4jEwIGtlsFj3I=;
+        b=BSs3wR2QmD07/dd1bnPcC7H5Qr6ymL1ou8L0y8/R7iepVvxosmyqvWcL9hYkpg0KLQ
+         /loKC0m6MNN6fR7FrT+x9ueIR9cS1iVZ/bphorVryoGzTYLrkUYKrgPOLyMtTQeP+fMG
+         YSYJxC//FR33vHqUHm1spn+quuMtfbl/McID7lPY6BOA8Pq/5yv5qlgZjvRjrdL04XHy
+         Rv4gCf4BWPNYEIdzztMk7c6d8m60kE8y3j3hSG/XBUXHzDjFgKHO8aiRKPWzrF9tFqwZ
+         98kM10NYmTavumTlx1VdcXcQYpX9zNQs/M15EePMHHkb4RUlN3riS644aWi7Bc/zSLak
+         UUVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sara Sharon <sara.sharon@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
+	Thomas Richter <tmricht@linux.vnet.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 089/128] iwlwifi: mvm: avoid dumping assert log when device is stopped
-Date: Fri, 16 Mar 2018 16:23:50 +0100
-Message-Id: <20180316152341.004217290@linuxfoundation.org>
+Subject: [PATCH 4.15 088/128] perf annotate: Fix objdump comment parsing for Intel mov dissassembly
+Date: Fri, 16 Mar 2018 16:23:49 +0100
+Message-Id: <20180316152340.960643455@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109150650656229?=
-X-GMAIL-MSGID: =?utf-8?q?1595109527269410440?=
+X-GMAIL-THRID: =?utf-8?q?1595109147936331066?=
+X-GMAIL-MSGID: =?utf-8?q?1595109524775963879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +54,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
 
-[ Upstream commit 6362ab721ef5c4ecfa01f53ad4137d3d984f0c6c ]
+[ Upstream commit 35a8a148d8c1ee9e5ae18f9565a880490f816f89 ]
 
-We might erroneously get to error dumping code when the
-device is already stopped.
+The command 'perf annotate' parses the output of objdump and also
+investigates the comments produced by objdump. For example the
+output of objdump produces (on x86):
 
-In that case the driver will detect a defective value and will try to
-reset the HW, assuming it is only a bus issue.  The driver than
-proceeds with the dumping.
+23eee:  4c 8b 3d 13 01 21 00 mov 0x210113(%rip),%r15
+                                # 234008 <stderr@@GLIBC_2.2.5+0x9a8>
 
-The result has two side effects:
+and the function mov__parse() is called to investigate the complete
+line. Mov__parse() breaks this line into several parts and finally
+calls function comment__symbol() to parse the data after the comment
+character '#'. Comment__symbol() expects a hexadecimal address followed
+by a symbol in '<' and '>' brackets.
 
-1. The device won't be stopped again, since the transport status is
-already stopped, so the device remains powered on while it actually
-should be stopped.
+However the 2nd parameter given to function comment__symbol()
+always points to the comment character '#'. The address parsing
+always returns 0 because the character '#' is not a digit and
+strtoull() fails without being noticed.
 
-2. The dump in that case is completely garbaged and useless.
+Fix this by advancing the second parameter to function comment__symbol()
+by one byte before invocation and add an error check after strtoull()
+has been called.
 
-Detect and avoid this.  It will also make debugging such issues
-easier.
-
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 6de783b6f50f ("perf annotate: Resolve symbols using objdump comment")
+Link: http://lkml.kernel.org/r/20171128075632.72182-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/utils.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/util/annotate.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-@@ -595,6 +595,12 @@ static void iwl_mvm_dump_lmac_error_log(
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -322,6 +322,8 @@ static int comment__symbol(char *raw, ch
+ 		return 0;
  
- void iwl_mvm_dump_nic_error_log(struct iwl_mvm *mvm)
- {
-+	if (!test_bit(STATUS_DEVICE_ENABLED, &mvm->trans->status)) {
-+		IWL_ERR(mvm,
-+			"DEVICE_ENABLED bit is not set. Aborting dump.\n");
-+		return;
-+	}
-+
- 	iwl_mvm_dump_lmac_error_log(mvm, mvm->error_event_table[0]);
+ 	*addrp = strtoull(comment, &endptr, 16);
++	if (endptr == comment)
++		return 0;
+ 	name = strchr(endptr, '<');
+ 	if (name == NULL)
+ 		return -1;
+@@ -435,8 +437,8 @@ static int mov__parse(struct arch *arch,
+ 		return 0;
  
- 	if (mvm->error_event_table[1])
+ 	comment = ltrim(comment);
+-	comment__symbol(ops->source.raw, comment, &ops->source.addr, &ops->source.name);
+-	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
++	comment__symbol(ops->source.raw, comment + 1, &ops->source.addr, &ops->source.name);
++	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
+ 
+ 	return 0;
+ 
+@@ -480,7 +482,7 @@ static int dec__parse(struct arch *arch
+ 		return 0;
+ 
+ 	comment = ltrim(comment);
+-	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
++	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
+ 
+ 	return 0;
+ }
