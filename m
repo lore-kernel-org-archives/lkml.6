@@ -1,59 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751963AbeCPTW6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:22:58 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56724 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeCPTW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:22:56 -0400
-Date: Fri, 16 Mar 2018 20:22:41 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Paolo Bonzini <pbonzini@redhat.com>
-cc: Radim Krcmar <rkrcmar@redhat.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        kvm@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Len Brown <len.brown@intel.com>,
-        Kyle Huey <me@kylehuey.com>, Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v5 1/3] x86/msr: Add AMD Core Perf Extension MSRs
-In-Reply-To: <150643f7-b464-0bd0-6ae8-6403b4d34700@redhat.com>
-Message-ID: <alpine.DEB.2.21.1803162022190.1509@nanos.tec.linutronix.de>
-References: <cover.1517850302.git.Janakarajan.Natarajan@amd.com> <7cf7bd5fa6d24cd46a9ea50024b0010bf3d01088.1517850303.git.Janakarajan.Natarajan@amd.com> <20180306210338.GD12128@flask> <150643f7-b464-0bd0-6ae8-6403b4d34700@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752415AbeCPTYy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:24:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:30325 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751562AbeCPTYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:24:52 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="25336226"
+Subject: Re: [PATCH 13/22] signal: Move addr_lsb into the _sigfault union for
+ clarity
+From: Dave Hansen <dave.hansen@intel.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+References: <87k1wimybi.fsf_-_@xmission.com>
+ <20180116004009.31036-13-ebiederm@xmission.com>
+ <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        linux-arch@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>
+Message-ID: <818f8945-f990-a770-476e-f82bdc77dbda@intel.com>
+Date: Fri, 16 Mar 2018 12:24:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
+Content-Type: multipart/mixed;
+ boundary="------------E4E5380CCEAD534ACA4BA262"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Mar 2018, Paolo Bonzini wrote:
+This is a multi-part message in MIME format.
+--------------E4E5380CCEAD534ACA4BA262
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-> On 06/03/2018 22:03, Radim Krcmar wrote:
-> >>  /* Fam 15h MSRs */
-> >>  #define MSR_F15H_PERF_CTL		0xc0010200
-> >> +#define MSR_F15H_PERF_CTL0		MSR_F15H_PERF_CTL
-> >> +#define MSR_F15H_PERF_CTL1		(MSR_F15H_PERF_CTL + 2)
-> >> +#define MSR_F15H_PERF_CTL2		(MSR_F15H_PERF_CTL + 4)
-> >> +#define MSR_F15H_PERF_CTL3		(MSR_F15H_PERF_CTL + 6)
-> >> +#define MSR_F15H_PERF_CTL4		(MSR_F15H_PERF_CTL + 8)
-> >> +#define MSR_F15H_PERF_CTL5		(MSR_F15H_PERF_CTL + 10)
-> >> +
-> >>  #define MSR_F15H_PERF_CTR		0xc0010201
-> >> +#define MSR_F15H_PERF_CTR0		MSR_F15H_PERF_CTR
-> >> +#define MSR_F15H_PERF_CTR1		(MSR_F15H_PERF_CTR + 2)
-> >> +#define MSR_F15H_PERF_CTR2		(MSR_F15H_PERF_CTR + 4)
-> >> +#define MSR_F15H_PERF_CTR3		(MSR_F15H_PERF_CTR + 6)
-> >> +#define MSR_F15H_PERF_CTR4		(MSR_F15H_PERF_CTR + 8)
-> >> +#define MSR_F15H_PERF_CTR5		(MSR_F15H_PERF_CTR + 10)
-> >> +
-> > x86 maintainers,
-> > 
-> > are you ok with this going through the kvm tree?
+On 03/16/2018 12:00 PM, Dave Hansen wrote:
+> On 01/15/2018 04:40 PM, Eric W. Biederman wrote:
+>> The addr_lsb fields is only valid and available when the
+>> signal is SIGBUS and the si_code is BUS_MCEERR_AR or BUS_MCEERR_AO.
+>> Document this with a comment and place the field in the _sigfault union
+>> to make this clear.
+>>
+>> All of the fields stay in the same physical location so both the old
+>> and new definitions of struct siginfo will continue to work.
+> 
+> This breaks the ABI and breaks protection keys.  The physical locations
+> *DO* change.
+> 
+> Before this patch:
+> 
+> #define si_pkey         _sifields._sigfault._pkey
+> (gdb) print &((siginfo_t *)0)->_sifields._sigfault._pkey
+> $1 = (__u32 *) 0x20 <irq_stack_union+32>
+> 
+> and after:
+> 
+> +#define si_pkey                _sifields._sigfault._addr_pkey._pkey
+> (gdb) print &((siginfo_t *)0)->_sifields._sigfault._addr_pkey._pkey
+> $1 = (__u32 *) 0x1c
+> 
+> Can we revert this, please?
 
-yes.
+It does not revert cleanly so I reverted it manually.  Patch doing that
+is attached.  Should we do this, or is there a better option?
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+--------------E4E5380CCEAD534ACA4BA262
+Content-Type: text/x-patch;
+ name="revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b.patch"
+
+
+index e698ec1..8f8e3ef 100644
+
+---
+
+ b/include/linux/compat.h             |   12 ++----------
+ b/include/uapi/asm-generic/siginfo.h |   14 +++-----------
+ 2 files changed, 5 insertions(+), 21 deletions(-)
+
+diff -puN include/linux/compat.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b include/linux/compat.h
+--- a/include/linux/compat.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b	2018-03-16 12:02:22.156310058 -0700
++++ b/include/linux/compat.h	2018-03-16 12:03:11.341309936 -0700
+@@ -222,23 +222,15 @@ typedef struct compat_siginfo {
+ #ifdef __ARCH_SI_TRAPNO
+ 			int _trapno;	/* TRAP # which caused the signal */
+ #endif
++			short int _addr_lsb;	/* Valid LSB of the reported address. */
+ 			union {
+-				/*
+-				 * used when si_code=BUS_MCEERR_AR or
+-				 * used when si_code=BUS_MCEERR_AO
+-				 */
+-				short int _addr_lsb;	/* Valid LSB of the reported address. */
+ 				/* used when si_code=SEGV_BNDERR */
+ 				struct {
+-					compat_uptr_t _dummy_bnd;
+ 					compat_uptr_t _lower;
+ 					compat_uptr_t _upper;
+ 				} _addr_bnd;
+ 				/* used when si_code=SEGV_PKUERR */
+-				struct {
+-					compat_uptr_t _dummy_pkey;
+-					u32 _pkey;
+-				} _addr_pkey;
++				u32 _pkey;
+ 			};
+ 		} _sigfault;
+ 
+diff -puN include/uapi/asm-generic/siginfo.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b include/uapi/asm-generic/siginfo.h
+--- a/include/uapi/asm-generic/siginfo.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b	2018-03-16 12:02:22.157310058 -0700
++++ b/include/uapi/asm-generic/siginfo.h	2018-03-16 12:03:37.071309872 -0700
+@@ -94,23 +94,15 @@ typedef struct siginfo {
+ 			unsigned int _flags;	/* see ia64 si_flags */
+ 			unsigned long _isr;	/* isr */
+ #endif
++			short _addr_lsb; /* LSB of the reported address */
+ 			union {
+-				/*
+-				 * used when si_code=BUS_MCEERR_AR or
+-				 * used when si_code=BUS_MCEERR_AO
+-				 */
+-				short _addr_lsb; /* LSB of the reported address */
+ 				/* used when si_code=SEGV_BNDERR */
+ 				struct {
+-					void *_dummy_bnd;
+ 					void __user *_lower;
+ 					void __user *_upper;
+ 				} _addr_bnd;
+ 				/* used when si_code=SEGV_PKUERR */
+-				struct {
+-					void *_dummy_pkey;
+-					__u32 _pkey;
+-				} _addr_pkey;
++				__u32 _pkey;
+ 			};
+ 		} _sigfault;
+ 
+@@ -150,7 +142,7 @@ typedef struct siginfo {
+ #define si_addr_lsb	_sifields._sigfault._addr_lsb
+ #define si_lower	_sifields._sigfault._addr_bnd._lower
+ #define si_upper	_sifields._sigfault._addr_bnd._upper
+-#define si_pkey		_sifields._sigfault._addr_pkey._pkey
++#define si_pkey		_sifields._sigfault._pkey
+ #define si_band		_sifields._sigpoll._band
+ #define si_fd		_sifields._sigpoll._fd
+ #define si_call_addr	_sifields._sigsys._call_addr
+_
+
+--------------E4E5380CCEAD534ACA4BA262--
