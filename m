@@ -1,102 +1,82 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx48MI7mj7zpNCkEbKXFfmLwZ0575OY5VuRT0DNNdIbB+Tnx9eU6oqlSCrxk3Gz18EKlIcWVa
-ARC-Seal: i=1; a=rsa-sha256; t=1522281121; cv=none;
+X-Google-Smtp-Source: AG47ELsKEr/6aENzvYXgJZmAVRoeISH+HNGMFowJ2BXyCDA3dmEOKkQ/6wJTHmgiW6vmob//o7eo
+ARC-Seal: i=1; a=rsa-sha256; t=1521237506; cv=none;
         d=google.com; s=arc-20160816;
-        b=HZTPC7NC1ycrIJtOycS27sX8myZkrG8du87+n/i9QnX6TtEw6jWg2uZTJ+OqExWwuS
-         RR4i4m+VyS2SR6Rh6O64zHABGRYmC9kWwU3SijYhhIjAmPQXXRSF0oX5wttTQgS1Vmgk
-         vSNwUigXDHYjtv1kmYkPcRLfER0AXrt4hN/gr49ff2sWGVYO9fbaWIicQPgfM07tSqkX
-         ifr+doFv72xgFpYUgnnkBkzFcFhZDjSWda+qOX+q1qkIcoK2cNkI/W7YmjCpZ5ddYvvy
-         HDmbHqhklcvaphdg2Uy581D+bfKasP7f2qJMOlg5ho4ilQmt4BeHbXOuIWZFSR8CDheQ
-         /EpQ==
+        b=zUozFml+eybchIv1X9nstKdojq14WQqxvYIKHr7A8bXThqoGTD9mkYDgjuBAxOXccC
+         nCQOf3O4mt6TFIMvuszqds2FF1dGSH88hJ0rS+EZ030BK1Wm6eHOKiifnFLDjoxa7NHn
+         +In8Lpds7pp2lYnxPI8PEqpIXiSaWX0RW/ek9BfHaMHOTZGlCp8177wE1+FseCtNXmUt
+         oGP7uN5eS/uXMelzVh/hCmirqMtj1r/KF8/2BUjIF8hAVp64aQph/d1ZwgcxIGYXFR4m
+         8+IOZRBrA2lrWIB0voMmVolHzLQ/5h4vVYXlQypp2XkuIsOmG/bDg8QSya8uO6OFeyow
+         oyMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:mime-version:date:in-reply-to
-         :subject:cc:to:from:user-agent:references:arc-authentication-results;
-        bh=/4n25k1dYPAF2J+4EU2IuhlZq15hKyh69/3AIc2Xt3w=;
-        b=FxSFRMatCzVOojme5JUyzHb6qv641A/JUhQhc24lMyHc69V+rrxVqxwGmxTuKuzduH
-         iO4pWQxZmYzquFDQ5D6TmYtGyQlXYmM/GsksfKcZcbm0HPl+Y3f+5o26eGdezkVnh/Q3
-         McFDP+60iWbjqcBopHv3n9AXOk9gFbE8zzuTgLgWdMM/ooCAemIzrP2N3feY3sJnKFBi
-         427OBcLRMzmDokLnAMXUNE8iQsafHaTaot2dFQWcMFPX+LoIMzp66F8B2Zn9aKLu/VT/
-         0bBIxeGCszCReVN/0tyVzki5os6ENA8/BS78bb8DNvka4Uin16vO2pUIfnyRBsyD6n/k
-         2Gkg==
+        h=list-id:precedence:sender:content-transfer-encoding
+         :content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:arc-authentication-results;
+        bh=VROUTf/ao4i45fnK7TCmaJvX0bNc50VPUfGm5vSnLPY=;
+        b=HBfU8PU1Wk3RgdyGYK2NXLB29lEmLdhMzXr8w8+RvgPM7+w2v/iAbCO+Sy0/cd5uux
+         DFE9NKOLcMPqwgCfL+mYJBFTFb63uiIwcC0f65qzitXvveNqn2CbJMPSq66Rom1fdE1J
+         CRXkTcLU+av4h47vdR8oINmFmzF1/sUJhLa7pArOQqecO60PkCFGWU0fmZLkhnXeqkAf
+         I4Qa+5fKlHqZWwPIA29Ubzzbdrh1rLhD7Z1dg/om8IfGMyqnseErD0CyFxhRVZuaZ6dZ
+         HsRi9PvbbdU8hrhEC9QfidRmwu5KTzpYsyq2Z8Z25a+NHPmiPCya0irfG1qhIJuFYjbh
+         RjUw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751211AbeC1XwA (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 28 Mar 2018 19:52:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43294 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750946AbeC1Xv7 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 28 Mar 2018 19:51:59 -0400
-References: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com> <1519264541-7621-8-git-send-email-linuxram@us.ibm.com> <dc5ee0c8-afe3-78aa-001d-7b49b398337b@intel.com> <87muys3p2v.fsf@morokweng.localdomain> <34fd1ae9-9697-ac6c-d6bc-7c25b4515a25@intel.com>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Ram Pai <linuxram@us.ibm.com>, shuahkh@osg.samsung.com,
-        linux-kselftest@vger.kernel.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        akpm@linux-foundation.org, benh@kernel.crashing.org,
-        paulus@samba.org, khandual@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
-        hbabu@us.ibm.com, mhocko@kernel.org, ebiederm@xmission.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v12 07/22] selftests/vm: fixed bugs in pkey_disable_clear()
-In-reply-to: <34fd1ae9-9697-ac6c-d6bc-7c25b4515a25@intel.com>
-Date: Wed, 28 Mar 2018 20:51:42 -0300
+        id S1751319AbeCPV60 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Fri, 16 Mar 2018 17:58:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32464 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750826AbeCPV6Z (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:58:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
+   d="scan'208";a="25366531"
+Subject: Re: [PATCH v12 04/22] selftests/vm: typecast the pkey register
+To: Ram Pai <linuxram@us.ibm.com>, shuahkh@osg.samsung.com,
+        linux-kselftest@vger.kernel.org
+References: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
+ <1519264541-7621-5-git-send-email-linuxram@us.ibm.com>
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, akpm@linux-foundation.org,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, arnd@arndb.de
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <00081300-e891-3381-3acd-e3312e54fb58@intel.com>
+Date: Fri, 16 Mar 2018 14:58:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18032823-8235-0000-0000-00000D3B5742
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008761; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01009846; UDB=6.00514467; IPR=6.00789128;
- MB=3.00020300; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-28 23:51:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032823-8236-0000-0000-00004040D761
-Message-Id: <878tabvjw1.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803280241
+In-Reply-To: <1519264541-7621-5-git-send-email-linuxram@us.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593064680200522222?=
-X-GMAIL-MSGID: =?utf-8?q?1596227448906614092?=
+X-GMAIL-THRID: =?utf-8?q?1593064769921910354?=
+X-GMAIL-MSGID: =?utf-8?q?1595133139922938409?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 02/21/2018 05:55 PM, Ram Pai wrote:
+> -static inline unsigned int _rdpkey_reg(int line)
+> +static inline pkey_reg_t _rdpkey_reg(int line)
+>  {
+> -	unsigned int pkey_reg = __rdpkey_reg();
+> +	pkey_reg_t pkey_reg = __rdpkey_reg();
+>  
+> -	dprintf4("rdpkey_reg(line=%d) pkey_reg: %x shadow: %x\n",
+> +	dprintf4("rdpkey_reg(line=%d) pkey_reg: %016lx shadow: %016lx\n",
+>  			line, pkey_reg, shadow_pkey_reg);
+>  	assert(pkey_reg == shadow_pkey_reg);
 
-Dave Hansen <dave.hansen@intel.com> writes:
-
-> On 03/28/2018 01:47 PM, Thiago Jung Bauermann wrote:
->>>>  	if (flags)
->>>> -		assert(rdpkey_reg() > orig_pkey_reg);
->>>> +		assert(rdpkey_reg() < orig_pkey_reg);
->>>>  }
->>>>
->>>>  void pkey_write_allow(int pkey)
->>> This seems so horribly wrong that I wonder how it worked in the first
->>> place.  Any idea?
->> The code simply wasn't used. pkey_disable_clear() is called by
->> pkey_write_allow() and pkey_access_allow(), but before this patch series
->> nothing called either of these functions.
->> 
->
-> Ahh, that explains it.  Can that get stuck in the changelog, please?
-
-Yes, will be in the next version.
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Hmm.  So we're using %lx for an int?  Doesn't the compiler complain
+about this?
