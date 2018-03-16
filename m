@@ -1,101 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933522AbeCPRHF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:07:05 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:42932 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933314AbeCPRG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:06:57 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 09/22] net: socket: add __sys_getpeername() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:06:01 +0100
-Message-Id: <20180316170614.5392-10-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        id S1753793AbeCPRHs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:07:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:33218 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeCPRHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:07:45 -0400
+Subject: Re: [linux-sunxi] [PATCH v4 4/9] pinctrl: sunxi: add support for the
+ Allwinner H6 main pin controller
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180316140215.28663-5-icenowy@aosc.io>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <a74d898f-7047-eebf-027e-106c40be2b9d@arm.com>
+Date: Fri, 16 Mar 2018 17:07:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_getpeername() allows us to avoid the
-internal calls to the sys_getpeername() syscall.
+Hi,
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/socket.h |  2 ++
- net/compat.c           |  2 +-
- net/socket.c           | 14 ++++++++++----
- 3 files changed, 13 insertions(+), 5 deletions(-)
+On 16/03/18 14:02, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+> 
+> This commit introduces support for the main pin controller on H6.
+> 
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format. The GPIO functions are dropped, as they're impossible to use --
+> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index ef0226a61b03..9ba003e92fea 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -370,5 +370,7 @@ extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
- extern int __sys_listen(int fd, int backlog);
- extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- 			     int __user *usockaddr_len);
-+extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
-+			     int __user *usockaddr_len);
- 
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index efd28d02608c..74017f618eb1 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -829,7 +829,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]));
- 		break;
- 	case SYS_GETPEERNAME:
--		ret = sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
-+		ret = __sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
- 		break;
- 	case SYS_SOCKETPAIR:
- 		ret = sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
-diff --git a/net/socket.c b/net/socket.c
-index b61e0d20f37b..007fb9483279 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1712,8 +1712,8 @@ SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
-  *	name to user space.
-  */
- 
--SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
--		int __user *, usockaddr_len)
-+int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
-+		      int __user *usockaddr_len)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
-@@ -1738,6 +1738,12 @@ SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
- 	return err;
- }
- 
-+SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
-+		int __user *, usockaddr_len)
-+{
-+	return __sys_getpeername(fd, usockaddr, usockaddr_len);
-+}
-+
- /*
-  *	Send a datagram to a given address. We move the address into kernel
-  *	space and check the user space data area is readable before invoking
-@@ -2511,8 +2517,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 		break;
- 	case SYS_GETPEERNAME:
- 		err =
--		    sys_getpeername(a0, (struct sockaddr __user *)a1,
--				    (int __user *)a[2]);
-+		    __sys_getpeername(a0, (struct sockaddr __user *)a1,
-+				      (int __user *)a[2]);
- 		break;
- 	case SYS_SOCKETPAIR:
- 		err = sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
--- 
-2.16.2
+As mentioned before, I checked every single pin against the manual and
+this looks correct to me.
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Thanks!
+Andre.
