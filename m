@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtkfv1/Th3EwzpjSl9RAOfdJ33SnzXoiSJsoNbF4jkVaBcS/IJq0+U1dvo6hAC42Ovg/POR
-ARC-Seal: i=1; a=rsa-sha256; t=1521214123; cv=none;
+X-Google-Smtp-Source: AG47ELsxlhIPhMIL2o8j6xpvheLj5tawG96tTDWW+s7i0Arilrjgqxx3EzGD/JWTF84rDJ2o22zE
+ARC-Seal: i=1; a=rsa-sha256; t=1521214120; cv=none;
         d=google.com; s=arc-20160816;
-        b=SIfJYxvQ6HMjIPaSYfZQf1HZDiLNWfz8TU1gYcw+Bs+K7d2DE2T+NfrBV6cAnfBv+d
-         ONab8nN5xyoJflCJLCC9uCvl7mXhLi1/EB9Mpj9w0yhREhj74F7vWTXEOBdwhV5yKV69
-         PaaR/UBJWahOT8yOdQ//RcmrvKdyOzQC0yD40+lBlLjmU0RjkOFqBEbKVoDE60lVIfY4
-         PSq+B4+tzk5uP6L1+sB91qqzaYaXg3o88gnsWjAuan/zH41RmBz+uQG2k2Nh4H7sMoeg
-         SLKFz9AQXa8LnmH80I5abwjldae3pXVP5JDALM8nqvNhdZzGmVLZn43niUsyXgo9tx3S
-         mG6A==
+        b=bT15xwTPB4KThv08P9ZfB0N0n+l+Mc5j4LXVYJYFnYghi4kDb/QX/Gux4Eu3CpyEJy
+         PaoYUrf4nXkmH4pk7+DQKcIL/HkYXqxtYRc3OndwF42Ow6md2DJLnUHLPI/hxpgQiX4Z
+         DG9tCe2M5uPXt42khvkIsC2/x5fTgX9R98/2M62fp3zr63rs6EJcCazz2Kxw2ZyzQLJ1
+         6nWjnhiOUZrPt5oc3QaKtoiN4sdquCloFN1gvDB7E1kG7apxrJTeI3WwQNec1sljoGO0
+         +1b5p72ubwel5PDcJf4MtQg6wCATT6/Xn3MRav77B258/tMK4nNNHfnf4rmCro91MByt
+         D8/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xZCPuMYxDoo49oVgtVA2Wz/NpLHzaaQ1pynad3fDUXU=;
-        b=sJm6L7kgAzSFDBSjqMFd9eZR6qwA/60NHngZTQoWkpeJHRrMrnH+oIWnm3dcgmqJqa
-         eONGZ8x9iYCIxM0dTMgSBh8Az2BL+bOhOX2OI4uy67cfUeUOLFPyhs4+HMdTCdeuzJfs
-         wHlTPoZaEE4F+1tZidlHAxMsPvE+woeDo1FhXqA6vlMn8yVWM4Sz59USOSj1h6XLn3Jr
-         XxHubdDstGDa2pvrppK9uGVKBQAFVxTGeSgaPExoPondQ9A2M4xVJ0A9XPb2iaNhyzz0
-         JJAd4mH11Mi9iGKbSpD4OhfkMgkCDZohzkWWVgRWUUdmMpzBBeErP9zGsPlDrqtkjgF5
-         lrJA==
+        bh=gKFM9+4+YwKizCULXJP4r9sK8mTmTrM6msbCjW2h4Mc=;
+        b=D0Z9qiIb1SwQkcfkw6PkRqKFaq+lj//y+5qgMFrXfQO2x2hey6ilU5rwVZSs70fn2p
+         CdNZxLz+/Rutme5hLzdGXpqmIPYv8V30uhOkCdFVonJH4ADECpovASetIu/DDeME/4QO
+         SmWlUO40a7cr5H1sWLZi/VvHQHLgLiY/HSCHVe5/nCBllR01TTQkuIFRF8yfTIVsPCP0
+         SUVJ4q8a6SAruzbEWPTud8AzHDEBIFdsN/gK2DYAbh1S62SkUzdKY3FoFM76p104HuAv
+         gzSHdOeEAF6Wbco/iQhnUFW5ZySKf1tBeMDtkclmoIBlLfV3Wbh4uqB5lFF92jDbfTnU
+         +njA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	Adam Ford <aford173@gmail.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.4 49/63] Revert "ARM: dts: LogicPD Torpedo: Fix I2C1 pinmux"
-Date: Fri, 16 Mar 2018 16:23:21 +0100
-Message-Id: <20180316152305.089955468@linuxfoundation.org>
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.4 40/63] netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
+Date: Fri, 16 Mar 2018 16:23:12 +0100
+Message-Id: <20180316152304.462922340@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108621239521366?=
-X-GMAIL-MSGID: =?utf-8?q?1595108621239521366?=
+X-GMAIL-THRID: =?utf-8?q?1595108478397273655?=
+X-GMAIL-MSGID: =?utf-8?q?1595108617796431529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Florian Westphal <fw@strlen.de>
 
-This reverts commit c86bfc7b7b01c4b98c29a39bd60e61fa8e337ebf which was
-commit 74402055a2d3ec998a1ded599e86185a27d9bbf4 upstream.
+commit b078556aecd791b0e5cb3a59f4c3a14273b52121 upstream.
 
-The backport merged incorrectly, so I'm dropping it.
+l4proto->manip_pkt() can cause reallocation of skb head so pointer
+to the ipv6 header must be reloaded.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Adam Ford <aford173@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>
+Reported-and-tested-by: <syzbot+10005f4292fc9cc89de7@syzkaller.appspotmail.com>
+Fixes: 58a317f1061c89 ("netfilter: ipv6: add IPv6 NAT support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm/boot/dts/logicpd-torpedo-som.dtsi |    8 --------
- 1 file changed, 8 deletions(-)
+ net/ipv6/netfilter/nf_nat_l3proto_ipv6.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-+++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-@@ -90,8 +90,6 @@
- };
- 
- &i2c1 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <2600000>;
- 
- 	twl: twl@48 {
-@@ -148,12 +146,6 @@
- 			OMAP3630_CORE2_IOPAD(0x25da, PIN_INPUT_PULLUP | MUX_MODE2)   /* etk_ctl.sdmmc3_cmd */
- 		>;
- 	};
--	i2c1_pins: pinmux_i2c1_pins {
--		pinctrl-single,pins = <
--			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
--			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
--		>;
--	};
- };
- 
- #include "twl4030.dtsi"
+--- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+@@ -99,6 +99,10 @@ static bool nf_nat_ipv6_manip_pkt(struct
+ 	    !l4proto->manip_pkt(skb, &nf_nat_l3proto_ipv6, iphdroff, hdroff,
+ 				target, maniptype))
+ 		return false;
++
++	/* must reload, offset might have changed */
++	ipv6h = (void *)skb->data + iphdroff;
++
+ manip_addr:
+ 	if (maniptype == NF_NAT_MANIP_SRC)
+ 		ipv6h->saddr = target->src.u3.in6;
