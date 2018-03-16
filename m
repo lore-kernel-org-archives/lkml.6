@@ -1,80 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753055AbeCPSRw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:17:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752885AbeCPSOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:14:34 -0400
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 4/9] ipc: Clamp msgmni and shmmni to the real IPCMNI limit
-Date: Fri, 16 Mar 2018 14:13:45 -0400
-Message-Id: <1521224030-2185-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1521224030-2185-1-git-send-email-longman@redhat.com>
-References: <1521224030-2185-1-git-send-email-longman@redhat.com>
+        id S1753263AbeCPRVu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:21:50 -0400
+Received: from muru.com ([72.249.23.125]:60726 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932101AbeCPRV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:21:26 -0400
+Date: Fri, 16 Mar 2018 10:21:21 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v6 0/5] Add coupled regulators mechanism
+Message-ID: <20180316172121.GT5799@atomide.com>
+References: <CGME20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e@eucas1p1.samsung.com>
+ <1520598128-11768-1-git-send-email-m.purski@samsung.com>
+ <20180309124234.GC5252@sirena.org.uk>
+ <20180309155827.GS5799@atomide.com>
+ <c6f43013-3d2e-afbc-9be8-2e07f58fda98@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6f43013-3d2e-afbc-9be8-2e07f58fda98@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A user can write arbitrary integer values to msgmni and shmmni sysctl
-parameters without getting error, but the actual limit is really
-IPCMNI (32k). This can mislead users as they think they can get a
-value that is not real.
+* Maciej Purski <m.purski@samsung.com> [180312 12:24]:
+> On 03/09/2018 04:58 PM, Tony Lindgren wrote:
+> > * Mark Brown <broonie@kernel.org> [180309 12:43]:
+> > > On Fri, Mar 09, 2018 at 01:22:02PM +0100, Maciej Purski wrote:
+> > > 
+> > > > I would like to kindly ask Fabio Estevam and Tony Lindgren to test the patch
+> > > > series on their boards.
+> > 
+> > I gave it a quick try and this set still causes at least mmc0
+> > to fail for me.
+>
+> Thanks. Here's a small patch, which adds some debugs. Maybe they will reveal,
+> where the problem is.
 
-Enforcing the limit by failing the sysctl parameter write, however,
-can break existing user applications. Instead, the range clamping flag
-is set to enforce the limit without failing existing user code. Users
-can easily figure out if the sysctl parameter value is out of range
-by either reading back the parameter value or checking the kernel
-ring buffer for warning.
+Sorry for the delay, now back from ELC. I tried applying this on
+top of Linux next + your six patches but it fails to apply. Do
+I need something else too?
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- ipc/ipc_sysctl.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Regards,
 
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index 8ad93c2..088721e 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- static int zero;
- static int one = 1;
- static int int_max = INT_MAX;
-+static int ipc_mni = IPCMNI;
- 
- static struct ctl_table ipc_kern_table[] = {
- 	{
-@@ -120,7 +121,10 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.data		= &init_ipc_ns.shm_ctlmni,
- 		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
- 		.mode		= 0644,
--		.proc_handler	= proc_ipc_dointvec,
-+		.proc_handler	= proc_ipc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &ipc_mni,
-+		.flags		= CTL_FLAGS_CLAMP_RANGE_SIGNED,
- 	},
- 	{
- 		.procname	= "shm_rmid_forced",
-@@ -147,7 +151,8 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.mode		= 0644,
- 		.proc_handler	= proc_ipc_dointvec_minmax,
- 		.extra1		= &zero,
--		.extra2		= &int_max,
-+		.extra2		= &ipc_mni,
-+		.flags		= CTL_FLAGS_CLAMP_RANGE_SIGNED,
- 	},
- 	{
- 		.procname	= "auto_msgmni",
--- 
-1.8.3.1
+Tony
+
+
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index f1f11cf..0e80ba5 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -2280,7 +2280,6 @@ int regulator_enable(struct regulator *regulator)
+>  {
+>  	struct regulator_dev *rdev = regulator->rdev;
+>  	int ret = 0;
+> -	int ret2;
+> 
+>  	if (rdev->coupling_desc.n_resolved != rdev->coupling_desc.n_coupled) {
+>  		rdev_err(rdev, "not all coupled regulators registered\n");
+> @@ -2298,15 +2297,9 @@ int regulator_enable(struct regulator *regulator)
+> 
+>  	regulator_lock_dependent(rdev);
+>  	ret = _regulator_enable(rdev);
+> -	ret2 = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+> +	regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+>  	regulator_unlock_dependent(rdev);
+> 
+> -	if (ret2 != 0) {
+> -		rdev_err(rdev,
+> -			"balancing failed when trying to enable regulator: %d",
+> -			ret2);
+> -	}
+> -
+>  	if (ret != 0 && rdev->supply)
+>  		regulator_disable(rdev->supply);
+> 
+> @@ -3149,7 +3142,7 @@ static int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
+>  		ret = regulator_set_voltage_unlocked(rdev->supply,
+>  				best_supply_uV, INT_MAX, state);
+>  		if (ret)
+> -			dev_err(&rdev->dev, "Failed to decrease supply voltage: %d\n",
+> +			dev_warn(&rdev->dev, "Failed to decrease supply voltage: %d\n",
+>  					ret);
+>  		/* No need to fail here */
+>  		ret = 0;
+> @@ -3332,11 +3325,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+>  		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
+>  						 best_uV, state);
+> 
+> -		if (ret < 0) {
+> -			rdev_err(rdev,
+> -				"Failed to set voltage with error: %d", ret);
+> +		if (ret < 0)
+>  			goto out;
+> -		}
+>  	}
+> 
+>  out:
+> 
+> 
