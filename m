@@ -1,114 +1,114 @@
-Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELsqQ0YlnaiWaNTIGgOzEyskas9f7mRINdLF0L+ksp55IqOspHZjYNx15rwvqmmCf7GtNaAC
-ARC-Seal: i=1; a=rsa-sha256; t=1521228599; cv=none;
+Return-Path: <geert@linux-m68k.org>
+X-Google-Smtp-Source: AG47ELtGcWoEZRLRtDYZmJaAut4gSbYmMB1ZC4hx59F1EnmOIjXAlW6+G7Rwcch6fh5U7rKLm6zG
+ARC-Seal: i=1; a=rsa-sha256; t=1521208193; cv=none;
         d=google.com; s=arc-20160816;
-        b=OckTHJ0nPEwNnpIYOSyz/LZ3ZsAnwq3wa6OBG93m6t3ml6EoMNhAp6W7NI0Qy/egQD
-         IV4GtA+yUWjJOyFFCtscaxlKvZWtc/GQv9tBjlcHmOcSYbIVzSaawcz0e7J6jXUibH56
-         BsbV+2H8sdOOXGdlWoBCYgTeN0h7oy76vfEx7KCGNOevyg+eteoPo8HqBrD3CW6LCuMT
-         RPkiecv2vcziND3j6wXkwUF8W1bqmuATCe7Z2olSH/YTG+9hp3+Ny8jV9mPLW2q+pBvJ
-         mtFK1Xebv+ov4KXruRBFL8QJE8YxmPsXBjMhytNCTMRTmWIPqumg2hNdMaIvjF6Wc2V3
-         9zVA==
+        b=w3i0B7WwhVEUjYJiSVxOogVHQ2M3TFrpDMMFeBcvdmC9cEBouogCNWtE9OPpZB1DRq
+         ksrSBEPHCrtYUq9297ye5m7dmX85/oEjctQrADQqf84D6Up4slaGagenThBTriHopEuE
+         br1cLnC+cmggqSgzcGMLwNZM4LNHU3NOJpZW8d+UUNv3Kd4eR8NzX2QhDyhYeLOQMxsj
+         Pi35jBGg+l4GqBnCUIXNL2Yz+2qf0CVK3Dt6zbOogFk2amsXcMrevwyjwEHma+yXLcuB
+         2MJi/h03Zr/30kA+O3y5LC7Xa3WrpekrWtaNaGwUGVwg+3EiXdOPGuLQrX//Q0Xp365x
+         nH0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=hdsRAwqz5z3IOtY48u7JLP4JHKEq8P0HRQlMJ07/mYo=;
-        b=Z6L6uQQ7PYkNebh0wNYpGWCi2lpc4ijsY7zQj1uIG3xbTDujncx3Dkc29b2vcgKWR0
-         uP887qNBVY1SfZOTo95ZcDJ+LrPq0LkzFDD9V9G1Blgplbpit+Uf8FZYsHbMfWXZN+oH
-         6W86DKV3rELd5rq+PvuEyh1+j20BkXb8ey/E8+j5nRZGjlwOtOomikW/cPR9KHMK1c8U
-         bCS2qwA/NuG07lrkyzggZN8cQkOFzzIpP+N+FYbIX6aU582W2fE3m626ZyzjSMOhosqf
-         tnbGWKexLI4EuK0MRR//31bWtlFIf9ohXXJxiFj7jHZY7IcWTBQOnu852ugYvtUZj2TO
-         iZJg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=0O0IMBKxd/F/GgAjFCLFzZJyoYk2aunHzbXSh1hUdFw=;
+        b=ngfXHpISDUvCna1gNrQFR54HGB0sa7L/yKKGvGr7qzXqa1UIbXaD+QUOPDgomUgxnT
+         9rjzibQHcPWRRbkKbQSE+xGTWSmUWymFwKgE9s75nw0uyrFO5G58Z2iy9zAyOApKq2BC
+         /lRFijYb2DT9dRiREnanKBk3JqY+EAkHQJx95oq/nHLPOHM95QYuqBxB3D0tKqZvoOBi
+         tuSy6hUWReKTWuQ4nYJhaKwGC0I+eaeHG1rsHbEq5OKxMw6hi/uqj2eK92TqLhJWrifE
+         jh0g+mOfvUaBDCDP0Z4fx3so19Wm2m27IqiZ6qn4e7pRqj5BDyA3MmK080AZ6ok5hvJA
+         fCyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=R1UnP2/d;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+       spf=neutral (google.com: 2a02:1800:120:4::f00:14 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=R1UnP2/d;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
-From: Joerg Roedel <joro@8bytes.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org,
+       spf=neutral (google.com: 2a02:1800:120:4::f00:14 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: iommu@lists.linux-foundation.org,
+	linux-usb@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	aliguori@amazon.com,
-	daniel.gruss@iaik.tugraz.at,
-	hughd@google.com,
-	keescook@google.com,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	jroedel@suse.de,
-	joro@8bytes.org
-Subject: [PATCH 02/35] x86/entry/32: Rename TSS_sysenter_sp0 to TSS_entry_stack
-Date: Fri, 16 Mar 2018 20:29:20 +0100
-Message-Id: <1521228593-3820-3-git-send-email-joro@8bytes.org>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 0/5] Allow compile-testing NO_DMA (core)
+Date: Fri, 16 Mar 2018 14:25:39 +0100
+Message-Id: <1521206744-1504-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
-References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123799447053077?=
-X-GMAIL-MSGID: =?utf-8?q?1595123799447053077?=
+X-GMAIL-THRID: =?utf-8?q?1595102402335154451?=
+X-GMAIL-MSGID: =?utf-8?q?1595102402335154451?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Joerg Roedel <jroedel@suse.de>
+	Hi all,
 
-The stack address doesn't need to be stored in tss.sp0 if
-we switch manually like on sysenter. Rename the offset so
-that it still makes sense when we change its location.
+If NO_DMA=y, get_dma_ops() returns a reference to the non-existing
+symbol bad_dma_ops, thus causing a link failure if it is ever used.
 
-We will also use this stack for all kernel-entry points, not
-just sysenter. Reflect that in the name as well.
+The intention of this is twofold:
+  1. To catch users of the DMA API on systems that do no support the DMA
+     mapping API,
+  2. To avoid building drivers that cannot work on such systems anyway.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/entry/entry_32.S        | 2 +-
- arch/x86/kernel/asm-offsets_32.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+However, the disadvantage is that we have to keep on adding dependencies
+on HAS_DMA all over the place.
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 2a35b1e..e659776 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -413,7 +413,7 @@ ENTRY(xen_sysenter_target)
-  * 0(%ebp) arg6
-  */
- ENTRY(entry_SYSENTER_32)
--	movl	TSS_sysenter_sp0(%esp), %esp
-+	movl	TSS_entry_stack(%esp), %esp
- .Lsysenter_past_esp:
- 	pushl	$__USER_DS		/* pt_regs->ss */
- 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index fa1261e..f452bfd 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -47,7 +47,7 @@ void foo(void)
- 	BLANK();
- 
- 	/* Offset from the sysenter stack to tss.sp0 */
--	DEFINE(TSS_sysenter_sp0, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
-+	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
- 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
- 
- #ifdef CONFIG_CC_STACKPROTECTOR
+Thanks to the COMPILE_TEST symbol, lots of drivers now depend on one or
+more platform dependencies (that imply HAS_DMA) || COMPILE_TEST, thus
+already covering intention #2.  Having to add an explicit dependency on
+HAS_DMA here is cumbersome, and hinders compile-testing.
+
+Hence I think the time is ripe to reconsider the link failure.
+This patch series:
+  - Changes get_dma_ops() to return NULL instead,
+  - Adds a few more dummies to enable compile-testing.
+
+A follow-up patch series will:
+  - Remove dependencies on HAS_DMA for symbols that already have
+    platform dependencies implying HAS_DMA.
+
+Changes compared to v1:
+  - Add Reviewed-by, Acked-by,
+  - Group NO_DMA-stubs for the DMA pool API under a single #ifdef,
+  - Split the big Kconfig patch in per-subsystem patches, split-off in a
+    follow-up series.
+
+This series is against v4.16-rc5. It can also be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/log/?h=no-dma-compile-testing-v2
+
+It has been compile-tested with allmodconfig and allyesconfig for
+m68k/sun3, and has received attention from the kbuild test robot.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  dma-mapping: Convert NO_DMA get_dma_ops() into a real dummy
+  dma-coherent: Add NO_DMA dummies for managed DMA API
+  usb: gadget: Add NO_DMA dummies for DMA mapping API
+  mm: Add NO_DMA dummies for DMA pool API
+  scsi: Add NO_DMA dummies for SCSI DMA mapping API
+
+ include/linux/dma-mapping.h | 19 ++++++++++++++-----
+ include/linux/dmapool.h     | 30 +++++++++++++++++++++++-------
+ include/linux/usb/gadget.h  | 12 ++++++++++++
+ include/scsi/scsi_cmnd.h    |  5 +++++
+ 4 files changed, 54 insertions(+), 12 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
