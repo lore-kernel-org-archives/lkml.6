@@ -1,31 +1,29 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-X-Google-Smtp-Source: AG47ELvLyK6IA6bNU8X5awYCPJIu2at9bCwJVWUAhnEKrJUf+bHUPVAn/lG0j7j/7rqOflMpq0Ey
-ARC-Seal: i=1; a=rsa-sha256; t=1521540172; cv=none;
+Return-Path: <geert@linux-m68k.org>
+X-Google-Smtp-Source: AG47ELv4SDd+yzWgGcoyRYdWJuyh4veZkXI8LL77rke71Xp65z9mzmttW40YSlIcvAI6+ImyKICd
+ARC-Seal: i=1; a=rsa-sha256; t=1521208373; cv=none;
         d=google.com; s=arc-20160816;
-        b=q0uQvX+qCMzIltws3rSjIw5in/ZDzhy3nx988aneVRZSNWswM807cWp2piOMzFxWhX
-         mcbZhf08z6BgS7CJRow0zU7+hQqvt2nK1hpMSgxxK9KNbe8mDf15upv5q08SKQriXzoP
-         xxyY9qnlHu1TgZKIi9sy+TcOIuUw+0yTEeNoUfvWCxshZc/CDWJUzDU5zopNbsI2wAIG
-         ypdm1zwamJJg2GaV4GRhbZgG2HnzAHymgFpZsqGbFuOMvuIabC/rjur4wW33jDRN2gVA
-         h+ajV2EzhV5pnuzqY8U7UHLIMPjSeq7YFaE0TEY8mlxyaoYNn3Ejcbjv/+64IiYb8IND
-         63pg==
+        b=a/u4umjLFCC7ifRGyul4hGTUx8sXT45jxHsDRKegn8XAwOOGpHrqPfCnDne3tiN2bc
+         fhbdj0BhunxmmCIk3xoG7vo6u+LR8Rhl7RG9/d9z0bc+N2ooy5E/l9ksP5GfWehnW1wa
+         8xiGYcmFkbVbApmxmf5V7Nj+ZBzTnfHb7MOIa+O/TdtIsAVc316sMXp2vS1yZQlhrdHM
+         OvhU1ISn1vadEDZB0NXrkHZqI7i5zzwkIxnoW5baXRdfAt5DGSy5/BM2GtxIBF/GB8n5
+         6jqCQ1VyK0RQv6I/r6wtH25blKtu9eR2xhsytyH3ClpMEAqkpxFFdQsUq8AkSU+KPYY+
+         WoSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=3tzu8fX3xtEX0L39fwHvv7ZkT7TC2NsRsPj/Z34rUZo=;
-        b=NGhLQQtVVqhJCrsV7MJabfg6hZdVJL8w0QcDSciydPlzz9q1YsM95DlfjyCBHQQ/Oy
-         apHQtwKXNrDABu94hmCLRkl4KhvEBCT2Gfp2d3eMOT55NKBGMT04ZeNGbgpAJadeti0a
-         vMSF0mjPUbxLhF//sQ/hZOdcl5DatN3Gme1FJUlGUfStjVnZ850xvJ+TXPOf6Tzg7amk
-         tEgPr5e1cs9DiVTq3ag1BAQpJ9V0M0apQpK2gTSs9wWrhJb1GNsPqEqKDPRJljmMJeR0
-         J3wY0KcUgPS973+hCOmnxCN0MoRduCewY4zWl+tBoogkeWwBxcQahHdsGY+Y/xsAWNY7
-         4B+g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=xVQJDaWsP9CdDZQGe0oozfo9Ft2Nm/fy3qynTS5kMMI=;
+        b=vcmMmjQdm2NgFIzajH1x+Gvkgi7xGihyrHmJ9t+rHmnwACfAGIt0LpY4rBR069yhaa
+         zBLNlK/ymmwXhIFiReqNrzqUjkfVjFlalVwXUR/KIWf2fIZOwb3pOylaEr27FOqOdFJJ
+         INrBudolYYqIF5vrT606kqcXQ6cPY4DgXhVNR1XCeHHW5nsODlIJ2wLJZzlMChdAH/QH
+         jzRg8b1bHuTAf0Xh0ZX8GWOPuhXo1eFhQ2HF4RPcabj2hWQoAJditRHAVhJNGJrxhvAQ
+         VqWtQ4CZuPy31Vhq1rZ9V1afPlhcGens+m6sf6DVxHRM47/2R7rfyVaOVfvMpyDGYC1K
+         XdNA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 194.117.254.33 is neither permitted nor denied by best guess record for domain of wsa-dev@sang-engineering.com) smtp.mailfrom=wsa-dev@sang-engineering.com
+       spf=neutral (google.com: 2a02:1800:120:4::f00:15 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 194.117.254.33 is neither permitted nor denied by best guess record for domain of wsa-dev@sang-engineering.com) smtp.mailfrom=wsa-dev@sang-engineering.com
-Date: Tue, 20 Mar 2018 11:02:50 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christoph Hellwig <hch@lst.de>,
+       spf=neutral (google.com: 2a02:1800:120:4::f00:15 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Robin Murphy <robin.murphy@arm.com>,
 	Felipe Balbi <balbi@kernel.org>,
@@ -34,13 +32,17 @@ Cc: Christoph Hellwig <hch@lst.de>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Tejun Heo <tj@kernel.org>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
 	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 	Stefan Richter <stefanr@s5r6.in-berlin.de>,
-	Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Alan Tull <atull@kernel.org>,
+	Moritz Fischer <mdf@kernel.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
 	Matias Bjorling <mb@lightnvm.io>,
 	Jassi Brar <jassisinghbrar@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -51,75 +53,137 @@ Cc: Christoph Hellwig <hch@lst.de>,
 	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Richard Weinberger <richard@nod.at>,
-	Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
 	Bjorn Andersson <bjorn.andersson@linaro.org>,
 	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	iommu@lists.linux-foundation.org,
-	USB list <linux-usb@vger.kernel.org>,
-	scsi <linux-scsi@vger.kernel.org>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org,
+	linux-usb@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	alsa-devel@alsa-project.org,
 	linux-ide@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-	linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
-	Linux I2C <linux-i2c@vger.kernel.org>, linux-iio@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net,
+	linux-fpga@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org,
 	linux-block@vger.kernel.org,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Linux MMC List <linux-mmc@vger.kernel.org>,
-	MTD Maling List <linux-mtd@lists.infradead.org>,
-	netdev <netdev@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
-	driverdevel <devel@driverdev.osuosl.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 00/21] Allow compile-testing NO_DMA (drivers)
-Message-ID: <20180320100250.ggt3rgjnk6g3fkww@katana>
+	linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 13/21] mmc: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:46 +0100
+Message-Id: <1521208314-4783-14-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
- <20180316212317.7d5rri3p25hpmx44@ninjato>
- <CAMuHMdUUKMngcyajm_s==KbhL3ZjMNHVxhNNGkPWkpnePE2rMw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kswnoihqyjs4firo"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUUKMngcyajm_s==KbhL3ZjMNHVxhNNGkPWkpnePE2rMw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595106436515547078?=
-X-GMAIL-MSGID: =?utf-8?q?1595450507561805887?=
+X-GMAIL-THRID: =?utf-8?q?1595102591306002739?=
+X-GMAIL-MSGID: =?utf-8?q?1595102591306002739?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
---kswnoihqyjs4firo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
+This simplifies the dependencies, and allows to improve compile-testing.
 
-> To play it safe, you want to postpone the subsystem patches until the core
-> part has landed upstream. I will rebase and resubmit after v4.17-rc1.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+---
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/mmc/host/Kconfig | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-Thanks for the heads up. I'll wait for the rebased patch then and apply
-it after rc1 for 4.17.
-
-
---kswnoihqyjs4firo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqw3EYACgkQFA3kzBSg
-KbY6yQ/+ImBXoqOKYU53q1YyxSyYsjKkmkSg9TnYq3KS9/78H+7QE/YI3e/rQ0gu
-DrG+4EwDjMTyQwNAOljF9krnn2l1R+2F71yAqNF1g95sZOGW28bT2Ih6K49/61Pv
-8p8VUetCMUs7oTCmhqnDL6UQbx9JhuRK4VSp4EL8K/8p93QuD9bD7yRbe2Sf2+bt
-430CEgTK0lybqXIFj+mAZ4Jcjc3y4MgUsH+2stSCSDnMozmnFjrF1IVRU1zaj8pU
-NG4F2Lx6eHtHl6pyi0TOoCCJRSGZo3kjYw62FfJUKhLUpM6Z8kEhZc48QjEkQlJp
-t7Do9GunImlFpmN/72crKecesNnZW9MlHA8wLfTfDiNiVzZDIOi+jCfTNQboSpWe
-PBpEupOaWoqPJjIa36mggu02UrxE2nqw0HlXFFRsBcDYllIB7xf2Vid45kd4gj+T
-wytNrwtv5wyZtwnb4yFguwNeq6vPH/xnc/8Agl7qQnMh+VYAGMkJ0oV8/oOAawH3
-9XBh3Gp9+nA7htdffgS6DoWfVx5Jg87aMNlWo3Fgza20+Kh8Cn0RAECez7LfGaNL
-mvqQKVwFgnjXKkCdJZn2jaQKnb6Wlh9QD1Vg8ZJ7V5Osj/+tMxM7xJTqzox4Ik/5
-cqckgKDiQYQWDkcpEShwK4sTAcaneaZ/pen19XnefXGwqlBKhDM=
-=JhkV
------END PGP SIGNATURE-----
-
---kswnoihqyjs4firo--
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 620c2d90a646f387..f6d43348b4a3e5d4 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -358,7 +358,6 @@ config MMC_MESON_MX_SDIO
+ 	tristate "Amlogic Meson6/Meson8/Meson8b SD/MMC Host Controller support"
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 	depends on COMMON_CLK
+-	depends on HAS_DMA
+ 	depends on OF
+ 	help
+ 	  This selects support for the SD/MMC Host Controller on
+@@ -401,7 +400,6 @@ config MMC_OMAP
+ 
+ config MMC_OMAP_HS
+ 	tristate "TI OMAP High Speed Multimedia Card Interface support"
+-	depends on HAS_DMA
+ 	depends on ARCH_OMAP2PLUS || ARCH_KEYSTONE || COMPILE_TEST
+ 	help
+ 	  This selects the TI OMAP High Speed Multimedia card Interface.
+@@ -511,7 +509,6 @@ config MMC_DAVINCI
+ 
+ config MMC_GOLDFISH
+ 	tristate "goldfish qemu Multimedia Card Interface support"
+-	depends on HAS_DMA
+ 	depends on GOLDFISH || COMPILE_TEST
+ 	help
+ 	  This selects the Goldfish Multimedia card Interface emulation
+@@ -605,7 +602,7 @@ config MMC_SDHI
+ 
+ config MMC_SDHI_SYS_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+-	depends on MMC_SDHI && HAS_DMA
++	depends on MMC_SDHI
+ 	default MMC_SDHI if (SUPERH || ARM)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+@@ -615,7 +612,7 @@ config MMC_SDHI_SYS_DMAC
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on MMC_SDHI && HAS_DMA
++	depends on MMC_SDHI
+ 	default MMC_SDHI if ARM64
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+@@ -688,7 +685,6 @@ config MMC_CAVIUM_THUNDERX
+ 
+ config MMC_DW
+ 	tristate "Synopsys DesignWare Memory Card Interface"
+-	depends on HAS_DMA
+ 	depends on ARC || ARM || ARM64 || MIPS || COMPILE_TEST
+ 	help
+ 	  This selects support for the Synopsys DesignWare Mobile Storage IP
+@@ -758,7 +754,6 @@ config MMC_DW_ZX
+ 
+ config MMC_SH_MMCIF
+ 	tristate "SuperH Internal MMCIF support"
+-	depends on HAS_DMA
+ 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  This selects the MMC Host Interface controller (MMCIF) found in various
+@@ -878,7 +873,6 @@ config MMC_TOSHIBA_PCI
+ config MMC_BCM2835
+ 	tristate "Broadcom BCM2835 SDHOST MMC Controller support"
+ 	depends on ARCH_BCM2835 || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  This selects the BCM2835 SDHOST MMC controller. If you have
+ 	  a BCM2835 platform with SD or MMC devices, say Y or M here.
+-- 
+2.7.4
