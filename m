@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtL1fAM6YQGs7swsS6VMSNU2G4oWOxXeMx0X9NMGFa+VK9w7vHhlNHoOZNZi1G4EIMI5n73
-ARC-Seal: i=1; a=rsa-sha256; t=1521214539; cv=none;
+X-Google-Smtp-Source: AG47ELs9Dw73VZ6Kh92Hr/DV8jU/WMHlHZ7ZcoGB6DvVBBx7GsFWZGXN51qizCMGduOnwFXvnhto
+ARC-Seal: i=1; a=rsa-sha256; t=1521214536; cv=none;
         d=google.com; s=arc-20160816;
-        b=GyjbmjoepFgNz7q7iuCewg2V9KRFzV2KGbNRFzM9lJUtsKFugZh3XPzULApHOKhmf5
-         ppt6u6wt+KvDW8PMC9xcM3yH1tfLNAzynJrDJdCy0ltFRLhrLi/2gjM/eKPuqRJRm2vY
-         9BuSYlXYxOldlgg7THEy4Db3dCKj2yyo0ZEiewBD7QZ73D8b/M9gJgjH85SeMTNobUU0
-         2SPxbZHHt4roCs0KCVrgTfqBSycJIDdIV3pPSKokNfA790w4i73nG2nxAbc4nywbX3ZA
-         CERr/9VVeh/gE04WyctrgBZ1Gw5B0GAJJ2JY7cPErMv4CRROmltSTxXjB9IUnyWA3nJg
-         lt3Q==
+        b=sXMfDa6GF/C7CPh2WNGfcjodaAEWKqWIHho+K/p2cWTq2ty9b9fFPY79mL7oPUr9U/
+         +Tg3orbuHn42umDth/XopxInmaM4OHcIwBQhWtH86eL7iwiPcR7pTIZ9wfz3Fx2Zf6eQ
+         +OBB+1VpsDFNBnDtV+y76XytDkiR7N3dq9NVOq9MzdR2F8z5GdQ+fNMopoNGltDnXC9p
+         Dd+UyA/1kYPUy8XNeN9zQ4ygvTdEQGIrxnIAoGaUvUJ6R1wDdqJlSuBZ+yPuTEqbgDFw
+         lL6JFa9GZJkXuPHIlJ0zBzubk+pfmypj0LOa2JA+6DvmJ74ZAnCk2w6wZ1tPo6fdc+86
+         +zng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+4BwCB/h9AJ/hJt0PmQhwKGCIovR/ubPNIyOrPJb02k=;
-        b=mY0O62DKoMr6sVa7vv38sRKUv84zgzzjhXt1hrGRSTmktoxDh5xGjc0AtacfyZDRy5
-         73QtF6DSbbSirG5gl3fk58Qpbi4INC+6l9TWfo2XIm4mve0kBu3pozPEIMoNKFfxVB8F
-         7CngpkXA45XNR6WpFJBAvjT/aWO2KzJ35jB9dCovJINepzlwahRSf95XmrhWnEq6xoY4
-         /53v3Q3zehor/6ULpjJxR3eISadOHEb0i0FzartZGpYnzGcD821qyvJpjimdpMuanzPv
-         xHsfnjF7VXhy9OUjZZ2EijsXeUPKbOYTuTyWQx2r7OGQ27jSHslW0cuWAx0xpFgecICO
-         rS2A==
+        bh=HQv/LtyifTYPNNaAUeh5X0ghgGSEkBLfiQJk07UIKyA=;
+        b=y+hHbW5+wGCLIj6sCOhiMQGbR8tH/RZW8mOe3A8NwHH6EoEbiYfkXrzVfBDy5es2eR
+         ZYgjiQLwZBoQZ0UlILbTPYjyAYbwCNr9Az9cAeyyW65evvpeNEuisJr1pGHqUHRAwTNE
+         vFo737FLSSZF3rubCWyNrZidvi4HFlbTsQxvLYYrkLGFPyFL9pHDhtKK/MjeMLi1feC6
+         xASNNygBeuZCOh+IZYgmoG7V/Ou+YVJWrhhk3pDxBVoOdHK8qYtlRnwEBTGSIA8xHfcl
+         5f4zD/JwjsfhAvFvsGtqWNAqXY4yPwDC5fNjbgCR547frQDCLZcw59Y6nVwT+Z+eHwgJ
+         +Gsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
+	Pierre Ducroquet <pinaraf@pinaraf.info>,
+	PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/109] crypto: cavium - fix memory leak on info
-Date: Fri, 16 Mar 2018 16:23:12 +0100
-Message-Id: <20180316152332.314598267@linuxfoundation.org>
+Subject: [PATCH 4.14 042/109] crypto: ecc - Fix NULL pointer deref. on no default_rng
+Date: Fri, 16 Mar 2018 16:23:11 +0100
+Message-Id: <20180316152332.238232657@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109057362691680?=
-X-GMAIL-MSGID: =?utf-8?q?1595109057362691680?=
+X-GMAIL-THRID: =?utf-8?q?1595109054048113937?=
+X-GMAIL-MSGID: =?utf-8?q?1595109054048113937?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Pierre <pinaraf@pinaraf.info>
 
 
-[ Upstream commit 87aae50af730a28dc1d8846d86dca5e9aa724a9f ]
+[ Upstream commit 4c0e22c90510308433272d7ba281b1eb4eda8209 ]
 
-The object info is being leaked on an error return path, fix this
-by setting ret to -ENOMEM and exiting via the request_cleanup path
-that will free info.
+If crypto_get_default_rng returns an error, the
+function ecc_gen_privkey should return an error.
+Instead, it currently tries to use the default_rng
+nevertheless, thus creating a kernel panic with a
+NULL pointer dereference.
+Returning the error directly, as was supposedly
+intended when looking at the code, fixes this.
 
-Detected by CoverityScan, CID#1408439 ("Resource Leak")
-
-Fixes: c694b233295b ("crypto: cavium - Add the Virtual Function driver for CPT")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Pierre Ducroquet <pinaraf@pinaraf.info>
+Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/cavium/cpt/cptvf_reqmanager.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ crypto/ecc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-@@ -459,7 +459,8 @@ int process_request(struct cpt_vf *cptvf
- 	info->completion_addr = kzalloc(sizeof(union cpt_res_s), GFP_KERNEL);
- 	if (unlikely(!info->completion_addr)) {
- 		dev_err(&pdev->dev, "Unable to allocate memory for completion_addr\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto request_cleanup;
- 	}
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -964,7 +964,7 @@ int ecc_gen_privkey(unsigned int curve_i
+ 	 * DRBG with a security strength of 256.
+ 	 */
+ 	if (crypto_get_default_rng())
+-		err = -EFAULT;
++		return -EFAULT;
  
- 	result = (union cpt_res_s *)info->completion_addr;
+ 	err = crypto_rng_get_bytes(crypto_default_rng, (u8 *)priv, nbytes);
+ 	crypto_put_default_rng();
