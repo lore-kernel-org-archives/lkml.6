@@ -1,18 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753162AbeCPHTw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:19:52 -0400
-Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:19184
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1753384AbeCPHUy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:20:54 -0400
+Received: from mail-dm3nam03on0048.outbound.protection.outlook.com ([104.47.41.48]:8984
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753213AbeCPHSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:18:08 -0400
+        id S1753176AbeCPHRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:53 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 24/28] pinctrl: Remove Blackfin pinctrl support
-Date: Fri, 16 Mar 2018 15:08:22 +0800
-Message-ID: <1521184106-24475-22-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 22/28] can: Remove Blackfin CAN bus support
+Date: Fri, 16 Mar 2018 15:08:20 +0800
+Message-ID: <1521184106-24475-20-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -20,2442 +24,884 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(2980300002)(438002)(199004)(189003)(37524003)(106002)(5660300001)(336012)(47776003)(72206003)(2351001)(16586007)(2906002)(76176011)(6666003)(2950100002)(6346003)(6916009)(26005)(59450400001)(77096007)(426003)(478600001)(7696005)(316002)(186003)(51416003)(8676002)(356003)(107886003)(246002)(8936002)(86362001)(50226002)(575784001)(50466002)(48376002)(36756003)(106466001)(4326008)(53946003)(6306002)(16200700003)(305945005)(7636002)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1483;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD021;1:hjh5x3u7R2D0kxjDPHF54pPdER7B2s09zO32N2JTbKmzmVO7m2eaPZpQjoRNIf6+HpWipVIlS2neNvAPfV1a1RC9YHo6QZnbxEo+6IFQd3qgL9jp3EFeFtJh9zgrAKNC
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(39380400002)(346002)(2980300002)(438002)(199004)(189003)(106466001)(356003)(6916009)(2950100002)(6666003)(86362001)(575784001)(478600001)(4326008)(72206003)(966005)(36756003)(2351001)(107886003)(7696005)(51416003)(6306002)(426003)(48376002)(50466002)(336012)(5660300001)(47776003)(316002)(106002)(186003)(26005)(2906002)(7636002)(8936002)(50226002)(76176011)(16586007)(77096007)(59450400001)(8676002)(246002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB2616;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD010;1:VuT2W/Jz9cy3mHpp7LF6lnGdT5R81p/rNwppC0EosEK1VGHf8m6joGWSFUjZt/opBkDRcbT13VfuvErvQz1hMqE3mCEcbmflUYt9aFZHG8gvd+2oM7RvO7CPhx/ePoRO
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 810aaed5-1177-4fd1-e8a7-08d58b0e0921
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1483;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;3:3gr6EKOLNq0f3kVPUBSeobkJ+6RwFHa0FpwCf/tJxnt2VhFsO8ZLUOhQoa4IRzS6xq/L3/hVraso7Y3+H9qW/HNIkAPrvsK86vPFCowBxmiZ0Kl+pldTRud85CpArIxZ13kZiUMNujCiErH1vhgtylnvVOGoCxhBsDYSisirbUXWCYpue4Wk3rgpNTVbecXF+GhF5f5KOAavkv3At6PdVb6aFVY3LJPK5XKI+l9wJET5v0GkMxAPQMm/acp0jeRmAf3VI7pNNQonf0XmFeVmgmEdJ5hhbIk+k7vE0fS40oioWGg84uBW4ygQxsOegr2ijTiEyX76v6l557Usv2k1JA==;25:eZhRjAYKQ7dZeF4MPyIKqKfzFX13Pzng9U3/N+6zaqhceNU830eGcJgnoP3Atg6C2v8uUelgfBUDUCK2cX3kauJUK+ecKpEq+IvC2oobaTnrVkVSScJ+73BTq6e1ZgpMgVSRwIiWoNet2n3u87tgMmHpfJIOo6ZZ6Ip5ZOvYfNQ6xy29hlczYWtujFdFABfPWNFTHNlBbVN6LPn/uS1TEJKTatxaGkAufCGoPrlsMeq6+Ev2Cu6vglVdIVU+e0ctBdXiRXbB0VRLmTc4AM1ZfczK83TVzZLQPIz3pR5M4GwFb1ulA1nD9i5Kwh5WZI2p5Z0meMrdcxW3vLBoB9sD2g==;31:vsTDpKj7mLmh13CVUm4LzOy1a5Vw4Qd088Y2wAD5O1WyVDO+0XjkRa09TzucnR6vK7XyUujxnv9grJW2LExDRNhvkwBqySNuHvJme6GcnxPkbpcp/aty9eI/oxpMpFvuhhIsSPxVXGdRWg/mzGJrtaoMg7wkSRk7KuB8wa+hqWM0AkU9Y3ybSofvOw3615wfb5ZSREvEa0yNCLSGmnF0c/gDNHQXU/TfDlShcn7v2GY=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1483:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;20:HeEV8IBiTSraOf9pReFoxXcmyTcFAHHBRVepeHHKsE+QTwgw5qBBbmRRDn959KH6qAtL0sZt+bN3nE6quTpa3VFzMf++xzvZOoS97NKqRDNgUNuZMRYSziHMV/IxUszThNSSGjIcQg1WummZFe5yxTOXHyqyDscNKODkCebQgGsfhuCI4VNSFwUQ9PaTafhZtpS5Uk2zPoVu4qqmDMriZdcKkjNP7XdsgHMep/3ADvYNk4/oBlYQ46kj9yWijx3ORUdaG9fLxyEFJhk/Ev+oN3mVeBnsm0wS8P31B+fxhx9BZ5byl+Mwshi5bScKipJhxHmxELuBYaMhFVgD3peA2DFrShYQF+rgbduWP6E5/aro/Gaj7o0smdVcmNCyUv7rTU7yfKzo56qJ/D5W/gJLbYvJoxm0/W1hkekBR3iD1wGCK+H7kLxW2SP3PgI962KjsRllmVaqzgljnqVPifs4UpAHbwqcWiLqauM3AR1fwqktbvl8bxkVztdbnUTi7wtI;4:KCZh3qtH9lgGLrZtti9GuBIG23pcwLI9bMjD4TS+IGmQwePF0FfvX65spqC/Fz8opxlujZ+BHJBmumtl27KgV/9vQTfil0Td/0iJSyQZLxV7bxCURvReNoAIXkg95+mQkfU7T1kszulEX4h3ZxImEh6z+lUMdSt8bENSd6tua6eq9RR2p1u8FhZA7+TlVdIxdHu9gcDwfJ8s3mwI77iKmKRORS1ax5XZVGGx9GiqKs4TiurdPYoz8s8HlVazszvG99lVX6Guv1bBshPQsYSBDUF5g4JbwEGK/brn9gb1Nv6FdSgpx6eXHkXOsCAOpioZWHJ9qUIWB6kdHbkOp1d3EtOMKPJJiIczweU7EadkZfE=
-X-Microsoft-Antispam-PRVS: <BY1PR03MB1483AEDE64C6AF522F41F9BDE0D70@BY1PR03MB1483.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(270121546159015)(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501281)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1483;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1483;
+X-MS-Office365-Filtering-Correlation-Id: e9036e42-fbde-4a51-2a30-08d58b0e06f4
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY4PR03MB2616;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;3:k71fqo3jXPBHWZdBkFJutmdkykWdsoawzFIt2sFjFoRe68zVUbyxIXUSZ3JkAc1RPPBexRN+ybJSimxcSOyUQ/HPslKdqGinXRHcNtfVOBQUt+A4RH1O8cH9UymRA+8tqsvfZr4HSjZpZhPPp3GAuL3ls57Hyv9od2IolW+I/gIb65Kr7WO2t+cNugyoGm55CDHNHU+J1EGD6rT9GxZXKh3JewmuqqP4Iep6uIEdBNVMT++dWvv8350QGYzU6TN9lw/gHYcYwrt2EnNS0X8sInjCGt2eDiiZvIcUA9M8yoc2kGgIt6xePCzq6o9bLDk4LDkuJI9Fmd1/KvOlpU7F2Q==;25:h0gEjTatGMEVEfMPgbkAtbUFqe+vAPAI/T3MO4jwnRpBviF1lXFp634K33oUezh3NHbvA3SDNcrixBai3Xx75vEo97xrHVsBY4DReqjPhiPgMOrX3LlRJCp8lVtpAgx3JRxULF7RWQWGOwC+fP++lblmij8j/qm+cr/ODuhxEAPAgAUpEp8EXKH/gZKR5mrMQWu3GUVXY7dEEd6kclW0PMVQMrl3+TH1mjvo3htQVQPcaaqdmgcmDC61DufIPDpP91DEjSe1YNurgOvoyFIN3p/IN8nlbVqqxJcrE29Hh2Yy/YqJV2AakWgqoSgRzHmjxpjPnwavWNOySmqWnq0Yfw==;31:RV4dMpi/Zi6rKqOwQo2Gjm5zv5k+J6NHLJeCcEWxJpN0pXnyicVkKqLKhRnKYVJZ9xysuRdTvqSIndi7PCWBsj0Q8FmkifR8CIhEV8+145lrNg01Jze/DmRsf6fFtI/PWUiIq2rycS6JT1mZ9Ym79oIQvUBSdvmGHNq1Y4Bf4LXsAUs8e5RxFlSVHeH2+xmrP/akWXIkg4Vz0cxAnAK7tnHijnIq3EXK9BYtjF9LAq8=
+X-MS-TrafficTypeDiagnostic: CY4PR03MB2616:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;20:tvLgrnxGmaYSOLhyajb/1WP/OydXMwH8w1Jwdpwh11eX85aaVzWNEM5TpONka85HAr2iu67uxsApzSHi8I13qQR2vjHeM3v9yT7hRihMKncID99gm+KQkOioCa3P9z+WPR+AMDx8C/W5bW76UhZ4PM7anqlRNy4EH/OIsmMLyXqQysIImA8j0iqAfj9VxLBMAYJZ9gDHXSqV1qoTbqA4gL+aessCCEp3Xxudgg90lu74VQoIMwk3fs6JmIn/2eDZkxTlXpwfUWzQFVgbdOBnX/J9TY23yMh6YNGiyZzGcFjdTWidUbCcusY+igwxEHR9PzMWUgvQwNq99dmmEpRDkHb7/pdv9R2UeIax3jVdLtVNIbFuXGsALDRqTBPG6h90Z8PgsX9czmeOF6kIknET/woLfCOoOMKWK8EcjZIWrOIzPYTOYoNSKVEoD77HgYbOBOAZTiIfFHooK3VZLvrn1jQw8gt8xN28Fu5BTDp0JHHLx80s6f8k2HUTx62uFPK9;4:PYpMCk7xy4Zb1MGlnHKsyLYj9qJ4iK4W2C9QS6UPe+FRvlhgEEIs1uY1I+wxz+tDFcA3WDi9cKIUKMTuk53FmY60xTeyqNr7ltM4m7BX3DweaK2QoW9f6aYv74+SzZe3eXoKerNwVGWXTbWT258P4wUC31vUeZPfDWoErSRStcBsrzufL3XPjqI5hbUUr8Oada6A4WWb3BkH0Pj+PPeL98J+kRlUGCSq24TCCAAf4jxTtCyaqTqDdc1DhzRfeYa3wCwqSnBth8NR58Rw0NxxVzGT9zvhbTevClw1tXr4+wz9Evvduhb2VZwt2IDrBWnqJqS3p+vyeAmD/ap1AZ+z8aWqPECDjBrhkmhXVI9sMHg=
+X-Microsoft-Antispam-PRVS: <CY4PR03MB2616E20EDF5AAB8B8CBCC8B2E0D70@CY4PR03MB2616.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(85827821059158);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:CY4PR03MB2616;BCL:0;PCL:0;RULEID:;SRVR:CY4PR03MB2616;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1483;23:f8TFIZhJG32c5Hz+DEa8DTqBXtBYgYS0pn0sDthCP?=
- =?us-ascii?Q?2v+Wx/cXpsjz5U8VGYxcXTSa/jx1nR49trGuiPEfE/uIAs9CIBesassxydb0?=
- =?us-ascii?Q?UjV0CgsTzQ56oPztrPmepiQjtJz0Fvqxb6w1oV5fhgIf8OUuONuoIw6MaL8C?=
- =?us-ascii?Q?xjA72NH7SXiYJpu3skR2ItGV0mN8T9dh/AWX7pchyQdUaBhxprLUv2oCsOvy?=
- =?us-ascii?Q?0+XJs/wcxuDsDNTM6UwI/M7zejGlRO6zX1pV/1WN81lb8XLM9zcumuLynu/X?=
- =?us-ascii?Q?0NsGd+X/YIbppZAPGDFtV/Q6JbRW6qa9XhOjdAizf/DA7JcYULIWsuqze29D?=
- =?us-ascii?Q?76odQngRwS+HJppvtvdsQCk+wLipL0THIpctj2f/wFwH1+W432wCcH5VFlmb?=
- =?us-ascii?Q?6LDXXojUKqJBK53J7zyqPt6AQslp1rrpBsCtsULI5JsDGIW4VC0otjcJLR/h?=
- =?us-ascii?Q?Z9ayK3nNB47WfJ+Jcw9TcVfFBnGTkfCWidL90LXcWP1HQ8AODSs9RJ0fg/50?=
- =?us-ascii?Q?imEPH+X5mMoT1dPUFeCs04kZtmqmNALMXgfaritkeXBUMJbJ6oCxHCeISawi?=
- =?us-ascii?Q?cAsrmUS/rh9JpbWnX/fODmATfsWXzJqZQ/jSKG0+YMPWX22ZVrRSwBisEKCy?=
- =?us-ascii?Q?Ae7U6IUWG5C0WVNAJktFij9N9TgthNFMQfixSvGonKnMnEF+MBecDUtt1z1v?=
- =?us-ascii?Q?6OvdpjHKbne1rtMg76Vu/0GgtPMQR9hGMNil4g7a9pLmUIG/J6sqIYzuBWnK?=
- =?us-ascii?Q?WzG1ylMk0qBWNIZa2dUgU5RyZ/yOD3b4B6fa9gCVsx15vA9TD3mtj/HrdEp9?=
- =?us-ascii?Q?G5B3pg71a4oIsRNcP3fTnZoGkSrNl5x92EVwldNHOvXyAP0UrNAL42QCe7re?=
- =?us-ascii?Q?/7LlNifRtJ80DG8fWIKQfHxJdl2k/trKo6i/vWWtMWqX9DhmMytbpSJ1vOU9?=
- =?us-ascii?Q?0ajRSWb86hflHr1nz2YcHolqXqHCHF5ZGpbbIR2tebHhOjkeksnH3oghy/d0?=
- =?us-ascii?Q?6MtqP5XYJ0a2XHKgyM1jUlufBDNAj6E52a49ostVUYfhA2t/H3o6/CcmtFUk?=
- =?us-ascii?Q?aZJx5vlo/0Wu4JeOahvaMbgwgPqCyXROB2t9T0rRwwxAkmjxjDA2X/a1GsQE?=
- =?us-ascii?Q?VcsLBobpGb95zl/nnVD1PAu1zjfE6lUQyoYmnqdAQtxJX14B3jh+W+LKEvwz?=
- =?us-ascii?Q?lWg1JxdLYvh+Mw=3D?=
-X-Microsoft-Antispam-Message-Info: ZTvF1vIFv1E6qFF84V4hoby3ddbxk+QDeR0wV+xddzgDojeZzJX+YGXJVt5YXsTmiVufnTM4e255GgIw344zOyTDyBeIcah4ALUzlP8N9xRwHhCcf5M9bm2zhlIlLWhpNyiEwNaBVekq8ZN3lcCH+eowpjSBcIJVoIHGkejsZDSuBa2Drowo44MoZ2Os3KAE
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;6:2KVOx5GPSZWZaBMyfF6IOGt5FvZTTUBt5th+y99n0nOTmuKZqx/dj9rtjg1GEQ0ThEDWzZhl8pX15e7DBKcupo+m6a0oCtlFWBMmt9f6XavtHZyNKsmLIEPWKimzUy0RYaVHj6erV0RfRbfYeN4VAcEGFrsCUasM/EkaPtkzsQLxVf3dVOqZZts/fvjM+bbL+0yg9q0qvj9ZgOEAq3vXUvf+b0OQ0Rl2OU954DlOdxuegktkwSNatj412Z7XZyRzzeq5ui2B4K78X1TtJcBEBlamn5gfy9gDiU/BgDuT+lnlP+Bse0gYfhW8GT0Df+XfztNJUsS/O6oQfc4J/hK+rbLJOzmGkk2wzfYS2Hr6bcY=;5:uGzc4kBUPPXb9ronRsPsL3xqa0bxd8on3J6jNu+8FuiR3gw8miPDr9uUJUYRccJ2XpytaUj2fMg1u/8uAElWwX7lLVh5L/L8Fe7BDXUF6WRMCjyPR1cgXd6cKpyq7p2WzKq5LCegj0Mcm1bIIYq1J6GovoPsYZe98hRv3ThulI0=;24:iPiRedQHxqI+Y+0J+SLKcUCpQygN2lN6TJU2iOka02/tMfd0+ilJcm30ObFU8zpivqylQFGqAxN1IeFJ/D2gMBRL6MDHFPeTv40D30oVh+4=;7:/n0WurzkL3Ni5jb1nCtwgjsjrVE8igZmQVkg9HnO9+k99UNTp0lTxp3VDMyMChYiseocQ5kI21SkmU4ea16fQ0eNxhabx2QS7x0/BcCY0Yuy7y/nDEVPgCpRz5UWCUawgIIf0xeugZSsZaiIM4mF6xYsy0oHasyAij8UE0PY6eEmontgQOcxpgP/G+pRcawzaLkh0AQ4qDAQWjWN+eJo52AxNrAwfAJ+hEOHCNhIYZDWoWzmaPK+syMq/1cBEDiG
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB2616;23:rLC3Wqy2y+zEolbczAzmnOCfy5OaeDGB3JF1P+x9O?=
+ =?us-ascii?Q?Uy5ZRRfFM7DRIBfzhXNOdszowl4/9OcEVRtJAdh42KFoI6f7YrfhZNwSYkEB?=
+ =?us-ascii?Q?BYhRmALwjxVltFzo8sDMXYFD6U1FD1zeJ3JCRmR/okBD5Wm+5TaAf0jI7CTn?=
+ =?us-ascii?Q?xmuEIQDNiG2pg3333SvO39Dl+/p820izYwxooUXuxNY9AZl/qa3rdkoAOnwr?=
+ =?us-ascii?Q?0rwA74N/zRtBdV0tdCywhZqILwUa1pP5UYCn0q7rn9Rl+0k/3/vnFsk/cUqY?=
+ =?us-ascii?Q?7WtkLqY0e57kpFwIU0xcGg2hlE01EmVrBe3RaAxdmf+H2/k/kr0/HI/lyVDv?=
+ =?us-ascii?Q?lIyk7H+Xm4O6wCEdIVWTCLFYx+j9TlfdLVzkNcXURQ6BDwa86YHhywb0jOpN?=
+ =?us-ascii?Q?U+M4XiZqVUzDMip8aq2jtg5ZnzfPkN/PtYvhXNyDt4OVvUtrSZ1hyqcqMalg?=
+ =?us-ascii?Q?2fScYvUdjm27YEL7DXlW1xGuSiFqLksVh1U8iDx1HbLkiLXIo/wxmll/kGBf?=
+ =?us-ascii?Q?AQBhNTQIG4WgzACprncwu+ktSb9ebe9HzHIYd25NMggqu+vWgBGo7ta/TRgx?=
+ =?us-ascii?Q?y/jPYy7H1c/EWS44XfJWN3QLgjnwRAhsPIAQ1SB/IhqR3XYbyBsaQpYjEA3n?=
+ =?us-ascii?Q?C+RyUHllXfxSgsxI5PIz2QJOyAiiO1AG6cYJ/N/1s28uAA/LlvfLY/QBzHG9?=
+ =?us-ascii?Q?4U2NCzWvrOgIPtUmhgu1axqzwVVkS//kUlAg0phX2PZe9SxOrEvFfCcywtDe?=
+ =?us-ascii?Q?0BRNlqYJvRa7grm2sjlQbK3vc3ZGCygHHIL5oMQ58RofVwyPsJl1rjBqkkyg?=
+ =?us-ascii?Q?KGmuGekTBDltsf82bvXOIeSwSNxCCgsinThHFXc9UAqvT9+PXNoMTIfUmQVZ?=
+ =?us-ascii?Q?vbf7KDEiXYDw2O5L29xD1t4gUE1WQEj33eOu5I9iyko6GIseS0nA2tzi111S?=
+ =?us-ascii?Q?6tnV3BnYmS4pNai+5C9cOsygPW0MnI2qGk2QXc3tqQz7L2PCRi5zQdVxPAAz?=
+ =?us-ascii?Q?aAXR/wG2fib0iyyX4vCXoARAv9ar3D9YVRrfHRJcGOcBVP2zD+OGohMA8JFU?=
+ =?us-ascii?Q?huWs0ffqVDQHIByjSZ7J+glU/zh?=
+X-Microsoft-Antispam-Message-Info: QLTIm9toA9KINixLfPf72SE3blvbyIXt8LJ9wRJajpwvRp0Vb42r3iVTwFXIvp+vQ76UvUHJ9IcK2ljXoowvb/+tJrIva6VgTGAUrgvW0gDX1IUUiwbvkvzvolMMuZcHaAt1n9uowMj/qmnyB39zv+ttwqXevdVvPkcEHoc9LqvEM5my2U22EqaKlC9RF01Y
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;6:r/AA2rWO3rRP5hocMU3qSAelUVoP4rZl1kk3DoUXxwM0pTBqsdtbXa7gZOfk9JH4TrpLpMAPhcppCeXx/nwPSPmpFrVwoR8zJfQC2DqdxfA2OGY0uCpcGzYPJJV2KO82vJXj7K8POKYwoNpKEp1zWV4oYTFk+Mug3Y1oSgX5tH2jTmRb1KBPqgYF2i3YgvxE+Vg4dPNsbYgL0/Zm0Zof2ZW9B6/wH4OODZzEowFVyxe2CTpAIZ94rl0BOncmihrGvwhcyPKA+hqSpDB/RXzpwTMJilKkiNRB/DE3NTBIJ5bRulBK2uv2nMFSyQ0NmAyt4mR24lFT6e9dEcgEyGfhb7tXX0OqMI+fFI5tF86ckmk=;5:mf67XoxnNNxt2n+oDLy4zRGesxwb7YshzlDWHithhvy6jw9w/ORAxeRQUT+DI1rqEFsGjRPtxwbk+sRXTiuw9LnSPDxXECD11tTyOWAmzzLH8Ef5yw4LaUtwVcBzruY+dN229OXTVA12s48/bD3ndkqAHel0L78+d+HmBUNm/ms=;24:2SJruZA6/auXx78ex3cJzYaeMVB7f8jo6QxT4W96fnYy4nXdBrVJr6+pLfk6ZYb1zLn1BZ8vd7F2gUSyxLB9Q8CAYP1y/gH0kqMWRtiXBcU=;7:/QNtYgtMo73kZBagThdVepZIO/5NhPsfeLBmr5yt8vOSFApoNWMmtqI3PysSufG/lPw3SLVTc9Gk6L3YIm0YnTS7kP1xRLDtKDXHn1b26h8RnRu25F64p0KwYYzkhhq3CvVD+08XLhJ/Idqj2J0NgEWnZwdn94DgehDjO61l+BGLtzOQ4PpqdpY57wbIiqGNaDBwBrjxiVYvXucVP7Qyh8iEFvUymxQy7YMtujbjuP/O9sdQvAHrSXN0XkT02QMp
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:53.7133
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:50.4013
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 810aaed5-1177-4fd1-e8a7-08d58b0e0921
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9036e42-fbde-4a51-2a30-08d58b0e06f4
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1483
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB2616
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin pinctrl support
+Remove Blackfin CAN bus support
 ---
- drivers/pinctrl/Kconfig              |   19 -
- drivers/pinctrl/Makefile             |    3 -
- drivers/pinctrl/pinctrl-adi2-bf54x.c |  588 ------------------
- drivers/pinctrl/pinctrl-adi2-bf60x.c |  517 ----------------
- drivers/pinctrl/pinctrl-adi2.c       | 1114 ----------------------------------
- drivers/pinctrl/pinctrl-adi2.h       |   75 ---
- 6 files changed, 2316 deletions(-)
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf54x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf60x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.h
+ drivers/net/can/Kconfig    |   9 -
+ drivers/net/can/Makefile   |   1 -
+ drivers/net/can/bfin_can.c | 784 ---------------------------------------------
+ 3 files changed, 794 deletions(-)
+ delete mode 100644 drivers/net/can/bfin_can.c
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 0f254b3..0080735 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -30,17 +30,6 @@ config DEBUG_PINCTRL
- 	help
- 	  Say Y here to add some extra checks and diagnostics to PINCTRL calls.
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index ac4ff39..2cb7598 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -88,15 +88,6 @@ config CAN_AT91
+ 	  This is a driver for the SoC CAN controller in Atmel's AT91SAM9263
+ 	  and AT91SAM9X5 processors.
  
--config PINCTRL_ADI2
--	bool "ADI pin controller driver"
--	depends on (BF54x || BF60x)
--	depends on !GPIO_ADI
--	select PINMUX
--	select IRQ_DOMAIN
--	help
--	  This is the pin controller and gpio driver for ADI BF54x, BF60x and
--	  future processors. This option is selected automatically when specific
--	  machine and arch are selected to build.
+-config CAN_BFIN
+-	depends on BF534 || BF536 || BF537 || BF538 || BF539 || BF54x
+-	tristate "Analog Devices Blackfin on-chip CAN"
+-	---help---
+-	  Driver for the Analog Devices Blackfin on-chip CAN controllers
 -
- config PINCTRL_ARTPEC6
-         bool "Axis ARTPEC-6 pin controller driver"
-         depends on MACH_ARTPEC6
-@@ -77,14 +66,6 @@ config PINCTRL_AXP209
- 	  selected.
- 	  Say yes to enable pinctrl and GPIO support for the AXP209 PMIC
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin_can.
+-
+ config CAN_FLEXCAN
+ 	tristate "Support for Freescale FLEXCAN based chips"
+ 	depends on ARM || PPC
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index 02b8ed7..44922bf 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -19,7 +19,6 @@ obj-y				+= usb/
+ obj-y				+= softing/
  
--config PINCTRL_BF54x
--	def_bool y if BF54x
--	select PINCTRL_ADI2
--
--config PINCTRL_BF60x
--	def_bool y if BF60x
--	select PINCTRL_ADI2
--
- config PINCTRL_AT91
- 	bool "AT91 pinctrl driver"
- 	depends on OF
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index d369263..92a40bd 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -8,12 +8,9 @@ obj-$(CONFIG_PINMUX)		+= pinmux.o
- obj-$(CONFIG_PINCONF)		+= pinconf.o
- obj-$(CONFIG_OF)		+= devicetree.o
- obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
--obj-$(CONFIG_PINCTRL_ADI2)	+= pinctrl-adi2.o
- obj-$(CONFIG_PINCTRL_ARTPEC6)	+= pinctrl-artpec6.o
- obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
- obj-$(CONFIG_PINCTRL_AXP209)	+= pinctrl-axp209.o
--obj-$(CONFIG_PINCTRL_BF54x)	+= pinctrl-adi2-bf54x.o
--obj-$(CONFIG_PINCTRL_BF60x)	+= pinctrl-adi2-bf60x.o
- obj-$(CONFIG_PINCTRL_AT91)	+= pinctrl-at91.o
- obj-$(CONFIG_PINCTRL_AT91PIO4)	+= pinctrl-at91-pio4.o
- obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
-diff --git a/drivers/pinctrl/pinctrl-adi2-bf54x.c b/drivers/pinctrl/pinctrl-adi2-bf54x.c
+ obj-$(CONFIG_CAN_AT91)		+= at91_can.o
+-obj-$(CONFIG_CAN_BFIN)		+= bfin_can.o
+ obj-$(CONFIG_CAN_CC770)		+= cc770/
+ obj-$(CONFIG_CAN_C_CAN)		+= c_can/
+ obj-$(CONFIG_CAN_FLEXCAN)	+= flexcan.o
+diff --git a/drivers/net/can/bfin_can.c b/drivers/net/can/bfin_can.c
 deleted file mode 100644
-index 008a29e..0000000
---- a/drivers/pinctrl/pinctrl-adi2-bf54x.c
+index 1deb8ff9..0000000
+--- a/drivers/net/can/bfin_can.c
 +++ /dev/null
-@@ -1,588 +0,0 @@
+@@ -1,784 +0,0 @@
 -/*
-- * Pinctrl Driver for ADI GPIO2 controller
+- * Blackfin On-Chip CAN Driver
 - *
-- * Copyright 2007-2013 Analog Devices Inc.
+- * Copyright 2004-2009 Analog Devices Inc.
 - *
-- * Licensed under the GPLv2 or later
+- * Enter bugs at http://blackfin.uclinux.org/
+- *
+- * Licensed under the GPL-2 or later.
 - */
 -
--#include <asm/portmux.h>
--#include "pinctrl-adi2.h"
--
--static const struct pinctrl_pin_desc adi_pads[] = {
--	PINCTRL_PIN(0, "PA0"),
--	PINCTRL_PIN(1, "PA1"),
--	PINCTRL_PIN(2, "PA2"),
--	PINCTRL_PIN(3, "PG3"),
--	PINCTRL_PIN(4, "PA4"),
--	PINCTRL_PIN(5, "PA5"),
--	PINCTRL_PIN(6, "PA6"),
--	PINCTRL_PIN(7, "PA7"),
--	PINCTRL_PIN(8, "PA8"),
--	PINCTRL_PIN(9, "PA9"),
--	PINCTRL_PIN(10, "PA10"),
--	PINCTRL_PIN(11, "PA11"),
--	PINCTRL_PIN(12, "PA12"),
--	PINCTRL_PIN(13, "PA13"),
--	PINCTRL_PIN(14, "PA14"),
--	PINCTRL_PIN(15, "PA15"),
--	PINCTRL_PIN(16, "PB0"),
--	PINCTRL_PIN(17, "PB1"),
--	PINCTRL_PIN(18, "PB2"),
--	PINCTRL_PIN(19, "PB3"),
--	PINCTRL_PIN(20, "PB4"),
--	PINCTRL_PIN(21, "PB5"),
--	PINCTRL_PIN(22, "PB6"),
--	PINCTRL_PIN(23, "PB7"),
--	PINCTRL_PIN(24, "PB8"),
--	PINCTRL_PIN(25, "PB9"),
--	PINCTRL_PIN(26, "PB10"),
--	PINCTRL_PIN(27, "PB11"),
--	PINCTRL_PIN(28, "PB12"),
--	PINCTRL_PIN(29, "PB13"),
--	PINCTRL_PIN(30, "PB14"),
--	PINCTRL_PIN(32, "PC0"),
--	PINCTRL_PIN(33, "PC1"),
--	PINCTRL_PIN(34, "PC2"),
--	PINCTRL_PIN(35, "PC3"),
--	PINCTRL_PIN(36, "PC4"),
--	PINCTRL_PIN(37, "PC5"),
--	PINCTRL_PIN(38, "PC6"),
--	PINCTRL_PIN(39, "PC7"),
--	PINCTRL_PIN(40, "PC8"),
--	PINCTRL_PIN(41, "PC9"),
--	PINCTRL_PIN(42, "PC10"),
--	PINCTRL_PIN(43, "PC11"),
--	PINCTRL_PIN(44, "PC12"),
--	PINCTRL_PIN(45, "PC13"),
--	PINCTRL_PIN(48, "PD0"),
--	PINCTRL_PIN(49, "PD1"),
--	PINCTRL_PIN(50, "PD2"),
--	PINCTRL_PIN(51, "PD3"),
--	PINCTRL_PIN(52, "PD4"),
--	PINCTRL_PIN(53, "PD5"),
--	PINCTRL_PIN(54, "PD6"),
--	PINCTRL_PIN(55, "PD7"),
--	PINCTRL_PIN(56, "PD8"),
--	PINCTRL_PIN(57, "PD9"),
--	PINCTRL_PIN(58, "PD10"),
--	PINCTRL_PIN(59, "PD11"),
--	PINCTRL_PIN(60, "PD12"),
--	PINCTRL_PIN(61, "PD13"),
--	PINCTRL_PIN(62, "PD14"),
--	PINCTRL_PIN(63, "PD15"),
--	PINCTRL_PIN(64, "PE0"),
--	PINCTRL_PIN(65, "PE1"),
--	PINCTRL_PIN(66, "PE2"),
--	PINCTRL_PIN(67, "PE3"),
--	PINCTRL_PIN(68, "PE4"),
--	PINCTRL_PIN(69, "PE5"),
--	PINCTRL_PIN(70, "PE6"),
--	PINCTRL_PIN(71, "PE7"),
--	PINCTRL_PIN(72, "PE8"),
--	PINCTRL_PIN(73, "PE9"),
--	PINCTRL_PIN(74, "PE10"),
--	PINCTRL_PIN(75, "PE11"),
--	PINCTRL_PIN(76, "PE12"),
--	PINCTRL_PIN(77, "PE13"),
--	PINCTRL_PIN(78, "PE14"),
--	PINCTRL_PIN(79, "PE15"),
--	PINCTRL_PIN(80, "PF0"),
--	PINCTRL_PIN(81, "PF1"),
--	PINCTRL_PIN(82, "PF2"),
--	PINCTRL_PIN(83, "PF3"),
--	PINCTRL_PIN(84, "PF4"),
--	PINCTRL_PIN(85, "PF5"),
--	PINCTRL_PIN(86, "PF6"),
--	PINCTRL_PIN(87, "PF7"),
--	PINCTRL_PIN(88, "PF8"),
--	PINCTRL_PIN(89, "PF9"),
--	PINCTRL_PIN(90, "PF10"),
--	PINCTRL_PIN(91, "PF11"),
--	PINCTRL_PIN(92, "PF12"),
--	PINCTRL_PIN(93, "PF13"),
--	PINCTRL_PIN(94, "PF14"),
--	PINCTRL_PIN(95, "PF15"),
--	PINCTRL_PIN(96, "PG0"),
--	PINCTRL_PIN(97, "PG1"),
--	PINCTRL_PIN(98, "PG2"),
--	PINCTRL_PIN(99, "PG3"),
--	PINCTRL_PIN(100, "PG4"),
--	PINCTRL_PIN(101, "PG5"),
--	PINCTRL_PIN(102, "PG6"),
--	PINCTRL_PIN(103, "PG7"),
--	PINCTRL_PIN(104, "PG8"),
--	PINCTRL_PIN(105, "PG9"),
--	PINCTRL_PIN(106, "PG10"),
--	PINCTRL_PIN(107, "PG11"),
--	PINCTRL_PIN(108, "PG12"),
--	PINCTRL_PIN(109, "PG13"),
--	PINCTRL_PIN(110, "PG14"),
--	PINCTRL_PIN(111, "PG15"),
--	PINCTRL_PIN(112, "PH0"),
--	PINCTRL_PIN(113, "PH1"),
--	PINCTRL_PIN(114, "PH2"),
--	PINCTRL_PIN(115, "PH3"),
--	PINCTRL_PIN(116, "PH4"),
--	PINCTRL_PIN(117, "PH5"),
--	PINCTRL_PIN(118, "PH6"),
--	PINCTRL_PIN(119, "PH7"),
--	PINCTRL_PIN(120, "PH8"),
--	PINCTRL_PIN(121, "PH9"),
--	PINCTRL_PIN(122, "PH10"),
--	PINCTRL_PIN(123, "PH11"),
--	PINCTRL_PIN(124, "PH12"),
--	PINCTRL_PIN(125, "PH13"),
--	PINCTRL_PIN(128, "PI0"),
--	PINCTRL_PIN(129, "PI1"),
--	PINCTRL_PIN(130, "PI2"),
--	PINCTRL_PIN(131, "PI3"),
--	PINCTRL_PIN(132, "PI4"),
--	PINCTRL_PIN(133, "PI5"),
--	PINCTRL_PIN(134, "PI6"),
--	PINCTRL_PIN(135, "PI7"),
--	PINCTRL_PIN(136, "PI8"),
--	PINCTRL_PIN(137, "PI9"),
--	PINCTRL_PIN(138, "PI10"),
--	PINCTRL_PIN(139, "PI11"),
--	PINCTRL_PIN(140, "PI12"),
--	PINCTRL_PIN(141, "PI13"),
--	PINCTRL_PIN(142, "PI14"),
--	PINCTRL_PIN(143, "PI15"),
--	PINCTRL_PIN(144, "PJ0"),
--	PINCTRL_PIN(145, "PJ1"),
--	PINCTRL_PIN(146, "PJ2"),
--	PINCTRL_PIN(147, "PJ3"),
--	PINCTRL_PIN(148, "PJ4"),
--	PINCTRL_PIN(149, "PJ5"),
--	PINCTRL_PIN(150, "PJ6"),
--	PINCTRL_PIN(151, "PJ7"),
--	PINCTRL_PIN(152, "PJ8"),
--	PINCTRL_PIN(153, "PJ9"),
--	PINCTRL_PIN(154, "PJ10"),
--	PINCTRL_PIN(155, "PJ11"),
--	PINCTRL_PIN(156, "PJ12"),
--	PINCTRL_PIN(157, "PJ13"),
--};
--
--static const unsigned uart0_pins[] = {
--	GPIO_PE7, GPIO_PE8,
--};
--
--static const unsigned uart1_pins[] = {
--	GPIO_PH0, GPIO_PH1,
--};
--
--static const unsigned uart1_ctsrts_pins[] = {
--	GPIO_PE9, GPIO_PE10,
--};
--
--static const unsigned uart2_pins[] = {
--	GPIO_PB4, GPIO_PB5,
--};
--
--static const unsigned uart3_pins[] = {
--	GPIO_PB6, GPIO_PB7,
--};
--
--static const unsigned uart3_ctsrts_pins[] = {
--	GPIO_PB2, GPIO_PB3,
--};
--
--static const unsigned rsi0_pins[] = {
--	GPIO_PC8, GPIO_PC9, GPIO_PC10, GPIO_PC11, GPIO_PC12, GPIO_PC13,
--};
--
--static const unsigned spi0_pins[] = {
--	GPIO_PE0, GPIO_PE1, GPIO_PE2,
--};
--
--static const unsigned spi1_pins[] = {
--	GPIO_PG8, GPIO_PG9, GPIO_PG10,
--};
--
--static const unsigned twi0_pins[] = {
--	GPIO_PE14, GPIO_PE15,
--};
--
--static const unsigned twi1_pins[] = {
--	GPIO_PB0, GPIO_PB1,
--};
--
--static const unsigned rotary_pins[] = {
--	GPIO_PH4, GPIO_PH3, GPIO_PH5,
--};
--
--static const unsigned can0_pins[] = {
--	GPIO_PG13, GPIO_PG12,
--};
--
--static const unsigned can1_pins[] = {
--	GPIO_PG14, GPIO_PG15,
--};
--
--static const unsigned smc0_pins[] = {
--	GPIO_PH8, GPIO_PH9, GPIO_PH10, GPIO_PH11, GPIO_PH12, GPIO_PH13,
--	GPIO_PI0, GPIO_PI1, GPIO_PI2, GPIO_PI3, GPIO_PI4, GPIO_PI5, GPIO_PI6,
--	GPIO_PI7, GPIO_PI8, GPIO_PI9, GPIO_PI10, GPIO_PI11,
--	GPIO_PI12, GPIO_PI13, GPIO_PI14, GPIO_PI15,
--};
--
--static const unsigned sport0_pins[] = {
--	GPIO_PC0, GPIO_PC2, GPIO_PC3, GPIO_PC4, GPIO_PC6, GPIO_PC7,
--};
--
--static const unsigned sport1_pins[] = {
--	GPIO_PD0, GPIO_PD2, GPIO_PD3, GPIO_PD4, GPIO_PD6, GPIO_PD7,
--};
--
--static const unsigned sport2_pins[] = {
--	GPIO_PA0, GPIO_PA2, GPIO_PA3, GPIO_PA4, GPIO_PA6, GPIO_PA7,
--};
--
--static const unsigned sport3_pins[] = {
--	GPIO_PA8, GPIO_PA10, GPIO_PA11, GPIO_PA12, GPIO_PA14, GPIO_PA15,
--};
--
--static const unsigned ppi0_8b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF13, GPIO_PG0, GPIO_PG1, GPIO_PG2,
--};
--
--static const unsigned ppi0_16b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF9, GPIO_PF10, GPIO_PF11, GPIO_PF12,
--	GPIO_PF13, GPIO_PF14, GPIO_PF15,
--	GPIO_PG0, GPIO_PG1, GPIO_PG2,
--};
--
--static const unsigned ppi0_24b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF8, GPIO_PF9, GPIO_PF10, GPIO_PF11, GPIO_PF12,
--	GPIO_PF13, GPIO_PF14, GPIO_PF15, GPIO_PD0, GPIO_PD1, GPIO_PD2,
--	GPIO_PD3, GPIO_PD4, GPIO_PD5, GPIO_PG3, GPIO_PG4,
--	GPIO_PG0, GPIO_PG1, GPIO_PG2,
--};
--
--static const unsigned ppi1_8b_pins[] = {
--	GPIO_PD0, GPIO_PD1, GPIO_PD2, GPIO_PD3, GPIO_PD4, GPIO_PD5, GPIO_PD6,
--	GPIO_PD7, GPIO_PE11, GPIO_PE12, GPIO_PE13,
--};
--
--static const unsigned ppi1_16b_pins[] = {
--	GPIO_PD0, GPIO_PD1, GPIO_PD2, GPIO_PD3, GPIO_PD4, GPIO_PD5, GPIO_PD6,
--	GPIO_PD7, GPIO_PD8, GPIO_PD9, GPIO_PD10, GPIO_PD11, GPIO_PD12,
--	GPIO_PD13, GPIO_PD14, GPIO_PD15,
--	GPIO_PE11, GPIO_PE12, GPIO_PE13,
--};
--
--static const unsigned ppi2_8b_pins[] = {
--	GPIO_PD8, GPIO_PD9, GPIO_PD10, GPIO_PD11, GPIO_PD12,
--	GPIO_PD13, GPIO_PD14, GPIO_PD15,
--	GPIO_PA7, GPIO_PB0, GPIO_PB1, GPIO_PB2, GPIO_PB3,
--};
--
--static const unsigned atapi_pins[] = {
--	GPIO_PH2, GPIO_PJ3, GPIO_PJ4, GPIO_PJ5, GPIO_PJ6,
--	GPIO_PJ7, GPIO_PJ8, GPIO_PJ9, GPIO_PJ10,
--};
--
--static const unsigned atapi_alter_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF8, GPIO_PF9, GPIO_PF10, GPIO_PF11, GPIO_PF12,
--	GPIO_PF13, GPIO_PF14, GPIO_PF15, GPIO_PG2, GPIO_PG3, GPIO_PG4,
--};
--
--static const unsigned nfc0_pins[] = {
--	GPIO_PJ1, GPIO_PJ2,
--};
--
--static const unsigned keys_4x4_pins[] = {
--	GPIO_PD8, GPIO_PD9, GPIO_PD10, GPIO_PD11,
--	GPIO_PD12, GPIO_PD13, GPIO_PD14, GPIO_PD15,
--};
--
--static const unsigned keys_8x8_pins[] = {
--	GPIO_PD8, GPIO_PD9, GPIO_PD10, GPIO_PD11,
--	GPIO_PD12, GPIO_PD13, GPIO_PD14, GPIO_PD15,
--	GPIO_PE0, GPIO_PE1, GPIO_PE2, GPIO_PE3,
--	GPIO_PE4, GPIO_PE5, GPIO_PE6, GPIO_PE7,
--};
--
--static const unsigned short uart0_mux[] = {
--	P_UART0_TX, P_UART0_RX,
--	0
--};
--
--static const unsigned short uart1_mux[] = {
--	P_UART1_TX, P_UART1_RX,
--	0
--};
--
--static const unsigned short uart1_ctsrts_mux[] = {
--	P_UART1_RTS, P_UART1_CTS,
--	0
--};
--
--static const unsigned short uart2_mux[] = {
--	P_UART2_TX, P_UART2_RX,
--	0
--};
--
--static const unsigned short uart3_mux[] = {
--	P_UART3_TX, P_UART3_RX,
--	0
--};
--
--static const unsigned short uart3_ctsrts_mux[] = {
--	P_UART3_RTS, P_UART3_CTS,
--	0
--};
--
--static const unsigned short rsi0_mux[] = {
--	P_SD_D0, P_SD_D1, P_SD_D2, P_SD_D3, P_SD_CLK, P_SD_CMD,
--	0
--};
--
--static const unsigned short spi0_mux[] = {
--	P_SPI0_SCK, P_SPI0_MISO, P_SPI0_MOSI, 0
--};
--
--static const unsigned short spi1_mux[] = {
--	P_SPI1_SCK, P_SPI1_MISO, P_SPI1_MOSI, 0
--};
--
--static const unsigned short twi0_mux[] = {
--	P_TWI0_SCL, P_TWI0_SDA, 0
--};
--
--static const unsigned short twi1_mux[] = {
--	P_TWI1_SCL, P_TWI1_SDA, 0
--};
--
--static const unsigned short rotary_mux[] = {
--	P_CNT_CUD, P_CNT_CDG, P_CNT_CZM, 0
--};
--
--static const unsigned short sport0_mux[] = {
--	P_SPORT0_TFS, P_SPORT0_DTPRI, P_SPORT0_TSCLK, P_SPORT0_RFS,
--	P_SPORT0_DRPRI, P_SPORT0_RSCLK, 0
--};
--
--static const unsigned short sport1_mux[] = {
--	P_SPORT1_TFS, P_SPORT1_DTPRI, P_SPORT1_TSCLK, P_SPORT1_RFS,
--	P_SPORT1_DRPRI, P_SPORT1_RSCLK, 0
--};
--
--static const unsigned short sport2_mux[] = {
--	P_SPORT2_TFS, P_SPORT2_DTPRI, P_SPORT2_TSCLK, P_SPORT2_RFS,
--	P_SPORT2_DRPRI, P_SPORT2_RSCLK, 0
--};
--
--static const unsigned short sport3_mux[] = {
--	P_SPORT3_TFS, P_SPORT3_DTPRI, P_SPORT3_TSCLK, P_SPORT3_RFS,
--	P_SPORT3_DRPRI, P_SPORT3_RSCLK, 0
--};
--
--static const unsigned short can0_mux[] = {
--	P_CAN0_RX, P_CAN0_TX, 0
--};
--
--static const unsigned short can1_mux[] = {
--	P_CAN1_RX, P_CAN1_TX, 0
--};
--
--static const unsigned short smc0_mux[] = {
--	P_A4, P_A5, P_A6, P_A7, P_A8, P_A9, P_A10, P_A11, P_A12,
--	P_A13, P_A14, P_A15, P_A16, P_A17, P_A18, P_A19, P_A20, P_A21,
--	P_A22, P_A23, P_A24, P_A25, P_NOR_CLK, 0,
--};
--
--static const unsigned short ppi0_8b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi0_16b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi0_24b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15,
--	P_PPI0_D16, P_PPI0_D17, P_PPI0_D18, P_PPI0_D19,
--	P_PPI0_D20, P_PPI0_D21, P_PPI0_D22, P_PPI0_D23,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi1_8b_mux[] = {
--	P_PPI1_D0, P_PPI1_D1, P_PPI1_D2, P_PPI1_D3,
--	P_PPI1_D4, P_PPI1_D5, P_PPI1_D6, P_PPI1_D7,
--	P_PPI1_CLK, P_PPI1_FS1, P_PPI1_FS2,
--	0,
--};
--
--static const unsigned short ppi1_16b_mux[] = {
--	P_PPI1_D0, P_PPI1_D1, P_PPI1_D2, P_PPI1_D3,
--	P_PPI1_D4, P_PPI1_D5, P_PPI1_D6, P_PPI1_D7,
--	P_PPI1_D8, P_PPI1_D9, P_PPI1_D10, P_PPI1_D11,
--	P_PPI1_D12, P_PPI1_D13, P_PPI1_D14, P_PPI1_D15,
--	P_PPI1_CLK, P_PPI1_FS1, P_PPI1_FS2,
--	0,
--};
--
--static const unsigned short ppi2_8b_mux[] = {
--	P_PPI2_D0, P_PPI2_D1, P_PPI2_D2, P_PPI2_D3,
--	P_PPI2_D4, P_PPI2_D5, P_PPI2_D6, P_PPI2_D7,
--	P_PPI2_CLK, P_PPI2_FS1, P_PPI2_FS2,
--	0,
--};
--
--static const unsigned short atapi_mux[] = {
--	P_ATAPI_RESET, P_ATAPI_DIOR, P_ATAPI_DIOW, P_ATAPI_CS0, P_ATAPI_CS1,
--	P_ATAPI_DMACK, P_ATAPI_DMARQ, P_ATAPI_INTRQ, P_ATAPI_IORDY,
--};
--
--static const unsigned short atapi_alter_mux[] = {
--	P_ATAPI_D0A, P_ATAPI_D1A, P_ATAPI_D2A, P_ATAPI_D3A, P_ATAPI_D4A,
--	P_ATAPI_D5A, P_ATAPI_D6A, P_ATAPI_D7A, P_ATAPI_D8A, P_ATAPI_D9A,
--	P_ATAPI_D10A, P_ATAPI_D11A, P_ATAPI_D12A, P_ATAPI_D13A, P_ATAPI_D14A,
--	P_ATAPI_D15A, P_ATAPI_A0A, P_ATAPI_A1A, P_ATAPI_A2A,
--	0
--};
--
--static const unsigned short nfc0_mux[] = {
--	P_NAND_CE, P_NAND_RB,
--	0
--};
--
--static const unsigned short keys_4x4_mux[] = {
--	P_KEY_ROW3, P_KEY_ROW2, P_KEY_ROW1, P_KEY_ROW0,
--	P_KEY_COL3, P_KEY_COL2, P_KEY_COL1, P_KEY_COL0,
--	0
--};
--
--static const unsigned short keys_8x8_mux[] = {
--	P_KEY_ROW7, P_KEY_ROW6, P_KEY_ROW5, P_KEY_ROW4,
--	P_KEY_ROW3, P_KEY_ROW2, P_KEY_ROW1, P_KEY_ROW0,
--	P_KEY_COL7, P_KEY_COL6, P_KEY_COL5, P_KEY_COL4,
--	P_KEY_COL3, P_KEY_COL2, P_KEY_COL1, P_KEY_COL0,
--	0
--};
--
--static const struct adi_pin_group adi_pin_groups[] = {
--	ADI_PIN_GROUP("uart0grp", uart0_pins, uart0_mux),
--	ADI_PIN_GROUP("uart1grp", uart1_pins, uart1_mux),
--	ADI_PIN_GROUP("uart1ctsrtsgrp", uart1_ctsrts_pins, uart1_ctsrts_mux),
--	ADI_PIN_GROUP("uart2grp", uart2_pins, uart2_mux),
--	ADI_PIN_GROUP("uart3grp", uart3_pins, uart3_mux),
--	ADI_PIN_GROUP("uart3ctsrtsgrp", uart3_ctsrts_pins, uart3_ctsrts_mux),
--	ADI_PIN_GROUP("rsi0grp", rsi0_pins, rsi0_mux),
--	ADI_PIN_GROUP("spi0grp", spi0_pins, spi0_mux),
--	ADI_PIN_GROUP("spi1grp", spi1_pins, spi1_mux),
--	ADI_PIN_GROUP("twi0grp", twi0_pins, twi0_mux),
--	ADI_PIN_GROUP("twi1grp", twi1_pins, twi1_mux),
--	ADI_PIN_GROUP("rotarygrp", rotary_pins, rotary_mux),
--	ADI_PIN_GROUP("can0grp", can0_pins, can0_mux),
--	ADI_PIN_GROUP("can1grp", can1_pins, can1_mux),
--	ADI_PIN_GROUP("smc0grp", smc0_pins, smc0_mux),
--	ADI_PIN_GROUP("sport0grp", sport0_pins, sport0_mux),
--	ADI_PIN_GROUP("sport1grp", sport1_pins, sport1_mux),
--	ADI_PIN_GROUP("sport2grp", sport2_pins, sport2_mux),
--	ADI_PIN_GROUP("sport3grp", sport3_pins, sport3_mux),
--	ADI_PIN_GROUP("ppi0_8bgrp", ppi0_8b_pins, ppi0_8b_mux),
--	ADI_PIN_GROUP("ppi0_16bgrp", ppi0_16b_pins, ppi0_16b_mux),
--	ADI_PIN_GROUP("ppi0_24bgrp", ppi0_24b_pins, ppi0_24b_mux),
--	ADI_PIN_GROUP("ppi1_8bgrp", ppi1_8b_pins, ppi1_8b_mux),
--	ADI_PIN_GROUP("ppi1_16bgrp", ppi1_16b_pins, ppi1_16b_mux),
--	ADI_PIN_GROUP("ppi2_8bgrp", ppi2_8b_pins, ppi2_8b_mux),
--	ADI_PIN_GROUP("atapigrp", atapi_pins, atapi_mux),
--	ADI_PIN_GROUP("atapialtergrp", atapi_alter_pins, atapi_alter_mux),
--	ADI_PIN_GROUP("nfc0grp", nfc0_pins, nfc0_mux),
--	ADI_PIN_GROUP("keys_4x4grp", keys_4x4_pins, keys_4x4_mux),
--	ADI_PIN_GROUP("keys_8x8grp", keys_8x8_pins, keys_8x8_mux),
--};
--
--static const char * const uart0grp[] = { "uart0grp" };
--static const char * const uart1grp[] = { "uart1grp" };
--static const char * const uart1ctsrtsgrp[] = { "uart1ctsrtsgrp" };
--static const char * const uart2grp[] = { "uart2grp" };
--static const char * const uart3grp[] = { "uart3grp" };
--static const char * const uart3ctsrtsgrp[] = { "uart3ctsrtsgrp" };
--static const char * const rsi0grp[] = { "rsi0grp" };
--static const char * const spi0grp[] = { "spi0grp" };
--static const char * const spi1grp[] = { "spi1grp" };
--static const char * const twi0grp[] = { "twi0grp" };
--static const char * const twi1grp[] = { "twi1grp" };
--static const char * const rotarygrp[] = { "rotarygrp" };
--static const char * const can0grp[] = { "can0grp" };
--static const char * const can1grp[] = { "can1grp" };
--static const char * const smc0grp[] = { "smc0grp" };
--static const char * const sport0grp[] = { "sport0grp" };
--static const char * const sport1grp[] = { "sport1grp" };
--static const char * const sport2grp[] = { "sport2grp" };
--static const char * const sport3grp[] = { "sport3grp" };
--static const char * const ppi0grp[] = { "ppi0_8bgrp",
--					"ppi0_16bgrp",
--					"ppi0_24bgrp" };
--static const char * const ppi1grp[] = { "ppi1_8bgrp",
--					"ppi1_16bgrp" };
--static const char * const ppi2grp[] = { "ppi2_8bgrp" };
--static const char * const atapigrp[] = { "atapigrp" };
--static const char * const atapialtergrp[] = { "atapialtergrp" };
--static const char * const nfc0grp[] = { "nfc0grp" };
--static const char * const keysgrp[] = { "keys_4x4grp",
--					"keys_8x8grp" };
--
--static const struct adi_pmx_func adi_pmx_functions[] = {
--	ADI_PMX_FUNCTION("uart0", uart0grp),
--	ADI_PMX_FUNCTION("uart1", uart1grp),
--	ADI_PMX_FUNCTION("uart1_ctsrts", uart1ctsrtsgrp),
--	ADI_PMX_FUNCTION("uart2", uart2grp),
--	ADI_PMX_FUNCTION("uart3", uart3grp),
--	ADI_PMX_FUNCTION("uart3_ctsrts", uart3ctsrtsgrp),
--	ADI_PMX_FUNCTION("rsi0", rsi0grp),
--	ADI_PMX_FUNCTION("spi0", spi0grp),
--	ADI_PMX_FUNCTION("spi1", spi1grp),
--	ADI_PMX_FUNCTION("twi0", twi0grp),
--	ADI_PMX_FUNCTION("twi1", twi1grp),
--	ADI_PMX_FUNCTION("rotary", rotarygrp),
--	ADI_PMX_FUNCTION("can0", can0grp),
--	ADI_PMX_FUNCTION("can1", can1grp),
--	ADI_PMX_FUNCTION("smc0", smc0grp),
--	ADI_PMX_FUNCTION("sport0", sport0grp),
--	ADI_PMX_FUNCTION("sport1", sport1grp),
--	ADI_PMX_FUNCTION("sport2", sport2grp),
--	ADI_PMX_FUNCTION("sport3", sport3grp),
--	ADI_PMX_FUNCTION("ppi0", ppi0grp),
--	ADI_PMX_FUNCTION("ppi1", ppi1grp),
--	ADI_PMX_FUNCTION("ppi2", ppi2grp),
--	ADI_PMX_FUNCTION("atapi", atapigrp),
--	ADI_PMX_FUNCTION("atapi_alter", atapialtergrp),
--	ADI_PMX_FUNCTION("nfc0", nfc0grp),
--	ADI_PMX_FUNCTION("keys", keysgrp),
--};
--
--static const struct adi_pinctrl_soc_data adi_bf54x_soc = {
--	.functions = adi_pmx_functions,
--	.nfunctions = ARRAY_SIZE(adi_pmx_functions),
--	.groups = adi_pin_groups,
--	.ngroups = ARRAY_SIZE(adi_pin_groups),
--	.pins = adi_pads,
--	.npins = ARRAY_SIZE(adi_pads),
--};
--
--void adi_pinctrl_soc_init(const struct adi_pinctrl_soc_data **soc)
--{
--	*soc = &adi_bf54x_soc;
--}
-diff --git a/drivers/pinctrl/pinctrl-adi2-bf60x.c b/drivers/pinctrl/pinctrl-adi2-bf60x.c
-deleted file mode 100644
-index fcfa008..0000000
---- a/drivers/pinctrl/pinctrl-adi2-bf60x.c
-+++ /dev/null
-@@ -1,517 +0,0 @@
--/*
-- * Pinctrl Driver for ADI GPIO2 controller
-- *
-- * Copyright 2007-2013 Analog Devices Inc.
-- *
-- * Licensed under the GPLv2 or later
-- */
--
--#include <asm/portmux.h>
--#include "pinctrl-adi2.h"
--
--static const struct pinctrl_pin_desc adi_pads[] = {
--	PINCTRL_PIN(0, "PA0"),
--	PINCTRL_PIN(1, "PA1"),
--	PINCTRL_PIN(2, "PA2"),
--	PINCTRL_PIN(3, "PG3"),
--	PINCTRL_PIN(4, "PA4"),
--	PINCTRL_PIN(5, "PA5"),
--	PINCTRL_PIN(6, "PA6"),
--	PINCTRL_PIN(7, "PA7"),
--	PINCTRL_PIN(8, "PA8"),
--	PINCTRL_PIN(9, "PA9"),
--	PINCTRL_PIN(10, "PA10"),
--	PINCTRL_PIN(11, "PA11"),
--	PINCTRL_PIN(12, "PA12"),
--	PINCTRL_PIN(13, "PA13"),
--	PINCTRL_PIN(14, "PA14"),
--	PINCTRL_PIN(15, "PA15"),
--	PINCTRL_PIN(16, "PB0"),
--	PINCTRL_PIN(17, "PB1"),
--	PINCTRL_PIN(18, "PB2"),
--	PINCTRL_PIN(19, "PB3"),
--	PINCTRL_PIN(20, "PB4"),
--	PINCTRL_PIN(21, "PB5"),
--	PINCTRL_PIN(22, "PB6"),
--	PINCTRL_PIN(23, "PB7"),
--	PINCTRL_PIN(24, "PB8"),
--	PINCTRL_PIN(25, "PB9"),
--	PINCTRL_PIN(26, "PB10"),
--	PINCTRL_PIN(27, "PB11"),
--	PINCTRL_PIN(28, "PB12"),
--	PINCTRL_PIN(29, "PB13"),
--	PINCTRL_PIN(30, "PB14"),
--	PINCTRL_PIN(31, "PB15"),
--	PINCTRL_PIN(32, "PC0"),
--	PINCTRL_PIN(33, "PC1"),
--	PINCTRL_PIN(34, "PC2"),
--	PINCTRL_PIN(35, "PC3"),
--	PINCTRL_PIN(36, "PC4"),
--	PINCTRL_PIN(37, "PC5"),
--	PINCTRL_PIN(38, "PC6"),
--	PINCTRL_PIN(39, "PC7"),
--	PINCTRL_PIN(40, "PC8"),
--	PINCTRL_PIN(41, "PC9"),
--	PINCTRL_PIN(42, "PC10"),
--	PINCTRL_PIN(43, "PC11"),
--	PINCTRL_PIN(44, "PC12"),
--	PINCTRL_PIN(45, "PC13"),
--	PINCTRL_PIN(46, "PC14"),
--	PINCTRL_PIN(47, "PC15"),
--	PINCTRL_PIN(48, "PD0"),
--	PINCTRL_PIN(49, "PD1"),
--	PINCTRL_PIN(50, "PD2"),
--	PINCTRL_PIN(51, "PD3"),
--	PINCTRL_PIN(52, "PD4"),
--	PINCTRL_PIN(53, "PD5"),
--	PINCTRL_PIN(54, "PD6"),
--	PINCTRL_PIN(55, "PD7"),
--	PINCTRL_PIN(56, "PD8"),
--	PINCTRL_PIN(57, "PD9"),
--	PINCTRL_PIN(58, "PD10"),
--	PINCTRL_PIN(59, "PD11"),
--	PINCTRL_PIN(60, "PD12"),
--	PINCTRL_PIN(61, "PD13"),
--	PINCTRL_PIN(62, "PD14"),
--	PINCTRL_PIN(63, "PD15"),
--	PINCTRL_PIN(64, "PE0"),
--	PINCTRL_PIN(65, "PE1"),
--	PINCTRL_PIN(66, "PE2"),
--	PINCTRL_PIN(67, "PE3"),
--	PINCTRL_PIN(68, "PE4"),
--	PINCTRL_PIN(69, "PE5"),
--	PINCTRL_PIN(70, "PE6"),
--	PINCTRL_PIN(71, "PE7"),
--	PINCTRL_PIN(72, "PE8"),
--	PINCTRL_PIN(73, "PE9"),
--	PINCTRL_PIN(74, "PE10"),
--	PINCTRL_PIN(75, "PE11"),
--	PINCTRL_PIN(76, "PE12"),
--	PINCTRL_PIN(77, "PE13"),
--	PINCTRL_PIN(78, "PE14"),
--	PINCTRL_PIN(79, "PE15"),
--	PINCTRL_PIN(80, "PF0"),
--	PINCTRL_PIN(81, "PF1"),
--	PINCTRL_PIN(82, "PF2"),
--	PINCTRL_PIN(83, "PF3"),
--	PINCTRL_PIN(84, "PF4"),
--	PINCTRL_PIN(85, "PF5"),
--	PINCTRL_PIN(86, "PF6"),
--	PINCTRL_PIN(87, "PF7"),
--	PINCTRL_PIN(88, "PF8"),
--	PINCTRL_PIN(89, "PF9"),
--	PINCTRL_PIN(90, "PF10"),
--	PINCTRL_PIN(91, "PF11"),
--	PINCTRL_PIN(92, "PF12"),
--	PINCTRL_PIN(93, "PF13"),
--	PINCTRL_PIN(94, "PF14"),
--	PINCTRL_PIN(95, "PF15"),
--	PINCTRL_PIN(96, "PG0"),
--	PINCTRL_PIN(97, "PG1"),
--	PINCTRL_PIN(98, "PG2"),
--	PINCTRL_PIN(99, "PG3"),
--	PINCTRL_PIN(100, "PG4"),
--	PINCTRL_PIN(101, "PG5"),
--	PINCTRL_PIN(102, "PG6"),
--	PINCTRL_PIN(103, "PG7"),
--	PINCTRL_PIN(104, "PG8"),
--	PINCTRL_PIN(105, "PG9"),
--	PINCTRL_PIN(106, "PG10"),
--	PINCTRL_PIN(107, "PG11"),
--	PINCTRL_PIN(108, "PG12"),
--	PINCTRL_PIN(109, "PG13"),
--	PINCTRL_PIN(110, "PG14"),
--	PINCTRL_PIN(111, "PG15"),
--};
--
--static const unsigned uart0_pins[] = {
--	GPIO_PD7, GPIO_PD8,
--};
--
--static const unsigned uart0_ctsrts_pins[] = {
--	GPIO_PD9, GPIO_PD10,
--};
--
--static const unsigned uart1_pins[] = {
--	GPIO_PG15, GPIO_PG14,
--};
--
--static const unsigned uart1_ctsrts_pins[] = {
--	GPIO_PG10, GPIO_PG13,
--};
--
--static const unsigned rsi0_pins[] = {
--	GPIO_PG3, GPIO_PG2, GPIO_PG0, GPIO_PE15, GPIO_PG5, GPIO_PG6,
--};
--
--static const unsigned eth0_pins[] = {
--	GPIO_PC6, GPIO_PC7, GPIO_PC2, GPIO_PC0, GPIO_PC3, GPIO_PC1,
--	GPIO_PB13, GPIO_PD6, GPIO_PC5, GPIO_PC4, GPIO_PB14, GPIO_PB15,
--};
--
--static const unsigned eth1_pins[] = {
--	GPIO_PE10, GPIO_PE11, GPIO_PG3, GPIO_PG0, GPIO_PG2, GPIO_PE15,
--	GPIO_PG5, GPIO_PE12, GPIO_PE13, GPIO_PE14, GPIO_PG6, GPIO_PC9,
--};
--
--static const unsigned spi0_pins[] = {
--	GPIO_PD4, GPIO_PD2, GPIO_PD3,
--};
--
--static const unsigned spi1_pins[] = {
--	GPIO_PD5, GPIO_PD14, GPIO_PD13,
--};
--
--static const unsigned twi0_pins[] = {
--};
--
--static const unsigned twi1_pins[] = {
--};
--
--static const unsigned rotary_pins[] = {
--	GPIO_PG7, GPIO_PG11, GPIO_PG12,
--};
--
--static const unsigned can0_pins[] = {
--	GPIO_PG1, GPIO_PG4,
--};
--
--static const unsigned smc0_pins[] = {
--	GPIO_PA0, GPIO_PA1, GPIO_PA2, GPIO_PA3, GPIO_PA4, GPIO_PA5, GPIO_PA6,
--	GPIO_PA7, GPIO_PA8, GPIO_PA9, GPIO_PB2, GPIO_PA10, GPIO_PA11,
--	GPIO_PB3, GPIO_PA12, GPIO_PA13, GPIO_PA14, GPIO_PA15, GPIO_PB6,
--	GPIO_PB7, GPIO_PB8, GPIO_PB10, GPIO_PB11, GPIO_PB0,
--};
--
--static const unsigned sport0_pins[] = {
--	GPIO_PB5, GPIO_PB4, GPIO_PB9, GPIO_PB8, GPIO_PB7, GPIO_PB11,
--};
--
--static const unsigned sport1_pins[] = {
--	GPIO_PE2, GPIO_PE5, GPIO_PD15, GPIO_PE4, GPIO_PE3, GPIO_PE1,
--};
--
--static const unsigned sport2_pins[] = {
--	GPIO_PG4, GPIO_PG1, GPIO_PG9, GPIO_PG10, GPIO_PG7, GPIO_PB12,
--};
--
--static const unsigned ppi0_8b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF13, GPIO_PF14, GPIO_PF15,
--	GPIO_PE6, GPIO_PE7, GPIO_PE8, GPIO_PE9,
--};
--
--static const unsigned ppi0_16b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF9, GPIO_PF10, GPIO_PF11, GPIO_PF12,
--	GPIO_PF13, GPIO_PF14, GPIO_PF15,
--	GPIO_PE6, GPIO_PE7, GPIO_PE8, GPIO_PE9,
--};
--
--static const unsigned ppi0_24b_pins[] = {
--	GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3, GPIO_PF4, GPIO_PF5, GPIO_PF6,
--	GPIO_PF7, GPIO_PF8, GPIO_PF9, GPIO_PF10, GPIO_PF11, GPIO_PF12,
--	GPIO_PF13, GPIO_PF14, GPIO_PF15, GPIO_PE0, GPIO_PE1, GPIO_PE2,
--	GPIO_PE3, GPIO_PE4, GPIO_PE5, GPIO_PE6, GPIO_PE7, GPIO_PE8,
--	GPIO_PE9, GPIO_PD12, GPIO_PD15,
--};
--
--static const unsigned ppi1_8b_pins[] = {
--	GPIO_PC0, GPIO_PC1, GPIO_PC2, GPIO_PC3, GPIO_PC4, GPIO_PC5, GPIO_PC6,
--	GPIO_PC7, GPIO_PC8, GPIO_PB13, GPIO_PB14, GPIO_PB15, GPIO_PD6,
--};
--
--static const unsigned ppi1_16b_pins[] = {
--	GPIO_PC0, GPIO_PC1, GPIO_PC2, GPIO_PC3, GPIO_PC4, GPIO_PC5, GPIO_PC6,
--	GPIO_PC7, GPIO_PC9, GPIO_PC10, GPIO_PC11, GPIO_PC12,
--	GPIO_PC13, GPIO_PC14, GPIO_PC15,
--	GPIO_PB13, GPIO_PB14, GPIO_PB15, GPIO_PD6,
--};
--
--static const unsigned ppi2_8b_pins[] = {
--	GPIO_PA0, GPIO_PA1, GPIO_PA2, GPIO_PA3, GPIO_PA4, GPIO_PA5, GPIO_PA6,
--	GPIO_PA7, GPIO_PB0, GPIO_PB1, GPIO_PB2, GPIO_PB3,
--};
--
--static const unsigned ppi2_16b_pins[] = {
--	GPIO_PA0, GPIO_PA1, GPIO_PA2, GPIO_PA3, GPIO_PA4, GPIO_PA5, GPIO_PA6,
--	GPIO_PA7, GPIO_PA8, GPIO_PA9, GPIO_PA10, GPIO_PA11, GPIO_PA12,
--	GPIO_PA13, GPIO_PA14, GPIO_PA15, GPIO_PB0, GPIO_PB1, GPIO_PB2,
--};
--
--static const unsigned lp0_pins[] = {
--	GPIO_PB0, GPIO_PB1, GPIO_PA0, GPIO_PA1, GPIO_PA2, GPIO_PA3,
--	GPIO_PA4, GPIO_PA5, GPIO_PA6, GPIO_PA7,
--};
--
--static const unsigned lp1_pins[] = {
--	GPIO_PB3, GPIO_PB2, GPIO_PA8, GPIO_PA9, GPIO_PA10, GPIO_PA11,
--	GPIO_PA12, GPIO_PA13, GPIO_PA14, GPIO_PA15,
--};
--
--static const unsigned lp2_pins[] = {
--	GPIO_PE6, GPIO_PE7, GPIO_PF0, GPIO_PF1, GPIO_PF2, GPIO_PF3,
--	GPIO_PF4, GPIO_PF5, GPIO_PF6, GPIO_PF7,
--};
--
--static const unsigned lp3_pins[] = {
--	GPIO_PE9, GPIO_PE8, GPIO_PF8, GPIO_PF9, GPIO_PF10, GPIO_PF11,
--	GPIO_PF12, GPIO_PF13, GPIO_PF14, GPIO_PF15,
--};
--
--static const unsigned short uart0_mux[] = {
--	P_UART0_TX, P_UART0_RX,
--	0
--};
--
--static const unsigned short uart0_ctsrts_mux[] = {
--	P_UART0_RTS, P_UART0_CTS,
--	0
--};
--
--static const unsigned short uart1_mux[] = {
--	P_UART1_TX, P_UART1_RX,
--	0
--};
--
--static const unsigned short uart1_ctsrts_mux[] = {
--	P_UART1_RTS, P_UART1_CTS,
--	0
--};
--
--static const unsigned short rsi0_mux[] = {
--	P_RSI_DATA0, P_RSI_DATA1, P_RSI_DATA2, P_RSI_DATA3,
--	P_RSI_CMD, P_RSI_CLK, 0
--};
--
--static const unsigned short eth0_mux[] = P_RMII0;
--static const unsigned short eth1_mux[] = P_RMII1;
--
--static const unsigned short spi0_mux[] = {
--	P_SPI0_SCK, P_SPI0_MISO, P_SPI0_MOSI, 0
--};
--
--static const unsigned short spi1_mux[] = {
--	P_SPI1_SCK, P_SPI1_MISO, P_SPI1_MOSI, 0
--};
--
--static const unsigned short twi0_mux[] = {
--	P_TWI0_SCL, P_TWI0_SDA, 0
--};
--
--static const unsigned short twi1_mux[] = {
--	P_TWI1_SCL, P_TWI1_SDA, 0
--};
--
--static const unsigned short rotary_mux[] = {
--	P_CNT_CUD, P_CNT_CDG, P_CNT_CZM, 0
--};
--
--static const unsigned short sport0_mux[] = {
--	P_SPORT0_ACLK, P_SPORT0_AFS, P_SPORT0_AD0, P_SPORT0_BCLK,
--	P_SPORT0_BFS, P_SPORT0_BD0, 0,
--};
--
--static const unsigned short sport1_mux[] = {
--	P_SPORT1_ACLK, P_SPORT1_AFS, P_SPORT1_AD0, P_SPORT1_BCLK,
--	P_SPORT1_BFS, P_SPORT1_BD0, 0,
--};
--
--static const unsigned short sport2_mux[] = {
--	P_SPORT2_ACLK, P_SPORT2_AFS, P_SPORT2_AD0, P_SPORT2_BCLK,
--	P_SPORT2_BFS, P_SPORT2_BD0, 0,
--};
--
--static const unsigned short can0_mux[] = {
--	P_CAN0_RX, P_CAN0_TX, 0
--};
--
--static const unsigned short smc0_mux[] = {
--	P_A3, P_A4, P_A5, P_A6, P_A7, P_A8, P_A9, P_A10, P_A11, P_A12,
--	P_A13, P_A14, P_A15, P_A16, P_A17, P_A18, P_A19, P_A20, P_A21,
--	P_A22, P_A23, P_A24, P_A25, P_NORCK, 0,
--};
--
--static const unsigned short ppi0_8b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi0_16b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi0_24b_mux[] = {
--	P_PPI0_D0, P_PPI0_D1, P_PPI0_D2, P_PPI0_D3,
--	P_PPI0_D4, P_PPI0_D5, P_PPI0_D6, P_PPI0_D7,
--	P_PPI0_D8, P_PPI0_D9, P_PPI0_D10, P_PPI0_D11,
--	P_PPI0_D12, P_PPI0_D13, P_PPI0_D14, P_PPI0_D15,
--	P_PPI0_D16, P_PPI0_D17, P_PPI0_D18, P_PPI0_D19,
--	P_PPI0_D20, P_PPI0_D21, P_PPI0_D22, P_PPI0_D23,
--	P_PPI0_CLK, P_PPI0_FS1, P_PPI0_FS2,
--	0,
--};
--
--static const unsigned short ppi1_8b_mux[] = {
--	P_PPI1_D0, P_PPI1_D1, P_PPI1_D2, P_PPI1_D3,
--	P_PPI1_D4, P_PPI1_D5, P_PPI1_D6, P_PPI1_D7,
--	P_PPI1_CLK, P_PPI1_FS1, P_PPI1_FS2,
--	0,
--};
--
--static const unsigned short ppi1_16b_mux[] = {
--	P_PPI1_D0, P_PPI1_D1, P_PPI1_D2, P_PPI1_D3,
--	P_PPI1_D4, P_PPI1_D5, P_PPI1_D6, P_PPI1_D7,
--	P_PPI1_D8, P_PPI1_D9, P_PPI1_D10, P_PPI1_D11,
--	P_PPI1_D12, P_PPI1_D13, P_PPI1_D14, P_PPI1_D15,
--	P_PPI1_CLK, P_PPI1_FS1, P_PPI1_FS2,
--	0,
--};
--
--static const unsigned short ppi2_8b_mux[] = {
--	P_PPI2_D0, P_PPI2_D1, P_PPI2_D2, P_PPI2_D3,
--	P_PPI2_D4, P_PPI2_D5, P_PPI2_D6, P_PPI2_D7,
--	P_PPI2_CLK, P_PPI2_FS1, P_PPI2_FS2,
--	0,
--};
--
--static const unsigned short ppi2_16b_mux[] = {
--	P_PPI2_D0, P_PPI2_D1, P_PPI2_D2, P_PPI2_D3,
--	P_PPI2_D4, P_PPI2_D5, P_PPI2_D6, P_PPI2_D7,
--	P_PPI2_D8, P_PPI2_D9, P_PPI2_D10, P_PPI2_D11,
--	P_PPI2_D12, P_PPI2_D13, P_PPI2_D14, P_PPI2_D15,
--	P_PPI2_CLK, P_PPI2_FS1, P_PPI2_FS2,
--	0,
--};
--
--static const unsigned short lp0_mux[] = {
--	P_LP0_CLK, P_LP0_ACK, P_LP0_D0, P_LP0_D1, P_LP0_D2,
--	P_LP0_D3, P_LP0_D4, P_LP0_D5, P_LP0_D6, P_LP0_D7,
--	0
--};
--
--static const unsigned short lp1_mux[] = {
--	P_LP1_CLK, P_LP1_ACK, P_LP1_D0, P_LP1_D1, P_LP1_D2,
--	P_LP1_D3, P_LP1_D4, P_LP1_D5, P_LP1_D6, P_LP1_D7,
--	0
--};
--
--static const unsigned short lp2_mux[] = {
--	P_LP2_CLK, P_LP2_ACK, P_LP2_D0, P_LP2_D1, P_LP2_D2,
--	P_LP2_D3, P_LP2_D4, P_LP2_D5, P_LP2_D6, P_LP2_D7,
--	0
--};
--
--static const unsigned short lp3_mux[] = {
--	P_LP3_CLK, P_LP3_ACK, P_LP3_D0, P_LP3_D1, P_LP3_D2,
--	P_LP3_D3, P_LP3_D4, P_LP3_D5, P_LP3_D6, P_LP3_D7,
--	0
--};
--
--static const struct adi_pin_group adi_pin_groups[] = {
--	ADI_PIN_GROUP("uart0grp", uart0_pins, uart0_mux),
--	ADI_PIN_GROUP("uart0ctsrtsgrp", uart0_ctsrts_pins, uart0_ctsrts_mux),
--	ADI_PIN_GROUP("uart1grp", uart1_pins, uart1_mux),
--	ADI_PIN_GROUP("uart1ctsrtsgrp", uart1_ctsrts_pins, uart1_ctsrts_mux),
--	ADI_PIN_GROUP("rsi0grp", rsi0_pins, rsi0_mux),
--	ADI_PIN_GROUP("eth0grp", eth0_pins, eth0_mux),
--	ADI_PIN_GROUP("eth1grp", eth1_pins, eth1_mux),
--	ADI_PIN_GROUP("spi0grp", spi0_pins, spi0_mux),
--	ADI_PIN_GROUP("spi1grp", spi1_pins, spi1_mux),
--	ADI_PIN_GROUP("twi0grp", twi0_pins, twi0_mux),
--	ADI_PIN_GROUP("twi1grp", twi1_pins, twi1_mux),
--	ADI_PIN_GROUP("rotarygrp", rotary_pins, rotary_mux),
--	ADI_PIN_GROUP("can0grp", can0_pins, can0_mux),
--	ADI_PIN_GROUP("smc0grp", smc0_pins, smc0_mux),
--	ADI_PIN_GROUP("sport0grp", sport0_pins, sport0_mux),
--	ADI_PIN_GROUP("sport1grp", sport1_pins, sport1_mux),
--	ADI_PIN_GROUP("sport2grp", sport2_pins, sport2_mux),
--	ADI_PIN_GROUP("ppi0_8bgrp", ppi0_8b_pins, ppi0_8b_mux),
--	ADI_PIN_GROUP("ppi0_16bgrp", ppi0_16b_pins, ppi0_16b_mux),
--	ADI_PIN_GROUP("ppi0_24bgrp", ppi0_24b_pins, ppi0_24b_mux),
--	ADI_PIN_GROUP("ppi1_8bgrp", ppi1_8b_pins, ppi1_8b_mux),
--	ADI_PIN_GROUP("ppi1_16bgrp", ppi1_16b_pins, ppi1_16b_mux),
--	ADI_PIN_GROUP("ppi2_8bgrp", ppi2_8b_pins, ppi2_8b_mux),
--	ADI_PIN_GROUP("ppi2_16bgrp", ppi2_16b_pins, ppi2_16b_mux),
--	ADI_PIN_GROUP("lp0grp", lp0_pins, lp0_mux),
--	ADI_PIN_GROUP("lp1grp", lp1_pins, lp1_mux),
--	ADI_PIN_GROUP("lp2grp", lp2_pins, lp2_mux),
--	ADI_PIN_GROUP("lp3grp", lp3_pins, lp3_mux),
--};
--
--static const char * const uart0grp[] = { "uart0grp" };
--static const char * const uart0ctsrtsgrp[] = { "uart0ctsrtsgrp" };
--static const char * const uart1grp[] = { "uart1grp" };
--static const char * const uart1ctsrtsgrp[] = { "uart1ctsrtsgrp" };
--static const char * const rsi0grp[] = { "rsi0grp" };
--static const char * const eth0grp[] = { "eth0grp" };
--static const char * const eth1grp[] = { "eth1grp" };
--static const char * const spi0grp[] = { "spi0grp" };
--static const char * const spi1grp[] = { "spi1grp" };
--static const char * const twi0grp[] = { "twi0grp" };
--static const char * const twi1grp[] = { "twi1grp" };
--static const char * const rotarygrp[] = { "rotarygrp" };
--static const char * const can0grp[] = { "can0grp" };
--static const char * const smc0grp[] = { "smc0grp" };
--static const char * const sport0grp[] = { "sport0grp" };
--static const char * const sport1grp[] = { "sport1grp" };
--static const char * const sport2grp[] = { "sport2grp" };
--static const char * const ppi0grp[] = { "ppi0_8bgrp",
--					"ppi0_16bgrp",
--					"ppi0_24bgrp" };
--static const char * const ppi1grp[] = { "ppi1_8bgrp",
--					"ppi1_16bgrp" };
--static const char * const ppi2grp[] = { "ppi2_8bgrp",
--					"ppi2_16bgrp" };
--static const char * const lp0grp[] = { "lp0grp" };
--static const char * const lp1grp[] = { "lp1grp" };
--static const char * const lp2grp[] = { "lp2grp" };
--static const char * const lp3grp[] = { "lp3grp" };
--
--static const struct adi_pmx_func adi_pmx_functions[] = {
--	ADI_PMX_FUNCTION("uart0", uart0grp),
--	ADI_PMX_FUNCTION("uart0_ctsrts", uart0ctsrtsgrp),
--	ADI_PMX_FUNCTION("uart1", uart1grp),
--	ADI_PMX_FUNCTION("uart1_ctsrts", uart1ctsrtsgrp),
--	ADI_PMX_FUNCTION("rsi0", rsi0grp),
--	ADI_PMX_FUNCTION("eth0", eth0grp),
--	ADI_PMX_FUNCTION("eth1", eth1grp),
--	ADI_PMX_FUNCTION("spi0", spi0grp),
--	ADI_PMX_FUNCTION("spi1", spi1grp),
--	ADI_PMX_FUNCTION("twi0", twi0grp),
--	ADI_PMX_FUNCTION("twi1", twi1grp),
--	ADI_PMX_FUNCTION("rotary", rotarygrp),
--	ADI_PMX_FUNCTION("can0", can0grp),
--	ADI_PMX_FUNCTION("smc0", smc0grp),
--	ADI_PMX_FUNCTION("sport0", sport0grp),
--	ADI_PMX_FUNCTION("sport1", sport1grp),
--	ADI_PMX_FUNCTION("sport2", sport2grp),
--	ADI_PMX_FUNCTION("ppi0", ppi0grp),
--	ADI_PMX_FUNCTION("ppi1", ppi1grp),
--	ADI_PMX_FUNCTION("ppi2", ppi2grp),
--	ADI_PMX_FUNCTION("lp0", lp0grp),
--	ADI_PMX_FUNCTION("lp1", lp1grp),
--	ADI_PMX_FUNCTION("lp2", lp2grp),
--	ADI_PMX_FUNCTION("lp3", lp3grp),
--};
--
--static const struct adi_pinctrl_soc_data adi_bf60x_soc = {
--	.functions = adi_pmx_functions,
--	.nfunctions = ARRAY_SIZE(adi_pmx_functions),
--	.groups = adi_pin_groups,
--	.ngroups = ARRAY_SIZE(adi_pin_groups),
--	.pins = adi_pads,
--	.npins = ARRAY_SIZE(adi_pads),
--};
--
--void adi_pinctrl_soc_init(const struct adi_pinctrl_soc_data **soc)
--{
--	*soc = &adi_bf60x_soc;
--}
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-deleted file mode 100644
-index 094a451..0000000
---- a/drivers/pinctrl/pinctrl-adi2.c
-+++ /dev/null
-@@ -1,1114 +0,0 @@
--/*
-- * Pinctrl Driver for ADI GPIO2 controller
-- *
-- * Copyright 2007-2013 Analog Devices Inc.
-- *
-- * Licensed under the GPLv2 or later
-- */
--
--#include <linux/bitops.h>
--#include <linux/delay.h>
 -#include <linux/module.h>
--#include <linux/err.h>
--#include <linux/debugfs.h>
--#include <linux/seq_file.h>
--#include <linux/irq.h>
--#include <linux/platform_data/pinctrl-adi2.h>
--#include <linux/irqdomain.h>
--#include <linux/irqchip/chained_irq.h>
--#include <linux/pinctrl/pinctrl.h>
--#include <linux/pinctrl/pinmux.h>
--#include <linux/pinctrl/consumer.h>
--#include <linux/pinctrl/machine.h>
--#include <linux/syscore_ops.h>
--#include <linux/gpio.h>
+-#include <linux/kernel.h>
+-#include <linux/bitops.h>
+-#include <linux/interrupt.h>
+-#include <linux/errno.h>
+-#include <linux/netdevice.h>
+-#include <linux/skbuff.h>
+-#include <linux/platform_device.h>
+-
+-#include <linux/can/dev.h>
+-#include <linux/can/error.h>
+-
 -#include <asm/portmux.h>
--#include "pinctrl-adi2.h"
--#include "core.h"
+-
+-#define DRV_NAME "bfin_can"
+-#define BFIN_CAN_TIMEOUT 100
+-#define TX_ECHO_SKB_MAX  1
+-
+-/* transmit and receive channels */
+-#define TRANSMIT_CHL 24
+-#define RECEIVE_STD_CHL 0
+-#define RECEIVE_EXT_CHL 4
+-#define RECEIVE_RTR_CHL 8
+-#define RECEIVE_EXT_RTR_CHL 12
+-#define MAX_CHL_NUMBER 32
+-
+-/* All Blackfin system MMRs are padded to 32bits even if the register
+- * itself is only 16bits.  So use a helper macro to streamline this
+- */
+-#define __BFP(m) u16 m; u16 __pad_##m
+-
+-/* bfin can registers layout */
+-struct bfin_can_mask_regs {
+-	__BFP(aml);
+-	__BFP(amh);
+-};
+-
+-struct bfin_can_channel_regs {
+-	/* data[0,2,4,6] -> data{0,1,2,3} while data[1,3,5,7] is padding */
+-	u16 data[8];
+-	__BFP(dlc);
+-	__BFP(tsv);
+-	__BFP(id0);
+-	__BFP(id1);
+-};
+-
+-struct bfin_can_regs {
+-	/* global control and status registers */
+-	__BFP(mc1);		/* offset 0x00 */
+-	__BFP(md1);		/* offset 0x04 */
+-	__BFP(trs1);		/* offset 0x08 */
+-	__BFP(trr1);		/* offset 0x0c */
+-	__BFP(ta1);		/* offset 0x10 */
+-	__BFP(aa1);		/* offset 0x14 */
+-	__BFP(rmp1);		/* offset 0x18 */
+-	__BFP(rml1);		/* offset 0x1c */
+-	__BFP(mbtif1);		/* offset 0x20 */
+-	__BFP(mbrif1);		/* offset 0x24 */
+-	__BFP(mbim1);		/* offset 0x28 */
+-	__BFP(rfh1);		/* offset 0x2c */
+-	__BFP(opss1);		/* offset 0x30 */
+-	u32 __pad1[3];
+-	__BFP(mc2);		/* offset 0x40 */
+-	__BFP(md2);		/* offset 0x44 */
+-	__BFP(trs2);		/* offset 0x48 */
+-	__BFP(trr2);		/* offset 0x4c */
+-	__BFP(ta2);		/* offset 0x50 */
+-	__BFP(aa2);		/* offset 0x54 */
+-	__BFP(rmp2);		/* offset 0x58 */
+-	__BFP(rml2);		/* offset 0x5c */
+-	__BFP(mbtif2);		/* offset 0x60 */
+-	__BFP(mbrif2);		/* offset 0x64 */
+-	__BFP(mbim2);		/* offset 0x68 */
+-	__BFP(rfh2);		/* offset 0x6c */
+-	__BFP(opss2);		/* offset 0x70 */
+-	u32 __pad2[3];
+-	__BFP(clock);		/* offset 0x80 */
+-	__BFP(timing);		/* offset 0x84 */
+-	__BFP(debug);		/* offset 0x88 */
+-	__BFP(status);		/* offset 0x8c */
+-	__BFP(cec);		/* offset 0x90 */
+-	__BFP(gis);		/* offset 0x94 */
+-	__BFP(gim);		/* offset 0x98 */
+-	__BFP(gif);		/* offset 0x9c */
+-	__BFP(control);		/* offset 0xa0 */
+-	__BFP(intr);		/* offset 0xa4 */
+-	__BFP(version);		/* offset 0xa8 */
+-	__BFP(mbtd);		/* offset 0xac */
+-	__BFP(ewr);		/* offset 0xb0 */
+-	__BFP(esr);		/* offset 0xb4 */
+-	u32 __pad3[2];
+-	__BFP(ucreg);		/* offset 0xc0 */
+-	__BFP(uccnt);		/* offset 0xc4 */
+-	__BFP(ucrc);		/* offset 0xc8 */
+-	__BFP(uccnf);		/* offset 0xcc */
+-	u32 __pad4[1];
+-	__BFP(version2);	/* offset 0xd4 */
+-	u32 __pad5[10];
+-
+-	/* channel(mailbox) mask and message registers */
+-	struct bfin_can_mask_regs msk[MAX_CHL_NUMBER];		/* offset 0x100 */
+-	struct bfin_can_channel_regs chl[MAX_CHL_NUMBER];	/* offset 0x200 */
+-};
+-
+-#undef __BFP
+-
+-#define SRS 0x0001		/* Software Reset */
+-#define SER 0x0008		/* Stuff Error */
+-#define BOIM 0x0008		/* Enable Bus Off Interrupt */
+-#define CCR 0x0080		/* CAN Configuration Mode Request */
+-#define CCA 0x0080		/* Configuration Mode Acknowledge */
+-#define SAM 0x0080		/* Sampling */
+-#define AME 0x8000		/* Acceptance Mask Enable */
+-#define RMLIM 0x0080		/* Enable RX Message Lost Interrupt */
+-#define RMLIS 0x0080		/* RX Message Lost IRQ Status */
+-#define RTR 0x4000		/* Remote Frame Transmission Request */
+-#define BOIS 0x0008		/* Bus Off IRQ Status */
+-#define IDE 0x2000		/* Identifier Extension */
+-#define EPIS 0x0004		/* Error-Passive Mode IRQ Status */
+-#define EPIM 0x0004		/* Enable Error-Passive Mode Interrupt */
+-#define EWTIS 0x0001		/* TX Error Count IRQ Status */
+-#define EWRIS 0x0002		/* RX Error Count IRQ Status */
+-#define BEF 0x0040		/* Bit Error Flag */
+-#define FER 0x0080		/* Form Error Flag */
+-#define SMR 0x0020		/* Sleep Mode Request */
+-#define SMACK 0x0008		/* Sleep Mode Acknowledge */
 -
 -/*
--According to the BF54x HRM, pint means "pin interrupt".
--http://www.analog.com/static/imported-files/processor_manuals/ADSP-BF54x_hwr_rev1.2.pdf
--
--ADSP-BF54x processor Blackfin processors have four SIC interrupt chan-
--nels dedicated to pin interrupt purposes. These channels are managed by
--four hardware blocks, called PINT0, PINT1, PINT2, and PINT3. Every PINTx
--block can sense to up to 32 pins. While PINT0 and PINT1 can sense the
--pins of port A and port B, PINT2 and PINT3 manage all the pins from port
--C to port J as shown in Figure 9-2.
--
--n BF54x HRM:
--The ten GPIO ports are subdivided into 8-bit half ports, resulting in lower and
--upper half 8-bit units. The PINTx_ASSIGN registers control the 8-bit multi-
--plexers shown in Figure 9-3. Lower half units of eight pins can be
--forwarded to either byte 0 or byte 2 of either associated PINTx block.
--Upper half units can be forwarded to either byte 1 or byte 3 of the pin
--interrupt blocks, without further restrictions.
--
--All MMR registers in the pin interrupt module are 32 bits wide. To simply the
--mapping logic, this driver only maps a 16-bit gpio port to the upper or lower
--16 bits of a PINTx block. You can find the Figure 9-3 on page 583.
--
--Each IRQ domain is binding to a GPIO bank device. 2 GPIO bank devices can map
--to one PINT device. Two in "struct gpio_pint" are used to ease the PINT
--interrupt handler.
--
--The GPIO bank mapping to the lower 16 bits of the PINT device set its IRQ
--domain pointer in domain[0]. The IRQ domain pointer of the other bank is set
--to domain[1]. PINT interrupt handler adi_gpio_handle_pint_irq() finds out
--the current domain pointer according to whether the interrupt request mask
--is in lower 16 bits (domain[0]) or upper 16bits (domain[1]).
--
--A PINT device is not part of a GPIO port device in Blackfin. Multiple GPIO
--port devices can be mapped to the same PINT device.
--
--*/
--
--static LIST_HEAD(adi_pint_list);
--static LIST_HEAD(adi_gpio_port_list);
--
--#define DRIVER_NAME "pinctrl-adi2"
--
--#define PINT_HI_OFFSET		16
--
--/**
-- * struct gpio_port_saved - GPIO port registers that should be saved between
-- * power suspend and resume operations.
-- *
-- * @fer: PORTx_FER register
-- * @data: PORTx_DATA register
-- * @dir: PORTx_DIR register
-- * @inen: PORTx_INEN register
-- * @mux: PORTx_MUX register
+- * bfin can private data
 - */
--struct gpio_port_saved {
--	u16 fer;
--	u16 data;
--	u16 dir;
--	u16 inen;
--	u32 mux;
+-struct bfin_can_priv {
+-	struct can_priv can;	/* must be the first member */
+-	struct net_device *dev;
+-	void __iomem *membase;
+-	int rx_irq;
+-	int tx_irq;
+-	int err_irq;
+-	unsigned short *pin_list;
 -};
 -
 -/*
-- * struct gpio_pint_saved - PINT registers saved in PM operations
-- *
-- * @assign: ASSIGN register
-- * @edge_set: EDGE_SET register
-- * @invert_set: INVERT_SET register
+- * bfin can timing parameters
 - */
--struct gpio_pint_saved {
--	u32 assign;
--	u32 edge_set;
--	u32 invert_set;
--};
--
--/**
-- * struct gpio_pint - Pin interrupt controller device. Multiple ADI GPIO
-- * banks can be mapped into one Pin interrupt controller.
-- *
-- * @node: All gpio_pint instances are added to a global list.
-- * @base: PINT device register base address
-- * @irq: IRQ of the PINT device, it is the parent IRQ of all
-- *       GPIO IRQs mapping to this device.
-- * @domain: [0] irq domain of the gpio port, whose hardware interrupts are
-- *		mapping to the low 16-bit of the pint registers.
-- *          [1] irq domain of the gpio port, whose hardware interrupts are
-- *		mapping to the high 16-bit of the pint registers.
-- * @regs: address pointer to the PINT device
-- * @map_count: No more than 2 GPIO banks can be mapped to this PINT device.
-- * @lock: This lock make sure the irq_chip operations to one PINT device
-- *        for different GPIO interrrupts are atomic.
-- * @pint_map_port: Set up the mapping between one PINT device and
-- *                 multiple GPIO banks.
-- */
--struct gpio_pint {
--	struct list_head node;
--	void __iomem *base;
--	int irq;
--	struct irq_domain *domain[2];
--	struct gpio_pint_regs *regs;
--	struct gpio_pint_saved saved_data;
--	int map_count;
--	spinlock_t lock;
--
--	int (*pint_map_port)(struct gpio_pint *pint, bool assign,
--				u8 map, struct irq_domain *domain);
--};
--
--/**
-- * ADI pin controller
-- *
-- * @dev: a pointer back to containing device
-- * @pctl: the pinctrl device
-- * @soc: SoC data for this specific chip
-- */
--struct adi_pinctrl {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--	const struct adi_pinctrl_soc_data *soc;
--};
--
--/**
-- * struct gpio_port - GPIO bank device. Multiple ADI GPIO banks can be mapped
-- * into one pin interrupt controller.
-- *
-- * @node: All gpio_port instances are added to a list.
-- * @base: GPIO bank device register base address
-- * @irq_base: base IRQ of the GPIO bank device
-- * @width: PIN number of the GPIO bank device
-- * @regs: address pointer to the GPIO bank device
-- * @saved_data: registers that should be saved between PM operations.
-- * @dev: device structure of this GPIO bank
-- * @pint: GPIO PINT device that this GPIO bank mapped to
-- * @pint_map: GIOP bank mapping code in PINT device
-- * @pint_assign: The 32-bit PINT registers can be divided into 2 parts. A
-- *               GPIO bank can be mapped into either low 16 bits[0] or high 16
-- *               bits[1] of each PINT register.
-- * @lock: This lock make sure the irq_chip operations to one PINT device
-- *        for different GPIO interrrupts are atomic.
-- * @chip: abstract a GPIO controller
-- * @domain: The irq domain owned by the GPIO port.
-- * @rsvmap: Reservation map array for each pin in the GPIO bank
-- */
--struct gpio_port {
--	struct list_head node;
--	void __iomem *base;
--	int irq_base;
--	unsigned int width;
--	struct gpio_port_t *regs;
--	struct gpio_port_saved saved_data;
--	struct device *dev;
--
--	struct gpio_pint *pint;
--	u8 pint_map;
--	bool pint_assign;
--
--	spinlock_t lock;
--	struct gpio_chip chip;
--	struct irq_domain *domain;
--};
--
--static inline u8 pin_to_offset(struct pinctrl_gpio_range *range, unsigned pin)
--{
--	return pin - range->pin_base;
--}
--
--static inline u32 hwirq_to_pintbit(struct gpio_port *port, int hwirq)
--{
--	return port->pint_assign ? BIT(hwirq) << PINT_HI_OFFSET : BIT(hwirq);
--}
--
--static struct gpio_pint *find_gpio_pint(unsigned id)
--{
--	struct gpio_pint *pint;
--	int i = 0;
--
--	list_for_each_entry(pint, &adi_pint_list, node) {
--		if (id == i)
--			return pint;
--		i++;
--	}
--
--	return NULL;
--}
--
--static inline void port_setup(struct gpio_port *port, unsigned offset,
--	bool use_for_gpio)
--{
--	struct gpio_port_t *regs = port->regs;
--
--	if (use_for_gpio)
--		writew(readw(&regs->port_fer) & ~BIT(offset),
--			&regs->port_fer);
--	else
--		writew(readw(&regs->port_fer) | BIT(offset), &regs->port_fer);
--}
--
--static inline void portmux_setup(struct gpio_port *port, unsigned offset,
--	unsigned short function)
--{
--	struct gpio_port_t *regs = port->regs;
--	u32 pmux;
--
--	pmux = readl(&regs->port_mux);
--
--	/* The function field of each pin has 2 consecutive bits in
--	 * the mux register.
+-static const struct can_bittiming_const bfin_can_bittiming_const = {
+-	.name = DRV_NAME,
+-	.tseg1_min = 1,
+-	.tseg1_max = 16,
+-	.tseg2_min = 1,
+-	.tseg2_max = 8,
+-	.sjw_max = 4,
+-	/*
+-	 * Although the BRP field can be set to any value, it is recommended
+-	 * that the value be greater than or equal to 4, as restrictions
+-	 * apply to the bit timing configuration when BRP is less than 4.
 -	 */
--	pmux &= ~(0x3 << (2 * offset));
--	pmux |= (function & 0x3) << (2 * offset);
+-	.brp_min = 4,
+-	.brp_max = 1024,
+-	.brp_inc = 1,
+-};
 -
--	writel(pmux, &regs->port_mux);
--}
--
--static inline u16 get_portmux(struct gpio_port *port, unsigned offset)
+-static int bfin_can_set_bittiming(struct net_device *dev)
 -{
--	struct gpio_port_t *regs = port->regs;
--	u32 pmux = readl(&regs->port_mux);
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	struct can_bittiming *bt = &priv->can.bittiming;
+-	u16 clk, timing;
 -
--	/* The function field of each pin has 2 consecutive bits in
--	 * the mux register.
+-	clk = bt->brp - 1;
+-	timing = ((bt->sjw - 1) << 8) | (bt->prop_seg + bt->phase_seg1 - 1) |
+-		((bt->phase_seg2 - 1) << 4);
+-
+-	/*
+-	 * If the SAM bit is set, the input signal is oversampled three times
+-	 * at the SCLK rate.
 -	 */
--	return pmux >> (2 * offset) & 0x3;
--}
+-	if (priv->can.ctrlmode & CAN_CTRLMODE_3_SAMPLES)
+-		timing |= SAM;
 -
--static void adi_gpio_ack_irq(struct irq_data *d)
--{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs = port->pint->regs;
--	unsigned pintbit = hwirq_to_pintbit(port, d->hwirq);
+-	writew(clk, &reg->clock);
+-	writew(timing, &reg->timing);
 -
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
--
--	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH) {
--		if (readl(&regs->invert_set) & pintbit)
--			writel(pintbit, &regs->invert_clear);
--		else
--			writel(pintbit, &regs->invert_set);
--	}
--
--	writel(pintbit, &regs->request);
--
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
--}
--
--static void adi_gpio_mask_ack_irq(struct irq_data *d)
--{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs = port->pint->regs;
--	unsigned pintbit = hwirq_to_pintbit(port, d->hwirq);
--
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
--
--	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH) {
--		if (readl(&regs->invert_set) & pintbit)
--			writel(pintbit, &regs->invert_clear);
--		else
--			writel(pintbit, &regs->invert_set);
--	}
--
--	writel(pintbit, &regs->request);
--	writel(pintbit, &regs->mask_clear);
--
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
--}
--
--static void adi_gpio_mask_irq(struct irq_data *d)
--{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs = port->pint->regs;
--
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
--
--	writel(hwirq_to_pintbit(port, d->hwirq), &regs->mask_clear);
--
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
--}
--
--static void adi_gpio_unmask_irq(struct irq_data *d)
--{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs = port->pint->regs;
--
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
--
--	writel(hwirq_to_pintbit(port, d->hwirq), &regs->mask_set);
--
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
--}
--
--static unsigned int adi_gpio_irq_startup(struct irq_data *d)
--{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs;
--
--	if (!port) {
--		pr_err("GPIO IRQ %d :Not exist\n", d->irq);
--		/* FIXME: negative return code will be ignored */
--		return -ENODEV;
--	}
--
--	regs = port->pint->regs;
--
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
--
--	port_setup(port, d->hwirq, true);
--	writew(BIT(d->hwirq), &port->regs->dir_clear);
--	writew(readw(&port->regs->inen) | BIT(d->hwirq), &port->regs->inen);
--
--	writel(hwirq_to_pintbit(port, d->hwirq), &regs->mask_set);
--
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
+-	netdev_info(dev, "setting CLOCK=0x%04x TIMING=0x%04x\n", clk, timing);
 -
 -	return 0;
 -}
 -
--static void adi_gpio_irq_shutdown(struct irq_data *d)
+-static void bfin_can_set_reset_mode(struct net_device *dev)
 -{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *regs = port->pint->regs;
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	int timeout = BFIN_CAN_TIMEOUT;
+-	int i;
 -
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
+-	/* disable interrupts */
+-	writew(0, &reg->mbim1);
+-	writew(0, &reg->mbim2);
+-	writew(0, &reg->gim);
 -
--	writel(hwirq_to_pintbit(port, d->hwirq), &regs->mask_clear);
+-	/* reset can and enter configuration mode */
+-	writew(SRS | CCR, &reg->control);
+-	writew(CCR, &reg->control);
+-	while (!(readw(&reg->control) & CCA)) {
+-		udelay(10);
+-		if (--timeout == 0) {
+-			netdev_err(dev, "fail to enter configuration mode\n");
+-			BUG();
+-		}
+-	}
 -
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
+-	/*
+-	 * All mailbox configurations are marked as inactive
+-	 * by writing to CAN Mailbox Configuration Registers 1 and 2
+-	 * For all bits: 0 - Mailbox disabled, 1 - Mailbox enabled
+-	 */
+-	writew(0, &reg->mc1);
+-	writew(0, &reg->mc2);
+-
+-	/* Set Mailbox Direction */
+-	writew(0xFFFF, &reg->md1);   /* mailbox 1-16 are RX */
+-	writew(0, &reg->md2);   /* mailbox 17-32 are TX */
+-
+-	/* RECEIVE_STD_CHL */
+-	for (i = 0; i < 2; i++) {
+-		writew(0, &reg->chl[RECEIVE_STD_CHL + i].id0);
+-		writew(AME, &reg->chl[RECEIVE_STD_CHL + i].id1);
+-		writew(0, &reg->chl[RECEIVE_STD_CHL + i].dlc);
+-		writew(0x1FFF, &reg->msk[RECEIVE_STD_CHL + i].amh);
+-		writew(0xFFFF, &reg->msk[RECEIVE_STD_CHL + i].aml);
+-	}
+-
+-	/* RECEIVE_EXT_CHL */
+-	for (i = 0; i < 2; i++) {
+-		writew(0, &reg->chl[RECEIVE_EXT_CHL + i].id0);
+-		writew(AME | IDE, &reg->chl[RECEIVE_EXT_CHL + i].id1);
+-		writew(0, &reg->chl[RECEIVE_EXT_CHL + i].dlc);
+-		writew(0x1FFF, &reg->msk[RECEIVE_EXT_CHL + i].amh);
+-		writew(0xFFFF, &reg->msk[RECEIVE_EXT_CHL + i].aml);
+-	}
+-
+-	writew(BIT(TRANSMIT_CHL - 16), &reg->mc2);
+-	writew(BIT(RECEIVE_STD_CHL) + BIT(RECEIVE_EXT_CHL), &reg->mc1);
+-
+-	priv->can.state = CAN_STATE_STOPPED;
 -}
 -
--static int adi_gpio_irq_type(struct irq_data *d, unsigned int type)
+-static void bfin_can_set_normal_mode(struct net_device *dev)
 -{
--	unsigned long flags;
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--	struct gpio_pint_regs *pint_regs;
--	unsigned pintmask;
--	unsigned int irq = d->irq;
--	int ret = 0;
--	char buf[16];
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	int timeout = BFIN_CAN_TIMEOUT;
 -
--	if (!port) {
--		pr_err("GPIO IRQ %d :Not exist\n", d->irq);
--		return -ENODEV;
+-	/*
+-	 * leave configuration mode
+-	 */
+-	writew(readw(&reg->control) & ~CCR, &reg->control);
+-
+-	while (readw(&reg->status) & CCA) {
+-		udelay(10);
+-		if (--timeout == 0) {
+-			netdev_err(dev, "fail to leave configuration mode\n");
+-			BUG();
+-		}
 -	}
 -
--	pint_regs = port->pint->regs;
+-	/*
+-	 * clear _All_  tx and rx interrupts
+-	 */
+-	writew(0xFFFF, &reg->mbtif1);
+-	writew(0xFFFF, &reg->mbtif2);
+-	writew(0xFFFF, &reg->mbrif1);
+-	writew(0xFFFF, &reg->mbrif2);
 -
--	pintmask = hwirq_to_pintbit(port, d->hwirq);
+-	/*
+-	 * clear global interrupt status register
+-	 */
+-	writew(0x7FF, &reg->gis); /* overwrites with '1' */
 -
--	spin_lock_irqsave(&port->lock, flags);
--	spin_lock(&port->pint->lock);
+-	/*
+-	 * Initialize Interrupts
+-	 * - set bits in the mailbox interrupt mask register
+-	 * - global interrupt mask
+-	 */
+-	writew(BIT(RECEIVE_STD_CHL) + BIT(RECEIVE_EXT_CHL), &reg->mbim1);
+-	writew(BIT(TRANSMIT_CHL - 16), &reg->mbim2);
 -
--	/* In case of interrupt autodetect, set irq type to edge sensitive. */
--	if (type == IRQ_TYPE_PROBE)
--		type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
+-	writew(EPIM | BOIM | RMLIM, &reg->gim);
+-}
 -
--	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
--		    IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
--		snprintf(buf, 16, "gpio-irq%u", irq);
--		port_setup(port, d->hwirq, true);
+-static void bfin_can_start(struct net_device *dev)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-
+-	/* enter reset mode */
+-	if (priv->can.state != CAN_STATE_STOPPED)
+-		bfin_can_set_reset_mode(dev);
+-
+-	/* leave reset mode */
+-	bfin_can_set_normal_mode(dev);
+-}
+-
+-static int bfin_can_set_mode(struct net_device *dev, enum can_mode mode)
+-{
+-	switch (mode) {
+-	case CAN_MODE_START:
+-		bfin_can_start(dev);
+-		if (netif_queue_stopped(dev))
+-			netif_wake_queue(dev);
+-		break;
+-
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-
+-	return 0;
+-}
+-
+-static int bfin_can_get_berr_counter(const struct net_device *dev,
+-				     struct can_berr_counter *bec)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-
+-	u16 cec = readw(&reg->cec);
+-
+-	bec->txerr = cec >> 8;
+-	bec->rxerr = cec;
+-
+-	return 0;
+-}
+-
+-static int bfin_can_start_xmit(struct sk_buff *skb, struct net_device *dev)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	struct can_frame *cf = (struct can_frame *)skb->data;
+-	u8 dlc = cf->can_dlc;
+-	canid_t id = cf->can_id;
+-	u8 *data = cf->data;
+-	u16 val;
+-	int i;
+-
+-	if (can_dropped_invalid_skb(dev, skb))
+-		return NETDEV_TX_OK;
+-
+-	netif_stop_queue(dev);
+-
+-	/* fill id */
+-	if (id & CAN_EFF_FLAG) {
+-		writew(id, &reg->chl[TRANSMIT_CHL].id0);
+-		val = ((id & 0x1FFF0000) >> 16) | IDE;
 -	} else
--		goto out;
+-		val = (id << 2);
+-	if (id & CAN_RTR_FLAG)
+-		val |= RTR;
+-	writew(val | AME, &reg->chl[TRANSMIT_CHL].id1);
 -
--	/* The GPIO interrupt is triggered only when its input value
--	 * transfer from 0 to 1. So, invert the input value if the
--	 * irq type is low or falling
--	 */
--	if ((type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_LEVEL_LOW)))
--		writel(pintmask, &pint_regs->invert_set);
--	else
--		writel(pintmask, &pint_regs->invert_clear);
--
--	/* In edge sensitive case, if the input value of the requested irq
--	 * is already 1, invert it.
--	 */
--	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
--		if (gpio_get_value(port->chip.base + d->hwirq))
--			writel(pintmask, &pint_regs->invert_set);
--		else
--			writel(pintmask, &pint_regs->invert_clear);
+-	/* fill payload */
+-	for (i = 0; i < 8; i += 2) {
+-		val = ((7 - i) < dlc ? (data[7 - i]) : 0) +
+-			((6 - i) < dlc ? (data[6 - i] << 8) : 0);
+-		writew(val, &reg->chl[TRANSMIT_CHL].data[i]);
 -	}
 -
--	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)) {
--		writel(pintmask, &pint_regs->edge_set);
--		irq_set_handler_locked(d, handle_edge_irq);
+-	/* fill data length code */
+-	writew(dlc, &reg->chl[TRANSMIT_CHL].dlc);
+-
+-	can_put_echo_skb(skb, dev, 0);
+-
+-	/* set transmit request */
+-	writew(BIT(TRANSMIT_CHL - 16), &reg->trs2);
+-
+-	return 0;
+-}
+-
+-static void bfin_can_rx(struct net_device *dev, u16 isrc)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct net_device_stats *stats = &dev->stats;
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	struct can_frame *cf;
+-	struct sk_buff *skb;
+-	int obj;
+-	int i;
+-	u16 val;
+-
+-	skb = alloc_can_skb(dev, &cf);
+-	if (skb == NULL)
+-		return;
+-
+-	/* get id */
+-	if (isrc & BIT(RECEIVE_EXT_CHL)) {
+-		/* extended frame format (EFF) */
+-		cf->can_id = ((readw(&reg->chl[RECEIVE_EXT_CHL].id1)
+-			     & 0x1FFF) << 16)
+-			     + readw(&reg->chl[RECEIVE_EXT_CHL].id0);
+-		cf->can_id |= CAN_EFF_FLAG;
+-		obj = RECEIVE_EXT_CHL;
 -	} else {
--		writel(pintmask, &pint_regs->edge_clear);
--		irq_set_handler_locked(d, handle_level_irq);
+-		/* standard frame format (SFF) */
+-		cf->can_id = (readw(&reg->chl[RECEIVE_STD_CHL].id1)
+-			     & 0x1ffc) >> 2;
+-		obj = RECEIVE_STD_CHL;
+-	}
+-	if (readw(&reg->chl[obj].id1) & RTR)
+-		cf->can_id |= CAN_RTR_FLAG;
+-
+-	/* get data length code */
+-	cf->can_dlc = get_can_dlc(readw(&reg->chl[obj].dlc) & 0xF);
+-
+-	/* get payload */
+-	for (i = 0; i < 8; i += 2) {
+-		val = readw(&reg->chl[obj].data[i]);
+-		cf->data[7 - i] = (7 - i) < cf->can_dlc ? val : 0;
+-		cf->data[6 - i] = (6 - i) < cf->can_dlc ? (val >> 8) : 0;
 -	}
 -
--out:
--	spin_unlock(&port->pint->lock);
--	spin_unlock_irqrestore(&port->lock, flags);
+-	stats->rx_packets++;
+-	stats->rx_bytes += cf->can_dlc;
+-	netif_rx(skb);
+-}
 -
--	return ret;
+-static int bfin_can_err(struct net_device *dev, u16 isrc, u16 status)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	struct net_device_stats *stats = &dev->stats;
+-	struct can_frame *cf;
+-	struct sk_buff *skb;
+-	enum can_state state = priv->can.state;
+-
+-	skb = alloc_can_err_skb(dev, &cf);
+-	if (skb == NULL)
+-		return -ENOMEM;
+-
+-	if (isrc & RMLIS) {
+-		/* data overrun interrupt */
+-		netdev_dbg(dev, "data overrun interrupt\n");
+-		cf->can_id |= CAN_ERR_CRTL;
+-		cf->data[1] = CAN_ERR_CRTL_RX_OVERFLOW;
+-		stats->rx_over_errors++;
+-		stats->rx_errors++;
+-	}
+-
+-	if (isrc & BOIS) {
+-		netdev_dbg(dev, "bus-off mode interrupt\n");
+-		state = CAN_STATE_BUS_OFF;
+-		cf->can_id |= CAN_ERR_BUSOFF;
+-		priv->can.can_stats.bus_off++;
+-		can_bus_off(dev);
+-	}
+-
+-	if (isrc & EPIS) {
+-		/* error passive interrupt */
+-		netdev_dbg(dev, "error passive interrupt\n");
+-		state = CAN_STATE_ERROR_PASSIVE;
+-	}
+-
+-	if ((isrc & EWTIS) || (isrc & EWRIS)) {
+-		netdev_dbg(dev, "Error Warning Transmit/Receive Interrupt\n");
+-		state = CAN_STATE_ERROR_WARNING;
+-	}
+-
+-	if (state != priv->can.state && (state == CAN_STATE_ERROR_WARNING ||
+-				state == CAN_STATE_ERROR_PASSIVE)) {
+-		u16 cec = readw(&reg->cec);
+-		u8 rxerr = cec;
+-		u8 txerr = cec >> 8;
+-
+-		cf->can_id |= CAN_ERR_CRTL;
+-		if (state == CAN_STATE_ERROR_WARNING) {
+-			priv->can.can_stats.error_warning++;
+-			cf->data[1] = (txerr > rxerr) ?
+-				CAN_ERR_CRTL_TX_WARNING :
+-				CAN_ERR_CRTL_RX_WARNING;
+-		} else {
+-			priv->can.can_stats.error_passive++;
+-			cf->data[1] = (txerr > rxerr) ?
+-				CAN_ERR_CRTL_TX_PASSIVE :
+-				CAN_ERR_CRTL_RX_PASSIVE;
+-		}
+-	}
+-
+-	if (status) {
+-		priv->can.can_stats.bus_error++;
+-
+-		cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
+-
+-		if (status & BEF)
+-			cf->data[2] |= CAN_ERR_PROT_BIT;
+-		else if (status & FER)
+-			cf->data[2] |= CAN_ERR_PROT_FORM;
+-		else if (status & SER)
+-			cf->data[2] |= CAN_ERR_PROT_STUFF;
+-	}
+-
+-	priv->can.state = state;
+-
+-	stats->rx_packets++;
+-	stats->rx_bytes += cf->can_dlc;
+-	netif_rx(skb);
+-
+-	return 0;
+-}
+-
+-static irqreturn_t bfin_can_interrupt(int irq, void *dev_id)
+-{
+-	struct net_device *dev = dev_id;
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	struct net_device_stats *stats = &dev->stats;
+-	u16 status, isrc;
+-
+-	if ((irq == priv->tx_irq) && readw(&reg->mbtif2)) {
+-		/* transmission complete interrupt */
+-		writew(0xFFFF, &reg->mbtif2);
+-		stats->tx_packets++;
+-		stats->tx_bytes += readw(&reg->chl[TRANSMIT_CHL].dlc);
+-		can_get_echo_skb(dev, 0);
+-		netif_wake_queue(dev);
+-	} else if ((irq == priv->rx_irq) && readw(&reg->mbrif1)) {
+-		/* receive interrupt */
+-		isrc = readw(&reg->mbrif1);
+-		writew(0xFFFF, &reg->mbrif1);
+-		bfin_can_rx(dev, isrc);
+-	} else if ((irq == priv->err_irq) && readw(&reg->gis)) {
+-		/* error interrupt */
+-		isrc = readw(&reg->gis);
+-		status = readw(&reg->esr);
+-		writew(0x7FF, &reg->gis);
+-		bfin_can_err(dev, isrc, status);
+-	} else {
+-		return IRQ_NONE;
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int bfin_can_open(struct net_device *dev)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	int err;
+-
+-	/* set chip into reset mode */
+-	bfin_can_set_reset_mode(dev);
+-
+-	/* common open */
+-	err = open_candev(dev);
+-	if (err)
+-		goto exit_open;
+-
+-	/* register interrupt handler */
+-	err = request_irq(priv->rx_irq, &bfin_can_interrupt, 0,
+-			"bfin-can-rx", dev);
+-	if (err)
+-		goto exit_rx_irq;
+-	err = request_irq(priv->tx_irq, &bfin_can_interrupt, 0,
+-			"bfin-can-tx", dev);
+-	if (err)
+-		goto exit_tx_irq;
+-	err = request_irq(priv->err_irq, &bfin_can_interrupt, 0,
+-			"bfin-can-err", dev);
+-	if (err)
+-		goto exit_err_irq;
+-
+-	bfin_can_start(dev);
+-
+-	netif_start_queue(dev);
+-
+-	return 0;
+-
+-exit_err_irq:
+-	free_irq(priv->tx_irq, dev);
+-exit_tx_irq:
+-	free_irq(priv->rx_irq, dev);
+-exit_rx_irq:
+-	close_candev(dev);
+-exit_open:
+-	return err;
+-}
+-
+-static int bfin_can_close(struct net_device *dev)
+-{
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-
+-	netif_stop_queue(dev);
+-	bfin_can_set_reset_mode(dev);
+-
+-	close_candev(dev);
+-
+-	free_irq(priv->rx_irq, dev);
+-	free_irq(priv->tx_irq, dev);
+-	free_irq(priv->err_irq, dev);
+-
+-	return 0;
+-}
+-
+-static struct net_device *alloc_bfin_candev(void)
+-{
+-	struct net_device *dev;
+-	struct bfin_can_priv *priv;
+-
+-	dev = alloc_candev(sizeof(*priv), TX_ECHO_SKB_MAX);
+-	if (!dev)
+-		return NULL;
+-
+-	priv = netdev_priv(dev);
+-
+-	priv->dev = dev;
+-	priv->can.bittiming_const = &bfin_can_bittiming_const;
+-	priv->can.do_set_bittiming = bfin_can_set_bittiming;
+-	priv->can.do_set_mode = bfin_can_set_mode;
+-	priv->can.do_get_berr_counter = bfin_can_get_berr_counter;
+-	priv->can.ctrlmode_supported = CAN_CTRLMODE_3_SAMPLES;
+-
+-	return dev;
+-}
+-
+-static const struct net_device_ops bfin_can_netdev_ops = {
+-	.ndo_open               = bfin_can_open,
+-	.ndo_stop               = bfin_can_close,
+-	.ndo_start_xmit         = bfin_can_start_xmit,
+-	.ndo_change_mtu         = can_change_mtu,
+-};
+-
+-static int bfin_can_probe(struct platform_device *pdev)
+-{
+-	int err;
+-	struct net_device *dev;
+-	struct bfin_can_priv *priv;
+-	struct resource *res_mem, *rx_irq, *tx_irq, *err_irq;
+-	unsigned short *pdata;
+-
+-	pdata = dev_get_platdata(&pdev->dev);
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "No platform data provided!\n");
+-		err = -EINVAL;
+-		goto exit;
+-	}
+-
+-	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rx_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	tx_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+-	err_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 2);
+-	if (!res_mem || !rx_irq || !tx_irq || !err_irq) {
+-		err = -EINVAL;
+-		goto exit;
+-	}
+-
+-	/* request peripheral pins */
+-	err = peripheral_request_list(pdata, dev_name(&pdev->dev));
+-	if (err)
+-		goto exit;
+-
+-	dev = alloc_bfin_candev();
+-	if (!dev) {
+-		err = -ENOMEM;
+-		goto exit_peri_pin_free;
+-	}
+-
+-	priv = netdev_priv(dev);
+-
+-	priv->membase = devm_ioremap_resource(&pdev->dev, res_mem);
+-	if (IS_ERR(priv->membase)) {
+-		err = PTR_ERR(priv->membase);
+-		goto exit_peri_pin_free;
+-	}
+-
+-	priv->rx_irq = rx_irq->start;
+-	priv->tx_irq = tx_irq->start;
+-	priv->err_irq = err_irq->start;
+-	priv->pin_list = pdata;
+-	priv->can.clock.freq = get_sclk();
+-
+-	platform_set_drvdata(pdev, dev);
+-	SET_NETDEV_DEV(dev, &pdev->dev);
+-
+-	dev->flags |= IFF_ECHO;	/* we support local echo */
+-	dev->netdev_ops = &bfin_can_netdev_ops;
+-
+-	bfin_can_set_reset_mode(dev);
+-
+-	err = register_candev(dev);
+-	if (err) {
+-		dev_err(&pdev->dev, "registering failed (err=%d)\n", err);
+-		goto exit_candev_free;
+-	}
+-
+-	dev_info(&pdev->dev,
+-		"%s device registered"
+-		"(&reg_base=%p, rx_irq=%d, tx_irq=%d, err_irq=%d, sclk=%d)\n",
+-		DRV_NAME, priv->membase, priv->rx_irq,
+-		priv->tx_irq, priv->err_irq, priv->can.clock.freq);
+-	return 0;
+-
+-exit_candev_free:
+-	free_candev(dev);
+-exit_peri_pin_free:
+-	peripheral_free_list(pdata);
+-exit:
+-	return err;
+-}
+-
+-static int bfin_can_remove(struct platform_device *pdev)
+-{
+-	struct net_device *dev = platform_get_drvdata(pdev);
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-
+-	bfin_can_set_reset_mode(dev);
+-
+-	unregister_candev(dev);
+-
+-	peripheral_free_list(priv->pin_list);
+-
+-	free_candev(dev);
+-	return 0;
 -}
 -
 -#ifdef CONFIG_PM
--static int adi_gpio_set_wake(struct irq_data *d, unsigned int state)
+-static int bfin_can_suspend(struct platform_device *pdev, pm_message_t mesg)
 -{
--	struct gpio_port *port = irq_data_get_irq_chip_data(d);
+-	struct net_device *dev = platform_get_drvdata(pdev);
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
+-	int timeout = BFIN_CAN_TIMEOUT;
 -
--	if (!port || !port->pint || port->pint->irq != d->irq)
--		return -EINVAL;
--
--#ifndef SEC_GCTL
--	adi_internal_set_wake(port->pint->irq, state);
--#endif
--
--	return 0;
--}
--
--static int adi_pint_suspend(void)
--{
--	struct gpio_pint *pint;
--
--	list_for_each_entry(pint, &adi_pint_list, node) {
--		writel(0xffffffff, &pint->regs->mask_clear);
--		pint->saved_data.assign = readl(&pint->regs->assign);
--		pint->saved_data.edge_set = readl(&pint->regs->edge_set);
--		pint->saved_data.invert_set = readl(&pint->regs->invert_set);
+-	if (netif_running(dev)) {
+-		/* enter sleep mode */
+-		writew(readw(&reg->control) | SMR, &reg->control);
+-		while (!(readw(&reg->intr) & SMACK)) {
+-			udelay(10);
+-			if (--timeout == 0) {
+-				netdev_err(dev, "fail to enter sleep mode\n");
+-				BUG();
+-			}
+-		}
 -	}
 -
 -	return 0;
 -}
 -
--static void adi_pint_resume(void)
+-static int bfin_can_resume(struct platform_device *pdev)
 -{
--	struct gpio_pint *pint;
+-	struct net_device *dev = platform_get_drvdata(pdev);
+-	struct bfin_can_priv *priv = netdev_priv(dev);
+-	struct bfin_can_regs __iomem *reg = priv->membase;
 -
--	list_for_each_entry(pint, &adi_pint_list, node) {
--		writel(pint->saved_data.assign, &pint->regs->assign);
--		writel(pint->saved_data.edge_set, &pint->regs->edge_set);
--		writel(pint->saved_data.invert_set, &pint->regs->invert_set);
--	}
--}
--
--static int adi_gpio_suspend(void)
--{
--	struct gpio_port *port;
--
--	list_for_each_entry(port, &adi_gpio_port_list, node) {
--		port->saved_data.fer = readw(&port->regs->port_fer);
--		port->saved_data.mux = readl(&port->regs->port_mux);
--		port->saved_data.data = readw(&port->regs->data);
--		port->saved_data.inen = readw(&port->regs->inen);
--		port->saved_data.dir = readw(&port->regs->dir_set);
+-	if (netif_running(dev)) {
+-		/* leave sleep mode */
+-		writew(0, &reg->intr);
 -	}
 -
--	return adi_pint_suspend();
--}
--
--static void adi_gpio_resume(void)
--{
--	struct gpio_port *port;
--
--	adi_pint_resume();
--
--	list_for_each_entry(port, &adi_gpio_port_list, node) {
--		writel(port->saved_data.mux, &port->regs->port_mux);
--		writew(port->saved_data.fer, &port->regs->port_fer);
--		writew(port->saved_data.inen, &port->regs->inen);
--		writew(port->saved_data.data & port->saved_data.dir,
--					&port->regs->data_set);
--		writew(port->saved_data.dir, &port->regs->dir_set);
--	}
--
--}
--
--static struct syscore_ops gpio_pm_syscore_ops = {
--	.suspend = adi_gpio_suspend,
--	.resume = adi_gpio_resume,
--};
--#else /* CONFIG_PM */
--#define adi_gpio_set_wake NULL
--#endif /* CONFIG_PM */
--
--#ifdef CONFIG_IRQ_PREFLOW_FASTEOI
--static inline void preflow_handler(struct irq_desc *desc)
--{
--	if (desc->preflow_handler)
--		desc->preflow_handler(&desc->irq_data);
+-	return 0;
 -}
 -#else
--static inline void preflow_handler(struct irq_desc *desc) { }
--#endif
--
--static void adi_gpio_handle_pint_irq(struct irq_desc *desc)
--{
--	u32 request;
--	u32 level_mask, hwirq;
--	bool umask = false;
--	struct gpio_pint *pint = irq_desc_get_handler_data(desc);
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct gpio_pint_regs *regs = pint->regs;
--	struct irq_domain *domain;
--
--	preflow_handler(desc);
--	chained_irq_enter(chip, desc);
--
--	request = readl(&regs->request);
--	level_mask = readl(&regs->edge_set) & request;
--
--	hwirq = 0;
--	domain = pint->domain[0];
--	while (request) {
--		/* domain pointer need to be changed only once at IRQ 16 when
--		 * we go through IRQ requests from bit 0 to bit 31.
--		 */
--		if (hwirq == PINT_HI_OFFSET)
--			domain = pint->domain[1];
--
--		if (request & 1) {
--			if (level_mask & BIT(hwirq)) {
--				umask = true;
--				chained_irq_exit(chip, desc);
--			}
--			generic_handle_irq(irq_find_mapping(domain,
--					hwirq % PINT_HI_OFFSET));
--		}
--
--		hwirq++;
--		request >>= 1;
--	}
--
--	if (!umask)
--		chained_irq_exit(chip, desc);
--}
--
--static struct irq_chip adi_gpio_irqchip = {
--	.name = "GPIO",
--	.irq_ack = adi_gpio_ack_irq,
--	.irq_mask = adi_gpio_mask_irq,
--	.irq_mask_ack = adi_gpio_mask_ack_irq,
--	.irq_unmask = adi_gpio_unmask_irq,
--	.irq_disable = adi_gpio_mask_irq,
--	.irq_enable = adi_gpio_unmask_irq,
--	.irq_set_type = adi_gpio_irq_type,
--	.irq_startup = adi_gpio_irq_startup,
--	.irq_shutdown = adi_gpio_irq_shutdown,
--	.irq_set_wake = adi_gpio_set_wake,
--};
--
--static int adi_get_groups_count(struct pinctrl_dev *pctldev)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	return pinctrl->soc->ngroups;
--}
--
--static const char *adi_get_group_name(struct pinctrl_dev *pctldev,
--				       unsigned selector)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	return pinctrl->soc->groups[selector].name;
--}
--
--static int adi_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
--			       const unsigned **pins,
--			       unsigned *num_pins)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	*pins = pinctrl->soc->groups[selector].pins;
--	*num_pins = pinctrl->soc->groups[selector].num;
--	return 0;
--}
--
--static const struct pinctrl_ops adi_pctrl_ops = {
--	.get_groups_count = adi_get_groups_count,
--	.get_group_name = adi_get_group_name,
--	.get_group_pins = adi_get_group_pins,
--};
--
--static int adi_pinmux_set(struct pinctrl_dev *pctldev, unsigned func_id,
--			  unsigned group_id)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--	struct gpio_port *port;
--	struct pinctrl_gpio_range *range;
--	unsigned long flags;
--	unsigned short *mux, pin;
--
--	mux = (unsigned short *)pinctrl->soc->groups[group_id].mux;
--
--	while (*mux) {
--		pin = P_IDENT(*mux);
--
--		range = pinctrl_find_gpio_range_from_pin(pctldev, pin);
--		if (range == NULL) /* should not happen */
--			return -ENODEV;
--
--		port = gpiochip_get_data(range->gc);
--
--		spin_lock_irqsave(&port->lock, flags);
--
--		portmux_setup(port, pin_to_offset(range, pin),
--				P_FUNCT2MUX(*mux));
--		port_setup(port, pin_to_offset(range, pin), false);
--		mux++;
--
--		spin_unlock_irqrestore(&port->lock, flags);
--	}
--
--	return 0;
--}
--
--static int adi_pinmux_get_funcs_count(struct pinctrl_dev *pctldev)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	return pinctrl->soc->nfunctions;
--}
--
--static const char *adi_pinmux_get_func_name(struct pinctrl_dev *pctldev,
--					  unsigned selector)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	return pinctrl->soc->functions[selector].name;
--}
--
--static int adi_pinmux_get_groups(struct pinctrl_dev *pctldev, unsigned selector,
--			       const char * const **groups,
--			       unsigned * const num_groups)
--{
--	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
--
--	*groups = pinctrl->soc->functions[selector].groups;
--	*num_groups = pinctrl->soc->functions[selector].num_groups;
--	return 0;
--}
--
--static int adi_pinmux_request_gpio(struct pinctrl_dev *pctldev,
--	struct pinctrl_gpio_range *range, unsigned pin)
--{
--	struct gpio_port *port;
--	unsigned long flags;
--	u8 offset;
--
--	port = gpiochip_get_data(range->gc);
--	offset = pin_to_offset(range, pin);
--
--	spin_lock_irqsave(&port->lock, flags);
--
--	port_setup(port, offset, true);
--
--	spin_unlock_irqrestore(&port->lock, flags);
--
--	return 0;
--}
--
--static const struct pinmux_ops adi_pinmux_ops = {
--	.set_mux = adi_pinmux_set,
--	.get_functions_count = adi_pinmux_get_funcs_count,
--	.get_function_name = adi_pinmux_get_func_name,
--	.get_function_groups = adi_pinmux_get_groups,
--	.gpio_request_enable = adi_pinmux_request_gpio,
--	.strict = true,
--};
--
--
--static struct pinctrl_desc adi_pinmux_desc = {
--	.name = DRIVER_NAME,
--	.pctlops = &adi_pctrl_ops,
--	.pmxops = &adi_pinmux_ops,
--	.owner = THIS_MODULE,
--};
--
--static int adi_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
--{
--	struct gpio_port *port;
--	unsigned long flags;
--
--	port = gpiochip_get_data(chip);
--
--	spin_lock_irqsave(&port->lock, flags);
--
--	writew(BIT(offset), &port->regs->dir_clear);
--	writew(readw(&port->regs->inen) | BIT(offset), &port->regs->inen);
--
--	spin_unlock_irqrestore(&port->lock, flags);
--
--	return 0;
--}
--
--static void adi_gpio_set_value(struct gpio_chip *chip, unsigned offset,
--	int value)
--{
--	struct gpio_port *port = gpiochip_get_data(chip);
--	struct gpio_port_t *regs = port->regs;
--	unsigned long flags;
--
--	spin_lock_irqsave(&port->lock, flags);
--
--	if (value)
--		writew(BIT(offset), &regs->data_set);
--	else
--		writew(BIT(offset), &regs->data_clear);
--
--	spin_unlock_irqrestore(&port->lock, flags);
--}
--
--static int adi_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
--	int value)
--{
--	struct gpio_port *port = gpiochip_get_data(chip);
--	struct gpio_port_t *regs = port->regs;
--	unsigned long flags;
--
--	spin_lock_irqsave(&port->lock, flags);
--
--	writew(readw(&regs->inen) & ~BIT(offset), &regs->inen);
--	if (value)
--		writew(BIT(offset), &regs->data_set);
--	else
--		writew(BIT(offset), &regs->data_clear);
--	writew(BIT(offset), &regs->dir_set);
--
--	spin_unlock_irqrestore(&port->lock, flags);
--
--	return 0;
--}
--
--static int adi_gpio_get_value(struct gpio_chip *chip, unsigned offset)
--{
--	struct gpio_port *port = gpiochip_get_data(chip);
--	struct gpio_port_t *regs = port->regs;
--	unsigned long flags;
--	int ret;
--
--	spin_lock_irqsave(&port->lock, flags);
--
--	ret = !!(readw(&regs->data) & BIT(offset));
--
--	spin_unlock_irqrestore(&port->lock, flags);
--
--	return ret;
--}
--
--static int adi_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
--{
--	struct gpio_port *port = gpiochip_get_data(chip);
--
--	if (port->irq_base >= 0)
--		return irq_find_mapping(port->domain, offset);
--	else
--		return irq_create_mapping(port->domain, offset);
--}
--
--static int adi_pint_map_port(struct gpio_pint *pint, bool assign, u8 map,
--	struct irq_domain *domain)
--{
--	struct gpio_pint_regs *regs = pint->regs;
--	u32 map_mask;
--
--	if (pint->map_count > 1)
--		return -EINVAL;
--
--	pint->map_count++;
--
--	/* The map_mask of each gpio port is a 16-bit duplicate
--	 * of the 8-bit map. It can be set to either high 16 bits or low
--	 * 16 bits of the pint assignment register.
--	 */
--	map_mask = (map << 8) | map;
--	if (assign) {
--		map_mask <<= PINT_HI_OFFSET;
--		writel((readl(&regs->assign) & 0xFFFF) | map_mask,
--			&regs->assign);
--	} else
--		writel((readl(&regs->assign) & 0xFFFF0000) | map_mask,
--			&regs->assign);
--
--	pint->domain[assign] = domain;
--
--	return 0;
--}
--
--static int adi_gpio_pint_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct resource *res;
--	struct gpio_pint *pint = devm_kzalloc(dev, sizeof(*pint), GFP_KERNEL);
--
--	if (!pint)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pint->base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(pint->base))
--		return PTR_ERR(pint->base);
--
--	pint->regs = (struct gpio_pint_regs *)pint->base;
--
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!res) {
--		dev_err(dev, "Invalid IRQ resource\n");
--		return -ENODEV;
--	}
--
--	spin_lock_init(&pint->lock);
--
--	pint->irq = res->start;
--	pint->pint_map_port = adi_pint_map_port;
--	platform_set_drvdata(pdev, pint);
--
--	irq_set_chained_handler_and_data(pint->irq, adi_gpio_handle_pint_irq,
--					 pint);
--
--	list_add_tail(&pint->node, &adi_pint_list);
--
--	return 0;
--}
--
--static int adi_gpio_pint_remove(struct platform_device *pdev)
--{
--	struct gpio_pint *pint = platform_get_drvdata(pdev);
--
--	list_del(&pint->node);
--	irq_set_handler(pint->irq, handle_simple_irq);
--
--	return 0;
--}
--
--static int adi_gpio_irq_map(struct irq_domain *d, unsigned int irq,
--				irq_hw_number_t hwirq)
--{
--	struct gpio_port *port = d->host_data;
--
--	if (!port)
--		return -EINVAL;
--
--	irq_set_chip_data(irq, port);
--	irq_set_chip_and_handler(irq, &adi_gpio_irqchip,
--				handle_level_irq);
--
--	return 0;
--}
--
--static const struct irq_domain_ops adi_gpio_irq_domain_ops = {
--	.map = adi_gpio_irq_map,
--	.xlate = irq_domain_xlate_onecell,
--};
--
--static int adi_gpio_init_int(struct gpio_port *port)
--{
--	struct device_node *node = port->dev->of_node;
--	struct gpio_pint *pint = port->pint;
--	int ret;
--
--	port->domain = irq_domain_add_linear(node, port->width,
--				&adi_gpio_irq_domain_ops, port);
--	if (!port->domain) {
--		dev_err(port->dev, "Failed to create irqdomain\n");
--		return -ENOSYS;
--	}
--
--	/* According to BF54x and BF60x HRM, pin interrupt devices are not
--	 * part of the GPIO port device. in GPIO interrupt mode, the GPIO
--	 * pins of multiple port devices can be routed into one pin interrupt
--	 * device. The mapping can be configured by setting pint assignment
--	 * register with the mapping value of different GPIO port. This is
--	 * done via function pint_map_port().
--	 */
--	ret = pint->pint_map_port(port->pint, port->pint_assign,
--			port->pint_map,	port->domain);
--	if (ret)
--		return ret;
--
--	if (port->irq_base >= 0) {
--		ret = irq_create_strict_mappings(port->domain, port->irq_base,
--					0, port->width);
--		if (ret) {
--			dev_err(port->dev, "Couldn't associate to domain\n");
--			return ret;
--		}
--	}
--
--	return 0;
--}
--
--#define DEVNAME_SIZE 16
--
--static int adi_gpio_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	const struct adi_pinctrl_gpio_platform_data *pdata;
--	struct resource *res;
--	struct gpio_port *port;
--	char pinctrl_devname[DEVNAME_SIZE];
--	static int gpio;
--	int ret = 0;
--
--	pdata = dev->platform_data;
--	if (!pdata)
--		return -EINVAL;
--
--	port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
--	if (!port)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	port->base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(port->base))
--		return PTR_ERR(port->base);
--
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!res)
--		port->irq_base = -1;
--	else
--		port->irq_base = res->start;
--
--	port->width = pdata->port_width;
--	port->dev = dev;
--	port->regs = (struct gpio_port_t *)port->base;
--	port->pint_assign = pdata->pint_assign;
--	port->pint_map = pdata->pint_map;
--
--	port->pint = find_gpio_pint(pdata->pint_id);
--	if (port->pint) {
--		ret = adi_gpio_init_int(port);
--		if (ret)
--			return ret;
--	}
--
--	spin_lock_init(&port->lock);
--
--	platform_set_drvdata(pdev, port);
--
--	port->chip.label		= "adi-gpio";
--	port->chip.direction_input	= adi_gpio_direction_input;
--	port->chip.get			= adi_gpio_get_value;
--	port->chip.direction_output	= adi_gpio_direction_output;
--	port->chip.set			= adi_gpio_set_value;
--	port->chip.request		= gpiochip_generic_request,
--	port->chip.free			= gpiochip_generic_free,
--	port->chip.to_irq		= adi_gpio_to_irq;
--	if (pdata->port_gpio_base > 0)
--		port->chip.base		= pdata->port_gpio_base;
--	else
--		port->chip.base		= gpio;
--	port->chip.ngpio		= port->width;
--	gpio = port->chip.base + port->width;
--
--	ret = gpiochip_add_data(&port->chip, port);
--	if (ret) {
--		dev_err(&pdev->dev, "Fail to add GPIO chip.\n");
--		goto out_remove_domain;
--	}
--
--	/* Add gpio pin range */
--	snprintf(pinctrl_devname, DEVNAME_SIZE, "pinctrl-adi2.%d",
--		pdata->pinctrl_id);
--	pinctrl_devname[DEVNAME_SIZE - 1] = 0;
--	ret = gpiochip_add_pin_range(&port->chip, pinctrl_devname,
--		0, pdata->port_pin_base, port->width);
--	if (ret) {
--		dev_err(&pdev->dev, "Fail to add pin range to %s.\n",
--				pinctrl_devname);
--		goto out_remove_gpiochip;
--	}
--
--	list_add_tail(&port->node, &adi_gpio_port_list);
--
--	return 0;
--
--out_remove_gpiochip:
--	gpiochip_remove(&port->chip);
--out_remove_domain:
--	if (port->pint)
--		irq_domain_remove(port->domain);
--
--	return ret;
--}
--
--static int adi_gpio_remove(struct platform_device *pdev)
--{
--	struct gpio_port *port = platform_get_drvdata(pdev);
--	u8 offset;
--
--	list_del(&port->node);
--	gpiochip_remove(&port->chip);
--	if (port->pint) {
--		for (offset = 0; offset < port->width; offset++)
--			irq_dispose_mapping(irq_find_mapping(port->domain,
--				offset));
--		irq_domain_remove(port->domain);
--	}
--
--	return 0;
--}
--
--static int adi_pinctrl_probe(struct platform_device *pdev)
--{
--	struct adi_pinctrl *pinctrl;
--
--	pinctrl = devm_kzalloc(&pdev->dev, sizeof(*pinctrl), GFP_KERNEL);
--	if (!pinctrl)
--		return -ENOMEM;
--
--	pinctrl->dev = &pdev->dev;
--
--	adi_pinctrl_soc_init(&pinctrl->soc);
--
--	adi_pinmux_desc.pins = pinctrl->soc->pins;
--	adi_pinmux_desc.npins = pinctrl->soc->npins;
--
--	/* Now register the pin controller and all pins it handles */
--	pinctrl->pctl = devm_pinctrl_register(&pdev->dev, &adi_pinmux_desc,
--					      pinctrl);
--	if (IS_ERR(pinctrl->pctl)) {
--		dev_err(&pdev->dev, "could not register pinctrl ADI2 driver\n");
--		return PTR_ERR(pinctrl->pctl);
--	}
--
--	platform_set_drvdata(pdev, pinctrl);
--
--	return 0;
--}
--
--static struct platform_driver adi_pinctrl_driver = {
--	.probe		= adi_pinctrl_probe,
--	.driver		= {
--		.name	= DRIVER_NAME,
+-#define bfin_can_suspend NULL
+-#define bfin_can_resume NULL
+-#endif	/* CONFIG_PM */
+-
+-static struct platform_driver bfin_can_driver = {
+-	.probe = bfin_can_probe,
+-	.remove = bfin_can_remove,
+-	.suspend = bfin_can_suspend,
+-	.resume = bfin_can_resume,
+-	.driver = {
+-		.name = DRV_NAME,
 -	},
 -};
 -
--static struct platform_driver adi_gpio_pint_driver = {
--	.probe		= adi_gpio_pint_probe,
--	.remove		= adi_gpio_pint_remove,
--	.driver		= {
--		.name	= "adi-gpio-pint",
--	},
--};
+-module_platform_driver(bfin_can_driver);
 -
--static struct platform_driver adi_gpio_driver = {
--	.probe		= adi_gpio_probe,
--	.remove		= adi_gpio_remove,
--	.driver		= {
--		.name	= "adi-gpio",
--	},
--};
--
--static struct platform_driver * const drivers[] = {
--	&adi_pinctrl_driver,
--	&adi_gpio_pint_driver,
--	&adi_gpio_driver,
--};
--
--static int __init adi_pinctrl_setup(void)
--{
--	int ret;
--
--	ret = platform_register_drivers(drivers, ARRAY_SIZE(drivers));
--	if (ret)
--		return ret;
--
--#ifdef CONFIG_PM
--	register_syscore_ops(&gpio_pm_syscore_ops);
--#endif
--	return 0;
--}
--arch_initcall(adi_pinctrl_setup);
--
--MODULE_AUTHOR("Sonic Zhang <sonic.zhang@analog.com>");
--MODULE_DESCRIPTION("ADI gpio2 pin control driver");
+-MODULE_AUTHOR("Barry Song <21cnbao@gmail.com>");
 -MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/pinctrl-adi2.h b/drivers/pinctrl/pinctrl-adi2.h
-deleted file mode 100644
-index 3ca2973..0000000
---- a/drivers/pinctrl/pinctrl-adi2.h
-+++ /dev/null
-@@ -1,75 +0,0 @@
--/*
-- * Pinctrl Driver for ADI GPIO2 controller
-- *
-- * Copyright 2007-2013 Analog Devices Inc.
-- *
-- * Licensed under the GPLv2 or later
-- */
--
--#ifndef PINCTRL_PINCTRL_ADI2_H
--#define PINCTRL_PINCTRL_ADI2_H
--
--#include <linux/pinctrl/pinctrl.h>
--
-- /**
-- * struct adi_pin_group - describes a pin group
-- * @name: the name of this pin group
-- * @pins: an array of pins
-- * @num: the number of pins in this array
-- */
--struct adi_pin_group {
--	const char *name;
--	const unsigned *pins;
--	const unsigned num;
--	const unsigned short *mux;
--};
--
--#define ADI_PIN_GROUP(n, p, m)  \
--	{			\
--		.name = n,	\
--		.pins = p,	\
--		.num = ARRAY_SIZE(p),	\
--		.mux = m,			\
--	}
--
-- /**
-- * struct adi_pmx_func - describes function mux setting of pin groups
-- * @name: the name of this function mux setting
-- * @groups: an array of pin groups
-- * @num_groups: the number of pin groups in this array
-- * @mux: the function mux setting array, end by zero
-- */
--struct adi_pmx_func {
--	const char *name;
--	const char * const *groups;
--	const unsigned num_groups;
--};
--
--#define ADI_PMX_FUNCTION(n, g)		\
--	{					\
--		.name = n,			\
--		.groups = g,			\
--		.num_groups = ARRAY_SIZE(g),	\
--	}
--
--/**
-- * struct adi_pinctrl_soc_data - ADI pin controller per-SoC configuration
-- * @functions:  The functions supported on this SoC.
-- * @nfunction:  The number of entries in @functions.
-- * @groups:     An array describing all pin groups the pin SoC supports.
-- * @ngroups:    The number of entries in @groups.
-- * @pins:       An array describing all pins the pin controller affects.
-- * @npins:      The number of entries in @pins.
-- */
--struct adi_pinctrl_soc_data {
--	const struct adi_pmx_func *functions;
--	int nfunctions;
--	const struct adi_pin_group *groups;
--	int ngroups;
--	const struct pinctrl_pin_desc *pins;
--	int npins;
--};
--
--void adi_pinctrl_soc_init(const struct adi_pinctrl_soc_data **soc);
--
--#endif /* PINCTRL_PINCTRL_ADI2_H */
+-MODULE_DESCRIPTION("Blackfin on-chip CAN netdevice driver");
+-MODULE_ALIAS("platform:" DRV_NAME);
 -- 
 2.7.4
