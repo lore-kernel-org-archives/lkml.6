@@ -1,70 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeCPEmD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 00:42:03 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46742 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeCPEmB (ORCPT
+        id S1751562AbeCPEy1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 00:54:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35256 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeCPEyZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 00:42:01 -0400
-X-Google-Smtp-Source: AG47ELtHCPRPWCQRUshlsUMjH3L7KTGIRXxhOwqBd+mhu+fUs9uYhjve96CKVIQ7Ld3lnNY46Mi4lw==
-Date: Fri, 16 Mar 2018 10:11:58 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] soc: qcom: rpmpd: Add a max vote on all corners at
- init
-Message-ID: <20180316044158.GT15832@vireshk-i7>
-References: <20180316040824.21472-1-rnayak@codeaurora.org>
- <20180316040824.21472-8-rnayak@codeaurora.org>
+        Fri, 16 Mar 2018 00:54:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBCD460246
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Subject: Re: [PATCH] [v2] Bluetooth: btrsi: rework dependencies
+References: <20180315165050.2211236-1-arnd@arndb.de>
+        <988BDE3E-B2D2-4ABF-B644-4BFF41AF4157@holtmann.org>
+        <CAK8P3a1DTbbRUoCoYsmaSAQBQhaePZ0Tx-g2+xuab3yRcGhLpw@mail.gmail.com>
+Date: Fri, 16 Mar 2018 06:54:19 +0200
+In-Reply-To: <CAK8P3a1DTbbRUoCoYsmaSAQBQhaePZ0Tx-g2+xuab3yRcGhLpw@mail.gmail.com>
+        (Arnd Bergmann's message of "Thu, 15 Mar 2018 22:16:51 +0100")
+Message-ID: <87r2ok4o3o.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316040824.21472-8-rnayak@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-03-18, 09:38, Rajendra Nayak wrote:
-> As we move from no clients/consumers in kernel voting on corners,
-> to *some* voting and some not voting, we might end up in a situation
-> where the clients which remove votes can adversly impact others
-> who still don't have a way to vote.
-> 
-> To avoid this situation, have a max vote on all corners at init.
-> This should/can be removed once we have all clients moved to
-> be able to vote/unvote for themselves.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/soc/qcom/rpmpd.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-> index 4058c5b450c6..ebdcf9398441 100644
-> --- a/drivers/soc/qcom/rpmpd.c
-> +++ b/drivers/soc/qcom/rpmpd.c
-> @@ -304,6 +304,15 @@ static int rpmpd_probe(struct platform_device *pdev)
->  		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
->  
->  		data->domains[i] = &rpmpds[i]->pd;
-> +
-> +		/*
-> +		 * Until we have all consumers voting on corners
-> +		 * just vote the max corner on all PDs
-> +		 * This should ideally be *removed* once we have
-> +		 * all (most) consumers being able to vote
-> +		 */
-> +		rpmpd_set_performance(&rpmpds[i]->pd, MAX_RPMPD_STATE);
-> +		rpmpd_power_on(&rpmpds[i]->pd);
->  	}
->  
->  	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> On Thu, Mar 15, 2018 at 7:30 PM, Marcel Holtmann <marcel@holtmann.org> wrote:
+>> Hi Arnd,
+>>
+>>> The linkage between the bluetooth driver and the wireless
+>>> driver is not defined properly, leading to build problems
+>>> such as:
+>>>
+>>> warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct
+>>> dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI &&
+>>> RSI_91X)
+>>> drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
+>>> (.text+0x205): undefined reference to `rsi_bt_ops'
+>>>
+>>> As the dependency is actually the reverse (RSI_91X uses
+>>> the BT_RSI driver, not the other way round), this changes
+>>> the dependency to match, and enables the bluetooth driver
+>>> from the RSI_COEX symbol.
+>>>
+>>> Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>>> v2: Pick a different from v1
+>>> ---
+>>> drivers/bluetooth/Kconfig        | 4 +---
+>>> drivers/net/wireless/rsi/Kconfig | 4 +++-
+>>> 2 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> Acked-by: Marcel Holtmann <marcel@holtmann.org>
+>>
+>> Since I think Kalle still has to take it through his tree until the
+>> btrsi driver makes it into net-next.
+
+Yes, I have to take this as I haven't sent the original patch to Dave
+yet.
+
+> Kalle, please wait for v3 though, I just ran into another build
+> failure caused by a typo in v2.
+
+Ok, I saw it.
 
 -- 
-viresh
+Kalle Valo
