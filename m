@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvStohgp9kXJOwThNmy+pH3HxliAQl/xSmbD1OZ81vfL64f513vo4XstHIxAETnVQaUGLYU
-ARC-Seal: i=1; a=rsa-sha256; t=1521214734; cv=none;
+X-Google-Smtp-Source: AG47ELufFpLy8gavHYEQLbT/YYbZLbXmywjtjL5DTRgNgON95yW5tNVSgwFOIkl30KrQjf1tunDo
+ARC-Seal: i=1; a=rsa-sha256; t=1521214732; cv=none;
         d=google.com; s=arc-20160816;
-        b=ea6eoJ4rLsb1HcbGSdr9VC1SDWsvvB/DXdWTftDl+0BXbG93xJxE9L2XfMRzPhSNIJ
-         AEBhrJh52z9QkbWFjk24EZChsHSLoVupbEEX4EvfRoZ4v8ffj8JMdwKDZBJuJ6e8J+eg
-         23c6ePAlNgnbK3U/uNzokLeiOVAak0/DsV/NVmtYsDpSQwqPnjw7mNFXqa967H1NKB5C
-         lRE747rUWH7SH8qK2dxdw2UdgA1ky88bIoN2VkChyGL1ryGOFBfNfRnBTrKhbkjv6kBV
-         0BCk0Oz7fde1QZVizOjKpaMlfB87HHyeSyJq7L1KddBR32qnFH7MOlZw6T/jpn429lw/
-         zzAQ==
+        b=FCg2ZvBtEuUBmbhWXUJwAIQ99iyAsg7Iu+LhswhrzySLctV+guEfBeBHD/EbYZhGPU
+         zO4JXCe8t2ycA6Ltap0q4yhx0h4F0vNwtOwOJ1LajnG21JMCkpddftWKHPJzvalbJOma
+         xVUiv9yFaPsgxA3USeugMNyPe6xTiplxOAVOAD/8qNxdflTAyh8zcXVgFukvpdsZDcrp
+         PvNz4pNcF8At3nUg/fNCLEq/QV941kp4dZELDisdrxtLUNjKRxkKdCne4E3BXAr9lkL9
+         cys+7vS4wp5NlHeenTrgRkRuZE0D0v6Uz/c/bqM30HFgfSbU5fKXA8GhjMqTMTrOJ1rb
+         +V5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=koPalqGxY9MszQuLyX4feCyOOnZxTVuW02ikMURxGus=;
-        b=b7LuavPk7pnnNwobRVG3j7adePNdOPqfTlkg27SOUzmGRp2D6eNeZx7pK+qKmMu8H7
-         aPwZR84Cxpyrk3YC+n4l3Uj444qE8RLws0A36dThKTy9tMGHKkXQpsQ1h6twMJ18rgeP
-         pS/7FX/UcqjlpDiqpUvviHp/Wda5upFRTQWRqws8+OuqJnMRWmP7vLxKSIiBuMqAdUbm
-         qRJcKjTj5vfBtxukCkkNZNIg4ykY4zaQwp4l4GWOn1S5MtZGO5lE6gGSdjunnMLRqrJz
-         rdTqHr7eHIISyprBXaRLTWRec90COop3wZe7AhJkBeO2oGkpwP26VcQH0Po5uyMxnQlW
-         LTkw==
+        bh=giqgu/iJXNB9c0cqQyuN6TESnxTmcALblVCwc8f5LxY=;
+        b=i2R4mE0b4PhxgoSgMFHJ4NFx2L5OBEmYbHp5w+jZr2gsZNMRnMAujmkpkBAnUMBqxY
+         bnKWW81zgsNXltSkSX/UCyx+ErCXzn6MKtT563GO4QPoQa1opqfCoPyUkHHEJRnYNCK4
+         +Kth9rH6PqJkjMkK+wklyUItf5IuJNj2YVgGQnzPMQ+djnTpU1QnUvlyKhEvdf4f+qY6
+         Tm9yahzO+47HRyjWcX9D1eV1nkRR8tKXUfaruKVpkyWTFbD/TaQlV0ZNoZ6QZu+91H5G
+         WSZdO0QYcI3Yo9IyVnXe2H3BJmN3OMx+gdUK2ZyR6o/SusBzIfoe4ofuoTBrU02qMVTZ
+         llSA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amit Sikka <amit.sikka@ericsson.com>,
-	Mahesh Bandewar <maheshb@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 103/109] ipvlan: add L2 check for packets arriving via virtual devices
-Date: Fri, 16 Mar 2018 16:24:12 +0100
-Message-Id: <20180316152335.448287990@linuxfoundation.org>
+Subject: [PATCH 4.14 063/109] cpufreq: Fix governor module removal race
+Date: Fri, 16 Mar 2018 16:23:32 +0100
+Message-Id: <20180316152333.395213939@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109262089805463?=
-X-GMAIL-MSGID: =?utf-8?q?1595109262089805463?=
+X-GMAIL-THRID: =?utf-8?q?1595109259104693147?=
+X-GMAIL-MSGID: =?utf-8?q?1595109259104693147?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,53 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
 
-[ Upstream commit 92ff42645028fa6f9b8aa767718457b9264316b4 ]
+[ Upstream commit a8b149d32b663c1a4105273295184b78f53d33cf ]
 
-Packets that don't have dest mac as the mac of the master device should
-not be entertained by the IPvlan rx-handler. This is mostly true as the
-packet path mostly takes care of that, except when the master device is
-a virtual device. As demonstrated in the following case -
+It is possible to remove a cpufreq governor module after
+cpufreq_parse_governor() has returned success in
+store_scaling_governor() and before cpufreq_set_policy()
+acquires a reference to it, because the governor list is
+not protected during that period and nothing prevents the
+governor from being unregistered then.
 
-  ip netns add ns1
-  ip link add ve1 type veth peer name ve2
-  ip link add link ve2 name iv1 type ipvlan mode l2
-  ip link set dev iv1 netns ns1
-  ip link set ve1 up
-  ip link set ve2 up
-  ip -n ns1 link set iv1 up
-  ip addr add 192.168.10.1/24 dev ve1
-  ip -n ns1 addr 192.168.10.2/24 dev iv1
-  ping -c2 192.168.10.2
-  <Works!>
-  ip neigh show dev ve1
-  ip neigh show 192.168.10.2 lladdr <random> dev ve1
-  ping -c2 192.168.10.2
-  <Still works! Wrong!!>
+Prevent that from happening by acquiring an extra reference
+to the governor module temporarily in cpufreq_parse_governor(),
+under cpufreq_governor_mutex, and dropping it in
+store_scaling_governor(), when cpufreq_set_policy() returns.
 
-This patch adds that missing check in the IPvlan rx-handler.
+Note that the second cpufreq_parse_governor() call site is fine,
+because it only cares about the policy member of new_policy.
 
-Reported-by: Amit Sikka <amit.sikka@ericsson.com>
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ipvlan/ipvlan_core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/cpufreq/cpufreq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/ipvlan/ipvlan_core.c
-+++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -304,6 +304,10 @@ static int ipvlan_rcv_frame(struct ipvl_
- 		if (dev_forward_skb(ipvlan->dev, skb) == NET_RX_SUCCESS)
- 			success = true;
- 	} else {
-+		if (!ether_addr_equal_64bits(eth_hdr(skb)->h_dest,
-+					     ipvlan->phy_dev->dev_addr))
-+			skb->pkt_type = PACKET_OTHERHOST;
-+
- 		ret = RX_HANDLER_ANOTHER;
- 		success = true;
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -631,6 +631,8 @@ static int cpufreq_parse_governor(char *
+ 			*governor = t;
+ 			err = 0;
+ 		}
++		if (t && !try_module_get(t->owner))
++			t = NULL;
+ 
+ 		mutex_unlock(&cpufreq_governor_mutex);
  	}
+@@ -759,6 +761,10 @@ static ssize_t store_scaling_governor(st
+ 		return -EINVAL;
+ 
+ 	ret = cpufreq_set_policy(policy, &new_policy);
++
++	if (new_policy.governor)
++		module_put(new_policy.governor->owner);
++
+ 	return ret ? ret : count;
+ }
+ 
