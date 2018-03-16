@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221510-5-11297922053825271880
+X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221496-2-5198873053447855105
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521221509; b=K9bQMn3+SRCed4AaSuJEkMgyI8KIeQwNAE03g6Mztjk9eth
-    USjjAepe6h9Fleon4JdqM26p51IJuWtMx0o/iHKSF7b68SIUxV1zDUJbzbp0kPla
-    GGaBt33/WEctnAMImNSJiZZl/2omA4x0/gmoXS8nKEtpxODlmXpWqBN2np1t0lKQ
-    mgnD2xWfbxpB4LItGQalTYFivcubn9HKoA1wd6oiX7q1rxUZWw0xWH/fJ5CkcarR
-    zrWnO8+XqYrZCdtH+gC8QfzLvK012NDVkhrFpsS3zmCj6VHOrEKU16q9k86Tbvlb
-    btm+sD6vBndXnu1e9YNZX9k+fHx1xkhpytjQcKw==
+    t=1521221496; b=HRvIAfRqMWmnnJWAJHLyH2BgngyAYg4wENn74R+/2euWmJy
+    jf9ri48fuMV1qdWe3V/s76h6cjcGYsMbEuG2MODzym9lFNZbLECwRQGLzUXWYbYk
+    qxQdfsg/5f3Cai/ZcgQNZW/YUdXOBymaMGNwPGI3pRlH6S0Dkn8vlizsGnVKQI3h
+    /ScAuC1RFuH1TUoh1WGzLkcrnziK49hyeVTdF1Us0PyzJOjUedKmA15TjGbX0GWC
+    cClkLGVUGDdlvRwE+7HlDnqIJ6yWWbZcy+abyyp8Hc/Wc8x1HhBp5Ld0t2XnBAt1
+    436TiDqfubiYVYK2g+Gu/Egn0v1zed85bfxweqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521221509; bh=yMwwu0rRneUVD2l80RC9ZjMbrQ
-    Xz+3O7sPVujT1BMs8=; b=h8gLy8YYHqh1ue6NMunKT3ScX8OZzfBTe34dhAIrNx
-    wu6eUQI3wvyQGhaDqpVU+MagV2LWeWeWdDtmglXfBf0zDpVR9adzWnSsoxyg5KG/
-    Vz3MrT25h1Xamd1cvrvvGqpfk3BPoVV0xTX0EsP8jHnG6kF36shlG9pmhzzT0yzm
-    BNZloIzFwGDsJVPxmVrUyD2vhgJT/uyNQgpXK6mCVWg0TRlHnzlgGfLSvWYFLgm8
-    gYAlTeZwYeWs70grXTMlLFluwTWNEGFX9INXqWYhtjC84P/1i2QvqDBX8l2Ec4iX
-    wC8oDzpPktG2EaJKjSqjHB9IrBSRFaykQwrtHdlTWcxw==
+    :list-id; s=arctest; t=1521221496; bh=IHPtuu8dDYAgAKzw+GJp2PMi51
+    1QqwsYY2hV8J/KFwk=; b=JvJbfdG+VrWrx8CqKz76gZj03aWufKa+RzDSRUpVYr
+    xpCQK1XRm+Azd3GDRW3DRIjvX0b+HOqfi847pYPByBuc7QocTS9MBcNAiHZ1ocQg
+    y9+hLOiNsKd94Pv8xq+bwnKBW/EDCpxz9Yg7AvOzDjR578xAVFNlmliManjgrQR3
+    p2yXySxnNOAsZrhRumXSLXaDQuBUir++GOIBHHfpZCmqQatnkJcaOb6N6EcSft4l
+    qcPl7CDAYWr4ePk9W+DAg191hW4B2l3BAdXvqfjOYBoaWIa2la89hiy/bVMQWolD
+    5Qy+Gr3CUWDoS3+Ab+RNdod5f15CzYCraGcnRlnjA4xA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932364AbeCPP1m (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:27:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34712 "EHLO
+        id S932673AbeCPP1r (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:27:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34798 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753950AbeCPP1l (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:41 -0400
+        with ESMTP id S1754269AbeCPP1p (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jerry Hoemann <jerry.hoemann@hpe.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.4 27/63] watchdog: hpwdt: SMBIOS check
-Date: Fri, 16 Mar 2018 16:22:59 +0100
-Message-Id: <20180316152303.057655220@linuxfoundation.org>
+Subject: [PATCH 4.4 28/63] watchdog: hpwdt: Check source of NMI
+Date: Fri, 16 Mar 2018 16:23:00 +0100
+Message-Id: <20180316152303.139424550@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -83,21 +83,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-commit c42cbe41727a138905a28f8e0b00c147be77ee93 upstream.
+commit 838534e50e2e5c1e644e30ab6cb28da88eb31368 upstream.
 
-This corrects:
-commit cce78da76601 ("watchdog: hpwdt: Add check for UEFI bits")
-
-The test on HPE SMBIOS extension type 219 record "Misc Features"
-bits for UEFI support is incorrect.  The definition of the Misc Features
-bits in the HPE SMBIOS OEM Extensions specification (and related
-firmware) was changed to use a different pair of bits to
-represent UEFI supported.  Howerver, a corresponding change
-to Linux was missed.
-
-Current code/platform work because the iCRU test is working.
-But purpose of cce78da766 is to ensure correct functionality
-on future systems where iCRU isn't supported.
+Do not claim the NMI (i.e. return NMI_DONE) if the source of
+the NMI isn't the iLO watchdog or debug.
 
 Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
@@ -106,17 +95,46 @@ Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/hpwdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/hpwdt.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 --- a/drivers/watchdog/hpwdt.c
 +++ b/drivers/watchdog/hpwdt.c
-@@ -700,7 +700,7 @@ static void dmi_find_icru(const struct d
- 		smbios_proliant_ptr = (struct smbios_proliant_info *) dm;
- 		if (smbios_proliant_ptr->misc_features & 0x01)
- 			is_icru = 1;
--		if (smbios_proliant_ptr->misc_features & 0x408)
-+		if (smbios_proliant_ptr->misc_features & 0x1400)
- 			is_uefi = 1;
- 	}
+@@ -51,6 +51,7 @@ static char expect_release;
+ static unsigned long hpwdt_is_open;
+ 
+ static void __iomem *pci_mem_addr;		/* the PCI-memory address */
++static unsigned long __iomem *hpwdt_nmistat;
+ static unsigned long __iomem *hpwdt_timer_reg;
+ static unsigned long __iomem *hpwdt_timer_con;
+ 
+@@ -473,6 +474,11 @@ static int hpwdt_time_left(void)
+ 	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
  }
+ 
++static int hpwdt_my_nmi(void)
++{
++	return ioread8(hpwdt_nmistat) & 0x6;
++}
++
+ #ifdef CONFIG_HPWDT_NMI_DECODING
+ /*
+  *	NMI Handler
+@@ -485,6 +491,9 @@ static int hpwdt_pretimeout(unsigned int
+ 	if (!hpwdt_nmi_decoding)
+ 		goto out;
+ 
++	if ((ulReason == NMI_UNKNOWN) && !hpwdt_my_nmi())
++		return NMI_DONE;
++
+ 	spin_lock_irqsave(&rom_lock, rom_pl);
+ 	if (!die_nmi_called && !is_icru && !is_uefi)
+ 		asminline_call(&cmn_regs, cru_rom_addr);
+@@ -840,6 +849,7 @@ static int hpwdt_init_one(struct pci_dev
+ 		retval = -ENOMEM;
+ 		goto error_pci_iomap;
+ 	}
++	hpwdt_nmistat	= pci_mem_addr + 0x6e;
+ 	hpwdt_timer_reg = pci_mem_addr + 0x70;
+ 	hpwdt_timer_con = pci_mem_addr + 0x72;
+ 
