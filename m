@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753266AbeCPHSS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:18:18 -0400
-Received: from mail-cys01nam02on0078.outbound.protection.outlook.com ([104.47.37.78]:37088
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1753234AbeCPHSL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:18:11 -0400
+Received: from mail-dm3nam03on0084.outbound.protection.outlook.com ([104.47.41.84]:10511
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753155AbeCPHRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:45 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+        id S1753158AbeCPHRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:48 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 16/28] irda: Remove Blackfin IRDA support
-Date: Fri, 16 Mar 2018 15:08:14 +0800
-Message-ID: <1521184106-24475-14-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 18/28] crypto: Remove Blackfin crypto support
+Date: Fri, 16 Mar 2018 15:08:16 +0800
+Message-ID: <1521184106-24475-16-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,1056 +24,1091 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(39380400002)(39860400002)(346002)(2980300002)(438002)(199004)(189003)(4326008)(6916009)(8936002)(106466001)(246002)(8676002)(2906002)(47776003)(48376002)(50466002)(50226002)(5660300001)(6306002)(5890100001)(72206003)(107886003)(186003)(26005)(77096007)(305945005)(426003)(356003)(7636002)(6666003)(966005)(478600001)(2351001)(336012)(16586007)(36756003)(51416003)(86362001)(316002)(106002)(7696005)(59450400001)(76176011)(2950100002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1482;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC014;1:neFSN9GK0fDb3W+fTBqv7b7nVQJ4PSPsZV7jh2baawm57r97x3EFYqIijkcXkxehL/T5uLoU8KEcONFGropNYHYTCXkM1k2gn4SpufIn1yffQj+0qKSNITSddfHk7wvf
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(376002)(39380400002)(2980300002)(438002)(189003)(199004)(5890100001)(5660300001)(106002)(50466002)(107886003)(6666003)(36756003)(72206003)(7636002)(47776003)(16586007)(8936002)(6916009)(426003)(478600001)(305945005)(2351001)(356003)(106466001)(246002)(2950100002)(4326008)(50226002)(86362001)(76176011)(77096007)(2906002)(51416003)(26005)(575784001)(186003)(53946003)(59450400001)(336012)(8676002)(7696005)(48376002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB1485;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD004;1:XAfzWMIkTd67FKR5ayiMj85mInzj4lAxa2vbVK5EUYiAmguEjcBHiE/KDG4tSnhlBhbG6jgrVirPk2pOnTAsUsIXN+mbMBxXYkg3+CloQ7n+SdBhWyXJXp1q/Ornb1jg
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 78ffd802-1201-4fe9-000c-08d58b0e0211
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1482;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;3:DItHST0W3gJeE6Mhg3khClSHCV8QnexiBhSfNRmolzCllHOZIGsLNbrrvHme4m2xQifjATe7Hl7oupcRo2FNSp8kqo02PX8J3JlIeSeeGpvn9zCtsVdBd3XmlL4Y9pihxPGugXcHV7A630FBSOHjQMmXLN4vUDGPv+KGT+F7vac1tf7HyJ7a6e6UeoQTcNoGIWzBQ9ozbNK3tlpNRrKkYBm7yuPt6szAi+kg0mqm6sqBqqtSMKn3UD5+o9dIMGsfB9s/QyyjXhONAT32bCv2axqWYB5Rz8yi4QMLOXA5br1v7dIWuSMwNHhhRdlJxndLsercx/m1WuKVzwvcn0erFQ==;25:x5FWG1vVl+wshhcVI63rjfgVHnqMhZxGXFJU38se8QRO9H7j+d3Sgj4duQoOrMeuQ5DcSe0LFKlPT4hmaUa2tfQfVvtIoDhP2Eh9ZfFClU6l7CCigGLdf2/rUNWkfzDDN7E9V0P2Kv/Cwfm4Q5jGTJDTt0+j/0MaTI/CkV9UO3QxoIQmzAsu4t5O9uda4j81kE0Jws2DcTr8c98SF0qeQobF28n0YWqu4UM82pc32+x0cTqZk4D9x0s5jadTK74yyvJi31bNxld8sP2GTl95G0Ch+aGkB3uW14yZdky8RwjfscT6flKjZL7vwohbvmAUaBthkW70FfIMXgTZBfXaBQ==;31:0Lvt58zURQGT4ieriLqi8U7XyD9+PMxjiuwyIQ13sFR3W4B8bpT+U0gHck8TCSJFddMQOE06oXIx4JREVmfXn+9D9CNJp6+UNvM8bVPJoPW7BH9qIIDSkildWIWI8yBj6L1ZBO+o5TZXtJ8slS3WdJ2/qhERYA8ohXgEFvwVZNVCthbHBDU96ff3vhbFEzDCvqxVkYtuRydYaammyIDmorz49pkocWykvqVCPKs2Vng=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1482:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;20:+cRCAkFCCcc1eZLm1gK0fcXKzkUBBKA16uYF2oB7P8lK8LmoXLXnWNcHgfv21XR+D5YvIVWGU746Yv50Vv487w2fd81QHGfRJ5iXMn/YX3GkBLJRW316137MlyLqDZxS7d/LmShFbTByvebxWVCGyGZpC7+FoTCCPF3znzGy9nWvKK8E/NkfVg8SjeshdTJvqPRwednQkl8B6u8olNnUxBeTdCldMKDAtjW0FLIBLyFPIQXTr5vWqB12nLWA3OH+qXr1Bf9ZMBABbKkB0m4VObIu9hEhELEUQgsJddVZRKvIxT/8xG0HUxgNcr07ySTaePPfyqCOdXZHi2Kg+66eqckSiZex7y1ehgNDmz2KFBd3zGqsybRd+WGvB3RjKT7x8WzWL7L6Qz7BTzotLh9CAYwhIF75sRR3jAqF/ENePmEscx0Xie8WKpq5XKG8Pu7Uiy6IBQ7AhyjFYKWDvjPI5LfKphs0zfRliwJCZOVwSXwC62/0Sa71LiY4hlIon0g/;4:agEPCaqMZe/uDePPmeKqHhvNvjaVGfZrI7oTxpTjEBBtOuYbJn4IbSTj+J+azlpJv6+q8xMTA+WKHsjDJgWwRGumKGGk4XYwFuagG/+O2lIrAim1pM0qq2Uv2XHOjJ7jMr5JMYmfpAQ2Co6tW+RXM+fXZP4hSR8P/+Byppqqt3YDVNxpCB/0WPH+EkrCBAtLFa9YkFu+VfQjSPcRLEIZO9/xpUs+sqYzCQoWRleK0dOm8uEZXCuAhVDMds2vuomfBqeDJ8S0583IN4cKMp2oAZw4zT050j87jLG0vcpaDrkk0ctSTmZIThm9Z2MCh/ee
-X-Microsoft-Antispam-PRVS: <BY1PR03MB148298E2EAD8EE44232A1B9BE0D70@BY1PR03MB1482.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 7da888d1-0359-4344-392a-08d58b0e03e5
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY1PR03MB1485;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1485;3:PeeI8jaor9r8HlcFO5ucbPIByCDvE2P+7pKXPG08Qh+cn8D8V6KN4nMJI41BGzHO72c4RbDJHbs6hTaG0GQf8ZbVvaSQ1BIuaCRmycRVkMce4jBb3wJ7kn0U2Cl/8Apkd5qJceCWbzEpLZL0ONMTsU/c8/zt+jWY8kXKLeGGV2fARdo1Sp1cQsQg34SDIutR3cr6fJOwSJc7s90pMvEEeK3Ype9kMb+Cux84jxmsinNQOAvalRk3SKZyGsJLvcynoyHwKqBPM0gWpcBQd8OkTYHIghcSQ3J4KNkutHtynCvx0wk+hyZXINbTPoTHIdtxdbYV0g6BarVyYLTQaMRA4g==;25:PGS+8XWqevwa8QltYJflr9is22ruf+zmVMSpJNvEu+sF9AE8juoMb3yNKSoqEYHQXPDV12QOzbYfGTlK5qO+37YMjn4xoyWg3fHrrSg4tdHS8WDm72FOA+/7DouKj0IN2R9BhSWxSjWgSTs5vKqrnUPDA2d5hmVyjiJcPE7Ro8LAc3FiMgCMPQEWHe+c0lyXPVutf+s7RXPzn5GAzEvjRTPM3E/xNH8FQog/B6QopnMHMmSv4t8//BiqUBbZLYrgAatRynILRcRAD/iQgofGoOlv0Q6UGVO0/ZO6fw0jJyTHIBZHnIvtLj1tj2+WkX8rZ+UmTyMVekLQREnWn2otJg==;31:dmp21Co1uwiJTfhLcSknpM4dOVc7F+BeNRxZAoxUJiSkKUxc7zQKxcav16tH4Oy2hqbviEilXnE/Dp1ttdQZis6kfaYlmncqmTZ533GMTGKm1iTssdouWxlPTES4+vlCgBsdV/HiobtXp9OwYE5Zm0xA65LnOlsSZEy1VT486DTqBMMLSm4m5IEOCTmM/a1w0RhUrANtmuEi8yOLsENr5xdiD/q+tOdZyptABBmSZjU=
+X-MS-TrafficTypeDiagnostic: CY1PR03MB1485:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1485;20:W9JdtAhKKwBM4AUUtgJRcKcG23SqopR98gRxgL005WrwKCskZc9Wp0teP8LHxZSM2SyiflVD/5YBEcJC/O8O4i2Tz+BlMq1cSLxVar8OIC+acJIR95kOtiM8AJH8uEMDFk9yFjLy8/ZKbXj0IlLYBedNIxVZrkP/cxB50RWAeAgXv4zKxHHlq3dhTsyxqEZYPkzbX0nBjUJhEMDnd7ZrJoBYJEBebtTnnqjldc/9y/RtbSUPxGUy7ihG98HkfFwSEjr6benkt2ENNE0g4Ci+2XXoMVAhq7YTtzSZNbBC9h76ILe+aj61rTh+GW/8y1i2QQDKE9D/sFg606SsSDEUOwl1UJMU4NoPM413idhb9X4VltQlPNoH3cCkooDtkdwYCdCGD+XbH1avSoie9XBph72IlPCJ7a6vu5oYF3ePUpnruFaEnzoL1+wwLwrZHFtxU2SymWojQ5Tu1B3CVoIUkiYFVz4bjgeOj62hy4vwQmwjVC3mg6PPXXFGQp2vpQRq;4:3lHDVyibPOVsAiEhzYvuFZXPsBCium04wWWEaG8R/yK4p4PVl0q/qnHm8bA6WIIcKjIs22OvJMooarl5CJW4LVPJnXjEzQlAPKNFsIsJmVRn6PRV+7Sxn9BJzN0AcwgRwttNmkCeFYL6EamDXC0WrtbIjAZOPkCWxvoxObNJjO9Tf7SfYztaa7LfodRWAPXTwWlv8YACqfCofm4EBmL6G3vGOIGNLecUbayRRHzi+4DnNsRwdtBh6ZMb1Bc68x35SpdEnBmgtEfKXCj8YZFVU5T9J/YqpSoolqDB/ZyGuD9TSj7aP1ZTD079cWjfdsoe
+X-Microsoft-Antispam-PRVS: <CY1PR03MB148576AA4A6DE3E57FA39A96E0D70@CY1PR03MB1485.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1482;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1482;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93004095)(3002001)(3231221)(944501281)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:CY1PR03MB1485;BCL:0;PCL:0;RULEID:;SRVR:CY1PR03MB1485;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1482;23:zRutGzFMYyXvYt5oPLjNfiI8WSrYYC7u5g4+GrDkj?=
- =?us-ascii?Q?cEqI/j6sBgwFOX2US8l66qPgqCCgR1m240dZKmHCDX8MJEENmjyS+1Qr751B?=
- =?us-ascii?Q?tVLn5sDnvyiKwc2P/7TMz9Nijsv0hdrCg3XwRTxmOqNBifPPKWbqnlH1O+r1?=
- =?us-ascii?Q?J7QVTgU+j2bzfsR/UPrOo5GUoEHvaR6fgq/novTzE/9lFNrxKM6GCjS1k14N?=
- =?us-ascii?Q?1Lr/rQhcuabUYiC235Bqkuv+wsT/R3VvKCHyfCg9xIvn0NgIfr+Sn8zJwMq+?=
- =?us-ascii?Q?gMc4AzYaOlnzmWbmbNE5e3EgvH9G8aYcRcEac0AcLSN+EzAG1G+RZn6Ocilm?=
- =?us-ascii?Q?X/eVaBLEIE1uKod1OWzCWDBDVC2LcDgjqJZnEqdRPay+bYyKW2h1Ju9fOuKr?=
- =?us-ascii?Q?d8opIiQ4i6Z09GjrUyvaSpM6LMC8NbqxVxnB+nhnZKdMzJYF1JjiG/y0sxsZ?=
- =?us-ascii?Q?PodtQK6myc1K8V6e4pbDevQfm69lQbbxfUP9FzzCrJVlWdZAepoTMJ1uhVUF?=
- =?us-ascii?Q?/dS9eJiQjNCKq+9/jzuHlptXKtCsyOWzkmQDTkRX0iyBGdln4eavIP3Y07zv?=
- =?us-ascii?Q?WSqR40uJa9Dvj8E/sBcf6LxCwFoJnS0I8DcDU7dZRqRhpxbxbqn9f70WnxKF?=
- =?us-ascii?Q?e49E/MrhLYYZ5//UrMvWFVU/eQvxoP7X+b1VH+fkipOa8scI4bk9gp6XTe6H?=
- =?us-ascii?Q?ANEyr+njyapObJCSmqQcPNfaRiNoUQVrR8V+KnaeCbrYMk/CtlSXFYzjtYt1?=
- =?us-ascii?Q?BLGtvnBmxQXmAZnRyozFWT4BD+g4rP2j3mbqgUcxrudD3VG6jHnjd/reV8ZZ?=
- =?us-ascii?Q?hp5Me56zCGEZdQ05ypTJZ4e7KGVVq3jmvAi4Wue961Ris5JjjU+Ip0ZCClKs?=
- =?us-ascii?Q?sUCSyGU6BlcgMAvcQJawmHbjgzuFP7z1z+mELGXN9FXBSwJ1Xc/ogo9dBl1q?=
- =?us-ascii?Q?ecIG+384W4cXHGrQs3nzVNH7j98sLVD30Nk0M3Q+tp2SntfujUl1rSRAI7EF?=
- =?us-ascii?Q?6yDD+GOlANRxAFlxmFa6aJfMAOFotD1ObUivWxDHDPguXYmhj5fwitUBZIVt?=
- =?us-ascii?Q?aLxsRDe7vS0qV1RTrvOCoLwDVMR?=
-X-Microsoft-Antispam-Message-Info: Zd3sgV6rcBwx5JIyanCRWAG5X8LTyaJWu7sbGK8sE6be9c106+hIgIH5rY+eM+6M0UZTSISBp24VrH0StmL+4kFtEjmGMqAazCzRBUZnEHus7fH+AlaIPvyDOTfoQvuM8NVa1cOeebOPCEzVxttgCC1T4JsBilW/ZzJBjdBf11CLW6iiH0eafuXdy58Mp7SI
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;6:5TfUaqZQePbtiXTSHAnFKtWdBm4xF1djpJaN77TUsKxz5P8HjxC6mp70EJE1Hv8NY6GcmHvLHLbajWVw2B5snF6x+d/TGqm/zA/w4ctRqPDayuWFX/U+NoQcs5naDgEiFq6BQ7L6wcQKeQfKE4dnPWouvcOQuq0ffqt1FdmimKnTBOEDHJE6kii69C54XOyjSnHvTGaGyBUZFYi644UDzNkfp7O+Rbt/mzfa99ztBXPwd1Njp0zcRcDF6sB0axEIIqjO8TMcGuSmn8FGFiUApOqxYQW6fO/8XCjTopAZPUI2cM0QVnvlfBHT6LG5OBlkL/dWuAfpi/FTJjmF1n5nigKlTdck9+pb1E1AwW6Vdt8=;5:t2GPsyb2jikf1btWG1w2HNH9yPA/Uus29tYFN1yawy+KiwIUgawKD045pOEaSYru+3zWoCxajRmm3hr0CoZE74vaXAAb0jkx29m5+3uGkDatkJUdtjN+ToB+pOuJusBcQA6SDK2YckrQQhpmzvyuPwpLzdBaHEIkLogN7mpjtb0=;24:fBFGvFaPbFEvvAuAozps+GfsgeEXV10PsUp/un3pngQMuAVbJ5mdoO+dC9e3S7I2FH8cmobsTwR33MMZz9dJ0OK7BL2AkjqudngJFeJwqWQ=;7:pjISe7xlBGsjiFtcSG7xQsy0vDjZT9MIcShkIie1yO8sFNiQ9XBIHuLiFXK5m65DYsSnhG89wGu0qUxsl4JeAkXmi4t68HkepKsFndfS0F8zOGnVRzKapyE0+N3jTBDrNe//OyVUniI57Fa4XW94dxygw/H3ooUsmAMiadJU7XN9HQkBydNCm1LBs1JKIDGfZoKo56cGBvwUz2mZ7Sw7i44BkmZuH/vaAzMHwlByd6hueWVV9Cn7Q+HgyT9uDdzC
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR03MB1485;23:bbAcIag/TcCUkA+ZAq1Vd2xy4Oc/B8h9z1Dorw49G?=
+ =?us-ascii?Q?esOJy8G3lTZvQ9nZhAAYcF9hMUkbob5l0He3JWL9XtI8B722CVSSSCneHT33?=
+ =?us-ascii?Q?S1p4/wkGp5p9bMtCg+uPzLQLob+EWpOAOMxC2+WJivfh6AIFy38BnoRWiZYk?=
+ =?us-ascii?Q?QoaP4599frz34hvz2OSI5sxrtFtDU1as4oUeVnzFb1wZIXC/bflo5ltTx1/7?=
+ =?us-ascii?Q?uZOeO7eb4erVYitsSkdn7tNZt+DYxJ6E4DDDy/9cNPIk4pwgh7SygYT4GyAa?=
+ =?us-ascii?Q?MA9DSQZwbkchMmzuvDOBd19tk0ACx5EsVW7lkGhevehdPgM7ag/VDyeyk+lD?=
+ =?us-ascii?Q?hDfjVgxwUDmccnqWSWJu7TSz9iVswGLgDaeBZmWm4goU9sXggNrCYJUE/Gw3?=
+ =?us-ascii?Q?SB8sP4hG+DlW907i9XRHrWOXkSovF5JMQXkwVPcxh4TUcnY6YY/JaGyV28u7?=
+ =?us-ascii?Q?CmWRLv2MFCw2w4zfc6xXRKTkAytuILYj190cDlKJN95oka5sg/kp2yci2ssc?=
+ =?us-ascii?Q?cy6ICeD2HpGh/lCpxzy+P4OjDIjM8YKjn0gcLSdcdaf4GGIZwBYdtfZB7P6F?=
+ =?us-ascii?Q?HeB/axabIXffmXcrOGTZWkjnQkhTFRMDf8O9ffCJ8y2KiJTNZlt2luMWK7Ak?=
+ =?us-ascii?Q?pgg3rUwBWX1piTVrV71POEdmTAGngFtiURhqP3vQZZWAm/j3V+o+4cwHRbFT?=
+ =?us-ascii?Q?Wk4zER2+gHO/t4fVDNBqLOeejVx+L5suglPw4d3ceNoWoqWMlbIkmkzRjL87?=
+ =?us-ascii?Q?gac2lXpz2+eyjICLSB0F8khuBSWmSkhifXEejoxSuZ4apIbCOBkvlTilhayk?=
+ =?us-ascii?Q?6uSa8vD3+eVyxKflR5AVLVq/mf3nz6Lvi7ByFQwtFZvWgHVTJWzuDpM3fQEo?=
+ =?us-ascii?Q?bgaxI3nf92+TUEc3Xwf+zOtkYqIiL9YyfDKUKilvdMbsiodDk4i9vmlq7rEU?=
+ =?us-ascii?Q?q+SPtHOSWW85dp++G3NKMKP69K5oXpHV/dbgTauQ70C6qmyPTehHtJMoMM8r?=
+ =?us-ascii?Q?5fDf0zaMfOJvnxTfJBHFc21VjB/Zs6QBXBV7b3Go/YI7XXah3Gls/sDmFbeO?=
+ =?us-ascii?Q?b91/yueXlLVnq6bhO5e5pgs66k+?=
+X-Microsoft-Antispam-Message-Info: V8HqRWhmKtWWnP9RqyaTg1d/2ZOnxrGLzYAzOFK6WM/WmjZlDSvCEU+BLiWOD+YFaQ1RdsfMfWyJnRr94fsiO1tjafZ+TIYl5BmbeMC+12yVvHWymCWgwxu3X4Lzk6WlX/BN+dFO76gx8EL6BpEiG5tknXkzSV3oTx2cF8VmjrpKNHnpuJkZTOPCjkjIbncN
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB1485;6:7Gjg/LNUGn8IG7TyHdMYOpLS5NVHjtZopvpyvQDBFFDXveRKs7CvQjeHk7fBrjhrQ3fR4bRza73dXpWUX2vd4eS2anwok/SutM1Clkjp7yfISKs1qsHB9rdkIJnZAw7+13Ig48x855NwIShSib4yhbsedChywPvYAqhqxIYgwEaVrg2gkBB7Ua7qjxAKNMOLYmqVBGNbXUHXfutBlMek2c3Pdm8DQD84QlM1pRL1/ht2lg627i3sZLZMK9yhec+lEwMZ0Bnmy6bZ3SpiAeO8xkOWugkF59rrLF2pcgRlWWeh70uwXLaW8Bkh6T8qh6plbY0YjRjoq5PfTes4Oei7JwDmBrlb4+t+avsPF/O3cAA=;5:u8jNFHj2pibyXpt5ZCCedhcPtrLbsTqDlZofxaYEWbQRGcRfd9XFfniO+xXh7jz46SBjbF6sqtjizsF84lkK8rV8+5eS61fN5dj/oOLp09AZUZqrnxdveflGk5Jp8aGOf861VyKK64S1v9pEEf5kdvNa4XKIP0gaOewFsvmehys=;24:HYjPQNw9PPuPUFHhE2lkigpPGmWxc4aVGMn06ducPUz32S7R/fjRBolwyWhinbKuSv+KIGWqds3407Eu3iaMZOOyN36FjgO7II404t5FrjY=;7:2RcukDIXWA+SEhKgN14ocNXIw/OIb2+Hj45uQ+O2ps0Sc+GezygcPJewAB0001Fus11ERZfSvItM2GB+PE+xluuv7v0IqunHH/E6dsnBeuaU/5StTlr0HlzVCyaqhJeasGirKNJA52ucpQx5wTIFNNMnJOaVfHnhst1MtRYOeioU86V3z5OpaS6Bbv1ZelvM2lx/4I17r6cV8ALdxjO1aqoE9jSJANNO9/O1Inv5+1yfvQLGE4sj/YhSwHuKZaVJ
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:42.0144
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:45.0986
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78ffd802-1201-4fe9-000c-08d58b0e0211
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7da888d1-0359-4344-392a-08d58b0e03e5
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1482
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB1485
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin IRDA support
+Remove Blackfin crypto support
 ---
- drivers/staging/irda/drivers/Kconfig    |  45 --
- drivers/staging/irda/drivers/Makefile   |   1 -
- drivers/staging/irda/drivers/bfin_sir.c | 819 --------------------------------
- drivers/staging/irda/drivers/bfin_sir.h |  93 ----
- 4 files changed, 958 deletions(-)
- delete mode 100644 drivers/staging/irda/drivers/bfin_sir.c
- delete mode 100644 drivers/staging/irda/drivers/bfin_sir.h
+ crypto/testmgr.c          |   6 -
+ crypto/testmgr.h          |  88 ------
+ drivers/crypto/Kconfig    |   7 -
+ drivers/crypto/Makefile   |   1 -
+ drivers/crypto/bfin_crc.c | 743 ----------------------------------------------
+ drivers/crypto/bfin_crc.h | 124 --------
+ 6 files changed, 969 deletions(-)
+ delete mode 100644 drivers/crypto/bfin_crc.c
+ delete mode 100644 drivers/crypto/bfin_crc.h
 
-diff --git a/drivers/staging/irda/drivers/Kconfig b/drivers/staging/irda/drivers/Kconfig
-index e070e12..71ac76c 100644
---- a/drivers/staging/irda/drivers/Kconfig
-+++ b/drivers/staging/irda/drivers/Kconfig
-@@ -17,51 +17,6 @@ config IRTTY_SIR
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index d5e23a1..8dacd69 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -3070,12 +3070,6 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			.hash = __VECS(ghash_tv_template)
+ 		}
+ 	}, {
+-		.alg = "hmac(crc32)",
+-		.test = alg_test_hash,
+-		.suite = {
+-			.hash = __VECS(bfin_crc_tv_template)
+-		}
+-	}, {
+ 		.alg = "hmac(md5)",
+ 		.test = alg_test_hash,
+ 		.suite = {
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index 6044f69..021e953 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -35045,94 +35045,6 @@ static const struct hash_testvec crc32c_tv_template[] = {
+ 	}
+ };
  
- 	  If unsure, say Y.
- 
--config BFIN_SIR
--	tristate "Blackfin SIR on UART"
--	depends on BLACKFIN && IRDA
--	default n
--	help
--	  Say Y here if your want to enable SIR function on Blackfin UART
--	  devices.
--
--	  To activate this driver you can start irattach like:
--	  "irattach irda0 -s"
--
--	  Saying M, it will be built as a module named bfin_sir.
--
--	  Note that you need to turn off one of the serial drivers for SIR
--	  to use that UART.
--
--config BFIN_SIR0
--	bool "Blackfin SIR on UART0"
--	depends on BFIN_SIR && !SERIAL_BFIN_UART0
--
--config BFIN_SIR1
--	bool "Blackfin SIR on UART1"
--	depends on BFIN_SIR && !SERIAL_BFIN_UART1 && (!BF531 && !BF532 && !BF533 && !BF561)
--
--config BFIN_SIR2
--	bool "Blackfin SIR on UART2"
--	depends on BFIN_SIR && !SERIAL_BFIN_UART2 && (BF54x || BF538 || BF539)
--
--config BFIN_SIR3
--	bool "Blackfin SIR on UART3"
--	depends on BFIN_SIR && !SERIAL_BFIN_UART3 && (BF54x)
--
--choice
--	prompt "SIR Mode"
--	depends on BFIN_SIR
--	default SIR_BFIN_DMA
--
--config SIR_BFIN_DMA
--	bool "DMA mode"
--	depends on !DMA_UNCACHED_NONE
--
--config SIR_BFIN_PIO
--	bool "PIO mode"
--endchoice
--
- config SH_SIR
- 	tristate "SuperH SIR on UART"
- 	depends on IRDA && SUPERH && \
-diff --git a/drivers/staging/irda/drivers/Makefile b/drivers/staging/irda/drivers/Makefile
-index e2901b1..d5307ed 100644
---- a/drivers/staging/irda/drivers/Makefile
-+++ b/drivers/staging/irda/drivers/Makefile
-@@ -23,7 +23,6 @@ obj-$(CONFIG_MCS_FIR)	        += mcs7780.o
- obj-$(CONFIG_AU1000_FIR)	+= au1k_ir.o
- # SIR drivers
- obj-$(CONFIG_IRTTY_SIR)		+= irtty-sir.o	sir-dev.o
--obj-$(CONFIG_BFIN_SIR)		+= bfin_sir.o
- obj-$(CONFIG_SH_SIR)		+= sh_sir.o
- # dongle drivers for SIR drivers
- obj-$(CONFIG_ESI_DONGLE)	+= esi-sir.o
-diff --git a/drivers/staging/irda/drivers/bfin_sir.c b/drivers/staging/irda/drivers/bfin_sir.c
-deleted file mode 100644
-index 59e409b..0000000
---- a/drivers/staging/irda/drivers/bfin_sir.c
-+++ /dev/null
-@@ -1,819 +0,0 @@
 -/*
-- * Blackfin Infra-red Driver
-- *
-- * Copyright 2006-2009 Analog Devices Inc.
-- *
-- * Enter bugs at http://blackfin.uclinux.org/
-- *
-- * Licensed under the GPL-2 or later.
-- *
+- * Blakcifn CRC test vectors
 - */
--#include "bfin_sir.h"
+-static const struct hash_testvec bfin_crc_tv_template[] = {
+-	{
+-		.psize = 0,
+-		.digest = "\x00\x00\x00\x00",
+-	},
+-	{
+-		.key = "\x87\xa9\xcb\xed",
+-		.ksize = 4,
+-		.psize = 0,
+-		.digest = "\x87\xa9\xcb\xed",
+-	},
+-	{
+-		.key = "\xff\xff\xff\xff",
+-		.ksize = 4,
+-		.plaintext = "\x01\x02\x03\x04\x05\x06\x07\x08"
+-			     "\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
+-			     "\x11\x12\x13\x14\x15\x16\x17\x18"
+-			     "\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
+-			     "\x21\x22\x23\x24\x25\x26\x27\x28",
+-		.psize = 40,
+-		.digest = "\x84\x0c\x8d\xa2",
+-	},
+-	{
+-		.key = "\xff\xff\xff\xff",
+-		.ksize = 4,
+-		.plaintext = "\x01\x02\x03\x04\x05\x06\x07\x08"
+-			     "\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
+-			     "\x11\x12\x13\x14\x15\x16\x17\x18"
+-			     "\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
+-			     "\x21\x22\x23\x24\x25\x26",
+-		.psize = 38,
+-		.digest = "\x8c\x58\xec\xb7",
+-	},
+-	{
+-		.key = "\xff\xff\xff\xff",
+-		.ksize = 4,
+-		.plaintext = "\x01\x02\x03\x04\x05\x06\x07\x08"
+-			     "\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
+-			     "\x11\x12\x13\x14\x15\x16\x17\x18"
+-			     "\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
+-			     "\x21\x22\x23\x24\x25\x26\x27",
+-		.psize = 39,
+-		.digest = "\xdc\x50\x28\x7b",
+-	},
+-	{
+-		.key = "\xff\xff\xff\xff",
+-		.ksize = 4,
+-		.plaintext = "\x01\x02\x03\x04\x05\x06\x07\x08"
+-			     "\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
+-			     "\x11\x12\x13\x14\x15\x16\x17\x18"
+-			     "\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
+-			     "\x21\x22\x23\x24\x25\x26\x27\x28"
+-			     "\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30"
+-			     "\x31\x32\x33\x34\x35\x36\x37\x38"
+-			     "\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40"
+-			     "\x41\x42\x43\x44\x45\x46\x47\x48"
+-			     "\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50"
+-			     "\x51\x52\x53\x54\x55\x56\x57\x58"
+-			     "\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60"
+-			     "\x61\x62\x63\x64\x65\x66\x67\x68"
+-			     "\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70"
+-			     "\x71\x72\x73\x74\x75\x76\x77\x78"
+-			     "\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80"
+-			     "\x81\x82\x83\x84\x85\x86\x87\x88"
+-			     "\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90"
+-			     "\x91\x92\x93\x94\x95\x96\x97\x98"
+-			     "\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0"
+-			     "\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8"
+-			     "\xa9\xaa\xab\xac\xad\xae\xaf\xb0"
+-			     "\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8"
+-			     "\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0"
+-			     "\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8"
+-			     "\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0"
+-			     "\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8"
+-			     "\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0"
+-			     "\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8"
+-			     "\xe9\xea\xeb\xec\xed\xee\xef\xf0",
+-		.psize = 240,
+-		.digest = "\x10\x19\x4a\x5c",
+-		.np = 2,
+-		.tap = { 31, 209 }
+-	},
 -
--#ifdef CONFIG_SIR_BFIN_DMA
--#define DMA_SIR_RX_XCNT        10
--#define DMA_SIR_RX_YCNT        (PAGE_SIZE / DMA_SIR_RX_XCNT)
--#define DMA_SIR_RX_FLUSH_JIFS  (HZ * 4 / 250)
--#endif
+-};
 -
--#if ANOMALY_05000447
--static int max_rate = 57600;
--#else
--static int max_rate = 115200;
--#endif
+ static const struct comp_testvec lz4_comp_tv_template[] = {
+ 	{
+ 		.inlen	= 255,
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index 4b741b8..c17368c 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -464,13 +464,6 @@ if CRYPTO_DEV_UX500
+ 	source "drivers/crypto/ux500/Kconfig"
+ endif # if CRYPTO_DEV_UX500
+ 
+-config CRYPTO_DEV_BFIN_CRC
+-	tristate "Support for Blackfin CRC hardware"
+-	depends on BF60x
+-	help
+-	  Newer Blackfin processors have CRC hardware. Select this if you
+-	  want to use the Blackfin CRC module.
 -
--static void bfin_sir_rx_dma_timeout(struct timer_list *t);
+ config CRYPTO_DEV_ATMEL_AUTHENC
+ 	tristate "Support for Atmel IPSEC/SSL hw accelerator"
+ 	depends on HAS_DMA
+diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
+index 2513d13..c08622b 100644
+--- a/drivers/crypto/Makefile
++++ b/drivers/crypto/Makefile
+@@ -3,7 +3,6 @@ obj-$(CONFIG_CRYPTO_DEV_ATMEL_AES) += atmel-aes.o
+ obj-$(CONFIG_CRYPTO_DEV_ATMEL_SHA) += atmel-sha.o
+ obj-$(CONFIG_CRYPTO_DEV_ATMEL_TDES) += atmel-tdes.o
+ obj-$(CONFIG_CRYPTO_DEV_ATMEL_ECC) += atmel-ecc.o
+-obj-$(CONFIG_CRYPTO_DEV_BFIN_CRC) += bfin_crc.o
+ obj-$(CONFIG_CRYPTO_DEV_CAVIUM_ZIP) += cavium/
+ obj-$(CONFIG_CRYPTO_DEV_CCP) += ccp/
+ obj-$(CONFIG_CRYPTO_DEV_CHELSIO) += chelsio/
+diff --git a/drivers/crypto/bfin_crc.c b/drivers/crypto/bfin_crc.c
+deleted file mode 100644
+index bfbf8bf..0000000
+--- a/drivers/crypto/bfin_crc.c
++++ /dev/null
+@@ -1,743 +0,0 @@
+-/*
+- * Cryptographic API.
+- *
+- * Support Blackfin CRC HW acceleration.
+- *
+- * Copyright 2012 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2.
+- */
 -
--static void turnaround_delay(int mtt)
+-#include <linux/err.h>
+-#include <linux/device.h>
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/errno.h>
+-#include <linux/interrupt.h>
+-#include <linux/kernel.h>
+-#include <linux/irq.h>
+-#include <linux/io.h>
+-#include <linux/platform_device.h>
+-#include <linux/scatterlist.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/delay.h>
+-#include <linux/crypto.h>
+-#include <linux/cryptohash.h>
+-#include <crypto/scatterwalk.h>
+-#include <crypto/algapi.h>
+-#include <crypto/hash.h>
+-#include <crypto/internal/hash.h>
+-#include <asm/unaligned.h>
+-
+-#include <asm/dma.h>
+-#include <asm/portmux.h>
+-#include <asm/io.h>
+-
+-#include "bfin_crc.h"
+-
+-#define CRC_CCRYPTO_QUEUE_LENGTH	5
+-
+-#define DRIVER_NAME "bfin-hmac-crc"
+-#define CHKSUM_DIGEST_SIZE      4
+-#define CHKSUM_BLOCK_SIZE       1
+-
+-#define CRC_MAX_DMA_DESC	100
+-
+-#define CRC_CRYPTO_STATE_UPDATE		1
+-#define CRC_CRYPTO_STATE_FINALUPDATE	2
+-#define CRC_CRYPTO_STATE_FINISH		3
+-
+-struct bfin_crypto_crc {
+-	struct list_head	list;
+-	struct device		*dev;
+-	spinlock_t		lock;
+-
+-	int			irq;
+-	int			dma_ch;
+-	u32			poly;
+-	struct crc_register	*regs;
+-
+-	struct ahash_request	*req; /* current request in operation */
+-	struct dma_desc_array	*sg_cpu; /* virt addr of sg dma descriptors */
+-	dma_addr_t		sg_dma; /* phy addr of sg dma descriptors */
+-	u8			*sg_mid_buf;
+-	dma_addr_t		sg_mid_dma; /* phy addr of sg mid buffer */
+-
+-	struct tasklet_struct	done_task;
+-	struct crypto_queue	queue; /* waiting requests */
+-
+-	u8			busy:1; /* crc device in operation flag */
+-};
+-
+-static struct bfin_crypto_crc_list {
+-	struct list_head	dev_list;
+-	spinlock_t		lock;
+-} crc_list;
+-
+-struct bfin_crypto_crc_reqctx {
+-	struct bfin_crypto_crc	*crc;
+-
+-	unsigned int		total;	/* total request bytes */
+-	size_t			sg_buflen; /* bytes for this update */
+-	unsigned int		sg_nents;
+-	struct scatterlist	*sg; /* sg list head for this update*/
+-	struct scatterlist	bufsl[2]; /* chained sg list */
+-
+-	size_t			bufnext_len;
+-	size_t			buflast_len;
+-	u8			bufnext[CHKSUM_DIGEST_SIZE]; /* extra bytes for next udpate */
+-	u8			buflast[CHKSUM_DIGEST_SIZE]; /* extra bytes from last udpate */
+-
+-	u8			flag;
+-};
+-
+-struct bfin_crypto_crc_ctx {
+-	struct bfin_crypto_crc	*crc;
+-	u32			key;
+-};
+-
+-/*
+- * get element in scatter list by given index
+- */
+-static struct scatterlist *sg_get(struct scatterlist *sg_list, unsigned int nents,
+-				unsigned int index)
 -{
--	long ticks;
--
--	mtt = mtt < 10000 ? 10000 : mtt;
--	ticks = 1 + mtt / (USEC_PER_SEC / HZ);
--	schedule_timeout_uninterruptible(ticks);
--}
--
--static void bfin_sir_init_ports(struct bfin_sir_port *sp, struct platform_device *pdev)
--{
--	int i;
--	struct resource *res;
--
--	for (i = 0; i < pdev->num_resources; i++) {
--		res = &pdev->resource[i];
--		switch (res->flags) {
--		case IORESOURCE_MEM:
--			sp->membase   = (void __iomem *)res->start;
--			break;
--		case IORESOURCE_IRQ:
--			sp->irq = res->start;
--			break;
--		case IORESOURCE_DMA:
--			sp->rx_dma_channel = res->start;
--			sp->tx_dma_channel = res->end;
--			break;
--		default:
--			break;
--		}
--	}
--
--	sp->clk = get_sclk();
--#ifdef CONFIG_SIR_BFIN_DMA
--	sp->tx_done        = 1;
--	timer_setup(&sp->rx_dma_timer, bfin_sir_rx_dma_timeout, 0);
--#endif
--}
--
--static void bfin_sir_stop_tx(struct bfin_sir_port *port)
--{
--#ifdef CONFIG_SIR_BFIN_DMA
--	disable_dma(port->tx_dma_channel);
--#endif
--
--	while (!(UART_GET_LSR(port) & THRE)) {
--		cpu_relax();
--		continue;
--	}
--
--	UART_CLEAR_IER(port, ETBEI);
--}
--
--static void bfin_sir_enable_tx(struct bfin_sir_port *port)
--{
--	UART_SET_IER(port, ETBEI);
--}
--
--static void bfin_sir_stop_rx(struct bfin_sir_port *port)
--{
--	UART_CLEAR_IER(port, ERBFI);
--}
--
--static void bfin_sir_enable_rx(struct bfin_sir_port *port)
--{
--	UART_SET_IER(port, ERBFI);
--}
--
--static int bfin_sir_set_speed(struct bfin_sir_port *port, int speed)
--{
--	int ret = -EINVAL;
--	unsigned int quot;
--	unsigned short val, lsr, lcr;
--	static int utime;
--	int count = 10;
--
--	lcr = WLS(8);
--
--	switch (speed) {
--	case 9600:
--	case 19200:
--	case 38400:
--	case 57600:
--	case 115200:
--
--		/*
--		 * IRDA is not affected by anomaly 05000230, so there is no
--		 * need to tweak the divisor like he UART driver (which will
--		 * slightly speed up the baud rate on us).
--		 */
--		quot = (port->clk + (8 * speed)) / (16 * speed);
--
--		do {
--			udelay(utime);
--			lsr = UART_GET_LSR(port);
--		} while (!(lsr & TEMT) && count--);
--
--		/* The useconds for 1 bits to transmit */
--		utime = 1000000 / speed + 1;
--
--		/* Clear UCEN bit to reset the UART state machine
--		 * and control registers
--		 */
--		val = UART_GET_GCTL(port);
--		val &= ~UCEN;
--		UART_PUT_GCTL(port, val);
--
--		/* Set DLAB in LCR to Access THR RBR IER */
--		UART_SET_DLAB(port);
--		SSYNC();
--
--		UART_PUT_DLL(port, quot & 0xFF);
--		UART_PUT_DLH(port, (quot >> 8) & 0xFF);
--		SSYNC();
--
--		/* Clear DLAB in LCR */
--		UART_CLEAR_DLAB(port);
--		SSYNC();
--
--		UART_PUT_LCR(port, lcr);
--
--		val = UART_GET_GCTL(port);
--		val |= UCEN;
--		UART_PUT_GCTL(port, val);
--
--		ret = 0;
--		break;
--	default:
--		printk(KERN_WARNING "bfin_sir: Invalid speed %d\n", speed);
--		break;
--	}
--
--	val = UART_GET_GCTL(port);
--	/* If not add the 'RPOLC', we can't catch the receive interrupt.
--	 * It's related with the HW layout and the IR transiver.
--	 */
--	val |= UMOD_IRDA | RPOLC;
--	UART_PUT_GCTL(port, val);
--	return ret;
--}
--
--static int bfin_sir_is_receiving(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	if (!(UART_GET_IER(port) & ERBFI))
--		return 0;
--	return self->rx_buff.state != OUTSIDE_FRAME;
--}
--
--#ifdef CONFIG_SIR_BFIN_PIO
--static void bfin_sir_tx_chars(struct net_device *dev)
--{
--	unsigned int chr;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	if (self->tx_buff.len != 0) {
--		chr = *(self->tx_buff.data);
--		UART_PUT_CHAR(port, chr);
--		self->tx_buff.data++;
--		self->tx_buff.len--;
--	} else {
--		self->stats.tx_packets++;
--		self->stats.tx_bytes += self->tx_buff.data - self->tx_buff.head;
--		if (self->newspeed) {
--			bfin_sir_set_speed(port, self->newspeed);
--			self->speed = self->newspeed;
--			self->newspeed = 0;
--		}
--		bfin_sir_stop_tx(port);
--		bfin_sir_enable_rx(port);
--		/* I'm hungry! */
--		netif_wake_queue(dev);
--	}
--}
--
--static void bfin_sir_rx_chars(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--	unsigned char ch;
--
--	UART_CLEAR_LSR(port);
--	ch = UART_GET_CHAR(port);
--	async_unwrap_char(dev, &self->stats, &self->rx_buff, ch);
--}
--
--static irqreturn_t bfin_sir_rx_int(int irq, void *dev_id)
--{
--	struct net_device *dev = dev_id;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	spin_lock(&self->lock);
--	while ((UART_GET_LSR(port) & DR))
--		bfin_sir_rx_chars(dev);
--	spin_unlock(&self->lock);
--
--	return IRQ_HANDLED;
--}
--
--static irqreturn_t bfin_sir_tx_int(int irq, void *dev_id)
--{
--	struct net_device *dev = dev_id;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	spin_lock(&self->lock);
--	if (UART_GET_LSR(port) & THRE)
--		bfin_sir_tx_chars(dev);
--	spin_unlock(&self->lock);
--
--	return IRQ_HANDLED;
--}
--#endif /* CONFIG_SIR_BFIN_PIO */
--
--#ifdef CONFIG_SIR_BFIN_DMA
--static void bfin_sir_dma_tx_chars(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	if (!port->tx_done)
--		return;
--	port->tx_done = 0;
--
--	if (self->tx_buff.len == 0) {
--		self->stats.tx_packets++;
--		if (self->newspeed) {
--			bfin_sir_set_speed(port, self->newspeed);
--			self->speed = self->newspeed;
--			self->newspeed = 0;
--		}
--		bfin_sir_enable_rx(port);
--		port->tx_done = 1;
--		netif_wake_queue(dev);
--		return;
--	}
--
--	blackfin_dcache_flush_range((unsigned long)(self->tx_buff.data),
--		(unsigned long)(self->tx_buff.data+self->tx_buff.len));
--	set_dma_config(port->tx_dma_channel,
--		set_bfin_dma_config(DIR_READ, DMA_FLOW_STOP,
--			INTR_ON_BUF, DIMENSION_LINEAR, DATA_SIZE_8,
--			DMA_SYNC_RESTART));
--	set_dma_start_addr(port->tx_dma_channel,
--		(unsigned long)(self->tx_buff.data));
--	set_dma_x_count(port->tx_dma_channel, self->tx_buff.len);
--	set_dma_x_modify(port->tx_dma_channel, 1);
--	enable_dma(port->tx_dma_channel);
--}
--
--static irqreturn_t bfin_sir_dma_tx_int(int irq, void *dev_id)
--{
--	struct net_device *dev = dev_id;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--
--	spin_lock(&self->lock);
--	if (!(get_dma_curr_irqstat(port->tx_dma_channel) & DMA_RUN)) {
--		clear_dma_irqstat(port->tx_dma_channel);
--		bfin_sir_stop_tx(port);
--
--		self->stats.tx_packets++;
--		self->stats.tx_bytes += self->tx_buff.len;
--		self->tx_buff.len = 0;
--		if (self->newspeed) {
--			bfin_sir_set_speed(port, self->newspeed);
--			self->speed = self->newspeed;
--			self->newspeed = 0;
--		}
--		bfin_sir_enable_rx(port);
--		/* I'm hungry! */
--		netif_wake_queue(dev);
--		port->tx_done = 1;
--	}
--	spin_unlock(&self->lock);
--
--	return IRQ_HANDLED;
--}
--
--static void bfin_sir_dma_rx_chars(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
+-	struct scatterlist *sg = NULL;
 -	int i;
 -
--	UART_CLEAR_LSR(port);
+-	for_each_sg(sg_list, sg, nents, i)
+-		if (i == index)
+-			break;
 -
--	for (i = port->rx_dma_buf.head; i < port->rx_dma_buf.tail; i++)
--		async_unwrap_char(dev, &self->stats, &self->rx_buff, port->rx_dma_buf.buf[i]);
+-	return sg;
 -}
 -
--static void bfin_sir_rx_dma_timeout(struct timer_list *t)
+-static int bfin_crypto_crc_init_hw(struct bfin_crypto_crc *crc, u32 key)
 -{
--	struct bfin_sir_port *port = from_timer(port, t, rx_dma_timer);
--	struct net_device *dev = port->dev;
--	struct bfin_sir_self *self = netdev_priv(dev);
+-	writel(0, &crc->regs->datacntrld);
+-	writel(MODE_CALC_CRC << OPMODE_OFFSET, &crc->regs->control);
+-	writel(key, &crc->regs->curresult);
 -
--	int x_pos, pos;
--	unsigned long flags;
--
--	spin_lock_irqsave(&self->lock, flags);
--	x_pos = DMA_SIR_RX_XCNT - get_dma_curr_xcount(port->rx_dma_channel);
--	if (x_pos == DMA_SIR_RX_XCNT)
--		x_pos = 0;
--
--	pos = port->rx_dma_nrows * DMA_SIR_RX_XCNT + x_pos;
--
--	if (pos > port->rx_dma_buf.tail) {
--		port->rx_dma_buf.tail = pos;
--		bfin_sir_dma_rx_chars(dev);
--		port->rx_dma_buf.head = port->rx_dma_buf.tail;
--	}
--	spin_unlock_irqrestore(&self->lock, flags);
--}
--
--static irqreturn_t bfin_sir_dma_rx_int(int irq, void *dev_id)
--{
--	struct net_device *dev = dev_id;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--	unsigned short irqstat;
--
--	spin_lock(&self->lock);
--
--	port->rx_dma_nrows++;
--	port->rx_dma_buf.tail = DMA_SIR_RX_XCNT * port->rx_dma_nrows;
--	bfin_sir_dma_rx_chars(dev);
--	if (port->rx_dma_nrows >= DMA_SIR_RX_YCNT) {
--		port->rx_dma_nrows = 0;
--		port->rx_dma_buf.tail = 0;
--	}
--	port->rx_dma_buf.head = port->rx_dma_buf.tail;
--
--	irqstat = get_dma_curr_irqstat(port->rx_dma_channel);
--	clear_dma_irqstat(port->rx_dma_channel);
--	spin_unlock(&self->lock);
--
--	mod_timer(&port->rx_dma_timer, jiffies + DMA_SIR_RX_FLUSH_JIFS);
--	return IRQ_HANDLED;
--}
--#endif /* CONFIG_SIR_BFIN_DMA */
--
--static int bfin_sir_startup(struct bfin_sir_port *port, struct net_device *dev)
--{
--#ifdef CONFIG_SIR_BFIN_DMA
--	dma_addr_t dma_handle;
--#endif /* CONFIG_SIR_BFIN_DMA */
--
--	if (request_dma(port->rx_dma_channel, "BFIN_UART_RX") < 0) {
--		dev_warn(&dev->dev, "Unable to attach SIR RX DMA channel\n");
--		return -EBUSY;
--	}
--
--	if (request_dma(port->tx_dma_channel, "BFIN_UART_TX") < 0) {
--		dev_warn(&dev->dev, "Unable to attach SIR TX DMA channel\n");
--		free_dma(port->rx_dma_channel);
--		return -EBUSY;
--	}
--
--#ifdef CONFIG_SIR_BFIN_DMA
--
--	set_dma_callback(port->rx_dma_channel, bfin_sir_dma_rx_int, dev);
--	set_dma_callback(port->tx_dma_channel, bfin_sir_dma_tx_int, dev);
--
--	port->rx_dma_buf.buf = dma_alloc_coherent(NULL, PAGE_SIZE,
--						  &dma_handle, GFP_DMA);
--	port->rx_dma_buf.head = 0;
--	port->rx_dma_buf.tail = 0;
--	port->rx_dma_nrows = 0;
--
--	set_dma_config(port->rx_dma_channel,
--				set_bfin_dma_config(DIR_WRITE, DMA_FLOW_AUTO,
--									INTR_ON_ROW, DIMENSION_2D,
--									DATA_SIZE_8, DMA_SYNC_RESTART));
--	set_dma_x_count(port->rx_dma_channel, DMA_SIR_RX_XCNT);
--	set_dma_x_modify(port->rx_dma_channel, 1);
--	set_dma_y_count(port->rx_dma_channel, DMA_SIR_RX_YCNT);
--	set_dma_y_modify(port->rx_dma_channel, 1);
--	set_dma_start_addr(port->rx_dma_channel, (unsigned long)port->rx_dma_buf.buf);
--	enable_dma(port->rx_dma_channel);
--
--
--#else
--
--	if (request_irq(port->irq, bfin_sir_rx_int, 0, "BFIN_SIR_RX", dev)) {
--		dev_warn(&dev->dev, "Unable to attach SIR RX interrupt\n");
--		return -EBUSY;
--	}
--
--	if (request_irq(port->irq+1, bfin_sir_tx_int, 0, "BFIN_SIR_TX", dev)) {
--		dev_warn(&dev->dev, "Unable to attach SIR TX interrupt\n");
--		free_irq(port->irq, dev);
--		return -EBUSY;
--	}
--#endif
+-	/* setup CRC interrupts */
+-	writel(CMPERRI | DCNTEXPI, &crc->regs->status);
+-	writel(CMPERRI | DCNTEXPI, &crc->regs->intrenset);
 -
 -	return 0;
 -}
 -
--static void bfin_sir_shutdown(struct bfin_sir_port *port, struct net_device *dev)
+-static int bfin_crypto_crc_init(struct ahash_request *req)
 -{
--	unsigned short val;
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-	struct bfin_crypto_crc_ctx *crc_ctx = crypto_ahash_ctx(tfm);
+-	struct bfin_crypto_crc_reqctx *ctx = ahash_request_ctx(req);
+-	struct bfin_crypto_crc *crc;
 -
--	bfin_sir_stop_rx(port);
+-	dev_dbg(ctx->crc->dev, "crc_init\n");
+-	spin_lock_bh(&crc_list.lock);
+-	list_for_each_entry(crc, &crc_list.dev_list, list) {
+-		crc_ctx->crc = crc;
+-		break;
+-	}
+-	spin_unlock_bh(&crc_list.lock);
 -
--	val = UART_GET_GCTL(port);
--	val &= ~(UCEN | UMOD_MASK | RPOLC);
--	UART_PUT_GCTL(port, val);
+-	if (sg_nents(req->src) > CRC_MAX_DMA_DESC) {
+-		dev_dbg(ctx->crc->dev, "init: requested sg list is too big > %d\n",
+-			CRC_MAX_DMA_DESC);
+-		return -EINVAL;
+-	}
 -
--#ifdef CONFIG_SIR_BFIN_DMA
--	disable_dma(port->tx_dma_channel);
--	disable_dma(port->rx_dma_channel);
--	del_timer(&(port->rx_dma_timer));
--	dma_free_coherent(NULL, PAGE_SIZE, port->rx_dma_buf.buf, 0);
--#else
--	free_irq(port->irq+1, dev);
--	free_irq(port->irq, dev);
--#endif
--	free_dma(port->tx_dma_channel);
--	free_dma(port->rx_dma_channel);
+-	ctx->crc = crc;
+-	ctx->bufnext_len = 0;
+-	ctx->buflast_len = 0;
+-	ctx->sg_buflen = 0;
+-	ctx->total = 0;
+-	ctx->flag = 0;
+-
+-	/* init crc results */
+-	put_unaligned_le32(crc_ctx->key, req->result);
+-
+-	dev_dbg(ctx->crc->dev, "init: digest size: %d\n",
+-		crypto_ahash_digestsize(tfm));
+-
+-	return bfin_crypto_crc_init_hw(crc, crc_ctx->key);
+-}
+-
+-static void bfin_crypto_crc_config_dma(struct bfin_crypto_crc *crc)
+-{
+-	struct scatterlist *sg;
+-	struct bfin_crypto_crc_reqctx *ctx = ahash_request_ctx(crc->req);
+-	int i = 0, j = 0;
+-	unsigned long dma_config;
+-	unsigned int dma_count;
+-	unsigned int dma_addr;
+-	unsigned int mid_dma_count = 0;
+-	int dma_mod;
+-
+-	dma_map_sg(crc->dev, ctx->sg, ctx->sg_nents, DMA_TO_DEVICE);
+-
+-	for_each_sg(ctx->sg, sg, ctx->sg_nents, j) {
+-		dma_addr = sg_dma_address(sg);
+-		/* deduce extra bytes in last sg */
+-		if (sg_is_last(sg))
+-			dma_count = sg_dma_len(sg) - ctx->bufnext_len;
+-		else
+-			dma_count = sg_dma_len(sg);
+-
+-		if (mid_dma_count) {
+-			/* Append last middle dma buffer to 4 bytes with first
+-			   bytes in current sg buffer. Move addr of current
+-			   sg and deduce the length of current sg.
+-			 */
+-			memcpy(crc->sg_mid_buf +(i << 2) + mid_dma_count,
+-				sg_virt(sg),
+-				CHKSUM_DIGEST_SIZE - mid_dma_count);
+-			dma_addr += CHKSUM_DIGEST_SIZE - mid_dma_count;
+-			dma_count -= CHKSUM_DIGEST_SIZE - mid_dma_count;
+-
+-			dma_config = DMAFLOW_ARRAY | RESTART | NDSIZE_3 |
+-				DMAEN | PSIZE_32 | WDSIZE_32;
+-
+-			/* setup new dma descriptor for next middle dma */
+-			crc->sg_cpu[i].start_addr = crc->sg_mid_dma + (i << 2);
+-			crc->sg_cpu[i].cfg = dma_config;
+-			crc->sg_cpu[i].x_count = 1;
+-			crc->sg_cpu[i].x_modify = CHKSUM_DIGEST_SIZE;
+-			dev_dbg(crc->dev, "%d: crc_dma: start_addr:0x%lx, "
+-				"cfg:0x%x, x_count:0x%x, x_modify:0x%x\n",
+-				i, crc->sg_cpu[i].start_addr,
+-				crc->sg_cpu[i].cfg, crc->sg_cpu[i].x_count,
+-				crc->sg_cpu[i].x_modify);
+-			i++;
+-		}
+-
+-		dma_config = DMAFLOW_ARRAY | RESTART | NDSIZE_3 | DMAEN | PSIZE_32;
+-		/* chop current sg dma len to multiple of 32 bits */
+-		mid_dma_count = dma_count % 4;
+-		dma_count &= ~0x3;
+-
+-		if (dma_addr % 4 == 0) {
+-			dma_config |= WDSIZE_32;
+-			dma_count >>= 2;
+-			dma_mod = 4;
+-		} else if (dma_addr % 2 == 0) {
+-			dma_config |= WDSIZE_16;
+-			dma_count >>= 1;
+-			dma_mod = 2;
+-		} else {
+-			dma_config |= WDSIZE_8;
+-			dma_mod = 1;
+-		}
+-
+-		crc->sg_cpu[i].start_addr = dma_addr;
+-		crc->sg_cpu[i].cfg = dma_config;
+-		crc->sg_cpu[i].x_count = dma_count;
+-		crc->sg_cpu[i].x_modify = dma_mod;
+-		dev_dbg(crc->dev, "%d: crc_dma: start_addr:0x%lx, "
+-			"cfg:0x%x, x_count:0x%x, x_modify:0x%x\n",
+-			i, crc->sg_cpu[i].start_addr,
+-			crc->sg_cpu[i].cfg, crc->sg_cpu[i].x_count,
+-			crc->sg_cpu[i].x_modify);
+-		i++;
+-
+-		if (mid_dma_count) {
+-			/* copy extra bytes to next middle dma buffer */
+-			memcpy(crc->sg_mid_buf + (i << 2),
+-				(u8*)sg_virt(sg) + (dma_count << 2),
+-				mid_dma_count);
+-		}
+-	}
+-
+-	dma_config = DMAFLOW_ARRAY | RESTART | NDSIZE_3 | DMAEN | PSIZE_32 | WDSIZE_32;
+-	/* For final update req, append the buffer for next update as well*/
+-	if (ctx->bufnext_len && (ctx->flag == CRC_CRYPTO_STATE_FINALUPDATE ||
+-		ctx->flag == CRC_CRYPTO_STATE_FINISH)) {
+-		crc->sg_cpu[i].start_addr = dma_map_single(crc->dev, ctx->bufnext,
+-						CHKSUM_DIGEST_SIZE, DMA_TO_DEVICE);
+-		crc->sg_cpu[i].cfg = dma_config;
+-		crc->sg_cpu[i].x_count = 1;
+-		crc->sg_cpu[i].x_modify = CHKSUM_DIGEST_SIZE;
+-		dev_dbg(crc->dev, "%d: crc_dma: start_addr:0x%lx, "
+-			"cfg:0x%x, x_count:0x%x, x_modify:0x%x\n",
+-			i, crc->sg_cpu[i].start_addr,
+-			crc->sg_cpu[i].cfg, crc->sg_cpu[i].x_count,
+-			crc->sg_cpu[i].x_modify);
+-		i++;
+-	}
+-
+-	if (i == 0)
+-		return;
+-
+-	/* Set the last descriptor to stop mode */
+-	crc->sg_cpu[i - 1].cfg &= ~(DMAFLOW | NDSIZE);
+-	crc->sg_cpu[i - 1].cfg |= DI_EN;
+-	set_dma_curr_desc_addr(crc->dma_ch, (unsigned long *)crc->sg_dma);
+-	set_dma_x_count(crc->dma_ch, 0);
+-	set_dma_x_modify(crc->dma_ch, 0);
+-	set_dma_config(crc->dma_ch, dma_config);
+-}
+-
+-static int bfin_crypto_crc_handle_queue(struct bfin_crypto_crc *crc,
+-				  struct ahash_request *req)
+-{
+-	struct crypto_async_request *async_req, *backlog;
+-	struct bfin_crypto_crc_reqctx *ctx;
+-	struct scatterlist *sg;
+-	int ret = 0;
+-	int nsg, i, j;
+-	unsigned int nextlen;
+-	unsigned long flags;
+-	u32 reg;
+-
+-	spin_lock_irqsave(&crc->lock, flags);
+-	if (req)
+-		ret = ahash_enqueue_request(&crc->queue, req);
+-	if (crc->busy) {
+-		spin_unlock_irqrestore(&crc->lock, flags);
+-		return ret;
+-	}
+-	backlog = crypto_get_backlog(&crc->queue);
+-	async_req = crypto_dequeue_request(&crc->queue);
+-	if (async_req)
+-		crc->busy = 1;
+-	spin_unlock_irqrestore(&crc->lock, flags);
+-
+-	if (!async_req)
+-		return ret;
+-
+-	if (backlog)
+-		backlog->complete(backlog, -EINPROGRESS);
+-
+-	req = ahash_request_cast(async_req);
+-	crc->req = req;
+-	ctx = ahash_request_ctx(req);
+-	ctx->sg = NULL;
+-	ctx->sg_buflen = 0;
+-	ctx->sg_nents = 0;
+-
+-	dev_dbg(crc->dev, "handling new req, flag=%u, nbytes: %d\n",
+-						ctx->flag, req->nbytes);
+-
+-	if (ctx->flag == CRC_CRYPTO_STATE_FINISH) {
+-		if (ctx->bufnext_len == 0) {
+-			crc->busy = 0;
+-			return 0;
+-		}
+-
+-		/* Pack last crc update buffer to 32bit */
+-		memset(ctx->bufnext + ctx->bufnext_len, 0,
+-				CHKSUM_DIGEST_SIZE - ctx->bufnext_len);
+-	} else {
+-		/* Pack small data which is less than 32bit to buffer for next update. */
+-		if (ctx->bufnext_len + req->nbytes < CHKSUM_DIGEST_SIZE) {
+-			memcpy(ctx->bufnext + ctx->bufnext_len,
+-				sg_virt(req->src), req->nbytes);
+-			ctx->bufnext_len += req->nbytes;
+-			if (ctx->flag == CRC_CRYPTO_STATE_FINALUPDATE &&
+-				ctx->bufnext_len) {
+-				goto finish_update;
+-			} else {
+-				crc->busy = 0;
+-				return 0;
+-			}
+-		}
+-
+-		if (ctx->bufnext_len) {
+-			/* Chain in extra bytes of last update */
+-			ctx->buflast_len = ctx->bufnext_len;
+-			memcpy(ctx->buflast, ctx->bufnext, ctx->buflast_len);
+-
+-			nsg = ctx->sg_buflen ? 2 : 1;
+-			sg_init_table(ctx->bufsl, nsg);
+-			sg_set_buf(ctx->bufsl, ctx->buflast, ctx->buflast_len);
+-			if (nsg > 1)
+-				sg_chain(ctx->bufsl, nsg, req->src);
+-			ctx->sg = ctx->bufsl;
+-		} else
+-			ctx->sg = req->src;
+-
+-		/* Chop crc buffer size to multiple of 32 bit */
+-		nsg = sg_nents(ctx->sg);
+-		ctx->sg_nents = nsg;
+-		ctx->sg_buflen = ctx->buflast_len + req->nbytes;
+-		ctx->bufnext_len = ctx->sg_buflen % 4;
+-		ctx->sg_buflen &= ~0x3;
+-
+-		if (ctx->bufnext_len) {
+-			/* copy extra bytes to buffer for next update */
+-			memset(ctx->bufnext, 0, CHKSUM_DIGEST_SIZE);
+-			nextlen = ctx->bufnext_len;
+-			for (i = nsg - 1; i >= 0; i--) {
+-				sg = sg_get(ctx->sg, nsg, i);
+-				j = min(nextlen, sg_dma_len(sg));
+-				memcpy(ctx->bufnext + nextlen - j,
+-					sg_virt(sg) + sg_dma_len(sg) - j, j);
+-				if (j == sg_dma_len(sg))
+-					ctx->sg_nents--;
+-				nextlen -= j;
+-				if (nextlen == 0)
+-					break;
+-			}
+-		}
+-	}
+-
+-finish_update:
+-	if (ctx->bufnext_len && (ctx->flag == CRC_CRYPTO_STATE_FINALUPDATE ||
+-		ctx->flag == CRC_CRYPTO_STATE_FINISH))
+-		ctx->sg_buflen += CHKSUM_DIGEST_SIZE;
+-
+-	/* set CRC data count before start DMA */
+-	writel(ctx->sg_buflen >> 2, &crc->regs->datacnt);
+-
+-	/* setup and enable CRC DMA */
+-	bfin_crypto_crc_config_dma(crc);
+-
+-	/* finally kick off CRC operation */
+-	reg = readl(&crc->regs->control);
+-	writel(reg | BLKEN, &crc->regs->control);
+-
+-	return -EINPROGRESS;
+-}
+-
+-static int bfin_crypto_crc_update(struct ahash_request *req)
+-{
+-	struct bfin_crypto_crc_reqctx *ctx = ahash_request_ctx(req);
+-
+-	if (!req->nbytes)
+-		return 0;
+-
+-	dev_dbg(ctx->crc->dev, "crc_update\n");
+-	ctx->total += req->nbytes;
+-	ctx->flag = CRC_CRYPTO_STATE_UPDATE;
+-
+-	return bfin_crypto_crc_handle_queue(ctx->crc, req);
+-}
+-
+-static int bfin_crypto_crc_final(struct ahash_request *req)
+-{
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-	struct bfin_crypto_crc_ctx *crc_ctx = crypto_ahash_ctx(tfm);
+-	struct bfin_crypto_crc_reqctx *ctx = ahash_request_ctx(req);
+-
+-	dev_dbg(ctx->crc->dev, "crc_final\n");
+-	ctx->flag = CRC_CRYPTO_STATE_FINISH;
+-	crc_ctx->key = 0;
+-
+-	return bfin_crypto_crc_handle_queue(ctx->crc, req);
+-}
+-
+-static int bfin_crypto_crc_finup(struct ahash_request *req)
+-{
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-	struct bfin_crypto_crc_ctx *crc_ctx = crypto_ahash_ctx(tfm);
+-	struct bfin_crypto_crc_reqctx *ctx = ahash_request_ctx(req);
+-
+-	dev_dbg(ctx->crc->dev, "crc_finishupdate\n");
+-	ctx->total += req->nbytes;
+-	ctx->flag = CRC_CRYPTO_STATE_FINALUPDATE;
+-	crc_ctx->key = 0;
+-
+-	return bfin_crypto_crc_handle_queue(ctx->crc, req);
+-}
+-
+-static int bfin_crypto_crc_digest(struct ahash_request *req)
+-{
+-	int ret;
+-
+-	ret = bfin_crypto_crc_init(req);
+-	if (ret)
+-		return ret;
+-
+-	return bfin_crypto_crc_finup(req);
+-}
+-
+-static int bfin_crypto_crc_setkey(struct crypto_ahash *tfm, const u8 *key,
+-			unsigned int keylen)
+-{
+-	struct bfin_crypto_crc_ctx *crc_ctx = crypto_ahash_ctx(tfm);
+-
+-	dev_dbg(crc_ctx->crc->dev, "crc_setkey\n");
+-	if (keylen != CHKSUM_DIGEST_SIZE) {
+-		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-		return -EINVAL;
+-	}
+-
+-	crc_ctx->key = get_unaligned_le32(key);
+-
+-	return 0;
+-}
+-
+-static int bfin_crypto_crc_cra_init(struct crypto_tfm *tfm)
+-{
+-	struct bfin_crypto_crc_ctx *crc_ctx = crypto_tfm_ctx(tfm);
+-
+-	crc_ctx->key = 0;
+-	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
+-				 sizeof(struct bfin_crypto_crc_reqctx));
+-
+-	return 0;
+-}
+-
+-static void bfin_crypto_crc_cra_exit(struct crypto_tfm *tfm)
+-{
+-}
+-
+-static struct ahash_alg algs = {
+-	.init		= bfin_crypto_crc_init,
+-	.update		= bfin_crypto_crc_update,
+-	.final		= bfin_crypto_crc_final,
+-	.finup		= bfin_crypto_crc_finup,
+-	.digest		= bfin_crypto_crc_digest,
+-	.setkey		= bfin_crypto_crc_setkey,
+-	.halg.digestsize	= CHKSUM_DIGEST_SIZE,
+-	.halg.base	= {
+-		.cra_name		= "hmac(crc32)",
+-		.cra_driver_name	= DRIVER_NAME,
+-		.cra_priority		= 100,
+-		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
+-						CRYPTO_ALG_ASYNC |
+-						CRYPTO_ALG_OPTIONAL_KEY,
+-		.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+-		.cra_ctxsize		= sizeof(struct bfin_crypto_crc_ctx),
+-		.cra_alignmask		= 3,
+-		.cra_module		= THIS_MODULE,
+-		.cra_init		= bfin_crypto_crc_cra_init,
+-		.cra_exit		= bfin_crypto_crc_cra_exit,
+-	}
+-};
+-
+-static void bfin_crypto_crc_done_task(unsigned long data)
+-{
+-	struct bfin_crypto_crc *crc = (struct bfin_crypto_crc *)data;
+-
+-	bfin_crypto_crc_handle_queue(crc, NULL);
+-}
+-
+-static irqreturn_t bfin_crypto_crc_handler(int irq, void *dev_id)
+-{
+-	struct bfin_crypto_crc *crc = dev_id;
+-	u32 reg;
+-
+-	if (readl(&crc->regs->status) & DCNTEXP) {
+-		writel(DCNTEXP, &crc->regs->status);
+-
+-		/* prepare results */
+-		put_unaligned_le32(readl(&crc->regs->result),
+-			crc->req->result);
+-
+-		reg = readl(&crc->regs->control);
+-		writel(reg & ~BLKEN, &crc->regs->control);
+-		crc->busy = 0;
+-
+-		if (crc->req->base.complete)
+-			crc->req->base.complete(&crc->req->base, 0);
+-
+-		tasklet_schedule(&crc->done_task);
+-
+-		return IRQ_HANDLED;
+-	} else
+-		return IRQ_NONE;
 -}
 -
 -#ifdef CONFIG_PM
--static int bfin_sir_suspend(struct platform_device *pdev, pm_message_t state)
+-/**
+- *	bfin_crypto_crc_suspend - suspend crc device
+- *	@pdev: device being suspended
+- *	@state: requested suspend state
+- */
+-static int bfin_crypto_crc_suspend(struct platform_device *pdev, pm_message_t state)
 -{
--	struct bfin_sir_port *sir_port;
--	struct net_device *dev;
--	struct bfin_sir_self *self;
+-	struct bfin_crypto_crc *crc = platform_get_drvdata(pdev);
+-	int i = 100000;
 -
--	sir_port = platform_get_drvdata(pdev);
--	if (!sir_port)
--		return 0;
+-	while ((readl(&crc->regs->control) & BLKEN) && --i)
+-		cpu_relax();
 -
--	dev = sir_port->dev;
--	self = netdev_priv(dev);
--	if (self->open) {
--		flush_work(&self->work);
--		bfin_sir_shutdown(self->sir_port, dev);
--		netif_device_detach(dev);
--	}
+-	if (i == 0)
+-		return -EBUSY;
 -
--	return 0;
--}
--static int bfin_sir_resume(struct platform_device *pdev)
--{
--	struct bfin_sir_port *sir_port;
--	struct net_device *dev;
--	struct bfin_sir_self *self;
--	struct bfin_sir_port *port;
--
--	sir_port = platform_get_drvdata(pdev);
--	if (!sir_port)
--		return 0;
--
--	dev = sir_port->dev;
--	self = netdev_priv(dev);
--	port = self->sir_port;
--	if (self->open) {
--		if (self->newspeed) {
--			self->speed = self->newspeed;
--			self->newspeed = 0;
--		}
--		bfin_sir_startup(port, dev);
--		bfin_sir_set_speed(port, 9600);
--		bfin_sir_enable_rx(port);
--		netif_device_attach(dev);
--	}
 -	return 0;
 -}
 -#else
--#define bfin_sir_suspend   NULL
--#define bfin_sir_resume    NULL
+-# define bfin_crypto_crc_suspend NULL
 -#endif
 -
--static void bfin_sir_send_work(struct work_struct *work)
+-#define bfin_crypto_crc_resume NULL
+-
+-/**
+- *	bfin_crypto_crc_probe - Initialize module
+- *
+- */
+-static int bfin_crypto_crc_probe(struct platform_device *pdev)
 -{
--	struct bfin_sir_self  *self = container_of(work, struct bfin_sir_self, work);
--	struct net_device *dev = self->sir_port->dev;
--	struct bfin_sir_port *port = self->sir_port;
--	unsigned short val;
--	int tx_cnt = 10;
+-	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	struct bfin_crypto_crc *crc;
+-	unsigned int timeout = 100000;
+-	int ret;
 -
--	while (bfin_sir_is_receiving(dev) && --tx_cnt)
--		turnaround_delay(self->mtt);
+-	crc = devm_kzalloc(dev, sizeof(*crc), GFP_KERNEL);
+-	if (!crc) {
+-		dev_err(&pdev->dev, "fail to malloc bfin_crypto_crc\n");
+-		return -ENOMEM;
+-	}
 -
--	bfin_sir_stop_rx(port);
+-	crc->dev = dev;
 -
--	/* To avoid losting RX interrupt, we reset IR function before
--	 * sending data. We also can set the speed, which will
--	 * reset all the UART.
+-	INIT_LIST_HEAD(&crc->list);
+-	spin_lock_init(&crc->lock);
+-	tasklet_init(&crc->done_task, bfin_crypto_crc_done_task, (unsigned long)crc);
+-	crypto_init_queue(&crc->queue, CRC_CCRYPTO_QUEUE_LENGTH);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	crc->regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR((void *)crc->regs)) {
+-		dev_err(&pdev->dev, "Cannot map CRC IO\n");
+-		return PTR_ERR((void *)crc->regs);
+-	}
+-
+-	crc->irq = platform_get_irq(pdev, 0);
+-	if (crc->irq < 0) {
+-		dev_err(&pdev->dev, "No CRC DCNTEXP IRQ specified\n");
+-		return -ENOENT;
+-	}
+-
+-	ret = devm_request_irq(dev, crc->irq, bfin_crypto_crc_handler,
+-			IRQF_SHARED, dev_name(dev), crc);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Unable to request blackfin crc irq\n");
+-		return ret;
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "No CRC DMA channel specified\n");
+-		return -ENOENT;
+-	}
+-	crc->dma_ch = res->start;
+-
+-	ret = request_dma(crc->dma_ch, dev_name(dev));
+-	if (ret) {
+-		dev_err(&pdev->dev, "Unable to attach Blackfin CRC DMA channel\n");
+-		return ret;
+-	}
+-
+-	crc->sg_cpu = dma_alloc_coherent(&pdev->dev, PAGE_SIZE, &crc->sg_dma, GFP_KERNEL);
+-	if (crc->sg_cpu == NULL) {
+-		ret = -ENOMEM;
+-		goto out_error_dma;
+-	}
+-	/*
+-	 * need at most CRC_MAX_DMA_DESC sg + CRC_MAX_DMA_DESC middle  +
+-	 * 1 last + 1 next dma descriptors
 -	 */
--	val = UART_GET_GCTL(port);
--	val &= ~(UMOD_MASK | RPOLC);
--	UART_PUT_GCTL(port, val);
--	SSYNC();
--	val |= UMOD_IRDA | RPOLC;
--	UART_PUT_GCTL(port, val);
--	SSYNC();
--	/* bfin_sir_set_speed(port, self->speed); */
+-	crc->sg_mid_buf = (u8 *)(crc->sg_cpu + ((CRC_MAX_DMA_DESC + 1) << 1));
+-	crc->sg_mid_dma = crc->sg_dma + sizeof(struct dma_desc_array)
+-			* ((CRC_MAX_DMA_DESC + 1) << 1);
 -
--#ifdef CONFIG_SIR_BFIN_DMA
--	bfin_sir_dma_tx_chars(dev);
--#endif
--	bfin_sir_enable_tx(port);
--	netif_trans_update(dev);
--}
+-	writel(0, &crc->regs->control);
+-	crc->poly = (u32)pdev->dev.platform_data;
+-	writel(crc->poly, &crc->regs->poly);
 -
--static int bfin_sir_hard_xmit(struct sk_buff *skb, struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	int speed = irda_get_next_speed(skb);
+-	while (!(readl(&crc->regs->status) & LUTDONE) && (--timeout) > 0)
+-		cpu_relax();
 -
--	netif_stop_queue(dev);
+-	if (timeout == 0)
+-		dev_info(&pdev->dev, "init crc poly timeout\n");
 -
--	self->mtt = irda_get_mtt(skb);
+-	platform_set_drvdata(pdev, crc);
 -
--	if (speed != self->speed && speed != -1)
--		self->newspeed = speed;
+-	spin_lock(&crc_list.lock);
+-	list_add(&crc->list, &crc_list.dev_list);
+-	spin_unlock(&crc_list.lock);
 -
--	self->tx_buff.data = self->tx_buff.head;
--	if (skb->len == 0)
--		self->tx_buff.len = 0;
--	else
--		self->tx_buff.len = async_wrap_skb(skb, self->tx_buff.data, self->tx_buff.truesize);
+-	if (list_is_singular(&crc_list.dev_list)) {
+-		ret = crypto_register_ahash(&algs);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"Can't register crypto ahash device\n");
+-			goto out_error_dma;
+-		}
+-	}
 -
--	schedule_work(&self->work);
--	dev_kfree_skb(skb);
+-	dev_info(&pdev->dev, "initialized\n");
 -
 -	return 0;
--}
 -
--static int bfin_sir_ioctl(struct net_device *dev, struct ifreq *ifreq, int cmd)
--{
--	struct if_irda_req *rq = (struct if_irda_req *)ifreq;
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--	int ret = 0;
--
--	switch (cmd) {
--	case SIOCSBANDWIDTH:
--		if (capable(CAP_NET_ADMIN)) {
--			if (self->open) {
--				ret = bfin_sir_set_speed(port, rq->ifr_baudrate);
--				bfin_sir_enable_rx(port);
--			} else {
--				dev_warn(&dev->dev, "SIOCSBANDWIDTH: !netif_running\n");
--				ret = 0;
--			}
--		}
--		break;
--
--	case SIOCSMEDIABUSY:
--		ret = -EPERM;
--		if (capable(CAP_NET_ADMIN)) {
--			irda_device_set_media_busy(dev, TRUE);
--			ret = 0;
--		}
--		break;
--
--	case SIOCGRECEIVING:
--		rq->ifr_receiving = bfin_sir_is_receiving(dev);
--		break;
--
--	default:
--		ret = -EOPNOTSUPP;
--		break;
--	}
+-out_error_dma:
+-	if (crc->sg_cpu)
+-		dma_free_coherent(&pdev->dev, PAGE_SIZE, crc->sg_cpu, crc->sg_dma);
+-	free_dma(crc->dma_ch);
 -
 -	return ret;
 -}
 -
--static struct net_device_stats *bfin_sir_stats(struct net_device *dev)
+-/**
+- *	bfin_crypto_crc_remove - Initialize module
+- *
+- */
+-static int bfin_crypto_crc_remove(struct platform_device *pdev)
 -{
--	struct bfin_sir_self *self = netdev_priv(dev);
+-	struct bfin_crypto_crc *crc = platform_get_drvdata(pdev);
 -
--	return &self->stats;
--}
--
--static int bfin_sir_open(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--	struct bfin_sir_port *port = self->sir_port;
--	int err;
--
--	self->newspeed = 0;
--	self->speed = 9600;
--
--	spin_lock_init(&self->lock);
--
--	err = bfin_sir_startup(port, dev);
--	if (err)
--		goto err_startup;
--
--	bfin_sir_set_speed(port, 9600);
--
--	self->irlap = irlap_open(dev, &self->qos, DRIVER_NAME);
--	if (!self->irlap) {
--		err = -ENOMEM;
--		goto err_irlap;
--	}
--
--	INIT_WORK(&self->work, bfin_sir_send_work);
--
--	/*
--	 * Now enable the interrupt then start the queue
--	 */
--	self->open = 1;
--	bfin_sir_enable_rx(port);
--
--	netif_start_queue(dev);
--
--	return 0;
--
--err_irlap:
--	self->open = 0;
--	bfin_sir_shutdown(port, dev);
--err_startup:
--	return err;
--}
--
--static int bfin_sir_stop(struct net_device *dev)
--{
--	struct bfin_sir_self *self = netdev_priv(dev);
--
--	flush_work(&self->work);
--	bfin_sir_shutdown(self->sir_port, dev);
--
--	if (self->rxskb) {
--		dev_kfree_skb(self->rxskb);
--		self->rxskb = NULL;
--	}
--
--	/* Stop IrLAP */
--	if (self->irlap) {
--		irlap_close(self->irlap);
--		self->irlap = NULL;
--	}
--
--	netif_stop_queue(dev);
--	self->open = 0;
--
--	return 0;
--}
--
--static int bfin_sir_init_iobuf(iobuff_t *io, int size)
--{
--	io->head = kmalloc(size, GFP_KERNEL);
--	if (!io->head)
--		return -ENOMEM;
--	io->truesize = size;
--	io->in_frame = FALSE;
--	io->state    = OUTSIDE_FRAME;
--	io->data     = io->head;
--	return 0;
--}
--
--static const struct net_device_ops bfin_sir_ndo = {
--	.ndo_open		= bfin_sir_open,
--	.ndo_stop		= bfin_sir_stop,
--	.ndo_start_xmit		= bfin_sir_hard_xmit,
--	.ndo_do_ioctl		= bfin_sir_ioctl,
--	.ndo_get_stats		= bfin_sir_stats,
--};
--
--static int bfin_sir_probe(struct platform_device *pdev)
--{
--	struct net_device *dev;
--	struct bfin_sir_self *self;
--	unsigned int baudrate_mask;
--	struct bfin_sir_port *sir_port;
--	int err;
--
--	if (pdev->id >= 0 && pdev->id < ARRAY_SIZE(per) && \
--				per[pdev->id][3] == pdev->id) {
--		err = peripheral_request_list(per[pdev->id], DRIVER_NAME);
--		if (err)
--			return err;
--	} else {
--		dev_err(&pdev->dev, "Invalid pdev id, please check board file\n");
+-	if (!crc)
 -		return -ENODEV;
--	}
 -
--	err = -ENOMEM;
--	sir_port = kmalloc(sizeof(*sir_port), GFP_KERNEL);
--	if (!sir_port)
--		goto err_mem_0;
+-	spin_lock(&crc_list.lock);
+-	list_del(&crc->list);
+-	spin_unlock(&crc_list.lock);
 -
--	bfin_sir_init_ports(sir_port, pdev);
--
--	dev = alloc_irdadev(sizeof(*self));
--	if (!dev)
--		goto err_mem_1;
--
--	self = netdev_priv(dev);
--	self->dev = &pdev->dev;
--	self->sir_port = sir_port;
--	sir_port->dev = dev;
--
--	err = bfin_sir_init_iobuf(&self->rx_buff, IRDA_SKB_MAX_MTU);
--	if (err)
--		goto err_mem_2;
--	err = bfin_sir_init_iobuf(&self->tx_buff, IRDA_SIR_MAX_FRAME);
--	if (err)
--		goto err_mem_3;
--
--	dev->netdev_ops = &bfin_sir_ndo;
--	dev->irq = sir_port->irq;
--
--	irda_init_max_qos_capabilies(&self->qos);
--
--	baudrate_mask = IR_9600;
--
--	switch (max_rate) {
--	case 115200:
--		baudrate_mask |= IR_115200;
--	case 57600:
--		baudrate_mask |= IR_57600;
--	case 38400:
--		baudrate_mask |= IR_38400;
--	case 19200:
--		baudrate_mask |= IR_19200;
--	case 9600:
--		break;
--	default:
--		dev_warn(&pdev->dev, "Invalid maximum baud rate, using 9600\n");
--	}
--
--	self->qos.baud_rate.bits &= baudrate_mask;
--
--	self->qos.min_turn_time.bits = 1; /* 10 ms or more */
--
--	irda_qos_bits_to_value(&self->qos);
--
--	err = register_netdev(dev);
--
--	if (err) {
--		kfree(self->tx_buff.head);
--err_mem_3:
--		kfree(self->rx_buff.head);
--err_mem_2:
--		free_netdev(dev);
--err_mem_1:
--		kfree(sir_port);
--err_mem_0:
--		peripheral_free_list(per[pdev->id]);
--	} else
--		platform_set_drvdata(pdev, sir_port);
--
--	return err;
--}
--
--static int bfin_sir_remove(struct platform_device *pdev)
--{
--	struct bfin_sir_port *sir_port;
--	struct net_device *dev = NULL;
--	struct bfin_sir_self *self;
--
--	sir_port = platform_get_drvdata(pdev);
--	if (!sir_port)
--		return 0;
--	dev = sir_port->dev;
--	self = netdev_priv(dev);
--	unregister_netdev(dev);
--	kfree(self->tx_buff.head);
--	kfree(self->rx_buff.head);
--	free_netdev(dev);
--	kfree(sir_port);
+-	crypto_unregister_ahash(&algs);
+-	tasklet_kill(&crc->done_task);
+-	free_dma(crc->dma_ch);
 -
 -	return 0;
 -}
 -
--static struct platform_driver bfin_ir_driver = {
--	.probe   = bfin_sir_probe,
--	.remove  = bfin_sir_remove,
--	.suspend = bfin_sir_suspend,
--	.resume  = bfin_sir_resume,
--	.driver  = {
--		.name = DRIVER_NAME,
+-static struct platform_driver bfin_crypto_crc_driver = {
+-	.probe     = bfin_crypto_crc_probe,
+-	.remove    = bfin_crypto_crc_remove,
+-	.suspend   = bfin_crypto_crc_suspend,
+-	.resume    = bfin_crypto_crc_resume,
+-	.driver    = {
+-		.name  = DRIVER_NAME,
 -	},
 -};
 -
--module_platform_driver(bfin_ir_driver);
+-/**
+- *	bfin_crypto_crc_mod_init - Initialize module
+- *
+- *	Checks the module params and registers the platform driver.
+- *	Real work is in the platform probe function.
+- */
+-static int __init bfin_crypto_crc_mod_init(void)
+-{
+-	int ret;
 -
--module_param(max_rate, int, 0);
--MODULE_PARM_DESC(max_rate, "Maximum baud rate (115200, 57600, 38400, 19200, 9600)");
+-	pr_info("Blackfin hardware CRC crypto driver\n");
 -
--MODULE_AUTHOR("Graf Yang <graf.yang@analog.com>");
--MODULE_DESCRIPTION("Blackfin IrDA driver");
+-	INIT_LIST_HEAD(&crc_list.dev_list);
+-	spin_lock_init(&crc_list.lock);
+-
+-	ret = platform_driver_register(&bfin_crypto_crc_driver);
+-	if (ret) {
+-		pr_err("unable to register driver\n");
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- *	bfin_crypto_crc_mod_exit - Deinitialize module
+- */
+-static void __exit bfin_crypto_crc_mod_exit(void)
+-{
+-	platform_driver_unregister(&bfin_crypto_crc_driver);
+-}
+-
+-module_init(bfin_crypto_crc_mod_init);
+-module_exit(bfin_crypto_crc_mod_exit);
+-
+-MODULE_AUTHOR("Sonic Zhang <sonic.zhang@analog.com>");
+-MODULE_DESCRIPTION("Blackfin CRC hardware crypto driver");
 -MODULE_LICENSE("GPL");
-diff --git a/drivers/staging/irda/drivers/bfin_sir.h b/drivers/staging/irda/drivers/bfin_sir.h
+diff --git a/drivers/crypto/bfin_crc.h b/drivers/crypto/bfin_crc.h
 deleted file mode 100644
-index d47cf14..0000000
---- a/drivers/staging/irda/drivers/bfin_sir.h
+index 786ef74..0000000
+--- a/drivers/crypto/bfin_crc.h
 +++ /dev/null
-@@ -1,93 +0,0 @@
+@@ -1,124 +0,0 @@
 -/*
-- * Blackfin Infra-red Driver
+- * bfin_crc.h - interface to Blackfin CRC controllers
 - *
-- * Copyright 2006-2009 Analog Devices Inc.
-- *
-- * Enter bugs at http://blackfin.uclinux.org/
+- * Copyright 2012 Analog Devices Inc.
 - *
 - * Licensed under the GPL-2 or later.
-- *
 - */
 -
--#include <linux/serial.h>
--#include <linux/module.h>
--#include <linux/netdevice.h>
--#include <linux/interrupt.h>
--#include <linux/delay.h>
--#include <linux/platform_device.h>
--#include <linux/dma-mapping.h>
--#include <linux/slab.h>
+-#ifndef __BFIN_CRC_H__
+-#define __BFIN_CRC_H__
 -
--#include <net/irda/irda.h>
--#include <net/irda/wrapper.h>
--#include <net/irda/irda_device.h>
--
--#include <asm/irq.h>
--#include <asm/cacheflush.h>
--#include <asm/dma.h>
--#include <asm/portmux.h>
--#undef DRIVER_NAME
--
--#ifdef CONFIG_SIR_BFIN_DMA
--struct dma_rx_buf {
--	char *buf;
--	int head;
--	int tail;
+-/* Function driver which use hardware crc must initialize the structure */
+-struct crc_info {
+-	/* Input data address */
+-	unsigned char *in_addr;
+-	/* Output data address */
+-	unsigned char *out_addr;
+-	/* Input or output bytes */
+-	unsigned long datasize;
+-	union {
+-	/* CRC to compare with that of input buffer */
+-	unsigned long crc_compare;
+-	/* Value to compare with input data */
+-	unsigned long val_verify;
+-	/* Value to fill */
+-	unsigned long val_fill;
+-	};
+-	/* Value to program the 32b CRC Polynomial */
+-	unsigned long crc_poly;
+-	union {
+-	/* CRC calculated from the input data */
+-	unsigned long crc_result;
+-	/* First failed position to verify input data */
+-	unsigned long pos_verify;
+-	};
+-	/* CRC mirror flags */
+-	unsigned int bitmirr:1;
+-	unsigned int bytmirr:1;
+-	unsigned int w16swp:1;
+-	unsigned int fdsel:1;
+-	unsigned int rsltmirr:1;
+-	unsigned int polymirr:1;
+-	unsigned int cmpmirr:1;
 -};
+-
+-/* Userspace interface */
+-#define CRC_IOC_MAGIC		'C'
+-#define CRC_IOC_CALC_CRC	_IOWR('C', 0x01, unsigned int)
+-#define CRC_IOC_MEMCPY_CRC	_IOWR('C', 0x02, unsigned int)
+-#define CRC_IOC_VERIFY_VAL	_IOWR('C', 0x03, unsigned int)
+-#define CRC_IOC_FILL_VAL	_IOWR('C', 0x04, unsigned int)
+-
+-
+-#ifdef __KERNEL__
+-
+-#include <linux/types.h>
+-#include <linux/spinlock.h>
+-
+-struct crc_register {
+-	u32 control;
+-	u32 datacnt;
+-	u32 datacntrld;
+-	u32 __pad_1[2];
+-	u32 compare;
+-	u32 fillval;
+-	u32 datafifo;
+-	u32 intren;
+-	u32 intrenset;
+-	u32 intrenclr;
+-	u32 poly;
+-	u32 __pad_2[4];
+-	u32 status;
+-	u32 datacntcap;
+-	u32 __pad_3;
+-	u32 result;
+-	u32 curresult;
+-	u32 __pad_4[3];
+-	u32 revid;
+-};
+-
+-/* CRC_STATUS Masks */
+-#define CMPERR			0x00000002	/* Compare error */
+-#define DCNTEXP			0x00000010	/* datacnt register expired */
+-#define IBR			0x00010000	/* Input buffer ready */
+-#define OBR			0x00020000	/* Output buffer ready */
+-#define IRR			0x00040000	/* Immediate result readt */
+-#define LUTDONE			0x00080000	/* Look-up table generation done */
+-#define FSTAT			0x00700000	/* FIFO status */
+-#define MAX_FIFO		4		/* Max fifo size */
+-
+-/* CRC_CONTROL Masks */
+-#define BLKEN			0x00000001	/* Block enable */
+-#define OPMODE			0x000000F0	/* Operation mode */
+-#define OPMODE_OFFSET		4		/* Operation mode mask offset*/
+-#define MODE_DMACPY_CRC		1		/* MTM CRC compute and compare */
+-#define MODE_DATA_FILL		2		/* MTM data fill */
+-#define MODE_CALC_CRC		3		/* MSM CRC compute and compare */
+-#define MODE_DATA_VERIFY	4		/* MSM data verify */
+-#define AUTOCLRZ		0x00000100	/* Auto clear to zero */
+-#define AUTOCLRF		0x00000200	/* Auto clear to one */
+-#define OBRSTALL		0x00001000	/* Stall on output buffer ready */
+-#define IRRSTALL		0x00002000	/* Stall on immediate result ready */
+-#define BITMIRR			0x00010000	/* Mirror bits within each byte of 32-bit input data */
+-#define BITMIRR_OFFSET		16		/* Mirror bits offset */
+-#define BYTMIRR			0x00020000	/* Mirror bytes of 32-bit input data */
+-#define BYTMIRR_OFFSET		17		/* Mirror bytes offset */
+-#define W16SWP			0x00040000	/* Mirror uppper and lower 16-bit word of 32-bit input data */
+-#define W16SWP_OFFSET		18		/* Mirror 16-bit word offset */
+-#define FDSEL			0x00080000	/* FIFO is written after input data is mirrored */
+-#define FDSEL_OFFSET		19		/* Mirror FIFO offset */
+-#define RSLTMIRR		0x00100000	/* CRC result registers are mirrored. */
+-#define RSLTMIRR_OFFSET		20		/* Mirror CRC result offset. */
+-#define POLYMIRR		0x00200000	/* CRC poly register is mirrored. */
+-#define POLYMIRR_OFFSET		21		/* Mirror CRC poly offset. */
+-#define CMPMIRR			0x00400000	/* CRC compare register is mirrored. */
+-#define CMPMIRR_OFFSET		22		/* Mirror CRC compare offset. */
+-
+-/* CRC_INTREN Masks */
+-#define CMPERRI 		0x02		/* CRC_ERROR_INTR */
+-#define DCNTEXPI 		0x10		/* CRC_STATUS_INTR */
+-
 -#endif
 -
--struct bfin_sir_port {
--	unsigned char __iomem   *membase;
--	unsigned int            irq;
--	unsigned int            lsr;
--	unsigned long           clk;
--	struct net_device       *dev;
--#ifdef CONFIG_SIR_BFIN_DMA
--	int                     tx_done;
--	struct dma_rx_buf       rx_dma_buf;
--	struct timer_list       rx_dma_timer;
--	int                     rx_dma_nrows;
 -#endif
--	unsigned int            tx_dma_channel;
--	unsigned int            rx_dma_channel;
--};
--
--struct bfin_sir_port_res {
--	unsigned long   base_addr;
--	int             irq;
--	unsigned int    rx_dma_channel;
--	unsigned int    tx_dma_channel;
--};
--
--struct bfin_sir_self {
--	struct bfin_sir_port    *sir_port;
--	spinlock_t              lock;
--	unsigned int            open;
--	int                     speed;
--	int                     newspeed;
--
--	struct sk_buff          *txskb;
--	struct sk_buff          *rxskb;
--	struct net_device_stats stats;
--	struct device           *dev;
--	struct irlap_cb         *irlap;
--	struct qos_info         qos;
--
--	iobuff_t                tx_buff;
--	iobuff_t                rx_buff;
--
--	struct work_struct      work;
--	int                     mtt;
--};
--
--#define DRIVER_NAME "bfin_sir"
--
--#include <asm/bfin_serial.h>
--
--static const unsigned short per[][4] = {
--	/* rx pin      tx pin     NULL  uart_number */
--	{P_UART0_RX, P_UART0_TX,    0,    0},
--	{P_UART1_RX, P_UART1_TX,    0,    1},
--	{P_UART2_RX, P_UART2_TX,    0,    2},
--	{P_UART3_RX, P_UART3_TX,    0,    3},
--};
 -- 
 2.7.4
