@@ -1,39 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeCPSIG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:08:06 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42717 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeCPSIE (ORCPT
+        id S933467AbeCPROV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:14:21 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43110 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeCPRG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:08:04 -0400
-X-Google-Smtp-Source: AG47ELuiMBAps2l9OBaEnznceqJirdiIYAjkS4UD2Ks6qQAPagkWb6tIJvqTg7/ZH+TV8Bt9OF1rlw==
-From: Junio C Hamano <gitster@pobox.com>
-To: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-Cc: git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [ANNOUNCE] Git v2.17.0-rc0
-References: <xmqqwoyc3kir.fsf@gitster-ct.c.googlers.com>
-        <87fu50e0ht.fsf@evledraar.gmail.com>
-        <xmqqbmfn3ngm.fsf@gitster-ct.c.googlers.com>
-Date: Fri, 16 Mar 2018 11:08:02 -0700
-In-Reply-To: <xmqqbmfn3ngm.fsf@gitster-ct.c.googlers.com> (Junio C. Hamano's
-        message of "Fri, 16 Mar 2018 11:05:45 -0700")
-Message-ID: <xmqq7eqb3nct.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 16 Mar 2018 13:06:59 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 03/22] net: socket: add __sys_accept4() helper; remove in-kernel call to syscall
+Date: Fri, 16 Mar 2018 18:05:55 +0100
+Message-Id: <20180316170614.5392-4-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Junio C Hamano <gitster@pobox.com> writes:
+Using the net-internal helper __sys_accept4() allows us to avoid the
+internal calls to the sys_accept4() syscall.
 
-> I haven't wordsmithed it fully, but it should say something along
-> the lines of ...
->
->  Documentation/RelNotes/2.16.0.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ include/linux/socket.h |  2 ++
+ net/compat.c           |  4 ++--
+ net/socket.c           | 20 +++++++++++++-------
+ 3 files changed, 17 insertions(+), 9 deletions(-)
 
-Eh, of course the addition should go to 2.17 release notes ;-)  I
-just happened to be reviewing a topic forked earlier.
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 54b85abc7265..6a9840271676 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -361,5 +361,7 @@ extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
+ extern int __sys_sendto(int fd, void __user *buff, size_t len,
+ 			unsigned int flags, struct sockaddr __user *addr,
+ 			int addr_len);
++extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
++			 int __user *upeer_addrlen, int flags);
+ 
+ #endif /* _LINUX_SOCKET_H */
+diff --git a/net/compat.c b/net/compat.c
+index fc82982d9b84..0ff9f7451b6f 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -823,7 +823,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = sys_listen(a0, a1);
+ 		break;
+ 	case SYS_ACCEPT:
+-		ret = sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
++		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
+ 		break;
+ 	case SYS_GETSOCKNAME:
+ 		ret = sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]));
+@@ -873,7 +873,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 					  compat_ptr(a[4]));
+ 		break;
+ 	case SYS_ACCEPT4:
+-		ret = sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), a[3]);
++		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), a[3]);
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+diff --git a/net/socket.c b/net/socket.c
+index 3f037a21ba5e..45f6ea0d57a5 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1519,8 +1519,8 @@ SYSCALL_DEFINE2(listen, int, fd, int, backlog)
+  *	clean when we restucture accept also.
+  */
+ 
+-SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
+-		int __user *, upeer_addrlen, int, flags)
++int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
++		  int __user *upeer_addrlen, int flags)
+ {
+ 	struct socket *sock, *newsock;
+ 	struct file *newfile;
+@@ -1599,10 +1599,16 @@ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
+ 	goto out_put;
+ }
+ 
++SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
++		int __user *, upeer_addrlen, int, flags)
++{
++	return __sys_accept4(fd, upeer_sockaddr, upeer_addrlen, flags);
++}
++
+ SYSCALL_DEFINE3(accept, int, fd, struct sockaddr __user *, upeer_sockaddr,
+ 		int __user *, upeer_addrlen)
+ {
+-	return sys_accept4(fd, upeer_sockaddr, upeer_addrlen, 0);
++	return __sys_accept4(fd, upeer_sockaddr, upeer_addrlen, 0);
+ }
+ 
+ /*
+@@ -2469,8 +2475,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		err = sys_listen(a0, a1);
+ 		break;
+ 	case SYS_ACCEPT:
+-		err = sys_accept4(a0, (struct sockaddr __user *)a1,
+-				  (int __user *)a[2], 0);
++		err = __sys_accept4(a0, (struct sockaddr __user *)a1,
++				    (int __user *)a[2], 0);
+ 		break;
+ 	case SYS_GETSOCKNAME:
+ 		err =
+@@ -2525,8 +2531,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 				   (struct timespec __user *)a[4]);
+ 		break;
+ 	case SYS_ACCEPT4:
+-		err = sys_accept4(a0, (struct sockaddr __user *)a1,
+-				  (int __user *)a[2], a[3]);
++		err = __sys_accept4(a0, (struct sockaddr __user *)a1,
++				    (int __user *)a[2], a[3]);
+ 		break;
+ 	default:
+ 		err = -EINVAL;
+-- 
+2.16.2
