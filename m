@@ -1,79 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753417AbeCPJTr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 05:19:47 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:44322 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbeCPJTn (ORCPT
+        id S1753085AbeCPJWu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 05:22:50 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:57212 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751665AbeCPJWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:19:43 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.91
-Subject: Re: [PATCH] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888
- output.
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1521121410-17103-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180316064731.muiw5yumhmfnwxg2@flea>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <658946b9-4f49-ff24-3b84-da1eb9b7d9ad@micronovasrl.com>
-Date: Fri, 16 Mar 2018 10:19:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 16 Mar 2018 05:22:49 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Fri, 16 Mar 2018 09:21:50 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH -next] ASoC: wm8400: Use devm_snd_soc_register_component()
+Message-ID: <20180316092150.osexp6amtg3utvhm@localhost.localdomain>
+References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180316064731.muiw5yumhmfnwxg2@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=578 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1803160114
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-Il 16/03/2018 07:47, Maxime Ripard ha scritto:
-> Hi Giulio,
+On Fri, Mar 16, 2018 at 07:32:07AM +0000, Wei Yongjun wrote:
+> Since the remove callback is removed, the snd_soc_unregister_component()
+> is missing when remove device. Using devm_snd_soc_register_component()
+> instead of snd_soc_register_component().
 > 
-> On Thu, Mar 15, 2018 at 02:43:30PM +0100, Giulio Benetti wrote:
->> The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setting
->> for the needed pins.
->>
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> 
-> Like we discussed last time, we only merge this kind of patches if
-> there's an immediate user.
+> Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-You're right.
-In few time(I hope), I'm going to send dts for Linova1-4_3 and Linova1-7,
-where I use those pins.
-I have also to send 2 patches for 2 new panels for panel-simple.
+Thanks for spotting this.
 
-So I think I have to send 2 displays' patches before.
-And a patchset for the 2 boards and rgb888 pins.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-One question: do I have to wait for panels' patches to applied and then 
-send patchset for boards dts?
-Or can I send a unique patchset?
-Because as I understand those patches should be applied to 2 different 
-repositories, right?
-
-Thanks in advance
-
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
-
-> 
-> Maxime
-> 
+Thanks,
+Charles
