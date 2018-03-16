@@ -1,98 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753627AbeCPRMh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:12:37 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43122 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753775AbeCPRHA (ORCPT
+        id S1753078AbeCPSGk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:06:40 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37393 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752567AbeCPSGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:07:00 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 10/22] net: socket: add __sys_socketpair() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:06:02 +0100
-Message-Id: <20180316170614.5392-11-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        Fri, 16 Mar 2018 14:06:37 -0400
+X-Google-Smtp-Source: AG47ELsN2vv1Q7J+grq3lPJ4S3LdSG3w6CimLOgZUH/37AIlmEi4j4+ceuhfAutI55s7fRfPkt5Cxw==
+Date: Fri, 16 Mar 2018 14:06:35 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH v9 08/61] page cache: Use xa_lock
+Message-ID: <20180316180633.e755emgeeovo4ddq@destiny>
+References: <20180313132639.17387-1-willy@infradead.org>
+ <20180313132639.17387-9-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313132639.17387-9-willy@infradead.org>
+User-Agent: NeoMutt/20170714 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_socketpair() allows us to avoid the
-internal calls to the sys_socketpair() syscall.
+On Tue, Mar 13, 2018 at 06:25:46AM -0700, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> Remove the address_space ->tree_lock and use the xa_lock newly added to
+> the radix_tree_root.  Rename the address_space ->page_tree to ->i_pages,
+> since we don't really care that it's a tree.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Acked-by: Jeff Layton <jlayton@redhat.com>
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/socket.h |  2 ++
- net/compat.c           |  2 +-
- net/socket.c           | 11 ++++++++---
- 3 files changed, 11 insertions(+), 4 deletions(-)
+Man my eyes started to glaze over about halfway through this one
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 9ba003e92fea..dbdddf0d079e 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -372,5 +372,7 @@ extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- 			     int __user *usockaddr_len);
- extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
- 			     int __user *usockaddr_len);
-+extern int __sys_socketpair(int family, int type, int protocol,
-+			    int __user *usockvec);
- 
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index 74017f618eb1..04db26316438 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -832,7 +832,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
- 		break;
- 	case SYS_SOCKETPAIR:
--		ret = sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
-+		ret = __sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
- 		break;
- 	case SYS_SEND:
- 		ret = sys_send(a0, compat_ptr(a1), a[2], a[3]);
-diff --git a/net/socket.c b/net/socket.c
-index 007fb9483279..5861821f46f5 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1368,8 +1368,7 @@ SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
-  *	Create a pair of connected sockets.
-  */
- 
--SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
--		int __user *, usockvec)
-+int __sys_socketpair(int family, int type, int protocol, int __user *usockvec)
- {
- 	struct socket *sock1, *sock2;
- 	int fd1, fd2, err;
-@@ -1454,6 +1453,12 @@ SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
- 	return err;
- }
- 
-+SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
-+		int __user *, usockvec)
-+{
-+	return __sys_socketpair(family, type, protocol, usockvec);
-+}
-+
- /*
-  *	Bind a name to a socket. Nothing much to do here since it's
-  *	the protocol's responsibility to handle the local address.
-@@ -2521,7 +2526,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 				      (int __user *)a[2]);
- 		break;
- 	case SYS_SOCKETPAIR:
--		err = sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
-+		err = __sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
- 		break;
- 	case SYS_SEND:
- 		err = sys_send(a0, (void __user *)a1, a[2], a[3]);
--- 
-2.16.2
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+
+Thanks,
+
+Josef
