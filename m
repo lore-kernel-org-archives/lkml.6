@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeCQWax (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 18:30:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
+        id S1752882AbeCQWeb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 18:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751704AbeCQWau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 18:30:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A69B21741
+        id S1751809AbeCQWe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 18:34:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DB621741
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 17 Mar 2018 22:30:44 +0000
+Date: Sat, 17 Mar 2018 22:34:22 +0000
 From: Jonathan Cameron <jic23@kernel.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio/accel/kxcjk-1013: Improve unlocking of a mutex in
- three functions
-Message-ID: <20180317223044.42c963b9@archlinux>
-In-Reply-To: <a4522ea5-78dc-4746-054a-7477d395630f@users.sourceforge.net>
-References: <a4522ea5-78dc-4746-054a-7477d395630f@users.sourceforge.net>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Fabrice Gasnier <fabrice.gasnier@st.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH 0/2] iio: stm32-dfsdm-adc: fix filter & rate setting
+Message-ID: <20180317223422.1a08a254@archlinux>
+In-Reply-To: <1ddfcfad-f06e-738f-53cf-11dc56e61da1@st.com>
+References: <1520950986-23116-1-git-send-email-fabrice.gasnier@st.com>
+        <1ddfcfad-f06e-738f-53cf-11dc56e61da1@st.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -30,142 +30,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 13:47:20 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+On Fri, 16 Mar 2018 10:10:09 +0100
+Arnaud Pouliquen <arnaud.pouliquen@st.com> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 13 Mar 2018 13:40:12 +0100
+> Hello,
 > 
-> * Add jump targets so that a call of the function "mutex_unlock" is stored
->   less often in these function implementations.
-> 
-> * Replace eight calls by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-A few minor comments inline, but at first glance at least these look
-to be fine in principle.
+> For the series:
+> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Both applied and marked for stable (as I'm not sure exactly when this will hit
+mainline and it may be after the next merge window)
+
+Thanks,
 
 Jonathan
 
-> ---
->  drivers/iio/accel/kxcjk-1013.c | 46 ++++++++++++++++++------------------------
->  1 file changed, 20 insertions(+), 26 deletions(-)
 > 
-> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-> index af53a1084ee5..4adf38b6d939 100644
-> --- a/drivers/iio/accel/kxcjk-1013.c
-> +++ b/drivers/iio/accel/kxcjk-1013.c
-> @@ -765,19 +765,18 @@ static int kxcjk1013_read_raw(struct iio_dev *indio_dev,
->  			ret = -EBUSY;
->  		else {
->  			ret = kxcjk1013_set_power_state(data, true);
-> -			if (ret < 0) {
-> -				mutex_unlock(&data->mutex);
-> -				return ret;
-> -			}
-> +			if (ret < 0)
-> +				goto unlock;
-> +
->  			ret = kxcjk1013_get_acc_reg(data, chan->scan_index);
->  			if (ret < 0) {
->  				kxcjk1013_set_power_state(data, false);
-> -				mutex_unlock(&data->mutex);
-> -				return ret;
-> +				goto unlock;
->  			}
->  			*val = sign_extend32(ret >> 4, 11);
->  			ret = kxcjk1013_set_power_state(data, false);
->  		}
-> +unlock:
->  		mutex_unlock(&data->mutex);
->  
->  		if (ret < 0)
-> @@ -905,8 +904,8 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
->  
->  	if (!state && data->motion_trigger_on) {
->  		data->ev_enable_state = 0;
-> -		mutex_unlock(&data->mutex);
-> -		return 0;
-> +		ret = 0;
-do this where it is orginally defined rather than here.
-
-int ret = 0;
-> +		goto unlock;
->  	}
->  
->  	/*
-> @@ -919,23 +918,20 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
->  	 * is always on so sequence doesn't matter
->  	 */
->  	ret = kxcjk1013_set_power_state(data, state);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->  
->  	ret =  kxcjk1013_setup_any_motion_interrupt(data, state);
->  	if (ret < 0) {
->  		kxcjk1013_set_power_state(data, false);
->  		data->ev_enable_state = 0;
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  
->  	data->ev_enable_state = state;
-> +unlock:
->  	mutex_unlock(&data->mutex);
-> -
-> -	return 0;
-> +	return ret;
->  }
->  
->  static int kxcjk1013_buffer_preenable(struct iio_dev *indio_dev)
-> @@ -1086,32 +1082,30 @@ static int kxcjk1013_data_rdy_trigger_set_state(struct iio_trigger *trig,
->  
->  	if (!state && data->ev_enable_state && data->motion_trigger_on) {
->  		data->motion_trigger_on = false;
-> -		mutex_unlock(&data->mutex);
-> -		return 0;
-> +		ret = 0;
-> +		goto unlock;
->  	}
->  
->  	ret = kxcjk1013_set_power_state(data, state);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
-> +
->  	if (data->motion_trig == trig)
->  		ret = kxcjk1013_setup_any_motion_interrupt(data, state);
->  	else
->  		ret = kxcjk1013_setup_new_data_interrupt(data, state);
->  	if (ret < 0) {
->  		kxcjk1013_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  	if (data->motion_trig == trig)
->  		data->motion_trigger_on = state;
->  	else
->  		data->dready_trigger_on = state;
->  
-> +unlock:
->  	mutex_unlock(&data->mutex);
-> -
-Please leave the blank line.  It makes it slightly easier for the eye
-to pick up on the return.
-
-> -	return 0;
-> +	return ret;
->  }
->  
->  static const struct iio_trigger_ops kxcjk1013_trigger_ops = {
+> Thanks,
+> Arnaud
+> 
+> On 03/13/2018 03:23 PM, Fabrice Gasnier wrote:
+> > This series brings fixes to STM32 DFSDM ADC driver.
+> > 
+> > Fabrice Gasnier (2):
+> >   iio: adc: stm32-dfsdm: fix successive oversampling settings
+> >   iio: adc: stm32-dfsdm: fix sample rate for div2 spi clock
+> > 
+> >  drivers/iio/adc/stm32-dfsdm-adc.c | 17 ++++++++++++++---
+> >  1 file changed, 14 insertions(+), 3 deletions(-)
+> >   
