@@ -1,81 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753528AbeCQRmr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 13:42:47 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40059 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752685AbeCQRmn (ORCPT
+        id S1753558AbeCQR4O (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 13:56:14 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:57950 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752836AbeCQR4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 13:42:43 -0400
-X-Google-Smtp-Source: AG47ELtu6pSLRcR7OVRb3FdsALxreLHDdW4niPtAf9lIjnZ6Z11A4vObYnZBSnUA704Y5ioUX2xCpQ==
-Date: Sat, 17 Mar 2018 10:42:40 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Nick Dyer <nick@shmanahar.org>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] Input: atmel_mxt_ts - do not pass suspend mode in
- platform data
-Message-ID: <20180317174240.GC183240@dtor-ws>
-References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
- <20180312190907.174301-2-dmitry.torokhov@gmail.com>
- <20180314205123.GA26353@lava.h.shmanahar.org>
- <20180315235621.GA60361@dtor-ws>
- <20180316204002.GA24333@bm.shmanahar.org>
+        Sat, 17 Mar 2018 13:56:11 -0400
+Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
+To: Rich Felker <dalias@libc.org>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+ <20180315224202.96668-3-dmitry.torokhov@gmail.com>
+ <20180316100748.GH16424@w540> <20180316233800.GA32310@dtor-ws>
+ <20180317092516.g5p5ybka57abyhex@apu3b>
+ <02834805-5053-4BDC-9256-DF1AFFEC8630@physik.fu-berlin.de>
+ <20180317171631.GV1436@brightrain.aerifal.cx>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <58c9a323-3897-7677-2780-882dd0f3c164@physik.fu-berlin.de>
+Date: Sun, 18 Mar 2018 02:55:58 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316204002.GA24333@bm.shmanahar.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180317171631.GV1436@brightrain.aerifal.cx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: 121.85.0.195
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 08:40:02PM +0000, Nick Dyer wrote:
-> On Thu, Mar 15, 2018 at 04:56:21PM -0700, Dmitry Torokhov wrote:
-> > On Wed, Mar 14, 2018 at 08:51:24PM +0000, Nick Dyer wrote:
-> > > On Mon, Mar 12, 2018 at 12:08:54PM -0700, Dmitry Torokhov wrote:
-> > > > The way we are supposed to put controller to sleep and wake it up does not
-> > > > depend on the platform, but rather on controller itself. Controllers using
-> > > > T9 require manipulating T9 control register, while others, using newer
-> > > > T100, should be put to sleep by adjusting T7 power config.
-> > > 
-> > > I'm afraid this is actually a misconception. If you look at object table
-> > > for the older T9 device, you'll find it has the T7 object and it in fact
-> > > works exactly the same way as the T100-based device.
-> > > 
-> > > The MXT_SUSPEND_T9_CTRL is in there because on your older Pixel devices
-> > > the config saved into NVRAM on the touch controller has a zero byte in
-> > > the T9 CTRL setting, meaning the touch controller will never wake up
-> > > unless the driver knows to write 0x83 into it.
-> > 
-> > Ah, OK, I see. I would really like to drop this pdata->suspend_mode
-> > stuff and I do not want to create "pixel-screwed-up" property either...
-> > I guess for the time being I'll put a DMI quirk for Link to restore T9
-> > control method, and then look into cleaning it all up. We have quite a
-> > bit different code in chromeos kernel trees and I'd like to reconcile
-> > it.
+On 03/18/2018 02:16 AM, Rich Felker wrote:
+>> Umh, but I’m still using the SH7724 Evovec board. Please don’t
+>> remove support for that.
+>>
+>> The SuperH port of the Linux kernel is still maintained.
 > 
-> Yes, it would be great to get rid of it. The driver does have the
-> ability to download configuration via the firmware loader interface. So
-> you would be able to grab a copy of the config by saving it with
-> mxt-app, tweak it to ensure that the T9 CTRL byte is set correctly, then
-> ship it somehow (presumably it could be added to linux-firmware). This
-> would override what's currently stored in NVRAM on all those units and
-> mean we could remove the T9_CTRL stuff.
+> Thanks. At some point it would be nice to remove the board file, but
+> only once the conversion to device tree happens. If anyone has a list
+> of boards that people are still using or have access to and who can do
+> testing, it would be nice to compile that somewhere so we can figure
+> out what needs to be tested and who can test it.
 
-We can't really rely on people fetching updated config. Do you think we
-could see if the device has only T9 and not T100 and if coming out of
-suspend the T9 CTRL byte is 0 we overwrite it with the 0x83?
+We should maybe create a wiki page somewhere. Either in the kernel wiki
+(I don't have an account for that) or the Debian Wiki.
 
-> 
-> I'm happy to talk you through sorting that out in more detail if you
-> want to give it a go. I don't have any Pixel 1 hardware available at the
-> moment, unfortunately.
+Here's what I still use:
 
-Yes, I have several Chromebooks with Atmel so I can try on a few of
-them.
+- Renesas SH7724 Evovec
+- Renesas SH7786LCR Evaluation Board
+- LANDISK SH7751
+- Sega Dreamcast (although I currently don't use that)
+- NextVoD (currently not in the kernel)
 
-Thanks.
+Adrian
 
 -- 
-Dmitry
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
