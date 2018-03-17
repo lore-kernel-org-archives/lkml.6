@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751911AbeCQKBz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 06:01:55 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:7232 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751278AbeCQKBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 06:01:54 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37901402"
-To: <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-Subject: questions about header.S
-Message-ID: <ac02a918-0c7a-2376-569d-c53a87bc1a42@cn.fujitsu.com>
-Date: Sat, 17 Mar 2018 18:01:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: EA9624D0EFCD.AA767
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+        id S1752064AbeCQKF5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 06:05:57 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:55530 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750888AbeCQKF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 06:05:56 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH v2] spi: jcore: disable ref_clk after getting its rate
+Date: Sat, 17 Mar 2018 13:05:44 +0300
+Message-Id: <1521281144-2561-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521238878-27159-1-git-send-email-khoroshilov@ispras.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The driver does not disable ref_clk on remove.
+According to the comment, the only reason to enable the clock is to get
+its rate. So, it should be safe to disable clk just after that.
 
-  I find two small questions which confuse me a little.
+By the way, clk_prepare_enable() looks to be more appropriate
+than clk_enable() here.
 
-1.
-# Check signature at end of setup
-       cmpl    $0x5a5aaa55, setup_sig
-       jne     setup_bad
+Found by Linux Driver Verification project (linuxtesting.org).
 
-setup_sig is defined in setup.ld, which points to the constant also
-defined in setup.ld, so I don't figure out in which case they don't
-equal and jump to setup_bad?
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+v2: There is no reason to wait for remove to disable ref_clk.
 
-In my test, drop these 2 lines seems fine, system can boot without any
-obvious error.
+ drivers/spi/spi-jcore.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-2.
-# Zero the bss
-	movw	$__bss_start, %di
-	movw	$_end+3, %cx
-	xorl	%eax, %eax
-	subw	%di, %cx
-	shrw	$2, %cx
-	rep; stosl
-
-It is not a big deal, but I think replace "_end" with "__bss_end" make
-more sense, and "_end" is already aligned to word length. And, there is
-no other code use symbol "__bss_end". So I don't know is there any
-reason to use "_end" here?
-
-In my test, replace the 2nd line with:
-
-	movw	$_end, %cx
-
-or:
-
-	movw	$__bss_end+3, %cx
-
-are both fine.
-
+diff --git a/drivers/spi/spi-jcore.c b/drivers/spi/spi-jcore.c
+index dafed6280df3..702fe573a47b 100644
+--- a/drivers/spi/spi-jcore.c
++++ b/drivers/spi/spi-jcore.c
+@@ -184,10 +184,11 @@ static int jcore_spi_probe(struct platform_device *pdev)
+ 	 */
+ 	clock_freq = 50000000;
+ 	clk = devm_clk_get(&pdev->dev, "ref_clk");
+-	if (!IS_ERR_OR_NULL(clk)) {
+-		if (clk_enable(clk) == 0)
++	if (!IS_ERR(clk)) {
++		if (clk_prepare_enable(clk) == 0) {
+ 			clock_freq = clk_get_rate(clk);
+-		else
++			clk_disable_unprepare(clk);
++		} else
+ 			dev_warn(&pdev->dev, "could not enable ref_clk\n");
+ 	}
+ 	hw->clock_freq = clock_freq;
+@@ -198,10 +199,8 @@ static int jcore_spi_probe(struct platform_device *pdev)
+ 
+ 	/* Register our spi controller */
+ 	err = devm_spi_register_master(&pdev->dev, master);
+-	if (err) {
+-		clk_disable(clk);
++	if (err)
+ 		goto exit;
+-	}
+ 
+ 	return 0;
+ 
 -- 
-Sincerely,
-Cao jin
+2.7.4
