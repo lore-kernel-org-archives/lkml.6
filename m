@@ -1,71 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753558AbeCQR4O (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 13:56:14 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:57950 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752836AbeCQR4L (ORCPT
+        id S1753629AbeCQSBg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 14:01:36 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51044 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753388AbeCQSBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 13:56:11 -0400
-Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
-To: Rich Felker <dalias@libc.org>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
- <20180315224202.96668-3-dmitry.torokhov@gmail.com>
- <20180316100748.GH16424@w540> <20180316233800.GA32310@dtor-ws>
- <20180317092516.g5p5ybka57abyhex@apu3b>
- <02834805-5053-4BDC-9256-DF1AFFEC8630@physik.fu-berlin.de>
- <20180317171631.GV1436@brightrain.aerifal.cx>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <58c9a323-3897-7677-2780-882dd0f3c164@physik.fu-berlin.de>
-Date: Sun, 18 Mar 2018 02:55:58 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 17 Mar 2018 14:01:33 -0400
+Date: Sat, 17 Mar 2018 18:01:31 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: what the hell is compat_sys_x86_waitpid() for?
+Message-ID: <20180317180131.GO30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180317171631.GV1436@brightrain.aerifal.cx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 121.85.0.195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/18/2018 02:16 AM, Rich Felker wrote:
->> Umh, but I’m still using the SH7724 Evovec board. Please don’t
->> remove support for that.
->>
->> The SuperH port of the Linux kernel is still maintained.
-> 
-> Thanks. At some point it would be nice to remove the board file, but
-> only once the conversion to device tree happens. If anyone has a list
-> of boards that people are still using or have access to and who can do
-> testing, it would be nice to compile that somewhere so we can figure
-> out what needs to be tested and who can test it.
+You have
+COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
+                       stat_addr, int, options)
+{
+        return compat_sys_wait4(pid, stat_addr, options, NULL);
+}
+with
+COMPAT_SYSCALL_DEFINE4(wait4,
+        compat_pid_t, pid,
+        compat_uint_t __user *, stat_addr,
+        int, options,
+        struct compat_rusage __user *, ru)
+{
+        struct rusage r;
+        long err = kernel_wait4(pid, stat_addr, options, ru ? &r : NULL);
+        if (err > 0) {
+                if (ru && put_compat_rusage(&r, ru))
+                        return -EFAULT;
+        }
+        return err;
+}
 
-We should maybe create a wiki page somewhere. Either in the kernel wiki
-(I don't have an account for that) or the Debian Wiki.
+so that turns into
+	return kernel_wait4(pid, stat_addr, options, NULL);
 
-Here's what I still use:
+Now, look at
+SYSCALL_DEFINE3(waitpid, pid_t, pid, int __user *, stat_addr, int, options)
+{
+        return sys_wait4(pid, stat_addr, options, NULL);
+}
+and
+SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
+                int, options, struct rusage __user *, ru)
+{
+        struct rusage r;
+        long err = kernel_wait4(upid, stat_addr, options, ru ? &r : NULL);
 
-- Renesas SH7724 Evovec
-- Renesas SH7786LCR Evaluation Board
-- LANDISK SH7751
-- Sega Dreamcast (although I currently don't use that)
-- NextVoD (currently not in the kernel)
+        if (err > 0) {
+                if (ru && copy_to_user(ru, &r, sizeof(struct rusage)))
+                        return -EFAULT;
+        }
+        return err;
+}
 
-Adrian
+and tell me what is the difference between those.  In other words, the problem
+with sys32_waitpid() was not that it didn't use proper wrappers - it's that
+it was (and always had been) 100% pointless.
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+For fsck sake, look at the arguments.  waitpid(2) takes pid_t, pointer to int
+and an int.  How the hell could it possibly have required a compat wrapper?
+
+Let's get rid of the junk rather than covering it with more layers of crap...
