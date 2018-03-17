@@ -1,105 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752886AbeCQAzT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 20:55:19 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:41882 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752828AbeCQAzR (ORCPT
+        id S1752916AbeCQA4d (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 20:56:33 -0400
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:34105 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751887AbeCQA4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 20:55:17 -0400
-Date: Sat, 17 Mar 2018 01:55:13 +0100
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
-        Sekhar Nori <nsekhar@ti.com>, John Keeping <john@metanate.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] PCI: endpoint: BAR width should not depend on
- sizeof dma_addr_t
-Message-ID: <20180317005513.GB22414@axis.com>
-References: <20180308133331.19464-1-niklas.cassel@axis.com>
- <20180308133331.19464-2-niklas.cassel@axis.com>
- <20180316180220.GA13505@red-moon>
+        Fri, 16 Mar 2018 20:56:32 -0400
+X-Google-Smtp-Source: AG47ELvtS9yx2tOUTrDjXoZBDdbjCIzcvwP5Y+t9B4180ukGxyu5GecUPHlkwflQYhsmV1nEkCuhTw==
+Subject: Re: New -Werror=restrict error with incremental gcc
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
+ <20180315143012.GA2221@redhat.com>
+ <53714ddf-1b2d-295b-e364-3330f1d9c48c@redhat.com>
+ <20180316031154.juk2uncs7baffctp@treble>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <b5d9ea0f-3a3e-ec87-df76-10be4bd72b90@redhat.com>
+Date: Fri, 16 Mar 2018 17:56:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316180220.GA13505@red-moon>
-User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
-X-TM-AS-GCONF: 00
+In-Reply-To: <20180316031154.juk2uncs7baffctp@treble>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 06:02:20PM +0000, Lorenzo Pieralisi wrote:
-> On Thu, Mar 08, 2018 at 02:33:26PM +0100, Niklas Cassel wrote:
-> > If a BAR supports 64-bit width or not depends on the hardware,
-> > and should thus not depend on sizeof(dma_addr_t).
-> > 
-> > Since this driver is generic, default to always using BAR width
-> > of 32-bits. 64-bit BARs can easily be tested by replacing
-> > PCI_BASE_ADDRESS_MEM_TYPE_32 with PCI_BASE_ADDRESS_MEM_TYPE_64
-> > in bar_flags.
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> > Note to Lorenzo/Bjorn:
-> > It is not trivial to convert the bar_size + bar_flags +
-> > struct pci_epf->bar member array to an array of struct resources,
-> > since we need to be able to store the addresses returned
-> > by dma_alloc_coherent(), which is of type dma_addr_t.
-> > struct resource uses resource_size_t, which is defined as phys_addr_t.
-> > E.g. ARTPEC-7 uses 64-bit dma_addr_t, but only 32-bit phys_addr_t.
-> > 
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 15 +++++++++------
-> >  1 file changed, 9 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 800da09d9005..7c70433b11a7 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -71,6 +71,14 @@ struct pci_epf_test_data {
-> >  };
-> >  
-> >  static int bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
-> > +static int bar_flags[] = {
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
-> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32
-> > +};
+On 03/15/2018 08:11 PM, Josh Poimboeuf wrote:
+> On Thu, Mar 15, 2018 at 08:06:26AM -0700, Laura Abbott wrote:
+>> This only showed up with the very latest rawhide snapshot, .17 worked and
+>> .18 started failing. I had to download .18 manually to test locally
+>> https://koji.fedoraproject.org/koji/packageinfo?packageID=40
 > 
-> Niklas,
+> I also see the error with the latest gcc master branch.  The code is
+> harmless, but maybe the warning is useful in other places, so here's one
+> way to fix it.
 > 
-> I think you are almost there, I have one question though to address
-> that can even simplify the patchset.
+
+Works for me, you can add
+
+Tested-by: Laura Abbott <labbott@redhat.com>
+
+> ----
 > 
-> If, according to your own commit logs (and my reading of the code), the
-> Cadence driver makes a decision on the BAR size just by checking the
-> corresponding region size (I would be happy to hear the reason
-> underpinning that choice, BTW), why can't we do the same for DWC (ie to
-> let the DWC driver decides whether a BAR should be 64 or 32 bits ?)
-
-We could, but I think that would be a mistake.
-
-The API that the user/"endpoint function" has available to configure
-the BARs:
-pci_epc_set_bar()
-
-If the user, for some reason, wants to configure a BAR with a
-64-bit width, even though the BAR size is less than 4 GB,
-I think that the API should allow that.
-
-This would not be possible if pci_epc_set_bar() would start to
-ignore PCI_BASE_ADDRESS_MEM_TYPE_64 from the flags parameter
-(and BAR width thus only being controlled by the size parameter).
-
-int pci_epc_set_bar(struct pci_epc *epc, u8 func_no, enum pci_barno bar,
-	            dma_addr_t bar_phys, size_t size, int flags);
-
-
-
-Best regards,
-Niklas
+> From: Josh Poimboeuf <jpoimboe@redhat.com>
+> Subject: [PATCH] objtool, perf: Fix GCC 8 -Wrestrict error
+> 
+> Starting with recent GCC 8 builds, objtool and perf fail to build with
+> the following error:
+> 
+>    ../str_error_r.c: In function ‘str_error_r’:
+>    ../str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+>       snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+> 
+> The code seems harmless, but there's probably no benefit in printing the
+> 'buf' pointer in this situation anyway, so just remove it to make GCC
+> happy.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>   tools/lib/str_error_r.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
+> index d6d65537b0d9..6aad8308a0ac 100644
+> --- a/tools/lib/str_error_r.c
+> +++ b/tools/lib/str_error_r.c
+> @@ -22,6 +22,6 @@ char *str_error_r(int errnum, char *buf, size_t buflen)
+>   {
+>   	int err = strerror_r(errnum, buf, buflen);
+>   	if (err)
+> -		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+> +		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, [buf], %zd)=%d", errnum, buflen, err);
+>   	return buf;
+>   }
+> 
