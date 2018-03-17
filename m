@@ -1,61 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeCQNWz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 09:22:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53240 "EHLO mail.bootlin.com"
+        id S1752787AbeCQNXR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 09:23:17 -0400
+Received: from linode.aoot.com ([69.164.194.13]:54778 "EHLO linode.aoot.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752114AbeCQNWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 09:22:54 -0400
-Date: Sat, 17 Mar 2018 14:22:52 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rtc tree with the asm-generic
- tree
-Message-ID: <20180317132252.GG4123@piout.net>
-References: <20180315185917.3316d781@canb.auug.org.au>
+        id S1752603AbeCQNXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 09:23:15 -0400
+From: "Steve Wise" <swise@opengridcomputing.com>
+To: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
+        <timur@codeaurora.org>, <sulrich@codeaurora.org>
+Cc: <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>,
+        "'Jason Gunthorpe'" <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org> <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com> <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org> <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com> <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org> <71e37a55-537b-d75a-cfde-f188b7cfce8e@codeaurora.org> <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
+In-Reply-To: <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
+Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Sat, 17 Mar 2018 08:23:13 -0500
+Message-ID: <001d01d3bdf3$1a607cf0$4f2176d0$@opengridcomputing.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315185917.3316d781@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6heAYll0hoCDc6xewHk8BZpAb3SUpMC4LP1TwG8iMu8pJYfrdA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+> 
+> On 3/17/2018 12:03 AM, Sinan Kaya wrote:
+> > On 3/16/2018 11:40 PM, Sinan Kaya wrote:
+> >> I'll change writel_relaxed() with __raw_writel() in the series like you
+> suggested
+> >> and also look at your other comments.
+> >
+> > I spoke too soon.
+> >
+> > Now that I realized, code needs to follow one of the following patterns
+> for correctness
+> >
+> > 1)
+> > wmb()
+> > writel()/writel_relaxed()
+> >
+> > or
+> >
+> > 2)
+> > wmb()
+> > __raw_wrltel()
+> > mmiowb()
+> >
+> > but definitely not
+> >
+> > wmb()
+> > __raw_wrltel()
+> >
+> > Since #1 == #2, I'll stick to my current implementation of writel_relaxed()
+> >
+> > Changing writel() to writel_relaxed() or __raw_writel() isn't enough.
+> PowerPC needs mmiowb()
+> > for correctness. ARM's mmiowb() implementation is empty.
+> >
+> > So, there is no one size fits all solution with the current state of affairs.
+> >
+> >
+> 
+> I think I finally got what you mean.
+> 
+> Code seems to have
+> 
+> wmb()
+> writel()/writeq()
+> wmb()
+> 
+> this can be safely replaced with
+> 
+> wmb()
+> __raw_writel()/__raw_writeq()
+> wmb()
+> 
+> This will work on all arches. Below is the new version. Let me know if this is
+> OK.
+> 
+> +++ b/drivers/infiniband/hw/cxgb4/t4.h
+> @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64
+> *src)
+>         int count = 8;
+> 
+>         while (count) {
+> -               writeq(*src, dst);
+> +               __raw_writeq(*src, dst);
+>                 src++;
+>                 dst++;
+>                 count--;
+> @@ -477,15 +477,16 @@ static inline void t4_ring_sq_db(struct t4_wq *wq,
+> u16 inc, union t4_wr *wqe)
+>                                  (u64 *)wqe);
+>                 } else {
+>                         pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
+> -                       writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
+> -                              wq->sq.bar2_va + SGE_UDB_KDOORBELL);
+> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
+> +                                    wq->sq.bar2_va + SGE_UDB_KDOORBELL);
+>                 }
+> 
+>                 /* Flush user doorbell area writes. */
+>                 wmb();
+>                 return;
+>         }
+> -       writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
+> +       __raw_writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
+> +       mmiowmb()
+>  }
+> 
+>  static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
+> @@ -502,15 +503,16 @@ static inline void t4_ring_rq_db(struct t4_wq *wq,
+> u16 inc,
+>                                  (void *)wqe);
+>                 } else {
+>                         pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
+> -                       writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
+> -                              wq->rq.bar2_va + SGE_UDB_KDOORBELL);
+> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
+> +                                    wq->rq.bar2_va + SGE_UDB_KDOORBELL);
+>                 }
+> 
+>                 /* Flush user doorbell area writes. */
+>                 wmb();
+>                 return;
+>         }
+> -       writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
+> +       __raw_writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
+> +       mmiowmb();
+>  }
+> 
+> 
 
-On 15/03/2018 at 18:59:17 +1100, Stephen Rothwell wrote:
-> Hi Alexandre,
-> 
-> Today's linux-next merge of the rtc tree got a conflict in:
-> 
->   drivers/rtc/rtc-tile.c
-> 
-> between commit:
-> 
->   909ce75a0665 ("rtc: remove tile driver")
-> 
-> from the asm-generic tree and commit:
-> 
->   1fbcb2aa1d64 ("rtc: tile: remove useless message")
-> 
-> from the rtc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Yes, this is what chelsio recommended to me.  
 
-I've removed the patch from my tree as there is no point in modifying a
-driver that is removed.
-
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Steve Wise <swise@opengridcomputing.com>
