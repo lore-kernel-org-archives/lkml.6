@@ -1,57 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeCQST6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 14:19:58 -0400
-Received: from mail-it0-f52.google.com ([209.85.214.52]:55026 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbeCQST5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 14:19:57 -0400
-X-Google-Smtp-Source: AG47ELuNVKe1AGGL+sC3ZOTKqnh/DAsYhMJ4dzxzzVchdmfzcOiGGt84lHqNcIv2D2vvIlPd45MTTGHAvPfr/z9XFys=
+        id S1753641AbeCQSUF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 14:20:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753478AbeCQSUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 14:20:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD2F21737
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 17 Mar 2018 18:19:51 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Himanshu Jha <himanshujha199640@gmail.com>
+Cc: Manish Narani <manish.narani@xilinx.com>, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, michal.simek@xilinx.com,
+        lee.jones@linaro.org, broonie@kernel.org, arnaud.pouliquen@st.com,
+        quentin.schulz@free-electrons.com, linus.walleij@linaro.org,
+        ksenija.stanojevic@gmail.com, arnd@arndb.de, martenli@axis.com,
+        jan.kiszka@siemens.com, lukas@wunner.de, vilhelm.gray@gmail.com,
+        geert+renesas@glider.be, fabio.estevam@nxp.com, jackoalan@gmail.com,
+        mnarani@xilinx.com, mike.looijmans@topic.nl,
+        alexander.sverdlin@gmail.com, jacopo+renesas@jmondi.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] iio: adc: Add Xilinx AMS driver
+Message-ID: <20180317181936.14468be2@archlinux>
+In-Reply-To: <20180316201925.GA18013@himanshu-Vostro-3559>
+References: <1521124947-18950-1-git-send-email-mnarani@xilinx.com>
+        <20180316201925.GA18013@himanshu-Vostro-3559>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180317180131.GO30522@ZenIV.linux.org.uk>
-References: <20180317180131.GO30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 17 Mar 2018 11:19:55 -0700
-X-Google-Sender-Auth: rIkuohTQSCS_lF3s_U2HIXTohXk
-Message-ID: <CA+55aFwdxjCjqSOR92GCz4Au9QLekWL_0zumnOyG-sxayDtfzg@mail.gmail.com>
-Subject: Re: what the hell is compat_sys_x86_waitpid() for?
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 11:01 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> and tell me what is the difference between those.  In other words, the problem
-> with sys32_waitpid() was not that it didn't use proper wrappers - it's that
-> it was (and always had been) 100% pointless.
+On Sat, 17 Mar 2018 01:49:25 +0530
+Himanshu Jha <himanshujha199640@gmail.com> wrote:
 
-That long long predates Dominik's patches, though.
+> On Thu, Mar 15, 2018 at 08:12:27PM +0530, Manish Narani wrote:
+> > The AMS includes an ADC as well as on-chip sensors that can be used to
+> > sample external voltages and monitor on-die operating conditions, such as
+> > temperature and supply voltage levels. The AMS has two SYSMON blocks.
+> > PL-SYSMON block is capable of monitoring off chip voltage and temperature.
+> > PL-SYSMON block has DRP, JTAG and I2C interface to enable monitoring from
+> > external master. Out of these interface currently only DRP is supported.
+> > Other block PS-SYSMON is memory mapped to PS.
+> > 
+> > The AMS can use internal channels to monitor voltage and temperature
+> > as well as one primary and up to 16 auxiliary channels for measuring
+> > external voltages.
+> > 
+> > The voltage and temperature monitoring channels also have event
+> > capability which allows to generate an interrupt when their value
+> > falls below or raises above a set threshold.
+> > 
+> > Signed-off-by: Manish Narani <mnarani@xilinx.com>
+> > ---  
+> 
+> [..]
+> 
+> > +static const struct of_device_id ams_of_match_table[] = {
+> > +       { .compatible = "xlnx,zynqmp-ams", &ams_pl_apb },
+> > +       { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, ams_of_match_table);  
+> 
+> [..]
+> 
+> > +static int ams_probe(struct platform_device *pdev)
+> > +{
+> > +       struct iio_dev *indio_dev;
+> > +       struct ams *ams;
+> > +       struct resource *res;
+> > +       const struct of_device_id *id;
+> > +       int ret;
+> > +
+> > +       if (!pdev->dev.of_node)
+> > +               return -ENODEV;
+> > +
+> > +       id = of_match_node(ams_of_match_table, pdev->dev.of_node);
+> > +       if (!id)
+> > +               return -ENODEV;  
+> 
+> Is the above check required ?
+> 
+> Isn't the probe function called if and only if a match is found in
+> ams_of_match_table[] since it is a pure OF driver ?
+> 
+> And therefore the above condition would never happen!
+Agreed in principle.  However, from a reviewer point of view, it is sometimes
+easier to have an error check that can never happen than have to check whether
+or not it can.  Hence I'd keep this in place (well actually not because there
+are better ways of doing this block of code, but that is unconnected to your
+comment Himanshu!)
 
-It clearly is worth fixing, but don't blame Dominik for just
-mindlessly converting mindless code.
+Was a good point to raise though and sometimes people add comments
+saying "This can never fail but is here for completeness" or similar.
+Not necessary but does avoid reviewers then asking why it was done.
 
-> For fsck sake, look at the arguments.  waitpid(2) takes pid_t, pointer to int
-> and an int.  How the hell could it possibly have required a compat wrapper?
+Jonathan
 
-This seems to go all the way back to the original x86_64 merge in
-2002, with the original version of arch/x86_64/ia32/sys_ia32.c
-containing
-
-   asmlinkage long
-   sys32_waitpid(__kernel_pid_t32 pid, unsigned int *stat_addr, int options)
-   {
-        return sys32_wait4(pid, stat_addr, options, NULL);
-   }
-
-and it has only been modified syntactically since.
-
-I suspect the reason is simply that the *regular* waitpid() was writtn
-in terms of sys_wait4(), and sys_wait4() needed a compat function, so
-then waitpid was basically just carried along.
-
-               Linus
+> 
+> > +static struct platform_driver ams_driver = {
+> > +       .probe = ams_probe,
+> > +       .remove = ams_remove,
+> > +       .driver = {
+> > +               .name = "ams",
+> > +               .pm     = &ams_pm_ops,
+> > +               .of_match_table = ams_of_match_table,
+> > +       },
+> > +};
+> > +module_platform_driver(ams_driver);  
+> 
+> 
