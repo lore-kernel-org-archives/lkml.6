@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELtEzaH8XTHKY2TR5wVPqvJv806cM6h48IrijrVhZYur2WJe+TZ/6JMvO1ObDz8nyaiDYl1B
-ARC-Seal: i=1; a=rsa-sha256; t=1521290980; cv=none;
+X-Google-Smtp-Source: AG47ELsOdrLs1267hf0BElXV6gAqw/3Z319pSsDegM+xjKbWTLjrcmn2xbYa/4Nj+jk4uy/Gkgrr
+ARC-Seal: i=1; a=rsa-sha256; t=1521290920; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ww/GolYRVsHCLixNm2XkBFqruAaT9iAQAwX1ITBsJUwGuLp3X3vIeh0TdH/KtP3Q+b
-         dR/DmAjGOj4gmM4vUMp/sFhUL9dw2H3KZP7cY3stVeHDU7lWA0Gi8OryoK3T7mjYtexc
-         1S8IuC3qcJTg7L57pVmDTulP4YWB2Lwc9XPX5vz6vb6F2n9j42e7axHXsLQE909tdTm+
-         /vhcCYqEnYYSfdoLmQdxNDf2IXwiT2EMV4bKzdh1fb9gZc0dLkilSBsD5hvxjMcGJZ2/
-         oMGFHbn0Szp/h07SERBJYuVqaUAAjsH1yzIKQvlWnvpqWH9dBdqr+GSWbvYUvik07FJX
-         Lyng==
+        b=QNIlcHUGmn03Eat9m79iqsoKf1djVmaNiY8nE4qjUM+0IhdyN3FfYB0TOURDqiIthX
+         zoa6FCqGD96f9YLmfIAfZMTM+cwazvS86alz7XX3yy2Q9F2nJederWMNk3sk01SI2kJk
+         ndGx9sfeoCLVcBJ7rm+znA8Kf695qydSoW/BIc9T5zdKNLm+JHS2MJeQy0H+2xB1Fr9q
+         KknMeyP11j13cFIur72pHFtR5m4AJF4gRFY04ioK5r0h8WaX0+v9RxIZuXGs8t64ihs4
+         /wMVM1m3aJUwhD/m2ei1brQHoTiUr0HROhkvVGVbjZb3q4OKjfTTHKKGaqQhFqF8vkfm
+         MvjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=/+e0f0JSzIJ6C9ruoogRaqMKIT6nGikgiyr1eTrdTSY=;
-        b=aDeKZO3616d/Ji7iSUwBTY6RyTSop8IzlBGKMIXRBnT23/iVi2vyW9xdn7RPtBx/JJ
-         GOmY8zJUCZ5pjcOjDNGFi7+wSB2ju0yKz/70jwOIp3RvfqBWd1isizmsX7Z+TznPwez4
-         2NNhDS4NKu/jKeLBks7kAcbBPoGXfvKLHiAvcsg5s4Gaz7ngXPwhIOC2eUQlrxz4tVbE
-         7ODXrHXc/FEghTO6JmgM8DJsog3hzWG2M+wKsgFQhP2BlPvO+2ZfHWUXoNzveCHJ05I4
-         uDMLjOWhevfWBLx9ChvK23H37UvG6GfxX49UQBh9ROpquujD23z/yQAfOKSqMb6vGYL0
-         eUCw==
+        bh=++tr2CS7eeb8t3WtZ8y4GUgseGYbs/zBb9jE5t+8pho=;
+        b=aNTkfLiUFlC/EPfV5UqCJ+e01pfi5YD2QcpRFFGCvv+nW7wiPXtRRj1k4jsiSJBJ+u
+         xLAtPNKRpfjJno74ox/MASTyjFw3HcM4gNq6v/p2TTZT38w8QSaib51kshAbVZJJVqnL
+         LS3o/8Hj4tqN+bEBGfSA89KM/di4O38edC/TlcjTv538B86kynzB3Acg7CXOzg0TQfSj
+         rGVvFtCPYif/xX5fIWipo2cnZQXyholtHbchAi5eEMDU1k7PgB3+6njvfHvPbtoBhzzB
+         Be9CEvpagZovwVovTy6mSbT957Arx+JbyQ4FWKvSLA3XSWG81SyTJYUmwj1aTYOIhZtj
+         PU3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeCQMt2 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 17 Mar 2018 08:49:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52100 "EHLO mail.kernel.org"
+        id S1752709AbeCQMsk (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 17 Mar 2018 08:48:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752732AbeCQMt1 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 17 Mar 2018 08:49:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E8021720
+        id S1752723AbeCQMsj (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 17 Mar 2018 08:48:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC81217D2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v6 15/21] tracing: probeevent: Add $argN for accessing function args
-Date: Sat, 17 Mar 2018 21:48:40 +0900
-Message-Id: <152129092008.31874.10350663621961102832.stgit@devbox>
+Subject: [PATCH v6 14/21] x86: ptrace: Add function argument access API
+Date: Sat, 17 Mar 2018 21:47:53 +0900
+Message-Id: <152129087298.31874.16468026611863630807.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152129024033.31874.15800253385376959274.stgit@devbox>
 References: <152129024033.31874.15800253385376959274.stgit@devbox>
@@ -54,295 +54,104 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595189211494393077?=
-X-GMAIL-MSGID: =?utf-8?q?1595189211494393077?=
+X-GMAIL-THRID: =?utf-8?q?1595189149190042063?=
+X-GMAIL-MSGID: =?utf-8?q?1595189149190042063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add $argN special fetch variable for accessing function
-arguments. This allows user to trace the Nth argument easily
-at the function entry.
+Add regs_get_argument() which returns N th argument of the
+function call.
+Note that this chooses most probably assignment, in some case
+it can be incorrect (e.g. passing data structure or floating
+point etc.)
 
-Note that this returns most probably assignment of registers
-and stacks. In some case, it may not work well. If you need
-to access correct registers or stacks you should use perf-probe.
+This is expected to be called from kprobes or ftrace with regs
+where the top of stack is the return address.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Changes in v2:
-  - Add $argN in README file
-  - Make N start from 1 as same as auto-generate event argument
-    names.
- Changes in v3:
-  - Show $arg<N> in README only when this feature is supported.
----
- Documentation/trace/kprobetrace.txt |   10 ++++++----
- kernel/trace/trace.c                |    4 ++++
- kernel/trace/trace_kprobe.c         |   18 +++++++++++++-----
- kernel/trace/trace_probe.c          |   36 ++++++++++++++++++++++-------------
- kernel/trace/trace_probe.h          |    9 ++++++++-
- kernel/trace/trace_uprobe.c         |    2 +-
- 6 files changed, 55 insertions(+), 24 deletions(-)
+ arch/Kconfig                  |    7 +++++++
+ arch/x86/Kconfig              |    1 +
+ arch/x86/include/asm/ptrace.h |   38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/Documentation/trace/kprobetrace.txt b/Documentation/trace/kprobetrace.txt
-index d49381f2e411..1d082f8ffeee 100644
---- a/Documentation/trace/kprobetrace.txt
-+++ b/Documentation/trace/kprobetrace.txt
-@@ -43,16 +43,18 @@ Synopsis of kprobe_events
-   @SYM[+|-offs]	: Fetch memory at SYM +|- offs (SYM should be a data symbol)
-   $stackN	: Fetch Nth entry of stack (N >= 0)
-   $stack	: Fetch stack address.
--  $retval	: Fetch return value.(*)
-+  $argN		: Fetch the Nth function argument. (N >= 1) (*1)
-+  $retval	: Fetch return value.(*2)
-   $comm		: Fetch current task comm.
--  +|-offs(FETCHARG) : Fetch memory at FETCHARG +|- offs address.(**)
-+  +|-offs(FETCHARG) : Fetch memory at FETCHARG +|- offs address.(*3)
-   NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
-   FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
- 		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
- 		  (x8/x16/x32/x64), "string" and bitfield are supported.
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 76c0b54443b1..4126ad4b122c 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -272,6 +272,13 @@ config HAVE_REGS_AND_STACK_ACCESS_API
+ 	  declared in asm/ptrace.h
+ 	  For example the kprobes-based event tracer needs this API.
  
--  (*) only for return probe.
--  (**) this is useful for fetching a field of data structures.
-+  (*1) only for the probe on function entry (offs == 0).
-+  (*2) only for return probe.
-+  (*3) this is useful for fetching a field of data structures.
- 
- Types
- -----
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5a3a5a336793..afaa1a4e76ad 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4608,7 +4608,11 @@ static const char readme_msg[] =
- #endif
- 	"\t     args: <name>=fetcharg[:type]\n"
- 	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
-+#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-+	"\t           $stack<index>, $stack, $retval, $comm, $arg<N>\n"
-+#else
- 	"\t           $stack<index>, $stack, $retval, $comm\n"
-+#endif
- 	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
- 	"\t           b<bit-width>@<bit-offset>/<container-size>\n"
- #endif
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index b564d38810b7..384ed4abae18 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -490,13 +490,15 @@ static int create_trace_kprobe(int argc, char **argv)
- 	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
-+	unsigned int flags = TPARG_FL_KERNEL;
- 
- 	/* argc must be >= 1 */
- 	if (argv[0][0] == 'p')
- 		is_return = false;
--	else if (argv[0][0] == 'r')
-+	else if (argv[0][0] == 'r') {
- 		is_return = true;
--	else if (argv[0][0] == '-')
-+		flags |= TPARG_FL_RETURN;
-+	} else if (argv[0][0] == '-')
- 		is_delete = true;
- 	else {
- 		pr_info("Probe definition must be started with 'p', 'r' or"
-@@ -579,8 +581,9 @@ static int create_trace_kprobe(int argc, char **argv)
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
--		if (offset && is_return &&
--		    !kprobe_on_func_entry(NULL, symbol, offset)) {
-+		if (kprobe_on_func_entry(NULL, symbol, offset))
-+			flags |= TPARG_FL_FENTRY;
-+		if (offset && is_return && !(flags & TPARG_FL_FENTRY)) {
- 			pr_info("Given offset is not valid for return probe.\n");
- 			return -EINVAL;
- 		}
-@@ -650,7 +653,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 
- 		/* Parse fetch argument */
- 		ret = traceprobe_parse_probe_arg(arg, &tk->tp.size, parg,
--						 is_return, true);
-+						 flags);
- 		if (ret) {
- 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
- 			goto error;
-@@ -890,6 +893,11 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 	case FETCH_OP_COMM:
- 		val = (unsigned long)current->comm;
- 		break;
-+#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-+	case FETCH_OP_ARG:
-+		val = regs_get_kernel_argument(regs, code->param);
-+		break;
-+#endif
- 	default:
- 		return -EILSEQ;
- 	}
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index e2a31087f1f8..9458800f394a 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -169,14 +169,13 @@ int traceprobe_split_symbol_offset(char *symbol, long *offset)
- #define PARAM_MAX_STACK (THREAD_SIZE / sizeof(unsigned long))
- 
- static int parse_probe_vars(char *arg, const struct fetch_type *t,
--			    struct fetch_insn *code, bool is_return,
--			    bool is_kprobe)
-+			    struct fetch_insn *code, unsigned int flags)
- {
- 	int ret = 0;
- 	unsigned long param;
- 
- 	if (strcmp(arg, "retval") == 0) {
--		if (is_return)
-+		if (flags & TPARG_FL_RETURN)
- 			code->op = FETCH_OP_RETVAL;
- 		else
- 			ret = -EINVAL;
-@@ -185,7 +184,8 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
- 			code->op = FETCH_OP_STACKP;
- 		} else if (isdigit(arg[5])) {
- 			ret = kstrtoul(arg + 5, 10, &param);
--			if (ret || (is_kprobe && param > PARAM_MAX_STACK))
-+			if (ret || ((flags & TPARG_FL_KERNEL) &&
-+				    param > PARAM_MAX_STACK))
- 				ret = -EINVAL;
- 			else {
- 				code->op = FETCH_OP_STACK;
-@@ -195,6 +195,18 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
- 			ret = -EINVAL;
- 	} else if (strcmp(arg, "comm") == 0) {
- 		code->op = FETCH_OP_COMM;
-+#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-+	} else if (((flags & TPARG_FL_MASK) ==
-+		    (TPARG_FL_KERNEL | TPARG_FL_FENTRY)) &&
-+		   strncmp(arg, "arg", 3) == 0) {
-+		if (!isdigit(arg[3]))
-+			return -EINVAL;
-+		ret = kstrtoul(arg + 3, 10, &param);
-+		if (ret || !param || param > PARAM_MAX_STACK)
-+			return -EINVAL;
-+		code->op = FETCH_OP_ARG;
-+		code->param = (unsigned int)param - 1;
-+#endif
- 	} else
- 		ret = -EINVAL;
- 
-@@ -205,7 +217,7 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
- static int
- parse_probe_arg(char *arg, const struct fetch_type *type,
- 		struct fetch_insn **pcode, struct fetch_insn *end,
--		bool is_return, bool is_kprobe)
-+		unsigned int flags)
- {
- 	struct fetch_insn *code = *pcode;
- 	unsigned long param;
-@@ -215,8 +227,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 
- 	switch (arg[0]) {
- 	case '$':
--		ret = parse_probe_vars(arg + 1, type, code,
--					is_return, is_kprobe);
-+		ret = parse_probe_vars(arg + 1, type, code, flags);
- 		break;
- 
- 	case '%':	/* named register */
-@@ -238,7 +249,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 			code->immediate = param;
- 		} else if (arg[1] == '+') {
- 			/* kprobes don't support file offsets */
--			if (is_kprobe)
-+			if (flags & TPARG_FL_KERNEL)
- 				return -EINVAL;
- 
- 			ret = kstrtol(arg + 2, 0, &offset);
-@@ -249,7 +260,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 			code->immediate = (unsigned long)offset;  // imm64?
- 		} else {
- 			/* uprobes don't support symbols */
--			if (!is_kprobe)
-+			if (!(flags & TPARG_FL_KERNEL))
- 				return -EINVAL;
- 
- 			ret = traceprobe_split_symbol_offset(arg + 1, &offset);
-@@ -290,8 +301,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 			const struct fetch_type *t2 = find_fetch_type(NULL);
- 
- 			*tmp = '\0';
--			ret = parse_probe_arg(arg, t2, &code, end, is_return,
--					      is_kprobe);
-+			ret = parse_probe_arg(arg, t2, &code, end, flags);
- 			if (ret)
- 				break;
- 			if (code->op == FETCH_OP_COMM)
-@@ -351,7 +361,7 @@ static int __parse_bitfield_probe_arg(const char *bf,
- 
- /* String length checking wrapper */
- int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
--		struct probe_arg *parg, bool is_return, bool is_kprobe)
-+		struct probe_arg *parg, unsigned int flags)
- {
- 	struct fetch_insn *code, *tmp = NULL;
- 	const char *t;
-@@ -391,7 +401,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
- 	code[FETCH_INSN_MAX - 1].op = FETCH_OP_END;
- 
- 	ret = parse_probe_arg(arg, parg->type, &code, &code[FETCH_INSN_MAX - 1],
--			      is_return, is_kprobe);
-+			      flags);
- 	if (ret)
- 		goto fail;
- 
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index ef477bd8468a..ff91faf70887 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -35,6 +35,7 @@
- #include <linux/stringify.h>
- #include <linux/limits.h>
- #include <linux/uaccess.h>
-+#include <linux/bitops.h>
- #include <asm/bitsperlong.h>
- 
- #include "trace.h"
-@@ -89,6 +90,7 @@ enum fetch_op {
- 	FETCH_OP_RETVAL,	/* Return value */
- 	FETCH_OP_IMM,		/* Immediate : .immediate */
- 	FETCH_OP_COMM,		/* Current comm */
-+	FETCH_OP_ARG,		/* Function argument : .param */
- 	FETCH_OP_FOFFS,		/* File offset: .immediate */
- 	// Stage 2 (dereference) op
- 	FETCH_OP_DEREF,		/* Dereference: .offset */
-@@ -261,8 +263,13 @@ find_event_file_link(struct trace_probe *tp, struct trace_event_file *file)
- 	return NULL;
++config HAVE_FUNCTION_ARG_ACCESS_API
++	bool
++	help
++	  This symbol should be selected by an architecure if it supports
++	  the API needed to access function arguments from pt_regs,
++	  declared in asm/ptrace.h
++
+ config HAVE_CLK
+ 	bool
+ 	help
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 3b037bc589ab..1ac63d118224 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -176,6 +176,7 @@ config X86
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_RCU_TABLE_FREE
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
+ 	select HAVE_STACK_VALIDATION		if X86_64
+ 	select HAVE_SYSCALL_TRACEPOINTS
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 6de1fd3d0097..c2304b25e2fd 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -256,6 +256,44 @@ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+ 		return 0;
  }
  
-+#define TPARG_FL_RETURN BIT(0)
-+#define TPARG_FL_KERNEL BIT(1)
-+#define TPARG_FL_FENTRY BIT(2)
-+#define TPARG_FL_MASK	GENMASK(2, 0)
++/**
++ * regs_get_kernel_argument() - get Nth function argument in kernel
++ * @regs:	pt_regs of that context
++ * @n:		function argument number (start from 0)
++ *
++ * regs_get_argument() returns @n th argument of the function call.
++ * Note that this chooses most probably assignment, in some case
++ * it can be incorrect.
++ * This is expected to be called from kprobes or ftrace with regs
++ * where the top of stack is the return address.
++ */
++static inline unsigned long regs_get_kernel_argument(struct pt_regs *regs,
++						     unsigned int n)
++{
++	static const unsigned int argument_offs[] = {
++#ifdef __i386__
++		offsetof(struct pt_regs, ax),
++		offsetof(struct pt_regs, cx),
++		offsetof(struct pt_regs, dx),
++#define NR_REG_ARGUMENTS 3
++#else
++		offsetof(struct pt_regs, di),
++		offsetof(struct pt_regs, si),
++		offsetof(struct pt_regs, dx),
++		offsetof(struct pt_regs, cx),
++		offsetof(struct pt_regs, r8),
++		offsetof(struct pt_regs, r9),
++#define NR_REG_ARGUMENTS 6
++#endif
++	};
 +
- extern int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
--		   struct probe_arg *parg, bool is_return, bool is_kprobe);
-+		   struct probe_arg *parg, unsigned int flags);
- 
- extern int traceprobe_conflict_field_name(const char *name,
- 			       struct probe_arg *args, int narg);
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 64c1fbe087a1..e15da2281855 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -519,7 +519,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 
- 		/* Parse fetch argument */
- 		ret = traceprobe_parse_probe_arg(arg, &tu->tp.size, parg,
--						 is_return, false);
-+					is_return ? TPARG_FL_RETURN : 0);
- 		if (ret) {
- 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
- 			goto error;
++	if (n >= NR_REG_ARGUMENTS) {
++		n -= NR_REG_ARGUMENTS - 1;
++		return regs_get_kernel_stack_nth(regs, n);
++	} else
++		return regs_get_register(regs, argument_offs[n]);
++}
++
+ #define arch_has_single_step()	(1)
+ #ifdef CONFIG_X86_DEBUGCTLMSR
+ #define arch_has_block_step()	(1)
 
