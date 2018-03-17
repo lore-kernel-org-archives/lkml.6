@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeCQKLp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 06:11:45 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38645 "EHLO
+        id S1752721AbeCQKLw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 06:11:52 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42107 "EHLO
         mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeCQKLj (ORCPT
+        with ESMTP id S1752674AbeCQKLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 06:11:39 -0400
-X-Google-Smtp-Source: AG47ELskkhD56494fzogvqTyRNJaVle0Oci486DhYsb5kd7Ae/s0q6XPT0Ug3kgu6rpK9C/VokAlLg==
+        Sat, 17 Mar 2018 06:11:47 -0400
+X-Google-Smtp-Source: AG47ELvB1tAympoDtYr3SR0xUC2qDTY1c6nCWEXqSZ2XUeowKZb1yBRD127YaV91kMf5tQR/RoJgGw==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -19,9 +19,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 05/12] clk: actions: Add gate clock support
-Date: Sat, 17 Mar 2018 15:39:45 +0530
-Message-Id: <20180317100952.28538-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 06/12] clk: actions: Add mux clock support
+Date: Sat, 17 Mar 2018 15:39:46 +0530
+Message-Id: <20180317100952.28538-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
 References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
@@ -29,36 +29,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Actions Semi gate clock together with helper
+Add support for Actions Semi mux clock together with helper
 functions to be used in composite clock.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
 
 diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
+index 1f0917872c9d..2d4aa8f35d90 100644
 --- a/drivers/clk/actions/Makefile
 +++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
  
  clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
 new file mode 100644
-index 000000000000..25dd94ac0f35
+index 000000000000..f9c6cf2540e4
 --- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL gate clock driver
++// OWL mux clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -69,79 +69,62 @@ index 000000000000..25dd94ac0f35
 +#include <linux/clk-provider.h>
 +#include <linux/regmap.h>
 +
-+#include "owl-gate.h"
++#include "owl-mux.h"
 +
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
 +{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++	u32 reg;
++	u8 parent;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
++
++	return parent;
++}
++
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
 +	u32 reg;
 +
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, true);
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
 +
 +	return 0;
 +}
 +
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
 +{
-+	u32 reg;
++	struct owl_mux *mux = hw_to_owl_mux(hw);
 +
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
 +}
 +
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
 +};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
 new file mode 100644
-index 000000000000..4fc609647ae4
+index 000000000000..834284c8c3ae
 --- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL gate clock driver
++// OWL mux clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -149,68 +132,56 @@ index 000000000000..4fc609647ae4
 +// Copyright (c) 2018 Linaro Ltd.
 +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
 +
 +#include "owl-common.h"
 +
-+struct owl_gate_hw {
++struct owl_mux_hw {
 +	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
++	u8			shift;
++	u8			width;
 +};
 +
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
 +	struct owl_clk_common	common;
 +};
 +
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
++#define OWL_MUX_HW(_reg, _shift, _width)		\
 +	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
 +	}
 +
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
 +		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
 +		},							\
-+	}								\
++	}
 +
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
 +{
 +	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
 +
-+	return container_of(common, struct owl_gate, common);
++	return container_of(common, struct owl_mux, common);
 +}
 +
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
 +
-+extern const struct clk_ops owl_gate_ops;
++extern const struct clk_ops owl_mux_ops;
 +
-+#endif /* _OWL_GATE_H_ */
++#endif /* _OWL_MUX_H_ */
 -- 
 2.14.1
