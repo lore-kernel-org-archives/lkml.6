@@ -1,91 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753218AbeCQXNV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 19:13:21 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33850 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeCQXNT (ORCPT
+        id S1753178AbeCQXYu (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 19:24:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751849AbeCQXYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 19:13:19 -0400
-X-Google-Smtp-Source: AG47ELtdMtUV8Qr+ZHVR2enAwYM1OBqgI9p6OYwPNkVj1IBZn+0SRPS6plvPFRT4trhdI+ANBQLmRaxrfNH/7QmryTY=
+        Sat, 17 Mar 2018 19:24:48 -0400
+Date: Sat, 17 Mar 2018 16:24:25 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+        dave.hansen@intel.com, mpe@ellerman.id.au, mingo@kernel.org,
+        akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH 1/3] x86, pkeys: do not special case protection key 0
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180316214654.895E24EC@viggo.jf.intel.com>
+ <20180316214656.0E059008@viggo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
-References: <20180316132529.45126501@canb.auug.org.au> <CABeXuvrFkASp1g5LDW0MsENqtHRiT=Vp=F5GN3XdhGzaXkHNsw@mail.gmail.com>
- <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Date: Sat, 17 Mar 2018 16:13:18 -0700
-Message-ID: <CABeXuvpoXWx3ndJ93aKA0ARQqdx4iJXn9FN4MnceYC3RTsAvvA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the y2038 tree
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180316214656.0E059008@viggo.jf.intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18031723-0020-0000-0000-00000406650D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031723-0021-0000-0000-0000429A745E
+Message-Id: <20180317232425.GH1060@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-17_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803170294
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I posted the patch.
+On Fri, Mar 16, 2018 at 02:46:56PM -0700, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+> inconsistent with the manpages, and also inconsistent with
+> mm->context.pkey_allocation_map.  Stop special casing it and only
+> disallow values that are actually bad (< 0).
+> 
+> The end-user visible effect of this is that you can now use
+> mprotect_pkey() to set pkey=0.
+> 
+> This is a bit nicer than what Ram proposed because it is simpler
+> and removes special-casing for pkey 0.  On the other hand, it does
+> allow applciations to pkey_free() pkey-0, but that's just a silly
+> thing to do, so we are not going to protect against it.
 
-The patch has simple changes. Let me know if maybe posting a new
-version makes sense.
+So your proposal 
+(a) allocates pkey 0 implicitly, 
+(b) does not stop anyone from freeing pkey-0
+(c) and allows pkey-0 to be explicitly associated with any address range.
+correct?
 
-I also needed this patch to build linux-next:
+My proposal
+(a) allocates pkey 0 implicitly, 
+(b) stops anyone from freeing pkey-0
+(c) and allows pkey-0 to be explicitly associated with any address range.
 
-commit b784c76bb7c1c440a4ce06a18f4b3a936f33967d
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri Mar 16 20:57:10 2018 -0700
+So the difference between the two proposals is just the freeing part i.e (b).
+Did I get this right?
 
-    i40iw: add missing irq.h include
+Its a philosophical debate; allow the user
+to shoot-in-the-feet or stop from not doing so. There is no 
+clear answer either way. I am fine either way.
 
-    iwarp driver began using irq_get_affinity_mask in commit 7e952b19eb638.
-    Add the needed include irq.h to get the definition.
+So here is my
 
-    This was found while trying allmodconfig for arm64, s390, and sparc.
+Reviewed-by: Ram Pai <linuxram@us.ibm.com>
 
-    Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+I will write a corresponding patch for powerpc.
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-index a51798578f27..506b10e8ea4e 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-@@ -32,6 +32,7 @@
- *
- *******************************************************************************/
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Ram Pai <linuxram@us.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Michael Ellermen <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>p
+> Cc: Shuah Khan <shuah@kernel.org>
+> ---
+> 
+>  b/arch/x86/include/asm/mmu_context.h |    2 +-
+>  b/arch/x86/include/asm/pkeys.h       |    6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff -puN arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated arch/x86/include/asm/mmu_context.h
+> --- a/arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated	2018-03-16 14:46:39.023285476 -0700
+> +++ b/arch/x86/include/asm/mmu_context.h	2018-03-16 14:46:39.028285476 -0700
+> @@ -191,7 +191,7 @@ static inline int init_new_context(struc
+> 
+>  #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+>  	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+> -		/* pkey 0 is the default and always allocated */
+> +		/* pkey 0 is the default and allocated implicitly */
+>  		mm->context.pkey_allocation_map = 0x1;
+>  		/* -1 means unallocated or invalid */
+>  		mm->context.execute_only_pkey = -1;
+> diff -puN arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated arch/x86/include/asm/pkeys.h
+> --- a/arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated	2018-03-16 14:46:39.025285476 -0700
+> +++ b/arch/x86/include/asm/pkeys.h	2018-03-16 14:46:39.028285476 -0700
+> @@ -49,10 +49,10 @@ bool mm_pkey_is_allocated(struct mm_stru
+>  {
+>  	/*
+>  	 * "Allocated" pkeys are those that have been returned
+> -	 * from pkey_alloc().  pkey 0 is special, and never
+> -	 * returned from pkey_alloc().
+> +	 * from pkey_alloc() or pkey 0 which is allocated
+> +	 * implicitly when the mm is created.
+>  	 */
+> -	if (pkey <= 0)
+> +	if (pkey < 0)
+>  		return false;
+>  	if (pkey >= arch_max_pkey())
+>  		return false;
+> _
 
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/random.h>
-
--Deepa
-
-On Fri, Mar 16, 2018 at 1:14 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Mar 16, 2018 at 6:23 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->> Hi Arnd,
->>
->> Do you want me to send the fix as a patch or should I re-post the series?
->
-> Please send a fix relative to linux-next. Due to my travel next week, I might
-> not be able to apply it right away but maybe Stephen can add it on top until
-> I get back.
->
->       Arnd
->
->> On Thu, Mar 15, 2018 at 7:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi Arnd,
->>>
->>> After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
->>> failed like this:
->>>
->>> In file included from include/linux/elf.h:5:0,
->>>                  from include/linux/module.h:15,
->>>                  from init/main.c:16:
->>> arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_regs'
->>>
->>> Caused by commit
->>>
->>>   f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
->>>
+-- 
+Ram Pai
