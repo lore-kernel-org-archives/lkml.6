@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753601AbeCQX3l (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 19:29:41 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:35792 "EHLO
+        id S1753701AbeCQX3o (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 19:29:44 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:36260 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751809AbeCQX3f (ORCPT
+        with ESMTP id S1753488AbeCQX3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 19:29:35 -0400
+        Sat, 17 Mar 2018 19:29:41 -0400
 From: Paul Cercueil <paul@crapouillou.net>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -19,9 +19,9 @@ Cc: James Hogan <jhogan@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 3/8] doc: Add doc for the Ingenic TCU hardware
-Date: Sun, 18 Mar 2018 00:28:56 +0100
-Message-Id: <20180317232901.14129-4-paul@crapouillou.net>
+Subject: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
+Date: Sun, 18 Mar 2018 00:28:57 +0100
+Message-Id: <20180317232901.14129-5-paul@crapouillou.net>
 In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
 References: <20180110224838.16711-2-paul@crapouillou.net>
  <20180317232901.14129-1-paul@crapouillou.net>
@@ -29,84 +29,225 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a documentation file about the Timer/Counter Unit (TCU)
-present in the Ingenic JZ47xx SoCs.
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) drivers from devicetree.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- Documentation/mips/00-INDEX        |  3 +++
- Documentation/mips/ingenic-tcu.txt | 50 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 Documentation/mips/ingenic-tcu.txt
+ .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
+ .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
+ .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
+ .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 
- v4: New patch in this series
+ v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+ added content.
 
-diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
-index 8ae9cffc2262..8ab8c3f83771 100644
---- a/Documentation/mips/00-INDEX
-+++ b/Documentation/mips/00-INDEX
-@@ -2,3 +2,6 @@
- 	- this file.
- AU1xxx_IDE.README
- 	- README for MIPS AU1XXX IDE driver.
-+ingenic-tcu.txt
-+	- Information file about the Timer/Counter Unit present
-+	  in Ingenic JZ47xx SoCs.
-diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
 new file mode 100644
-index 000000000000..2508e5793da8
+index 000000000000..471d27078599
 --- /dev/null
-+++ b/Documentation/mips/ingenic-tcu.txt
-@@ -0,0 +1,50 @@
-+Ingenic JZ47xx SoCs Timer/Counter Unit hardware
-+-----------------------------------------------
++++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+@@ -0,0 +1,42 @@
++Ingenic SoC TCU binding
 +
-+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
-+hardware block. It features eight channels, that can be used as counters,
-+timers, or PWM.
++The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
++channels, each one having its own clock, that can be started and stopped,
++reparented, and reclocked.
 +
-+- JZ4770 introduced a separate channel, called Operating System Timer (OST).
-+  It is a 64-bit programmable timer.
++Required properties:
++- compatible : One of:
++  * ingenic,jz4740-tcu-clocks,
++  * ingenic,jz4770-tcu-clocks,
++  * ingenic,jz4780-tcu-clocks.
++- clocks : List of phandle & clock specifiers for clocks external to the TCU.
++  The "pclk", "rtc" and "ext" clocks should be provided.
++- clock-names : List of name strings for the external clocks.
++- #clock-cells: Should be 1.
++  Clock consumers specify this argument to identify a clock. The valid values
++  may be found in <dt-bindings/clock/ingenic,tcu.h>.
 +
-+- Each one of the eight channels has its own clock, which can be reparented
-+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
-+  their TCSR register.
-+  * The watchdog and OST hardware blocks also feature a TCSR register with
-+	the same format in their register space.
-+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
-+	and OST clocks.
++Example:
 +
-+- On SoCs >= JZ4770, there are two different modes:
-+  * Channels 0, 3-7 operate in TCU1 mode: they cannot work in sleep mode,
-+	but are easier to operate.
-+  * Channels 1-2 operate in TCU2 mode: they can work in sleep mode, but
-+	the operation is a bit more complicated than with TCU1 channels.
++/ {
++	tcu: mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
 +
-+- Each channel can generate an interrupt. Some channels share an interrupt
-+  line, some don't, and this changes between SoC versions:
-+  * on JZ4740, timer 0 and timer 1 have their own interrupt line; others share
-+	one interrupt line.
-+  * on JZ4770 and JZ4780, timer 5 has its own interrupt; timers 0-4 and 6-7 all
-+	use one interrupt line; the OST uses the last interrupt.
++		tcu_clk: clocks@10 {
++			compatible = "ingenic,jz4740-tcu-clocks";
++			reg = <0x10 0xff0>;
 +
-+Implementation
-+--------------
++			clocks = <&ext>, <&rtc>, <&pclk>;
++			clock-names = "ext", "rtc", "pclk";
 +
-+The functionalities of the TCU hardware are spread across multiple drivers:
-+- interrupts:   drivers/irqchip/irq-ingenic-tcu.c
-+- clocks:       drivers/clk/ingenic/tcu.c
-+- timer:        drivers/clocksource/timer-ingenic.c
-+- PWM:          drivers/pwm/pwm-jz4740.c
-+- watchdog:     drivers/watchdog/jz4740_wdt.c
-+- OST:			(none yet)
++			#clock-cells = <1>;
++		};
++	};
++};
 +
-+Because various functionalities of the TCU that belong to different drivers
-+and frameworks can be controlled from the same registers, all of these drivers
-+access their registers through the same regmap.
++For information about the top-level "ingenic,tcu" compatible node and other
++children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..7f3af2da77cd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+@@ -0,0 +1,39 @@
++Ingenic SoCs Timer/Counter Unit Interrupt Controller
 +
-+In practice, the devicetree nodes for all of these drivers must be children
-+of a "syscon" node that defines the register area.
-+For more information regarding the devicetree bindings of the TCU drivers,
-+have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
++Required properties:
++
++- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
++  * ingenic,jz4740-tcu-intc
++  * ingenic,jz4770-tcu-intc
++  * ingenic,jz4780-tcu-intc
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value shall be 1.
++- interrupt-parent : phandle of the interrupt controller.
++- interrupts : Specifies the interrupt the controller is connected to.
++
++Example:
++
++/ {
++	tcu: mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		tcu_irq: interrupt-controller@20 {
++			compatible = "ingenic,jz4740-tcu-intc";
++			reg = <0x20 0x20>;
++
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <15>;
++		};
++	};
++};
++
++For information about the top-level "ingenic,tcu" compatible node and other
++children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..5742c3f21550
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+@@ -0,0 +1,56 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
++----------------------------------------------------------
++
++For a description of the TCU hardware and drivers, have a look at
++Documentation/mips/ingenic-tcu.txt.
++
++The TCU is implemented as a parent node, whose role is to create the
++regmap, and child nodes for the various drivers listed in the aforementioned
++document.
++
++Required properties:
++
++- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
++- reg: Should be the offset/length value corresponding to the TCU registers
++- #address-cells: Should be <1>;
++- #size-cells: Should be <1>;
++- ranges: Should be one range for the full TCU registers area
++
++Accepted children nodes:
++- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
++- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
++- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
++
++
++Example:
++
++/ {
++	tcu: mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		tcu_irq: interrupt-controller@20 {
++			compatible = "ingenic,jz4740-tcu-intc";
++			reg = <0x20 0x20>;
++			...
++		};
++
++		tcu_clk: clocks@10 {
++			compatible = "ingenic,jz4740-tcu-clocks";
++			reg = <0x10 0xff0>;
++			...
++		};
++
++		tcu_timer: timer@10 {
++			compatible = "ingenic,jz4740-tcu";
++			reg = <0x10 0xff0>;
++			...
++		};
++	};
++};
++
++For more information about the children node, refer to the documents listed
++above in the "Accepted children nodes" section.
+diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..f910b7e96783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+@@ -0,0 +1,41 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit driver
++---------------------------------------------
++
++Required properties:
++
++- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
++  * ingenic,jz4740-tcu
++  * ingenic,jz4770-tcu
++  * ingenic,jz4780-tcu
++- interrupt-parent : phandle of the TCU interrupt controller.
++- interrupts : Specifies the interrupts the controller is connected to.
++- clocks : List of phandle & clock specifiers for the TCU clocks.
++- clock-names : List of name strings for the TCU clocks.
++
++Example:
++
++/ {
++	tcu: mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		tcu_timer: timer@10 {
++			compatible = "ingenic,jz4740-tcu";
++			reg = <0x10 0xff0>;
++
++			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
++					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++						  "timer4", "timer5", "timer6", "timer7";
++
++			interrupt-parent = <&tcu_irq>;
++			interrupts = <0 1 2 3 4 5 6 7>;
++		};
++	};
++};
++
++For information about the top-level "ingenic,tcu" compatible node and other
++children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
 -- 
 2.11.0
