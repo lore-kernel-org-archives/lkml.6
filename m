@@ -1,33 +1,33 @@
 Return-Path: <kieran.bingham@ideasonboard.com>
-X-Google-Smtp-Source: AG47ELuClUhf5Dm43clp3DvpN/EzcwOV8RZoYHovQPktDg854Gzm6NU/njs7cifLWv2yOoDZFp8q
-ARC-Seal: i=1; a=rsa-sha256; t=1521281527; cv=none;
+X-Google-Smtp-Source: AG47ELvPgJreqyP/+74zxRZzFjlMNfy9gg/Yccm1GTI6oA2xTxSnSvtBoK8WNqk2IwyN86QdKVKD
+ARC-Seal: i=1; a=rsa-sha256; t=1521279184; cv=none;
         d=google.com; s=arc-20160816;
-        b=R0ohUH6eVufbkb3GYyacH/uv8ND2Vp6igd+jKbV6z3FWBO7eQgxEKiSMCslbX9UqLE
-         ZEKtzQQ4kwLKLXPrkn1h37mr3Gz1ZT49ypru8LV2SbS4SkRm2nxd4tlIlbiT1ee+3viY
-         0pZogXQbMGJdusq3L26Qh6/YbAOURfemlfA92jQsZ2wsb33aOD59nKy4eeJNVIa9aUbx
-         FfeFI+uoCoU1KS8f1uwoTNB0rj6O6YuPbHTPxJzprKGEPnPc57fTtXRzTNlzSHbcdvZE
-         tzflO3kXq0lMB9IbIvWADWqI6yKWFyp/UdWd1Xh/nDTxsvlzrmQ33GYzDpDAjjpFAKvP
-         QqBA==
+        b=ur7AUN3etv/tGZbDu0hB1RtIQMIGSgNi+GvupqshNbAfTYWgbEyGHdIOFugqYj+bGM
+         errpY5NL9ObcYpHgavR6XjzolW++U9Ss8sSBwC8XDrulcKEvoryaW1zWf/dPSyAcV+bd
+         sIAzmBjac90E/qAOm7QlHiSE9xbc5zYa8nc1JPMLQuT2hikZsrLm9bHneoxiHvMX7Fll
+         hO653TmJcLU0Ur/y5JOPQXRyz0PNcXVTFE9Ghro+ANTWI3uc0Nxoj8VVT+P6R2RNbvey
+         9ciu+KQwQFnUJka7+a5A4rkOL+v9Wgd940yJ6WM+RCRJ2S+yelG1//7CUNHAn7iIdbf5
+         S9yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:organization:from:references:cc:to
          :subject:dkim-signature:arc-authentication-results;
-        bh=pBvPKQ/69xg/zepnr3aycVLXseDHrytCrCM7KOh+YWE=;
-        b=t0CnrDOtt1zO3iBH1rJspkuLDuOukMUskmyGmQ8KdMqPT3IvGx3LXavc0Wnif/DRjj
-         dP2FlNOZq1Ar2bfH+lhxTjdDVtJwe1pe3T2W/PAGradckWaCzulTld3Hbct+IpuPB2jq
-         wQuHZbZ9bV6L93G1Lf/ZO+sa5VYYcnwB5pFAUkZ0Jc6Kz09IKAVwTsXBIObAkFlnXSxS
-         JD5vbdBRJTrx4v/ktbpJD1dpJi4/lfHxAnNmbNmElztc/Ff0RD3PmVmBLm50yjOzwrkF
-         eyOpcBEBT3vfRotKGa1Mq5yN2HJrexi6hDSV93OyTPiiasFOG16p4t94HddnNxQBTX9O
-         1Q5A==
+        bh=uD4iztECnSmpUx3AGWZO3rYe6Ei3cDSaatdSUY6QkdA=;
+        b=NaCj8ZohLRqhjWohlz2IA6jjY4QCkor5o6mijAxrrMZjbcJid1OCiTcFRAnwo+5VLx
+         VeO9U62mqwdhKm6MJ/kpRtv/2aI9Ilru7r3xszU5W4cJc2y3BdcSMHm3m6PkiKGhg6MQ
+         Wh2irkd9jNQP/w+8yQ/1bsQvZqhW1e79YIk1uIkohp77gvZl0J6OcYqlAXy7Abgmb5l1
+         ip1H3OOzBAf6Cya+SyR2RtDzU8RBEY3bxd5Ekn2evitMO1Gj8DVzPM0I5Wjk22myx0JM
+         AprkEK8w9dGy2eC2VGYaD+squTipGXGMCaumFG+qkDrglsVM6CYSchg92YLzxWF5h2kg
+         i52w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=Irotrwdj;
-       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 185.26.127.97 as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
+       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=trNlsUg7;
+       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 2001:4b98:dc2:45:216:3eff:febb:480d as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=Irotrwdj;
-       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 185.26.127.97 as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
+       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=trNlsUg7;
+       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 2001:4b98:dc2:45:216:3eff:febb:480d as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
 Subject: Re: [PATCH][RFC] kernel.h: provide array iterator
-To: Joe Perches <joe@perches.com>,
- Rasmus Villemoes <rasmus.villemoes@prevas.dk>, linux-kernel@vger.kernel.org
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+ linux-kernel@vger.kernel.org
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
  Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
@@ -38,91 +38,126 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Ian Abbott <abbotti@mev.co.uk>
 References: <1521108052-26861-1-git-send-email-kieran.bingham@ideasonboard.com>
  <b6af11b9-d697-59ec-6acc-80f0657a3e11@prevas.dk>
- <1521225943.6119.10.camel@perches.com>
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 Organization: Ideas on Board
-Message-ID: <5f027b5c-7419-d4f2-53a7-28805baa7193@ideasonboard.com>
-Date: Sat, 17 Mar 2018 11:12:01 +0100
+Message-ID: <30d9c547-a53b-8c3f-f185-7152bd302c8b@ideasonboard.com>
+Date: Sat, 17 Mar 2018 10:32:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <1521225943.6119.10.camel@perches.com>
+In-Reply-To: <b6af11b9-d697-59ec-6acc-80f0657a3e11@prevas.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594997409535098266?=
-X-GMAIL-MSGID: =?utf-8?q?1595179298597655165?=
+X-GMAIL-MSGID: =?utf-8?q?1595176841990427921?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Joe,
+Hi Rasmus,
 
-On 16/03/18 19:45, Joe Perches wrote:
-> On Fri, 2018-03-16 at 16:27 +0100, Rasmus Villemoes wrote:
->> On 2018-03-15 11:00, Kieran Bingham wrote:
->>> Simplify array iteration with a helper to iterate each entry in an array.
->>> Utilise the existing ARRAY_SIZE macro to identify the length of the array
->>> and pointer arithmetic to process each item as a for loop.
+On 16/03/18 16:27, Rasmus Villemoes wrote:
+> On 2018-03-15 11:00, Kieran Bingham wrote:
+>> Simplify array iteration with a helper to iterate each entry in an array.
+>> Utilise the existing ARRAY_SIZE macro to identify the length of the array
+>> and pointer arithmetic to process each item as a for loop.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  include/linux/kernel.h | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> The use of static arrays to store data is a common use case throughout the
+>> kernel. Along with that is the obvious need to iterate that data.
+>>
+>> In fact there are just shy of 5000 instances of iterating a static array:
+>> 	git grep "for .*ARRAY_SIZE" | wc -l
+>> 	4943
+>>
+>> When working on the UVC driver - I found that I needed to split one such
+>> iteration into two parts, and at the same time felt that this could be
+>> refactored to be cleaner / easier to read. 
 > 
-> I recall getting negative feedback on a similar proposal
-> a decade ago:
+> About that, it would be helpful if you first converted to the new
+> iterator, so that one can more easily see they are equivalent. And then
+> split in two, adding the flush_workqueue call. Or do it the other way
+> around. But please don't mix the two in one patch, especially not if
+> it's supposed to act as an example of how to use the new helper.
+>
+
+My apologies - in the example below I was trying to show the usage and reason
+for the macro. This was not meant to be a change to be integrated - the 'example
+change' is not how the change will be committed, or included in the patch - but
+was added here purely to show the usage / reason for the new macro and promote
+the discussion. (So I'll already call that a success)
+
+But that is a good point - the example usage could be much simplified here, and
+then included in the commit message.
+
+
+>> I do however worry that this simple short patch might not be desired or could
+>> also be heavily bikeshedded due to it's potential wide spread use (though
+>> perhaps that would be a good thing to have more users) ...  but here it is,
+>> along with an example usage below which is part of a separate series.
 > 
-> https://lkml.org/lkml/2007/2/13/25
+> I think it can be useful, and it does have the must_be_array protection
+> built in, so code doesn't silently break if one changes from a
+> fixed-size allocation to e.g. a kmalloc-based one. Just don't attempt a
+> tree-wide mass conversion, but obviously starting to make use of it when
+> refactoring code anyway is fine.
 
-Thanks for the reference. I didn't know about this.
+Well it had already been suggested to try to make a coccinelle patch - but I
+suspect time and effort required may delay or postpone that currently.
 
-Your suggestion at https://lkml.org/lkml/2007/2/13/25 looks remarkably similar
-to my implementation though :-D  (Perhaps even a bit neater, I may have to
-incorporate some of your suggestion)
+I'll focus on seeing if I can actually get this macro in before expending effort
+on a full conversion :-D
+
+I originally anticipated that this would be a 'convert or use as required' style
+change.
 
 
-> Not sure this is different.
+> And now, the bikeshedding you expected :)
+
+It wouldn't be a discussion without it :D
+
+
+>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+>> index ce51455e2adf..95d7dae248b7 100644
+>> --- a/include/linux/kernel.h
+>> +++ b/include/linux/kernel.h
+>> @@ -70,6 +70,16 @@
+>>   */
+>>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>>  
+>> +/**
+>> + * for_each_array_element - Iterate all items in an array
+>> + * @elem: pointer of array type for iteration cursor
 > 
+> Hm, "pointer of array type" sounds wrong; it's not a "pointer to array".
+> But "pointer of array elements' type" is clumsy. Maybe just "@elem:
+> iteration cursor" is clear enough.
 
-I count three disagreements in that series. But I'm sure I have more positive
-responses already... (Though no 'official Acks' yet ...)
+"@elem: iteration cursor" sounds good to me.
 
-How many ACKs do I need for this to be accepted ? or do the past-nack's have
-full veto?
-
-I still believe the use of an iterator in my case [0] makes *absolute sense*
-(thus it must make sense elsewhere)
-
-I'm not suggesting a full tree conversion here (though that has been suggested
-earlier in the thread) but the ability to add a convenience macro in a common
-location, so that it can be used when desired.
-
-In my instance, I have an array of structures which I want to iterate. I believe
-this make my code more readable. I have already had another vote to say that
-they thought the same.
-
-I'm certain that throughout the media tree there are a lot of use cases where
-arrays of structures define types which must be searched where this macro could
-also make sense.
-
-Do I need to start a poll to determine if this is a worthy pursuit? or am I to
-give up and stop in my tracks (I'm a bit too tenacious usually to give up - so
-someone 'high up' better make a clear statement saying ... just give up...
-otherwise I likely won't)
-
-Either way - I intend to add an equivalent macro to the UVC driver [1][2]
-(because as I said - I believe it makes sense), and I have the support of the
-maintainer there, so It seems a shame to have to duplicate the implementation in
-other use cases where this would make the code more friendly.
+Depending on how the other conversations go here - I will likely make this
+change. (I see there was a previous attempt at including a very similar macro)
 
 
-/me awaits a NACK-FULL-STOP, or now fears if I'm about to be the cause of a
-flame war :-S
+>> + * @array: array to be iterated
+>> + */
+>> +#define for_each_array_element(elem, array) \
+>> +	for (elem = &(array)[0]; \
+>> +	     elem < &(array)[ARRAY_SIZE(array)]; \
+>> +	     ++elem)
+>> +
+> 
+> Please parenthesize elem as well.
 
-[0]
-https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=kernel/array-iterator
+That's certainly a good point! Thanks :D
 
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=kernel/array-iterator&id=3dece696e5b19d79c94f88c9df77482542d49a75
+> Rasmus
 
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=kernel/array-iterator&id=a31a5424a6577e14d46ce24ef0eff35de3e089bc
+Regards
 
---
-Kieran
+Kieran Bingham
