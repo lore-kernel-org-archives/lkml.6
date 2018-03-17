@@ -1,70 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeCQOxL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 10:53:11 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40420 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752692AbeCQOxJ (ORCPT
+        id S1752897AbeCQPF0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 11:05:26 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36709 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752625AbeCQPFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 10:53:09 -0400
-X-Google-Smtp-Source: AG47ELshY+1WxmKVvPmTq2vPEQfH1P1bo6OhpMvRo3a8Jpz5JNoAQDiOvwXePbzkEHcIeHdkyM6PZ8oZ9JemlDH4/sc=
+        Sat, 17 Mar 2018 11:05:23 -0400
+X-Google-Smtp-Source: AG47ELvlei2FTrHyvZdzjM37ZnZi20YICVTUYWEqRlQrWUUA58gnF0DBNp1UfozxAlardR978cjX4g==
+Date: Sat, 17 Mar 2018 09:05:20 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Steve Wise <swise@opengridcomputing.com>, netdev@vger.kernel.org,
+        timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
+ on weakly-ordered archs
+Message-ID: <20180317150520.GA23463@ziepe.ca>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+ <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
+ <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
+ <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
+ <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
+ <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org>
+ <71e37a55-537b-d75a-cfde-f188b7cfce8e@codeaurora.org>
+ <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1521269828-8874-1-git-send-email-Anson.Huang@nxp.com>
-References: <1521269828-8874-1-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 17 Mar 2018 11:53:08 -0300
-Message-ID: <CAOMZO5BzE46Dm24++j+xVA4KGFnpsopGfJ97h7sFGOAxVa19=g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: pfuze3000: update sw1a/vldo4 voltage range
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+On Sat, Mar 17, 2018 at 12:25:14AM -0400, Sinan Kaya wrote:
+> On 3/17/2018 12:03 AM, Sinan Kaya wrote:
+> > On 3/16/2018 11:40 PM, Sinan Kaya wrote:
+> >> I'll change writel_relaxed() with __raw_writel() in the series like you suggested
+> >> and also look at your other comments.
+> > 
+> > I spoke too soon.
+> > 
+> > Now that I realized, code needs to follow one of the following patterns for correctness
+> > 
+> > 1)
+> > wmb()
+> > writel()/writel_relaxed()
+> > 
+> > or 
+> > 
+> > 2)
+> > wmb()
+> > __raw_wrltel()
+> > mmiowb()
+> > 
+> > but definitely not
+> > 
+> > wmb()
+> > __raw_wrltel()
+> > 
+> > Since #1 == #2, I'll stick to my current implementation of writel_relaxed()
+> > 
+> > Changing writel() to writel_relaxed() or __raw_writel() isn't enough. PowerPC needs mmiowb()
+> > for correctness. ARM's mmiowb() implementation is empty.
+> > 
+> > So, there is no one size fits all solution with the current state of affairs.
+> > 
+> > 
+> 
+> I think I finally got what you mean.
+> 
+> Code seems to have
+> 
+> wmb()
+> writel()/writeq()
+> wmb()
+> 
+> this can be safely replaced with
+> 
+> wmb()
+> __raw_writel()/__raw_writeq()
+> wmb()
+> 
+> This will work on all arches. Below is the new version. Let me know if this is OK.
+> 
+> +++ b/drivers/infiniband/hw/cxgb4/t4.h
+> @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64 *src)
+>         int count = 8;
+> 
+>         while (count) {
+> -               writeq(*src, dst);
+> +               __raw_writeq(*src, dst);
+>                 src++;
+>                 dst++;
+>                 count--;
+> @@ -477,15 +477,16 @@ static inline void t4_ring_sq_db(struct t4_wq *wq, u16 inc, union t4_wr *wqe)
+>                                  (u64 *)wqe);
+>                 } else {
+>                         pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
+> -                       writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
+> -                              wq->sq.bar2_va + SGE_UDB_KDOORBELL);
+> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
+> +                                    wq->sq.bar2_va + SGE_UDB_KDOORBELL);
+>                 }
+> 
+>                 /* Flush user doorbell area writes. */
+>                 wmb();
+>                 return;
+>         }
+> -       writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
+> +       __raw_writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
+> +       mmiowmb()
+>  }
+> 
+>  static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
+> @@ -502,15 +503,16 @@ static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
+>                                  (void *)wqe);
+>                 } else {
+>                         pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
+> -                       writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
+> -                              wq->rq.bar2_va + SGE_UDB_KDOORBELL);
+> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
+> +                                    wq->rq.bar2_va + SGE_UDB_KDOORBELL);
+>                 }
+> 
+>                 /* Flush user doorbell area writes. */
+>                 wmb();
+>                 return;
+>         }
+> -       writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
+> +       __raw_writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
+> +       mmiowmb();
 
-On Sat, Mar 17, 2018 at 3:57 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Update sw1a/vldo4's voltage range according to latest pfuze3000
-> datasheet from:
->
-> http://cache.freescale.com/files/analog/doc/data_sheet/PF3000.pdf?fsrch=1&sr=1&pageNum=1
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6sx-udoo-neo.dtsi  | 2 +-
->  arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 4 ++--
->  arch/arm/boot/dts/imx7d-nitrogen7.dts   | 2 +-
->  arch/arm/boot/dts/imx7d-sdb.dts         | 6 +++---
->  arch/arm/boot/dts/imx7s-warp.dts        | 2 +-
->  5 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi b/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-> index 53b3eac..1de0a0f 100644
-> --- a/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-> +++ b/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-> @@ -142,7 +142,7 @@
->                 regulators {
->                         sw1a_reg: sw1a {
->                                 regulator-min-microvolt = <700000>;
-> -                               regulator-max-microvolt = <1475000>;
-> +                               regulator-max-microvolt = <3300000>;
+No! NAK! Adding *new* barriers to use the *wrong* accessor is crazy!
 
-This change does not look like a safe thing to do without carefully
-checking each one of the board schematics.
+Your first patch was right, replacing
+  wmb()
+  writel()
 
-Even if the regulator itself is capable of driving a higher voltage,
-it does not mean that the circuitry that consumes such regulator is
-allowed to receive the higher voltages.
+With wmb(); writel_relaxed() is fine, and helps ARM.
+
+The problem with PPC has nothing to do with the writel, it is with the
+spinlock, and we can't improve it without adding some new
+infrastructure. Certainly don't hack around the problem by using
+__raw_writel in multi-arch drivers!
+
+In userspace we settled on something like this as a pattern:
+
+ mmio_wc_spin_lock()
+ writel_wc_mmio()
+ mmio_wc_spin_unlock()
+
+Where mmio_wc_spin_unlock incorporates the mmiowmb and is defined to
+fully contain all MMIO access to WC and UC memory.
+
+Due to our userspace the pattern is specifically used with MMIO writes
+to WC BAR memory, but it could be generalized..
+
+This allows all known arches to use the best code in all cases. x86
+can even optimize a lot and combine the mmiowmb() into the
+spin_unlock, apparently.
+
+Jason
