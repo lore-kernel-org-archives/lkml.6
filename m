@@ -1,83 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753477AbeCQPGx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 11:06:53 -0400
-Received: from mout.gmx.net ([212.227.15.15]:59911 "EHLO mout.gmx.net"
+        id S1753141AbeCQPJs (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 11:09:48 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:59750 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753428AbeCQPGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 11:06:51 -0400
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, devicetree@vger.kernel.org
-Subject: [PATCH] powerpc: wii.dts: Add drive slot LED
-Date: Sat, 17 Mar 2018 16:06:17 +0100
-Message-Id: <20180317150617.26913-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.16.2
+        id S1751743AbeCQPJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 11:09:43 -0400
+Date: Sat, 17 Mar 2018 10:09:42 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
+Message-ID: <20180317150942.GA10607@mail.hallyn.com>
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+ <20180314202020.3794-4-bauerman@linux.vnet.ibm.com>
+ <20180314214045.GC14289@mail.hallyn.com>
+ <87efkmjjc7.fsf@morokweng.localdomain>
+ <1521141514.3547.637.camel@linux.vnet.ibm.com>
+ <874llhoz89.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:o+6YQhA/50aNuR5eNm1MmkCZy4j1HQoztX/9HUQTrja/RNtE/Nd
- N6oWT3NAA3JY9aY3Lt8UHDXgCmVktF8V7IY2ZO25jqQUKvblixLNFZwz5mDj+RBCCMW3Xyq
- WaloGP7Xpith6VOt0wxHwYszuanjCtYSmM5DCm66TubCoYcRcKLDdE9JzZwxMePJhDtnHS+
- QFMxetrMgGHy8D+UEycTA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6hCM+DjODo0=:ujkA2MUv07BHoo6++uijfB
- bJ4Tz2UuOd74SNLEu7XinRsaDzvbVsZVEnZKeOV0qGTCGfwH1B5JJrcPoRTSrjmDqwyq/PPCW
- v/VVyFvTTXZmhA0x4FYtt9GUbQgCbHcFf6GKYDZgvYabOzxUHkprWfQQu7yJvqf735PLyIo0p
- SDjBoDpKBBQRiNmou1osD431Bb9h6f+0FWx1MwcAg1iggu1AHGrpM+XEpK74Fou6/hKHSEHO5
- yWU+pgR5sU5TaLRt6DBqK1yJxme2jmtzJ5+H/nLp0sapQeMvaez9RJC+pQwqBXrls9+/hZwkK
- sNG7eJNwfMUyTEzFkGyT4jTGAlheX0ZPsFqChXsTr9pAaoUxdAH56cfNEsOOXbbGmVBzNzCu6
- XEGAf7kMSJs0KF3kDPIvwMfODUGQjF06J5oO01OjSD2LA+h6JmwRDIaUmrumeyuWWswJeNQrn
- NzqOXr1WQZRG8SodT4vBfYdr+l1P/bpegkfyK+ysRscbEHmDZWQDwTEJgnpSkSwsDRsjWNG9k
- 2/oRjXosnXxbCXOg8vx3V6Y4miJ8YtXFjuwJ7L35FiTxIs1kdO0YhIvde7ChSRMSc1/2EQtWk
- xsXymkRsF6b7Wvbtvqr0RZtAuLpvFLV98Z1iipCRh7LrJ5N8JfCQ9DPX7MGY2dJU8YqAPg1NZ
- HwqUgXSebk13dMcqticFXZCB8czzDOsR6d+Gd9WnbJP1WsgSiY+KIUTct1LPtjvH/dOC/BKjW
- 0CjwMTaEvr3fTlM9m8Q9c7NQbdGfuRsC//hwPdLRzfqV3ExWpao2VSLeeo6hik2eZFXZAU9iD
- wOf+Hd9RayXAoiXPTzZe12tFv39v4JCJEzd7U9M4GL6dxu1ZMg=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874llhoz89.fsf@morokweng.localdomain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Wii has a blue LED in the disk drive slot, which is controlled via a
-GPIO line. Add this LED to wii.dts, and mark it as a panic-indicator.
+Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
+> 
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> > On Wed, 2018-03-14 at 21:03 -0300, Thiago Jung Bauermann wrote:
+> >> Hello Serge,
+> >> 
+> >> Thanks for quickly reviewing these patches!
+> >> 
+> >> Serge E. Hallyn <serge@hallyn.com> writes:
+> >> 
+> >> > Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
+> >> >> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> >> >> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >> >>  	}
+> >> >>  
+> >> >>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> >> >> -	if ((status != INTEGRITY_PASS) &&
+> >> >> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
+> >> >> -	    (status != INTEGRITY_UNKNOWN)) {
+> >> >> -		if ((status == INTEGRITY_NOLABEL)
+> >> >> -		    || (status == INTEGRITY_NOXATTRS))
+> >> >> -			cause = "missing-HMAC";
+> >> >> -		else if (status == INTEGRITY_FAIL)
+> >> >> -			cause = "invalid-HMAC";
+> >> >> +	switch (status) {
+> >> >> +	case INTEGRITY_PASS:
+> >> >> +	case INTEGRITY_PASS_IMMUTABLE:
+> >> >> +	case INTEGRITY_UNKNOWN:
+> >> >
+> >> > Wouldn't it be more future-proof to replace this with a 'default', or
+> >> > to at least add a "default: BUG()" to catch new status values?
+> >> 
+> >> I agree. I like the "default: BUG()" option.
+> >
+> > Agreed. I would put it at the end after INTEGRITY_FAIL.
+> 
+> Ok, what about the version below?
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
- arch/powerpc/boot/dts/wii.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Since the status is returned by evm, it seems like an actual BUG() is
+appropriate, but ok.
 
-diff --git a/arch/powerpc/boot/dts/wii.dts b/arch/powerpc/boot/dts/wii.dts
-index d697f706fc22..a946a8f4bee3 100644
---- a/arch/powerpc/boot/dts/wii.dts
-+++ b/arch/powerpc/boot/dts/wii.dts
-@@ -13,6 +13,7 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
- 
- /*
-  * This is commented-out for now.
-@@ -228,5 +229,16 @@
- 			interrupts = <2>;
- 		};
- 	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		/* This is the blue LED in the disk drive slot */
-+		drive-slot {
-+			label = "wii:blue:drive_slot";
-+			gpios = <&GPIO 5 GPIO_ACTIVE_HIGH>;
-+			panic-indicator;
-+		};
-+	};
- };
- 
--- 
-2.16.2
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+> 
+> >> 
+> >> >> +		break;
+> >> >> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+> >> >> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> >> >> +		cause = "missing-HMAC";
+> >> >> +		goto out;
+> >> >> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> >> >> +		cause = "invalid-HMAC";
+> >> >>  		goto out;
+> >> >>  	}
+> >> >> +
+> >> >>  	switch (xattr_value->type) {
+> >> >>  	case IMA_XATTR_DIGEST_NG:
+> >> >>  		/* first byte contains algorithm id */
+> >> >> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> >> >>  				    op, cause, rc, 0);
+> >> >>  	} else if (status != INTEGRITY_PASS) {
+> >> >> +		/* Fix mode, but don't replace file signatures. */
+> >> >>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+> >> >>  		    (!xattr_value ||
+> >> >>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+> >> >>  			if (!ima_fix_xattr(dentry, iint))
+> >> >>  				status = INTEGRITY_PASS;
+> >> >> -		} else if ((inode->i_size == 0) &&
+> >> >> -			   (iint->flags & IMA_NEW_FILE) &&
+> >> >> -			   (xattr_value &&
+> >> >> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
+> >> >> +		}
+> >> >> +
+> >> >> +		/* Permit new files with file signatures, but without data. */
+> >> >> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+> >> >
+> >> > This may be correct, but it's not identical to what you're replacing.
+> >> > Since in either case you're setting status to INTEGRITY_PASS the final
+> >> > result is the same, but with a few extra possible steps.  Not sure
+> >> > whether that matters.
+> >> 
+> >> Good point. I'll have to defer this one to Mimi though.
+> >
+> > The end result is the same, but add some needed comments.
+
+Yes, the same, but with a few extra possible steps, impacting performance,
+so I just wanted to call that out.
+
+-serge
