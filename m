@@ -1,64 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753003AbeCQUoV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 16:44:21 -0400
-Received: from sauhun.de ([88.99.104.3]:38673 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751623AbeCQUoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 16:44:19 -0400
-Date: Sat, 17 Mar 2018 21:44:18 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] i2c: i2c-stm32f7: fix no check on returned
- setup
-Message-ID: <20180317204417.xwfl32lr7zt3dy25@ninjato>
-References: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
+        id S1753146AbeCQUqa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 16:46:30 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:37042 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752878AbeCQUq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 16:46:29 -0400
+Date: Sat, 17 Mar 2018 21:46:04 +0100
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 2/4] pwm: pwm-jz4740: Implement set_polarity
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <1521319566.2835.0@smtp.crapouillou.net>
+In-Reply-To: <20180106165843.3461-2-paul@crapouillou.net>
+References: <20180106165843.3461-1-paul@crapouillou.net>
+        <20180106165843.3461-2-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="boro3g3wgwwiedfk"
-Content-Disposition: inline
-In-Reply-To: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2HKkaO8022602
 
+Hi,
 
---boro3g3wgwwiedfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Could this patchset get a bit of love?
+I have other changes waiting for this patchset to get in, so it'd be 
+great
+to see it in 4.17-rc1.
 
-On Mon, Mar 12, 2018 at 01:53:21PM +0100, Pierre-Yves MORDRET wrote:
-> Before assigning returned setup structure check if not null
->=20
-> Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
-> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Thanks,
+-Paul
 
-Maxime? Alexandre?
-
-
---boro3g3wgwwiedfk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqtfhUACgkQFA3kzBSg
-KbZ9KxAAgF+tTQhdC/Xp5XrvoN/ChJ//Y8jLjHtHEdjHUeEjMFNsZwkB0GIx/g2k
-RhOTtVCHiAwzdMo1fy9Slg1qDayIvTZmpu7pjPZLhE3NJVi3eiXaTYe12fDCI+u9
-qUYyFBnTNINB0nSGUO+H4ngCtWqemPRQ+uJLE2ULhhMEQPbRzLaSfoGW5r7wAAuc
-aza9vb+4grLItFdZhsJcWNUPwIykNqy8Mpzt722SQ/uEbX4sE54sD29eelb2W5nK
-5RjymZPvDw34gPkn2BfidB8JClg+o7v61VzipM4MAOQ5I/zKEZ/fjXQ1FXNnb5Yt
-3lfqCzkNQxstw5/s5dzskGxPasB3zcBCcnEKYJW2TGNVQgEJ32SvnGu4gIjFOZvv
-yAJXzlGx6z2StPBrqCqXPB9NwMYE7nUosZD1JncIfbJbKYpg+zWkrye1b+ebPIym
-ktso021XdIW81rCZByvC0UN/WXxXMF0CbdD0bTilu7veoCGKB1LUDzspNyMTNUdc
-Jusn/38RkSYErLOaezBUr5imFMRefHqHrx6wd2g5IhoZqsbPVPAjCXxGvq1N1mb4
-X476qDRy7tGjumzHea0E8bzbb/+XGYXenJLmWEUYdWLeBYorrmoXD/GRKP+Nw6nW
-l52a0DvICsvhZq7T/XiY4pseWirFPCzANO2pcEZ2MKaxowB2bi8=
-=7u4G
------END PGP SIGNATURE-----
-
---boro3g3wgwwiedfk--
+Le sam. 6 janv. 2018 à 17:58, Paul Cercueil <paul@crapouillou.net> a 
+écrit :
+> This permits clients of this driver to specify the polarity to use for
+> their PWM channel.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/pwm/pwm-jz4740.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+> index 2e41ba213f39..6539c001fe32 100644
+> --- a/drivers/pwm/pwm-jz4740.c
+> +++ b/drivers/pwm/pwm-jz4740.c
+> @@ -130,10 +130,29 @@ static int jz4740_pwm_config(struct pwm_chip 
+> *chip, struct pwm_device *pwm,
+>  	return 0;
+>  }
+> 
+> +static int jz4740_pwm_set_polarity(struct pwm_chip *chip,
+> +		struct pwm_device *pwm, enum pwm_polarity polarity)
+> +{
+> +	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
+> +
+> +	switch (polarity) {
+> +	case PWM_POLARITY_NORMAL:
+> +		ctrl &= ~JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
+> +		break;
+> +	case PWM_POLARITY_INVERSED:
+> +		ctrl |= JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
+> +		break;
+> +	}
+> +
+> +	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
+> +	return 0;
+> +}
+> +
+>  static const struct pwm_ops jz4740_pwm_ops = {
+>  	.request = jz4740_pwm_request,
+>  	.free = jz4740_pwm_free,
+>  	.config = jz4740_pwm_config,
+> +	.set_polarity = jz4740_pwm_set_polarity,
+>  	.enable = jz4740_pwm_enable,
+>  	.disable = jz4740_pwm_disable,
+>  	.owner = THIS_MODULE,
+> --
+> 2.11.0
+> 
