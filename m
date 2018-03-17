@@ -1,272 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753117AbeCQQwk (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 12:52:40 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37915 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbeCQQwj (ORCPT
+        id S1753386AbeCQRKM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 13:10:12 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40841 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752709AbeCQRKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 12:52:39 -0400
-X-Google-Smtp-Source: AG47ELtoM/vu2tPQ2bHdHxyPANDRUcFA6l9ytByHjBcWGdAft/BupmE0tPRnrG2qzr6mMnXKzBCQUA==
-Date: Sat, 17 Mar 2018 19:52:35 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH -mm] proc: test /proc/uptime
-Message-ID: <20180317165235.GB3445@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        Sat, 17 Mar 2018 13:10:07 -0400
+X-Google-Smtp-Source: AG47ELsKuGakTehhcSNq3St0il80Ih4O2UXzL0CMeoirQ7mtJK7XKVYOC6zrNGqJJocWojz5QRJD4g==
+From: Eric Dumazet <edumazet@google.com>
+To: x86 <x86@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>
+Subject: [PATCH 2/2] x86, cpuid: allow cpuid_read() to schedule
+Date: Sat, 17 Mar 2018 10:09:53 -0700
+Message-Id: <20180317170953.111610-2-edumazet@google.com>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180317170953.111610-1-edumazet@google.com>
+References: <20180317170953.111610-1-edumazet@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only tests I could come up with for /proc/uptime are:
-* test that values increase monotonically for 1 second,
-* bounce around CPUs and test the same thing.
+I noticed high latencies caused by a daemon periodically reading various
+MSR and cpuid on all cpus. KASAN kernels would see ~10ms latencies
+simply reading one cpuid. Even without KASAN, sending IPI to CPU
+in deep sleep state or blocking hard IRQ in a a long section,
+then waiting for the answer can consume hundreds of usec or more.
 
-Avoid glibc like plague for affinity given patches like this:
-https://marc.info/?l=linux-kernel&m=152130031912594&w=4
+Switching to smp_call_function_single_async() and a completion
+allows to reschedule and not burn cpu cycles.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
 ---
+ arch/x86/kernel/cpuid.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
- tools/testing/selftests/proc/.gitignore        |    2 
- tools/testing/selftests/proc/Makefile          |    2 
- tools/testing/selftests/proc/proc-uptime-001.c |   45 ++++++++++++++
- tools/testing/selftests/proc/proc-uptime-002.c |   79 +++++++++++++++++++++++++
- tools/testing/selftests/proc/proc-uptime.h     |   74 +++++++++++++++++++++++
- 5 files changed, 202 insertions(+)
-
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -4,4 +4,6 @@
- /proc-self-map-files-002
- /proc-self-syscall
- /proc-self-wchan
-+/proc-uptime-001
-+/proc-uptime-002
- /read
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -7,6 +7,8 @@ TEST_GEN_PROGS += proc-self-map-files-001
- TEST_GEN_PROGS += proc-self-map-files-002
- TEST_GEN_PROGS += proc-self-syscall
- TEST_GEN_PROGS += proc-self-wchan
-+TEST_GEN_PROGS += proc-uptime-001
-+TEST_GEN_PROGS += proc-uptime-002
- TEST_GEN_PROGS += read
+diff --git a/arch/x86/kernel/cpuid.c b/arch/x86/kernel/cpuid.c
+index 0931a105ffe16cde4640e759efa600b23a756d84..1d300f96df4b316dbe3392c8221467cfd8593272 100644
+--- a/arch/x86/kernel/cpuid.c
++++ b/arch/x86/kernel/cpuid.c
+@@ -40,6 +40,7 @@
+ #include <linux/notifier.h>
+ #include <linux/uaccess.h>
+ #include <linux/gfp.h>
++#include <linux/completion.h>
  
- include ../lib.mk
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-uptime-001.c
-@@ -0,0 +1,45 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+// Test that values in /proc/uptime increment monotonically.
-+#undef NDEBUG
-+#include <assert.h>
-+#include <stdint.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
+ #include <asm/processor.h>
+ #include <asm/msr.h>
+@@ -47,19 +48,27 @@
+ static struct class *cpuid_class;
+ static enum cpuhp_state cpuhp_cpuid_state;
+ 
++struct cpuid_regs_done {
++	struct cpuid_regs regs;
++	struct completion done;
++};
 +
-+#include "proc-uptime.h"
+ static void cpuid_smp_cpuid(void *cmd_block)
+ {
+-	struct cpuid_regs *cmd = (struct cpuid_regs *)cmd_block;
++	struct cpuid_regs_done *cmd = cmd_block;
 +
-+int main(void)
-+{
-+	uint64_t start, u0, u1, i0, i1;
-+	int fd;
++	cpuid_count(cmd->regs.eax, cmd->regs.ecx,
++		    &cmd->regs.eax, &cmd->regs.ebx,
++		    &cmd->regs.ecx, &cmd->regs.edx);
+ 
+-	cpuid_count(cmd->eax, cmd->ecx,
+-		    &cmd->eax, &cmd->ebx, &cmd->ecx, &cmd->edx);
++	complete(&cmd->done);
+ }
+ 
+ static ssize_t cpuid_read(struct file *file, char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
+ 	char __user *tmp = buf;
+-	struct cpuid_regs cmd;
++	struct cpuid_regs_done cmd;
+ 	int cpu = iminor(file_inode(file));
+ 	u64 pos = *ppos;
+ 	ssize_t bytes = 0;
+@@ -68,19 +77,28 @@ static ssize_t cpuid_read(struct file *file, char __user *buf,
+ 	if (count % 16)
+ 		return -EINVAL;	/* Invalid chunk size */
+ 
++	init_completion(&cmd.done);
+ 	for (; count; count -= 16) {
+-		cmd.eax = pos;
+-		cmd.ecx = pos >> 32;
+-		err = smp_call_function_single(cpu, cpuid_smp_cpuid, &cmd, 1);
++		call_single_data_t csd = {
++			.func = cpuid_smp_cpuid,
++			.info = &cmd,
++		};
 +
-+	fd = open("/proc/uptime", O_RDONLY);
-+	assert(fd >= 0);
++		cmd.regs.eax = pos;
++		cmd.regs.ecx = pos >> 32;
 +
-+	proc_uptime(fd, &u0, &i0);
-+	start = u0;
-+	do {
-+		proc_uptime(fd, &u1, &i1);
-+		assert(u1 >= u0);
-+		assert(i1 >= i0);
-+		u0 = u1;
-+		i0 = i1;
-+	} while (u1 - start < 100);
-+
-+	return 0;
-+}
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-uptime-002.c
-@@ -0,0 +1,79 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+// Test that values in /proc/uptime increment monotonically
-+// while shifting across CPUs.
-+#define _GNU_SOURCE
-+#undef NDEBUG
-+#include <assert.h>
-+#include <unistd.h>
-+#include <sys/syscall.h>
-+#include <stdlib.h>
-+#include <string.h>
-+
-+#include <stdint.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+
-+#include "proc-uptime.h"
-+
-+static inline int sys_sched_getaffinity(pid_t pid, unsigned int len, unsigned long *m)
-+{
-+	return syscall(SYS_sched_getaffinity, pid, len, m);
-+}
-+
-+static inline int sys_sched_setaffinity(pid_t pid, unsigned int len, unsigned long *m)
-+{
-+	return syscall(SYS_sched_setaffinity, pid, len, m);
-+}
-+
-+int main(void)
-+{
-+	unsigned int len;
-+	unsigned long *m;
-+	unsigned int cpu;
-+	uint64_t u0, u1, i0, i1;
-+	int fd;
-+
-+	/* find out "nr_cpu_ids" */
-+	m = NULL;
-+	len = 0;
-+	do {
-+		len += sizeof(unsigned long);
-+		free(m);
-+		m = malloc(len);
-+	} while (sys_sched_getaffinity(0, len, m) == -EINVAL);
-+
-+	fd = open("/proc/uptime", O_RDONLY);
-+	assert(fd >= 0);
-+
-+	proc_uptime(fd, &u0, &i0);
-+	for (cpu = 0; cpu < len * 8; cpu++) {
-+		memset(m, 0, len);
-+		m[cpu / (8 * sizeof(unsigned long))] |= 1UL << (cpu % (8 * sizeof(unsigned long)));
-+
-+		/* CPU might not exist, ignore error */
-+		sys_sched_setaffinity(0, len, m);
-+
-+		proc_uptime(fd, &u1, &i1);
-+		assert(u1 >= u0);
-+		assert(i1 >= i0);
-+		u0 = u1;
-+		i0 = i1;
-+	}
-+
-+	return 0;
-+}
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-uptime.h
-@@ -0,0 +1,74 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+#undef NDEBUG
-+#include <assert.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+
-+static unsigned long long xstrtoull(const char *p, char **end)
-+{
-+	if (*p == '0') {
-+		*end = (char *)p + 1;
-+		return 0;
-+	} else if ('1' <= *p && *p <= '9') {
-+		unsigned long long val;
-+
-+		errno = 0;
-+		val = strtoull(p, end, 10);
-+		assert(errno == 0);
-+		return val;
-+	} else
-+		assert(0);
-+}
-+
-+static void proc_uptime(int fd, uint64_t *uptime, uint64_t *idle)
-+{
-+	uint64_t val1, val2;
-+	char buf[64], *p;
-+	ssize_t rv;
-+
-+	/* save "p < end" checks */
-+	memset(buf, 0, sizeof(buf));
-+	rv = pread(fd, buf, sizeof(buf), 0);
-+	assert(0 <= rv && rv <= sizeof(buf));
-+	buf[sizeof(buf) - 1] = '\0';
-+
-+	p = buf;
-+
-+	val1 = xstrtoull(p, &p);
-+	assert(p[0] == '.');
-+	assert('0' <= p[1] && p[1] <= '9');
-+	assert('0' <= p[2] && p[2] <= '9');
-+	assert(p[3] == ' ');
-+
-+	val2 = (p[1] - '0') * 10 + p[2] - '0';
-+	*uptime = val1 * 100 + val2;
-+
-+	p += 4;
-+
-+	val1 = xstrtoull(p, &p);
-+	assert(p[0] == '.');
-+	assert('0' <= p[1] && p[1] <= '9');
-+	assert('0' <= p[2] && p[2] <= '9');
-+	assert(p[3] == '\n');
-+
-+	val2 = (p[1] - '0') * 10 + p[2] - '0';
-+	*idle = val1 * 100 + val2;
-+
-+	assert(p + 4 == buf + rv);
-+}
++		err = smp_call_function_single_async(cpu, &csd);
+ 		if (err)
+ 			break;
+-		if (copy_to_user(tmp, &cmd, 16)) {
++		wait_for_completion(&cmd.done);
++		if (copy_to_user(tmp, &cmd.regs, 16)) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
+ 		tmp += 16;
+ 		bytes += 16;
+ 		*ppos = ++pos;
++		reinit_completion(&cmd.done);
+ 	}
+ 
+ 	return bytes ? bytes : err;
+-- 
+2.16.2.804.g6dcf76e118-goog
