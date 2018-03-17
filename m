@@ -1,65 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752927AbeCQUmi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 16:42:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41524 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752726AbeCQUmb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 16:42:31 -0400
-Subject: Re: Unknown symbols in module (iio)
-To: Srishti Sharma <srishtishar@gmail.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-References: <CAB3L5ow-gf0Z7NCRW1V0v+spRF553zx=J_pwc5m5YXxW4S27Lg@mail.gmail.com>
-Cc: linux-iio@vger.kernel.org
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a1ceed29-158a-5ba8-6b05-cddd043baef8@infradead.org>
-Date: Sat, 17 Mar 2018 13:42:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753003AbeCQUoV (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 16:44:21 -0400
+Received: from sauhun.de ([88.99.104.3]:38673 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751623AbeCQUoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 16:44:19 -0400
+Date: Sat, 17 Mar 2018 21:44:18 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] i2c: i2c-stm32f7: fix no check on returned
+ setup
+Message-ID: <20180317204417.xwfl32lr7zt3dy25@ninjato>
+References: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB3L5ow-gf0Z7NCRW1V0v+spRF553zx=J_pwc5m5YXxW4S27Lg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="boro3g3wgwwiedfk"
+Content-Disposition: inline
+In-Reply-To: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[adding linux-iio mailing list]
 
-Hi,
+--boro3g3wgwwiedfk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's always a good idea to include the kernel version in a problem report.
+On Mon, Mar 12, 2018 at 01:53:21PM +0100, Pierre-Yves MORDRET wrote:
+> Before assigning returned setup structure check if not null
+>=20
+> Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 
-
-On 03/05/2018 03:17 AM, Srishti Sharma wrote:
-> Hello,
-> I was trying to work with the iio dummy driver, and when I try to load
-> the iio_dummy_evgen.ko module I am getting unknown symbols found in
-> module error on running modprobe.
-> 
-> These variables are unknown
-> iio_bus_type		>>> in industrialio-core
-> irq_sim_init		>>> in iio_dummy_evgen
-> irq_sim_fini		>>> same
-> irq_sim_fire		>>> same
-> irq_sim_fini		>>> [duplicate]
-
-I tested this using Linux 4.16-rc5.  As long as I manually load all
-modules in the needed order, they will all load with no symbol problems.
+Maxime? Alexandre?
 
 
-> All of these variables are present in the Module.symvers file in the
-> /lib/modules/<kernel version>/build directory. The kernel and the
-> modules versions match. I ran make clean, make, and make
-> modules_install before trying to load them. I am unable to figure out
-> the problem. Where I might be going wrong any ideas ?
+--boro3g3wgwwiedfk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Were you expecting some module autoloading based on their internal
-dependencies?  If so, maybe someone on the linux-iio mailing list
-could comment on that.
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqtfhUACgkQFA3kzBSg
+KbZ9KxAAgF+tTQhdC/Xp5XrvoN/ChJ//Y8jLjHtHEdjHUeEjMFNsZwkB0GIx/g2k
+RhOTtVCHiAwzdMo1fy9Slg1qDayIvTZmpu7pjPZLhE3NJVi3eiXaTYe12fDCI+u9
+qUYyFBnTNINB0nSGUO+H4ngCtWqemPRQ+uJLE2ULhhMEQPbRzLaSfoGW5r7wAAuc
+aza9vb+4grLItFdZhsJcWNUPwIykNqy8Mpzt722SQ/uEbX4sE54sD29eelb2W5nK
+5RjymZPvDw34gPkn2BfidB8JClg+o7v61VzipM4MAOQ5I/zKEZ/fjXQ1FXNnb5Yt
+3lfqCzkNQxstw5/s5dzskGxPasB3zcBCcnEKYJW2TGNVQgEJ32SvnGu4gIjFOZvv
+yAJXzlGx6z2StPBrqCqXPB9NwMYE7nUosZD1JncIfbJbKYpg+zWkrye1b+ebPIym
+ktso021XdIW81rCZByvC0UN/WXxXMF0CbdD0bTilu7veoCGKB1LUDzspNyMTNUdc
+Jusn/38RkSYErLOaezBUr5imFMRefHqHrx6wd2g5IhoZqsbPVPAjCXxGvq1N1mb4
+X476qDRy7tGjumzHea0E8bzbb/+XGYXenJLmWEUYdWLeBYorrmoXD/GRKP+Nw6nW
+l52a0DvICsvhZq7T/XiY4pseWirFPCzANO2pcEZ2MKaxowB2bi8=
+=7u4G
+-----END PGP SIGNATURE-----
 
--- 
-~Randy
+--boro3g3wgwwiedfk--
