@@ -1,87 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752809AbeCQAzC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 20:55:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55900 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCQAzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 20:55:00 -0400
-Date: Sat, 17 Mar 2018 00:54:58 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v5 2/9] proc/sysctl: Provide additional ctl_table.flags
- checks
-Message-ID: <20180317005458.GA4449@wotan.suse.de>
-References: <1521224030-2185-1-git-send-email-longman@redhat.com>
- <1521224030-2185-3-git-send-email-longman@redhat.com>
+        id S1752886AbeCQAzT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 20:55:19 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:41882 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752828AbeCQAzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 20:55:17 -0400
+Date: Sat, 17 Mar 2018 01:55:13 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
+        Sekhar Nori <nsekhar@ti.com>, John Keeping <john@metanate.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] PCI: endpoint: BAR width should not depend on
+ sizeof dma_addr_t
+Message-ID: <20180317005513.GB22414@axis.com>
+References: <20180308133331.19464-1-niklas.cassel@axis.com>
+ <20180308133331.19464-2-niklas.cassel@axis.com>
+ <20180316180220.GA13505@red-moon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521224030-2185-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180316180220.GA13505@red-moon>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:13:43PM -0400, Waiman Long wrote:
-> Checking code is added to provide the following additional
-> ctl_table.flags checks:
+On Fri, Mar 16, 2018 at 06:02:20PM +0000, Lorenzo Pieralisi wrote:
+> On Thu, Mar 08, 2018 at 02:33:26PM +0100, Niklas Cassel wrote:
+> > If a BAR supports 64-bit width or not depends on the hardware,
+> > and should thus not depend on sizeof(dma_addr_t).
+> > 
+> > Since this driver is generic, default to always using BAR width
+> > of 32-bits. 64-bit BARs can easily be tested by replacing
+> > PCI_BASE_ADDRESS_MEM_TYPE_32 with PCI_BASE_ADDRESS_MEM_TYPE_64
+> > in bar_flags.
+> > 
+> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > ---
+> > Note to Lorenzo/Bjorn:
+> > It is not trivial to convert the bar_size + bar_flags +
+> > struct pci_epf->bar member array to an array of struct resources,
+> > since we need to be able to store the addresses returned
+> > by dma_alloc_coherent(), which is of type dma_addr_t.
+> > struct resource uses resource_size_t, which is defined as phys_addr_t.
+> > E.g. ARTPEC-7 uses 64-bit dma_addr_t, but only 32-bit phys_addr_t.
+> > 
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 15 +++++++++------
+> >  1 file changed, 9 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > index 800da09d9005..7c70433b11a7 100644
+> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > @@ -71,6 +71,14 @@ struct pci_epf_test_data {
+> >  };
+> >  
+> >  static int bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
+> > +static int bar_flags[] = {
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32
+> > +};
 > 
->  1) No unknown flag is allowed.
->  2) Minimum of a range cannot be larger than the maximum value.
->  3) The signed and unsigned flags are mutually exclusive.
->  4) The proc_handler should be consistent with the signed or unsigned
->     flags.
+> Niklas,
 > 
-> Two new flags are added to indicate if the min/max values are signed
-> or unsigned - CTL_FLAGS_SIGNED_RANGE & CTL_FLAGS_UNSIGNED_RANGE.
-> These 2 flags can be optionally enabled for range checking purpose.
-> But either one of them must be set with CTL_FLAGS_CLAMP_RANGE.
+> I think you are almost there, I have one question though to address
+> that can even simplify the patchset.
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
+> If, according to your own commit logs (and my reading of the code), the
+> Cadence driver makes a decision on the BAR size just by checking the
+> corresponding region size (I would be happy to hear the reason
+> underpinning that choice, BTW), why can't we do the same for DWC (ie to
+> let the DWC driver decides whether a BAR should be 64 or 32 bits ?)
 
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index e446e1f..088f032 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -134,14 +134,26 @@ struct ctl_table
->   *	the input value. No lower bound or upper bound checking will be
->   *	done if the corresponding minimum or maximum value isn't provided.
->   *
-> + * @CTL_FLAGS_SIGNED_RANGE: Set to indicate that the extra1 and extra2
-> + *	fields are pointers to minimum and maximum signed values of
-> + *	an allowable range.
-> + *
-> + * @CTL_FLAGS_UNSIGNED_RANGE: Set to indicate that the extra1 and extra2
-> + *	fields are pointers to minimum and maximum unsigned values of
-> + *	an allowable range.
-> + *
->   * At most 16 different flags are allowed.
->   */
->  enum ctl_table_flags {
->  	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
-> -	__CTL_FLAGS_MAX			= BIT(1),
-> +	CTL_FLAGS_SIGNED_RANGE		= BIT(1),
-> +	CTL_FLAGS_UNSIGNED_RANGE	= BIT(2),
-> +	__CTL_FLAGS_MAX			= BIT(3),
->  };
+We could, but I think that would be a mistake.
 
-You are adding new flags which the user can set, and yet these are used
-internally.
+The API that the user/"endpoint function" has available to configure
+the BARs:
+pci_epc_set_bar()
 
-It would be best if internal flags are just that, not flags that a user can set.
+If the user, for some reason, wants to configure a BAR with a
+64-bit width, even though the BAR size is less than 4 GB,
+I think that the API should allow that.
 
-This patch should be folded with the first one.
+This would not be possible if pci_epc_set_bar() would start to
+ignore PCI_BASE_ADDRESS_MEM_TYPE_64 from the flags parameter
+(and BAR width thus only being controlled by the size parameter).
 
-I'm starting to loose hope on these patch sets.
+int pci_epc_set_bar(struct pci_epc *epc, u8 func_no, enum pci_barno bar,
+	            dma_addr_t bar_phys, size_t size, int flags);
 
-  Luis
+
+
+Best regards,
+Niklas
