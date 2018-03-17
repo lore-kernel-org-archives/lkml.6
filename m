@@ -1,90 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeCQIhO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 04:37:14 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33497 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751693AbeCQIhM (ORCPT
+        id S1751820AbeCQJMW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 05:12:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57598 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbeCQJMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 04:37:12 -0400
-X-Google-Smtp-Source: AG47ELsfRpR6gayVGMPNwrjdSFy0/ROad1al5WTsXj8OlF7uvzhPbMfLirP0cb4tpRlzXDDPCPJzcQ==
-Date: Sat, 17 Mar 2018 09:37:03 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] watchdog: sama5d4: make use of timeout-secs
- provided in devicetree
-Message-ID: <20180317083646.GA927@gmail.com>
-References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
- <20180316133703.GA31029@gmail.com>
- <f3d913af-a396-ccdf-105f-c4e64397cbff@roeck-us.net>
+        Sat, 17 Mar 2018 05:12:21 -0400
+Date: Sat, 17 Mar 2018 10:12:15 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linuxram@us.ibm.com,
+        dave.hansen@intel.com, mpe@ellerman.id.au, mingo@kernel.org,
+        akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH 1/3] x86, pkeys: do not special case protection key 0
+In-Reply-To: <20180316214656.0E059008@viggo.jf.intel.com>
+Message-ID: <alpine.DEB.2.21.1803171011100.1509@nanos.tec.linutronix.de>
+References: <20180316214654.895E24EC@viggo.jf.intel.com> <20180316214656.0E059008@viggo.jf.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
-Content-Disposition: inline
-In-Reply-To: <f3d913af-a396-ccdf-105f-c4e64397cbff@roeck-us.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 16 Mar 2018, Dave Hansen wrote:
 
---LpQ9ahxlCli8rRTG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+> inconsistent with the manpages, and also inconsistent with
+> mm->context.pkey_allocation_map.  Stop special casing it and only
+> disallow values that are actually bad (< 0).
+> 
+> The end-user visible effect of this is that you can now use
+> mprotect_pkey() to set pkey=0.
+> 
+> This is a bit nicer than what Ram proposed because it is simpler
+> and removes special-casing for pkey 0.  On the other hand, it does
+> allow applciations to pkey_free() pkey-0, but that's just a silly
+> thing to do, so we are not going to protect against it.
 
-On Fri, Mar 16, 2018 at 06:56:27PM -0700, Guenter Roeck wrote:
-> On 03/16/2018 06:37 AM, Marcus Folkesson wrote:
-> > Hi,
-> >=20
-> > Am I supposed to do something more to make this patchset picked up?
-> >=20
->=20
-> Did you check linux-next ?
+What's the consequence of that? Application crashing and burning itself or
+something more subtle?
 
-:-)
+Thanks,
 
-Thank you
-
-/Marcus
-
->=20
-> Guenter
->=20
-
---LpQ9ahxlCli8rRTG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlqs06oACgkQiIBOb1ld
-UjIvSQ/+OZNz57o0QzL0AcahUDcORE0yMlvflD5NjEFI6idt7gcrLkx+kTr9L+Pq
-HGyamPmXqSY01zTqbSfcIdJQ3hKO3Bs8TaGaoksdP/fyJRQ71QkvEWn09P8VnElb
-SBxkcEj8OPzIk5bgy+oW2o8a1Qlv/7qsrsihuEBRK9NPZ+ac/Xc3Zcg4K4l/28MT
-LmfK7H1gTYk38hjk0TzMrv9hVJDAbLudhow74kB4czRz0T6bJBRbkZdaoANGejJN
-TKFZkBh3/pqQ/IKu498Qnm7K0uLqQD8q3FJKRXPEjuIkzGSOYkVkuJGTJA8m6l3+
-72lfpERxcO1+nl+2MMX9CPM7F7lV25mPhWgQ/C40tYjpB+0MUrT8jv3CBJcTN2t7
-cZLIA12aI21nBuvsWNWH+X4npSu1CPPXRvZPx2rfP/L5fHlve7unY0qr3CL9fGtV
-rKTA3+ZH5jEkD+qrGnBCWEbArzhC70UyrT3C/fChOZs36HnrCUD3GocUpD2DQnU4
-q+oQ8capQqf2T3/PoRTpx1oOZ6KqLBll6WIU0NJvOUmlE6d9K/KXXfM4G5RDrrf2
-s1qh1ZPYSq44tTPDy7xDRqsgMbfqsHRae8jyTcB4MSHfJajR9w0utkRxvPDnateg
-FhQ5lyF48DBfz5IXgZ/e2JQLebAkAb7VOfZmPm6wZy6THST6L7E=
-=ubOx
------END PGP SIGNATURE-----
-
---LpQ9ahxlCli8rRTG--
+	tglx
