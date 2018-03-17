@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeCQANi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 20:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCQANh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 20:13:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C9620855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sat, 17 Mar 2018 09:13:34 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: rostedt <rostedt@goodmis.org>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
- blacklist
-Message-Id: <20180317091334.55f1fc325c26deaa4d4a4d19@kernel.org>
-In-Reply-To: <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
-References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
-        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
-        <20170714142900.1c91949c@gandalf.local.home>
-        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
-        <20180316112517.66bdd85a@gandalf.local.home>
-        <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
-        <20180316124134.30fa47d5@gandalf.local.home>
-        <20180316124840.3e83bbec@gandalf.local.home>
-        <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752283AbeCQAVc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 20:21:32 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37734 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeCQAVa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 20:21:30 -0400
+Date: Sat, 17 Mar 2018 00:21:14 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: syzbot <syzbot+36712f50b0552615bf59@syzkaller.appspotmail.com>
+Cc: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        ira.weiny@intel.com, jgg@ziepe.ca, leonro@mellanox.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com
+Subject: Re: general protection fault in ucma_connect
+Message-ID: <20180317002114.GL30522@ZenIV.linux.org.uk>
+References: <f4f5e80792347b0aa7056790643c@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4f5e80792347b0aa7056790643c@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Mar 2018 13:53:01 -0400 (EDT)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Fri, Mar 16, 2018 at 04:59:02PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on upstream commit
+> e2c15aff5f353ba80bd3bb49840837f65fa5cc43 (Thu Mar 15 18:07:35 2018 +0000)
+> Merge tag 'sound-4.16-rc6' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+> 
+> So far this crash happened 2 times on upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
 
-> ----- On Mar 16, 2018, at 12:48 PM, rostedt rostedt@goodmis.org wrote:
-> 
-> > On Fri, 16 Mar 2018 12:41:34 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> >> Yes, kprobes are dangerous. I'm not saying it shouldn't be fixed, I'm
-> >> saying that I don't have time to fix it now, but would be happy to
-> >> accept patches if someone else does so.
-> > 
-> > And looking at what I replied before for the original patch. It would
-> > probably be a good idea to blacklist directories. Like we do with
-> > function tracing. We probably should black list both kernel/tracing and
-> > kernel/events from being probed.
-> > 
-> > Did this come up at plumbers? You were there too, I don't remember
-> > discussing it there.
-> 
-> I don't remember this coming up last Plumbers nor KS neither, given
-> that we were focused on other topics.
-> 
-> Would the general approach you envision be based on emitting all code
-> generated by compilation of all objects under kernel/tracing and
-> kernel/events into a specific "nokprobes" text section of the kernel ?
-> Perhaps we could create a specific linker scripts for those directories,
-> or do you have in mind a neater way to do this ?
+May I politely inquire why am I getting Cc on the slew of ucma reports?
+My last involvement with that thing that wouldn't have been absolutely
+trivial had been back in 2012, and even that had been a conversion of
+fget() to fdget() - nowhere near the areas implicated by those.  Anything
+more recent would have no impact on the object code - replacement of
+POLL{IN,RDNORM} with EPOLL{IN,RDNORM} (equal values on x86) and two
+replacements of unsigned int with __poll_t, which is typedefed to
+unsigned.
 
-.kprobes.text section still exists. As I pointed in previous mail, I don't
-think we have to put all those code into that section. But if you want,
-it is acceptable to have a kconfig which push most of those ftrace related
-code into .kprobes.text section.
+It's not that I've objections against helping to debug that thing (other
+than general aversion to drivers/infinibarf), but I'm really curious -
+just what got me volunteered from the syzbot POV?
 
-Thank,
-
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> > 
-> > -- Steve
-> 
-> -- 
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Al, digging through tons of unpleasant code in fs/{config,debug}fs
+at the moment...
