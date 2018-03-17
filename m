@@ -1,59 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeCQAcF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 20:32:05 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43312 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751719AbeCQAcE (ORCPT
+        id S1752798AbeCQAcU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 20:32:20 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:41299 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751829AbeCQAcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 20:32:04 -0400
-X-Google-Smtp-Source: AG47ELv7cGLxXX/84Cz4iB+6l+2iHbwago2ycHLs+6xwVTMuTqGRJCkTgn1tm4x+cCSyfBn0nlBeFA==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] drm/i915: Disable some extra clang warnings
-Date: Fri, 16 Mar 2018 17:31:51 -0700
-Message-Id: <20180317003151.252750-1-mka@chromium.org>
-X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+        Fri, 16 Mar 2018 20:32:18 -0400
+Date: Sat, 17 Mar 2018 01:32:16 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dcache: remove trailing whitespace
+Message-ID: <20180317003216.GA22414@axis.com>
+References: <20180316143400.8698-1-niklas.cassel@axis.com>
+ <20180316155538.GD30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180316155538.GD30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
-warnings to full") enabled extra warnings for i915 to spot possible
-bugs in new code, and then disabled a subset of these warnings to keep
-the current code building without warnings (with gcc). Enabling the
-extra warnings also enabled some additional clang-only warnings, as a
-result building i915 with clang currently is extremely noisy. For now
-also disable the clang warnings sign-compare, sometimes-uninitialized,
-unneeded-internal-declaration and initializer-overrides. If desired
-they can be re-enabled after the code has been fixed.
+On Fri, Mar 16, 2018 at 03:55:38PM +0000, Al Viro wrote:
+> On Fri, Mar 16, 2018 at 03:34:00PM +0100, Niklas Cassel wrote:
+> > Remove trailing whitespace.
+> > Remove empty line and trailing whitespace after function comments.
+> > Remove an extra space in one of the comments.
+> > Fix a typo in of the comments.
+> > 
+> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > ---
+> > I know that these type of patches are not really appreciated,
+> > however, there is enough trailing whitespace in this file to
+> > distract me from reading the real code.
+> 
+> No, they are not, and here's why:
+> 
+> Applying: dcache: remove trailing whitespace
+> error: patch failed: fs/dcache.c:254
+> error: fs/dcache.c: patch does not apply
+> Patch failed at 0001 dcache: remove trailing whitespace
+> 
+> ... which, BTW, happens in *all* branches.  If you do that kind
+> of stuff, at least do it against something in the public trees
+> and _tell_ _what_ _it_ _is_ _against_.
 
-Fixes: 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
-warnings to full")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/gpu/drm/i915/Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
+Hello Al,
 
-diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-index 091aef281963..ad05796a96ba 100644
---- a/drivers/gpu/drm/i915/Makefile
-+++ b/drivers/gpu/drm/i915/Makefile
-@@ -17,6 +17,10 @@ subdir-ccflags-y += $(call cc-disable-warning, unused-parameter)
- subdir-ccflags-y += $(call cc-disable-warning, type-limits)
- subdir-ccflags-y += $(call cc-disable-warning, missing-field-initializers)
- subdir-ccflags-y += $(call cc-disable-warning, implicit-fallthrough)
-+subdir-ccflags-y += $(call cc-disable-warning, sign-compare)
-+subdir-ccflags-y += $(call cc-disable-warning, sometimes-uninitialized)
-+subdir-ccflags-y += $(call cc-disable-warning, unneeded-internal-declaration)
-+subdir-ccflags-y += $(call cc-disable-warning, initializer-overrides)
- subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
- 
- # Fine grained warnings disable
--- 
-2.16.2.804.g6dcf76e118-goog
+I always base my patches on linux-next, which is usually correct,
+and if it isn't, the maintainer usually says something :)
+
+The patch in question is based on the latest linux-next tag:
+next-20180316
+
+It appears that the following three commits are in linux-next,
+but not on your for-next branch @ your vfs git tree:
+61fc3c8ce7f1 dcache: remove trailing whitespace
+929387149a47 dcache: fix indirectly reclaimable memory accounting
+ff335768ddd0 dcache: fix indirectly reclaimable memory accounting for CONFIG_SLOB
+
+They appear to come from Andrew Morton's tree.
+
+Would you prefer me to rebase my patch against your
+for-next branch instead?
+
+> Not applied.  Please, do it sanely.  BTW, which editor is _that_
+> annoying?  Anything that shoves trailing whitespace in my face
+> would've been either configured (with considerable cursing at
+> the people who'd set such defaults) or, should that prove
+> impossible, given a boot...
+
+I'm using emacs, but having added show-trailing-whitespace
+is my personal preference, however, I quite sure that I'm
+not the only one who has an editor configured like this.
+
+
+Kind regards,
+Niklas
