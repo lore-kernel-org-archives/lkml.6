@@ -1,67 +1,84 @@
-Return-Path: <davem@davemloft.net>
-X-Google-Smtp-Source: AG47ELtS6JmZuK17cXA+cMcceXne+nJ9/iWZs/OWI9lDhk+ORoR+e2jbgCT3+wd2nrkbht8fB1s6
-ARC-Seal: i=1; a=rsa-sha256; t=1521225708; cv=none;
+Return-Path: <christian.brauner@canonical.com>
+X-Google-Smtp-Source: AG47ELufG/0/nrkQNlTKeyfHel4Mgt2awwecVO/KiNr0RyGPdVvRa/w/cqf98PvKU4TSlkxrJ2qY
+ARC-Seal: i=1; a=rsa-sha256; t=1521282546; cv=none;
         d=google.com; s=arc-20160816;
-        b=ybHwQflkIMM0UK74qsWUMQj38R24nUnT4k5k8n5Zo7kBblSEaZS5uWtO3Q29pQLtQl
-         2yQdCDLRynZJTZulBK28qyCWe1/BNFp2GvdDS25eElASWC9fXZUplL6y3zHYGXpajlvE
-         RjWPIsXD2rTxycFvKISp5jBvKio5EnFIFESgeva538ZlIdNQT7iSwNijCmXn2B+Yj1L8
-         UCs2M4H4iXXowCPZ92YV8ct1iJA+b+2igIj47tafcXfAmRZF+4TM7ZDJjD/fccSz5Qmj
-         KoCIX84rX9DqLj5Y0ClVziASgpt8PdKNjaJwUg4uMf8lKKHyRtgrE6hqchh3PY1+Sc5o
-         1sRg==
+        b=DAD43c2zlmtk5gf5TrwL5K7bjfKoozEXUuB+dOvuLyw0LhbdGK1IAcGElv6QoG86do
+         2hHYMxyD9wupDBVaYNIKqRxkM9cBRX9g6q+ih3P6mjob6Dpqmub9Dzr7qDAPm4OZlHhr
+         JMkuIGKLFTqJdGVlYZKa3kRh1793zrnCzp9Fvipw69L0SSZPgrvqptkckBGW3vT7EM/j
+         biWVtP1P2XyKFWq9YhyONtDGLi99+k7rNC188Ll+UNKuvQBBuEEO2C8DEKHiZogTAKP1
+         uKA/trJiN3ZRgfWb2bLcxc6gRx5Qf+sxnbjX4KWHAtXIIUUmhg4b8O0cVZ8ZugB6qcY+
+         mTUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:arc-authentication-results;
-        bh=IPktq7gyd4fRB6Ono6PLZOGIDuV1f2ZfHT1GByvsHpk=;
-        b=ZJjGtvKmgE+zza7wMGJTLJVs1z/JuoAwQx1sbqqIQRv5GJn5opNW3MHs6jQVvvBTlo
-         /ek2dc5AwdCiij7amm8Hlp/RI8lCgIMufXxm91PRZfqZ5za5nOawERZj8rzYrLP56X/1
-         An9LkOb9uBdvc55H/m9Npy5DH8TlAwgpP9QXc+5WbvbP9jjuKExBHMtWL0ZIgSQ/WBoX
-         Qd4mWsXUVmQa8a+Zat8Lm2MvWzTKu4eUeEmnxiO+XV9tse6W3px+e2N1YXtL4ZFgJBnl
-         S3q3PttBeU7gqs2UUwAFIdCf351pAhcLYO0w/+yb5wY+JOpwa2/krEr0S5wy9Q0VcsRl
-         BA4w==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=fnDAh+kzlCZKeVTYtcR3JuwPew8WWrM7In26S056CPY=;
+        b=TZbJXGLenxPOix9W/Qh0YsD7H7UWhfX5KnGM4SuSORfaC5kfcnWyxnFS4TIdehWVmH
+         n6mjDqsIx37WCArbOSmjH3eW1Yj4zRky8AuvWRUTT5+eTAKp5JUYMWJ5PmFPupsSirW3
+         N7ge2bs9mupE5768YhQwphNU8ve1YWXQZx20ZTn+pTICRHl7C+3a0mAgCB9nJNKsGjPY
+         pccCnXyPm7p6pqIgenAikTpUOK3Jbl+F+NfC/SwgvnaDyK7tJFa1coFrA5k1YFl6XJM7
+         tVlpDikCp8/Rwf0q7oY9KcTWecGZA0rKUzhAl16Y4N6048qgR3Lj+j9Ix6F/flTCfuew
+         dqDg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
-Date: Fri, 16 Mar 2018 14:41:45 -0400 (EDT)
-Message-Id: <20180316.144145.1695554148709004295.davem@davemloft.net>
-To: christian.brauner@ubuntu.com
-Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, serge@hallyn.com,
- avagin@virtuozzo.com, ktkhai@virtuozzo.com
+       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+Date: Sat, 17 Mar 2018 11:29:03 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: David Miller <davem@davemloft.net>
+Cc: christian.brauner@ubuntu.com, ebiederm@xmission.com,
+	gregkh@linuxfoundation.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, serge@hallyn.com,
+	avagin@virtuozzo.com, ktkhai@virtuozzo.com
 Subject: Re: [PATCH v2] netns: send uevent messages
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180316125030.23624-1-christian.brauner@ubuntu.com>
+Message-ID: <20180317102902.GA4301@gmail.com>
 References: <20180316125030.23624-1-christian.brauner@ubuntu.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+ <20180316.144145.1695554148709004295.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180316.144145.1695554148709004295.davem@davemloft.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595098694946431538?=
-X-GMAIL-MSGID: =?utf-8?q?1595120768234791421?=
+X-GMAIL-MSGID: =?utf-8?q?1595180367177590232?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Fri, 16 Mar 2018 13:50:30 +0100
+On Fri, Mar 16, 2018 at 02:41:45PM -0400, David Miller wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> Date: Fri, 16 Mar 2018 13:50:30 +0100
+> 
+> > +static int uevent_net_broadcast(struct sock *usk, struct sk_buff *skb,
+> > +				struct netlink_ext_ack *extack)
+> > +{
+> > +	int ret;
+> > +	/* u64 to chars: 2^64 - 1 = 21 chars */
+> > +	char buf[sizeof("SEQNUM=") + 21];
+> > +	struct sk_buff *skbc;
+> 
+> I hate to be difficult, but please use reverse christmas tree ordering
+> for local variables.
 
-> +static int uevent_net_broadcast(struct sock *usk, struct sk_buff *skb,
-> +				struct netlink_ext_ack *extack)
-> +{
-> +	int ret;
-> +	/* u64 to chars: 2^64 - 1 = 21 chars */
-> +	char buf[sizeof("SEQNUM=") + 21];
-> +	struct sk_buff *skbc;
+No problem David, coding style is important. I'm about to send out
+another version with:
 
-I hate to be difficult, but please use reverse christmas tree ordering
-for local variables.
+/* u64 to chars: 2^64 - 1 = 21 chars */
+char buf[sizeof("SEQNUM=") + 21];
+struct sk_buff *skbc;
+int ret;
 
-> +static int uevent_net_rcv_skb(struct sk_buff *skb, struct nlmsghdr *nlh,
-> +			      struct netlink_ext_ack *extack)
-> +{
-> +	int ret;
-> +	struct net *net;
+Thanks!
+Christian
 
-Likewise.
-
-Thank you.
+> 
+> > +static int uevent_net_rcv_skb(struct sk_buff *skb, struct nlmsghdr *nlh,
+> > +			      struct netlink_ext_ack *extack)
+> > +{
+> > +	int ret;
+> > +	struct net *net;
+> 
+> Likewise.
+> 
+> Thank you.
