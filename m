@@ -1,191 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeCQXK1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 19:10:27 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39136 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeCQXKY (ORCPT
+        id S1753218AbeCQXNV (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 19:13:21 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33850 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751849AbeCQXNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 19:10:24 -0400
-X-Google-Smtp-Source: AG47ELt7qUcbF3ddIoac8n5IKTbGQZ3WqSnfBaaEel9guxPmwGOvKyFlDWBnH8+ZnplyqX5yJHeudQ==
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com
-Cc: David Hildenbrand <david@redhat.com>, linux-s390@vger.kernel.org
-Subject: [PATCH] s390: Use asm/compat.h instead of linux/compat.h
-Date: Sat, 17 Mar 2018 16:09:57 -0700
-Message-Id: <20180317230957.12174-1-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Sat, 17 Mar 2018 19:13:19 -0400
+X-Google-Smtp-Source: AG47ELtdMtUV8Qr+ZHVR2enAwYM1OBqgI9p6OYwPNkVj1IBZn+0SRPS6plvPFRT4trhdI+ANBQLmRaxrfNH/7QmryTY=
+MIME-Version: 1.0
 In-Reply-To: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
-References: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
+References: <20180316132529.45126501@canb.auug.org.au> <CABeXuvrFkASp1g5LDW0MsENqtHRiT=Vp=F5GN3XdhGzaXkHNsw@mail.gmail.com>
+ <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Date: Sat, 17 Mar 2018 16:13:18 -0700
+Message-ID: <CABeXuvpoXWx3ndJ93aKA0ARQqdx4iJXn9FN4MnceYC3RTsAvvA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the y2038 tree
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include asm/compat.h directly for uses of compat_ptr.
-This includes the compat defines when CONFIG_COMPAT is
-not on.
+I posted the patch.
 
-Also make compat data structure definitions conditional on
-CONFIG_COMPAT, to remove circular include dependencies in
-elf.h
+The patch has simple changes. Let me know if maybe posting a new
+version makes sense.
 
-Cc: David Hildenbrand <david@redhat.com>
-Cc: linux-s390@vger.kernel.org
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
- arch/s390/hypfs/hypfs_sprp.c      | 1 +
- arch/s390/include/asm/compat.h    | 1 +
- arch/s390/include/asm/elf.h       | 2 ++
- arch/s390/kvm/priv.c              | 2 +-
- arch/s390/pci/pci_clp.c           | 1 +
- drivers/s390/block/dasd_ioctl.c   | 2 +-
- drivers/s390/char/fs3270.c        | 2 +-
- drivers/s390/char/sclp_ctl.c      | 1 +
- drivers/s390/char/vmcp.c          | 1 +
- drivers/s390/cio/chsc_sch.c       | 2 +-
- drivers/s390/net/qeth_core_main.c | 2 +-
- 11 files changed, 12 insertions(+), 5 deletions(-)
+I also needed this patch to build linux-next:
 
-diff --git a/arch/s390/hypfs/hypfs_sprp.c b/arch/s390/hypfs/hypfs_sprp.c
-index 5d85a039391c..d800b8067042 100644
---- a/arch/s390/hypfs/hypfs_sprp.c
-+++ b/arch/s390/hypfs/hypfs_sprp.c
-@@ -7,6 +7,7 @@
-  *    Author(s): Martin Schwidefsky <schwidefsky@de.ibm.com>
-  */
- 
-+#include <asm/compat.h>
- #include <linux/compat.h>
- #include <linux/errno.h>
- #include <linux/gfp.h>
-diff --git a/arch/s390/include/asm/compat.h b/arch/s390/include/asm/compat.h
-index 501aaff85304..1832d98c9328 100644
---- a/arch/s390/include/asm/compat.h
-+++ b/arch/s390/include/asm/compat.h
-@@ -4,6 +4,7 @@
- /*
-  * Architecture specific compatibility types
-  */
-+#include <linux/compat_time.h>
- #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-diff --git a/arch/s390/include/asm/elf.h b/arch/s390/include/asm/elf.h
-index 7d22a474a040..e572ae613b19 100644
---- a/arch/s390/include/asm/elf.h
-+++ b/arch/s390/include/asm/elf.h
-@@ -134,8 +134,10 @@
- typedef s390_fp_regs elf_fpregset_t;
- typedef s390_regs elf_gregset_t;
- 
-+#ifdef CONFIG_COMPAT
- typedef s390_fp_regs compat_elf_fpregset_t;
- typedef s390_compat_regs compat_elf_gregset_t;
-+#endif
- 
- #include <linux/sched/mm.h>	/* for task_struct */
- #include <asm/mmu_context.h>
-diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
-index a3bce0e84346..b7e6d81547bd 100644
---- a/arch/s390/kvm/priv.c
-+++ b/arch/s390/kvm/priv.c
-@@ -11,7 +11,7 @@
- #include <linux/kvm.h>
- #include <linux/gfp.h>
- #include <linux/errno.h>
--#include <linux/compat.h>
-+#include <asm/compat.h>
- #include <linux/mm_types.h>
- 
- #include <asm/asm-offsets.h>
-diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
-index 19b2d2a9b43d..4b6fe97823b7 100644
---- a/arch/s390/pci/pci_clp.c
-+++ b/arch/s390/pci/pci_clp.c
-@@ -9,6 +9,7 @@
- #define KMSG_COMPONENT "zpci"
- #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
- 
-+#include <asm/compat.h>
- #include <linux/compat.h>
- #include <linux/kernel.h>
- #include <linux/miscdevice.h>
-diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
-index 2016e0ed5865..288fa9d4d105 100644
---- a/drivers/s390/block/dasd_ioctl.c
-+++ b/drivers/s390/block/dasd_ioctl.c
-@@ -13,7 +13,7 @@
- #define KMSG_COMPONENT "dasd"
- 
- #include <linux/interrupt.h>
--#include <linux/compat.h>
-+#include <asm/compat.h>
- #include <linux/major.h>
- #include <linux/fs.h>
- #include <linux/blkpg.h>
-diff --git a/drivers/s390/char/fs3270.c b/drivers/s390/char/fs3270.c
-index 16a4e8528bbc..cf4a26c6f76d 100644
---- a/drivers/s390/char/fs3270.c
-+++ b/drivers/s390/char/fs3270.c
-@@ -12,7 +12,7 @@
- #include <linux/console.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
--#include <linux/compat.h>
-+#include <asm/compat.h>
- #include <linux/sched/signal.h>
- #include <linux/module.h>
- #include <linux/list.h>
-diff --git a/drivers/s390/char/sclp_ctl.c b/drivers/s390/char/sclp_ctl.c
-index 248b5db3eaa8..bd0d9e5cabd7 100644
---- a/drivers/s390/char/sclp_ctl.c
-+++ b/drivers/s390/char/sclp_ctl.c
-@@ -7,6 +7,7 @@
-  * Author: Michael Holzheu <holzheu@linux.vnet.ibm.com>
-  */
- 
-+#include <asm/compat.h>
- #include <linux/compat.h>
- #include <linux/uaccess.h>
- #include <linux/miscdevice.h>
-diff --git a/drivers/s390/char/vmcp.c b/drivers/s390/char/vmcp.c
-index 948ce82a7725..0a153741ea88 100644
---- a/drivers/s390/char/vmcp.c
-+++ b/drivers/s390/char/vmcp.c
-@@ -14,6 +14,7 @@
- 
- #include <linux/fs.h>
- #include <linux/init.h>
-+#include <asm/compat.h>
- #include <linux/compat.h>
- #include <linux/kernel.h>
- #include <linux/miscdevice.h>
-diff --git a/drivers/s390/cio/chsc_sch.c b/drivers/s390/cio/chsc_sch.c
-index 8d9f36625ba5..3a541e694cb1 100644
---- a/drivers/s390/cio/chsc_sch.c
-+++ b/drivers/s390/cio/chsc_sch.c
-@@ -9,7 +9,7 @@
-  */
- 
- #include <linux/slab.h>
--#include <linux/compat.h>
-+#include <asm/compat.h>
- #include <linux/device.h>
- #include <linux/module.h>
- #include <linux/uaccess.h>
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index d3529ef6e0f7..adde6b30bad6 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -10,7 +10,7 @@
- #define KMSG_COMPONENT "qeth"
- #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
- 
--#include <linux/compat.h>
-+#include <asm/compat.h>
+commit b784c76bb7c1c440a4ce06a18f4b3a936f33967d
+Author: Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Fri Mar 16 20:57:10 2018 -0700
+
+    i40iw: add missing irq.h include
+
+    iwarp driver began using irq_get_affinity_mask in commit 7e952b19eb638.
+    Add the needed include irq.h to get the definition.
+
+    This was found while trying allmodconfig for arm64, s390, and sparc.
+
+    Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+index a51798578f27..506b10e8ea4e 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+@@ -32,6 +32,7 @@
+ *
+ *******************************************************************************/
+
++#include <linux/irq.h>
  #include <linux/module.h>
  #include <linux/moduleparam.h>
- #include <linux/string.h>
--- 
-2.14.1
+ #include <linux/random.h>
+
+-Deepa
+
+On Fri, Mar 16, 2018 at 1:14 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Mar 16, 2018 at 6:23 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>> Hi Arnd,
+>>
+>> Do you want me to send the fix as a patch or should I re-post the series?
+>
+> Please send a fix relative to linux-next. Due to my travel next week, I might
+> not be able to apply it right away but maybe Stephen can add it on top until
+> I get back.
+>
+>       Arnd
+>
+>> On Thu, Mar 15, 2018 at 7:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi Arnd,
+>>>
+>>> After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
+>>> failed like this:
+>>>
+>>> In file included from include/linux/elf.h:5:0,
+>>>                  from include/linux/module.h:15,
+>>>                  from init/main.c:16:
+>>> arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_regs'
+>>>
+>>> Caused by commit
+>>>
+>>>   f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
+>>>
