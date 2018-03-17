@@ -1,59 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751809AbeCQEbY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 00:31:24 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55924 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751710AbeCQEbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 00:31:22 -0400
-Date: Sat, 17 Mar 2018 05:30:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] EDAC, sb_edac: Remove VLA usage
-Message-ID: <20180317043040.GA973@pd.tnic>
-References: <20180314182131.GA25259@embeddedgus>
+        id S1751539AbeCQEfc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 00:35:32 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2692 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbeCQEfa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 00:35:30 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 16 Mar 2018 21:35:30 -0700
+Subject: Re: [PATCH 08/14] mm/hmm: cleanup special vma handling (VM_SPECIAL)
+To: <jglisse@redhat.com>, <linux-mm@kvack.org>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+References: <20180316191414.3223-1-jglisse@redhat.com>
+ <20180316191414.3223-9-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <44d08350-7035-a26c-d6c8-29b3dc3f99eb@nvidia.com>
+Date: Fri, 16 Mar 2018 21:35:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180314182131.GA25259@embeddedgus>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180316191414.3223-9-jglisse@redhat.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 01:21:32PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wvla, remove VLA and replace it
-> with a fixed-length array instead.
+On 03/16/2018 12:14 PM, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
 > 
-> Fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
+> Special vma (one with any of the VM_SPECIAL flags) can not be access by
+> device because there is no consistent model accross device drivers on
+> those vma and their backing memory.
 > 
-> Also, remove max_interleave as it is no longer useful.
+> This patch directly use hmm_range struct for hmm_pfns_special() argument
+> as it is always affecting the whole vma and thus the whole range.
 > 
-> Reviewed-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v4:
->  - Remove max_interleave.
+> It also make behavior consistent after this patch both hmm_vma_fault()
+> and hmm_vma_get_pfns() returns -EINVAL when facing such vma. Previously
+> hmm_vma_fault() returned 0 and hmm_vma_get_pfns() return -EINVAL but
+> both were filling the HMM pfn array with special entry.
 > 
-> Changes in v3:
->  - Update macro MAX_INTERLEAVE in order to avoid too long lines.
->    This change is based on Mauro's feedback.
->  - Update changelog with Mauro's Reviewed-by.
-> 
-> Changes in v2:
->  - Use macro max_t to compute the max of all three array sizes.
->    This change is based on Borislav's feedback.
-> 
->  drivers/edac/sb_edac.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
 
-Applied, thanks.
+Hi Jerome,
 
+This seems correct. 
+
+<snip>
+
+> @@ -486,6 +478,14 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+>  	return 0;
+>  }
+>  
+> +static void hmm_pfns_special(struct hmm_range *range)
+> +{
+> +	unsigned long addr = range->start, i = 0;
+> +
+> +	for (; addr < range->end; addr += PAGE_SIZE, i++)
+> +		range->pfns[i] = HMM_PFN_SPECIAL;
+> +}
+
+Silly nit: the above would read more naturally, like this:
+
+	unsigned long addr, i = 0;
+
+	for (addr = range->start; addr < range->end; addr += PAGE_SIZE, i++)
+		range->pfns[i] = HMM_PFN_SPECIAL;
+
+Either way,
+
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+thanks,
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+John Hubbard
+NVIDIA
