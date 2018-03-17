@@ -1,28 +1,29 @@
 Return-Path: <jlayton@kernel.org>
-X-Google-Smtp-Source: AG47ELvUHw3deI9YemWy0YvUQU9oBupc+mLZy8l5GaHyCqzL3QkR2UkI25+ldnhq26s2iOT8i9xa
-ARC-Seal: i=1; a=rsa-sha256; t=1521296723; cv=none;
+X-Google-Smtp-Source: AG47ELskevkSrqZzdD9SegM4X7rvdxUnai5tQRwJLHqVCmGQ+Mjo4hH1OKqFYq8g7gj1U3OyH3fQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521305942; cv=none;
         d=google.com; s=arc-20160816;
-        b=Imf42lCO+DIMyTb9dyKI78qiiRrvszo9hcHxg+IyuJgGaMimTIFSCdf3cG/mUCzJv8
-         Um/FEDxpu1aZXlIWaQxOXZgbF+FVL8TjKhsWdLVQr1+J4wQ5EapMj+r8AY9nn98xq/in
-         cj7yI+ZGWYisFpX6C9wBRC6lO4ngyURnsJZ+G8uQs97xxPUVD+qMa8TCKCb01bvQp/U8
-         WcQWBqfiN96ie/8snbWkdsffUjzpk8/cwQyf7jP0xagLJ3qXlHoANft4xSLMu9mltdRL
-         7VDJOCbSl91+rFQtB0krJObjOKc2dh1twsAc3Wc/Hc4694oFCVC8bBrYo6ZVL4r9JtzN
-         syRA==
+        b=Yj40pkk6QGKtMxuH1Mb6/4BLQjuB58Qx+bU2w123bU+rK1PwET6kULcyv0pTnG7RCu
+         sBVMRKEp3H7ccfq5O8dxD0HyBY5Dbhy+UjiTnkh7ryY0zrHcWSk6OmtMf+VU4eqBVvJm
+         l0vm1bGzQQvbMMBhYCOtJ5R7wQr4o+LsCi9Q1/A5I+jXS2PEjugQh+i80/ZBQZJDgO6a
+         IdiTN5+lBkUQGSpCmyIMfOHCdwoUPMBrdB1sVzQj1gHYyLjbXoRcXurb2Emz/ZiELvpH
+         mn+Izp9EN1/RdMZ3cFkJdlSBXZiGzFLumLYphMuGFtOIbWsHcNHF/+Bjx45bE73qggVB
+         j55Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dmarc-filter:arc-authentication-results;
-        bh=V4WFXze4/WNai1UWm1Qf2YyedMryBT+qTpm5CpFNZ04=;
-        b=e5F6Bi1nHuAGU+7AMBEpZDIsKbG/7fzAT2bYsl1/PGR0PlQdUWZ0wy00Nrsi41j/6E
-         fWKNhfzOraCaOYbP9pp8NIiQ0sO3ONZeZT+j2QrqPOFUXPO34qo0QordnCRpYwSlbY1u
-         CoQPgDuujfbLz8i5484K0Rcjb/GOjyxcryokvtL+ujkjpm/lGJ5hjtk3+vQn8mAkyCqf
-         4O8cytqCGNvnCCJM5hRChJoxEmjMrAlT2vbtTV8rJ/1B5eZXc+ZO9511ZOdPTiDTXwH8
-         EAKDogbEcSE1hAH3CJCKxBoaA5+rf82SU/yTA3PF+cVksLBr9z4VK9DrL5Mks+tonHae
-         xdEw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:dmarc-filter
+         :arc-authentication-results;
+        bh=CL8VUMxmGau3NN2b1Vozqm1WB6N2RwDt3rfEZPARyFw=;
+        b=0FDks3wlVdiFnbw8smtIJguWvBTP+itLIYMbv57tHao3qUf3lbk2a+8EiMCljj36kD
+         bazFD7iOipPACZir/jEkKqlDgThoW81ru4t3KeZpQocixk0GEMSR7zQPq00YCYhz7t4Y
+         PERC1Gf6Jui3Zzmz37NNBAmpK49ULgFL7BF8tG7zrkJlCRCgUqpTAc6Jzb9VahzyLCBB
+         s+FtDVNQb2LsspkPzzG+n4Ip8uueEHXQ7/6D9/52GTLSgi6juKImFIEfzpLhP6O8njIg
+         vbmpry3wfhEiT3wMYsO5K/cgKC/Y5S2g0iaSwDmNfvaHeOSuI8MLEq97J07nhBW81EcD
+         vStg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67B320855
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C8921737
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
 From: Jeff Layton <jlayton@kernel.org>
@@ -36,16 +37,18 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] locks: change POSIX lock ownership on execve when files_struct is displaced
-Date: Sat, 17 Mar 2018 10:25:20 -0400
-Message-Id: <20180317142520.30520-1-jlayton@kernel.org>
+Subject: [PATCH v2] locks: change POSIX lock ownership on execve when files_struct is displaced
+Date: Sat, 17 Mar 2018 12:58:59 -0400
+Message-Id: <20180317165859.26200-1-jlayton@kernel.org>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180317142520.30520-1-jlayton@kernel.org>
+References: <20180317142520.30520-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595195233416759536?=
-X-GMAIL-MSGID: =?utf-8?q?1595195233416759536?=
+X-GMAIL-MSGID: =?utf-8?q?1595204900024165744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -72,15 +75,13 @@ swapping it out.
 Reported-by: Daniel P. Berrangé <berrange@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/exec.c               |  4 +++-
- fs/file.c               | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/locks.c              | 43 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/fdtable.h |  1 +
- include/linux/fs.h      |  6 ++++++
- 5 files changed, 99 insertions(+), 1 deletion(-)
+ fs/exec.c          |  4 +++-
+ fs/locks.c         | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  8 ++++++++
+ 3 files changed, 71 insertions(+), 1 deletion(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 7eb8d21bcab9..e9f154f9bad9 100644
+index 7eb8d21bcab9..35b05376bf78 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -1812,8 +1812,10 @@ static int do_execveat_common(int fd, struct filename *filename,
@@ -89,107 +90,48 @@ index 7eb8d21bcab9..e9f154f9bad9 100644
  	putname(filename);
 -	if (displaced)
 +	if (displaced) {
-+		change_lock_owners(current->files, displaced);
++		posix_change_lock_owners(current->files, displaced);
  		put_files_struct(displaced);
 +	}
  	return retval;
  
  out:
-diff --git a/fs/file.c b/fs/file.c
-index 42f0db4bd0fb..18065fcc045a 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -365,6 +365,52 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
- 	return NULL;
- }
- 
-+/**
-+ * change_lock_owners - change lock ownership from old files struct to new
-+ * @files: new files struct to own locks
-+ * @old: old files struct that previously held locks
-+ *
-+ * On execve, a process may end up with a new files_struct. In that case, we
-+ * must change all of the locks that were owned by the previous files_struct
-+ * to the new one.
-+ */
-+void change_lock_owners(struct files_struct *new, struct files_struct *old)
-+{
-+	struct fdtable *fdt = rcu_dereference_raw(new->fdt);
-+	unsigned int i, j = 0;
-+
-+	/*
-+	 * It is safe to dereference the fd table without RCU or ->file_lock
-+	 * because this is the only reference to the files structure. If that's
-+	 * ever not the case, just warn and don't change anything.
-+	 */
-+	if (unlikely(atomic_read(&new->count) != 1)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
-+
-+	for (;;) {
-+		unsigned long set;
-+		i = j * BITS_PER_LONG;
-+		if (i >= fdt->max_fds)
-+			break;
-+		set = fdt->open_fds[j++];
-+		while (set) {
-+			if (set & 1) {
-+				struct file *file =
-+					rcu_dereference_protected(fdt->fd[i],
-+								  true);
-+				if (file) {
-+					posix_chown_locks(file, old, new);
-+					cond_resched();
-+				}
-+			}
-+			i++;
-+			set >>= 1;
-+		}
-+	}
-+}
-+
- static struct fdtable *close_files(struct files_struct * files)
- {
- 	/*
 diff --git a/fs/locks.c b/fs/locks.c
-index d6ff4beb70ce..f7d4eb147a4d 100644
+index d6ff4beb70ce..ab428ca8bb11 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -993,6 +993,49 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+@@ -993,6 +993,66 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
  	return error;
  }
  
-+/**
-+ * posix_chown_locks - change all locks on inode owned by old fl_owner to new
-+ * @file: struct file on which to change the locks
-+ * @old: old fl_owner value to change from
-+ * @new: new fl_owner value to change to
-+ *
-+ * This function changes all of the file locks in an inode owned by an old
-+ * fl_owner to be owned by a new fl_owner.
-+ */
-+void posix_chown_locks(struct file *file, fl_owner_t old, fl_owner_t new)
++struct posix_change_lock_owners_arg {
++	fl_owner_t old;
++	fl_owner_t new;
++};
++
++static int posix_change_lock_owners_cb(const void *varg, struct file *file,
++					  unsigned int fd)
 +{
++	const struct posix_change_lock_owners_arg *arg = varg;
 +	struct inode *inode = file_inode(file);
 +	struct file_lock_context *ctx;
 +	struct file_lock *fl, *tmp;
 +
-+	/* Don't want to allocate a context in this case */
++	/* If there is no context, then no locks need to be changed */
 +	ctx = locks_get_lock_context(inode, F_UNLCK);
 +	if (!ctx)
-+		return;
++		return 0;
 +
 +	percpu_down_read_preempt_disable(&file_rwsem);
 +	spin_lock(&ctx->flc_lock);
-+	/* Find the first old lock with the same owner as the new lock */
++	/* Find the first lock with the old owner */
 +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
-+		if (fl->fl_owner == old)
++		if (fl->fl_owner == arg->old)
 +			break;
 +	}
 +
 +	list_for_each_entry_safe_from(fl, tmp, &ctx->flc_posix, fl_list) {
-+		if (fl->fl_owner != old)
++		if (fl->fl_owner != arg->old)
 +			break;
 +
 +		/* This should only be used for normal userland lockmanager */
@@ -197,50 +139,59 @@ index d6ff4beb70ce..f7d4eb147a4d 100644
 +			WARN_ON_ONCE(1);
 +			break;
 +		}
-+		fl->fl_owner = new;
++		fl->fl_owner = arg->new;
 +	}
 +	spin_unlock(&ctx->flc_lock);
 +	percpu_up_read_preempt_enable(&file_rwsem);
++	return 0;
++}
++
++/**
++ * posix_change_lock_owners - change lock owners from old files_struct to new
++ * @files: new files struct to own locks
++ * @old: old files struct that previously held locks
++ *
++ * On execve, a process may end up with a new files_struct. In that case, we
++ * must change all of the locks that were owned by the previous files_struct
++ * to the new one.
++ */
++void posix_change_lock_owners(struct files_struct *new,
++			      struct files_struct *old)
++{
++	struct posix_change_lock_owners_arg arg = { .old = old,
++						    .new = new };
++
++	iterate_fd(new, 0, posix_change_lock_owners_cb, &arg);
 +}
 +
  static int posix_lock_inode(struct inode *inode, struct file_lock *request,
  			    struct file_lock *conflock)
  {
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 41615f38bcff..228dfb059d69 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -114,6 +114,7 @@ void do_close_on_exec(struct files_struct *);
- int iterate_fd(struct files_struct *, unsigned,
- 		int (*)(const void *, struct file *, unsigned),
- 		const void *);
-+void change_lock_owners(struct files_struct *, struct files_struct *);
- 
- extern int __alloc_fd(struct files_struct *files,
- 		      unsigned start, unsigned end, unsigned flags);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 79c413985305..1928fb3db6a0 100644
+index 79c413985305..65fa99707bf9 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -1084,6 +1084,7 @@ extern void locks_remove_posix(struct file *, fl_owner_t);
- extern void locks_remove_file(struct file *);
- extern void locks_release_private(struct file_lock *);
- extern void posix_test_lock(struct file *, struct file_lock *);
-+extern void posix_chown_locks(struct file *, fl_owner_t old, fl_owner_t new);
- extern int posix_lock_file(struct file *, struct file_lock *, struct file_lock *);
- extern int posix_unblock_lock(struct file_lock *);
- extern int vfs_test_lock(struct file *, struct file_lock *);
-@@ -1169,6 +1170,11 @@ static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
- 	return;
- }
- 
-+static void posix_chown_locks(struct file *, fl_owner_t old, fl_owner_t new)
+@@ -1098,6 +1098,8 @@ extern int lease_modify(struct file_lock *, int, struct list_head *);
+ struct files_struct;
+ extern void show_fd_locks(struct seq_file *f,
+ 			 struct file *filp, struct files_struct *files);
++extern void posix_change_lock_owners(struct files_struct *new,
++				     struct files_struct *old);
+ #else /* !CONFIG_FILE_LOCKING */
+ static inline int fcntl_getlk(struct file *file, unsigned int cmd,
+ 			      struct flock __user *user)
+@@ -1232,6 +1234,12 @@ static inline int lease_modify(struct file_lock *fl, int arg,
+ struct files_struct;
+ static inline void show_fd_locks(struct seq_file *f,
+ 			struct file *filp, struct files_struct *files) {}
++
++static inline void posix_change_lock_owners(struct files_struct *new,
++					    struct files_struct *old)
 +{
-+	return;
 +}
 +
- static inline int posix_lock_file(struct file *filp, struct file_lock *fl,
- 				  struct file_lock *conflock)
- {
+ #endif /* !CONFIG_FILE_LOCKING */
+ 
+ static inline struct inode *file_inode(const struct file *f)
 -- 
 2.14.3
