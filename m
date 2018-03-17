@@ -1,98 +1,132 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3741325-1521368792-2-10549451632005803677
+X-Cyrus-Session-Id: sloti22d1t05-1689738-1521298145-2-8576394501481139878
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521368792; b=lDTQGEUw2FfiCOmGZm0gLecHC5p6Uq1BpNLbH2eZJ1QL2q6
-    nn+DBorVmH4bXNQMjJhsZ+ol53FxepTOgLcVdmDR43jKxvF+hhfzUn8S2I7S/tKK
-    F+DpS1qi/HtkgfkS1TK0cGHDYWCadsgFBl+2c9/R6XSvMoRwC9lQqH1snScV+cYG
-    LBQhPm5+Y0NqewQbORfPJRigGTUBD0BS+7vtWScwEqNXprBWYZzLn8IE+tVsTfnk
-    RvXuG9yOGH7/OdqR3HX0inb3BDciJA+59kXpLFhI/agA3TKj2X3m5mVTvgbCCFCX
-    2BPVD+y4V+fGGdH8mycaIVtLfUP7RIN8tu/ktaQ==
+    t=1521298145; b=Q5jLEdrY/iKJKkyw5DeIH11KzJL5BfZQjz462JU0J7kigWs
+    /OJHRbc5yJHyASsTxd92tmrO+YLdkWLlmaTz/LDy+IMgeHQw3ePX4bjwwx0gDAHf
+    y1opcOwTQ7pfNyEcgyxO6M4r9c4QZjpj4wcUv7HCo5dhKOmKVVRpKPfTQvFo0HFP
+    EdhL6i0o68a5o3NZljDeDqo9wPX8YLmJ6WmJiL8dsgFsn6VWlVAITtAEH/ECfplg
+    Wiblh/gQUZC5me8asFxh/+OjEMLaP7xHENI2VNq2jcaxLHZAR6Zc2ZGrO7hYk00S
+    TwUXPiFypyDEZcX2ZG2VBI9fSNNZ6Ri9XeuB64Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521368792; bh=wt2vMh8A80kR8fgIWsI2ssp6gw
-    oYlEf4e52YOn1Ft1o=; b=pogORkNkbfHAPBtpW7NX8Oc0yDR8Ak4X8HOPqvF0cn
-    eJ5dShF5K+sEsUh1TqD+1/0/qZnmf3h87zwCiXlIgDI4qGhrEv3ypt+Bo1k3QeiC
-    U+AUeI51OaLIIxEI4eAYeIX18IZPo94BccLhgzA3Gw1zd4KHJp6II/XyqmzWh9e4
-    y5Q8YXbXt9o+LEhglWCFXawcExICFLOCFjkCx3YzjBKNryIRugRewi+lDfjcfD7o
-    9q3IotVMDJTsz6ztZ0HakzZEr6Oh6Ci107k5tSmhCs6yGTvOBIqgPIkcsThZS3UZ
-    eQWnfIBwrK27FuuiIuTd8peWKDYR3IsJuLtUAkZUUnYg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1521298145; bh=/mAr/W1hewnM4bSjb7jtt2C/NBxpseqMwR+iY9IhMW0=; b=J
+    cWwC5H7MReRQmLyLkPy1Zr0wu8CuURc1+rbwM0naNe0IVPc1c/pujjdtdmL54jy9
+    I+ghxEI3Zz+Xrkkq4fcjlo7V0Zz2hsq0HCKxVIH5WqSOcXiwOaNx1zjWDpjthIJU
+    xBOj8K3q8E0R7Ho1931N215UUBI/usW7bYCAgf+b+FAv8yPJPqfPBRjR8/xE/Ps4
+    LnpQ/TgHrbiMHt/q2ZHLjSAW6N6+FaO2Nyqf3MorCoAakNqizNsxc2CjdNp1TWTg
+    4a1x+uIlyrzkcktZhyBnrV5/mtppW9pPhnYKbZXigEPtLeYCury5QcuSbRl/eDXp
+    IXcD4aw6V72f/StaGUEPg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=J5czkcsN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MdV0twz1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=J5czkcsN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MdV0twz1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeCRK0a (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 18 Mar 2018 06:26:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41462 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753429AbeCRK0a (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 18 Mar 2018 06:26:30 -0400
-Date: Sun, 18 Mar 2018 11:26:29 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        lkft-triage@lists.linaro.org, patches@kernelci.org,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, peter.ujfalusi@ti.com
+        id S1752699AbeCQOtC (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 17 Mar 2018 10:49:02 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35348 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752589AbeCQOtB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 17 Mar 2018 10:49:01 -0400
+X-Google-Smtp-Source: AG47ELuPUe0S4H4Yd962KB5BjcJLJtoW2F/GwFFdyKDQ5onR9U9acJmyoPJBdDX0htKAPLpGQBDMnw==
 Subject: Re: [PATCH 4.15 000/128] 4.15.11-stable review
-Message-ID: <20180318102629.GC32470@kroah.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 References: <20180316152336.199007505@linuxfoundation.org>
- <CA+G9fYs81eFKnN9411PQtkHsvtVRLWhPH_Txx7PCkVH=0sutvg@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <120779fd-01fa-fd6a-66d6-fcaefa12ca2e@roeck-us.net>
+Date: Sat, 17 Mar 2018 07:48:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYs81eFKnN9411PQtkHsvtVRLWhPH_Txx7PCkVH=0sutvg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 17, 2018 at 01:06:21AM +0530, Naresh Kamboju wrote:
-> > Peter Ujfalusi <peter.ujfalusi@ti.com>
-> >     dmaengine: bcm2835-dma: Use vchan_terminate_vdesc() instead of desc_free
+On 03/16/2018 08:22 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.15.11 release.
+> There are 128 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> arm and arm64 build broken due to this patch for 4.15 and 4.14
+> Responses should be made by Sun Mar 18 15:22:57 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> drivers/dma/bcm2835-dma.c:815:3: error: implicit declaration of function
-> 'vchan_terminate_vdesc' [-Werror=implicit-function-declaration]
->    vchan_terminate_vdesc(&c->desc->vd);
->    ^
-> cc1: some warnings being treated as errors
 
-Should now be resolved, thanks.
+Build results:
+	total: 147 pass: 142 fail: 5
+Failed builds:
+	arm:allmodconfig
+	arm:lpc32xx_defconfig
+	arm:nhk8815_defconfig
+	arm:bcm2835_defconfig
+	arm64:allmodconfig
+Qemu test results:
+	total: 141 pass: 122 fail: 19
+Failed tests:
+	arm:beagle:multi_v7_defconfig:omap3-beagle
+	arm:beaglexm:multi_v7_defconfig:omap3-beagle-xm
+	arm:overo:multi_v7_defconfig:omap3-overo-tobi
+	arm:sabrelite:multi_v7_defconfig:imx6dl-sabrelite
+	arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+	arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+	arm:vexpress-a15-a7:multi_v7_defconfig:vexpress-v2p-ca15_a7
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc702
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc706
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zed
+	arm:midway:multi_v7_defconfig:ecx-2000
+	arm:smdkc210:multi_v7_defconfig:exynos4210-smdkv310
+	arm64:virt:smp:defconfig:initrd
+	arm64:virt:smp:defconfig:rootfs
+	arm64:xlnx-zcu102:smp:defconfig:initrd:zynqmp-ep108
+	arm64:xlnx-zcu102:smp:defconfig:rootfs:zynqmp-ep108
+	arm64:virt:nosmp:defconfig:initrd
+	arm64:xlnx-zcu102:nosmp:defconfig:initrd:zynqmp-ep108
+	arm64:xlnx-zcu102:nosmp:defconfig:rootfs:zynqmp-ep108
 
-greg k-h
+drivers/dma/amba-pl08x.c: In function 'pl08x_terminate_all':
+drivers/dma/amba-pl08x.c:2185:3: error: implicit declaration of function 'vchan_terminate_vdesc'
+
+Further details are available at http://kerneltests.org/builders.
+
+Guenter
