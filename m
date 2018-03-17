@@ -1,83 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeCQAcU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 20:32:20 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:41299 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751829AbeCQAcS (ORCPT
+        id S1752704AbeCQAgh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 20:36:37 -0400
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:44207 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeCQAgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 20:32:18 -0400
-Date: Sat, 17 Mar 2018 01:32:16 +0100
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dcache: remove trailing whitespace
-Message-ID: <20180317003216.GA22414@axis.com>
-References: <20180316143400.8698-1-niklas.cassel@axis.com>
- <20180316155538.GD30522@ZenIV.linux.org.uk>
+        Fri, 16 Mar 2018 20:36:35 -0400
+X-Google-Smtp-Source: AG47ELvRUICxcqaHgsMRvui99W//fySFUtwCiVqn1CIvXOci5OItmyirQ32jx0FOkjTiMyYBBWo8JA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316155538.GD30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
-X-TM-AS-GCONF: 00
+References: <20180309232543.24636-1-ilina@codeaurora.org> <20180309232543.24636-6-ilina@codeaurora.org>
+In-Reply-To: <20180309232543.24636-6-ilina@codeaurora.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Sat, 17 Mar 2018 00:35:55 +0000
+X-Gmail-Original-Message-ID: <CAE=gft4YRzsG4w2oTFwSbxXtO4mNFo+SzntJo9ZP8Mm_N2Z6fg@mail.gmail.com>
+Message-ID: <CAE=gft4YRzsG4w2oTFwSbxXtO4mNFo+SzntJo9ZP8Mm_N2Z6fg@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 03:55:38PM +0000, Al Viro wrote:
-> On Fri, Mar 16, 2018 at 03:34:00PM +0100, Niklas Cassel wrote:
-> > Remove trailing whitespace.
-> > Remove empty line and trailing whitespace after function comments.
-> > Remove an extra space in one of the comments.
-> > Fix a typo in of the comments.
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> > I know that these type of patches are not really appreciated,
-> > however, there is enough trailing whitespace in this file to
-> > distract me from reading the real code.
-> 
-> No, they are not, and here's why:
-> 
-> Applying: dcache: remove trailing whitespace
-> error: patch failed: fs/dcache.c:254
-> error: fs/dcache.c: patch does not apply
-> Patch failed at 0001 dcache: remove trailing whitespace
-> 
-> ... which, BTW, happens in *all* branches.  If you do that kind
-> of stuff, at least do it against something in the public trees
-> and _tell_ _what_ _it_ _is_ _against_.
+On Fri, Mar 9, 2018 at 3:27 PM Lina Iyer <ilina@codeaurora.org> wrote:
 
-Hello Al,
+> Sleep and wake requests are sent when the application processor
+> subsystem of the SoC is entering deep sleep states like in suspend.
+> These requests help lower the system power requirements when the
+> resources are not in use.
 
-I always base my patches on linux-next, which is usually correct,
-and if it isn't, the maintainer usually says something :)
+> Sleep and wake requests are written to the TCS slots but are not
+> triggered at the time of writing. The TCS are triggered by the firmware
+> after the last of the CPUs has executed its WFI. Since these requests
+> may come in different batches of requests, it is the job of this
+> controller driver to find and arrange the requests into the available
+> TCSes.
 
-The patch in question is based on the latest linux-next tag:
-next-20180316
-
-It appears that the following three commits are in linux-next,
-but not on your for-next branch @ your vfs git tree:
-61fc3c8ce7f1 dcache: remove trailing whitespace
-929387149a47 dcache: fix indirectly reclaimable memory accounting
-ff335768ddd0 dcache: fix indirectly reclaimable memory accounting for CONFIG_SLOB
-
-They appear to come from Andrew Morton's tree.
-
-Would you prefer me to rebase my patch against your
-for-next branch instead?
-
-> Not applied.  Please, do it sanely.  BTW, which editor is _that_
-> annoying?  Anything that shoves trailing whitespace in my face
-> would've been either configured (with considerable cursing at
-> the people who'd set such defaults) or, should that prove
-> impossible, given a boot...
-
-I'm using emacs, but having added show-trailing-whitespace
-is my personal preference, however, I quite sure that I'm
-not the only one who has an editor configured like this.
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+>    drivers/soc/qcom/rpmh-internal.h |   9 ++-
+>    drivers/soc/qcom/rpmh-rsc.c      | 120
++++++++++++++++++++++++++++++++++++++++
+>    2 files changed, 128 insertions(+), 1 deletion(-)
 
 
-Kind regards,
-Niklas
+Reviewed-by: Evan Green <evgreen@chromium.org>
