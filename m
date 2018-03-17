@@ -1,61 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753536AbeCQPtt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 11:49:49 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:37560 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752875AbeCQPtq (ORCPT
+        id S1753585AbeCQPuN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 11:50:13 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:33520 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752875AbeCQPuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 11:49:46 -0400
-X-Google-Smtp-Source: AG47ELtSZNV+Yop/bBax2o7fnSkLZ3SxftJ23VHR2tXpRzS5z69cVZ2OWvMQgcMTGlol5ONxY1YpfA==
+        Sat, 17 Mar 2018 11:50:08 -0400
+X-Google-Smtp-Source: AG47ELu0IRzSYuUjiuK77TXhnUn9DTi6EX/P0wJH5BFm/5OZnSCnFS5i28GpbPYuXzf/D7H/+5siFA==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: linus.walleij@linaro.org
 Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v3 0/8] Implement get_multiple for ACCES and PC/104 drivers
-Date: Sat, 17 Mar 2018 11:49:39 -0400
-Message-Id: <cover.1521301345.git.vilhelm.gray@gmail.com>
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: [PATCH v3 1/8] iio: stx104: Implement get_multiple callback
+Date: Sat, 17 Mar 2018 11:49:56 -0400
+Message-Id: <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521301345.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521301345.git.vilhelm.gray@gmail.com>
+References: <cover.1521301345.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v2:
-  - Add missing bitmap.h header includes
-  - Fix typographical error in symbol name for word_mask
-  - Remove const qualifier for ports array
+The Apex Embedded Systems STX104 series of devices provides 4 TTL
+compatible lines of inputs accessed via a single 4-bit port. Since four
+input lines are acquired on a single port input read, the STX104 GPIO
+driver may improve multiple input reads by utilizing a get_multiple
+callback. This patch implements the stx104_gpio_get_multiple function
+which serves as the respective get_multiple callback.
 
-This patchset implements get_multiple callbacks for the PC104 GPIO
-drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
-devices all acquire the multiple input lines with a single read, so
-utilizing the get_multiple callback can provide improvement for those
-users who regularly access multiple input lines.
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/iio/adc/stx104.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-While developing this patchset I noticed many of these devices make use
-of Intel 8255 compatible interfaces for their I/O. I may write a generic
-8255 GPIO driver in the future to reduce some of the redundant code I
-see pop among the drivers for these devices.
-
-William Breathitt Gray (8):
-  iio: stx104: Implement get_multiple callback
-  gpio: 104-idio-16: Implement get_multiple callback
-  gpio: pci-idio-16: Implement get_multiple callback
-  gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks
-  gpio: 104-dio-48e: Implement get_multiple callback
-  gpio: 104-idi-48: Implement get_multiple callback
-  gpio: gpio-mm: Implement get_multiple callback
-  gpio: ws16c48: Implement get_multiple callback
-
- drivers/gpio/gpio-104-dio-48e.c  |  47 ++++++++++++++++
- drivers/gpio/gpio-104-idi-48.c   |  47 ++++++++++++++++
- drivers/gpio/gpio-104-idio-16.c  |  15 +++++
- drivers/gpio/gpio-gpio-mm.c      |  47 ++++++++++++++++
- drivers/gpio/gpio-pci-idio-16.c  |  50 +++++++++++++++++
- drivers/gpio/gpio-pcie-idio-24.c | 117 +++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpio-ws16c48.c      |  47 ++++++++++++++++
- drivers/iio/adc/stx104.c         |  11 ++++
- 8 files changed, 381 insertions(+)
-
+diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
+index 17b021f33180..0662ca199eb0 100644
+--- a/drivers/iio/adc/stx104.c
++++ b/drivers/iio/adc/stx104.c
+@@ -233,6 +233,16 @@ static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(inb(stx104gpio->base) & BIT(offset));
+ }
+ 
++static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++	unsigned long *bits)
++{
++	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
++
++	*bits = inb(stx104gpio->base);
++
++	return 0;
++}
++
+ static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
+ {
+@@ -342,6 +352,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
+ 	stx104gpio->chip.direction_input = stx104_gpio_direction_input;
+ 	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
+ 	stx104gpio->chip.get = stx104_gpio_get;
++	stx104gpio->chip.get_multiple = stx104_gpio_get_multiple;
+ 	stx104gpio->chip.set = stx104_gpio_set;
+ 	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
+ 	stx104gpio->base = base[id] + 3;
 -- 
 2.16.2
