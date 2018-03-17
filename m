@@ -1,63 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeCQWPx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 18:15:53 -0400
-Received: from ozlabs.org ([103.22.144.67]:39997 "EHLO ozlabs.org"
+        id S1753011AbeCQWax (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 18:30:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752514AbeCQWPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 18:15:42 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Sun, 18 Mar 2018 09:15:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rtc tree with the asm-generic
- tree
-Message-ID: <20180318091501.3843a277@canb.auug.org.au>
-In-Reply-To: <20180317132252.GG4123@piout.net>
-References: <20180315185917.3316d781@canb.auug.org.au>
-        <20180317132252.GG4123@piout.net>
+        id S1751704AbeCQWau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 18:30:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A69B21741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 17 Mar 2018 22:30:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio/accel/kxcjk-1013: Improve unlocking of a mutex in
+ three functions
+Message-ID: <20180317223044.42c963b9@archlinux>
+In-Reply-To: <a4522ea5-78dc-4746-054a-7477d395630f@users.sourceforge.net>
+References: <a4522ea5-78dc-4746-054a-7477d395630f@users.sourceforge.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/by.UMozGWY0z6u7sj7xHdR_"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/by.UMozGWY0z6u7sj7xHdR_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 13 Mar 2018 13:47:20 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Hi Alexandre,
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 13 Mar 2018 13:40:12 +0100
+> 
+> * Add jump targets so that a call of the function "mutex_unlock" is stored
+>   less often in these function implementations.
+> 
+> * Replace eight calls by goto statements.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+A few minor comments inline, but at first glance at least these look
+to be fine in principle.
 
-On Sat, 17 Mar 2018 14:22:52 +0100 Alexandre Belloni <alexandre.belloni@boo=
-tlin.com> wrote:
->
-> I've removed the patch from my tree as there is no point in modifying a
-> driver that is removed.
+Jonathan
 
-Thanks for letting me know.
+> ---
+>  drivers/iio/accel/kxcjk-1013.c | 46 ++++++++++++++++++------------------------
+>  1 file changed, 20 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+> index af53a1084ee5..4adf38b6d939 100644
+> --- a/drivers/iio/accel/kxcjk-1013.c
+> +++ b/drivers/iio/accel/kxcjk-1013.c
+> @@ -765,19 +765,18 @@ static int kxcjk1013_read_raw(struct iio_dev *indio_dev,
+>  			ret = -EBUSY;
+>  		else {
+>  			ret = kxcjk1013_set_power_state(data, true);
+> -			if (ret < 0) {
+> -				mutex_unlock(&data->mutex);
+> -				return ret;
+> -			}
+> +			if (ret < 0)
+> +				goto unlock;
+> +
+>  			ret = kxcjk1013_get_acc_reg(data, chan->scan_index);
+>  			if (ret < 0) {
+>  				kxcjk1013_set_power_state(data, false);
+> -				mutex_unlock(&data->mutex);
+> -				return ret;
+> +				goto unlock;
+>  			}
+>  			*val = sign_extend32(ret >> 4, 11);
+>  			ret = kxcjk1013_set_power_state(data, false);
+>  		}
+> +unlock:
+>  		mutex_unlock(&data->mutex);
+>  
+>  		if (ret < 0)
+> @@ -905,8 +904,8 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
+>  
+>  	if (!state && data->motion_trigger_on) {
+>  		data->ev_enable_state = 0;
+> -		mutex_unlock(&data->mutex);
+> -		return 0;
+> +		ret = 0;
+do this where it is orginally defined rather than here.
 
---=20
-Cheers,
-Stephen Rothwell
+int ret = 0;
+> +		goto unlock;
+>  	}
+>  
+>  	/*
+> @@ -919,23 +918,20 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
+>  	 * is always on so sequence doesn't matter
+>  	 */
+>  	ret = kxcjk1013_set_power_state(data, state);
+> -	if (ret < 0) {
+> -		mutex_unlock(&data->mutex);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto unlock;
+>  
+>  	ret =  kxcjk1013_setup_any_motion_interrupt(data, state);
+>  	if (ret < 0) {
+>  		kxcjk1013_set_power_state(data, false);
+>  		data->ev_enable_state = 0;
+> -		mutex_unlock(&data->mutex);
+> -		return ret;
+> +		goto unlock;
+>  	}
+>  
+>  	data->ev_enable_state = state;
+> +unlock:
+>  	mutex_unlock(&data->mutex);
+> -
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int kxcjk1013_buffer_preenable(struct iio_dev *indio_dev)
+> @@ -1086,32 +1082,30 @@ static int kxcjk1013_data_rdy_trigger_set_state(struct iio_trigger *trig,
+>  
+>  	if (!state && data->ev_enable_state && data->motion_trigger_on) {
+>  		data->motion_trigger_on = false;
+> -		mutex_unlock(&data->mutex);
+> -		return 0;
+> +		ret = 0;
+> +		goto unlock;
+>  	}
+>  
+>  	ret = kxcjk1013_set_power_state(data, state);
+> -	if (ret < 0) {
+> -		mutex_unlock(&data->mutex);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto unlock;
+> +
+>  	if (data->motion_trig == trig)
+>  		ret = kxcjk1013_setup_any_motion_interrupt(data, state);
+>  	else
+>  		ret = kxcjk1013_setup_new_data_interrupt(data, state);
+>  	if (ret < 0) {
+>  		kxcjk1013_set_power_state(data, false);
+> -		mutex_unlock(&data->mutex);
+> -		return ret;
+> +		goto unlock;
+>  	}
+>  	if (data->motion_trig == trig)
+>  		data->motion_trigger_on = state;
+>  	else
+>  		data->dready_trigger_on = state;
+>  
+> +unlock:
+>  	mutex_unlock(&data->mutex);
+> -
+Please leave the blank line.  It makes it slightly easier for the eye
+to pick up on the return.
 
---Sig_/by.UMozGWY0z6u7sj7xHdR_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqtk2UACgkQAVBC80lX
-0GxrdAgAkFcpgLuc53J6qzBfxp3xpfUOFWLqDUGU/ZKIAgz1wQ8k3/xXT3CyJZ8N
-PG288zabPr+p7GaN3zurbfey4x5dRCvc7zxErelNnStn7Rl5CGptSPGOQ3UFWl5X
-vs8H+wc3ITiUzCZSt1ISFnNsiZdYi8TqBBSSLWDOJJ+4PMDDwQ1MiZ770avWAio4
-OcZYSY7rtq9EOF2pGPHU554d6EFKz6k2dcJEprCODhQz3nq8ASvgxVcWzFftl2a+
-5ZSs9Ozy1b5XbQN0AJlpWviisfCxWd48DuGl0Nhf+JnUC/5xBKkKBdYPj1NJEud3
-boXmnzVA8zJ6JeQU60Jhg6D6cEicyw==
-=UrXE
------END PGP SIGNATURE-----
-
---Sig_/by.UMozGWY0z6u7sj7xHdR_--
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static const struct iio_trigger_ops kxcjk1013_trigger_ops = {
