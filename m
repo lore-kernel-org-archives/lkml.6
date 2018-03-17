@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751677AbeCQUQv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 16:16:51 -0400
-Received: from sauhun.de ([88.99.104.3]:38515 "EHLO pokefinder.org"
+        id S1751924AbeCQUTI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 16:19:08 -0400
+Received: from sauhun.de ([88.99.104.3]:38532 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750919AbeCQUQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 16:16:49 -0400
-Date: Sat, 17 Mar 2018 21:16:47 +0100
+        id S1750746AbeCQUTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 16:19:06 -0400
+Date: Sat, 17 Mar 2018 21:19:04 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: xiic: Make suspend function names consistent
-Message-ID: <20180317201647.cfnaeozisotswg7f@ninjato>
-References: <20180310174056.16572-1-mdf@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 35/47] i2c: remove bfin-twi driver
+Message-ID: <20180317201903.ii4aiefgcxs6dzow@ninjato>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+ <20180314153603.3127932-36-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vagwv4bxe36tr3sa"
+        protocol="application/pgp-signature"; boundary="qqu3qz442oagv6g6"
 Content-Disposition: inline
-In-Reply-To: <20180310174056.16572-1-mdf@kernel.org>
+In-Reply-To: <20180314153603.3127932-36-arnd@arndb.de>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---vagwv4bxe36tr3sa
+--qqu3qz442oagv6g6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 10, 2018 at 09:40:56AM -0800, Moritz Fischer wrote:
-> Suspend functions seem to have been copied from i2c-cadence driver.
-> Rename the functions to match the rest of the driver.
+On Wed, Mar 14, 2018 at 04:35:48PM +0100, Arnd Bergmann wrote:
+> The blackfin architecture is getting removed, so the
+> twi driver can also be removed.
 >=20
-> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Applied to for-next, thanks!
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
 
---vagwv4bxe36tr3sa
+--qqu3qz442oagv6g6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqtd68ACgkQFA3kzBSg
-KbZd9g/+KSr7fHlGszVeM94zuTsuUplGJVbi/67HmDhAvdwOdX+vKVhJV6xel85N
-/FNHzuW7vdqTqSNfCWeweUzxm+nI4TmrFNTRAxSrF32tU1dSNBJpqByxgqJ951iV
-FtQ9mhKZmDgMEwDMjaoeL2gg/I6NMxbQi6JeQnZLYyGkOip+qh1xwS6NW+EHN+zE
-jqXD2SbX/tI++34IP9tRG+w4MXLBt2pFX2YxqO1ImaBjuoY80jeV7vClv+Y8n8su
-xQrkvsPpHnYAXd+QHUbHOJUmi+Oj7vSrkc6PvDiswut5EWoAXNeVOUucEOE8/WKt
-Dw5XE/jwDUBLwV20IJLMsSHrk0A6sUZY5GWEw4Zlupl/bFgQCNy9svV3DFvnBx8A
-THuw+UoZlUdwtVHk/IF/DSf22fZZ2mIgbER7u5nHIcMhSZP6V4bf+iqHIc81xs62
-GcRcFnawP7cvLw3bfiZyZwNlDJQip+/KBbqJmAeZ2kjblrdzsueLq7DG0tsL/Nnx
-RUdjzy74K7WMbm2TlKW0c9GxEqrxOlt/N2jxqyxno9zcED1GwDLYdSSKzmbWVuLv
-pxEz6vNSmU71D6gCccO5PhSv7bLQzYW1y/kG16fMssWrtDJhY9nZrWl5f7vG+38C
-4Vla30KitgIyZBt3pSyg1msLcueIXQPrr7Nnbke6+iEPzZ7RIIA=
-=CTIy
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqteDcACgkQFA3kzBSg
+Kbbi8RAAiEb6dCViOvLtYVhr+SgvklfKU1hgJ4SlE/+ZWR/Ho2F2tkhg15FthK6R
+yIRH+VNWP281bHkNir8R0hrRaLmVZAnNAaHtXrQ5HzX/51XxCI8jZ0X2QnKTePkE
+RaDzNg5hc2Peb5+/siHYpGzbkTg4U9CN/31+RyRyyRXtFfNB4aIW0ZkTjjIk9xHJ
+a/OXJKjS1TPU8AinVgQVAQpTgpPd8UXnmC1I22BxC6eLRYW3TbmPFEJO6QW79D/a
+GRIY7BmY9NzsM3qETB868j1GxitTygPTHQeEN+BwHN9uWf2nQUARGyGWmI1Px2Uq
+GkQZUvVEffyHabLpoHYA3u9+rcblswsDR/Bip418KaGb1PA9lddZ+W3XRG5QrB1n
+lbnNZGxsEs1uimGOwGOwTumkgShVpyfFFNEDqK477y5yoIsTesQJBCF5Uy53D3T+
+9vIBfVGB1Lyh0bRnHTCfNZwyoeG569NBvFmwB3hP3mTgbhk7jfy616ES/rve7kDM
+tGgEax6/6BULeDQZ59ZVLwpI5p4CVKKYvPyxfxNhf3jvehwAWfV0NjTtYQsSlcg5
+bcP1g2eWfID7T8g6zLJ4kIXLQMXerCJRgs5hjb6VmrnTX13ud21z/iSPFnRPR8NV
+8p6qIae9tvUegdm3X/0o+XDaPCR+KKuSYh3kCrztC5mm+WsfOSQ=
+=FvHd
 -----END PGP SIGNATURE-----
 
---vagwv4bxe36tr3sa--
+--qqu3qz442oagv6g6--
