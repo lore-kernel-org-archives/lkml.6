@@ -1,71 +1,69 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2444442-1521325648-2-3768366733115240853
+X-Cyrus-Session-Id: sloti22d1t05-1672187-1521300520-2-5282152204956710700
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='utf-8'
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521325647; b=rWTQATK1439CGMXOtvuV//PlvhDio/Pcqdlpmdc0xomqBN/
-    8e+vKlQek7MwN7j++ZqQ8a7YDksxlw2wGB63c4Btuk+QsqE6sm50IAyHKc1Lbvqr
-    K4s4SRFOzxd7LndExdaKnZriJMOtvMn+wkTTWIkuEJMPs99hJK2hnQ0mNLulwKLJ
-    eod+7fBF8/hUNgPAhOFMm1Rmcx0Jc6HPyMkoQ3iN4WlL7CVoxtdeMQLzRQl7s21x
-    fV4CP3pFbCecZPhd91eXbiP9hnHRBUKHaddX/8OWAGGj/SRa689GDfNd9LwzLHnC
-    lF8DiE6c+T59V5Waf4gwivKbGXzeWTGrkJ43Tgw==
+    t=1521300520; b=r5slnNT3ASArl+A2KeVcdDVcvlngeDFD4P6UVP78VIyrEIl
+    Z6KY0cA3kb3wuG3hf4E3qxIeaVVzyyVwzMACjCSkM1Qu4ESs5gNa+QEyBRuMsrEz
+    yM4V0ulMrpwr+s5k4gqCSrbjs0nWeIysCK+vVLjbWj7IWGDlP+Bfr11i6+wPaMtN
+    ucntZ+emdu/GOilrXf5pg1a8vMWIOggu62PXndY0YLr1DLuYoz32WSf7zrlu8xdk
+    2SFg1LIjtMTMlSh5tM+aKt31aYQRGGuwvhWKrUqxwXTOP6Ih8LZoDctBWrc89L3j
+    mkcaQA+n0ugRciccdF+7AebW6ek8VeJachIvP5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521325647; bh=D
-    NSMJbyIAcaBD1MlFP1G6QwCGAW40QYMRqz4yQeNtGg=; b=Hq1AsZJfxGYU5CDnQ
-    zZG1eb643qJpVDAId+HSDqrt9VmBD+3Fq+/faU8iJsmDD5YeY9uJjo7PVPtAekSf
-    812ra8Q7ljirr/8al5FCrVSImeDJfw3l23B5cTt+B0CrR1mIE/6kSS2R3ZL/1CWy
-    awg7GLPllqDJc6znbBofTCLPI7UhC5Sbsa62FEtQVD9rW2tc35HeUxemlE4b5lOA
-    Lwda72yzB2mjYN+cn4c7N36OHW8lBO0G4w/qQe1VHF1ZVYJtDsDwwaJrWg7hf1Pj
-    SPxwomVDXrxlawWvEvSP9zLsEEFJMigHI25Q+eHziszQYM7XUMeSvz0tR86wYRV3
-    1sUJA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521300520; bh=R
+    7ucZlMr3Qv8FX/stf0kON6kKhBlnd6TV8QUZD0+YgM=; b=IlJ1y1qQEpsDJdvD5
+    pO46TLN35h/8niZjq45a8SttscmACR+GSI1ygyqaXOpuQN8xmWsAV/YOM6A0mV76
+    C9JUdPLNmuZG4WKqk3SvpfJopKVK+Rlyqu8n/u5ds09/jvU1DSfsMk7pQE7ixAbV
+    SP4gUANEFXJpgUpiZDVvHPw7WbCopWQOzit/4gfJFt/A3OPB3gaHTdTm+UmIdOe9
+    JuWiiXD2mAdS5nzRZNalc7uDq93fExdaT//IpiG7t0z35oGHeJxUfkspuLvteHLF
+    V3EXjLNYhv3xM9EsIVk9SowgapXVJV6vIHznjfe0oCU+59ZG1duhOeBcjCr4/Njy
+    BNoDg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HKCNvOLn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bOWjM1oR;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HKCNvOLn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bOWjM1oR;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCC921741
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 17 Mar 2018 22:27:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>
-Subject: Re: Plan to move cdc:ad7746 driver out of staging
-Message-ID: <20180317222714.101ce507@archlinux>
-In-Reply-To: <CALfa3vGh4Ni36+ptCdnd0+mxPWDs8OQKe7-egpttgYBpuDTeqA@mail.gmail.com>
-References: <CALfa3vGh4Ni36+ptCdnd0+mxPWDs8OQKe7-egpttgYBpuDTeqA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+X-Google-Smtp-Source: AG47ELucetZnXHgDSdYPqZV4Ow6CyRqpE++z64wRl1zuySu5Mo4NGZfNuyTh8OjphVQjvSFR2hpypw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH v1 0/5] Tegra Video Decoder patches for 4.17
+Date: Sat, 17 Mar 2018 18:28:10 +0300
+Message-Id: <cover.1521300358.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.16.1
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -76,62 +74,41 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Daniel Baluta <daniel.baluta@gmail.com>,
- lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, pmeerw@pmeerw.net,
- knaack.h@gmx.de
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gTW9uLCAxMiBNYXIgMjAxOCAxNjoyNTo1MiAtMDMwMApIZXJuw6FuIEdvbnphbGV6IDxoZXJu
-YW5AdmFuZ3VhcmRpYXN1ci5jb20uYXI+IHdyb3RlOgoKPiBIaSwKPiAKPiBUaGlzIGlzIG15IHBs
-YW4gZm9yIG1vdmluZyBvdXQgdGhlIGFkNzc0NiBkcml2ZXIgb3V0IG9mIHN0YWdpbmcuIEkKPiBo
-YXZlIHNvbWUgc3BlY2lmaWMgcXVlc3Rpb25zIHRoYXQgd291bGQgYmUgcmVhbGx5IGhlbHBmdWwg
-aWYgc29tZW9uZQo+IGNhbiBwb2ludCBtZSBpbiB0aGUgcmlnaHQgZGlyZWN0aW9uIHRvIGdvLgo+
-IAo+IDEuIFBpY2sgdXAgb24gRGF2aWQncyBjbGVhbi11cCBwYXRjaC4gRmluaXNoIGNsZWFuaW5n
-IENIRUNLcyBmcm9tCj4gY2hlY2twYXRjaC5wbCBpZiBwb3NzaWJsZS4KPiAKPiAyLiBSZW9yZGVy
-IGluY2x1ZGVzIGFscGhhYmV0aWNhbGx5Lgo+IAo+IDMuIFJlb3JkZXIgc29tZSB2YXJpYWJsZSBk
-ZWNsYXJhdGlvbnMgaW4gYW4gaW52ZXJzZS1weXJhbWlkIHNjaGVtZS4KPiAKPiA0LiBGaXggc3lz
-ZnMgYXR0cnMgbmFtaW5nIHRvIGNvbXBseSB3aXRoIHRoZSBBQkksIGUuZy46Cj4gaW5fY2FwYWNp
-dGFuY2UwX2NhbGliYmlhc19jYWxpYnJhdGlvbiAtPiBpbl9jYXBhY2l0YW5jZTBfY2FsaWJiaWFz
-ClRha2UgYSBjYXJlZnVsIGxvb2sgYXQgd2hhdCB0aGVzZSBhcmUgZG9pbmcgYmVmb3JlIHlvdSBk
-byB0aGF0IDopClRoZW4gY29uc2lkZXIgd2hhdCB0aGUgdXNlY2FzZXMgYXJlLiAgSWYgd2UgbmVl
-ZCB0bywgd2UgbWF5IG5lZWQKdG8gYWRkIG5ldyBBQkkgdG8gY292ZXIgdGhlIHJlcXVpcmVtZW50
-LgoKPiAKPiA1LiBBZGQgZG9jdW1lbnRhdGlvbiB0byB0aGUge2NhcCx2dH1fZmlsdGVyX3JhdGUg
-dGFibGVzIGFuZCB0byB0aGUKPiBwcm9jZXNzZWQgaW5mbyByZWFkLiBUaGVyZSBhcmUgc29tZSBt
-YWdpYyBudW1iZXJzIG91dCB0aGVyZSwgSSB3aWxsCj4gcmVhZCB0aGUgZGF0YXNoZWV0IGFuZCBl
-eHBsYWluIHRoZSBtYXRoIHRoYXQgSSBjb25zaWRlciBhcHByb3BpYXRlLgo+IAo+IDYuIFRoZXJl
-IGFyZSBhIGZldyB0b28gbWFueSBkZWZpbmVzIHRoYXQgYXJlIG5vdCB1c2VkIGF0IGFsbCBidXQg
-dGhleQo+IGRvIGZvbGxvdyB0aGUgZGF0YXNoZWV0LiBJIGRvbid0IGtub3cgaWYgdGhlcmUgYXJl
-IHBsYW5zIHRvIGtlZXAKPiBhZGRpbmcgZnVuY3Rpb25hbGl0aWVzIHRvIHRoaXMgZHJpdmVyIG9y
-IGlmIEkgc2hvdWxkIGp1c3QgcmVtb3ZlIHRoZW0uCj4gCj4gOC4gRVhDTFZMIGlzIGR1cGxpY2F0
-ZWQuIFRoZXJlJ3MgYSBzaW1wbGUgbWFjcm8gaW4gYWQ3NzQ2LmMgYW5kIHNvbWUKPiBkZWZpbmVz
-IGluIGFkNzc0Ni5oLiBUaGUgbGF0dGVyIGFyZSBub3QgdXNlZCBhbnl3aGVyZSBpbiB0aGUgY29k
-ZS4KPiBSZW1vdmUgdGhlbS4KPiAKPiA3LiBNb3ZlIHRoZSBzdHJ1Y3QgYWQ3NzQ2X3BsYXRmb3Jt
-X2RhdGEgdG8gaW5jbHVkZS9saW51eC9paW8uCj4gCj4gQXMgbWVudGlvbmVkIGluIGVhcmxpZXIg
-bWFpbHMsIEkgd2lsbCBhdm9pZCBhZGRpbmcgbmV3IGZlYXR1cmVzIGFzIEkKPiBoYXZlIG5vIGFj
-Y2VzcyB0byB0aGUgaGFyZHdhcmUgYW5kLCB0aGVyZWZvcmUsIGNvdWxkIG5vdCB0ZXN0IGl0LgpN
-aWNoYWVsIGhhcyBzdGF0ZWQgaGUgaGFzIGF0IGxlYXN0IHNvbWUgb2YgdGhlIENEQ3Mgc3RpbGwg
-c28gbWF5IGJlIGFibGUKdG8gaGVscCB3aXRoIHRoYXQuCgo+IAo+IEkgZ3Vlc3MgdGhhdCdkIGJl
-IGFsbC4gSWYgSSdtIG1pc3Npbmcgc29tZXRoaW5nIEkgd291bGQgYmUgcmVhbGx5Cj4gZ3JhdGVm
-dWwgaWYgeW91IGNhbiBsZXQgbWUga25vdyBvciBnaXZlIG1lIHNvbWUgcG9pbnRlcnMgd2hlcmUg
-dG8gbG9vawo+IGF0LgoKSXQgd291bGQgcHJvYmFibHkgYmUgYSBnb29kIGlkZWEgdG8gYWRkIGRl
-dmljZXRyZWUgYmluZGluZ3MgaWYgcG9zc2libGUuCkhhcmRseSBhbnl0aGluZyBpcyBkb25lIHdp
-dGggYm9hcmQgZmlsZXMgdGhlc2UgZGF5cyAtIHRob3VnaCB3ZSBzaG91bGQKbWFpbnRhaW4gdGhl
-IHBsYXRmb3JtIGRhdGEgZm9yIGFueW9uZSB3aG8gaXMgdXNpbmcgdGhlbSAoZm9yIG5vdykuCgpU
-aGVyZSBtYXkgd2VsbCBiZSBvdGhlciB0aGluZ3MgdGhhdCBjb21lIG91dCBvZiB0aGUgd29vZHdv
-cmsgb25jZQp3ZSBkbyBhIGZvcm1hbCByZXZpZXcgb2YgdGhlIHBhdGNoIHRoYXQgcHJvcG9zZXMg
-bW92aW5nIGl0IG91dCBvZgpzdGFnaW5nICh0aGVyZSBhbG1vc3QgYWx3YXlzIGlzISkKCkpvbmF0
-aGFuCgo+IAo+IENoZWVycywKPiAKPiBIZXJuw6FuCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtaWlvIiBpbgo+IHRo
-ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBt
-YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZl
-bCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVy
-ZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2
-ZWwK
+Hello media maintainers,
+
+I've been postponing sending out these patches for awhile because I was
+waiting for a review for the Tegra memory controller patches that would
+allow to reset VDE HW properly and was hoping that they will get into 4.17,
+but it's getting quite late now and seems 4.18 is the best bet now for the
+proper VDE reset. So here is a small patchset that addresses couple of
+minor issues that I've spotted over time.
+
+Dmitry Osipenko (5):
+  media: staging: tegra-vde: Align bitstream size to 16K
+  media: staging: tegra-vde: Silence some of checkpatch warnings
+  media: staging: tegra-vde: Correct minimum size of U/V planes
+  media: staging: tegra-vde: Do not handle spurious interrupts
+  media: staging: tegra-vde: Correct included header
+
+ drivers/staging/media/tegra-vde/tegra-vde.c | 63 ++++++++++++++++-------------
+ 1 file changed, 34 insertions(+), 29 deletions(-)
+
+-- 
+2.16.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
