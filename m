@@ -1,87 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753678AbeCQSWz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 14:22:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752819AbeCQSWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 14:22:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BDE420855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 17 Mar 2018 18:22:48 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Subject: Re: [PATCH v3 1/8] iio: stx104: Implement get_multiple callback
-Message-ID: <20180317182248.28fc9cbb@archlinux>
-In-Reply-To: <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521301345.git.vilhelm.gray@gmail.com>
-References: <cover.1521301345.git.vilhelm.gray@gmail.com>
-        <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521301345.git.vilhelm.gray@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753757AbeCQS1a (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 14:27:30 -0400
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:43248 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753056AbeCQS1Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 14:27:24 -0400
+X-Google-Smtp-Source: AG47ELslMNeFMJDsmNMx5Ka/PYbeFddDU0+LlkLoAlJe1VAh/t9NvqCGzAhWtHlbG46VOQmE8Yx1JO04Oc8YXsWilkk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1937778373.476574.1521290144753@email.1und1.de>
+References: <1521269828-8874-1-git-send-email-Anson.Huang@nxp.com>
+ <1521269828-8874-2-git-send-email-Anson.Huang@nxp.com> <1937778373.476574.1521290144753@email.1und1.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 17 Mar 2018 15:27:23 -0300
+Message-ID: <CAOMZO5CUD373oZsnE69kEwj0oXLSQTMeb5k2YK6H5gPY7QyZPA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] regulator: pfuze100: update voltage setting for
+ pfuze3000 sw1a
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>, Robin Gong <yibin.gong@nxp.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Anson Huang <Anson.Huang@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2HIRYnR008680
 
-On Sat, 17 Mar 2018 11:49:56 -0400
-William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+Hi Stefan,
 
-> The Apex Embedded Systems STX104 series of devices provides 4 TTL
-> compatible lines of inputs accessed via a single 4-bit port. Since four
-> input lines are acquired on a single port input read, the STX104 GPIO
-> driver may improve multiple input reads by utilizing a get_multiple
-> callback. This patch implements the stx104_gpio_get_multiple function
-> which serves as the respective get_multiple callback.
-> 
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-This one is simple so applied to the togreg branch of iio.git and pushed
-out as testing for the autobuilders to play with it.
+On Sat, Mar 17, 2018 at 9:35 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> Hi Anson,
+>
+>> Anson Huang <Anson.Huang@nxp.com> hat am 17. März 2018 um 07:57 geschrieben:
+>>
+>>
+>> Latest pfuze3000 datasheet from:
+>>
+>> http://cache.freescale.com/files/analog/doc/data_sheet/PF3000.pdf?fsrch=1&sr=1&pageNum=1
+>
+> this link goes to Rev. 7.0, 9/2016, which isn't the latest one.
+>
+> I guess Rev. 9.0, 8/2017 is the latest.
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/adc/stx104.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
-> index 17b021f33180..0662ca199eb0 100644
-> --- a/drivers/iio/adc/stx104.c
-> +++ b/drivers/iio/adc/stx104.c
-> @@ -233,6 +233,16 @@ static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
->  	return !!(inb(stx104gpio->base) & BIT(offset));
->  }
->  
-> +static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-> +	unsigned long *bits)
-> +{
-> +	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
-> +
-> +	*bits = inb(stx104gpio->base);
-> +
-> +	return 0;
-> +}
-> +
->  static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
->  	int value)
->  {
-> @@ -342,6 +352,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
->  	stx104gpio->chip.direction_input = stx104_gpio_direction_input;
->  	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
->  	stx104gpio->chip.get = stx104_gpio_get;
-> +	stx104gpio->chip.get_multiple = stx104_gpio_get_multiple;
->  	stx104gpio->chip.set = stx104_gpio_set;
->  	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
->  	stx104gpio->base = base[id] + 3;
+You are right. This is the link to the latest datasheet:
+https://www.nxp.com/docs/en/data-sheet/PF3000.pdf
