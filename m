@@ -1,67 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeCQQoY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 12:44:24 -0400
-Received: from p3plsmtpa07-05.prod.phx3.secureserver.net ([173.201.192.234]:36469
-        "EHLO p3plsmtpa07-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751304AbeCQQoV (ORCPT
+        id S1753172AbeCQQtS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 12:49:18 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:38597 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbeCQQtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 12:44:21 -0400
-From: Kyle Spiers <kyle@spiers.me>
-To: idryomov@gmail.com
-Cc: sage@redhat.com, elder@kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org, me@tobin.cc,
-        Kyle Spiers <kyle@spiers.me>
-Subject: [PATCH v3] rbd: Remove VLA usage
-Date: Sat, 17 Mar 2018 09:44:01 -0700
-Message-Id: <1521305041-18181-1-git-send-email-kyle@spiers.me>
-X-Mailer: git-send-email 2.7.4
-X-CMAE-Envelope: MS4wfON3VnCVQJhfJWjTyCr+FFfDy/E3u1Qigv//j6kJgeaAlsIuNf2Y8RF2gCDBorkunvQccqYRJM/eLhOkld8zjlRxMnriqnInf+tZR/v/36EqfTcD7fdZ
- 5ggwN6LWZrmHFtZPdAPbj4hxnvV4YDLfjRFmxDDZvn/NNqRHQjMnbL55sYQ+VipEs2cYO/42picYgqqF7KFucAZ6ufM6UauMM3UeZgsQuB7Vbecberr9wqX0
- BXB/e78tY0j/9Y3dGPweVxXLMsQzCLNhR0I/B7PaWeua27YZuuBaClqh9Xp3qZ1/9dz26Hz16g+FwwRu+N7u3977J+7FBaerO4aG6TYkIxzghXYlNwPItvwI
- lHa2RHcdj48zjZUF+PlNXNGTOPoH9gwTwFBvAY1NO03x7T1iV1k=
+        Sat, 17 Mar 2018 12:49:16 -0400
+X-Google-Smtp-Source: AG47ELvleyN+vfiUOhbUnWthG41xrah1PGqQR3jXq2BlcRfGJ3EDBqZkoLpfFpiWFrHFeoLw60GqYA==
+Date: Sat, 17 Mar 2018 19:49:11 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH -mm] proc: fixup read test even more
+Message-ID: <20180317164911.GA3445@avx2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- 
-As part of the effort to remove VLAs from the kernel[1], this moves
-the literal values into the stack array calculation instead of using a
-variable for the sizing. The resulting size can be found from
-sizeof(buf).
+/proc/sysrq-trigger lives on the ground floor so to speak.
 
-[1] https://lkml.org/lkml/2018/3/7/621
-
-Signed-off-by: Kyle Spiers <kyle@spiers.me>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- drivers/block/rbd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e40da0..46893e0 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
- 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
--	int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
--	char buf[buf_size];
-+	char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
-+	int buf_size = sizeof(buf);
- 	void *p = buf;
+	FOLD INTO proc-shotgun-test-read-readdir-readlink-a-little-write-fix.patch
+
+ tools/testing/selftests/proc/read.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -106,10 +106,10 @@ static void f(DIR *d, unsigned int level)
+ 			int fd;
  
- 	dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
-@@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct rbd_device *rbd_dev,
- 				     u64 notify_id, u64 cookie, s32 *result)
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
--	int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
--	char buf[buf_size];
-+	char buf[4 + CEPH_ENCODING_START_BLK_LEN];
-+	int buf_size = sizeof(buf);
- 	int ret;
- 
- 	if (result) {
--- 
-2.7.4
+ 		case DT_REG:
+-			if (level == 1 && streq(de->d_name, "clear_refs")) {
+-				f_reg_write(d, de->d_name, "1", 1);
+-			} else if (level == 1 && streq(de->d_name, "sysrq-trigger")) {
++			if (level == 0 && streq(de->d_name, "sysrq-trigger")) {
+ 				f_reg_write(d, de->d_name, "h", 1);
++			} else if (level == 1 && streq(de->d_name, "clear_refs")) {
++				f_reg_write(d, de->d_name, "1", 1);
+ 			} else if (level == 3 && streq(de->d_name, "clear_refs")) {
+ 				f_reg_write(d, de->d_name, "1", 1);
+ 			} else {
