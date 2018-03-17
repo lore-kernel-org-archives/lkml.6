@@ -1,65 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeCQEoj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 00:44:39 -0400
-Received: from 4ray.co ([163.172.156.253]:53372 "EHLO 4ray.co"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750853AbeCQEoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 00:44:37 -0400
-Subject: [PATCH] Input: atmel_mxt_ts: Add hook for Chromebooks with upstream
- coreboot
-References: <158c166b-bd85-53ab-dc02-920667c7409d@4ray.co>
-To: Nick Dyer <nick@shmanahar.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Jean Lucas <jean@4ray.co>
-X-Forwarded-Message-Id: <158c166b-bd85-53ab-dc02-920667c7409d@4ray.co>
-Message-ID: <ccc2fe57-5d0f-4033-063f-9a9e941ef54e@4ray.co>
-Date: Sat, 17 Mar 2018 00:37:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751236AbeCQFbP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 01:31:15 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:40753 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750746AbeCQFbO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 01:31:14 -0400
+X-Google-Smtp-Source: AG47ELsRR2V/SsFjL18F040KvOdS6/UfQ7/wFUZvQuKjYj48ra2eJTzzMZVLGZKQln6eLQ9ZpfcZiy2w27zxTTXk3SI=
 MIME-Version: 1.0
-In-Reply-To: <158c166b-bd85-53ab-dc02-920667c7409d@4ray.co>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20180221170748.27505-1-enric.balletbo@collabora.com>
+ <20180221170748.27505-7-enric.balletbo@collabora.com> <20180307162846.6he3rtvtzkvuwpem@dell>
+In-Reply-To: <20180307162846.6he3rtvtzkvuwpem@dell>
+From: Gwendal Grignou <gwendal@chromium.org>
+Date: Sat, 17 Mar 2018 05:31:01 +0000
+Message-ID: <CAMHSBOXaVhxURFvDZYojL1bpYh0ixv-u9=6s2KX1BAigRtoAOw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] platform/chrome: mfd/cros_ec_dev: Add sysfs entry
+ to set keyboard wake lid angle
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
+        Guenter Roeck <groeck@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2H5VRgT019594
 
-Chromebooks use coreboot for system initialization. coreboot has always
-had the default mainboard vendor string for Google machines set to
-"Google". Google engineers set this string to "GOOGLE" in the coreboot
-copies of the Chromium OS tree. The atmel_mxt_ts driver in it's current
-state is set to match the latter case, i.e. it will only bind to a
-Chromebook's touchscreen either if the device uses the downstream
-coreboot firmware (providing the matching mainboard vendor string), or
-if a user running upstream coreboot has manually set the string to
-"GOOGLE". This patch adds a match for coreboot's default.
+On Wed, Mar 7, 2018 at 8:28 AM Lee Jones <lee.jones@linaro.org> wrote:
 
-Signed-off-by: Jean Lucas <jean@4ray.co>
----
-  drivers/input/touchscreen/atmel_mxt_ts.c | 8 ++++++++
-  1 file changed, 8 insertions(+)
+> On Wed, 21 Feb 2018, Enric Balletbo i Serra wrote:
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 7659bc48f1db..8c74a3e13cca 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -3038,6 +3038,14 @@ static const struct dmi_system_id mxt_dmi_table[] = {
-  		},
-  		.driver_data = chromebook_platform_data,
-  	},
-+	{
-+		/* Chromebooks with upstream coreboot */
-+		.ident = "Chromebook",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
-+		},
-+		.driver_data = chromebook_platform_data,
-+	},
-  	{ }
-  };
-  
--- 
-2.16.2
+> > From: Gwendal Grignou <gwendal@chromium.org>
+> >
+> > This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
+> > used to set and get the keyboard wake lid angle. This attribute is
+> > present only if 2 accelerometers are controlled by the EC.
+> >
+> > This patch also moves the cros_ec features check before the device is
+> > added so the features map obtained from the EC is ready on time.
+
+Enric,
+
+I found an error in the patch. During the merge, the code that set
+has_kb_wake_angle in cros_ec_sensors_register() has been lost. I uploaded a
+change (that also remove call for a non-existent cros-ec-angle platform
+driver) at https://chromium-review.googlesource.com/#/c/866106.
+
+Gwendal.
+> >
+> > Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > ---
+> > Changes since v1:
+> > - Suggested by Andy Shevchenko:
+> >   - Use the previous defined to_cros_ec_dev
+> >   - Use one line when fits in 80 characters.
+> >   - Use DEVICE_ATTR_RW variant.
+> >
+> >  drivers/platform/chrome/cros_ec_sysfs.c | 81
++++++++++++++++++++++++++++++++++
+
+> >  drivers/mfd/cros_ec_dev.c               | 19 ++++----
+> >  include/linux/mfd/cros_ec.h             |  1 +
+
+> Please send me a PR with this patch contained.
+
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> --
+> Lee Jones
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
