@@ -1,79 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753041AbeCQXAY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 19:00:24 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:54514 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752359AbeCQXAX (ORCPT
+        id S1753169AbeCQXK1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 19:10:27 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39136 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751849AbeCQXKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 19:00:23 -0400
-Date: Sat, 17 Mar 2018 16:00:21 -0700
-From: Andi Kleen <andi@firstfloor.org>
-To: jason.vas.dias@gmail.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, peterz@infradead.org, andi@firstfloor.org
-Subject: Re: [PATCH v4.16-rc5 2/2] x86/vdso: VDSO should handle
- clock_gettime(CLOCK_MONOTONIC_RAW) without syscall
-Message-ID: <20180317230020.ensccrtuajqgxsxa@two.firstfloor.org>
-References: <1521296974-12142-1-git-send-email-jason.vas.dias@gmail.com>
- <1521296974-12142-3-git-send-email-jason.vas.dias@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521296974-12142-3-git-send-email-jason.vas.dias@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sat, 17 Mar 2018 19:10:24 -0400
+X-Google-Smtp-Source: AG47ELt7qUcbF3ddIoac8n5IKTbGQZ3WqSnfBaaEel9guxPmwGOvKyFlDWBnH8+ZnplyqX5yJHeudQ==
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com
+Cc: David Hildenbrand <david@redhat.com>, linux-s390@vger.kernel.org
+Subject: [PATCH] s390: Use asm/compat.h instead of linux/compat.h
+Date: Sat, 17 Mar 2018 16:09:57 -0700
+Message-Id: <20180317230957.12174-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
+References: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 02:29:34PM +0000, jason.vas.dias@gmail.com wrote:
->          This patch allows compilation to succeed with compilers that support -DRETPOLINE -
->          it was kindly contributed by H.J. Liu in GCC Bugzilla: 84908 :
->             https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84908
-> 
->          Apparently the GCC retpoline implementation has a limitation that it cannot
->          handle switch statements with more than 5 clauses, which vclock_gettime.c's
->          __vdso_clock_gettime function now conts.
+Include asm/compat.h directly for uses of compat_ptr.
+This includes the compat defines when CONFIG_COMPAT is
+not on.
 
-That's quite a mischaracterization of the issue. gcc works as intended,
-but the kernel did not correctly supply a indirect call retpoline thunk
-to the vdso, and it just happened to work by accident with the old
-vdso.
+Also make compat data structure definitions conditional on
+CONFIG_COMPAT, to remove circular include dependencies in
+elf.h
 
-> 
->          The automated test builds should now succeed with this patch.
+Cc: David Hildenbrand <david@redhat.com>
+Cc: linux-s390@vger.kernel.org
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+---
+ arch/s390/hypfs/hypfs_sprp.c      | 1 +
+ arch/s390/include/asm/compat.h    | 1 +
+ arch/s390/include/asm/elf.h       | 2 ++
+ arch/s390/kvm/priv.c              | 2 +-
+ arch/s390/pci/pci_clp.c           | 1 +
+ drivers/s390/block/dasd_ioctl.c   | 2 +-
+ drivers/s390/char/fs3270.c        | 2 +-
+ drivers/s390/char/sclp_ctl.c      | 1 +
+ drivers/s390/char/vmcp.c          | 1 +
+ drivers/s390/cio/chsc_sch.c       | 2 +-
+ drivers/s390/net/qeth_core_main.c | 2 +-
+ 11 files changed, 12 insertions(+), 5 deletions(-)
 
-How about just adding the thunk function to the vdso object instead of
-this cheap hack? 
-
-The other option would be to build vdso with inline thunks.
-
-But just disabling is completely the wrong action.
-
--Andi
-
-
-> 
-> 
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-> index 1943aeb..cb64e10 100644
-> --- a/arch/x86/entry/vdso/Makefile
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -76,7 +76,7 @@ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
->         -fno-omit-frame-pointer -foptimize-sibling-calls \
->         -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
->  
-> -$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
-> +$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS) -DRETPOLINE,$(KBUILD_CFLAGS)) $(CFL)
->  
->  #
->  # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
-> @@ -143,6 +143,7 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
->  KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
->  KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
->  KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
-> +KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS) -DRETPOLINE,$(KBUILD_CFLAGS_32))
->  KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
->  KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
->  KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
-> 
+diff --git a/arch/s390/hypfs/hypfs_sprp.c b/arch/s390/hypfs/hypfs_sprp.c
+index 5d85a039391c..d800b8067042 100644
+--- a/arch/s390/hypfs/hypfs_sprp.c
++++ b/arch/s390/hypfs/hypfs_sprp.c
+@@ -7,6 +7,7 @@
+  *    Author(s): Martin Schwidefsky <schwidefsky@de.ibm.com>
+  */
+ 
++#include <asm/compat.h>
+ #include <linux/compat.h>
+ #include <linux/errno.h>
+ #include <linux/gfp.h>
+diff --git a/arch/s390/include/asm/compat.h b/arch/s390/include/asm/compat.h
+index 501aaff85304..1832d98c9328 100644
+--- a/arch/s390/include/asm/compat.h
++++ b/arch/s390/include/asm/compat.h
+@@ -4,6 +4,7 @@
+ /*
+  * Architecture specific compatibility types
+  */
++#include <linux/compat_time.h>
+ #include <linux/types.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+diff --git a/arch/s390/include/asm/elf.h b/arch/s390/include/asm/elf.h
+index 7d22a474a040..e572ae613b19 100644
+--- a/arch/s390/include/asm/elf.h
++++ b/arch/s390/include/asm/elf.h
+@@ -134,8 +134,10 @@
+ typedef s390_fp_regs elf_fpregset_t;
+ typedef s390_regs elf_gregset_t;
+ 
++#ifdef CONFIG_COMPAT
+ typedef s390_fp_regs compat_elf_fpregset_t;
+ typedef s390_compat_regs compat_elf_gregset_t;
++#endif
+ 
+ #include <linux/sched/mm.h>	/* for task_struct */
+ #include <asm/mmu_context.h>
+diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
+index a3bce0e84346..b7e6d81547bd 100644
+--- a/arch/s390/kvm/priv.c
++++ b/arch/s390/kvm/priv.c
+@@ -11,7 +11,7 @@
+ #include <linux/kvm.h>
+ #include <linux/gfp.h>
+ #include <linux/errno.h>
+-#include <linux/compat.h>
++#include <asm/compat.h>
+ #include <linux/mm_types.h>
+ 
+ #include <asm/asm-offsets.h>
+diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
+index 19b2d2a9b43d..4b6fe97823b7 100644
+--- a/arch/s390/pci/pci_clp.c
++++ b/arch/s390/pci/pci_clp.c
+@@ -9,6 +9,7 @@
+ #define KMSG_COMPONENT "zpci"
+ #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+ 
++#include <asm/compat.h>
+ #include <linux/compat.h>
+ #include <linux/kernel.h>
+ #include <linux/miscdevice.h>
+diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+index 2016e0ed5865..288fa9d4d105 100644
+--- a/drivers/s390/block/dasd_ioctl.c
++++ b/drivers/s390/block/dasd_ioctl.c
+@@ -13,7 +13,7 @@
+ #define KMSG_COMPONENT "dasd"
+ 
+ #include <linux/interrupt.h>
+-#include <linux/compat.h>
++#include <asm/compat.h>
+ #include <linux/major.h>
+ #include <linux/fs.h>
+ #include <linux/blkpg.h>
+diff --git a/drivers/s390/char/fs3270.c b/drivers/s390/char/fs3270.c
+index 16a4e8528bbc..cf4a26c6f76d 100644
+--- a/drivers/s390/char/fs3270.c
++++ b/drivers/s390/char/fs3270.c
+@@ -12,7 +12,7 @@
+ #include <linux/console.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/compat.h>
++#include <asm/compat.h>
+ #include <linux/sched/signal.h>
+ #include <linux/module.h>
+ #include <linux/list.h>
+diff --git a/drivers/s390/char/sclp_ctl.c b/drivers/s390/char/sclp_ctl.c
+index 248b5db3eaa8..bd0d9e5cabd7 100644
+--- a/drivers/s390/char/sclp_ctl.c
++++ b/drivers/s390/char/sclp_ctl.c
+@@ -7,6 +7,7 @@
+  * Author: Michael Holzheu <holzheu@linux.vnet.ibm.com>
+  */
+ 
++#include <asm/compat.h>
+ #include <linux/compat.h>
+ #include <linux/uaccess.h>
+ #include <linux/miscdevice.h>
+diff --git a/drivers/s390/char/vmcp.c b/drivers/s390/char/vmcp.c
+index 948ce82a7725..0a153741ea88 100644
+--- a/drivers/s390/char/vmcp.c
++++ b/drivers/s390/char/vmcp.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/init.h>
++#include <asm/compat.h>
+ #include <linux/compat.h>
+ #include <linux/kernel.h>
+ #include <linux/miscdevice.h>
+diff --git a/drivers/s390/cio/chsc_sch.c b/drivers/s390/cio/chsc_sch.c
+index 8d9f36625ba5..3a541e694cb1 100644
+--- a/drivers/s390/cio/chsc_sch.c
++++ b/drivers/s390/cio/chsc_sch.c
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include <linux/slab.h>
+-#include <linux/compat.h>
++#include <asm/compat.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/uaccess.h>
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index d3529ef6e0f7..adde6b30bad6 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -10,7 +10,7 @@
+ #define KMSG_COMPONENT "qeth"
+ #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+ 
+-#include <linux/compat.h>
++#include <asm/compat.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/string.h>
+-- 
+2.14.1
