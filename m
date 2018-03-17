@@ -1,43 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753114AbeCQBKZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 21:10:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56458 "EHLO mx2.suse.de"
+        id S1752988AbeCQBWQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 21:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753044AbeCQBKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 21:10:23 -0400
-Date: Sat, 17 Mar 2018 01:10:21 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v5 1/9] sysctl: Add flags to support min/max range
- clamping
-Message-ID: <20180317011021.GB4449@wotan.suse.de>
-References: <1521224030-2185-1-git-send-email-longman@redhat.com>
- <1521224030-2185-2-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521224030-2185-2-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+        id S1752714AbeCQBWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 21:22:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600DD2177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Sat, 17 Mar 2018 10:22:11 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
+ blacklist
+Message-Id: <20180317102211.a648f26ae0d5a53d95c63022@kernel.org>
+In-Reply-To: <20180317091334.55f1fc325c26deaa4d4a4d19@kernel.org>
+References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
+        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
+        <20170714142900.1c91949c@gandalf.local.home>
+        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
+        <20180316112517.66bdd85a@gandalf.local.home>
+        <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
+        <20180316124134.30fa47d5@gandalf.local.home>
+        <20180316124840.3e83bbec@gandalf.local.home>
+        <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
+        <20180317091334.55f1fc325c26deaa4d4a4d19@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:13:42PM -0400, Waiman Long wrote:
-> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table
-> entry, any update from the userspace will be clamped to the given
-> range without error if either the proc_dointvec_minmax() or the
-> proc_douintvec_minmax() handlers is used.
+On Sat, 17 Mar 2018 09:13:34 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-I don't get it.  Why define a generic range flag when we can be mores specific and
-you do that in your next patch. What's the point of this flag then?
+> On Fri, 16 Mar 2018 13:53:01 -0400 (EDT)
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+> > ----- On Mar 16, 2018, at 12:48 PM, rostedt rostedt@goodmis.org wrote:
+> > 
+> > > On Fri, 16 Mar 2018 12:41:34 -0400
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > 
+> > >> Yes, kprobes are dangerous. I'm not saying it shouldn't be fixed, I'm
+> > >> saying that I don't have time to fix it now, but would be happy to
+> > >> accept patches if someone else does so.
+> > > 
+> > > And looking at what I replied before for the original patch. It would
+> > > probably be a good idea to blacklist directories. Like we do with
+> > > function tracing. We probably should black list both kernel/tracing and
+> > > kernel/events from being probed.
+> > > 
+> > > Did this come up at plumbers? You were there too, I don't remember
+> > > discussing it there.
+> > 
+> > I don't remember this coming up last Plumbers nor KS neither, given
+> > that we were focused on other topics.
+> > 
+> > Would the general approach you envision be based on emitting all code
+> > generated by compilation of all objects under kernel/tracing and
+> > kernel/events into a specific "nokprobes" text section of the kernel ?
+> > Perhaps we could create a specific linker scripts for those directories,
+> > or do you have in mind a neater way to do this ?
+> 
+> .kprobes.text section still exists. As I pointed in previous mail, I don't
+> think we have to put all those code into that section. But if you want,
+> it is acceptable to have a kconfig which push most of those ftrace related
+> code into .kprobes.text section.
 
-  Luis
+Or, we can check it by ftrace_location_range() as below patch.
+
+Note that as a side-effect, we can not trace functions in trace_kprobe.c
+anymore, and this means it is hard to me to make a testcase of kprobe events.
+It was the easiest (and maintainable) way to make test cases... sigh.
+
+-----
+tracing: kprobes: Prohibit probing on notrace function
+
+From: Masami Hiramatsu <mhiramat@kernel.org>
+
+Prohibit kprobe-events probing on notrace function.
+Since probing on the notrace function can cause recursive
+event call. In most case those are just skipped, but
+in some case it falls into infinit recursive call.
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ kernel/trace/trace_kprobe.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 5ce9b8cf7be3..7404b012e51a 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -487,6 +487,23 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_KPROBES_ON_FTRACE
++static bool within_notrace_func(struct trace_kprobe *tk)
++{
++	unsigned long offset, size, addr;
++
++	addr = kallsyms_lookup_name(trace_kprobe_symbol(tk));
++	addr += trace_kprobe_offset(tk);
++
++	if (!kallsyms_lookup_size_offset(addr, &size, &offset))
++		return true;	/* Out of range. */
++
++	return !ftrace_location_range(addr - offset, addr - offset + size);
++}
++#else
++#define within_notrace_func(tk)	(false)
++#endif
++
+ /* Internal register function - just handle k*probes and flags */
+ static int __register_trace_kprobe(struct trace_kprobe *tk)
+ {
+@@ -495,6 +512,12 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
+ 	if (trace_probe_is_registered(&tk->tp))
+ 		return -EINVAL;
+ 
++	if (within_notrace_func(tk)) {
++		pr_warn("Could not probe notrace function %s\n",
++			trace_kprobe_symbol(tk));
++		return -EINVAL;
++	}
++
+ 	for (i = 0; i < tk->tp.nr_args; i++)
+ 		traceprobe_update_arg(&tk->tp.args[i]);
+ 
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
