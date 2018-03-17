@@ -1,158 +1,91 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvhk3a4u8GKLefvOk3vol5xJPTdgPAY9Kd9971KGUid1mmNwjjMyE1pyS41GHbNSPoqucwr
-ARC-Seal: i=1; a=rsa-sha256; t=1521486200; cv=none;
-        d=google.com; s=arc-20160816;
-        b=x6RZ9+A/PfKXgWfb0eJogeOXuYstTZbG5NQBeGPXKktUips2x5WignB1VqA0nNbSsI
-         85tVxmp8hg7H3M6vkVezOaXxmQQlWIKxbPC06xze8wKFB8t2whoovc/+STdwhWnPBkh9
-         HeLjo29heVszTxVD2HX21ldjLc/VQAVf1BkAigdCgLSuiyoUog3x0d1yO9vEvLpjeUcO
-         EomhL5XD7nja4NFTf+L7iRcM01JeMNyCA+d48ZHLhxNMtkeVahjfvbv9uDFO1zCeVyhv
-         i5vIgspP4ynBpXd8ykSdKE7u/VkfoOOyvWTHS2siF0qcVgupCNtfB8pmJnCDbcgBO2O6
-         yjAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Uy7RalgXfEQ7otTEqf2fKfsuVbqGZsUNmxogIHNRa+I=;
-        b=0SP3IHYVO5A9VK74qveLnVR6fmruXJZ9Q/vhoZLpYbChNHgtRgyajdHTEIuMJe6ODX
-         nJ+Q0WHAB7hOgSlegq1gzMhc6Yu3nOYBXVeKnm5aKjnypk8/GFhS9zgXWjpOscWkI5xd
-         vP/knClqj/698rW36B/qjbnT7i2hWInXdj9eG8nmF3M7CIk3ymErzffi0AQGswh7xoBu
-         29QVxpQtU9A6o0cCAt672pZmmJNu3Rmw1DaVMSJTdb+wtVhqncu4BRd2r/3c/Ferzc2Q
-         +CMW1YWSj9oNEeAuyJvyYAeq3B4hE9u9JanIoezP6xxRlGiLiMAA+iq71LINy3bq7DGs
-         a2Kg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-937799-1521271960-3-15877025261107409378
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521271959; b=oiwXvdhZqrVjz2gyJB/dmP8dGv4uT3h+XJT0BD/GaXvmxSy
+    C2KQm3YPL6AKqnpWeFhPkXr//ulro+mU/1aBLGEPK9YOFazK17CXHSIrmG1AmwF5
+    kHDw6WwAJ4RTsVn83fR6nwuiWHtFfbowTh8VWF9K8NWlWMbGNYi+DpQaXmV9SdEe
+    2lMatak92312KTDW9bSOeCAbnizIZL6f2+B27z0sL6cUp6EvlP5yksUtVZH8fNbc
+    41Ip23RD1j69arnz2CVptDf17b5z5HOAspWrtNcv0uoXbWzPQOcWd42Fu9jqKt3R
+    HGHZyxzlXgOwVzvjhfc3aMOmi0N53RfNaC/615Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521271959; bh=0Wekq0QGJVKwxicuL4Udt55F8+
+    lOMfwAZxM1Yg9lZCA=; b=FUT0u0/AKtQdNUPY/EIeJQNXRGOjjYUCUk5KtpyUMo
+    D01KZV2k2XyyNkVQvmhu8toMsQBPtlKJ1qxIefUxHtMjqtgkP6hsNvGe/KGZM7e8
+    FajWVlSTwawyNxXHkwoos1bXAPpyX/Xe+jeMVoZP73yPBthncAd4TgJGt34lLTTI
+    7olKpb8NMFEX3OtqQe5kJD1xhIbsZf5gwS+TnkuI/Ces2B7RtTA6ICw7Eje8SkUt
+    ftlnykvspUM0RYEITNjyJddUkZqXPfnbrqevnd9EtyqQ7cIyJfa6mbFxqDQmxEEF
+    EGk3o63jI52hlgkQAbXDZRM3PftSNiGEzfAMc4pmDZ8g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=N91ZNGi4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Bq8ebQmV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=N91ZNGi4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Bq8ebQmV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968451AbeCSTDT (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 19 Mar 2018 15:03:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970805AbeCSTCX (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:02:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF63217D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-kselftest@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/14] perf probe: Use right type to access array elements
-Date: Mon, 19 Mar 2018 16:01:34 -0300
-Message-Id: <20180319190136.7441-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180319190136.7441-1-acme@kernel.org>
-References: <20180319190136.7441-1-acme@kernel.org>
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+        id S1751304AbeCQHch (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 17 Mar 2018 03:32:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51128 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeCQHcg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 17 Mar 2018 03:32:36 -0400
+X-Google-Smtp-Source: AG47ELuh9FJsHfD2/lV14ujJeUjk6ipftkV2xUYg7hn/aFnC0+PI9rc0VmCaf1DCfVldnB4e8f4uqQ==
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To: stable@vger.kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, pavel@ucw.cz,
+        jacek.anaszewski@gmail.com
+Subject: [PATCH 4.9 0/2] Clear LED_BLINK_SW flag in led_blink_set()
+Date: Sat, 17 Mar 2018 08:31:00 +0100
+Message-Id: <1521271862-4599-1-git-send-email-jacek.anaszewski@gmail.com>
+X-Mailer: git-send-email 2.1.4
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595393913613486395?=
-X-GMAIL-MSGID: =?utf-8?q?1595393913613486395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+The fix for brightness setting when setting delay_off=0 introduces
+a regression and has truncated commit message. Revert that patch
+and apply the one-line change required to fix the original issue
+in the way appropriate for the 4.9 code base.
 
-Current 'perf probe' converts the type of array-elements incorrectly. It
-always converts the types as a pointer of array. This passes the "array"
-type DIE to the type converter so that it can get correct "element of
-array" type DIE from it.
+Thanks,
+Jacek Anaszewski
 
-E.g.
-  ====
-  $ cat hello.c
-  #include <stdio.h>
+Jacek Anaszewski (2):
+  Revert "led: core: Fix brightness setting when setting delay_off=0"
+  led: core: Clear LED_BLINK_SW flag in led_blink_set()
 
-  void foo(int a[])
-  {
-	  printf("%d\n", a[1]);
-  }
+ drivers/leds/led-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  void main()
-  {
-	  int a[3] = {4, 5, 6};
-	  printf("%d\n", a[0]);
-	  foo(a);
-  }
-
-  $ gcc -g hello.c -o hello
-  $ perf probe -x ./hello -D "foo a[1]"
-  ====
-
-Without this fix, above outputs
-  ====
-  p:probe_hello/foo /tmp/hello:0x4d3 a=+4(-8(%bp)):u64
-  ====
-The "u64" means "int *", but a[1] is "int".
-
-With this,
-  ====
-  p:probe_hello/foo /tmp/hello:0x4d3 a=+4(-8(%bp)):s32
-  ====
-So, "int" correctly converted to "s32"
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-trace-users@vger.kernel.org
-Fixes: b2a3c12b7442 ("perf probe: Support tracing an entry of array")
-Link: http://lkml.kernel.org/r/152129114502.31874.2474068470011496356.stgit@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/probe-finder.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index a5731de0e5eb..c37fbef1711d 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -423,20 +423,20 @@ static int convert_variable_fields(Dwarf_Die *vr_die, const char *varname,
- 		pr_warning("Failed to get the type of %s.\n", varname);
- 		return -ENOENT;
- 	}
--	pr_debug2("Var real type: (%x)\n", (unsigned)dwarf_dieoffset(&type));
-+	pr_debug2("Var real type: %s (%x)\n", dwarf_diename(&type),
-+		  (unsigned)dwarf_dieoffset(&type));
- 	tag = dwarf_tag(&type);
- 
- 	if (field->name[0] == '[' &&
- 	    (tag == DW_TAG_array_type || tag == DW_TAG_pointer_type)) {
--		if (field->next)
--			/* Save original type for next field */
--			memcpy(die_mem, &type, sizeof(*die_mem));
-+		/* Save original type for next field or type */
-+		memcpy(die_mem, &type, sizeof(*die_mem));
- 		/* Get the type of this array */
- 		if (die_get_real_type(&type, &type) == NULL) {
- 			pr_warning("Failed to get the type of %s.\n", varname);
- 			return -ENOENT;
- 		}
--		pr_debug2("Array real type: (%x)\n",
-+		pr_debug2("Array real type: %s (%x)\n", dwarf_diename(&type),
- 			 (unsigned)dwarf_dieoffset(&type));
- 		if (tag == DW_TAG_pointer_type) {
- 			ref = zalloc(sizeof(struct probe_trace_arg_ref));
-@@ -448,9 +448,6 @@ static int convert_variable_fields(Dwarf_Die *vr_die, const char *varname,
- 				*ref_ptr = ref;
- 		}
- 		ref->offset += dwarf_bytesize(&type) * field->index;
--		if (!field->next)
--			/* Save vr_die for converting types */
--			memcpy(die_mem, vr_die, sizeof(*die_mem));
- 		goto next;
- 	} else if (tag == DW_TAG_pointer_type) {
- 		/* Check the pointer and dereference */
 -- 
-2.14.3
-
+2.1.4
