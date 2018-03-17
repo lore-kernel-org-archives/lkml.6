@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeCQLLE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 07:11:04 -0400
-Received: from mout.gmx.net ([212.227.17.21]:33361 "EHLO mout.gmx.net"
+        id S1752467AbeCQLT4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 07:19:56 -0400
+Received: from mga17.intel.com ([192.55.52.151]:47799 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751949AbeCQLLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 07:11:03 -0400
-Date: Sat, 17 Mar 2018 12:10:50 +0100
-From: Helge Deller <deller@gmx.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        John David Anglin <dave.anglin@bell.net>
-Subject: [GIT PULL] parisc architecture fix for 4.16-rc6
-Message-ID: <20180317111050.GA30481@ls3530.fritz.box>
+        id S1751829AbeCQLTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 07:19:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,319,1517904000";
+   d="scan'208";a="28791803"
+Date: Sat, 17 Mar 2018 19:19:51 +0800
+From: kbuild test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: kbuild-all@01.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alexandre.belloni@bootlin.com, thomas.petazzoni@bootlin.com,
+        mylene.josserand@bootlin.com, michael@amarulasolutions.com
+Subject: Re: [PATCH v3 1/2] ASoC: codecs: Add support for PCM1789
+Message-ID: <201803171907.vbmkB7Z8%fengguang.wu@intel.com>
+References: <20180315161825.5524-2-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Provags-ID: V03:K0:bvVTxvt3EBHgWoiHUbcg9qQb0VvEWOb8irixa+dPlLoO2xd8EiC
- EDnohsY/yNFC8czl2AHyNELtynrlWYPwmAf2rvkxF96H9h0zxvE79xAMp4qQwznrRxdqMa0
- 960hx7dYdqFZKWzlFpl3XBndSqIo93LCq0YbiHeM3HdS83FlRQ1wEuZBiec48PXhTZlviNz
- uV/flQL0TGPzYUE5N2NKA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SmUdDgMO6SE=:KJ53KDqhrQ2CoSAI0+IW0A
- vykl9mS8cXOyWve7iBzxXq8sObYNrsIHh4Gb8wxJwEYE9+YlqNvz4DfCV6vFuwpEfJbFW4AYx
- 1sWKlA31NcBKxe+51Wd1nN6ZLy4m4dMrLMNU6/7DBy9LY7pDd6KjyW/qrDUGx91rKRTCMWPbK
- SGtajc/FbydvIw69cfI8y+luo7JBOc5FoaNdPWqqkan+DOPK+YxXGAYMK9V50Oq6Tb91fI4Fn
- 9ea6kxzsoVJoa0TBCfNE8EnUFRvIYom7f7LubuFX6Tx/N+YGemNgPeUtVB9sjs/rOWIeJf6mJ
- 6VbsYWoLvpDjTSOoimFBFOjbN5PYRz2zCs/TXnxwt2NWekpTaDAOlgijE5+gf4AEIfHcxLXWS
- rfTfz6itkS43cAwd/x2irISMnq6FNGzQfNNTRUsid+GzRldLHT7mkyp2wG4v90vYDMjJhmzDt
- rJIKXL8nNiSeZWZBlPs0Ud2z9Hb3J5rCGBK8mTKTZMaN9GpqU+zzsn2K4Mv6A0NHbLJIU4lK+
- x01t0OhwzRG8VUSPcfXuN4TOVLd05ZyPBd3CXu9jA9dw+IwJTI8KRDaoRR5hNBotH3Oig7PpL
- GKkB2nV/OCFCy8ZL0HHrOQKemeQ8KpL8z39saLPsf+kZyhFzm4e0xKcBS9iYIZSKWWaeKIZII
- XB8B2Y7XQ9hCHbIeZuOmLSr9EvbiXi31kkmdPFqZLuljzt/gJVl12MC7irWAM61mTIQY61Sge
- DtwDRjZSEsrqObH5ZBSMFKAThXHZxmr9knr2tfVspspFJ5KAsNaPUbaATjSHvgypJ3g+FvGQt
- tHpLmw9ffaBgsNdEntr6S6Ahc6Pxg==
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180315161825.5524-2-mylene.josserand@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Mylène,
 
-please pull one patch for the parisc architecture from:
+Thank you for the patch! Perhaps something to improve:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.16-2
+[auto build test WARNING on v4.16-rc4]
+[also build test WARNING on next-20180316]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-flush_cache_range() may be called without context, which then triggers a BUG().
-This patch by Dave Anglin adds code to correctly handle this case.
+url:    https://github.com/0day-ci/linux/commits/Myl-ne-Josserand/ASoC-codecs-Add-support-for-PCM1789/20180317-174449
 
-Thanks,
-Helge
 
-----------------------------------------------------------------
-John David Anglin (1):
-      parisc: Handle case where flush_cache_range is called with no context
+coccinelle warnings: (new ones prefixed by >>)
 
- arch/parisc/kernel/cache.c | 41 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 32 insertions(+), 9 deletions(-)
+>> sound/soc/codecs/pcm1789.c:265:1-3: ERROR: test of a variable/field address
+
+vim +265 sound/soc/codecs/pcm1789.c
+
+   260	
+   261	int pcm1789_common_exit(struct device *dev)
+   262	{
+   263		struct pcm1789_private *priv = dev_get_drvdata(dev);
+   264	
+ > 265		if (&priv->work)
+   266			flush_work(&priv->work);
+   267	
+   268		return 0;
+   269	}
+   270	EXPORT_SYMBOL_GPL(pcm1789_common_exit);
+   271	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
