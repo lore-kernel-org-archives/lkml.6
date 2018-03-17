@@ -1,255 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeCQSaS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 14:30:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49526 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753192AbeCQSaP (ORCPT
+        id S1753834AbeCQSu6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 14:50:58 -0400
+Received: from hoggar.fisica.ufpr.br ([200.238.171.242]:38420 "EHLO
+        hoggar.fisica.ufpr.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752676AbeCQSu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 14:30:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5AEB600C1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
- on weakly-ordered archs
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Steve Wise <swise@opengridcomputing.com>, netdev@vger.kernel.org,
-        timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
- <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
- <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
- <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
- <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
- <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org>
- <71e37a55-537b-d75a-cfde-f188b7cfce8e@codeaurora.org>
- <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
- <20180317150520.GA23463@ziepe.ca>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <ac9c34e1-0a81-a494-c7c7-ac9c3922095a@codeaurora.org>
-Date: Sat, 17 Mar 2018 14:30:10 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 17 Mar 2018 14:50:57 -0400
+Date: Sat, 17 Mar 2018 15:41:10 -0300
+From: Carlos Carvalho <carlos@fisica.ufpr.br>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: NULL pointer dereferences with 4.14.27
+Message-ID: <20180317184110.GA9702@fisica.ufpr.br>
 MIME-Version: 1.0
-In-Reply-To: <20180317150520.GA23463@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+linuxppc-dev@lists.ozlabs.org
+I've put 4.14.27 this morning in this machine and in about 2h it started
+showing null dereferences identical to the following one. There were several of
+them, with about 1/2h of interval. Strangely it continued to work and I saw no
+other anomalies. I've just reverted to 4.14.26.
 
-On 3/17/2018 11:05 AM, Jason Gunthorpe wrote:
-> On Sat, Mar 17, 2018 at 12:25:14AM -0400, Sinan Kaya wrote:
->> On 3/17/2018 12:03 AM, Sinan Kaya wrote:
->>> On 3/16/2018 11:40 PM, Sinan Kaya wrote:
->>>> I'll change writel_relaxed() with __raw_writel() in the series like you suggested
->>>> and also look at your other comments.
->>>
->>> I spoke too soon.
->>>
->>> Now that I realized, code needs to follow one of the following patterns for correctness
->>>
->>> 1)
->>> wmb()
->>> writel()/writel_relaxed()
->>>
->>> or 
->>>
->>> 2)
->>> wmb()
->>> __raw_wrltel()
->>> mmiowb()
->>>
->>> but definitely not
->>>
->>> wmb()
->>> __raw_wrltel()
->>>
->>> Since #1 == #2, I'll stick to my current implementation of writel_relaxed()
->>>
->>> Changing writel() to writel_relaxed() or __raw_writel() isn't enough. PowerPC needs mmiowb()
->>> for correctness. ARM's mmiowb() implementation is empty.
->>>
->>> So, there is no one size fits all solution with the current state of affairs.
->>>
->>>
->>
->> I think I finally got what you mean.
->>
->> Code seems to have
->>
->> wmb()
->> writel()/writeq()
->> wmb()
->>
->> this can be safely replaced with
->>
->> wmb()
->> __raw_writel()/__raw_writeq()
->> wmb()
->>
->> This will work on all arches. Below is the new version. Let me know if this is OK.
->>
->> +++ b/drivers/infiniband/hw/cxgb4/t4.h
->> @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64 *src)
->>         int count = 8;
->>
->>         while (count) {
->> -               writeq(*src, dst);
->> +               __raw_writeq(*src, dst);
->>                 src++;
->>                 dst++;
->>                 count--;
->> @@ -477,15 +477,16 @@ static inline void t4_ring_sq_db(struct t4_wq *wq, u16 inc, union t4_wr *wqe)
->>                                  (u64 *)wqe);
->>                 } else {
->>                         pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
->> -                       writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
->> -                              wq->sq.bar2_va + SGE_UDB_KDOORBELL);
->> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
->> +                                    wq->sq.bar2_va + SGE_UDB_KDOORBELL);
->>                 }
->>
->>                 /* Flush user doorbell area writes. */
->>                 wmb();
->>                 return;
->>         }
->> -       writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
->> +       __raw_writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
->> +       mmiowmb()
->>  }
->>
->>  static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
->> @@ -502,15 +503,16 @@ static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
->>                                  (void *)wqe);
->>                 } else {
->>                         pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
->> -                       writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
->> -                              wq->rq.bar2_va + SGE_UDB_KDOORBELL);
->> +                       __raw_writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
->> +                                    wq->rq.bar2_va + SGE_UDB_KDOORBELL);
->>                 }
->>
->>                 /* Flush user doorbell area writes. */
->>                 wmb();
->>                 return;
->>         }
->> -       writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
->> +       __raw_writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
->> +       mmiowmb();
-> 
-> No! NAK! Adding *new* barriers to use the *wrong* accessor is crazy!
-> 
-> Your first patch was right, replacing
->   wmb()
->   writel()
-> 
-> With wmb(); writel_relaxed() is fine, and helps ARM.
-> 
-> The problem with PPC has nothing to do with the writel, it is with the
-> spinlock, and we can't improve it without adding some new
-> infrastructure. Certainly don't hack around the problem by using
-> __raw_writel in multi-arch drivers!
-> 
-> In userspace we settled on something like this as a pattern:
-> 
->  mmio_wc_spin_lock()
->  writel_wc_mmio()
->  mmio_wc_spin_unlock()
+It only happened in this machine, which has a net traffic of several Gb/s and
+thousands of simultaneous connections.
 
-> 
-> Where mmio_wc_spin_unlock incorporates the mmiowmb and is defined to
-> fully contain all MMIO access to WC and UC memory.
-> 
-> Due to our userspace the pattern is specifically used with MMIO writes
-> to WC BAR memory, but it could be generalized..
-> 
-> This allows all known arches to use the best code in all cases. x86
-> can even optimize a lot and combine the mmiowmb() into the
-> spin_unlock, apparently.
-
-Given both Dave [1] and Jason's feedback, we have to ask PowerPC developers
-to fix writel_relaxed().
-
-Otherwise, PowerPC won't be able to take advantage of the optimizations
-introduced in this series.
-
-I don't think we need writel_really_relaxed() API.
-
-Somebody also has to take a task and work very hard to get rid of __raw_writeX()
-APIs in drivers/net directory. It looked like a very common practice though
-it clearly violates multiarch portability concerns Jason and Deve highlighted.
-
-This will be the next version:
-
-iff --git a/drivers/infiniband/hw/cxgb4/t4.h b/drivers/infiniband/hw/cxgb4/t4.h
-index 8369c7c..6e5658a 100644
---- a/drivers/infiniband/hw/cxgb4/t4.h
-+++ b/drivers/infiniband/hw/cxgb4/t4.h
-@@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64 *src)
-        int count = 8;
- 
-        while (count) {
--               writeq(*src, dst);
-+               writeq_relaxed(*src, dst);
-                src++;
-                dst++;
-                count--;
-@@ -477,15 +477,15 @@ static inline void t4_ring_sq_db(struct t4_wq *wq, u16 inc, union t4_wr *wqe)
-                                 (u64 *)wqe);
-                } else {
-                        pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
--                       writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
--                              wq->sq.bar2_va + SGE_UDB_KDOORBELL);
-+                       writel_relaxed(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
-+                                      wq->sq.bar2_va + SGE_UDB_KDOORBELL);
-                }
- 
-                /* Flush user doorbell area writes. */
-                wmb();
-                return;
-        }
--       writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
-+       writel_relaxed(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
- }
- 
- static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
-@@ -502,15 +502,15 @@ static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
-                                 (void *)wqe);
-                } else {
-                        pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
--                       writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
--                              wq->rq.bar2_va + SGE_UDB_KDOORBELL);
-+                       writel_relaxed(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
-+                                      wq->rq.bar2_va + SGE_UDB_KDOORBELL);
-                }
- 
-                /* Flush user doorbell area writes. */
-                wmb();
-                return;
-        }
--       writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
-+       writel_relaxed(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
- }
-
-
-[1] https://lkml.org/lkml/2018/3/17/100
-
-> 
-> Jason
-> 
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Mar 17 13:29:21 sagres kernel: : BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+Mar 17 13:29:21 sagres kernel: : IP: tcp_push+0x4e/0xe7
+Mar 17 13:29:21 sagres kernel: : PGD 0 P4D 0 
+Mar 17 13:29:21 sagres kernel: : Oops: 0002 [#1] SMP PTI
+Mar 17 13:29:21 sagres kernel: : CPU: 55 PID: 2658 Comm: apache2 Not tainted 4.14.27 #4
+Mar 17 13:29:21 sagres kernel: : task: ffff89791cf7e600 task.stack: ffffabdd91db8000
+Mar 17 13:29:21 sagres kernel: : RIP: 0010:tcp_push+0x4e/0xe7
+Mar 17 13:29:21 sagres kernel: : RSP: 0018:ffffabdd91dbbc10 EFLAGS: 00010246
+Mar 17 13:29:21 sagres kernel: : RAX: 0000000000000000 RBX: 00000000000004c4 RCX: 0000000000000001
+Mar 17 13:29:21 sagres kernel: : RDX: 0000000000000001 RSI: 0000000000000040 RDI: ffff89968330a100
+Mar 17 13:29:21 sagres kernel: : RBP: ffff89968330a250 R08: 0000000000007be8 R09: ffffe77cbfc4ab00
+Mar 17 13:29:21 sagres kernel: : R10: ffff89968330a250 R11: 0000000000000000 R12: ffff8987aab3bb80
+Mar 17 13:29:21 sagres kernel: : R13: ffff89968330a100 R14: ffff89791cf7e930 R15: 00000000ffffffe0
+Mar 17 13:29:21 sagres kernel: : FS:  00007f0bd67d4700(0000) GS:ffff89993f4c0000(0000) knlGS:0000000000000000
+Mar 17 13:29:21 sagres kernel: : CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 17 13:29:21 sagres kernel: : CR2: 0000000000000038 CR3: 0000003ff4842006 CR4: 00000000003606e0
+Mar 17 13:29:21 sagres kernel: : DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Mar 17 13:29:21 sagres kernel: : DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Mar 17 13:29:21 sagres kernel: : Call Trace:
+Mar 17 13:29:21 sagres kernel: : tcp_sendmsg_locked+0xac6/0xc1e
+Mar 17 13:29:21 sagres kernel: : tcp_sendmsg+0x23/0x35
+Mar 17 13:29:21 sagres kernel: : sock_sendmsg+0x11/0x1b
+Mar 17 13:29:21 sagres kernel: : sock_write_iter+0x71/0x87
+Mar 17 13:29:21 sagres kernel: : do_iter_readv_writev+0xf0/0x111
+Mar 17 13:29:21 sagres kernel: : do_iter_write+0x84/0xf0
+Mar 17 13:29:21 sagres kernel: : vfs_writev+0xad/0xfb
+Mar 17 13:29:21 sagres kernel: : ? do_writev+0x56/0x92
+Mar 17 13:29:21 sagres kernel: : do_writev+0x56/0x92
+Mar 17 13:29:21 sagres kernel: : do_syscall_64+0x181/0x210
+Mar 17 13:29:21 sagres kernel: : entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Mar 17 13:29:21 sagres kernel: : RIP: 0033:0x7f13f1264017
+Mar 17 13:29:21 sagres kernel: : RSP: 002b:00007f0bd67d2810 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
+Mar 17 13:29:21 sagres kernel: : RAX: ffffffffffffffda RBX: 0000000000000079 RCX: 00007f13f1264017
+Mar 17 13:29:21 sagres kernel: : RDX: 000000000000000a RSI: 00007f0bd67d2970 RDI: 0000000000000079
+Mar 17 13:29:21 sagres kernel: : RBP: 00007f0bd67d2970 R08: 0000000000000000 R09: 00007f13680762c8
+Mar 17 13:29:21 sagres kernel: : R10: 0000556029c85dd4 R11: 0000000000000293 R12: 000000000000000a
+Mar 17 13:29:21 sagres kernel: : R13: 00007f0bd67d2970 R14: 00007f0bd67d28d0 R15: 0000556029ea1440
+Mar 17 13:29:21 sagres kernel: : Code: d0 75 02 31 c0 41 89 f3 41 81 e3 00 80 00 00 74 1a 44 8b 8f 58 05 00 00 41 d1 e9 44 2b 8f 5c 06 00 00 44 03 8f 64 06 00 00 79 10 <80> 48 38 08 8b 8f 5c 06 00 00 89 8f 64 06 00 00 40 80 e6 01 74 
+Mar 17 13:29:21 sagres kernel: : RIP: tcp_push+0x4e/0xe7 RSP: ffffabdd91dbbc10
+Mar 17 13:29:21 sagres kernel: : CR2: 0000000000000038
+Mar 17 13:29:21 sagres kernel: : ---[ end trace f9a8f71d250d2782 ]---
