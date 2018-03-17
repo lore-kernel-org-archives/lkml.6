@@ -1,118 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752760AbeCQDB6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 23:01:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751372AbeCQDB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 23:01:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D3621742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 16 Mar 2018 23:01:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
- blacklist
-Message-ID: <20180316230154.2d34a98c@vmware.local.home>
-In-Reply-To: <20180317102211.a648f26ae0d5a53d95c63022@kernel.org>
-References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
-        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
-        <20170714142900.1c91949c@gandalf.local.home>
-        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
-        <20180316112517.66bdd85a@gandalf.local.home>
-        <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
-        <20180316124134.30fa47d5@gandalf.local.home>
-        <20180316124840.3e83bbec@gandalf.local.home>
-        <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
-        <20180317091334.55f1fc325c26deaa4d4a4d19@kernel.org>
-        <20180317102211.a648f26ae0d5a53d95c63022@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752896AbeCQDIO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 23:08:14 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8681 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeCQDIN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 23:08:13 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 16 Mar 2018 20:08:12 -0700
+Subject: Re: [PATCH 05/14] mm/hmm: use struct for hmm_vma_fault(),
+ hmm_vma_get_pfns() parameters
+To: <jglisse@redhat.com>, <linux-mm@kvack.org>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+References: <20180316191414.3223-1-jglisse@redhat.com>
+ <20180316191414.3223-6-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <9b8ad818-252d-e1f2-0cdb-a7228ccaa392@nvidia.com>
+Date: Fri, 16 Mar 2018 20:08:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180316191414.3223-6-jglisse@redhat.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 17 Mar 2018 10:22:11 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On 03/16/2018 12:14 PM, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
+> 
 
-> Or, we can check it by ftrace_location_range() as below patch.
+Hi Jerome,
 
-Cute ;-)
+I failed to find any problems in this patch, so:
 
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+There are a couple of documentation recommended typo fixes listed
+below, which are very minor but as long as I'm here I'll point them out.
+
+> Both hmm_vma_fault() and hmm_vma_get_pfns() were taking a hmm_range
+> struct as parameter and were initializing that struct with others of
+> their parameters. Have caller of those function do this as they are
+> likely to already do and only pass this struct to both function this
+> shorten function signature and make it easiers in the future to add
+
+                                         easier
+
+> new parameters by simply adding them to the structure.
 > 
-> Note that as a side-effect, we can not trace functions in trace_kprobe.c
-> anymore, and this means it is hard to me to make a testcase of kprobe events.
-> It was the easiest (and maintainable) way to make test cases... sigh.
-> 
-> -----
-> tracing: kprobes: Prohibit probing on notrace function
-> 
-> From: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Prohibit kprobe-events probing on notrace function.
-> Since probing on the notrace function can cause recursive
-> event call. In most case those are just skipped, but
-> in some case it falls into infinit recursive call.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
 > ---
->  kernel/trace/trace_kprobe.c |   23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index 5ce9b8cf7be3..7404b012e51a 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -487,6 +487,23 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
->  	return ret;
->  }
+>  include/linux/hmm.h | 18 ++++---------
+>  mm/hmm.c            | 78 +++++++++++++++++++----------------------------------
+>  2 files changed, 33 insertions(+), 63 deletions(-)
+
+
+<snip>
 >  
-> +#ifdef CONFIG_KPROBES_ON_FTRACE
-> +static bool within_notrace_func(struct trace_kprobe *tk)
-> +{
-> +	unsigned long offset, size, addr;
-> +
-> +	addr = kallsyms_lookup_name(trace_kprobe_symbol(tk));
-> +	addr += trace_kprobe_offset(tk);
-> +
-> +	if (!kallsyms_lookup_size_offset(addr, &size, &offset))
-> +		return true;	/* Out of range. */
-> +
-> +	return !ftrace_location_range(addr - offset, addr - offset + size);
-> +}
-> +#else
-> +#define within_notrace_func(tk)	(false)
-> +#endif
-> +
->  /* Internal register function - just handle k*probes and flags */
->  static int __register_trace_kprobe(struct trace_kprobe *tk)
->  {
-> @@ -495,6 +512,12 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
->  	if (trace_probe_is_registered(&tk->tp))
->  		return -EINVAL;
 >  
-> +	if (within_notrace_func(tk)) {
-> +		pr_warn("Could not probe notrace function %s\n",
-> +			trace_kprobe_symbol(tk));
-> +		return -EINVAL;
-> +	}
-
-This will prevent probing assembly code. Do we want to do that? Or is
-kprobes already prohibited from doing so?
-
--- Steve
-
-
-> +
->  	for (i = 0; i < tk->tp.nr_args; i++)
->  		traceprobe_update_arg(&tk->tp.args[i]);
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 64d9e7dae712..49f0f6b337ed 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -490,11 +490,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
 >  
-> 
+>  /*
+>   * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual addresses
+> - * @vma: virtual memory area containing the virtual address range
+> - * @range: used to track snapshot validity
+> - * @start: range virtual start address (inclusive)
+> - * @end: range virtual end address (exclusive)
+> - * @entries: array of hmm_pfn_t: provided by the caller, filled in by function
+> + * @range: range being snapshoted and all needed informations
+
+Let's just say this:
+
+* @range: range being snapshotted
+
+
+<snip>
+
+> @@ -628,11 +617,7 @@ EXPORT_SYMBOL(hmm_vma_range_done);
+>  
+>  /*
+>   * hmm_vma_fault() - try to fault some address in a virtual address range
+> - * @vma: virtual memory area containing the virtual address range
+> - * @range: use to track pfns array content validity
+> - * @start: fault range virtual start address (inclusive)
+> - * @end: fault range virtual end address (exclusive)
+> - * @pfns: array of hmm_pfn_t, only entry with fault flag set will be faulted
+> + * @range: range being faulted and all needed informations
+
+Similarly here, let's just write it like this:
+
+* @range: range being faulted
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
