@@ -1,198 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753488AbeCQRh2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 13:37:28 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33698 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752685AbeCQRhZ (ORCPT
+        id S1753528AbeCQRmr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 13:42:47 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40059 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752685AbeCQRmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 13:37:25 -0400
-X-Google-Smtp-Source: AG47ELt5yJByJmJ4Yh+z8at27eO6jivypxFy7GVbZ6IM5bG5E5JiS0B+/HzWHO9nmw4XiOvnTYa6JQ==
-Date: Sat, 17 Mar 2018 10:37:22 -0700
+        Sat, 17 Mar 2018 13:42:43 -0400
+X-Google-Smtp-Source: AG47ELtu6pSLRcR7OVRb3FdsALxreLHDdW4niPtAf9lIjnZ6Z11A4vObYnZBSnUA704Y5ioUX2xCpQ==
+Date: Sat, 17 Mar 2018 10:42:40 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
-Message-ID: <20180317173722.GB183240@dtor-ws>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
- <20180315224202.96668-3-dmitry.torokhov@gmail.com>
- <20180316100748.GH16424@w540>
- <20180316233800.GA32310@dtor-ws>
- <20180317092516.g5p5ybka57abyhex@apu3b>
+To: Nick Dyer <nick@shmanahar.org>
+Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] Input: atmel_mxt_ts - do not pass suspend mode in
+ platform data
+Message-ID: <20180317174240.GC183240@dtor-ws>
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-2-dmitry.torokhov@gmail.com>
+ <20180314205123.GA26353@lava.h.shmanahar.org>
+ <20180315235621.GA60361@dtor-ws>
+ <20180316204002.GA24333@bm.shmanahar.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180317092516.g5p5ybka57abyhex@apu3b>
+In-Reply-To: <20180316204002.GA24333@bm.shmanahar.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 10:25:16AM +0100, jacopo mondi wrote:
-> Hi Dmitry,
-> 
-> On Fri, Mar 16, 2018 at 04:38:00PM -0700, Dmitry Torokhov wrote:
-> > Hi Jacopo,
-> > 
-> > On Fri, Mar 16, 2018 at 11:07:48AM +0100, jacopo mondi wrote:
-> > > Hello Dmitry
+On Fri, Mar 16, 2018 at 08:40:02PM +0000, Nick Dyer wrote:
+> On Thu, Mar 15, 2018 at 04:56:21PM -0700, Dmitry Torokhov wrote:
+> > On Wed, Mar 14, 2018 at 08:51:24PM +0000, Nick Dyer wrote:
+> > > On Mon, Mar 12, 2018 at 12:08:54PM -0700, Dmitry Torokhov wrote:
+> > > > The way we are supposed to put controller to sleep and wake it up does not
+> > > > depend on the platform, but rather on controller itself. Controllers using
+> > > > T9 require manipulating T9 control register, while others, using newer
+> > > > T100, should be put to sleep by adjusting T7 power config.
 > > > 
-> > > FYI I am brushing the ecovec board these days as well
-> > > https://www.spinics.net/lists/linux-sh/msg52536.html
+> > > I'm afraid this is actually a misconception. If you look at object table
+> > > for the older T9 device, you'll find it has the T7 object and it in fact
+> > > works exactly the same way as the T100-based device.
 > > > 
+> > > The MXT_SUSPEND_T9_CTRL is in there because on your older Pixel devices
+> > > the config saved into NVRAM on the touch controller has a zero byte in
+> > > the T9 CTRL setting, meaning the touch controller will never wake up
+> > > unless the driver knows to write 0x83 into it.
 > > 
-> > What is the ecovec board BTW? Is it some devkit or what? It seems quite
-> > old to me.
+> > Ah, OK, I see. I would really like to drop this pdata->suspend_mode
+> > stuff and I do not want to create "pixel-screwed-up" property either...
+> > I guess for the time being I'll put a DMI quirk for Link to restore T9
+> > control method, and then look into cleaning it all up. We have quite a
+> > bit different code in chromeos kernel trees and I'd like to reconcile
+> > it.
 > 
-> Yes, it is a SuperH 4 based development board. It is old for sure. I'm
-> also working on removing some stuff the ecovec board file is the only
-> user of...
-> 
-> > > And I have a board to test with but without any display panel, I'm
-> > > afraid.
-> > > 
-> > > On Thu, Mar 15, 2018 at 03:42:00PM -0700, Dmitry Torokhov wrote:
-> > > > Commit fe79f919f47e ("sh: ecovec24: Use gpio-backlight") removed custom
-> > > > backlight support and switched over to generic gpio-backlight driver. The
-> > > > comment when we run with DVI states "no backlight", but setting
-> > > > gpio_backlight_data.fbdev to NULL actually makes gpio-backlight to react to
-> > > > events from any framebuffer device, not ignore them.
-> > > >
-> > > > We want to get rid of platform data in favor of generic device properties
-> > > > in gpio_backlight driver, so we can not have kernel pointers passed around
-> > > > to tie the framebuffer device to backlight. Assuming that the intent of the
-> > > > above referenced commit was to indeed not export backlight when using DVI,
-> > > > let's switch to conditionally registering backlight device so it is not
-> > > > present at all in DVI case.
-> > > >
-> > > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > > ---
-> > > >  arch/sh/boards/mach-ecovec24/setup.c | 24 +++++++++++++++++-------
-> > > >  1 file changed, 17 insertions(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
-> > > > index 6f929abe0b50f..67633d2d42390 100644
-> > > > --- a/arch/sh/boards/mach-ecovec24/setup.c
-> > > > +++ b/arch/sh/boards/mach-ecovec24/setup.c
-> > > > @@ -368,7 +368,6 @@ static struct platform_device lcdc_device = {
-> > > >  };
-> > > >
-> > > >  static struct gpio_backlight_platform_data gpio_backlight_data = {
-> > > > -	.fbdev = &lcdc_device.dev,
-> > > >  	.gpio = GPIO_PTR1,
-> > > >  	.def_value = 1,
-> > > >  	.name = "backlight",
-> > > > @@ -987,7 +986,6 @@ static struct platform_device *ecovec_devices[] __initdata = {
-> > > >  	&usb1_common_device,
-> > > >  	&usbhs_device,
-> > > >  	&lcdc_device,
-> > > > -	&gpio_backlight_device,
-> > > >  	&ceu0_device,
-> > > >  	&ceu1_device,
-> > > >  	&keysc_device,
-> > > > @@ -1077,6 +1075,8 @@ static int __init arch_setup(void)
-> > > >  {
-> > > >  	struct clk *clk;
-> > > >  	bool cn12_enabled = false;
-> > > > +	bool use_backlight = false;
-> > > > +	int error;
-> > > >
-> > > >  	/* register board specific self-refresh code */
-> > > >  	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF |
-> > > > @@ -1193,9 +1193,6 @@ static int __init arch_setup(void)
-> > > >  		lcdc_info.ch[0].lcd_modes		= ecovec_dvi_modes;
-> > > >  		lcdc_info.ch[0].num_modes		= ARRAY_SIZE(ecovec_dvi_modes);
-> > > >
-> > > > -		/* No backlight */
-> > > > -		gpio_backlight_data.fbdev = NULL;
-> > > > -
-> > > >  		gpio_set_value(GPIO_PTA2, 1);
-> > > >  		gpio_set_value(GPIO_PTU1, 1);
-> > > >  	} else {
-> > > > @@ -1217,6 +1214,8 @@ static int __init arch_setup(void)
-> > > >  		/* enable TouchScreen */
-> > > >  		i2c_register_board_info(0, &ts_i2c_clients, 1);
-> > > >  		irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
-> > > > +
-> > > > +		use_backlight = true;
-> > > >  	}
-> > > >
-> > > >  	/* enable CEU0 */
-> > > > @@ -1431,8 +1430,19 @@ static int __init arch_setup(void)
-> > > >  	gpio_set_value(GPIO_PTG4, 1);
-> > > >  #endif
-> > > >
-> > > > -	return platform_add_devices(ecovec_devices,
-> > > > -				    ARRAY_SIZE(ecovec_devices));
-> > > > +	error = platform_add_devices(ecovec_devices,
-> > > > +				      ARRAY_SIZE(ecovec_devices));
-> > > 
-> > > I would invert this.
-> > > Register the backlight first, then all other devices.
-> > 
-> > We could do that, but why would that be better?
-> > 
-> 
-> That if backlight device registration fails we do not register all
-> other devices. But yes that may be a bit too harsh, isn't it?
+> Yes, it would be great to get rid of it. The driver does have the
+> ability to download configuration via the firmware loader interface. So
+> you would be able to grab a copy of the config by saving it with
+> mxt-app, tweak it to ensure that the T9 CTRL byte is set correctly, then
+> ship it somehow (presumably it could be added to linux-firmware). This
+> would override what's currently stored in NVRAM on all those units and
+> mean we could remove the T9_CTRL stuff.
 
-Yes, that was my reasoning. With platform_add_devices() that unwinds all
-the devices it created successfully we do not really have any option but
-return error (which is either ignored or fatal). Here we can simply warn
-and still let the device boot so users have easier way to see what went
-wrong.
+We can't really rely on people fetching updated config. Do you think we
+could see if the device has only T9 and not T100 and if coming out of
+suspend the T9 CTRL byte is 0 we overwrite it with the 0x83?
 
 > 
-> > > 
-> > > 
-> > > > +	if (error)
-> > > > +		return error;
-> > > > +
-> > > > +	if (use_backlight) {
-> > > > +		error = platform_device_add(&gpio_backlight_device);
-> > > > +		if (error)
-> > > > +			pr_warn("%s: failed to register backlight: %d\n",
-> > > > +				error);
-> > > 
-> > > Could you use dev_warn here? Also the format is wrong, I assume you
-> > 
-> > I would rather not, as the backlight device would be in unknown state
-> > here, and using dev_warn with device that has not been fully registered
-> > does not give any benefits. There is also no ambiguity as there is only
-> > one backlight.
-> 
-> You are very correct, sorry for the fuss.
-> 
-> > 
-> > > are missing a '__func__' as second function argument.
-> > 
-> > I'll fix this.
-> > 
-> > > 
-> > > Also, you may want to return error.
-> > 
-> > How would caller handle this error? Should we kill all successfully
-> > registered devices on error adding backlight?
-> 
-> As the function returned an error code for 'platform_add_devices()' I
-> thought we may want to return one as well. That's why I proposed to
-> invert the registration order :)
-> 
-> All minor nits btw,  sorry for jumping up, I understand this is an
-> RFC and ecovec board file is not the real juice of this series ;)
-> 
-> Ping me if I can help with testing as I've the board.
+> I'm happy to talk you through sorting that out in more detail if you
+> want to give it a go. I don't have any Pixel 1 hardware available at the
+> moment, unfortunately.
 
-Yes, I'll fix up the other mess ups and I'll post a v2.
+Yes, I have several Chromebooks with Atmel so I can try on a few of
+them.
 
-Thanks!
+Thanks.
 
 -- 
 Dmitry
