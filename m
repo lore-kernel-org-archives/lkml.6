@@ -1,65 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeCQN1y (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 09:27:54 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:45124 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752114AbeCQN1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 09:27:53 -0400
-Date: Sat, 17 Mar 2018 09:27:50 -0400 (EDT)
-Message-Id: <20180317.092750.607418476271096975.davem@davemloft.net>
-To: okaya@codeaurora.org
-Cc: swise@opengridcomputing.com, netdev@vger.kernel.org,
-        timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        swise@chelsio.com, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        werner@chelsio.com, leedom@chelsio.com
-Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate
- barriers on weakly-ordered archs
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
-References: <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org>
-        <71e37a55-537b-d75a-cfde-f188b7cfce8e@codeaurora.org>
-        <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1752355AbeCQNez (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 09:34:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40450 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751618AbeCQNey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 09:34:54 -0400
+Date: Sat, 17 Mar 2018 13:34:45 +0000
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Shanker Donthineni <shankerd@codeaurora.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Vikram Sethi <vikrams@codeaurora.org>
+Subject: Re: [PATCH v2] irqchip/gic-v3: Ensure GICR_CTLR.EnableLPI=0 is
+ observed before enabling
+Message-ID: <20180317133445.772733ac@why.wild-wind.fr.eu.org>
+In-Reply-To: <1521124287-25009-1-git-send-email-shankerd@codeaurora.org>
+References: <1521124287-25009-1-git-send-email-shankerd@codeaurora.org>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sinan Kaya <okaya@codeaurora.org>
-Date: Sat, 17 Mar 2018 00:25:14 -0400
+On Thu, 15 Mar 2018 09:31:27 -0500
+Shanker Donthineni <shankerd@codeaurora.org> wrote:
 
-> I think I finally got what you mean.
+> The definition of the GICR_CTLR.RWP control bit was expanded to indicate
+> status of changing GICR_CTLR.EnableLPI from 1 to 0 is being in progress
+> or completed. Software must observe GICR_CTLR.RWP==0 after clearing
+> GICR_CTLR.EnableLPI from 1 to 0 and before writing GICR_PENDBASER and/or
+> GICR_PROPBASER, otherwise behavior is UNPREDICTABLE.
 > 
-> Code seems to have
+> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> ---
+> Changes since v1:
+>   -Moved LPI disable code to a seperate function as Marc suggested.
+>   -Mark's suggestion to use readl_relaxed_poll_timeout() helper functions.
+>   
+>  drivers/irqchip/irq-gic-v3-its.c   | 66 ++++++++++++++++++++++++++++++--------
+>  include/linux/irqchip/arm-gic-v3.h |  1 +
+>  2 files changed, 53 insertions(+), 14 deletions(-)
 > 
-> wmb()
-> writel()/writeq()
-> wmb()
-> 
-> this can be safely replaced with
-> 
-> wmb()
-> __raw_writel()/__raw_writeq()
-> wmb()
-> 
-> This will work on all arches. Below is the new version. Let me know if this is OK.
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 1d3056f..cba71a7 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -33,6 +33,8 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/percpu.h>
+>  #include <linux/slab.h>
+> +#include <linux/time64.h>
+> +#include <linux/iopoll.h>
+>  
+>  #include <linux/irqchip.h>
+>  #include <linux/irqchip/arm-gic-v3.h>
+> @@ -1875,16 +1877,6 @@ static void its_cpu_init_lpis(void)
+>  		gic_data_rdist()->pend_page = pend_page;
+>  	}
+>  
+> -	/* Disable LPIs */
+> -	val = readl_relaxed(rbase + GICR_CTLR);
+> -	val &= ~GICR_CTLR_ENABLE_LPIS;
+> -	writel_relaxed(val, rbase + GICR_CTLR);
+> -
+> -	/*
+> -	 * Make sure any change to the table is observable by the GIC.
+> -	 */
+> -	dsb(sy);
+> -
+>  	/* set PROPBASE */
+>  	val = (page_to_phys(gic_rdists->prop_page) |
+>  	       GICR_PROPBASER_InnerShareable |
+> @@ -3288,13 +3280,59 @@ static bool gic_rdists_supports_plpis(void)
+>  	return !!(gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER) & GICR_TYPER_PLPIS);
+>  }
+>  
+> +static int redist_disable_lpis(void)
+> +{
+> +	void __iomem *rbase = gic_data_rdist_rd_base();
+> +	u64 val;
+> +	int ret;
+> +
+> +	if (!gic_rdists_supports_plpis()) {
+> +		pr_info("CPU%d: LPIs not supported\n", smp_processor_id());
+> +		return -ENXIO;
+> +	}
+> +
+> +	val = readl_relaxed(rbase + GICR_CTLR);
+> +	if (!(val & GICR_CTLR_ENABLE_LPIS))
+> +		return 0;
+> +
+> +	/* Disable LPIs */
+> +	val &= ~GICR_CTLR_ENABLE_LPIS;
+> +	writel_relaxed(val, rbase + GICR_CTLR);
+> +
+> +	/* Make sure any change to GICR_CTLR is observable by the GIC */
+> +	dsb(sy);
+> +
+> +	/* Wait for GICR_CTLR.GICR_CTLR_ENABLE_LPIS==0 or timeout */
+> +	ret = readl_relaxed_poll_timeout_atomic(rbase + GICR_CTLR, val,
+> +					 !(val & GICR_CTLR_ENABLE_LPIS), 1,
+> +					 USEC_PER_SEC);
 
-Unfortunately, I think this won't work.
+Why do you need to poll on EnableLPIs? It is supposed to be immediately
+written. It seems to me that the sequence should be:
 
-At least on sparc, the __raw_*() variants also change the endianness to
-native endianness.
+- Check EnableLPis
+- If set to 1, scream about bootloader being braindead
+- Write EnableLPIs to 0
+- Read back EnableLpis:
+- If still set 1, bail out, we're doomed. Scream about the HW being
+  braindead
+- Poll RWP
+- If timeout, bail out, the HW has locked up. Scream again.
 
-PowerPC does this as well, even documented in a comment :-)
+I think this should cover the whole thing. An alternative would be to
+place the poll between the write and read-back, but that doesn't change
+anything.
 
-/*
- * Non ordered and non-swapping "raw" accessors
- */
+> +	if (ret) {
+> +		pr_err("CPU%d: Failed to disable LPIs\n", smp_processor_id());
+> +		return -EBUSY;
+> +	}
+> +
+> +	/* Wait for GICR_CTLR.RWP==0 or timeout */
+> +	ret = readl_relaxed_poll_timeout_atomic(rbase + GICR_CTLR, val,
+> +					 !(val & GICR_CTLR_RWP), 1,
+> +					 USEC_PER_SEC);
+> +	if (ret) {
+> +		pr_err("CPU%d: Failed to observe RWP==0 after enabling LPIs\n",
+> +		       smp_processor_id());
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int its_cpu_init(void)
+>  {
+> +	int ret;
+> +
+>  	if (!list_empty(&its_nodes)) {
 
-Only the non-__raw_ variants do the endianness swap to/from
-little-endian.
+nit: move 'ret' here.
+
+> -		if (!gic_rdists_supports_plpis()) {
+> -			pr_info("CPU%d: LPIs not supported\n", smp_processor_id());
+> -			return -ENXIO;
+> -		}
+> +		ret = redist_disable_lpis();
+> +		if (ret)
+> +			return ret;
+> +
+>  		its_cpu_init_lpis();
+>  		its_cpu_init_collection();
+>  	}
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index c00c4c33..4d5fb60 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -106,6 +106,7 @@
+>  #define GICR_PIDR2			GICD_PIDR2
+>  
+>  #define GICR_CTLR_ENABLE_LPIS		(1UL << 0)
+> +#define GICR_CTLR_RWP			(1UL << 3)
+>  
+>  #define GICR_TYPER_CPU_NUMBER(r)	(((r) >> 8) & 0xffff)
+>  
+
+Thanks,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
