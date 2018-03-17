@@ -1,229 +1,123 @@
-Return-Path: <jonathan.cameron@huawei.com>
-X-Google-Smtp-Source: AG47ELspcyOZiRig2dTDyMyqRR2moPzj8NdbDbeoOvnqmLuL4dD6aGeBysFO+mFRnHZ4yoJROKSk
-ARC-Seal: i=1; a=rsa-sha256; t=1520259139; cv=none;
-        d=google.com; s=arc-20160816;
-        b=B4eoY7fOOpBW/7ZfJRUgkY5Wj75q+F1SCfWUVGLHdlCicvX64Qm1WHvtgFmw4XVCQ+
-         RGYOm663iXoUX129o9zevlNS6uZOzGt3j09DQvcIOplyuEyfrTJQgkxOxbikbkTFnOhQ
-         /4PjZNEMQHFnfEFhAtVzaNHPR9kUZpAqvkz9MjDxfbr0E6PxnmrNVfaI7lSjdUgLXtxe
-         AT3yFelkPVMnibwFkrM6R4FZgFHzv8W1WhsmDntNep4SL/nEt8zwczCpu5+YGdTSay+O
-         ul1w3E9KFxQVpA938HjFcxpWSoP7HduFzIWMCy2vNvF4B1uqKHMAVPZV4c6jR60RqeJR
-         E/Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=E//JgVDEdxGlNGFaI7c5S3ZF1By4UpMaa1X+EfqXHOI=;
-        b=ivkuTzCR6oCkZstPNOaoYTefntDpcHQTjqR0e9P51MNM62A2gaZzLHcv2/fIuqCmj+
-         +WjCOEXudAfnc2Kutu1CD6f3Pg3D94vqLL+mqnhmKtAE0zOKEcs8Vu2REsSL7by5dJo8
-         9P+JoeQkFEagAE7kx/3aXRDs3beP5fR84Vg+G1ED1nTJxfb1cDyzK+P5t2F7waAv3LSQ
-         BLhRWTanY3DiSA2/ePAU7jkyLihKN9EV5ddRuHAxYpfJeHk6FnSYONCZiKZ5je8uYBdJ
-         lt728VY2Ll1k8zutTILRHsxoFhxRpvYPr0fad1u/vDd6GFxPLzCBcUZJBKvmONYQPdsu
-         HEMg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jonathan.cameron@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=jonathan.cameron@huawei.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jonathan.cameron@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=jonathan.cameron@huawei.com
-Date: Mon, 5 Mar 2018 14:11:54 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: ALKML <linux-arm-kernel@lists.infradead.org>, LKML
-	<linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, "Alexey
- Klimov" <klimov.linux@gmail.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 04/20] firmware: arm_scmi: add common infrastructure
- and support for base protocol
-Message-ID: <20180305151154.000051c2@huawei.com>
-In-Reply-To: <1519403030-21189-5-git-send-email-sudeep.holla@arm.com>
-References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
-	<1519403030-21189-5-git-send-email-sudeep.holla@arm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1090440-1521278161-2-13715738138293963676
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES ensk.us-asciiro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521278160; b=PN7Xp2Z0Gr98+A9pSa20GHpDPjaVR2X86UfPJ5pf0PDjaE1
+    iLDEbtaj83SlKNMy9ZAlrtsgcmbezgEiXWBuj4QpjPe7G4cjDBeVrIXH+1sFGCI/
+    m7kO/BCNekPsCzIcienU6tKFcy9tqFMvYl1WZ64klH7ZL2XNFaC9sFNg2UOCpIwk
+    4bIlF5+NC1+cX7iPuKxSiFYSGykp/DJQsXSCPXeMme4d/Fq6qhLhioCk+CiaSYfc
+    nlYM+Yf1M4rbQQKX0BkuNl+l3LdFXkU2u1b5H4t9n20XmsKIbMisd4ek/u0EuoVh
+    WcxUcJWoC8m55FUgX7KkRA3Yhc4ZGJ6rODh9N7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521278160; bh=x
+    fewiN065KPn/aKlF7NO4ZAT/WMc94O0Q0UwqbY5W54=; b=UgzbkXACm38i+W2O9
+    M1fAVhX9ibiQPNQXHuzVF/UG+h2I5YBJNLtFMy+b3dxKEehfRYmgIxRZNAW5BLZF
+    lNNvwDZ10xdUKJkL2uE92dkLgoo6Mu8tWDdKkkI+nDuii1P0H4AcspNDJFWsd6rh
+    yc1l9HZgJ6UjQ+7zjuDEl1MMdcyUwcLqxWqvQ8r9ZIwwm2z/zUCxdNkeGvUs3BAj
+    6d1x9kd3+sYfac7eGM7eLVf4TpH9tWn3FFJEXKi2yJX08FxeZzy14wSkWJoXMQDD
+    MKJqDb6ojfhHpSmSrnh7WT9eDMlcERXFq+F05sqqf2Hh3RXhmSlnNDkteJOes0Fd
+    U8H8g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=uayuXIcb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=cBs2PLgi;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=uayuXIcb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=cBs2PLgi;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELsHtTt/k4/G8vTITMH/PgkfbOPLQ/dfxN8bRccsIbIgPTvXEqB+f69+4/0p0zNALgfSvW3FGA==
+Date: Sat, 17 Mar 2018 09:15:41 +0000
+From: Justin Skists <j.skists@gmail.com>
+To: devel@driverdev.osuosl.org
+Subject: [PATCH] staging: lustre: Fix unneeded byte-ordering cast
+Message-ID: <20180317091530.GA18271@tanglefoot>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Patrick Farrell <paf@cray.com>, NeilBrown <neilb@suse.com>,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593209578298526460?=
-X-GMAIL-MSGID: =?utf-8?q?1594107247614189877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Feb 2018 16:23:34 +0000
-Sudeep Holla <sudeep.holla@arm.com> wrote:
+Fix sparse warning:
 
-> The base protocol describes the properties of the implementation and
-> provide generic error management. The base protocol provides commands
-> to describe protocol version, discover implementation specific
-> attributes and vendor/sub-vendor identification, list of protocols
-> implemented and the various agents are in the system including OSPM
-> and the platform. It also supports registering for notifications of
-> platform errors.
-> 
-> This protocol is mandatory. This patch adds support for the same along
-> with some basic infrastructure to add support for other protocols.
-> 
-<snip>
+  CHECK   drivers/staging//lustre/lnet/lnet/acceptor.c
+drivers/staging//lustre/lnet/lnet/acceptor.c:243:30: warning: cast to
+restricted __le32
 
-Minor comments inline.
+LNET_PROTO_TCP_MAGIC, as a define, is already CPU byte-ordered when
+compared to 'magic', so no need for a cast.
 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index fa0e9cf31f4c..ba784b8ec170 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -105,21 +105,27 @@ struct scmi_desc {
->   * @dev: Device pointer
->   * @desc: SoC description for this instance
->   * @handle: Instance of SCMI handle to send to clients
-> + * @version: SCMI revision information containing protocol version,
-> + *	implementation version and (sub-)vendor identification.
->   * @cl: Mailbox Client
->   * @tx_chan: Transmit mailbox channel
->   * @tx_payload: Transmit mailbox channel payload area
->   * @minfo: Message info
-> + * @protocols_imp: list of protocols implemented, currently maximum of
-> + *	MAX_PROTOCOLS_IMP elements allocated by the base protocol
-If it is fixed size, is there a benefit in not just putting it in here
-as a fixed size array and simplifying the allocation?
+Signed-off-by: Justin Skists <j.skists@gmail.com>
+---
+ drivers/staging/lustre/lnet/lnet/acceptor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->   * @node: list head
->   * @users: Number of users of this instance
->   */
->  struct scmi_info {
->  	struct device *dev;
->  	const struct scmi_desc *desc;
-> +	struct scmi_revision_info version;
->  	struct scmi_handle handle;
->  	struct mbox_client cl;
->  	struct mbox_chan *tx_chan;
->  	void __iomem *tx_payload;
->  	struct scmi_xfers_info minfo;
-> +	u8 *protocols_imp;
->  	struct list_head node;
->  	int users;
->  };
-> @@ -433,6 +439,45 @@ int scmi_one_xfer_init(const struct scmi_handle *handle, u8 msg_id, u8 prot_id,
->  }
->  
->  /**
-> + * scmi_version_get() - command to get the revision of the SCMI entity
-> + *
-> + * @handle: Handle to SCMI entity information
-> + *
-> + * Updates the SCMI information in the internal data structure.
-> + *
-> + * Return: 0 if all went fine, else return appropriate error.
-> + */
-> +int scmi_version_get(const struct scmi_handle *handle, u8 protocol,
-> +		     u32 *version)
-> +{
-> +	int ret;
-> +	__le32 *rev_info;
-> +	struct scmi_xfer *t;
-> +
-> +	ret = scmi_one_xfer_init(handle, PROTOCOL_VERSION, protocol, 0,
-> +				 sizeof(*version), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = scmi_do_xfer(handle, t);
-> +	if (!ret) {
-> +		rev_info = t->rx.buf;
-> +		*version = le32_to_cpu(*rev_info);
-> +	}
-> +
-> +	scmi_one_xfer_put(handle, t);
-blank line before all simple returns is common kernel coding style
-and does help for readability (a little bit)
+diff --git a/drivers/staging/lustre/lnet/lnet/acceptor.c b/drivers/staging/lustre/lnet/lnet/acceptor.c
+index fb478e20e204..13e981781b9a 100644
+--- a/drivers/staging/lustre/lnet/lnet/acceptor.c
++++ b/drivers/staging/lustre/lnet/lnet/acceptor.c
+@@ -240,7 +240,7 @@ lnet_accept(struct socket *sock, __u32 magic)
+ 			return -EPROTO;
+ 		}
+ 
+-		if (magic == le32_to_cpu(LNET_PROTO_TCP_MAGIC))
++		if (magic == LNET_PROTO_TCP_MAGIC)
+ 			str = "'old' socknal/tcpnal";
+ 		else
+ 			str = "unrecognised";
+-- 
+2.16.2
 
-> +	return ret;
-> +}
-> +
-> +void scmi_setup_protocol_implemented(const struct scmi_handle *handle,
-> +				     u8 *prot_imp)
-> +{
-> +	struct scmi_info *info = handle_to_scmi_info(handle);
-> +
-> +	info->protocols_imp = prot_imp;
-> +}
-> +
-> +/**
->   * scmi_handle_get() - Get the  SCMI handle for a device
->   *
->   * @dev: pointer to device for which we want SCMI handle
-> @@ -660,11 +705,19 @@ static int scmi_probe(struct platform_device *pdev)
->  
->  	handle = &info->handle;
->  	handle->dev = info->dev;
-> +	handle->version = &info->version;
->  
->  	ret = scmi_mbox_chan_setup(info);
->  	if (ret)
->  		return ret;
->  
-> +	ret = scmi_base_protocol_init(handle);
-> +	if (ret) {
-> +		dev_err(dev, "unable to communicate with SCMI(%d)\n", ret);
-> +		scmi_mbox_free_channel(info);
-> +		return ret;
-> +	}
-> +
->  	mutex_lock(&scmi_list_mutex);
->  	list_add_tail(&info->node, &scmi_list);
->  	mutex_unlock(&scmi_list_mutex);
-> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> index 854ed2479993..664da3d763f2 100644
-> --- a/include/linux/scmi_protocol.h
-> +++ b/include/linux/scmi_protocol.h
-> @@ -17,11 +17,48 @@
->   */
->  #include <linux/types.h>
->  
-> +#define SCMI_MAX_STR_SIZE	16
-> +
-> +/**
-> + * struct scmi_revision_info - version information structure
-This isn't really just the version stuff. It's more about discovery
-of what is present.
-Perhaps the naming could make that clear if you want to keep this
-as one structure?
-
-> + *
-> + * @major_ver: Major ABI version. Change here implies risk of backward
-> + *	compatibility break.
-> + * @minor_ver: Minor ABI version. Change here implies new feature addition,
-> + *	or compatible change in ABI.
-> + * @num_protocols: Number of protocols that are implemented, excluding the
-> + *	base protocol.
-> + * @num_agents: Number of agents in the system.
-> + * @impl_ver: A vendor-specific implementation version.
-> + * @vendor_id: A vendor identifier(Null terminated ASCII string)
-> + * @sub_vendor_id: A sub-vendor identifier(Null terminated ASCII string)
-> + */
-> +struct scmi_revision_info {
-> +	u16 major_ver;
-> +	u16 minor_ver;
-> +	u8 num_protocols;
-> +	u8 num_agents;
-> +	u32 impl_ver;
-> +	char vendor_id[SCMI_MAX_STR_SIZE];
-> +	char sub_vendor_id[SCMI_MAX_STR_SIZE];
-> +};
-> +
->  /**
->   * struct scmi_handle - Handle returned to ARM SCMI clients for usage.
->   *
->   * @dev: pointer to the SCMI device
-> + * @version: pointer to the structure containing SCMI version information
->   */
->  struct scmi_handle {
->  	struct device *dev;
-> +	struct scmi_revision_info *version;
-> +};
-> +
-> +enum scmi_std_protocol {
-> +	SCMI_PROTOCOL_BASE = 0x10,
-> +	SCMI_PROTOCOL_POWER = 0x11,
-> +	SCMI_PROTOCOL_SYSTEM = 0x12,
-> +	SCMI_PROTOCOL_PERF = 0x13,
-> +	SCMI_PROTOCOL_CLOCK = 0x14,
-> +	SCMI_PROTOCOL_SENSOR = 0x15,
->  };
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
