@@ -1,148 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752726AbeCQDaV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 23:30:21 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9174 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbeCQDaU (ORCPT
+        id S1752999AbeCQDk5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 23:40:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57024 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeCQDkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 23:30:20 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 16 Mar 2018 20:30:19 -0700
-Subject: Re: [PATCH 06/14] mm/hmm: remove HMM_PFN_READ flag and ignore
- peculiar architecture
-To: <jglisse@redhat.com>, <linux-mm@kvack.org>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180316191414.3223-1-jglisse@redhat.com>
- <20180316191414.3223-7-jglisse@redhat.com>
-X-Nvconfidentiality: public
-From: John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8483b2a7-230c-eb05-0b23-eb15691070f0@nvidia.com>
-Date: Fri, 16 Mar 2018 20:30:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 16 Mar 2018 23:40:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0717C60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
+ on weakly-ordered archs
+To: Steve Wise <swise@opengridcomputing.com>, netdev@vger.kernel.org,
+        timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>,
+        "'Jason Gunthorpe'" <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+ <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
+ <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
+ <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
+ <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org>
+Date: Fri, 16 Mar 2018 23:40:50 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180316191414.3223-7-jglisse@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/16/2018 12:14 PM, jglisse@redhat.com wrote:
-> From: Jérôme Glisse <jglisse@redhat.com>
+On 3/16/2018 7:05 PM, Steve Wise wrote:
+>>
+>> On 3/16/2018 5:05 PM, Steve Wise wrote:
+>>>> Code includes wmb() followed by writel(). writel() already has a barrier
+>>> on
+>>>> some architectures like arm64.
+>>>>
+>>>> This ends up CPU observing two barriers back to back before executing
+>> the
+>>>> register write.
+>>>>
+>>>> Since code already has an explicit barrier call, changing writel() to
+>>>> writel_relaxed().
+>>>>
+>>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>>
+>>> NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
+>>> writeX().
+>>>
+>>> I was just looking at this with Chelsio developers, and they said the
+>>> writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
+>>> get rid of the extra barrier for all architectures.
+>>
+>> OK. I can do that but isn't the problem at PowerPC adaptation?
+>>
+>> /*
+>>  * We don't do relaxed operations yet, at least not with this semantic
+>>  */
+>> #define readb_relaxed(addr)	readb(addr)
+>> #define readw_relaxed(addr)	readw(addr)
+>> #define readl_relaxed(addr)	readl(addr)
+>> #define readq_relaxed(addr)	readq(addr)
+>> #define writeb_relaxed(v, addr)	writeb(v, addr)
+>> #define writew_relaxed(v, addr)	writew(v, addr)
+>> #define writel_relaxed(v, addr)	writel(v, addr)
+>> #define writeq_relaxed(v, addr)	writeq(v, addr)
+>>
+>> Why don't we fix the PowerPC's relaxed operators? Is that a bigger task?
 > 
-> Only peculiar architecture allow write without read thus assume that
-> any valid pfn do allow for read. Note we do not care for write only
-> because it does make sense with thing like atomic compare and exchange
-> or any other operations that allow you to get the memory value through
-> them.
+> I don't know the answer, but perhaps the proper fix is to correctly implement these for PPC?
 > 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> ---
->  include/linux/hmm.h | 14 ++++++--------
->  mm/hmm.c            | 28 ++++++++++++++++++++++++----
->  2 files changed, 30 insertions(+), 12 deletions(-)
+
+I found this article: https://lwn.net/Articles/698014/#PowerPC%20Implementation
+
+Apparently, this issue was discussed at a conference in 2015.
+
+Based on how I read this article, writel() and writel_relaxed() behave exactly
+the same on PowerPC because the barrier is enforced by the time code is leaving
+a critical section not during MMIO execution.
+
+I also see that __raw_writel() is being heavily used in drivers directory.
+
+https://elixir.bootlin.com/linux/latest/ident/__raw_writel
+
+I'll change writel_relaxed() with __raw_writel() in the series like you suggested
+and also look at your other comments.
+
+This seems to be the current norm.
+
 > 
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index b65e527dd120..4bdc58ffe9f3 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -84,7 +84,6 @@ struct hmm;
->   *
->   * Flags:
->   * HMM_PFN_VALID: pfn is valid
-
-Maybe write it like this:
-
-* HMM_PFN_VALID: pfn is valid. This implies that it has, at least, read permission.
-
-> - * HMM_PFN_READ:  CPU page table has read permission set
->   * HMM_PFN_WRITE: CPU page table has write permission set
->   * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
->   * HMM_PFN_EMPTY: corresponding CPU page table entry is pte_none()
-> @@ -97,13 +96,12 @@ struct hmm;
->  typedef unsigned long hmm_pfn_t;
->  
->  #define HMM_PFN_VALID (1 << 0)
-
-<snip>
-
->  
-> @@ -536,6 +534,17 @@ int hmm_vma_get_pfns(struct hmm_range *range)
->  	list_add_rcu(&range->list, &hmm->ranges);
->  	spin_unlock(&hmm->lock);
->  
-> +	if (!(vma->vm_flags & VM_READ)) {
-> +		/*
-> +		 * If vma do not allow read assume it does not allow write as
-> +		 * only peculiar architecture allow write without read and this
-> +		 * is not a case we care about (some operation like atomic no
-> +		 * longer make sense).
-> +		 */
-> +		hmm_pfns_clear(range->pfns, range->start, range->end);
-> +		return 0;
-
-1. Shouldn't we return an error here? All is not well. No one has any pfns, even
-   though they tried to get some. :)
-
-2. I think this check needs to be done much earlier, right after the "Sanity
-   check, this should not happen" code in this routine.
-
-> +	}
-> +
->  	hmm_vma_walk.fault = false;
->  	hmm_vma_walk.range = range;
->  	mm_walk.private = &hmm_vma_walk;
-> @@ -690,6 +699,17 @@ int hmm_vma_fault(struct hmm_range *range, bool write, bool block)
->  	list_add_rcu(&range->list, &hmm->ranges);
->  	spin_unlock(&hmm->lock);
->  
-> +	if (!(vma->vm_flags & VM_READ)) {
-> +		/*
-> +		 * If vma do not allow read assume it does not allow write as
-> +		 * only peculiar architecture allow write without read and this
-> +		 * is not a case we care about (some operation like atomic no
-> +		 * longer make sense).
-> +		 */
-
-For the comment wording (for this one, and the one above), how about:
-
-/*
- * If the vma does not allow read access, then assume that 
- * it does not allow write access, either.
- */
-
-...and then leave the more extensive explanation to the commit log. Or,
-if we really want a longer explananation right here, then:
-
-/*
- * If the vma does not allow read access, then assume that 
- * it does not allow write access, either. Architectures that
- * allow write without read access are not supported by HMM,
- * because operations such as atomic access would not work.
- */
+>>
+>> >From API perspective both __raw_writeX() and writeX_relaxed() are
+>> correct.
+>> It is just PowerPC doesn't seem the follow the definition yet.
+> 
+> 
+> 
+> 
 
 
-> +		hmm_pfns_clear(range->pfns, range->start, range->end);
-> +		return 0;
-> +	}
-
-Similar points as above: it seems like an error case, and the check should be right near 
-the beginning of the function.
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
