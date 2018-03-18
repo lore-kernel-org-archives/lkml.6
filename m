@@ -1,223 +1,928 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3842254-1521371772-2-6202294486320136722
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daen,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521371772; b=CUvLsWZcLs14/XcwfmesjTWwQN1IGdNgdbVA0dekvFSdGTi
-    Wk4ecylszodm+nyfWO9UI+H88kJh5L8hKJijW5KvJ4nvmHXDOBn5RRIC37/mTtmL
-    bbx1IuilxfF5qJinTWIfxbKULRsA2nptm8jIXqUeOqIWCjLMHWIeQdRLaq2IgTyl
-    RLVnpGlesoqRxTOoQYe+GQsD+5UclbjjegUlWZ4Kn7+JaFXSksPeQgLNWCj5Hd/c
-    PiF/R8em9TUmYQ74VO6xfTvkP+BSmLl0JyLVLmt0SfmjBu8AtW1SNThulZxyG3CL
-    sN8gJzSkkC6mKtjE8qcX2cY0BTqVsI/TPWakHbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1521371772; bh=LWR5xQWygK85Lu5q/LhYmQuuStTQlEcSCkx34+WS//g=; b=l
-    ukfuvCQz7U47DIh4p2smdif/yr3pOe3jXLqCLqCwAWouIFPeadumP9ZTegjm49JJ
-    C98Whq8uYPqgbJ8SLjXEU8mD7nX20vY4q+930w1+lxcn5qopEojdyO7Z/9DJOoqO
-    VNXom6kQHEvQ/zgMvOVoVFqKf3BW2NWglZFTxgwTqNUddv+dh0co61DH4HR7CvuM
-    kM1CmaEqjjDbV9V1pC9CVb5j1d8TljJBcz3Z+9eLPh8UUIlmKSAdYef2/lUkzd29
-    9aFNN0tHSx+/FETYqDGb9VnpuYBf0AV7PgdCEcuA41yX0GmNT9zGUdeZ2H01p5Do
-    9wwQUDOb3LvPTU6sNldmg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751967AbeCRLQK (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 18 Mar 2018 07:16:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58628 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751934AbeCRLQJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 18 Mar 2018 07:16:09 -0400
-Date: Sun, 18 Mar 2018 12:16:08 +0100
+Date: Sun, 18 Mar 2018 12:16:25 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 3.18.100
-Message-ID: <20180318111608.GA6614@kroah.com>
+Subject: Re: Linux 3.18.100
+Message-ID: <20180318111625.GB6614@kroah.com>
+References: <20180318111608.GA6614@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180318111608.GA6614@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 3.18.100 kernel.
-
-All users of the 3.18 kernel series must upgrade.
-
-The updated 3.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-3.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                 |    2=20
- arch/mips/kernel/smp-bmips.c             |    8 +-
- arch/x86/kernel/cpu/mcheck/mce.c         |   22 +++++
- arch/x86/kernel/machine_kexec_64.c       |    1=20
- arch/x86/kernel/module.c                 |   14 +++
- arch/x86/tools/relocs.c                  |    3=20
- drivers/input/keyboard/matrix_keypad.c   |    4 -
- drivers/mtd/ubi/vmt.c                    |   15 ++-
- drivers/scsi/qla2xxx/qla_init.c          |    1=20
- drivers/staging/android/ashmem.c         |   15 +--
- drivers/tty/serial/8250/8250_pci.c       |   11 ++
- drivers/tty/serial/atmel_serial.c        |    1=20
- drivers/tty/serial/sh-sci.c              |    2=20
- drivers/usb/core/message.c               |    4 +
- drivers/usb/core/quirks.c                |    3=20
- drivers/usb/mon/mon_text.c               |  124 +++++++++++++++++++-------=
------
- drivers/usb/storage/uas.c                |    2=20
- include/linux/usb/quirks.h               |    3=20
- net/bridge/netfilter/ebt_among.c         |   21 ++++-
- net/bridge/netfilter/ebtables.c          |   13 +++
- net/ipv6/netfilter/nf_nat_l3proto_ipv6.c |    4 +
- net/netfilter/nf_nat_proto_common.c      |    7 +
- net/netfilter/xt_IDLETIMER.c             |    9 +-
- net/netfilter/xt_LED.c                   |   12 +--
- net/sctp/sm_make_chunk.c                 |    2=20
- scripts/recordmcount.c                   |   14 +++
- sound/core/seq/seq_clientmgr.c           |   21 +++--
- sound/core/seq/seq_fifo.c                |    2=20
- sound/core/seq/seq_memory.c              |   14 ++-
- sound/core/seq/seq_memory.h              |    3=20
- 30 files changed, 261 insertions(+), 96 deletions(-)
-
-Clay McClure (1):
-      ubi: Fix race condition between ubi volume creation and udev
-
-Danilo Krummrich (1):
-      usb: quirks: add control message delay for 1b1c:1b20
-
-Eric Dumazet (1):
-      netfilter: IDLETIMER: be syzkaller friendly
-
-Florian Westphal (3):
-      netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets
-      netfilter: bridge: ebt_among: add missing match size checks
-      netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
-
-Greg Kroah-Hartman (2):
-      fixup: sctp: verify size of a new chunk in _sctp_make_chunk()
-      Linux 3.18.100
-
-H.J. Lu (1):
-      x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
-
-Joel Fernandes (1):
-      staging: android: ashmem: Fix lockdep issue during llseek
-
-Jonas Danielsson (1):
-      tty/serial: atmel: add new version check for usart
-
-Josh Poimboeuf (1):
-      x86/module: Detect and skip invalid relocations
-
-Julia Lawall (1):
-      USB: usbmon: remove assignment from IS_ERR argument
-
-Justin Chen (1):
-      MIPS: BMIPS: Do not mask IPIs during suspend
-
-Nikola Ciprich (1):
-      serial: 8250_pci: Add Brainboxes UC-260 4 port serial device
-
-Oliver Neukum (1):
-      uas: fix comparison for error code
-
-Paolo Abeni (2):
-      netfilter: x_tables: fix missing timer initialization in xt_LED
-      netfilter: nat: cope with negative port range
-
-Pete Zaitcev (1):
-      usb: usbmon: Read text within supplied buffer size
-
-Russell King (1):
-      scripts: recordmcount: break hardlinks
-
-Seunghun Han (1):
-      x86/MCE: Serialize sysfs changes
-
-Takashi Iwai (2):
-      ALSA: seq: Don't allow resizing pool in use
-      ALSA: seq: More protection for concurrent write and ioctl races
-
-Ulrich Hecht (1):
-      serial: sh-sci: prevent lockup on full TTY buffers
-
-Zhang Bo (1):
-      Input: matrix_keypad - fix race when disabling interrupts
-
-himanshu.madhani@cavium.com (1):
-      scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
-
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlquSnQACgkQONu9yGCS
-aT6rug//YQyt3Ky/JpJ47p1+gcyR/wtnC9LxcJBvF3/3n4fsr1LuhwriSFH/ux+A
-TsqHr0QKbsCiX+Czp2pNeUrOcNCQKUyL9oy/G338tr4C5ENCzmt1FlrmoxQMzq+l
-T6tQFCWrWFd9VY8/ZvJpohezl81qkGVFgM/4l9TdJoagZqVTmqeh6idR2mBj7Rry
-fOsMn5Iq1O+ewkMl2zzIeqe+eClVxaqckqrDwv2Y8lIDXyX0dF8TIDUan1KPlKkl
-gnOTKkhbwUl2D6Z1D0GaGdAxqtSFCKWxTIw1atbQGvwpCzoW4JThRJhluIub8XPZ
-/TuSo3RduqBDHEYvTdYkJdRSS54ivv6qhswiH7xcrsVGw4quQkO8PjRasqFjU2Ya
-+kIU5qLucQghgRXEztR1rd2nR/5jVm4ZT968XYs3Eyn6Ek6Pc6ujaDagflnJcjIO
-d5SBKlX0rMjwQfQJomSugjR1f85XvMOUnpsgNKl1lCcbFVwGtDMWoB6qzmPN0/V4
-Dv3u3yl7Xx4xh+DQCtetG2T30R9ke8Pvu+M2WuvJBHzbH+jabrDbeCHg6vn51LfY
-GyP8j7877HZPx6yg8xiko7RQWgqwUOKnw9sRiAeIeoSefuuvzfc+d9EUmOaXsrs4
-xmQ+7c2sKTruZlDJBXQqgtmXASDHMpquDHMJOv+HJNeuCKDjZ18=
-=04b6
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+diff --git a/Makefile b/Makefile
+index a94a5e5d84ca..6544b6ed9d46 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 3
+ PATCHLEVEL = 18
+-SUBLEVEL = 99
++SUBLEVEL = 100
+ EXTRAVERSION =
+ NAME = Diseased Newt
+ 
+diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
+index 06bb5ed6d80a..747bcb3641a8 100644
+--- a/arch/mips/kernel/smp-bmips.c
++++ b/arch/mips/kernel/smp-bmips.c
+@@ -159,11 +159,11 @@ static void bmips_prepare_cpus(unsigned int max_cpus)
+ 		return;
+ 	}
+ 
+-	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi0", NULL))
++	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
+ 		panic("Can't request IPI0 interrupt");
+-	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi1", NULL))
++	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
+ 		panic("Can't request IPI1 interrupt");
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index bf44e45a2a76..d5d3af159bec 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -56,6 +56,9 @@ static DEFINE_MUTEX(mce_chrdev_read_mutex);
+ 			      rcu_read_lock_sched_held() || \
+ 			      lockdep_is_held(&mce_chrdev_read_mutex))
+ 
++/* sysfs synchronization */
++static DEFINE_MUTEX(mce_sysfs_mutex);
++
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/mce.h>
+ 
+@@ -2183,6 +2186,7 @@ static ssize_t set_ignore_ce(struct device *s,
+ 	if (kstrtou64(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.ignore_ce ^ !!new) {
+ 		if (new) {
+ 			/* disable ce features */
+@@ -2195,6 +2199,8 @@ static ssize_t set_ignore_ce(struct device *s,
+ 			on_each_cpu(mce_enable_ce, (void *)1, 1);
+ 		}
+ 	}
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
+ }
+ 
+@@ -2207,6 +2213,7 @@ static ssize_t set_cmci_disabled(struct device *s,
+ 	if (kstrtou64(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.cmci_disabled ^ !!new) {
+ 		if (new) {
+ 			/* disable cmci */
+@@ -2218,6 +2225,8 @@ static ssize_t set_cmci_disabled(struct device *s,
+ 			on_each_cpu(mce_enable_ce, NULL, 1);
+ 		}
+ 	}
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
+ }
+ 
+@@ -2225,8 +2234,19 @@ static ssize_t store_int_with_restart(struct device *s,
+ 				      struct device_attribute *attr,
+ 				      const char *buf, size_t size)
+ {
+-	ssize_t ret = device_store_int(s, attr, buf, size);
++	unsigned long old_check_interval = check_interval;
++	ssize_t ret = device_store_ulong(s, attr, buf, size);
++
++	if (check_interval == old_check_interval)
++		return ret;
++
++	if (check_interval < 1)
++		check_interval = 1;
++
++	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return ret;
+ }
+ 
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 485981059a40..0652c5b637d9 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -516,6 +516,7 @@ int arch_kexec_apply_relocations_add(const Elf64_Ehdr *ehdr,
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_PC32:
++		case R_X86_64_PLT32:
+ 			value -= (u64)address;
+ 			*(u32 *)location = value;
+ 			break;
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index e69f9882bf95..53ce44fe8f21 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -167,19 +167,28 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 		case R_X86_64_NONE:
+ 			break;
+ 		case R_X86_64_64:
++			if (*(u64 *)loc != 0)
++				goto invalid_relocation;
+ 			*(u64 *)loc = val;
+ 			break;
+ 		case R_X86_64_32:
++			if (*(u32 *)loc != 0)
++				goto invalid_relocation;
+ 			*(u32 *)loc = val;
+ 			if (val != *(u32 *)loc)
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_32S:
++			if (*(s32 *)loc != 0)
++				goto invalid_relocation;
+ 			*(s32 *)loc = val;
+ 			if ((s64)val != *(s32 *)loc)
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_PC32:
++		case R_X86_64_PLT32:
++			if (*(u32 *)loc != 0)
++				goto invalid_relocation;
+ 			val -= (u64)loc;
+ 			*(u32 *)loc = val;
+ #if 0
+@@ -195,6 +204,11 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 	}
+ 	return 0;
+ 
++invalid_relocation:
++	pr_err("x86/modules: Skipping invalid relocation target, existing value is nonzero for type %d, loc %p, val %Lx\n",
++	       (int)ELF64_R_TYPE(rel[i].r_info), loc, val);
++	return -ENOEXEC;
++
+ overflow:
+ 	pr_err("overflow in relocation type %d val %Lx\n",
+ 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index 73eb7fd4aec4..5b6c8486a0be 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -769,9 +769,12 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		break;
+ 
+ 	case R_X86_64_PC32:
++	case R_X86_64_PLT32:
+ 		/*
+ 		 * PC relative relocations don't need to be adjusted unless
+ 		 * referencing a percpu symbol.
++		 *
++		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
+ 		 */
+ 		if (is_percpu_sym(sym, symname))
+ 			add_reloc(&relocs32neg, offset);
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index e651fa692afe..176bdd140769 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -216,8 +216,10 @@ static void matrix_keypad_stop(struct input_dev *dev)
+ {
+ 	struct matrix_keypad *keypad = input_get_drvdata(dev);
+ 
++	spin_lock_irq(&keypad->lock);
+ 	keypad->stopped = true;
+-	mb();
++	spin_unlock_irq(&keypad->lock);
++
+ 	flush_work(&keypad->work.work);
+ 	/*
+ 	 * matrix_keypad_scan() will leave IRQs enabled;
+diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+index 96131eb34c9f..ff5f1ac79581 100644
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -308,6 +308,12 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+ 			vol->last_eb_bytes = vol->usable_leb_size;
+ 	}
+ 
++	/* Make volume "available" before it becomes accessible via sysfs */
++	spin_lock(&ubi->volumes_lock);
++	ubi->volumes[vol_id] = vol;
++	ubi->vol_count += 1;
++	spin_unlock(&ubi->volumes_lock);
++
+ 	/* Register character device for the volume */
+ 	cdev_init(&vol->cdev, &ubi_vol_cdev_operations);
+ 	vol->cdev.owner = THIS_MODULE;
+@@ -350,11 +356,6 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+ 	if (err)
+ 		goto out_sysfs;
+ 
+-	spin_lock(&ubi->volumes_lock);
+-	ubi->volumes[vol_id] = vol;
+-	ubi->vol_count += 1;
+-	spin_unlock(&ubi->volumes_lock);
+-
+ 	ubi_volume_notify(ubi, vol, UBI_VOLUME_ADDED);
+ 	self_check_volumes(ubi);
+ 	return err;
+@@ -374,6 +375,10 @@ out_sysfs:
+ out_cdev:
+ 	cdev_del(&vol->cdev);
+ out_mapping:
++	spin_lock(&ubi->volumes_lock);
++	ubi->volumes[vol_id] = NULL;
++	ubi->vol_count -= 1;
++	spin_unlock(&ubi->volumes_lock);
+ 	if (do_free)
+ 		kfree(vol->eba_tbl);
+ out_acc:
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index c919ac042593..b2bd6029ff65 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *ptr, int res)
+ 	srb_t *sp = (srb_t *)ptr;
+ 	struct srb_iocb *abt = &sp->u.iocb_cmd;
+ 
++	del_timer(&sp->u.iocb_cmd.timer);
+ 	complete(&abt->u.abt.comp);
+ }
+ 
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 8b0211d7d7a6..cf7c597e598f 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -330,24 +330,23 @@ static loff_t ashmem_llseek(struct file *file, loff_t offset, int origin)
+ 	mutex_lock(&ashmem_mutex);
+ 
+ 	if (asma->size == 0) {
+-		ret = -EINVAL;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EINVAL;
+ 	}
+ 
+ 	if (!asma->file) {
+-		ret = -EBADF;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EBADF;
+ 	}
+ 
++	mutex_unlock(&ashmem_mutex);
++
+ 	ret = vfs_llseek(asma->file, offset, origin);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
+ 
+ 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
+ 	file->f_pos = asma->file->f_pos;
+-
+-out:
+-	mutex_unlock(&ashmem_mutex);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index 5fd44ac7ecf8..2a928c18c8ea 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -4981,6 +4981,17 @@ static struct pci_device_id serial_pci_tbl[] = {
+ 	{	PCI_VENDOR_ID_INTASHIELD, PCI_DEVICE_ID_INTASHIELD_IS400,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,    /* 135a.0dc0 */
+ 		pbn_b2_4_115200 },
++	/*
++	 * BrainBoxes UC-260
++	 */
++	{	PCI_VENDOR_ID_INTASHIELD, 0x0D21,
++		PCI_ANY_ID, PCI_ANY_ID,
++		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
++		pbn_b2_4_115200 },
++	{	PCI_VENDOR_ID_INTASHIELD, 0x0E34,
++		PCI_ANY_ID, PCI_ANY_ID,
++		 PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
++		pbn_b2_4_115200 },
+ 	/*
+ 	 * Perle PCI-RAS cards
+ 	 */
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index f958ccda379a..faaf50061308 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1643,6 +1643,7 @@ static void atmel_get_ip_name(struct uart_port *port)
+ 		switch (version) {
+ 		case 0x302:
+ 		case 0x10213:
++		case 0x10302:
+ 			dev_dbg(port->dev, "This version is usart\n");
+ 			atmel_port->is_usart = true;
+ 			break;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 118d998f6ff6..c8f1af8a053f 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -736,6 +736,8 @@ static void sci_receive_chars(struct uart_port *port)
+ 		/* Tell the rest of the system the news. New characters! */
+ 		tty_flip_buffer_push(tport);
+ 	} else {
++		/* TTY buffers full; read from RX reg to prevent lockup */
++		serial_port_in(port, SCxRDR);
+ 		serial_port_in(port, SCxSR); /* dummy read */
+ 		serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+ 	}
+diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+index f368d2053da5..251b44300b38 100644
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -147,6 +147,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
+ 
+ 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
+ 
++	/* Linger a bit, prior to the next control message. */
++	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
++		msleep(200);
++
+ 	kfree(dr);
+ 
+ 	return ret;
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index e34b84e0d782..786bfe9be897 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -219,7 +219,8 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
+ 	/* Corsair Strafe RGB */
+-	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
++	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
+ 
+ 	/* Corsair K70 LUX */
+ 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
+diff --git a/drivers/usb/mon/mon_text.c b/drivers/usb/mon/mon_text.c
+index ad408251d955..108dcc5f5350 100644
+--- a/drivers/usb/mon/mon_text.c
++++ b/drivers/usb/mon/mon_text.c
+@@ -82,6 +82,8 @@ struct mon_reader_text {
+ 
+ 	wait_queue_head_t wait;
+ 	int printf_size;
++	size_t printf_offset;
++	size_t printf_togo;
+ 	char *printf_buf;
+ 	struct mutex printf_lock;
+ 
+@@ -373,73 +375,103 @@ err_alloc:
+ 	return rc;
+ }
+ 
+-/*
+- * For simplicity, we read one record in one system call and throw out
+- * what does not fit. This means that the following does not work:
+- *   dd if=/dbg/usbmon/0t bs=10
+- * Also, we do not allow seeks and do not bother advancing the offset.
+- */
++static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
++    char __user * const buf, const size_t nbytes)
++{
++	const size_t togo = min(nbytes, rp->printf_togo);
++
++	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
++		return -EFAULT;
++	rp->printf_togo -= togo;
++	rp->printf_offset += togo;
++	return togo;
++}
++
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_t(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+-
+-	mon_text_read_head_t(rp, &ptr, ep);
+-	mon_text_read_statset(rp, &ptr, ep);
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+-
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_t(rp, &ptr, ep);
++		mon_text_read_statset(rp, &ptr, ep);
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
++	}
++
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_u(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+ 
+-	mon_text_read_head_u(rp, &ptr, ep);
+-	if (ep->type == 'E') {
+-		mon_text_read_statset(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
+-		mon_text_read_isostat(rp, &ptr, ep);
+-		mon_text_read_isodesc(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
+-		mon_text_read_intstat(rp, &ptr, ep);
+-	} else {
+-		mon_text_read_statset(rp, &ptr, ep);
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_u(rp, &ptr, ep);
++		if (ep->type == 'E') {
++			mon_text_read_statset(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
++			mon_text_read_isostat(rp, &ptr, ep);
++			mon_text_read_isodesc(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
++			mon_text_read_intstat(rp, &ptr, ep);
++		} else {
++			mon_text_read_statset(rp, &ptr, ep);
++		}
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
+ 	}
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+ 
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
+ static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
+diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+index 7d535f1ddecc..85f205883e22 100644
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -1067,7 +1067,7 @@ static int uas_post_reset(struct usb_interface *intf)
+ 		return 0;
+ 
+ 	err = uas_configure_endpoints(devinfo);
+-	if (err && err != ENODEV)
++	if (err && err != -ENODEV)
+ 		shost_printk(KERN_ERR, shost,
+ 			     "%s: alloc streams error %d after reset",
+ 			     __func__, err);
+diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
+index de2a722fe3cf..ea4f81c2a6d5 100644
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -56,4 +56,7 @@
+  */
+ #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
+ 
++/* Device needs a pause after every control message. */
++#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
++
+ #endif /* __LINUX_USB_QUIRKS_H */
+diff --git a/net/bridge/netfilter/ebt_among.c b/net/bridge/netfilter/ebt_among.c
+index 9024283d2bca..9637a681bdda 100644
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 	return true;
+ }
+ 
++static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
++{
++	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+ 	const struct ebt_entry_match *em =
+ 		container_of(par->matchinfo, const struct ebt_entry_match, data);
+-	int expected_length = sizeof(struct ebt_among_info);
++	unsigned int expected_length = sizeof(struct ebt_among_info);
+ 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
+ 	int err;
+ 
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+-	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_dst))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_dst);
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
++	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_src))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
+ 
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index d9a8c05d995d..653d72979ee1 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2019,7 +2019,9 @@ static int ebt_size_mwt(struct compat_ebt_entry_mwt *match32,
+ 		if (match_kern)
+ 			match_kern->match_size = ret;
+ 
+-		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
++		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
++			return -EINVAL;
++
+ 		match32 = (struct compat_ebt_entry_mwt *) buf;
+ 	}
+ 
+@@ -2076,6 +2078,15 @@ static int size_entry_mwt(struct ebt_entry *entry, const unsigned char *base,
+ 	 *
+ 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+ 	 */
++	for (i = 0; i < 4 ; ++i) {
++		if (offsets[i] >= *total)
++			return -EINVAL;
++		if (i == 0)
++			continue;
++		if (offsets[i-1] > offsets[i])
++			return -EINVAL;
++	}
++
+ 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
+ 		struct compat_ebt_entry_mwt *match32;
+ 		unsigned int size;
+diff --git a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+index c5812e1c1ffb..4e8b2752da89 100644
+--- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+@@ -99,6 +99,10 @@ static bool nf_nat_ipv6_manip_pkt(struct sk_buff *skb,
+ 	    !l4proto->manip_pkt(skb, &nf_nat_l3proto_ipv6, iphdroff, hdroff,
+ 				target, maniptype))
+ 		return false;
++
++	/* must reload, offset might have changed */
++	ipv6h = (void *)skb->data + iphdroff;
++
+ manip_addr:
+ 	if (maniptype == NF_NAT_MANIP_SRC)
+ 		ipv6h->saddr = target->src.u3.in6;
+diff --git a/net/netfilter/nf_nat_proto_common.c b/net/netfilter/nf_nat_proto_common.c
+index fbce552a796e..7d7466dbf663 100644
+--- a/net/netfilter/nf_nat_proto_common.c
++++ b/net/netfilter/nf_nat_proto_common.c
+@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const struct nf_nat_l3proto *l3proto,
+ 				 const struct nf_conn *ct,
+ 				 u16 *rover)
+ {
+-	unsigned int range_size, min, i;
++	unsigned int range_size, min, max, i;
+ 	__be16 *portptr;
+ 	u_int16_t off;
+ 
+@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const struct nf_nat_l3proto *l3proto,
+ 		}
+ 	} else {
+ 		min = ntohs(range->min_proto.all);
+-		range_size = ntohs(range->max_proto.all) - min + 1;
++		max = ntohs(range->max_proto.all);
++		if (unlikely(max < min))
++			swap(max, min);
++		range_size = max - min + 1;
+ 	}
+ 
+ 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
+diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
+index f407ebc13481..95b6dedc5ac7 100644
+--- a/net/netfilter/xt_IDLETIMER.c
++++ b/net/netfilter/xt_IDLETIMER.c
+@@ -146,11 +146,11 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
+ 		    (unsigned long) info->timer);
+ 	info->timer->refcnt = 1;
+ 
++	INIT_WORK(&info->timer->work, idletimer_tg_work);
++
+ 	mod_timer(&info->timer->timer,
+ 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+ 
+-	INIT_WORK(&info->timer->work, idletimer_tg_work);
+-
+ 	return 0;
+ 
+ out_free_attr:
+@@ -191,7 +191,10 @@ static int idletimer_tg_checkentry(const struct xt_tgchk_param *par)
+ 		pr_debug("timeout value is zero\n");
+ 		return -EINVAL;
+ 	}
+-
++	if (info->timeout >= INT_MAX / 1000) {
++		pr_debug("timeout value is too big\n");
++		return -EINVAL;
++	}
+ 	if (info->label[0] == '\0' ||
+ 	    strnlen(info->label,
+ 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
+diff --git a/net/netfilter/xt_LED.c b/net/netfilter/xt_LED.c
+index 3ba31c194cce..0858fe17e14a 100644
+--- a/net/netfilter/xt_LED.c
++++ b/net/netfilter/xt_LED.c
+@@ -141,10 +141,11 @@ static int led_tg_check(const struct xt_tgchk_param *par)
+ 		goto exit_alloc;
+ 	}
+ 
+-	/* See if we need to set up a timer */
+-	if (ledinfo->delay > 0)
+-		setup_timer(&ledinternal->timer, led_timeout_callback,
+-			    (unsigned long)ledinternal);
++	/* Since the letinternal timer can be shared between multiple targets,
++	 * always set it up, even if the current target does not need it
++	 */
++	setup_timer(&ledinternal->timer, led_timeout_callback,
++		    (unsigned long)ledinternal);
+ 
+ 	list_add_tail(&ledinternal->list, &xt_led_triggers);
+ 
+@@ -181,8 +182,7 @@ static void led_tg_destroy(const struct xt_tgdtor_param *par)
+ 
+ 	list_del(&ledinternal->list);
+ 
+-	if (ledinfo->delay > 0)
+-		del_timer_sync(&ledinternal->timer);
++	del_timer_sync(&ledinternal->timer);
+ 
+ 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
+ 
+diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+index 6d48cbf6465d..bbf6abb6ae3c 100644
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -1369,7 +1369,7 @@ static struct sctp_chunk *_sctp_make_chunk(const struct sctp_association *asoc,
+ 	struct sock *sk;
+ 	int chunklen;
+ 
+-	chunklen = sizeof(*chunk_hdr) + paylen;
++	chunklen = WORD_ROUND(sizeof(*chunk_hdr) + paylen);
+ 	if (chunklen > SCTP_MAX_CHUNK_LEN)
+ 		goto nodata;
+ 
+diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+index d96d8a2647d6..89c0b9efcba4 100644
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -201,6 +201,20 @@ static void *mmap_file(char const *fname)
+ 		addr = umalloc(sb.st_size);
+ 		uread(fd_map, addr, sb.st_size);
+ 	}
++	if (sb.st_nlink != 1) {
++		/* file is hard-linked, break the hard link */
++		close(fd_map);
++		if (unlink(fname) < 0) {
++			perror(fname);
++			fail_file();
++		}
++		fd_map = open(fname, O_RDWR | O_CREAT, sb.st_mode);
++		if (fd_map < 0) {
++			perror(fname);
++			fail_file();
++		}
++		uwrite(fd_map, addr, sb.st_size);
++	}
+ 	return addr;
+ }
+ 
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index dee6691013c1..0f4610c48acc 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -919,7 +919,8 @@ int snd_seq_dispatch_event(struct snd_seq_event_cell *cell, int atomic, int hop)
+ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
+ 					struct snd_seq_event *event,
+ 					struct file *file, int blocking,
+-					int atomic, int hop)
++					int atomic, int hop,
++					struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	int err;
+@@ -957,7 +958,8 @@ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
+ 		return -ENXIO; /* queue is not allocated */
+ 
+ 	/* allocate an event cell */
+-	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
++	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
++				file, mutexp);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -1026,12 +1028,11 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
+ 		return -ENXIO;
+ 
+ 	/* allocate the pool now if the pool is not allocated yet */ 
++	mutex_lock(&client->ioctl_mutex);
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+-		mutex_lock(&client->ioctl_mutex);
+ 		err = snd_seq_pool_init(client->pool);
+-		mutex_unlock(&client->ioctl_mutex);
+ 		if (err < 0)
+-			return -ENOMEM;
++			goto out;
+ 	}
+ 
+ 	/* only process whole events */
+@@ -1082,7 +1083,7 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
+ 		/* ok, enqueue it */
+ 		err = snd_seq_client_enqueue_event(client, &event, file,
+ 						   !(file->f_flags & O_NONBLOCK),
+-						   0, 0);
++						   0, 0, &client->ioctl_mutex);
+ 		if (err < 0)
+ 			break;
+ 
+@@ -1093,6 +1094,8 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
+ 		written += len;
+ 	}
+ 
++ out:
++	mutex_unlock(&client->ioctl_mutex);
+ 	return written ? written : err;
+ }
+ 
+@@ -1929,6 +1932,9 @@ static int snd_seq_ioctl_set_client_pool(struct snd_seq_client *client,
+ 	    (! snd_seq_write_pool_allocated(client) ||
+ 	     info.output_pool != client->pool->size)) {
+ 		if (snd_seq_write_pool_allocated(client)) {
++			/* is the pool in use? */
++			if (atomic_read(&client->pool->counter))
++				return -EBUSY;
+ 			/* remove all existing cells */
+ 			snd_seq_pool_mark_closing(client->pool);
+ 			snd_seq_queue_client_leave_cells(client->number);
+@@ -2352,7 +2358,8 @@ static int kernel_client_enqueue(int client, struct snd_seq_event *ev,
+ 	if (! cptr->accept_output)
+ 		result = -EPERM;
+ 	else /* send it */
+-		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
++		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
++						      atomic, hop, NULL);
+ 
+ 	snd_seq_client_unlock(cptr);
+ 	return result;
+diff --git a/sound/core/seq/seq_fifo.c b/sound/core/seq/seq_fifo.c
+index a2ff0d44fd3b..bb872ec4ff88 100644
+--- a/sound/core/seq/seq_fifo.c
++++ b/sound/core/seq/seq_fifo.c
+@@ -123,7 +123,7 @@ int snd_seq_fifo_event_in(struct snd_seq_fifo *f,
+ 		return -EINVAL;
+ 
+ 	snd_use_lock_use(&f->use_lock);
+-	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
++	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
+ 	if (err < 0) {
+ 		if ((err == -ENOMEM) || (err == -EAGAIN))
+ 			atomic_inc(&f->overflow);
+diff --git a/sound/core/seq/seq_memory.c b/sound/core/seq/seq_memory.c
+index b855c087cd8a..5e0604ff01f2 100644
+--- a/sound/core/seq/seq_memory.c
++++ b/sound/core/seq/seq_memory.c
+@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_event_cell * cell)
+  */
+ static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
+ 			      struct snd_seq_event_cell **cellp,
+-			      int nonblock, struct file *file)
++			      int nonblock, struct file *file,
++			      struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	unsigned long flags;
+@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		add_wait_queue(&pool->output_sleep, &wait);
+ 		spin_unlock_irq(&pool->lock);
++		if (mutexp)
++			mutex_unlock(mutexp);
+ 		schedule();
++		if (mutexp)
++			mutex_lock(mutexp);
+ 		spin_lock_irq(&pool->lock);
+ 		remove_wait_queue(&pool->output_sleep, &wait);
+ 		/* interrupted? */
+@@ -288,7 +293,7 @@ __error:
+  */
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+ 		      struct snd_seq_event_cell **cellp, int nonblock,
+-		      struct file *file)
++		      struct file *file, struct mutex *mutexp)
+ {
+ 	int ncells, err;
+ 	unsigned int extlen;
+@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+ 	if (ncells >= pool->total_elements)
+ 		return -ENOMEM;
+ 
+-	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
++	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+ 			int size = sizeof(struct snd_seq_event);
+ 			if (len < size)
+ 				size = len;
+-			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
++			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
++						 mutexp);
+ 			if (err < 0)
+ 				goto __error;
+ 			if (cell->event.data.ext.ptr == NULL)
+diff --git a/sound/core/seq/seq_memory.h b/sound/core/seq/seq_memory.h
+index 32f959c17786..3abe306c394a 100644
+--- a/sound/core/seq/seq_memory.h
++++ b/sound/core/seq/seq_memory.h
+@@ -66,7 +66,8 @@ struct snd_seq_pool {
+ void snd_seq_cell_free(struct snd_seq_event_cell *cell);
+ 
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+-		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
++		      struct snd_seq_event_cell **cellp, int nonblock,
++		      struct file *file, struct mutex *mutexp);
+ 
+ /* return number of unused (free) cells */
+ static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
