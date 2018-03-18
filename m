@@ -1,78 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754488AbeCRMvw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 08:51:52 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44555 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754108AbeCRMsg (ORCPT
+        id S1754120AbeCRMwB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 08:52:01 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37933 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754108AbeCRMvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 08:48:36 -0400
-X-Google-Smtp-Source: AG47ELuqhpuaINM12FgxjZOTqdIEIrQ2jSpl+66sC46uoef5V1QcZ4yBx0iv00zk8LZ+6MJOI/jsdQ==
-Date: Sun, 18 Mar 2018 07:48:33 -0500
+        Sun, 18 Mar 2018 08:51:54 -0400
+X-Google-Smtp-Source: AG47ELuhFWwVYk5am/wpeyoSjNgv74KljX+0w+4aHOmS4MCQkc/yzz5PN7eVqU7i8xSVRx835nfE2g==
+Date: Sun, 18 Mar 2018 07:51:50 -0500
 From: Rob Herring <robh@kernel.org>
-To: Andreas Brauchli <a.brauchli@elementarea.net>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: chemical: sgp30: Support Sensirion SGPxx
- sensors
-Message-ID: <20180317234938.qf7j45o53nu4ryu2@rob-hp-laptop>
-References: <58a6dcdc4097d60e7bcee61ec1d0cbdf8ad3ae49.camel@elementarea.net>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: frowand.list@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Michael J Clark <mjc@sifive.com>,
+        Trung Tran <trung.tran@ettus.com>, Moritz Fischer <mdf@kernel.org>
+Subject: Re: [PATCH] of: Respect CONFIG_CMDLINE{,_EXTENED,_FORCE) with no
+ chosen node
+Message-ID: <20180318125150.3i54r7i5edefbhfq@rob-hp-laptop>
+References: <20180314163105.8638-1-palmer@sifive.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58a6dcdc4097d60e7bcee61ec1d0cbdf8ad3ae49.camel@elementarea.net>
+In-Reply-To: <20180314163105.8638-1-palmer@sifive.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 11:07:30PM +0100, Andreas Brauchli wrote:
-> Support Sensirion SGP30 and SGPC3 multi-pixel I2C gas sensors
+On Wed, Mar 14, 2018 at 09:31:05AM -0700, Palmer Dabbelt wrote:
+> Systems that boot without a chosen node in the device tree should still
+> respect the command lines that are built into the kernel.  This patch
+> avoids bailing out of the command line argument parsing code when there
+> is no chosen node in the device tree.  This is necessary to boot
+> straight to a root file system (ie, without an initramfs)
 > 
-> Supported Features:
+> The intent here is that the only functional change is to copy
+> CONFIG_CMDLINE into data if both of them are valid (ie, CONFIG_CMDLINE
+> is defined and data is non-null) on systems where there is no chosen
+> device tree node.  I don't actually know what the return values do so I
+> just preserved them.
 > 
-> * Indoor Air Quality (IAQ) concentrations for
->   - tVOC (in_concentration_voc_input)
->   - CO2eq (in_concentration_co2_input) - SGP30 only
->   IAQ concentrations are periodically read out by a background thread
->   to allow the sensor to maintain its internal baseline.
-> * Baseline support for IAQ (in_iaq_baseline, set_iaq_baseline)
-> * Gas concentration signals
->   - Ethanol (in_concentration_ethanol_raw)
->   - H2 (in_concentration_h2_raw) - SGP30 only
-> * On-chip self test (in_selftest)
-> * Sensor interface version (in_feature_set_version)
-> * Sensor serial number (in_serial_id)
-> * Humidity compensation
->   With the help of an external humidity signal, the gas signals can be
->   humidity-compensated. The sensor performs the compensation on-chip.
-> * Power mode switching between low power mode (1/2Hz) and
->   ultra low power mode (1/30Hz) sampling - SGPC3 only
-> * Checksummed I2C communication
+> Thanks to Trung and Moritz for finding the bug during our ELC hackathon
+> (and providing the first fix), and Michal for suggesting this fix (which
+> is cleaner than what I was doing).  I've given this very minimal
+> testing: it fixes the RISC-V bug (in conjunction with a patch to move
+> from COMMANDLINE_OVERRIDE to COMMANDLINE_FORCE), still works on systems
+> with and without the chosen node, and builds on ARM64.
 > 
-> For all features, refer to the data sheet or the documentation in
-> Documentation/iio/chemical/sgp30.txt for more details.
-> 
-> The ABI is documented in
-> Documentation/ABI/testing/sysfs-bus-iio-chemical-sgp30
-> 
-> Signed-off-by: Andreas Brauchli <andreas.brauchli@sensirion.com>
+> CC: Michael J Clark <mjc@sifive.com>
+> CC: Trung Tran <trung.tran@ettus.com>
+> CC: Moritz Fischer <mdf@kernel.org>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 > ---
->  .../ABI/testing/sysfs-bus-iio-chemical-sgp30       |   62 ++
->  .../bindings/iio/chemical/sensirion,sgp30.txt      |   15 +
+>  drivers/of/fdt.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index 84aa9d676375..60241b1cb024 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -1084,9 +1084,12 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>  
+>  	pr_debug("search \"chosen\", depth: %d, uname: %s\n", depth, uname);
+>  
+> -	if (depth != 1 || !data ||
+> +	if (!data)
+> +		goto no_data;
 
-Please split bindings to separate patch.
+Just "return 0" here.
 
->  Documentation/iio/chemical/sgp30.txt               |   97 ++
->  drivers/iio/chemical/Kconfig                       |   13 +
->  drivers/iio/chemical/Makefile                      |    1 +
->  drivers/iio/chemical/sgp30.c                       | 1120 ++++++++++++++++++++
->  6 files changed, 1308 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-chemical-sgp30
->  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sgp30.txt
->  create mode 100644 Documentation/iio/chemical/sgp30.txt
->  create mode 100644 drivers/iio/chemical/sgp30.c
+> +
+> +	if (depth != 1 ||
+>  	    (strcmp(uname, "chosen") != 0 && strcmp(uname, "chosen@0") != 0))
+> -		return 0;
+> +		goto no_chosen;
+>  
+>  	early_init_dt_check_for_initrd(node);
+>  
+> @@ -1117,6 +1120,13 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>  
+>  	/* break now */
+>  	return 1;
+> +
+> +no_chosen:
+> +#ifdef CONFIG_CMDLINE
+> +	strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
+
+Best case, this is going to needlessly copy the string on every single 
+node that is not /chosen.
+
+Worst case, I think this changes behavior. For example, first you copy 
+CONFIG_CMDLINE into data, then on a later iteration, you strlcat 
+CONFIG_CMDLINE into data if CONFIG_CMDLINE_EXTEND is enable. There could 
+also be some unintended behavior if data has a string to start with. 
+
+I'd really like to see this function re-written to just find the /chosen 
+node and then handle each property one by one. The iterating approach is 
+silly. I assume it predates libfdt and we didn't have nice functions to 
+find nodes by path (or any other way).
+
+I'm working on a patch to re-structure this function. Will send it out 
+in the next day.
+
+> +#endif
+> +no_data:
+> +	return 0;
+>  }
+>  
+>  #ifdef CONFIG_HAVE_MEMBLOCK
+> -- 
+> 2.16.1
+> 
