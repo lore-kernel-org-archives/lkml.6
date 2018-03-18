@@ -1,81 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754508AbeCRUY4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 16:24:56 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42228 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751062AbeCRUYx (ORCPT
+        id S1754599AbeCRU0E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 16:26:04 -0400
+Received: from smtprelay0035.hostedemail.com ([216.40.44.35]:47623 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754304AbeCRU0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 16:24:53 -0400
-X-Google-Smtp-Source: AG47ELtk6e0qhgkpQbHyE6rdWWbk67KpSTJDf1iU0sFgBGfd31/puMRGyxEUCsH+4oqyArue0Tx7mw==
-Date: Sun, 18 Mar 2018 13:24:51 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Shakeel Butt <shakeelb@google.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [patch -mm] mm: memcg: remote memcg charging for kmem allocations
- fix
-In-Reply-To: <20180305182951.34462-2-shakeelb@google.com>
-Message-ID: <alpine.DEB.2.20.1803181318530.241887@chino.kir.corp.google.com>
-References: <20180305182951.34462-1-shakeelb@google.com> <20180305182951.34462-2-shakeelb@google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 18 Mar 2018 16:26:01 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 10,1,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:3871:3872:3873:3874:4250:4321:5007:6119:7903:8531:10004:10400:10848:11232:11658:11914:12048:12740:12760:12895:13069:13071:13311:13357:13439:13523:13524:14180:14181:14659:14721:21080:21433:21627:30012:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: floor66_6e5abf8b65744
+X-Filterd-Recvd-Size: 1864
+Message-ID: <1521404757.27411.46.camel@perches.com>
+Subject: Re: [PATCH 00/19] C-SKY(csky) Linux Kernel Port
+From: Joe Perches <joe@perches.com>
+To: Guo Ren <ren_guo@c-sky.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de
+Cc: c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Date: Sun, 18 Mar 2018 13:25:57 -0700
+In-Reply-To: <cover.1521399976.git.ren_guo@c-sky.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix build warning for CONFIG_SLOB:
+On Mon, 2018-03-19 at 03:51 +0800, Guo Ren wrote:
+> This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
+> CPU cores and the patches are based on linux-4.16-rc5.
+> 
+> There are two ABI versions with several CPU cores in this patchset:
+>   ABIv1: ck610 (16-bit instruction, 32-bit data path, VIPT Cache ...)
+>   ABIv2: ck807 ck810 (16/32-bit variable length instruction, PIPT Cache ...)
 
-mm/memcontrol.c:706:27: warning: 'get_mem_cgroup' defined but not used [-Wunused-function]
-static struct mem_cgroup *get_mem_cgroup(struct mem_cgroup *memcg)
+[]
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- mm/memcontrol.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> It's my first patchset to linux and any feedback is welcome :)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -701,15 +701,6 @@ struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
- 	return memcg;
- }
- 
--static struct mem_cgroup *get_mem_cgroup(struct mem_cgroup *memcg)
--{
--	rcu_read_lock();
--	if (!css_tryget_online(&memcg->css))
--		memcg = NULL;
--	rcu_read_unlock();
--	return memcg;
--}
--
- /**
-  * mem_cgroup_iter - iterate over memory cgroup hierarchy
-  * @root: hierarchy root
-@@ -2128,6 +2119,15 @@ static void commit_charge(struct page *page, struct mem_cgroup *memcg,
- }
- 
- #ifndef CONFIG_SLOB
-+static struct mem_cgroup *get_mem_cgroup(struct mem_cgroup *memcg)
-+{
-+	rcu_read_lock();
-+	if (!css_tryget_online(&memcg->css))
-+		memcg = NULL;
-+	rcu_read_unlock();
-+	return memcg;
-+}
-+
- static int memcg_alloc_cache_id(void)
- {
- 	int id, size;
+Hello.  You might try to do a git am <series>
+on a new branch and correct the various
+git whitespace messages that are produced.
+
+It's also possible to run checkpatch and correct
+some of the linux-kernel code style conformance
+nits it lists.
+
+Perhaps something like:
+
+$ git ls-files arch/csky/ | \
+  while read file ; do \
+    ./scripts/checkpatch.pl --strict --terse --no-summary $file ; \
+  done
+
+add --fix-inplace to the checkpatch line if desired.
