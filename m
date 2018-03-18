@@ -1,84 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754675AbeCRQMD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 12:12:03 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:46512 "EHLO
+        id S1754708AbeCRQMH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 12:12:07 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:46484 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754132AbeCRQL7 (ORCPT
+        with ESMTP id S1754157AbeCRQL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 18 Mar 2018 12:11:59 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         arnd@arndb.de, viro@ZenIV.linux.org.uk
-Cc: linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
-Subject: [RFC PATCH 6/6] x86: remove compat_sys_x86_waitpid()
-Date: Sun, 18 Mar 2018 17:10:56 +0100
-Message-Id: <20180318161056.5377-7-linux@dominikbrodowski.net>
+Cc: linux-arch@vger.kernel.org
+Subject: [RFC PATCH 0/6] remove in-kernel syscall invocations (part 3 == compat cruft)
+Date: Sun, 18 Mar 2018 17:10:50 +0100
+Message-Id: <20180318161056.5377-1-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180318161056.5377-1-linux@dominikbrodowski.net>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-compat_sys_x86_waitpid() is not needed, as it takes the same parameters
-(int, *int, int) as the native syscall.
+Here is a third series of patches which reduce the number of syscall
+invocations from within the kernel. Once this long-term goal is achieved,
+the syscall entry path can be streamlined.
 
-Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
- arch/x86/ia32/sys_ia32.c               | 6 ------
- arch/x86/include/asm/sys_ia32.h        | 3 ---
- 3 files changed, 1 insertion(+), 10 deletions(-)
+This series focuses on a few compat syscall definitions in arch/ which
+have no other in-kernel users. In particular, it introduces generic compat
+syscalls for a handful of mm- and fs-related functions. Their calling
+convention depends on whether the architecture sets
+	__ARCH_WANT_LE_COMPAT_SYS (little-endian calling convention)
+and/or	__ARCH_WANT_COMPAT_SYS_WITH_PADDING.
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 17b8dc7130f5..6eddf8ba8348 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -13,7 +13,7 @@
- 4	i386	write			sys_write
- 5	i386	open			sys_open			compat_sys_open
- 6	i386	close			sys_close
--7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
-+7	i386	waitpid			sys_waitpid
- 8	i386	creat			sys_creat
- 9	i386	link			sys_link
- 10	i386	unlink			sys_unlink
-diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-index 31d50d11239b..4710a0cc969b 100644
---- a/arch/x86/ia32/sys_ia32.c
-+++ b/arch/x86/ia32/sys_ia32.c
-@@ -162,12 +162,6 @@ COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
- 			       a.offset>>PAGE_SHIFT);
- }
- 
--COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
--		       stat_addr, int, options)
--{
--	return compat_sys_wait4(pid, stat_addr, options, NULL);
--}
--
- /*
-  * Some system calls that need sign extended arguments. This could be
-  * done by a generic wrapper.
-diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
-index 6a78bee5a314..b407c00d62fa 100644
---- a/arch/x86/include/asm/sys_ia32.h
-+++ b/arch/x86/include/asm/sys_ia32.h
-@@ -33,9 +33,6 @@ asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
- struct mmap_arg_struct32;
- asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
- 
--asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
--				       int);
--
- asmlinkage long compat_sys_x86_fadvise64_64(int, __u32, __u32, __u32, __u32,
- 					    int);
- 
+As I am not used to non-x86 architectures, please bear with me in case I
+broke something or missed some peculiarities. In particular, I was
+surprised that a couple of compat syscall definitions used "u64" or
+"unsigned long" as parameter definitions -- though the code makes it clear
+that they expected an "u32" or an "unsigned int" instead. CVE-2009-0029
+seems to be handled already by the compat_sys_*() compat_SyS_*() /
+C_SYSC_*() indirection provided for by include/linux/compat.h. Or do I
+miss something here?
+
+I did not bother addressing metag and tile, as they are going away.
+Parisc and sh (sys_sh32.c in particular) provide similar wrappers for
+"native" (non-compat) use, so they are left as-is as well.
+
+Patches 5 and 6 in this series are x86-only.
+
+Thanks,
+	Dominik
+
+Dominik Brodowski (6):
+  fs: provide a generic compat_sys_fallocate() implementation
+  fs: provide a generic compat_sys_truncate64() implementation
+  fs: provide generic compat_sys_p{read,write}64() implementations
+  mm: provide generic compat_sys_readahead() implementation
+  x86: use _do_fork() in compat_sys_x86_clone()
+  x86: remove compat_sys_x86_waitpid()
+
+ arch/mips/include/asm/unistd.h         |  8 ++++
+ arch/mips/kernel/linux32.c             | 35 ---------------
+ arch/mips/kernel/scall64-o32.S         | 10 ++---
+ arch/powerpc/include/asm/unistd.h      |  5 +++
+ arch/powerpc/kernel/sys_ppc32.c        | 30 -------------
+ arch/s390/include/asm/unistd.h         |  4 ++
+ arch/s390/kernel/compat_linux.c        | 33 --------------
+ arch/s390/kernel/compat_linux.h        |  5 ---
+ arch/s390/kernel/syscalls/syscall.tbl  | 10 ++---
+ arch/sparc/include/asm/unistd.h        |  4 ++
+ arch/sparc/kernel/sys_sparc32.c        | 41 -----------------
+ arch/sparc/kernel/systbls.h            | 19 --------
+ arch/sparc/kernel/systbls_64.S         |  4 +-
+ arch/x86/entry/syscalls/syscall_32.tbl | 12 ++---
+ arch/x86/ia32/sys_ia32.c               | 46 +------------------
+ arch/x86/include/asm/sys_ia32.h        | 14 ------
+ arch/x86/include/asm/unistd.h          |  5 +++
+ fs/open.c                              | 52 +++++++++++++++++++++-
+ fs/read_write.c                        | 74 +++++++++++++++++++++++++++++--
+ include/linux/compat.h                 | 42 ++++++++++++++++++
+ mm/readahead.c                         | 81 ++++++++++++++++++++++++----------
+ 21 files changed, 266 insertions(+), 268 deletions(-)
+
 -- 
 2.16.2
