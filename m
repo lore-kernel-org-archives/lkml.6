@@ -1,62 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754120AbeCRPfl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 11:35:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750766AbeCRPfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 11:35:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886B620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        id S1754048AbeCRPmq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 11:42:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58567 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbeCRPmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 11:42:43 -0400
+Date: Sun, 18 Mar 2018 16:42:34 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, Christoph Hellwig <hch@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: samsung: Mark unused Odroid compatibles as deprecated
-Date: Sun, 18 Mar 2018 16:35:12 +0100
-Message-Id: <20180318153512.8343-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+Subject: Re: [PATCH v4 4/7] x86/hyper-v: allocate and use Virtual Processor
+ Assist Pages
+In-Reply-To: <20180316142220.32506-5-vkuznets@redhat.com>
+Message-ID: <alpine.DEB.2.21.1803181638190.1509@nanos.tec.linutronix.de>
+References: <20180316142220.32506-1-vkuznets@redhat.com> <20180316142220.32506-5-vkuznets@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compatible for XU4 audio is not being used.  Instead the board uses the
-same compatible as XU3.  The devices are now just compatible so they
-should use the same value.  Mark "hardkernel,odroid-xu4-audio" as being
-deprecated so in this future could be removed to limit useless
-properties.
+On Fri, 16 Mar 2018, Vitaly Kuznetsov wrote:
+>  static int hv_cpu_init(unsigned int cpu)
+> @@ -101,6 +104,23 @@ static int hv_cpu_init(unsigned int cpu)
+>  	if (msr_vp_index > hv_max_vp_index)
+>  		hv_max_vp_index = msr_vp_index;
+>  
+> +	if (!hv_vp_assist_page)
+> +		return 0;
+> +
+> +	if (!hv_vp_assist_page[smp_processor_id()])
+> +		hv_vp_assist_page[smp_processor_id()] =
+> +			__vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL);
 
-Additionally add older compatibles appearing in the bindings.
+Please avoid the ugly line break which makes the statement appear as
+multiline - which would require curly braces for readability - and simply
+have a local variable
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+	struct hv_vp_assist_page **hvp = hv_vp_assist_page[smp_processor_id()];
 
----
+and use that throughout the function.
+     
+> +	if (hv_vp_assist_page[smp_processor_id()]) {
+> +		u64 val;
+> +
+> +		val = vmalloc_to_pfn(hv_vp_assist_page[smp_processor_id()]);
+> +		val = (val << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) |
+> +			HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
+> +
+> +		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, val);
+> +	}
+> +
+>  	return 0;
 
-Changes since v1:
-1. Correct typo XU4->XU3 for one deprecated compatible.
----
- Documentation/devicetree/bindings/sound/samsung,odroid.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Other than that:
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-index f35a2694eb04..e9da2200e173 100644
---- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-@@ -3,7 +3,9 @@ Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
- Required properties:
- 
-  - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
--		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board
-+		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated),
-+		"samsung,odroid-xu3-audio" - for Odroid XU3 board (deprecated),
-+		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
-  - model - the user-visible name of this sound complex
-  - clocks - should contain entries matching clock names in the clock-names
-     property
--- 
-2.14.1
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
