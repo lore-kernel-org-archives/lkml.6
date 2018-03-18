@@ -1,70 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754736AbeCRWEY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 18:04:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36217 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754354AbeCRWEU (ORCPT
+        id S1754761AbeCRWGJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 18:06:09 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:54587 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754342AbeCRWGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 18:04:20 -0400
-Date: Sun, 18 Mar 2018 23:04:18 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net
-Subject: 4.16-rc5 on Motorola Droid 4
-Message-ID: <20180318220418.GA22880@amd>
+        Sun, 18 Mar 2018 18:06:04 -0400
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
+Date: Sun, 18 Mar 2018 23:06:02 +0100
+Message-ID: <2906688.e4ghZiFuBA@merkaba>
+In-Reply-To: <d9c6e12b-a1ea-92e1-04ba-010e3db7c480@redhat.com>
+References: <27165802.vQ9JbjrmvU@merkaba> <4373847.u3KAOBid1D@merkaba> <d9c6e12b-a1ea-92e1-04ba-010e3db7c480@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Hans.
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hans de Goede - 18.03.18, 22:34:
+> On 14-03-18 13:48, Martin Steigerwald wrote:
+> > Hans de Goede - 14.03.18, 12:05:
+> >> Hi,
+> >> 
+> >> On 14-03-18 12:01, Martin Steigerwald wrote:
+> >>> Hans de Goede - 11.03.18, 15:37:
+> >>>> Hi Martin,
+> >>>> 
+> >>>> On 11-03-18 09:20, Martin Steigerwald wrote:
+> >>>>> Hello.
+> >>>>> 
+> >>>>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+> >>>>> with SMART checks occassionally failing like this:
+> >>>>> 
+> >>>>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
+> >>>>> checks
+> >>>>> udisksd[24408]: Error performing housekeeping for drive
+> >>>>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error
+> >>>>> updating
+> >>>>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected
+> >>>>> sense
+> >>>>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00
+> >>>>> 50
+> >>>>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00
+> >>>>> 00
+> >>>>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
+> >>>>> udisksd[24408]: Error performing housekeeping for drive
+> >>>>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error
+> >>>>> updating
+> >>>>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
+> >>>>> sense
+> >>>>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00
+> >>>>> 00
+> >>>>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
+> >>>>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+> >>>>> 
+> >>>>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad
+> >>>>> T520)
+> >>>>> 
+> >>>>> However when I then check manually with smartctl -a | -x | -H the
+> >>>>> device
+> >>>>> reports SMART data just fine.
+> >>>>> 
+> >>>>> As smartd correctly detects that device is in sleep mode, this may be
+> >>>>> an
+> >>>>> userspace issue in udisksd.
+> >>>>> 
+> >>>>> Also at some boot attempts the boot hangs with a message like "could
+> >>>>> not
+> >>>>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
+> >>>>> on to LVs (each on one of the SSDs). A configuration that requires a
+> >>>>> manual
+> >>>>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
+> >>>>> btrfs device scan).
+> >>>>> 
+> >>>>> I wonder whether that has to do with the new SATA LPM policy stuff,
+> >>>>> but
+> >>>>> as
+> >>>>> I had issues with
+> >>>>> 
+> >>>>> 3 => Medium power with Device Initiated PM enabled
+> >>>>> 
+> >>>>> (machine did not boot, which could also have been caused by me
+> >>>>> accidentally
+> >>>>> removing all TCP/IP network support in the kernel with that setting)
+> >>>>> 
+> >>>>> I set it back to
+> >>>>> 
+> >>>>> CONFIG_SATA_MOBILE_LPM_POLICY=0
+> >>>>> 
+> >>>>> (firmware settings)
+> >>>> 
+> >>>> Right, so at that settings the LPM policy changes are effectively
+> >>>> disabled and cannot explain your SMART issues.
+> >>>> 
+> >>>> Still I would like to zoom in on this part of your bug report, because
+> >>>> for Fedora 28 we are planning to ship with
+> >>>> CONFIG_SATA_MOBILE_LPM_POLICY=3
+> >>>> and AFAIK Ubuntu has similar plans.
+> >>>> 
+> >>>> I suspect that the issue you were seeing with
+> >>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've
+> >>>> attached
+> >>>> a patch for you to test, which disabled LPM for your model Crucial SSD
+> >>>> (but
+> >>>> keeps it on for the Intel disk) if you can confirm that with that patch
+> >>>> you
+> >>>> can run with
+> >>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
+> >>> 
+> >>> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system
+> >>> successfully
+> >>> booted three times in a row. So feel free to add tested-by.
+> >> 
+> >> Thanks.
+> >> 
+> >> To be clear, you're talking about 4.16-rc5 with the patch I made to
+> >> blacklist the Crucial disk I assume, not just plain 4.16-rc5, right ?
+> > 
+> > 4.16-rc5 with your
+> > 
+> > 0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.patch
+> 
+> I was about to submit this upstream and was planning on extending it to
+> also cover the 960GB version, which lead to me doing a quick google.
+> Judging from the google results it seems that there are multiple firmware
+> versions of this SSD out there and I wonder if you are perhaps running
+> an older version of the firmware. If you do:
+> 
+> dmesg | grep Crucial_CT480M500
+> 
+> You should see something like this:
+> 
+> ata2.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
+> 
+> I'm interested in the "MU03" part, what is that in your case?
 
-Hi!
+Although I never updated the firmware, I do have MU03:
 
-I have the phone, I have safestrap installed, kexec seems to work
-(crashes my system). But I can't get any output from the new kernel.
+% lsscsi | grep Crucial
+[2:0:0:0]    disk    ATA      Crucial_CT480M50 MU03  /dev/sdb
 
-All the howtos assume serial connection, but I don't yet have
-that. I'm really bad at soldering. IIRC display should work in the
-latest kernels, maybe with some patches?
+% dmesg | grep Crucial_CT480M500
+[    2.424537] ata3.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
 
-Could someone give me .config and git hash that works for him? Once I
-get working display I should be able to continue easily. I'd really
-like to get voice calls working...
+> Note I'm not saying we should not do the NOLPM quirk, but maybe we
+> can limit it to older firmware.
 
-I took a brief look through dts, and I did not find anything that
-could be easily used for debugging. (It seems that capslock LED and
-keyboard backlight is not yet supported? Also volume down  seems to be
-supported but not volume up, funny).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqu4mIACgkQMOfwapXb+vJ6UQCeISS+Gu2M4fPORKYEVg9c1Uci
-gLwAmQGV6dJXHKA+tmri4Irwr6lUxNa1
-=iPZk
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+Thanks,
+-- 
+Martin
