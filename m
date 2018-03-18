@@ -1,88 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754309AbeCRRuB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 13:50:01 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40872 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754121AbeCRRt6 (ORCPT
+        id S1754405AbeCRRvJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 13:51:09 -0400
+Received: from omr-a018e.mx.aol.com ([204.29.186.64]:33060 "EHLO
+        omr-a018e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754140AbeCRRvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 13:49:58 -0400
-Date: Sun, 18 Mar 2018 17:49:56 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        arnd@arndb.de, linux-arch@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips@linux-mips.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        x86@kernel.org
-Subject: Re: [RFC PATCH 2/6] fs: provide a generic compat_sys_truncate64()
- implementation
-Message-ID: <20180318174956.GS30522@ZenIV.linux.org.uk>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
- <20180318161056.5377-3-linux@dominikbrodowski.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180318161056.5377-3-linux@dominikbrodowski.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Sun, 18 Mar 2018 13:51:07 -0400
+From: Martin Vuille <jpmv27@aim.com>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Martin Vuille <jpmv27@aim.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] perf unwind: Report error from dwfl_attach_state
+Date: Sun, 18 Mar 2018 13:50:53 -0400
+Message-Id: <20180318175053.4222-1-jpmv27@aim.com>
+X-Mailer: git-send-email 2.13.6
+x-aol-global-disposition: G
+x-aol-sid: 3039ac1b01e25aaea70908dc
+X-AOL-IP: 99.246.128.134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 05:10:52PM +0100, Dominik Brodowski wrote:
+In verbose level 2, errors returned by libdw are reported in most cases,
+but not when calling dwfl_attach_state.
 
-> +#ifdef __ARCH_WANT_COMPAT_SYS_TRUNCATE64
-> +#if defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
-> +	defined(__ARCH_WANT_LE_COMPAT_SYS)
-> +COMPAT_SYSCALL_DEFINE4(truncate64, const char __user *, filename, u32 padding,
-> +		       unsigned int, offset_low, unsigned int, offset_high)
-> +#elif defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
-> +	!defined(__ARCH_WANT_LE_COMPAT_SYS)
-> +COMPAT_SYSCALL_DEFINE4(truncate64, const char __user *, filename, u32 padding,
-> +		       unsigned int, offset_high, unsigned int, offset_low)
-> +#elif !defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
-> +	defined(__ARCH_WANT_LE_COMPAT_SYS)
-> +COMPAT_SYSCALL_DEFINE3(truncate64, const char __user *, filename,
-> +		       unsigned int, offset_low, unsigned int, offset_high)
-> +#else /* no padding, big endian */
-> +COMPAT_SYSCALL_DEFINE3(truncate64, const char __user *, filename,
-> +		       unsigned int, offset_high, unsigned int, offset_low)
-> +#endif
-> +{
-> +#ifdef CONFIG_SPARC
-> +	if ((int) offset_high < 0)
-> +		return -EINVAL;
-> +#endif
-> +	return do_sys_truncate(filename,
-> +			       ((loff_t) offset_high << 32) | offset_low);
-> +}
-> +#endif /* __ARCH_WANT_COMPAT_SYS_TRUNCATE64 */
+Since elfutils v 0.160 (2014), dwfl_attach_state sets the error code to
+report failure cause. On failure, log the reported error.
 
-Ow...
+Signed-off-by: Martin Vuille <jpmv27@aim.com>
+---
+ tools/perf/util/unwind-libdw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-For one thing, the same observation as for readahead(2).  For another, that
-sparc-specific test is very suspicious, innit?  Let's take a look at
-do_sys_truncate():
-static long do_sys_truncate(const char __user *pathname, loff_t length)
-{
-        unsigned int lookup_flags = LOOKUP_FOLLOW;
-        struct path path;
-        int error;
-
-        if (length < 0) /* sorry, but loff_t says... */
-                return -EINVAL;
-
-So in case of offset_high having bit 31 set, we would get length with bit 63 set,
-and step into that if (length < 0) return -EINVAL;
-
-Sure, any set of texts can be combined, given a sufficiently large pile of ifdefs,
-but you are replacing an arseload of almost but not quite identical functions
-spread all over the tree with something that is in one place, but is awfully hard
-to look at, nevermind reading it...
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 8e969f28cc59..7bdd239c795c 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -236,7 +236,8 @@ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
+ 	if (err)
+ 		goto out;
+ 
+-	if (!dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui))
++	err = !dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui);
++	if (err)
+ 		goto out;
+ 
+ 	err = dwfl_getthread_frames(ui->dwfl, thread->tid, frame_callback, ui);
+-- 
+2.13.6
