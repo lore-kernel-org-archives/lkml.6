@@ -1,96 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753643AbeCRLGP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 07:06:15 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38252 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbeCRLGN (ORCPT
+        id S1753001AbeCRLIZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 07:08:25 -0400
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:45287 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeCRLIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 07:06:13 -0400
-X-Google-Smtp-Source: AG47ELsAhdZQTHD+aZ+92p84QaDb+UGG6HAFJejuopQJVLtnsIZCEoOd182mLGI6PvpSVcZu2vDzMA==
+        Sun, 18 Mar 2018 07:08:24 -0400
+X-Google-Smtp-Source: AG47ELskfHdkmru3SKnqC8c9M8g1PyTTQAjp+aJWSv3tttSNhmgjw+tWQy7VZsyuMuJrE2jPZD9LNA==
+Date: Sun, 18 Mar 2018 16:38:16 +0530
 From: Pratik Jain <pratik.jain0509@gmail.com>
 To: arnaud.patard@rtp-net.org
-Cc: trivial@kernel.org, linux-kernel@vger.kernel.org,
-        Pratik Jain <pratik.jain0509@gmail.com>
-Subject: [PATCH] Staging: xgifb: XGI_main_26.c: Fixed over 80 column characters
-Date: Sun, 18 Mar 2018 16:36:06 +0530
-Message-Id: <20180318110606.27753-1-pratik.jain0509@gmail.com>
-X-Mailer: git-send-email 2.16.2
+Cc: trivial@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: xgifb: XGI_main_26.c: Fixed multi-line
+ dereference warning
+Message-ID: <20180318110816.GA28279@archlinux>
+References: <20180318110341.26230-1-pratik.jain0509@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180318110341.26230-1-pratik.jain0509@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed coding style issues detected by checkpatch.pl
-
-Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
----
- drivers/staging/xgifb/XGI_main_26.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
-index 10107de0119a..d4d289f6fe87 100644
---- a/drivers/staging/xgifb/XGI_main_26.c
-+++ b/drivers/staging/xgifb/XGI_main_26.c
-@@ -770,7 +770,9 @@ static void XGIfb_post_setmode(struct xgifb_video_info *xgifb_info)
- 				xgifb_reg_and(vb->Part2Port, 0x3a, 0x1f);
- 
- 				if (xgifb_info->TV_plug == TVPLUG_SVIDEO) {
--					xgifb_reg_and(vb->Part2Port, 0x30, 0xdf);
-+					xgifb_reg_and(vb->Part2Port,
-+							0x30,
-+							0xdf);
- 
- 				} else if (xgifb_info->TV_plug
- 						== TVPLUG_COMPOSITE) {
-@@ -826,11 +828,15 @@ static void XGIfb_post_setmode(struct xgifb_video_info *xgifb_info)
- 				xgifb_reg_and(vb->Part2Port, 0x3A, 0x1F);
- 
- 				if (xgifb_info->TV_plug == TVPLUG_SVIDEO) {
--					xgifb_reg_and(vb->Part2Port, 0x30, 0xDF);
-+					xgifb_reg_and(vb->Part2Port,
-+							0x30,
-+							0xDF);
- 
- 				} else if (xgifb_info->TV_plug
- 						== TVPLUG_COMPOSITE) {
--					xgifb_reg_or(vb->Part2Port, 0x30, 0x20);
-+					xgifb_reg_or(vb->Part2Port,
-+							0x30,
-+							0x20);
- 
- 					switch (xgifb_info->video_width) {
- 					case 640:
-@@ -1024,7 +1030,9 @@ static int XGIfb_do_set_var(struct fb_var_screeninfo *var, int isactive,
- 			xgifb_info->XGI310_AccelDepth = 0x00010000;
- #if defined(__BIG_ENDIAN)
- 			cr_data = xgifb_reg_get(vb->P3d4, 0x4D);
--			xgifb_reg_set(vb->P3d4, 0x4D, ((cr_data & 0xE0) | 0x0B));
-+			xgifb_reg_set(vb->P3d4,
-+					0x4D,
-+					((cr_data & 0xE0) | 0x0B));
- #endif
- 			xgifb_info->video_cmap_len = 16;
- 			break;
-@@ -1034,7 +1042,9 @@ static int XGIfb_do_set_var(struct fb_var_screeninfo *var, int isactive,
- 			xgifb_info->video_cmap_len = 16;
- #if defined(__BIG_ENDIAN)
- 			cr_data = xgifb_reg_get(vb->P3d4, 0x4D);
--			xgifb_reg_set(vb->P3d4, 0x4D, ((cr_data & 0xE0) | 0x15));
-+			xgifb_reg_set(vb->P3d4,
-+					0x4D,
-+					((cr_data & 0xE0) | 0x15));
- #endif
- 			break;
- 		default:
-@@ -1894,7 +1904,8 @@ static int xgifb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	xgifb_info->refresh_rate = refresh_rate;
- 	if (xgifb_info->refresh_rate == 0)
- 		xgifb_info->refresh_rate = 60;
--	if (XGIfb_search_refresh_rate(xgifb_info, xgifb_info->refresh_rate) == 0) {
-+	if (XGIfb_search_refresh_rate(xgifb_info, xgifb_info->refresh_rate)
-+			== 0) {
- 		xgifb_info->rate_idx = 1;
- 		xgifb_info->refresh_rate = 60;
- 	}
--- 
-2.16.2
+IGNORE THIS THREAD
