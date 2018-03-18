@@ -1,56 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754119AbeCRPX7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 11:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754020AbeCRPXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754018AbeCRPXy (ORCPT <rfc822;w@1wt.eu>);
         Sun, 18 Mar 2018 11:23:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F99620855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: samsung: Mark unused Odroid compatibles as deprecated
-Date: Sun, 18 Mar 2018 16:23:21 +0100
-Message-Id: <20180318152321.4419-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+Received: from eddie.linux-mips.org ([148.251.95.138]:53128 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeCRPXx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 11:23:53 -0400
+Date: Sun, 18 Mar 2018 16:23:49 +0100
+From: Ladislav Michl <ladis@linux-mips.org>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Markus Grabner <grabner@icg.tugraz.at>,
+        Stefan Hajnoczi <stefanha@gmail.com>,
+        Chris Rorvick <chris@rorvick.com>, Andrej Krutak <dev@andree.sk>
+Subject: Re: [alsa-devel] [PATCH 1/3] sound: usb: line6: Replace mdelay with
+ msleep in line6_read_data
+Message-ID: <20180318152349.GA16414@lenoch>
+References: <1521384693-23336-1-git-send-email-baijiaju1990@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521384693-23336-1-git-send-email-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compatible for XU4 audio is not being used.  Instead the board uses the
-same compatible as XU3.  The devices are now just compatible so they
-should use the same value.  Mark hardkernel,odroid-xu4-audio as being
-deprecated so in future could be removed to limit useless compatibles.
+On Sun, Mar 18, 2018 at 10:51:33PM +0800, Jia-Ju Bai wrote:
+> line6_read_data() is never called in atomic context.
+> 
+> The call chains ending up at line6_read_data() are:
+> [1] line6_read_data() <- line6_read_serial_number() -> pod_startup4()
+> [2] line6_read_data() <- line6_read_serial_number() <- 
+> 	podhd_startup_workqueue()
+> [3] line6_read_data() <- podhd_dev_start() <- podhd_startup_workqueue()
+> [4] line6_read_data() <- line6_read_serial_number() <- toneport_init()
+> 	<- line6_probe()
+> [5] line6_read_data() <- toneport_init() <- line6_probe()
+> 
+> pod_startup4() and podhd_startup_workqueue() are set in INIT_WORK().
+> line6_probe() is called in toneport_probe(), pod_probe(), podhd_probe() 
+> and variax_probe(), which are set as ".probe" in usb_driver structure.
+> These functions are not called in atomic context.
+> 
+> Despite never getting called from atomic context, line6_read_data()
+> calls mdelay for busy wait.
+> That is not necessary and can be replaced with msleep to 
+> avoid busy waiting.
 
-Additionally add older compatibles appearing in the bindings.
+Can we have usleep_range here? Please see Documentation/timers/timers-howto.txt
+for rationale and range settings.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- Documentation/devicetree/bindings/sound/samsung,odroid.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> This is found by a static analysis tool named DCNS written by myself.
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-index f35a2694eb04..4a18d83456c3 100644
---- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-@@ -3,7 +3,9 @@ Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
- Required properties:
- 
-  - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
--		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board
-+		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
-+		"samsung,odroid-xu3-audio" - for Odroid XU4 board (deprecated)
-+		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
-  - model - the user-visible name of this sound complex
-  - clocks - should contain entries matching clock names in the clock-names
-     property
--- 
-2.14.1
+Here I'm assuming you do not have hardware and do not know how it works,
+therefore few more people from 'git log --follow sound/usb/line6/driver.c'
+were added to Cc list. Hopefully they can clarify the right range value.
+
+Thank you.
+
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  sound/usb/line6/driver.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/usb/line6/driver.c b/sound/usb/line6/driver.c
+> index 0ff5a7d..af99e73 100644
+> --- a/sound/usb/line6/driver.c
+> +++ b/sound/usb/line6/driver.c
+> @@ -356,7 +356,7 @@ int line6_read_data(struct usb_line6 *line6, unsigned address, void *data,
+>  
+>  	/* Wait for data length. We'll get 0xff until length arrives. */
+>  	for (count = 0; count < LINE6_READ_WRITE_MAX_RETRIES; count++) {
+> -		mdelay(LINE6_READ_WRITE_STATUS_DELAY);
+> +		msleep(LINE6_READ_WRITE_STATUS_DELAY);
+>  
+>  		ret = usb_control_msg(usbdev, usb_rcvctrlpipe(usbdev, 0), 0x67,
+>  				      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+> -- 
+> 1.9.1
+> 
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
