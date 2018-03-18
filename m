@@ -1,928 +1,511 @@
-Date: Sun, 18 Mar 2018 12:16:25 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.100
-Message-ID: <20180318111625.GB6614@kroah.com>
-References: <20180318111608.GA6614@kroah.com>
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AG47ELuv8TpLQ3Bx6ZsRE2Ozgbrly+LZvN/ox2Q3LmIKk2KtJkbPaBfNUv/uwwOvGbBmh+qXESvw
+ARC-Seal: i=1; a=rsa-sha256; t=1521371076; cv=none;
+        d=google.com; s=arc-20160816;
+        b=X8FAKg5xa+iuM0hBP3XQ94TiHiMG2FT4M94aV4R7AUBIYKa9eAibs0dPN1tg5ImYlj
+         8aFKOYMXFhEIikIm3dhykRh+NJLQERFwE+oShxGfxNs7zIzL3bNZJt/a+ZQ/6WX4PZ3Q
+         KxdqLt2qWGbUyzoKUtHigF2top3/ML5CsgNmeOJz68wLliTKPHeKz8S6GfYzOFojqW70
+         NpJ8PIY5amVrF917ZxtYRMcQIj6mSlYkrz9xfHgQWpjv1AI21H2YyU7JtHXdhKOqOSsn
+         NXXF9slPqG5Q8kouZ1n8OwwWkqp9ImhP/NVFSrKwJToE1ZrKh0/cVtsZwmcDpb64U36g
+         c7YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=/Pl62ppU0x926ZKKi/DJmFP7SXz7XXvVb9RREmai/6M=;
+        b=F6okHw51wf/1mQcNUFsDiIqVQMASBEurBeUiNDN7Y1afC23uWKV8+BqVzbho2LiUso
+         FcWZVGvvQPB7Xj8JdxR4oJn8MmPuVLv532aeiEXSTTiNkC10uss3e6fqxRT4x5ypmjN3
+         gJ1so1DJy/QQ66kToJNXjiQP23oi99Ux2iwwyFApUS2x+KpyacfsixktRr6RrpstmKrl
+         WRqz0+jNMfFeWGNYR6xOSfAfJmFUMiBXrJO4O1atkwb+3LgynB06HG2gqINXnkI8g82t
+         QAEj6d2s7yBbogsFc+3DjKwMputxdVLvFU71azcTFxAEPwIJUsXPO6CYtMvu41tXqlLg
+         PwfA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Date: Sun, 18 Mar 2018 12:04:35 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+    Greg KH <gregkh@linuxfoundation.org>
+Subject: [GIT pull] x86/pti updates for 4.16
+Message-ID: <alpine.DEB.2.21.1803181152270.1509@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180318111608.GA6614@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595273198443467054?=
+X-GMAIL-MSGID: =?utf-8?q?1595273198443467054?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index a94a5e5d84ca..6544b6ed9d46 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 99
-+SUBLEVEL = 100
- EXTRAVERSION =
- NAME = Diseased Newt
+Linus,
+
+please pull the latest x86-pti-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
+
+Another set of melted spectrum updates:
+
+  - Iron out the last late microcode loading issues by actually checking
+    whether new microcode is present and preventing the CPU synchronization
+    to run into a timeout induced hang.
+
+  - Remove Skylake C2 from the microcode blacklist according to the latest
+    Intel documentation
+
+  - Fix the VM86 POPF emulation which traps if VIP is set, but VIF is
+    not. Enhance the selftests to catch that kind of issue
+
+  - Annotate indirect calls/jumps for objtool on 32bit. This is not a
+    functional issue, but for consistency sake its the right thing to do.
+
+  - Fix a jump label build warning observed on SPARC64 which uses 32bit
+    storage for the code location which is casted to 64 bit pointer w/o
+    extending it to 64bit first.
+
+  - Add two new cpufeature bits. Not really an urgent issue, but provides
+    them for both x86 and x86/kvm work. No impact on the current kernel.
+
+Thanks,
+
+	tglx
+
+------------------>
+Alexander Sergeyev (1):
+      x86/speculation: Remove Skylake C2 from Speculation Control microcode blacklist
+
+Andy Lutomirski (3):
+      selftests/x86/entry_from_vm86: Exit with 1 if we fail
+      selftests/x86/entry_from_vm86: Add test cases for POPF
+      x86/vm86/32: Fix POPF emulation
+
+Andy Whitcroft (1):
+      x86/speculation, objtool: Annotate indirect calls/jumps for objtool on 32-bit kernels
+
+Borislav Petkov (2):
+      x86/microcode: Attempt late loading only when new microcode is present
+      x86/microcode: Fix CPU synchronization routine
+
+Josh Poimboeuf (1):
+      jump_label: Fix sparc64 warning
+
+Kirill A. Shutemov (2):
+      x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
+      x86/cpufeatures: Add Intel PCONFIG cpufeature
+
+
+ arch/x86/include/asm/cpufeatures.h            |  2 +
+ arch/x86/include/asm/microcode.h              |  1 +
+ arch/x86/include/asm/nospec-branch.h          |  5 +-
+ arch/x86/kernel/cpu/intel.c                   |  3 +-
+ arch/x86/kernel/cpu/microcode/amd.c           | 34 +++++++-----
+ arch/x86/kernel/cpu/microcode/core.c          | 76 ++++++++++++++++-----------
+ arch/x86/kernel/cpu/microcode/intel.c         |  4 +-
+ arch/x86/kernel/vm86_32.c                     |  3 +-
+ kernel/jump_label.c                           |  3 +-
+ tools/testing/selftests/x86/entry_from_vm86.c | 32 +++++++++--
+ 10 files changed, 108 insertions(+), 55 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index f41079da38c5..d554c11e01ff 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -316,6 +316,7 @@
+ #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
+ #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
+ #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
++#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
+ #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+@@ -328,6 +329,7 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
++#define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
+index 7fb1047d61c7..6cf0e4cb7b97 100644
+--- a/arch/x86/include/asm/microcode.h
++++ b/arch/x86/include/asm/microcode.h
+@@ -39,6 +39,7 @@ struct device;
  
-diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
-index 06bb5ed6d80a..747bcb3641a8 100644
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -159,11 +159,11 @@ static void bmips_prepare_cpus(unsigned int max_cpus)
+ enum ucode_state {
+ 	UCODE_OK	= 0,
++	UCODE_NEW,
+ 	UCODE_UPDATED,
+ 	UCODE_NFOUND,
+ 	UCODE_ERROR,
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index b7063cfa19f9..b3996d60f981 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -183,7 +183,10 @@
+  * otherwise we'll run out of registers. We don't care about CET
+  * here, anyway.
+  */
+-# define CALL_NOSPEC ALTERNATIVE("call *%[thunk_target]\n",	\
++# define CALL_NOSPEC						\
++	ALTERNATIVE(						\
++	ANNOTATE_RETPOLINE_SAFE					\
++	"call *%[thunk_target]\n",				\
+ 	"       jmp    904f;\n"					\
+ 	"       .align 16\n"					\
+ 	"901:	call   903f;\n"					\
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 4aa9fd379390..c3af167d0a70 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -105,7 +105,7 @@ static void probe_xeon_phi_r3mwait(struct cpuinfo_x86 *c)
+ /*
+  * Early microcode releases for the Spectre v2 mitigation were broken.
+  * Information taken from;
+- * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
++ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/03/microcode-update-guidance.pdf
+  * - https://kb.vmware.com/s/article/52345
+  * - Microcode revisions observed in the wild
+  * - Release note from 20180108 microcode release
+@@ -123,7 +123,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+ 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index a998e1a7d46f..48179928ff38 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -339,7 +339,7 @@ int __init save_microcode_in_initrd_amd(unsigned int cpuid_1_eax)
+ 		return -EINVAL;
+ 
+ 	ret = load_microcode_amd(true, x86_family(cpuid_1_eax), desc.data, desc.size);
+-	if (ret != UCODE_OK)
++	if (ret > UCODE_UPDATED)
+ 		return -EINVAL;
+ 
+ 	return 0;
+@@ -683,27 +683,35 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
+ static enum ucode_state
+ load_microcode_amd(bool save, u8 family, const u8 *data, size_t size)
+ {
++	struct ucode_patch *p;
+ 	enum ucode_state ret;
+ 
+ 	/* free old equiv table */
+ 	free_equiv_cpu_table();
+ 
+ 	ret = __load_microcode_amd(family, data, size);
+-
+-	if (ret != UCODE_OK)
++	if (ret != UCODE_OK) {
+ 		cleanup();
++		return ret;
++	}
+ 
+-#ifdef CONFIG_X86_32
+-	/* save BSP's matching patch for early load */
+-	if (save) {
+-		struct ucode_patch *p = find_patch(0);
+-		if (p) {
+-			memset(amd_ucode_patch, 0, PATCH_MAX_SIZE);
+-			memcpy(amd_ucode_patch, p->data, min_t(u32, ksize(p->data),
+-							       PATCH_MAX_SIZE));
+-		}
++	p = find_patch(0);
++	if (!p) {
++		return ret;
++	} else {
++		if (boot_cpu_data.microcode == p->patch_id)
++			return ret;
++
++		ret = UCODE_NEW;
+ 	}
+-#endif
++
++	/* save BSP's matching patch for early load */
++	if (!save)
++		return ret;
++
++	memset(amd_ucode_patch, 0, PATCH_MAX_SIZE);
++	memcpy(amd_ucode_patch, p->data, min_t(u32, ksize(p->data), PATCH_MAX_SIZE));
++
+ 	return ret;
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 70ecbc8099c9..10c4fc2c91f8 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -517,7 +517,29 @@ static int check_online_cpus(void)
+ 	return -EINVAL;
+ }
+ 
+-static atomic_t late_cpus;
++static atomic_t late_cpus_in;
++static atomic_t late_cpus_out;
++
++static int __wait_for_cpus(atomic_t *t, long long timeout)
++{
++	int all_cpus = num_online_cpus();
++
++	atomic_inc(t);
++
++	while (atomic_read(t) < all_cpus) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				all_cpus - atomic_read(t));
++			return 1;
++		}
++
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
++
++		touch_nmi_watchdog();
++	}
++	return 0;
++}
+ 
+ /*
+  * Returns:
+@@ -527,30 +549,16 @@ static atomic_t late_cpus;
+  */
+ static int __reload_late(void *info)
+ {
+-	unsigned int timeout = NSEC_PER_SEC;
+-	int all_cpus = num_online_cpus();
+ 	int cpu = smp_processor_id();
+ 	enum ucode_state err;
+ 	int ret = 0;
+ 
+-	atomic_dec(&late_cpus);
+-
+ 	/*
+ 	 * Wait for all CPUs to arrive. A load will not be attempted unless all
+ 	 * CPUs show up.
+ 	 * */
+-	while (atomic_read(&late_cpus)) {
+-		if (timeout < SPINUNIT) {
+-			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
+-				atomic_read(&late_cpus));
+-			return -1;
+-		}
+-
+-		ndelay(SPINUNIT);
+-		timeout -= SPINUNIT;
+-
+-		touch_nmi_watchdog();
+-	}
++	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
++		return -1;
+ 
+ 	spin_lock(&update_lock);
+ 	apply_microcode_local(&err);
+@@ -558,15 +566,22 @@ static int __reload_late(void *info)
+ 
+ 	if (err > UCODE_NFOUND) {
+ 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-		ret = -1;
+-	} else if (err == UCODE_UPDATED) {
++		return -1;
++	/* siblings return UCODE_OK because their engine got updated already */
++	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
+ 		ret = 1;
++	} else {
++		return ret;
+ 	}
+ 
+-	atomic_inc(&late_cpus);
+-
+-	while (atomic_read(&late_cpus) != all_cpus)
+-		cpu_relax();
++	/*
++	 * Increase the wait timeout to a safe value here since we're
++	 * serializing the microcode update and that could take a while on a
++	 * large number of CPUs. And that is fine as the *actual* timeout will
++	 * be determined by the last CPU finished updating and thus cut short.
++	 */
++	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC * num_online_cpus()))
++		panic("Timeout during microcode update!\n");
+ 
+ 	return ret;
+ }
+@@ -579,12 +594,11 @@ static int microcode_reload_late(void)
+ {
+ 	int ret;
+ 
+-	atomic_set(&late_cpus, num_online_cpus());
++	atomic_set(&late_cpus_in,  0);
++	atomic_set(&late_cpus_out, 0);
+ 
+ 	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
+-	if (ret < 0)
+-		return ret;
+-	else if (ret > 0)
++	if (ret > 0)
+ 		microcode_check();
+ 
+ 	return ret;
+@@ -607,7 +621,7 @@ static ssize_t reload_store(struct device *dev,
+ 		return size;
+ 
+ 	tmp_ret = microcode_ops->request_microcode_fw(bsp, &microcode_pdev->dev, true);
+-	if (tmp_ret != UCODE_OK)
++	if (tmp_ret != UCODE_NEW)
+ 		return size;
+ 
+ 	get_online_cpus();
+@@ -691,10 +705,8 @@ static enum ucode_state microcode_init_cpu(int cpu, bool refresh_fw)
+ 	if (system_state != SYSTEM_RUNNING)
+ 		return UCODE_NFOUND;
+ 
+-	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev,
+-						     refresh_fw);
+-
+-	if (ustate == UCODE_OK) {
++	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, refresh_fw);
++	if (ustate == UCODE_NEW) {
+ 		pr_debug("CPU%d updated upon init\n", cpu);
+ 		apply_microcode_on_target(cpu);
+ 	}
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 2aded9db1d42..32b8e5724f96 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -862,6 +862,7 @@ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
+ 	unsigned int leftover = size;
+ 	unsigned int curr_mc_size = 0, new_mc_size = 0;
+ 	unsigned int csig, cpf;
++	enum ucode_state ret = UCODE_OK;
+ 
+ 	while (leftover) {
+ 		struct microcode_header_intel mc_header;
+@@ -903,6 +904,7 @@ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
+ 			new_mc  = mc;
+ 			new_mc_size = mc_size;
+ 			mc = NULL;	/* trigger new vmalloc */
++			ret = UCODE_NEW;
+ 		}
+ 
+ 		ucode_ptr += mc_size;
+@@ -932,7 +934,7 @@ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
+ 	pr_debug("CPU%d found a matching microcode update with version 0x%x (current=0x%x)\n",
+ 		 cpu, new_rev, uci->cpu_sig.rev);
+ 
+-	return UCODE_OK;
++	return ret;
+ }
+ 
+ static int get_ucode_fw(void *to, const void *from, size_t n)
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 5edb27f1a2c4..9d0b5af7db91 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -727,7 +727,8 @@ void handle_vm86_fault(struct kernel_vm86_regs *regs, long error_code)
+ 	return;
+ 
+ check_vip:
+-	if (VEFLAGS & X86_EFLAGS_VIP) {
++	if ((VEFLAGS & (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) ==
++	    (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) {
+ 		save_v86_state(regs, VM86_STI);
  		return;
  	}
- 
--	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi0", NULL))
-+	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
- 		panic("Can't request IPI0 interrupt");
--	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi1", NULL))
-+	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
- 		panic("Can't request IPI1 interrupt");
- }
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index bf44e45a2a76..d5d3af159bec 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -56,6 +56,9 @@ static DEFINE_MUTEX(mce_chrdev_read_mutex);
- 			      rcu_read_lock_sched_held() || \
- 			      lockdep_is_held(&mce_chrdev_read_mutex))
- 
-+/* sysfs synchronization */
-+static DEFINE_MUTEX(mce_sysfs_mutex);
-+
- #define CREATE_TRACE_POINTS
- #include <trace/events/mce.h>
- 
-@@ -2183,6 +2186,7 @@ static ssize_t set_ignore_ce(struct device *s,
- 	if (kstrtou64(buf, 0, &new) < 0)
- 		return -EINVAL;
- 
-+	mutex_lock(&mce_sysfs_mutex);
- 	if (mca_cfg.ignore_ce ^ !!new) {
- 		if (new) {
- 			/* disable ce features */
-@@ -2195,6 +2199,8 @@ static ssize_t set_ignore_ce(struct device *s,
- 			on_each_cpu(mce_enable_ce, (void *)1, 1);
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 52a0a7af8640..e7214093dcd1 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -373,7 +373,8 @@ static void __jump_label_update(struct static_key *key,
+ 			if (kernel_text_address(entry->code))
+ 				arch_jump_label_transform(entry, jump_label_type(entry));
+ 			else
+-				WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
++				WARN_ONCE(1, "can't patch jump_label at %pS",
++					  (void *)(unsigned long)entry->code);
  		}
  	}
-+	mutex_unlock(&mce_sysfs_mutex);
-+
- 	return size;
  }
+diff --git a/tools/testing/selftests/x86/entry_from_vm86.c b/tools/testing/selftests/x86/entry_from_vm86.c
+index 361466a2eaef..ade443a88421 100644
+--- a/tools/testing/selftests/x86/entry_from_vm86.c
++++ b/tools/testing/selftests/x86/entry_from_vm86.c
+@@ -95,6 +95,10 @@ asm (
+ 	"int3\n\t"
+ 	"vmcode_int80:\n\t"
+ 	"int $0x80\n\t"
++	"vmcode_popf_hlt:\n\t"
++	"push %ax\n\t"
++	"popf\n\t"
++	"hlt\n\t"
+ 	"vmcode_umip:\n\t"
+ 	/* addressing via displacements */
+ 	"smsw (2052)\n\t"
+@@ -124,8 +128,8 @@ asm (
  
-@@ -2207,6 +2213,7 @@ static ssize_t set_cmci_disabled(struct device *s,
- 	if (kstrtou64(buf, 0, &new) < 0)
- 		return -EINVAL;
+ extern unsigned char vmcode[], end_vmcode[];
+ extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
+-	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[],
+-	vmcode_umip_str[], vmcode_umip_sldt[];
++	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_popf_hlt[],
++	vmcode_umip[], vmcode_umip_str[], vmcode_umip_sldt[];
  
-+	mutex_lock(&mce_sysfs_mutex);
- 	if (mca_cfg.cmci_disabled ^ !!new) {
- 		if (new) {
- 			/* disable cmci */
-@@ -2218,6 +2225,8 @@ static ssize_t set_cmci_disabled(struct device *s,
- 			on_each_cpu(mce_enable_ce, NULL, 1);
- 		}
- 	}
-+	mutex_unlock(&mce_sysfs_mutex);
-+
- 	return size;
- }
- 
-@@ -2225,8 +2234,19 @@ static ssize_t store_int_with_restart(struct device *s,
- 				      struct device_attribute *attr,
- 				      const char *buf, size_t size)
- {
--	ssize_t ret = device_store_int(s, attr, buf, size);
-+	unsigned long old_check_interval = check_interval;
-+	ssize_t ret = device_store_ulong(s, attr, buf, size);
-+
-+	if (check_interval == old_check_interval)
-+		return ret;
-+
-+	if (check_interval < 1)
-+		check_interval = 1;
-+
-+	mutex_lock(&mce_sysfs_mutex);
- 	mce_restart();
-+	mutex_unlock(&mce_sysfs_mutex);
-+
- 	return ret;
- }
- 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 485981059a40..0652c5b637d9 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -516,6 +516,7 @@ int arch_kexec_apply_relocations_add(const Elf64_Ehdr *ehdr,
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			value -= (u64)address;
- 			*(u32 *)location = value;
- 			break;
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index e69f9882bf95..53ce44fe8f21 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -167,19 +167,28 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 		case R_X86_64_NONE:
- 			break;
- 		case R_X86_64_64:
-+			if (*(u64 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u64 *)loc = val;
- 			break;
- 		case R_X86_64_32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(u32 *)loc = val;
- 			if (val != *(u32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_32S:
-+			if (*(s32 *)loc != 0)
-+				goto invalid_relocation;
- 			*(s32 *)loc = val;
- 			if ((s64)val != *(s32 *)loc)
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
-+			if (*(u32 *)loc != 0)
-+				goto invalid_relocation;
- 			val -= (u64)loc;
- 			*(u32 *)loc = val;
- #if 0
-@@ -195,6 +204,11 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 	}
- 	return 0;
- 
-+invalid_relocation:
-+	pr_err("x86/modules: Skipping invalid relocation target, existing value is nonzero for type %d, loc %p, val %Lx\n",
-+	       (int)ELF64_R_TYPE(rel[i].r_info), loc, val);
-+	return -ENOEXEC;
-+
- overflow:
- 	pr_err("overflow in relocation type %d val %Lx\n",
- 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
-diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index 73eb7fd4aec4..5b6c8486a0be 100644
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -769,9 +769,12 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
- 		break;
- 
- 	case R_X86_64_PC32:
-+	case R_X86_64_PLT32:
- 		/*
- 		 * PC relative relocations don't need to be adjusted unless
- 		 * referencing a percpu symbol.
-+		 *
-+		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
- 		 */
- 		if (is_percpu_sym(sym, symname))
- 			add_reloc(&relocs32neg, offset);
-diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-index e651fa692afe..176bdd140769 100644
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -216,8 +216,10 @@ static void matrix_keypad_stop(struct input_dev *dev)
- {
- 	struct matrix_keypad *keypad = input_get_drvdata(dev);
- 
-+	spin_lock_irq(&keypad->lock);
- 	keypad->stopped = true;
--	mb();
-+	spin_unlock_irq(&keypad->lock);
-+
- 	flush_work(&keypad->work.work);
- 	/*
- 	 * matrix_keypad_scan() will leave IRQs enabled;
-diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-index 96131eb34c9f..ff5f1ac79581 100644
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -308,6 +308,12 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
- 			vol->last_eb_bytes = vol->usable_leb_size;
- 	}
- 
-+	/* Make volume "available" before it becomes accessible via sysfs */
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = vol;
-+	ubi->vol_count += 1;
-+	spin_unlock(&ubi->volumes_lock);
-+
- 	/* Register character device for the volume */
- 	cdev_init(&vol->cdev, &ubi_vol_cdev_operations);
- 	vol->cdev.owner = THIS_MODULE;
-@@ -350,11 +356,6 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
- 	if (err)
- 		goto out_sysfs;
- 
--	spin_lock(&ubi->volumes_lock);
--	ubi->volumes[vol_id] = vol;
--	ubi->vol_count += 1;
--	spin_unlock(&ubi->volumes_lock);
--
- 	ubi_volume_notify(ubi, vol, UBI_VOLUME_ADDED);
- 	self_check_volumes(ubi);
- 	return err;
-@@ -374,6 +375,10 @@ out_sysfs:
- out_cdev:
- 	cdev_del(&vol->cdev);
- out_mapping:
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = NULL;
-+	ubi->vol_count -= 1;
-+	spin_unlock(&ubi->volumes_lock);
- 	if (do_free)
- 		kfree(vol->eba_tbl);
- out_acc:
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index c919ac042593..b2bd6029ff65 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *ptr, int res)
- 	srb_t *sp = (srb_t *)ptr;
- 	struct srb_iocb *abt = &sp->u.iocb_cmd;
- 
-+	del_timer(&sp->u.iocb_cmd.timer);
- 	complete(&abt->u.abt.comp);
- }
- 
-diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-index 8b0211d7d7a6..cf7c597e598f 100644
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -330,24 +330,23 @@ static loff_t ashmem_llseek(struct file *file, loff_t offset, int origin)
- 	mutex_lock(&ashmem_mutex);
- 
- 	if (asma->size == 0) {
--		ret = -EINVAL;
--		goto out;
-+		mutex_unlock(&ashmem_mutex);
-+		return -EINVAL;
- 	}
- 
- 	if (!asma->file) {
--		ret = -EBADF;
--		goto out;
-+		mutex_unlock(&ashmem_mutex);
-+		return -EBADF;
- 	}
- 
-+	mutex_unlock(&ashmem_mutex);
-+
- 	ret = vfs_llseek(asma->file, offset, origin);
- 	if (ret < 0)
--		goto out;
-+		return ret;
- 
- 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
- 	file->f_pos = asma->file->f_pos;
--
--out:
--	mutex_unlock(&ashmem_mutex);
- 	return ret;
- }
- 
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-index 5fd44ac7ecf8..2a928c18c8ea 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -4981,6 +4981,17 @@ static struct pci_device_id serial_pci_tbl[] = {
- 	{	PCI_VENDOR_ID_INTASHIELD, PCI_DEVICE_ID_INTASHIELD_IS400,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,    /* 135a.0dc0 */
- 		pbn_b2_4_115200 },
-+	/*
-+	 * BrainBoxes UC-260
-+	 */
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0D21,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
-+		pbn_b2_4_115200 },
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0E34,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		 PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
-+		pbn_b2_4_115200 },
- 	/*
- 	 * Perle PCI-RAS cards
- 	 */
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index f958ccda379a..faaf50061308 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1643,6 +1643,7 @@ static void atmel_get_ip_name(struct uart_port *port)
- 		switch (version) {
- 		case 0x302:
- 		case 0x10213:
-+		case 0x10302:
- 			dev_dbg(port->dev, "This version is usart\n");
- 			atmel_port->is_usart = true;
- 			break;
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 118d998f6ff6..c8f1af8a053f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -736,6 +736,8 @@ static void sci_receive_chars(struct uart_port *port)
- 		/* Tell the rest of the system the news. New characters! */
- 		tty_flip_buffer_push(tport);
+ /* Returns false if the test was skipped. */
+ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+@@ -175,7 +179,7 @@ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+ 	    (VM86_TYPE(ret) == rettype && VM86_ARG(ret) == retarg)) {
+ 		printf("[OK]\tReturned correctly\n");
  	} else {
-+		/* TTY buffers full; read from RX reg to prevent lockup */
-+		serial_port_in(port, SCxRDR);
- 		serial_port_in(port, SCxSR); /* dummy read */
- 		serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+-		printf("[FAIL]\tIncorrect return reason\n");
++		printf("[FAIL]\tIncorrect return reason (started at eip = 0x%lx, ended at eip = 0x%lx)\n", eip, v86->regs.eip);
+ 		nerrs++;
  	}
-diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index f368d2053da5..251b44300b38 100644
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -147,6 +147,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
  
- 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
+@@ -264,6 +268,9 @@ int main(void)
+ 	v86.regs.ds = load_addr / 16;
+ 	v86.regs.es = load_addr / 16;
  
-+	/* Linger a bit, prior to the next control message. */
-+	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+		msleep(200);
++	/* Use the end of the page as our stack. */
++	v86.regs.esp = 4096;
 +
- 	kfree(dr);
+ 	assert((v86.regs.cs & 3) == 0);	/* Looks like RPL = 0 */
  
- 	return ret;
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index e34b84e0d782..786bfe9be897 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -219,7 +219,8 @@ static const struct usb_device_id usb_quirk_list[] = {
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 	/* #BR -- should deliver SIG??? */
+@@ -295,6 +302,23 @@ int main(void)
+ 	v86.regs.eflags &= ~X86_EFLAGS_IF;
+ 	do_test(&v86, vmcode_sti - vmcode, VM86_STI, 0, "STI with VIP set");
  
- 	/* Corsair Strafe RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
++	/* POPF with VIP set but IF clear: should not trap */
++	v86.regs.eflags = X86_EFLAGS_VIP;
++	v86.regs.eax = 0;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_UNKNOWN, 0, "POPF with VIP set and IF clear");
++
++	/* POPF with VIP set and IF set: should trap */
++	v86.regs.eflags = X86_EFLAGS_VIP;
++	v86.regs.eax = X86_EFLAGS_IF;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_STI, 0, "POPF with VIP and IF set");
++
++	/* POPF with VIP clear and IF set: should not trap */
++	v86.regs.eflags = 0;
++	v86.regs.eax = X86_EFLAGS_IF;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_UNKNOWN, 0, "POPF with VIP clear and IF set");
++
++	v86.regs.eflags = 0;
++
+ 	/* INT3 -- should cause #BP */
+ 	do_test(&v86, vmcode_int3 - vmcode, VM86_TRAP, 3, "INT3");
  
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
-diff --git a/drivers/usb/mon/mon_text.c b/drivers/usb/mon/mon_text.c
-index ad408251d955..108dcc5f5350 100644
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -82,6 +82,8 @@ struct mon_reader_text {
+@@ -318,7 +342,7 @@ int main(void)
+ 	clearhandler(SIGSEGV);
  
- 	wait_queue_head_t wait;
- 	int printf_size;
-+	size_t printf_offset;
-+	size_t printf_togo;
- 	char *printf_buf;
- 	struct mutex printf_lock;
- 
-@@ -373,73 +375,103 @@ err_alloc:
- 	return rc;
- }
- 
--/*
-- * For simplicity, we read one record in one system call and throw out
-- * what does not fit. This means that the following does not work:
-- *   dd if=/dbg/usbmon/0t bs=10
-- * Also, we do not allow seeks and do not bother advancing the offset.
-- */
-+static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
-+    char __user * const buf, const size_t nbytes)
-+{
-+	const size_t togo = min(nbytes, rp->printf_togo);
-+
-+	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
-+		return -EFAULT;
-+	rp->printf_togo -= togo;
-+	rp->printf_offset += togo;
-+	return togo;
-+}
-+
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_t(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
- 
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
--
--	mon_text_read_head_t(rp, &ptr, ep);
--	mon_text_read_statset(rp, &ptr, ep);
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
--
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+
-+	if (rp->printf_togo == 0) {
-+
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_t(rp, &ptr, ep);
-+		mon_text_read_statset(rp, &ptr, ep);
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
-+	}
-+
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
- 
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_u(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
- 
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
- 
--	mon_text_read_head_u(rp, &ptr, ep);
--	if (ep->type == 'E') {
--		mon_text_read_statset(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
--		mon_text_read_isostat(rp, &ptr, ep);
--		mon_text_read_isodesc(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
--		mon_text_read_intstat(rp, &ptr, ep);
--	} else {
--		mon_text_read_statset(rp, &ptr, ep);
-+	if (rp->printf_togo == 0) {
-+
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_u(rp, &ptr, ep);
-+		if (ep->type == 'E') {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
-+			mon_text_read_isostat(rp, &ptr, ep);
-+			mon_text_read_isodesc(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
-+			mon_text_read_intstat(rp, &ptr, ep);
-+		} else {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		}
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
- 	}
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
- 
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
- 
- static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
-diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-index 7d535f1ddecc..85f205883e22 100644
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1067,7 +1067,7 @@ static int uas_post_reset(struct usb_interface *intf)
+ 	/* Make sure nothing explodes if we fork. */
+-	if (fork() > 0)
++	if (fork() == 0)
  		return 0;
  
- 	err = uas_configure_endpoints(devinfo);
--	if (err && err != ENODEV)
-+	if (err && err != -ENODEV)
- 		shost_printk(KERN_ERR, shost,
- 			     "%s: alloc streams error %d after reset",
- 			     __func__, err);
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index de2a722fe3cf..ea4f81c2a6d5 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -56,4 +56,7 @@
-  */
- #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
- 
-+/* Device needs a pause after every control message. */
-+#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
-diff --git a/net/bridge/netfilter/ebt_among.c b/net/bridge/netfilter/ebt_among.c
-index 9024283d2bca..9637a681bdda 100644
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb, struct xt_action_param *par)
- 	return true;
- }
- 
-+static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
-+{
-+	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
-+}
-+
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
- 	const struct ebt_entry_match *em =
- 		container_of(par->matchinfo, const struct ebt_entry_match, data);
--	int expected_length = sizeof(struct ebt_among_info);
-+	unsigned int expected_length = sizeof(struct ebt_among_info);
- 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
- 	int err;
- 
-+	if (expected_length > em->match_size)
-+		return -EINVAL;
-+
- 	wh_dst = ebt_among_wh_dst(info);
--	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_dst))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_dst);
-+	if (expected_length > em->match_size)
-+		return -EINVAL;
-+
-+	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_src))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index d9a8c05d995d..653d72979ee1 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2019,7 +2019,9 @@ static int ebt_size_mwt(struct compat_ebt_entry_mwt *match32,
- 		if (match_kern)
- 			match_kern->match_size = ret;
- 
--		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
-+		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
-+			return -EINVAL;
-+
- 		match32 = (struct compat_ebt_entry_mwt *) buf;
- 	}
- 
-@@ -2076,6 +2078,15 @@ static int size_entry_mwt(struct ebt_entry *entry, const unsigned char *base,
- 	 *
- 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
- 	 */
-+	for (i = 0; i < 4 ; ++i) {
-+		if (offsets[i] >= *total)
-+			return -EINVAL;
-+		if (i == 0)
-+			continue;
-+		if (offsets[i-1] > offsets[i])
-+			return -EINVAL;
-+	}
-+
- 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
- 		struct compat_ebt_entry_mwt *match32;
- 		unsigned int size;
-diff --git a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-index c5812e1c1ffb..4e8b2752da89 100644
---- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-+++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-@@ -99,6 +99,10 @@ static bool nf_nat_ipv6_manip_pkt(struct sk_buff *skb,
- 	    !l4proto->manip_pkt(skb, &nf_nat_l3proto_ipv6, iphdroff, hdroff,
- 				target, maniptype))
- 		return false;
-+
-+	/* must reload, offset might have changed */
-+	ipv6h = (void *)skb->data + iphdroff;
-+
- manip_addr:
- 	if (maniptype == NF_NAT_MANIP_SRC)
- 		ipv6h->saddr = target->src.u3.in6;
-diff --git a/net/netfilter/nf_nat_proto_common.c b/net/netfilter/nf_nat_proto_common.c
-index fbce552a796e..7d7466dbf663 100644
---- a/net/netfilter/nf_nat_proto_common.c
-+++ b/net/netfilter/nf_nat_proto_common.c
-@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const struct nf_nat_l3proto *l3proto,
- 				 const struct nf_conn *ct,
- 				 u16 *rover)
- {
--	unsigned int range_size, min, i;
-+	unsigned int range_size, min, max, i;
- 	__be16 *portptr;
- 	u_int16_t off;
- 
-@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const struct nf_nat_l3proto *l3proto,
- 		}
- 	} else {
- 		min = ntohs(range->min_proto.all);
--		range_size = ntohs(range->max_proto.all) - min + 1;
-+		max = ntohs(range->max_proto.all);
-+		if (unlikely(max < min))
-+			swap(max, min);
-+		range_size = max - min + 1;
- 	}
- 
- 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index f407ebc13481..95b6dedc5ac7 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -146,11 +146,11 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
- 		    (unsigned long) info->timer);
- 	info->timer->refcnt = 1;
- 
-+	INIT_WORK(&info->timer->work, idletimer_tg_work);
-+
- 	mod_timer(&info->timer->timer,
- 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
- 
--	INIT_WORK(&info->timer->work, idletimer_tg_work);
--
- 	return 0;
- 
- out_free_attr:
-@@ -191,7 +191,10 @@ static int idletimer_tg_checkentry(const struct xt_tgchk_param *par)
- 		pr_debug("timeout value is zero\n");
- 		return -EINVAL;
- 	}
--
-+	if (info->timeout >= INT_MAX / 1000) {
-+		pr_debug("timeout value is too big\n");
-+		return -EINVAL;
-+	}
- 	if (info->label[0] == '\0' ||
- 	    strnlen(info->label,
- 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
-diff --git a/net/netfilter/xt_LED.c b/net/netfilter/xt_LED.c
-index 3ba31c194cce..0858fe17e14a 100644
---- a/net/netfilter/xt_LED.c
-+++ b/net/netfilter/xt_LED.c
-@@ -141,10 +141,11 @@ static int led_tg_check(const struct xt_tgchk_param *par)
- 		goto exit_alloc;
- 	}
- 
--	/* See if we need to set up a timer */
--	if (ledinfo->delay > 0)
--		setup_timer(&ledinternal->timer, led_timeout_callback,
--			    (unsigned long)ledinternal);
-+	/* Since the letinternal timer can be shared between multiple targets,
-+	 * always set it up, even if the current target does not need it
-+	 */
-+	setup_timer(&ledinternal->timer, led_timeout_callback,
-+		    (unsigned long)ledinternal);
- 
- 	list_add_tail(&ledinternal->list, &xt_led_triggers);
- 
-@@ -181,8 +182,7 @@ static void led_tg_destroy(const struct xt_tgdtor_param *par)
- 
- 	list_del(&ledinternal->list);
- 
--	if (ledinfo->delay > 0)
--		del_timer_sync(&ledinternal->timer);
-+	del_timer_sync(&ledinternal->timer);
- 
- 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
- 
-diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
-index 6d48cbf6465d..bbf6abb6ae3c 100644
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -1369,7 +1369,7 @@ static struct sctp_chunk *_sctp_make_chunk(const struct sctp_association *asoc,
- 	struct sock *sk;
- 	int chunklen;
- 
--	chunklen = sizeof(*chunk_hdr) + paylen;
-+	chunklen = WORD_ROUND(sizeof(*chunk_hdr) + paylen);
- 	if (chunklen > SCTP_MAX_CHUNK_LEN)
- 		goto nodata;
- 
-diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
-index d96d8a2647d6..89c0b9efcba4 100644
---- a/scripts/recordmcount.c
-+++ b/scripts/recordmcount.c
-@@ -201,6 +201,20 @@ static void *mmap_file(char const *fname)
- 		addr = umalloc(sb.st_size);
- 		uread(fd_map, addr, sb.st_size);
- 	}
-+	if (sb.st_nlink != 1) {
-+		/* file is hard-linked, break the hard link */
-+		close(fd_map);
-+		if (unlink(fname) < 0) {
-+			perror(fname);
-+			fail_file();
-+		}
-+		fd_map = open(fname, O_RDWR | O_CREAT, sb.st_mode);
-+		if (fd_map < 0) {
-+			perror(fname);
-+			fail_file();
-+		}
-+		uwrite(fd_map, addr, sb.st_size);
-+	}
- 	return addr;
- }
- 
-diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
-index dee6691013c1..0f4610c48acc 100644
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -919,7 +919,8 @@ int snd_seq_dispatch_event(struct snd_seq_event_cell *cell, int atomic, int hop)
- static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
- 					struct snd_seq_event *event,
- 					struct file *file, int blocking,
--					int atomic, int hop)
-+					int atomic, int hop,
-+					struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	int err;
-@@ -957,7 +958,8 @@ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
- 		return -ENXIO; /* queue is not allocated */
- 
- 	/* allocate an event cell */
--	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
-+	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
-+				file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -1026,12 +1028,11 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
- 		return -ENXIO;
- 
- 	/* allocate the pool now if the pool is not allocated yet */ 
-+	mutex_lock(&client->ioctl_mutex);
- 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
--		mutex_lock(&client->ioctl_mutex);
- 		err = snd_seq_pool_init(client->pool);
--		mutex_unlock(&client->ioctl_mutex);
- 		if (err < 0)
--			return -ENOMEM;
-+			goto out;
- 	}
- 
- 	/* only process whole events */
-@@ -1082,7 +1083,7 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
- 		/* ok, enqueue it */
- 		err = snd_seq_client_enqueue_event(client, &event, file,
- 						   !(file->f_flags & O_NONBLOCK),
--						   0, 0);
-+						   0, 0, &client->ioctl_mutex);
- 		if (err < 0)
- 			break;
- 
-@@ -1093,6 +1094,8 @@ static ssize_t snd_seq_write(struct file *file, const char __user *buf,
- 		written += len;
- 	}
- 
-+ out:
-+	mutex_unlock(&client->ioctl_mutex);
- 	return written ? written : err;
- }
- 
-@@ -1929,6 +1932,9 @@ static int snd_seq_ioctl_set_client_pool(struct snd_seq_client *client,
- 	    (! snd_seq_write_pool_allocated(client) ||
- 	     info.output_pool != client->pool->size)) {
- 		if (snd_seq_write_pool_allocated(client)) {
-+			/* is the pool in use? */
-+			if (atomic_read(&client->pool->counter))
-+				return -EBUSY;
- 			/* remove all existing cells */
- 			snd_seq_pool_mark_closing(client->pool);
- 			snd_seq_queue_client_leave_cells(client->number);
-@@ -2352,7 +2358,8 @@ static int kernel_client_enqueue(int client, struct snd_seq_event *ev,
- 	if (! cptr->accept_output)
- 		result = -EPERM;
- 	else /* send it */
--		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
-+		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
-+						      atomic, hop, NULL);
- 
- 	snd_seq_client_unlock(cptr);
- 	return result;
-diff --git a/sound/core/seq/seq_fifo.c b/sound/core/seq/seq_fifo.c
-index a2ff0d44fd3b..bb872ec4ff88 100644
---- a/sound/core/seq/seq_fifo.c
-+++ b/sound/core/seq/seq_fifo.c
-@@ -123,7 +123,7 @@ int snd_seq_fifo_event_in(struct snd_seq_fifo *f,
- 		return -EINVAL;
- 
- 	snd_use_lock_use(&f->use_lock);
--	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
-+	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
- 	if (err < 0) {
- 		if ((err == -ENOMEM) || (err == -EAGAIN))
- 			atomic_inc(&f->overflow);
-diff --git a/sound/core/seq/seq_memory.c b/sound/core/seq/seq_memory.c
-index b855c087cd8a..5e0604ff01f2 100644
---- a/sound/core/seq/seq_memory.c
-+++ b/sound/core/seq/seq_memory.c
-@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_event_cell * cell)
-  */
- static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
- 			      struct snd_seq_event_cell **cellp,
--			      int nonblock, struct file *file)
-+			      int nonblock, struct file *file,
-+			      struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	unsigned long flags;
-@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		add_wait_queue(&pool->output_sleep, &wait);
- 		spin_unlock_irq(&pool->lock);
-+		if (mutexp)
-+			mutex_unlock(mutexp);
- 		schedule();
-+		if (mutexp)
-+			mutex_lock(mutexp);
- 		spin_lock_irq(&pool->lock);
- 		remove_wait_queue(&pool->output_sleep, &wait);
- 		/* interrupted? */
-@@ -288,7 +293,7 @@ __error:
-  */
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
- 		      struct snd_seq_event_cell **cellp, int nonblock,
--		      struct file *file)
-+		      struct file *file, struct mutex *mutexp)
- {
- 	int ncells, err;
- 	unsigned int extlen;
-@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
- 	if (ncells >= pool->total_elements)
- 		return -ENOMEM;
- 
--	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
-+	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
- 			int size = sizeof(struct snd_seq_event);
- 			if (len < size)
- 				size = len;
--			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
-+			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
-+						 mutexp);
- 			if (err < 0)
- 				goto __error;
- 			if (cell->event.data.ext.ptr == NULL)
-diff --git a/sound/core/seq/seq_memory.h b/sound/core/seq/seq_memory.h
-index 32f959c17786..3abe306c394a 100644
---- a/sound/core/seq/seq_memory.h
-+++ b/sound/core/seq/seq_memory.h
-@@ -66,7 +66,8 @@ struct snd_seq_pool {
- void snd_seq_cell_free(struct snd_seq_event_cell *cell);
- 
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
--		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
-+		      struct snd_seq_event_cell **cellp, int nonblock,
-+		      struct file *file, struct mutex *mutexp);
- 
- /* return number of unused (free) cells */
- static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
+ 	return (nerrs == 0 ? 0 : 1);
