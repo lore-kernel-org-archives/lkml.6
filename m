@@ -1,228 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754143AbeCRNQl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 09:16:41 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:54704 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753919AbeCRNQi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 09:16:38 -0400
-Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
- make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
- remove check_stdin()"
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Woody Suwalski <terraluna977@gmail.com>,
-        Manoj Srivastava <srivasta@debian.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
- <9d122a3c-b1fe-a9f8-17db-c38f42fdc4b1@gmail.com>
- <CAK7LNAQRZ6F92s5QotKHoapAG+9BqxaUqmGSeKJRYOuu5izauQ@mail.gmail.com>
- <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
- <20180213113324.gm6sv37g72gs3qrc@huvuddator>
- <20180213123510.hkbblka6xkosxi36@huvuddator>
- <CAFkk2KSsdrdf28GaMgOX2hMDOdoNdsjmcFiMsmqA8C4NC-EARQ@mail.gmail.com>
-From: Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <e2228977-c017-1d5b-a81d-9b54ee761a87@eikelenboom.it>
-Date: Sun, 18 Mar 2018 14:16:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754117AbeCRNpG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 09:45:06 -0400
+Received: from ozlabs.org ([103.22.144.67]:49047 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754054AbeCRNpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 09:45:04 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 19 Mar 2018 00:44:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the kvm tree
+Message-ID: <20180319004421.44b18d1e@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KSsdrdf28GaMgOX2hMDOdoNdsjmcFiMsmqA8C4NC-EARQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/doOM47Y7bOWvP_3kqrHL.9+"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/18 14:07, Ulf Magnusson wrote:
-> On Tue, Feb 13, 2018 at 1:35 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> On Tue, Feb 13, 2018 at 12:33:24PM +0100, Ulf Magnusson wrote:
->>> On Tue, Feb 13, 2018 at 11:00:49AM +0100, Sander Eikelenboom wrote:
->>>> On 13/02/18 05:09, Masahiro Yamada wrote:
->>>>> 2018-02-13 12:00 GMT+09:00 Woody Suwalski <terraluna977@gmail.com>:
->>>>>> Sander Eikelenboom wrote:
->>>>>>>
->>>>>>> L.S.,
->>>>>>>
->>>>>>> The Debian kernel-package tool make-kpkg for easy building of upstream
->>>>>>> kernels on Debian fails with linux 4.16-rc1.
->>>>>>>
->>>>>>> The tool (perl script) while invoked with:
->>>>>>>      make-kpkg --initrd --append_to_version -20180212 kernel_image
->>>>>>>
->>>>>>> On a git tree with a .config from the previous kernel release, so new
->>>>>>> KConfig questions have to be asked on new or changed options.
->>>>>>>
->>>>>>> The script stalls indefinitely while it seems to be excuting:
->>>>>>>      exec make kpkg_version=13.018+nmu1 -f
->>>>>>> /usr/share/kernel-package/ruleset/minimal.mk debian
->>>>>>> APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
->>>>>>>
->>>>>>> After using ctrl-c to break out it, i get:
->>>>>>>     ^CFailed to create a ./debian directory: No such file or directory at
->>>>>>> /usr/bin/make-kpkg line 970.
->>>>>>>
->>>>>>> Bisection turned up as culprit:
->>>>>>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
->>>>>>>      kconfig: remove check_stdin()
->>>>>>>           Except silentoldconfig, valid_stdin is 1, so check_stdin() is
->>>>>>> no-op.
->>>>>>>           oldconfig and silentoldconfig work almost in the same way except
->>>>>>> that
->>>>>>>      the latter generates additional files under include/.  Both ask users
->>>>>>>      for input for new symbols.
->>>>>>>           I do not know why only silentoldconfig requires stdio be tty.
->>>>>>>             $ rm -f .config; touch .config
->>>>>>>        $ yes "" | make oldconfig > stdout
->>>>>>>        $ rm -f .config; touch .config
->>>>>>>        $ yes "" | make silentoldconfig > stdout
->>>>>>>        make[1]: *** [silentoldconfig] Error 1
->>>>>>>        make: *** [silentoldconfig] Error 2
->>>>>>>        $ tail -n 4 stdout
->>>>>>>        Console input/output is redirected. Run 'make oldconfig' to update
->>>>>>> configuration.
->>>>>>>             scripts/kconfig/Makefile:40: recipe for target
->>>>>>> 'silentoldconfig' failed
->>>>>>>        Makefile:507: recipe for target 'silentoldconfig' failed
->>>>>>>           Redirection is useful, for example, for testing where we want to
->>>>>>> give
->>>>>>>      particular key inputs from a test file, then check the result.
->>>>>>>           Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>>>>      Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
->>>>>>>
->>>>>>> Reverting this specific commit makes make-kpkg work again as usual.
->>>>>>>
->>>>>>> Version of the kernel-package used:
->>>>>>> ii  kernel-package
->>>>>>> 13.018+nmu1
->>>>>>>
->>>>>>>
->>>>>>> I also cc'ed the Debian developer who maintains the kernel-package
->>>>>>> package: Manoj Srivastava
->>>>>>>
->>>>>>> --
->>>>>>> Sander
->>>>>>>
->>>>>> I have noticed today the same - the kernel-build blockage was in (as I
->>>>>> recall)
->>>>>> srcipts/kconfig/conf -s --silentoldconfig Kbuild
->>>>>>
->>>>>> I have bypassed it by regenerating the .config "by hand"...
->>>>>
->>>>>
->>>>> silentoldconfig asks you values for new symbols.
->>>>> So, you must answer questions to proceed.
->>>>
->>>> I know, but it stalls before asking the questions.
->>>>
->>>>>
->>>>> How does 'make-kpkg' handle silentoldconfig?
->>>>>
->>>>> Re-direct stdio, then make it forcibly fail?
->>>>
->>>> I don't know, it is a bunch of perl and shell scripts that gets invoked, not the most easy to comprehend if you are not familiar with them. I'm just a user of the tool.
->>>>
->>>> So i would have to defer that question to the Debian package maintainer, hopefully he will chime in.
->>>>
->>>> --
->>>> Sander
->>>>
->>>>>
->>>>>
->>>>>
->>>>
->>>
->>> Hello,
->>>
->>> What the commit does is to make silentoldconfig not immediately exit(1)
->>> when both of the following apply:
->>>
->>>     1. stdin is from something that's not a terminal
->>>
->>>     2. New symbols are prompted for
->>>
->>> All the outputs (.config and the include/generated/ and include/config/
->>> trees) are generated after the point where silentoldconfig would
->>> previously exit(1), afaics, so the effects of the commit can be
->>> summarized as follows:
->>>
->>>     * If no new symbols appear (that would be prompted for), the
->>>       behavior is exactly the same as before.
->>>
->>>       (check_stdin() never seems to get called unless a value would
->>>       actually be prompted for, which makes sense.)
->>>
->>>     * If new symbols appear and stdin is a tty, the behavior is also
->>>       exactly the same as before.
->>>
->>> And finally, the only case where the behavior differs:
->>>
->>>     * If new symbols appear and stdin is not a tty, the
->>>       new behavior is to prompt (to expect e.g. "n"/"m"/"y" from
->>>       wherever stdin is coming from).
->>>
->>>       The old behavior was to exit(1) without generating any output
->>>       files.
->>>
->>> Hopefully that clarifies it.
->>>
->>> The intent of the commit was just to clean up the code a bit, since
->>> there doesn't seem to be a good reason to bail just because stdin
->>> happens to not be a tty (plus it's inconsistent with the way oldconfig
->>> works, which never bailed).
->>>
->>> silentoldconfig is something of an internal implementation detail at
->>> this point by the way. It's basically oldconfig + generate the
->>> configuration stuff in include/generated/ and include/config/ that
->>> actually gets used during the build. Normally it's called automatically
->>> as needed when building the kernel.
->>>
->>> See https://www.spinics.net/lists/kernel/msg2720574.html for some more
->>> details re. silentoldconfig.
->>>
->>> Cheers,
->>> Ulf
->>
->> By the way: If you can figure out a reason for why that stdin check was
->> there before while looking into the Debian tool, then please tell us.
->>
->> The problem with uncommented mystery code like that is that it easily
->> looks pointless and is at risk of getting changed or removed, even if
->> there was a good reason for it (which I still suspect there wasn't
->> though).
->>
->> </soapbox>
->>
->> Cheers,
->> Ulf
-> 
-> Shouldn't be a problem to back this one out either if it turns out to
-> cause massive amounts of pain in practice I guess, even if it's the
-> Debian tools doing something weird.
-> 
-> Good to look into what it is they're doing in any case.
-> 
-> Cheers,
-> Ulf
-> 
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ulf / Masahiro,
+Hi all,
 
-Unfortunately the Debian maintainer hasn't responded to this thread, nor on
-the Debian bugtracker (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=890817) 
-issue i made.
+There is a series if commits
 
---
-Sander
+  e84b7119e891 ("x86/msr: Add AMD Core Perf Extension MSRs")
+to
+  e1de91ccab31 ("KVM: VMX: WARN on a MOV CR3 exit w/ unrestricted guest")
 
+that are missing a Signed-off-by from their committer.  It looks like
+they have been rebased?
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqubTUACgkQAVBC80lX
+0GwfPwf/ZJ7WDY7gv6uE+mBG0GBcbTikuEb/BFBOIBMtLdy8MJv+UPJauFmDDvu0
+u9s+0T/U6LCq91M9xThBpjIiemQdkOSMJOZh2CslG/YCdyceihKP0yy+3NMdAKj3
+SeqXHfXIYm+HsXTNzIAkJIyQmIkjEBuZgCuUzrNB4aJdOZdray2EQRmTKn2jOAFG
+uTVRD60iJo0xuDcRT7OQMhrWZOG1eEZnNnBSjSyOiKayWhJ3DUDn9HFMSmssrfdZ
+TPVp7tynVMU2v/3zHXPQ1M/kL5mvW49AwZwREgcLw/OL+63rjJ7ukOIdfEl1SxHT
++xxG1JEB14Xire8FJle4WXuk73N0eA==
+=kcaQ
+-----END PGP SIGNATURE-----
 
-
-
-
-Linux-Regression-ID: lr#2fd778
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+--
