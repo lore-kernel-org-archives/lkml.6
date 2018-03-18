@@ -1,73 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751635AbeCRFA1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 01:00:27 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5902 "EHLO huawei.com"
+        id S1752124AbeCRFRf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 01:17:35 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:5516 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750756AbeCRFA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 01:00:26 -0400
+        id S1750756AbeCRFRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 01:17:33 -0400
 From: gengdongjiu <gengdongjiu@huawei.com>
-To: James Morse <james.morse@arm.com>, gengdongjiu <gengdj.1984@gmail.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+To: James Morse <james.morse@arm.com>
+CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
         "Huangshaoyu (Shawn)" <huangshaoyu@huawei.com>
-Subject: Re: [PATCH] arm64: rename the function arm64_is_ras_serror() to
- avoid confusion
-Thread-Topic: [PATCH] arm64: rename the function arm64_is_ras_serror() to
- avoid confusion
-Thread-Index: AdO+dXEZOYZcXfBPRxK9auxbihsfMg==
-Date: Sun, 18 Mar 2018 05:00:10 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201B6C1B2@DGGEMA503-MBS.china.huawei.com>
+Subject: Re: [PATCH v10 1/5] arm64: KVM: Prepare set virtual SEI syndrome
+ value
+Thread-Topic: [PATCH v10 1/5] arm64: KVM: Prepare set virtual SEI syndrome
+ value
+Thread-Index: AdO+eCvKVEAI/Q5kTiOBw3krJZrcgw==
+Date: Sun, 18 Mar 2018 05:17:22 +0000
+Message-ID: <0184EA26B2509940AA629AE1405DD7F201B6C1D7@DGGEMA503-MBS.china.huawei.com>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.45.52.52]
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2I50ifm024173
 
 Hi James,
 
-> Hi gengdongjiu,
 > 
-> On 26/02/18 16:13, gengdongjiu wrote:
-> > 2018-02-24 1:58 GMT+08:00 James Morse <james.morse@arm.com>:
-> >> On 22/02/18 18:02, Dongjiu Geng wrote:
-> >>> The RAS SError Syndrome can be Implementation-Defined,
-> >>> arm64_is_ras_serror() is used to judge whether it is RAS SError, but
-> >>> arm64_is_ras_serror() does not include this judgement. In order to
-> >>> avoid function name confusion, we rename the arm64_is_ras_serror()
-> >>> to arm64_is_categorized_ras_serror(), this function is used to judge
-> >>> whether it is categorized RAS Serror.
-> >>
-> >> I don't see how 'categorized' is relevant. The most significant ISS
-> >> bit is used to determine if this is an IMP-DEF ESR, or one that uses the architected layout.
-> >
-> > From the name arm64_is_ras_serror(), it used to judge whether this is
-> > RAS Serror, but arm64_is_ras_serror() think the IMP-DEF SError is not
-> > RAS SError, as shown the code note and code in[1].
+> Hi Dongjiu Geng,
 > 
-> > In fact the IMP-DEF SError is also RAS SError, so when I read the
-> > code, it looks like
+> On 03/03/18 16:09, Dongjiu Geng wrote:
+> > Export one API to specify virtual SEI syndrome value for guest, and
+> > add a helper to get the VSESR_EL2 value.
 > 
-> This is just you then. No-one else has your imp-def:RAS error ESR values.
-> 
-> This would be like me adding some impdef branch instruction, then claiming
-> aarch64_insn_is_branch() doesn't take account of my private additions.
-> 
-> I agree the name is assuming all architected ESR are RAS-errors, and that impdef ESR are just that: impdef, that's all we know about them.
-> Unless this causes us to do the wrong thing, I don't think it matters.
-> Obviously we would need to change it if a new architected ESR is added.
+> This patch adds two helpers that nothing calls... its not big, please merge it with the patch that uses these.
 
-Ok, let us keep the current code and not change it until a new architected ESR is added
+OK, thanks, I will merge them.
+
+> 
+> 
+> > diff --git a/arch/arm64/include/asm/kvm_emulate.h
+> > b/arch/arm64/include/asm/kvm_emulate.h
+> > index 413dc82..3294885 100644
+> > --- a/arch/arm64/include/asm/kvm_emulate.h
+> > +++ b/arch/arm64/include/asm/kvm_emulate.h
+> > @@ -71,6 +71,11 @@ static inline void vcpu_set_hcr(struct kvm_vcpu *vcpu, unsigned long hcr)
+> >  	vcpu->arch.hcr_el2 = hcr;
+> >  }
+> >
+> > +static inline unsigned long vcpu_get_vsesr(struct kvm_vcpu *vcpu) {
+> > +	return vcpu->arch.vsesr_el2;
+> > +}
+> > +
+> >  static inline void vcpu_set_vsesr(struct kvm_vcpu *vcpu, u64 vsesr)
+> > {
+> >  	vcpu->arch.vsesr_el2 = vsesr;
+> > diff --git a/arch/arm64/include/asm/kvm_host.h
+> > b/arch/arm64/include/asm/kvm_host.h
+> > index a73f63a..3dc49b7 100644
+> > --- a/arch/arm64/include/asm/kvm_host.h
+> > +++ b/arch/arm64/include/asm/kvm_host.h
+> > @@ -354,6 +354,8 @@ void handle_exit_early(struct kvm_vcpu *vcpu,
+> > struct kvm_run *run,  int kvm_perf_init(void);  int
+> > kvm_perf_teardown(void);
+> >
+> > +void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 syndrome);
+> > +
+> >  struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long
+> > mpidr);
+> >
+> >  static inline void __cpu_init_hyp_mode(phys_addr_t pgd_ptr, diff
+> > --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
+> > index 60666a0..78ecb28 100644
+> > --- a/arch/arm64/kvm/inject_fault.c
+> > +++ b/arch/arm64/kvm/inject_fault.c
+> > @@ -186,3 +186,8 @@ void kvm_inject_vabt(struct kvm_vcpu *vcpu)  {
+> >  	pend_guest_serror(vcpu, ESR_ELx_ISV);  }
+> > +
+> > +void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 syndrome) {
+> > +	pend_guest_serror(vcpu, syndrome & ESR_ELx_ISS_MASK);
+> 
+> If you move the ISS_MASK into pend_guest_serror(), you wouldn't need this at all.
+> 
+> It would be better if any validation were in the user-space helpers so we can check user-space hasn't put something funny in the top bits.
+
+Yes, I agree your idea, thanks for the good suggestion.
+
+> 
+> > +}
+> >
+> 
+> 
+> Thanks,
+> 
+> James
