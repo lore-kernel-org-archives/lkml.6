@@ -1,605 +1,779 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754215AbeCRROe (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 13:14:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48053 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754179AbeCRRO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 13:14:29 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,326,1517904000";
-   d="gz'50?scan'50,208,50";a="40020997"
-Date: Mon, 19 Mar 2018 01:13:44 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: kbuild-all@01.org, x86 <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH 1/2] x86, msr: add rdmsr_safe_on_cpu_resched() and use it
- in msr_read()
-Message-ID: <201803190119.XsZZ8VZX%fengguang.wu@intel.com>
-References: <20180317170953.111610-1-edumazet@google.com>
+        id S1754242AbeCRRRf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 13:17:35 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:39920 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeCRRRc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 13:17:32 -0400
+X-Google-Smtp-Source: AG47ELs18cAOXFOllWnijnbmtoTKpFxcxjpr5B1T5ZYiwxX0IYvWa4Q6d7RMtQ2jks3PnmaK+3OjHw==
+Date: Sun, 18 Mar 2018 18:16:32 +0100
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clang-format: add configuration file
+Message-ID: <20180318171632.qfkemw3mwbcukth6@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="CE+1k2dSO48ffgeK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180317170953.111610-1-edumazet@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+clang-format is a tool to format C/C++/... code according to a set
+of rules and heuristics. Like most tools, it is not perfect nor
+covers every single case, but it is good enough to be helpful.
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In particular, it is useful for quickly re-formatting blocks of code
+automatically, for reviewing full files in order to spot coding style
+mistakes, typos and possible improvements. It is also handy for
+sorting ``#includes``, for aligning variables and macros, for reflowing
+text and other similar tasks. It also serves as a teaching tool/guide
+for newcomers.
 
-Hi Eric,
+The tool itself has been already included in the repositories of popular
+Linux distributions for a long time. The rules in this file are intended
+for clang-format >= 4, which is easily available in most distributions.
 
-Thank you for the patch! Yet something to improve:
+This commit adds the configuration file that contains the rules that
+the tool uses to know how to format the code according to the kernel
+coding style. This gives us several advantages:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.16-rc5 next-20180316]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+  * clang-format works out of the box with reasonable defaults;
+    avoiding that everyone has to re-do the configuration.
 
-url:    https://github.com/0day-ci/linux/commits/Eric-Dumazet/x86-msr-add-rdmsr_safe_on_cpu_resched-and-use-it-in-msr_read/20180319-001007
-config: i386-randconfig-s1-201811 (attached as .config)
-compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+  * Everyone agrees (eventually) on what is the most useful default
+    configuration for most of the kernel.
 
-All errors (new ones prefixed by >>):
+  * If it becomes commonplace among kernel developers, clang-format
+    may feel compelled to support us better. They already recognize
+    the Linux kernel and its style in their documentation and in one
+    of the style sub-options.
 
-   arch/x86/kernel/msr.c: In function 'msr_read':
->> arch/x86/kernel/msr.c:63:9: error: implicit declaration of function 'rdmsr_safe_on_cpu_resched' [-Werror=implicit-function-declaration]
-      err = rdmsr_safe_on_cpu_resched(cpu, reg, &data[0], &data[1]);
-            ^~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Some of clang-format's features relevant for the kernel are:
 
-vim +/rdmsr_safe_on_cpu_resched +63 arch/x86/kernel/msr.c
+  * Uses clang's tooling support behind the scenes to parse and rewrite
+    the code. It is not based on ad-hoc regexps.
 
-    48	
-    49	static ssize_t msr_read(struct file *file, char __user *buf,
-    50				size_t count, loff_t *ppos)
-    51	{
-    52		u32 __user *tmp = (u32 __user *) buf;
-    53		u32 data[2];
-    54		u32 reg = *ppos;
-    55		int cpu = iminor(file_inode(file));
-    56		int err = 0;
-    57		ssize_t bytes = 0;
-    58	
-    59		if (count % 8)
-    60			return -EINVAL;	/* Invalid chunk size */
-    61	
-    62		for (; count; count -= 8) {
-  > 63			err = rdmsr_safe_on_cpu_resched(cpu, reg, &data[0], &data[1]);
-    64			if (err)
-    65				break;
-    66			if (copy_to_user(tmp, &data, 8)) {
-    67				err = -EFAULT;
-    68				break;
-    69			}
-    70			tmp += 2;
-    71			bytes += 8;
-    72		}
-    73	
-    74		return bytes ? bytes : err;
-    75	}
-    76	
+  * Supports reasonably well the Linux kernel coding style.
 
+  * Fast enough to be used at the press of a key.
+
+  * There are already integrations (either built-in or third-party)
+    for many common editors used by kernel developers (e.g. vim,
+    emacs, Sublime, Atom...) that allow you to format an entire file
+    or, more usefully, just your selection.
+
+  * Able to parse unified diffs -- you can, for instance, reformat
+    only the lines changed by a git commit.
+
+  * Able to reflow text comments as well.
+
+  * Widely supported and used by hundreds of developers in highly
+    complex projects and organizations (e.g. the LLVM project itself,
+    Chromium, WebKit, Google, Mozilla...). Therefore, it will be
+    supported for a long time.
+
+See more information about the tool at:
+
+    https://clang.llvm.org/docs/ClangFormat.html
+    https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ .clang-format                          | 429 +++++++++++++++++++++++++++++++++
+ .gitignore                             |   1 +
+ Documentation/process/4.Coding.rst     |   8 +
+ Documentation/process/clang-format.rst | 185 ++++++++++++++
+ Documentation/process/coding-style.rst |   8 +
+ 5 files changed, 631 insertions(+)
+ create mode 100644 .clang-format
+ create mode 100644 Documentation/process/clang-format.rst
 
---CE+1k2dSO48ffgeK
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-89eZlEyHnu3xX2cKwzBGmwEA
-
---CE+1k2dSO48ffgeK--
+diff --git a/.clang-format b/.clang-format
+new file mode 100644
+index 000000000000..6cdf4aa4e974
+--- /dev/null
++++ b/.clang-format
+@@ -0,0 +1,429 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# clang-format configuration file. Intended for clang-format >= 4.
++#
++# For more information, see:
++#
++#   Documentation/process/clang-format.rst
++#   https://clang.llvm.org/docs/ClangFormat.html
++#   https://clang.llvm.org/docs/ClangFormatStyleOptions.html
++#
++---
++AccessModifierOffset: -4
++AlignAfterOpenBracket: Align
++AlignConsecutiveAssignments: false
++AlignConsecutiveDeclarations: false
++#AlignEscapedNewlines: Left # Unknown to clang-format-4.0
++AlignOperands: true
++AlignTrailingComments: false
++AllowAllParametersOfDeclarationOnNextLine: false
++AllowShortBlocksOnASingleLine: false
++AllowShortCaseLabelsOnASingleLine: false
++AllowShortFunctionsOnASingleLine: None
++AllowShortIfStatementsOnASingleLine: false
++AllowShortLoopsOnASingleLine: false
++AlwaysBreakAfterDefinitionReturnType: None
++AlwaysBreakAfterReturnType: None
++AlwaysBreakBeforeMultilineStrings: false
++AlwaysBreakTemplateDeclarations: false
++BinPackArguments: true
++BinPackParameters: true
++BraceWrapping:
++  AfterClass: false
++  AfterControlStatement: false
++  AfterEnum: false
++  AfterFunction: true
++  AfterNamespace: true
++  AfterObjCDeclaration: false
++  AfterStruct: false
++  AfterUnion: false
++  #AfterExternBlock: false # Unknown to clang-format-5.0
++  BeforeCatch: false
++  BeforeElse: false
++  IndentBraces: false
++  #SplitEmptyFunction: true # Unknown to clang-format-4.0
++  #SplitEmptyRecord: true # Unknown to clang-format-4.0
++  #SplitEmptyNamespace: true # Unknown to clang-format-4.0
++BreakBeforeBinaryOperators: None
++BreakBeforeBraces: Custom
++#BreakBeforeInheritanceComma: false # Unknown to clang-format-4.0
++BreakBeforeTernaryOperators: false
++BreakConstructorInitializersBeforeComma: false
++#BreakConstructorInitializers: BeforeComma # Unknown to clang-format-4.0
++BreakAfterJavaFieldAnnotations: false
++BreakStringLiterals: false
++ColumnLimit: 80
++CommentPragmas: '^ IWYU pragma:'
++#CompactNamespaces: false # Unknown to clang-format-4.0
++ConstructorInitializerAllOnOneLineOrOnePerLine: false
++ConstructorInitializerIndentWidth: 8
++ContinuationIndentWidth: 8
++Cpp11BracedListStyle: false
++DerivePointerAlignment: false
++DisableFormat: false
++ExperimentalAutoDetectBinPacking: false
++#FixNamespaceComments: false # Unknown to clang-format-4.0
++
++# Taken from:
++#   git grep -h '^#define [^[:space:]]*for_each[^[:space:]]*(' include/ \
++#   | sed "s,^#define \([^[:space:]]*for_each[^[:space:]]*\)(.*$,  - '\1'," \
++#   | sort | uniq
++ForEachMacros:
++  - 'apei_estatus_for_each_section'
++  - 'ata_for_each_dev'
++  - 'ata_for_each_link'
++  - 'ax25_for_each'
++  - 'ax25_uid_for_each'
++  - 'bio_for_each_integrity_vec'
++  - '__bio_for_each_segment'
++  - 'bio_for_each_segment'
++  - 'bio_for_each_segment_all'
++  - 'bio_list_for_each'
++  - 'bip_for_each_vec'
++  - 'blkg_for_each_descendant_post'
++  - 'blkg_for_each_descendant_pre'
++  - 'blk_queue_for_each_rl'
++  - 'bond_for_each_slave'
++  - 'bond_for_each_slave_rcu'
++  - 'btree_for_each_safe128'
++  - 'btree_for_each_safe32'
++  - 'btree_for_each_safe64'
++  - 'btree_for_each_safel'
++  - 'card_for_each_dev'
++  - 'cgroup_taskset_for_each'
++  - 'cgroup_taskset_for_each_leader'
++  - 'cpufreq_for_each_entry'
++  - 'cpufreq_for_each_entry_idx'
++  - 'cpufreq_for_each_valid_entry'
++  - 'cpufreq_for_each_valid_entry_idx'
++  - 'css_for_each_child'
++  - 'css_for_each_descendant_post'
++  - 'css_for_each_descendant_pre'
++  - 'device_for_each_child_node'
++  - 'drm_atomic_crtc_for_each_plane'
++  - 'drm_atomic_crtc_state_for_each_plane'
++  - 'drm_atomic_crtc_state_for_each_plane_state'
++  - 'drm_for_each_connector_iter'
++  - 'drm_for_each_crtc'
++  - 'drm_for_each_encoder'
++  - 'drm_for_each_encoder_mask'
++  - 'drm_for_each_fb'
++  - 'drm_for_each_legacy_plane'
++  - 'drm_for_each_plane'
++  - 'drm_for_each_plane_mask'
++  - 'drm_mm_for_each_hole'
++  - 'drm_mm_for_each_node'
++  - 'drm_mm_for_each_node_in_range'
++  - 'drm_mm_for_each_node_safe'
++  - 'for_each_active_drhd_unit'
++  - 'for_each_active_iommu'
++  - 'for_each_available_child_of_node'
++  - 'for_each_bio'
++  - 'for_each_board_func_rsrc'
++  - 'for_each_bvec'
++  - 'for_each_child_of_node'
++  - 'for_each_clear_bit'
++  - 'for_each_clear_bit_from'
++  - 'for_each_cmsghdr'
++  - 'for_each_compatible_node'
++  - 'for_each_console'
++  - 'for_each_cpu'
++  - 'for_each_cpu_and'
++  - 'for_each_cpu_not'
++  - 'for_each_cpu_wrap'
++  - 'for_each_dev_addr'
++  - 'for_each_dma_cap_mask'
++  - 'for_each_drhd_unit'
++  - 'for_each_dss_dev'
++  - 'for_each_efi_memory_desc'
++  - 'for_each_efi_memory_desc_in_map'
++  - 'for_each_endpoint_of_node'
++  - 'for_each_evictable_lru'
++  - 'for_each_fib6_node_rt_rcu'
++  - 'for_each_fib6_walker_rt'
++  - 'for_each_free_mem_range'
++  - 'for_each_free_mem_range_reverse'
++  - 'for_each_func_rsrc'
++  - 'for_each_hstate'
++  - 'for_each_if'
++  - 'for_each_iommu'
++  - 'for_each_ip_tunnel_rcu'
++  - 'for_each_irq_nr'
++  - 'for_each_lru'
++  - 'for_each_matching_node'
++  - 'for_each_matching_node_and_match'
++  - 'for_each_memblock'
++  - 'for_each_memblock_type'
++  - 'for_each_memcg_cache_index'
++  - 'for_each_mem_pfn_range'
++  - 'for_each_mem_range'
++  - 'for_each_mem_range_rev'
++  - 'for_each_migratetype_order'
++  - 'for_each_msi_entry'
++  - 'for_each_net'
++  - 'for_each_netdev'
++  - 'for_each_netdev_continue'
++  - 'for_each_netdev_continue_rcu'
++  - 'for_each_netdev_feature'
++  - 'for_each_netdev_in_bond_rcu'
++  - 'for_each_netdev_rcu'
++  - 'for_each_netdev_reverse'
++  - 'for_each_netdev_safe'
++  - 'for_each_net_rcu'
++  - 'for_each_new_connector_in_state'
++  - 'for_each_new_crtc_in_state'
++  - 'for_each_new_plane_in_state'
++  - 'for_each_new_private_obj_in_state'
++  - 'for_each_node'
++  - 'for_each_node_by_name'
++  - 'for_each_node_by_type'
++  - 'for_each_node_mask'
++  - 'for_each_node_state'
++  - 'for_each_node_with_cpus'
++  - 'for_each_node_with_property'
++  - 'for_each_of_allnodes'
++  - 'for_each_of_allnodes_from'
++  - 'for_each_of_pci_range'
++  - 'for_each_old_connector_in_state'
++  - 'for_each_old_crtc_in_state'
++  - 'for_each_oldnew_connector_in_state'
++  - 'for_each_oldnew_crtc_in_state'
++  - 'for_each_oldnew_plane_in_state'
++  - 'for_each_oldnew_private_obj_in_state'
++  - 'for_each_old_plane_in_state'
++  - 'for_each_old_private_obj_in_state'
++  - 'for_each_online_cpu'
++  - 'for_each_online_node'
++  - 'for_each_online_pgdat'
++  - 'for_each_pci_bridge'
++  - 'for_each_pci_dev'
++  - 'for_each_pci_msi_entry'
++  - 'for_each_populated_zone'
++  - 'for_each_possible_cpu'
++  - 'for_each_present_cpu'
++  - 'for_each_prime_number'
++  - 'for_each_prime_number_from'
++  - 'for_each_process'
++  - 'for_each_process_thread'
++  - 'for_each_property_of_node'
++  - 'for_each_reserved_mem_region'
++  - 'for_each_resv_unavail_range'
++  - 'for_each_rtdcom'
++  - 'for_each_rtdcom_safe'
++  - 'for_each_set_bit'
++  - 'for_each_set_bit_from'
++  - 'for_each_sg'
++  - 'for_each_sg_page'
++  - '__for_each_thread'
++  - 'for_each_thread'
++  - 'for_each_zone'
++  - 'for_each_zone_zonelist'
++  - 'for_each_zone_zonelist_nodemask'
++  - 'fwnode_for_each_available_child_node'
++  - 'fwnode_for_each_child_node'
++  - 'fwnode_graph_for_each_endpoint'
++  - 'gadget_for_each_ep'
++  - 'hash_for_each'
++  - 'hash_for_each_possible'
++  - 'hash_for_each_possible_rcu'
++  - 'hash_for_each_possible_rcu_notrace'
++  - 'hash_for_each_possible_safe'
++  - 'hash_for_each_rcu'
++  - 'hash_for_each_safe'
++  - 'hctx_for_each_ctx'
++  - 'hlist_bl_for_each_entry'
++  - 'hlist_bl_for_each_entry_rcu'
++  - 'hlist_bl_for_each_entry_safe'
++  - 'hlist_for_each'
++  - 'hlist_for_each_entry'
++  - 'hlist_for_each_entry_continue'
++  - 'hlist_for_each_entry_continue_rcu'
++  - 'hlist_for_each_entry_continue_rcu_bh'
++  - 'hlist_for_each_entry_from'
++  - 'hlist_for_each_entry_from_rcu'
++  - 'hlist_for_each_entry_rcu'
++  - 'hlist_for_each_entry_rcu_bh'
++  - 'hlist_for_each_entry_rcu_notrace'
++  - 'hlist_for_each_entry_safe'
++  - '__hlist_for_each_rcu'
++  - 'hlist_for_each_safe'
++  - 'hlist_nulls_for_each_entry'
++  - 'hlist_nulls_for_each_entry_from'
++  - 'hlist_nulls_for_each_entry_rcu'
++  - 'hlist_nulls_for_each_entry_safe'
++  - 'ide_host_for_each_port'
++  - 'ide_port_for_each_dev'
++  - 'ide_port_for_each_present_dev'
++  - 'idr_for_each_entry'
++  - 'idr_for_each_entry_continue'
++  - 'idr_for_each_entry_ul'
++  - 'inet_bind_bucket_for_each'
++  - 'inet_lhash2_for_each_icsk_rcu'
++  - 'iov_for_each'
++  - 'key_for_each'
++  - 'key_for_each_safe'
++  - 'klp_for_each_func'
++  - 'klp_for_each_object'
++  - 'kvm_for_each_memslot'
++  - 'kvm_for_each_vcpu'
++  - 'list_for_each'
++  - 'list_for_each_entry'
++  - 'list_for_each_entry_continue'
++  - 'list_for_each_entry_continue_rcu'
++  - 'list_for_each_entry_continue_reverse'
++  - 'list_for_each_entry_from'
++  - 'list_for_each_entry_from_reverse'
++  - 'list_for_each_entry_lockless'
++  - 'list_for_each_entry_rcu'
++  - 'list_for_each_entry_reverse'
++  - 'list_for_each_entry_safe'
++  - 'list_for_each_entry_safe_continue'
++  - 'list_for_each_entry_safe_from'
++  - 'list_for_each_entry_safe_reverse'
++  - 'list_for_each_prev'
++  - 'list_for_each_prev_safe'
++  - 'list_for_each_safe'
++  - 'llist_for_each'
++  - 'llist_for_each_entry'
++  - 'llist_for_each_entry_safe'
++  - 'llist_for_each_safe'
++  - 'media_device_for_each_entity'
++  - 'media_device_for_each_intf'
++  - 'media_device_for_each_link'
++  - 'media_device_for_each_pad'
++  - 'netdev_for_each_lower_dev'
++  - 'netdev_for_each_lower_private'
++  - 'netdev_for_each_lower_private_rcu'
++  - 'netdev_for_each_mc_addr'
++  - 'netdev_for_each_uc_addr'
++  - 'netdev_for_each_upper_dev_rcu'
++  - 'netdev_hw_addr_list_for_each'
++  - 'nft_rule_for_each_expr'
++  - 'nla_for_each_attr'
++  - 'nla_for_each_nested'
++  - 'nlmsg_for_each_attr'
++  - 'nlmsg_for_each_msg'
++  - 'nr_neigh_for_each'
++  - 'nr_neigh_for_each_safe'
++  - 'nr_node_for_each'
++  - 'nr_node_for_each_safe'
++  - 'of_for_each_phandle'
++  - 'of_property_for_each_string'
++  - 'of_property_for_each_u32'
++  - 'pci_bus_for_each_resource'
++  - 'ping_portaddr_for_each_entry'
++  - 'plist_for_each'
++  - 'plist_for_each_continue'
++  - 'plist_for_each_entry'
++  - 'plist_for_each_entry_continue'
++  - 'plist_for_each_entry_safe'
++  - 'plist_for_each_safe'
++  - 'pnp_for_each_card'
++  - 'pnp_for_each_dev'
++  - 'protocol_for_each_card'
++  - 'protocol_for_each_dev'
++  - 'queue_for_each_hw_ctx'
++  - 'radix_tree_for_each_contig'
++  - 'radix_tree_for_each_slot'
++  - 'radix_tree_for_each_tagged'
++  - 'rbtree_postorder_for_each_entry_safe'
++  - 'resource_list_for_each_entry'
++  - 'resource_list_for_each_entry_safe'
++  - 'rhl_for_each_entry_rcu'
++  - 'rhl_for_each_rcu'
++  - 'rht_for_each'
++  - 'rht_for_each_continue'
++  - 'rht_for_each_entry'
++  - 'rht_for_each_entry_continue'
++  - 'rht_for_each_entry_rcu'
++  - 'rht_for_each_entry_rcu_continue'
++  - 'rht_for_each_entry_safe'
++  - 'rht_for_each_rcu'
++  - 'rht_for_each_rcu_continue'
++  - '__rq_for_each_bio'
++  - 'rq_for_each_segment'
++  - 'scsi_for_each_prot_sg'
++  - 'scsi_for_each_sg'
++  - 'sctp_for_each_hentry'
++  - 'sctp_skb_for_each'
++  - 'shdma_for_each_chan'
++  - '__shost_for_each_device'
++  - 'shost_for_each_device'
++  - 'sk_for_each'
++  - 'sk_for_each_bound'
++  - 'sk_for_each_entry_offset_rcu'
++  - 'sk_for_each_from'
++  - 'sk_for_each_rcu'
++  - 'sk_for_each_safe'
++  - 'sk_nulls_for_each'
++  - 'sk_nulls_for_each_from'
++  - 'sk_nulls_for_each_rcu'
++  - 'snd_pcm_group_for_each_entry'
++  - 'snd_soc_dapm_widget_for_each_path'
++  - 'snd_soc_dapm_widget_for_each_path_safe'
++  - 'snd_soc_dapm_widget_for_each_sink_path'
++  - 'snd_soc_dapm_widget_for_each_source_path'
++  - 'tb_property_for_each'
++  - 'udp_portaddr_for_each_entry'
++  - 'udp_portaddr_for_each_entry_rcu'
++  - 'usb_hub_for_each_child'
++  - 'v4l2_device_for_each_subdev'
++  - 'v4l2_m2m_for_each_dst_buf'
++  - 'v4l2_m2m_for_each_dst_buf_safe'
++  - 'v4l2_m2m_for_each_src_buf'
++  - 'v4l2_m2m_for_each_src_buf_safe'
++  - 'zorro_for_each_dev'
++
++#IncludeBlocks: Preserve # Unknown to clang-format-5.0
++IncludeCategories:
++  - Regex: '.*'
++    Priority: 1
++IncludeIsMainRegex: '(Test)?$'
++IndentCaseLabels: false
++#IndentPPDirectives: None # Unknown to clang-format-5.0
++IndentWidth: 8
++IndentWrappedFunctionNames: true
++JavaScriptQuotes: Leave
++JavaScriptWrapImports: true
++KeepEmptyLinesAtTheStartOfBlocks: false
++MacroBlockBegin: ''
++MacroBlockEnd: ''
++MaxEmptyLinesToKeep: 1
++NamespaceIndentation: Inner
++#ObjCBinPackProtocolList: Auto # Unknown to clang-format-5.0
++ObjCBlockIndentWidth: 8
++ObjCSpaceAfterProperty: true
++ObjCSpaceBeforeProtocolList: true
++
++# Taken from git's rules
++#PenaltyBreakAssignment: 10 # Unknown to clang-format-4.0
++PenaltyBreakBeforeFirstCallParameter: 30
++PenaltyBreakComment: 10
++PenaltyBreakFirstLessLess: 0
++PenaltyBreakString: 10
++PenaltyExcessCharacter: 100
++PenaltyReturnTypeOnItsOwnLine: 60
++
++PointerAlignment: Right
++ReflowComments: false
++SortIncludes: false
++#SortUsingDeclarations: false # Unknown to clang-format-4.0
++SpaceAfterCStyleCast: false
++SpaceAfterTemplateKeyword: true
++SpaceBeforeAssignmentOperators: true
++#SpaceBeforeCtorInitializerColon: true # Unknown to clang-format-5.0
++#SpaceBeforeInheritanceColon: true # Unknown to clang-format-5.0
++SpaceBeforeParens: ControlStatements
++#SpaceBeforeRangeBasedForLoopColon: true # Unknown to clang-format-5.0
++SpaceInEmptyParentheses: false
++SpacesBeforeTrailingComments: 1
++SpacesInAngles: false
++SpacesInContainerLiterals: false
++SpacesInCStyleCastParentheses: false
++SpacesInParentheses: false
++SpacesInSquareBrackets: false
++Standard: Cpp03
++TabWidth: 8
++UseTab: Always
++...
++
+diff --git a/.gitignore b/.gitignore
+index 1be78fd8163b..ab5cbc1e85f6 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -81,6 +81,7 @@ modules.builtin
+ !.gitignore
+ !.mailmap
+ !.cocciconfig
++!.clang-format
+ 
+ #
+ # Generated include files
+diff --git a/Documentation/process/4.Coding.rst b/Documentation/process/4.Coding.rst
+index 26b106071364..eb4b185d168c 100644
+--- a/Documentation/process/4.Coding.rst
++++ b/Documentation/process/4.Coding.rst
+@@ -58,6 +58,14 @@ can never be transgressed.  If there is a good reason to go against the
+ style (a line which becomes far less readable if split to fit within the
+ 80-column limit, for example), just do it.
+ 
++Note that you can also use the ``clang-format`` tool to help you with
++these rules, to quickly re-format parts of your code automatically,
++and to review full files in order to spot coding style mistakes,
++typos and possible improvements. It is also handy for sorting ``#includes``,
++for aligning variables/macros, for reflowing text and other similar tasks.
++See the file :ref:`Documentation/process/clang-format.rst <clangformat>`
++for more details.
++
+ 
+ Abstraction layers
+ ******************
+diff --git a/Documentation/process/clang-format.rst b/Documentation/process/clang-format.rst
+new file mode 100644
+index 000000000000..a0236d051dcd
+--- /dev/null
++++ b/Documentation/process/clang-format.rst
+@@ -0,0 +1,185 @@
++.. _clangformat:
++
++clang-format
++============
++
++``clang-format`` is a tool to format C/C++/... code according to
++a set of rules and heuristics. Like most tools, it is not perfect
++nor covers every single case, but it is good enough to be helpful.
++
++``clang-format`` can be used for several purposes:
++
++  - Quickly reformat a block of code to the kernel style. Specially useful
++    when moving code around and aligning/sorting. See clangformatreformat_.
++
++  - Spot style mistakes, typos and possible improvements in files
++    you maintain, patches you review, diffs, etc. See clangformatreview_.
++
++  - Help you follow the coding style rules, specially useful for those
++    new to kernel development or working at the same time in several
++    projects with different coding styles.
++
++Its configuration file is ``.clang-format`` in the root of the kernel tree.
++The rules contained there try to approximate the most common kernel
++coding style. They also try to follow :ref:`Documentation/process/coding-style.rst <codingstyle>`
++as much as possible. Since not all the kernel follows the same style,
++it is possible that you may want to tweak the defaults for a particular
++subsystem or folder. To do so, you can override the defaults by writing
++another ``.clang-format`` file in a subfolder.
++
++The tool itself has already been included in the repositories of popular
++Linux distributions for a long time. Search for ``clang-format`` in
++your repositories. Otherwise, you can either download pre-built
++LLVM/clang binaries or build the source code from:
++
++    http://releases.llvm.org/download.html
++
++See more information about the tool at:
++
++    https://clang.llvm.org/docs/ClangFormat.html
++
++    https://clang.llvm.org/docs/ClangFormatStyleOptions.html
++
++
++.. _clangformatreview:
++
++Review files and patches for coding style
++-----------------------------------------
++
++By running the tool in its inline mode, you can review full subsystems,
++folders or individual files for code style mistakes, typos or improvements.
++
++To do so, you can run something like::
++
++    # Make sure your working directory is clean!
++    clang-format -i kernel/*.[ch]
++
++And then take a look at the git diff.
++
++Counting the lines of such a diff is also useful for improving/tweaking
++the style options in the configuration file; as well as testing new
++``clang-format`` features/versions.
++
++``clang-format`` also supports reading unified diffs, so you can review
++patches and git diffs easily. See the documentation at:
++
++    https://clang.llvm.org/docs/ClangFormat.html#script-for-patch-reformatting
++
++To avoid ``clang-format`` formatting some portion of a file, you can do::
++
++    int formatted_code;
++    // clang-format off
++        void    unformatted_code  ;
++    // clang-format on
++    void formatted_code_again;
++
++While it might be tempting to use this to keep a file always in sync with
++``clang-format``, specially if you are writing new files or if you are
++a maintainer, please note that people might be running different
++``clang-format`` versions or not have it available at all. Therefore,
++you should probably refrain yourself from using this in kernel sources;
++at least until we see if ``clang-format`` becomes commonplace.
++
++
++.. _clangformatreformat:
++
++Reformatting blocks of code
++---------------------------
++
++By using an integration with your text editor, you can reformat arbitrary
++blocks (selections) of code with a single keystroke. This is specially
++useful when moving code around, for complex code that is deeply intended,
++for multi-line macros (and aligning their backslashes), etc.
++
++Remember that you can always tweak the changes afterwards in those cases
++where the tool did not do an optimal job. But as a first approximation,
++it can be very useful.
++
++There are integrations for many popular text editors. For some of them,
++like vim, emacs, BBEdit and Visual Studio you can find support built-in.
++For instructions, read the appropiate section at:
++
++    https://clang.llvm.org/docs/ClangFormat.html
++
++For Atom, Eclipse, Sublime Text, Visual Studio Code, XCode and other
++editors and IDEs you should be able to find ready-to-use plugins.
++
++For this use case, consider using a secondary ``.clang-format``
++so that you can tweak a few options. See clangformatextra_.
++
++
++.. _clangformatmissing:
++
++Missing support
++---------------
++
++``clang-format`` is missing support for some things that are common
++in kernel code. They are easy to remember, so if you use the tool
++regularly, you will quickly learn to avoid/ignore those.
++
++In particular, some very common ones you will notice are:
++
++  - Aligned blocks of one-line ``#defines``, e.g.::
++
++        #define TRACING_MAP_BITS_DEFAULT       11
++        #define TRACING_MAP_BITS_MAX           17
++        #define TRACING_MAP_BITS_MIN           7
++
++    vs.::
++
++        #define TRACING_MAP_BITS_DEFAULT 11
++        #define TRACING_MAP_BITS_MAX 17
++        #define TRACING_MAP_BITS_MIN 7
++
++  - Aligned designated initializers, e.g.::
++
++        static const struct file_operations uprobe_events_ops = {
++                .owner          = THIS_MODULE,
++                .open           = probes_open,
++                .read           = seq_read,
++                .llseek         = seq_lseek,
++                .release        = seq_release,
++                .write          = probes_write,
++        };
++
++    vs.::
++
++        static const struct file_operations uprobe_events_ops = {
++                .owner = THIS_MODULE,
++                .open = probes_open,
++                .read = seq_read,
++                .llseek = seq_lseek,
++                .release = seq_release,
++                .write = probes_write,
++        };
++
++
++.. _clangformatextra:
++
++Extra features/options
++----------------------
++
++Some features/style options are not enabled by default in the configuration
++file in order to minimize the differences between the output and the current
++code. In other words, to make the difference as small as possible,
++which makes reviewing full-file style, as well diffs and patches as easy
++as possible.
++
++In other cases (e.g. particular subsystems/folders/files), the kernel style
++might be different and enabling some of these options may approximate
++better the style there.
++
++For instance:
++
++  - Aligning assignments (``AlignConsecutiveAssignments``).
++
++  - Aligning declarations (``AlignConsecutiveDeclarations``).
++
++  - Reflowing text in comments (``ReflowComments``).
++
++  - Sorting ``#includes`` (``SortIncludes``).
++
++They are typically useful for block re-formatting, rather than full-file.
++You might want to create another ``.clang-format`` file and use that one
++from your editor/IDE instead.
++
+diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+index a20b44a40ec4..55d8b6624e78 100644
+--- a/Documentation/process/coding-style.rst
++++ b/Documentation/process/coding-style.rst
+@@ -622,6 +622,14 @@ options ``-kr -i8`` (stands for ``K&R, 8 character indents``), or use
+ re-formatting you may want to take a look at the man page.  But
+ remember: ``indent`` is not a fix for bad programming.
+ 
++Note that you can also use the ``clang-format`` tool to help you with
++these rules, to quickly re-format parts of your code automatically,
++and to review full files in order to spot coding style mistakes,
++typos and possible improvements. It is also handy for sorting ``#includes``,
++for aligning variables/macros, for reflowing text and other similar tasks.
++See the file :ref:`Documentation/process/clang-format.rst <clangformat>`
++for more details.
++
+ 
+ 10) Kconfig configuration files
+ -------------------------------
+-- 
+2.14.1
