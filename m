@@ -1,108 +1,106 @@
-Return-Path: <f.fainelli@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521422603; cv=none;
+Return-Path: <liuwenliang@huawei.com>
+X-Google-Smtp-Source: AG47ELu6UpvYIYRUzT9acMPFZuxe5f074wRyWcOKEaupTCfMFdUW8JCUPqa0+SO1Qj2mHpW0XEb3
+ARC-Seal: i=1; a=rsa-sha256; t=1521378829; cv=none;
         d=google.com; s=arc-20160816;
-        b=nArMrzocyTdWJ3P5l7KWGVDaMhErqkLSEQX5PvJ5ZKe2IwdwGBoWFoiwLoP1u2FMI5
-         dEG2iq6B2o9qqHhgnTk5R084+7bJAXCIM14bk2MZFSfc3Xjxq25zWFbuJYSeYjxgRdCN
-         qVdjPUO+e8zX1jI2K7D5kd07MBz3bAVcaxS4AqI9iRc0d5V6wug0pq0H2NnUoxogFIbA
-         30l6o9M3M87Nmm8YcABWtG+WkqSTDWSDKhLKQtT0bGURV3V25IAY4Bweenfb6SVOajZ+
-         qwT9Qud1BVTjbiBT5A9ZsNjgMcGJ96TKkIan8PkSN4hgVq9mCi/iV6UslHAk5A01EOfb
-         mElg==
+        b=yCj3YV2pDWPQoHC/MJilLueW89pL8/d4p5gYewKrbdy2uI/eJQuEKilUNzuouVa9GP
+         g3AF4EjpJO+glcP9ELQiCN9HHg63YKQ8zh4HFl66cNdnvEckQ5ttZ/qO3m95d7cgNTi1
+         72T9r8eLtrf7Udwp8+IpKaKa0xK01ep3RJWGg6rTkQTvf638an4SipoFc9VPQqry4BJ4
+         qsW6PgkyjqSUpf6pq8tpIlMn/6DySHoAStR8if9cannJNhefU79dEuPbGhX1EUTPmLAv
+         Z/TqftAY9bFgQp1sWn88yJ2+Noar5jy6MhcSn3JdkajnrCYiYH0NknR03beL91A5XdaT
+         QyDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=6F70WU6Cw3C2Ul/DmeWzBhBisSyBFQznWSTSQFdvKpc=;
-        b=cc7bhKCiGk9VKrHzIRc41BjejkvkUu6JCc9hj3AN/yp2MFX4ES51AsplNJYLmJa3sT
-         HvcQgvns4jfcKcIg1xSxkAP1Q3iMumUXDyOUAwoqDKax/oQ7LP8XNLPmR0jEElGMq5pb
-         x4Mux4FOZe3A6UsU5vntMkfmNqJe1fizOF9SB8LgwyOtov9m1kqCKe9UTIJq17zeHgth
-         G+NQGnfjPrlwQiQbC4ogtcXNotV0DXhKiILG43s42ikdK0uiCjE9iRxRxqVUeGu7zG4S
-         l1x+nYB+kQicGya+C3p9jcywwi8QxRtVyj9/C5AJOt94n7AxD3vwxLqs6SfeOCkwkeXj
-         RNbg==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=lTxpIFFh58vmJxEWR02loWAsikfJ+s9CWRPwhE1dby8=;
+        b=ZHZYF2Mnfw0wophEJ8x8f/Y3aogiPRE6h2eCgD+61Se3LZlWtDUdNxKutNdth7UPWO
+         GvnLvKxAHsx1divvYmEtYWvA7CXTJwGU8vYgx+f7eYGIKL2bmu0bC4GjjuogR/lDotMY
+         giY0PYHhOWqd/yhparK/CR5vGzH2HTvfaJcYEp3dpElSgyH0jxsqf/qXgeVDMq2CtlHO
+         eRqOKYXPHNsKHg1Qp2M9m8VdzMl6USm9VJ8TaxdoNr3EOKb/93GU6Lt8A65f9zNzTC/9
+         TjIwhdRZTRPUYzH6Lw3uj0eJ9SstMQKwL0yYmXO7ichKtlonmSLD2FpDmN8IJoJJJESz
+         UetA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=SybLk61h;
-       spf=pass (google.com: domain of f.fainelli@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=f.fainelli@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=SybLk61h;
-       spf=pass (google.com: domain of f.fainelli@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=f.fainelli@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuuESHa1ztGI4qPHIpa8hH0SelonqfNrw/Tq4tykr7IbsrzNcD5u3fXJc2MjOaM5koPXhnuYw==
-Subject: Re: [PATCH v2 0/7] KASan for arm
-To: "Liuwenliang (Abbott Liu)" <liuwenliang@huawei.com>,
- "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
- "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
- "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "afzal.mohd.ma@gmail.com" <afzal.mohd.ma@gmail.com>,
- "alexander.levin@verizon.com" <alexander.levin@verizon.com>
-Cc: "glider@google.com" <glider@google.com>,
- "dvyukov@google.com" <dvyukov@google.com>,
- "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
- "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
- "mawilcox@microsoft.com" <mawilcox@microsoft.com>,
- "pombredanne@nexb.com" <pombredanne@nexb.com>,
- "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
- "vladimir.murzin@arm.com" <vladimir.murzin@arm.com>,
- "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "thgarnie@google.com" <thgarnie@google.com>,
- "dhowells@redhat.com" <dhowells@redhat.com>,
- "keescook@chromium.org" <keescook@chromium.org>,
- "arnd@arndb.de" <arnd@arndb.de>, "geert@linux-m68k.org"
- <geert@linux-m68k.org>, "tixy@linaro.org" <tixy@linaro.org>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "james.morse@arm.com" <james.morse@arm.com>,
- "zhichao.huang@linaro.org" <zhichao.huang@linaro.org>,
- "jinb.park7@gmail.com" <jinb.park7@gmail.com>,
- "labbott@redhat.com" <labbott@redhat.com>,
- "philip@cog.systems" <philip@cog.systems>,
- "grygorii.strashko@linaro.org" <grygorii.strashko@linaro.org>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "opendmb@gmail.com" <opendmb@gmail.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
- "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <B8AC3E80E903784988AB3003E3E97330C0076FBE@dggemm510-mbs.china.huawei.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <b9a813b8-30fe-ef17-ff79-372c2134723f@gmail.com>
-Date: Sun, 18 Mar 2018 18:23:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
+From: Abbott Liu <liuwenliang@huawei.com>
+To: <linux@armlinux.org.uk>, <aryabinin@virtuozzo.com>,
+	<marc.zyngier@arm.com>, <kstewart@linuxfoundation.org>,
+	<gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
+	<liuwenliang@huawei.com>, <akpm@linux-foundation.org>,
+	<afzal.mohd.ma@gmail.com>, <alexander.levin@verizon.com>
+CC: <glider@google.com>, <dvyukov@google.com>, <christoffer.dall@linaro.org>,
+	<linux@rasmusvillemoes.dk>, <mawilcox@microsoft.com>, <pombredanne@nexb.com>,
+	<ard.biesheuvel@linaro.org>, <vladimir.murzin@arm.com>,
+	<nicolas.pitre@linaro.org>, <tglx@linutronix.de>, <thgarnie@google.com>,
+	<dhowells@redhat.com>, <keescook@chromium.org>, <arnd@arndb.de>,
+	<geert@linux-m68k.org>, <tixy@linaro.org>, <mark.rutland@arm.com>,
+	<james.morse@arm.com>, <zhichao.huang@linaro.org>, <jinb.park7@gmail.com>,
+	<labbott@redhat.com>, <philip@cog.systems>, <grygorii.strashko@linaro.org>,
+	<catalin.marinas@arm.com>, <opendmb@gmail.com>,
+	<kirill.shutemov@linux.intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+	<kvmarm@lists.cs.columbia.edu>, <linux-mm@kvack.org>
+Subject: [PATCH 1/7] 2 1-byte checks more safer for memory_is_poisoned_16
+Date: Sun, 18 Mar 2018 20:53:36 +0800
+Message-ID: <20180318125342.4278-2-liuwenliang@huawei.com>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180318125342.4278-1-liuwenliang@huawei.com>
+References: <20180318125342.4278-1-liuwenliang@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <B8AC3E80E903784988AB3003E3E97330C0076FBE@dggemm510-mbs.china.huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.187.223]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595281327886471398?=
-X-GMAIL-MSGID: =?utf-8?q?1595327228257192836?=
+X-GMAIL-THRID: =?utf-8?q?1595281327885358177?=
+X-GMAIL-MSGID: =?utf-8?q?1595281327885358177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Because in some architecture(eg. arm) instruction set, non-aligned
+access support is not very well, so 2 1-byte checks is more
+safer than 1 2-byte check. The impact on performance is small
+because 16-byte accesses are not too common.
 
+Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+---
+ mm/kasan/kasan.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-On 03/18/2018 06:20 PM, Liuwenliang (Abbott Liu) wrote:
-> On 03/19/2018 03:14 AM, Florian Fainelli wrote:
->> Thanks for posting these patches! Just FWIW, you cannot quite add
->> someone's Tested-by for a patch series that was just resubmitted given
->> the differences with v1. I just gave it a spin on a Cortex-A5 (no LPAE)
->> and it looks like test_kasan.ko is passing, great job!
-> 
-> I'm sorry.
-> Thanks for your testing very much!
-> I forget to add Tested-by in cover letter patch file. But I have alreadly added
-> Tested-by in some of following patch. 
-> In the next version I am going to add Tested-by in all patches.
-
-This is not exactly what I meant. When you submit a v2 of your patches,
-you must wait for people to give you their test results. The Tested-by
-applied to v1, and so much has changed it is no longer valid for v2
-unless someone tells you they tested v2. Hope this is clearer.
+diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+index e13d911..104839a 100644
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -151,13 +151,20 @@ static __always_inline bool memory_is_poisoned_2_4_8(unsigned long addr,
+ 
+ static __always_inline bool memory_is_poisoned_16(unsigned long addr)
+ {
+-	u16 *shadow_addr = (u16 *)kasan_mem_to_shadow((void *)addr);
+-
+-	/* Unaligned 16-bytes access maps into 3 shadow bytes. */
+-	if (unlikely(!IS_ALIGNED(addr, KASAN_SHADOW_SCALE_SIZE)))
+-		return *shadow_addr || memory_is_poisoned_1(addr + 15);
++	u8 *shadow_addr = (u8 *)kasan_mem_to_shadow((void *)addr);
+ 
+-	return *shadow_addr;
++	if (unlikely(shadow_addr[0] || shadow_addr[1])) {
++		return true;
++	} else if (likely(IS_ALIGNED(addr, KASAN_SHADOW_SCALE_SIZE))) {
++		/*
++		 * If two shadow bytes covers 16-byte access, we don't
++		 * need to do anything more. Otherwise, test the last
++		 * shadow byte.
++		 */
++		return false;
++	} else {
++		return memory_is_poisoned_1(addr + 15);
++	}
+ }
+ 
+ static __always_inline unsigned long bytes_is_nonzero(const u8 *start,
 -- 
-Florian
+2.9.0
