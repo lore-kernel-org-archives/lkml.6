@@ -1,86 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753381AbeCRLM0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 07:12:26 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:39816 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751069AbeCRLMY (ORCPT
+        id S1753721AbeCRMA0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 08:00:26 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:46313 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbeCRMAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 07:12:24 -0400
-Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
- <20180315224202.96668-3-dmitry.torokhov@gmail.com>
- <20180316100748.GH16424@w540> <20180316233800.GA32310@dtor-ws>
- <20180317092516.g5p5ybka57abyhex@apu3b>
- <02834805-5053-4BDC-9256-DF1AFFEC8630@physik.fu-berlin.de>
- <20180318105422.GA3323@w540>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <31518d93-a6db-70ee-869f-39d09012402b@physik.fu-berlin.de>
-Date: Sun, 18 Mar 2018 20:12:11 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 18 Mar 2018 08:00:23 -0400
+X-Google-Smtp-Source: AG47ELv4dYul0UripD1upoDJTCtSn6QE+v4MgaIPzDOr/GlLWH5rzZuXxqnkeVVUuJkHGMeu0pLUY2OVt0Vt7phMK2g=
 MIME-Version: 1.0
-In-Reply-To: <20180318105422.GA3323@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 121.85.0.195
+In-Reply-To: <20180318110416.30b45043@archlinux>
+References: <CAB3L5ow-gf0Z7NCRW1V0v+spRF553zx=J_pwc5m5YXxW4S27Lg@mail.gmail.com>
+ <a1ceed29-158a-5ba8-6b05-cddd043baef8@infradead.org> <20180318110416.30b45043@archlinux>
+From: Srishti Sharma <srishtishar@gmail.com>
+Date: Sun, 18 Mar 2018 17:30:22 +0530
+Message-ID: <CAB3L5owZTL2wBNzS4XRB9zEKfHOqMDM-AkA-t804XdT_Gszhcg@mail.gmail.com>
+Subject: Re: Unknown symbols in module (iio)
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On Sun, Mar 18, 2018 at 4:34 PM, Jonathan Cameron
+<jic23@jic23.retrosnub.co.uk> wrote:
+> On Sat, 17 Mar 2018 13:42:24 -0700
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+>> [adding linux-iio mailing list]
+>>
+>> Hi,
+>>
+>> It's always a good idea to include the kernel version in a problem report.
+>>
+>>
+>> On 03/05/2018 03:17 AM, Srishti Sharma wrote:
+>> > Hello,
+>> > I was trying to work with the iio dummy driver, and when I try to load
+>> > the iio_dummy_evgen.ko module I am getting unknown symbols found in
+>> > module error on running modprobe.
+>> >
+>> > These variables are unknown
+>> > iio_bus_type                >>> in industrialio-core
+>> > irq_sim_init                >>> in iio_dummy_evgen
+>> > irq_sim_fini                >>> same
+>> > irq_sim_fire                >>> same
+>> > irq_sim_fini                >>> [duplicate]
+>>
+>> I tested this using Linux 4.16-rc5.  As long as I manually load all
+>> modules in the needed order, they will all load with no symbol problems.
+>>
+>>
+>> > All of these variables are present in the Module.symvers file in the
+>> > /lib/modules/<kernel version>/build directory. The kernel and the
+>> > modules versions match. I ran make clean, make, and make
+>> > modules_install before trying to load them. I am unable to figure out
+>> > the problem. Where I might be going wrong any ideas ?
+>>
+>> Were you expecting some module autoloading based on their internal
+>> dependencies?  If so, maybe someone on the linux-iio mailing list
+>> could comment on that.
+>>
+>>
+> Hi Randy,
+>
+> Thanks for following up on this. Looks like Srishti followed this
+> with an email to the linux-iio list.  I sent a quick reply but haven't
+> heard back yet.
+>
+> https://marc.info/?l=linux-iio&m=152024876720954&w=2
+>
+> Superficially I was guessing that Srishti had missed the fact that irqsim
+> is built into the kernel rather than as a module, so a reboot would have
+> been required as well.
+>
+> Srishti, if you do try a message on multiple lists, please do it by
+> replying to the original thread and cc'ing the new one.  That way we save
+> time by avoiding duplication of efforts on different lists.
+> (at least I am assuming you sent it to one list then the other?)
 
-Hi Jacopo!
+Hey,
+I am sorry for the late reply, the solution Jonathan had proposed i.e;
+reinstalling the kernel after configuring it for loading the required
+modules worked for me, Thank you so much.
 
-On 03/18/2018 07:54 PM, jacopo mondi wrote:
-> Sorry if I was not clear here, it is not anyone's intention to remove any support for any SH board. The media subsystem is working to replace some
-> components (the legacy camera drivers) a few SH boards (ecovec included) are the only remaining user of. Nobody is working to remove support for those
-> boards.
+Regards,
+Srishti
 
-Ok, I am very relieved to hear that. I have invested a lot of work and
-effort into Debian's SuperH port and I therefore hope we can still
-keep it for a while.
-
-FWIW, I will send out free ST-40 SuperH development boxes to anyone
-who is is willing to work on the SH kernel :-).
-
-> I have access to a few SH boards, if you're planning to collect that informations in some wiki, I'll list myself there.
-
-I'll find the proper wiki to post this information. I need to figure
-out what I need to get an account for the kernel.org wiki.
-
-Adrian
-
-- -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEYv+KdYTgKVaVRgAGdCY7N/W1+RMFAlquSYcACgkQdCY7N/W1
-+RPkZBAAt2dXvx99JoE/X2O3Gsg+v5w682u/bglBBN+IBtFtlE4ARMBrJnyd9I7L
-x/a0pDsEBuU1AIy2I6gcLc84ekd1A42qfsh4pISXKhMfDFFVBsxhbk0wbH7tyAqk
-EWI7aQsBUVrrDl4pn0CRy0tirRBBabG6U+AiVYVdrxbNBKVMrQlfwf+Y1Ez7fAsP
-3gEet5qNYJsQ0ofzQIXIr6i/sXYPL+rovPIRIBsvuvmmaGGvKmbe8PgFehcX1dbj
-uPij8bgvfrEcT85hOi3MoCnBd5o1vEbtvfh5aBK4DIIZaAKMXmhDS0fhgQEYerv2
-EaxzPkdMmhbd8N5T/DcIbaCoVPPDDDn/PFK1hSwN/lpL4n7ouQPjjA87qwPLbX7o
-vfyoAsohtp1qKtepbp+x5CfjCwqeWu7qzaxjUF3tzAorH+wUUDsOKn2dKGHv7Vlr
-LtE+IdO2eJPzZpcmZ0e86bn0YNk7ZtVmDMhdyUfbkI4ZkrO3ANJz4Ed+9vJPzAo7
-YKZXI1DHJSd33bpAUtNE1Os9DMLqpuMIYxxGPENhEwcvVo5Ftix8NkviHbQxwLbY
-GH36VySCqzkYSt6HUavv5W+N9v4T24pvHx9r+D4f6ACiMT17OtVwS5PMjPcARM5/
-Ftp3D9JX8ZRMpktGMuUx18Hhm9wnAwhXK28vFoq6u5TLvVkmnu8=
-=2O6i
------END PGP SIGNATURE-----
+>
+> Thanks,
+>
+> Jonathan
