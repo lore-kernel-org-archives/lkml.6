@@ -1,87 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754018AbeCRPXy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 11:23:54 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:53128 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751539AbeCRPXx (ORCPT
+        id S1754151AbeCRPYM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 11:24:12 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.228]:16978 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754127AbeCRPYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 11:23:53 -0400
-Date: Sun, 18 Mar 2018 16:23:49 +0100
-From: Ladislav Michl <ladis@linux-mips.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Markus Grabner <grabner@icg.tugraz.at>,
-        Stefan Hajnoczi <stefanha@gmail.com>,
-        Chris Rorvick <chris@rorvick.com>, Andrej Krutak <dev@andree.sk>
-Subject: Re: [alsa-devel] [PATCH 1/3] sound: usb: line6: Replace mdelay with
- msleep in line6_read_data
-Message-ID: <20180318152349.GA16414@lenoch>
-References: <1521384693-23336-1-git-send-email-baijiaju1990@gmail.com>
+        Sun, 18 Mar 2018 11:24:05 -0400
+Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: bcm2835-gpio: Add generic
+ pinctrl support
+To: Rob Herring <robh@kernel.org>
+Cc: stefan.wahren@i2se.com, eric@anholt.net, linus.walleij@linaro.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <483687035.384686.1520596004410@email.1und1.de>
+ <1520615640-9153-1-git-send-email-matheus@castello.eng.br>
+ <1520615640-9153-2-git-send-email-matheus@castello.eng.br>
+ <20180318124820.xea5etlb3wu7wnpw@rob-hp-laptop>
+From: Matheus Castello <matheus@castello.eng.br>
+Message-ID: <f500b25c-eea0-9f01-7d7b-5a9dd90c50fa@castello.eng.br>
+Date: Sun, 18 Mar 2018 11:23:49 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521384693-23336-1-git-send-email-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180318124820.xea5etlb3wu7wnpw@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.21.134
+X-Source-L: No
+X-Exim-ID: 1exaAE-000GDJ-Dr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.11]) [191.189.21.134]:4439
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 6
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 10:51:33PM +0800, Jia-Ju Bai wrote:
-> line6_read_data() is never called in atomic context.
-> 
-> The call chains ending up at line6_read_data() are:
-> [1] line6_read_data() <- line6_read_serial_number() -> pod_startup4()
-> [2] line6_read_data() <- line6_read_serial_number() <- 
-> 	podhd_startup_workqueue()
-> [3] line6_read_data() <- podhd_dev_start() <- podhd_startup_workqueue()
-> [4] line6_read_data() <- line6_read_serial_number() <- toneport_init()
-> 	<- line6_probe()
-> [5] line6_read_data() <- toneport_init() <- line6_probe()
-> 
-> pod_startup4() and podhd_startup_workqueue() are set in INIT_WORK().
-> line6_probe() is called in toneport_probe(), pod_probe(), podhd_probe() 
-> and variax_probe(), which are set as ".probe" in usb_driver structure.
-> These functions are not called in atomic context.
-> 
-> Despite never getting called from atomic context, line6_read_data()
-> calls mdelay for busy wait.
-> That is not necessary and can be replaced with msleep to 
-> avoid busy waiting.
+Hi Rob,
 
-Can we have usleep_range here? Please see Documentation/timers/timers-howto.txt
-for rationale and range settings.
+sorry I used allwinner,sunxi-pinctrl.txt from Maxime Ripard as a base, I 
+used the same words, I thought it would be correct.
 
-> This is found by a static analysis tool named DCNS written by myself.
+I will modify this to:
 
-Here I'm assuming you do not have hardware and do not know how it works,
-therefore few more people from 'git log --follow sound/usb/line6/driver.c'
-were added to Cc list. Hopefully they can clarify the right range value.
+The BCM2835 pin configuration and multiplexing supports the generic 
+bindings. For details on each properties, you can refer to
+./pinctrl-bindings.txt.
 
-Thank you.
+If it's okay for you let me know, so I can send the v5 patch.
 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  sound/usb/line6/driver.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Best Regards
+Matheus Castello
+
+
+On 03/18/2018 08:48 AM, Rob Herring wrote:
+> On Fri, Mar 09, 2018 at 01:13:58PM -0400, Matheus Castello wrote:
+>> Added generic pin configuration and multiplexing support,
+>> and shoud be preferred than brcm legacy one.
+>>
+>> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+>> ---
+>>   .../devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+>> index 2569866..58b4720 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+>> @@ -36,6 +36,25 @@ listed. In other words, a subnode that lists only a mux function implies no
+>>   information about any pull configuration. Similarly, a subnode that lists only
+>>   a pul parameter implies no information about the mux function.
+>>   
+>> +This driver supports the generic pin multiplexing and configuration
 > 
-> diff --git a/sound/usb/line6/driver.c b/sound/usb/line6/driver.c
-> index 0ff5a7d..af99e73 100644
-> --- a/sound/usb/line6/driver.c
-> +++ b/sound/usb/line6/driver.c
-> @@ -356,7 +356,7 @@ int line6_read_data(struct usb_line6 *line6, unsigned address, void *data,
->  
->  	/* Wait for data length. We'll get 0xff until length arrives. */
->  	for (count = 0; count < LINE6_READ_WRITE_MAX_RETRIES; count++) {
-> -		mdelay(LINE6_READ_WRITE_STATUS_DELAY);
-> +		msleep(LINE6_READ_WRITE_STATUS_DELAY);
->  
->  		ret = usb_control_msg(usbdev, usb_rcvctrlpipe(usbdev, 0), 0x67,
->  				      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-> -- 
-> 1.9.1
+> Bindings describe h/w, not drivers.
 > 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+>> +bindings. For details on each properties, you can refer to
+>> +./pinctrl-bindings.txt.
+>> +
+>> +Required sub-node properties:
+>> +  - pins
+>> +  - function
+>> +
+>> +Optional sub-node properties:
+>> +  - bias-disable
+>> +  - bias-pull-up
+>> +  - bias-pull-down
+>> +  - output-high
+>> +  - output-low
+>> +
+>> +Legacy pin configuration and multiplexing binding:
+>> +*** (Its use is deprecated, use generic multiplexing and configuration
+>> +bindings instead)
+>> +
+>>   Required subnode-properties:
+>>   - brcm,pins: An array of cells. Each cell contains the ID of a pin. Valid IDs
+>>     are the integer GPIO IDs; 0==GPIO0, 1==GPIO1, ... 53==GPIO53.
+>> -- 
+>> 2.7.4
+>>
