@@ -1,98 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754476AbeCRU4j (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 16:56:39 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33262 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754121AbeCRU4i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 16:56:38 -0400
-X-Google-Smtp-Source: AG47ELui5cR+aIpbvjBabm5v7bo6+dJlII8DfLrLNVIm/0zVSsa50T8ALY4eFPo6L5rmZ3XLe1P0JA==
-Date: Sun, 18 Mar 2018 20:56:35 +0000
-From: Phillip Potter <phil@philpotter.co.uk>
-To: dushistov@mail.ru
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: ufs: Convert ufs_set_de_type to use lookup table
-Message-ID: <20180318205635.GA31421@pathfinder>
+        id S1754667AbeCRVPj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 17:15:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39436 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754121AbeCRVPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 17:15:35 -0400
+Date: Sun, 18 Mar 2018 22:15:23 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Peter Pan <peterpandong@micron.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] mtd: nand: remove STANDALONE compile mode of nand_ecc
+Message-ID: <20180318221523.1b47aefc@bbrezillon>
+In-Reply-To: <1520600632-24955-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1520600632-24955-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify ufs_set_de_type function in fs/ufs/util.h to use a lookup
-table rather than a switch statement, as per the TODO comment.
+On Fri,  9 Mar 2018 22:03:52 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
----
- fs/ufs/util.h | 50 ++++++++++++++++++++++----------------------------
- 1 file changed, 22 insertions(+), 28 deletions(-)
+> This file can not be built independently any more.  We would have to
+> bring in more to resolve mtd_to_nand(mtd)->ecc.size, for example.
+> 
+> It is difficult to notice a breakage since nobody compiles this mode.
+> It is not worth fixing or maintaining in my opinion.  Remove.
+> 
 
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 1907be6d5808..1edf4c6454e3 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -155,37 +155,31 @@ ufs_set_de_namlen(struct super_block *sb, struct ufs_dir_entry *de, u16 value)
- static inline void
- ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
- {
-+	/* type lookup table, DT_UNKNOWN is default type if no case holds */
-+	const int mode_table[] = {
-+		DT_UNKNOWN,
-+		DT_FIFO,	/* mode & S_IFMT == S_IFIFO case */
-+		DT_CHR,		/* mode & S_IFMT == S_IFCHR case */
-+		DT_UNKNOWN,
-+		DT_DIR,		/* mode & S_IFMT == S_IFDIR case */
-+		DT_UNKNOWN,
-+		DT_BLK,		/* mode & S_IFMT == S_IFBLK case */
-+		DT_UNKNOWN,
-+		DT_REG,		/* mode & S_IFMT == S_IFREG case */
-+		DT_UNKNOWN,
-+		DT_LNK,		/* mode & S_IFMT == S_IFLNK case */
-+		DT_UNKNOWN,
-+		DT_SOCK,	/* mode & S_IFMT == S_IFSOCK case */
-+		DT_UNKNOWN,
-+		DT_UNKNOWN,
-+		DT_UNKNOWN
-+	};
-+
- 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
- 		return;
- 
--	/*
--	 * TODO turn this into a table lookup
--	 */
--	switch (mode & S_IFMT) {
--	case S_IFSOCK:
--		de->d_u.d_44.d_type = DT_SOCK;
--		break;
--	case S_IFLNK:
--		de->d_u.d_44.d_type = DT_LNK;
--		break;
--	case S_IFREG:
--		de->d_u.d_44.d_type = DT_REG;
--		break;
--	case S_IFBLK:
--		de->d_u.d_44.d_type = DT_BLK;
--		break;
--	case S_IFDIR:
--		de->d_u.d_44.d_type = DT_DIR;
--		break;
--	case S_IFCHR:
--		de->d_u.d_44.d_type = DT_CHR;
--		break;
--	case S_IFIFO:
--		de->d_u.d_44.d_type = DT_FIFO;
--		break;
--	default:
--		de->d_u.d_44.d_type = DT_UNKNOWN;
--	}
-+	/* shift (mode & S_IFMT) right 12 bits to index into table */
-+	de->d_u.d_44.d_type = mode_table[(mode & S_IFMT) >> 12];
- }
- 
- static inline u32
+Applied.
+
+Thanks,
+
+Boris
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  drivers/mtd/nand/raw/nand_ecc.c | 20 --------------------
+>  1 file changed, 20 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_ecc.c b/drivers/mtd/nand/raw/nand_ecc.c
+> index 3630f0f..8e132ed 100644
+> --- a/drivers/mtd/nand/raw/nand_ecc.c
+> +++ b/drivers/mtd/nand/raw/nand_ecc.c
+> @@ -28,15 +28,6 @@
+>   *
+>   */
+>  
+> -/*
+> - * The STANDALONE macro is useful when running the code outside the kernel
+> - * e.g. when running the code in a testbed or a benchmark program.
+> - * When STANDALONE is used, the module related macros are commented out
+> - * as well as the linux include files.
+> - * Instead a private definition of mtd_info is given to satisfy the compiler
+> - * (the code does not use mtd_info, so the code does not care)
+> - */
+> -#ifndef STANDALONE
+>  #include <linux/types.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -44,17 +35,6 @@
+>  #include <linux/mtd/rawnand.h>
+>  #include <linux/mtd/nand_ecc.h>
+>  #include <asm/byteorder.h>
+> -#else
+> -#include <stdint.h>
+> -struct mtd_info;
+> -#define EXPORT_SYMBOL(x)  /* x */
+> -
+> -#define MODULE_LICENSE(x)	/* x */
+> -#define MODULE_AUTHOR(x)	/* x */
+> -#define MODULE_DESCRIPTION(x)	/* x */
+> -
+> -#define pr_err printf
+> -#endif
+>  
+>  /*
+>   * invparity is a 256 byte table that contains the odd parity
+
+
+
 -- 
-2.14.3
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
