@@ -1,67 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754703AbeCRV50 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 17:57:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40049 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754304AbeCRV5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 17:57:25 -0400
-Date: Sun, 18 Mar 2018 22:57:12 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: sun8i-h3: Add Mali node
-Message-ID: <20180318215712.t2evailkwua5xxow@flea>
-References: <1520936205-64723-1-git-send-email-giulio.benetti@micronovasrl.com>
+        id S1754698AbeCRWBr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 18:01:47 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52903 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754342AbeCRWBo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 18:01:44 -0400
+X-Google-Smtp-Source: AG47ELtW+P+PJyD9YMhaU4qts4Q1fYvvYsseo8kTtnCQwkNtSkU0mff1s7ay5hZ7SAJsz1IMKFimWw==
+Subject: Re: [PATCH v1 13/19] arm: dts: mt7623: move node mt6323 leds to
+ mt6323.dtsi
+To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+ <e8a515a1aeaf06a7162b8b0e390bee615b323303.1519378872.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <a4097137-4364-6ca3-ece3-1842569d7e54@gmail.com>
+Date: Sun, 18 Mar 2018 23:01:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7br5xyiczou6vho7"
-Content-Disposition: inline
-In-Reply-To: <1520936205-64723-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <e8a515a1aeaf06a7162b8b0e390bee615b323303.1519378872.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---7br5xyiczou6vho7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 13, 2018 at 11:16:45AM +0100, Giulio Benetti wrote:
-> The H3 has an ARM Mali 400 GPU, so add binding to our DT.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+On 02/23/2018 11:16 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Since those LEDs are parts of PMIC MT6323, it is reasonable to merge
+> those LEDs node definition back into mt6323.dtsi. This way can improve
+> the reusability of those nodes among different boards with the same PMIC.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> ---
+>  arch/arm/boot/dts/mt6323.dtsi                 | 26 ++++++++++++++++++++++++-
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 28 ---------------------------
+>  2 files changed, 25 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/mt6323.dtsi b/arch/arm/boot/dts/mt6323.dtsi
+> index 7c783d6..44c5642 100644
+> --- a/arch/arm/boot/dts/mt6323.dtsi
+> +++ b/arch/arm/boot/dts/mt6323.dtsi
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2017 MediaTek Inc.
+> + * Copyright (c) 2017-2018 MediaTek Inc.
+>   * Author: John Crispin <john@phrozen.org>
+>   *	   Sean Wang <sean.wang@mediatek.com>
+>   * This program is free software; you can redistribute it and/or modify
+> @@ -237,5 +237,29 @@
+>  				regulator-enable-ramp-delay = <216>;
+>  			};
+>  		};
+> +
+> +		leds {
+> +			compatible = "mediatek,mt6323-led";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			led@0 {
+> +				reg = <0>;
+> +				label = "mt6323:isink:green";
+> +				default-state = "off";
+> +			};
+> +
+> +			led@1 {
+> +				reg = <1>;
+> +				label = "mt6323:isink:red";
+> +				default-state = "off";
+> +			};
+> +
+> +			led@2 {
+> +				reg = <2>;
+> +				label = "mt6323:isink:blue";
+> +				default-state = "off";
+> +			};
+> +		};
 
-Applied, thanks!
-Maxime
+The color of the leds are defined by the board and not by the PMIC. So as long
+as you don't have any good arguments, I tend not to merge this one.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards,
+Matthias
 
---7br5xyiczou6vho7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqu4LgACgkQ0rTAlCFN
-r3TDXA/6A1nkN6lH8iE98zckrDlgEktATEwGao635p3YhKyfhNnBrZmR5xzp5fFn
-lco83aVTo6NIkP60Yueb1svKy1qPg44+hMAjiKP9eG359NVYGpcVcX19lHnGIlop
-/W6rixVg96C6XvmmVY2PoILjZpzkrzHQ3jn+XlesspQNiEk4AupJCMFK4+WMlTPM
-bBMyNHWu4FbjfkMz3W9Uqe/yWC2aSxoBf5wbDR/uRmWPTCggGtt6i8pHC/UwNJef
-I3Eih3Nog+qTbpeePiTYeNfZzL971ndREM/BLrz97+EJ4/hh8EWhGUSSFiMNe5el
-G2/hD+0VmBiAx3zlGFN4sz48DYdbhlUM5DSbSypjXQJgPgjmT5nS2+fXQBIFfT6Z
-vwT+mRVPZ5sjgX27PpQ0c5CIK0l0gNov5pTGfGeGCHJaVp9ho/mWuNC4qeaEZItn
-ACAg2HkGrXBxlRcxXHu3WB3wSx/BBsQ9cXKpoZTvr9fDio250hrznEFeWa7S69dc
-20IR6H8XIBdsh4Owhhq0HU1p6tDz/ctH4RLdx5qYr9V0x6qVKD8nz9G0vMSiK21R
-qa8ATXNf1K8fjEoyfne/b4ikd/WXAKxXDAujpKZv8CwECXR2YeSuHwoe6032Jkt7
-7SJXzWfBBAiseYuNNn6+/8afbJ0gvlN7u9G6qgN/u+BSGj46bG0=
-=HpyW
------END PGP SIGNATURE-----
-
---7br5xyiczou6vho7--
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 75e61c4..767b225 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -483,34 +483,6 @@
+>  	status = "okay";
+>  };
+>  
+> -&pwrap {
+> -	mt6323 {
+> -		mt6323led: led {
+> -			compatible = "mediatek,mt6323-led";
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -
+> -			led@0 {
+> -				reg = <0>;
+> -				label = "bpi-r2:isink:green";
+> -				default-state = "off";
+> -			};
+> -
+> -			led@1 {
+> -				reg = <1>;
+> -				label = "bpi-r2:isink:red";
+> -				default-state = "off";
+> -			};
+> -
+> -			led@2 {
+> -				reg = <2>;
+> -				label = "bpi-r2:isink:blue";
+> -				default-state = "off";
+> -			};
+> -		};
+> -	};
+> -};
+> -
+>  &spi0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&spi0_pins_a>;
+> 
