@@ -1,63 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754406AbeCRRwM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 13:52:12 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36635 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754153AbeCRRwK (ORCPT
+        id S1754316AbeCRSFV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 14:05:21 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41114 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754121AbeCRSFS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 13:52:10 -0400
-X-Google-Smtp-Source: AG47ELsWYms3/queYBqjMVGhPMmLjtfQz+S9bgvGD92W6mwF3WNCvRvkYxrZN6MJRk+bPx4Iv1cYTw==
-Date: Sun, 18 Mar 2018 23:21:23 +0530
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: dwmw2@infradead.org
-Cc: Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: Replace typedef with struct
-Message-ID: <20180318175122.GA15004@seema-Inspiron-15-3567>
+        Sun, 18 Mar 2018 14:05:18 -0400
+Date: Sun, 18 Mar 2018 18:05:14 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        arnd@arndb.de, linux-arch@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips@linux-mips.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        x86@kernel.org
+Subject: Re: [RFC PATCH 3/6] fs: provide generic compat_sys_p{read,write}64()
+ implementations
+Message-ID: <20180318180514.GT30522@ZenIV.linux.org.uk>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-4-linux@dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180318161056.5377-4-linux@dominikbrodowski.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using typedef for a structure type is not suggested in Linux kernel
-coding style guidelines. Hence, occurrence of typedefs has been
-removed.
+On Sun, Mar 18, 2018 at 05:10:53PM +0100, Dominik Brodowski wrote:
 
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
----
- drivers/mtd/ssfdc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> +#ifdef __ARCH_WANT_COMPAT_SYS_PREADWRITE64
+> +#if defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +	defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE6(pread64, unsigned int, fd, char __user *, ubuf,
+> +		       u32, count, u32, padding, u32, poslo, u32, poshi)
+> +#elif defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +	!defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE6(pread64, unsigned int, fd, char __user *, ubuf,
+> +		       u32, count, u32, padding, u32, poshi, u32, poslo)
+> +#elif !defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +	defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE5(pread64, unsigned int, fd, char __user *, ubuf,
+> +		       u32, count, u32, poslo, u32, poshi)
+> +#else /* no padding, big endian */
+> +COMPAT_SYSCALL_DEFINE5(pread64, unsigned int, fd, char __user *, ubuf,
+> +		       u32, count, u32, poshi, u32, poslo)
+> +#endif
+> +{
+> +#ifdef CONFIG_S390
+> +	if ((compat_ssize_t) count < 0)
+> +		return -EINVAL;
+> +#endif /* CONFIG_S390 */
+> +	return do_pread64(fd, ubuf, count,
+> +			  ((loff_t) (unsigned long) (poshi) << 32) |
+> +				(unsigned long) (poslo));
+> +}
 
-diff --git a/drivers/mtd/ssfdc.c b/drivers/mtd/ssfdc.c
-index 95f0bf9..8bae672 100644
---- a/drivers/mtd/ssfdc.c
-+++ b/drivers/mtd/ssfdc.c
-@@ -54,15 +54,15 @@ SumSector	2,000	4,000	8,000	16,000	32,000	64,000	128,000	256,000
- SectorSize	512	512	512	512	512	512	512	512
- **/
- 
--typedef struct {
-+struct chs_entry {
- 	unsigned long size;
- 	unsigned short cyl;
- 	unsigned char head;
- 	unsigned char sec;
--} chs_entry_t;
-+};
- 
- /* Must be ordered by size */
--static const chs_entry_t chs_table[] = {
-+static const struct chs_entry chs_table[] = {
- 	{ MiB(  1), 125,  4,  4 },
- 	{ MiB(  2), 125,  4,  8 },
- 	{ MiB(  4), 250,  4,  8 },
--- 
-2.7.4
+Egads...  You have 4 ifdefs before you even get to the body.  And good luck
+trying to actually keep track of that mess.
+
+They clearly go in 2 pairs, right?  One parameter is "do we have padding"
+(== does ABI prohibit passing 64bit value in 4th and 5th words), another
+is the order in which the halves of 64bit are passed.  On l-e you have
+bits 0..31 in the first one and bits 32..63 in the second; on b-e it's the
+other way round.
+
+Only the logics for putting them together into a 64bit value cares which
+half is which; insisting on the names of form <something>{hi,lo} gives
+you arseloads of similar variants in ifdefs, all for the sake of not
+having conditional code in the body.  Or, actually, in the inlined
+helper for building that 64bit out of two halves...
