@@ -1,77 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754501AbeCRMwL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 08:52:11 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40695 "EHLO
+        id S1754543AbeCRMwZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 08:52:25 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44756 "EHLO
         mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754210AbeCRMwC (ORCPT
+        with ESMTP id S1754506AbeCRMwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 08:52:02 -0400
-X-Google-Smtp-Source: AG47ELsH8O/Atyl5ZlkssmjIHu//Ijc/FONc9SqXuNhXEwgBiX/KbLCksIzHswpcS961bBSGzWw5CA==
-Date: Sun, 18 Mar 2018 07:51:59 -0500
+        Sun, 18 Mar 2018 08:52:15 -0400
+X-Google-Smtp-Source: AG47ELv4t6x6tv2EqxTOUGGrWCY9z17WJeqM8Fp8fwGFrBoNUqJKqwluYT+jgL+zAnegxlL+b/6uLg==
+Date: Sun, 18 Mar 2018 07:52:12 -0500
 From: Rob Herring <robh@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>, Lina Iyer <lina.iyer@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 11/25] of: base: Add of_get_cpu_state_node() to get
- idle states for a CPU node
-Message-ID: <20180318023811.izvvsjqzb3awqwpy@rob-hp-laptop>
-References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
- <1521046715-30683-12-git-send-email-ulf.hansson@linaro.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] drm/sun4i: Add compatible strings for A80 TCONs
+Message-ID: <20180318030014.4rkxe4huxxhslj3v@rob-hp-laptop>
+References: <20180315114136.24747-1-wens@csie.org>
+ <20180315114136.24747-2-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521046715-30683-12-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <20180315114136.24747-2-wens@csie.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 05:58:21PM +0100, Ulf Hansson wrote:
-> The CPU's idle state nodes are currently parsed at the common cpuidle DT
-> library, but also when initializing back-end data for the arch specific CPU
-> operations, as in the PSCI driver case.
+On Thu, Mar 15, 2018 at 07:41:29PM +0800, Chen-Yu Tsai wrote:
+> The A80 has 2 or 3 TCONs. The documentation and vendor kernel are very
+> vague about the third TCON, to the point that it might not exist.
 > 
-> To avoid open-coding, let's introduce of_get_cpu_state_node(), which takes
-> the device node for the CPU and the index to the requested idle state node,
-> as in-parameters. In case a corresponding idle state node is found, it
-> returns the node with the refcount incremented for it, else it returns
-> NULL.
+> In the documentation, the first TCON is missing channel 1, and the
+> second is missing channel 0. However the vendor kernel seems to be
+> able to use them regardless. Here we model them like the old TCONs.
 > 
-> Moreover, for ARM, there are two generic methods, to describe the CPU's
-> idle states, either via the flattened description through the
-> "cpu-idle-states" binding [1] or via the hierarchical layout, using the
-> "power-domains" and the "domain-idle-states" bindings [2]. Hence, let's
-> take both options into account.
+> An oddity is that TCON0 requires the reset control for the eDP block
+> to be deasserted, for any register access to stick.
 > 
-> [1]
-> Documentation/devicetree/bindings/arm/idle-states.txt
-> [2]
-> Documentation/devicetree/bindings/arm/psci.txt
+> This patch adds compatible strings for TCON0 and TCON1, with TCON0
+> requiring an extra "edp" reset control.
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  8 ++++++++
->  2 files changed, 43 insertions(+)
-
-I'd prefer not to add this here, but don't have a better suggestion. If 
-more cpu related functions are added, I'd like to move them to a 
-separate file in drivers/of/, but that can wait.
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
