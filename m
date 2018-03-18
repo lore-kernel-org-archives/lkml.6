@@ -1,57 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754714AbeCRQHj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 12:07:39 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:57104 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754575AbeCRQHg (ORCPT
+        id S1754675AbeCRQMD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 12:12:03 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:46512 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754132AbeCRQL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 12:07:36 -0400
-Date: Sun, 18 Mar 2018 12:07:34 -0400 (EDT)
-Message-Id: <20180318.120734.1936832399192758981.davem@davemloft.net>
-To: helgaas@kernel.org
-Cc: khalid.aziz@oracle.com, sparclinux@vger.kernel.org,
-        linux-pci@vger.kernel.org, yinghai@kernel.org,
-        linux-kernel@vger.kernel.org, david.ahern@oracle.com, linux@iam.tj
-Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
-        <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Sun, 18 Mar 2018 12:11:59 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        arnd@arndb.de, viro@ZenIV.linux.org.uk
+Cc: linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
+Subject: [RFC PATCH 6/6] x86: remove compat_sys_x86_waitpid()
+Date: Sun, 18 Mar 2018 17:10:56 +0100
+Message-Id: <20180318161056.5377-7-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180318161056.5377-1-linux@dominikbrodowski.net>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Tue, 20 Feb 2018 17:39:35 -0600
+compat_sys_x86_waitpid() is not needed, as it takes the same parameters
+(int, *int, int) as the native syscall.
 
-> Both these patches are on my pci/sparc branch and appeared in the
-> Feb 19 linux-next tree.
-> 
-> Any testing and feedback (especially on the second patch, which should
-> change /proc/iomem) would be great.
-> 
-> They're headed for v4.17 unless I hear about issues.
-> 
-> It would be useful to hear about what's still broken so I can try to
-> pull in the other patches.
+Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: x86@kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
+ arch/x86/ia32/sys_ia32.c               | 6 ------
+ arch/x86/include/asm/sys_ia32.h        | 3 ---
+ 3 files changed, 1 insertion(+), 10 deletions(-)
 
-I don't understand why you put the SYSTEM and Video ROM at addresses
-relative to absolute zero.  The result of this is that it might
-overlap real physical memory.
-
-If a VGA card is present, it's ROM will respond to those addresses
-relative to the PCI controller's MEM space area.
-
-Their legacy resources are "hardwired", but those hardwired addresses
-need to be relative to the PCI host controller's MEM areas in order
-for them to be accessible.
-
-I could understand removing the System ROM resource altogether, that
-makes a lot of sense to me.
-
-Thanks.
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 17b8dc7130f5..6eddf8ba8348 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -13,7 +13,7 @@
+ 4	i386	write			sys_write
+ 5	i386	open			sys_open			compat_sys_open
+ 6	i386	close			sys_close
+-7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
++7	i386	waitpid			sys_waitpid
+ 8	i386	creat			sys_creat
+ 9	i386	link			sys_link
+ 10	i386	unlink			sys_unlink
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index 31d50d11239b..4710a0cc969b 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -162,12 +162,6 @@ COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
+ 			       a.offset>>PAGE_SHIFT);
+ }
+ 
+-COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
+-		       stat_addr, int, options)
+-{
+-	return compat_sys_wait4(pid, stat_addr, options, NULL);
+-}
+-
+ /*
+  * Some system calls that need sign extended arguments. This could be
+  * done by a generic wrapper.
+diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
+index 6a78bee5a314..b407c00d62fa 100644
+--- a/arch/x86/include/asm/sys_ia32.h
++++ b/arch/x86/include/asm/sys_ia32.h
+@@ -33,9 +33,6 @@ asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
+ struct mmap_arg_struct32;
+ asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
+ 
+-asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
+-				       int);
+-
+ asmlinkage long compat_sys_x86_fadvise64_64(int, __u32, __u32, __u32, __u32,
+ 					    int);
+ 
+-- 
+2.16.2
