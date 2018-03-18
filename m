@@ -1,44 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754572AbeCRMwm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 08:52:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34768 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754332AbeCRMwe (ORCPT
+        id S1754637AbeCRMzY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 08:55:24 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39155 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754315AbeCRMwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 08:52:34 -0400
-X-Google-Smtp-Source: AG47ELsEXYwIMqKHoRzhLEHo6gI61biV2R2gdxvhV2R0DomzVFQxVD2HDAV+e4IBqftN8J4M5NgE3g==
-Date: Sun, 18 Mar 2018 07:52:31 -0500
+        Sun, 18 Mar 2018 08:52:40 -0400
+X-Google-Smtp-Source: AG47ELuxH6N5ZSBWv4CTNpfYnd0RTTDJrXPMgrdmLv4dPrGAHrdcCxfLamQUQZ/xA6Zl6+cgqWQhBQ==
+Date: Sun, 18 Mar 2018 07:52:37 -0500
 From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alexandre.belloni@bootlin.com, thomas.petazzoni@bootlin.com,
-        michael@amarulasolutions.com
-Subject: Re: [PATCH v3 2/2] ASoC: Add bindings for PCM1789
-Message-ID: <20180318031809.doznckhzraitowcz@rob-hp-laptop>
-References: <20180315161825.5524-1-mylene.josserand@bootlin.com>
- <20180315161825.5524-3-mylene.josserand@bootlin.com>
+To: Harald Geyer <harald@ccbib.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
+Subject: Re: [PATCHv2 2/5] arm64: dts: allwinner: a64: Add watchdog
+Message-ID: <20180318031909.u5s4ttzxmta7e4sa@rob-hp-laptop>
+References: <20180315162510.11669-1-harald@ccbib.org>
+ <20180315162510.11669-3-harald@ccbib.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180315161825.5524-3-mylene.josserand@bootlin.com>
+In-Reply-To: <20180315162510.11669-3-harald@ccbib.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 05:18:25PM +0100, Mylène Josserand wrote:
-> Add a device-tree binding for Texas Instrument's PCM1789 codec.
-> For the moment, only I2C bus is supported but SPI could be added
-> in future.
+On Thu, Mar 15, 2018 at 04:25:07PM +0000, Harald Geyer wrote:
+> Add a watchdog node for the A64, automatically enabled on all boards.
+> Since the device is compatible with an existing driver, we only reserve
+> a new compatible string to be used together with the fall back.
+> Tested on Olimex Teres-I.
 > 
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> Signed-off-by: Harald Geyer <harald@ccbib.org>
 > ---
->  .../devicetree/bindings/sound/pcm1789.txt          | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/pcm1789.txt
+> changes since v1:
+>  * add and use a specific compatible string
+> 
+>  Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt | 6 ++++--
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi            | 7 +++++++
+>  2 files changed, 11 insertions(+), 2 deletions(-)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
