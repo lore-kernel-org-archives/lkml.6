@@ -1,86 +1,66 @@
-Return-Path: <anholt@anholt.net>
-X-Google-Smtp-Source: AG47ELu59iutxlKinnZKBoam6mnw+oDCb+issnUCbfhBhRZJ2XdSg1/poHtcmK5l/Y5Npk/5/AH1
-ARC-Seal: i=1; a=rsa-sha256; t=1520621061; cv=none;
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521377305; cv=none;
         d=google.com; s=arc-20160816;
-        b=0bpAlE4McYosA9C88b7Xc0p7UucM9pA0ZCshos1VVBEJIVWSar37THREHW5B5JLc54
-         EjYAjGo9VM/n+817zfIWWib5cYpbySOrfC+x/IckRiHT1ifV63GJ2ahG826mekaFojBJ
-         soiDcmIkx+t4T0kWNr3LRxP5tEOuM3aveACdhJIrz0u6MIA1H1Q0XEdkUv8G8Yw3gDa+
-         zS74JN5EHSjRiw7LlKBHRig9gvG0x9VqueXB8ZFNY4dMkKHTh9NG3WCFlnSdjPwMwShL
-         wqXk4vR1+ovCxqpnWMHkoYPdSpofAkNY4XCk5tprYAEb5ojMC09X2JXe4Lv9gNEF6uPa
-         xGgQ==
+        b=Ogptn647/FGYHrPFdS5exuH7ZqsxoR61qNd2ZIaH/JS0Z+CjjAJiF2uW+Nr3g3UHGb
+         Oxf8meSCQaqwUt3eyJy26SMkkuiMO/4viLe5viMlhppna4GRUqUlhupOTOtjlZzHEsoC
+         tPUiSsp3UgoVoETfdTdAWDPf+ZZXRP4K3kXzLagJBABPZzf8Za12TXHN3kUrC3V9Q5SM
+         UqfykvvZQzikjWBASEM6e24FLVfSnvMkczo148k714aUIaazF8FCKN806yO7emKdVa/z
+         KYpQZ2qOPvaORlTIYN/KFa82gyxXuR5tsV7R6Ysij22ssl4IOaSP3UikPDetMSEtLzBU
+         QAeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=fYTyph/s5nZn7R91iE1w6WddVO6hIkASk43I39xM3xg=;
-        b=DZ6H5LojX8TCwIbrZSpeQtuDR5FNrY3jRyS6RQMSIX1ZC51WbWgD1dJRmdXL3zIjsK
-         8IGf4oZ08PMkRA0WyTkjHm+WNBQzCXItkeMqyFfY4o2O4U2dtz0uCA2SURLM9J00zi3P
-         HwJcF8c6mCgv1Kq+/k0XgI/FouZofkYVuKMnggtAmTpPtx7gh1LKG2huWthPLCcg6y+t
-         fSmNtC4jb6nBV7UHhpK+Nf1VrQK+jdztv+JOR24xT0IpUpuW8EPFRaOSXx0BstPAvmEZ
-         d2sr4NDKNGd3Lwi0wYySr6Jtv2hcDfBVLaMBkxIzRXf8JHPhwqCNt36SYOj2AJm0Q2Sh
-         v2Lw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=6tWq4rbuwTjgIDe+NDVSmZPZhaCxICbPyWue8MxQS58=;
+        b=idNqjYmyIqvv51+WKtg5MO36F24Q5+1fwHNWHpRJMG85fkBfWUvIBKg6yoMx8P13vV
+         CeYAYkmc9a6sK6qKmS4BciEKgxbKtY79jNrso/Au3ZdSfw4K+qBgMzxtQObDXkho8ioh
+         CR+lG1iPle8z+TTZ/5+u7T/ehzw46yxzHCE/+RNR7+xYwv7EOYf42ebHGvl+Ku1W049U
+         Qle+wyxLQ9imRZM4P8kHxNtniVMhVIR/NUMoLX5KvHmRBjL5SVa93F9kHM77lfLVVahF
+         FwD1yC6vRyC2SFDiGuxanQejANSyip/UvuapDs8Ay3zbx4yrvvw2tbOGkKcirmR3UVu2
+         Hd/g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of anholt@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=anholt@anholt.net
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of anholt@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=anholt@anholt.net
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AG47ELvvUurw+wZe7XPpxDNh9W8Nn6mwLVJ64J4dsvIImUjmcuHj8ZU3nKx/ek1Pfcjsu9qZipMz+g==
+Date: Sun, 18 Mar 2018 07:48:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Phil Elwell <phil@raspberrypi.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Phil Elwell <phil@raspberrypi.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Stefan Wahren <stefan.wahren@i2se.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 3/6] dt-bindings: soc: Add a binding for the Broadcom VCHIQ services. (v3)
-Date: Fri,  9 Mar 2018 10:44:14 -0800
-Message-Id: <20180309184417.23368-3-eric@anholt.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180309184417.23368-1-eric@anholt.net>
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 3/6] dt-bindings: soc: Add a binding for the Broadcom
+ VCHIQ services. (v3)
+Message-ID: <20180318124823.jfvoy3xraogsxpdi@rob-hp-laptop>
 References: <20180309184417.23368-1-eric@anholt.net>
+ <20180309184417.23368-3-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309184417.23368-3-eric@anholt.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594486750832006220?=
-X-GMAIL-MSGID: =?utf-8?q?1594486750832006220?=
+X-GMAIL-MSGID: =?utf-8?q?1595279729720921135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The VCHIQ communication channel can be provided by BCM283x and Capri
-SoCs, to communicate with the VPU-side OS services.
+On Fri, Mar 09, 2018 at 10:44:14AM -0800, Eric Anholt wrote:
+> The VCHIQ communication channel can be provided by BCM283x and Capri
+> SoCs, to communicate with the VPU-side OS services.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+> 
+> v2: VCHI->VCHIQ, dropped firmware property, added cache-line-size
+> v3: Dropped cache-line-size, s/vchi@/mailbox@/
+> 
+>  .../devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt   | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
-
-v2: VCHI->VCHIQ, dropped firmware property, added cache-line-size
-v3: Dropped cache-line-size, s/vchi@/mailbox@/
-
- .../devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt   | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-
-diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-new file mode 100644
-index 000000000000..8dd7b3a7de65
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-@@ -0,0 +1,16 @@
-+Broadcom VCHIQ firmware services
-+
-+Required properties:
-+
-+- compatible:	Should be "brcm,bcm2835-vchiq"
-+- reg:		Physical base address and length of the doorbell register pair
-+- interrupts:	The interrupt number
-+		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-+
-+Example:
-+
-+mailbox@7e00b840 {
-+	compatible = "brcm,bcm2835-vchiq";
-+	reg = <0x7e00b840 0xf>;
-+	interrupts = <0 2>;
-+};
--- 
-2.16.2
+Reviewed-by: Rob Herring <robh@kernel.org>
