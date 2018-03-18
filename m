@@ -1,80 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754402AbeCRRXQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 13:23:16 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43023 "EHLO
+        id S1754242AbeCRRk0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 13:40:26 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:44713 "EHLO
         mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeCRRWs (ORCPT
+        with ESMTP id S1751750AbeCRRkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 13:22:48 -0400
-X-Google-Smtp-Source: AG47ELurx5MYc7llgaa1jQVbOZQWClrrbivE0z6+FqcQK2CsIYSi133tVOLmWwszfcgcPpe2ecEGXA==
-From: Matt Porter <mporter@konsulko.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] ASoC: add tda7419 audio processor binding
-Date: Sun, 18 Mar 2018 13:22:37 -0400
-Message-Id: <20180318172238.9795-2-mporter@konsulko.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180318172238.9795-1-mporter@konsulko.com>
-References: <20180318172238.9795-1-mporter@konsulko.com>
+        Sun, 18 Mar 2018 13:40:23 -0400
+X-Google-Smtp-Source: AG47ELtp+ZtSjno2QRZURAtvB+Zb3P48PBlPsOnXQ9Hb40SVl30znRkU/2wGbuA6eiG6EaAT6Ioy9IQ71Bb70hko1K0=
+MIME-Version: 1.0
+In-Reply-To: <20180318161056.5377-4-linux@dominikbrodowski.net>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net> <20180318161056.5377-4-linux@dominikbrodowski.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 18 Mar 2018 10:40:22 -0700
+X-Google-Sender-Auth: cABkl9pHVqZjAOxfCbjTK6dSsQQ
+Message-ID: <CA+55aFy3THY_nw7NNeUZYoGcszSDkGW-DFK0K063uFMUEO9w=g@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] fs: provide generic compat_sys_p{read,write}64() implementations
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DeviceTree binding for the tda7419 audio processor.
+Honestly, I think the patches like this are disgusting:
 
-Signed-off-by: Matt Porter <mporter@konsulko.com>
----
- .../devicetree/bindings/sound/tda7419.txt          | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/tda7419.txt
+On Sun, Mar 18, 2018 at 9:10 AM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> +#ifdef __ARCH_WANT_COMPAT_SYS_PREADWRITE64
+> +#if defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +       defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE6(pread64, unsigned int, fd, char __user *, ubuf,
+> +                      u32, count, u32, padding, u32, poslo, u32, poshi)
+> +#elif defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +       !defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE6(pread64, unsigned int, fd, char __user *, ubuf,
+> +                      u32, count, u32, padding, u32, poshi, u32, poslo)
+> +#elif !defined(__ARCH_WANT_COMPAT_SYS_WITH_PADDING) && \
+> +       defined(__ARCH_WANT_LE_COMPAT_SYS)
+> +COMPAT_SYSCALL_DEFINE5(pread64, unsigned int, fd, char __user *, ubuf,
+> +                      u32, count, u32, poslo, u32, poshi)
+> +#else /* no padding, big endian */
+> +COMPAT_SYSCALL_DEFINE5(pread64, unsigned int, fd, char __user *, ubuf,
+> +                      u32, count, u32, poshi, u32, poslo)
+> +#endif
+> +{
+> +#ifdef CONFIG_S390
+> +       if ((compat_ssize_t) count < 0)
+> +               return -EINVAL;
+> +#endif /* CONFIG_S390 */
 
-diff --git a/Documentation/devicetree/bindings/sound/tda7419.txt b/Documentation/devicetree/bindings/sound/tda7419.txt
-new file mode 100644
-index 000000000000..6b85ec38dd56
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/tda7419.txt
-@@ -0,0 +1,38 @@
-+TDA7419 audio processor
-+
-+This device supports I2C only.
-+
-+Required properties:
-+
-+- compatible : "st,tda7419"
-+- reg : the I2C address of the device.
-+- vdd-supply : a regulator spec for the common power supply (8-10V)
-+
-+Optional properties:
-+
-+- st,mute-gpios : a GPIO spec for the MUTE pin.
-+
-+Pins on the device (for linking into audio routes):
-+
-+  * SE3L
-+  * SE3R
-+  * SE2L
-+  * SE2R
-+  * SE1L
-+  * SE1R
-+  * DIFFL
-+  * DIFFR
-+  * MIX
-+  * OUTLF
-+  * OUTRF
-+  * OUTLR
-+  * OUTRR
-+  * OUTSW
-+
-+Example:
-+
-+ap: tda7419@44 {
-+	compatible = "st,tda7419";
-+	reg = <0x44>;
-+	vdd-supply = <&vdd_9v0_reg>;
-+};
--- 
-2.11.0
+and we should just keep code like this entirely architecture-dependent.
+
+It doesn't save all that many lines:
+
+ 19 files changed, 97 insertions(+), 106 deletions(-)
+
+and the lines it adds are an unreadable mess compared to the lines it removes.
+
+So please keep the high/low/padding stuff in the arch wrapper, and
+just make them use "do_pwrite64()" and friends instead (or
+"kern_pwrite64()", or whatever we ended up using as the kernel naming
+for in-kernel system call wrappers).
+
+                Linus
