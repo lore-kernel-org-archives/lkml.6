@@ -1,113 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754151AbeCRPYM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 11:24:12 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.228]:16978 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754127AbeCRPYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 11:24:05 -0400
-Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: bcm2835-gpio: Add generic
- pinctrl support
-To: Rob Herring <robh@kernel.org>
-Cc: stefan.wahren@i2se.com, eric@anholt.net, linus.walleij@linaro.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <483687035.384686.1520596004410@email.1und1.de>
- <1520615640-9153-1-git-send-email-matheus@castello.eng.br>
- <1520615640-9153-2-git-send-email-matheus@castello.eng.br>
- <20180318124820.xea5etlb3wu7wnpw@rob-hp-laptop>
-From: Matheus Castello <matheus@castello.eng.br>
-Message-ID: <f500b25c-eea0-9f01-7d7b-5a9dd90c50fa@castello.eng.br>
-Date: Sun, 18 Mar 2018 11:23:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754048AbeCRPah (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 11:30:37 -0400
+Received: from cmta20.telus.net ([209.171.16.93]:34902 "EHLO cmta20.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751372AbeCRPae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 11:30:34 -0400
+X-Authority-Analysis: v=2.2 cv=Pr98V0E3 c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
+ a=1_jNL22JWkIHjat0TdkA:9 a=CjuIK1q_8ugA:10 a=svzTaB3SJmTkU8mK-ULk:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>
+Cc: "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Rik van Riel'" <riel@surriel.com>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <001a01d3be0a$ad3a0ed0$07ae2c70$@net> xW2zeQ0g8FfdwxW30ehIAY
+In-Reply-To: xW2zeQ0g8FfdwxW30ehIAY
+Subject: RE: [RFT][PATCH v5 0/7] sched/cpuidle: Idle loop rework
+Date: Sun, 18 Mar 2018 08:30:29 -0700
+Message-ID: <000801d3bece$0e4b9090$2ae2b1b0$@net>
 MIME-Version: 1.0
-In-Reply-To: <20180318124820.xea5etlb3wu7wnpw@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1exaAE-000GDJ-Dr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.11]) [191.189.21.134]:4439
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 6
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdO+qE2gIO3LKbRcSpOEk14a0E1IAAAHb8pw
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfIzWMQUmL1rcBBeI/rgZxvtMBqk7jpBi1ngqbHwF0cwMLPfJ5jEzLY3R5MJF30S1MAtgf9rkS1MsQ5cjdj0s5mkdAf0XkcUfthjOF94RIf9cTnWHHEuh
+ lqXbYza6Ejb8r/v9ms8J8bFTktJ+iHpk7jm/5OwyOztMGNJhWI0uaxgEELAamu4IjPxd+VZnKeeV+Jn4Gu7nLh8GLVWxjCVq2Bg/jAb48fbXU30iaMUbQvWl
+ oHol9nvABHCZ17mf3DzfqJVPCPSj/wiFde0uEy8AJhTUetoQyU+fX64V3JI9c1sWOG1JgOTSY7qFrzcnfL6b/hDFu9NqFGxcuYxLvR7AGu36eivzj1p/xmNg
+ gwVXCWCQtsKHAq+hH9QNtmNC3j3TZbf8EA+x6w5vaKZqDtpbo/5KFnT2BweAqCFfmP6IK9MCdbpyIrfM7k2UuYi5OGilvYfDlKooRmWKXiOwiSVpq3pq4xR7
+ WY0WJslm64VRBKVzFMZ10z0eWSTTkaWlxKD0/JHQAJgZzWNLk2kQDcA+M6c=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On 2018.03.18 04:01 Rafael J. Wysocki wrote:
 
-sorry I used allwinner,sunxi-pinctrl.txt from Maxime Ripard as a base, I 
-used the same words, I thought it would be correct.
+> Below is a drop-in v6 replacement for patch [4/7].
+>
+> With this new patch applied instead of the [4/7] the behavior should be much
+> more in line with the v4 behavior, so please try it if you can and let me know
+> if that really is the case on your systems.
 
-I will modify this to:
+Yes, the idle power is back down to V4 levels. (I did not do a new graph).
 
-The BCM2835 pin configuration and multiplexing supports the generic 
-bindings. For details on each properties, you can refer to
-./pinctrl-bindings.txt.
+Some other data from this week (7 patch set + poll fix verses kernel 4.16-rc5):
 
-If it's okay for you let me know, so I can send the v5 patch.
+pipe-test: The not cross core test is the most dramatic. Using CPU's 3 and 7,
+or core 3, uses 6% less power and 18% performance improvement.
 
-Best Regards
-Matheus Castello
+Graphs:
+http://fast.smythies.com/pipe-test-one-core-power.png
+http://fast.smythies.com/pipe-test-one-core-times.png
 
+A couple of Phoronix tests (I didn't get very far yet):
+himeno: 11% performance improvement; 14% less power.
+compress-lzma: small performance improvement; small power improvement.
+mafft: performance similar; small power improvement.
 
-On 03/18/2018 08:48 AM, Rob Herring wrote:
-> On Fri, Mar 09, 2018 at 01:13:58PM -0400, Matheus Castello wrote:
->> Added generic pin configuration and multiplexing support,
->> and shoud be preferred than brcm legacy one.
->>
->> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
->> ---
->>   .../devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
->> index 2569866..58b4720 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
->> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
->> @@ -36,6 +36,25 @@ listed. In other words, a subnode that lists only a mux function implies no
->>   information about any pull configuration. Similarly, a subnode that lists only
->>   a pul parameter implies no information about the mux function.
->>   
->> +This driver supports the generic pin multiplexing and configuration
-> 
-> Bindings describe h/w, not drivers.
-> 
->> +bindings. For details on each properties, you can refer to
->> +./pinctrl-bindings.txt.
->> +
->> +Required sub-node properties:
->> +  - pins
->> +  - function
->> +
->> +Optional sub-node properties:
->> +  - bias-disable
->> +  - bias-pull-up
->> +  - bias-pull-down
->> +  - output-high
->> +  - output-low
->> +
->> +Legacy pin configuration and multiplexing binding:
->> +*** (Its use is deprecated, use generic multiplexing and configuration
->> +bindings instead)
->> +
->>   Required subnode-properties:
->>   - brcm,pins: An array of cells. Each cell contains the ID of a pin. Valid IDs
->>     are the integer GPIO IDs; 0==GPIO0, 1==GPIO1, ... 53==GPIO53.
->> -- 
->> 2.7.4
->>
+... Doug
