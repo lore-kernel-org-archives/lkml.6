@@ -1,9 +1,9 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1982828-1522231247-2-11550149047107428397
+X-Cyrus-Session-Id: sloti22d1t05-3741325-1521368210-2-7665059097178401299
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
@@ -13,60 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522231246; b=IKSucLOoRTY40WivIPmUEFxpJliJWrZM0OAOULvnqcEuqVN
-    cG4IIk7yU9GeAAWWWTXqxOpiwAg9nqKzUArYqIRqgKjHhad70QpV7is5kRdurYYE
-    dFFIvCyxnP/p28i06/b/2SxfTQTapKEnprRNJMwKGcs73S+l0c1KDWjPwygksZHk
-    SPT9JtxGcbraJzaTvDpyAav1maDJ574QovGNpu7OuwQU6fqBGfa/xYRAo2eQxjrg
-    qDoTQN0fOysjoExH5VXzaBtm8dXjP9crpTglnhhV5ZqO1I46j+HmOK1p/HTshdLQ
-    hfNQu6dv6c6lmlIlrJ/PS61plbLwpMerefE4okQ==
+    t=1521368210; b=mYjShgbvgQWCAMftPwwmZtC4Ly8INljLmbvy7dxJnpsSqQN
+    Vtp/jfJ/PC3g+oFZ+26bbbkUekkJKWWY+0kbAWDh24Il41bocD+RbMG5LhUeQCws
+    ZHRRr4JKW3aGWjhkyHaegddGos7ncSkrsovEyomJXOyXxH8TZlnfNM+EF0cLLr/F
+    TuAGK4rOUddDCbqaZ6NbGAJ+pe1PcK0YW7aHfgc60IIk1mhNyuNic5dsrqPjPPK0
+    Kf1iX8Z+KPTpKomBVKx/e11zAnxoPvGjrSeAzEJQ64lv/XyVQdGKUe2LI/vc8bib
+    mcvAsxNG0SGchaRU1Hpo9S9/rIPEq0ltCtlQU2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1522231246; bh=QgIojIgHehESJeSI4IbBKp0roa
-    Dbxzn9vuhxhReAkyY=; b=eviqtA9J3xpvyVA3JPJKGTJij7Hu2PB7Mm5JiM1nTQ
-    9PlvrvUC72SV7orNxk5sD74fKD19lxhmNglLUp2+BngtwC9GoEfmhK49eSFpbR/D
-    D00TtgdItvmtrX2f5fz8hjaOAt4uyj4KtvRFZihLLIJjVicNCo9gRPZWyAGUPJ2H
-    imqO0Z6FEjYnladWkkzUm10PUYaWUbMvlnC1Xqk4++CL0ywY2kpEYyYK8Od8wH2B
-    8gCZ/wcFgcSxycaK+B/ppQ52wS/ruVAdl47JD49N1AErNauNmLgiEXP9w9oXHN8b
-    HmS3WGSWQsE0YsijnyEDw50mqLPNFN33FeNIxfvIWfZw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521368210; bh=6YgjKTcYxp6/yFNa3ouU+H5T03
+    ybi0G1k4NY1HXEcb8=; b=Okf12vCW15RrR75baMtw9HRQRm7HFUeGFFikgd4+ve
+    FSDHJ+bVBpjkDva1VZn2awcFI/mXonD8DYUuWQBVhOCgjnvIRFLsnkP+VJ8tr2b0
+    NmKkAWtBYaVfuVbY9Fh82PxPfUbUYz2fFJZorZjSVYNVtIPzAZPg66cXyMWyz/5l
+    l5bjJQXrnuw31hiTurARkf77ehyhd9kDAKjCvwr9f6y/XoAbs6WQz4sJKZovYr5q
+    kIJr9kkVUcYXzEQPyLHsrKDDgnPyvjVVznQGZ7OGL129kaeelc16Et25PLC7r5MW
+    IsqzaAwaiYQ3lUOFxzLNJCDDLfvwVaIe5hyKVhao02OA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL6d6RNi7uiyYkVWUrSKH4pCKlsqlU9euBXFYBQlrMDUvI6cSwP9CVR5JcuAnq81B2N9qw43dR2IIwZNG2xIw8upGCwRRjp9cxjNNxhrVjNGhTO9X9fM
-    K5+6kr0JSTM4hmKF1ijagk+w4d3ORTkoZMRcJoBbKcOkFWNlpApCPS5MhB4s8biQVQDrzXUEGeUsmFdVuOtbjaAr39dwfkOavWwI277fKr/wtcRYL2VAbFYo
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=sVTJds5vj0MA:10
-    a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8 a=pw4HcN0x0l-yxCJX3qoA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeC1KAo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 06:00:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52244 "EHLO
+        id S1752015AbeCRKQs (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 18 Mar 2018 06:16:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36370 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752342AbeC1KAn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 06:00:43 -0400
-Date: Wed, 28 Mar 2018 12:00:39 +0200
+        with ESMTP id S1751635AbeCRKQs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 18 Mar 2018 06:16:48 -0400
+Date: Sun, 18 Mar 2018 11:16:47 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Nathan Chancellor <natechancellor@gmail.com>
 Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
@@ -75,7 +64,7 @@ Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 4.4 00/63] 4.4.122-stable review
-Message-ID: <20180328100039.GB29144@kroah.com>
+Message-ID: <20180318101647.GF13276@kroah.com>
 References: <20180316152259.964532775@linuxfoundation.org>
  <20180316180531.GA18177@flashbox>
 MIME-Version: 1.0
@@ -115,6 +104,7 @@ On Fri, Mar 16, 2018 at 11:05:31AM -0700, Nathan Chancellor wrote:
 > 
 > No initial issues noticed in general usage or dmesg.
 
-Great, thanks for testing and letting me know.
+Great, thanks for testing and letting me know, and sorry about your
+Pixel 2 :(
 
 greg k-h
