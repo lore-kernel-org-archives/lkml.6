@@ -1,326 +1,122 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AG47ELv6ONweJkTiIkSzLazOwuJv3GfDuhg9pnMPVki4wjH3yXSTMmSS9NXkWkwRAV0MBLXhz3Qa
-ARC-Seal: i=1; a=rsa-sha256; t=1521316468; cv=none;
+Return-Path: <elfring@users.sourceforge.net>
+X-Google-Smtp-Source: AG47ELsjo/z2hh5N9vVAI6DCyrFtYtPW8pFoW024QLS2xZUok6FwO7cP1ZgYay1Zi5zc/3yoOHhv
+ARC-Seal: i=1; a=rsa-sha256; t=1521361203; cv=none;
         d=google.com; s=arc-20160816;
-        b=wT8CAhBeVnrElfF/JeqYyaiwRxE/dUgkN38U+7oNC60gJYKyd9FYqIyUA157AybMb1
-         n8jIjSiqY466PnQ0dknPAmmfFFOy86NWptrlNQX38FkBdNxueUgq1V4Pc8OW+T0yOFCZ
-         3FqJrCaJUx5gjdzGVRsaoxf+E4bdrgtCSJ3cWMNDByCCy4jebpkLYFA9W+MeJCL4fmzG
-         XgCq/hTMJ6lU8dZFul8vXBx3/IabBQbSbl3QrksuapcRFfbRziSWllMK6xs9/pnCILjJ
-         5RsE4WsRhw2w4mgTEbHGo0/vRMOr+Mz4Oul2GVI64UybERY2IszIWtH9zfFzk2CL6GDm
-         wz1A==
+        b=SyljhVkELvQFaw+661l6dpGjKKHo1IhNXqkHmM+1kpYbbjvwEf6L3Yk4kVm6IrVN1K
+         fx1jfXBHmnnnS4VKQ5MwWaQjCLDcKFbuvPqJP6s5doJnSxYgmInMqVarrLNyOT58DtwA
+         7cpL0P+1jnWxvVdGyWfFIi/hCG+KyExtxN2RccMUorGqYFm+8scuzyBMcR9ySIKeV0GS
+         eVef6oGkOIRYfpzobaA3wnSnhjv4klBDMp5AHqAFK7XKdP+z81aRLupcjpuva9hQK1vL
+         4r83x6yY6a3wQWPS6uj2Npq5o2vod84yMtjL28YSxIhPsp6V3JnweYIU7lPsQl8Kiq8z
+         wfRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=Lpn2dGuM0vux9I3PZVlytpD70K99WK3x+VvgbeBxTGg=;
-        b=EDYlhNnlfjL4aSdboXOtefRXb0W+NKYtm3kqsjeYBhIHDub9HGJx0+GYr1OuyrJAHf
-         QecS0KF376Y6/LHPiJXTyxRC53J/7D5wX4DsOdUeaWTzrlP93bqZXvz0EFSC5KOVpoIp
-         I6/04OuY6xX0DL9+pwE11Au2/zddmU/AJXT+qx8v8OWrp+peNiXlJcu+KqWyf84AiUMc
-         6D4b2wDmOLeTJ9eeJ1BB7kIT7ixRj9Rb4q1mz0Z1UPpnWW6OSPTzxnyqa4VSYUB9Ixl4
-         5uoBA9hcrvnxCvxHA0hXQ3sugZuEX18thSfTz+/BCA+BAzfgXtFTj68V64PrxIOT7Pxo
-         XxiA==
+        bh=07tg9M55K9J6e9drItaOn95EoApNhMEhm/bDTsSJv/Y=;
+        b=DW/owKgK9oQATkLL3ViDMEfhOiG1Qzj6gTL9SDlYGYg+UNFYhYYDwnjtDBA23hS2Zp
+         oIml9Zl8kxNf63WdvoFbQ7Du18beBtjlgwqVODeCd1t4Zsuv5dKnsAfBmQUqMXnmEL6d
+         znJs73fl9ks/VMjuf1hta4WTjQya+ceWpIiKYJ3PKvWNxk/peaPXDN0KiVvWeVDDuHTT
+         lIcU0INIejqUE7cZ/FAy6CzmPTU/vfp7I2VHVEJvG6vAMdJ3m1KHBpIS8WzafvUv9B+i
+         4gWS1s4rQBaHmXdmq9cNL590zkkgAWHQ8nnESOcpBv/y0wTdhR2XCaERSVa9U92yX5LK
+         i3og==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81CF521720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 17 Mar 2018 19:54:22 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter
- Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Pravin Shedge <pravin.shedge4linux@gmail.com>, Quentin Schulz
- <quentin.schulz@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio/gyro/bmg160_core: Improve unlocking of a mutex in
- five functions
-Message-ID: <20180317195422.037a8b57@archlinux>
-In-Reply-To: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
+Subject: Re: iio/gyro/bmg160_core: Improve unlocking of a mutex in five
+ functions
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Pravin Shedge <pravin.shedge4linux@gmail.com>,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 References: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180317195422.037a8b57@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <73f0a187-57d1-c877-ba9f-3b15f6a61640@users.sourceforge.net>
+Date: Sun, 18 Mar 2018 09:19:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180317195422.037a8b57@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:leiycwqSa9zdoq+6LLLuqOv6VQ0y4j0L9yLmUJEQd8S3Stv8A1i
+ VH8zBDjHOKq0vyuTZlGoKYY6xZk5DjipZpfFsBkqC3e6D6loHQzJUp7AYH8wMUBZRyBmYC9
+ VkWjRBqVBCBRiPttz5IwLc+WadE8MbXORacz8y7hIl1gToGGUnoj5v+3afbTU1OARxuay0O
+ 82ZpgtUGwLiIxU3xhlK6g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:/szo6LFP7qI=:bZrL1wRxuYG5jlJAumRP+/
+ pe7kTZxdw/oAMRzawlfV7z8Pfl3ZPrAEh/eSHzizqxVA5CtNV0JIBTJDJQpU9qcdRtzTX19n/
+ rsTyWb/ccQ+PKyo7UOhnq7csvJ5iac4Hi1X4yNbWJzgdWyVkCEpm4/i7lsDq5UkA+KslHZgob
+ iQqdKuLjTD2jucw6hHdRlWNEuVOv9Wx81hoSjaduf7LcVRrJauCtAXfFokyOKEG/iKdpMR/Lo
+ GSoWeF4kIs1j9jL891gGf0q+qT+8AkNLEU/9ePGWXKFA+QwGh+dAoX+dA/baew1xwcEd4i7V+
+ 0PymjooLS11bHA0+pRJkurTqSSPNHvVWoZTSeSprhomu5Sks20M9xQnS06rg5NicCSK7OOUGx
+ BE6ZPm4GeK75NtwO/B8kE/6di1q46c9M8sL7gYzGTcKKEOQV0D3E9LjynnaSSAnceE3223/sk
+ jziC1l6pXMy3ItCQWafxalT3atdND/HiFfVO/lN1HMaKbCiqwjLYXcoZBU9EAH39uM31Dbqvk
+ ahSTB2dWwOSl7w1LteC3aBTfIM9gRse69LL9DQmi/ydkg80KQmf5WEr+puuChv04YDseRwWFD
+ p04zX9vDkMKf14PlTAqBno9t69gRL9ZF2LQYvGky9JqOoMTuux7vlJEJGPTSgLMtL6krcHDlY
+ ndrGAJFzdhxiW1f5FHiscK7vwsur4maG++wuCmqQdC7qS6h9goGbLwaoyuyUwmZvedvDniVwK
+ UeAquH8/nrUX5W1UdD5QWVU/eiJlX9VK4OcZkHxFTKpH533pbzOnhGRt/vLVhc5cIVLBINBh9
+ KCwSV5z3Dx7Q62RLnZVrWB5bVCW6QZ2knpf+Z7c3rgCpAb5EkM=
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594926606648991207?=
-X-GMAIL-MSGID: =?utf-8?q?1595215936962683427?=
+X-GMAIL-MSGID: =?utf-8?q?1595262845153676826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 14 Mar 2018 16:15:32 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Mar 2018 16:06:49 +0100
+
+Am 17.03.2018 um 20:54 schrieb Jonathan Cameron:
+> On Wed, 14 Mar 2018 16:15:32 +0100
+> SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 > 
-> * Add jump targets so that a call of the function "mutex_unlock" is stored
->   only once in these function implementations.
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Wed, 14 Mar 2018 16:06:49 +0100
+>>
+>> * Add jump targets so that a call of the function "mutex_unlock" is stored
+>>   only once in these function implementations.
+>>
+>> * Replace 19 calls by goto statements.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > 
-> * Replace 19 calls by goto statements.
+> Hi Markus,
 > 
-> This issue was detected by using the Coccinelle software.
+> Some of these are good and sensible changes
+
+Such feedback is nice.
+
+
+> - others break the code.
+
+Which concrete places do you find questionable here?
+
+
+>> -		return ret;
+>> +
+>> +		goto set_power_state;
+>>  	default:
+>>  		return -EINVAL;
+> We exit with the mutex locked now and it should not be.
+
+I wonder about your source code interpretation here.
+The mutex was (and is still only) locked within case branches, isn't it?
+
+
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>>  	}
+>>  
+>>  	return -EINVAL;
+> Mutex is still locked here and the return is wrong.
 
-Hi Markus,
+Should this statement get any more software development attention?
 
-Some of these are good and sensible changes - others break the code.
-Please be careful to fully check all the resulting paths and ensure
-we don't change wether the lock is still held in all exit paths.
-Note a function that isn't lockdep annotated should not be holding
-any locks, that it took, upon exit.
-
-> ---
->  drivers/iio/gyro/bmg160_core.c | 103 ++++++++++++++++++-----------------------
->  1 file changed, 45 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-> index 63ca31628a93..fa367fd7bc8c 100644
-> --- a/drivers/iio/gyro/bmg160_core.c
-> +++ b/drivers/iio/gyro/bmg160_core.c
-> @@ -499,21 +499,19 @@ static int bmg160_get_temp(struct bmg160_data *data, int *val)
->  
->  	mutex_lock(&data->mutex);
->  	ret = bmg160_set_power_state(data, true);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->  
->  	ret = regmap_read(data->regmap, BMG160_REG_TEMP, &raw_val);
->  	if (ret < 0) {
->  		dev_err(dev, "Error reading reg_temp\n");
->  		bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  
->  	*val = sign_extend32(raw_val, 7);
->  	ret = bmg160_set_power_state(data, false);
-> +unlock:
->  	mutex_unlock(&data->mutex);
->  	if (ret < 0)
->  		return ret;
-> @@ -529,22 +527,20 @@ static int bmg160_get_axis(struct bmg160_data *data, int axis, int *val)
->  
->  	mutex_lock(&data->mutex);
->  	ret = bmg160_set_power_state(data, true);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->  
->  	ret = regmap_bulk_read(data->regmap, BMG160_AXIS_TO_REG(axis), &raw_val,
->  			       sizeof(raw_val));
->  	if (ret < 0) {
->  		dev_err(dev, "Error reading axis %d\n", axis);
->  		bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  
->  	*val = sign_extend32(le16_to_cpu(raw_val), 15);
->  	ret = bmg160_set_power_state(data, false);
-> +unlock:
->  	mutex_unlock(&data->mutex);
->  	if (ret < 0)
->  		return ret;
-> @@ -632,19 +628,16 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
->  		 * mode to power on for other writes.
->  		 */
->  		ret = bmg160_set_power_state(data, true);
-> -		if (ret < 0) {
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
-> +
->  		ret = bmg160_set_bw(data, val);
->  		if (ret < 0) {
->  			bmg160_set_power_state(data, false);
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> +			goto unlock;
->  		}
-> -		ret = bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +
-> +		goto set_power_state;
->  	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
->  		if (val2)
->  			return -EINVAL;
-> @@ -653,18 +646,15 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
->  		ret = bmg160_set_power_state(data, true);
->  		if (ret < 0) {
->  			bmg160_set_power_state(data, false);
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> +			goto unlock;
->  		}
->  		ret = bmg160_set_filter(data, val);
->  		if (ret < 0) {
->  			bmg160_set_power_state(data, false);
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> +			goto unlock;
->  		}
-> -		ret = bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +
-> +		goto set_power_state;
->  	case IIO_CHAN_INFO_SCALE:
->  		if (val)
->  			return -EINVAL;
-> @@ -672,24 +662,27 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
->  		mutex_lock(&data->mutex);
->  		/* Refer to comments above for the suspend mode ops */
->  		ret = bmg160_set_power_state(data, true);
-> -		if (ret < 0) {
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
-> +
->  		ret = bmg160_set_scale(data, val2);
->  		if (ret < 0) {
->  			bmg160_set_power_state(data, false);
-> -			mutex_unlock(&data->mutex);
-> -			return ret;
-> +			goto unlock;
->  		}
-> -		ret = bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-Please keep the mutex_unlock in the same scope as the
-mutex_lock.
-
-I may make sense to take both outside the switch statement but
-that needs careful consideration.
-
-> -		return ret;
-> +
-> +		goto set_power_state;
->  	default:
->  		return -EINVAL;
-We exit with the mutex locked now and it should not be.
-
->  	}
->  
->  	return -EINVAL;
-Mutex is still locked here and the return is wrong.
-> +
-> +set_power_state:
-> +	ret = bmg160_set_power_state(data, false);
-> +unlock:
-> +	mutex_unlock(&data->mutex);
-blank line before the return.
-
-> +	return ret;
->  }
->  
->  static int bmg160_read_event(struct iio_dev *indio_dev,
-> @@ -763,8 +756,8 @@ static int bmg160_write_event_config(struct iio_dev *indio_dev,
->  
->  	if (!state && data->motion_trigger_on) {
->  		data->ev_enable_state = 0;
-> -		mutex_unlock(&data->mutex);
-> -		return 0;
-> +		ret = 0;
-Put this in as the value at instantiation.
-int ret = 0;
-> +		goto unlock;
->  	}
->  	/*
->  	 * We will expect the enable and disable to do operation in
-> @@ -776,22 +769,19 @@ static int bmg160_write_event_config(struct iio_dev *indio_dev,
->  	 * is always on so sequence doesn't matter
->  	 */
->  	ret = bmg160_set_power_state(data, state);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->  
->  	ret =  bmg160_setup_any_motion_interrupt(data, state);
->  	if (ret < 0) {
->  		bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  
->  	data->ev_enable_state = state;
-> +unlock:
->  	mutex_unlock(&data->mutex);
-> -
-Blank line preferred before the return ret.
-> -	return 0;
-> +	return ret;
->  }
->  
->  static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("100 200 400 1000 2000");
-> @@ -919,8 +909,8 @@ static int bmg160_data_rdy_trigger_set_state(struct iio_trigger *trig,
->  
->  	if (!state && data->ev_enable_state && data->motion_trigger_on) {
->  		data->motion_trigger_on = false;
-> -		mutex_unlock(&data->mutex);
-> -		return 0;
-> +		ret = 0;
-Setting ret where it is originally defined to 0 would be tidier.
-
-int ret = 0;
-
-> +		goto unlock;
->  	}
->  
->  	/*
-> @@ -928,27 +918,24 @@ static int bmg160_data_rdy_trigger_set_state(struct iio_trigger *trig,
->  	 * enable/disable operation order
->  	 */
->  	ret = bmg160_set_power_state(data, state);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
-> +
->  	if (data->motion_trig == trig)
->  		ret =  bmg160_setup_any_motion_interrupt(data, state);
->  	else
->  		ret = bmg160_setup_new_data_interrupt(data, state);
->  	if (ret < 0) {
->  		bmg160_set_power_state(data, false);
-> -		mutex_unlock(&data->mutex);
-> -		return ret;
-> +		goto unlock;
->  	}
->  	if (data->motion_trig == trig)
->  		data->motion_trigger_on = state;
->  	else
->  		data->dready_trigger_on = state;
-> -
-> +unlock:
->  	mutex_unlock(&data->mutex);
-> -
-> -	return 0;
-I would prefer a blank line between the mutex_unlock and the return.
-
-> +	return ret;
->  }
->  
->  static const struct iio_trigger_ops bmg160_trigger_ops = {
+Regards,
+Markus
