@@ -1,68 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754773AbeCRTy0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 15:54:26 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40930 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752711AbeCRTyU (ORCPT
+        id S1754725AbeCRTxw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 15:53:52 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41108 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754448AbeCRTxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 15:54:20 -0400
-X-Google-Smtp-Source: AG47ELuRBarjY0XLEx4kHUeddGz1T4zqDEFzP+l9veob2x7iNicGjG56XsauxG1Bqk75rk2jd7xDKLRXTb64Zo5xtis=
-MIME-Version: 1.0
-In-Reply-To: <1521272215-22514-1-git-send-email-Anson.Huang@nxp.com>
-References: <1521272215-22514-1-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 18 Mar 2018 16:54:19 -0300
-Message-ID: <CAOMZO5DJ5-AdudGhk6VfTazJXBpReGHW-bxKM1=bLZO90PnXsg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx7s: add anatop vdd1p2 regulator
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        NXP Linux Team <Linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 18 Mar 2018 15:53:49 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.02444205|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03271;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.BMC.GMa_1521402706;
+From: Guo Ren <ren_guo@c-sky.com>
+To: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
+        arnd@arndb.de
+Cc: c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH 01/19] csky: Kernel booting
+Date: Mon, 19 Mar 2018 03:51:23 +0800
+Message-Id: <1cde8ee5cb31fc0bbe366434aeee489b2e16eed3.1521399976.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1521399976.git.ren_guo@c-sky.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1521399976.git.ren_guo@c-sky.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/kernel/head.S  |  20 ++++++
+ arch/csky/kernel/setup.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 177 insertions(+)
+ create mode 100644 arch/csky/kernel/head.S
+ create mode 100644 arch/csky/kernel/setup.c
 
-On Sat, Mar 17, 2018 at 4:36 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Add i.MX7S/D anatop vdd1p2 regulator.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx7s.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index cd6964f..1210028 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -565,6 +565,21 @@
->                                         anatop-max-voltage = <1200000>;
->                                         anatop-enable-bit = <0>;
->                                 };
-> +
-> +                               reg_1p2: regulator-vdd1p2@30360220 {
-> +                                       reg = <0x30360220>;
-> +                                       compatible = "fsl,anatop-regulator";
-> +                                       regulator-name = "vdd1p2";
-> +                                       regulator-min-microvolt = <1100000>;
-> +                                       regulator-max-microvolt = <1300000>;
-> +                                       anatop-reg-offset = <0x220>;
-> +                                       anatop-vol-bit-shift = <8>;
-> +                                       anatop-vol-bit-width = <5>;
-> +                                       anatop-min-bit-val = <0x14>;
-> +                                       anatop-min-voltage = <1100000>;
-> +                                       anatop-max-voltage = <1300000>;
-> +                                       anatop-enable-bit = <0>;
-> +                               };
-
-Do you also plan to add a consumer for it?
+diff --git a/arch/csky/kernel/head.S b/arch/csky/kernel/head.S
+new file mode 100644
+index 0000000..a746caf
+--- /dev/null
++++ b/arch/csky/kernel/head.S
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/linkage.h>
++#include <linux/init.h>
++#include <asm/page.h>
++#include <abi/regdef.h>
++
++ENTRY(_start)
++	/* set super user mode */
++	lrw	a3, DEFAULT_PSR_VALUE
++	mtcr    a3, psr
++	psrset  ee
++
++	/* set stack point */
++	lrw     a3, init_thread_union + THREAD_SIZE
++	mov	sp, a3
++
++	jmpi	csky_start
++END(_start)
++
+diff --git a/arch/csky/kernel/setup.c b/arch/csky/kernel/setup.c
+new file mode 100644
+index 0000000..04c9fbd
+--- /dev/null
++++ b/arch/csky/kernel/setup.c
+@@ -0,0 +1,157 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/console.h>
++#include <linux/memblock.h>
++#include <linux/bootmem.h>
++#include <linux/initrd.h>
++#include <linux/of.h>
++#include <linux/of_fdt.h>
++#include <linux/start_kernel.h>
++#include <asm/sections.h>
++#include <asm/mmu_context.h>
++#include <asm/pgalloc.h>
++
++phys_addr_t __init_memblock memblock_end_of_REG0(void)
++{
++	return (memblock.memory.regions[0].base + memblock.memory.regions[0].size);
++}
++
++phys_addr_t __init_memblock memblock_start_of_REG1(void)
++{
++	return memblock.memory.regions[1].base;
++}
++
++size_t __init_memblock memblock_size_of_REG1(void)
++{
++	return memblock.memory.regions[1].size;
++}
++
++static void __init csky_memblock_init(void)
++{
++	unsigned long zone_size[MAX_NR_ZONES];
++	unsigned long zhole_size[MAX_NR_ZONES];
++	signed long size;
++
++	memblock_reserve(__pa(_stext), _end - _stext);
++#ifdef CONFIG_BLK_DEV_INITRD
++	memblock_reserve(__pa(initrd_start), initrd_end - initrd_start);
++#endif
++
++	early_init_fdt_reserve_self();
++	early_init_fdt_scan_reserved_mem();
++
++	memblock_dump_all();
++
++	memset(zone_size, 0, sizeof(zone_size));
++	memset(zhole_size, 0, sizeof(zhole_size));
++
++	min_low_pfn = PFN_UP(memblock_start_of_DRAM());
++	max_low_pfn = PFN_UP(memblock_end_of_REG0());
++	max_pfn = PFN_DOWN(memblock_end_of_DRAM());
++
++	size = max_pfn - min_low_pfn;
++
++	if (memblock.memory.cnt > 1) {
++		zone_size[ZONE_NORMAL]  = PFN_DOWN(memblock_start_of_REG1()) - min_low_pfn;
++		zhole_size[ZONE_NORMAL] = PFN_DOWN(memblock_start_of_REG1()) - max_low_pfn;
++	} else {
++		if (size <= PFN_DOWN(LOWMEM_LIMIT - CONFIG_RAM_BASE))
++			zone_size[ZONE_NORMAL] = max_pfn - min_low_pfn;
++		else {
++			zone_size[ZONE_NORMAL] = PFN_DOWN(LOWMEM_LIMIT - CONFIG_RAM_BASE);
++			max_low_pfn = min_low_pfn + zone_size[ZONE_NORMAL];
++		}
++	}
++
++#ifdef CONFIG_HIGHMEM
++	size = 0;
++	if(memblock.memory.cnt > 1) {
++		size = PFN_DOWN(memblock_size_of_REG1());
++		highstart_pfn = PFN_DOWN(memblock_start_of_REG1());
++	} else {
++		size = max_pfn - min_low_pfn - PFN_DOWN(LOWMEM_LIMIT - CONFIG_RAM_BASE);
++		highstart_pfn =  min_low_pfn + PFN_DOWN(LOWMEM_LIMIT - CONFIG_RAM_BASE);
++	}
++
++	if (size > 0)
++		zone_size[ZONE_HIGHMEM] = size;
++
++	highend_pfn = max_pfn;
++#endif
++	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
++
++	free_area_init_node(0, zone_size, min_low_pfn, zhole_size);
++}
++
++extern void cpu_dt_probe(void);
++void __init setup_arch(char **cmdline_p)
++{
++	*cmdline_p = boot_command_line;
++
++	console_verbose();
++
++	printk("C-SKY: https://c-sky.github.io\n");
++
++	init_mm.start_code = (unsigned long) _stext;
++	init_mm.end_code = (unsigned long) _etext;
++	init_mm.end_data = (unsigned long) _edata;
++	init_mm.brk = (unsigned long) _end;
++
++	parse_early_param();
++
++	csky_memblock_init();
++
++	unflatten_and_copy_device_tree();
++
++	cpu_dt_probe();
++
++	sparse_init();
++
++#ifdef CONFIG_HIGHMEM
++	kmap_init();
++#endif
++	cache_wbinv_all();
++
++#if defined(CONFIG_VT) && defined(CONFIG_DUMMY_CONSOLE)
++	conswitchp = &dummy_con;
++#endif
++}
++
++extern void pre_trap_init(void);
++asmlinkage __visible void __init csky_start(
++	unsigned int	unused,
++	void *		param
++	)
++{
++	/* Clean up bss section */
++	memset(__bss_start, 0, __bss_stop - __bss_start);
++
++	pre_trap_init();
++
++	/* Setup mmu as coprocessor */
++	select_mmu_cp();
++
++	/*
++	 * Setup page-table and enable TLB-hardrefill
++	 */
++	flush_tlb_all();
++	pgd_init((unsigned long *)swapper_pg_dir);
++	TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir);
++
++	asid_cache(smp_processor_id()) = ASID_FIRST_VERSION;
++
++	/* Setup page mask to 4k */
++	write_mmu_pagemask(0);
++
++#ifdef CONFIG_CSKY_BUILTIN_DTB
++	printk("Use builtin dtb\n");
++	early_init_dt_scan(__dtb_start);
++#else
++	early_init_dt_scan(param);
++#endif
++	printk("Phys. mem: %ldMB\n", (unsigned long) memblock_phys_mem_size()/1024/1024);
++	start_kernel();
++
++	while(1);
++}
++
+-- 
+2.7.4
