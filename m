@@ -1,123 +1,187 @@
-Return-Path: <kernel-hardening-return-12728-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtouAc52n59N5E2GnFrELyRhY9/2ikuuQ9MSdIDNKvkZjaz24s3DVLd63T8fqV5lJ85Xsnb
-ARC-Seal: i=1; a=rsa-sha256; t=1522046027; cv=none;
+Return-Path: <liuwenliang@huawei.com>
+X-Google-Smtp-Source: AG47ELu+AKwv0U8mpmfeZYTbzRP0VPr6hZ0qZK6xW39xs6Kih98HLXmPIXRrJfWROmYhIEXcpide
+ARC-Seal: i=1; a=rsa-sha256; t=1521378830; cv=none;
         d=google.com; s=arc-20160816;
-        b=hyY0DXeVGBisnMt5gRoRQzqaLqaj8Cwjgrqpk7QkZZIfhm5d0Ev5MwwK+GAD5pcdfe
-         GparOLGISAJ6zhHSJQdsqDKHETF7vU8+MpjurzYw9mVPHfYvYtLuneMfvsgM5rxVHrL7
-         9Ie3vXqvLegd3A87nz0jWoU/aRfKirOSymznO8dlACE72OeuMeugf2OJ/sbUciqyJnCn
-         LJVeJD+NyUA1hhJi0Yv7YWAg/3daicxXlRv2DY/75rrvKpaXztMn1wDJ+BmwHXpZC86/
-         aAvFO+5HVitYUEVz30tSZBTUweCHm1nM9UQWhfUBwuVbvBIBB02GeR+BxpIxSpmh1W1F
-         C3ow==
+        b=n/y5qNbTKCQMwPBqjhhpPdV7DtOq4VD0qyYukt0jc4aleJkenBD9Hh72fNuvgbDdD8
+         1HiD8NP4TyUEYFncLMskYrcwffFDkSiOamAM21QqYnYgxPIg7KYV3Pj1QKjPvKMTUX4a
+         y1QLP5bXX5Dbc/YDEikYYbqMuHTkNo/eNwtHul5rWJfoSOtD+uNR1De77RpAWE4plWwx
+         RiqdbNHnAir+1823+/ST26p1Pk3URoHPauop8JZAD4BWLyp/dFrYG71qu9t6+O9d65ON
+         x53a+mQK3CzXNOl2rTRwvqCkYe57E/9xFaABn6oF48lr6vMo5RTIPF75OH3SUsDBDcjq
+         gvsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=SkA5nm/L0ZJHx3nVkwQEdRW0Dt+mqyocDBj8FQeX/gw=;
-        b=D6mNU+aeOyqXwVC1Vf7+uz5RuLfS3aDhid7sRUSQaBQq2ctYFoZI/RonLXglkpHCdn
-         f+ng3AZ5Q/XyvA9Tg+hcjMQ/eE9qR5LLrYR2tpb9WwDAF1mAKWtfrjD45cis26MxAc4i
-         FepxT3xLgsMrmBbVkCoZEmKMgkutqkYNaO8G1JVhoKwV7y9N30zQgv+AYJWIsJnLB7xx
-         +VfryDySEg029WCUXjKNN4pPaXY96r3OGI4NA7itOzgh/zm63eDEMbt9SmtF6ljcZL4z
-         B3+LFtJdXH0cHRnUNC5/DbWTExLE4Epd2BOmnvT48eT0n4QA49iE9rWu3XK9Tigkgsfv
-         xXuw==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=9+sAnrjRN4VGCXvwvmg1qAhpKOCUbv4sD0W4/o9Xe3g=;
+        b=KnFQmZBNumF1q+5Gc5q50+6fmeSusgOCRRKSB3zi/I97zpVAL19BcvpZIotdpHi8YU
+         GbD/iXdk4YJx+ldMoINJ4hLlz1HHHQR8zas4VT2Dr0+7hRCpJ2+9m7LyK1u2pwN6RlDT
+         HQdWMTFBFSPb+W/tc7rl5YpdJEPMALFlbqJQ1/t6SzhFnx7H9YkqSWnoYP1Ghozzluk3
+         19BZyB6CiyAhUNzXO/oaFMA7NoSKaXZYywdndLc9w6vHJNhknnfeWs5O7Jmmq6xlSgXp
+         zGOnhuKSOTHm/3YFErWU4kCj3pNGqjeaIxadDiYFDyIIBP24G7hZmSMh+iobrMc5T943
+         YfPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=daFLy5mv;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ZnJvIyIe;
-       spf=pass (google.com: domain of kernel-hardening-return-12728-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12728-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=daFLy5mv;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ZnJvIyIe;
-       spf=pass (google.com: domain of kernel-hardening-return-12728-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12728-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:NpS4WmT1SjO94rCQVANtJODJKfDEklbgcQJRJ6cbKcP2BRh0meS2Iw>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] mmc: pwrseq: Use kmalloc_array instead of stack VLA
-Date: Mon, 26 Mar 2018 17:33:14 +1100
-Message-Id: <1522045994-21913-1-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
+From: Abbott Liu <liuwenliang@huawei.com>
+To: <linux@armlinux.org.uk>, <aryabinin@virtuozzo.com>,
+	<marc.zyngier@arm.com>, <kstewart@linuxfoundation.org>,
+	<gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
+	<liuwenliang@huawei.com>, <akpm@linux-foundation.org>,
+	<afzal.mohd.ma@gmail.com>, <alexander.levin@verizon.com>
+CC: <glider@google.com>, <dvyukov@google.com>, <christoffer.dall@linaro.org>,
+	<linux@rasmusvillemoes.dk>, <mawilcox@microsoft.com>, <pombredanne@nexb.com>,
+	<ard.biesheuvel@linaro.org>, <vladimir.murzin@arm.com>,
+	<nicolas.pitre@linaro.org>, <tglx@linutronix.de>, <thgarnie@google.com>,
+	<dhowells@redhat.com>, <keescook@chromium.org>, <arnd@arndb.de>,
+	<geert@linux-m68k.org>, <tixy@linaro.org>, <mark.rutland@arm.com>,
+	<james.morse@arm.com>, <zhichao.huang@linaro.org>, <jinb.park7@gmail.com>,
+	<labbott@redhat.com>, <philip@cog.systems>, <grygorii.strashko@linaro.org>,
+	<catalin.marinas@arm.com>, <opendmb@gmail.com>,
+	<kirill.shutemov@linux.intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+	<kvmarm@lists.cs.columbia.edu>, <linux-mm@kvack.org>
+Subject: [PATCH v2 0/7] KASan for arm
+Date: Sun, 18 Mar 2018 20:53:35 +0800
+Message-ID: <20180318125342.4278-1-liuwenliang@huawei.com>
+X-Mailer: git-send-email 2.9.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.187.223]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595980934577926333?=
-X-GMAIL-MSGID: =?utf-8?q?1595980934577926333?=
+X-GMAIL-THRID: =?utf-8?q?1595281327886471398?=
+X-GMAIL-MSGID: =?utf-8?q?1595281327886471398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-(kernel Oops) or a security flaw (overwriting memory beyond the
-stack). Also, in general, as code evolves it is easy to lose track of
-how big a VLA can get. Thus, we can end up having runtime failures
-that are hard to debug. As part of the directive[1] to remove all VLAs
-from the kernel, and build with -Wvla.
+Changelog:
+v2 - v1
+- Fixed some compiling error which happens on changing kernel compression
+  mode to lzma/xz/lzo/lz4.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+	     Russell King - ARM Linux <linux@armlinux.org.uk>
+- Fixed a compiling error cause by some older arm instruction set(armv4t)
+  don't suppory movw/movt which is reported by kbuild.
+- Changed the pte flag from _L_PTE_DEFAULT | L_PTE_DIRTY | L_PTE_XN to
+  pgprot_val(PAGE_KERNEL).
+  ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved Enable KASan patch as the last one.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+     Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved the definitions of cp15 registers from 
+  arch/arm/include/asm/kvm_hyp.h to arch/arm/include/asm/cp15.h.
+  ---Asked by: Mark Rutland <mark.rutland@arm.com>
+- Merge the following commits into the commit
+  Define the virtual space of KASan's shadow region:
+  1) Define the virtual space of KASan's shadow region;
+  2) Avoid cleaning the KASan shadow area's mapping table;
+  3) Add KASan layout;
+- Merge the following commits into the commit
+  Initialize the mapping of KASan shadow memory:
+  1) Initialize the mapping of KASan shadow memory;
+  2) Add support arm LPAE;
+  3) Don't need to map the shadow of KASan's shadow memory;
+     ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+  4) Change mapping of kasan_zero_page int readonly.
 
-Currently driver is using a VLA declared using the number of descriptors.  This
-array is used to store integer values and is later used as an argument to
-`gpiod_set_array_value_cansleep()` This can be avoided by using
-`kmalloc_array()` to allocate memory for the array of integer values.  Memory is
-free'd before return from function.
+Hi,all:
+   These patches add arch specific code for kernel address sanitizer
+(see Documentation/kasan.txt).
 
->From the code it appears that it is safe to sleep so we can use GFP_KERNEL
-(based _cansleep() suffix of function `gpiod_set_array_value_cansleep()`.
+   1/8 of kernel addresses reserved for shadow memory. There was no
+big enough hole for this, so virtual addresses for shadow were
+stolen from user space.
 
-It can be expected that this patch will result in a small increase in overhead
-due to the use of `kmalloc_array()`
+   At early boot stage the whole shadow region populated with just
+one physical page (kasan_zero_page). Later, this page reused
+as readonly zero shadow for some memory that KASan currently
+don't track (vmalloc).
 
-[1] https://lkml.org/lkml/2018/3/7/621
+  After mapping the physical memory, pages for shadow memory are
+allocated and mapped.
+  
+  KASan's stack instrumentation significantly increases stack's
+consumption, so CONFIG_KASAN doubles THREAD_SIZE.
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
+  Functions like memset/memmove/memcpy do a lot of memory accesses.
+If bad pointer passed to one of these function it is important
+to catch this. Compiler's instrumentation cannot do this since
+these functions are written in assembly.
 
-Patch is untested.  I was not able to fully grok the call chain involved
-with this change so was unable to quantify the total degradation
-of performance.
+  KASan replaces memory functions with manually instrumented variants.
+Original functions declared as weak symbols so strong definitions
+in mm/kasan/kasan.c could replace them. Original functions have aliases
+with '__' prefix in name, so we could call non-instrumented variant
+if needed.
 
-Line calling to gpiod_set_array_value_cansleep() is 83 characters long,
-patch attempts to leave the code as clean as possible.  Open to
-suggestions for improvement.  I tried various forms of while loop and
-pointer arithmetic for the setting of `values` but in the end settled
-for array indexing, again open to suggestions.
+  Some files built without kasan instrumentation (e.g. mm/slub.c).
+Original mem* function replaced (via #define) with prefixed variants
+to disable memory access checks for such files.
 
-thanks,
-Tobin.
+  On arm LPAE architecture,  the mapping table of KASan shadow memory(if
+PAGE_OFFSET is 0xc0000000, the KASan shadow memory's virtual space is
+0xb6e000000~0xbf000000) can't be filled in do_translation_fault function,
+because kasan instrumentation maybe cause do_translation_fault function
+accessing KASan shadow memory. The accessing of KASan shadow memory in
+do_translation_fault function maybe cause dead circle. So the mapping table
+of KASan shadow memory need be copyed in pgd_alloc function.
 
- drivers/mmc/core/pwrseq_simple.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-index 13ef162cf066..a8b9fee4d62a 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -40,14 +40,18 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
- 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
- 
- 	if (!IS_ERR(reset_gpios)) {
--		int i;
--		int values[reset_gpios->ndescs];
-+		int i, *values;
-+		int nvalues = reset_gpios->ndescs;
- 
--		for (i = 0; i < reset_gpios->ndescs; i++)
-+		values = kmalloc_array(nvalues, sizeof(int), GFP_KERNEL);
-+		if (!values)
-+			return;
-+
-+		for (i = 0; i < nvalues; i++)
- 			values[i] = value;
- 
--		gpiod_set_array_value_cansleep(
--			reset_gpios->ndescs, reset_gpios->desc, values);
-+		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc, values);
-+		kfree(values);
- 	}
- }
- 
+Most of the code comes from:
+https://github.com/aryabinin/linux/commit/0b54f17e70ff50a902c4af05bb92716eb95acefe
+
+These patches are tested on vexpress-ca15, vexpress-ca9
+
+
+
+Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
+Tested-by: Abbott Liu <liuwenliang@huawei.com>
+Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+
+Abbott Liu (3):
+  2 1-byte checks more safer for memory_is_poisoned_16
+  Add TTBR operator for kasan_init
+  Define the virtual space of KASan's shadow region
+
+Andrey Ryabinin (4):
+  Disable instrumentation for some code
+  Replace memory function for kasan
+  Initialize the mapping of KASan shadow memory
+  Enable KASan for arm
+
+ arch/arm/Kconfig                      |   1 +
+ arch/arm/boot/compressed/Makefile     |   1 +
+ arch/arm/boot/compressed/decompress.c |   2 +
+ arch/arm/boot/compressed/libfdt_env.h |   2 +
+ arch/arm/include/asm/cp15.h           | 104 ++++++++++++
+ arch/arm/include/asm/kasan.h          |  23 +++
+ arch/arm/include/asm/kasan_def.h      |  52 ++++++
+ arch/arm/include/asm/kvm_hyp.h        |  52 ------
+ arch/arm/include/asm/memory.h         |   5 +
+ arch/arm/include/asm/pgalloc.h        |   7 +-
+ arch/arm/include/asm/string.h         |  17 ++
+ arch/arm/include/asm/thread_info.h    |   4 +
+ arch/arm/kernel/entry-armv.S          |   5 +-
+ arch/arm/kernel/entry-common.S        |   6 +-
+ arch/arm/kernel/head-common.S         |   7 +-
+ arch/arm/kernel/setup.c               |   2 +
+ arch/arm/kernel/unwind.c              |   3 +-
+ arch/arm/kvm/hyp/cp15-sr.c            |  12 +-
+ arch/arm/kvm/hyp/switch.c             |   6 +-
+ arch/arm/lib/memcpy.S                 |   3 +
+ arch/arm/lib/memmove.S                |   5 +-
+ arch/arm/lib/memset.S                 |   3 +
+ arch/arm/mm/Makefile                  |   3 +
+ arch/arm/mm/init.c                    |   6 +
+ arch/arm/mm/kasan_init.c              | 290 ++++++++++++++++++++++++++++++++++
+ arch/arm/mm/mmu.c                     |   7 +-
+ arch/arm/mm/pgd.c                     |  14 ++
+ arch/arm/vdso/Makefile                |   2 +
+ mm/kasan/kasan.c                      |  24 ++-
+ 29 files changed, 588 insertions(+), 80 deletions(-)
+ create mode 100644 arch/arm/include/asm/kasan.h
+ create mode 100644 arch/arm/include/asm/kasan_def.h
+ create mode 100644 arch/arm/mm/kasan_init.c
+
 -- 
-2.7.4
+2.9.0
