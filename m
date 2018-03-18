@@ -1,60 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754728AbeCRQMN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 12:12:13 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:46522 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754162AbeCRQL7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 12:11:59 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        arnd@arndb.de, viro@ZenIV.linux.org.uk
-Cc: linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
-Subject: [RFC PATCH 5/6] x86: use _do_fork() in compat_sys_x86_clone()
-Date: Sun, 18 Mar 2018 17:10:55 +0100
-Message-Id: <20180318161056.5377-6-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180318161056.5377-1-linux@dominikbrodowski.net>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+        id S1754741AbeCRQM3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 12:12:29 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56864 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754162AbeCRQM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 12:12:26 -0400
+Date: Sun, 18 Mar 2018 17:12:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] x86/microcode/AMD: Subtract SECTION_HDR_SIZE
+ from file leftover length
+Message-ID: <20180318161200.GA2036@cz.tnic>
+References: <cover.1521150415.git.mail@maciej.szmigiero.name>
+ <b4854b17-e3ba-54d6-488d-0e0bfffe4c71@maciej.szmigiero.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b4854b17-e3ba-54d6-488d-0e0bfffe4c71@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is trivial to directly call _do_fork() instead of the sys_clone()
-syscall in compat_sys_x86_clone().
+On Fri, Mar 16, 2018 at 12:07:42AM +0100, Maciej S. Szmigiero wrote:
+> verify_patch_size() function verifies whether the microcode container file
+> remaining size is large enough to contain a patch of the indicated size.
+> 
+> However, the section header length is not included in this indicated size
+> but it is present in the leftover file length so it should be subtracted
+> from the leftover file length before passing this value to
+> verify_patch_size().
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 
-This patch is part of a series which tries to remove in-kernel calls to
-syscalls. On this basis, the syscall entry path can be streamlined.
+I split the comment and applied this:
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/ia32/sys_ia32.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Date: Fri, 16 Mar 2018 00:07:42 +0100
+Subject: [PATCH] x86/microcode/AMD: Subtract SECTION_HDR_SIZE from file
+ leftover length
 
-diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-index 89dcb36d19da..31d50d11239b 100644
---- a/arch/x86/ia32/sys_ia32.c
-+++ b/arch/x86/ia32/sys_ia32.c
-@@ -41,6 +41,7 @@
- #include <linux/highuid.h>
- #include <linux/sysctl.h>
- #include <linux/slab.h>
-+#include <linux/sched/task.h>
- #include <asm/mman.h>
- #include <asm/types.h>
- #include <linux/uaccess.h>
-@@ -204,6 +205,6 @@ COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, clone_flags,
- 		       unsigned long, newsp, int __user *, parent_tidptr,
- 		       unsigned long, tls_val, int __user *, child_tidptr)
- {
--	return sys_clone(clone_flags, newsp, parent_tidptr, child_tidptr,
-+	return _do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr,
- 			tls_val);
+verify_patch_size() verifies whether the remaining size of the microcode
+container file is large enough to contain a patch of the indicated size.
+
+However, the section header length is not included in this indicated
+size but it is present in the leftover file length so it should be
+subtracted from the leftover file length before passing this value to
+verify_patch_size().
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Link: http://lkml.kernel.org/r/b4854b17-e3ba-54d6-488d-0e0bfffe4c71@maciej.szmigiero.name
+[ Split comment. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 48179928ff38..ffce949409cc 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -461,8 +461,12 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
+ 	return 0;
  }
+ 
+-static unsigned int verify_patch_size(u8 family, u32 patch_size,
+-				      unsigned int size)
++/*
++ * Check whether the passed remaining file @size is large enough to contain a
++ * patch of the indicated @patch_size (and also whether this size does not
++ * exceed the per-family maximum).
++ */
++static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
+ {
+ 	u32 max_size;
+ 
+@@ -613,7 +617,12 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return crnt_size;
+ 	}
+ 
+-	ret = verify_patch_size(family, patch_size, leftover);
++	/*
++	 * The section header length is not included in this indicated size
++	 * but is present in the leftover file length so we need to subtract
++	 * it before passing this value to the function below.
++	 */
++	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
+ 	if (!ret) {
+ 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+ 		return crnt_size;
 -- 
-2.16.2
+2.7.3
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply. Srsly.
