@@ -1,74 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754667AbeCRV23 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 17:28:29 -0400
-Received: from mga02.intel.com ([134.134.136.20]:36729 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754304AbeCRV20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 17:28:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,327,1517904000";
-   d="scan'208";a="209314996"
-Date: Mon, 19 Mar 2018 05:28:08 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-        afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
-Message-ID: <201803190542.EmeV4ajI%fengguang.wu@intel.com>
-References: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+        id S1754679AbeCRVce (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 17:32:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33845 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754406AbeCRVcc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 17:32:32 -0400
+X-Google-Smtp-Source: AG47ELvPLKCjb4rQO58Em5kiGS2ezGeXDZqqAyqkD33xmhtOaTXdkB9RbzkDTnfda5YR1vPkRUV+pw==
+Subject: Re: [PATCH] vfs: make sure struct filename->iname is word-aligned
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180228231922.15796-1-linux@rasmusvillemoes.dk>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <cf8b0832-5545-1f09-dfc7-bd9ac1c7cc16@rasmusvillemoes.dk>
+Date: Sun, 18 Mar 2018 22:32:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180228231922.15796-1-linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manivannan,
+On 2018-03-01 00:19, Rasmus Villemoes wrote:
+> I noticed that offsetof(struct filename, iname) is actually 28 on 64
+> bit platforms, so we always pass an unaligned pointer to
+> strncpy_from_user. This is mostly a problem for those 64 bit platforms
+> without HAVE_EFFICIENT_UNALIGNED_ACCESS, but even on x86_64, unaligned
+> accesses carry a penalty.
+> 
+> A user-space microbenchmark doing nothing but strncpy_from_user from the
+> same (aligned) source string runs about 5% faster when the destination
+> is aligned. That number increases to 20% when the string is long
+> enough (~32 bytes) that we cross a cache line boundary - that's for
+> example the case for about half the files a "git status" in a kernel
+> tree ends up stat'ing.
+> 
+> This won't make any real-life workloads 5%, or even 1%, faster, but path
+> lookup is common enough that cutting even a few cycles should be
+> worthwhile. So ensure we always pass an aligned destination pointer to
+> strncpy_from_user. Instead of explicit padding, simply swap the refcnt
+> and aname members, as suggested by Al Viro.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on v4.16-rc4]
-[cannot apply to next-20180316]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Manivannan-Sadhasivam/Add-clock-driver-for-Actions-S900-SoC/20180319-015124
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/actions/owl-s900.c:33:46: sparse: constant 2700000000 is so big it is long
-   drivers/clk/actions/owl-s900.c:604:18: sparse: Initializer entry defined twice
-   drivers/clk/actions/owl-s900.c:639:18:   also defined here
-
-vim +33 drivers/clk/actions/owl-s900.c
-
-    31	
-    32	static struct clk_pll_table clk_edp_pll_table[] = {
-  > 33		{0, 810000000}, {1, 1350000000}, {2, 2700000000},
-    34		{0, 0},
-    35	};
-    36	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+polite ping...
