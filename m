@@ -1,268 +1,289 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeCRKyh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 06:54:37 -0400
-Received: from relay0.mail.gandi.net ([217.70.178.220]:57651 "EHLO
-        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751635AbeCRKyd (ORCPT
+        id S1753845AbeCRLAR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 07:00:17 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57320 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751635AbeCRLAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 06:54:33 -0400
-X-Originating-IP: 109.112.88.148
-Date: Sun, 18 Mar 2018 11:54:22 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 2/4] sh: ecovec24: conditionally register backlight device
-Message-ID: <20180318105422.GA3323@w540>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
- <20180315224202.96668-3-dmitry.torokhov@gmail.com>
- <20180316100748.GH16424@w540>
- <20180316233800.GA32310@dtor-ws>
- <20180317092516.g5p5ybka57abyhex@apu3b>
- <02834805-5053-4BDC-9256-DF1AFFEC8630@physik.fu-berlin.de>
+        Sun, 18 Mar 2018 07:00:15 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Doug Smythies <dsmythies@telus.net>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>
+Cc: "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Rik van Riel'" <riel@surriel.com>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'LKML'" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v5 0/7] sched/cpuidle: Idle loop rework
+Date: Sun, 18 Mar 2018 12:00:44 +0100
+Message-ID: <2043615.lCdO10SMaB@aspire.rjw.lan>
+In-Reply-To: <001a01d3be0a$ad3a0ed0$07ae2c70$@net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <001a01d3be0a$ad3a0ed0$07ae2c70$@net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
-Content-Disposition: inline
-In-Reply-To: <02834805-5053-4BDC-9256-DF1AFFEC8630@physik.fu-berlin.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Saturday, March 17, 2018 5:11:53 PM CET Doug Smythies wrote:
+> On 2018.03.17 Thomas Ilsche wrote:
+> 
+> > Over the last week I tested v4+pollv2 and now v5+pollv3. With v5, I
+> > observe a particular idle behavior, that I have not seen before with
+> > v4. On a dual-socket Skylake system the idle power increases from
+> > 74.1 W (system total) to 85.5 W with a 300 HZ build and even to
+> > 138.3 W with a 1000 HZ build. A similar Haswell-EP system is also
+> > affected.
+> 
+> I confirm your idle findings. There is a regression between V4 and V5.
+> The differences on my test computer are much less than on yours,
+> probably because I have only 8 CPUs.
+> 
+> http://fast.smythies.com/rjw_idle.png
+> 
+> 1000 Hz kernel only.
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Doug, Thomas,
 
-Hi Andrian,
+Thank you both for the reports, much appreciated!
 
-On Sat, Mar 17, 2018 at 07:21:17PM +0900, John Paul Adrian Glaubitz wrote:
->
->
-> > On Mar 17, 2018, at 6:25 PM, jacopo mondi <jacopo@jmondi.org> wrote:
-> >
-> > Hi Dmitry,
-> >
-> >> On Fri, Mar 16, 2018 at 04:38:00PM -0700, Dmitry Torokhov wrote:
-> >> Hi Jacopo,
-> >>
-> >>> On Fri, Mar 16, 2018 at 11:07:48AM +0100, jacopo mondi wrote:
-> >>> Hello Dmitry
-> >>>
-> >>> FYI I am brushing the ecovec board these days as well
-> >>> https://www.spinics.net/lists/linux-sh/msg52536.html
-> >>>
-> >>
-> >> What is the ecovec board BTW? Is it some devkit or what? It seems quite
-> >> old to me.
-> >
-> > Yes, it is a SuperH 4 based development board. It is old for sure. I'm
-> > also working on removing some stuff the ecovec board file is the only
-> > user of...
->
-> Umh, but I=E2=80=99m still using the SH7724 Evovec board. Please don=E2=
-=80=99t remove support for that.
->
-> The SuperH port of the Linux kernel is still maintained.
+Below is a drop-in v6 replacement for patch [4/7].
 
-Sorry if I was not clear here, it is not anyone's intention to remove any
-support for any SH board. The media subsystem is working to replace
-some components (the legacy camera drivers) a few SH boards (ecovec
-included) are the only remaining user of. Nobody is working to remove
-support for those boards.
+With this new patch applied instead of the [4/7] the behavior should be much
+more in line with the v4 behavior, so please try it if you can and let me know
+if that really is the case on your systems.
 
-I have access to a few SH boards, if you're planning to collect that
-informations in some wiki, I'll list myself there.
+Patches [5-7/7] from the original v5 apply on top of it right away for me,
+but I've also created a git branch you can use to pull all of the series
+with the below included:
 
-Thanks
-   j
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ idle-loop
 
->
-> Adrian
->
-> >
-> >>> And I have a board to test with but without any display panel, I'm
-> >>> afraid.
-> >>>
-> >>>> On Thu, Mar 15, 2018 at 03:42:00PM -0700, Dmitry Torokhov wrote:
-> >>>> Commit fe79f919f47e ("sh: ecovec24: Use gpio-backlight") removed cus=
-tom
-> >>>> backlight support and switched over to generic gpio-backlight driver=
-=2E The
-> >>>> comment when we run with DVI states "no backlight", but setting
-> >>>> gpio_backlight_data.fbdev to NULL actually makes gpio-backlight to r=
-eact to
-> >>>> events from any framebuffer device, not ignore them.
-> >>>>
-> >>>> We want to get rid of platform data in favor of generic device prope=
-rties
-> >>>> in gpio_backlight driver, so we can not have kernel pointers passed =
-around
-> >>>> to tie the framebuffer device to backlight. Assuming that the intent=
- of the
-> >>>> above referenced commit was to indeed not export backlight when usin=
-g DVI,
-> >>>> let's switch to conditionally registering backlight device so it is =
-not
-> >>>> present at all in DVI case.
-> >>>>
-> >>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>>> ---
-> >>>> arch/sh/boards/mach-ecovec24/setup.c | 24 +++++++++++++++++-------
-> >>>> 1 file changed, 17 insertions(+), 7 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/m=
-ach-ecovec24/setup.c
-> >>>> index 6f929abe0b50f..67633d2d42390 100644
-> >>>> --- a/arch/sh/boards/mach-ecovec24/setup.c
-> >>>> +++ b/arch/sh/boards/mach-ecovec24/setup.c
-> >>>> @@ -368,7 +368,6 @@ static struct platform_device lcdc_device =3D {
-> >>>> };
-> >>>>
-> >>>> static struct gpio_backlight_platform_data gpio_backlight_data =3D {
-> >>>> -    .fbdev =3D &lcdc_device.dev,
-> >>>>    .gpio =3D GPIO_PTR1,
-> >>>>    .def_value =3D 1,
-> >>>>    .name =3D "backlight",
-> >>>> @@ -987,7 +986,6 @@ static struct platform_device *ecovec_devices[] =
-__initdata =3D {
-> >>>>    &usb1_common_device,
-> >>>>    &usbhs_device,
-> >>>>    &lcdc_device,
-> >>>> -    &gpio_backlight_device,
-> >>>>    &ceu0_device,
-> >>>>    &ceu1_device,
-> >>>>    &keysc_device,
-> >>>> @@ -1077,6 +1075,8 @@ static int __init arch_setup(void)
-> >>>> {
-> >>>>    struct clk *clk;
-> >>>>    bool cn12_enabled =3D false;
-> >>>> +    bool use_backlight =3D false;
-> >>>> +    int error;
-> >>>>
-> >>>>    /* register board specific self-refresh code */
-> >>>>    sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF |
-> >>>> @@ -1193,9 +1193,6 @@ static int __init arch_setup(void)
-> >>>>        lcdc_info.ch[0].lcd_modes        =3D ecovec_dvi_modes;
-> >>>>        lcdc_info.ch[0].num_modes        =3D ARRAY_SIZE(ecovec_dvi_mo=
-des);
-> >>>>
-> >>>> -        /* No backlight */
-> >>>> -        gpio_backlight_data.fbdev =3D NULL;
-> >>>> -
-> >>>>        gpio_set_value(GPIO_PTA2, 1);
-> >>>>        gpio_set_value(GPIO_PTU1, 1);
-> >>>>    } else {
-> >>>> @@ -1217,6 +1214,8 @@ static int __init arch_setup(void)
-> >>>>        /* enable TouchScreen */
-> >>>>        i2c_register_board_info(0, &ts_i2c_clients, 1);
-> >>>>        irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
-> >>>> +
-> >>>> +        use_backlight =3D true;
-> >>>>    }
-> >>>>
-> >>>>    /* enable CEU0 */
-> >>>> @@ -1431,8 +1430,19 @@ static int __init arch_setup(void)
-> >>>>    gpio_set_value(GPIO_PTG4, 1);
-> >>>> #endif
-> >>>>
-> >>>> -    return platform_add_devices(ecovec_devices,
-> >>>> -                    ARRAY_SIZE(ecovec_devices));
-> >>>> +    error =3D platform_add_devices(ecovec_devices,
-> >>>> +                      ARRAY_SIZE(ecovec_devices));
-> >>>
-> >>> I would invert this.
-> >>> Register the backlight first, then all other devices.
-> >>
-> >> We could do that, but why would that be better?
-> >>
-> >
-> > That if backlight device registration fails we do not register all
-> > other devices. But yes that may be a bit too harsh, isn't it?
-> >
-> >>>
-> >>>
-> >>>> +    if (error)
-> >>>> +        return error;
-> >>>> +
-> >>>> +    if (use_backlight) {
-> >>>> +        error =3D platform_device_add(&gpio_backlight_device);
-> >>>> +        if (error)
-> >>>> +            pr_warn("%s: failed to register backlight: %d\n",
-> >>>> +                error);
-> >>>
-> >>> Could you use dev_warn here? Also the format is wrong, I assume you
-> >>
-> >> I would rather not, as the backlight device would be in unknown state
-> >> here, and using dev_warn with device that has not been fully registered
-> >> does not give any benefits. There is also no ambiguity as there is only
-> >> one backlight.
-> >
-> > You are very correct, sorry for the fuss.
-> >
-> >>
-> >>> are missing a '__func__' as second function argument.
-> >>
-> >> I'll fix this.
-> >>
-> >>>
-> >>> Also, you may want to return error.
-> >>
-> >> How would caller handle this error? Should we kill all successfully
-> >> registered devices on error adding backlight?
-> >
-> > As the function returned an error code for 'platform_add_devices()' I
-> > thought we may want to return one as well. That's why I proposed to
-> > invert the registration order :)
-> >
-> > All minor nits btw,  sorry for jumping up, I understand this is an
-> > RFC and ecovec board file is not the real juice of this series ;)
-> >
-> > Ping me if I can help with testing as I've the board.
-> >
-> > Thanks
-> >   j
-> >
-> >>
-> >> Thanks.
-> >>
-> >> --
-> >> Dmitry
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Thanks!
 
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Subject: [PATCH v6] cpuidle: Return nohz hint from cpuidle_select()
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Add a new pointer argument to cpuidle_select() and to the ->select
+cpuidle governor callback to allow a boolean value indicating
+whether or not the tick should be stopped before entering the
+selected state to be returned from there.
 
-iQIcBAEBAgAGBQJarkVeAAoJEHI0Bo8WoVY8p08QAIjKZjH8cGxLseindkdPZINL
-kIuBohRDbNz4QDZ4vp8TcTU6mJ1vw4X/vFSN6FfmUfXIIqzYxzM3IfXObGyB4px3
-HKV/uPtYCnatF0cWsxvbDwvqNjbLYHyzvMIBtrwlBSy1/9qJnUO/g+eusaktrtXe
-Lis3gNDQCBzDL6MFVhaOiIHpjivmyIOeawBSxjgUX+AZeykSP1N2s2FSZ3m+gjnK
-+/cxmEtXotkSoasYwwPYdqPmQF6D5n2NNEN3tMdYvgHWmRjJrDUER9bXa+LizxVb
-sOigAwQd3NE/SGKbiMwNZlmEfzH6glyIy+9ZuPZ32SwqEmu+l40dCiw9dTFoTjOo
-o/s4ueDW7E2xzIwGd7hnSGcGMObI0QLCTnLsDMcPS6SAVXE63hnAlNYFXuz1KZle
-jGbSXax5y5vWrHrFFsmjOJskqvuzcTMGwMJufVpgbTTam2ahfB1Wij7khPbAtOmY
-1UgG0+WlRVzKF3LKlQ+LuIy1VaahZlpAAODU5b1gGHY7JLWOJXh1RVCxbhaRc/e+
-TfLcNRkSesXh0p+sWqQ12AMxWMOILHUaNS7ic3x++/x86vuTG4Sk56Roth5ClbCa
-XBXzsCd8fw43Vo/oJcFrKg+WVKaZP77N0SbePn4+m/bgZNFYG8rsecnUX5uC11ZV
-X3LzV52uNaEqrTpVcmv2
-=sibO
------END PGP SIGNATURE-----
+Make the ladder governor ignore that pointer (to preserve its
+current behavior) and make the menu governor return 'false" through
+it if:
+ (1) the idle exit latency is constrained at 0,
+ (2) the selected state is a polling one, or
+ (3) the selected state is not deep enough.
 
---LZvS9be/3tNcYl/X--
+Since the value returned through the new argument pointer is not
+used yet, this change is not expected to alter the functionality of
+the code.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v5 -> v6: Change tick stopping conditions in the menu governor to
+  be more in line with the v4 behavior.
+
+---
+ drivers/cpuidle/cpuidle.c          |   10 ++++++--
+ drivers/cpuidle/governors/ladder.c |    3 +-
+ drivers/cpuidle/governors/menu.c   |   44 ++++++++++++++++++++++++++++++++-----
+ include/linux/cpuidle.h            |    8 ++++--
+ kernel/sched/idle.c                |    4 ++-
+ 5 files changed, 57 insertions(+), 12 deletions(-)
+
+Index: linux-pm/include/linux/cpuidle.h
+===================================================================
+--- linux-pm.orig/include/linux/cpuidle.h
++++ linux-pm/include/linux/cpuidle.h
+@@ -135,7 +135,8 @@ extern bool cpuidle_not_available(struct
+ 				  struct cpuidle_device *dev);
+ 
+ extern int cpuidle_select(struct cpuidle_driver *drv,
+-			  struct cpuidle_device *dev);
++			  struct cpuidle_device *dev,
++			  bool *nohz_ret);
+ extern int cpuidle_enter(struct cpuidle_driver *drv,
+ 			 struct cpuidle_device *dev, int index);
+ extern void cpuidle_reflect(struct cpuidle_device *dev, int index);
+@@ -167,7 +168,7 @@ static inline bool cpuidle_not_available
+ 					 struct cpuidle_device *dev)
+ {return true; }
+ static inline int cpuidle_select(struct cpuidle_driver *drv,
+-				 struct cpuidle_device *dev)
++				 struct cpuidle_device *dev, bool *nohz_ret)
+ {return -ENODEV; }
+ static inline int cpuidle_enter(struct cpuidle_driver *drv,
+ 				struct cpuidle_device *dev, int index)
+@@ -250,7 +251,8 @@ struct cpuidle_governor {
+ 					struct cpuidle_device *dev);
+ 
+ 	int  (*select)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
++					struct cpuidle_device *dev,
++					bool *nohz_ret);
+ 	void (*reflect)		(struct cpuidle_device *dev, int index);
+ };
+ 
+Index: linux-pm/kernel/sched/idle.c
+===================================================================
+--- linux-pm.orig/kernel/sched/idle.c
++++ linux-pm/kernel/sched/idle.c
+@@ -188,13 +188,15 @@ static void cpuidle_idle_call(void)
+ 		next_state = cpuidle_find_deepest_state(drv, dev);
+ 		call_cpuidle(drv, dev, next_state);
+ 	} else {
++		bool nohz = true;
++
+ 		tick_nohz_idle_stop_tick();
+ 		rcu_idle_enter();
+ 
+ 		/*
+ 		 * Ask the cpuidle framework to choose a convenient idle state.
+ 		 */
+-		next_state = cpuidle_select(drv, dev);
++		next_state = cpuidle_select(drv, dev, &nohz);
+ 		entered_state = call_cpuidle(drv, dev, next_state);
+ 		/*
+ 		 * Give the governor an opportunity to reflect on the outcome
+Index: linux-pm/drivers/cpuidle/cpuidle.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/cpuidle.c
++++ linux-pm/drivers/cpuidle/cpuidle.c
+@@ -272,12 +272,18 @@ int cpuidle_enter_state(struct cpuidle_d
+  *
+  * @drv: the cpuidle driver
+  * @dev: the cpuidle device
++ * @nohz_ret: indication on whether or not to stop the tick
+  *
+  * Returns the index of the idle state.  The return value must not be negative.
++ *
++ * The memory location pointed to by @nohz_ret is expected to be written the
++ * 'false' boolean value if the scheduler tick should not be stopped before
++ * entering the returned state.
+  */
+-int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		   bool *nohz_ret)
+ {
+-	return cpuidle_curr_governor->select(drv, dev);
++	return cpuidle_curr_governor->select(drv, dev, nohz_ret);
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/ladder.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/ladder.c
++++ linux-pm/drivers/cpuidle/governors/ladder.c
+@@ -63,9 +63,10 @@ static inline void ladder_do_selection(s
+  * ladder_select_state - selects the next state to enter
+  * @drv: cpuidle driver
+  * @dev: the CPU
++ * @dummy: not used
+  */
+ static int ladder_select_state(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev)
++			       struct cpuidle_device *dev, bool *dummy)
+ {
+ 	struct ladder_device *ldev = this_cpu_ptr(&ladder_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -275,12 +275,16 @@ again:
+ 	goto again;
+ }
+ 
++#define TICK_USEC_HZ   ((USEC_PER_SEC + HZ/2) / HZ)
++
+ /**
+  * menu_select - selects the next idle state to enter
+  * @drv: cpuidle driver containing state data
+  * @dev: the CPU
++ * @nohz_ret: indication on whether or not to stop the tick
+  */
+-static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		       bool *nohz_ret)
+ {
+ 	struct menu_device *data = this_cpu_ptr(&menu_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+@@ -303,8 +307,10 @@ static int menu_select(struct cpuidle_dr
+ 		latency_req = resume_latency;
+ 
+ 	/* Special case when user has set very strict latency requirement */
+-	if (unlikely(latency_req == 0))
++	if (unlikely(latency_req == 0)) {
++		*nohz_ret = false;
+ 		return 0;
++	}
+ 
+ 	/* determine the expected residency time, round up */
+ 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
+@@ -354,6 +360,7 @@ static int menu_select(struct cpuidle_dr
+ 	if (latency_req > interactivity_req)
+ 		latency_req = interactivity_req;
+ 
++	expected_interval = TICK_USEC_HZ;
+ 	/*
+ 	 * Find the idle state with the lowest power while satisfying
+ 	 * our constraints.
+@@ -367,17 +374,44 @@ static int menu_select(struct cpuidle_dr
+ 			continue;
+ 		if (idx == -1)
+ 			idx = i; /* first enabled state */
+-		if (s->target_residency > data->predicted_us)
++		if (s->target_residency > data->predicted_us) {
++			/*
++			 * Retain the tick if the selected state is shallower
++			 * than the deepest available one with target residency
++			 * within the tick period range.
++			 *
++			 * This allows the tick to be stopped even if the
++			 * predicted idle duration is within the tick period
++			 * range to counter the effect by which the prediction
++			 * may be skewed towards lower values due to the tick
++			 * bias.
++			 */
++			expected_interval = s->target_residency;
+ 			break;
+-		if (s->exit_latency > latency_req)
++		}
++		if (s->exit_latency > latency_req) {
++			/*
++			 * If we break out of the loop for latency reasons,
++			 * retain the tick unless the target residency of the
++			 * selected state is too high.
++			 */
++			expected_interval = drv->states[idx].target_residency;
+ 			break;
+-
++		}
+ 		idx = i;
+ 	}
+ 
+ 	if (idx == -1)
+ 		idx = 0; /* No states enabled. Must use 0. */
+ 
++	/*
++	 * Don't stop the tick if the selected state is a polling one or it is
++	 * not deep enough.
++	 */
++	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
++	    expected_interval < TICK_USEC_HZ)
++		*nohz_ret = false;
++
+ 	data->last_state_idx = idx;
+ 
+ 	return data->last_state_idx;
