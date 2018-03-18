@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753488AbeCRD01 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Mar 2018 23:26:27 -0400
-Received: from mail-by2nam03on0057.outbound.protection.outlook.com ([104.47.42.57]:7072
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S1753622AbeCRD0c (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Mar 2018 23:26:32 -0400
+Received: from mail-dm3nam03on0062.outbound.protection.outlook.com ([104.47.41.62]:24656
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752548AbeCRD0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Mar 2018 23:26:24 -0400
+        id S1753370AbeCRD02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Mar 2018 23:26:28 -0400
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -17,161 +17,113 @@ To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
         <stefan.wahren@i2se.com>
 CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 1/2] ARM: dts: pfuze3000: update sw1a/vldo4 voltage range
-Date: Sun, 18 Mar 2018 11:23:20 +0800
-Message-ID: <1521343401-3109-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 2/2] regulator: pfuze100: update voltage setting for pfuze3000 sw1a
+Date: Sun, 18 Mar 2018 11:23:21 +0800
+Message-ID: <1521343401-3109-2-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521343401-3109-1-git-send-email-Anson.Huang@nxp.com>
+References: <1521343401-3109-1-git-send-email-Anson.Huang@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131658171829266220;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(39380400002)(376002)(396003)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(316002)(36756003)(6306002)(53936002)(105606002)(85426001)(2201001)(48376002)(356003)(86362001)(106466001)(575784001)(50466002)(305945005)(5660300001)(2906002)(104016004)(77096007)(51416003)(59450400001)(68736007)(54906003)(16586007)(110136005)(26826003)(498600001)(966005)(72206003)(6666003)(336012)(97736004)(50226002)(450100002)(4326008)(81156014)(81166006)(8676002)(15650500001)(8936002)(47776003)(26005)(32563001)(2101003)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2767;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD012;1:1SiQS3ly3UKtFi4W5lIjBjrxjkDUhT0hPxyziS+uEpghsWr/FQX6t6H6UgjZhAl/G2qGJKlGFHiV2YB3ZgcVHYUq0+tfWnqbecpmAJ+eQcbXQiNmkbYdxTXp3wWfRuDi
+X-Matching-Connectors: 131658171864351750;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39380400002)(346002)(376002)(39860400002)(2980300002)(1110001)(1109001)(339900001)(189003)(199004)(76176011)(54906003)(51416003)(16586007)(316002)(104016004)(4326008)(53936002)(5660300001)(59450400001)(336012)(6306002)(97736004)(77096007)(48376002)(106466001)(72206003)(305945005)(498600001)(85426001)(450100002)(50466002)(356003)(26826003)(110136005)(26005)(8936002)(2201001)(2906002)(86362001)(2950100002)(36756003)(81166006)(81156014)(966005)(50226002)(8676002)(47776003)(15650500001)(68736007)(105606002)(32563001)(2101003)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR03MB351;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC005;1:SLYrV1EFrwAZTbQaoRALGHcCxxEnLfiBiouYUchy9NNyZJi6FfOnJGd92zyBI910RxwHfZNQT9pAjCwj9xuQ7ebl7L6UO55avbM7mS6WV6xLxjgtaN8iDPTTJUCf1rtG
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 808a4573-a017-4239-bac3-08d58c80060a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:MWHPR03MB2767;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2767;3:jU9TfdIg+5JwoCSqwcaCke7qGItTFyKygQMmIWmccVH9jqlNyGFMTCH6xEZaM2NR0ffOx5JQunrpJrBO3tygQhQNCLytgPY6vUcqcdJ+J2xwWoQ788/3IYKQ8Y5Nu+CGrltS2J49cTwUhAm15X6nN2IdP7e2asQ/G5Dg4qJg8cRORnAy9Mwwnkg2W8SNhx/wwV3saMWaSNc/bDyJZPGvtAiCLDoVsbmRoVN3c6egc3kQCybCLZDw66kXgMEg+vj2VpdPZm6QwplkM2NxN4INx1wPDU93EgLMOIHKA1siJq5uUpVHz+40qBUN2p5w3mvSxax6GsF8jmEX9NEt4mR0PuRYMwUwmGWI2lVgx+rC4lE=;25:UJKZFTKY7J82/NILWGpwBO9OB/Qmi85H/61gCBNP05hK7kWduZxebgw9Ylab2KD7rd8Rb2qDk47IW2iYP0mmn4QIY0uzN14/dOMkmxTMdBG+L2z6PCRbJTNp6cE9mFHKp3QSng/2OIRbhSi2SAAlX7vEV3u+JDJNxw5OUyWo6gGF32fv3U/M+ttWGiQUrAfo42HAJYz6+oFZWLhpcVCL7oUW7cjgLufJ4S+yarFkvzmcEtcGMfOiGsmZcuWNE9E/LM/Lknz6G84IWUQ9sjA7oN44sznHfCDO34Qb8zyyAiK0HU5KTldIAj2uIzEfuX86LwBKHqI7/PutsDKMXW1r8g==
-X-MS-TrafficTypeDiagnostic: MWHPR03MB2767:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2767;31:JpNjPdFRmZ+MSyZ6v9nOlnSSAFsTIZ/Wgw2k3dkQzF2/x4Jj4BQ7+UMggS3u+cEhgMS/4yB4tkomBi47txJ8bSkZ1VFiJ26k/Cz5mtbH+4c1ZWW7/c8M9XQTLLIM37dchFE5+reWpzlQhPBcoBHqHPsUeeHux/YK0mJEN6cuYylsrylsqtMvW2nNAZjWbgpdCZex/10KCuOR6yx3JtTIlP+MCPdUnIBWJBY8GxI8HJk=;4:MFwphJ20+4Qtgby7gKJTS7uS9eIANmMxGRFP/IzfBgBSTJ2r9yJRAe3eM9sQOsaBp+ATYekHJFf3E/xxCMRGWHui9p4yRRlC6LeXvZgcxAt7QG6XdX3vigOf1QosyU6KXanGqkjZAURVNrif2xN76RamgVb2iKAk3lsUgCByE263LinaeVRR3FmYeRM7hz97JonG0L7yTSm8ZbHB4hDaFUzMdBPugZrgMvcDwuh85ynjHRAvdXd/Q3MTc0BP1OtmcXAVbPadSBuKPwDZbdH63y01Jxv1dmrmxxZd6l5zZl9drwASohKESXuyhDMYW27qEJihe2hX/6FGNiUHJQ+dfOd+4g8drGO/H/Lkk8vMzE8=
-X-Microsoft-Antispam-PRVS: <MWHPR03MB2767F33BA7C4A6890ADA5E0CF5D50@MWHPR03MB2767.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 1cec4dd6-057a-4704-8406-08d58c800837
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:DM2PR03MB351;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB351;3:fFTIlOk4SYkMKzrOgUgxyQo4jPiKiOlAKR2GQxaJwjfIgP8JoOmC7jht5lXmT9e9w6nkKndugrPWZUwsZsy4bs4ECeblxUL6ehlJPl1XzBJcU2FrSQtYJxJ9qeskq2ZBMNAA8HIJewHIpUv8DzVO0XUKjaMCMiu/erQANhYq0aUl8XNTIv/HybN3Lldtomv+94deOP5RljN1xRLxKZOii3zod+GHGNzDr7bQA/raww7WneEq8O0IzsUff3krury75Q7lzikK9yGFMwkzLbJW5QiQSLn63hUX8mSH7gO1xMX+e9eknxkqbwdge5pBb9mFBT0zA5avfYQAw6mdG6T/S84PoASt7eSXlNfPUp2zIsg=;25:AuLqRRGBjrzw2+W+igQ3LnImHbFeOLuGd6d1jN+z6HgTzZK+CLIgf4R/xl0/ZUfhcrN2nd8dSqs64tSIoQmg15SuXXSdfuQNuU3oSB2/MX/vA2E/YaR4Pdf2JNA1DrRUWApd+KXOCKoDV1T+ooztgggkMAL+OY5pMIx0cRJbsbLjGIY+Nc9dul74CIzk/FbD969MhyvQpoXrD94+KInJAkQ5IusgJ++r9jWZqD8+9ecNVxvK2arOox2Z5copIWi2oN1D3KwQDD6RR8gICaW1NPGbfVe6ZGYBCngORqomQik94HcMEiBCA/JnfOBKWDZ9Oqejq18Aw5yL37kDefkzMg==
+X-MS-TrafficTypeDiagnostic: DM2PR03MB351:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB351;31:/m0l92cZH+vSuoI8n3krirnRGVFsfI9rmxwnMl8iv2YkzsPg0alJgyAk53vOMzIDlvwK0El/MlwvZXCoUf1X9YTwItbrZEdS1/X4LW0U1KQ4iHdQugeulDZs4VBxep/L///CLF2IuyW4r6Rb+NEsSz453wAAqydL2pvk3OQ8o95YVsfBu9/UhlnjqmF7LWZuOiEck0mwJJOLDVqtL5Kp9n1V+YVHlTz8FAo0IwciShQ=;4:K1awV9JU40ZCoG7uJoyFqOMe25QZ/3nlCowoPa4Va0Z39T9nXE74IOBWBnJZulXudjSm32uXfiR74sO3owTG6KZ4Dw1U1tTjP3j4uv+ZYlCgqnrj1oj9xcp+XAp7v2dSNsgbyDUCSHsvGgRcrVoZQxAaSRgAiZPVpuxaPc7tOdl/sbGLzcAjH8/o74EcrOqgNuXruhYuhddiklOyTE+87j7mRjUAIGQOv9Kj4E+elRbdAvfaBt5R7pzKDjtPZ8yhxTMpo9qXGtf42J6C4CUJc+Fb4NtM98sow5ItLKvHGd1EXJYQUgqBWQX8gRMcVDIOjz4QTQkaVkxqnPFpxZsnJ543si4tRSVakJ/cVZYcqlw=
+X-Microsoft-Antispam-PRVS: <DM2PR03MB35145FA02CD982D34160239F5D50@DM2PR03MB351.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(264314650089876);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(10201501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(6055026)(6096035)(20161123559100)(20161123563025)(20161123556025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123565025)(20161123561025)(201708071742011);SRVR:MWHPR03MB2767;BCL:0;PCL:0;RULEID:(400006);SRVR:MWHPR03MB2767;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231221)(944501244)(52105095)(10201501046)(6055026)(6096035)(20161123561025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123565025)(20161123563025)(20161123559100)(20161123556025)(201708071742011);SRVR:DM2PR03MB351;BCL:0;PCL:0;RULEID:(400006);SRVR:DM2PR03MB351;
 X-Forefront-PRVS: 06157D541C
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2767;23:Gx1manIk9iVm8jyP4JAB1U6ZYtfgbT7HWrZNVbuOU?=
- =?us-ascii?Q?AXAwR3AIafjdUuu+V8qi1eTYFgLhW+0iUVvyJRXhE9uine/E7utnXFc0WmEz?=
- =?us-ascii?Q?563TG/SxC5s/7oKEfKHbyTREu8+YArGAJnvWq2Mk1V1MSbpof9yAKwiAmgzH?=
- =?us-ascii?Q?UBxFIICgrL+YsR35CtqXs16o7kRuMdT2npDu2TeQxbPLWMfETXW3jIJ9k/hP?=
- =?us-ascii?Q?8XAtG0QZ3WZsm68D5erebGvPRVPAYzy9+xU36bUxDHTZ85UIpMONInZ66mDe?=
- =?us-ascii?Q?xLJCEHaVJ9urrKmpFkFP+ynsruDR1yxzWcE7+PhUU7og5SvxalznegtxPIyD?=
- =?us-ascii?Q?KKYWUOJcvrgcZchljHl8KzQ7woyfaUywyM3jiF7HZrWHm4xJuL0QJrOLIrTV?=
- =?us-ascii?Q?Ae2O52O4kBMcgnPdWlrOtaqhzfy9yN6txdwlPgP70ZPagcVQlb2kB0lDGJVi?=
- =?us-ascii?Q?O87wu+UPVzvnb2yels5aLTF+v3GKm2EABQSyOCfmJZxjZfOVql0e6oATnUk+?=
- =?us-ascii?Q?CMpYVjJDD1hf77T9jsroPWaMPqPp/cN5pGnaNTOz/a/PE1kBFeox/Wlx9pUy?=
- =?us-ascii?Q?3tyo10tMAFKaIWhAQlHFHLjLqGlSjEuEAuza1XFRW6U3Hqzcn9l5ymfPGlQ9?=
- =?us-ascii?Q?eTQhIdW3nP70+N6ztRWry5rY/Cft3Jmy3nuBxTFG9qtfdpVNpdgU6e1g2PWJ?=
- =?us-ascii?Q?Uahcf4zNWjm3rfodldUo3EvEUtPDsWol2FoLsLHBsyJqSKeVkDWE2A52FeoF?=
- =?us-ascii?Q?ne+oaZLycAUSDpqhiSmYROYcZaDU6unw1BMAp6cRUgiyHdy74TFnGnVXj/hZ?=
- =?us-ascii?Q?KHVGznJnoPOBRFVJfOorVVMTZXCGjVYvaawKHOa4lQgeJgMEjR1eJfRDIYVl?=
- =?us-ascii?Q?l+jmySgZoRq50fA0zHzXc7wSONAksEOXaGZ84sQWPPCYMYKRYbKfAlPAwbHZ?=
- =?us-ascii?Q?PQTlo1L2lJVJqPBCO8Pz0yNzwzR81oXyREkxyCiycuxj2P2ZGiMHcfGEoBkY?=
- =?us-ascii?Q?cGUb611tOATSZWyOj1ab6tAneAXLhCAGjP29v0mE+H4Ygtd1w05zYUHm4BkU?=
- =?us-ascii?Q?7ALg9Sjqd74U6gUJ8N0/1LZSgbnj1AhRg5GbBFIWo2ADVPVFaoaFT7zCPk7W?=
- =?us-ascii?Q?l2fXCnnr4G07m9HHGDVxUbJKYpW6/esMwRAIUhVA/wtE3Pt1Ek6AUU3HCp0n?=
- =?us-ascii?Q?ITPbWGoNYKPxiQHjqCjzZveq+FAizgr5NBACgQH8hTir9TsksiVGJ5tYIi+x?=
- =?us-ascii?Q?yRFaW8WmxnCqFmQWuoHCuK0RSJaQnPaqZQ99Sxa?=
-X-Microsoft-Antispam-Message-Info: sz8wraFyyeE3bFEAC+mFuHwFUfku2Ea/WqBmd7LEVsy2uz8on9gDqNrhJdon/alVf/X96GAGcga0uUphyq0F5R6N0ac6TDoacRUYGGqRlfxHc+LM+1i0NIgHHdE+Tr3wwGT9AxeKrRvvtXK9mtlK7RiYlWaeeaSnhH+sdeKmLHTbYIDUkJDb9YVZRIP8gut3
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2767;6:It8FxoPGRgQwC67eubRWYDTtZvBB6xNfhMjClAHm3kXpp5xZuKvZiOZPBWg/xdlWB7O6JQMxL1noNVLoqNxKx5wjXtCcDLDCR0kMFMeDWXgP2OjG01Af8pWRH4SfCYC1b7XTWvEYHj6Rox1zqMZh8jgXtLS8e729FEhKleeOAGTL+NHGNXRsb/Dsll4Dbvru3rQGUGJLw9Fg28Z5e0c/hvRXaIWtp9QI3Hsp3UVkkWy5B4htfHITls6v3MozlkmI8cai2/5XKCuOY0NGWfrmoj7ToEfS2DwVJ6cmAE4aztBr0nPF+T6gO/axAE6oRMPmnpcae6hVlsulKB1it1gIdHmxOvrlLgRQzUMno81+vLU=;5:0+3Q2396Qc9JFQ5JDO93cuBLKS10ekTVGTqfpBj7eqt9TqYGBPXgzlg7ROmaWoQhY1HpgIWYaFK+hnGo820mg67x072D40QprzWxXwooW19LJgS00XB1mMgqTRxVj72wCepj3OTjPnkdilu28m3X3tSzGsnKCHZJ269x3OLD92A=;24:Tij/+CZD1ouGPg3I/i2vgrOowDn9hDzTP3r2+Pb3LOIS7BaEdrITGoKUiG9xXIOg5OMA+jWg7mB8Jf1N3Ai0TK93E8mUzQe7PFrW+Gwxtwg=;7:XovSeDc/usVhvTYRRL1UMBTrGyBRjq534Cv9oo8ijbx++l6FbMRwYNSdiJci5wKg3e+z5aFXRb3pBIjfdWmIEM3WyvCxmw6JJiyorVeVvcsXqPQMnUyPw5W7ULg161EZfl5a18lMxOl0x0TvQkxDXHwHuL4btl1z2MsOJH30Nu92BypmRWfQniw5G8uRbpxtubqp/cEdplC2Rc/iGLnTQ3XFqKOBaJ0bHBkUFacV6CaceuptKDdbsU7571+tGuP3
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR03MB351;23:hQ1rTpHHJjjyFg35w5siscsqOsZYWv7muEU9GSdYY3?=
+ =?us-ascii?Q?cfFvp5Hiy00C/2o1u3j+D2B93DqZWHsv5O5TUd3vVb3gkXLg5FZB7JHLH2yd?=
+ =?us-ascii?Q?N+pOvAK4GrhDLcto5NeTWbsWhTGy3nwdFxZrfcO4P+Nj38x7noaBGE0W/NT7?=
+ =?us-ascii?Q?aKe7UnHwnFx/vpRM1pudjDalmuy0wRc3h5DkAjjjWowx/oU3P3WmYEl5Bm0g?=
+ =?us-ascii?Q?KcVSxF6XGimjy59aHs5QmHoiiDPBIGcnpMg8eXwzzx8vCOuwvh1RzyfNYnfR?=
+ =?us-ascii?Q?pIGT078YL8CdJ9gpoUykRLCTfgW6bfYmhEeo5GsLDHW3xqegvCKH7JuoVTuw?=
+ =?us-ascii?Q?Gw0CNvJSMSEGYTYSV4ZLAcT6g/XnhD5R/QYbfFXHOaIhMCHw56BkoL2SmBLa?=
+ =?us-ascii?Q?KPsOR5S0nQvu/cXdxmPBjRjgUAJqHsQfPBFSJ+tG074qgH8HGcsCdg1UxVy5?=
+ =?us-ascii?Q?58KT2SH8/pgyEo+Yyxg0CLnMGCiwtV8O4jAS0uzXxzx5v2DFjXJi11+4L6Cs?=
+ =?us-ascii?Q?FUsCRxisbRPnqdfni99LfaZ+T+wSUZcF5q/ds/Mh779NYoNBLKIKA0VFvgeT?=
+ =?us-ascii?Q?JT+IPQp3gJVLmz+cL9tJNFx767rgvKsmE4Km3TRd6ZpmwC7JZYI1Jyrhal1A?=
+ =?us-ascii?Q?gSsnb0b28mWrZ3cOBr9Unmwdpy6C+8zgsRvIkvOWpryx5Kk9Z3UHxqTzarBd?=
+ =?us-ascii?Q?Ob+0Fz3PuejKGwdGcNOVO4A+S5foCsWVaJqnxFbdQhVMvpm3+IZYy9o7h01C?=
+ =?us-ascii?Q?wxiaOxP6zsQoL+HKAsdMDVmGzfYkn+cG99iGd3NTc9HyA1/7pjpEfH9xL3P6?=
+ =?us-ascii?Q?Jzrv0zU/+5+VcLjo345KxtUVrZJSrwbh8jlOSRHrD91CUmBfPBJVm19ZS/uG?=
+ =?us-ascii?Q?E2R7UD/c4XG/7Fkk+XHGtEdwTc2yLfu1+0K4oNbgBCVqLCz+A5L7fJl0PZEi?=
+ =?us-ascii?Q?NW4SXo7yiLWdPiv3BqUw4y9zVwJGExeZEAfP8BzDn1ETtfKpoEEZWRAsPj7B?=
+ =?us-ascii?Q?lgYG00m1T+yxKj8XRVwEiA8vAMgINxCf2qW52Kem/546u/hCcJY48jSYAjn7?=
+ =?us-ascii?Q?uHbMog0vkIt7xp4ICxChNd9C2UCYTWkVdkjVZesVbKLB+jHduHxUiwvCP6N7?=
+ =?us-ascii?Q?OkVw2G1V3PrSzflsPjo6yGXFhlu09T7ZwJ7xls1nRiDUM2cQ7M9408+Xoxy8?=
+ =?us-ascii?Q?A7y0hul1/EW1ooztyz1Kjpt60DuNaVw0CajhPDAP7u5a0tcEmn9cFoI77NUG?=
+ =?us-ascii?Q?XIUoUdJflqYvobNPHgRHHRK5i00G/zqxeClWRTTwUaVb5lXXMcbKkXgSy5ow?=
+ =?us-ascii?Q?=3D=3D?=
+X-Microsoft-Antispam-Message-Info: E2CmEIl+KyM++Y4zNGj0rxa3Ser07wZOepnTvAUfC3z9J6B6MIxh/l9fPv/LK+yS99IE3l2TdN5Fb520dnHH6Nb2G+SWcR2OZomz+2VrNtAjBucOg6M8qwNd9f4oMvBn72jRmqB2PeT8U11cokb7QIA9mjplfXOVEOj//1kmbzHKjYKsdUEe6hSLcyl6iekh
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB351;6:UAOOJ9wesbJYo27R+r2wFs+7DfmBn2AEQxiaBT2hGn2h9zBA+TVuOEMLpR5+4wjOka+MHgvyb/4IuTLJDCdvnnp1TYy25wT8MTFR21gObsoM1VeRYz1iJBQ26JNXdp7mJAQV7LK82gdbgfVvNBt803/GbGi80CHgierhTHuD7m4xUII4x0t9VtdwvmaAXkcDwEOZJ0abf8BooX5mNFel2TOtlMQmkbNDSyR/659XK3J3d8r59kgze67YxXZjOlsqNOMJ0b6IatAZY7iMXyC9PSZ/+wbDwLTfDDTlSIVB1NAaUYnS01S3ANOxpDyX/joWC1wxk+EZS/J0z88260QMI5ICvxTDBhJ3MXLOiRFkKTg=;5:yNdsh3CoVlYhAJcIidwVCZpBdfT9cx59R6GOYnP3sLSovaaZ1Ndim+m/17tDMj5iL4gZp1TOcGhU3HmX2jYPmoXGtfhoyD2jCTtiSAm8PfPw/BYERzNmEI0b+VgLN5J7RGDHzWOMsdKLL3rumIlMNK/Wn1HD40DdGB7Vh5o0lJI=;24:69KPphJnO627BJd5Em+Ksh30tP6zZ2uN6CoZ4EQM+IxLZbF6b5TSmyM8QaKwvMGHqWWrEQm9ZyN7aB/xFI8EJaMP+JQM6VaWXpscG+tIAXw=;7:tKKwil/1BPWPdK9W1pSKOL6FivSpCnzk5ZfN0026rrdB3fYMGNTEsU/+PvV2kHwBwMvGszqX6T8WQCwT2ZNKLAuwmNvdkueTBO9l68+Bh/oUlyvEM8dcNMt1MJNM47Nyd2zkVoiiHVpXOYioTDJetMDovLpW8b+tdv8XcHS3uj12jHFjPRPxEHx6cEiK25YN6Whh7ahvvTEUclLpT0/3D0VG/itfcJHAuaFSg+Xok8N3x4OOZzumHeubkC7oRq9R
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2018 03:26:22.6614
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2018 03:26:26.2791
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 808a4573-a017-4239-bac3-08d58c80060a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cec4dd6-057a-4704-8406-08d58c800837
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2767
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR03MB351
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update sw1a/vldo4's voltage range according to pfuze3000
-datasheet(Rev.9.0) from:
+pfuze3000 datasheet(Rev.9.0) from:
 
 https://www.nxp.com/docs/en/data-sheet/PF3000.pdf
+
+updates sw1a's voltage range, the settings for 1.450V and 1.475V
+are replaced with 1.8V and 3.3V:
+
+5b'11110 1.450 (SW1B), 1.8 (SW1A/SW1AB)
+5b'11111 1.475 (SW1B), 3.3 (SW1A/SW1AB)
+
+the voltage calculation using steps is NOT available for sw1a now,
+use voltage table instead.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 ---
-no changes since V1.
- arch/arm/boot/dts/imx6sx-udoo-neo.dtsi  | 2 +-
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 4 ++--
- arch/arm/boot/dts/imx7d-nitrogen7.dts   | 2 +-
- arch/arm/boot/dts/imx7d-sdb.dts         | 6 +++---
- arch/arm/boot/dts/imx7s-warp.dts        | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+changes since V1:
+	update the latest datasheet link and add version into commit message.
+ drivers/regulator/pfuze100-regulator.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi b/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-index 53b3eac..1de0a0f 100644
---- a/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-+++ b/arch/arm/boot/dts/imx6sx-udoo-neo.dtsi
-@@ -142,7 +142,7 @@
- 		regulators {
- 			sw1a_reg: sw1a {
- 				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <1475000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 				regulator-ramp-delay = <6250>;
-diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index ae45af1..3781cb8 100644
---- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-+++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -87,7 +87,7 @@
- 		regulators {
- 			sw1a_reg: sw1a {
- 				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <1475000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 				regulator-ramp-delay = <6250>;
-@@ -284,4 +284,4 @@
- 			MX7D_PAD_LPSR_GPIO1_IO05__GPIO1_IO5	0x14 /* OTG PWREN */
- 		>;
- 	};
--};
-\ No newline at end of file
-+};
-diff --git a/arch/arm/boot/dts/imx7d-nitrogen7.dts b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-index 2b05898..2802bcf 100644
---- a/arch/arm/boot/dts/imx7d-nitrogen7.dts
-+++ b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-@@ -188,7 +188,7 @@
- 		regulators {
- 			sw1a_reg: sw1a {
- 				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <1475000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 				regulator-ramp-delay = <6250>;
-diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
-index a7a5dc7..ba60457 100644
---- a/arch/arm/boot/dts/imx7d-sdb.dts
-+++ b/arch/arm/boot/dts/imx7d-sdb.dts
-@@ -248,7 +248,7 @@
- 		regulators {
- 			sw1a_reg: sw1a {
- 				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <1475000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 				regulator-ramp-delay = <6250>;
-@@ -324,8 +324,8 @@
- 			};
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 63922a2..680f076 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -86,6 +86,13 @@ static const int pfuze100_coin[] = {
+ 	2500000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000, 3300000,
+ };
  
- 			vgen6_reg: vldo4 {
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/imx7s-warp.dts b/arch/arm/boot/dts/imx7s-warp.dts
-index 9bdf121..0e0cbcf 100644
---- a/arch/arm/boot/dts/imx7s-warp.dts
-+++ b/arch/arm/boot/dts/imx7s-warp.dts
-@@ -129,7 +129,7 @@
- 		regulators {
- 			sw1a_reg: sw1a {
- 				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <1475000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 				regulator-ramp-delay = <6250>;
++static const int pfuze3000_sw1a[] = {
++	700000, 725000, 750000, 775000, 800000, 825000, 850000, 875000,
++	900000, 925000, 950000, 975000, 1000000, 1025000, 1050000, 1075000,
++	1100000, 1125000, 1150000, 1175000, 1200000, 1225000, 1250000, 1275000,
++	1300000, 1325000, 1350000, 1375000, 1400000, 1425000, 1800000, 3300000,
++};
++
+ static const int pfuze3000_sw2lo[] = {
+ 	1500000, 1550000, 1600000, 1650000, 1700000, 1750000, 1800000, 1850000,
+ };
+@@ -343,7 +350,7 @@ static struct pfuze_regulator pfuze200_regulators[] = {
+ };
+ 
+ static struct pfuze_regulator pfuze3000_regulators[] = {
+-	PFUZE100_SW_REG(PFUZE3000, SW1A, PFUZE100_SW1ABVOL, 700000, 1475000, 25000),
++	PFUZE100_SWB_REG(PFUZE3000, SW1A, PFUZE100_SW1ABVOL, 0x1f, pfuze3000_sw1a),
+ 	PFUZE100_SW_REG(PFUZE3000, SW1B, PFUZE100_SW1CVOL, 700000, 1475000, 25000),
+ 	PFUZE100_SWB_REG(PFUZE3000, SW2, PFUZE100_SW2VOL, 0x7, pfuze3000_sw2lo),
+ 	PFUZE3000_SW3_REG(PFUZE3000, SW3, PFUZE100_SW3AVOL, 900000, 1650000, 50000),
 -- 
 2.7.4
