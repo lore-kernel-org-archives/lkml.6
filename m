@@ -1,135 +1,127 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2432810-1521451807-2-9135787090787685694
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-179927-1521384820-2-8680211289818931995
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521451807; b=IFwkmO5KgXdE9vPEOyPWgSoL0uB0SINzSM1gGKJqPEuT6MN
-    FnyJpIMS/z1LIhl1SYmAInY4EgQAHXzSZbvumapREXuYE9NWjd7UbyZdhTNd42mF
-    0sH9pr+JOeeOvMIcOFLvzLOE76gHFwoYWEYpqBnL5MDeoaSAoakxSKj+P+2NUVcQ
-    lsqkM+edNKw7en+KJbx2bhDPhZDon1IKDdFB/UF0qRkF+5l7OktBM+fp2RT/FKgT
-    WYgWeYWkfWr0WMuCLZhi0KA54uv6gvKdPFm6qL02Ugz/s+S6J1gMWpmWJ0D67Fjq
-    xS/Qb1oYhf690z/JxXSDVphOO9W1UkFu0qUnr4Q==
+    t=1521384819; b=cczHsB6nJ3qiYizpIwkJIRRCgBEu5w0TGnZwE3WcgundJ36
+    bmYAbJkdtOOoaMmhIJERcbz9cSsvfc37fttuah0RB8Pv2dGHLBoouctj00crws3o
+    SW0Ddn9MfEHwogT8bbuNhSgl2B6yQM+gP3+icvMAH6OreGoyclWe8hHDVOT+zl9H
+    53edVoZvmlJiQn3CVKivTEdeaSGzFc20mCdz/As9dZ5WqUGipOpufcID/dkuzP9g
+    CeXaPglb7h7WovIkP722dT5Y9HuxxYuR4HIEj/r5zfPZXoN2L1XjfNssl10r/kNC
+    HYCyOsaQhetwT/JPdrBFgO0oGuTv430OfldwX5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521451807; bh=tRfKKD9snMqQclgLwZ++8aFXzpEWVRpRGWSW93XIp/g=; b=n
-    VdbKmAIOcOvY8ZNCvR2sfVWT7oQZNZMD6mBPTubJRgaCU8J3mWNuB5fd4jRgs00V
-    z4PYYefwwATzZK5YmZqFweUpR3EDFEcX84UKKHcpQB7jyEB9t+aSOVTM44DGuL/N
-    SKT7BCNBvQJ+aJH1GajKFbqr0o3DIVEEaTGN8p5po1xTxTiIMu1Cclj34cpRj+Xt
-    xAtIcs0lPYUIKkBrULpWVTkM6UQ8Uv4HapOsrojCbLHJPzVj35i4a/1wCGLRfofK
-    zyWnYFJzwsM40PHE/ARh2ex2+uSv5aWcw9Xsyj1/aft0r3/8Yl38IHmNDcOEMfgo
-    QbzqBkgK73hze2+DdQVbA==
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521384819; bh=/
+    21mBCPASsByApaSzu3yA/EBzXxxliOkN7R3/j26PCU=; b=QjEoaXBa+QOjip9f8
+    NpZMI+UlsCYhCbi63MkiXuFVScl5qYfY7rQY5BSPsTjUA1oiBUgm68Sba6mxpcvY
+    28moz3nVLCylMv9kcQl1ew8nuNCaYThqMNocTNlJgySKuVeYFC52CmuF0qL/knnC
+    W0zj5tX2s3Yf/Vybkndc+XyXc6bLYIinMR75r9P9bqDhDwmssB3c7Z2jsygNq40v
+    //rFXcXa9AfXVYDSu0UTrG6BpqUs7sa2FJK12GCRTVSUNFGavUCKxtgWA3BEJXLX
+    0tjCuXHhcO8QJrt6GwpllLRyhU6M2u89NapPs1NO3QwwKk7mzpJVRQY9q+simYUZ
+    zqNKw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=irpfLv0e x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddtudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtgfhsphejsehtjeertdertddvnecuhfhrohhmpeeuohhrihhsuceurhgviihilhhlohhnuceosghorhhishdrsghrvgiiihhllhhonhessghoohhtlhhinhdrtghomheqnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdeifedrvdduiedrkeejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeehheehnecuvehluhhsthgvrhfuihiivgeptd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=bootlin.com header.result=pass header_is_org_domain=yes
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kaeaLy7b;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=irpfLv0e x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddtudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtgfhsphejsehtjeertdertddvnecuhfhrohhmpeeuohhrihhsuceurhgviihilhhlohhnuceosghorhhishdrsghrvgiiihhllhhonhessghoohhtlhhinhdrtghomheqnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdeifedrvdduiedrkeejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeehheehnecuvehluhhsthgvrhfuihiivgeptd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=bootlin.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932867AbeCSJaE (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 05:30:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52354 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932787AbeCSJaD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:30:03 -0400
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on mail.bootlin.com
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT,
-        URIBL_BLOCKED shortcircuit=ham autolearn=disabled version=3.4.0
-Date: Mon, 19 Mar 2018 10:30:00 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: OuYang ZhiZhong <ouyzz@yealink.com>
-Cc: <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@free-electrons.com>, <marek.vasut@gmail.com>,
-        <richard@nod.at>, <cyrille.pitchen@wedev4u.fr>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <oyzhizhong@gmail.com>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v4] mtdchar: fix usage of mtd_ooblayout_ecc()
-Message-ID: <20180319103000.2c1902f7@bbrezillon>
-In-Reply-To: <1520755147-4414-1-git-send-email-ouyzz@yealink.com>
-References: <1520755147-4414-1-git-send-email-ouyzz@yealink.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kaeaLy7b;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELuyasd571ZOOgIkSy8xgStvqvuJcGSC1IFvq8aSfMyXiv3IvT94MswD4tSOf2665x0QKUAyvQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+ bhelgaas@google.com
+Subject: [PATCH 2/2] pci: host: pci-hyperv: Replace GFP_ATOMIC with GFP_KERNEL
+ in new_pcichild_device
+Date: Sun, 18 Mar 2018 22:53:28 +0800
+Message-Id: <1521384808-23627-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@linuxdriverproject.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 11 Mar 2018 15:59:07 +0800
-OuYang ZhiZhong <ouyzz@yealink.com> wrote:
+new_pcichild_device() is not called in atomic context.
 
-> Section was not properly computed. The value of OOB region definition is
-> always ECC section 0 information in the OOB area, but we want to get all
-> the ECC bytes information, so we should call
-> mtd_ooblayout_ecc(mtd, section++, &oobregion) until it returns -ERANGE.
+The call chain ending up at new_pcichild_device() is:
+[1] new_pcichild_device() <- pci_devices_present_work()
+pci_devices_present_work() is only set in INIT_WORK().
 
-Applied.
+Despite never getting called from atomic context,
+new_pcichild_device() calls kzalloc with GFP_ATOMIC,
+which waits busily for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL
+to avoid busy waiting.
 
-Thanks,
+This is found by a static analysis tool named DCNS written by myself.
 
-Boris
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/pci/host/pci-hyperv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Fixes: c2b78452a9db ("mtd: use mtd_ooblayout_xxx() helpers where appropriate")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: OuYang ZhiZhong <ouyzz@yealink.com>
-> ---
->  drivers/mtd/mtdchar.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-> index de8c902..7d80a8b 100644
-> --- a/drivers/mtd/mtdchar.c
-> +++ b/drivers/mtd/mtdchar.c
-> @@ -479,7 +479,7 @@ static int shrink_ecclayout(struct mtd_info *mtd,
->  	for (i = 0; i < MTD_MAX_ECCPOS_ENTRIES;) {
->  		u32 eccpos;
->  
-> -		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-> +		ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
->  		if (ret < 0) {
->  			if (ret != -ERANGE)
->  				return ret;
-> @@ -526,7 +526,7 @@ static int get_oobinfo(struct mtd_info *mtd, struct nand_oobinfo *to)
->  	for (i = 0; i < ARRAY_SIZE(to->eccpos);) {
->  		u32 eccpos;
->  
-> -		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-> +		ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
->  		if (ret < 0) {
->  			if (ret != -ERANGE)
->  				return ret;
-
-
-
+diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
+index 0fe3ea1..289e31d 100644
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1500,7 +1500,7 @@ static struct hv_pci_dev *new_pcichild_device(struct hv_pcibus_device *hbus,
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	hpdev = kzalloc(sizeof(*hpdev), GFP_ATOMIC);
++	hpdev = kzalloc(sizeof(*hpdev), GFP_KERNEL);
+ 	if (!hpdev)
+ 		return NULL;
+ 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
