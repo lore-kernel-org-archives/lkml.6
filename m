@@ -1,74 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753528AbeCRJa7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 05:30:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58308 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeCRJa6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 05:30:58 -0400
-Date: Sun, 18 Mar 2018 10:30:48 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ram Pai <linuxram@us.ibm.com>
-cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dave.hansen@intel.com, mpe@ellerman.id.au, mingo@kernel.org,
-        akpm@linux-foundation.org, shuah@kernel.org
-Subject: Re: [PATCH 1/3] x86, pkeys: do not special case protection key 0
-In-Reply-To: <20180317232425.GH1060@ram.oc3035372033.ibm.com>
-Message-ID: <alpine.DEB.2.21.1803181029220.1509@nanos.tec.linutronix.de>
-References: <20180316214654.895E24EC@viggo.jf.intel.com> <20180316214656.0E059008@viggo.jf.intel.com> <20180317232425.GH1060@ram.oc3035372033.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1754000AbeCRKTA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 06:19:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751635AbeCRKS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 06:18:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B6020855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 18 Mar 2018 10:18:53 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio/adc/ad7291: Improve unlocking of a mutex in
+ ad7291_read_raw()
+Message-ID: <20180318101853.756785b4@archlinux>
+In-Reply-To: <a53248a9-4422-4436-aa43-bfbd2b60a85f@users.sourceforge.net>
+References: <a53248a9-4422-4436-aa43-bfbd2b60a85f@users.sourceforge.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 17 Mar 2018, Ram Pai wrote:
-> On Fri, Mar 16, 2018 at 02:46:56PM -0700, Dave Hansen wrote:
-> > 
-> > From: Dave Hansen <dave.hansen@linux.intel.com>
-> > 
-> > mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
-> > inconsistent with the manpages, and also inconsistent with
-> > mm->context.pkey_allocation_map.  Stop special casing it and only
-> > disallow values that are actually bad (< 0).
-> > 
-> > The end-user visible effect of this is that you can now use
-> > mprotect_pkey() to set pkey=0.
-> > 
-> > This is a bit nicer than what Ram proposed because it is simpler
-> > and removes special-casing for pkey 0.  On the other hand, it does
-> > allow applciations to pkey_free() pkey-0, but that's just a silly
-> > thing to do, so we are not going to protect against it.
-> 
-> So your proposal 
-> (a) allocates pkey 0 implicitly, 
-> (b) does not stop anyone from freeing pkey-0
-> (c) and allows pkey-0 to be explicitly associated with any address range.
-> correct?
-> 
-> My proposal
-> (a) allocates pkey 0 implicitly, 
-> (b) stops anyone from freeing pkey-0
-> (c) and allows pkey-0 to be explicitly associated with any address range.
-> 
-> So the difference between the two proposals is just the freeing part i.e (b).
-> Did I get this right?
+On Tue, 13 Mar 2018 20:16:27 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Yes, and that's consistent with the other pkeys.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 13 Mar 2018 20:08:40 +0100
+> 
+> * Add a jump target so that a call of the function "mutex_unlock" is stored
+>   only once in this function implementation.
+> 
+> * Replace three calls by goto statements.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/iio/adc/ad7291.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7291.c b/drivers/iio/adc/ad7291.c
+> index a862b5d8fb4b..b2c3d4c79909 100644
+> --- a/drivers/iio/adc/ad7291.c
+> +++ b/drivers/iio/adc/ad7291.c
+> @@ -335,27 +335,27 @@ static int ad7291_read_raw(struct iio_dev *indio_dev,
+>  			mutex_lock(&chip->state_lock);
+>  			/* If in autocycle mode drop through */
+>  			if (chip->command & AD7291_AUTOCYCLE) {
+> -				mutex_unlock(&chip->state_lock);
+> -				return -EBUSY;
+> +				ret = -EBUSY;
+> +				goto unlock;
+>  			}
+>  			/* Enable this channel alone */
+>  			regval = chip->command & (~AD7291_VOLTAGE_MASK);
+>  			regval |= BIT(15 - chan->channel);
+>  			ret = ad7291_i2c_write(chip, AD7291_COMMAND, regval);
+> -			if (ret < 0) {
+> -				mutex_unlock(&chip->state_lock);
+> -				return ret;
+> -			}
+> +			if (ret < 0)
+> +				goto unlock;
+> +
+>  			/* Read voltage */
+>  			ret = i2c_smbus_read_word_swapped(chip->client,
+>  							  AD7291_VOLTAGE);
+> -			if (ret < 0) {
+> -				mutex_unlock(&chip->state_lock);
+> -				return ret;
+> -			}
+> +			if (ret < 0)
+> +				goto unlock;
+> +
+>  			*val = ret & AD7291_VALUE_MASK;
+> +			ret = IIO_VAL_INT;
+> +unlock:
+>  			mutex_unlock(&chip->state_lock);
+> -			return IIO_VAL_INT;
+> +			return ret;
+This localized error handling makes for complex code flow.  It does however
+suggest that perhaps this block of code would be better in it's own function
+with nice clean internal error handling.
 
-> Its a philosophical debate; allow the user to shoot-in-the-feet or stop
-> from not doing so. There is no clear answer either way. I am fine either
-> way.
+>  		case IIO_TEMP:
+>  			/* Assumes tsense bit of command register always set */
+>  			ret = i2c_smbus_read_word_swapped(chip->client,
 
-The user can shoot himself already with the other pkeys, so adding another
-one does not matter and is again consistent.
+Markus, please throttle these patches to one at a time.  If you send lots
+of similar patches before anyone has reviewed any of them it wastes both
+your and reviewers time.
 
 Thanks,
 
-	tglx
+Jonathan
