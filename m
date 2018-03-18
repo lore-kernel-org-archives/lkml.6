@@ -1,42 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754850AbeCRUgh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 16:36:37 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:59714 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754375AbeCRUgc (ORCPT
+        id S1754793AbeCRUhL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 16:37:11 -0400
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:43959 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754375AbeCRUhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 16:36:32 -0400
-Date: Sun, 18 Mar 2018 16:36:31 -0400 (EDT)
-Message-Id: <20180318.163631.750748793504057329.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch,
-        vivien.didelot@savoirfairelinux.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: Fix missing register
- lock in serdes_get_stats
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180318182305.24952-1-f.fainelli@gmail.com>
-References: <20180318182305.24952-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Sun, 18 Mar 2018 16:37:08 -0400
+X-Google-Smtp-Source: AG47ELvjer8QPcaTpmSDqzeJiKbRfpGmMUEWlpOOl+7et+XrMxYKwW6PeTXyOEQmLa9LJpy/VxSfKg==
+Subject: Re: [PATCH v3 01/15] dt-bindings: clock: mediatek: add missing
+ required #reset-cells
+To: Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, sean.wang@mediatek.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <cover.1518895232.git.sean.wang@mediatek.com>
+ <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
+ <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <836d5d6e-eafa-52b8-39dc-6422ebe32d82@gmail.com>
+Date: Sun, 18 Mar 2018 21:34:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Sun, 18 Mar 2018 11:23:05 -0700
 
-> We can hit the register lock not held assertion with the following path:
-...
-> mv88e6xxx_get_ethtool_stats() calls mv88e6xxx_get_stats() which calls both
-> chip->info->ops->stats_get_stats(), which holds the register lock, and
-> chip->info->ops->serdes_get_stats() which does not. Have
-> chip->info->ops->serdes_get_stats() be running with the register lock held to
-> avoid such assertions.
+
+On 03/16/2018 09:36 PM, Stephen Boyd wrote:
+> Quoting sean.wang@mediatek.com (2018-02-17 11:54:36)
+>> From: Sean Wang <sean.wang@mediatek.com>
+>>
+>> All ethsys, pciesys and ssusbsys internally include reset controller, so
+>> explicitly add back these missing cell definitions to related bindings
+>> and examples.
+>>
+>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: linux-clk@vger.kernel.org
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
 > 
-> Fixes: 436fe17d273b ("net: dsa: mv88e6xxx: Allow the SERDES interfaces to have statistics")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
 
-Applied, thanks Florian.
+added to v4.16-next/dts64
+Thanks!
