@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeCRPrA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 11:47:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58577 "EHLO
+        id S1754147AbeCRPsE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 11:48:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58584 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeCRPq6 (ORCPT
+        with ESMTP id S1751062AbeCRPsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 11:46:58 -0400
-Date: Sun, 18 Mar 2018 16:46:52 +0100 (CET)
+        Sun, 18 Mar 2018 11:48:02 -0400
+Date: Sun, 18 Mar 2018 16:47:55 +0100 (CET)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Vitaly Kuznetsov <vkuznets@redhat.com>
 cc: kvm@vger.kernel.org, x86@kernel.org,
@@ -21,9 +21,9 @@ cc: kvm@vger.kernel.org, x86@kernel.org,
         Bandan Das <bsd@redhat.com>, Christoph Hellwig <hch@infradead.org>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v4 6/7] x86/hyper-v: detect nested features
-In-Reply-To: <20180316142220.32506-7-vkuznets@redhat.com>
-Message-ID: <alpine.DEB.2.21.1803181642520.1509@nanos.tec.linutronix.de>
-References: <20180316142220.32506-1-vkuznets@redhat.com> <20180316142220.32506-7-vkuznets@redhat.com>
+In-Reply-To: <alpine.DEB.2.21.1803181642520.1509@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1803181647420.1509@nanos.tec.linutronix.de>
+References: <20180316142220.32506-1-vkuznets@redhat.com> <20180316142220.32506-7-vkuznets@redhat.com> <alpine.DEB.2.21.1803181642520.1509@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -34,18 +34,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Mar 2018, Vitaly Kuznetsov wrote:
->  
-> +	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
-> +		ms_hyperv.nested_features =
-> +			cpuid_eax(HYPERV_CPUID_NESTED_FEATURES);
+On Sun, 18 Mar 2018, Thomas Gleixner wrote:
 
-Please add curly braces. Rationale:
+> On Fri, 16 Mar 2018, Vitaly Kuznetsov wrote:
+> >  
+> > +	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
+> > +		ms_hyperv.nested_features =
+> > +			cpuid_eax(HYPERV_CPUID_NESTED_FEATURES);
+> 
+> Please add curly braces. Rationale:
+> 
+>        https://marc.info/?l=linux-kernel&m=148467980905537
+> 
+> I know it's a pet pieve, ...
 
-       https://marc.info/?l=linux-kernel&m=148467980905537
+Other than that:
 
-I know it's a pet pieve, ...
-
-Thanks,
-
-	tglx
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
