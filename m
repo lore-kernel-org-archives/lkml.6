@@ -1,39 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754037AbeCRMsU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 08:48:20 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40466 "EHLO
+        id S1754125AbeCRMsl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 08:48:41 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39312 "EHLO
         mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753845AbeCRMsI (ORCPT
+        with ESMTP id S1754038AbeCRMs3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 08:48:08 -0400
-X-Google-Smtp-Source: AG47ELulJTzoiLRT79dC+ITPNN8J5L0+L/lyTH/e9WcLMuDLZ3xYgQkqutAMN09B8kSEtarJrO3woQ==
-Date: Sun, 18 Mar 2018 07:48:05 -0500
+        Sun, 18 Mar 2018 08:48:29 -0400
+X-Google-Smtp-Source: AG47ELukW2XY+3fbgNuyzKuVWNTaBEKQCrIKZo4GmY3HMNsqE+J+itQbFlRDkEz+3QP8Ns0Gkj3t4Q==
+Date: Sun, 18 Mar 2018 07:48:26 -0500
 From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] of: Documentation: Fix forgotten reference to
- of_overlay_apply()
-Message-ID: <20180318124805.hnc7q57b57ilgst7@rob-hp-laptop>
-References: <1520592288-7680-1-git-send-email-geert+renesas@glider.be>
- <1520592288-7680-2-git-send-email-geert+renesas@glider.be>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
+ and pcal9555a
+Message-ID: <20180317234320.ahqlhzjzxco7xnyb@rob-hp-laptop>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1520592288-7680-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 11:44:46AM +0100, Geert Uytterhoeven wrote:
-> Fixes: 93a6039000b5acab ("of: Documentation: of_overlay_apply() replaced by of_overlay_fdt_apply()")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sat, Mar 10, 2018 at 12:00:01PM +0100, H. Nikolaus Schaller wrote:
+> The Pyra-Handheld originally used the tca6424 but recently we have
+> replaced it by the pin and package compatible pcal6524. So let's
+> add this to the bindings and the driver.
+> 
+> And while we are at it, the pcal9555a does not have a compatible entry
+> either but is already supported by the device id table.
+> 
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 > ---
->  Documentation/devicetree/overlay-notes.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 2 ++
 
-Applied.
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  drivers/gpio/gpio-pca953x.c                             | 4 ++++
+>  2 files changed, 6 insertions(+)
