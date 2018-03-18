@@ -1,124 +1,138 @@
-Return-Path: <ning.a.zhang@intel.com>
-X-Google-Smtp-Source: AG47ELsqdCi20C4ltU3YYzsLQyJ7Urd/kWpEVy1gt0os837upT5mew2xBXmm0mQpCWPDtupfxjn4
-ARC-Seal: i=1; a=rsa-sha256; t=1521428120; cv=none;
+Return-Path: <outreachy-kernel+bncBCK63FO5TUHRBLNNXPKQKGQESRJ76AY@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1521407662; cv=pass;
         d=google.com; s=arc-20160816;
-        b=vtPknb8lAb8LYM94FnA6AuKqZEPdO/ycGBg/qGrfr4tKiImBdpo/svVus2OaAObB4g
-         MCm0Phebhu5SMPFU91j3oKw6aKQj4I+XyMa0fJxG2JclnZ78l37LGT+9TauzuWcuApvG
-         oNTheNc0TYGCSUZJpkAfuanII+ZyPwawC2DLOd2YtaFhfjgxZJ4Zyzc8+q3/iNUh/DeL
-         sXEQ3qw/52eZmXax4JlF1RV77AAeqwGMhYjkl62NXp9zBkKzidYsSGDx0+E4JsIVktJ/
-         j585fL3OG3z2mkRkmzqIy7RJbYZOMLwzKnh+jmFKzAI2iclo5BOhVp+y2zQjijLOU3hf
-         fycA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=DwfarKWcu1Tei/1y0pHJFolLDhxe38iTbkxSOCyFUo4=;
-        b=Ug6/KPlLVOPPBSwJeCs9cKEgwkOR8o3xIibmKrmxL3zhTIHc3G8UrHH71bxoFAqPrH
-         ynke1XL5kztsB31K3lmeFTPVdAi+kd1Oj6Ze0B8Lzy761iWoKOnchthUeEHZEO0Fkc0a
-         aOty0sy2k9JbYEs6QGjVjOZWrgzNEz1f0F17oSdJadzWyRwfKc+bfltresg57HyEu1ET
-         ehSl5c7h0qCNZYwArobleNXvpOWTchzJGAZzIojFrB7l81vOGakl2LcEbFW6NwSutM5A
-         CxcKLbXErAeYRg8PSccEf+X3di4FzdTr8YVMk2kU/IJAIWRKuAvGj+f3QDCxW0I4tDoM
-         3kDg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
+        b=wGs6fTbWSS1Bb22zEDRj1VeXhVp7zMg66L2MTs/BFvrCtw+BRt96W7UOL07KE1U942
+         olg3DmI/wqNplZf71DmLu20woowNK4WEK7Yecl2sHYPXmymxL7deaY2LNVj5KP7sLNAT
+         YTyLJwqxZGviShEhtUqRr7qHSpTMbXIgTOi+DzF/+euI8nntpaCSC22y/6qeLCX+3TOp
+         DFdHfW3OPLckpGGFqQI/DC0pI4VYwf6AcuEGBCj0mqkmkxy7rBkZoYVsmRB20pZ+rijE
+         19CYD8IwJXa/GyNwAEyyM9kGZ/1+2PKbHwkl4fJWjV6TS1Q6DZUPFgKtzI5HoP2h144m
+         97rQ==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature
+         :arc-authentication-results:arc-message-signature
+         :arc-authentication-results;
+        bh=ZmLu2q7GVYBUv/4jW3h4ane79pmPsohWLM4nXXLJfpk=;
+        b=Y0QCW6yVPXpVavOKNEGkUI+KpG+DkYH0KKg0J18HSOR3IUR1X1qEG8ylUtBtiI6wKt
+         Lm8tfi6VF9OVjUPmAxbMqaxmb/6+yNot1S/EveyBq8RhHRKscRcxwP6yjvhX8+ROF6yZ
+         jKScz12YDOS44LIFs/cCvEcBlTT1vDapPZXZVUkTJaVlC0aR13pUN5Jy/BmjDo1Z7sc3
+         8Bn5dhXG6wnx7sP6rsgYx3QoGPHvo0P4lMUwtNY/7gc1lvK7UPKnUcPnOw2i67MJ1XUL
+         zcmLQD4uTJ+hzdIfEo9Q3QiBhIDTgD59Hw3XVNr3Mft/ycCzyAXzC/B5j1QPAPNToRP5
+         vpBQ==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ibWjgxU0;
+       arc=pass (i=2 spf=pass spfdomain=bootlin.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbck63fo5tuhrblnnxpkqkgqesrj76ay@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCK63FO5TUHRBLNNXPKQKGQESRJ76AY@googlegroups.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,328,1517904000";
-   d="scan'208";a="212762307"
-From: ning.a.zhang@intel.com
-To: dhowells@redhat.com,
-	akpm@linux-foundation.org,
-	alexander.levin@verizon.com,
-	kstewart@linuxfoundation.org,
-	tglx@linutronix.de,
-	gregkh@linuxfoundation.org,
-	pombredanne@nexb.com
-Cc: linux-kernel@vger.kernel.org,
-	Zhang Ning <ning.a.zhang@intel.com>
-Subject: [PATCH] init: no need to wait device probe
-Date: Mon, 19 Mar 2018 10:55:08 +0800
-Message-Id: <20180319025508.3767-1-ning.a.zhang@intel.com>
-X-Mailer: git-send-email 2.14.2
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ibWjgxU0;
+       arc=pass (i=2 spf=pass spfdomain=bootlin.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbck63fo5tuhrblnnxpkqkgqesrj76ay@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCK63FO5TUHRBLNNXPKQKGQESRJ76AY@googlegroups.com
+ARC-Seal: i=2; a=rsa-sha256; t=1521407661; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=0hvfaZ0vz8MZA0meVZ5aRpOytGuCwoY/KvBsozTFfrO+ssFdTG9YeJEQwq7nBE/vSX
+         MHHmbgsGG6HPI+Mt0phWjarvd8U6y0k0+ajurxQ/LX+Sf0S6570eLCCA56/X8ZlZoxWE
+         d9SN75TOBBx4h5vbP8MLhHwAhrZKlwqg3U7nWcrwgZxElPFOlquaxWGzbbKkXCwvEJ7K
+         9eGqbVD/n/pPDimDE1eFefr8cueV802ryJdhW+a5SZmQSaWbQrS0o/hvvMMOu24fYWWp
+         jdQ7MLroQ77mr0O/2B9IFC9yiancQpaoFhkMS1ZLvK+uG+OIAtyB1b/IXgpAHyBXZPtM
+         9ihQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature
+         :arc-authentication-results;
+        bh=ZmLu2q7GVYBUv/4jW3h4ane79pmPsohWLM4nXXLJfpk=;
+        b=rbMloLEBZq42iiwYVYi3YdE1hMoppBoITBtwePH+0BJuO3szWIWNCKror/MatkOzmp
+         0V0Kx9BeXfR+RN67SCMDHljPh7qivvecN7Itxk3+ajIXpFekXitkYN58o4qtQEPOYJl9
+         lQ7ebsZ396FYwwJC7uFAvlKg3Z+IbM7O84Ki6NN4wibqWIDTprbhHhexE1pQLYKwBja4
+         uA+QQWF7+3w/zMKJNkE2Te7HUbc5/T5fi/PqedulE/ZrDsf83TBpUI+kMadRKa1IfI+w
+         nASLx+gP1H1bsYFlk0gYRl3yfusuKVxrp3TJvkoSGtLFGT0Dax4oNBpV9z3JbcbInTcA
+         obDg==
+ARC-Authentication-Results: i=2; gmr-mx.google.com;
+       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+Sender: outreachy-kernel@googlegroups.com
+X-Google-Smtp-Source: AG47ELsoBWoUsmQqgMjPk9xwl8QR1YRGaWKSJOFP9cq6vaaul1elQ/H5JTdyr53DUDbX6facwNv0TQ==
+X-BeenThere: outreachy-kernel@googlegroups.com
+ARC-Seal: i=1; a=rsa-sha256; t=1521407661; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DovOAsoajsEU8BhRdJSEl8CPS4sDikVeA7ADTi4pyjAri4HJpCfEdUQmWnuGbWfWpR
+         ixw3ZO/BGqsX5YCnGpZvBI7LjmmJNtAP7W3Ztkp9l8M6PFtlNz66tcW+ltSU72YVjyCq
+         m2MHiO7QJI5oFEXP30cURiZ55SIXw33Gt9lJwpCqSRO3xwYDIWhAruPPgsSa4uf3FQbn
+         gXkjdczzSQuU5o+EZv0uVpJ23wWIxX8xEUlkJGMUSiBJ2HtIkVmHW8TrAmSfuD638yjy
+         MWTpcVVc9LbFbKMpuGHVORJcJr1e4sB1popG9F1ZU3GKC6rDr2JYL9a1oRyRGgImzXu9
+         7vRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=WpLFhoYijHIi1Q4dfm0JS+VIRnwsOiLsJ91LTFfzh2E=;
+        b=bnd5hRf9H1bBV3371Ruhl5aKbvF4c5PHwCF23NLGriiezZNVym2F5HUyTapSSK/jzA
+         oP8I4cdhmhr1H9J2ykSjKGUKfzOkMXUxEz4Ey1I8d7tSu+s3Mq4Mq/AfxKNTK5GxB9Cp
+         KKBt2gYBQyccbZFRSqXqqXcuLjCZKZoq1+MaEfZrhMMDyUn3w731AwnGvXWLtceybKsp
+         wXt7tP2cVmiAd/3+JvndzZIydgStj2Iyy0ayWvsYIgx6ycL6YZua7ILsBdT4QoaMKiGW
+         OkmVuMVU7gENsuSUymd4qGh2YrWiJdLxN+oNwpnKUKZlHFzidqIiLK4zrMyYonAYoCj9
+         Uouw==
+ARC-Authentication-Results: i=1; gmr-mx.google.com;
+       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+Date: Sun, 18 Mar 2018 22:14:09 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Shreeya Patel <shreeya.patel23498@gmail.com>
+Cc: boris.brezillon@free-electrons.com, richard@nod.at, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com,
+ cyrille.pitchen@wedev4u.fr, maximlevitsky@gmail.com,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ ezequiel@vanguardiasur.com.ar, outreachy-kernel@googlegroups.com
+Subject: [Outreachy kernel] Re: [PATCH NAND v5] mtd: nand: Replace printk()
+ with appropriate pr_*() macro
+Message-ID: <20180318221409.65945850@bbrezillon>
+In-Reply-To: <1519317082-4790-1-git-send-email-shreeya.patel23498@gmail.com>
+References: <1519317082-4790-1-git-send-email-shreeya.patel23498@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+X-Original-Sender: boris.brezillon@bootlin.com
+X-Original-Authentication-Results: gmr-mx.google.com;       spf=pass
+ (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as
+ permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
+X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
+X-Google-Group-Id: 672804067692
+List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
+List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
+List-Archive: <https://groups.google.com/group/outreachy-kernel
+List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
+ <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595333012085575083?=
-X-GMAIL-MSGID: =?utf-8?q?1595333012085575083?=
+X-GMAIL-THRID: =?utf-8?q?1593119442965474552?=
+X-GMAIL-MSGID: =?utf-8?q?1595311561170376990?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Zhang Ning <ning.a.zhang@intel.com>
+On Thu, 22 Feb 2018 22:01:22 +0530
+Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
 
-there are 2 reasons for no need to wait device probe
+> Using pr_<loglevel>() is more concise than
+> printk(KERN_<LOGLEVEL>).
+> Replace printks having a log level with the appropriate
+> pr_*() macros.
+> Define pr_fmt() and remove other additional macros from
+> the replaced printks.
 
-reason 1:
-mount root device is very late in kernel initial stage.
-all initcalls are finished. that means most of probe functions
-are returned.
+Applied.
 
-and deferred probe are also finished by late_initcall.
-only async probe driver are possible in  probing.
+Thanks,
 
-no block devices, device-mapper or nfs are use async probe.
-so no need to wait device probe.
+Boris
 
-reason 2:
-let's check dd.c, probe_count is increased and decreased only
-in really_probe, and when really_probe returns, probe_count
-always be 0.
-
-when someone really wants to wait device-B probe.
-but code looks like:
-
-thread-1:			thread-2:
-probe device-A;                 wait_for_device_probe();
-msleep(30);
-probe device-B
-
-when device-A probe finishes, thread-2 will be wakeup,
-but device-B is not probed.
-
-wait_for_device_probe can't make sure the device you want is probed.
-
-based on above 2 reasons, no need to wait for device probe.
-
-Signed-off-by: Zhang Ning <ning.a.zhang@intel.com>
----
- init/do_mounts.c    | 9 ---------
- init/do_mounts_md.c | 2 --
- 2 files changed, 11 deletions(-)
-
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 7cf4f6dafd5f..a9fb2ad44964 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -555,15 +555,6 @@ void __init prepare_namespace(void)
- 		ssleep(root_delay);
- 	}
- 
--	/*
--	 * wait for the known devices to complete their probing
--	 *
--	 * Note: this is a potential source of long boot delays.
--	 * For example, it is not atypical to wait 5 seconds here
--	 * for the touchpad of a laptop to initialize.
--	 */
--	wait_for_device_probe();
--
- 	md_run_setup();
- 
- 	if (saved_root_name[0]) {
-diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
-index 3f733c760a8c..4aab3492e71d 100644
---- a/init/do_mounts_md.c
-+++ b/init/do_mounts_md.c
-@@ -292,8 +292,6 @@ static void __init autodetect_raid(void)
- 	printk(KERN_INFO "md: Waiting for all devices to be available before autodetect\n");
- 	printk(KERN_INFO "md: If you don't use raid, use raid=noautodetect\n");
- 
--	wait_for_device_probe();
--
- 	fd = sys_open("/dev/md0", 0, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
 -- 
-2.14.2
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180318221409.65945850%40bbrezillon.
+For more options, visit https://groups.google.com/d/optout.
