@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754393AbeCRSlg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 14:41:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39956 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeCRSla (ORCPT
+        id S1754505AbeCRSlr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 14:41:47 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36279 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754314AbeCRSlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 14:41:30 -0400
-X-Google-Smtp-Source: AG47ELuqrlyN0akLAgOga/OerTXG7kktyyxmhyBpUXzVv2+pLRGovXDNujFbDvt1YfKSuQIrKSAH1A==
+        Sun, 18 Mar 2018 14:41:35 -0400
+X-Google-Smtp-Source: AG47ELv7U6hshRnstGPnlcpwEAUasLMGRDcXqzcsrfZe953qnH5FnVlMykE2spIKAM4eX3wSXlH32Q==
 From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
 To: kvalo@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
         arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
@@ -17,53 +17,39 @@ Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
         brcm80211-dev-list@cypress.com,
         Alexey Roslyakov <alexey.roslyakov@gmail.com>
-Subject: [PATCH 1/2] brcmfmac: add new dt entries for SG SDIO settings
-Date: Mon, 19 Mar 2018 01:41:00 +0700
-Message-Id: <20180318184101.26951-1-alexey.roslyakov@gmail.com>
+Subject: [PATCH 2/2] dt: bindings: add new dt entries for brcmfmac
+Date: Mon, 19 Mar 2018 01:41:01 +0700
+Message-Id: <20180318184101.26951-2-alexey.roslyakov@gmail.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180318184101.26951-1-alexey.roslyakov@gmail.com>
+References: <20180318184101.26951-1-alexey.roslyakov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are 3 fields in SDIO settings (quirks) to workaround some of
-the SG SDIO host particularities, i.e higher align requirements for
-SG items.
-All coding is done the long time ago, but there is no way to change the
-driver behavior without patching the kernel.
-Add missing devicetree entries.
+In case if the host has higher align requirements for SG items, allow
+setting device-specific aligns for scatterlist items.
 
 Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-index aee6e5937c41..0718ca09a40d 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-@@ -31,6 +31,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- 	int irq;
- 	u32 irqf;
- 	u32 val;
-+	u16 align;
+diff --git a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+index 86602f264dce..187b8c1b52a7 100644
+--- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
++++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+@@ -17,6 +17,11 @@ Optional properties:
+ 	When not specified the device will use in-band SDIO interrupts.
+  - interrupt-names : name of the out-of-band interrupt, which must be set
+ 	to "host-wake".
++ - brcm,broken-sg-support : boolean flag to indicate that the SDIO host
++	controller has higher align requirement than 32 bytes for each
++	scatterlist item.
++ - brcm,sd-head-align : alignment requirement for start of data buffer.
++ - brcm,sd-sgentry-align : length alignment requirement for each sg entry.
  
- 	if (!np || bus_type != BRCMF_BUSTYPE_SDIO ||
- 	    !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
-@@ -39,6 +40,15 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- 	if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
- 		sdio->drive_strength = val;
+ Example:
  
-+	sdio->broken_sg_support =
-+		of_property_read_bool(np, "brcm,broken-sg-support");
-+
-+	if (of_property_read_u16(np, "brcm,sd-head-align", &align) == 0)
-+		sdio->sd_head_align = align;
-+
-+	if (of_property_read_u16(np, "brcm,sd-sgentry-align", &align) == 0)
-+		sdio->sd_sgentry_align = align;
-+
- 	/* make sure there are interrupts defined in the node */
- 	if (!of_find_property(np, "interrupts", NULL))
- 		return;
 -- 
 2.16.1
