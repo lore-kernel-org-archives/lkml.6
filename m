@@ -1,94 +1,69 @@
-Return-Path: <jack@suse.cz>
-X-Google-Smtp-Source: AG47ELtbQw05+gdItUPNYxSqnu/uzcx4uILly6RqcvV9Y5zUgYjTr1hK97V6fbOZ2o7Gaav1zMJF
-ARC-Seal: i=1; a=rsa-sha256; t=1521577056; cv=none;
+Return-Path: <ying.huang@intel.com>
+X-Google-Smtp-Source: AG47ELs+SZfzJPE2kbkneZAEIZs5rRiM1QhyuRV3p/+9TqJAD5JSMqbGPRMnAMPx6hZp04eqdMeW
+ARC-Seal: i=1; a=rsa-sha256; t=1521427022; cv=none;
         d=google.com; s=arc-20160816;
-        b=S/+zMFVlqVErCLirt3Ei4jOwZadQplpre3wxamvEN9ow+Bj+gmmbJzWLximsXSi6ea
-         MOnb/wAp9268npLuPaZX/9nRPoPWiQhCe5JwnTzrry/jn1xhxaIugOQdMhG0KwMS9Gxc
-         H21+PN21K8+WuuFzvL7vVEyDUTwfNi/nDpe1CqchHlttKXfsXMc26aJWyrvHVKwwEncH
-         OKT6S1BiveXb7JF5L4vBoJuQJdl3NROcAsFg16C4UU/as8mSD9sP+05tuohT/7aXqTFG
-         tWPkdo8TV8V5ivb8mC2V+kJUu6IKjKq8relk+8wtjt8JlCGMGpRbzjjdl4lReJpsN2Xh
-         U36w==
+        b=S0T7U0INqGNQsPtQHl1hDn0a0/u9ihQg6Fq3/084KKmoe5X6CMquZJu/SiGGd2DR9G
+         OLN5rjmayJMX1v8EfKx9ChxFteVC9/kmzFwlDp62JJR4Nt72W0On5rKjeDx9KK1Y8uJJ
+         x34+IfjoU87On9Ko7s0qi/5RjOwMFO9xNuG1Ar1RmBxXqwE4Cdy5pJ0cCAquRsv28H5e
+         bEKsIz7dYfXGYWhN3clUFtpFy4rI4WD5oPzsUMZLof0e+IHhI1c1boVp+Iodmljr56li
+         zfRuHWTg1IgkQ+RZBTQwi1XncyO5EGWL6h8BfumLs8MhydCMwD3LMinWisH/+KNBmGkF
+         WGUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=B6RwOF1O1GvwZxBxx4aKn10fdudaOwfzwSFl60ngLek=;
-        b=tKdHSO/pVZo0sa7DODjfpt74dqt2OLY7yiJ1daPMJCSXxC8jblN1lHs16pu8Yc3QwE
-         rgC42qoPj3pIcRsv94r18A4eQ5GMWsHeiPwViEw3Vgh/J9YJU+polxCCWmM5iWPxCcIj
-         9lGv/HEjKE7n4tfMt1h0y+5C8AGG819v71Rbgusi0JYIqf7Qb22g/SW2tlDR2wqLKyhr
-         eiE+ONXUOFf4agLjuIaknhIpv52JFVga6pDz/fC49bj+2KCGnK0gox7Cw1bof6R8BvxG
-         g01e+6+mTW/x38YjtEdE5j8np6NSyGnIb+NmMHT9N/qGG2O83cZi15db1+vtGhOYRK/X
-         FOnA==
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/H2VpWrj4N/ZUcdTD/sgdTOnKRE75QWKHq4i1qsC3BE=;
+        b=VOZOV5rTeIbhkWhzWcup+ENW29r0IbbfAZ1+QG72NQtLrnPvTDDvc5TYdk8edO63Rt
+         e+tV4ePLKMA/dYRXNPtG2y5SaZD+iAlK1ytTNrHqbF1n30f5doRkLm0cm375IARxorqR
+         NfB0k0e2y93Sgprrprk7QlBuaG2SrFtKNXJuNYv46fIe1QKz9iQKgWXWzx4qRboC8amf
+         Dh3S14smDCP/hbrUs2rl1loF6xx6fHlp+1Ztin2BLpUGrTF62N47L+4FRR+r21Ufh62Y
+         /WeLdZFtNgQib5zOE7FfTxAuZQ8a5b4yIZnJtV3TPrX+MUMm4fsRMCjDwyr55PzUp4rI
+         ztJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
+       spf=pass (google.com: domain of ying.huang@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=ying.huang@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
-Date: Tue, 20 Mar 2018 21:17:30 +0100
-From: Jan Kara <jack@suse.cz>
+       spf=pass (google.com: domain of ying.huang@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=ying.huang@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,328,1517904000";
+   d="scan'208";a="25596026"
+From: "Huang\, Ying" <ying.huang@intel.com>
 To: Wei Wang <wvw@google.com>
-Cc: gregkh@linuxfoundation.org, Todd Poynor <toddpoynor@google.com>,
-	Wei Wang <wei.vince.wang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jan Kara <jack@suse.cz>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Sherry Cheung <SCheung@nvidia.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Huang Ying <ying.huang@intel.com>, Dennis Zhou <dennisz@fb.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, mgorman@suse.de
+Cc: <gregkh@linuxfoundation.org>,  Todd Poynor <toddpoynor@google.com>,
+  "Wei Wang" <wei.vince.wang@gmail.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Dan Williams <dan.j.williams@intel.com>,
+  Michal Hocko <mhocko@suse.com>,  "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>,  Jan Kara <jack@suse.cz>,
+  =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,  "Hugh Dickins"
+ <hughd@google.com>,  Matthew Wilcox <willy@infradead.org>,  "Ingo Molnar"
+ <mingo@kernel.org>,  Sherry Cheung <SCheung@nvidia.com>,  "Oliver
+ O'Halloran" <oohall@gmail.com>,  Andrey Ryabinin
+ <aryabinin@virtuozzo.com>,  Dennis Zhou <dennisz@fb.com>,  "Pavel
+ Tatashin" <pasha.tatashin@oracle.com>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] mm: add config for readahead window
-Message-ID: <20180320201730.xvvpc4gptqrn47ba@quack2.suse.cz>
 References: <20180316182512.118361-1-wvw@google.com>
- <CAGXk5yoVMd9B=nvob7s=niCAQ9oHAX84eupF9Eet_dAk7WTStg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	<CAGXk5yoVMd9B=nvob7s=niCAQ9oHAX84eupF9Eet_dAk7WTStg@mail.gmail.com>
+Date: Mon, 19 Mar 2018 10:36:58 +0800
 In-Reply-To: <CAGXk5yoVMd9B=nvob7s=niCAQ9oHAX84eupF9Eet_dAk7WTStg@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+	(Wei Wang's message of "Fri, 16 Mar 2018 18:49:08 +0000")
+Message-ID: <87zi34zt85.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595119752476729321?=
-X-GMAIL-MSGID: =?utf-8?q?1595489184282423101?=
+X-GMAIL-MSGID: =?utf-8?q?1595331862119084015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri 16-03-18 18:49:08, Wei Wang wrote:
+Wei Wang <wvw@google.com> writes:
+
 > Android devices boot time benefits by bigger readahead window setting from
-> init. This patch will make readahead window a config so early boot can benefit
-> by it as well.
-> 
-> 
-> On Fri, Mar 16, 2018 at 11:25 AM Wei Wang <wvw@google.com> wrote:
-> 
->     From: Wei Wang <wvw@google.com>
-> 
->     Change VM_MAX_READAHEAD value from the default 128KB to a configurable
->     value. This will allow the readahead window to grow to a maximum size
->     bigger than 128KB during boot, which could benefit to sequential read
->     throughput and thus boot performance.
-> 
->     Signed-off-by: Wei Wang <wvw@google.com>
+> init. This patch will make readahead window a config so early boot can
+> benefit by it as well.
 
-Just for record we had VM_MAX_READAHEAD changed to 512 in all SUSE
-distributions for quite some years. But just recently we were re-evaluating
-it and we are finding less and less reasons to keep this setting to 512 -
-with newer storage benefits become marginal and the overhead of reading
-more unnecessarily in some other corner cases is visible as well (I still
-have somewhere reports from 0-day robot that complained to me about two
-performance regressions coming from increased default readahead window).
+Can you change the source code of init to call ioctl(BLKRASET) early?
 
-So for your specific case it might make sense to increase the window when
-you have a control of both the HW and the kernel but in general I tend to
-currently agree with Linus & co. that the current default is probably fine.
-
-I don't have a strong opinion on whether your ~90ms of boot time are good
-enough justification for a kernel config option...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best Regards,
+Huang, Ying
