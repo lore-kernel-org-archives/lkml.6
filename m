@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvRCUFq3/QUnQM2bdUH82Cg+rA7/RDtLFmEfQzyK6OB/bR4Ui+gs6EVmlCHeF6Y+f4zgQyJ
-ARC-Seal: i=1; a=rsa-sha256; t=1521483288; cv=none;
+X-Google-Smtp-Source: AG47ELv03gxWdw/KM8+5fD42eYxX+GTWSDVegtmQZKZX2aaYC3a6EMKQy1PViSfbC7CDgtZe9equ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483285; cv=none;
         d=google.com; s=arc-20160816;
-        b=P3NGIeATl7cZetiqltp3QwxjnG873M2VNqDBcVQ1crJ4gEZwqtiCqZwFY+6nsX7TpF
-         ZfPJtpA24Tt9EQbFJ+e9SuCQerFyuIEeOEoFkQ66464LruYxTnAbjOVD/er9DvJLhfBV
-         ggNRUP4E92ikyYRGQkLZB6hH5P/Djoapssrdu0pBn84uO0JXaYd5TPXjBBe1cyvx8sTJ
-         knynTp4+LfaNzwTMtxtEh6VztsD6JgGYSfJMEtFQzMAOJl+MCJ8HDIcn+8lgaYUI3kVL
-         ahntTVB4Buu2WWhOsFMDjsH87UxQRTzvHYvm/tzY12nBMI8CVIT55ajcwvWeUdENBrtA
-         T/FA==
+        b=KbeImsmiLZfIm+Za4Jjp1Uc6xzNhaj5im7i/aB+CrLY8+gXyIigl4kYmCVLvT0e9qe
+         lV3XCCN7YyMjdR8achW+UaddyyZX4z9PGva/dxDpPfwzwSIy226c510aL1DqrBL8hhpC
+         2Ah5n5uqP/+rPAVj6U490fJWcrXN66uzbuQdL4nP647QHAUU8bD5zXJc6l597qDbh64m
+         V0QGF1xzndCEgu3j/rxsQXhovbie4ibogcH3CMbdYUWKl8zwDRCCm243TL12KnF6MOHK
+         WXtyohTJtqdwFOT3ZVGugUJ64hJ/Hbdx0Q7F6yns1kN19ml/IOf17s8smYXDAYNeD42Q
+         yzAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3QxlR4l+fs8jWBAq6Mz+tvfTpmV93wv2pkT0l2gnoJE=;
-        b=sYpQ1AjIHfRP7NOqpdiwAmuIFUYmIe17laJcE6PZYR/VZfTDHQoM/Bu8YrVzBuFyPj
-         uRHcdcucCi+yjwyv/XO7pdUmXdhKmTAtl28iGqsAgpH1vNbZyCKVdSa6IuxKaf111CGh
-         OA7YK0q2yebdfwky6l7OvK877S/a59G+J+Jko8Fwr3Jtawp8fK/c0rYUPvUnBlwPnWjh
-         ZQFu8z1rnVfSbeql2P3QJdMUimhzEd/IcHeZhRFQlfSAoY12B932vcBiCKT+KbV+B1W0
-         JFQfoBMeR2TsIj7+WYw2+N4j5HCWkPXP4Sj3xia6Aq3/UneMk6OP/i+x19WqfAvuDA9m
-         mRYg==
+        bh=+YERCPeq7/+C2SP9j9ZyinJLWVedAsxwMTCESUzjK8s=;
+        b=C1lBX15g7H37pYPk8Cgqzw4vSPvB+CYIB0eSiGenreHH3/IOE3L3khmZlvu20xJnRs
+         7cLA5+8oUgdyXdwi6Z4CKiiSbpWTMtCR2XvBoovgfRdQ5m5eZQc1n2tD6t+dvtUvAjkv
+         YQMr2w/uKGefBLXC/9pWapvSod4Fw3lpedd1JUjJ/yDJIvectElz6IrMUNEPYfNwc0bo
+         PnAmV02tjUIsQLzrov6rrCMMKx3A5MZIGNb4oNPmie4vLZlwZLoU/0MNAWiVRRG6wW9s
+         +gcJ5xaILL69YrQj8LwaIcKZBSM7bIcNAFkEBKHodHraO8miy0vVAEsS9KfwiLJN5f4o
+         zrLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	NeilBrown <neilb@suse.com>,
-	Shaohua Li <shli@fb.com>,
+	=?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 067/134] md/raid6: Fix anomily when recovering a single device in RAID6.
-Date: Mon, 19 Mar 2018 19:05:50 +0100
-Message-Id: <20180319171858.945193883@linuxfoundation.org>
+Subject: [PATCH 4.4 066/134] regulator: isl9305: fix array size
+Date: Mon, 19 Mar 2018 19:05:49 +0100
+Message-Id: <20180319171858.794067026@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390860083366707?=
-X-GMAIL-MSGID: =?utf-8?q?1595390860083366707?=
+X-GMAIL-THRID: =?utf-8?q?1595390687763949182?=
+X-GMAIL-MSGID: =?utf-8?q?1595390857272871888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,63 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: "Vincent Stehlé" <vincent.stehle@laposte.net>
 
 
-[ Upstream commit 7471fb77ce4dc4cb81291189947fcdf621a97987 ]
+[ Upstream commit 0c08aaf873174c95e674cf21ffcd041c589d2e5b ]
 
-When recoverying a single missing/failed device in a RAID6,
-those stripes where the Q block is on the missing device are
-handled a bit differently.  In these cases it is easy to
-check that the P block is correct, so we do.  This results
-in the P block be destroy.  Consequently the P block needs
-to be read a second time in order to compute Q.  This causes
-lots of seeks and hurts performance.
+ISL9305_MAX_REGULATOR is the last index used to access the init_data[]
+array, so we need to add one to this last index to obtain the necessary
+array size.
 
-It shouldn't be necessary to re-read P as it can be computed
-from the DATA.  But we only compute blocks on missing
-devices, since c337869d9501 ("md: do not compute parity
-unless it is on a failed drive").
+This fixes the following smatch error:
 
-So relax the change made in that commit to allow computing
-of the P block in a RAID6 which it is the only missing that
-block.
+  drivers/regulator/isl9305.c:160 isl9305_i2c_probe() error: buffer overflow 'pdata->init_data' 3 <= 3
 
-This makes RAID6 recovery run much faster as the disk just
-"before" the recovering device is no longer seeking
-back-and-forth.
-
-Reported-by-tested-by: Brad Campbell <lists2009@fnarfbargle.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: dec38b5ce6a9edb4 ("regulator: isl9305: Add Intersil ISL9305/H driver")
+Signed-off-by: Vincent StehlÃ© <vincent.stehle@laposte.net>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid5.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ include/linux/platform_data/isl9305.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -3372,9 +3372,20 @@ static int fetch_block(struct stripe_hea
- 		BUG_ON(test_bit(R5_Wantcompute, &dev->flags));
- 		BUG_ON(test_bit(R5_Wantread, &dev->flags));
- 		BUG_ON(sh->batch_head);
-+
-+		/*
-+		 * In the raid6 case if the only non-uptodate disk is P
-+		 * then we already trusted P to compute the other failed
-+		 * drives. It is safe to compute rather than re-read P.
-+		 * In other cases we only compute blocks from failed
-+		 * devices, otherwise check/repair might fail to detect
-+		 * a real inconsistency.
-+		 */
-+
- 		if ((s->uptodate == disks - 1) &&
-+		    ((sh->qd_idx >= 0 && sh->pd_idx == disk_idx) ||
- 		    (s->failed && (disk_idx == s->failed_num[0] ||
--				   disk_idx == s->failed_num[1]))) {
-+				   disk_idx == s->failed_num[1])))) {
- 			/* have disk failed, and we're requested to fetch it;
- 			 * do compute it
- 			 */
+--- a/include/linux/platform_data/isl9305.h
++++ b/include/linux/platform_data/isl9305.h
+@@ -24,7 +24,7 @@
+ struct regulator_init_data;
+ 
+ struct isl9305_pdata {
+-	struct regulator_init_data *init_data[ISL9305_MAX_REGULATOR];
++	struct regulator_init_data *init_data[ISL9305_MAX_REGULATOR + 1];
+ };
+ 
+ #endif
