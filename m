@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuKV9g+6gnZiC6qE6B0ZLoj1kDY/cKJeApbsRs3luDNEAR60pUGLSXV2AaIM1xw1e3ZUzzn
-ARC-Seal: i=1; a=rsa-sha256; t=1521483581; cv=none;
+X-Google-Smtp-Source: AG47ELtHRhEn9KAY/3/4XOPrxRyu1wtfsr1LrkTrr7+URxvWafEW/tsUpnM/NNVEGMp+hBpX7pyq
+ARC-Seal: i=1; a=rsa-sha256; t=1521483578; cv=none;
         d=google.com; s=arc-20160816;
-        b=po63GE6gxjTX9YSMsMHBACkB7RGYO7S+t/kzO8OSednTuflZApzCn2X6pBq1dzgaOS
-         c0iNCnYL1OBrhPzxescbufXd2OptzkP3JnjdX1prDRDYSzQKxSG0if2l+aV89tkfaW3Q
-         ZebkNPpyYEpd86GaghMgN1XF2VbtQBoSklrskaZwJKajDN/jVILsVXa33ANpdn0hl3iZ
-         Gk0c3VUsPWtn13xnT63YBDCYp57C7OnrwJWbSHZTzCP/z0oHXLUyOzKlvT60UG8ntYiZ
-         W4u/8Fc5FJu/EXZIQzqQIDMiQMrBNowHhJ5qMbAX7gKI2pdXWxX2ocCVTmUtltD9gIU4
-         Efmw==
+        b=xRAsNLJ8W/Rb02v+SiXdvXZ0BKV75/YqJ4Kh8Cam6jA7WRGcDiP9B0LfEBxkdlbUWl
+         VEJGftOnEBtr/Z/5C3uUlkEWfLhs65/M/OB7q+Q3h7ua6lN6w1exDFMM9cKDPk2LWjWc
+         HgZZJgTXY90tWmUt0d2k/tJDVDZfywkP3M+kyUvEM3oEBNqvqY4PRwBc6OB7ivvERE8/
+         OLAlIFuWmxrdQmriaLP/D8gGGCoPJMP24+LdfnNy6uhxt+pPBvYpqqfkd7NPBS5rf6py
+         P6+9//ns+2jMYWnMXpMbtqv7KP+5sm1IAL7Pf67dAne4+vwwHs240sxUugxt5hW6xTVT
+         6RUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nktBnKoikKDSiVEENCBOKxGfur9hbNu1LaWmwSz5Ld0=;
-        b=Hb6IE1MwyIwOrQiVaDrrwcD8RZfc6LRzR07dlxOu0Wf4S+ar7YbY14Vj1JX+xF+MNM
-         FjSzUi/8V3gKpb/QoAAtJQNctbE2bNWdiX6KYMYKKrnxFvsjG5pHbpz8ajyid5qn9dFh
-         lZZGVBP4+jiu0NsJcTkFhc7pkvwgoTZVWmZewhZS+Qt/nWNNYOaaV/+4kk9hQJzqLAqx
-         O5b0jfRRcIPqRn/Zr/+4Qu6WZS204K6ELmcH/p1okUaMdl0J3u9fIBQfD5ebqqeP6gUD
-         hzimYeT0HL9HOOZSRbCUGYNG6TDS7GPRBSHsUxGjWdJy6w4bpRH1dOZKIsZ7O3b6Okr4
-         0ZSA==
+        bh=vNnxqQkVq+7smwG+NKZdeQsei0FVIGJaYPBRPpoTxQs=;
+        b=XGkgQCztEEshxIL2xbbfiylmeW505U/W/KKhJH91Lzf/7cbDtMUVxGfpFG3J79b7N8
+         RUXeQwU6kCUj/F7tiqA6zAJTREIvYBSZFgHqmmNSr3mdN0UEVU2rq3ZZcV9e6Gtyxo/V
+         bB2itO1NulPZMLQ9OQxJYt11EI2nyP+LfaGh5NXW2yBcgtkzB9OYCxbV7Eg4RPAzkx3e
+         UIa+DHi/Ov73Mufjt+whzyVDEr5bm0mMA+OV2Rna7a2NwXKNx1775z+6Z4Aw9WUWkoQ9
+         SJ+ro4NQBtUvpQNkUsGloFVOAluo8e+CG85h0iHWRaIeI/6bxTVERVaM+5DkL/czOUYr
+         3+xg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Wang Nan <wangnan0@huawei.com>,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 042/241] perf probe: Return errno when not hitting any event
-Date: Mon, 19 Mar 2018 19:05:07 +0100
-Message-Id: <20180319180752.941046771@linuxfoundation.org>
+Subject: [PATCH 4.9 041/241] perf probe: Fix concat_probe_trace_events
+Date: Mon, 19 Mar 2018 19:05:06 +0100
+Message-Id: <20180319180752.898616948@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390716323570935?=
-X-GMAIL-MSGID: =?utf-8?q?1595391167530491207?=
+X-GMAIL-THRID: =?utf-8?q?1595391164951127831?=
+X-GMAIL-MSGID: =?utf-8?q?1595391164951127831?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,57 +53,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 
 
-[ Upstream commit 70946723eeb859466f026274b29c6196e39149c4 ]
+[ Upstream commit f0a30dca5f84fe8048271799b56677ac2279de66 ]
 
-On old perf, when using 'perf probe -d' to delete an inexistent event,
-it returns errno, eg,
+'*ntevs' contains number of elements present in 'tevs' array. If there
+are no elements in array, 'tevs2' can be directly assigned to 'tevs'
+without allocating more space. So the condition should be  '*ntevs == 0'
+not  'ntevs == 0'.
 
-  -bash-4.3# perf probe -d xxx  || echo $?
-  Info: Event "*:xxx" does not exist.
-    Error: Failed to delete events.
-  255
-
-But now perf_del_probe_events() will always set ret = 0, different from
-previous del_perf_probe_events(). After this, it returns errno again,
-eg,
-
-  -bash-4.3# ./perf probe -d xxx  || echo $?
-  "xxx" does not hit any event.
-    Error: Failed to delete events.
-  254
-
-And it is more appropriate to return -ENOENT instead of -EPERM.
-
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: dddc7ee32fa1 ("perf probe: Fix an error when deleting probes successfully")
-Link: http://lkml.kernel.org/r/1489738592-61011-1-git-send-email-wangkefeng.wang@huawei.com
+Fixes: 42bba263eb58 ("perf probe: Allow wildcard for cached events")
+Link: http://lkml.kernel.org/r/20170308065908.4128-1-ravi.bangoria@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-probe.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/probe-event.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/builtin-probe.c
-+++ b/tools/perf/builtin-probe.c
-@@ -442,9 +442,9 @@ static int perf_del_probe_events(struct
- 	}
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -3060,7 +3060,7 @@ concat_probe_trace_events(struct probe_t
+ 	struct probe_trace_event *new_tevs;
+ 	int ret = 0;
  
- 	if (ret == -ENOENT && ret2 == -ENOENT)
--		pr_debug("\"%s\" does not hit any event.\n", str);
--		/* Note that this is silently ignored */
--	ret = 0;
-+		pr_warning("\"%s\" does not hit any event.\n", str);
-+	else
-+		ret = 0;
- 
- error:
- 	if (kfd >= 0)
+-	if (ntevs == 0) {
++	if (*ntevs == 0) {
+ 		*tevs = *tevs2;
+ 		*ntevs = ntevs2;
+ 		*tevs2 = NULL;
