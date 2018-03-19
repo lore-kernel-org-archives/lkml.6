@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvHe9cBXa/JR7sHurkIbQvBrvRVJ/OBBwX6zfuJPAqrLLEA4Gv8cdTuSvVM+F4Hncag1IZu
-ARC-Seal: i=1; a=rsa-sha256; t=1521483101; cv=none;
+X-Google-Smtp-Source: AG47ELsEWO2Wi+6nMp4DpT9calBxzzoQdU0YgvrgQjmoVrP9rz6DQ3vPwton6Cuhb64S1OqtuUuL
+ARC-Seal: i=1; a=rsa-sha256; t=1521483096; cv=none;
         d=google.com; s=arc-20160816;
-        b=yR6RUcWUuBcj8Ob7Sz8vcac6fdTjKWgX3nEm15sqqGXqyWkkVAlnnAR00iUNqiZ2ZI
-         OfyHsSURXh5XskOMEtiMgsV60Wlg4EvN4VTN904+xjaiJ1O3wlGpxQ2JD1i29SJKgd4a
-         aetRtS5IskG32p9jn/RSZ24Z0xoaen2jaFUMgy3214SsUdWJX4Mu3DYEcPFk0z9dgUQJ
-         93ifV1jhI6lS8sjKjvsNYfRwG95ROocXl/x7up5Jkr4MMqVdCGMSdbIBiUE2bv5j3ZaP
-         2aWJjy+i5e/ox/01LDkvqiJpqF+f7aOukv5QRmjMzATm6JXo0cx8ZU8E1QeAsFgGtdPW
-         JuwQ==
+        b=AFonSg+DuRV9Z0KB7VZ2OYeB6kWP/84ofKsZtquUgtqJ33RqGVUvWwyLNSaNw6F/yc
+         renJNb+sRlE4ckgOmaKBm1O15xZ/wWAuDvZCJhErbIqJrnCYE3KHf0R5aftXHx1rIzOc
+         DrHGM2gbpNN7alvObv2TlOSOgGNw/QLfpuw3OVBFuxNHROga80QONwUuNwRE6n7Nglh6
+         aUz/ECDzf+gcCnEuVQXiujwbFZgse/KuBKOvhEif+R/U7JKnXA3Kr2vy+csreGPjW1Hp
+         ygGCZuli4autJvHjfZV0ujEreDj52lmcYnzTPnF8HeD7Ih4jhqBuLHhR2l62LJooYIoj
+         3TbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=A0mFrQRB0nQ97//MhIOh2wZbykxlPK12KA+icTv+wAk=;
-        b=t66sUufCcjt57EYypxSfEFGQXx6jJl4aB0LHDRBJFfcFGrW9VcH8O4pjSBUgz1ZKbW
-         RBvYm8rT9Ph4rj+FoE6hJkOvdyp87NrYCckvmgu85FNda2/mcsj+qqpOLzmmloQgMSLO
-         WhEv4aBwmlvpHThRCr0PQw+OhGYnhOn+w17Bqz8s0j2vkKsKAstCu/q3PwR3QMCT1fn4
-         emW3S11upgQY2CDjSKTq4Q0b2uzWoZt9TXClKO6hEIa83+g7nBLFB+m9+64BYXyIa9pa
-         P/IRdQpKaarL+iQ3Z/r5raXQK3Mvk7jGVpk0Z7t6HBnBSrkHeX/ZvIynTT1Mbk5o0sZn
-         QB+g==
+        bh=zLnnq6CCET0O9Xf8o4RJRA5AWknZU4uewMvMYsD3gzw=;
+        b=RRq8TBt/Rbrkpjrns9COTix+q3e8Ov64odXb0MTAkHDF4TCGkqadFRuykvFvYB8jGJ
+         7nY20+v6OKdM1/v7hVx/FW28Ickemlx5D1+uLoDzSWXuxTOmlb/+HQ8+2cACWLIIAcIk
+         dYCwnWRtic4vjMxN1QMjRHZgbvxdwNJYydzCrsSgc2gli5FKrLXA4FPeNcagh5xZW95u
+         TO0u0+ZXbKE9neTLtkIZPisXYch37wGSTiz0ijecogY6Vs6Vi2pjgpnK1AexE9MbA5z2
+         +AnX4+XBzsa4BLg6cOYg8etk1gE8m7xXp8c/ySPudoy5l+OGRUsdhkoJ8lhL59D3EAUq
+         E9Ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Colin Ian King <colin.king@canonical.com>,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Douglas Gilbert <dgilbert@interlog.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3.18 67/68] scsi: sg: fix static checker warning in sg_is_valid_dxfer
-Date: Mon, 19 Mar 2018 19:06:45 +0100
-Message-Id: <20180319171837.303799320@linuxfoundation.org>
+	Tejun Heo <tj@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 65/68] fs/aio: Use RCU accessors for kioctx_table->table[]
+Date: Mon, 19 Mar 2018 19:06:43 +0100
+Message-Id: <20180319171837.008255189@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390665356823986?=
-X-GMAIL-MSGID: =?utf-8?q?1595390665356823986?=
+X-GMAIL-THRID: =?utf-8?q?1595390659140496650?=
+X-GMAIL-MSGID: =?utf-8?q?1595390659140496650?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,42 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Tejun Heo <tj@kernel.org>
 
-commit 14074aba4bcda3764c9a702b276308b89901d5b6 upstream.
+commit d0264c01e7587001a8c4608a5d1818dba9a4c11a upstream.
 
-dxfer_len is an unsigned int and we always assign a value > 0 to it, so
-it doesn't make any sense to check if it is < 0. We can't really check
-dxferp as well as we have both NULL and not NULL cases in the possible
-call paths.
+While converting ioctx index from a list to a table, db446a08c23d
+("aio: convert the ioctx list to table lookup v3") missed tagging
+kioctx_table->table[] as an array of RCU pointers and using the
+appropriate RCU accessors.  This introduces a small window in the
+lookup path where init and access may race.
 
-So just return true for SG_DXFER_FROM_DEV transfer in
-sg_is_valid_dxfer().
+Mark kioctx_table->table[] with __rcu and use the approriate RCU
+accessors when using the field.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jann Horn <jannh@google.com>
+Fixes: db446a08c23d ("aio: convert the ioctx list to table lookup v3")
+Cc: Benjamin LaHaise <bcrl@kvack.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org # v3.12+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/aio.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -770,8 +770,11 @@ static bool sg_is_valid_dxfer(sg_io_hdr_
- 			return false;
- 		return true;
- 	case SG_DXFER_FROM_DEV:
--		if (hp->dxfer_len < 0)
--			return false;
-+		/*
-+		 * for SG_DXFER_FROM_DEV we always set dxfer_len to > 0. dxferp
-+		 * can either be NULL or != NULL so there's no point in checking
-+		 * it either. So just return true.
-+		 */
- 		return true;
- 	case SG_DXFER_TO_DEV:
- 	case SG_DXFER_TO_FROM_DEV:
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -68,9 +68,9 @@ struct aio_ring {
+ #define AIO_RING_PAGES	8
+ 
+ struct kioctx_table {
+-	struct rcu_head	rcu;
+-	unsigned	nr;
+-	struct kioctx	*table[];
++	struct rcu_head		rcu;
++	unsigned		nr;
++	struct kioctx __rcu	*table[];
+ };
+ 
+ struct kioctx_cpu {
+@@ -583,9 +583,9 @@ static int ioctx_add_table(struct kioctx
+ 	while (1) {
+ 		if (table)
+ 			for (i = 0; i < table->nr; i++)
+-				if (!table->table[i]) {
++				if (!rcu_access_pointer(table->table[i])) {
+ 					ctx->id = i;
+-					table->table[i] = ctx;
++					rcu_assign_pointer(table->table[i], ctx);
+ 					spin_unlock(&mm->ioctx_lock);
+ 
+ 					/* While kioctx setup is in progress,
+@@ -760,8 +760,8 @@ static int kill_ioctx(struct mm_struct *
+ 
+ 	spin_lock(&mm->ioctx_lock);
+ 	table = rcu_dereference_raw(mm->ioctx_table);
+-	WARN_ON(ctx != table->table[ctx->id]);
+-	table->table[ctx->id] = NULL;
++	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
++	RCU_INIT_POINTER(table->table[ctx->id], NULL);
+ 	spin_unlock(&mm->ioctx_lock);
+ 
+ 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
+@@ -817,7 +817,8 @@ void exit_aio(struct mm_struct *mm)
+ 		return;
+ 
+ 	for (i = 0; i < table->nr; ++i) {
+-		struct kioctx *ctx = table->table[i];
++		struct kioctx *ctx =
++			rcu_dereference_protected(table->table[i], true);
+ 		struct completion requests_done =
+ 			COMPLETION_INITIALIZER_ONSTACK(requests_done);
+ 
+@@ -1003,7 +1004,7 @@ static struct kioctx *lookup_ioctx(unsig
+ 	if (!table || id >= table->nr)
+ 		goto out;
+ 
+-	ctx = table->table[id];
++	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+ 		percpu_ref_get(&ctx->users);
+ 		ret = ctx;
