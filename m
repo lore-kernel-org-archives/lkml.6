@@ -1,128 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755168AbeCSEPq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 00:15:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48502 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754531AbeCSEPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 00:15:44 -0400
-Date: Mon, 19 Mar 2018 04:15:35 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
-        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 18/19] clocksource: add timer-nationalchip.c
-Message-ID: <20180319041522.zyjdjrxtd2va3m2a@salmiak>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <04f5a0702fc14e934e6f5a456cad8682d0b15aa2.1521399976.git.ren_guo@c-sky.com>
+        id S1754996AbeCSETT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 00:19:19 -0400
+Received: from mx.socionext.com ([202.248.49.38]:58803 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750739AbeCSETP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 00:19:15 -0400
+From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To: "'Mark Brown'" <broonie@kernel.org>,
+        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?=
+        <suzuki.katsuhiro@socionext.com>
+Cc: <alsa-devel@alsa-project.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20180314123900.19505-1-suzuki.katsuhiro@socionext.com> <20180314162609.GV2186@sirena.org.uk>
+In-Reply-To: <20180314162609.GV2186@sirena.org.uk>
+Subject: Re: [PATCH] ASoC: uniphier: evea: add switch for changing source of line-in
+Date: Mon, 19 Mar 2018 13:19:10 +0900
+Message-ID: <001101d3bf39$6e3933c0$4aab9b40$@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04f5a0702fc14e934e6f5a456cad8682d0b15aa2.1521399976.git.ren_guo@c-sky.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+        charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHTu5FuzEJuYhG2tk6R1XBNqubmsKPPVE6AgAdyUOA=
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Mark,
 
-On Mon, Mar 19, 2018 at 03:51:40AM +0800, Guo Ren wrote:
-> +#define NC_VA_COUNTER_1_STATUS		(void *)(timer_reg + 0x00)
-> +#define NC_VA_COUNTER_1_VALUE		(void *)(timer_reg + 0x04)
-> +#define NC_VA_COUNTER_1_CONTROL		(void *)(timer_reg + 0x10)
-> +#define NC_VA_COUNTER_1_CONFIG		(void *)(timer_reg + 0x20)
-> +#define NC_VA_COUNTER_1_PRE		(void *)(timer_reg + 0x24)
-> +#define NC_VA_COUNTER_1_INI		(void *)(timer_reg + 0x28)
-> +#define NC_VA_COUNTER_2_STATUS		(void *)(timer_reg + 0x40)
-> +#define NC_VA_COUNTER_2_VALUE		(void *)(timer_reg + 0x44)
-> +#define NC_VA_COUNTER_2_CONTROL		(void *)(timer_reg + 0x50)
-> +#define NC_VA_COUNTER_2_CONFIG		(void *)(timer_reg + 0x60)
-> +#define NC_VA_COUNTER_2_PRE		(void *)(timer_reg + 0x64)
-> +#define NC_VA_COUNTER_2_INI		(void *)(timer_reg + 0x68)
-> +#define NC_VA_COUNTER_3_STATUS		(void *)(timer_reg + 0x80)
-> +#define NC_VA_COUNTER_3_VALUE		(void *)(timer_reg + 0x84)
-> +#define NC_VA_COUNTER_3_CONTROL		(void *)(timer_reg + 0x90)
-> +#define NC_VA_COUNTER_3_CONFIG		(void *)(timer_reg + 0xa0)
-> +#define NC_VA_COUNTER_3_PRE		(void *)(timer_reg + 0xa4)
-> +#define NC_VA_COUNTER_3_INI		(void *)(timer_reg + 0xa8)
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: Thursday, March 15, 2018 1:26 AM
+> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
+> Cc: alsa-devel@alsa-project.org; Masami Hiramatsu
+<masami.hiramatsu@linaro.org>;
+> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] ASoC: uniphier: evea: add switch for changing source of
+line-in
+> 
+> On Wed, Mar 14, 2018 at 09:39:00PM +0900, Katsuhiro Suzuki wrote:
+> > This patch adds mixer switch for changing audio source of line-in.
+> > We can choose one of LIN1, 2, 3, default is LIN1.
+> 
+> I'll apply for now but this should really be a DAPM control so that we
+> can power down things connected to the disconnected line inputs when
+> recording.
 
-Please define the offsets alone, e.g.
+Thanks a lot for your suggestion. I tried to change the implementation to DAPM
+control as follows:
 
-#define NC_VA_COUNTER_1_STATUS	0x00
-#define NC_VA_COUNTER_1_VALUE	0x04
+----------
+static const char * const linsw1_sel1_text[] = {
+	"LIN1", "LIN2", "LIN3"
+};
 
-... the base address should be added when calling the io accessor. Please see
-below.
+static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
+	ALINSW1, ALINSW1_SEL1_SHIFT,
+	linsw1_sel1_text);
 
-> +static unsigned int timer_reg;
+static const struct snd_kcontrol_new linesw1_mux =
+	SOC_DAPM_ENUM("Line In 1 Source", linsw1_sel1_enum);
 
-This should be a void __iomem *, e.g.
+static const struct snd_soc_dapm_widget evea_widgets[] = {
+	SND_SOC_DAPM_ADC("ADC", NULL, SND_SOC_NOPM, 0, 0),
+	SND_SOC_DAPM_MUX("Line In 1 Mux", SND_SOC_NOPM, 0, 0, &linesw1_mux),
+	SND_SOC_DAPM_INPUT("LIN1_LP"),
+	SND_SOC_DAPM_INPUT("LIN1_RP"),
+	SND_SOC_DAPM_INPUT("LIN2_LP"),
+	SND_SOC_DAPM_INPUT("LIN2_RP"),
+	SND_SOC_DAPM_INPUT("LIN3_LP"),
+	SND_SOC_DAPM_INPUT("LIN3_RP"),
 
-static void __iomem *timer_base;
+	SND_SOC_DAPM_DAC("DAC HP", NULL, SND_SOC_NOPM, 0, 0),
+	SND_SOC_DAPM_DAC("DAC LO1", NULL, SND_SOC_NOPM, 0, 0),
+	SND_SOC_DAPM_DAC("DAC LO2", NULL, SND_SOC_NOPM, 0, 0),
+	SND_SOC_DAPM_OUTPUT("HP1_L"),
+	SND_SOC_DAPM_OUTPUT("HP1_R"),
+	SND_SOC_DAPM_OUTPUT("LO2_L"),
+	SND_SOC_DAPM_OUTPUT("LO2_R"),
+};
 
-... though it would be better for this to be associated with the instance of
-the clock_event_device, so that there can be multiple instances in a system.
+static const struct snd_soc_dapm_route evea_routes[] = {
+	{ "Line In 1", NULL, "ADC" },
+	{ "ADC", NULL, "Line In 1 Mux" },
+	{ "Line In 1 Mux", NULL, "LIN1_LP" },
+	{ "Line In 1 Mux", NULL, "LIN1_RP" },
+	{ "Line In 1 Mux", NULL, "LIN2_LP" },
+	{ "Line In 1 Mux", NULL, "LIN2_RP" },
+	{ "Line In 1 Mux", NULL, "LIN3_LP" },
+	{ "Line In 1 Mux", NULL, "LIN3_RP" },
 
-> +
-> +static inline void timer_reset(void)
-> +{
-> +	__raw_writel(0x1,	NC_VA_COUNTER_1_CONTROL);
-> +	__raw_writel(0x0,	NC_VA_COUNTER_1_CONTROL);
-> +	__raw_writel(0x3,	NC_VA_COUNTER_1_CONFIG);
-> +	__raw_writel(26,	NC_VA_COUNTER_1_PRE);
+	{ "DAC HP", NULL, "Headphone 1" },
+	{ "DAC LO1", NULL, "Line Out 1" },
+	{ "DAC LO2", NULL, "Line Out 2" },
+	{ "HP1_L", NULL, "DAC HP" },
+	{ "HP1_R", NULL, "DAC HP" },
+	{ "LO2_L", NULL, "DAC LO2" },
+	{ "LO2_R", NULL, "DAC LO2" },
+};
+----------
 
-Should this be 26 or 0x26?
+I can see the value of ALINSW1 register at 'Line In 1 Mux',0 using
+  amixer get 'Line In 1 Mux',0
 
-It would be nice to have mnemonics for these magic numbers.
+But I can't change the value.
+  amixer set 'Line In 1 Mux',0 LIN2
+  Simple mixer control 'Line In 1 Mux',0
+    Capabilities: enum
+    Items: 'LIN1' 'LIN2' 'LIN3'
+    Item0: 'LIN1'
 
-Please use writel_relaxed() rather than __raw_writel(). e.g.
+Would you tell me what is wrong...
 
-	writel_relaxed(0x1, timer_base + NC_VA_COUNTER_1_CONTROL);
-	writel_relaxed(0x0, timer_base + NC_VA_COUNTER_1_CONTROL);
-	writel_relaxed(0x3, timer_base + NC_VA_COUNTER_1_CONTROL);
-	writel_relaxed(26, timer_base + NC_VA_COUNTER_1_PRE);
 
-[...]
-
-> +static int __init nc_timer_init(struct device_node *np)
-> +{
-> +	unsigned int irq;
-> +	unsigned int freq;
-> +
-> +	/* parse from devicetree */
-> +	timer_reg = (unsigned int) of_iomap(np, 0);
-> +	if (!timer_reg)
-> +		panic("%s, of_iomap err.\n", __func__);
-> +
-> +	irq = irq_of_parse_and_map(np, 0);
-> +	if (!irq)
-> +		panic("%s, irq_parse err.\n", __func__);
-> +
-> +	if (of_property_read_u32(np, "clock-frequency", &freq))
-> +		panic("%s, clock-frequency error.\n", __func__);
-> +
-> +	pr_info("Nationalchip Timer Init, reg: %x, irq: %d, freq: %d.\n",
-> +		timer_reg, irq, freq);
-> +
-> +	/* setup irq */
-> +	if (request_irq(irq, timer_interrupt, IRQF_TIMER, np->name, &nc_ced))
-> +		panic("%s timer_interrupt error.\n", __func__);
-> +
-> +	/* register */
-> +	clockevents_config_and_register(&nc_ced, freq, 1, ULONG_MAX);
-> +
-> +	nc_csd_enable();
-> +	clocksource_mmio_init(NC_VA_COUNTER_2_VALUE, "nationalchip-clksource", freq, 200, 32, clocksource_mmio_readl_up);
-> +
-> +	sched_clock_register(nc_sched_clock_read, 32, freq);
-> +
-> +	return 0;
-> +}
-> +CLOCKSOURCE_OF_DECLARE(nc_timer, "nationalchip,timer-v1", nc_timer_init);
-
-This needs a devicetree binding document. Please see Documentation/devicetree/bindings/submitting-patches.txt.
-
-Thanks,
-Mark
+Regards,
+--
+Katsuhiro Suzuki
