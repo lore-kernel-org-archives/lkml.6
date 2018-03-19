@@ -1,38 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvp8sz3zmvwblDbKLb++s0kGJzVBwx9l5bC13tlmYcZSiFoix19Y2Ehe8Mt0bGLrP9zXIEx
-ARC-Seal: i=1; a=rsa-sha256; t=1521483180; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fvB1YMYbyQ/lKpf0R9+BeD+0d6g96iGM+vDPvkDTSGfS5YSPJqeMY37s15m1OBub1v
-         D8iXUy4yUHKizjhmhyGw2L0zNC/7xgE3wRVX69xVYKsdMzQfyt0GcpjpFXkXJwvHwXoy
-         Mfyje9ydFlDMeu8/jwPhjL/tTIUbopl9Q8j2byhaxBo67uxah+JTKg+vB8tBmhqUKWnl
-         4PntXIS6sFZx/X2aFpsA4B/nRjOCO5B8inCEw5m+tiEZ1IwC2aoplSj+zblOZMW6mgjZ
-         0JmMjqbcXrA35RakirKd3eJkAqcF8nEQ+9KZvhwj0VrgzGS5004git9f80UsGRVAM4Ha
-         0nSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=N+at5ppSPd3FQ83ZSPXaraLQ/2/NKEfmCu7Ri2WuBpk=;
-        b=S57nVTqV9ruCYrrclgdv/TjAsiDO+J70bMMmZORcgB2cg3davpGk3OB49XPcFcBs+i
-         tTGhHNnsAbXCzSsYwhGbKLGm8x14oJ7MLV2TMZuUGIx7tpg9lwwuPJvk/JO0M2Gx41RU
-         9qkAsxomTqL+0ucDuXSqvioSuvV9IB2jJXLs2v8IiN9mP8QmyUsRZEHocdyOUCvpTfGP
-         zC1Czy3lFoD7zDSC7eHiemioDKUFZDFEa2VSd/KDiQUHzA9KPD2QSlXhctLEHu4pIAld
-         PhFhwtSGZbMq2bCOWaYxzz0UFW3tBTs9aSByLerDs+WmBnP5MKKQ9JD4WhNtofHwoZRq
-         vdpA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483178-2-3269915916091377862
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483177; b=YyDIfdrSoe0hLV3ugbh6equN2N4X56mET8eaiXzHgjLLMTN
+    yFaU1nHRLRCVV9pNP0RbUmByws0chfKnYcg9ruZCrjfr5OfQM3CiNijkF2WrJJOC
+    ESo+lCmuZO/Gcxgi/pMlJNyIz9gVpHRrmbnJnFsTNEOVXJlAiNlsnoV6K3+AF9gi
+    lMRpOU5ZypfxE4byEK3KRIMWcGaKtm4enhxTSKJIL8gcIj3jp1Tp1UdkLVdtJqnN
+    nHS8FzHcB0GfC9TiLCtkkCawPX9oA3KC/ih5zP7QYQudn3aeKMYfKiWaTdgEfXKZ
+    mP7To6+tjc1xThHOee5yg5v3s26LtgHRx2ZUzHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483177; bh=inUBFEgRYgrEdFnyQ7JX/+3oX8
+    VWxNkTQXV9i6EdfhM=; b=e5FLDiqZvkVaAdT5ScIx/5VeQ8343CQPDckLyA4+C2
+    OWm9DxknwTouyoGmB2aEWpngfFycKRYOpyp1ioDSDyuJGJW+PwNyJMuQxpLI1y7A
+    eVWHMfJbNXC7KSV9rIYIinTnMeMzfBK+40Lzv+tSCgtztkqpoT2DaxEawYz3BVGw
+    TfqSOKQnvV6BDAiN2iH7AaOfGE2jBIi3ggPwZUwgI2CWtiXfmyT40SbJdMqwJ4Va
+    UCmOqG7MWxd6/j/Q7Xg58Uqczt/eOc62eikpq3rj45CQLrgpJSnPPgBTF0szoLGV
+    kGC3zIWInSVjaKHayrfhvHK3M8o7Vtl9wjweFEbyh1Jg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedviedtfeenucevlhhushhtvghrufhiiigvpeehie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedviedtfeenucevlhhushhtvghrufhiiigvpeehie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S968644AbeCSSMy (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:12:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42902 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935657AbeCSSMr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:12:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Tom Hromatka <tom.hromatka@oracle.com>,
-	Rob Gardner <rob.gardner@oracle.com>,
-	John Stultz <john.stultz@linaro.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 028/134] sysrq: Reset the watchdog timers while displaying high-resolution timers
-Date: Mon, 19 Mar 2018 19:05:11 +0100
-Message-Id: <20180319171853.307322482@linuxfoundation.org>
+        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 023/134] of: fix of_device_get_modalias returned length when truncating buffers
+Date: Mon, 19 Mar 2018 19:05:06 +0100
+Message-Id: <20180319171852.535241779@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390747005815237?=
-X-GMAIL-MSGID: =?utf-8?q?1595390747005815237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +81,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Hromatka <tom.hromatka@oracle.com>
+From: Rob Herring <robh@kernel.org>
 
 
-[ Upstream commit 0107042768658fea9f5f5a9c00b1c90f5dab6a06 ]
+[ Upstream commit bcf54d5385abaea9c8026aae6f4eeb348671a52d ]
 
-On systems with a large number of CPUs, running sysrq-<q> can cause
-watchdog timeouts.  There are two slow sections of code in the sysrq-<q>
-path in timer_list.c.
+If the length of the modalias is greater than the buffer size, then the
+modalias is truncated. However the untruncated length is returned which
+will cause an error. Fix this to return the truncated length. If an error
+in the case was desired, then then we should just return -ENOMEM.
 
-1. print_active_timers() - This function is called by print_cpu() and
-   contains a slow goto loop.  On a machine with hundreds of CPUs, this
-   loop took approximately 100ms for the first CPU in a NUMA node.
-   (Subsequent CPUs in the same node ran much quicker.)  The total time
-   to print all of the CPUs is ultimately long enough to trigger the
-   soft lockup watchdog.
+The reality is no device will ever have 4KB of compatible strings to hit
+this case.
 
-2. print_tickdevice() - This function outputs a large amount of textual
-   information.  This function also took approximately 100ms per CPU.
-
-Since sysrq-<q> is not a performance critical path, there should be no
-harm in touching the nmi watchdog in both slow sections above.  Touching
-it in just one location was insufficient on systems with hundreds of
-CPUs as occasional timeouts were still observed during testing.
-
-This issue was observed on an Oracle T7 machine with 128 CPUs, but I
-anticipate it may affect other systems with similarly large numbers of
-CPUs.
-
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
-Reviewed-by: Rob Gardner <rob.gardner@oracle.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/time/timer_list.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/of/device.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -16,6 +16,7 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/kallsyms.h>
-+#include <linux/nmi.h>
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -223,7 +223,7 @@ ssize_t of_device_get_modalias(struct de
+ 			str[i] = '_';
+ 	}
  
- #include <asm/uaccess.h>
+-	return tsize;
++	return repend;
+ }
+ EXPORT_SYMBOL_GPL(of_device_get_modalias);
  
-@@ -96,6 +97,9 @@ print_active_timers(struct seq_file *m,
- 
- next_one:
- 	i = 0;
-+
-+	touch_nmi_watchdog();
-+
- 	raw_spin_lock_irqsave(&base->cpu_base->lock, flags);
- 
- 	curr = timerqueue_getnext(&base->active);
-@@ -207,6 +211,8 @@ print_tickdevice(struct seq_file *m, str
- {
- 	struct clock_event_device *dev = td->evtdev;
- 
-+	touch_nmi_watchdog();
-+
- 	SEQ_printf(m, "Tick Device: mode:     %d\n", td->mode);
- 	if (cpu < 0)
- 		SEQ_printf(m, "Broadcast device\n");
