@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuAKyc+U/q+md+LMO0N1Yz0JEhLjJEcmyLwWDICeJRMkASbZczZpJ0Hv2poRSY7sSgUVPAN
-ARC-Seal: i=1; a=rsa-sha256; t=1521483449; cv=none;
+X-Google-Smtp-Source: AG47ELvdEMGixnTvTQn5DyTKk3kuw4eA44rOcbvKw5L8v2OqiGqgdplCCKeOA5kxlfHLQ2wN9e2v
+ARC-Seal: i=1; a=rsa-sha256; t=1521483447; cv=none;
         d=google.com; s=arc-20160816;
-        b=vAQoMc9cIzaZLslL88GTIFHpo/L2BS29aWeOGhodXPaSIm6URYX+69EvICZwwFKi7f
-         LOy/EQhFnQXEhVLryXqqmpPTFhSe3g2USMdqBe/feKWvqHO+VSCBff05DCLpPi3J8yYa
-         XfGyRp+m8vppZsd7t1xqhXuljjJAISIPO3knLqgwhXbIYKJZq0Ry7gbYhS+vSa3hZetj
-         XdYkZILPbC+s07IZ+r50PMBKI7448geXUSr3ulzVVpMxfTddUJUm/L5qKw4N/z/S08+Z
-         yT2rwgFlB0nJzi0gJ0fXB596UQQc+znTnQqsQZk7JgNiSxyYkV+8buhXp+W24lPM0yAj
-         IYZg==
+        b=C4K1oSO2/vi0fj2heHJTtiANI31zHAVqFC56oiLnAqP56oVN4P4niBufyQaOJJ20oI
+         Oe2FEVO/TVIwXFhbrMtQEq7XJqhupehqJvKKufpwzBjw3t28EHLqaLDjx3lXBQeQ4/g3
+         sIKlSS0xMtFDVp9ocWgAHKp2YWVUul+RP7K14meOEs79NjYy72ixUyVr6n2TzDriXTTD
+         jbk44qytBsJJ6VuafLvEQHzoLJ7yDlRGoOZahs53bcHMqSK7LJ5KPwAGKJi7xAehdRJ1
+         /t6eTZZpK57Aomwjil0dqBTfSs9NvcKqQ0P1lcFsG2iHOcgoAbvAwhd3mBx/2nsVjMcJ
+         6xIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ew1qcVvYOLA6/BYmMS8xbf9iA9E1Hr4zU//crB87vmQ=;
-        b=HcJuYy2N3x2Vm+L5HZ19qz0Ppgp2Vgba3NmNPXQvMbz6AbNUfDTT1zmbZVgxSziJPF
-         Qm8Oq9/wrv3e7YrQ73jnYbWDrQ3Py08+sKe9ZbLgs8Iop5pjuUmvPaBlopBv5l7kb4FI
-         HKvIJ6LAqXHn/pX/xA/a5p5Bq5FEwJNFRbo4WSOsEYbufKKs1PhlIY0QAZLEktfTINIz
-         2o27vxWrzLdUTZ7zWEj4RViD5Jq4e/XJRmfrwDFlOtn7W5tr5s4GmQgYgVxuB3P8e59Z
-         lDQyKmdeSx/p6+U5PlHqTZujywfHxE2NODAx2xhZG6HdZw3RUIPKMFn4yc7KFw1VdVjM
-         JDXA==
+        bh=RqH42LyGjO/+kmMY38nDdNRb9bWKIFlT8oFmftX+ZMU=;
+        b=h9G+v+Ih1spdbshQpIqqMQHH9cH5vuHRMbywuYWRW/9uudQDvN+yOG4aWzdATis2ce
+         B7CwONIKijRlvp8rcB/OGEGgii0/i1dvTWCDSbrb48x9ykfR38mN9d7fvZx2liuWR115
+         eQ8QFQJf1T/AurfAnLtfnr2BRmaQ7ZgkheuwVfF6n/0YQSWStPrtVmU7z126vteq4FYu
+         cVV+vakKw/3ELUOfZWc47iprhVRR1Ip/3G0GSiPKYpiAU88BwD/Ez9eOsF3VecWopngh
+         Rbo0CNU2Ptnm9b8Kt1YWWgXVHMESVZY/IOlTyX6xYoaRDN2d9dkTA2CF284p+qHxsnUa
+         eIEA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Jason L Tibbitts III <tibbs@math.uh.edu>,
-	Doug Gilbert <dgilbert@interlog.com>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 128/134] scsi: sg: only check for dxfer_len greater than 256M
-Date: Mon, 19 Mar 2018 19:06:51 +0100
-Message-Id: <20180319171907.770748258@linuxfoundation.org>
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stas Sergeev <stsp@list.ru>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	bartoldeman@gmail.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 110/134] selftests/x86/entry_from_vm86: Exit with 1 if we fail
+Date: Mon, 19 Mar 2018 19:06:33 +0100
+Message-Id: <20180319171905.147688634@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -43,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390667692635257?=
-X-GMAIL-MSGID: =?utf-8?q?1595391029863093234?=
+X-GMAIL-THRID: =?utf-8?q?1595391027196234846?=
+X-GMAIL-MSGID: =?utf-8?q?1595391027196234846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,74 +59,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit f930c7043663188429cd9b254e9d761edfc101ce upstream.
+commit 327d53d005ca47b10eae940616ed11c569f75a9b upstream.
 
-Don't make any assumptions on the sg_io_hdr_t::dxfer_direction or the
-sg_io_hdr_t::dxferp in order to determine if it is a valid request. The
-only way we can check for bad requests is by checking if the length
-exceeds 256M.
+Fix a logic error that caused the test to exit with 0 even if test
+cases failed.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Fixes: 28676d869bbb (scsi: sg: check for valid direction before starting the request)
-Reported-by: Jason L Tibbitts III <tibbs@math.uh.edu>
-Tested-by: Jason L Tibbitts III <tibbs@math.uh.edu>
-Suggested-by: Doug Gilbert <dgilbert@interlog.com>
-Cc: Doug Gilbert <dgilbert@interlog.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stas Sergeev <stsp@list.ru>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bartoldeman@gmail.com
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/b1cc37144038958a469c8f70a5f47a6a5638636a.1521003603.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |   31 +------------------------------
- 1 file changed, 1 insertion(+), 30 deletions(-)
+ tools/testing/selftests/x86/entry_from_vm86.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -762,35 +762,6 @@ sg_new_write(Sg_fd *sfp, struct file *fi
- 	return count;
- }
+--- a/tools/testing/selftests/x86/entry_from_vm86.c
++++ b/tools/testing/selftests/x86/entry_from_vm86.c
+@@ -231,7 +231,7 @@ int main(void)
+ 	clearhandler(SIGSEGV);
  
--static bool sg_is_valid_dxfer(sg_io_hdr_t *hp)
--{
--	switch (hp->dxfer_direction) {
--	case SG_DXFER_NONE:
--		if (hp->dxferp || hp->dxfer_len > 0)
--			return false;
--		return true;
--	case SG_DXFER_FROM_DEV:
--		/*
--		 * for SG_DXFER_FROM_DEV we always set dxfer_len to > 0. dxferp
--		 * can either be NULL or != NULL so there's no point in checking
--		 * it either. So just return true.
--		 */
--		return true;
--	case SG_DXFER_TO_DEV:
--	case SG_DXFER_TO_FROM_DEV:
--		if (!hp->dxferp || hp->dxfer_len == 0)
--			return false;
--		return true;
--	case SG_DXFER_UNKNOWN:
--		if ((!hp->dxferp && hp->dxfer_len) ||
--		    (hp->dxferp && hp->dxfer_len == 0))
--			return false;
--		return true;
--	default:
--		return false;
--	}
--}
--
- static int
- sg_common_write(Sg_fd * sfp, Sg_request * srp,
- 		unsigned char *cmnd, int timeout, int blocking)
-@@ -811,7 +782,7 @@ sg_common_write(Sg_fd * sfp, Sg_request
- 			"sg_common_write:  scsi opcode=0x%02x, cmd_size=%d\n",
- 			(int) cmnd[0], (int) hp->cmd_len));
+ 	/* Make sure nothing explodes if we fork. */
+-	if (fork() > 0)
++	if (fork() == 0)
+ 		return 0;
  
--	if (!sg_is_valid_dxfer(hp))
-+	if (hp->dxfer_len >= SZ_256M)
- 		return -EINVAL;
- 
- 	k = sg_start_req(srp, cmnd);
+ 	return (nerrs == 0 ? 0 : 1);
