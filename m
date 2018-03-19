@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521482967-2-5259794600100033129
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521482966; b=vbJx/vpq6c3Ij5doQVh8h+M8owUj6PeBHXvQ+7Lq3uqPrzd
-    orN/kfmUG85Fbeq9angMyJaNTcAr9R/rW2CaHntTwOZwedwd3i8KkX1xSF1tz1yQ
-    urDqhlvzy2VZ3/oRxC/mpeud3XE9I/V7E/hU89cRy/549VBSMeCya2LK3YyxkHhW
-    CD3RzgA2utApbJuXq6bNOF5qPN0myIMSmBSzNkcdqL48Iu8DwH8mMFK+OJfwFPwT
-    oHyh7J16h2Dc+ybYEIfCA1+Acy9pfLV6xmNwugnCYALw5VhBa/IOBgrqG51+Aia/
-    9LepSl5fHyULfEw9O3wlYkjfIEuaPdbZGGl1Bpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521482966; bh=zlJzth8yS2h7SwGaL11E7uHNaE
-    /04w3Q5cWph0eheWM=; b=XDsSPE4KussBsjttcZofomnwFKNoP8CKCRKmNUojY4
-    9u7SlKprto07/9+/KjnKY7gQS4lTB8YetHjuGLh9GG7UX+bGAe0MjEr7Az6vMjJj
-    m+2lh3QgEcQN2Zo1kXY0mFiJfe6hcIAHBvXx4qgX2WHM8coqmAQ23STcnq2eKV/r
-    i27QIx8LfB0k6RUUOax8nQzoZU7uRC+MZSD2ibtdw7L8C1qR6sLf06IagDF5OM/c
-    jUX0mKuurK7bfKJr6+IGWnIh++tmZL3zDhXkDefkk7yV4byjpdAFhYf/3jipf6mL
-    L1/0YLAb5rh7rVZzV8FgXI5QJIVWkovNkrmiF7gLjePQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvkeeiieenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvkeeiieenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968630AbeCSSJY (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:09:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41374 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967162AbeCSSJT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:09:19 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvWP82jBu6vZ+LovmCDGXN+S+aH+uJKt6mxRY2nPC+XN9NP4rXMEGuTsenIDG5uYJDiLg++
+ARC-Seal: i=1; a=rsa-sha256; t=1521482966; cv=none;
+        d=google.com; s=arc-20160816;
+        b=qoP91L2MllrpihDGMQf7Dyq64uu9DOISX7FYOAOE9p/MMdqW+G8MLyZa7u3xWZCFqY
+         aiE/B05SqSsaJwy2BjpX7WILd/SvrVxc/fTxeQkkfMofhYHT6s4N6/gmaINSnvNmtMFn
+         v5APDjPEh1/llALG0FE2TtyBxHQwkq4q3B1tECeDMM3RbDBjgJgBggkm1Y0HI3Q87KLm
+         5FxYVMq8PKKcPjL1lemB5pJffg/dpttYefZ2kkonksCi1l5FTrAVr+sE4ceqTCK/UyEF
+         d+rp1H3wJCbBxHelc08vEBmybYuvYZOqhs+2lF1RRC8lXLgLDgx8Y5NjBJja0VNv4XI/
+         Rlcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=aEvHe6ZjpgOkBnEXoHJct4qrd530IDZZU1hgMyx90Po=;
+        b=dWF0a6zzQnRUgHkCGs6R1YBSNh6NA26sFnBqGS+SzOFJPihrlrYObA1gV5Cb6i2uLz
+         iQ7GY9Jj+UqMFRu6WH9xaHorGbci8ZsDumROYzl/mlP7URPS8ZE1SZQDJap2b/ChJG7i
+         he8oLfcxSRY+Cf7UF529IA0zpRmGpNXpO9Eewv5odrDECubNUuxTK1ZxHoUuCIZsh+MG
+         hCJHUov7LorM4AvyS/4LylJGUQfUJNNRraCmzht28f2PwHY1PfjHitlePWQjq2xOVcrt
+         I5YQhnRBtie0hnF/rKY1Au0Z6IQsvpH8n0hi0kXS6r4ddTnBNxeGzmlUabydlTqGdfft
+         JihQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Engraf <david.engraf@sysgo.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 16/68] timers, sched_clock: Update timeout for clock wrap
-Date: Mon, 19 Mar 2018 19:05:54 +0100
-Message-Id: <20180319171830.147593353@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Gao Feng <fgao@ikuai8.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 19/68] tcp: sysctl: Fix a race to avoid unexpected 0 window from space
+Date: Mon, 19 Mar 2018 19:05:57 +0100
+Message-Id: <20180319171830.571358571@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390523266264934?=
+X-GMAIL-MSGID: =?utf-8?q?1595390523266264934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,39 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Engraf <david.engraf@sysgo.com>
+From: Gao Feng <fgao@ikuai8.com>
 
 
-[ Upstream commit 1b8955bc5ac575009835e371ae55e7f3af2197a9 ]
+[ Upstream commit c48367427a39ea0b85c7cf018fe4256627abfd9e ]
 
-The scheduler clock framework may not use the correct timeout for the clock
-wrap. This happens when a new clock driver calls sched_clock_register()
-after the kernel called sched_clock_postinit(). In this case the clock wrap
-timeout is too long thus sched_clock_poll() is called too late and the clock
-already wrapped.
+Because sysctl_tcp_adv_win_scale could be changed any time, so there
+is one race in tcp_win_from_space.
+For example,
+1.sysctl_tcp_adv_win_scale<=0 (sysctl_tcp_adv_win_scale is negative now)
+2.space>>(-sysctl_tcp_adv_win_scale) (sysctl_tcp_adv_win_scale is postive now)
 
-On my ARM system the scheduler was no longer scheduling any other task than
-the idle task because the sched_clock() wrapped.
+As a result, tcp_win_from_space returns 0. It is unexpected.
 
-Signed-off-by: David Engraf <david.engraf@sysgo.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+Certainly if the compiler put the sysctl_tcp_adv_win_scale into one
+register firstly, then use the register directly, it would be ok.
+But we could not depend on the compiler behavior.
+
+Signed-off-by: Gao Feng <fgao@ikuai8.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/time/sched_clock.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ include/net/tcp.h |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -146,6 +146,11 @@ void __init sched_clock_register(u64 (*r
- 	cd.epoch_ns = ns;
- 	raw_write_seqcount_end(&cd.seq);
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -1099,9 +1099,11 @@ void tcp_select_initial_window(int __spa
  
-+	if (sched_clock_timer.function != NULL) {
-+		/* update timeout for clock wrap */
-+		hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
-+	}
+ static inline int tcp_win_from_space(int space)
+ {
+-	return sysctl_tcp_adv_win_scale<=0 ?
+-		(space>>(-sysctl_tcp_adv_win_scale)) :
+-		space - (space>>sysctl_tcp_adv_win_scale);
++	int tcp_adv_win_scale = sysctl_tcp_adv_win_scale;
 +
- 	r = rate;
- 	if (r >= 4000000) {
- 		r /= 1000000;
++	return tcp_adv_win_scale <= 0 ?
++		(space>>(-tcp_adv_win_scale)) :
++		space - (space>>tcp_adv_win_scale);
+ }
+ 
+ /* Note: caller must be prepared to deal with negative returns */ 
