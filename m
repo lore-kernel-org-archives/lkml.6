@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvgPbctyU870Ou7Uj+fLVe1KDeqPNyedNK3LsVf4D9Sv+E42+oK70a6wTRXHnXyADpS9KY7
-ARC-Seal: i=1; a=rsa-sha256; t=1521483322; cv=none;
+X-Google-Smtp-Source: AG47ELv0jzxGYgIyjkhX6e2/FtcRMdtR4Qj28eFQEVZbCKi6sLK0ahF4EzkiTR/thU0Uneh+RwQk
+ARC-Seal: i=1; a=rsa-sha256; t=1521483320; cv=none;
         d=google.com; s=arc-20160816;
-        b=OK0q/TRBWfK1XCkP6J1LOCvJV6SRHjWCDelGhN1ivMCcntfFBRCKJtJDCY1Jm/SNUO
-         MbJdkuai0L+8k8sDY4zYyY/TL/M24IGzW/jmbjYdWpUBtlxIZKutgiMeq1v6mJxMnIh4
-         VxzrZa+yXlq0uy4lDXBCjcAdJHvLlWsWsFKxItwDOw6HeBBO3VMwHJdwFc9no3/kLr0g
-         FEEg1Ndoj5ou2ZCJiHyIvGrTduIomtTPoUnSUlQGduDXkAOWo48Iogts2P/7bhPzaInx
-         PTk2wfLS9hyVHglfOUvC66Z2YGvXdYn9nNGmhGDkQGbzsZyZDVYmYkvrRbalDKkQ0j7S
-         5UMw==
+        b=lmvhHcS+QZT/7guik7rpVKAk8mwEDBpkUl6zaTajrspw9BVLSmWbwzEuHGQhhCkMT6
+         VqPxAXkrzPW9Bbd2R3DeZyRgkE+d0YMbZAr4b0kMlJjKrDlqPU/rPrRGE3Hw//ICrY9/
+         Dna9o+cGG2/hGfDjVjSNQrAj/6U5+Me+fmXkspkoio4hk7byUsq6aM8KL0REJpJ4HfAo
+         jurT8FTs9h4spgj6lVNYMclIQ+dG13WjfTI+AqAE7EqyxiG7E4vsXMjp3Y8AJlat4gl7
+         0u5xR6yj9p0OmiCV7QIMs2/gfE1KSbqp+2J7Z0N7zOe+9W3KrP5D6zAF8hYQYPINdPxf
+         xz7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xFwr8ynOJzvPuaGLR/tEjfyY8MZ4dmuQnYdP4Db7y7U=;
-        b=sfwMiNoyb9MfeK8mLnkNeW6KM1m2y3vt42pAjaZo2B1dGR2hG2OdtYAcTki9tZQXW/
-         /p8L+oflXKk4iuooLlra1se00dz3Esf6sNC3unOWqjzKls32dANMwlYC+TTonhU49+B9
-         csdRqb3HqgBb+jnzr6nilHYYvj/8bXNNsnLi54wC47wqyToX3Zf6mYhxLfrqvlr2Q4b9
-         XELrdWWvcLNxPjAD//K53Lf2lLaYARRp7FNmw9fZI3toQXfFxCiXiYlq1jOttdShMcYH
-         qRYXcXVfBt6Qm3coghlDEkegeJRCX0Lz5TCECTdAwZ8A2l2qEhUHZKcDL5aLlgmzXCM4
-         6nMA==
+        bh=J5OPQMTGwzzyCfI5qMMw+fGdsB8sOJ1Wj99wQ0eC6wY=;
+        b=fnORWyaFMtwJYwrsKn0F1oNXPSimQT98+dzKJBrxZctDuwjmoFIflzSZoBvVgCOcZ7
+         la/5QARSxKNFZyXORqIFCELLToDds+mocI1cbP7nTSqyy/Cm8kQ0NmLC6hEwuZ0ntVoA
+         kmdjQ5bHA8V151qBrJflo6yLOPgMvHOADyKjdm9k/g7eJwpVOXcc0cQ9GrryokYjN0qS
+         02cG3et6MliohCsZzJ/TnqBwMZJ6Jl0hqb4RNes5GhXkdD4WuJs+sXYDBwXcuB0eFoDX
+         ESPfNILSX+dPr1Qv3aNxV/3trixg3oMx1civviZvP4vFcK9VX4BIhkPZPrDw/J1Uu52n
+         BAZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Simon Shields <simon@lineageos.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 082/134] ARM: dts: exynos: Correct Trats2 panel reset line
-Date: Mon, 19 Mar 2018 19:06:05 +0100
-Message-Id: <20180319171901.139261101@linuxfoundation.org>
+Subject: [PATCH 4.4 081/134] HID: elo: clear BTN_LEFT mapping
+Date: Mon, 19 Mar 2018 19:06:04 +0100
+Message-Id: <20180319171900.997357947@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390897153858560?=
-X-GMAIL-MSGID: =?utf-8?q?1595390897153858560?=
+X-GMAIL-THRID: =?utf-8?q?1595390684316858028?=
+X-GMAIL-MSGID: =?utf-8?q?1595390894167512089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Simon Shields <simon@lineageos.org>
+From: Jiri Kosina <jkosina@suse.cz>
 
 
-[ Upstream commit 1b377924841df1e13ab5b225be3a83f807a92b52 ]
+[ Upstream commit 9abd04af951e5734c9d5cfee9b49790844b734cf ]
 
-Trats2 uses gpf2-1 as the panel reset GPIO. gpy4-5 was only used
-on early revisions of the board.
+ELO devices have one Button usage in GenDesk field, which makes hid-input map
+it to BTN_LEFT; that confuses userspace, which then considers the device to be
+a mouse/touchpad instead of touchscreen.
 
-Fixes: 420ae8451a22 ("ARM: dts: exynos4412-trats2: add panel node")
-Signed-off-by: Simon Shields <simon@lineageos.org>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fix that by unmapping BTN_LEFT and keeping only BTN_TOUCH in place.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-elo.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -359,7 +359,7 @@
- 		reg = <0>;
- 		vdd3-supply = <&lcd_vdd3_reg>;
- 		vci-supply = <&ldo25_reg>;
--		reset-gpios = <&gpy4 5 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpf2 1 GPIO_ACTIVE_HIGH>;
- 		power-on-delay= <50>;
- 		reset-delay = <100>;
- 		init-delay = <100>;
+--- a/drivers/hid/hid-elo.c
++++ b/drivers/hid/hid-elo.c
+@@ -42,6 +42,12 @@ static int elo_input_configured(struct h
+ {
+ 	struct input_dev *input = hidinput->input;
+ 
++	/*
++	 * ELO devices have one Button usage in GenDesk field, which makes
++	 * hid-input map it to BTN_LEFT; that confuses userspace, which then
++	 * considers the device to be a mouse/touchpad instead of touchscreen.
++	 */
++	clear_bit(BTN_LEFT, input->keybit);
+ 	set_bit(BTN_TOUCH, input->keybit);
+ 	set_bit(ABS_PRESSURE, input->absbit);
+ 	input_set_abs_params(input, ABS_PRESSURE, 0, 256, 0, 0);
