@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvK/01TzRxJM4PyUCTV1iDuIlqddpbUrwwLt/POQ1eHrZfxJnT/xgz0GUhfIYzKPNx+4sB
-ARC-Seal: i=1; a=rsa-sha256; t=1521484009; cv=none;
+X-Google-Smtp-Source: AG47ELsaVYtIhvQwDI3pk6r/CEUo1CF4exXBHDoAZ0GwVwojVdnysgdfXFCkYrSCjt689UXx3I51
+ARC-Seal: i=1; a=rsa-sha256; t=1521484006; cv=none;
         d=google.com; s=arc-20160816;
-        b=ulo3WAjTH+y/kkJgYCE5x1oUajRnKfdshyOs76EHZkjYnYbOFXav+MOsjXBV68gFfp
-         4v9wTPm/gIiEDXGw31IMKzVUl4Evj9aemmG4o406z1z1h2/VIMwTkX+kTCWmpaLILV9+
-         KZj4L80PTeCyiwlRW4yTgrXUTXVY6SBYENTTh4258cnJeuBSj+9wsllB+ft5SCBmNEpR
-         hHCjBPsYeOJuWIA5YYZkVx+63+1e//HHynMnWYPYog0qiXZB0+0Ilo9KA5sd/np6bxZo
-         GbH/O9rX8vPUTWp1m/zE7BDhxQeuwPfF881swXu6mOeLsv0xkNmQLjLSy8QvTmxqhj8+
-         E5GA==
+        b=PZWPOD/nwwVx/ygstYDhAocGhLdvIg7aclNKBBrQECOTpwlhpKAUF67mUC4KXFJD0w
+         EDUKdQnzRjKSTgVX6EjHy+rXpXpn4tUzgtbYmkrdro+kDtCms9xz00e54gRSBBH6iF50
+         K//3Ix5i8slEvyUPHKsy5nwsjuee4AoEw13JOKZi0/gkZ1mdzQe8dCRSuQ/+3fNImX/7
+         PnZqQisW2GiCm5Yu2HqkZrpkJ7Ug/y5MfWZTQLSwh4k+n8mDl5aWuNgS3E0wUSBUmVeQ
+         5J3kpWyfr6gqO9NGYCuerSHBnM1ULdeF7OQrM96U7S+ESbwspfcWXEQpV/dWlMbcpxzd
+         V0WA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QovJBloNsRJYfvXsQnDYGeTTOUinUrc0f5CHxxKvQ5E=;
-        b=UuzuOejN5MICVU3p5okLSsHhOWvQ4bTDA1a/eXIxaBXzV2ytV809ZXR74EUsJM2vjs
-         Ec9RZSwSeUqaH79/I1HHFaW5i+nApswmP1D3UsUwgRIvDWlA4LW8YykRpf13GCYm0cQG
-         r8q7zanPJmdwLlRNOWzJip5zSudgan5XLXMYLDZM5lkO/0pq1wcj3O5n4FS7gHJoKRIa
-         gmdH1K1yusTa82m/h5qwhmtmnWY7mtTYjGLBscZSCDcMOLdUaErsDlRw/FY2ODR5x5Yw
-         atb8jFCqztg2PLDRL0q9RC4JPRbkfdaDNMq/e7USU8cedEWGhIg7LPQUjOQH9AYI3ezs
-         m+1Q==
+        bh=KieoKMRiuYZpUA1GyeO0a9LLOxyNhm7DlCFHFNLJ8kY=;
+        b=WwzrG88syS883M2LRoJfcPkNHl2TkA0vVryDSEisJr89DY5puyPlOicCvZKT3ZcPcT
+         GOtFdKvZGr5U8PKZa5BqBXZDMOgpNpV/SNUSR25zJ4wXGYHJzpfiYoqAXFQvuKNStYTA
+         tIz3NsQQBQUYChthx7VDMAufYNsORw7AmUrm+Ysx4+oXd9Yu8SKHQKmvoy0IyKo33xIf
+         E1mSepQOFfWoK3wiVryJKAGKIr0wCdI6Wc1eUydR4tKgRnRkGEtAoEW79vBeHsF681QM
+         lF0ifOX/iKRXRQ3vhJu1PlxJ5KbQVFeXr0Kw8DDfp4jhMdbC4nU++XauOutSm0Ul1vBZ
+         L1Ew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Hans Verkuil <hans.verkuil@cisco.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 198/241] media: cpia2: Fix a couple off by one bugs
-Date: Mon, 19 Mar 2018 19:07:43 +0100
-Message-Id: <20180319180759.393591393@linuxfoundation.org>
+Subject: [PATCH 4.9 197/241] media: vsp1: Prevent suspending and resuming DRM pipelines
+Date: Mon, 19 Mar 2018 19:07:42 +0100
+Message-Id: <20180319180759.347810101@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390622995940501?=
-X-GMAIL-MSGID: =?utf-8?q?1595391617129316997?=
+X-GMAIL-THRID: =?utf-8?q?1595391613778820847?=
+X-GMAIL-MSGID: =?utf-8?q?1595391613778820847?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +52,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 
-[ Upstream commit d5ac225c7d64c9c3ef821239edc035634e594ec9 ]
+[ Upstream commit a17d2d6cd9985ca09a9e384f1bc71d710f7e5203 ]
 
-The cam->buffers[] array has cam->num_frames elements so the > needs to
-be changed to >= to avoid going beyond the end of the array.  The
-->buffers[] array is allocated in cpia2_allocate_buffers() if you want
-to confirm.
+When used as part of a display pipeline, the VSP is stopped and
+restarted explicitly by the DU from its suspend and resume handlers.
+There is thus no need to stop or restart pipelines in the VSP suspend
+and resume handlers, and doing so would cause the hardware to be
+left in a misconfigured state.
 
-Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
+Ensure that the VSP suspend and resume handlers do not affect DRM-based
+pipelines.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/cpia2/cpia2_v4l.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drv.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/cpia2/cpia2_v4l.c
-+++ b/drivers/media/usb/cpia2/cpia2_v4l.c
-@@ -812,7 +812,7 @@ static int cpia2_querybuf(struct file *f
- 	struct camera_data *cam = video_drvdata(file);
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -509,7 +509,13 @@ static int __maybe_unused vsp1_pm_suspen
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
  
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
+-	vsp1_pipelines_suspend(vsp1);
++	/*
++	 * When used as part of a display pipeline, the VSP is stopped and
++	 * restarted explicitly by the DU.
++	 */
++	if (!vsp1->drm)
++		vsp1_pipelines_suspend(vsp1);
++
+ 	pm_runtime_force_suspend(vsp1->dev);
  
- 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
-@@ -863,7 +863,7 @@ static int cpia2_qbuf(struct file *file,
+ 	return 0;
+@@ -520,7 +526,13 @@ static int __maybe_unused vsp1_pm_resume
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
  
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
- 	   buf->memory != V4L2_MEMORY_MMAP ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
+ 	pm_runtime_force_resume(vsp1->dev);
+-	vsp1_pipelines_resume(vsp1);
++
++	/*
++	 * When used as part of a display pipeline, the VSP is stopped and
++	 * restarted explicitly by the DU.
++	 */
++	if (!vsp1->drm)
++		vsp1_pipelines_resume(vsp1);
  
- 	DBG("QBUF #%d\n", buf->index);
+ 	return 0;
+ }
