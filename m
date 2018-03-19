@@ -1,96 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755054AbeCSCib (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 22:38:31 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:23818 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754579AbeCSCiZ (ORCPT
+        id S1755082AbeCSCvO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 22:51:14 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6925 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754685AbeCSCvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 22:38:25 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w2J2cMma030646
-X-Nifty-SrcIP: [209.85.217.170]
-X-Google-Smtp-Source: AG47ELulvdCFP9pMk6HAePfgcygeW10NheXx2sv8JtWVlKnCCl+dLsnRp3xLDv7OC1cEWguCgMMX4vNO9HH8XaJXwXk=
-MIME-Version: 1.0
-In-Reply-To: <9026b476c29fdd2d68b2e90ab0a155d0@agner.ch>
-References: <1511784913-3396-1-git-send-email-yamada.masahiro@socionext.com> <9026b476c29fdd2d68b2e90ab0a155d0@agner.ch>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 19 Mar 2018 11:37:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQKzXK_MYAEh0kke96wA0MWmKhUjZhnbugX5WTf2kyTVw@mail.gmail.com>
-Message-ID: <CAK7LNAQKzXK_MYAEh0kke96wA0MWmKhUjZhnbugX5WTf2kyTVw@mail.gmail.com>
-Subject: Re: kbuild: move cc-option and cc-disable-warning after incl. arch Makefile
-To: Stefan Agner <stefan@agner.ch>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>
+        Sun, 18 Mar 2018 22:51:11 -0400
+X-UUID: d1eea8d018a54423b2698b322a85922d-20180319
+Message-ID: <1521427861.13211.8.camel@mtkswgap22>
+Subject: Re: [PATCH v1 02/19] dt-bindings: cpufreq: mediatek: use - instead
+ of _ in examples
+From: Sean Wang <sean.wang@mediatek.com>
+To: <matthias.bgg@gmail.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
+Date: Mon, 19 Mar 2018 10:51:01 +0800
+In-Reply-To: <20180226041336.GJ26947@vireshk-i7>
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+         <fd1fc4c6760ab8fcbf7518df1cecf3837ab18d2c.1519378871.git.sean.wang@mediatek.com>
+         <20180226041336.GJ26947@vireshk-i7>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-19 9:41 GMT+09:00 Stefan Agner <stefan@agner.ch>:
-> Hi Masahiro,
->
-> On 27.11.2017 13:15, Masahiro Yamada wrote:
->> Geert reported commit ae6b289a3789 ("kbuild: Set KBUILD_CFLAGS before
->> incl. arch Makefile") broke cross-compilation using a cross-compiler
->> that supports less compiler options than the host compiler.
->>
->> For example,
->>
->>   cc1: error: unrecognized command line option "-Wno-unused-but-set-variable"
->>
->> This problem happens on architectures that setup CROSS_COMPILE in their
->> arch/*/Makefile.
->>
->> Move the cc-option and cc-disable-warning back to the original position,
->> but keep the Clang target options.
->
-> This seems to break arm (32-bit) clang support for me. It seems to break
-> correct compiler flag detection in some way.
->
-> Just moving no-integrated-as back to before including the arch Makefile
-> seems to fix the issue:
 
-Sorry, looks like I broke it.
+Hi, Matthias
+
+I'm worried you missed the patch which already got both tags Reviewed-by
+from Rob and Acked-by: Viresh and thus I thought it
+should be ready for your tree.
+
+For the other patches in the same series, I will have v2 to refine them
+according to these suggestions and comments in v1 and let them easy to
+review.
+
+Really thanks for your effort!
+	
+	Sean
 
 
-
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -487,6 +487,7 @@ CLANG_GCC_TC        :=
-> --gcc-toolchain=$(GCC_TOOLCHAIN)
->  endif
->  KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
->  KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
-> +KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
->  endif
->
->  RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern
-> -mindirect-branch-register
-> @@ -744,7 +745,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning,
-> tautological-compare)
->  # See modpost pattern 2
->  KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
->  KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
-> -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
->  KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
->  else
->
-> Does that sound like a reasonable fix?
-
-
-Yes, I think so.
-
-
-For consistency, please move
-KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
-as well.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+On Mon, 2018-02-26 at 09:43 +0530, Viresh Kumar wrote:
+> On 23-02-18, 18:16, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > It should be good that no use "_" is in examples. Consequently,
+> > those nodes in certain files which have an inappropriate name containing
+> > "_" are all being replaced with "-".
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-pm@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > ---
+> >  Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > index d36f07e..38cfbb5 100644
+> > --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > @@ -26,7 +26,7 @@ Optional properties:
+> >  
+> >  Example 1 (MT7623 SoC):
+> >  
+> > -	cpu_opp_table: opp_table {
+> > +	cpu_opp_table: opp-table {
+> >  		compatible = "operating-points-v2";
+> >  		opp-shared;
+> >  
+> > @@ -86,7 +86,7 @@ Example 1 (MT7623 SoC):
+> >  	};
+> >  
+> >  Example 2 (MT8173 SoC):
+> > -	cpu_opp_table_a: opp_table_a {
+> > +	cpu_opp_table_a: opp-table-a {
+> >  		compatible = "operating-points-v2";
+> >  		opp-shared;
+> >  
+> > @@ -131,7 +131,7 @@ Example 2 (MT8173 SoC):
+> >  		};
+> >  	};
+> >  
+> > -	cpu_opp_table_b: opp_table_b {
+> > +	cpu_opp_table_b: opp-table-b {
+> >  		compatible = "operating-points-v2";
+> >  		opp-shared;
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
