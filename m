@@ -1,36 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuPcYor5neN7nOzqfNO1X2VgYxraEazFxW14oan5g3GgPiqDf4O6kudjBQPma+C9xj0QC8W
-ARC-Seal: i=1; a=rsa-sha256; t=1521484162; cv=none;
-        d=google.com; s=arc-20160816;
-        b=kNUz7iJRwHPeScG/vVouf/Ca0BnKVGTZAqRgbMNFCSPtUOSHNSjgNVCn5gGHxFWGKm
-         n3X7ShYxDEcGnFzV9VaemaxocxjnoMrMTRco2A6U2J6SDh8tmFYuzW0/KPcM8RNSEYQL
-         XRbyiq4co4wFclawHylSMiGuwUjyME2Q4GMrvkXjEp78jQqIH571EoFHvalvNNDp1ccK
-         KW5CcbfYy325EOyeWYSbajqKDW7DTYpqhBL35scOtTD0o+UHyAwUcQYUqGEKRR/DimiA
-         UiuetDMZJkpBhLTMnI4DOCCnEtXvtE99sdXO4I8VkTSrTdC7PvjSoo4i5kt5nn5W3gl9
-         IlPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=0jGjX/TxaCCk8QD/P8XsOysdk8MAJ/F2v9LUGfvW4So=;
-        b=Qxfa1gOCnA8+l8isbGgqV59nEyo1GypSdxVa9ASrRkEOqih/hiuFJOss0QxNNq2g9A
-         bJyn3bggcbjC60+r2PDkynzOku2kDehQRi94DwN48zVxoAol7/bSTsZnpsZbhTA6UjrA
-         PQcF4SQhU7QNthCI5FinM6CwxWmwxyyNb+CX0hi1RdOf63nkWynEtCLDTtB8xdbSh4wX
-         tsks3E18LLdxOANPf9wR5YtugqX4Nu9nUjpYXxpcCiYQ0KIcjmMsWsVQxSnzueGZqlLX
-         xrqlaL3BZvrpa3i/4fPT9+fxYU7+t68IIKnHS+FBM0DSlqSEEP4laOWgmkP/t5riklEz
-         v+BA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484160-2-6314293638286450684
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521484159; b=CTb6FAzTYACOVEYaDKwHx0eRmNQuIVRt/G5jT0GtO74pCt5
+    YdWe4Q5F5GSiNEJ19W/M6uWZswGw/ly4GgeoCPgQVNLcUKhhCv2JzqKHiNkSJ70E
+    7DldBQPKN0I6Sn5kJPijapxdA8DvFHjXfxOxRBuCSGc2w/dhyG9J9TJMjF2eN8bZ
+    mTqxRkRnJxaqmeHWP4ae57M3worgGiJ1DkimArpzpXQaMKzpjnC1vNQoijwmPN4N
+    OnVXCuOEBM9whuLJFIQLN/0duurXwnTwXkixe0xSEsaIBcc+tBETR1K4WQXS2sLe
+    fm1SZs0AcBGsYaUXpdd8o5yE3mOtj0sr9OA/1og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521484159; bh=JYLVCOap9CsQ4INHFTCbkn8tXy
+    RQCPhLxJZbP4MdiMQ=; b=gMcmskhW0twmQCICmUQEa3Wu6oKuNvekUET5svwX5b
+    mB1CPocIWEBzF2gRguRaN/iWL32fFj4gXub1nwd7S8tT6TLIyCbgX2XreNwEpafC
+    XiIyXrb8KoAQpiWlaAmKgVPygCyxggW4183rRspw4h3W3iw+j8YoCSHKSyzro+Wm
+    8Ox17I/6WOTS2mj1BDxWX2w/d8GV+LsyIfk1hLMenYfSuMdEYXN7/AjOTMVhubhp
+    4juMyTVAtxQ001/ac/0qecLR+lnidUsp5ptXx1yl3Cj3yT/uwXIrM0o12LEEVpKN
+    JqHFTyCjMFblMHMUz7j8Zn1WvSffwDtI3+nordmTwZeg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvheegieenucevlhhushhtvghrufhiiigvpeegge;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvheegieenucevlhhushhtvghrufhiiigvpeegge;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S968156AbeCSS3Q (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:29:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52666 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031813AbeCSS3N (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:29:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 13/41] ALSA: pcm: Fix UAF in snd_pcm_oss_get_formats()
-Date: Mon, 19 Mar 2018 19:08:13 +0100
-Message-Id: <20180319180733.068995288@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 10/41] KVM: x86: Fix device passthrough when SME is active
+Date: Mon, 19 Mar 2018 19:08:10 +0100
+Message-Id: <20180319180732.893636267@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -38,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390642761119786?=
-X-GMAIL-MSGID: =?utf-8?q?1595391776271314015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,49 +80,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit 01c0b4265cc16bc1f43f475c5944c55c10d5768f upstream.
+commit daaf216c06fba4ee4dc3f62715667da929d68774 upstream.
 
-snd_pcm_oss_get_formats() has an obvious use-after-free around
-snd_mask_test() calls, as spotted by syzbot.  The passed format_mask
-argument is a pointer to the hw_params object that is freed before the
-loop.  What a surprise that it has been present since the original
-code of decades ago...
+When using device passthrough with SME active, the MMIO range that is
+mapped for the device should not be mapped encrypted.  Add a check in
+set_spte() to insure that a page is not mapped encrypted if that page
+is a device MMIO page as indicated by kvm_is_mmio_pfn().
 
-Reported-by: syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: <stable@vger.kernel.org> # 4.14.x-
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/kvm/mmu.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1762,10 +1762,9 @@ static int snd_pcm_oss_get_formats(struc
- 		return -ENOMEM;
- 	_snd_pcm_hw_params_any(params);
- 	err = snd_pcm_hw_refine(substream, params);
--	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
--	kfree(params);
- 	if (err < 0)
--		return err;
-+		goto error;
-+	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
- 	for (fmt = 0; fmt < 32; ++fmt) {
- 		if (snd_mask_test(format_mask, fmt)) {
- 			int f = snd_pcm_oss_format_to(fmt);
-@@ -1773,7 +1772,10 @@ static int snd_pcm_oss_get_formats(struc
- 				formats |= f;
- 		}
- 	}
--	return formats;
-+
-+ error:
-+	kfree(params);
-+	return err < 0 ? err : formats;
- }
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -2758,8 +2758,10 @@ static int set_spte(struct kvm_vcpu *vcp
+ 	else
+ 		pte_access &= ~ACC_WRITE_MASK;
  
- static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
++	if (!kvm_is_mmio_pfn(pfn))
++		spte |= shadow_me_mask;
++
+ 	spte |= (u64)pfn << PAGE_SHIFT;
+-	spte |= shadow_me_mask;
+ 
+ 	if (pte_access & ACC_WRITE_MASK) {
+ 
