@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932507AbeCSH0g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:26:36 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18491 "EHLO
+        id S932472AbeCSH02 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:26:28 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:32005 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932190AbeCSH0Y (ORCPT
+        by vger.kernel.org with ESMTP id S932147AbeCSH0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:26:24 -0400
+        Mon, 19 Mar 2018 03:26:23 -0400
 From: <gabriel.fernandez@st.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -18,16 +18,16 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         benjamin GAIGNARD <benjamin.gaignard@st.com>,
         Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
         Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH v3 1/2] dt-bindings: reset: add STM32MP1 resets
-Date: Mon, 19 Mar 2018 08:25:50 +0100
-Message-ID: <1521444351-29550-2-git-send-email-gabriel.fernandez@st.com>
+Subject: [PATCH v3 2/2] reset: stm32mp1: Enable stm32mp1 reset driver
+Date: Mon, 19 Mar 2018 08:25:51 +0100
+Message-ID: <1521444351-29550-3-git-send-email-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
 References: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_04:,,
  signatures=0
@@ -37,142 +37,175 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch adds the reset binding entry for STM32MP1
+stm32mp1 RCC IP 1 has a reset SET register and a reset CLEAR register.
+
+Writing '0' on reset SET register has no effect
+Writing '1' on reset SET register
+	activates the reset of the corresponding peripheral
+
+Writing '0' on reset CLEAR register	has no effect
+Writing '1' on reset CLEAR register
+	releases the reset of the corresponding peripheral
+
+See Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/reset/st,stm32mp1-rcc.txt  |   6 ++
- include/dt-bindings/reset/stm32mp1-resets.h        | 108 +++++++++++++++++++++
- 2 files changed, 114 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt
- create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
+ drivers/reset/Kconfig          |   6 +++
+ drivers/reset/Makefile         |   1 +
+ drivers/reset/reset-stm32mp1.c | 115 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/reset/reset-stm32mp1.c
 
-diff --git a/Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt b/Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt
-new file mode 100644
-index 0000000..b4edaf7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt
-@@ -0,0 +1,6 @@
-+STMicroelectronics STM32MP1 Peripheral Reset Controller
-+=======================================================
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 1efbc6c..c0b292b 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -97,6 +97,12 @@ config RESET_SIMPLE
+ 	   - Allwinner SoCs
+ 	   - ZTE's zx2967 family
+ 
++config RESET_STM32MP157
++	bool "STM32MP157 Reset Driver" if COMPILE_TEST
++	default MACH_STM32MP157
++	help
++	  This enables the RCC reset controller driver for STM32 MPUs.
 +
-+The RCC IP is both a reset and a clock controller.
-+
-+Please see Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
-diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
+ config RESET_SUNXI
+ 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+ 	default ARCH_SUNXI
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index 132c24f..c1261dc 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_MESON) += reset-meson.o
+ obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
+ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
++obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
 new file mode 100644
-index 0000000..f0c3aae
+index 0000000..b221a28
 --- /dev/null
-+++ b/include/dt-bindings/reset/stm32mp1-resets.h
-@@ -0,0 +1,108 @@
-+/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++++ b/drivers/reset/reset-stm32mp1.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
 + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
 + */
 +
-+#ifndef _DT_BINDINGS_STM32MP1_RESET_H_
-+#define _DT_BINDINGS_STM32MP1_RESET_H_
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
 +
-+#define LTDC_R		3072
-+#define DSI_R		3076
-+#define DDRPERFM_R	3080
-+#define USBPHY_R	3088
-+#define SPI6_R		3136
-+#define I2C4_R		3138
-+#define I2C6_R		3139
-+#define USART1_R	3140
-+#define STGEN_R		3156
-+#define GPIOZ_R		3200
-+#define CRYP1_R		3204
-+#define HASH1_R		3205
-+#define RNG1_R		3206
-+#define AXIM_R		3216
-+#define GPU_R		3269
-+#define ETHMAC_R	3274
-+#define FMC_R		3276
-+#define QSPI_R		3278
-+#define SDMMC1_R	3280
-+#define SDMMC2_R	3281
-+#define CRC1_R		3284
-+#define USBH_R		3288
-+#define MDMA_R		3328
-+#define MCU_R		8225
-+#define TIM2_R		19456
-+#define TIM3_R		19457
-+#define TIM4_R		19458
-+#define TIM5_R		19459
-+#define TIM6_R		19460
-+#define TIM7_R		19461
-+#define TIM12_R		16462
-+#define TIM13_R		16463
-+#define TIM14_R		16464
-+#define LPTIM1_R	19465
-+#define SPI2_R		19467
-+#define SPI3_R		19468
-+#define USART2_R	19470
-+#define USART3_R	19471
-+#define UART4_R		19472
-+#define UART5_R		19473
-+#define UART7_R		19474
-+#define UART8_R		19475
-+#define I2C1_R		19477
-+#define I2C2_R		19478
-+#define I2C3_R		19479
-+#define I2C5_R		19480
-+#define SPDIF_R		19482
-+#define CEC_R		19483
-+#define DAC12_R		19485
-+#define MDIO_R		19847
-+#define TIM1_R		19520
-+#define TIM8_R		19521
-+#define TIM15_R		19522
-+#define TIM16_R		19523
-+#define TIM17_R		19524
-+#define SPI1_R		19528
-+#define SPI4_R		19529
-+#define SPI5_R		19530
-+#define USART6_R	19533
-+#define SAI1_R		19536
-+#define SAI2_R		19537
-+#define SAI3_R		19538
-+#define DFSDM_R		19540
-+#define FDCAN_R		19544
-+#define LPTIM2_R	19584
-+#define LPTIM3_R	19585
-+#define LPTIM4_R	19586
-+#define LPTIM5_R	19587
-+#define SAI4_R		19592
-+#define SYSCFG_R	19595
-+#define VREF_R		19597
-+#define TMPSENS_R	19600
-+#define PMBCTRL_R	19601
-+#define DMA1_R		19648
-+#define DMA2_R		19649
-+#define DMAMUX_R	19650
-+#define ADC12_R		19653
-+#define USBO_R		19656
-+#define SDMMC3_R	19664
-+#define CAMITF_R	19712
-+#define CRYP2_R		19716
-+#define HASH2_R		19717
-+#define RNG2_R		19718
-+#define CRC2_R		19719
-+#define HSEM_R		19723
-+#define MBOX_R		19724
-+#define GPIOA_R		19776
-+#define GPIOB_R		19777
-+#define GPIOC_R		19778
-+#define GPIOD_R		19779
-+#define GPIOE_R		19780
-+#define GPIOF_R		19781
-+#define GPIOG_R		19782
-+#define GPIOH_R		19783
-+#define GPIOI_R		19784
-+#define GPIOJ_R		19785
-+#define GPIOK_R		19786
++#define CLR_OFFSET 0x4
 +
-+#endif /* _DT_BINDINGS_STM32MP1_RESET_H_ */
++struct stm32_reset_data {
++	struct reset_controller_dev	rcdev;
++	void __iomem			*membase;
++};
++
++static inline struct stm32_reset_data *
++to_stm32_reset_data(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct stm32_reset_data, rcdev);
++}
++
++static int stm32_reset_update(struct reset_controller_dev *rcdev,
++			      unsigned long id, bool assert)
++{
++	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
++	int reg_width = sizeof(u32);
++	int bank = id / (reg_width * BITS_PER_BYTE);
++	int offset = id % (reg_width * BITS_PER_BYTE);
++	void __iomem *addr;
++
++	addr = data->membase + (bank * reg_width);
++	if (!assert)
++		addr += CLR_OFFSET;
++
++	writel(BIT(offset), addr);
++
++	return 0;
++}
++
++static int stm32_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	return stm32_reset_update(rcdev, id, true);
++}
++
++static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return stm32_reset_update(rcdev, id, false);
++}
++
++static int stm32_reset_status(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
++	int reg_width = sizeof(u32);
++	int bank = id / (reg_width * BITS_PER_BYTE);
++	int offset = id % (reg_width * BITS_PER_BYTE);
++	u32 reg;
++
++	reg = readl(data->membase + (bank * reg_width));
++
++	return !!(reg & BIT(offset));
++}
++
++static const struct reset_control_ops stm32_reset_ops = {
++	.assert		= stm32_reset_assert,
++	.deassert	= stm32_reset_deassert,
++	.status		= stm32_reset_status,
++};
++
++static const struct of_device_id stm32_reset_dt_ids[] = {
++	{ .compatible = "st,stm32mp1-rcc"},
++	{ /* sentinel */ },
++};
++
++static int stm32_reset_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct stm32_reset_data *data;
++	void __iomem *membase;
++	struct resource *res;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	membase = devm_ioremap_resource(dev, res);
++	if (IS_ERR(membase))
++		return PTR_ERR(membase);
++
++	data->membase = membase;
++	data->rcdev.owner = THIS_MODULE;
++	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
++	data->rcdev.ops = &stm32_reset_ops;
++	data->rcdev.of_node = dev->of_node;
++
++	return devm_reset_controller_register(dev, &data->rcdev);
++}
++
++static struct platform_driver stm32_reset_driver = {
++	.probe	= stm32_reset_probe,
++	.driver = {
++		.name		= "stm32mp1-reset",
++		.of_match_table	= stm32_reset_dt_ids,
++	},
++};
++
++builtin_platform_driver(stm32_reset_driver);
 -- 
 1.9.1
