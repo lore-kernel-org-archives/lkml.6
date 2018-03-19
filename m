@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsKQwEPmnzbxHO7n97t8lu9dCr2UZqmnm2ccnZt4dIvpgHoaFNkW4k36bWbwK2k8IgzByZ9
-ARC-Seal: i=1; a=rsa-sha256; t=1521483266; cv=none;
+X-Google-Smtp-Source: AG47ELtXcNXPO4uaM0ArJcyqtGUzNy6hZur1NiqxExkld2ShQZm4sOHsqJRXGLFUdrWEwBqiHjMk
+ARC-Seal: i=1; a=rsa-sha256; t=1521483263; cv=none;
         d=google.com; s=arc-20160816;
-        b=s29BlxjiZ80uSh9wQp27CN3z0WlndfsNwB+zrq4nRDsE/zKd2/rKOAFujK94UjRyrf
-         aODuGAFvQ9IKOFcUiMAewsvAe/oox5OEbwMNUyhfco6DRz/xQmj2Dcrd2nacWPsV7fAl
-         aIJZ7Ag+SZCgRYC1T4T7eERZA0AsJq2LG8VeGN/yS2hh0WzjgMoYq54JRPp5G/9AqvDf
-         VLTGlgdkX3AQu1sarFVkGiLvEtyHTDdqyxDzQeB6Wgid+4sqKFPTDdijO8ZA4YVwyB+k
-         PJXjpoEAa3GL5ZDcJFTxSdTXQvhiQtmhIsmr455TV0pxd9bP4pXrOBiJ2BERVkpZ0ig+
-         ny2A==
+        b=O/VX6yoboZJBE2Ld7tDmaCJQmIOTkx9RbZ0p5cFrNyqrNfLVEaqK1umj1VhR7pxUWk
+         p4d0x0hZ7+HKZdBPA3EtHbBaUNQoHcwBrc96mXkhqwH8SnCTO3VrZHixrdpd+YfkZGO4
+         /B8iIsDrF5A5h7K7RMmZKzrhCCxeOAQb/kwQtY/FXhllYdqU4jf7Po89YHtPF8siYeQc
+         HpZR0yhDFM895mwIUBt/GukmUnKlBw0FFaPy2CqAGgXY4VGsNhYIsxAStUuLT5LdAmgE
+         yq/55qFKxLNpUiaZ1xzQcP/i32pdqS3CORIzRC7fk5ajZCzQFEtXlaC73SendzBUg3it
+         lBXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LmAkflzbJ0qvR5NEINntMtlB5LOaeYegx8eDPOProD8=;
-        b=oHB5hCtJ57k5v2YkJycCAhE3hNi1QpGZ0PYlpL6WXtA+I0+886zYSGu6sL6PW8aulB
-         YdL2ZMOovsAuup8+paAKIuqpYo9NeY2ZHzaLxmQTDCpn3KvX3eQQ+6n0bc2gj7U3QLJq
-         MP+Mw9FoqlbWkTQAXl2qXIl53O00V5Pgs+7qVrEExM/Goc6gRdTGD4kB04+ZkxSrhhDG
-         d2xiyc6/wy3MxQrKqcO/6fv5LMbLb0q7K+4XVNkxEex/51Q6YxJCmE8A/z8UfrTwvBhL
-         R3pXtyCfZds7ekIz6R8h89j4rqfs50fxw7OFhTdLiatxgU3HazqdmV9Kyq3UUo5uvUsy
-         j32A==
+        bh=dRkSMllYxYK1eWVXRKBf1+6IN+6j9u/9s924vZk2zgs=;
+        b=0fqDIUcUOLMjRliOSwnwwjiXLJKbfTPdbSPhRTMyntCqd+WNBNhe1nS9/nlFoSLll1
+         9v26JwzUvkFJuwHLvCH1HJFTQ1y3dmsv7G5m51uHK+jP8M/RDmWKr1XjBNlh7OLnGk6U
+         B4ONlFo1Dn/SWuo8cPFbL5VAaP+ZJOPUGx8/Yn5Qnx4payUHRoTWgHPfdJMkbyfT1MXb
+         jSEJvoTsWGhb1tYmW+yzFjHsOfjaM+dfE5Un988qYHDBdgfdaYISvR7I3Qz5RIixAOD/
+         ZamB7F6sXXcJAhiLxWG7OHjXpHw9C3jH2zoJdF3e6AV0BRxN64wfXBfmEzsNX5itRYKp
+         utCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	amd-gfx@lists.freedesktop.org,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 060/134] drm/amdgpu: Fail fb creation from imported dma-bufs. (v2)
-Date: Mon, 19 Mar 2018 19:05:43 +0100
-Message-Id: <20180319171857.980738204@linuxfoundation.org>
+Subject: [PATCH 4.4 059/134] drm/radeon: Fail fb creation from imported dma-bufs.
+Date: Mon, 19 Mar 2018 19:05:42 +0100
+Message-Id: <20180319171857.843350088@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390837447532927?=
-X-GMAIL-MSGID: =?utf-8?q?1595390837447532927?=
+X-GMAIL-THRID: =?utf-8?q?1595390568975323259?=
+X-GMAIL-MSGID: =?utf-8?q?1595390834918545494?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,7 +56,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>
 
 
-[ Upstream commit 1769152ac64b0b07583f696b621624df2ca4c840 ]
+[ Upstream commit a294043b2fbd8de69d161457ed0c7a4026bbfa5a ]
 
 Any use of the framebuffer will migrate it to VRAM, which is not sensible for
 an imported dma-buf.
@@ -71,12 +71,12 @@ Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c |    6 ++++++
+ drivers/gpu/drm/radeon/radeon_display.c |    6 ++++++
  1 file changed, 6 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -560,6 +560,12 @@ amdgpu_user_framebuffer_create(struct dr
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -1374,6 +1374,12 @@ radeon_user_framebuffer_create(struct dr
  		return ERR_PTR(-ENOENT);
  	}
  
@@ -86,6 +86,6 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +		return ERR_PTR(-EINVAL);
 +	}
 +
- 	amdgpu_fb = kzalloc(sizeof(*amdgpu_fb), GFP_KERNEL);
- 	if (amdgpu_fb == NULL) {
+ 	radeon_fb = kzalloc(sizeof(*radeon_fb), GFP_KERNEL);
+ 	if (radeon_fb == NULL) {
  		drm_gem_object_unreference_unlocked(obj);
