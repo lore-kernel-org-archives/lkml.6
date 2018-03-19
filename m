@@ -1,53 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968930AbeCSUrc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:47:32 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35628 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968664AbeCSSJx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:09:53 -0400
-X-Google-Smtp-Source: AG47ELv0MvuL5OxTxRCJpchNtMwTU47tMbcQzT1BKSJB9ZxD4vLhOwk5h7SNN1LG5CyKT7RM2xqgTQ==
-Date: Mon, 19 Mar 2018 19:09:50 +0100
-From: Paolo Pisati <p.pisati@gmail.com>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Paolo Pisati <p.pisati@gmail.com>, Alan Tull <atull@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-Message-ID: <20180319180950.GA15921@harukaze>
-References: <1521215669-23874-1-git-send-email-p.pisati@gmail.com>
- <1521215669-23874-3-git-send-email-p.pisati@gmail.com>
- <20180316162654.bcr7d46om2tnhm7l@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316162654.bcr7d46om2tnhm7l@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S971536AbeCSUt6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:49:58 -0400
+Received: from mout.gmx.net ([212.227.15.19]:48169 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968556AbeCSUtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:49:52 -0400
+Message-ID: <1521492550.16869.1.camel@gmx.de>
+Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
+From: Mike Galbraith <efault@gmx.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Date: Mon, 19 Mar 2018 21:49:10 +0100
+In-Reply-To: <20180319153413.GO2943022@devbig577.frc2.facebook.com>
+References: <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
+         <1520619426.27998.18.camel@gmx.de>
+         <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
+         <1520624424.27998.76.camel@gmx.de>
+         <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+         <20180309221736.GB5926@hirez.programming.kicks-ass.net>
+         <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
+         <1520653648.12749.20.camel@gmx.de>
+         <20180314195711.GD2943022@devbig577.frc2.facebook.com>
+         <1521082141.7100.1.camel@gmx.de>
+         <20180319153413.GO2943022@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:yDkKTQ08n5X5d6zlFU9Nrsc4Ue1WQlte78XR7M1azl/fiuVJXbY
+ KxL2H4I6riUuM+fiJExAfyTKun7gqHj2RGgylh9khRMHtpEr6rjf7q/U1oPdt2LMz0qOoFj
+ liYNFw1iGl+X8AP2tDUxZ/gJHdHEas1mOIZ+hjxGkfY5fyR+4pgL/ZTqSTJHE8sxUq9KH9h
+ 5PrAZgaL4GnjnNWUQZHwg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:tV+d0y6sZD0=:Xgby/XFG4CWVrwQnc2MY31
+ 0ivSnSalP1rzbpc3ZYiTH7Kk1QCURYwQ3VMgNlser4BKDp3/UprZ49H+zdZilofVfUNPyXkJb
+ 4nkd29wip1FF+Rlx9HXdQmia39vQTTNxSTzhXIXbpsE/eGRcjI3pJ+t2LHNW1nbpOM2UA7YtL
+ aC6yVfqe1s3vyXBGp2hq3Lg84t4mkHjUy+ks1SX2OmY/Eu+pUi88dPfPo4XvgogCYx0I1w6ED
+ xtavVUjloTz5RcmWM5eHHeP5mTkyDbCkp3t8NkX/eRlufq5WxJ25Y2CsBhhUcoXol1ZqFdKaI
+ PTQoRvO8PypuV/+f/pL33a2h4+MojZpKLUgoY/ikd3R26xybZ/mjGvetZ03DIWiKx0HGYFW/9
+ TCEmEcjnK44zi1zieW/5yAgptyi4kHDzvN2FmPOaOL5MLp37JaRWcTtn4GX4pdgko46+UCGxY
+ pkFy4dbJB51kAbzspZKjGKDJ2QiN7BiPfkXFCkxtzqyA0n9eZP3UkiwzwqNDmWa1TSS23U+42
+ OZ654tK910EtSv6EDwtJNMLPwzLv95Epi49JbcfXICM4kc9jyEsSzELzfq6TzWMDMDUDhg84k
+ Edfu81kAM96Pc/xKpJBFGxaP7RajO8PhkjeogRVInm7wjWpU7kuQqLOTC5BMbLGzbhBVf0lIA
+ Ni3WhKwCPIDC/enPHAgxGLAzx3WAcBsACH+GJdTc3ADdd9q0B1LyQIJt+njL0QXm502vUtbG9
+ SrIV9/nNgtLvN9iso0UTLVcRZEp02x5vpJGLSyQqcVsZhI4IuK+9OsaubGLCC+IHOiP68YxyU
+ s6tdOBV/FwY5YOgkKIsMlZTqGndDhovG75cbUPWa3zigADc9U4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 09:26:54AM -0700, Moritz Fischer wrote:
-> >
-> > +static enum fpga_mgr_states machxo2_spi_state(struct fpga_manager *mgr)
-> > +{
-> > +	return FPGA_MGR_STATE_UNKNOWN;
-> > +}
+On Mon, 2018-03-19 at 08:34 -0700, Tejun Heo wrote:
+> Hello, Mike.
 > 
-> To understand this correctly: Further up you have a way to determine the
-> state you're in, but then you only use that for debug printout, while
-> here where you should provide the status you say FPGA_MGR_STATE_UNKNOWN?
+> On Thu, Mar 15, 2018 at 03:49:01AM +0100, Mike Galbraith wrote:
+> > Under the hood v2 details are entirely up to you.  My input ends at
+> > please don't leave dynamic partitioning standing at the dock when v2
+> > sails.
 > 
-> Am I missing something here?
+> So, this isn't about implementation details but about what the
+> interface achieves - ie, what's the actual function?  The only thing I
+> can see is blocking the entity which is configuring the hierarchy from
+> making certain configs.  While that might be useful in some specific
+> use cases, it seems to miss the bar for becoming its own kernel
+> feature.  After all, nothing prevents the same entity from clearing
+> the exlusive bit and making the said changes.
 
-This is more of a generic function ('What's the state of the FPGA now?') while
-dump_status_reg() is invoked after a specific SPI command is sent to the FPGA to
-keep track of the status of the chip and check that it adhere to the state
-machine.
+Yes, privileged contexts can maliciously or stupidly step all over one
+other no matter what you do (finite resource), but oxymoron creation
+(CPUs simultaneously balanced and isolated) should be handled.  If one
+context can allocate a set overlapping a set another context intends to
+or already has detached from scheduler domains, both are screwed.
 
-I'll send a v7.
--- 
-bye,
-p.
+	-Mike
