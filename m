@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuz2tkQwW8DWIIN14LHZF5aNw1RJzm5nwRxKWNIQH1C/yPm3HJDqgmgs6ttDtuy/5x6TIPx
+X-Google-Smtp-Source: AG47ELtiJw15uSowZmlb8P1Lbzpm+CNa6o1F49ABUu+W8JX07+BcGMz735xSaoNV6l50/L4FcR2g
 ARC-Seal: i=1; a=rsa-sha256; t=1521483369; cv=none;
         d=google.com; s=arc-20160816;
-        b=nzC40X4Uy9paTQ531J9geKJw6zy7+QB2NIXITZ0BgMxt/ipIQijBHgYbHgNzxqSw2j
-         MsLUbbGInqLz5Wpo7cssHBGJKKADhQvS0q9MMY+DX78KdudD/XnJoYdS0wL4VpS0B19L
-         UVartwlcvWZ5YlPirWxXKIp1gPQI+ftgQXNv0o6/MlW4nwTqBuLaRYgiHDJuTL06ItrL
-         ItjJduODbl6r0I5UByDlcu6FH52dq3D1NEsrcid+5b+s+NWTd/QChh8KDFlEydf610NW
-         FZjsFSW0qScV3deGmgt8vfsXyod5W6lfJRpCHp76NzuwnFlgt3MXagg9zPyrt318j8z0
-         8t1Q==
+        b=DOxKSvnotBb9QUBh7CJiN3IN5RxdahaX5n8AfcjFRFLscfiA5Mgnurrb5D3LdPJMSQ
+         oKHzoo8jUMv7aa5ZpPk4tq4m2KQnxrGUYYw39DArMAiZit04dPRQniwL6dm/2AWkL994
+         sbkjff/QrBLL73OnnHFTVl+mGVgd802Lng6H3J1PW1fk1kaHhnArZdJWg54wj91+/eUm
+         riZYVbiA/jm7awQC/855nNHoR6cr1MvP156N1LXRzpXXXCvwCsAxC7ur4z+YTYRpRMXK
+         fgWauI0g5Adlu02XsocSleqBkKDI0jnvxKhR/aQrUPJG7drH3hABJLY+77pdxPQCV6Sp
+         jaiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CUrsjB9h0tCeI/oEQxtp3spDfOF3AlHWWjPWZVPA/PI=;
-        b=ZECIyykLk+6yDYkbfWQDtQRiBOYL9F2VtjhkhV2c2LES1bxOs8dXMuRpTzfZzKFFcE
-         m+PEoyTTH7QbiWIzIab9tH5BdNsMNljGF1XvDKDKrqflfkGFa1FNjuOMyAS+Bgdwv4aR
-         cT77KbQ7bYqXYmxTmAAqM5pw1UWNoV/vqJq2MWqUCllRG80bzMrTVYX2tBA+D9ML2p8m
-         bW1TUV+c7VBml+nJ/fLbH/y3HSm4aV87k6YPIprmZmlOYWLHRLhp4TVkaXBk2ZT7JhhY
-         EtLP+8D1goZaK1kLaSiG4Pin7Bw8vy/o1RSjn4doanzxF7g+AoDhMYeM6ouTPI4CrkV+
-         yOCA==
+        bh=+0prhnoKR1LBgL/9pBJmYbcPRE5MDybbdFhLO/oX38o=;
+        b=fHqYNUBBySWAqnL/+k/0qPGjCbaA68yfMPZ8BZwgLQ5CoFUjFIIAgUaRezH+KkjA/q
+         X+tfHOInB+nRlhTOX8SxJfxw/BEz0hz7fL7PN9KHDzLCssIYl4hUTnUaS5jKUVMt3hgq
+         pWvWyAlFuTW6lCf9wrLlBqHIuGCnG2LIIbydWEjsAc3I9mtA/Yg7Flm6lB+btfkL7XeU
+         nDOkZI06fzwN7SJ7Nux6ZH4SnWBzpnEN8vQWxi063bxOsQGD9WvZWnOp9YHLF0bB3ykC
+         FGSsGLEVh7ZRIe/+kPyHWd0+WUa3erANHr9svxE0I1onHwqSBb6g7q6Fh8rh7PhbNqXx
+         LILQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hannes Reinecke <hare@suse.de>,
-	Takahiro Yasui <takahiro.yasui@hds.com>,
-	Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-	SCSI ML <linux-scsi@vger.kernel.org>,
-	Xose Vazquez Perez <xose.vazquez@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 098/134] scsi: devinfo: apply to HP XP the same flags as Hitachi VSP
-Date: Mon, 19 Mar 2018 19:06:21 +0100
-Message-Id: <20180319171903.401420472@linuxfoundation.org>
+Subject: [PATCH 4.4 097/134] scsi: core: scsi_get_device_flags_keyed(): Always return device flags
+Date: Mon, 19 Mar 2018 19:06:20 +0100
+Message-Id: <20180319171903.260705907@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390620005177642?=
-X-GMAIL-MSGID: =?utf-8?q?1595390945302124468?=
+X-GMAIL-THRID: =?utf-8?q?1595390945327424140?=
+X-GMAIL-MSGID: =?utf-8?q?1595390945327424140?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,43 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
 
-[ Upstream commit b369a0471503130cfc74f9f62071db97f48948c3 ]
+[ Upstream commit a44c9d36509c83cf64f33b93f6ab2e63822c01eb ]
 
-Commit 56f3d383f37b ("scsi: scsi_devinfo: Add TRY_VPD_PAGES to HITACHI
-OPEN-V blacklist entry") modified some Hitachi entries:
+Since scsi_get_device_flags_keyed() callers do not check whether or not
+the returned value is an error code, change that function such that it
+returns a flags value even if the 'key' argument is invalid.  Note:
+since commit 28a0bc4120d3 ("scsi: sd: Implement blacklist option for
+WRITE SAME w/ UNMAP") bit 31 is a valid device information flag so
+checking whether bit 31 is set in the return value is not sufficient to
+tell the difference between an error code and a flags value.
 
-    HITACHI is always supporting VPD pages, even though it's claiming to
-    support SCSI Revision 3 only.
-
-The same should have been done also for HP-rebranded.
-
-[mkp: checkpatch and tweaked commit message]
-
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Takahiro Yasui <takahiro.yasui@hds.com>
-Cc: Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_devinfo.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_devinfo.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 --- a/drivers/scsi/scsi_devinfo.c
 +++ b/drivers/scsi/scsi_devinfo.c
-@@ -180,7 +180,7 @@ static struct {
- 	{"HITACHI", "6586-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HITACHI", "6588-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HP", "A6189A", NULL, BLIST_SPARSELUN | BLIST_LARGELUN},	/* HP VA7400 */
--	{"HP", "OPEN-", "*", BLIST_REPORTLUN2}, /* HP XP Arrays */
-+	{"HP", "OPEN-", "*", BLIST_REPORTLUN2 | BLIST_TRY_VPD_PAGES}, /* HP XP Arrays */
- 	{"HP", "NetRAID-4M", NULL, BLIST_FORCELUN},
- 	{"HP", "HSV100", NULL, BLIST_REPORTLUN2 | BLIST_NOSTARTONADD},
- 	{"HP", "C1557A", NULL, BLIST_FORCELUN},
+@@ -589,17 +589,12 @@ int scsi_get_device_flags_keyed(struct s
+ 				int key)
+ {
+ 	struct scsi_dev_info_list *devinfo;
+-	int err;
+ 
+ 	devinfo = scsi_dev_info_list_find(vendor, model, key);
+ 	if (!IS_ERR(devinfo))
+ 		return devinfo->flags;
+ 
+-	err = PTR_ERR(devinfo);
+-	if (err != -ENOENT)
+-		return err;
+-
+-	/* nothing found, return nothing */
++	/* key or device not found: return nothing */
+ 	if (key != SCSI_DEVINFO_GLOBAL)
+ 		return 0;
+ 
