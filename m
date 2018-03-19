@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932833AbeCSKiv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:38:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55006 "EHLO
+        id S932881AbeCSKjD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:39:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55038 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeCSKip (ORCPT
+        with ESMTP id S932830AbeCSKiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:38:45 -0400
+        Mon, 19 Mar 2018 06:38:50 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: x86@kernel.org
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -15,9 +15,9 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/14] x86: remove dma_alloc_coherent_mask
-Date: Mon, 19 Mar 2018 11:38:14 +0100
-Message-Id: <20180319103826.12853-3-hch@lst.de>
+Subject: [PATCH 04/14] x86: use generic swiotlb_ops
+Date: Mon, 19 Mar 2018 11:38:16 +0100
+Message-Id: <20180319103826.12853-5-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180319103826.12853-1-hch@lst.de>
 References: <20180319103826.12853-1-hch@lst.de>
@@ -26,151 +26,208 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These days all devices (including the ISA fallback device) have a coherent
-DMA mask set, so remove the workaround.
+The generic swiotlb dma ops were based on the x86 ones and provide
+equivalent functionality, so use them.
+
+Also fix the sta2x11 case.  For that SOC the dma map ops need an
+additional physical to dma address translations.  For swiotlb buffers
+that is done throught the phys_to_dma helper, but the sta2x11_dma_ops
+also added an additional translation on the return value from
+x86_swiotlb_alloc_coherent, which is only correct if that functions
+returns a direct allocation and not a swiotlb buffer.  With the
+generic swiotlb and dma-direct code phys_to_dma is not always used
+and the separate sta2x11_dma_ops can be replaced with a simple
+bit that marks if the additional physical to dma address translation
+is needed.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 ---
- arch/x86/include/asm/dma-mapping.h | 18 ++----------------
- arch/x86/kernel/pci-dma.c          | 10 ++++------
- arch/x86/mm/mem_encrypt.c          |  4 +---
- drivers/xen/swiotlb-xen.c          | 16 +---------------
- 4 files changed, 8 insertions(+), 40 deletions(-)
+ arch/x86/include/asm/device.h  |  3 +++
+ arch/x86/include/asm/swiotlb.h |  8 -------
+ arch/x86/kernel/pci-swiotlb.c  | 47 +-----------------------------------------
+ arch/x86/pci/sta2x11-fixup.c   | 46 +++++------------------------------------
+ 4 files changed, 9 insertions(+), 95 deletions(-)
 
-diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
-index 6277c83c0eb1..545bf3721bc0 100644
---- a/arch/x86/include/asm/dma-mapping.h
-+++ b/arch/x86/include/asm/dma-mapping.h
-@@ -44,26 +44,12 @@ extern void dma_generic_free_coherent(struct device *dev, size_t size,
- 				      void *vaddr, dma_addr_t dma_addr,
- 				      unsigned long attrs);
- 
--static inline unsigned long dma_alloc_coherent_mask(struct device *dev,
--						    gfp_t gfp)
--{
--	unsigned long dma_mask = 0;
--
--	dma_mask = dev->coherent_dma_mask;
--	if (!dma_mask)
--		dma_mask = (gfp & GFP_DMA) ? DMA_BIT_MASK(24) : DMA_BIT_MASK(32);
--
--	return dma_mask;
--}
--
- static inline gfp_t dma_alloc_coherent_gfp_flags(struct device *dev, gfp_t gfp)
- {
--	unsigned long dma_mask = dma_alloc_coherent_mask(dev, gfp);
--
--	if (dma_mask <= DMA_BIT_MASK(24))
-+	if (dev->coherent_dma_mask <= DMA_BIT_MASK(24))
- 		gfp |= GFP_DMA;
- #ifdef CONFIG_X86_64
--	if (dma_mask <= DMA_BIT_MASK(32) && !(gfp & GFP_DMA))
-+	if (dev->coherent_dma_mask <= DMA_BIT_MASK(32) && !(gfp & GFP_DMA))
- 		gfp |= GFP_DMA32;
+diff --git a/arch/x86/include/asm/device.h b/arch/x86/include/asm/device.h
+index 5e12c63b47aa..a8f6c809d9b1 100644
+--- a/arch/x86/include/asm/device.h
++++ b/arch/x86/include/asm/device.h
+@@ -6,6 +6,9 @@ struct dev_archdata {
+ #if defined(CONFIG_INTEL_IOMMU) || defined(CONFIG_AMD_IOMMU)
+ 	void *iommu; /* hook for IOMMU specific extension */
  #endif
-        return gfp;
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index df7ab02f959f..b59820872ec7 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -80,13 +80,10 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
- 				 dma_addr_t *dma_addr, gfp_t flag,
- 				 unsigned long attrs)
- {
--	unsigned long dma_mask;
- 	struct page *page;
- 	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	dma_addr_t addr;
++#ifdef CONFIG_STA2X11
++	bool is_sta2x11;
++#endif
+ };
  
--	dma_mask = dma_alloc_coherent_mask(dev, flag);
+ #if defined(CONFIG_X86_DEV_DMA_OPS) && defined(CONFIG_PCI_DOMAINS)
+diff --git a/arch/x86/include/asm/swiotlb.h b/arch/x86/include/asm/swiotlb.h
+index 1c6a6cb230ff..ff6c92eff035 100644
+--- a/arch/x86/include/asm/swiotlb.h
++++ b/arch/x86/include/asm/swiotlb.h
+@@ -27,12 +27,4 @@ static inline void pci_swiotlb_late_init(void)
+ {
+ }
+ #endif
 -
- again:
- 	page = NULL;
- 	/* CMA can be used only in the context which permits sleeping */
-@@ -95,7 +92,7 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
- 						 flag);
- 		if (page) {
- 			addr = phys_to_dma(dev, page_to_phys(page));
--			if (addr + size > dma_mask) {
-+			if (addr + size > dev->coherent_dma_mask) {
- 				dma_release_from_contiguous(dev, page, count);
- 				page = NULL;
- 			}
-@@ -108,10 +105,11 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
- 		return NULL;
+-extern void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-					dma_addr_t *dma_handle, gfp_t flags,
+-					unsigned long attrs);
+-extern void x86_swiotlb_free_coherent(struct device *dev, size_t size,
+-					void *vaddr, dma_addr_t dma_addr,
+-					unsigned long attrs);
+-
+ #endif /* _ASM_X86_SWIOTLB_H */
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index bcb6a9bf64ad..661583662430 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -17,51 +17,6 @@
  
- 	addr = phys_to_dma(dev, page_to_phys(page));
--	if (addr + size > dma_mask) {
-+	if (addr + size > dev->coherent_dma_mask) {
- 		__free_pages(page, get_order(size));
+ int swiotlb __read_mostly;
  
--		if (dma_mask < DMA_BIT_MASK(32) && !(flag & GFP_DMA)) {
-+		if (dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
-+		    !(flag & GFP_DMA)) {
- 			flag = (flag & ~GFP_DMA32) | GFP_DMA;
- 			goto again;
- 		}
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 1a53071e2e17..75dc8b525c12 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -203,12 +203,10 @@ void __init sme_early_init(void)
- static void *sev_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		       gfp_t gfp, unsigned long attrs)
- {
--	unsigned long dma_mask;
- 	unsigned int order;
- 	struct page *page;
- 	void *vaddr = NULL;
- 
--	dma_mask = dma_alloc_coherent_mask(dev, gfp);
- 	order = get_order(size);
- 
- 	/*
-@@ -226,7 +224,7 @@ static void *sev_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		 * mask with it already cleared.
- 		 */
- 		addr = __sme_clr(phys_to_dma(dev, page_to_phys(page)));
--		if ((addr + size) > dma_mask) {
-+		if ((addr + size) > dev->coherent_dma_mask) {
- 			__free_pages(page, get_order(size));
- 		} else {
- 			vaddr = page_address(page);
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 5bb72d3f8337..e1c60899fdbc 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -53,20 +53,6 @@
-  * API.
-  */
- 
--#ifndef CONFIG_X86
--static unsigned long dma_alloc_coherent_mask(struct device *dev,
--					    gfp_t gfp)
+-void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-					dma_addr_t *dma_handle, gfp_t flags,
+-					unsigned long attrs)
 -{
--	unsigned long dma_mask = 0;
+-	void *vaddr;
 -
--	dma_mask = dev->coherent_dma_mask;
--	if (!dma_mask)
--		dma_mask = (gfp & GFP_DMA) ? DMA_BIT_MASK(24) : DMA_BIT_MASK(32);
+-	/*
+-	 * Don't print a warning when the first allocation attempt fails.
+-	 * swiotlb_alloc_coherent() will print a warning when the DMA
+-	 * memory allocation ultimately failed.
+-	 */
+-	flags |= __GFP_NOWARN;
 -
--	return dma_mask;
+-	vaddr = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+-	if (vaddr)
+-		return vaddr;
+-
+-	return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
 -}
--#endif
 -
- #define XEN_SWIOTLB_ERROR_CODE	(~(dma_addr_t)0x0)
+-void x86_swiotlb_free_coherent(struct device *dev, size_t size,
+-				      void *vaddr, dma_addr_t dma_addr,
+-				      unsigned long attrs)
+-{
+-	if (is_swiotlb_buffer(dma_to_phys(dev, dma_addr)))
+-		swiotlb_free_coherent(dev, size, vaddr, dma_addr);
+-	else
+-		dma_direct_free(dev, size, vaddr, dma_addr, attrs);
+-}
+-
+-static const struct dma_map_ops x86_swiotlb_dma_ops = {
+-	.mapping_error = swiotlb_dma_mapping_error,
+-	.alloc = x86_swiotlb_alloc_coherent,
+-	.free = x86_swiotlb_free_coherent,
+-	.sync_single_for_cpu = swiotlb_sync_single_for_cpu,
+-	.sync_single_for_device = swiotlb_sync_single_for_device,
+-	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
+-	.sync_sg_for_device = swiotlb_sync_sg_for_device,
+-	.map_sg = swiotlb_map_sg_attrs,
+-	.unmap_sg = swiotlb_unmap_sg_attrs,
+-	.map_page = swiotlb_map_page,
+-	.unmap_page = swiotlb_unmap_page,
+-	.dma_supported = NULL,
+-};
+-
+ /*
+  * pci_swiotlb_detect_override - set swiotlb to 1 if necessary
+  *
+@@ -111,7 +66,7 @@ void __init pci_swiotlb_init(void)
+ {
+ 	if (swiotlb) {
+ 		swiotlb_init(0);
+-		dma_ops = &x86_swiotlb_dma_ops;
++		dma_ops = &swiotlb_dma_ops;
+ 	}
+ }
  
- static char *xen_io_tlb_start, *xen_io_tlb_end;
-@@ -328,7 +314,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
- 		return ret;
+diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
+index 6c712fe11bdc..eac58e03f43c 100644
+--- a/arch/x86/pci/sta2x11-fixup.c
++++ b/arch/x86/pci/sta2x11-fixup.c
+@@ -159,43 +159,6 @@ static dma_addr_t a2p(dma_addr_t a, struct pci_dev *pdev)
+ 	return p;
+ }
  
- 	if (hwdev && hwdev->coherent_dma_mask)
--		dma_mask = dma_alloc_coherent_mask(hwdev, flags);
-+		dma_mask = hwdev->coherent_dma_mask;
+-/**
+- * sta2x11_swiotlb_alloc_coherent - Allocate swiotlb bounce buffers
+- *     returns virtual address. This is the only "special" function here.
+- * @dev: PCI device
+- * @size: Size of the buffer
+- * @dma_handle: DMA address
+- * @flags: memory flags
+- */
+-static void *sta2x11_swiotlb_alloc_coherent(struct device *dev,
+-					    size_t size,
+-					    dma_addr_t *dma_handle,
+-					    gfp_t flags,
+-					    unsigned long attrs)
+-{
+-	void *vaddr;
+-
+-	vaddr = x86_swiotlb_alloc_coherent(dev, size, dma_handle, flags, attrs);
+-	*dma_handle = p2a(*dma_handle, to_pci_dev(dev));
+-	return vaddr;
+-}
+-
+-/* We have our own dma_ops: the same as swiotlb but from alloc (above) */
+-static const struct dma_map_ops sta2x11_dma_ops = {
+-	.alloc = sta2x11_swiotlb_alloc_coherent,
+-	.free = x86_swiotlb_free_coherent,
+-	.map_page = swiotlb_map_page,
+-	.unmap_page = swiotlb_unmap_page,
+-	.map_sg = swiotlb_map_sg_attrs,
+-	.unmap_sg = swiotlb_unmap_sg_attrs,
+-	.sync_single_for_cpu = swiotlb_sync_single_for_cpu,
+-	.sync_single_for_device = swiotlb_sync_single_for_device,
+-	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
+-	.sync_sg_for_device = swiotlb_sync_sg_for_device,
+-	.mapping_error = swiotlb_dma_mapping_error,
+-	.dma_supported = dma_direct_supported,
+-};
+-
+ /* At setup time, we use our own ops if the device is a ConneXt one */
+ static void sta2x11_setup_pdev(struct pci_dev *pdev)
+ {
+@@ -205,7 +168,8 @@ static void sta2x11_setup_pdev(struct pci_dev *pdev)
+ 		return;
+ 	pci_set_consistent_dma_mask(pdev, STA2X11_AMBA_SIZE - 1);
+ 	pci_set_dma_mask(pdev, STA2X11_AMBA_SIZE - 1);
+-	pdev->dev.dma_ops = &sta2x11_dma_ops;
++	pdev->dev.dma_ops = &swiotlb_dma_ops;
++	pdev->dev.archdata.is_sta2x11 = true;
  
- 	/* At this point dma_handle is the physical address, next we are
- 	 * going to set it to the machine address.
+ 	/* We must enable all devices as master, for audio DMA to work */
+ 	pci_set_master(pdev);
+@@ -225,7 +189,7 @@ bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+ {
+ 	struct sta2x11_mapping *map;
+ 
+-	if (dev->dma_ops != &sta2x11_dma_ops) {
++	if (!dev->archdata.is_sta2x11) {
+ 		if (!dev->dma_mask)
+ 			return false;
+ 		return addr + size - 1 <= *dev->dma_mask;
+@@ -249,7 +213,7 @@ bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+  */
+ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+ {
+-	if (dev->dma_ops != &sta2x11_dma_ops)
++	if (!dev->archdata.is_sta2x11)
+ 		return paddr;
+ 	return p2a(paddr, to_pci_dev(dev));
+ }
+@@ -261,7 +225,7 @@ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+  */
+ phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr)
+ {
+-	if (dev->dma_ops != &sta2x11_dma_ops)
++	if (!dev->archdata.is_sta2x11)
+ 		return daddr;
+ 	return a2p(daddr, to_pci_dev(dev));
+ }
 -- 
 2.14.2
