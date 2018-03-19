@@ -1,23 +1,23 @@
 Return-Path: <mika.westerberg@linux.intel.com>
-X-Google-Smtp-Source: AG47ELvAuYJyGjplfY9xjn1fdgxAGZOJBfyuB9HavOnlkedXRITFx3ANGUaN2hEIdbIMohmVIeXZ
+X-Google-Smtp-Source: AG47ELuWiqjcF3C2yy0zLGTTt6lCi5L9opJgL+XeRPZ2da7TVIJwqt44Hqxeo6A9hMsyU0Suzogg
 ARC-Seal: i=1; a=rsa-sha256; t=1521476827; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ak7wKkLbj7HY843Q0s06Yz/1RKd5Ss/l/Mk7237C2f0PcaTAeM227HBYY/XvfF2PbV
-         19O31l6LWxroxZ0WD8AnObYdvLZczZZMDhbqc0ep2QnhNx1sVWVDzIwbalsUVH9oRYmb
-         0urqdKttUaQUxP4UB35piRQa7KWuX8mfgHWSJr6bJwfGdIvvpeFuSfdxDS0FOB0gfsym
-         opxHkq+aF/djW3TLMGKLgch21t6rM4U+D3jwVfTn63O9CcY4FmVDgtY/qeqTdIFBv5uu
-         A7slxbFJF7Ezn/quo3E5FB4/BNVZHLAbFALZe7lw1hfyta96pZ6qCsrA0Rx97Q2owT+9
-         fSSA==
+        b=WuZUyKWcp7AGd8YyJjfRPIInhfdWRl6G5de1yPuKG1fUre1c1D/lJRIxD9rs4hvEyv
+         Zlw7y++KsM83YMpbSx0coBU0DtMaBWXS93mFRc75FNJCBa+uOTBIK0sBVROzjn92X0iZ
+         d0jX04VGBH9hlNSie3pb19gdwDRPpFQ9eZ4lbbzmNTKWHi1hsiV7eXn77F+y1drMw6KC
+         F5p40QAiEF7eK8keBgzAYsIXp2X6tKNAL7ckWW/3tytzSvarBMLLD6GQLJXzuaz+V8MO
+         /g3jxDIq0B/6BVm5jukgQtbjURSvZZUTbKPwd7UFzce0ebAlEGkZd16GF+63ZJXfjIyl
+         Ly4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=AXJ3x/Ni8JNMvnvUSlz775HP7/Znx8an3MXnCpw1fqM=;
-        b=jUgtgeJSoZzk25yloo2QOS+y45ngH2szIlLxKmOvCzY1AUQSLMVnnKWu1yGO4NX5H8
-         S+hfKy0OWO1exVwjbJjj5qhroWcigyA4Enz8u24uYos2tbqejuEZv7L98jQc0PMnmvEV
-         rH1cZpe7FdvJ0iF3fKP80bb5h+fu2c/PbYyaMnEYRm4bKPKfJRn3lJXZQ+W7g53Zp8lv
-         RlPaxOT1qi6jFGjUmz00gorWfWxOZgTrqpYFdmKmBNG6+OXbbWSWN46x50LNe8OKCZyC
-         Idxr3f2QtkcBd9l5hHzJcOjiJSdxOzVQ/HPRnHKcBLdcSzPvbtDgzm6pybi9ErhXACxR
-         Xnfw==
+        bh=iP5siBnaU20J68vJmy/egtrevdIyKC5/bS/GlWBjqbo=;
+        b=LxvBazHAGvurX1v8+b7R3s/mPh5t8xtPReMageLLYipR5c4cDRgQjghWN41D77zvq9
+         VCw+7MCsZVOdlgA+Y1aAHmKDdZI19pvCms9hJ44K4wWjwX/c4QsTQG8nnadmbgzUQ/3v
+         /1Y3ryy8jH+vSByMRxFcA6qM8OH9Bjzif0htX7DtXmOlyk7J4l9C/r+HC9C9ymrkfSGg
+         /0KqTJrEhvqSHaPRSmmJyyGKeyxcSmtvbJ+9plduXY0PhVMxacRTX9svv5bGYZ2bgG6V
+         UxNY5lTulDxXHuS9A7nG+ljNqEozSzoQCRpgo45aWeaBWtbNNX2VsIbaAgAg1PQTOo1w
+         dMeg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 134.134.136.24 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
-   d="scan'208";a="35080666"
+   d="scan'208";a="35080661"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Andreas Noever <andreas.noever@gmail.com>,
@@ -34,40 +34,91 @@ Cc: Andreas Noever <andreas.noever@gmail.com>,
 	Yehezkel Bernat <yehezkel.bernat@intel.com>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/19] thunderbolt: Do not overwrite error code when domain adding fails
-Date: Mon, 19 Mar 2018 19:26:48 +0300
-Message-Id: <20180319162703.5331-5-mika.westerberg@linux.intel.com>
+Subject: [PATCH 03/19] thunderbolt: Handle connecting device in place of host properly
+Date: Mon, 19 Mar 2018 19:26:47 +0300
+Message-Id: <20180319162703.5331-4-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 References: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595384086230284571?=
-X-GMAIL-MSGID: =?utf-8?q?1595384086230284571?=
+X-GMAIL-THRID: =?utf-8?q?1595384085747857742?=
+X-GMAIL-MSGID: =?utf-8?q?1595384085747857742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If the Thunderbolt domain adding fails for some reason we currently
-always return -EIO instead of the real error code. To make debugging
-easier return the actual error code instead.
+If the system is suspended and user disconnects cable to another host
+and connects it to a Thunderbolt device instead we get a warning from
+driver core about adding duplicate sysfs attribute and adding the new
+device fails.
 
+Handle this properly so that we first remove the existing XDomain
+connection before adding new devices.
+
+Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/thunderbolt/nhi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thunderbolt/icm.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index 80c33c7404f5..9e58d09f6029 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -1036,7 +1036,7 @@ static int nhi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		 */
- 		tb_domain_put(tb);
- 		nhi_shutdown(nhi);
--		return -EIO;
-+		return res;
- 	}
- 	pci_set_drvdata(pdev, tb);
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index ab02d13f40b7..182226023acb 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -383,6 +383,15 @@ static void remove_switch(struct tb_switch *sw)
+ 	tb_switch_remove(sw);
+ }
  
++static void remove_xdomain(struct tb_xdomain *xd)
++{
++	struct tb_switch *sw;
++
++	sw = tb_to_switch(xd->dev.parent);
++	tb_port_at(xd->route, sw)->xdomain = NULL;
++	tb_xdomain_remove(xd);
++}
++
+ static void
+ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ {
+@@ -391,6 +400,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	struct tb_switch *sw, *parent_sw;
+ 	struct icm *icm = tb_priv(tb);
+ 	bool authorized = false;
++	struct tb_xdomain *xd;
+ 	u8 link, depth;
+ 	u64 route;
+ 	int ret;
+@@ -467,6 +477,13 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		tb_switch_put(sw);
+ 	}
+ 
++	/* Remove existing XDomain connection if found */
++	xd = tb_xdomain_find_by_link_depth(tb, link, depth);
++	if (xd) {
++		remove_xdomain(xd);
++		tb_xdomain_put(xd);
++	}
++
+ 	parent_sw = tb_switch_find_by_link_depth(tb, link, depth - 1);
+ 	if (!parent_sw) {
+ 		tb_err(tb, "failed to find parent switch for %u.%u\n",
+@@ -529,15 +546,6 @@ icm_fr_device_disconnected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	tb_switch_put(sw);
+ }
+ 
+-static void remove_xdomain(struct tb_xdomain *xd)
+-{
+-	struct tb_switch *sw;
+-
+-	sw = tb_to_switch(xd->dev.parent);
+-	tb_port_at(xd->route, sw)->xdomain = NULL;
+-	tb_xdomain_remove(xd);
+-}
+-
+ static void
+ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ {
 -- 
 2.16.2
