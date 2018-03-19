@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuGaNcZLPL5FQnQfnMfUhh+lr8qPByUkAjnkH7AsK3XB0Flux5+XTgtMsUV/04G797JSqpE
-ARC-Seal: i=1; a=rsa-sha256; t=1521483077; cv=none;
+X-Google-Smtp-Source: AG47ELsQ1DveNNP+pjfoWIHvyQTqw+3IrKhAWcqPCPOd5xRepqHiqKVtDs+6CASwk+rvKhtpt5NN
+ARC-Seal: i=1; a=rsa-sha256; t=1521483072; cv=none;
         d=google.com; s=arc-20160816;
-        b=eCFhdjEasS5wBuxIWsJDmNLITw+QkUAbz9Yj6mXC3NVz1X8IF8OZr69jXNCygTMHW4
-         cSFvqkVpeJsBY6RpNvwIaphiY+lQwWKA23t7YHHvpkxPsVca6XK8RL8ksK8wz4yO624x
-         MgtbkTjhiCze3I7U2wQrfdkormlj7llF1hH2DSjDrzPFGwhR1Lz1uWZAAC7cG5z+SXet
-         kxpIc3u/e9vKTqyDh2yh4OwaSoRY0VQsEiEshbfh4eOJqhedqidwlkt3nOsFlql49D8Z
-         gRO6ZEQRuydudmqmpsdisseWmeD59UVVvxB+9JMHLZfYvC7/YNizCCxfY3C6+kOjm+d1
-         Nc2Q==
+        b=yJlr8+kWt/HQ+HSYktqsUtX1VKitnEsNPeKGzQxve/QxevN5I+obOO2xoteeMR3sTW
+         LJ97oNskeSFv0W0SbvIZ+TKG9brLvEv4sA23IjzZUcqiOzNU2cRuBBdb9tfaRVxA5pZF
+         PAHBKg7QDy4K4A7iKr0ym1ME9JN8tENAwDrIEl0/29AM4sCYNCiP+gIWkSZ2xAe0aZnl
+         7L6O/+SQ9HSuMMO0XC+N3LOamEU3O9FQDLPMYX5R97wapsYXu2zfYYTldY9vvtDZYeXV
+         JDqL5lv8h/7MqDAnv7/ftPsmyHREGFxsOIsgwI1LcNCu6DC8n4DsnjDxDANI0c65UMho
+         IF5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=39zwaiBkKUdOhc7Dyt/co8/tCxJI5OJJDbT3gvVqiZo=;
-        b=j0vzVQv16xb4Cl1g2gPRqwE1OAM0lnZdXycYg8BIItquvFocy5fv5caLrCi651EBxy
-         NUhQDL2od4aaGFbFoDJVCSS35uYMuakb0lf5O5s8VsclMMBNXq5RQ/5tLDat906jo/Vg
-         EFkKXixx+GF1ykktjiB56hzWqMn9+wcxJen/JAEy7uTxoQGgHh+c9knL8jrcjp2KCc6D
-         wuKeofJahuNw7Caa+RG8zNtfL0Ovcvvq9Dao5nh0nqK9kOHdgue1vtXIZzGABJ8fX88H
-         hthJ7XHK2doClh8yyNGIpAtJWWB8ndQFNTybwfR9BJux1PX0Mys2aak8TIdtBciYpttH
-         2Nog==
+        bh=aMKC3J9Po1jvO85ghfYd3yCgBVDh+bYpvu3j9C0O2A0=;
+        b=lqF003oTp4yC2hkueXJ13NBXsGuH3AoIarCYKkW5rfZmn7n1kISAYowl64ArxyN7yl
+         YDNm3j8ZusTU4znGOi6Gnk8YrtVnwSkzw7McsMBFtYpqlccDgZv+ebvaGyHYgcn3RzhD
+         /4nALkO202Se53DiLHPZW7tpv3AemALzTzoLEu14yy6vATeNi+2nFGMGaw+FaVSlBdu1
+         T/MH00IDDtpdTxIznRY9HYSGVP46HBeh2Bpo7CJ5lZY1pFbTwZcz2LcdZGhADoI6N/pD
+         DwN4uVfv1M603RjcNcvfKK9h+lTvgR3KeXrfGFZKBlCOyiawwt8CKvTCyLhzc3fXv5BE
+         LZyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 59/68] ima: relax requiring a file signature for new files with zero length
-Date: Mon, 19 Mar 2018 19:06:37 +0100
-Message-Id: <20180319171836.133063513@linuxfoundation.org>
+Subject: [PATCH 3.18 57/68] ASoC: nuc900: Fix a loop timeout test
+Date: Mon, 19 Mar 2018 19:06:35 +0100
+Message-Id: <20180319171835.863002127@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390639959423215?=
-X-GMAIL-MSGID: =?utf-8?q?1595390639959423215?=
+X-GMAIL-THRID: =?utf-8?q?1595390634104093891?=
+X-GMAIL-MSGID: =?utf-8?q?1595390634104093891?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
+[ Upstream commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 ]
 
-Custom policies can require file signatures based on LSM labels.  These
-files are normally created and only afterwards labeled, requiring them
-to be signed.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout == -1.
 
-Instead of requiring file signatures based on LSM labels, entire
-filesystems could require file signatures.  In this case, we need the
-ability of writing new files without requiring file signatures.
-
-The definition of a "new" file was originally defined as any file with
-a length of zero.  Subsequent patches redefined a "new" file to be based
-on the FILE_CREATE open flag.  By combining the open flag with a file
-size of zero, this patch relaxes the file signature requirement.
-
-Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/ima/ima_appraise.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/nuc900/nuc900-ac97.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -206,7 +206,8 @@ int ima_appraise_measurement(int func, s
- 		if (opened & FILE_CREATED)
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
--		    !(iint->flags & IMA_DIGSIG_REQUIRED))
-+		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-+		     (inode->i_size == 0)))
- 			status = INTEGRITY_PASS;
- 		goto out;
- 	}
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(s
+ 
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
