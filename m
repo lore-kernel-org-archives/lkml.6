@@ -1,36 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv1kWZRO53cr4/9Dz7aYI6yjGlmA8q3qXTE95Tt4JfNCQVMzLX3x2iIn6rBJGI2JuVgyBbB
-ARC-Seal: i=1; a=rsa-sha256; t=1521484077; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fj6S41Uo+8H5zZuAW83EThQthPka9Iwi/muBaRSqvUMpoFFhZkDMFy7KidDC8ED1Tj
-         2CCovCp75+oTyl7o3xa0UQlzXx+MXlm2UyASxDpbPlJgQUugJ++zEzhr0IARqjNBJEDr
-         fWiVTHdYPWleC5n6i/2qZe9PEV4LsS0R3F48gSnWBZkezmEFW/OswnwQthsq34pVArl9
-         Kvk1lP0B95GD91v0lo2wGF1gGhBcYd/ihaTAHjqnMhVvy7BY7Kzbty/8iye5CxdMhp91
-         eYOoLOyyQT4T1FfmHoqxUo9KQrgoSQwF3irKSNPgKB936dM1uFy+w6nOS9t1MWD5taTF
-         iHng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=JHfEFNKoQkPHokB85L5bEhFRQJ1eDiwXehNkgMiGu+k=;
-        b=fDhhBaMg0wfgsOQKoViMHrPx/8/iEr3hIoW868Y8847Jch+RA8s54JhvSGScH9LFJj
-         hLx5cNZAeYBP4jSiMYYXWHFSK80tz98+LgKz+RsC4NhW6jEtudHMsPCpTWdr4SXKHrN5
-         Noak8P1k8bF0f17yLTOmhLgsjGgKBjllecdD2+5u7k4J7SXpR3PSJx+VCfoTixHnRxhT
-         b64pKNZM8PiSuGszx3C1KmhNleXMtKJYFytbUXZ/b4MTU5fqAkiH991H3OUwGgT+jVwd
-         BPDu/YfUDdz5xJ7YSiS8b4uC6G2qX+AAkmbxXhQLC88Fgt9UAKN4U8IOLwkLbYMigUKC
-         DyYA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484075-2-6637310377587942909
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521484074; b=fwKCjd3j035incSU6vY6olZ1UZpdLtJ2rLZbEwo8I8qQ0vt
+    jFtDm+xxgLCz0Lo2DwJMr/07JfcFRo9TmvL1PWurdPzGsV6JM+rdCMcJ9XewdMjD
+    8M34/rwji4FQAboMVOZhgwtfsCAr2QTXpdCbZSHVbTN9Id46fc47HFTR5vv54Zg2
+    RX2rEfYB9oVtptEp2AkdKfGVLIWBblE0EdmBbWLHEmmD9/rrLPGrlWgFInsel+g1
+    X0Er1Fs33xLtpWI93b5hsjG3+HjOfSjC8Molz+MQvNvtvGO4hM3isc3gR3OSay1m
+    ZtdqvL5Nj90P2p4PxRyH1f9LWHSa/g3yf9tTA6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521484074; bh=oT09+khX+Y5ol73evRAXJ+5UxC
+    er1cTd+KDpbyNJUYU=; b=dGc3injfODrCT/e7psvYXpRTLmS3mUf0LVR8lL7Wgu
+    HcFH0ud7udEoairmMoE5wXDhaWJ59bmul1ZKiYCqeulaMqlKCxIJ69IG/kGtdkpv
+    FvSr0WZvsWgf+JH67PKjJCD3oHPfwrcsD7X8fzVSTUf4ato7Hg64eVrFMPUrmTPs
+    UB/S/fUnhlGQN4HEIErCE7WldveshipW0cHfhNP2UbuHMJTckIeZCU57oF+y3711
+    tzoQ1KnaA4OPIgequA5rtUEvDzhv9RsBsg69JFZqDV5vg/kLzjGO3BsgjCjErtcn
+    1ndqcUQq94F7c7i7usc6grt+X/hAAlwvaWcUdEgft86g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefgeelleenucevlhhushhtvghrufhiiigvpeekje;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefgeelleenucevlhhushhtvghrufhiiigvpeekje;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S964936AbeCSS1v (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:27:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51370 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031719AbeCSS1t (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:27:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nicolai Stange <nstange@suse.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 224/241] ALSA: seq: Fix possible UAF in snd_seq_check_queue()
-Date: Mon, 19 Mar 2018 19:08:09 +0100
-Message-Id: <20180319180800.444228393@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Eric Anholt <eric@anholt.net>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 185/241] dmaengine: bcm2835-dma: Use vchan_terminate_vdesc() instead of desc_free
+Date: Mon, 19 Mar 2018 19:07:30 +0100
+Message-Id: <20180319180758.806946963@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -38,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390645359098514?=
-X-GMAIL-MSGID: =?utf-8?q?1595391688015878367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,168 +82,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-commit d0f833065221cbfcbadf19fd4102bcfa9330006a upstream.
 
-Although we've covered the races between concurrent write() and
-ioctl() in the previous patch series, there is still a possible UAF in
-the following scenario:
+[ Upstream commit de92436ac40ffe9933230aa503e24dbb5ede9201 ]
 
-A: user client closed		B: timer irq
-  -> snd_seq_release()		  -> snd_seq_timer_interrupt()
-    -> snd_seq_free_client()	    -> snd_seq_check_queue()
-				      -> cell = snd_seq_prioq_cell_peek()
-      -> snd_seq_prioq_leave()
-         .... removing all cells
-      -> snd_seq_pool_done()
-         .... vfree()
-				      -> snd_seq_compare_tick_time(cell)
-				         ... Oops
+To avoid race with vchan_complete, use the race free way to terminate
+running transfer.
 
-So the problem is that a cell is peeked and accessed without any
-protection until it's retrieved from the queue again via
-snd_seq_prioq_cell_out().
+Implement the device_synchronize callback to make sure that the terminated
+descriptor is freed.
 
-This patch tries to address it, also cleans up the code by a slight
-refactoring.  snd_seq_prioq_cell_out() now receives an extra pointer
-argument.  When it's non-NULL, the function checks the event timestamp
-with the given pointer.  The caller needs to pass the right reference
-either to snd_seq_tick or snd_seq_realtime depending on the event
-timestamp type.
-
-A good news is that the above change allows us to remove the
-snd_seq_prioq_cell_peek(), too, thus the patch actually reduces the
-code size.
-
-Reviewed-by: Nicolai Stange <nstange@suse.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/core/seq/seq_prioq.c |   28 ++++++++++++++--------------
- sound/core/seq/seq_prioq.h |    6 ++----
- sound/core/seq/seq_queue.c |   28 +++++++++-------------------
- 3 files changed, 25 insertions(+), 37 deletions(-)
+ drivers/dma/bcm2835-dma.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/sound/core/seq/seq_prioq.c
-+++ b/sound/core/seq/seq_prioq.c
-@@ -87,7 +87,7 @@ void snd_seq_prioq_delete(struct snd_seq
- 	if (f->cells > 0) {
- 		/* drain prioQ */
- 		while (f->cells > 0)
--			snd_seq_cell_free(snd_seq_prioq_cell_out(f));
-+			snd_seq_cell_free(snd_seq_prioq_cell_out(f, NULL));
- 	}
- 	
- 	kfree(f);
-@@ -214,8 +214,18 @@ int snd_seq_prioq_cell_in(struct snd_seq
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -812,7 +812,7 @@ static int bcm2835_dma_terminate_all(str
+ 	 * c->desc is NULL and exit.)
+ 	 */
+ 	if (c->desc) {
+-		bcm2835_dma_desc_free(&c->desc->vd);
++		vchan_terminate_vdesc(&c->desc->vd);
+ 		c->desc = NULL;
+ 		bcm2835_dma_abort(c->chan_base);
+ 
+@@ -836,6 +836,13 @@ static int bcm2835_dma_terminate_all(str
  	return 0;
  }
  
-+/* return 1 if the current time >= event timestamp */
-+static int event_is_ready(struct snd_seq_event *ev, void *current_time)
++static void bcm2835_dma_synchronize(struct dma_chan *chan)
 +{
-+	if ((ev->flags & SNDRV_SEQ_TIME_STAMP_MASK) == SNDRV_SEQ_TIME_STAMP_TICK)
-+		return snd_seq_compare_tick_time(current_time, &ev->time.tick);
-+	else
-+		return snd_seq_compare_real_time(current_time, &ev->time.time);
++	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
++
++	vchan_synchronize(&c->vc);
 +}
 +
- /* dequeue cell from prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f)
-+struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
-+						  void *current_time)
+ static int bcm2835_dma_chan_init(struct bcm2835_dmadev *d, int chan_id,
+ 				 int irq, unsigned int irq_flags)
  {
- 	struct snd_seq_event_cell *cell;
- 	unsigned long flags;
-@@ -227,6 +237,8 @@ struct snd_seq_event_cell *snd_seq_prioq
- 	spin_lock_irqsave(&f->lock, flags);
- 
- 	cell = f->head;
-+	if (cell && current_time && !event_is_ready(&cell->event, current_time))
-+		cell = NULL;
- 	if (cell) {
- 		f->head = cell->next;
- 
-@@ -252,18 +264,6 @@ int snd_seq_prioq_avail(struct snd_seq_p
- 	return f->cells;
- }
- 
--
--/* peek at cell at the head of the prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq * f)
--{
--	if (f == NULL) {
--		pr_debug("ALSA: seq: snd_seq_prioq_cell_in() called with NULL prioq\n");
--		return NULL;
--	}
--	return f->head;
--}
--
--
- static inline int prioq_match(struct snd_seq_event_cell *cell,
- 			      int client, int timestamp)
- {
---- a/sound/core/seq/seq_prioq.h
-+++ b/sound/core/seq/seq_prioq.h
-@@ -44,14 +44,12 @@ void snd_seq_prioq_delete(struct snd_seq
- int snd_seq_prioq_cell_in(struct snd_seq_prioq *f, struct snd_seq_event_cell *cell);
- 
- /* dequeue cell from prioq */ 
--struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f);
-+struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
-+						  void *current_time);
- 
- /* return number of events available in prioq */
- int snd_seq_prioq_avail(struct snd_seq_prioq *f);
- 
--/* peek at cell at the head of the prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq *f);
--
- /* client left queue */
- void snd_seq_prioq_leave(struct snd_seq_prioq *f, int client, int timestamp);        
- 
---- a/sound/core/seq/seq_queue.c
-+++ b/sound/core/seq/seq_queue.c
-@@ -277,30 +277,20 @@ void snd_seq_check_queue(struct snd_seq_
- 
-       __again:
- 	/* Process tick queue... */
--	while ((cell = snd_seq_prioq_cell_peek(q->tickq)) != NULL) {
--		if (snd_seq_compare_tick_time(&q->timer->tick.cur_tick,
--					      &cell->event.time.tick)) {
--			cell = snd_seq_prioq_cell_out(q->tickq);
--			if (cell)
--				snd_seq_dispatch_event(cell, atomic, hop);
--		} else {
--			/* event remains in the queue */
-+	for (;;) {
-+		cell = snd_seq_prioq_cell_out(q->tickq,
-+					      &q->timer->tick.cur_tick);
-+		if (!cell)
- 			break;
--		}
-+		snd_seq_dispatch_event(cell, atomic, hop);
- 	}
- 
--
- 	/* Process time queue... */
--	while ((cell = snd_seq_prioq_cell_peek(q->timeq)) != NULL) {
--		if (snd_seq_compare_real_time(&q->timer->cur_time,
--					      &cell->event.time.time)) {
--			cell = snd_seq_prioq_cell_out(q->timeq);
--			if (cell)
--				snd_seq_dispatch_event(cell, atomic, hop);
--		} else {
--			/* event remains in the queue */
-+	for (;;) {
-+		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
-+		if (!cell)
- 			break;
--		}
-+		snd_seq_dispatch_event(cell, atomic, hop);
- 	}
- 
- 	/* free lock */
+@@ -942,6 +949,7 @@ static int bcm2835_dma_probe(struct plat
+ 	od->ddev.device_prep_dma_memcpy = bcm2835_dma_prep_dma_memcpy;
+ 	od->ddev.device_config = bcm2835_dma_slave_config;
+ 	od->ddev.device_terminate_all = bcm2835_dma_terminate_all;
++	od->ddev.device_synchronize = bcm2835_dma_synchronize;
+ 	od->ddev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	od->ddev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	od->ddev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV) |
