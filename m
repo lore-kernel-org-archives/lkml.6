@@ -1,71 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030322AbeCSTCg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:02:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41828 "EHLO mail.kernel.org"
+        id S970746AbeCSTC4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:02:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970158AbeCSTCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:02:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA92521839
+        id S970828AbeCSTC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:02:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954F8217D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/14] objtool, perf: Fix GCC 8 -Wrestrict error
-Date: Mon, 19 Mar 2018 16:01:35 -0300
-Message-Id: <20180319190136.7441-14-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 14/14] perf tests bp_account: Fix build with clang-6
+Date: Mon, 19 Mar 2018 16:01:36 -0300
+Message-Id: <20180319190136.7441-15-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180319190136.7441-1-acme@kernel.org>
 References: <20180319190136.7441-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Starting with recent GCC 8 builds, objtool and perf fail to build with
-the following error:
+To shut up this compiler warning:
 
-  ../str_error_r.c: In function ‘str_error_r’:
-  ../str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
-     snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+    CC       /tmp/build/perf/tests/bp_account.o
+    CC       /tmp/build/perf/tests/task-exit.o
+    CC       /tmp/build/perf/tests/sw-clock.o
+  tests/bp_account.c:106:20: error: pointer type mismatch ('int (*)(void)' and 'void *') [-Werror,-Wpointer-type-mismatch]
+          void *addr = is_x ? test_function : (void *) &the_var;
+                            ^ ~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~
+  1 error generated.
 
-The code seems harmless, but there's probably no benefit in printing the
-'buf' pointer in this situation anyway, so just remove it to make GCC
-happy.
+Noticed with clang 6 on fedora rawhide.
 
-Reported-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
+  [perfbuilder@44490f0e7241 perf]$ clang -v
+  clang version 6.0.0 (tags/RELEASE_600/final)
+  Target: x86_64-unknown-linux-gnu
+  Thread model: posix
+  InstalledDir: /usr/bin
+  Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-redhat-linux/8
+  Found candidate GCC installation: /usr/lib/gcc/x86_64-redhat-linux/8
+  Selected GCC installation: /usr/bin/../lib/gcc/x86_64-redhat-linux/8
+  Candidate multilib: .;@m64
+  Candidate multilib: 32;@m32
+  Selected multilib: .;@m64
+  [perfbuilder@44490f0e7241 perf]$
+
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/20180316031154.juk2uncs7baffctp@treble
+Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
+Link: https://lkml.kernel.org/n/tip-a3jnkzh4xam0l954de5tn66d@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/str_error_r.c | 2 +-
+ tools/perf/tests/bp_account.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
-index d6d65537b0d9..6aad8308a0ac 100644
---- a/tools/lib/str_error_r.c
-+++ b/tools/lib/str_error_r.c
-@@ -22,6 +22,6 @@ char *str_error_r(int errnum, char *buf, size_t buflen)
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+index 9e88d7608951..a20cbc445426 100644
+--- a/tools/perf/tests/bp_account.c
++++ b/tools/perf/tests/bp_account.c
+@@ -103,7 +103,7 @@ static int bp_accounting(int wp_cnt, int share)
+ static int detect_cnt(bool is_x)
  {
- 	int err = strerror_r(errnum, buf, buflen);
- 	if (err)
--		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
-+		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, [buf], %zd)=%d", errnum, buflen, err);
- 	return buf;
- }
+ 	struct perf_event_attr attr;
+-	void *addr = is_x ? test_function : (void *) &the_var;
++	void *addr = is_x ? (void *)test_function : (void *)&the_var;
+ 	int fd[100], cnt = 0, i;
+ 
+ 	while (1) {
 -- 
 2.14.3
