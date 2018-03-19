@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtVFoVhPh25l7QlYfx1YycUQxxNy8EgMBDLl9nqD7d5MD/BQAIEuJGlBdcddHwcp7MC4gJg
-ARC-Seal: i=1; a=rsa-sha256; t=1521483656; cv=none;
+X-Google-Smtp-Source: AG47ELtbhfkle27U6fR9GiWzMvrQNCNHmSNuP5WyntNC6+2Ne0rTDG3+Yux0j0cwrNwNmlTaMhUI
+ARC-Seal: i=1; a=rsa-sha256; t=1521483653; cv=none;
         d=google.com; s=arc-20160816;
-        b=LTkEjurnqlVQdeg+J4FTiJcg4IwT3/JNDTVHuofgkTe2LOAZUVG+DWEQJ59oJtOdlz
-         qenM4GctLkPQtW0957RiYsq7YO7AiI9v6PVq7d3msUADYaV7NSORlbcj+Y5qWGZ4gWBB
-         fGU/E7wDrnj0j1VEQryAKL/71FPET8+VtH4CmWhBeK0gzzRDn8duUciFA1PcesmD8nxk
-         g7KZg3ZW9sV3dmtYL6aysEA6ZxaYUKrYajHrUCi5rJscYRIlHBk3sLi+rcJKQfTJ+Uc1
-         bZiRhdKqyUglZIMtS9s2JZ4mKBm63tj28k9JHo05C6HZFwXyGldIcWVU9TcjPXpvs7B5
-         fCSg==
+        b=O+r2r1Oc/yu8cRe+S4dcOKvjiGPFTBPqImtq78fQ7sRn/kUDb2QuUj8Gxn4XrRn4hZ
+         OHp8GVqon1yJ7mwCNF65cy2Ut0mRkTi1CtdIgpyPoP1+fsV/HcpffpTbo1hbqgr4d4Jo
+         P8SL7sqXyw2ENk3hCNc+783KOKBOb3WAsYKGK58xrFho5MfuOwRBOknvj5wyezUFFKlG
+         9PcPvXdJLtsTNLTJhMCnu2U65AkzqBTdHxWVF3QiK0crfmsInKlh1bfPZBmKlTkzVw9b
+         4v8pwbWerI7S2bXoevw299JeRSGlz62sQcTpV3dMbhwaEc9vL4c0+BJw8zUbZXzCRrtz
+         VyXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5tRgJVrzPxxONIW44ioF/QKyE6Q/c1V4SeYOdEDBAUg=;
-        b=rzzPwk0uZOf7BYuY9usQQxR4PWEvDrlzFVw9Yga3X5ZZ52tMp6gnx9VULDNCE14rLJ
-         mCDKQbiH/fD6fLJMQwhyRHoO4f3O+O9QEOvLClMIyv4MDdw2cpwSI5YNXSh4sjG+F64q
-         /qQR7OfSa9nfyqvyCk/Zereb3dpc/zfocStMWTVqI4BJkvwrmUlG7qzg2j47TaVXTsxs
-         gql649ldRq1HAbVTsloT2t2q8k7Bhy6MPA/VkaayVMmgFmpFErzXOqdL8WykuuFag4jA
-         sUpa8A+6JWDHHomMY8X0b1hq1B497i/wxI2Eja8VLP1Q0Eb+UwXlrfU3YZdz1p2UnE7E
-         c3zQ==
+        bh=KMIJDyYKUx/apj2sguEWzFDEeUjanUJ/Tzq9pkKaQtc=;
+        b=Kzc8Ng/lvPQlvHNPDKyK8n1ugW4X+Lb/+4mV8FOr3kRpxyK2z6qQH3RFTQgPCROmUh
+         TG1B2lm2ZBOBCf4jXhtzzEXu3YQ9dfSCeRB0M5DJofjCa5kJb785rNqvLtREuR4seSXB
+         27mZPdcBYHv7j6H94Lje172CPLKkUTSyA8PQZN8rvtNHdFlJFSVu7CxoN1MUCM79wRRa
+         5mMJLNHIdZNGTX6sgxdmNzrh7ElUWhAC7YHgzchyxgP436LW2F3/Zzvm5x1yQbtcB0ji
+         FHkeoTwqLu58h7F4fMMGsgrymHdeHKCjRwM7uOQ3Yqxb2cgJke0x11RKYxNYoWwFZQ0q
+         UKYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Elliott Hughes <enh@google.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 023/241] eventpoll.h: fix epoll event masks
-Date: Mon, 19 Mar 2018 19:04:48 +0100
-Message-Id: <20180319180752.133182910@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mario Kleiner <mario.kleiner.de@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Sasha Levin <alexander.levin@microsoft.com>,
+	Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.9 032/241] drm: Defer disabling the vblank IRQ until the next interrupt (for instant-off)
+Date: Mon, 19 Mar 2018 19:04:57 +0100
+Message-Id: <20180319180752.503838380@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391246031865705?=
-X-GMAIL-MSGID: =?utf-8?q?1595391246031865705?=
+X-GMAIL-THRID: =?utf-8?q?1595390585617290166?=
+X-GMAIL-MSGID: =?utf-8?q?1595391243294620826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,54 +56,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg KH <gregkh@linuxfoundation.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
 
-[ Upstream commit 6f051e4a685b768f3704c7c069aa1edee3010622 ]
+[ Upstream commit 608b20506941969ea30d8c08dc9ae02bb87dbf7d ]
 
-[resend due to me forgetting to cc: linux-api the first time around I
-posted these back on Feb 23]
+On vblank instant-off systems, we can get into a situation where the cost
+of enabling and disabling the vblank IRQ around a drmWaitVblank query
+dominates. And with the advent of even deeper hardware sleep state,
+touching registers becomes ever more expensive.  However, we know that if
+the user wants the current vblank counter, they are also very likely to
+immediately queue a vblank wait and so we can keep the interrupt around
+and only turn it off if we have no further vblank requests queued within
+the interrupt interval.
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+After vblank event delivery, this patch adds a shadow of one vblank where
+the interrupt is kept alive for the user to query and queue another vblank
+event. Similarly, if the user is using blocking drmWaitVblanks, the
+interrupt will be disabled on the IRQ following the wait completion.
+However, if the user is simply querying the current vblank counter and
+timestamp, the interrupt will be disabled after every IRQ and the user
+will enabled it again on the first query following the IRQ.
 
-When userspace tries to use these defines, it complains that it needs to
-be an unsigned 1 that is shifted, so libc implementations have to create
-their own version.  Fix this by defining it properly so that libcs can
-just use the kernel uapi header.
+v2: Mario Kleiner -
+After testing this, one more thing that would make sense is to move
+the disable block at the end of drm_handle_vblank() instead of at the
+top.
 
-Reported-by: Elliott Hughes <enh@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Turns out that if high precision timestaming is disabled or doesn't
+work for some reason (as can be simulated by echo 0 >
+/sys/module/drm/parameters/timestamp_precision_usec), then with your
+delayed disable code at its current place, the vblank counter won't
+increment anymore at all for instant queries, ie. with your other
+"instant query" patches. Clients which repeatedly query the counter
+and wait for it to progress will simply hang, spinning in an endless
+query loop. There's that comment in vblank_disable_and_save:
+
+"* Skip this step if there isn't any high precision timestamp
+ * available. In that case we can't account for this and just
+ * hope for the best.
+ */
+
+With the disable happening after leading edge of vblank (== hw counter
+increment already happened) but before the vblank counter/timestamp
+handling in drm_handle_vblank, that step is needed to keep the counter
+progressing, so skipping it is bad.
+
+Now without high precision timestamping support, a kms driver must not
+set dev->vblank_disable_immediate = true, as this would cause problems
+for clients, so this shouldn't matter, but it would be good to still
+make this robust against a future kms driver which might have
+unreliable high precision timestamping, e.g., high precision
+timestamping that intermittently doesn't work.
+
+v3: Patch before coffee needs extra coffee.
+
+Testcase: igt/kms_vblank
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Michel Dänzer <michel@daenzer.net>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dave Airlie <airlied@redhat.com>,
+Cc: Mario Kleiner <mario.kleiner.de@gmail.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: http://patchwork.freedesktop.org/patch/msgid/20170315204027.20160-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/eventpoll.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_irq.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/eventpoll.h
-+++ b/include/uapi/linux/eventpoll.h
-@@ -40,7 +40,7 @@
- #define EPOLLRDHUP	0x00002000
+--- a/drivers/gpu/drm/drm_irq.c
++++ b/drivers/gpu/drm/drm_irq.c
+@@ -1202,9 +1202,9 @@ static void drm_vblank_put(struct drm_de
+ 	if (atomic_dec_and_test(&vblank->refcount)) {
+ 		if (drm_vblank_offdelay == 0)
+ 			return;
+-		else if (dev->vblank_disable_immediate || drm_vblank_offdelay < 0)
++		else if (drm_vblank_offdelay < 0)
+ 			vblank_disable_fn((unsigned long)vblank);
+-		else
++		else if (!dev->vblank_disable_immediate)
+ 			mod_timer(&vblank->disable_timer,
+ 				  jiffies + ((drm_vblank_offdelay * HZ)/1000));
+ 	}
+@@ -1819,6 +1819,16 @@ bool drm_handle_vblank(struct drm_device
+ 	wake_up(&vblank->queue);
+ 	drm_handle_vblank_events(dev, pipe);
  
- /* Set exclusive wakeup mode for the target file descriptor */
--#define EPOLLEXCLUSIVE (1 << 28)
-+#define EPOLLEXCLUSIVE (1U << 28)
++	/* With instant-off, we defer disabling the interrupt until after
++	 * we finish processing the following vblank. The disable has to
++	 * be last (after drm_handle_vblank_events) so that the timestamp
++	 * is always accurate.
++	 */
++	if (dev->vblank_disable_immediate &&
++	    drm_vblank_offdelay > 0 &&
++	    !atomic_read(&vblank->refcount))
++		vblank_disable_fn((unsigned long)vblank);
++
+ 	spin_unlock_irqrestore(&dev->event_lock, irqflags);
  
- /*
-  * Request the handling of system wakeup events so as to prevent system suspends
-@@ -52,13 +52,13 @@
-  *
-  * Requires CAP_BLOCK_SUSPEND
-  */
--#define EPOLLWAKEUP (1 << 29)
-+#define EPOLLWAKEUP (1U << 29)
- 
- /* Set the One Shot behaviour for the target file descriptor */
--#define EPOLLONESHOT (1 << 30)
-+#define EPOLLONESHOT (1U << 30)
- 
- /* Set the Edge Triggered behaviour for the target file descriptor */
--#define EPOLLET (1 << 31)
-+#define EPOLLET (1U << 31)
- 
- /* 
-  * On x86-64 make the 64bit structure have the same alignment as the
+ 	return true;
