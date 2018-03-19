@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970502AbeCSSiK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:38:10 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:51359 "EHLO
+        id S970530AbeCSSiW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:38:22 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:35910 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1032127AbeCSSiB (ORCPT
+        by vger.kernel.org with ESMTP id S970505AbeCSSiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:38:01 -0400
+        Mon, 19 Mar 2018 14:38:13 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
-X-Quarantine-ID: <DUwm3WqSjCTu>
+X-Quarantine-ID: <Ir_YVmk99rwn>
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-RRZE-Flag: Not-Spam
 X-RRZE-Submit-IP: 2003:d5:3db:1800:60b5:55d8:d757:229
@@ -21,9 +21,9 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 06/11] block: sed-opal: split generation of bytestring header and content
-Date: Mon, 19 Mar 2018 19:36:48 +0100
-Message-Id: <0f5fe62576e70de12515e323ca5c0a45ef92832d.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH v2 10/11] block: sed-opal: get metadata about opal-sed tables
+Date: Mon, 19 Mar 2018 19:36:52 +0100
+Message-Id: <623d80cb07538e630a12a1c925e9c87b8e14dd6b.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
 References: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
@@ -33,64 +33,87 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split the header generation from the (normal) memcpy part if a
-bytestring is copied into the command buffer. This allows in-place
-generation of the bytestring content. For example, copy_from_user may be
-used without an intermediate buffer.
+Every opal-sed table is described in the OPAL_TABLE_TABLE. Provide a
+function to get desired metadata information out of that table.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
+diff --git a/block/opal_proto.h b/block/opal_proto.h
+index b6e352cfe982..5e8df3245eb0 100644
+--- a/block/opal_proto.h
++++ b/block/opal_proto.h
+@@ -106,6 +106,7 @@ enum opal_uid {
+ 	OPAL_ENTERPRISE_BANDMASTER0_UID,
+ 	OPAL_ENTERPRISE_ERASEMASTER_UID,
+ 	/* tables */
++	OPAL_TABLE_TABLE,
+ 	OPAL_LOCKINGRANGE_GLOBAL,
+ 	OPAL_LOCKINGRANGE_ACE_RDLOCKED,
+ 	OPAL_LOCKINGRANGE_ACE_WRLOCKED,
+@@ -160,6 +161,21 @@ enum opal_token {
+ 	OPAL_STARTCOLUMN = 0x03,
+ 	OPAL_ENDCOLUMN = 0x04,
+ 	OPAL_VALUES = 0x01,
++	/* table table */
++	OPAL_TABLE_UID = 0x00,
++	OPAL_TABLE_NAME = 0x01,
++	OPAL_TABLE_COMMON = 0x02,
++	OPAL_TABLE_TEMPLATE = 0x03,
++	OPAL_TABLE_KIND = 0x04,
++	OPAL_TABLE_COLUMN = 0x05,
++	OPAL_TABLE_COLUMNS = 0x06,
++	OPAL_TABLE_ROWS = 0x07,
++	OPAL_TABLE_ROWS_FREE = 0x08,
++	OPAL_TABLE_ROW_BYTES = 0x09,
++	OPAL_TABLE_LASTID = 0x0A,
++	OPAL_TABLE_MIN = 0x0B,
++	OPAL_TABLE_MAX = 0x0C,
++
+ 	/* authority table */
+ 	OPAL_PIN = 0x03,
+ 	/* locking tokens */
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 9b6f14e7aeb1..fc10f81d4892 100644
+index 5b7b23cb95a4..51f8034edbf7 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -581,14 +581,11 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 		add_token_u8(err, cmd, number >> (len * 8));
+@@ -136,6 +136,8 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
+ 
+ 	/* tables */
+ 
++	[OPAL_TABLE_TABLE]
++		{ 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01 },
+ 	[OPAL_LOCKINGRANGE_GLOBAL] =
+ 		{ 0x00, 0x00, 0x08, 0x02, 0x00, 0x00, 0x00, 0x01 },
+ 	[OPAL_LOCKINGRANGE_ACE_RDLOCKED] =
+@@ -1107,6 +1109,29 @@ static int generic_get_column(struct opal_dev *dev, const u8 *table,
+ 	return finalize_and_send(dev, parse_and_check_status);
  }
  
--static void add_token_bytestring(int *err, struct opal_dev *cmd,
--				 const u8 *bytestring, size_t len)
-+static u8 *add_bytestring_header(int *err, struct opal_dev *cmd, size_t len)
- {
- 	size_t header_len = 1;
- 	bool is_short_atom = true;
--
--	if (*err)
--		return;
-+	char *start;
- 
- 	if (len & ~SHORT_ATOM_LEN_MASK) {
- 		header_len = 2;
-@@ -597,17 +594,27 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
- 
- 	if (!can_add(err, cmd, header_len + len)) {
- 		pr_debug("Error adding bytestring: end of buffer.\n");
--		return;
-+		return NULL;
- 	}
- 
- 	if (is_short_atom)
- 		add_short_atom_header(cmd, true, false, len);
- 	else
- 		add_medium_atom_header(cmd, true, false, len);
--
--	memcpy(&cmd->cmd[cmd->pos], bytestring, len);
-+	start = &cmd->cmd[cmd->pos];
- 	cmd->pos += len;
-+	return start;
-+}
- 
-+static void add_token_bytestring(int *err, struct opal_dev *cmd,
-+				 const u8 *bytestring, size_t len)
++/*
++ * see TCG SAS 5.3.2.3 for a description of the available columns
++ *
++ * the result is provided in dev->resp->tok[4]
++ */
++static int generic_get_table_info(struct opal_dev *dev, enum opal_uid table,
++				  u64 column)
 +{
-+	u8 *start;
++	u8 uid[OPAL_UID_LENGTH];
++	const unsigned int half = OPAL_UID_LENGTH/2;
 +
-+	start = add_bytestring_header(err, cmd, len);
-+	if (!start)
-+		return;
-+	memcpy(start, bytestring, len);
- }
- 
- static int build_locking_range(u8 *buffer, size_t length, u8 lr)
++	/* sed-opal UIDs can be split in two halfs:
++	 *  first:  actual table index
++	 *  second: relative index in the table
++	 * so we have to get the first half of the OPAL_TABLE_TABLE and use the
++	 * first part of the target table as relative index into that table
++	 */
++	memcpy(uid, opaluid[OPAL_TABLE_TABLE], half);
++	memcpy(uid+half, opaluid[table], half);
++
++	return generic_get_column(dev, uid, column);
++}
++
+ static int gen_key(struct opal_dev *dev, void *data)
+ {
+ 	u8 uid[OPAL_UID_LENGTH];
 -- 
 2.16.1
