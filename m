@@ -1,129 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933092AbeCSKkl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:40:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55214 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932950AbeCSKjT (ORCPT
+        id S933127AbeCSKlD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:41:03 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56510 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932910AbeCSKk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:39:19 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: x86@kernel.org
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 11/14] swiotlb: remove swiotlb_set_mem_attributes
-Date: Mon, 19 Mar 2018 11:38:23 +0100
-Message-Id: <20180319103826.12853-12-hch@lst.de>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180319103826.12853-1-hch@lst.de>
-References: <20180319103826.12853-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 19 Mar 2018 06:40:59 -0400
+From: Colin King <colin.king@canonical.com>
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>,
+        Tsang-Shian Lin <thlin@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
+Date: Mon, 19 Mar 2018 10:40:54 +0000
+Message-Id: <20180319104054.32564-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that set_memory_decrypted is always available we can just call it
-directly.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Trivial fix to spelling mistake in RT_TRACE message text.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/include/asm/mem_encrypt.h |  2 --
- arch/x86/mm/mem_encrypt.c          |  9 ---------
- lib/swiotlb.c                      | 12 ++++++------
- 3 files changed, 6 insertions(+), 17 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-index 22c5f3e6f820..9da0b63c8fc7 100644
---- a/arch/x86/include/asm/mem_encrypt.h
-+++ b/arch/x86/include/asm/mem_encrypt.h
-@@ -48,8 +48,6 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size);
- /* Architecture __weak replacement functions */
- void __init mem_encrypt_init(void);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+index b11365a5ee1f..9111ba7ff0a1 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+@@ -1475,7 +1475,7 @@ void rtl8812ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
+ 		}
+ 	} else if (method == MIX_MODE) {
+ 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
++			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
+ 			 rtldm->default_ofdm_index,
+ 			 rtldm->absolute_ofdm_swing_idx[rf_path],
+ 			 rf_path);
+@@ -1750,7 +1750,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
  
--void swiotlb_set_mem_attributes(void *vaddr, unsigned long size);
--
- bool sme_active(void);
- bool sev_active(void);
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 			rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
  
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 66beedc8fe3d..d3b80d5f9828 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -446,15 +446,6 @@ void __init mem_encrypt_init(void)
- 			     : "Secure Memory Encryption (SME)");
- }
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1766,7 +1766,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
  
--void swiotlb_set_mem_attributes(void *vaddr, unsigned long size)
--{
--	WARN(PAGE_ALIGN(size) != size,
--	     "size is not page-aligned (%#lx)\n", size);
--
--	/* Make the SWIOTLB buffer area decrypted */
--	set_memory_decrypted((unsigned long)vaddr, size >> PAGE_SHIFT);
--}
--
- struct sme_populate_pgd_data {
- 	void	*pgtable_area;
- 	pgd_t	*pgd;
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index c43ec2271469..005d1d87bb2e 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -31,6 +31,7 @@
- #include <linux/gfp.h>
- #include <linux/scatterlist.h>
- #include <linux/mem_encrypt.h>
-+#include <linux/set_memory.h>
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
+ 		} else {
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1782,7 +1782,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 				-1 * delta_swing_table_idx_tdown_a[delta];
+ 			/* Record delta swing for mix mode power tracking*/
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
  
- #include <asm/io.h>
- #include <asm/dma.h>
-@@ -156,8 +157,6 @@ unsigned long swiotlb_size_or_default(void)
- 	return size ? size : (IO_TLB_DEFAULT_SIZE);
- }
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1799,7 +1799,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
  
--void __weak swiotlb_set_mem_attributes(void *vaddr, unsigned long size) { }
--
- /* For swiotlb, clear memory encryption mask from dma addresses */
- static dma_addr_t swiotlb_phys_to_dma(struct device *hwdev,
- 				      phys_addr_t address)
-@@ -209,12 +208,12 @@ void __init swiotlb_update_mem_attributes(void)
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
+ 		}
  
- 	vaddr = phys_to_virt(io_tlb_start);
- 	bytes = PAGE_ALIGN(io_tlb_nslabs << IO_TLB_SHIFT);
--	swiotlb_set_mem_attributes(vaddr, bytes);
-+	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
- 	memset(vaddr, 0, bytes);
+@@ -2115,7 +2115,7 @@ void rtl8821ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
+ 		}
+ 	} else if (method == MIX_MODE) {
+ 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
++			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
+ 			 rtldm->default_ofdm_index,
+ 			 rtldm->absolute_ofdm_swing_idx[rf_path],
+ 			 rf_path);
+@@ -2329,7 +2329,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
  
- 	vaddr = phys_to_virt(io_tlb_overflow_buffer);
- 	bytes = PAGE_ALIGN(io_tlb_overflow);
--	swiotlb_set_mem_attributes(vaddr, bytes);
-+	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
- 	memset(vaddr, 0, bytes);
- }
- 
-@@ -355,7 +354,7 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
- 	io_tlb_start = virt_to_phys(tlb);
- 	io_tlb_end = io_tlb_start + bytes;
- 
--	swiotlb_set_mem_attributes(tlb, bytes);
-+	set_memory_decrypted((unsigned long)tlb, bytes >> PAGE_SHIFT);
- 	memset(tlb, 0, bytes);
- 
- 	/*
-@@ -366,7 +365,8 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
- 	if (!v_overflow_buffer)
- 		goto cleanup2;
- 
--	swiotlb_set_mem_attributes(v_overflow_buffer, io_tlb_overflow);
-+	set_memory_decrypted((unsigned long)v_overflow_buffer,
-+			io_tlb_overflow >> PAGE_SHIFT);
- 	memset(v_overflow_buffer, 0, io_tlb_overflow);
- 	io_tlb_overflow_buffer = virt_to_phys(v_overflow_buffer);
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 		} else {
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -2345,7 +2345,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
+ 				-1 * delta_swing_table_idx_tdown_a[delta];
+ 			/* Record delta swing for mix mode power tracking*/
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 		}
  
 -- 
-2.14.2
+2.15.1
