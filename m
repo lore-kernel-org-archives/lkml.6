@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtq6oIRPDIbJX0J/GJdoH25ChxrlYTF7jT3Kk6vXtRrv9OWEkBsIB2+H+StVqg8E6K25o7E
-ARC-Seal: i=1; a=rsa-sha256; t=1521483239; cv=none;
+X-Google-Smtp-Source: AG47ELunHNA+4wVs0GjmmRvcAPTrQzIsnnPwvMfWAa7O9i4GXimxJHqwE7nqcktSVutnbGbgRgHw
+ARC-Seal: i=1; a=rsa-sha256; t=1521483236; cv=none;
         d=google.com; s=arc-20160816;
-        b=ujy5zVWLN7tqzjR+EeJQ7gB3IeC3kQIgf62KmFciBg7d3qAJkvAqO7JIzIaNZ/4zLk
-         f/MiEwvXAAJvPHiFFEp2aZyEKctwFYxmQIGDwrxFpRF9gXtVG0SUVyVuAphAeC0MyJHA
-         W5T7sAJnb/+Ek2M0gzDiMfhGeDQ8ragb9i3Eira4wl9OlFKZptFV7SbKu3grQRRRdJge
-         hlBtfdTeKqhSR3vQxQFQuP0CBAnuU7crpV208qk3sSrNmcovLnz+mBUDzSKqisNOgW8e
-         G4ELLov8AUeEU/CyS5ImY2d9xdGuqzUOKOkraOacGBBBUmK9YsqA5mvqIqv/FZJ9zprk
-         Mcxw==
+        b=PxlKDrO7/5Ewz/OlCIDNbCJTZGl8AeAuHW+6jsfhRU9TaJjOo+hsz359uDOiKUHMm1
+         MlvdKNmXy5clZDrxu63HYxGqykZAh4hkrjBsOsznuYcLbd+VP8fOwgd/pZzl60+b2Tdo
+         3DSDHaVIsQas/gaS2QNTZXVTItK7pnHQTLb4tTlPEz6PpT4qSeOCHh2YeWOyC7TUAXX3
+         sXGb5Y3vCx9ZyIjDNDaGB4t2vpIynwQhRCtaPWm6jUWbqpkMnpMocnlNyrYuoHEyqt02
+         6NRFSmQ7qBVAmn9IR9Inj/mhmQF8Wc/LYzI0OP9Lud5gRu3r3W78/1qcnVIVwNp8ckQl
+         0ycw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yRq/HAbKgoT670Ipb1YgsSRMig7jkx4jS1iSdqJaW9o=;
-        b=n0Ue86ZNjVRAv6xRXPmr7qyVmuudMLo8hsV2dznQ7UJP5nvxeJKg4gKKBhKwx64Ke3
-         0edl7zrWYhDGCcMdmG9M6Ky9dHg/xyfqB70j76xlqR/VAgNIVwxBly5okukpaQRa8VJU
-         bgyTxSUPvGfn5m8j+R07ywWlOu8m4cRVHPKKJy16cXyuMF7xlji9S6P+jFYmlbBVnvIC
-         WiStZWMIzMJflqS7GlaVYoMW2y09u3PEK1jFlhxmt+TTTMJHTqe/kUG/Ug1mL1ckFdTf
-         7a9CpVKdeY7V4sD6iZbDTBIQnv7dXQGigleJN6SRG24sPuNlnjxLgnw4n99Ds8DDHwBg
-         OAQg==
+        bh=cnYM3sWZGEWZWpDoKvOuts2qc5dw1eYCivLJaCbEH0U=;
+        b=Xh4wrA82xfgG0zZutXlgz70q5G5yPAE47dF51FiAyK0jl0ozRtOR+9R4wk4GqmYFCL
+         FlMlXfGU9/w2QpFIaf/5XwRn+Nb4pgGU07vyKnGQYMydoJxrGr0VgYvxZfMva6c7VZ4n
+         vYrxSG05g0b58Mj5iQzGM69QZOtnDP9vw4Y5n9RwiS5+Yo1k6mf+zPeNAZybu+tfPD13
+         aAVlSg1+BrNCM/mRftGLUJVg52+Pex16t6Liki6RwKro1PnErFIVvhU4aRu8CsrmzvyC
+         rBA8ZOm0Yalt1S+zmsVbtcHDUAjouszYSYS7paCUXDWQJjljnIpdbgJeXzuTsvwVEzDm
+         jD4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 051/134] ARM: dts: koelsch: Correct clock frequency of X2 DU clock input
-Date: Mon, 19 Mar 2018 19:05:34 +0100
-Message-Id: <20180319171856.723297606@linuxfoundation.org>
+Subject: [PATCH 4.4 050/134] net/faraday: Add missing include of of.h
+Date: Mon, 19 Mar 2018 19:05:33 +0100
+Message-Id: <20180319171856.587319690@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390808962226509?=
-X-GMAIL-MSGID: =?utf-8?q?1595390808962226509?=
+X-GMAIL-THRID: =?utf-8?q?1595390548552931804?=
+X-GMAIL-MSGID: =?utf-8?q?1595390806353080107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,33 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Andrew Lunn <andrew@lunn.ch>
 
 
-[ Upstream commit ebf06af55c7594ed1fc18469a5cddf911c40e687 ]
+[ Upstream commit d39004ab136ebb6949a7dda9d24376f3d6209295 ]
 
-The X2 crystal oscillator on the Koelsch development board provides a
-74.25 MHz clock, not a 148.5 MHz clock.
+Breaking the include loop netdevice.h, dsa.h, devlink.h broke this
+driver, it depends on includes brought in by these headers. Adding
+linux/of.h fixes it.
 
-Fixes: cd21cb46e14aae3a ("ARM: shmobile: koelsch: Add DU external pixel clocks to DT")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: ed0e39e97d34 ("net: break include loop netdevice.h, dsa.h, devlink.h")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/faraday/ftgmac100.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -280,7 +280,7 @@
- 	x2_clk: x2-clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <148500000>;
-+		clock-frequency = <74250000>;
- 	};
- 
- 	x13_clk: x13-clock {
+--- a/drivers/net/ethernet/faraday/ftgmac100.c
++++ b/drivers/net/ethernet/faraday/ftgmac100.c
+@@ -28,6 +28,7 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/netdevice.h>
++#include <linux/of.h>
+ #include <linux/phy.h>
+ #include <linux/platform_device.h>
+ #include <net/ip.h>
