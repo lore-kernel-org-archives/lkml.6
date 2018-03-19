@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvXHo6ImvWh4mHOi2H4OdlR5Wo/Ioon5l8adTPEwIgZhCPHjpmu1a/5eXZLKAC13TpUgB6c
-ARC-Seal: i=1; a=rsa-sha256; t=1521483985; cv=none;
+X-Google-Smtp-Source: AG47ELv1IZkaIfXweMVVu89EIGEojYTtmDSd20kGNdVPle5Ks3dantILAF1IiBTSaHSzcSWWfL7j
+ARC-Seal: i=1; a=rsa-sha256; t=1521483982; cv=none;
         d=google.com; s=arc-20160816;
-        b=nxH1WweOi2Rjuqz8JDwokHRPXzVx9altRYUav9tJUvYFn5L+g0RYhqGG59Yyo71zxM
-         TzW1EZbxWWzpDHNG738EBNzwxEaXUmHCrmp3tU8ZU39itlzyHcp2btgbc4uJHr+0MZ3x
-         1zIsv7R2t5Akz3cZESMiO5VsCyIRkph5SHFkhVo0YOYFndVgf4tRiSFjz47nn4Gk1LKi
-         1bPi8heto0CcGR4HPMTWevUNL3jxLdKQQDCf8fsMocUOJLRJer8vWv42k9HjN2arzaXO
-         /dSSiZlNe3QL4yualjtH88BnVO1li0eWCIs1yUDasgPnrEzVICfcb6Kf3sOiD8/NhShB
-         48Zw==
+        b=o3bA7K+t0ePdpOozt/ZHPraYQjUXnO8clLyNlf98StjKpyRWYVR7SNS9B6wzfApfTN
+         K5Rw8YBbUCdL7dF2sfiwr4ZGGI38AyAl1NgrOOpYfjj6Lk2ANkI97SJGtD9TPlDpoWWb
+         XK5xXLZqiBppakGAs2DMwDuomxr7EFKdCPuE2XHusdoqXTxChgh4ZzbKpd5Kzj05f6az
+         CPM9VxfI54sUgsQ7syGitDPROQ5snCC4rArD/HMMiae4PZ0XlxMzHQ60faV8rR3LnTNU
+         aFWGhl5GmRPf2vCcuGsKX/LNwRUSlxAyA7gt/o9qtaqHt4cOsIFfZHlhjQGfpVPPpmpf
+         EEWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/rDQA2Cnuy3pV7T3XUjICdNduPdm4CauCgSXtB7POEM=;
-        b=HSdG62YTWPkP/qLGw0AbA/UNGxtmnzNvabgmPEsTVKAnG43LOpD1MpF+IjBT1sK+ga
-         lo3F0DIAqbx94W1050g3d5ekfzG5P5u0O2gjRco2AB5sB9/2D08sS2RioDZBKNK5EIz7
-         ih5GlNfTf9XXgUThcxUnhRIQSreY9T3vSKd8CkGx82thf72pKJDhlBPN+uy5FxKtCF2z
-         Hu0VhhyxMxrCmSS20ZWqLGMkPP0PKKHEo92ZO3k8MKuCXFsZpvTUjij3Smq8dkheKEnD
-         uJvsa4EHFilX2XeuKRVjJlU0evLqkgAobl7ygTRLF8m6IP89oJCRrjVHcSRfT8aOMJly
-         TSMQ==
+        bh=NHp19sSJc0Ysj3WJ7hHXTQ6LofK8SlRHymmjPM4Fwug=;
+        b=r//v/YFRvZ9zF0feohWWLKwmEXvjxTX1RsjXsyZMJYUZiGokk/88BgFnNwer7EUjRb
+         uCzV97cB5F0vBoy1jMC83dLtHRPAylaGFkPRqkCNtHDt/ZWaEWQEkBXtcB1vXTCn11IR
+         tWAVYkMwB1fRlrDhYXlBD4Oos/6poaejbAgHZd026o7xXBw4kljKSmaWO5EFA8SZQEqc
+         VsyDgWiZJcY8QJmnk310uPHvHNLW/ibD1/K79oVMiYZLr6y7VBN7ATo4p14+bIGK44XK
+         iuioGD4+CPTmHaTbZWndsFGqQMomh+5Z12QTD6Z7+xsbTL3Wc+GwCgd7hcQd/GIz0YZR
+         vmlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Greear <greearb@candelatech.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Limin Zhu <liminzhu@marvell.com>,
+	Xinming Hu <huxm@marvell.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 190/241] ath10k: fix invalid STS_CAP_OFFSET_MASK
-Date: Mon, 19 Mar 2018 19:07:35 +0100
-Message-Id: <20180319180759.008654033@linuxfoundation.org>
+Subject: [PATCH 4.9 189/241] mwifiex: cfg80211: do not change virtual interface during scan processing
+Date: Mon, 19 Mar 2018 19:07:34 +0100
+Message-Id: <20180319180758.971784748@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390933811655032?=
-X-GMAIL-MSGID: =?utf-8?q?1595391590954217676?=
+X-GMAIL-THRID: =?utf-8?q?1595391588673319503?=
+X-GMAIL-MSGID: =?utf-8?q?1595391588673319503?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Greear <greearb@candelatech.com>
+From: Limin Zhu <liminzhu@marvell.com>
 
 
-[ Upstream commit 8cec57f5277ef0e354e37a0bf909dc71bc1f865b ]
+[ Upstream commit c61cfe49f0f0f0d1f8b56d0b045838d597e8c3a3 ]
 
-The 10.4 firmware defines this as a 3-bit field, as does the
-mac80211 stack.  The 4th bit is defined as CONF_IMPLICIT_BF
-at least in the firmware header I have seen.  This patch
-fixes the ath10k wmi header to match the firmware.
+(1) Change virtual interface operation in cfg80211 process reset and
+reinitilize private data structure.
+(2) Scan result event processed in main process will dereference private
+data structure concurrently, ocassionly crash the kernel.
 
-Signed-off-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+The cornel case could be trigger by below steps:
+(1) wpa_cli mlan0 scan
+(2) ./hostapd mlan0.conf
+
+Cfg80211 asynchronous scan procedure is not all the time operated
+under rtnl lock, here we add the protect to serialize the cfg80211
+scan and change_virtual interface operation.
+
+Signed-off-by: Limin Zhu <liminzhu@marvell.com>
+Signed-off-by: Xinming Hu <huxm@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -5017,7 +5017,8 @@ enum wmi_10_4_vdev_param {
- #define WMI_VDEV_PARAM_TXBF_MU_TX_BFER BIT(3)
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -1109,6 +1109,12 @@ mwifiex_cfg80211_change_virtual_intf(str
+ 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
+ 	enum nl80211_iftype curr_iftype = dev->ieee80211_ptr->iftype;
  
- #define WMI_TXBF_STS_CAP_OFFSET_LSB	4
--#define WMI_TXBF_STS_CAP_OFFSET_MASK	0xf0
-+#define WMI_TXBF_STS_CAP_OFFSET_MASK	0x70
-+#define WMI_TXBF_CONF_IMPLICIT_BF       BIT(7)
- #define WMI_BF_SOUND_DIM_OFFSET_LSB	8
- #define WMI_BF_SOUND_DIM_OFFSET_MASK	0xf00
- 
++	if (priv->scan_request) {
++		mwifiex_dbg(priv->adapter, ERROR,
++			    "change virtual interface: scan in process\n");
++		return -EBUSY;
++	}
++
+ 	switch (curr_iftype) {
+ 	case NL80211_IFTYPE_ADHOC:
+ 		switch (type) {
