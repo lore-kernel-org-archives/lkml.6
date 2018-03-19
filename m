@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsBgTlEwe2mN62oWogbKkjmwhOnbO0IQtFwTOQ4gXh9WCXkNNCYHXV48+7SBiTsjuja1ExB
-ARC-Seal: i=1; a=rsa-sha256; t=1521483198; cv=none;
+X-Google-Smtp-Source: AG47ELu3UgJ1Vn56aVM8EeAJYdRBsgZuPaOVamz0AygPso4wfk1Kx2TIT5w3tzsm+LB9cjAv2J6a
+ARC-Seal: i=1; a=rsa-sha256; t=1521483193; cv=none;
         d=google.com; s=arc-20160816;
-        b=T1YKP0M6CsSXDILsUEBMIVXExfoECBZNwnljt6JyYUnPhwtisZcTy0oLoj0nLjdgzZ
-         7F/fyHnSECMrr+fcmv7q4nA/rxSQZfBdqUIMCMZPF3wgNjUEAuI9IicsF9s75gBkMIvE
-         oMERG65druXFVeA1tgzMxpkvRRKUzcYIggrRhnqXH9n74O5lp7GNnUjf/g2vFmPOsO1C
-         mBYt/p04u2faHFWoz4r9WHNr6C9FaNvK5tq6zC5ON9xidtHjw0FB/WARzf6oV1By0D1X
-         Kv8jPELba24nt3++AKX1KAxMDMLbr9GbhGKkwqHzU4Dpithokm3CUR8/Z/zzwzPUhRg0
-         1SJw==
+        b=epgoB2+WUEd+d15bo6eShHrROKlZ41GkAUrsSVkZiNPLhekNdPVjFO5Eczps9SpCw1
+         K1GZ+6xg0/mjacqYNl7OXkGOI54l06gxw59PEr6MaJJLNRNT/wfkdai6RATC3O3Z2Dbw
+         EkWvdcfApOs+CZ5YDRTnP4ziV+6HzAtipAP+5o5iVTw9nZYWthA66onr6cyi+5c/9M5o
+         m4A+y5sXT3/m104a7KrbitOn1hLmp8QWfSV4j58A1V0yjD6ab6gK08HZ5R6i9YtOFERn
+         UdYXd4JLap/Jxd7sEx9HxluHurpU0jz8Xf/oS5CusAUxtthcn7yE7qsXeQ5ndI/xl0cE
+         HW8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QiQh2sd0Z2du9XOiwc4pPFE1Bch8WB/DvtHDS+RX+hY=;
-        b=A67CF6OFDfO5Ubf/GYGOVslPF29XXou7W4aUnNlEDwPjm/ARf9Zy9JhahNgL96eHTu
-         clyXKQ6H0xi4pensqLtOi3Zc338+laPREPa9Dq0JRNDaBnHEw+Vt2UO6XMG7d1yYvN4t
-         VitXWV1XbumVrwyqb3HPj6m8hx9tkYusiv2Kb72IzFdjmFwnwjxoFTZVkWpk6rdzIPGI
-         bRVsTO1lAi2opUgKvsGCSrJy5JCyYrAh64Tgnh/8NViJW6XOvURzDVKb68a+eq2vv5ym
-         O5mUtn1YdRnogOkRoJuS7f43+OmXYFdQYBeIRtEKHgR+ldvvgAgZkM1HemvT3YD4QUdH
-         z4tw==
+        bh=+mpfmKiZnEzGBa1COo2hLy+dofB2VonWrqAU68N/6aA=;
+        b=YYGZFYppKJOKQC4nazCbDnCX46pfamo99TUAx9vXUeuWJVJbfpFv4vOLxf/U4akq58
+         BiIWKxtajs3ywzPpM/+3TH0SsN/wEO0LRGAi6PR9MLc4sM6ukZI0Ujc6zSmzogaIoq3i
+         Xs8XHLZOG7Kc4FoQ11U+YHK2j4n41nMYO2YDCymCq5QElLQZxjUYWGy16t0WdK8+Lnv2
+         +oiWEAsEyJ4Tt1ifWUWKxC/weCPN0dt76+DXx/v9I4pyLCEQPRV8K6bhA0TwrVrdRrmd
+         PpBQC19Wr6FXo6BFtfGHc5Y4BaKN1XaCxvoJj3gYB0X7rnfW6prJbmjQh4BHkoayltSZ
+         9bcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiada Wang <jiada_wang@mentor.com>,
-	Vinod Koul <vinod.koul@intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 034/134] dmaengine: imx-sdma: add 1ms delay to ensure SDMA channel is stopped
-Date: Mon, 19 Mar 2018 19:05:17 +0100
-Message-Id: <20180319171854.214890247@linuxfoundation.org>
+Subject: [PATCH 4.4 032/134] spi: omap2-mcspi: poll OMAP2_MCSPI_CHSTAT_RXS for PIO transfer
+Date: Mon, 19 Mar 2018 19:05:15 +0100
+Message-Id: <20180319171853.917407502@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390766580958175?=
-X-GMAIL-MSGID: =?utf-8?q?1595390766580958175?=
+X-GMAIL-THRID: =?utf-8?q?1595390520568953936?=
+X-GMAIL-MSGID: =?utf-8?q?1595390761275825359?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,64 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiada Wang <jiada_wang@mentor.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
 
-[ Upstream commit 7f3ff14b7eb1ffad132117f08a1973b48e653d43 ]
+[ Upstream commit 812613591cb652344186c4cd912304ed02138566 ]
 
-sdma_disable_channel() cannot ensure dma is stopped to access
-module's FIFOs. There is chance SDMA core is running and accessing
-BD when disable of corresponding channel, this may cause sometimes
-even after call of .sdma_disable_channel(), SDMA core still be
-running and accessing module's FIFOs.
+When running the spi-loopback-test with slower clock rate like 10 KHz,
+the test for 251 bytes transfer was failed.  This failure triggered an
+spi-omap2-mcspi's error message "DMA RX last word empty".
 
-According to NXP R&D team a delay of one BD SDMA cost time (maximum
-is 1ms) should be added after disable of the channel bit, to ensure
-SDMA core has really been stopped after SDMA clients call
-.device_terminate_all.
+This message means that PIO for reading the remaining bytes due to the
+DMA transfer length reduction is failed.  This problem can be fixed by
+polling OMAP2_MCSPI_CHSTAT_RXS bit in channel status register to wait
+until the receive buffer register is filled.
 
-This patch introduces adds a new function sdma_disable_channel_with_delay()
-which simply adds 1ms delay after call sdma_disable_channel(),
-and set it as .device_terminate_all.
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/imx-sdma.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/spi/spi-omap2-mcspi.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -911,6 +911,21 @@ static int sdma_disable_channel(struct d
- 	return 0;
- }
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -457,6 +457,8 @@ omap2_mcspi_rx_dma(struct spi_device *sp
+ 	int			elements = 0;
+ 	int			word_len, element_count;
+ 	struct omap2_mcspi_cs	*cs = spi->controller_state;
++	void __iomem		*chstat_reg = cs->base + OMAP2_MCSPI_CHSTAT0;
++
+ 	mcspi = spi_master_get_devdata(spi->master);
+ 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
+ 	count = xfer->len;
+@@ -517,8 +519,8 @@ omap2_mcspi_rx_dma(struct spi_device *sp
+ 	if (l & OMAP2_MCSPI_CHCONF_TURBO) {
+ 		elements--;
  
-+static int sdma_disable_channel_with_delay(struct dma_chan *chan)
-+{
-+	sdma_disable_channel(chan);
-+
-+	/*
-+	 * According to NXP R&D team a delay of one BD SDMA cost time
-+	 * (maximum is 1ms) should be added after disable of the channel
-+	 * bit, to ensure SDMA core has really been stopped after SDMA
-+	 * clients call .device_terminate_all.
-+	 */
-+	mdelay(1);
-+
-+	return 0;
-+}
-+
- static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
- {
- 	struct sdma_engine *sdma = sdmac->sdma;
-@@ -1793,7 +1808,7 @@ static int sdma_probe(struct platform_de
- 	sdma->dma_device.device_prep_slave_sg = sdma_prep_slave_sg;
- 	sdma->dma_device.device_prep_dma_cyclic = sdma_prep_dma_cyclic;
- 	sdma->dma_device.device_config = sdma_config;
--	sdma->dma_device.device_terminate_all = sdma_disable_channel;
-+	sdma->dma_device.device_terminate_all = sdma_disable_channel_with_delay;
- 	sdma->dma_device.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	sdma->dma_device.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	sdma->dma_device.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-		if (likely(mcspi_read_cs_reg(spi, OMAP2_MCSPI_CHSTAT0)
+-				   & OMAP2_MCSPI_CHSTAT_RXS)) {
++		if (!mcspi_wait_for_reg_bit(chstat_reg,
++					    OMAP2_MCSPI_CHSTAT_RXS)) {
+ 			u32 w;
+ 
+ 			w = mcspi_read_cs_reg(spi, OMAP2_MCSPI_RX0);
+@@ -536,8 +538,7 @@ omap2_mcspi_rx_dma(struct spi_device *sp
+ 			return count;
+ 		}
+ 	}
+-	if (likely(mcspi_read_cs_reg(spi, OMAP2_MCSPI_CHSTAT0)
+-				& OMAP2_MCSPI_CHSTAT_RXS)) {
++	if (!mcspi_wait_for_reg_bit(chstat_reg, OMAP2_MCSPI_CHSTAT_RXS)) {
+ 		u32 w;
+ 
+ 		w = mcspi_read_cs_reg(spi, OMAP2_MCSPI_RX0);
