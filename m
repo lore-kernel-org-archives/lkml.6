@@ -1,23 +1,23 @@
 Return-Path: <mika.westerberg@linux.intel.com>
-X-Google-Smtp-Source: AG47ELuSK6IFJrvnpzvdrW08/cWxhSbwP/rJWbYBHeS26l55sSQp/YvyUBddV1J4DdhBH7sHhSf0
-ARC-Seal: i=1; a=rsa-sha256; t=1521476831; cv=none;
+X-Google-Smtp-Source: AG47ELtIpwCtzGG2EIqkf5zSU4Q/BhTlTip0VoWgufXqGeaO7JqDuIbMWK5B/baFS5qtLp2fuHEb
+ARC-Seal: i=1; a=rsa-sha256; t=1521476830; cv=none;
         d=google.com; s=arc-20160816;
-        b=rNKv8Xip7+7t0O/3NUHxkHSDdHfVZRCOUXPxwDpkd7STRpEbFshkCAIHSm8QKYRmdz
-         4kxzUqkb7t1iTvFPIg2sNUjVM3swpr/5CtyKkmNjhE0rblISK+AEbDXkTZST+mnWmqPZ
-         UumWrlqMqVDwEYRY4EgXo42jteE+9VfdG7l7u2DWDtzdMpMAQLFGRN35d50x2EfIhakE
-         N82tWtDIMrnc5v+ngIkPekK5rEPsrWfz5SIWyw+SwSsokUANk8QFe3Cx5eJT7AXj1Ty0
-         fy4wf/hZYoQNBMSMqXUdfAbUvrZ8wwhEDh8Ua8S00st15NScvIwgK/b5vUBVb02A+j93
-         xhWw==
+        b=TX4uO5uf6WQ4bvgb6Ixr+DD4nDnZmnNwaysCOeypT3DfWOzZyLX8HEaT/XtVFpqGIn
+         MdR22b3fVkQ/R76hHERrHhqplwxJl4PCGmqfn2Xmoj9jICwHaZCE9H5nombMaNUROWuu
+         WF7Xw46YgJWzUaqgScy9wTpo8WUkE0loTKz3tKOxzTnAcot+/fmRS6qYaaqiuHUZdglL
+         +uEeEPVqcri/wBIsiuvYnwe+ALVVPZQC2vdiR1IZGmtDslh0TwsN2j+Of3ujOdlqZ82F
+         +NgADIvqCHeP3FkY03Bi7ySGNdq+UbxCyzm3O+EMT4olP7UE8KO8UDRwV6AF6CAzMwVE
+         gzKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Kht4ShyV0XK4WYs57pfuUKZ4JGRLSFOSXgsL03tnR1c=;
-        b=V8Rw6Q/kmRHgF0MFWRVWEkyNinCHlrxgqlMKOqE7+3Gn/WacTeu+eePFD3SZHhZRQX
-         7yLrQMxSxZnOZoLl8V1BewYda6P/xTl7sabORgsrjwo9mIl2loHrfEyGPwL9aGZHe4Rg
-         CYaIJwQj84PYak98gvHH837isbf0CuMw3lN4nW0kB/d491ceKxztODrcGZ4P8A4KZLzB
-         20wwEERMLNUiuGb28japCYvpyN1YTVGnZbG4ExHjyzd6W03OfTcN6cqTTSPB67CHNyQ2
-         0iRUl4a/zh0nrTgkCiFL5hs833FglYA2TVloqcVcdKfICyENgcT++Z5/C8BnsTf57RIl
-         lBCg==
+        bh=GevcRRd46oJTx8vGocCcdBYAFgr/oc89DhlSLFlCl/0=;
+        b=DccDqKoKgCNq1EatFtXxoF0ig0oyIa002YMb5Tu2yZHj4gcO+19nJ8yTJQbkclXxDi
+         Wv4iyLcXe8QfHO3RZJd4cgxuf/qWtmk5Uv4gHLyJC2TMryZt82xNOmTEzCcQKBy+FYRg
+         HJe1CvcTbTPLlmCHqL1O5sCi44YDpUlrXciYQQInDFe/ay2QDtrK6kmw+BPb9I/yQiR3
+         w0BCKeDhsXifJ3lc10hbb7niFZ+2VcoFTQBEwkfX4IeduiAhmPdgN3noYZOuX2sLrjt5
+         8nZvfaujDlbcLV6jR2FIrWF4QCoU83Bb1UioSkX3GsQeKF7ztF6CHyNkrwRCmKtglzvw
+         /arA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,156 +26,235 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
-   d="scan'208";a="212938679"
+   d="scan'208";a="212938676"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Andreas Noever <andreas.noever@gmail.com>,
 	Michael Jamet <michael.jamet@intel.com>,
 	Yehezkel Bernat <yehezkel.bernat@intel.com>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Radion Mirchevsky <radion.mirchevsky@intel.com>
-Subject: [PATCH 12/19] thunderbolt: Add tb_xdomain_find_by_route()
-Date: Mon, 19 Mar 2018 19:26:56 +0300
-Message-Id: <20180319162703.5331-13-mika.westerberg@linux.intel.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 08/19] thunderbolt: Factor common ICM add and update operations out
+Date: Mon, 19 Mar 2018 19:26:52 +0300
+Message-Id: <20180319162703.5331-9-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 References: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595384089934768410?=
-X-GMAIL-MSGID: =?utf-8?q?1595384089934768410?=
+X-GMAIL-THRID: =?utf-8?q?1595384089779162503?=
+X-GMAIL-MSGID: =?utf-8?q?1595384089779162503?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Radion Mirchevsky <radion.mirchevsky@intel.com>
+The newer ICM will not use link and depth to address devices. Instead it
+uses route strings. In order to take advantage of the existing code
+factor out common operations so that we can use the same functions with
+the new ICM as well.
 
-This is needed by the new ICM interface to find xdomains by route string
-instead of link and depth.
+No functional changes intended.
 
-While there update existing tb_xdomain_find_* functions to use
-tb_xdomain_get() instead of open-coding the same.
-
-Signed-off-by: Radion Mirchevsky <radion.mirchevsky@intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/thunderbolt/xdomain.c | 47 ++++++++++++++++++++++++++++++++-----------
- include/linux/thunderbolt.h   | 13 ++++++++++++
- 2 files changed, 48 insertions(+), 12 deletions(-)
+ drivers/thunderbolt/icm.c | 136 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 87 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
-index f25d88d4552b..8abb4e843085 100644
---- a/drivers/thunderbolt/xdomain.c
-+++ b/drivers/thunderbolt/xdomain.c
-@@ -1255,6 +1255,7 @@ struct tb_xdomain_lookup {
- 	const uuid_t *uuid;
- 	u8 link;
- 	u8 depth;
-+	u64 route;
- };
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index 6d7f8262f864..6798516d6474 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -374,6 +374,57 @@ static int icm_fr_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
+ 	return 0;
+ }
  
- static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
-@@ -1275,9 +1276,13 @@ static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
- 			if (lookup->uuid) {
- 				if (uuid_equal(xd->remote_uuid, lookup->uuid))
- 					return xd;
--			} else if (lookup->link == xd->link &&
-+			} else if (lookup->link &&
-+				   lookup->link == xd->link &&
- 				   lookup->depth == xd->depth) {
- 				return xd;
-+			} else if (lookup->route &&
-+				   lookup->route == xd->route) {
-+				return xd;
- 			}
- 		} else if (port->remote) {
- 			xd = switch_find_xdomain(port->remote->sw, lookup);
-@@ -1313,12 +1318,7 @@ struct tb_xdomain *tb_xdomain_find_by_uuid(struct tb *tb, const uuid_t *uuid)
- 	lookup.uuid = uuid;
++static void add_switch(struct tb_switch *parent_sw, u64 route,
++		       const uuid_t *uuid, u8 connection_id, u8 connection_key,
++		       u8 link, u8 depth, enum tb_security_level security_level,
++		       bool authorized)
++{
++	struct tb_switch *sw;
++
++	sw = tb_switch_alloc(parent_sw->tb, &parent_sw->dev, route);
++	if (!sw)
++		return;
++
++	sw->uuid = kmemdup(uuid, sizeof(*uuid), GFP_KERNEL);
++	sw->connection_id = connection_id;
++	sw->connection_key = connection_key;
++	sw->link = link;
++	sw->depth = depth;
++	sw->authorized = authorized;
++	sw->security_level = security_level;
++
++	/* Link the two switches now */
++	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
++	tb_upstream_port(sw)->remote = tb_port_at(route, parent_sw);
++
++	if (tb_switch_add(sw)) {
++		tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
++		tb_switch_put(sw);
++		return;
++	}
++}
++
++static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
++			  u64 route, u8 connection_id, u8 connection_key,
++			  u8 link, u8 depth)
++{
++	/* Disconnect from parent */
++	tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
++	/* Re-connect via updated port*/
++	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
++
++	/* Update with the new addressing information */
++	sw->config.route_hi = upper_32_bits(route);
++	sw->config.route_lo = lower_32_bits(route);
++	sw->connection_id = connection_id;
++	sw->connection_key = connection_key;
++	sw->link = link;
++	sw->depth = depth;
++
++	/* This switch still exists */
++	sw->is_unplugged = false;
++}
++
+ static void remove_switch(struct tb_switch *sw)
+ {
+ 	struct tb_switch *parent_sw;
+@@ -383,6 +434,31 @@ static void remove_switch(struct tb_switch *sw)
+ 	tb_switch_remove(sw);
+ }
  
- 	xd = switch_find_xdomain(tb->root_switch, &lookup);
--	if (xd) {
--		get_device(&xd->dev);
--		return xd;
++static void add_xdomain(struct tb_switch *sw, u64 route,
++			const uuid_t *local_uuid, const uuid_t *remote_uuid,
++			u8 link, u8 depth)
++{
++	struct tb_xdomain *xd;
++
++	xd = tb_xdomain_alloc(sw->tb, &sw->dev, route, local_uuid, remote_uuid);
++	if (!xd)
++		return;
++
++	xd->link = link;
++	xd->depth = depth;
++
++	tb_port_at(route, sw)->xdomain = xd;
++
++	tb_xdomain_add(xd);
++}
++
++static void update_xdomain(struct tb_xdomain *xd, u64 route, u8 link)
++{
++	xd->link = link;
++	xd->route = route;
++	xd->is_unplugged = false;
++}
++
+ static void remove_xdomain(struct tb_xdomain *xd)
+ {
+ 	struct tb_switch *sw;
+@@ -397,6 +473,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ {
+ 	const struct icm_fr_event_device_connected *pkg =
+ 		(const struct icm_fr_event_device_connected *)hdr;
++	enum tb_security_level security_level;
+ 	struct tb_switch *sw, *parent_sw;
+ 	struct icm *icm = tb_priv(tb);
+ 	bool authorized = false;
+@@ -409,6 +486,8 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	depth = (pkg->link_info & ICM_LINK_INFO_DEPTH_MASK) >>
+ 		ICM_LINK_INFO_DEPTH_SHIFT;
+ 	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
++	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
++			 ICM_FLAGS_SLEVEL_SHIFT;
+ 
+ 	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+ 		tb_info(tb, "switch at %u.%u was rejected by ICM firmware because topology limit exceeded\n",
+@@ -441,16 +520,8 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		 */
+ 		if (sw->depth == depth && sw_phy_port == phy_port &&
+ 		    !!sw->authorized == authorized) {
+-			tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+-			tb_port_at(route, parent_sw)->remote =
+-				   tb_upstream_port(sw);
+-			sw->config.route_hi = upper_32_bits(route);
+-			sw->config.route_lo = lower_32_bits(route);
+-			sw->connection_id = pkg->connection_id;
+-			sw->connection_key = pkg->connection_key;
+-			sw->link = link;
+-			sw->depth = depth;
+-			sw->is_unplugged = false;
++			update_switch(parent_sw, sw, route, pkg->connection_id,
++				      pkg->connection_key, link, depth);
+ 			tb_switch_put(sw);
+ 			return;
+ 		}
+@@ -497,30 +568,10 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
+ 	}
+ 
+-	sw = tb_switch_alloc(tb, &parent_sw->dev, route);
+-	if (!sw) {
+-		tb_switch_put(parent_sw);
+-		return;
+-	}
++	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
++		   pkg->connection_key, link, depth, security_level,
++		   authorized);
+ 
+-	sw->uuid = kmemdup(&pkg->ep_uuid, sizeof(pkg->ep_uuid), GFP_KERNEL);
+-	sw->connection_id = pkg->connection_id;
+-	sw->connection_key = pkg->connection_key;
+-	sw->link = link;
+-	sw->depth = depth;
+-	sw->authorized = authorized;
+-	sw->security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
+-				ICM_FLAGS_SLEVEL_SHIFT;
+-
+-	/* Link the two switches now */
+-	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
+-	tb_upstream_port(sw)->remote = tb_port_at(route, parent_sw);
+-
+-	ret = tb_switch_add(sw);
+-	if (ret) {
+-		tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+-		tb_switch_put(sw);
+-	}
+ 	tb_switch_put(parent_sw);
+ }
+ 
+@@ -591,9 +642,7 @@ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		phy_port = phy_port_from_route(route, depth);
+ 
+ 		if (xd->depth == depth && xd_phy_port == phy_port) {
+-			xd->link = link;
+-			xd->route = route;
+-			xd->is_unplugged = false;
++			update_xdomain(xd, route, link);
+ 			tb_xdomain_put(xd);
+ 			return;
+ 		}
+@@ -643,19 +692,8 @@ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
+ 	}
+ 
+-	xd = tb_xdomain_alloc(sw->tb, &sw->dev, route,
+-			      &pkg->local_uuid, &pkg->remote_uuid);
+-	if (!xd) {
+-		tb_switch_put(sw);
+-		return;
 -	}
 -
--	return NULL;
-+	return tb_xdomain_get(xd);
- }
- EXPORT_SYMBOL_GPL(tb_xdomain_find_by_uuid);
- 
-@@ -1349,13 +1349,36 @@ struct tb_xdomain *tb_xdomain_find_by_link_depth(struct tb *tb, u8 link,
- 	lookup.depth = depth;
- 
- 	xd = switch_find_xdomain(tb->root_switch, &lookup);
--	if (xd) {
--		get_device(&xd->dev);
--		return xd;
--	}
-+	return tb_xdomain_get(xd);
-+}
- 
--	return NULL;
-+/**
-+ * tb_xdomain_find_by_route() - Find an XDomain by route string
-+ * @tb: Domain where the XDomain belongs to
-+ * @route: XDomain route string
-+ *
-+ * Finds XDomain by walking through the Thunderbolt topology below @tb.
-+ * The returned XDomain will have its reference count increased so the
-+ * caller needs to call tb_xdomain_put() when it is done with the
-+ * object.
-+ *
-+ * This will find all XDomains including the ones that are not yet added
-+ * to the bus (handshake is still in progress).
-+ *
-+ * The caller needs to hold @tb->lock.
-+ */
-+struct tb_xdomain *tb_xdomain_find_by_route(struct tb *tb, u64 route)
-+{
-+	struct tb_xdomain_lookup lookup;
-+	struct tb_xdomain *xd;
-+
-+	memset(&lookup, 0, sizeof(lookup));
-+	lookup.route = route;
-+
-+	xd = switch_find_xdomain(tb->root_switch, &lookup);
-+	return tb_xdomain_get(xd);
- }
-+EXPORT_SYMBOL_GPL(tb_xdomain_find_by_route);
- 
- bool tb_xdomain_handle_request(struct tb *tb, enum tb_cfg_pkg_type type,
- 			       const void *buf, size_t size)
-diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
-index 7b69853188b1..27b9be34d4b9 100644
---- a/include/linux/thunderbolt.h
-+++ b/include/linux/thunderbolt.h
-@@ -237,6 +237,7 @@ int tb_xdomain_enable_paths(struct tb_xdomain *xd, u16 transmit_path,
- 			    u16 receive_ring);
- int tb_xdomain_disable_paths(struct tb_xdomain *xd);
- struct tb_xdomain *tb_xdomain_find_by_uuid(struct tb *tb, const uuid_t *uuid);
-+struct tb_xdomain *tb_xdomain_find_by_route(struct tb *tb, u64 route);
- 
- static inline struct tb_xdomain *
- tb_xdomain_find_by_uuid_locked(struct tb *tb, const uuid_t *uuid)
-@@ -250,6 +251,18 @@ tb_xdomain_find_by_uuid_locked(struct tb *tb, const uuid_t *uuid)
- 	return xd;
+-	xd->link = link;
+-	xd->depth = depth;
+-
+-	tb_port_at(route, sw)->xdomain = xd;
+-
+-	tb_xdomain_add(xd);
++	add_xdomain(sw, route, &pkg->local_uuid, &pkg->remote_uuid, link,
++		    depth);
+ 	tb_switch_put(sw);
  }
  
-+static inline struct tb_xdomain *
-+tb_xdomain_find_by_route_locked(struct tb *tb, u64 route)
-+{
-+	struct tb_xdomain *xd;
-+
-+	mutex_lock(&tb->lock);
-+	xd = tb_xdomain_find_by_route(tb, route);
-+	mutex_unlock(&tb->lock);
-+
-+	return xd;
-+}
-+
- static inline struct tb_xdomain *tb_xdomain_get(struct tb_xdomain *xd)
- {
- 	if (xd)
 -- 
 2.16.2
