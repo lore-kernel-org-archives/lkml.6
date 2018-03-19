@@ -1,134 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970639AbeCSS5z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:57:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968293AbeCSS5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:57:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE66621720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 19 Mar 2018 13:57:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-am33-list@redhat.com
-Subject: Re: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
-Message-ID: <20180319185734.GF77194@bhelgaas-glaptop.roam.corp.google.com>
-References: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S970657AbeCSS6A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:58:00 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47051 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935537AbeCSS3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:29:34 -0400
+Subject: Re: [PATCH] ARC: Improve cmpxchng syscall implementation
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        <linux-snps-arc@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Max Filippov <jcmvbkbc@gmail.com>, <linux-arch@vger.kernel.org>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc,gmane.linux.kernel.cross-arch
+References: <20180319110002.27419-1-abrodkin@synopsys.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <5bc39838-b1c5-ef65-f97d-8777ed33bda0@synopsys.com>
+Date: Mon, 19 Mar 2018 11:29:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180319110002.27419-1-abrodkin@synopsys.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 04:45:49PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On 03/19/2018 04:00 AM, Alexey Brodkin wrote:
+> arc_usr_cmpxchg syscall is supposed to be used on platforms
+> that lack support of Load-Locked/Store-Conditional instructions
+> in hardware. And in that case we mimic missing hardware features
+> with help of kernel's sycall that "atomically" checks current
+> value in memory and then if it matches caller expectation new
+> value is written to that same location.
 > 
-> If a device already has MSI or MSI-X enabled, there's no need to set up its
-> legacy INTx interrupt.
-> 
-> bba6f6fc68e7 ("[PATCH] MSI-X: fix resume crash") changed the cris, frv,
-> x86, and ia64 arches to skip INTx setup when MSI is enabled.
-> 
-> 16cf0ebc35dd ("x86/PCI: Do not use interrupt links for devices using
-> MSI-X") extended that by changing x86 to also skip INTx setup when MSI-X is
-> enabled.
-> 
-> Change the remaining arches (cris, frv, and ia64) to skip INTx setup when
-> either MSI or MSI-X is enabled.
-> 
-> Also update mn10300 (which didn't exist at the time of bba6f6fc68e7) to
-> follow the same pattern.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+...
+...
 
-Applied to pci/msi with tested-by from Tony and reviewed-by Rafael and
-Andy.  And I added a note to my to-do list about getting rid of
-pcibios_enable_device().
-
-> ---
->  arch/cris/arch-v32/drivers/pci/bios.c |    2 +-
->  arch/frv/mb93090-mb00/pci-vdk.c       |    2 +-
->  arch/ia64/pci/pci.c                   |    4 ++--
->  arch/mn10300/unit-asb2305/pci.c       |    8 +++++---
->  4 files changed, 9 insertions(+), 7 deletions(-)
 > 
-> diff --git a/arch/cris/arch-v32/drivers/pci/bios.c b/arch/cris/arch-v32/drivers/pci/bios.c
-> index 6b9e6cfaa29e..c2bed0cc060b 100644
-> --- a/arch/cris/arch-v32/drivers/pci/bios.c
-> +++ b/arch/cris/arch-v32/drivers/pci/bios.c
-> @@ -68,7 +68,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->  	if ((err = pcibios_enable_resources(dev, mask)) < 0)
->  		return err;
->  
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->  		pcibios_enable_irq(dev);
->  	return 0;
->  }
-> diff --git a/arch/frv/mb93090-mb00/pci-vdk.c b/arch/frv/mb93090-mb00/pci-vdk.c
-> index f211839e2cae..4a55d1b82d21 100644
-> --- a/arch/frv/mb93090-mb00/pci-vdk.c
-> +++ b/arch/frv/mb93090-mb00/pci-vdk.c
-> @@ -413,7 +413,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->  
->  	if ((err = pci_enable_resources(dev, mask)) < 0)
->  		return err;
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->  		pcibios_enable_irq(dev);
->  	return 0;
->  }
-> diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
-> index f5ec736100ee..7ccc64d5fe3e 100644
-> --- a/arch/ia64/pci/pci.c
-> +++ b/arch/ia64/pci/pci.c
-> @@ -398,7 +398,7 @@ pcibios_enable_device (struct pci_dev *dev, int mask)
->  	if (ret < 0)
->  		return ret;
->  
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->  		return acpi_pci_irq_enable(dev);
->  	return 0;
->  }
-> @@ -407,7 +407,7 @@ void
->  pcibios_disable_device (struct pci_dev *dev)
->  {
->  	BUG_ON(atomic_read(&dev->enable_cnt));
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->  		acpi_pci_irq_disable(dev);
->  }
->  
-> diff --git a/arch/mn10300/unit-asb2305/pci.c b/arch/mn10300/unit-asb2305/pci.c
-> index 3dfe2d31c67b..4d36ea517679 100644
-> --- a/arch/mn10300/unit-asb2305/pci.c
-> +++ b/arch/mn10300/unit-asb2305/pci.c
-> @@ -399,10 +399,12 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->  {
->  	int err;
->  
-> -	err = pci_enable_resources(dev, mask);
-> -	if (err == 0)
-> +	if ((err = pci_enable_resources(dev, mask)) < 0)
-> +		return err;
+> 2. What's worse if we're dealing with data from not yet allocated
+>     page (think of pre-copy-on-write state) we'll successfully
+>     read data but on write we'll silently return to user-space
+>     with correct result 
+
+This is technically incorrect, even for reading, you need a page, which could be 
+common zero page in certain cases.
+
+(which we really read just before). That leads
+>     to very strange problems in user-space app further down the line
+>     because new value was never written to the destination.
+> 
+> 3. Regardless of what went wrong we'll return from syscall
+>     and user-space application will continue to execute.
+>     Even if user's pointer was completely bogus.
+
+Again we are exaggerating (from technical correctness POV) - if user pointer was 
+bogs, the read would not have worked in first place etc. So lets tone down the 
+rhetoric.
+
+
+>     In case of hardware LL/SC that app would have been killed
+>     by the kernel.
+> 
+> With that change we attempt to imrove on all 3 items above:
+> 
+> 1. We still disable preemption around read-and-write of
+>     user's data but if we happen to fail with either of them
+>     we're enabling preemption and try to force page fault so
+>     that we have a correct mapping in the TLB. Then re-try
+>     again in "atomic" context.
+> 
+> 2. If real page fault fails or even access_ok() returns false
+>     we send SIGSEGV to the user-space process so if something goes
+>     seriously wrong we'll know about it much earlier.
+> 
+
+
+>   
+>   	/*
+>   	 * This is only for old cores lacking LLOCK/SCOND, which by defintion
+> @@ -60,23 +62,48 @@ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
+>   	/* Z indicates to userspace if operation succeded */
+>   	regs->status32 &= ~STATUS_Z_MASK;
+>   
+> -	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
+> -		return -EFAULT;
+> +	ret = access_ok(VERIFY_WRITE, uaddr, sizeof(*uaddr));
+> +	if (!ret)
+> +		goto fail;
+>   
+> +again:
+>   	preempt_disable();
+>   
+> -	if (__get_user(uval, uaddr))
+> -		goto done;
+> -
+> -	if (uval == expected) {
+> -		if (!__put_user(new, uaddr))
+> +	ret = __get_user(val, uaddr);
+> +	if (ret == -EFAULT) {
+
+
+Lets see if this warrants adding complexity ! This implies that TLB entry with 
+Read permissions didn't exist for reading the var and page fault handler could not 
+wire up even a zero page due to preempt_disable, meaning it was something not 
+touched by userspace already - sort of uninitialized variable in user code. 
+Otherwise it is extremely unlikely to start with a TLB entry with Read 
+permissions, followed by syscall Trap only to find the entry missing, unless a 
+global TLB flush came from other cores, right in the middle. But this syscall is 
+not guaranteed to work with SMP anyways, so lets ignore any SMP misdoings here.
+
+Now in case it was *an* uninitialized var, do we have to guarantee any well 
+defined semantics for the kernel emulation of cmpxchg ? IMO it should be fine to 
+return 0 or -EFAULT etc. Infact -EFAULT is better as it will force a retry loop on 
+user side, given the typical cmpxchg usage pattern.
+
+
+> +		preempt_enable();
+> +		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
+> +		if (ret < 0)
+> +			goto fail;
 > +
-> +	if (!pci_dev_msi_enabled(dev))
->  		pcibios_enable_irq(dev);
-> -	return err;
-> +	return 0;
->  }
->  
->  /*
+> +		put_page(page);
+> +		goto again;
+> +	} else if (ret)
+> +		goto fail;
+> +
+> +	if (val == expected) {
+> +		ret = __put_user(new, uaddr);
+> +		if (!ret)
+>   			regs->status32 |= STATUS_Z_MASK;
+>   	}
+>   
+> -done:
+>   	preempt_enable();
+>   
+> -	return uval;
+> +	if (ret == -EFAULT) {
+> +		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
+> +		if (ret < 0)
+> +			goto fail;
+> +
+> +		put_page(page);
+> +		goto again;
+> +	} else if (ret)
+> +		goto fail;
+> +
+> +	return val;
+> +
+> +fail:
+> +	force_sig(SIGSEGV, current);
+> +	return ret;
+>   }
+>   
+>   #ifdef CONFIG_ISA_ARCV2
 > 
