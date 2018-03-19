@@ -1,189 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755550AbeCSPCN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:02:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38834 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754923AbeCSPCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:02:10 -0400
-Date: Mon, 19 Mar 2018 16:02:07 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
- patches.
-Message-ID: <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-6-pmladek@suse.com>
- <20180313224613.sdkdkcvhpqv54s6c@treble>
+        id S1755580AbeCSPC0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:02:26 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53206 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754923AbeCSPCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:02:22 -0400
+X-Google-Smtp-Source: AG47ELuf87s6V+6Ce5qm3OpxzdW93wcOdj+t3seUzdBReQVpsV9TuOMxgQPPWJnG93LMTotb1CJCFA==
+Date: Mon, 19 Mar 2018 11:02:17 -0400
+From: Matt Porter <mporter@konsulko.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: dts: hummingboard2: convert onboard audio to
+ simple-audio-card
+Message-ID: <20180319150217.legzgw6a63b7a3ky@bacon.ohporter.com>
+References: <20180319135326.24357-1-mporter@konsulko.com>
+ <20180319142350.GE2743@n2100.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313224613.sdkdkcvhpqv54s6c@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180319142350.GE2743@n2100.armlinux.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-03-13 17:46:13, Josh Poimboeuf wrote:
-> On Wed, Mar 07, 2018 at 09:20:34AM +0100, Petr Mladek wrote:
-> > From: Jason Baron <jbaron@akamai.com>
-> > 
-> > We are going to add a feature called atomic replace. It will allow to
-> > create a patch that would replace all already registered patches.
-> > 
-> > The replaced patches will stay registered because they are typically
-> > unregistered by some package uninstall scripts. But we will remove
-> > these patches from @klp_patches list to keep the enabled patch
-> > on the bottom of the stack. Otherwise, we would need to implement
-> > rather complex logic for moving the patches on the stack. Also
-> > it would complicate implementation of the atomic replace feature.
-> > It is not worth it.
-> > 
-> > As a result, we will have patches that are registered but that
-> > are no longer usable. Let's get prepared for this and use
-> > a better descriptive name for klp_is_patch_registered() function.
-> > 
-> > Also create separate list for the replaced patches and allow to
-> > unregister them. Alternative solution would be to add a flag
-> > into struct klp_patch. Note that patch->kobj.state_initialized
-> > is not safe because it can be cleared outside klp_mutex.
+On Mon, Mar 19, 2018 at 02:23:50PM +0000, Russell King - ARM Linux wrote:
+> On Mon, Mar 19, 2018 at 09:53:26AM -0400, Matt Porter wrote:
+> > The HB2 onboard audio currently makes use of the imx-audio-sgtl5000
+> > binding. This binding does not support auxiliary audio devices such
+> > as external amplifiers. The simple-audio-card binding does support
+> > this property which allows systems incorporating the HB2 to easily
+> > add an auxiliary device that's attached to the HB2 audio jack with
+> > an overlay. Convert HB2 to use simple-audio-card for the onboard
+> > audio to allow for this additional flexibility.
+> 
+> What is driving this change?
+
+I have an HB2 that's incorporated in a platform that includes an
+audio processor (tda7419) and external amplifier (tda7850) attached to
+the HB2 headphone out. The tda7419 also handles two additional non-Linux
+audio source inputs, FWIW. The tda7419 and tda7850 are supported as
+ASoC component drivers. However, they must be added to a card as
+auxiliary devices to be instantiated and have their controls exposed
+to userspace. In addition, once added as an aux device, the tda7419
+muxes and switches can participate in DAPM properly. Using
+simple-audio-card enables this option, without giving up any of the
+current functionality when using imx-audio-sgtl5000.
+
+>Why only make this change for HB2 and not HB?
+
+I was a little fixated on the HB2 platform that I'm working on. It's
+equally applicable to HB so I can add the same change there.
+
+-Matt
+
+> > Signed-off-by: Matt Porter <mporter@konsulko.com>
 > > ---
-> >  kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
-> >  1 file changed, 24 insertions(+), 6 deletions(-)
+> >  arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi | 48 +++++++++++++++++++++++-----
+> >  1 file changed, 40 insertions(+), 8 deletions(-)
 > > 
-> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > index ab1f6a371fc8..fd0296859ff4 100644
-> > --- a/kernel/livepatch/core.c
-> > +++ b/kernel/livepatch/core.c
-> > @@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
+> > diff --git a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
+> > index dffbc92e0023..587251ab76ec 100644
+> > --- a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
+> > +++ b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
+> > @@ -38,6 +38,7 @@
+> >   *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> >   *     OTHER DEALINGS IN THE SOFTWARE.
+> >   */
+> > +#include <dt-bindings/sound/fsl-imx-audmux.h>
 > >  
-> >  static LIST_HEAD(klp_patches);
+> >  / {
+> >  	chosen {
+> > @@ -145,22 +146,52 @@
+> >  		vin-supply = <&v_5v0>;
+> >  	};
 > >  
-> > +/*
-> > + * List of 'replaced' patches that have been replaced by a patch that has the
-> > + * 'replace' bit set. When they are added to this list, they are disabled and
-> > + * can not be re-enabled, but they can be unregistered().
-> > + */
-> > +static LIST_HEAD(klp_replaced_patches);
-> 
-> Can someone remind me why we're permanently disabling replaced patches?
-> I seem to remember being involved in that decision, but at least with
-> this latest version of the patches, it seems like it would be simpler to
-> just let 'replace' patches be rolled back to the previous state when
-> they're unpatched.  Then we don't need two lists of patches, the nops
-> can become more permanent, the replaced patches remain "enabled" but
-> inert, and the unpatching behavior is less surprising to the user, more
-> like a normal rollback.
-
-Yes, keeping the patches might make some things easier. But it might
-also bring some problems and it would make the feature less useful.
-The following arguments come to my mind:
-
-1. The feature should help to keep the system in a consistent and
-   well defined state. It should not depend on what patches were
-   installed before.
-
-   We do not want to force people to install every single livepatch
-   before. It should be enough to install the last one. But then
-   we might get different amount of NOPs depending on what was
-   installed before.
-
-
-2. The feature should allow to unpatch some functions while keeping
-   the others patched.
-
-   The ftrace handler might cause some unwanted slowdown or other
-   problems. The performance might get restored only when we remove
-   the NOPs when they are not longer necessary.
-
-
-3. The handling of callbacks is already problematic. We run only
-   the ones from the last patch to make things easier.
-
-   We would need to come with something more complicated if we
-   want to support rollback to "random" patches on the stack.
-   And support for random patches is fundamental at least
-   from my point of view.
-
-
-> Along those lines, I'd also propose that we constrain our existing patch
-> stacking even further.  Right now we allow a new patch to be registered
-> on top of a disabled patch, though we don't allow the new patch to be
-> enabled until the previous patch gets enabled.  I'd propose we no longer
-> allow that condition.  We should instead enforce that all existing
-> patches are *enabled* before allowing a new patch to be registered on
-> top.  That way the patch stacking is even more sane, and there are less
-> "unusual" conditions to worry about.  We have enough of those already.
-> Each additional bit of flexibility has a maintenance cost, and this one
-> isn't worth it IMO.
-
-Again, this might make some things easier but it might also bring
-problems.
-
-For example, we would need to solve the situation when the last
-patch is disabled and cannot be removed because the transition
-was forced. This might be more common after removing the immediate
-feature.
-
-Also it might be less user friendly. White the atomic replace could
-make things easier for both developers and users.
-
-
-> The downside of the above proposals is that now you can't remove an old
-> patch after it's been replaced, but IMO that's a small price to pay for
-> code sanity.  Every additional bit of flexibility has a maintenance
-> cost, and this one isn't worth it IMO.  Just force the user to leave the
-> old inert patches loaded.  They shouldn't take up much memory anyway,
-> and they might come in handy should a revert be needed.
-
-I actually think about exactly the opposite way. IMHO, the atomic replace
-and cumulative patches allow to handle livepatches more securely.
-Also most situations might be solved by just going forward. If we support
-only replace mode, we could get rid of the stack, disable feature,
-and possibly make the code more straightforward.
-
-To make it clear. I do not have any plans to work on this. It is
-just an idea.
-
-
+> > -	sound-sgtl5000 {
+> > -		audio-codec = <&sgtl5000>;
+> > -		audio-routing =
+> > +	audio: sound-sgtl5000 {
+> > +		compatible = "simple-audio-card";
+> > +		simple-audio-card,name = "On-Board Codec";
+> > +		simple-audio-card,format = "i2s";
+> > +		simple-audio-card,bitclock-master = <&sound_codec>;
+> > +		simple-audio-card,frame-master = <&sound_codec>;
+> > +		simple-audio-card,widgets =
+> > +			"Microphone", "Mic Jack",
+> > +			"Headphone", "Headphone Jack";
+> > +		simple-audio-card,routing =
+> >  			"MIC_IN", "Mic Jack",
+> >  			"Mic Jack", "Mic Bias",
+> >  			"Headphone Jack", "HP_OUT";
+> > -		compatible = "fsl,imx-audio-sgtl5000";
+> > -		model = "On-board Codec";
+> > -		mux-ext-port = <5>;
+> > -		mux-int-port = <1>;
+> > -		ssi-controller = <&ssi1>;
 > > +
-> >  static struct kobject *klp_root_kobj;
+> > +		sound_cpu: simple-audio-card,cpu {
+> > +			sound-dai = <&ssi1>;
+> > +		};
+> > +
+> > +		sound_codec: simple-audio-card,codec {
+> > +			sound-dai = <&sgtl5000>;
+> > +		};
+> >  	};
+> >  };
 > >  
-> >  static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
-
-[...]
-
-> > @@ -375,7 +393,7 @@ int klp_disable_patch(struct klp_patch *patch)
+> >  &audmux {
+> >  	status = "okay";
+> > +
+> > +	ssi1 {
+> > +		fsl,audmux-port = <0>;
+> > +		fsl,port-config = <
+> > +			(IMX_AUDMUX_V2_PTCR_SYN |
+> > +			 IMX_AUDMUX_V2_PTCR_TFSEL(4) |
+> > +			 IMX_AUDMUX_V2_PTCR_TCSEL(4) |
+> > +			 IMX_AUDMUX_V2_PTCR_TFSDIR |
+> > +			 IMX_AUDMUX_V2_PTCR_TCLKDIR)
+> > +			 IMX_AUDMUX_V2_PDCR_RXDSEL(4)
+> > +		>;
+> > +	};
+> > +
+> > +	pins5 {
+> > +		fsl,audmux-port = <4>;
+> > +		fsl,port-config = <
+> > +			IMX_AUDMUX_V2_PTCR_SYN
+> > +			IMX_AUDMUX_V2_PDCR_RXDSEL(0)
+> > +		>;
+> > +	};
+> >  };
 > >  
-> >  	mutex_lock(&klp_mutex);
-> >  
-> > -	if (!klp_is_patch_registered(patch)) {
-> > +	if (!klp_is_patch_usable(patch)) {
+> >  &ecspi2 {
+> > @@ -193,6 +224,7 @@
+> >  		compatible = "fsl,sgtl5000";
+> >  		pinctrl-names = "default";
+> >  		pinctrl-0 = <&pinctrl_hummingboard2_sgtl5000>;
+> > +		#sound-dai-cells = <0>;
+> >  		reg = <0x0a>;
+> >  		VDDA-supply = <&v_3v2>;
+> >  		VDDD-supply = <&vcc_1p8>;
+> > -- 
+> > 2.11.0
+> > 
 > 
-> This is another case where a wrapper function hurts readability.  What
-> does "usable" even mean to the reader of this code?  Every time I see
-> it, I have to do a double take.  I think getting rid of the wrapper in
-> favor of just doing
->
-> 	if (!klp_is_patch_in_list(patch, &klp_patches))
-
-IMHO, this is only a matter of taste. In the long term, the name
-"is_patch_usable" might be more descriptive than the information that
-the patch is on some  list.
-
-Anyway, I reworked this for v11. I removed klp_replaced_patches list.
-Instead, I added "bool registered" into struct klp_patch. Also
-I renamed klp_is_patch_registered() to klp_is_patch_on_stack().
-
-Then you could check is_patch_on_stack() in the enable/disable
-functions. And you could check patch->registered in
-klp_unregister_patch(). I believe that it is more clear.
-
-
-Best Regards,
-Petr
+> -- 
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+> According to speedtest.net: 8.21Mbps down 510kbps up
