@@ -1,38 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuj6pb9BoQBTCjAkoapSkvJnliEoOLwsdxT9MmKyxO5+/EJJ2U8ICLEGcmusZoWjP6pekrQ
-ARC-Seal: i=1; a=rsa-sha256; t=1521483061; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IH1Dhhz2E0tYTgbf5DNZvL2j3WeyXhBC85qy8TkxEklnwFZzgqbF3/zk36jMA0Ffx1
-         Anq/Arf4KPVVTQmh2hNfj8IJdjvqn2tswE/imaW2tSk3z/Q4RWBykOSVzVRyhpfBt6vP
-         ElDe9d3hkhBXuNEGJE5m9FO1KBneATvAXotAJkooGvy829tOORQExkeVrQXeoNKa3iRR
-         UgptrENbIf/89B9dvnT3GLGR9qJu3TwWe5xXm5+MYNcYpaPfbdZJZM/Yxrxn22Y9OaLt
-         ZLECR92aZre9kMdOc4KOEJzSxKDDlIea/4lyEwNJGMUxb9gbjpJQl11qQShdfEoZS268
-         MKfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Ydrup8WiDvD4UL3s8Mp6zcfhht5FP9lgb5ue8nPE3cw=;
-        b=IONvVl3VPttMERG/BzfR7GzaOjEFbB3ol3Myo/4vQTwSwrMPBWbYl9oesicwW5syXD
-         z83Teemnd0g6Bq5JvXfxA0ZfADRNuYvjUSkHPJg7yUiqKjNQZ0Z6NoPzwEGcxnbrai78
-         +J3P6GGKecd8lEBFVUwEfzbD8sZpFhDY2NQbI8SrM/m1GrJKvXPn/+WFysVmrq2wdKii
-         EoObwdMfb592YY2y1aNyNoVFDI3jgOOiJRa3ZJFh6Wu/fFFOm+/Fu5uwlSeharpgaA1c
-         I6ot89I5+aKfU7s26ot8ukSYGGT095AXIAPXY7kP0XCM88UPh65fb76424xug0NqfjlJ
-         04tA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483053-2-1639070516023791670
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483052; b=vptJqAQmpPEuQ7d4PKPdoFN/Cb1I9V5PkQV0b+kYk/nISLG
+    /gr59QUzJQhGzHmbqsQ129Kvdov+jehZhq9cT9TVNGQQbqNDfPA+uFtb6SpZpjtv
+    vBo6OOPmo4QRmT61dFctG7vHl0uKTd4BjRGWkvBgI5SA1KE51Bq12vhv77RNnhK8
+    +nu7bIMhMNSqrxnLs2QynKmCSrT/ZWGmwLyMryIoiD4QZpSY5V2ebhKXEalf4gkn
+    XJhd4rRtkNqH6ZifxCLpUWlU2BROR/EVBKrYwYQ5U9Cy+qjWush1XnBdwce/yksI
+    +OVqC3KBLvb1b6keb0WZmb4+Hk77xUNIwgulXnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483052; bh=zpOIHhbYeVPWGdZvWFvF++D9aZ
+    +XalPyzCLQlrDs4ws=; b=s2M7q/7s8D+w7ofPvj3qCO03sHQKetKs0TTMhiwc6U
+    AocVpmxqJrRXBiNRvzu4i5mhFUrIgBazUJAOq11RFXhrCnd1bQN9AkN2WNeGSu8g
+    Gv821uwfNaXHWgUS9FHSDdfslix7iWcdMrfKLwltcUbebwxY1Javr6H2TbSZBsvg
+    2WHL+FJlDnszrcFzTtHE5BysoapMKTbbgQxQdtMUK+18LnYxN4nzsYzXLoDHxtqH
+    a6lTLt5EQtmHnzMcbb7ZNveEYFVJQfwH9Drjx+8mIpYAPFkSymQirX06uowEk/PO
+    7d3ku46zK/MGq0+zQx4Fw7pbn68w+FVs0hICnWKviSlA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegheeijeenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegheeijeenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S966438AbeCSSKl (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:10:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41990 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965559AbeCSSKh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:10:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 54/68] media: cpia2: Fix a couple off by one bugs
-Date: Mon, 19 Mar 2018 19:06:32 +0100
-Message-Id: <20180319171835.467820557@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 45/68] sched: Stop resched_cpu() from sending IPIs to offline CPUs
+Date: Mon, 19 Mar 2018 19:06:23 +0100
+Message-Id: <20180319171834.218142193@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -40,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390622995940501?=
-X-GMAIL-MSGID: =?utf-8?q?1595390622995940501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +83,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
-[ Upstream commit d5ac225c7d64c9c3ef821239edc035634e594ec9 ]
+[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
 
-The cam->buffers[] array has cam->num_frames elements so the > needs to
-be changed to >= to avoid going beyond the end of the array.  The
-->buffers[] array is allocated in cpia2_allocate_buffers() if you want
-to confirm.
+The rcutorture test suite occasionally provokes a splat due to invoking
+resched_cpu() on an offline CPU:
 
-Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
+WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
+Modules linked in:
+CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+task: ffff902ede9daf00 task.stack: ffff96c50010c000
+RIP: 0010:native_smp_send_reschedule+0x37/0x40
+RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
+RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
+RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
+R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
+FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+Call Trace:
+ resched_curr+0x8f/0x1c0
+ resched_cpu+0x2c/0x40
+ rcu_implicit_dynticks_qs+0x152/0x220
+ force_qs_rnp+0x147/0x1d0
+ ? sync_rcu_exp_select_cpus+0x450/0x450
+ rcu_gp_kthread+0x5a9/0x950
+ kthread+0x142/0x180
+ ? force_qs_rnp+0x1d0/0x1d0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x27/0x40
+Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
+---[ end trace 26df9e5df4bba4ac ]---
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+This splat cannot be generated by expedited grace periods because they
+always invoke resched_cpu() on the current CPU, which is good because
+expedited grace periods require that resched_cpu() unconditionally
+succeed.  However, other parts of RCU can tolerate resched_cpu() acting
+as a no-op, at least as long as it doesn't happen too often.
+
+This commit therefore makes resched_cpu() invoke resched_curr() only if
+the CPU is either online or is the current CPU.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/cpia2/cpia2_v4l.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/cpia2/cpia2_v4l.c
-+++ b/drivers/media/usb/cpia2/cpia2_v4l.c
-@@ -812,7 +812,7 @@ static int cpia2_querybuf(struct file *f
- 	struct camera_data *cam = video_drvdata(file);
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -633,7 +633,8 @@ void resched_cpu(int cpu)
+ 	unsigned long flags;
  
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
+ 	raw_spin_lock_irqsave(&rq->lock, flags);
+-	resched_curr(rq);
++	if (cpu_online(cpu) || cpu == smp_processor_id())
++		resched_curr(rq);
+ 	raw_spin_unlock_irqrestore(&rq->lock, flags);
+ }
  
- 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
-@@ -863,7 +863,7 @@ static int cpia2_qbuf(struct file *file,
- 
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
- 	   buf->memory != V4L2_MEMORY_MMAP ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
- 
- 	DBG("QBUF #%d\n", buf->index);
