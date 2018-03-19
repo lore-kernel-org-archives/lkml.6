@@ -1,67 +1,83 @@
 Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1521451054; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521451053; cv=none;
         d=google.com; s=arc-20160816;
-        b=WV5r7G1KRJ53wxDooY6mf9XHPcIKT7+d422gmaqgxkqdz0T8oG8y2EAMkQcWuUnk1q
-         5gTDA5tg6l8avwXVhs/AdWdhIDYb8rYE+YDEqSb9JUViPMI8gW9k4AJvlQvu55sJJhND
-         2t9pzImsgcJmqkK+Qwoxdnf6QtvOuBsqhOHM7ypBU7TZYM8AkCdD99lXvUmUpjMmyjbg
-         nKsFCDzih+VJfY9vamqTaLE9baP7VjVckEBldVTivXBajTZowqhSQZZQC30murBqCy3u
-         EImTnJyow62GvlExiPBMOloiRRjzYeKdCep3zPCy0o8OhpI0GM8FHBKqcu2CD4QtlQu2
-         Vjaw==
+        b=S9FXPM5YAtd1yI13qBspLY99D2gLVD92G7Ybv+6W3t/P9QXyuDn4/ABgYqQ2OkxPox
+         F5RR/CSDmmlTk4N6lx27rYeRKDf7jSl4E0EfPG1TMqWxCtuBP132/KK4TluG4odt0wxX
+         igya/tSyIPFXNCl4DHq6+N6IsfusNrvsikU5qAga/L9K9EakmJdhVmzQ5ql+o54vjs2+
+         LhHiTo7otyjdm2/IuM4J9rjrke71cCj0vJuv9QpgG6tW1iWvAI79oxm+soXaGNyVmM8f
+         fwWNCN8zAm31TRnAnjgzwxesmuR1iiLRHpdKxNGjsLaK/1vnQMZpD49AVVZhy3Gp1gAM
+         q+Gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=FxAKBDOkmmd+0QaP3/e3MWUtjVQYZZMwsjprwdcsZUI=;
-        b=lqWdd/vWohemk4fXUy06FQkl7U4reaFGJ4uw5Bp4kkEnDAnXXbO7B66zFzh/oO2LDQ
-         zizGPipeFT5Y5e8dLw7vfh1R+TiADHp5u3xMJZsTcYWbBw/8VwbFVw0Fbbntx3llDXA7
-         e3bhgHUvnfDvagyWpE5d3j6AG2ORW4feC3kmcNom4O45Wi1O3TNoPFra/I89yoY6AEuV
-         O3+oe6+VnzzC4UBo5EoFKC+C29XXj//liLB9qCHkDWI/WCPEQGQctOLwQ29W02vjwD6G
-         PO1xl74tXSHv+hpY1IvmvgnD8a0BHlQzxxyPgeyQpyREKd/FPwXbnqRRzG8hGl6aZbj+
-         XRUQ==
+        bh=v3VPrd7wRyIUv3FGcGGyv+0Ad0gIfczJLP/v+0C/a8g=;
+        b=pqSGmzQI3B2mNd3s4HBf2AyQcuoMSvB4aiFR/8//gbldrObZhQBp+Az/hRJ5SgSHhD
+         ICBoCAZAzw+KI/6i2DFmvCQtLifQyveB/6/BEYpqzDHetd2p5EiLbLBFukrZT5wn9nhi
+         5tkuccwhuG7OqVyJ+ob1+/mTqgpguwstzMjcrOq0mpBIGr7onidnux+ti7pyWqJDLzM6
+         dL8SdTBqFfa9e+6ZDFDEb/+3YiDqZHark3Tehx+rbTF+NwX3ZuEGDHt0WBpuzXjk2mtt
+         nxmT6Y3bb7OGG27Er5IF6B/4FN3rsI0f6LBuPBYYhCujLW8XHdvxXie+jAlm5wVJ0HcE
+         OM+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=TmHAUs8B;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=TuC8iHy8;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=TmHAUs8B;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=TuC8iHy8;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AG47ELufbzzxlCKHomzTYwKA63ycew1vIw8YtCYffvXtU/42oJhG+P2TukEKBlQdW2PO8ZGwpIK8sw==
+X-Google-Smtp-Source: AG47ELslQMR57XkJsrc1BjC5pDS535TPvqSkLv42QQGxdS9PnTYHweibhvq1wEJn39cCuDtET08iGQ==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 08/21] eeprom: at24: make struct initialization uniform in at24_probe()
-Date: Mon, 19 Mar 2018 10:17:08 +0100
-Message-Id: <20180319091721.18193-9-brgl@bgdev.pl>
+Subject: [PATCH 07/21] eeprom: at24: drop redundant variable in at24_write()
+Date: Mon, 19 Mar 2018 10:17:07 +0100
+Message-Id: <20180319091721.18193-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180319091721.18193-1-brgl@bgdev.pl>
 References: <20180319091721.18193-1-brgl@bgdev.pl>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595357060361041755?=
-X-GMAIL-MSGID: =?utf-8?q?1595357060361041755?=
+X-GMAIL-THRID: =?utf-8?q?1595357059742950553?=
+X-GMAIL-MSGID: =?utf-8?q?1595357059742950553?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When zeroing structs, use "{ }" everywhere.
+We can reuse ret instead of defining a loop-local status variable.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/misc/eeprom/at24.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/eeprom/at24.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index d9d55310ffa4..83a9223e62fb 100644
+index ff7eb8e382c2..d9d55310ffa4 100644
 --- a/drivers/misc/eeprom/at24.c
 +++ b/drivers/misc/eeprom/at24.c
-@@ -515,7 +515,7 @@ static int at24_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	struct regmap_config regmap_config = { };
- 	struct nvmem_config nvmem_config = { };
- 	const struct at24_chip_data *cd = NULL;
--	struct at24_platform_data chip = { 0 };
-+	struct at24_platform_data chip = { };
- 	unsigned int i, num_addresses;
- 	struct at24_data *at24;
- 	bool writable;
+@@ -440,18 +440,16 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
+ 	gpiod_set_value_cansleep(at24->wp_gpio, 0);
+ 
+ 	while (count) {
+-		int status;
+-
+-		status = at24_regmap_write(at24, buf, off, count);
+-		if (status < 0) {
++		ret = at24_regmap_write(at24, buf, off, count);
++		if (ret < 0) {
+ 			gpiod_set_value_cansleep(at24->wp_gpio, 1);
+ 			mutex_unlock(&at24->lock);
+ 			pm_runtime_put(dev);
+-			return status;
++			return ret;
+ 		}
+-		buf += status;
+-		off += status;
+-		count -= status;
++		buf += ret;
++		off += ret;
++		count -= ret;
+ 	}
+ 
+ 	gpiod_set_value_cansleep(at24->wp_gpio, 1);
 -- 
 2.16.1
