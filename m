@@ -1,95 +1,125 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELueRjmDYJwvWiE1PJJS1WRf+AWeSVLprfAjRBgqKvx7uTaWsTVp+Y3X/XDuUfBJp+vdbi7u
-ARC-Seal: i=1; a=rsa-sha256; t=1522075455; cv=none;
+Return-Path: <jhovold@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521467660; cv=none;
         d=google.com; s=arc-20160816;
-        b=VWoLFJKKcLdi4Ua7qhrhS4kJGlQLvkCTAmdvT931iK0lX/flJyxpdrEhFJUj/skB8h
-         wHjnhO47qiNu5WTGG+tZ6EWj6t5TWWuvo5lCs4tRSDtZ93DzkhMwuLgiC7qspp0iI7YI
-         aMoAJUFSe3/qwnHuvYrE7VvV6N77H8j8DoSTqS46ACxfJ776vNqqmrfQA4h6F0dPsGfz
-         t89QVIZgp+BAFrje+8KxT92wxNZYmVGc6E3EVUNROthVcYqfHoYl6bGaWoKfw2adSr9E
-         RjNyYbvCRktSjGp5z6PHLA3Y7oG3YFD8/986bGj90CCLZuJ3UrP+LsMu6mnAhqkYo0k+
-         vs1g==
+        b=REUCUL19b7RXAIdtVVOFxgZ0j9KRLW4pyMUpIMkI5VkiYLlAIBxLQkT9nWm2YHOgdn
+         jXAGKjHTX8R51W40l+fpw0yytSxjZzyLZSkz0AxSjFDKuX3kKFMQJjmuvzLYCEy+ucuP
+         c8KOh70l5WjrwQ5TDdmlEsTMsyXj9BxO6AM5IZuCfbg1MzoW82/ghj2YdeXvsRjai7ca
+         +IKTZ6hUBnXkq32KWwsisRd2qhZXwb3mNtH1o2SQP5oeYy1YA9eY9MuF4BEO/Cr57liK
+         87/+pBCCjdzzXszODT3sPhirrmS4ABNmXXGis6/ecybPZ6F9i4UAJla93AjL8jqGFbxZ
+         quyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=YAUtPWld5+NGx6Fhf39hFYfVwVKRHIeK4CqNVxo9jZ8=;
-        b=Xi66ht0/QcMuVjhIpFff/nmRMir3KNsE2B4DBRvTuHZ4p30lb1s2hp3hgHWz9+SuIM
-         YiH4X46jO5OCsIoEohTQhuw4UFAKX3L/g3q1SNVnkaclXC4+Gt9jrLb54EN9Tw6gM/3k
-         j+BW+UQ3MmEOT+QYX6Ge+gArXd0CdvDkCUZWRfGzVArnpvXzr2euNwY6MFiQYfTNZqPj
-         uORK5vNstgdQ2zuXnmSiz3xo9CA6gMgAZo27bMTfB+q/hNothfPjP9PK4pa7eZpQaFrO
-         liGChbAk9A/X5MA/I5zX664s4egG/Cg+fciYwjMHM5eIY0ZBqenDvbCHZfdJaM2GOtvy
-         EvzQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :arc-authentication-results;
+        bh=a7IOpzZw6/7yEyXRAOTavwL8UN9+uNF0HfI5H3QZQgs=;
+        b=zO78eM2/5mXdW6T2GWfsoxpuXs9atcx3GIHhG6ZAZSnUU8Aff0+l0qXwwbA0ToP8Pv
+         NYEs9iHwNHXzw+r5/mmlu80xbth+e10bvgxpCTwbAKssVHflBRp8Cwb/aJNLoR0maXHv
+         bKpMUxQseDsosRiUktc+gqJ9UGgaMC5RBkz4SIJBxqrJEYXmti1oHWI/YA0JV4QEQgqM
+         HMzs8HmmwDRoyYUTTIiHVyErBJDIcS8ShwlkWdYqIE14HssBeUWJ6JbMB/+NebwvUICy
+         Gbc8A9WbxDNws/Gyg/7R2SyWukXsuBM0XeUT8uQHG2Z9vI5caooU7S1l8dHYR7O2qzaH
+         ndHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Xxv4svnO;
+       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeCZOoP (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 26 Mar 2018 10:44:15 -0400
-Received: from osg.samsung.com ([64.30.133.232]:48109 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751926AbeCZOoO (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:44:14 -0400
-Subject: Re: [PATCH] selftests: Print the test we're running to /dev/kmsg
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180323094427.21938-1-mpe@ellerman.id.au>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <5575d84d-5737-9610-5cef-bbfda909b704@osg.samsung.com>
-Date: Mon, 26 Mar 2018 08:44:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Xxv4svnO;
+       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+X-Google-Smtp-Source: AG47ELtptmgm4AHY6BpOjDUojTh2ytsImEwPfnlGxHlxxq31/fq/3hxSzyCDKGiE17qu7CMY+lTVQA==
+Sender: Johan Hovold <jhovold@gmail.com>
+Date: Mon, 19 Mar 2018 14:54:18 +0100
+From: Johan Hovold <johan@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Johan Hovold <johan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	DTML <devicetree@vger.kernel.org>,
+	Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+	=?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	kernel@pyra-handheld.com, Russell King <linux@armlinux.org.uk>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-omap <linux-omap@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@baylibre.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [Letux-kernel] [PATCH v5 3/5] misc serdev: Add w2sg0004 (gps
+ receiver) power control driver
+Message-ID: <20180319135418.GL18359@localhost>
+References: <cover.1512114576.git.hns@goldelico.com>
+ <5494ad34b39a6c62601e3747440268dfb3be7d5a.1512114576.git.hns@goldelico.com>
+ <20171222124427.GI3374@localhost>
+ <91850CC3-B280-4701-9D07-96AFF3A79A6F@goldelico.com>
+ <90F9A8E4-035A-4A9E-8AAB-757491D63E69@goldelico.com>
+ <20180112153903.GB5992@localhost>
+ <20180212152618.GC13962@amd>
+ <20180227070415.GB18666@localhost>
+ <22A8F5FE-C8B9-46EB-B98D-A94EA4170131@goldelico.com>
 MIME-Version: 1.0
-In-Reply-To: <20180323094427.21938-1-mpe@ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22A8F5FE-C8B9-46EB-B98D-A94EA4170131@goldelico.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595721182279802309?=
-X-GMAIL-MSGID: =?utf-8?q?1596011793223044784?=
+X-GMAIL-THRID: =?utf-8?q?1584169666984958099?=
+X-GMAIL-MSGID: =?utf-8?q?1595374473677219424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/23/2018 03:44 AM, Michael Ellerman wrote:
-> Some tests cause the kernel to print things to the kernel log
-> buffer (ie. printk), in particular oops and warnings etc. However when
-> running all the tests in succession it's not always obvious which
-> test(s) caused the kernel to print something.
+On Tue, Feb 27, 2018 at 08:32:50AM +0100, H. Nikolaus Schaller wrote:
+> Hi Johan,
 > 
-> We can narrow it down by printing which test directory we're running
-> in to /dev/kmsg, if it's writable.
+> > Am 27.02.2018 um 08:04 schrieb Johan Hovold <johan@kernel.org>:
+> > 
+> > On Mon, Feb 12, 2018 at 04:26:18PM +0100, Pavel Machek wrote:
+> >> Hi!
+> >> 
+> >>>> Let's restart this discussion and focus on the main roadblock (others
+> >>>> are minor details which can be sorted out later).
+> >>>> 
+> >>>> If it feels like a hack, the key issue seems to me to be the choice of
+> >>>> the API to present the GPS data to user space. Right?
+> >>> 
+> >>> Or even more fundamentally, does this belong in the kernel at all?
+> >> 
+> >> Yes, it does.
 > 
-> Example output:
+> Thanks, Pavel for supporting our view.
 > 
->   [  170.149149] kselftest: Running tests in powerpc
->   [  305.300132] kworker/dying (71) used greatest stack depth: 7776 bytes left
->   [  808.915456] kselftest: Running tests in pstore
+> > 
+> > But not necessarily in its current form.
 > 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  tools/testing/selftests/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 7442dfb73b7f..0fbe778efd5f 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -130,6 +130,7 @@ ifdef INSTALL_PATH
->  		BUILD_TARGET=$$BUILD/$$TARGET;	\
->  		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
->  		echo "echo ========================================" >> $(ALL_SCRIPT); \
-> +		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\" >> /dev/kmsg" >> $(ALL_SCRIPT); \
->  		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
->  		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
->  		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
-> 
+> Is this a "yes after some code fixes"?
 
-Thanks Michael. I will get this to 4.17-rc1
+No, we need some kind of at least rudimentary gps framework even if we
+allow for a raw (NMEA) interface for the time being (possibly
+indefinitely).
 
--- Shuah
+> Pavel mentioned an example where such an evolutionary approach was taken.
+> > 
+> >>> Now, if we'd ever have a proper GPS framework that handled everything in
+> >>> kernel space (i.e. no more gpsd) then we would be able to write kernel
+> >>> drivers that also take care of PM. But perhaps that's unlikely to ever
+> >>> be realised given the state of things (proprietary protocols, numerous
+> >>> quirky implementations, etc).
+> >> 
+> >> That is what needs to happen.
+> >> 
+> >>> The kernel is probably not the place to be working around issues like
+> >>> that, even if serdev at least allows for such hacks to be fairly
+> >>> isolated in drivers (unlike some of the earlier proposals touching core
+> >>> code).
+> >> 
+> >> Oh, kernel is indeed right place to provide hardware abstraction --
+> >> and that includes bug workarounds.
+> > 
+> > Right, at least when such hacks can be confined to a driver and not be
+> > spread all over the place.
+> 
+> It seems that you forgot that the driver we propose is not spread all over
+> the place. It *is* confined to a single driver thanks to the serdev api.
+
+I believe that's what I wrote above.
+
+Johan
