@@ -1,67 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932781AbeCSJvC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:51:02 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:53171 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932567AbeCSJvA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:51:00 -0400
-X-Google-Smtp-Source: AG47ELto+vmSSIHsXkmsI3yh/7zcvQsbXo8fzYS5QXxAUiE3+pk1Qued5QfhlpfPnUz7MIKW33UKjA==
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
-        Martin Steigerwald <martin@lichtvoll.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-References: <27165802.vQ9JbjrmvU@merkaba>
- <a3af4fed-a728-5be2-2224-6a0573406c5b@leemhuis.info>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <f6f20cd6-0d52-4501-f8ea-c4da9ec128cf@redhat.com>
-Date: Mon, 19 Mar 2018 10:50:58 +0100
+        id S932725AbeCSKBO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:01:14 -0400
+Received: from mga04.intel.com ([192.55.52.120]:33457 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932375AbeCSKBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 06:01:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,330,1517904000";
+   d="scan'208";a="29215719"
+Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
+ timeout value
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180307132020.30951-1-kishon@ti.com>
+ <20180307132020.30951-8-kishon@ti.com>
+ <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
+ <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
+ <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
+ <29f640ac-b155-41c6-cf3f-8c66e1b300f1@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1905d25f-d16d-50b1-54b0-35807d801a12@intel.com>
+Date: Mon, 19 Mar 2018 12:00:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <a3af4fed-a728-5be2-2224-6a0573406c5b@leemhuis.info>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <29f640ac-b155-41c6-cf3f-8c66e1b300f1@ti.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thorsten,
-
-On 19-03-18 10:42, Thorsten Leemhuis wrote:
-> Hi! On 11.03.2018 09:20, Martin Steigerwald wrote:
->>
->> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
->> with SMART checks occassionally failing like this:
+On 19/03/18 11:20, Kishon Vijay Abraham I wrote:
+> Hi Adrian,
 > 
-> Martin (or someone else): Could you gibe a status update? I have this
-> issue on my list or regressions, but it's hard to follow as two
-> different issues seem to be discussed. Or is it just one issue? Did the
-> patch/discussion that Bart pointed to help? Is the issue still showing
-> up in rc6?
+> On Friday 16 March 2018 07:51 PM, Adrian Hunter wrote:
+>> On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
+>>>> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
+>>>>> sdhci has a 10 second timeout to catch devices that stop responding.
+>>>>> Instead of programming 10 second arbitrary value, calculate the total time
+>>>>> it would take for the entire transfer to happen and program the timeout
+>>>>> value accordingly.
+>>>>>
+>>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>>> ---
+>>>>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>>>>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
+>>>>>  2 files changed, 50 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>> index 1dd117cbeb6e..baab67bfa39b 100644
+>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+>>>>>  		return sg_dma_address(host->data->sg);
+>>>>>  }
+>>>>>  
+>>>>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
+>>>>> +				  struct mmc_command *cmd,
+>>>>> +				  unsigned int target_timeout)
+>>>>> +{
+>>>>> +	struct mmc_data *data = cmd->data;
+>>>>> +	struct mmc_host *mmc = host->mmc;
+>>>>> +	u64 transfer_time;
+>>>>> +	struct mmc_ios *ios = &mmc->ios;
+>>>>> +	unsigned char bus_width = 1 << ios->bus_width;
+>>>>> +	unsigned int blksz;
+>>>>> +	unsigned int freq;
+>>>>> +
+>>>>> +	if (data) {
+>>>>> +		blksz = data->blksz;
+>>>>> +		freq = host->mmc->actual_clock ? : host->clock;
+>>>>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
+>>>>> +		do_div(transfer_time, freq);
+>>>>> +		/* multiply by '2' to account for any unknowns */
+>>>>> +		transfer_time = transfer_time * 2;
+>>>>> +		/* calculate timeout for the entire data */
+>>>>> +		host->data_timeout = (data->blocks * ((target_timeout *
+>>>>> +						       NSEC_PER_USEC) +
+>>>>> +						       transfer_time));
+>>>>
+>>>> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
+>>>> for timeouts greater than about 4 seconds.
+>>>>
+>>>>> +	} else {
+>>>>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
+>>>>> +	}
+>>>>> +
+>>>>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>>>
+>>>> Need to allow for target_timeout == 0 so:
+>>>>
+>>>> 	if (host->data_timeout)
+>>>> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>>>
+>>>>> +}
+>>>>> +
+>>>>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>>  {
+>>>>>  	u8 count;
+>>>>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>>  		if (count >= 0xF)
+>>>>>  			break;
+>>>>>  	}
+>>>>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
+>>>>
+>>>> If you make the changes I suggest for patch 6, then this would
+>>>> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
+>>>>
+>>>> I suggest you factor out the target_timeout calculation e.g.
+>>>>
+>>>> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+>>>> 					 struct mmc_command *cmd,
+>>>> 					 struct mmc_data *data)
+>>>> {
+>>>> 	unsigned int target_timeout;
+>>>>
+>>>> 	/* timeout in us */
+>>>> 	if (!data)
+>>>> 		target_timeout = cmd->busy_timeout * 1000;
+>>>> 	else {
+>>>> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
+>>>> 		if (host->clock && data->timeout_clks) {
+>>>> 			unsigned long long val;
+>>>>
+>>>> 			/*
+>>>> 			 * data->timeout_clks is in units of clock cycles.
+>>>> 			 * host->clock is in Hz.  target_timeout is in us.
+>>>> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
+>>>> 			 */
+>>>> 			val = 1000000ULL * data->timeout_clks;
+>>>> 			if (do_div(val, host->clock))
+>>>> 				target_timeout++;
+>>>> 			target_timeout += val;
+>>>> 		}
+>>>> 	}
+>>>>
+>>>> 	return target_timeout;
+>>>> }
+>>>>
+>>>> And call it from sdhci_calc_sw_timeout()
+>>>>
+>>>>>  
+>>>>>  	return count;
+>>>>>  }
+>>>>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>>  		mdelay(1);
+>>>>>  	}
+>>>>>  
+>>>>> -	timeout = jiffies;
+>>>>> -	if (!cmd->data && cmd->busy_timeout > 9000)
+>>>>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+>>>>> -	else
+>>>>> -		timeout += 10 * HZ;
+>>>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
+>>>>> -
+>>>>>  	host->cmd = cmd;
+>>>>>  	if (sdhci_data_line_cmd(cmd)) {
+>>>>>  		WARN_ON(host->data_cmd);
+>>>>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
+>>>>>  		flags |= SDHCI_CMD_DATA;
+>>>>>  
+>>>>> +	timeout = jiffies;
+>>>>> +	if (host->data_timeout > 0) {
+>>>>
+>>>> This can be just:
+>>>>
+>>>> 	if (host->data_timeout) {
+>>>>
+>>>>> +		timeout += nsecs_to_jiffies(host->data_timeout);
+>>>>> +		host->data_timeout = 0;
+>>>>
+>>>> It would be better to initialize host->data_timeout = 0 at the top of
+>>>> sdhci_prepare_data().
+>>>>
+>>>> Also still need:
+>>>>
+>>>> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
+>>>> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+>>>
+>>> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
+>>
+>> Yes, but I was thinking you would only calculate when it was needed.
+> 
+> I feel since we would have anyways calculated data_timeout, we should use that
+> instead unless you see a problem with that.
 
-Your right there are 2 issues here:
-
-1) The Crucial M500 SSD (at least the 480GB MU03 firmware version) does
-not like enabling SATA link power-management at a level of min_power
-or at the new(ish) med_power_with_dipm level. This problem exists in
-older kernels too, so this is not really a regression.
-
-New in 4.16 is a Kconfig option to enable SATA LPM by default, which
-makes this existing problem much more noticeable. Not sure if you want
-to count this as a regression. Either way I'm preparing and sending
-out a patch fixing this (by blacklisting LPM for this model SSD) right
-now.
-
-2) There seem to be some latency issues in the MU03 version of the
-firmware, triggered by polling SMART data, which causes lvmetad to
-timeout in some cases. Note I'm not involved in that part of this
-thread, but I believe that issue is currently unresolved.
-
-Regards,
-
-Hans
+I would prefer not to calculate data_timeout when a hardware timeout is
+being used.
