@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521483946-2-11288699330911335809
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483945; b=kzAZEu1acwvBVmZ5lRA5YnO/v8oUy6nN+9PD2XMavq30Nu2
-    GwXpiHOgK96x3jBz61idXRqQShq0KoVIxfeuSVMkTsgDzDX+G3IYc51WNlEwwicr
-    QOOqQFr3nqHX0YqX3QGZ1DclNyuHPn8o6+q73xVWgOgXtE2wHCVR8sCF3Jt9xx11
-    C46CDppW1hgm49odYGLIz1fcXhrDtuCU1zCALnWTTN+D7VPcgK1O4Ac53c9Gg+ID
-    1qXwTvaUBKiGb5UjZ75kjFttq8f9u3cDSnCwln/GLHZnVfF4kMLBj43qMxpI2TCN
-    aJz0ZTFO9G40Q1yJMwtdOMMqmADniYNpiwA0k3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483945; bh=Vmhl0bejB1gsujL20U+nOww+aw
-    9FMYEssdObMkrHOjs=; b=lg+rivaVN0TQdmoRAMS9bEVo1E2WuueTkAJvO2kfdX
-    s6TRxFuUUBX74TUVcZqDhYpr28wuVx7pIER9LlXvdrQeWOa3EDozBnLWEoFAVfXj
-    vFHwg85BUCXxuOcSznLU5aObMnAkVCLJxaV50AY62YDTqXjIhfEf2G8uMUebthoy
-    wc3F73IOsIDDinDMdT1xABnA6HVidEg7wN38L7EBjqLQbZvas/SjCTFd0cy4Tffe
-    yYvCsQUuyshqR+PoQBGQPUo8Ms8ssIrYW9RqcsdS1wgBOvTZxMh56MzA2bzKekv2
-    0JS4G1E9AD2IpCzUDYFOBb2QL5Ftz+MOsWYAgU4FJYlw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheeikeenucevlhhushhtvghrufhiiigvpeejtd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheeikeenucevlhhushhtvghrufhiiigvpeejtd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965942AbeCSSZj (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:25:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50438 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969743AbeCSSZb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:25:31 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELv9J6Hq+oDjNB+ebWz0BdLk+td8oUeEmrTzXxQJIeQya1XUulIYuGIsJoz+j1C51YvckqjI
+ARC-Seal: i=1; a=rsa-sha256; t=1521483944; cv=none;
+        d=google.com; s=arc-20160816;
+        b=x3r4NgI4seNIA26sp/94DLZAmeAdc29COUqsInfklO1OiBnhFs8lzxe75M0RlwyBzv
+         HwtYHkl9+wgRWyWVARJ2n4a3xr73/wKTdBYhQHftmtqQmVwLLjRD/Wu6VOtImGDJ6iyh
+         Qktxv0HCvf1SNu+84TlP2NvrjUNg8VPmBPGBbDuzTzLSx4T0AhGsWsTtc17w6sVJYrCf
+         2BfQPjJ+BpQqpI9SrypRU2pfBGDhjwwkWlIPUC2pwjc06xjsOEnLgMjKySzNZsaDib1X
+         Ngd8Gp6nwLzyZk/bb+eQkh7hJne+rSWAP3i1jpBGCIe1bSz0QUGcpXjE755eDrl4jWSQ
+         0FIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=xlUYFG/y/dEX4vQ8+l8BQrmIhiEBkVmQuJ3zbaSF4jk=;
+        b=Y+pOTrC3q18+sqKa0lqjiEjQS0+MSPejRPUkRcsTaa/F8pADebCKtL6/c5rFab09QA
+         fyivhODtcRJYkANexxFVJPYSSd66dN/4xKx5mHQFc8X8g4qsILHqW3qnwp8nO+YiOdpK
+         llbM34tIIK8E61MWZOSbTDd21hxG+IgycxuF8V+V0DByFzCPhNPxAv/7byzFsIDSIpuB
+         7syYl1XwpmR/Ci9IFzACXOGGgtUucjFmJ9uxsQfBRSa46RiE8XwLVsrHQklMf/TuK5Mq
+         GpXDHV93A5Jce9PZ8Z4lwaBKrxnKarBSPgMurjtYImRx0jLptAzLFEbjrGMJBoqLZM7B
+         GG+w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xingyu Chen <xingyu.chen@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 168/241] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-Date: Mon, 19 Mar 2018 19:07:13 +0100
-Message-Id: <20180319180758.120407909@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Stefan Schmidt <stefan@osg.samsung.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 173/241] net: ieee802154: adf7242: Fix bug if defined DEBUG
+Date: Mon, 19 Mar 2018 19:07:18 +0100
+Message-Id: <20180319180758.317636013@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391548381946292?=
+X-GMAIL-MSGID: =?utf-8?q?1595391548381946292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,48 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
 
 
-[ Upstream commit 75eccf5ed83250c0aeaeeb76f7288254ac0a87b4 ]
+[ Upstream commit 388b3b2b03701f3b3c10975c272892d7f78080df ]
 
-According to the datasheet, in Meson-GXBB/GXL series,
-The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+This fixes undefined reference to struct adf7242_local *lp in
+case DEBUG is defined.
 
-Test passed at gxl-s905x-p212 board.
-
-The following published datasheets are wrong and should be updated
-[1] GXBB v1.1.4
-[2] GXL v0.3_20170314
-
-Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
-Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Stefan Schmidt <stefan@osg.samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/meson/gxbb.c |    4 ++--
+ drivers/net/ieee802154/adf7242.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -572,7 +572,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_M
- static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
- static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
- static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
--static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-+static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
- static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
- static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
- static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-@@ -623,7 +623,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge,
- static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
- static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
- static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
--static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-+static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
- static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
- static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
- static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+--- a/drivers/net/ieee802154/adf7242.c
++++ b/drivers/net/ieee802154/adf7242.c
+@@ -888,7 +888,7 @@ static struct ieee802154_ops adf7242_ops
+ 	.set_cca_ed_level = adf7242_set_cca_ed_level,
+ };
+ 
+-static void adf7242_debug(u8 irq1)
++static void adf7242_debug(struct adf7242_local *lp, u8 irq1)
+ {
+ #ifdef DEBUG
+ 	u8 stat;
+@@ -932,7 +932,7 @@ static irqreturn_t adf7242_isr(int irq,
+ 		dev_err(&lp->spi->dev, "%s :ERROR IRQ1 = 0x%X\n",
+ 			__func__, irq1);
+ 
+-	adf7242_debug(irq1);
++	adf7242_debug(lp, irq1);
+ 
+ 	xmit = test_bit(FLAG_XMIT, &lp->flags);
+ 
