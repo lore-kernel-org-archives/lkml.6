@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891259-1521498674-2-6964783263518410707
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521498610-2-16576726737890417081
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosk.us-ascii, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521498673; b=P3qhUyd+5blVyxfMpze/1N3DWccTe81ULbBFebGUbW9YDpM
-    CMihtetH44bi2hkTThiniLp6qNpO6o1iPKsrGvEEIs7ljSP/g2zHiGpI+Pw9Qya+
-    Uj8L7lORnDDM5OIHttjvNGa5RnXbmIBNUUQDzfBNRfAb0BFaJDYPWYpU7kxcpxnt
-    sw131+FShzCDOjTDpwLeD7ByDlv61G/irxaSg8Y0okqPe1kTAluKD/IaPHAvBlxH
-    EjBvtdGJBOLIhzzH0LM0PRLcoiKLTMcdAlaezyXMBJlY8NUr7LGe1UHx9wXgK7aI
-    0kiC1t/w1QpJwws46mpCwb30Rz1t3DzIZ9G9szw==
+    t=1521498609; b=wnHe4Sr3DCMATLFq1ULJux0KMgxhRBtp7Py0UmkNzJmbYZP
+    hOXbHTimO1xHISKMPicGnPnUqUlBMyAxaDOCcxBRf+L8F6v6MpyUxWGw57RYj6ya
+    X14aqqta/y9UyBYf1CqN80qORBkB9pbMSvoHHzU0npPyKFJQgWU/TIs9wHl+fMOy
+    FW/J0a/0LhtZgMm4jz4YUi9Z+g1H7cS7xIpk9hLTAQ3D4t3bIyuhkCTFwTPioOe0
+    SuG9FQ5mzy/gH3+YZ+XZsAHBe7lPmWzGEOobZne5QMErzN5UnGf5WQUAtaazp+Sg
+    F3X9wQrFJaDgbmcypzEJXVkLJKO4HnoNYWmLL2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521498673; bh=IKe9Zd
-    AHm/HEP0m3VFqGaYQh2FRi3VyvqOjUTLv/y0U=; b=By5MqIcgBRGlbKtFnY+gkY
-    S2TwMc66UWxZbGY4+sw6yhB78t1JYj/lU7yeKvhPIO7FMgd0N8DIVCNlvLp61lBa
-    TYgvNoxgdyEesHdYO+bceKRxq1R2g1p3tfUIkU2538Vq/eX9bHjyqWo4tAD7cjgc
-    5JU7YN7O4qYzZX6mdD5M9cvWXyi9/l5XeY3qMyGDmMvCjtaTUYDvZ7WJg6EnQKHO
-    aRoPD2fzfwN6cA2mUBjKvpTOrhn4x3f3izjuGvhvppUg3RFvUi1W1Xrk6JWukENq
-    Pna0LQEMzhmbp2nKcOxWpTEGU6DqzOwWFnREqdnYHetECOk8B3IRra5OR97FM9Og
+    :mime-version:sender:list-id; s=arctest; t=1521498609; bh=4FchJ+
+    SVaykXLEKWv6/QOrC83v07UoRp8vfZcQHPMKs=; b=T+L/B84cvm9KhXWYao0yr+
+    Zbh/y5LKcs36Dfi8P31getyFBdkOR2tMpoJVTwo9kP81Wj1OsZFgYG/ufo8CQP+N
+    jAq/cFWjmtp+cu/09udl8zR5P/J3pyqeupt83WojTDQfd8DEJm9FRLB2gYLkj/mz
+    5OH962o+kLUZI3KX7sK4FJQCxjQn2vgQbL7k8FZbyp/4ZJ9Tzf0eYDhSAVueeh13
+    QVgk84cWj8hlqhDw+tdoFZiVkwagdTdZptJ6wHwvBvIimqWITvuhPBkeB51FzHlV
+    oyYeUJqZuxHVx2YZGh46+E1Djz8Lc3p6+3EuUAU8HJaYRkilJwpSiPy+kdWJmb0g
     ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nZPMX0mS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RlGRL7j2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduieefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieektdenucevlhhushhtvghrufhiiigvpeekhe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejgedvkeenucevlhhushhtvghrufhiiigvpeejie;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nZPMX0mS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RlGRL7j2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduieefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieektdenucevlhhushhtvghrufhiiigvpeekhe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejgedvkeenucevlhhushhtvghrufhiiigvpeejie;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933785AbeCSWaK (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:30:10 -0400
-Received: from mail-by2nam01on0119.outbound.protection.outlook.com ([104.47.34.119]:13392
+        id S936530AbeCSWaG (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:30:06 -0400
+Received: from mail-by2nam01on0106.outbound.protection.outlook.com ([104.47.34.106]:16179
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933758AbeCSPsX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:48:23 -0400
+        id S933522AbeCSPsa (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:48:30 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Hans de Goede <hdegoede@redhat.com>,
-        Mark Brown <broonie@kernel.org>,
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        "Reported-by : Jason Kridner" <jkridner@beagleboard.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 037/124] ASoC: Intel: cht_bsw_rt5645: Analog
- Mic support
-Thread-Topic: [PATCH AUTOSEL for 4.15 037/124] ASoC: Intel: cht_bsw_rt5645:
- Analog Mic support
-Thread-Index: AQHTv5mbIesFz3pH/kynEw2Nkiykfg==
-Date: Mon, 19 Mar 2018 15:47:37 +0000
-Message-ID: <20180319154645.11350-37-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 052/124] gpio: label descriptors using the
+ device name
+Thread-Topic: [PATCH AUTOSEL for 4.15 052/124] gpio: label descriptors using
+ the device name
+Thread-Index: AQHTv5ml+sln5ZcwBkSMg1noXkQBXQ==
+Date: Mon, 19 Mar 2018 15:47:54 +0000
+Message-ID: <20180319154645.11350-52-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,103 +78,75 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1030;7:KYhGUSl2O4JQFtBn6lXUPYUl5ICB7Kiz38wEeoHTH2HRyzKZ0Ub7cfbnumLSaf12dI9OX1/k3IVCr9zGuC1a0HSPnh3/SUqGwQad3XQ5uroAAPvpNypOB7ZTdhZODtHtquB1LaMECVNEsr0JSMxg+edrRIoVpJJv+nFb1McUOhG/9szIzU7sr53peMsvpKsj81l0ufTvl4SC0sx2c51KSthMokd+qyQtOYlEJiHYado+ZwcGZK+0PDaVZzG0MGWL;20:X4Lnme2amzmagZeiL6Ubupatt13aYODMUH6+6WehLfpG2s5fw/EupS4P4kL76lWYi3lB+BncTCFo4Ptr5xxyirL4WxPayjGuJ4FzDUjV8pWWSSGm/hgiihlo3lLctYfgWUIomWlTsCAplFsp6LBH5+Oyq+roqklBa3bIPqdXXmo=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:jnORC4JQqwlQ2YYGePIpKHtm9t1dbneZQ2qNHZvn5j3dVMxZb91m2MnRDhkhHtB2q7Z4EynDi7tl4VU1ZrKeX4oi3roTGHXnS8ApLobpLqmHQBUU1+2zXzBVuv1gVScFwdV5/CSMBHudzSJNxuzrZnVl4OcoaK2kCwADbdVcrLEAdsb5XT29XLzsm9JX+kMKPnj/dO8iqTNG/5WC9ci6Rvp0naTBZCFw7pj4KpHfs2EGju3xsEsQKgOAkgsA7Q4Z;20:ItCoAxTxXzHRGc0Ym+ZyhYd0sSl289hKy+arF9nRNZmoqka4xIy20BjvsOB3nkWTY1qMURk2ZLpafs5WYGDcAKrVZK7+eOYliy2iAWazeBoBP+/rh1EJKfZEsQyu7L7JVq1Zh7gYRdHrMoDlabHmlR8LSX1lKGLNa4IW5WBq0zw=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b70f89db-0efe-468f-754f-08d58db0ce13
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1030;
-x-ms-traffictypediagnostic: DM5PR2101MB1030:
+x-ms-office365-filtering-correlation-id: 67d6edc2-f158-4025-2ebf-08d58db0d33d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
+x-ms-traffictypediagnostic: DM5PR2101MB1031:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10306540BBE3AD2574808143FBD40@DM5PR2101MB1030.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB1031EA585D74E8C9E9E60FB6FBD40@DM5PR2101MB1031.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1030;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1030;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(39380400002)(366004)(346002)(376002)(199004)(189003)(2501003)(6486002)(5250100002)(478600001)(86612001)(102836004)(1076002)(97736004)(99286004)(72206003)(6436002)(2906002)(107886003)(66066001)(10090500001)(81166006)(6116002)(81156014)(305945005)(8676002)(86362001)(7736002)(68736007)(54906003)(110136005)(26005)(3846002)(105586002)(3280700002)(316002)(53936002)(8936002)(186003)(76176011)(2900100001)(6506007)(36756003)(10290500003)(2950100002)(22452003)(25786009)(5660300001)(106356001)(3660700001)(4326008)(14454004)(6512007)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1030;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 0sKehCptbmbjGNC1CKd/hjTeS2WZjteZEUB7uFMnYI7H4yBx/DQExTEcn55WkdBRsyIgZASSTscqfZ2qkZX3HNF8xB3mXT2q5q9rkvsoicwpwxaS7z/D9jhnZaEv8fQz3aIS8zMwFcdclxUPfrqw0uHqGkf9MotLfiA5J+YVM8pVQeQFljBQI2/n2hMX/0oXSVVz/MGLAQtNrlqgAk164xn2rC6oAqKHginOpXkxNeDXHzYYu31XK/pPbbCc/8MX+hQUoXETPbOPQaNybgtLovvi3p882MyOH7IIPtbQbv82Pgm50YZ23AAZI+pbti8disFLGUIHs/dZLnu/HL4TcA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(39860400002)(39380400002)(376002)(189003)(199004)(6436002)(6512007)(6666003)(3280700002)(2950100002)(7736002)(6116002)(3846002)(10090500001)(105586002)(4326008)(5660300001)(305945005)(1076002)(81156014)(2906002)(6486002)(81166006)(8676002)(8936002)(2900100001)(106356001)(36756003)(68736007)(54906003)(3660700001)(22452003)(97736004)(6506007)(25786009)(59450400001)(99286004)(10290500003)(76176011)(66066001)(14454004)(72206003)(478600001)(102836004)(26005)(186003)(316002)(2501003)(110136005)(5250100002)(86362001)(53936002)(107886003)(86612001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: SU7nwxjyDkgGecyRovQc09Ia0QyadCEylaD40h6x3poN1MSNWv6GmdnpkNeKPhBmg0VdWQ4vYLp8i1IKw/aT4izK2phmqFc7dWyJnSsnbQ0oNOOqXEGCQ+7s3OFaRaoG2DjhJ0CwfEyMa9ZbRLn+uff0gTpXMbuk7D9l6evzBeNNMNvwcLRArX7CY1Z/QFcCS19Q6KYnsUHUas7JUHerKNzIM+DLxcNI3yQuyib0Lg8eLTfgJ4q0l6diJ4Ukx7y/iyA2eywnJkv7qamIKGh/9U204tmV5hc/FkvIbmp5beJDGtUPyo9WCXtPtdyP0ythoQXhCw8jRLhsOk7QR8JZ8g==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b70f89db-0efe-468f-754f-08d58db0ce13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:37.7132
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67d6edc2-f158-4025-2ebf-08d58db0d33d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:54.8581
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1030
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1031
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit b70b309950418437bbd2a30afd169c4f09dee3e5 ]
+[ Upstream commit 24e78079bf2250874e33da2e7cfbb6db72d3caf4 ]
 
-Various Cherry Trail boards with a rt5645 codec have an analog mic
-connected to IN2P + IN2N. The mic on this boards also needs micbias to
-be enabled, on some boards micbias1 is used and on others micbias2, so
-we enable both.
+Some GPIO lines appear named "?" in the lsgpio dump due to their
+requesting drivers not passing a reasonable label.
 
-This commit adds a new "Int Analog Mic" DAPM widget for this, so that we
-do not end up enabling micbias on boards with a digital mic which uses
-the already present "Int Mic" widget. Some existing UCM files already
-refer to "Int Mic" for their "Internal Analog Microphones" SectionDevice,
-but these don't work anyways since they enable the RECMIX BST1 Switch
-instead of the BST2 switch.
+Most typically this happens if a device tree node just defines
+gpios =3D <...> and not foo-gpios =3D <...>, the former gets named
+"foo" and the latter gets named "?".
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+However the struct device passed in is always valid so let's
+just label the GPIO with dev_name() on the device if no proper
+label was passed.
+
+Cc: Reported-by: Jason Kridner <jkridner@beagleboard.org>
+Reported-by: Jason Kridner <jkridner@beagleboard.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/intel/boards/cht_bsw_rt5645.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpio/gpiolib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/boards/cht_bsw_rt5645.c b/sound/soc/intel/boar=
-ds/cht_bsw_rt5645.c
-index 18d129caa974..f898ee140cdc 100644
---- a/sound/soc/intel/boards/cht_bsw_rt5645.c
-+++ b/sound/soc/intel/boards/cht_bsw_rt5645.c
-@@ -118,6 +118,7 @@ static const struct snd_soc_dapm_widget cht_dapm_widget=
-s[] =3D {
- 	SND_SOC_DAPM_HP("Headphone", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
- 	SND_SOC_DAPM_MIC("Int Mic", NULL),
-+	SND_SOC_DAPM_MIC("Int Analog Mic", NULL),
- 	SND_SOC_DAPM_SPK("Ext Spk", NULL),
- 	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
- 			platform_clock_control, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
-@@ -128,6 +129,8 @@ static const struct snd_soc_dapm_route cht_rt5645_audio=
-_map[] =3D {
- 	{"IN1N", NULL, "Headset Mic"},
- 	{"DMIC L1", NULL, "Int Mic"},
- 	{"DMIC R1", NULL, "Int Mic"},
-+	{"IN2P", NULL, "Int Analog Mic"},
-+	{"IN2N", NULL, "Int Analog Mic"},
- 	{"Headphone", NULL, "HPOL"},
- 	{"Headphone", NULL, "HPOR"},
- 	{"Ext Spk", NULL, "SPOL"},
-@@ -135,6 +138,9 @@ static const struct snd_soc_dapm_route cht_rt5645_audio=
-_map[] =3D {
- 	{"Headphone", NULL, "Platform Clock"},
- 	{"Headset Mic", NULL, "Platform Clock"},
- 	{"Int Mic", NULL, "Platform Clock"},
-+	{"Int Analog Mic", NULL, "Platform Clock"},
-+	{"Int Analog Mic", NULL, "micbias1"},
-+	{"Int Analog Mic", NULL, "micbias2"},
- 	{"Ext Spk", NULL, "Platform Clock"},
- };
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8abdd0035091..c6c499691541 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3638,7 +3638,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct=
+ device *dev,
+ 		return desc;
+ 	}
 =20
-@@ -189,6 +195,7 @@ static const struct snd_kcontrol_new cht_mc_controls[] =
-=3D {
- 	SOC_DAPM_PIN_SWITCH("Headphone"),
- 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
- 	SOC_DAPM_PIN_SWITCH("Int Mic"),
-+	SOC_DAPM_PIN_SWITCH("Int Analog Mic"),
- 	SOC_DAPM_PIN_SWITCH("Ext Spk"),
- };
+-	status =3D gpiod_request(desc, con_id);
++	/* If a connection label was passed use that, else use the device name as=
+ label */
++	status =3D gpiod_request(desc, con_id ? con_id : dev_name(dev));
+ 	if (status < 0)
+ 		return ERR_PTR(status);
 =20
 --=20
 2.14.1
