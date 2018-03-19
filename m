@@ -1,139 +1,149 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3703489-1522289908-2-1687420320436390767
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522289907; b=GR8nr5Wk7cYFjM3CwBYluIU2AELtxwd+BYsVJraXSZUHUL+
-    gFbOFAA50K8ttyRFpxXGDOSM1iTjbUc9D9bRIC8DTseUnPrQW1E7zTTZK7WZKeB0
-    XYpSTrp6mrkLRb++iRvNqTp48rHmb/o7QyzxdFDbcBKmuh5WZ/3UVhOjMLzrs2UX
-    IZnX7yxV/fMGhyociPzxLEMk6KqnFF0THJEHHSrjxQ7phlQ2Gas1cIRUdYKZ5Vs8
-    TghmYLK0YTOPbHyJWTH2LLuIi0p61ZWzR6jnZkhBtKK8Jziiw8z4wWCKEHQCSH9Q
-    puNYBAbOhzXvQPdi82NVs3l3CosRb82dI8RDabA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1522289907; bh=Ojf6fDcqOf5OMnQr6opUCQ1chu
-    VTU+CHdX/iA155GR4=; b=m2Q3A5W8v91x23OR54IyxPTtIZw9lzCEooDcTZ1wnY
-    v0udc4NbRou/SX9d/b2I4Ch0sYWkhXvDMBREvjrdFA8XLXU4mq19+wFInmw3uojQ
-    ycbz/DgHBB3UdpKztIT74vp7eynv/xgDAXSAz2F1KfkkfEyfrmbCpennb1VDDehh
-    XxdO3oN4ihMDGM84esHBAepmanViI9Y4m4lOoj2SsWfayl7+RRTLO116mHfukovR
-    kJNUmuVoAIn0LXxZoBhFgFSVcksexzEYpA4TGbn6mZP7S9GvZmOpKacowoXLVDmY
-    P795O2nSu2KvCeguy2UOw4L4Pmv7LTrNWYQU92SWQjCQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=K9MME2+v x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Jyg/dwuH;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=K9MME2+v x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Jyg/dwuH;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFT3X5qN81i4Qxn73bMQc0l+Za7yD9N9wgseu7EsvBiTiUYtzaAraOPfN3At354QAdu0pcNAKBZe2R8UmxRftQODB+v4NRMwxmMbXVM2mBfH2OhQFW8W
-    vIsd1YE9XdEXHkKiwg4W2EUZE7oLec+DHoTgzHAfSM6DmkwipM25Bb5mk9M7TPbZTGlyq3+iwEXZnwTurTHtuhMXJNsr7xPYaNl5X4AMEgiBNmwPT2t94Ilg
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=uP1ucDPQAAAA:8 a=Byx-y9mGAAAA:8 a=3Suf5XRKAAAA:8 a=6ohNodAXAAAA:8
-    a=KKAkSRfTAAAA:8 a=Pms26XNpMU6socnADCgA:9 a=CjuIK1q_8ugA:10
-    a=9a9ggB8z3XFZH39hjkD6:22 a=VcBebDW0u3KdNpfvOfbI:22 a=0gLUg1G2xj6MhZ7RLP3J:22
-    a=cvBusfyB2V15izCimMoJ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750946AbeC2CSY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 22:18:24 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33776 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeC2CSX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 22:18:23 -0400
-X-Google-Smtp-Source: AIpwx483qtcTh8EZRuGrovj2vDPjFeAtRaM3XwZx1BWIG+7v/3jWJTV1OCvNjVaR52AP3XH99CLtlg==
-Date: Thu, 29 Mar 2018 10:18:06 +0800
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org,
-        a.zummo@towertech.it, Pan Bian <bianpan2016@163.com>,
-        Guy Shapiro <guy.shapiro@mobi-wize.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Frank Li <Frank.Li@freescale.com>, linux-rtc@vger.kernel.org,
-        "# v3 . 16+" <stable@vger.kernel.org>
-Subject: Re: [RESEND] [PATCH] rtc: snvs: Fix usage of snvs_rtc_enable
-Message-ID: <20180329021803.GI27302@dragon>
-References: <1522264445-2398-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <peda@axentia.se>
+X-Google-Smtp-Source: AG47ELtdgjPbvZU6woxVZwDsrT7XLbfJFpX8wkYXJyDfL0dJoujXv8d43mM056GTeacPMPYzAanQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521478978; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zO2l4ixi6QTouN/6w6SczRZ8wHq1xo2G3++wHVD6tSQFVr5WWvq1+sadZ61Czye27j
+         uYR92ZRrpz/1EeHH4Sbrib5iCp7gGyQEt05fgmAlx0If1sQUm//zm0yQkyvj86JcmzYR
+         CcBJQIV9oo54+L8YUq1XI0mEB0KU6Qm9uWtr+ryh2/CGiU9euANKYTc1Krbb8ViC9j2g
+         a4RbL7QbiUoRvqwerXqDjWCxkq1kytxkTVcmm3sbLr4FKbrTpH5HPiPyOwVx4oQBd2SK
+         PlC5UxNOiCy2ZGkAsBNbayRQ8huT3ZNIia1TBcF4hdKcQdsioVFlMRr/MoC56BRR154E
+         fK0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
+         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=RLQxN0mBOtqL0n5JbEAfcpKKNbVh4hqF3KUn34bEW3k=;
+        b=ZPz0AJkoGJZB4IYGAWi+CjxF7/Gut+YA+1sPAQJBgzcN6ElFp8gB4YykTJerdZjPtg
+         JxZYaRQU7V1E3ffCTHRM1KT0A8MbA5rafNgxRnYxMh5aF2bzjUzZpRaIt00POY+FL5Re
+         nrmsySXr9cEtdt6c7JOItsSELDdzb2c0G5lgZ+dd/BPs2G+D5nDM5MHsBJ6qxdVbSrNI
+         hfSw0ybQIlnjToGqfYv3wRtAaXnzGDMcxOR5XtuoZIOkh6+BKZWXYsQ9iQU5nhwSiz6e
+         XXvHLWTNP47gQrXfo2Z+thdx2kphexDKdi4cDGymYN5oO6xHmctW1tYtsxi5btjIL7lz
+         f2Rg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=PwhmkKxs;
+       spf=pass (google.com: domain of peda@axentia.se designates 40.107.4.133 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=PwhmkKxs;
+       spf=pass (google.com: domain of peda@axentia.se designates 40.107.4.133 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Hartmut Knaack <knaack.h@gmx.de>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/3] iio: add unit converter
+Date: Mon, 19 Mar 2018 18:02:43 +0100
+Message-Id: <20180319170246.26830-1-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522264445-2398-1-git-send-email-pure.logic@nexus-software.ie>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1P190CA0048.EURP190.PROD.OUTLOOK.COM (2603:10a6:7:52::37)
+ To AM4PR0202MB2769.eurprd02.prod.outlook.com (2603:10a6:200:8c::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d01d41dc-4fdb-4d43-3227-08d58dbb41e5
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2769;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:lhyp+1jXZ1lmbLPpvnKgNg/4F9SC7BrrzU1JyBjCLYvo9MQqKMTNZer6Sjwteqc6661Hab8Ir1zD4h01QQcH/FSd3wkwJHcmDHEB3ieHa6DtKAZjbbR94MjvzfSgFCsCRZJoCcMUBow6nVZ5k5be3evwUIsXWXk2NUa7vSfUBp31V90LqWhQuzvvNfa6ETopbVbBsn9rQsP9gvT+7BOsZTbbaSPrMlP9a7ugs66TQHv5qaUnd9SZmUJSlBLPqkY3;25:JhLk+15tBvvVHxHkOQCIEbTuu7mXhYK7xg4OtEq4Py0lUpT0OTZNOHrIg+5b0qkIcmJR9MhZs/GZdAiOWi/s/N3UrLM5dyfmBuqoFTMfxf15/gX/KdmC5Ze16igSL18ugRMOqS4wjNKv6r30zgiqNX8bJBSbS69IhbskF9mbXfiTscQeO0OlC9erovhIviLyroCmnir+VEMsYhBPMfNgOrYDhg8k8rHTnnCbBsI6fOTSqu1LoUBXpARrpQ2UdAZYYidOotw9cMBiGnzrxrt0Lk7z/M0cWFfuzu2dYD4djQAsGflsWHOZCBMs4YECYIjbgNuR8/oRb6Wc0TfvAarmBw==;31:Jxf5Ardg9ntdtT0v5JJs+o/9tik1ZWAo/8tDz9QVuuXwwyjVntehicHR2KWaikCvPalhBRICidARF4l+7dYLgakxejqAMwcUo3var8UBhxW1wKBr77j1EGEkwh8hqyN4k53LEzAOxxoZbKlhZngQGNmtFE23W7RjnezxBpoN4GjHyJUgw/TTAHMhKaCFlZnSZIoH8StOduajJ3mlBlalkZJZP+tMqbIPZaNfG1I8abI=
+X-MS-TrafficTypeDiagnostic: AM4PR0202MB2769:
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB27691217F238569A962E1A6ABCD40@AM4PR0202MB2769.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231221)(944501300)(52105095)(10201501046)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:AM4PR0202MB2769;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2769;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:ZDyahLTvAaen4kSY7qepfgO+p50JQkZZAQA6zLHNV0oNbPG3K++sBZwmvFViuQwKK8DTPOKF7Kj/Drl8l2Gyg+7kzxRcJenVs6uvOroi/1a4OTR/IODNc9QQmFEUNAtOZTTyl3zeYXVlDAlLQ8kCkK+SaSIiZd32OdnsFeslX0Tvx01cYRTzqDC6CmM+5MShWvd8vh2t7xbmv/1KFjIKY0iwdOPnGDy+nNS2OqvBnd1GbQ47wN59g6Rf4DDbZWCWVjiUMiUKAN7vlm9mSFjvyA==
+X-Forefront-PRVS: 06167FAD59
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39830400003)(39380400002)(346002)(199004)(189003)(36756003)(48376002)(68736007)(50466002)(50226002)(66066001)(8936002)(6486002)(53936002)(51416003)(8666007)(52116002)(6512007)(7736002)(305945005)(105586002)(478600001)(3846002)(6116002)(2351001)(1076002)(2361001)(97736004)(6666003)(6916009)(54906003)(16586007)(74482002)(26005)(2906002)(4326008)(7416002)(386003)(6506007)(86362001)(81166006)(59450400001)(81156014)(8676002)(47776003)(16526019)(25786009)(186003)(316002)(5660300001)(106356001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:nEPLfUtSWpal6jMblim3Ttxy+vqLxrUADFvnIUL?=
+ =?us-ascii?Q?YbGUWwGgTi3+VlAV7dNmVE/FnoPgScYWm9HXiVf2rvbQriJQo92535ZnN0qN?=
+ =?us-ascii?Q?YOO55v8epInW85ehzqyfbvQ5ZCuox5B38rMkl6Mdbhru9wcWwWf61EyKOOGr?=
+ =?us-ascii?Q?HFh6IJSxhDeQ/VSCih5zZFywvjt1V7RY2MA9VZY1ZpRtTd7NOTpnB9hWnIwp?=
+ =?us-ascii?Q?wUEEK+B734Lya54gHnWuWgeClK0U/zlIEc6xycAkBmNGGTVUYLWppy+XXYpl?=
+ =?us-ascii?Q?qsOO9ftllaftFGEaIhOwf7eUtzOikuO8oGA5qjUf9dkUVmFAV7dx8WtQrbPy?=
+ =?us-ascii?Q?nHA4H+XLeB3GXuJz88n2x8X5nLzP/UAh9jXbrXAGvOao/rRvvn4QAS0ytAcd?=
+ =?us-ascii?Q?LLp4rl10mbdRJlUm9jY6V9C0i9aon3bjgZ2kCvY7wcLQM21mmEswrPldKxWG?=
+ =?us-ascii?Q?AnkhrZIpaUR5dMdH9z87H42IP9eCdagesGTN+dqnMf2yCTxjVyXX1IqkGwTn?=
+ =?us-ascii?Q?xqBpMcJEiOFortfGlPNY3JScfQ+kkymm83VFRxLX72ZDI22K0edrqCqxUvxo?=
+ =?us-ascii?Q?h0vRqYQjoe+WOi1PUBW4ASAi+DSQ/3068H4kFWpSq2kbrqaBaqNjRwqmG6f6?=
+ =?us-ascii?Q?AFZEAUr9wCtMScmkdx4QpGYdx0XDzTYY6Tstdgndp0RVOo0DpP8RnF5S7Cw2?=
+ =?us-ascii?Q?3krf7Hn6uS/4MehDwCmra8ZbsRKExVRD+ZyosnyocXxdAR0YQ7ocoqGghCgM?=
+ =?us-ascii?Q?4layLHf8emq4bGUjkKhwAEPGQWGkVHBbYDwxlKlLfJNUbG3m24KSQ1iDES0U?=
+ =?us-ascii?Q?3I7s2Chcz9PEsg0a3k2kMbSSxfnRxiqGzYhF5wzbrZZ3ods6r/C8hjc14yVe?=
+ =?us-ascii?Q?o3qOB8+8s0i2uqs2whGuNf5oa2zeni7DDpS+5oOcN0UqMzAeNpszeaLb4tkn?=
+ =?us-ascii?Q?xNpDaDok37lEZ6lOm7dl4ZM4rjsyJEknEHbAgP2D8tMF0PDRWPQEYqfDGJj0?=
+ =?us-ascii?Q?XYbC8QcFNEgNzaaJ7+ImO2LEVGaYVgushYJ1O69b0o3HzwC0mFg5KPE0sdl7?=
+ =?us-ascii?Q?O6VNQ4lIURoPo931Z3+Pw+yxWxSzV+Etb1XZAR63ksRhR88+riJedeYGyNnC?=
+ =?us-ascii?Q?8/TQ4A7iGaXuzVQGZMOH3A0wdiOIBkM/EiTB9rbDD8PqvMatZL/LoqMNtxcj?=
+ =?us-ascii?Q?LOhFPE9dOE/60JVcBji4vq/4qibHkH/a0EZmKmf+nyRBU4q3PBv7AEN+Q/dg?=
+ =?us-ascii?Q?+JsHohtaPQVHBNHLCmKw=3D?=
+X-Microsoft-Antispam-Message-Info: D+ruJE/hYFbpF1JAnqhdpCfBQwV2Yhx1pbigkwiwfvo6b1NdDMb/mgxeJciShgZIqn8MYivLVDTtbE6VA7rgeTvE16TW9ovyaSujI7bLh1uRUn1lXXFc+V1RLj/ULZrPELheLWKW8qYtP/mVeSJ7AU+huEMWRjimfkclonS8Dg5GIurJBHB4HmrgUA1VEUzu
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:oy1HjA+D+GrN1LNQJ3T0KIECZMUFVjE6xOCTVLqVCr4y2nQsI9abugISe0C96fLsUkTz0wcO0rKzhpJADV37n3FRddSF+jsbC6Vi6kOvutebhodHJJ0o9di9YyieXCrM0ig/y/c4UsnIiOi5pNfGFTcrfH5Dwc55h52cDAaWVO1VaWsE+VbHvLeierUYFzU+kfLQ8HDfQmGxluPj6lmeIbPdP2o/ntwedvxUvqum2i9CAhoyGj1GJVSthk+pSBgx3GAdrINiC0H/e15SPd6ab9EBstS4vFEOXD37zdA4jfqU4/EjOyqcoRrngSBshY4LD9Sj79Ve6GYXs0kwyYqwlMR6QHj2ayj4+h8lskDdeTA=;5:r4O1GejowUtMMb+s0aJKkr3ZQ6JTiczBk6rfm8Z3uw10/rOxcgkK5Xu9ozSCirYHd72ZPw1TMzYMdYdiTGXKHtC/Hd+SUPjs1vOBlIIywn3rEmX8xzkB9/oKWvH0OVWmT15sP5vV8l4/9a8nX3oOXLOpuTcSl+X44PzbIewun28=;24:nworSPSOYJEr3AZ4QGwkD1qkB/zzFvBvI/9lPa9q24a9k7Iyw6DDCSXpC+queSsz5oCPWQdq3w/09SEW/Q/XPCYrBLXWvsT6aNba2zWVKnM=;7:VxnqJaBPLsEGHiY6QxMipK1+4YI8Q7n10p5HZMih4TReOxX6+jqdTK2IQwfgOGtO7BtJAXKP8/KIeBitx5gffBzr+GKCTaAwHVq+DpHvdR210stnLp27comFNBsqjs2l9ti0coY7lBmQuJIDVffziZt49poTsNFv3ArUBtVODAfuafrxZrqEpaV88pFUDguLH/IAT48kN1KQCEBrElXK9mplky9mM1VC6bB7NboBEgjO5KzA0PNRdg+MBtWN9GSu
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2018 17:02:53.7646 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d01d41dc-4fdb-4d43-3227-08d58dbb41e5
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2769
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595386339632135527?=
+X-GMAIL-MSGID: =?utf-8?q?1595386339632135527?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 08:14:05PM +0100, Bryan O'Donoghue wrote:
-> commit 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver") introduces
-> the SNVS RTC driver with a function snvs_rtc_enable().
-> 
-> snvs_rtc_enable() can return an error on the enable path however this
-> driver does not currently trap that failure on the probe() path and
-> consequently if enabling the RTC fails we encounter a later error spinning
-> forever in rtc_write_sync_lp().
-> 
-> [   36.093481] [<c010d630>] (__irq_svc) from [<c0c2e9ec>] (_raw_spin_unlock_irqrestore+0x34/0x44)
-> [   36.102122] [<c0c2e9ec>] (_raw_spin_unlock_irqrestore) from [<c072e32c>] (regmap_read+0x4c/0x5c)
-> [   36.110938] [<c072e32c>] (regmap_read) from [<c085d0f4>] (rtc_write_sync_lp+0x6c/0x98)
-> [   36.118881] [<c085d0f4>] (rtc_write_sync_lp) from [<c085d160>] (snvs_rtc_alarm_irq_enable+0x40/0x4c)
-> [   36.128041] [<c085d160>] (snvs_rtc_alarm_irq_enable) from [<c08567b4>] (rtc_timer_do_work+0xd8/0x1a8)
-> [   36.137291] [<c08567b4>] (rtc_timer_do_work) from [<c01441b8>] (process_one_work+0x28c/0x76c)
-> [   36.145840] [<c01441b8>] (process_one_work) from [<c01446cc>] (worker_thread+0x34/0x58c)
-> [   36.153961] [<c01446cc>] (worker_thread) from [<c014aee4>] (kthread+0x138/0x150)
-> [   36.161388] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
-> [   36.168635] rcu_sched kthread starved for 2602 jiffies! g496 c495 f0x2 RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
-> [   36.178564] rcu_sched       R  running task        0     8      2 0x00000000
-> [   36.185664] [<c0c288b0>] (__schedule) from [<c0c29134>] (schedule+0x3c/0xa0)
-> [   36.192739] [<c0c29134>] (schedule) from [<c0c2db80>] (schedule_timeout+0x78/0x4e0)
-> [   36.200422] [<c0c2db80>] (schedule_timeout) from [<c01a7ab0>] (rcu_gp_kthread+0x648/0x1864)
-> [   36.208800] [<c01a7ab0>] (rcu_gp_kthread) from [<c014aee4>] (kthread+0x138/0x150)
-> [   36.216309] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
-> 
-> This patch fixes by parsing the result of rtc_write_sync_lp() and
-> propagating both in the probe and elsewhere. If the RTC doesn't start we
-> don't proceed loading the driver and don't get into this loop mess later
-> on.
-> 
-> Fixes: 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver")
-> 
-> Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-> Cc: a.zummo@towertech.it
-> Cc: alexandre.belloni@free-electrons.com
-> Cc: Pan Bian <bianpan2016@163.com>
-> Cc: Guy Shapiro <guy.shapiro@mobi-wize.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Frank Li <Frank.Li@freescale.com>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
+Hi!
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+This moves the iio-mux driver to a new category, since I think
+it will be the single driver in that category forever, and now
+I'm adding a new driver that is somewhat similar in nature...
+
+But that rename is not very interesting, it's just reshuffling.
+It's the new driver that I need. Specifically, I need to allow
+linear scaling and modification of the type of an io-channel.
+I don't know exactly how that is accomplished in the best way,
+but this is what I came up with.
+
+The use cases are an ADC hooked up to measure a "big" voltage by
+looking at the midpoint of a voltage divider, and an ADC used
+to measure the current by looking at the voltage over a resistor.
+
+Comments?
+
+Cheers,
+Peter
+
+Peter Rosin (3):
+  iio: rename the multiplexer category to wrapper
+  dt-bindings: iio: wrapper: add io-channel-unit-converter
+  iio: wrapper: unit-converter: new driver
+
+ .../{multiplexer => wrapper}/io-channel-mux.txt    |   0
+ .../iio/wrapper/io-channel-unit-converter.txt      |  84 +++++++
+ MAINTAINERS                                        |  11 +-
+ drivers/iio/Kconfig                                |   2 +-
+ drivers/iio/Makefile                               |   2 +-
+ drivers/iio/multiplexer/Makefile                   |   6 -
+ drivers/iio/{multiplexer => wrapper}/Kconfig       |  13 +-
+ drivers/iio/wrapper/Makefile                       |   7 +
+ drivers/iio/{multiplexer => wrapper}/iio-mux.c     |   0
+ drivers/iio/wrapper/iio-unit-converter.c           | 268 +++++++++++++++++++++
+ 10 files changed, 381 insertions(+), 12 deletions(-)
+ rename Documentation/devicetree/bindings/iio/{multiplexer => wrapper}/io-channel-mux.txt (100%)
+ create mode 100644 Documentation/devicetree/bindings/iio/wrapper/io-channel-unit-converter.txt
+ delete mode 100644 drivers/iio/multiplexer/Makefile
+ rename drivers/iio/{multiplexer => wrapper}/Kconfig (53%)
+ create mode 100644 drivers/iio/wrapper/Makefile
+ rename drivers/iio/{multiplexer => wrapper}/iio-mux.c (100%)
+ create mode 100644 drivers/iio/wrapper/iio-unit-converter.c
+
+-- 
+2.11.0
