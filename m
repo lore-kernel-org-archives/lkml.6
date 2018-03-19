@@ -1,62 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754868AbeCSA5D (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 20:57:03 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:57272 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754258AbeCSA5A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 20:57:00 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com
-Cc: pasha.tatashin@oracle.com, ard.biesheuvel@linaro.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] mm/memblock: cast constant ULLONG_MAX to phys_addr_t
-Date: Mon, 19 Mar 2018 01:56:45 +0100
-Message-Id: <20180319005645.29051-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.16.2
+        id S1754882AbeCSBC5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:02:57 -0400
+Received: from ozlabs.org ([103.22.144.67]:38095 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754258AbeCSBC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 21:02:56 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
+Subject: Re: [RFC PATCH 1/2] ftrace: Allow arches to opt-out of static ftrace
+In-Reply-To: <20180316104030.0df39af7@gandalf.local.home>
+References: <20180316134633.10584-1-mpe@ellerman.id.au> <20180316104030.0df39af7@gandalf.local.home>
+Date: Mon, 19 Mar 2018 12:02:54 +1100
+Message-ID: <87h8pcho75.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes a warning shown when phys_addr_t is 32-bit int
-when compiling with clang:
-  mm/memblock.c:927:15: warning: implicit conversion from 'unsigned long long'
-        to 'phys_addr_t' (aka 'unsigned int') changes value from
-        18446744073709551615 to 4294967295 [-Wconstant-conversion]
-                                  r->base : ULLONG_MAX;
-                                            ^~~~~~~~~~
-  ./include/linux/kernel.h:30:21: note: expanded from macro 'ULLONG_MAX'
-  #define ULLONG_MAX      (~0ULL)
-                           ^~~~~
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- mm/memblock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> On Sat, 17 Mar 2018 00:46:32 +1100
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+>> There is a small but non-zero amount of code required by arches to
+>> suppory non-dynamic (static) ftrace, and more importantly there is the
+>> added work of testing both configurations.
+>> 
+>> There are also almost no down sides to dynamic ftrace once it's well
+>> tested, other than a small increase in code/data size.
+>> 
+>> So give arches the option to opt-out of supporting static ftrace.
+>> 
+>> This is implemented as a DYNAMIC_FTRACE_CHOICE option, which controls
+>> whether DYNAMIC_FTRACE is presented as a user-selectable option or if
+>> it is just enabled based on its dependencies being enabled (because
+>> it's already default y).
+>> 
+>> Then the CHOICE option depends on an arch *not* selecting
+>> HAVE_DYNAMIC_FTRACE_ONLY. This would be more natural in reverse, as a
+>> HAVE_STATIC_FTRACE option, but that would require updating every arch.
+>> 
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>
+> Why not just add in arch/powerpc/Kconfig:
+>
+> config PPC
+> 	[..]
+> 	select DYNAMIC_FTRACE			if FUNCTION_TRACER
+>
+> ?
+>
+> It seems to work for me.
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index b6ba6b7adadc..696829a198ba 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -924,7 +924,7 @@ void __init_memblock __next_mem_range(u64 *idx, int nid, ulong flags,
- 			r = &type_b->regions[idx_b];
- 			r_start = idx_b ? r[-1].base + r[-1].size : 0;
- 			r_end = idx_b < type_b->cnt ?
--				r->base : ULLONG_MAX;
-+				r->base : (phys_addr_t)ULLONG_MAX;
- 
- 			/*
- 			 * if idx_b advanced past idx_a,
-@@ -1040,7 +1040,7 @@ void __init_memblock __next_mem_range_rev(u64 *idx, int nid, ulong flags,
- 			r = &type_b->regions[idx_b];
- 			r_start = idx_b ? r[-1].base + r[-1].size : 0;
- 			r_end = idx_b < type_b->cnt ?
--				r->base : ULLONG_MAX;
-+				r->base : (phys_addr_t)ULLONG_MAX;
- 			/*
- 			 * if idx_b advanced past idx_a,
- 			 * break out to advance idx_a
--- 
-2.16.2
+It does work, but it's a bit fragile. It requires duplicating the
+dependencies of DYNAMIC_FTRACE in the 'if' condition.
+
+Currently that's:
+
+config DYNAMIC_FTRACE
+	depends on FUNCTION_TRACER
+	depends on HAVE_DYNAMIC_FTRACE
+
+So technically we should use:
+
+ 	select DYNAMIC_FTRACE			if FUNCTION_TRACER and HAVE_DYNAMIC_FTRACE
+
+Though we happen to know we just selected HAVE_DYNAMIC_FTRACE so we can
+leave that out.
+
+As long as the dependencies of DYNAMIC_FTRACE don't change, or the 'if'
+clause is updated when they do, then it's OK and it is certainly simpler.
+
+cheers
