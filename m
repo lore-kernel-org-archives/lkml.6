@@ -1,120 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755524AbeCSMSy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 08:18:54 -0400
-Received: from mailxx.hitachi.co.jp ([133.145.228.50]:50524 "EHLO
-        mailxx.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754761AbeCSMSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 08:18:49 -0400
-Message-ID: <5AAFA682.2080901@hitachi.com>
-Date: Mon, 19 Mar 2018 21:01:06 +0900
-From: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20120614 Thunderbird/13.0.1
-MIME-Version: 1.0
-To: idryomov@gmail.com, sage@redhat.com, elder@kernel.org,
-        ceph-devel@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags bit
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
+        id S1755299AbeCSMXS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 08:23:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:42530 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750739AbeCSMXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 08:23:17 -0400
+Message-Id: <8c39109dbf91dd464fee381da3d8ad3354273ed2.1521461897.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH  1/2] powerpc/32be: use stmw/lmw for non volatile registers
+ save/restore
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 19 Mar 2018 13:23:15 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a user interface to prevent from issuing discard
-requests onto the specified rbd device. This is needed for
-thick-provisioned images. To avoid discarding allocated blocks on
-thick-provision image, users can specify this flag bit via sysfs
-(/sys/bus/rbd/devices/<dev-id>/thick).
+arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
+in order to use multiple word instructions in functions entry/exit
 
-When users write "1" to the file, rbd doesn't issue discard
-operation; meanwhile, if users write "0" to the file then rbd
-issues discard operation.
+The patch does the same for the asm parts, for consistency
 
-Signed-off-by: Hitoshi Kamei <hitoshi.kamei.xm@hitachi.com>
-Cc: Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/block/rbd.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ arch/powerpc/include/asm/ppc_asm.h |  5 +++++
+ arch/powerpc/kernel/misc.S         | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e40da093766..dba60ef43a47 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -427,6 +427,7 @@ enum rbd_dev_flags {
- 	RBD_DEV_FLAG_EXISTS,	/* mapped snapshot has not been deleted */
- 	RBD_DEV_FLAG_REMOVING,	/* this mapping is being removed */
- 	RBD_DEV_FLAG_BLACKLISTED, /* our ceph_client is blacklisted */
-+	RBD_DEV_FLAG_THICK,	/* image is thick-provisioned */
- };
-
- static DEFINE_MUTEX(client_mutex);	/* Serialize client creation */
-@@ -4011,6 +4012,15 @@ static void rbd_queue_workfn(struct work_struct *work)
- 		goto err;
- 	}
-
-+	/* Ignore/skip discard requests for thick-provision image */
-+
-+	if (op_type == OBJ_OP_DISCARD &&
-+	    test_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags)) {
-+		dout("%s: Ignored a discard request\n", __func__);
-+		result = 0;
-+		goto err_rq;
-+	}
-+
- 	/* Ignore/skip any zero-length requests */
-
- 	if (!length) {
-@@ -4600,6 +4610,32 @@ static ssize_t rbd_image_refresh(struct device *dev,
- 	return size;
- }
-
-+static ssize_t rbd_thick_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf,
-+				 size_t size)
-+{
-+	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
-+
-+	spin_lock_irq(&rbd_dev->lock);
-+	if (!strncmp(buf, "1", size))
-+		set_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags);
-+	else if (!strncmp(buf, "0", size))
-+		clear_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags);
-+	spin_unlock_irq(&rbd_dev->lock);
-+
-+	return size;
-+}
-+
-+static ssize_t rbd_thick_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
-+	int is_thick = test_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags) ? 1 : 0;
-+
-+	return sprintf(buf, "%d\n", is_thick);
-+}
-+
- static DEVICE_ATTR(size, S_IRUGO, rbd_size_show, NULL);
- static DEVICE_ATTR(features, S_IRUGO, rbd_features_show, NULL);
- static DEVICE_ATTR(major, S_IRUGO, rbd_major_show, NULL);
-@@ -4616,6 +4652,7 @@ static DEVICE_ATTR(refresh, S_IWUSR, NULL, rbd_image_refresh);
- static DEVICE_ATTR(current_snap, S_IRUGO, rbd_snap_show, NULL);
- static DEVICE_ATTR(snap_id, S_IRUGO, rbd_snap_id_show, NULL);
- static DEVICE_ATTR(parent, S_IRUGO, rbd_parent_show, NULL);
-+static DEVICE_ATTR(thick, 0644, rbd_thick_show, rbd_thick_store);
-
- static struct attribute *rbd_attrs[] = {
- 	&dev_attr_size.attr,
-@@ -4634,6 +4671,7 @@ static struct attribute *rbd_attrs[] = {
- 	&dev_attr_snap_id.attr,
- 	&dev_attr_parent.attr,
- 	&dev_attr_refresh.attr,
-+	&dev_attr_thick.attr,
- 	NULL
- };
-
+diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
+index ae94b3626b6c..3c39f7fa9540 100644
+--- a/arch/powerpc/include/asm/ppc_asm.h
++++ b/arch/powerpc/include/asm/ppc_asm.h
+@@ -80,11 +80,16 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
+ #else
+ #define SAVE_GPR(n, base)	stw	n,GPR0+4*(n)(base)
+ #define REST_GPR(n, base)	lwz	n,GPR0+4*(n)(base)
++#ifdef CONFIG_CPU_BIG_ENDIAN
++#define SAVE_NVGPRS(base)	stmw	13, GPR0+4*13(base)
++#define REST_NVGPRS(base)	lmw	13, GPR0+4*13(base)
++#else
+ #define SAVE_NVGPRS(base)	SAVE_GPR(13, base); SAVE_8GPRS(14, base); \
+ 				SAVE_10GPRS(22, base)
+ #define REST_NVGPRS(base)	REST_GPR(13, base); REST_8GPRS(14, base); \
+ 				REST_10GPRS(22, base)
+ #endif
++#endif
+ 
+ #define SAVE_2GPRS(n, base)	SAVE_GPR(n, base); SAVE_GPR(n+1, base)
+ #define SAVE_4GPRS(n, base)	SAVE_2GPRS(n, base); SAVE_2GPRS(n+2, base)
+diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
+index 384357cb8bc0..739977a6be80 100644
+--- a/arch/powerpc/kernel/misc.S
++++ b/arch/powerpc/kernel/misc.S
+@@ -60,6 +60,10 @@ _GLOBAL(setjmp)
+ 	PPC_STL	r0,0(r3)
+ 	PPC_STL	r1,SZL(r3)
+ 	PPC_STL	r2,2*SZL(r3)
++#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
++	mfcr	r12
++	stmw	r12, 3*SZL(r3)
++#else
+ 	mfcr	r0
+ 	PPC_STL	r0,3*SZL(r3)
+ 	PPC_STL	r13,4*SZL(r3)
+@@ -81,6 +85,7 @@ _GLOBAL(setjmp)
+ 	PPC_STL	r29,20*SZL(r3)
+ 	PPC_STL	r30,21*SZL(r3)
+ 	PPC_STL	r31,22*SZL(r3)
++#endif
+ 	li	r3,0
+ 	blr
+ 
+@@ -88,6 +93,10 @@ _GLOBAL(longjmp)
+ 	PPC_LCMPI r4,0
+ 	bne	1f
+ 	li	r4,1
++#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
++1:	lmw	r12, 3*SZL(r3)
++	mtcrf	0x38, r12
++#else
+ 1:	PPC_LL	r13,4*SZL(r3)
+ 	PPC_LL	r14,5*SZL(r3)
+ 	PPC_LL	r15,6*SZL(r3)
+@@ -109,6 +118,7 @@ _GLOBAL(longjmp)
+ 	PPC_LL	r31,22*SZL(r3)
+ 	PPC_LL	r0,3*SZL(r3)
+ 	mtcrf	0x38,r0
++#endif
+ 	PPC_LL	r0,0(r3)
+ 	PPC_LL	r1,SZL(r3)
+ 	PPC_LL	r2,2*SZL(r3)
 -- 
-2.15.1
+2.13.3
