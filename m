@@ -1,112 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755187AbeCSXPD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 19:15:03 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37519 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbeCSXO7 (ORCPT
+        id S1755787AbeCSXQZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 19:16:25 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34629 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755312AbeCSXQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 19:14:59 -0400
-X-Google-Smtp-Source: AG47ELugkViJrl84ALMintBfXUaFuzRbLM1/obvDPuqA2/dWbaErHiPKVb2rtPCyl81aq0wCKjVY4Q==
-Subject: Re: [PATCH 1/3] powercap: intel_rapl: Add support for Cannon Lake
-To: Harry Pan <harry.pan@intel.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: gs0622@gmail.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        puthik@google.com, Benson Leung <bleung@google.com>,
-        "'Benson Leung'" <bleung@chromium.org>
-References: <20180309121549.630-1-harry.pan@intel.com>
-From: Benson Leung <bleung@google.com>
-Organization: Google
-Message-ID: <56dfa209-0592-90f5-bd96-5e5df28abd2a@google.com>
-Date: Mon, 19 Mar 2018 16:14:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Mar 2018 19:16:18 -0400
+X-Google-Smtp-Source: AG47ELtRQr1JvX9hB8bp+j+UGMziQ3iQmAG2XulzZYU9iFvUfMxhO7FjC5nAN5Hcqe9+9/biHih6jw==
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for
+ brcmfmac
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Alexey Roslyakov <alexey.roslyakov@gmail.com>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com>
+ <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+ <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvalo@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, Ulf Hansson <ulf.hansson@linaro.org>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5AB044C0.9060701@broadcom.com>
+Date: Tue, 20 Mar 2018 00:16:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180309121549.630-1-harry.pan@intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="ZhgbKaIbgD3qoYndXy7UBY0VmTOocLtfL"
+In-Reply-To: <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ZhgbKaIbgD3qoYndXy7UBY0VmTOocLtfL
-Content-Type: multipart/mixed; boundary="NLM87k46ZF1egIWReNv9sx44l7oEQVA2z";
- protected-headers="v1"
-From: Benson Leung <bleung@google.com>
-To: Harry Pan <harry.pan@intel.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: gs0622@gmail.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
- puthik@google.com, Benson Leung <bleung@google.com>,
- 'Benson Leung' <bleung@chromium.org>
-Message-ID: <56dfa209-0592-90f5-bd96-5e5df28abd2a@google.com>
-Subject: Re: [PATCH 1/3] powercap: intel_rapl: Add support for Cannon Lake
-References: <20180309121549.630-1-harry.pan@intel.com>
-In-Reply-To: <20180309121549.630-1-harry.pan@intel.com>
++ Uffe
 
---NLM87k46ZF1egIWReNv9sx44l7oEQVA2z
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+On 3/19/2018 6:55 PM, Florian Fainelli wrote:
+> On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
+>> Hi Arend,
+>> I appreciate your response. In my opinion, it has nothing to do with
+>> SDIO host, because it defines "quirks" in the driver itself.
+>
+> It is not clear to me from your patch series whether the problem is that:
+>
+> - the SDIO device has a specific alignment requirements, which would be
+> either a SDIO device driver limitation/issue or maybe the underlying
+> hardware device/firmware requiring that
+>
+> - the SDIO host controller used is not capable of coping nicely with
+> these said limitations
+>
+> It seems to me like what you are doing here is a) applicable to possibly
+> more SDIO devices and host combinations, and b) should likely be done at
+> the layer between the host and device, such that it is available to more
+> combinations.
 
-+puthik@google.com
+Indeed. That was my thought exactly and I can not imagine Uffe would 
+push back on that reasoning.
 
-On 03/09/2018 04:15 AM, Harry Pan wrote:
-> Cannon Lake microarchitecture is similar to Kaby Lake in terms of
-> RAPL, this patch enables CNL RAPL support.
->=20
-> Signed-off-by: Harry Pan <harry.pan@intel.com>
-> ---
->  drivers/powercap/intel_rapl.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rap=
-l.c
-> index 35636e1d8a3d..295d8dcba48c 100644
-> --- a/drivers/powercap/intel_rapl.c
-> +++ b/drivers/powercap/intel_rapl.c
-> @@ -1162,6 +1162,7 @@ static const struct x86_cpu_id rapl_ids[] __initc=
-onst =3D {
->  	RAPL_CPU(INTEL_FAM6_SKYLAKE_X,		rapl_defaults_hsw_server),
->  	RAPL_CPU(INTEL_FAM6_KABYLAKE_MOBILE,	rapl_defaults_core),
->  	RAPL_CPU(INTEL_FAM6_KABYLAKE_DESKTOP,	rapl_defaults_core),
-> +	RAPL_CPU(INTEL_FAM6_CANNONLAKE_MOBILE,	rapl_defaults_core),
-> =20
->  	RAPL_CPU(INTEL_FAM6_ATOM_SILVERMONT1,	rapl_defaults_byt),
->  	RAPL_CPU(INTEL_FAM6_ATOM_AIRMONT,	rapl_defaults_cht),
->=20
+>> If I get it right, you mean something like this:
+>>
+>> mmc3: mmc@1c12000 {
+>> ...
+>>          broken-sg-support;
+>>          sd-head-align = 4;
+>>          sd-sgentry-align = 512;
+>>
+>>          brcmf: wifi@1 {
+>>                  ...
+>>          };
+>> };
+>>
+>> Where dt: bindings documentation for these entries should reside?
+>> In generic MMC bindings? Well, this is the very special case and
+>> mmc-linux maintainer will unlikely to accept these changes.
+>> Also, extra kernel code modification might be required. It could make
+>> quite trivial change much more complex.
+>
+> If the MMC maintainers are not copied on this patch series, it will
+> likely be hard for them to identify this patch series and chime in...
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+The main question is whether this is indeed a "very special case" as 
+Alexey claims it to be or that it is likely to be applicable to other 
+device and host combinations as you are suggesting.
 
+If these properties are imposed by the host or host controller it would 
+make sense to have these in the mmc bindings.
 
---NLM87k46ZF1egIWReNv9sx44l7oEQVA2z--
+>>
+>>> Also I am not sure if the broken-sg-support is still needed. We added that for omap_hsmmc, but that has since changed to scatter-gather emulation so it might not be needed anymore.
+>>
+>> I've experienced the problem with rk3288 (dw-mmc host) and sdio
+>> settings like above solved it.
+>> Frankly, I haven't investigated any deeper which one of the settings
+>> helped in my case yet...
+>> I will try to get rid of broken-sg-support first and let you know if
+>> it does make any difference.
 
---ZhgbKaIbgD3qoYndXy7UBY0VmTOocLtfL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Are you using some chromebook. I have some lying around here so I could 
+also look into it. What broadcom chipset do you have?
 
------BEGIN PGP SIGNATURE-----
+Regards,
+Arend
 
-iQIzBAEBCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqwRHAACgkQHwn1ewov
-5lgPURAAsUQqEJ8eFQ12cwMS2+TKriGkXj9JpYJoMrTbXaVfOlB5OEIav3Shjyic
-xjqeqRCxzGdaF3V3MEpzd27VBX4ANJfdxwg0V3SqPd2KX3zTnDieDY9HRkZ4MJhX
-SXg73wjd6Fnrm4S2LILLyWKKpFidWkeA/YxvWWuKYIoX7C7sg3jAFAaOqAxUH3OM
-VY9hL9uHXz6j0+nRRcEINERSgGF7s1qNpm4Z7uVanuur3wSUUmK5T9qF7byvnXqQ
-RYCTxBN7GmK5wI98yQ1kJGmIMTLqGv4vA3YU43c7MPL48Hcxw6iQf6SVs4CG64L+
-FmM6wFuuebvkr8FtU5Oo7gqmOFmE/Ni8YvZD7BjHWKKtEQuSm8qoCe705gNsu2IZ
-VdOtSl06leACwoem0rwbBfL+fvv8zcVkKJS8hjIqbGZqNr1dNv0G0XNSL0atbzD9
-XOgeEUQJTyHLG4DH6n8aICa4tcfuLpk9UFIOwpDokGa5l6qkkeyNPpnMXGLcyG+p
-xNlACVQrIJy0lkQoZNqhlzQkss/8QH83aJhYI2s6AxnyegL3itWPNlAz0+Ne0sI+
-vb1HljhXwvNUQtP0a02LzOcZhUPdvBDt3xM0aZXeXG+pJpTI+UPJJUfAdGrv/8CE
-RGM4OGC/NjkMRkpIXyvO7zEmvVjOC0glbDLqVvuKNeppPu1HjkY=
-=owNc
------END PGP SIGNATURE-----
-
---ZhgbKaIbgD3qoYndXy7UBY0VmTOocLtfL--
+>> All the best,
+>>    Alex.
+>>
+>> On 19 March 2018 at 16:31, Arend van Spriel
+>> <arend.vanspriel@broadcom.com> wrote:
+>>> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
+>>>>
+>>>> In case if the host has higher align requirements for SG items, allow
+>>>> setting device-specific aligns for scatterlist items.
+>>>>
+>>>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt | 5
+>>>> +++++
+>>>>    1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>> index 86602f264dce..187b8c1b52a7 100644
+>>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>> @@ -17,6 +17,11 @@ Optional properties:
+>>>>          When not specified the device will use in-band SDIO interrupts.
+>>>>     - interrupt-names : name of the out-of-band interrupt, which must be
+>>>> set
+>>>>          to "host-wake".
+>>>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO host
+>>>> +       controller has higher align requirement than 32 bytes for each
+>>>> +       scatterlist item.
+>>>> + - brcm,sd-head-align : alignment requirement for start of data buffer.
+>>>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
+>>>> entry.
+>>>
+>>>
+>>> Hi Alexey,
+>>>
+>>> Thanks for the patch. However, the problem with these is that they are
+>>> characterizing the host controller and not the wireless device. So from
+>>> device tree perspective , which is to describe the hardware, these
+>>> properties should be SDIO host controller properties. Also I am not sure if
+>>> the broken-sg-support is still needed. We added that for omap_hsmmc, but
+>>> that has since changed to scatter-gather emulation so it might not be needed
+>>> anymore.
+>>>
+>>> Regards,
+>>> Arend
+>>
+>>
+>>
+>
+>
