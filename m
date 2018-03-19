@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtxNg4hoVqkCzgBNiUpyQYp5dCKYmFvghX6/Q3awoDcARJfwMsaO3T4dklzEd/49gQHiO+C
-ARC-Seal: i=1; a=rsa-sha256; t=1521483537; cv=none;
+X-Google-Smtp-Source: AG47ELuAPhd4ULXlm+hH9nbVJprgksAVyotBPJUf4bgnj/vWCRnE2mbMpqz1TssxI4lYf+VsRBRb
+ARC-Seal: i=1; a=rsa-sha256; t=1521483532; cv=none;
         d=google.com; s=arc-20160816;
-        b=CW0z9c9NBSoaOcpT1Dxivv5Vp8DkLaYk6fdIc5su1tQycD8nFtHAhlEKWDLlTPL+Yj
-         52AamURAGJ+8R29fTEVnZQpFsEuVmN9jXlhpp4NXijpoGxr7/pJkbJdiLxNlVgUuyOfo
-         UoSsHkHCtUuqwxvSljkZ05VnIdnRVp0U5avUml8w1P4sY04n2uPq/jY6ZbBOTEqOeFPm
-         bzEkyg2BgY80y4uhRTCWxtZ8qEjq2zu10xneQhYE85rP2BkqpcNyDZj+crGtMMwRCAp1
-         XXhoDeDqcPV0fIF68m+ruSgccT1XuelKM62PIBTTNMnobCPMz7V7LqnWDq+DfzcLukFi
-         vyxw==
+        b=cCvP58jkA8Mc2B6PPxgjKmRL0n2/Tx4eLW15ZwzzLIoMseGWOf4eaGT/ceNaR9CQPH
+         ScjrD6qFejX3Q2c+kw2vdAkgef0RTfyWzh7Ciww62Yf89QSaoYRoiyXDanHNg2AglQkE
+         f0WJVAeMAMZ+meFJJOr0V7JRpVc9k6qxivB/Jayc+fSq51rDq5GOKkIZaeiNnGZCMrO1
+         5AJb3InzJjzWlWCfFfV+a3vjiQtl4tk2EN6UNDMrdOxS43kHclHjgidgNKHUNkFDF0xP
+         58DsuJlx1ps2bsm9Su6aJQOJdujsdzTM3lX4N23MntRI0uy+X7FODf7+fEDfSOVSCB27
+         p4aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9SGTOoLRnSIPJwmfXaWJ7CW0L1xZjm54AwdGTPOBDIo=;
-        b=XkLjgUqFXC1uLrL8ywqHdO+DoxdwxyiwfJuM2gzAf1YVhLfB31YNHCnqtj2qPX86Cn
-         bu3akvv+MrATi6yA0pV6lG4fSKLvpheqsJUNkVQwatXFM7jRebaqo3mrC04Plbih0l4+
-         l+nXhJx6+Ry3EdDTqIz/TUBE2V71ZOKp21R5lfGGs2l3dA0yzXLKDHPuX/zHaqsErelM
-         mALgNTjKVNBhWMwj99V61OSRcFiSb9vsZXVQhJoGDjXMlBzKHjzbznEXoDJM8FlCeyvR
-         Gx6KCkSLgo6zxeX6r2v+JAr+1oV4dAFjSdc8hXGj0usOTmMUyk3M9qlYzco0gbPknEsO
-         FH1A==
+        bh=XkqPXvpWNns8/CzQ8nhiEgkgjiDYaO3PCMJxh7ImzxM=;
+        b=tTTG469jwdW+y/SaCNLOpRuqiCVk/Iq9ZSWYtWzPIIhTcDuQMCdXfBzE1FMiJNwKCB
+         4ypC5/7ftEDMZCVGfiLo08NweTZTjGYOJBXtMFsZ+HIQig1FGRhXO6no1tzCirSGqF4I
+         pWUYvxQgoGrSOHgBQPnTaqzhPeYVbN1D3Wh+6ucSN6L3AgHspe4Qh+08e0U2oCpi6sHA
+         pF4OztL6sjiIb10tcw1jP/kZWHsNt4w/FiWxJMwI4AMJN1uk5olYpT7qp/88kxkZuyJw
+         gc3dHDbiPBQwAZvjTq7cSftyNPgbo1K0slj+xOVwbjk6x21W6B8DRhBvaO1cOjxXnNzC
+         QTog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
+	Borislav Petkov <bp@suse.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Robert Richter <rric@kernel.org>,
+	Vince Weaver <vince@deater.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 005/241] staging: wilc1000: add check for kmalloc allocation failure.
-Date: Mon, 19 Mar 2018 19:04:30 +0100
-Message-Id: <20180319180751.404292822@linuxfoundation.org>
+Subject: [PATCH 4.9 003/241] perf stat: Issue a HW watchdog disable hint
+Date: Mon, 19 Mar 2018 19:04:28 +0100
+Message-Id: <20180319180751.316243264@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390769061869990?=
-X-GMAIL-MSGID: =?utf-8?q?1595391122245992413?=
+X-GMAIL-THRID: =?utf-8?q?1595391116141665242?=
+X-GMAIL-MSGID: =?utf-8?q?1595391116141665242?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,32 +54,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Borislav Petkov <bp@suse.de>
 
 
-[ Upstream commit 6cc0c259d034c6ab48f4e12f505213988e73d380 ]
+[ Upstream commit 02d492e5dcb72c004d213756eb87c9d62a6d76a7 ]
 
-Add a sanity check that wid.val has been allocated, fixes a null
-pointer deference on stamac when calling ether_add_copy.
+When using perf stat on an AMD F15h system with the default hw events
+attributes, some of the events don't get counted:
 
-Detected by CoverityScan, CID#1369537 ("Dereference null return value")
+ Performance counter stats for 'sleep 1':
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+          0.749208      task-clock (msec)         #    0.001 CPUs utilized
+                 1      context-switches          #    0.001 M/sec
+                 0      cpu-migrations            #    0.000 K/sec
+                54      page-faults               #    0.072 M/sec
+         1,122,815      cycles                    #    1.499 GHz
+           286,740      stalled-cycles-frontend   #   25.54% frontend cycles idle
+     <not counted>      stalled-cycles-backend                                        (0.00%)
+     ^^^^^^^^^^^^
+     <not counted>      instructions                                                  (0.00%)
+     ^^^^^^^^^^^^
+     <not counted>      branches                                                      (0.00%)
+     <not counted>      branch-misses                                                 (0.00%)
+
+       1.001550070 seconds time elapsed
+
+The reason is that we have the HW watchdog consuming one PMU counter and
+when perf tries to schedule 6 events on 6 counters and some of those
+counters are constrained to only a specific subset of PMCs by the
+hardware, the event scheduling fails.
+
+So issue a hint to disable the HW watchdog around a perf stat session.
+
+Committer note:
+
+Testing it...
+
+  # perf stat -d usleep 1
+
+   Performance counter stats for 'usleep 1':
+
+          1.180203      task-clock (msec)         #    0.490 CPUs utilized
+                 1      context-switches          #    0.847 K/sec
+                 0      cpu-migrations            #    0.000 K/sec
+                54      page-faults               #    0.046 M/sec
+           184,754      cycles                    #    0.157 GHz
+           714,553      instructions              #    3.87  insn per cycle
+           154,661      branches                  #  131.046 M/sec
+             7,247      branch-misses             #    4.69% of all branches
+           219,984      L1-dcache-loads           #  186.395 M/sec
+            17,600      L1-dcache-load-misses     #    8.00% of all L1-dcache hits    (90.16%)
+     <not counted>      LLC-loads                                                     (0.00%)
+     <not counted>      LLC-load-misses                                               (0.00%)
+
+       0.002406823 seconds time elapsed
+
+  Some events weren't counted. Try disabling the NMI watchdog:
+	echo 0 > /proc/sys/kernel/nmi_watchdog
+	perf stat ...
+	echo 1 > /proc/sys/kernel/nmi_watchdog
+  #
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <rric@kernel.org>
+Cc: Vince Weaver <vince@deater.net>
+Link: http://lkml.kernel.org/r/20170211183218.ijnvb5f7ciyuunx4@pd.tnic
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/wilc1000/host_interface.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/builtin-stat.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -1930,6 +1930,8 @@ static s32 Handle_Get_InActiveTime(struc
- 	wid.type = WID_STR;
- 	wid.size = ETH_ALEN;
- 	wid.val = kmalloc(wid.size, GFP_KERNEL);
-+	if (!wid.val)
-+		return -ENOMEM;
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -146,6 +146,7 @@ static aggr_get_id_t		aggr_get_id;
+ static bool			append_file;
+ static const char		*output_name;
+ static int			output_fd;
++static int			print_free_counters_hint;
  
- 	stamac = wid.val;
- 	memcpy(stamac, strHostIfStaInactiveT->mac, ETH_ALEN);
+ struct perf_stat {
+ 	bool			 record;
+@@ -1109,6 +1110,9 @@ static void printout(int id, int nr, str
+ 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
+ 			csv_sep);
+ 
++		if (counter->supported)
++			print_free_counters_hint = 1;
++
+ 		fprintf(stat_config.output, "%-*s%s",
+ 			csv_output ? 0 : unit_width,
+ 			counter->unit, csv_sep);
+@@ -1477,6 +1481,13 @@ static void print_footer(void)
+ 				avg_stats(&walltime_nsecs_stats));
+ 	}
+ 	fprintf(output, "\n\n");
++
++	if (print_free_counters_hint)
++		fprintf(output,
++"Some events weren't counted. Try disabling the NMI watchdog:\n"
++"	echo 0 > /proc/sys/kernel/nmi_watchdog\n"
++"	perf stat ...\n"
++"	echo 1 > /proc/sys/kernel/nmi_watchdog\n");
+ }
+ 
+ static void print_counters(struct timespec *ts, int argc, const char **argv)
