@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3827995-1521495988-2-15824656388049840531
+X-Cyrus-Session-Id: sloti22d1t05-3827995-1521495950-2-17033205326966422722
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,60 +13,68 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521495988; b=di/flwUmORCnQO2TFAA54QLfSqfoZ/ztGpfN3Kp6rYmrNx1
-    J7tPzaLTcwe/IPgS0TTao/7JWEfmaCHR+hmYkTKc3hC6t52eeW+jEoXypn1GIppW
-    x7jVsHIV93kL9FKIVO3W0O0J/1cWqDfLRbCT0N2UWwlB01UZ0ks5jWMzynMceP1x
-    P+m4hJOw2NwpSRLJZqhdvE2IRuO+mXWs9GvVTeXxs24UUOKIMwkG76GLwyfLoD7Z
-    EqGkR2Z4PFkf1jGrPKZziCb27HDAV8yXnnnrchCTEFY3lMqOXKAEf0n5w8HqhpCy
-    y7rYDKk1vsd/wH6aV5ZE/GyEJNrzMVjk//MXODA==
+    t=1521495950; b=B5etyi80gul3zR5iG2wcrjl9Sp32b18ciXeGxBGevNn8xub
+    LniZ+HxgvlL6pR44feHJOuxeIN/S07xDoHmHxxOko10hpXh4peXgqi5z/M/JxZIc
+    5nAX7qamtJ7q1VBuLzmB8e7hQRpHXKDwz5u0GeItE46cfL5kzQBb5x5y0G2peiK3
+    ZROtDAeoSUCMw4oU8qmVoHgB6onZKyOFWlybbBJbi+oKxPzy1aThE0K5bHQNjhmO
+    AWi6RbEA0w6Ql7dFBSu/XJwLAxbzMDmsp+jJ5yaf3p6fRWO6cU6bHnyeskv2mHCp
+    nUAYNA/tevnj3oxY3y5BC1oiUNUg57+hWaBWOlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521495988; bh=EvwKOw
-    s2eR5OURXBkb60yAeumPMb0LNmAYQLfkuIMe4=; b=HwjNY2kXbHmgD9i6rR+eFC
-    GtPQJ12l1xN93yoNI+JUsyBEopJ8N4djAbP1BZGGa0Sc1KgxbjJRgeYsdyJcxLD8
-    L3iv2CGdNuuAUsP2AQKg99P1GU0hsgP22xVM7K8QcJbh0uwD697ugUEiQxFsZhq3
-    R+zxYfcgpZCsdmKIMBrYhID2+J0ROt4hvefr59aku3xj4q3KB9LQHmFEyiJYei1M
-    Eji+VoClQFABrMfx+iU+W2WQVf4HAW3RAEnBkcs4JT452F73D0ZgXZFoDB4oLAlr
-    1lKx05yXJAoS0OmZCtOoX+XRSU8gwSI0kOO4O7Gen2AKS1UBP3gClV6EL5BhNmWQ
+    :mime-version:sender:list-id; s=arctest; t=1521495950; bh=IozAM3
+    4NMRMJz7XimoA4bk+BAHrlf9absvZ4G+vn7Ck=; b=wyrJhMj3MTq5r89+qop28B
+    Ok5cBfVrGbJhloNHNvtim7GdL37VNsQsAwaziqXJAD01PHm/R8ERxNfAcTYq8bat
+    nqevr1DevlaeksKzd4TU0BD5AErto75/KZu4gEdeSpafej2aQymIbKUXX+TlQsNJ
+    2TeflM4DaZ/O9AUkBsaxVT5H3YTJD3Vx93mgF48eZBcp0kkDoW8LRuwVobuebDmp
+    OeFi2yLa854KLnnVbv+NBwIIQrxazcNo4kltSiDaHaoMWk8P29kGK4zxJd1u3bWt
+    LRzt73o/3yYi0UrRFbdfdhoY7TsPHR5xVDnr23FxVlHJC0egh7s7RxEV3IJKHm2w
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=N2ni3C8F x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DXe3mRnC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejleektdenucevlhhushhtvghrufhiiigvpeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeektdekkeenucevlhhushhtvghrufhiiigvpedvke;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=N2ni3C8F x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DXe3mRnC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejleektdenucevlhhushhtvghrufhiiigvpeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeektdekkeenucevlhhushhtvghrufhiiigvpedvke;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964910AbeCSVpy (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:45:54 -0400
-Received: from mail-by2nam01on0127.outbound.protection.outlook.com ([104.47.34.127]:11541
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S934574AbeCSVpH (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 17:45:07 -0400
+Received: from mail-co1nam03on0139.outbound.protection.outlook.com ([104.47.40.139]:4928
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964922AbeCSP6Y (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:58:24 -0400
+        id S964938AbeCSP60 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:58:26 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "J. Bruce Fields" <bfields@redhat.com>,
+CC: Will Deacon <will.deacon@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 020/281] lockd: fix lockd shutdown race
-Thread-Topic: [PATCH AUTOSEL for 4.9 020/281] lockd: fix lockd shutdown race
-Thread-Index: AQHTv5sVHjt34w+3MkOUCcp8tAF0zg==
-Date: Mon, 19 Mar 2018 15:58:13 +0000
-Message-ID: <20180319155742.13731-20-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 028/281] perf/callchain: Force USER_DS when
+ invoking perf_callchain_user()
+Thread-Topic: [PATCH AUTOSEL for 4.9 028/281] perf/callchain: Force USER_DS
+ when invoking perf_callchain_user()
+Thread-Index: AQHTv5scx2iaUVFoZE+HqB8iz8jBVg==
+Date: Mon, 19 Mar 2018 15:58:23 +0000
+Message-ID: <20180319155742.13731-28-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,91 +83,91 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;7:rYL/O0nFyv071lKmXngadridR4Bh6eNSOZ3FHFoeEN7sfCCPVSO3L+CgJ82m8ufvqa4ePru4aBuSXmwLa0Pwi7TPQz4T2g6Kp1L2NMcndqrrhpxcdXTQLTP0wiT5e97FEc8BepzUplZVC0HMC37dmpf3F+udfQQd6O43cqsrEmHUTu+xrBzDfLw45w+d4Hqpb/Qiv5QaLCxchS614wfe8GuQk6wsuQgEw6MydbkgN+CDulpRbazm0eppZpbKtlG0;20:v8ay842u0sKybFSeOM+8LLEUdVMeIIRrvSqbUgLRqd6Eqp8lD2nwYyQNNR8QeuhkUT+Y/Wd74pDgIG+ITIi8OSj6A2us4Yn0NPDRwSbbS7EM4nGCfJ6YCp6BaV1ovkAeqbbRvp9A7Oj8kT69PRgHmeJewi9Qq2Ro4iv3Kbg0S2k=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0933;7:ATa29ZJGos5aweRTLQmYXkmV9G7xHRsYuxxtF9XfQtmLy1m+tBu3TsO5202vJNryXt/idrpZn0iE23Rl1Ap5clR/rkAcLfcDMLInLEfRFUyaRuP7UiEov8h712QP9giboPczYLhD3zIFvlhA8WYyYUtPiPz7tzWCn8od/HoZER8K60QcaIFQZi1hLwi4u5GovdmRBnIEO2L7AurQu/DXVNDJf4Ns8H6RdYoM2aot6a/g9NK8zm2paYvG3uBsBB+8;20:oIVKIHFuRz8O15jWOQ3GRbTGg/p90JNuIaiVcgzByS3k0MLhggMyHLwItsI9JBzl94JrP8cRDxc27werOSoo/IiDZ8XGJfiRbOcv/dZ+vlOLbAM6pe250QH1uY8Scvy2IqxJiuzHrw6X9xSXbrUA+04LDe6lSWdCPz2hWK4FEZU=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f5b96b51-8935-48e8-0ba8-08d58db23889
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0726;
-x-ms-traffictypediagnostic: DM5PR2101MB0726:
+x-ms-office365-filtering-correlation-id: 9af78896-12f2-4b51-b306-08d58db23ee0
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0933;
+x-ms-traffictypediagnostic: DM5PR2101MB0933:
+x-microsoft-antispam-prvs: <DM5PR2101MB0933F1F14BF36C3A877FDB5CFBD40@DM5PR2101MB0933.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501300)(52105095)(6055026)(61426038)(61427038)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0933;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0933;
+x-forefront-prvs: 06167FAD59
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(39380400002)(366004)(346002)(376002)(199004)(189003)(2501003)(72206003)(1076002)(66066001)(10290500003)(99286004)(10090500001)(7736002)(14454004)(6116002)(5660300001)(2906002)(97736004)(6346003)(102836004)(575784001)(22452003)(86612001)(3660700001)(186003)(2900100001)(25786009)(478600001)(5250100002)(26005)(6486002)(6436002)(81156014)(81166006)(36756003)(4326008)(86362001)(76176011)(6512007)(8936002)(106356001)(3846002)(53936002)(105586002)(3280700002)(305945005)(68736007)(110136005)(2950100002)(54906003)(8676002)(107886003)(316002)(6506007)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0933;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB07268398AEA4FEFCED8FA466FBD40@DM5PR2101MB0726.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
-x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(39380400002)(396003)(366004)(376002)(199004)(189003)(81166006)(22452003)(2906002)(3660700001)(10090500001)(102836004)(53936002)(26005)(316002)(14454004)(2950100002)(97736004)(54906003)(86362001)(575784001)(76176011)(110136005)(99286004)(105586002)(7736002)(10290500003)(66066001)(478600001)(5660300001)(86612001)(6512007)(81156014)(36756003)(305945005)(6506007)(6486002)(6436002)(72206003)(2900100001)(2501003)(5250100002)(59450400001)(186003)(1076002)(3846002)(25786009)(106356001)(8676002)(4326008)(8936002)(6116002)(3280700002)(68736007)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: hukacUpH6XCfM+XJPQTPYYjNxgDMHZipN2AWXn8NbBOuzjyRaPLL3dd1FmRhqVj90IVqZmxxCF63qOJ+vX7csriPipEyNNyDnqFT4n0Pltq5WDcZj5+Z9mYRwtllPafPTB5l6OWdQLH9juIKcekNmYf8RhMKCEjug2Lrb4C6bP+gzo/sdbUIXmS1AGkK8EEpWoRzr91ejnlMTsUk2Va6f8+cVLP5p/XPDzLC910acsTYFa99CC6Ec0jRlQvD8KBYkY1zZfn8ixUuxc3pdyezMemUgWy0ZZNhsaZazWiQVE6aJs3thTn7o7aVgzS4+DB/uNAjXf12fQ1AixOqomMERg==
+x-microsoft-antispam-message-info: tgcRJGXz0fTQULr6qomu73P7jaCxslstCOhqM8LWHYGI3lR8LWAlVFGIFySV9/a+psOi7vCgOoRf7HzCAOJMSmZy48Hb1VA7hJSQHcJNT3BGPNPspoAgOOwkN1Dx9xGonxXa35KTH4JJAP4JF2ClsYqkhEOPev4q5+p0OGyZuTXo6jbqiqu38lM1yzsQ2sgNuM0vc/0QaEW4vf//KC0Pbp14WmwZnM8C4P/N0UbkX7RnI4/AYGsN11tifdqImrjHsJxuMwqsVyS9Nd8DgHPfYmjMYzdTDbRoQSdwwb600wa9NIiSnUfpJy6Wg2U44lmxNiDHe88vKTL4hb1yy3AwuA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5b96b51-8935-48e8-0ba8-08d58db23889
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:13.3562
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9af78896-12f2-4b51-b306-08d58db23ee0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:23.9590
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0933
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit efda760fe95ea15291853c8fa9235c32d319cd98 ]
+[ Upstream commit 88b0193d9418c00340e45e0a913a0813bc6c8c96 ]
 
-As reported by David Jeffery: "a signal was sent to lockd while lockd
-was shutting down from a request to stop nfs.  The signal causes lockd
-to call restart_grace() which puts the lockd_net structure on the grace
-list.  If this signal is received at the wrong time, it will occur after
-lockd_down_net() has called locks_end_grace() but before
-lockd_down_net() stops the lockd thread.  This leads to lockd putting
-the lockd_net structure back on the grace list, then exiting without
-anything removing it from the list."
+Perf can generate and record a user callchain in response to a synchronous
+request, such as a tracepoint firing. If this happens under set_fs(KERNEL_D=
+S),
+then we can end up walking the user stack (and dereferencing/saving whateve=
+r we
+find there) without the protections usually afforded by checks such as
+access_ok.
 
-So, perform the final locks_end_grace() from the the lockd thread; this
-ensures it's serialized with respect to restart_grace().
+Rather than play whack-a-mole with each architecture's stack unwinding
+implementation, fix the root of the problem by ensuring that we force USER_=
+DS
+when invoking perf_callchain_user from the perf core.
 
-Reported-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/lockd/svc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/events/callchain.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-index 9d373247222c..85135df0eb34 100644
---- a/fs/lockd/svc.c
-+++ b/fs/lockd/svc.c
-@@ -132,6 +132,8 @@ lockd(void *vrqstp)
- {
- 	int		err =3D 0;
- 	struct svc_rqst *rqstp =3D vrqstp;
-+	struct net *net =3D &init_net;
-+	struct lockd_net *ln =3D net_generic(net, lockd_net_id);
-=20
- 	/* try_to_freeze() is called from svc_recv() */
- 	set_freezable();
-@@ -176,6 +178,8 @@ lockd(void *vrqstp)
- 	if (nlmsvc_ops)
- 		nlmsvc_invalidate_all();
- 	nlm_shutdown_hosts();
-+	cancel_delayed_work_sync(&ln->grace_period_end);
-+	locks_end_grace(&ln->lockd_manager);
- 	return 0;
- }
-=20
-@@ -270,8 +274,6 @@ static void lockd_down_net(struct svc_serv *serv, struc=
-t net *net)
- 	if (ln->nlmsvc_users) {
- 		if (--ln->nlmsvc_users =3D=3D 0) {
- 			nlm_shutdown_hosts_net(net);
--			cancel_delayed_work_sync(&ln->grace_period_end);
--			locks_end_grace(&ln->lockd_manager);
- 			svc_shutdown_net(serv, net);
- 			dprintk("lockd_down_net: per-net data destroyed; net=3D%p\n", net);
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index e9fdb5203de5..411226b26bca 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -227,12 +227,18 @@ get_perf_callchain(struct pt_regs *regs, u32 init_nr,=
+ bool kernel, bool user,
  		}
+=20
+ 		if (regs) {
++			mm_segment_t fs;
++
+ 			if (crosstask)
+ 				goto exit_put;
+=20
+ 			if (add_mark)
+ 				perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
++
++			fs =3D get_fs();
++			set_fs(USER_DS);
+ 			perf_callchain_user(&ctx, regs);
++			set_fs(fs);
+ 		}
+ 	}
+=20
 --=20
 2.14.1
