@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484993-2-12577946984099538172
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484986-2-4453903117139431302
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,57 +13,56 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484993; b=t5NLthFsqswT5PznlkheMa9oRcaOPF61y8zPVm0xmmVXHQ7
-    oVuxoPQVdJ2m0s+bF8TLlfyzCW8NTdU+3BwdWPy2BFKpNpzcB2fbCzGXh94IEw2t
-    kHW5qF2rAsnNzqfNPGc6Yq++TmsVmp/7ks1Ayt3DJGoMRsW0ayAK1MMUErJM7A/R
-    EvrWVt80M6Wb4mncPGKuqs2SShrBqSB6/ogU76NtWsk946q55yHY+Sja7zMKlnNC
-    oajauJefcI1+VC9WO2vXetVhp4nLqZLKHwCffIENhctepxdmdcCv1c7+gydWefc0
-    Rs/25dyswm96T6ivryHllZpKb5DfNvE/uf+xJFQ==
+    t=1521484986; b=k/0qUxF7bUJK1vJS/AC1bazsXCcqeo/9kcXZLUohCYBcYGM
+    QH8tn6ZZhtl3lUJfaKLbBL9ox3ZF2ByI3rX1PrtRtbzVjSsclsXxuZiDqzcIGXV4
+    6QTrsYlkduhHoo7ckhtsihDoGN6txJjRcfehaQfr0c3B1p719o/x8wOSJUAQsdLi
+    Jyfa4Erynt+taseBPgb/zGiy/M0f8H3GdKJeZsSY9eD5tVIOQf56A//jgdTcZssf
+    ZqoOOmzlKlQvca1Yz6mAseIUvB54B9MElAxteO9Vp0RH1FSK+BZqBvY2aGWRiz/p
+    p1Ye+CdtzceidfS/wAnh1VvHtjiZG6tunv42Pdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484993; bh=j+QAicckKDvk181J0J2UtcKZPJ
-    GIhFtH1agjKDyKDUk=; b=vAmjIHrY3DYsITSuxVlh0L387nTEr0lt3bc364Q8Qw
-    OxM6eGVTkkyfrh+D0mCPyzAnpc/12lv8mHUZu0uOxf7ZtE9QCqoyVqEIPJreQ6Xd
-    6fLbQ46KnpXwVMmEIEV5SS85QE7HN8dt5/XO7shRYsiPhPnjDE7hbXqlKArONaxi
-    C3e1mcs2/owZrZ45vT/SandAYJfSnzgqCyZhbInfOVGCBEMJMJg4ZfMKDvSsmS18
-    gmf3dG00anJmVz4101FrnFbdk0eiM5ihNG/3u6cJMduHSZ/py/2VFl6xCz7nXfOP
-    t/hX9jYMTcEmkLkJtvkKAYkmXoasuFq3jhOpwMAvaMCg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484986; bh=FsAa3GEd2S7UvdIKs9LPj88KEt
+    n9HMra8UXAqtNF1P0=; b=tJaIE7GIo/yqvEoiCtrIMpAMPdS06VoTJopor3jAM+
+    +Nv42d2m5304ZhfVt9BUZpD12Vn5gHBwx78pA1F72nX/eQRiCPZTtt/hY9EQVUJX
+    d9Fu+Hr7Xzbu/Cm4IwzZs7HDY0pA7z/4RzwQLFw/s5EG7JxLqLPavUyAGxsRfYjw
+    yaFSAcVLPYo3VhrpFA9dmofRL41FM/9qaB8UUEVPRjK8CTeETvUjfQm4arDyNjss
+    rkt5oHmpxdnJMr2jYUEaQSH1PzpzZXOZD/M3DwhFEhhRA+X6ML4hnsJkwEXM4PT5
+    z8wSNuwQ+KGRi6UsYq2BmqJJnC4PYVPoMWt2j6tmkc6A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehudefheenucevlhhushhtvghrufhiiigvpeeffe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvheekieenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehudefheenucevlhhushhtvghrufhiiigvpeeffe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvheekieenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970294AbeCSSc2 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:32:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53940 "EHLO
+        id S970427AbeCSSmj (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:42:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934606AbeCSScY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:32:24 -0400
+        with ESMTP id S970304AbeCSScc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:32:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 37/52] btrfs: Fix memory barriers usage with device stats counters
-Date: Mon, 19 Mar 2018 19:08:35 +0100
-Message-Id: <20180319180737.073560552@linuxfoundation.org>
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 40/52] scsi: qla2xxx: Fix logo flag for qlt_free_session_done()
+Date: Mon, 19 Mar 2018 19:08:38 +0100
+Message-Id: <20180319180737.227853403@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -81,94 +80,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Himanshu Madhani <hmadhani@redhat.com>
 
-commit 9deae9689231964972a94bb56a79b669f9d47ac1 upstream.
+commit a2390348c19d0819d525d375414a7cfdacb51a68 upstream.
 
-Commit addc3fa74e5b ("Btrfs: Fix the problem that the dirty flag of dev
-stats is cleared") reworked the way device stats changes are tracked. A
-new atomic dev_stats_ccnt counter was introduced which is incremented
-every time any of the device stats counters are changed. This serves as
-a flag whether there are any pending stats changes. However, this patch
-only partially implemented the correct memory barriers necessary:
+Commit 3515832cc614 ("scsi: qla2xxx: Reset the logo flag, after target
+re-login.")fixed the target re-login after session relogin is complete,
+but missed out the qlt_free_session_done() path.
 
-- It only ordered the stores to the counters but not the reads e.g.
-  btrfs_run_dev_stats
-- It completely omitted any comments documenting the intended design and
-  how the memory barriers pair with each-other
+This patch clears send_els_logo flag in qlt_free_session_done()
+callback.
 
-This patch provides the necessary comments as well as adds a missing
-smp_rmb in btrfs_run_dev_stats. Furthermore since dev_stats_cnt is only
-a snapshot at best there was no point in reading the counter twice -
-once in btrfs_dev_stats_dirty and then again when assigning stats_cnt.
-Just collapse both reads into 1.
+[mkp: checkpatch]
 
-Fixes: addc3fa74e5b ("Btrfs: Fix the problem that the dirty flag of dev stats is cleared")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 3515832cc614 ("scsi: qla2xxx: Reset the logo flag, after target re-login.")
+Signed-off-by: Himanshu Madhani <hmadhani@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |   18 ++++++++++++++++--
- fs/btrfs/volumes.h |   12 ++++++++++++
- 2 files changed, 28 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -7093,10 +7093,24 @@ int btrfs_run_dev_stats(struct btrfs_tra
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -982,6 +982,7 @@ static void qlt_free_session_done(struct
  
- 	mutex_lock(&fs_devices->device_list_mutex);
- 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
--		if (!device->dev_stats_valid || !btrfs_dev_stats_dirty(device))
-+		stats_cnt = atomic_read(&device->dev_stats_ccnt);
-+		if (!device->dev_stats_valid || stats_cnt == 0)
- 			continue;
+ 			logo.id = sess->d_id;
+ 			logo.cmd_count = 0;
++			sess->send_els_logo = 0;
+ 			qlt_send_first_logo(vha, &logo);
+ 		}
  
--		stats_cnt = atomic_read(&device->dev_stats_ccnt);
-+
-+		/*
-+		 * There is a LOAD-LOAD control dependency between the value of
-+		 * dev_stats_ccnt and updating the on-disk values which requires
-+		 * reading the in-memory counters. Such control dependencies
-+		 * require explicit read memory barriers.
-+		 *
-+		 * This memory barriers pairs with smp_mb__before_atomic in
-+		 * btrfs_dev_stat_inc/btrfs_dev_stat_set and with the full
-+		 * barrier implied by atomic_xchg in
-+		 * btrfs_dev_stats_read_and_reset
-+		 */
-+		smp_rmb();
-+
- 		ret = update_dev_stat_item(trans, fs_info, device);
- 		if (!ret)
- 			atomic_sub(stats_cnt, &device->dev_stats_ccnt);
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -498,6 +498,12 @@ static inline void btrfs_dev_stat_inc(st
- 				      int index)
- {
- 	atomic_inc(dev->dev_stat_values + index);
-+	/*
-+	 * This memory barrier orders stores updating statistics before stores
-+	 * updating dev_stats_ccnt.
-+	 *
-+	 * It pairs with smp_rmb() in btrfs_run_dev_stats().
-+	 */
- 	smp_mb__before_atomic();
- 	atomic_inc(&dev->dev_stats_ccnt);
- }
-@@ -523,6 +529,12 @@ static inline void btrfs_dev_stat_set(st
- 				      int index, unsigned long val)
- {
- 	atomic_set(dev->dev_stat_values + index, val);
-+	/*
-+	 * This memory barrier orders stores updating statistics before stores
-+	 * updating dev_stats_ccnt.
-+	 *
-+	 * It pairs with smp_rmb() in btrfs_run_dev_stats().
-+	 */
- 	smp_mb__before_atomic();
- 	atomic_inc(&dev->dev_stats_ccnt);
- }
