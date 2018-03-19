@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuAWjUoWMshyNUWCFJJ6dpPMZm6K7liQL1n7Ue0aKFLgW/PC9V5QzM5BEN5ltw41xo2a6Z2
-ARC-Seal: i=1; a=rsa-sha256; t=1521483145; cv=none;
+X-Google-Smtp-Source: AG47ELu0W5qbHP8wIkxC/e8D4KdSmYbAxUeNvJ6IfuOkQXyJFSKlAPq4B0BU+17tx5UEyuRFdMNN
+ARC-Seal: i=1; a=rsa-sha256; t=1521483142; cv=none;
         d=google.com; s=arc-20160816;
-        b=NxMqIaSoZTgT9qDG951mujAZTPgsD0gnSsKUAzUAMXShDuxFLooj4aPPc/ScMcF01k
-         +/WevG9rF+m5n0PLBmRuNgV7YN8m86mLzk538nJWj+OMQKiVgXuQ9X5n6PEw8fPAZM34
-         3bjCB80Jhp1SvX6/KzZcJ6MK6dg2ETJxS64Y45KOpKVClUPkck9LmyR3HTa1LTi+Bk1c
-         s+N7MMF4bS+NR8wSGWMG3ScgvF6QCUNuWg2kPJXKqtJ/pySvO7zy/QherQnePVKGRj9i
-         0XFvK7mErrtIMK2Bo7x9lVxxU98ba1ZOaIcC0RxAXzMTUEQUFo73uqnYv/1qrvz/ONdn
-         Euww==
+        b=pq868HWaUBKeHU+rXAfoO1ee4AiqfZ4epAKc9AoFZdnmuF4fU5u9FLiI/y3qtDdYgE
+         VqIO+sLk+KHBPDTIB+KfpVV4yGk3F8VP6lXZ0mTCA2MYHzn8tQhpEezBCJ1B21nHpbfD
+         bJcyJPVa/ms4u8tP5iET9EadwNFPWj6cRNlA/i8q5mToZJF3L2x/167luEOApSaii2m/
+         KJ6wL3NpZFnngZEbThBHAmjfBSCYrlaND1WQErVzDRZDjwqyYMNtS87DgqLFzAOC2XTf
+         d8hmv3baQP3mdTrjpJUPCQTZHeuViMfs7oEoJR8OzOpL0TIh33BWr66jEFiinu+cApzH
+         /GZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=azAx/GE2ymwmUcRA6/FLQnTqAbE1XXaMRp/E9k2IYXY=;
-        b=cVN2Iinl7tDVIwXooCeY7yPtj8RI7O2oA2CFBc6tSkRB2pk+3ygXFq9Gq3jPagrUnB
-         qGZIWxShN4MPQ5z9D5+eAwIPgD2niQlmEiqrE6VcV/OHE9uFsA8VssE/TSDhv4IR6HoX
-         hivoIKv/BvENBmX2f5qAkQYZbLvix1riC+Q7TZAGcyPpU62tdBMOFAlAEDoj4aHE2F12
-         8TV2VZhfNJ7IEQoKeaeZ64opZkWy2NkUxrZCptx1xU4atpjHz9WttUxezo4+ceKk+o9u
-         8Y7cSEVzklfnOopzlcTLVT8Qq8hiI4hBjxF+jQPCFHLX9PhvxMhwcL3WW6TGuZ4Q22oS
-         KwfA==
+        bh=rrp9R6uMfhXXL43yk0Yjaed2ttNAdKAZh5cZU8yx6WQ=;
+        b=NWErMszKJzN0+2y7s5twhl9x2pW328o1FYlFP8Cbko4XGXPVf2qZmXzk2VETP7h8Nh
+         PJQ+Xv5e0CuOnTAVR0DYHRd9egHYg6/VE3pkL+ujzt+VVBzGkU8sgu6IhRlb5RE2rAo6
+         QzUEyYcT4Aek4fXJgoSdcJ9OdByCcSVaC29HJlccR7SsxC/M1e+4bymL+aYydQojEilN
+         8WvL6I/Bh6UKs3uy6JWBwB134zV1Oifcz8BVwNRDcK+coN3tusgmlETUb/V3yQKae9Uf
+         rkIdiUjOOD6nmaJj6W+y/eX45yZmfKk6HMf94wDfcWQBOjsLiZpH2h6DzePPUn9R7sEX
+         lC3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mario Kleiner <mario.kleiner.de@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Sasha Levin <alexander.levin@microsoft.com>,
-	Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.4 016/134] drm: Defer disabling the vblank IRQ until the next interrupt (for instant-off)
-Date: Mon, 19 Mar 2018 19:04:59 +0100
-Message-Id: <20180319171851.468411917@linuxfoundation.org>
+	Quan Nguyen <qnguyen@apm.com>,
+	Iyappan Subramanian <isubramanian@apm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 015/134] drivers: net: xgene: Fix hardware checksum setting
+Date: Mon, 19 Mar 2018 19:04:58 +0100
+Message-Id: <20180319171851.297389761@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -47,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390585617290166?=
-X-GMAIL-MSGID: =?utf-8?q?1595390710012009387?=
+X-GMAIL-THRID: =?utf-8?q?1595390583134295858?=
+X-GMAIL-MSGID: =?utf-8?q?1595390707421136071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,106 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Quan Nguyen <qnguyen@apm.com>
 
 
-[ Upstream commit 608b20506941969ea30d8c08dc9ae02bb87dbf7d ]
+[ Upstream commit e026e700d940a1ea3d3bc84d92ac668b1f015462 ]
 
-On vblank instant-off systems, we can get into a situation where the cost
-of enabling and disabling the vblank IRQ around a drmWaitVblank query
-dominates. And with the advent of even deeper hardware sleep state,
-touching registers becomes ever more expensive.  However, we know that if
-the user wants the current vblank counter, they are also very likely to
-immediately queue a vblank wait and so we can keep the interrupt around
-and only turn it off if we have no further vblank requests queued within
-the interrupt interval.
+This patch fixes the hardware checksum settings by properly program
+the classifier. Otherwise, packet may be received with checksum error
+on X-Gene1 SoC.
 
-After vblank event delivery, this patch adds a shadow of one vblank where
-the interrupt is kept alive for the user to query and queue another vblank
-event. Similarly, if the user is using blocking drmWaitVblanks, the
-interrupt will be disabled on the IRQ following the wait completion.
-However, if the user is simply querying the current vblank counter and
-timestamp, the interrupt will be disabled after every IRQ and the user
-will enabled it again on the first query following the IRQ.
-
-v2: Mario Kleiner -
-After testing this, one more thing that would make sense is to move
-the disable block at the end of drm_handle_vblank() instead of at the
-top.
-
-Turns out that if high precision timestaming is disabled or doesn't
-work for some reason (as can be simulated by echo 0 >
-/sys/module/drm/parameters/timestamp_precision_usec), then with your
-delayed disable code at its current place, the vblank counter won't
-increment anymore at all for instant queries, ie. with your other
-"instant query" patches. Clients which repeatedly query the counter
-and wait for it to progress will simply hang, spinning in an endless
-query loop. There's that comment in vblank_disable_and_save:
-
-"* Skip this step if there isn't any high precision timestamp
- * available. In that case we can't account for this and just
- * hope for the best.
- */
-
-With the disable happening after leading edge of vblank (== hw counter
-increment already happened) but before the vblank counter/timestamp
-handling in drm_handle_vblank, that step is needed to keep the counter
-progressing, so skipping it is bad.
-
-Now without high precision timestamping support, a kms driver must not
-set dev->vblank_disable_immediate = true, as this would cause problems
-for clients, so this shouldn't matter, but it would be good to still
-make this robust against a future kms driver which might have
-unreliable high precision timestamping, e.g., high precision
-timestamping that intermittently doesn't work.
-
-v3: Patch before coffee needs extra coffee.
-
-Testcase: igt/kms_vblank
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Michel Dänzer <michel@daenzer.net>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dave Airlie <airlied@redhat.com>,
-Cc: Mario Kleiner <mario.kleiner.de@gmail.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: http://patchwork.freedesktop.org/patch/msgid/20170315204027.20160-1-chris@chris-wilson.co.uk
+Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+Signed-off-by: Iyappan Subramanian <isubramanian@apm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_irq.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/apm/xgene/xgene_enet_hw.c |    1 +
+ drivers/net/ethernet/apm/xgene/xgene_enet_hw.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/drm_irq.c
-+++ b/drivers/gpu/drm/drm_irq.c
-@@ -1271,9 +1271,9 @@ void drm_vblank_put(struct drm_device *d
- 	if (atomic_dec_and_test(&vblank->refcount)) {
- 		if (drm_vblank_offdelay == 0)
- 			return;
--		else if (dev->vblank_disable_immediate || drm_vblank_offdelay < 0)
-+		else if (drm_vblank_offdelay < 0)
- 			vblank_disable_fn((unsigned long)vblank);
--		else
-+		else if (!dev->vblank_disable_immediate)
- 			mod_timer(&vblank->disable_timer,
- 				  jiffies + ((drm_vblank_offdelay * HZ)/1000));
- 	}
-@@ -1902,6 +1902,16 @@ bool drm_handle_vblank(struct drm_device
- 	wake_up(&vblank->queue);
- 	drm_handle_vblank_events(dev, pipe);
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+@@ -604,6 +604,7 @@ static void xgene_enet_cle_bypass(struct
+ 	xgene_enet_rd_csr(pdata, CLE_BYPASS_REG0_0_ADDR, &cb);
+ 	cb |= CFG_CLE_BYPASS_EN0;
+ 	CFG_CLE_IP_PROTOCOL0_SET(&cb, 3);
++	CFG_CLE_IP_HDR_LEN_SET(&cb, 0);
+ 	xgene_enet_wr_csr(pdata, CLE_BYPASS_REG0_0_ADDR, cb);
  
-+	/* With instant-off, we defer disabling the interrupt until after
-+	 * we finish processing the following vblank. The disable has to
-+	 * be last (after drm_handle_vblank_events) so that the timestamp
-+	 * is always accurate.
-+	 */
-+	if (dev->vblank_disable_immediate &&
-+	    drm_vblank_offdelay > 0 &&
-+	    !atomic_read(&vblank->refcount))
-+		vblank_disable_fn((unsigned long)vblank);
-+
- 	spin_unlock_irqrestore(&dev->event_lock, irqflags);
+ 	xgene_enet_rd_csr(pdata, CLE_BYPASS_REG1_0_ADDR, &cb);
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.h
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.h
+@@ -147,6 +147,7 @@ enum xgene_enet_rm {
+ #define CFG_RXCLK_MUXSEL0_SET(dst, val)	xgene_set_bits(dst, val, 26, 3)
  
- 	return true;
+ #define CFG_CLE_IP_PROTOCOL0_SET(dst, val)	xgene_set_bits(dst, val, 16, 2)
++#define CFG_CLE_IP_HDR_LEN_SET(dst, val)	xgene_set_bits(dst, val, 8, 5)
+ #define CFG_CLE_DSTQID0_SET(dst, val)		xgene_set_bits(dst, val, 0, 12)
+ #define CFG_CLE_FPSEL0_SET(dst, val)		xgene_set_bits(dst, val, 16, 4)
+ #define CFG_MACMODE_SET(dst, val)		xgene_set_bits(dst, val, 18, 2)
