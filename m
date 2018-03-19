@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3384037-1521481148-2-6940320688773819150
+X-Cyrus-Session-Id: sloti22d1t05-3372889-1521481129-2-1757414432598040924
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,65 +13,64 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521481148; b=v9xUb8ojVYTZ8AD6M6sKvpTVEAm5eAz+92MnivibCj66YWq
-    FMGrpj6vOkzUaXYrlUjUj1JqwqWNgfEODkHIG872S4pP/vGVC/a08M0XUQMRPU32
-    htZ5fyY1jlkxO6f9KoxflZhLboRX0+u65LIpmDO1X03+i/PmAeARoN8DcS7QL1hj
-    w1yAoTlOmlZqfvcxVQfpRX6YtWtlW7yoSZOtHp7MwbWr9KXps96YLe15cxf5Bpc6
-    mm1LpGMUV2sgy5NmKtJTyNjxQ7Lzcsp/ax29vX4IIMB4E83RUagAcoumLpZ9LTei
-    vIIGfSTHpF5NptRsvEahhpqLFv1vT2jIzv4GXgA==
+    t=1521481128; b=a4dLVpgiYwKZ7lgVhDHrE7Yk8sW6XLh2M+oFNgz6oDztDsK
+    vEXt6YBqTUpIQ7R2AZUe5hnuIpkbZUiXf+avz97YwpFqU5R4CMCJ3/E6pNCFS1xs
+    FHo7PmVYAUtKC0bAqJ/YiIDjavPEhyE5zxvOnvDIxQHt7vtGUE1pBrxU8fVjjEWN
+    ajuHF1LKr3mi8DtgskRjbwV6zeXiLj632y0eVYedlZpB5WecyLpqKF7zOO+xxY1c
+    P+ruvnhTTgyzWydOnmBSZRqEyU8IlDpLTNJ0KMexHt/pYwklQbJxTYJRiLwOXVrz
+    NXRMM7OmMPgVhKdr/VKQuygQN3osts3gN5TkuvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521481148; bh=uU+FQ5
-    QakxWZTiLJBULLAM4NJdOJXNABoI9VEZyPLa0=; b=eClhpEuqJ3jsfVmuq9+0Xi
-    rfxyMCMAL8ocogxaM0JEMY/rMTWioK94yRuun+YU4i/uO2jPCH5KEObVoELrc/Dv
-    SCSkuopyiZVzT/IXt5FAdltsDZEZgOvlDVJoUUQem/UDUHZBBSeMTw6FWF+Xj79O
-    uoMXuWjRs4rtRF5s0X3NUNucc1x0XX3yYrFUz9eNTp9J3t8a6H8EhLQ2eqNEPYIc
-    SvqK09+mW87cMEEFdzt7qP7CHKxGJY6k5FzZvSakK4LQYQX2ko6K/pXhicpPl37q
-    4cpPsqbV53co6GJ7FjqQkRf/7RUt6tgEKkvA3aYdyhhod/UuC9nZs8Ta7qEHyqJg
+    :mime-version:sender:list-id; s=arctest; t=1521481128; bh=u3HPgX
+    Gt68+HzaBia+ODyxRFIFnEraXzYpXbYv73wuM=; b=urunH/787OVhtZinOSbfjo
+    cvOl9mE3LFK116KrzOf9XBTKYCZXw6uip4z39JEIeT4abTAy24MiWmYctsQufc06
+    WKbblNN5vhXwnrHDyT1WPrmetW6lrA1xrZCAgRUms8nw1P3mU5kpmnSJnliiiUow
+    XxQBkPf5jRJ0CltjUsB7lNTlT0h9+mUL+lfoymMnbe6fmeb+HQRJUeGxIIexacxU
+    rdQaFG+/rjLn3ut1Q1Th96TZf09B7dbPaa6ACctxQxNvOymyVaidx7O0Bs6+BRSM
+    kfwsvMLq4divWw1kkUnvSyRLS9XoypL9Nqz5fRdDA/i3UA55I1xg3xx09oYchUHA
     ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cl4DncyI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Wth9zUB0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeelkedtnecuvehluhhsthgvrhfuihiivgeple;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekkeejudenucevlhhushhtvghrufhiiigvpedufe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cl4DncyI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Wth9zUB0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeelkedtnecuvehluhhsthgvrhfuihiivgeple;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekkeejudenucevlhhushhtvghrufhiiigvpedufe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966002AbeCSRiv (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 13:38:51 -0400
-Received: from mail-sn1nam02on0103.outbound.protection.outlook.com ([104.47.36.103]:60917
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S965967AbeCSQGm (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 12:06:42 -0400
+Received: from mail-dm3nam03on0123.outbound.protection.outlook.com ([104.47.41.123]:6845
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965964AbeCSQGl (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:06:41 -0400
+        id S965950AbeCSQGe (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:06:34 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Eric W. Biederman" <ebiederm@xmission.com>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+CC: Arjun Vynipadath <arjun@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 277/281] signal/parisc: Document a conflict
- with SI_USER with SIGFPE
-Thread-Topic: [PATCH AUTOSEL for 4.9 277/281] signal/parisc: Document a
- conflict with SI_USER with SIGFPE
-Thread-Index: AQHTv5vOFxYanGBkD0Sqyh/xG5YjMw==
-Date: Mon, 19 Mar 2018 16:03:23 +0000
-Message-ID: <20180319155742.13731-277-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 271/281] cxgb4vf: Fix SGE FL buffer
+ initialization logic for 64K pages
+Thread-Topic: [PATCH AUTOSEL for 4.9 271/281] cxgb4vf: Fix SGE FL buffer
+ initialization logic for 64K pages
+Thread-Index: AQHTv5vKhh80/x4xyUaHG31AYeUHRg==
+Date: Mon, 19 Mar 2018 16:03:16 +0000
+Message-ID: <20180319155742.13731-271-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,109 +79,104 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0728;7:+IT1WUFk1te+fKgwwRMwqqke79KEx/KQZ2Epjjl2iQpWqLoTPWP/JDdfLSuhgMn/inYRX+fD5sRLSVCGEovzoor7C/4kvjCPIu1YYHmKzB+hqKBQWgzrwJvHzS08ORx89lDxRg+6qO3dm7AjTpyLVH2h5wTIoryT3U/rjIkSSMyXt8oJGXcEfkIN+jxOIKEaM1Zn6lisZi5vvmOKD+jxh5+cF34ejnnUby0p9p4FxikplOi0gpW2NwS2DmGKxpFy;20:vU/rpYX/8097UeodEvwfLjtynLo+hGI5OdyScT7Qn2loRoimhBOA9ACNRe/USXg9MYuB8BN2E4VluQC//YCbDcfee6K8iBUKvDCzIMxRYW6ZTFEFfV/H+Cgf24y3xeRW/vczvIMrw33Q6qf3YSZ96pI+IZWIsZoZ4dU8LtrYUN8=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:FGg8VYuTrkt6a//JT0wgaqdcR5Xmx7nDPAKi+XzQPGooxBvLvb21TvyCezOg7V8f8L/Mfpmlzw44Y6+LBJfaejqHHjz1h7UKVQgzTzQpyCGpydnFSTKVY6YTTp7OWuFN31TVJhCxv4R6aNoheuLwcdDvTwGpzyNzybFTGYnoROjGoN4ltkYJb8k0EDVA87qpoVL4fZ5DWr0j9lnmB9n2U+UteB4b+4uf0+vI7DWrbCWvDluOuQL9EfHo3L4/7AP4;20:Vc6/dfFVLH8kOrvnEDMG9CTHEX0s6iVr79UaQGX7kTUvMn7CHpF/uvph0sBDFfiZz5e2FAS8IqN4Zr7aOZYt38y/BWT0xAoovfhun2wiGC2pMHTcsAbLuV1aBNpso4gAX9pjMtMyj3kR9eQ/1ZRbFAHGbNfc1DvlnhFPt+jk6ic=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3ab1836b-1300-47b8-1f0e-08d58db36449
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0728;
-x-ms-traffictypediagnostic: DM5PR2101MB0728:
+x-ms-office365-filtering-correlation-id: 313ced02-7e55-480f-1e3a-08d58db361f9
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
+x-ms-traffictypediagnostic: DM5PR2101MB1015:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0728022AC4248AAC0C47D495FBD40@DM5PR2101MB0728.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(26323138287068)(89211679590171)(9452136761055)(84791874153150);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0728;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0728;
+x-microsoft-antispam-prvs: <DM5PR2101MB1015A9BB9A59885FE4F616A8FBD40@DM5PR2101MB1015.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(346002)(376002)(39860400002)(396003)(199004)(189003)(8936002)(99286004)(478600001)(53936002)(107886003)(966005)(110136005)(86612001)(72206003)(97736004)(76176011)(316002)(3280700002)(5250100002)(2501003)(36756003)(2906002)(105586002)(1076002)(86362001)(14454004)(6436002)(54906003)(8666007)(6512007)(6116002)(6486002)(6306002)(106356001)(3846002)(22452003)(3660700001)(186003)(59450400001)(68736007)(66066001)(25786009)(102836004)(4326008)(10290500003)(26005)(6666003)(305945005)(2950100002)(7736002)(10090500001)(81156014)(81166006)(8676002)(6506007)(5660300001)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0728;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: SW2A2b8FEXY7NVtKvihgVLTCmHaHqG90nRRH1bpLCn0SqyEsCOnfrSUozxmeenzdpUuqzFvL7JONr09Qt5qPnXtwOBWunfUasl+vRIsyX3FMr0KxuQ3YNgu3vF25QFOCjHVtUsTrZYkVVAJIoqogo2XtxU8flDDmbA2MLckTbRzp8NfJlNavvzX6tOQHQs37tzCM6Bz9GE06LifRmvTo+cdEaLBscDOkVlrlCNBRqIWe742hAde/Pme1k8gQs5gQ2i+bSJedyLDtWOyTp3KPhKYq3aVia8B5wJhdNiRSAEZsHopYKVcfNFYN1uiowrYH54ehHUdVQSMuFnkb6YZcXQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(376002)(39860400002)(396003)(346002)(199004)(189003)(6506007)(106356001)(107886003)(2950100002)(6666003)(22452003)(316002)(10090500001)(59450400001)(76176011)(8676002)(81156014)(105586002)(81166006)(3280700002)(3660700001)(305945005)(7736002)(2501003)(6436002)(68736007)(6486002)(5250100002)(8936002)(6116002)(3846002)(2906002)(1076002)(186003)(36756003)(25786009)(10290500003)(4326008)(97736004)(72206003)(2900100001)(99286004)(53936002)(5660300001)(6512007)(14454004)(478600001)(102836004)(66066001)(86612001)(86362001)(26005)(54906003)(110136005)(575784001)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: AOANQ5shPYN7i0padwucqBHjl4T83pktzD7GUaWY/8mM2vTsooMebRdNW+YTdibEbOTSVfTuZIQlBmJVyfW5ftL8lD061lq+ydvweV/IAkPy/FR5wc0nLgde9r4RO3PB/VM9j0MKrBL7MOGPixx4SfARnHyT5bTX0JbI96otEei6xC5+KH//2S6llmI3alRLo6FOL3M8uBni4x4Rxo8kCek3dc3n9LE75T0Jhc4cN0/x1Y2c2N+LiYp+TPwB0NrobtU2IBx6uS4MMIWrJXK9gsG4K3jrrzVdnuEsbspbzHkmw6XJnfTfrFWYNg6bBvmFSy0DI7NbwxYHw48S8Zq2SQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ab1836b-1300-47b8-1f0e-08d58db36449
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:03:23.7694
+X-MS-Exchange-CrossTenant-Network-Message-Id: 313ced02-7e55-480f-1e3a-08d58db361f9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:03:16.6674
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0728
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
-[ Upstream commit b5daf2b9d1c9a2b4f03ca93f75913ba2da3b3eaa ]
+[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
 
-Setting si_code to 0 results in a userspace seeing an si_code of 0.
-This is the same si_code as SI_USER.  Posix and common sense requires
-that SI_USER not be a signal specific si_code.  As such this use of 0
-for the si_code is a pretty horribly broken ABI.
+We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
+the extant logic would flag that as an error. This was already fixed in
+cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
+t4_sge_init_soft() when our Page Size is 64KB".
 
-Further use of si_code =3D=3D 0 guaranteed that copy_siginfo_to_user saw a
-value of __SI_KILL and now sees a value of SIL_KILL with the result
-that uid and pid fields are copied and which might copying the si_addr
-field by accident but certainly not by design.  Making this a very
-flakey implementation.
-
-Utilizing FPE_FIXME siginfo_layout will now return SIL_FAULT and the
-appropriate fields will reliably be copied.
-
-This bug is 13 years old and parsic machines are no longer being built
-so I don't know if it possible or worth fixing it.  But it is at least
-worth documenting this so other architectures don't make the same
-mistake.
-
-Possible ABI fixes includee:
-  - Send the signal without siginfo
-  - Don't generate a signal
-  - Possibly assign and use an appropriate si_code
-  - Don't handle cases which can't happen
-
-Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-Cc: Helge Deller <deller@gmx.de>
-Cc: linux-parisc@vger.kernel.org
-Ref: 313c01d3e3fd ("[PATCH] PA-RISC update for 2.6.0")
-Histroy Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.=
-git
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Original Work by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/parisc/include/uapi/asm/siginfo.h | 7 +++++++
- arch/parisc/kernel/traps.c             | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/arch/parisc/include/uapi/asm/siginfo.h b/arch/parisc/include/u=
-api/asm/siginfo.h
-index 8fd10f85c50e..882a8775441f 100644
---- a/arch/parisc/include/uapi/asm/siginfo.h
-+++ b/arch/parisc/include/uapi/asm/siginfo.h
-@@ -7,4 +7,11 @@
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c b/drivers/net/ether=
+net/chelsio/cxgb4vf/sge.c
+index f3ed9ce99e5e..9d64e8e7c417 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
+@@ -2616,8 +2616,8 @@ void t4vf_sge_stop(struct adapter *adapter)
+ int t4vf_sge_init(struct adapter *adapter)
+ {
+ 	struct sge_params *sge_params =3D &adapter->params.sge;
+-	u32 fl0 =3D sge_params->sge_fl_buffer_size[0];
+-	u32 fl1 =3D sge_params->sge_fl_buffer_size[1];
++	u32 fl_small_pg =3D sge_params->sge_fl_buffer_size[0];
++	u32 fl_large_pg =3D sge_params->sge_fl_buffer_size[1];
+ 	struct sge *s =3D &adapter->sge;
 =20
- #include <asm-generic/siginfo.h>
-=20
-+/*
-+ * SIGFPE si_codes
-+ */
-+#ifdef __KERNEL__
-+#define FPE_FIXME	0	/* Broken dup of SI_USER */
-+#endif /* __KERNEL__ */
+ 	/*
+@@ -2625,9 +2625,20 @@ int t4vf_sge_init(struct adapter *adapter)
+ 	 * the Physical Function Driver.  Ideally we should be able to deal
+ 	 * with _any_ configuration.  Practice is different ...
+ 	 */
+-	if (fl0 !=3D PAGE_SIZE || (fl1 !=3D 0 && fl1 <=3D fl0)) {
 +
- #endif
-diff --git a/arch/parisc/kernel/traps.c b/arch/parisc/kernel/traps.c
-index 378df9207406..3172cb52f703 100644
---- a/arch/parisc/kernel/traps.c
-+++ b/arch/parisc/kernel/traps.c
-@@ -627,7 +627,7 @@ void notrace handle_interruption(int code, struct pt_re=
-gs *regs)
- 			si.si_signo =3D SIGFPE;
- 			/* Set to zero, and let the userspace app figure it out from
- 			   the insn pointed to by si_addr */
--			si.si_code =3D 0;
-+			si.si_code =3D FPE_FIXME;
- 			si.si_addr =3D (void __user *) regs->iaoq[0];
- 			force_sig_info(SIGFPE, &si, current);
- 			return;
++	/* We only bother using the Large Page logic if the Large Page Buffer
++	 * is larger than our Page Size Buffer.
++	 */
++	if (fl_large_pg <=3D fl_small_pg)
++		fl_large_pg =3D 0;
++
++	/* The Page Size Buffer must be exactly equal to our Page Size and the
++	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
++	 */
++	if (fl_small_pg !=3D PAGE_SIZE ||
++	    (fl_large_pg & (fl_large_pg - 1)) !=3D 0) {
+ 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
+-			fl0, fl1);
++			fl_small_pg, fl_large_pg);
+ 		return -EINVAL;
+ 	}
+ 	if ((sge_params->sge_control & RXPKTCPLMODE_F) !=3D
+@@ -2639,8 +2650,8 @@ int t4vf_sge_init(struct adapter *adapter)
+ 	/*
+ 	 * Now translate the adapter parameters into our internal forms.
+ 	 */
+-	if (fl1)
+-		s->fl_pg_order =3D ilog2(fl1) - PAGE_SHIFT;
++	if (fl_large_pg)
++		s->fl_pg_order =3D ilog2(fl_large_pg) - PAGE_SHIFT;
+ 	s->stat_len =3D ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
+ 			? 128 : 64);
+ 	s->pktshift =3D PKTSHIFT_G(sge_params->sge_control);
 --=20
 2.14.1
