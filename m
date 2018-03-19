@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtH8KT+E79xuDMBvdrozyDRjJR/0K6H9LNVC1e11CNBLytOud82iNQCXB3G0DAV18tCPDwm
-ARC-Seal: i=1; a=rsa-sha256; t=1521483818; cv=none;
+X-Google-Smtp-Source: AG47ELs9oMSoA6Y1Cu5jLYxT4pE85EG/E/UUvEkOCqFMlIfDi1z+nkKX0nLIQ7J7Awdt+zdUsmxc
+ARC-Seal: i=1; a=rsa-sha256; t=1521483815; cv=none;
         d=google.com; s=arc-20160816;
-        b=ELym+qXJ9kTEbpbQBB3P4wnMWCbTXGVzYqHVVYBRDo0GxE1DigjyJPKEkJwlXFR1tv
-         HNohxEvMaFYIsev+P6uI/zttI3KQEZYze7OOwVS/J480ZoUC++OS2l7iGoVMsEjk50cx
-         pQPdkpe93LI2sc0ahWmHC9pMtnQM2OsvWBzbFFgL72B6TvJgJxd+NwwIn4YDwMW6NmQJ
-         R4CSIFmP+yfxhAve19Odi7TOe7F0oC2lT7flP0ERfz6mLCubpzmn0OChqTUHmM/ZnFEv
-         TMCzeQGboCb+KohC+aqFcEr0b6tBJP6hXva6NjBJ/o+kQfJxT2i/myi5mXQhuIPtODVz
-         DPJw==
+        b=ORQQIuIsnDMY/+bh1uXhyHeKASs9Aws0JXQFXCtKKPjRyku4uCM5Bn6ocTzr7lVFR3
+         5IUp9nEZOdB53Vg1mX0G7fT59zIEFC66yYxWVLP6lbWMUuL3byWAm7D+MRbYQepqK4Tb
+         g2p7kj4CowVOzGGA7vGbkXBQU04CzV73shwy8hlk2K0S4QNb5apVkirYPCixT76UZbxN
+         cmGkQ0lN37sWlP/85KxCKmvIrOqaeL7319x8zN9HsKH2B8/W3+yoydTv6/HpOELnE2I1
+         i4DHQt2vdaFb/B9r0otEj/4/ShsS7hFk2lfWaH3sOKQ4EHie58aNImuobOmcvLPHr0vk
+         4GAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=muGasVB9x6Ob9mTdoW0wPdirqm9cMt2NLQfM4Co+JxM=;
-        b=hW8yxviMNZGPVW7Ax7TGf0hjHeefYFO8zpKyw982CIdzh82t2mZrQIVXCpnxfnCUrr
-         BR8VN6xfCMj6uXeaxaugKXMYz6KCGYkx4rM515tZHoLj6elwQhF0WIUBXzpcrLtVLSVv
-         Gr+iNoOBi3YgOQ7sPnsh7Z+XNerWgxwHIL92Tfe1bAixeaoAyshTi4VxFE24gmcK+89V
-         MkFTa3YD0jMIPV250eQ6MeveS0wTm+336XbjQf5gEavFk9Q9b1CsIkin82Uy0DREcnDd
-         a+GvjkjRU+sHWTjUEquAn867ZdTW3pERAK9q5CmAi3nRG8a3yIrb8rw6RfSDhDV0MqIv
-         tJNg==
+        bh=mU0gPA9ouPF3HyrcC8f/W8sE2CaNgjeH00POqP6XuFA=;
+        b=dqw4zXGJM9AT2Sst5+ZKltaWevQmk+Nd1joQvY/UMTDtPY9vsjlRai3dcK5xawwBSA
+         nKkILbakZs+GelzVaB62khy742icsFxBA8lgWJD4AjTTWNeqizLYc3/pq4kXFD3Z7dme
+         gk2bYnQIVlsTzPAqpSvS/DjplSHX63Vw2TKSVi/6FCBu5LktK9T9y3WBxr58FL8jnM8F
+         y1xOanhpvxOpkROmhf3E02TJtLUCw+8FndHWT02MBRtBOkjPFu4S2V7Gg7o7Pi3YIaj+
+         KsOmcMlU7o+6ByvfmeUV0vL4pOxsXQyNxuJRSpH5OD0kJKnw2Y1MFUIOTuem4d+5JUow
+         XLpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas Stach <l.stach@pengutronix.de>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jayachandran C <jnair@caviumnetworks.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 128/241] serial: imx: setup DCEDTE early and ensure DCD and RI irqs to be off
-Date: Mon, 19 Mar 2018 19:06:33 +0100
-Message-Id: <20180319180756.500425657@linuxfoundation.org>
+Subject: [PATCH 4.9 127/241] tty: amba-pl011: Fix spurious TX interrupts
+Date: Mon, 19 Mar 2018 19:06:32 +0100
+Message-Id: <20180319180756.456254569@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391416952285233?=
-X-GMAIL-MSGID: =?utf-8?q?1595391416952285233?=
+X-GMAIL-THRID: =?utf-8?q?1595391413477416074?=
+X-GMAIL-MSGID: =?utf-8?q?1595391413477416074?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,91 +49,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+From: Jayachandran C <jnair@caviumnetworks.com>
 
 
-[ Upstream commit e61c38d85b7392e033ee03bca46f1d6006156175 ]
+[ Upstream commit 7d05587c9e0e4611650bb403812e2d492c178a9f ]
 
-If the UART is operated in DTE mode and UCR3_DCD or UCR3_RI are 1 (which
-is the reset default) and the opposite side pulls the respective line to
-its active level the irq triggers after it is requested in .probe.
+On SMP systems, we see a lot of spurious TX interrupts when a
+program generates a steady stream of output to the pl011 UART.
 
-These irqs were already disabled in .startup but this might be too late.
+The problem can be easily seen when one CPU generates the output
+while another CPU handles the pl011 interrupts, and the rate of
+output is low enough not to fill the TX FIFO. The problem seems
+to be:
 
-Also setup of the UFCR_DCEDTE bit (currently done in .set_termios) is
-done very late which is critical as it also controls direction of some
-pins.
+    -- CPU a --                        -- CPU b --
+   (take port lock)
+   pl011_start_tx
+      pl011_start_tx_pio
+         enable TXIM in REG_IMSC   ->  causes uart tx intr (pl011_int)
+         pl011_tx_chars                pl011_int
+            ...tx chars, all done...       (wait for port lock)
+            pl011_stop_tx                   .
+               disable TXIM                 .
+    (release port lock)            ->      (take port lock)
+                                           check for TXIM, not enabled
+                                           (release port lock)
+                                           return IRQ_NONE
 
-So setup UFCR_DCEDTE earlier (in .probe) and also disable the broken
-irqs in DTE mode there before requesting irqs.
+Enabling the TXIM in pl011_start_tx_pio() causes the interrupt
+to be generated and delivered to CPU b, even though pl011_tx_chars()
+is able to complete the TX and then disable the tx interrupt.
 
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
+Fix this by enabling TXIM only after pl011_tx_chars, if it is needed.
+pl011_tx_chars will return a boolean indicating whether the TX
+interrupts have to be enabled.
+
+Debugged-by: Vijaya Kumar <Vijaya.Kumar@cavium.com>
+Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/imx.c |   36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+ drivers/tty/serial/amba-pl011.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1316,19 +1316,10 @@ static int imx_startup(struct uart_port
- 	if (!is_imx1_uart(sport)) {
- 		temp = readl(sport->port.membase + UCR3);
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1302,14 +1302,15 @@ static void pl011_stop_tx(struct uart_po
+ 	pl011_dma_tx_stop(uap);
+ }
  
--		/*
--		 * The effect of RI and DCD differs depending on the UFCR_DCEDTE
--		 * bit. In DCE mode they control the outputs, in DTE mode they
--		 * enable the respective irqs. At least the DCD irq cannot be
--		 * cleared on i.MX25 at least, so it's not usable and must be
--		 * disabled. I don't have test hardware to check if RI has the
--		 * same problem but I consider this likely so it's disabled for
--		 * now, too.
--		 */
--		temp |= IMX21_UCR3_RXDMUXSEL | UCR3_ADNIMP |
--			UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
-+		temp |= UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
+-static void pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
++static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq);
  
- 		if (sport->dte_mode)
-+			/* disable broken interrupts */
- 			temp &= ~(UCR3_RI | UCR3_DCD);
- 
- 		writel(temp, sport->port.membase + UCR3);
-@@ -1583,8 +1574,6 @@ imx_set_termios(struct uart_port *port,
- 
- 	ufcr = readl(sport->port.membase + UFCR);
- 	ufcr = (ufcr & (~UFCR_RFDIV)) | UFCR_RFDIV_REG(div);
--	if (sport->dte_mode)
--		ufcr |= UFCR_DCEDTE;
- 	writel(ufcr, sport->port.membase + UFCR);
- 
- 	writel(num, sport->port.membase + UBIR);
-@@ -2149,6 +2138,27 @@ static int serial_imx_probe(struct platf
- 		 UCR1_TXMPTYEN | UCR1_RTSDEN);
- 	writel_relaxed(reg, sport->port.membase + UCR1);
- 
-+	if (!is_imx1_uart(sport) && sport->dte_mode) {
-+		/*
-+		 * The DCEDTE bit changes the direction of DSR, DCD, DTR and RI
-+		 * and influences if UCR3_RI and UCR3_DCD changes the level of RI
-+		 * and DCD (when they are outputs) or enables the respective
-+		 * irqs. So set this bit early, i.e. before requesting irqs.
-+		 */
-+		writel(UFCR_DCEDTE, sport->port.membase + UFCR);
-+
-+		/*
-+		 * Disable UCR3_RI and UCR3_DCD irqs. They are also not
-+		 * enabled later because they cannot be cleared
-+		 * (confirmed on i.MX25) which makes them unusable.
-+		 */
-+		writel(IMX21_UCR3_RXDMUXSEL | UCR3_ADNIMP | UCR3_DSR,
-+		       sport->port.membase + UCR3);
-+
-+	} else {
-+		writel(0, sport->port.membase + UFCR);
+ /* Start TX with programmed I/O only (no DMA) */
+ static void pl011_start_tx_pio(struct uart_amba_port *uap)
+ {
+-	uap->im |= UART011_TXIM;
+-	pl011_write(uap->im, uap, REG_IMSC);
+-	pl011_tx_chars(uap, false);
++	if (pl011_tx_chars(uap, false)) {
++		uap->im |= UART011_TXIM;
++		pl011_write(uap->im, uap, REG_IMSC);
 +	}
-+
- 	clk_disable_unprepare(sport->clk_ipg);
+ }
  
- 	/*
+ static void pl011_start_tx(struct uart_port *port)
+@@ -1389,25 +1390,26 @@ static bool pl011_tx_char(struct uart_am
+ 	return true;
+ }
+ 
+-static void pl011_tx_chars(struct uart_amba_port *uap, bool from_irq)
++/* Returns true if tx interrupts have to be (kept) enabled  */
++static bool pl011_tx_chars(struct uart_amba_port *uap, bool from_irq)
+ {
+ 	struct circ_buf *xmit = &uap->port.state->xmit;
+ 	int count = uap->fifosize >> 1;
+ 
+ 	if (uap->port.x_char) {
+ 		if (!pl011_tx_char(uap, uap->port.x_char, from_irq))
+-			return;
++			return true;
+ 		uap->port.x_char = 0;
+ 		--count;
+ 	}
+ 	if (uart_circ_empty(xmit) || uart_tx_stopped(&uap->port)) {
+ 		pl011_stop_tx(&uap->port);
+-		return;
++		return false;
+ 	}
+ 
+ 	/* If we are using DMA mode, try to send some characters. */
+ 	if (pl011_dma_tx_irq(uap))
+-		return;
++		return true;
+ 
+ 	do {
+ 		if (likely(from_irq) && count-- == 0)
+@@ -1422,8 +1424,11 @@ static void pl011_tx_chars(struct uart_a
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(&uap->port);
+ 
+-	if (uart_circ_empty(xmit))
++	if (uart_circ_empty(xmit)) {
+ 		pl011_stop_tx(&uap->port);
++		return false;
++	}
++	return true;
+ }
+ 
+ static void pl011_modem_status(struct uart_amba_port *uap)
