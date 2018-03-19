@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3954714-1521499275-2-4613930184184719811
+X-Cyrus-Session-Id: sloti22d1t05-3954714-1521499249-2-6553688415343137315
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521499274; b=qklpN0aIZJ19OdBL4erjRqC3D77vE+Tr05zVGDlO4NS2qQB
-    r/BvR/8uWPCfIP7/DL9esrEN9fh3cRKzV7NTnkMmY52r3E7QMvYq7AM499XhaJw0
-    V8Ay5uavM3cBgmBJwPkxdnzLtnhy1Hr6620rS3lFX15RvvJVDAyU5qNa7wiPmW/8
-    S19wUYjrjJ0LpFl6G+iJSIXd1Hw8YGnN4g6Q2LP+JgCI85dn3NMW7Sz2YUK5Q5z4
-    sZirc2D4GYztLlOHEzz73pY2Rc7Ycapt7CUOt+GfPb0o3NoXu7OVx37SLqHUs5h9
-    ru+X28q55syrGv+OJsKKyV8DC55NOXmmLYKi+3w==
+    t=1521499248; b=KWvD03eGtix70euA19F0lLAI3LImUNaTAc+wMfQZZfUdbkU
+    WUVgd7BI7iodWNIi/XBJ65UN854OSNVRXKW39wwDjtWCPTKVvhhdYRTNfjZOakZN
+    S8/zMn49WUazO5KLFhxoIiqVudE3IPnYvDsuvuXdEH2kxY/4i4wddkq8JqmBiSW0
+    KRXVJj6ZNCMR0w7UV5hhK0NaYzB8MnMkwyolM8lDmKynNZNpItXSuJ/ttODzX/8v
+    tPQl/Muea8VIoF7HydJdsoUuHfPQeo/dS5RTEgGe79W09E/q2bGMPKmar25oBOMb
+    D0wE5Aq7cijjXAJuD6V7f+XIYy+tyS1MDB7Ai4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521499274; bh=txxx+L
-    Wgpbp10dYyJujSOkFgSIwXqZKBh6NHFTj2tyc=; b=EkY7lu8p/zq9FNSTOJohkH
-    XDfhNtNTAoa/sl9ImriX1YBui1J1i7aLThh/y/OeEYG6U73eNthAlrR+PfZPB+34
-    ewKAhq77BuYCl4PIA6ytSr2Jv4RvYnlesmz7w2oeOK3OoPGOvqjF0xdYohAxdCn9
-    I67kbyPTweHZwvrlAeDNv7T0xcUxe/QTsiCfEUB8hlbb3DPj7OAoh0H079mtJyW6
-    AW76YUau1zrmdj+E5OCGVa0SPEAwCftzTllJjIsdY3pWT4mDBpBaYgWqvBMJbsKB
-    ilU/csHq3AGfb3A5l3jKiK4TYXdum+LS7YcGWMGlV+SybUr4FZCuP5fm/RGegSNg
+    :mime-version:sender:list-id; s=arctest; t=1521499248; bh=hnAcOm
+    PNjjvSdfr6O0O6CMleSwN8R30LUBVyoVryoK8=; b=c/lIN64efOoGzO2st/r6Gr
+    xonqiNCwBRkEFo+oCc/33kARi4tcPi09kteEseWbvI2a4wCM8WG5ajE3K9tiLT+n
+    gNLsaj7AWMxYgYk/9EcC815+ffH/1DsnBrEHkkxpiXCpS6vFZYmuXvY5gGXJBXzA
+    jif2oOxfT6EnRDWjyZvnpeOd+jFjhYxqPxK9364nONmRIR0wEhnXzVi9zwkMII+D
+    A0Z6erHRPf1ZkWbUQ1XZ4LdDiUhqInylo3vUQqQDtJLxoNUmx+pLLgf4xbPX9GH1
+    lWOMPlRBo33KuEAZ5Ot7nYkFrOFoeOkUpVS40kRgHl1xUhbOakG706z8Qy8qAKRA
     ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=K26/JKU/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E9K+LCh+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggddtudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinheprhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeelieekfeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeelieenucevlhhushhtvghrufhiiigvpeehke;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=K26/JKU/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E9K+LCh+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggddtudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinheprhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeelieekfeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeelieenucevlhhushhtvghrufhiiigvpeehke;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933026AbeCSWjv (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:39:51 -0400
-Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:4160
+        id S936648AbeCSWjx (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:39:53 -0400
+Received: from mail-by2nam01on0103.outbound.protection.outlook.com ([104.47.34.103]:19764
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933160AbeCSPrX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:47:23 -0400
+        id S933099AbeCSPrW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:47:22 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+CC: Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 018/124] ACPI / video: Default lcd_only to
- true on Win8-ready and newer machines
-Thread-Topic: [PATCH AUTOSEL for 4.15 018/124] ACPI / video: Default lcd_only
- to true on Win8-ready and newer machines
-Thread-Index: AQHTv5mO41RDtvYTbkqYVxmngs9SdQ==
-Date: Mon, 19 Mar 2018 15:47:17 +0000
-Message-ID: <20180319154645.11350-18-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 017/124] rds; Reset rs->rs_bound_addr in
+ rds_add_bound() failure path
+Thread-Topic: [PATCH AUTOSEL for 4.15 017/124] rds; Reset rs->rs_bound_addr in
+ rds_add_bound() failure path
+Thread-Index: AQHTv5mOTCslapjPg0+jgzE7/o1rzQ==
+Date: Mon, 19 Mar 2018 15:47:16 +0000
+Message-ID: <20180319154645.11350-17-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,121 +78,87 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0728;7:u2gImwDOdiimoAjiQYP95XlXyFsEr0PWyUwyE/eTeYE3qyZAib84dBTOPuY30m/1mlwqeD4Z7KRVkTsMjBxYXuh+ry/MJIQtz5/9og7nWcxENXpnGsk7tSaO6KT4b18rWzL9YnEd7oIwJkWkf9TrcragpWro/Rhh6Xqesg7x2LBa5DuPQhTeq6nboD6NUErIiMCYPiIgjaNllH587UnMwjUNtn2bgeBJipC4NYYTE8tV+c+sYaUt+BZj8J0oLQ/4;20:Ha/1wvcRbKLl87cRURuNiwf0OLNXDNDzFI/V6ilQg/Azb92kztafcEKWf0lt/RDdXSf7GBu58u4SGUmIhYmAwcuZtVBDm9b/4CPC5i8e8I2sQPWuFJRjHbf5pLsNM7OtMu4g31EtA0bgdXTnC2TTTZEk1nctg6XPucYvYgS1bBE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:jmYvxpuFtc83jWvsEUHbQionhmM3JV6JOX9GgV/L/HthquV9OyDd3z1lORzKEO734EQssJl+T1w8gmVWAnf297GsmQl7BvSqzwphToYf7DnfLC+U1K7ywat3Tij3sUL6oRT9+ULsqJ++jSYZrv/bX7Cz0cLfFjYAit9IfGe8YEbrn8eVG6D+SB9gGHtD+Uyr57MI+oalLiBe+Sm33j9/bW4eCtw7ZdAc1TJbfL7v5PInjKVwlxM309EDwb/EwR7n;20:0RkNa9bXFsV6tcdVkEXixXkaAf8JIFf+bkZFIs+J5hvboID6P8uBtstXb5OhoM8vfp12olP/M2VAdPxe98+FVKyTBw2gGFF0YUW4QhwtH2SPHohAS5IH6q2eaIs65cY6yZmezFqJr827je9UtZY/cfGZAxVZ4sam+jPF+b84z2Y=
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fc7d12e5-cdf6-4c6d-57af-08d58db0b187
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0728;
-x-ms-traffictypediagnostic: DM5PR2101MB0728:
+x-ms-office365-filtering-correlation-id: d3f5a357-16fe-45ad-6acf-08d58db0b0e4
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1013;
+x-ms-traffictypediagnostic: DM5PR2101MB1013:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0728762D9E9C10717E3E2F3BFBD40@DM5PR2101MB0728.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(83566789882024)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0728;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0728;
+x-microsoft-antispam-prvs: <DM5PR2101MB10138E27E5E92BF409E43491FBD40@DM5PR2101MB1013.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1013;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1013;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(396003)(346002)(39380400002)(366004)(199004)(189003)(10290500003)(26005)(305945005)(68736007)(186003)(59450400001)(25786009)(4326008)(102836004)(66066001)(6506007)(8676002)(2900100001)(5660300001)(7736002)(2950100002)(81166006)(10090500001)(81156014)(97736004)(5250100002)(3280700002)(2501003)(76176011)(316002)(8936002)(478600001)(53936002)(575784001)(99286004)(86612001)(72206003)(107886003)(110136005)(966005)(54906003)(6512007)(14454004)(6436002)(22452003)(3660700001)(3846002)(6306002)(6116002)(6486002)(106356001)(1076002)(36756003)(2906002)(105586002)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0728;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: VWkLejiyGMWlxjcdiwHWx5kNgFATVABBgmnHCOCUzn4tfEq11MMwvfwcsdV9mZeZXdISMCSQfVjm7ugT9KD9OhQNx6g1yF88dIRo+prbRSiSQOer9QmgNhhMvqs2ECfU/T5Cdk3MHWRZ/EKBLzj381U30cBiul4BTqEM1eHVpGb0QS4paokuqy8nL6n0Hf7/pKT615fksYGGDhyA5HBUh+EgCfMh4X+Vo1iJhND/QSHGZ0Tv7IDcir4ioeL2tJ52aZ4pesaYaSmHNBXdva8yOKVnHQRHR9o4GYT0fR2kt0zFBhvch8vK44E0jWU9eUszpQmi9sATxYqCBxn5H7AupQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(346002)(376002)(39380400002)(189003)(199004)(86612001)(316002)(26005)(72206003)(4326008)(25786009)(110136005)(10290500003)(86362001)(575784001)(59450400001)(54906003)(53936002)(36756003)(107886003)(3280700002)(14454004)(22452003)(6506007)(5660300001)(68736007)(99286004)(186003)(478600001)(76176011)(2950100002)(10090500001)(102836004)(6116002)(5250100002)(2501003)(97736004)(3660700001)(106356001)(81156014)(81166006)(8676002)(8936002)(7736002)(305945005)(2900100001)(105586002)(3846002)(1076002)(66066001)(6436002)(2906002)(6512007)(6486002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1013;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: ++dGyVLJM/54Mb2lHm7U7smxsyw2ng9cEct6oqMNDFvMJIW9Hi0KWWkbO6fjbLj4uxlr9m1ur1s59rF73HpJ3wNk30xcxTq1kKcCpsDgCIXNkkrNvhFJBRfvNHWZwdhnd/UiG+niwtKvD+6DueTdh1obbtFCxOZn0nzfP5CbCAU8WbwjTvBJTSIOecz657YesveyMGnzMo3G5/zvVLrYMmHLejq+ffExjAyEo8vUXEd13Ps+2rNN+DU/zqFdw6l6AC82rsieY33ztHHVxwSabkh/Dh6NdtN7EBZzg5mzLI+fGbmnAOzsifEODLUPKpcmC7k1w2xAoHCeFP4v1wY3Gg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc7d12e5-cdf6-4c6d-57af-08d58db0b187
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:17.3749
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3f5a357-16fe-45ad-6acf-08d58db0b0e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:16.3142
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0728
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1013
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-[ Upstream commit 5928c281524fe451114e04f1dfa11246a37e859f ]
+[ Upstream commit 7ae0c649c47f1c5d2db8cee6dd75855970af1669 ]
 
-We're seeing a lot of bogus backlight interfaces on newer machines without
-a LCD such as desktops, servers and HDMI sticks. This causes userspace to
-show a non-functional brightness slider in e.g. the GNOME3 system menu,
-which is undesirable. And, in general, we should simply just not register
-a non functional backlight interface.
+If the rds_sock is not added to the bind_hash_table, we must
+reset rs_bound_addr so that rds_remove_bound will not trip on
+this rds_sock.
 
-Checking the LCD flag causes the bogus acpi_video backlight interfaces to
-go away (on the machines this was tested on).
+rds_add_bound() does a rds_sock_put() in this failure path, so
+failing to reset rs_bound_addr will result in a socket refcount
+bug, and will trigger a WARN_ON with the stack shown below when
+the application subsequently tries to close the PF_RDS socket.
 
-This change sets the lcd_only option by default on any machines which
-are Win8-ready, to fix this.
+     WARNING: CPU: 20 PID: 19499 at net/rds/af_rds.c:496 \
+		rds_sock_destruct+0x15/0x30 [rds]
+       :
+     __sk_destruct+0x21/0x190
+     rds_remove_bound.part.13+0xb6/0x140 [rds]
+     rds_release+0x71/0x120 [rds]
+     sock_release+0x1a/0x70
+     sock_close+0xe/0x20
+     __fput+0xd5/0x210
+     task_work_run+0x82/0xa0
+     do_exit+0x2ce/0xb30
+     ? syscall_trace_enter+0x1cc/0x2b0
+     do_group_exit+0x39/0xa0
+     SyS_exit_group+0x10/0x10
+     do_syscall_64+0x61/0x1a0
 
-This is not entirely without a risk of regressions, but video_detect.c
-already prefers native-backlight interfaces over the acpi_video one
-on Win8-ready machines, calling acpi_video_unregister_backlight() as soon
-as a native interface shows up. This is done because the ACPI backlight
-interface often is broken on Win8-ready machines, because win8 does not
-seem to actually use it.
-
-So in practice we already end up not registering the ACPI backlight
-interface on (most) Win8-ready machines with a LCD panel, thus this
-change does not change anything for (most) machines with a LCD panel
-and on machines without a LCD panel we actually don't want to register
-any backlight interfaces.
-
-This has been tested on the following machines and fixes a bogus backlight
-interface showing up there:
- - Desktop with an Asrock B150M Pro4S/D3 m.b. using i5-6500 builtin gfx
- - Intel Compute Stick STK1AW32SC
- - Meegopad T08 HDMI stick
-
-Bogus backlight interfaces have also been reported on:
- - Desktop with Asus H87I-Plus m.b.
- - Desktop with ASRock B75M-ITX m.b.
- - Desktop with Gigabyte Z87-D3HP m.b.
- - Dell PowerEdge T20 desktop
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D1097436
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D1133327
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D1133329
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D1133646
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/acpi/acpi_video.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ net/rds/bind.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 0972ec0e2eb8..f53ccc680238 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -80,8 +80,8 @@ MODULE_PARM_DESC(report_key_events,
- static bool device_id_scheme =3D false;
- module_param(device_id_scheme, bool, 0444);
-=20
--static bool only_lcd =3D false;
--module_param(only_lcd, bool, 0444);
-+static int only_lcd =3D -1;
-+module_param(only_lcd, int, 0444);
-=20
- static int register_count;
- static DEFINE_MUTEX(register_count_mutex);
-@@ -2136,6 +2136,16 @@ int acpi_video_register(void)
- 		goto leave;
- 	}
-=20
-+	/*
-+	 * We're seeing a lot of bogus backlight interfaces on newer machines
-+	 * without a LCD such as desktops, servers and HDMI sticks. Checking
-+	 * the lcd flag fixes this, so enable this on any machines which are
-+	 * win8 ready (where we also prefer the native backlight driver, so
-+	 * normally the acpi_video code should not register there anyways).
-+	 */
-+	if (only_lcd =3D=3D -1)
-+		only_lcd =3D acpi_osi_is_win8();
-+
- 	dmi_check_system(video_dmi_table);
-=20
- 	ret =3D acpi_bus_register_driver(&acpi_video_bus);
+diff --git a/net/rds/bind.c b/net/rds/bind.c
+index 75d43dc8e96b..5aa3a64aa4f0 100644
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -114,6 +114,7 @@ static int rds_add_bound(struct rds_sock *rs, __be32 ad=
+dr, __be16 *port)
+ 			  rs, &addr, (int)ntohs(*port));
+ 			break;
+ 		} else {
++			rs->rs_bound_addr =3D 0;
+ 			rds_sock_put(rs);
+ 			ret =3D -ENOMEM;
+ 			break;
 --=20
 2.14.1
