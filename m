@@ -1,41 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuIcBZvRlb4HAHzjzEDPV6Wn77W2lUShUQ5tClsRD0WlajAnq7TOqNmlK2JSL2B7PzjhlA8
-ARC-Seal: i=1; a=rsa-sha256; t=1521483573; cv=none;
-        d=google.com; s=arc-20160816;
-        b=j2vf5Zwgla0jnRf/UT6wGCvVeg3tdv2XKVd3ore+tP8CcrdNlqjsZ2Na9VtR/GelTp
-         i4nu1onhdFMhuNChrO6ptVFYFS0cQwx0qQW9BmhyEY8SwzH5WV8F9p1eVGRUchTyiQxF
-         JzvPVtsIrGAiGejNcai75gni05A8K1S2ZJw65trqDJ1Ct1dKlHL00FTVLBzG+D/CnVPl
-         99VBB5xMeqMyEL9JATeIezA+6Wo5g3u4OQB1nn1rQsYG2/muKFyu6Fi9eWL6nNXYd653
-         brdWYQ42mmMqtglGUGPZZKpx2fo6tS6NlPFARc7wCMzSBKm6aFHX7MKLIE1aA+Duxqug
-         EgTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=I/VF54YjZQsL1ts/95HTXmA4W82V2jErnI6rOYS4h4A=;
-        b=srFnGHM+HyJsT0IoyqUKSJnvQqPyHJAUlkXx4ErD8kL8yoUInpErWfjc/mrMbVdZf7
-         CDJIOpXnFc2vcGf7CCVWRdzYE+Xbtuv9a8A/3S4QGuXMzUP9YJNxuYcOt9RncqSYdV4b
-         C+uN9JtUQurxjNBdbioRgjKdOOWf7Y2HeznPWUsqw8t4imZSZUydowkfz39SvQAeaRrW
-         5ofkfbbZmTiFz/GsxmHjHFWxGhn8uJC10TSX9qJPzLagepafTz6S1rtWCQauM5SpvpKH
-         3HOFMaTrQKz77FoOTUu9yfvEWpeP06eWJVy5qD7A5KMObUJfSuAcLhVyVvLmMdfe5CYs
-         RcUQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483571-2-8653641434496245044
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483571; b=FkH7wiutIRIdh1pu20NXcV+YYlc9/CrB/4nCPdYa3eTQduF
+    e3/0mxaZq9bWye8cPclk+7W1alTSh1jq87YyTSwLjPBZT5yRfZvZxKn3ZNDLrN9d
+    VX7hEsSGMfcT4P9QJkVt7YNBkS21L+mwPzzFwZWvKdA74Zqgezl9ssZYWmUnacPH
+    Vplg7zVirqC4bvbK6fAyJSOHdrQ6eKiiVdzqTg8hVe/PgPgzdKoEYmmR+l73DQ9L
+    BXto6oVtPjLxVAYPlKAs0zWump8//0XrGpIIPbotyXEmYeA+XgILcMdMTbQSxcAk
+    hrXN5IlJj8liI6A52xJA8+o5DE23f5QvwAYyE/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483571; bh=1ABMJiQjoJ6tkk1dVAP957GSK3
+    1vp2T67ZQ/+naoLTs=; b=YatnDBtNm3MYyl48FWVKQ70IXs3U+VbdmBdf0aD25E
+    alkdsa2uwAu0zFtIjGOzTp8R/GvAPysT2Gq8u24EjzkxzNwxbJGveu74nU2CfqXT
+    tcaa/UuJTXflEMtNM2N4Q2JaDF0Em6MVhPXWkGxkEBBb3IFSVSQ5XX15iGrzD+Mv
+    Sb0kh7rI8CHTvPWSfQ6r7vXV2MOccQPbo0eCCGAr4O9xNyZ4hcG1U9hIXSsMTgkn
+    3jCRYjpfWky1SluLGvZqSyPNvGuLlA1y4NpD6tuRf9L0YpEvIIFTjJoW+jaKWJsG
+    K3OgjuWsw+J/7GAcsrx2IrhMchkjtEhzn1jCaCP45+lA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegfeeludenucevlhhushhtvghrufhiiigvpeduvd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegfeeludenucevlhhushhtvghrufhiiigvpeduvd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S969136AbeCSSTY (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:19:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46918 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969377AbeCSSTR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:19:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Yazen Ghannam <Yazen.Ghannam@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-edac <linux-edac@vger.kernel.org>,
-	x86-ml <x86@kernel.org>,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 039/241] x86/mce: Init some CPU features early
-Date: Mon, 19 Mar 2018 19:05:04 +0100
-Message-Id: <20180319180752.824360363@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 033/241] ath10k: disallow DFS simulation if DFS channel is not enabled
+Date: Mon, 19 Mar 2018 19:04:58 +0100
+Message-Id: <20180319180752.550931639@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391159458560633?=
-X-GMAIL-MSGID: =?utf-8?q?1595391159458560633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,93 +82,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yazen Ghannam <Yazen.Ghannam@amd.com>
+From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
 
 
-[ Upstream commit 5204bf17031b69fa5faa4dc80a9dc1e2446d74f9 ]
+[ Upstream commit ca07baab0b1e627ae1d4a55d190fb1c9d32a3445 ]
 
-When the MCA banks in __mcheck_cpu_init_generic() are polled for leftover
-errors logged during boot or from the previous boot, its required to have
-CPU features detected sufficiently so that the reading out and handling of
-those early errors is done correctly.
+If DFS is not enabled in hostapd (ieee80211h=0) DFS channels shall
+not be available for use even though the hardware may have the capability
+to support DFS. With this configuration (DFS disabled in hostapd) trying to
+bring up ath10k device in DFS channel for AP mode fails and trying to
+simulate DFS in ath10k debugfs results in a warning in cfg80211 complaining
+invalid channel and this should be avoided in the driver itself rather than
+false propogating RADAR detection to mac80211/cfg80211. Fix this by
+checking for the first vif 'is_started' state(should work for client mode
+as well) as all the vifs shall be configured for the same channel
 
-If those features are not available, the decoding may miss some information
-and get incomplete errors logged. For example, on SMCA systems the MCA_IPID
-and MCA_SYND registers are not logged and MCA_ADDR is not masked
-appropriately.
+sys/kernel/debug/ieee80211/phy1/ath10k# echo 1 > dfs_simulate_radar
 
-To cure that, do a subset of the basic feature detection early while the
-rest happens in its usual place in __mcheck_cpu_init_vendor().
+WARNING: at net/wireless/chan.c:265 cfg80211_radar_event+0x24/0x60
+Workqueue: phy0 ieee80211_dfs_radar_detected_work [mac80211]
+[<c022f2d4>] (warn_slowpath_null) from
+[<bf72dab8>] (cfg80211_radar_event+0x24/0x60 [cfg80211])
+[<bf72dab8>] (cfg80211_radar_event [cfg80211]) from
+[<bf7813e0>] (ieee80211_dfs_radar_detected_work+0x94/0xa0 [mac80211])
+[<bf7813e0>] (ieee80211_dfs_radar_detected_work [mac80211]) from
+[<c0242320>] (process_one_work+0x20c/0x32c)
 
-Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/1489599055-20756-1-git-send-email-Yazen.Ghannam@amd.com
-[ Massage commit message and simplify. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+WARNING: at net/wireless/nl80211.c:2488 nl80211_get_mpath+0x13c/0x4cc
+ Workqueue: phy0 ieee80211_dfs_radar_detected_work [mac80211]
+[<c022f2d4>] (warn_slowpath_null) from
+[<bf72dab8>] (cfg80211_radar_event+0x24/0x60 [cfg80211])
+[<bf72dab8>] (cfg80211_radar_event [cfg80211]) from
+[<bf7813e0>] (ieee80211_dfs_radar_detected_work+0x94/0xa0 [mac80211])
+[<bf7813e0>] (ieee80211_dfs_radar_detected_work [mac80211]) from
+[<c0242320>] (process_one_work+0x20c/0x32c)
+
+Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/mcheck/mce.c |   30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ drivers/net/wireless/ath/ath10k/debug.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1695,30 +1695,35 @@ static int __mcheck_cpu_ancient_init(str
- 	return 0;
- }
- 
--static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
-+/*
-+ * Init basic CPU features needed for early decoding of MCEs.
-+ */
-+static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
+--- a/drivers/net/wireless/ath/ath10k/debug.c
++++ b/drivers/net/wireless/ath/ath10k/debug.c
+@@ -1942,6 +1942,15 @@ static ssize_t ath10k_write_simulate_rad
+ 					   size_t count, loff_t *ppos)
  {
--	switch (c->x86_vendor) {
--	case X86_VENDOR_INTEL:
--		mce_intel_feature_init(c);
--		mce_adjust_timer = cmci_intel_adjust_timer;
--		break;
--
--	case X86_VENDOR_AMD: {
-+	if (c->x86_vendor == X86_VENDOR_AMD) {
- 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
- 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
- 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
- 
--		/*
--		 * Install proper ops for Scalable MCA enabled processors
--		 */
- 		if (mce_flags.smca) {
- 			msr_ops.ctl	= smca_ctl_reg;
- 			msr_ops.status	= smca_status_reg;
- 			msr_ops.addr	= smca_addr_reg;
- 			msr_ops.misc	= smca_misc_reg;
- 		}
--		mce_amd_feature_init(c);
-+	}
-+}
- 
-+static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
-+{
-+	switch (c->x86_vendor) {
-+	case X86_VENDOR_INTEL:
-+		mce_intel_feature_init(c);
-+		mce_adjust_timer = cmci_intel_adjust_timer;
-+		break;
+ 	struct ath10k *ar = file->private_data;
++	struct ath10k_vif *arvif;
 +
-+	case X86_VENDOR_AMD: {
-+		mce_amd_feature_init(c);
- 		break;
- 		}
++	/* Just check for for the first vif alone, as all the vifs will be
++	 * sharing the same channel and if the channel is disabled, all the
++	 * vifs will share the same 'is_started' state.
++	 */
++	arvif = list_first_entry(&ar->arvifs, typeof(*arvif), list);
++	if (!arvif->is_started)
++		return -EINVAL;
  
-@@ -1804,6 +1809,7 @@ void mcheck_cpu_init(struct cpuinfo_x86
+ 	ieee80211_radar_detected(ar->hw);
  
- 	machine_check_vector = do_machine_check;
- 
-+	__mcheck_cpu_init_early(c);
- 	__mcheck_cpu_init_generic();
- 	__mcheck_cpu_init_vendor(c);
- 	__mcheck_cpu_init_clear_banks();
