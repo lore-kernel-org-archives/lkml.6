@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs0xajia8ZUQVMU7AdgqBcorhusm2pGH/rGDheOQJkIVtpgDosyP6AvXtsGl7oh4fO+IAAe
-ARC-Seal: i=1; a=rsa-sha256; t=1521483182; cv=none;
+X-Google-Smtp-Source: AG47ELvp8sz3zmvwblDbKLb++s0kGJzVBwx9l5bC13tlmYcZSiFoix19Y2Ehe8Mt0bGLrP9zXIEx
+ARC-Seal: i=1; a=rsa-sha256; t=1521483180; cv=none;
         d=google.com; s=arc-20160816;
-        b=IrQwSTynow8cVEmaMPZzMCFM2J4UZXlBfbQJ+503qJ7fp3VapgpqmF6b093R0qKpIU
-         OvnRSEHlNMFDQJxbec5CYiBuRNHJq0sXYs5QEjeN4PQXqT+EaRuUDiUXakxwVrF5k2+Z
-         l36iMASfCjUNojLSH6y6RakzUD8wx3ECExEN84FTn+l31jMeqbApa/L1TuZ/nSPGaq3V
-         YhpNvaI0U5ndcOirnipPTiSziKB8WepYaTsqgOTgirp2jvIYDGKfP6guXkjFre4+N0pE
-         O0k1TFjkWdVQOSq/OnUstwQZGrBjk2c80+A/5uXznr9zvOEMlhqy7PRZBMH3tqlCwkrK
-         /TDw==
+        b=fvB1YMYbyQ/lKpf0R9+BeD+0d6g96iGM+vDPvkDTSGfS5YSPJqeMY37s15m1OBub1v
+         D8iXUy4yUHKizjhmhyGw2L0zNC/7xgE3wRVX69xVYKsdMzQfyt0GcpjpFXkXJwvHwXoy
+         Mfyje9ydFlDMeu8/jwPhjL/tTIUbopl9Q8j2byhaxBo67uxah+JTKg+vB8tBmhqUKWnl
+         4PntXIS6sFZx/X2aFpsA4B/nRjOCO5B8inCEw5m+tiEZ1IwC2aoplSj+zblOZMW6mgjZ
+         0JmMjqbcXrA35RakirKd3eJkAqcF8nEQ+9KZvhwj0VrgzGS5004git9f80UsGRVAM4Ha
+         0nSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6xqiEyej/P7EW/cv1IxLFPhC4gDMLERZ6KBXcyJV4QY=;
-        b=iUplIGOC1Pf2/BAU9kuyVnDbImoxYJF7wCARC7M80y3kILJoblZu6mbVvDk1BHDx2e
-         jiexQRjcFwak4sFjQrD26D8G2BQBv1SzXn41eQdPHNDbr2ykt00zalF5agzbzpDjkSBY
-         DqnjOjP/e3gsFwdAraHKE4ZCL4svIDKZc+RJj4PDAgx0gYJlCEQOET0Dnntjy7l6lIYW
-         XvIocWSD8PaBylLNHnxe1FmShe+dkdTBDs/lzaHQJt6EybSh3YdApwyv8DFK42qYPG7f
-         wkCvTNmq1NJFNcXuekGTEqnIoUrNneHEiTMTgtCDmxVBBx2rLb1L+RwyGJIIluH9Bx6Y
-         u/mQ==
+        bh=N+at5ppSPd3FQ83ZSPXaraLQ/2/NKEfmCu7Ri2WuBpk=;
+        b=S57nVTqV9ruCYrrclgdv/TjAsiDO+J70bMMmZORcgB2cg3davpGk3OB49XPcFcBs+i
+         tTGhHNnsAbXCzSsYwhGbKLGm8x14oJ7MLV2TMZuUGIx7tpg9lwwuPJvk/JO0M2Gx41RU
+         9qkAsxomTqL+0ucDuXSqvioSuvV9IB2jJXLs2v8IiN9mP8QmyUsRZEHocdyOUCvpTfGP
+         zC1Czy3lFoD7zDSC7eHiemioDKUFZDFEa2VSd/KDiQUHzA9KPD2QSlXhctLEHu4pIAld
+         PhFhwtSGZbMq2bCOWaYxzz0UFW3tBTs9aSByLerDs+WmBnP5MKKQ9JD4WhNtofHwoZRq
+         vdpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Tom Hromatka <tom.hromatka@oracle.com>,
+	Rob Gardner <rob.gardner@oracle.com>,
+	John Stultz <john.stultz@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 029/134] Input: qt1070 - add OF device ID table
-Date: Mon, 19 Mar 2018 19:05:12 +0100
-Message-Id: <20180319171853.422990742@linuxfoundation.org>
+Subject: [PATCH 4.4 028/134] sysrq: Reset the watchdog timers while displaying high-resolution timers
+Date: Mon, 19 Mar 2018 19:05:11 +0100
+Message-Id: <20180319171853.307322482@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390749733261002?=
-X-GMAIL-MSGID: =?utf-8?q?1595390749733261002?=
+X-GMAIL-THRID: =?utf-8?q?1595390747005815237?=
+X-GMAIL-MSGID: =?utf-8?q?1595390747005815237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+From: Tom Hromatka <tom.hromatka@oracle.com>
 
 
-[ Upstream commit cf5cd9d4480a87da78768718cac194a71079b5cb ]
+[ Upstream commit 0107042768658fea9f5f5a9c00b1c90f5dab6a06 ]
 
-The driver doesn't have a struct of_device_id table but supported devices
-are registered via Device Trees. This is working on the assumption that a
-I2C device registered via OF will always match a legacy I2C device ID and
-that the MODALIAS reported will always be of the form i2c:<device>.
+On systems with a large number of CPUs, running sysrq-<q> can cause
+watchdog timeouts.  There are two slow sections of code in the sysrq-<q>
+path in timer_list.c.
 
-But this could change in the future so the correct approach is to have an
-OF device ID table if the devices are registered via OF.
+1. print_active_timers() - This function is called by print_cpu() and
+   contains a slow goto loop.  On a machine with hundreds of CPUs, this
+   loop took approximately 100ms for the first CPU in a NUMA node.
+   (Subsequent CPUs in the same node ran much quicker.)  The total time
+   to print all of the CPUs is ultimately long enough to trigger the
+   soft lockup watchdog.
 
-The compatible strings don't have a vendor prefix because that's how it's
-used currently, and changing this will be a Device Tree ABI break.
+2. print_tickdevice() - This function outputs a large amount of textual
+   information.  This function also took approximately 100ms per CPU.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Since sysrq-<q> is not a performance critical path, there should be no
+harm in touching the nmi watchdog in both slow sections above.  Touching
+it in just one location was insufficient on systems with hundreds of
+CPUs as occasional timeouts were still observed during testing.
+
+This issue was observed on an Oracle T7 machine with 128 CPUs, but I
+anticipate it may affect other systems with similarly large numbers of
+CPUs.
+
+Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
+Reviewed-by: Rob Gardner <rob.gardner@oracle.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/keyboard/qt1070.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ kernel/time/timer_list.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/input/keyboard/qt1070.c
-+++ b/drivers/input/keyboard/qt1070.c
-@@ -274,9 +274,18 @@ static const struct i2c_device_id qt1070
- };
- MODULE_DEVICE_TABLE(i2c, qt1070_id);
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -16,6 +16,7 @@
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+ #include <linux/kallsyms.h>
++#include <linux/nmi.h>
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id qt1070_of_match[] = {
-+	{ .compatible = "qt1070", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, qt1070_of_match);
-+#endif
+ #include <asm/uaccess.h>
+ 
+@@ -96,6 +97,9 @@ print_active_timers(struct seq_file *m,
+ 
+ next_one:
+ 	i = 0;
 +
- static struct i2c_driver qt1070_driver = {
- 	.driver	= {
- 		.name	= "qt1070",
-+		.of_match_table = of_match_ptr(qt1070_of_match),
- 		.pm	= &qt1070_pm_ops,
- 	},
- 	.id_table	= qt1070_id,
++	touch_nmi_watchdog();
++
+ 	raw_spin_lock_irqsave(&base->cpu_base->lock, flags);
+ 
+ 	curr = timerqueue_getnext(&base->active);
+@@ -207,6 +211,8 @@ print_tickdevice(struct seq_file *m, str
+ {
+ 	struct clock_event_device *dev = td->evtdev;
+ 
++	touch_nmi_watchdog();
++
+ 	SEQ_printf(m, "Tick Device: mode:     %d\n", td->mode);
+ 	if (cpu < 0)
+ 		SEQ_printf(m, "Broadcast device\n");
