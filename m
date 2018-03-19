@@ -1,41 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933132AbeCSJTn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:19:43 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35735 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933006AbeCSJRr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:17:47 -0400
-X-Google-Smtp-Source: AG47ELsAgesszY8RLgkKPksTWnHOL+NSngcGpuLnczc9MINpVZnr+0fKKzz/24AtbMFikR80wOlqSg==
-Subject: Re: linux-next on x60: network manager often complains "network is
- disabled" after resume
-To: Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>
-Cc: Netdev list <netdev@vger.kernel.org>
-References: <20180318104023.GA10392@amd>
-From: Woody Suwalski <terraluna977@gmail.com>
-Message-ID: <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
-Date: Mon, 19 Mar 2018 05:17:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
- SeaMonkey/2.49.2
-MIME-Version: 1.0
-In-Reply-To: <20180318104023.GA10392@amd>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S933313AbeCSJVI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:21:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36484 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933280AbeCSJVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:21:01 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [RFC 11/12] KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Mon, 19 Mar 2018 10:20:19 +0100
+Message-Id: <1521451220-27754-12-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
+References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel Machek wrote:
-> Hi!
->
-> With recent linux-next, after resume networkmanager often claims that
-> "network is disabled". Sometimes suspend/resume clears that.
->
-> Any ideas? Does it work for you?
-> 									Pavel
-Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
+This new attribute allows the userspace to set the base address
+of a reditributor region, relaxing the constraint of having all
+consecutive redistibutor frames contiguous.
 
-Woody
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+---
+ arch/arm/include/uapi/asm/kvm.h   | 7 ++++---
+ arch/arm64/include/uapi/asm/kvm.h | 7 ++++---
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+index 6edd177..ce67f1d 100644
+--- a/arch/arm/include/uapi/asm/kvm.h
++++ b/arch/arm/include/uapi/asm/kvm.h
+@@ -88,9 +88,10 @@ struct kvm_regs {
+ #define KVM_VGIC_V2_CPU_SIZE		0x2000
+ 
+ /* Supported VGICv3 address types  */
+-#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+-#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+-#define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
++#define KVM_VGIC_ITS_ADDR_TYPE			4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
+ 
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
+diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+index 9abbf30..ef8ad3b 100644
+--- a/arch/arm64/include/uapi/asm/kvm.h
++++ b/arch/arm64/include/uapi/asm/kvm.h
+@@ -88,9 +88,10 @@ struct kvm_regs {
+ #define KVM_VGIC_V2_CPU_SIZE		0x2000
+ 
+ /* Supported VGICv3 address types  */
+-#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+-#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+-#define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
++#define KVM_VGIC_ITS_ADDR_TYPE			4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
+ 
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
+-- 
+2.5.5
