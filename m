@@ -1,87 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755741AbeCSOw3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:52:29 -0400
-Received: from smtp-out4.electric.net ([192.162.216.184]:56504 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755504AbeCSOw1 (ORCPT
+        id S1755556AbeCSOzd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:55:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52388 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755270AbeCSOz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:52:27 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>
-Subject: RE: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Topic: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Index: AQHTv43TjMVMzNQoikSg1VH837bpVaPXnqXg
-Date: Mon, 19 Mar 2018 14:53:17 +0000
-Message-ID: <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
-In-Reply-To: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 19 Mar 2018 10:55:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65FAF6055D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Mon, 19 Mar 2018 08:55:25 -0600
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Channagoud Kadabi <ckadabi@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
+Subject: Re: [PATCH 2/2] drivers: soc: Add LLCC driver
+Message-ID: <20180319145525.GD28808@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Channagoud Kadabi <ckadabi@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
+References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
+ <1516924513-20183-3-git-send-email-ckadabi@codeaurora.org>
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516924513-20183-3-git-send-email-ckadabi@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rahul Lakkireddy
-> Sent: 19 March 2018 14:21
-> 
-> This series of patches add support for 256-bit IO read and write.
-> The APIs are readqq and writeqq (quad quadword - 4 x 64), that read
-> and write 256-bits at a time from IO, respectively.
+On Thu, Jan 25, 2018 at 03:55:13PM -0800, Channagoud Kadabi wrote:
+> LLCC (Last Level Cache Controller) provides additional cache memory
+> in the system. LLCC is partitioned into muliple slices and each
+> slice gets its own priority, size, ID and other config parameters.
+> LLCC driver programs these parameters for each slice. Clients that
+> are assigned to use LLCC need to get information such size & ID of the
+> slice for their usecase and activate or deactivate the slice as needed.
+> LLCC driver provides API interfaces for the clients to perform these
+> operations.
 
-Why not use the AVX2 registers to get 512bit accesses.
+<snip>
 
-> Patch 1 adds u256 type and adds necessary non-atomic accessors.  Also
-> adds byteorder conversion APIs.
-> 
-> Patch 2 adds 256-bit read and write to x86 via VMOVDQU AVX CPU
-> instructions.
-> 
-> Patch 3 updates cxgb4 driver to use the readqq API to speed up
-> reading on-chip memory 256-bits at a time.
+> +/**
+> + * llcc_slice_deactivate - Deactivate the llcc slice
+> + * @desc: Pointer to llcc slice descriptor
+> + *
+> + * A value zero will be returned on success and a negative errno will
+> + * be returned in error cases
+> + */
+> +int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+> +{
+> +	u32 act_ctrl_val;
+> +	int rc = -EINVAL;
+> +	struct llcc_drv_data *drv;
+> +
+> +	if (desc == NULL) {
+> +		pr_err("Input descriptor supplied is invalid\n");
 
-Calling kernel_fpu_begin() is likely to be slow.
-I doubt you want to do it every time around a loop of accesses.
+Sorry that this is out of the blue, but I was reviewing a client driver that
+uses this API. This should not print an error - we should be allowed to safely
+pass a null pointer from an aborted sequence in the driver without the
+conditional checks and it shouldn't generate a bit of log spam as it goes about
+it's business.
 
-In principle it ought to be possible to get access to one or two
-(eg) AVX registers by saving them to stack and telling the fpu
-save code where you've put them.
-Then the IPI fp save code could then copy the saved values over
-the current values if asked to save the fp state for a process.
-This should be reasonable cheap - especially if there isn't an
-fp save IPI.
+Jordan
 
-OTOH, for x86, if the code always runs in process context (eg from a
-system call) then, since the ABI defines them all as caller-saved
-the AVX(2) registers, it is only necessary to ensure that the current
-FPU registers belong to the current process once.
-The registers can be set to zero by an 'invalidate' instruction on
-system call entry (hope this is done) and after use.
-
-	David
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
