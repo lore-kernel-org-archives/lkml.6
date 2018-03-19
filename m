@@ -1,221 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755952AbeCSPpa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:45:30 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34077 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755539AbeCSPpZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:45:25 -0400
-X-Google-Smtp-Source: AG47ELsXkTJB7I7owHIOVAOjY6UqgxfEx+yj8N5nfLCcSh9A5mUb9DgSNT/N1l1MimEH1Q8Wp8H2wnN1zaMsE4nzB/0=
+        id S933863AbeCSPs6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:48:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54136 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933739AbeCSPsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:48:25 -0400
+Date: Mon, 19 Mar 2018 15:48:33 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
+        iommu@lists.linux-foundation.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 12/14] dma-direct: handle the memory encryption bit in
+ common code
+Message-ID: <20180319154832.GD14916@arm.com>
+References: <20180319103826.12853-1-hch@lst.de>
+ <20180319103826.12853-13-hch@lst.de>
+ <dd05dd14-9969-7985-826e-f440c3fc4c08@arm.com>
+ <20180319152442.GA27915@lst.de>
+ <5316b479-7e75-d62f-6b17-b6bece55187c@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
-References: <cover.1521399976.git.ren_guo@c-sky.com> <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 19 Mar 2018 23:45:23 +0800
-X-Google-Sender-Auth: TzPRCNM0_R2WFRg-X-b67c5AlmI
-Message-ID: <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com>
-Subject: Re: [PATCH 15/19] csky: Build infrastructure
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5316b479-7e75-d62f-6b17-b6bece55187c@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 3:51 AM, Guo Ren <ren_guo@c-sky.com> wrote:
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> new file mode 100644
-> index 0000000..694c1f8
-> --- /dev/null
-> +++ b/arch/csky/Kconfig
-> @@ -0,0 +1,203 @@
-> +config CSKY
-> +       bool
-> +       default y
-> +       select ARCH_USE_BUILTIN_BSWAP
-> +       select ARCH_WANT_IPC_PARSE_VERSION
+On Mon, Mar 19, 2018 at 03:37:20PM +0000, Robin Murphy wrote:
+> On 19/03/18 15:24, Christoph Hellwig wrote:
+> >On Mon, Mar 19, 2018 at 03:19:04PM +0000, Robin Murphy wrote:
+> >>As a heads-up, I've just realised there's now a silent (but build-breaking)
+> >>conflict with the current arm64 queue brewing here, as we've unfortunately
+> >>had to reintroduce ARCH_HAS_PHYS_TO_DMA as a means of being safe against an
+> >>ugly architectural corner case - currently commit 1f85b42a691c ("arm64:
+> >>Revert L1_CACHE_SHIFT back to 6 (64-byte cache line size)") in -next.
+> >
+> >Please revert that arm64 commit.  This condition should be handled
+> >in common code as it is not arm specific.  And next time please CC
+> >the iommu list and dma-mapping maintainers before doing such a change.
+> 
+> There didn't seem enough justification to clutter up core SWIOTLB code with
+> the ability to force bouncing on a per-device basis, but if you think there
+> are real potential users out there then fair enough. For arm64, it's
+> extremely unlikely that anyone will ever build a sufficiently wacky system
+> to actually hit this code path; we really only implemented it for peace of
+> mind per the letter of the architecture.
 
-Drop ipc_parse_version here, it's only for old architectures.
+I'm less sure. We will certainly see systems with large writeback granules,
+the real question is whether or not they will be expected to work with
+non-coherent DMA. Having silent data corruption in those situations is just
+about the worst possible behaviour, so I'd like to do *something* instead
+of that. Falling back to swiotlb bouncing with a taint seems sensible to me.
 
-> +       select HAVE_OPROFILE
-> +       select HAVE_PERF_EVENTS
+Why can't we just resolve the conflict by adding the underscores?
 
-Do you still need oprofile when you have perf?
-
-> +       select MODULES_USE_ELF_REL if MODULES
-> +       select MODULES_USE_ELF_RELA if MODULES
-
-You should only need one of these two.
-
-> +       select OLD_SIGACTION
-> +       select OLD_SIGSUSPEND3
-
-These should not be needed.
-
-> +config CPU_HAS_CACHEV2
-> +       bool
-> +       default n
-> +
-> +config CPU_HAS_HILO
-> +       bool
-> +       default n
-> +
-> +config CPU_HAS_TLBI
-> +       bool
-> +       default n
-
-'default n' is redundant and can be dropped.
-
-> +config GENERIC_CALIBRATE_DELAY
-> +       bool
-> +       default y
-
-Does your architecture provide a reliable high-reslution clocksource?
-If yes, you
-could use that for the delay, rather than a calibrated loop.
-
-> +choice
-> +        prompt "CPU MODEL"
-> +        default CPU_CK610
-> +
-> +config CPU_CK610
-> +        bool "CSKY CPU ck610"
-> +       select CPU_NEED_TLBSYNC
-> +       select CPU_NEED_SOFTALIGN
-> +
-> +config CPU_CK810
-> +        bool "CSKY CPU ck810"
-> +       select HIGHMEM
-> +       select CPU_HAS_HILO
-> +       select CPU_NEED_TLBSYNC
-> +
-> +config CPU_CK807
-> +        bool "CSKY CPU ck807"
-> +       select HIGHMEM
-> +       select CPU_HAS_HILO
-> +
-> +config CPU_CK860
-> +        bool "CSKY CPU ck860"
-> +       select HIGHMEM
-> +       select CPU_HAS_TLBI
-> +       select CPU_HAS_CACHEV2
-> +endchoice
-
-Why select 'HIGHMEM' based on the CPU type? You should only need it
-when you have more than 1GB of RAM, and it can be a performance
-problem when it's enabled without need.
-
-Usually the kernel should allow multiple CPU types to be selected
-together, or ask for a "minimum architecture" level to be selected
-by allow newer cores to be used as a superset.
-
-> +config CPU_TLB_SIZE
-> +       int
-> +       default "128"   if(CPU_CK610 || CPU_CK807 || CPU_CK810)
-> +       default "1024"  if(CPU_CK860)
-> +
-> +config L1_CACHE_SHIFT
-> +       int
-> +       default "4"     if(CPU_CK610)
-> +       default "5"     if(CPU_CK807 || CPU_CK810)
-> +       default "6"     if(CPU_CK860)
-
-I think you then need to reverse the order of the list here: When e.g. CK860
-and CK810 are both enabled, L1_CACHE_SHIFT should be the largest
-possible size.
-
-> +config SSEG0_BASE
-> +       hex "Direct mapping physical address"
-> +       default 0x0
-> +       help
-> +         There are MSAx regs can be used to change the base physical address
-> +         of direct mapping. The default base physical address is 0x0.
-> +
-> +config RAM_BASE
-> +       hex "DRAM base address offset from SSEG0_BASE, it must be the same with dts memory."
-> +       default 0x08000000
-
-To allow one kernel to run on multiple boards, it's better to detect
-these two at runtime.
-
-> +config CSKY_NR_IRQS
-> +       int "NR_IRQS to max virtual interrupt numbers of the whole system"
-> +       range 64 8192
-> +       default "128"
-> +endmenu
-
-This should no longer be needed, with the IRQ domain code, any number
-of interrupts
-can be used without noticeable overhead.
-
-> +menu "Power management options"
-> +
-> +source "kernel/power/Kconfig"
-> +
-> +config ARCH_SUSPEND_POSSIBLE
-> +       bool y
-> +       default y
-
-Make it either
-
-            def_bool y
-
-or
-
-           bool
-           default y
-
-
-> +config CSKY_BUILTIN_DTB
-> +       bool "Use kernel builtin dtb"
-> +       default n
-> +
-> +config CSKY_BUILTIN_DTB_NAME
-> +       string "kernel builtin dtb name"
-> +       depends on CSKY_BUILTIN_DTB
-
-It's generally better not to use a builtin dtb, but use the bootloader
-to pass a dtb.
-
-If you need to support existing bootloaders, the best way is to allow
-appending the dtb to the kernel.
-
-> +ifeq ($(VERSION)_$(PATCHLEVEL), 4_9)
-> +COMPAT_KERNEL_4_9 = -DCOMPAT_KERNEL_4_9
-> +endif
-
-Should not be needed
-
-> +KBUILD_CFLAGS +=       -ffreestanding \
-
--ffreestanding usually results in worse code and should not be needed
-
-> +                       -fno-tree-dse \
-> +                       -pipe \
-> +                       -Wno-uninitialized \
-
-For -Wno-uninitialized, better fix the bugs properly. Can you explain
-why you want
--fno-tree-dse?
-
-> +++ b/arch/csky/abiv1/Makefile
-> @@ -0,0 +1,8 @@
-> +obj-y +=       src/bswapdi.o
-> +obj-y +=       src/bswapsi.o
-> +obj-y +=       src/cacheflush.o
-> +obj-y +=       src/memcpy.o
-> +obj-y +=       src/mmap.o
-> +
-> +obj-$(CONFIG_CPU_NEED_SOFTALIGN) +=    src/alignment.o
-
-Better not use subdirectories like that.
-
-Can you explain why you need the alignement fixups?
-
-            Arnd
+Will
