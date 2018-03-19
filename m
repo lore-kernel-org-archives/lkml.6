@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3230508-1521475710-2-9339599720498066829
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521475709; b=WHvCSjyKp1yQ11gN3fe3scR6HmDPec7mim8qeRaIyo93PPZ
-    V7y9WTIcex0JE9itGn2MmzWTWkkt7wRjasYCIuwAfbq8sOKXvw2X3UVeSEbYI4Za
-    MByk5kSPKQmhOIMLyu5zgeAHoWedAa/qXCbJIRVleIryh/DnGohPYUmr/yPG/ROo
-    rMWKP40sgNMgeafPL3f01t88wZtQRtY2CQrFM73/RCa6F3+2HtD7APtuVNN7HBcd
-    00LQoXkBCdVCng19WuzIhHaMQFGYaY2u+ASgavoJVqR+e3hTDrcHyqWGLvyhH7wU
-    qT+T8++bdy5+iK+WgHddhILKqRRVzD/sD/PM33Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521475709; bh=D9JLl8
-    JiKl9u0yHbteF8K0ZIrIs0YK0nmJ+AILsajg4=; b=UIQ2w+G6JqWgwgqL9J3SnX
-    8htpRJy9NZA9cL3zFOc3T4Jta14siXID5d2jgSys418FXsx029E5Ox8H7u4iQZ3d
-    RMkkRUxk6itgMFMpVZqzeiUyPFx4jiS5+Idy35p3Zah92s3QWHCQGbzqLZVQCAs9
-    dY+NBQUaEQBQ7iTtolUuGz/xdck4UUOZK+/PlZP/4VkzUlG33sZ29Gvi4NKL0lgE
-    guWbaHeRgXbjIfDmQ0e+Y4Eem5E/M5GLVPWff+n1fmixQznj9yINPs5fnyU3uMpl
-    TA5woDw6T43fYjBw/4vU8ZoEIWxzdwgalawlxhZ890RRo1Et2FkBinSRtmWSoP8g
-    ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kQBpgkRJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepuddtvddtudenucevlhhushhtvghrufhiiigvpeeftd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kQBpgkRJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepuddtvddtudenucevlhhushhtvghrufhiiigvpeeftd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966267AbeCSQIP (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 12:08:15 -0400
-Received: from mail-dm3nam03on0098.outbound.protection.outlook.com ([104.47.41.98]:60247
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966200AbeCSQIM (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:08:12 -0400
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELsB4i8CydDCoGUyjhXJ1IpJKKRYRVcfJKEho/CkedhOt2px7caQA9IXSw7Mfgns9X+LyppE
+ARC-Seal: i=1; a=rsa-sha256; t=1521475699; cv=none;
+        d=google.com; s=arc-20160816;
+        b=T2g9uu851Yu8dupRRJMiVu61erP0UZp/KqLDR4WPOxFa4U/ShkywBqDbOKuWeEyxmW
+         aIORbPdhZlel+bhZZHN0FOpj/bU7oihr+/VM2oeARVboJmKsVd/wNYj+OhqkM+6EkWRr
+         Nh16JaC7LKvPU7le3m2Q9eD3LthxMvOUVRyy0Va16A8XP1wMqMpBbUqfd4a8Rf0C/XaH
+         Ckxdy5Z4UC55/u5rEXytIkZupNTrx4Vm+ZFNuot2OlEpzK2KQ7JX3XWNoAshGTlHeIVh
+         2CWKy+ke82t7d7xGmjIBDsZ4VVmMPKgSBAGpdXsGlRewCI1IlmnRwlb//5fDLt8JcGZj
+         4itw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=2kNgaGefpWPG6Sh3/F1Suiz+/8kK1HdBA6iGreNSuRw=;
+        b=rnEfDFUsxAJGJz8LJE9xXxZSJtSDUXJ1d5jANShrv3lruw+rAx1rQ8mcsowQ9tGnUl
+         rK0SjDSjc41DHql7+pZvCXhiBMMBSOiuX1oCDrHP1Q0nA7uQoGBWYd03EoEm22pYjLbK
+         m7GdiqDFeZRs0n/NNNJwg+d2FjsVKbDG2kB4WfXgOvo/KA4uMQX9ORvPNE9cI/Zo6aON
+         v4WXuH4tApqxDzoxuQI8qaQovjU1cZtCnfa2YtIYrmMQvtl8U4twlGls9zN9JNAc92sX
+         DU3koVjXfDVODNtByzdoOEOm+Gn7lqq1XMIcVKjh+2J43xfNkzUoFstop0OOnOcn/zZ4
+         nWOQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cg87mrkY;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.116 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cg87mrkY;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.116 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Ihar Hrachyshka <ihrachys@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 042/167] neighbour: update neigh timestamps
- iff update is effective
-Thread-Topic: [PATCH AUTOSEL for 4.4 042/167] neighbour: update neigh
- timestamps iff update is effective
-Thread-Index: AQHTv5w0Mx7F4Sc9SEOUK9phEHiJ1g==
-Date: Mon, 19 Mar 2018 16:06:13 +0000
-Message-ID: <20180319160513.16384-42-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 049/167] serial: sh-sci: Fix race condition
+ causing garbage during shutdown
+Thread-Topic: [PATCH AUTOSEL for 4.4 049/167] serial: sh-sci: Fix race
+ condition causing garbage during shutdown
+Thread-Index: AQHTv5w5qIczdbR8J0KN4IAKRYD8PA==
+Date: Mon, 19 Mar 2018 16:06:22 +0000
+Message-ID: <20180319160513.16384-49-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,128 +48,101 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0805;7:B6DeghUcXEUm0aWwxaIN4hAyOGsaOqEyyfMiU5O9t1pcrfi71QFk6aKyYtXnNWn6rOOCPSqFy4H2MVOhv4o6BFQ0e90G309AQXEyJSvI0ejpfPHFMtWYuf72O2icWCt3iu71lf/UxUw6HznORfSxpr4mcwezEQM5BUthGu7y0Kb8uxO4kxX/XL1BUwmXVdcO15IdCYUz/PbdGDIPGD0M9Rd7Wynp5eZO56z172+g4N9AXNnmKGVPCtkDFEENq+Nw;20:oa+eFuOPAeF9oPOfLugGzdWUlREi1nUycF36EqM7MukbV2nNs6Mzvpll+3dWhEtQMJk6eD76xW64C1Zu0LUynPjPOKTwsRO7A/ApJlzmWumvIyZdsE7TC3cJsYRqZJlq8y9REnlcsNdyXKXLiti2Ygf3Xh4LxKfIFvprgR1qI7g=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1094;7:yHDoBnldHKhYDg48D0QLngq0lF4vc8EDIJisUse2ULKI2abQlOGhR1zorpcP+c12pkiJ6U8AHbgtX2oSt+Kj+txceDzdLXBUy/WiZD/8n7t1DLmZHjfsjtX/WcKxDE95+CQSM9Ewm0C9/idv7T9lBFBbV9Z13VuyXkfr8SlxR0KQyzNjwPG0SRRXtCce6f36ANmA/vDM5edVZQuYo7gvlTrXD0tnY6AWuxlf9juqmelpn048ReJYj+CDTu13NGth;20:Sc4OM4OzqQpLZVTpvj80j3QjjHA7YPBnKSQB9e18Gr1lYgMFS5PptO9qALu442gTD+E0fyxbR3Obj+hfdcx9Jgl2TGz+gCYERJjMrLCwrojUl006xG2qc6xV2FQUNdav8Ih3JR27ARoC/DqCszXVw/k3QYVcSvfGbwyueqeUSEg=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c822a71f-affe-401e-8707-08d58db39bed
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0805;
-x-ms-traffictypediagnostic: DM5PR2101MB0805:
+x-ms-office365-filtering-correlation-id: 63aa0887-59db-4592-3156-08d58db3a102
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1094;
+x-ms-traffictypediagnostic: DM5PR2101MB1094:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08057579B5C23DB3AF6A8F0BFBD40@DM5PR2101MB0805.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0805;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0805;
+x-microsoft-antispam-prvs: <DM5PR2101MB10940F27D86EF4155A2D7E18FBD40@DM5PR2101MB1094.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1094;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1094;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(346002)(366004)(396003)(39860400002)(199004)(189003)(2950100002)(305945005)(186003)(86362001)(6506007)(3660700001)(6666003)(5660300001)(6116002)(8936002)(3846002)(1076002)(26005)(7736002)(6486002)(2900100001)(6436002)(2906002)(86612001)(68736007)(81166006)(81156014)(10090500001)(15650500001)(102836004)(59450400001)(8676002)(14454004)(105586002)(107886003)(25786009)(478600001)(2501003)(5250100002)(53936002)(3280700002)(316002)(54906003)(4326008)(6512007)(72206003)(66066001)(22452003)(10290500003)(99286004)(76176011)(36756003)(97736004)(106356001)(110136005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0805;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: oIizZBbxaQI/Qn9kqks63D/QuQeVvuyTw5LseSDCXPBLQc/i1skJMFNoFw2ACCcRhwowANikGpDDe6pYtsytJvDlXMRywBpxnc0YkP7YjYrk1YbUVvWgv4Ikvvp4Fwd3pm9NRod2WPPmr5oN85zn9YFcKyQ4vn2sIZO1L0yp2uuLI4FRNbw9PpNPzRdu3/luCesUmtlD3OH0Ajswjq2TX/aKNUpcwmwakVJOFCfu9XCaQtvLTfdxLuDjdbl0TU1nVZxL+gInR/fTX0Le9p8ZFSvXxRARq9tOd9W0oiM8Ml3Y3gWkJCvKAHROFt3tvEVadcvQNw3oWJXjrKWVCAt4HQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(396003)(376002)(39380400002)(199004)(189003)(106356001)(10290500003)(110136005)(22452003)(3280700002)(478600001)(6666003)(54906003)(2906002)(2900100001)(2950100002)(10090500001)(186003)(26005)(97736004)(5660300001)(72206003)(66066001)(107886003)(102836004)(53936002)(59450400001)(6506007)(6512007)(316002)(7736002)(305945005)(1076002)(6436002)(36756003)(3846002)(6116002)(6486002)(105586002)(8676002)(8936002)(86612001)(68736007)(3660700001)(86362001)(575784001)(81166006)(81156014)(25786009)(2501003)(4326008)(76176011)(5250100002)(14454004)(99286004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1094;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: DrLCw3ShNgmPT+9P/+1200LTokD/za36JuyuONwHbYZv6H541Vo5VudMWgt2C1uvFfKkq5wy3CkxhbgykzPP0EpNLSwLkBiEoLjRjL1X7YnnWTOkFt/I7T/g7rjWdmLJ7sNnbZtZUOvUIIaxbxgOxUclkPab103n0OXt6D5+e81P8uKiK3z6NvIsoUvaHWhnJ5H16SYNAeC6yw5xqjpNI5Q5F267YOppKUIpYj3OxRpKibVhoPV9QN0xMJptLGW0mPPfQpn9L7WFwC2jWPTrEfJzfcfXijQDSPAhn/th2veWB9wo5tZeqWEKIFXHGog1nCxie4iIazIFOFAzpCZvZQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c822a71f-affe-401e-8707-08d58db39bed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:06:13.8729
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63aa0887-59db-4592-3156-08d58db3a102
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:06:22.4630
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0805
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1094
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595382381074210323?=
+X-GMAIL-MSGID: =?utf-8?q?1595382903653789292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ihar Hrachyshka <ihrachys@redhat.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 77d7123342dcf6442341b67816321d71da8b2b16 ]
+[ Upstream commit 1cf4a7efdc71cab84c42cfea7200608711ea954f ]
 
-It's a common practice to send gratuitous ARPs after moving an
-IP address to another device to speed up healing of a service. To
-fulfill service availability constraints, the timing of network peers
-updating their caches to point to a new location of an IP address can be
-particularly important.
+If DMA is enabled and used, a burst of old data may be seen on the
+serial console during "poweroff" or "reboot".  uart_flush_buffer()
+clears the circular buffer, but sci_port.tx_dma_len is not reset.
+This leads to a circular buffer overflow, dumping (UART_XMIT_SIZE -
+sci_port.tx_dma_len) bytes.
 
-Sometimes neigh_update calls won't touch neither lladdr nor state, for
-example if an update arrives in locktime interval. The neigh->updated
-value is tested by the protocol specific neigh code, which in turn
-will influence whether NEIGH_UPDATE_F_OVERRIDE gets set in the
-call to neigh_update() or not. As a result, we may effectively ignore
-the update request, bailing out of touching the neigh entry, except that
-we still bump its timestamps inside neigh_update.
+To fix this, add a .flush_buffer() callback that resets
+sci_port.tx_dma_len.
 
-This may be a problem for updates arriving in quick succession. For
-example, consider the following scenario:
+Inspired by commit 31ca2c63fdc0aee7 ("tty/serial: atmel: fix race
+condition (TX+DMA)").
 
-A service is moved to another device with its IP address. The new device
-sends three gratuitous ARP requests into the network with ~1 seconds
-interval between them. Just before the first request arrives to one of
-network peer nodes, its neigh entry for the IP address transitions from
-STALE to DELAY.  This transition, among other things, updates
-neigh->updated. Once the kernel receives the first gratuitous ARP, it
-ignores it because its arrival time is inside the locktime interval. The
-kernel still bumps neigh->updated. Then the second gratuitous ARP
-request arrives, and it's also ignored because it's still in the (new)
-locktime interval. Same happens for the third request. The node
-eventually heals itself (after delay_first_probe_time seconds since the
-initial transition to DELAY state), but it just wasted some time and
-require a new ARP request/reply round trip. This unfortunate behaviour
-both puts more load on the network, as well as reduces service
-availability.
-
-This patch changes neigh_update so that it bumps neigh->updated (as well
-as neigh->confirmed) only once we are sure that either lladdr or entry
-state will change). In the scenario described above, it means that the
-second gratuitous ARP request will actually update the entry lladdr.
-
-Ideally, we would update the neigh entry on the very first gratuitous
-ARP request. The locktime mechanism is designed to ignore ARP updates in
-a short timeframe after a previous ARP update was honoured by the kernel
-layer. This would require tracking timestamps for state transitions
-separately from timestamps when actual updates are received. This would
-probably involve changes in neighbour struct. Therefore, the patch
-doesn't tackle the issue of the first gratuitous APR ignored, leaving
-it for a follow-up.
-
-Signed-off-by: Ihar Hrachyshka <ihrachys@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/core/neighbour.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sh-sci.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index 253c86b78ff0..33432e64804c 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -1132,10 +1132,6 @@ int neigh_update(struct neighbour *neigh, const u8 *=
-lladdr, u8 new,
- 		lladdr =3D neigh->ha;
- 	}
-=20
--	if (new & NUD_CONNECTED)
--		neigh->confirmed =3D jiffies;
--	neigh->updated =3D jiffies;
--
- 	/* If entry was valid and address is not changed,
- 	   do not change entry state, if new one is STALE.
- 	 */
-@@ -1159,6 +1155,16 @@ int neigh_update(struct neighbour *neigh, const u8 *=
-lladdr, u8 new,
- 		}
- 	}
-=20
-+	/* Update timestamps only once we know we will make a change to the
-+	 * neighbour entry. Otherwise we risk to move the locktime window with
-+	 * noop updates and ignore relevant ARP updates.
-+	 */
-+	if (new !=3D old || lladdr !=3D neigh->ha) {
-+		if (new & NUD_CONNECTED)
-+			neigh->confirmed =3D jiffies;
-+		neigh->updated =3D jiffies;
-+	}
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 80d0ffe7abc1..b2a7c3d9dcaf 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1455,7 +1455,16 @@ static void sci_free_dma(struct uart_port *port)
+ 	if (s->chan_rx)
+ 		sci_rx_dma_release(s, false);
+ }
+-#else
 +
- 	if (new !=3D old) {
- 		neigh_del_timer(neigh);
- 		if (new & NUD_PROBE)
++static void sci_flush_buffer(struct uart_port *port)
++{
++	/*
++	 * In uart_flush_buffer(), the xmit circular buffer has just been
++	 * cleared, so we have to reset tx_dma_len accordingly.
++	 */
++	to_sci_port(port)->tx_dma_len =3D 0;
++}
++#else /* !CONFIG_SERIAL_SH_SCI_DMA */
+ static inline void sci_request_dma(struct uart_port *port)
+ {
+ }
+@@ -1463,7 +1472,9 @@ static inline void sci_request_dma(struct uart_port *=
+port)
+ static inline void sci_free_dma(struct uart_port *port)
+ {
+ }
+-#endif
++
++#define sci_flush_buffer	NULL
++#endif /* !CONFIG_SERIAL_SH_SCI_DMA */
+=20
+ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ {
+@@ -2203,6 +2214,7 @@ static struct uart_ops sci_uart_ops =3D {
+ 	.break_ctl	=3D sci_break_ctl,
+ 	.startup	=3D sci_startup,
+ 	.shutdown	=3D sci_shutdown,
++	.flush_buffer	=3D sci_flush_buffer,
+ 	.set_termios	=3D sci_set_termios,
+ 	.pm		=3D sci_pm,
+ 	.type		=3D sci_type,
 --=20
 2.14.1
