@@ -1,194 +1,98 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2558661-1519898037-2-2640090931121619775
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1738054-1521431389-2-281272665500986121
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-source: IP='209.85.160.68', Host='mail-pl0-f68.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: leechu729@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519898037; b=as9BHkTR9RYZu9FoaNH9EiG/moD9eSXcQ9QR9iv1m2SJuXi
-    Oy+UCq0c+OKE73zMi5avZlfZvoYyyW3wHRxQFlovwmD0RcwvA67Qs2IgEuundd4o
-    UVjreftxTpF9h/Red82XMYks/ujkfN7TOcgWC/YtBVDJfyocKQYl+ZxtkhsI8c/y
-    txIgWWu5IwAAgi0uMJrfial2ViwrcsCcWll0W6F1IoVgD4Tsl5hr6j4rbpb2rIkM
-    Wja4Hx1XbkV0C3djYjQo4zrBPxu5IBuM+LL3+pXNiFAxT0vb+/RobE6TXDKfoVBb
-    aydmyEjMnKBBOij7RcnvkBcVZXnc4l70XDryltQ==
+    t=1521431388; b=Zva9lmj3ykRRJJCXqTjYcXxZjAk5CNjA79TCgL2F+cTP85c
+    8XshlzQyDedsu6sYfYPfwayCPErexB6X06Gm2hHItsiQ0Yg/g18XYsLOeHxPU0Pv
+    KJPVIiTEiOkBCfGo44XTYyLowucpkPDErJl/YxLMDHtISgepd4uKJDrJ9xgh3FAV
+    DHPwN0U0hyWNZGQaZ1TE21E8PJrYKy5LyUSs14aWLWWZCUTViveaT4bMlptqv6h3
+    t2vJhUbHKQJUTT/ME3NARPCh82epnIRvmKBOs4Y8frrpuL5B2vG64jgEEibaFFlu
+    DX7iRNWUtAE/op0JVbMKWv8HBBZFw3nJldkATbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519898037; bh=a3mIoNSP3WC5rjAcg4mIh4KdEr
-    Ew+R0XXdtn6bZPB+4=; b=JFOcpiTgDgKLClpasJA6LptIPAbjiJdvoSbyi1p/AE
-    cMmPz25hYl7rGM9JiZ6VQTjRv8mP3V+hf4vBf5Gtzpt0Ib/1lHeu4X27naF0QljH
-    Jbl+02B+/bGyhpc6bXKWwTC8XliX0l9nDcYxfmCqJrx2HNmPM6Kx0e0KteFvNsFN
-    pwWL6QT1g50tlYlsDvuYMiey//Ees81xsARY3k+a0CQlqBDIMFU4jwj6q8iLi0Vk
-    Az/DpttsdX5hLQIoAHphhRf7U9hI75HBoDIMTfNBe+9xcijHrUDgh9U4UpCIsoXL
-    SUq00LoKImtXTo3vknfg6Wu5ykVBI0LEgFFenZLu2S2A==
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1521431388; bh=3PJEotp9xLrLoNG9bLqs5C+3ZCvBXgGxCSp0xM
+    p0i+k=; b=MueWoeimuDjYV5jkgztcklppwUQPThVIZH24oWOr3z9S0KE/r0wE7b
+    lkzCEqDE0cJbtOOvoCOeN0PjGewFMKDSS77ho6yWPTUWMG0Oi/LmSh0gIL2qCmqX
+    0VJkyNpPX3ZEXvYOg0ookXulkwxy/6x/1xJCkhjYH5Fl8ss40R3b9z47n1IopMqg
+    VZwj3T2leh8dNCITSOyR7NEbb+43NjjzAlk549up587/0HuBHhJDsTlltLo64muZ
+    f704RfYKoxrHFkQP37FSrTeYvHXeFowWj7yeWDAJo1pZKVKCbcwSjcNetrcEk9wD
+    7c9KrIivEgjcrd5/224VsJ8+nufz5hqQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KQ7Wuofy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.68 (mail-pl0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pl0-f68.google.com;
+    x-aligned-from=pass;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=S/oP6D1V;
+    x-ptr=pass x-ptr-helo=mail-pl0-f68.google.com x-ptr-lookup=mail-pl0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967146AbeCAJxc (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 04:53:32 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14938 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967296AbeCAJx1 (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 1 Mar 2018 04:53:27 -0500
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Roger Quadros" <rogerq@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        "Robin Murphy" <robin.murphy@arm.com>
-CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v4 2/2] usb: host: ehci-platform: add support for optional external vbus supply
-Date: Thu, 1 Mar 2018 10:51:39 +0100
-Message-ID: <1519897899-8577-3-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
-References: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
- signatures=0
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KQ7Wuofy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.68 (mail-pl0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pl0-f68.google.com;
+    x-aligned-from=pass;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=S/oP6D1V;
+    x-ptr=pass x-ptr-helo=mail-pl0-f68.google.com x-ptr-lookup=mail-pl0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELu6sMfGmLoLBXddQk2GAF7YvSgRheHWP7xE5kmTGmavRJcq3ESKzoVMyuEbgR9BNj6r2SrRAw==
+From: ShuFan Lee <leechu729@gmail.com>
+To: greg@kroah.com,
+	heikki.krogerus@linux.intel.com,
+	linux@roeck-us.net
+Cc: shufan_lee@richtek.com,
+	cy_huang@richtek.com,
+	jun.li@nxp.com,
+	mats.dev.list@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH 0/2] staging: typec: rt1711h typec driver and dt-bindings
+Date: Mon, 19 Mar 2018 11:49:33 +0800
+Message-Id: <1521431375-23207-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On some boards, especially when vbus supply requires large current,
-and the charge pump on the PHY isn't enough, an external vbus power switch
-may be used.
-Add support for optional external vbus supply per port in ehci-platform.
+From: ShuFan Lee <shufan_lee@richtek.com>
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
----
- drivers/usb/host/ehci-platform.c | 51 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+This patch series add rt1711h typec chip driver and dt-bindings
 
-diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-index b065a96..e0dace7 100644
---- a/drivers/usb/host/ehci-platform.c
-+++ b/drivers/usb/host/ehci-platform.c
-@@ -29,6 +29,7 @@
- #include <linux/of.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
-@@ -46,6 +47,7 @@ struct ehci_platform_priv {
- 	struct reset_control *rsts;
- 	struct phy **phys;
- 	int num_phys;
-+	struct regulator **vbus_supplies;
- 	bool reset_on_resume;
- };
- 
-@@ -56,7 +58,8 @@ static int ehci_platform_reset(struct usb_hcd *hcd)
- 	struct platform_device *pdev = to_platform_device(hcd->self.controller);
- 	struct usb_ehci_pdata *pdata = dev_get_platdata(&pdev->dev);
- 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
--	int retval;
-+	struct ehci_platform_priv *priv = hcd_to_ehci_priv(hcd);
-+	int portnum, n_ports, retval;
- 
- 	ehci->has_synopsys_hc_bug = pdata->has_synopsys_hc_bug;
- 
-@@ -71,11 +74,56 @@ static int ehci_platform_reset(struct usb_hcd *hcd)
- 	if (retval)
- 		return retval;
- 
-+	n_ports = HCS_N_PORTS(ehci->hcs_params);
-+	priv->vbus_supplies = devm_kcalloc(&pdev->dev, n_ports,
-+					   sizeof(*priv->vbus_supplies),
-+					   GFP_KERNEL);
-+	if (!priv->vbus_supplies)
-+		return -ENOMEM;
-+
-+	for (portnum = 0; portnum < n_ports; portnum++) {
-+		struct regulator *vbus_supply;
-+		char id[20];
-+
-+		sprintf(id, "port%d_vbus", portnum);
-+
-+		vbus_supply = devm_regulator_get_optional(&pdev->dev, id);
-+		if (IS_ERR(vbus_supply)) {
-+			retval = PTR_ERR(vbus_supply);
-+			if (retval != ENODEV)
-+				return retval;
-+		} else {
-+			priv->vbus_supplies[portnum] = vbus_supply;
-+		}
-+	}
-+
- 	if (pdata->no_io_watchdog)
- 		ehci->need_io_watchdog = 0;
- 	return 0;
- }
- 
-+static int ehci_platform_port_power(struct usb_hcd *hcd, int portnum,
-+				    bool enable)
-+{
-+	struct ehci_platform_priv *priv = hcd_to_ehci_priv(hcd);
-+	int ret;
-+
-+	if (!priv->vbus_supplies[portnum])
-+		return 0;
-+
-+	if (enable)
-+		ret = regulator_enable(priv->vbus_supplies[portnum]);
-+	else
-+		ret = regulator_disable(priv->vbus_supplies[portnum]);
-+
-+	if (ret)
-+		dev_err(hcd->self.controller,
-+			"failed to %s vbus supply for port %d: %d\n",
-+			enable ? "enable" : "disable", portnum, ret);
-+
-+	return ret;
-+}
-+
- static int ehci_platform_power_on(struct platform_device *dev)
- {
- 	struct usb_hcd *hcd = platform_get_drvdata(dev);
-@@ -134,6 +182,7 @@ static struct hc_driver __read_mostly ehci_platform_hc_driver;
- static const struct ehci_driver_overrides platform_overrides __initconst = {
- 	.reset =		ehci_platform_reset,
- 	.extra_priv_size =	sizeof(struct ehci_platform_priv),
-+	.port_power =		ehci_platform_port_power,
- };
- 
- static struct usb_ehci_pdata ehci_platform_defaults = {
+changelogs between v1 & v2
+- use gpiod_* instead of gpio_*
+
+changelogs between v2 & v3
+- add dt-bindings for rt1711h typec driver
+
+ShuFan Lee (2):
+  staging: typec: rt1711h typec chip driver
+  dt-bindings: usb: rt1711h device tree binding document
+
+ .../devicetree/bindings/usb/richtek,rt1711h.txt    |  30 ++
+ drivers/staging/typec/Kconfig                      |   8 +
+ drivers/staging/typec/Makefile                     |   1 +
+ drivers/staging/typec/tcpci.h                      |   1 +
+ drivers/staging/typec/tcpci_rt1711h.c              | 329 +++++++++++++++++++++
+ 5 files changed, 369 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
+ create mode 100644 drivers/staging/typec/tcpci_rt1711h.c
+
 -- 
-2.7.4
-
+1.9.1
