@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt7MymBlkn3RNX4LaAF42wczuqjy6SW2NxhMEOUn/kcwja5a6c7YJf79Hze+R2TuRK5FyD5
-ARC-Seal: i=1; a=rsa-sha256; t=1521484147; cv=none;
+X-Google-Smtp-Source: AG47ELuAVHCA276kb6NPFWZteUDUk8PaKu0s2ZLJanOqv2xIBMe7oa4vmj9oA6iwGys8TMQG0Kgv
+ARC-Seal: i=1; a=rsa-sha256; t=1521484144; cv=none;
         d=google.com; s=arc-20160816;
-        b=mFiAuizHC8HjxmjkTBOOIPgdHBzBJ6R4VI0aUDtMpUfjjx5SKfprMqmOdkeeZAsOFy
-         MQZsAMp1nRgOPxVghaFFQ9AL31TOnZQ3yiX1U0ksi2hBpN0WR50k54VPf05zKkNXQeNa
-         TMMEcGJS67vOd/SqJ4vTZ1fzm7Xx4tgZQog0sgiiS+XXtCez75pUgeX6Ww6wZKahLKGC
-         MOvYL/6XxwFfYuoxuCWlrhOLefth5ZWixHHlUKmi2UuSFn8qCUrCM2WPQJZckYbu3N46
-         AVGY5mpFcxRzdjLudurYY7Gijz8oQ/TUqgfYkCjfnAkh0ORthS/aKLYbMoJFc0Hue/VV
-         /3ZA==
+        b=ZgvIGezhZbIqSq+Wd5P6AHpTC6B7OvYSHj7XA1SF44xhRq42rg+rSd/JfP1CRdySQ0
+         cM3AjHqDauSAXm7DOfDAkOgPa/70XkvRBd4acRV6uP1YI3sg4MHVnfRNEWfcJubI4oYI
+         KxoSvqXQQAEFcT7r1LpLfpuuopFjNMkrEhMizxs9tCA0nX+Tfkz0DS5KNPKMpUTtWDlD
+         XZtOSI1YKBhdFOmABgtMb3j3TQZpEabaXK34T+G9eqS+jHVP3hjFM0/OytURwYlUS1UG
+         46YM2HdSeIsMkXEfGdLUaUJ0ew/w70ghV5IJ/paEJhGqFA3fAHS5f/ZNMiAS7xhBFaUP
+         PIiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xVEwT1rDw53Elxf7JpX/tDNUevArs07WzgRVR4ApLwo=;
-        b=pNj29cT7wig/PxaOkCGqqo3WS8ovCdP74G6u3IAGp8lwD1XgG0YmKx37sEb9/QL9e1
-         S9JlEvaBib+ywmd0Mxz7dfzO14u6XQJmeH2cGmmGwhpnOXMU6lwH37nxOlsXBXFfvR+s
-         lilwCvujdnXQipABa+l0coZp3tt9IjcM4atByaI5gC4mGuCmsPQduvNnubLzJecTn4Uf
-         dSxJJCS0Y/Lip6cbWqd5VP40IfvM1hk2sUF1lvqAaXS5IEpNT9qWbdvFbxOjmyqarmbP
-         29EEJOrkK3NOK3nm1YLi4mtg45JleLXJCnCCSt9gp0rWJGiRk6m9oKulSZ+OffIPQfm4
-         cWBA==
+        bh=gr7KW0rFQg3Jlwoj+Ye2B0e4+ZcjpTf2sHbpfQOMcVk=;
+        b=BNjb+TB2FWMojcwWU4FxsJhaFqakIxsiG6FZRUUWHB5s2iHGlj0kdzgZUNlQTT8zbw
+         YkS1CYlsxtBpjyvlcLX+FTJY4qvIursnN+cc8bgAIwmvWjdDac96yh1D8izV0gbAZOn5
+         oOcGoNmc8bgB3De8rN2FFgBOIMfflKywFo0XsHgrDtCFrPVb850Ptz+prtIyK+h7acex
+         5EmTOpTQwLRV+y8AfcAY+cgV/jsW536xJm0i3ozg4FJctzH+KHsq6Pg6MrRaQ2wBdD3G
+         tHG2SnD9y6XYFhLIpEb+x8zh1rcBlGHVeyyOmBoE9Tv8uM3c9jtXHCPTitStfn9SsVyX
+         WEdw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,38 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Borislav Petkov <bp@suse.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Chen Yucong <slaoub@gmail.com>,
-	Chris Metcalf <cmetcalf@mellanox.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	ricardo.neri@intel.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 214/241] selftests/x86: Add tests for User-Mode Instruction Prevention
-Date: Mon, 19 Mar 2018 19:07:59 +0100
-Message-Id: <20180319180800.035896589@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 223/241] ALSA: hda - Revert power_save option default value
+Date: Mon, 19 Mar 2018 19:08:08 +0100
+Message-Id: <20180319180800.405889647@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -67,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391050324869540?=
-X-GMAIL-MSGID: =?utf-8?q?1595391761982366986?=
+X-GMAIL-THRID: =?utf-8?q?1595391067718842348?=
+X-GMAIL-MSGID: =?utf-8?q?1595391758824169571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -76,169 +49,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9390afebe1d3f5a0be18b1afdd0ce09d67cebf9e upstream.
+commit 40088dc4e1ead7df31728c73f5b51d71da18831d upstream.
 
-Certain user space programs that run on virtual-8086 mode may utilize
-instructions protected by the User-Mode Instruction Prevention (UMIP)
-security feature present in new Intel processors: SGDT, SIDT and SMSW. In
-such a case, a general protection fault is issued if UMIP is enabled. When
-such a fault happens, the kernel traps it and emulates the results of
-these instructions with dummy values. The purpose of this new
-test is to verify whether the impacted instructions can be executed
-without causing such #GP. If no #GP exceptions occur, we expect to exit
-virtual-8086 mode from INT3.
+With the commit 1ba8f9d30817 ("ALSA: hda: Add a power_save
+blacklist"), we changed the default value of power_save option to -1
+for processing the power-save blacklist.
+Unfortunately, this seems breaking user-space applications that
+actually read the power_save parameter value via sysfs and judge /
+adjust the power-saving status.  They see the value -1 as if the
+power-save is turned off, although the actual value is taken from
+CONFIG_SND_HDA_POWER_SAVE_DEFAULT and it can be a positive.
 
-The instructions protected by UMIP are executed in representative use
-cases:
+So, overall, passing -1 there was no good idea.  Let's partially
+revert it -- at least for power_save option default value is restored
+again to CONFIG_SND_HDA_POWER_SAVE_DEFAULT.  Meanwhile, in this patch,
+we keep the blacklist behavior and make is adjustable via the new
+option, pm_blacklist.
 
- a) displacement-only memory addressing
- b) register-indirect memory addressing
- c) results stored directly in operands
-
-Unfortunately, it is not possible to check the results against a set of
-expected values because no emulation will occur in systems that do not
-have the UMIP feature. Instead, results are printed for verification. A
-simple verification is done to ensure that results of all tests are
-identical.
-
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Chen Yucong <slaoub@gmail.com>
-Cc: Chris Metcalf <cmetcalf@mellanox.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Huang Rui <ray.huang@amd.com>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi V. Shankar <ravi.v.shankar@intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: ricardo.neri@intel.com
-Link: http://lkml.kernel.org/r/1509935277-22138-12-git-send-email-ricardo.neri-calderon@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
+Fixes: 1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/entry_from_vm86.c |   73 +++++++++++++++++++++++++-
- 1 file changed, 72 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_intel.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/tools/testing/selftests/x86/entry_from_vm86.c
-+++ b/tools/testing/selftests/x86/entry_from_vm86.c
-@@ -95,6 +95,22 @@ asm (
- 	"int3\n\t"
- 	"vmcode_int80:\n\t"
- 	"int $0x80\n\t"
-+	"vmcode_umip:\n\t"
-+	/* addressing via displacements */
-+	"smsw (2052)\n\t"
-+	"sidt (2054)\n\t"
-+	"sgdt (2060)\n\t"
-+	/* addressing via registers */
-+	"mov $2066, %bx\n\t"
-+	"smsw (%bx)\n\t"
-+	"mov $2068, %bx\n\t"
-+	"sidt (%bx)\n\t"
-+	"mov $2074, %bx\n\t"
-+	"sgdt (%bx)\n\t"
-+	/* register operands, only for smsw */
-+	"smsw %ax\n\t"
-+	"mov %ax, (2080)\n\t"
-+	"int3\n\t"
- 	".size vmcode, . - vmcode\n\t"
- 	"end_vmcode:\n\t"
- 	".code32\n\t"
-@@ -103,7 +119,7 @@ asm (
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -180,11 +180,15 @@ static const struct kernel_param_ops par
+ };
+ #define param_check_xint param_check_int
  
- extern unsigned char vmcode[], end_vmcode[];
- extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
--	vmcode_sti[], vmcode_int3[], vmcode_int80[];
-+	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[];
+-static int power_save = -1;
++static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ module_param(power_save, xint, 0644);
+ MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
+ 		 "(in second, 0 = disable).");
  
- /* Returns false if the test was skipped. */
- static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
-@@ -160,6 +176,58 @@ static bool do_test(struct vm86plus_stru
- 	return true;
- }
++static bool pm_blacklist = true;
++module_param(pm_blacklist, bool, 0644);
++MODULE_PARM_DESC(pm_blacklist, "Enable power-management blacklist");
++
+ /* reset the HD-audio controller in power save mode.
+  * this may give more power-saving, but will take longer time to
+  * wake up.
+@@ -2153,10 +2157,9 @@ static int azx_probe_continue(struct azx
  
-+void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
-+{
-+	struct table_desc {
-+		unsigned short limit;
-+		unsigned long base;
-+	} __attribute__((packed));
-+
-+	/* Initialize variables with arbitrary values */
-+	struct table_desc gdt1 = { .base = 0x3c3c3c3c, .limit = 0x9999 };
-+	struct table_desc gdt2 = { .base = 0x1a1a1a1a, .limit = 0xaeae };
-+	struct table_desc idt1 = { .base = 0x7b7b7b7b, .limit = 0xf1f1 };
-+	struct table_desc idt2 = { .base = 0x89898989, .limit = 0x1313 };
-+	unsigned short msw1 = 0x1414, msw2 = 0x2525, msw3 = 3737;
-+
-+	/* UMIP -- exit with INT3 unless kernel emulation did not trap #GP */
-+	do_test(vm86, vmcode_umip - vmcode, VM86_TRAP, 3, "UMIP tests");
-+
-+	/* Results from displacement-only addressing */
-+	msw1 = *(unsigned short *)(test_mem + 2052);
-+	memcpy(&idt1, test_mem + 2054, sizeof(idt1));
-+	memcpy(&gdt1, test_mem + 2060, sizeof(gdt1));
-+
-+	/* Results from register-indirect addressing */
-+	msw2 = *(unsigned short *)(test_mem + 2066);
-+	memcpy(&idt2, test_mem + 2068, sizeof(idt2));
-+	memcpy(&gdt2, test_mem + 2074, sizeof(gdt2));
-+
-+	/* Results when using register operands */
-+	msw3 = *(unsigned short *)(test_mem + 2080);
-+
-+	printf("[INFO]\tResult from SMSW:[0x%04x]\n", msw1);
-+	printf("[INFO]\tResult from SIDT: limit[0x%04x]base[0x%08lx]\n",
-+	       idt1.limit, idt1.base);
-+	printf("[INFO]\tResult from SGDT: limit[0x%04x]base[0x%08lx]\n",
-+	       gdt1.limit, gdt1.base);
-+
-+	if (msw1 != msw2 || msw1 != msw3)
-+		printf("[FAIL]\tAll the results of SMSW should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SMSW are identical.\n");
-+
-+	if (memcmp(&gdt1, &gdt2, sizeof(gdt1)))
-+		printf("[FAIL]\tAll the results of SGDT should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SGDT are identical.\n");
-+
-+	if (memcmp(&idt1, &idt2, sizeof(idt1)))
-+		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SIDT are identical.\n");
-+}
-+
- int main(void)
- {
- 	struct vm86plus_struct v86;
-@@ -218,6 +286,9 @@ int main(void)
- 	v86.regs.eax = (unsigned int)-1;
- 	do_test(&v86, vmcode_int80 - vmcode, VM86_INTx, 0x80, "int80");
+ 	val = power_save;
+ #ifdef CONFIG_PM
+-	if (val == -1) {
++	if (pm_blacklist) {
+ 		const struct snd_pci_quirk *q;
  
-+	/* UMIP -- should exit with INTx 0x80 unless UMIP was not disabled */
-+	do_umip_tests(&v86, addr);
-+
- 	/* Execute a null pointer */
- 	v86.regs.cs = 0;
- 	v86.regs.ss = 0;
+-		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ 		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
+ 		if (q && val) {
+ 			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
