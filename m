@@ -1,58 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933189AbeCSK5R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:57:17 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59975 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932296AbeCSK5Q (ORCPT
+        id S933052AbeCSLAK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 07:00:10 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:37352 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932296AbeCSLAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:57:16 -0400
-Date: Mon, 19 Mar 2018 11:57:04 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Anshuman Gupta <anshuman.gupta@intel.com>
-cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>, x86@kernel.org,
-        mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
-        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
-        Alan Cox <alan@linux.intel.com>
-Subject: Re: [PATCH v2] x86: i8237: Register based on FADT legacy boot flag
-In-Reply-To: <20180319104627.GA2959@anshuman.gupta@intel.com>
-Message-ID: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de>
-References: <1521004627-30329-1-git-send-email-rajneesh.bhardwaj@intel.com> <alpine.DEB.2.21.1803141603190.2481@nanos.tec.linutronix.de> <20180319104627.GA2959@anshuman.gupta@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 19 Mar 2018 07:00:08 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: linux-snps-arc@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Max Filippov <jcmvbkbc@gmail.com>, linux-arch@vger.kernel.org
+Subject: [PATCH] ARC: Improve cmpxchng syscall implementation
+Date: Mon, 19 Mar 2018 14:00:02 +0300
+Message-Id: <20180319110002.27419-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018, Anshuman Gupta wrote:
-> On Wed, Mar 14, 2018 at 04:07:43PM +0100, Thomas Gleixner wrote:
-> > On Wed, 14 Mar 2018, Rajneesh Bhardwaj wrote:
-> > > +	 * support 8237 DMA or bus mastering from LPC. Platform firmware
-> > > +	 * must announce the support for such legacy devices via
-> > > +	 * ACPI_FADT_LEGACY_DEVICES field in FADT table.
-> > > +	 */
-> > > +	if (!x86_platform.legacy.devices.pnpbios && dmi_get_bios_year() >= 2017)
-> > 
-> > Please use arch_pnpbios_disabled() and explain why you need that year
->   arch_pnpbios_disabled is defined only when CONFIG_PNPBIOS is set, which may 
->   not be true for all configurations.
+arc_usr_cmpxchg syscall is supposed to be used on platforms
+that lack support of Load-Locked/Store-Conditional instructions
+in hardware. And in that case we mimic missing hardware features
+with help of kernel's sycall that "atomically" checks current
+value in memory and then if it matches caller expectation new
+value is written to that same location.
 
-The please create a helper function x86_pnpbios_disabled() and use that one
-in arch_pnp_bios_disabled() and in your new code.
+What's important in the description above:
+ - Check-and-exchange must be "atomical" which means
+   preemption must be disabled during entire "transaction"
+ - Data accessed is from user-space, i.e. we're dealing
+   with virtual addresses
 
-> > check. If there is no pnpbios then why is the year interesting and why
-> > would anyone trust something which comes from BIOS?
->
->   Modern bios fsp have started using to use ACPI_FADT_LEGACY_DEVICES field in
->   FADT table, that is the reason we require a year check for BIOS.
->   https://review.coreboot.org/#/c/coreboot/+/23833/
->   https://review.coreboot.org/#/c/coreboot/+/23835/ 
+And in current implementation we have a couple of problems:
 
-Sorry, this gerrit stuff is unreadable. Please explain it in your own
-words. You have to do that anyway as that information wants to be in a
-comment or at least in the change log.
+1. We do disable preemprion around __get_user() & __put_user()
+   but that in its turn disables page fault handler.
+   That means if a pointer to user's data has no mapping in
+   the TLB we won't be able to access required data.
+   Instead software "exception handling" code from __get_user_fn()
+   will return -EFAULT.
 
-Thanks,
+2. What's worse if we're dealing with data from not yet allocated
+   page (think of pre-copy-on-write state) we'll successfully
+   read data but on write we'll silently return to user-space
+   with correct result (which we really read just before). That leads
+   to very strange problems in user-space app further down the line
+   because new value was never written to the destination.
 
-	tglx
+3. Regardless of what went wrong we'll return from syscall
+   and user-space application will continue to execute.
+   Even if user's pointer was completely bogus.
+   In case of hardware LL/SC that app would have been killed
+   by the kernel.
+
+With that change we attempt to imrove on all 3 items above:
+
+1. We still disable preemption around read-and-write of
+   user's data but if we happen to fail with either of them
+   we're enabling preemption and try to force page fault so
+   that we have a correct mapping in the TLB. Then re-try
+   again in "atomic" context.
+
+2. If real page fault fails or even access_ok() returns false
+   we send SIGSEGV to the user-space process so if something goes
+   seriously wrong we'll know about it much earlier.
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-arch@vger.kernel.org
+---
+ arch/arc/kernel/process.c | 47 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arc/kernel/process.c b/arch/arc/kernel/process.c
+index 5ac3b547453f..d7d3e16133d6 100644
+--- a/arch/arc/kernel/process.c
++++ b/arch/arc/kernel/process.c
+@@ -47,7 +47,9 @@ SYSCALL_DEFINE0(arc_gettls)
+ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
+ {
+ 	struct pt_regs *regs = current_pt_regs();
+-	int uval = -EFAULT;
++	struct page *page;
++	u32 val;
++	int ret;
+ 
+ 	/*
+ 	 * This is only for old cores lacking LLOCK/SCOND, which by defintion
+@@ -60,23 +62,48 @@ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
+ 	/* Z indicates to userspace if operation succeded */
+ 	regs->status32 &= ~STATUS_Z_MASK;
+ 
+-	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
+-		return -EFAULT;
++	ret = access_ok(VERIFY_WRITE, uaddr, sizeof(*uaddr));
++	if (!ret)
++		goto fail;
+ 
++again:
+ 	preempt_disable();
+ 
+-	if (__get_user(uval, uaddr))
+-		goto done;
+-
+-	if (uval == expected) {
+-		if (!__put_user(new, uaddr))
++	ret = __get_user(val, uaddr);
++	if (ret == -EFAULT) {
++		preempt_enable();
++		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
++		if (ret < 0)
++			goto fail;
++
++		put_page(page);
++		goto again;
++	} else if (ret)
++		goto fail;
++
++	if (val == expected) {
++		ret = __put_user(new, uaddr);
++		if (!ret)
+ 			regs->status32 |= STATUS_Z_MASK;
+ 	}
+ 
+-done:
+ 	preempt_enable();
+ 
+-	return uval;
++	if (ret == -EFAULT) {
++		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
++		if (ret < 0)
++			goto fail;
++
++		put_page(page);
++		goto again;
++	} else if (ret)
++		goto fail;
++
++	return val;
++
++fail:
++	force_sig(SIGSEGV, current);
++	return ret;
+ }
+ 
+ #ifdef CONFIG_ISA_ARCV2
+-- 
+2.11.0
