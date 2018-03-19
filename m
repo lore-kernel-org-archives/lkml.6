@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932731AbeCSI3J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:29:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34472 "EHLO mx1.redhat.com"
+        id S932737AbeCSI30 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:29:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932487AbeCSI3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:29:05 -0400
+        id S932510AbeCSI3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:29:07 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
@@ -14,9 +14,11 @@ Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 1/2] perf tools: Fix snprint warnings for gcc 8
-Date: Mon, 19 Mar 2018 09:29:01 +0100
-Message-Id: <20180319082902.4518-1-jolsa@kernel.org>
+Subject: [PATCH 2/2] perf tools: Fix python extension build for gcc 8
+Date: Mon, 19 Mar 2018 09:29:02 +0100
+Message-Id: <20180319082902.4518-2-jolsa@kernel.org>
+In-Reply-To: <20180319082902.4518-1-jolsa@kernel.org>
+References: <20180319082902.4518-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -26,186 +28,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: root <root@riddick.tpb.lab.eng.brq.redhat.com>
 
-With gcc 8 we get new set of snprintf warnings that
-brakes the compilation, one example:
+The gcc 8 won't compile python extension code with
+following errors (one example):
 
-  tests/mem.c: In function ‘check’:
-  tests/mem.c:19:48: error: ‘%s’ directive output may be truncated writing \
-        up to 99 bytes into a region of size 89 [-Werror=format-truncation=]
-    snprintf(failure, sizeof failure, "unexpected %s", out);
+  python.c:830:15: error: cast between incompatible  function types from              \
+  ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’                       \
+  uct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to     \
+  ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _objeuct \
+  _object *)’} [-Werror=cast-function-type]
+     .ml_meth  = (PyCFunction)pyrf_evsel__open,
 
-The gcc docs says:
- To avoid the warning either use a bigger buffer or handle the
- function's return value which indicates whether or not its output
- has been truncated.
+The problem with PyMethodDef::ml_meth callback is that
+its type is determined based on PyMethodDef::ml_flags
+value, which we set as METH_VARARGS | METH_KEYWORDS.
 
-Given that all these warnings are harmless, because the code
-either properly fails due to uncomplete file path or we don't
-care for truncated output at all, I'm changing all those snprintf
-calls to scnprintf calls, which actually 'checks' for the snprint
-return value so the gcc stays silent.
+That indicates that the callback is expecting extra PyObject* arg,
+and is actually PyCFunctionWithKeywords type, but the base
+PyMethodDef::ml_meth type stays PyCFunction.
 
-Link: http://lkml.kernel.org/n/tip-1xbmgdznb5syjqjduymm3bxw@git.kernel.org
+Previous gccs did not find this, gcc8 now does. Fixing
+this by silencing this warning for python.c build.
+
+Link: http://lkml.kernel.org/n/tip-gyl1jq6b27e9ad0wm9x4v1vr@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-script.c    | 22 +++++++++++-----------
- tools/perf/tests/attr.c        |  4 ++--
- tools/perf/tests/mem.c         |  2 +-
- tools/perf/tests/pmu.c         |  2 +-
- tools/perf/util/cgroup.c       |  2 +-
- tools/perf/util/parse-events.c |  4 ++--
- tools/perf/util/pmu.c          |  2 +-
- 7 files changed, 19 insertions(+), 19 deletions(-)
+ tools/perf/util/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index cce926aeb0c0..313c42423393 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2674,8 +2674,8 @@ static int list_available_scripts(const struct option *opt __maybe_unused,
- 	}
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 6891635b50c3..1a3fac37112d 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -27,7 +27,7 @@ class install_lib(_install_lib):
  
- 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
--		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
--			 lang_dirent->d_name);
-+		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
-+			  lang_dirent->d_name);
- 		lang_dir = opendir(lang_path);
- 		if (!lang_dir)
- 			continue;
-@@ -2684,8 +2684,8 @@ static int list_available_scripts(const struct option *opt __maybe_unused,
- 			script_root = get_script_root(script_dirent, REPORT_SUFFIX);
- 			if (script_root) {
- 				desc = script_desc__findnew(script_root);
--				snprintf(script_path, MAXPATHLEN, "%s/%s",
--					 lang_path, script_dirent->d_name);
-+				scnprintf(script_path, MAXPATHLEN, "%s/%s",
-+					  lang_path, script_dirent->d_name);
- 				read_script_info(desc, script_path);
- 				free(script_root);
- 			}
-@@ -2721,7 +2721,7 @@ static int check_ev_match(char *dir_name, char *scriptname,
- 	int match, len;
- 	FILE *fp;
+ cflags = getenv('CFLAGS', '').split()
+ # switch off several checks (need to be at the end of cflags list)
+-cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
++cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-cast-function-type' ]
  
--	sprintf(filename, "%s/bin/%s-record", dir_name, scriptname);
-+	scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scriptname);
- 
- 	fp = fopen(filename, "r");
- 	if (!fp)
-@@ -2799,8 +2799,8 @@ int find_scripts(char **scripts_array, char **scripts_path_array)
- 	}
- 
- 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
--		snprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
--			 lang_dirent->d_name);
-+		scnprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
-+			  lang_dirent->d_name);
- #ifdef NO_LIBPERL
- 		if (strstr(lang_path, "perl"))
- 			continue;
-@@ -2855,8 +2855,8 @@ static char *get_script_path(const char *script_root, const char *suffix)
- 		return NULL;
- 
- 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
--		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
--			 lang_dirent->d_name);
-+		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
-+			  lang_dirent->d_name);
- 		lang_dir = opendir(lang_path);
- 		if (!lang_dir)
- 			continue;
-@@ -2867,8 +2867,8 @@ static char *get_script_path(const char *script_root, const char *suffix)
- 				free(__script_root);
- 				closedir(lang_dir);
- 				closedir(scripts_dir);
--				snprintf(script_path, MAXPATHLEN, "%s/%s",
--					 lang_path, script_dirent->d_name);
-+				scnprintf(script_path, MAXPATHLEN, "%s/%s",
-+					  lang_path, script_dirent->d_name);
- 				return strdup(script_path);
- 			}
- 			free(__script_root);
-diff --git a/tools/perf/tests/attr.c b/tools/perf/tests/attr.c
-index 97f64ad7fa08..05dfe11c2f9e 100644
---- a/tools/perf/tests/attr.c
-+++ b/tools/perf/tests/attr.c
-@@ -170,8 +170,8 @@ static int run_dir(const char *d, const char *perf)
- 	if (verbose > 0)
- 		vcnt++;
- 
--	snprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
--		 d, d, perf, vcnt, v);
-+	scnprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
-+		  d, d, perf, vcnt, v);
- 
- 	return system(cmd) ? TEST_FAIL : TEST_OK;
- }
-diff --git a/tools/perf/tests/mem.c b/tools/perf/tests/mem.c
-index 21952e1e6e6d..0f82ee9fd3f7 100644
---- a/tools/perf/tests/mem.c
-+++ b/tools/perf/tests/mem.c
-@@ -16,7 +16,7 @@ static int check(union perf_mem_data_src data_src,
- 
- 	n = perf_mem__snp_scnprintf(out, sizeof out, &mi);
- 	n += perf_mem__lvl_scnprintf(out + n, sizeof out - n, &mi);
--	snprintf(failure, sizeof failure, "unexpected %s", out);
-+	scnprintf(failure, sizeof failure, "unexpected %s", out);
- 	TEST_ASSERT_VAL(failure, !strcmp(string, out));
- 	return 0;
- }
-diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-index 9abca267afa9..7bedf8608fdd 100644
---- a/tools/perf/tests/pmu.c
-+++ b/tools/perf/tests/pmu.c
-@@ -98,7 +98,7 @@ static char *test_format_dir_get(void)
- 		struct test_format *format = &test_formats[i];
- 		FILE *file;
- 
--		snprintf(name, PATH_MAX, "%s/%s", dir, format->name);
-+		scnprintf(name, PATH_MAX, "%s/%s", dir, format->name);
- 
- 		file = fopen(name, "w");
- 		if (!file)
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index 78408f5c4bad..decb91f9da82 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -81,7 +81,7 @@ static int open_cgroup(const char *name)
- 	if (cgroupfs_find_mountpoint(mnt, PATH_MAX + 1))
- 		return -1;
- 
--	snprintf(path, PATH_MAX, "%s/%s", mnt, name);
-+	scnprintf(path, PATH_MAX, "%s/%s", mnt, name);
- 
- 	fd = open(path, O_RDONLY);
- 	if (fd == -1)
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 4e80ca320399..2fb0272146d8 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -206,8 +206,8 @@ struct tracepoint_path *tracepoint_id_to_path(u64 config)
- 
- 		for_each_event(sys_dirent, evt_dir, evt_dirent) {
- 
--			snprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
--				 evt_dirent->d_name);
-+			scnprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
-+				  evt_dirent->d_name);
- 			fd = open(evt_path, O_RDONLY);
- 			if (fd < 0)
- 				continue;
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 1111d5bf15ca..064bdcb7bd78 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -351,7 +351,7 @@ static int pmu_aliases_parse(char *dir, struct list_head *head)
- 		if (pmu_alias_info_file(name))
- 			continue;
- 
--		snprintf(path, PATH_MAX, "%s/%s", dir, name);
-+		scnprintf(path, PATH_MAX, "%s/%s", dir, name);
- 
- 		file = fopen(path, "r");
- 		if (!file) {
+ src_perf  = getenv('srctree') + '/tools/perf'
+ build_lib = getenv('PYTHON_EXTBUILD_LIB')
 -- 
 2.13.6
