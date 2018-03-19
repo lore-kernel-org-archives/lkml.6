@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvBPTSkTprZ2X5brSup65BKo5ggkw4Srypn+6RMVkl/utxFQ08n2VcRHvI0B5HkyQXfW4yE
-ARC-Seal: i=1; a=rsa-sha256; t=1521483412; cv=none;
+X-Google-Smtp-Source: AG47ELsSOCQ7ZQfPsikLZmviKJTQyypcIPxgfRcZ2IIGoqh+qYYlLWdhsMOA31omyKS4gkOkhD7y
+ARC-Seal: i=1; a=rsa-sha256; t=1521483409; cv=none;
         d=google.com; s=arc-20160816;
-        b=R2jae8ujM7622pjx7sIRmipl0YJ2oQPKmGkzauh72fxlt1yvLPUELVr8NJWr/oySwR
-         swS+gjB8MUrKjFjF5CZPIymRJ2dwkMm9x8jCTU6xw2cMkNJHwYghe2qVPUlxmYuVQ2rS
-         kl4x7QTvVhnbfm67Cj+hCR0ucW78t/fhdbCH4B6VNGOGEwO9wDLOORI/C98eMS1ln9Ik
-         /PJRO4cyjldbyoRM0FuFPuHPWOQa3y6JIJSdBIdFC2nu9vJcMPFe7Ts4K7QnQiZpls/h
-         KjKyzvnHZKNxyX2KFK0ucG2JV762WUgI6xwYzhFX2zN9x9RqG5g7EQDZS7LptoVsUXv+
-         swJg==
+        b=tu22PgtsHzZ+zQnJsW4kQkoIULHuazfUvDkIJFpQTlqq+TQnt2rFZBzzXqK/u/h+jV
+         NrzYh8LreXG3FpW1NEaVcIT1xHl3Td7eneclDUgPIE0BrOorCw5eHFC/1piHcEK+lIQr
+         MyzvqrjMKV75AQ3f1yJP5uo4CeJupUq08/qmlXmpdDBxWaU3RkK2Xnc3IplNb+ms3sA+
+         ZR2Vt8XQzwjNLWBEwdQMfnfMsPzVBYiyGUqwAMZ1lh0oZhZiZhiajDNZ0WtERda6/ZV6
+         Nji7XwGp+IOho8k8AjXP/Bv2olggnXhPCzxArnv4iNjzY7s9pyq4JURzGKpkMv8tMxgb
+         25Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/0+nUddDwEe06lVM7MQjnPMZVnm6pBKJhBE7wCvDVL0=;
-        b=Y2QtG9P1xrtXuLrgJbeKgQq2GM9hIJGMIlWaHfNAuswGUo+bfFjCb1aPUOxX2DSAKR
-         uXo1LCXvp8aS//mMwZgOQc5HKeeDmHXV26l2j5Ifkqu5c3g299Q/2st9cp6MGs5f/BqS
-         9cWaMYaPm5lEq7dt1Ow13DkaNAfrmNzHU93uxw7GPTNlQssRm3q0NT047lUFhiAAJX1T
-         I589HNZZ70iWPYxW22ySVx0KJzlVVHrekkVIKPv5Q7PbT9VQxy9Xa/YdndCZB+r9IXnJ
-         F24Hp6fuRFi+2kxMH4h6JySzmMiKUrI2CBdZuvVNAy3SimDmv6F7VcGU6ULWXQIre9E7
-         Xkkg==
+        bh=5Cw+PiUl22P6si0bpBZVRHRu1pdj/ahBmfLSfHyvP6M=;
+        b=bZno/Qbxg0dr/x5emQ8218rKgqG0r1N1CkE//0YTsphU1fXZ0x1d6eZSIiPWW1bJ1p
+         0ZkQj9CAXUKIA0Q5kJ6E+ALLB5eJh4pnxMk4liEOf17DVb0B6BXTnGgAhPAaGAJ0eZ5k
+         1ny/90EpBegeB7dwZJqO4x5M2GtwkydPb5PbFYdZ+fcMoCk8dwTJu31ZZciEqaYEDl8O
+         7lJEwYyfsGQ+csPMT7WzXaLo3qoMDRbMF6WdvP2nb7lndvGfCGwQtPA+3sfzZnE5M997
+         au2+2EEvC4z4bxLghxZID52v9//5i6egGHqS6E5xA3GJTu2ulg8+tDYWIJNRkpP5Cbw+
+         mKow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,26 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shashank Sharma <shashank.sharma@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Archit Taneja <architt@codeaurora.org>,
 	Andrzej Hajda <a.hajda@samsung.com>,
+	Russell King <linux@armlinux.org.uk>,
+	CK Hu <ck.hu@mediatek.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	linux-media@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>,
 	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jani Nikula <jani.nikula@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 080/134] video/hdmi: Allow "empty" HDMI infoframes
-Date: Mon, 19 Mar 2018 19:06:03 +0100
-Message-Id: <20180319171900.827753992@linuxfoundation.org>
+Subject: [PATCH 4.4 079/134] drm/edid: set ELD connector type in drm_edid_to_eld()
+Date: Mon, 19 Mar 2018 19:06:02 +0100
+Message-Id: <20180319171900.680724144@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -45,8 +55,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390990648022019?=
-X-GMAIL-MSGID: =?utf-8?q?1595390990648022019?=
+X-GMAIL-THRID: =?utf-8?q?1595390988028544718?=
+X-GMAIL-MSGID: =?utf-8?q?1595390988028544718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,133 +64,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Ville Syrj�l�" <ville.syrjala@linux.intel.com>
+From: Jani Nikula <jani.nikula@intel.com>
 
 
-[ Upstream commit 593f4b19a094c4426bd1e1e3cbab87a48bd13c71 ]
+[ Upstream commit 1d1c36650752b7fb81cee515a9bba4131cac4b7c ]
 
-HDMI 2.0 Appendix F suggest that we should keep sending the infoframe
-when switching from 3D to 2D mode, even if the infoframe isn't strictly
-necessary (ie. not needed to transmit the VIC or stereo information).
-This is a workaround against some sinks that fail to realize that they
-should switch from 3D to 2D mode when the source stop transmitting
-the infoframe.
+Since drm_edid_to_eld() knows the connector type, we can set the type in
+ELD while at it. Most connectors this gets called on are not DP
+encoders, and with the HDMI type being 0, this does not change behaviour
+for non-DP.
 
-v2: Handle unpack() as well
-    Pull the length calculation into a helper
+For i915 having this in place earlier would have saved a considerable
+amount of debugging that lead to the fix 2d8f63297b9f ("drm/i915: always
+update ELD connector type after get modes"). I don't see other drivers,
+even the ones calling drm_edid_to_eld() on DP connectors, setting the
+connector type in ELD.
 
-Cc: Shashank Sharma <shashank.sharma@intel.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Archit Taneja <architt@codeaurora.org>
 Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: CK Hu <ck.hu@mediatek.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Mark Yao <mark.yao@rock-chips.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Vincent Abriou <vincent.abriou@st.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: linux-media@vger.kernel.org
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com> #v1
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171113170427.4150-2-ville.syrjala@linux.intel.com
-Reviewed-by: Shashank Sharma <shashank.sharma@intel.com>
+Cc: Eric Anholt <eric@anholt.net>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/d527b31619528c477c2c136f25cdf118bc0cfc1d.1509545641.git.jani.nikula@intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/hdmi.c |   51 +++++++++++++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/drm_edid.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/video/hdmi.c
-+++ b/drivers/video/hdmi.c
-@@ -321,6 +321,17 @@ int hdmi_vendor_infoframe_init(struct hd
- }
- EXPORT_SYMBOL(hdmi_vendor_infoframe_init);
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -3219,8 +3219,7 @@ monitor_name(struct detailed_timing *t,
+  * @edid: EDID to parse
+  *
+  * Fill the ELD (EDID-Like Data) buffer for passing to the audio driver. The
+- * Conn_Type, HDCP and Port_ID ELD fields are left for the graphics driver to
+- * fill in.
++ * HDCP and Port_ID ELD fields are left for the graphics driver to fill in.
+  */
+ void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
+ {
+@@ -3293,6 +3292,12 @@ void drm_edid_to_eld(struct drm_connecto
+ 	}
+ 	eld[5] |= sad_count << 4;
  
-+static int hdmi_vendor_infoframe_length(const struct hdmi_vendor_infoframe *frame)
-+{
-+	/* for side by side (half) we also need to provide 3D_Ext_Data */
-+	if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
-+		return 6;
-+	else if (frame->vic != 0 || frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID)
-+		return 5;
++	if (connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort ||
++	    connector->connector_type == DRM_MODE_CONNECTOR_eDP)
++		eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |= DRM_ELD_CONN_TYPE_DP;
 +	else
-+		return 4;
-+}
++		eld[DRM_ELD_SAD_COUNT_CONN_TYPE] |= DRM_ELD_CONN_TYPE_HDMI;
 +
- /**
-  * hdmi_vendor_infoframe_pack() - write a HDMI vendor infoframe to binary buffer
-  * @frame: HDMI infoframe
-@@ -341,19 +352,11 @@ ssize_t hdmi_vendor_infoframe_pack(struc
- 	u8 *ptr = buffer;
- 	size_t length;
+ 	eld[DRM_ELD_BASELINE_ELD_LEN] =
+ 		DIV_ROUND_UP(drm_eld_calc_baseline_block_size(eld), 4);
  
--	/* empty info frame */
--	if (frame->vic == 0 && frame->s3d_struct == HDMI_3D_STRUCTURE_INVALID)
--		return -EINVAL;
--
- 	/* only one of those can be supplied */
- 	if (frame->vic != 0 && frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID)
- 		return -EINVAL;
- 
--	/* for side by side (half) we also need to provide 3D_Ext_Data */
--	if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
--		frame->length = 6;
--	else
--		frame->length = 5;
-+	frame->length = hdmi_vendor_infoframe_length(frame);
- 
- 	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
- 
-@@ -372,14 +375,16 @@ ssize_t hdmi_vendor_infoframe_pack(struc
- 	ptr[5] = 0x0c;
- 	ptr[6] = 0x00;
- 
--	if (frame->vic) {
--		ptr[7] = 0x1 << 5;	/* video format */
--		ptr[8] = frame->vic;
--	} else {
-+	if (frame->s3d_struct != HDMI_3D_STRUCTURE_INVALID) {
- 		ptr[7] = 0x2 << 5;	/* video format */
- 		ptr[8] = (frame->s3d_struct & 0xf) << 4;
- 		if (frame->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF)
- 			ptr[9] = (frame->s3d_ext_data & 0xf) << 4;
-+	} else if (frame->vic) {
-+		ptr[7] = 0x1 << 5;	/* video format */
-+		ptr[8] = frame->vic;
-+	} else {
-+		ptr[7] = 0x0 << 5;	/* video format */
- 	}
- 
- 	hdmi_infoframe_set_checksum(buffer, length);
-@@ -1161,7 +1166,7 @@ hdmi_vendor_any_infoframe_unpack(union h
- 
- 	if (ptr[0] != HDMI_INFOFRAME_TYPE_VENDOR ||
- 	    ptr[1] != 1 ||
--	    (ptr[2] != 5 && ptr[2] != 6))
-+	    (ptr[2] != 4 && ptr[2] != 5 && ptr[2] != 6))
- 		return -EINVAL;
- 
- 	length = ptr[2];
-@@ -1189,16 +1194,22 @@ hdmi_vendor_any_infoframe_unpack(union h
- 
- 	hvf->length = length;
- 
--	if (hdmi_video_format == 0x1) {
--		hvf->vic = ptr[4];
--	} else if (hdmi_video_format == 0x2) {
-+	if (hdmi_video_format == 0x2) {
-+		if (length != 5 && length != 6)
-+			return -EINVAL;
- 		hvf->s3d_struct = ptr[4] >> 4;
- 		if (hvf->s3d_struct >= HDMI_3D_STRUCTURE_SIDE_BY_SIDE_HALF) {
--			if (length == 6)
--				hvf->s3d_ext_data = ptr[5] >> 4;
--			else
-+			if (length != 6)
- 				return -EINVAL;
-+			hvf->s3d_ext_data = ptr[5] >> 4;
- 		}
-+	} else if (hdmi_video_format == 0x1) {
-+		if (length != 5)
-+			return -EINVAL;
-+		hvf->vic = ptr[4];
-+	} else {
-+		if (length != 4)
-+			return -EINVAL;
- 	}
- 
- 	return 0;
