@@ -1,246 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933152AbeCSKz6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:55:58 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:29866 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932493AbeCSKzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:55:55 -0400
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xuwei (O)" <xuwei5@huawei.com>, Linuxarm <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Topic: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Index: AQHTv1c+cEfbAjOP8UqK+R1irvQWu6PXYHQA
-Date: Mon, 19 Mar 2018 10:55:41 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838675F4F@FRAEML521-MBX.china.huawei.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
- <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S933178AbeCSK4J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933162AbeCSK4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 06:56:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C45E217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AG47ELuTuo6c8pycG4pBoXz8DoDQCg0GE1J00GYlP7/ND9WRZD2zmqTCOkc8xVsWtGAniondR/MF2/Dpk3XGLr+Notw=
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <9bb639c3-f4e9-3a1e-61e8-a34fcfd0a344@samsung.com>
+References: <CGME20180319102927epcas1p12d4a070d0a7125db9424990b997c01c8@epcas1p1.samsung.com>
+ <20180318153512.8343-1-krzk@kernel.org> <9bb639c3-f4e9-3a1e-61e8-a34fcfd0a344@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 19 Mar 2018 11:56:00 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPcBesWpBoq07XbE1j3F1_N5dAWMTRkv8SN=tSMEm1q0iQ@mail.gmail.com>
+Message-ID: <CAJKOXPcBesWpBoq07XbE1j3F1_N5dAWMTRkv8SN=tSMEm1q0iQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: samsung: Mark unused Odroid compatibles as deprecated
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 19, 2018 at 11:29 AM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 03/18/2018 04:35 PM, Krzysztof Kozlowski wrote:
+>> Compatible for XU4 audio is not being used.  Instead the board uses the
+>> same compatible as XU3.  The devices are now just compatible so they
+>> should use the same value.  Mark "hardkernel,odroid-xu4-audio" as being
+>> deprecated so in this future could be removed to limit useless
+>> properties.
+>
+> It doesn't feel right to obsolete the "hardkernel,odroid-xu4-audio"
+> compatible, there is significant difference between XU3 and XU4 - there
+> is no audio CODEC on XU4, this board only supports audio over HDMI interface.
+> XU4 could be compatible with XU3, but not the other way around.
+> It just happens we have other DT properties that help to handle such HW
+> design difference.
 
+The compatible does not describe physical differences. It does not
+mean that devices are the same. In this case they are just coming from
+the same family and they operate the same, from the bindings
+perspective.
 
-> -----Original Message-----
-> From: Tian, Kevin [mailto:kevin.tian@intel.com]
-> Sent: Monday, March 19, 2018 7:52 AM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> alex.williamson@redhat.com; eric.auger@redhat.com;
-> pmorel@linux.vnet.ibm.com
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; xuwei (O)
-> <xuwei5@huawei.com>; Linuxarm <linuxarm@huawei.com>;
-> iommu@lists.linux-foundation.org
-> Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
-> update iova list
-> 
-> > From: Shameer Kolothum
-> > Sent: Friday, March 16, 2018 12:35 AM
-> >
-> > This retrieves the reserved regions associated with dev group and
-> > checks for conflicts with any existing dma mappings. Also update
-> > the iova list excluding the reserved regions.
-> >
-> > Signed-off-by: Shameer Kolothum
-> > <shameerali.kolothum.thodi@huawei.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 90
-> > +++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 90 insertions(+)
-> >
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> > b/drivers/vfio/vfio_iommu_type1.c
-> > index 1123c74..cfe2bb2 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
-> > list_head *iova,
-> >  	return 0;
-> >  }
-> >
-> > +/*
-> > + * Check reserved region conflicts with existing dma mappings
-> > + */
-> > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-> > +				struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *region;
-> > +
-> > +	/* Check for conflict with existing dma mappings */
-> > +	list_for_each_entry(region, resv_regions, list) {
-> > +		if (vfio_find_dma(iommu, region->start, region->length))
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * Check iova region overlap with  reserved regions and
-> > + * exclude them from the iommu iova range
-> > + */
-> > +static int vfio_iommu_resv_exclude(struct list_head *iova,
-> > +					struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *resv;
-> > +	struct vfio_iova *n, *next;
-> > +
-> > +	list_for_each_entry(resv, resv_regions, list) {
-> > +		phys_addr_t start, end;
-> > +
-> > +		start = resv->start;
-> > +		end = resv->start + resv->length - 1;
-> > +
-> > +		list_for_each_entry_safe(n, next, iova, list) {
-> > +			int ret = 0;
-> > +
-> > +			/* No overlap */
-> > +			if ((start > n->end) || (end < n->start))
-> > +				continue;
-> > +			/*
-> > +			 * Insert a new node if current node overlaps with
-> > the
-> > +			 * reserve region to exlude that from valid iova
-> > range.
-> > +			 * Note that, new node is inserted before the
-> > current
-> > +			 * node and finally the current node is deleted
-> > keeping
-> > +			 * the list updated and sorted.
-> > +			 */
-> > +			if (start > n->start)
-> > +				ret = vfio_iommu_iova_insert(&n->list,
-> > +							n->start, start - 1);
-> > +			if (!ret && end < n->end)
-> > +				ret = vfio_iommu_iova_insert(&n->list,
-> > +							end + 1, n->end);
-> > +			if (ret)
-> > +				return ret;
-> 
-> Is it safer to delete the 1st node here in case of failure of the 2nd node?
-> There is no problem with current logic since upon error iova_copy will
-> be released anyway. However this function alone doesn't assume the
-> fact of a temporary list, thus it's better to keep the list clean w/o garbage
-> left from any error handling.
+The XU4 binding is not being used. Adding a compatible which is not
+used in the moment of adding is a proof that this compatible is not
+needed. It is just a duplicate. There is no point of adding
+duplicates.
 
-Agree. I will consider this.
+>
+> Moreover, only XU4 is still in production and should be in few more years [1],
+> others are obsoleted now.
 
-> > +
-> > +			list_del(&n->list);
-> > +			kfree(n);
-> > +		}
-> > +	}
-> > +
-> > +	if (list_empty(iova))
-> > +		return -EINVAL;
-> 
-> if list_empty should BUG_ON here? or do we really need this check?
+It is not a problem. Whether device is manufactured or not, does not
+reflect what bindings we are using. Deprecated XU4 compatible does not
+mean that XU4 itself is deprecated. Just this compatible should not be
+used for new DTS.
 
-I think we need the check here. This basically means there is no valid iova
-region as the reserved regions overlaps it completely(very unlikely, a bad
-configuration maybe). The __attach will fail if that happens and may be 
-WARN_ON is a good idea to notify the user.
+>
+> So I think we should keep at least these 2 compatible strings:
+>
+> - "hardkernel,odroid-xu3-audio" - for boards with audio CODEC,
+> - "hardkernel,odroid-xu4-audio" - for boards without audio CODEC,
+>    supporting only HDMI interface.
 
-Thanks,
-Shameer
+Yeah, and then we inflate this list into X, X2, U3, HC1 and all others
+which are the same. And then we should add XU3-lite (it is different
+device). This goes to some nonsense. Compatible is not for each device
+but for family even though there are differences between specific
+devices.
 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void vfio_iommu_resv_free(struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *n, *next;
-> > +
-> > +	list_for_each_entry_safe(n, next, resv_regions, list) {
-> > +		list_del(&n->list);
-> > +		kfree(n);
-> > +	}
-> > +}
-> > +
-> >  static void vfio_iommu_iova_free(struct list_head *iova)
-> >  {
-> >  	struct vfio_iova *n, *next;
-> > @@ -1366,6 +1442,7 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  	phys_addr_t resv_msi_base;
-> >  	struct iommu_domain_geometry geo;
-> >  	LIST_HEAD(iova_copy);
-> > +	LIST_HEAD(group_resv_regions);
-> >
-> >  	mutex_lock(&iommu->lock);
-> >
-> > @@ -1444,6 +1521,13 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  		goto out_detach;
-> >  	}
-> >
-> > +	iommu_get_group_resv_regions(iommu_group,
-> > &group_resv_regions);
-> > +
-> > +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
-> > +		ret = -EINVAL;
-> > +		goto out_detach;
-> > +	}
-> > +
-> >  	/* Get a copy of the current iova list and work on it */
-> >  	ret = vfio_iommu_iova_get_copy(iommu, &iova_copy);
-> >  	if (ret)
-> > @@ -1454,6 +1538,10 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  	if (ret)
-> >  		goto out_detach;
-> >
-> > +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
-> > +	if (ret)
-> > +		goto out_detach;
-> > +
-> >  	resv_msi = vfio_iommu_has_sw_msi(iommu_group,
-> > &resv_msi_base);
-> >
-> >  	INIT_LIST_HEAD(&domain->group_list);
-> > @@ -1514,6 +1602,7 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  	/* Delete the old one and insert new iova list */
-> >  	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
-> >  	mutex_unlock(&iommu->lock);
-> > +	vfio_iommu_resv_free(&group_resv_regions);
-> >
-> >  	return 0;
-> >
-> > @@ -1522,6 +1611,7 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  out_domain:
-> >  	iommu_domain_free(domain->domain);
-> >  	vfio_iommu_iova_free(&iova_copy);
-> > +	vfio_iommu_resv_free(&group_resv_regions);
-> >  out_free:
-> >  	kfree(domain);
-> >  	kfree(group);
-> > --
-> > 2.7.4
-> >
-> >
-> > _______________________________________________
-> > iommu mailing list
-> > iommu@lists.linux-foundation.org
-> > https://lists.linuxfoundation.org/mailman/listinfo/iommu
+Best regards,
+Krzysztof
