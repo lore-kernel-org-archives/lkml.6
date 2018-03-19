@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891247-1521497468-2-12374655385665628283
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521497420-2-15570333454741442218
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,66 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521497467; b=jKoegvSzJPXyjkAeeGz0sGiZRZwhVk5SBpxPJwrGnBB0xk/
-    Q/hgoWSyjTsM11ToXjAv2ZP/El/VImlXMkg72dGqwc6QziFYWwwbzLuGFQ9T2FAb
-    OlpyaHG4U4d42jr8odBEFKFYvvAGhH+6Vr6bdYOG9+xgsMCydBSs8kJvpWem9Uc+
-    W0nypD9yRQGVo7tQ1dd3dZUk6l8c1ZjioXvJalflyr4Y9Fa9p8f0cuxNkMSWT8M3
-    5XebvXPjeFuAXtUSCIiwNuge8Lg5ENtNTvvYJv7Xo/DuM5KSDVDAqa+gVGGLiYR1
-    81FvhY5+/O/Ze5fxjshyXu9HYdVnl/Qsh6dovEQ==
+    t=1521497419; b=QRmL/14jCYNEgV76VQ1Imb3uI9rpMEyu0ykO9vktm08IAEK
+    giBwVRTq73/bx9j9QJB1Aodn9SGmONMy/N5yz0L5xQGe37W4ZE9u/hLz2M9v+bxY
+    Q235Z1IPOIL6cw3t5sfBPnTOC2Hv7eCOWVzhFtSDrEDBFk5lwe7mmeopgpCkYMpS
+    ETBCcK3LDhZ+rD4dQTAJb0dL741Cry8Nj5SmvAVMe7SFwmTuR+RUKhJpHjg3mznF
+    8xqOStV53CcZtc9apMcYXb/X4t0yjxIKyhhwLWSTIzbRQ/cvGfK6D0lsujl3wqye
+    Mi0SwzJZJj37pDeT5bmWyt712q/zgA9Pphp3oCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521497467; bh=kBGOGF
-    tNeR7FHQE0/ZWb6uUacgzUp+TZLdDF9Qohk0I=; b=UzsIcwVoGVaeax0uksCnd2
-    eD7qWd4nY3gIpmLrpEwy/W8P8RcE1LhbubQNctYek7KdcnTqVCJitkAd/XD9MJ9U
-    96f5YsMIw3acE7wEnITHfjXPPzRiPqLFdzvAzEnuzmFaZ7cLHv/exAedKZDxu2rp
-    c686fYd6Tyt1izFXgr0TO53nDwSl7SkQcK1ijZ7NgGvSA97XqWfTmjIyLSWq5R5B
-    BgzQJwbuvZXex7NbpAOTGLPj/Lxxt2m0mAbDb/wmY0OwBHYKxnhN5duMdU6YaRo4
-    x2hej7FPHqshaEzJpqPGRrLee89h1xLJIMgDPw+WjW8+FgXzRg1DchfXg8xX04og
+    :mime-version:sender:list-id; s=arctest; t=1521497419; bh=hnAcOm
+    PNjjvSdfr6O0O6CMleSwN8R30LUBVyoVryoK8=; b=IKYJM9gVdDsQJ2cWsWwfBi
+    t/BYUjMigRXUskQmQ5h2ReeU3AEdoFdN63h90kb8AISlfxtrUGzul/cESbfDAjNd
+    UoAryuRaLjrfKHwUdcEXnzvgnM1qnH7MRQXcxftYIDijDlid03Kd0hNdpxRnLXGi
+    vFIC9sjvV81pqGWLucLdayiyibiNNU7gRE3extUBPqu1Rqu8lT3h1ISqgM5zMd92
+    mPOW037r7kGmJdxE5xvYx+KtJ5uP+57pFhRaFfBLd/0SHIh8V9N8aDCaK7tlvWua
+    4C2e0CosAasHWueBvUBvI2H7o2QBJlSIr/WiqzfUTN1/7QJPBCJMMQUAYQ8jBSEw
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=m4oUh195 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=m5Rcx+8W x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpvdehrdhsohenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepudduudejleenucevlhhushhtvghrufhiiigvpedu;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeegjeenucevlhhushhtvghrufhiiigvpeeihe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=m4oUh195 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=m5Rcx+8W x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpvdehrdhsohenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepudduudejleenucevlhhushhtvghrufhiiigvpedu;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeegjeenucevlhhushhtvghrufhiiigvpeeihe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934222AbeCSPyl (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:54:41 -0400
-Received: from mail-bn3nam01on0109.outbound.protection.outlook.com ([104.47.33.109]:27808
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S934154AbeCSWJ6 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:09:58 -0400
+Received: from mail-cys01nam02on0125.outbound.protection.outlook.com ([104.47.37.125]:46720
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934280AbeCSPyf (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:54:35 -0400
+        id S934309AbeCSPyq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:54:46 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Masami Hiramatsu <mhiramat@kernel.org>,
-        Paul Clarke <pc@us.ibm.com>,
-        bhargavb <bhargavaramudu@gmail.com>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+CC: Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 09/97] perf probe: Find versioned symbols
- from map
-Thread-Topic: [PATCH AUTOSEL for 4.14 09/97] perf probe: Find versioned
- symbols from map
-Thread-Index: AQHTv5qRN8oZQChAuU2VITyxJSS7bQ==
-Date: Mon, 19 Mar 2018 15:54:31 +0000
-Message-ID: <20180319155411.12348-9-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 15/97] rds; Reset rs->rs_bound_addr in
+ rds_add_bound() failure path
+Thread-Topic: [PATCH AUTOSEL for 4.14 15/97] rds; Reset rs->rs_bound_addr in
+ rds_add_bound() failure path
+Thread-Index: AQHTv5qWBlhqf5IVzU61eePwHDEzDA==
+Date: Mon, 19 Mar 2018 15:54:39 +0000
+Message-ID: <20180319155411.12348-15-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -81,186 +78,86 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0903;7:Y9vbbEOJR/0emAtSXVRXpyPlIhRe2rUMnx8fSrun5HNv7oKJXL1WGAYFlNJugWva9OTo2KztBm8MgBdxbc30s56oFjCDwCDwc2EYC18CsZkGpuCr01Mg05SWq8jBszeFkqOrmCWnVnH4u6UyiARRXdat2nS9tXm/GuVWQGVJ8+of8LlEYGTSG4o5T97DHM6Dk0iFPhVSSFx3CgaJzZe4fstJPguNgpqGroAiq9CKjEoEOawIaU9wVMO5mRNFvCE4;20:kSURisEzl7YaVQbtBaCu7zkxvZ1VV2xeKe4t/6L0r6DbXECbD9t+Fxhulzc7i6vs9f3H/TQjHDbd/rfzNvrQ59xd9BBTvHb+kBXYtKU3SOSRqWEStbkhsxEBSCy925dO50lHqAuCQ5XvcF3+565Rb21s3bKVkYGqq+ZvdGa0nbU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:53TTg8WaP1pfGO10Z+5pngNjL1Rh+tkv/n0m6PkMjMkPIaKar8q9bOkUyRaQBckyezoFyNfJFpAa1qsXdgufGyrImstFWCn1WyAT+CcRZQqYNPkYPzaL//479fKlt23cwyhwdPAKLdO0AuQVod3slKFmoJ+A/O0IjwqjF8a+NJ54vhtFieiS/m2WpEpqcas4FLwERFe5FJ1cR8gj+uJcVFwCyZ1JoM3mf3fRHYUKTjLNh3UQwtU7mZzJ4fEsFqPY;20:1WUU9vv6uwT0HFyWyvkedsRhAQ01JztkFD/tuW9N1d6XHs32YuccAJMYzJqUxcU9IJ5Gg+S3GvEMuNi4oFM5ckjfg3+8WKZeL0CVqq3Q6b5Z3oz35MV5xf5SUI7XSZzwZ1QFVRGFQjJ5e4FSnqbC75xV2gayKvFgm/iM+iWQPDE=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fe9873c9-0e05-49c6-740b-08d58db1b441
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0903;
-x-ms-traffictypediagnostic: DM5PR2101MB0903:
+x-ms-office365-filtering-correlation-id: 022a4281-a670-4757-3436-08d58db1b8e4
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
+x-ms-traffictypediagnostic: DM5PR2101MB0806:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB090322053C628C3957C7368CFBD40@DM5PR2101MB0903.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158)(42068640409301)(274839183919467)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0903;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0903;
+x-microsoft-antispam-prvs: <DM5PR2101MB0806A5AE57207B6784DE6D5EFBD40@DM5PR2101MB0806.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(376002)(39380400002)(396003)(39860400002)(366004)(346002)(189003)(199004)(106356001)(99286004)(22452003)(5250100002)(8656006)(66066001)(2950100002)(2501003)(105586002)(54906003)(86612001)(110136005)(316002)(5660300001)(102836004)(3660700001)(36756003)(6486002)(478600001)(2906002)(97736004)(10090500001)(26005)(186003)(53936002)(1076002)(6116002)(966005)(3846002)(72206003)(81156014)(7736002)(305945005)(8676002)(81166006)(10290500003)(107886003)(6512007)(6306002)(8936002)(68736007)(39060400002)(6506007)(76176011)(14454004)(59450400001)(4326008)(2900100001)(3280700002)(25786009)(86362001)(6436002)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0903;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: jT8Tno/+GnHN5RhdoCrp/shZRJ8jQX+ZbWjEi67+/tAOVP5e3K3um5AnDINS0OwQX7RVhyJVWuWB1a9q5hdvoChz9kyREaBGYhn8c/hMad1lrJtP3N9nUcKj40uGzEKf+IR6Osg0sMufdR0Gd6IGPkmoIQpRhVsRCi0m9g8DvRBl0UTEkSLN6kZxGUi7hxETPqcyh1KPf79mmGXKjcN4lVnbfK2gHA+MJbXENPs9fXcyo7tx91F5FKyAagGAI24qjVxkaGgkLOSilpaLBUTGp7tKf2CwxdiTJ3M4TTofQ5HVA/1Qemt1Rdj1kUW1fcfj6rfKGnNmyht2Y9aja8xQZw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(39380400002)(366004)(199004)(189003)(14454004)(105586002)(6486002)(316002)(86612001)(68736007)(106356001)(36756003)(6436002)(99286004)(2501003)(5250100002)(107886003)(54906003)(110136005)(97736004)(5660300001)(22452003)(26005)(186003)(6512007)(59450400001)(102836004)(6506007)(53936002)(86362001)(575784001)(2906002)(25786009)(478600001)(66066001)(2900100001)(72206003)(7736002)(8936002)(3280700002)(4326008)(8676002)(81156014)(81166006)(10290500003)(10090500001)(1076002)(3846002)(6116002)(3660700001)(2950100002)(305945005)(76176011)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: u1wqhhIkFl+J8IwhugkDzHrlX7QNjoYuzzV/n9jMSZoY+TMIIB7MNFy84o0x7OZYwlDeXp3Lh2qoj/x4ujq2hPohjei/YM2HyEHslzZFVAMjrDnt1EyxXyVjAsgmjS4LgPvWajoKrMUYVW6ikAtPwEVwbfI0wsY2oh+/dcrRGUO4V34VcON79eoyOb670SPopgYMBU/feX8a2c4YrDJNNP6qWuM9d7P4TqjEc9LTVzlghrpApf/Ltgw1CoY1srMoU4UTbrhA33oi44oVMH2i7lZSnTd43qsV1aHClbRKOcnzvoM+ErV28pT7j6e3LBYcGnEm6xzqdlwpZEbqKW3Jgw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe9873c9-0e05-49c6-740b-08d58db1b441
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:54:31.4078
+X-MS-Exchange-CrossTenant-Network-Message-Id: 022a4281-a670-4757-3436-08d58db1b8e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:54:39.2003
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0903
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0806
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-[ Upstream commit 4b3a2716dd785fabb9f6ac80c1d53cb29a88169d ]
+[ Upstream commit 7ae0c649c47f1c5d2db8cee6dd75855970af1669 ]
 
-Commit d80406453ad4 ("perf symbols: Allow user probes on versioned
-symbols") allows user to find default versioned symbols (with "@@") in
-map. However, it did not enable normal versioned symbol (with "@") for
-perf-probe.  E.g.
+If the rds_sock is not added to the bind_hash_table, we must
+reset rs_bound_addr so that rds_remove_bound will not trip on
+this rds_sock.
 
-  =3D=3D=3D=3D=3D
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Failed to find symbol malloc_get_state in /usr/lib64/libc-2.25.so
-    Error: Failed to add events.
-  =3D=3D=3D=3D=3D
+rds_add_bound() does a rds_sock_put() in this failure path, so
+failing to reset rs_bound_addr will result in a socket refcount
+bug, and will trigger a WARN_ON with the stack shown below when
+the application subsequently tries to close the PF_RDS socket.
 
-This solves above issue by improving perf-probe symbol search function,
-as below.
+     WARNING: CPU: 20 PID: 19499 at net/rds/af_rds.c:496 \
+		rds_sock_destruct+0x15/0x30 [rds]
+       :
+     __sk_destruct+0x21/0x190
+     rds_remove_bound.part.13+0xb6/0x140 [rds]
+     rds_release+0x71/0x120 [rds]
+     sock_release+0x1a/0x70
+     sock_close+0xe/0x20
+     __fput+0xd5/0x210
+     task_work_run+0x82/0xa0
+     do_exit+0x2ce/0xb30
+     ? syscall_trace_enter+0x1cc/0x2b0
+     do_group_exit+0x39/0xa0
+     SyS_exit_group+0x10/0x10
+     do_syscall_64+0x61/0x1a0
 
-  =3D=3D=3D=3D=3D
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Added new event:
-    probe_libc:malloc_get_state (on malloc_get_state in /usr/lib64/libc-2.2=
-5.so)
-
-  You can now use it in all perf tools, such as:
-
-	  perf record -e probe_libc:malloc_get_state -aR sleep 1
-
-  # ./perf probe -l
-    probe_libc:malloc_get_state (on malloc_get_state@GLIBC_2.2.5 in /usr/li=
-b64/libc-2.25.so)
-  =3D=3D=3D=3D=3D
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: bhargavb <bhargavaramudu@gmail.com>
-Cc: linux-rt-users@vger.kernel.org
-Link: http://lkml.kernel.org/r/151275049269.24652.1639103455496216255.stgit=
-@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c |  8 ++++++++
- tools/perf/util/probe-event.c               | 20 ++++++++++++++++++--
- tools/perf/util/symbol.c                    |  5 +++++
- tools/perf/util/symbol.h                    |  1 +
- 4 files changed, 32 insertions(+), 2 deletions(-)
+ net/rds/bind.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/=
-powerpc/util/sym-handling.c
-index 9c4e23d8c8ce..53d83d7e6a09 100644
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -64,6 +64,14 @@ int arch__compare_symbol_names_n(const char *namea, cons=
-t char *nameb,
-=20
- 	return strncmp(namea, nameb, n);
- }
-+
-+const char *arch__normalize_symbol_name(const char *name)
-+{
-+	/* Skip over initial dot */
-+	if (name && *name =3D=3D '.')
-+		name++;
-+	return name;
-+}
- #endif
-=20
- #if defined(_CALL_ELF) && _CALL_ELF =3D=3D 2
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index b7aaf9b2294d..c3cd3488fee7 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2792,16 +2792,32 @@ static int find_probe_functions(struct map *map, ch=
-ar *name,
- 	int found =3D 0;
- 	struct symbol *sym;
- 	struct rb_node *tmp;
-+	const char *norm, *ver;
-+	char *buf =3D NULL;
-=20
- 	if (map__load(map) < 0)
- 		return 0;
-=20
- 	map__for_each_symbol(map, sym, tmp) {
--		if (strglobmatch(sym->name, name)) {
-+		norm =3D arch__normalize_symbol_name(sym->name);
-+		if (!norm)
-+			continue;
-+
-+		/* We don't care about default symbol or not */
-+		ver =3D strchr(norm, '@');
-+		if (ver) {
-+			buf =3D strndup(norm, ver - norm);
-+			if (!buf)
-+				return -ENOMEM;
-+			norm =3D buf;
-+		}
-+		if (strglobmatch(norm, name)) {
- 			found++;
- 			if (syms && found < probe_conf.max_probes)
- 				syms[found - 1] =3D sym;
- 		}
-+		if (buf)
-+			zfree(&buf);
- 	}
-=20
- 	return found;
-@@ -2847,7 +2863,7 @@ static int find_probe_trace_events_from_map(struct pe=
-rf_probe_event *pev,
- 	 * same name but different addresses, this lists all the symbols.
- 	 */
- 	num_matched_functions =3D find_probe_functions(map, pp->function, syms);
--	if (num_matched_functions =3D=3D 0) {
-+	if (num_matched_functions <=3D 0) {
- 		pr_err("Failed to find symbol %s in %s\n", pp->function,
- 			pev->target ? : "kernel");
- 		ret =3D -ENOENT;
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 6492ef38b090..4e8dd5fd45fd 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -93,6 +93,11 @@ static int prefix_underscores_count(const char *str)
- 	return tail - str;
- }
-=20
-+const char * __weak arch__normalize_symbol_name(const char *name)
-+{
-+	return name;
-+}
-+
- int __weak arch__compare_symbol_names(const char *namea, const char *nameb=
-)
- {
- 	return strcmp(namea, nameb);
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 6352022593c6..698c65e603a8 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -347,6 +347,7 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr);
- void arch__sym_update(struct symbol *s, GElf_Sym *sym);
- #endif
-=20
-+const char *arch__normalize_symbol_name(const char *name);
- #define SYMBOL_A 0
- #define SYMBOL_B 1
-=20
+diff --git a/net/rds/bind.c b/net/rds/bind.c
+index 75d43dc8e96b..5aa3a64aa4f0 100644
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -114,6 +114,7 @@ static int rds_add_bound(struct rds_sock *rs, __be32 ad=
+dr, __be16 *port)
+ 			  rs, &addr, (int)ntohs(*port));
+ 			break;
+ 		} else {
++			rs->rs_bound_addr =3D 0;
+ 			rds_sock_put(rs);
+ 			ret =3D -ENOMEM;
+ 			break;
 --=20
 2.14.1
