@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtB0UEY//1TJL3azW0WmoIxN6FM6vABvXMWnO6Sc64XG4ixk6DYGkZfcL9nc7mo0NAD4v0n
-ARC-Seal: i=1; a=rsa-sha256; t=1521483298; cv=none;
+X-Google-Smtp-Source: AG47ELvyp7KXUmmPtmlIh4a9ihhEhy35vy2SMekkcJ+FsiaxBj+qFI+ZoIsxg6GNqK0AUZteJ9J8
+ARC-Seal: i=1; a=rsa-sha256; t=1521483295; cv=none;
         d=google.com; s=arc-20160816;
-        b=o3pnaJo8uvgn5RdCJj6goPgUbz/ua0+CspgNZi/r9+eaZqmdNuJzQOsWGpbeuVxgf+
-         WRWtZ3W03UA100sxiPQqZLYnZM/HDqbOfRtGxa87zgB4C8/yBuwtH9KFK13rGk4RzNPN
-         YTZn7lxF7qtoFcDzp0t929pAQnSz7Mgqmg6h09vXTTOJvb0Pfl2Pm3ECq/90RNOAYm/a
-         YVMNG3q0WcqwPIQjUTJzit3wl3Y86Obs0jYn/Ifv6DHDxpqPdb7yWuAWL+v2yKwP5AKj
-         dfhtKeQsqkBFWwIYpBBSG6XKsnfj/+F1FDeTZTRhq+y+J5ukY8MYMquOuxIFhiQM5ba5
-         Xlcg==
+        b=qwNrUulJyTRjYYerUHNq+jFeuQ2TyhSvs9mC7VixXEGwXm6D7u3YuD/yrsTOUysN1t
+         Cw/vW7khsIgNNPNkj15DE5eFcPntJQv+JAAzmEaNAyaHduVu68mFShbBkuFf/2hqQJb5
+         6CXzUlKWbNcotzWCkpJBC//O1eZzrruuV+4F0VHHxkuGCZRFjvLlSiLCwpfOE8aLzuiR
+         qZebK2T29bVCsG38b7Y8Zkn2/h8LRm0l+8ZHYghLO3Z9LLv/PvinOWXYkEETaoOEpIn3
+         Z5p4DEiKFlTHc0qu3CJjh6mPUPDH4wuBUaoTHNwqHzROMpzwZXCCQIpGUmtxGWuc3F4u
+         0IiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TKVyeHAURhW4yUSIHQCMUTM/yyfhOW94CZKUVdGhL4c=;
-        b=PXMIskBgZYGd7I7WzNha5B4HMp4EErm6asQOfGO9IeLtfjnJ7kySP3Ip4sDdTawZhW
-         6Gu86NVrprOvxIxakRTX4lVEKMQEwaVGgFhQpkyzVLzknz7wuSTp0buvIuPuPyX+nzLX
-         hscJdYOuUfWVrV3j9BbRXBtJhBf43tHjmLDM2KQjkoDTzKvApKy/Oo2HuI9ev8PJnRwD
-         ToyHtjVHihCaZeE+BXA5GG5MLXcfvQLxX4YLULUZvW2RYWtenkOSS0QBa3P8VdaxncNX
-         hb2Ys5dUbprdMx4UJGHbBy7wIUO/t/hnE8Xblfemw3vzfk54aw2ehiyoE3TMx1GMHiPV
-         bJRg==
+        bh=aoDNvGd3miw86H1uZNsTvg5cEHSCKn972IIMbznw6d4=;
+        b=hA0amg38GScq2jp9cBWiL++OAvV2llusPZLKMvl7PELZi+T8Fw3Rd0Iyvy8mjCGq4v
+         Y4WOeGObESmZ+93K+539sXXKMtQ/ex3Kx7nXQTTm80scUcRMLIzhDbv4l9DMgeaQNPui
+         y6ox4D6ghO7bAQPmQnom9XepsRcbTGNL7Zjlr3KvurT6ICbIbs3MIHDRUrokYJX0VbSj
+         O1PcHcMIs4SxKzveZhxkaw+qcTGXVzDp6/mspswDowEwF8qCgmfdFjGeJvYeyHAIvl2Y
+         tfT29ruTKR1k+X55PJAl/cqB2UVBZFATS84u6Kcb9xW/u1A2MIhr8PDwfYkjPedHw955
+         YiTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yunlei He <heyunlei@huawei.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 039/134] f2fs: relax node version check for victim data in gc
-Date: Mon, 19 Mar 2018 19:05:22 +0100
-Message-Id: <20180319171854.987259946@linuxfoundation.org>
+Subject: [PATCH 4.4 070/134] drivers/perf: arm_pmu: handle no platform_device
+Date: Mon, 19 Mar 2018 19:05:53 +0100
+Message-Id: <20180319171859.341765752@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390871217961883?=
-X-GMAIL-MSGID: =?utf-8?q?1595390871217961883?=
+X-GMAIL-THRID: =?utf-8?q?1595390868408579074?=
+X-GMAIL-MSGID: =?utf-8?q?1595390868408579074?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Mark Rutland <mark.rutland@arm.com>
 
 
-[ Upstream commit c13ff37e359bb3eacf4e1760dcea8d9760aa7459 ]
+[ Upstream commit 7654137071fa706e5c91f4f27bc2a5cd7e435a9b ]
 
-- has_not_enough_free_secs
-node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+In armpmu_dispatch_irq() we look at arm_pmu::plat_device to acquire
+platdata, so that we can defer to platform-specific IRQ handling,
+required on some 32-bit parts. With the advent of ACPI we won't always
+have a platform_device, and so we must avoid trying to dereference
+fields from it.
 
-          - f2fs_gc
-             - get_victim_by_default
-alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
+This patch fixes up armpmu_dispatch_irq() to avoid doing so, introducing
+a new armpmu_get_platdata() helper.
 
-                - do_garbage_collect
-start_segno 3976, end_segno 3977   type 0
-
-                  - is_alive
-nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
-
-                   - gc_data_segment 766, segno 3976, block 512/426 not alive
-
-So, this patch fixes subtle corrupted case where node version does not match
-to summary version which results in infinite loop by gc.
-
-Reported-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/gc.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/perf/arm_pmu.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -522,8 +522,10 @@ static bool is_alive(struct f2fs_sb_info
- 	get_node_info(sbi, nid, dni);
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -321,10 +321,16 @@ validate_group(struct perf_event *event)
+ 	return 0;
+ }
  
- 	if (sum->version != dni->version) {
--		f2fs_put_page(node_page, 1);
--		return false;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: valid data with mismatched node version.",
-+				__func__);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 	}
++static struct arm_pmu_platdata *armpmu_get_platdata(struct arm_pmu *armpmu)
++{
++	struct platform_device *pdev = armpmu->plat_device;
++
++	return pdev ? dev_get_platdata(&pdev->dev) : NULL;
++}
++
+ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
+ {
+ 	struct arm_pmu *armpmu;
+-	struct platform_device *plat_device;
+ 	struct arm_pmu_platdata *plat;
+ 	int ret;
+ 	u64 start_clock, finish_clock;
+@@ -336,8 +342,8 @@ static irqreturn_t armpmu_dispatch_irq(i
+ 	 * dereference.
+ 	 */
+ 	armpmu = *(void **)dev;
+-	plat_device = armpmu->plat_device;
+-	plat = dev_get_platdata(&plat_device->dev);
++
++	plat = armpmu_get_platdata(armpmu);
  
- 	*nofs = ofs_of_node(node_page);
+ 	start_clock = sched_clock();
+ 	if (plat && plat->handle_irq)
