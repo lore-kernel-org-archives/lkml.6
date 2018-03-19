@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuTQ+o7NXQkvsU/mMiBCLkMdD3QG3iuxkLrdl1a9DX1lEriwAMPvH8CT0ckF67yke34KTXt
-ARC-Seal: i=1; a=rsa-sha256; t=1521483510; cv=none;
+X-Google-Smtp-Source: AG47ELs6dMi5tTjHY8sLYtYjOSaikyYlMEXx2fsJMwL4gdK1lee2iEeEuy/0zEXNUIlKfIm/h/u4
+ARC-Seal: i=1; a=rsa-sha256; t=1521483507; cv=none;
         d=google.com; s=arc-20160816;
-        b=uSw0DpLR/wd/DnAPwAVuWeE9ptdfYh6eX/i1LXIvZEE9TM3JgQduJGJyEuHj3+Dq17
-         tg1LGV/R02BUpxM4A91+Ke9x5gXmsBeuNZqkaDSX/giky5d5lZPz/iikbRQWc/G7fZ71
-         M2qZv3sxOoYoOhzp/yjiOvO8u1GrYlpemzRnf9cvaBgyRGBVC8OpnLrHAPq5LHsCDucP
-         30VY3PhOVG26oHJc32p2J717RuUOiIFe55HiL3I2qI5kr0CJHCZiEN737DXig7NSLWd+
-         5mAPHI1ZiYSpc/ZLulZA2nJ/e/o7f6A1Eqx1TrkHBAyHRq7KI+Q+Ix2koDNJCuwVV1s6
-         xb0g==
+        b=vE8UtsswLlewtB5hFa9hSp1EsF8RQn7XBGs0ZntmwbXnT37C5HFD8n/a/i/XZ1BaMC
+         W/YO39BAv9bFHXugzG1TZpJt/6ZkrVTWCmnJAnLtk3I/JPDV5AxpkRhjEqZrtwF1UDAb
+         CJm5oZu16+konvkAMdrm9QGHOy+t6f+Lm2BfsH8z4Dc5QucZN2/eahFfY1kQsqpgoOkP
+         w4DkrcY/CR+0Kw1iQxiR0ntr0BlOKXee3vQ0EYUp9mZbnQTADeVDUOoTF9HoXXV5+Tvv
+         JVuKuBK3DTCH5apPsUAkVSXYs1kEY5KG2Km8zRtuEOmFwMVMjEEGRLnBGK65dQwCn0hG
+         Zy0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NGaDjAoY/bx14iyI9Z2HYdOBJfnWy714SdrZ1884hzQ=;
-        b=QWTmKq/yU3oZRHhGMNMSd/cJVoikFNyF3Y077hGTN8ih/kn++2fB8jkH6Io/tq0Es/
-         290sGuMXxvroiIMMX/mPChpwo0XdYYZ0GZaPhex4ulF2FGdjS+hxDCvqUFHZ3epv3gUR
-         GRn5uK7jWw/EI3MdwP4wca2rN+lHTrcF++c/g/ZOFULDKGzB1LxniQ6QG2bO1y0Eh7Ml
-         3Ppzj8D6w2ztwNtt+hE6ew8XaZq6vsq+UNEBdadbQ/8er+U6UlYV2SfEpJQwu0gUijbo
-         YlLn4BbezsFFSPXx/yUqehgct6z0bBUzk+LNP8NUE4DyiimjX13m9YgPAqRcLR76GPXZ
-         CMUw==
+        bh=J20vZTLdvB8c8eLxZ5x/lzcCZtNJv7NIe3bX3+P/yqA=;
+        b=ofXQ6Z9PyORGX2MHOQ1+V9qL7IdAbydoI3dcBGEa7uxJGJ5rA0ekAq0u1MJAzvQfbg
+         6jOz2kBwVw7L7qfbi6Ma+DuciZD7PK1u/1RFctwO28DhXvANhrc47Ms24OQlQLyfeN+o
+         ACkNUbhn8xEQdPCu4L455MleIF0FjgkEDQ15w3m0w0VLpTzzIRb41qpn3HlduQQg9cgZ
+         w5oZ4Jnu4obKxauuVt8aPerODfIAuI//v7xfrWP+8KqfxoNCrFgjd403eFr4XCbJHzgP
+         1S/ISPXF39Lpc5v9c6y5eq+dNskrmcR7XnXRNRfSustHvHODYyHwvCHOSWF6VjvJ9+ng
+         ih3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 016/241] drm/sun4i: Fix TCON clock and regmap initialization sequence
-Date: Mon, 19 Mar 2018 19:04:41 +0100
-Message-Id: <20180319180751.842712764@linuxfoundation.org>
+Subject: [PATCH 4.9 015/241] ath10k: fix a warning during channel switch with multiple vaps
+Date: Mon, 19 Mar 2018 19:04:40 +0100
+Message-Id: <20180319180751.804953757@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391093394652122?=
-X-GMAIL-MSGID: =?utf-8?q?1595391093394652122?=
+X-GMAIL-THRID: =?utf-8?q?1595390777971895276?=
+X-GMAIL-MSGID: =?utf-8?q?1595391090586577561?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,98 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
 
 
-[ Upstream commit 4c7f16d14a33a9cfb4af9cb780d8a73bcca64a92 ]
+[ Upstream commit c73f8c00330f59ce9b1ace9ff698aca83390d358 ]
 
-The TCON driver calls sun4i_tcon_init_regmap and sun4i_tcon_init_clocks
-in its bind function. The former creates a regmap and writes to several
-register to clear its configuration to a known default. The latter
-initializes various clocks. This includes enabling the bus clock for
-register access and creating the dotclock.
+Doing a channel switch via hostapd_cli seems to update
+the new channel context for each VAP's appropriately as below
+in 'ath10k_mac_update_vif_chan', hence we can safely suppress the
+warning that shows up during this operation and dump the warning only
+if no vaps are available for channel switch
 
-In order for the first step's writes to work, the bus clock must be
-enabled which is done in the second step. but the dotclock's ops use
-the regmap created in the first step.
+hostapd_cli -i wlan0 chan_switch 5 5200
+OK
 
-Rearrange the function calls such that the clocks are initialized before
-the regmap, and split out the dot clock creation to after the regmap is
-initialized.
+ath10k_pci : mac chanctx switch n_vifs 3 mode 1
+ath10k_pci : mac chanctx switch vdev_id 2 freq 5180->5200 width 0->0
+ath10k_pci : mac chanctx switch vdev_id 1 freq 5180->5200 width 0->0
+ath10k_pci : mac chanctx switch vdev_id 0 freq 5180->5200 width 0->0
 
-Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Call Trace:
+
+WARNING: backports-20161201-3.14.77-9ab3068/drivers/net/wireless/ath/ath10k/mac.c:7126
+[<c022f2d4>] (warn_slowpath_null) from [<bf7f150c>]
+(ath10k_reconfig_complete+0xe4/0x25c [ath10k_core])
+[<bf7f150c>] (ath10k_reconfig_complete [ath10k_core])
+[<bf7f35f0>] (ath10k_mac_vif_ap_csa_work+0x214/0x370 [ath10k_core])
+[<bf7f38b8>] (ath10k_mac_op_change_chanctx+0x108/0x128 [ath10k_core])
+[<bf782ac0>] (ieee80211_recalc_chanctx_min_def+0x30c/0x430 [mac80211])
+[<bf7830a4>] (ieee80211_recalc_smps_chanctx+0x2ec/0x840 [mac80211])
+[<bf7843e8>] (ieee80211_vif_use_reserved_context+0x7c/0xf8 [mac80211])
+[<bf7843e8>] (ieee80211_vif_use_reserved_context [mac80211])
+[<bf76e5d4>] (ieee80211_csa_finalize_work+0x5c/0x88 [mac80211])
+
+Fixes: d7bf4b4aba05 ("ath10k: fix ar->rx_channel updating logic")
+Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -336,12 +336,11 @@ static int sun4i_tcon_init_clocks(struct
- 		}
- 	}
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -7070,7 +7070,7 @@ ath10k_mac_update_rx_channel(struct ath1
+ 	lockdep_assert_held(&ar->data_lock);
  
--	return sun4i_dclk_create(dev, tcon);
-+	return 0;
- }
+ 	WARN_ON(ctx && vifs);
+-	WARN_ON(vifs && n_vifs != 1);
++	WARN_ON(vifs && !n_vifs);
  
- static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
- {
--	sun4i_dclk_free(tcon);
- 	clk_disable_unprepare(tcon->clk);
- }
- 
-@@ -506,22 +505,28 @@ static int sun4i_tcon_bind(struct device
- 		return ret;
- 	}
- 
-+	ret = sun4i_tcon_init_clocks(dev, tcon);
-+	if (ret) {
-+		dev_err(dev, "Couldn't init our TCON clocks\n");
-+		goto err_assert_reset;
-+	}
-+
- 	ret = sun4i_tcon_init_regmap(dev, tcon);
- 	if (ret) {
- 		dev_err(dev, "Couldn't init our TCON regmap\n");
--		goto err_assert_reset;
-+		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_tcon_init_clocks(dev, tcon);
-+	ret = sun4i_dclk_create(dev, tcon);
- 	if (ret) {
--		dev_err(dev, "Couldn't init our TCON clocks\n");
--		goto err_assert_reset;
-+		dev_err(dev, "Couldn't create our TCON dot clock\n");
-+		goto err_free_clocks;
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
- 	if (ret) {
- 		dev_err(dev, "Couldn't init our TCON interrupts\n");
--		goto err_free_clocks;
-+		goto err_free_dotclock;
- 	}
- 
- 	ret = sun4i_rgb_init(drm);
-@@ -530,6 +535,8 @@ static int sun4i_tcon_bind(struct device
- 
- 	return 0;
- 
-+err_free_dotclock:
-+	sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -542,6 +549,7 @@ static void sun4i_tcon_unbind(struct dev
- {
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
-+	sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
+ 	/* FIXME: Sort of an optimization and a workaround. Peers and vifs are
+ 	 * on a linked list now. Doing a lookup peer -> vif -> chanctx for each
