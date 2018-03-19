@@ -1,118 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932945AbeCSKum (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:50:42 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39179 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755299AbeCSKuj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:50:39 -0400
-X-Google-Smtp-Source: AG47ELsHp1wdsoT5oz9sT9xAH+FAnzEFi6w4Lh9uTvGEDN5VJCkTST/Q5UD3SUrAPbRquT1fguKvCQ==
-From: Jan Glauber <jglauber@cavium.com>
-X-Google-Original-From: Jan Glauber <jglauber@caviumnetworks.com>
-Date: Mon, 19 Mar 2018 11:50:35 +0100
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: George Cherian <george.cherian@cavium.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kamlakant Patel <kamlakant.patel@cavium.com>
-Subject: Re: [PATCH v2] i2c: xlp9xx: Add support for SMBAlert
-Message-ID: <20180319105035.GA10534@wintermute>
-References: <1520347594-184146-1-git-send-email-george.cherian@cavium.com>
- <20180317210300.yyft3errf3opj2t3@ninjato>
+        id S932973AbeCSKvt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:51:49 -0400
+Received: from mx22.baidu.com ([220.181.50.185]:43342 "EHLO baidu.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932959AbeCSKvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 06:51:47 -0400
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF0gbW0vbWVtY29udHJvbC5jOiBzcGVl?=
+ =?utf-8?Q?d_up_to_force_empty_a_memory_cgroup?=
+Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIG1tL21lbWNvbnRyb2wuYzogc3BlZWQgdXAgdG8g?=
+ =?utf-8?Q?force_empty_a_memory_cgroup?=
+Thread-Index: AQHTv1/VbuxxIhYpnkemi1IzBVlLeqPXTxaA//+IvQCAAIne0A==
+Date: Mon, 19 Mar 2018 10:51:42 +0000
+Message-ID: <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+ <20180319085355.GQ23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
+ <20180319103756.GV23100@dhcp22.suse.cz>
+In-Reply-To: <20180319103756.GV23100@dhcp22.suse.cz>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.31.62.17]
+x-baidu-bdmsfe-datecheck: 1_BC-MAIL-HUB01_2018-03-19 18:51:44:215
+x-baidu-bdmsfe-viruscheck: BC-MAIL-HUB01_GRAY_Inside_WithoutAtta_2018-03-19
+ 18:51:43:341
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180317210300.yyft3errf3opj2t3@ninjato>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2JAptQO021430
 
-On Sat, Mar 17, 2018 at 10:03:00PM +0100, Wolfram Sang wrote:
-> On Tue, Mar 06, 2018 at 06:46:34AM -0800, George Cherian wrote:
-> > Add support for SMBus alert mechanism to i2c-xlp9xx driver.
-> > The second interrupt is parsed to use for SMBus alert.
-> > The first interrupt is the i2c controller main interrupt.
-> > 
-> > Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
-> > Signed-off-by: George Cherian <george.cherian@cavium.com>
+
+
+> -----邮件原件-----
+> 发件人: Michal Hocko [mailto:mhocko@kernel.org]
+> 发送时间: 2018年3月19日 18:38
+> 收件人: Li,Rongqing <lirongqing@baidu.com>
+> 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
+> <aryabinin@virtuozzo.com>
+> 主题: Re: 答复: [PATCH] mm/memcontrol.c: speed up to force empty a
+> memory cgroup
 > 
-> Are the previous reviewers happy now?
-
-Reviewed-by: Jan Glauber <jglauber@cavium.com>
-
-> > ---
-> >  drivers/i2c/busses/i2c-xlp9xx.c | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-xlp9xx.c b/drivers/i2c/busses/i2c-xlp9xx.c
-> > index eb8913e..d5cadb6 100644
-> > --- a/drivers/i2c/busses/i2c-xlp9xx.c
-> > +++ b/drivers/i2c/busses/i2c-xlp9xx.c
-> > @@ -10,6 +10,7 @@
-> >  #include <linux/clk.h>
-> >  #include <linux/completion.h>
-> >  #include <linux/i2c.h>
-> > +#include <linux/i2c-smbus.h>
-> >  #include <linux/init.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/io.h>
-> > @@ -84,6 +85,8 @@ struct xlp9xx_i2c_dev {
-> >  	struct device *dev;
-> >  	struct i2c_adapter adapter;
-> >  	struct completion msg_complete;
-> > +	struct i2c_smbus_alert_setup alert_data;
-> > +	struct i2c_client *ara;
-> >  	int irq;
-> >  	bool msg_read;
-> >  	bool len_recv;
-> > @@ -447,6 +450,19 @@ static int xlp9xx_i2c_get_frequency(struct platform_device *pdev,
-> >  	return 0;
-> >  }
-> >  
-> > +static int xlp9xx_i2c_smbus_setup(struct xlp9xx_i2c_dev *priv,
-> > +				  struct platform_device *pdev)
-> > +{
-> > +	if (!priv->alert_data.irq)
-> > +		return -EINVAL;
-> > +
-> > +	priv->ara = i2c_setup_smbus_alert(&priv->adapter, &priv->alert_data);
-> > +	if (!priv->ara)
-> > +		return -ENODEV;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int xlp9xx_i2c_probe(struct platform_device *pdev)
-> >  {
-> >  	struct xlp9xx_i2c_dev *priv;
-> > @@ -467,6 +483,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
-> >  		dev_err(&pdev->dev, "invalid irq!\n");
-> >  		return priv->irq;
-> >  	}
-> > +	/* SMBAlert irq */
-> > +	priv->alert_data.irq = platform_get_irq(pdev, 1);
-> > +	if (priv->alert_data.irq <= 0)
+> On Mon 19-03-18 10:00:41, Li,Rongqing wrote:
+> >
+> >
+> > > -----邮件原件-----
+> > > 发件人: Michal Hocko [mailto:mhocko@kernel.org]
+> > > 发送时间: 2018年3月19日 16:54
+> > > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
+> > > <aryabinin@virtuozzo.com>
+> > > 主题: Re: [PATCH] mm/memcontrol.c: speed up to force empty a
+> memory
+> > > cgroup
+> > >
+> > > On Mon 19-03-18 16:29:30, Li RongQing wrote:
+> > > > mem_cgroup_force_empty() tries to free only 32
+> (SWAP_CLUSTER_MAX)
+> > > > pages on each iteration, if a memory cgroup has lots of page
+> > > > cache, it will take many iterations to empty all page cache, so
+> > > > increase the reclaimed number per iteration to speed it up. same
+> > > > as in
+> > > > mem_cgroup_resize_limit()
+> > > >
+> > > > a simple test show:
+> > > >
+> > > >   $dd if=aaa  of=bbb  bs=1k count=3886080
+> > > >   $rm -f bbb
+> > > >   $time echo
+> 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+> > > >
+> > > > Before: 0m0.252s ===> after: 0m0.178s
+> > >
+> > > Andrey was proposing something similar [1]. My main objection was
+> > > that his approach might lead to over-reclaim. Your approach is more
+> > > conservative because it just increases the batch size. The size is
+> > > still rather arbitrary. Same as SWAP_CLUSTER_MAX but that one is a
+> > > commonly used unit of reclaim in the MM code.
+> > >
+> > > I would be really curious about more detailed explanation why having
+> > > a larger batch yields to a better performance because we are doingg
+> > > SWAP_CLUSTER_MAX batches at the lower reclaim level anyway.
+> > >
+> >
+> > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
+> > stack of try_to_free_mem_cgroup_pages is too long, increase the
+> > nr_to_reclaim can reduce times of calling
+> > function[do_try_to_free_pages, shrink_zones, hrink_node ]
+> >
+> > mem_cgroup_resize_limit
+> > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
+> > --->SWAP_CLUSTER_MAX),
+> >    ---> do_try_to_free_pages
+> >      ---> shrink_zones
+> >       --->shrink_node
+> >        ---> shrink_node_memcg
+> >          ---> shrink_list          <-------loop will happen in this place
+> [times=1024/32]
+> >            ---> shrink_page_list
 > 
-> '< 0' should do, or?
-> 
-> > +		priv->alert_data.irq = 0;
-> >  
-> >  	xlp9xx_i2c_get_frequency(pdev, priv);
-> >  	xlp9xx_i2c_init(priv);
-> > @@ -493,6 +513,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
-> >  	if (err)
-> >  		return err;
-> >  
-> > +	err = xlp9xx_i2c_smbus_setup(priv, pdev);
-> > +	if (err)
-> > +		dev_info(&pdev->dev, "No active SMBus alert %d\n", err);
-> > +
-> 
-> Do you really want to print this info every time SMBus alert is not
-> used? Is it common on this platform
+> Can you actually measure this to be the culprit. Because we should rethink
+> our call path if it is too complicated/deep to perform well.
+> Adding arbitrary batch sizes doesn't sound like a good way to go to me.
 
-We do the same thing in the ThunderX driver and thought it is useful to
-have the info print.
+Ok, I will try
 
---Jan
+-RongQing
+> --
+> Michal Hocko
+> SUSE Labs
