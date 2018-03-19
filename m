@@ -1,92 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933559AbeCSOP4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:15:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:53088 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754380AbeCSOPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:15:54 -0400
-Subject: Re: [RFC 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-To: Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
- <1521451220-27754-3-git-send-email-eric.auger@redhat.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <f00d314f-7f16-1785-b0e2-6d4d815514dc@arm.com>
-Date: Mon, 19 Mar 2018 14:15:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755535AbeCSOQT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:16:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45282 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933419AbeCSOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 10:16:17 -0400
+Date: Mon, 19 Mar 2018 11:16:12 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] tools: Fix str_error_r() Werror=restrict build
+Message-ID: <20180319141612.GA2143@redhat.com>
+References: <20180319055504.757-1-sergey.senozhatsky@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1521451220-27754-3-git-send-email-eric.auger@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180319055504.757-1-sergey.senozhatsky@gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/03/18 09:20, Eric Auger wrote:
-> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-> base address and size of a redistributor region
+Em Mon, Mar 19, 2018 at 02:55:04PM +0900, Sergey Senozhatsky escreveu:
+> Commit c8b5f2c96d1bf6c ("tools: Introduce str_error_r()") added
+> an str_error_r() wrapper which makes gcc8 unhappy due to
+> restrict-qualified parameter aliasing violation:
 > 
-> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-> to declare several separate redistributor regions.
+> ../lib/str_error_r.c: In function ‘str_error_r’:
+> ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+>    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+>    ^~~~~~~~
+> cc1: all warnings being treated as errors
+
+I applied Josh's patch, just printing '[buf]', that is good enough, I
+think.
+
+- Arnaldo
+ 
+> Workaround that aliasing error by creating an additional stack
+> variable which holds the buf pointer value we passed to strerror_r().
 > 
-> So the whole redist space does not need to be contiguous anymore.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 > ---
->  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  tools/lib/str_error_r.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> index 9293b45..2c0bedf 100644
-> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> @@ -27,6 +27,18 @@ Groups:
->        VCPU and all of the redistributor pages are contiguous.
->        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->        This address needs to be 64K aligned.
+> diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
+> index d6d65537b0d9..11c3425f272b 100644
+> --- a/tools/lib/str_error_r.c
+> +++ b/tools/lib/str_error_r.c
+> @@ -21,7 +21,12 @@
+>  char *str_error_r(int errnum, char *buf, size_t buflen)
+>  {
+>  	int err = strerror_r(errnum, buf, buflen);
+> -	if (err)
+> -		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+> +	if (err) {
+> +		char *err_buf = buf;
 > +
-> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> +      The attr field of kvm_device_attr encodes 3 values:
-> +      bits:     | 63   ....  52  |  51   ....   12 |11 - 0
-> +      values:   |     pfns       |       base      | index
-> +      - index encodes the unique redistibutor region index
-> +      - base field encodes bits [51:12] the guest physical base address
-> +        of the first redistributor in the region. There are two 64K pages
-> +        for each VCPU and all of the redistributor pages are contiguous
-> +        within the redistributor region.
-
-Why does base have to include bits [15:12] of the IPA? If it is 64kB
-aligned (as it should), these bits are guaranteed to be 0. This also
-avoid having to return -EINVAL in case of alignment problems.
-
-> +      - pfns encodes the size of the region in 64kB pages.
-> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-
-"pfns" a bit of an odd name, and is a bit unnatural. Why don't we
-instead encode the number of redistributors? You've already imposed that
-a redistributor has 2 64kB pages, so let's take advantage of this by
-saving yet another bit.
-
-You could dedicate a couple of these bits as a selector for the ITS
-version (v3, v4 or whatever comes after that, if ever...). Just make 0
-the only valid version for the time being.
-
->    Errors:
->      -E2BIG:  Address outside of addressable IPA range
->      -EINVAL: Incorrectly aligned address
-> 
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> +		snprintf(err_buf, buflen,
+> +			 "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d",
+> +			 errnum, buf, buflen, err);
+> +	}
+>  	return buf;
+>  }
+> -- 
+> 2.16.2
