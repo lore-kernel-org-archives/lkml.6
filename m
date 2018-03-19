@@ -1,49 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755368AbeCSJFY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:05:24 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:40004 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeCSJFS (ORCPT
+        id S1755425AbeCSJF7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:05:59 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:28659 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeCSJF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:05:18 -0400
-X-Google-Smtp-Source: AG47ELu7aHy/sxblgDnGMLNgA8osaDhcL2GBqXNbqgCDk3AFXfIVRX1kGfo9M3maixsEyrktZNyyBg==
-Subject: Re: [PATCH v5 11/11] KVM: x86: Disable Intel Processor Trace when
- VMXON in L1 guest
-To: "Kang, Luwei" <luwei.kang@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>
-References: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
- <1520165241-15819-12-git-send-email-luwei.kang@intel.com>
- <a8686725-ce27-8000-dee5-5a39d3629dd8@redhat.com>
- <82D7661F83C1A047AF7DC287873BF1E167EFC16F@SHSMSX101.ccr.corp.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <6a7c53f0-8c47-0fe1-27f2-141a15ebdcff@redhat.com>
-Date: Mon, 19 Mar 2018 10:05:15 +0100
+        Mon, 19 Mar 2018 05:05:56 -0400
+Subject: Re: [PATCH] drm/tilcdc: Fix setting clock divider for omap-l138
+To: David Lechner <david@lechnology.com>,
+        <dri-devel@lists.freedesktop.org>
+CC: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>
+References: <1521068325-15077-1-git-send-email-david@lechnology.com>
+From: Jyri Sarha <jsarha@ti.com>
+Message-ID: <fe2866d2-6dd4-f6e4-ea0e-72d8a9334075@ti.com>
+Date: Mon, 19 Mar 2018 11:05:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167EFC16F@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1521068325-15077-1-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/03/2018 08:31, Kang, Luwei wrote:
->>> +	if (pt_mode == PT_MODE_HOST_GUEST) {
->> This would be vmx_pt_supported(), but I think it's better to remove that function and just test pt_mode ==
->> PT_MODE_HOST_GUEST everywhere (or !=).
-> Hi Paolo,
->     There have so many vmx_pt_supported() invoked in MSRs read/write (patch 9) patch and I think it can be replaced by  pt_mode check.
->     But I think this function need to be reserved in patch 5(cpuid emulation). What is your opinion?
+Thanks,
+I'll pick this for v4.18.
 
-Yes, the function pointer needs to stay.
+Best regards,
+Jyri
 
-Paolo
+On 15/03/18 00:58, David Lechner wrote:
+> This fixes setting the clock divider on the TI OMAP-L138 LCDK board.
+> 
+> The clock drivers for OMAP-L138 are being covernted to the common clock
+> framework. When this happens, clk_set_rate() will no longer return an
+> error. However, on this SoC, the clock rate cannot actually be changed
+> because the clock has to maintain a fixed ratio to the ARM clock. So
+> after attempting to set the clock rate, we need to check to see if the
+> new rate is actually close enough. If not, then follow the previous
+> error path to adjust the divider in LCDC IP block to compensate for not
+> being able to change the parent clock rate.
+> 
+> Tested working on a TI OMAP-L138 LCDK board.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  drivers/gpu/drm/tilcdc/tilcdc_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+> index 8bf6bb9..6931777 100644
+> --- a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+> +++ b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+> @@ -224,7 +224,7 @@ static void tilcdc_crtc_set_clk(struct drm_crtc *crtc)
+>  
+>  	ret = clk_set_rate(priv->clk, req_rate * clkdiv);
+>  	clk_rate = clk_get_rate(priv->clk);
+> -	if (ret < 0) {
+> +	if (ret < 0 || tilcdc_pclk_diff(req_rate, clk_rate) > 5) {
+>  		/*
+>  		 * If we fail to set the clock rate (some architectures don't
+>  		 * use the common clock framework yet and may not implement
+> 
+
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
