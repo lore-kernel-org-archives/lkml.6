@@ -1,69 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483397-2-972667119656974499
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483396; b=sER1tHZcOTGB6cpt30u164y2A3L15JcTwjMt0pQm0bZJtY/
-    b+VnUEoT6vrstZiOfq6L/d21epsLNXjXnblUbXvjOnHOhQmtsn1QdfvkELUZObXx
-    AM8Rn2GuBUfEgHmcPT8+bojxVCuEwnG3K3K71UE/+SpU6FHXTPj5OKdx2Ft8GU5d
-    RDlV7rbWxSFHXb+uJ/eKkgzGNJefo0o7wy2iFcjkYIozbeA5M911ZQPlQHaLSIX9
-    EIMJmoy6wDjjzv5KpSRge1L6NmHowrBwIoddf37mJQL8zfNjlWxDAOdUiYe8vWiy
-    hx8ZG7Hqfz14Maax7zxAZWhYOlQOmWa3uqLqPaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483396; bh=MaIT6TIhiiUQkpPRLlRyg/enNu
-    /wQUE2VeWIrF3geW0=; b=ondRQLSFXVLJOYe8aXEvZbqOI1lsRcoj5gnZLA4U2r
-    RJzQbIsUnSVzxXQexFAuIJTVF26zbo3FoiJ1LFILzSwVx6DOq848C/eruMhE9IHI
-    GQoqfpf2ei1O3PJ7qdKwNiQHGcv0b1JwYQP9ZKBdSv2q9X/tHFQ/w6Ty/4rJTiFe
-    DyA6MvvX0KNMRSUstZqIFK5IbXvYXwTcVSSRUsaMDYanWdEf86e9s0AdFMepOCu8
-    eq7PkCNA84zCDDtH8VxpRdZL/L+klqRyBgo52VL02enqvtcGl8EAcRe3GxMhUsaO
-    NSOsxVAv3F4B2lba6eLIqvoEnllJl0xeaAi3o1ZDfp6w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedviedvudenucevlhhushhtvghrufhiiigvpeefie;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedviedvudenucevlhhushhtvghrufhiiigvpeefie;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964784AbeCSSQd (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:16:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45154 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030817AbeCSSQb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:16:31 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsFhL+UukC7gbokzy1n52simY6i9VgGOAN3FJgRCypSOWFVdE0FEl/HLapyhF1O8fe0yJp9
+ARC-Seal: i=1; a=rsa-sha256; t=1521483396; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oOOV5QD01OR6bNh+96prhGkKJNXrzVv8GAHjUWVRvpnaSJPEmw1YC01Jk8Y8zF2Ii8
+         utrCI/rhOgbUnADINLMei3pW2lfeHXbmVe8XI28tUiIO4C0Nuw5kGOsoLVRT7PL6IgL3
+         nsp4J0D5m+rKSVsTjo4xVyda+VfWAM1hqL75DqSnQo1CmnRurhZYbsIMBN7uLvrPb22y
+         7/SvD5xfMOBEVR6TqOEQZtYvc997HorBZ3tekF3sZg1pR+sRTlNnqc3cIy6mYSu8tml9
+         hHY6OLO5a2gasEXUw/mJqj6pWxnN2nEnMXFwPWWdtRHgoT0cQM+wBWQRMJtSnsCqpUoO
+         XIaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=FBu1meLZXWgTqU/95ocPADwzFpU7MPO/A0KaTvfNUSA=;
+        b=sQMxwCED8MIAHy3Xs+wfFx83dY3mW80RbZWesvlTZuYEd0Mb8Fh9xfr2h7Fwv101Gh
+         /6r3XySxJwsR/JzgCYDjTW2nZg53f0dlXPlAUQPDRtiuHoopxm3gwEFxpuXPBYRhaKOS
+         /0mJVj+w76l4vuTkplECjb8Qfi3ufSy5GBqYqisdz61ZfFMGZ+y0KmkbUcrn07eLD8mA
+         FB+G0M/9IHAWrJk7aj0RoQOm+0l9aJXDih5cCim3Gf+JNQ0IXr3EuDZeTQLrf+LaRPlu
+         LilEEOKip0bKaE421EMniGs2TOF4Uz81ojm/Xuo6VRtitYg14ICrxJcObPAnEJlvuPQ5
+         gT3A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 105/134] mac80211: remove BUG() when interface type is invalid
-Date: Mon, 19 Mar 2018 19:06:28 +0100
-Message-Id: <20180319171904.347470584@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Amit Sikka <amit.sikka@ericsson.com>,
+	Mahesh Bandewar <maheshb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 107/134] ipvlan: add L2 check for packets arriving via virtual devices
+Date: Mon, 19 Mar 2018 19:06:30 +0100
+Message-Id: <20180319171904.697457654@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -71,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390973665404691?=
+X-GMAIL-MSGID: =?utf-8?q?1595390973665404691?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,34 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Mahesh Bandewar <maheshb@google.com>
 
 
-[ Upstream commit c7976f5272486e4ff406014c4b43e2fa3b70b052 ]
+[ Upstream commit 92ff42645028fa6f9b8aa767718457b9264316b4 ]
 
-In the ieee80211_setup_sdata() we check if the interface type is valid
-and, if not, call BUG().  This should never happen, but if there is
-something wrong with the code, it will not be caught until the bug
-happens when an interface is being set up.  Calling BUG() is too
-extreme for this and a WARN_ON() would be better used instead.  Change
-that.
+Packets that don't have dest mac as the mac of the master device should
+not be entertained by the IPvlan rx-handler. This is mostly true as the
+packet path mostly takes care of that, except when the master device is
+a virtual device. As demonstrated in the following case -
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+  ip netns add ns1
+  ip link add ve1 type veth peer name ve2
+  ip link add link ve2 name iv1 type ipvlan mode l2
+  ip link set dev iv1 netns ns1
+  ip link set ve1 up
+  ip link set ve2 up
+  ip -n ns1 link set iv1 up
+  ip addr add 192.168.10.1/24 dev ve1
+  ip -n ns1 addr 192.168.10.2/24 dev iv1
+  ping -c2 192.168.10.2
+  <Works!>
+  ip neigh show dev ve1
+  ip neigh show 192.168.10.2 lladdr <random> dev ve1
+  ping -c2 192.168.10.2
+  <Still works! Wrong!!>
+
+This patch adds that missing check in the IPvlan rx-handler.
+
+Reported-by: Amit Sikka <amit.sikka@ericsson.com>
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/iface.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ipvlan/ipvlan_core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -1441,7 +1441,7 @@ static void ieee80211_setup_sdata(struct
- 		break;
- 	case NL80211_IFTYPE_UNSPECIFIED:
- 	case NUM_NL80211_IFTYPES:
--		BUG();
-+		WARN_ON(1);
- 		break;
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -282,6 +282,10 @@ static int ipvlan_rcv_frame(struct ipvl_
+ 		if (dev_forward_skb(ipvlan->dev, skb) == NET_RX_SUCCESS)
+ 			success = true;
+ 	} else {
++		if (!ether_addr_equal_64bits(eth_hdr(skb)->h_dest,
++					     ipvlan->phy_dev->dev_addr))
++			skb->pkt_type = PACKET_OTHERHOST;
++
+ 		ret = RX_HANDLER_ANOTHER;
+ 		success = true;
  	}
- 
