@@ -1,42 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934934AbeCSXo5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 19:44:57 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33783 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934466AbeCSXox (ORCPT
+        id S935011AbeCSXpk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 19:45:40 -0400
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:34753 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932750AbeCSXpj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 19:44:53 -0400
-X-Google-Smtp-Source: AG47ELtlQaLMqh6QQY+lbUeDFapGadxqBC+ULsVgyqFZpmV/TsKYsrYv1C0AjqJHhcAiNFWttMvdqw==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM64: dts: meson-gx: make efuse read-only
-Organization: BayLibre
-References: <20180316145021.8517-1-jbrunet@baylibre.com>
-Date: Mon, 19 Mar 2018 16:44:50 -0700
-In-Reply-To: <20180316145021.8517-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Fri, 16 Mar 2018 15:50:21 +0100")
-Message-ID: <7h370vsk99.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 19 Mar 2018 19:45:39 -0400
+Date: Tue, 20 Mar 2018 10:39:13 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: xfs: list corruption in xfs_setup_inode()
+Message-ID: <20180319233913.GA1150@dastard>
+References: <CAM_iQpU9A+KpSdXceUuz-cUX+f91bttKwJCOE91LnTZmKofk_Q@mail.gmail.com>
+ <CAM_iQpVBmhiN05ZpxEZ2cNLSJpczc7z=Sz7a1tnUGeQimtDTYA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpVBmhiN05ZpxEZ2cNLSJpczc7z=Sz7a1tnUGeQimtDTYA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Mon, Mar 19, 2018 at 02:37:22PM -0700, Cong Wang wrote:
+> On Mon, Oct 30, 2017 at 2:55 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> > Hello,
+> >
+> > We triggered a list corruption (double add) warning below on our 4.9
+> > kernel (the 4.9 kernel we use is based on -stable release, with only a
+> > few unrelated networking backports):
+> 
+> We still keep getting this warning on 4.9 kernel. Looking into this again,
+> it seems xfs_setup_inode() could be called twice if an XFS inode is gotten
+> from disk? Once in xfs_iget() => xfs_setup_existing_inode(), and once
+> in xfs_ialloc().
 
-> efuse is one time programmable, so it is safer to deny write request
-> to this memory, unless the user is savvy enough to remove the read-only
-> flag from DTB
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+AFAICT, the only way this can happen is that if the inode ->i_mode
+has been corrupted in some way. i.e. there is either on-disk or
+in-memory corruption occurring.
 
-Applied to v4.17/dt64,
+> Does the following patch (compile-only) make any sense? Again, I don't
+> want to pretend to understand XFS...
 
-Thanks,
+No, it doesn't make sense because a newly allocated inode should
+always have a zero i_mode.
 
-Kevin
+Have you turned on memory poisoning to try to identify where the
+corruption is coming from?
+
+And given that it might actually be on-disk corruption that is
+causing this, have you run xfs_repair on these filesystems to
+determine if they are free from on-disk corruption?
+
+Indeed, that makes me wonder format are you running on these
+filesystems, because on the more recent v5 format we don't read
+newly allocated inodes from disk. Can you provide the info listed
+here:
+
+http://xfs.org/index.php/XFS_FAQ#Q:_What_information_should_I_include_when_reporting_a_problem.3F
+
+as that will tell us what code paths are executing on inode
+allocation.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
