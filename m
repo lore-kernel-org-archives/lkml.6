@@ -1,75 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeCSGLi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 02:11:38 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46654 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755200AbeCSGLe (ORCPT
+        id S932190AbeCSGNS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 02:13:18 -0400
+Received: from webbox1416.server-home.net ([77.236.96.61]:60750 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755200AbeCSGNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 02:11:34 -0400
-Date: Mon, 19 Mar 2018 07:11:26 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PULL 0/2] vfio-ccw patches for 4.17
-In-Reply-To: <20180305123116.4301-1-cohuck@redhat.com>
-References: <20180305123116.4301-1-cohuck@redhat.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Mon, 19 Mar 2018 02:13:15 -0400
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: John Fastabend <john.fastabend@gmail.com>,
+        Dave Taht <dave.taht@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>
+Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
+Date: Mon, 19 Mar 2018 07:07:05 +0100
+Message-ID: <1950329.Eot9n0FZxY@ws-stein>
+In-Reply-To: <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
+References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com> <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com> <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031906-0008-0000-0000-000004DFAE60
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031906-0009-0000-0000-00001E72C3E5
-Message-Id: <20180319071126.2ecaa081@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803190079
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  5 Mar 2018 13:31:14 +0100
-Cornelia Huck <cohuck@redhat.com> wrote:
+On Friday, March 16, 2018, 11:26:47 AM CET Jakob Unterwurzacher wrote:
+> On 15.03.18 23:30, John Fastabend wrote:
+> >> I have reproduced it using two USB network cards connected to each other. The test tool sends UDP packets containing a counter and listens on the other interface, it is available at
+> >> https://github.com/jakob-tsd/pfifo_stress/blob/master/pfifo_stress.py
+> >>
+> > 
+> > Great thanks, can you also run this with taskset to bind to
+> > a single CPU,
+> > 
+> >   # taskset 0x1 ./pifof_stress.py
+> > 
+> > And let me know if you still see the OOO.
+> 
+> Interesting. Looks like it depends on which core it runs on. CPU0 is 
+> clean, CPU1 is not.
+> 
+> Clean:	taskset --cpu-list 0 ./pfifo_stress.py
+> 
+> Broken:	taskset --cpu-list 1 ./pfifo_stress.py
+> 
+> Maybe related: CPU0 is where USB interrupts are handled:
+> 
+> > root@rk3399-q7:~# cat /proc/interrupts           
+> >            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5
+> > 217:    2175353          0          0          0          0          0     GICv3 142 Level     xhci-hcd:usb5
 
-> The following changes since commit 5628683cf77bc8dad3336a9b254e55f728f7c70e:
-> 
->   s390/dasd: set timestamps unconditionally (2018-02-27 08:05:29 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/vfio-ccw.git tags/vfio-ccw-20180305
-> 
-> for you to fetch changes up to 9851bc77e62499957567e7c39a5beba7d6de6296:
-> 
->   vfio-ccw: fence off transport mode (2018-03-01 17:35:50 +0100)
-> 
-> ----------------------------------------------------------------
-> A small documentation update, and reject transport mode requests
-> (which we don't support).
-> 
-> ----------------------------------------------------------------
-> 
-> Cornelia Huck (2):
->   vfio-ccw: update documentation
->   vfio-ccw: fence off transport mode
-> 
->  Documentation/s390/vfio-ccw.txt | 79 ++++++++++++++++++++---------------------
->  drivers/s390/cio/vfio_ccw_fsm.c |  5 +++
->  2 files changed, 43 insertions(+), 41 deletions(-)
- 
-This is now merged into s390/linux:features for the next merge window. Thanks Conny.
+This reminds me somewhat of this thread: https://marc.info/?l=linux-can&m=148007442317274&w=2
 
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Best regards,
+Alexander
