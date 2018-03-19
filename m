@@ -1,65 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755166AbeCSBFO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:05:14 -0400
-Received: from ozlabs.org ([103.22.144.67]:46925 "EHLO ozlabs.org"
+        id S1754922AbeCSBIQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:08:16 -0400
+Received: from ozlabs.org ([103.22.144.67]:51309 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754258AbeCSBFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 21:05:10 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 19 Mar 2018 12:04:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Harsh Jain <harsh@chelsio.com>
-Subject: linux-next: build warning after merge of the crypto tree
-Message-ID: <20180319120433.24cc4be1@canb.auug.org.au>
+        id S1754218AbeCSBIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 21:08:12 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
+Subject: Re: [RFC PATCH 2/2] powerpc: Only support DYNAMIC_FTRACE not static
+In-Reply-To: <20180316104248.6aa11792@gandalf.local.home>
+References: <20180316134633.10584-1-mpe@ellerman.id.au> <20180316134633.10584-2-mpe@ellerman.id.au> <20180316104248.6aa11792@gandalf.local.home>
+Date: Mon, 19 Mar 2018 12:08:10 +1100
+Message-ID: <87efkghnyd.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rvvOt6xsja+.U4n9.FFTr/X"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rvvOt6xsja+.U4n9.FFTr/X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-Hi Herbert,
+> On Sat, 17 Mar 2018 00:46:33 +1100
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+>> We've had dynamic ftrace support for over 9 years since Steve first
+>> wrote it, all the distros use dynamic, and static is basically
+>> untested these days, so drop support for static ftrace.
+>> 
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>  arch/powerpc/Kconfig                           |  1 +
+>>  arch/powerpc/include/asm/ftrace.h              |  4 +---
+>>  arch/powerpc/include/asm/module.h              |  5 -----
+>>  arch/powerpc/kernel/trace/ftrace.c             |  2 --
+>>  arch/powerpc/kernel/trace/ftrace_32.S          | 20 ------------------
+>>  arch/powerpc/kernel/trace/ftrace_64.S          | 29 --------------------------
+>>  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  3 ---
+>>  arch/powerpc/kernel/trace/ftrace_64_pg.S       |  2 --
+>>  8 files changed, 2 insertions(+), 64 deletions(-)
+>> 
+>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>> index 73ce5dd07642..23a325df784a 100644
+>> --- a/arch/powerpc/Kconfig
+>> +++ b/arch/powerpc/Kconfig
+>> @@ -189,6 +189,7 @@ config PPC
+>>  	select HAVE_DEBUG_STACKOVERFLOW
+>>  	select HAVE_DMA_API_DEBUG
+>>  	select HAVE_DYNAMIC_FTRACE
+>> +	select HAVE_DYNAMIC_FTRACE_ONLY
+>
+> I still think adding:
+>
+> 	select DYNAMIC_FTRACE			if FUNCTION_TRACER
+>
+> is the better approach.
 
-After merging the crypto tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+OK. As I said in my other reply it's a bit fragile, but it does work.
 
-In file included from drivers/crypto/chelsio/chcr_ipsec.c:66:0:
-drivers/crypto/chelsio/chcr_crypto.h:343:12: warning: 'chcr_ahash_continue'=
- declared 'static' but never defined [-Wunused-function]
- static int chcr_ahash_continue(struct ahash_request *req);
-            ^~~~~~~~~~~~~~~~~~~
+I'll do a version for powerpc using the above approach.
 
-Introduced by commit
+> But I'm all for this patch. I've debated doing the same thing for x86,
+> but the only reason I have not, was because it's the only way I test
+> the !DYNAMIC_FTRACE code. I've broken the static function tracing
+> several times and only find out during my test suite that still tests
+> that case. But yeah, it would be nice to just nuke static function
+> tracing for all archs. Perhaps after we finish removing unused archs,
+> that may be the way to go forward.
 
-  5110e65536f3 ("crypto: chelsio -Split Hash requests for large scatter gat=
-her list")
+Yeah I did look and we still have some arches that support ftrace but
+not dynamic ftrace, but there's not many.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rvvOt6xsja+.U4n9.FFTr/X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvDKIACgkQAVBC80lX
-0GxosAf/Z4LngXkrYhHqp9Ilzv/yc+qjlyf+w+l+AUhHZh6MLU11Mm8wEqP8mUxA
-gM29tdlsxL1XnardbXiTG+EjphAZGIP6g5uv+P8at+gtytOMi1vLzGXvL1ibEKAm
-g3RLyBOjNGgC46O1yd7PW4FOFAaL7VFxboZA3GpLj8EdWOtfz6cnc0KtcAq8Z/XH
-EWmhERAqMt8mUoY/iERj8FFSwnChBeBzNDPnkT41zPcV2TEXylROyljv3VTzZpVB
-+H+SqNwiAlZzsdAbhnbh8xMNOsZLrjovLNR5d9yUJuQ+Mudt5PvoyOEeCniCjbpn
-5yyBGiX/o8+p+7VRcjj2TNfYBNHdpg==
-=Emsn
------END PGP SIGNATURE-----
-
---Sig_/rvvOt6xsja+.U4n9.FFTr/X--
+cheers
