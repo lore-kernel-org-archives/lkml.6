@@ -1,49 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933228AbeCSJZU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:25:20 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:46436 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933021AbeCSJZK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:25:10 -0400
-Date: Mon, 19 Mar 2018 17:24:58 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: doc - clarify hash callbacks state machine
-Message-ID: <20180319092458.GB12302@gondor.apana.org.au>
-References: <20180305103945.3517-1-horia.geanta@nxp.com>
- <20180316151642.GA6606@gondor.apana.org.au>
- <AM3PR04MB45284A83B66E00785872DE698D40@AM3PR04MB452.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM3PR04MB45284A83B66E00785872DE698D40@AM3PR04MB452.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S933062AbeCSJY5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:24:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60350 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932891AbeCSJUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:20:34 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [RFC 01/12] KVM: arm/arm64: Avoid multiple dist->spis kfree
+Date: Mon, 19 Mar 2018 10:20:09 +0100
+Message-Id: <1521451220-27754-2-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
+References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 06:39:50AM +0000, Horia Geantă wrote:
->
-> The fact that there can be multiple requests in parallel (for a given tfm) is a
-> different topic.
-> Each request object has its state in its own state machine, independent from the
-> other request objects.
-> I assume this is clear enough.
+in case kvm_vgic_map_resources() fails, typically if the vgic
+distributor is not defined, __kvm_vgic_destroy will be called
+several times. Indeed kvm_vgic_map_resources() is called on
+first vcpu run. As a result dist->spis is freeed twice and on
+the second time it causes a "kernel BUG at mm/slub.c:3912!"
 
-My point is that all of the state associated with a request needs
-to be stored in the request object.  If you're start storing things
-in the driver/hardware, then things will get ugly one way or another.
+This patch avoids freeing dist->spis twice.
 
-Cheers,
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+---
+ virt/kvm/arm/vgic/vgic-init.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index 743ca5c..38fd5f1 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -324,7 +324,10 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
+ 	dist->ready = false;
+ 	dist->initialized = false;
+ 
+-	kfree(dist->spis);
++	if (dist->spis) {
++		kfree(dist->spis);
++		dist->spis = NULL;
++	}
+ 	dist->nr_spis = 0;
+ 
+ 	if (vgic_supports_direct_msis(kvm))
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.5.5
