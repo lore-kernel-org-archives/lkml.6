@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970395AbeCSSja (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:39:30 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:54750 "EHLO
+        id S1032132AbeCSSh7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:37:59 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:58480 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S970295AbeCSSiE (ORCPT
+        by vger.kernel.org with ESMTP id S935161AbeCSShx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:38:04 -0400
+        Mon, 19 Mar 2018 14:37:53 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
-X-Quarantine-ID: <CDo_Q9f4c33g>
+X-Quarantine-ID: <AKEr0D1U9mQO>
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-RRZE-Flag: Not-Spam
 X-RRZE-Submit-IP: 2003:d5:3db:1800:60b5:55d8:d757:229
@@ -21,9 +21,9 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 07/11] block: sed-opal: add ioctl for done-mark of shadow mbr
-Date: Mon, 19 Mar 2018 19:36:49 +0100
-Message-Id: <c63c7dc587e3e99f513451c969f1e6756eff2531.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH v2 04/11] block: sed-opal: unify error handling of responses
+Date: Mon, 19 Mar 2018 19:36:46 +0100
+Message-Id: <4a20f9848927d0f654491136e4821f2adab131cc.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
 References: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
@@ -33,93 +33,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable users to mark the shadow mbr as done without completely
-deactivating the shadow mbr feature. This may be useful on reboots,
-when the power to the disk is not disconnected in between and the shadow
-mbr stores the required boot files. Of course, this saves also the
-(few) commands required to enable the feature if it is already enabled
-and one only wants to mark the shadow mbr as done.
+Also response_get_token had already been in place, its functionality had
+been duplicated within response_get_{u64,bytestring} with the same error
+handling. Unify the handling by reusing response_get_token within the
+other functions.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index fc10f81d4892..2c8baff8bf67 100644
+index efe5d2a7f3dc..30f6e46518a6 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -1988,13 +1988,39 @@ static int opal_erase_locking_range(struct opal_dev *dev,
- static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
- 					  struct opal_mbr_data *opal_mbr)
+@@ -697,6 +697,11 @@ static const struct opal_resp_tok *response_get_token(
  {
-+	u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
-+		? OPAL_TRUE : OPAL_FALSE;
- 	const struct opal_step mbr_steps[] = {
- 		{ opal_discovery0, },
- 		{ start_admin1LSP_opal_session, &opal_mbr->key },
--		{ set_mbr_done, &opal_mbr->enable_disable },
-+		{ set_mbr_done, &token },
- 		{ end_opal_session, },
- 		{ start_admin1LSP_opal_session, &opal_mbr->key },
--		{ set_mbr_enable_disable, &opal_mbr->enable_disable },
-+		{ set_mbr_enable_disable, &token },
-+		{ end_opal_session, },
-+		{ NULL, }
-+	};
-+	int ret;
-+
-+	if (opal_mbr->enable_disable != OPAL_MBR_ENABLE &&
-+	    opal_mbr->enable_disable != OPAL_MBR_DISABLE)
-+		return -EINVAL;
-+
-+	mutex_lock(&dev->dev_lock);
-+	setup_opal_dev(dev, mbr_steps);
-+	ret = next(dev);
-+	mutex_unlock(&dev->dev_lock);
-+	return ret;
-+}
-+
-+static int opal_mbr_status(struct opal_dev *dev, struct opal_mbr_data *opal_mbr)
-+{
-+	u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
-+		? OPAL_TRUE : OPAL_FALSE;
-+	const struct opal_step mbr_steps[] = {
-+		{ opal_discovery0, },
-+		{ start_admin1LSP_opal_session, &opal_mbr->key },
-+		{ set_mbr_done, &token },
- 		{ end_opal_session, },
- 		{ NULL, }
- 	};
-@@ -2340,6 +2366,9 @@ int sed_ioctl(struct opal_dev *dev, unsigned int cmd, void __user *arg)
- 	case IOC_OPAL_ENABLE_DISABLE_MBR:
- 		ret = opal_enable_disable_shadow_mbr(dev, p);
- 		break;
-+	case IOC_OPAL_MBR_STATUS:
-+		ret = opal_mbr_status(dev, p);
-+		break;
- 	case IOC_OPAL_ERASE_LR:
- 		ret = opal_erase_locking_range(dev, p);
- 		break;
-diff --git a/include/linux/sed-opal.h b/include/linux/sed-opal.h
-index 04b124fca51e..b38dc602cae3 100644
---- a/include/linux/sed-opal.h
-+++ b/include/linux/sed-opal.h
-@@ -47,6 +47,7 @@ static inline bool is_sed_ioctl(unsigned int cmd)
- 	case IOC_OPAL_ENABLE_DISABLE_MBR:
- 	case IOC_OPAL_ERASE_LR:
- 	case IOC_OPAL_SECURE_ERASE_LR:
-+	case IOC_OPAL_MBR_STATUS:
- 		return true;
- 	}
- 	return false;
-diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
-index 627624d35030..0cb9890cdc04 100644
---- a/include/uapi/linux/sed-opal.h
-+++ b/include/uapi/linux/sed-opal.h
-@@ -116,5 +116,6 @@ struct opal_mbr_data {
- #define IOC_OPAL_ENABLE_DISABLE_MBR _IOW('p', 229, struct opal_mbr_data)
- #define IOC_OPAL_ERASE_LR           _IOW('p', 230, struct opal_session_info)
- #define IOC_OPAL_SECURE_ERASE_LR    _IOW('p', 231, struct opal_session_info)
-+#define IOC_OPAL_MBR_STATUS         _IOW('p', 232, struct opal_mbr_data)
+ 	const struct opal_resp_tok *tok;
  
- #endif /* _UAPI_SED_OPAL_H */
++	if (!resp) {
++		pr_debug("Response is NULL\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	if (n >= resp->num) {
+ 		pr_debug("Token number doesn't exist: %d, resp: %d\n",
+ 			 n, resp->num);
+@@ -879,27 +884,19 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 				  const char **store)
+ {
+ 	u8 skip;
+-	const struct opal_resp_tok *token;
++	const struct opal_resp_tok *tok;
+ 
+ 	*store = NULL;
+-	if (!resp) {
+-		pr_debug("Response is NULL\n");
+-		return 0;
+-	}
+-
+-	if (n > resp->num) {
+-		pr_debug("Response has %d tokens. Can't access %d\n",
+-			 resp->num, n);
++	tok = response_get_token(resp, n);
++	if (IS_ERR(tok))
+ 		return 0;
+-	}
+ 
+-	token = &resp->toks[n];
+-	if (token->type != OPAL_DTA_TOKENID_BYTESTRING) {
++	if (tok->type != OPAL_DTA_TOKENID_BYTESTRING) {
+ 		pr_debug("Token is not a byte string!\n");
+ 		return 0;
+ 	}
+ 
+-	switch (token->width) {
++	switch (tok->width) {
+ 	case OPAL_WIDTH_TINY:
+ 	case OPAL_WIDTH_SHORT:
+ 		skip = 1;
+@@ -915,37 +912,29 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 		return 0;
+ 	}
+ 
+-	*store = token->pos + skip;
+-	return token->len - skip;
++	*store = tok->pos + skip;
++	return tok->len - skip;
+ }
+ 
+ static u64 response_get_u64(const struct parsed_resp *resp, int n)
+ {
+-	if (!resp) {
+-		pr_debug("Response is NULL\n");
+-		return 0;
+-	}
++	const struct opal_resp_tok *tok;
+ 
+-	if (n > resp->num) {
+-		pr_debug("Response has %d tokens. Can't access %d\n",
+-			 resp->num, n);
++	tok = response_get_token(resp, n);
++	if (IS_ERR(tok))
+ 		return 0;
+-	}
+ 
+-	if (resp->toks[n].type != OPAL_DTA_TOKENID_UINT) {
+-		pr_debug("Token is not unsigned it: %d\n",
+-			 resp->toks[n].type);
++	if (tok->type != OPAL_DTA_TOKENID_UINT) {
++		pr_debug("Token is not unsigned it: %d\n", tok->type);
+ 		return 0;
+ 	}
+ 
+-	if (!(resp->toks[n].width == OPAL_WIDTH_TINY ||
+-	      resp->toks[n].width == OPAL_WIDTH_SHORT)) {
+-		pr_debug("Atom is not short or tiny: %d\n",
+-			 resp->toks[n].width);
++	if (tok->width != OPAL_WIDTH_TINY && tok->width != OPAL_WIDTH_SHORT) {
++		pr_debug("Atom is not short or tiny: %d\n", tok->width);
+ 		return 0;
+ 	}
+ 
+-	return resp->toks[n].stored.u;
++	return tok->stored.u;
+ }
+ 
+ static bool response_token_matches(const struct opal_resp_tok *token, u8 match)
 -- 
 2.16.1
