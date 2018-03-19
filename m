@@ -1,80 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754862AbeCSAlQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 20:41:16 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:63654 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754646AbeCSAlO (ORCPT
+        id S1754891AbeCSAlq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 20:41:46 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:57071 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754646AbeCSAln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 20:41:14 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37918255"
-Subject: Re: [ACPI / processor] d619c81e24:
- WARNING:at_include/linux/cpumask.h:#cpumask_test_cpu
-To: kernel test robot <fengguang.wu@intel.com>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <tglx@linutronix.de>,
-        <rafael@kernel.org>, <dedekind1@gmail.com>, <ming.lei@redhat.com>,
-        <lkp@01.org>
-References: <20180316111752.qi3u42mag367vx46@inn>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <6212a66a-e301-4f9f-d435-34063da9df4f@cn.fujitsu.com>
-Date: Mon, 19 Mar 2018 08:41:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Sun, 18 Mar 2018 20:41:43 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180316111752.qi3u42mag367vx46@inn>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 99BF54D0EFF9.ACF5B
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Date: Mon, 19 Mar 2018 01:41:41 +0100
+From: Stefan Agner <stefan@agner.ch>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org,
+        mka@chromium.org, arnd@arndb.de
+Subject: Re: kbuild: move cc-option and cc-disable-warning after incl. arch
+ Makefile
+In-Reply-To: <1511784913-3396-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511784913-3396-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <9026b476c29fdd2d68b2e90ab0a155d0@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi lkp team
+Hi Masahiro,
 
-Thank you for testing.
+On 27.11.2017 13:15, Masahiro Yamada wrote:
+> Geert reported commit ae6b289a3789 ("kbuild: Set KBUILD_CFLAGS before
+> incl. arch Makefile") broke cross-compilation using a cross-compiler
+> that supports less compiler options than the host compiler.
+> 
+> For example,
+> 
+>   cc1: error: unrecognized command line option "-Wno-unused-but-set-variable"
+> 
+> This problem happens on architectures that setup CROSS_COMPILE in their
+> arch/*/Makefile.
+> 
+> Move the cc-option and cc-disable-warning back to the original position,
+> but keep the Clang target options.
 
-At 03/16/2018 07:17 PM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: d619c81e246424e322f7a902bed6e60b90668d56 ("ACPI / processor: Get accurate possible CPU count")
-> url: https://github.com/0day-ci/linux/commits/Dou-Liyang/ACPI-processor-Get-accurate-possible-CPU-count/20180316-140349
-> 
-> 
-> in testcase: boot
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 1G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +------------------------------------------------------+------------+------------+
-> |                                                      | 3266b5bd97 | d619c81e24 |
-> +------------------------------------------------------+------------+------------+
-> | boot_successes                                       | 16         | 2          |
-> | boot_failures                                        | 0          | 18         |
-> | WARNING:at_include/linux/cpumask.h:#cpumask_test_cpu | 0          | 18         |
-> | WARNING:at_include/linux/cpumask.h:#cpumask_check    | 0          | 18         |
-> | RIP:cpumask_check                                    | 0          | 18         |
-> | RIP:cpumask_test_cpu                                 | 0          | 18         |
-> | general_protection_fault:#[##]                       | 0          | 13         |
-> | RIP:__lock_acquire                                   | 0          | 13         |
-> | Kernel_panic-not_syncing:Fatal_exception             | 0          | 13         |
-> | BUG:kernel_hang_in_boot_stage                        | 0          | 5          |
-> +------------------------------------------------------+------------+------------+
-> 
-> 
-> 
-> [    0.830741] WARNING: CPU: 1 PID: 1 at include/linux/cpumask.h:122 cpumask_test_cpu+0x32/0x57
-> [    0.830785] WARNING: CPU: 1 PID: 1 at include/linux/cpumask.h:122 cpumask_check+0x2d/0x48
+This seems to break arm (32-bit) clang support for me. It seems to break
+correct compiler flag detection in some way.
 
-Yes, this patch broke the number of CPUs, we will find out a new way,
-please drop the test work of this patch.
+Just moving no-integrated-as back to before including the arch Makefile
+seems to fix the issue:
 
-Thanks,
-	dou
+--- a/Makefile
++++ b/Makefile
+@@ -487,6 +487,7 @@ CLANG_GCC_TC        :=
+--gcc-toolchain=$(GCC_TOOLCHAIN)
+ endif
+ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+ KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+ endif
+ 
+ RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern
+-mindirect-branch-register
+@@ -744,7 +745,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning,
+tautological-compare)
+ # See modpost pattern 2
+ KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+ KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+-KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+ KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+ else
+
+Does that sound like a reasonable fix?
+
+Note that arm support is not completely upstream yet, but only few
+patches are necessary currently:
+http://git.agner.ch/gitweb/?p=linux.git;a=shortlog;h=refs/heads/v4.16-rc5-clang-arm-no-revert
+
+--
+Stefan
+
+
+> 
+> Fixes: ae6b289a3789 ("kbuild: Set KBUILD_CFLAGS before incl. arch Makefile")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> 
+>  Makefile | 43 +++++++++++++++++++++++--------------------
+>  1 file changed, 23 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index aa67428..ac2d4e1 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -484,26 +484,6 @@ CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+>  KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+>  KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> -KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+> -# Quiet clang warning: comparison of unsigned expression < 0 is always false
+> -KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+> -# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+> -# source of a reference will be _MergedGlobals and not on of the
+> whitelisted names.
+> -# See modpost pattern 2
+> -KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+> -KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+> -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> -KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+> -else
+> -
+> -# These warnings generated too much noise in a regular build.
+> -# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+>  endif
+>  
+>  ifeq ($(config-targets),1)
+> @@ -715,6 +695,29 @@ ifdef CONFIG_CC_STACKPROTECTOR
+>  endif
+>  KBUILD_CFLAGS += $(stackp-flag)
+>  
+> +ifeq ($(cc-name),clang)
+> +KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+> +# Quiet clang warning: comparison of unsigned expression < 0 is always false
+> +KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+> +# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+> +# source of a reference will be _MergedGlobals and not on of the
+> whitelisted names.
+> +# See modpost pattern 2
+> +KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+> +KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+> +KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> +KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+> +else
+> +
+> +# These warnings generated too much noise in a regular build.
+> +# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+> +KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+> +endif
+> +
+>  ifdef CONFIG_FRAME_POINTER
+>  KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+>  else
