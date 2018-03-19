@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELustTAND9DWBJAaQsrmaa0UhgJV1uJYWBmC+0BmWlwNOCCV+Z5b+Dr/ZFYVZ8C//V6RsAZs
-ARC-Seal: i=1; a=rsa-sha256; t=1521483647; cv=none;
+X-Google-Smtp-Source: AG47ELsbsMm13jjWxRIxZgz9zwUk8xWHfmbdSth7UJ4C2mQ+CW+1LfhPOkwtVobET3hjnmhAVSAj
+ARC-Seal: i=1; a=rsa-sha256; t=1521483645; cv=none;
         d=google.com; s=arc-20160816;
-        b=CszNPHvLhuczWLn7MLjQPdevOgRzoqFgFRWiokVyOcrxTtLdg83fMRLM8pgzMM23tn
-         dIpfFvrOqYMOzYF122VD/SGSBZXxLLu4VZK+Xafszyr2rePzJKnW5OlKgyVX8M/OqAnP
-         z7wRZGRt1h6qdEomFpzES8ARQFelvim4gKeN4z/GrN1iL6gwfl6l9T+GANQjFgoeqteq
-         DsM9m2ITSf5WJ3ub8J1jWNpPxux4/qHoi+oWm8kTb8aV22K+99uY/Hx++osS4hYevy2s
-         E3/4lDAfUou/dTqL/nyrl6GEy0kE2PZwXO15Gf18Nl92JMkrB252X8c6oK22GSMUf0vf
-         6TlQ==
+        b=pNzqDzKo7DmXV2FQoMeAQ5wBM8Axi6eXlXNU2ksXX9XWtN+CSB+FjidLPzLB2uvo72
+         fbl58p1MTOgLp9XYTvun+Ina6B3g/W3uvanNv/CLcyFxCiG5rpdFxNifRetKJDA4Bwgp
+         YoNItbrCAjNhmHg2qnAJB5Aebs3VXyZviZjXO40ftGE8OEqd6PFEsmn5BLrC+wlDDBh4
+         D+UiNQVfTIQDUDcDDs3h6Rp+TT4HO6MwJrjDP4xDC3X5z2DPWYQA4XVe5r98jIemnMyk
+         yVC8r0Hq+bkUn3Mfq0FjpctQ1turhq4I+Zo+fcSzyImodFNWa9/l/w5wd0+SugOnbDkC
+         RbMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OBl5nU3VvpOeiTogMvEUB22/u3nxeZl/hicLCVgVeo8=;
-        b=B3kleoExH86gMOVxHivakG+MS97QGs6GA/0t36Y3CgUZOopppGcfvp+uDn/Wo9v17C
-         JnSk0EskCXI9qKP0EJBZRI3kkpLrsJ5hmB5gRkT43fi3nK08IgX0FiTw5ja2PD+KOwbQ
-         RskFSt5JnwZJVMU1lPxHuhjStjwCofI6Qjqf3wlXp7CpyGRiIWRjCqvLI7+49aFJ4W12
-         KwfECWPRg4cc9JkH1euyTVEKDFH0SZ2tOOIqZikdx5DnY+LYMpIU6qE0Y/M/Bx46hkA3
-         BgAkxtzw0vzql0ONHWZQqZley2t0oJ2ggav6l+zkbsMurBslxShz0LBsZxfp/mC3mj8U
-         /FeA==
+        bh=yq8C8uKSjUDHsy+q677Fp65Ph6ERJHeCfNvCrxLj2dw=;
+        b=RxXEAkws8k+1f4UJ+WN2ANh4kKNACsXzvszr9UzVLqSU1PLfsPZVEN4yQuSH2WevQx
+         gdNv+f2OhuG347dhRDdjuA5lrR2QFioqbqCKQ3ehufBR33THrXyXY/elfjb91OtDRVGK
+         Lym/slWdpW/poxJV/Mx/LhMmtC7a/QiBj7xZR70ZqlpGMaINOtqu5pGBaVV4u3o4wCNF
+         8KDRxEH49kPYk5BYXQUoMtrZARuf6zUZgozy0hrGUQuICDD76J0HI9gabg012d+Tsfkb
+         JA+kRatJIebbUANIYMkJ5MQiC2xQjuVV3/f8/1W/yhPo//LzMTZxRzIMXcuugWp4jCea
+         sK2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Iyappan Subramanian <isubramanian@apm.com>,
 	Quan Nguyen <qnguyen@apm.com>,
+	Iyappan Subramanian <isubramanian@apm.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 030/241] drivers: net: xgene: Fix wrong logical operation
-Date: Mon, 19 Mar 2018 19:04:55 +0100
-Message-Id: <20180319180752.415954080@linuxfoundation.org>
+Subject: [PATCH 4.9 029/241] drivers: net: phy: xgene: Fix mdio write
+Date: Mon, 19 Mar 2018 19:04:54 +0100
+Message-Id: <20180319180752.373015832@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391237661738388?=
-X-GMAIL-MSGID: =?utf-8?q?1595391237661738388?=
+X-GMAIL-THRID: =?utf-8?q?1595391234856721071?=
+X-GMAIL-MSGID: =?utf-8?q?1595391234856721071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,32 +54,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Quan Nguyen <qnguyen@apm.com>
 
 
-[ Upstream commit 11623fce0f9afef30c45e3f2120b063de3809a8f ]
+[ Upstream commit 4b72436dc3dd2457056b22d6f147777368c869fa ]
 
-This patch fixes the wrong logical OR operation by changing it to
-bit-wise OR operation.
+This patches fixes a typo in the argument to xgene_enet_wr_mdio_csr().
 
-Fixes: 3bb502f83080 ("drivers: net: xgene: fix statistics counters race condition")
-Signed-off-by: Iyappan Subramanian <isubramanian@apm.com>
 Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+Signed-off-by: Iyappan Subramanian <isubramanian@apm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/apm/xgene/xgene_enet_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/phy/mdio-xgene.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-+++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-@@ -537,9 +537,9 @@ static int xgene_enet_rx_frame(struct xg
- 	buf_pool->rx_skb[skb_index] = NULL;
+--- a/drivers/net/phy/mdio-xgene.c
++++ b/drivers/net/phy/mdio-xgene.c
+@@ -232,7 +232,7 @@ static int xgene_xfi_mdio_write(struct m
  
- 	/* checking for error */
--	status = (GET_VAL(ELERR, le64_to_cpu(raw_desc->m0)) << LERR_LEN) ||
-+	status = (GET_VAL(ELERR, le64_to_cpu(raw_desc->m0)) << LERR_LEN) |
- 		  GET_VAL(LERR, le64_to_cpu(raw_desc->m0));
--	if (unlikely(status > 2)) {
-+	if (unlikely(status)) {
- 		dev_kfree_skb_any(skb);
- 		xgene_enet_parse_error(rx_ring, netdev_priv(rx_ring->ndev),
- 				       status);
+ 	val = SET_VAL(HSTPHYADX, phy_id) | SET_VAL(HSTREGADX, reg) |
+ 	      SET_VAL(HSTMIIMWRDAT, data);
+-	xgene_enet_wr_mdio_csr(addr, MIIM_FIELD_ADDR, data);
++	xgene_enet_wr_mdio_csr(addr, MIIM_FIELD_ADDR, val);
+ 
+ 	val = HSTLDCMD | SET_VAL(HSTMIIMCMD, MIIM_CMD_LEGACY_WRITE);
+ 	xgene_enet_wr_mdio_csr(addr, MIIM_COMMAND_ADDR, val);
