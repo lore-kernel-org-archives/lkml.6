@@ -1,108 +1,95 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3734533-1521630208-2-8041460278393454716
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521630208; b=Nw3k9gINVZF330+BB389lr/r4hFjxJ7WQQQ1FlDSHTMngHY
-    UrFqSaL3EZFyH4ao9q9xnKpttT1/Rv9haFBp9WoueZjvB5Mxa9HPeSqAYktRIdBy
-    EuTR3TtHw7UHk1ywZGfHZq1X7e3sSPobVFVZj3x3HOVLZhja1tCWR4VbtyepHS72
-    LA/epMZs6KtdDdwTXVXbh9OfgLWg9D4wCsBtyjRDZGpVjtixr/8UtIKPXPz+vY/l
-    87UeI2rD+LuOCSrRK/0+OBb2TpHb2C83qeukhSreMlCaVRnMXuLp43L67JoLQvIJ
-    bf5/tY3tUa3xqfAJ7ldk5EhMsAkh8jI60O398Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521630208; bh=J1IZ3IMcv/t3sQoVNbBdju7+uw
-    I6lVWwYa1aQuqGOyo=; b=VXL+tNS0U6baH8RX8E7i+OvHJ6z443r7ZMQJZOjHFj
-    3Sg671wzj1RQ0PAzXNVq5klnSye7qbO/6B7tm6g9z0r4Ovtdbk35iYjd9nTZh0D1
-    cx80d8rg5HB/4+lYp1uJgbx+ABQbjW5xljZJ91j4Z4c1FgDL+Grkzi3w6Lg49Lea
-    t7x3pzbZMhzDT9G6Cv+aQbuyI8VZeLjMCv0fk1FJYDhaQ/GX9zLpYNtHc3czb9T5
-    4s1N5rw6TWM4onjvoBYOS+6/g/5IMrLBBRZJ8XkRiC/p5xvqOZGQzUI1y5aIpNLc
-    g4OIbHNWyqrIgG39Cz+J+seQivP6mKq+3mq9FsQ4nBJQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751729AbeCULD1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 07:03:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41636 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeCULD0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Mar 2018 07:03:26 -0400
-Date: Wed, 21 Mar 2018 12:03:25 +0100
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuE+1nvAwaVeY3+IHKBtb556k35P4C55IDQEUcHZxiFNFr+kRdwRIK0ynA3tOJkHrHWS46k
+ARC-Seal: i=1; a=rsa-sha256; t=1521482977; cv=none;
+        d=google.com; s=arc-20160816;
+        b=PGxuLg903CrnkXWZh3GqizmL+xfNjnqaKnH1UcoT9MLkxi+pbbPEtNIvqPs1Pgzbm8
+         xo99xnMQmkekrJsPvg1SUChyHj6x8MxTcYsg4ltdFvIjEfu2OFaoxldscd+UlZXqlqbM
+         rRA1fCx7B3k2kmRcUUShUrbHJ9+HwXZHKkL/icQHP7y2DB6e4BHbo4WQMmD/XPbnRiOX
+         x1ctQOJvEP8oQczSFk4LMNDSrhtHHseJtCYwe7SQOHERfyXr/nulNC3o+XMlCNnkviNm
+         vWb3hIlr44+L08xL4Tm5AA4qqwF8LQxSDGtNNnXH5sx9nYRAgFyS0cNf4cn6UipKP7s4
+         MxxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=QlbgvdH/haoeVmnBmb5KMlS21l6Vg2GqJM8ojkIVoYk=;
+        b=qVKXyxGjCDv7cmRA+e0GvuygBph7gOTab7EcizVOxCot6dTSRgqilNi24r/K0KnC4x
+         l5Mrh49UKiCi5lyprZ2QvXweN2WXsutN5+85ZKmSjupzzlNr5yRXt+/pFJ3mW3XsXK+M
+         xx+cW1X0DgGLQjyrftEQqqC4twT7csZQos95ZzZL2XZwSGVOMieweVaof2Zq7CItLcxA
+         +vnQx/rqIwm4J806UhZ9RU5x84nllLH2krogUTYdZEVNjKeJAKY5mB/7/VMTc1mzNUVq
+         J0QE6BZyWn6X28joGhAU5AfMIe94FJV5Lus9vlgjVvoG9/uY/7G7XbIrg6EOZSNtdfm5
+         DUqg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/68] 3.18.101-stable review
-Message-ID: <20180321110325.GC24810@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Tero Kristo <t-kristo@ti.com>,
+	Roger Quadros <rogerq@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 22/68] ARM: DRA7: hwmod_data: Prevent wait_target_disable error for usb_otg_ss
+Date: Mon, 19 Mar 2018 19:06:00 +0100
+Message-Id: <20180319171830.959470467@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
- <20180320144751.GA16028@roeck-us.net>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320144751.GA16028@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390534800077046?=
+X-GMAIL-MSGID: =?utf-8?q?1595390534800077046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 07:47:51AM -0700, Guenter Roeck wrote:
-> On Mon, Mar 19, 2018 at 07:05:38PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 3.18.101 release.
-> > There are 68 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Mar 21 17:17:59 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> 
-> For v3.18.100-68-g290f46f:
-> 
-> Build results:
-> 	total: 137 pass: 135 fail: 2
-> Failed builds: 
-> 	arm:allmodconfig 
-> 	arm:omap2plus_defconfig 
-> 
-> arm/mach-omap2/omap_hwmod_7xx_data.c:2109:12: error:
-> 	'HWMOD_CLKDM_NOAUTO' undeclared here
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-I've dropped the patch that caused that error and pushed out -rc2 for
-the test-bots.
+------------------
 
-thanks,
+From: Roger Quadros <rogerq@ti.com>
 
-greg k-h
+
+[ Upstream commit e2d54fe76997301b49311bde7ba8ef52b47896f9 ]
+
+It seems that if L3_INIT clkdomain is kept in HW_AUTO while usb_otg_ss
+is in use then there are random chances that the usb_otg_ss module
+will fail to completely idle. i.e. IDLEST = 0x2 instead of 0x3.
+
+Preventing L3_INIT from HW_AUTO while usb_otg_ss module is in use
+fixes this issue.
+
+We don't know yet if usb_otg_ss instances 3 and 4 are affected by this
+issue or not so don't add this flag for those instances.
+
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+@@ -2106,6 +2106,7 @@ static struct omap_hwmod dra7xx_usb_otg_
+ 	.class		= &dra7xx_usb_otg_ss_hwmod_class,
+ 	.clkdm_name	= "l3init_clkdm",
+ 	.main_clk	= "dpll_core_h13x2_ck",
++	.flags		= HWMOD_CLKDM_NOAUTO,
+ 	.prcm = {
+ 		.omap4 = {
+ 			.clkctrl_offs = DRA7XX_CM_L3INIT_USB_OTG_SS1_CLKCTRL_OFFSET,
+@@ -2127,6 +2128,7 @@ static struct omap_hwmod dra7xx_usb_otg_
+ 	.class		= &dra7xx_usb_otg_ss_hwmod_class,
+ 	.clkdm_name	= "l3init_clkdm",
+ 	.main_clk	= "dpll_core_h13x2_ck",
++	.flags		= HWMOD_CLKDM_NOAUTO,
+ 	.prcm = {
+ 		.omap4 = {
+ 			.clkctrl_offs = DRA7XX_CM_L3INIT_USB_OTG_SS2_CLKCTRL_OFFSET,
