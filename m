@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvlsQbJx9kZBo+Zg6bybuSXv3khduDxR2jbuk0dPtSRnbwip/BQ+GxlBV5t7yJ4Eb6EzPW2
-ARC-Seal: i=1; a=rsa-sha256; t=1521483903; cv=none;
+X-Google-Smtp-Source: AG47ELvWdCdMGy3dhZGAKmSZpCxbZr/tfyNV2IsXKPgXm4AnLSdnvgh7IJAf/2tB2WRhro2LW8aS
+ARC-Seal: i=1; a=rsa-sha256; t=1521483900; cv=none;
         d=google.com; s=arc-20160816;
-        b=hJaUObwF+F+MLlj3jqmpiwTUYZAn5zyBcuFuJFjsGwj4wpPcCyX3CpsZ4cA2JeTTBy
-         UoNWiCAySOqGEQMnr/MtoMt+wwWO/VpSkGcOnqFupY6jSsj+DLhpNU3FrSnqsHhLdy5E
-         le2IhxcCyPDc9wO+rBYi0C/2A2Gs/qan+svWqblmJ+l6Y8zZpkxPbDZs6cMzSqCnf5Zj
-         HTMdxCEmydFyliIW1IpMwS2qJ2j9g1JNhhhbA+FIRoLvkyKGgwmQaeskSec7nioHndoV
-         ihWTWFJ09VnynYAp7MOAWByvrfOXdnzhmy2/Zy+U2Ty6BcTA48DbKjlQ0GwIDyInKYO3
-         uSvw==
+        b=Uyh12CorTcA8IlaBxpBqX6wyT4u907VUYhwtxPmyVlcKm41zQUQPC4V7bVm9peXHw8
+         f+Uho+TEfPapKzXWV3Ij5xr3p128hKUZ+BPDfK7/nzZ5walEdg9P4h6prXnBKPygmxuP
+         YHZvo7vX51hywxMmX/EGFcpV2Gq6oVo9rjvGIHgs0+Nb3DQ9hbCNnDosWuJN1219rQ4n
+         3sbocwRNAZddAIg4jc7YvNoOwrIOxvwKid8oRl5rWuswtYW51LDA41/ldDIOSt5HbmqA
+         8z5bnhs9dcFYWgaNWnH2OVtyWpXQOowCiYvGXmE4HjrMh8ARwUQ9UmUkPUPTAVH7RFLR
+         trRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sRgtz8BxhObzQxQksFUzqwlO/vJFumKFt1fkR0fs0us=;
-        b=mJeUYhmiVUTNAnT6Y8KeVosL+9ZIFUC8dkyhBFMXMXnMQx5/rCIPVQ5vZeg48awzvH
-         F/YPgsyXZKSk9l3PGWPmyxZC7vqEEVnsiKUT0kgg9tQXYKnPVJw/ofqq7WRb+cfl1q07
-         w0Yx5IoTPxQqPRYvkft1us8Fz5dGQ41hnkcVnEg/XVl28M3hVbZr6JKrVBojitpmLsp5
-         oLvMW9Su7KltV+F5HNRKevinBtHCjfhU8A1zfAsCJLWQRwjwkBHLmHTiXM+sRq1F8wLB
-         yqoX+F8p2sjSB8vhiquqxKmHsCCUUnvX+69CGbmMq+6VvuYAeVPHSBGBByTG3AwgO8Oo
-         W2Vw==
+        bh=xM5QaWEK+6CuKtfAO1tHklt4/z8Foo1EufC6fSGh0Xw=;
+        b=J816rX9Jf251CwROpm60iSxWecGkZwvIQjayo5iRQpqg5vw4/tVrgsYenuwJAfnvyT
+         lgO1VDZH9Tm9KqxHriBVkGZeR7dEDWzU2RDhhaKIOS5+6tahjbMy1LsM1xig+71EaZjl
+         LzqHqNZph9qoIZeGO3DKZru9CIpIr/5GFnqnVe5gJgUw56waFUgzaegTxJgzDA4+09vU
+         aBzYDWota3eNfLS+68a95FM44kCl+fLsO1FfiGTtETEj20UQyeRBNsPYuaC89AIsjDzx
+         3PrEPok9TebR9Zwbw1DImKZRPuT3mIxeRVQ0we9Ewwd1Ox1eAbocbagD2JakwNqdfJ1B
+         tzVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Kazior <michal.kazior@tieto.com>,
-	Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 159/241] ath10k: fix compile time sanity check for CE4 buffer size
-Date: Mon, 19 Mar 2018 19:07:04 +0100
-Message-Id: <20180319180757.744894218@linuxfoundation.org>
+Subject: [PATCH 4.9 158/241] mac80211_hwsim: use per-interface power level
+Date: Mon, 19 Mar 2018 19:07:03 +0100
+Message-Id: <20180319180757.708132844@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391505357964669?=
-X-GMAIL-MSGID: =?utf-8?q?1595391505357964669?=
+X-GMAIL-THRID: =?utf-8?q?1595391502047672023?=
+X-GMAIL-MSGID: =?utf-8?q?1595391502047672023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +49,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
 
-[ Upstream commit 62ca0690cd495bb7c1414cdf0cf790c2922a1d79 ]
+[ Upstream commit 1d5e9f80ab021e3e1f9436627a4ad07a143ccb2c ]
 
-In 'ath10k_ce_alloc_pipe' the compile time sanity check to
-ensure that there is sufficient buffers in CE4 for HTT Tx
-MSDU descriptors, but this did not take into account of the
-case with 'peer flow control' enabled, fix this.
+When channel contexts are used, there's no global power level
+(the power_level is always 0). Use the per-interface TX power
+in mac80211_hwsim to have a proper setting for both cases.
 
-Cc: Michal Kazior <michal.kazior@tieto.com>
-Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+This fixes the bgscan_simple and bgscan_learn test cases when
+the number of channels advertised by hwsim is >1 by default.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/ce.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mac80211_hwsim.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/ce.c
-+++ b/drivers/net/wireless/ath/ath10k/ce.c
-@@ -1059,7 +1059,7 @@ int ath10k_ce_alloc_pipe(struct ath10k *
- 	 */
- 	BUILD_BUG_ON(2 * TARGET_NUM_MSDU_DESC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
--	BUILD_BUG_ON(2 * TARGET_10X_NUM_MSDU_DESC >
-+	BUILD_BUG_ON(2 * TARGET_10_4_NUM_MSDU_DESC_PFC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
- 	BUILD_BUG_ON(2 * TARGET_TLV_NUM_MSDU_DESC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -552,8 +552,6 @@ struct mac80211_hwsim_data {
+ 	/* wmediumd portid responsible for netgroup of this radio */
+ 	u32 wmediumd;
+ 
+-	int power_level;
+-
+ 	/* difference between this hw's clock and the real clock, in usecs */
+ 	s64 tsf_offset;
+ 	s64 bcn_delta;
+@@ -1208,7 +1206,9 @@ static bool mac80211_hwsim_tx_frame_no_n
+ 	if (info->control.rates[0].flags & IEEE80211_TX_RC_SHORT_GI)
+ 		rx_status.flag |= RX_FLAG_SHORT_GI;
+ 	/* TODO: simulate real signal strength (and optional packet loss) */
+-	rx_status.signal = data->power_level - 50;
++	rx_status.signal = -50;
++	if (info->control.vif)
++		rx_status.signal += info->control.vif->bss_conf.txpower;
+ 
+ 	if (data->ps != PS_DISABLED)
+ 		hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_PM);
+@@ -1607,7 +1607,6 @@ static int mac80211_hwsim_config(struct
+ 
+ 	WARN_ON(data->channel && data->use_chanctx);
+ 
+-	data->power_level = conf->power_level;
+ 	if (!data->started || !data->beacon_int)
+ 		tasklet_hrtimer_cancel(&data->beacon_timer);
+ 	else if (!hrtimer_is_queued(&data->beacon_timer.timer)) {
+@@ -2212,7 +2211,6 @@ static const char mac80211_hwsim_gstring
+ 	"d_tx_failed",
+ 	"d_ps_mode",
+ 	"d_group",
+-	"d_tx_power",
+ };
+ 
+ #define MAC80211_HWSIM_SSTATS_LEN ARRAY_SIZE(mac80211_hwsim_gstrings_stats)
+@@ -2249,7 +2247,6 @@ static void mac80211_hwsim_get_et_stats(
+ 	data[i++] = ar->tx_failed;
+ 	data[i++] = ar->ps;
+ 	data[i++] = ar->group;
+-	data[i++] = ar->power_level;
+ 
+ 	WARN_ON(i != MAC80211_HWSIM_SSTATS_LEN);
+ }
