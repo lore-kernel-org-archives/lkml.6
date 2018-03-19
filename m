@@ -1,72 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483395-2-6749447906041697567
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483395; b=LCmtGlwf5O51BYlywDuW68mjP049IuiY8a/gmsUhwW4KLvj
-    BiKAAhrfVRRM0omTM/jIaRg++zz5ohJjLyRDGY9hBmm6tU3szDoclFH3UnSHPJO4
-    pe8f1lDUnUOqNGVi04PH4cJ+QDcoqmkseSGnFds5pMJKqdkJkht+CDBtmoiCKl6T
-    xj6eoAt0uuKRoMH8Z8asvnmwt2TcnXqllAe4MJg800MOvXPNGaR+nIvbTDI9nE2h
-    4nevLsiGsA81UT0s6wiG82TOiSnodYmjN1uqB+FX4Rs9TLXBWntUxunQzoDpjbic
-    jIx5Rk0mKLeX9O8ncSD29XaFLZ6nivXhG4wfypQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483395; bh=PN2qLTQ639dq0qjZ/XvLsSeCCd
-    NSHcWt5EnFH2toUcA=; b=darDCYK2SIGrAj5gq7tTpSGo53jH+8J9d2TaVzrKq3
-    rJ3i6T3OxRWgqJoOIj86MLsbNI9Rrv8Q1GC6cLqj3tpMwVxSL666WPFq1JQo6n2b
-    xnSx/Fp+v9PyFdBkOI0KJDbeWNT74PP3bL8VvYoJl6gXbT23MfEmVi/wySftxnm2
-    gtQJXwWCoh4S4tf5nKWQa3vniK964OobozBsE8R+NV2/DEjYFi0K9teiIbg1FJSX
-    rxSh+YSaAM4sw1auIwbIUq679uLyggRUtqxN1laMD6UVa+udqbzKx6BUO0zx9MN4
-    5BJBgd3QOULJxsiY+tcQ0HjiJvAxbfIL41OKXxBPF3Qg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefgeejudenucevlhhushhtvghrufhiiigvpedv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefgeejudenucevlhhushhtvghrufhiiigvpedv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030814AbeCSSQa (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:16:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45126 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030782AbeCSSQZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:16:25 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsMuNO1/C2Wl8iif7660T5WZfyxPX+ijqDsWmdgcxjZBowEJOH5vobo9eULVz02MBSE1IT2
+ARC-Seal: i=1; a=rsa-sha256; t=1521483393; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xN+r/fEyJAwZD0f37HsE00VbdVilNqkoub00Dq4N7nqTqZrvbGHOxon0RTqzGaWuop
+         aVV0oHqe+gBYrGIzTZwhYYdWLr5C1P8JVas/VbEwMam5ts3049ShpFXhFuq9BEHjSgIf
+         zfu8kEcfyBOnepgbCn4ygUp0oQSEghR8znjQ9S6b1aUnVYplM9MKQNPOC0BZDAw8/hgp
+         fY9zYqVkI1PsIIytinL1ovT5K0fRhgHT/kpeeqlWg4SIK/CzDHMNd23VsBS50gZ+S3ah
+         n3vgU0D8Bay8l0R2ReIVrwSpp0JqKjuC0p2R7kCQHT9vmJSMLA1edCguCVYVq606Xnz2
+         VVNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=rbc6sIjCFau6Mm+1jr5gCQOdqo/i3DTNgFL6nIWXd94=;
+        b=Z1pGFb/hff1x6lq0cyTDYk61dz/qNdtJgySC+4Hf0tHGMtrd60iiyVQfoz4bmGJVpZ
+         SjFrknUV3jmPWVkA94SWwdPTYyKWLSNsWVp+X1dNFqgfKh9N/lsvafCVjJUvPuLVY45V
+         ZZ/2Rcb6YUR4znSAuAWT/Vn58gGmip/p/yDlvzni4+r/2RLOxzYVhFDq44cYMXdjhdjz
+         Lqn7Oya9yTzSqRudt76V8pH80iYPsp6XkFukfXiTTMO+jLbcw5P8VgfpISxMKGwhgPFc
+         CpByBi1M0z/L7H7hTChY9fNzVFJVYEB1000BabZusVaTCTz+yBYmmfTsBCRee7hrkPqD
+         JJ4g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Mika Kuoppala <mika.kuoppala@intel.com>,
-        drm-intel-fixes@lists.freedesktop.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 103/134] agp/intel: Flush all chipset writes after updating the GGTT
-Date: Mon, 19 Mar 2018 19:06:26 +0100
-Message-Id: <20180319171904.132930407@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 106/134] ASoC: nuc900: Fix a loop timeout test
+Date: Mon, 19 Mar 2018 19:06:29 +0100
+Message-Id: <20180319171904.555299725@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -74,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390634104093891?=
+X-GMAIL-MSGID: =?utf-8?q?1595390970751880418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,44 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 8516673a996870ea0ceb337ee4f83c33c5ec3111 ]
+[ Upstream commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 ]
 
-Before accessing the GGTT we must flush the PTE writes and make them
-visible to the chipset, or else the indirect access may end up in the
-wrong page. In commit 3497971a71d8 ("agp/intel: Flush chipset writes
-after updating a single PTE"), we noticed corruption of the uploads for
-pwrite and for capturing GPU error states, but it was presumed that the
-explicit calls to intel_gtt_chipset_flush() were sufficient for the
-execbuffer path. However, we have not been flushing the chipset between
-the PTE writes and access via the GTT itself.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout == -1.
 
-For simplicity, do the flush after any PTE update rather than try and
-batch the flushes on a just-in-time basis.
-
-References: 3497971a71d8 ("agp/intel: Flush chipset writes after updating a single PTE")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Mika Kuoppala <mika.kuoppala@intel.com>
-Cc: drm-intel-fixes@lists.freedesktop.org
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171208214616.30147-1-chris@chris-wilson.co.uk
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/agp/intel-gtt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/nuc900/nuc900-ac97.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/char/agp/intel-gtt.c
-+++ b/drivers/char/agp/intel-gtt.c
-@@ -859,6 +859,8 @@ void intel_gtt_insert_sg_entries(struct
- 		}
- 	}
- 	wmb();
-+	if (intel_private.driver->chipset_flush)
-+		intel_private.driver->chipset_flush();
- }
- EXPORT_SYMBOL(intel_gtt_insert_sg_entries);
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(s
  
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
