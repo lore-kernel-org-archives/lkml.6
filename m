@@ -1,130 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933337AbeCSJVN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:21:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36496 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933301AbeCSJVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:21:08 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [RFC 12/12] KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Date: Mon, 19 Mar 2018 10:20:20 +0100
-Message-Id: <1521451220-27754-13-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
-References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
+        id S933114AbeCSJVq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:21:46 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:21223 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932976AbeCSJVi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:21:38 -0400
+Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
+ timeout value
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+References: <20180307132020.30951-1-kishon@ti.com>
+ <20180307132020.30951-8-kishon@ti.com>
+ <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
+ <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
+ <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <29f640ac-b155-41c6-cf3f-8c66e1b300f1@ti.com>
+Date: Mon, 19 Mar 2018 14:50:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
+MIME-Version: 1.0
+In-Reply-To: <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now all the internals are ready to handle multiple redistributor
-regions, let's allow the userspace to register them.
+Hi Adrian,
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
----
- virt/kvm/arm/vgic/vgic-kvm-device.c | 34 +++++++++++++++++++++++++++++++++-
- virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
- virt/kvm/arm/vgic/vgic.h            |  7 ++++++-
- 3 files changed, 41 insertions(+), 4 deletions(-)
+On Friday 16 March 2018 07:51 PM, Adrian Hunter wrote:
+> On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
+>>> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
+>>>> sdhci has a 10 second timeout to catch devices that stop responding.
+>>>> Instead of programming 10 second arbitrary value, calculate the total time
+>>>> it would take for the entire transfer to happen and program the timeout
+>>>> value accordingly.
+>>>>
+>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> ---
+>>>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>>>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
+>>>>  2 files changed, 50 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>> index 1dd117cbeb6e..baab67bfa39b 100644
+>>>> --- a/drivers/mmc/host/sdhci.c
+>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+>>>>  		return sg_dma_address(host->data->sg);
+>>>>  }
+>>>>  
+>>>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
+>>>> +				  struct mmc_command *cmd,
+>>>> +				  unsigned int target_timeout)
+>>>> +{
+>>>> +	struct mmc_data *data = cmd->data;
+>>>> +	struct mmc_host *mmc = host->mmc;
+>>>> +	u64 transfer_time;
+>>>> +	struct mmc_ios *ios = &mmc->ios;
+>>>> +	unsigned char bus_width = 1 << ios->bus_width;
+>>>> +	unsigned int blksz;
+>>>> +	unsigned int freq;
+>>>> +
+>>>> +	if (data) {
+>>>> +		blksz = data->blksz;
+>>>> +		freq = host->mmc->actual_clock ? : host->clock;
+>>>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
+>>>> +		do_div(transfer_time, freq);
+>>>> +		/* multiply by '2' to account for any unknowns */
+>>>> +		transfer_time = transfer_time * 2;
+>>>> +		/* calculate timeout for the entire data */
+>>>> +		host->data_timeout = (data->blocks * ((target_timeout *
+>>>> +						       NSEC_PER_USEC) +
+>>>> +						       transfer_time));
+>>>
+>>> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
+>>> for timeouts greater than about 4 seconds.
+>>>
+>>>> +	} else {
+>>>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
+>>>> +	}
+>>>> +
+>>>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>>
+>>> Need to allow for target_timeout == 0 so:
+>>>
+>>> 	if (host->data_timeout)
+>>> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
+>>>
+>>>> +}
+>>>> +
+>>>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>  {
+>>>>  	u8 count;
+>>>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>  		if (count >= 0xF)
+>>>>  			break;
+>>>>  	}
+>>>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
+>>>
+>>> If you make the changes I suggest for patch 6, then this would
+>>> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
+>>>
+>>> I suggest you factor out the target_timeout calculation e.g.
+>>>
+>>> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+>>> 					 struct mmc_command *cmd,
+>>> 					 struct mmc_data *data)
+>>> {
+>>> 	unsigned int target_timeout;
+>>>
+>>> 	/* timeout in us */
+>>> 	if (!data)
+>>> 		target_timeout = cmd->busy_timeout * 1000;
+>>> 	else {
+>>> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
+>>> 		if (host->clock && data->timeout_clks) {
+>>> 			unsigned long long val;
+>>>
+>>> 			/*
+>>> 			 * data->timeout_clks is in units of clock cycles.
+>>> 			 * host->clock is in Hz.  target_timeout is in us.
+>>> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
+>>> 			 */
+>>> 			val = 1000000ULL * data->timeout_clks;
+>>> 			if (do_div(val, host->clock))
+>>> 				target_timeout++;
+>>> 			target_timeout += val;
+>>> 		}
+>>> 	}
+>>>
+>>> 	return target_timeout;
+>>> }
+>>>
+>>> And call it from sdhci_calc_sw_timeout()
+>>>
+>>>>  
+>>>>  	return count;
+>>>>  }
+>>>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>  		mdelay(1);
+>>>>  	}
+>>>>  
+>>>> -	timeout = jiffies;
+>>>> -	if (!cmd->data && cmd->busy_timeout > 9000)
+>>>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+>>>> -	else
+>>>> -		timeout += 10 * HZ;
+>>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
+>>>> -
+>>>>  	host->cmd = cmd;
+>>>>  	if (sdhci_data_line_cmd(cmd)) {
+>>>>  		WARN_ON(host->data_cmd);
+>>>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
+>>>>  		flags |= SDHCI_CMD_DATA;
+>>>>  
+>>>> +	timeout = jiffies;
+>>>> +	if (host->data_timeout > 0) {
+>>>
+>>> This can be just:
+>>>
+>>> 	if (host->data_timeout) {
+>>>
+>>>> +		timeout += nsecs_to_jiffies(host->data_timeout);
+>>>> +		host->data_timeout = 0;
+>>>
+>>> It would be better to initialize host->data_timeout = 0 at the top of
+>>> sdhci_prepare_data().
+>>>
+>>> Also still need:
+>>>
+>>> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
+>>> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+>>
+>> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
+> 
+> Yes, but I was thinking you would only calculate when it was needed.
 
-diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-index e7b5a86..6a7f8ee 100644
---- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-+++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-@@ -92,7 +92,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 		if (r)
- 			break;
- 		if (write) {
--			r = vgic_v3_set_redist_base(kvm, *addr);
-+			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
- 			goto out;
- 		}
- 		rdreg = list_first_entry(&vgic->rd_regions,
-@@ -103,6 +103,38 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 			addr_ptr = &rdreg->base;
- 		break;
- 	}
-+	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
-+	{
-+		struct vgic_redist_region *rdreg;
-+		uint8_t index;
-+
-+		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
-+		if (r)
-+			break;
-+
-+		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
-+
-+		if (write) {
-+			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
-+			uint32_t pfns = (*addr & KVM_VGIC_V3_RDIST_PFNS_MASK)
-+					>> KVM_VGIC_V3_RDIST_PFNS_SHIFT;
-+
-+			if (!pfns)
-+				r = -EINVAL;
-+			else
-+				r = vgic_v3_set_redist_base(kvm, index,
-+							    base, pfns);
-+			goto out;
-+		}
-+
-+		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
-+		if (!rdreg)
-+			r = -ENODEV;
-+
-+		*addr_ptr = rdreg->base & index &
-+			(uint64_t)rdreg->pfns << KVM_VGIC_V3_RDIST_PFNS_SHIFT;
-+		break;
-+	}
- 	default:
- 		r = -ENODEV;
- 	}
-diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index ea34412..8fa6c08 100644
---- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -763,11 +763,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
- 	return ret;
- }
- 
--int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-+int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 pfns)
- {
- 	int ret;
- 
--	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
-+	ret = vgic_v3_insert_redist_region(kvm, index, addr, pfns);
- 	if (ret)
- 		return ret;
- 
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index dcf43c7..57165fe 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -96,6 +96,11 @@
- /* we only support 64 kB translation table page size */
- #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
- 
-+#define KVM_VGIC_V3_RDIST_INDEX_MASK	GENMASK_ULL(1, 0)
-+#define KVM_VGIC_V3_RDIST_BASE_MASK	GENMASK_ULL(51, 12)
-+#define KVM_VGIC_V3_RDIST_PFNS_MASK	GENMASK_ULL(63, 52)
-+#define KVM_VGIC_V3_RDIST_PFNS_SHIFT	52
-+
- static inline bool irq_is_pending(struct vgic_irq *irq)
- {
- 	if (irq->config == VGIC_CONFIG_EDGE)
-@@ -195,7 +200,7 @@ int vgic_v3_probe(const struct gic_kvm_info *info);
- int vgic_v3_map_resources(struct kvm *kvm);
- int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq);
- int vgic_v3_save_pending_tables(struct kvm *kvm);
--int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr);
-+int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 pfns);
- int vgic_register_redist_iodev(struct kvm_vcpu *vcpu);
- bool vgic_v3_check_base(struct kvm *kvm);
- 
--- 
-2.5.5
+I feel since we would have anyways calculated data_timeout, we should use that
+instead unless you see a problem with that.
+
+Thanks
+Kishon
