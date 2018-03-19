@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuMskbqq2lnm7yVO5EdOjgfDNCRqZVMF0aTEenIfMPFLw3qN7RyKwC4AHFkm5gduMV0Crcr
-ARC-Seal: i=1; a=rsa-sha256; t=1521483463; cv=none;
+X-Google-Smtp-Source: AG47ELuTSKzV28FlQa7G7DYMjS1CGjSKD3WGEetnMUAsxfPtJNnk4Ma8FlRr9O4yWr9gkK5h+vvQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483461; cv=none;
         d=google.com; s=arc-20160816;
-        b=TcWpWQb1pyQ0Uwo4W7q9cMhfmJa48mySkGjMJI2hsbebMFfeqF30wow9A4t5kq5Sw5
-         xWwU7tbU9KnkT7O5XRCR07XFDLfT/xDfrZjwZKxSZoXYRm45EzwCXYUkXbw3sUx09lfQ
-         QmFTFvYNs4w99fe0T3Ccx91YtPz8+YleVoPAsmVxmkzgy5d1JmOrqQMk77WTcqTvzxPD
-         VY6TiEHdxb8HI2K9BUnB3BYdZxLBdvKVpIfHB4wkAtySjTCQuL0YgqvM4GOCEfFTRV78
-         mVNlPJiGzviCd6jzjF03qdPQRLqs08JIQRBvEqUFvR4lcDGolWxdw7Sypb1ts5JuvaDl
-         itZw==
+        b=AxB+dSJ7fqgAf9qhW5l61B8Cj1fuLdYc7AtTyoFu4rYGmfWQHugdJtLuXU2liefOPY
+         l76dmgb6oPLsci8KwCnxvOrBOcomP1EoDckoAMv0ciRreO/IlhJPgkgR27ydauWpMS8L
+         YN5nmlplUFpCpMQ40HRpCsBd1+ZdgdwzDKAhJ+tklpPwILAB/Z1eoORvEXDD7UA5fRHP
+         D88VnIeB59GvMLj0M9bhLk2zMh8gu7i5gapS0r09/UDPdluz8qk4uTCLXfXPBdQo3dDo
+         hzc3LufNgOM8FdIdTSvZWUq/jRBAqglaudr886gL6JGdI3yVRx7K0y3ODeuG7TWRuLjP
+         CFcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uSFhdWT74IFcn7guKWJq/6oQUDS2qOK5MOaLqaNUT5M=;
-        b=pS1BdNz/elW/AD48Yxp1tKFAEohbeM+ACBf+/t7Fc3kRsxwJ5la8QlCybrYCDJV/Ew
-         a8RZFHUGKFWAzUvSgpMg6nfGNxphdasWvBGQZpYY+/rh4C8Xd8GH2ezJGTzBVuvoDEdU
-         +/zuLtp8Mi8dr1dVscinUGGEnFPm+yx16riRlWsGFh/8KXTCG25OIx02clLNLAjGKEzX
-         WHwksccw8iUimJzXvZUsqybBOkMl+OA09uwYbgN+/cBfDISfwn45/kNVONC+Y8mxvBGV
-         /jAeEXYylBe1xTuo1BJYakqlsbYFNbRZTiYgEVcJL070cYhM0v323EPcue1q7S87Hk60
-         ApDg==
+        bh=zNlrSLHVtDMWSXr05qYWugqjOlRXxUt4oyf5OxDIRbw=;
+        b=JXkVgaBsYwzg9CbD+HIxG1Z27p+v/MmI4ZksuhH2Ys1ZPffE4G9PVmCHq5QwwhWi2A
+         Umterv/mnU2F15xIbiN54u6Y0MQjieShtFVaXwQQD/16IS0hm9yoJTs1gF9Jivt/wYjK
+         YRUuP9FxyPZsqF0M4TommYbUmq56sK0/ECaEVdmAGmLdYC1YUjpJuZ2q+QCRTQTDPP4P
+         Xx9iGsCGJjSD0c//Y/EknYO0XgaIqnZM98iq/AhtY0Suq7o+3nK37roSuWkjJzvoQwV3
+         9eBft19SeK83j7wcEcpHCo7qESKgSNVkVUUgm3lyR5ks+LiRyaMCtHPMNckidY8IcDFy
+         EsmA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Wei Yongjun <weiyongjun1@huawei.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.4 133/134] usb: gadget: bdc: 64-bit pointer capability check
-Date: Mon, 19 Mar 2018 19:06:56 +0100
-Message-Id: <20180319171908.434936208@linuxfoundation.org>
+Subject: [PATCH 4.4 132/134] USB: gadget: udc: Add missing platform_device_put() on error in bdc_pci_probe()
+Date: Mon, 19 Mar 2018 19:06:55 +0100
+Message-Id: <20180319171908.304050554@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391044924888972?=
-X-GMAIL-MSGID: =?utf-8?q?1595391044924888972?=
+X-GMAIL-THRID: =?utf-8?q?1595391041891799420?=
+X-GMAIL-MSGID: =?utf-8?q?1595391041891799420?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit c8e4e5bdb62a5ac6f860ebcaaf7b467b62f453f1 upstream.
+commit 8874ae5f15f3feef3b4a415b9aed51edcf449aa1 upstream.
 
-Corrected the register to check the 64-bit pointer
-capability state. 64-bit pointer implementation capability
-was checking in wrong register, which causes the BDC
-enumeration failure in 64-bit memory address.
+Add the missing platform_device_put() before return from bdc_pci_probe()
+in the platform_device_add_resources() error handling case.
 
-Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for
-Broadcom USB3.0 device controller IP BDC")
-
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for Broadcom USB3.0 device controller IP BDC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/bdc/bdc_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/bdc/bdc_pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -475,7 +475,7 @@ static int bdc_probe(struct platform_dev
- 	bdc->dev = dev;
- 	dev_dbg(bdc->dev, "bdc->regs: %p irq=%d\n", bdc->regs, bdc->irq);
+--- a/drivers/usb/gadget/udc/bdc/bdc_pci.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_pci.c
+@@ -82,6 +82,7 @@ static int bdc_pci_probe(struct pci_dev
+ 	if (ret) {
+ 		dev_err(&pci->dev,
+ 			"couldn't add resources to bdc device\n");
++		platform_device_put(bdc);
+ 		return ret;
+ 	}
  
--	temp = bdc_readl(bdc->regs, BDC_BDCSC);
-+	temp = bdc_readl(bdc->regs, BDC_BDCCAP1);
- 	if ((temp & BDC_P64) &&
- 			!dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64))) {
- 		dev_dbg(bdc->dev, "Using 64-bit address\n");
