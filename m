@@ -1,143 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032336AbeCSV1z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:27:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50411 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933624AbeCSV1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:27:18 -0400
-Date: Mon, 19 Mar 2018 22:27:05 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/2] arm64: allwinner: h6: temporarily drop the usage of
- CCU headers in DTSI
-Message-ID: <20180319212705.7u5yqz4mk644aomk@flea>
-References: <20180319081108.23496-1-icenowy@aosc.io>
- <20180319081108.23496-2-icenowy@aosc.io>
+        id S970661AbeCSV34 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:29:56 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:44791 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965234AbeCSV3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:29:50 -0400
+X-Google-Smtp-Source: AG47ELu/KPH09XtZrd2quugu2sFLH6UNOtqMm5gVDjhU304RCgIkwlViQjfEz2UgPcGXHlAGefrtnA==
+Date: Mon, 19 Mar 2018 14:29:46 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: [GIT PULL] percpu fixes for v4.16-rc6
+Message-ID: <20180319212946.GI519464@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ixzervdxjrzxhrrb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180319081108.23496-2-icenowy@aosc.io>
-User-Agent: NeoMutt/20180223
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello, Linus.
 
---ixzervdxjrzxhrrb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Late percpu pull request for v4.16-rc6.
 
-On Mon, Mar 19, 2018 at 04:11:08PM +0800, Icenowy Zheng wrote:
-> As the CCU driver will be merged in different tree with the device tree,
-> temporarily drop the usage of CCU headers in the DTSI file, and replace
-> macros with the corresponding numbers.
->=20
-> After they are both merged into Linus' tree, it can be switched back to
-> use the CCU headers.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 +++++++++-----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
-ot/dts/allwinner/sun50i-h6.dtsi
-> index 4debc3962830..56563150d61a 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -4,8 +4,6 @@
->   */
-> =20
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -#include <dt-bindings/clock/sun50i-h6-ccu.h>
-> -#include <dt-bindings/reset/sun50i-h6-ccu.h>
-> =20
->  / {
->  	interrupt-parent =3D <&gic>;
-> @@ -117,7 +115,7 @@
->  				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks =3D <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
-> +			clocks =3D <&ccu 26>, <&osc24M>, <&osc32k>;
->  			clock-names =3D "apb", "hosc", "losc";
->  			gpio-controller;
->  			#gpio-cells =3D <3>;
-> @@ -136,8 +134,8 @@
->  			interrupts =3D <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift =3D <2>;
->  			reg-io-width =3D <4>;
-> -			clocks =3D <&ccu CLK_BUS_UART0>;
-> -			resets =3D <&ccu RST_BUS_UART0>;
-> +			clocks =3D <&ccu 70>;
-> +			resets =3D <&ccu 21>;
->  			status =3D "disabled";
->  		};
-> =20
-> @@ -147,8 +145,8 @@
->  			interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift =3D <2>;
->  			reg-io-width =3D <4>;
-> -			clocks =3D <&ccu CLK_BUS_UART1>;
-> -			resets =3D <&ccu RST_BUS_UART1>;
-> +			clocks =3D <&ccu 71>;
-> +			resets =3D <&ccu 22>;
->  			status =3D "disabled";
->  		};
-> =20
-> @@ -158,8 +156,8 @@
->  			interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift =3D <2>;
->  			reg-io-width =3D <4>;
-> -			clocks =3D <&ccu CLK_BUS_UART2>;
-> -			resets =3D <&ccu RST_BUS_UART2>;
-> +			clocks =3D <&ccu 72>;
-> +			resets =3D <&ccu 23>;
->  			status =3D "disabled";
->  		};
-> =20
-> @@ -169,8 +167,8 @@
->  			interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift =3D <2>;
->  			reg-io-width =3D <4>;
-> -			clocks =3D <&ccu CLK_BUS_UART3>;
-> -			resets =3D <&ccu RST_BUS_UART3>;
-> +			clocks =3D <&ccu 73>;
-> +			resets =3D <&ccu 24>;
+* percpu allocator pool replenishing no longer triggers OOM or warning
+  messages.  Also, the alloc interface now understands __GFP_NORETRY
+  and __GFP_NOWARN.  This is to allow avoiding OOMs from userland
+  triggered actions like bpf map creation.  Also added cond_resched()
+  in alloc loop.
 
-Thanks, I squashed a similar patch earlier.
+* perpcu allocation now can be interrupted by kill sigs to avoid
+  deadlocking OOM killer.
 
-Maxime
+* Added Dennis Zhou as a co-maintainer.  He has rewritten the area map
+  allocator, understands most of the code base and has been responsive
+  for all bug reports.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks.
 
---ixzervdxjrzxhrrb
-Content-Type: application/pgp-signature; name="signature.asc"
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
------BEGIN PGP SIGNATURE-----
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqwKygACgkQ0rTAlCFN
-r3TPPQ//RSwwnM/8GD7a/ZyxYWTs39sHi0mhis9WFxbsiF4BDR55pX0Xis8GTlz8
-fUk9giwlt3bUbIRUAVzEIjR408xhnlMMO8dr0MZ+4wix8Ua8oHrSIOszzcFOQlYD
-CcyT0mBmCN19dbzF+ZDqGz6Mj7Ds7uURCru8hVFk+VzuhkoShQJdfxkYQqSSStOr
-Igr28omXfPva4ahhh3RBHXhc7hP5yu0vfVpFkfRiceujUQb7aTyRoJEp/fdyMfDU
-vs3aioWeq05QoMKvSps7Wq+1V7rRryEBWIeO+aaa6NAn4LOrDsJ787Nu+CcChUAm
-djxQ6KlM68ENOD2mHbqbg+PQZDDMXpvUkKSNsRraCCyxnRLt5iKoS5MAIuvUF0wf
-tD2wRaepfQJx0qf7kTt+QE7EilNQWjDvonUZTSToQvKZzMes/ZhyuKyFflGuzNEa
-zXyYmEXxAoV/AAs2amemLEdAeDs5BZlPxcB17VXBOSIazsaEmjNpeDjeElHMGu/J
-GrYDuO1kQhMSg7gtDtPfoslKFfl/GBorCPdcJCrLJNAqMYtTvIih64yli5qJEBfN
-psIvcMSQC2LckBGPz2AKzVORPy4M4WIcrNjH8+plhZtC0u7VnL61QvQjnql68EIn
-ABgJM7rz23OzcYKrVrZgE3lmhOO8HarS9ifIk3lSHZgp1dXsDbc=
-=Gbo1
------END PGP SIGNATURE-----
+are available in the git repository at:
 
---ixzervdxjrzxhrrb--
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-4.16-fixes
+
+for you to fetch changes up to b3a5d111994450909158929560906f2c1c6c1d85:
+
+  percpu_ref: Update doc to dissuade users from depending on internal RCU grace periods (2018-03-19 10:09:44 -0700)
+
+----------------------------------------------------------------
+Dennis Zhou (3):
+      percpu: match chunk allocator declarations with definitions
+      percpu: add __GFP_NORETRY semantics to the percpu balancing path
+      percpu: allow select gfp to be passed to underlying allocators
+
+Eric Dumazet (1):
+      percpu: add a schedule point in pcpu_balance_workfn()
+
+Kirill Tkhai (1):
+      mm: Allow to kill tasks doing pcpu_alloc() and waiting for pcpu_balance_workfn()
+
+Tejun Heo (3):
+      percpu: add Dennis Zhou as a percpu co-maintainer
+      percpu: include linux/sched.h for cond_resched()
+      percpu_ref: Update doc to dissuade users from depending on internal RCU grace periods
+
+ MAINTAINERS                     |  1 +
+ include/linux/percpu-refcount.h | 18 +++++++----
+ lib/percpu-refcount.c           |  2 ++
+ mm/percpu-km.c                  |  8 ++---
+ mm/percpu-vm.c                  | 18 ++++++-----
+ mm/percpu.c                     | 67 +++++++++++++++++++++++++++--------------
+ 6 files changed, 74 insertions(+), 40 deletions(-)
