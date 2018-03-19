@@ -1,32 +1,33 @@
 Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AG47ELtIkXnpiqBo2GIDegPJETK0+M2LgPu6HKbKKSogNB1XrQHYM0xSlFhgJl2+QsUMIDztxOrv
-ARC-Seal: i=1; a=rsa-sha256; t=1521463273; cv=none;
+X-Google-Smtp-Source: AG47ELvIRQN4uwiejggNFcNDdv87bMP8xaFjEw+dPotaO34knVlERyWdyitNaalEQUnyyANFE0P+
+ARC-Seal: i=1; a=rsa-sha256; t=1521463289; cv=none;
         d=google.com; s=arc-20160816;
-        b=gJV8VB5Da1mtSpq+baOMMLTaYAL1kaOV6uQyvMeQhkk4AdTAH9pw8+6AcY/aaEqu3F
-         Y5ItkWQ7wInrEO8E6MnoVysuKsd1u3n3ITPzrFXFfS6r06i5mzVn+uzS06gdIdT/Ip8K
-         IBJSqZyvpPApiWpr0+H6tzhKiJBHPtsWAG6G/2xvGxs01c+6R6OZrC9povmLTl2Y/7sS
-         NaZYOatRpT9vEXPmeE2EkW16w36j7AvL7K6hRoau5jEFO372cic+S6WFlYvpgOv0ZrLX
-         lEuWeSuHKbSlCXspmHOB9XZt6weUimRDxYAxRnPY6UJDva5HhX9TEBjtIXmg7ZFM5mgh
-         9ftg==
+        b=U1KX8iA0Jl0Gq+MbEp2oq52GcqPmarx0GVSU7Yy9bPOMMgpJxtxSYbuJ2dkwMgGKQK
+         9EQwy0Zq0Av0kFbwCyrHeOeSBVUFJWG7aaAdLzGLrvO3YpWE8n9uxXIWFJw6o99oSCcy
+         /x0pc1T/gRnxSFBJruMWBgNm+7Eih46IoZYtl6ITRCgXrN2RKIfSEnoxqvtNpptCJsig
+         S8pjmVfG9APnbgL7BMI8OO1bHocYY92oMS63ynfPajfRQORHN1b1LWrKifEG5QGzKJ3l
+         hVQHq9IzeoQL1FEPvCCgxOQmXzwsKjGSpbSd+FSuO/aIbwZnUkEikSkSCnjaPpJ2FXHQ
+         P1Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dmarc-filter:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=YSlYqRwvJyYOCOpOvY5NiuxLR8QH06R0lvVXZSXAiA8=;
-        b=Nb7+ShyYnsw3bYKPE7GtJ/A5piwgU9qrwKmpQYWAlaLPtV9ePeXUPLXR7qCfUGQWmw
-         FZfdLBZGdcS5RAl0V+kONJytUm8XDBEjm1Bvcvu+/5tRrCs0U6iJDLzczG/d7qB9VI4C
-         zGllb62TfILINhYuJm63r6Fvg9zYTe3pvCI/F1I+migSYYV9um6BCFGQ2Q3HvhPm81IT
-         uoJMx9KAkGfZjTzGD2qR7VC8bSSMnB9NXFNRU7jGHb48Io4voNV9m3IqY5J1xQ7DxTIa
-         q4Z7HhcNuFBDUvLQTem71aaiNC7rWnyAAXOY5Hz7Ax0ZzIQd5L2780Y8NBdb9vuk0nN7
-         KLuA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=RUyRu+BmX3uuUIhAP/3YMJ5uvgcG7dJi8mXraNrl3kg=;
+        b=WPbbv/KHfpZ4LMqBRPG7dMaLz6zUr3oB3gatWUN9SHXt+Obb92bvj+lqMD/u0sdteA
+         y6cIctCwN2Ptt6Fpd5GwF5XnSGA13xX3WbAe4o5CxMKuMR+q6P5BOX9SdNWRuFse6CUg
+         o4YKOZLW+5Q9AxBVYA2Zx7b67dOajwUcVpfii7kEWUo2Op8fIRLqhgEqbQKjMBc519io
+         g1LiOnZsf3u1viS57SqJJ71TP5fIvBeFLNgUMjn4017JWuazTOc7PMrVh7DKYi3vmsvo
+         eBLuraWfp6CQJjN6Cr0rxC87GOF3ZMyrJBXl/AgB2djOO00pD/md5qOM+ZnxvIw9BFKH
+         L+Zg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kHAaRM0+;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cSeQGwZW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Ob0hQ4zd;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MrMXWP7R;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kHAaRM0+;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cSeQGwZW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Ob0hQ4zd;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MrMXWP7R;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 852C36055B
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C847B60C67
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
 From: Chintan Pandya <cpandya@codeaurora.org>
@@ -47,43 +48,81 @@ Cc: arnd@arndb.de,
 	akpm@linux-foundation.org,
 	toshi.kani@hpe.com,
 	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v3 0/3] Fix issues with huge mapping in ioremap for ARM64
-Date: Mon, 19 Mar 2018 18:10:53 +0530
-Message-Id: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
+Subject: [PATCH v3 2/3] arm64: Implement page table free interfaces
+Date: Mon, 19 Mar 2018 18:10:55 +0530
+Message-Id: <1521463256-19858-3-git-send-email-cpandya@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
+References: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595369872957799920?=
-X-GMAIL-MSGID: =?utf-8?q?1595369872957799920?=
+X-GMAIL-THRID: =?utf-8?q?1595007777008930452?=
+X-GMAIL-MSGID: =?utf-8?q?1595369889153070930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This series of patches are follow up work (and depends on)
-Toshi Kani <toshi.kani@hpe.com>'s patches "fix memory leak/
-panic in ioremap huge pages".
+Implement pud_free_pmd_page() and pmd_free_pte_page().
 
-This series of patches are tested on 4.9 kernel with Cortex-A75
-based SoC.
+Implementation requires,
+ 1) Freeing of the un-used next level page tables
+ 2) Clearing off the current pud/pmd entry
+ 3) Invalidate TLB which could have previously
+    valid but not stale entry
 
-Chintan Pandya (3):
-  ioremap: Update pgtable free interfaces with addr
-  arm64: Implement page table free interfaces
-  Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+---
+ arch/arm64/mm/mmu.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
->From V2->V3:
- - Use the exisiting page table free interface to do arm64
-   specific things
-
->From V1->V2:
- - Rebased my patches on top of "[PATCH v2 1/2] mm/vmalloc:
-   Add interfaces to free unmapped page table"
- - Honored BBM for ARM64
-
- arch/arm64/mm/mmu.c           | 40 ++++++++++++++++++++++++++++------------
- arch/x86/mm/pgtable.c         |  4 ++--
- include/asm-generic/pgtable.h |  8 ++++----
- lib/ioremap.c                 |  4 ++--
- 4 files changed, 36 insertions(+), 20 deletions(-)
-
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index da98828..c70f139 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -45,6 +45,7 @@
+ #include <asm/memblock.h>
+ #include <asm/mmu_context.h>
+ #include <asm/ptdump.h>
++#include <asm/tlbflush.h>
+ 
+ #define NO_BLOCK_MAPPINGS	BIT(0)
+ #define NO_CONT_MAPPINGS	BIT(1)
+@@ -975,10 +976,35 @@ int pmd_clear_huge(pmd_t *pmdp)
+ 
+ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+-	return pud_none(*pud);
++	pmd_t *pmd;
++	int i;
++
++	pmd = __va(pud_val(*pud));
++	if (pud_val(*pud)) {
++		for (i = 0; i < PTRS_PER_PMD; i++)
++			pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE));
++
++		free_page((unsigned long) pmd);
++		pud_clear(pud);
++		flush_tlb_kernel_range(addr, addr + PUD_SIZE);
++	}
++	return 1;
+ }
+ 
+ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+-	return pmd_none(*pmd);
++	if (pmd_val(*pmd)) {
++		free_page((unsigned long)__va(pmd_val(*pmd)));
++
++		pmd_clear(pmd);
++		/*
++		 * FIXME: __flush_tlb_pgtable(&init_mm, addr) is
++		 *        ideal candidate here, which exactly
++		 *        flushes intermediate pgtables. But,
++		 *        this is broken (evident from tests).
++		 *        So, use safe TLB op unless that is fixed.
++		 */
++		flush_tlb_kernel_range(addr, addr + PMD_SIZE);
++	}
++	return 1;
+ }
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation
 Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
