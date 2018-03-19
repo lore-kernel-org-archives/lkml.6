@@ -1,62 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932984AbeCSLcl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 07:32:41 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55968 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755299AbeCSLch (ORCPT
+        id S933349AbeCSLc7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 07:32:59 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53903 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933042AbeCSLco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 07:32:37 -0400
-X-Google-Smtp-Source: AG47ELsnfyUhRrVA5H+XyNZMtfjBlKJIgw5IHFC8nFErHCrNdBHm9ml/IykDwaGw1GwpbRkvVLGcbA==
+        Mon, 19 Mar 2018 07:32:44 -0400
+X-Google-Smtp-Source: AG47ELtLixVMppEqlwICOvPFMZQlaYnYOUpB3ea0RDdARGpwZ32II8UR6ousm2r6cbagpRf7Y6rBNA==
 From: Paul McQuade <paulmcquad@gmail.com>
 To: paulmcquad@gmail.com
 Cc: marcel@holtmann.org, johan.hedberg@gmail.com,
         linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] Bluetooth: trailing whitespace
-Date: Mon, 19 Mar 2018 11:32:19 +0000
-Message-Id: <20180319113222.6725-1-paulmcquad@gmail.com>
+Subject: [PATCH 4/4] Bluetooth: space required
+Date: Mon, 19 Mar 2018 11:32:22 +0000
+Message-Id: <20180319113222.6725-4-paulmcquad@gmail.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180319113222.6725-1-paulmcquad@gmail.com>
+References: <20180319113222.6725-1-paulmcquad@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed whitespace
+space required before the open parenthesis '('
 
 Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
 ---
- drivers/bluetooth/bfusb.c     | 2 +-
- drivers/bluetooth/btuart_cs.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/bluetooth/hci_serdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index ab090a313a5f..0d5b403fe431 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -148,7 +148,7 @@ static int bfusb_send_bulk(struct bfusb_data *data, struct sk_buff *skb)
+diff --git a/drivers/bluetooth/hci_serdev.c b/drivers/bluetooth/hci_serdev.c
+index e0e6461b9200..ec4b6b2bbf9a 100644
+--- a/drivers/bluetooth/hci_serdev.c
++++ b/drivers/bluetooth/hci_serdev.c
+@@ -94,7 +94,7 @@ static void hci_uart_write_work(struct work_struct *work)
+ 			hci_uart_tx_complete(hu, hci_skb_pkt_type(skb));
+ 			kfree_skb(skb);
+ 		}
+-	} while(test_bit(HCI_UART_TX_WAKEUP, &hu->tx_state));
++	} while (test_bit(HCI_UART_TX_WAKEUP, &hu->tx_state));
  
- 	err = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (err) {
--		BT_ERR("%s bulk tx submit failed urb %p err %d", 
-+		BT_ERR("%s bulk tx submit failed urb %p err %d",
- 					data->hdev->name, urb, err);
- 		skb_unlink(skb, &data->pending_q);
- 		usb_free_urb(urb);
-diff --git a/drivers/bluetooth/btuart_cs.c b/drivers/bluetooth/btuart_cs.c
-index 310e9c2e09b6..8dce5bfad947 100644
---- a/drivers/bluetooth/btuart_cs.c
-+++ b/drivers/bluetooth/btuart_cs.c
-@@ -365,10 +365,10 @@ static void btuart_change_speed(struct btuart_info *info,
- 
- 	fcr = UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT;
- 
--	/* 
-+	/*
- 	 * Use trigger level 1 to avoid 3 ms. timeout delay at 9600 bps, and
- 	 * almost 1,7 ms at 19200 bps. At speeds above that we can just forget
--	 * about this timeout since it will always be fast enough. 
-+	 * about this timeout since it will always be fast enough.
- 	 */
- 
- 	if (speed < 38400)
+ 	clear_bit(HCI_UART_SENDING, &hu->tx_state);
+ }
 -- 
 2.16.2
