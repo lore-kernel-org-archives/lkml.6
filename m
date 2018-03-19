@@ -1,71 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeCSNNq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:13:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58870 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932793AbeCSNNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:13:45 -0400
-Date: Mon, 19 Mar 2018 14:13:43 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Stefan Chulski <stefanc@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
- interface to use in-band negotiation
-Message-ID: <20180319131343.GK4519@kwain>
-References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
- <20180316103351.16616-3-antoine.tenart@bootlin.com>
- <20180316155307.GQ9418@n2100.armlinux.org.uk>
- <20180319085252.GF4519@kwain>
- <20180319111205.GB2743@n2100.armlinux.org.uk>
- <20180319125227.GI4519@kwain>
- <20180319125953.GD19795@lunn.ch>
- <54e290a192734831b5db22191f056a81@IL-EXCH01.marvell.com>
- <20180319130823.GA22306@lunn.ch>
+        id S933071AbeCSNQo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:16:44 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60182 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932889AbeCSNQm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 09:16:42 -0400
+Date: Mon, 19 Mar 2018 14:16:37 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Guo Ren <ren_guo@c-sky.com>
+cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 06/19] csky: IRQ handling
+In-Reply-To: <28baa2d92e5c3145afdff68ca784075afbb64d88.1521399976.git.ren_guo@c-sky.com>
+Message-ID: <alpine.DEB.2.21.1803191413300.2010@nanos.tec.linutronix.de>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <28baa2d92e5c3145afdff68ca784075afbb64d88.1521399976.git.ren_guo@c-sky.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180319130823.GA22306@lunn.ch>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 02:08:23PM +0100, Andrew Lunn wrote:
-> > > If they don't have PHYs, how are the connected to the outside world?
-> > 
-> > By external SFP or direct attached cable.
+
+
+On Mon, 19 Mar 2018, Guo Ren wrote:
+
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  arch/csky/include/asm/irq.h      | 12 +++++++++
+>  arch/csky/include/asm/irqflags.h | 55 ++++++++++++++++++++++++++++++++++++++++
+>  arch/csky/kernel/irq.c           | 41 ++++++++++++++++++++++++++++++
+>  3 files changed, 108 insertions(+)
+>  create mode 100644 arch/csky/include/asm/irq.h
+>  create mode 100644 arch/csky/include/asm/irqflags.h
+>  create mode 100644 arch/csky/kernel/irq.c
 > 
-> Maybe i'm missing something, but don't you just need to add an SFP
-> device in the device tree. The SFP code and PHYLINK will work
-> together, query what the SFP module is, use the GPIOs to determine
-> link up/down and module present, and tell the MAC how to configure the
-> MAC-SFP link?
+> diff --git a/arch/csky/include/asm/irq.h b/arch/csky/include/asm/irq.h
+> new file mode 100644
+> index 0000000..f68e868
+> --- /dev/null
+> +++ b/arch/csky/include/asm/irq.h
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +#ifndef __ASM_CSKY_IRQ_H
+> +#define __ASM_CSKY_IRQ_H
+> +
+> +#define NR_IRQS CONFIG_CSKY_NR_IRQS
+> +
+> +#include <asm-generic/irq.h>
+> +
+> +extern unsigned int (*csky_get_auto_irqno) (void);
+> +
+> +#endif /* __ASM_CSKY_IRQ_H */
+> diff --git a/arch/csky/include/asm/irqflags.h b/arch/csky/include/asm/irqflags.h
+> +static inline unsigned long arch_local_irq_save(void)
+> +{
+> +	unsigned long flags;
 
-This would definitively work for SFP connectors with a PHY, but would
-that work when using direct attached cable? As in the second case
-phylink wouldn't be able to ask the SFP PHY for the link state.
+Newline between declaration and code please.
 
-Antoine
+> +	asm volatile(
+> +		"mfcr	%0, psr	\n"
+> +		"psrclr	ie	\n"
+> +		:"=r"(flags));
 
--- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +++ b/arch/csky/kernel/irq.c
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip.h>
+> +
+> +unsigned int (*csky_get_auto_irqno) (void) = NULL;
+> +
+> +void csky_do_IRQ(int irq, struct pt_regs *regs)
+
+static? If not, then it needs a declaration in a header somewhere.
+
+> +{
+> +	struct pt_regs *old_regs = set_irq_regs(regs);
+> +
+> +	irq_enter();
+> +	generic_handle_irq(irq);
+> +	irq_exit();
+> +
+> +	set_irq_regs(old_regs);
+> +}
+> +
+> +asmlinkage void csky_do_auto_IRQ(struct pt_regs *regs)
+> +{
+> +	unsigned long irq, psr;
+> +
+> +	asm volatile("mfcr %0, psr":"=r"(psr));
+> +
+> +	irq = (psr >> 16) & 0xff;
+> +
+> +	if (irq == 10)
+> +		irq = csky_get_auto_irqno();
+> +	else
+> +		irq -= 32;
+
+Please add a comment explaining this magic here. Magic numbers w/o
+explanation are bad.
