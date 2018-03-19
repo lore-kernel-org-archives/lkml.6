@@ -1,47 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754947AbeCSAxT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 20:53:19 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37889 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754723AbeCSAwo (ORCPT
+        id S1754868AbeCSA5D (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 20:57:03 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:57272 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754258AbeCSA5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 20:52:44 -0400
-X-Google-Smtp-Source: AG47ELuj4+d6r/+keThSNAmQVYu3/hEQzOr/8g44tlpTGODjrq9byrvnoE2cjsGJB7XBvSUeFwXzJg==
-From: Paul McQuade <paulmcquad@gmail.com>
-To: paulmcquad@gmail.com
-Cc: daniel.vetter@intel.com, gustavo@padovan.org, seanpaul@chromium.org,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] GPU: drm: Fixed Spacing issue
-Date: Mon, 19 Mar 2018 00:52:23 +0000
-Message-Id: <20180319005225.1545-2-paulmcquad@gmail.com>
+        Sun, 18 Mar 2018 20:57:00 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com
+Cc: pasha.tatashin@oracle.com, ard.biesheuvel@linaro.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] mm/memblock: cast constant ULLONG_MAX to phys_addr_t
+Date: Mon, 19 Mar 2018 01:56:45 +0100
+Message-Id: <20180319005645.29051-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180319005225.1545-1-paulmcquad@gmail.com>
-References: <20180319005225.1545-1-paulmcquad@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"foo ** bar" should be "foo **bar"
+This fixes a warning shown when phys_addr_t is 32-bit int
+when compiling with clang:
+  mm/memblock.c:927:15: warning: implicit conversion from 'unsigned long long'
+        to 'phys_addr_t' (aka 'unsigned int') changes value from
+        18446744073709551615 to 4294967295 [-Wconstant-conversion]
+                                  r->base : ULLONG_MAX;
+                                            ^~~~~~~~~~
+  ./include/linux/kernel.h:30:21: note: expanded from macro 'ULLONG_MAX'
+  #define ULLONG_MAX      (~0ULL)
+                           ^~~~~
 
-Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/gpu/drm/drm_bufs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memblock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 83b3d0801262..9af9efd84ee7 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -132,7 +132,7 @@ static int drm_map_handle(struct drm_device *dev, struct drm_hash_item *hash,
- static int drm_addmap_core(struct drm_device *dev, resource_size_t offset,
- 			   unsigned int size, enum drm_map_type type,
- 			   enum drm_map_flags flags,
--			   struct drm_map_list ** maplist)
-+			   struct drm_map_list **maplist)
- {
- 	struct drm_local_map *map;
- 	struct drm_map_list *list;
+diff --git a/mm/memblock.c b/mm/memblock.c
+index b6ba6b7adadc..696829a198ba 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -924,7 +924,7 @@ void __init_memblock __next_mem_range(u64 *idx, int nid, ulong flags,
+ 			r = &type_b->regions[idx_b];
+ 			r_start = idx_b ? r[-1].base + r[-1].size : 0;
+ 			r_end = idx_b < type_b->cnt ?
+-				r->base : ULLONG_MAX;
++				r->base : (phys_addr_t)ULLONG_MAX;
+ 
+ 			/*
+ 			 * if idx_b advanced past idx_a,
+@@ -1040,7 +1040,7 @@ void __init_memblock __next_mem_range_rev(u64 *idx, int nid, ulong flags,
+ 			r = &type_b->regions[idx_b];
+ 			r_start = idx_b ? r[-1].base + r[-1].size : 0;
+ 			r_end = idx_b < type_b->cnt ?
+-				r->base : ULLONG_MAX;
++				r->base : (phys_addr_t)ULLONG_MAX;
+ 			/*
+ 			 * if idx_b advanced past idx_a,
+ 			 * break out to advance idx_a
 -- 
 2.16.2
