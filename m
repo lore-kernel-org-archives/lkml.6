@@ -1,90 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936108AbeCSVKR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:10:17 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38052 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935270AbeCSVKI (ORCPT
+        id S969147AbeCSVLe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:11:34 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:39370 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968048AbeCSVLU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:10:08 -0400
-X-Google-Smtp-Source: AG47ELufeSacbSjNhNewdvpsksECT2WvkHkQPpn/l2npcNESO43s9i0u0wf0YHLmlFRb/hhrZq/YXA==
-Date: Mon, 19 Mar 2018 14:10:05 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch] mm, thp: do not cause memcg oom for thp
-Message-ID: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 19 Mar 2018 17:11:20 -0400
+X-Google-Smtp-Source: AIpwx4/xEN8+I7U5LOA57UNUDG0YjLycmw6/wcHu8b2TYF3vlt3rIwIpcFScrSToQwAV8HHiA8CAZJOsxxs1ZtdFulA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Mon, 19 Mar 2018 14:11:18 -0700
+Message-ID: <CAMe9rOoa81MC=oFW3coLuxha0pp6qdZowYR_o_my=n7ZXjVu=g@mail.gmail.com>
+Subject: [PATCH] x86: Don't build vDSO with $(RETPOLINE_CFLAGS) -DRETPOLINE
+To: LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: multipart/mixed; boundary="00000000000034b08f0567ca6697"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-madvised allocations") changed the page allocator to no longer detect thp
-allocations based on __GFP_NORETRY.
+--00000000000034b08f0567ca6697
+Content-Type: text/plain; charset="UTF-8"
 
-It did not, however, modify the mem cgroup try_charge() path to avoid oom
-kill for either khugepaged collapsing or thp faulting.  It is never
-expected to oom kill a process to allocate a hugepage for thp; reclaim is
-governed by the thp defrag mode and MADV_HUGEPAGE, but allocations (and
-charging) should fallback instead of oom killing processes.
+vDSO code runs in userspace.  Don't compile it with retpoline.
 
-Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- mm/huge_memory.c | 5 +++--
- mm/khugepaged.c  | 8 ++++++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,7 +555,8 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
- 
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
- 
--	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
-+	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
-+				  true)) {
- 		put_page(page);
- 		count_vm_event(THP_FAULT_FALLBACK);
- 		return VM_FAULT_FALLBACK;
-@@ -1316,7 +1317,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	}
- 
- 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
--					huge_gfp, &memcg, true))) {
-+				huge_gfp | __GFP_NORETRY, &memcg, true))) {
- 		put_page(new_page);
- 		split_huge_pmd(vma, vmf->pmd, vmf->address);
- 		if (page)
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -960,7 +960,9 @@ static void collapse_huge_page(struct mm_struct *mm,
- 		goto out_nolock;
- 	}
- 
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
-+	/* Do not oom kill for khugepaged charges */
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
-+					   &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out_nolock;
- 	}
-@@ -1319,7 +1321,9 @@ static void collapse_shmem(struct mm_struct *mm,
- 		goto out;
- 	}
- 
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
-+	/* Do not oom kill for khugepaged charges */
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
-+					   &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out;
- 	}
+
+-- 
+H.J.
+
+--00000000000034b08f0567ca6697
+Content-Type: text/x-patch; charset="US-ASCII";
+	name="0001-x86-Don-t-build-vDSO-with-RETPOLINE_CFLAGS-DRETPOLIN.patch"
+Content-Disposition: attachment;
+	filename="0001-x86-Don-t-build-vDSO-with-RETPOLINE_CFLAGS-DRETPOLIN.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jeyq5ka20
+
+RnJvbSA3MTE5MjY0MDllNDI4NjJkZTA4NjMzZWMwNTc4OTIxOTVmZGNlNGUwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiAiSC5KLiBMdSIgPGhqbC50b29sc0BnbWFpbC5jb20+CkRhdGU6
+IEZyaSwgMTYgTWFyIDIwMTggMTQ6NTg6MjkgLTA3MDAKU3ViamVjdDogW1BBVENIXSB4ODY6IERv
+bid0IGJ1aWxkIHZEU08gd2l0aCAkKFJFVFBPTElORV9DRkxBR1MpIC1EUkVUUE9MSU5FCgp2RFNP
+IGNvZGUgcnVucyBpbiB1c2Vyc3BhY2UuICBEb24ndCBjb21waWxlIGl0IHdpdGggcmV0cG9saW5l
+LgoKU2lnbmVkLW9mZi1ieTogSC5KLiBMdSA8aGpsLnRvb2xzQGdtYWlsLmNvbT4KLS0tCiBhcmNo
+L3g4Ni9lbnRyeS92ZHNvL01ha2VmaWxlIHwgMyArKy0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
+dGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9lbnRyeS92ZHNv
+L01ha2VmaWxlIGIvYXJjaC94ODYvZW50cnkvdmRzby9NYWtlZmlsZQppbmRleCAxYjhlMDQxZDQ5
+NzkuLmVlYmNjM2JlZGJmMCAxMDA2NDQKLS0tIGEvYXJjaC94ODYvZW50cnkvdmRzby9NYWtlZmls
+ZQorKysgYi9hcmNoL3g4Ni9lbnRyeS92ZHNvL01ha2VmaWxlCkBAIC03Niw3ICs3Niw3IEBAIENG
+TCA6PSAkKFBST0ZJTElORykgLW1jbW9kZWw9c21hbGwgLWZQSUMgLU8yIC1mYXN5bmNocm9ub3Vz
+LXVud2luZC10YWJsZXMgLW02NCBcCiAgICAgICAgLWZuby1vbWl0LWZyYW1lLXBvaW50ZXIgLWZv
+cHRpbWl6ZS1zaWJsaW5nLWNhbGxzIFwKICAgICAgICAtRERJU0FCTEVfQlJBTkNIX1BST0ZJTElO
+RyAtREJVSUxEX1ZEU08KIAotJCh2b2Jqcyk6IEtCVUlMRF9DRkxBR1MgOj0gJChmaWx0ZXItb3V0
+ICQoR0NDX1BMVUdJTlNfQ0ZMQUdTKSwkKEtCVUlMRF9DRkxBR1MpKSAkKENGTCkKKyQodm9ianMp
+OiBLQlVJTERfQ0ZMQUdTIDo9ICQoZmlsdGVyLW91dCAkKEdDQ19QTFVHSU5TX0NGTEFHUykgJChS
+RVRQT0xJTkVfQ0ZMQUdTKSAtRFJFVFBPTElORSwkKEtCVUlMRF9DRkxBR1MpKSAkKENGTCkKIAog
+IwogIyB2RFNPIGNvZGUgcnVucyBpbiB1c2Vyc3BhY2UgYW5kIC1wZyBkb2Vzbid0IGhlbHAgd2l0
+aCBwcm9maWxpbmcgYW55d2F5LgpAQCAtMTc3LDYgKzE3Nyw3IEBAIEtCVUlMRF9DRkxBR1NfMzIg
+Oj0gJChmaWx0ZXItb3V0IC1tY21vZGVsPWtlcm5lbCwkKEtCVUlMRF9DRkxBR1NfMzIpKQogS0JV
+SUxEX0NGTEFHU18zMiA6PSAkKGZpbHRlci1vdXQgLWZuby1waWMsJChLQlVJTERfQ0ZMQUdTXzMy
+KSkKIEtCVUlMRF9DRkxBR1NfMzIgOj0gJChmaWx0ZXItb3V0IC1tZmVudHJ5LCQoS0JVSUxEX0NG
+TEFHU18zMikpCiBLQlVJTERfQ0ZMQUdTXzMyIDo9ICQoZmlsdGVyLW91dCAkKEdDQ19QTFVHSU5T
+X0NGTEFHUyksJChLQlVJTERfQ0ZMQUdTXzMyKSkKK0tCVUlMRF9DRkxBR1NfMzIgOj0gJChmaWx0
+ZXItb3V0ICQoUkVUUE9MSU5FX0NGTEFHUykgLURSRVRQT0xJTkUsJChLQlVJTERfQ0ZMQUdTXzMy
+KSkKIEtCVUlMRF9DRkxBR1NfMzIgKz0gLW0zMiAtbXNvZnQtZmxvYXQgLW1yZWdwYXJtPTAgLWZw
+aWMKIEtCVUlMRF9DRkxBR1NfMzIgKz0gJChjYWxsIGNjLW9wdGlvbiwgLWZuby1zdGFjay1wcm90
+ZWN0b3IpCiBLQlVJTERfQ0ZMQUdTXzMyICs9ICQoY2FsbCBjYy1vcHRpb24sIC1mb3B0aW1pemUt
+c2libGluZy1jYWxscykKLS0gCjIuMTQuMwoK
+--00000000000034b08f0567ca6697--
