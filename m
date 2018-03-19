@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsdcL61GCtOEl183pT/4UfVuYyxZ1ny+rs7/3nVlOwfnYGYmQLHKcdD8NAGWcz2qdARNpcx
-ARC-Seal: i=1; a=rsa-sha256; t=1521484303; cv=none;
+X-Google-Smtp-Source: AG47ELsiG87ztlD9vmCMU0gat8s5J4PkTAgGyFCf1AmQW4il1w6ohVsb+khac5x+V5f9/k6hn5xZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521484300; cv=none;
         d=google.com; s=arc-20160816;
-        b=fwry5zK5jia8eLMAQUxNUgdjHqNpFCoRUJiTIEUkZSgMm7uGKnkrMn41QRwJgLEzsw
-         Im2LCmGs3gtTNkfhGpZKhqnR1QRRDGS8gbiGEa5m0Cn6tKwsN/+vjjMJ9H2WNleR1MgD
-         yLzwYKUQ131Hi7fuHylv1JGcg8l8gsZ2P31AQ91FxOc/g9Tte0cqC7SGPP/1GVgsfmQU
-         6LmEIgGzTGcQEanQrXuXwmuSxanNZG+zaedPHRUlpbEBQFvxwHJ57FN3N2CJCyWxKX1I
-         /RpF7kxatafKW7sAxHlREbwuhHv4sSEr7ldyZYm8yLyyzkoeSkr1/6tuuPcq2iThz4Z4
-         iGBg==
+        b=glQXKlsI2CPQHc2hXSYyLEX4PQ0UYyqHKlM41ZfXF7sCo81N6m3zm683jXcc+bThK9
+         iS2F0uHMA1JldUpx+Jnz4B87oPqu9jxrjWdQaVmuMu1HpCbb1VXEIoLQs9d6mkLWGRoS
+         CYNpTWRiknSq7C0tAsu+eXdMGBcIBeyjdCwOitGmgYqousC2QFJvsFcPpwMf5y9RsnmX
+         VM3AMWDodgaFVbrXMZbpPbGdz6yzV+dA6NKELxws0ZeQ18Vn4TEWI8eLBcdV/tNfsats
+         sLTv/5RR+bn5qKK7hyB0MNbV7X06+a7EzenqHwf/BzYRLI/uEUCImHNYmbVn+RtPKRh4
+         bq/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hx2s4sGnaZK5ycDYhmLeFKqNrS8o1TtFBDG3/x1hjhk=;
-        b=HtqgnCjJyn9+gpjApsZWN4D4vNx2ljiTEWYYFcrWSkbgJqwDIiWmYYXIwhqN7tEaJd
-         HLtR6/YRhHh65qJ70Ajx2eYpb/DzRvdQ1/YsljxmhBrEulByiw+Kp6QW1u5V4faQEAek
-         fQ+iqnMxW9LhYvSPrObtTsoMj8+Qv0RPo/6ojb6taqYeQYexUFrwfCXwfrcVr3+kax8K
-         VMrGhJvZfP8Meh3s1Sdt7ZpQQe3zHcAAUPi9PTHFdQmbWvQlJ3ikzBZJ47yBgwRFJarI
-         a0j7XuZYqJ2O1PMXcpjet1kqPsB5ZOMYvGQF9g3gXfuiz9eIBpVNBvb/j49eyH3J2oyv
-         LN+g==
+        bh=3j4WS6zk7WLaJwHdmEzqJc5j8jMUkYuqiHq9p2A/cVg=;
+        b=SUc/4TTkp6rQZ13Uo+1NjX7tckOSeokdfB5v5zka+Ti9NbtknUM/2r5VZ1ZuXol3aP
+         H3hRdatNSMgU1aPTB2MB5+wUtj45e7/0M3nsJeuFBufuDXwuTvSz8fYpQdoC+0g1EAhR
+         Z9qBR2CkWdhSaCSJWV9qrx2FiV+/NvcNn+Y/cl0iul3pQ6g5ziAKs0uAABQhYWv9z7Oo
+         U2prh8Vnng1Bt9ltCMZRyaRuuET4FI6r41T1AqPELFcG5n6F+mJcxiJwTsRKkSad9ytq
+         afdRBUVmpMJlxlqU8ipEdFGcy2bkTPkdj0bQOctJTGlOflBvwaN7i+rKu4gYyWB9RFFy
+         VeNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Christoffer Dall <cdall@kernel.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.15 21/52] KVM: arm/arm64: Reduce verbosity of KVM init log
-Date: Mon, 19 Mar 2018 19:08:19 +0100
-Message-Id: <20180319180736.298970050@linuxfoundation.org>
+	Al Viro <viro@ZenIV.linux.org.uk>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.15 20/52] fs: Teach path_connected to handle nfs filesystems with multiple roots.
+Date: Mon, 19 Mar 2018 19:08:18 +0100
+Message-Id: <20180319180736.253807141@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391829188994151?=
-X-GMAIL-MSGID: =?utf-8?q?1595391925415573514?=
+X-GMAIL-THRID: =?utf-8?q?1595391007817216634?=
+X-GMAIL-MSGID: =?utf-8?q?1595391922223327913?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,77 +50,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 76600428c3677659e3c3633bb4f2ea302220a275 upstream.
+commit 95dd77580ccd66a0da96e6d4696945b8cea39431 upstream.
 
-On my GICv3 system, the following is printed to the kernel log at boot:
+On nfsv2 and nfsv3 the nfs server can export subsets of the same
+filesystem and report the same filesystem identifier, so that the nfs
+client can know they are the same filesystem.  The subsets can be from
+disjoint directory trees.  The nfsv2 and nfsv3 filesystems provides no
+way to find the common root of all directory trees exported form the
+server with the same filesystem identifier.
 
-   kvm [1]: 8-bit VMID
-   kvm [1]: IDMAP page: d20e35000
-   kvm [1]: HYP VA range: 800000000000:ffffffffffff
-   kvm [1]: vgic-v2@2c020000
-   kvm [1]: GIC system register CPU interface enabled
-   kvm [1]: vgic interrupt IRQ1
-   kvm [1]: virtual timer IRQ4
-   kvm [1]: Hyp mode initialized successfully
+The practical result is that in struct super s_root for nfs s_root is
+not necessarily the root of the filesystem.  The nfs mount code sets
+s_root to the root of the first subset of the nfs filesystem that the
+kernel mounts.
 
-The KVM IDMAP is a mapping of a statically allocated kernel structure,
-and so printing its physical address leaks the physical placement of
-the kernel when physical KASLR in effect. So change the kvm_info() to
-kvm_debug() to remove it from the log output.
+This effects the dcache invalidation code in generic_shutdown_super
+currently called shrunk_dcache_for_umount and that code for years
+has gone through an additional list of dentries that might be dentry
+trees that need to be freed to accomodate nfs.
 
-While at it, trim the output a bit more: IRQ numbers can be found in
-/proc/interrupts, and the HYP VA and vgic-v2 lines are not highly
-informational either.
+When I wrote path_connected I did not realize nfs was so special, and
+it's hueristic for avoiding calling is_subdir can fail.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Christoffer Dall <cdall@kernel.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+The practical case where this fails is when there is a move of a
+directory from the subtree exposed by one nfs mount to the subtree
+exposed by another nfs mount.  This move can happen either locally or
+remotely.  With the remote case requiring that the move directory be cached
+before the move and that after the move someone walks the path
+to where the move directory now exists and in so doing causes the
+already cached directory to be moved in the dcache through the magic
+of d_splice_alias.
+
+If someone whose working directory is in the move directory or a
+subdirectory and now starts calling .. from the initial mount of nfs
+(where s_root == mnt_root), then path_connected as a heuristic will
+not bother with the is_subdir check.  As s_root really is not the root
+of the nfs filesystem this heuristic is wrong, and the path may
+actually not be connected and path_connected can fail.
+
+The is_subdir function might be cheap enough that we can call it
+unconditionally.  Verifying that will take some benchmarking and
+the result may not be the same on all kernels this fix needs
+to be backported to.  So I am avoiding that for now.
+
+Filesystems with snapshots such as nilfs and btrfs do something
+similar.  But as the directory tree of the snapshots are disjoint
+from one another and from the main directory tree rename won't move
+things between them and this problem will not occur.
+
+Cc: stable@vger.kernel.org
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Fixes: 397d425dc26d ("vfs: Test for and handle paths that are unreachable from their mnt_root")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/arch_timer.c   |    2 +-
- virt/kvm/arm/mmu.c          |    6 +++---
- virt/kvm/arm/vgic/vgic-v2.c |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/namei.c         |    5 +++--
+ fs/nfs/super.c     |    2 ++
+ include/linux/fs.h |    1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -773,7 +773,7 @@ int kvm_timer_hyp_init(bool has_gic)
- 		}
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -578,9 +578,10 @@ static int __nd_alloc_stack(struct namei
+ static bool path_connected(const struct path *path)
+ {
+ 	struct vfsmount *mnt = path->mnt;
++	struct super_block *sb = mnt->mnt_sb;
+ 
+-	/* Only bind mounts can have disconnected paths */
+-	if (mnt->mnt_root == mnt->mnt_sb->s_root)
++	/* Bind mounts and multi-root filesystems can have disconnected paths */
++	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
+ 		return true;
+ 
+ 	return is_subdir(path->dentry, mnt->mnt_root);
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2631,6 +2631,8 @@ struct dentry *nfs_fs_mount_common(struc
+ 		/* initial superblock/root creation */
+ 		mount_info->fill_super(s, mount_info);
+ 		nfs_get_cache_cookie(s, mount_info->parsed, mount_info->cloned);
++		if (!(server->flags & NFS_MOUNT_UNSHARED))
++			s->s_iflags |= SB_I_MULTIROOT;
  	}
  
--	kvm_info("virtual timer IRQ%d\n", host_vtimer_irq);
-+	kvm_debug("virtual timer IRQ%d\n", host_vtimer_irq);
+ 	mntroot = nfs_get_root(s, mount_info->mntfh, dev_name);
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1312,6 +1312,7 @@ extern int send_sigurg(struct fown_struc
+ #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
+ #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
+ #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
++#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
  
- 	cpuhp_setup_state(CPUHP_AP_KVM_ARM_TIMER_STARTING,
- 			  "kvm/arm/timer:starting", kvm_timer_starting_cpu,
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1760,9 +1760,9 @@ int kvm_mmu_init(void)
- 	 */
- 	BUG_ON((hyp_idmap_start ^ (hyp_idmap_end - 1)) & PAGE_MASK);
- 
--	kvm_info("IDMAP page: %lx\n", hyp_idmap_start);
--	kvm_info("HYP VA range: %lx:%lx\n",
--		 kern_hyp_va(PAGE_OFFSET), kern_hyp_va(~0UL));
-+	kvm_debug("IDMAP page: %lx\n", hyp_idmap_start);
-+	kvm_debug("HYP VA range: %lx:%lx\n",
-+		  kern_hyp_va(PAGE_OFFSET), kern_hyp_va(~0UL));
- 
- 	if (hyp_idmap_start >= kern_hyp_va(PAGE_OFFSET) &&
- 	    hyp_idmap_start <  kern_hyp_va(~0UL) &&
---- a/virt/kvm/arm/vgic/vgic-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-v2.c
-@@ -381,7 +381,7 @@ int vgic_v2_probe(const struct gic_kvm_i
- 	kvm_vgic_global_state.type = VGIC_V2;
- 	kvm_vgic_global_state.max_gic_vcpus = VGIC_V2_MAX_CPUS;
- 
--	kvm_info("vgic-v2@%llx\n", info->vctrl.start);
-+	kvm_debug("vgic-v2@%llx\n", info->vctrl.start);
- 
- 	return 0;
- out:
+ /* sb->s_iflags to limit user namespace mounts */
+ #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
