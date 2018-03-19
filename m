@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvRYyHnV2sjdKh19UDeOTpBZQZycFgbV8ZXTV0+rF2ZEaoK3SjorXnROqfKAdmWUPLNNFXj
-ARC-Seal: i=1; a=rsa-sha256; t=1521483069; cv=none;
+X-Google-Smtp-Source: AG47ELtrBLBhPFylF33GyKFzPYCCqb+N+pQ1x7RdXzI1DNNomFLgeLO/AoyV7O92DSp+iI1apAeF
+ARC-Seal: i=1; a=rsa-sha256; t=1521483067; cv=none;
         d=google.com; s=arc-20160816;
-        b=WXSuEYdqflJMp38oB+wOsVjlJCa4oGydfJC0z24Sa/1UWbdPJwyseaJBydYR5nq1ex
-         Rm/JpCqpHrIgk0Ki6jSlaP9f+LdoenKNBe/fZTI5wbuOm3fTg78i0QBbsMZ7SPjBlOeS
-         6omzAWFsGO3LRKaFImAn9xmXN3MkDRpvfR54RiDg8Hf7M6dqMOrNhgpw5HR6RmvTo4Vc
-         UhkcV+X9i9iS/qDOro8BpDoXn+K6oKzNZgWStic+qVcnQfGHk6O2nMid6xy2zeWKF3S3
-         dHC4rlA7nmuqegoUsGR9xlI+arEccyUymOBpkj2VTECJdXwtgxNUNuLX7lexY3vYI5QQ
-         50mw==
+        b=rkk0FVf4oaAKpZ7O9GT/Z7wW7xlMCAue1kBJOGH0CniEyed12N1fmivceCTM4TQ76T
+         hmM1aKzNjlv/O6I/oHEYPr4vOSt0jGv8/0jufe6ccmpyUrFw1UzzNHNqJ2dxZoU2YJbD
+         dSJeX3rtdcSzGnFjNhAP56xjz/U6D8hFHQmjMpFCB3EIMOWW+5dtaQl8ujHjxiJQLLJ8
+         igNBpR9myhWJ4ifBWM8UwO1LgHcOr9GA2Ajhf5En0dQIMViUEvlD9bUhDch/gh6SbULL
+         +fiAwRXGayuXWlkfubxzYlpqh6bGDJK2ENaZNMzQSTwj/jQ+RkLYQPiW7yoMqmVZp5jy
+         3dig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F6V617vEwh7ek7Weslp6siCFc64bVhBu1/dXbdlY+Ns=;
-        b=r+pS0yHsNY27BcplDWsXJS0+vZLl4O3mykE1MqlzIpvToojpDeLVfc8n7AVXyBvqtq
-         okx+dLDCuJgtpJVpcI3yqdJ3xue8TAmWsj9hYubWgQ8doQpjkkGIjG9CrnugSQ1Zf+tS
-         AJyxOz9LUX0+/1mXOPvUA8QbnSqGn2uR9sfgxP2/SLnVMnxpiprSfy9E740mypzstBsP
-         1NfygRXLzTRy8Veo30hkk0eG+bRfEwsz3FtJMomfyLp+yDjNV4XqLwzpSusi+hl9SgfG
-         PXDP4vuwk0v7AlaIS7Drp2FPj9FyHPOyYR/9jTHLSgF/fsOgqLjtaY22RqnQtQy54muC
-         OOFA==
+        bh=Lm8v4JKFaP39l9nwZmRYveX2dCR3VX/K9KEmHUq4fxI=;
+        b=xh+yqPp7tEQw0XyRtNcKEcNcXixvd8KAcKaUBq2vfkw0PajPmBgQiJ+UBal2C5pH9D
+         cuDX0LHfV/wLifQHffcDmCEadvoi8+0Tur4erZeLEA1dByHy37CKmNZY0TIA1KLRazuw
+         P5SO5idAOZv4xdllu2BApiuqBs8pcXMEFR8+ySzo0PygonjclhKBNf0mDTY+d+pwDGLA
+         XOhDjWFlFXVVwdwr9OTq3Zx73SKF5qES2PQKOajaom5ei0UHhznlA47eVMG7R9h0FZua
+         aquatvoqLclVh8by1FCkh7JP513qGy1VhU7BRIk20KFP2S+GFvQzHKAEOhf9inr6z6y3
+         bwZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Luca Coelho <luciano.coelho@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Stephen Hemminger <sthemmin@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 56/68] mac80211: remove BUG() when interface type is invalid
-Date: Mon, 19 Mar 2018 19:06:34 +0100
-Message-Id: <20180319171835.729806847@linuxfoundation.org>
+Subject: [PATCH 3.18 55/68] veth: set peer GSO values
+Date: Mon, 19 Mar 2018 19:06:33 +0100
+Message-Id: <20180319171835.597351843@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390631204394300?=
-X-GMAIL-MSGID: =?utf-8?q?1595390631204394300?=
+X-GMAIL-THRID: =?utf-8?q?1595390628799057705?=
+X-GMAIL-MSGID: =?utf-8?q?1595390628799057705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
 
-[ Upstream commit c7976f5272486e4ff406014c4b43e2fa3b70b052 ]
+[ Upstream commit 72d24955b44a4039db54a1c252b5031969eeaac3 ]
 
-In the ieee80211_setup_sdata() we check if the interface type is valid
-and, if not, call BUG().  This should never happen, but if there is
-something wrong with the code, it will not be caught until the bug
-happens when an interface is being set up.  Calling BUG() is too
-extreme for this and a WARN_ON() would be better used instead.  Change
-that.
+When new veth is created, and GSO values have been configured
+on one device, clone those values to the peer.
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+For example:
+   # ip link add dev vm1 gso_max_size 65530 type veth peer name vm2
+
+This should create vm1 <--> vm2 with both having GSO maximum
+size set to 65530.
+
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/iface.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/veth.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -1379,7 +1379,7 @@ static void ieee80211_setup_sdata(struct
- 		break;
- 	case NL80211_IFTYPE_UNSPECIFIED:
- 	case NUM_NL80211_IFTYPES:
--		BUG();
-+		WARN_ON(1);
- 		break;
- 	}
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -382,6 +382,9 @@ static int veth_newlink(struct net *src_
+ 	if (ifmp && (dev->ifindex != 0))
+ 		peer->ifindex = ifmp->ifi_index;
  
++	peer->gso_max_size = dev->gso_max_size;
++	peer->gso_max_segs = dev->gso_max_segs;
++
+ 	err = register_netdevice(peer);
+ 	put_net(net);
+ 	net = NULL;
