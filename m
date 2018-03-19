@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsz7tytXz/ZCXJkHAM9JqGRxgqRPfgaqVZz+ag+mkYFJPuyVUY+vXtnu9nP2YooJ3/TxgRb
-ARC-Seal: i=1; a=rsa-sha256; t=1521483472; cv=none;
+X-Google-Smtp-Source: AG47ELv/40p7KJWJfdD+IymhVu6pqv958aIe5F4TGc6VkgFTwFyh1Bk+44ZL1dXEbIpm9IsVLB1y
+ARC-Seal: i=1; a=rsa-sha256; t=1521483469; cv=none;
         d=google.com; s=arc-20160816;
-        b=mGyYm6WmVcOge4dbnGrjU73dDUSd+aHbxXtM+a74wVh1Mi7ZvUShHW5kYgj6LEFZXa
-         ryB2gYjH+GGpWE7wVF0jcwoe0iTMQHzjaIilFYWyjt88W+gUm+nQsuMLGORS4Z8AeXxM
-         8mZcEVfdRRlhysFuBD/xjzLjcJWzds/M1XWPRPpOtRARhhr5cV8tJYChukyPXQ4+pQEO
-         2dd2W8mtfBQlwv0NTDoXw6lC0js0WFBJvEybs9CA1f83fMGt2HEky4gGbAmbnNTZlESu
-         RYFv689wDgshJ7sB0x6P2He7i9MSbaIdhvSs2l7LZrv7jWQ8lsbK3Am1FvzfaP2Rw0n0
-         5x5g==
+        b=nSQjy1WJbUaYcvziKFRC6nP5JHhiFzXs0ZMoT1y0J/1xZJz729atSo07P3zEw6jOF8
+         ZF7ef5MyxJ6welJHkjKTp7S6eARI3L8djkWNgP6nYj7mx8t8HnH19n8ZD7dDUNxn0Bs1
+         TPvOtiLt/NTYg9dVn45TbHULL9mGicsvnZ+j7TgmhkMCKl6DJ5Th9o/wwLH5UkOdwkoR
+         /2JRComAzcLxlXk82LoTOcDdV7lWUkk49oH0YFWjclBPM5vNoJuNsTViXVCnKS2cT+vF
+         FgKlUu2kanN3Z6qWCfhG2YcWFWX7mJTox6Xat/p92Og0Fif1cOjSI2Wf02FyO8zpVKaO
+         rwuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9nHWASNjxal146xv8zJydhEhcLE1YRgoGjmjlfZZC9I=;
-        b=HeMu+nFiSd40WzHr3UrYFYV5bDmWbZfWxy+oe9tmEVQKF8fxkuc6I3QXQ3UQffSgM7
-         rxP6YJ2afZ7lXdipu7e7RaB310OoizEzp9MZJOjFGsPAiUGSPFNHzAfLiHLE/knxI+DF
-         ee9WhZ2f4cg8QZz1NKYmO37ESzxyzbS1kS7O8TGUKY//Ru9YgRNz2eURiMy1qFIlQNGA
-         y6o53uKiuPjSOT+8o1eHAuNHdnCqJow2LOEroQsz3ej09Vh/CPm75NtpQFqGg5mlX2WJ
-         BclarbsZ8BdjSBlEuYNeDiPvi9g4RanNEbhV777XHecgdGyIf4KSBwNOJnJ1hUtqeeas
-         /Esw==
+        bh=p9PTJg15rKwByViyS5V/fJ5yfWARfKTuf9slm/lBFsw=;
+        b=nF5knu9cYohhZEczFbgUsfUEIiIXu+iS623EzqEy7jd9zcgfyyoLn4cRLZWwJPCBnH
+         wWSCSO7Bd3K4x2gV2+NdW85Gycg9aWfBUTvoL9ks2dlO6NyZb2ymCf3Rx501l+wBrkj5
+         AXeYijkfrnhbCGujs8prsqUaQo6qHquSLbfR7qDqu9QRQqdRsMFL8zDgcPT2ZW1rf82G
+         yolwL+xxd9VNicz4bEwhKSwF+JsfE9OnqLvvSmuAHL6C2lo5a9shxrugwOCYBgvYBvbb
+         KvrlGZq8QuuHGFbO+xgiH4f9mxcEHE7SZCpY0749VAdbma+CxKZsPcY37Kyrp1087BX0
+         IoHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -55,9 +55,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	ricardo.neri@intel.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 112/134] selftests/x86: Add tests for the STR and SLDT instructions
-Date: Mon, 19 Mar 2018 19:06:35 +0100
-Message-Id: <20180319171905.477378247@linuxfoundation.org>
+Subject: [PATCH 4.4 111/134] selftests/x86: Add tests for User-Mode Instruction Prevention
+Date: Mon, 19 Mar 2018 19:06:34 +0100
+Message-Id: <20180319171905.310966620@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -67,8 +67,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391053287071016?=
-X-GMAIL-MSGID: =?utf-8?q?1595391053287071016?=
+X-GMAIL-THRID: =?utf-8?q?1595391050324869540?=
+X-GMAIL-MSGID: =?utf-8?q?1595391050324869540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,21 +78,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 
-commit a9e017d5619eb371460c8e516f4684def62bef3a upstream.
+commit 9390afebe1d3f5a0be18b1afdd0ce09d67cebf9e upstream.
 
-The STR and SLDT instructions are not valid when running on virtual-8086
-mode and generate an invalid operand exception. These two instructions are
-protected by the Intel User-Mode Instruction Prevention (UMIP) security
-feature. In protected mode, if UMIP is enabled, these instructions generate
-a general protection fault if called from CPL > 0. Linux traps the general
-protection fault and emulates the instructions sgdt, sidt and smsw; but not
-str and sldt.
+Certain user space programs that run on virtual-8086 mode may utilize
+instructions protected by the User-Mode Instruction Prevention (UMIP)
+security feature present in new Intel processors: SGDT, SIDT and SMSW. In
+such a case, a general protection fault is issued if UMIP is enabled. When
+such a fault happens, the kernel traps it and emulates the results of
+these instructions with dummy values. The purpose of this new
+test is to verify whether the impacted instructions can be executed
+without causing such #GP. If no #GP exceptions occur, we expect to exit
+virtual-8086 mode from INT3.
 
-These tests are added to verify that the emulation code does not emulate
-these two instructions but the expected invalid operand exception is
-seen.
+The instructions protected by UMIP are executed in representative use
+cases:
 
-Tests fallback to exit with INT3 in case emulation does happen.
+ a) displacement-only memory addressing
+ b) register-indirect memory addressing
+ c) results stored directly in operands
+
+Unfortunately, it is not possible to check the results against a set of
+expected values because no emulation will occur in systems that do not
+have the UMIP feature. Instead, results are printed for verification. A
+simple verification is done to ensure that results of all tests are
+identical.
 
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
@@ -122,52 +131,114 @@ Cc: Shuah Khan <shuah@kernel.org>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: ricardo.neri@intel.com
-Link: http://lkml.kernel.org/r/1509935277-22138-13-git-send-email-ricardo.neri-calderon@linux.intel.com
+Link: http://lkml.kernel.org/r/1509935277-22138-12-git-send-email-ricardo.neri-calderon@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/entry_from_vm86.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/entry_from_vm86.c |   73 +++++++++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 1 deletion(-)
 
 --- a/tools/testing/selftests/x86/entry_from_vm86.c
 +++ b/tools/testing/selftests/x86/entry_from_vm86.c
-@@ -111,6 +111,11 @@ asm (
- 	"smsw %ax\n\t"
- 	"mov %ax, (2080)\n\t"
+@@ -95,6 +95,22 @@ asm (
  	"int3\n\t"
-+	"vmcode_umip_str:\n\t"
-+	"str %eax\n\t"
-+	"vmcode_umip_sldt:\n\t"
-+	"sldt %eax\n\t"
+ 	"vmcode_int80:\n\t"
+ 	"int $0x80\n\t"
++	"vmcode_umip:\n\t"
++	/* addressing via displacements */
++	"smsw (2052)\n\t"
++	"sidt (2054)\n\t"
++	"sgdt (2060)\n\t"
++	/* addressing via registers */
++	"mov $2066, %bx\n\t"
++	"smsw (%bx)\n\t"
++	"mov $2068, %bx\n\t"
++	"sidt (%bx)\n\t"
++	"mov $2074, %bx\n\t"
++	"sgdt (%bx)\n\t"
++	/* register operands, only for smsw */
++	"smsw %ax\n\t"
++	"mov %ax, (2080)\n\t"
 +	"int3\n\t"
  	".size vmcode, . - vmcode\n\t"
  	"end_vmcode:\n\t"
  	".code32\n\t"
-@@ -119,7 +124,8 @@ asm (
+@@ -103,7 +119,7 @@ asm (
  
  extern unsigned char vmcode[], end_vmcode[];
  extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
--	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[];
-+	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[],
-+	vmcode_umip_str[], vmcode_umip_sldt[];
+-	vmcode_sti[], vmcode_int3[], vmcode_int80[];
++	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[];
  
  /* Returns false if the test was skipped. */
  static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
-@@ -226,6 +232,16 @@ void do_umip_tests(struct vm86plus_struc
- 		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
- 	else
- 		printf("[PASS]\tAll the results from SIDT are identical.\n");
-+
-+	sethandler(SIGILL, sighandler, 0);
-+	do_test(vm86, vmcode_umip_str - vmcode, VM86_SIGNAL, 0,
-+		"STR instruction");
-+	clearhandler(SIGILL);
-+
-+	sethandler(SIGILL, sighandler, 0);
-+	do_test(vm86, vmcode_umip_sldt - vmcode, VM86_SIGNAL, 0,
-+		"SLDT instruction");
-+	clearhandler(SIGILL);
+@@ -160,6 +176,58 @@ static bool do_test(struct vm86plus_stru
+ 	return true;
  }
  
++void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
++{
++	struct table_desc {
++		unsigned short limit;
++		unsigned long base;
++	} __attribute__((packed));
++
++	/* Initialize variables with arbitrary values */
++	struct table_desc gdt1 = { .base = 0x3c3c3c3c, .limit = 0x9999 };
++	struct table_desc gdt2 = { .base = 0x1a1a1a1a, .limit = 0xaeae };
++	struct table_desc idt1 = { .base = 0x7b7b7b7b, .limit = 0xf1f1 };
++	struct table_desc idt2 = { .base = 0x89898989, .limit = 0x1313 };
++	unsigned short msw1 = 0x1414, msw2 = 0x2525, msw3 = 3737;
++
++	/* UMIP -- exit with INT3 unless kernel emulation did not trap #GP */
++	do_test(vm86, vmcode_umip - vmcode, VM86_TRAP, 3, "UMIP tests");
++
++	/* Results from displacement-only addressing */
++	msw1 = *(unsigned short *)(test_mem + 2052);
++	memcpy(&idt1, test_mem + 2054, sizeof(idt1));
++	memcpy(&gdt1, test_mem + 2060, sizeof(gdt1));
++
++	/* Results from register-indirect addressing */
++	msw2 = *(unsigned short *)(test_mem + 2066);
++	memcpy(&idt2, test_mem + 2068, sizeof(idt2));
++	memcpy(&gdt2, test_mem + 2074, sizeof(gdt2));
++
++	/* Results when using register operands */
++	msw3 = *(unsigned short *)(test_mem + 2080);
++
++	printf("[INFO]\tResult from SMSW:[0x%04x]\n", msw1);
++	printf("[INFO]\tResult from SIDT: limit[0x%04x]base[0x%08lx]\n",
++	       idt1.limit, idt1.base);
++	printf("[INFO]\tResult from SGDT: limit[0x%04x]base[0x%08lx]\n",
++	       gdt1.limit, gdt1.base);
++
++	if (msw1 != msw2 || msw1 != msw3)
++		printf("[FAIL]\tAll the results of SMSW should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SMSW are identical.\n");
++
++	if (memcmp(&gdt1, &gdt2, sizeof(gdt1)))
++		printf("[FAIL]\tAll the results of SGDT should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SGDT are identical.\n");
++
++	if (memcmp(&idt1, &idt2, sizeof(idt1)))
++		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SIDT are identical.\n");
++}
++
  int main(void)
+ {
+ 	struct vm86plus_struct v86;
+@@ -218,6 +286,9 @@ int main(void)
+ 	v86.regs.eax = (unsigned int)-1;
+ 	do_test(&v86, vmcode_int80 - vmcode, VM86_INTx, 0x80, "int80");
+ 
++	/* UMIP -- should exit with INTx 0x80 unless UMIP was not disabled */
++	do_umip_tests(&v86, addr);
++
+ 	/* Execute a null pointer */
+ 	v86.regs.cs = 0;
+ 	v86.regs.ss = 0;
