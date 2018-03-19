@@ -1,31 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754916AbeCSBD0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:03:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49138 "EHLO
+        id S1754972AbeCSBDj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:03:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49482 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754230AbeCSBDX (ORCPT
+        with ESMTP id S1754931AbeCSBDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 21:03:23 -0400
+        Sun, 18 Mar 2018 21:03:35 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+To: weiyongjun (A) <weiyongjun1@huawei.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com,
+        alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: samsung: Mark unused Odroid compatibles as deprecated" to the asoc tree
-In-Reply-To: <20180318153512.8343-1-krzk@kernel.org>
-Message-Id: <20180319010315.ECCA1440079@finisterre.ee.mobilebroadband>
-Date: Mon, 19 Mar 2018 01:03:15 +0000 (GMT)
+Subject: Applied "ASoC: wm8400: Use devm_snd_soc_register_component()" to the asoc tree
+In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+Message-Id: <20180319010320.46B5E440079@finisterre.ee.mobilebroadband>
+Date: Mon, 19 Mar 2018 01:03:20 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: Mark unused Odroid compatibles as deprecated
+   ASoC: wm8400: Use devm_snd_soc_register_component()
 
 has been applied to the asoc tree at
 
@@ -50,39 +53,35 @@ to this mail.
 Thanks,
 Mark
 
->From 3b84574d95c020f01410ff2ca0a38dd8fd7b644b Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sun, 18 Mar 2018 16:35:12 +0100
-Subject: [PATCH] ASoC: samsung: Mark unused Odroid compatibles as deprecated
+>From 822e70a8210b7038e1f54c43ca6c76c3b9f89803 Mon Sep 17 00:00:00 2001
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+Date: Fri, 16 Mar 2018 07:32:07 +0000
+Subject: [PATCH] ASoC: wm8400: Use devm_snd_soc_register_component()
 
-Compatible for XU4 audio is not being used.  Instead the board uses the
-same compatible as XU3.  The devices are now just compatible so they
-should use the same value.  Mark "hardkernel,odroid-xu4-audio" as being
-deprecated so in this future could be removed to limit useless
-properties.
+Since the remove callback is removed, the snd_soc_unregister_component()
+is missing when remove device. Using devm_snd_soc_register_component()
+instead of snd_soc_register_component().
 
-Additionally add older compatibles appearing in the bindings.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/samsung,odroid.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/codecs/wm8400.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-index f35a2694eb04..e9da2200e173 100644
---- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-@@ -3,7 +3,9 @@ Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
- Required properties:
+diff --git a/sound/soc/codecs/wm8400.c b/sound/soc/codecs/wm8400.c
+index c237365d1184..57b22065a45d 100644
+--- a/sound/soc/codecs/wm8400.c
++++ b/sound/soc/codecs/wm8400.c
+@@ -1343,7 +1343,7 @@ static const struct snd_soc_component_driver soc_component_dev_wm8400 = {
  
-  - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
--		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board
-+		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated),
-+		"samsung,odroid-xu3-audio" - for Odroid XU3 board (deprecated),
-+		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
-  - model - the user-visible name of this sound complex
-  - clocks - should contain entries matching clock names in the clock-names
-     property
+ static int wm8400_probe(struct platform_device *pdev)
+ {
+-	return snd_soc_register_component(&pdev->dev,
++	return devm_snd_soc_register_component(&pdev->dev,
+ 			&soc_component_dev_wm8400,
+ 			&wm8400_dai, 1);
+ }
 -- 
 2.16.2
