@@ -1,161 +1,90 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AG47ELs0MC7Vt5IcukgHZgu/SGKHZhKFXS5tmh2aLhxSevP7Ig0PG2J7PKknaUeBnfH6Oe5WDpjQ
-ARC-Seal: i=1; a=rsa-sha256; t=1520935130; cv=none;
+Return-Path: <cpandya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELtIkXnpiqBo2GIDegPJETK0+M2LgPu6HKbKKSogNB1XrQHYM0xSlFhgJl2+QsUMIDztxOrv
+ARC-Seal: i=1; a=rsa-sha256; t=1521463273; cv=none;
         d=google.com; s=arc-20160816;
-        b=DVWSS5Hv2XoRhpYW6ZQY6flVxq/TL1eonm5YHEa30zOOw9YggnjIfM4D+9AOE/8LLX
-         1tDshY2w+5UCg6ABJAL8fQDbmcJ7sJSWgddAwkXaJpGBsLdOJSpn8zem0GXwGtyQsNj5
-         sRqgxAMb5ayWTBptDfvJzRKDSBSjwQqtl3ZWRrtaRjcrrKOW9EknH6ryAy32ZF99TLXB
-         zZDn3ftSClt+Py5aNHcwp5K8JcMcWuLn9QUGkSoYFBmlHIj0HNs6++thS7yIrgDL0T8m
-         5hBd7C/XETYyBZJ0/R4IntVTpMt/V92wRYmP5rTvqhSiLhDHcVcP7LZT2fwK3AcXnuAy
-         8XaA==
+        b=gJV8VB5Da1mtSpq+baOMMLTaYAL1kaOV6uQyvMeQhkk4AdTAH9pw8+6AcY/aaEqu3F
+         Y5ItkWQ7wInrEO8E6MnoVysuKsd1u3n3ITPzrFXFfS6r06i5mzVn+uzS06gdIdT/Ip8K
+         IBJSqZyvpPApiWpr0+H6tzhKiJBHPtsWAG6G/2xvGxs01c+6R6OZrC9povmLTl2Y/7sS
+         NaZYOatRpT9vEXPmeE2EkW16w36j7AvL7K6hRoau5jEFO372cic+S6WFlYvpgOv0ZrLX
+         lEuWeSuHKbSlCXspmHOB9XZt6weUimRDxYAxRnPY6UJDva5HhX9TEBjtIXmg7ZFM5mgh
+         9ftg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=hnHnbclzHB1BY3sn1vpgU1pEBUBfCLor18ccQ3l2UKs=;
-        b=NOA+w2O58ONDvZbNmzsQbagrFQXD/o/WamqK8FUzUtuTQQMwnN34rRWJ3/eqRWSTsv
-         vvp3Xq1yaashjRVjSkt+4T/OXS5k4L2b42M4i72lRub+zS2qHHYiwRDq++uysFj5o+LD
-         iQ3cMjfeYy0PKysJYAYttTdTgC8utaABYATpqbUbUj2a+nmItLOCWGFMruZhqt9S4e/5
-         3YE0nQZ4HVr5TduY5sL5KhgAH+2s6RZd6tfLDtDq5hEjQkKrKgLttyv7HfHqA2Y3Lsc5
-         uQ6swKPdh6uThTWRoVVbpEI6XgWFR4SYyNrByCe7PjHC8TOhSX4Gob/lj6IQrS0qj9O9
-         ffSA==
+        h=message-id:date:subject:cc:to:from:dmarc-filter:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=YSlYqRwvJyYOCOpOvY5NiuxLR8QH06R0lvVXZSXAiA8=;
+        b=Nb7+ShyYnsw3bYKPE7GtJ/A5piwgU9qrwKmpQYWAlaLPtV9ePeXUPLXR7qCfUGQWmw
+         FZfdLBZGdcS5RAl0V+kONJytUm8XDBEjm1Bvcvu+/5tRrCs0U6iJDLzczG/d7qB9VI4C
+         zGllb62TfILINhYuJm63r6Fvg9zYTe3pvCI/F1I+migSYYV9um6BCFGQ2Q3HvhPm81IT
+         uoJMx9KAkGfZjTzGD2qR7VC8bSSMnB9NXFNRU7jGHb48Io4voNV9m3IqY5J1xQ7DxTIa
+         q4Z7HhcNuFBDUvLQTem71aaiNC7rWnyAAXOY5Hz7Ax0ZzIQd5L2780Y8NBdb9vuk0nN7
+         KLuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Gf4I7+Bg;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=EEYoYkKM;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=kHAaRM0+;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cSeQGwZW;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Gf4I7+Bg;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=EEYoYkKM;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9FF16081C
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=kHAaRM0+;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cSeQGwZW;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 852C36055B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-MIME-Version: 1.0
-In-Reply-To: <20180313085534.11650-2-vivek.gautam@codeaurora.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org> <20180313085534.11650-2-vivek.gautam@codeaurora.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Tue, 13 Mar 2018 15:28:47 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iH5E3qZNS65AHWEAypMwy7bfRg62_TFc3dBEYu_H-K0mg@mail.gmail.com>
-Message-ID: <CAFp+6iH5E3qZNS65AHWEAypMwy7bfRg62_TFc3dBEYu_H-K0mg@mail.gmail.com>
-Subject: Re: [PATCH v9 1/5] driver core: Find an existing link between two devices
-To: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>, devicetree@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Rob Clark <robdclark@gmail.com>, Tomasz Figa <tfiga@chromium.org>,
-	Sricharan R <sricharan@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Archit Taneja <architt@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mark.rutland@arm.com
+Cc: arnd@arndb.de,
+	ard.biesheuvel@linaro.org,
+	marc.zyngier@arm.com,
+	james.morse@arm.com,
+	kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org,
+	toshi.kani@hpe.com,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v3 0/3] Fix issues with huge mapping in ioremap for ARM64
+Date: Mon, 19 Mar 2018 18:10:53 +0530
+Message-Id: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594812129788829883?=
-X-GMAIL-MSGID: =?utf-8?q?1594816075292926829?=
+X-GMAIL-THRID: =?utf-8?q?1595369872957799920?=
+X-GMAIL-MSGID: =?utf-8?q?1595369872957799920?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 2:25 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> The lists managing the device-links can be traversed to
-> find the link between two devices. The device_link_add() APIs
-> does traverse these lists to check if there's already a link
-> setup between the two devices.
-> So, add a new APIs, device_link_find(), to find an existing
-> device link between two devices - suppliers and consumers.
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->
->  * New patch added to this series.
->
->  drivers/base/core.c    | 30 +++++++++++++++++++++++++++---
->  include/linux/device.h |  2 ++
->  2 files changed, 29 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 5847364f25d9..e8c9774e4ba2 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -144,6 +144,30 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
->         return 0;
->  }
->
-> +/**
-> + * device_link_find - find any existing link between two devices.
-> + * @consumer: Consumer end of the link.
-> + * @supplier: Supplier end of the link.
-> + *
-> + * Returns pointer to the existing link between a supplier and
-> + * and consumer devices, or NULL if no link exists.
-> + */
-> +struct device_link *device_link_find(struct device *consumer,
-> +                                    struct device *supplier)
-> +{
-> +       struct device_link *link = NULL;
-> +
-> +       if (!consumer || !supplier)
-> +               return NULL;
-> +
-> +       list_for_each_entry(link, &supplier->links.consumers, s_node)
-> +               if (link->consumer == consumer)
-> +                       break;
-> +
-> +       return link;
+This series of patches are follow up work (and depends on)
+Toshi Kani <toshi.kani@hpe.com>'s patches "fix memory leak/
+panic in ioremap huge pages".
 
-My bad, this too needs fixing (didn't add the changes to the patch :( )
+This series of patches are tested on 4.9 kernel with Cortex-A75
+based SoC.
 
-           list_for_each_entry(link, &supplier->links.consumers, s_node)
-                   if (link->consumer == consumer)
-                           return link;
+Chintan Pandya (3):
+  ioremap: Update pgtable free interfaces with addr
+  arm64: Implement page table free interfaces
+  Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
 
-           return NULL;
+>From V2->V3:
+ - Use the exisiting page table free interface to do arm64
+   specific things
 
-> +}
-> +EXPORT_SYMBOL_GPL(device_link_find);
-> +
->  /**
->   * device_link_add - Create a link between two devices.
->   * @consumer: Consumer end of the link.
-> @@ -195,9 +219,9 @@ struct device_link *device_link_add(struct device *consumer,
->                 goto out;
->         }
->
-> -       list_for_each_entry(link, &supplier->links.consumers, s_node)
-> -               if (link->consumer == consumer)
-> -                       goto out;
-> +       link = device_link_find(consumer, supplier);
-> +       if (link)
-> +               goto out;
->
->         link = kzalloc(sizeof(*link), GFP_KERNEL);
->         if (!link)
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index b093405ed525..13bc1884c3eb 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1278,6 +1278,8 @@ extern const char *dev_driver_string(const struct device *dev);
->  struct device_link *device_link_add(struct device *consumer,
->                                     struct device *supplier, u32 flags);
->  void device_link_del(struct device_link *link);
-> +struct device_link *device_link_find(struct device *consumer,
-> +                                    struct device *supplier);
->
->  #ifdef CONFIG_PRINTK
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>From V1->V2:
+ - Rebased my patches on top of "[PATCH v2 1/2] mm/vmalloc:
+   Add interfaces to free unmapped page table"
+ - Honored BBM for ARM64
 
-
+ arch/arm64/mm/mmu.c           | 40 ++++++++++++++++++++++++++++------------
+ arch/x86/mm/pgtable.c         |  4 ++--
+ include/asm-generic/pgtable.h |  8 ++++----
+ lib/ioremap.c                 |  4 ++--
+ 4 files changed, 36 insertions(+), 20 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
