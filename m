@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932771AbeCSIr1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:47:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58448 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754531AbeCSIrX (ORCPT
+        id S932761AbeCSIuN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:50:13 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:51526 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754531AbeCSIuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:47:23 -0400
+        Mon, 19 Mar 2018 04:50:11 -0400
+Date: Mon, 19 Mar 2018 09:50:09 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
+        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 02/19] csky: Exception handling and syscall
+Message-ID: <20180319085009.GA32603@isilmar-4.linta.de>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Mar 2018 14:17:22 +0530
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH] phy: core: Allow phy_pm_runtime_xxx API calls with NULL
- phy
-In-Reply-To: <1521191452-30089-1-git-send-email-mgautam@codeaurora.org>
-References: <1521191452-30089-1-git-send-email-mgautam@codeaurora.org>
-Message-ID: <a34e1f1038e667e0ee9a568e7b8ff3ce@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-16 14:40, Manu Gautam wrote:
-> phy_init() and phy_exit() calls, and phy_power_on() and
-> phy_power_off() already accept NULL as valid PHY refernece
-> and act as NOP. Extend same concept to phy runtime_pm APIs
-> to keep drivers (e.g. dwc3) code simple while dealing with
-> optional PHYs.
-> 
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  drivers/phy/phy-core.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 09ac8af..48b9615 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -153,6 +153,9 @@ int phy_pm_runtime_get(struct phy *phy)
->  {
->  	int ret;
-> 
-> +	if (!phy)
-> +		return 0;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
+> +#define __ARCH_WANT_SYSCALL_DEPRECATED
+> +#define __ARCH_WANT_SYSCALL_OFF_T
+> +#define __ARCH_WANT_SYSCALL_NO_AT
+> +#define __ARCH_WANT_SYSCALL_NO_FLAGS
 
-Were we already trying to dereference a NULL here?
-That shouldn't be good i guess.
-Kishon, do we not expect phys to be NULL here?
+Does this arch *really* want these deprecated and obsolete syscalls? See the
+commend in include/uapi/asm-generic/unistd.h
 
-<snip>
+ * All syscalls below here should go away really,
+ * these are provided for both review and as a porting
+ * help for the C library version.
 
-regards
-Vivek
+Thanks,
+	Dominik
