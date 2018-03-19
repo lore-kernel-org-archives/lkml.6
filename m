@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521483797-2-7385748284401112136
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483796; b=X3Bn5ehUFPFrq4DJHdQEC7hB9oFfZ7XyrLsqmAT97oLkFuR
-    k6Ij+xYZpX6KhVyyEKgDnOrNZ3ZYrESnmgAX4542IGN+waGafzOlHBgU0cmMTCia
-    13kqzcT7xVGPUYu7wBTSSfUKXzy0D6j2mK39eEr5/PaE2lVQYvBHaVl13uE8FIbP
-    VP23KfbHBjgiRpGMq8KPQB878X3iqaUIjaHPqHKUhGdy66BUjP0/1CBoWvY6Y5FU
-    c9+EboIKK0axdC+rnAL+b2d8nZeB7Y76z8saTAK7pgjk2JZ1UOBMQ0qWKGADWK45
-    pvc7Log33RL2/sOzcj2H1JZIGJ56sj8qjD0OfPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483796; bh=zfQ6+Rh1IJJ35n/fsJiEOevMPj
-    ozhzSkWj7jsT+pRX4=; b=lQOU4rfnNSZfA+xNhGHstansbRx1QllS72oERW5GbH
-    LJorQHCeoD5g3g+UTikT6quZbQwBR1HA0ZDp42pNlcNNOKgC+zZFSwDiOs1IMaat
-    yvsFkgv5jJ+x2M6kV1AfgfqAV7sHWOwSizypzDQy7IhOvSA8sKPzCbPeWEH1vVSd
-    3pHQTA0ia+WwC13IdIOtFY1CFDiarA0fQLLHHnaCCvupcNy+1vX2VshE66Nqk85P
-    RedOTRs93VeANBjxhL4hS3CjIsjJykKGMxeCaOygHYIdnbeEdWlLjWOdoZSnZSNn
-    s+O0QzcB6hrmxcu9jF3jme8+xHsKYvXzMx3x9se6JdOQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegtdehvdenucevlhhushhtvghrufhiiigvpedvtd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegtdehvdenucevlhhushhtvghrufhiiigvpedvtd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030959AbeCSSXL (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:23:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48774 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031363AbeCSSXH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:23:07 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuxosdG8tThdR2YhdjuDL1UUzSYchlYmb/rlskPGoYlFCBaE/gpHrY1DYroAvga/c6wyKDH
+ARC-Seal: i=1; a=rsa-sha256; t=1521483794; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WCBoHGOuW/Sl4w79PaesXe7V082xq2opesTFA5UcWuokWzxu1vKl7YVmLlqriXy+gb
+         pPURnZ4YeZL4HlWe92gOJwbk01CR7ehIxZZulX1qxYrTXYvCoFs/0+1S/NX2uFEo6Y9q
+         gXEncDQHeT2Hjt+TNrcWaP85jj2K1M0pNMPAx6kaNl7rQBv0NUd9MOIj35d+jlBPaJjA
+         PCFhGnO9m17ZtXs7g3a78l8HmgQqVk2jYRSx8WQz67VJmBvFDsQoBq5m6rXy2K6966HG
+         y7NSql2D3ezcaglwKmtopBa7coIdgxPS9OxTPVXCAgajLmzsqXyMSSH3GZyo9cjKmmNs
+         2LNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=iOU4mP2/RxHeO2l7vfaZc+iKbNaeFaMx3wxUlfJodJE=;
+        b=fJmStTvHEuNLOPgJuNlp2S3s1AT3Xl+uaMRyeThCjw7zJexvAD6FrqLPfc4OH39ZLn
+         7+ttmChrPyCaX79KgAqur0Gr0TlTufiKIzsF+DujE8MCiOGE9r5rYSYnYfDLaiEP085z
+         h1tIk0z/5EfhGQj7pFb2dXARwjx2GMomHnW+EsLwdZOBVzybPxRjEuFUlb9/abOHCncg
+         d/aQQLeG1edk3+Wi27fo4dtSpoOQ3OSneWaTdWLR0awl9HgAdsGWQ/rl9OgQGQX7InhL
+         J+45kqqmjQ+xBgdEqXzFAJZ2EF0K2FSTU3Xug+vGvRdrpd4LxCWJBAYMBPc2zZGTTxBA
+         0LiQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nate Watterson <nwatters@codeaurora.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 117/241] iommu/iova: Fix underflow bug in __alloc_and_insert_iova_range
-Date: Mon, 19 Mar 2018 19:06:22 +0100
-Message-Id: <20180319180756.045874894@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 119/241] kvm: nVMX: Disallow userspace-injected exceptions in guest mode
+Date: Mon, 19 Mar 2018 19:06:24 +0100
+Message-Id: <20180319180756.125127600@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391390879289879?=
+X-GMAIL-MSGID: =?utf-8?q?1595391390879289879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,66 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nate Watterson <nwatters@codeaurora.org>
+From: Jim Mattson <jmattson@google.com>
 
 
-[ Upstream commit 5016bdb796b3726eec043ca0ce3be981f712c756 ]
+[ Upstream commit 28d06353881939703c34d82a1465136af176c620 ]
 
-Normally, calling alloc_iova() using an iova_domain with insufficient
-pfns remaining between start_pfn and dma_limit will fail and return a
-NULL pointer. Unexpectedly, if such a "full" iova_domain contains an
-iova with pfn_lo == 0, the alloc_iova() call will instead succeed and
-return an iova containing invalid pfns.
+The userspace exception injection API and code path are entirely
+unprepared for exceptions that might cause a VM-exit from L2 to L1, so
+the best course of action may be to simply disallow this for now.
 
-This is caused by an underflow bug in __alloc_and_insert_iova_range()
-that occurs after walking the "full" iova tree when the search ends
-at the iova with pfn_lo == 0 and limit_pfn is then adjusted to be just
-below that (-1). This (now huge) limit_pfn gives the impression that a
-vast amount of space is available between it and start_pfn and thus
-a new iova is allocated with the invalid pfn_hi value, 0xFFF.... .
+1. The API provides no mechanism for userspace to specify the new DR6
+bits for a #DB exception or the new CR2 value for a #PF
+exception. Presumably, userspace is expected to modify these registers
+directly with KVM_SET_SREGS before the next KVM_RUN ioctl. However, in
+the event that L1 intercepts the exception, these registers should not
+be changed. Instead, the new values should be provided in the
+exit_qualification field of vmcs12 (Intel SDM vol 3, section 27.1).
 
-To rememdy this, a check is introduced to ensure that adjustments to
-limit_pfn will not underflow.
+2. In the case of a userspace-injected #DB, inject_pending_event()
+clears DR7.GD before calling vmx_queue_exception(). However, in the
+event that L1 intercepts the exception, this is too early, because
+DR7.GD should not be modified by a #DB that causes a VM-exit directly
+(Intel SDM vol 3, section 27.1).
 
-This issue has been observed in the wild, and is easily reproduced with
-the following sample code.
+3. If the injected exception is a #PF, nested_vmx_check_exception()
+doesn't properly check whether or not L1 is interested in the
+associated error code (using the #PF error code mask and match fields
+from vmcs12). It may either return 0 when it should call
+nested_vmx_vmexit() or vice versa.
 
-	struct iova_domain *iovad = kzalloc(sizeof(*iovad), GFP_KERNEL);
-	struct iova *rsvd_iova, *good_iova, *bad_iova;
-	unsigned long limit_pfn = 3;
-	unsigned long start_pfn = 1;
-	unsigned long va_size = 2;
+4. nested_vmx_check_exception() assumes that it is dealing with a
+hardware-generated exception intercept from L2, with some of the
+relevant details (the VM-exit interruption-information and the exit
+qualification) live in vmcs02. For userspace-injected exceptions, this
+is not the case.
 
-	init_iova_domain(iovad, SZ_4K, start_pfn, limit_pfn);
-	rsvd_iova = reserve_iova(iovad, 0, 0);
-	good_iova = alloc_iova(iovad, va_size, limit_pfn, true);
-	bad_iova = alloc_iova(iovad, va_size, limit_pfn, true);
+5. prepare_vmcs12() assumes that when its exit_intr_info argument
+specifies valid information with a valid error code that it can VMREAD
+the VM-exit interruption error code from vmcs02. For
+userspace-injected exceptions, this is not the case.
 
-Prior to the patch, this yielded:
-	*rsvd_iova == {0, 0}   /* Expected */
-	*good_iova == {2, 3}   /* Expected */
-	*bad_iova  == {-2, -1} /* Oh no... */
-
-After the patch, bad_iova is NULL as expected since inadequate
-space remains between limit_pfn and start_pfn after allocating
-good_iova.
-
-Signed-off-by: Nate Watterson <nwatters@codeaurora.org>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/iova.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -138,7 +138,7 @@ static int __alloc_and_insert_iova_range
- 				break;	/* found a free slot */
- 		}
- adjust_limit_pfn:
--		limit_pfn = curr_iova->pfn_lo - 1;
-+		limit_pfn = curr_iova->pfn_lo ? (curr_iova->pfn_lo - 1) : 0;
- move_left:
- 		prev = curr;
- 		curr = rb_prev(curr);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3070,7 +3070,8 @@ static int kvm_vcpu_ioctl_x86_set_vcpu_e
+ 		return -EINVAL;
+ 
+ 	if (events->exception.injected &&
+-	    (events->exception.nr > 31 || events->exception.nr == NMI_VECTOR))
++	    (events->exception.nr > 31 || events->exception.nr == NMI_VECTOR ||
++	     is_guest_mode(vcpu)))
+ 		return -EINVAL;
+ 
+ 	/* INITs are latched while in SMM */
