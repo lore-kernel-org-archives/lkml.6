@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELteBMrbvcFqckPCfyhPBydNmDzOQn8lTmdgCVW1V62buE58R0yZ6kfCEOvyYbqPN2KubtVr
-ARC-Seal: i=1; a=rsa-sha256; t=1521483766; cv=none;
+X-Google-Smtp-Source: AG47ELv516npW6ZYtegfv0eoWT9Io4GKHV1J6wsXa7bff2Diaww/jNzoqdxRh+y6K0HcSB7RPC5i
+ARC-Seal: i=1; a=rsa-sha256; t=1521483763; cv=none;
         d=google.com; s=arc-20160816;
-        b=HolNSWKouJkE080Fcr0j8kjOkhxdP8iqSQDDnxjIHD8vky4BiEdO3IILDTjAhBUERa
-         dJZHhNQs2TYPHrLwO3ToAV1OPnS5d+tECUEjMGGx1gSA24zFzHOZlHYE42CNgnIc98U2
-         Qy+YI+YEEVda4ED4VwKSGeupHhewZbvlfpNQ+n5F8gHDxJWNL9rn7sZWFoEP2vpliH4i
-         wmO1DiJTwPZghS94JG9DZuCVqaHmV9WkK8U7BsrFpfBF/pyzBIz+hvvtAqaNcRhRtrXr
-         lghsRnh3O4jJl2iiUyOU3C581AQnTt6ritETLjuKil2kiL9ABy7Ezvc8RvKgo0VacHVX
-         1BYg==
+        b=QJ23UZR9oIquUeQ9JCQ3QiqGTkMkTMZ/gCkO3UUNyltaEzLb8joqyi31ACqLFPxEhx
+         jYg3b5NLxnvccrwVY0j2U6jIt/poWlI7X/FQZUAZWmPrXZmZ1mB8uEu4eSG4/IMugtOJ
+         R+0HbeTylzHELtUA6GGYIOhAbgyqJAQwTW9CFlZ0hN1psGnqycfpwSsAYa1Vumrk1oeU
+         uYR5Df0pBOOiLWvYlcnDL9fxsL7SkehTfYmPCFkqQIAnoghzIZiAC+bWcfYwqCWFk+Eq
+         j8eLaipaYrD5orxoc5xvC74Brl1bg6VDvcVngQ07+fuA9R8nuricziEmROAvyaUodNMh
+         KzYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FVVgwSxXpzpsx2dZoZl6BBdoq4IoFxWW84z61qZWXn8=;
-        b=LfM00G3QuEO/pkdSdjtZeuHj6w5hkCH9EBNAJ9UARZqZ/d0LOqVIsnt9BK3Q/z6fyH
-         dioGSKaR91fzqqRVDAEscUXdnvVTKC6SA0FJs28eArovwMhMwuDJlAnPuq3hseM0L9/T
-         ueHN70e/f8V0/HTdC7mY71Mfj6zq0OfLq9PvBtA/n0h75nDnZYtS5BhBQaJDSMRdqQ//
-         cjtchFZRBE6khTfOFfZ69j+WUmQi40IdEULYWjap7hmNhkOlX/C0jlblOUDWUhlj/+aj
-         +UujHPKCu4DG2ZhWhfbdb4c+rp1XZpOxgVs/PQyFNsOk57NCr5fT7kAULBMDl3rCvCaY
-         +vTA==
+        bh=8hF/Tz1wg9Qo6fBrgcZkWhLwiXzEvaTr3Y2Fwwve43s=;
+        b=04RRGJqwfObGjmzM43UaHPbgp8kgAB//5uF8eZVShEYa0nV5bjuxzYiYfCGpMTjcnt
+         GeCJ9EAy5HoPetLC01bqOmj93AFJdMP5Pl+yNa31EkXp7Hu7X5EhKfch7ZuP/s46OYiP
+         EaUKrRqHAhQ6FzkTAcvU0tA4hWZstr4+lZJyjINXzrDGetPomTFRUJwl+Auc2LmusFHF
+         bNjd482OI0Uu/ak90cUKieJw8Rgo6IwxCjvLMQn1tJskC5PGN94zSXry/i9Y/UXhgvxT
+         aBzplkl5819O7HJ4fKjmarAIrxxIzMpPYh1E+pGK2m+APU75jeqZrSGmJoqk952xThkR
+         tjBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Takashi Iwai <tiwai@suse.de>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Easwar Hariharan <easwar.hariharan@intel.com>,
+	Doug Ledford <dledford@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 110/241] ALSA: firewire-digi00x: add support for console models of Digi00x series
-Date: Mon, 19 Mar 2018 19:06:15 +0100
-Message-Id: <20180319180755.756089691@linuxfoundation.org>
+Subject: [PATCH 4.9 109/241] IB/hfi1: Check for QSFP presence before attempting reads
+Date: Mon, 19 Mar 2018 19:06:14 +0100
+Message-Id: <20180319180755.709719470@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391361827758079?=
-X-GMAIL-MSGID: =?utf-8?q?1595391361827758079?=
+X-GMAIL-THRID: =?utf-8?q?1595391358986033648?=
+X-GMAIL-MSGID: =?utf-8?q?1595391358986033648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,118 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Easwar Hariharan <easwar.hariharan@intel.com>
 
 
-[ Upstream commit 13e005f9f933a35b5e55c9d36f151efe2a8383ec ]
+[ Upstream commit fb897ad315643e5dc1092a115b3cec914b66df9d ]
 
-Digi00x series includes two types of unit; rack and console. As long as
-reading information on config rom of Digi 002 console, 'MODEL_ID' field
-has a different value from the one on Digi 002 rack.
+Attempting to read the status of a QSFP cable creates noise in the logs
+and misses out on setting an appropriate Offline/Disabled Reason if the
+cable is not plugged in. Check for this prior to attempting the read and
+attendant retries.
 
-We've already got a test report from users with Digi 003 rack. We can
-assume that console type and rack type has different value in the field.
-
-This commit adds a device entry for console type. For following commits,
-this commit also adds a member to 'struct snd_digi00x' to identify console
-type.
-
-$ cd linux-firewire-utils/src
-$ python2 ./crpp < /sys/bus/firewire/devices/fw1/config_rom
-               ROM header and bus information block
-               -----------------------------------------------------------------
-400  0404f9d0  bus_info_length 4, crc_length 4, crc 63952
-404  31333934  bus_name "1394"
-408  60647002  irmc 0, cmc 1, isc 1, bmc 0, cyc_clk_acc 100, max_rec 7 (256)
-40c  00a07e00  company_id 00a07e     |
-410  00a30000  device_id 0000a30000  | EUI-64 00a07e0000a30000
-
-               root directory
-               -----------------------------------------------------------------
-414  00058a39  directory_length 5, crc 35385
-418  0c0043a0  node capabilities
-41c  04000001  hardware version
-420  0300a07e  vendor
-424  81000007  --> descriptor leaf at 440
-428  d1000001  --> unit directory at 42c
-
-               unit directory at 42c
-               -----------------------------------------------------------------
-42c  00046674  directory_length 4, crc 26228
-430  120000a3  specifier id
-434  13000001  version
-438  17000001  model
-43c  81000007  --> descriptor leaf at 458
-
-               descriptor leaf at 440
-               -----------------------------------------------------------------
-440  00055913  leaf_length 5, crc 22803
-444  000050f2  descriptor_type 00, specifier_ID 50f2
-448  80000000
-44c  44696769
-450  64657369
-454  676e0000
-
-               descriptor leaf at 458
-               -----------------------------------------------------------------
-458  0004a6fd  leaf_length 4, crc 42749
-45c  00000000  textual descriptor
-460  00000000  minimal ASCII
-464  44696769  "Digi"
-468  20303032  " 002"
-
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 673b975f1fba ("IB/hfi1: Add QSFP sanity pre-check")
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Easwar Hariharan <easwar.hariharan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/firewire/digi00x/digi00x.c |   13 +++++++++++--
- sound/firewire/digi00x/digi00x.h |    1 +
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hfi1/chip.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/digi00x/digi00x.c
-+++ b/sound/firewire/digi00x/digi00x.c
-@@ -13,7 +13,8 @@ MODULE_AUTHOR("Takashi Sakamoto <o-takas
- MODULE_LICENSE("GPL v2");
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -9489,8 +9489,11 @@ static int test_qsfp_read(struct hfi1_pp
+ 	int ret;
+ 	u8 status;
  
- #define VENDOR_DIGIDESIGN	0x00a07e
--#define MODEL_DIGI00X		0x000002
-+#define MODEL_CONSOLE		0x000001
-+#define MODEL_RACK		0x000002
+-	/* report success if not a QSFP */
+-	if (ppd->port_type != PORT_TYPE_QSFP)
++	/*
++	 * Report success if not a QSFP or, if it is a QSFP, but the cable is
++	 * not present
++	 */
++	if (ppd->port_type != PORT_TYPE_QSFP || !qsfp_mod_present(ppd))
+ 		return 0;
  
- static int name_card(struct snd_dg00x *dg00x)
- {
-@@ -129,6 +130,8 @@ static int snd_dg00x_probe(struct fw_uni
- 	spin_lock_init(&dg00x->lock);
- 	init_waitqueue_head(&dg00x->hwdep_wait);
- 
-+	dg00x->is_console = entry->model_id == MODEL_CONSOLE;
-+
- 	/* Allocate and register this sound card later. */
- 	INIT_DEFERRABLE_WORK(&dg00x->dwork, do_registration);
- 	snd_fw_schedule_registration(unit, &dg00x->dwork);
-@@ -183,7 +186,13 @@ static const struct ieee1394_device_id s
- 		.match_flags = IEEE1394_MATCH_VENDOR_ID |
- 			       IEEE1394_MATCH_MODEL_ID,
- 		.vendor_id = VENDOR_DIGIDESIGN,
--		.model_id = MODEL_DIGI00X,
-+		.model_id = MODEL_CONSOLE,
-+	},
-+	{
-+		.match_flags = IEEE1394_MATCH_VENDOR_ID |
-+			       IEEE1394_MATCH_MODEL_ID,
-+		.vendor_id = VENDOR_DIGIDESIGN,
-+		.model_id = MODEL_RACK,
- 	},
- 	{}
- };
---- a/sound/firewire/digi00x/digi00x.h
-+++ b/sound/firewire/digi00x/digi00x.h
-@@ -60,6 +60,7 @@ struct snd_dg00x {
- 	/* For asynchronous MIDI controls. */
- 	struct snd_rawmidi_substream *in_control;
- 	struct snd_fw_async_midi_port out_control;
-+	bool is_console;
- };
- 
- #define DG00X_ADDR_BASE		0xffffe0000000ull
+ 	/* read byte 2, the status byte */
