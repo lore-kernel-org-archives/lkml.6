@@ -1,75 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932708AbeCSI24 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:28:56 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34646 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932696AbeCSI2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:28:48 -0400
-Subject: Re: [PATCH] jffs2: remove fd from the f->dents list immediately.
-To: David Woodhouse <dwmw2@infradead.org>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-CC: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-References: <20180316110522.1120-1-yuyufen@huawei.com>
- <1521203963.4790.208.camel@infinera.com>
- <1521204767.20126.123.camel@infradead.org>
-From: yuyufen <yuyufen@huawei.com>
-Message-ID: <8bce38ca-aa2e-1928-4807-5571f91ae1c8@huawei.com>
-Date: Mon, 19 Mar 2018 16:27:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S932731AbeCSI3J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:29:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932487AbeCSI3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:29:05 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 1/2] perf tools: Fix snprint warnings for gcc 8
+Date: Mon, 19 Mar 2018 09:29:01 +0100
+Message-Id: <20180319082902.4518-1-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1521204767.20126.123.camel@infradead.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.177.219.49]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, David
+From: root <root@riddick.tpb.lab.eng.brq.redhat.com>
 
-On 2018/3/16 20:52, David Woodhouse wrote:
-> On Fri, 2018-03-16 at 12:39 +0000, Joakim Tjernlund wrote:
->>> After reverting the commit, we test 'rm -r', which can remove all
->>> files, and all seems OK!
->> UHH, this is mine (and Davids work from 2007)!
->> I cannot remember  any details this long afterwards but I guess you cannot just
->> revert that part as it triggers some other bug, David?
-> Right, the issue was with f_pos in the directory.
->
-> The 'rm' we were testing with at the time would delete a bunch of
-> directory entries, then continue with its readdir() to work out what
-> else to delete. But when we were handling f_pos on directories merely
-> as the position on the list, and when we were *deleting* things from
-> that list as we went, some dirents ended up moving so that they were
-> *before* the position that 'rm' had got to with its readdir().
-Thanks a for explaining in detail. And you are right.
+With gcc 8 we get new set of snprintf warnings that
+brakes the compilation, one example:
 
-We have a directory, including 2000 files. After getdents and unlink as 
-follow:
-     for ( ; ; ) {
-         nread = syscall(SYS_getdents, fd, buf, BUF_SIZE); //BUF_SIZE=1024
-         for (bpos = 0; bpos < nread;) {
-             unlink(d->d_name);
-         }
-     }
-we found there is still 990 files!
-> But... the list we're traversing is *already* ordered by CRC, and that
-> could be a much saner thing to use as f_pos. We just have to make sure
-That's true. Our experiments also show that  it can quicken traverse.
-However, when the list is very long (e.g. 1000000), the number of traverse
-times can reach thousands.
+  tests/mem.c: In function ‘check’:
+  tests/mem.c:19:48: error: ‘%s’ directive output may be truncated writing \
+        up to 99 bytes into a region of size 89 [-Werror=format-truncation=]
+    snprintf(failure, sizeof failure, "unexpected %s", out);
 
-What's more, a lot of memory space is occupying and will be more and more.
-I have no idea how to improve this. Do you have some good idea?
+The gcc docs says:
+ To avoid the warning either use a bigger buffer or handle the
+ function's return value which indicates whether or not its output
+ has been truncated.
 
-Thanks,
-yufen
-> we cope with hash collisions. Shifting left by 4 bits and using the low
-> 4 bits would allow us to cope with 16 names with the same hash... but
-> I'm not sure that's good enough.
+Given that all these warnings are harmless, because the code
+either properly fails due to uncomplete file path or we don't
+care for truncated output at all, I'm changing all those snprintf
+calls to scnprintf calls, which actually 'checks' for the snprint
+return value so the gcc stays silent.
+
+Link: http://lkml.kernel.org/n/tip-1xbmgdznb5syjqjduymm3bxw@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-script.c    | 22 +++++++++++-----------
+ tools/perf/tests/attr.c        |  4 ++--
+ tools/perf/tests/mem.c         |  2 +-
+ tools/perf/tests/pmu.c         |  2 +-
+ tools/perf/util/cgroup.c       |  2 +-
+ tools/perf/util/parse-events.c |  4 ++--
+ tools/perf/util/pmu.c          |  2 +-
+ 7 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index cce926aeb0c0..313c42423393 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -2674,8 +2674,8 @@ static int list_available_scripts(const struct option *opt __maybe_unused,
+ 	}
+ 
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
++			  lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
+ 			continue;
+@@ -2684,8 +2684,8 @@ static int list_available_scripts(const struct option *opt __maybe_unused,
+ 			script_root = get_script_root(script_dirent, REPORT_SUFFIX);
+ 			if (script_root) {
+ 				desc = script_desc__findnew(script_root);
+-				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent->d_name);
++				scnprintf(script_path, MAXPATHLEN, "%s/%s",
++					  lang_path, script_dirent->d_name);
+ 				read_script_info(desc, script_path);
+ 				free(script_root);
+ 			}
+@@ -2721,7 +2721,7 @@ static int check_ev_match(char *dir_name, char *scriptname,
+ 	int match, len;
+ 	FILE *fp;
+ 
+-	sprintf(filename, "%s/bin/%s-record", dir_name, scriptname);
++	scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scriptname);
+ 
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+@@ -2799,8 +2799,8 @@ int find_scripts(char **scripts_array, char **scripts_path_array)
+ 	}
+ 
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
++			  lang_dirent->d_name);
+ #ifdef NO_LIBPERL
+ 		if (strstr(lang_path, "perl"))
+ 			continue;
+@@ -2855,8 +2855,8 @@ static char *get_script_path(const char *script_root, const char *suffix)
+ 		return NULL;
+ 
+ 	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent->d_name);
++		scnprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
++			  lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
+ 			continue;
+@@ -2867,8 +2867,8 @@ static char *get_script_path(const char *script_root, const char *suffix)
+ 				free(__script_root);
+ 				closedir(lang_dir);
+ 				closedir(scripts_dir);
+-				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent->d_name);
++				scnprintf(script_path, MAXPATHLEN, "%s/%s",
++					  lang_path, script_dirent->d_name);
+ 				return strdup(script_path);
+ 			}
+ 			free(__script_root);
+diff --git a/tools/perf/tests/attr.c b/tools/perf/tests/attr.c
+index 97f64ad7fa08..05dfe11c2f9e 100644
+--- a/tools/perf/tests/attr.c
++++ b/tools/perf/tests/attr.c
+@@ -170,8 +170,8 @@ static int run_dir(const char *d, const char *perf)
+ 	if (verbose > 0)
+ 		vcnt++;
+ 
+-	snprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
+-		 d, d, perf, vcnt, v);
++	scnprintf(cmd, 3*PATH_MAX, PYTHON " %s/attr.py -d %s/attr/ -p %s %.*s",
++		  d, d, perf, vcnt, v);
+ 
+ 	return system(cmd) ? TEST_FAIL : TEST_OK;
+ }
+diff --git a/tools/perf/tests/mem.c b/tools/perf/tests/mem.c
+index 21952e1e6e6d..0f82ee9fd3f7 100644
+--- a/tools/perf/tests/mem.c
++++ b/tools/perf/tests/mem.c
+@@ -16,7 +16,7 @@ static int check(union perf_mem_data_src data_src,
+ 
+ 	n = perf_mem__snp_scnprintf(out, sizeof out, &mi);
+ 	n += perf_mem__lvl_scnprintf(out + n, sizeof out - n, &mi);
+-	snprintf(failure, sizeof failure, "unexpected %s", out);
++	scnprintf(failure, sizeof failure, "unexpected %s", out);
+ 	TEST_ASSERT_VAL(failure, !strcmp(string, out));
+ 	return 0;
+ }
+diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
+index 9abca267afa9..7bedf8608fdd 100644
+--- a/tools/perf/tests/pmu.c
++++ b/tools/perf/tests/pmu.c
+@@ -98,7 +98,7 @@ static char *test_format_dir_get(void)
+ 		struct test_format *format = &test_formats[i];
+ 		FILE *file;
+ 
+-		snprintf(name, PATH_MAX, "%s/%s", dir, format->name);
++		scnprintf(name, PATH_MAX, "%s/%s", dir, format->name);
+ 
+ 		file = fopen(name, "w");
+ 		if (!file)
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 78408f5c4bad..decb91f9da82 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -81,7 +81,7 @@ static int open_cgroup(const char *name)
+ 	if (cgroupfs_find_mountpoint(mnt, PATH_MAX + 1))
+ 		return -1;
+ 
+-	snprintf(path, PATH_MAX, "%s/%s", mnt, name);
++	scnprintf(path, PATH_MAX, "%s/%s", mnt, name);
+ 
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 4e80ca320399..2fb0272146d8 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -206,8 +206,8 @@ struct tracepoint_path *tracepoint_id_to_path(u64 config)
+ 
+ 		for_each_event(sys_dirent, evt_dir, evt_dirent) {
+ 
+-			snprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
+-				 evt_dirent->d_name);
++			scnprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
++				  evt_dirent->d_name);
+ 			fd = open(evt_path, O_RDONLY);
+ 			if (fd < 0)
+ 				continue;
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 1111d5bf15ca..064bdcb7bd78 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -351,7 +351,7 @@ static int pmu_aliases_parse(char *dir, struct list_head *head)
+ 		if (pmu_alias_info_file(name))
+ 			continue;
+ 
+-		snprintf(path, PATH_MAX, "%s/%s", dir, name);
++		scnprintf(path, PATH_MAX, "%s/%s", dir, name);
+ 
+ 		file = fopen(path, "r");
+ 		if (!file) {
+-- 
+2.13.6
