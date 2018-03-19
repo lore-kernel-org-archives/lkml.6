@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521482908-2-2439088256322049430
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521482903-2-1181873704461967409
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,62 +13,62 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521482907; b=ojoRWl333L3g6l0Sp3yC+kZ9ONJgqJkEoFG0nKwXKoBoikT
-    xWKbrCXavqYyCj20pHNRDRJFwDvWkVt+pC7ouzmQFCSHN1mNkpl/uHrhMbPpLCz+
-    1Iviex5M5jAWRaZHa9/DHSZHkxSt5hOAfdudc2zFAq6Mk28lRD81hfgTOjETBJCB
-    JrBHCEGSQEoOV3FTbVu3dJfQifWYQCiGp/NYGITODnYHwcM69j5EK/r9/4anOcss
-    ycWtHx6FxyHVgvbxlvWSDS1Q1J5r2s+vwqlLLGpq6GTcSDBkaGVJzPD+3/h3UnBo
-    zR6JryjXrvLquM4bMFbMN4rSRFs6BR9RUXfm0XQ==
+    t=1521482903; b=I14ryy6nNPGLVR3HcI92tmyRS7mHaZT2/HQlJ1CR1gYi4O9
+    iuRfpezlffK+1DNqxEcZBKeAAlGWgxPUl2JuFQY8qmohssalMQiUY/jHvZXb4dJY
+    IjLg1TAgHMSF1hc0fuqyHEiLHh2edLfC3PaIiYnM339VFq+xd1XGTh8pje5v6dxH
+    o43u9oCxS1Q51DS92ZLLhtO5+E1uIvbgifOpUZ4ozuuU9HaNTLu6GFE7oIqc4SXc
+    CbPYKVcLIYxIRxG6F1fTlG9tAQdKDge6H7xE09/6/gVI1F22ym+69rX1Dss/0Sgp
+    XkPNGE7E7BS4IFPmGaBjin4Vc6iZ9LvAgZcgmNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521482907; bh=70xCEd
-    lHWi8aTrpwhcaYzB1G1UYbBkSOsS+2eFP14PM=; b=VlU4XbOYqx/msYTo4QjYcK
-    iVIuNAKH6KLiwVg/KI/w7FMcTwpQxURUlpG6pP16q9WcjBFkEx3++hHV9Xyn56CQ
-    Nn5zkgzYDzWPW4AoHHPqjjBagMZSYPfG5wgDqEbGgZM0f/hTQmx8HYTaOxhbaSoT
-    mC5qDfeImmWK4lskkY6lr20icNEj8OeoHDvfjSGJs+NIGGVvhvd7R45ouu0nCLYb
-    TpdfIpY/ebO1NKjQtcbHIvrz5Vjy4uSu0SRwH7pRNVv+n5wLhNUPbcnWyaTq1dvL
-    FOMtMsMn0k+h6EmQcDghnJh3lm75hyY5zll3zx+AoXvtV3hmDkhKrfjMM+k7vsxw
+    :mime-version:sender:list-id; s=arctest; t=1521482903; bh=QoYdUx
+    oV2ywwpXdDMj6MqnIEaWTSAabMPpYy5LdAmX4=; b=fDHQ8J0Q5t0BpYjpDNX5KE
+    /mW2t3tjzgkhguuwQWgg53PmPiwIu0ZvDBmT9tk9XLbvc3lsLbAtr/afHzXuWFZz
+    kHMwOz6yyWWbHrZzE1qo2MMzXFx/JLSlsbBFcVCjqEczH5BzLTTWc7x+aTaRvKBU
+    u1quYdD6RuE65GOQqc0qCorOk+iQY8zsb5yvHeRLaox/xxLkmy6SX0JB4yLH7MP4
+    PTLsDpAib2HiCN7+uc+nP1kFnW9/SxOeWgjNskTam5CzyS8zPiYYfcigHp86+JQv
+    vuhq+Shfr+h8uI/sQcecoktKlrx7j1sBPk9qDvw290xgwjEpQ8T+TZNW8N6VZbqg
     ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QcEdX7Li x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=M5dapYdt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieduvdenucevlhhushhtvghrufhiiigvpeejle;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeduheenucevlhhushhtvghrufhiiigvpeehhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QcEdX7Li x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=M5dapYdt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieduvdenucevlhhushhtvghrufhiiigvpeejle;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjeduheenucevlhhushhtvghrufhiiigvpeehhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965588AbeCSSIY (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:08:24 -0400
-Received: from mail-cys01nam02on0139.outbound.protection.outlook.com ([104.47.37.139]:43744
+        id S965551AbeCSQDM (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 12:03:12 -0400
+Received: from mail-cys01nam02on0106.outbound.protection.outlook.com ([104.47.37.106]:53674
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965554AbeCSQDO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:03:14 -0400
+        id S965533AbeCSQDJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:03:09 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
 CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 173/281] dt-bindings: display: sun4i: Add
- allwinner,tcon-channel property
-Thread-Topic: [PATCH AUTOSEL for 4.9 173/281] dt-bindings: display: sun4i: Add
- allwinner,tcon-channel property
-Thread-Index: AQHTv5uEyhRuuojrb0qhu15AHcMSUQ==
-Date: Mon, 19 Mar 2018 16:01:18 +0000
-Message-ID: <20180319155742.13731-173-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 172/281] drm/sun4i: Ignore the generic
+ connectors for components
+Thread-Topic: [PATCH AUTOSEL for 4.9 172/281] drm/sun4i: Ignore the generic
+ connectors for components
+Thread-Index: AQHTv5uD9qgG6lP+3keco7sYJnubnA==
+Date: Mon, 19 Mar 2018 16:01:17 +0000
+Message-ID: <20180319155742.13731-172-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,27 +77,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0725;7:tLTXo4x7zXxPzplYz9Y4r0GKYDvnhDp8mdlr2Mc8LsUlp5G6Q882/QXFJRgUNjMdDUr37sUkQ9pgEOvrAeuEBNA4HgauOgL/yilTaivvb3LZdj9v+SNpW2Ahtt8jL/ymnVgovjUpuLFYu2l9eP7Kua0DZ5XzSgCGqYuGEZMZsGFABXsNlSvm8kNKDWKOBwfup93asoMYlxkCPC1Z0igqkfcG7yoK2TH1YrzZAU5W+RgMtREjZoUmpCFT025ntiAZ;20:Is8sEkTnSMu6P4YSO7U2xfHQA/VlAfG3+KjwVf38UEKpqtYN1KH2Riqz0LNtzUo0ba+uCZrJAjkZYQW/rn4dcmNjwqvRjd9HeHVKbl5Opo1m24voH6LkCFbP0tK3/ONXjVX7aBRIu/VEuoMUG7DzP0HvkG2UrQfy7YFcXzj8mDg=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0725;7:ok7zNkJzWk7luYdncS2f4etChJ7sdK+N5ycQk8w2aG/hogZNX+Uof5rLV1jhZdSfNYjPZKepDwls0ekjtfhucBS0r+F1FmkrA2LdEt73QD1U7vAfuz8rU8iIqCIdMBdggXjirWo60zU0U5pIaGLAj1cBx33OjW4YzXmzKTOvXRgfQK9T7WtExlrnRTIYAMMDyO6zHjAW7xzEEtMZWrVkbSa1R7eDci1iQfqWoop1uTo7NRPrGlcXUPywsvsOk12w;20:nRB4tGxKsOPKQ3nBkgOGyfmULdrxEwRJLDh7UXLcagLqa0JMKXoASMNOaO8bbqBJGzV1hEh2d6Ra/89dSJl+DFkzK9cqmdAWEl0Vuc4Ab/LwTxAYZfc3EC0LrW9DZVFG3Jbyi0DcLMpUNeIV2qKysVisfNGVvYCS9WmLzarXP/8=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 919a95d2-4b9d-4f22-3b4f-08d58db2e7dd
+x-ms-office365-filtering-correlation-id: ec03643b-b226-414e-a78a-08d58db2e273
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0725;
 x-ms-traffictypediagnostic: DM5PR2101MB0725:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB072514084B9CAC2E01232DEEFBD40@DM5PR2101MB0725.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0725E9EEC9BCB2A59EA636FCFBD40@DM5PR2101MB0725.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(58145275503218);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0725;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0725;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(376002)(346002)(366004)(39380400002)(199004)(189003)(2900100001)(4326008)(54906003)(10090500001)(81166006)(316002)(2906002)(14454004)(110136005)(107886003)(6506007)(186003)(81156014)(22452003)(68736007)(53936002)(3660700001)(478600001)(5250100002)(2501003)(99286004)(36756003)(105586002)(6116002)(3846002)(5660300001)(72206003)(1076002)(2950100002)(6666003)(305945005)(6436002)(86612001)(66066001)(10290500003)(76176011)(97736004)(8676002)(7736002)(8936002)(6512007)(102836004)(106356001)(3280700002)(6486002)(86362001)(25786009)(26005)(22906009)(142933001)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0725;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: DEdLATIpTDJDJnj75qDArJEfeivu03hghvrZ1BGzg+xHTHxrZCKvS96wlRokxN60CY94XBxRvAJsPIWoPSxUppV3xGe9I3S3JiIUXPJG/5Uf5jUt3oEhP+KBk8N15OypB36YWPVdyO3FfRCVWarGjheUfLHDVEfjprAq80MOXvtpBeYzN1yc+BoPaN0NYX1rzazEakw/zI3C+Y82OTidWGAkhdjrmgHhCcXKZRMLVJor1SrouF+hF2YLVqKmDPhhAupuKUnVdrONqQBt0raeXjJaIBJvhBH9zk4/vdxj3FjIWOkByu75PAeFRnIs3cP1n/AGN/Y0NcgABniSSvKC4w==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(376002)(346002)(366004)(39380400002)(199004)(189003)(2900100001)(4326008)(54906003)(10090500001)(81166006)(316002)(2906002)(14454004)(110136005)(107886003)(6506007)(186003)(81156014)(22452003)(68736007)(53936002)(3660700001)(478600001)(5250100002)(2501003)(99286004)(36756003)(105586002)(6116002)(3846002)(5660300001)(72206003)(1076002)(2950100002)(6666003)(305945005)(6436002)(86612001)(66066001)(10290500003)(76176011)(97736004)(8676002)(7736002)(8936002)(6512007)(102836004)(106356001)(3280700002)(6486002)(86362001)(25786009)(26005)(22906009)(41533002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0725;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: LQ+ZSkklCYe0zaORtgfjzriNX/IW3YTAJdvLx3fVQzKywMfRkRa3WTiCZRja55N/Cfcl9t1eEXSqi4Utl8JQ1h9yN2R3bCMd7CHIqQhTDJFegEW54kVPGKcj3dK8T+KnOJwIH2Hica3ajdUqKK6u9CRNdFxJOK26vSyxBwOVFDhU5ZL8DxtnSW9wptWLOw8hdwq5EBx1n9Vi4ez3Wo19iefuTCxqGjS3aNGa9imDqVlYrjcLBKm2K++Csh5QpAQ+NcLbxvnx2H0GEY/zl7oxmOrR0dNyG0gDSLrPXCLAqgDpMYtfcn7RGa+bJM5ve1zJ28g/ZOS/LNPJ2BGudTTENQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 919a95d2-4b9d-4f22-3b4f-08d58db2e7dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:01:18.1577
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec03643b-b226-414e-a78a-08d58db2e273
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:01:17.1820
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -110,53 +110,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-[ Upstream commit 22662f12768f971809b478386d9cc4947d00497a ]
+[ Upstream commit 49baeb074783f5bdf770dc9fac5fbb2837190583 ]
 
-The Allwinner Timings Controller has two, mutually exclusive, channels.
-When the binding has been introduced, it was assumed that there would be
-only a single user per channel in the system.
+The generic connectors such as hdmi-connector doesn't have any driver in,
+so if they are added to the component list, we will be waiting forever for
+a non-existing driver to probe.
 
-While this is likely for the channel 0 which only connects to LCD displays,
-it turns out that the channel 1 can be connected to multiple controllers in
-the SoC (HDMI and TV encoders for example). And while the simultaneous use
-of HDMI and TV outputs cannot be achieved, switching from one to the other
-at runtime definitely sounds plausible.
+Add a list of the connectors we want to ignore when building our component
+list.
 
-Add an extra property, allwinner,tcon-channel, to specify for a given
-endpoint which TCON channel it is connected to, while falling back to the
-previous mechanism if that property is missing.
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 +++++++=
-----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt =
-b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 4f7ae7555758..bda9d6fab6b4 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -47,10 +47,13 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4=
+i_drv.c
+index 1feec34ca9dd..7a3d8e8eed75 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -206,6 +206,11 @@ static const struct component_master_ops sun4i_drv_mas=
+ter_ops =3D {
+ 	.unbind	=3D sun4i_drv_unbind,
+ };
 =20
--  The output should have two endpoints. The first is the block
--  connected to the TCON channel 0 (usually a panel or a bridge), the
--  second the block connected to the TCON channel 1 (usually the TV
--  encoder)
-+  The output may have multiple endpoints. The TCON has two channels,
-+  usually with the first channel being used for the panels interfaces
-+  (RGB, LVDS, etc.), and the second being used for the outputs that
-+  require another controller (TV Encoder, HDMI, etc.). The endpoints
-+  will take an extra property, allwinner,tcon-channel, to specify the
-+  channel the endpoint is associated to. If that property is not
-+  present, the endpoint number will be used as the channel number.
++static bool sun4i_drv_node_is_connector(struct device_node *node)
++{
++	return of_device_is_compatible(node, "hdmi-connector");
++}
++
+ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ {
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-display-fronten=
+d") ||
+@@ -246,6 +251,13 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 	    !of_device_is_available(node))
+ 		return 0;
 =20
- On SoCs other than the A33, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
++	/*
++	 * The connectors will be the last nodes in our pipeline, we
++	 * can just bail out.
++	 */
++	if (sun4i_drv_node_is_connector(node))
++		return 0;
++
+ 	if (!sun4i_drv_node_is_frontend(node)) {
+ 		/* Add current component */
+ 		DRM_DEBUG_DRIVER("Adding component %s\n",
 --=20
 2.14.1
