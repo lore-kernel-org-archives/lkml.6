@@ -1,42 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966634AbeCSULB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:11:01 -0400
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34369 "EHLO
-        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S971068AbeCSUKx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:10:53 -0400
-X-Google-Smtp-Source: AG47ELtGlpHjmEpd+ldOrsaGAc3eUZ8bKh+/m0rJaQo0hdOa3GvalwaqUqrDqyjVKEqUC+gmt/z81ZhToF8J3L+PgVs=
+        id S971114AbeCSUMM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:12:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S971225AbeCSUMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:12:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C8B204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180319194513.GA3160@lst.de>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180319173345.GF1757@magnolia> <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
- <20180319194513.GA3160@lst.de>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 19 Mar 2018 13:10:52 -0700
-Message-ID: <CAPcyv4hhM3py_YG-qYcAxsqdCZT1aM+ziKffijVManPngbCg_A@mail.gmail.com>
-Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To: Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180228140751.10819-1-gregory.clement@bootlin.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Shadi Ammouri <shadi@marvell.com>,
+        Omri Itach <omrii@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+        Igal Liberman <igall@marvell.com>, Marcin Wojtas <mw@semihalf.com>
+References: <20180228140751.10819-1-gregory.clement@bootlin.com>
+Message-ID: <152149032034.242365.10971731653439256704@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: mvebu: cp110: Fix clock tree representation
+Date: Mon, 19 Mar 2018 13:12:00 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 12:45 PM, Christoph Hellwig <hch@lst.de> wrote:
-> On Mon, Mar 19, 2018 at 10:57:55AM -0700, Dan Williams wrote:
->> I don't see anything to adapt with respect to mmap locks since reflink
->> and dax are mutually exclusive.
->
-> For now.  I'll change that pretty soon.
+Quoting Gregory CLEMENT (2018-02-28 06:07:51)
+> Thanks to new documentation, we have a better view of the clock tree.
+> There were few mistakes in the first version of this driver, the main one
+> being the parental link between the clocks. Actually the tree is more
+> flat that we though. Most of the IP blocks require two clocks: one for
+> the IP itself and one for accessing the registers, and unlike what we
+> wrote there is no link between these two clocks.
+> 
+> The other mistakes were about the name of the clocks: the root clock is
+> not the Audio PLL but the PLL0, and what we called the EIP clock is named
+> the x2 Core clock and is used by other IP block than the EIP ones.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
 
-Right, so which patch set will be staged first? This one or the one
-that causes us to consider reflink vs dax locking?
+Applied to clk-next
