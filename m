@@ -1,74 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935011AbeCSXpk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 19:45:40 -0400
-Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:34753 "EHLO
-        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932750AbeCSXpj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 19:45:39 -0400
-Date: Tue, 20 Mar 2018 10:39:13 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: xfs: list corruption in xfs_setup_inode()
-Message-ID: <20180319233913.GA1150@dastard>
-References: <CAM_iQpU9A+KpSdXceUuz-cUX+f91bttKwJCOE91LnTZmKofk_Q@mail.gmail.com>
- <CAM_iQpVBmhiN05ZpxEZ2cNLSJpczc7z=Sz7a1tnUGeQimtDTYA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpVBmhiN05ZpxEZ2cNLSJpczc7z=Sz7a1tnUGeQimtDTYA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S965839AbeCSXst (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 19:48:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54266 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964858AbeCSXse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 19:48:34 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5/6] rtc: 88pm80x: remove artificial limitation
+Date: Tue, 20 Mar 2018 00:48:16 +0100
+Message-Id: <20180319234817.16199-5-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180319234817.16199-1-alexandre.belloni@bootlin.com>
+References: <20180319234817.16199-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 02:37:22PM -0700, Cong Wang wrote:
-> On Mon, Oct 30, 2017 at 2:55 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> > Hello,
-> >
-> > We triggered a list corruption (double add) warning below on our 4.9
-> > kernel (the 4.9 kernel we use is based on -stable release, with only a
-> > few unrelated networking backports):
-> 
-> We still keep getting this warning on 4.9 kernel. Looking into this again,
-> it seems xfs_setup_inode() could be called twice if an XFS inode is gotten
-> from disk? Once in xfs_iget() => xfs_setup_existing_inode(), and once
-> in xfs_ialloc().
+The 88pm80x supports time up to 2106 (it is a 32 bit counter). Also, the
+year will never be before 1970 as the RTC core forbids that.
 
-AFAICT, the only way this can happen is that if the inode ->i_mode
-has been corrupted in some way. i.e. there is either on-disk or
-in-memory corruption occurring.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-88pm80x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Does the following patch (compile-only) make any sense? Again, I don't
-> want to pretend to understand XFS...
-
-No, it doesn't make sense because a newly allocated inode should
-always have a zero i_mode.
-
-Have you turned on memory poisoning to try to identify where the
-corruption is coming from?
-
-And given that it might actually be on-disk corruption that is
-causing this, have you run xfs_repair on these filesystems to
-determine if they are free from on-disk corruption?
-
-Indeed, that makes me wonder format are you running on these
-filesystems, because on the more recent v5 format we don't read
-newly allocated inodes from disk. Can you provide the info listed
-here:
-
-http://xfs.org/index.php/XFS_FAQ#Q:_What_information_should_I_include_when_reporting_a_problem.3F
-
-as that will tell us what code paths are executing on inode
-allocation.
-
-Cheers,
-
-Dave.
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index 466bf7f9a285..6cbafefa80a2 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -134,9 +134,9 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	struct pm80x_rtc_info *info = dev_get_drvdata(dev);
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+-	if ((tm->tm_year < 70) || (tm->tm_year > 138)) {
++	if (tm->tm_year > 206) {
+ 		dev_dbg(info->dev,
+-			"Set time %d out of range. Please set time between 1970 to 2038.\n",
++			"Set time %d out of range. Please set time between 1970 to 2106.\n",
+ 			1900 + tm->tm_year);
+ 		return -EINVAL;
+ 	}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.16.2
