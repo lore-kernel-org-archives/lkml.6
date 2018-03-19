@@ -1,60 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755110AbeCSBsL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:48:11 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35568 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754752AbeCSBsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 21:48:07 -0400
-X-Google-Smtp-Source: AG47ELuBm4QRtDOBFX5LEQhKIwgYE5PIg/haztLXiJCq6BOG0LuOpkZ2gUKxDneIMy2wapqWbkaxPw==
-Date: Sun, 18 Mar 2018 19:48:05 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Steve Wise <swise@opengridcomputing.com>, netdev@vger.kernel.org,
-        timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
- on weakly-ordered archs
-Message-ID: <20180319014805.GA27186@ziepe.ca>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
- <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
- <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
- <83387f6e-adcb-14e9-2c22-96abf9493cc6@codeaurora.org>
- <004501d3bd7b$505e70f0$f11b52d0$@opengridcomputing.com>
- <740c7d45-450e-c9b3-ceed-7bc7fcefbc5a@codeaurora.org>
- <71e37a55-537b-d75a-cfde-f188b7cfce8e@codeaurora.org>
- <1f5e3b14-05a1-08d0-c0cb-00805526448d@codeaurora.org>
- <20180317150520.GA23463@ziepe.ca>
- <ac9c34e1-0a81-a494-c7c7-ac9c3922095a@codeaurora.org>
+        id S1755195AbeCSBsV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:48:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:47852 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755169AbeCSBsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 21:48:17 -0400
+Date: Mon, 19 Mar 2018 01:48:07 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
+        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 02/19] csky: Exception handling and syscall
+Message-ID: <20180319014755.s2n65f3hzzemc7do@salmiak>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ac9c34e1-0a81-a494-c7c7-ac9c3922095a@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 02:30:10PM -0400, Sinan Kaya wrote:
+Hi,
 
-> Somebody also has to take a task and work very hard to get rid of __raw_writeX()
-> APIs in drivers/net directory. It looked like a very common practice though
-> it clearly violates multiarch portability concerns Jason and Deve highlighted.
+On Mon, Mar 19, 2018 at 03:51:24AM +0800, Guo Ren wrote:
+> +inline static unsigned int
+> +get_regs_value(unsigned int rx, struct pt_regs *regs)
+> +{
+> +	unsigned int value;
+> +
+> +	if(rx == 0){
+> +		if(user_mode(regs)){
+> +			asm volatile("mfcr %0, ss1\n":"=r"(value));
 
-When you posted your list I thought most of the hits were in what I'd
-think of 'one-arch drivers', eg an IRQ controller or clock driver or
-something.. Some might have a reason for it (eg avoiding the swap, for
-instance), maybe it is a hold over from before writel_relaxed, or
-maybe it is just a cargo-cult behavior..
+Here you open code an MFCR instruction.
 
-It is the obviously multi-arch drivers that probably need some
-attention..
+I guess MFCR stands for something like move-from-control-register, and MTCR
+stands for move-to-control-register?
 
-Jason
+I see that later on you have helpers for specific registers, e.g. mfcr_cpuidrr().
+
+You might want to follow the example of arm64's read_sysreg() and
+write_sysreg(), and have general purpose helpers for thos instructions, e.g.
+
+#define mfcr(reg)						\
+({								\
+	unsigned long __mfcr_val;				\
+	asm volatile("mfcr %0, " #reg "\n" : "=r" (__mfr_val));	\
+	__mfcr_val;						\
+})
+
+... which avoids needing helpers for each register, as you can do:
+
+ss1_val = mfcr(ss1);
+cpuidrr_val = mfcr(cpuidrr);
+
+[...]
+
+> +static __init void setup_cpu_msa(void)
+> +{
+> +	if (memblock_start_of_DRAM() != (PHYS_OFFSET + CONFIG_RAM_BASE)) {
+> +		pr_err("C-SKY: dts-DRAM doesn't fit .config: %x-%x.\n",
+> +			memblock_start_of_DRAM(),
+> +			PHYS_OFFSET + CONFIG_RAM_BASE);
+> +		return;
+> +	}
+
+If this is a problem, is it safe to continue at all?
+
+Why does the base address of RAM matter?
+
+> +
+> +	mtcr_msa0(PHYS_OFFSET | 0xe);
+> +	mtcr_msa1(PHYS_OFFSET | 0x6);
+
+As with MFCR, you could use a generic helper here, e.g.
+
+#define mtcr(val, reg)								\
+do {										\
+	asm volatile("mtcr %0, " #reg "\n" : "=r" ((unsigned long)val));	\
+} while (0);
+
+mtcr(PHYS_OFFSET | 0xe, msa0)
+mtcr(PHYS_OFFSET | 0x6, msa1)
+
+> +}
+> +
+> +__init void cpu_dt_probe(void)
+> +{
+> +	setup_cpu_msa();
+> +}
+> +
+> +static int c_show(struct seq_file *m, void *v)
+> +{
+> +	seq_printf(m, "C-SKY CPU : %s\n", CSKYCPU_DEF_NAME);
+> +	seq_printf(m, "revision  : 0x%08x\n", mfcr_cpuidrr());
+> +	seq_printf(m, "ccr reg   : 0x%08x\n", mfcr_ccr());
+> +	seq_printf(m, "ccr2 reg  : 0x%08x\n", mfcr_ccr2());
+> +	seq_printf(m, "hint reg  : 0x%08x\n", mfcr_hint());
+> +	seq_printf(m, "msa0 reg  : 0x%08x\n", mfcr_msa0());
+> +	seq_printf(m, "msa1 reg  : 0x%08x\n", mfcr_msa1());
+
+Do these need to be exposed to userspace?
+
+Does this arch support SMP? I see you don't log information per-cpu.
+
+[...]
+
+> diff --git a/arch/csky/kernel/entry.S b/arch/csky/kernel/entry.S
+
+> +#define THREADSIZE_MASK_BIT 13
+
+You might want to define this as THREAD_SHIFT, and define THREAD_SIZE in terms
+of it, so that they're guaranteed to be in sync
+
+e.g. in your <asm/thread_info.h> have:
+
+#define THREAD_SHIFT	13
+#define THREAD_SIZE	(1 << THREAD_SHIFT)
+
+[...]
+
+> +ENTRY(csky_systemcall)
+> +	SAVE_ALL_TRAP
+> +
+> +	psrset  ee, ie
+> +
+> +	/* Stack frame for syscall, origin call set_esp0 */
+> +	mov     r12, sp
+> +
+> +	bmaski  r11, 13
+> +	andn    r12, r11
+> +	bgeni   r11, 9
+> +	addi    r11, 32
+> +	addu    r12, r11
+> +	st      sp, (r12, 0)
+> +
+> +	lrw     r11, __NR_syscalls
+> +	cmphs   syscallid, r11                 /* Check nr of syscall */
+> +	bt      ret_from_exception
+> +
+> +	lrw     r13, sys_call_table
+> +	ixw     r13, syscallid                 /* Index into syscall table */
+> +	ldw     r11, (r13)               /* Get syscall function */
+> +	cmpnei  r11, 0                  /* Check for not null */
+> +	bf      ret_from_exception
+> +
+> +	mov     r9, sp				 /* Get task pointer */
+> +	bmaski  r10, THREADSIZE_MASK_BIT
+> +	andn    r9, r10                      /* Get thread_info */
+
+If you have a spare register that you can point at the current task (or you
+have preemption-safe percpu ops), I'd recommend moving the thread_info off of
+the stack, and implementing THREAD_INFO_IN_TASK_STRUCT.
+
+[...]
+
+> +ENTRY(csky_get_tls)
+> +	USPTOKSP
+> +
+> +	/* increase epc for continue */
+> +	mfcr	a0, epc
+> +	INCTRAP	a0
+> +	mtcr	a0, epc
+> +
+> +	/* get current task thread_info with kernel 8K stack */
+> +	bmaski   a0, (PAGE_SHIFT + 1)
+
+For consistency, and in case you change your stack size in future, this should
+be THREADSIZE_MASK_BIT.
+
+[...]
+
+> +/*
+> + * This routine handles page faults.  It determines the address,
+> + * and the problem, and then passes it off to one of the appropriate
+> + * routines.
+> + */
+> +asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long write,
+> +                              unsigned long mmu_meh)
+> +{
+> +        struct vm_area_struct * vma = NULL;
+> +        struct task_struct *tsk = current;
+> +        struct mm_struct *mm = tsk->mm;
+> +        siginfo_t info;
+> +	int fault;
+> +	unsigned long address = mmu_meh & PAGE_MASK;
+> +
+> +        info.si_code = SEGV_MAPERR;
+> +
+> +        /*
+> +         * We fault-in kernel-space virtual memory on-demand. The
+> +         * 'reference' page table is init_mm.pgd.
+> +         *
+> +         * NOTE! We MUST NOT take any locks for this case. We may
+> +         * be in an interrupt or a critical region, and should
+> +         * only copy the information from the master page table,
+> +         * nothing more.
+> +         */
+> +        if (unlikely(address >= VMALLOC_START && address <= VMALLOC_END))
+> +                goto vmalloc_fault;
+
+You might want to check if this was a user mode fault here, so that users can't trigger vmalloc faults.
+
+Thanks,
+Mark.
+
+> +vmalloc_fault:
+> +        {
+> +                /*
+> +                 * Synchronize this task's top level page-table
+> +                 * with the 'reference' page table.
+> +                 *
+> +                 * Do _not_ use "tsk" here. We might be inside
+> +                 * an interrupt in the middle of a task switch..
+> +                 */
+> +                int offset = __pgd_offset(address);
+> +                pgd_t *pgd, *pgd_k;
+> +                pud_t *pud, *pud_k;
+> +                pmd_t *pmd, *pmd_k;
+> +                pte_t *pte_k;
+> +
+> +                unsigned long pgd_base;
+> +		pgd_base = tlb_get_pgd();
+> +                pgd = (pgd_t *)pgd_base + offset;
+> +                pgd_k = init_mm.pgd + offset;
+> +
+> +                if (!pgd_present(*pgd_k))
+> +                        goto no_context;
+> +                set_pgd(pgd, *pgd_k);
+> +
+> +                pud = (pud_t *)pgd;
+> +                pud_k = (pud_t *)pgd_k;
+> +                if (!pud_present(*pud_k))
+> +                        goto no_context;
+> +
+> +                pmd = pmd_offset(pud, address);
+> +                pmd_k = pmd_offset(pud_k, address);
+> +                if (!pmd_present(*pmd_k))
+> +                        goto no_context;
+> +                set_pmd(pmd, *pmd_k);
+> +
+> +                pte_k = pte_offset_kernel(pmd_k, address);
+> +                if (!pte_present(*pte_k))
+> +                        goto no_context;
+> +                return;
+> +        }
+> +}
+> +
+> -- 
+> 2.7.4
+> 
