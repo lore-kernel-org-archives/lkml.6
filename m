@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv9ynWUJ/r3rNDPqKvCRSbc1hBwNDQiCJ8CoK1d8urmqqIwzzl7bvvMARqZulA0G8T38rXG
-ARC-Seal: i=1; a=rsa-sha256; t=1521483357; cv=none;
+X-Google-Smtp-Source: AG47ELvRFU1Lp9kWoCzns7b1gLS1hfV9RNOZyb4tGmgB5Uyy2i8gNZdEbt1a/xiBFnXyzsp0I6R/
+ARC-Seal: i=1; a=rsa-sha256; t=1521483354; cv=none;
         d=google.com; s=arc-20160816;
-        b=z9TSnLVhDPo+rEXaC71YM9YX8oL+WIzX8puiBG54yHuEgc7ED2h0gYfH+kzXI/G5Tp
-         7rtCYArOCIg7bngr2k28vmkp1IAuEGweuljWZHz8yp7a9HUaQ+zkWaV880RS+QMyvb+c
-         RWLQEMO5mmutPXj4tznSUWdQaUfsBugCTCOXluItIFfzSrMwzanYaqRSmHglNGPB8nEi
-         Srs9/5UN8tmUspnsIC7+HpY63N8JT1ge6aKD5RE+iMygEgL9ZPx6nxoG6gmi/Jp5Vj8Q
-         INRGF2nqQ9s84dF6+otsWbR7U6OAGWpwqOR8lT5I6oNMa6N8Pmr6BmsyyxjEDkTajbyK
-         Z9Zg==
+        b=SdXlNCOgQ7aLPECwQ40znL+N6NZR9c+h2ALeW7UYv80pOlQRglk+LgsAVeh3xrgKoE
+         kyvWDyOZWWprnXjt4DGk7KCZLsGMhM/5CccuhzDdcQyIc7ITcCXUU2X22yhuVpp7upFu
+         ZmPZJTiiEKDHhFygyKi5QXeCsE6x8TfCjICRB09VRxDYCUk+67BW88J9hvcXjuAzLsUX
+         t3dB/L835SUsZsd+1ouHWeJQXj9yvXT6xS/Qcom05EGC3QCNEui9mFIJLjSq5K9V1suS
+         wQZyl/2i2fPgqvJyw+AvSfZIOS9fBh1b2M5N/besF4fZgDM4TUQWwkoo2OuSj8Tf2fgP
+         qXpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YkgagwdzN5JasXKdQ61Luh4KdKRWoFXEvtdVTwMR/H8=;
-        b=Vzm5dE6xmGMfzGuYPG46DbMeQ1SxpF3+ccPyayyyF8z/Pqn7jtT635968VI1+IYv82
-         iRQDkQuI86CVAJKfJBFWS9MTtVlR1pqdh7dIspbYZUi12oL+og6oNQTTGrn8ADzpdWB7
-         rvWfy5OhFfyCud6kxoPzcd/9HI3arVGAR/4Z7/fYLwJqnG0Lza39yqe+joins4wU27yZ
-         j/M8Kr5ujo04ZObtmzJA7a3ar1EeiT0NS6AMXREXKJ5sYEllz5dq8K5T3cXhqD7MLJTz
-         SvgHD+OKi2er54cPUbFzs8RSkes9omNHixDAX58bD8noT6e4X98uFU44ysmETmfpK5hQ
-         k3Rw==
+        bh=3cHwTE7JuE9NcF4/opsuU1vUC4AFMLfizF3EvCIHkKw=;
+        b=fwZ1m/guYyDs+5c7V6XXeXH88j/bMDlY5DvYkyVgD1viAB6edVOv2sK+Ue2c6HwdBD
+         pdQ5tNDISLk6SzeKt/2keT04kn7NDNBygUlrCz1877nOVgZZiqmdfkis8df/X2lYX1jg
+         OyG/ZrRJGPqe+D7YIJcVozK7ty1AN5V4xOYz+dHP560n9v4+FebQgWj+/xUFyPr1Y/Ga
+         2ZmR2F6MwfpoKE4TmbWQ4VXaRWX1pPWKdW8cHnYS8ky4hxhIdVydjKLzVqVwSSRZO5dA
+         8GyoG5Cs/XNBvhpI+zSpUHk50LA8+MbHzXe4NchRz23UQHQ1yXOLXKg6be0LY8+ujuMk
+         UarA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Greear <greearb@candelatech.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 094/134] ath10k: fix invalid STS_CAP_OFFSET_MASK
-Date: Mon, 19 Mar 2018 19:06:17 +0100
-Message-Id: <20180319171902.877771095@linuxfoundation.org>
+Subject: [PATCH 4.4 093/134] clk: qcom: msm8916: fix mnd_width for codec_digcodec
+Date: Mon, 19 Mar 2018 19:06:16 +0100
+Message-Id: <20180319171902.717573470@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390933811655032?=
-X-GMAIL-MSGID: =?utf-8?q?1595390933811655032?=
+X-GMAIL-THRID: =?utf-8?q?1595390930256471292?=
+X-GMAIL-MSGID: =?utf-8?q?1595390930256471292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +50,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Greear <greearb@candelatech.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
-[ Upstream commit 8cec57f5277ef0e354e37a0bf909dc71bc1f865b ]
+[ Upstream commit d8e488e8242ecf129eebc440c92d800a99ca109d ]
 
-The 10.4 firmware defines this as a 3-bit field, as does the
-mac80211 stack.  The 4th bit is defined as CONF_IMPLICIT_BF
-at least in the firmware header I have seen.  This patch
-fixes the ath10k wmi header to match the firmware.
+This patch fixes missing mnd_width for codec_digital clk, this is now set to
+8 inline with datasheet.
 
-Signed-off-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-msm8916.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -4826,7 +4826,8 @@ enum wmi_10_4_vdev_param {
- #define WMI_VDEV_PARAM_TXBF_MU_TX_BFER BIT(3)
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1437,6 +1437,7 @@ static const struct freq_tbl ftbl_codec_
  
- #define WMI_TXBF_STS_CAP_OFFSET_LSB	4
--#define WMI_TXBF_STS_CAP_OFFSET_MASK	0xf0
-+#define WMI_TXBF_STS_CAP_OFFSET_MASK	0x70
-+#define WMI_TXBF_CONF_IMPLICIT_BF       BIT(7)
- #define WMI_BF_SOUND_DIM_OFFSET_LSB	8
- #define WMI_BF_SOUND_DIM_OFFSET_MASK	0xf00
- 
+ static struct clk_rcg2 codec_digcodec_clk_src = {
+ 	.cmd_rcgr = 0x1c09c,
++	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
+ 	.freq_tbl = ftbl_codec_clk,
