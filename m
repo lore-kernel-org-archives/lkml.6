@@ -1,124 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933006AbeCSNxh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:53:37 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33897 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755270AbeCSNxe (ORCPT
+        id S933467AbeCSNyE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:54:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55001 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933417AbeCSNxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:53:34 -0400
-X-Google-Smtp-Source: AG47ELv+blaq8VoupDN0rAXZYNwGC2U3vTH2aYYAIvB+JF6C008PCourIEVr3ZCZy2J+5LHoBxD7yg==
-From: Matt Porter <mporter@konsulko.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] arm: dts: hummingboard2: convert onboard audio to simple-audio-card
-Date: Mon, 19 Mar 2018 09:53:26 -0400
-Message-Id: <20180319135326.24357-1-mporter@konsulko.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 19 Mar 2018 09:53:55 -0400
+X-Google-Smtp-Source: AG47ELtWkd2ahJl3fKN9FMzGNnvtcgnntqvQoBg6RRdHTJ230yygK68qcDegtaHNL/sc+BafzKZeCg==
+Date: Mon, 19 Mar 2018 14:53:51 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Joe Perches <joe@perches.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
+Message-ID: <20180319135351.GL14155@phenom.ffwll.local>
+Mail-Followup-To: Joe Perches <joe@perches.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
+ <20180316074150.GE25297@phenom.ffwll.local>
+ <1521203342.6119.5.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521203342.6119.5.camel@perches.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HB2 onboard audio currently makes use of the imx-audio-sgtl5000
-binding. This binding does not support auxiliary audio devices such
-as external amplifiers. The simple-audio-card binding does support
-this property which allows systems incorporating the HB2 to easily
-add an auxiliary device that's attached to the HB2 audio jack with
-an overlay. Convert HB2 to use simple-audio-card for the onboard
-audio to allow for this additional flexibility.
+On Fri, Mar 16, 2018 at 05:29:02AM -0700, Joe Perches wrote:
+> On Fri, 2018-03-16 at 08:41 +0100, Daniel Vetter wrote:
+> > On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
+> > > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
+> > > arguments that can be removed by creating separate functins.
+> > > 
+> > > Create specific functions for these calls to reduce x86/64 defconfig
+> > > size by ~20k.
+> > > 
+> > > Modify the existing macros to use the specific calls.
+> > > 
+> > > new:
+> > > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
+> > > 
+> > > old:
+> > > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
+> > > 
+> > > Miscellanea:
+> > > 
+> > > o intel_display requires a change to use the specific calls.
+> > > 
+> > > Signed-off-by: Joe Perches <joe@perches.com>
+> > 
+> > Impressed with the size of the bikeshed piled on top of this I decided to
+> > cut this all short by merging it.
+> 
+> Thanks.
+> 
+> There was a similar patch for the DRM_DEV_ macros
+> awhile ago that also reduced object code.
+> 
+> https://lkml.org/lkml/2017/9/25/247
+> 
+> Never applied.
+> 
+> Want a remerge resend?
 
-Signed-off-by: Matt Porter <mporter@konsulko.com>
----
- arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi | 48 +++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 8 deletions(-)
+Yeah dropped out of my inbox, resending is easier. Please do so.
 
-diff --git a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
-index dffbc92e0023..587251ab76ec 100644
---- a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
-@@ -38,6 +38,7 @@
-  *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
-+#include <dt-bindings/sound/fsl-imx-audmux.h>
- 
- / {
- 	chosen {
-@@ -145,22 +146,52 @@
- 		vin-supply = <&v_5v0>;
- 	};
- 
--	sound-sgtl5000 {
--		audio-codec = <&sgtl5000>;
--		audio-routing =
-+	audio: sound-sgtl5000 {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "On-Board Codec";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sound_codec>;
-+		simple-audio-card,frame-master = <&sound_codec>;
-+		simple-audio-card,widgets =
-+			"Microphone", "Mic Jack",
-+			"Headphone", "Headphone Jack";
-+		simple-audio-card,routing =
- 			"MIC_IN", "Mic Jack",
- 			"Mic Jack", "Mic Bias",
- 			"Headphone Jack", "HP_OUT";
--		compatible = "fsl,imx-audio-sgtl5000";
--		model = "On-board Codec";
--		mux-ext-port = <5>;
--		mux-int-port = <1>;
--		ssi-controller = <&ssi1>;
-+
-+		sound_cpu: simple-audio-card,cpu {
-+			sound-dai = <&ssi1>;
-+		};
-+
-+		sound_codec: simple-audio-card,codec {
-+			sound-dai = <&sgtl5000>;
-+		};
- 	};
- };
- 
- &audmux {
- 	status = "okay";
-+
-+	ssi1 {
-+		fsl,audmux-port = <0>;
-+		fsl,port-config = <
-+			(IMX_AUDMUX_V2_PTCR_SYN |
-+			 IMX_AUDMUX_V2_PTCR_TFSEL(4) |
-+			 IMX_AUDMUX_V2_PTCR_TCSEL(4) |
-+			 IMX_AUDMUX_V2_PTCR_TFSDIR |
-+			 IMX_AUDMUX_V2_PTCR_TCLKDIR)
-+			 IMX_AUDMUX_V2_PDCR_RXDSEL(4)
-+		>;
-+	};
-+
-+	pins5 {
-+		fsl,audmux-port = <4>;
-+		fsl,port-config = <
-+			IMX_AUDMUX_V2_PTCR_SYN
-+			IMX_AUDMUX_V2_PDCR_RXDSEL(0)
-+		>;
-+	};
- };
- 
- &ecspi2 {
-@@ -193,6 +224,7 @@
- 		compatible = "fsl,sgtl5000";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_hummingboard2_sgtl5000>;
-+		#sound-dai-cells = <0>;
- 		reg = <0x0a>;
- 		VDDA-supply = <&v_3v2>;
- 		VDDD-supply = <&vcc_1p8>;
+In case you wonder, I try to fairly intentionally drop stuff on the floor,
+to force other people on dri-devel to not load everything onto me, making
+me a bottleneck. But then occasionally a patch drops through all nets
+because tracking mailing lists is impossible :-/
+-Daniel
 -- 
-2.11.0
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
