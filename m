@@ -1,118 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932608AbeCSKfN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:35:13 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38186 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932354AbeCSKfL (ORCPT
+        id S932656AbeCSKiA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:38:00 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44925 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755372AbeCSKh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:35:11 -0400
-X-Google-Smtp-Source: AG47ELs00GvcOAjnhlHhbHDCQbdM4pZpqb+P2uvXY0XaegtwnGcbqhHzKJmBlexAVrfzn1jNMv0/pA==
-Subject: Re: [PATCH v1 02/19] dt-bindings: cpufreq: mediatek: use - instead of
- _ in examples
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-References: <cover.1519378871.git.sean.wang@mediatek.com>
- <fd1fc4c6760ab8fcbf7518df1cecf3837ab18d2c.1519378871.git.sean.wang@mediatek.com>
- <20180226041336.GJ26947@vireshk-i7> <1521427861.13211.8.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <1eafba31-0d0b-89d9-fb66-c4ba5ca6b56f@gmail.com>
-Date: Mon, 19 Mar 2018 11:35:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1521427861.13211.8.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Mar 2018 06:37:56 -0400
+X-Google-Smtp-Source: AG47ELtr5zi21i70OiC0NaOaLu/UwuStKw0NncWXFqEyAQ44EH9VUjSVAPf6NdjhPEDdmO+bMLjq3g==
+From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+To: jdelvare@suse.com, linux@roeck-us.net, lee.jones@linaro.org,
+        cphealy@gmail.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+Subject: [PATCH] hwmon: MC13982: add uid and die temperature sensor inputs
+Date: Mon, 19 Mar 2018 13:38:46 +0300
+Message-Id: <1521455926-26423-1-git-send-email-andrey.gusakov@cogentembedded.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+The uid and die temperature can be read out on the ADIN7 using
+input mux. Map uid and die tenperature sensor to channels 16
+and 17.
 
-On 03/19/2018 03:51 AM, Sean Wang wrote:
-> 
-> Hi, Matthias
-> 
-> I'm worried you missed the patch which already got both tags Reviewed-by
-> from Rob and Acked-by: Viresh and thus I thought it
-> should be ready for your tree.
-> 
+Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+---
+ drivers/hwmon/mc13783-adc.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/mc13xxx-core.c  | 15 ++++++++++++++-
+ include/linux/mfd/mc13xxx.h |  2 ++
+ 3 files changed, 58 insertions(+), 1 deletion(-)
 
-Yes, sorry I missed this one. Fortunately it is not critical, can you please add
-it to v2.
-
-I suppose you realized that I didn't take any from 12/19 onwards, especially 14,
-15 and 17, because they have many conflicts with previous patches in the series.
-
-Sorry for the inconvenience.
-Matthias
-
-> For the other patches in the same series, I will have v2 to refine them
-> according to these suggestions and comments in v1 and let them easy to
-> review.
-> 
-> Really thanks for your effort!
-> 	
-> 	Sean
-> 
-> 
-> On Mon, 2018-02-26 at 09:43 +0530, Viresh Kumar wrote:
->> On 23-02-18, 18:16, sean.wang@mediatek.com wrote:
->>> From: Sean Wang <sean.wang@mediatek.com>
->>>
->>> It should be good that no use "_" is in examples. Consequently,
->>> those nodes in certain files which have an inappropriate name containing
->>> "_" are all being replaced with "-".
->>>
->>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->>> Cc: Rob Herring <robh+dt@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: linux-pm@vger.kernel.org
->>> Cc: devicetree@vger.kernel.org
->>> ---
->>>  Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt | 6 +++---
->>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
->>> index d36f07e..38cfbb5 100644
->>> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
->>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
->>> @@ -26,7 +26,7 @@ Optional properties:
->>>  
->>>  Example 1 (MT7623 SoC):
->>>  
->>> -	cpu_opp_table: opp_table {
->>> +	cpu_opp_table: opp-table {
->>>  		compatible = "operating-points-v2";
->>>  		opp-shared;
->>>  
->>> @@ -86,7 +86,7 @@ Example 1 (MT7623 SoC):
->>>  	};
->>>  
->>>  Example 2 (MT8173 SoC):
->>> -	cpu_opp_table_a: opp_table_a {
->>> +	cpu_opp_table_a: opp-table-a {
->>>  		compatible = "operating-points-v2";
->>>  		opp-shared;
->>>  
->>> @@ -131,7 +131,7 @@ Example 2 (MT8173 SoC):
->>>  		};
->>>  	};
->>>  
->>> -	cpu_opp_table_b: opp_table_b {
->>> +	cpu_opp_table_b: opp-table-b {
->>>  		compatible = "operating-points-v2";
->>>  		opp-shared;
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>
-> 
-> 
+diff --git a/drivers/hwmon/mc13783-adc.c b/drivers/hwmon/mc13783-adc.c
+index 960a1db..ee42133 100644
+--- a/drivers/hwmon/mc13783-adc.c
++++ b/drivers/hwmon/mc13783-adc.c
+@@ -63,6 +63,10 @@ static int mc13783_adc_read(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
++	/* ADIN7 subchannels */
++	if (channel >= 16)
++		channel = 7;
++
+ 	channel &= 0x7;
+ 
+ 	*val = (sample[channel % 4] >> (channel > 3 ? 14 : 2)) & 0x3ff;
+@@ -111,6 +115,40 @@ static ssize_t mc13783_adc_read_gp(struct device *dev,
+ 	return sprintf(buf, "%u\n", val);
+ }
+ 
++static ssize_t mc13783_adc_read_uid(struct device *dev,
++		struct device_attribute *devattr, char *buf)
++{
++	unsigned int val;
++	int ret = mc13783_adc_read(dev, devattr, &val);
++
++	if (ret)
++		return ret;
++
++	/*
++	 * UID is scaled with 0.9 factor.
++	 * input range is [0, 2.555V], val is 10 bits
++	 */
++	return sprintf(buf, "%d\n",
++		DIV_ROUND_CLOSEST(val * 2555, 1024));
++}
++
++static ssize_t mc13783_adc_read_temp(struct device *dev,
++		struct device_attribute *devattr, char *buf)
++{
++	unsigned int val;
++	int ret = mc13783_adc_read(dev, devattr, &val);
++
++	if (ret)
++		return ret;
++
++	/*
++	 * Return value is raw temperature.
++	 * Convert per MC13892 datasheet.
++	 */
++	return sprintf(buf, "%d\n",
++		DIV_ROUND_CLOSEST(-2635920 + val * 4244, 10));
++}
++
+ static DEVICE_ATTR_RO(name);
+ static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO, mc13783_adc_read_bp, NULL, 2);
+ static SENSOR_DEVICE_ATTR(in5_input, S_IRUGO, mc13783_adc_read_gp, NULL, 5);
+@@ -124,6 +162,8 @@ static ssize_t mc13783_adc_read_gp(struct device *dev,
+ static SENSOR_DEVICE_ATTR(in13_input, S_IRUGO, mc13783_adc_read_gp, NULL, 13);
+ static SENSOR_DEVICE_ATTR(in14_input, S_IRUGO, mc13783_adc_read_gp, NULL, 14);
+ static SENSOR_DEVICE_ATTR(in15_input, S_IRUGO, mc13783_adc_read_gp, NULL, 15);
++static SENSOR_DEVICE_ATTR(uid_input, S_IRUGO, mc13783_adc_read_uid, NULL, 16);
++static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, mc13783_adc_read_temp, NULL, 17);
+ 
+ static struct attribute *mc13783_attr_base[] = {
+ 	&dev_attr_name.attr,
+@@ -131,6 +171,8 @@ static ssize_t mc13783_adc_read_gp(struct device *dev,
+ 	&sensor_dev_attr_in5_input.dev_attr.attr,
+ 	&sensor_dev_attr_in6_input.dev_attr.attr,
+ 	&sensor_dev_attr_in7_input.dev_attr.attr,
++	&sensor_dev_attr_uid_input.dev_attr.attr,
++	&sensor_dev_attr_temp1_input.dev_attr.attr,
+ 	NULL
+ };
+ 
+diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
+index d7f54e4..2178c784 100644
+--- a/drivers/mfd/mc13xxx-core.c
++++ b/drivers/mfd/mc13xxx-core.c
+@@ -279,8 +279,21 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
+ 	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2;
+ 	adc1 = MC13XXX_ADC1_ADEN | MC13XXX_ADC1_ADTRIGIGN | MC13XXX_ADC1_ASC;
+ 
+-	if (channel > 7)
++	/*
++	 * Channels mapped through ADIN7:
++	 * 7  - General purpose ADIN7
++	 * 16 - UID
++	 * 17 - Die temperature
++	 */
++	if ((channel > 7) && (channel < 16)) {
+ 		adc1 |= MC13XXX_ADC1_ADSEL;
++	} else if (channel == 16) {
++		adc0 |= MC13XXX_ADC0_UIDEN;
++		channel = 7;
++	} else if (channel == 17) {
++		adc0 |= MC13XXX_ADC0_DTHEN;
++		channel = 7;
++	}
+ 
+ 	switch (mode) {
+ 	case MC13XXX_ADC_MODE_TS:
+diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
+index 638222e..6389a98 100644
+--- a/include/linux/mfd/mc13xxx.h
++++ b/include/linux/mfd/mc13xxx.h
+@@ -243,6 +243,8 @@ struct mc13xxx_platform_data {
+ #define MC13XXX_ADC0_LICELLCON		(1 << 0)
+ #define MC13XXX_ADC0_CHRGICON		(1 << 1)
+ #define MC13XXX_ADC0_BATICON		(1 << 2)
++#define MC13XXX_ADC0_DTHEN		(1 << 4)
++#define MC13XXX_ADC0_UIDEN		(1 << 5)
+ #define MC13XXX_ADC0_ADREFEN		(1 << 10)
+ #define MC13XXX_ADC0_TSMOD0		(1 << 12)
+ #define MC13XXX_ADC0_TSMOD1		(1 << 13)
+-- 
+1.9.1
