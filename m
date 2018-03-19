@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtDqzKIMDIOocJKIqGottxqTDse1PyAMPsxj6rf/cMH0ApvA0vXTKLnYqzgg/KInk0/WnWX
-ARC-Seal: i=1; a=rsa-sha256; t=1521482950; cv=none;
+X-Google-Smtp-Source: AG47ELvoGbnnyw6hvj6N0k0bDzotCaW/kMT9JAQRlj8PXosUxMy3XiJxaaMtyZU8Z3Af8agWXN8B
+ARC-Seal: i=1; a=rsa-sha256; t=1521482943; cv=none;
         d=google.com; s=arc-20160816;
-        b=p5fNvgwosl01Akm/njcydOqRgvshhlhVZjc4iDN3c7Oivhf3NuiKgdOBi/7ESMEWtf
-         DK8T5OGfa7bDtAm7H9D7xclcTU4w/bas1hxNAe5cTnDB8jMziHSI1bt4lGvC53zI+UQP
-         OBl3EO+fSJRHDYGZ7WeIeLWYV3O24RzKYX8wuiYHfi/eHppqSZN2/Mm1h/d8OlUo5UlL
-         4FSPHGSp6oYpOZjcETEtXMUUhppcMT8MpqXXcprK8p0MdXxcFkaY53LRPhc1mqfE4pD/
-         T8RlymH/IXztNu+No3I1HGq5g69qxSsGAx5FfbO5Ts6Grd/e6yORdv30tR1uH5JJUlgs
-         Ai1w==
+        b=YAwE51RzhKrsoAoDsFsB/ssAas39sIiEX+96jCB9EWVLTiszoS5wD0L6YjSdwxCMa6
+         YUymHR82jygKQPqmQygFYnbZrGbX3G0j5hs/re6jUkCBLgsECzuDCCVblgD1CEEf61YH
+         gXxfJNrvynTn56yw/QU1Pco7rvo0eMkXkzdtLy/70phaFTlbe9L1J2eqHM53eBq0To2L
+         QRuoNeI/pgObciEUa7keE3Weuu+Xx/TGeoGKtNYEsyFZGxDJRwLeJd+Fp1rutnJgy2O4
+         4vqTw6G6Y/aEBkyJZc1+Lds0k8rOKRZl9AzB1ARIFrXlmIb0Nc8Hcly0wsF4GIjmplgt
+         pdYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1jTs3APfe6pFljpVPxNFX9BKVvmAO958dE7+9/tMkdI=;
-        b=uuAzNxAUi4BXqTyTaejVekz95QdCvgmfeOTsJnZOGA6G75GD1zKgbcdxmr9vXiFHnC
-         4EIzvn7WRL2vv7NZSG9nU2+GOU0WBt/dkryM4sydTLp2t/RZX0CuNsszkejTKQCzeSha
-         tWMkssZVVArvPfCibltpWySdjPXaHVP0VhvJMC32AmLba74XE7ocPhoUy7sWJ58Vc7Km
-         ud+uMu226MHPoFfVMu56gmbOKSb56j3KJk58zMgUWqjcqRPs7z6C/oXT0RTfLN17johb
-         lS1Elx6vxmA8E9AeYvbyUd/SdhFX5vU2Nvwm6wzwPLR7kfeJw3j4F/MjC3E+PtxGe1VK
-         x2OA==
+        bh=NwQI532H3BtO6rL3BRp585pblQ2SalOJu93l6/rVW28=;
+        b=ftj8gOT4F+J2R+kwEZ3ZhgKIAhVHZtdTg/gj4njfj6k9EZHitxjkLaEQNei02sTHsJ
+         ZjRwPpWKrhkSwtfgiG9nla7YM41p5YD8OsJl8mKUfXPCkb6HtdXGEhZLM5orApo4Btr7
+         iaIgxxiPde8QoluKZpu/5eDypU8ATWpU4M0rT1/5nKRKS80Is9iQgUoVydTqSNajCSMt
+         xiOiv1XAN2libdy4czjQ8qvJxH7L/Nw/zBGQNDnAvOrMQX4mc7VW0lR9YQWcwJM8Xkjc
+         nV5s1031rqdJJc5VAzzL5NWpQ4A62RtCAkAZTf7qWAl80XNwm7uk2mdaRnJygPhbssSE
+         8ihw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Simon Wunderlich <sw@simonwunderlich.de>,
-	Andreas Pape <apape@phoenixcontact.com>,
-	Sven Eckelmann <sven@narfation.org>,
+	Tomasz Kramkowski <tk@the-tk.com>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 12/68] batman-adv: handle race condition for claims between gateways
-Date: Mon, 19 Mar 2018 19:05:50 +0100
-Message-Id: <20180319171829.651678844@linuxfoundation.org>
+Subject: [PATCH 3.18 10/68] HID: clamp input to logical range if no null state
+Date: Mon, 19 Mar 2018 19:05:48 +0100
+Message-Id: <20180319171829.401708082@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390506286270414?=
-X-GMAIL-MSGID: =?utf-8?q?1595390506286270414?=
+X-GMAIL-THRID: =?utf-8?q?1595390498609156118?=
+X-GMAIL-MSGID: =?utf-8?q?1595390498609156118?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +51,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andreas Pape <APape@phoenixcontact.com>
+From: Tomasz Kramkowski <tk@the-tk.com>
 
 
-[ Upstream commit a3a5129e122709306cfa6409781716c2933df99b ]
+[ Upstream commit c3883fe06488a483658ba5d849b70e49bee15e7c ]
 
-Consider the following situation which has been found in a test setup:
-Gateway B has claimed client C and gateway A has the same backbone
-network as B. C sends a broad- or multicast to B and directly after
-this packet decides to send another packet to A due to a better TQ
-value. B will forward the broad-/multicast into the backbone as it is
-the responsible gw and after that A will claim C as it has been
-chosen by C as the best gateway. If it now happens that A claims C
-before it has received the broad-/multicast forwarded by B (due to
-backbone topology or due to some delay in B when forwarding the
-packet) we get a critical situation: in the current code A will
-immediately unclaim C when receiving the multicast due to the
-roaming client scenario although the position of C has not changed
-in the mesh. If this happens the multi-/broadcast forwarded by B
-will be sent back into the mesh by A and we have looping packets
-until one of the gateways claims C again.
-In order to prevent this, unclaiming of a client due to the roaming
-client scenario is only done after a certain time is expired after
-the last claim of the client. 100 ms are used here, which should be
-slow enough for big backbones and slow gateways but fast enough not
-to break the roaming client use case.
+This patch fixes an issue in drivers/hid/hid-input.c where values
+outside of the logical range are not clamped when "null state" bit of
+the input control is not set.
 
-Acked-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Andreas Pape <apape@phoenixcontact.com>
-[sven@narfation.org: fix conflicts with current version]
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+This was discussed on the lists [1] and this change stems from the fact
+due to the ambiguity of the HID specification it might be appropriate to
+follow Microsoft's own interpretation of the specification. As noted in
+Microsoft's documentation [2] in the section titled "Required HID usages
+for digitizers" it is noted that values reported outside the logical
+range "will be considered as invalid data and the value will be changed
+to the nearest boundary value (logical min/max)."
+
+This patch fixes an issue where the (1292:4745) Innomedia INNEX
+GENESIS/ATARI reports out of range values for its X and Y axis of the
+DPad which, due to the null state bit being unset, are forwarded to
+userspace as is. Now these values will get clamped to the logical range
+before being forwarded to userspace. This device was also used to test
+this patch.
+
+This patch expands on commit 3f3752705dbd ("HID: reject input outside
+logical range only if null state is set").
+
+[1]: http://lkml.kernel.org/r/20170307131036.GA853@gaia.local
+[2]: https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
+
+Signed-off-by: Tomasz Kramkowski <tk@the-tk.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bridge_loop_avoidance.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/hid/hid-input.c |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/net/batman-adv/bridge_loop_avoidance.c
-+++ b/net/batman-adv/bridge_loop_avoidance.c
-@@ -1596,10 +1596,22 @@ int batadv_bla_tx(struct batadv_priv *ba
- 		/* if yes, the client has roamed and we have
- 		 * to unclaim it.
- 		 */
--		batadv_handle_unclaim(bat_priv, primary_if,
--				      primary_if->net_dev->dev_addr,
--				      ethhdr->h_source, vid);
--		goto allow;
-+		if (batadv_has_timed_out(claim->lasttime, 100)) {
-+			/* only unclaim if the last claim entry is
-+			 * older than 100 ms to make sure we really
-+			 * have a roaming client here.
-+			 */
-+			batadv_dbg(BATADV_DBG_BLA, bat_priv, "bla_tx(): Roaming client %pM detected. Unclaim it.\n",
-+				   ethhdr->h_source);
-+			batadv_handle_unclaim(bat_priv, primary_if,
-+					      primary_if->net_dev->dev_addr,
-+					      ethhdr->h_source, vid);
-+			goto allow;
-+		} else {
-+			batadv_dbg(BATADV_DBG_BLA, bat_priv, "bla_tx(): Race for claim %pM detected. Drop packet.\n",
-+				   ethhdr->h_source);
-+			goto handled;
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1090,19 +1090,26 @@ void hidinput_hid_event(struct hid_devic
+ 
+ 	/*
+ 	 * Ignore out-of-range values as per HID specification,
+-	 * section 5.10 and 6.2.25.
++	 * section 5.10 and 6.2.25, when NULL state bit is present.
++	 * When it's not, clamp the value to match Microsoft's input
++	 * driver as mentioned in "Required HID usages for digitizers":
++	 * https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
+ 	 *
+ 	 * The logical_minimum < logical_maximum check is done so that we
+ 	 * don't unintentionally discard values sent by devices which
+ 	 * don't specify logical min and max.
+ 	 */
+ 	if ((field->flags & HID_MAIN_ITEM_VARIABLE) &&
+-	    (field->flags & HID_MAIN_ITEM_NULL_STATE) &&
+-	    (field->logical_minimum < field->logical_maximum) &&
+-	    (value < field->logical_minimum ||
+-	     value > field->logical_maximum)) {
+-		dbg_hid("Ignoring out-of-range value %x\n", value);
+-		return;
++	    (field->logical_minimum < field->logical_maximum)) {
++		if (field->flags & HID_MAIN_ITEM_NULL_STATE &&
++		    (value < field->logical_minimum ||
++		     value > field->logical_maximum)) {
++			dbg_hid("Ignoring out-of-range value %x\n", value);
++			return;
 +		}
++		value = clamp(value,
++			      field->logical_minimum,
++			      field->logical_maximum);
  	}
  
- 	/* check if it is a multicast/broadcast frame */
+ 	/*
