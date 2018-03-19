@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtyb/qYQWKc+xJ3S8iKtES0gglRiAziS/RiqKQAdP3MWBNCInlJPXg2MJCrzEU5E1pCINeD
-ARC-Seal: i=1; a=rsa-sha256; t=1521483807; cv=none;
+X-Google-Smtp-Source: AG47ELu8QK6KjuRMTDiUuzAKYclZfL38a+6n33eJoi6WvX3I6n4wcdrExZduZG1EfwQeKbJfKY8H
+ARC-Seal: i=1; a=rsa-sha256; t=1521483805; cv=none;
         d=google.com; s=arc-20160816;
-        b=hiKHqrX4AYYI0llmOuk+7nJ4s8kHtgE4nEaoa0KdRmLlUX+f3ORbSbjqBCZJFIpzEe
-         AQGGQW1TzMyMu57VgMuIEyygl1T5jJP4dPxT1MQ0EfvkwQeAFVQ6J5ug8jNHRWH5H8im
-         QsptRFM06u8Q/Hy9LSiHLRCVSgSbQKIAgIV3dm09AIIQxN9GJSaMDAIYpOMbChFXC3Op
-         ksxiGhzHNqpv87I3xRTsDvAhtETzQV59QRVVS82TyopVa/FIqW2+1u0G6biRFtvZfYbM
-         F9mJCB++kazt1mAD3JRvsxLM8j7csIy2IR3geGirn4JJFoFSRSJqAh4O7/jdjGWQ2Xfl
-         MH0A==
+        b=o1Sh/YjYuUTyLyrPFGnQuNe+ir5qd0MLqlu8X0T8pJem2JU7JAf4FMUgmu6HBGQCIr
+         lq63r2SUkH8otveihRnCscgF7PhyogUXSqj5k3hqGoDTIjh3jJU9o5AXDbd98NAN2bSU
+         RKCOImoAvOaO/xhhie39OSxZ5051auo/b29W3Em/7MbgDeKai938RzUKkmRIp5ShWTBZ
+         G0QJfL9gKNTG571QOf2fTgjHKcpUK6yhfTtm27gzFKCpkLdT4eViE8AkzLTF+OYVc/Kd
+         qIUjANi0HUKY4k3DS9hMupaIzeq9Fo46fR4OvMEvy0KbMXieZHwHE4d5Obh98S7X+nMk
+         G7MA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=q4EVk2RoOBOKo0/V7Jv1sofeI83J1BGVe2ANd6LIzFQ=;
-        b=s08j059r/2j/twzsoJ8+VrAYLbjIjFt2YegHg1AppkuHni2eQhifeAPK2aJ5KOdGqu
-         gWp5VSjDuhGK72ifEuk0wWzaJ2xWiPrATdWxsCsus132AT5QRa3tYxI4GxbLRMHFMCEi
-         RP96D+o5n3rCn9v4YBLicN5/HyxgJ5lqE1GtlR8L7+LhUbzvbgcx6QUgFEE1i1Bon45T
-         /79XmJw/9O/zhM1QIpvyxBOr75o6AP/U1zYYSv3nHWg+rPkSPCrILUlxoOsvwMNRNzEu
-         FW/ORx0cUtctGm67tAueIZVbxNYD/F6cjYBkTxXXia8rCYHgisIdxDVVQSNgBRAjuKmt
-         TfDA==
+        bh=cSBwTDfjV0Lm6yQEuE4jviKlw+EW32nXoa43ZLFxwnw=;
+        b=HHTjSVrGEgSbZw4JmHTrT4GLk1YFg8tY5sqdObcGCAj5ZqRv9O76guk6pMflvXjKUG
+         tMWolRrbL+G2euko922t53GlhJZgRgd5ExAHXnRgzHPY5OhKUAucwhI81Zmcn4UKqABp
+         nmgPAa9m+nM66nH6PSnVwr3AX0klb5hUtgHgfDvz+9c1olq/HAE1UeuzsOBvbiS8R7z8
+         RG795b+euuRS/HHImP4VZ6GyQql5jsEbPDLwnXWZSuwdOcNlSjmpUMqvvOEkrnkL/nG7
+         Ra2dWAndFkYweEWi32nhXp8uqHynEsqR0X/dDUxM9C1nZlrEHpVV0o31QoHBDI8wPz1g
+         s1Jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mitch Williams <mitch.a.williams@intel.com>,
-	Stefan Assmann <sassmann@kpanic.de>,
-	Andrew Bowers <andrewx.bowers@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Sean Paul <seanpaul@chromium.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 124/241] i40e: only register client on iWarp-capable devices
-Date: Mon, 19 Mar 2018 19:06:29 +0100
-Message-Id: <20180319180756.334934447@linuxfoundation.org>
+Subject: [PATCH 4.9 123/241] drm/rockchip: vop: Enable pm domain before vop_initial
+Date: Mon, 19 Mar 2018 19:06:28 +0100
+Message-Id: <20180319180756.292330703@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391405470733489?=
-X-GMAIL-MSGID: =?utf-8?q?1595391405470733489?=
+X-GMAIL-THRID: =?utf-8?q?1595391402570792885?=
+X-GMAIL-MSGID: =?utf-8?q?1595391402570792885?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,58 +50,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mitch Williams <mitch.a.williams@intel.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
 
 
-[ Upstream commit 004eb614c4d2fcc12a98714fd887a860582f203a ]
+[ Upstream commit 5e570373c015b60a68828b1cd9d475cb33d3be4b ]
 
-The client interface is only intended for use on devices that support
-iWarp. Only register with the client if this is the case.
+We're trying to access vop registers here, so need to make sure
+the pm domain is on.
 
-This fixes a panic when loading i40iw on X710 devices.
+Normally it should be enabled by the bootloader, but there's no
+guarantee of it. And if we wanna do unbind/bind, it would also
+cause the device to hang.
 
-Signed-off-by: Mitch Williams <mitch.a.williams@intel.com>
-Reported-by: Stefan Assmann <sassmann@kpanic.de>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+And this patch also does these:
+1/ move vop_initial to the end of vop_bind for eaiser error handling.
+2/ correct the err_put_pm_runtime of vop_enable.
+
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: http://patchwork.freedesktop.org/patch/msgid/1491481885-13775-8-git-send-email-jeffy.chen@rock-chips.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   29 ++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -11142,10 +11142,12 @@ static int i40e_probe(struct pci_dev *pd
- 		  round_jiffies(jiffies + pf->service_timer_period));
- 
- 	/* add this PF to client device list and launch a client service task */
--	err = i40e_lan_add_device(pf);
--	if (err)
--		dev_info(&pdev->dev, "Failed to add PF to client API service list: %d\n",
--			 err);
-+	if (pf->flags & I40E_FLAG_IWARP_ENABLED) {
-+		err = i40e_lan_add_device(pf);
-+		if (err)
-+			dev_info(&pdev->dev, "Failed to add PF to client API service list: %d\n",
-+				 err);
-+	}
- 
- #ifdef I40E_FCOE
- 	/* create FCoE interface */
-@@ -11323,10 +11325,11 @@ static void i40e_remove(struct pci_dev *
- 		i40e_vsi_release(pf->vsi[pf->lan_vsi]);
- 
- 	/* remove attached clients */
--	ret_code = i40e_lan_del_device(pf);
--	if (ret_code) {
--		dev_warn(&pdev->dev, "Failed to delete client device: %d\n",
--			 ret_code);
-+	if (pf->flags & I40E_FLAG_IWARP_ENABLED) {
-+		ret_code = i40e_lan_del_device(pf);
-+		if (ret_code)
-+			dev_warn(&pdev->dev, "Failed to delete client device: %d\n",
-+				 ret_code);
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -503,7 +503,7 @@ static int vop_enable(struct drm_crtc *c
+ 	ret = pm_runtime_get_sync(vop->dev);
+ 	if (ret < 0) {
+ 		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
+-		goto err_put_pm_runtime;
++		return ret;
  	}
  
- 	/* shutdown and destroy the HMC */
+ 	ret = clk_enable(vop->hclk);
+@@ -1348,10 +1348,16 @@ static int vop_initial(struct vop *vop)
+ 		return PTR_ERR(vop->dclk);
+ 	}
+ 
++	ret = pm_runtime_get_sync(vop->dev);
++	if (ret < 0) {
++		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
++		return ret;
++	}
++
+ 	ret = clk_prepare(vop->dclk);
+ 	if (ret < 0) {
+ 		dev_err(vop->dev, "failed to prepare dclk\n");
+-		return ret;
++		goto err_put_pm_runtime;
+ 	}
+ 
+ 	/* Enable both the hclk and aclk to setup the vop */
+@@ -1411,6 +1417,8 @@ static int vop_initial(struct vop *vop)
+ 
+ 	vop->is_enabled = false;
+ 
++	pm_runtime_put_sync(vop->dev);
++
+ 	return 0;
+ 
+ err_disable_aclk:
+@@ -1419,6 +1427,8 @@ err_disable_hclk:
+ 	clk_disable_unprepare(vop->hclk);
+ err_unprepare_dclk:
+ 	clk_unprepare(vop->dclk);
++err_put_pm_runtime:
++	pm_runtime_put_sync(vop->dev);
+ 	return ret;
+ }
+ 
+@@ -1519,12 +1529,6 @@ static int vop_bind(struct device *dev,
+ 	if (!vop->regsbak)
+ 		return -ENOMEM;
+ 
+-	ret = vop_initial(vop);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "cannot initial vop dev - err %d\n", ret);
+-		return ret;
+-	}
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(dev, "cannot find irq for vop\n");
+@@ -1551,8 +1555,17 @@ static int vop_bind(struct device *dev,
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ret = vop_initial(vop);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "cannot initial vop dev - err %d\n", ret);
++		goto err_disable_pm_runtime;
++	}
++
+ 	return 0;
+ 
++err_disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++	vop_destroy_crtc(vop);
+ err_enable_irq:
+ 	enable_irq(vop->irq); /* To balance out the disable_irq above */
+ 	return ret;
