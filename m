@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELthvgKOnr21G6P2ix+jp9JBclXPK8gaf6KfbdB73+NW2NRQ4T8U0MnQ7MjbhjiZl3SzKTIj
-ARC-Seal: i=1; a=rsa-sha256; t=1521483554; cv=none;
+X-Google-Smtp-Source: AG47ELvN6u9sNzF0k1DEk0vErDDBH+qQgI8RDCmjAfzwAPoQt4K2jWhx7cc+OfWdCUHaaKTMlOUg
+ARC-Seal: i=1; a=rsa-sha256; t=1521483548; cv=none;
         d=google.com; s=arc-20160816;
-        b=qxWmDYIELpEempOk0wZ0wb/v57RO4PZ7mkWmXO37bw2elajuiE7reSop+AqCd2rGcJ
-         PDTTNwwGUtg7kJ1UV6wHmiKQb9+CGZGVMJhzpI4K1AjxeLuuP2VcFYyuyO4SAvAwonVs
-         UtsN+39eXr091DI2b2NXkXImv/4LDHznj5tLoj3mmtAzvT7CU6f2BOQI3Vfb/ZVm5bdc
-         T8FgevZQL5+9DnKcPgHjDfoy763YjlJT4u1cHeioOwGW8STuH8uhLIDgMniPTxZptkGR
-         ECtVpGUGaxiGewEWubhRFEQrsdIKHWHFeo0SZKgZ5ty5jTQTqKlHmPSfDmjExC7pXoh6
-         Dzuw==
+        b=0ShBFpG32is9DUn4kYleIjnzPKmIRG55hCQI/KyY4300Gu8CxZZA/fQt9UrNqq3ZBA
+         ek/O9UujSHHZUA6vQcDPX+d0B0G3iURKNm+WXZKa4OwMhHER5xM7xQOcPEKQx9EV15Ps
+         AqWjwGtRRIUT01LyW3FJaxzmnI/Ox+nkJZN5netVQDXM2GYAjaFtiWqWHgvB+Gzxn0+y
+         eFF+uzbBeFzP95HDdqUEZOJK2ha6L6WrlPhS1Ud0bywdms4htsxrJeAn28QHInsjVNvt
+         gjHay2SbZriwouBkqETQla2aufG5E9auJo/nYVRuPVpVJfeyWTm9qTqTzteNOpqa/glu
+         /RGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RoKS40n2hHCV+Tt0kmZLbtJuD1otOAVfcY6+qKvI3QU=;
-        b=DaHB0GSWZ7wpp50qDGXVRfK2qa4nunEklxg+JfoIWGSF9KDe9EykxZKQCVXKnQYoku
-         +MU9q57JSPH/OlK/S16thOUyG0oAhK+HSDDaHJPaOHvtW09Q32Q84Vn5FQdRzbWRSnYF
-         mXSZGuKBWjEm1eoRRtwlmPhVaBHTS1gO+di2v279+jw3WIBdC63N40eXqxwqm04NH5Jh
-         E3jsYlvk0RsBJYqMEZP6R7k9AND0vAorWIzzhXstup+kMteEdJ1iPai9MBXpDi2k+els
-         qYIne5P7DNVqgk8T0r26w0w/akQZ5EFeVofobpFlzhKTd4TVbgJxQLjF1BZDY5O25EF2
-         /GWQ==
+        bh=tZoJR/mSiDSLhPaqBX4KDAR2vBhcxRt1nB+3LeahnwI=;
+        b=e8wQVUBzBmOFMm+juCR3T5Buz/8N20RepYY0NAeMI9AcZoHgP8Tqm9nkXbyuTsnRVu
+         zdZpXx/aJaUaUSjeRcmjEN9QS+zlWuxru2IrFtGjRc8zl3NEx0X63UHqpZr18HALERQM
+         lkqxEp9HNtoS0iBxNzQyOrxvvPSBgK/daq/wvCjOwXpyyfGIShCRFRcxPy34TSQURd4a
+         7MC540D1WTWeg15Q2RMUBMU8fn8uiv7BggBAzxmBcCZEEZ1p4cHb7XIlXLRLyufl6lyA
+         nL2I2CD/YMGbQeBG2iY+/AxqOpRZkGjSwtyBrzbkVrjD3Gs00YyLHRdVgEmdeBBGjoND
+         lD+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aaron Salter <aaron.k.salter@intel.com>,
-	Andrew Bowers <andrewx.bowers@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 024/241] i40e: Acquire NVM lock before reads on all devices
-Date: Mon, 19 Mar 2018 19:04:49 +0100
-Message-Id: <20180319180752.169330146@linuxfoundation.org>
+Subject: [PATCH 4.9 009/241] ARM: dts: r8a7792: Remove unit-address and reg from integrated cache
+Date: Mon, 19 Mar 2018 19:04:34 +0100
+Message-Id: <20180319180751.560981724@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390699398049231?=
-X-GMAIL-MSGID: =?utf-8?q?1595391139777225767?=
+X-GMAIL-THRID: =?utf-8?q?1595391134061617095?=
+X-GMAIL-MSGID: =?utf-8?q?1595391134061617095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aaron Salter <aaron.k.salter@intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 96a39aed25e6559b160786117df124084feb9080 ]
+[ Upstream commit a0504f0880c11da301dc2b5a5135bd02376e367e ]
 
-Acquire NVM lock before reads on all devices.  Previously, locks were
-only used for X722 and later.  Fixes an issue where simultaneous X710
-NVM accesses were interfering with each other.
+The Cortex-A15 cache controller is an integrated controller, and thus
+the device node representing it should not have a unit-addresses or reg
+property.
 
-Change-ID: If570bb7acf958cef58725ec2a2011cead6f80638
-Signed-off-by: Aaron Salter <aaron.k.salter@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_nvm.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_nvm.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_nvm.c
-@@ -292,14 +292,14 @@ i40e_status i40e_read_nvm_word(struct i4
- {
- 	enum i40e_status_code ret_code = 0;
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -58,9 +58,8 @@
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
--	if (hw->flags & I40E_HW_FLAG_AQ_SRCTL_ACCESS_ENABLE) {
--		ret_code = i40e_acquire_nvm(hw, I40E_RESOURCE_READ);
--		if (!ret_code) {
-+	ret_code = i40e_acquire_nvm(hw, I40E_RESOURCE_READ);
-+	if (!ret_code) {
-+		if (hw->flags & I40E_HW_FLAG_AQ_SRCTL_ACCESS_ENABLE) {
- 			ret_code = i40e_read_nvm_word_aq(hw, offset, data);
--			i40e_release_nvm(hw);
-+		} else {
-+			ret_code = i40e_read_nvm_word_srctl(hw, offset, data);
- 		}
--	} else {
--		ret_code = i40e_read_nvm_word_srctl(hw, offset, data);
-+		i40e_release_nvm(hw);
- 	}
- 	return ret_code;
- }
+-		L2_CA15: cache-controller@0 {
++		L2_CA15: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 			power-domains = <&sysc R8A7792_PD_CA15_SCU>;
