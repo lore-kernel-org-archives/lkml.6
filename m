@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3230508-1521475806-2-9960860341284620013
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521475805; b=PEOrKiHUjTptuXgVPEHpii1Yo5klqlOZ1jhPACLQ7KdMjP0
-    wS03KBRtfe2gJ6iq2/DMOJDChOh0ehOsYY2HykG/WinZDuQ8eo35Sy0k5kPm8/RY
-    nsVgeHrGx7gT5005zHy7kpDR3eTmvtNIgvY7ErDlZLrcnEl9z4SDhHPpJ1tso8cY
-    O34jxWcgEuyd0SAkTfhS7pQC8B+NfZ8CIH6MWn1IqoSy7np7W1AkDLxe5jCcZqaE
-    Osm3QLYAwd90OHh4tAJn12+q5DbC285Skc7GvN9UVlUtFs+HHMnwwJWDrZR+pHkN
-    KRmPRuo5+k+AUOCFotr62JE9C44nbJ6UYgKZvqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521475805; bh=93orrF
-    h7uce423ugO7ZGY/lIZwrBN4yeGfr4twWcKow=; b=Akb4naLnC5JfmYiLZ8sR+C
-    i/09JcmK7TKPnH06S5+9Ih48RSktZ44bA8XfPzdny4NvcmBr2rW0VViCInsmjKHt
-    SQ9VTHY4toDs3Mk9kPjPPnJ23cE4xZVtX+/Vus5aiXJJyGHnNhSderBQkHe/wpcf
-    cZ5izuQSyPJfx8KVkhqH9rrkGFo0VFC06r1VVabuse5uf2n5GSfGyQ9m7Edustb/
-    +7kAO8vtbmLkF8oX4kacG5YiqQ+pqSQCA7RntjR/jNqGgYHNwk7NkIEWYw0QQs6v
-    pKzi2mYn+QdReB7V5oQ/afbiXj5QVLEmdB5+gu7bRDq2hQna9Jrt86pjk9ou7xOA
-    ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E6RIrH5h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeefjedvnecuvehluhhsthgvrhfuihiivgepuddtud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E6RIrH5h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeefjedvnecuvehluhhsthgvrhfuihiivgepuddtud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965835AbeCSQKA (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 12:10:00 -0400
-Received: from mail-bn3nam01on0122.outbound.protection.outlook.com ([104.47.33.122]:60672
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966394AbeCSQJu (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:09:50 -0400
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELtrqyutxRrBtpkcOXxMg9TJpjr+veY3ImCkBR+8JlqdKjTNWJGsOiVGQdM+njiokWMxO6o0
+ARC-Seal: i=1; a=rsa-sha256; t=1521475804; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Sn5lprVDbDmTbDVJvEIDQZRS2WxGW93LimeSohhC1uVrbBH/VsWlaBZAOA2BWGw5Uv
+         DKMU6QY/Mdv+UMeTazVwDRXLMag2h6OWNubXTvX9q9fH42XBFEVHKuB6sn4ar8vix3hs
+         dvJCrbLfJabTUz7ahLrnNfX319Peu7m+10CHn6iIs2hZn4e1S/82WPXF/0G7FbZmwOXA
+         +AiQTLL30D+TTOMGrdvYqGXMbGglUziZBViHPnK9tNvLXhj3zbmv66M2zo3EOjcdSzAq
+         oW4TjLlcraWIhkIIpNCYiA4+KdytxJ4p6N44AFbFG6rs1fmIkUNUsNN1dgDud2Gwan0z
+         A4wA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=fFgb9UOPy72c6DPHq/4NhoTwipqdmus0Cv4Omm92jRw=;
+        b=ts/HvZ85OkGLlXy7RPhW7JH9inmphE/B1TlyIwYCXVNiVqChq6A/pXV4FWUD8HOCvK
+         yY8FSfuEyDyRJZnu/4uHmMBb7dFnZSDDfziRtzHTxgjzAjsSNwuxwtyK1W2mE1yYL5s6
+         GWAm3CBgqqLiXeGWB9uMhSNwmmSAgVmcri6WLFkcJvifvp3h7dMRXOncFpa9awsSVg0M
+         dXzhVotqaOfhe1HOdXKAgheQqpYKjvRA5nvktIjtoufGk2Dqmo7op3zf/uKMpVYV4J3Q
+         NUkkxw9ut7GBvuAa8rr4B11NudMKnj+zhyw9f8jFRvsVpzCfTD+kzUYoqX0yHnoZZRr3
+         9wQQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=VvxoNJpC;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.128 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=VvxoNJpC;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.128 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 096/167] wl1251: check return from call to
- wl1251_acx_arp_ip_filter
-Thread-Topic: [PATCH AUTOSEL for 4.4 096/167] wl1251: check return from call
- to wl1251_acx_arp_ip_filter
-Thread-Index: AQHTv5xdYvGx0TNgwUqgsDCuJ3Skdw==
-Date: Mon, 19 Mar 2018 16:07:22 +0000
-Message-ID: <20180319160513.16384-96-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 119/167] Fix serial console on SNI RM400
+ machines
+Thread-Topic: [PATCH AUTOSEL for 4.4 119/167] Fix serial console on SNI RM400
+ machines
+Thread-Index: AQHTv5xuAlYumOkc1kOEgtBzJ4EB0A==
+Date: Mon, 19 Mar 2018 16:07:51 +0000
+Message-ID: <20180319160513.16384-119-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,71 +48,82 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:t6DANIfFw0/gI4y5eoTjJZVV13uQsP/to50CR0ux7anI3mmv5P654WbjLa9JcwmpE/XF1YZHTNIrb8TWbiLRkR/0DxtnEXDecKUvi0OvT0esJ53AP0gM9JizT79amQ/H+nmhHoQVKg5rRBN7BLaMZSBn5mcGSGo71RxlTeiFsSzKN8oDP1OlCk2KgWMnYlCgZkskVJva2FpS2UD0dIhOmZW0ooQjf7FbRtspJeAYYMRxesQn9Hy8wocaSv0s9Vg/;20:mCBQY6fXpogbStBdmjMJWY1VZHHUeHDuaOnjVZ/HH+M+X1clsXHIZLiUtUDoHWNe0t0q670nlw9Qw2K7Ac8FPqpMnK9sR2Wf2HaiupvJRTUS+LB6+qQKEUYIZ076CBfLkUVCE+rjDZuLsZII8cZZiD2rQfv38vdjb1cvgprXGww=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0919;7:ZogAv2VLsydwdara/r+QlmriFQaF1vSDQMyT7uj+3QlMKDakUioy90fBNEWhR6VhvB9UQJID5BCCegEGN29GjKmxFrW/qigtm1UcvxvdCj++25lW5Jf+nEooDrGnZ2phEEacXuPN2+x/QWMQ8EXHyzkOKPMdWF8uskunyy1ioXfZCEVZZ4z+R7czmdkwu7Ee+v2WbpjTDkOmuP7RRHE72oSp7Kt0nkKloSSBiRE5BLyWMiSCdKFkEoz2UCLECdHE;20:bD4tGwT1MVAwwQNtAP7VnmSXAFsZZXwlB6vFHPBirXnsCduBeGqU1R7euiBURU1YT9CRSkXhE/xi2Zv7g8JEebRrja1mglKxIJQpkOzIbh7R1//eiIk97gHmshiqa/OY8pnTnsY18IK/1Aftp5BgDrida87K4hnz9c8x6SlaP+o=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1b9325c4-f5a6-4d86-1d2c-08d58db3d531
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1095;
-x-ms-traffictypediagnostic: DM5PR2101MB1095:
+x-ms-office365-filtering-correlation-id: 21cb5980-6706-45cc-7c88-08d58db3df73
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0919;
+x-ms-traffictypediagnostic: DM5PR2101MB0919:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1095F94CED93B86CA420F36BFBD40@DM5PR2101MB1095.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(198206253151910);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1095;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1095;
+x-microsoft-antispam-prvs: <DM5PR2101MB0919A21765E29A2D1CDBC7F9FBD40@DM5PR2101MB0919.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0919;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0919;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(396003)(39380400002)(189003)(199004)(15760500003)(305945005)(316002)(1076002)(7736002)(14454004)(86612001)(25786009)(8936002)(2950100002)(110136005)(66066001)(186003)(10090500001)(6666003)(5250100002)(2501003)(99286004)(76176011)(86362001)(4326008)(68736007)(3660700001)(105586002)(8676002)(81166006)(81156014)(106356001)(3280700002)(72206003)(10290500003)(478600001)(2900100001)(97736004)(54906003)(6512007)(53936002)(6506007)(102836004)(6436002)(5660300001)(6486002)(107886003)(26005)(2906002)(22452003)(6116002)(3846002)(36756003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: wMp/xx1FbaYHPzFuwyh/kNHuyBuEpIdOwK/B5R6OZfourWA7Ge92YIjaoqYqQcTVQc7QyR48HbdJLwsqxtoXTYW0iwit5ri1iJMg0PR7f32muFqptiwqG2zwMD55L900JwTArF1ac/jEXq2xtOMyEcYW3pLrsUf2BFQ2fxgZLOpNLUTSXysIkx+j6shfTBGBg51+vaMT8giRzUO0VvLlB377QVorJ+c/ULEtnA4ctYsve0INHB1iRqX3rvg2Is+r0fc685TA/NJyhEErQ+iCnkPlT8KArLVfH5/QNyCH7Q38YP0YppJA9m/W03wseJ+ckrzVtBq3PRMLS7hPqK0OWw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(396003)(39860400002)(376002)(366004)(199004)(189003)(66066001)(575784001)(2906002)(86362001)(10290500003)(105586002)(8676002)(305945005)(110136005)(478600001)(4326008)(7736002)(81166006)(3280700002)(6506007)(97736004)(107886003)(5660300001)(36756003)(8936002)(53936002)(86612001)(14454004)(59450400001)(1076002)(2501003)(6116002)(10090500001)(76176011)(186003)(3846002)(5250100002)(6512007)(99286004)(102836004)(106356001)(72206003)(81156014)(2950100002)(6666003)(54906003)(3660700001)(22452003)(68736007)(6486002)(25786009)(26005)(316002)(2900100001)(6436002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0919;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: n2FLNhOsUD404rxARi4fJSl/31W6zFALSsXtz0e5Y3/he2s6K7d4+ZbCfEM8XMtL8IJd65gMaW4rJymy9LlY+G7F69/C5FBACAPwAVULiIAepiyMXudm/fgs/11rc6HTtlRxEmffnbkF+R0u62tSVohQsTELuatNN9625lx9+w9hugif708QxdQJJgZsOfoHAP9Eib6MFCt6nJYei33bpF+68vemqFVBNwM8lDSVcFbn5m/F9wdD+Ffj4QgfR82ikfCIwBUQ36yR9B2q2N4zl6EZuZCtrtVK69bjKgauU7uvkNGenPSkf8B18Xy9Rc5/SMDIW+oXs1CxdeNniO7b5A==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9325c4-f5a6-4d86-1d2c-08d58db3d531
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:07:22.6657
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21cb5980-6706-45cc-7c88-08d58db3df73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:07:51.4501
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1095
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0919
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595382626228264600?=
+X-GMAIL-MSGID: =?utf-8?q?1595383013132343780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
-[ Upstream commit ac1181c60822292176ab96912208ec9f9819faf8 ]
+[ Upstream commit e279e6d98e0cf2c2fe008b3c29042b92f0e17b1d ]
 
-Currently the less than zero error check on ret is incorrect
-as it is checking a far earlier ret assignment rather than the
-return from the call to wl1251_acx_arp_ip_filter. Fix this by
-adding in the missing assginment.
+sccnxp driver doesn't get the correct uart clock rate, if CONFIG_HAVE_CLOCK
+is disabled. Correct usage of clk API to make it work with/without it.
 
-Detected by CoverityScan, CID#1164835 ("Logically dead code")
+Fixes: 90efa75f7ab0 (serial: sccnxp: Using CLK API for getting UART clock)
 
-Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Suggested-by: Russell King - ARM Linux <linux@armlinux.org.uk>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/ti/wl1251/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/sccnxp.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/ti/wl1251/main.c b/drivers/net/wireless/t=
-i/wl1251/main.c
-index 9bee3f11898a..869411f55d88 100644
---- a/drivers/net/wireless/ti/wl1251/main.c
-+++ b/drivers/net/wireless/ti/wl1251/main.c
-@@ -1196,8 +1196,7 @@ static void wl1251_op_bss_info_changed(struct ieee802=
-11_hw *hw,
- 		WARN_ON(wl->bss_type !=3D BSS_TYPE_STA_BSS);
+diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
+index fcf803ffad19..cdd2f942317c 100644
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -884,14 +884,19 @@ static int sccnxp_probe(struct platform_device *pdev)
 =20
- 		enable =3D bss_conf->arp_addr_cnt =3D=3D 1 && bss_conf->assoc;
--		wl1251_acx_arp_ip_filter(wl, enable, addr);
--
-+		ret =3D wl1251_acx_arp_ip_filter(wl, enable, addr);
- 		if (ret < 0)
- 			goto out_sleep;
- 	}
+ 	clk =3D devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		if (PTR_ERR(clk) =3D=3D -EPROBE_DEFER) {
+-			ret =3D -EPROBE_DEFER;
++		ret =3D PTR_ERR(clk);
++		if (ret =3D=3D -EPROBE_DEFER)
+ 			goto err_out;
+-		}
++		uartclk =3D 0;
++	} else {
++		clk_prepare_enable(clk);
++		uartclk =3D clk_get_rate(clk);
++	}
++
++	if (!uartclk) {
+ 		dev_notice(&pdev->dev, "Using default clock frequency\n");
+ 		uartclk =3D s->chip->freq_std;
+-	} else
+-		uartclk =3D clk_get_rate(clk);
++	}
+=20
+ 	/* Check input frequency */
+ 	if ((uartclk < s->chip->freq_min) || (uartclk > s->chip->freq_max)) {
 --=20
 2.14.1
