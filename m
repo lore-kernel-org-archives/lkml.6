@@ -1,31 +1,31 @@
 Return-Path: <jacek.anaszewski@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521487487; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521487488; cv=none;
         d=google.com; s=arc-20160816;
-        b=h54BIyK6gYtRgOa05VrrrdTUhwfMepNBy0l0+Jl4oEmbXbupiBvNJ1omZ3qSmwR1iw
-         mde+qw2IGIiYdThu0UcS9A8zGmyxCGFpUlVWchL/DtD4bvZyYJ/xaV38U2+Xm1l+npyh
-         z1JoJ883TgE0JDqTbSEQm62l7JTOYrYTc0OSlx2EgHY+phYZPqTCHxaaGWwRaK5TR32N
-         s5SqJuWUK0KiGh7hKsC2Ubed17v0X+pz0TnhFaeWkmkK0BmCOaqoJOKgP++0BXsUtuzp
-         paJd4MCJaAZrc9aqAcl+i5yyFSoWdatYfKcD3nOjlmGwF/mUWakUgzMhVJG6v+263epA
-         F8jg==
+        b=uozWW0EfU5og14k+wMx0PFdC0M7HtCp7VubWXMnP0/4qQAZl5canM4F3k0a0NK+Sys
+         lOThlYusv0BZflvJEl57vLvrdc8i9WAs/ua73TkUnWupQuIk5mYgr4xp8YAMwycog1+f
+         pU/3SaK422c/uqNERH2zQCRQV3zfIGajSf+Hxh7L/pH+ssB5Jp2sJan/f5WHSwUVbzgr
+         psrnz7VJEOzfze+3m6meMmGkykZtDaVYc5vLsegT2WRsA5uSPAuj8WxBDp4dld4xxLdr
+         r5EiZNvq+Ptt/vaOUXFjQ+Xt9Y5UM2AOANAcDGLIlzz270aTLiWts49UovKWUs/bd7gX
+         7Fqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=xlEFjdyGICQUelcGArGkqqK6OnPwV/FT/8uGx2v9IvA=;
-        b=BhPE2K38u5Z2+a7juK1OT0djzTZkiy0mOlWOwcfA0K/SrRfmG4f7ethkpCd/y5us+5
-         UgyLWsKteS9eIQluzhoA5EpNQEASCDXdnyPcLpGCOp4kYwNTE16f1nb6zeRrNkwFyvDg
-         Fv2HTFOs/CsiQ0I73o84kTd4iz7tcNRUt2dlqjHyUSRaK0WygBpZ308KFOPiWo7n7CuI
-         Mc4JPGXnELcebxm6mGyU6nSpRtXOwo30rBKMSfFLTy8ru24Esx0yFv+40kwk2SkfnThc
-         mBMYHM96oCXsM0p5CemV5WEqtIJB02a5cmwBaFmefSkchwdJKh0dPos/NqUX3c63Dn6i
-         SE4A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=BNmB/0a3IdnFLwCNz/ZcGpTkdw999lsfp1YmEZp8hSk=;
+        b=X0tB3AgW5NARlT2H8dorlb1MW9tJxDhcPV4nPjpxasvyCvtc4yKD67XybZRRlp93Nu
+         3vVnkmnQD4IE9rMRlAEesckA6nXHb+0xN39vvIhZjr6xx1yCxCK5778ArAdjZwZpcUox
+         bTDJLqZC+ASdRhnGHCpr0SdpAsaBHt5jMK8MNlhECmFHmxjeoXZS+frxFYIfHNNvp+EI
+         jadtsAeCqd5M5fginCTeOhhDP4X1ZyIMhUz7Q7R5TmKR2DH5NxwrTMgI6cWxPh6OjJ6G
+         EJ7r6DvAYBB0Zt3lbchMC3GGY9SpCYXpspc7lr+NW4AD3Mz73qcJopaSESVinuTp5b9K
+         2WIA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ATB1fnpU;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icCZUVZy;
        spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ATB1fnpU;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icCZUVZy;
        spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELu6xVozGw2tMjAlgX703M4YsJDywzudtlwzXuhANxOtTx2w3WZwx+t5k36QyyTOO6bmS9+Mjg==
+X-Google-Smtp-Source: AG47ELvaz1EQ9419WqECTOKWDxF2CICe4i/Z9A2QksXQghemIePCKjwUcwqX8+PNdCDUnf9PL9VKqQ==
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org
@@ -33,33 +33,44 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-leds@vger.kernel.org,
 	pavel@ucw.cz,
 	jacek.anaszewski@gmail.com
-Subject: [PATCH 4.9 v2 0/2] Clear LED_BLINK_SW flag in led_blink_set()
-Date: Mon, 19 Mar 2018 20:23:17 +0100
-Message-Id: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 4.9 v2 1/2] Revert "led: core: Fix brightness setting when setting delay_off=0"
+Date: Mon, 19 Mar 2018 20:23:18 +0100
+Message-Id: <1521487399-10447-2-git-send-email-jacek.anaszewski@gmail.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+References: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595395263169697427?=
-X-GMAIL-MSGID: =?utf-8?q?1595395263169697427?=
+X-GMAIL-THRID: =?utf-8?q?1595395264577300277?=
+X-GMAIL-MSGID: =?utf-8?q?1595395264577300277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The fix for brightness setting when setting delay_off=0 introduces
-a regression and has truncated commit message. Revert that patch
-and apply the one-line change required to fix the original issue
-in the way appropriate for the 4.9 code base.
+This reverts commit 86b9fa2190907f4f550d9d6bf490c5f89ca33836.
 
-Changes from v1:
- - added Reported-by and Signed-off-by tags
+The commit being reverted has two flaws:
+ - it introduces a regression, fixed in the upstream
+   commit 7b6af2c53192f1766892ef40c8f48a413509ed72.
+ - it has truncated commit message
 
-Thanks,
-Jacek Anaszewski
+Reported-by: Sasha Levin <Alexander.Levin@microsoft.com>
+Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+ drivers/leds/led-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jacek Anaszewski (2):
-  Revert "led: core: Fix brightness setting when setting delay_off=0"
-  led: core: Clear LED_BLINK_SW flag in led_blink_set()
-
- drivers/leds/led-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index d70d4a5..3bce448 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *led_cdev,
+ 		   unsigned long *delay_on,
+ 		   unsigned long *delay_off)
+ {
+-	led_stop_software_blink(led_cdev);
++	del_timer_sync(&led_cdev->blink_timer);
+ 
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
 -- 
 2.1.4
