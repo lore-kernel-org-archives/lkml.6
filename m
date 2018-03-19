@@ -1,54 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966060AbeCSQjt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:39:49 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:44351 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935400AbeCSQjn (ORCPT
+        id S967320AbeCSQrK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:47:10 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41955 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964999AbeCSQpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:39:43 -0400
-X-Google-Smtp-Source: AG47ELsu1029VtFxmZRAu/8HGJIVeZ8i5aZFzIMqUggHBG3VSJ8w7lkC3xDh+o3+Gd6KTj+7PgI4LA==
-Date: Mon, 19 Mar 2018 09:39:40 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, cl@linux.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: Allow to kill tasks doing pcpu_alloc() and
- waiting for pcpu_balance_workfn()
-Message-ID: <20180319163940.GA519464@devbig577.frc2.facebook.com>
-References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
- <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
- <20180319151447.GL2943022@devbig577.frc2.facebook.com>
- <4e8ca27a-9c92-8f1e-fb72-88758a266cb6@virtuozzo.com>
+        Mon, 19 Mar 2018 12:45:55 -0400
+X-Google-Smtp-Source: AG47ELsTjNf6OKrKcCi9ymDFDYgkI9cEjx+qy5acvo6ycX6BGbHmv7QNC93nW3LEzrCm1fjfP3mMZGqMCQ82LiTL6Xg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e8ca27a-9c92-8f1e-fb72-88758a266cb6@virtuozzo.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180315123202.365696346@infradead.org>
+References: <20180315121902.942902000@infradead.org> <20180315123202.365696346@infradead.org>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 19 Mar 2018 09:45:54 -0700
+Message-ID: <CAPcyv4hu+6-dO+ncM0U4EHwUW_TyoNu1zngVzne0x8rVEa0p2w@mail.gmail.com>
+Subject: Re: [PATCH 01/11] sched/wait: Introduce wait_var_event()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Chris Mason <clm@fb.com>, Anna Schumaker <anna.schumaker@netapp.com>,
+        Joel Becker <jlbec@evilplan.org>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        George Spelvin <linux@sciencehorizons.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 06:32:10PM +0300, Kirill Tkhai wrote:
-> From: Kirill Tkhai <ktkhai@virtuozzo.com>
-> 
-> In case of memory deficit and low percpu memory pages,
-> pcpu_balance_workfn() takes pcpu_alloc_mutex for a long
-> time (as it makes memory allocations itself and waits
-> for memory reclaim). If tasks doing pcpu_alloc() are
-> choosen by OOM killer, they can't exit, because they
-> are waiting for the mutex.
-> 
-> The patch makes pcpu_alloc() to care about killing signal
-> and use mutex_lock_killable(), when it's allowed by GFP
-> flags. This guarantees, a task does not miss SIGKILL
-> from OOM killer.
-> 
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+On Thu, Mar 15, 2018 at 5:19 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> As a replacement for the wait_on_atomic_t() API provide the
+> wait_var_event() API.
+>
+> The wait_var_event() API is based on the very same hashed-waitqueue
+> idea, but doesn't care about the type (atomic_t) or the specific
+> condition (atomic_read() == 0). IOW. it's much more widely
+> applicable/flexible.
+>
+> It shares all the benefits/disadvantages of a hashed-waitqueue
+> approach with the existing wait_on_atomic_t/wait_on_bit() APIs.
+>
+> The API is modeled after the existing wait_event() API, but instead of
+> taking a wait_queue_head, it takes an address. This addresses is
+> hashed to obtain a wait_queue_head from the bit_wait_table.
+>
+> Similar to the wait_event() API, it takes a condition expression as
+> second argument and will wait until this expression becomes true.
+>
+> The following are (mostly) identical replacements:
+>
+>   wait_on_atomic_t(&my_atomic, atomic_t_wait, TASK_UNINTERRUPTIBLE);
+>   wake_up_atomic_t(&my_atomic);
+>
+>   wait_var_event(&my_atomic, !atomic_read(&my_atomic));
+>   wake_up_var(&my_atomic);
+>
+> The only difference is that wake_up_var() is an unconditional wakeup
+> and doesn't check the previously hard-coded (atomic_read() == 0)
+> condition here. This is of little concequence, since most callers are
+> already conditional on atomic_dec_and_test() and the ones that are
+> not, are trivial to make so.
+>
+> Cc: David Howells <dhowells@redhat.com>
+> Tested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  include/linux/wait_bit.h |   70 +++++++++++++++++++++++++++++++++++++++++++++++
+>  kernel/sched/wait_bit.c  |   48 ++++++++++++++++++++++++++++++++
+>  2 files changed, 118 insertions(+)
 
-Applied to percpu/for-4.16-fixes.
+Hi Peter,
 
-Thanks.
+Is this commit ready to hit tip/sched/core? I'm looking for an
+immutable branch that I can use as a basis for the "dax vs dma vs
+truncate" fix series.
 
--- 
-tejun
+Thanks in advance.
