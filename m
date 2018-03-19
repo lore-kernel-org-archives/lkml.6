@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuhoOH0avxf40o8C9ovgnFK0yslqFYCfiRwvKMCEWq1JAFO8/NMu9NLs7tGtssM/5cV7mC4
-ARC-Seal: i=1; a=rsa-sha256; t=1521484136; cv=none;
+X-Google-Smtp-Source: AG47ELvbDtUAH1+sJMfRYRrJOjj10Aj/Oi+xQvz0bE/SEi4WW/8Q8fEvrYoRlT6NZ2Nlu0Tdoucl
+ARC-Seal: i=1; a=rsa-sha256; t=1521484128; cv=none;
         d=google.com; s=arc-20160816;
-        b=ukRYeLCVzfb3OzHA5fKAHW7H0QcYZjBBvpjiBOQSwk7BIL4OFfNRVH23UPgnqddlxD
-         ZKhlN5xmdIXIL4oD4U8kQQKtMwhzDJsooz2+CNVPnLMUwBFOvJn1npHl0Cwh29GdvFS+
-         TSos9Cn0L6y9pzaR0y34dpuUATt86ErTlroJXY0vmjHBOC3sy+qwcrSz959gejWenx8e
-         txHaUTMPsc8y/t+1w/FF8s36YXIlDTilVUl/CBSEycPWiyt3RgzzSk7McymkkG+DLrCC
-         1bgikDDvkhM583S0hz+3FWsgYuVUwkEnOQzX8cLx0sEeHQstLm2V9G+GKQtnAyEIdrVX
-         X5kQ==
+        b=Zi2S9imo6qLOV+cjkRb9bckfxntJ7q8Z6PWlVw5h4lemC6fr/nODoH3f+NX0BHomXB
+         7ocOP54c9dVLphcOq9kG4BJ7nExZqSKgfgnZ2QVhKKbH0+2AvHv230Do7KFjpRZH1pYa
+         /F60piKhbcwTZ/LC/oLanrlGzRX1zU+I6BojaixGn1KUhk4/uWvRUXi46qu9Va4L5ZfK
+         xDpUbbwZ7tG05hLgX6cvUVnDPRUWol2lg/cifIOqi/VjE7EkN1WhAil0I2hoFBc5QNAK
+         c4GH3uDB5vhQe9DqF+3mO3ZR8nhD/Hq2zgLzD3zOnSgIChbq9PAlUkxlCcpOQO0oCOjk
+         QW4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XgKZb0fM4/p6HJuXCbHMORKu9Mopv4fzqB1yu/CeGSM=;
-        b=zVxcAUd/VBX7umJ8KGGzIw9S7EXXBEKej5LLeUsbMBbTZ9nDmbIWqM7hArAKDQw+F/
-         tm2x3js6FMRtJxnW5xZP7139sikazKA3k68/bERiZHtL32rN9HEzGnBMhRABQSR6ZGFg
-         tzuZbXjo8w6MlY7qocw0dBQIqbGXvWkgP/rA5eoPlbj5005cYlPi3VRUe5QSQ31h5Dw2
-         NPPaU/Qm8ZW+E4bQ/26e14W4e7gwA8ZASc/w/K6qFh7c0a3/1ct7cr3r3CfCgj6b3Rfy
-         KxNFZfipTSJcTVScSTJ9c8lvFyjjqSGUD+3Xqa7nSRCWwUHCrk4R/xqnyK9Ai2ZLWajz
-         eg6Q==
+        bh=A4WK57pxvJvYVzgsTNVJlhN/6rdRrYWAJnFTqU2Vbwk=;
+        b=xLEuuto+tI0lE7LjjiEnU2iiaAOfLvoTttAeJlUVD4krR7dj5LZEutFI7Van86gxSb
+         ZYyqcFAltob1aNKn+9dJalh13afBQx9oNVhmaOGwhEBtshaAA6PzyDbuJqHES+sdm2Hc
+         At0KAmk/OZKBIGKgv7TJxF8pwCSwS7a7C+Xpuh+P8MOZzko6La+MT5hQ+Vu7fZcCQAqk
+         H52qC30tyfS6K6hXaebLl/WAWn5yi0a5QcEMUoVDAZTcnTnh+T+wD51ADM1kJ5pZej8s
+         4KZJNg9BUEVUpcl693xIGQV8LSMcgEzJgRzSkottgdOyR1xO5rU6lUPAygMLmtcBhsZg
+         53iw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gratian Crisan <gratian.crisan@ni.com>,
-	Toshi Kani <toshi.kani@hpe.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-mm@kvack.org,
+	Stas Sergeev <stsp@list.ru>,
+	Bart Oldeman <bartoldeman@gmail.com>,
+	Andy Lutomirski <luto@kernel.org>,
 	Borislav Petkov <bp@alien8.de>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 4.9 220/241] x86/mm: Fix vmalloc_fault to use pXd_large
-Date: Mon, 19 Mar 2018 19:08:05 +0100
-Message-Id: <20180319180800.282731338@linuxfoundation.org>
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 217/241] x86/vm86/32: Fix POPF emulation
+Date: Mon, 19 Mar 2018 19:08:02 +0100
+Message-Id: <20180319180800.159625579@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -44,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391061057183549?=
-X-GMAIL-MSGID: =?utf-8?q?1595391750336272784?=
+X-GMAIL-THRID: =?utf-8?q?1595391058826275806?=
+X-GMAIL-MSGID: =?utf-8?q?1595391741971305083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,57 +59,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 18a955219bf7d9008ce480d4451b6b8bf4483a22 upstream.
+commit b5069782453459f6ec1fdeb495d9901a4545fcb5 upstream.
 
-Gratian Crisan reported that vmalloc_fault() crashes when CONFIG_HUGETLBFS
-is not set since the function inadvertently uses pXn_huge(), which always
-return 0 in this case.  ioremap() does not depend on CONFIG_HUGETLBFS.
+POPF would trap if VIP was set regardless of whether IF was set.  Fix it.
 
-Fix vmalloc_fault() to call pXd_large() instead.
-
-Fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
-Reported-by: Gratian Crisan <gratian.crisan@ni.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: linux-mm@kvack.org
+Suggested-by: Stas Sergeev <stsp@list.ru>
+Reported-by: Bart Oldeman <bartoldeman@gmail.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/20180313170347.3829-2-toshi.kani@hpe.com
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Fixes: 5ed92a8ab71f ("x86/vm86: Use the normal pt_regs area for vm86")
+Link: http://lkml.kernel.org/r/ce95f40556e7b2178b6bc06ee9557827ff94bd28.1521003603.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/vm86_32.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -343,7 +343,7 @@ static noinline int vmalloc_fault(unsign
- 	if (!pmd_k)
- 		return -1;
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -719,7 +719,8 @@ void handle_vm86_fault(struct kernel_vm8
+ 	return;
  
--	if (pmd_huge(*pmd_k))
-+	if (pmd_large(*pmd_k))
- 		return 0;
- 
- 	pte_k = pte_offset_kernel(pmd_k, address);
-@@ -463,7 +463,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
- 		BUG();
- 
--	if (pud_huge(*pud))
-+	if (pud_large(*pud))
- 		return 0;
- 
- 	pmd = pmd_offset(pud, address);
-@@ -474,7 +474,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
- 		BUG();
- 
--	if (pmd_huge(*pmd))
-+	if (pmd_large(*pmd))
- 		return 0;
- 
- 	pte_ref = pte_offset_kernel(pmd_ref, address);
+ check_vip:
+-	if (VEFLAGS & X86_EFLAGS_VIP) {
++	if ((VEFLAGS & (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) ==
++	    (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) {
+ 		save_v86_state(regs, VM86_STI);
+ 		return;
+ 	}
