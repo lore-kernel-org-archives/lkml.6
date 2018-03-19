@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932619AbeCSIZe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:25:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48566 "EHLO mail.bootlin.com"
+        id S932665AbeCSIZk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:25:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48556 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755328AbeCSIYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:24:03 -0400
+        id S1755306AbeCSIYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:24:02 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: herbert@gondor.apana.org.au, davem@davemloft.net
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
@@ -13,9 +13,9 @@ Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
         nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH v2 5/9] crypto: inside-secure - do not access buffers mapped to the device
-Date: Mon, 19 Mar 2018 09:21:17 +0100
-Message-Id: <20180319082121.32103-6-antoine.tenart@bootlin.com>
+Subject: [PATCH v2 3/9] crypto: inside-secure - fix a typo in a register name
+Date: Mon, 19 Mar 2018 09:21:15 +0100
+Message-Id: <20180319082121.32103-4-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180319082121.32103-1-antoine.tenart@bootlin.com>
 References: <20180319082121.32103-1-antoine.tenart@bootlin.com>
@@ -23,41 +23,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patches update the way the digest is copied from the state buffer
-to the result buffer, so that the copy only happen after the state
-buffer was DMA unmapped, as otherwise the buffer would be owned by the
-device.
+This patch fixes a typo in the EIP197_HIA_xDR_WR_CTRL_BUG register name,
+as it should be EIP197_HIA_xDR_WR_CTRL_BUF. This is a cosmetic only
+change.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel_hash.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/inside-secure/safexcel.c | 2 +-
+ drivers/crypto/inside-secure/safexcel.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index ef3e0c1c0f2c..b9ec82f3dee1 100644
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -156,10 +156,6 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 	safexcel_complete(priv, ring);
- 	spin_unlock_bh(&priv->ring[ring].egress_lock);
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 5fe85b9dad64..7b291068222f 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -235,7 +235,7 @@ static int safexcel_hw_setup_rdesc_rings(struct safexcel_crypto_priv *priv)
+ 		/* Configure DMA tx control */
+ 		val = EIP197_HIA_xDR_CFG_WR_CACHE(WR_CACHE_3BITS);
+ 		val |= EIP197_HIA_xDR_CFG_RD_CACHE(RD_CACHE_3BITS);
+-		val |= EIP197_HIA_xDR_WR_RES_BUF | EIP197_HIA_xDR_WR_CTRL_BUG;
++		val |= EIP197_HIA_xDR_WR_RES_BUF | EIP197_HIA_xDR_WR_CTRL_BUF;
+ 		writel(val,
+ 		       EIP197_HIA_RDR(priv, i) + EIP197_HIA_xDR_DMA_CFG);
  
--	if (sreq->finish)
--		memcpy(areq->result, sreq->state,
--		       crypto_ahash_digestsize(ahash));
--
- 	if (sreq->nents) {
- 		dma_unmap_sg(priv->dev, areq->src, sreq->nents, DMA_TO_DEVICE);
- 		sreq->nents = 0;
-@@ -177,6 +173,10 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 		sreq->cache_dma = 0;
- 	}
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index 2b7bed3cfb75..8c139b98a580 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -135,7 +135,7 @@
  
-+	if (sreq->finish)
-+		memcpy(areq->result, sreq->state,
-+		       crypto_ahash_digestsize(ahash));
-+
- 	cache_len = sreq->len - sreq->processed;
- 	if (cache_len)
- 		memcpy(sreq->cache, sreq->cache_next, cache_len);
+ /* EIP197_HIA_xDR_DMA_CFG */
+ #define EIP197_HIA_xDR_WR_RES_BUF		BIT(22)
+-#define EIP197_HIA_xDR_WR_CTRL_BUG		BIT(23)
++#define EIP197_HIA_xDR_WR_CTRL_BUF		BIT(23)
+ #define EIP197_HIA_xDR_WR_OWN_BUF		BIT(24)
+ #define EIP197_HIA_xDR_CFG_WR_CACHE(n)		(((n) & 0x7) << 25)
+ #define EIP197_HIA_xDR_CFG_RD_CACHE(n)		(((n) & 0x7) << 29)
 -- 
 2.14.3
