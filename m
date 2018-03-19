@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvszXxogBZU1pcEBOAirqdTjbw2sVr0Q7VOMxe9GU3Ci3pRg6rNYgdHLNt8GZbVqi9dayO4
-ARC-Seal: i=1; a=rsa-sha256; t=1521483088; cv=none;
+X-Google-Smtp-Source: AG47ELu3KRbm7S8tElqXfkgX3n8VQ67OgTOQtJBG6oVtB9qrFX4wrA1fbe45nR9zSnscNayWeAXE
+ARC-Seal: i=1; a=rsa-sha256; t=1521483085; cv=none;
         d=google.com; s=arc-20160816;
-        b=RINY2rlt97Sg2/LA8aDoma1u+3Tt2ugcoX3EKOaqZNmuDZVe5O8ce7NnG7e22Mt65m
-         gKaeIm4VO7CSYB7XC1jvaWFl6Aa+uHMyGkau3IbyytfH4NSzwcO9/AUBymaDTM5TPmJ5
-         pDQnwjS15fxLsZVMIe5ED1yIHFvkk8+m5PMCJpDUmU495QbxMeL5rEeQD1nBNxyt66cS
-         4OUDsuujuURW9eQGLWFLYXN5lzd2v2ZIOb1GSaHzFCl+jYquErcQOWCQHU9frVuw8xgO
-         W6gz2mOxxv0izVJYUVo+5ACVbSeR2whZrK6vg8PRGrMCe99bIIFU/JHJ+YAVRyyTU0Da
-         Pmcw==
+        b=0MBZHLCyydH2aL9C3kPoTVTBLyrW9U7EiEQf8TqQr2JYKbLd4ncMKHYYHr2IyEHl3K
+         KighTbSRWBUAnlUNKeFJGZuI89xBqLR/4nEEhfEpIlz2NH37+Thg3SbXf0iAXCuyF7b0
+         57vPiVUcqWtMkl+74ALMV6irbvQWT+wrnlH3NcWnmM3puyetfMvNW4aX2BZuJPuWRGIS
+         p+F+NU9l06xmYkpaF0Mfi+zy6tHcj2gtiK177/GS+JfBi2gLTeZRNauYV16GNX7GWc7z
+         /T2U09ImeZeSu+JKAH414SLIVHV3djH+1WFuOZ5+1i/EGFURLbqrFlQD1KRFfYJCg8C7
+         0MbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=q8nLbeRMewMe3nHP8KmW80K9vrI8bvGptX/xb4VBgpM=;
-        b=xVDi7KyHolsTDNiMXoG+FXq/eEUAPCZNs7UlbZzsCdPU0tRELqMnR6O3AHsqRj4gK8
-         PF/W9t4IV8Tiye+qxB0ZaFxAfRO5N4hqhWRSNj5KYvobimRAUILcVKeHxUU5U8ahecwe
-         aLkPF9Mv41nQagGA8WIeIfRvzWalVMkQm/Wt5MeGIiNCJBALdXNZA8YsdG3w/iqDR29M
-         XSd4tVIAo3KszysgEMoxOmdFrnxjuFEE6pm+06EHm6uNtF3bbiKDfCI30uv3GrCqn+Eu
-         Xgk9TwDekjjmn6ZODiIBmjnm8JyFcbKUfmFw9q0yKg9BwdrT1UOuPEWHCNZPILXEBz/0
-         F12w==
+        bh=AP20q2zVlYEVe26V43dbe8+aBtY2wQDJkubvDame8OI=;
+        b=HZrITw41dGQcdnFHqiZhNUYJDirduC/qcHYGJrxKQAJl91fzxEeM0c2JDNVnxi2tLG
+         QnVFyx5rVFz31nRkGIjv0SDQxuDVavocAiC2mvfoo+XCoQdVgSLsH62eLoXhbGwG66mx
+         K9fa6aUE+V1UdqVSADPZ2u7BSoa6MU+TkXeWb/wgP3zLzbVat8VgIoeyvtg2Ij5ebY4r
+         XikvuusKVikbHBBoU/OSASJthDcFtW0+zuOs6+JZE5OaWRO+1YdrRJmuPEsVpqpKmAkA
+         3I60SFlEJkhtdePkdALTyJN/LYJOn/3gpdyio7byI04CmN9GqbDJEfYNnm5zDoAE3LBN
+         ECqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 63/68] lock_parent() needs to recheck if dentry got __dentry_killed under it
-Date: Mon, 19 Mar 2018 19:06:41 +0100
-Message-Id: <20180319171836.748239518@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 62/68] ALSA: seq: Clear client entry before deleting else at closing
+Date: Mon, 19 Mar 2018 19:06:40 +0100
+Message-Id: <20180319171836.577285981@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390651194659537?=
-X-GMAIL-MSGID: =?utf-8?q?1595390651194659537?=
+X-GMAIL-THRID: =?utf-8?q?1595390647940605831?=
+X-GMAIL-MSGID: =?utf-8?q?1595390647940605831?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,47 +48,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3b821409632ab778d46e807516b457dfa72736ed upstream.
+commit a2ff19f7b70118ced291a28d5313469914de451b upstream.
 
-In case when dentry passed to lock_parent() is protected from freeing only
-by the fact that it's on a shrink list and trylock of parent fails, we
-could get hit by __dentry_kill() (and subsequent dentry_kill(parent))
-between unlocking dentry and locking presumed parent.  We need to recheck
-that dentry is alive once we lock both it and parent *and* postpone
-rcu_read_unlock() until after that point.  Otherwise we could return
-a pointer to struct dentry that already is rcu-scheduled for freeing, with
-->d_lock held on it; caller's subsequent attempt to unlock it can end
-up with memory corruption.
+When releasing a client, we need to clear the clienttab[] entry at
+first, then call snd_seq_queue_client_leave().  Otherwise, the
+in-flight cell in the queue might be picked up by the timer interrupt
+via snd_seq_check_queue() before calling snd_seq_queue_client_leave(),
+and it's delivered to another queue while the client is clearing
+queues.  This may eventually result in an uncleared cell remaining in
+a queue, and the later snd_seq_pool_delete() may need to wait for a
+long time until the event gets really processed.
 
-Cc: stable@vger.kernel.org # 3.12+, counting backports
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+By moving the clienttab[] clearance at the beginning of release, any
+event delivery of a cell belonging to this client will fail at a later
+point, since snd_seq_client_ptr() returns NULL.  Thus the cell that
+was picked up by the timer interrupt will be returned immediately
+without further delivery, and the long stall of snd_seq_delete_pool()
+can be avoided, too.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ sound/core/seq/seq_clientmgr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -581,11 +581,16 @@ again:
- 		spin_unlock(&parent->d_lock);
- 		goto again;
- 	}
--	rcu_read_unlock();
--	if (parent != dentry)
-+	if (parent != dentry) {
- 		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
--	else
-+		if (unlikely(dentry->d_lockref.count < 0)) {
-+			spin_unlock(&parent->d_lock);
-+			parent = NULL;
-+		}
-+	} else {
- 		parent = NULL;
-+	}
-+	rcu_read_unlock();
- 	return parent;
- }
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -270,12 +270,12 @@ static int seq_free_client1(struct snd_s
  
+ 	if (!client)
+ 		return 0;
+-	snd_seq_delete_all_ports(client);
+-	snd_seq_queue_client_leave(client->number);
+ 	spin_lock_irqsave(&clients_lock, flags);
+ 	clienttablock[client->number] = 1;
+ 	clienttab[client->number] = NULL;
+ 	spin_unlock_irqrestore(&clients_lock, flags);
++	snd_seq_delete_all_ports(client);
++	snd_seq_queue_client_leave(client->number);
+ 	snd_use_lock_sync(&client->use_lock);
+ 	snd_seq_queue_client_termination(client->number);
+ 	if (client->pool)
