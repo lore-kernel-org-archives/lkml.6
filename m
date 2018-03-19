@@ -1,85 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970553AbeCSVeC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:34:02 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:46147 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965043AbeCSP7k (ORCPT
+        id S971748AbeCSVfj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:35:39 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:37679 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965173AbeCSVff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:59:40 -0400
-X-Google-Smtp-Source: AG47ELubZqdzN6gnLxtx/A8CR2pV/hsz5qqwNRbRvX0pshJWEx3+Fo991RshmZreqXtSzmeU80nIrg==
-Date: Mon, 19 Mar 2018 08:59:37 -0700
+        Mon, 19 Mar 2018 17:35:35 -0400
+X-Google-Smtp-Source: AG47ELuQbgbbVUUSak8L8iZTXr/Gt0Z3eGmfC/+vTw11eknZaiGDRA4CBmo4E+aFdYmFMnSUGi34Kg==
+Date: Mon, 19 Mar 2018 14:35:32 -0700
 From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v5 1/2] cpuset: Enable cpuset controller in default
- hierarchy
-Message-ID: <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
-References: <1521148842-15486-1-git-send-email-longman@redhat.com>
- <1521148842-15486-2-git-send-email-longman@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
+Subject: [GIT PULL] cgroup fixes for v4.16-rc6
+Message-ID: <20180319213532.GK519464@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521148842-15486-2-git-send-email-longman@redhat.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Waiman.
+Hello, Linus.
 
-This looks great.  A couple nitpicks below.
+Two commits to fix the following subtle cgroup2 behavior bugs.
 
-> +     5-3. Cpuset
-> +       5.3-1. Cpuset Interface Files
+* cpu.max was rejecting config when it shouldn't.
 
-Can we put cpuset below pid?  It feels weird to break up cpu, memory
-and io as they represent the three major resources and are in a
-similar fashion.
-
-> +  cpuset.effective_cpus
-> +	A read-only multiple values file which exists on non-root
-> +	cgroups.
-> +
-> +	It lists the onlined CPUs that are actually allowed to be
-> +	used by tasks within the current cgroup. It is a subset of
-> +	"cpuset.cpus".  Its value will be affected by CPU hotplug
-> +	events.
-
-Can we do cpuset.cpus.availble which lists the cpus available to the
-cgroup instead of the eventual computed mask for the cgroup?  That'd
-be more useful as it doesn't lose the information by and'ing what's
-available with the cgroup's mask and it's trivial to determine the
-effective from the two masks.
-
-> +  cpuset.effective_mems
-> +	A read-only multiple values file which exists on non-root
-> +	cgroups.
-> +
-> +	It lists the onlined memory nodes that are actually allowed
-> +	to be used by tasks within the current cgroup.  It is a subset
-> +	of "cpuset.mems".  Its value will be affected by memory nodes
-> +	hotplug events.
-
-Ditto.
-
-> +static struct cftype dfl_files[] = {
-> +	{
-> +		.name = "cpus",
-> +		.seq_show = cpuset_common_seq_show,
-> +		.write = cpuset_write_resmask,
-> +		.max_write_len = (100U + 6 * NR_CPUS),
-> +		.private = FILE_CPULIST,
-> +	},
-
-Is it missing CFTYPE_NOT_ON_ROOT?  Other files too.
+* Thread mode enable was allowed when it shouldn't.
 
 Thanks.
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.16-fixes
+
+for you to fetch changes up to d1897c9538edafd4ae6bbd03cc075962ddde2c21:
+
+  cgroup: fix rule checking for threaded mode switching (2018-02-21 11:39:22 -0800)
+
+----------------------------------------------------------------
+Tejun Heo (2):
+      sched, cgroup: Don't reject lower cpu.max on ancestors
+      cgroup: fix rule checking for threaded mode switching
+
+ kernel/cgroup/cgroup.c | 10 ++++++++++
+ kernel/sched/core.c    | 15 ++++++++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
 -- 
 tejun
