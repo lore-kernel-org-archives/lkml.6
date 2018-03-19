@@ -1,112 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755058AbeCSBl1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:41:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56366 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754258AbeCSBlM (ORCPT
+        id S1755016AbeCSBlZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:41:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36745 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755213AbeCSBlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 18 Mar 2018 21:41:12 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Matt Porter <mporter@konsulko.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: add tda7419 audio processor binding" to the asoc tree
-In-Reply-To: <20180318172238.9795-2-mporter@konsulko.com>
-Message-Id: <20180319014101.ADC1344007A@finisterre.ee.mobilebroadband>
-Date: Mon, 19 Mar 2018 01:41:01 +0000 (GMT)
+X-Google-Smtp-Source: AG47ELvazC1ramDVUfSxgB0n1BFKK9yhNKvNPyfDCmWnIzQRLsjr818ieVlqQYJeHh9U3ocJpAg+TQ==
+Subject: Re: [PATCH v1] arm: dts: mt7623: add PCIe related nodes
+To: Ryder Lee <ryder.lee@mediatek.com>, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-mediatek@lists.infradead.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <4e567be2546f90ef62a5df0e957e8a014e460cde.1518576282.git.ryder.lee@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5dc6610c-0d8e-63e8-8528-c79b777f0ce7@gmail.com>
+Date: Mon, 19 Mar 2018 02:41:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <4e567be2546f90ef62a5df0e957e8a014e460cde.1518576282.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   ASoC: add tda7419 audio processor binding
 
-has been applied to the asoc tree at
+On 02/14/2018 04:27 AM, Ryder Lee wrote:
+> This patch adds some device nodes for the PCIe function block and updates
+> related pinmux.
+> 
+> Moreover, we add interrupt-map properties in both parent and children as
+> the chip only has one IRQ per slot that is connected to all INTx and get
+> propagated through the bridges and it also represents the root ports own
+> interrupts.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Applied now to v4.16-next/dts32
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks!
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 050a0e1f539448474250f441332c0a7d9714d3b5 Mon Sep 17 00:00:00 2001
-From: Matt Porter <mporter@konsulko.com>
-Date: Sun, 18 Mar 2018 13:22:37 -0400
-Subject: [PATCH] ASoC: add tda7419 audio processor binding
-
-DeviceTree binding for the tda7419 audio processor.
-
-Signed-off-by: Matt Porter <mporter@konsulko.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/sound/tda7419.txt          | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/tda7419.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/tda7419.txt b/Documentation/devicetree/bindings/sound/tda7419.txt
-new file mode 100644
-index 000000000000..6b85ec38dd56
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/tda7419.txt
-@@ -0,0 +1,38 @@
-+TDA7419 audio processor
-+
-+This device supports I2C only.
-+
-+Required properties:
-+
-+- compatible : "st,tda7419"
-+- reg : the I2C address of the device.
-+- vdd-supply : a regulator spec for the common power supply (8-10V)
-+
-+Optional properties:
-+
-+- st,mute-gpios : a GPIO spec for the MUTE pin.
-+
-+Pins on the device (for linking into audio routes):
-+
-+  * SE3L
-+  * SE3R
-+  * SE2L
-+  * SE2R
-+  * SE1L
-+  * SE1R
-+  * DIFFL
-+  * DIFFR
-+  * MIX
-+  * OUTLF
-+  * OUTRF
-+  * OUTLR
-+  * OUTRR
-+  * OUTSW
-+
-+Example:
-+
-+ap: tda7419@44 {
-+	compatible = "st,tda7419";
-+	reg = <0x44>;
-+	vdd-supply = <&vdd_9v0_reg>;
-+};
--- 
-2.16.2
+> ---
+> 
+> Sorry to send v1 in such a rush. Somehow I forgot to add something in previous version.
+> 
+> changes since v1:
+>  - enable device nodes - pcie0_phy & pcie2_phy
+>  - fix dtc warning: Warning (pci_bridge): Node /pcie-controller@1a140000 node name is not "pci" or "pcie"
+> ---
+>  arch/arm/boot/dts/mt7623.dtsi                 | 105 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  30 ++++++++
+>  2 files changed, 135 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+> index 629c92b..137ce99 100644
+> --- a/arch/arm/boot/dts/mt7623.dtsi
+> +++ b/arch/arm/boot/dts/mt7623.dtsi
+> @@ -667,6 +667,111 @@
+>  		#reset-cells = <1>;
+>  	};
+>  
+> +	pcie: pcie@1a140000 {
+> +		compatible = "mediatek,mt7623-pcie";
+> +		device_type = "pci";
+> +		reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
+> +		      <0 0x1a142000 0 0x1000>, /* Port0 registers */
+> +		      <0 0x1a143000 0 0x1000>, /* Port1 registers */
+> +		      <0 0x1a144000 0 0x1000>; /* Port2 registers */
+> +		reg-names = "subsys", "port0", "port1", "port2";
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		#interrupt-cells = <1>;
+> +		interrupt-map-mask = <0xf800 0 0 0>;
+> +		interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
+> +				<0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
+> +				<0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
+> +			 <&hifsys CLK_HIFSYS_PCIE0>,
+> +			 <&hifsys CLK_HIFSYS_PCIE1>,
+> +			 <&hifsys CLK_HIFSYS_PCIE2>;
+> +		clock-names = "free_ck", "sys_ck0", "sys_ck1", "sys_ck2";
+> +		resets = <&hifsys MT2701_HIFSYS_PCIE0_RST>,
+> +			 <&hifsys MT2701_HIFSYS_PCIE1_RST>,
+> +			 <&hifsys MT2701_HIFSYS_PCIE2_RST>;
+> +		reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
+> +		phys = <&pcie0_port PHY_TYPE_PCIE>,
+> +		       <&pcie1_port PHY_TYPE_PCIE>,
+> +		       <&u3port1 PHY_TYPE_PCIE>;
+> +		phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
+> +		bus-range = <0x00 0xff>;
+> +		status = "disabled";
+> +		ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000
+> +			  0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;
+> +
+> +		pcie@0,0 {
+> +			reg = <0x0000 0 0 0 0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0>;
+> +			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
+> +			ranges;
+> +			num-lanes = <1>;
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie@1,0 {
+> +			reg = <0x0800 0 0 0 0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0>;
+> +			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
+> +			ranges;
+> +			num-lanes = <1>;
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie@2,0 {
+> +			reg = <0x1000 0 0 0 0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0>;
+> +			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+> +			ranges;
+> +			num-lanes = <1>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +
+> +	pcie0_phy: pcie-phy@1a149000 {
+> +		compatible = "mediatek,generic-tphy-v1";
+> +		reg = <0 0x1a149000 0 0x0700>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		status = "disabled";
+> +
+> +		pcie0_port: pcie-phy@1a149900 {
+> +			reg = <0 0x1a149900 0 0x0700>;
+> +			clocks = <&clk26m>;
+> +			clock-names = "ref";
+> +			#phy-cells = <1>;
+> +			status = "okay";
+> +		};
+> +	};
+> +
+> +	pcie1_phy: pcie-phy@1a14a000 {
+> +		compatible = "mediatek,generic-tphy-v1";
+> +		reg = <0 0x1a14a000 0 0x0700>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		status = "disabled";
+> +
+> +		pcie1_port: pcie-phy@1a14a900 {
+> +			reg = <0 0x1a14a900 0 0x0700>;
+> +			clocks = <&clk26m>;
+> +			clock-names = "ref";
+> +			#phy-cells = <1>;
+> +			status = "okay";
+> +		};
+> +	};
+> +
+>  	usb1: usb@1a1c0000 {
+>  		compatible = "mediatek,mt7623-xhci",
+>  			     "mediatek,mt8173-xhci";
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 7bf5aa2..3efecc5 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -209,6 +209,28 @@
+>  	vqmmc-supply = <&mt6323_vio18_reg>;
+>  };
+>  
+> +&pcie {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie_default>;
+> +	status = "okay";
+> +
+> +	pcie@0,0 {
+> +		status = "okay";
+> +	};
+> +
+> +	pcie@1,0 {
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&pcie0_phy {
+> +	status = "okay";
+> +};
+> +
+> +&pcie1_phy {
+> +	status = "okay";
+> +};
+> +
+>  &pio {
+>  	cir_pins_a:cir@0 {
+>  		pins_cir {
+> @@ -376,6 +398,14 @@
+>  		};
+>  	};
+>  
+> +	pcie_default: pcie_pin_default {
+> +		pins_cmd_dat {
+> +			pinmux = <MT7623_PIN_208_AUD_EXT_CK1_FUNC_PCIE0_PERST_N>,
+> +				 <MT7623_PIN_209_AUD_EXT_CK2_FUNC_PCIE1_PERST_N>;
+> +			bias-disable;
+> +		};
+> +	};
+> +
+>  	pwm_pins_a: pwm@0 {
+>  		pins_pwm {
+>  			pinmux = <MT7623_PIN_203_PWM0_FUNC_PWM0>,
+> 
