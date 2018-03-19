@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuun3uY+c10oH5X6gX83FvtJjdkSGwyrCHXowJczJlN0wtdtN8Dshd+Rb6yhJ5lddLj/ZvV
-ARC-Seal: i=1; a=rsa-sha256; t=1521483420; cv=none;
+X-Google-Smtp-Source: AG47ELtTxdKkHXDR/FvFdA9UJBsquhAlm3DrQ5RoQpJk25DMCGhz6rXEqHi7aGJVoP6cPKNA/Pq4
+ARC-Seal: i=1; a=rsa-sha256; t=1521483417; cv=none;
         d=google.com; s=arc-20160816;
-        b=aQXZrVKvnWkPuPRzNgXSuEJLMZqZF+jWf11OAmYweJ4M40sQT10/SSRaqAIezTKO62
-         /LubvvxCZAqYs20wtQ54VQmYT7hr5NmgSp7oAaCR4Cj6KbhVV40Eg49b2gD4fKSyN42P
-         hTp5qSJOebhFrzrw7GafAq5vLQJuzhUYgQBqoK2cyqs5orQ81+fkI2vf31XaaJK2yvGd
-         brdDNrQb2sWD3yVD8SsCaS7PeOiyzlu6XIY4+j6sxWsPZRcvvcHdJLVXWwAnPg2Q5e9e
-         Ip3NqcNgSdo7fhadh1SRn1aSla4lk4NiwbRqt6stkOPd9MFOB2OcCM0Jrri0Gmzwu2qP
-         9uTA==
+        b=I41KzVfjCCdcL74fS0cDfdRzpebk4x/gB3A/rN465Mevd8lCeH1MbRvIP/wKdbPxqb
+         mm/jK7sYlx08LCVMcUcCdb+d9n9sm/cmxEXnudwQFOLHBEQzbflyKKUqFFEjjqn41hhn
+         ax1VHJxvK6351+Z9RhZMheM1NIbuA7biPItTuT/AbNYy9i2IAYnbOYgQzTADxEVRiqmr
+         bFRNsLVk4WKH7wUi7PTNF0VeN/2bRXb5xOOgrls9m1ElFSewdH4+jfvI4PeWtMB9xTAV
+         wymXnFp8K7TjlsZiRkgie3qjWYe/nY3RJhiHxx2vaBHy1AVGmVBcsZbhbPaEENOHv+Pe
+         ueuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=av3kee4xfd4oWpcma3ptevJ2vZvUoFFfK1xiZgRiI7U=;
-        b=b4qGcnFbSo4+8QVD8jvM1ZinYfkyoHIK+NgVbS3P390SneV6/Q9TQI5VZYoUiDxcGO
-         VOAXkIHUIeUcrjvGE/qT3U9qxxEuAxq3HD7diqdwr8TYkOf5CEFAfmX+JeLX4Gwv4bsz
-         c8baGJtV3+ES7Qaww3yvXXqEGCBj5p+STKeAMDNDDJjZtWXlkSTdI0m6YrQx/f9+t2Pm
-         w8lqJsXDdHQxumJhJiQbQ/DNH5OGvzKXtIEzODCmZ1eYjwxDxV+emMGTgoLRVoogxDRy
-         n8iWgw9cACMj5gL0kjhyPrlgPoOSf71LkhV0BIhiKU8GN60naahjWPDmsWBWp5K7ylK0
-         rszg==
+        bh=DdBVoic6yR7xEj2GrNDrixUl5JsghFoMcRq0p9gbTL8=;
+        b=Yy7QsuVJ+1pUdkp5rMC4d+5X6V587/6CLAcN0JxbmrxeujvZ11OySi4tB5qALnm/vp
+         4GvLQzywI/nD9rJ1Evom3pwWh5rpFWyP5yOZB3/rhSlu481VARi0fFj3ZXtsLztIUcax
+         RFvBtUH6pIwxBGL1fJjLuCYEwpvjgfhbKkZsqZtGKCIKG46EfFDNVDVotUY1lDQIeGlw
+         AHP+5A27rUx5ZbaB0k39BXpC+79HGE+X1FEWny4YtVRehU0tHS9xW6ITNxKkOVmW3qVm
+         fkMlZYr3jLBrNsSE/0s5ObMJlpEIH3J6i34+AF5H12cWlKjHghGErxgK5WIdmOD5JCh3
+         fUfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicolai Stange <nstange@suse.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 118/134] ALSA: seq: Fix possible UAF in snd_seq_check_queue()
-Date: Mon, 19 Mar 2018 19:06:41 +0100
-Message-Id: <20180319171906.304081705@linuxfoundation.org>
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 109/134] ima: relax requiring a file signature for new files with zero length
+Date: Mon, 19 Mar 2018 19:06:32 +0100
+Message-Id: <20180319171905.020768938@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390645359098514?=
-X-GMAIL-MSGID: =?utf-8?q?1595390999081787911?=
+X-GMAIL-THRID: =?utf-8?q?1595390639959423215?=
+X-GMAIL-MSGID: =?utf-8?q?1595390995909702379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,168 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-commit d0f833065221cbfcbadf19fd4102bcfa9330006a upstream.
 
-Although we've covered the races between concurrent write() and
-ioctl() in the previous patch series, there is still a possible UAF in
-the following scenario:
+[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
 
-A: user client closed		B: timer irq
-  -> snd_seq_release()		  -> snd_seq_timer_interrupt()
-    -> snd_seq_free_client()	    -> snd_seq_check_queue()
-				      -> cell = snd_seq_prioq_cell_peek()
-      -> snd_seq_prioq_leave()
-         .... removing all cells
-      -> snd_seq_pool_done()
-         .... vfree()
-				      -> snd_seq_compare_tick_time(cell)
-				         ... Oops
+Custom policies can require file signatures based on LSM labels.  These
+files are normally created and only afterwards labeled, requiring them
+to be signed.
 
-So the problem is that a cell is peeked and accessed without any
-protection until it's retrieved from the queue again via
-snd_seq_prioq_cell_out().
+Instead of requiring file signatures based on LSM labels, entire
+filesystems could require file signatures.  In this case, we need the
+ability of writing new files without requiring file signatures.
 
-This patch tries to address it, also cleans up the code by a slight
-refactoring.  snd_seq_prioq_cell_out() now receives an extra pointer
-argument.  When it's non-NULL, the function checks the event timestamp
-with the given pointer.  The caller needs to pass the right reference
-either to snd_seq_tick or snd_seq_realtime depending on the event
-timestamp type.
+The definition of a "new" file was originally defined as any file with
+a length of zero.  Subsequent patches redefined a "new" file to be based
+on the FILE_CREATE open flag.  By combining the open flag with a file
+size of zero, this patch relaxes the file signature requirement.
 
-A good news is that the above change allows us to remove the
-snd_seq_prioq_cell_peek(), too, thus the patch actually reduces the
-code size.
-
-Reviewed-by: Nicolai Stange <nstange@suse.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/core/seq/seq_prioq.c |   28 ++++++++++++++--------------
- sound/core/seq/seq_prioq.h |    6 ++----
- sound/core/seq/seq_queue.c |   28 +++++++++-------------------
- 3 files changed, 25 insertions(+), 37 deletions(-)
+ security/integrity/ima/ima_appraise.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/core/seq/seq_prioq.c
-+++ b/sound/core/seq/seq_prioq.c
-@@ -87,7 +87,7 @@ void snd_seq_prioq_delete(struct snd_seq
- 	if (f->cells > 0) {
- 		/* drain prioQ */
- 		while (f->cells > 0)
--			snd_seq_cell_free(snd_seq_prioq_cell_out(f));
-+			snd_seq_cell_free(snd_seq_prioq_cell_out(f, NULL));
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -206,7 +206,8 @@ int ima_appraise_measurement(int func, s
+ 		if (opened & FILE_CREATED)
+ 			iint->flags |= IMA_NEW_FILE;
+ 		if ((iint->flags & IMA_NEW_FILE) &&
+-		    !(iint->flags & IMA_DIGSIG_REQUIRED))
++		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
++		     (inode->i_size == 0)))
+ 			status = INTEGRITY_PASS;
+ 		goto out;
  	}
- 	
- 	kfree(f);
-@@ -214,8 +214,18 @@ int snd_seq_prioq_cell_in(struct snd_seq
- 	return 0;
- }
- 
-+/* return 1 if the current time >= event timestamp */
-+static int event_is_ready(struct snd_seq_event *ev, void *current_time)
-+{
-+	if ((ev->flags & SNDRV_SEQ_TIME_STAMP_MASK) == SNDRV_SEQ_TIME_STAMP_TICK)
-+		return snd_seq_compare_tick_time(current_time, &ev->time.tick);
-+	else
-+		return snd_seq_compare_real_time(current_time, &ev->time.time);
-+}
-+
- /* dequeue cell from prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f)
-+struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
-+						  void *current_time)
- {
- 	struct snd_seq_event_cell *cell;
- 	unsigned long flags;
-@@ -227,6 +237,8 @@ struct snd_seq_event_cell *snd_seq_prioq
- 	spin_lock_irqsave(&f->lock, flags);
- 
- 	cell = f->head;
-+	if (cell && current_time && !event_is_ready(&cell->event, current_time))
-+		cell = NULL;
- 	if (cell) {
- 		f->head = cell->next;
- 
-@@ -252,18 +264,6 @@ int snd_seq_prioq_avail(struct snd_seq_p
- 	return f->cells;
- }
- 
--
--/* peek at cell at the head of the prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq * f)
--{
--	if (f == NULL) {
--		pr_debug("ALSA: seq: snd_seq_prioq_cell_in() called with NULL prioq\n");
--		return NULL;
--	}
--	return f->head;
--}
--
--
- static inline int prioq_match(struct snd_seq_event_cell *cell,
- 			      int client, int timestamp)
- {
---- a/sound/core/seq/seq_prioq.h
-+++ b/sound/core/seq/seq_prioq.h
-@@ -44,14 +44,12 @@ void snd_seq_prioq_delete(struct snd_seq
- int snd_seq_prioq_cell_in(struct snd_seq_prioq *f, struct snd_seq_event_cell *cell);
- 
- /* dequeue cell from prioq */ 
--struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f);
-+struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
-+						  void *current_time);
- 
- /* return number of events available in prioq */
- int snd_seq_prioq_avail(struct snd_seq_prioq *f);
- 
--/* peek at cell at the head of the prioq */
--struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq *f);
--
- /* client left queue */
- void snd_seq_prioq_leave(struct snd_seq_prioq *f, int client, int timestamp);        
- 
---- a/sound/core/seq/seq_queue.c
-+++ b/sound/core/seq/seq_queue.c
-@@ -277,30 +277,20 @@ void snd_seq_check_queue(struct snd_seq_
- 
-       __again:
- 	/* Process tick queue... */
--	while ((cell = snd_seq_prioq_cell_peek(q->tickq)) != NULL) {
--		if (snd_seq_compare_tick_time(&q->timer->tick.cur_tick,
--					      &cell->event.time.tick)) {
--			cell = snd_seq_prioq_cell_out(q->tickq);
--			if (cell)
--				snd_seq_dispatch_event(cell, atomic, hop);
--		} else {
--			/* event remains in the queue */
-+	for (;;) {
-+		cell = snd_seq_prioq_cell_out(q->tickq,
-+					      &q->timer->tick.cur_tick);
-+		if (!cell)
- 			break;
--		}
-+		snd_seq_dispatch_event(cell, atomic, hop);
- 	}
- 
--
- 	/* Process time queue... */
--	while ((cell = snd_seq_prioq_cell_peek(q->timeq)) != NULL) {
--		if (snd_seq_compare_real_time(&q->timer->cur_time,
--					      &cell->event.time.time)) {
--			cell = snd_seq_prioq_cell_out(q->timeq);
--			if (cell)
--				snd_seq_dispatch_event(cell, atomic, hop);
--		} else {
--			/* event remains in the queue */
-+	for (;;) {
-+		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
-+		if (!cell)
- 			break;
--		}
-+		snd_seq_dispatch_event(cell, atomic, hop);
- 	}
- 
- 	/* free lock */
