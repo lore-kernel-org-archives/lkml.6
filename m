@@ -1,91 +1,143 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521502823; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsBSecxTXld4cErhqNYkskT5FJ13J+Pwc+ohB7mHJdxvY4twfRCpkzf99ePwbXV+2IWHYDQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521484225; cv=none;
         d=google.com; s=arc-20160816;
-        b=FYJnuWFmJhyNRYTJWLUE/+Hjwj5tJ+hiDT3o1k9qNbl/W3OHIvmx4dJoO0NYJsTAnj
-         7LvsHsLEXDbNOW/R2c6YmFVKGIdEy+4LxyQYSQGyq8kXCJiwXgZB+D4WcPGx6j6MpyMs
-         kEhGZOQijlbHs0cEpYCASfUGMIjo2YNUo7/D97jHsbi9wbxqm+a3fWHaR5Xo7kJNAa2v
-         QRasF5iw4/6WUvCcNsJ0KgArmBC3aqaJxkMr5DM+zBQelI5swrO0+oiOXodFt/aFvYD1
-         0SCtyJCUVOBSkRkiOIXRJ61WlKCnbPY2q5fI7445lrEm1LdVykPpL7Q9BsrtZZrhHqHE
-         zVyQ==
+        b=SY6rbQTZb8fUng5sXobAFni/3sZMNEVIQItlld0Nc+SSoohFj5XRlvGdasOKMgND2D
+         6l0OrzYYnMp2ypndbp1uXbQKLm6yhKk1uFSurkU+citJVvsGe5nm1caocP8xtkFXFV3E
+         yEXDKP5jMq2eHoG2DyuP/+BzAREbPW/APhLdxJAEuLSndMGxMNa1R3010o8dd7LOQvaK
+         H6HLArbvqaVLCU5viQoEYASbBXIDbP3iS5DIHMJO32YpJXhfrIGNqlJGO0KKgDD+7XNZ
+         rfnEjDiosvizVB41nkes6tGlJjU2ZbxuXR0AWBkX4TdZUHZhmcuHy9AGsmInyy+rBUYL
+         opmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=H06ZUX2Vdh56dfVpYHovjX3WO4h+tiocbAkCbJ1z+7M=;
-        b=HDlYZQOgzjyg1vVRY0gOXpys41pLJj4sMvhNV/VIVcwFgWxnEn8ECtyihbsWLBvXd8
-         ofdphbA7Z6z3iGmJ2x0CX+WM2IP4TOPiSAEKvxKASmPofACBz8Dz2mIl6yhgsQ6lYLVi
-         yTjpw/CjQpbpeGemp+oJUryDIq092UKjtjJLFavQXgqSwbX6vJJHnrRl0b16P4x0aWWR
-         GOxV4fkCzw9UIX2ao5oREg+HPgMM4XhiXXXxPMSwWgBWWWtW9zqs2D0pMIGyDrrb2XP2
-         nDWgseXK2QOWeBl37/JpA9lFnohfFCNovq1NRcLxshYtnwvW8gy2GvIx18XIqhST2vM7
-         gxBg==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=fB3HErIUUC/XKPssuXRCvelrfgtoDMsdkQ15WqT415M=;
+        b=bFMmoEaJ+2Uv5Jq60SHlgPB6Uv3AN+oYfh6EJyxmhuUXAB7dWCZ5MwGY0M6+87X96j
+         iGyLRnCxkUKCd1nYwMlTWjn8y2GZkrmZv+Iku+Wt0L4K3YZOl/tmzgkD1nT/qp1X68zP
+         DT68A1uMJC1PTtmxKowMN+lq7JmMhnGbJ4d0arfuJOryIo0Hr/gCsnNciOUIUgf6fngI
+         ztyvXNeAoqDM4EWbOZUhsqKNviGe532wNb35zUNr1D9U8G3oNnp6rl74n4jcZ4bgyAkQ
+         0/Ne+eQY5k2jVtEUtNrWAmQnOiBovJACi4cSX5HVa/8RHBIepE+eYvBcerntTLc/hR6w
+         vhbw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELsP1vjNrpQCzHgq+NJ41BCKrmz8BOBAZDGotm+R3Yic9O6Gai1VwTK3V3iXm3NNJy/AWYzgsQ==
-Message-ID: <5ab04a66.c9351c0a.1eb49.1d2d@mx.google.com>
-Date: Mon, 19 Mar 2018 16:40:22 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Kernel: v4.14.28-42-g5efaf4e669b0
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Nikolay Borisov <nborisov@suse.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 35/41] btrfs: Fix memory barriers usage with device stats counters
+Date: Mon, 19 Mar 2018 19:08:35 +0100
+Message-Id: <20180319180734.512334467@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/41] 4.14.29-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595391826189307019?=
-X-GMAIL-MSGID: =?utf-8?q?1595411344691709584?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391842925372502?=
+X-GMAIL-MSGID: =?utf-8?q?1595391842925372502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 118 boots: 0 failed, 106 passed with 10 offlin=
-e, 2 untried/unknown (v4.14.28-42-g5efaf4e669b0)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.28-42-g5efaf4e669b0/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.28-42-g5efaf4e669b0/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.28-42-g5efaf4e669b0
-Git Commit: 5efaf4e669b0bb63f3be5c225f25ff832be26875
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 67 unique boards, 23 SoC families, 17 builds out of 185
+From: Nikolay Borisov <nborisov@suse.com>
 
-Offline Platforms:
+commit 9deae9689231964972a94bb56a79b669f9d47ac1 upstream.
 
-arm:
+Commit addc3fa74e5b ("Btrfs: Fix the problem that the dirty flag of dev
+stats is cleared") reworked the way device stats changes are tracked. A
+new atomic dev_stats_ccnt counter was introduced which is incremented
+every time any of the device stats counters are changed. This serves as
+a flag whether there are any pending stats changes. However, this patch
+only partially implemented the correct memory barriers necessary:
 
-    multi_v7_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
+- It only ordered the stores to the counters but not the reads e.g.
+  btrfs_run_dev_stats
+- It completely omitted any comments documenting the intended design and
+  how the memory barriers pair with each-other
 
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
+This patch provides the necessary comments as well as adds a missing
+smp_rmb in btrfs_run_dev_stats. Furthermore since dev_stats_cnt is only
+a snapshot at best there was no point in reading the counter twice -
+once in btrfs_dev_stats_dirty and then again when assigning stats_cnt.
+Just collapse both reads into 1.
 
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-arm64:
-
-    defconfig:
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxbb-p200: 1 offline lab
-        meson-gxl-s905x-khadas-vim: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        mt7622-rfb1: 1 offline lab
+Fixes: addc3fa74e5b ("Btrfs: Fix the problem that the dirty flag of dev stats is cleared")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ fs/btrfs/volumes.c |   18 ++++++++++++++++--
+ fs/btrfs/volumes.h |   12 ++++++++++++
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7082,10 +7082,24 @@ int btrfs_run_dev_stats(struct btrfs_tra
+ 
+ 	mutex_lock(&fs_devices->device_list_mutex);
+ 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+-		if (!device->dev_stats_valid || !btrfs_dev_stats_dirty(device))
++		stats_cnt = atomic_read(&device->dev_stats_ccnt);
++		if (!device->dev_stats_valid || stats_cnt == 0)
+ 			continue;
+ 
+-		stats_cnt = atomic_read(&device->dev_stats_ccnt);
++
++		/*
++		 * There is a LOAD-LOAD control dependency between the value of
++		 * dev_stats_ccnt and updating the on-disk values which requires
++		 * reading the in-memory counters. Such control dependencies
++		 * require explicit read memory barriers.
++		 *
++		 * This memory barriers pairs with smp_mb__before_atomic in
++		 * btrfs_dev_stat_inc/btrfs_dev_stat_set and with the full
++		 * barrier implied by atomic_xchg in
++		 * btrfs_dev_stats_read_and_reset
++		 */
++		smp_rmb();
++
+ 		ret = update_dev_stat_item(trans, fs_info, device);
+ 		if (!ret)
+ 			atomic_sub(stats_cnt, &device->dev_stats_ccnt);
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -498,6 +498,12 @@ static inline void btrfs_dev_stat_inc(st
+ 				      int index)
+ {
+ 	atomic_inc(dev->dev_stat_values + index);
++	/*
++	 * This memory barrier orders stores updating statistics before stores
++	 * updating dev_stats_ccnt.
++	 *
++	 * It pairs with smp_rmb() in btrfs_run_dev_stats().
++	 */
+ 	smp_mb__before_atomic();
+ 	atomic_inc(&dev->dev_stats_ccnt);
+ }
+@@ -523,6 +529,12 @@ static inline void btrfs_dev_stat_set(st
+ 				      int index, unsigned long val)
+ {
+ 	atomic_set(dev->dev_stat_values + index, val);
++	/*
++	 * This memory barrier orders stores updating statistics before stores
++	 * updating dev_stats_ccnt.
++	 *
++	 * It pairs with smp_rmb() in btrfs_run_dev_stats().
++	 */
+ 	smp_mb__before_atomic();
+ 	atomic_inc(&dev->dev_stats_ccnt);
+ }
