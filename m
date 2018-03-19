@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3357373-1521481022-2-2317388232005677829
+X-Cyrus-Session-Id: sloti22d1t05-3205673-1521475816-2-1927921552509790001
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,139 +13,160 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521481022; b=l9i5rY4JlNKrUStftDV8rMy20wf2CVV/cEXo0CehjYtFyue
-    NPIpR6AH5u6mfCR58qu2rarP/Ypr++VE6VYN+YSFNHA5fG0JHmzkSmKWy7QXJ823
-    pDQYuJUQxIhYjulKRbW8w41gFKKdWLjBBIkikPgJ4TIO5ZtSQA9zMQlOfS9fNbSX
-    Iy52dPxnhF2CGnAl/p6N4GGw6rt4+k/sPkCahAC78VBwaEp38Oacr6QdRCMqEQOS
-    Xu2brAxiimQa7auc5TuO4DeHwAZJXaayfSx0YdmG4ytwcHIhvAUIbmp7+wJT8miS
-    HKT5FbKH1prwY+lz07MKZJHzEPQB/lvYpGpfNUw==
+    t=1521475815; b=vs2c9zMK9MLiQBCw0y02FdawFQETl9BHlCGILuDn1hXX7jY
+    NvDTEfm/xG2jCmaOmuYBF0poSbxYy/0HSv/kbRGtBGqpeQ7rWfmuqYvBmiu4dtRh
+    nFA9uklHrKcmHCksrfWmVe51etmAZ0ZYUxQZhPEajl+HM4rfM8v9oSjuHYrxuD7c
+    nyQqXf83XKNS/fWT/Fkj5UBbHfmNiH2GrSz/SV8XxfzrcH9wHNN9VdcgIQRK3NUJ
+    aBLbsvGLrFyUfZHMpcl99FXqRbHUjpJkkAag/+gspe5nQzZP9EBnnxNWBkzLU7Km
+    Op9b/6cwl8cSACcwdvtWipe01cLciI6ywROSkIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :content-type:content-transfer-encoding:mime-version:sender
-    :list-id; s=arctest; t=1521481022; bh=kPkK2T8nLeNCIBnf4JD4h4BJ3w
-    JKKGNPSKVgKe5wHK8=; b=r7/LTAPwltySRVYS1EGmODDlPwQzGKBN5pNvzgONaV
-    0ueHLgg4S+nhuaqYPLoPPOCE4PbTVovY9Ovqcj5dND96YUeDOBZ+wRzsrQD2yOpS
-    V6LaL+QSrFzpUnMkHxPbpcElzxJt60ApP+5l0+UnTtGo++U8h4QbZ9XhabMLtbGl
-    Q/pVJZ66unJp+wvWVDaRk55wAZ0MoyAIxXMlRkul4jYRfrIbUp4E0bgAmfiZAuim
-    7UdLoSmHkWm6XKr770DjPJfiWzNeQ42nRRkwG1N7jUBMwqKo8WgjfCc9rx7yIELX
-    JUJlqsdO1UFp7hvoXo8/iT4ejKzrw4ejV9T0MvDXY27A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lSS31hcr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1521475815; bh=lzDSb0
+    ISNXIr1o6aRLg6Hs4J66eE0Vwpc2jNhF+1Gi0=; b=XiJsznd8QH/5ENKsBgYUbn
+    Oi9nV72e8zQ+ntQdMw1hxGP49jaGtDiBRx1MOq0bo2tq1/086uNNkC8+mpxMm0Jp
+    AZZTJ+HoNDRUDf8fwXNQMslf513JtUHY/o654uLcKM+NVpqrXIMKqCBixKDV8xbC
+    fvznKwCyeBVvcYEUnO9s3qVsnohZeygRQoftfVK9OuhS1+BbP+lSkJV7K6vusVjE
+    EI+7LFw3ykqmndn14e6IVxl8IbtUMBZkQw71TcThV1ocMJ0iIBTDDksquAVcrZE9
+    FKS1/RvMjw8ILuWacGX96zRnFi5ecbNfKV1785CopikmMxqIyjNh7v00qeqoItcQ
+    ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DkklKGts x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeekleenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhmihgtrhhoshhofhhtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekhedvudenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lSS31hcr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DkklKGts x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeekleenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhmihgtrhhoshhofhhtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekhedvudenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966007AbeCSRge (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 13:36:34 -0400
-Received: from mail-by2nam01on0122.outbound.protection.outlook.com ([104.47.34.122]:13968
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S966580AbeCSQKL (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 12:10:11 -0400
+Received: from mail-sn1nam01on0103.outbound.protection.outlook.com ([104.47.32.103]:51328
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965993AbeCSQGp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:06:45 -0400
+        id S966521AbeCSQJu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:09:50 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Mario Limonciello <mario.limonciello@dell.com>,
+        Bob Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 001/167] cfg80211: make RATE_INFO_BW_20 the
- default
-Thread-Topic: [PATCH AUTOSEL for 4.4 001/167] cfg80211: make RATE_INFO_BW_20
- the default
-Thread-Index: AQHTv5wUZj5tNc0ZNkSR4ds+ssei5g==
-Date: Mon, 19 Mar 2018 16:05:20 +0000
-Message-ID: <20180319160513.16384-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 093/167] ACPICA: Recognize the Windows 10
+ version 1607 and 1703 OSI strings
+Thread-Topic: [PATCH AUTOSEL for 4.4 093/167] ACPICA: Recognize the Windows 10
+ version 1607 and 1703 OSI strings
+Thread-Index: AQHTv5xaTVO5Yc6WFEyJ+eHwrZ3Epg==
+Date: Mon, 19 Mar 2018 16:07:18 +0000
+Message-ID: <20180319160513.16384-93-alexander.levin@microsoft.com>
+References: <20180319160513.16384-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0728;7:2OD3nfAWkFYK4bBcB2Eyzz5jAvNFmlYBWPPigy3KRJxTfaCkEu42Vnx5Cm4GLlel7BxVL47Xyo3qruyXcROx+skeD599IxjLEvipd+glZyaazWCRgORQa2iv/UbFCH4yL6CEJqmI5QjG50E9FCyV0utpTNKvD1V7b5yNUjfaAzTH6PK5mkbjahD56RzDZIpgvi0jJ2m+zpDSN3ugDc6Qq3kuEq7afZFsgbOfE9UQdWNV5g2Kwd0PD5cKXMPWbUnP;20:qhSL5ybd3aIIUUYmlynaoyoDixZiLB+h+qv6RVQXOqFYwG8tYZM78ViHAbKnMbgPlnbeI8+K23xuKdjTvUQHKGZTowmp6KJGyt6YGCvhthQPykBRwkhDImni0GcDJFHvTyUbjCTL8OvpiajETx/vZWUbCXeYu8FlUM2Fk4lzVcU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:OxV/wFYYovkjrV2Teb66Aj9no72auHrbk2Mwgui/McC+wOGA3sx1ItE5UAQRkzns4ayerLKj6aGJMRNJjBmKycA11pnwPKBPpuoQaHmf8Urvtk76a4Mou2s85eLUPCU9Eyfy4302tY2aCPwz4HQE4PHPROdMfuoe1JpSKwr4WxG87GofM1O7Z2+rRWKZqac+ofT0lFK6ON/lgSZHQYZCIbSL+xFdpLwXUPWjlZIDN7jEOgK28C7Q8yXVhY+Udtb4;20:q2Y4s7N2lfMA5L/sBMAs3I48m4a5gNFQfgELYrVpOl9LHo9+Z1UcjoQlLLf75DRI8lvY7j2zfFnnQCio1Qg4QpIDGggioolubameiDm/y6PpGRRuVI7RWSCXzT1UkCxrmcuBRNCPzBIzvgFVOWoiouaQTdrAuXxR6WNox3qpesc=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d99f6c2c-ab4d-4f4f-b4a3-08d58db365e5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0728;
-x-ms-traffictypediagnostic: DM5PR2101MB0728:
+x-ms-office365-filtering-correlation-id: cbb4c239-4031-4a0e-c39a-08d58db3d418
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
+x-ms-traffictypediagnostic: DM5PR2101MB0902:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0728450A700F6C76E4B0CA66FBD40@DM5PR2101MB0728.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(211171220733660)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0728;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0728;
+x-microsoft-antispam-prvs: <DM5PR2101MB0902E107555AF3EF5DD437D2FBD40@DM5PR2101MB0902.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(166708455590820)(233534484880143)(56004941905204)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(346002)(376002)(39860400002)(396003)(199004)(189003)(8936002)(99286004)(478600001)(53936002)(107886003)(110136005)(86612001)(72206003)(97736004)(316002)(3280700002)(5250100002)(2501003)(36756003)(2906002)(105586002)(1076002)(86362001)(14454004)(6436002)(54906003)(6512007)(6116002)(6486002)(106356001)(3846002)(22452003)(3660700001)(186003)(59450400001)(68736007)(66066001)(25786009)(102836004)(4326008)(10290500003)(26005)(6666003)(305945005)(7736002)(10090500001)(81156014)(81166006)(8676002)(6506007)(5660300001)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0728;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: /YiI+qclmRt92MiVUPl9rSjDKPqk6zOrqHLlOG1Jctrc6nl4LzOd9qp5d9HHB/YKafL7mUWtR76cTjNCpEm8ei9FP2Jm8TVGtrF1l/mNxPx/COKWosWmWSvcJyNvtvwHZLaQHTbKUTtBFA8gbhOQjapog25omAA+mbzcer73jLBF3AgRydBKwLPmE8W0GwAeZH1cD1wN9BrbVk9yRKFx2QM6X05CRel512GMrWrZEcilhx4OLP8ajfvhOcg4l2qKQysn9xTpF/xdMJGNHUyAoFProHOicB36R4M/drn8yIePCvovb56DifIenbYgwTvpkpFDOCuQvR1SOTgnRQniLQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(4326008)(305945005)(7736002)(66066001)(105586002)(316002)(8676002)(25786009)(8936002)(6666003)(2950100002)(5660300001)(97736004)(81166006)(81156014)(3280700002)(22452003)(99286004)(186003)(2906002)(76176011)(5250100002)(59450400001)(54906003)(10090500001)(110136005)(6116002)(2900100001)(3846002)(2501003)(1076002)(86612001)(107886003)(106356001)(6436002)(6512007)(6306002)(575784001)(86362001)(53936002)(6506007)(8666007)(6486002)(26005)(14454004)(10290500003)(102836004)(68736007)(3660700001)(478600001)(966005)(72206003)(36756003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: HIkTapYGWRqult74v9KY10z3hsQYdqe0wUYZWmCfgpIk2eV2Z/NkbVm689h1hK9snLfGklM/wiMD/PvFT5V04SpBMfTMOd+SjL13m6Idxm+JHrGFTbMJ/9q9XZZ9A0vhc29u/C6SGW61g2YaL5RowmEoz4CtAtdiMCNKI+vhkBKQhY3nc74qFjxwz0iUztPg7yFHI78xRmtzBUBrodfRMYklmRuwIkaXIyGG4h9TjCc87jbU5lpMljNuOC4b7uMcJkiJZKbGZrgc6NSKOMs+QzmIIHtzjI18PX1i48sqTUGdkLzMncu1If5hgJV4F6R0KB1n8KGoBLK95Kp3Ql1VzQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d99f6c2c-ab4d-4f4f-b4a3-08d58db365e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:05:20.0428
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbb4c239-4031-4a0e-c39a-08d58db3d418
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:07:18.5898
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0728
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0902
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-[ Upstream commit 842be75c77cb72ee546a2b19da9c285fb3ded660 ]
+[ Upstream commit bc4d413a819f9d0764a80a55875a5d7e1f4efed4 ]
 
-Due to the way I did the RX bitrate conversions in mac80211 with
-spatch, going setting flags to setting the value, many drivers now
-don't set the bandwidth value for 20 MHz, since with the flags it
-wasn't necessary to (there was no 20 MHz flag, only the others.)
+ACPICA commit 35a4a3ea723b3066f575e63e5f0116f7ce65e713
 
-Rather than go through and try to fix up all the drivers, instead
-renumber the enum so that 20 MHz, which is the typical bandwidth,
-actually has the value 0, making those drivers all work again.
+The public Microsoft document listing recognized OSI strings [1]
+shows that these two strings were introduced.
+version 1607 / Anniversary Update / "Redstone 1"
+version 1703 / Creators Update / "Redstone 2"
 
-If VHT was hit used with a driver not reporting it, e.g. iwlmvm,
-this manifested in hitting the bandwidth warning in
-cfg80211_calculate_bitrate_vht().
+[1] http://download.microsoft.com/download/7/e/7/7e7662cf-cbea-470b-a97e-ce=
+7ce0d98dc2/winacpi_osi.docx
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://github.com/acpica/acpica/commit/35a4a3ea
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/net/cfg80211.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpica/utosi.c | 2 ++
+ include/acpi/actypes.h      | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index b5f3693fe5b6..c05748cc1b20 100644
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -933,9 +933,9 @@ enum rate_info_flags {
-  * @RATE_INFO_BW_160: 160 MHz bandwidth
-  */
- enum rate_info_bw {
-+	RATE_INFO_BW_20 =3D 0,
- 	RATE_INFO_BW_5,
- 	RATE_INFO_BW_10,
--	RATE_INFO_BW_20,
- 	RATE_INFO_BW_40,
- 	RATE_INFO_BW_80,
- 	RATE_INFO_BW_160,
+diff --git a/drivers/acpi/acpica/utosi.c b/drivers/acpi/acpica/utosi.c
+index 8f3d203aed79..51d9011b5b33 100644
+--- a/drivers/acpi/acpica/utosi.c
++++ b/drivers/acpi/acpica/utosi.c
+@@ -101,6 +101,8 @@ static struct acpi_interface_info acpi_default_supporte=
+d_interfaces[] =3D {
+ 	{"Windows 2012", NULL, 0, ACPI_OSI_WIN_8},	/* Windows 8 and Server 2012 -=
+ Added 08/2012 */
+ 	{"Windows 2013", NULL, 0, ACPI_OSI_WIN_8},	/* Windows 8.1 and Server 2012=
+ R2 - Added 01/2014 */
+ 	{"Windows 2015", NULL, 0, ACPI_OSI_WIN_10},	/* Windows 10 - Added 03/2015=
+ */
++	{"Windows 2016", NULL, 0, ACPI_OSI_WIN_10_RS1},	/* Windows 10 version 160=
+7 - Added 12/2017 */
++	{"Windows 2017", NULL, 0, ACPI_OSI_WIN_10_RS2},	/* Windows 10 version 170=
+3 - Added 12/2017 */
+=20
+ 	/* Feature Group Strings */
+=20
+diff --git a/include/acpi/actypes.h b/include/acpi/actypes.h
+index f914958c4adb..d27bc051f47f 100644
+--- a/include/acpi/actypes.h
++++ b/include/acpi/actypes.h
+@@ -1284,6 +1284,8 @@ typedef enum {
+ #define ACPI_OSI_WIN_7                  0x0B
+ #define ACPI_OSI_WIN_8                  0x0C
+ #define ACPI_OSI_WIN_10                 0x0D
++#define ACPI_OSI_WIN_10_RS1             0x0E
++#define ACPI_OSI_WIN_10_RS2             0x0F
+=20
+ /* Definitions of file IO */
+=20
 --=20
 2.14.1
