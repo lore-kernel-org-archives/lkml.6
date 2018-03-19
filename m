@@ -1,120 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933039AbeCSKjl (ORCPT <rfc822;w@1wt.eu>);
+        id S933062AbeCSKjt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:39:49 -0400
+Received: from verein.lst.de ([213.95.11.211]:58280 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933040AbeCSKjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Mar 2018 06:39:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932989AbeCSKjc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:39:32 -0400
+Date: Mon, 19 Mar 2018 11:39:39 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: x86@kernel.org
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         David Woodhouse <dwmw2@infradead.org>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 14/14] swiotlb: remove swiotlb_{alloc,free}_coherent
-Date: Mon, 19 Mar 2018 11:38:26 +0100
-Message-Id: <20180319103826.12853-15-hch@lst.de>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180319103826.12853-1-hch@lst.de>
-References: <20180319103826.12853-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Subject: Re: [PATCH 11/13] dma-direct: handle the memory encryption bit in
+        common code
+Message-ID: <20180319103939.GA23333@lst.de>
+References: <20180305174655.9878-1-hch@lst.de> <20180305174655.9878-12-hch@lst.de> <114e27be-5814-4258-4985-af08763c8a74@amd.com> <0c9d3e4a-8407-282a-73eb-21d28047e0e3@amd.com> <20180313131005.GA6260@lst.de> <69e98163-beca-fb8a-a26b-66dfeef2f689@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69e98163-beca-fb8a-a26b-66dfeef2f689@amd.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unused now that everyone uses swiotlb_{alloc,free}.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/swiotlb.h |  8 --------
- lib/swiotlb.c           | 38 --------------------------------------
- 2 files changed, 46 deletions(-)
-
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 5b1f2a00491c..965be92c33b5 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -72,14 +72,6 @@ void *swiotlb_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
- void swiotlb_free(struct device *dev, size_t size, void *vaddr,
- 		dma_addr_t dma_addr, unsigned long attrs);
- 
--extern void
--*swiotlb_alloc_coherent(struct device *hwdev, size_t size,
--			dma_addr_t *dma_handle, gfp_t flags);
--
--extern void
--swiotlb_free_coherent(struct device *hwdev, size_t size,
--		      void *vaddr, dma_addr_t dma_handle);
--
- extern dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
- 				   unsigned long offset, size_t size,
- 				   enum dma_data_direction dir,
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 8b06b4485e65..15954b86f09e 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -157,13 +157,6 @@ unsigned long swiotlb_size_or_default(void)
- 	return size ? size : (IO_TLB_DEFAULT_SIZE);
- }
- 
--/* Note that this doesn't work with highmem page */
--static dma_addr_t swiotlb_virt_to_bus(struct device *hwdev,
--				      volatile void *address)
--{
--	return phys_to_dma(hwdev, virt_to_phys(address));
--}
--
- static bool no_iotlb_memory;
- 
- void swiotlb_print_info(void)
-@@ -752,28 +745,6 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	return NULL;
- }
- 
--void *
--swiotlb_alloc_coherent(struct device *hwdev, size_t size,
--		       dma_addr_t *dma_handle, gfp_t flags)
--{
--	int order = get_order(size);
--	unsigned long attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
--	void *ret;
--
--	ret = (void *)__get_free_pages(flags, order);
--	if (ret) {
--		*dma_handle = swiotlb_virt_to_bus(hwdev, ret);
--		if (dma_coherent_ok(hwdev, *dma_handle, size)) {
--			memset(ret, 0, size);
--			return ret;
--		}
--		free_pages((unsigned long)ret, order);
--	}
--
--	return swiotlb_alloc_buffer(hwdev, size, dma_handle, attrs);
--}
--EXPORT_SYMBOL(swiotlb_alloc_coherent);
--
- static bool swiotlb_free_buffer(struct device *dev, size_t size,
- 		dma_addr_t dma_addr)
- {
-@@ -793,15 +764,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
- 	return true;
- }
- 
--void
--swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
--		      dma_addr_t dev_addr)
--{
--	if (!swiotlb_free_buffer(hwdev, size, dev_addr))
--		free_pages((unsigned long)vaddr, get_order(size));
--}
--EXPORT_SYMBOL(swiotlb_free_coherent);
--
- static void
- swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
- 	     int do_panic)
--- 
-2.14.2
+Can you test and review the V3 of the series I just sent out?
+We reall should get it into linux-next ASAP.
