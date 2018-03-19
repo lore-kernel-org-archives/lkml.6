@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsZr/qDp/jh/eONbN6Go8SVTyD9PsVl5k3r8ReSrO2L0yh7KJ9HucWK2agHO2za9ICDilMO
-ARC-Seal: i=1; a=rsa-sha256; t=1521484061; cv=none;
+X-Google-Smtp-Source: AG47ELtI+J9QHBK9FIkFGsGJ1R//qyrrapbabD8oRxAtoZ5kxikAqNXigD+FsR/2P0R3IB92YirZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521484058; cv=none;
         d=google.com; s=arc-20160816;
-        b=D/ZQJiawSrN/xkBz9CdKLtHqj9tSUO8Ejvd3Ke9KXqCIzUO8CYdQ7dL2OTa7ZkwlaP
-         BxeYxBIDTyEOlTh2Uz7oj3RCTFU/ePqqlHGxaVONm5L25wgayCMdEgx0E7zvS++8VneH
-         A2Ej8GXcYk5GWcvEwXHpZyawsrzjmXmczmDah3qzuUCqIQZ/Hvhje8aiqySMg3U0k1rK
-         gEdr9VIUu4eLJ9cVZon6JOuVnmb1Y/kWhSs884ywVivaUwzP3IYhnL8OMdwFwwnoUQ02
-         covwEcCjWiUsQz/VRov3wnVp20jyahnbUYcMygP157fcVzrdNUbJK2lYzeqZ7LaOXbYf
-         Be8A==
+        b=A+z6bLTMUzNnf2EECF39u8/jjn4ShXerzCxOMHm5nplFd3HVcKc+yowiwwWwBYQpQQ
+         7vNESc+kEKGrVqOg3UC19xyYdEBIWpJIOtsiYZbzqcJdz2XgBugrEXY2cq+/2KHZV4Kc
+         k+HsPKiQncYYQbYX5cm2oBjo+NNdaMKwof3KzHx/VvuLlIQEuLor7ffI1bswIIwOgOlO
+         K1jzhJQzNub37doHpRa0ahRRfUKJT0HRQSqv/hHyUTwdzyVf6wAs1fIUxFHHnAya6xVG
+         Rr/XLML5CGnExZiHHjrXRzJoOlsoGkfVJ9AvvQ09VgLyxtPBtLdesMBt1Bsi5I/+BcyC
+         w9aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QUYtdfBZDl4uHE9YtxdPihvbJCXXvU8q8UBzlSdTQ2w=;
-        b=XRxdnY0lUiEwJ4+irDigf2dnqy71kjTuYWFMCDcBAaj2nhMNdHq1ODrzJqhQh9lUAC
-         kgQjpug+u/Xlsj0BtIG2kTTvwHuThSZ1jN9sG5yuXJdmek/nL8M/na29mmTa6ZuS6k+v
-         cryq1DY6P3SeQWzJd6/cooZE+w1HSmiafBJQCg9Xv7DIhGaxpxZO3GVYjoS8afLC91fz
-         a3163EywVOg+lQy1X8Vt03Znz6Uq57hAMrym0Py+q3MblixV3XtnJx4j02vb9TGj92Gb
-         tQLhIiNcg8UILtdatS1pgzSnErqtDeZ58kKS90BpZ+qdsVtmpP+PNpc1PZaVPjaZ210w
-         6LiA==
+        bh=O1pceMFXBUFYoEAQ+XYR9O+rvqvqj+MO2C1zawtYvZs=;
+        b=NHfGj9UqkTePtL8Xzgd7d3y5EUIGOD4tO2KqEj1J/w0tH3DW0geOZMmB5/81m+ayN5
+         R6ZqWbzcHPNt/ZLinHeekjWs4+iEGaHfELdp4LzjEG8BhjNZuflQjgnyeMKXoyeiOZpr
+         KOMBFGEAwC+diVQMx0yEfa5GESsn+JRCIQ//1mD+Gw5v3EGXUrHfATUiPg25DPrSUkxb
+         QmLIoIBzEw76WfkimGwzU28TnBdYt4KnLrsJTm8Mc32nYPR5FrYNs//2qM52/8CLCPD3
+         DAY8QomvE13lV8bFRkO0li6dGK3lvwV1Kn0vBOpKvtHgTvvs6Jh6kzBhH6vsnZa6GBeF
+         tDog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee.jones@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 182/241] power: supply: ab8500_charger: Fix an error handling path
-Date: Mon, 19 Mar 2018 19:07:27 +0100
-Message-Id: <20180319180758.677378811@linuxfoundation.org>
+Subject: [PATCH 4.9 181/241] leds: pm8058: Silence pointer to integer size warning
+Date: Mon, 19 Mar 2018 19:07:26 +0100
+Message-Id: <20180319180758.638613424@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391671060606802?=
-X-GMAIL-MSGID: =?utf-8?q?1595391671060606802?=
+X-GMAIL-THRID: =?utf-8?q?1595391668171577601?=
+X-GMAIL-MSGID: =?utf-8?q?1595391668171577601?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +52,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 
-[ Upstream commit bf59fddde1c3eab89eb8dca8f3d3dc097887d2bb ]
+[ Upstream commit 8f52df50d9366f770a894d14ef724e5e04574e98 ]
 
-'ret' is know to be 0 at this point, because it has not been updated by the
-the previous call to 'abx500_mask_and_set_register_interruptible()'.
+The pointer returned by of_device_get_match_data() doesn't have the same
+size as u32 on 64-bit architectures, causing a compile warning when
+compile-testing the driver on such platform.
 
-Fix it by updating 'ret' before checking if an error occurred.
+Cast the return value of of_device_get_match_data() to unsigned long and
+then to u32 to silence this warning.
 
-Fixes: 84edbeeab67c ("ab8500-charger: AB8500 charger driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/ab8500_charger.c |    2 +-
+ drivers/leds/leds-pm8058.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/power/supply/ab8500_charger.c
-+++ b/drivers/power/supply/ab8500_charger.c
-@@ -3218,7 +3218,7 @@ static int ab8500_charger_init_hw_regist
- 	}
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -106,7 +106,7 @@ static int pm8058_led_probe(struct platf
+ 	if (!led)
+ 		return -ENOMEM;
  
- 	/* Enable backup battery charging */
--	abx500_mask_and_set_register_interruptible(di->dev,
-+	ret = abx500_mask_and_set_register_interruptible(di->dev,
- 		AB8500_RTC, AB8500_RTC_CTRL_REG,
- 		RTC_BUP_CH_ENA, RTC_BUP_CH_ENA);
- 	if (ret < 0)
+-	led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
++	led->ledtype = (u32)(unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	map = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!map) {
