@@ -1,71 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483681-2-7521693266137068054
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483680; b=KEjbC/74UBdrFiRwwlBEIHPHRGv+lkGauuKoUpScYOpCN6V
-    98qKtF8QQeSbJt7bqlI/T8XhcYLa2lPncFlhqUPTG9kDoMxGysjjPmcML75D/Zuk
-    CxZeVxcZIdZ+qXKzPqtmoGtpfCIxpykHElw01E/s6Vmy6cpq5HaMg9NuoflKd299
-    sdGZEBV79TgvpPA7BC6cB+dPgXIbXgq7A5GzXlYBn6Jddre7IUMQndztU6UCmiAA
-    BqsdDhHn708ggULlvLftDUnGjruKwlFl+zsNsdUNb1MNpMCIaiksHYpTpx7oW9xz
-    LaiaFXwc0PRerns9cEt3lhoSyGeN4U5GLY54afA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483680; bh=PYGoG95AhNdaGdIkAKRiUpZT5g
-    rQRZCY4zuFr+LvbME=; b=uI8SpU4C5mTe5H0MuAp2u3j8+8k6ekeMMUcTWearXg
-    0gwXUcK2+m2n7PufxkJcgKaSHDfH4/lA4jWIdqhLp2edGSP7QOEc6t2xEGqkz4zu
-    WD/g9BwQuuzcG1igd6KMhiGAci7ILfl897jFCe0uNpnNfTjWOtqVThr/msQpJ438
-    GVkWxYydhZMa6g8PjqMJpIDe70D52f4ndZGvGja4QF3XHz38EJgsPE2yZGQZ8Gg3
-    bY4so8Rf0qnhWV2unBzr0k/8PgtKiZHKksQf9DNU/FDTl3Qlr1ZFj+F9VHxofzwt
-    v6wW1Ig/fmxOIFsVod2lqj33HpAes952tIzFMPNhKtEQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjeduleenucevlhhushhtvghrufhiiigvpeduheek;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjeduleenucevlhhushhtvghrufhiiigvpeduheek;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031048AbeCSSVR (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:21:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48028 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031069AbeCSSVP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:15 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELude+bgTcwJi/jd/zmpYmk7prIg+YKtxPZck4JDkOeFTs6dXEufZoLmg0oGgRx4WxFrp1Lr
+ARC-Seal: i=1; a=rsa-sha256; t=1521483677; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xkmeJ9/7Nz+wxWniMYmAyerURK94f5ijA+Tq7ezWbBeQY7ZcEdTbbb7h9xhwFJ0i01
+         eXnNuvSQiEHCvlOq5nWFpNWPKKCyE+hoVIU4vrP5jLjx9sUz87aaZXJPqz4zrA6fjYD0
+         v6Aznf9SlFRwMW1pH6Ifm+hYpRCVwXyiECfss1F0qWWhgloCd5ThKhQv+R37L7dKojhM
+         CGLRYbDNU4Of8B+2JVBzHUMQL74yhS0dzKKWJxlNEkgGgjjkfX89raQmWKg4I5JEKYQ9
+         FSOmab0aLWOujR41H0G3whfaKP8ikn5KI7mBl1LVutr9aKaWIjp17m8ltaS3u9d5drIj
+         Vj1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=oBlljR7fsklGHpnXhlYwhzZ0OxFRiMVdSGAY+lRUlRI=;
+        b=acYnFMwop10my9XhEXW8RUG3u1mwMeSwW4mNfcNUPDdCEgjfEJx8VZAHleVfe4utL/
+         7nvuMIyjz0VxNn42wOLEviYP+X+1hPoyrkbIQ3EDYxZSU87hM02lCm2wsj3fhyxhQJrZ
+         AkyQEvqn8oS+fkjh7tB7NqqfFlOpwn7rd3YS7Skk8GWwg33nqCdYgP5CPkzkXiQMjwkf
+         gFsyUEQ+k5ZEW683vAo9Mxqrhs/EXxrlEEqC6sB5EnmmnlI89xvy8YgeaXt1xt0VVmNv
+         pEPyxd9yaNpnRfk0rz2TzfE4FlA7gMe8PbaxK/AEAPzWaLoQVWuDPQgQFb4IZFFKCfyk
+         AXwQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 076/241] ARM: dts: r8a7794: Correct clock of DU1
-Date: Mon, 19 Mar 2018 19:05:41 +0100
-Message-Id: <20180319180754.347805985@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 077/241] ARM: dts: silk: Correct clock of DU1
+Date: Mon, 19 Mar 2018 19:05:42 +0100
+Message-Id: <20180319180754.390437873@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -73,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391268350395323?=
+X-GMAIL-MSGID: =?utf-8?q?1595391268350395323?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -86,29 +54,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 89675f36c9e17512812b9d14d9824f8ef92782c3 ]
+[ Upstream commit 403fe77e22eb72c962c3889efc9d4fa62e454737 ]
 
 The second channel of the display unit uses a different module clock
 than the first channel.
 
-Fixes: 46c4f13d04d729fa ("ARM: shmobile: r8a7794: Add DU node to device tree")
+Fixes: 84e734f497cd48f6 ("ARM: dts: silk: add DU DT support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/r8a7794.dtsi |    2 +-
+ arch/arm/boot/dts/r8a7794-silk.dts |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -916,7 +916,7 @@
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--			 <&mstp7_clks R8A7794_CLK_DU0>;
-+			 <&mstp7_clks R8A7794_CLK_DU1>;
- 		clock-names = "du.0", "du.1";
- 		status = "disabled";
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -425,7 +425,7 @@
+ 	status = "okay";
+ 
+ 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
+-		 <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&mstp7_clks R8A7794_CLK_DU1>,
+ 		 <&x2_clk>, <&x3_clk>;
+ 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
  
