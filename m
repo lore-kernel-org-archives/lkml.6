@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs1PKyMr/BOKICJb488RYfRjqf/Y7xbJJOBEsJnLxfC1NKsQkhTI0tYlIws7wOYDhXgOC30
-ARC-Seal: i=1; a=rsa-sha256; t=1521482961; cv=none;
+X-Google-Smtp-Source: AG47ELtqGqa+L619DrGaf2d6P7FdEHqpAiOcmCakMnUTEa8wVL2PQjhaUeFjQ5zKAgKoK4nQhY7P
+ARC-Seal: i=1; a=rsa-sha256; t=1521482955; cv=none;
         d=google.com; s=arc-20160816;
-        b=dZH5f+WvcsXorAJSizNf/z7TbXFHRp3ng8wCWea86cRJ94eVKKPbnS0igsSLWqB6Ma
-         dtUK7HWsmiS2EcFQNFqktY2UfhcLO5tHvC3+kJDXa+rO/Q6TkUrBqgTKdaJ+PiL5NgIB
-         B48SmfZoaaxYg8oHzq+ITQDt37UxErHebsVKxrNwvnZ2a6TR6Km5R69y+1GIiR5drEHS
-         h0Q7vX3fF5A4oI17fHoDIS1DOUp8P/eRWaX+eiOcG+GVwDLfKGt8oJ+3wjFOuJ1LZvzV
-         2Q/iRz0Y0Sjd9czSH8xQ1INyA5zu7bdf1dmcxUyQQLNF9LFePymLTmEngF+M+GUO8sUS
-         ESFA==
+        b=tJ75iuFm4CX1GRYnl8KkMncXFjAE67oQDpsp6vSq74wPi8iRGObAyy72yxJaVQIWoP
+         W0R39NZfyOcHDbNNF9y+Tx2GLck80Ry9oAWlMCqlFVMjD3Cndv3ni36Z+fCIP1/vudq6
+         NU5JcdJLHsy7Rz0kI5WoeB1jYsFXtzTo+SAoL2JUjh4MWpZSqh5XKtcuiBsikCIpIEYx
+         KSVpS9yTh2sQS/mq+DomtPUQ4+Rb3z3Gm0gQQttx0ntfpM+9j0WYuUuvWPG44elWMKyE
+         jKdAJiyVGlNszIudb2wod40aWRn5QL5tz0lyLiERThan4EOetyd1PQ0tsg0YDL9WfjSX
+         +IXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2+O2rskaUaT7LJ/mYnjBi7zcpiOfQ/ax92rVnrq/LE4=;
-        b=YA5S/eqMLl6inCkG4gBFnDuKCtsnMc5Yxg7ld8pxzGchOInFYyzheYlA5ITaUsVhZz
-         1ET+6D1VdefrgNU7OmXYg1l1P9rus4PJrRdiUysCCQxakKZoZuyqyjarVbi6CIIB1IU5
-         eMjBgzEd5CIheISS62grLoY2zjcU9y2IstwUeJyGFZv9R7t2g+aCGxxWSy0AljzvAeXa
-         cqP5iTashRQPFhdcqWs97iWxnKZiACbHNUrwepl2Z8oFzV7YJcetXTsfCU0hbQn/atec
-         drLAmFimtfFuZvAEVOUoTS54wKJOTUF3/EsQ8e2NqwJcK0eNgdg5j+DuiU9QoC6MhnLV
-         FO2g==
+        bh=M0vfqLwGzJSJodaq4DyL+uyIf3s6jw+Rro1G3DCgQLE=;
+        b=QhaK7l1DGxwRTVoijwyuPjF2CT0iA+bcTpD0p1b0D3iCm8b4mCNuK3hYAcT9jDM503
+         E7RVnJUFKsKFaOl8rEjfXAqrNXjY944PPuWMa1B5q4z1CLVS8CxTk+n6XQBJg5guWp1i
+         Xtutii1qQHENh4pDh4x1ADAbel3GmhwANHRIf8PNI45Rj60JP3CO+17vdVEZxlZ1eU4G
+         Ce0PNDzAdJXLHvwXxWFv4xP8Bqk7M3P0J/SePCl7jLDpMNYM8ujmg2er2U3EL0ePmcYt
+         EDt+WgjFj3RrTPpQ5qnx4X3Cgl88trwKNhy4gc5xNi9nE2SO/ZnoR9fw1xrSsl7Go2vx
+         nkZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Davide Caratti <dcaratti@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Brian King <brking@linux.vnet.ibm.com>,
+	Wendy Xiong <wenxiong@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 17/68] sched: act_csum: dont mangle TCP and UDP GSO packets
-Date: Mon, 19 Mar 2018 19:05:55 +0100
-Message-Id: <20180319171830.284544788@linuxfoundation.org>
+Subject: [PATCH 3.18 14/68] scsi: ipr: Fix missed EH wakeup
+Date: Mon, 19 Mar 2018 19:05:52 +0100
+Message-Id: <20180319171829.858947760@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390518256431155?=
-X-GMAIL-MSGID: =?utf-8?q?1595390518256431155?=
+X-GMAIL-THRID: =?utf-8?q?1595390511066260812?=
+X-GMAIL-MSGID: =?utf-8?q?1595390511066260812?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,78 +51,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Brian King <brking@linux.vnet.ibm.com>
 
 
-[ Upstream commit add641e7dee31b36aee83412c29e39dd1f5e0c9c ]
+[ Upstream commit 66a0d59cdd12546ddf01d229de28b07ccf6d637f ]
 
-after act_csum computes the checksum on skbs carrying GSO TCP/UDP packets,
-subsequent segmentation fails because skb_needs_check(skb, true) returns
-true. Because of that, skb_warn_bad_offload() is invoked and the following
-message is displayed:
+Following a command abort or device reset, ipr's EH handlers wait for
+the commands getting aborted to get sent back from the adapter prior to
+returning from the EH handler. This fixes up some cases where the
+completion handler was not getting called, which would have resulted in
+the EH thread waiting until it timed out, greatly extending EH time.
 
-WARNING: CPU: 3 PID: 28 at net/core/dev.c:2553 skb_warn_bad_offload+0xf0/0xfd
-<...>
-
-  [<ffffffff8171f486>] skb_warn_bad_offload+0xf0/0xfd
-  [<ffffffff8161304c>] __skb_gso_segment+0xec/0x110
-  [<ffffffff8161340d>] validate_xmit_skb+0x12d/0x2b0
-  [<ffffffff816135d2>] validate_xmit_skb_list+0x42/0x70
-  [<ffffffff8163c560>] sch_direct_xmit+0xd0/0x1b0
-  [<ffffffff8163c760>] __qdisc_run+0x120/0x270
-  [<ffffffff81613b3d>] __dev_queue_xmit+0x23d/0x690
-  [<ffffffff81613fa0>] dev_queue_xmit+0x10/0x20
-
-Since GSO is able to compute checksum on individual segments of such skbs,
-we can simply skip mangling the packet.
-
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
+Reviewed-by: Wendy Xiong <wenxiong@linux.vnet.ibm.com>
+Tested-by: Wendy Xiong <wenxiong@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_csum.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/scsi/ipr.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/net/sched/act_csum.c
-+++ b/net/sched/act_csum.c
-@@ -176,6 +176,9 @@ static int tcf_csum_ipv4_tcp(struct sk_b
- 	struct tcphdr *tcph;
- 	const struct iphdr *iph;
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -828,8 +828,10 @@ static void ipr_sata_eh_done(struct ipr_
  
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4)
-+		return 1;
-+
- 	tcph = tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
- 	if (tcph == NULL)
- 		return 0;
-@@ -197,6 +200,9 @@ static int tcf_csum_ipv6_tcp(struct sk_b
- 	struct tcphdr *tcph;
- 	const struct ipv6hdr *ip6h;
+ 	qc->err_mask |= AC_ERR_OTHER;
+ 	sata_port->ioasa.status |= ATA_BUSY;
+-	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ 	ata_qc_complete(qc);
++	if (ipr_cmd->eh_comp)
++		complete(ipr_cmd->eh_comp);
++	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ }
  
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV6)
-+		return 1;
-+
- 	tcph = tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
- 	if (tcph == NULL)
- 		return 0;
-@@ -220,6 +226,9 @@ static int tcf_csum_ipv4_udp(struct sk_b
- 	const struct iphdr *iph;
- 	u16 ul;
+ /**
+@@ -5830,8 +5832,10 @@ static void ipr_erp_done(struct ipr_cmnd
+ 		res->in_erp = 0;
+ 	}
+ 	scsi_dma_unmap(ipr_cmd->scsi_cmd);
+-	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ 	scsi_cmd->scsi_done(scsi_cmd);
++	if (ipr_cmd->eh_comp)
++		complete(ipr_cmd->eh_comp);
++	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ }
  
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
-+		return 1;
-+
- 	/*
- 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
- 	 * udph->len to get the real length without any protocol check,
-@@ -273,6 +282,9 @@ static int tcf_csum_ipv6_udp(struct sk_b
- 	const struct ipv6hdr *ip6h;
- 	u16 ul;
+ /**
+@@ -6214,8 +6218,10 @@ static void ipr_erp_start(struct ipr_ioa
+ 	}
  
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
-+		return 1;
-+
- 	/*
- 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
- 	 * udph->len to get the real length without any protocol check,
+ 	scsi_dma_unmap(ipr_cmd->scsi_cmd);
+-	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ 	scsi_cmd->scsi_done(scsi_cmd);
++	if (ipr_cmd->eh_comp)
++		complete(ipr_cmd->eh_comp);
++	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ }
+ 
+ /**
+@@ -6241,8 +6247,10 @@ static void ipr_scsi_done(struct ipr_cmn
+ 		scsi_dma_unmap(scsi_cmd);
+ 
+ 		spin_lock_irqsave(ipr_cmd->hrrq->lock, lock_flags);
+-		list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ 		scsi_cmd->scsi_done(scsi_cmd);
++		if (ipr_cmd->eh_comp)
++			complete(ipr_cmd->eh_comp);
++		list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
+ 		spin_unlock_irqrestore(ipr_cmd->hrrq->lock, lock_flags);
+ 	} else {
+ 		spin_lock_irqsave(ioa_cfg->host->host_lock, lock_flags);
