@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvWdCdMGy3dhZGAKmSZpCxbZr/tfyNV2IsXKPgXm4AnLSdnvgh7IJAf/2tB2WRhro2LW8aS
-ARC-Seal: i=1; a=rsa-sha256; t=1521483900; cv=none;
+X-Google-Smtp-Source: AG47ELuIodo0gbxWt46oc0ImEoMMbnvODjGrwRqRZ5yzZy8hYO/VLpvjcvcYU8h/Zpz4GToC8ZP3
+ARC-Seal: i=1; a=rsa-sha256; t=1521483895; cv=none;
         d=google.com; s=arc-20160816;
-        b=Uyh12CorTcA8IlaBxpBqX6wyT4u907VUYhwtxPmyVlcKm41zQUQPC4V7bVm9peXHw8
-         f+Uho+TEfPapKzXWV3Ij5xr3p128hKUZ+BPDfK7/nzZ5walEdg9P4h6prXnBKPygmxuP
-         YHZvo7vX51hywxMmX/EGFcpV2Gq6oVo9rjvGIHgs0+Nb3DQ9hbCNnDosWuJN1219rQ4n
-         3sbocwRNAZddAIg4jc7YvNoOwrIOxvwKid8oRl5rWuswtYW51LDA41/ldDIOSt5HbmqA
-         8z5bnhs9dcFYWgaNWnH2OVtyWpXQOowCiYvGXmE4HjrMh8ARwUQ9UmUkPUPTAVH7RFLR
-         trRQ==
+        b=VI9dnNQGHUQig77AgksS8N+HlTl35fJB4KYNA59Nz9bAfykA7xumjV0Y3YAb4bgEoe
+         GQHzc8S/xPJjWpr0mrkRprWG61FIZp5Vm4+/8xcCueVqUuNlvgl3mTmXcjpv6wODrz3+
+         Jswv94SHfiMuTlV9p3ieYf9Bw1UnrFcuTd/GDQgZtRLE03seEQBMaWFBb4b7/H5nbc4h
+         CZUqx551CuxMRv3o5wTF1cHH2mfkQ6QfZPd01Al7ZDBtgVp45fv021eF7UHWUImVEP06
+         mDqE6g+/A6QxnLZMS+36nrlVrufYd9REfjJN7Epoc/xZfiycE/7ytBBbEB7zZLqq00gZ
+         5XMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xM5QaWEK+6CuKtfAO1tHklt4/z8Foo1EufC6fSGh0Xw=;
-        b=J816rX9Jf251CwROpm60iSxWecGkZwvIQjayo5iRQpqg5vw4/tVrgsYenuwJAfnvyT
-         lgO1VDZH9Tm9KqxHriBVkGZeR7dEDWzU2RDhhaKIOS5+6tahjbMy1LsM1xig+71EaZjl
-         LzqHqNZph9qoIZeGO3DKZru9CIpIr/5GFnqnVe5gJgUw56waFUgzaegTxJgzDA4+09vU
-         aBzYDWota3eNfLS+68a95FM44kCl+fLsO1FfiGTtETEj20UQyeRBNsPYuaC89AIsjDzx
-         3PrEPok9TebR9Zwbw1DImKZRPuT3mIxeRVQ0we9Ewwd1Ox1eAbocbagD2JakwNqdfJ1B
-         tzVA==
+        bh=GzG44Y5TpcqWAppRUO8wpXrg/9TGF092F+zO+/bQYEg=;
+        b=UThkJL4LmHa3qAMXr2t7lSM3Q7ozWUgI2wJNio7Ob0KhJH6iI1114GCaMdER2FooRH
+         5dPY7gDcjyzL1NWW1X2ncVsjkF6QhtYP7RQHmnEoMps8lvFj4AD1x5mOgiioogJ7rQes
+         ptOPHUlaQxfCvK11m8yf6nK4osPg7SJ/0OlgJLs8rZ54wKOd+gBOGsq9JVM0qNRmytht
+         a9JOISPIiSmiBSFaVjn0cXwTL5pg/tRw/MwSnir2eGy9535jhzVN84wpsDuJlO7q4p0d
+         Vu6Dy3fhIeBtKOFciHLuIIlx98ro9Za5igSIf8AFxvJfF6HdOUKtYdFGKBx2SJkjD3Ex
+         G7uQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 158/241] mac80211_hwsim: use per-interface power level
-Date: Mon, 19 Mar 2018 19:07:03 +0100
-Message-Id: <20180319180757.708132844@linuxfoundation.org>
+Subject: [PATCH 4.9 157/241] Bluetooth: 6lowpan: fix delay work init in add_peer_chan()
+Date: Mon, 19 Mar 2018 19:07:02 +0100
+Message-Id: <20180319180757.671943434@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391502047672023?=
-X-GMAIL-MSGID: =?utf-8?q?1595391502047672023?=
+X-GMAIL-THRID: =?utf-8?q?1595391496612397287?=
+X-GMAIL-MSGID: =?utf-8?q?1595391496612397287?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,68 +51,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Michael Scott <michael.scott@linaro.org>
 
 
-[ Upstream commit 1d5e9f80ab021e3e1f9436627a4ad07a143ccb2c ]
+[ Upstream commit d2891c4d071d807f01cc911dc42a68f4568d65cf ]
 
-When channel contexts are used, there's no global power level
-(the power_level is always 0). Use the per-interface TX power
-in mac80211_hwsim to have a proper setting for both cases.
+When adding 6lowpan devices very rapidly we sometimes see a crash:
+[23122.306615] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.9.0-43-arm64 #1 Debian 4.9.9.linaro.43-1
+[23122.315400] Hardware name: HiKey Development Board (DT)
+[23122.320623] task: ffff800075443080 task.stack: ffff800075484000
+[23122.326551] PC is at expire_timers+0x70/0x150
+[23122.330907] LR is at run_timer_softirq+0xa0/0x1a0
+[23122.335616] pc : [<ffff000008142dd8>] lr : [<ffff000008142f58>] pstate: 600001c5
 
-This fixes the bgscan_simple and bgscan_learn test cases when
-the number of channels advertised by hwsim is >1 by default.
+This was due to add_peer_chan() unconditionally initializing the
+lowpan_btle_dev->notify_peers delayed work structure, even if the
+lowpan_btle_dev passed into add_peer_chan() had previously been
+initialized.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Normally, this would go unnoticed as the delayed work timer is set for
+100 msec, however when calling add_peer_chan() faster than 100 msec it
+clears out a previously queued delay work causing the crash above.
+
+To fix this, let add_peer_chan() know when a new lowpan_btle_dev is passed
+in so that it only performs the delay work initialization when needed.
+
+Signed-off-by: Michael Scott <michael.scott@linaro.org>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/bluetooth/6lowpan.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -552,8 +552,6 @@ struct mac80211_hwsim_data {
- 	/* wmediumd portid responsible for netgroup of this radio */
- 	u32 wmediumd;
- 
--	int power_level;
--
- 	/* difference between this hw's clock and the real clock, in usecs */
- 	s64 tsf_offset;
- 	s64 bcn_delta;
-@@ -1208,7 +1206,9 @@ static bool mac80211_hwsim_tx_frame_no_n
- 	if (info->control.rates[0].flags & IEEE80211_TX_RC_SHORT_GI)
- 		rx_status.flag |= RX_FLAG_SHORT_GI;
- 	/* TODO: simulate real signal strength (and optional packet loss) */
--	rx_status.signal = data->power_level - 50;
-+	rx_status.signal = -50;
-+	if (info->control.vif)
-+		rx_status.signal += info->control.vif->bss_conf.txpower;
- 
- 	if (data->ps != PS_DISABLED)
- 		hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_PM);
-@@ -1607,7 +1607,6 @@ static int mac80211_hwsim_config(struct
- 
- 	WARN_ON(data->channel && data->use_chanctx);
- 
--	data->power_level = conf->power_level;
- 	if (!data->started || !data->beacon_int)
- 		tasklet_hrtimer_cancel(&data->beacon_timer);
- 	else if (!hrtimer_is_queued(&data->beacon_timer.timer)) {
-@@ -2212,7 +2211,6 @@ static const char mac80211_hwsim_gstring
- 	"d_tx_failed",
- 	"d_ps_mode",
- 	"d_group",
--	"d_tx_power",
- };
- 
- #define MAC80211_HWSIM_SSTATS_LEN ARRAY_SIZE(mac80211_hwsim_gstrings_stats)
-@@ -2249,7 +2247,6 @@ static void mac80211_hwsim_get_et_stats(
- 	data[i++] = ar->tx_failed;
- 	data[i++] = ar->ps;
- 	data[i++] = ar->group;
--	data[i++] = ar->power_level;
- 
- 	WARN_ON(i != MAC80211_HWSIM_SSTATS_LEN);
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@ -755,7 +755,8 @@ static void set_ip_addr_bits(u8 addr_typ
  }
+ 
+ static struct l2cap_chan *add_peer_chan(struct l2cap_chan *chan,
+-					struct lowpan_btle_dev *dev)
++					struct lowpan_btle_dev *dev,
++					bool new_netdev)
+ {
+ 	struct lowpan_peer *peer;
+ 
+@@ -786,7 +787,8 @@ static struct l2cap_chan *add_peer_chan(
+ 	spin_unlock(&devices_lock);
+ 
+ 	/* Notifying peers about us needs to be done without locks held */
+-	INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
++	if (new_netdev)
++		INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
+ 	schedule_delayed_work(&dev->notify_peers, msecs_to_jiffies(100));
+ 
+ 	return peer->chan;
+@@ -843,6 +845,7 @@ out:
+ static inline void chan_ready_cb(struct l2cap_chan *chan)
+ {
+ 	struct lowpan_btle_dev *dev;
++	bool new_netdev = false;
+ 
+ 	dev = lookup_dev(chan->conn);
+ 
+@@ -853,12 +856,13 @@ static inline void chan_ready_cb(struct
+ 			l2cap_chan_del(chan, -ENOENT);
+ 			return;
+ 		}
++		new_netdev = true;
+ 	}
+ 
+ 	if (!try_module_get(THIS_MODULE))
+ 		return;
+ 
+-	add_peer_chan(chan, dev);
++	add_peer_chan(chan, dev, new_netdev);
+ 	ifup(dev->netdev);
+ }
+ 
