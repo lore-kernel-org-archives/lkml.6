@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtwgUfLnqMtfpyQiZsd1kpluUtwWORHDVnvr5Yl8awHOksxp2FmEYjflu50QHSH1jX5fNSC
-ARC-Seal: i=1; a=rsa-sha256; t=1521483840; cv=none;
+X-Google-Smtp-Source: AG47ELs4+SSnM/NaVn/oh/OMdaCtUjOxzWjVjnR1Kdeu5nD7WfOFGB6jdQScN87yMI/B3/L61srQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483838; cv=none;
         d=google.com; s=arc-20160816;
-        b=z7kXNAoTpHLxTD+qcefgLA5ymNOdF6pJXtCvMY1EnxFJFtlMZX/HVeOubp4zbvw+5n
-         Bf20M4j3u56pjHRHtkjbzH7wTzVxgmHaTBVlyf2CPEhEBJhTST/RpYyGLT93Ap8MvcDN
-         yj1qeOI4sB0hVJAXWVZolvUeHQ1gNTE7SY1lnBYMS8/+8tkDRb3LUJ6IddZBeZTV04M2
-         HXc+3UCAKQKqHdLoHMts+rt8qbss47yVrye9Hxa67nTk+ZHMZvjg8ko03GYy6El77Wzq
-         zP8weuiLVI7A29EFtmvIHqVsZq69bgHNzp/bStoRqGhUU/osnYwxpLl0BjF1FayF3uOe
-         I+og==
+        b=etmWmsAvb/XQgcyj7ZlfAkyjWQ5TAH9tS+7XuYxzWJsSAolFoFckRZFXh3Ul8co0Kj
+         OKt+IXLOnps0Jxmc3uQdis+jaEMx1cC01mA8cEmHNwOfTnhWXHpTrstWWqKoOdPx6c80
+         eHjn/5FetG5JtqcYkEN7Orsb78aYauGrEuQwv3IVMBXmFyXmfxE3aT7+i4KtKYSTtQpg
+         cLCx/b/exip89+IcvYdWp4O2hAu741KoIlVX9J9n7W024EAiw+Xwa1+l9xrVd41r/+/k
+         agts0843OZ6lY1HBsCmhBZUcILECkGmiivDSW/w7gTXMTuYNFaN3rSnG6Vyyk6OS8fIr
+         692Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qaC+pz75EDTvTMIS+c6LuMJFHwNsCOSeGbie0wHCT80=;
-        b=cgd1X960Bk/bTbfPq3cGoGzR8AEVpcRScnxzfq61Lrm+fHhyqQFWvEhrw2R+v2uY7J
-         o++qgzLV8GZWFxAr+ZPjOowGXeJbqnYDVqs0CT9m4gKucA2ruik0vZG1CGh3wso5sVwE
-         QFyjHj0ZTM8oe/4+7kjXwJS09pNnM4/HlUt6FGYOtummQDII6Swh06Llftd1uJTnPV8I
-         wbKaw02SKroc/VI6L83+M3rzcQQhNTAKkrAv7MckL2aoHN7WCv7mFd0KT7GlgJV32bSQ
-         ErXh5BBfeljLIYlrCI3SsaNtUrNYmXfAfDs5wlSo/SNlXUnsBIrTUSYcqW6g+JrlGqMQ
-         mRQA==
+        bh=ls7srhmD5ZgAJsuZDFs2YtRa77mda9+9aHqi82hPCxY=;
+        b=KEl0TmjRA1wyK+Q1esPjeWgMKcSKR74xX7spcvzEAqusf2byBL09zEMcyEXjbQk4hQ
+         dt8d8wGWtbv10s/vp3bSXeryRg0Yg1Iqc4yjzL/+mhSq6mtXWsVJfUHCWKmPvmTt8Hk5
+         wYwHyoA6VEAFrEny9YMNNRuz/I7DEFof3CIM9+ho22OGrsfmq99giEcWLsEpFMBOqXG3
+         vJmWSTlJcC1EjEAU/3m1t+34sucpFKvNf/QzxjERKXCfdIXG7+9/LLI2DDW147PfCT2+
+         uH5w/UTGf63DkjEBqlwTdKrH2cftMl00ERjWiPECsWDbSINQs+XfiEldL2uEcRvCxdhs
+         BHZw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>,
-	Mark Brown <broonie@kernel.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 135/241] regulator: isl9305: fix array size
-Date: Mon, 19 Mar 2018 19:06:40 +0100
-Message-Id: <20180319180756.782897020@linuxfoundation.org>
+Subject: [PATCH 4.9 134/241] [media] v4l: vsp1: Register pipe with output WPF
+Date: Mon, 19 Mar 2018 19:06:39 +0100
+Message-Id: <20180319180756.740776187@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390687763949182?=
-X-GMAIL-MSGID: =?utf-8?q?1595391440059524338?=
+X-GMAIL-THRID: =?utf-8?q?1595391437205592630?=
+X-GMAIL-MSGID: =?utf-8?q?1595391437205592630?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Vincent Stehlé" <vincent.stehle@laposte.net>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 
-[ Upstream commit 0c08aaf873174c95e674cf21ffcd041c589d2e5b ]
+[ Upstream commit 1531a208ed861e4bd287444f9466ffcf98383de2 ]
 
-ISL9305_MAX_REGULATOR is the last index used to access the init_data[]
-array, so we need to add one to this last index to obtain the necessary
-array size.
+The DRM object does not register the pipe with the WPF object. This is
+used internally throughout the driver as a means of accessing the pipe.
+As such this breaks operations which require access to the pipe from WPF
+interrupts.
 
-This fixes the following smatch error:
+Register the pipe inside the WPF object after it has been declared as
+the output.
 
-  drivers/regulator/isl9305.c:160 isl9305_i2c_probe() error: buffer overflow 'pdata->init_data' 3 <= 3
+Fixes: ff7e97c94d9f ("[media] v4l: vsp1: Store pipeline pointer in rwpf")
 
-Fixes: dec38b5ce6a9edb4 ("regulator: isl9305: Add Intersil ISL9305/H driver")
-Signed-off-by: Vincent StehlÃ© <vincent.stehle@laposte.net>
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/platform_data/isl9305.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_drm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/platform_data/isl9305.h
-+++ b/include/linux/platform_data/isl9305.h
-@@ -24,7 +24,7 @@
- struct regulator_init_data;
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -596,6 +596,7 @@ int vsp1_drm_init(struct vsp1_device *vs
+ 	pipe->bru = &vsp1->bru->entity;
+ 	pipe->lif = &vsp1->lif->entity;
+ 	pipe->output = vsp1->wpf[0];
++	pipe->output->pipe = pipe;
  
- struct isl9305_pdata {
--	struct regulator_init_data *init_data[ISL9305_MAX_REGULATOR];
-+	struct regulator_init_data *init_data[ISL9305_MAX_REGULATOR + 1];
- };
- 
- #endif
+ 	return 0;
+ }
