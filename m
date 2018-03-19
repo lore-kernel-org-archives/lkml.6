@@ -1,124 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932458AbeCSHYw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:24:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932073AbeCSHYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:24:50 -0400
-Date: Mon, 19 Mar 2018 15:24:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, keescook@chromium.org,
-        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
-        lcapitulino@redhat.com
-Subject: Re: [PATCH v9 0/5] x86/KASLR: Add parameter
- kaslr_boot_mem=nn[KMG]@ss[KMG]
-Message-ID: <20180319072446.GE8389@localhost.localdomain>
-References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
- <20180312093557.gxypr66vrbftz3v3@gmail.com>
- <20180312101031.GH18656@localhost.localdomain>
- <20180312105727.mzrtjvnyxgyz7jn7@gmail.com>
- <20180312120415.GC8547@localhost.localdomain>
+        id S932375AbeCSH0b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:26:31 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11179 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932073AbeCSH0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 03:26:23 -0400
+From: <gabriel.fernandez@st.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, <gabriel.fernandez@st.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <gabriel.fernandez.st@gmail.com>, Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+Subject: [PATCH v3 0/2] Introduce STM32MP1 Reset driver
+Date: Mon, 19 Mar 2018 08:25:49 +0100
+Message-ID: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312120415.GC8547@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG4NODE2.st.com
+ (10.75.127.11)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/18 at 08:04pm, Chao Fan wrote:
-> On Mon, Mar 12, 2018 at 11:57:27AM +0100, Ingo Molnar wrote:
-> >
-> >* Baoquan He <bhe@redhat.com> wrote:
-> >
-> >> Hi Ingo,
-> >> 
-> >> On 03/12/18 at 10:35am, Ingo Molnar wrote:
-> >> > 
-> >> > * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-> >> > 
-> >> > > Long time no reply, rebase the patchset, change the parameter name
-> >> > > from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
-> >> > > 
-> >> > > ***Background:
-> >> > > People reported that kaslr may randomly chooses some positions
-> >> > > which are located in movable memory regions. This will break memory
-> >> > > hotplug feature.
-> >> > 
-> >> > [...]
-> >> > 
-> >> > > ***Solutions:
-> >> > > Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
-> >> > > specify the memory regions where kernel can be allowed to randomize
-> >> > > safely.
-> >> > 
-> >> > Manual solutions like that are pretty suboptimal to users, aren't they?
-> >> > 
-> >> > In what way does memory hotplug feature 'break'? Does it crash or misbehave? Or 
-> >> > simply does it not allow the movement of the affected memory region, while still 
-> >> > allowing the rest to be moved?
-> >> 
-> >> AFAIT, if kernel is randomized into the movable memory region, the
-> >> affected memory region can not be hot added/removed since it has kernel
-> >> data. Surely, the system can still work, the unaffected part still can
-> >> be moved. Still it will cause regression on memory hotplug.
-> >> 
-> >> Mainly we parse SRAT table to get the ranges of memory provided by
-> >> hot-added memory devices in initmem_init(), that's very late. During boot,
-> >> we don't know it. Chao ever posted patches to grab SRAT at decompressing
-> >> stage, the code is very complicated and not elegant, ACPI maintainer
-> >> NACKed that.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Hi Chao,
+v3:
+remove unused includes
+fix status ops
+fix from Fengguang Wu
+	for Kbuild test robot: symbol 'stm32_reset_ops' was not declared. Should it be static?
+use 'builtin_platform_driver' instead 'postcore_initcall'
 
-Seems Ingo prefers the handling in kaslr boot code. Maybe you can try
-to optimize and split your below patch and post anouther round?
+v2:
+Don't use reset-simple driver but a custom reset driver.
+add dt-binding documentation.
 
-I will see how to sove the hugepage in boot/compressed/kaslr.c . 
+This patch-set enables the reset of STM32MP1.
+STM32MP1 reset IP has a register to assert by writing '1' and another
+register to de-assert by writing '1'.
 
-Thanks
-Baoquan
+The patch 'dt-bindings: reset: add STM32MP1 resets' could be squashed
+with the patch:
+'dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings'
+commit 3830681d354f
 
-> 
-> Thanks for Ingo's suggestion and Baoquan's explaination.
-> 
-> Yes, I did ever try to dig SRAT table in boot period in early RFC PATCH:
-> https://lkml.org/lkml/2017/9/3/77
-> But the change is too huge so made this patchset to avoid this bug in a
-> small change, which will not make the code looks messy.
-> 
-> Thanks,
-> Chao Fan
-> 
-> >
-> >So there's apparently a mis-design here:
-> >
-> > - KASLR needs to be done very early on during bootup: - it's not realistic to 
-> >   expect KASLR to be done with a booted up kernel, because pointers to various 
-> >   KASLR-ed objects are already widely spread out in memory.
-> >
-> > - But for some unfathomable reason the memory hotplug attribute of memory
-> >   regions is not part of the regular memory map but part of late-init ACPI data
-> >   structures.
-> >
-> >The right solution would be _not_ to fudge the KASLR location, but to provide the 
-> >memory hotplug information to early code, preferably via the primary memory map. 
-> >KASLR can then make use of it and avoid those regions, just like it avoids other 
-> >memory regions already.
-> >
-> >In addition to that hardware makers (including virtualized hardware) should also 
-> >fix their systems to provide memory hotplug information to early code.
-> >
-> >Thanks,
-> >
-> >	Ingo
-> >
-> >
-> 
-> 
+Gabriel Fernandez (2):
+  dt-bindings: reset: add STM32MP1 resets
+  reset: stm32mp1: Enable stm32mp1 reset driver
+
+ .../devicetree/bindings/reset/st,stm32mp1-rcc.txt  |   6 ++
+ drivers/reset/Kconfig                              |   6 ++
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-stm32mp1.c                     | 115 +++++++++++++++++++++
+ include/dt-bindings/reset/stm32mp1-resets.h        | 108 +++++++++++++++++++
+ 5 files changed, 236 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt
+ create mode 100644 drivers/reset/reset-stm32mp1.c
+ create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
+
+-- 
+1.9.1
