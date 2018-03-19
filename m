@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755462AbeCSOdE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:33:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60942 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933087AbeCSOdB (ORCPT
+        id S1755650AbeCSOeQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:34:16 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35154 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755629AbeCSOeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:33:01 -0400
-From: Colin King <colin.king@canonical.com>
-To: Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bnx2x: fix spelling mistake: "registeration" -> "registration"
-Date: Mon, 19 Mar 2018 14:32:59 +0000
-Message-Id: <20180319143259.5796-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Mar 2018 10:34:11 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, luto@kernel.org,
+        x86@kernel.org, jgross@suse.com,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH] x86/vsyscall/64: Use proper accessor to update p4d entry
+Date: Mon, 19 Mar 2018 10:31:54 -0400
+Message-Id: <20180319143154.3742-1-boris.ostrovsky@oracle.com>
+X-Mailer: git-send-email 2.14.3
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836 signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=558
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803190149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Writing to it directly does not work for Xen PV guests.
 
-Trivial fix to spelling mistake in BNX2X_ERR error message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 2 +-
+ arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 74fc9af4aadb..b8388e93520a 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -13913,7 +13913,7 @@ static void bnx2x_register_phc(struct bnx2x *bp)
- 	bp->ptp_clock = ptp_clock_register(&bp->ptp_clock_info, &bp->pdev->dev);
- 	if (IS_ERR(bp->ptp_clock)) {
- 		bp->ptp_clock = NULL;
--		BNX2X_ERR("PTP clock registeration failed\n");
-+		BNX2X_ERR("PTP clock registration failed\n");
- 	}
- }
- 
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 8560ef68a9d6..317be365bce3 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -347,7 +347,7 @@ void __init set_vsyscall_pgtable_user_bits(pgd_t *root)
+ 	set_pgd(pgd, __pgd(pgd_val(*pgd) | _PAGE_USER));
+ 	p4d = p4d_offset(pgd, VSYSCALL_ADDR);
+ #if CONFIG_PGTABLE_LEVELS >= 5
+-	p4d->p4d |= _PAGE_USER;
++	set_p4d(p4d, __p4d(p4d_val(*p4d) | _PAGE_USER));
+ #endif
+ 	pud = pud_offset(p4d, VSYSCALL_ADDR);
+ 	set_pud(pud, __pud(pud_val(*pud) | _PAGE_USER));
 -- 
-2.15.1
+2.14.3
