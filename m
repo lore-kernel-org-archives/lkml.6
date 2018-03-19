@@ -1,113 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933127AbeCSKlD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:41:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56510 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932910AbeCSKk7 (ORCPT
+        id S932915AbeCSKjK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:39:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55074 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932841AbeCSKi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:40:59 -0400
-From: Colin King <colin.king@canonical.com>
-To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>,
-        Tsang-Shian Lin <thlin@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
-Date: Mon, 19 Mar 2018 10:40:54 +0000
-Message-Id: <20180319104054.32564-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Mar 2018 06:38:57 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: x86@kernel.org
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/14] x86/amd_gart: use dma_direct_{alloc,free}
+Date: Mon, 19 Mar 2018 11:38:18 +0100
+Message-Id: <20180319103826.12853-7-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180319103826.12853-1-hch@lst.de>
+References: <20180319103826.12853-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This gains support for CMA allocations for the force_iommu case, and
+cleans up the code a bit.
 
-Trivial fix to spelling mistake in RT_TRACE message text.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/kernel/amd_gart_64.c | 36 ++++++++++++++----------------------
+ 1 file changed, 14 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-index b11365a5ee1f..9111ba7ff0a1 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-@@ -1475,7 +1475,7 @@ void rtl8812ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
- 		}
- 	} else if (method == MIX_MODE) {
- 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
-+			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
- 			 rtldm->default_ofdm_index,
- 			 rtldm->absolute_ofdm_swing_idx[rf_path],
- 			 rf_path);
-@@ -1750,7 +1750,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
- 			/*Record delta swing for mix mode power tracking*/
+diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+index 79ac6caaaabb..f299d8a479bb 100644
+--- a/arch/x86/kernel/amd_gart_64.c
++++ b/arch/x86/kernel/amd_gart_64.c
+@@ -480,29 +480,21 @@ static void *
+ gart_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_addr,
+ 		    gfp_t flag, unsigned long attrs)
+ {
+-	dma_addr_t paddr;
+-	unsigned long align_mask;
+-	struct page *page;
+-
+-	if (force_iommu && dev->coherent_dma_mask > DMA_BIT_MASK(24)) {
+-		flag &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
+-		page = alloc_pages(flag | __GFP_ZERO, get_order(size));
+-		if (!page)
+-			return NULL;
+-
+-		align_mask = (1UL << get_order(size)) - 1;
+-		paddr = dma_map_area(dev, page_to_phys(page), size,
+-				     DMA_BIDIRECTIONAL, align_mask);
+-
+-		flush_gart();
+-		if (paddr != bad_dma_addr) {
+-			*dma_addr = paddr;
+-			return page_address(page);
+-		}
+-		__free_pages(page, get_order(size));
+-	} else
+-		return dma_direct_alloc(dev, size, dma_addr, flag, attrs);
++	void *vaddr;
++
++	vaddr = dma_direct_alloc(dev, size, dma_addr, flag, attrs);
++	if (!vaddr ||
++	    !force_iommu || dev->coherent_dma_mask <= DMA_BIT_MASK(24))
++		return vaddr;
  
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
-+				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
- 			rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
- 
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-@@ -1766,7 +1766,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
- 			/*Record delta swing for mix mode power tracking*/
- 
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
-+				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
- 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
- 		} else {
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-@@ -1782,7 +1782,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
- 				-1 * delta_swing_table_idx_tdown_a[delta];
- 			/* Record delta swing for mix mode power tracking*/
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
-+				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
- 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
- 
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-@@ -1799,7 +1799,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
- 			/*Record delta swing for mix mode power tracking*/
- 
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
-+				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
- 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
- 		}
- 
-@@ -2115,7 +2115,7 @@ void rtl8821ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
- 		}
- 	} else if (method == MIX_MODE) {
- 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
-+			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
- 			 rtldm->default_ofdm_index,
- 			 rtldm->absolute_ofdm_swing_idx[rf_path],
- 			 rf_path);
-@@ -2329,7 +2329,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
- 			/*Record delta swing for mix mode power tracking*/
- 
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
-+				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
- 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
- 		} else {
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-@@ -2345,7 +2345,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
- 				-1 * delta_swing_table_idx_tdown_a[delta];
- 			/* Record delta swing for mix mode power tracking*/
- 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
-+				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
- 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
- 		}
++	*dma_addr = dma_map_area(dev, virt_to_phys(vaddr), size,
++			DMA_BIDIRECTIONAL, (1UL << get_order(size)) - 1);
++	flush_gart();
++	if (unlikely(*dma_addr == bad_dma_addr))
++		goto out_free;
++	return vaddr;
++out_free:
++	dma_direct_free(dev, size, vaddr, *dma_addr, attrs);
+ 	return NULL;
+ }
  
 -- 
-2.15.1
+2.14.2
