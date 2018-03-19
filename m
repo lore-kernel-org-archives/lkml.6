@@ -1,129 +1,113 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-191852-1521249638-2-13100024021970958213
+X-Cyrus-Session-Id: sloti22d1t05-3763980-1521493618-2-10579909291404898674
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521249638; b=XxJiur7kp2Rw8RPJXPg28f53G3vjo9Ciai2P78z8CyE2PVD
-    yiTX8Jp8rCxZLXsDXri0gPyFiSuVEP3ZjpT2yFFg6cO1tWPj5hElOPMltDGdT6zK
-    W9GoQ05zWu0rvO4MOSX0K/PNwMGHQovZyGMmkXzegX4GHfppHMmdQ1W/2OJHtZdr
-    dSfz3SpD8CVxttNWLHM81zjNeLMxWaycTyupTOpXN4xvhTBVY9clbhes5O/evoIm
-    56NDk6WWsI8oxfp0QARxBzRygcqJ47R/PbtQQCJVqMAWgpE6B0KHkQf2wiXnpfuy
-    4nLqhaZhsCNt/d/9xxZuVcpJ+VH57mJH1PV52WA==
+    t=1521493617; b=fqUHe98rz4vrZd5B9FgVrR0w/sflcfGuUGTYSC0cTOwIsCO
+    sRiucl/3CGG6zQ3sqmLeLpZlAoiQ206pTTSBZXbsZASocpSh4m4hEHAIquoaa0J0
+    ktZJm+Alta8KvsveS39D68+IlT2CAXaaFWHiZLUfn+ht+/hF53SOi35ImA2v4KCA
+    sVsM+7W/TYyhpXHKjfy+LpWAbIl+QQOGl4+b1p4MOl2MiDIJ5326HTul2KVmCnMy
+    VrTy99XZQy6jcl1BHRXroQa+F3ywMMB2NAzK5SVKIFG6m3AKzrSLoKTbN3aWcUu0
+    r/OwanyR/HYTFsDWY7KHJZfWpsaU0dfCjK5bhVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521249638; bh=aGY+uo6V5ZbiNgxqlXLq7MQ7gpkkiJZvcv2CxjnzHcY=; b=c
-    +c/b9hHojusk13u3zVa6qUYZ7bIV1h2zpNFrLbtFnnAXZ9wRI37baH7wHjEajPoo
-    WBxN9Uz5xDT+wu/beYLm0VRWt7QRjDjHa2ruAmT7KTImFo9oZ9t3y+U0FWSAuoV0
-    Fba9j+4xtKSEOrrvZ+IVTOPJnr2lJ6x3JThdlLkA92mwO9pX8iTrns+3tX3+7Zgs
-    XxKdQYbhxnABvpi2pzKL4Hp1ZbxCm2U+gTu6BwCVryveIA0aMDqnbCRNllCh+zVA
-    IdjCt9M1QFDHLBIHxlyV8z7kEY1sS+8o1iNwyrKqR9klk55SD8JjnikToyJygjPf
-    y9UKF/tbXAPWZ37Rxftjg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cRH+59O8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20151216;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=hansenpartnership.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=arctest; t=1521493617; bh=RYHKo5b
+    817BugNtALdkZke25lUqwhUpWUbgIh8jMgFM=; b=Uh2yq1hV1uVTHMW/Xriq7oi
+    K9V+Fv485cGCDRgzLqox5JOz0c2vFdK/3Ei4T1qaPgzVMFfO9auggRJ6lzKAdoOB
+    kjmPfSiZNhB1dXf932udQkvvoMRaXHpQRas97xCIG3R7qdsS0a2vrKA2Lx/c26cr
+    wB6wAgoVm0ZX0D2Xz5z6jNbliy7rZSyn0IU3ABHdRYcnUWpQrjpT8iztT95nKddo
+    g5kwPZbGctwhO04Jhp6eSGZb066jymtbIVej6Wyv1uKQg+wpU0VZ34cmkBpRxiDA
+    JcsWvkGqOgkL5KGX9JBVbHtKckEuc+rKSrv9ihWlAl5edWGTOWphx13fPp02bQg=
+    =
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfhggtggugfgjohgfshhpjeesthekredttderudenucfhrhhomheplfgrrhhkkhhoucfurghkkhhinhgvnhcuoehjrghrkhhkohdrshgrkhhkihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdduledvrdehhedrhedvrddufeeinecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfedtgedvnecuvehluhhsthgvrhfuihiivgepge;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hansenpartnership.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cRH+59O8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20151216;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=hansenpartnership.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfhggtggugfgjohgfshhpjeesthekredttderudenucfhrhhomheplfgrrhhkkhhoucfurghkkhhinhgvnhcuoehjrghrkhhkohdrshgrkhhkihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdduledvrdehhedrhedvrddufeeinecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfedtgedvnecuvehluhhsthgvrhfuihiivgepge;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hansenpartnership.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeCQBUe (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 21:20:34 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54234 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751437AbeCQBUd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 21:20:33 -0400
-Message-ID: <1521249631.12827.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        id S935530AbeCSVGb (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 17:06:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:56673 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935776AbeCSVG2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:06:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,332,1517904000";
+   d="scan'208";a="35141598"
+Date: Mon, 19 Mar 2018 23:06:21 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        '@linux.intel.com
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         stable@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Date: Fri, 16 Mar 2018 18:20:31 -0700
-In-Reply-To: <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
+Message-ID: <20180319210620.GB14364@linux.intel.com>
 References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-         <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
+ <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
+ <1521249631.12827.5.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521249631.12827.5.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> index 9e80a953d693..1adb976a2e37 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -537,14 +537,26 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip,
-> struct tpm_space *space,
->  			 const char *desc)
->  {
->  	const struct tpm_output_header *header = buf;
-> +	unsigned int delay_msec = TPM2_DURATION_SHORT;
->  	int err;
->  	ssize_t len;
->  
-> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
-> -	if (len <  0)
-> -		return len;
-> +	for (;;) {
-> +		len = tpm_transmit(chip, space, (u8 *)buf, bufsiz,
-> flags);
-> +		if (len <  0)
-> +			return len;
-> +		err = be32_to_cpu(header->return_code);
-> +		if (err != TPM2_RC_TESTING)
-> +			break;
-> +
-> +		delay_msec *= 2;
-> +		if (delay_msec > TPM2_DURATION_LONG) {
-> +			dev_err(&chip->dev, "the self test is still
-> running\n");
-> +			break;
-> +		}
-> +		tpm_msleep(delay_msec);
-> +	}
+On Fri, Mar 16, 2018 at 06:20:31PM -0700, James Bottomley wrote:
+> It turns out this bit is wrong ... I just discovered it testing the
+> RC_RETRY code. �You can't feed the buf back to tpm_transmit because the
+> header has already been changed to give you back the return code. �To
+> make this work, you have to save the header and handle area and restore
+> it before the command is resent.
+> 
+> I think the best solution for this hunk of code is to merge it with the
+> retry code.
 
-It turns out this bit is wrong ... I just discovered it testing the
-RC_RETRY code.  You can't feed the buf back to tpm_transmit because the
-header has already been changed to give you back the return code.  To
-make this work, you have to save the header and handle area and restore
-it before the command is resent.
+Yeah, right, so it is embarrasingly so :-) I wonder how I missed ths
+during the review. Thanks for spotting this one out. Are you saying
+that I should merge the patches into a single one? Perhaps you could
+send me the merged patch if so?
 
-I think the best solution for this hunk of code is to merge it with the
-retry code.
+If you agree, please send only that patch. I'll send v4 of my patch
+set after 4.17 pull request.
 
-James
+/Jarkko
