@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELve/dlsjt2O+sFyeJbrFdVgt9z3p+P6f6nWxFxBvMKlnxXGgowBmkGk1gWP9zaa8i2B2kBZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521484123; cv=none;
+X-Google-Smtp-Source: AG47ELs9D5UTvZ/qEy6owdN/jmI7q7RGRxKq716gbxl+qHvFc7vdtTBrhnLWJ5AZRpBnd7AZ300j
+ARC-Seal: i=1; a=rsa-sha256; t=1521484120; cv=none;
         d=google.com; s=arc-20160816;
-        b=xE6/jajHVCoMcD9dL5QyOYdfK5O5/4C6l839t7OLU/nEhiwhy5e+hTyJEeI1cIqlcz
-         e/tQDVWQJfOp/4Si/imUHlBUJQrO/rj8WMpduJOw1CZzA83si6jt6k6mBQyuBM6sSgYe
-         tV7TYfKryAvNGBaUWNMwwpzyXqUNVdp4kNQyx99iho8NPKC5evea+YmJ5WOh9YkCedgZ
-         xqZ+pxBO83HROteuDcw+S48TwUTzfLDQG+bT8M/pLoCmR4yAspPCa8Q2Wl2a3nXKVi7o
-         nArbhduVjHJL+MG3NKDuNaU20qwNGYoyo8EyseiK+dKUvDNG4PXKAq+wEhDIeCazkZf8
-         g69A==
+        b=X6EIk8StlGClFlCt1tSEm790L5jpNV2Dqy9NMEwefVh/r/Fmpby6y8Ie9bF0oArceP
+         ntki/lJHLnuN8K0Dl6zFLIQtJlbC+46qCjoLv+bn4rWL/TMs4/iM0iVGHE9/0gJYaohO
+         LGa1+K/6Rvmo+LWFYd+79FHW8f2xc/RQ+KvsUZNl3FTQ8DSYhEOu1u2cu5TOOSvzhzAm
+         FlEKv6N3cxT7eGMrwWohdS4SMe1Bzi0fv6sol+pA7G7cUZsHwRmva//G3X+IZaT95wZy
+         0IV0BPnRGTLWpwoud4cv+jyI9qv5FRupFbeuBrhCEp0T+/RhYiAV89EmXLLRgYi5Tuh0
+         PFSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=anYGwOQNaT6EQ5Ea4uSTWj8sZlCLZmxCOIUpzK2iJmc=;
-        b=SWuTciHtpiYNgJvj/pwIqHBo8KFnRITAiOU1KnONaskdMna9nN04H0ujcVN4PLBJIL
-         3HeArf+FeqB2Lm6J/ddwxrf0mFlfOSLTnK8N6wcDNJozRRxRlP1az+fxysuhCtp2Z55Q
-         epmcddIzaBeD8+Urth5eBH79GaAGr2dftSylWPAIDFxzzAn3Cu8Z/Ts6JxKW1Jy9nWih
-         asQ6YQn0/0o2isjH/2My6jWFECEjxpjIrpDU4fahoOOu2Ycg5OwlWHegC0AXHMWzEsEr
-         F9djhgJQFPdNSgdWDUvuU1Sy9cN8jc2cqtXTtD6yC0YCM/tuGbg4w1YFSuA7zEe6pmj4
-         BDEw==
+        bh=lAS8Na9F7Kwjhz/+VCRy7dkG8SwZoZUBhm4qpqmYk1I=;
+        b=TyiZD4//gdHRUUGfUiOmW0cI9DTAm441YcEK+pAP0e/3+JV+aXMWNJ0gQEzgR0JARq
+         ICOhGpvGvBnU8wkY9/5rGpU37nk+oyGHjiMS0IJlDrRCEjwpu5kz7MIC/6wOO1P2OjUh
+         d2+eqTqTroaS85FXcdQcNdXVcK7Z8/pHII3MwPYmiWvU+5CmKSwVzSIlMdjgRSXUkqy2
+         Ersk4ZouV3SMR6wlZPIzjGj7Fv7COCksD0ebgBJEWkIHIECd4WvxopYEvcdwhqad7XZt
+         Veqh8/6jyAoi1rx+3/Rx3QfLqexmkNQZYR7jc6P/5iEz1g/9ek4SQ0U5iyHMmaYN0fyp
+         AaHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thinh Nguyen <thinhn@synopsys.com>,
+	Wei Yongjun <weiyongjun1@huawei.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 240/241] usb: dwc3: Fix GDBGFIFOSPACE_TYPE values
-Date: Mon, 19 Mar 2018 19:08:25 +0100
-Message-Id: <20180319180801.105762772@linuxfoundation.org>
+Subject: [PATCH 4.9 239/241] USB: gadget: udc: Add missing platform_device_put() on error in bdc_pci_probe()
+Date: Mon, 19 Mar 2018 19:08:24 +0100
+Message-Id: <20180319180801.068116443@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391736203563121?=
-X-GMAIL-MSGID: =?utf-8?q?1595391736203563121?=
+X-GMAIL-THRID: =?utf-8?q?1595391041891799420?=
+X-GMAIL-MSGID: =?utf-8?q?1595391733388944367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit b16ea8b9492e99e03b1269fe93ebdbf8e4eabf8a upstream.
+commit 8874ae5f15f3feef3b4a415b9aed51edcf449aa1 upstream.
 
-The FIFO/Queue type values are incorrect. Correct them according to
-DWC_usb3 programming guide section 1.2.27 (or DWC_usb31 section 1.2.25).
+Add the missing platform_device_put() before return from bdc_pci_probe()
+in the platform_device_add_resources() error handling case.
 
-Additionally, this patch includes ProtocolStatusQ and AuxEventQ types.
-
-Fixes: cf6d867d3b57 ("usb: dwc3: core: add fifo space helper")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for Broadcom USB3.0 device controller IP BDC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/core.h |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/usb/gadget/udc/bdc/bdc_pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -159,13 +159,15 @@
- #define DWC3_GDBGFIFOSPACE_TYPE(n)	(((n) << 5) & 0x1e0)
- #define DWC3_GDBGFIFOSPACE_SPACE_AVAILABLE(n) (((n) >> 16) & 0xffff)
+--- a/drivers/usb/gadget/udc/bdc/bdc_pci.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_pci.c
+@@ -82,6 +82,7 @@ static int bdc_pci_probe(struct pci_dev
+ 	if (ret) {
+ 		dev_err(&pci->dev,
+ 			"couldn't add resources to bdc device\n");
++		platform_device_put(bdc);
+ 		return ret;
+ 	}
  
--#define DWC3_TXFIFOQ		1
--#define DWC3_RXFIFOQ		3
--#define DWC3_TXREQQ		5
--#define DWC3_RXREQQ		7
--#define DWC3_RXINFOQ		9
--#define DWC3_DESCFETCHQ		13
--#define DWC3_EVENTQ		15
-+#define DWC3_TXFIFOQ		0
-+#define DWC3_RXFIFOQ		1
-+#define DWC3_TXREQQ		2
-+#define DWC3_RXREQQ		3
-+#define DWC3_RXINFOQ		4
-+#define DWC3_PSTATQ		5
-+#define DWC3_DESCFETCHQ		6
-+#define DWC3_EVENTQ		7
-+#define DWC3_AUXEVENTQ		8
- 
- /* Global RX Threshold Configuration Register */
- #define DWC3_GRXTHRCFG_MAXRXBURSTSIZE(n) (((n) & 0x1f) << 19)
