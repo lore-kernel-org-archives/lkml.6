@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891247-1521496841-2-15816640703107768706
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521496840-2-11749260483721607927
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521496841; b=UDE/0LGt6VRH3DFVkC6XJAOm9ESzo57RmT9C8YARd+AaJXm
-    yvT0kg8DlN6WY+xMIlQONgTsUf6T9HfLgGUH4gaR2j4KTFEQTmyS+LUlc4tFVZgt
-    0H0PlNZAE2jq3zovLrXzULrjzy4qJirZp/ujFHTNEdWAh8faz+PnyMlGHp1eypbD
-    imDEfaYS2M9pAVwFS8PsXnQSGFO7WbzFizGZKMdIEBsecM4p5JSO+QlVN3snd3jr
-    5Cvpj2BK2NXbOBl8FZQVQ+M+TA3gHbnG8RxoD9XKoaKVZADPJMIC3eeLrYY8oQwY
-    VHltW/U0HxUdvjRQpIXgXWvOI9JUI1IuNkQqL7A==
+    t=1521496840; b=IeY5wSECYWQOD9Bd32XSqj1dIMOrSJ/X9d3LD21RLbfCW5A
+    BjRozCTvGDM5QmR9OH1xw7S2nWIVAYbUo7YmQooZcesCY4dM8QuyLQhJTmciSOE4
+    h81ZFTTlJN21CFdawjdJqhKnnaYullLLWM3jTnskZk2Z3gfJIIXP+bhU97nMXxG8
+    boC0e1oJeohLtXULwNeUu7ql4FyY0ESHkjnXyd2zbmeObzE9SDvKul9ndc/kzYnS
+    Py40VvUgMsUo2aL52cUUmqVJmMPv2HuJZKnnEWge8vg55C8pyKZhrsO0+IYxB6rt
+    3LCqyMQdCXRCqAvdvr7hSKpnV5p70SuGUdgjsQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521496841; bh=9d4PsK
-    u9xAyJyJyVTT8/KxNIVBhqHT9X5hmt26yw28I=; b=wL6oyhPfZOnVlUlB8diP49
-    SYr2J31tJtkavSUl4GOalPfLjbbQkZE8xBL2x4OOIzd6ba858LqkAg/zYxZUCOGr
-    VzfW1fS1zwPWEiUje9zpG376dPl0YwtFU4FRStQrveXgUDeul1MOXYo+3bBWA/um
-    lmfPudmOqaQTa6m6po5Ny4dPdsSsUazN7UqZn5nygejWPXNOQh7MiiYQYO31Awm4
-    8/ZsxWYnriWEeL5Jf+0vfnHy8mUObaGIjOiEA4MVM8YPeZG3Nf2jqxVRj5Dmbz66
-    dy7vQ688yBsm+pGB+DL9KM21gkA6CyqShBYqNraNuC3TNr1ujhuDIhwJyZslKDtQ
+    :mime-version:sender:list-id; s=arctest; t=1521496840; bh=EaekYF
+    01QqvdK9eJ3z4dBtHtrWPri1hXcw5PT0t/+tQ=; b=BDuLP6XzmuxelWMjq+HnYj
+    j5dHdOx49ZlWaBmss94hUlLpXJsI87ebTItPMsY18OZlcdoTEp+PqgZPCP3s8LFP
+    YsOwTo9xVtP4ZHy4VDXuv6C0hqib0aIMhoB/1kIvTRjhoReIYYJ+tP/Itv6uX5Rd
+    ADpRf1kebA7CMwS/NNzmMXXc8GcoZkqPTSIhWclRc4BZ3TGApYcizi0nd7tYRF8e
+    46cmP07UFzLQWMaF0kNGVL28sSXmIXB+jqdxmFCAthxMMjzacEi9JABn2+XwrjJi
+    l0Yquk2h0Myh1IjdTfFeE5rLpNs1mVgee+TAKEGFWj5GQlvZXV9LJdPJ1EmpHCKA
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=REy53NLZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PojmrKV4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejudejgeenucevlhhushhtvghrufhiiigvpeejtd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdegheenucevlhhushhtvghrufhiiigvpeejtd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=REy53NLZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PojmrKV4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejudejgeenucevlhhushhtvghrufhiiigvpeejtd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdegheenucevlhhushhtvghrufhiiigvpeejtd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934664AbeCSV7y (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:59:54 -0400
-Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:43956
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S934560AbeCSV7w (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 17:59:52 -0400
+Received: from mail-dm3nam03on0127.outbound.protection.outlook.com ([104.47.41.127]:29856
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934189AbeCSP4A (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:56:00 -0400
+        id S934470AbeCSP4E (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:56:04 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown <broonie@kernel.org>,
+CC: Brian Foster <bfoster@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 53/97] ASoC: Intel: sst: Fix the return value
- of 'sst_send_byte_stream_mrfld()'
-Thread-Topic: [PATCH AUTOSEL for 4.14 53/97] ASoC: Intel: sst: Fix the return
- value of 'sst_send_byte_stream_mrfld()'
-Thread-Index: AQHTv5q4jaxQ2r7mO0q163jkqUWn9Q==
-Date: Mon, 19 Mar 2018 15:55:36 +0000
-Message-ID: <20180319155411.12348-53-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 59/97] xfs: fix up agi unlinked list
+ reservations
+Thread-Topic: [PATCH AUTOSEL for 4.14 59/97] xfs: fix up agi unlinked list
+ reservations
+Thread-Index: AQHTv5q/01lYqPArpUCmtOwZRGk2IA==
+Date: Mon, 19 Mar 2018 15:55:47 +0000
+Message-ID: <20180319155411.12348-59-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,66 +78,94 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:8/UUJdpLIOB6dn2RWN5+BbDXneBAu/4DwzeZ/n2aTdFLe9gyPzgPRBE0CD1H0YVxXYfdQJwemWt2wsltbbxz3xnHIR4C1XA4iTnu/Mr+k2wiFeCsnXDRXVgasojly/9vWalpn3ZSv+IZzfLl2ac9iwyBxsnaAyHtLTWVdFem2pvBIJ3YfsSly0ymDLMHVXWVwdyLwr1oeJsTY85tAGiExcTOPuPYb6pDSWHFHZP+dMro9IqmrTXW48CI/qCro6ZF;20:ACGUK+nFhz3UwogL4thumiANXgBk5F32XT33/3KkhNNyziycq3EXlHT4WJ6JSvai4WGl5L4ZbYYQC/d5LkwKcAPE81nEKCICTqYFySpqRxIkGCqVC0ilFkW5p37Z2MHNSqfFF0woXJN+GuzpYgfeVEqU2gfD7ss4KzyuhiGXLEE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0807;7:NWZoKr0KZ3W+RoUMvR71XCQ6Epm8uQUniQleEw0k45uUkQtLJjSdOxbvf0TdueUwobQtuRbpZYLQyN8WpKCe+Xsp5W+FSegAZAxyuglq9oJeCN78Gkl+oZzePP58vRl5FXBXbp5+DOyn8n3Mvl3MYNQ+OXIc8Tc6reJJXMPuDqSx9v7YFvD3bp63faHhE5c/bDxm8tqXU7bqwsTlwVf4x5RogIgtoG65s5ISMBzKQ1cXGAb/pz/URu3OB1mTWDlv;20:DRZPe+1hIL5okCL24ONgUo6EtGFutKCAhMBUyBElHF1/435T20eNnBUEHO/gvuShBynn4L694XNgqqaoOS1LVMFRmcR6199C7XUifzQ88Tc4tmi/ACVTC48L0M/aJx1tql87rH4mdVMkyRR/+579J3ht80+CPXIJ9kgiU9BqN30=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fea231a4-2eda-44aa-2cbf-08d58db1e66e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0967;
-x-ms-traffictypediagnostic: DM5PR2101MB0967:
+x-ms-office365-filtering-correlation-id: 08f838be-cccd-406c-2154-08d58db1e84c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0807;
+x-ms-traffictypediagnostic: DM5PR2101MB0807:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB096724FDE12AC23D50120FA3FBD40@DM5PR2101MB0967.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(155761271638844);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0967;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0967;
+x-microsoft-antispam-prvs: <DM5PR2101MB08074CC45734A0AD7C324B97FBD40@DM5PR2101MB0807.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0807;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0807;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(376002)(39860400002)(366004)(346002)(189003)(199004)(54906003)(59450400001)(10090500001)(110136005)(5250100002)(2501003)(1076002)(6116002)(3846002)(2900100001)(99286004)(22452003)(3280700002)(186003)(2906002)(76176011)(86612001)(26005)(6486002)(10290500003)(102836004)(14454004)(36756003)(68736007)(3660700001)(72206003)(478600001)(107886003)(106356001)(53936002)(6506007)(6512007)(6436002)(86362001)(105586002)(316002)(7736002)(4326008)(305945005)(66066001)(81156014)(81166006)(5660300001)(97736004)(8936002)(25786009)(8676002)(2950100002)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: X7KCrc3Ca18fDGTU7FrrEb+4UjZsc3iRYrC6qK7GWY4sMfl/UbU9WNdt2YfpBQnK7pPGLic1nyHRwmq+9bD9Vt8Q/N34VJYu9bz0oey0TZE+E9qh/IbjnAjw0Bx3HVIevHVddXGESxSt5KG9+fiRreg1D6M42KBJZlXzs1qAzDYoxaDzbX9feN302Vlz7Em39kVIOZM6azPlPIU2ba/7s8bIhOZkmTV7Nz3Rb5jeBYBpbqSxRcAc4zWTpouyRFNzZ+NScdEOQfDdrf3/Zpu1Sqg3/h5hdzFs+B92ivUGb9GFicILx4Iwh6dXKrAbVi6JMuSsg6Ew2eMMgSMl3bG6fg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39380400002)(39860400002)(199004)(189003)(26005)(10290500003)(305945005)(6666003)(68736007)(186003)(102836004)(4326008)(25786009)(66066001)(6506007)(8676002)(59450400001)(2900100001)(5660300001)(7736002)(2950100002)(81166006)(10090500001)(81156014)(97736004)(2501003)(5250100002)(3280700002)(316002)(76176011)(478600001)(8936002)(99286004)(53936002)(36756003)(86612001)(72206003)(107886003)(110136005)(54906003)(6512007)(14454004)(6436002)(22452003)(3660700001)(3846002)(6486002)(6116002)(106356001)(1076002)(105586002)(2906002)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0807;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 278Erot3wEmAf0+m5htOwa7kpSAgJNc6pDjVX6oE4mABfLYyzxQTle5PiEaIlPb8BcVRic3ggheWheXQbArqN980PxkFcDnJOzv+ZK7YMtBWri6y9BnnV4XZRjvJLQ0prcWg6L855FCKiTu6zdJJmffIJieuB1L2I6nNF2iGRfsIdSS58c69yRC67qvf6uysHCH5ZNiNsqVWNTqEUKG+TvuOrdd4hY0cjWQJcBr/Uzkc2wzyoJ1PaRFlS15mdkyaCKDL4vu6e3deWjjKtgvyRxelYwJQ37KghUk4BV/7MasdqoIDtlCp93XIANl0JY5p0FzPySRKR90wkq1S0t1Zpw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fea231a4-2eda-44aa-2cbf-08d58db1e66e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:36.8561
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08f838be-cccd-406c-2154-08d58db1e84c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:47.7011
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0967
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0807
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit eaadb1caa966a91128297b754e90b7c92b350a00 ]
+[ Upstream commit e8341d9f6348640dff01d8c4a33695dc82bab5a3 ]
 
-In some error handling paths, an error code is assiegned to 'ret'.
-However, the function always return 0.
+The current AGI unlinked list addition and removal reservations do
+not reflect the worst case log usage. An unlinked list removal can
+log up to two on-disk inode clusters but only includes reservation
+for one. An unlinked list addition logs the on-disk cluster but
+includes reservation for an in-core inode.
 
-Fix it and return the error code if such an error paths is taken.
+Update the AGI unlinked list reservation helpers to calculate the
+correct worst case reservation for the associated operations.
 
-Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/intel/atom/sst/sst_stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/libxfs/xfs_trans_resv.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/s=
-st/sst_stream.c
-index 83d8dda15233..4eeb9afdc89f 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -221,7 +221,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *ss=
-t_drv_ctx,
- 		sst_free_block(sst_drv_ctx, block);
- out:
- 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
--	return 0;
-+	return ret;
+diff --git a/fs/xfs/libxfs/xfs_trans_resv.c b/fs/xfs/libxfs/xfs_trans_resv.=
+c
+index 838566b85622..173b1bc13ffe 100644
+--- a/fs/xfs/libxfs/xfs_trans_resv.c
++++ b/fs/xfs/libxfs/xfs_trans_resv.c
+@@ -282,13 +282,14 @@ xfs_calc_rename_reservation(
+  * For removing an inode from unlinked list at first, we can modify:
+  *    the agi hash list and counters: sector size
+  *    the on disk inode before ours in the agi hash list: inode cluster si=
+ze
++ *    the on disk inode in the agi hash list: inode cluster size
+  */
+ STATIC uint
+ xfs_calc_iunlink_remove_reservation(
+ 	struct xfs_mount        *mp)
+ {
+ 	return xfs_calc_buf_res(1, mp->m_sb.sb_sectsize) +
+-	       max_t(uint, XFS_FSB_TO_B(mp, 1), mp->m_inode_cluster_size);
++	       2 * max_t(uint, XFS_FSB_TO_B(mp, 1), mp->m_inode_cluster_size);
+ }
+=20
+ /*
+@@ -320,13 +321,13 @@ xfs_calc_link_reservation(
+ /*
+  * For adding an inode to unlinked list we can modify:
+  *    the agi hash list: sector size
+- *    the unlinked inode: inode size
++ *    the on disk inode: inode cluster size
+  */
+ STATIC uint
+ xfs_calc_iunlink_add_reservation(xfs_mount_t *mp)
+ {
+ 	return xfs_calc_buf_res(1, mp->m_sb.sb_sectsize) +
+-		xfs_calc_inode_res(mp, 1);
++		max_t(uint, XFS_FSB_TO_B(mp, 1), mp->m_inode_cluster_size);
  }
 =20
  /*
