@@ -1,229 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031292AbeCSUGZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:06:25 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:34511 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031167AbeCSUGR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:06:17 -0400
-X-IronPort-AV: E=Sophos;i="5.48,331,1517875200";
-   d="scan'208";a="336517795"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: linux-kernel@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v4 1/2] PCI/IOV: Use VF0 cached config registers for other VFs
-Date: Mon, 19 Mar 2018 21:06:00 +0100
-Message-Id: <1521489961-18291-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        id S970970AbeCSUHB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:07:01 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38925 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031351AbeCSUG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:06:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
+   d="scan'208";a="212758466"
+Date: Mon, 19 Mar 2018 13:41:26 -0600
+From: Scott Bauer <scott.bauer@intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/11] block: sed-opal: split generation of bytestring
+ header and content
+Message-ID: <20180319194126.ldamexpmw4ji7qi6@sbauer-Z170X-UD5>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <0f5fe62576e70de12515e323ca5c0a45ef92832d.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <20180319195945.GH3380@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319195945.GH3380@lst.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cache some config data from VF0 and use it for all other VFs instead of
-reading it from the config space of each VF.  We assume these items are the
-same across all associated VFs:
+On Mon, Mar 19, 2018 at 08:59:45PM +0100, Christoph Hellwig wrote:
+> > +static u8 *add_bytestring_header(int *err, struct opal_dev *cmd, size_t len)
+> >  {
+> >  	size_t header_len = 1;
+> >  	bool is_short_atom = true;
+> > -
+> > -	if (*err)
+> > -		return;
+> > +	char *start;
+> 
+> Shouldn't this also return early if we have a pending error?
 
-   Revision ID
-   Class Code
-   Subsystem Vendor ID
-   Subsystem ID
-
-This is an optimization when enabling SR-IOV on a device with many VFs.
-
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-[bhelgaas: changelog, simplify comments, remove unused "device"]
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
----
-v3->v4:
-- Restructure the code to handle CONFIG_PCI_ATS
-
- drivers/pci/iov.c   | 42 +++++++++++++++++++++++++++++++++++-------
- drivers/pci/pci.h   |  4 ++++
- drivers/pci/probe.c | 47 ++++++++++++++++++++++++++++++++++++++++++-----
- 3 files changed, 81 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 677924a..30bf8f7 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -114,6 +114,29 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
- 	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
- }
- 
-+static void pci_read_vf_config_common(struct pci_dev *virtfn)
-+{
-+	struct pci_dev *physfn = virtfn->physfn;
-+
-+	/*
-+	 * Some config registers are the same across all associated VFs.
-+	 * Read them once from VF0 so we can skip reading them from the
-+	 * other VFs.
-+	 *
-+	 * PCIe r4.0, sec 9.3.4.1, technically doesn't require all VFs to
-+	 * have the same Revision ID and Subsystem ID, but we assume they
-+	 * do.
-+	 */
-+	pci_read_config_dword(virtfn, PCI_CLASS_REVISION,
-+			      &physfn->sriov->class);
-+	pci_read_config_byte(virtfn, PCI_HEADER_TYPE,
-+			     &physfn->sriov->hdr_type);
-+	pci_read_config_word(virtfn, PCI_SUBSYSTEM_VENDOR_ID,
-+			     &physfn->sriov->subsystem_vendor);
-+	pci_read_config_word(virtfn, PCI_SUBSYSTEM_ID,
-+			     &physfn->sriov->subsystem_device);
-+}
-+
- int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- {
- 	int i;
-@@ -136,13 +159,17 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
- 	virtfn->vendor = dev->vendor;
- 	virtfn->device = iov->vf_device;
-+	virtfn->is_virtfn = 1;
-+	virtfn->physfn = pci_dev_get(dev);
-+
-+	if (id == 0)
-+		pci_read_vf_config_common(virtfn);
-+
- 	rc = pci_setup_device(virtfn);
- 	if (rc)
--		goto failed0;
-+		goto failed1;
- 
- 	virtfn->dev.parent = dev->dev.parent;
--	virtfn->physfn = pci_dev_get(dev);
--	virtfn->is_virtfn = 1;
- 	virtfn->multifunction = 0;
- 
- 	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
-@@ -163,10 +190,10 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 	sprintf(buf, "virtfn%u", id);
- 	rc = sysfs_create_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
- 	if (rc)
--		goto failed1;
-+		goto failed2;
- 	rc = sysfs_create_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
- 	if (rc)
--		goto failed2;
-+		goto failed3;
- 
- 	kobject_uevent(&virtfn->dev.kobj, KOBJ_CHANGE);
- 
-@@ -174,11 +201,12 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 
- 	return 0;
- 
--failed2:
-+failed3:
- 	sysfs_remove_link(&dev->dev.kobj, buf);
-+failed2:
-+	pci_stop_and_remove_bus_device(virtfn);
- failed1:
- 	pci_dev_put(dev);
--	pci_stop_and_remove_bus_device(virtfn);
- failed0:
- 	virtfn_remove_bus(dev->bus, bus);
- failed:
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index fcd8191..bdb4ba2 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -271,6 +271,10 @@ struct pci_sriov {
- 	u16		driver_max_VFs;	/* Max num VFs driver supports */
- 	struct pci_dev	*dev;		/* Lowest numbered PF */
- 	struct pci_dev	*self;		/* This PF */
-+	u32		class;		/* VF device */
-+	u8		hdr_type;	/* VF header type */
-+	u16		subsystem_vendor; /* VF subsystem vendor */
-+	u16		subsystem_device; /* VF subsystem device */
- 	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
- 	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
- };
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef53774..21ee1c3 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1389,6 +1389,43 @@ int pci_cfg_space_size(struct pci_dev *dev)
- 	return PCI_CFG_SPACE_SIZE;
- }
- 
-+static int pci_cfg_space_class(struct pci_dev *dev)
-+{
-+	int class;
-+
-+#ifdef CONFIG_PCI_ATS
-+	if (dev->is_virtfn)
-+		return dev->physfn->sriov->class;
-+#endif
-+	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-+	return class;
-+}
-+
-+static void pci_cfg_space_subsystem(struct pci_dev *dev, u16 *vendor, u16 *device)
-+{
-+#ifdef CONFIG_PCI_ATS
-+	if (dev->is_virtfn) {
-+		*vendor = dev->physfn->sriov->subsystem_vendor;
-+		*device = dev->physfn->sriov->subsystem_device;
-+		return;
-+	}
-+#endif
-+	pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, vendor);
-+	pci_read_config_word(dev, PCI_SUBSYSTEM_ID, device);
-+}
-+
-+static u8 pci_cfg_space_hdr_type(struct pci_dev *dev)
-+{
-+	u8 hdr_type;
-+
-+#ifdef CONFIG_PCI_ATS
-+	if (dev->is_virtfn)
-+		return dev->physfn->sriov->hdr_type;
-+#endif
-+	pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type);
-+	return hdr_type;
-+}
-+
- #define LEGACY_IO_RESOURCE	(IORESOURCE_IO | IORESOURCE_PCI_FIXED)
- 
- static void pci_msi_setup_pci_dev(struct pci_dev *dev)
-@@ -1454,8 +1491,7 @@ int pci_setup_device(struct pci_dev *dev)
- 	struct pci_bus_region region;
- 	struct resource *res;
- 
--	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
--		return -EIO;
-+	hdr_type = pci_cfg_space_hdr_type(dev);
- 
- 	dev->sysdata = dev->bus->sysdata;
- 	dev->dev.parent = dev->bus->bridge;
-@@ -1477,7 +1513,8 @@ int pci_setup_device(struct pci_dev *dev)
- 		     dev->bus->number, PCI_SLOT(dev->devfn),
- 		     PCI_FUNC(dev->devfn));
- 
--	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-+	class = pci_cfg_space_class(dev);
-+
- 	dev->revision = class & 0xff;
- 	dev->class = class >> 8;		    /* upper 3 bytes */
- 
-@@ -1517,8 +1554,8 @@ int pci_setup_device(struct pci_dev *dev)
- 			goto bad;
- 		pci_read_irq(dev);
- 		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-+
-+		pci_cfg_space_subsystem(dev, &dev->subsystem_vendor, &dev->subsystem_device);
- 
- 		/*
- 		 * Do the ugly legacy mode stuff here rather than broken chip
--- 
-2.7.4
+It will short circuit and bail out via can_add failing. So even though
+you have to go dig to see if the following functions handle the erorr
+I think it's slightly cleaner to have a single if (*err) in the deeper functions.
+This lest the error back out the call chain instead of having multiple if (*err)
+checks earlier in the call chains.
