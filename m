@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtz0u9FKlRc2+uTkGn7GoZBYbcDnJoDsRi38T4LypXIut1N3IOhyMfZLgUDAXBzflRTlEP5
-ARC-Seal: i=1; a=rsa-sha256; t=1521483863; cv=none;
+X-Google-Smtp-Source: AG47ELuyA2cH0XCZ5/pMZJdg64dhwV2bQLjpC0iiH6Hh3EkfgGsNGFktPbj2b/zxmYB58j1YcRkm
+ARC-Seal: i=1; a=rsa-sha256; t=1521483860; cv=none;
         d=google.com; s=arc-20160816;
-        b=ozVbhdssTCwoeIFiyyTF/OaBislO5fIIvrPsPd44HfKRNx2zOL94Vf/U9aK1fgFwlz
-         JWFEs8mjuhCnkUOnHxLbZI4PNjXSkZ7XEk9zckwFWI4wuCilGAqeNKixtNlXJu2M0I3R
-         CtU/Ih89k+Q4Ses/sz8Ws5dYWiou3enkBBZw8Mpq5xVgKDv/SGqQmSs4apDZ5kJ599up
-         ryOp7QfozLVjdF5kFfH7C1wjtJH5M177rOcATdoFO675F+twihjhaCCxMHxTgJYPH/b+
-         hG2IqBrgAQoZupfM+ttRB/dXcQTJ1GSURrtsthGmZLOwLme/jW2Kv2RFgDLsSrDMAdZ4
-         0Ctg==
+        b=C+mJcmK5sg1lTtK/HL7YscdWoOggmqnrFmSflGcQAFMqCX+lVF4oukDqdEQYsJsXWf
+         zgcD5+XGLohFibdz+VlxR7rxz4XjeTpgjkK1YPYIATAakeTZ4KxUgrqMwX+5HV6gLw08
+         JXQ518DGm9dCTv5EAzx4CYccafBVpd9hQQnsCX68egbEBi2Sh1bmtpLZY3RyDXSYT8q1
+         tfeUDoc0sDaBaMnANd5XQ/Qhot5RP5b86UtEw9swJYijTIiZzk7kgAYZc8oWS2Wg6orP
+         R/jmZPyJEa+5khvUvJBWqXBLRW5Si+tNZ6x+B7il2VqQLQSkf0OkZLOpD/FBkPfvCatl
+         FVLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XkGKSS3NP0Uy3m6D6Px1BrUOExPT+ORsGngyvWbLLRM=;
-        b=yWVy1lRXG0nPAkB0wr3X7OOxtHBzdmPTF+bYcvut/7BzD5evP3g/bB9Djez8BN+3SE
-         nh/E/ENiLsBregqxzTcS0if6YePUH+yja7R3tASMxpyqgLx8mHvX7Rd1JydlCRm9GN+u
-         ySjwIpKCnhH26Z0be8YC45Q04MNvzKWZthCeH/0eoHzDYdavOr/+bCaExmhyzTcS5P9h
-         cAL2vdv86Ttu7tD+iCGib+6x93s3Z2jZFtTy0v78abr1jnIdTMigyMnJEC1ysGTgMDjw
-         2s1EK2EfmR2f+al9mvYuDisUzx+TdLawW6GHOR2iTq9txQJPVzhWK/smme91RqQKeBHV
-         qT8A==
+        bh=r4nNVwm8LTLT4j0b3k4MpQCEefM7RWq3pgLgJ9sEdzU=;
+        b=A0e8YyUnPIRBnEatMxNiSCahOju1KxMpe8gHpUbkbyxQdzoWiB00m7CbnOK+8tnMhC
+         gK7RE+hgSNwg6Su8sLLRP9cE693UZMezGrt69iY37VsbvD0EfK7h762oN9F8y6InT44D
+         aGKIs91cwvY5r7wyd7u1CnSDTc2Nc4/yR2aqe9bpxfNv+4s1sWAzlVu+lmUMr9VSwJYF
+         JsGahXc/lMxtlzYJsXYXxkv2ky+jZyZ1GxIB51ueXjntmG0naQL4aD2hiVbFhmxZnY4t
+         B5dMcIk1ZkO5ptLi5Q0otWhFC2m0OBb65A04NetWydIvsE1k8TvyUl37V6Qopqni2Z1s
+         BJHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
+	Jan Kara <jack@suse.cz>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 108/241] ASoC: rt5677: Add OF device ID table
-Date: Mon, 19 Mar 2018 19:06:13 +0100
-Message-Id: <20180319180755.666233581@linuxfoundation.org>
+Subject: [PATCH 4.9 107/241] reiserfs: Make cancel_old_flush() reliable
+Date: Mon, 19 Mar 2018 19:06:12 +0100
+Message-Id: <20180319180755.624505421@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391463626429173?=
-X-GMAIL-MSGID: =?utf-8?q?1595391463626429173?=
+X-GMAIL-THRID: =?utf-8?q?1595390552017688761?=
+X-GMAIL-MSGID: =?utf-8?q?1595391459988355881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,63 +49,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+From: Jan Kara <jack@suse.cz>
 
 
-[ Upstream commit 7b87463edf3e2c16d72eeea3d1cf3c12bb5487c6 ]
+[ Upstream commit 71b0576bdb862e964a82c73327cdd1a249c53e67 ]
 
-The driver doesn't have a struct of_device_id table but supported devices
-are registered via Device Trees. This is working on the assumption that a
-I2C device registered via OF will always match a legacy I2C device ID and
-that the MODALIAS reported will always be of the form i2c:<device>.
+Currently canceling of delayed work that flushes old data using
+cancel_old_flush() does not prevent work from being requeued. Thus
+in theory new work can be queued after cancel_old_flush() from
+reiserfs_freeze() has run. This will become larger problem once
+flush_old_commits() can requeue the work itself.
 
-But this could change in the future so the correct approach is to have an
-OF device ID table if the devices are registered via OF.
+Fix the problem by recording in sbi->work_queue that flushing work is
+canceled and should not be requeued.
 
-Before this patch:
-
-$ modinfo sound/soc/codecs/snd-soc-rt5677.ko | grep alias
-alias:          i2c:RT5677CE:00
-alias:          i2c:rt5676
-alias:          i2c:rt5677
-
-After this patch:
-
-$ modinfo sound/soc/codecs/snd-soc-rt5677.ko | grep alias
-alias:          of:N*T*Crealtek,rt5677C*
-alias:          of:N*T*Crealtek,rt5677
-alias:          i2c:RT5677CE:00
-alias:          i2c:rt5676
-alias:          i2c:rt5677
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt5677.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/reiserfs/journal.c  |    2 +-
+ fs/reiserfs/reiserfs.h |    1 +
+ fs/reiserfs/super.c    |   21 +++++++++++++++------
+ 3 files changed, 17 insertions(+), 7 deletions(-)
 
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -5035,6 +5035,12 @@ static const struct i2c_device_id rt5677
- };
- MODULE_DEVICE_TABLE(i2c, rt5677_i2c_id);
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -1959,7 +1959,7 @@ static int do_journal_release(struct rei
+ 	 * will be requeued because superblock is being shutdown and doesn't
+ 	 * have MS_ACTIVE set.
+ 	 */
+-	cancel_delayed_work_sync(&REISERFS_SB(sb)->old_work);
++	reiserfs_cancel_old_flush(sb);
+ 	/* wait for all commits to finish */
+ 	cancel_delayed_work_sync(&SB_JOURNAL(sb)->j_work);
  
-+static const struct of_device_id rt5677_of_match[] = {
-+	{ .compatible = "realtek,rt5677", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rt5677_of_match);
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2948,6 +2948,7 @@ int reiserfs_allocate_list_bitmaps(struc
+ 				   struct reiserfs_list_bitmap *, unsigned int);
+ 
+ void reiserfs_schedule_old_flush(struct super_block *s);
++void reiserfs_cancel_old_flush(struct super_block *s);
+ void add_save_link(struct reiserfs_transaction_handle *th,
+ 		   struct inode *inode, int truncate);
+ int remove_save_link(struct inode *inode, int truncate);
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -90,7 +90,9 @@ static void flush_old_commits(struct wor
+ 	s = sbi->s_journal->j_work_sb;
+ 
+ 	spin_lock(&sbi->old_work_lock);
+-	sbi->work_queued = 0;
++	/* Avoid clobbering the cancel state... */
++	if (sbi->work_queued == 1)
++		sbi->work_queued = 0;
+ 	spin_unlock(&sbi->old_work_lock);
+ 
+ 	reiserfs_sync_fs(s, 1);
+@@ -117,21 +119,22 @@ void reiserfs_schedule_old_flush(struct
+ 	spin_unlock(&sbi->old_work_lock);
+ }
+ 
+-static void cancel_old_flush(struct super_block *s)
++void reiserfs_cancel_old_flush(struct super_block *s)
+ {
+ 	struct reiserfs_sb_info *sbi = REISERFS_SB(s);
+ 
+-	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
+ 	spin_lock(&sbi->old_work_lock);
+-	sbi->work_queued = 0;
++	/* Make sure no new flushes will be queued */
++	sbi->work_queued = 2;
+ 	spin_unlock(&sbi->old_work_lock);
++	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
+ }
+ 
+ static int reiserfs_freeze(struct super_block *s)
+ {
+ 	struct reiserfs_transaction_handle th;
+ 
+-	cancel_old_flush(s);
++	reiserfs_cancel_old_flush(s);
+ 
+ 	reiserfs_write_lock(s);
+ 	if (!(s->s_flags & MS_RDONLY)) {
+@@ -152,7 +155,13 @@ static int reiserfs_freeze(struct super_
+ 
+ static int reiserfs_unfreeze(struct super_block *s)
+ {
++	struct reiserfs_sb_info *sbi = REISERFS_SB(s);
 +
- static const struct acpi_gpio_params plug_det_gpio = { RT5677_GPIO_PLUG_DET, 0, false };
- static const struct acpi_gpio_params mic_present_gpio = { RT5677_GPIO_MIC_PRESENT_L, 0, false };
- static const struct acpi_gpio_params headphone_enable_gpio = { RT5677_GPIO_HP_AMP_SHDN_L, 0, false };
-@@ -5294,6 +5300,7 @@ static int rt5677_i2c_remove(struct i2c_
- static struct i2c_driver rt5677_i2c_driver = {
- 	.driver = {
- 		.name = "rt5677",
-+		.of_match_table = rt5677_of_match,
- 	},
- 	.probe = rt5677_i2c_probe,
- 	.remove   = rt5677_i2c_remove,
+ 	reiserfs_allow_writes(s);
++	spin_lock(&sbi->old_work_lock);
++	/* Allow old_work to run again */
++	sbi->work_queued = 0;
++	spin_unlock(&sbi->old_work_lock);
+ 	return 0;
+ }
+ 
+@@ -2194,7 +2203,7 @@ error_unlocked:
+ 	if (sbi->commit_wq)
+ 		destroy_workqueue(sbi->commit_wq);
+ 
+-	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
++	reiserfs_cancel_old_flush(s);
+ 
+ 	reiserfs_free_bitmap_cache(s);
+ 	if (SB_BUFFER_WITH_SB(s))
