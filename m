@@ -1,59 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967104AbeCSQ1F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:27:05 -0400
-Received: from mail-yw0-f181.google.com ([209.85.161.181]:43869 "EHLO
-        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965769AbeCSQ05 (ORCPT
+        id S967146AbeCSQ1P (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:27:15 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39779 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965769AbeCSQ1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:26:57 -0400
-X-Google-Smtp-Source: AG47ELt5zntUSYh3eP4A4u2RWKLLtz/dihZ07j3dR51mLlJd07IrRMQo4AeEiqPQmAlwpdoXhZKy/w==
-Date: Mon, 19 Mar 2018 09:26:54 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v5 2/2] cpuset: Add cpuset.flags control knob to v2
-Message-ID: <20180319162654.GR2943022@devbig577.frc2.facebook.com>
-References: <1521148842-15486-1-git-send-email-longman@redhat.com>
- <1521148842-15486-3-git-send-email-longman@redhat.com>
+        Mon, 19 Mar 2018 12:27:06 -0400
+X-Google-Smtp-Source: AG47ELu4IF4+/5TlxlxmbJ9DKvw65mLnYBxsW9i/KPyJOu4NsxDI3wVXODj9fUPqHI9Ca6/4MT/tjfOPafS1mP/dEvo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521148842-15486-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <877eq8yqym.fsf@kamboji.qca.qualcomm.com>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-2-alexey.roslyakov@gmail.com> <877eq8yqym.fsf@kamboji.qca.qualcomm.com>
+From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+Date: Mon, 19 Mar 2018 23:27:04 +0700
+Message-ID: <CALFoz4a=zoLrLvrR7wpeg5JAeL3KrTf24AGEuOcLWBrSmp+xWA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/2] brcmfmac: add new dt entries for SG SDIO settings
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, robh+dt@kernel.org, mark.rutland@arm.com,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        franky.lin@broadcom.com, hante.meuleman@broadcom.com,
+        chi-hsien.lin@cypress.com, wright.feng@cypress.com,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Waiman.
+Hi, Kalle,
+good remark, I'll try to make it clear in next version.
 
-On Thu, Mar 15, 2018 at 05:20:42PM -0400, Waiman Long wrote:
-> +	The currently supported flag is:
-> +
-> +	  sched_load_balance
-> +		When it is not set, there will be no load balancing
-> +		among CPUs on this cpuset.  Tasks will stay in the
-> +		CPUs they are running on and will not be moved to
-> +		other CPUs.
-> +
-> +		When it is set, tasks within this cpuset will be
-> +		load-balanced by the kernel scheduler.  Tasks will be
-> +		moved from CPUs with high load to other CPUs within
-> +		the same cpuset with less load periodically.
+Thank you.
 
-Hmm... looks like this is something which can be decided by the cgroup
-itself and should be made delegatable.  Given that different flags
-might need different delegation settings and the precedence of
-memory.oom_group, I think it'd be better to make the flags separate
-bool files - ie. cpuset.sched_load_balance which contains 0/1 and
-marked delegatable.
 
-Thanks.
+On 19 March 2018 at 23:23, Kalle Valo <kvalo@codeaurora.org> wrote:
+> Alexey Roslyakov <alexey.roslyakov@gmail.com> writes:
+>
+>> There are 3 fields in SDIO settings (quirks) to workaround some of the
+>> SG SDIO host particularities, i.e higher align requirements for SG
+>> items. All coding is done the long time ago, but there is no way to
+>> change the driver behavior without patching the kernel. Add missing
+>> devicetree entries.
+>>
+>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+>
+> The commit log is not clear for me, what does "all coding is done long
+> time ago" exactly mean? What code and where?
+>
+>>  drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 12 +++++++++---
+>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> Why net-next? To me it looks like this should go to
+> wireless-drivers-next.
+>
+> --
+> Kalle Valo
+
+
 
 -- 
-tejun
+With best regards,
+  Alexey Roslyakov
+Email: alexey.roslyakov@gmail.com
