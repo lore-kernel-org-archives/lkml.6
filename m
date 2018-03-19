@@ -1,62 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932453AbeCSHpD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:45:03 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:39620 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeCSHpC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:45:02 -0400
-X-Google-Smtp-Source: AG47ELvLzeEGM1G33XslYzkynWvJyU3twm7zqIjIH2W1cpYsKSc5DM42uXYt/y4Nd+usW1ql2LMX3g==
-Date: Mon, 19 Mar 2018 16:44:56 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] tools: Fix str_error_r() Werror=restrict build
-Message-ID: <20180319074456.GA3315@jagdpanzerIV>
-References: <20180319055504.757-1-sergey.senozhatsky@gmail.com>
- <20180319071821.GA9988@krava>
+        id S1755396AbeCSHw2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:52:28 -0400
+Received: from mga03.intel.com ([134.134.136.65]:35355 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755285AbeCSHwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 03:52:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,329,1517904000";
+   d="scan'208";a="26831926"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Topic: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Index: AQHTvHwgJKD0PzK49EKiN4zj+umOtKPXM8CA
+Date: Mon, 19 Mar 2018 07:51:58 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
+References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+ <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
+In-Reply-To: <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWNiNGFlN2ItNTllMy00NDQwLThhNTEtODE5NTlmYmM5MzBkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InYxRU0zVkw2MTE5NHFkeWd0T2loRlNaeHZhaHJ6TDlJbXQ2WnB3SW1weUE9In0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180319071821.GA9988@krava>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/19/18 08:18), Jiri Olsa wrote:
-> On Mon, Mar 19, 2018 at 02:55:04PM +0900, Sergey Senozhatsky wrote:
-> > Commit c8b5f2c96d1bf6c ("tools: Introduce str_error_r()") added
-> > an str_error_r() wrapper which makes gcc8 unhappy due to
-> > restrict-qualified parameter aliasing violation:
-> > 
-> > ../lib/str_error_r.c: In function ‘str_error_r’:
-> > ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
-> >    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
-> >    ^~~~~~~~
-> > cc1: all warnings being treated as errors
-> > 
-> > Workaround that aliasing error by creating an additional stack
-> > variable which holds the buf pointer value we passed to strerror_r().
-> > 
-> > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> From: Shameer Kolothum
+> Sent: Friday, March 16, 2018 12:35 AM
 > 
-> Josh posted another way to fix it:
-> https://marc.info/?l=linux-kernel&m=152116992412107&w=2
+> This retrieves the reserved regions associated with dev group and
+> checks for conflicts with any existing dma mappings. Also update
+> the iova list excluding the reserved regions.
+> 
+> Signed-off-by: Shameer Kolothum
+> <shameerali.kolothum.thodi@huawei.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 90
+> +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c
+> b/drivers/vfio/vfio_iommu_type1.c
+> index 1123c74..cfe2bb2 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
+> list_head *iova,
+>  	return 0;
+>  }
+> 
+> +/*
+> + * Check reserved region conflicts with existing dma mappings
+> + */
+> +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
+> +				struct list_head *resv_regions)
+> +{
+> +	struct iommu_resv_region *region;
+> +
+> +	/* Check for conflict with existing dma mappings */
+> +	list_for_each_entry(region, resv_regions, list) {
+> +		if (vfio_find_dma(iommu, region->start, region->length))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/*
+> + * Check iova region overlap with  reserved regions and
+> + * exclude them from the iommu iova range
+> + */
+> +static int vfio_iommu_resv_exclude(struct list_head *iova,
+> +					struct list_head *resv_regions)
+> +{
+> +	struct iommu_resv_region *resv;
+> +	struct vfio_iova *n, *next;
+> +
+> +	list_for_each_entry(resv, resv_regions, list) {
+> +		phys_addr_t start, end;
+> +
+> +		start = resv->start;
+> +		end = resv->start + resv->length - 1;
+> +
+> +		list_for_each_entry_safe(n, next, iova, list) {
+> +			int ret = 0;
+> +
+> +			/* No overlap */
+> +			if ((start > n->end) || (end < n->start))
+> +				continue;
+> +			/*
+> +			 * Insert a new node if current node overlaps with
+> the
+> +			 * reserve region to exlude that from valid iova
+> range.
+> +			 * Note that, new node is inserted before the
+> current
+> +			 * node and finally the current node is deleted
+> keeping
+> +			 * the list updated and sorted.
+> +			 */
+> +			if (start > n->start)
+> +				ret = vfio_iommu_iova_insert(&n->list,
+> +							n->start, start - 1);
+> +			if (!ret && end < n->end)
+> +				ret = vfio_iommu_iova_insert(&n->list,
+> +							end + 1, n->end);
+> +			if (ret)
+> +				return ret;
 
-Oh, thanks for the pointers.
+Is it safer to delete the 1st node here in case of failure of the 2nd node?
+There is no problem with current logic since upon error iova_copy will
+be released anyway. However this function alone doesn't assume the
+fact of a temporary list, thus it's better to keep the list clean w/o garbage
+left from any error handling.
 
-> your patch keeps the same output, I dont mind either way ;-)
+> +
+> +			list_del(&n->list);
+> +			kfree(n);
+> +		}
+> +	}
+> +
+> +	if (list_empty(iova))
+> +		return -EINVAL;
 
-Thanks. No strong opinion, either way is OK :) Can't tell for sure if
-snprintf(... "%p", buf) is significantly better than snprintf(... "[buf]"),
-but Arnaldo wanted to have the first version.
+if list_empty should BUG_ON here? or do we really need this check?
 
-	-ss
+> +
+> +	return 0;
+> +}
+> +
+> +static void vfio_iommu_resv_free(struct list_head *resv_regions)
+> +{
+> +	struct iommu_resv_region *n, *next;
+> +
+> +	list_for_each_entry_safe(n, next, resv_regions, list) {
+> +		list_del(&n->list);
+> +		kfree(n);
+> +	}
+> +}
+> +
+>  static void vfio_iommu_iova_free(struct list_head *iova)
+>  {
+>  	struct vfio_iova *n, *next;
+> @@ -1366,6 +1442,7 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+>  	phys_addr_t resv_msi_base;
+>  	struct iommu_domain_geometry geo;
+>  	LIST_HEAD(iova_copy);
+> +	LIST_HEAD(group_resv_regions);
+> 
+>  	mutex_lock(&iommu->lock);
+> 
+> @@ -1444,6 +1521,13 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+>  		goto out_detach;
+>  	}
+> 
+> +	iommu_get_group_resv_regions(iommu_group,
+> &group_resv_regions);
+> +
+> +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
+> +		ret = -EINVAL;
+> +		goto out_detach;
+> +	}
+> +
+>  	/* Get a copy of the current iova list and work on it */
+>  	ret = vfio_iommu_iova_get_copy(iommu, &iova_copy);
+>  	if (ret)
+> @@ -1454,6 +1538,10 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+>  	if (ret)
+>  		goto out_detach;
+> 
+> +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
+> +	if (ret)
+> +		goto out_detach;
+> +
+>  	resv_msi = vfio_iommu_has_sw_msi(iommu_group,
+> &resv_msi_base);
+> 
+>  	INIT_LIST_HEAD(&domain->group_list);
+> @@ -1514,6 +1602,7 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+>  	/* Delete the old one and insert new iova list */
+>  	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
+>  	mutex_unlock(&iommu->lock);
+> +	vfio_iommu_resv_free(&group_resv_regions);
+> 
+>  	return 0;
+> 
+> @@ -1522,6 +1611,7 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+>  out_domain:
+>  	iommu_domain_free(domain->domain);
+>  	vfio_iommu_iova_free(&iova_copy);
+> +	vfio_iommu_resv_free(&group_resv_regions);
+>  out_free:
+>  	kfree(domain);
+>  	kfree(group);
+> --
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
