@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt2Cl23jz+K/4eugKnn5sQ49Ra5QSnp5PzVnotO2xMhechkVI7AjMeUU/g29gOatpaj9yEg
-ARC-Seal: i=1; a=rsa-sha256; t=1521483513; cv=none;
+X-Google-Smtp-Source: AG47ELuTQ+o7NXQkvsU/mMiBCLkMdD3QG3iuxkLrdl1a9DX1lEriwAMPvH8CT0ckF67yke34KTXt
+ARC-Seal: i=1; a=rsa-sha256; t=1521483510; cv=none;
         d=google.com; s=arc-20160816;
-        b=zFRCrHSC5OG1x9fw8DOyeDN+HfOiWPvr1Z2po+HqKLtg2T/n6dJvgRb92WBvEGX3hS
-         WXx5a44niMDbnbQge2X0zeX+lmqSPr7eqY0/zF92ADtvv66M7sgQuF76CZbNfQSp6Fel
-         6jGbclyflF/eb2q5PSvpKUR93gdHo6F2BjCCSj1W+6NFjSjZ8unXaepPhzWbRWXGjhBu
-         K+GW9JimNCPLcIe+5R8aWR2UwBDd69Ou+FRoYLeYwOw12fapHjLs+F7n758+iPmNC/0L
-         DIV1QUxKvfe5sW9Ql4WwjFdRxeqqHKlZrYoZQRpUt0f917euYpXfkPQHqDDsnKnYl694
-         FaeQ==
+        b=uSw0DpLR/wd/DnAPwAVuWeE9ptdfYh6eX/i1LXIvZEE9TM3JgQduJGJyEuHj3+Dq17
+         tg1LGV/R02BUpxM4A91+Ke9x5gXmsBeuNZqkaDSX/giky5d5lZPz/iikbRQWc/G7fZ71
+         M2qZv3sxOoYoOhzp/yjiOvO8u1GrYlpemzRnf9cvaBgyRGBVC8OpnLrHAPq5LHsCDucP
+         30VY3PhOVG26oHJc32p2J717RuUOiIFe55HiL3I2qI5kr0CJHCZiEN737DXig7NSLWd+
+         5mAPHI1ZiYSpc/ZLulZA2nJ/e/o7f6A1Eqx1TrkHBAyHRq7KI+Q+Ix2koDNJCuwVV1s6
+         xb0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7uun66CoH6yGtz9KrI99Zp3bV5lTO8Wws8sEC/3vCUQ=;
-        b=b/aK4l8sP697iQvC0TqzkRvIMw1TWG5M+vz5+KBMhiU6cXAV9C5RBbeooE0zzmd5qh
-         sBKB2eEC/BOPS5qrWs86trmBZ1MGJ35CKQpj1ViH7BsIRPr7OZjvlNo01eJZFi0GLE0m
-         XwGvecRU63icbNbQdp2dmhDYCsV8mFq1RieDRjJMbUFoEwQgFNms/ul7K/WYvc7ThMqU
-         t6Zoxlj3uqgCiWWgd5L7ttVq6bHIhcO9lbj9MqsSN2uCR4t5iAvusfIldFk4J1oDn3im
-         NBDVmpr310O/TnPEyf8ZTSRCnefobjZLUMQBXqQReVTjXcz1D/8YAIDiZZ8cJUm3Txyh
-         2boA==
+        bh=NGaDjAoY/bx14iyI9Z2HYdOBJfnWy714SdrZ1884hzQ=;
+        b=QWTmKq/yU3oZRHhGMNMSd/cJVoikFNyF3Y077hGTN8ih/kn++2fB8jkH6Io/tq0Es/
+         290sGuMXxvroiIMMX/mPChpwo0XdYYZ0GZaPhex4ulF2FGdjS+hxDCvqUFHZ3epv3gUR
+         GRn5uK7jWw/EI3MdwP4wca2rN+lHTrcF++c/g/ZOFULDKGzB1LxniQ6QG2bO1y0Eh7Ml
+         3Ppzj8D6w2ztwNtt+hE6ew8XaZq6vsq+UNEBdadbQ/8er+U6UlYV2SfEpJQwu0gUijbo
+         YlLn4BbezsFFSPXx/yUqehgct6z0bBUzk+LNP8NUE4DyiimjX13m9YgPAqRcLR76GPXZ
+         CMUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 017/241] net: mvpp2: set dma mask and coherent dma mask on PPv2.2
-Date: Mon, 19 Mar 2018 19:04:42 +0100
-Message-Id: <20180319180751.880741514@linuxfoundation.org>
+Subject: [PATCH 4.9 016/241] drm/sun4i: Fix TCON clock and regmap initialization sequence
+Date: Mon, 19 Mar 2018 19:04:41 +0100
+Message-Id: <20180319180751.842712764@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390557556706046?=
-X-GMAIL-MSGID: =?utf-8?q?1595391096373928476?=
+X-GMAIL-THRID: =?utf-8?q?1595391093394652122?=
+X-GMAIL-MSGID: =?utf-8?q?1595391093394652122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,46 +50,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
 
-[ Upstream commit 2067e0a13cfe0b1bdca7b91bc5e4f2740b07d478 ]
+[ Upstream commit 4c7f16d14a33a9cfb4af9cb780d8a73bcca64a92 ]
 
-On PPv2.2, the streaming mappings can be anywhere in the first 40 bits
-of the physical address space. However, for the coherent mappings, we
-still need them to be in the first 32 bits of the address space,
-because all BM pools share a single register to store the high 32 bits
-of the BM pool address, which means all BM pools must be allocated in
-the same 4GB memory area.
+The TCON driver calls sun4i_tcon_init_regmap and sun4i_tcon_init_clocks
+in its bind function. The former creates a regmap and writes to several
+register to clear its configuration to a known default. The latter
+initializes various clocks. This includes enabling the bus clock for
+register access and creating the dotclock.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In order for the first step's writes to work, the bus clock must be
+enabled which is done in the second step. but the dotclock's ops use
+the regmap created in the first step.
+
+Rearrange the function calls such that the clocks are initialized before
+the regmap, and split out the dot clock creation to after the regmap is
+initialized.
+
+Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -6420,6 +6420,20 @@ static int mvpp2_probe(struct platform_d
- 	/* Get system's tclk rate */
- 	priv->tclk = clk_get_rate(priv->pp_clk);
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -336,12 +336,11 @@ static int sun4i_tcon_init_clocks(struct
+ 		}
+ 	}
  
-+	if (priv->hw_version == MVPP22) {
-+		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(40));
-+		if (err)
-+			goto err_mg_clk;
-+		/* Sadly, the BM pools all share the same register to
-+		 * store the high 32 bits of their address. So they
-+		 * must all have the same high 32 bits, which forces
-+		 * us to restrict coherent memory to DMA_BIT_MASK(32).
-+		 */
-+		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-+		if (err)
-+			goto err_mg_clk;
+-	return sun4i_dclk_create(dev, tcon);
++	return 0;
+ }
+ 
+ static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
+ {
+-	sun4i_dclk_free(tcon);
+ 	clk_disable_unprepare(tcon->clk);
+ }
+ 
+@@ -506,22 +505,28 @@ static int sun4i_tcon_bind(struct device
+ 		return ret;
+ 	}
+ 
++	ret = sun4i_tcon_init_clocks(dev, tcon);
++	if (ret) {
++		dev_err(dev, "Couldn't init our TCON clocks\n");
++		goto err_assert_reset;
 +	}
 +
- 	/* Initialize network controller */
- 	err = mvpp2_init(pdev, priv);
- 	if (err < 0) {
+ 	ret = sun4i_tcon_init_regmap(dev, tcon);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't init our TCON regmap\n");
+-		goto err_assert_reset;
++		goto err_free_clocks;
+ 	}
+ 
+-	ret = sun4i_tcon_init_clocks(dev, tcon);
++	ret = sun4i_dclk_create(dev, tcon);
+ 	if (ret) {
+-		dev_err(dev, "Couldn't init our TCON clocks\n");
+-		goto err_assert_reset;
++		dev_err(dev, "Couldn't create our TCON dot clock\n");
++		goto err_free_clocks;
+ 	}
+ 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't init our TCON interrupts\n");
+-		goto err_free_clocks;
++		goto err_free_dotclock;
+ 	}
+ 
+ 	ret = sun4i_rgb_init(drm);
+@@ -530,6 +535,8 @@ static int sun4i_tcon_bind(struct device
+ 
+ 	return 0;
+ 
++err_free_dotclock:
++	sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -542,6 +549,7 @@ static void sun4i_tcon_unbind(struct dev
+ {
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
++	sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
+ }
+ 
