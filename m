@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELukVYi0qHW7yG0m2aBOoyKmBnyqiSEr0+kXNv/srNSUXd9fu+wSay0shBtmtHYK3a3iuBNH
-ARC-Seal: i=1; a=rsa-sha256; t=1521483306; cv=none;
+X-Google-Smtp-Source: AG47ELsAhkQ2fnbhhTb7O+OuY5EbGVcczRgItcDFLnL/EysjPLluI3y/9PoiinN7kszD6A7YYQXm
+ARC-Seal: i=1; a=rsa-sha256; t=1521483303; cv=none;
         d=google.com; s=arc-20160816;
-        b=JvXU4Vx/P9VF4AVh143fHQGeQh6uCaWFzWSBaZTUItrARwxUtM7t7Q1xMH1RVFDtP0
-         +lt4C5KjSl15qWLubVLDeeIU+agTGhI1Z5wnLp7g9mM/CE5Aqs48WteiDkQ+ExmXxxKL
-         iSQsBQL2xfgOsAn5bKmjlC1sFTtqSjaOgQCxkLH8UUPZFkHeSQLJvdBrWcg/tOYumnjA
-         or5YgimNGrzFtaXXahNMu2bA6Z8S7Ggyxm8kKGcOKtOtcsEhF5Z4K/XQhFIgNH8jAlZ9
-         8xiQAc5EDCRNxzhgvstKM3NbHC0NSLXO1EeBLzqG7hFcd3z+mrBNBuMSqb1uj34D6S9P
-         gvzg==
+        b=K3S6mE5dv9+SE/tmLFcq0LPHQVqeMQVc2Ll/z8DaS32JH1d4hPAF0cpgxEdPePhzeQ
+         M340A/W0oGJ0ziWVOIGpjE1NPCcFlo/zu5h2p5axX7JGzgDhbs2R/i/SV3pgz5b0UPhr
+         PDJOJXyjKm6uHiXYBT5gU573Tg4QUzTPbSFOV2kSHGV6r5eTwqNFIny/RE2b2AyuUGzC
+         k0srsAkf/1+Y/nOLTF/BOHUsJuMI/rl2fTpmfzsRY59e27aF4Tz+AP/nmTtxl2ZSz09d
+         M3aVomAEZChcCtIYXLyVXwPUsha0m8wuBttDlmhpGhugSBjKplfmo4M4s65LrUPhIbun
+         vtRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TOeV8o4CuQ9wwLCRRoo1ryUuhX2Qvmse8XrEb2UAMe8=;
-        b=qRDfSjExUbmeSSxAB0zcTOPSFh7qBPMvGBoElqg/cXqmYs4b6GmLec22YPqvlvddpt
-         0rIRRu5LhLBei8kMq10R7YDdGysz4s5hFokINzNjJGnIJgo0hUU0uIlVEfHvQ2y9MXE6
-         uDvtORQ53egYrcqui4LncV/x5zSGzHANyABZ1M05roAtQetAjPNB4M5AX0oHz/3Mcf1X
-         dh1SX4S2UaI4P9xYKHd5Q2KsoTzdJzkkdMQLNgqSmdCqehI2zcu0MMBoQPh24eT4FzZv
-         O6CUO1QxyBDRXnVOGwBpOrkGQDHBqTSEnmw4lQ3/9EhfgTMiXNnlD+Gt+kFl+uPoTiib
-         TSxw==
+        bh=aYRB68j0bwXjR+qU4/FS5nJBXk0j6alxvi3x5StNJKc=;
+        b=lCVZ15IlDAp6YqwWs0a5bZhV/06zx9JlVswlvfrpK9GdiIxxSG5ASpMqwe2/WRE8Xp
+         9PZm4R4kdxdjPTtZmQiOWUAsaMzVcR1cAlYC+DVksuaKwXf3FQP3at+TqLODzcqIVLV4
+         Gkao0/WXNxoQPAv5Iog3HkooFqIND5ty3AiLpumB20yYIIKcCHQpMouAyI7c0Pm+6grb
+         IAwJOpt/NqixgwJrXO9dKEwegPWvFQ3UNilabHs/O6Xjd8zwEbC31fa8deUs2Lh1+G87
+         s2Eixu+K+SnAqHBQ/V/ZI8KMY9QJwHXMGAcwxcgKhGPzRSocpOyjB2w49FPMV8jUwXhP
+         kxdg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	Aleksey Makarov <aleksey.makarov@linaro.org>,
-	Joe Perches <joe@perches.com>,
-	Ming Lei <ming.lei@canonical.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Petr Mladek <pmladek@suse.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 042/134] braille-console: Fix value returned by _braille_console_setup
-Date: Mon, 19 Mar 2018 19:05:25 +0100
-Message-Id: <20180319171855.461834353@linuxfoundation.org>
+Subject: [PATCH 4.4 041/134] powerpc/mm/hugetlb: Filter out hugepage size not supported by page table layout
+Date: Mon, 19 Mar 2018 19:05:24 +0100
+Message-Id: <20180319171855.295206021@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390537392999945?=
-X-GMAIL-MSGID: =?utf-8?q?1595390879675536962?=
+X-GMAIL-THRID: =?utf-8?q?1595390876998071483?=
+X-GMAIL-MSGID: =?utf-8?q?1595390876998071483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,102 +50,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
 
-[ Upstream commit 2ed2b8621be2708c0f6d61fe9841e9ad8b9753f0 ]
+[ Upstream commit a525108cf1cc14651602d678da38fa627a76a724 ]
 
-commit bbeddf52adc1 ("printk: move braille console support into
-separate braille.[ch] files") introduced _braille_console_setup()
-to outline the braille initialization code.  There was however some
-confusion over the value it was supposed to return. commit 2cfe6c4ac7ee
-("printk: Fix return of braille_register_console()") tried to fix it
-but failed to.
+Without this if firmware reports 1MB page size support we will crash
+trying to use 1MB as hugetlb page size.
 
-This fixes and documents the returned value according to the use
-in printk.c: non-zero return means a parsing error, and thus this
-console configuration should be ignored.
+echo 300 > /sys/kernel/mm/hugepages/hugepages-1024kB/nr_hugepages
 
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Cc: Aleksey Makarov <aleksey.makarov@linaro.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Ming Lei <ming.lei@canonical.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+kernel BUG at ./arch/powerpc/include/asm/hugetlb.h:19!
+.....
+....
+[c0000000e2c27b30] c00000000029dae8 .hugetlb_fault+0x638/0xda0
+[c0000000e2c27c30] c00000000026fb64 .handle_mm_fault+0x844/0x1d70
+[c0000000e2c27d70] c00000000004805c .do_page_fault+0x3dc/0x7c0
+[c0000000e2c27e30] c00000000000ac98 handle_page_fault+0x10/0x30
+
+With fix, we don't enable 1MB as hugepage size.
+
+bash-4.2# cd /sys/kernel/mm/hugepages/
+bash-4.2# ls
+hugepages-16384kB  hugepages-16777216kB
+
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/printk/braille.c |   15 ++++++++-------
- kernel/printk/braille.h |   13 ++++++++++---
- 2 files changed, 18 insertions(+), 10 deletions(-)
+ arch/powerpc/mm/hugetlbpage.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/kernel/printk/braille.c
-+++ b/kernel/printk/braille.c
-@@ -2,12 +2,13 @@
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -828,6 +828,24 @@ static int __init add_huge_page_size(uns
+ 	if ((mmu_psize = shift_to_mmu_psize(shift)) < 0)
+ 		return -EINVAL;
  
- #include <linux/kernel.h>
- #include <linux/console.h>
-+#include <linux/errno.h>
- #include <linux/string.h>
- 
- #include "console_cmdline.h"
- #include "braille.h"
- 
--char *_braille_console_setup(char **str, char **brl_options)
-+int _braille_console_setup(char **str, char **brl_options)
- {
- 	if (!strncmp(*str, "brl,", 4)) {
- 		*brl_options = "";
-@@ -15,14 +16,14 @@ char *_braille_console_setup(char **str,
- 	} else if (!strncmp(*str, "brl=", 4)) {
- 		*brl_options = *str + 4;
- 		*str = strchr(*brl_options, ',');
--		if (!*str)
-+		if (!*str) {
- 			pr_err("need port name after brl=\n");
--		else
--			*((*str)++) = 0;
--	} else
--		return NULL;
++#ifdef CONFIG_PPC_BOOK3S_64
++	/*
++	 * We need to make sure that for different page sizes reported by
++	 * firmware we only add hugetlb support for page sizes that can be
++	 * supported by linux page table layout.
++	 * For now we have
++	 * Radix: 2M
++	 * Hash: 16M and 16G
++	 */
++	if (radix_enabled()) {
++		if (mmu_psize != MMU_PAGE_2M)
 +			return -EINVAL;
-+		}
-+		*((*str)++) = 0;
++	} else {
++		if (mmu_psize != MMU_PAGE_16M && mmu_psize != MMU_PAGE_16G)
++			return -EINVAL;
 +	}
++#endif
++
+ 	BUG_ON(mmu_psize_defs[mmu_psize].shift != shift);
  
--	return *str;
-+	return 0;
- }
- 
- int
---- a/kernel/printk/braille.h
-+++ b/kernel/printk/braille.h
-@@ -9,7 +9,14 @@ braille_set_options(struct console_cmdli
- 	c->brl_options = brl_options;
- }
- 
--char *
-+/*
-+ * Setup console according to braille options.
-+ * Return -EINVAL on syntax error, 0 on success (or no braille option was
-+ * actually given).
-+ * Modifies str to point to the serial options
-+ * Sets brl_options to the parsed braille options.
-+ */
-+int
- _braille_console_setup(char **str, char **brl_options);
- 
- int
-@@ -25,10 +32,10 @@ braille_set_options(struct console_cmdli
- {
- }
- 
--static inline char *
-+static inline int
- _braille_console_setup(char **str, char **brl_options)
- {
--	return NULL;
-+	return 0;
- }
- 
- static inline int
+ 	/* Return if huge page size has already been setup */
