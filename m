@@ -1,40 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsbBCMf5/TOm+0gT/jUvazF1Kva31JYsxmnXUDCeeVFmMNjqsj2molwU9jQjI9EH8/rqc3P
-ARC-Seal: i=1; a=rsa-sha256; t=1521483480; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Fx50mvuGH0ZDG3ugO/ZI3SL7vsu86BimxsyLiI0DBLB5LTYX7UY4TKv1MTdazRBV4q
-         VxaxTEXQ2SnmA8M2TgCx2vKn9o4rXSh7b2oJsyuh1UmrfoqF37Ol1qJw/FycL7wOR0OC
-         2CozzvhaTUPptOxZyc4MupxPOJI1CNhzevI0frFm5D+uLvXLIuZi+VexIOgjAthRxX9r
-         eZPuRN2gUzG4V4C/qRRFl7rnTkry+iDBZVvYo0+GNN/lb6WUWDj6eSnp42dAYN0Tkf6N
-         u/2RpxLNsvIvMWWJPrM1rt2Fs7Zrn4r0V1g9DFqu40y93280Jp/zwGuxfjbwmJq5khPA
-         uLWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=4i37U53eyplVPdTuUIpaT7AW+G+IZomsidB1ZMcqOrc=;
-        b=e0UxqBw+mF/pbTy4++5ygYCCX8k1TwO777NgaNcRWoJ6x06NTajGfEt0fBR2F4GO4y
-         J6YUtggIbYgNU1GDBjtpwd6MbQBAdQeZTnC8m2ewDOENoL2eoby44TPsO0GEwwIS20SS
-         CY+9gYnq9lsYBfN7q3oyoC1+xugDTQzy1WOcf593ameTqJKKco/4A7woDujqHQ1p1Dpr
-         N7RSTHUI4hv4ZQKDxBx3XPPfxdW/uvkzEfZ1g72VtgsdWpIyhKjzDJdrDMBFMdXwjhQs
-         LEK1Zbhv8OkI7s1IksA5LougFrTGgvzDgi3jMJll5Ma/b9Ju02NFyp7dmbsxlha6T9kY
-         o1Rw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483479-5-8135920020911332322
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483479; b=havt+CPzp/lBb45eQ5EohKxKYANI8NpsU/BwF6mpPH3BeV/
+    /z+2qu9jY4jAKeTuDt681yiOrActDxq0yvccs42e/Rb3FRD1VmdPO5MuPT+KIFpe
+    2eRC88vhOleNysPJlGIDBgSSIsu0gk4ldTA4R3n4CMkKWU1sV8kzp2ag9gT6Fb1S
+    nsqCBSDcoUo4rAXjySfZrvvC4yPQqkCaWSWJrRA1bhfa1zl5uh6Bwnz3RXr4ejD2
+    ShkRJTT9cArGVX2jSkYJeSsZ2WZRjXw1gN5CpQIhc+WBHT356X2hwLFXo7JPTrfJ
+    1u5X6G3bYPqtxg8C8hwd7LJM6xh4cqcOP0XBrNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483479; bh=SJhIuVqjczZ37dhGkKVESOehXE
+    QxSHs8jxFmRgvL9Nk=; b=ulzHioCDVS4EQo0sazPmZh0aaX5TQCUp7Bt/Wjx0qE
+    3KeEX1JVh4mVQqY9tCqL3ieudmRP2/Lk2QZXyMijxNIuq9jZoPUz22uB3zxGRIZK
+    9e8DA1TMs6daM4osaXOuOCswbBMChiQtHPcsBtftcJIQkS94tAftD8cTCJnoVLCU
+    McGyZJrwZS7y3MxKwCvFql28lOV6N33BDIJQ77F0jY87QErkrcOu30Q22yYDFBZx
+    u3zlA7+WfDhTDDU3WwVG2qw5Mu7gFtMISyXa3+jKj9y97dfOywaljYXaQm/JnCHv
+    HNgWM8Gh8QBlPAdrvEivyNogzN+xSID+CWLSJj4gfHMw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleejheenucevlhhushhtvghrufhiiigvpeejud;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleejheenucevlhhushhtvghrufhiiigvpeejud;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S969179AbeCSSRj (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:17:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45620 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969171AbeCSSRi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:17:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Gratian Crisan <gratian.crisan@ni.com>,
-	Toshi Kani <toshi.kani@hpe.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-mm@kvack.org,
-	Borislav Petkov <bp@alien8.de>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 4.4 115/134] x86/mm: Fix vmalloc_fault to use pXd_large
-Date: Mon, 19 Mar 2018 19:06:38 +0100
-Message-Id: <20180319171905.892026687@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 131/134] btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device
+Date: Mon, 19 Mar 2018 19:06:54 +0100
+Message-Id: <20180319171908.164096609@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391061057183549?=
-X-GMAIL-MSGID: =?utf-8?q?1595391061057183549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,57 +81,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 18a955219bf7d9008ce480d4451b6b8bf4483a22 upstream.
+commit fd649f10c3d21ee9d7542c609f29978bdf73ab94 upstream.
 
-Gratian Crisan reported that vmalloc_fault() crashes when CONFIG_HUGETLBFS
-is not set since the function inadvertently uses pXn_huge(), which always
-return 0 in this case.  ioremap() does not depend on CONFIG_HUGETLBFS.
+Commit 4fde46f0cc71 ("Btrfs: free the stale device") introduced
+btrfs_free_stale_device which iterates the device lists for all
+registered btrfs filesystems and deletes those devices which aren't
+mounted. In a btrfs_devices structure has only 1 device attached to it
+and it is unused then btrfs_free_stale_devices will proceed to also free
+the btrfs_fs_devices struct itself. Currently this leads to a use after
+free since list_for_each_entry will try to perform a check on the
+already freed memory to see if it has to terminate the loop.
 
-Fix vmalloc_fault() to call pXd_large() instead.
+The fix is to use 'break' when we know we are freeing the current
+fs_devs.
 
-Fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
-Reported-by: Gratian Crisan <gratian.crisan@ni.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/20180313170347.3829-2-toshi.kani@hpe.com
+Fixes: 4fde46f0cc71 ("Btrfs: free the stale device")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/btrfs/volumes.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -287,7 +287,7 @@ static noinline int vmalloc_fault(unsign
- 	if (!pmd_k)
- 		return -1;
- 
--	if (pmd_huge(*pmd_k))
-+	if (pmd_large(*pmd_k))
- 		return 0;
- 
- 	pte_k = pte_offset_kernel(pmd_k, address);
-@@ -407,7 +407,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
- 		BUG();
- 
--	if (pud_huge(*pud))
-+	if (pud_large(*pud))
- 		return 0;
- 
- 	pmd = pmd_offset(pud, address);
-@@ -418,7 +418,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
- 		BUG();
- 
--	if (pmd_huge(*pmd))
-+	if (pmd_large(*pmd))
- 		return 0;
- 
- 	pte_ref = pte_offset_kernel(pmd_ref, address);
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -568,6 +568,7 @@ void btrfs_free_stale_device(struct btrf
+ 				btrfs_sysfs_remove_fsid(fs_devs);
+ 				list_del(&fs_devs->list);
+ 				free_fs_devices(fs_devs);
++				break;
+ 			} else {
+ 				fs_devs->num_devices--;
+ 				list_del(&dev->dev_list);
