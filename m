@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsx8JBtbZ9BDt9AbEgnhDuh9qSzgiBM8nTqq2raLheQ7dSoHZm7E++LLZ97khKBI8A92kJj
-ARC-Seal: i=1; a=rsa-sha256; t=1521483059; cv=none;
+X-Google-Smtp-Source: AG47ELuj6pb9BoQBTCjAkoapSkvJnliEoOLwsdxT9MmKyxO5+/EJJ2U8ICLEGcmusZoWjP6pekrQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483061; cv=none;
         d=google.com; s=arc-20160816;
-        b=DNqbOScMZ3Uy0fYlaxz+0C9cKdptTwZNUNODvPAssBpKCle0j6FI7QhXQjKNhRS3+A
-         ks5aQB3E+bSAuqBwlkK8NYWPwJNLfQmnBHOBDauqX96k42hgFs3NINyfRp2dIEENBm0m
-         YE8Anm97FZuIMmpdcq1zzJNMGy6zKXKyDbmdm6g/DdMl0O/g8NiaX1U6+XZ4DiRqJLlo
-         uFrcg7D7nGjDNgA9t4QlUbLtc56HG9azSju/ZmFVVDNfGHO5+woMDNuq/VVSqzP9h+e+
-         uUwFV/d1fz0cGRmQ001sZj88n2tKouy5xfe356Jddg8M59fQmjTeV7e13TnSdZXGIfkV
-         m2gw==
+        b=IH1Dhhz2E0tYTgbf5DNZvL2j3WeyXhBC85qy8TkxEklnwFZzgqbF3/zk36jMA0Ffx1
+         Anq/Arf4KPVVTQmh2hNfj8IJdjvqn2tswE/imaW2tSk3z/Q4RWBykOSVzVRyhpfBt6vP
+         ElDe9d3hkhBXuNEGJE5m9FO1KBneATvAXotAJkooGvy829tOORQExkeVrQXeoNKa3iRR
+         UgptrENbIf/89B9dvnT3GLGR9qJu3TwWe5xXm5+MYNcYpaPfbdZJZM/Yxrxn22Y9OaLt
+         ZLECR92aZre9kMdOc4KOEJzSxKDDlIea/4lyEwNJGMUxb9gbjpJQl11qQShdfEoZS268
+         MKfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Q0YSAiRd5TRMjGhMZ0pfXvbJLSb/IXcLlInqLicToTk=;
-        b=KMaLtO/17QzhITXrrw2Q/8jgNUy/VHCz+S4sPLVFWoGuoOR8KuY/CS6B11g0zo8yPl
-         PGoXNdW8w/mEvcit2tzIJZ4agbh20GjzNKPHQ6qTTaxi+xHM3Y+RlDksWELI6IncRgrP
-         KicaLjsRDhOw41Hb42Z/yLNK4kJbqPDmQYPpd16587o116iyi+1QgPz0Am0uOuXRdXYq
-         CHWUuJIR/5FPmkMHJH7Tk9ibFUd8mpb8zg3UMPT2dAUAYA23l6Wnb2/FRIjtoKpeZzcu
-         RMRqBnaZxU5wpkbY9wddn2l6VRA7zGOLy1TIq80AluJjr57FbDZkytxZSiS4oIWtyMlT
-         ykeg==
+        bh=Ydrup8WiDvD4UL3s8Mp6zcfhht5FP9lgb5ue8nPE3cw=;
+        b=IONvVl3VPttMERG/BzfR7GzaOjEFbB3ol3Myo/4vQTwSwrMPBWbYl9oesicwW5syXD
+         z83Teemnd0g6Bq5JvXfxA0ZfADRNuYvjUSkHPJg7yUiqKjNQZ0Z6NoPzwEGcxnbrai78
+         +J3P6GGKecd8lEBFVUwEfzbD8sZpFhDY2NQbI8SrM/m1GrJKvXPn/+WFysVmrq2wdKii
+         EoObwdMfb592YY2y1aNyNoVFDI3jgOOiJRa3ZJFh6Wu/fFFOm+/Fu5uwlSeharpgaA1c
+         I6ot89I5+aKfU7s26ot8ukSYGGT095AXIAPXY7kP0XCM88UPh65fb76424xug0NqfjlJ
+         04tA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hannes Reinecke <hare@suse.de>,
-	Takahiro Yasui <takahiro.yasui@hds.com>,
-	Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-	SCSI ML <linux-scsi@vger.kernel.org>,
-	Xose Vazquez Perez <xose.vazquez@gmail.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 53/68] scsi: devinfo: apply to HP XP the same flags as Hitachi VSP
-Date: Mon, 19 Mar 2018 19:06:31 +0100
-Message-Id: <20180319171835.301256869@linuxfoundation.org>
+Subject: [PATCH 3.18 54/68] media: cpia2: Fix a couple off by one bugs
+Date: Mon, 19 Mar 2018 19:06:32 +0100
+Message-Id: <20180319171835.467820557@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390620005177642?=
-X-GMAIL-MSGID: =?utf-8?q?1595390620005177642?=
+X-GMAIL-THRID: =?utf-8?q?1595390622995940501?=
+X-GMAIL-MSGID: =?utf-8?q?1595390622995940501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,43 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit b369a0471503130cfc74f9f62071db97f48948c3 ]
+[ Upstream commit d5ac225c7d64c9c3ef821239edc035634e594ec9 ]
 
-Commit 56f3d383f37b ("scsi: scsi_devinfo: Add TRY_VPD_PAGES to HITACHI
-OPEN-V blacklist entry") modified some Hitachi entries:
+The cam->buffers[] array has cam->num_frames elements so the > needs to
+be changed to >= to avoid going beyond the end of the array.  The
+->buffers[] array is allocated in cpia2_allocate_buffers() if you want
+to confirm.
 
-    HITACHI is always supporting VPD pages, even though it's claiming to
-    support SCSI Revision 3 only.
+Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
 
-The same should have been done also for HP-rebranded.
-
-[mkp: checkpatch and tweaked commit message]
-
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Takahiro Yasui <takahiro.yasui@hds.com>
-Cc: Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_devinfo.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/cpia2/cpia2_v4l.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -180,7 +180,7 @@ static struct {
- 	{"HITACHI", "6586-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HITACHI", "6588-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HP", "A6189A", NULL, BLIST_SPARSELUN | BLIST_LARGELUN},	/* HP VA7400 */
--	{"HP", "OPEN-", "*", BLIST_REPORTLUN2}, /* HP XP Arrays */
-+	{"HP", "OPEN-", "*", BLIST_REPORTLUN2 | BLIST_TRY_VPD_PAGES}, /* HP XP Arrays */
- 	{"HP", "NetRAID-4M", NULL, BLIST_FORCELUN},
- 	{"HP", "HSV100", NULL, BLIST_REPORTLUN2 | BLIST_NOSTARTONADD},
- 	{"HP", "C1557A", NULL, BLIST_FORCELUN},
+--- a/drivers/media/usb/cpia2/cpia2_v4l.c
++++ b/drivers/media/usb/cpia2/cpia2_v4l.c
+@@ -812,7 +812,7 @@ static int cpia2_querybuf(struct file *f
+ 	struct camera_data *cam = video_drvdata(file);
+ 
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+@@ -863,7 +863,7 @@ static int cpia2_qbuf(struct file *file,
+ 
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+ 	   buf->memory != V4L2_MEMORY_MMAP ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	DBG("QBUF #%d\n", buf->index);
