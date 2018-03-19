@@ -1,196 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933114AbeCSJVq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:21:46 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:21223 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932976AbeCSJVi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:21:38 -0400
-Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
- timeout value
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-References: <20180307132020.30951-1-kishon@ti.com>
- <20180307132020.30951-8-kishon@ti.com>
- <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
- <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
- <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <29f640ac-b155-41c6-cf3f-8c66e1b300f1@ti.com>
-Date: Mon, 19 Mar 2018 14:50:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S933371AbeCSJVw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:21:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:50320 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933106AbeCSJVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:21:45 -0400
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>
+Cc: maxime.ripard@bootlin.com, linux@armlinux.org.uk, wens@csie.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
+        quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+ <20180223133742.26044-11-mylene.josserand@bootlin.com>
+ <6329fbb6-13a1-41fe-f6cf-f2f0d4b2e5f9@arm.com>
+ <20180318200715.363f3135@dell-desktop.home>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <f3545b1c-fc75-e4bc-87a9-da28c48e4b14@arm.com>
+Date: Mon, 19 Mar 2018 09:21:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180318200715.363f3135@dell-desktop.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+Hi Mylène,
 
-On Friday 16 March 2018 07:51 PM, Adrian Hunter wrote:
-> On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
->>> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
->>>> sdhci has a 10 second timeout to catch devices that stop responding.
->>>> Instead of programming 10 second arbitrary value, calculate the total time
->>>> it would take for the entire transfer to happen and program the timeout
->>>> value accordingly.
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
->>>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
->>>>  2 files changed, 50 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>>> index 1dd117cbeb6e..baab67bfa39b 100644
->>>> --- a/drivers/mmc/host/sdhci.c
->>>> +++ b/drivers/mmc/host/sdhci.c
->>>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
->>>>  		return sg_dma_address(host->data->sg);
->>>>  }
->>>>  
->>>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
->>>> +				  struct mmc_command *cmd,
->>>> +				  unsigned int target_timeout)
->>>> +{
->>>> +	struct mmc_data *data = cmd->data;
->>>> +	struct mmc_host *mmc = host->mmc;
->>>> +	u64 transfer_time;
->>>> +	struct mmc_ios *ios = &mmc->ios;
->>>> +	unsigned char bus_width = 1 << ios->bus_width;
->>>> +	unsigned int blksz;
->>>> +	unsigned int freq;
->>>> +
->>>> +	if (data) {
->>>> +		blksz = data->blksz;
->>>> +		freq = host->mmc->actual_clock ? : host->clock;
->>>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
->>>> +		do_div(transfer_time, freq);
->>>> +		/* multiply by '2' to account for any unknowns */
->>>> +		transfer_time = transfer_time * 2;
->>>> +		/* calculate timeout for the entire data */
->>>> +		host->data_timeout = (data->blocks * ((target_timeout *
->>>> +						       NSEC_PER_USEC) +
->>>> +						       transfer_time));
->>>
->>> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
->>> for timeouts greater than about 4 seconds.
->>>
->>>> +	} else {
->>>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
->>>> +	}
->>>> +
->>>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>>
->>> Need to allow for target_timeout == 0 so:
->>>
->>> 	if (host->data_timeout)
->>> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>>
->>>> +}
->>>> +
->>>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>>  {
->>>>  	u8 count;
->>>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>>  		if (count >= 0xF)
->>>>  			break;
->>>>  	}
->>>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
->>>
->>> If you make the changes I suggest for patch 6, then this would
->>> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
->>>
->>> I suggest you factor out the target_timeout calculation e.g.
->>>
->>> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
->>> 					 struct mmc_command *cmd,
->>> 					 struct mmc_data *data)
->>> {
->>> 	unsigned int target_timeout;
->>>
->>> 	/* timeout in us */
->>> 	if (!data)
->>> 		target_timeout = cmd->busy_timeout * 1000;
->>> 	else {
->>> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
->>> 		if (host->clock && data->timeout_clks) {
->>> 			unsigned long long val;
->>>
->>> 			/*
->>> 			 * data->timeout_clks is in units of clock cycles.
->>> 			 * host->clock is in Hz.  target_timeout is in us.
->>> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
->>> 			 */
->>> 			val = 1000000ULL * data->timeout_clks;
->>> 			if (do_div(val, host->clock))
->>> 				target_timeout++;
->>> 			target_timeout += val;
->>> 		}
->>> 	}
->>>
->>> 	return target_timeout;
->>> }
->>>
->>> And call it from sdhci_calc_sw_timeout()
->>>
->>>>  
->>>>  	return count;
->>>>  }
->>>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>>  		mdelay(1);
->>>>  	}
->>>>  
->>>> -	timeout = jiffies;
->>>> -	if (!cmd->data && cmd->busy_timeout > 9000)
->>>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
->>>> -	else
->>>> -		timeout += 10 * HZ;
->>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
->>>> -
->>>>  	host->cmd = cmd;
->>>>  	if (sdhci_data_line_cmd(cmd)) {
->>>>  		WARN_ON(host->data_cmd);
->>>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
->>>>  		flags |= SDHCI_CMD_DATA;
->>>>  
->>>> +	timeout = jiffies;
->>>> +	if (host->data_timeout > 0) {
->>>
->>> This can be just:
->>>
->>> 	if (host->data_timeout) {
->>>
->>>> +		timeout += nsecs_to_jiffies(host->data_timeout);
->>>> +		host->data_timeout = 0;
->>>
->>> It would be better to initialize host->data_timeout = 0 at the top of
->>> sdhci_prepare_data().
->>>
->>> Also still need:
->>>
->>> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
->>> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
->>
->> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
+On 18/03/18 19:07, Mylène Josserand wrote:
+> Hello Mark,
 > 
-> Yes, but I was thinking you would only calculate when it was needed.
+> Please, excuse me for this late answer and thank you for the review!
 
-I feel since we would have anyways calculated data_timeout, we should use that
-instead unless you see a problem with that.
+No worries.
 
-Thanks
-Kishon
+> 
+> On Wed, 7 Mar 2018 12:18:33 +0000
+> Marc Zyngier <marc.zyngier@arm.com> wrote:
+> 
+>> On 23/02/18 13:37, Mylène Josserand wrote:
+>>> On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.  
+>>
+>> Only on A7? Is that specific to your platform?
+> 
+> I do not really know other Allwinner's platforms about this subject. At
+> least, the sun9i-a80 which is a Cortex-a15/a7 does not need that but it
+> is necessary for sun8i-a83t which is a cortex-a7. Maybe, Chen-Yu or
+> Maxime could help us on it.
+
+My point was that having an uninitialized CNTVOFF is hardly a property
+of Cortex-A7. The same behaviour exists on all CPUs that implement the
+arch timers. What you have here is more a property of the platform, and
+its lack of firmware support.
+
+>>
+>>> It should be done by the bootloader but it is currently not the case,
+>>> even for boot CPU because this SoC is booting in secure mode.
+>>> It leads to an random offset value meaning that each CPU will have a
+>>> different time, which isn't working very well.
+>>>
+>>> Add assembly code used for boot CPU and secondary CPU cores to make
+>>> sure that the CNTVOFF register is initialized.
+>>>
+>>> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+>>> ---
+>>>  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
+>>>  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
+>>>  2 files changed, 25 insertions(+)
+>>>
+>>> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+>>> index d5c97e945e69..605896251927 100644
+>>> --- a/arch/arm/mach-sunxi/headsmp.S
+>>> +++ b/arch/arm/mach-sunxi/headsmp.S
+>>> @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
+>>>  	first: .word sunxi_mc_smp_first_comer - .
+>>>  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+>>>  
+>>> +ENTRY(sunxi_init_cntvoff)
+>>> +	/*
+>>> +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+>>> +	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+>>> +	 * then it should be handled by the secure code
+>>> +	 */
+>>> +	cps	#MON_MODE
+>>> +	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
+>>> +	orr	r0, r1, #1
+>>> +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+>>> +	instr_sync  
+>>
+>> Since these CPUs are all ARMv7, you can use isb directly. Nobody wants
+>> to see more of the CP15 barriers.
+> 
+> Okay, thanks, I will update that.
+> 
+>>
+>>> +	mov	r0, #0
+>>> +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
+>>> +	instr_sync
+>>> +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+>>> +	instr_sync
+>>> +	cps	#SVC_MODE
+>>> +	ret	lr  
+>>
+>> Given that this code is identical to the shmobile hack, it'd be good to
+>> make it common, one way or another.
+> 
+> Sure, I will try that.
+> May you have some hints to give me on how to implement it?
+
+You could move it to arch/arm/common, for example.
+
+> 
+>>
+>>> +ENDPROC(sunxi_init_cntvoff)
+>>> +
+>>>  #ifdef CONFIG_SMP
+>>>  ENTRY(sunxi_boot)
+>>>  	bl	sunxi_mc_smp_cluster_cache_enable
+>>> +	bl	sunxi_init_cntvoff
+>>>  	b	secondary_startup
+>>>  ENDPROC(sunxi_boot)
+>>>  
+>>> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+>>> index 5e9602ce1573..4bb041492b54 100644
+>>> --- a/arch/arm/mach-sunxi/sunxi.c
+>>> +++ b/arch/arm/mach-sunxi/sunxi.c
+>>> @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
+>>>  };
+>>>  
+>>>  extern void __init sun6i_reset_init(void);
+>>> +extern void sunxi_init_cntvoff(void);
+>>> +
+>>>  static void __init sun6i_timer_init(void)
+>>>  {
+>>> +	sunxi_init_cntvoff();
+>>> +  
+>>
+>> It is slightly odd that some CPUs get initialized from the early asm
+>> code, and some others do a detour via some C code. I'm sure this could
+>> be made to work
+> 
+> Renesa's code was also doing that so I thought it could be ok to do
+> it.
+
+It is not that it isn't OK, it is just a slightly bizarre construct.
+
+> Without this code in this timer_init function, it fails to initialize
+> cntvoff correctly:
+> http://code.bulix.org/i9fhc9-302612?raw
+> 
+> How should I implement that?
+
+I would make it part of a path that all CPUs have to hit at bring-up
+time. You already have such a path in your SMP init code, so why not
+take advantage of that, making it completely uniform across the board?
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
