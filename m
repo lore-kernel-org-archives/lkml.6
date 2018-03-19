@@ -1,37 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuaEQALIb78QwI4BwXJQdYndbkNh4iiFPnnuIWPXTeJSolmhqMzkaMQoD4CJEy6IW+S1zwu
-ARC-Seal: i=1; a=rsa-sha256; t=1521483693; cv=none;
-        d=google.com; s=arc-20160816;
-        b=I/FajWmBwyW9XqeQjOtuO3NVQfjBxqHUGEkI2ISFVf/40V3bGawjE4itWujU5IgPXb
-         0qEpkwcKjdHfH2Cz0t+g8tzu6Ul5XPGaYRxtFe9TJEYFPXZSh5as1fp5ZFZFoWDSUr61
-         h8XQmFg8ntv0JMLp5SZvBcM+0DOO3+7r+igKjrEF9luJV6yymtnIjv1jxQ2CPJ3/0Nsc
-         rwcinV96yikKX4raTdr6E75cr+dKpCnkSobIoIF9qcX/SVvCBAeGi+MaoFfmyLj+gvHk
-         4bSlJdStcLeK2yXqNjsL7hzNDGfyQ8VTuHlIJh8CfIUBuqvR7931xExKIGSAhXDIYcgj
-         EPMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=IvyYWFmbopNw8zTnEfdCGbOwWtNcoe9+panq6O/QAgU=;
-        b=Sc7ixf5KwGaSnfrlQLCdlAN1rgx88InltpiQScvw6jSu9ZLa0cJzyB+yL7Ce6sW705
-         7dFPEtvglmRo/JuEWHIQ70QW69G63SpQ4X6eoiUe0RG6GCPwr2zd1S6Cc8wJJ9S0FKUC
-         5MoHK4Ix/s9XbJiP92WXdoFHg4ntyArG3MfUsVhOw9GgxpToAsDngVTXHM3/xufNu0wE
-         CmBcT0gz3UKOyYjtCvJwip+4uiQW8vqAruJc9TJFUMHW0jTzue8vXP0aNVAKjFH7EAEQ
-         l/CdPNTBikGccv4gvqBFkD5hTcqRlu5FoKsKFFQIzdMtasFWps0m3h2bUQWWLr4EaHt9
-         SVDQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483693-2-16850870785817956721
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483693; b=Qx4siA17WL4NwNkXPFgUhgOws6rW1xA7pwsfhXiZTq10sGX
+    wXx1aNr/3s3kG0gDpzr58GwDmR7WUh+QqCMgKK4AOppuYpwRTR32x8CYZnFJW7NM
+    5QBVtMlAheMIycVWUG8PqVNuWmyl9hFT1NzgGhW3N/44ZcJLfQtbMZ7EiLYOeWMS
+    t2EgYru4brxqdrYqK87wGZLPvPSmixod6kuEJKrzkurhgvEfhvATdjbB8rQrBYM1
+    mb1wyOu90gOvXpR9gBeUaI9WOU+raHEcNoh4GdcX5OUnH93b/j6k19Kn9sL/+v/B
+    I9nB8dfA6fHW1UgYt6Qb/2u1o3MDBDNDe1r4yeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483693; bh=GtgNd+4slKMTPKoT9FJZWRtLno
+    APYWFmuwBe3ouSFM0=; b=KqT9IfBdiQmUhC1zvFLcuNrlndv4v6RuMhGje7abnu
+    iiXe6UJOUlI0ugCOUBYzw/15N2aKtXBTKornImqVK+kcP1UnX26K3ZgmY0pXhXIt
+    9MXGuKked4SIixydfJqUkT6l+mZbS4PfarspRrbV6qC97iJ6h+oi/RGrqhNAsj6u
+    iCUAy/XykUQaUBtpY5rGc1Wl0pR9yhqlpRrL5GZpGF2AhC4QDLQyrWodP/ymvY5u
+    YeXgEujM/j8ukLfuLHHAbDFYc9lq2B/MJQybCyb31BKV1/dd0RHFuANW58TsO5uK
+    bAgTRIPpnsohVK0PZDjWYyGDUvkAG4Nf+hJSWIYS5NfQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheekleenucevlhhushhtvghrufhiiigvpeeiie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheekleenucevlhhushhtvghrufhiiigvpeeiie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1031110AbeCSSVW (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:21:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48048 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031100AbeCSSVU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Yunlei He <heyunlei@huawei.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 082/241] f2fs: relax node version check for victim data in gc
-Date: Mon, 19 Mar 2018 19:05:47 +0100
-Message-Id: <20180319180754.596539198@linuxfoundation.org>
+        stable@vger.kernel.org, Shaohua Li <shli@fb.com>,
+        Jens Axboe <axboe@fb.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 078/241] blk-throttle: make sure expire time isnt too big
+Date: Mon, 19 Mar 2018 19:05:43 +0100
+Message-Id: <20180319180754.432758367@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -39,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390871217961883?=
-X-GMAIL-MSGID: =?utf-8?q?1595391285044369195?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +81,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Shaohua Li <shli@fb.com>
 
 
-[ Upstream commit c13ff37e359bb3eacf4e1760dcea8d9760aa7459 ]
+[ Upstream commit 06cceedcca67a93ac7f7aa93bbd9980c7496d14e ]
 
-- has_not_enough_free_secs
-node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+cgroup could be throttled to a limit but when all cgroups cross high
+limit, queue enters a higher state and so the group should be throttled
+to a higher limit. It's possible the cgroup is sleeping because of
+throttle and other cgroups don't dispatch IO any more. In this case,
+nobody can trigger current downgrade/upgrade logic. To fix this issue,
+we could either set up a timer to wakeup the cgroup if other cgroups are
+idle or make sure this cgroup doesn't sleep too long. Setting up a timer
+means we must change the timer very frequently. This patch chooses the
+latter. Making cgroup sleep time not too big wouldn't change cgroup
+bps/iops, but could make it wakeup more frequently, which isn't a big
+issue because throtl_slice * 8 is already quite big.
 
-          - f2fs_gc
-             - get_victim_by_default
-alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
-
-                - do_garbage_collect
-start_segno 3976, end_segno 3977   type 0
-
-                  - is_alive
-nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
-
-                   - gc_data_segment 766, segno 3976, block 512/426 not alive
-
-So, this patch fixes subtle corrupted case where node version does not match
-to summary version which results in infinite loop by gc.
-
-Reported-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/gc.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ block/blk-throttle.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -538,8 +538,10 @@ static bool is_alive(struct f2fs_sb_info
- 	get_node_info(sbi, nid, dni);
- 
- 	if (sum->version != dni->version) {
--		f2fs_put_page(node_page, 1);
--		return false;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: valid data with mismatched node version.",
-+				__func__);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 	}
- 
- 	*nofs = ofs_of_node(node_page);
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -499,6 +499,17 @@ static void throtl_dequeue_tg(struct thr
+ static void throtl_schedule_pending_timer(struct throtl_service_queue *sq,
+ 					  unsigned long expires)
+ {
++	unsigned long max_expire = jiffies + 8 * throtl_slice;
++
++	/*
++	 * Since we are adjusting the throttle limit dynamically, the sleep
++	 * time calculated according to previous limit might be invalid. It's
++	 * possible the cgroup sleep time is very long and no other cgroups
++	 * have IO running so notify the limit changes. Make sure the cgroup
++	 * doesn't sleep too long to avoid the missed notification.
++	 */
++	if (time_after(expires, max_expire))
++		expires = max_expire;
+ 	mod_timer(&sq->pending_timer, expires);
+ 	throtl_log(sq, "schedule timer. delay=%lu jiffies=%lu",
+ 		   expires - jiffies, jiffies);
