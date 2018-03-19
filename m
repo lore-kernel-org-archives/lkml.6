@@ -1,193 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755230AbeCSE0Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 00:26:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48562 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754923AbeCSE0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 00:26:13 -0400
-Date: Mon, 19 Mar 2018 04:26:00 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
-        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 19/19] irqchip: add irq-nationalchip.c and irq-csky.c
-Message-ID: <20180319042535.fzssdiu4ot7nyhwe@salmiak>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <62e687d3eb67505aa6f4d4d01ce268fd432bf58e.1521399976.git.ren_guo@c-sky.com>
+        id S1755100AbeCSElh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 00:41:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52530 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeCSEle (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 00:41:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E6386055B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH 5/6] dt-bindings: phy-qcom-usb2: Update bindings for
+ sdm845
+To: Rob Herring <robh@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-arm-msm@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1521193500-4696-1-git-send-email-mgautam@codeaurora.org>
+ <1521193500-4696-6-git-send-email-mgautam@codeaurora.org>
+ <20180318033421.bicewbj3s5wenuis@rob-hp-laptop>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <71f0d215-9d6b-efd6-d3fc-e11326615b2c@codeaurora.org>
+Date: Mon, 19 Mar 2018 10:11:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62e687d3eb67505aa6f4d4d01ce268fd432bf58e.1521399976.git.ren_guo@c-sky.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180318033421.bicewbj3s5wenuis@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 03:51:41AM +0800, Guo Ren wrote:
-> +static unsigned int intc_reg;
+Hi,
 
-This should be a void __iomem *ptr;
 
-> +
-> +#define CK_VA_INTC_ICR		(void *)(intc_reg + 0x00)	/* Interrupt control register(High 16bits) */
-> +#define CK_VA_INTC_ISR		(void *)(intc_reg + 0x00)	/* Interrupt status register(Low 16bits) */
-> +#define CK_VA_INTC_NEN31_00	(void *)(intc_reg + 0x10)	/* Normal interrupt enable register Low */
-> +#define	CK_VA_INTC_NEN63_32	(void *)(intc_reg + 0x28)	/* Normal interrupt enable register High */
-> +#define CK_VA_INTC_IFR31_00	(void *)(intc_reg + 0x08)	/* Normal interrupt force register Low */
-> +#define CK_VA_INTC_IFR63_32	(void *)(intc_reg + 0x20)	/* Normal interrupt force register High */
-> +#define	CK_VA_INTC_SOURCE	(void *)(intc_reg + 0x40)	/* Proiority Level Select Registers 0 */
+On 3/18/2018 6:22 PM, Rob Herring wrote:
+> On Fri, Mar 16, 2018 at 03:14:58PM +0530, Manu Gautam wrote:
+>> Update compatible strings for USB2 PHYs on sdm845.
+>> There are two QUSB2 PHYs present on sdm845. Few PHY registers
+>> programming is different for these PHYs related to electrical
+>> parameters, otherwise both are same.
+> Register locations are different or tuning values are different? For the 
+> latter, is that something that could be DT properties?
 
-Please use mnemonics for the offsets, and add the base address in the IO
-accessors.
+There are only register values changes. Corresponding driver change:
+https://patchwork.kernel.org/patch/10286803/
 
-[...]
 
-> +		temp = __raw_readl(CK_VA_INTC_NEN31_00);
-
-Please use readl_relaxed() rather than __raw_readl().
-
-> +		__raw_writel(temp, CK_VA_INTC_NEN31_00);
-
-Likewise, please use writel_relaxed() rather than __raw_writel().
-
-[...]
-
-> +static int __init
-> +__intc_init(struct device_node *np, struct device_node *parent, bool ave)
-> +{
-> +	struct irq_domain *root_domain;
-> +	int i;
-> +
-> +	csky_get_auto_irqno = ck_get_irqno;
-> +
-> +	if (parent)
-> +		panic("pic not a root intc\n");
-> +
-> +	intc_reg = (unsigned int)of_iomap(np, 0);
-> +	if (!intc_reg)
-> +		panic("%s, of_iomap err.\n", __func__);
-> +
-> +	__raw_writel(0, CK_VA_INTC_NEN31_00);
-> +	__raw_writel(0,	CK_VA_INTC_NEN63_32);
-> +
-> +	if (ave == true)
-> +		__raw_writel( 0xc0000000, CK_VA_INTC_ICR);
-> +	else
-> +		__raw_writel( 0x0, CK_VA_INTC_ICR);
-> +	/*
-> +	 * csky irq ctrl has 64 sources.
-> +	 */
-> +	#define INTC_IRQS 64
-> +	for (i=0; i<INTC_IRQS; i=i+4)
-> +		__raw_writel((i+3)|((i+2)<<8)|((i+1)<<16)|(i<<24),
-> +				CK_VA_INTC_SOURCE + i);
-> +
-> +	root_domain = irq_domain_add_legacy(np, INTC_IRQS, 0, 0, &ck_irq_ops, NULL);
-> +	if (!root_domain)
-> +		panic("root irq domain not available\n");
-> +
-> +	irq_set_default_host(root_domain);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init
-> +intc_init(struct device_node *np, struct device_node *parent)
-> +{
-> +
-> +	return __intc_init(np, parent, false);
-> +}
-> +IRQCHIP_DECLARE(csky_intc_v1, "csky,intc-v1", intc_init);
-> +
-> +/*
-> + * use auto vector exceptions 10 for interrupt.
-> + */
-> +static int __init
-> +intc_init_ave(struct device_node *np, struct device_node *parent)
-> +{
-> +	return __intc_init(np, parent, true);
-> +}
-> +IRQCHIP_DECLARE(csky_intc_v1_ave, "csky,intc-v1,ave", intc_init_ave);
-
-These need devicetree bindings. Please see
-Documentation/devicetree/bindings/submitting-patches.txt.
-
-[...]
-
-> +inline int ff1_64(unsigned int hi, unsigned int lo)
-> +{
-> +	int result;
-> +	asm volatile(
-> +		"ff1 %0\n"
-> +		:"=r"(hi)
-> +		:"r"(hi)
-> +		:
-> +	);
-> +
-> +	asm volatile(
-> +		"ff1 %0\n"
-> +		:"=r"(lo)
-> +		:"r"(lo)
-> +		:
-> +	);
-> +	if( lo != 32 )
-> +		result = 31-lo;
-> +	else if( hi != 32 ) result = 31-hi + 32;
-> +	else {
-> +		printk("nc_get_irqno error hi:%x, lo:%x.\n", hi, lo);
-> +		result = NR_IRQS;
-> +	}
-> +	return result;
-> +}
-
-Please avoid assembly in generic driver code. Here you cna use __ffs64() after
-combining the two halves into a 64-bit quantity, or you could use ffs() on each
-half.
-
-> +static int __init
-> +intc_init(struct device_node *intc, struct device_node *parent)
-> +{
-> +	struct irq_domain *root_domain;
-> +	unsigned int i;
-> +
-> +	if (parent)
-> +		panic("DeviceTree incore intc not a root irq controller\n");
-> +
-> +	csky_get_auto_irqno = nc_get_irqno;
-> +
-> +	intc_reg = (unsigned int) of_iomap(intc, 0);
-> +	if (!intc_reg)
-> +		panic("Nationalchip Intc Reg: %x.\n", intc_reg);
-> +
-> +	__raw_writel(0xffffffff, NC_VA_INTC_NENCLR31_00);
-> +	__raw_writel(0xffffffff, NC_VA_INTC_NENCLR63_32);
-> +	__raw_writel(0xffffffff, NC_VA_INTC_NMASK31_00);
-> +	__raw_writel(0xffffffff, NC_VA_INTC_NMASK63_32);
-> +
-> +	/*
-> +	 * nationalchip irq ctrl has 64 sources.
-> +	 */
-> +	#define INTC_IRQS 64
-> +	for (i=0; i<INTC_IRQS; i=i+4)
-> +		__raw_writel(i|((i+1)<<8)|((i+2)<<16)|((i+3)<<24),
-> +				NC_VA_INTC_SOURCE + i);
-> +
-> +	root_domain = irq_domain_add_legacy(intc, INTC_IRQS, 0, 0,
-> +			&nc_irq_ops, NULL);
-> +	if (!root_domain)
-> +		panic("root irq domain not avail\n");
-> +
-> +	irq_set_default_host(root_domain);
-> +
-> +	return 0;
-> +}
-> +
-> +IRQCHIP_DECLARE(nationalchip_intc_v1_ave, "nationalchip,intc-v1,ave", intc_init);
-
-This needs a devicetree binding document.
-
-Thanks,
-Mark.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
