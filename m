@@ -1,50 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932626AbeCSIlq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:41:46 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56391 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932301AbeCSIll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:41:41 -0400
-Subject: Re: [RESEND PATCH v1 2/6] i2c: i2c-stm32f7: Add slave support
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
- <1520852023-27083-3-git-send-email-pierre-yves.mordret@st.com>
- <20180317205109.gocf5wemtjkyomct@ninjato>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <5a3c5b21-bc66-ce73-a997-f686ecc275f3@st.com>
-Date: Mon, 19 Mar 2018 09:41:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932678AbeCSIo0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:44:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49226 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932143AbeCSIoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:44:24 -0400
+Date: Mon, 19 Mar 2018 09:44:22 +0100
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, linux@armlinux.org.uk, gregory.clement@bootlin.com,
+        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        ymarkman@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com,
+        nadavh@marvell.com, thomas.petazzoni@bootlin.com,
+        miquel.raynal@bootlin.com, stefanc@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 05/10] phy: cp110-comphy: 2.5G SGMII mode
+Message-ID: <20180319084422.GD4519@kwain>
+References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
+ <20180316103351.16616-6-antoine.tenart@bootlin.com>
+ <20180318044247.kp3i2ymvrj5fdoj3@sapphire.tkos.co.il>
 MIME-Version: 1.0
-In-Reply-To: <20180317205109.gocf5wemtjkyomct@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_05:,,
- signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180318044247.kp3i2ymvrj5fdoj3@sapphire.tkos.co.il>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I do believe the hw can support it, even it looks odd to me having the same I2C
-in slave and master mode at the same time.
-Nevertheless the driver is devised to support either master or slave more but
-not at the same time.
+Hi Baruch,
 
-Regards
-On 03/17/2018 09:51 PM, Wolfram Sang wrote:
+On Sun, Mar 18, 2018 at 06:42:48AM +0200, Baruch Siach wrote:
+> On Fri, Mar 16, 2018 at 11:33:46AM +0100, Antoine Tenart wrote:
+> > This patch allow the CP100 comphy to configure some lanes in the
 > 
->> + * @master_mode: boolean to know in which mode the I2C is running (master or
->> + * slave)
-> 
-> It can't do both at the same time?
-> 
+> Should be 'CP110'.
+
+That's right, I'll update.
+
+Thanks!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
