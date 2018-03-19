@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs7eIo8W7DLmeWxX9bPzRvf14sYSBxzenbe4sudQlKNPO+8q3qny3zSVvBAmoIg7LW6S0d8
-ARC-Seal: i=1; a=rsa-sha256; t=1521483312; cv=none;
+X-Google-Smtp-Source: AG47ELvHNQJnii9pubNlEWnLNkiRRU1ieZkRbEtmK7eBMpaxT+MoVW0OY+xFGkOKjwLmhm9UNsVp
+ARC-Seal: i=1; a=rsa-sha256; t=1521483309; cv=none;
         d=google.com; s=arc-20160816;
-        b=iNafyl9qwJENPuvu5EX+2XO3J56CF4OWSLoEcWnRAzHUr7NcoKCJ6fnj9M4bif9BZ1
-         Q+Kc3Gv/MyspJlbX9w3vCNshdl6EZtUdB+mIvt+CE/jhJ1PFgZSMIqPBNEllvncPlggD
-         3VpDyWM+VRJXTkGB8N8KmitwR9ia69Ua9guYyLe9jMTq5HpukMg4I0aex/AoC6OEZSPx
-         3UG5gRuOdaRrQfMTnNOSvRj3FcbBtiqxqwoFYzH6noAg5pvxdQsc0+VMcpENmPqrSrBD
-         qKgpMDaOpDtLzk9OyhiNsaMl+B6Em0Y6RUzXgx9tCFWaPOznnhshK5kN5RvwxEcCTvpE
-         YpkA==
+        b=w5ZmI8YVFmolsheumN1Opaxut/INdbdzONjbRkA/2t/1oRDtwj6L6Ht3UFi3qUX65g
+         wcAIabre7BZbd9nWSe8TBtGUJ4s+wETF2Bgr8lFCU9UNDDX4M9FgRAhYdeGpBEBHQ8dZ
+         /ky3TeENJjuZtcEfq+GhsH1Gki3Mm9bGZUz1+coKNP8KZZJa7gdoey9oH9w+i7kUyQwx
+         nY1IhpdZtZaWKK5CgtjNNXzN2GcAcJz9MRA5/k0kmEobF7dJaNx13v/qg9zV3l6e+GoH
+         t+SScfPiKv4d65qclBDLJ5Xt1pGeLtIOBFLvLn2PefoYAeCaH/GoM4SPxDFJ3FMSJpPJ
+         fmVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8Ypt9shM3tmZ6rKwuVK8cjxNMcnDhXDaRnHb/Y3bvM8=;
-        b=VszosnQU3FSAov4IV7D+JXM0uCTaJqiIwZPCwIRbORcNSU+tIPoU2F7keEPyXmhZw+
-         hnQ9ZknQ59+1NVlR6XDkeLkkVt2LjBddwizIR+wJi0q3F+1CisoZW1VaLXIwfNgwuhbD
-         /BFk2ymgyQRMPAN/Oysh8Udd3DQPzqPtFas6Y1tyEus+36VnzKpBEUmmW8Vx5m+XQnNC
-         kGbCiUcsCUaxnIz4LP3IKqF7+ePkQDnOonb+87Aq9+4pS0xGz7S0M3Xt1Dm8hTJAIudR
-         vPgOmQNlSIyQ9oy6mU4tKxsENtaqoL6UmamkYREZ1g4Jrajj5cKPV0XVjB1XCgVVhXJ8
-         MFEw==
+        bh=XkRcCYKUI8cx6gLLiY4NkEYxLb6WIKrzVgEmzs/gIC4=;
+        b=gmNRDlOeVHGD5PlI+Ic7Ymvm5BdFH8Hspyw7KlF67U4rRuiT51B68210x7tRdOzzJW
+         /WW406vWdE3S2Ium05wrIv59RDpdwkexkP5OT4rJEbwOS1oN5FMQFFmFHk6YGCbBz+ja
+         su8NP0YaGOCJ9myB+b05ysyjhf0u5ee10h7WPQLUJv8KBd5+7SHdIKaOAML1SFmyFjK6
+         8YMcytaNYUVtNEOWlAPQ1quaDjXc4wIOD6pqgRuIWjwqYwQWY77HmXuLAzFFVAt54IOl
+         ozSE4tsRPymQzHvmrkAzJQjekc/i6JQTLWfDyl6IfkJQAv3MvX33rJEtLoNwi2Kny7RF
+         H5pg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Felix Manlunas <felix.manlunas@cavium.com>,
-	Satanand Burla <satananda.burla@cavium.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Sinclair Yeh <syeh@vmware.com>,
+	Thomas Hellstrom <thellstrom@vmware.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 044/134] vxlan: vxlan dev should inherit lowerdevs gso_max_size
-Date: Mon, 19 Mar 2018 19:05:27 +0100
-Message-Id: <20180319171855.752190937@linuxfoundation.org>
+Subject: [PATCH 4.4 043/134] drm/vmwgfx: Fixes to vmwgfx_fb
+Date: Mon, 19 Mar 2018 19:05:26 +0100
+Message-Id: <20180319171855.594348584@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390885442025178?=
-X-GMAIL-MSGID: =?utf-8?q?1595390885442025178?=
+X-GMAIL-THRID: =?utf-8?q?1595390882331433865?=
+X-GMAIL-MSGID: =?utf-8?q?1595390882331433865?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Manlunas <felix.manlunas@cavium.com>
+From: Sinclair Yeh <syeh@vmware.com>
 
 
-[ Upstream commit d6acfeb17d030bb3907e77c048b0e7783ad8e5a9 ]
+[ Upstream commit aa74f0687cfe998e59b20d6454f45e8aa4403c45 ]
 
-vxlan dev currently ignores lowerdev's gso_max_size, which adversely
-affects TSO performance of liquidio if it's the lowerdev.  Egress TCP
-packets' skb->len often exceed liquidio's advertised gso_max_size.  This
-may happen on other NIC drivers.
+1.  When unsetting a mode, num_connector should be set to zero
+2.  The pixel_format field needs to be initialized as newer DRM internal
+    functions checks this field
+3.  Take the drm_modeset_lock_all() because vmw_fb_kms_detach() can
+    change current mode
 
-Fix it by assigning lowerdev's gso_max_size to that of vxlan dev.  Might as
-well do likewise for gso_max_segs.
-
-Single flow TSO throughput of liquidio as lowerdev (using iperf3):
-
-    Before the patch:    139 Mbps
-    After the patch :   8.68 Gbps
-    Percent increase:  6,144 %
-
-Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
-Signed-off-by: Satanand Burla <satananda.burla@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sinclair Yeh <syeh@vmware.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_fb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -2834,6 +2834,11 @@ static int vxlan_dev_configure(struct ne
- 		needed_headroom = lowerdev->hard_header_len;
- 	}
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
+@@ -433,7 +433,7 @@ static int vmw_fb_kms_detach(struct vmw_
+ 		set.y = 0;
+ 		set.mode = NULL;
+ 		set.fb = NULL;
+-		set.num_connectors = 1;
++		set.num_connectors = 0;
+ 		set.connectors = &par->con;
+ 		ret = drm_mode_set_config_internal(&set);
+ 		if (ret) {
+@@ -821,7 +821,9 @@ int vmw_fb_off(struct vmw_private *vmw_p
+ 	flush_delayed_work(&par->local_work);
  
-+	if (lowerdev) {
-+		dev->gso_max_size = lowerdev->gso_max_size;
-+		dev->gso_max_segs = lowerdev->gso_max_segs;
-+	}
-+
- 	if (conf->mtu) {
- 		err = __vxlan_change_mtu(dev, lowerdev, dst, conf->mtu, false);
- 		if (err)
+ 	mutex_lock(&par->bo_mutex);
++	drm_modeset_lock_all(vmw_priv->dev);
+ 	(void) vmw_fb_kms_detach(par, true, false);
++	drm_modeset_unlock_all(vmw_priv->dev);
+ 	mutex_unlock(&par->bo_mutex);
+ 
+ 	return 0;
