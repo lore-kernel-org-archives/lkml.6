@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933633AbeCSOWW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:22:22 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:26549 "EHLO
+        id S933613AbeCSOWS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:22:18 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:5653 "EHLO
         stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755588AbeCSOWR (ORCPT
+        with ESMTP id S933520AbeCSOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:22:17 -0400
+        Mon, 19 Mar 2018 10:22:11 -0400
 From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
 To: x86@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
@@ -14,9 +14,9 @@ Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         torvalds@linux-foundation.org, ganeshgr@chelsio.com,
         nirranjan@chelsio.com, indranil@chelsio.com,
         Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [RFC PATCH 3/3] cxgb4: read on-chip memory 256-bits at a time
-Date: Mon, 19 Mar 2018 19:50:36 +0530
-Message-Id: <b95c4daeaf169ef0b3b689214c7c4ab37d946949.1521469118.git.rahul.lakkireddy@chelsio.com>
+Subject: [RFC PATCH 1/3] include/linux: add 256-bit IO accessors
+Date: Mon, 19 Mar 2018 19:50:34 +0530
+Message-Id: <a05fb08ec04fe09a9932e7c0d2606280dc02aaf8.1521469118.git.rahul.lakkireddy@chelsio.com>
 X-Mailer: git-send-email 2.5.3
 In-Reply-To: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
 References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
@@ -26,80 +26,228 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use readqq() to read on-chip memory 256-bits at a time.
+Add readqq and writeqq (quad quadword - 4 x 64) IO non-atomic
+accessors.  Also add byteorder conversions for 256-bit.
 
 Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
 Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 16 ++++++++--------
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h     |  6 ++++++
- 2 files changed, 14 insertions(+), 8 deletions(-)
+ include/linux/byteorder/generic.h     | 48 ++++++++++++++++++++++++++++
+ include/linux/io-64-nonatomic-hi-lo.h | 59 +++++++++++++++++++++++++++++++++++
+ include/linux/io-64-nonatomic-lo-hi.h | 59 +++++++++++++++++++++++++++++++++++
+ include/linux/types.h                 |  7 +++++
+ 4 files changed, 173 insertions(+)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-index 9da6f57901a9..3a319b16c8a3 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-@@ -885,7 +885,7 @@ static int cudbg_memory_read(struct cudbg_init *pdbg_init, int win,
- 	struct adapter *adap = pdbg_init->adap;
- 	u32 pos, offset, resid;
- 	u32 *res_buf;
--	u64 *buf;
-+	u256 *buf;
- 	int ret;
- 
- 	/* Argument sanity checks ...
-@@ -893,10 +893,10 @@ static int cudbg_memory_read(struct cudbg_init *pdbg_init, int win,
- 	if (addr & 0x3 || (uintptr_t)hbuf & 0x3)
- 		return -EINVAL;
- 
--	buf = (u64 *)hbuf;
-+	buf = (u256 *)hbuf;
- 
--	/* Try to do 64-bit reads.  Residual will be handled later. */
--	resid = len & 0x7;
-+	/* Try to do 256-bit reads.  Residual will be handled later. */
-+	resid = len & 0x1f;
- 	len -= resid;
- 
- 	ret = t4_memory_rw_init(adap, win, mtype, &memoffset, &mem_base,
-@@ -917,10 +917,10 @@ static int cudbg_memory_read(struct cudbg_init *pdbg_init, int win,
- 
- 	/* Transfer data from the adapter */
- 	while (len > 0) {
--		*buf++ = le64_to_cpu((__force __le64)
--				     t4_read_reg64(adap, mem_base + offset));
--		offset += sizeof(u64);
--		len -= sizeof(u64);
-+		*buf++ = le256_to_cpu((__force __le256)
-+				      t4_read_reg256(adap, mem_base + offset));
-+		offset += sizeof(u256);
-+		len -= sizeof(u256);
- 
- 		/* If we've reached the end of our current window aperture,
- 		 * move the PCI-E Memory Window on to the next.
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-index a5c0a649f3c7..0035ed0a2ec9 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-@@ -51,6 +51,7 @@
- #include <linux/ptp_clock_kernel.h>
- #include <linux/ptp_classify.h>
- #include <asm/io.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include "t4_chip_type.h"
- #include "cxgb4_uld.h"
- 
-@@ -1234,6 +1235,11 @@ static inline u64 t4_read_reg64(struct adapter *adap, u32 reg_addr)
- 	return readq(adap->regs + reg_addr);
+diff --git a/include/linux/byteorder/generic.h b/include/linux/byteorder/generic.h
+index 451aaa0786ae..c6c936818a3a 100644
+--- a/include/linux/byteorder/generic.h
++++ b/include/linux/byteorder/generic.h
+@@ -187,4 +187,52 @@ static inline void be32_to_cpu_array(u32 *dst, const __be32 *src, size_t len)
+ 		dst[i] = be32_to_cpu(src[i]);
  }
  
-+static inline u256 t4_read_reg256(struct adapter *adap, u32 reg_addr)
++static inline __le256 cpu_to_le256(u256 val)
 +{
-+	return readqq(adap->regs + reg_addr);
++	__le256 ret;
++
++	ret.a = cpu_to_le64(val.a);
++	ret.b = cpu_to_le64(val.b);
++	ret.c = cpu_to_le64(val.c);
++	ret.d = cpu_to_le64(val.d);
++
++	return ret;
 +}
 +
- static inline void t4_write_reg64(struct adapter *adap, u32 reg_addr, u64 val)
- {
- 	writeq(val, adap->regs + reg_addr);
++static inline u256 le256_to_cpu(__le256 val)
++{
++	u256 ret;
++
++	ret.a = le64_to_cpu(val.a);
++	ret.b = le64_to_cpu(val.b);
++	ret.c = le64_to_cpu(val.c);
++	ret.d = le64_to_cpu(val.d);
++
++	return ret;
++}
++
++static inline __be256 cpu_to_be256(u256 val)
++{
++	__be256 ret;
++
++	ret.a = cpu_to_be64(val.d);
++	ret.b = cpu_to_be64(val.c);
++	ret.c = cpu_to_be64(val.b);
++	ret.d = cpu_to_be64(val.a);
++
++	return ret;
++}
++
++static inline u256 be256_to_cpu(__be256 val)
++{
++	u256 ret;
++
++	ret.a = be64_to_cpu(val.d);
++	ret.b = be64_to_cpu(val.c);
++	ret.c = be64_to_cpu(val.b);
++	ret.d = be64_to_cpu(val.a);
++
++	return ret;
++}
++
+ #endif /* _LINUX_BYTEORDER_GENERIC_H */
+diff --git a/include/linux/io-64-nonatomic-hi-lo.h b/include/linux/io-64-nonatomic-hi-lo.h
+index 862d786a904f..9bdc42132020 100644
+--- a/include/linux/io-64-nonatomic-hi-lo.h
++++ b/include/linux/io-64-nonatomic-hi-lo.h
+@@ -55,4 +55,63 @@ static inline void hi_lo_writeq_relaxed(__u64 val, volatile void __iomem *addr)
+ #define writeq_relaxed hi_lo_writeq_relaxed
+ #endif
+ 
++static inline __u256 hi_lo_readqq(const volatile void __iomem *addr)
++{
++	const volatile u64 __iomem *p = addr;
++	__u256 ret;
++
++	ret.d = readq(p + 3);
++	ret.c = readq(p + 2);
++	ret.b = readq(p + 1);
++	ret.a = readq(p);
++
++	return ret;
++}
++
++static inline void hi_lo_writeqq(__u256 val, volatile void __iomem *addr)
++{
++	writeq(val.d, addr + 24);
++	writeq(val.c, addr + 16);
++	writeq(val.b, addr + 8);
++	writeq(val.a, addr);
++}
++
++static inline __u256 hi_lo_readqq_relaxed(const volatile void __iomem *addr)
++{
++	const volatile u64 __iomem *p = addr;
++	__u256 ret;
++
++	ret.d = readq_relaxed(p + 3);
++	ret.c = readq_relaxed(p + 2);
++	ret.b = readq_relaxed(p + 1);
++	ret.a = readq_relaxed(p);
++
++	return ret;
++}
++
++static inline void hi_lo_writeqq_relaxed(__u256 val,
++					 volatile void __iomem *addr)
++{
++	writeq_relaxed(val.d, addr + 24);
++	writeq_relaxed(val.c, addr + 16);
++	writeq_relaxed(val.b, addr + 8);
++	writeq_relaxed(val.a, addr);
++}
++
++#ifndef readqq
++#define readqq hi_lo_readqq
++#endif
++
++#ifndef writeqq
++#define writeqq hi_lo_writeqq
++#endif
++
++#ifndef readqq_relaxed
++#define readqq_relaxed hi_lo_readqq_relaxed
++#endif
++
++#ifndef writeqq_relaxed
++#define writeqq_relaxed hi_lo_writeqq_relaxed
++#endif
++
+ #endif	/* _LINUX_IO_64_NONATOMIC_HI_LO_H_ */
+diff --git a/include/linux/io-64-nonatomic-lo-hi.h b/include/linux/io-64-nonatomic-lo-hi.h
+index d042e7bb5adb..8aaf734e1d51 100644
+--- a/include/linux/io-64-nonatomic-lo-hi.h
++++ b/include/linux/io-64-nonatomic-lo-hi.h
+@@ -55,4 +55,63 @@ static inline void lo_hi_writeq_relaxed(__u64 val, volatile void __iomem *addr)
+ #define writeq_relaxed lo_hi_writeq_relaxed
+ #endif
+ 
++static inline __u256 lo_hi_readqq(const volatile void __iomem *addr)
++{
++	const volatile u64 __iomem *p = addr;
++	__u256 ret;
++
++	ret.a = readq(p);
++	ret.b = readq(p + 1);
++	ret.c = readq(p + 2);
++	ret.d = readq(p + 3);
++
++	return ret;
++}
++
++static inline void lo_hi_writeqq(__u256 val, volatile void __iomem *addr)
++{
++	writeq(val.a, addr);
++	writeq(val.b, addr + 8);
++	writeq(val.c, addr + 16);
++	writeq(val.d, addr + 24);
++}
++
++static inline __u256 lo_hi_readqq_relaxed(const volatile void __iomem *addr)
++{
++	const volatile u64 __iomem *p = addr;
++	__u256 ret;
++
++	ret.a = readq_relaxed(p);
++	ret.b = readq_relaxed(p + 1);
++	ret.c = readq_relaxed(p + 2);
++	ret.d = readq_relaxed(p + 3);
++
++	return ret;
++}
++
++static inline void lo_hi_writeqq_relaxed(__u256 val,
++					 volatile void __iomem *addr)
++{
++	writeq_relaxed(val.a, addr);
++	writeq_relaxed(val.b, addr + 8);
++	writeq_relaxed(val.c, addr + 16);
++	writeq_relaxed(val.d, addr + 24);
++}
++
++#ifndef readqq
++#define readqq lo_hi_readqq
++#endif
++
++#ifndef writeqq
++#define writeqq lo_hi_writeqq
++#endif
++
++#ifndef readqq_relaxed
++#define readqq_relaxed lo_hi_readqq_relaxed
++#endif
++
++#ifndef writeqq_relaxed
++#define writeqq_relaxed lo_hi_writeqq_relaxed
++#endif
++
+ #endif	/* _LINUX_IO_64_NONATOMIC_LO_HI_H_ */
+diff --git a/include/linux/types.h b/include/linux/types.h
+index c94d59ef96cc..f4ee2857d253 100644
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -114,6 +114,13 @@ typedef		__u64		u_int64_t;
+ typedef		__s64		int64_t;
+ #endif
+ 
++typedef struct {
++	__u64 a, b, c, d;
++} __u256;
++typedef __u256 u256;
++typedef __u256 __le256;
++typedef __u256 __be256;
++
+ /* this is a special 64bit data type that is 8-byte aligned */
+ #define aligned_u64 __u64 __attribute__((aligned(8)))
+ #define aligned_be64 __be64 __attribute__((aligned(8)))
 -- 
 2.14.1
