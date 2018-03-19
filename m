@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtQ5v9H6vdBCCyWvQ4TlfXBYbx5+KHjzHST+9DIyYggCZaDiB/4ZiixnfstQeVgpmTHhCkt
-ARC-Seal: i=1; a=rsa-sha256; t=1521483688; cv=none;
+X-Google-Smtp-Source: AG47ELucVW5bKucj1VDAMg4BkrBl5jqTMeV3WaBIMuia0pJ+RxCoUkl6MTmoheINAeGXUb/ZVE/C
+ARC-Seal: i=1; a=rsa-sha256; t=1521483685; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ak7KAJbFz4CrGM9pOmhuEfVE57fitXarCePJyTfSdHHRxtNsYkqWXePXuturG69JXo
-         VcqbliRTdSL2a3woH5ytOf8FQuundi3qaEOdylpqSNtoLj/vFiBcWyeqhb3Oyw6obAF/
-         6Jz36NrsockEE5x2Htpl1bdi24yMQhs2ODoRxkwcqNHZ9zOaH3/qjCtcqJjyf/YkIDc6
-         d7ZVTmsjVGS06o298gjFejSao3Lg/QzkgKHQUWbEjJStxAmjDw0NjRFZaAhm5q9XevHP
-         2NqEq9tnjCO/j8+jfX1dIbrkrwQaYqegCt30il7HNCLVmtBkqD0XKSP+lJjau4I9pNE2
-         PSxA==
+        b=sJrNCLqkcF06+puWp0daumfjLNjlt10sFuGgme7ohstdcDhGWErPPOXA7foPaVDgEf
+         KROqx/SxG39MyIsnh5AMA06xpakMatxxLLoJdLsWkROObVHR+ribj1nKcLo0MbpVB860
+         LOxA8BRv62b/uR78JpVQ8NmOlBwXgstd9LDVHBnqD2Q9mVibqS5nKbJXePasOHSS6omK
+         jE8ASTX8u8a3Km+ulVk/wrcDBtWPK6U24OI+VMBVD+E5sutArq/fXQjOc3dyJdo2mbZb
+         Q22HPCRpYcdvF4GVwYcVdIkmWHLXiEMbX09hnI7RDzG/bQDq8XLzOoKLXqxeLu1GmIrl
+         GcZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VihABIU+AsGwm09SqpznluNQSjyX30Z2qkCqymLygck=;
-        b=oK/+/xn/la/VijX6NDEKbYHUYFvZed0sf1WqkJvTY6bgav8LXNG7ZrJrpG5yHKCLxP
-         w0k9twdrbeib8OFeebJwccYR9xnfBZ0ZonyU06SfjG5mkvOjQXACRR3Mz9gaIIR/eIHN
-         HdOQVy8DUhOf/ZF9Xfm0E0gFTfJH3lpVuqsrAAxR3ezOwNKGQr0tvsXoE5ayuSe5MKYi
-         ALm3IU8/DoPAicFE+eTLySv5pfH67XjKjRgaLJ94Qan0mEinxaVfhLj4NzxvhYvEUqAC
-         EV8BhsOtkKWC+uvnkX/PfkxGYN4sFeviAhXvjwnvXzUHwo2mKPfdoXhjCeFgDkODKluX
-         C1Ng==
+        bh=hkJYD2E4w5zlVabyK7i+c8iMDN0PqprK7d+5CsorcIM=;
+        b=pwD1kD9MuEyzeR9bph1ZXZ4H6a4iAkUcmlz9UrLMF/yjysKUlsEIP/aAYLMOr1qWte
+         fPTGpyNi0Y56STqNhyPRpoj8sTnv98PXtImAYJQ7XnpgGfvPJ0UrNw4GOtzyRYoDo5Tf
+         TQUfh+IU7J7nqsaWKbNqB34BUMmCvm4i5o7vDns4+PfL8hBhEMQakivV/mPNF9CH8vqi
+         jnervzXEQnoRE5FAssLMp21ywMqa5KjEzd9k9hmWISdbircbPC6iTeOVAImlSq0ir7Q2
+         4WiUykdg6vayiNCW5hmw7ekHNqC3gekYpxLx8HeVx9NHCQzYDfhDQW1GMVJ/U29RMdU2
+         uGLg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
 	Mark Brown <broonie@kernel.org>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 063/241] spi: omap2-mcspi: poll OMAP2_MCSPI_CHSTAT_RXS for PIO transfer
-Date: Mon, 19 Mar 2018 19:05:28 +0100
-Message-Id: <20180319180753.809101115@linuxfoundation.org>
+Subject: [PATCH 4.9 080/241] regulator: core: Limit propagation of parent voltage count and list
+Date: Mon, 19 Mar 2018 19:05:45 +0100
+Message-Id: <20180319180754.520172717@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390520568953936?=
-X-GMAIL-MSGID: =?utf-8?q?1595391279573924350?=
+X-GMAIL-THRID: =?utf-8?q?1595391276712954548?=
+X-GMAIL-MSGID: =?utf-8?q?1595391276712954548?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +51,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
 
-[ Upstream commit 812613591cb652344186c4cd912304ed02138566 ]
+[ Upstream commit fd086045559d90cd7854818b4c60a7119eda6231 ]
 
-When running the spi-loopback-test with slower clock rate like 10 KHz,
-the test for 251 bytes transfer was failed.  This failure triggered an
-spi-omap2-mcspi's error message "DMA RX last word empty".
+Commit 26988efe11b1 ("regulator: core: Allow to get voltage count and
+list from parent") introduces the propagation of the parent voltage
+count and list for regulators that don't provide this information
+themselves. The goal is to support simple switch regulators, however as
+a side effect normal continuous regulators can leak details of their
+supplies and provide consumers with inconsistent information.
 
-This message means that PIO for reading the remaining bytes due to the
-DMA transfer length reduction is failed.  This problem can be fixed by
-polling OMAP2_MCSPI_CHSTAT_RXS bit in channel status register to wait
-until the receive buffer register is filled.
+Limit the propagation of the voltage count and list to switch
+regulators.
 
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Fixes: 26988efe11b1 ("regulator: core: Allow to get voltage count and
+  list from parent")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-omap2-mcspi.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/regulator/core.c         |    9 +++++++--
+ include/linux/regulator/driver.h |    2 ++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -454,6 +454,8 @@ omap2_mcspi_rx_dma(struct spi_device *sp
- 	int			elements = 0;
- 	int			word_len, element_count;
- 	struct omap2_mcspi_cs	*cs = spi->controller_state;
-+	void __iomem		*chstat_reg = cs->base + OMAP2_MCSPI_CHSTAT0;
-+
- 	mcspi = spi_master_get_devdata(spi->master);
- 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
- 	count = xfer->len;
-@@ -549,8 +551,8 @@ omap2_mcspi_rx_dma(struct spi_device *sp
- 	if (l & OMAP2_MCSPI_CHCONF_TURBO) {
- 		elements--;
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2465,7 +2465,7 @@ static int _regulator_list_voltage(struc
+ 		ret = ops->list_voltage(rdev, selector);
+ 		if (lock)
+ 			mutex_unlock(&rdev->mutex);
+-	} else if (rdev->supply) {
++	} else if (rdev->is_switch && rdev->supply) {
+ 		ret = _regulator_list_voltage(rdev->supply, selector, lock);
+ 	} else {
+ 		return -EINVAL;
+@@ -2523,7 +2523,7 @@ int regulator_count_voltages(struct regu
+ 	if (rdev->desc->n_voltages)
+ 		return rdev->desc->n_voltages;
  
--		if (likely(mcspi_read_cs_reg(spi, OMAP2_MCSPI_CHSTAT0)
--				   & OMAP2_MCSPI_CHSTAT_RXS)) {
-+		if (!mcspi_wait_for_reg_bit(chstat_reg,
-+					    OMAP2_MCSPI_CHSTAT_RXS)) {
- 			u32 w;
+-	if (!rdev->supply)
++	if (!rdev->is_switch || !rdev->supply)
+ 		return -EINVAL;
  
- 			w = mcspi_read_cs_reg(spi, OMAP2_MCSPI_RX0);
-@@ -568,8 +570,7 @@ omap2_mcspi_rx_dma(struct spi_device *sp
- 			return count;
- 		}
+ 	return regulator_count_voltages(rdev->supply);
+@@ -4049,6 +4049,11 @@ regulator_register(const struct regulato
+ 		mutex_unlock(&regulator_list_mutex);
  	}
--	if (likely(mcspi_read_cs_reg(spi, OMAP2_MCSPI_CHSTAT0)
--				& OMAP2_MCSPI_CHSTAT_RXS)) {
-+	if (!mcspi_wait_for_reg_bit(chstat_reg, OMAP2_MCSPI_CHSTAT_RXS)) {
- 		u32 w;
  
- 		w = mcspi_read_cs_reg(spi, OMAP2_MCSPI_RX0);
++	if (!rdev->desc->ops->get_voltage &&
++	    !rdev->desc->ops->list_voltage &&
++	    !rdev->desc->fixed_uV)
++		rdev->is_switch = true;
++
+ 	ret = device_register(&rdev->dev);
+ 	if (ret != 0) {
+ 		put_device(&rdev->dev);
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -425,6 +425,8 @@ struct regulator_dev {
+ 	struct regulator_enable_gpio *ena_pin;
+ 	unsigned int ena_gpio_state:1;
+ 
++	unsigned int is_switch:1;
++
+ 	/* time when this regulator was disabled last time */
+ 	unsigned long last_off_jiffy;
+ };
