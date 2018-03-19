@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483715-5-12278247353921482584
+X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483715-2-12530035023925227236
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,29 +13,29 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483715; b=QdnHkSss2+5bCqcsORggxaDOtlpd7YVn2yjPdEPw4Vqs/9K
-    /I1F+tkIYObH9Tz6rYeJRLnXs45qWX+ZcgDFLE2iCN4X/mej2wLjhIogZ8ZXe2sg
-    eAIFDx32t41Xx0YYHZKPhRzEUVGUz44EyTQ3H3wXAnQ4ABx6Ef0zwLnPAQxrhBF3
-    ZEhWolHwJACmQPORH121q1DdoisYG3NO5wyfRMz/mogNQhIM5NHGArnem7N1gjZB
-    4k5YiTg8/9ySF5w2sT9ry65ZkLAyTgHtuR9OAh6+pXPt9s5E6LYpNAtZDtSxqg5O
-    A/YuEPYA066oUSmy41lPfp0HInGOvn6cVu625bA==
+    t=1521483714; b=VfjoPr/ZVyFceT2BJwIkJHQTdHBSrL4ASYK0VoZWYJI8cx9
+    uWmMpboNmSNLTJs7NJzyoB0O4vZUUl9LYjZbLbmWmIH7/Xoa66rQnfsYeG9gAGQH
+    qEte4n8jrYz+WLS/oCOlP1/ou4qe5V4rG5oU4RqqEUy3qy2uiDQhV+Vp5Xsqzt19
+    2N9iOnMYOUhcQl/t9blqZPUUWoUkDKQzscjZ1ydL1rHLr2FYsstnA4s2XnYqDElr
+    DHJrU9NDmgHfX4Xns/SgGqcRmMg5xaoe4gANUiPiJUJu1Deh5+fl17s4//m+qnJg
+    BxTG0hVgB7FNbI+Myf40s2IGeKlznHFiSmr9IYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483715; bh=DuihOIiSaJLsvCUk5iEGIzI8KE
-    gnnBhkTuwYIJ/cA7E=; b=JGPhkMX1QVgesWhn5VOeWeSfb3s57Bd6lTAf5co/LL
-    0TKwhRAiZnvicbdTgAw/S+lGvosMVqVpyhzSfF6P+T+KehOVSkyM+8Syur6K4Cdz
-    CFCoKa6T018KH0caie3QwLECwypplIf5x7XRt8CmrCfer0IXf/VUOoN2JYdVRMqg
-    Tc4nbSGkHpd9LZuSI4fGXudq0cTy8gtExxYRAYGoVM752O5ycNwKHeMNCFjRA6wk
-    Yjr1gOb0EfgTmfkLGnb9u6iJLZ0IQ4/DzsAGqL8X1IOqDC7pA5BSOA+2chfrBHfa
-    RBcMDFP/qb3B/0jTg1nba5mFD6DOxznZG9hO60l47o7A==
+    :list-id; s=arctest; t=1521483714; bh=7At78sGb1/OHojsglcMRTauJOJ
+    9LwS6JM5/s4VvX6N8=; b=VGmGo1SMiYEn30KCW8RbWQoZ8pxn6P3hURojqYPLb9
+    T8rm5PONc8rzilSP0KXt3v7JFypfINCV/xmiP9EUxV2tTDqMz1BB7Bl0R92CMykl
+    N074ytac886bQkg2O21KNjyGahqPalte6Yg5aPsSPut2md6Y1Pj+5KlE+bCuhO9k
+    GtphDZlsM77PkC5via0HFKyFIMYCS/H9nRfP0WhUOWG7yP6BR004P20xX6bo3JuD
+    +qpITc7viXZCD9175zjxEDR0+PERk7kYn4+Neb3v1c24wGJBR4Yy20U3c+ufs4Az
+    jfO6cEZ2/2AVshkp3o0xLpFM75Nxs9Rx/kv3JrqpWDhA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheeijeenucevlhhushhtvghrufhiiigvpeejle;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvieelkeenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
@@ -45,26 +45,27 @@ Authentication-Results: mx4.messagingengine.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefheeijeenucevlhhushhtvghrufhiiigvpeejle;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvieelkeenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968070AbeCSSVp (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:21:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48244 "EHLO
+        id S965466AbeCSSVo (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:21:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030442AbeCSSVo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:44 -0400
+        with ESMTP id S1031117AbeCSSVl (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Manish Jaggi <mjaggi@cavium.com>,
+        David Daney <david.daney@cavium.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 086/241] powerpc/mm/hugetlb: Filter out hugepage size not supported by page table layout
-Date: Mon, 19 Mar 2018 19:05:51 +0100
-Message-Id: <20180319180754.771365592@linuxfoundation.org>
+Subject: [PATCH 4.9 085/241] PCI: Apply Cavium ACS quirk only to CN81xx/CN83xx/CN88xx devices
+Date: Mon, 19 Mar 2018 19:05:50 +0100
+Message-Id: <20180319180754.722150781@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -82,62 +83,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+From: Manish Jaggi <mjaggi@caviumnetworks.com>
 
 
-[ Upstream commit a525108cf1cc14651602d678da38fa627a76a724 ]
+[ Upstream commit b77d537d00d08fcf0bf641cd3491dd7df0ad1475 ]
 
-Without this if firmware reports 1MB page size support we will crash
-trying to use 1MB as hugetlb page size.
+Only apply the Cavium ACS quirk to devices with ID in the range
+0xa000-0xa0ff.  These are the on-chip PCI devices for CN81xx/CN83xx/CN88xx.
 
-echo 300 > /sys/kernel/mm/hugepages/hugepages-1024kB/nr_hugepages
-
-kernel BUG at ./arch/powerpc/include/asm/hugetlb.h:19!
-.....
-....
-[c0000000e2c27b30] c00000000029dae8 .hugetlb_fault+0x638/0xda0
-[c0000000e2c27c30] c00000000026fb64 .handle_mm_fault+0x844/0x1d70
-[c0000000e2c27d70] c00000000004805c .do_page_fault+0x3dc/0x7c0
-[c0000000e2c27e30] c00000000000ac98 handle_page_fault+0x10/0x30
-
-With fix, we don't enable 1MB as hugepage size.
-
-bash-4.2# cd /sys/kernel/mm/hugepages/
-bash-4.2# ls
-hugepages-16384kB  hugepages-16777216kB
-
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: b404bcfbf035 ("PCI: Add ACS quirk for all Cavium devices")
+Reported-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Manish Jaggi <mjaggi@cavium.com>
+Acked-by: David Daney <david.daney@cavium.com>
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/hugetlbpage.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -765,6 +765,24 @@ static int __init add_huge_page_size(uns
- 	if ((mmu_psize = shift_to_mmu_psize(shift)) < 0)
- 		return -EINVAL;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4104,6 +4104,9 @@ static int pci_quirk_cavium_acs(struct p
+ 	 */
+ 	acs_flags &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_SV | PCI_ACS_UF);
  
-+#ifdef CONFIG_PPC_BOOK3S_64
-+	/*
-+	 * We need to make sure that for different page sizes reported by
-+	 * firmware we only add hugetlb support for page sizes that can be
-+	 * supported by linux page table layout.
-+	 * For now we have
-+	 * Radix: 2M
-+	 * Hash: 16M and 16G
-+	 */
-+	if (radix_enabled()) {
-+		if (mmu_psize != MMU_PAGE_2M)
-+			return -EINVAL;
-+	} else {
-+		if (mmu_psize != MMU_PAGE_16M && mmu_psize != MMU_PAGE_16G)
-+			return -EINVAL;
-+	}
-+#endif
++	if (!((dev->device >= 0xa000) && (dev->device <= 0xa0ff)))
++		return -ENOTTY;
 +
- 	BUG_ON(mmu_psize_defs[mmu_psize].shift != shift);
+ 	return acs_flags ? 0 : 1;
+ }
  
- 	/* Return if huge page size has already been setup */
