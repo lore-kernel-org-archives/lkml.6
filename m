@@ -1,105 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971753AbeCSU4W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:56:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S968538AbeCSU4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:56:13 -0400
-Subject: Re: [RFC 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-To: Marc Zyngier <marc.zyngier@arm.com>, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org
-References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
- <1521451220-27754-3-git-send-email-eric.auger@redhat.com>
- <f00d314f-7f16-1785-b0e2-6d4d815514dc@arm.com>
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <93b3cb3b-6ceb-0277-154e-14bfa5b8f0e6@redhat.com>
-Date: Mon, 19 Mar 2018 21:56:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <f00d314f-7f16-1785-b0e2-6d4d815514dc@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S971770AbeCSU40 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:56:26 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62509 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968528AbeCSSIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:08:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
+   d="scan'208";a="39330586"
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: x86@kernel.org
+Cc: luto@kernel.org, ak@linux.intel.com, hpa@zytor.com,
+        markus.t.metzger@intel.com, tony.luck@intel.com,
+        ravi.v.shankar@intel.com, linux-kernel@vger.kernel.org,
+        chang.seok.bae@intel.com
+Subject: [PATCH 09/15] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
+Date: Mon, 19 Mar 2018 10:49:21 -0700
+Message-Id: <1521481767-22113-10-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+From: Andi Kleen <ak@linux.intel.com>
 
-On 19/03/18 15:15, Marc Zyngier wrote:
-> On 19/03/18 09:20, Eric Auger wrote:
->> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
->> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
->> base address and size of a redistributor region
->>
->> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
->> to declare several separate redistributor regions.
->>
->> So the whole redist space does not need to be contiguous anymore.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> ---
->>  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
->> index 9293b45..2c0bedf 100644
->> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
->> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
->> @@ -27,6 +27,18 @@ Groups:
->>        VCPU and all of the redistributor pages are contiguous.
->>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->>        This address needs to be 64K aligned.
->> +
->> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
->> +      The attr field of kvm_device_attr encodes 3 values:
->> +      bits:     | 63   ....  52  |  51   ....   12 |11 - 0
->> +      values:   |     pfns       |       base      | index
->> +      - index encodes the unique redistibutor region index
->> +      - base field encodes bits [51:12] the guest physical base address
->> +        of the first redistributor in the region. There are two 64K pages
->> +        for each VCPU and all of the redistributor pages are contiguous
->> +        within the redistributor region.
-> 
-> Why does base have to include bits [15:12] of the IPA? If it is 64kB
-> aligned (as it should), these bits are guaranteed to be 0. This also
-> avoid having to return -EINVAL in case of alignment problems.
-Agreed. I hesitated but saw addresses were generally described  with
-bits[51:12] in regs such as PROPBASER/PENDBASER and I did not really
-need the spare bits.
-> 
->> +      - pfns encodes the size of the region in 64kB pages.
->> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> 
-> "pfns" a bit of an odd name, and is a bit unnatural. Why don't we
-> instead encode the number of redistributors? You've already imposed that
-> a redistributor has 2 64kB pages,
-I copied the description in KVM_VGIC_V3_ADDR_TYPE_REDIST ;-) I knew that
-for GICv4 the number of 64kB pages per redist is different so I thought
-it was more generic. But I don't have a strong opinion.
- so let's take advantage of this by
-> saving yet another bit.
-> 
-> You could dedicate a couple of these bits as a selector for the ITS
-> version (v3, v4 or whatever comes after that, if ever...). Just make 0
-> the only valid version for the time being.
-OK
+Add C intrinsics and assembler macros for the new RD/WR FS/GS BASE
+instructions.
 
-Thanks
+Very straight forward. Used in followon patch.
 
-Eric
-> 
->>    Errors:
->>      -E2BIG:  Address outside of addressable IPA range
->>      -EINVAL: Incorrectly aligned address
->>
-> 
-> Thanks,
-> 
-> 	M.
-> 
+[luto: rename the variables from fs and gs to fsbase and gsbase and
+ make fsgs.h safe to include on 32-bit kernels.]
+
+v2: Use __always_inline
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+[chang: Replace new instruction macros with GAS-compatible and
+ renaming]
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+---
+ arch/x86/include/asm/fsgsbase.h | 102 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index 29249f6..cad2831 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -18,6 +18,44 @@ int write_task_fsbase(struct task_struct *task, unsigned long fsbase);
+ int write_task_gsbase(struct task_struct *task, unsigned long gsbase);
+ 
+ /*
++ * Must be protected by X86_FEATURE_FSGSBASE check.
++ */
++
++static __always_inline unsigned long rdfsbase(void)
++{
++	unsigned long fsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc0 # rdfsbaseq %%rax"
++			: "=a" (fsbase)
++			:: "memory");
++	return fsbase;
++}
++
++static __always_inline unsigned long rdgsbase(void)
++{
++	unsigned long gsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc8 # rdgsbaseq %%rax;"
++			: "=a" (gsbase)
++			:: "memory");
++	return gsbase;
++}
++
++static __always_inline void wrfsbase(unsigned long fsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd0 # wrfsbaseq %%rax"
++			:: "a" (fsbase)
++			: "memory");
++}
++
++static __always_inline void wrgsbase(unsigned long gsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd8 # wrgsbaseq %%rax;"
++			:: "a" (gsbase)
++			: "memory");
++}
++
++/*
+  * Helper functions for reading/writing FS/GS base
+  */
+ 
+@@ -43,6 +81,70 @@ void  write_shadow_gsbase(unsigned long gsbase);
+ 
+ #endif /* CONFIG_X86_64 */
+ 
++#else /* __ASSEMBLY__ */
++
++#ifdef CONFIG_X86_64
++
++#include <asm/inst.h>
++
++.macro RDFSBASE opd
++	REG_TYPE rdfsbase_opd_type \opd
++	.if rdfsbase_opd_type == REG_TYPE_R64
++	R64_NUM rdfsbase_opd \opd
++	.byte 0xf3
++	PFX_REX rdfsbase_opd 0 W = 1
++	.else
++	R32_NUM rdfsbase_opd \opd
++	.byte 0xf3
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xc0 rdfsbase_opd 0
++.endm
++
++.macro WRFSBASE opd
++	REG_TYPE wrfsbase_opd_type \opd
++	.if wrfsbase_opd_type == REG_TYPE_R64
++	R64_NUM wrfsbase_opd \opd
++	.byte 0xf3
++	PFX_REX wrfsbase_opd 0 W = 1
++	.else
++	R32_NUM wrfsbase_opd \opd
++	.byte 0xf3
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xd0 wrfsbase_opd 0
++.endm
++
++.macro RDGSBASE opd
++	REG_TYPE rdgsbase_opd_type \opd
++	.if rdgsbase_opd_type == REG_TYPE_R64
++	R64_NUM rdgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX rdgsbase_opd 0 W = 1
++	.else
++	R32_NUM rdgsbase_opd \opd
++	.byte 0xf3
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xc0 rdgsbase_opd 1
++.endm
++
++.macro WRGSBASE opd
++	REG_TYPE wrgsbase_opd_type \opd
++	.if wrgsbase_opd_type == REG_TYPE_R64
++	R64_NUM wrgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX wrgsbase_opd 0 W = 1
++	.else
++	R32_NUM wrgsbase_opd \opd
++	.byte 0xf3
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xd0 wrgsbase_opd 1
++.endm
++
++#endif /* CONFIG_X86_64 */
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* _ASM_FSGSBASE_H */
+-- 
+2.7.4
