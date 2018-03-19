@@ -1,37 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtYJUhnrPH+fgF668KIbH/kWD89D+hcgeLRRFoMisXQSMKs5eKBBZgNYKxtnLZj2pW4T1qO
-ARC-Seal: i=1; a=rsa-sha256; t=1521483780; cv=none;
-        d=google.com; s=arc-20160816;
-        b=BH/qcNYBPjuQg7iJGxi8d8HTJKegkqf+TEE0R0KRv39oYicyZWFP+TOmFnSa6AtC/j
-         ZsBalV4CVbS/OZq4JvtDLgdUwPKIjlT5vs9G1TKDUzb7hm7X7ncmAoSKBDBrtS3d2W47
-         zA4IT0DfsVloiL0P0J/rM8h6e8haQiq6RYDCcCHx4HFs3hBgPbrTJQ7MskY0uO4bs7AD
-         hv4NTkv6Rab/KMSRbzXSLJxdfattlNGRWoUh/5oLxFiVo2VbjghwXIscGKheZinP17qS
-         y+3PMa+KdT2kwxbPHaLP3TcHONKNTTQ3d33ROjb1tG5D53Om6pdnaWVMhhaV0Ma4WESL
-         bzQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=gL21BlfTNmFLf9NC9gTEMPuwukS0BnRx1L7KJn9XWbM=;
-        b=RSF+gOgVkqHjz/FjkUT2yHfKHogo/J7seKhXro2afN4gWyAFMzrIQj0sm7UNWHYnvw
-         JJyp3IUIcCQrlsCqBWf0NxrcSzxwU8dm+OYzOJj7mKJLXj/pNN8ftEXcAYs1PTpeK+fE
-         YeoOIWe4Qfwp1bxP8QLbGcD4CO2FPgyR1Vg+LarAKZchZlToXDWpvmMjfbiR1W7f8B8T
-         rZPYx6AGUQCrPp2NXLoBrnPP++4nE8P3KSQr07xTwiKuYh1bMJUj9sFdUqaLJ82Wc7IL
-         IXHPFzHeIIBBYEe34nOpUFFeBPoIdelr9EN7SkJJ2Q02n4H1OGp+GopHpXEd9ECmGT2B
-         YAzQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521483778-2-14078620781157007973
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483777; b=DUdz6Q8LBqIUHZcNOvjRuG568UCkURkZJA0fQIEit/WOxS3
+    mX1lY0TmJC65VJmIPp2JZP8868F28nnj9Li2AyizmPAOkkTq8mV/X2BSlbq9kfW+
+    7qTsGNu4frqSj9+MnCryrAwJOSR9TuuhLnPDcW/IFc4MxPLN4hUkPy4myYj2ENKV
+    FJA4kjQS2U85X2viFIcoFLs1UuraF2SVRh40HE3H1DMhlE2T8tQ1jmh9rRa2Tl0H
+    V8RJVd6uLA5+dxTu2SyksqGH451sfYn4We9zYvkK4zdzjtnzPem4NQvyeQ+9iZIF
+    Ak7KMrhdZWOUCKekPZwaosAjztFtqJxhCROwQHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483777; bh=gfm1d0RFPSPms9YiXoURo1hjbF
+    VYpdc4o6CjfhOF3UE=; b=egCZ+07vutQJW+EuEfdhQjC5hZVEKgaFfLSYtWo6l6
+    tXK/bSBTjUb4uOQf2ksdgYwDipZMCjeBs4ygUG4QRd/ElZgNbcROd0ipvDJklmH3
+    B/ANqDl/FxS+Q17cepF2dkJCw4OICO0BW2PD+eHVvWLG98NUloAMaEHeUgK8tAO9
+    5haECipwWYSs05iDpdUk6hK7DEbBtu/yH0EQLU1gnxcyNWzZa17n3g3eqXSReotl
+    5056POnhezkWTAMejV52B9bBrPB7WVe3PAW5HlfMDRppCTMw1ihD0jjnVsJNZUD6
+    oQ/fHGKAvrAMGqCCWWhK3Yk3Dm6lyh+I2jeZJWZ47rxg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjedtleenucevlhhushhtvghrufhiiigvpeef;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjedtleenucevlhhushhtvghrufhiiigvpeef;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S969441AbeCSSWy (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:22:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48700 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967952AbeCSSWx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:22:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Yuval Mintz <Yuval.Mintz@cavium.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 115/241] qed: Correct MSI-x for storage
-Date: Mon, 19 Mar 2018 19:06:20 +0100
-Message-Id: <20180319180755.968501050@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Turnbull <phil.turnbull@oracle.com>,
+        Krishneil Singh <krishneil.k.singh@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 112/241] fm10k: correctly check if interface is removed
+Date: Mon, 19 Mar 2018 19:06:17 +0100
+Message-Id: <20180319180755.847150304@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -39,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391376451817393?=
-X-GMAIL-MSGID: =?utf-8?q?1595391376451817393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +82,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
+From: Phil Turnbull <phil.turnbull@oracle.com>
 
 
-[ Upstream commit 2f78227874754b1e10cd348fd6e7693b0dabb3f6 ]
+[ Upstream commit 540fca35e38d15777b310f450f63f056e63039f5 ]
 
-When qedr is enabled, qed would try dividing the msi-x vectors between
-L2 and RoCE, starting with L2 and providing it with sufficient vectors
-for its queues.
+FM10K_REMOVED expects a hardware address, not a 'struct fm10k_hw'.
 
-Problem is qed would also do that for storage partitions, and as those
-don't need queues it would lead qed to award those partitions with 0
-msi-x vectors, causing them to believe theye're using INTa and
-preventing them from operating.
-
-Fixes: 51ff17251c9c ("qed: Add support for RoCE hw init")
-Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5cb8db4a4cbc ("fm10k: Add support for VF")
+Signed-off-by: Phil Turnbull <phil.turnbull@oracle.com>
+Tested-by: Krishneil Singh <krishneil.k.singh@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -711,7 +711,8 @@ static int qed_slowpath_setup_int(struct
- 	cdev->int_params.fp_msix_cnt = cdev->int_params.out.num_vectors -
- 				       cdev->num_hwfns;
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c
+@@ -942,7 +942,7 @@ static void fm10k_self_test(struct net_d
  
--	if (!IS_ENABLED(CONFIG_QED_RDMA))
-+	if (!IS_ENABLED(CONFIG_QED_RDMA) ||
-+	    QED_LEADING_HWFN(cdev)->hw_info.personality != QED_PCI_ETH_ROCE)
- 		return 0;
+ 	memset(data, 0, sizeof(*data) * FM10K_TEST_LEN);
  
- 	for_each_hwfn(cdev, i)
+-	if (FM10K_REMOVED(hw)) {
++	if (FM10K_REMOVED(hw->hw_addr)) {
+ 		netif_err(interface, drv, dev,
+ 			  "Interface removed - test blocked\n");
+ 		eth_test->flags |= ETH_TEST_FL_FAILED;
