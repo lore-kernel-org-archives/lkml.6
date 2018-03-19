@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755444AbeCSMwd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 08:52:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57984 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754892AbeCSMw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 08:52:29 -0400
-Date: Mon, 19 Mar 2018 13:52:27 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
-        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR interface
- to use in-band negotiation
-Message-ID: <20180319125227.GI4519@kwain>
-References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
- <20180316103351.16616-3-antoine.tenart@bootlin.com>
- <20180316155307.GQ9418@n2100.armlinux.org.uk>
- <20180319085252.GF4519@kwain>
- <20180319111205.GB2743@n2100.armlinux.org.uk>
+        id S932952AbeCSM47 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 08:56:59 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:60516 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932831AbeCSM44 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 08:56:56 -0400
+Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
+To: Paolo Abeni <pabeni@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Dave Taht <dave.taht@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>
+References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
+ <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
+ <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
+ <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
+ <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
+ <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
+ <1521462750.3059.12.camel@redhat.com>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <5468f8eb-17b6-9000-ab4d-a2c67ef35e4b@theobroma-systems.com>
+Date: Mon, 19 Mar 2018 13:56:47 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180319111205.GB2743@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1521462750.3059.12.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
+On 19.03.18 13:32, Paolo Abeni wrote:
+> Is not clear to me if you can reproduce the bug with the vanilla
+> kernel, or if  you need some out-of-tree nic driver. Can you please
+> clarify which NIC/driver are you using?
 
-On Mon, Mar 19, 2018 at 11:12:05AM +0000, Russell King - ARM Linux wrote:
-> On Mon, Mar 19, 2018 at 09:52:52AM +0100, Antoine Tenart wrote:
-> > 
-> > Anyway, the reason to use in-band negotiation was also to avoid using
-> > fixed-link. It would work but always report the link is up, which for
-> > the user isn't a great experience as we have a way to detect this.
-> > 
-> > What would you suggest to achieve this in a reasonable way?
-> 
-> The intention of this test in phylink_of_phy_connect() is to avoid
-> failing when there is no requirement for a PHY to be present (such as
-> a fixed link, or an 802.3z link.)  However, with 10G PHYs such as the
-> 3310, we need the PHY so we can read the speed from it, and so know
-> whether to downgrade the MAC to SGMII mode, or having downgraded the
-> MAC, upgrade it back to 10G mode when the PHY switches to 10G.
-> 
-> I'm guessing that you're wanting this for the DB boards, but I don't
-> see why.  Do they not have PHYs?
+Yes I reproduced it with a vanilla kernel. I use two off-the-shelf USB 
+NICs, lsusb says:
 
-You guessed right, that's exactly my use case. The DB boards (7k and 8k)
-have 10G interfaces without PHYs. I could describe them as fixed-link
-(it works), but it would be better not to require a PHY in
-phylink_of_phy_connect() for such interfaces.
+   Bus 005 Device 013: ID 0b95:7720 ASIX Electronics Corp. AX88772
+   Bus 005 Device 014: ID 0b95:772b ASIX Electronics Corp. AX88772B
 
-That's why I used in-band AN, which is wrong, but we still probably
-need to add a check to allow such setups. I'm all ears for suggestions
-as I do not have the full picture of all the supported modes and their
-requirements.
+Photo of the setup:
+https://github.com/jakob-tsd/pfifo_stress/blob/master/usb_nics.jpg
 
-Thanks!
-Antoine
-
--- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+Jakob
