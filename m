@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELue2E2zCqwAaXqk92Uw01P7orAqN0uIKM78CUryFN1dNPomT0KcqnFPiog3cCnHWTQPqxUc
-ARC-Seal: i=1; a=rsa-sha256; t=1521484263; cv=none;
+X-Google-Smtp-Source: AG47ELsza0qyKAmj1fYCshtRkgrTALSeJEU1N1nqh8IarSm5bBEWn7YHAHOM6hI4bRudpn5RlKQ2
+ARC-Seal: i=1; a=rsa-sha256; t=1521484260; cv=none;
         d=google.com; s=arc-20160816;
-        b=mfuoayekYJW//Q3wb9xEISqZ8Zfqrx7ubAIQTOlrNpO8B5nf29ipbw56W3jzq7Ef+h
-         RLXfb9JQA3ISSW4MylKjDzRgl9Slc8JDr/96MJMTwBfyO276e5vpCytlMO626RKg9WcF
-         mPQSI3PmXZeKkksdW3W6xRbcao53o5T764uYGmS45S+EjWAo9QTfnrtwyBUmybOzIkMo
-         958jfgxqu553lLIFwirrBhrzY+td2mX3eXz9QFSwH0XT18uR+CjAtZRc/XofWgwrC8t/
-         GOQ1MTFGtvZQw7blzhJN06kaSGJPpJ8lBHC4jH+SWXqBs5ALMLpDUIE01RxRrCHFI/60
-         C1OQ==
+        b=FkRcKuWg1qjXb3LFV6tyu7hoFT0KSwoU6sK2eojTfDZ5lEq+DcZ+6xcP+Ez9FwEMT2
+         T0eYh4zl+SbnmOppPiJ3F/TFbbrBk55QMhxyJ6jiWXY+ekWW9y+Xah1NpafLpWJXANyU
+         Rz5za/nIs/N2VOTC94tWdIK3ZUZCRcORijVJpVaQVOkGcYq9uC1Vm66nG9eWr2iodF/g
+         I/SEvETPURIpWxONuFCElrh92q92wte8ouul3+R9cs5mqQebZB4rFdCtzRixybyop41Z
+         Gk/WHWq9+eInduaVymP4SwvvIUeoKENy7C62dSazy9f+LRJoHPZwHfRrG1GILEAA4M/E
+         7CMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ECkCjllXw0v+P0YRRLyaoHXo7BKGIu9JsuuJ7YRViWk=;
-        b=aMVKX2BJrPNXkMceXB7u0f1DbkRW44mcNKDtF+qalm6cy6OLNfytpUADCMg9WIp9Ub
-         cGOHYumNhJ1QSr55Hj2WlqxWHlhmQJAec3T/2ZQWfMMiX0+xEO+VUmTm00L/0GNzx98L
-         JtS6bumPDukGYZCqCP+USF8JTGd62xpOxqjpDwjr5jUVbmiBX1gbQseD6y/1sOGfBe65
-         idCKU0kVlmNm02b8FDLaYm4FChAZvAK+4j/CqqkFS98h4z77Hda8zEI/Ft68WBYYW6E/
-         wC3WPzZAZJbj7NefHvAcR45G/5mXy1gT6IkDHGmy2ByyqnCKUi46ihdrAAPEOeKir25d
-         yVig==
+        bh=lfMcxfFnbaxQQ6XQn1r8DRLU2wgB1Jz24oqWry0WEKA=;
+        b=Mehl9yxS3QQbGiiiI3H4yT+LHEisJSO6lEuTj9zW9lJ6xTfm/IGXXw90QeemGj3ZlC
+         D8reoOYyQ5EWho6puiTBPyxW0GUDvJb10TWs0Z9FTSAsqFIIwA4RT4CmOWkJvUs+VTng
+         E+/+p0EEF9DZgHnthWS13cvNwUzvolyDMUmgN5t/S7oTuboT/wuXVLEUpSerht3Wp1Jd
+         hgeBhPDa4GkfpBHSfbzx4hTFmpbaiPpLwDae0+H8ld4Bnhe4EPSde+LO3W5fbNc5Qtwh
+         AhfaXLnJgl5tkaYA7CwBUdd2tn9Rz+4lXEnaAIptwtm7PDNXIkr+sf8rvuQ7U9PYtrtY
+         ELtQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 30/41] btrfs: Fix NULL pointer exception in find_bio_stripe
-Date: Mon, 19 Mar 2018 19:08:30 +0100
-Message-Id: <20180319180734.205001516@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 29/41] irqchip/gic-v3-its: Ensure nr_ites >= nr_lpis
+Date: Mon, 19 Mar 2018 19:08:29 +0100
+Message-Id: <20180319180734.138841577@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391882677400134?=
-X-GMAIL-MSGID: =?utf-8?q?1595391882677400134?=
+X-GMAIL-THRID: =?utf-8?q?1595391018593755377?=
+X-GMAIL-MSGID: =?utf-8?q?1595391879501654589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,84 +49,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 047fdea6341966a0898e3b16c51f54d4f5ba030a upstream.
+commit 4f2c7583e33eb08dc09dd2e25574b80175ba7d93 upstream.
 
-On detaching of a disk which is a part of a RAID6 filesystem, the
-following kernel OOPS may happen:
+When struct its_device instances are created, the nr_ites member
+will be set to a power of 2 that equals or exceeds the requested
+number of MSIs passed to the msi_prepare() callback. At the same
+time, the LPI map is allocated to be some multiple of 32 in size,
+where the allocated size may be less than the requested size
+depending on whether a contiguous range of sufficient size is
+available in the global LPI bitmap.
 
-[63122.680461] BTRFS error (device sdo): bdev /dev/sdo errs: wr 0, rd 0, flush 1, corrupt 0, gen 0
-[63122.719584] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
-[63122.719587] BTRFS error (device sdo): bdev /dev/sdo errs: wr 1, rd 0, flush 1, corrupt 0, gen 0
-[63122.803516] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
-[63122.803519] BTRFS error (device sdo): bdev /dev/sdo errs: wr 2, rd 0, flush 1, corrupt 0, gen 0
-[63122.863902] BTRFS critical (device sdo): fatal error on device /dev/sdo
-[63122.935338] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-[63122.946554] IP: fail_bio_stripe+0x58/0xa0 [btrfs]
-[63122.958185] PGD 9ecda067 P4D 9ecda067 PUD b2b37067 PMD 0
-[63122.971202] Oops: 0000 [#1] SMP
-[63123.006760] CPU: 0 PID: 3979 Comm: kworker/u8:9 Tainted: G W 4.14.2-16-scst34x+ #8
-[63123.007091] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[63123.007402] Workqueue: btrfs-worker btrfs_worker_helper [btrfs]
-[63123.007595] task: ffff880036ea4040 task.stack: ffffc90006384000
-[63123.007796] RIP: 0010:fail_bio_stripe+0x58/0xa0 [btrfs]
-[63123.007968] RSP: 0018:ffffc90006387ad8 EFLAGS: 00010287
-[63123.008140] RAX: 0000000000000002 RBX: ffff88004beaa0b8 RCX: ffff8800b2bd5690
-[63123.008359] RDX: 0000000000000000 RSI: ffff88007bb43500 RDI: ffff88004beaa000
-[63123.008621] RBP: ffffc90006387ae8 R08: 0000000099100000 R09: ffff8800b2bd5600
-[63123.008840] R10: 0000000000000004 R11: 0000000000010000 R12: ffff88007bb43500
-[63123.009059] R13: 00000000fffffffb R14: ffff880036fc5180 R15: 0000000000000004
-[63123.009278] FS: 0000000000000000(0000) GS:ffff8800b7000000(0000) knlGS:0000000000000000
-[63123.009564] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[63123.009748] CR2: 0000000000000080 CR3: 00000000b0866000 CR4: 00000000000406f0
-[63123.009969] Call Trace:
-[63123.010085] raid_write_end_io+0x7e/0x80 [btrfs]
-[63123.010251] bio_endio+0xa1/0x120
-[63123.010378] generic_make_request+0x218/0x270
-[63123.010921] submit_bio+0x66/0x130
-[63123.011073] finish_rmw+0x3fc/0x5b0 [btrfs]
-[63123.011245] full_stripe_write+0x96/0xc0 [btrfs]
-[63123.011428] raid56_parity_write+0x117/0x170 [btrfs]
-[63123.011604] btrfs_map_bio+0x2ec/0x320 [btrfs]
-[63123.011759] ? ___cache_free+0x1c5/0x300
-[63123.011909] __btrfs_submit_bio_done+0x26/0x50 [btrfs]
-[63123.012087] run_one_async_done+0x9c/0xc0 [btrfs]
-[63123.012257] normal_work_helper+0x19e/0x300 [btrfs]
-[63123.012429] btrfs_worker_helper+0x12/0x20 [btrfs]
-[63123.012656] process_one_work+0x14d/0x350
-[63123.012888] worker_thread+0x4d/0x3a0
-[63123.013026] ? _raw_spin_unlock_irqrestore+0x15/0x20
-[63123.013192] kthread+0x109/0x140
-[63123.013315] ? process_scheduled_works+0x40/0x40
-[63123.013472] ? kthread_stop+0x110/0x110
-[63123.013610] ret_from_fork+0x25/0x30
-[63123.014469] RIP: fail_bio_stripe+0x58/0xa0 [btrfs] RSP: ffffc90006387ad8
-[63123.014678] CR2: 0000000000000080
-[63123.016590] ---[ end trace a295ea7259c17880 ]—
+This may result in the situation where the nr_ites < nr_lpis, and
+since nr_ites is what we program into the hardware when we map the
+device, the additional LPIs will be non-functional.
 
-This is reproducible in a cycle, where a series of writes is followed by
-SCSI device delete command. The test may take up to few minutes.
+For bog standard hardware, this does not really matter. However,
+in cases where ITS device IDs are shared between different PCIe
+devices, we may end up allocating these additional LPIs without
+taking into account that they don't actually work.
 
-Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-[ no signed-off-by provided ]
-Author: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+So let's make nr_ites at least 32. This ensures that all allocated
+LPIs are 'live', and that its_alloc_device_irq() will fail when
+attempts are made to allocate MSIs beyond what was allocated in
+the first place.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[maz: updated comment]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/raid56.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/irqchip/irq-gic-v3-its.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -1348,6 +1348,7 @@ static int find_bio_stripe(struct btrfs_
- 		stripe_start = stripe->physical;
- 		if (physical >= stripe_start &&
- 		    physical < stripe_start + rbio->stripe_len &&
-+		    stripe->dev->bdev &&
- 		    bio->bi_disk == stripe->dev->bdev->bd_disk &&
- 		    bio->bi_partno == stripe->dev->bdev->bd_partno) {
- 			return i;
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1310,7 +1310,7 @@ static struct irq_chip its_irq_chip = {
+  * This gives us (((1UL << id_bits) - 8192) >> 5) possible allocations.
+  */
+ #define IRQS_PER_CHUNK_SHIFT	5
+-#define IRQS_PER_CHUNK		(1 << IRQS_PER_CHUNK_SHIFT)
++#define IRQS_PER_CHUNK		(1UL << IRQS_PER_CHUNK_SHIFT)
+ #define ITS_MAX_LPI_NRBITS	16 /* 64K LPIs */
+ 
+ static unsigned long *lpi_bitmap;
+@@ -2026,11 +2026,10 @@ static struct its_device *its_create_dev
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	/*
+-	 * At least one bit of EventID is being used, hence a minimum
+-	 * of two entries. No, the architecture doesn't let you
+-	 * express an ITT with a single entry.
++	 * We allocate at least one chunk worth of LPIs bet device,
++	 * and thus that many ITEs. The device may require less though.
+ 	 */
+-	nr_ites = max(2UL, roundup_pow_of_two(nvecs));
++	nr_ites = max(IRQS_PER_CHUNK, roundup_pow_of_two(nvecs));
+ 	sz = nr_ites * its->ite_size;
+ 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+ 	itt = kzalloc(sz, GFP_KERNEL);
