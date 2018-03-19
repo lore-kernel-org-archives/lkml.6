@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvUxQrnlhCqkOgkbtG8WP3jHjMlJ9jr/aJier5OpqM4L+WZgm/np4rD/QJJ5wWuCIsvM8/a
-ARC-Seal: i=1; a=rsa-sha256; t=1521483261; cv=none;
+X-Google-Smtp-Source: AG47ELvnnDG8EjDuX+FgtD/D5coiVbrHNKBJhu7Loq0rdWW6sgPpbSKV7tdNL3NfzmVTY2dLnYrL
+ARC-Seal: i=1; a=rsa-sha256; t=1521483258; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q0w5ai2JHMhqbq9wRJJgUa6Xm/LO02dGzxRmDjaBJJToSaMDKefSqRS9zQxLn0i3Fv
-         yemntbCcwBRSqYwutFYFHv9D+ObwilqHCK2OasqmdcjU63O7s3YcqGZzQ1tUkfq813iY
-         ff5mdg6iT2+IlEtfHsClyzgClcbDWJusgK8UsfouYQQYGEzF2ODL7UKQVHl6AG+9bhgS
-         ww6NsncQaJCGxGaP0LBTEIcQYzbk0Tq1sEVK0uzRXu0f387FxJOrSKlWU4gnwka68q3H
-         I/bVvHpMOgsZ9p0tDMK59snmhCf5DBIuwbLvFQIj5kECybQRuN/2Mt1LQgTDGJLuoXD8
-         Q1Pw==
+        b=n8swvBf99/bJbl5diQp9olBds/xxxVmAYPKeeJEW7rf8WMSGMko0nlZoGX4Ev+g5It
+         t6xrxAt1sLAJWqEV0NPS24YMTSTUIJ2xmEEhm+THgrOosfA35bA1thQ3IFMlheHNUQOe
+         Ensrd9NRiWJlQOMK/s3e+Bg8HVW1xfThnL10derfLZpZ4Rq8VmFLChh6U7MESTVKYeoT
+         XKOFo6w776yOD2f4vCbXbA8COHzU3bz20FutoNMEXWocm5/R4asy/7gtCK4yRVHU/AnK
+         TeEiWXsl9v7OA/VmiI4wi31hXAyBm/vTkW123SR0nBCFRgfDRH/eLfe8PjZsas8y2r6F
+         Z10g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Jh46KTMCAJeOJq/n6EhoObJYCICHGLgkX9ZFQYRmx48=;
-        b=r5RsA4p426EXBOZ8fScJFRBa9GHPfyIWIFloxsvIQwOhk82NI0qx69V/MjEnDuQsR8
-         cIl43gzhs4n11AsUyF0KOrX7jCc7St8dkqT4xE7QamHyVtOxFNPn31+mEB7COyADLsGF
-         A3pk5aC/iTFcMPeY/J/+gERIz/US8WkbxsmQsMLKWjbjUiJkYQG0+8F871JazTUXszon
-         3D2XuSlrWJVamy3R00X5qe+cYWnDOzG+hQZMFuWOxdO2AfOP5QsFSeph75ru8tH4y74K
-         9iNheL9wIlV+Alp1l++uIQYw0kza7hBdCXLFk9kh09he/WYIoa0AlxTSqE04x9k8dHOG
-         NbLA==
+        bh=5UNdbxpeW/5c87aX9lYDFPAGGSgzMRNoHRwfeOgC8DE=;
+        b=CHtFkuVtXdPAkzEpPk/KfLI4ux1Kgh58BzmbVsuxrgztavhICQKfXR2DBzOSHgSNpA
+         KLCO9gLPS5dNy0k/B57D5o4hIYNBTTbGSwvrH9Ozl1aXtF/6oJs9IEu3/obZ0cr8yC/8
+         5/ZVWFkWelHSsZAfQSdbAvjOMnkatclKSHKUZlSe630k9efW0tdoqYW44qioouXGp4Yv
+         j8PXtX1AflAKwJ0LRtBrEYbhKwwAbGxkxa1pP9JWuhU5niSPlWFLwgmqmEbqFUB9pyxa
+         NQbo4A9vWGoybgo831J1s9Gl5bKLXMH36t6Ydi/mcPPMB+IVpZEoPYWgugd0LQpVlACX
+         mSNw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liam Beguin <lbeguin@tycoint.com>,
-	Sylvain Lemieux <slemieux@tycoint.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Nate Watterson <nwatters@codeaurora.org>,
+	Joerg Roedel <jroedel@suse.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 058/134] video: ARM CLCD: fix dma allocation size
-Date: Mon, 19 Mar 2018 19:05:41 +0100
-Message-Id: <20180319171857.710685292@linuxfoundation.org>
+Subject: [PATCH 4.4 057/134] iommu/iova: Fix underflow bug in __alloc_and_insert_iova_range
+Date: Mon, 19 Mar 2018 19:05:40 +0100
+Message-Id: <20180319171857.581263008@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390565607100523?=
-X-GMAIL-MSGID: =?utf-8?q?1595390832049216457?=
+X-GMAIL-THRID: =?utf-8?q?1595390563257454216?=
+X-GMAIL-MSGID: =?utf-8?q?1595390829436000959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,44 +50,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liam Beguin <lbeguin@tycoint.com>
+From: Nate Watterson <nwatters@codeaurora.org>
 
 
-[ Upstream commit 9a1c779e6b06855e41099caa6f15b3b584dfa88c ]
+[ Upstream commit 5016bdb796b3726eec043ca0ce3be981f712c756 ]
 
-This patch forces the frambuffer size to be aligned on kernel pages.
+Normally, calling alloc_iova() using an iova_domain with insufficient
+pfns remaining between start_pfn and dma_limit will fail and return a
+NULL pointer. Unexpectedly, if such a "full" iova_domain contains an
+iova with pfn_lo == 0, the alloc_iova() call will instead succeed and
+return an iova containing invalid pfns.
 
-During the board startup, the splash screed did appear;
-the "ts_test" program or our application were not able to start.
+This is caused by an underflow bug in __alloc_and_insert_iova_range()
+that occurs after walking the "full" iova tree when the search ends
+at the iova with pfn_lo == 0 and limit_pfn is then adjusted to be just
+below that (-1). This (now huge) limit_pfn gives the impression that a
+vast amount of space is available between it and start_pfn and thus
+a new iova is allocated with the invalid pfn_hi value, 0xFFF.... .
 
-The following error message was reported:
-error: failed to map framebuffer device to memory.
-LinuxFB: driver cannot connect
+To rememdy this, a check is introduced to ensure that adjustments to
+limit_pfn will not underflow.
 
-The issue was discovered, on the LPC32xx platform, during the migration
-of the LCD definition from the board file to the device tree.
+This issue has been observed in the wild, and is easily reproduced with
+the following sample code.
 
-Signed-off-by: Liam Beguin <lbeguin@tycoint.com>
-Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+	struct iova_domain *iovad = kzalloc(sizeof(*iovad), GFP_KERNEL);
+	struct iova *rsvd_iova, *good_iova, *bad_iova;
+	unsigned long limit_pfn = 3;
+	unsigned long start_pfn = 1;
+	unsigned long va_size = 2;
+
+	init_iova_domain(iovad, SZ_4K, start_pfn, limit_pfn);
+	rsvd_iova = reserve_iova(iovad, 0, 0);
+	good_iova = alloc_iova(iovad, va_size, limit_pfn, true);
+	bad_iova = alloc_iova(iovad, va_size, limit_pfn, true);
+
+Prior to the patch, this yielded:
+	*rsvd_iova == {0, 0}   /* Expected */
+	*good_iova == {2, 3}   /* Expected */
+	*bad_iova  == {-2, -1} /* Oh no... */
+
+After the patch, bad_iova is NULL as expected since inadequate
+space remains between limit_pfn and start_pfn after allocating
+good_iova.
+
+Signed-off-by: Nate Watterson <nwatters@codeaurora.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/amba-clcd.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/iova.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/amba-clcd.c
-+++ b/drivers/video/fbdev/amba-clcd.c
-@@ -759,8 +759,8 @@ static int clcdfb_of_dma_setup(struct cl
- 	if (err)
- 		return err;
- 
--	framesize = fb->panel->mode.xres * fb->panel->mode.yres *
--			fb->panel->bpp / 8;
-+	framesize = PAGE_ALIGN(fb->panel->mode.xres * fb->panel->mode.yres *
-+			fb->panel->bpp / 8);
- 	fb->fb.screen_base = dma_alloc_coherent(&fb->dev->dev, framesize,
- 			&dma, GFP_KERNEL);
- 	if (!fb->fb.screen_base)
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -126,7 +126,7 @@ static int __alloc_and_insert_iova_range
+ 				break;	/* found a free slot */
+ 		}
+ adjust_limit_pfn:
+-		limit_pfn = curr_iova->pfn_lo - 1;
++		limit_pfn = curr_iova->pfn_lo ? (curr_iova->pfn_lo - 1) : 0;
+ move_left:
+ 		prev = curr;
+ 		curr = rb_prev(curr);
