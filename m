@@ -1,78 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970923AbeCSTvk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:51:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56934 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969466AbeCSSTn (ORCPT
+        id S969435AbeCSSTh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:19:37 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34736 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969380AbeCSSTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:19:43 -0400
-Date: Mon, 19 Mar 2018 11:19:30 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
-Message-ID: <20180319181930.GH1757@magnolia>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180319173345.GF1757@magnolia>
- <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
+        Mon, 19 Mar 2018 14:19:18 -0400
+X-Google-Smtp-Source: AG47ELsdaGmg9Z1pTb4h4CFnrm4pmdkTBukXakivPhL+DUXcu66BJMZprRaY/Uny1PjJZcy7fEWfHNWEt50InBGyn88=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=996
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803190149
+In-Reply-To: <20180319152936.GI6955@suse.cz>
+References: <001a11427716098c150567bcd12f@google.com> <20180319161406-mutt-send-email-mst@kernel.org>
+ <20180319152936.GI6955@suse.cz>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 19 Mar 2018 19:18:56 +0100
+Message-ID: <CACT4Y+baZvirMR6oRDy7YRpAqHgqCtuLFCQ9a4Ku2fEjnGLA4g@mail.gmail.com>
+Subject: Re: get_user_pages returning 0 (was Re: kernel BUG at drivers/vhost/vhost.c:LINE!)
+To: dsterba@suse.cz, "Michael S. Tsirkin" <mst@redhat.com>,
+        syzbot <syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com>,
+        Michel Lespinasse <walken@google.com>, syzkaller-bugs@googlegroups.com,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 10:57:55AM -0700, Dan Williams wrote:
-> On Mon, Mar 19, 2018 at 10:33 AM, Darrick J. Wong
-> <darrick.wong@oracle.com> wrote:
-> > On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
-> >> In preparation for adding coordination between truncate operations and
-> >> busy dax-pages, extend xfs_break_layouts() to assume it must be called
-> >> with the mmap lock held. This locking scheme will be required for
-> >> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
-> >> pages mapped into the file's address space).
-> >
-> > If I'm reading this right, you've added a requirement (for xfs anyway)
-> > that we have to have grabbed MMAPLOCK_EXCL before calling break_layout()
-> > so that the layout breaking process will block until active dmas have
-> > finished.
-> >
-> > In 4.16 we added xfs_iolock_two_inodes_and_break_layout (in
-> > xfs_reflink.c) to break pnfs leases for files that are about to be
-> > reflinked (since pnfs and reflink aren't compatible either).  I think
-> > that function will have to be adapted to take the appropriate mmap locks
-> > too -- definitely the exclusive mmap lock for the destination file
-> > because we anticipate punching out blocks.  I'm not sure about the
-> > source file; I think taking the shared mmap lock is fine for that?
-> 
-> I don't see anything to adapt with respect to mmap locks since reflink
-> and dax are mutually exclusive. The new lock coordination and layout
-> breaking in xfs_break_dax_layouts() only applies to dax vs truncate,
-> so xfs_iolock_two_inodes_and_break_layout() looks ok to me as is.
+On Mon, Mar 19, 2018 at 4:29 PM, David Sterba <dsterba@suse.cz> wrote:
+> On Mon, Mar 19, 2018 at 05:09:28PM +0200,  Michael S. Tsirkin  wrote:
+>> Hello!
+>> The following code triggered by syzbot
+>>
+>>         r = get_user_pages_fast(log, 1, 1, &page);
+>>         if (r < 0)
+>>                 return r;
+>>         BUG_ON(r != 1);
+>>
+>> Just looking at get_user_pages_fast's documentation this seems
+>> impossible - it is supposed to only ever return # of pages
+>> pinned or errno.
+>>
+>> However, poking at code, I see at least one path that might cause this:
+>>
+>>                         ret = faultin_page(tsk, vma, start, &foll_flags,
+>>                                         nonblocking);
+>>                         switch (ret) {
+>>                         case 0:
+>>                                 goto retry;
+>>                         case -EFAULT:
+>>                         case -ENOMEM:
+>>                         case -EHWPOISON:
+>>                                 return i ? i : ret;
+>>                         case -EBUSY:
+>>                                 return i;
+>>
+>> which originally comes from:
+>>
+>> commit 53a7706d5ed8f1a53ba062b318773160cc476dde
+>> Author: Michel Lespinasse <walken@google.com>
+>> Date:   Thu Jan 13 15:46:14 2011 -0800
+>>
+>>     mlock: do not hold mmap_sem for extended periods of time
+>>
+>>     __get_user_pages gets a new 'nonblocking' parameter to signal that the
+>>     caller is prepared to re-acquire mmap_sem and retry the operation if
+>>     needed.  This is used to split off long operations if they are going to
+>>     block on a disk transfer, or when we detect contention on the mmap_sem.
+>>
+>>     [akpm@linux-foundation.org: remove ref to rwsem_is_contended()]
+>>     Signed-off-by: Michel Lespinasse <walken@google.com>
+>>     Cc: Hugh Dickins <hughd@google.com>
+>>     Cc: Rik van Riel <riel@redhat.com>
+>>     Cc: Peter Zijlstra <peterz@infradead.org>
+>>     Cc: Nick Piggin <npiggin@kernel.dk>
+>>     Cc: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+>>     Cc: Ingo Molnar <mingo@elte.hu>
+>>     Cc: "H. Peter Anvin" <hpa@zytor.com>
+>>     Cc: Thomas Gleixner <tglx@linutronix.de>
+>>     Cc: David Howells <dhowells@redhat.com>
+>>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+>>
+>> I started looking into this, if anyone has any feedback meanwhile,
+>> that would be appreciated.
+>>
+>> In particular I don't really see why would this trigger
+>> on commit 8f5fd927c3a7576d57248a2d7a0861c3f2795973:
+>>
+>> Merge: 8757ae2 093e037
+>> Author: Linus Torvalds <torvalds@linux-foundation.org>
+>> Date:   Fri Mar 16 13:37:42 2018 -0700
+>>
+>>     Merge tag 'for-4.16-rc5-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+>>
+>> is btrfs used on these systems?
+>
+> There were 3 patches pulled by that tag, none of them is even remotely
+> related to the reported bug, AFAICS. If there's some impact, it must be
+> indirect, obvious bugs like NULL pointer would exhibit in a different
+> way and leave at least some trace in the stacks.
 
-I was aiming for DAX + reflink someday working together.  :)
-
-As far as that goes, I think the only thing we really have to do is
-figure out how to make iomap_begin do the cow operation before letting
-userspace write to (or MAP_SYNC a writable region) pmem, right?
-
---D
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+That is just a commit on which the bug was hit. It's provided so that
+developers can make sense out of line numbers and check if the tree
+includes/not includes a particular commit, etc. It's not that that
+commit introduced the bug.
