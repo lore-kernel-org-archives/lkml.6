@@ -1,84 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965747AbeCSQFE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:05:04 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33945 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935052AbeCSQEd (ORCPT
+        id S965345AbeCSRwG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:52:06 -0400
+Received: from mail-pg0-f51.google.com ([74.125.83.51]:41744 "EHLO
+        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965837AbeCSRv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:04:33 -0400
-X-Google-Smtp-Source: AG47ELtitNUUsOtjrhZvKsyKkx9I4iKRJb/1HqV1UYXcm+2s+AyPx7XUscu632MMmRiSaK/F4G8RYYNxFGeiGn4Koeo=
+        Mon, 19 Mar 2018 13:51:59 -0400
+X-Google-Smtp-Source: AG47ELsVuzoRn300rA+Jd52YbJ70SpoV3wvrEvLURc3FoTyERp93yLo+ze6pl+c6ToxcZKem7tuslw==
+Date: Mon, 19 Mar 2018 10:51:57 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: "Li,Rongqing" <lirongqing@baidu.com>
+cc: Michal Hocko <mhocko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH=5D_mm=2Fmemcontrol=2Ec=3A_speed_up_to_force_empty_a_memory_cgroup?=
+In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+Message-ID: <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com> <20180319085355.GQ23100@dhcp22.suse.cz> <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com> <20180319103756.GV23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 19 Mar 2018 17:04:31 +0100
-Message-ID: <CAFqH_52bXq76TnQLfnD0mohgr0d5iAcrHBcPefwnRB8gdbaYFQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation
- and brightness to human eye
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Mon, 19 Mar 2018, Li,Rongqing wrote:
 
-Gentle ping for this series, there is any possibility you have a
-chance to review it? Let me know if you want I change something.
+> > > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
+> > > stack of try_to_free_mem_cgroup_pages is too long, increase the
+> > > nr_to_reclaim can reduce times of calling
+> > > function[do_try_to_free_pages, shrink_zones, hrink_node ]
+> > >
+> > > mem_cgroup_resize_limit
+> > > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
+> > > --->SWAP_CLUSTER_MAX),
+> > >    ---> do_try_to_free_pages
+> > >      ---> shrink_zones
+> > >       --->shrink_node
+> > >        ---> shrink_node_memcg
+> > >          ---> shrink_list          <-------loop will happen in this place
+> > [times=1024/32]
+> > >            ---> shrink_page_list
+> > 
+> > Can you actually measure this to be the culprit. Because we should rethink
+> > our call path if it is too complicated/deep to perform well.
+> > Adding arbitrary batch sizes doesn't sound like a good way to go to me.
+> 
+> Ok, I will try
+> 
 
-Thanks,
-  Enric
+Looping in mem_cgroup_resize_limit(), which takes memcg_limit_mutex on 
+every iteration which contends with lowering limits in other cgroups (on 
+our systems, thousands), calling try_to_free_mem_cgroup_pages() with less 
+than SWAP_CLUSTER_MAX is lame.  It would probably be best to limit the 
+nr_pages to the amount that needs to be reclaimed, though, rather than 
+over reclaiming.
 
-2018-02-08 12:30 GMT+01:00 Enric Balletbo i Serra
-<enric.balletbo@collabora.com>:
-> Dear all,
->
-> This series is a third patchset integrating the requested changes.
->
-> The first and second patch what tries to solve is the problem of
-> granularity for high resolution PWMs. The idea is simple interpolate
-> between 2 brightness values so we can have a high PWM duty cycle (a
-> 16 bits PWM is up to 65535 possible steps) without having to list
-> out every possible value in the dts. I think that this patch is
-> required to not break backward compability, to be more flexible and
-> also extend the functionality to be able to use high resolution PWM
-> with enough steps to have a good UI experience in userspace.
->
-> The thirth and fourth patch is a bit more ambicious, the idea is let
-> decide the driver the brightness-levels required in function of the PWM
-> resolution. To do this create a brightness-levels table filled with the
-> CIE 1931 algorithm values to convert brightness to PWM duty cycle.
->
-> More detailed info is available in the commit message of every patch.
->
-> Both functionalities were tested on a Samsung Chromebook Plus (that has
-> a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
->
-> Waiting for your feedback.
->
-> Best regards,
->
-> Enric Balletbo i Serra (4):
->   backlight: pwm_bl: linear interpolation between brightness-levels
->   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
->   backlight: pwm_bl: compute brightness of LED linearly to human eye.
->   dt-bindings: pwm-backlight: move brightness-levels to optional.
->
->  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
->  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
->  2 files changed, 246 insertions(+), 20 deletions(-)
->
-> --
-> 2.15.1
->
+If you wanted to be invasive, you could change page_counter_limit() to 
+return the count - limit, fix up the callers that look for -EBUSY, and 
+then use max(val, SWAP_CLUSTER_MAX) as your nr_pages.
