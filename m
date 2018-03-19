@@ -1,64 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755668AbeCSWrq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 18:47:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53232 "EHLO mail.bootlin.com"
+        id S1755773AbeCSWt1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 18:49:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45348 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755360AbeCSWrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 18:47:42 -0400
-Date: Mon, 19 Mar 2018 23:47:29 +0100
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: boris.brezillon@free-electrons.com, richard@nod.at,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        nicolas.ferre@microchip.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, miquel.raynal@free-electrons.com,
-        alexandre.belloni@free-electrons.com, wens@csie.org,
-        cyrille.pitchen@wedev4u.fr
-Subject: Re: [PATCH v2 2/2] mtd: nand: Remove print after allocation failure
-Message-ID: <20180319234729.73fb800d@xps13>
-In-Reply-To: <1521390796-13715-2-git-send-email-arushisinghal19971997@gmail.com>
-References: <1521390796-13715-1-git-send-email-arushisinghal19971997@gmail.com>
-        <1521390796-13715-2-git-send-email-arushisinghal19971997@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1755358AbeCSWt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 18:49:26 -0400
+Message-ID: <1521499764.3722.108.camel@redhat.com>
+Subject: Re: [PATCH 00/10 v2] iommu/amd: lock splitting & GFP_KERNEL
+ allocation
+From: Scott Wood <swood@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Date: Mon, 19 Mar 2018 17:49:24 -0500
+In-Reply-To: <20180319121527.zdmuwid4i3mjpwjw@linutronix.de>
+References: <20180316201836.7864-1-bigeasy@linutronix.de>
+         <1521316194.3722.74.camel@redhat.com>
+         <20180317211013.rlou66s542ad4y2i@linutronix.de>
+         <1521323019.3722.98.camel@redhat.com>
+         <20180319121527.zdmuwid4i3mjpwjw@linutronix.de>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arushi,
-
-On Sun, 18 Mar 2018 22:03:16 +0530, Arushi Singhal
-<arushisinghal19971997@gmail.com> wrote:
-
-> The prints after [k|v][m|z|c]alloc() etc. functions are not needed, because
-> in case of failure, allocator will print their internal error prints
-> anyway.
+On Mon, 2018-03-19 at 13:15 +0100, Sebastian Andrzej Siewior wrote:
+> On 2018-03-17 16:43:39 [-0500], Scott Wood wrote:
+> > If that's worth the lock dropping then fine (though why does only
+> > one
+> > of the two allocations use GFP_KERNEL?), but it doesn't need to be
+> > a
 > 
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
-> ---
-> changes in v2
-> *done the similar changes in other files.
+> That was a mistake, I planned to keep both as GFP_KERNEL.
 > 
->  drivers/mtd/nand/ams-delta.c             |  1 -
->  drivers/mtd/nand/atmel/nand-controller.c | 13 +++---------
->  drivers/mtd/nand/marvell_nand.c          |  8 ++------
->  drivers/mtd/nand/nandsim.c               | 35 ++++++++------------------------
->  drivers/mtd/nand/ndfc.c                  |  4 +---
->  drivers/mtd/nand/sunxi_nand.c            |  4 +---
->  6 files changed, 15 insertions(+), 50 deletions(-)
+> > raw lock if the non-allocating users are separated.  Keeping them
+> > separate will also preserve the WARNs if we somehow end up in an
+> > atomic
+> > context with no table (versus relying on atomic sleep debugging
+> > that
+> > may or may not be enabled), and make the code easier to understand
+> > by
+> > being explicit about which functions can be used from RT-atomic
+> > context.
 > 
+> That separated part is okay. We could keep it. However, I am not sure
+> if
+> looking at the table irq_lookup_table[devid] without the lock is
+> okay.
+> The pointer is assigned without DTE entry/iommu-flush to be
+> completed. 
+> This does not look "okay".
 
+Those callers are getting the devid from an irq_2_irte struct, which
+was set up in irq_remapping_alloc() after get/alloc_irq_table() is
+completed.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miquèl
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-Scott
