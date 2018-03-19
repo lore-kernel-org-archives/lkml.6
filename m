@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsJrYULL4ejFGLvmzXGQlFGJoOovkw1Jew4+h1ByBYmkAPZIvV69cySuv3z8icG82eXXQJt
-ARC-Seal: i=1; a=rsa-sha256; t=1521483960; cv=none;
+X-Google-Smtp-Source: AG47ELsLkp0lffWy4vYlyw7s/kf7d6/yfXHZUOAd9umaeodYRr1gaoJI25ZAGpRZMqExsN4/qdYs
+ARC-Seal: i=1; a=rsa-sha256; t=1521483955; cv=none;
         d=google.com; s=arc-20160816;
-        b=NP9Mi2Fz26Xwa0lg0Oc/j79qG3gCDw/cCQZJDlW8SWrnaw1syMSqax67EUq1WrzL+W
-         nO+nhyMGDurG3KccP06p8YFJoaueeO0if38gVcrvCx9vGW427UjUS2utl8zp47AgeDVe
-         tZpnWRMS1WZXVhq8tpEJpHtshCvPEATL2NlSlspjfb8W+fnQj9oQZ9xJAmPkR2n034Zv
-         dVNsD0Shq45ZztspZrEWkdWMT14oo3HF20GifPJjqf4VhLE7TtBiiJEP+By+ZqSm6mdT
-         2Nj6wIXxBAG5ydXEm9d0kv+2av0G8z+UfKdmuyqjKtdcHtMcIKEdH6gi8LaPzp5bc7tE
-         PS8g==
+        b=BABD2zeUM2VsYF2eI4EZXyDcYrZLjdiE4SnDLMDHUMPZOncpAXs80paoIMuhTyOZMA
+         P92HV8BXx123ukpApYXef7P2qJO2Yo08vFqaGbGy2LsyHv5g1PmdLc/H9vzMW7BkN7qj
+         QaKR0CTbfeOd/tucJvKu/IqzWX2GLzKE/Y7+znHh4eJ9GvtZAHTiO1ATrpE6/cYsZl1G
+         pWvdS3eq4cyUqk7jVn2bWzwZfoBj4Av3EXudCZxJ/jAwNuBJH2gmSOTwXHFPhZDDlxF8
+         TO+UMuewlKWhsMGY0j5FYjEJMkZTgiFvsn+KlC7SCfnl2IQoMsMG/w23pXV+IS3sE5c4
+         xKwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uswYoHDQZvVyNb6VvLutqc6PyFyXzp2Ro01730/QVf0=;
-        b=LwxtOChPFTmpOsxSmvNiUiG9414ZAAa96rv1UAJhKKKNs9FGwqdwjX3jrWShLj6MaT
-         2oRFBt1Di5ZphBrPYaIzj+TmvfEBxvOP5++LpyxyaW0fGYMo8jzz70I2ffQZJGWu/t/K
-         KgDjgDkZBTJzCTCR+/WGePKDGaaC+EywXHfULPiWavj6Dgen6KRqDSs5LdzUgxrp2jS0
-         ZRbgNxySXpVusuHh7VDKjTsZiGvWYT1kuztXOVpRtyOw3Of8NP0KYk4Y0Pvd8AnrRTOB
-         9Im5gXYEAixeJYoMWQBOtgjEe7PrK4t1efuB62n9Ffnzj6UDkWzVEE0yX+OvupnP8RsQ
-         /zZw==
+        bh=qP49o6ULFPUNunwZ3ZjmTdlgrcpV5ACECnFAjoxXeo8=;
+        b=CdF6VjO+PYmeCZHSvE7i8bDgpjg9JVTJAXdm1GoRHtHzL4gGhfqLzTVCnSoisM3TZN
+         xjW2vdObc1wIfkUnv/M51SnSNqcK4a8AEFd92FAjZI6xZkxWyFChQ+/NRbOlZXXLXSff
+         lbzRlJF3KpsWN66wmVsYUfM72uOFOYlAeSwTqxAzy3IrF20IdKvYi+8EvxTYHNQPBUW6
+         mW5vzrlEGaEtHQisjN4vvgj583NrZb3gnk4ntKcAftjiCruxzCd4xO7of9r6vpp2YSxF
+         +FVMhSJoYw151v33xkMWvCG77WuVQcJeraRT8kM1nhhz3bwoGKOv7yg/8WCgzgXbT+nL
+         Li1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fugang Duan <B38611@freescale.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 145/241] net: fec: add phy-reset-gpios PROBE_DEFER check
-Date: Mon, 19 Mar 2018 19:06:50 +0100
-Message-Id: <20180319180757.191602215@linuxfoundation.org>
+Subject: [PATCH 4.9 143/241] drivers/perf: arm_pmu: handle no platform_device
+Date: Mon, 19 Mar 2018 19:06:48 +0100
+Message-Id: <20180319180757.110623684@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391565217059227?=
-X-GMAIL-MSGID: =?utf-8?q?1595391565217059227?=
+X-GMAIL-THRID: =?utf-8?q?1595390868408579074?=
+X-GMAIL-MSGID: =?utf-8?q?1595391560219769245?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,112 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fugang Duan <fugang.duan@nxp.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
 
-[ Upstream commit 9269e5560b261eb9ee157497890dc0948db76cf8 ]
+[ Upstream commit 7654137071fa706e5c91f4f27bc2a5cd7e435a9b ]
 
-Many boards use i2c/spi expander gpio as phy-reset-gpios and these
-gpios maybe registered after fec port, driver should check the return
-value of .of_get_named_gpio().
+In armpmu_dispatch_irq() we look at arm_pmu::plat_device to acquire
+platdata, so that we can defer to platform-specific IRQ handling,
+required on some 32-bit parts. With the advent of ACPI we won't always
+have a platform_device, and so we must avoid trying to dereference
+fields from it.
 
-Signed-off-by: Fugang Duan <B38611@freescale.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch fixes up armpmu_dispatch_irq() to avoid doing so, introducing
+a new armpmu_get_platdata() helper.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c |   26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/perf/arm_pmu.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3209,7 +3209,7 @@ static int fec_enet_init(struct net_devi
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -322,10 +322,16 @@ validate_group(struct perf_event *event)
+ 	return 0;
  }
  
- #ifdef CONFIG_OF
--static void fec_reset_phy(struct platform_device *pdev)
-+static int fec_reset_phy(struct platform_device *pdev)
- {
- 	int err, phy_reset;
- 	bool active_high = false;
-@@ -3217,7 +3217,7 @@ static void fec_reset_phy(struct platfor
- 	struct device_node *np = pdev->dev.of_node;
- 
- 	if (!np)
--		return;
-+		return 0;
- 
- 	of_property_read_u32(np, "phy-reset-duration", &msec);
- 	/* A sane reset duration should not be longer than 1s */
-@@ -3225,8 +3225,10 @@ static void fec_reset_phy(struct platfor
- 		msec = 1;
- 
- 	phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
--	if (!gpio_is_valid(phy_reset))
--		return;
-+	if (phy_reset == -EPROBE_DEFER)
-+		return phy_reset;
-+	else if (!gpio_is_valid(phy_reset))
-+		return 0;
- 
- 	active_high = of_property_read_bool(np, "phy-reset-active-high");
- 
-@@ -3235,7 +3237,7 @@ static void fec_reset_phy(struct platfor
- 			"phy-reset");
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", err);
--		return;
-+		return err;
- 	}
- 
- 	if (msec > 20)
-@@ -3244,14 +3246,17 @@ static void fec_reset_phy(struct platfor
- 		usleep_range(msec * 1000, msec * 1000 + 1000);
- 
- 	gpio_set_value_cansleep(phy_reset, !active_high);
++static struct arm_pmu_platdata *armpmu_get_platdata(struct arm_pmu *armpmu)
++{
++	struct platform_device *pdev = armpmu->plat_device;
 +
-+	return 0;
- }
- #else /* CONFIG_OF */
--static void fec_reset_phy(struct platform_device *pdev)
-+static int fec_reset_phy(struct platform_device *pdev)
++	return pdev ? dev_get_platdata(&pdev->dev) : NULL;
++}
++
+ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
  {
- 	/*
- 	 * In case of platform probe, the reset has been done
- 	 * by machine code.
+ 	struct arm_pmu *armpmu;
+-	struct platform_device *plat_device;
+ 	struct arm_pmu_platdata *plat;
+ 	int ret;
+ 	u64 start_clock, finish_clock;
+@@ -337,8 +343,8 @@ static irqreturn_t armpmu_dispatch_irq(i
+ 	 * dereference.
  	 */
-+	return 0;
- }
- #endif /* CONFIG_OF */
+ 	armpmu = *(void **)dev;
+-	plat_device = armpmu->plat_device;
+-	plat = dev_get_platdata(&plat_device->dev);
++
++	plat = armpmu_get_platdata(armpmu);
  
-@@ -3422,6 +3427,7 @@ fec_probe(struct platform_device *pdev)
- 		if (ret) {
- 			dev_err(&pdev->dev,
- 				"Failed to enable phy regulator: %d\n", ret);
-+			clk_disable_unprepare(fep->clk_ipg);
- 			goto failed_regulator;
- 		}
- 	} else {
-@@ -3434,7 +3440,9 @@ fec_probe(struct platform_device *pdev)
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
--	fec_reset_phy(pdev);
-+	ret = fec_reset_phy(pdev);
-+	if (ret)
-+		goto failed_reset;
- 
- 	if (fep->bufdesc_ex)
- 		fec_ptp_init(pdev);
-@@ -3495,8 +3503,10 @@ failed_init:
- 	fec_ptp_stop(pdev);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
-+failed_reset:
-+	pm_runtime_put(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- failed_regulator:
--	clk_disable_unprepare(fep->clk_ipg);
- failed_clk_ipg:
- 	fec_enet_clk_enable(ndev, false);
- failed_clk:
+ 	start_clock = sched_clock();
+ 	if (plat && plat->handle_irq)
