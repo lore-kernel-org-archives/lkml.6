@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891247-1521496539-2-13998275884238423539
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521496517-2-16538896383371031079
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521496538; b=gxk7Y8IeSc2RWzdhHfPbHeOeC8i4W+apYoQBGaX+2PUwgmo
-    ih2H6PzkHwvlF3gAzHZxXnOmd8lncm0VOeTB4cW/l4q7Y5wWbTh1oOx57Y+fi3M+
-    jNlPkmdI16i3NJ7jeLpbV+tIsPbY2MIN8jZCNLdokx0LJU3ZIPx0ZXoqXrnXRafI
-    aaLIwcrkMIIBUM1yyFuCBtfRCNS13lRm1GCl6976MQ+5sVMXcUq2NU9L3r3Bk9yt
-    Ttq6Qn90PqqJ854j0008jBqpsS6x204bM5Rr4qjZfbnAkNltnkbbxOfPGlRXtQ05
-    M5CFTO+kRIuHrZMwCXGcRuBmpz6plCmNCW+GNig==
+    t=1521496517; b=UDGn5TAIDXgqpciAF/dIbwX/IlZgYAuQJfuJQclEDvTJm+J
+    YjQc88NQgEiXgKDczt/U1RegTMCO32w/EdYI3p3L0BX2HyKKELL3of75EbfBhHcH
+    xSVUteiG1Z7x/0ZxfyHQ7PKkDkXlk7hmqyBfhAGzpjohNhnPObDByvU1Kuz/hc8B
+    oo9n0TRrnTnrYMO/gLHaneVJKsit6Y6ZBDUlLUhG1w4eHKMGr6SPKiCm36A2fQgf
+    iHIIk/4fc3vImIJGP0v6JHcKB/igzXnVViPqYb1Z+4R7QrBIpJvV3dg8UiIWvZln
+    Im26UA93Tu02epgs2/bMJpl+UdPp4n3kSbhp2LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521496538; bh=d1BDm4
-    Oc3tcc5q+4Udnma3Yv/PiyyPBfCkA5wI2Wq78=; b=o+krdxAplsq92U1dUlaRX4
-    2ZCWfHkoie3PSveBlFxZQcfFFGP5+71P9n8wozHIDnU3BrP0OEJYQtr3uZtI5Mg9
-    JRIxk4QotonRp+uz1L4nTbHNpx5MniHtL8PgmyFVXPkxi3T3vs4MlTgH8ZurjDYQ
-    5q6AXrJNg+njzTllpoWgwhH80aXsTgerog2pKUtO7rylvW1eZKCL9cXvNHOhDlTk
-    sS0FAH8dTg5nSnwk+zEIBA6CnmtV/C6gFypDiuWEse2xp3od99bUiRlwo8jh/M8l
-    nOLr/MDwJwi1lul2FcriObbVpnGJhQt/GcnCGp4LZ/HjBEqsErxKNKnTjPV8KtiA
+    :mime-version:sender:list-id; s=arctest; t=1521496517; bh=pM5c6G
+    qOcRCpj8ktTPBnDlmj6Tp1ftjPLI100Y0bug4=; b=NoaCY27f9yXgTSnr+vvQ+7
+    RdutYN0kFtburxzxcCx+G+r1UWjUIHAXb5luCXNcUhSXFAIhPQRZZ4MeThmbMIZ+
+    qzvBJCA8J4EAqHL/Cyyo+6ljkst/RfwR050ZvnTBwBYUALIoqe5SFcz0bvJx9qTS
+    cITiIMHEkCDgiNiit/GkFZblzWZf6PBJvS9yFwaSf9VFgmK7dZu1iPB4XVV/78NV
+    Ons6XayaSpCZJmRv33gY7SThPxZqf1cSYpx9By0AITor/YRLxp39iZc/G84vmGgN
+    tvTimtigdHiYd7dqlj6J/82ILMqCjaEMqtgZZs/wLejMvB4lDCPpRHiboVP49JOg
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=naLvFOQU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=bDHAcNPh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdeikeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehgihhthhhusgdrtghomhdprhgvugguihhtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdekheenucevlhhushhtvghrufhiiigvpedu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=naLvFOQU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=bDHAcNPh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdeikeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehgihhthhhusgdrtghomhdprhgvugguihhtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekvdekheenucevlhhushhtvghrufhiiigvpedu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934546AbeCSP5H (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:57:07 -0400
+        id S934642AbeCSP5N (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:57:13 -0400
 Received: from mail-sn1nam01on0113.outbound.protection.outlook.com ([104.47.32.113]:22624
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934637AbeCSP4s (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:56:48 -0400
+        id S934657AbeCSP4u (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:56:50 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC: Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 84/97] sdhci: Advertise 2.0v supply on SDIO
- host controller
-Thread-Topic: [PATCH AUTOSEL for 4.14 84/97] sdhci: Advertise 2.0v supply on
- SDIO host controller
-Thread-Index: AQHTv5rUpxyJpLsViE2eCPKIwVMtPw==
-Date: Mon, 19 Mar 2018 15:56:22 +0000
-Message-ID: <20180319155411.12348-84-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 86/97] Input: goodix - disable IRQs while
+ suspended
+Thread-Topic: [PATCH AUTOSEL for 4.14 86/97] Input: goodix - disable IRQs
+ while suspended
+Thread-Index: AQHTv5rVdH6OjC8/AUyNcmKrvu7bsA==
+Date: Mon, 19 Mar 2018 15:56:25 +0000
+Message-ID: <20180319155411.12348-86-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1064;7:W5hQNQpbi06zFl11BULPC9hCl1/FCARX0sSs04MRBLOT+aQZArVYt16xAk3kHtpv6Zw5wBSsKhUdbvqK2BvMLO4tkIKWI8Pr6wt9BSgwLQubBIsRWqrfjRdbktzH+S9s7Q+7bBsr33c58VpZrJHFMWCgWoeAGMBj8nzkmlYTQCaQG/6QjlmoT3kEhkkVLa521v1ZvcuaeWjSBgJDQ1CdNHo/xPci0BmAiPmSevXdvqAe25QDBUP92V+n0SdDa6v7;20:oDdkL+oRdtP/VWjF5tRwf1Cnm6YErElTneK7ELYIOuWHweGVBxRApHgbtkJUCsgmItEJS4TJJvthLdv8N193eKDmY0DtOqEqkTNpyrCZlpnj8TUamAFY5TYRi2I/UiLyq20xfFUXlTG/aWWdRfOhbBHe5T5WVlCnNWYaotPiplw=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1064;7:R+t3M//N5RD7HnFVtU3cp8Gl9qujb6sG5LvGobW7CWQAcoCOHa2bewsdAc5QHmKHDwTaSp5ONT17frE0cU5GrHd5Cry9WUMb4On0mLgbrx5EfYbGtCtv2/Md5fbM37cF1QlQ63R/yK+6m6LYcwuk6YIp3d4CfeiubJellOH4CNP8DaJLRgwfGUfExhaOpTJOxiUb9D3vqAdFo1oNnBVIR+cModF7dWq3Ap84iv6HDXmuD78TegnQpVu8307MnD8h;20:virbMyofIM4RQb+ES1USJnkUiQVgKBLZBD54xk042THSqdTIn1h+68zAZd74Ot0PI4so28iXp97zGZBJTOLJApk6ej0BbZGR9TuMcFlFlOInCNAufwn5lNgxX23X0uRaDQ4M7k1nUbEcm2D0bSrVVv0uRqXoRmLZSYX65S2EHQQ=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3e032317-f577-4bb6-860c-08d58db20269
+x-ms-office365-filtering-correlation-id: 6aa929e9-0ba3-4cf2-6816-08d58db202fe
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1064;
 x-ms-traffictypediagnostic: DM5PR2101MB1064:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1064E3806F7F7814F7039F9BFBD40@DM5PR2101MB1064.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-microsoft-antispam-prvs: <DM5PR2101MB1064A530C82C9F33656FFC07FBD40@DM5PR2101MB1064.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(166708455590820)(85827821059158);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1064;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1064;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(39380400002)(376002)(346002)(199004)(189003)(1076002)(106356001)(316002)(36756003)(76176011)(8936002)(81156014)(81166006)(22452003)(8676002)(3660700001)(2906002)(2900100001)(97736004)(305945005)(7736002)(53936002)(3280700002)(5660300001)(99286004)(107886003)(2501003)(5250100002)(6666003)(2950100002)(10290500003)(25786009)(72206003)(3846002)(478600001)(54906003)(6116002)(4326008)(105586002)(14454004)(110136005)(6512007)(6506007)(10090500001)(102836004)(66066001)(68736007)(186003)(86612001)(6486002)(26005)(6436002)(86362001)(575784001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1064;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: T8KRsfiKZnX8/E4nZValB3JgU2ioFKxGlC8ygmjuR+asDnPy5DFROr0CemkMo0nsqidsgECvIDRDPc02X/gNCX/bHE67+1IB1ByqUoqboghIILPKF6nVbA4cTavYNagaEP0lMN2jdBRxecmFIFWoh8bkx/uyDZstg6gfJeqXjtx2jK75ySM3UHwlMnBK5PlHroYV00IBuRJIk0Re13CO7zrEOxWlFnYVJHLIiTDYSG2zCx52u2mnkQlEE4v/g05RNNsBajLuklzzQmp5qL0GENuhUgqrLJJBu5H2dV6QTPFNu+S8L2NbqNk9Kdt/1Q15MDBwCTy+aZsSIoQ9jrPdkA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(39380400002)(376002)(346002)(199004)(189003)(1076002)(106356001)(316002)(36756003)(76176011)(39060400002)(8936002)(81156014)(81166006)(22452003)(8676002)(3660700001)(59450400001)(2906002)(2900100001)(97736004)(305945005)(7736002)(53936002)(3280700002)(5660300001)(99286004)(107886003)(2501003)(966005)(5250100002)(6666003)(2950100002)(10290500003)(25786009)(72206003)(3846002)(478600001)(54906003)(6116002)(4326008)(105586002)(14454004)(110136005)(6512007)(6506007)(10090500001)(102836004)(15650500001)(66066001)(68736007)(186003)(86612001)(6486002)(26005)(6436002)(86362001)(6306002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1064;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: pPTZ2P/PkgGWUjHiOJS8Lq8QNLAJtV1uzXrXeHBWs4l0ZGlGt15oaNqUyF03ltEA99gInAVOZx3VILRw1MwGDE0BlG+haFS2o6rLiM+r5hNOqbooRdK2RE87jrOtvF+46PJSA6Qhmod1/YgigwnDHVgN54ayuO4ZNozUZrPV41DTO7rbPADzUCw6IHWScdJbz2g4TVYWSb5O1QK8seNfxVUArGAcRFd1ZByf0Hi5o8lBJ6Yqz4xAfathQXQ7YKv6RbOeSghg+3qFFPQGF7mBdirVETas104HNfGs9eBPz5hZa/3oWi40DxspzsQ1kBNpw11+xmauNHTMECTVKi4JFw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e032317-f577-4bb6-860c-08d58db20269
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:56:22.8071
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6aa929e9-0ba3-4cf2-6816-08d58db202fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:56:25.0838
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -109,64 +109,66 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
+[ Upstream commit faec44b6838312484d63e82286087cf2d5ebb891 ]
 
-On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
-requires 2.0v, while the host, according to Intel Merrifield TRM,
-supports 1.8v supply only.
+We should not try to do any i2c transfers before the controller is
+resumed (which happens before our resume method gets called).
 
-The card announces itself as
+So we need to disable our IRQ while suspended to enforce this. The
+code paths for devices with GPIOs for the int and reset pins already
+disable the IRQ the through goodix_free_irq().
 
-  mmc2: new ultra high speed DDR50 SDIO card at address 0001
+This commit also disables the IRQ while suspended for devices without
+GPIOs for the int and reset pins.
 
-Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
-and add a special case to sdhci_set_power_noreg() to override 2.0v supply
-by enforcing 1.8v power choice.
+This fixes the i2c bus sometimes getting stuck after a suspend/resume
+causing the touchscreen to sometimes not work after a suspend/resume.
+This has been tested on a GPD pocked device.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+BugLink: https://github.com/nexus511/gpd-ubuntu-packages/issues/10
+BugLink: https://www.reddit.com/r/GPDPocket/comments/7niut2/fix_for_broken_=
+touch_after_resume_all_linux/
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Bastien Nocera <hadess@hadess.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/host/sdhci-pci-core.c | 2 ++
- drivers/mmc/host/sdhci.c          | 7 +++++++
- 2 files changed, 9 insertions(+)
+ drivers/input/touchscreen/goodix.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci=
--core.c
-index 070f5da06fd2..5bedf4b7f0f7 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -806,6 +806,8 @@ static int intel_mrfld_mmc_probe_slot(struct sdhci_pci_=
-slot *slot)
- 		slot->host->quirks2 |=3D SDHCI_QUIRK2_NO_1_8_V;
- 		break;
- 	case INTEL_MRFLD_SDIO:
-+		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
-+		slot->host->ocr_mask =3D MMC_VDD_20_21 | MMC_VDD_165_195;
- 		slot->host->mmc->caps |=3D MMC_CAP_NONREMOVABLE |
- 					 MMC_CAP_POWER_OFF_CARD;
- 		break;
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 90cc1977b792..d35deb79965d 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1470,6 +1470,13 @@ void sdhci_set_power_noreg(struct sdhci_host *host, =
-unsigned char mode,
- 	if (mode !=3D MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-+		/*
-+		 * Without a regulator, SDHCI does not support 2.0v
-+		 * so we only get here if the driver deliberately
-+		 * added the 2.0v range to ocr_avail. Map it to 1.8v
-+		 * for the purpose of turning on the power.
-+		 */
-+		case MMC_VDD_20_21:
- 			pwr =3D SDHCI_POWER_180;
- 			break;
- 		case MMC_VDD_29_30:
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen=
+/goodix.c
+index b3bbad7d2282..5dafafad6351 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -808,8 +808,10 @@ static int __maybe_unused goodix_suspend(struct device=
+ *dev)
+ 	int error;
+=20
+ 	/* We need gpio pins to suspend/resume */
+-	if (!ts->gpiod_int || !ts->gpiod_rst)
++	if (!ts->gpiod_int || !ts->gpiod_rst) {
++		disable_irq(client->irq);
+ 		return 0;
++	}
+=20
+ 	wait_for_completion(&ts->firmware_loading_complete);
+=20
+@@ -849,8 +851,10 @@ static int __maybe_unused goodix_resume(struct device =
+*dev)
+ 	struct goodix_ts_data *ts =3D i2c_get_clientdata(client);
+ 	int error;
+=20
+-	if (!ts->gpiod_int || !ts->gpiod_rst)
++	if (!ts->gpiod_int || !ts->gpiod_rst) {
++		enable_irq(client->irq);
+ 		return 0;
++	}
+=20
+ 	/*
+ 	 * Exit sleep mode by outputting HIGH level to INT pin
 --=20
 2.14.1
