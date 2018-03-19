@@ -1,69 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966560AbeCSVJH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:09:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965426AbeCSVI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:08:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A5620838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S936108AbeCSVKR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:10:17 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38052 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935270AbeCSVKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:10:08 -0400
+X-Google-Smtp-Source: AG47ELufeSacbSjNhNewdvpsksECT2WvkHkQPpn/l2npcNESO43s9i0u0wf0YHLmlFRb/hhrZq/YXA==
+Date: Mon, 19 Mar 2018 14:10:05 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [patch] mm, thp: do not cause memcg oom for thp
+Message-ID: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-        Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        mark.rutland@arm.com
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
- <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
-Message-ID: <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Mon, 19 Mar 2018 14:08:56 -0700
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mike Looijmans (2018-03-19 08:04:15)
-> On 18-03-18 13:52, Rob Herring wrote:
-> > On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
-> >> +Required properties:
-> >> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
-> >> +               to the speed grade of the chip.
-> >> + - reg: I2C device address.
-> >> + - #clock-cells: From common clock bindings: Shall be 0.
-> >> +
-> >> +Optional properties:
-> >> + - clock-output-names: From common clock bindings. Recommended to be "si544".
-> > 
-> > What's the point if there is only 1 clock output?
-> 
-> I have a board with 6 of these chips, and the clock registration fails if they 
-> don't have unique names. Providing a clock-output-names property was the 
-> easiest way around it.
-> 
-> Should I just omit the line or change the wording to reflect the above or is 
-> there a better solution (maybe I can use the DT node name as clock name in the 
-> driver, will look into that)
+Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+madvised allocations") changed the page allocator to no longer detect thp
+allocations based on __GFP_NORETRY.
 
-I would leave clock-output-names for now. One day we can get off of
-strings in CCF. Soon perhaps.
+It did not, however, modify the mem cgroup try_charge() path to avoid oom
+kill for either khugepaged collapsing or thp faulting.  It is never
+expected to oom kill a process to allocate a hugepage for thp; reclaim is
+governed by the thp defrag mode and MADV_HUGEPAGE, but allocations (and
+charging) should fallback instead of oom killing processes.
 
-> 
-> > 
-> >> +
-> >> +Example:
-> >> +    si544: clock-generator@55 {
-> > 
-> > clock-controller@55 is the standard node name.
-> 
-> I'll change and post patch v3
-> 
+Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ mm/huge_memory.c | 5 +++--
+ mm/khugepaged.c  | 8 ++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-I made some comments on v1. Please fold those into v3.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,7 +555,8 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
+ 
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
++	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
++				  true)) {
+ 		put_page(page);
+ 		count_vm_event(THP_FAULT_FALLBACK);
+ 		return VM_FAULT_FALLBACK;
+@@ -1316,7 +1317,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 	}
+ 
+ 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
+-					huge_gfp, &memcg, true))) {
++				huge_gfp | __GFP_NORETRY, &memcg, true))) {
+ 		put_page(new_page);
+ 		split_huge_pmd(vma, vmf->pmd, vmf->address);
+ 		if (page)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -960,7 +960,9 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 		goto out_nolock;
+ 	}
+ 
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
++	/* Do not oom kill for khugepaged charges */
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
++					   &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out_nolock;
+ 	}
+@@ -1319,7 +1321,9 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		goto out;
+ 	}
+ 
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
++	/* Do not oom kill for khugepaged charges */
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
++					   &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out;
+ 	}
