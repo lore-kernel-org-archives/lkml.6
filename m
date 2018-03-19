@@ -1,81 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970164AbeCSTsf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:48:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52956 "EHLO mail.kernel.org"
+        id S970734AbeCSTte (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:49:34 -0400
+Received: from verein.lst.de ([213.95.11.211]:32919 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969556AbeCSTsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:48:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9678921720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 19 Mar 2018 14:48:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>,
-        Juergen Gross <jgross@suse.com>, Mark Rutland <mark.rutland@arm.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v5 0/7] jailhouse: Enhance secondary Jailhouse guest
- support /wrt PCI
-Message-ID: <20180319194813.GJ77194@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1520408357.git.jan.kiszka@siemens.com>
+        id S970355AbeCSTtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:49:31 -0400
+Date: Mon, 19 Mar 2018 20:49:30 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, x86@kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
+        iommu@lists.linux-foundation.org,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 12/14] dma-direct: handle the memory encryption bit in
+        common code
+Message-ID: <20180319194930.GA3255@lst.de>
+References: <20180319103826.12853-1-hch@lst.de> <20180319103826.12853-13-hch@lst.de> <dd05dd14-9969-7985-826e-f440c3fc4c08@arm.com> <20180319152442.GA27915@lst.de> <5316b479-7e75-d62f-6b17-b6bece55187c@arm.com> <20180319154832.GD14916@arm.com> <20180319160343.GA29002@lst.de> <20180319180141.w5o6lhknhd6q7ktq@armageddon.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180319180141.w5o6lhknhd6q7ktq@armageddon.cambridge.arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 08:39:11AM +0100, Jan Kiszka wrote:
-> Basic x86 support [1] for running Linux as secondary Jailhouse [2] guest
-> is currently pending in the tip tree. This builds on top and enhances
-> the PCI support for x86 and also ARM guests (ARM[64] does not require
-> platform patches and works already).
-> ...
+On Mon, Mar 19, 2018 at 06:01:41PM +0000, Catalin Marinas wrote:
+> I don't particularly like maintaining an arm64-specific dma-direct.h
+> either but arm64 seems to be the only architecture that needs to
+> potentially force a bounce when cache_line_size() > ARCH_DMA_MINALIGN
+> and the device is non-coherent.
 
-Hi Jan,
+mips is another likely candidate, see all the recent drama about
+dma_get_alignmet().  And I'm also having major discussion about even
+exposing the cache line size architecturally for RISC-V, so changes
+are high it'll have to deal with this mess sooner or later as they
+probably can't agree on a specific cache line size.
 
-What tree do you plan to merge this through?  I was sort of assuming
-x86, since the main point of jailhouse is not PCI, but I do notice
-most of the changes here are PCI-related, so thought I should make
-sure you're not waiting on me.
+> Note that lib/swiotlb.c doesn't even
+> deal with non-coherent DMA (e.g. map_sg doesn't have arch callbacks for
+> cache maintenance), so not disrupting lib/swiotlb.c seems to be the
+> least intrusive option.
 
-> Jan Kiszka (6):
->   jailhouse: Provide detection for non-x86 systems
->   PCI: Scan all functions when running over Jailhouse
->   x86: Align x86_64 PCI_MMCONFIG with 32-bit variant
->   x86: Consolidate PCI_MMCONFIG configs
->   x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
->   MAINTAINERS: Add entry for Jailhouse
+No yet.  I have patches to consolidate the various swiotlb ops
+that deal with cache flushing or barriers.  I was hoping to get them
+in for this merge window, but it probably is too late now given that
+I have a few other fires to fight.  But they are going to be out
+early for the next merge window.
+
+> > Nevermind that the commit should at least be three different patches:
+> > 
+> >  (1) revert the broken original commit
+> >  (2) increase the dma min alignment
 > 
-> Otavio Pontes (1):
->   x86/jailhouse: Enable PCI mmconfig access in inmates
-> 
->  Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
->  MAINTAINERS                                     |  7 +++++++
->  arch/x86/Kconfig                                | 12 +++++++-----
->  arch/x86/include/asm/jailhouse_para.h           |  2 +-
->  arch/x86/include/asm/pci_x86.h                  |  2 ++
->  arch/x86/kernel/Makefile                        |  2 +-
->  arch/x86/kernel/cpu/amd.c                       |  2 +-
->  arch/x86/kernel/jailhouse.c                     |  8 ++++++++
->  arch/x86/pci/legacy.c                           |  4 +++-
->  arch/x86/pci/mmconfig-shared.c                  |  4 ++--
->  drivers/pci/probe.c                             | 22 +++++++++++++++++++---
->  include/linux/hypervisor.h                      | 17 +++++++++++++++--
->  12 files changed, 74 insertions(+), 16 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
-> 
-> -- 
-> 2.13.6
-> 
+> Reverting the original commit could, on its own, break an SoC which
+> expects ARCH_DMA_MINALIGN == 128. So these two should be a single commit
+> (my patch only reverts the L1_CACHE_BYTES change rather than
+> ARCH_DMA_MINALIGN, the latter being correct as 128).
+
+It would revert to the state before this commit.
+
+> As I said above, adding a check in swiotlb.c for
+> !is_device_dma_coherent(dev) && (ARCH_DMA_MINALIGN < cache_line_size())
+> feels too architecture specific.
+
+And what exactly is architecture specific about that?  It is a totally
+generic concept, which at this point also seems entirely theoretical
+based on the previous mail in this thread.
