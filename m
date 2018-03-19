@@ -1,38 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsdtnWnOHyF6g2OCvdJWvVFiQrX0xo2LvzBYm23rXi07zGbAhXTGNztfGUYoAmm96gQ5Bqp
-ARC-Seal: i=1; a=rsa-sha256; t=1521483172; cv=none;
-        d=google.com; s=arc-20160816;
-        b=s1BEI2k70Ez2wnA4ivXPfc0MWyHExJ/78ArPWHqAF5QAZSKUyTwKAZqx29k83+1PUd
-         uO0Vy6ehPaHAfAKrPs43SLEPB0eFg2RXKNTtrvsFccDCpOVEGCNgOyCZDsoZfXQT3q12
-         niwqjvRw7bXln/GEyIpXx/t+rLn8yVEneRGwaCXD5SfaWgCf0FyPcelRdjo13N9L61wS
-         dvYZUW12KzGtkDJSdw7igLcMmlZd4VwUYg6RcWSbFWoNQ4OyIKy3e+vVg5XyrizOYc1H
-         0asz0ztShGxH5m3eN2nj5cC8oQ+auDTRmLtwbeMT9o6u5wqfUQz1C+/7EU59gz+BLGiw
-         CatQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=rKTgKyNmVwLjN8Gto5SLhjjHF5btsSTH872RkDRVh6U=;
-        b=qYVnpkryEYY6QjGqxa0CGzGKqSm6ojgBo6vrp0wqGR8Iez6U40/+crtf+wTHZ1KYtl
-         TOwoKIDImWFJ9Io88JZmNHPaq1Wr+t21860N7UfXyvv2f7fX1Y3oPE+moy3S2TNcAYYX
-         7cj5MqgiE6SeX4WP/8NDxQhCMJz7zEUEGWPQsVZw4oYGNYtex5tVRrubfoyFPTccHY39
-         fAVIoFTR1RrW+CYAA41+jEaLD0+gtv3rjObKYJcbl6xQNA32B/uG8XCpvM0V1My+9qcX
-         YJq6539yjKprgILaZCGncMfuCyRFOHIY0Wi/P7/30HUJLBD4mykPG4xfPqCqKM2O4r+a
-         ZWeA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483167-2-12075864921817043373
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483166; b=V6Iquh9gM/3HlZywXI0YDL1h5N+audNOOmLlGdpBZlBClea
+    Z6ql5Rp4MMYJNVbMRJrNf7e0qK6cX18rkQLu/aks042meJja5/jjSSVZAjOVRBum
+    7eiG+I0I4zUIZzLswQlPlHf3vRTrtbtqKCAtxHzSdizn+gvIG1bRSNSuYyXO5PF9
+    VVBGjEzuFxViRfyEMD9nmBbT9nGNB71gtF5JoYwyFFKqjqJXtJUvuqBJawcTsHAC
+    ZOcdFD4xesjw8V/r5z/CjDTeE/ivqkUzteu8Fh/+s7H7deTUkX1wUjZrTvnA4Z7x
+    vxHikj6A97wkSy/KxIzb/E6gJqqmKT+K+A+oepA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483166; bh=g/f3E8n1ybmp9GSrQ+CZE7jvuW
+    HQa2UKOVe8LTSff8M=; b=wgqKiWgrlKEJKnlBUqjDe0qLzayPQhlfnJYVUeiEnF
+    xWsEb3Ph3kqRGPmCGxau2jLboJYjgQqj2/qBOe7ZlNHgF+M5qht4ADxFTWV8Nji3
+    2Aim1j4Hmgib5KV+6ImE/IhIlDF8Ja0wffUcRr/PaO9E8BdbT7g9KzY1vnOZGELI
+    HVafpJCW7dlxUEhRkHh68g2JLAPtlPRfcRoQ0qO79bWvYIzRSM7gcIKZjdzoOEjj
+    pnvW3RtTzrhDCbtbON164mjJ8MwGlZ7/uudplEqtfE6CLec9OxvpwKLFYqwiR6mU
+    f8rzjklw65ZafUij9Td7sitWomPW9W80e4ophApvCSNQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvieelieenucevlhhushhtvghrufhiiigvpeehtd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvieelieenucevlhhushhtvghrufhiiigvpeehtd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935568AbeCSSMj (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:12:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42828 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935560AbeCSSMg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:12:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Brian King <brking@linux.vnet.ibm.com>,
-	Wendy Xiong <wenxiong@linux.vnet.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 025/134] scsi: ipr: Fix missed EH wakeup
-Date: Mon, 19 Mar 2018 19:05:08 +0100
-Message-Id: <20180319171852.848050844@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 002/134] Input: tsc2007 - check for presence and power down tsc2007 during probe
+Date: Mon, 19 Mar 2018 19:04:45 +0100
+Message-Id: <20180319171849.375263695@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390511066260812?=
-X-GMAIL-MSGID: =?utf-8?q?1595390738449707764?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +81,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian King <brking@linux.vnet.ibm.com>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
 
 
-[ Upstream commit 66a0d59cdd12546ddf01d229de28b07ccf6d637f ]
+[ Upstream commit 934df23171e7c5b71d937104d4957891c39748ff ]
 
-Following a command abort or device reset, ipr's EH handlers wait for
-the commands getting aborted to get sent back from the adapter prior to
-returning from the EH handler. This fixes up some cases where the
-completion handler was not getting called, which would have resulted in
-the EH thread waiting until it timed out, greatly extending EH time.
+1. check if chip is really present and don't succeed if it isn't.
+2. if it succeeds, power down the chip until accessed
 
-Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
-Reviewed-by: Wendy Xiong <wenxiong@linux.vnet.ibm.com>
-Tested-by: Wendy Xiong <wenxiong@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ipr.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/input/touchscreen/tsc2007.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/scsi/ipr.c
-+++ b/drivers/scsi/ipr.c
-@@ -835,8 +835,10 @@ static void ipr_sata_eh_done(struct ipr_
+--- a/drivers/input/touchscreen/tsc2007.c
++++ b/drivers/input/touchscreen/tsc2007.c
+@@ -455,6 +455,14 @@ static int tsc2007_probe(struct i2c_clie
  
- 	qc->err_mask |= AC_ERR_OTHER;
- 	sata_port->ioasa.status |= ATA_BUSY;
--	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- 	ata_qc_complete(qc);
-+	if (ipr_cmd->eh_comp)
-+		complete(ipr_cmd->eh_comp);
-+	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- }
+ 	tsc2007_stop(ts);
  
- /**
-@@ -5864,8 +5866,10 @@ static void ipr_erp_done(struct ipr_cmnd
- 		res->in_erp = 0;
- 	}
- 	scsi_dma_unmap(ipr_cmd->scsi_cmd);
--	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- 	scsi_cmd->scsi_done(scsi_cmd);
-+	if (ipr_cmd->eh_comp)
-+		complete(ipr_cmd->eh_comp);
-+	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- }
- 
- /**
-@@ -6255,8 +6259,10 @@ static void ipr_erp_start(struct ipr_ioa
- 	}
- 
- 	scsi_dma_unmap(ipr_cmd->scsi_cmd);
--	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- 	scsi_cmd->scsi_done(scsi_cmd);
-+	if (ipr_cmd->eh_comp)
-+		complete(ipr_cmd->eh_comp);
-+	list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- }
- 
- /**
-@@ -6282,8 +6288,10 @@ static void ipr_scsi_done(struct ipr_cmn
- 		scsi_dma_unmap(scsi_cmd);
- 
- 		spin_lock_irqsave(ipr_cmd->hrrq->lock, lock_flags);
--		list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- 		scsi_cmd->scsi_done(scsi_cmd);
-+		if (ipr_cmd->eh_comp)
-+			complete(ipr_cmd->eh_comp);
-+		list_add_tail(&ipr_cmd->queue, &ipr_cmd->hrrq->hrrq_free_q);
- 		spin_unlock_irqrestore(ipr_cmd->hrrq->lock, lock_flags);
- 	} else {
- 		spin_lock_irqsave(ioa_cfg->host->host_lock, lock_flags);
++	/* power down the chip (TSC2007_SETUP does not ACK on I2C) */
++	err = tsc2007_xfer(ts, PWRDOWN);
++	if (err < 0) {
++		dev_err(&client->dev,
++			"Failed to setup chip: %d\n", err);
++		return err;	/* usually, chip does not respond */
++	}
++
+ 	err = input_register_device(input_dev);
+ 	if (err) {
+ 		dev_err(&client->dev,
