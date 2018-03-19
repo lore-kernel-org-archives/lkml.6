@@ -1,79 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030900AbeCST5F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:57:05 -0400
-Received: from verein.lst.de ([213.95.11.211]:32986 "EHLO newverein.lst.de"
+        id S1030945AbeCST6G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:58:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967261AbeCST5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:57:02 -0400
-Date: Mon, 19 Mar 2018 20:57:00 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc: Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 03/11] block: sed-opal: unify cmd start and finalize
-Message-ID: <20180319195700.GE3380@lst.de>
-References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de> <801b85d1a40e87f95b73be00d7343621808d2e85.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+        id S969447AbeCST6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:58:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE9C2178C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 19 Mar 2018 14:57:58 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI/IOV: Skip initializing the base addresses from the
+ VF config space
+Message-ID: <20180319195758.GK77194@bhelgaas-glaptop.roam.corp.google.com>
+References: <1520051590-11750-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <801b85d1a40e87f95b73be00d7343621808d2e85.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1520051590-11750-1-git-send-email-karahmed@amazon.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 07:36:45PM +0100, Jonas Rabenstein wrote:
-> Every step starts with resetting the cmd buffer as well as the comid and
-> constructs the appropriate OPAL_CALL command. Consequently, those
-> actions may be combined into one generic function. On should take care,
-> that the opening and closing tokens for the argument list are already
-> emitted by those functions and thus must not be additionally added.
+On Sat, Mar 03, 2018 at 05:33:10AM +0100, KarimAllah Ahmed wrote:
+> Per PCIe r4.0, sec 9.3.4.1.11, the BARs registers from the VF config space
+> are all RO Zero for PCI VFs. So just skip reading them for VFs.
 > 
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> This is an optimization when enabling SR-IOV on a device with many VFs.
 > 
-> diff --git a/block/sed-opal.c b/block/sed-opal.c
-> index 771b4cfff95c..efe5d2a7f3dc 100644
-> --- a/block/sed-opal.c
-> +++ b/block/sed-opal.c
-> @@ -656,6 +656,9 @@ static int cmd_finalize(struct opal_dev *cmd, u32 hsn, u32 tsn)
->  	struct opal_header *hdr;
->  	int err = 0;
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+
+Applied to pci/virtualization for v4.17, thanks!
+
+> ---
+>  drivers/pci/probe.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index a96837e..7204d46 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -329,6 +329,10 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
+>  	if (dev->non_compliant_bars)
+>  		return;
 >  
-> +	/* close the parameter list opened from start_opal_cmd */
-> +	add_token_u8(&err, cmd, OPAL_ENDLIST);
+> +	/* Per PCIe r4.0, sec 9.3.4.1.11, the VF BARs are all RO Zero */
+> +	if (dev->is_virtfn)
+> +		return;
 > +
->  	add_token_u8(&err, cmd, OPAL_ENDOFDATA);
->  	add_token_u8(&err, cmd, OPAL_STARTLIST);
->  	add_token_u8(&err, cmd, 0);
-
-I think this should be a separate patch, independent of the newly added
-start_opal_cmd.
-
-
-> @@ -998,6 +1001,26 @@ static void clear_opal_cmd(struct opal_dev *dev)
->  	memset(dev->cmd, 0, IO_BUFFER_LENGTH);
->  }
->  
-> +static int start_opal_cmd(struct opal_dev *dev, const u8 *uid, const u8 *method)
-> +{
-> +	int err = 0;
-
-start_opal_cmd and cmd_finalize don't really seem to match in terms
-of naming.  I don't really care either way, but a little consistency
-would be nice.
-
-> +	/* every method call is followed by its parameters enclosed within
-> +	 * OPAL_STARTLIST and OPAL_ENDLIST tokens. We automatically open the
-> +	 * parameter list here and close it later in cmd_finalize
-> +	 */
-
-Normal Linux comment style would be:
-
-	/*
-	 * Every method call is followed by its parameters enclosed within
-	 * OPAL_STARTLIST and OPAL_ENDLIST tokens. We automatically open the
-	 * parameter list here and close it later in cmd_finalize.
-	 */
+>  	for (pos = 0; pos < howmany; pos++) {
+>  		struct resource *res = &dev->resource[pos];
+>  		reg = PCI_BASE_ADDRESS_0 + (pos << 2);
+> -- 
+> 2.7.4
+> 
