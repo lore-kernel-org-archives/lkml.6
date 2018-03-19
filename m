@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuSiY+9RI1c8fKGN1twMPCX0f8UBJwX3XhmOBHOCtbOsqhUVyrxROCVY0RNPiLUZ5iqhaHx
-ARC-Seal: i=1; a=rsa-sha256; t=1521483698; cv=none;
+X-Google-Smtp-Source: AG47ELtnHMeUHdrauaApRhgeEPa3iBqFyMhGkH1vWrp5QZaoDMSAKJ2anmrCG3p9ssjyLcN0myO8
+ARC-Seal: i=1; a=rsa-sha256; t=1521483695; cv=none;
         d=google.com; s=arc-20160816;
-        b=vEgaI4akbY/a6uP2c7J1OMfNBsk1gGwbtH+gkkNd8zjUoJcN7aY2OGJtzS+ARvy6uW
-         sIgMy1B4HQA+rXEGP9ePDw8jNZ2xgAGJitDtreTsoRNE/DNAIYj/2hLBBh63Mchp0mWS
-         uSJH7flzjor1/obKqG5xbYyIaVQQl+vwB9ogtp5+rKP80OHHYaJwZ2QEZuwGxXX+plkJ
-         Wq/DYq+ASwbLkEDAAFYfQx/iM9NaPEfV425vQ+N54NKTlJ989YHHJrQKoAS7LPEG1pml
-         B6yiS/Fg5bFzh9XB+w5zqUnEpSBcNTHB0vDk7+eyRN3mCXNDvjDYc+NYFOskK9mvvjrL
-         UVnA==
+        b=AN9GXvjziJGAFo2oSDmL/oRpfd/fW58Izb5MMbOyhbsuvokIe/QF2s4OQw+IydAvRC
+         XMhs+jZlGnNi52Td3B2NAXH4YcHqKmxO+BicEI7HYKKiQEZ0ISJNKIU3MVnvEU/69JOT
+         2sCcaWZERNgd9PDxrvx76j2W+dUDrxqiatM3RSLZrRVIi2CWCrapqzwXAmAAwlfmMnSJ
+         zTdMr1+dxqxwlNrQuCZfMmoqanq0PtRZGioDKBzFBTTA/aMmaHI6fGYzxZpFPWQU+vSu
+         4naZd1zN0Bds3/nLHrAPRwkpQNtgU0r1XmJcQE2dNcs91YtRd/c6xcKEGFgDtNunDfe1
+         BBDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Gv5uNCfuSpIm8ZTExakhATehXXsuld+lUP4QTKvXSKo=;
-        b=Op1BtcvM/pp8uyWCNXtNgz7FVw2nqubEK9IhUIp/t6lk739s6o2JoUVtujcoaAfCT0
-         vj2dXOIDCxGK6rR++k4OP+0a68MWXoAGyqfSV/WnT4onayzHyH2x09Ynaz6olIRg48Sb
-         pUi8/oJJp1X55bfpX9lg2k02Xn/7NdE6KaHTjhKljKDbULZwz088X8DD0Kve/Fm9rL87
-         nORHfP9i7Qm1rY6HVpHno0fepYfV0N+N8pvsWbrzvJeCUSzd7YapYIN31uxHEnzy/2iK
-         +6PMePtf0vjtuxcIUi3X+LXA3mCOaYBbPAJFZljAyAIW3njCjrOfIqt4KtVGkS4fbWV9
-         NyNg==
+        bh=RJiZ5QV9XF03gno7MiAq5x5NCekwUbhCnniF2gMMHBI=;
+        b=gL0hECk6lJWQofw21m8Uh+aIwZCCElZFIbdH9SMrZBthurQuaguCJ2OnseMz/jJlqh
+         WlhZwWKdC2ZmfqyPY2q6IOPQh7SDs6be9G7kQHTL19IoFLAr2s5JrA/9Bboq3UvkFt+2
+         cVrEWCBQZOXI8J3yLTiJCCY4cfDUXlrfsHU4XgJ4N6EX545ratTZ9hbpdpuENjchPjQi
+         urZ5Xt1sdxlo0qrYswW5Hz02nzMQm+A4Z4Pyx4PeykOqeEorEoYmnTEtTaNVxz8Dm/vy
+         eAWFPL9u0fiAK8kYJkgZKFkV+qTjzn7vG6doHrWbp+1LYmJ6lpkkeOF8iWQqTJBMFUik
+         iskQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	zhoucm1 <david1.zhou@amd.com>,
+	=?UTF-8?q?Nicolai=20H=C3=A4hnle?= <nicolai.haehnle@amd.com>,
+	Samuel Pitoiset <samuel.pitoiset@gmail.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 084/241] bonding: refine bond_fold_stats() wrap detection
-Date: Mon, 19 Mar 2018 19:05:49 +0100
-Message-Id: <20180319180754.675387089@linuxfoundation.org>
+Subject: [PATCH 4.9 083/241] drm/ttm: never add BO that failed to validate to the LRU list
+Date: Mon, 19 Mar 2018 19:05:48 +0100
+Message-Id: <20180319180754.634525827@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390874214479458?=
-X-GMAIL-MSGID: =?utf-8?q?1595391290327686570?=
+X-GMAIL-THRID: =?utf-8?q?1595391288087740628?=
+X-GMAIL-MSGID: =?utf-8?q?1595391288087740628?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +53,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: "Nicolai H�hnle" <nicolai.haehnle@amd.com>
 
 
-[ Upstream commit 142c6594acbcc32391af9c15f8cd65c6c177698f ]
+[ Upstream commit c2c139cf435b18939204800fa72c53a7207bdd68 ]
 
-Some device drivers reset their stats at down/up events, possibly
-fooling bonding stats, since they operate with relative deltas.
+Fixes a potential race condition in amdgpu that looks as follows:
 
-It is nearly not possible to fix drivers, since some of them compute the
-tx/rx counters based on per rx/tx queue stats, and the queues can be
-reconfigured (ethtool -L) between the down/up sequence.
+Task 1: attempt ttm_bo_init, but ttm_bo_validate fails
+Task 1: add BO to global list anyway
+Task 2: grabs hold of the BO, waits on its reservation lock
+Task 1: releases its reference of the BO; never gives up the
+        reservation lock
 
-Lets avoid accumulating 'negative' values that render bonding stats
-useless.
+The patch "drm/amdgpu: fix a potential deadlock in
+amdgpu_bo_create_restricted()" attempts to fix that by releasing
+the reservation lock in amdgpu code; unfortunately, it introduces
+a use-after-free when this race _doesn't_ happen.
 
-It is better to lose small deltas, assuming the bonding stats are
-fetched at a reasonable frequency.
+This patch should fix the race properly by never adding the BO
+to the global list in the first place.
 
-Fixes: 5f0c5f73e5ef ("bonding: make global bonding stats more reliable")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: zhoucm1 <david1.zhou@amd.com>
+Signed-off-by: Nicolai Hähnle <nicolai.haehnle@amd.com>
+Tested-by: Samuel Pitoiset <samuel.pitoiset@gmail.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/ttm/ttm_bo.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3331,12 +3331,17 @@ static void bond_fold_stats(struct rtnl_
- 	for (i = 0; i < sizeof(*_res) / sizeof(u64); i++) {
- 		u64 nv = new[i];
- 		u64 ov = old[i];
-+		s64 delta = nv - ov;
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -1209,18 +1209,20 @@ int ttm_bo_init(struct ttm_bo_device *bd
+ 	if (likely(!ret))
+ 		ret = ttm_bo_validate(bo, placement, interruptible, false);
  
- 		/* detects if this particular field is 32bit only */
- 		if (((nv | ov) >> 32) == 0)
--			res[i] += (u32)nv - (u32)ov;
--		else
--			res[i] += nv - ov;
-+			delta = (s64)(s32)((u32)nv - (u32)ov);
+-	if (!resv) {
++	if (!resv)
+ 		ttm_bo_unreserve(bo);
+ 
+-	} else if (!(bo->mem.placement & TTM_PL_FLAG_NO_EVICT)) {
++	if (unlikely(ret)) {
++		ttm_bo_unref(&bo);
++		return ret;
++	}
 +
-+		/* filter anomalies, some drivers reset their stats
-+		 * at down/up events.
-+		 */
-+		if (delta > 0)
-+			res[i] += delta;
++	if (resv && !(bo->mem.placement & TTM_PL_FLAG_NO_EVICT)) {
+ 		spin_lock(&bo->glob->lru_lock);
+ 		ttm_bo_add_to_lru(bo);
+ 		spin_unlock(&bo->glob->lru_lock);
  	}
- }
  
+-	if (unlikely(ret))
+-		ttm_bo_unref(&bo);
+-
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ttm_bo_init);
