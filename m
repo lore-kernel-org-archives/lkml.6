@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv7PW9+TJssk+VQNruxfQ+iM63ljEobuuR8HIYiWvQckP79EnPsK4+7vdKbjvVie1EvheFG
-ARC-Seal: i=1; a=rsa-sha256; t=1521483489; cv=none;
+X-Google-Smtp-Source: AG47ELtGp5Qn+79PxREfnRyt7Mq9nZ3/PeNyFeCDJaaqRnHcuomwg6wB7rC+TpzQvy1rhMzeUbIe
+ARC-Seal: i=1; a=rsa-sha256; t=1521483485; cv=none;
         d=google.com; s=arc-20160816;
-        b=Wfn+ZEX6BH9aZYCLwcJrPpgRccMHvRRxf4B4FIKeWRremONa4FKW7FEOfHYRvKwiud
-         ZGlfJ8YZPJVyyIgCxZ3YKGOzbEutBtv42q+N7bZvivRAI82oIVXoWQjP0fdfTKgyumhF
-         LV6n+QBX14b0VDCY6cG0QN09XaQ4xtnrA1Fxjn+z/75x/nM7aIBiz4SqRNosT69gh3xx
-         ek6x3+jkDf4eajXHywzXzUJNOF8OWLQ98+qePyPhzxG+AMAe7KqqMCRCmtCgMbJ1dFmF
-         zZJ9sC+nzAlDDSNwwRx21hMfaUpkqlKyaF0Iib+5jdvalehizuS7XwRxJnE74YwOzTOc
-         CRGw==
+        b=cU6At5oA/4zgyFzsZ4SL+08arNxIjhT0TEpyhzkEsfRntQNhRXi/L9WlOTtNFajJfq
+         HKpMvD9PEbSk4dRkzaARB22r15Q0a7vVG4/Rd9ScG+NlJlypfGvD+qHP9XnMb/NKnm6W
+         fIAhtMv0LN5curKbG67GA6hl6qnCy43Jhp7aD1nq7hcCXSt9lsXJxVrsSbTf9UwwtIUR
+         TNhSKD3fUtW38qh4y1OdPzU/4p+4SMQp4AvC/3I4Bn41+9THRAoZJzgu7udL3CzWP4dB
+         cdzjhKiF8Ooiod5+Y1cdt808XKh7Yq2G063aOrcvusGAAm3OghaiUZao8W/qCmGdurOF
+         lJ+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JlILj6RgkRPnhKYO4qxmWOF5pmHo41g2Z/5DRs/8bNs=;
-        b=qeRGNwWsubvOFgAks6IwsFDKBiq63Va6W0GmbafwfjbyowkYj0Pxy25ZYbLRiZ3iAZ
-         oF41xlCsOUHsH+NYzrlH1jZPfaIEs9oxFvRsOlAJcQbb1cjFbKmmgWZSH0pJNGNSFCYz
-         HQICFm5pSdX1MQQXtFvbnnSRADBcUp8+4Ok+oLnozGx7DDlpPWTXos/SFFOS69uOi0Dv
-         681OlXoKE9kn91w+1b+Hpvz7Ds3BkF/BeeEMj40oJdxOnNiVZ0+qKJ/t0kF6VSzxOIPJ
-         iWf3lY5m+mPBH7AivJ7p2C5DQvnERXXgByGCMZB5ia/RvPwVyRvhLCMODRFrHlovca/I
-         JDdA==
+        bh=9df6y9CWJML+NrrE5f8+g5eOWxqlFDp8oWNjsO5so98=;
+        b=SYKi6kKoDpHgLpGT2nvTmUTwPCgKovLxzru0SsqqNwV35l/60F01sn20iDZeUB7zyM
+         q3EkHuyIMpmwH0qdAuWY79B7qOfJZJ6+Cqc5kk8K8eU5fC5siEmmM6BF4BC++pbFFx4P
+         /nAIv7mf2IIkK05PsCFhYN/82qxpYZJPOFEhDJyANTHQO/z7ut9L6jOZbypXlVpM8PTA
+         VJTEew6ro+pSx6utOYr0cy7Do1bcO3fHB6wYOvEQNUZ8Z+UJj66VvL5yNitQuWQ2h1Z4
+         5KHiUZWvmsgTVDjBj3KgpojmhFdGaV9RtlEvf4tIoSYQcDPaRxFmb70V4RUtqiPmsHIX
+         2tCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	SeongJae Park <sj38.park@gmail.com>,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 108/134] rcutorture/configinit: Fix build directory error message
-Date: Mon, 19 Mar 2018 19:06:31 +0100
-Message-Id: <20180319171904.844070036@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 117/134] ALSA: hda - Revert power_save option default value
+Date: Mon, 19 Mar 2018 19:06:40 +0100
+Message-Id: <20180319171906.169181408@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390637326267892?=
-X-GMAIL-MSGID: =?utf-8?q?1595391071571144199?=
+X-GMAIL-THRID: =?utf-8?q?1595391067718842348?=
+X-GMAIL-MSGID: =?utf-8?q?1595391067718842348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +49,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: SeongJae Park <sj38.park@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
+commit 40088dc4e1ead7df31728c73f5b51d71da18831d upstream.
 
-[ Upstream commit 2adfa4210f8f35cdfb4e08318cc06b99752964c2 ]
+With the commit 1ba8f9d30817 ("ALSA: hda: Add a power_save
+blacklist"), we changed the default value of power_save option to -1
+for processing the power-save blacklist.
+Unfortunately, this seems breaking user-space applications that
+actually read the power_save parameter value via sysfs and judge /
+adjust the power-saving status.  They see the value -1 as if the
+power-save is turned off, although the actual value is taken from
+CONFIG_SND_HDA_POWER_SAVE_DEFAULT and it can be a positive.
 
-The 'configinit.sh' script checks the format of optional argument for the
-build directory, printing an error message if the format is not valid.
-However, the error message uses the wrong variable, indicating an empty
-string even though the user entered a non-empty (but erroneous) string.
-This commit fixes the script to use the correct variable.
+So, overall, passing -1 there was no good idea.  Let's partially
+revert it -- at least for power_save option default value is restored
+again to CONFIG_SND_HDA_POWER_SAVE_DEFAULT.  Meanwhile, in this patch,
+we keep the blacklist behavior and make is adjustable via the new
+option, pm_blacklist.
 
-Fixes: c87b9c601ac8 ("rcutorture: Add KVM-based test framework")
-
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
+Fixes: 1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/rcutorture/bin/configinit.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -51,7 +51,7 @@ then
- 			mkdir $builddir
- 		fi
- 	else
--		echo Bad build directory: \"$builddir\"
-+		echo Bad build directory: \"$buildloc\"
- 		exit 2
- 	fi
- fi
+---
+ sound/pci/hda/hda_intel.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -179,11 +179,15 @@ static const struct kernel_param_ops par
+ };
+ #define param_check_xint param_check_int
+ 
+-static int power_save = -1;
++static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ module_param(power_save, xint, 0644);
+ MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
+ 		 "(in second, 0 = disable).");
+ 
++static bool pm_blacklist = true;
++module_param(pm_blacklist, bool, 0644);
++MODULE_PARM_DESC(pm_blacklist, "Enable power-management blacklist");
++
+ /* reset the HD-audio controller in power save mode.
+  * this may give more power-saving, but will take longer time to
+  * wake up.
+@@ -2164,10 +2168,9 @@ static int azx_probe_continue(struct azx
+ 
+ 	val = power_save;
+ #ifdef CONFIG_PM
+-	if (val == -1) {
++	if (pm_blacklist) {
+ 		const struct snd_pci_quirk *q;
+ 
+-		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ 		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
+ 		if (q && val) {
+ 			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
