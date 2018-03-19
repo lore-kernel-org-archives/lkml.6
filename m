@@ -1,59 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933220AbeCSLOv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 07:14:51 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40983 "EHLO mga14.intel.com"
+        id S933294AbeCSLTm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 07:19:42 -0400
+Received: from ozlabs.org ([103.22.144.67]:51517 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932616AbeCSLOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 07:14:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,330,1517904000";
-   d="scan'208";a="26089405"
-Date: Mon, 19 Mar 2018 13:14:45 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] ACPI: Add Time and Alarm Device (TAD) driver
-Message-ID: <20180319111445.GM2703@lahna.fi.intel.com>
-References: <6419044.RXe4JATo1K@aspire.rjw.lan>
+        id S932659AbeCSLTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 07:19:41 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+        Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-mm@kvack.org, Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>, Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 3/5] powerpc/mm/32: Use page_is_ram to check for RAM
+In-Reply-To: <874llcha6p.fsf@concordia.ellerman.id.au>
+References: <20180222121516.23415-1-j.neuschaefer@gmx.net> <20180222121516.23415-4-j.neuschaefer@gmx.net> <874llcha6p.fsf@concordia.ellerman.id.au>
+Date: Mon, 19 Mar 2018 22:19:32 +1100
+Message-ID: <87y3iofh2z.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6419044.RXe4JATo1K@aspire.rjw.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 01:51:01PM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Introduce a driver for the ACPI Time and Alarm Device (TAD) based on
-> Section 9.18 of ACPI 6.2.
-> 
-> This driver only supports the system wakeup capabilities of the TAD
-> which are mandatory.  Support for the RTC capabilities of the TAD
-> will be added to it in the future.
-> 
-> This driver is entirely sysfs-based.  It provides attributes (under
-> the TAD platform device) to allow user space to manage the AC and DC
-> wakeup timers of the TAD: set and read their values, set and check
-> their expire timer wake policies, check and clear their status and
-> check the capabilities of the TAD reported by AML.  The DC timer
-> attributes are only present if the TAD supports a separate DC alarm
-> timer.
-> 
-> The wakeup events handling and power management of the TAD is
-> expected to be taken care of by the ACPI PM domain attached to its
-> platform device.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Michael Ellerman <mpe@ellerman.id.au> writes:
+> Jonathan Neuschäfer <j.neuschaefer@gmx.net> writes:
+>
+>> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+>> ---
+>>  arch/powerpc/mm/pgtable_32.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+>> index d35d9ad3c1cd..d54e1a9c1c99 100644
+>> --- a/arch/powerpc/mm/pgtable_32.c
+>> +++ b/arch/powerpc/mm/pgtable_32.c
+>> @@ -145,9 +145,8 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
+>>  #ifndef CONFIG_CRASH_DUMP
+>>  	/*
+>>  	 * Don't allow anybody to remap normal RAM that we're using.
+>> -	 * mem_init() sets high_memory so only do the check after that.
+>>  	 */
+>> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+>> +	if (page_is_ram(__phys_to_pfn(p)) &&
+>>  	    !(__allow_ioremap_reserved && memblock_is_region_reserved(p, size))) {
+>>  		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+>>  		       (unsigned long long)p, __builtin_return_address(0));
+>
+>
+> This is killing my p5020ds (Freescale e5500) unfortunately:
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Duh, I should actually read the patch :)
+
+This is a 32-bit system with 4G of RAM, so not all of RAM is mapped,
+some of it is highem which is why removing the test against high_memory
+above breaks it.
+
+So I need the high_memory test on this system.
+
+I'm not clear why it was a problem for you on the Wii, do you even build
+the Wii kernel with HIGHMEM enabled?
+
+cheers
