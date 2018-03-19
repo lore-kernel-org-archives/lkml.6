@@ -1,57 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935605AbeCSQ3a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:29:30 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:53464 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935570AbeCSQ3V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:29:21 -0400
-X-Google-Smtp-Source: AG47ELsVeX7km5Q1SEq2C7kS9tl7Fwj5j1ZM7wTGAg3sqe1uE8En6EPXZyYQ1nQ9s1uRzmgfsG6xje+ye9wHHQM3/Ak=
+        id S967222AbeCSQdV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:33:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51132 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935330AbeCSQdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:33:18 -0400
+Subject: Re: [PATCH v5 2/2] cpuset: Add cpuset.flags control knob to v2
+To: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+References: <1521148842-15486-1-git-send-email-longman@redhat.com>
+ <1521148842-15486-3-git-send-email-longman@redhat.com>
+ <20180319162654.GR2943022@devbig577.frc2.facebook.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8e553b7e-cab6-1b5d-9110-cc5770ae16c4@redhat.com>
+Date: Mon, 19 Mar 2018 12:33:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <ba8ac1f8c1f444da857b6a46c4153672@AcuMS.aculab.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com> <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <ba8ac1f8c1f444da857b6a46c4153672@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 19 Mar 2018 09:29:19 -0700
-X-Google-Sender-Auth: 29ZyxyaTu9C3cyK7tqq-y_n1Imw
-Message-ID: <CA+55aFzOjqaW-hYcAaMJ=2gh4GAqP6jOjnWv6mK0eygAW2wL-A@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-To: David Laight <David.Laight@aculab.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180319162654.GR2943022@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 8:53 AM, David Laight <David.Laight@aculab.com> wrote:
+On 03/19/2018 12:26 PM, Tejun Heo wrote:
+> Hello, Waiman.
 >
-> The x87 and SSE registers can't be changed - they can contain callee-saved
-> registers.
-> But (IIRC) the AVX and AVX2 registers are all caller-saved.
+> On Thu, Mar 15, 2018 at 05:20:42PM -0400, Waiman Long wrote:
+>> +	The currently supported flag is:
+>> +
+>> +	  sched_load_balance
+>> +		When it is not set, there will be no load balancing
+>> +		among CPUs on this cpuset.  Tasks will stay in the
+>> +		CPUs they are running on and will not be moved to
+>> +		other CPUs.
+>> +
+>> +		When it is set, tasks within this cpuset will be
+>> +		load-balanced by the kernel scheduler.  Tasks will be
+>> +		moved from CPUs with high load to other CPUs within
+>> +		the same cpuset with less load periodically.
+> Hmm... looks like this is something which can be decided by the cgroup
+> itself and should be made delegatable.  Given that different flags
+> might need different delegation settings and the precedence of
+> memory.oom_group, I think it'd be better to make the flags separate
+> bool files - ie. cpuset.sched_load_balance which contains 0/1 and
+> marked delegatable.
+>
+> Thanks.
+>
+Sure. Will do that.
 
-No.
-
-The kernel entry is not the usual function call.
-
-On kernel entry, *all* registers are callee-saved.
-
-Of course, some may be return values, and I have a slight hope that I
-can trash %eflags. But basically, a system call is simply not a
-function call. We have different calling conventions on the argument
-side too. In fact, the arguments are in different registers depending
-on just *which* system call you take.
-
-                  Linus
+-Longman
