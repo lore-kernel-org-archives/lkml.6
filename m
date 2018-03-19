@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsjdozHpZWhFOfRILuUpEsUemkwm9dDXa3W+LvooDjrnOf/RAhjUXZvD/HUGzLxqvV5w2zA
-ARC-Seal: i=1; a=rsa-sha256; t=1521483736; cv=none;
+X-Google-Smtp-Source: AG47ELuIY7x8wzQKc4VV/nFd7pk14+NfWFdPzfW3vHA8sLZTasGCPvx2LrD0ITniRcGKxASeBmYi
+ARC-Seal: i=1; a=rsa-sha256; t=1521483734; cv=none;
         d=google.com; s=arc-20160816;
-        b=kl4rXT2z27XdRjTetSryu2ooOILORGQ4ZRT/k0adRyuISmADy4Jhqd8NbvdqePTqJt
-         knIPjYuF6/g7CBVOY1qeNh0T6YMCMT2CQWeK3O53wmoH/xaj/s4WJFluYrYPiWglVLni
-         WL3uvZduDUgSQSJGusAwGjv5QaKYdz8EFFuWO8E4UoXV7yXIW7S9M2YamALoUATj3ZhZ
-         dPisRNrcElnLlj035ZU6l985xCfti17BCMcs9YFFt3jT3jTzqrGyeBMDsNfiCjjDhYHr
-         YTdDEbFiNcuxFd6NZ2cCVB6lCI9bpglfEj0AknaAIr3bfYTrH+JrAuZ5gjOcHuAS97C5
-         c5sw==
+        b=NDfVbUQ2oExRA2Q79YkHCIp4lcAwzzhuYz355HHKVzjnfiC79Aw3CHhgA0YGzM+0UA
+         Q0wHgChfNxMwmGJkaPPr2NhpBT38yzBNWRQvy9UwJ11KF0LOERFam/AF797wcEvuMTA+
+         2nHuoRcHi/Jtiq2S/VCY0jDLmaBZft06xszmHV+IzI4x6iG5Ps7+M2yhOIq5GAYLzSzJ
+         bkPVefnPpWif87PGRTKATTkNM/WMSBld7vaWmVRKuuuyCK8RW52Nf5GNmRBLD6E6tRgA
+         f0LLvPtiHtruGU7Zdu1JNqH1x73dpCHD3y/0VvqpLXi1BFLZxCG7qlzc9AXQ0QQmnt50
+         CKyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kw2cvn1T2oRYJNf+TtIgd/qh6vrXCQv5grCyc8r5dWc=;
-        b=jPdnw+u0FBda0NoKlhEPyzYGozJ8lQrnLCAMkzIYpBlyTNely9YPp9l7yHu5YgXYGE
-         /dNLvG+FyiT6l34pPqtsz/LLYdEDqiyPW/t5PSfG3sln7S8AhscejXCJMWXY4W0/5BZG
-         fKf/QhEcN9JMxl67klDghmNnHCUwIZq6pBvdk4esmi9Jh5x+MBmkVqnhbnzg6d5TXEfe
-         2DrKDgeJySs+JqTQ7wPN3jViblAjdmhN3j93VokPfRG7jeAGMLgCk0K8VxM6j9HEfsmO
-         3JZD65i8Uw3Kf3f9wbuLEp4D8XyY2unHvADwetHGGkPtj84uqedTIwwzTOTg7hwefE7j
-         6kJQ==
+        bh=6TA6tGRHXQMZUF7UgDsplIz2Y7CPWRTTEJR2p+JiFy0=;
+        b=Ym5TVh0dcY9w0Dp96ml1jNZ2eneLs3czyHXqNuXZJEqMYvS32HYib+5B9wv2YvRE7a
+         Sfa6YCFLQU91dJdrukRizJ7adQvWEm5FrB9lPuoZf2H3QACBsoeO03Ve9H/XXW7sMCwu
+         PGhX9N/XFlql5348sZOCYC5fwy7Ck044Z36a0QlCnFldTuyZw4pDUS6xu/ugaSxdS2i8
+         8OStYSGpS8FFu0hqcpsctP7QXhhy8khzObr3W6qHXR7jfnSU+9QsA+CcGzT6dAgU82o3
+         7keZ2RVmTIcuQ86ckdbCU8jAAK1W/g+iOvLPtqBvNdleSwf+Ivz2Q4+Tj5eC86Oce/LX
+         jn9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anton Blanchard <anton@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 097/241] powerpc: Avoid taking a data miss on every userspace instruction miss
-Date: Mon, 19 Mar 2018 19:06:02 +0100
-Message-Id: <20180319180755.209904834@linuxfoundation.org>
+Subject: [PATCH 4.9 096/241] ARM: dts: r8a7793: Correct parent of SSI[0-9] clocks
+Date: Mon, 19 Mar 2018 19:06:01 +0100
+Message-Id: <20180319180755.170979343@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390545850143108?=
-X-GMAIL-MSGID: =?utf-8?q?1595391330787669104?=
+X-GMAIL-THRID: =?utf-8?q?1595391327974650816?=
+X-GMAIL-MSGID: =?utf-8?q?1595391327974650816?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anton Blanchard <anton@samba.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit a7a9dcd882a67b68568868b988289fce5ffd8419 ]
+[ Upstream commit 1cd9028027c7a7c10b774df698c3cfafec6aa67d ]
 
-Early on in do_page_fault() we call store_updates_sp(), regardless of
-the type of exception. For an instruction miss this doesn't make
-sense, because we only use this information to detect if a data miss
-is the result of a stack expansion instruction or not.
+The SSI-ALL gate clock is located in between the P clock and the
+individual SSI[0-9] clocks, hence the former should be listed as their
+parent.
 
-Worse still, it results in a data miss within every userspace
-instruction miss handler, because we try and load the very instruction
-we are about to install a pte for!
-
-A simple exec microbenchmark runs 6% faster on POWER8 with this fix:
-
- #include <stdlib.h>
- #include <stdio.h>
- #include <unistd.h>
-
-int main(int argc, char *argv[])
-{
-	unsigned long left = atol(argv[1]);
-	char leftstr[16];
-
-	if (left-- == 0)
-		return 0;
-
-	sprintf(leftstr, "%ld", left);
-	execlp(argv[0], argv[0], leftstr, NULL);
-	perror("exec failed\n");
-
-	return 0;
-}
-
-Pass the number of iterations on the command line (eg 10000) and time
-how long it takes to execute.
-
-Signed-off-by: Anton Blanchard <anton@samba.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 072d326542e49187 ("ARM: dts: r8a7793: add MSTP10 clocks to device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7793.dtsi |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -294,7 +294,7 @@ int do_page_fault(struct pt_regs *regs,
- 	 * can result in fault, which will cause a deadlock when called with
- 	 * mmap_sem held
- 	 */
--	if (user_mode(regs))
-+	if (!is_exec && user_mode(regs))
- 		store_update_sp = store_updates_sp(regs);
- 
- 	if (user_mode(regs))
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1234,8 +1234,11 @@
+ 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+ 			clocks = <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+ 				<&p_clk>,
+ 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+ 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
