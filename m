@@ -1,50 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932225AbeCSGrt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 02:47:49 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:35072 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755122AbeCSGrr (ORCPT
+        id S932292AbeCSGtA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 02:49:00 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40081 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932239AbeCSGs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 02:47:47 -0400
-X-Google-Smtp-Source: AG47ELsldQ15QIgq5+AkKL4VMXRmzYITcR5jzxn4LqwZL2WCGlb9pyOB/06jUdfjNdV5Sb1f22pTovQeNc6g3hUtwxo=
+        Mon, 19 Mar 2018 02:48:59 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0247243|-1;CH=blue;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.BMZd6v0_1521442064;
+Date: Mon, 19 Mar 2018 14:47:44 +0800
+From: Guo Ren <ren_guo@c-sky.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
+        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 02/19] csky: Exception handling and syscall
+Message-ID: <20180319064744.GA10134@guoren-Inspiron-7460>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
+ <20180319014755.s2n65f3hzzemc7do@salmiak>
 MIME-Version: 1.0
-In-Reply-To: <20180319063708.GB20345@oracle.com>
-References: <001a114aacf82781120565c9f4fe@google.com> <CACT4Y+Y_K_GQq0ZgwMNEWuHx6k3BWQZKCoNT8BOWsB-mxL2Szw@mail.gmail.com>
- <20180319063708.GB20345@oracle.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 19 Mar 2018 09:47:26 +0300
-Message-ID: <CACT4Y+ZMbLyxvOAz-rXfxkZOdqDAnLWNbg-K8n93k2JYUtdOYQ@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in rds_cong_queue_updates
-To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: syzbot <syzbot+80c06fb3aabfa386bc06@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319014755.s2n65f3hzzemc7do@salmiak>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 9:37 AM, Sowmini Varadhan
-<sowmini.varadhan@oracle.com> wrote:
-> On (03/19/18 09:29), Dmitry Vyukov wrote:
->>
->> This looks the same as:
->>
->> #syz dup: KASAN: use-after-free Read in rds_cong_queue_updates
+Hi Mark,
+
+> Here you open code an MFCR instruction.
+> 
+> I guess MFCR stands for something like move-from-control-register, and MTCR
+> stands for move-to-control-register?
+> 
+> I see that later on you have helpers for specific registers, e.g. mfcr_cpuidrr().
+> 
+> You might want to follow the example of arm64's read_sysreg() and
+> write_sysreg(), and have general purpose helpers for thos instructions, e.g.
+> 
+> #define mfcr(reg)						\
+> ({								\
+> 	unsigned long __mfcr_val;				\
+> 	asm volatile("mfcr %0, " #reg "\n" : "=r" (__mfr_val));	\
+> 	__mfcr_val;						\
+> })
+> 
+> ... which avoids needing helpers for each register, as you can do:
+> 
+> ss1_val = mfcr(ss1);
+> cpuidrr_val = mfcr(cpuidrr);
 >
-> correct, seems like the rds_destroy_pending() fixes did not seal
-> this race condition. I need to look at this more carefully to see
-> what race I missed.. no easy answer here, I am afraid.
+OK, good idea.
 
+> > +	if (memblock_start_of_DRAM() != (PHYS_OFFSET + CONFIG_RAM_BASE)) {
+> > +		pr_err("C-SKY: dts-DRAM doesn't fit .config: %x-%x.\n",
+> > +			memblock_start_of_DRAM(),
+> > +			PHYS_OFFSET + CONFIG_RAM_BASE);
+> > +		return;
+> > +	}
+> 
+> If this is a problem, is it safe to continue at all?
+> 
+> Why does the base address of RAM matter?
+>
+We use mips-like direct-mapping tech, and it need 512MB boundary
+alignment. And few users need non-512MB boundary phy-addr start,
+so we give the CONFIG_RAM_BASE for determine the offset to PHYS_OFFSET.
 
-Hi Sowmini,
+> > +
+> > +	mtcr_msa0(PHYS_OFFSET | 0xe);
+> > +	mtcr_msa1(PHYS_OFFSET | 0x6);
+> 
+> As with MFCR, you could use a generic helper here, e.g.
+>
+> #define mtcr(val, reg)								\
+> do {										\
+> 	asm volatile("mtcr %0, " #reg "\n" : "=r" ((unsigned long)val));	\
+> } while (0);
+> 
+> mtcr(PHYS_OFFSET | 0xe, msa0)
+> mtcr(PHYS_OFFSET | 0x6, msa1)
+>
+OK
 
-What fix do you mean? syzbot does not know about any fixes for any of
-the bugs as far as I see. So maybe your fix actually fixed it, but
-it's not in upstream yes, and syzbot still finds this in upstream.
-We tell syzbot about fixes (with Reported-by tags or "#syz fix" email
-commands) to be able to later make sense of the state of the bugs.
+> > +	seq_printf(m, "C-SKY CPU : %s\n", CSKYCPU_DEF_NAME);
+> > +	seq_printf(m, "revision  : 0x%08x\n", mfcr_cpuidrr());
+> > +	seq_printf(m, "ccr reg   : 0x%08x\n", mfcr_ccr());
+> > +	seq_printf(m, "ccr2 reg  : 0x%08x\n", mfcr_ccr2());
+> > +	seq_printf(m, "hint reg  : 0x%08x\n", mfcr_hint());
+> > +	seq_printf(m, "msa0 reg  : 0x%08x\n", mfcr_msa0());
+> > +	seq_printf(m, "msa1 reg  : 0x%08x\n", mfcr_msa1());
+> 
+> Do these need to be exposed to userspace?
+>
+Yes, I'll add more explain info.
+
+> Does this arch support SMP? I see you don't log information per-cpu.
+This patch-set doesn't support SMP.
+> 
+> > diff --git a/arch/csky/kernel/entry.S b/arch/csky/kernel/entry.S
+> 
+> > +#define THREADSIZE_MASK_BIT 13
+> 
+> You might want to define this as THREAD_SHIFT, and define THREAD_SIZE in terms
+> of it, so that they're guaranteed to be in sync
+> 
+> e.g. in your <asm/thread_info.h> have:
+> 
+> #define THREAD_SHIFT	13
+> #define THREAD_SIZE	(1 << THREAD_SHIFT)
+OK
+
+> If you have a spare register that you can point at the current task (or you
+> have preemption-safe percpu ops), I'd recommend moving the thread_info off of
+> the stack, and implementing THREAD_INFO_IN_TASK_STRUCT.
+>
+Em... I'll think about it.
+
+> For consistency, and in case you change your stack size in future, this should
+> be THREADSIZE_MASK_BIT.
+>
+OK
+
+> > +        if (unlikely(address >= VMALLOC_START && address <= VMALLOC_END))
+> > +                goto vmalloc_fault;
+> 
+> You might want to check if this was a user mode fault here, so that users can't trigger vmalloc faults.
+Is it necessary to check user mode? If a user-process touch a
+kernel-addr, it will cause a supervisor exception.
+
+Best Regards
+  Guo Ren
