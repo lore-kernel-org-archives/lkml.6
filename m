@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3827928-1521494630-2-7849606418071194707
+X-Cyrus-Session-Id: sloti22d1t05-3827995-1521494630-2-1457561014466212595
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,64 +13,62 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521494629; b=JyiJ6y+un9+XvlgH9zMqytJlg/unOPZmUnMnEP8Z8OhMLQ7
-    ej/TNsgAPoK+3TJ4p9bbdeJeSE7lCFM0QqEEldTLobIe0F92Cx144mYa8thq/O2T
-    L5fa2DUetHDJNBgDZFuk0CGMB0FT8l5X4AEN97n86dhm8pUMo/yeHZ44d86er0BV
-    Tcrid6m9OGzGea5pKjapoKZ+cBQx4rsmn9gwdpyBml0t9Z5U8ZIefZDdedjnpwnT
-    62dimB78AR+IVGdga1FutlD7OCWuhvIRuvHVW7BJ12mp0keGvFQy/eYtXZfYzadH
-    Vp/xGU3jtSwcVt7fUcKk18njI5hQovZjw0NSYzA==
+    t=1521494629; b=mZLcQ780C177SsSmzZlua49avmZBWXeNn+KdQc6odqiJM/x
+    h/u90I/NK1y+oUWi6lHavgXc3qzJHgAbQqktjrTvkBa0AMLODQM537fciVvG2jOp
+    esVc/rCMqKOOcgLa3BHwtaixyJxU6SkZ7hAr5B9tzon+VRjm3WKfxxq1rQQX4Qu5
+    ISgP5p+VVhPmWvXT3768kyzh6n43t4HSyVc8rT+GPXO+0+8iNRP5pP7GHxm+iSoO
+    qwQ1xG903n067d0fqsPOhN1UOhpJ4nY6Rf88Qc7Jri2jp6iQ2zeLTnFhRQZqCUPN
+    uFydLIgEpPRJUNB2CkzcQDBZiUbl8Vb5/47TVzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521494629; bh=ziTZOU
-    u64YYUTnFgEI/zR3IAh2o/cUJtl7kb0p9yMLU=; b=TL88MJGvDUOzNntBt+dc05
-    lC7re5K2P7WTUuwklTVwOP0/dfrno2FK/5rx5voGJ/ToGrfZXW7Usqm5hi2Z1BpC
-    9NMhiyg0315CDzgLz4IkhyfOHvuKhOVTl5SyyP0rF2cVtjjoMJgR+USd0fSRx82L
-    WNiy1JMtkWn2UyG8w/Zojc5oyrBCITeyu2TwLgdSTAmvWTTSEY4fI/PXgjmrb3Ml
-    n0x/D17TsEtxD2xB3Y0zSzriVzfDSPMg7zaV+KWo1ne1ZttJY2lS5EiZtKr4xDJh
-    qAo9g+iFcg97WI216E5CfC9CUTs6ahk4C/T2B4z5NdXzGA91FV4OeqEKBOPYNITA
+    :mime-version:sender:list-id; s=arctest; t=1521494629; bh=jh02gZ
+    X1MbgvkOdrMR4BxponDAU8fNU7LdHjgTs8zrs=; b=PG/eoAcamWgiOFxCvWggxa
+    /wpG5JWhqEhlE2aaA5nRjlrgcqgrso3gtVLLis6mWgFGL+zbDqMWIOwWdL1HqTgj
+    Fa1sW8O8WC7+YNx6tKSAm5XFI27R6YNCWwB3EDH1+ybnwWmKKAwmgBMxa+yLv9kC
+    q9kOg6Y437cNDUPJzzNROG+/3H0SpzhagsORwYDjbid/mPJvQKgLsT32kz+0Vlxk
+    tgtrsRCID1FGRGAxACQwVlavt8aPLXq+9pBR+zMKSw7tl+qD7WWhbDzzm/wHE4L4
+    OyDb3LgkrJX9vZy/fRNqqRNX2OAt6kisHA19PG99+etXWNqK/FInDJc01fiDiW1w
     ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JoiWSVwh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ORfjBN/h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekuddvjeenucevlhhushhtvghrufhiiigvpeegke;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeekfeeknecuvehluhhsthgvrhfuihiivgepgeek;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JoiWSVwh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ORfjBN/h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekuddvjeenucevlhhushhtvghrufhiiigvpeegke;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeekfeeknecuvehluhhsthgvrhfuihiivgepgeek;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936266AbeCSVXm (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:23:42 -0400
-Received: from mail-sn1nam02on0093.outbound.protection.outlook.com ([104.47.36.93]:41904
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S965415AbeCSVXp (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 17:23:45 -0400
+Received: from mail-co1nam03on0127.outbound.protection.outlook.com ([104.47.40.127]:22848
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934849AbeCSQA0 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:00:26 -0400
+        id S934790AbeCSQAZ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:00:25 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Kees Cook <keescook@chromium.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+CC: Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 090/281] ray_cs: Avoid reading past end of
- buffer
-Thread-Topic: [PATCH AUTOSEL for 4.9 090/281] ray_cs: Avoid reading past end
- of buffer
-Thread-Index: AQHTv5tIlpRE1trQZEGzkW3231dlnQ==
-Date: Mon, 19 Mar 2018 15:59:38 +0000
-Message-ID: <20180319155742.13731-90-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 079/281] powerpc/mm: Fix virt_addr_valid()
+ etc. on 64-bit hash
+Thread-Topic: [PATCH AUTOSEL for 4.9 079/281] powerpc/mm: Fix
+ virt_addr_valid() etc. on 64-bit hash
+Thread-Index: AQHTv5s+Nd5dz1KJn0e+tmKCFSzYFA==
+Date: Mon, 19 Mar 2018 15:59:22 +0000
+Message-ID: <20180319155742.13731-79-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,83 +77,109 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0984;7:F17yy5KmEaf0tiv6qIGCnZ11zXe95d5iNLDan/vfUWwmh7X4741f6KQAQ+I6eCA2YkuZO3ebZjaQ9D4su5CY1HERZOqHJRo+GjrBxWPIAufSN/qqFHtVM+qWwlP9cf3qGzXKq+XrqYdP4B/W6WZCLEBmnT7iW6WQHY3Anki9I+AkbtsiUUNZdQme6BBmL1OR/H1ULGSmKisu48I+sKT+pU++HZxvAvg8jJntZ+hODN1N5gH5q+AxEdPKX7iCr/cB;20:UsJAMStNQnQxn10X/n8reyobpMe7Yw6qtcupcMMlWI0G4p54N3TfiW5Yu36Pzu/sauStEz+nJKnTQE/9xxoPpVY7zQ9zqh4gf39ZSFhBBFWBkC/+j7FH2bdv9K46cNXtALNePwkn+sCVqKJv6Ey+F0+8tf7HQjw2LXFnpXGtYWQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0869;7:955gLkH69TpaKT9Zwa+/ibxk3Ua/5Ynt2GySfw3csI1fV63DKnUyh30Z54nV8uhkKt7ROBwavKYnUcGT0ziy3WxCi5m+2CPM1udV0EeEQL5N06uca5V+kWsdMP1nRk4Lt4kToj48nAyHCGnp1ueyw6cXNvSE+Ulj/IgyYJ/jgwu/3m7IQQOP4apQI8FsKtYaHOqxh79PCHcTwX0VR3YGA3DTjLa8H/VAQsxbfY5hCAPjurXMLUJ7D2qO5eeH8EuO;20:HL6BETuv4X6WQWwqPh+QH5SaKnWsVKq5hkun2yCqf9/ovgqvX4W5f50bYkM8QFcA/wFjVks13lpc24paAGuV39v3c0Nfl72+Vx1U8Q1BWHq5qU3jpVassRwlsqiOaixrwP+QiyeJtPPYVlQPBfUTDk/5v03cjuEuWDRzi+EDZZg=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 735b0bce-395e-46e7-0fbb-08d58db27d75
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0984;
-x-ms-traffictypediagnostic: DM5PR2101MB0984:
+x-ms-office365-filtering-correlation-id: da53d9c6-48bd-4bc7-c00f-08d58db27a42
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0869;
+x-ms-traffictypediagnostic: DM5PR2101MB0869:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0984CFFF9726FAA988CBF76CFBD40@DM5PR2101MB0984.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB086914CFCD55AFB84443C79EFBD40@DM5PR2101MB0869.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0984;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0984;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0869;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0869;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39860400002)(39380400002)(396003)(189003)(199004)(6116002)(25786009)(6486002)(97736004)(1076002)(4326008)(2950100002)(6666003)(66066001)(3846002)(36756003)(39060400002)(81166006)(8676002)(6436002)(106356001)(8936002)(81156014)(2900100001)(105586002)(5250100002)(2501003)(305945005)(7736002)(10090500001)(5660300001)(14454004)(54906003)(68736007)(99286004)(26005)(186003)(6506007)(3280700002)(478600001)(3660700001)(86362001)(107886003)(10290500003)(6512007)(86612001)(72206003)(53936002)(76176011)(316002)(22452003)(102836004)(110136005)(2906002)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0984;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: FE3CTcVknW91yhO0FBxxaMG9SHWgsAPSX7gfeHnsKT7I2wYyHoFdNdlMORzjT+q2jFm+akkSeYuuktHwIpS4hdfao8S8zZgrVIGuJPtRNR+bIDFU+nJ38z8lkQq08w3G/I5enqKHQ8HbVLsaSvLGFl6cRCor4mRUzj4g2+raFK3pXmfjprN0K6J6y2aq8xVGf83AAOzDAnv7RaPQi261n1Fxtk1yX6RbxDfAOyF28yhb007xNmDpJwEfl5UPxmiUsV1F6BVnkzWCYYHVbgxyZVooye4DIWRyPVxcLRmtIOhObEakJtKm9U39khnI9LXHKODUfGwQ48PAPA7OgFc0sw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(366004)(346002)(39860400002)(199004)(189003)(76176011)(6486002)(2950100002)(6666003)(2906002)(5660300001)(54906003)(14454004)(110136005)(7736002)(2501003)(10290500003)(106356001)(22452003)(59450400001)(3280700002)(5250100002)(305945005)(25786009)(99286004)(107886003)(10090500001)(6436002)(26005)(97736004)(53936002)(86612001)(3846002)(6116002)(186003)(1076002)(8676002)(81156014)(81166006)(68736007)(102836004)(72206003)(3660700001)(8936002)(316002)(478600001)(4326008)(36756003)(6506007)(105586002)(66066001)(6512007)(2900100001)(575784001)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0869;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: NTRGTT8hbiADZN75pLVlX9CjVX1PlgyCuw02juw545Hgy0c47l/AltxPT0xIPrIHzNJ0RCsI1wDPqhR8CLeh4q1oji3boNOmiJBRi1X+AuJY0z3tZ77v4lTZL4yiYr2vfNJ1xStxXhOPmEmMInggXLxyhpkcLSGL3QtD9AGbli5ERJt/09UAcpV0LqbN3NNc6gIBVvuh6aFCrJrZ+PF9HgyFn3bKIxQHAtmLFsBHKMHzwkTquc9pV6UxIQJhSXbUe6PoCn48/hYnwks1wn0X1eK5OPj1+ay1ZFmkYxn3vj5VJ9JFrrI7q20bjnBzYqQgL3RVbfRdIdMPjZAKOL0Qpw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 735b0bce-395e-46e7-0fbb-08d58db27d75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:59:38.6141
+X-MS-Exchange-CrossTenant-Network-Message-Id: da53d9c6-48bd-4bc7-c00f-08d58db27a42
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:59:22.1762
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0984
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0869
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit e48d661eb13f2f83861428f001c567fdb3f317e8 ]
+[ Upstream commit e41e53cd4fe331d0d1f06f8e4ed7e2cc63ee2c34 ]
 
-Using memcpy() from a buffer that is shorter than the length copied means
-the destination buffer is being filled with arbitrary data from the kernel
-rodata segment. In this case, the source was made longer, since it did not
-match the destination structure size. Additionally removes a needless cast.
+virt_addr_valid() is supposed to tell you if it's OK to call virt_to_page()=
+ on
+an address. What this means in practice is that it should only return true =
+for
+addresses in the linear mapping which are backed by a valid PFN.
 
-This was found with the future CONFIG_FORTIFY_SOURCE feature.
+We are failing to properly check that the address is in the linear mapping,
+because virt_to_pfn() will return a valid looking PFN for more or less any
+address. That bug is actually caused by __pa(), used in virt_to_pfn().
 
-Cc: Daniel Micay <danielmicay@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+eg: __pa(0xc000000000010000) =3D 0x10000  # Good
+    __pa(0xd000000000010000) =3D 0x10000  # Bad!
+    __pa(0x0000000000010000) =3D 0x10000  # Bad!
+
+This started happening after commit bdbc29c19b26 ("powerpc: Work around gcc
+miscompilation of __pa() on 64-bit") (Aug 2013), where we changed the defin=
+ition
+of __pa() to work around a GCC bug. Prior to that we subtracted PAGE_OFFSET=
+ from
+the value passed to __pa(), meaning __pa() of a 0xd or 0x0 address would gi=
+ve
+you something bogus back.
+
+Until we can verify if that GCC bug is no longer an issue, or come up with
+another solution, this commit does the minimal fix to make virt_addr_valid(=
+)
+work, by explicitly checking that the address is in the linear mapping regi=
+on.
+
+Fixes: bdbc29c19b26 ("powerpc: Work around gcc miscompilation of __pa() on =
+64-bit")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Tested-by: Breno Leitao <breno.leitao@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/ray_cs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/page.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
-index 0881ba8535f4..c78abfc7bd96 100644
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -247,7 +247,10 @@ static const UCHAR b4_default_startup_parms[] =3D {
- 	0x04, 0x08,		/* Noise gain, limit offset */
- 	0x28, 0x28,		/* det rssi, med busy offsets */
- 	7,			/* det sync thresh */
--	0, 2, 2			/* test mode, min, max */
-+	0, 2, 2,		/* test mode, min, max */
-+	0,			/* rx/tx delay */
-+	0, 0, 0, 0, 0, 0,	/* current BSS id */
-+	0			/* hop set */
- };
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/pag=
+e.h
+index 56398e7e6100..71c69883125a 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -132,7 +132,19 @@ extern long long virt_phys_offset;
+ #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
+ #define virt_to_page(kaddr)	pfn_to_page(virt_to_pfn(kaddr))
+ #define pfn_to_kaddr(pfn)	__va((pfn) << PAGE_SHIFT)
++
++#ifdef CONFIG_PPC_BOOK3S_64
++/*
++ * On hash the vmalloc and other regions alias to the kernel region when p=
+assed
++ * through __pa(), which virt_to_pfn() uses. That means virt_addr_valid() =
+can
++ * return true for some vmalloc addresses, which is incorrect. So explicit=
+ly
++ * check that the address is in the kernel region.
++ */
++#define virt_addr_valid(kaddr) (REGION_ID(kaddr) =3D=3D KERNEL_REGION_ID &=
+& \
++				pfn_valid(virt_to_pfn(kaddr)))
++#else
+ #define virt_addr_valid(kaddr)	pfn_valid(virt_to_pfn(kaddr))
++#endif
 =20
- /*=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D*/
-@@ -598,7 +601,7 @@ static void init_startup_params(ray_dev_t *local)
- 	 *    a_beacon_period =3D hops    a_beacon_period =3D KuS
- 	 *//* 64ms =3D 010000 */
- 	if (local->fw_ver =3D=3D 0x55) {
--		memcpy((UCHAR *) &local->sparm.b4, b4_default_startup_parms,
-+		memcpy(&local->sparm.b4, b4_default_startup_parms,
- 		       sizeof(struct b4_startup_params));
- 		/* Translate sane kus input values to old build 4/5 format */
- 		/* i =3D hop time in uS truncated to 3 bytes */
+ /*
+  * On Book-E parts we need __va to parse the device tree and we can't
 --=20
 2.14.1
