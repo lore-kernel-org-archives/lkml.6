@@ -1,54 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968380AbeCSRxh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:53:37 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33561 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965733AbeCSRxd (ORCPT
+        id S968405AbeCSRzx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:55:53 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50231 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965686AbeCSRzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:53:33 -0400
-X-Google-Smtp-Source: AG47ELu12A95cad/T5Xvo46N/RxoWJduPvXluE6I350YSr704hNBcRqsQp/xaozpsMBR+UuoIwCPfw==
-Date: Mon, 19 Mar 2018 11:53:28 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Honggang LI <honli@redhat.com>
-Cc: dledford@redhat.com, matanb@mellanox.com, leonro@mellanox.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        noaos@mellanox.com
-Subject: Re: [PATCH] IB/mlx5: Set the default active rate and width to QDR
- and 4X
-Message-ID: <20180319175328.GF1225@ziepe.ca>
-References: <20180316023713.30323-1-honli@redhat.com>
+        Mon, 19 Mar 2018 13:55:40 -0400
+X-Google-Smtp-Source: AG47ELvweM6Vg9DM4q3EDPv6hzeSvjNZgT9LcqUV4Mn2wk+3Bs07K6gEHO1qy7Cs9nZe86VD9dntIQ==
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for
+ brcmfmac
+To: Alexey Roslyakov <alexey.roslyakov@gmail.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvalo@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com>
+ <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+Date: Mon, 19 Mar 2018 10:55:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316023713.30323-1-honli@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 10:37:13AM +0800, Honggang LI wrote:
-> From: Honggang Li <honli@redhat.com>
-> 
-> commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-> active_speed in RoCE"). Before this patch applied, the mlx5_ib
-> driver set default active_width and active_speed to IB_WIDTH_4X
-> and IB_SPEED_QDR.
-> 
-> When the RoCE port is down, the RoCE port did not negotiate the
-> active width with remote side. The active width is zero. If run
-> ibstat to require the port status, ibstat will panic as it read
-> invalid width from sys file.
-> 
-> This patch restores the original behavior.
-> 
-> Fixes: f1b65df5a232 ("IB/mlx5: Add support for active_width and active_speed in RoCE").
-> Signed-off-by: Honggang Li <honli@redhat.com>
-> Reviewed-by: Hal Rosenstock <hal@mellanox.com>
-> Reviewed-by: Noa Osherovich <noaos@mellanox.com>
->  drivers/infiniband/hw/mlx5/main.c | 3 +++
->  1 file changed, 3 insertions(+)
+On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
+> Hi Arend,
+> I appreciate your response. In my opinion, it has nothing to do with
+> SDIO host, because it defines "quirks" in the driver itself.
 
-Applied to for-next, thanks
+It is not clear to me from your patch series whether the problem is that:
 
-Jason
+- the SDIO device has a specific alignment requirements, which would be
+either a SDIO device driver limitation/issue or maybe the underlying
+hardware device/firmware requiring that
+
+- the SDIO host controller used is not capable of coping nicely with
+these said limitations
+
+It seems to me like what you are doing here is a) applicable to possibly
+more SDIO devices and host combinations, and b) should likely be done at
+the layer between the host and device, such that it is available to more
+combinations.
+
+> If I get it right, you mean something like this:
+> 
+> mmc3: mmc@1c12000 {
+> ...
+>         broken-sg-support;
+>         sd-head-align = 4;
+>         sd-sgentry-align = 512;
+> 
+>         brcmf: wifi@1 {
+>                 ...
+>         };
+> };
+> 
+> Where dt: bindings documentation for these entries should reside?
+> In generic MMC bindings? Well, this is the very special case and
+> mmc-linux maintainer will unlikely to accept these changes.
+> Also, extra kernel code modification might be required. It could make
+> quite trivial change much more complex.
+
+If the MMC maintainers are not copied on this patch series, it will
+likely be hard for them to identify this patch series and chime in...
+
+> 
+>> Also I am not sure if the broken-sg-support is still needed. We added that for omap_hsmmc, but that has since changed to scatter-gather emulation so it might not be needed anymore.
+> 
+> I've experienced the problem with rk3288 (dw-mmc host) and sdio
+> settings like above solved it.
+> Frankly, I haven't investigated any deeper which one of the settings
+> helped in my case yet...
+> I will try to get rid of broken-sg-support first and let you know if
+> it does make any difference.
+> 
+> All the best,
+>   Alex.
+> 
+> On 19 March 2018 at 16:31, Arend van Spriel
+> <arend.vanspriel@broadcom.com> wrote:
+>> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
+>>>
+>>> In case if the host has higher align requirements for SG items, allow
+>>> setting device-specific aligns for scatterlist items.
+>>>
+>>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt | 5
+>>> +++++
+>>>   1 file changed, 5 insertions(+)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>> index 86602f264dce..187b8c1b52a7 100644
+>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>> @@ -17,6 +17,11 @@ Optional properties:
+>>>         When not specified the device will use in-band SDIO interrupts.
+>>>    - interrupt-names : name of the out-of-band interrupt, which must be
+>>> set
+>>>         to "host-wake".
+>>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO host
+>>> +       controller has higher align requirement than 32 bytes for each
+>>> +       scatterlist item.
+>>> + - brcm,sd-head-align : alignment requirement for start of data buffer.
+>>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
+>>> entry.
+>>
+>>
+>> Hi Alexey,
+>>
+>> Thanks for the patch. However, the problem with these is that they are
+>> characterizing the host controller and not the wireless device. So from
+>> device tree perspective , which is to describe the hardware, these
+>> properties should be SDIO host controller properties. Also I am not sure if
+>> the broken-sg-support is still needed. We added that for omap_hsmmc, but
+>> that has since changed to scatter-gather emulation so it might not be needed
+>> anymore.
+>>
+>> Regards,
+>> Arend
+> 
+> 
+> 
+
+
+-- 
+Florian
