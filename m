@@ -1,85 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935514AbeCSQfU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:35:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:8500 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933823AbeCSQfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:35:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
-   d="scan'208";a="40281020"
-Date: Mon, 19 Mar 2018 09:37:14 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
-Message-ID: <20180319093714.3afe698b@jacob-builder>
-In-Reply-To: <20180315131854.s6xmltsvsysublcw@8bytes.org>
-References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
-        <20180213140303.42mbzfxpypljy37l@8bytes.org>
-        <20180213214002.GA27066@otc-nc-03>
-        <20180213145332.35c73eda@jacob-builder>
-        <20180215095337.fccoozdclfnbepi4@8bytes.org>
-        <20180215083811.3ec86e49@jacob-builder>
-        <20180315131854.s6xmltsvsysublcw@8bytes.org>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S966060AbeCSQjt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:39:49 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:44351 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935400AbeCSQjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:39:43 -0400
+X-Google-Smtp-Source: AG47ELsu1029VtFxmZRAu/8HGJIVeZ8i5aZFzIMqUggHBG3VSJ8w7lkC3xDh+o3+Gd6KTj+7PgI4LA==
+Date: Mon, 19 Mar 2018 09:39:40 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, cl@linux.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: Allow to kill tasks doing pcpu_alloc() and
+ waiting for pcpu_balance_workfn()
+Message-ID: <20180319163940.GA519464@devbig577.frc2.facebook.com>
+References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
+ <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
+ <20180319151447.GL2943022@devbig577.frc2.facebook.com>
+ <4e8ca27a-9c92-8f1e-fb72-88758a266cb6@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e8ca27a-9c92-8f1e-fb72-88758a266cb6@virtuozzo.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 14:18:54 +0100
-Joerg Roedel <joro@8bytes.org> wrote:
+On Mon, Mar 19, 2018 at 06:32:10PM +0300, Kirill Tkhai wrote:
+> From: Kirill Tkhai <ktkhai@virtuozzo.com>
+> 
+> In case of memory deficit and low percpu memory pages,
+> pcpu_balance_workfn() takes pcpu_alloc_mutex for a long
+> time (as it makes memory allocations itself and waits
+> for memory reclaim). If tasks doing pcpu_alloc() are
+> choosen by OOM killer, they can't exit, because they
+> are waiting for the mutex.
+> 
+> The patch makes pcpu_alloc() to care about killing signal
+> and use mutex_lock_killable(), when it's allowed by GFP
+> flags. This guarantees, a task does not miss SIGKILL
+> from OOM killer.
+> 
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-> On Thu, Feb 15, 2018 at 08:38:11AM -0800, Jacob Pan wrote:
-> > Just wondering if your concern is on the implementation or the
-> > debugfs idea in general. Perhaps have some common IOMMU debugfs?  
-> 
-> My concern mainly is that we add interfaces which reveal
-> potentially security relevant information
-I don;t think security is any worse than existing kernel page table in
-debugfs. i.e. /sys/kernel/debug/page_tables
-This is a debug feature.
-> to user-space and that tools
-> come up using it so that this also becomes kABI and we can't easily
-> change it anymore and this whole stuff turns into a maintence
-> nightmare.
-> 
-Agreed, perhaps we can address that by only dumping user readable data
-which avoid having a parser tool that relies on stable kABI?
+Applied to percpu/for-4.16-fixes.
 
-> So that is definitly not something I'd like to see enabled in the
-> distros, and its better to avoid it at all and search for better ways
-> to debug upcoming issues.
-> 
-We can make it "def_bool n" so only used by advanced customers who can
-recompile kernel.
-> BPF tracers and tracing in general comes to mind here...
-> 
-my concern is that tracing is suitable for dynamic debugging, but these
-context info are mostly static. Perhaps I am missing some tracing
-features.
+Thanks.
 
-Thanks,
-
-Jacob
-> 
-> 	Joerg
-> 
-
-[Jacob Pan]
+-- 
+tejun
