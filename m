@@ -1,168 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971601AbeCSUwe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:52:34 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:33766 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966623AbeCSSJD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:09:03 -0400
-X-Google-Smtp-Source: AG47ELvVOqV+krMMmOWeAQxqAYIrdAVUH5vs7kqmAgRNujXt8Geo0Lb87H0bLuNREr8o2CEDVTZ0wowcQjdwSheYbgY=
-MIME-Version: 1.0
-In-Reply-To: <20180319174559.GG1757@magnolia>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152112916514.24669.8643877835071945330.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180319174559.GG1757@magnolia>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 19 Mar 2018 11:09:02 -0700
-Message-ID: <CAPcyv4hM5HOn-Gjn-Nqp_5rPL9ZK2MAjW79WvZaS7DbJnKDhbA@mail.gmail.com>
-Subject: Re: [PATCH v6 14/15] xfs: prepare xfs_break_layouts() for another
- layout type
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S968573AbeCSSJC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:09:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62511 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968521AbeCSSIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:08:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
+   d="scan'208";a="39330580"
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: x86@kernel.org
+Cc: luto@kernel.org, ak@linux.intel.com, hpa@zytor.com,
+        markus.t.metzger@intel.com, tony.luck@intel.com,
+        ravi.v.shankar@intel.com, linux-kernel@vger.kernel.org,
+        chang.seok.bae@intel.com,
+        "Markus T . Metzger" <markus.t.metzgar@intel.com>
+Subject: [PATCH 07/15] x86/fsgsbase/64: putregs() in a reverse order
+Date: Mon, 19 Mar 2018 10:49:19 -0700
+Message-Id: <1521481767-22113-8-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 10:45 AM, Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
-> On Thu, Mar 15, 2018 at 08:52:45AM -0700, Dan Williams wrote:
->> When xfs is operating as the back-end of a pNFS block server, it prevents
->> collisions between local and remote operations by requiring a lease to
->> be held for remotely accessed blocks. Local filesystem operations break
->> those leases before writing or mutating the extent map of the file.
->>
->> A similar mechanism is needed to prevent operations on pinned dax
->> mappings, like device-DMA, from colliding with extent unmap operations.
->>
->> BREAK_WRITE and BREAK_TRUNCATE are introduced as two distinct levels of
->> layout breaking.
->>
->> Layouts are broken in the BREAK_WRITE case to ensure that layout-holders
->> do not collide with local writes. Additionally, layouts are broken in
->> the BREAK_TRUNCATE case to make sure the layout-holder has a consistent
->> view of the file's extent map. While BREAK_WRITE breaks can be satisfied
->> be recalling FL_LAYOUT leases, BREAK_TRUNCATE breaks additionally
->> require waiting for busy dax-pages to go idle.
->>
->> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
->> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
->> Reported-by: Dave Chinner <david@fromorbit.com>
->> Reported-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> ---
->>  fs/xfs/xfs_file.c  |   23 +++++++++++++++++------
->>  fs/xfs/xfs_inode.h |   18 ++++++++++++++++--
->>  fs/xfs/xfs_ioctl.c |    2 +-
->>  fs/xfs/xfs_iops.c  |    5 +++--
->>  4 files changed, 37 insertions(+), 11 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
->> index 5742d395a4e4..399c5221f101 100644
->> --- a/fs/xfs/xfs_file.c
->> +++ b/fs/xfs/xfs_file.c
->> @@ -352,7 +352,7 @@ xfs_file_aio_write_checks(
->>
->>       xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
->>       *iolock |= XFS_MMAPLOCK_EXCL;
->> -     error = xfs_break_layouts(inode, iolock);
->> +     error = xfs_break_layouts(inode, iolock, BREAK_WRITE);
->>       if (error) {
->>               *iolock &= ~XFS_MMAPLOCK_EXCL;
->>               xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->> @@ -762,7 +762,8 @@ xfs_file_write_iter(
->>  int
->>  xfs_break_layouts(
->>       struct inode            *inode,
->> -     uint                    *iolock)
->> +     uint                    *iolock,
->> +     enum layout_break_reason reason)
->>  {
->>       struct xfs_inode        *ip = XFS_I(inode);
->>       int                     ret;
->> @@ -770,9 +771,19 @@ xfs_break_layouts(
->>       ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
->>                               | XFS_MMAPLOCK_EXCL));
->>
->> -     ret = xfs_break_leased_layouts(inode, iolock);
->> -     if (ret > 0)
->> -             ret = 0;
->> +     switch (reason) {
->> +     case BREAK_TRUNCATE:
->> +             /* fall through */
->> +     case BREAK_WRITE:
->> +             ret = xfs_break_leased_layouts(inode, iolock);
->> +             if (ret > 0)
->> +                     ret = 0;
->> +             break;
->> +     default:
->> +             ret = -EINVAL;
->> +             break;
->> +     }
->> +
->>       return ret;
->>  }
->>
->> @@ -802,7 +813,7 @@ xfs_file_fallocate(
->>               return -EOPNOTSUPP;
->>
->>       xfs_ilock(ip, iolock);
->> -     error = xfs_break_layouts(inode, &iolock);
->> +     error = xfs_break_layouts(inode, &iolock, BREAK_TRUNCATE);
->>       if (error)
->>               goto out_unlock;
->>
->> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
->> index 74c63f3a720f..1a66c7afcf45 100644
->> --- a/fs/xfs/xfs_inode.h
->> +++ b/fs/xfs/xfs_inode.h
->> @@ -379,6 +379,20 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
->>                                       >> XFS_ILOCK_SHIFT)
->>
->>  /*
->> + * Layouts are broken in the BREAK_WRITE case to ensure that
->> + * layout-holders do not collide with local writes. Additionally,
->> + * layouts are broken in the BREAK_TRUNCATE case to make sure the
->> + * layout-holder has a consistent view of the file's extent map. While
->> + * BREAK_WRITE breaks can be satisfied be recalling FL_LAYOUT leases,
->> + * BREAK_TRUNCATE breaks additionally require waiting for busy dax-pages
->> + * to go idle.
->> + */
->> +enum layout_break_reason {
->> +        BREAK_WRITE,
->
-> I wonder if this belongs in a system header file since the same general
-> principle is going to apply to ext4 and others?  If this really is a
-> special xfs thing, then please use the "XFS_" prefix.
->
->> +        BREAK_TRUNCATE,
->
-> The "truncate" part of the name misled me for a bit.  That operation is
-> really about "make sure there are no busy dax pages because we're about
-> to change some file pmem^Wblock mappings", right?  Truncation, hole
-> punching, reflinking, and zero_range (because it punches the range and
-> reallocates unwritten extents) all have to wait for busy dax pages to
-> become free before they can begin unmapping blocks.  So this isn't just
-> about truncation specifically; can I suggest "BREAK_UNMAPI" ?
+This patch makes a walk of user_regs_struct reversely. Main
+reason for doing this is to put FS/GS base setting after
+the selector.
 
-I like that name better.
+Each element is independently set now. When FS/GS base is
+(only) updated, its index is reset to zero. In putregs(),
+it does not reset when both FS/GS base and selector are
+covered.
 
-It isn't clear that this needs to go to a system header because I
-expect ext4 will only support BREAK_UNMAPI for dax and not care about
-BREAK_WRITE since that is an XFS-only / pNFS-only distinction in
-current code. However, I'll let Jan chime in if this guess is
-incorrect and ext4 plans to add pNFS block-server support.
+When FSGSBASE is enabled, an arbitrary base value is possible
+anyways, so it is going to be reasonable to write base lastly.
 
-> (I also haven't figured out whether the same requirements apply to
-> things that *add* extent maps to the file, but I have to run to a
-> meeting in a few so wanted to get this email sent.)
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: Markus T. Metzger <markus.t.metzgar@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/kernel/ptrace.c | 48 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 45 insertions(+), 3 deletions(-)
 
-Add should not be a problem because DMA only ever starts after extents
-are added, i.e. there's no risk of DMA starting to invalid address
-because fs/dax.c arranges for extents to be allocated at fault time.
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 9c09bf0..ee37e28 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -426,14 +426,56 @@ static int putregs(struct task_struct *child,
+ 		   unsigned int count,
+ 		   const unsigned long *values)
+ {
+-	const unsigned long *v = values;
++	const unsigned long *v = values + count / sizeof(unsigned long);
+ 	int ret = 0;
++#ifdef CONFIG_X86_64
++	bool fs_fully_covered = (offset <= USER_REGS_OFFSET(fs_base)) &&
++			((offset + count) >= USER_REGS_OFFSET(fs));
++	bool gs_fully_covered = (offset <= USER_REGS_OFFSET(gs_base)) &&
++			((offset + count) >= USER_REGS_OFFSET(gs));
++
++	offset += count - sizeof(*v);
++
++	while (count >= sizeof(*v) && !ret) {
++		v--;
++		switch (offset) {
++		case USER_REGS_OFFSET(fs_base):
++			if (fs_fully_covered) {
++				if (unlikely(*v >= TASK_SIZE_MAX))
++					return -EIO;
++				/*
++				 * When changing both %fs (index) and %fsbase
++				 * write_task_fsbase() tends to overwrite
++				 * task's %fs. Simply setting base only here.
++				 */
++				if (child->thread.fsbase != *v)
++					child->thread.fsbase = *v;
++				break;
++			}
++		case USER_REGS_OFFSET(gs_base):
++			if (gs_fully_covered) {
++				if (unlikely(*v >= TASK_SIZE_MAX))
++					return -EIO;
++				/* Same here as the %fs handling above */
++				if (child->thread.gsbase != *v)
++					child->thread.gsbase = *v;
++				break;
++			}
++		default:
++			ret = putreg(child, offset, *v);
++		}
++		count -= sizeof(*v);
++		offset -= sizeof(*v);
++	}
++#else
+ 
++	offset += count - sizeof(*v);
+ 	while (count >= sizeof(*v) && !ret) {
+-		ret = putreg(child, offset, *v++);
++		ret = putreg(child, offset, *(--v));
+ 		count -= sizeof(*v);
+-		offset += sizeof(*v);
++		offset -= sizeof(*v);
+ 	}
++#endif /* CONFIG_X86_64 */
+ 	return ret;
+ }
+ 
+-- 
+2.7.4
