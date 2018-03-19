@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3293580-1521478713-2-418427390120760587
+X-Cyrus-Session-Id: sloti22d1t05-3274576-1521478712-2-6931138782027503436
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,62 +13,62 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521478712; b=OBM26tVLQQMnP3hirTkEO7IxW2YYdyU0cKQ/lJMKBCFDxyy
-    xAyj3fKC+ZBlEVHWb2f+ZDXcrDJUFWZU6nlf5HD66ATtReZw3cAQGEcgsLtCz2WH
-    UOKCN6H8oNyeJdSAvqT7Ue/Ypd9lu/VU6tiNx4KGhHY18PIRx7xz+w6Ohu4k8PXG
-    A5IDAcc2YsSEYfgxFtV8WJG8SpZ2gSzbyk582REkBW0Bl5B5pU1j164XwtVw3yOv
-    skKQVMuVrOBeNUjQpFO0pWgkruoo62R3ilAgSLU0OXkf4x7I10UEVsmLOORcekkx
-    xZH0flBOgwlbtJ0ToONxZwxWJaBVVE6xkzzULIQ==
+    t=1521478711; b=LpNsUqkMqbiMWg0ECZn1zEoLBRovUYmNDSH0CLe5iwrQi7a
+    w/p2UCeFMoYDO1iaPFd0R58Dy5juarwUXwx+9xKq3JMV589VjiTRp8hc7lemrLfB
+    y6C8pD8SPtRAe/2X5fCjvHzbj+MoO9LSBtNxUMQghOsICLOyMs0yBtKqZ41Hh1Bo
+    yHKNdVWZEsNPqvmWQjfxE4sT9wGm+6TZ/m/MyrsySVFntj+iWkftPivSwxZDX5yf
+    hFiDgyDa+FClmRFCpfDYVBPxH9/M8pLZuDVq99adOJGUNYo5P4xtr0oHuwebdIEr
+    3AIriBhWdfGvwqQ2EqhiSt8ma2E3gwnc3nQ2LCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521478712; bh=/53dMy
-    whgyb/NABz1SMsAIp1A+uc8Ho6xRfHew4QBvY=; b=bdL1kOMlMC0iiIe4B0FTuJ
-    YcywuYMULkFQn+I+NTEckEaou0f99wsWi8uRbgBFFO1oa2+r1N/xyaB1CpPRt8I/
-    VHDPNnVKEV9GXCS75AEQwIuIr89vaYCFbE1MGNoP660+phBi9pcZ4yMhyS+occpw
-    /0l8WCnSAcY8fw7e+bUrzOxF0mLeO29Zyn972w60vLHRnsUPCNws8RgnOB9yNLtR
-    UMti3yp9rV+Zt14DSgvfg5/YOZgdpMslr8hV9u/FeLvLnru8LVT9NUdR66aEDk5l
-    qh39h8CT6qFXUlW3J87gd5w3KqUikTEfuiI1k1qF2iz4LPOMlLdDcljQaa+bvUkg
+    :mime-version:sender:list-id; s=arctest; t=1521478711; bh=76z/ML
+    1CS3Bd1UFOvf80NciPa0lkbNzS074IaPDAKrM=; b=kXrmdaS87bCuQVF8GrSBFz
+    BBkxsJLauVZtNnPEQjEQQkmESmepB11+eR9cvokL39E87Gq4Bd2x1jzak88hRApv
+    2XPrjnt65vijavy6cgA+NtVAVE7S0DmGvnteH0dWMsbU0EEK+VdFa3RROG3kWOSm
+    lNEYRmuDq12GdcUt4m3yxisUaV1dS5m7FlJSZHfyMvFA/MHtIO7Yu+Ddu8vYX/3P
+    Xlnfb6zGwA++M63DqgbPD9+9Ftz2MYBAMY2d3B9L0ToLt17TZps9vYVR2AzPBAZu
+    8IilYnCYc2VqULFegxkkAQTEqFaJ3z85Irohy3OlZ7EbPI1BKkbhDXnP/exttWEQ
     ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iJnqja61 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lSkf3c8e x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleeitdejnecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeeggedvnecuvehluhhsthgvrhfuihiivgeptd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iJnqja61 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lSkf3c8e x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleeitdejnecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeeggedvnecuvehluhhsthgvrhfuihiivgeptd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967541AbeCSQ4R (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 12:56:17 -0400
-Received: from mail-co1nam03on0139.outbound.protection.outlook.com ([104.47.40.139]:6160
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S966746AbeCSQL1 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 12:11:27 -0400
+Received: from mail-dm3nam03on0108.outbound.protection.outlook.com ([104.47.41.108]:23560
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966761AbeCSQLc (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:11:32 -0400
+        id S966740AbeCSQLW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:11:22 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+CC: Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 159/167] blk-mq: fix kernel oops in
- blk_mq_tag_idle()
-Thread-Topic: [PATCH AUTOSEL for 4.4 159/167] blk-mq: fix kernel oops in
- blk_mq_tag_idle()
-Thread-Index: AQHTv5yMkzSUgCLaBUiR7jaJwVMTwA==
-Date: Mon, 19 Mar 2018 16:08:41 +0000
-Message-ID: <20180319160513.16384-159-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 151/167] s390/dasd: fix hanging safe offline
+Thread-Topic: [PATCH AUTOSEL for 4.4 151/167] s390/dasd: fix hanging safe
+ offline
+Thread-Index: AQHTv5yGDn6mHYfLTkS4WDc/5ttdmw==
+Date: Mon, 19 Mar 2018 16:08:32 +0000
+Message-ID: <20180319160513.16384-151-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,116 +77,75 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;7:Kc3ewHO3HEhWWY26sIKvI5WaphVs7AKIRlANiNMRUjatioCWX9fkceGgl6suPaatA5GVpyomyabifr6jeQzkkucssDhC1f1OWoxqaEfQu8K976BKvC/vxaY/xOr8Qika92BkRSJ5CL86SejKvTO0cREHg3VJh6sY9IU98BcGvD5g8CamkGPQ3NySW5StizSKDC6fT1DqN0q+4hGQd9ybLFMcgGgVJPjlJpsm5U1+EU/GHEdlusyIOol/Yr2kbnv8;20:Ju4cGwkJSP3N5MqtpKt6MPh48KB32mLsE1EEMSltzQ3LXphVSPVjXsq3dKDD8QrIVQ1vIdNQ252FsAirpnOEZCr4232ChyRmMeoNOHAtdLoPKnK33b+wx4z91E8oirIQA8S5c91excZX6yxjtXN+ZufZB1law8YrUT42SaPTz28=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0984;7:4jlwjcv09TVlGAb3Y9hqtOoB6elOqe37TK7UYGcHqz6FgLCsVeQRTudgTi1gMK2f3IT7KOi6k68JNtt/5aNDaEL/qkA5Kz99INsq/SOKF57Rg3jvjV+boww/k5Xkfekb4dlwLMXXyfxzO+R93ETXtXZ3f2+N0wb9gV6UKIbgOG16q5m7EIGmzP9spKqzeAkFkDYu1nV6CTnNyIeIdurqJu6JeeP1RdBguTaVmMJKeyH4W/1jJVSpOxJsROIbN5Mg;20:z2D23HpJDd4FN0HUxn60S21aN7SxC2UOlUBFsX0Vm9Pz9Q0wjY3Tds4KefUgV3WZD4ABNs9jMGe6xrxlnTsU0jbJwFhqrewtIJdBdiffUaglHGDC08tfepHM7+QI6heBUFun/cFhxngWydYi6HxWHfdVl519AyJYxNW+lhcz+V4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d5cabac9-53e2-442c-2239-08d58db41044
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
-x-ms-traffictypediagnostic: DM5PR2101MB0888:
+x-ms-office365-filtering-correlation-id: e4096644-4de3-4af1-b0a9-08d58db40dd2
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0984;
+x-ms-traffictypediagnostic: DM5PR2101MB0984:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08886E08BCAAC03925B50523FBD40@DM5PR2101MB0888.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
+x-microsoft-antispam-prvs: <DM5PR2101MB09845436A71DE966BEB4D651FBD40@DM5PR2101MB0984.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(190383065149520)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0984;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0984;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(366004)(39380400002)(376002)(51234002)(189003)(199004)(6486002)(72206003)(106356001)(86362001)(575784001)(3660700001)(6436002)(68736007)(53936002)(107886003)(8936002)(81166006)(8676002)(81156014)(2906002)(6116002)(4326008)(6512007)(1076002)(86612001)(66066001)(25786009)(7736002)(3846002)(305945005)(5660300001)(99286004)(5250100002)(110136005)(478600001)(36756003)(54906003)(2501003)(6506007)(186003)(59450400001)(26005)(14454004)(6666003)(2900100001)(316002)(2950100002)(102836004)(10290500003)(3280700002)(97736004)(76176011)(10090500001)(22452003)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: XQLRLH+xnwZQtXy+RpI64uELL3oA/NOYpK1Feigu76wFeWkhoBClXrnSZ6HW+HK9tnnl7ElH0rAjpSS1QWcTDN1kRzb7r9AWX3BwVDVFpgNgUKjvLwCVCE9k7tETyuir6V+Ma+B7516aCT/Ze3VcyCsL7lT1j/Y3Ake+5LtT3TTYPDzlX0ViwwRya6o/3ha2JxXrXEeet/RDb36dfv6wyQE2Q6NaNyGb1H/JxVe6IVJL1hO87w4/o5iqMJhKV7HSTL62xKnp4FZLb5xZaZ9uGNmb1hkO6wRSV7fg6DMu0/1VeCK9ru2w7mZ7PSvFE01DXd3jecyuAz1CTzn67nLvsA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(39380400002)(376002)(346002)(199004)(189003)(43544003)(54906003)(14454004)(68736007)(10090500001)(5660300001)(6506007)(186003)(26005)(99286004)(7736002)(305945005)(76176011)(316002)(22452003)(53936002)(102836004)(110136005)(2906002)(107886003)(86362001)(10290500003)(3280700002)(478600001)(3660700001)(72206003)(86612001)(6512007)(3846002)(66066001)(36756003)(97736004)(6116002)(6486002)(25786009)(6666003)(2950100002)(1076002)(4326008)(5250100002)(105586002)(2900100001)(2501003)(81166006)(8936002)(81156014)(6436002)(8676002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0984;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: v3ltNa26AksyJIziNLLI5ZzyJb2B5G++s29XgnxDfnVpbpd3EnGYTuFIPW/x4+K+UyDDt9+32H/6rtkLNbABXUfcApiL6f3Gux5gHG1/RnCkyF5Tpvo5Lt6Cl4KhJTiNzKctZBDuVEw5LBovdTIveSNRXk9hZcdalejFDbfTPUEm5N7jU8PBHGtgQuDOuHh9unPcVZxYoY8GB8+VmTfSBaGnf555NYzmHZGj2Ab2g0yNquUfe8L3nf+4kh+MKW2HpLhLEcXBJgR+IsulBRF2BI0kcEwdHgmduEDKBK0xgrA0W7UwsBvMJ7bU+dII0DAOqjozeoyCBPWz6liBX4WYGg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5cabac9-53e2-442c-2239-08d58db41044
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:08:42.0159
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4096644-4de3-4af1-b0a9-08d58db40dd2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:08:32.0418
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0984
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Stefan Haberland <sth@linux.vnet.ibm.com>
 
-[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
+[ Upstream commit e8ac01555d9e464249e8bb122337d6d6e5589ccc ]
 
-HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues=
-(),
-then we need to check it before calling blk_mq_tag_idle(), otherwise
-the following kernel oops can be triggered, so fix it by checking if
-the hw queue is unmapped since it doesn't make sense to idle the tags
-any more after hw queues are unmapped.
+The safe offline processing may hang forever because it waits for I/O
+which can not be started because of the offline flag that prevents new
+I/O from being started.
 
-[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
-[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893=
-bf9bc8000
-[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_m=
-q_tag_idle+0x24/0x40
-[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
-[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 00000000000=
-0011f
-[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb13=
-1dc00
-[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00=
-c0000
-[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd=
-1e008
-[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 00000000000=
-00080
-[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:=
-0000000000000000
-[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001=
-407e0
-[  440.876169] Call Trace:
-[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
-[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
-[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
-[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
-[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme=
-_core]
-[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvm=
-e_rdma]
-[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvm=
-e_rdma]
-[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
-[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
-[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
-[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
-[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
-[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 =
-00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 =
-<f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
-[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  441.019301]  RSP <ffff893bf9bcbd10>
-[  441.024052] CR2: 0000000000000008
+Allow I/O to be started during safe offline processing because in this
+special case we take care that the queues are empty before throwing away
+the device.
 
-Reported-by: Zhang Yi <yizhan@redhat.com>
-Tested-by: Zhang Yi <yizhan@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Stefan Haberland <sth@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- block/blk-mq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/block/dasd.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 96bd8d9a9ad7..8649dbf06ce4 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1634,7 +1634,8 @@ static void blk_mq_exit_hctx(struct request_queue *q,
+diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
+index e7a6f1222642..b76a85d14ef0 100644
+--- a/drivers/s390/block/dasd.c
++++ b/drivers/s390/block/dasd.c
+@@ -1881,8 +1881,12 @@ static int __dasd_device_is_unusable(struct dasd_dev=
+ice *device,
  {
- 	unsigned flush_start_tag =3D set->queue_depth;
+ 	int mask =3D ~(DASD_STOPPED_DC_WAIT | DASD_UNRESUMED_PM);
 =20
--	blk_mq_tag_idle(hctx);
-+	if (blk_mq_hw_queue_mapped(hctx))
-+		blk_mq_tag_idle(hctx);
-=20
- 	if (set->ops->exit_request)
- 		set->ops->exit_request(set->driver_data,
+-	if (test_bit(DASD_FLAG_OFFLINE, &device->flags)) {
+-		/* dasd is being set offline. */
++	if (test_bit(DASD_FLAG_OFFLINE, &device->flags) &&
++	    !test_bit(DASD_FLAG_SAFE_OFFLINE_RUNNING, &device->flags)) {
++		/*
++		 * dasd is being set offline
++		 * but it is no safe offline where we have to allow I/O
++		 */
+ 		return 1;
+ 	}
+ 	if (device->stopped) {
 --=20
 2.14.1
