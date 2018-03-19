@@ -1,184 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968148AbeCSRef (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:34:35 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56660 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966080AbeCSRd7 (ORCPT
+        id S967524AbeCSRnH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:43:07 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43626 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965650AbeCSRnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:33:59 -0400
-Date: Mon, 19 Mar 2018 10:33:45 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
-Message-ID: <20180319173345.GF1757@magnolia>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Mon, 19 Mar 2018 13:43:02 -0400
+X-Google-Smtp-Source: AG47ELs8dMOQiNMHweSdmqg8jsJKi32ytHXsgYM2psdms25Bz+ZrQmf14RpGG3J0P8yepHfLtuh/+3F8HpQkRwFNBSs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803190149
+References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
+ <26a25069-ea1d-5fb3-549c-ab653f454a30@arm.com> <CAAeHK+zq4-mw3pCNf3nob3gN-s+aWVq7vUy1p8yY4bU4QYNNMg@mail.gmail.com>
+ <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com> <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
+ <38b3c636-38cd-2cc5-79d0-8ccf234e2b26@arm.com>
+In-Reply-To: <38b3c636-38cd-2cc5-79d0-8ccf234e2b26@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Mon, 19 Mar 2018 17:42:49 +0000
+Message-ID: <CAKwvOdkypCE2YEmOLxmst1Xtosc+FmNQ7LU=p94b5xkn-4=fVA@mail.gmail.com>
+Subject: Re: arm64 kvm built with clang doesn't boot
+To: marc.zyngier@arm.com
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>, dave.martin@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
-> In preparation for adding coordination between truncate operations and
-> busy dax-pages, extend xfs_break_layouts() to assume it must be called
-> with the mmap lock held. This locking scheme will be required for
-> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
-> pages mapped into the file's address space).
+The thread I was thinking of is:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-March/562953.html
+which is about b092201e0020614127f495c092e0a12d26a2116e `arm64: Add
+ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support`.  As you mention, that
+commit uses the correct widths.
+Andrey had sent me his workaround, which modified some #defines in
+include/linux/arm-smccc.h, which were added recently in commit
+f2d3b2e8759a5833df6f022e42df2d581e6d843c `arm/arm64: smccc: Implement SMCCC
+v1.1 inline primitive`.
 
-If I'm reading this right, you've added a requirement (for xfs anyway)
-that we have to have grabbed MMAPLOCK_EXCL before calling break_layout()
-so that the layout breaking process will block until active dmas have
-finished.
+>>> We probably want to be very explicit with register widths here.
 
-In 4.16 we added xfs_iolock_two_inodes_and_break_layout (in
-xfs_reflink.c) to break pnfs leases for files that are about to be
-reflinked (since pnfs and reflink aren't compatible either).  I think
-that function will have to be adapted to take the appropriate mmap locks
-too -- definitely the exclusive mmap lock for the destination file
-because we anticipate punching out blocks.  I'm not sure about the
-source file; I think taking the shared mmap lock is fine for that?
+So f2d3b2e8759 is the patch I'm referring to.
 
---D
+On Fri, Mar 16, 2018 at 10:18 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
 
-> 
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  fs/xfs/xfs_file.c  |   14 +++++++++-----
->  fs/xfs/xfs_ioctl.c |    5 +----
->  fs/xfs/xfs_iops.c  |   10 +++++++---
->  fs/xfs/xfs_pnfs.c  |    6 ++++--
->  4 files changed, 21 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 9ea08326f876..ba969019bf26 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -350,9 +350,16 @@ xfs_file_aio_write_checks(
->  	if (error <= 0)
->  		return error;
->  
-> +	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> +	*iolock |= XFS_MMAPLOCK_EXCL;
->  	error = xfs_break_layouts(inode, iolock);
-> -	if (error)
-> +	if (error) {
-> +		*iolock &= ~XFS_MMAPLOCK_EXCL;
-> +		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->  		return error;
-> +	}
-> +	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
-> +	*iolock &= ~XFS_MMAPLOCK_EXCL;
->  
->  	/*
->  	 * For changing security info in file_remove_privs() we need i_rwsem
-> @@ -768,7 +775,7 @@ xfs_file_fallocate(
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	long			error;
->  	enum xfs_prealloc_flags	flags = 0;
-> -	uint			iolock = XFS_IOLOCK_EXCL;
-> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  	loff_t			new_size = 0;
->  	bool			do_file_insert = false;
->  
-> @@ -782,9 +789,6 @@ xfs_file_fallocate(
->  	if (error)
->  		goto out_unlock;
->  
-> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> -	iolock |= XFS_MMAPLOCK_EXCL;
-> -
->  	if (mode & FALLOC_FL_PUNCH_HOLE) {
->  		error = xfs_free_file_space(ip, offset, len);
->  		if (error)
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 89fb1eb80aae..4151fade4bb1 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -614,7 +614,7 @@ xfs_ioc_space(
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct iattr		iattr;
->  	enum xfs_prealloc_flags	flags = 0;
-> -	uint			iolock = XFS_IOLOCK_EXCL;
-> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  	int			error;
->  
->  	/*
-> @@ -648,9 +648,6 @@ xfs_ioc_space(
->  	if (error)
->  		goto out_unlock;
->  
-> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> -	iolock |= XFS_MMAPLOCK_EXCL;
-> -
->  	switch (bf->l_whence) {
->  	case 0: /*SEEK_SET*/
->  		break;
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 951e84df5576..d23aa08426f9 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1028,13 +1028,17 @@ xfs_vn_setattr(
->  
->  	if (iattr->ia_valid & ATTR_SIZE) {
->  		struct xfs_inode	*ip = XFS_I(d_inode(dentry));
-> -		uint			iolock = XFS_IOLOCK_EXCL;
-> +		uint			iolock;
-> +
-> +		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> +		iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  
->  		error = xfs_break_layouts(d_inode(dentry), &iolock);
-> -		if (error)
-> +		if (error) {
-> +			xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->  			return error;
-> +		}
->  
-> -		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
->  		error = xfs_vn_setattr_size(dentry, iattr);
->  		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->  	} else {
-> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
-> index aa6c5c193f45..9fe661c2d59c 100644
-> --- a/fs/xfs/xfs_pnfs.c
-> +++ b/fs/xfs/xfs_pnfs.c
-> @@ -38,12 +38,14 @@ xfs_break_layouts(
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	int			error;
->  
-> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
-> +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
-> +				| XFS_MMAPLOCK_EXCL));
->  
->  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
->  		xfs_iunlock(ip, *iolock);
->  		error = break_layout(inode, true);
-> -		*iolock = XFS_IOLOCK_EXCL;
-> +		*iolock &= ~XFS_IOLOCK_SHARED;
-> +		*iolock |= XFS_IOLOCK_EXCL;
->  		xfs_ilock(ip, *iolock);
->  	}
->  
-> 
+> On 16/03/18 16:52, Nick Desaulniers wrote:
+
+> [dropping kernel-dynamic-tools@google.com which keeps bouncing]
+
+> > Is this in regards to: commit "arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
+> > hardening support"? Has anyone tried to upstream a fix for this?  We
+> > probably want to be very explicit with register widths here.
+> What do you mean? The current code is as strict as it gets, and
+> explicitly tells the compiler to use the right register width, based on
+> the SMC call parameter types.
+
+> Thanks,
+
+>          M.
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Jazz is not dead. It just smells funny...
+
+
+
+--
+Thanks,
+~Nick Desaulniers
