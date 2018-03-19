@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvC5DI+mudaxoQkPjTMnOs66pMHsaFiqWI5WLPgWziNSnuNDN2PRfLoT31T9fXf+CJGG+9N
-ARC-Seal: i=1; a=rsa-sha256; t=1521483769; cv=none;
+X-Google-Smtp-Source: AG47ELteBMrbvcFqckPCfyhPBydNmDzOQn8lTmdgCVW1V62buE58R0yZ6kfCEOvyYbqPN2KubtVr
+ARC-Seal: i=1; a=rsa-sha256; t=1521483766; cv=none;
         d=google.com; s=arc-20160816;
-        b=pAVc/onPr4ptnioeTv1b0aHGEQkJ2A1NhB1tQ/itVsL5PX4WNq1B0qPfL1hdiceFBl
-         hTy6yM59IBt1LUCl4l7NJZBNQWRR+BnKyxw4i1XX4hLqUGaszWg2EIleV/tUzCHL+DZz
-         vmpIHUjCNZdqYloMXDBGq4x8Dtkjtw2F11EDrhwjYDdLJnjQA63npC5+9JDjGiuoZ9in
-         PK+HzuoROqF+FH25qT8iLFqQc69peWBynhUFtFdOTJNwbmvKNIR223LDOFaSGG9Hv3dU
-         1LRYV4kiVGJGI912Km9QeL2SCDO4LCvG5Xv+Hq49vYQNS5Fl3DofS1mXcqBwgZKJVX8e
-         oGrw==
+        b=HolNSWKouJkE080Fcr0j8kjOkhxdP8iqSQDDnxjIHD8vky4BiEdO3IILDTjAhBUERa
+         dJZHhNQs2TYPHrLwO3ToAV1OPnS5d+tECUEjMGGx1gSA24zFzHOZlHYE42CNgnIc98U2
+         Qy+YI+YEEVda4ED4VwKSGeupHhewZbvlfpNQ+n5F8gHDxJWNL9rn7sZWFoEP2vpliH4i
+         wmO1DiJTwPZghS94JG9DZuCVqaHmV9WkK8U7BsrFpfBF/pyzBIz+hvvtAqaNcRhRtrXr
+         lghsRnh3O4jJl2iiUyOU3C581AQnTt6ritETLjuKil2kiL9ABy7Ezvc8RvKgo0VacHVX
+         1BYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3CPQhkEBtU67iX9JuPyp2NdLd3/l5RM9ZnEh14bDyfg=;
-        b=sCiKiGdvjS7Am1iIqZPSP3AtYDzdRp8o8cKUUJrdjTHfQCQB04LlOyehEULqMe5fpl
-         usJdwecaxAmbFQBygSjil7N2Fpfk6clz8SyscRcB8Ddw7bQFaJKOF0+GHNNnO0eDNSgY
-         RnntGyHMq973rhgxQVR+wqsmsdL1VwXBiHDa9uR8VyvGj3ijNjJgqJsQWKhdlJqWZk4X
-         NQ9NwWN5KPx4Y/1uGStWsfQxrjyzjydQ7T31F5t5rypmK2Hiim92MP8n33GSAc3Jc7p/
-         90BMN/gZFGq5ZEyQRJbCFbrNyt9DKQMm8lTNdaS6B5FVgquvee+nQDy7bSLgzOJf+cAK
-         loTg==
+        bh=FVVgwSxXpzpsx2dZoZl6BBdoq4IoFxWW84z61qZWXn8=;
+        b=LfM00G3QuEO/pkdSdjtZeuHj6w5hkCH9EBNAJ9UARZqZ/d0LOqVIsnt9BK3Q/z6fyH
+         dioGSKaR91fzqqRVDAEscUXdnvVTKC6SA0FJs28eArovwMhMwuDJlAnPuq3hseM0L9/T
+         ueHN70e/f8V0/HTdC7mY71Mfj6zq0OfLq9PvBtA/n0h75nDnZYtS5BhBQaJDSMRdqQ//
+         cjtchFZRBE6khTfOFfZ69j+WUmQi40IdEULYWjap7hmNhkOlX/C0jlblOUDWUhlj/+aj
+         +UujHPKCu4DG2ZhWhfbdb4c+rp1XZpOxgVs/PQyFNsOk57NCr5fT7kAULBMDl3rCvCaY
+         +vTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
 	Takashi Iwai <tiwai@suse.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 111/241] ALSA: firewire-digi00x: handle all MIDI messages on streaming packets
-Date: Mon, 19 Mar 2018 19:06:16 +0100
-Message-Id: <20180319180755.809983705@linuxfoundation.org>
+Subject: [PATCH 4.9 110/241] ALSA: firewire-digi00x: add support for console models of Digi00x series
+Date: Mon, 19 Mar 2018 19:06:15 +0100
+Message-Id: <20180319180755.756089691@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390814861636073?=
-X-GMAIL-MSGID: =?utf-8?q?1595391364727062881?=
+X-GMAIL-THRID: =?utf-8?q?1595391361827758079?=
+X-GMAIL-MSGID: =?utf-8?q?1595391361827758079?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,143 +53,115 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
 
-[ Upstream commit 8820a4cf0cb4cd5c6540a9a18b2cedbdfd5a6891 ]
+[ Upstream commit 13e005f9f933a35b5e55c9d36f151efe2a8383ec ]
 
-At a commit 9dc5d31cdceb ("ALSA: firewire-digi00x: handle MIDI messages in
-isochronous packets"), a functionality to handle MIDI messages on
-isochronous packet was supported. But this includes some of my
-misunderstanding. This commit is to fix them.
+Digi00x series includes two types of unit; rack and console. As long as
+reading information on config rom of Digi 002 console, 'MODEL_ID' field
+has a different value from the one on Digi 002 rack.
 
-For digi00x series, first data channel of data blocks in rx/tx packet
-includes MIDI messages. The data channel has 0x80 in 8 bit of its MSB,
-however it's against IEC 61883-6. Unique data format is applied:
- - Upper 4 bits of LSB represent port number.
-  - 0x0: port 1.
-  - 0x2: port 2.
-  - 0xe: console port.
- - Lower 4 bits of LSB represent the number of included MIDI message bytes;
-   0x0/0x1/0x2.
- - Two bytes of middle of this data channel have MIDI bytes.
+We've already got a test report from users with Digi 003 rack. We can
+assume that console type and rack type has different value in the field.
 
-Especially, MIDI messages from/to console surface are also transferred by
-isochronous packets, as well as physical MIDI ports.
+This commit adds a device entry for console type. For following commits,
+this commit also adds a member to 'struct snd_digi00x' to identify console
+type.
+
+$ cd linux-firewire-utils/src
+$ python2 ./crpp < /sys/bus/firewire/devices/fw1/config_rom
+               ROM header and bus information block
+               -----------------------------------------------------------------
+400  0404f9d0  bus_info_length 4, crc_length 4, crc 63952
+404  31333934  bus_name "1394"
+408  60647002  irmc 0, cmc 1, isc 1, bmc 0, cyc_clk_acc 100, max_rec 7 (256)
+40c  00a07e00  company_id 00a07e     |
+410  00a30000  device_id 0000a30000  | EUI-64 00a07e0000a30000
+
+               root directory
+               -----------------------------------------------------------------
+414  00058a39  directory_length 5, crc 35385
+418  0c0043a0  node capabilities
+41c  04000001  hardware version
+420  0300a07e  vendor
+424  81000007  --> descriptor leaf at 440
+428  d1000001  --> unit directory at 42c
+
+               unit directory at 42c
+               -----------------------------------------------------------------
+42c  00046674  directory_length 4, crc 26228
+430  120000a3  specifier id
+434  13000001  version
+438  17000001  model
+43c  81000007  --> descriptor leaf at 458
+
+               descriptor leaf at 440
+               -----------------------------------------------------------------
+440  00055913  leaf_length 5, crc 22803
+444  000050f2  descriptor_type 00, specifier_ID 50f2
+448  80000000
+44c  44696769
+450  64657369
+454  676e0000
+
+               descriptor leaf at 458
+               -----------------------------------------------------------------
+458  0004a6fd  leaf_length 4, crc 42749
+45c  00000000  textual descriptor
+460  00000000  minimal ASCII
+464  44696769  "Digi"
+468  20303032  " 002"
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/firewire/digi00x/amdtp-dot.c |   53 +++++++++++++++++++++++++------------
- 1 file changed, 36 insertions(+), 17 deletions(-)
+ sound/firewire/digi00x/digi00x.c |   13 +++++++++++--
+ sound/firewire/digi00x/digi00x.h |    1 +
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/digi00x/amdtp-dot.c
-+++ b/sound/firewire/digi00x/amdtp-dot.c
-@@ -28,6 +28,9 @@
-  */
- #define MAX_MIDI_RX_BLOCKS	8
+--- a/sound/firewire/digi00x/digi00x.c
++++ b/sound/firewire/digi00x/digi00x.c
+@@ -13,7 +13,8 @@ MODULE_AUTHOR("Takashi Sakamoto <o-takas
+ MODULE_LICENSE("GPL v2");
  
-+/* 3 = MAX(DOT_MIDI_IN_PORTS, DOT_MIDI_OUT_PORTS) + 1. */
-+#define MAX_MIDI_PORTS		3
-+
- /*
-  * The double-oh-three algorithm was discovered by Robin Gareus and Damien
-  * Zammit in 2012, with reverse-engineering for Digi 003 Rack.
-@@ -42,10 +45,8 @@ struct amdtp_dot {
- 	unsigned int pcm_channels;
- 	struct dot_state state;
+ #define VENDOR_DIGIDESIGN	0x00a07e
+-#define MODEL_DIGI00X		0x000002
++#define MODEL_CONSOLE		0x000001
++#define MODEL_RACK		0x000002
  
--	unsigned int midi_ports;
--	/* 2 = MAX(DOT_MIDI_IN_PORTS, DOT_MIDI_OUT_PORTS) */
--	struct snd_rawmidi_substream *midi[2];
--	int midi_fifo_used[2];
-+	struct snd_rawmidi_substream *midi[MAX_MIDI_PORTS];
-+	int midi_fifo_used[MAX_MIDI_PORTS];
- 	int midi_fifo_limit;
- 
- 	void (*transfer_samples)(struct amdtp_stream *s,
-@@ -124,8 +125,8 @@ int amdtp_dot_set_parameters(struct amdt
- 		return -EBUSY;
- 
- 	/*
--	 * A first data channel is for MIDI conformant data channel, the rest is
--	 * Multi Bit Linear Audio data channel.
-+	 * A first data channel is for MIDI messages, the rest is Multi Bit
-+	 * Linear Audio data channel.
- 	 */
- 	err = amdtp_stream_set_parameters(s, rate, pcm_channels + 1);
- 	if (err < 0)
-@@ -135,11 +136,6 @@ int amdtp_dot_set_parameters(struct amdt
- 
- 	p->pcm_channels = pcm_channels;
- 
--	if (s->direction == AMDTP_IN_STREAM)
--		p->midi_ports = DOT_MIDI_IN_PORTS;
--	else
--		p->midi_ports = DOT_MIDI_OUT_PORTS;
--
- 	/*
- 	 * We do not know the actual MIDI FIFO size of most devices.  Just
- 	 * assume two bytes, i.e., one byte can be received over the bus while
-@@ -281,13 +277,25 @@ static void write_midi_messages(struct a
- 		b = (u8 *)&buffer[0];
- 
- 		len = 0;
--		if (port < p->midi_ports &&
-+		if (port < MAX_MIDI_PORTS &&
- 		    midi_ratelimit_per_packet(s, port) &&
- 		    p->midi[port] != NULL)
- 			len = snd_rawmidi_transmit(p->midi[port], b + 1, 2);
- 
- 		if (len > 0) {
--			b[3] = (0x10 << port) | len;
-+			/*
-+			 * Upper 4 bits of LSB represent port number.
-+			 * - 0000b: physical MIDI port 1.
-+			 * - 0010b: physical MIDI port 2.
-+			 * - 1110b: console MIDI port.
-+			 */
-+			if (port == 2)
-+				b[3] = 0xe0;
-+			else if (port == 1)
-+				b[3] = 0x20;
-+			else
-+				b[3] = 0x00;
-+			b[3] |= len;
- 			midi_use_bytes(s, port, len);
- 		} else {
- 			b[1] = 0;
-@@ -309,11 +317,22 @@ static void read_midi_messages(struct am
- 
- 	for (f = 0; f < data_blocks; f++) {
- 		b = (u8 *)&buffer[0];
--		port = b[3] >> 4;
-+
- 		len = b[3] & 0x0f;
-+		if (len > 0) {
-+			/*
-+			 * Upper 4 bits of LSB represent port number.
-+			 * - 0000b: physical MIDI port 1. Use port 0.
-+			 * - 1110b: console MIDI port. Use port 2.
-+			 */
-+			if (b[3] >> 4 > 0)
-+				port = 2;
-+			else
-+				port = 0;
- 
--		if (port < p->midi_ports && p->midi[port] && len > 0)
--			snd_rawmidi_receive(p->midi[port], b + 1, len);
-+			if (port < MAX_MIDI_PORTS && p->midi[port])
-+				snd_rawmidi_receive(p->midi[port], b + 1, len);
-+		}
- 
- 		buffer += s->data_block_quadlets;
- 	}
-@@ -364,7 +383,7 @@ void amdtp_dot_midi_trigger(struct amdtp
+ static int name_card(struct snd_dg00x *dg00x)
  {
- 	struct amdtp_dot *p = s->protocol;
+@@ -129,6 +130,8 @@ static int snd_dg00x_probe(struct fw_uni
+ 	spin_lock_init(&dg00x->lock);
+ 	init_waitqueue_head(&dg00x->hwdep_wait);
  
--	if (port < p->midi_ports)
-+	if (port < MAX_MIDI_PORTS)
- 		ACCESS_ONCE(p->midi[port]) = midi;
- }
++	dg00x->is_console = entry->model_id == MODEL_CONSOLE;
++
+ 	/* Allocate and register this sound card later. */
+ 	INIT_DEFERRABLE_WORK(&dg00x->dwork, do_registration);
+ 	snd_fw_schedule_registration(unit, &dg00x->dwork);
+@@ -183,7 +186,13 @@ static const struct ieee1394_device_id s
+ 		.match_flags = IEEE1394_MATCH_VENDOR_ID |
+ 			       IEEE1394_MATCH_MODEL_ID,
+ 		.vendor_id = VENDOR_DIGIDESIGN,
+-		.model_id = MODEL_DIGI00X,
++		.model_id = MODEL_CONSOLE,
++	},
++	{
++		.match_flags = IEEE1394_MATCH_VENDOR_ID |
++			       IEEE1394_MATCH_MODEL_ID,
++		.vendor_id = VENDOR_DIGIDESIGN,
++		.model_id = MODEL_RACK,
+ 	},
+ 	{}
+ };
+--- a/sound/firewire/digi00x/digi00x.h
++++ b/sound/firewire/digi00x/digi00x.h
+@@ -60,6 +60,7 @@ struct snd_dg00x {
+ 	/* For asynchronous MIDI controls. */
+ 	struct snd_rawmidi_substream *in_control;
+ 	struct snd_fw_async_midi_port out_control;
++	bool is_console;
+ };
  
+ #define DG00X_ADDR_BASE		0xffffe0000000ull
