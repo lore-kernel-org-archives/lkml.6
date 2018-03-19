@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELueMcJ+HG+biMCePXpEy8RH/PejiOaiCG+9Cr0PXn66NTZgbnpnJ3v6xvYAoaHFacJZG9zl
-ARC-Seal: i=1; a=rsa-sha256; t=1521484265; cv=none;
+X-Google-Smtp-Source: AG47ELue2E2zCqwAaXqk92Uw01P7orAqN0uIKM78CUryFN1dNPomT0KcqnFPiog3cCnHWTQPqxUc
+ARC-Seal: i=1; a=rsa-sha256; t=1521484263; cv=none;
         d=google.com; s=arc-20160816;
-        b=DjrJG/z7nBuk21ob89hDr/NyMMNfEA9y8zpKgGc9yiekrqYrPFCso20/Fl/dzajzlt
-         NKj6sG/Xq9Kl8vQOSgEvO2JP4MjBu1ML2X1AN6+3YFm55AtbLBM8pSnxw511x6Z3xvLH
-         xEq+D3M9EsdQHx3nhTY9SMzxVzCVxiRvXeqCMCDZkWejMoQuthoPzgXkGi05F6y1Mxdl
-         bYqiPX904MSF4N5LMAe80ClGm1wok4GRX9sA0sSrhV5anjGaJq1ACIaH9s6JHmIRWr5C
-         QvNnbzHLKh527XB9T8cg0IgMi30+cIsTxnuGmZWlHzscMiVmdaiET1cElbpsG9ScjB+p
-         /ICQ==
+        b=mfuoayekYJW//Q3wb9xEISqZ8Zfqrx7ubAIQTOlrNpO8B5nf29ipbw56W3jzq7Ef+h
+         RLXfb9JQA3ISSW4MylKjDzRgl9Slc8JDr/96MJMTwBfyO276e5vpCytlMO626RKg9WcF
+         mPQSI3PmXZeKkksdW3W6xRbcao53o5T764uYGmS45S+EjWAo9QTfnrtwyBUmybOzIkMo
+         958jfgxqu553lLIFwirrBhrzY+td2mX3eXz9QFSwH0XT18uR+CjAtZRc/XofWgwrC8t/
+         GOQ1MTFGtvZQw7blzhJN06kaSGJPpJ8lBHC4jH+SWXqBs5ALMLpDUIE01RxRrCHFI/60
+         C1OQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BKtM4Xvs3r981bTQCjxkyXYom+MiFsFV/YP6UebPzLI=;
-        b=ie5RCi3bCmr4lfXTiWkpFW0YJ2nuASVwE7l7hSnYOhSP4M2/RpXxUroG2X5RHMMiRL
-         J68TLdi8N2QBGz8mJpvVvFVe8SX5Y5MzildUxiVvm1eNm+xEfdc/UsTGMonJtZBedmuQ
-         f/YGEYagwiaNdZdNwexFY5fOFAd9TzvcaBQOEC+5oSfbVxQQGYWE21Qpzu2EFOybXjXR
-         ckXTt64ERQlpn7N48FVHe8GZDrFOOIFI4pjK+yGb3AexHbCTggZu2pD3G8buVDMgWNst
-         H8oaVZOOHUIm+9mnSOEbErP78KVoVxc0HnDh2hS0i5Uw5HqECVtOLYd5vwAyY04ZPDa3
-         K/Aw==
+        bh=ECkCjllXw0v+P0YRRLyaoHXo7BKGIu9JsuuJ7YRViWk=;
+        b=aMVKX2BJrPNXkMceXB7u0f1DbkRW44mcNKDtF+qalm6cy6OLNfytpUADCMg9WIp9Ub
+         cGOHYumNhJ1QSr55Hj2WlqxWHlhmQJAec3T/2ZQWfMMiX0+xEO+VUmTm00L/0GNzx98L
+         JtS6bumPDukGYZCqCP+USF8JTGd62xpOxqjpDwjr5jUVbmiBX1gbQseD6y/1sOGfBe65
+         idCKU0kVlmNm02b8FDLaYm4FChAZvAK+4j/CqqkFS98h4z77Hda8zEI/Ft68WBYYW6E/
+         wC3WPzZAZJbj7NefHvAcR45G/5mXy1gT6IkDHGmy2ByyqnCKUi46ihdrAAPEOeKir25d
+         yVig==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 21/41] fs: Teach path_connected to handle nfs filesystems with multiple roots.
-Date: Mon, 19 Mar 2018 19:08:21 +0100
-Message-Id: <20180319180733.622908838@linuxfoundation.org>
+	Liu Bo <bo.li.liu@oracle.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 30/41] btrfs: Fix NULL pointer exception in find_bio_stripe
+Date: Mon, 19 Mar 2018 19:08:30 +0100
+Message-Id: <20180319180734.205001516@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391007817216634?=
-X-GMAIL-MSGID: =?utf-8?q?1595391885656904610?=
+X-GMAIL-THRID: =?utf-8?q?1595391882677400134?=
+X-GMAIL-MSGID: =?utf-8?q?1595391882677400134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,102 +49,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
 
-commit 95dd77580ccd66a0da96e6d4696945b8cea39431 upstream.
+commit 047fdea6341966a0898e3b16c51f54d4f5ba030a upstream.
 
-On nfsv2 and nfsv3 the nfs server can export subsets of the same
-filesystem and report the same filesystem identifier, so that the nfs
-client can know they are the same filesystem.  The subsets can be from
-disjoint directory trees.  The nfsv2 and nfsv3 filesystems provides no
-way to find the common root of all directory trees exported form the
-server with the same filesystem identifier.
+On detaching of a disk which is a part of a RAID6 filesystem, the
+following kernel OOPS may happen:
 
-The practical result is that in struct super s_root for nfs s_root is
-not necessarily the root of the filesystem.  The nfs mount code sets
-s_root to the root of the first subset of the nfs filesystem that the
-kernel mounts.
+[63122.680461] BTRFS error (device sdo): bdev /dev/sdo errs: wr 0, rd 0, flush 1, corrupt 0, gen 0
+[63122.719584] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
+[63122.719587] BTRFS error (device sdo): bdev /dev/sdo errs: wr 1, rd 0, flush 1, corrupt 0, gen 0
+[63122.803516] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
+[63122.803519] BTRFS error (device sdo): bdev /dev/sdo errs: wr 2, rd 0, flush 1, corrupt 0, gen 0
+[63122.863902] BTRFS critical (device sdo): fatal error on device /dev/sdo
+[63122.935338] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+[63122.946554] IP: fail_bio_stripe+0x58/0xa0 [btrfs]
+[63122.958185] PGD 9ecda067 P4D 9ecda067 PUD b2b37067 PMD 0
+[63122.971202] Oops: 0000 [#1] SMP
+[63123.006760] CPU: 0 PID: 3979 Comm: kworker/u8:9 Tainted: G W 4.14.2-16-scst34x+ #8
+[63123.007091] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[63123.007402] Workqueue: btrfs-worker btrfs_worker_helper [btrfs]
+[63123.007595] task: ffff880036ea4040 task.stack: ffffc90006384000
+[63123.007796] RIP: 0010:fail_bio_stripe+0x58/0xa0 [btrfs]
+[63123.007968] RSP: 0018:ffffc90006387ad8 EFLAGS: 00010287
+[63123.008140] RAX: 0000000000000002 RBX: ffff88004beaa0b8 RCX: ffff8800b2bd5690
+[63123.008359] RDX: 0000000000000000 RSI: ffff88007bb43500 RDI: ffff88004beaa000
+[63123.008621] RBP: ffffc90006387ae8 R08: 0000000099100000 R09: ffff8800b2bd5600
+[63123.008840] R10: 0000000000000004 R11: 0000000000010000 R12: ffff88007bb43500
+[63123.009059] R13: 00000000fffffffb R14: ffff880036fc5180 R15: 0000000000000004
+[63123.009278] FS: 0000000000000000(0000) GS:ffff8800b7000000(0000) knlGS:0000000000000000
+[63123.009564] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[63123.009748] CR2: 0000000000000080 CR3: 00000000b0866000 CR4: 00000000000406f0
+[63123.009969] Call Trace:
+[63123.010085] raid_write_end_io+0x7e/0x80 [btrfs]
+[63123.010251] bio_endio+0xa1/0x120
+[63123.010378] generic_make_request+0x218/0x270
+[63123.010921] submit_bio+0x66/0x130
+[63123.011073] finish_rmw+0x3fc/0x5b0 [btrfs]
+[63123.011245] full_stripe_write+0x96/0xc0 [btrfs]
+[63123.011428] raid56_parity_write+0x117/0x170 [btrfs]
+[63123.011604] btrfs_map_bio+0x2ec/0x320 [btrfs]
+[63123.011759] ? ___cache_free+0x1c5/0x300
+[63123.011909] __btrfs_submit_bio_done+0x26/0x50 [btrfs]
+[63123.012087] run_one_async_done+0x9c/0xc0 [btrfs]
+[63123.012257] normal_work_helper+0x19e/0x300 [btrfs]
+[63123.012429] btrfs_worker_helper+0x12/0x20 [btrfs]
+[63123.012656] process_one_work+0x14d/0x350
+[63123.012888] worker_thread+0x4d/0x3a0
+[63123.013026] ? _raw_spin_unlock_irqrestore+0x15/0x20
+[63123.013192] kthread+0x109/0x140
+[63123.013315] ? process_scheduled_works+0x40/0x40
+[63123.013472] ? kthread_stop+0x110/0x110
+[63123.013610] ret_from_fork+0x25/0x30
+[63123.014469] RIP: fail_bio_stripe+0x58/0xa0 [btrfs] RSP: ffffc90006387ad8
+[63123.014678] CR2: 0000000000000080
+[63123.016590] ---[ end trace a295ea7259c17880 ]—
 
-This effects the dcache invalidation code in generic_shutdown_super
-currently called shrunk_dcache_for_umount and that code for years
-has gone through an additional list of dentries that might be dentry
-trees that need to be freed to accomodate nfs.
+This is reproducible in a cycle, where a series of writes is followed by
+SCSI device delete command. The test may take up to few minutes.
 
-When I wrote path_connected I did not realize nfs was so special, and
-it's hueristic for avoiding calling is_subdir can fail.
-
-The practical case where this fails is when there is a move of a
-directory from the subtree exposed by one nfs mount to the subtree
-exposed by another nfs mount.  This move can happen either locally or
-remotely.  With the remote case requiring that the move directory be cached
-before the move and that after the move someone walks the path
-to where the move directory now exists and in so doing causes the
-already cached directory to be moved in the dcache through the magic
-of d_splice_alias.
-
-If someone whose working directory is in the move directory or a
-subdirectory and now starts calling .. from the initial mount of nfs
-(where s_root == mnt_root), then path_connected as a heuristic will
-not bother with the is_subdir check.  As s_root really is not the root
-of the nfs filesystem this heuristic is wrong, and the path may
-actually not be connected and path_connected can fail.
-
-The is_subdir function might be cheap enough that we can call it
-unconditionally.  Verifying that will take some benchmarking and
-the result may not be the same on all kernels this fix needs
-to be backported to.  So I am avoiding that for now.
-
-Filesystems with snapshots such as nilfs and btrfs do something
-similar.  But as the directory tree of the snapshots are disjoint
-from one another and from the main directory tree rename won't move
-things between them and this problem will not occur.
-
-Cc: stable@vger.kernel.org
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Fixes: 397d425dc26d ("vfs: Test for and handle paths that are unreachable from their mnt_root")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
+[ no signed-off-by provided ]
+Author: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c         |    5 +++--
- fs/nfs/super.c     |    2 ++
- include/linux/fs.h |    1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/raid56.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -578,9 +578,10 @@ static int __nd_alloc_stack(struct namei
- static bool path_connected(const struct path *path)
- {
- 	struct vfsmount *mnt = path->mnt;
-+	struct super_block *sb = mnt->mnt_sb;
- 
--	/* Only bind mounts can have disconnected paths */
--	if (mnt->mnt_root == mnt->mnt_sb->s_root)
-+	/* Bind mounts and multi-root filesystems can have disconnected paths */
-+	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
- 		return true;
- 
- 	return is_subdir(path->dentry, mnt->mnt_root);
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2623,6 +2623,8 @@ struct dentry *nfs_fs_mount_common(struc
- 		/* initial superblock/root creation */
- 		mount_info->fill_super(s, mount_info);
- 		nfs_get_cache_cookie(s, mount_info->parsed, mount_info->cloned);
-+		if (!(server->flags & NFS_MOUNT_UNSHARED))
-+			s->s_iflags |= SB_I_MULTIROOT;
- 	}
- 
- 	mntroot = nfs_get_root(s, mount_info->mntfh, dev_name);
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1312,6 +1312,7 @@ extern int send_sigurg(struct fown_struc
- #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
- #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
- #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
-+#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
- 
- /* sb->s_iflags to limit user namespace mounts */
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1348,6 +1348,7 @@ static int find_bio_stripe(struct btrfs_
+ 		stripe_start = stripe->physical;
+ 		if (physical >= stripe_start &&
+ 		    physical < stripe_start + rbio->stripe_len &&
++		    stripe->dev->bdev &&
+ 		    bio->bi_disk == stripe->dev->bdev->bd_disk &&
+ 		    bio->bi_partno == stripe->dev->bdev->bd_partno) {
+ 			return i;
