@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484875-2-6876070623469560976
+X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484555-2-1930306492614117827
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UPPERCASE_50_75 0.008,
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,57 +13,57 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484875; b=U8lqdzFqQoLtgeqfOEPNVAj6zBEl7U+1hd1GQWDPII7ynoT
-    6hY58z4VKvQZ2KvBxP/O3Sr/dEy5t+Slyk1U0yvYjnikETbjDU40J6IvhQV0A4af
-    jMk2zxK3H1RdkPqI1pWxxHG3uZXXniJE+pZ64q+ZWxrg/fctS3W//Z/86pneCw2h
-    ceAjk0xd1RGZ3zKvLD1Q2Y0HEtCRTpXX8AZaB7XwYWoG3Ka9SXEs8tJvwrKgGeFE
-    rCjduehV5dt2JQtPV1votlD5ojsjK36DJKLfhqb+CAbFBVohAhCLH+VPcUmcPCi8
-    ihTD2yb9yFA1BqOdvwHxzsH8aqlnf7rSftjZU8A==
+    t=1521484555; b=CXZZ6LhR0BvunjOwlZHo/RYVhlfSOHEn0JKoKYGQEvjozqJ
+    WaPlz7A0o5uf4MivcY5e28Atd4eRYvNmEjEQnAWscssrr2ZJGuU70i/XuHaL6Gtc
+    HLamzO/QWwHipnAKsU2odEcMxCcGD4VCyno8smO4yL97/ngG3niUWqLtI21qCMzF
+    U62C7IRyP1OkakTHB/XIhIOiAhWLhiByNTQulHvqqPKHkdSxFNcGMnAXNShWl/ck
+    rSXHLuSN8Zmm/Ckt5tBpRldOqfRpArxvB8IE3Jh5wVtFGR/p0Wm/W0XaCwSrstoD
+    flwkpgSZ952scjd38t06kqEceX4UJRmz1rYmLFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484875; bh=YOT8FudQMJJi2VQkW3sean7qXb
-    sMMLITRTldBXKc6MU=; b=U5I1I7b8qS6udKFye/D1omu68troB4j8QKARBfm6mG
-    icWauxM/KWy8N9K2k9mzszAbFh92i/kwvgKexYzQ5qecmJexEHPEtHcxjYCz3yS6
-    ojin4ySpdnP20FExwZu79Uv4JJhMm8oNa91a/AK5XPAJ49dQ6P1hWpRqvFF5L0FY
-    wlGamp/px/vF4dqX0lcK4kOkaMOOrKuikcJRyWYQjTI2w4SGCeBo9oxNgNytvCzR
-    JvJFEIz5n7LYGZlL1f9X45qQ/3JUJTPA4R8SZEtP9EeLcTIRI2CSXv2gpvBGnmc/
-    RiR6ujfsKg31ygM10tBdjhYNFMyfxq3qTM9aB8voDlaw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484555; bh=ewZY0aeJ+qhtG99hE4lZ8FqCGy
+    IgplgzGrSSYTKumSo=; b=dqPcRjRJfxSV59cgL6Hck4uh94DboDJKm3s4mR9WOW
+    xdlBgolKGBNtLSV76hIRHAhSDnXs8CxTxpJvlhONuozzxxADYDIYCU00iR3fgvAE
+    fbDT9vE760qU24u1MqLE8xAgSh1GwN/8a5U+34/VdGmZKGulpuVA2pJSzl+qDV1q
+    kzDEWSpIh9iL2viNEcjQIXyApXk7GWHJtLni6gq/c7jF/ss++ynweiuh6oufmxCw
+    eeR9XCP266nMRKA7F3AlzNsjVdG1POAi2doA2sPJFohrX89NIjMcyVyhHO76vmVg
+    H4xxHATs8gWZvWYtMNt8ILG5DHNkHodaTDo5PH+iHWWQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeeljeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjedvudenucevlhhushhtvghrufhiiigvpedvhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeeljeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejjedvudenucevlhhushhtvghrufhiiigvpedvhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935727AbeCSShS (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:37:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54110 "EHLO
+        id S935711AbeCSSfs (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:35:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032127AbeCSScy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:32:54 -0400
+        with ESMTP id S1032132AbeCSSdC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 47/52] usb: dwc3: of-simple: fix oops by unbalanced clk disable call
-Date: Mon, 19 Mar 2018 19:08:45 +0100
-Message-Id: <20180319180737.572313960@linuxfoundation.org>
+        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.15 50/52] phy: phy-brcm-usb-init: Some Low Speed keyboards fail on 7271
+Date: Mon, 19 Mar 2018 19:08:48 +0100
+Message-Id: <20180319180737.711929771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -81,55 +81,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Al Cooper <al.cooper@broadcom.com>
 
-commit bff52352e0ccc2481f2b6b0d612ff8ff56c50f3a upstream.
+commit 279a0cd0e02aa1e506d9acf94a7ecb530821359c upstream.
 
-dwc3_of_simple_dev_pm_ops has never been used since commit a0d8c4cfdf31
-("usb: dwc3: of-simple: set dev_pm_ops"), but this commit has brought
-and oops when unbind the device due this sequence:
+Enable the the Low Speed Keep Alive signal on the 7271b0 by setting
+the LS_KEEP_ALIVE bit in the USB CTRL OBRIDGE register otherwise
+some Dell Low Speed keyboards fail.
 
-  dwc3_of_simple_remove
-   -> clk_disable ...
-      -> pm_runtime_put_sync
-         -> dwc3_of_simple_runtime_suspend
-            -> clk_disable (again)
+Also do a little cleanup of the EBRIDGE ESTOP_SCB_REQ bit. Since
+this is only used on one platform, remove it from the platform
+tables and just use "if (family == ").
 
-This double call to clk_core_disable causes a kernel oops like this:
-
- WARNING: CPU: 1 PID: 4022 at drivers/clk/clk.c:656 clk_core_disable+0x78/0x80
- CPU: 1 PID: 4022 Comm: bash Not tainted 4.15.0-rc4+ #44
- Hardware name: Google Kevin (DT)
- pstate: 80000085 (Nzcv daIf -PAN -UAO)
- pc : clk_core_disable+0x78/0x80
- lr : clk_core_disable_lock+0x20/0x38
- sp : ffff00000bbf3a90
- ...
- Call trace:
-  clk_core_disable+0x78/0x80
-  clk_disable+0x1c/0x30
-  dwc3_of_simple_runtime_suspend+0x30/0x50
-  pm_generic_runtime_suspend+0x28/0x40
-
-This patch fixes the unbalanced clk disable call by setting the num_clocks
-variable to zero once the clocks were disabled.
-
-Fixes: a0d8c4cfdf31 ("usb: dwc3: of-simple: set dev_pm_ops")
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 49859e55e364 ("phy: usb: phy-brcm-usb: Add Broadcom STB USB phy driver")
+Signed-off-by: Al Cooper <alcooperx@gmail.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/dwc3-of-simple.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/broadcom/phy-brcm-usb-init.c |   19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -143,6 +143,7 @@ static int dwc3_of_simple_remove(struct
- 		clk_disable_unprepare(simple->clks[i]);
- 		clk_put(simple->clks[i]);
- 	}
-+	simple->num_clocks = 0;
+--- a/drivers/phy/broadcom/phy-brcm-usb-init.c
++++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
+@@ -50,6 +50,8 @@
+ #define   USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK		0x80000000 /* option */
+ #define USB_CTRL_EBRIDGE		0x0c
+ #define   USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK		0x00020000 /* option */
++#define USB_CTRL_OBRIDGE		0x10
++#define   USB_CTRL_OBRIDGE_LS_KEEP_ALIVE_MASK		0x08000000
+ #define USB_CTRL_MDIO			0x14
+ #define USB_CTRL_MDIO2			0x18
+ #define USB_CTRL_UTMI_CTL_1		0x2c
+@@ -116,7 +118,6 @@ enum {
+ 	USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR,
+ 	USB_CTRL_SETUP_OC3_DISABLE_SELECTOR,
+ 	USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_SELECTOR,
+-	USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_SELECTOR,
+ 	USB_CTRL_USB_PM_BDC_SOFT_RESETB_SELECTOR,
+ 	USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR,
+ 	USB_CTRL_USB_PM_USB_PWRDN_SELECTOR,
+@@ -203,7 +204,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -225,7 +225,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
+ 		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
+@@ -247,7 +246,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -269,7 +267,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
+ 		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
+@@ -291,7 +288,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -313,7 +309,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
+ 		0, /* USB_CTRL_SETUP_OC3_DISABLE_MASK */
+ 		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
+-		0, /* USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK */
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		0, /* USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK */
+ 		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
+@@ -335,7 +330,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		0, /* USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK */
+ 		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -357,7 +351,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
+-		0, /* USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK */
+ 		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
+ 		0, /* USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK */
+ 		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
+@@ -379,7 +372,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -401,7 +393,6 @@ usb_reg_bits_map_table[BRCM_FAMILY_COUNT
+ 		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
+ 		USB_CTRL_SETUP_OC3_DISABLE_MASK,
+ 		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
+-		USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK,
+ 		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
+ 		USB_CTRL_USB_PM_USB_PWRDN_MASK,
+@@ -952,13 +943,17 @@ void brcm_usb_init_eohci(struct brcm_usb
+ 		 * Don't enable this so the memory controller doesn't read
+ 		 * into memory holes. NOTE: This bit is low true on 7366C0.
+ 		 */
+-		USB_CTRL_SET_FAMILY(params, EBRIDGE, ESTOP_SCB_REQ);
++		USB_CTRL_SET(ctrl, EBRIDGE, ESTOP_SCB_REQ);
  
- 	reset_control_assert(simple->resets);
- 	reset_control_put(simple->resets);
+ 	/* Setup the endian bits */
+ 	reg = brcmusb_readl(USB_CTRL_REG(ctrl, SETUP));
+ 	reg &= ~USB_CTRL_SETUP_ENDIAN_BITS;
+ 	reg |= USB_CTRL_MASK_FAMILY(params, SETUP, ENDIAN);
+ 	brcmusb_writel(reg, USB_CTRL_REG(ctrl, SETUP));
++
++	if (params->selected_family == BRCM_FAMILY_7271A0)
++		/* Enable LS keep alive fix for certain keyboards */
++		USB_CTRL_SET(ctrl, OBRIDGE, LS_KEEP_ALIVE);
+ }
+ 
+ void brcm_usb_init_xhci(struct brcm_usb_init_params *params)
