@@ -1,81 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755527AbeCSNAR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:00:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:54845 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755194AbeCSNAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:00:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,330,1517904000";
-   d="scan'208";a="209478274"
-From: "Liang, Kan" <kan.liang@intel.com>
-To: "'Peter Zijlstra'" <peterz@infradead.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
+        id S1755541AbeCSNCA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:02:00 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:34268 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754892AbeCSNB6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 09:01:58 -0400
+From: Yan Markman <ymarkman@marvell.com>
+To: Stefan Chulski <stefanc@marvell.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Antoine Tenart <antoine.tenart@bootlin.com>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "eranian@google.com" <eranian@google.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>
-Subject: RE: [PATCH V6 5/8] perf/x86/intel/uncore: add infrastructure for
- free running counter
-Thread-Topic: [PATCH V6 5/8] perf/x86/intel/uncore: add infrastructure for
- free running counter
-Thread-Index: AQHTlhkdbIHwBgso+EGyqTzZBmqr86PT9AcAgAMLAJA=
-Date: Mon, 19 Mar 2018 13:00:09 +0000
-Message-ID: <37D7C6CF3E00A74B8858931C1DB2F0775385655B@SHSMSX103.ccr.corp.intel.com>
-References: <1516911228-5293-1-git-send-email-kan.liang@intel.com>
- <1516911228-5293-5-git-send-email-kan.liang@intel.com>
- <20180317093438.GI4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180317093438.GI4064@hirez.programming.kicks-ass.net>
-Accept-Language: zh-CN, en-US
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, "mw@semihalf.com" <mw@semihalf.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+ interface to use in-band negotiation
+Thread-Topic: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+ interface to use in-band negotiation
+Thread-Index: AQHTvRKIrenTeC9ZpUaR21q8LIQjxqPS4hSAgARBlACAACblgIAAHbQAgAAiJJA=
+Date: Mon, 19 Mar 2018 13:01:07 +0000
+Message-ID: <2ff0a81f55a84069a4652d02a4212b70@IL-EXCH01.marvell.com>
+References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
+ <20180316103351.16616-3-antoine.tenart@bootlin.com>
+ <20180316155307.GQ9418@n2100.armlinux.org.uk> <20180319085252.GF4519@kwain>
+ <20180319111205.GB2743@n2100.armlinux.org.uk>
+ <4e11135ba2644f76beb41a307c9d990a@IL-EXCH01.marvell.com>
+In-Reply-To: <4e11135ba2644f76beb41a307c9d990a@IL-EXCH01.marvell.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzg3YjA2MWItYjQzNS00YjRiLWIyZDItZDZhMzViMzRmMGQ4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX0lDIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImtDWm91MzdJcGxSbG5HV1pBVHdqQVNyTFYwVlhLa2hqMGdDVFJuY0czZlE9In0=
-x-ctpclassification: CTP_IC
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.5.102.207]
+Content-Type: multipart/mixed;
+        boundary="_002_2ff0a81f55a84069a4652d02a4212b70ILEXCH01marvellcom_"
 MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_08:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1803190153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thu, Jan 25, 2018 at 12:13:45PM -0800, kan.liang@intel.com wrote:
-> > @@ -512,6 +538,17 @@ static int uncore_pmu_event_add(struct
-> perf_event *event, int flags)
-> >  	if (!box)
-> >  		return -ENODEV;
+--_002_2ff0a81f55a84069a4652d02a4212b70ILEXCH01marvellcom_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+The DTS-patch for this board (in "old" format) is attached
+
+
+Yan Markman
+Tel. 05-44732819
+
+
+-----Original Message-----
+From: Stefan Chulski=20
+Sent: Monday, March 19, 2018 2:58 PM
+To: Russell King - ARM Linux <linux@armlinux.org.uk>; Antoine Tenart <antoi=
+ne.tenart@bootlin.com>
+Cc: davem@davemloft.net; kishon@ti.com; gregory.clement@bootlin.com; andrew=
+@lunn.ch; jason@lakedaemon.net; sebastian.hesselbarth@gmail.com; netdev@vge=
+r.kernel.org; linux-kernel@vger.kernel.org; thomas.petazzoni@bootlin.com; m=
+axime.chevallier@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai <nada=
+vh@marvell.com>; Yan Markman <ymarkman@marvell.com>; mw@semihalf.com; linux=
+-arm-kernel@lists.infradead.org
+Subject: RE: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GK=
+R interface to use in-band negotiation
+
+> > > There is no inband negotiation like there is with 802.3z or SGMII,=20
+> > > so this makes no sense.
 > >
-> > +	/*
-> > +	 * The free funning counter is assigned in event_init().
-> > +	 * The free running counter event and free running counter
-> > +	 * are 1:1 mapped. It doesn't need to be tracked in event_list.
-> > +	 */
-> > +	if (uncore_pmc_freerunning(hwc->idx)) {
-> > +		if (flags & PERF_EF_START)
-> > +			uncore_pmu_event_start(event, 0);
-> > +		return 0;
-> > +	}
-> > +
-> >  	ret = n = uncore_collect_events(box, event, false);
-> >  	if (ret < 0)
-> >  		return ret;
-> 
-> This will result in some (probably) unexpected scheduling artifacts.
-> Probably the only way to really cure that is to have the free running
-> counters in their own PMU and not share with the GP counters of this
-> box.
+> > Oh, that's what I feared. I read some docs but probably will need=20
+> > more
+> > :)
+> >
+> > Anyway, the reason to use in-band negotiation was also to avoid=20
+> > using fixed-link. It would work but always report the link is up,=20
+> > which for the user isn't a great experience as we have a way to detect =
+this.
+> >
+> > What would you suggest to achieve this in a reasonable way?
+>=20
+> The intention of this test in phylink_of_phy_connect() is to avoid=20
+> failing when there is no requirement for a PHY to be present (such as=20
+> a fixed link, or an 802.3z link.)  However, with 10G PHYs such as the=20
+> 3310, we need the PHY so we can read the speed from it, and so know=20
+> whether to downgrade the MAC to SGMII mode, or having downgraded the=20
+> MAC, upgrade it back to 10G mode when the PHY switches to 10G.
+>=20
+> I'm guessing that you're wanting this for the DB boards, but I don't see =
+why.
+> Do they not have PHYs?
 
-I'm not quite sure what the unexpected scheduling artifacts could be.
-But, yes, I can move all the free running counters to new PMU for SKX
-and later platforms.
+New Solid Run board MACCHIATObin Single Shot doesn't has  3310 PHY either, =
+like DB boards.
+https://www.cnx-software.com/2017/12/20/solidrun-macchiatobin-single-shot-n=
+etworking-board-launched-for-269-and-up/
 
-Thanks,
-Kan
+Stefan,
+Best Regards.
+
+--_002_2ff0a81f55a84069a4652d02a4212b70ILEXCH01marvellcom_
+Content-Type: application/octet-stream;
+	name="0001-arm64-dts-marvell-add-new-mcbin-single-shot-board.patch"
+Content-Description: 0001-arm64-dts-marvell-add-new-mcbin-single-shot-board.patch
+Content-Disposition: attachment;
+	filename="0001-arm64-dts-marvell-add-new-mcbin-single-shot-board.patch";
+	size=9179; creation-date="Mon, 19 Mar 2018 13:01:04 GMT";
+	modification-date="Mon, 19 Mar 2018 12:59:28 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSA3ZTRjZDEyZWYxMTExZjg1Nzc4ZjFlZjJhZmIzYjFiNzgzOWRlZTE0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBZYW4gTWFya21hbiA8eW1hcmttYW5AbWFydmVsbC5jb20+CkRh
+dGU6IE1vbiwgMTIgTWFyIDIwMTggMTg6MDg6MDIgKzAyMDAKU3ViamVjdDogW1BBVENIIDEvMV0g
+YXJtNjQ6IGR0czogbWFydmVsbDogYWRkIG5ldyBtY2Jpbi1zaW5nbGUtc2hvdCBib2FyZAoKQWRk
+IG5ldyBNYWNjaGlhdG8gdmVyc2lvbiBib2FyZCB3aGljaCBoYXMgc2luZ2xlIHBoeXNpY2FsCmlu
+dGVyZmFjZSBvbiBwb3J0cyAwIC0tIG9ubHkgRmliZXIgYW5kIG5vIENvcHBlci4KClRoZSBvbmx5
+IGRpZmZlcmVuY2UgaXMgLSBubyBwaHkgbm9kZSBkZWNsYXJhdGlvbgoKQ2hhbmdlLUlkOiBJYTU4
+NzZmNjM3MWQ4OTdjMmYyOTczNmY2MjNhNTdmOWViMmE2OTM2NQpTaWduZWQtb2ZmLWJ5OiBZYW4g
+TWFya21hbiA8eW1hcmttYW5AbWFydmVsbC5jb20+Ci0tLQogYXJjaC9hcm02NC9ib290L2R0cy9t
+YXJ2ZWxsL01ha2VmaWxlICAgICAgICAgICAgICAgfCAgIDEgKwogLi4uL2R0cy9tYXJ2ZWxsL2Fy
+bWFkYS04MDQwLW1jYmluLXNpbmdsZS1zaG90LmR0cyAgfCAzMjMgKysrKysrKysrKysrKysrKysr
+KysrCiAyIGZpbGVzIGNoYW5nZWQsIDMyNCBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA3
+NTUgYXJjaC9hcm02NC9ib290L2R0cy9tYXJ2ZWxsL2FybWFkYS04MDQwLW1jYmluLXNpbmdsZS1z
+aG90LmR0cwoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWFydmVsbC9NYWtlZmls
+ZSBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWFydmVsbC9NYWtlZmlsZQppbmRleCA1NjMzNjc2Li44
+MDUxYzBkIDEwMDY0NAotLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL21hcnZlbGwvTWFrZWZpbGUK
+KysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tYXJ2ZWxsL01ha2VmaWxlCkBAIC05LDYgKzksNyBA
+QCBkdGItJChDT05GSUdfQVJDSF9NVkVCVSkgKz0gYXJtYWRhLTM3MjAtZXNwcmVzc29iaW4uZHRi
+CiBkdGItJChDT05GSUdfQVJDSF9NVkVCVSkgKz0gYXJtYWRhLTcwNDAtZGIuZHRiCiBkdGItJChD
+T05GSUdfQVJDSF9NVkVCVSkgKz0gYXJtYWRhLTgwNDAtZGIuZHRiCiBkdGItJChDT05GSUdfQVJD
+SF9NVkVCVSkgKz0gYXJtYWRhLTgwNDAtbWNiaW4uZHRiCitkdGItJChDT05GSUdfQVJDSF9NVkVC
+VSkgKz0gYXJtYWRhLTgwNDAtbWNiaW4tc2luZ2xlLXNob3QuZHRiCiBkdGItJChDT05GSUdfQVJD
+SF9NVkVCVSkgKz0gYXJtYWRhLTgwODAtZGIuZHRiCiAKIGFsd2F5cwkJOj0gJChkdGIteSkKZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWFydmVsbC9hcm1hZGEtODA0MC1tY2Jpbi1z
+aW5nbGUtc2hvdC5kdHMgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21hcnZlbGwvYXJtYWRhLTgwNDAt
+bWNiaW4tc2luZ2xlLXNob3QuZHRzCm5ldyBmaWxlIG1vZGUgMTAwNzU1CmluZGV4IDAwMDAwMDAu
+LjEyZWRhMTIKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21hcnZlbGwv
+YXJtYWRhLTgwNDAtbWNiaW4tc2luZ2xlLXNob3QuZHRzCkBAIC0wLDAgKzEsMzIzIEBACisvKgor
+ICogQ29weXJpZ2h0IChDKSAyMDE2IE1hcnZlbGwgVGVjaG5vbG9neSBHcm91cCBMdGQuCisgKgor
+ICogVGhpcyBmaWxlIGlzIGR1YWwtbGljZW5zZWQ6IHlvdSBjYW4gdXNlIGl0IGVpdGhlciB1bmRl
+ciB0aGUgdGVybXMKKyAqIG9mIHRoZSBHUEx2MiBvciB0aGUgWDExIGxpY2Vuc2UsIGF0IHlvdXIg
+b3B0aW9uLiBOb3RlIHRoYXQgdGhpcyBkdWFsCisgKiBsaWNlbnNpbmcgb25seSBhcHBsaWVzIHRv
+IHRoaXMgZmlsZSwgYW5kIG5vdCB0aGlzIHByb2plY3QgYXMgYQorICogd2hvbGUuCisgKgorICog
+IGEpIFRoaXMgbGlicmFyeSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBp
+dCBhbmQvb3IKKyAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
+ZXJhbCBQdWJsaWMgTGljZW5zZSBhcworICogICAgIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0
+d2FyZSBGb3VuZGF0aW9uOyBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZQorICogICAgIExpY2Vuc2Us
+IG9yIChhdCB5b3VyIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCisgKgorICogICAgIFRoaXMg
+bGlicmFyeSBpcyBkaXN0cmlidXRlZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVs
+LAorICogICAgIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5UWTsgd2l0aG91dCBldmVuIHRoZSBpbXBs
+aWVkIHdhcnJhbnR5IG9mCisgKiAgICAgTUVSQ0hBTlRBQklMSVRZIG9yIEZJVE5FU1MgRk9SIEEg
+UEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQorICogICAgIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlIGZvciBtb3JlIGRldGFpbHMuCisgKgorICogT3IsIGFsdGVybmF0aXZlbHksCisgKgor
+ICogIGIpIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBh
+bnkgcGVyc29uCisgKiAgICAgb2J0YWluaW5nIGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBh
+c3NvY2lhdGVkIGRvY3VtZW50YXRpb24KKyAqICAgICBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLCB0
+byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0CisgKiAgICAgcmVzdHJpY3Rpb24sIGluY2x1
+ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UsCisgKiAgICAgY29weSwg
+bW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yCisg
+KiAgICAgc2VsbCBjb3BpZXMgb2YgdGhlIFNvZnR3YXJlLCBhbmQgdG8gcGVybWl0IHBlcnNvbnMg
+dG8gd2hvbSB0aGUKKyAqICAgICBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1Ympl
+Y3QgdG8gdGhlIGZvbGxvd2luZworICogICAgIGNvbmRpdGlvbnM6CisgKgorICogICAgIFRoZSBh
+Ym92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIHNoYWxsIGJl
+CisgKiAgICAgaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBv
+ZiB0aGUgU29mdHdhcmUuCisgKgorICogICAgIFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMg
+SVMiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5ELAorICogICAgIEVYUFJFU1MgT1IgSU1Q
+TElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUworICogICAg
+IE9GIE1FUkNIQU5UQUJJTElUWSwgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5E
+CisgKiAgICAgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVUSE9SUyBP
+UiBDT1BZUklHSFQKKyAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlNLCBEQU1B
+R0VTIE9SIE9USEVSIExJQUJJTElUWSwKKyAqICAgICBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBD
+T05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcKKyAqICAgICBGUk9NLCBPVVQgT0Yg
+T1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SCisgKiAgICAg
+T1RIRVIgREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgorICovCisKKy8qCisgKiBEZXZpY2UgVHJl
+ZSBmaWxlIGZvciBNQUNDSElBVE9CaW4gQXJtYWRhIDgwNDAgY29tbXVuaXR5IGJvYXJkIHBsYXRm
+b3JtCisgKi8KKworI2luY2x1ZGUgImFybWFkYS04MDQwLmR0c2kiCisKKyNpbmNsdWRlIDxkdC1i
+aW5kaW5ncy9ncGlvL2dwaW8uaD4KKworLyB7CisJbW9kZWwgPSAiTWFydmVsbCA4MDQwIE1BQ0hJ
+QVRPQmluIFNpbmdsZVNob3QiOworCWNvbXBhdGlibGUgPSAibWFydmVsbCxhcm1hZGE4MDQwLW1j
+YmluLXNpbmdsZS1zaG90IiwKKwkJCSJtYXJ2ZWxsLGFybWFkYTgwNDAtbWNiaW4iLCAibWFydmVs
+bCxhcm1hZGE4MDQwIiwKKwkJCSJtYXJ2ZWxsLGFybWFkYS1hcDgwNi1xdWFkIiwgIm1hcnZlbGws
+YXJtYWRhLWFwODA2IjsKKworCWNob3NlbiB7CisJCXN0ZG91dC1wYXRoID0gInNlcmlhbDA6MTE1
+MjAwbjgiOworCX07CisKKwltZW1vcnlAMDAwMDAwMDAgeworCQlkZXZpY2VfdHlwZSA9ICJtZW1v
+cnkiOworCQlyZWcgPSA8MHgwIDB4MCAweDAgMHg4MDAwMDAwMD47CisJfTsKKworCWFsaWFzZXMg
+eworCQlldGhlcm5ldDAgPSAmY3BtX2V0aDA7CisJCWV0aGVybmV0MSA9ICZjcHNfZXRoMDsKKwkJ
+ZXRoZXJuZXQyID0gJmNwc19ldGgxOworCQlldGhlcm5ldDMgPSAmY3BzX2V0aDI7CisJfTsKKwor
+CS8qIFJlZ3VsYXRvciBsYWJlbHMgY29ycmVzcG9uZCB3aXRoIHNjaGVtYXRpY3MgKi8KKwl2XzNf
+MzogcmVndWxhdG9yLTMtM3YgeworCQljb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhlZCI7CisJ
+CXJlZ3VsYXRvci1uYW1lID0gInZfM18zIjsKKwkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8
+MzMwMDAwMD47CisJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDMzMDAwMDA+OworCQlyZWd1
+bGF0b3ItYWx3YXlzLW9uOworCQlzdGF0dXMgPSAib2theSI7CisJfTsKKworCXZfdmRkb19oOiBy
+ZWd1bGF0b3ItMS04diB7CisJCWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKKwkJcmVn
+dWxhdG9yLW5hbWUgPSAidl92ZGRvX2giOworCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwx
+ODAwMDAwPjsKKwkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTgwMDAwMD47CisJCXJlZ3Vs
+YXRvci1hbHdheXMtb247CisJCXN0YXR1cyA9ICJva2F5IjsKKwl9OworCisJdl81djBfdXNiM19o
+c3RfdmJ1czogcmVndWxhdG9yLXVzYjMtdmJ1czAgeworCQljb21wYXRpYmxlID0gInJlZ3VsYXRv
+ci1maXhlZCI7CisJCWVuYWJsZS1hY3RpdmUtaGlnaDsKKwkJZ3BpbyA9IDwmY3BtX2dwaW8yIDE1
+IEdQSU9fQUNUSVZFX0hJR0g+OworCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOworCQlwaW5j
+dHJsLTAgPSA8JmNwbV94aGNpX3ZidXNfcGlucz47CisJCXJlZ3VsYXRvci1uYW1lID0gInZfNXYw
+X3VzYjNfaHN0X3ZidXMiOworCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsK
+KwkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8NTAwMDAwMD47CisJCXN0YXR1cyA9ICJva2F5
+IjsKKwl9OworCisJdXNiM2gwX3BoeTogdXNiM19waHkwIHsKKwkJY29tcGF0aWJsZSA9ICJ1c2It
+bm9wLXhjZWl2IjsKKwkJdmNjLXN1cHBseSA9IDwmdl81djBfdXNiM19oc3RfdmJ1cz47CisJfTsK
+K307CisKKyZ1YXJ0MCB7CisJc3RhdHVzID0gIm9rYXkiOworCXBpbmN0cmwtMCA9IDwmdWFydDBf
+cGlucz47CisJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKK307CisKKyZhcF9zZGhjaTAgewor
+CWJ1cy13aWR0aCA9IDw4PjsKKwkvKgorCSAqIE5vdCBzdGFibGUgaW4gSFMgbW9kZXMgLSBwaHkg
+bmVlZHMgIm1vcmUgY2FsaWJyYXRpb24iLCBzbyBhZGQKKwkgKiB0aGUgInNsb3ctbW9kZSIgYW5k
+IGRpc2FibGUgU0RSMTA0LCBTRFI1MCBhbmQgRERSNTAgbW9kZXMuCisJICovCisJbWFydmVsbCx4
+ZW5vbi1waHktc2xvdy1tb2RlOworCW5vLTEtOC12OworCW5vLXNkOworCW5vLXNkaW87CisJbm9u
+LXJlbW92YWJsZTsKKwlzdGF0dXMgPSAib2theSI7CisJdnFtbWMtc3VwcGx5ID0gPCZ2X3ZkZG9f
+aD47Cit9OworCismY3BtX2kyYzAgeworCWNsb2NrLWZyZXF1ZW5jeSA9IDwxMDAwMDA+OworCXBp
+bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CisJcGluY3RybC0wID0gPCZjcG1faTJjMF9waW5zPjsK
+KwlzdGF0dXMgPSAib2theSI7Cit9OworCismY3BtX2kyYzEgeworCWNsb2NrLWZyZXF1ZW5jeSA9
+IDwxMDAwMDA+OworCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CisJcGluY3RybC0wID0gPCZj
+cG1faTJjMV9waW5zPjsKKwlzdGF0dXMgPSAib2theSI7CisKKwlpMmMtc3dpdGNoQDcwIHsKKwkJ
+Y29tcGF0aWJsZSA9ICJueHAscGNhOTU0OCI7CisJCSNhZGRyZXNzLWNlbGxzID0gPDE+OworCQkj
+c2l6ZS1jZWxscyA9IDwwPjsKKwkJcmVnID0gPDB4NzA+OworCisJCXNmcHAwX2kyYzogaTJjQDAg
+eworCQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKwkJCXJl
+ZyA9IDwwPjsKKwkJfTsKKwkJc2ZwcDFfaTJjOiBpMmNAMSB7CisJCQkjYWRkcmVzcy1jZWxscyA9
+IDwxPjsKKwkJCSNzaXplLWNlbGxzID0gPDA+OworCQkJcmVnID0gPDE+OworCQl9OworCQlzZnBf
+MWdfaTJjOiBpMmNAMiB7CisJCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKKwkJCSNzaXplLWNlbGxz
+ID0gPDA+OworCQkJcmVnID0gPDI+OworCQl9OworCX07Cit9OworCismY3BtX21kaW8geworCXBp
+bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CisJcGluY3RybC0wID0gPCZjcG1fZ2VfbWRpb19waW5z
+PjsKKwlzdGF0dXMgPSAib2theSI7CisKKwlnZV9waHk6IGV0aGVybmV0LXBoeUAwIHsKKwkJcmVn
+ID0gPDA+OworCX07Cit9OworCismY3BtX3BjaWUwIHsKKwlwaW5jdHJsLW5hbWVzID0gImRlZmF1
+bHQiOworCXBpbmN0cmwtMCA9IDwmY3BtX3BjaWVfcGlucz47CisJbnVtLWxhbmVzID0gPDQ+Owor
+CW51bS12aWV3cG9ydCA9IDw4PjsKKwlyZXNldC1ncGlvID0gPCZjcG1fZ3BpbzEgMjAgR1BJT19B
+Q1RJVkVfTE9XPjsKKwlzdGF0dXMgPSAib2theSI7Cit9OworCismY3BtX3BpbmN0cmwgeworCWNw
+bV9nZV9tZGlvX3BpbnM6IGdlLW1kaW8tcGlucyB7CisJCW1hcnZlbGwscGlucyA9ICJtcHAzMiIs
+ICJtcHAzNCI7CisJCW1hcnZlbGwsZnVuY3Rpb24gPSAiZ2UiOworCX07CisJY3BtX2kyYzFfcGlu
+czogaTJjMS1waW5zIHsKKwkJbWFydmVsbCxwaW5zID0gIm1wcDM1IiwgIm1wcDM2IjsKKwkJbWFy
+dmVsbCxmdW5jdGlvbiA9ICJpMmMxIjsKKwl9OworCWNwbV9pMmMwX3BpbnM6IGkyYzAtcGlucyB7
+CisJCW1hcnZlbGwscGlucyA9ICJtcHAzNyIsICJtcHAzOCI7CisJCW1hcnZlbGwsZnVuY3Rpb24g
+PSAiaTJjMCI7CisJfTsKKwljcG1feGhjaV92YnVzX3BpbnM6IHhoY2kwLXZidXMtcGlucyB7CisJ
+CW1hcnZlbGwscGlucyA9ICJtcHA0NyI7CisJCW1hcnZlbGwsZnVuY3Rpb24gPSAiZ3BpbyI7CisJ
+fTsKKwljcG1fcGNpZV9waW5zOiBwY2llLXBpbnMgeworCQltYXJ2ZWxsLHBpbnMgPSAibXBwNTIi
+OworCQltYXJ2ZWxsLGZ1bmN0aW9uID0gImdwaW8iOworCX07CisJY3BtX3NkaGNpX3BpbnM6IHNk
+aGNpLXBpbnMgeworCQltYXJ2ZWxsLHBpbnMgPSAibXBwNTUiLCAibXBwNTYiLCAibXBwNTciLCAi
+bXBwNTgiLCAibXBwNTkiLAorCQkJICAgICAgICJtcHA2MCIsICJtcHA2MSI7CisJCW1hcnZlbGws
+ZnVuY3Rpb24gPSAic2RpbyI7CisJfTsKK307CisKKyZjcG1feG1kaW8geworCXN0YXR1cyA9ICJv
+a2F5IjsKKworCXBoeTA6IGV0aGVybmV0LXBoeUAwIHsKKwkJY29tcGF0aWJsZSA9ICJldGhlcm5l
+dC1waHktaWVlZTgwMi4zLWM0NSI7CisJCXJlZyA9IDwwPjsKKwl9OworCisJcGh5ODogZXRoZXJu
+ZXQtcGh5QDggeworCQljb21wYXRpYmxlID0gImV0aGVybmV0LXBoeS1pZWVlODAyLjMtYzQ1IjsK
+KwkJcmVnID0gPDg+OworCX07Cit9OworCismY3BtX2V0aGVybmV0IHsKKwlzdGF0dXMgPSAib2th
+eSI7Cit9OworCismY3BtX2V0aDAgeworCXN0YXR1cyA9ICJva2F5IjsKKwlwaHktbW9kZSA9ICIx
+MGdiYXNlLWtyIjsKKwkvKiBHZW5lcmljIFBIWSwgcHJvdmlkaW5nIHNlcmRlcyBsYW5lcyAqLwor
+CXBoeXMgPSA8JmNwbV9jb21waHk0IDA+OworfTsKKworJmNwbV9zYXRhMCB7CisJLyogQ1BNIExh
+bmUgMCAtIFUyOSAqLworCXN0YXR1cyA9ICJva2F5IjsKK307CisKKyZjcG1fc2RoY2kwIHsKKwkv
+KiBVNiAqLworCWJyb2tlbi1jZDsKKwlidXMtd2lkdGggPSA8ND47CisJcGluY3RybC1uYW1lcyA9
+ICJkZWZhdWx0IjsKKwlwaW5jdHJsLTAgPSA8JmNwbV9zZGhjaV9waW5zPjsKKwlzdGF0dXMgPSAi
+b2theSI7CisJdnFtbWMtc3VwcGx5ID0gPCZ2XzNfMz47Cit9OworCismY3BtX3VzYjNfMCB7CisJ
+LyogSjM4PyAtIFVTQjIuMCBvbmx5ICovCisJc3RhdHVzID0gIm9rYXkiOworfTsKKworJmNwbV91
+c2IzXzEgeworCS8qIEozOD8gLSBVU0IyLjAgb25seSAqLworCXN0YXR1cyA9ICJva2F5IjsKK307
+CisKKyZjcHNfZXRoZXJuZXQgeworCXN0YXR1cyA9ICJva2F5IjsKK307CisKKyZjcHNfZXRoMCB7
+CisJc3RhdHVzID0gIm9rYXkiOworCXBoeS1tb2RlID0gIjEwZ2Jhc2Uta3IiOworCS8qIEdlbmVy
+aWMgUEhZLCBwcm92aWRpbmcgc2VyZGVzIGxhbmVzICovCisJcGh5cyA9IDwmY3BzX2NvbXBoeTQg
+MD47Cit9OworCismY3BzX2V0aDEgeworCS8qIENQUyBMYW5lIDAgLSBKNSAoR2lnYWJpdCBSSjQ1
+KSAqLworCXN0YXR1cyA9ICJva2F5IjsKKwkvKiBOZXR3b3JrIFBIWSAqLworCXBoeSA9IDwmZ2Vf
+cGh5PjsKKwlwaHktbW9kZSA9ICJzZ21paSI7CisJLyogR2VuZXJpYyBQSFksIHByb3ZpZGluZyBz
+ZXJkZXMgbGFuZXMgKi8KKwlwaHlzID0gPCZjcHNfY29tcGh5MCAxPjsKK307CisKKyZjcHNfZXRo
+MiB7CisJLyogQ1BTIExhbmUgNSAqLworCXN0YXR1cyA9ICJva2F5IjsKKwlwaHktbW9kZSA9ICIy
+NTAwYmFzZS14IjsKKwkvKiBHZW5lcmljIFBIWSwgcHJvdmlkaW5nIHNlcmRlcyBsYW5lcyAqLwor
+CXBoeXMgPSA8JmNwc19jb21waHk1IDI+OworfTsKKworJmNwc19waW5jdHJsIHsKKwljcHNfc3Bp
+MV9waW5zOiBzcGkxLXBpbnMgeworCQltYXJ2ZWxsLHBpbnMgPSAibXBwMTIiLCAibXBwMTMiLCAi
+bXBwMTQiLCAibXBwMTUiLCAibXBwMTYiOworCQltYXJ2ZWxsLGZ1bmN0aW9uID0gInNwaTEiOwor
+CX07Cit9OworCismY3BzX3NhdGEwIHsKKwkvKiBDUFMgTGFuZSAxIC0gVTMyICovCisJLyogQ1BT
+IExhbmUgMyAtIFUzMSAqLworCXN0YXR1cyA9ICJva2F5IjsKK307CisKKyZjcHNfc3BpMSB7CisJ
+cGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKKwlwaW5jdHJsLTAgPSA8JmNwc19zcGkxX3BpbnM+
+OworCXN0YXR1cyA9ICJva2F5IjsKKworCXNwaS1mbGFzaEAwIHsKKwkJY29tcGF0aWJsZSA9ICJz
+dCx3MjVxMzIiOworCQlzcGktbWF4LWZyZXF1ZW5jeSA9IDw1MDAwMDAwMD47CisJCXJlZyA9IDww
+PjsKKwl9OworfTsKKworJmNwc191c2IzXzAgeworCS8qIENQUyBMYW5lIDIgLSBDT043ICovCisJ
+dXNiLXBoeSA9IDwmdXNiM2gwX3BoeT47CisJc3RhdHVzID0gIm9rYXkiOworfTsKLS0gCjIuMC40
+Cgo=
+
+--_002_2ff0a81f55a84069a4652d02a4212b70ILEXCH01marvellcom_--
