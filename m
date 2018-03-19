@@ -1,63 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967547AbeCSQws (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 12:52:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55288 "EHLO
+        id S967545AbeCSQzs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:55:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55352 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934426AbeCSQwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:52:42 -0400
-Date: Mon, 19 Mar 2018 16:52:34 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: kishon@ti.com, linux-pci@vger.kernel.org,
-        Niklas Cassel <niklass@axis.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] PCI endpoint 64-bit BAR fixes
-Message-ID: <20180319165234.GA12486@e107981-ln.cambridge.arm.com>
-References: <20180308133331.19464-1-niklas.cassel@axis.com>
+        id S935120AbeCSQzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:55:44 -0400
+Date: Mon, 19 Mar 2018 16:55:51 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, x86@kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
+        iommu@lists.linux-foundation.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 12/14] dma-direct: handle the memory encryption bit in
+ common code
+Message-ID: <20180319165551.GE14916@arm.com>
+References: <20180319103826.12853-1-hch@lst.de>
+ <20180319103826.12853-13-hch@lst.de>
+ <dd05dd14-9969-7985-826e-f440c3fc4c08@arm.com>
+ <20180319152442.GA27915@lst.de>
+ <5316b479-7e75-d62f-6b17-b6bece55187c@arm.com>
+ <20180319154832.GD14916@arm.com>
+ <20180319160343.GA29002@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308133331.19464-1-niklas.cassel@axis.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180319160343.GA29002@lst.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 02:33:25PM +0100, Niklas Cassel wrote:
-> PCI endpoint fixes to improve the way 64-bit BARs are handled.
+On Mon, Mar 19, 2018 at 05:03:43PM +0100, Christoph Hellwig wrote:
+> On Mon, Mar 19, 2018 at 03:48:33PM +0000, Will Deacon wrote:
+> > Why can't we just resolve the conflict by adding the underscores?
 > 
+> We can solve the conflict easily that way.  But that's not the point.
 > 
-> There are still future improvements that could be made:
-> 
-> pci-epf-test.c always allocates space for
-> 6 BARs, even when using 64-bit BARs (which
-> really only requires us to allocate 3 BARs).
-> 
-> pcitest.sh will print "NOT OKAY" for BAR1,
-> BAR3, and BAR5 when using 64-bit BARs.
-> This could probably be improved to say
-> something like "N/A (64-bit BAR)".
-> 
-> Niklas Cassel (5):
->   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
->   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
->     properly
->   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
->     properly
->   PCI: endpoint: Make pci_epc_set_bar() return the BAR width that was
->     set-up
->   misc: pci_endpoint_test: Handle 64-bit BARs properly
-> 
->  drivers/misc/pci_endpoint_test.c              | 12 +++++++-----
->  drivers/pci/cadence/pcie-cadence-ep.c         |  2 +-
->  drivers/pci/dwc/pcie-designware-ep.c          | 22 ++++++++++++++++++----
->  drivers/pci/endpoint/functions/pci-epf-test.c | 22 +++++++++++++++-------
->  4 files changed, 41 insertions(+), 17 deletions(-)
+> The point is that I've been fighting hard to consolidate dma code
+> given that the behavior really is common and not arch specific.  And
+> this one is another case like that:  the fact that the non-coherent
+> dma boundary is bigger than the exposed size is something that can
+> easily happen elsewhere, so there is no need to duplicate a lot
+> of code for that.
 
-Niklas,
+Fair enough, although I wouldn't say it's a *lot* of code being duplicated.
+Are there other architectures working around this issue too? I couldn't
+see anything in the other dma-direct.h headers.
 
-I am fine with the series but I'd need Kishon ACKs (and Greg's for the
-last patch), I am ready to queue them then.
+> Nevermind that the commit should at least be three different patches:
+> 
+>  (1) revert the broken original commit
+>  (2) increase the dma min alignment
+>  (3) put the swiotlb workaround in place
 
-Thanks,
-Lorenzo
+I'd agree with you if this wasn't already queued and sitting in -next.
+Reverting what we currently have seems a bit OTT now. Catalin?
+
+Will
