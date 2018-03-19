@@ -1,58 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971505AbeCSVBY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:01:24 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41671 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032270AbeCSVA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:00:28 -0400
-X-Google-Smtp-Source: AG47ELsgRAlKnRZ5ZJKmB6Z1al6LgBJzyJ67PprhyKum+Ckn+eEnDVexoIuoq+S66uXo+G2bLLL05g==
-From: Shakeel Butt <shakeelb@google.com>
-To: Tejun Heo <tj@kernel.org>, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] mm, slab: memcg_link the SLAB's kmem_cache
-Date: Mon, 19 Mar 2018 14:00:20 -0700
-Message-Id: <20180319210020.60289-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+        id S969006AbeCSVGz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:06:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935294AbeCSVGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:06:31 -0400
+Subject: Re: [RFC 03/12] KVM: arm/arm64: Record RDIST Last bit at registration
+To: Marc Zyngier <marc.zyngier@arm.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
+        peter.maydell@linaro.org
+References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
+ <1521451220-27754-4-git-send-email-eric.auger@redhat.com>
+ <3943c306-5204-3a2b-0e06-7c8a4298c9fc@arm.com>
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <f6126707-45b7-309e-4cc9-16833e7d27d4@redhat.com>
+Date: Mon, 19 Mar 2018 22:06:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <3943c306-5204-3a2b-0e06-7c8a4298c9fc@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the root caches are linked into slab_root_caches which was
-introduced by the commit 510ded33e075 ("slab: implement slab_root_caches
-list") but it missed to add the SLAB's kmem_cache.
+Hi Marc,
 
-While experimenting with opt-in/opt-out kmem accounting, I noticed
-system crashes due to NULL dereference inside cache_from_memcg_idx()
-while deferencing kmem_cache.memcg_params.memcg_caches. The upstream
-clean kernel will not see these crashes but SLAB should be consistent
-with SLUB which does linked its boot caches (kmem_cache_node and
-kmem_cache) into slab_root_caches.
+On 19/03/18 16:57, Marc Zyngier wrote:
+> On 19/03/18 09:20, Eric Auger wrote:
+>> To prepare for multiple RDIST regions, let's record the RDIST
+>> Last bit field when registering the IO device.
+>>
+>> As a reminder the Last bit indicates whether the redistributor
+>> is the highest one in a series of contiguous redistributor pages.
+>>
+>> Since at the moment KVM only supports a single redist region,
+>> the RDIST tagged with the last bit set to true corresponds to the
+>> highest vCPU one.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  include/kvm/arm_vgic.h           | 1 +
+>>  virt/kvm/arm/vgic/vgic-mmio-v3.c | 6 +++++-
+>>  2 files changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+>> index cdbd142..1c8c0ff 100644
+>> --- a/include/kvm/arm_vgic.h
+>> +++ b/include/kvm/arm_vgic.h
+>> @@ -312,6 +312,7 @@ struct vgic_cpu {
+>>  	 */
+>>  	struct vgic_io_device	rd_iodev;
+>>  	struct vgic_io_device	sgi_iodev;
+>> +	bool rdist_last; /* Is the RDIST the last one of the RDIST region? */
+>>  
+>>  	/* Contains the attributes and gpa of the LPI pending tables. */
+>>  	u64 pendbaser;
+>> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> index 671fe81..75fe689 100644
+>> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> @@ -184,12 +184,13 @@ static unsigned long vgic_mmio_read_v3r_typer(struct kvm_vcpu *vcpu,
+>>  					      gpa_t addr, unsigned int len)
+>>  {
+>>  	unsigned long mpidr = kvm_vcpu_get_mpidr_aff(vcpu);
+>> +	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>>  	int target_vcpu_id = vcpu->vcpu_id;
+>>  	u64 value;
+>>  
+>>  	value = (u64)(mpidr & GENMASK(23, 0)) << 32;
+>>  	value |= ((target_vcpu_id & 0xffff) << 8);
+>> -	if (target_vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1)
+>> +	if (vgic_cpu->rdist_last)
+>>  		value |= GICR_TYPER_LAST;
+>>  	if (vgic_has_its(vcpu->kvm))
+>>  		value |= GICR_TYPER_PLPIS;
+>> @@ -580,6 +581,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+>>  {
+>>  	struct kvm *kvm = vcpu->kvm;
+>>  	struct vgic_dist *vgic = &kvm->arch.vgic;
+>> +	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>>  	struct vgic_io_device *rd_dev = &vcpu->arch.vgic_cpu.rd_iodev;
+>>  	struct vgic_io_device *sgi_dev = &vcpu->arch.vgic_cpu.sgi_iodev;
+>>  	gpa_t rd_base, sgi_base;
+>> @@ -632,6 +634,8 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+>>  	}
+>>  
+>>  	vgic->vgic_redist_free_offset += 2 * SZ_64K;
+>> +	vgic_cpu->rdist_last =
+>> +		(vcpu->vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1);
+>>  out:
+>>  	mutex_unlock(&kvm->slots_lock);
+>>  	return ret;
+>>
+> 
+> I don't really like the idea of keeping this "Last" bit around, because
+> it doesn't have much to do with the state of a redistributor, and has
+> more to do with its position in the region.
+agreed. What about putting it in vgic_io_device then?.
+> 
+> What is wrong with the current approach of dynamically computing the
+> Last bit? If you have multiple regions, all you need to know is which
+> region this redistributor belongs to. From that point (and assuming you
+> know how many redistributors have been instantiated in that region, you
+> can know whether the Last bit is set or not.
+Well, looked to me more natural to compute the information once when
+registering the rdist into its region instead of each time we read the
+RDIST TYPER. Especially because at that moment we map the redist, we
+need to know anyway if we have sufficient space to put it.
+> 
+> One of the issue is that the current code works in term of "target cpu",
+> while we really want is to use the addr parameter to work out if the
+> Last bit is set or not. I'd be a lot more confident if we emulate it
+> like that (which is how the HW would generate it too).
+Sorry I don't understand your comment above.
 
-Fixes: 510ded33e075c ("slab: implement slab_root_caches list")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/slab.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks
 
-diff --git a/mm/slab.c b/mm/slab.c
-index 324446621b3e..9095c3945425 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -1283,6 +1283,7 @@ void __init kmem_cache_init(void)
- 				  nr_node_ids * sizeof(struct kmem_cache_node *),
- 				  SLAB_HWCACHE_ALIGN, 0, 0);
- 	list_add(&kmem_cache->list, &slab_caches);
-+	memcg_link_cache(kmem_cache);
- 	slab_state = PARTIAL;
- 
- 	/*
--- 
-2.16.2.804.g6dcf76e118-goog
+Eric
+> 
+> What do you think?
+> 
+> 	M.
+> 
