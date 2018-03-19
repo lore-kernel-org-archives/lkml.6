@@ -1,193 +1,149 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-646354-1522056198-2-12077128485250111880
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521498528-2-4001668467979329994
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522056198; b=M9/IU+H31niqQncnm8cKe0RZmr2LeALssWq/kcb6V1SCp4E
-    TcoahhzFf7g1qn1Kl5juEzFGe/JqAqgloZvFLn3GNZsykZjZ7cBPEtcvZu99ysOi
-    t2mRUFkM/KOsamwivJIqiPUbuh3p1fBjRkvwHH2eqFuiZqb7jtw0VJdham/4bKLB
-    hhgrOyUPXQxKQ+sKQC5fp8NkUZ7fvOfM4//HYPHUCBOleJZ9wAC/YEkaOTBizy1k
-    hYLVixpUYxPokMmHOQBaicSgKRQYXBa0LaZTE4f+m56qZxnaUxZ6TUsDMO1QzFvs
-    6eo9ktUK2DKeP5M8ecFOhV+bryLznsA5VVYw5sA==
+    t=1521498525; b=dVkrSFmBBJlXN4Xy8UqtjP6NnD9skJ4MdoYeCAkKIeGTLy0
+    LSrWa9p33Zn9mhkjjnwAbkQjmQ3rB0/INGgkDP0rcQOmbAK8DnFs3kY+LfY7W5Uo
+    mvnaqrndSS1uRtYaHQpJMd/DohR53GTHg3ahCERPfgMhJA+JeVyGW6dNtExR4Ehv
+    sQcwgDjnCcIBTrXJheXIxP2iuOzV2IVkb3ny4vRrS2zHkKRaMVnmTgIAgEVQjgOC
+    AbovjylOdb+PrEtv5nwlQJXYEE9A0t7DiSWT32sam275JjD0z02kuV2Drwbm1OEp
+    RBigSTkipg4SR/1/7H0j2vd8nk/Hfq4VaqoBVmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1522056198; bh=7b131v
-    sVrrq5qpChvtuYE+EiwrS5RaacJMc4ERijIEY=; b=aGYXmsI7yokEiMaohe6PA5
-    KJWnOklsv0f40gyF1rMXHih+Q8LnRNked5OqjciANWB8G51KM0bUD+ZXrIBJrgbm
-    vtuR9OPt4UrdGaiR0LDfo24WC20DcaH92aH2gyI8S60Eo0IbguXyVSc+NYD5W6U+
-    WGS4oV4n9ReHn9Ebl2ThlIRpdNZGIJIjaUTyR5MjfJTpgSRHrDJDADq8NUTzSEOs
-    0QFg0rCjWm4ZAjRgmoA9wGdbGCl02vUkBY6ucOBzoSaIyfhwFkWX8eYddo4Bfsix
-    V0r0SnCYRn4uMkIKAIwEKu/9bKfO6US9w2NnnNURyGwa5TMAIfuvk5rCNjwKJdaA
+    :mime-version:sender:list-id; s=arctest; t=1521498525; bh=v4Iohq
+    qvswwGGChZ0ypfxilgvrBcG4JuenKfKq9fi7Q=; b=dreAOmsVRhHIgTCS2cgWWO
+    sBvn0dtPTfdXf1GOxSDGAc+vSavn97cNWGTol5gYLUl33pjyCRUnB0+lpOy37iZ5
+    UXlpElRI2vRBM/MjMarm8nz9bz4PCaTXFXM/q1hQAkEyHF1jFm0M7duvkiOGZj/J
+    VV9AxbmOWG3V1OF5dUGzEokeFxGRVU+wxh71GOYnphcCl42a77tPxksulFeGC8Gx
+    CHffw+KhbMwaSS9ums7lF3ozhHCOaNs6WYqHSDsQyrCMJNoudvGxp3WuggEGZzkD
+    Y8eMoeJHqC5InijCy1h6f5S6L449U8/vvp3w/jaaAZzIpsZR4UsKozvLg1Py5zrw
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com header.b=jYrgpH/l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=smtpout;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=dell.com;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cy0RKD5Z x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduieefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdefkeenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dell.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com header.b=jYrgpH/l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=smtpout;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=dell.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cy0RKD5Z x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduieefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdefkeenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dell.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE+4xYZE0eDHaQ2I7NxydH3VwpOtxAwp21Et0j+s22kdZ506K9Lt4eDTs9UHq4RipMbA9cBeZaQtXz8yduhCBUK1iUfZtUi+k/+nXA4Ul9Mt2OL6bXTr
-    TlNZ0yk/R9oian5/C4lIwgSOJN/II2sN6R1psYdLKeClnZGANYnbEGAcdgamGktmJAH6gDkFlDeZpE5aYEHwRcNzDZuj4z7foqC0AGSNT1O+/aC+zeSOKIXr
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wCHvqnb4SGkA:10 a=kj9zAlcOel0A:10
-    a=v2DPQv5-lfwA:10 a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=iLNU1ar6AAAA:8
-    a=QyXUC8HyAAAA:8 a=NEAV23lmAAAA:8 a=gnDlLK7X971D4A0utR0A:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750983AbeCZJXP (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Mar 2018 05:23:15 -0400
-Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:6136 "EHLO
-        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750864AbeCZJXO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Mar 2018 05:23:14 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EzAADnuLhamMqZ6EReGgEBAQEBAgEBA?=
- =?us-ascii?q?QEIAQEBAYQUDnAoCotSjQ00gUCBEZJRFIE1PQsjCYQNTAKDeiE0GAECAQEBAQE?=
- =?us-ascii?q?BAgECEAEBAQEBCAsLBigjDII4Ig0ESyEIAQIvAQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQEBAQEBAQEBAQEBAQcCDTgLAhgBAQEEOj8MBAIBCBEEAQEfBQQHRgMBBQg?=
- =?us-ascii?q?CBAENBQiFBg+pPRGDQIg9ghqHWIIUgQyDB4MTAgOBFBQBEgEJHYVOA5c/CIVSi?=
- =?us-ascii?q?FeBODmKUIcmgSJLhB6CRYElHIEacXCDEgmCJhyDNIpRbwGNcYEggRcBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2EzAADnuLhamMqZ6EReGgEBAQEBAgEBAQEIAQEBAYQUDnA?=
- =?us-ascii?q?oCotSjQ00gUCBEZJRFIE1PQsjCYQNTAKDeiE0GAECAQEBAQEBAgECEAEBAQEBC?=
- =?us-ascii?q?AsLBigjDII4Ig0ESyEIAQIvAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcCDTgLAhgBAQEEOj8MBAIBCBEEAQEfBQQHRgMBBQgCBAENBQiFBg+pP?=
- =?us-ascii?q?RGDQIg9ghqHWIIUgQyDB4MTAgOBFBQBEgEJHYVOA5c/CIVSiFeBODmKUIcmgSJ?=
- =?us-ascii?q?LhB6CRYElHIEacXCDEgmCJhyDNIpRbwGNcYEggRcBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.195
-X-IronPort-AV: E=Sophos;i="5.48,364,1517896800";
-   d="scan'208";a="1233475981"
-X-DLP: DLP_GlobalPCIDSS
-To: <Alexander.Levin@microsoft.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-CC: <robert.moore@intel.com>, <erik.schmauss@intel.com>,
-        <rafael.j.wysocki@intel.com>
-Subject: RE: [PATCH AUTOSEL for 4.15 050/124] ACPICA: Recognize the Windows 10
- version 1607 and 1703 OSI strings
-Thread-Topic: [PATCH AUTOSEL for 4.15 050/124] ACPICA: Recognize the Windows
- 10 version 1607 and 1703 OSI strings
-Thread-Index: AQHTv5mjS5s9T/qcp0eNCtacHINC9KPiRbIA
-Date: Mon, 26 Mar 2018 09:12:03 +0000
-Message-ID: <9e47cad5d0144285864141c298e8c27c@ausx13mpc120.AMER.DELL.COM>
+        id S933872AbeCSW2m (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:28:42 -0400
+Received: from mail-by2nam01on0106.outbound.protection.outlook.com ([104.47.34.106]:16179
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933810AbeCSPsr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:48:47 -0400
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 058/124] ipv6: Set nexthop flags during route
+ creation
+Thread-Topic: [PATCH AUTOSEL for 4.15 058/124] ipv6: Set nexthop flags during
+ route creation
+Thread-Index: AQHTv5mo//FsBdCFtkuOTa0rN5EV2A==
+Date: Mon, 19 Mar 2018 15:48:00 +0000
+Message-ID: <20180319154645.11350-58-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
- <20180319154645.11350-50-alexander.levin@microsoft.com>
-In-Reply-To: <20180319154645.11350-50-alexander.levin@microsoft.com>
+In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:QnCsqq4oBvcFcuXiQCKGWzoim0cOvptN2Sgh6RFCDcGnIVsc43u4KPCT5fz2U23QU8KAZR4xOIDE/bycF/t2TBfZlsATI34DQLVUi8znVaGqGYWhN0UjMxNde+SyZ3T4/0OyMLPDgFGUTEXnH9Sbwpi5P4Mayk0tf8UlFoXpwVkxVBrUxGi4B5skdL1wobBUPdaBOX4Z3I+XHrA0ybm5XwEiD3ZyMRCg3+VTPv99okE0MEsFwAMlgbyjgnw1t6sz;20:FUOdPDVRsCMYH+FqLjQLUaTMX2s7L96pHfoyA+iAPmRNOLLeesVXGRv2I99c1rfEtiv6A5rNSRoJtSudhjj7sdl6dFypvmc6Q9V+Se1Davn5Xx4/d4b8aVP76f+ClzmjJelOlNwdm7bYr98bPg2nlS/BK7jYy6/yWXZMG2i0lp8=
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f8c7a211-5fd0-4af8-fb62-08d58db0d52c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
+x-ms-traffictypediagnostic: DM5PR2101MB1031:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB1031ABC17CBE5EA147C39724FBD40@DM5PR2101MB1031.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
+x-forefront-prvs: 06167FAD59
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(39860400002)(39380400002)(376002)(189003)(199004)(6436002)(6512007)(6666003)(3280700002)(2950100002)(7736002)(6116002)(3846002)(10090500001)(105586002)(4326008)(5660300001)(305945005)(1076002)(81156014)(2906002)(6486002)(81166006)(8676002)(8936002)(2900100001)(106356001)(36756003)(68736007)(54906003)(3660700001)(22452003)(97736004)(6506007)(25786009)(99286004)(10290500003)(76176011)(66066001)(14454004)(72206003)(478600001)(102836004)(26005)(186003)(316002)(2501003)(110136005)(5250100002)(86362001)(53936002)(107886003)(86612001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: PVFUZDB1qTi+bVWzQMXRBb9TixnaZTKPg8hKS5xZwAWeJFqIxzoKy2LM91ZgpF5ZObiFmT5agYTbY0fUJ2vVRhf7SK1u1iGCMTm6BlajqTBciBZ+OQnuGKJ9h/87gddnP3wT+Kj1ZQwYDfid1cVrSP/iph7AN41B8RAEvU/IkcYW4pYiANs5PW1db8JIHyHo+kPYB4AMrevPSBBpLHnCwtFvMwzd8CIc08Fu5kWSN0O1d1JE0KMyIOcOySdTYFKP6kHt5yAnoEBtO2f2StRXGgQafKdEMqNl5svZxm6id4iIbl0TeEdF5iOY1ZukvLCQ9QZTkTWbwOTLEIPH9mtUuQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8c7a211-5fd0-4af8-fb62-08d58db0d52c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:48:00.9624
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1031
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> -----Original Message-----
-> From: Sasha Levin [mailto:Alexander.Levin@microsoft.com]
-> Sent: Monday, March 19, 2018 10:48 AM
-> To: linux-kernel@vger.kernel.org; stable@vger.kernel.org
-> Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Bob Moore
-> <robert.moore@intel.com>; Erik Schmauss <erik.schmauss@intel.com>; Rafael=
- J .
-> Wysocki <rafael.j.wysocki@intel.com>; Sasha Levin
-> <Alexander.Levin@microsoft.com>
-> Subject: [PATCH AUTOSEL for 4.15 050/124] ACPICA: Recognize the Windows 1=
-0
-> version 1607 and 1703 OSI strings
->=20
-> From: Mario Limonciello <mario.limonciello@dell.com>
->=20
-> [ Upstream commit bc4d413a819f9d0764a80a55875a5d7e1f4efed4 ]
->=20
-> ACPICA commit 35a4a3ea723b3066f575e63e5f0116f7ce65e713
->=20
-> The public Microsoft document listing recognized OSI strings [1]
-> shows that these two strings were introduced.
-> version 1607 / Anniversary Update / "Redstone 1"
-> version 1703 / Creators Update / "Redstone 2"
->=20
-> [1] http://download.microsoft.com/download/7/e/7/7e7662cf-cbea-470b-a97e-
-> ce7ce0d98dc2/winacpi_osi.docx
->=20
-> Link: https://github.com/acpica/acpica/commit/35a4a3ea
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> Signed-off-by: Bob Moore <robert.moore@intel.com>
-> Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> ---
->  drivers/acpi/acpica/utosi.c | 2 ++
->  include/acpi/actypes.h      | 2 ++
->  2 files changed, 4 insertions(+)
->=20
-> diff --git a/drivers/acpi/acpica/utosi.c b/drivers/acpi/acpica/utosi.c
-> index 3175b133c0e4..f6b8dd24b006 100644
-> --- a/drivers/acpi/acpica/utosi.c
-> +++ b/drivers/acpi/acpica/utosi.c
-> @@ -101,6 +101,8 @@ static struct acpi_interface_info
-> acpi_default_supported_interfaces[] =3D {
->  	{"Windows 2012", NULL, 0, ACPI_OSI_WIN_8},	/* Windows 8 and Server
-> 2012 - Added 08/2012 */
->  	{"Windows 2013", NULL, 0, ACPI_OSI_WIN_8},	/* Windows 8.1 and Server
-> 2012 R2 - Added 01/2014 */
->  	{"Windows 2015", NULL, 0, ACPI_OSI_WIN_10},	/* Windows 10 - Added
-> 03/2015 */
-> +	{"Windows 2016", NULL, 0, ACPI_OSI_WIN_10_RS1},	/* Windows 10
-> version 1607 - Added 12/2017 */
-> +	{"Windows 2017", NULL, 0, ACPI_OSI_WIN_10_RS2},	/* Windows 10
-> version 1703 - Added 12/2017 */
->=20
->  	/* Feature Group Strings */
->=20
-> diff --git a/include/acpi/actypes.h b/include/acpi/actypes.h
-> index 4f077edb9b81..bfc8a814379a 100644
-> --- a/include/acpi/actypes.h
-> +++ b/include/acpi/actypes.h
-> @@ -1299,6 +1299,8 @@ typedef enum {
->  #define ACPI_OSI_WIN_7                  0x0B
->  #define ACPI_OSI_WIN_8                  0x0C
->  #define ACPI_OSI_WIN_10                 0x0D
-> +#define ACPI_OSI_WIN_10_RS1             0x0E
-> +#define ACPI_OSI_WIN_10_RS2             0x0F
->=20
->  /* Definitions of getopt */
->=20
-> --
-> 2.14.1
+From: Ido Schimmel <idosch@mellanox.com>
 
-This is fine by me for 4.15, as mentioned in other email I don't think it s=
-hould go to 4.14, 4.9 or 4.4.
+[ Upstream commit 5609b80a37f69f796548339e675256188b29c17d ]
+
+It is valid to install routes with a nexthop device that does not have a
+carrier, so we need to make sure they're marked accordingly.
+
+As explained in the previous patch, host and anycast routes are never
+marked with the 'linkdown' flag.
+
+Note that reject routes are unaffected, as these use the loopback device
+which always has a carrier.
+
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/ipv6/route.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index a560fb1d0230..b2d6377f1ef5 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2750,6 +2750,9 @@ static struct rt6_info *ip6_route_info_create(struct =
+fib6_config *cfg,
+ 	rt->rt6i_flags =3D cfg->fc_flags;
+=20
+ install_route:
++	if (!(rt->rt6i_flags & (RTF_LOCAL | RTF_ANYCAST)) &&
++	    !netif_carrier_ok(dev))
++		rt->rt6i_nh_flags |=3D RTNH_F_LINKDOWN;
+ 	rt->dst.dev =3D dev;
+ 	rt->rt6i_idev =3D idev;
+ 	rt->rt6i_table =3D table;
+--=20
+2.14.1
