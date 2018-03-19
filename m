@@ -1,79 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932438AbeCSHSY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:18:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33376 "EHLO mx1.redhat.com"
+        id S932458AbeCSHYw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:24:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40074 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932134AbeCSHSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:18:23 -0400
-Date: Mon, 19 Mar 2018 08:18:21 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] tools: Fix str_error_r() Werror=restrict build
-Message-ID: <20180319071821.GA9988@krava>
-References: <20180319055504.757-1-sergey.senozhatsky@gmail.com>
+        id S932073AbeCSHYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 03:24:50 -0400
+Date: Mon, 19 Mar 2018 15:24:46 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, keescook@chromium.org,
+        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
+        lcapitulino@redhat.com
+Subject: Re: [PATCH v9 0/5] x86/KASLR: Add parameter
+ kaslr_boot_mem=nn[KMG]@ss[KMG]
+Message-ID: <20180319072446.GE8389@localhost.localdomain>
+References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
+ <20180312093557.gxypr66vrbftz3v3@gmail.com>
+ <20180312101031.GH18656@localhost.localdomain>
+ <20180312105727.mzrtjvnyxgyz7jn7@gmail.com>
+ <20180312120415.GC8547@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180319055504.757-1-sergey.senozhatsky@gmail.com>
+In-Reply-To: <20180312120415.GC8547@localhost.localdomain>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 02:55:04PM +0900, Sergey Senozhatsky wrote:
-> Commit c8b5f2c96d1bf6c ("tools: Introduce str_error_r()") added
-> an str_error_r() wrapper which makes gcc8 unhappy due to
-> restrict-qualified parameter aliasing violation:
+On 03/12/18 at 08:04pm, Chao Fan wrote:
+> On Mon, Mar 12, 2018 at 11:57:27AM +0100, Ingo Molnar wrote:
+> >
+> >* Baoquan He <bhe@redhat.com> wrote:
+> >
+> >> Hi Ingo,
+> >> 
+> >> On 03/12/18 at 10:35am, Ingo Molnar wrote:
+> >> > 
+> >> > * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+> >> > 
+> >> > > Long time no reply, rebase the patchset, change the parameter name
+> >> > > from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
+> >> > > 
+> >> > > ***Background:
+> >> > > People reported that kaslr may randomly chooses some positions
+> >> > > which are located in movable memory regions. This will break memory
+> >> > > hotplug feature.
+> >> > 
+> >> > [...]
+> >> > 
+> >> > > ***Solutions:
+> >> > > Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
+> >> > > specify the memory regions where kernel can be allowed to randomize
+> >> > > safely.
+> >> > 
+> >> > Manual solutions like that are pretty suboptimal to users, aren't they?
+> >> > 
+> >> > In what way does memory hotplug feature 'break'? Does it crash or misbehave? Or 
+> >> > simply does it not allow the movement of the affected memory region, while still 
+> >> > allowing the rest to be moved?
+> >> 
+> >> AFAIT, if kernel is randomized into the movable memory region, the
+> >> affected memory region can not be hot added/removed since it has kernel
+> >> data. Surely, the system can still work, the unaffected part still can
+> >> be moved. Still it will cause regression on memory hotplug.
+> >> 
+> >> Mainly we parse SRAT table to get the ranges of memory provided by
+> >> hot-added memory devices in initmem_init(), that's very late. During boot,
+> >> we don't know it. Chao ever posted patches to grab SRAT at decompressing
+> >> stage, the code is very complicated and not elegant, ACPI maintainer
+> >> NACKed that.
+
+Hi Chao,
+
+Seems Ingo prefers the handling in kaslr boot code. Maybe you can try
+to optimize and split your below patch and post anouther round?
+
+I will see how to sove the hugepage in boot/compressed/kaslr.c . 
+
+Thanks
+Baoquan
+
 > 
-> ../lib/str_error_r.c: In function ‘str_error_r’:
-> ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
->    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
->    ^~~~~~~~
-> cc1: all warnings being treated as errors
+> Thanks for Ingo's suggestion and Baoquan's explaination.
 > 
-> Workaround that aliasing error by creating an additional stack
-> variable which holds the buf pointer value we passed to strerror_r().
+> Yes, I did ever try to dig SRAT table in boot period in early RFC PATCH:
+> https://lkml.org/lkml/2017/9/3/77
+> But the change is too huge so made this patchset to avoid this bug in a
+> small change, which will not make the code looks messy.
 > 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
-Josh posted another way to fix it:
-https://marc.info/?l=linux-kernel&m=152116992412107&w=2
-
-your patch keeps the same output, I dont mind either way ;-)
-
-jirka
-
-
-> ---
->  tools/lib/str_error_r.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> Thanks,
+> Chao Fan
 > 
-> diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
-> index d6d65537b0d9..11c3425f272b 100644
-> --- a/tools/lib/str_error_r.c
-> +++ b/tools/lib/str_error_r.c
-> @@ -21,7 +21,12 @@
->  char *str_error_r(int errnum, char *buf, size_t buflen)
->  {
->  	int err = strerror_r(errnum, buf, buflen);
-> -	if (err)
-> -		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
-> +	if (err) {
-> +		char *err_buf = buf;
-> +
-> +		snprintf(err_buf, buflen,
-> +			 "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d",
-> +			 errnum, buf, buflen, err);
-> +	}
->  	return buf;
->  }
-> -- 
-> 2.16.2
+> >
+> >So there's apparently a mis-design here:
+> >
+> > - KASLR needs to be done very early on during bootup: - it's not realistic to 
+> >   expect KASLR to be done with a booted up kernel, because pointers to various 
+> >   KASLR-ed objects are already widely spread out in memory.
+> >
+> > - But for some unfathomable reason the memory hotplug attribute of memory
+> >   regions is not part of the regular memory map but part of late-init ACPI data
+> >   structures.
+> >
+> >The right solution would be _not_ to fudge the KASLR location, but to provide the 
+> >memory hotplug information to early code, preferably via the primary memory map. 
+> >KASLR can then make use of it and avoid those regions, just like it avoids other 
+> >memory regions already.
+> >
+> >In addition to that hardware makers (including virtualized hardware) should also 
+> >fix their systems to provide memory hotplug information to early code.
+> >
+> >Thanks,
+> >
+> >	Ingo
+> >
+> >
+> 
 > 
