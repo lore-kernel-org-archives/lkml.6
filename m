@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3907919-1521497086-6-4024262830290692231
+X-Cyrus-Session-Id: sloti22d1t05-3891259-1521497085-2-16037280175144077652
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,62 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521497085; b=tcfV3B6QZjEy4oVLgAFaapmqr+bdVZTyIWOs1pVDE6I+MsZ
-    OTSD05PoX+EvIibUwjwgIOZWTp6OTUO4mU5iOHhx3T7lLxOzAd1Ch6u8JSi/DW0L
-    srag80npVXtK9JiA1IieJI92NbBwTmZBBwPdrNzbA1J+DcsWDLbrqwxdS0Jyv1w1
-    DCTOtiEI8KwTufxjmiUFf5bJSFLhpO84wNUpf9SndtdQ8Iu2JE+gU6j+XYEGS4B5
-    Gsf7lkvOHPTJOJQLMXkJbnDt4C7rzb1/ExOcS0zi4umVZCF2fmr/zXmYqW02KroI
-    rgEGwvxubS4Z5TbC6rKgnxxoXvyykJ0PK1HS65Q==
+    t=1521497084; b=X5uCHSyHM/IRXt6t9Ojay6R7l+tpk4hqxMV9zxDsRl5hy10
+    rqhGlncGnlIyuXgz8+ra7IeSXgCAw1TUkdpotB1ODmkbXKrH2mPaHayWa/hebSFo
+    5ReIChY0bkeyDNTHUz0iM6q8bl60JDoJF3fmICNOpBLZyO9HyCqfmPEgnKKONTOe
+    JJCeVW+oWBA5V96VZK8UpuztNfdVZHEzNWer16GAjbh19QSgID8gZsX+/YoQ8g6M
+    q0+K1lDafwIUkUTjaQ/+xZ0Hg3uZtBfG/kkb9EcTC50Np33sliXzvTLoIUIqhSVq
+    U82Yvd17EvLchPiN/JgGRg7DMi9tNGUaZqMYYzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521497085; bh=/67M09
-    EpI5ECzohT3//hsx8chaRxCdwj3x9QCS0kF8I=; b=tftmIElvJF5dh6KU8zY8JV
-    q3CEkkRLkpXAj1/EVtWMZca/Uxpai5GNbdywoGz0MIM3yfl7CY9eKiaIJKZOdPDz
-    uWUM8Fw00zrP7YtCPw0AXndRPFQmqnh+0hHA5qrqDlc8+18Fso6AE9NN22sJg7X6
-    MOJA3r18olObN6qEEOydO2eTaIZ/NTPtf9j/FbVrB4EYAujdKKJHrwkCfMuGgKBn
-    arQ+5OMgY4ruBwARan3/GU8t7+IXzbjt3cRffBk+j07h8C1RCpf8Xem9cXufXcHd
-    xOY9uc8A+GQZiq167NdIPJ7vPBWfHgrhgaiOSfhL9J9jOsuQA/+Vl6GWu2mxmRzQ
+    :mime-version:sender:list-id; s=arctest; t=1521497084; bh=HLkZyf
+    Rp7S5/Y0POzDH+iiHaSysu2mRW8WSqMfND0G0=; b=f3Dow+o6pUd330eRMDopG+
+    54XQ5gL8jb6vlE/YIP8vkZvAYo6WUQntICQOX+bwycPrfzXvRRg531eiEdHQ685N
+    JnLkvHpszXwj3ILrJM9s0nAvYv5X28THE7am6K7Q8wuoLiuTg43OhMZcNcQf2vR/
+    qiJN+0I1YUShGKtp7kfTig6vbmBVh+DQTDrGfZZSXtw+F8erV//krnZRyWnfzsjy
+    owmZJ8SeFASQCR3hMUqhOogAa2WuMDVbjk4GcrLtxzbXpmaDca/nKFnHogOYsC7J
+    EFe6XGwMnrrvjk5SILyhmfAlHuTtSQqf3qievLbKxvCKgeTEVu4coRFcHZokBoAw
     ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzhzXQoM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ULkg7vdS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutdekkeelnecuvehluhhsthgvrhfuihiivgepheeh;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeludduvdenucevlhhushhtvghrufhiiigvpeehhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzhzXQoM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ULkg7vdS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutdekkeelnecuvehluhhsthgvrhfuihiivgepheeh;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeludduvdenucevlhhushhtvghrufhiiigvpeehhe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933681AbeCSWEN (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:04:13 -0400
-Received: from mail-by2nam03on0092.outbound.protection.outlook.com ([104.47.42.92]:42976
+        id S934406AbeCSPzu (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:55:50 -0400
+Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:43956
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934117AbeCSPzu (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:55:50 -0400
+        id S934379AbeCSPzo (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:55:44 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+CC: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 42/97] blk-mq: avoid to map CPU into stale hw
- queue
-Thread-Topic: [PATCH AUTOSEL for 4.14 42/97] blk-mq: avoid to map CPU into
- stale hw queue
-Thread-Index: AQHTv5quCqcstVMimUyIygaz7G11rQ==
-Date: Mon, 19 Mar 2018 15:55:19 +0000
-Message-ID: <20180319155411.12348-42-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 37/97] vfb: fix video mode and line_length
+ being set when loaded
+Thread-Topic: [PATCH AUTOSEL for 4.14 37/97] vfb: fix video mode and
+ line_length being set when loaded
+Thread-Index: AQHTv5qqYdj+W3Q+GU+92ZGH1J3oQw==
+Date: Mon, 19 Mar 2018 15:55:12 +0000
+Message-ID: <20180319155411.12348-37-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:KHJ64oUKVurUUN2n+NnRYBsNV3JIrkphiXqPnGpqZZUCll/f3sjLa2XR4/fNASEll6X/dXYom0B3CQdc5YHDrGVYX6RtBPezMSYef1Ox7jpUs3ySs2K0dAfSRRreVQnQ3sR7LRK4XJVbSvNSWzsu//ePOy7phCbuldW9ZIha7+iYZ3X5DVQNXO2IaNcZQyQiehAYUjs8WFrFp7RERaZpiU/n16zrbq18UVk1ghARpsHPgUV6fBcqJswPIRCYmD8w;20:YPCv1RU9+LlRI58EnLz054AZZCW9P2dHG/sXi7phY4pDZPu25b8y17N1TBXJGwq8KxNGrp/3B8Wfv1BSEW/FikBIHB++Oyq0WefjAuUOPuczhnDv6E6Ztsz8iqMJaJOIPksWdKFlda84kNjojV/SJbTTscPL6vAKlmB/nwn6LFg=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:AxUtvdPHl0/HfjAtf/5qyK4uUsOWWTmXMKaR2Uo1TOPxJnn/S+7vAZEH1CO73/WGKc9lDc/dmcJIcqkW25P73i4UY+6MVFI3I+rUJJXvztQ3EYBzvIWIemuF9jfskCR2JmYqPUzQtt3cDTwhlSKnLYiimQyBDToX6Jt7rvjfWj+hgvlVikYm1JrcfhvShBXANEMJ0btX6DYu6iyAFfgb4sNOyt/YGMka6nyuVTC5WTadYDaJv1XUtkPfni6j4yG1;20:mY1frTsBSws6AogIDWQxZR0AOg2k3iOlu1vEyKwxvs6sIZtkOKgqN82oCmc0CCulDSl/wnk+WBtatLbSBDcBfx0Gs7tloPHOrXKb1m/IT4uMaNfUAON3iFCA0udRsHwGNw7nxgcXifshxomFBSJXwSTcVWEP6/WXYgTTT2pfVSo=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4e19fbf7-ae34-463b-59af-08d58db1e049
+x-ms-office365-filtering-correlation-id: e3558f68-3c1e-4c9b-bb7d-08d58db1de9a
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0967;
 x-ms-traffictypediagnostic: DM5PR2101MB0967:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0967022657D30BFCE8E0E11BFBD40@DM5PR2101MB0967.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB09677264A8152B09B3D6B82CFBD40@DM5PR2101MB0967.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0967;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0967;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(376002)(39860400002)(366004)(346002)(51234002)(189003)(199004)(54906003)(59450400001)(10090500001)(110136005)(5250100002)(2501003)(1076002)(6116002)(3846002)(2900100001)(99286004)(22452003)(3280700002)(186003)(2906002)(76176011)(86612001)(26005)(6486002)(10290500003)(102836004)(14454004)(36756003)(68736007)(3660700001)(72206003)(478600001)(107886003)(106356001)(53936002)(6506007)(6512007)(6436002)(86362001)(105586002)(316002)(7736002)(4326008)(305945005)(66066001)(81156014)(81166006)(5660300001)(97736004)(8936002)(25786009)(8676002)(2950100002)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: I0M6h7kawz6qaLBoMRK9lG4s3DkVFCpVSIT/Vvrb18iqqBCB9qEOI+Mm+i/17tVpLY/0bFUAZ9kZ043+jGR08Kb7QOof/UV4EFBxNroO93Uqruu7jN1PSnh+UgjmGbZZedusI537rWhyTor3YWqTsM+fm7mLGbzYy580VuDjLdjDKnt2qSp500WHQHLq+KQAAAd25XuTYQmSj/ib7RDgpLGObbfOaBiiKZzQ/GQxJikFTjYg8B8sXD96r0S0Tr3ic9M+t3+g/zw8noJ5et+mVO1DAPOTwXVSsNR1j0/c3/WUJmvdfsRnOAZFmpK+n/sIonGpHnTjRLBEmNW7Vk7nnA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(376002)(39860400002)(366004)(346002)(189003)(199004)(54906003)(10090500001)(110136005)(5250100002)(2501003)(1076002)(6116002)(3846002)(2900100001)(99286004)(22452003)(3280700002)(186003)(2906002)(76176011)(86612001)(26005)(6486002)(10290500003)(102836004)(14454004)(36756003)(68736007)(3660700001)(72206003)(478600001)(107886003)(106356001)(53936002)(6506007)(6512007)(6436002)(86362001)(575784001)(105586002)(316002)(7736002)(4326008)(305945005)(66066001)(81156014)(81166006)(5660300001)(97736004)(8936002)(25786009)(8676002)(2950100002)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: EBJkex3PBuyl0NxPRIgiN30hPbHcwF0kTaGjRKJ6+Dc5Ow9amsunf+N3JhGy2Pk7MY69pUB0ENL5h00BraEAh1oCor/X89rzCHOIp0QDrUfEra74PEw2q8e344Z3QyQk0CF6HSMiEbOgFs+cxXFIYnaFaLusykvgYgQzROngIyDnkl2PyofdozjlvE/P3g+0+IzEEQvk5jkpmSpz3n2Wz/wE+lmX8t7O4kKDfDh7fCjn9oZp5XPiaxEqWp/KAeaZp2kDijN77P9InmQNZeqC3XlrnTKC45CAkS4RZNbU5vn+nXkEUBokOFZ3xEE2JAdBdHIbPyIvugxsOyiFaGR5Vw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e19fbf7-ae34-463b-59af-08d58db1e049
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:19.8771
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3558f68-3c1e-4c9b-bb7d-08d58db1de9a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:12.6330
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -108,123 +109,108 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ming Lei <ming.lei@redhat.com>
+From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
 
-[ Upstream commit 7d4901a90d02500c8011472a060f9b2e60e6e605 ]
+[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
 
-blk_mq_pci_map_queues() may not map one CPU into any hw queue, but its
-previous map isn't cleared yet, and may point to one stale hw queue
-index.
+Currently, when loading the vfb module, the newly created fbdev
+has a line_length of 0, and its video mode would be PSEUDOCOLOR
+regardless of color depth. (The former could be worked around by
+calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
+flag set.) This patch automatically sets the line_length correctly,
+and the video mode is derived from the bit depth now as well.
 
-This patch fixes the following issue by clearing the mapping table before
-setting it up in blk_mq_pci_map_queues().
+Thanks to Geert Uytterhoeven for confirming the bug and helping me with
+the patch.
 
-This patches fixes this following issue reported by Zhang Yi:
+Output of `fbset -i' before the patch:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
 
-[  101.202734] BUG: unable to handle kernel NULL pointer dereference at 000=
-0000094d3013f
-[  101.211487] IP: blk_mq_map_swqueue+0xbc/0x200
-[  101.216346] PGD 0 P4D 0
-[  101.219171] Oops: 0000 [#1] SMP
-[  101.222674] Modules linked in: sunrpc ipmi_ssif vfat fat intel_rapl sb_e=
-dac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass =
-crct10dif_pclmul crc32_pclmul ghash_clmulni_intel intel_cstate intel_uncore=
- mxm_wmi intel_rapl_perf iTCO_wdt ipmi_si ipmi_devintf pcspkr iTCO_vendor_s=
-upport sg dcdbas ipmi_msghandler wmi mei_me lpc_ich shpchp mei acpi_power_m=
-eter dm_multipath ip_tables xfs libcrc32c sd_mod mgag200 i2c_algo_bit drm_k=
-ms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm ahci libahc=
-i crc32c_intel libata tg3 nvme nvme_core megaraid_sas ptp i2c_core pps_core=
- dm_mirror dm_region_hash dm_log dm_mod
-[  101.284881] CPU: 0 PID: 504 Comm: kworker/u25:5 Not tainted 4.15.0-rc2 #=
-1
-[  101.292455] Hardware name: Dell Inc. PowerEdge R730xd/072T6D, BIOS 2.5.5=
- 08/16/2017
-[  101.301001] Workqueue: nvme-wq nvme_reset_work [nvme]
-[  101.306636] task: 00000000f2c53190 task.stack: 000000002da874f9
-[  101.313241] RIP: 0010:blk_mq_map_swqueue+0xbc/0x200
-[  101.318681] RSP: 0018:ffffc9000234fd70 EFLAGS: 00010282
-[  101.324511] RAX: ffff88047ffc9480 RBX: ffff88047e130850 RCX: 00000000000=
-00000
-[  101.332471] RDX: ffffe8ffffd40580 RSI: ffff88047e509b40 RDI: ffff88046f3=
-7a008
-[  101.340432] RBP: 000000000000000b R08: ffff88046f37a008 R09: 0000000011f=
-94280
-[  101.348392] R10: ffff88047ffd4d00 R11: 0000000000000000 R12: ffff88046f3=
-7a008
-[  101.356353] R13: ffff88047e130f38 R14: 000000000000000b R15: ffff88046f3=
-7a558
-[  101.364314] FS:  0000000000000000(0000) GS:ffff880277c00000(0000) knlGS:=
-0000000000000000
-[  101.373342] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  101.379753] CR2: 0000000000000098 CR3: 000000047f409004 CR4: 00000000001=
-606f0
-[  101.387714] Call Trace:
-[  101.390445]  blk_mq_update_nr_hw_queues+0xbf/0x130
-[  101.395791]  nvme_reset_work+0x6f4/0xc06 [nvme]
-[  101.400848]  ? pick_next_task_fair+0x290/0x5f0
-[  101.405807]  ? __switch_to+0x1f5/0x430
-[  101.409988]  ? put_prev_entity+0x2f/0xd0
-[  101.414365]  process_one_work+0x141/0x340
-[  101.418836]  worker_thread+0x47/0x3e0
-[  101.422921]  kthread+0xf5/0x130
-[  101.426424]  ? rescuer_thread+0x380/0x380
-[  101.430896]  ? kthread_associate_blkcg+0x90/0x90
-[  101.436048]  ret_from_fork+0x1f/0x30
-[  101.440034] Code: 48 83 3c ca 00 0f 84 2b 01 00 00 48 63 cd 48 8b 93 10 =
-01 00 00 8b 0c 88 48 8b 83 20 01 00 00 4a 03 14 f5 60 04 af 81 48 8b 0c c8 =
-<48> 8b 81 98 00 00 00 f0 4c 0f ab 30 8b 81 f8 00 00 00 89 42 44
-[  101.461116] RIP: blk_mq_map_swqueue+0xbc/0x200 RSP: ffffc9000234fd70
-[  101.468205] CR2: 0000000000000098
-[  101.471907] ---[ end trace 5fe710f98228a3ca ]---
-[  101.482489] Kernel panic - not syncing: Fatal exception
-[  101.488505] Kernel Offset: disabled
-[  101.497752] ---[ end Kernel panic - not syncing: Fatal exception
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : PSEUDOCOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 0                    <-- note this
+    Accelerator : No
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Tested-by: Yi Zhang <yi.zhang@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+After:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
+
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : TRUECOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 5464
+    Accelerator : No
+
+Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency=
+>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+[b.zolnierkie: minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- block/blk-mq.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/vfb.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index f1fb126a3be5..12bb7a49c5ba 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2528,9 +2528,27 @@ static int blk_mq_alloc_rq_maps(struct blk_mq_tag_se=
-t *set)
-=20
- static int blk_mq_update_queue_map(struct blk_mq_tag_set *set)
+diff --git a/drivers/video/fbdev/vfb.c b/drivers/video/fbdev/vfb.c
+index da653a080394..54127905bfe7 100644
+--- a/drivers/video/fbdev/vfb.c
++++ b/drivers/video/fbdev/vfb.c
+@@ -239,8 +239,23 @@ static int vfb_check_var(struct fb_var_screeninfo *var=
+,
+  */
+ static int vfb_set_par(struct fb_info *info)
  {
--	if (set->ops->map_queues)
-+	if (set->ops->map_queues) {
-+		int cpu;
-+		/*
-+		 * transport .map_queues is usually done in the following
-+		 * way:
-+		 *
-+		 * for (queue =3D 0; queue < set->nr_hw_queues; queue++) {
-+		 * 	mask =3D get_cpu_mask(queue)
-+		 * 	for_each_cpu(cpu, mask)
-+		 * 		set->mq_map[cpu] =3D queue;
-+		 * }
-+		 *
-+		 * When we need to remap, the table has to be cleared for
-+		 * killing stale mapping since one CPU may not be mapped
-+		 * to any hw queue.
-+		 */
-+		for_each_possible_cpu(cpu)
-+			set->mq_map[cpu] =3D 0;
++	switch (info->var.bits_per_pixel) {
++	case 1:
++		info->fix.visual =3D FB_VISUAL_MONO01;
++		break;
++	case 8:
++		info->fix.visual =3D FB_VISUAL_PSEUDOCOLOR;
++		break;
++	case 16:
++	case 24:
++	case 32:
++		info->fix.visual =3D FB_VISUAL_TRUECOLOR;
++		break;
++	}
 +
- 		return set->ops->map_queues(set);
--	else
-+	} else
- 		return blk_mq_map_queues(set);
+ 	info->fix.line_length =3D get_line_length(info->var.xres_virtual,
+ 						info->var.bits_per_pixel);
++
+ 	return 0;
  }
 =20
+@@ -450,6 +465,8 @@ static int vfb_probe(struct platform_device *dev)
+ 		goto err2;
+ 	platform_set_drvdata(dev, info);
+=20
++	vfb_set_par(info);
++
+ 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n"=
+,
+ 		videomemorysize >> 10);
+ 	return 0;
 --=20
 2.14.1
