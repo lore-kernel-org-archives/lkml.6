@@ -1,37 +1,37 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1601348-1521428502-2-6797093889266887161
+X-Cyrus-Session-Id: sloti22d1t05-1738054-1521430814-2-8761265582118260448
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521428502; b=RRvvq5zGpK3NbVWgDQ/ss//usBQSVakuzgjSmFvCpd4EISi
-    ApDE/oAG94BgKzN7E4IyDKL0ySOamhD0/BO+GgmTTZeoK1kratJgtWdcNIhVGN2Q
-    yj/7oFx+q6MhDU1pTxGFx3ci+EcocAArI0R3YUZes330BjBgvxUh+pDrRLeWY5mf
-    Vdrhx1i8ORVMX298KckwGqWMRyBurViaxe54IwUQFcd1yNznruCEUFLf01nIDe5a
-    mnEuCTXGjg3ixR+dxA/usg6mzueQnRnbMMhibYVojrf4sHrnpLfZ/9xuJNNr663K
-    YX3fRFC3aOrXqH6WdBsGTbDho1ZfFK53YsVFONg==
+    t=1521430814; b=Bc9s7a2zggL/EU5nJHDqHxHF1zVNjGSSgBnVW2xuo/TUt/K
+    ZX+HM324UV4V0D25RWcmD+h8W/bYqBxikepz1EvFT/eFKObYsCKfRJiP68I8Cl2T
+    Kwimr1bzidoinBTJSkxwuYhF/IxB13erxA82CLDGoQcRuMHDgTG1npFe5u+WSxdY
+    +vOfVlyr2Fc9T3z6YCRQxxPbT1kcz0bunWHOSQ2WHniZ5FEVfXwVzS4+EPiuptWZ
+    Tj3VEHU4gk8ZNHLUsevSeRGnvhfQQImrKN13PWOP7A8x0SPmO8icEDf1dq6Cl2T8
+    jHiiRjfNu0t8+hbPNI9O09LoWquMhyye2fwv8jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :references:in-reply-to:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521428502; bh=J
-    48NCIzuInTqetbkDosGm19RA3SjapLcbfwJwaqa5+M=; b=Gq1amFpZ3Un0UREEB
-    Yn+jH1uN2oE/Op2VEOK27VS/gaOTiIwYB6oQlVptab9a0CpfOz+jOAZJZvoyvRdH
-    R+AnsLyf/yG4q6WtEYwEOBFqsv3eHoGWtfEUaalUp/YAPQYcmkftbRoF0da1dGft
-    yXffsXy95g9TsypjYVkjWfMlYfB75I7O74dYibusR7YtmZG4kOa1HwhNzeN0bQbY
-    jn58cGUogK6VdSUekb24FLaEsTz8k6eIK8d6sUfmGKKG/mxrv9VP3zFCFxGdVlkX
-    F9xkS3PJWJXOnknucptfsmPZTmT3lUfWIPGxSpj9RDNxXCqfKIcO/BOVe4qx4OKq
-    9nB7g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=H0h75kWV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :content-transfer-encoding:sender; s=arctest; t=1521430814; bh=Y
+    Z0GSsKJ3VjSqkjXVnv3SATq8vbXqrNgCU0a4W+tLXY=; b=KXupAlxl7BOnrWiNP
+    BV0/MElSR+ackPHgrSdvoeX1Yl20PtHoBVvQwxeKfB6+XKNRQkxarv0Cxa9rs9NH
+    iOFDHBEHWPOH4Pm7lg98jTo0Hq4YUj5MK4EJBt0IdCiNlZ7QIBvm4wfbLcy1KrBu
+    1PcT4MjyUlysspgXo5xGH0Zg/3h28uvo2uzoo9H6tQheuD5K6tucS7SX/eENXx50
+    IG+HqyDL1jUDSgP6yPfCV0v5YS1WBGu+e5GtUJYKcjcLYoP7givXLDOhBa3s/dWV
+    QSu2M0u5UsuBpM1FYRZAydvqi4ZjkW5F99s5Z5ua8juLNwhYrP0Bb4b1h1I0qJ2T
+    7UcXw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=apFqXpy1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
@@ -40,9 +40,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=H0h75kWV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=apFqXpy1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
@@ -52,55 +52,66 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: KY Srinivasan <kys@microsoft.com>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, Stephen Hemminger
- <sthemmin@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>
+From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+To: KY Srinivasan <kys@microsoft.com>, Arvind Yadav
+ <arvind.yadav.cs@gmail.com>, Stephen Hemminger <sthemmin@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>
 Subject: RE: [PATCH] vmbus: use put_device() if device_register fail
 Thread-Topic: [PATCH] vmbus: use put_device() if device_register fail
-Thread-Index: AQHTvoUaSaPHx26coEaurL53qMiDJaPW37dw
-Date: Mon, 19 Mar 2018 03:01:31 +0000
-Message-ID: <SN6PR2101MB0893ED30DA3AAFD4B3E2064EA0D40@SN6PR2101MB0893.namprd21.prod.outlook.com>
+Thread-Index: AQHTvoUgz7NIDmL0UEiY7KwnBfP37qPW4B+AgAAI0fA=
+Date: Mon, 19 Mar 2018 03:40:03 +0000
+Message-ID: <DM5PR2101MB103094D4CE169185B16EE0E9DCD40@DM5PR2101MB1030.namprd21.prod.outlook.com>
 References: <bd6526dedf570a226ee024907be9a8f2bb04803f.1521355469.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <bd6526dedf570a226ee024907be9a8f2bb04803f.1521355469.git.arvind.yadav.cs@gmail.com>
+ <SN6PR2101MB0893ED30DA3AAFD4B3E2064EA0D40@SN6PR2101MB0893.namprd21.prod.outlook.com>
+In-Reply-To: <SN6PR2101MB0893ED30DA3AAFD4B3E2064EA0D40@SN6PR2101MB0893.namprd21.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:8101:f39b:510f:222a]
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-03-19T03:40:02.0159852Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; SN6PR2101MB1021;
- 7:52ueQFhaugaHwvKgit3bcFcaKzobFsLRhxF7kY4JuYJ5l8pJlOYaY/V9KQzXFzX5d7k1SJ0Dir9sBEhCbsfsI+0miEVzELHGtCXAhLZ6dcGTwxNme6cG/KO8t5b4OR0aygMZhhHAwTZdsDpKbZSdnrIdXSdn6Q9/BAous9oL1AA0lz+NE66Eiwc7NS+UfKqMJlQ6yiRsQ8OSySu0mlex9HlS1ys5oiiK90bWMrSarXX9JFt4Bjmb/RXBiIGgyPp5;
- 20:b5kGOn9KjWqt3RKv3q3NjpGA9cQx2rfJuGPiCxE7ab24T2WKxYtnZ81tbaAYHofWRXQEI/zEm7qhRVI4MftoJxtmrwaDlK9igTRR3wh3r1Ol0XONvLqExcwkGxgeLsIvYaovKhOkrHG5YnY9WQax/d7wPLWqxk+y0UZGQLqB/sQ=
+x-microsoft-exchange-diagnostics: 1; DM5PR2101MB0887;
+ 7:i7fn2qYf14zYcy1J3qmUpPCzJzoqAqUaMHSqXqepO1PPtdHfVW4XV0qFUxqW2UjamYViFraaHx5FSn5nAT1vgQ8wtd9KW/w2WU46VOx+9Mrp7Fq+/AprqLRgiQ5xaIwKGCaVNclEp6lQPPPIGrLQO5u99r0rLDdvpPSeNRNPOGSMIKcYjPSrW8SZa5Xj+ZvdG4tuq0479hJsUuQVXr4VfEIYsa9hbnUwcd84lMJfqAId7NmtQ9EXLx2oJ4VWA6Hd;
+ 20:qmzLy0QR5FLxFF0mUtKfMb7qEc4wXzmwn/izTRvGM+adm2qy36vmnjqloxAKVxa7HU4TwrJDjgKaSQSsYPkb/O0R39RgRL0pxvI/wjWnY3/QTrLqnNMP6p+1EQzVDijot+QsKENtu13ji9K95z4/gkuVHInsQ34IC8O2c8HYtTQ=
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cdff0304-6d14-4241-1356-08d58d45b77c
+x-ms-office365-filtering-correlation-id: 570b79f8-fff6-48fc-cacc-08d58d4b19ea
 x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);
- SRVR:SN6PR2101MB1021;
-x-ms-traffictypediagnostic: SN6PR2101MB1021:
+ RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7193020);
+ SRVR:DM5PR2101MB0887;
+x-ms-traffictypediagnostic: DM5PR2101MB0887:
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com;
-x-microsoft-antispam-prvs: <SN6PR2101MB10216D27B9AF744133BC0C97A0D40@SN6PR2101MB1021.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(189930954265078)(85827821059158)(219752817060721);
+ smtp.mailfrom=Michael.H.Kelley@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB08877E98FA672D052AFA0291DCD40@DM5PR2101MB0887.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158); 
 x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
- RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501300)(52105095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);
- SRVR:SN6PR2101MB1021; BCL:0; PCL:0; RULEID:; SRVR:SN6PR2101MB1021;
+ RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);
+ SRVR:DM5PR2101MB0887; BCL:0; PCL:0; RULEID:; SRVR:DM5PR2101MB0887;
 x-forefront-prvs: 06167FAD59
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(979002)(376002)(346002)(366004)(39380400002)(39860400002)(396003)(13464003)(189003)(199004)(59450400001)(2906002)(81156014)(6436002)(55016002)(102836004)(81166006)(8936002)(575784001)(86362001)(14454004)(316002)(5250100002)(8676002)(33656002)(6116002)(6246003)(966005)(186003)(9686003)(10290500003)(2900100001)(6506007)(53936002)(6306002)(53546011)(478600001)(2950100002)(6636002)(68736007)(4326008)(3660700001)(25786009)(86612001)(39060400002)(1511001)(8990500004)(229853002)(3280700002)(7736002)(7696005)(305945005)(5660300001)(97736004)(74316002)(76176011)(99286004)(106356001)(22452003)(105586002)(10090500001)(110136005)(46003)(54906003)(969003)(989001)(999001)(1009001)(1019001);
- DIR:OUT; SFP:1102; SCL:1; SRVR:SN6PR2101MB1021;
- H:SN6PR2101MB0893.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ SFS:(10019020)(366004)(396003)(39860400002)(376002)(39380400002)(346002)(13464003)(189003)(199004)(10290500003)(26005)(7696005)(74316002)(68736007)(110136005)(478600001)(72206003)(6636002)(6246003)(99286004)(229853002)(10090500001)(305945005)(7736002)(2950100002)(33656002)(76176011)(97736004)(86612001)(6436002)(54906003)(4326008)(39060400002)(25786009)(3660700001)(53936002)(2906002)(5250100002)(81156014)(81166006)(8676002)(8936002)(86362001)(2900100001)(8990500004)(5660300001)(3846002)(6116002)(3280700002)(55016002)(9686003)(66066001)(316002)(59450400001)(53546011)(6506007)(1511001)(106356001)(22452003)(105586002)(14454004)(102836004);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:DM5PR2101MB0887;
+ H:DM5PR2101MB1030.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
  PTR:InfoNoRecords; MX:1; A:1;
-x-microsoft-antispam-message-info: dyXdESfG12avKgeeGbrdAsutYwAeV5REkbxJw7b31LZHTsG4+FeNxWUlKu/BNXtKu5ol31NNa/uLYpLtduE7woWlcAAUiDTDpnilOwOapDmR8oQjCNYS48dd5PFvHMebBb7n/IJIgXIT1tEVwc4l/vmpgEQdl0449i281a67k8aeeoYelk5kkjgxQJQS3Lxq2JknYBhk58+swnxHuMyhdUhAJgfYiorEEh5LmXQimd6QgK3PzWydKtyz88BBDXO501PUJdMmNbQt5lxmERy+yrvf6EMz2C2vH5bwAWAxL4TmjxlD6DFWJej9Vb/5AstrKZLPfzK6arDh3eIXwJCjbA==
+x-microsoft-antispam-message-info: Tgk5kDPPIZzuUxaMiqrufQU71nOWxdhTGCY/w39rIi4IKMcbN0MOxU1w5pNlXi1vpgVtCzomZCvBfOJRFFN4ruhmUhqlB7QSZhg/IS4CRV8t2uL+MqYm/IojyMvCSJRzyQ8RkkojMR4TKQcDQFueO5zCDWxuab8D37kiN/nM7Rsf4VcAJ0v51fFbAmkFxuMfnsfvruTvcejl87gXQk7CUG0qvenZPxQipyaJuASkbOvXeQ87do662vyPPVFmWw2PhjUQ6sOSaduE2DcneVWTDmaBFVnsEdH1+Z6aqJTP6HWZ5Jlqp5qr79/xYIQ249bmb/jCzVgAzIS7oRJE3eztuA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdff0304-6d14-4241-1356-08d58d45b77c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 03:01:31.1974 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 570b79f8-fff6-48fc-cacc-08d58d4b19ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 03:40:03.8713 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1021
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0887
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -121,57 +132,61 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
 > -----Original Message-----
-> From: devel <driverdev-devel-bounces@linuxdriverproject.org> On Behalf
-> Of Arvind Yadav
-> Sent: Saturday, March 17, 2018 11:48 PM
-> To: Stephen Hemminger <sthemmin@microsoft.com>; Haiyang Zhang
-> <haiyangz@microsoft.com>
+> From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.kernel.org> On Behalf
+> Of KY Srinivasan
+> Sent: Sunday, March 18, 2018 8:02 PM
+> To: Arvind Yadav <arvind.yadav.cs@gmail.com>; Stephen Hemminger
+> <sthemmin@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>
 > Cc: devel@linuxdriverproject.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] vmbus: use put_device() if device_register fail
+> Subject: RE: [PATCH] vmbus: use put_device() if device_register fail
 > 
-> if device_register() returned an error. Always use put_device()
-> to give up the reference initialized.
+> > -----Original Message-----
+> > From: devel <driverdev-devel-bounces@linuxdriverproject.org> On Behalf
+> > Of Arvind Yadav
+> > Sent: Saturday, March 17, 2018 11:48 PM
+> > To: Stephen Hemminger <sthemmin@microsoft.com>; Haiyang Zhang
+> > <haiyangz@microsoft.com>
+> > Cc: devel@linuxdriverproject.org; linux-kernel@vger.kernel.org
+> > Subject: [PATCH] vmbus: use put_device() if device_register fail
+> >
+> > if device_register() returned an error. Always use put_device()
+> > to give up the reference initialized.
+> >
+> > Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> > ---
+> >  drivers/hv/vmbus_drv.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> > index bc65c4d..25da2f3 100644
+> > --- a/drivers/hv/vmbus_drv.c
+> > +++ b/drivers/hv/vmbus_drv.c
+> > @@ -1358,6 +1358,7 @@ int vmbus_device_register(struct hv_device
+> > *child_device_obj)
+> >  	ret = device_register(&child_device_obj->device);
+> >  	if (ret) {
+> >  		pr_err("Unable to register child device\n");
+> > +		put_device(&child_device_obj->device);
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/hv/vmbus_drv.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index bc65c4d..25da2f3 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -1358,6 +1358,7 @@ int vmbus_device_register(struct hv_device
-> *child_device_obj)
->  	ret = device_register(&child_device_obj->device);
->  	if (ret) {
->  		pr_err("Unable to register child device\n");
-> +		put_device(&child_device_obj->device);
+> If the registration failed; we would not have acquired the reference on the device and so
+> we should not be dropping the reference in the failure path.
 
-If the registration failed; we would not have acquired the reference on the device and so
-we should not be dropping the reference in the failure path.
+Looking at the code for device_register() and its constituent parts
+device_initialize() and device_add(), Arvind is correct.  device_initialize()
+creates the object with a reference count of 1.  device_add() does not
+decrement that reference count or free the object, even if it fails.  The
+comments for device_register() call this out as well.
 
-K. Y
->  		return ret;
->  	}
+Michael  
+
 > 
-> --
-> 2.7.4
-> 
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> https://na01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdriverd
-> ev.linuxdriverproject.org%2Fmailman%2Flistinfo%2Fdriverdev-
-> devel&data=04%7C01%7Ckys%40microsoft.com%7Caf95bfab917f4e1fa4b008
-> d58c9c3b72%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C63656952
-> 5011478334%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIj
-> oiV2luMzIiLCJBTiI6Ik1haWwifQ%3D%3D%7C-
-> 1&sdata=%2FEb%2FMTY2SMh8sY1tar2c8Om2uKPUZAXIUQkrG0q07CA%3D&r
-> eserved=0
+> K. Y
+> >  		return ret;
+> >  	}
+> >
+> > --
+> > 2.7.4
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
