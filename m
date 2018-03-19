@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891247-1521498490-2-7275827804475722150
+X-Cyrus-Session-Id: sloti22d1t05-3891259-1521498489-2-6421779541828760889
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521498489; b=airN/f2zC4siHHgHeP92bGFm9DidBc7XKK7HOif1pJISmM2
-    0+PSLjc2+T8apVxXBviFjFYI7xO72gVjn8Alj5I3Xmje6BOiJIevgYxYZLVetxVS
-    RJdK0ohXzWmpoMo2r9jI4+a6MTSuaNDb9OlYahvOvQamFMHBqEKx0RdNLiH6G1pv
-    pJkSlBuDLvvuECYKMUC9SovHIpIr81MwUpLRzmaUVbxRukUbHIZE09UeGLisNIcF
-    huGBZyB1FqIJohZ0Cu2o+o4Pk0mBJNN4G0EqJII3GcnPkJjeVMsp33Ye7RnPw+1w
-    kFAHMWhadTjpRAcfvfNvEPn1c8GvKqNhqM835RA==
+    t=1521498488; b=LUg4pI7G2/WFzOgoEoBtozdYQskMNHN5fui9mga4cDM8eyO
+    nAIwTnhOQx6c76jDSegA5wnphOwNta8jD03/drYxsHV9bfEXvZGgaZYcdy8j0ZMl
+    Ks+Jb6t9dXDTfjKMV3vBySxaV4HUnZEt4x+UC8g5RWuuLjaJWH806Q20lWU3SmkI
+    BOWopVtuABv4533O8T5brMK3DIEA5DYjzg2kerUtLyqsRY3bS1A/gLaQ8nczZVEh
+    TTZzXsLeVOLbiLm7JG3xztnGFd5kXbBPN5npsiJFqRHJ3Tr2j/xND2D3LQEbu4Qe
+    8xxb3lqiKVl4Ntw/+RxUYowqMkNWGxAy0tAOa5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521498489; bh=jN2IHt
-    24fCR6So++eEIb2dkZYm0FQ63T2qh6TiVs6OU=; b=AmkjaU7alJOyvCWuusG0es
-    52VSJgsa4qfBeLt8kmHVvu1DPU//MYLNmwbIRbqbf9c5BiYVPU6OQjkrWhohURTg
-    8OEdixHVuRVYHLQtFAhe5j0BEIkNWHrGxjOPiFpH1Bq7bZTReqQlT/tTtaXnxVDK
-    xZhWfFHSLojLKZ4bd4dUqXIKDHuop/Ke8AbNmgw2xsu/799dILYRAU7XrneIPele
-    +XyXqTzQPAkhifiCWCscFCRaHG07so84DYUjqZDjte9adIIC1oC9zIRrNcS9h3zS
-    Vlyzt6r2GOfJRUzqPBE8cZGO38gW8WTJ7V3mmz+isxwz8kZMs1onvTLstpE8BTXQ
+    :mime-version:sender:list-id; s=arctest; t=1521498488; bh=MbXCR/
+    BimVn1YlkNMgz0U+Dxz6hrt796w/q+n3NtPus=; b=KiHGCnY5SRcuDyE8+e9SKt
+    rp5MfZQqgmrUXFf3q3y3HdNqCuhYrjKZANnVZ/QnlidxHbqurgWWdNq8ok3tFaC0
+    D3QP7PipTHGrtMfrenGb/7jtIyGkddmhmMvOp22wDZtHE4GSN11wX+TnqSgR99O8
+    UvOUF62mFG8/ju1rSHq+ZdbAG8hMpqz3K8aFFuk+MlhKrKYojZOrK5trE6+5jQBU
+    dC+6WxcfB7O3CpIKZP3Of7EFYDAUdNQIw3sH/rF7lQek0AY745cW68Y9sth216n8
+    zi5opd+Azi8mOhY7SVYl4wPlsZs2CbSr4UNCHsohLjB2hazBzOowOVJgK6sPJiqQ
     ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gPYncI+n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gePVe3WK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduuddujeehnecuvehluhhsthgvrhfuihiivgepkeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeljeelkeenucevlhhushhtvghrufhiiigvpeekfe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gPYncI+n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gePVe3WK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduuddujeehnecuvehluhhsthgvrhfuihiivgepkeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeljeelkeenucevlhhushhtvghrufhiiigvpeekfe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933866AbeCSW1R (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:27:17 -0400
-Received: from mail-sn1nam02on0103.outbound.protection.outlook.com ([104.47.36.103]:38940
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S933763AbeCSPst (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:48:49 -0400
+Received: from mail-co1nam03on0136.outbound.protection.outlook.com ([104.47.40.136]:48409
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933848AbeCSPs4 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:48:56 -0400
+        id S933780AbeCSPs3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:48:29 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+CC: Shanker Donthineni <shankerd@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 064/124] tpm: return a TPM_RC_COMMAND_CODE
- response if command is not implemented
-Thread-Topic: [PATCH AUTOSEL for 4.15 064/124] tpm: return a
- TPM_RC_COMMAND_CODE response if command is not implemented
-Thread-Index: AQHTv5mtSq9yOIO9yk+agjT/FcuLlQ==
-Date: Mon, 19 Mar 2018 15:48:09 +0000
-Message-ID: <20180319154645.11350-64-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 046/124] irqchip/gic-v3: Fix the driver
+ probe() fail due to disabled GICC entry
+Thread-Topic: [PATCH AUTOSEL for 4.15 046/124] irqchip/gic-v3: Fix the driver
+ probe() fail due to disabled GICC entry
+Thread-Index: AQHTv5mgdnHxWjk2CkGMiVrILs4PMw==
+Date: Mon, 19 Mar 2018 15:47:47 +0000
+Message-ID: <20180319154645.11350-46-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,178 +78,125 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0936;7:HmAl0M5pDJytsTHszQ4dA554iOtbauGEmbIgT8t53GcJk7kYTAivWt2OI5la5DteWg0wmwnznaOkce36gqzcopww5vpnHbVVaNjkOvg3E2lnMecEDDOpJHEn+ZowELw0ZO+mo/RO3KF+qvkJxdQz9K1e5dTJdBlM/QaPNPQK/KyMVe/UoikKgXjyckf3wiiYPc4UyGy7pG8GFBmJnW15I7xOTju/NSJNXJI9gM3Lsgi4+V2mdphw4o0UIFciLzpO;20:IiNUsiTvZxc5XrdVzrnCrWUrtnRBzafocwuFphv4//QH708RosQ7zdasH8UodV+0Vy0CJpj6NpHKJMZ4qPu9X5/sh878Qf+LTCpVPP7gjn+y2+bZ/Na0aAK6iPgs5I2V1/aBaAR6YUHZ/wIyL04PNFpGFNPwFtQnB16FOQW4eHE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:G9ITPLVgQgypzmhGoR3Xe4FPfkXSwB5tsD2xtTOAygipA/BiwEeAkS5Z+VQ2i6uNVBf3M8+A5P2F8GHMaCuG5Xde6+hGS80zah0KLe1BFEF2pO9z+x/ieaey7RbstGtyrJNf9jpMssPQd3Y/W7yTVNuHHdnx2RZOAMZU4dYumUs0GfuMa0DPUB81knE/rShHmJNfZ13E2V03G/QSFJ3KZLxpr6VsC1FCfkeubrmtrublpHvGBEaLqEO0WkUL9nqq;20:C+y+E0csWp9zoqpvovhGs07WUyddcxb0DhNuoLA2CcT+yYQMNlslKuinpAfR7g8EeYm6h28/fW5AReqbUCZthLgGJSWwCY0IQSv3wyGBGoLDqHOlsgbZGbIqT0gQkgwhiQNGye5ktFAgxSjoPpxc7m2eSwrjflee9McgkY4oaGY=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 8b3ac393-3e1c-4ca6-ec9d-08d58db0e934
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
-x-ms-traffictypediagnostic: DM5PR2101MB0936:
-x-microsoft-antispam-prvs: <DM5PR2101MB093691D32F72FB8428E6898BFBD40@DM5PR2101MB0936.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501300)(52105095)(6055026)(61426038)(61427038)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR2101MB0936;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0936;
-x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(39860400002)(366004)(376002)(396003)(199004)(189003)(2900100001)(3280700002)(2950100002)(10290500003)(66066001)(106356001)(76176011)(86612001)(6666003)(478600001)(5250100002)(6512007)(6486002)(107886003)(36756003)(97736004)(72206003)(25786009)(6436002)(53936002)(7736002)(2501003)(54906003)(110136005)(105586002)(10090500001)(2906002)(86362001)(305945005)(5660300001)(316002)(8676002)(6346003)(1076002)(3846002)(3660700001)(81156014)(4326008)(14454004)(26005)(6116002)(102836004)(8936002)(81166006)(6506007)(186003)(22452003)(59450400001)(99286004)(68736007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-ms-office365-filtering-correlation-id: 421144b2-4d9c-4bd8-44fc-08d58db0d0ec
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0998;
+x-ms-traffictypediagnostic: DM5PR2101MB0998:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: 5UjPaNt+tmpnCWfrS72lde6RZLEALGPlVs7zP+gzjsg+N4McpdAf31KVMMlbs+CWMT8QcklaAUabgcd9jTer32DN83HzhJC/u1/2FnYZw3plGVPbSYW1nYPOxmX9e7FWGVq/RBO92EDt6A/+4ax2CaN3Rw/4cZC7oyjgXcR0HKBfUs68+RTZIy+yfM8KzYpFGVCMqunStVsIZ18nOOx2HG/jXXupavj5uekPZEA/Hw7vwG1SjlmQlKJbPOcjyfgz9460lguM1vFCEWE1G/iAPoUF8FCzBB76fEqFRkuwERPFZUW5Sl04MKK7aI3dZ4dYXZlGHFVT/p+eKHry2n3tKw==
+x-microsoft-antispam-prvs: <DM5PR2101MB0998366C50A11D8EF743063EFBD40@DM5PR2101MB0998.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0998;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0998;
+x-forefront-prvs: 06167FAD59
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(376002)(396003)(346002)(199004)(189003)(3846002)(6116002)(8936002)(6486002)(102836004)(68736007)(6506007)(2900100001)(22452003)(25786009)(3660700001)(7736002)(76176011)(6512007)(72206003)(86362001)(53936002)(8676002)(81156014)(6436002)(81166006)(305945005)(478600001)(99286004)(2950100002)(14454004)(6666003)(10290500003)(186003)(107886003)(2501003)(106356001)(26005)(86612001)(97736004)(5660300001)(10090500001)(110136005)(54906003)(316002)(2906002)(66066001)(105586002)(4326008)(36756003)(3280700002)(1076002)(5250100002)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: +fpjdEic3E/jZrgUTEbtn7DCh0qJvkrBwksfFDYHreZYgYN3ODKkkrjbQcTdLVkqZRiTpPr7siThb3JS8108mQb3feUIEaL3B+ekGGkof9xPv/ab7smv26WkT+Vi2ZR/VXaJKAnE9kkNjjy5FkVTGbgwyjVJC922nBZhF32lNV0KpFT8xc+UfT6t4HMBUDs0Xr85NHHOhYBBDiEfASFpcdWhlrYYjZUfNuxjDEg4uVkwf92Y69WV6ycxViSOGdOrgyuxTkTvUuko1hSQQsx1JYLJ70DOlSoDFa0EmBl07xbcpANkt2wT2lVC8+xkpJYSWX+bpBtXT/o2VS0rTwfagQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b3ac393-3e1c-4ca6-ec9d-08d58db0e934
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:48:09.3142
+X-MS-Exchange-CrossTenant-Network-Message-Id: 421144b2-4d9c-4bd8-44fc-08d58db0d0ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:47.5460
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0998
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
 
-[ Upstream commit 095531f891e627e408606f2da4008d3d53e6748a ]
+[ Upstream commit ebe2f8718007d5a1238bb3cb8141b5bb2b4d5773 ]
 
-According to the TPM Library Specification, a TPM device must do a command
-header validation before processing and return a TPM_RC_COMMAND_CODE code
-if the command is not implemented.
+The ACPI specification says OS shouldn't attempt to use GICC configuration
+parameters if the flag ACPI_MADT_ENABLED is cleared. The ARM64-SMP code
+skips the disabled GICC entries but not causing any issue. However the
+current GICv3 driver probe bails out causing kernel panic() instead of
+skipping the disabled GICC interfaces. This issue happens on systems
+where redistributor regions are not in the always-on power domain and
+one of GICC interface marked with ACPI_MADT_ENABLED=3D0.
 
-So user-space will expect to handle that response as an error. But if the
-in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
-returned instead if the command isn't implemented. This confuses userspace
-since it doesn't expect that error value.
+This patch does the two things to fix the panic.
+  - Don't return an error in gic_acpi_match_gicc() for disabled GICC entry.
+  - No need to keep GICR region information for disabled GICC entry.
 
-This also isn't consistent with the behavior when not using TPM spaces and
-accessing the TPM directly (/dev/tpm?). In this case, the command is sent
-to the TPM even when not implemented and the TPM responds with an error.
+Observed kernel crash on QDF2400 platform GICC entry is disabled.
+Kernel crash traces:
+  Kernel panic - not syncing: No interrupt controller found.
+  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.13.5 #26
+  [<ffff000008087770>] dump_backtrace+0x0/0x218
+  [<ffff0000080879dc>] show_stack+0x14/0x20
+  [<ffff00000883b078>] dump_stack+0x98/0xb8
+  [<ffff0000080c5c14>] panic+0x118/0x26c
+  [<ffff000008b62348>] init_IRQ+0x24/0x2c
+  [<ffff000008b609fc>] start_kernel+0x230/0x394
+  [<ffff000008b601e4>] __primary_switched+0x64/0x6c
+  ---[ end Kernel panic - not syncing: No interrupt controller found.
 
-Instead of returning an -EINVAL errno code when the tpm_validate_command()
-function fails, synthesize a TPM command response so user-space can get a
-TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
+Disabled GICC subtable example:
+                   Subtable Type : 0B [Generic Interrupt Controller]
+                          Length : 50
+                        Reserved : 0000
+            CPU Interface Number : 0000003D
+                   Processor UID : 0000003D
+           Flags (decoded below) : 00000000
+               Processor Enabled : 0
+ Performance Interrupt Trig Mode : 0
+ Virtual GIC Interrupt Trig Mode : 0
+        Parking Protocol Version : 00000000
+           Performance Interrupt : 00000017
+                  Parked Address : 0000000000000000
+                    Base Address : 0000000000000000
+        Virtual GIC Base Address : 0000000000000000
+     Hypervisor GIC Base Address : 0000000000000000
+           Virtual GIC Interrupt : 00000019
+      Redistributor Base Address : 0000FFFF88F40000
+                       ARM MPIDR : 000000000000000D
+                Efficiency Class : 00
+                        Reserved : 000000
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
-TAB specifications define that higher layers in the stack should use some
-of the unused 20 bits to specify from which level of the stack the error
-is coming from.
-
-Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
-manager, set the error level to the TAB/RM layer so user-space is aware of
-this.
-
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: William Roberts <william.c.roberts@intel.com>
-Reviewed-by: Philip Tricca <philip.b.tricca@intel.com>
-Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/char/tpm/tpm-interface.c | 28 ++++++++++++++++++++--------
- drivers/char/tpm/tpm.h           |  5 +++++
- 2 files changed, 25 insertions(+), 8 deletions(-)
+ drivers/irqchip/irq-gic-v3.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interf=
-ace.c
-index 5294442505cb..0f1dc35e7078 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip=
- *chip,
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 980ae8e7df30..45ced9e48c5d 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -1331,6 +1331,10 @@ gic_acpi_parse_madt_gicc(struct acpi_subtable_header=
+ *header,
+ 	u32 size =3D reg =3D=3D GIC_PIDR2_ARCH_GICv4 ? SZ_64K * 4 : SZ_64K * 2;
+ 	void __iomem *redist_base;
 =20
--static bool tpm_validate_command(struct tpm_chip *chip,
-+static int tpm_validate_command(struct tpm_chip *chip,
- 				 struct tpm_space *space,
- 				 const u8 *cmd,
- 				 size_t len)
-@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct tpm_chip *chi=
-p,
- 	unsigned int nr_handles;
-=20
- 	if (len < TPM_HEADER_SIZE)
--		return false;
-+		return -EINVAL;
-=20
- 	if (!space)
--		return true;
++	/* GICC entry which has !ACPI_MADT_ENABLED is not unusable so skip */
++	if (!(gicc->flags & ACPI_MADT_ENABLED))
 +		return 0;
++
+ 	redist_base =3D ioremap(gicc->gicr_base_address, size);
+ 	if (!redist_base)
+ 		return -ENOMEM;
+@@ -1380,6 +1384,13 @@ static int __init gic_acpi_match_gicc(struct acpi_su=
+btable_header *header,
+ 	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address)
+ 		return 0;
 =20
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
- 		cc =3D be32_to_cpu(header->ordinal);
-@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 		if (i < 0) {
- 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
- 				cc);
--			return false;
-+			return -EOPNOTSUPP;
- 		}
-=20
- 		attrs =3D chip->cc_attrs_tbl[i];
-@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct tpm_chip *chi=
-p,
- 			goto err_len;
- 	}
-=20
--	return true;
-+	return 0;
- err_len:
- 	dev_dbg(&chip->dev,
- 		"%s: insufficient command length %zu", __func__, len);
--	return false;
-+	return -EINVAL;
++	/*
++	 * It's perfectly valid firmware can pass disabled GICC entry, driver
++	 * should not treat as errors, skip the entry instead of probe fail.
++	 */
++	if (!(gicc->flags & ACPI_MADT_ENABLED))
++		return 0;
++
+ 	return -ENODEV;
  }
 =20
- /**
-@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm=
-_space *space,
- 	unsigned long stop;
- 	bool need_locality;
-=20
--	if (!tpm_validate_command(chip, space, buf, bufsiz))
--		return -EINVAL;
-+	rc =3D tpm_validate_command(chip, space, buf, bufsiz);
-+	if (rc =3D=3D -EINVAL)
-+		return rc;
-+	/*
-+	 * If the command is not implemented by the TPM, synthesize a
-+	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-+	 */
-+	if (rc =3D=3D -EOPNOTSUPP) {
-+		header->length =3D cpu_to_be32(sizeof(*header));
-+		header->tag =3D cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		header->return_code =3D cpu_to_be32(TPM2_RC_COMMAND_CODE |
-+						  TSS2_RESMGR_TPM_RC_LAYER);
-+		return bufsiz;
-+	}
-=20
- 	if (bufsiz > TPM_BUFSIZE)
- 		bufsiz =3D TPM_BUFSIZE;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 528cffbd49d3..f6f56dfda6c7 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -93,12 +93,17 @@ enum tpm2_structures {
- 	TPM2_ST_SESSIONS	=3D 0x8002,
- };
-=20
-+/* Indicates from what layer of the software stack the error comes from */
-+#define TSS2_RC_LAYER_SHIFT	 16
-+#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
-+
- enum tpm2_return_codes {
- 	TPM2_RC_SUCCESS		=3D 0x0000,
- 	TPM2_RC_HASH		=3D 0x0083, /* RC_FMT1 */
- 	TPM2_RC_HANDLE		=3D 0x008B,
- 	TPM2_RC_INITIALIZE	=3D 0x0100, /* RC_VER1 */
- 	TPM2_RC_DISABLED	=3D 0x0120,
-+	TPM2_RC_COMMAND_CODE    =3D 0x0143,
- 	TPM2_RC_TESTING		=3D 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	=3D 0x0910,
- };
 --=20
 2.14.1
