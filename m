@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483717-2-11618317146744785613
+X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483716-2-13971050230833696319
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,29 +13,29 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483716; b=fXcwLE4a3mnBpfRDN5JTOC4zcMBmKkuGz3qAhJzaHZ5J2eC
-    qJZk5sanffQm7qfbM+0pHvtY9KgsTLyLUDfX9VMYMSR6wXKSwG70sjSHfYdhO6al
-    1pgehN3IlX/pyFQ58XAx5/jhZAHPqOGjKehFDy7tv6JF2R1Q0Ovmq4OsHNuY+vpA
-    yQ+f3JeqVHyKOzUcjs9Xy23POcLkNCIB0VwFnUPih04A8Pp7c2SCJIdXjnFpMtwH
-    QPxngmmkJ1JStuH+sALrX1hlaO6DU3DZwLG+ivpzqp2Vq2Wq59RCSP5HqXmaF8et
-    yeL6B7+E48NeWPwHPZ4dT7SxXDy/gH4Pq5qh01g==
+    t=1521483715; b=SV0KDUM2DWBKiLkFKNdHEx1fwnwU2IGk1MJUYxjXjkW6ZHk
+    50un7cEzyWQE5nloHyj8G2LiD1Ovgu8Z5IZr8NyXCo39t5l286MINVxO29PYoBYe
+    r6u587BhIQIRAID4Ib3dPGOOjGSix/rAn32cI8s0ZYBWdIaNoKTCLYnVeKR0wrr8
+    IuomS9kwG9GV++sJ1VVzqVJa3dlPy9pp8x6kg9+AKmBwOD0sB+h83Ow5r9fJQBVw
+    4bw9roYXe3U3ABiwbFg2tK6WjPTIZvYglymKZMahoYbGwIFU5DubLX4dSqt5WtDD
+    BaUSwS1868c2ufO3IJ84MquQs7LV3f5iStq8wIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483716; bh=wRQY5zZAt9j1vPYhAZvF2ClU3e
-    2JGqzrHatUMXS1Mz4=; b=Neze3w9u5Lxp7l/tRTKh61Djw9FBRv2ANqapl2mRom
-    XqhPVxgfE5zvENTUcibDEvwksXy8cNZArI1mSFabSdwEBredV1CFoMLNxym1SKeL
-    ix/mM5B9IzA9I5aOGwRKPTSZw/LrWy8PqR803mTpgs7JDFzd9TgUVL8LwxhVlsU+
-    taPgu4EgItr17xQSgh49aN1AjH3ZkW3dX+Y0598DO206o0v9AFjvV0IaYcfXltST
-    DlavHRFiSMm4zCDUT6nkCdN02wG9ai8x9BWpU1RUmImlP2okPWsUQIPfQFk60XPa
-    5gwE7CQ5SZcnT45mrXfu7Jwtx7YgkJzTEq/XW8bxEj5A==
+    :list-id; s=arctest; t=1521483715; bh=FrzeiqxSWQJ7WlUlRKYLULpn6C
+    2j/NOZYywNrXHqGPY=; b=L0odwUiiL9QYLJziWRKcSw1bF7NWExah/NG6poDBpR
+    wz5HWieIC7b7fe8QxmiAVcZQqW7Lc6uRLtW/pF6lLcyMtqkDkIzsyjruMPyN5haE
+    lQRa/hxbDdCb67Q+q2rEf6Wt/+TevB+76cKSZ9KJvpkjNegul99tZOTkNsVDoJFX
+    aWsNnrybHQTwY3kYX2ySLbxVU3zLR7nT57VZjolToQryVNgaPcNOuShQN8X5+ECT
+    quKjvNIS0HCZgfXU0ZjJDaXxQnQOir5+Pb0XByDgb5V0wAzPCZDnTrMiGneIAIJC
+    iu4EUYnjUhDh6uaJ5SrS7a+6EaBBYhzxyc+0NpaJT2yw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegheelieenucevlhhushhtvghrufhiiigvpeekhe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvledvheenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
@@ -45,30 +45,25 @@ Authentication-Results: mx4.messagingengine.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegheelieenucevlhhushhtvghrufhiiigvpeekhe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduuddvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvledvheenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969612AbeCSSVx (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:21:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48262 "EHLO
+        id S969119AbeCSSVv (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:21:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969566AbeCSSVq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:46 -0400
+        with ESMTP id S969602AbeCSSVt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Aleksey Makarov <aleksey.makarov@linaro.org>,
-        Joe Perches <joe@perches.com>,
-        Ming Lei <ming.lei@canonical.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>,
+        stable@vger.kernel.org, Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 087/241] braille-console: Fix value returned by _braille_console_setup
-Date: Mon, 19 Mar 2018 19:05:52 +0100
-Message-Id: <20180319180754.812195591@linuxfoundation.org>
+Subject: [PATCH 4.9 088/241] drm/vmwgfx: Fixes to vmwgfx_fb
+Date: Mon, 19 Mar 2018 19:05:53 +0100
+Message-Id: <20180319180754.849858133@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -86,102 +81,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+From: Sinclair Yeh <syeh@vmware.com>
 
 
-[ Upstream commit 2ed2b8621be2708c0f6d61fe9841e9ad8b9753f0 ]
+[ Upstream commit aa74f0687cfe998e59b20d6454f45e8aa4403c45 ]
 
-commit bbeddf52adc1 ("printk: move braille console support into
-separate braille.[ch] files") introduced _braille_console_setup()
-to outline the braille initialization code.  There was however some
-confusion over the value it was supposed to return. commit 2cfe6c4ac7ee
-("printk: Fix return of braille_register_console()") tried to fix it
-but failed to.
+1.  When unsetting a mode, num_connector should be set to zero
+2.  The pixel_format field needs to be initialized as newer DRM internal
+    functions checks this field
+3.  Take the drm_modeset_lock_all() because vmw_fb_kms_detach() can
+    change current mode
 
-This fixes and documents the returned value according to the use
-in printk.c: non-zero return means a parsing error, and thus this
-console configuration should be ignored.
-
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Cc: Aleksey Makarov <aleksey.makarov@linaro.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Ming Lei <ming.lei@canonical.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sinclair Yeh <syeh@vmware.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/printk/braille.c |   15 ++++++++-------
- kernel/printk/braille.h |   13 ++++++++++---
- 2 files changed, 18 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_fb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/printk/braille.c
-+++ b/kernel/printk/braille.c
-@@ -2,12 +2,13 @@
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
+@@ -433,7 +433,7 @@ static int vmw_fb_kms_detach(struct vmw_
+ 		set.y = 0;
+ 		set.mode = NULL;
+ 		set.fb = NULL;
+-		set.num_connectors = 1;
++		set.num_connectors = 0;
+ 		set.connectors = &par->con;
+ 		ret = drm_mode_set_config_internal(&set);
+ 		if (ret) {
+@@ -821,7 +821,9 @@ int vmw_fb_off(struct vmw_private *vmw_p
+ 	flush_delayed_work(&par->local_work);
  
- #include <linux/kernel.h>
- #include <linux/console.h>
-+#include <linux/errno.h>
- #include <linux/string.h>
+ 	mutex_lock(&par->bo_mutex);
++	drm_modeset_lock_all(vmw_priv->dev);
+ 	(void) vmw_fb_kms_detach(par, true, false);
++	drm_modeset_unlock_all(vmw_priv->dev);
+ 	mutex_unlock(&par->bo_mutex);
  
- #include "console_cmdline.h"
- #include "braille.h"
- 
--char *_braille_console_setup(char **str, char **brl_options)
-+int _braille_console_setup(char **str, char **brl_options)
- {
- 	if (!strncmp(*str, "brl,", 4)) {
- 		*brl_options = "";
-@@ -15,14 +16,14 @@ char *_braille_console_setup(char **str,
- 	} else if (!strncmp(*str, "brl=", 4)) {
- 		*brl_options = *str + 4;
- 		*str = strchr(*brl_options, ',');
--		if (!*str)
-+		if (!*str) {
- 			pr_err("need port name after brl=\n");
--		else
--			*((*str)++) = 0;
--	} else
--		return NULL;
-+			return -EINVAL;
-+		}
-+		*((*str)++) = 0;
-+	}
- 
--	return *str;
-+	return 0;
- }
- 
- int
---- a/kernel/printk/braille.h
-+++ b/kernel/printk/braille.h
-@@ -9,7 +9,14 @@ braille_set_options(struct console_cmdli
- 	c->brl_options = brl_options;
- }
- 
--char *
-+/*
-+ * Setup console according to braille options.
-+ * Return -EINVAL on syntax error, 0 on success (or no braille option was
-+ * actually given).
-+ * Modifies str to point to the serial options
-+ * Sets brl_options to the parsed braille options.
-+ */
-+int
- _braille_console_setup(char **str, char **brl_options);
- 
- int
-@@ -25,10 +32,10 @@ braille_set_options(struct console_cmdli
- {
- }
- 
--static inline char *
-+static inline int
- _braille_console_setup(char **str, char **brl_options)
- {
--	return NULL;
-+	return 0;
- }
- 
- static inline int
+ 	return 0;
