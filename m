@@ -1,78 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932812AbeCSIw5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:52:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49742 "EHLO mail.bootlin.com"
+        id S932828AbeCSIyA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:54:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35996 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753013AbeCSIwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:52:54 -0400
-Date: Mon, 19 Mar 2018 09:52:52 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
-        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR interface
- to use in-band negotiation
-Message-ID: <20180319085252.GF4519@kwain>
-References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
- <20180316103351.16616-3-antoine.tenart@bootlin.com>
- <20180316155307.GQ9418@n2100.armlinux.org.uk>
+        id S1751617AbeCSIx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:53:57 -0400
+Date: Mon, 19 Mar 2018 09:53:55 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Li RongQing <lirongqing@baidu.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: [PATCH] mm/memcontrol.c: speed up to force empty a memory cgroup
+Message-ID: <20180319085355.GQ23100@dhcp22.suse.cz>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180316155307.GQ9418@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
-
-On Fri, Mar 16, 2018 at 03:53:07PM +0000, Russell King - ARM Linux wrote:
-> On Fri, Mar 16, 2018 at 11:33:43AM +0100, Antoine Tenart wrote:
-> > The PHY mode 10GKR can use in-band negotiation. This patches allows this
-> > mode to be used with MLO_AN_INBAND in phylink.
-> > 
-> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-> > ---
-> >  drivers/net/phy/phylink.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> > index 51a011a349fe..7224b005f0dd 100644
-> > --- a/drivers/net/phy/phylink.c
-> > +++ b/drivers/net/phy/phylink.c
-> > @@ -768,7 +768,8 @@ int phylink_of_phy_connect(struct phylink *pl, struct device_node *dn,
-> >  	/* Fixed links and 802.3z are handled without needing a PHY */
-> >  	if (pl->link_an_mode == MLO_AN_FIXED ||
-> >  	    (pl->link_an_mode == MLO_AN_INBAND &&
-> > -	     phy_interface_mode_is_8023z(pl->link_interface)))
-> > +	     (phy_interface_mode_is_8023z(pl->link_interface) ||
-> > +	      pl->link_interface == PHY_INTERFACE_MODE_10GKR)))
+On Mon 19-03-18 16:29:30, Li RongQing wrote:
+> mem_cgroup_force_empty() tries to free only 32 (SWAP_CLUSTER_MAX) pages
+> on each iteration, if a memory cgroup has lots of page cache, it will
+> take many iterations to empty all page cache, so increase the reclaimed
+> number per iteration to speed it up. same as in mem_cgroup_resize_limit()
 > 
-> There is no inband negotiation like there is with 802.3z or SGMII,
-> so this makes no sense.
+> a simple test show:
+> 
+>   $dd if=aaa  of=bbb  bs=1k count=3886080
+>   $rm -f bbb
+>   $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+> 
+> Before: 0m0.252s ===> after: 0m0.178s
 
-Oh, that's what I feared. I read some docs but probably will need more
-:)
+Andrey was proposing something similar [1]. My main objection was that
+his approach might lead to over-reclaim. Your approach is more
+conservative because it just increases the batch size. The size is still
+rather arbitrary. Same as SWAP_CLUSTER_MAX but that one is a commonly
+used unit of reclaim in the MM code.
 
-Anyway, the reason to use in-band negotiation was also to avoid using
-fixed-link. It would work but always report the link is up, which for
-the user isn't a great experience as we have a way to detect this.
+I would be really curious about more detailed explanation why having a
+larger batch yields to a better performance because we are doingg
+SWAP_CLUSTER_MAX batches at the lower reclaim level anyway.
 
-What would you suggest to achieve this in a reasonable way?
+[1] http://lkml.kernel.org/r/20180119132544.19569-2-aryabinin@virtuozzo.com
 
-Thanks,
-Antoine
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  mm/memcontrol.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 670e99b68aa6..8910d9e8e908 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2480,7 +2480,7 @@ static int mem_cgroup_resize_limit(struct mem_cgroup *memcg,
+>  		if (!ret)
+>  			break;
+>  
+> -		if (!try_to_free_mem_cgroup_pages(memcg, 1,
+> +		if (!try_to_free_mem_cgroup_pages(memcg, 1024,
+>  					GFP_KERNEL, !memsw)) {
+>  			ret = -EBUSY;
+>  			break;
+> @@ -2610,7 +2610,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+>  		if (signal_pending(current))
+>  			return -EINTR;
+>  
+> -		progress = try_to_free_mem_cgroup_pages(memcg, 1,
+> +		progress = try_to_free_mem_cgroup_pages(memcg, 1024,
+>  							GFP_KERNEL, true);
+>  		if (!progress) {
+>  			nr_retries--;
+> -- 
+> 2.11.0
 
 -- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Michal Hocko
+SUSE Labs
