@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755403AbeCSH5N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:57:13 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37047 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeCSH5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:57:11 -0400
-X-Google-Smtp-Source: AG47ELvrs5nBOQ7+pG0W8DFhxfBWin/1ZgEcmyqQyG+MGS7sQhh9TZ3C73r3SKk7dNNtfg0NLbuHzQ==
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] include/linux/mmdebug.h: make VM_WARN* non-rvals
-Date: Mon, 19 Mar 2018 08:57:02 +0100
-Message-Id: <20180319075702.25645-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.16.1
+        id S932521AbeCSICS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:02:18 -0400
+Received: from mga06.intel.com ([134.134.136.31]:5828 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932239AbeCSICM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:02:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,329,1517904000";
+   d="scan'208";a="40160977"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Szymon Mielczarek <szymonx.mielczarek@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alex Lemberg <Alex.Lemberg@sandisk.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH V2 0/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
+Date: Mon, 19 Mar 2018 10:01:17 +0200
+Message-Id: <1521446478-12656-1-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present the construct
+Hi
 
-	if (VM_WARN(...))
+Here is V2, now re-based on top of patch "scsi: ufs: sysfs:reworking of the
+rpm_lvl and spm_lvl entries".
 
-will compile OK with CONFIG_DEBUG_VM=y and will fail with
-CONFIG_DEBUG_VM=n. The reason is that VM_{WARN,BUG}* have always been
-special wrt. {WARN/BUG}* and never generate any code when DEBUG_VM is
-disabled. So we cannot really use it in conditionals.
+Michał Potomski has previously sent a patch for Auto-Hibernate, but this
+patch is slightly different, based on the latest ufs-sysfs changes, it also
+takes care to restore auto-hibernate during resume, and otherwise avoids
+updating the register if the device is runtime suspended.  Also a default
+value of 150ms is set.
 
-We considered changing things so that this construct works in both cases
-but that might cause unwanted code generation with CONFIG_DEBUG_VM=n.  It
-is safer and simpler to make the build fail in both cases.
 
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-[akpm@linux-foundation.org: changelog]
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
- include/linux/mmdebug.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in V2:
 
-diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
-index 35d77b0dae3b..14baf1d9d65b 100644
---- a/include/linux/mmdebug.h
-+++ b/include/linux/mmdebug.h
-@@ -37,10 +37,10 @@ void dump_mm(const struct mm_struct *mm);
- 			BUG();						\
- 		}							\
- 	} while (0)
--#define VM_WARN_ON(cond) WARN_ON(cond)
--#define VM_WARN_ON_ONCE(cond) WARN_ON_ONCE(cond)
--#define VM_WARN_ONCE(cond, format...) WARN_ONCE(cond, format)
--#define VM_WARN(cond, format...) WARN(cond, format)
-+#define VM_WARN_ON(cond) (void)WARN_ON(cond)
-+#define VM_WARN_ON_ONCE(cond) (void)WARN_ON_ONCE(cond)
-+#define VM_WARN_ONCE(cond, format...) (void)WARN_ONCE(cond, format)
-+#define VM_WARN(cond, format...) (void)WARN(cond, format)
- #else
- #define VM_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_BUG_ON_PAGE(cond, page) VM_BUG_ON(cond)
--- 
-2.16.1
+	Re-based on top of (yet to be applied) patch "scsi: ufs: sysfs:
+	reworking of the rpm_lvl and spm_lvl entries"
+
+
+Adrian Hunter (1):
+      scsi: ufs: Add support for Auto-Hibernate Idle Timer
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 15 ++++++
+ drivers/scsi/ufs/ufs-sysfs.c               | 77 ++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c                  | 26 ++++++++++
+ drivers/scsi/ufs/ufshcd.h                  |  3 ++
+ drivers/scsi/ufs/ufshci.h                  |  7 +++
+ 5 files changed, 128 insertions(+)
+
+
+Regards
+Adrian
