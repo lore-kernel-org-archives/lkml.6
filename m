@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs24n96mtOSQOwGiPzgiNEUcS5Nof7gMzOVQxX2dVwA/bK9dPz7Z9YuFGe1ETOlNy5i9RR7
-ARC-Seal: i=1; a=rsa-sha256; t=1521484211; cv=none;
+X-Google-Smtp-Source: AG47ELvljqQy7c4BUCuObcFzckbRDxxR8XeCdh1Mt9ph8IBqSaHbxg+yRuJ8TCNsO2DPS3zleohS
+ARC-Seal: i=1; a=rsa-sha256; t=1521484206; cv=none;
         d=google.com; s=arc-20160816;
-        b=Nzu4QOJ1jx5Da4gdoNeCeLIqOFxHy9W+HVGgIN77EKV/8yR+q0KCcTlv5M2UoF/F5B
-         HDpgMu/ey7utd2UWT76Rz8aD01nkbPYWkR54JAiAzbMAj9UMBgJ7fFDvp4UoOsX2viHg
-         cEoiIGuH74ohed4I9NthujIpK2z5Hlu1g12TddO4IYwNcN4B78CvzNNe8UQqPOOQjB+8
-         UVqiI0ncyzUgT38X6eyX9PHNVm2d6bvTZrSIVVk7Ymn72TS++TVkKhPADcmLEpdZduBo
-         AXzKj3kkwCRJgp+B8yVJDggihHZcHws5Nowg9nXU7zTOKEz3Tq+1ovpYHTWYEYXxByYu
-         F3aA==
+        b=ruku8vOFveHruAzMQH56YYsvc5JET2hQKjd4Qus3hXMFjq3f2E0LbdbbXKdgy5ztBZ
+         ifuEzw79MoLoZpxvfG6s8xikG4NjuZxU7DAm/QKoH1qu9tBRG8hmAtPn4tIgs9Ohdabv
+         Bs30rd51zgVb4uun+QWL3KKHrmu8iGEVx47BQgRO5JjPo02IsY6w2rVEPTV3oCr8flTq
+         dX6GV7YHP6Jvd+sCzqZvBR08iObSflH7wca2k2yYkrjqFloZUARl2OTcuCSsnntSL4F3
+         5iQTDKwl15xwVU3Nw6ZhldByL5qCncIW0Slh7GPwuHErPPDpBcnIG/7rtfr6pfylheiB
+         VX8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IOkMM7z5M840wjg3ekGCxu2y6E+XhlkggwLVEftVGyk=;
-        b=ZzuJ/W3B69F2qvwgAg64duJgInw6fKnYvnNo+tH6+orpB0xlVzQuwAY1/oCq3hpa7J
-         NY2cvUSyAu5JmQo+ihAzJocI5FHZVRsOYI+iKpZvIQW2p2gt+Ov+Ll8qsOuDOLFGEz/g
-         f8gjPb641H6+h0v4H8MsqLszqXQy6JxooCjCxdKIK4KNehOTEs4skMT9kTuGkkiF1cu5
-         4k0esXYeM/l4FQznW/yupbp4MwzlMRassI+N/uKG9n4b6FTRW54ACflKtoBtB2mFA1NM
-         I4bBycSOaxuNQUdJz6zy1zDssR7Xp177vyqjJoQ1V3DrHDyQVlNQS+E9BvUKfgVftzrI
-         C6iw==
+        bh=Bm4fJuMHpcWZsifYR1Us6X2RX8j+XVrIoZycHCaZ+NY=;
+        b=Lge/WVBripP0JVB8rUiophgbgONpKGCkxtnL3Jd9td9UR6Vzh390pQE5LWruMWeeWA
+         x5g5bcxrM/A2USAo8iFQIWLZYm2ElqzfKAVciYofVBOjEuppuX+OIMFKpw2UV480VKMS
+         leJLxEcH/tYcKk6mYEVcu9EivK/PmlSVxa6GDup2V4Ftewp+cetoDBsjh4zMBcaOO+lo
+         mnl+nUtndL5sE1qNJqO8VcQi5wSJG3M4o3Q9MLqgKpw3XnvI0VkYIp0kfX4u0w3xf004
+         DHZf0mJmb4AgOYpeivQe4LXXzq7yjn78IEFZb5tVoKGhRcF9cb4vmg9Ixvi+lqjaM6JF
+         9d1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Christoffer Dall <cdall@kernel.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 22/41] KVM: arm/arm64: Reduce verbosity of KVM init log
-Date: Mon, 19 Mar 2018 19:08:22 +0100
-Message-Id: <20180319180733.701035078@linuxfoundation.org>
+	Alexander Sergeyev <sergeev917@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jia Zhang <qianyue.zj@alibaba-inc.com>,
+	Kyle Huey <me@kylehuey.com>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 09/41] x86/speculation: Remove Skylake C2 from Speculation Control microcode blacklist
+Date: Mon, 19 Mar 2018 19:08:09 +0100
+Message-Id: <20180319180732.817648219@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391829188994151?=
-X-GMAIL-MSGID: =?utf-8?q?1595391829188994151?=
+X-GMAIL-THRID: =?utf-8?q?1595391747267778863?=
+X-GMAIL-MSGID: =?utf-8?q?1595391823292270723?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,77 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Alexander Sergeyev <sergeev917@gmail.com>
 
-commit 76600428c3677659e3c3633bb4f2ea302220a275 upstream.
+commit e3b3121fa8da94cb20f9e0c64ab7981ae47fd085 upstream.
 
-On my GICv3 system, the following is printed to the kernel log at boot:
+In accordance with Intel's microcode revision guidance from March 6 MCU
+rev 0xc2 is cleared on both Skylake H/S and Skylake Xeon E3 processors
+that share CPUID 506E3.
 
-   kvm [1]: 8-bit VMID
-   kvm [1]: IDMAP page: d20e35000
-   kvm [1]: HYP VA range: 800000000000:ffffffffffff
-   kvm [1]: vgic-v2@2c020000
-   kvm [1]: GIC system register CPU interface enabled
-   kvm [1]: vgic interrupt IRQ1
-   kvm [1]: virtual timer IRQ4
-   kvm [1]: Hyp mode initialized successfully
-
-The KVM IDMAP is a mapping of a statically allocated kernel structure,
-and so printing its physical address leaks the physical placement of
-the kernel when physical KASLR in effect. So change the kvm_info() to
-kvm_debug() to remove it from the log output.
-
-While at it, trim the output a bit more: IRQ numbers can be found in
-/proc/interrupts, and the HYP VA and vgic-v2 lines are not highly
-informational either.
-
-Cc: <stable@vger.kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Christoffer Dall <cdall@kernel.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Alexander Sergeyev <sergeev917@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kyle Huey <me@kylehuey.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180313193856.GA8580@localhost.localdomain
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/arch_timer.c   |    2 +-
- virt/kvm/arm/mmu.c          |    6 +++---
- virt/kvm/arm/vgic/vgic-v2.c |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/intel.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -602,7 +602,7 @@ int kvm_timer_hyp_init(void)
- 		return err;
- 	}
- 
--	kvm_info("virtual timer IRQ%d\n", host_vtimer_irq);
-+	kvm_debug("virtual timer IRQ%d\n", host_vtimer_irq);
- 
- 	cpuhp_setup_state(CPUHP_AP_KVM_ARM_TIMER_STARTING,
- 			  "kvm/arm/timer:starting", kvm_timer_starting_cpu,
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1760,9 +1760,9 @@ int kvm_mmu_init(void)
- 	 */
- 	BUG_ON((hyp_idmap_start ^ (hyp_idmap_end - 1)) & PAGE_MASK);
- 
--	kvm_info("IDMAP page: %lx\n", hyp_idmap_start);
--	kvm_info("HYP VA range: %lx:%lx\n",
--		 kern_hyp_va(PAGE_OFFSET), kern_hyp_va(~0UL));
-+	kvm_debug("IDMAP page: %lx\n", hyp_idmap_start);
-+	kvm_debug("HYP VA range: %lx:%lx\n",
-+		  kern_hyp_va(PAGE_OFFSET), kern_hyp_va(~0UL));
- 
- 	if (hyp_idmap_start >= kern_hyp_va(PAGE_OFFSET) &&
- 	    hyp_idmap_start <  kern_hyp_va(~0UL) &&
---- a/virt/kvm/arm/vgic/vgic-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-v2.c
-@@ -380,7 +380,7 @@ int vgic_v2_probe(const struct gic_kvm_i
- 	kvm_vgic_global_state.type = VGIC_V2;
- 	kvm_vgic_global_state.max_gic_vcpus = VGIC_V2_MAX_CPUS;
- 
--	kvm_info("vgic-v2@%llx\n", info->vctrl.start);
-+	kvm_debug("vgic-v2@%llx\n", info->vctrl.start);
- 
- 	return 0;
- out:
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -105,7 +105,7 @@ static void probe_xeon_phi_r3mwait(struc
+ /*
+  * Early microcode releases for the Spectre v2 mitigation were broken.
+  * Information taken from;
+- * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
++ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/03/microcode-update-guidance.pdf
+  * - https://kb.vmware.com/s/article/52345
+  * - Microcode revisions observed in the wild
+  * - Release note from 20180108 microcode release
+@@ -123,7 +123,6 @@ static const struct sku_microcode spectr
+ 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
