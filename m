@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELusnqrdXj7cLTpmzqFS9MYtAx/5VWbOzggEjqGJIL1nsX1LBsOvZNQr+DVz0rMw51Qt0gwa
-ARC-Seal: i=1; a=rsa-sha256; t=1521484004; cv=none;
+X-Google-Smtp-Source: AG47ELshrx/+a8pW09MRFwM4q9J+qGxSiIOLep6fWKlrUYRgSNJUPOJy0+v23PkyVJtSaA5JcUEl
+ARC-Seal: i=1; a=rsa-sha256; t=1521484001; cv=none;
         d=google.com; s=arc-20160816;
-        b=WDUHVrxiPoCCSyTQaCPqnE0g4kGVZLU5WOSj8gMSV+lrL99MkchAa1l8jTjUuX8i1f
-         rgS3D6m4f09IBP46RsEYci2ztaZPBrBq9PEhji47+R3RNQV91QVbAhAlz6eqD6cBpKtl
-         P9EogpDyeyYOVl21DKveXDstxuWGi75/nzve+POOfkpCuTAvgzh6kvZaGjmOOuPbJUkt
-         hPJxPvjv0gRn1Xz1uD4rO+qf6OeG4YaEhaXI8FKu9YOIS7bXaIN5UpVZVQZ5WSvMj0at
-         thzNZ/LAvcZQtpmK3c9TU5cHjXLRmPjIrWiL0/aTyT2JUwwvBFf56N8EdfEUU/lAcBx4
-         4dGQ==
+        b=SQj93UhNAbwx4NIyjjWMrvaa+XSo2vN1R4BKSp7PSkpc/vD2clcFutM1Syfcu9JKCY
+         ToPcFA1RgwDhrzzShKgDOU7z1oU1Tpv6+5psn9hwgHOt1prr76Pdp6LpRHMHVtKRUs0V
+         wDnYHkMAevqGXj1xu6jqh5aJZhyAJ1BzYRTKHDVvEh7ULFzmuBcy8KR80OFgwZoGB1wi
+         08qIDVtowOd5kAIUihsN+pHKO8BbjLboQx9mEsgFxe4eiOh9FmCropJDxq0e/+Zaok0k
+         L853UI/ATRVuJpauWUk/kvMgVLGIyCxNKYTxjNeHFgrOwV2rxUp6azoeFZkmRrkI20an
+         iG2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6ZbTLjYnGr/UMuMrtvlEdPqizw7VkYBklbZKVyKW9K4=;
-        b=VzCBH5cK/PNLgNhQTw2YjFl5ubPaIURI05lMV1rbOANb4tfhH5j/PFoQbfEV/wuHPo
-         3fBw3g7JNOcNBL90+b2rDrFcMSrqfKJ5pRlts2wyf+SX1zIzuVXLBVdXA1TwTXK1PPFY
-         Qmm7eIIY9MgxNhLGFK9csfE1US0iBUBzjNJ3tXvqgvZ2k23JMUePWtHMNrsQo62wsUCu
-         UqjzBrQ+OQZHecsApHVU79zeszXJhJ6PsgkVh+PeB0XakkZVl6mn3gYfq8gKB9q316ai
-         79SG5r6mGtjmz9B3LZcOUKG/cm8UQRnJGkHIByUXyn4gGdf9MUdpGgmeuTOWQPOBPB3S
-         eM5w==
+        bh=uPGGhzm7F98b1nvXjWwA/5vyO4vGvB29N5l0EpvSaZY=;
+        b=RYf+fDWw9LgxEpYAZhG/J92jehHbCGp9phmpffrcrcfblLNqFdyfPJ4ZU2Kpf5yraK
+         F+VX3i6zaGHmuQ+vN9UoCCQntlRqI1TDzDk4fJgRajE/jOlEOpZwUy4Be35SfeYNS/kc
+         TVopH8hInh2I8zfz/GVQYGFtAjLKT/aYnXE8w1zKtb7Rk1rJHHs8FFaYnsJxjMDCwl1d
+         GbX10qoqkVAUr0qNW+ajcKeUDWZe378YEWpwu/H0X5+fmZTNu157/WNarNdC84ZKJplx
+         aCfquQo8bJJ6LXEWOOLjkENzmvMofTvBg6TQaUhLnakY0BSpmIUNuJkTg1Vd3LsPczlQ
+         qesQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Christophe Varoqui <christophe.varoqui@opensvc.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-	SCSI ML <linux-scsi@vger.kernel.org>,
-	device-mapper development <dm-devel@redhat.com>,
-	Xose Vazquez Perez <xose.vazquez@gmail.com>,
+	"Andrew F. Davis" <afd@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 196/241] scsi: dh: add new rdac devices
-Date: Mon, 19 Mar 2018 19:07:41 +0100
-Message-Id: <20180319180759.278873126@linuxfoundation.org>
+Subject: [PATCH 4.9 178/241] ARM: dts: omap3-n900: Fix the audio CODECs reset pin
+Date: Mon, 19 Mar 2018 19:07:23 +0100
+Message-Id: <20180319180758.523777268@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390947989892367?=
-X-GMAIL-MSGID: =?utf-8?q?1595391611155146493?=
+X-GMAIL-THRID: =?utf-8?q?1595390608912985115?=
+X-GMAIL-MSGID: =?utf-8?q?1595391608319878663?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,49 +50,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
 
 
-[ Upstream commit 4b3aec2bbbce1c35f50e7475a9fd78d24b9ea4ea ]
+[ Upstream commit 7be4b5dc7ffa9499ac6ef33a5ffa9ff43f9b7057 ]
 
-Add IBM 3542 and 3552, arrays: FAStT200 and FAStT500.
+The correct DT property for specifying a GPIO used for reset
+is "reset-gpios", fix this here.
 
-Add full STK OPENstorage family, arrays: 9176, D173, D178, D210, D220,
-D240 and D280.
+Fixes: 14e3e295b2b9 ("ARM: dts: omap3-n900: Add TLV320AIC3X support")
 
-Add STK BladeCtlr family, arrays: B210, B220, B240 and B280.
-
-These changes were done in multipath-tools time ago.
-
-Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Christophe Varoqui <christophe.varoqui@opensvc.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Cc: device-mapper development <dm-devel@redhat.com>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_dh.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/omap3-n900.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/scsi_dh.c
-+++ b/drivers/scsi/scsi_dh.c
-@@ -56,10 +56,13 @@ static const struct scsi_dh_blist scsi_d
- 	{"IBM", "1815",			"rdac", },
- 	{"IBM", "1818",			"rdac", },
- 	{"IBM", "3526",			"rdac", },
-+	{"IBM", "3542",			"rdac", },
-+	{"IBM", "3552",			"rdac", },
- 	{"SGI", "TP9",			"rdac", },
- 	{"SGI", "IS",			"rdac", },
--	{"STK", "OPENstorage D280",	"rdac", },
-+	{"STK", "OPENstorage",		"rdac", },
- 	{"STK", "FLEXLINE 380",		"rdac", },
-+	{"STK", "BladeCtlr",		"rdac", },
- 	{"SUN", "CSM",			"rdac", },
- 	{"SUN", "LCSM100",		"rdac", },
- 	{"SUN", "STK6580_6780",		"rdac", },
+--- a/arch/arm/boot/dts/omap3-n900.dts
++++ b/arch/arm/boot/dts/omap3-n900.dts
+@@ -510,7 +510,7 @@
+ 	tlv320aic3x: tlv320aic3x@18 {
+ 		compatible = "ti,tlv320aic3x";
+ 		reg = <0x18>;
+-		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
++		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
+ 		ai3x-gpio-func = <
+ 			0 /* AIC3X_GPIO1_FUNC_DISABLED */
+ 			5 /* AIC3X_GPIO2_FUNC_DIGITAL_MIC_INPUT */
+@@ -527,7 +527,7 @@
+ 	tlv320aic3x_aux: tlv320aic3x@19 {
+ 		compatible = "ti,tlv320aic3x";
+ 		reg = <0x19>;
+-		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
++		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
+ 
+ 		AVDD-supply = <&vmmc2>;
+ 		DRVDD-supply = <&vmmc2>;
