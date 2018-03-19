@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu4DmRrnroOp65LmDlSkrtnctXxMqUezHjnuU/N/lcuF3Gsy7S7+3BYSTeqAX/hw9P8Osku
-ARC-Seal: i=1; a=rsa-sha256; t=1521484034; cv=none;
+X-Google-Smtp-Source: AG47ELsiugdHjcuruIHga4fDsBWXps3kOU6CpaI0NqymCeRHYlAcf0e0RpVA2uMiwZ91hq+Oy1T/
+ARC-Seal: i=1; a=rsa-sha256; t=1521484031; cv=none;
         d=google.com; s=arc-20160816;
-        b=KuRcCe294gBPgj5lIAyDLT0UN168U0IlZ4m9C2ooq6kkavz+LbnGKaUPazpRwv2HGp
-         6MvVHqm7YCneGd2lxY8H0DDOu7kOHvZpdWPeDV3ms9ekcMvdQ9bHrtQrHmcxrNK7SDf+
-         lSYZ+MBr050PRbGIf9qb8AChNNBnSrjf6FPlUeqqkBcN9Pkf1RRKN39R+HcqaCBlsWzR
-         ax51uYekz+F0m/+YmRB4xzX8UTgChr4bQ1K8fVyVh6LQURfhjSX/BknFSBt3wU5t2RCP
-         ERgGVYwwYTgfiEMkUlddXULBlqVxfLHJXH0apNdfAPG1udHtF+0TxEV3hdZQjeoyha8E
-         HRbg==
+        b=u/721JA1fVgW1NrlR4kRixxHRNATV70t7LF3pOpQGLNhjEF02WYsmqYslN2WH3l7j0
+         XQ38qrfQsRpwyP80WnTOrFLWKhAc0uatVJakQ08GnT9n6iysYxSCPD0Er/vTK2pn/XzO
+         lYWdAL8Ij92rHos+gHQtokfCoW8fsvPe1Fq0mY3ZlRoTF33WywGbisA1AdO/nMmPAMPM
+         YiI60RhqLFfWlrO0QQznM1VRgCxoIyUEm1QLT5i2sjPbjHjEfOd0+/AwHYMhhuvNJ0Al
+         rIXixIYp6nBVWqchqVUsv8bXRT/5iTtSJOYbUTsYRO1/Lbl1EsP4FGanmLzCVxX8MIMw
+         6meg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RBIq3jspxtPI3/0M0nxtykfxLqpnJIn/OVHxQlvXth4=;
-        b=XxkkB5BmKw+fil8ClBhaa4UWh47Hp4A2Ugg+cVW2ehnddqTJQODCcW++rL6CFCWOCx
-         RHoKkDZ4jHOcqOZy7V62xSJ1DHZESWwOnjANhZfaJj6XRCyA3wfRbOvc7DbHLBx+pyHu
-         dF1IvubAioDLaY8MfpNBxR4Iw8Zt0mCKEcW7l96aBMuRt3wC1X2C1gt5rjpqiJjNy9vl
-         vY9GnjsxcrB1To5/CWhpu+QTwLULAowT76MVdc718jGwbNpAfqBxvX1PTUPwi/+00bL6
-         MFBIsloBA6pdS/bb7XP+Tg59efRdOtfLvqbAKbmUceHbuUGrQk/DaLNsNZ5T8S4BBGM9
-         LhmQ==
+        bh=LtatiJiyobRU1ZmtFkOk9YR6LT1ocdkHf9au6bgqSYM=;
+        b=cbevG5+LhcFpNL5tzUR8hsmhPgYWwaZ3JdSxxXePn6CWTGIh34lNJ+JDvhms9TUV0F
+         N49C9FYZLKpu0N9wq3bN9hkBbzkBPpd4uEtfL+Qv1UzarMrw3KgufoZrC9GNudYnOIVd
+         z24B2USmdufJF/NCDScIonlY2WeSWcDThV4LG+Q4oCO2iY84mhaJcJBw6zDmZUXRz+3T
+         faQJHi13Fc+yB2FyVXxkGHY37Ahu823ok4msFUDJg4wgOkBBlWSGjM3lgeoZZaMCx4pg
+         nUtC/OEBd4eYRIEs2Di3/XSqr1TIM0PldmyQEgHQ9z4akb/9PZ0EnpxJ3q3Bvw1X+7+Q
+         mGIw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amit Sikka <amit.sikka@ericsson.com>,
-	Mahesh Bandewar <maheshb@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 206/241] ipvlan: add L2 check for packets arriving via virtual devices
-Date: Mon, 19 Mar 2018 19:07:51 +0100
-Message-Id: <20180319180759.704620255@linuxfoundation.org>
+Subject: [PATCH 4.9 179/241] mtd: nand: ifc: update bufnum mask for ver >= 2.0.0
+Date: Mon, 19 Mar 2018 19:07:24 +0100
+Message-Id: <20180319180758.562318183@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390973665404691?=
-X-GMAIL-MSGID: =?utf-8?q?1595391642016779534?=
+X-GMAIL-THRID: =?utf-8?q?1595390612053939105?=
+X-GMAIL-MSGID: =?utf-8?q?1595391639709694884?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,53 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
 
-[ Upstream commit 92ff42645028fa6f9b8aa767718457b9264316b4 ]
+[ Upstream commit bccb06c353af3764ca86d9da47652458e6c2eb41 ]
 
-Packets that don't have dest mac as the mac of the master device should
-not be entertained by the IPvlan rx-handler. This is mostly true as the
-packet path mostly takes care of that, except when the master device is
-a virtual device. As demonstrated in the following case -
+Bufnum mask is used to calculate page position in the internal SRAM.
 
-  ip netns add ns1
-  ip link add ve1 type veth peer name ve2
-  ip link add link ve2 name iv1 type ipvlan mode l2
-  ip link set dev iv1 netns ns1
-  ip link set ve1 up
-  ip link set ve2 up
-  ip -n ns1 link set iv1 up
-  ip addr add 192.168.10.1/24 dev ve1
-  ip -n ns1 addr 192.168.10.2/24 dev iv1
-  ping -c2 192.168.10.2
-  <Works!>
-  ip neigh show dev ve1
-  ip neigh show 192.168.10.2 lladdr <random> dev ve1
-  ping -c2 192.168.10.2
-  <Still works! Wrong!!>
+As IFC version 2.0.0 has 16KB of internal SRAM as compared to older
+versions which had 8KB. Hence bufnum mask needs to be updated.
 
-This patch adds that missing check in the IPvlan rx-handler.
-
-Reported-by: Amit Sikka <amit.sikka@ericsson.com>
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Signed-off-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ipvlan/ipvlan_core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mtd/nand/fsl_ifc_nand.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/ipvlan/ipvlan_core.c
-+++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -299,6 +299,10 @@ static int ipvlan_rcv_frame(struct ipvl_
- 		if (dev_forward_skb(ipvlan->dev, skb) == NET_RX_SUCCESS)
- 			success = true;
- 	} else {
-+		if (!ether_addr_equal_64bits(eth_hdr(skb)->h_dest,
-+					     ipvlan->phy_dev->dev_addr))
-+			skb->pkt_type = PACKET_OTHERHOST;
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -907,6 +907,13 @@ static int fsl_ifc_chip_init(struct fsl_
+ 	if (ctrl->version == FSL_IFC_VERSION_1_1_0)
+ 		fsl_ifc_sram_init(priv);
+ 
++	/*
++	 * As IFC version 2.0.0 has 16KB of internal SRAM as compared to older
++	 * versions which had 8KB. Hence bufnum mask needs to be updated.
++	 */
++	if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
++		priv->bufnum_mask = (priv->bufnum_mask * 2) + 1;
 +
- 		ret = RX_HANDLER_ANOTHER;
- 		success = true;
- 	}
+ 	return 0;
+ }
+ 
