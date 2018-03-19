@@ -1,76 +1,76 @@
-Return-Path: <groeck7@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3230508-1521476783-2-14438404500117976271
+Return-Path: <heikki.krogerus@linux.intel.com>
+X-Cyrus-Session-Id: sloti22d1t05-2643090-1521458458-2-6257756705322032094
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25,
-  FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_NONE -0.0001,
-  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.160.65', Host='mail-pl0-f65.google.com', Country='US',
-  FromHeader='net', MailFrom='com'
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='192.55.52.88', Host='mga01.intel.com', Country='US', FromHeader='com',
+  MailFrom='com'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: groeck7@gmail.com
+X-Mail-from: heikki.krogerus@linux.intel.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521476782; b=uFcL9AqBp3tF3mV+fxz7AxvwR+KCW1A2nQpkUX7EbO16m1+
-    0uEcQZLtySfQeK6z5CLaGwxsN+6tgOO+T+dF8AJ5lYIdhrM0kMCFXCTW3lL7RkgU
-    4xfDivOtMNJrb6bmwLNnILOlKd06NbyylrFPxlzzWLop/DcjfT66gixEdDLWJhln
-    w3CCdeaGym42ImXp2MtxsTA3xyZH4SWAgLTpocmVF4Bzw4O/OQgXiyG3C8G0u7DH
-    91z9zJhfKZ1J5DxBBA774enVdMPJSvyDuFj7KbKJ5D2eJOQpXAkPMBYM2DQqxa+W
-    IuZjWw8MXTL+6EKiFES6Ao/Hq49SnTG4/AwIw6A==
+    t=1521458457; b=cAD+qXUjJy8+gWBJQAs81tOPHXvI01N12t101AGSylPZUVI
+    xFg/Y//ZEWQ07A5NoY0zhdx6ZBgv1n/HKS7fmSjVGekYV4lanrHRLLmyKQjFL5vO
+    zPDP7qGMaK7YE63+DzBsWkyRLpcbspVUrAYmn6+kf/vZe+qOd+r56sWa4FpAuIWG
+    77W4/65QfZ9pIqH4O3fm6gnNcfePmp7n6UiF3ETH2MZCJQ0Ope3FSZRWr8M4rf7j
+    4rt1tNQHzoUV7jKIr+V4SYIWWH8nz1bcWDCSOa2wvVHksbRHJprPbq0Xvq++38pW
+    qxEmqe7RdRXcqIqAk6PPCDV4kYstHJT2v3cYGRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=sender:date:from:to:cc:subject:message-id
+    messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to; s=arctest; t=
-    1521476782; bh=baUGE+5kzEblCS6GWBB0adBLDV+GB7Zx8mEdUXqId2k=; b=a
-    Xh10wmI5uFNYfrMIgLP6HuHHsRStc0t6+WZ7IwQffcBt4FV8zcnVegijeiWFW1C1
-    tjxNijjU5TWU6abBoQXoYxHspH6dTvrqx0pY3zltwiSLwFS9IpDWNBMG3umBDq9J
-    MoixieHLITSv86QsacWTkKydTUeYn4yqPfQnvTg5x6DkYTeYspbdQylDaYrmr/Fz
-    RdmMCCd/xr9o+4mwzfvSguA1R9xSRD2sACPuH0j0HWeV6wyAvY5esr3uaMq/10yH
-    byzhqKOHA41Gnbe3zt+UY8jmn5RG56GIA43Ck/SBBvcbN9wHrKUKMQ6OyTF7rPHs
-    yKa4tSudOWrqe0NPkrYEg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=u82aNtYy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.85.160.65 (mail-pl0-f65.google.com);
-    spf=pass smtp.mailfrom=groeck7@gmail.com smtp.helo=mail-pl0-f65.google.com;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekjeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpehsfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhuvghnthgvrhcutfhovggtkhcuoehlihhnuhigsehrohgvtghkqdhushdrnhgvtheqnecukfhppedvtdelrdekhedrudeitddrieehpddutdekrddvvdefrdegtddrieeinecurfgrrhgrmhepihhnvghtpedvtdelrdekhedrudeitddrieehpdhhvghlohepmhgrihhlqdhplhdtqdhfieehrdhgohhoghhlvgdrtghomhdpmhgrihhlfhhrohhmpeeoghhrohgvtghkjeesghhmrghilhdrtghomhequcfukfgkgfepudegkedutdenucevlhhushhtvghrufhiiigvpedt;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KdWmHylq;
-    x-ptr=pass x-ptr-helo=mail-pl0-f65.google.com x-ptr-lookup=mail-pl0-f65.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    1521458457; bh=nfyVONo7loCRkuGdumVPWFHYxvY0lbMMozrweHloLhI=; b=N
+    VfgTV8AL8sfhKoaUlswL8bHEtarCwWPfpkvEKCypQ1MG126l0aoilw0zAI/8UEMz
+    uSYxc5eseub+/h8tdSea1IsewlQ8TK3mF+TEqa/zu0FNlWP+trZUFoqkJKiUCIEi
+    Aa9cNn5V3OYv9GyhuoRns2Ju06Vu6/VTB0DnDgDYxKDpsfWFnUMQKV3TA1Of69p3
+    8DQ50oS/5AhPpmtOcWK8tbl1BOGhaY291/ydasvSc9hGVXjLQa4Z++MR6B/OcJ75
+    z7wNdi6MlHrR/PpVQiuzOJ7J/6aK9CUd+CkfyQj2gpEJFp3By/YOWNK5LG5rdctr
+    EcILHLaWHDyoUlBSPcJRw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=192.55.52.88 (mga01.intel.com);
+    spf=none smtp.mailfrom=heikki.krogerus@linux.intel.com smtp.helo=mga01.intel.com;
+    x-aligned-from=pass (Address match);
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddvheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttddttddtredvnecuhfhrohhmpefjvghikhhkihcumfhrohhgvghruhhsuceohhgvihhkkhhirdhkrhhoghgvrhhusheslhhinhhugidrihhnthgvlhdrtghomheqnecukfhppeduledvrdehhedrhedvrdekkeenucfrrghrrghmpehinhgvthepudelvddrheehrdehvddrkeekpdhhvghlohepmhhgrgdtuddrihhnthgvlhdrtghomhdpmhgrihhlfhhrohhmpeeohhgvihhkkhhirdhkrhhoghgvrhhusheslhhinhhugidrihhnthgvlhdrtghomhequcfukfgkgfepuddvleekleenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=pass x-ptr-helo=mga01.intel.com x-ptr-lookup=mga01.intel.com;
+    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=u82aNtYy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.85.160.65 (mail-pl0-f65.google.com);
-    spf=pass smtp.mailfrom=groeck7@gmail.com smtp.helo=mail-pl0-f65.google.com;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdekjeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpehsfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhuvghnthgvrhcutfhovggtkhcuoehlihhnuhigsehrohgvtghkqdhushdrnhgvtheqnecukfhppedvtdelrdekhedrudeitddrieehpddutdekrddvvdefrdegtddrieeinecurfgrrhgrmhepihhnvghtpedvtdelrdekhedrudeitddrieehpdhhvghlohepmhgrihhlqdhplhdtqdhfieehrdhgohhoghhlvgdrtghomhdpmhgrihhlfhhrohhmpeeoghhrohgvtghkjeesghhmrghilhdrtghomhequcfukfgkgfepudegkedutdenucevlhhushhtvghrufhiiigvpedt;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KdWmHylq;
-    x-ptr=pass x-ptr-helo=mail-pl0-f65.google.com x-ptr-lookup=mail-pl0-f65.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=192.55.52.88 (mga01.intel.com);
+    spf=none smtp.mailfrom=heikki.krogerus@linux.intel.com smtp.helo=mga01.intel.com;
+    x-aligned-from=pass (Address match);
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddvheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttddttddtredvnecuhfhrohhmpefjvghikhhkihcumfhrohhgvghruhhsuceohhgvihhkkhhirdhkrhhoghgvrhhusheslhhinhhugidrihhnthgvlhdrtghomheqnecukfhppeduledvrdehhedrhedvrdekkeenucfrrghrrghmpehinhgvthepudelvddrheehrdehvddrkeekpdhhvghlohepmhhgrgdtuddrihhnthgvlhdrtghomhdpmhgrihhlfhhrohhmpeeohhgvihhkkhhirdhkrhhoghgvrhhusheslhhinhhugidrihhnthgvlhdrtghomhequcfukfgkgfepuddvleekleenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=pass x-ptr-helo=mga01.intel.com x-ptr-lookup=mga01.intel.com;
+    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AG47ELubWIIOWLWRQmzQtz82h12qYoCBLUje2x8QCZqW7R4fbjS48OCgICFNLDMHmSrOw6YXS3CCzQ==
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 19 Mar 2018 09:26:17 -0700
-From: Guenter Roeck <linux@roeck-us.net>
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,330,1517904000";
+   d="scan'208";a="39212707"
+Date: Mon, 19 Mar 2018 13:20:46 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: ShuFan Lee <leechu729@gmail.com>
-Cc: greg@kroah.com, heikki.krogerus@linux.intel.com, shufan_lee@richtek.com,
+Cc: greg@kroah.com, linux@roeck-us.net, shufan_lee@richtek.com,
 	cy_huang@richtek.com, jun.li@nxp.com, mats.dev.list@gmail.com,
 	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Subject: Re: [PATCH 1/2] staging: typec: rt1711h typec chip driver
-Message-ID: <20180319162617.GA17189@roeck-us.net>
+Message-ID: <20180319112046.GF11689@kuha.fi.intel.com>
 References: <1521431375-23207-1-git-send-email-leechu729@gmail.com>
  <1521431375-23207-2-git-send-email-leechu729@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1521431375-23207-2-git-send-email-leechu729@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -85,14 +85,10 @@ On Mon, Mar 19, 2018 at 11:49:34AM +0800, ShuFan Lee wrote:
 > 
 > Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
 
-No additional feedback on top of Heikki's comments.
+Looks OK to me. I'll put a few nitpics below in case you make one more
+version for some other reason. In any case:
 
-As we get more drivers, it might make sense to provide an
-API function for rt1711h_check_revision(), or even have
-tcpci_register_port() validate vendor and product IDs.
-But I think for now we are good.
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 > ---
 >  drivers/staging/typec/Kconfig         |   8 +
@@ -260,6 +256,9 @@ Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > +
 > +	return rt1711h_write8(chip, RT1711H_RTCTRL8,
 > +			      RT1711H_RTCTRL8_SET(0, 1, enable ? 0 : 1, 2));
+
+RT1711H_RTCTRL8_SET(0, 1, !enable, 2)
+
 > +}
 > +
 > +static int rt1711h_start_drp_toggling(struct tcpci *tcpci,
@@ -386,6 +385,9 @@ Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > +	if (ret < 0)
 > +		return ret;
 > +	if (ret != 0x29cf) {
+
+Ideally the vendor ID had a definition.
+
 > +		dev_err(&i2c->dev, "vid is not correct, 0x%04x\n", ret);
 > +		return -ENODEV;
 > +	}
@@ -393,6 +395,9 @@ Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > +	if (ret < 0)
 > +		return ret;
 > +	if (ret != 0x1711) {
+
+Ditto.
+
 > +		dev_err(&i2c->dev, "pid is not correct, 0x%04x\n", ret);
 > +		return -ENODEV;
 > +	}
@@ -478,6 +483,8 @@ Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > +MODULE_AUTHOR("ShuFan Lee <shufan_lee@richtek.com>");
 > +MODULE_DESCRIPTION("RT1711H USB Type-C Port Controller Interface Driver");
 > +MODULE_LICENSE("GPL");
-> -- 
-> 1.9.1
-> 
+
+Thanks,
+
+-- 
+heikki
