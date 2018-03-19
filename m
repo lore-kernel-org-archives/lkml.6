@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3827928-1521495588-2-7361726176550156549
+X-Cyrus-Session-Id: sloti22d1t05-3827995-1521495563-2-15064560091898927495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,66 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521495588; b=e6CGgdLB0Q2WcuW0rOa9uPGlwW0kqj7+Fn48bS3pAdeatKD
-    PvHuT7xcp+SY8piFMKaFaQ2u1rkhGfVdRXm+NR3/CWz1cgJlI1VmwovfAtGlUTAR
-    L019XSTb/DKBOdP1k7lUkt/orG3xn4V1Kqj1hjJcwPToqaeXbmZjbOWFv5MGwNWm
-    aHWOMF73KQpT7hCS3SP+BofFtlYcB7IdddJo3yVtllg5RzvV2YjkrRJil5+Kfllf
-    YPrJQsH+VWy/1fQBhu2/i7UqWqhE1aksO5k3Rf5BZ7DqHar2w1sYwa58/YqaSH95
-    F589Ku+LrvrIgQxymDCWhsHIbAceQnixdD7uL4w==
+    t=1521495563; b=lMpt/q2DqkdcK4INK+/1NDVzxYX7+voYgtlbYHuqssXfy3w
+    iMO/SDDV6y54MeK9jjPUQNF3Yaim+VQaUEPZJ3h/uth8bobWIE5TgGd027g2H63M
+    l8rbb4z9932JDeLFv+CkA5uPziYSyQ9r3sAnX9DU3CVnGQwIoq53JoWzo81pgDlq
+    AM6Uv4DYvT9tfQH0g9y/RMz6/tnTn2sZb4cza/3vK0+8F5gBf26S8qfEfCBuz8q8
+    TZqh5HND6r7je5ChovdJ+HduXmvKdhcBoXlVlVu+Xsg6gleBXevXwkyyhRQxCfKc
+    ohfD281yQ8t7ZAvGY+PUAVFdmOLYDM1ltlZpL/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521495588; bh=IZi6jS
-    OY8NLAe/hyJhlvWYWNjTRzntqfNMmMwrz/mAA=; b=a7xgH4NFfdMSIvoEnYx9th
-    WGCe3gLOnh2l+VHwwOV6E03vOg4lwCt9gK6nxJ51q98zA77tf0JfnOwGevozPcnC
-    QJ5hQG6XA2/a/Y++HiRrqJgAmMAGaa8RFkguS3yERmXgWxmqz/YX5heI0VD8UCUR
-    TPNTYlP3l3oMZNk7RBzkbAiboJRu5Xt6YZRnjP8hX6n8sMnszQlG9o10P/5szJ4o
-    CtuvLZHGm/61pmKsC71nzv1ROIKnXh+By8YWg8jhcCXSiNdRFJPySqg714h3Pib4
-    2XNeKBhRKrSMSRt5+gwtZF4rTYRUaGBwctNTy2VHSesKTMlkcmqgemZG3nIID/fg
+    :mime-version:sender:list-id; s=arctest; t=1521495563; bh=XPH04w
+    VMNXf+RwnvFtd+zvagxiIoDUlRnm/QXq3theU=; b=ERiU7OSAdhKyyZYY4MWsCM
+    B1kcnUTQNNbhWdzLSL666bxEoqzKMLY3LYV4bOdHIwfvFFlA/BXk34MFAXQJZ1co
+    QFYfwmf7p8C/fAozBj7tGda0f/Ritx4JfLGfQ3d3DgeyTVBWL83tUuqIEupM2OA1
+    Wzmt0OLrKNney7pBlR7ZbmU/HYYjL28x/0uyfk+ygq/xmELSmymGyPE24xq1IZPw
+    /+nFjdpFpFNFlX/MOwvp3wp/2v9Sh0cbowYuL3KyOAhgZwwDactkmNMNdIVYGvA0
+    ABrsG0qOqf0rDe1gJq14AXrVhyDn8W/aKGWADLi8esNr5KG/L2jHISdSKT+EB3oA
     ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=S7twC1ok x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aDDs/4KJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeejleenucevlhhushhtvghrufhiiigvpeegud;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeeguddvnecuvehluhhsthgvrhfuihiivgeptd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=S7twC1ok x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aDDs/4KJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeejleenucevlhhushhtvghrufhiiigvpeegud;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeeguddvnecuvehluhhsthgvrhfuihiivgeptd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965217AbeCSVjY (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:39:24 -0400
-Received: from mail-sn1nam02on0139.outbound.protection.outlook.com ([104.47.36.139]:23168
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S964859AbeCSP7O (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:59:14 -0400
+Received: from mail-by2nam01on0118.outbound.protection.outlook.com ([104.47.34.118]:14025
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965067AbeCSP7P (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:59:15 -0400
+        id S965047AbeCSP7J (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:59:09 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+CC: MaJun <majun258@huawei.com>, Hanjun Guo <hanjun.guo@linaro.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 043/281] PowerCap: Fix an error code in
- powercap_register_zone()
-Thread-Topic: [PATCH AUTOSEL for 4.9 043/281] PowerCap: Fix an error code in
- powercap_register_zone()
-Thread-Index: AQHTv5smZ/zdvrf0E0mBmyBZaNDuHg==
-Date: Mon, 19 Mar 2018 15:58:41 +0000
-Message-ID: <20180319155742.13731-43-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 037/281] irqchip/mbigen: Fix the clear
+ register offset calculation
+Thread-Topic: [PATCH AUTOSEL for 4.9 037/281] irqchip/mbigen: Fix the clear
+ register offset calculation
+Thread-Index: AQHTv5siAnk9DXECuUyaVkFohBHn/g==
+Date: Mon, 19 Mar 2018 15:58:34 +0000
+Message-ID: <20180319155742.13731-37-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,70 +81,93 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:mcaYvhNpEb1PHnQNfZ23yj6IyRcjNnfHEZiADcPvdeEACgWXcMB7zp0EOQ5UKkoZHspKsAaZBYq8MAS1vOKD2418c8vrwvHih6UVlskp3gATS2luDqvJmLtqlS2NHyqOZbdUhu0T0Ul4kB5uO/KC0W7dINCnqUmJVknDx3VSr38Bgq4OynOAb3MrYfbB5g8O1EfC5pdkjz6n7SPrmvwy3TUmdur3Jn47amjRYkdAiqgBWKwlXGB/AGMNCjnM8d0q;20:rD6qQ920/80XPtwe8VlPNzvH1XEtd4z0UlD7jZ+iB2HQphbIKyeTWrh+/6BG8xWJ8U45iZ69nrS3pDlaXTKGpUsBbKr2lzrg0uA8KNOpcTTyU7c05LcnrJ7tSS/D+vSP5fitj30J+soE5rADGr6zG6PsuDTgyP5+Qgm56opkrqU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;7:ze2hcy6hw77Fk0zWtoXe1uIBFpty72qHdUMSXwBPMrd3WbAuYpvhDeleEZH9HKPJYNJW+MJEK2zlSAUO3z79kiWg+1kJpG1kzzVW1VVX3GzcXWE0BWcUuBdvE5mSchv3fQG1zgPtiQjdq4RfErTcN9p00pnFlDnm2joPK7r46R9FBi8OfbdgY4pJZEkXw95HL4gFfRz5gNMGKX764SEA2oPE4iqXN4CmsshvDFe/sZ95PtJOO0DZC/yjeNZZu2b5;20:kODt1CZJGsxiuadSjvUaQKzXZwmoxtHWvd2jsagUQxEmRmIvPkyLGtejFpzF5usx8xtWyst5NmbRev6bhCs1iGttGUrG539wgTSNPdmsrEuCnrZJwkpP1ZUY5Xtnt7yueQsUn7ci8/FFAoL3pTgTxQbXY2gMMh+B2NpuZltRBWA=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1ac41059-e578-43c4-8fed-08d58db25bd0
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
-x-ms-traffictypediagnostic: DM5PR2101MB1015:
+x-ms-office365-filtering-correlation-id: 910deda1-1311-4314-4ed7-08d58db254f3
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0726;
+x-ms-traffictypediagnostic: DM5PR2101MB0726:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1015CDFEE3EC65516FCC4684FBD40@DM5PR2101MB1015.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
+x-microsoft-antispam-prvs: <DM5PR2101MB072669A1B1D6BDCA64533AB4FBD40@DM5PR2101MB0726.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(50582790962513)(42068640409301);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39380400002)(39860400002)(366004)(189003)(199004)(97736004)(72206003)(4326008)(99286004)(2900100001)(1076002)(186003)(10290500003)(36756003)(25786009)(66066001)(86612001)(102836004)(54906003)(110136005)(575784001)(26005)(86362001)(53936002)(5660300001)(6512007)(14454004)(478600001)(106356001)(107886003)(316002)(2950100002)(6666003)(22452003)(6506007)(7736002)(3280700002)(3660700001)(305945005)(8936002)(2906002)(6116002)(3846002)(6436002)(68736007)(2501003)(5250100002)(6486002)(10090500001)(76176011)(8676002)(81156014)(105586002)(81166006)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 7dnOyl+/nKg2UVKJeRvPLrKxGj6JtjgsP+Hc+QcJu19zYmf9MYAj11Nm8pmho4MgfdWp/FVwD7TwzwU5P2YB1U07O5VDLBSgEo8lYg3WyXzG7taGyYH2QKO60BqBHlsDL/3gvu94Kw7Bc9yA5cR1fJKNkAd7nboOSz5uCnmAYsgs3M1SGIMTp8RwbuJQ6FKILyH+LgJGg8yDfCU3S8POawtHxLRZnn/vaOWIEh+oFt4P/xKTODcEsH7gd9RPxBSampa4c3mWvJemfIWRL6+3JtJYmvvit4LTzSXgRDLtrzSg/FzIlXf7lAko8MfzaPvHm0zkZGFzK/PZfmySsF+XsA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(39380400002)(396003)(366004)(376002)(199004)(54534003)(189003)(6666003)(81166006)(22452003)(2906002)(3660700001)(10090500001)(102836004)(53936002)(26005)(316002)(14454004)(2950100002)(97736004)(54906003)(86362001)(575784001)(76176011)(110136005)(99286004)(105586002)(7736002)(10290500003)(66066001)(966005)(478600001)(5660300001)(86612001)(6512007)(81156014)(36756003)(305945005)(6506007)(6486002)(6436002)(72206003)(2900100001)(2501003)(5250100002)(59450400001)(186003)(1076002)(3846002)(25786009)(6306002)(106356001)(8676002)(4326008)(8936002)(6116002)(3280700002)(68736007)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: yUgtH64TPBPXW59vf3WSJbM4w5BCyXFuBl4/L76Vvr3rFtkScIojzHLD+Qbrfcj7wguUGF1cYE+pQg3Fc8M7UdqJRuxSENk/ro+XnNnviFqbj/TKx8AImD3Hn9rV+MG50Irwq/UJPI8wTkugqhY3OnwHucoOJmt22w9FtOIYUBN3h6VGW0C2a6aAYCEM2lnITPROwXuwKIP19eIotR7pTndEfPDU/72yAeBOsxpe8hzVBo+c0Cibflm/+bALNAvnHnQ/aeTX/E8vNryCQHtrYTbVKEA1QAfWYcGS5Xc5W0MSVBOv+GiqpFr5cUnZH2hPxEj4chcg1xisFJfxy/TfZA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ac41059-e578-43c4-8fed-08d58db25bd0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:41.3136
+X-MS-Exchange-CrossTenant-Network-Message-Id: 910deda1-1311-4314-4ed7-08d58db254f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:34.0883
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: MaJun <majun258@huawei.com>
 
-[ Upstream commit 216c4e9db4c9d1d2a382b42880442dc632cd47d9 ]
+[ Upstream commit 9459a04b6a5a09967eec94a1b66f0a74312819d9 ]
 
-In the current code we accidentally return the successful result from
-idr_alloc() instead of a negative error pointer.  The caller is looking
-for an error pointer and so it treats the returned value as a valid
-pointer.
+The register array offset for clearing an interrupt is calculated by:
 
-This one might be a bit serious because if it lets people get around the
-kernel's protection for remapping NULL.  I'm not sure.
+    offset =3D (hwirq - RESERVED_IRQ_PER_MBIGEN_CHIP) / 32;
 
-Fixes: 75d2364ea0ca (PowerCap: Add class driver)
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This is wrong because the clear register array includes the reserved
+interrupts. So the clear operation ends up in the wrong register.
+
+This went unnoticed so far, because the hardware clears the real bit
+through a timeout mechanism when the hardware is configured in debug
+mode. That debug mode was enabled on early generations of the hardware, so
+the problem was papered over.
+
+On newer hardware with updated firmware the debug mode was disabled, so the
+bits did not get cleared which causes the system to malfunction.
+
+Remove the subtraction of RESERVED_IRQ_PER_MBIGEN_CHIP, so the correct
+register is accessed.
+
+[ tglx: Rewrote changelog ]
+
+Fixes: a6c2f87b8820 ("irqchip/mbigen: Implement the mbigen irq chip operati=
+on functions")
+Signed-off-by: MaJun <majun258@huawei.com>
+Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: linuxarm@huawei.com
+Cc: Wei Yongjun <weiyongjun1@huawei.com>
+Link: http://lkml.kernel.org/r/1494561328-39514-4-git-send-email-guohanjun@=
+huawei.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/powercap/powercap_sys.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/irqchip/irq-mbigen.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sy=
-s.c
-index 14bde0db8c24..5b10b50f8686 100644
---- a/drivers/powercap/powercap_sys.c
-+++ b/drivers/powercap/powercap_sys.c
-@@ -538,6 +538,7 @@ struct powercap_zone *powercap_register_zone(
+diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+index 03b79b061d24..05d87f60d929 100644
+--- a/drivers/irqchip/irq-mbigen.c
++++ b/drivers/irqchip/irq-mbigen.c
+@@ -105,10 +105,7 @@ static inline void get_mbigen_type_reg(irq_hw_number_t=
+ hwirq,
+ static inline void get_mbigen_clear_reg(irq_hw_number_t hwirq,
+ 					u32 *mask, u32 *addr)
+ {
+-	unsigned int ofst;
+-
+-	hwirq -=3D RESERVED_IRQ_PER_MBIGEN_CHIP;
+-	ofst =3D hwirq / 32 * 4;
++	unsigned int ofst =3D (hwirq / 32) * 4;
 =20
- 	power_zone->id =3D result;
- 	idr_init(&power_zone->idr);
-+	result =3D -ENOMEM;
- 	power_zone->name =3D kstrdup(name, GFP_KERNEL);
- 	if (!power_zone->name)
- 		goto err_name_alloc;
+ 	*mask =3D 1 << (hwirq % 32);
+ 	*addr =3D ofst + REG_MBIGEN_CLEAR_OFFSET;
 --=20
 2.14.1
