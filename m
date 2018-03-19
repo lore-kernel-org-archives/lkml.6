@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtQhPRgN2BAQbyIpz6T96kJRLxuHXK0sBGxLY6HOqyzsd7T7izKwmRXiY4WBuKkc+yOEQoy
-ARC-Seal: i=1; a=rsa-sha256; t=1521484164; cv=none;
+X-Google-Smtp-Source: AG47ELuPcYor5neN7nOzqfNO1X2VgYxraEazFxW14oan5g3GgPiqDf4O6kudjBQPma+C9xj0QC8W
+ARC-Seal: i=1; a=rsa-sha256; t=1521484162; cv=none;
         d=google.com; s=arc-20160816;
-        b=tbvJzGmbbz27U7o1oEOyB6lpMSF0shmRo4RoxP1WufsaWWXqa0gWkp3ZeE/Atgu2fX
-         jYTM7Wuw89JxtJg1+2zHoC9pWCCThAIwVR2Y8TVaw4LMI4fNvZqejUR8lrK/YRSDIZf/
-         A+NBSgNKHnFe/6OPK8gwWv3sfaoexzxNOAYWCI75ATByj1DN2SzjWiKcXSczqyHaBxkn
-         80mnsWpEfKdEG5CfOplYwtvyGtORtfuq50Ds1DTJ5uezNjMBGHAwM5caq4X2vmepp5n5
-         ESbecljANMcy0R3yCONDE8lSTZ5ofX58s89WBV0azO9PacncIHHLbZJhPagr+C7LOgX6
-         wN9w==
+        b=kNUz7iJRwHPeScG/vVouf/Ca0BnKVGTZAqRgbMNFCSPtUOSHNSjgNVCn5gGHxFWGKm
+         n3X7ShYxDEcGnFzV9VaemaxocxjnoMrMTRco2A6U2J6SDh8tmFYuzW0/KPcM8RNSEYQL
+         XRbyiq4co4wFclawHylSMiGuwUjyME2Q4GMrvkXjEp78jQqIH571EoFHvalvNNDp1ccK
+         KW5CcbfYy325EOyeWYSbajqKDW7DTYpqhBL35scOtTD0o+UHyAwUcQYUqGEKRR/DimiA
+         UiuetDMZJkpBhLTMnI4DOCCnEtXvtE99sdXO4I8VkTSrTdC7PvjSoo4i5kt5nn5W3gl9
+         IlPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vBgXIMR00nQh3ewO4hOlwShre67GA2/2meRv/5uGsC0=;
-        b=FjiuwsGEfhS68vnK4uNL9cRZ8N2jnwJ7ra5tmckprjOGx1zjqspTAGonR3N2GZzL/H
-         XwyVDajOhXWa4kM7SA3mOaZ+XLvckz/M5hNeBfhTRXawGgTh2wGr/SIj9Q4lOvBJG/cD
-         fMVH4urkh82aSjmfiDEO4qgNITm5yLYFkSM2Bj24Gaf1XAIFi3YHUPkGTCCBuDr1i6Kd
-         BKdelGmVnyoLKPqmdnygBb8y9Y/aeJXW8ZnKO3gfh99un8AgR4MNmR8Y1ijuvPCQbpGd
-         CEdSpRyckPvyMnzYaQwRnuIj3pYaf+7ErEm/Pwu367oJbCBGZqNVYETFfHev05wZcv02
-         4ESw==
+        bh=0jGjX/TxaCCk8QD/P8XsOysdk8MAJ/F2v9LUGfvW4So=;
+        b=Qxfa1gOCnA8+l8isbGgqV59nEyo1GypSdxVa9ASrRkEOqih/hiuFJOss0QxNNq2g9A
+         bJyn3bggcbjC60+r2PDkynzOku2kDehQRi94DwN48zVxoAol7/bSTsZnpsZbhTA6UjrA
+         PQcF4SQhU7QNthCI5FinM6CwxWmwxyyNb+CX0hi1RdOf63nkWynEtCLDTtB8xdbSh4wX
+         tsks3E18LLdxOANPf9wR5YtugqX4Nu9nUjpYXxpcCiYQ0KIcjmMsWsVQxSnzueGZqlLX
+         xrqlaL3BZvrpa3i/4fPT9+fxYU7+t68IIKnHS+FBM0DSlqSEEP4laOWgmkP/t5riklEz
+         v+BA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
+	syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 14/41] ALSA: hda - Revert power_save option default value
-Date: Mon, 19 Mar 2018 19:08:14 +0100
-Message-Id: <20180319180733.158794628@linuxfoundation.org>
+Subject: [PATCH 4.14 13/41] ALSA: pcm: Fix UAF in snd_pcm_oss_get_formats()
+Date: Mon, 19 Mar 2018 19:08:13 +0100
+Message-Id: <20180319180733.068995288@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391067718842348?=
-X-GMAIL-MSGID: =?utf-8?q?1595391779470136198?=
+X-GMAIL-THRID: =?utf-8?q?1595390642761119786?=
+X-GMAIL-MSGID: =?utf-8?q?1595391776271314015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 40088dc4e1ead7df31728c73f5b51d71da18831d upstream.
+commit 01c0b4265cc16bc1f43f475c5944c55c10d5768f upstream.
 
-With the commit 1ba8f9d30817 ("ALSA: hda: Add a power_save
-blacklist"), we changed the default value of power_save option to -1
-for processing the power-save blacklist.
-Unfortunately, this seems breaking user-space applications that
-actually read the power_save parameter value via sysfs and judge /
-adjust the power-saving status.  They see the value -1 as if the
-power-save is turned off, although the actual value is taken from
-CONFIG_SND_HDA_POWER_SAVE_DEFAULT and it can be a positive.
+snd_pcm_oss_get_formats() has an obvious use-after-free around
+snd_mask_test() calls, as spotted by syzbot.  The passed format_mask
+argument is a pointer to the hw_params object that is freed before the
+loop.  What a surprise that it has been present since the original
+code of decades ago...
 
-So, overall, passing -1 there was no good idea.  Let's partially
-revert it -- at least for power_save option default value is restored
-again to CONFIG_SND_HDA_POWER_SAVE_DEFAULT.  Meanwhile, in this patch,
-we keep the blacklist behavior and make is adjustable via the new
-option, pm_blacklist.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
-Fixes: 1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+Reported-by: syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/core/oss/pcm_oss.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -181,11 +181,15 @@ static const struct kernel_param_ops par
- };
- #define param_check_xint param_check_int
- 
--static int power_save = -1;
-+static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
- module_param(power_save, xint, 0644);
- MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
- 		 "(in second, 0 = disable).");
- 
-+static bool pm_blacklist = true;
-+module_param(pm_blacklist, bool, 0644);
-+MODULE_PARM_DESC(pm_blacklist, "Enable power-management blacklist");
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -1762,10 +1762,9 @@ static int snd_pcm_oss_get_formats(struc
+ 		return -ENOMEM;
+ 	_snd_pcm_hw_params_any(params);
+ 	err = snd_pcm_hw_refine(substream, params);
+-	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
+-	kfree(params);
+ 	if (err < 0)
+-		return err;
++		goto error;
++	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
+ 	for (fmt = 0; fmt < 32; ++fmt) {
+ 		if (snd_mask_test(format_mask, fmt)) {
+ 			int f = snd_pcm_oss_format_to(fmt);
+@@ -1773,7 +1772,10 @@ static int snd_pcm_oss_get_formats(struc
+ 				formats |= f;
+ 		}
+ 	}
+-	return formats;
 +
- /* reset the HD-audio controller in power save mode.
-  * this may give more power-saving, but will take longer time to
-  * wake up.
-@@ -2300,10 +2304,9 @@ static int azx_probe_continue(struct azx
++ error:
++	kfree(params);
++	return err < 0 ? err : formats;
+ }
  
- 	val = power_save;
- #ifdef CONFIG_PM
--	if (val == -1) {
-+	if (pm_blacklist) {
- 		const struct snd_pci_quirk *q;
- 
--		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
- 		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
- 		if (q && val) {
- 			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
+ static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
