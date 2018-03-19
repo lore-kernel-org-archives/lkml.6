@@ -1,157 +1,187 @@
-Return-Path: <toshi.kani@hpe.com>
-X-Google-Smtp-Source: AG47ELuXN3UEDAQ0HVP080YwKpNez1ixB6+WCl1akTIDnimZb5Hl6dli6GB/TtQQ/6o9eqILdTle
-ARC-Seal: i=1; a=rsa-sha256; t=1521211845; cv=none;
+Return-Path: <cpandya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELuOHTS8xURRjPXJvNKs7IxtwOqddYGKN82KriU7wvpN60voixG6kpRRqSb5WrflBjpUqnDJ
+ARC-Seal: i=1; a=rsa-sha256; t=1521433589; cv=none;
         d=google.com; s=arc-20160816;
-        b=NY3+biFhAdDfnYf1sKeTBZufxYIbg4HuqNJQ1W580e03EmWl34foMT6XecPe7cnvAQ
-         ZQVe/ufunckmoHnJ5E4eoDgIc+mb85HZy8RvZl0u7zuM56d0xFJchZ6pkYsxDy96oP76
-         rJxahSPJUO7pCeF7wy0Ho3zhat5xnCuLOIkWRbk30R3JkxzLrdm9OK2O+3exiPIO5Fx+
-         qLWz90LA2QeQbeSMj6lCcfl4ZIIut316xhTwKEMgWIUdRR8dT3eqsIkgDA/95tNmc34E
-         9mXZfadlc6bqZW5v9vMI1nBtGwIvjPMJ1OlWD3/bmNaw+suaHIbVswVQJNSS8dz71ti3
-         S7xA==
+        b=JawI4jk/505WeEQXWMUmjMjy2YjRT2RSmFr0Z2ZTMkBd/1zzK9T1RNIEIntTNoqA8U
+         ITj6gup+X9krZ2q0fdqVgNZWIfCCp9J/kpPehAqs4Mt52fwjde3RwewQM055hgV5wCD3
+         ry8PxhytsmFIJXbrgC3VGK12Gyyt5uysGgqmaWpHVpvXsg25vbpblqvmHM5yVaOnD7wB
+         psJZkhTTWhJQXjY8VTle69sQJ/v5tjcrosFyrUOmhUm4JzR1X0Mice2biQ3w4NRnJo+E
+         uqETSRt/r3bmfjapQE1AE9uHBwtCeoWwBR3/Rlf9pNKSXqvK6ejDFzKd9m9AOwwuumS5
+         d/Aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=Gkc8IY3YyOze/YNEx4ZVUwYNwAdVC116dUQWCsV9XSg=;
-        b=fG984Gon7rwhcefNuxTnbPDw0IHtej5iJK9cwwYxEH4a0RUqCQ8rsg/7UYqFrJUqBZ
-         ZUPxDCKasI8YGe2Od0S7gFAvdWetfVqQ3dMt5N7i43meBopOKRkQqg6WvUSGcHGQ7+1X
-         UMFrY8dqKoaoqRBylvAn8+VHaVHiu0uggCPnCE+TuqIhUdKFrw+iQLBocuWGEbkTtmaO
-         yVy9QHqQlYKGJTFKcVdUSRX/2GQusNigjgsqTZGyYKJAKeawsRBHJwO0He716ztJKN4F
-         qi2SIDxp0z/9Znh4Wt1T67rhGTKSwNU1jB6/zCwTj1sROt006DpZRDt6qP0m6R6uim//
-         2dDw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=26m/XDGyfyEk+pbrT980An4RUVlBi4LGZnTM8x+k/Js=;
+        b=xW1MiaxKIHg/aBoMKv510aSaRjFFDXtW+uTiBq4B12Zo7Cq9T2TZ/zz24ZryfsR97B
+         FGoXpi6TQfc3MVazqFNmb860h5Kw4LCv/Q2RjvqZk8w1fmbiOkdVoENGa2vUlPspuMxc
+         LzHOaJDjLUK9YW5HmhYzK9Gh9vX82LmN7MFEkGsti37iO/bVl2/FmKJL2jtweZ0K4ZsY
+         ORTG0CRovco+LJp246MECsn+KJHpdlJIHUJyPOG57t8Yb+KnY5pjOqO6qb+InpdbM6Bv
+         4xIgHHXhGzHoC7INLKXTWDe19pmdx2Pz79UFR6M7I5iCgZ8whBc+NZXLFjPVQAFgjyNO
+         CfLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of toshi.kani@hpe.com designates 15.241.48.73 as permitted sender) smtp.mailfrom=toshi.kani@hpe.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=db4hOQ71;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=aEI6zlil;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of toshi.kani@hpe.com designates 15.241.48.73 as permitted sender) smtp.mailfrom=toshi.kani@hpe.com
-From: "Kani, Toshi" <toshi.kani@hpe.com>
-To: "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com"
-	<will.deacon@arm.com>, "arnd@arndb.de" <arnd@arndb.de>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "takahiro.akashi@linaro.org"
-	<takahiro.akashi@linaro.org>, "james.morse@arm.com" <james.morse@arm.com>,
-	"kristina.martsenko@arm.com" <kristina.martsenko@arm.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "marc.zyngier@arm.com"
-	<marc.zyngier@arm.com>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=db4hOQ71;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=aEI6zlil;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4670160314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
 Subject: Re: [PATCH v2 2/4] ioremap: Implement TLB_INV before huge mapping
-Thread-Topic: [PATCH v2 2/4] ioremap: Implement TLB_INV before huge mapping
-Thread-Index: AQHTvFuW/H5D66EiPUqborstpx0HBaPReDQAgAEDIICAAHg+gA==
-Date: Fri, 16 Mar 2018 14:50:42 +0000
-Message-ID: <1521211837.2693.187.camel@hpe.com>
+To: "Kani, Toshi" <toshi.kani@hpe.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "takahiro.akashi@linaro.org" <takahiro.akashi@linaro.org>,
+ "james.morse@arm.com" <james.morse@arm.com>,
+ "kristina.martsenko@arm.com" <kristina.martsenko@arm.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
 References: <1521117906-20107-1-git-send-email-cpandya@codeaurora.org>
-	 <1521117906-20107-3-git-send-email-cpandya@codeaurora.org>
-	 <1521130368.2693.177.camel@hpe.com>
-	 <0cec2b79-1668-68d1-32db-531f5a8a9db2@codeaurora.org>
-In-Reply-To: <0cec2b79-1668-68d1-32db-531f5a8a9db2@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=toshi.kani@hpe.com;
-x-originating-ip: [15.203.227.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DF4PR8401MB0585;7:nS4z4oQoH0ncxll6yRuK5R16aJChSANJ4m6vdSb7WWG0MYFs5h1OI6Uu4TauD3VW3uhR4lGrhpna2vdXj5PYZncoTd/V/MpoI66PUlCFuxteWh1/dI6T780gtWd4IEyz9LURquYKihpFi3QdjRqUxcwkReU9GFe7FqXJS5EsXlxbmuNcsIbgsyZJm+uk6wnhSbvOjRDBo2AkVp4/PhFvfiJCUjojQ8FjaOMZjpjbONN3oAYkvmiKJOuexvf6SWWK
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 65ed1715-ce46-4dc0-cd33-08d58b4d4acc
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989060)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:DF4PR8401MB0585;
-x-ms-traffictypediagnostic: DF4PR8401MB0585:
-x-microsoft-antispam-prvs: <DF4PR8401MB0585294BAF0AF0FA3843E82182D70@DF4PR8401MB0585.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:DF4PR8401MB0585;BCL:0;PCL:0;RULEID:;SRVR:DF4PR8401MB0585;
-x-forefront-prvs: 0613912E23
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(376002)(39380400002)(346002)(199004)(377424004)(189003)(86362001)(68736007)(105586002)(6486002)(4326008)(3280700002)(76176011)(99286004)(26005)(3660700001)(2950100002)(6116002)(478600001)(97736004)(2201001)(3846002)(2906002)(14454004)(6436002)(36756003)(66066001)(2501003)(5250100002)(6246003)(25786009)(81166006)(2900100001)(7416002)(5660300001)(8676002)(6512007)(7736002)(305945005)(8936002)(106356001)(81156014)(102836004)(110136005)(103116003)(54906003)(6506007)(53546011)(93886005)(186003)(316002)(53936002)(229853002)(14583001);DIR:OUT;SFP:1102;SCL:1;SRVR:DF4PR8401MB0585;H:DF4PR8401MB0396.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: cXSbgE8DZnREOfbx8bpJT6SekDlZUPc2NEPLNG+bnsMZkRvP0ndz+qOkkrKjUjH8Xk26RFr4yjLGqyRm7UM0MLoXXrDgYRM3Tu7gzinKbqRRK61nj0E7R4Nm9sQ3ZfGtFRMMOVDd6dXVDrz+X1ulSpT4FQo7cH3gcYqykgMnb0vNyWZHR2tY8wa85ZKqHQ1oenhGEUhE8idMVsoHn/nxIsgTz4Dxg7S/ADxIQ+LYhBXNDFu9yYLxJrMWhnF4Y8lhbnp4JU/ZzCWeTz3cRFEel8RhbX3wwXXJnBe1ME3j1drqrc3cYYwWCMAksDIRM0j4eSw0gGwrreSU+/44TsmZBg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E5223E06372499429F6515DDC7FDBEC5@NAMPRD84.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+ <1521117906-20107-3-git-send-email-cpandya@codeaurora.org>
+ <1521130368.2693.177.camel@hpe.com>
+ <0cec2b79-1668-68d1-32db-531f5a8a9db2@codeaurora.org>
+ <1521211837.2693.187.camel@hpe.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <471d5888-af4d-6c37-8e8d-097879fd8c82@codeaurora.org>
+Date: Mon, 19 Mar 2018 09:56:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ed1715-ce46-4dc0-cd33-08d58b4d4acc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2018 14:50:42.5846
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DF4PR8401MB0585
-X-OriginatorOrg: hpe.com
+In-Reply-To: <1521211837.2693.187.camel@hpe.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595007763353693659?=
-X-GMAIL-MSGID: =?utf-8?q?1595106232276896451?=
+X-GMAIL-MSGID: =?utf-8?q?1595338747534236800?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gRnJpLCAyMDE4LTAzLTE2IGF0IDEzOjEwICswNTMwLCBDaGludGFuIFBhbmR5YSB3cm90ZToN
-Cj4gDQo+IE9uIDMvMTUvMjAxOCA5OjQyIFBNLCBLYW5pLCBUb3NoaSB3cm90ZToNCj4gPiBPbiBU
-aHUsIDIwMTgtMDMtMTUgYXQgMTg6MTUgKzA1MzAsIENoaW50YW4gUGFuZHlhIHdyb3RlOg0KPiA+
-ID4gSHVnZSBtYXBwaW5nIGNoYW5nZXMgUE1EL1BVRCB3aGljaCBjb3VsZCBoYXZlDQo+ID4gPiB2
-YWxpZCBwcmV2aW91cyBlbnRyaWVzLiBUaGlzIHJlcXVpcmVzIHByb3Blcg0KPiA+ID4gVExCIG1h
-aW50YW5hbmNlIG9uIHNvbWUgYXJjaGl0ZWN0dXJlcywgbGlrZQ0KPiA+ID4gQVJNNjQuDQo+ID4g
-PiANCj4gPiA+IEltcGxlbnQgQkJNIChicmVhay1iZWZvcmUtbWFrZSkgc2FmZSBUTEINCj4gPiA+
-IGludmFsaWRhdGlvbi4NCj4gPiA+IA0KPiA+ID4gSGVyZSwgSSd2ZSB1c2VkIGZsdXNoX3RsYl9w
-Z3RhYmxlKCkgaW5zdGVhZA0KPiA+ID4gb2YgZmx1c2hfa2VybmVsX3JhbmdlKCkgYmVjYXVzZSBp
-bnZhbGlkYXRpbmcNCj4gPiA+IGludGVybWVkaWF0ZSBwYWdlX3RhYmxlIGVudHJpZXMgY291bGQg
-aGF2ZQ0KPiA+ID4gYmVlbiBvcHRpbWl6ZWQgZm9yIHNwZWNpZmljIGFyY2guIFRoYXQncyB0aGUN
-Cj4gPiA+IGNhc2Ugd2l0aCBBUk02NCBhdCBsZWFzdC4NCj4gPiA+IA0KPiA+ID4gU2lnbmVkLW9m
-Zi1ieTogQ2hpbnRhbiBQYW5keWEgPGNwYW5keWFAY29kZWF1cm9yYS5vcmc+DQo+ID4gPiAtLS0N
-Cj4gPiA+ICAgbGliL2lvcmVtYXAuYyB8IDI1ICsrKysrKysrKysrKysrKysrKystLS0tLS0NCj4g
-PiA+ICAgMSBmaWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+
-ID4gPiANCj4gPiA+IGRpZmYgLS1naXQgYS9saWIvaW9yZW1hcC5jIGIvbGliL2lvcmVtYXAuYw0K
-PiA+ID4gaW5kZXggNTRlNWJiYS4uNTVmODY0OCAxMDA2NDQNCj4gPiA+IC0tLSBhL2xpYi9pb3Jl
-bWFwLmMNCj4gPiA+ICsrKyBiL2xpYi9pb3JlbWFwLmMNCj4gPiA+IEBAIC0xMyw2ICsxMyw3IEBA
-DQo+ID4gPiAgICNpbmNsdWRlIDxsaW51eC9leHBvcnQuaD4NCj4gPiA+ICAgI2luY2x1ZGUgPGFz
-bS9jYWNoZWZsdXNoLmg+DQo+ID4gPiAgICNpbmNsdWRlIDxhc20vcGd0YWJsZS5oPg0KPiA+ID4g
-KyNpbmNsdWRlIDxhc20tZ2VuZXJpYy90bGIuaD4NCj4gPiA+ICAgDQo+ID4gPiAgICNpZmRlZiBD
-T05GSUdfSEFWRV9BUkNIX0hVR0VfVk1BUA0KPiA+ID4gICBzdGF0aWMgaW50IF9fcmVhZF9tb3N0
-bHkgaW9yZW1hcF9wNGRfY2FwYWJsZTsNCj4gPiA+IEBAIC04MCw2ICs4MSw3IEBAIHN0YXRpYyBp
-bmxpbmUgaW50IGlvcmVtYXBfcG1kX3JhbmdlKHB1ZF90ICpwdWQsIHVuc2lnbmVkIGxvbmcgYWRk
-ciwNCj4gPiA+ICAgCQl1bnNpZ25lZCBsb25nIGVuZCwgcGh5c19hZGRyX3QgcGh5c19hZGRyLCBw
-Z3Byb3RfdCBwcm90KQ0KPiA+ID4gICB7DQo+ID4gPiAgIAlwbWRfdCAqcG1kOw0KPiA+ID4gKwlw
-bWRfdCBvbGRfcG1kOw0KPiA+ID4gICAJdW5zaWduZWQgbG9uZyBuZXh0Ow0KPiA+ID4gICANCj4g
-PiA+ICAgCXBoeXNfYWRkciAtPSBhZGRyOw0KPiA+ID4gQEAgLTkxLDEwICs5MywxNSBAQCBzdGF0
-aWMgaW5saW5lIGludCBpb3JlbWFwX3BtZF9yYW5nZShwdWRfdCAqcHVkLCB1bnNpZ25lZCBsb25n
-IGFkZHIsDQo+ID4gPiAgIA0KPiA+ID4gICAJCWlmIChpb3JlbWFwX3BtZF9lbmFibGVkKCkgJiYN
-Cj4gPiA+ICAgCQkgICAgKChuZXh0IC0gYWRkcikgPT0gUE1EX1NJWkUpICYmDQo+ID4gPiAtCQkg
-ICAgSVNfQUxJR05FRChwaHlzX2FkZHIgKyBhZGRyLCBQTURfU0laRSkgJiYNCj4gPiA+IC0JCSAg
-ICBwbWRfZnJlZV9wdGVfcGFnZShwbWQpKSB7DQo+ID4gPiAtCQkJaWYgKHBtZF9zZXRfaHVnZShw
-bWQsIHBoeXNfYWRkciArIGFkZHIsIHByb3QpKQ0KPiA+ID4gKwkJICAgIElTX0FMSUdORUQocGh5
-c19hZGRyICsgYWRkciwgUE1EX1NJWkUpKSB7DQo+ID4gPiArCQkJb2xkX3BtZCA9ICpwbWQ7DQo+
-ID4gPiArCQkJcG1kX2NsZWFyKHBtZCk7DQo+ID4gDQo+ID4gcG1kX2NsZWFyKCkgaXMgb25lIG9m
-IHRoZSBvcGVyYXRpb25zIHBtZF9mcmVlX3B0ZV9wYWdlKCkgbmVlZHMgdG8gZG8uDQo+ID4gU2Vl
-IHRoZSB4ODYgdmVyc2lvbi4NCj4gPiANCj4gPiA+ICsJCQlmbHVzaF90bGJfcGd0YWJsZSgmaW5p
-dF9tbSwgYWRkcik7DQo+ID4gDQo+ID4gWW91IGNhbiBjYWxsIGl0IGluIHBtZF9mcmVlX3B0ZV9w
-YWdlKCkgb24gYXJtNjQgYXMgd2VsbC4NCj4gPiANCj4gPiA+ICsJCQlpZiAocG1kX3NldF9odWdl
-KHBtZCwgcGh5c19hZGRyICsgYWRkciwgcHJvdCkpIHsNCj4gPiA+ICsJCQkJcG1kX2ZyZWVfcHRl
-X3BhZ2UoJm9sZF9wbWQpOw0KPiA+ID4gICAJCQkJY29udGludWU7DQo+ID4gPiArCQkJfSBlbHNl
-DQo+ID4gPiArCQkJCXNldF9wbWQocG1kLCBvbGRfcG1kKTsNCj4gPiANCj4gPiBJIGRvIG5vdCB1
-bmRlcnN0YW5kIHdoeSB5b3UgbmVlZGVkIHRvIG1ha2UgdGhpcyBjaGFuZ2UuDQo+ID4gcG1kX2Zy
-ZWVfcHRlX3BhZ2UoKSBpcyBkZWZpbmVkIGFzIGFuIGFyY2gtc3BlY2lmaWMgZnVuY3Rpb24gc28g
-dGhhdCB5b3UNCj4gPiBjYW4gYWRkaXRpb25hbGx5IHBlcmZvcm0gVExCIHB1cmdlcyBvbiBhcm02
-NC4gIFBsZWFzZSB0cnkgdG8gbWFrZSBwcm9wZXINCj4gPiBhcm02NCBpbXBsZW1lbnRhdGlvbiBv
-ZiB0aGlzIGludGVyZmFjZS4gIEFuZCBpZiB5b3UgZmluZCBhbnkgaXNzdWUgaW4NCj4gPiB0aGlz
-IGludGVyZmFjZSwgcGxlYXNlIGxldCBtZSBrbm93Lg0KPiANCj4gVExCIG9wcyByZXF1aXJlIFZB
-IGF0IGxlYXN0LiBBbmQgdGhpcyBpbnRlcmZhY2UgcGFzc2VzIGp1c3QgdGhlIFBNRC9QVUQuDQoN
-CllvdSBjYW4gYWRkICdhZGRyJyBhcyB0aGUgMm5kIGFyZy4gIFN1Y2ggbWlub3IgdHdlYWsgaXMg
-ZXhwZWN0ZWQgd2hlbg0KaW1wbGVtZW50aW5nIG9uIG11bHRpcGxlIGFyY2hlcy4NCg0KPiBTZWNv
-bmQgaXMsIGlmIHdlIGNsZWFyIHRoZSBwcmV2aW91cyB0YWJsZSBlbnRyeSBpbnNpZGUgdGhlIGFy
-Y2ggc3BlY2lmaWMNCj4gY29kZSBhbmQgdGhlbiB3ZSBmYWlsIGluIHBtZC9wdWRfc2V0X2h1Z2Us
-IHdlIGNhbid0IGZhbGxiYWNrICh4ODYgY2FzZSkuDQo+IA0KPiBTbywgd2UgY2FuIGRvIHNvbWV0
-aGluZyBsaWtlIHRoaXMgKGZvbGxvd2luZyBNYXJrJ3Mgc3VnZ2VzdGlvbiksDQo+IA0KPiAJaWYg
-KGlvcmVtYXBfcG1kX2VuYWJsZWQoKSAmJg0KPiAgICAgICAgICAJKChuZXh0IC0gYWRkcikgPT0g
-UE1EX1NJWkUpICYmDQo+IAkJSVNfQUxJR05FRChwaHlzX2FkZHIgKyBhZGRyLCBQTURfU0laRSkg
-JiYNCj4gCQlwbWRfY2FuX3NldF9odWdlKHBtZCwgcGh5c19hZGRyICsgYWRkciwgcHJvdCkpIHsN
-Cj4gCQkJLyoNCj4gCQkJICogQ2xlYXIgZXhpc3RpbmcgdGFibGUgZW50cnksDQo+IAkJCSAqIElu
-dmFsaWRhdGUsDQo+IAkJCSAqIEZyZWUgdGhlIHBhZ2UgdGFibGUNCj4gCQkJICogaW5zaWRlIHRo
-aXMgY29kZQ0KPiAJCQkgKi8NCj4gCQkJcG1kX2ZyZWVfcHRlX3BhZ2UocG1kLCBhZGRyLCBhZGRy
-ICsgUE1EX1NJWkUpOw0KPiAJCQlwbWRfc2V0X2h1Z2UoLi4uKSAvL3dpdGhvdXQgZmFpbA0KPiAJ
-CQljb250aW51ZTsNCj4gCX0NCg0KVGhhdCdzIG5vdCBuZWNlc3NhcnkuICBwbWQgYmVpbmcgbm9u
-ZSBpcyBhIGxlZ2l0aW1hdGUgc3RhdGUuICBJbiBmYWN0LA0KaXQgaXMgdGhlIGNhc2Ugd2hlbiBw
-bWRfYWxsb2MoKSBhbGxvY2F0ZWQgYW5kIHBvcHVsYXRlZCBhIG5ldyBwbWQuDQoNClRoYW5rcywN
-Ci1Ub3NoaQ0K
+
+
+On 3/16/2018 8:20 PM, Kani, Toshi wrote:
+> On Fri, 2018-03-16 at 13:10 +0530, Chintan Pandya wrote:
+>>
+>> On 3/15/2018 9:42 PM, Kani, Toshi wrote:
+>>> On Thu, 2018-03-15 at 18:15 +0530, Chintan Pandya wrote:
+>>>> Huge mapping changes PMD/PUD which could have
+>>>> valid previous entries. This requires proper
+>>>> TLB maintanance on some architectures, like
+>>>> ARM64.
+>>>>
+>>>> Implent BBM (break-before-make) safe TLB
+>>>> invalidation.
+>>>>
+>>>> Here, I've used flush_tlb_pgtable() instead
+>>>> of flush_kernel_range() because invalidating
+>>>> intermediate page_table entries could have
+>>>> been optimized for specific arch. That's the
+>>>> case with ARM64 at least.
+>>>>
+>>>> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+>>>> ---
+>>>>    lib/ioremap.c | 25 +++++++++++++++++++------
+>>>>    1 file changed, 19 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/lib/ioremap.c b/lib/ioremap.c
+>>>> index 54e5bba..55f8648 100644
+>>>> --- a/lib/ioremap.c
+>>>> +++ b/lib/ioremap.c
+>>>> @@ -13,6 +13,7 @@
+>>>>    #include <linux/export.h>
+>>>>    #include <asm/cacheflush.h>
+>>>>    #include <asm/pgtable.h>
+>>>> +#include <asm-generic/tlb.h>
+>>>>    
+>>>>    #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
+>>>>    static int __read_mostly ioremap_p4d_capable;
+>>>> @@ -80,6 +81,7 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+>>>>    		unsigned long end, phys_addr_t phys_addr, pgprot_t prot)
+>>>>    {
+>>>>    	pmd_t *pmd;
+>>>> +	pmd_t old_pmd;
+>>>>    	unsigned long next;
+>>>>    
+>>>>    	phys_addr -= addr;
+>>>> @@ -91,10 +93,15 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+>>>>    
+>>>>    		if (ioremap_pmd_enabled() &&
+>>>>    		    ((next - addr) == PMD_SIZE) &&
+>>>> -		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+>>>> -		    pmd_free_pte_page(pmd)) {
+>>>> -			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+>>>> +		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
+>>>> +			old_pmd = *pmd;
+>>>> +			pmd_clear(pmd);
+>>>
+>>> pmd_clear() is one of the operations pmd_free_pte_page() needs to do.
+>>> See the x86 version.
+>>>
+>>>> +			flush_tlb_pgtable(&init_mm, addr);
+>>>
+>>> You can call it in pmd_free_pte_page() on arm64 as well.
+>>>
+>>>> +			if (pmd_set_huge(pmd, phys_addr + addr, prot)) {
+>>>> +				pmd_free_pte_page(&old_pmd);
+>>>>    				continue;
+>>>> +			} else
+>>>> +				set_pmd(pmd, old_pmd);
+>>>
+>>> I do not understand why you needed to make this change.
+>>> pmd_free_pte_page() is defined as an arch-specific function so that you
+>>> can additionally perform TLB purges on arm64.  Please try to make proper
+>>> arm64 implementation of this interface.  And if you find any issue in
+>>> this interface, please let me know.
+>>
+>> TLB ops require VA at least. And this interface passes just the PMD/PUD.
+> 
+> You can add 'addr' as the 2nd arg.  Such minor tweak is expected when
+> implementing on multiple arches.
+> 
+>> Second is, if we clear the previous table entry inside the arch specific
+>> code and then we fail in pmd/pud_set_huge, we can't fallback (x86 case).
+>>
+>> So, we can do something like this (following Mark's suggestion),
+>>
+>> 	if (ioremap_pmd_enabled() &&
+>>           	((next - addr) == PMD_SIZE) &&
+>> 		IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+>> 		pmd_can_set_huge(pmd, phys_addr + addr, prot)) {
+>> 			/*
+>> 			 * Clear existing table entry,
+>> 			 * Invalidate,
+>> 			 * Free the page table
+>> 			 * inside this code
+>> 			 */
+>> 			pmd_free_pte_page(pmd, addr, addr + PMD_SIZE);
+>> 			pmd_set_huge(...) //without fail
+>> 			continue;
+>> 	}
+> 
+> That's not necessary.  pmd being none is a legitimate state.  In fact,
+> it is the case when pmd_alloc() allocated and populated a new pmd.
+
+Alright. I'll send v3 today.
+
+> 
+> Thanks,
+> -Toshi
+> 
+
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
