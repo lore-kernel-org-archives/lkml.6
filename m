@@ -1,82 +1,78 @@
 Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1521451052; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521451051; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fc7OquUrLiqJriiyn8mFWn8MTAAwGJ8D7Wn3vA/7gykX08IoIX9njj760FVojsZEwe
-         P6NbbkU3/qW02AOsD7A7G3Y8EYcFkn3uk9U6rsSBvS06zbTrxPGqTqWMPIf/yE6OztaA
-         QQ6lX7TDIviK42Gy9vbrUo95zumI8DPaDSGLrXH2D3qZ2vH+BSrhX/QKWfaIMlFggQqv
-         grUotSxkF3jwVHty6mI3iTreMnmZeTXr8HvHWg7iy8YyWAPk49KDpInvD8PG2cWm9s3E
-         UirHugTkkT8GrjoUh+vSxT9iwOmrZlh0QygFNOXgJa9/0cS2foeJNVQIvXcDVWlvgPjv
-         wayA==
+        b=ZZB3EIA0VHRJ3jJKHbH6VmNqBsE8orJgbAMJpyYl8zsWK/O2dQZcarfkamLkp9Tc5i
+         U/FJEL1b2ls2OKuNC1XO09326Yzborc1AE5mjyOZHovLnlYaz+g+lfo+0Z7CJhikANQk
+         aGcF/K7dquo9KzJry3Fep0vJN8mP8uH9ga7bEPM8nggT3bSUhKVB9gh3/WtkL0q48Shr
+         /gb+FwikXTb/8mbaMH3HH2TaCYQmri1CC2T02xKn5+tON07Ei5aX5NGp25zQpaDc54oa
+         is5L0kF48Mb+B2o40OaKcuqn7bYG2+OTA+0VMV639Cdw6lkXtXcN8w3+RSHa3Dp+kjCc
+         NTOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=xc5v/DKfrEPeCKkcFcZKhc/8WmOk6XS2lRMMNbCK2kE=;
-        b=T9RVe+aMxaajcNYfS/O0q9sm8exyC3afoe4S0O6i2eu9LCxpXU4AsHY5dO7yIXUdZ8
-         cBS2UVpjxBKAR8PbByXPUOqSF+VVSSOl6VNvZZRIIf7CQpYXQuVoYEgG4YCXBrk8ZN4a
-         NL/YCU6Kf6T1vxX1QHD+EtVJ/yQwR5NgdXackiGpBJX9MSF332Ap9G11YryvsMCv5X+3
-         egbHwTayFszLGLmL+PX1r/Y3jIZQ/zdDvn11t6dV8zfbpMzNq4leuiozSeOf+AfzpsGE
-         EWn4eMYGyAvZ70olFkMF6edPbHUQFmUMkrXN/V4YWuMFS9yZoA77uoQnVIBwnFqfutKJ
-         RkgQ==
+        bh=bLnxJTIBNvdInu38oJWeKFvbnt8/GUCrO8fvhPHT3Oo=;
+        b=ivxuTa2EqZPTTf8cbf8en5KTqYGz0/zGs107LePrdueNpn8ubFzI/dCHyV402ADB3Y
+         usZi/tKUBWW2PjRgrREtRGwv5FZHDewlMNqBqaVAZelh7n8LO33xR4gqTAjpsea66VUP
+         J6vBlQSX9Io7YcKke90Pjf6ECUSEf4WtgWBQV3NMQL9z1u35k89ROyV/oqTL6w7NLr+u
+         FaTE5pIU7tAyvoWZp0Kl52y9M2ENUffD/04h3xtZ3SWKhVSs5Gs0Qelwe2sxYiCN5XO8
+         gXFgibTarSE6EzGRcP/VH845LQZgj8rwoVl0pXtLfXjOUTk9IMOudVRh0i5yqAJOznmh
+         sq6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=aWHK40bD;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=XP5JLkxF;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=aWHK40bD;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=XP5JLkxF;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AG47ELuFenlnAUcskWPkHAf2vxw/Rpd/g9aoajUACnHOxe5P0E2NPI1dsSDhpAel09225Ph4dfXxOw==
+X-Google-Smtp-Source: AG47ELvkuq/jkSPWeOaJQejpvrzbze0VJ+OWjeJXqaMUvYitsrfIie2zZjwsjaMzQRT+9AyAyQ3Ygw==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 06/21] eeprom: at24: drop redundant variable in at24_read()
-Date: Mon, 19 Mar 2018 10:17:06 +0100
-Message-Id: <20180319091721.18193-7-brgl@bgdev.pl>
+Subject: [PATCH 05/21] eeprom: at24: remove code separators
+Date: Mon, 19 Mar 2018 10:17:05 +0100
+Message-Id: <20180319091721.18193-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180319091721.18193-1-brgl@bgdev.pl>
 References: <20180319091721.18193-1-brgl@bgdev.pl>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595357058637703701?=
-X-GMAIL-MSGID: =?utf-8?q?1595357058637703701?=
+X-GMAIL-THRID: =?utf-8?q?1595357057571787349?=
+X-GMAIL-MSGID: =?utf-8?q?1595357057571787349?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We can reuse ret instead of defining a loop-local status variable.
+These are just two left-overs from times when this driver was bigger.
+
+They are not really useful anymore. Remove them.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/misc/eeprom/at24.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/misc/eeprom/at24.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index d1ad73d94fa8..ff7eb8e382c2 100644
+index 0e06201d33c9..d1ad73d94fa8 100644
 --- a/drivers/misc/eeprom/at24.c
 +++ b/drivers/misc/eeprom/at24.c
-@@ -392,17 +392,15 @@ static int at24_read(void *priv, unsigned int off, void *val, size_t count)
- 	mutex_lock(&at24->lock);
+@@ -235,8 +235,6 @@ static const struct acpi_device_id at24_acpi_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(acpi, at24_acpi_ids);
  
- 	while (count) {
--		int	status;
+-/*-------------------------------------------------------------------------*/
 -
--		status = at24_regmap_read(at24, buf, off, count);
--		if (status < 0) {
-+		ret = at24_regmap_read(at24, buf, off, count);
-+		if (ret < 0) {
- 			mutex_unlock(&at24->lock);
- 			pm_runtime_put(dev);
--			return status;
-+			return ret;
- 		}
--		buf += status;
--		off += status;
--		count -= status;
-+		buf += ret;
-+		off += ret;
-+		count -= ret;
- 	}
+ /*
+  * This routine supports chips which consume multiple I2C addresses. It
+  * computes the addressing information to be used for a given r/w request.
+@@ -712,8 +710,6 @@ static int at24_remove(struct i2c_client *client)
+ 	return 0;
+ }
  
- 	mutex_unlock(&at24->lock);
+-/*-------------------------------------------------------------------------*/
+-
+ static struct i2c_driver at24_driver = {
+ 	.driver = {
+ 		.name = "at24",
 -- 
 2.16.1
