@@ -1,52 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932801AbeCSIvj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:51:39 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48115 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754531AbeCSIvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:51:38 -0400
-Subject: Re: [RESEND PATCH v1 6/6] i2c: i2c-stm32f7: Implement I2C recovery
- mechanism
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
- <1520852023-27083-7-git-send-email-pierre-yves.mordret@st.com>
- <20180317204720.mclh4jw5owobbtww@ninjato>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <2672947b-46b2-7bd7-ac13-501db8bde72b@st.com>
-Date: Mon, 19 Mar 2018 09:51:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932812AbeCSIw5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:52:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49742 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753013AbeCSIwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:52:54 -0400
+Date: Mon, 19 Mar 2018 09:52:52 +0100
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
+        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR interface
+ to use in-band negotiation
+Message-ID: <20180319085252.GF4519@kwain>
+References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
+ <20180316103351.16616-3-antoine.tenart@bootlin.com>
+ <20180316155307.GQ9418@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180317204720.mclh4jw5owobbtww@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_05:,,
- signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180316155307.GQ9418@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes. Recovery mechanism is triggered whenever a busy line is detected.
-This busy state can be checked by sw when either SDA or SCL is low: a bit is set
-by Hw for this purpose.
-On busy state I2C is reconfigured and lines are released the time of recovery.
+Hi Russell,
 
-Regards
-On 03/17/2018 09:47 PM, Wolfram Sang wrote:
-> On Mon, Mar 12, 2018 at 11:53:43AM +0100, Pierre-Yves MORDRET wrote:
->> Feature prevents I2C lock-ups. Mechanism resets I2C state machine
->> and releases SCL/SDA signals but preserves I2C registers.
+On Fri, Mar 16, 2018 at 03:53:07PM +0000, Russell King - ARM Linux wrote:
+> On Fri, Mar 16, 2018 at 11:33:43AM +0100, Antoine Tenart wrote:
+> > The PHY mode 10GKR can use in-band negotiation. This patches allows this
+> > mode to be used with MLO_AN_INBAND in phylink.
+> > 
+> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> > ---
+> >  drivers/net/phy/phylink.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+> > index 51a011a349fe..7224b005f0dd 100644
+> > --- a/drivers/net/phy/phylink.c
+> > +++ b/drivers/net/phy/phylink.c
+> > @@ -768,7 +768,8 @@ int phylink_of_phy_connect(struct phylink *pl, struct device_node *dn,
+> >  	/* Fixed links and 802.3z are handled without needing a PHY */
+> >  	if (pl->link_an_mode == MLO_AN_FIXED ||
+> >  	    (pl->link_an_mode == MLO_AN_INBAND &&
+> > -	     phy_interface_mode_is_8023z(pl->link_interface)))
+> > +	     (phy_interface_mode_is_8023z(pl->link_interface) ||
+> > +	      pl->link_interface == PHY_INTERFACE_MODE_10GKR)))
 > 
-> Does it release SDA when held down by the slave? Because that is what
-> the recovery mechanism is for.
-> 
+> There is no inband negotiation like there is with 802.3z or SGMII,
+> so this makes no sense.
+
+Oh, that's what I feared. I read some docs but probably will need more
+:)
+
+Anyway, the reason to use in-band negotiation was also to avoid using
+fixed-link. It would work but always report the link is up, which for
+the user isn't a great experience as we have a way to detect this.
+
+What would you suggest to achieve this in a reasonable way?
+
+Thanks,
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
