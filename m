@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsTqgm7mhi8lxedAAspgx6lhyOyJTZUk8R6fwE/oRlMTmRYD5EQdl/IDMyYLDMNkWMKoka6
-ARC-Seal: i=1; a=rsa-sha256; t=1521483576; cv=none;
+X-Google-Smtp-Source: AG47ELuIcBZvRlb4HAHzjzEDPV6Wn77W2lUShUQ5tClsRD0WlajAnq7TOqNmlK2JSL2B7PzjhlA8
+ARC-Seal: i=1; a=rsa-sha256; t=1521483573; cv=none;
         d=google.com; s=arc-20160816;
-        b=vqETo5AZ2I3Wj4hUJ7Uye4KIWCsNwR2smnmSLRAmSVJWZ0DusjRHNnHu66MsWMKYFz
-         ys5VOp9hf+Bkfy/9CtmgjwA7W0PDSjFy2V2crwC5VGfSWL+2WZ00iWJB+zC7JxdIKcl/
-         PMqYv8GoBbQi9Ffs35RQtIjVnMDHC/BBSBuO2nkEnh30PFDUVRfEnKZtaYWMgELWsSGk
-         wDdfEPv5wppFsRXxBDsdmIcr39DwrVCHhPj0GeUVfH9GmyYhGVZBLIKaUbiA8OGykTm9
-         8gPZI07voKHOjcY2xFtNWiZhj9mweMLauA9q/VnalFTuWm2eYA9TIMm0czrdnAQW3sWJ
-         5jFg==
+        b=j2vf5Zwgla0jnRf/UT6wGCvVeg3tdv2XKVd3ore+tP8CcrdNlqjsZ2Na9VtR/GelTp
+         i4nu1onhdFMhuNChrO6ptVFYFS0cQwx0qQW9BmhyEY8SwzH5WV8F9p1eVGRUchTyiQxF
+         JzvPVtsIrGAiGejNcai75gni05A8K1S2ZJw65trqDJ1Ct1dKlHL00FTVLBzG+D/CnVPl
+         99VBB5xMeqMyEL9JATeIezA+6Wo5g3u4OQB1nn1rQsYG2/muKFyu6Fi9eWL6nNXYd653
+         brdWYQ42mmMqtglGUGPZZKpx2fo6tS6NlPFARc7wCMzSBKm6aFHX7MKLIE1aA+Duxqug
+         EgTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CvttG7Z8QqJ/CHEiwfpa5cK3vZld6mTXtIocDzQZXQA=;
-        b=aFrWrTe84IiFaXqGD74WmqJQ1hYyUUkXvfHF9Pqx+eKYDiziHkgCtTMyguzM0xnLC8
-         Rz6JzIC6ycrEQpXe1DEO9uyBLiribUKIJpsPaDxo7u92G9/tS1lw0PdUsqvpEqjm1HLi
-         Ji0C7MgN2EIjv2NJJFrK8eHIWUGE2Q0Cmk5JE8SiSz640W7rExWid3VYJvItGf006C2Y
-         4miBmld9rPIT3sIb9T1V/inTc+ngkjyfFbWrNXGU4AMCSEjSqHE6mIrqJ6e9dvXKZR2P
-         07KaLksKTcGjIIwxvqO45B0GnZhncZSGioGSsPNRSvAHwyWYSF12u1TPlf3uRFuApcG1
-         1YsA==
+        bh=I/VF54YjZQsL1ts/95HTXmA4W82V2jErnI6rOYS4h4A=;
+        b=srFnGHM+HyJsT0IoyqUKSJnvQqPyHJAUlkXx4ErD8kL8yoUInpErWfjc/mrMbVdZf7
+         CDJIOpXnFc2vcGf7CCVWRdzYE+Xbtuv9a8A/3S4QGuXMzUP9YJNxuYcOt9RncqSYdV4b
+         C+uN9JtUQurxjNBdbioRgjKdOOWf7Y2HeznPWUsqw8t4imZSZUydowkfz39SvQAeaRrW
+         5ofkfbbZmTiFz/GsxmHjHFWxGhn8uJC10TSX9qJPzLagepafTz6S1rtWCQauM5SpvpKH
+         3HOFMaTrQKz77FoOTUu9yfvEWpeP06eWJVy5qD7A5KMObUJfSuAcLhVyVvLmMdfe5CYs
+         RcUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	tomi.valkeinen@ti.com,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Yazen Ghannam <Yazen.Ghannam@amd.com>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	x86-ml <x86@kernel.org>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 040/241] omapfb: dss: Handle return errors in dss_init_ports()
-Date: Mon, 19 Mar 2018 19:05:05 +0100
-Message-Id: <20180319180752.861721795@linuxfoundation.org>
+Subject: [PATCH 4.9 039/241] x86/mce: Init some CPU features early
+Date: Mon, 19 Mar 2018 19:05:04 +0100
+Message-Id: <20180319180752.824360363@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391162244534313?=
-X-GMAIL-MSGID: =?utf-8?q?1595391162244534313?=
+X-GMAIL-THRID: =?utf-8?q?1595391159458560633?=
+X-GMAIL-MSGID: =?utf-8?q?1595391159458560633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,68 +54,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Yazen Ghannam <Yazen.Ghannam@amd.com>
 
 
-[ Upstream commit 0348aaa34412e24ebe622a2b1b013e68d6ae5412 ]
+[ Upstream commit 5204bf17031b69fa5faa4dc80a9dc1e2446d74f9 ]
 
-dss_init_ports() is not handling return errors from dpi_init_port() and
-sdi_init_port(). It is also always returning 0 currently which results in
-part of error handling code in dss_bind() being unused.
+When the MCA banks in __mcheck_cpu_init_generic() are polled for leftover
+errors logged during boot or from the previous boot, its required to have
+CPU features detected sufficiently so that the reading out and handling of
+those early errors is done correctly.
 
-Fix dss_init_ports() to handle return errors from dpi_init_port() and
-sdi_init_port().
+If those features are not available, the decoding may miss some information
+and get incomplete errors logged. For example, on SMCA systems the MCA_IPID
+and MCA_SYND registers are not logged and MCA_ADDR is not masked
+appropriately.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: tomi.valkeinen@ti.com
-[b.zolnierkie: fail early on errors, minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To cure that, do a subset of the basic feature detection early while the
+rest happens in its usual place in __mcheck_cpu_init_vendor().
+
+Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/1489599055-20756-1-git-send-email-Yazen.Ghannam@amd.com
+[ Massage commit message and simplify. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/omap2/omapfb/dss/dss.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |   30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
---- a/drivers/video/fbdev/omap2/omapfb/dss/dss.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
-@@ -941,11 +941,13 @@ static int dss_init_features(struct plat
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1695,30 +1695,35 @@ static int __mcheck_cpu_ancient_init(str
  	return 0;
  }
  
-+static void dss_uninit_ports(struct platform_device *pdev);
-+
- static int dss_init_ports(struct platform_device *pdev)
+-static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
++/*
++ * Init basic CPU features needed for early decoding of MCEs.
++ */
++static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
  {
- 	struct device_node *parent = pdev->dev.of_node;
- 	struct device_node *port;
--	int r;
-+	int r, ret = 0;
+-	switch (c->x86_vendor) {
+-	case X86_VENDOR_INTEL:
+-		mce_intel_feature_init(c);
+-		mce_adjust_timer = cmci_intel_adjust_timer;
+-		break;
+-
+-	case X86_VENDOR_AMD: {
++	if (c->x86_vendor == X86_VENDOR_AMD) {
+ 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
+ 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
+ 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
  
- 	if (parent == NULL)
- 		return 0;
-@@ -972,17 +974,21 @@ static int dss_init_ports(struct platfor
- 
- 		switch (port_type) {
- 		case OMAP_DISPLAY_TYPE_DPI:
--			dpi_init_port(pdev, port);
-+			ret = dpi_init_port(pdev, port);
- 			break;
- 		case OMAP_DISPLAY_TYPE_SDI:
--			sdi_init_port(pdev, port);
-+			ret = sdi_init_port(pdev, port);
- 			break;
- 		default:
- 			break;
+-		/*
+-		 * Install proper ops for Scalable MCA enabled processors
+-		 */
+ 		if (mce_flags.smca) {
+ 			msr_ops.ctl	= smca_ctl_reg;
+ 			msr_ops.status	= smca_status_reg;
+ 			msr_ops.addr	= smca_addr_reg;
+ 			msr_ops.misc	= smca_misc_reg;
  		}
--	} while ((port = omapdss_of_get_next_port(parent, port)) != NULL);
-+	} while (!ret &&
-+		 (port = omapdss_of_get_next_port(parent, port)) != NULL);
+-		mce_amd_feature_init(c);
++	}
++}
  
--	return 0;
-+	if (ret)
-+		dss_uninit_ports(pdev);
++static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
++{
++	switch (c->x86_vendor) {
++	case X86_VENDOR_INTEL:
++		mce_intel_feature_init(c);
++		mce_adjust_timer = cmci_intel_adjust_timer;
++		break;
 +
-+	return ret;
- }
++	case X86_VENDOR_AMD: {
++		mce_amd_feature_init(c);
+ 		break;
+ 		}
  
- static void dss_uninit_ports(struct platform_device *pdev)
+@@ -1804,6 +1809,7 @@ void mcheck_cpu_init(struct cpuinfo_x86
+ 
+ 	machine_check_vector = do_machine_check;
+ 
++	__mcheck_cpu_init_early(c);
+ 	__mcheck_cpu_init_generic();
+ 	__mcheck_cpu_init_vendor(c);
+ 	__mcheck_cpu_init_clear_banks();
