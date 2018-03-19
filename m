@@ -1,160 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970657AbeCSS6A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:58:00 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47051 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935537AbeCSS3e (ORCPT
+        id S970700AbeCSTAV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:00:21 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43154 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S970143AbeCSS3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:29:34 -0400
-Subject: Re: [PATCH] ARC: Improve cmpxchng syscall implementation
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Max Filippov <jcmvbkbc@gmail.com>, <linux-arch@vger.kernel.org>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc,gmane.linux.kernel.cross-arch
-References: <20180319110002.27419-1-abrodkin@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <5bc39838-b1c5-ef65-f97d-8777ed33bda0@synopsys.com>
-Date: Mon, 19 Mar 2018 11:29:24 -0700
+        Mon, 19 Mar 2018 14:29:01 -0400
+Subject: Re: [RESEND PATCH v5 1/5] pwm-backlight: enable/disable the PWM
+ before/after LCD enable toggle.
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20180216174034.15936-1-enric.balletbo@collabora.com>
+ <20180319165829.GB22770@ulmo>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <a2ea8b01-1182-7c80-60a2-4b4e0d8141ab@collabora.com>
+Date: Mon, 19 Mar 2018 19:28:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180319110002.27419-1-abrodkin@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180319165829.GB22770@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 04:00 AM, Alexey Brodkin wrote:
-> arc_usr_cmpxchg syscall is supposed to be used on platforms
-> that lack support of Load-Locked/Store-Conditional instructions
-> in hardware. And in that case we mimic missing hardware features
-> with help of kernel's sycall that "atomically" checks current
-> value in memory and then if it matches caller expectation new
-> value is written to that same location.
-> 
-...
-...
+Hi Thierry,
 
-> 
-> 2. What's worse if we're dealing with data from not yet allocated
->     page (think of pre-copy-on-write state) we'll successfully
->     read data but on write we'll silently return to user-space
->     with correct result 
+Thanks for your ack.
 
-This is technically incorrect, even for reading, you need a page, which could be 
-common zero page in certain cases.
-
-(which we really read just before). That leads
->     to very strange problems in user-space app further down the line
->     because new value was never written to the destination.
+On 19/03/18 17:58, Thierry Reding wrote:
+> On Fri, Feb 16, 2018 at 06:40:30PM +0100, Enric Balletbo i Serra wrote:
+>> Before this patch the enable signal was set before the PWM signal and
+>> vice-versa on power off. This sequence is wrong, at least, it is on
+>> the different panels datasheets that I checked, so I inverted the sequence
+>> to follow the specs.
+>>
+>> For reference the following panels have the mentioned sequence:
+>>   - N133HSE-EA1 (Innolux)
+>>   - N116BGE (Innolux)
+>>   - N156BGE-L21 (Innolux)
+>>   - B101EAN0 (Auo)
+>>   - B101AW03 (Auo)
+>>   - LTN101NT05 (Samsung)
+>>   - CLAA101WA01A (Chunghwa)
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+>> ---
+>> Changes since v4:
+>>  - Rebase on top of mainline.
+>>  - Add the acks from Daniel Thompson and Jingoo Han.
+>> Changes since v3:
+>>  - List the part numbers for the panel checked (Daniel Thompson)
+>> Changes since v2:
+>>  - Add this as a separate patch (Thierry Reding)
+>> Changes since v1:
+>>  - None
+>>
+>>  drivers/video/backlight/pwm_bl.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> 3. Regardless of what went wrong we'll return from syscall
->     and user-space application will continue to execute.
->     Even if user's pointer was completely bogus.
-
-Again we are exaggerating (from technical correctness POV) - if user pointer was 
-bogs, the read would not have worked in first place etc. So lets tone down the 
-rhetoric.
-
-
->     In case of hardware LL/SC that app would have been killed
->     by the kernel.
-> 
-> With that change we attempt to imrove on all 3 items above:
-> 
-> 1. We still disable preemption around read-and-write of
->     user's data but if we happen to fail with either of them
->     we're enabling preemption and try to force page fault so
->     that we have a correct mapping in the TLB. Then re-try
->     again in "atomic" context.
-> 
-> 2. If real page fault fails or even access_ok() returns false
->     we send SIGSEGV to the user-space process so if something goes
->     seriously wrong we'll know about it much earlier.
+> I'm surprised that panels even care about this. Do you see actual
+> breakage if these are the other way around?
 > 
 
+At least the B116XTN02 requires enable first the PWM, wait 10ms and then BL_EN
+to avoid garbage. I did not observe the issue on other panels but the datasheets
+I checked specifies this sequence as correct.
 
->   
->   	/*
->   	 * This is only for old cores lacking LLOCK/SCOND, which by defintion
-> @@ -60,23 +62,48 @@ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
->   	/* Z indicates to userspace if operation succeded */
->   	regs->status32 &= ~STATUS_Z_MASK;
->   
-> -	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
-> -		return -EFAULT;
-> +	ret = access_ok(VERIFY_WRITE, uaddr, sizeof(*uaddr));
-> +	if (!ret)
-> +		goto fail;
->   
-> +again:
->   	preempt_disable();
->   
-> -	if (__get_user(uval, uaddr))
-> -		goto done;
-> -
-> -	if (uval == expected) {
-> -		if (!__put_user(new, uaddr))
-> +	ret = __get_user(val, uaddr);
-> +	if (ret == -EFAULT) {
-
-
-Lets see if this warrants adding complexity ! This implies that TLB entry with 
-Read permissions didn't exist for reading the var and page fault handler could not 
-wire up even a zero page due to preempt_disable, meaning it was something not 
-touched by userspace already - sort of uninitialized variable in user code. 
-Otherwise it is extremely unlikely to start with a TLB entry with Read 
-permissions, followed by syscall Trap only to find the entry missing, unless a 
-global TLB flush came from other cores, right in the middle. But this syscall is 
-not guaranteed to work with SMP anyways, so lets ignore any SMP misdoings here.
-
-Now in case it was *an* uninitialized var, do we have to guarantee any well 
-defined semantics for the kernel emulation of cmpxchg ? IMO it should be fine to 
-return 0 or -EFAULT etc. Infact -EFAULT is better as it will force a retry loop on 
-user side, given the typical cmpxchg usage pattern.
-
-
-> +		preempt_enable();
-> +		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
-> +		if (ret < 0)
-> +			goto fail;
-> +
-> +		put_page(page);
-> +		goto again;
-> +	} else if (ret)
-> +		goto fail;
-> +
-> +	if (val == expected) {
-> +		ret = __put_user(new, uaddr);
-> +		if (!ret)
->   			regs->status32 |= STATUS_Z_MASK;
->   	}
->   
-> -done:
->   	preempt_enable();
->   
-> -	return uval;
-> +	if (ret == -EFAULT) {
-> +		ret = get_user_pages_fast((unsigned long)uaddr, 1, 1, &page);
-> +		if (ret < 0)
-> +			goto fail;
-> +
-> +		put_page(page);
-> +		goto again;
-> +	} else if (ret)
-> +		goto fail;
-> +
-> +	return val;
-> +
-> +fail:
-> +	force_sig(SIGSEGV, current);
-> +	return ret;
->   }
->   
->   #ifdef CONFIG_ISA_ARCV2
+> Anyway, this seems to me as legit as the other way around, so:
+> 
+> Acked-by: Thierry Reding <thierry.reding@gmail.com>
 > 
