@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELujoC3oQRNCgfs3o7ii6017YCHUCJSD5MiWRyu7rMHvkN/+osPFORSOmHmTurZffqYujmA5
-ARC-Seal: i=1; a=rsa-sha256; t=1521483314; cv=none;
+X-Google-Smtp-Source: AG47ELs7eIo8W7DLmeWxX9bPzRvf14sYSBxzenbe4sudQlKNPO+8q3qny3zSVvBAmoIg7LW6S0d8
+ARC-Seal: i=1; a=rsa-sha256; t=1521483312; cv=none;
         d=google.com; s=arc-20160816;
-        b=FJreYBM9k3C+ZAefUIAtAPJyckXXI79eX1ncOgHlednUXr6HHV02wIefVsL7weULi0
-         YVIJUnZzYq7x51I+/cOq1afE+fwwgdzKfym1KEcrCpd9PEV3Uw9nw9FK8TSajH+qYcJ6
-         jw1Hd4OxjWDcMEEkbPKp7Jsz9Qv8G9YkB9c0d7PmIPG08qNUQMtceyay80xKRhE7nj9L
-         cOXeHKWMaooDeZJo7a8F7p5/MUHKo26zqJjxIqtLH3cKu0KAHrMj5AUMWXOsdsxdqXjB
-         OUV5wt1S3DZG8IXZB+aQnUc3c+TNWTDxW2/Tk1o30oxZXumMQKCIHJc2CWmpLV3luX7f
-         uwUg==
+        b=iNafyl9qwJENPuvu5EX+2XO3J56CF4OWSLoEcWnRAzHUr7NcoKCJ6fnj9M4bif9BZ1
+         Q+Kc3Gv/MyspJlbX9w3vCNshdl6EZtUdB+mIvt+CE/jhJ1PFgZSMIqPBNEllvncPlggD
+         3VpDyWM+VRJXTkGB8N8KmitwR9ia69Ua9guYyLe9jMTq5HpukMg4I0aex/AoC6OEZSPx
+         3UG5gRuOdaRrQfMTnNOSvRj3FcbBtiqxqwoFYzH6noAg5pvxdQsc0+VMcpENmPqrSrBD
+         qKgpMDaOpDtLzk9OyhiNsaMl+B6Em0Y6RUzXgx9tCFWaPOznnhshK5kN5RvwxEcCTvpE
+         YpkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ioo1qlFqY9DsxIXP7lkgvF0HtXFT05w3ytj86UAwILA=;
-        b=mskk5FVw+r560QhLAYP6SRW+AbSDlWXCqZ6JU8yLqWp7BhSt/fOanKagUtVEIw3XYW
-         zEZO1u+SizvjzsDAz2/tFMuV7vEWJOTHKp+2hxCbza9Y5aCVKvuRqKDznmDDG9MrmcQC
-         xiw91/Oa2zuh6g1GWdbFQsMqYBRd58TpRRrJ8RMAeNd4RWrhymLBEFV/El83wijIkcnB
-         jS6H+annuTv0UqW80MH6+Qe4LQNmeRrikHLvwn25s6shrlWq2lZWOGMZ/p6Hetm/8/Pl
-         +0ZR1XFXlhP5B7HQLxCbBd4ClTQCU7lzmJhNJ4ZUrGo7u1uYKtEzKzbRX6tNviQFu8IK
-         xMlQ==
+        bh=8Ypt9shM3tmZ6rKwuVK8cjxNMcnDhXDaRnHb/Y3bvM8=;
+        b=VszosnQU3FSAov4IV7D+JXM0uCTaJqiIwZPCwIRbORcNSU+tIPoU2F7keEPyXmhZw+
+         hnQ9ZknQ59+1NVlR6XDkeLkkVt2LjBddwizIR+wJi0q3F+1CisoZW1VaLXIwfNgwuhbD
+         /BFk2ymgyQRMPAN/Oysh8Udd3DQPzqPtFas6Y1tyEus+36VnzKpBEUmmW8Vx5m+XQnNC
+         kGbCiUcsCUaxnIz4LP3IKqF7+ePkQDnOonb+87Aq9+4pS0xGz7S0M3Xt1Dm8hTJAIudR
+         vPgOmQNlSIyQ9oy6mU4tKxsENtaqoL6UmamkYREZ1g4Jrajj5cKPV0XVjB1XCgVVhXJ8
+         MFEw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shikhar Dogra <shidogra@cisco.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+	Felix Manlunas <felix.manlunas@cavium.com>,
+	Satanand Burla <satananda.burla@cavium.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 035/134] driver: (adm1275) set the m,b and R coefficients correctly for power
-Date: Mon, 19 Mar 2018 19:05:18 +0100
-Message-Id: <20180319171854.377436734@linuxfoundation.org>
+Subject: [PATCH 4.4 044/134] vxlan: vxlan dev should inherit lowerdevs gso_max_size
+Date: Mon, 19 Mar 2018 19:05:27 +0100
+Message-Id: <20180319171855.752190937@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390888092685404?=
-X-GMAIL-MSGID: =?utf-8?q?1595390888092685404?=
+X-GMAIL-THRID: =?utf-8?q?1595390885442025178?=
+X-GMAIL-MSGID: =?utf-8?q?1595390885442025178?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shikhar Dogra <shidogra@cisco.com>
+From: Felix Manlunas <felix.manlunas@cavium.com>
 
 
-[ Upstream commit 6faecba0b3da7b617bf72bef422bf0d3bb6dfe7d ]
+[ Upstream commit d6acfeb17d030bb3907e77c048b0e7783ad8e5a9 ]
 
-Seems like coefficient values for m, b and R under power have been
-put in the wrong order. Rearranging them properly to get correct
-values of coefficients for power.
+vxlan dev currently ignores lowerdev's gso_max_size, which adversely
+affects TSO performance of liquidio if it's the lowerdev.  Egress TCP
+packets' skb->len often exceed liquidio's advertised gso_max_size.  This
+may happen on other NIC drivers.
 
-For specs, please refer to table 7 (page 35) on
-http://www.analog.com/media/en/technical-documentation/data-sheets/ADM1075.pdf
+Fix it by assigning lowerdev's gso_max_size to that of vxlan dev.  Might as
+well do likewise for gso_max_segs.
 
-Fixes: 904b296f308d ("hwmon: (adm1275) Introduce configuration data structure for coeffcients")
-Signed-off-by: Shikhar Dogra <shidogra@cisco.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Single flow TSO throughput of liquidio as lowerdev (using iperf3):
+
+    Before the patch:    139 Mbps
+    After the patch :   8.68 Gbps
+    Percent increase:  6,144 %
+
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: Satanand Burla <satananda.burla@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/pmbus/adm1275.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/vxlan.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -95,8 +95,8 @@ static const struct coefficients adm1075
- 	[0] = { 27169, 0, -1 },		/* voltage */
- 	[1] = { 806, 20475, -1 },	/* current, irange25 */
- 	[2] = { 404, 20475, -1 },	/* current, irange50 */
--	[3] = { 0, -1, 8549 },		/* power, irange25 */
--	[4] = { 0, -1, 4279 },		/* power, irange50 */
-+	[3] = { 8549, 0, -1 },		/* power, irange25 */
-+	[4] = { 4279, 0, -1 },		/* power, irange50 */
- };
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2834,6 +2834,11 @@ static int vxlan_dev_configure(struct ne
+ 		needed_headroom = lowerdev->hard_header_len;
+ 	}
  
- static const struct coefficients adm1275_coefficients[] = {
++	if (lowerdev) {
++		dev->gso_max_size = lowerdev->gso_max_size;
++		dev->gso_max_segs = lowerdev->gso_max_segs;
++	}
++
+ 	if (conf->mtu) {
+ 		err = __vxlan_change_mtu(dev, lowerdev, dst, conf->mtu, false);
+ 		if (err)
