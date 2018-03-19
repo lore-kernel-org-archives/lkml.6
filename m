@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3114250-1521474652-2-1475031407824015376
+X-Cyrus-Session-Id: sloti22d1t05-3175828-1521474648-2-15540462810418307535
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521474651; b=Z8kh8lHXh+7GIlLXsxBG40C3k/QNdPYS3ZNE/DVdUkIwuAH
-    ilc+MHpYS9YidhK3Mkpbzl67ow6Kdnmfi78z0Caf3J9wIRemC9oJGkzeDyywgY3p
-    BarZrkeEB2NlE/1tNwcIlB94wGWYt6rOigSSrRtVu2UiA0ulb1ia+We5TckPefUt
-    5dn8Y2i4EBaRI9YkTIwPPkGMJjLcu1vp7SY/VpyFnIUL1yhGx5C1kLbPS+QmRYCm
-    FOBecbjE/fCpOZwvl4Qg+6/2TTm29HdFk9PScCoLVNLTkHEd4NLxu1kNTVbkuz8M
-    vssN1jG6dh1o7nY0HVTaCvkB0yutTpPwD+QtvmQ==
+    t=1521474648; b=IZ1ZSKxfuhijGp0qcofaliNOSdT01gQo9Xffp+2Rz5f0h/a
+    mQfyqF2MtAjnvLtXNxcXat8Nv0k/e/Wb7pcoOcra5Ca4B1yyhj5WzqYOwWr7QZFZ
+    lT9W+2zTVW63N4vwe0hjU8moiU4Y2UrwtDGx9XVrd37wxvC7JWfLjHRVjGNY+uoJ
+    UjdZl7fi3AUgXHephqfmGWtmVctZOyHKB8SbJCRjd8lQyiEcXk6LKSdYMtLGRayC
+    H4pxkHwUEzCWCIVcDnpdk/+55Tmeprl4U2SXsosDSX2RpCCwpuYG8tGkgGQ6q6kq
+    sSu09/IY1Pqz9eFiF9aICE27Fa/qdAhjgDXAjjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521474651; bh=Lkh5db
-    TwoG82op7jwn5tUSEYgya7InhTrknPJG2ZxV4=; b=QHG0Tfcnr8U+9b2mvObQWK
-    HLLd4fQvcwIvdzAPoHNPzudiDsYBu86HHrzqFBzUdxkxCjCxO6APb7uYPHOPB6wQ
-    vA39putKhUvnMGbWC2nYCYdvA482CQnJp4jWdOGAsNHZFI9xWTggUmUJI96WssVn
-    Ul6M9dM7O1rPmFn9BsvRkz/kDH9XZYP65fTNrddPaSthUyea6dvxoR3NUiGKuZ8H
-    ZW7m8MYIXbCU31iqQaNrYKLVU3lzqK0SQDl06xrUqJADlt6oaNAODd0tWbJszsW3
-    fNxd+F+V+jRKfC0PPb9PzrQ5GFhNIWD89NJx9S9OX3L0keAPMOVlwmLov8LryamA
+    :mime-version:sender:list-id; s=arctest; t=1521474648; bh=GKFEll
+    nF5ndB7r/8utMj5Kp+6FdSjmNc/g4SW7OfT/g=; b=FUOR5oUBsl7XovxSaeyUcl
+    hF1BkATod1lo39NjEuNIKEHZqZNGDHOvnAlhVySqYaBwyrC9XSY+z/dvgOxHua7H
+    +9/UYm7BCTHczTX35XWwUZEFMoexxpHHBTZpKHRW82Hj7O1zZ7OsO2IsBHgolbEW
+    e9fbOivKcIWvbJrEnIQXA+qSnNE+rmHpMho2AUyJ+eJwG5BUNyKucaY3xoajDepA
+    bbXAGLPLNSvZLJeVSOTZdIDjsm3OqTUeT+0AfsbSM2HMzgq3IBjWWFaX8xApoYqt
+    TmA0xDtXw/Y//9XLaJZESYk9psrYxAb2Ql6ZLg13UuAd1T+klpST6DvUGRBbI0mw
     ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=F0QgvHCH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PpHeWjSt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleehgedtnecuvehluhhsthgvrhfuihiivgepfe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeejgedvnecuvehluhhsthgvrhfuihiivgepfe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=F0QgvHCH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PpHeWjSt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleehgedtnecuvehluhhsthgvrhfuihiivgepfe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeejgedvnecuvehluhhsthgvrhfuihiivgepfe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934143AbeCSPur (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:50:47 -0400
-Received: from mail-bn3nam01on0104.outbound.protection.outlook.com ([104.47.33.104]:63552
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S933518AbeCSPup (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:50:45 -0400
+Received: from mail-sn1nam01on0096.outbound.protection.outlook.com ([104.47.32.96]:13186
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934137AbeCSPul (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:50:41 -0400
+        id S934134AbeCSPuk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:50:40 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Brian Foster <bfoster@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
+CC: Mike Christie <mchristi@redhat.com>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 122/124] xfs: account finobt blocks properly
- in perag reservation
-Thread-Topic: [PATCH AUTOSEL for 4.15 122/124] xfs: account finobt blocks
- properly in perag reservation
-Thread-Index: AQHTv5nXq03HA5IfJUGurkmQUHyB2A==
-Date: Mon, 19 Mar 2018 15:49:19 +0000
-Message-ID: <20180319154645.11350-122-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 123/124] tcmu: release blocks for partially
+ setup cmds
+Thread-Topic: [PATCH AUTOSEL for 4.15 123/124] tcmu: release blocks for
+ partially setup cmds
+Thread-Index: AQHTv5nYpPU7O7j1o0q1GGLeBghHZQ==
+Date: Mon, 19 Mar 2018 15:49:20 +0000
+Message-ID: <20180319154645.11350-123-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,134 +78,80 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;7:Zuv3f0NMsMLJ6qS8vRUtuAtKW+l2Einir0z8hfCvA7K/v0U247yZvI7IVLFxrnW+Tv+jRsdqBa/3StvoWNA1O9Okzwb3EKgrux1sjYW6InJNTlo6C9LIKmJu0AvySL2TNZbYJHoUqguSku3VMFEQD7uFQhZ9QAFYFo9S0TgFL//oRNjcOcGPejlVV70cIVVAycHvEEOd7ib/5jUgOD6ZHQVchPV82QySmPsIlzw/FZIE0h6Lp8aXE/749teXLigc;20:FTsspGpDGVlj+56pWrTZQuq8qQTP/eyabQnSWETjyn0Pw1yOvt+NbTFUcwA8SVdjjFo8KdwVRM94QD2LIos3Zc6qT8pGxhsXsoxAdxnGn3cknh/wFUHlpn21Xg+AY9wVaIM9f0VBpv6GF7KPrWvqhq4XnaqhOL/1z+13dt83cvA=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1029;7:FhyEDGH5nybR7wTWUa1wmupMdTA1D1QWWh0s4IhUodZCbBfY/FYgnijq48FneKxP8IkYlI+mniMZYy1rj+A0AbFl7Mn+AG3s6a2TZ/2w28Su4SSiCO0rmjwVD6zTFd+QpCguM6unV1LVzb+/DryaBHnTCrMliNMiOhdMdAPRTub0lzV7OwQX1UoJ/bhE4qzeBVsIL8AnWdmSJBBaa5gJxa4im/2kAL3EyG82J1VKYjQzdky9oBDu5UoIaM+O1Thz;20:nfu186ejJUApdbI0O7v1tnp76pliB6Vvy7wjBX5ZhHUe4O3oRSt1J9MhFsdC5+fSJJnh63se0nNxf+4XfvZb4SJwSrDNklZVgz9HOWjRsoq6euQy4EhHJ5SJR3P3/Ku+d8+daXAowxvMO2CZzj/7BlShGQG8OkCvH0ueaA72mi0=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 51cdc43a-704b-4d0a-6e54-08d58db1294a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
-x-ms-traffictypediagnostic: DM5PR2101MB1063:
+x-ms-office365-filtering-correlation-id: 045eb2ee-f8c9-4333-156b-08d58db12997
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1029;
+x-ms-traffictypediagnostic: DM5PR2101MB1029:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1063773C4297C2D6CE18C63CFBD40@DM5PR2101MB1063.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1063;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1063;
+x-microsoft-antispam-prvs: <DM5PR2101MB102935D7203C365266EA6F6FFBD40@DM5PR2101MB1029.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1029;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1029;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(39860400002)(376002)(366004)(346002)(189003)(199004)(10290500003)(68736007)(110136005)(478600001)(72206003)(36756003)(99286004)(97736004)(10090500001)(305945005)(551934003)(7736002)(6666003)(2950100002)(107886003)(76176011)(26005)(6436002)(86612001)(54906003)(6486002)(4326008)(186003)(15650500001)(3660700001)(25786009)(53936002)(81166006)(2906002)(2501003)(81156014)(5250100002)(86362001)(2900100001)(5660300001)(8936002)(6116002)(8676002)(1076002)(3846002)(3280700002)(66066001)(316002)(59450400001)(6506007)(14454004)(106356001)(22452003)(105586002)(102836004)(6512007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 4t598pNH799FkhsHm2ot+wMKNrB0BNikVj18hCJ10c+Fs4AmpUr5FqVpOb2sLZ88N/GCDdHtoyr3ZaCkD9GqO8iJl67dfjLvrgvy0quBBnQzTmHoTL/+kzNIpLYf2PIYXNOkxCMdJ4mtwVZEBq1dHBj0ENPNOeUDm0wTPaHr0ChXt5j+kG5l/UwcQTKx2yv1i6KcTGz7RUblW0Ynd4YF6mQkl++eSr/SdYHSCys9YZZ/CMKKnoxu9Alz4WQpDHpN9tjlABvfIMFg/PU+r4L5b8zBnlQNhQ93mwbxKNVh7cat5eR2mnUw8NRRg8Q+V3jZFnIxikn/56oO0dxRmJIdSg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39380400002)(39860400002)(376002)(346002)(189003)(199004)(59450400001)(10090500001)(102836004)(6506007)(2501003)(5250100002)(2950100002)(86612001)(6666003)(105586002)(14454004)(54906003)(110136005)(3660700001)(97736004)(99286004)(1076002)(2900100001)(6116002)(3846002)(36756003)(7736002)(5660300001)(305945005)(478600001)(186003)(575784001)(81166006)(2906002)(22452003)(3280700002)(76176011)(25786009)(316002)(6512007)(66066001)(4326008)(6486002)(53936002)(6436002)(86362001)(8936002)(107886003)(106356001)(72206003)(8676002)(10290500003)(81156014)(68736007)(26005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1029;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 4kNAxJrxoSNc4XMceJuQEIX7xAZZarL1GEjqQCbAC5odHkXLfIB3tGKTyWrYKbE5lGlEM8OCGJYI/qT2x7aw9MHP38jd4ypb4qiDHSoViCnH35lXtAjXuJog94hg16fqIGu6WS/WOQ7EycVJ5mJHM/azjL3wCGzIBdyG9og6ZlzJF27lTskSIt1gAJaJ8RlSXX43qeD1ras7oCE++VYsLUgc2nea9/uwFA6twO1T4yjeeUWyEz9D/3bCA3Fqe5xy+4kohu8ADBmJXfdIPNvgYgwaTQAFdX1IeCPRFEyHqCgJKSt3xVhd/yIlhFINVhL6MuKkugU8Z9HCBrVs3S13bQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51cdc43a-704b-4d0a-6e54-08d58db1294a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:19.5953
+X-MS-Exchange-CrossTenant-Network-Message-Id: 045eb2ee-f8c9-4333-156b-08d58db12997
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:20.9963
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1063
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1029
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Brian Foster <bfoster@redhat.com>
+From: Mike Christie <mchristi@redhat.com>
 
-[ Upstream commit ad90bb585c45917b6c1bb01c812fba337e689362 ]
+[ Upstream commit 810b8153c4243d2012a6ec002ddd3bbc9a9ae8c2 ]
 
-XFS started using the perag metadata reservation pool for free inode
-btree blocks in commit 76d771b4cbe33 ("xfs: use per-AG reservations
-for the finobt"). To handle backwards compatibility, finobt blocks
-are accounted against the pool so long as the full reservation is
-available at mount time. Otherwise the ->m_inotbt_nores flag is set
-and the filesystem falls back to the traditional per-transaction
-finobt reservation.
+If we cannot setup a cmd because we run out of ring space
+or global pages release the blocks before sleeping. This
+prevents a deadlock where dev0 has waiting_blocks set and
+needs N blocks, but dev1 to devX have each allocated N / X blocks
+and also hit the global block limit so they went to sleep.
 
-This commit has two problems:
+find_free_blocks is not able to take the sleeping dev's
+blocks becaause their waiting_blocks is set and even
+if it was not the block returned by find_last_bit could equal
+dbi_max. The latter will probably never happen because
+DATA_BLOCK_BITS is so high but in the next patches
+DATA_BLOCK_BITS and TCMU_GLOBAL_MAX_BLOCKS will be settable so
+it might be lower and could happen.
 
-- finobt blocks are always accounted against the metadata
-  reservation on allocation, regardless of ->m_inotbt_nores state
-- finobt blocks are never returned to the reservation pool on free
-
-The first problem affects reflink+finobt filesystems where the full
-finobt reservation is not available at mount time. finobt blocks are
-essentially stolen from the reflink reservation, putting refcountbt
-management at risk of allocation failure. The second problem is an
-unconditional leak of metadata reservation whenever finobt is
-enabled.
-
-Update the finobt block allocation callouts to consider
-->m_inotbt_nores and account blocks appropriately. Blocks should be
-consistently accounted against the metadata pool when
-->m_inotbt_nores is false and otherwise tagged as RESV_NONE.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/xfs/libxfs/xfs_ialloc_btree.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ drivers/target/target_core_user.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc_btree.c b/fs/xfs/libxfs/xfs_ialloc_bt=
-ree.c
-index 317caba9faa6..af3c20821a48 100644
---- a/fs/xfs/libxfs/xfs_ialloc_btree.c
-+++ b/fs/xfs/libxfs/xfs_ialloc_btree.c
-@@ -141,21 +141,42 @@ xfs_finobt_alloc_block(
- 	union xfs_btree_ptr	*new,
- 	int			*stat)
- {
-+	if (cur->bc_mp->m_inotbt_nores)
-+		return xfs_inobt_alloc_block(cur, start, new, stat);
- 	return __xfs_inobt_alloc_block(cur, start, new, stat,
- 			XFS_AG_RESV_METADATA);
- }
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core=
+_user.c
+index a415d87f22d2..3ab96d0f705e 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -805,6 +805,13 @@ tcmu_queue_cmd_ring(struct tcmu_cmd *tcmu_cmd)
+ 		int ret;
+ 		DEFINE_WAIT(__wait);
 =20
- STATIC int
--xfs_inobt_free_block(
-+__xfs_inobt_free_block(
- 	struct xfs_btree_cur	*cur,
--	struct xfs_buf		*bp)
-+	struct xfs_buf		*bp,
-+	enum xfs_ag_resv_type	resv)
- {
- 	struct xfs_owner_info	oinfo;
-=20
- 	xfs_rmap_ag_owner(&oinfo, XFS_RMAP_OWN_INOBT);
- 	return xfs_free_extent(cur->bc_tp,
- 			XFS_DADDR_TO_FSB(cur->bc_mp, XFS_BUF_ADDR(bp)), 1,
--			&oinfo, XFS_AG_RESV_NONE);
-+			&oinfo, resv);
-+}
++		/*
++		 * Don't leave commands partially setup because the unmap
++		 * thread might need the blocks to make forward progress.
++		 */
++		tcmu_cmd_free_data(tcmu_cmd, tcmu_cmd->dbi_cur);
++		tcmu_cmd_reset_dbi_cur(tcmu_cmd);
 +
-+STATIC int
-+xfs_inobt_free_block(
-+	struct xfs_btree_cur	*cur,
-+	struct xfs_buf		*bp)
-+{
-+	return __xfs_inobt_free_block(cur, bp, XFS_AG_RESV_NONE);
-+}
-+
-+STATIC int
-+xfs_finobt_free_block(
-+	struct xfs_btree_cur	*cur,
-+	struct xfs_buf		*bp)
-+{
-+	if (cur->bc_mp->m_inotbt_nores)
-+		return xfs_inobt_free_block(cur, bp);
-+	return __xfs_inobt_free_block(cur, bp, XFS_AG_RESV_METADATA);
- }
+ 		prepare_to_wait(&udev->wait_cmdr, &__wait, TASK_INTERRUPTIBLE);
 =20
- STATIC int
-@@ -372,7 +393,7 @@ static const struct xfs_btree_ops xfs_finobt_ops =3D {
- 	.dup_cursor		=3D xfs_inobt_dup_cursor,
- 	.set_root		=3D xfs_finobt_set_root,
- 	.alloc_block		=3D xfs_finobt_alloc_block,
--	.free_block		=3D xfs_inobt_free_block,
-+	.free_block		=3D xfs_finobt_free_block,
- 	.get_minrecs		=3D xfs_inobt_get_minrecs,
- 	.get_maxrecs		=3D xfs_inobt_get_maxrecs,
- 	.init_key_from_rec	=3D xfs_inobt_init_key_from_rec,
+ 		pr_debug("sleeping for ring space\n");
 --=20
 2.14.1
