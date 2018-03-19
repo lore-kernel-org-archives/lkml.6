@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484464-2-12174721065746416464
+X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484446-2-16142306066168423439
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,57 +13,56 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484463; b=fm8LjNm2jLA8p2BzmPqTIAdnB9tRxwOuxtOwVBBgs8hkzJj
-    LIKrnjbhLzoBvPlJEULXlManQd5pxpQzFL2QzHD5/jnhA6mJDy8peBF77roNfcNk
-    WE9gOh4+uKcrMSNjyx6bThkZmoNBwFg+KeREa4FQfpeCrvkyM+3mwaS4Gj2786g3
-    tA+Y9mFIJJ+hyXEnGfxMMJeLudMWf1L1C62GVqtLjbPuy2ySyIx6a1h4WE+6Ma1R
-    XY8EzKBBEF771dZ+4BrOMkeCOuhFr6SThd0sqIIAVo007QymRSrrh58/GK1vIMXs
-    5kABuHDqqsqPrBn/IlPrOCfxRaZwuTQ+6MOUlgQ==
+    t=1521484446; b=rmuvIsxJMsbZ+sLspw5wc4vykgEQsAYQU90KRVD4GTTf+WL
+    ojv2n/d6KWLRiecYb6pgaBQpicckh4dv6stPkYIFy6j52lyFtuQwOtTPYb/e6600
+    x5997nFcnjLs3C1InK+dhIx/BCZ7fpAxl3YRnrPKL8EyMD534p0gX724ceGBUW5h
+    CYHCzVSoZQQIJ0esqKMCHIqPpAE6tdFLrFtT+dw4ZqCO4eDHkMOg4Ay1oWt0eY8B
+    /h9CVX1LsSMkeunM5A+hA3zqUzhfih01yVcQibdjtMdLgR6Y54VmOQ+ufegoylLF
+    UlwRmfn6jlYEyRzragV2Mnl27q8kfMVP/YvJFjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484463; bh=UZ5tNPX/atpUOcDdRITGmxqc7Q
-    enm75CK9KNhTh4DOc=; b=diL9i/Sk3ewaKp9Z1HmRhLpn7s+ngZiDDdgitHGavW
-    UoBfm9UYLw5baGqnijhE1/9IH5TRA1fXaFowPjFteJ2EWW4mDp6UEbfY784IfUN8
-    /WzZY6ypCEmYmpiMuMWELitzUaGwRdGd4KYdX9Qgi74uSHBi6AoZR7rucbeN6uYb
-    YSRUnNaER5HftdTNtveHyJU8QUGKB1cWsR7Y52t6yRW+PXbl2zd/UV1WYaOrqBx7
-    CB0cJrzy5cHSQtLYJAqvTAxqxaehmd1DyKjEJ4BOfxVxPmx2J5dBDzKdCAlcfL+Q
-    iHIIRbO8tGhAYO7kAuIR1aCnfq8yA7O2MMztNGS7mkrw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484446; bh=xb7t7ujzzonbXs8WgzdqLnoUE/
+    4rgUus6au3IeLgNa4=; b=ZA2w/7e/Cosv9dJn05nTxDYMmfawhETryKjbOf/Zsm
+    U6F2xA7amxFSID9X3Aeg69krcGiV1C1fD77C5qMnPe2jQdfS9gnzn9JoSDLRH9zt
+    CywvLOYFQeDlV5mJsgsRSMlZDhXP/H0AACAM6DrzP4zRdqWzeKofJbWmsdgnC+Ar
+    Z4TczTyM5jw8Yw82NC1edDd9/SGALIqaff+bMW726qGo2Kc/JOzV4Lp8LQZ9WZ6R
+    WIzxz+BLd/fEoiPnS3x6QJKu34Ygnq4f+NWRxZ0BFRtI7QS9mClShLAl7nnw1r8e
+    t8plnXV22r1xj1nJTyn9uGoiG6zm7Uz7wx8mhmLbTCVQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepshhpihhnihgtshdrnhgvthenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehtdejleenucevlhhushhtvghrufhiiigvpeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefieejieenucevlhhushhtvghrufhiiigvpeelvd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepshhpihhnihgtshdrnhgvthenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehtdejleenucevlhhushhtvghrufhiiigvpeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefieejieenucevlhhushhtvghrufhiiigvpeelvd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967418AbeCSSeH (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:34:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54736 "EHLO
+        id S1032217AbeCSSd0 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:33:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54418 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032214AbeCSSd0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:26 -0400
+        with ESMTP id S1032208AbeCSSdX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
+        stable@vger.kernel.org, Edmund Nadolski <enadolski@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 34/52] btrfs: alloc_chunk: fix DUP stripe size handling
-Date: Mon, 19 Mar 2018 19:08:32 +0100
-Message-Id: <20180319180736.927690482@linuxfoundation.org>
+Subject: [PATCH 4.15 33/52] btrfs: add missing initialization in btrfs_check_shared
+Date: Mon, 19 Mar 2018 19:08:31 +0100
+Message-Id: <20180319180736.877316375@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -81,87 +80,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+From: Edmund Nadolski <enadolski@suse.com>
 
-commit 92e222df7b8f05c565009c7383321b593eca488b upstream.
+commit 18bf591ba9753e3e5ba91f38f756a800693408f4 upstream.
 
-In case of using DUP, we search for enough unallocated disk space on a
-device to hold two stripes.
+This patch addresses an issue that causes fiemap to falsely
+report a shared extent.  The test case is as follows:
 
-The devices_info[ndevs-1].max_avail that holds the amount of unallocated
-space found is directly assigned to stripe_size, while it's actually
-twice the stripe size.
+xfs_io -f -d -c "pwrite -b 16k 0 64k" -c "fiemap -v" /media/scratch/file5
+sync
+xfs_io  -c "fiemap -v" /media/scratch/file5
 
-Later on in the code, an unconditional division of stripe_size by
-dev_stripes corrects the value, but in the meantime there's a check to
-see if the stripe_size does not exceed max_chunk_size. Since during this
-check stripe_size is twice the amount as intended, the check will reduce
-the stripe_size to max_chunk_size if the actual correct to be used
-stripe_size is more than half the amount of max_chunk_size.
+which gives the resulting output:
 
-The unconditional division later tries to correct stripe_size, but will
-actually make sure we can't allocate more than half the max_chunk_size.
+wrote 65536/65536 bytes at offset 0
+64 KiB, 4 ops; 0.0000 sec (121.359 MiB/sec and 7766.9903 ops/sec)
+/media/scratch/file5:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        24576..24703       128 0x2001
+/media/scratch/file5:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        24576..24703       128   0x1
 
-Fix this by moving the division by dev_stripes before the max chunk size
-check, so it always contains the right value, instead of putting a duct
-tape division in further on to get it fixed again.
+This is because btrfs_check_shared calls find_parent_nodes
+repeatedly in a loop, passing a share_check struct to report
+the count of shared extent. But btrfs_check_shared does not
+re-initialize the count value to zero for subsequent calls
+from the loop, resulting in a false share count value. This
+is a regressive behavior from 4.13.
 
-Since in all other cases than DUP, dev_stripes is 1, this change only
-affects DUP.
+With proper re-initialization the test result is as follows:
 
-Other attempts in the past were made to fix this:
-* 37db63a400 "Btrfs: fix max chunk size check in chunk allocator" tried
-to fix the same problem, but still resulted in part of the code acting
-on a wrongly doubled stripe_size value.
-* 86db25785a "Btrfs: fix max chunk size on raid5/6" unintentionally
-broke this fix again.
+wrote 65536/65536 bytes at offset 0
+64 KiB, 4 ops; 0.0000 sec (110.035 MiB/sec and 7042.2535 ops/sec)
+/media/scratch/file5:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        24576..24703       128   0x1
+/media/scratch/file5:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        24576..24703       128   0x1
 
-The real problem was already introduced with the rest of the code in
-73c5de0051.
+which corrects the regression.
 
-The user visible result however will be that the max chunk size for DUP
-will suddenly double, while it's actually acting according to the limits
-in the code again like it was 5 years ago.
-
-Reported-by: Naohiro Aota <naohiro.aota@wdc.com>
-Link: https://www.spinics.net/lists/linux-btrfs/msg69752.html
-Fixes: 73c5de0051 ("btrfs: quasi-round-robin for chunk allocation")
-Fixes: 86db25785a ("Btrfs: fix max chunk size on raid5/6")
-Signed-off-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update comment ]
+Fixes: 3ec4d3238ab ("btrfs: allow backref search checks for shared extents")
+Signed-off-by: Edmund Nadolski <enadolski@suse.com>
+[ add text from cover letter to changelog ]
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ fs/btrfs/backref.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -4737,10 +4737,13 @@ static int __btrfs_alloc_chunk(struct bt
- 	ndevs = min(ndevs, devs_max);
- 
- 	/*
--	 * the primary goal is to maximize the number of stripes, so use as many
--	 * devices as possible, even if the stripes are not maximum sized.
-+	 * The primary goal is to maximize the number of stripes, so use as
-+	 * many devices as possible, even if the stripes are not maximum sized.
-+	 *
-+	 * The DUP profile stores more than one stripe per device, the
-+	 * max_avail is the total size so we have to adjust.
- 	 */
--	stripe_size = devices_info[ndevs-1].max_avail;
-+	stripe_size = div_u64(devices_info[ndevs - 1].max_avail, dev_stripes);
- 	num_stripes = ndevs * dev_stripes;
- 
- 	/*
-@@ -4775,8 +4778,6 @@ static int __btrfs_alloc_chunk(struct bt
- 			stripe_size = devices_info[ndevs-1].max_avail;
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -1509,6 +1509,7 @@ int btrfs_check_shared(struct btrfs_root
+ 		if (!node)
+ 			break;
+ 		bytenr = node->val;
++		shared.share_count = 0;
+ 		cond_resched();
  	}
- 
--	stripe_size = div_u64(stripe_size, dev_stripes);
--
- 	/* align to BTRFS_STRIPE_LEN */
- 	stripe_size = round_down(stripe_size, BTRFS_STRIPE_LEN);
  
