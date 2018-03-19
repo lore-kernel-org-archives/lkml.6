@@ -1,116 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755590AbeCSOK1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:10:27 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53002 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754166AbeCSOKY (ORCPT
+        id S1755612AbeCSOMR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:12:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755299AbeCSOMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:10:24 -0400
-X-Google-Smtp-Source: AG47ELshSgDnXDEMMzQaVKm1VU3GAhbArlPcYpB6sUOhmv7voNFy4ZlHNREQIbOyHr1fz3cKXCWOe2bcer5d1bguXL0=
-MIME-Version: 1.0
-In-Reply-To: <5AAF838D.2030105@broadcom.com>
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
- <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
-From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
-Date: Mon, 19 Mar 2018 21:10:21 +0700
-Message-ID: <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, kvalo@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com
+        Mon, 19 Mar 2018 10:12:13 -0400
+Subject: Re: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: joeyli <jlee@suse.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Jiri Slaby <jslaby@suse.cz>, David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, matthew.garrett@nebula.com,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 19 Mar 2018 10:12:03 -0400
+In-Reply-To: <20180311032022.GA31059@linux-l9pv.suse>
+References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
+         <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
+         <1520428682.10396.445.camel@linux.vnet.ibm.com>
+         <1520436517.5558.2.camel@HansenPartnership.com>
+         <20180311032022.GA31059@linux-l9pv.suse>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031914-0040-0000-0000-00000422DB0D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031914-0041-0000-0000-00002625F0A7
+Message-Id: <1521468723.3503.171.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803190164
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arend,
-I appreciate your response. In my opinion, it has nothing to do with
-SDIO host, because it defines "quirks" in the driver itself.
-If I get it right, you mean something like this:
+On Sun, 2018-03-11 at 11:20 +0800, joeyli wrote:
+> On Wed, Mar 07, 2018 at 07:28:37AM -0800, James Bottomley wrote:
+> > On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
+> > > On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
+> > > > what's the status of this please? Distributors (I checked SUSE,
+> > > > RedHat and Ubuntu) have to carry these patches and every of them
+> > > > have to forward-port the patches to new kernels. So are you going
+> > > > to resend the PR to have this merged?
+> > [...]
+> > > Just because I trust the platform keys prior to booting the kernel,
+> > > doesn't mean that I *want* to trust those keys once booted.  There
+> > > are, however, places where we need access to those keys to verify a
+> > > signature (eg. kexec kernel image).
+> > 
+> > Which is essentially the reason I always give when these patches come
+> > back
+> >
+> 
+> Josh Boyer's "MODSIGN: Allow the "db" UEFI variable to be suppressed"
+> patch checks MokIgnoreDB variable to ignore db:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-uefi&id=7c395b30a33a617c5cc2cdd419300af71277b79a
+> 
+> I think that we can consider to use MokAllowDB. Which means that kernel
+> ignores DB by default.
 
-mmc3: mmc@1c12000 {
-...
-        broken-sg-support;
-        sd-head-align = 4;
-        sd-sgentry-align = 512;
+Not all systems have a shim layer.  This design is really x86
+specific.  Allowing shim keys, but ignoring DB, does not address those
+systems.
 
-        brcmf: wifi@1 {
-                ...
-        };
-};
+> > > Nayna Jain's "certs: define a trusted platform keyring" patch set
+> > > introduces a new, separate keyring for these platform keys.
+> > 
+> > Perhaps, to break the deadlock, we should ask Jiří what the reason is
+> > the distros want these keys to be trusted.  Apart from the Microsoft
+> > key, it will also give you an OEM key in your trusted keyring.  Is it
+> > something to do with OEM supplied modules?
+> >
+> 
+> As I remember that some manufacturers uses certificate in db to
+> sign their kernel module. We need to discuss with them for switching
+> to mok. Currently I do not know all use cases for using db.
+> 
+> There have some benefits for using db:
+> 
+>  - User does not need to deal with shim-mokmanager to enroll mok.
+>    Target machine doesn't need to reboot and user doesn't need to
+>    face to mokmanager UI.  
 
-Where dt: bindings documentation for these entries should reside?
-In generic MMC bindings? Well, this is the very special case and
-mmc-linux maintainer will unlikely to accept these changes.
-Also, extra kernel code modification might be required. It could make
-quite trivial change much more complex.
+The reason for trusting enrolled shim keys is because it requires
+physical presence.  (I kind of remember hearing that this changed.
+ There is some method of accepting enrolled keys that does not require
+physical presence.)
 
->Also I am not sure if the broken-sg-support is still needed. We added that for omap_hsmmc, but that has since changed to scatter-gather emulation so it might not be needed anymore.
+>  - The db is a authenticated variable, it's still secure when secure
+>    boot is disabled.
+>    The db is a authenticated variable that it can only be modified
+>    by manufacturer's key. Kernel can trust it when secure boot
+>    is disabled. It's useful for we do not need to taint kernel
+>    for loading a manufacturer's kernel module even secure boot is
+>    disabled.
+> 
+>  - Do not need to worry about the space of NVRAM and the EFI firmware
+>    implementation for writing a boot time variable.
+>   
+> But I also agree that we should not trust all keys (like Microsoft key)
+> in db by default.
 
-I've experienced the problem with rk3288 (dw-mmc host) and sdio
-settings like above solved it.
-Frankly, I haven't investigated any deeper which one of the settings
-helped in my case yet...
-I will try to get rid of broken-sg-support first and let you know if
-it does make any difference.
+Between requiring a shim layer and relying on physical presence, I'm
+not convinced this is the best solution.  Do we really want to support
+different methods for different architectures?
 
-All the best,
-  Alex.
-
-On 19 March 2018 at 16:31, Arend van Spriel
-<arend.vanspriel@broadcom.com> wrote:
-> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
->>
->> In case if the host has higher align requirements for SG items, allow
->> setting device-specific aligns for scatterlist items.
->>
->> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
->> ---
->>   Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt | 5
->> +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git
->> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->> index 86602f264dce..187b8c1b52a7 100644
->> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->> @@ -17,6 +17,11 @@ Optional properties:
->>         When not specified the device will use in-band SDIO interrupts.
->>    - interrupt-names : name of the out-of-band interrupt, which must be
->> set
->>         to "host-wake".
->> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO host
->> +       controller has higher align requirement than 32 bytes for each
->> +       scatterlist item.
->> + - brcm,sd-head-align : alignment requirement for start of data buffer.
->> + - brcm,sd-sgentry-align : length alignment requirement for each sg
->> entry.
->
->
-> Hi Alexey,
->
-> Thanks for the patch. However, the problem with these is that they are
-> characterizing the host controller and not the wireless device. So from
-> device tree perspective , which is to describe the hardware, these
-> properties should be SDIO host controller properties. Also I am not sure if
-> the broken-sg-support is still needed. We added that for omap_hsmmc, but
-> that has since changed to scatter-gather emulation so it might not be needed
-> anymore.
->
-> Regards,
-> Arend
-
-
-
--- 
-With best regards,
-  Alexey Roslyakov
-Email: alexey.roslyakov@gmail.com
+Mimi
