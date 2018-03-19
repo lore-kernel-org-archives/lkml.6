@@ -1,43 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932746AbeCSJmq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:42:46 -0400
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:34732 "EHLO
-        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932351AbeCSJmp (ORCPT
+        id S1755409AbeCSJqP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:46:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47142 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755291AbeCSJqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:42:45 -0400
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Martin Steigerwald <martin@lichtvoll.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-References: <27165802.vQ9JbjrmvU@merkaba>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Message-ID: <a3af4fed-a728-5be2-2224-6a0573406c5b@leemhuis.info>
-Date: Mon, 19 Mar 2018 10:42:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Mar 2018 05:46:13 -0400
+Date: Mon, 19 Mar 2018 10:45:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v5 6/7] cpuidle: menu: Refine idle state selection
+ for running tick
+Message-ID: <20180319094549.GG4043@hirez.programming.kicks-ass.net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan>
+ <4980385.RayypyZ8dA@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <27165802.vQ9JbjrmvU@merkaba>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1521452565;1c873da3;
-X-HE-SMSGID: 1exrJS-0001WP-47
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4980385.RayypyZ8dA@aspire.rjw.lan>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi! On 11.03.2018 09:20, Martin Steigerwald wrote:
->
-> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
-> with SMART checks occassionally failing like this:
+On Thu, Mar 15, 2018 at 11:16:41PM +0100, Rafael J. Wysocki wrote:
 
-Martin (or someone else): Could you gibe a status update? I have this
-issue on my list or regressions, but it's hard to follow as two
-different issues seem to be discussed. Or is it just one issue? Did the
-patch/discussion that Bart pointed to help? Is the issue still showing
-up in rc6?
+> --- linux-pm.orig/kernel/time/tick-sched.c
+> +++ linux-pm/kernel/time/tick-sched.c
+> @@ -1031,10 +1031,11 @@ void tick_nohz_irq_exit(void)
+>  
+>  /**
+>   * tick_nohz_get_sleep_length - return the expected length of the current sleep
+> + * @cur_ret: pointer for returning the current time to the next event
 
-Ciao, Thorsten
+Both name and description are confusing, what it actually appears to
+return is the duration until the next event. Which would suggest a name
+like: delta_next or something along those lines.
+
+But 'cur' short for current, is very misleading.
