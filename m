@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521482965-2-10139645511813150068
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521482964; b=BAsnUO/BitT12ojZ6nT0H59cnLCW6jz1P+/iDRYTpiDCo/f
-    Dt9vBI3FGzm+ldxquo75KteT/D6hGeE3aUt/OWqG8x8ICRxtj2nCSyHtXo0LmLdI
-    vjRxN4OrWj3blhsSKnGY0Mzm4SEulP/M4bOIe93IigIJHpJr0r9MBPR/Xogp/YVG
-    +hyJVb4kVJ/waIsST8u7eqjKcnrZzvOhP5/eLoyVHok0JBwb/fIXbk7CdqbvVqCR
-    nvk/bvHWoTQ73AaxzOBVbvuwWExKEknB4fCfPoMiXY0YDZp1diX6qYSccVqGEDbC
-    Q2Cp36oLpCu/X/gCHoe+YxfbmIvV8dT8mV1QGWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521482964; bh=RX2sivfFcKK26OCxIg4Zm99T/f
-    O15D7MqpcuXV65qcM=; b=H6YuO8fVvO+fJ/lo0K5TvwGRNXxtzG2R4KETVYGyE+
-    OdSJxx/ojVf8gzK1gz4FzFvo6u6KzSR57fcgdNRrlMmI50//OMPBJlMbLTUumjtL
-    TTwZsP9TkkeD3Ir8lj19c/czjbz3tMq3SYYtnP5MCpgyVle2vTFssP0K7zUd9bn4
-    S4gOr3raufT1J2egjHZpkWMcUg/+HjmLtTJd/iwITw++Nlgfckvm3X+3v4mxdPK2
-    STR3/FEwSZopvIq0Gph+3HHE1f3m89BRbiWvllg+D7idXg33r2I+fM6Oux4ZKRFB
-    /NKuLjBt4tvRvCuD9JM2HhOr7dq+wyHDqEEyLCHawBVw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefudeiudenucevlhhushhtvghrufhiiigvpedu;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefudeiudenucevlhhushhtvghrufhiiigvpedu;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966588AbeCSSJV (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:09:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41360 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965608AbeCSSJS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:09:18 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELs1PKyMr/BOKICJb488RYfRjqf/Y7xbJJOBEsJnLxfC1NKsQkhTI0tYlIws7wOYDhXgOC30
+ARC-Seal: i=1; a=rsa-sha256; t=1521482961; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dZH5f+WvcsXorAJSizNf/z7TbXFHRp3ng8wCWea86cRJ94eVKKPbnS0igsSLWqB6Ma
+         dtUK7HWsmiS2EcFQNFqktY2UfhcLO5tHvC3+kJDXa+rO/Q6TkUrBqgTKdaJ+PiL5NgIB
+         B48SmfZoaaxYg8oHzq+ITQDt37UxErHebsVKxrNwvnZ2a6TR6Km5R69y+1GIiR5drEHS
+         h0Q7vX3fF5A4oI17fHoDIS1DOUp8P/eRWaX+eiOcG+GVwDLfKGt8oJ+3wjFOuJ1LZvzV
+         2Q/iRz0Y0Sjd9czSH8xQ1INyA5zu7bdf1dmcxUyQQLNF9LFePymLTmEngF+M+GUO8sUS
+         ESFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=2+O2rskaUaT7LJ/mYnjBi7zcpiOfQ/ax92rVnrq/LE4=;
+        b=YA5S/eqMLl6inCkG4gBFnDuKCtsnMc5Yxg7ld8pxzGchOInFYyzheYlA5ITaUsVhZz
+         1ET+6D1VdefrgNU7OmXYg1l1P9rus4PJrRdiUysCCQxakKZoZuyqyjarVbi6CIIB1IU5
+         eMjBgzEd5CIheISS62grLoY2zjcU9y2IstwUeJyGFZv9R7t2g+aCGxxWSy0AljzvAeXa
+         cqP5iTashRQPFhdcqWs97iWxnKZiACbHNUrwepl2Z8oFzV7YJcetXTsfCU0hbQn/atec
+         drLAmFimtfFuZvAEVOUoTS54wKJOTUF3/EsQ8e2NqwJcK0eNgdg5j+DuiU9QoC6MhnLV
+         FO2g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 15/68] [media] media: i2c/soc_camera: fix ov6650 sensor getting wrong clock
-Date: Mon, 19 Mar 2018 19:05:53 +0100
-Message-Id: <20180319171829.996235141@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Davide Caratti <dcaratti@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 17/68] sched: act_csum: dont mangle TCP and UDP GSO packets
+Date: Mon, 19 Mar 2018 19:05:55 +0100
+Message-Id: <20180319171830.284544788@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390518256431155?=
+X-GMAIL-MSGID: =?utf-8?q?1595390518256431155?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,39 +50,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
 
-[ Upstream commit 54449af0e0b2ea43a8166611c95b730c850c3184 ]
+[ Upstream commit add641e7dee31b36aee83412c29e39dd1f5e0c9c ]
 
-After changes to v4l2_clk API introduced in v4.1 by commits a37462b919
-'[media] V4L: remove clock name from v4l2_clk API' and 4f528afcfb
-'[media] V4L: add CCF support to the v4l2_clk API', ov6650 sensor
-stopped responding because v4l2_clk_get(), still called with
-depreciated V4L2 clock name "mclk", started to return respective CCF
-clock instead of the V4l2 one registered by soc_camera. Fix it by
-calling v4l2_clk_get() with NULL clock name.
+after act_csum computes the checksum on skbs carrying GSO TCP/UDP packets,
+subsequent segmentation fails because skb_needs_check(skb, true) returns
+true. Because of that, skb_warn_bad_offload() is invoked and the following
+message is displayed:
 
-Created and tested on Amstrad Delta against Linux-4.7-rc3 with
-omap1_camera fixes.
+WARNING: CPU: 3 PID: 28 at net/core/dev.c:2553 skb_warn_bad_offload+0xf0/0xfd
+<...>
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+  [<ffffffff8171f486>] skb_warn_bad_offload+0xf0/0xfd
+  [<ffffffff8161304c>] __skb_gso_segment+0xec/0x110
+  [<ffffffff8161340d>] validate_xmit_skb+0x12d/0x2b0
+  [<ffffffff816135d2>] validate_xmit_skb_list+0x42/0x70
+  [<ffffffff8163c560>] sch_direct_xmit+0xd0/0x1b0
+  [<ffffffff8163c760>] __qdisc_run+0x120/0x270
+  [<ffffffff81613b3d>] __dev_queue_xmit+0x23d/0x690
+  [<ffffffff81613fa0>] dev_queue_xmit+0x10/0x20
+
+Since GSO is able to compute checksum on individual segments of such skbs,
+we can simply skip mangling the packet.
+
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/soc_camera/ov6650.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_csum.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/media/i2c/soc_camera/ov6650.c
-+++ b/drivers/media/i2c/soc_camera/ov6650.c
-@@ -1016,7 +1016,7 @@ static int ov6650_probe(struct i2c_clien
- 	priv->code	  = V4L2_MBUS_FMT_YUYV8_2X8;
- 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@ -176,6 +176,9 @@ static int tcf_csum_ipv4_tcp(struct sk_b
+ 	struct tcphdr *tcph;
+ 	const struct iphdr *iph;
  
--	priv->clk = v4l2_clk_get(&client->dev, "mclk");
-+	priv->clk = v4l2_clk_get(&client->dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		ret = PTR_ERR(priv->clk);
- 		goto eclkget;
++	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4)
++		return 1;
++
+ 	tcph = tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
+ 	if (tcph == NULL)
+ 		return 0;
+@@ -197,6 +200,9 @@ static int tcf_csum_ipv6_tcp(struct sk_b
+ 	struct tcphdr *tcph;
+ 	const struct ipv6hdr *ip6h;
+ 
++	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV6)
++		return 1;
++
+ 	tcph = tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
+ 	if (tcph == NULL)
+ 		return 0;
+@@ -220,6 +226,9 @@ static int tcf_csum_ipv4_udp(struct sk_b
+ 	const struct iphdr *iph;
+ 	u16 ul;
+ 
++	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
++		return 1;
++
+ 	/*
+ 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
+ 	 * udph->len to get the real length without any protocol check,
+@@ -273,6 +282,9 @@ static int tcf_csum_ipv6_udp(struct sk_b
+ 	const struct ipv6hdr *ip6h;
+ 	u16 ul;
+ 
++	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
++		return 1;
++
+ 	/*
+ 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
+ 	 * udph->len to get the real length without any protocol check,
