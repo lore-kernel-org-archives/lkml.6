@@ -1,64 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935724AbeCSSgg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:36:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965507AbeCSSgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:36:04 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 1/2] sched/debug: fix per-task line continuation for console
-Date: Mon, 19 Mar 2018 14:35:54 -0400
-Message-Id: <1521484555-8620-2-git-send-email-joe.lawrence@redhat.com>
-In-Reply-To: <1521484555-8620-1-git-send-email-joe.lawrence@redhat.com>
-References: <1521484555-8620-1-git-send-email-joe.lawrence@redhat.com>
+        id S970418AbeCSSha (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:37:30 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:51163 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967496AbeCSShZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:37:25 -0400
+Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2003:d5:3db:1800:60b5:55d8:d757:229
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Scott Bauer <scott.bauer@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2 00/11] block: sed-opal support write to shadow mbr
+Date: Mon, 19 Mar 2018 19:36:42 +0100
+Message-Id: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the SEQ_printf() macro prints to the console, it runs a simple
-printk() without KERN_CONT "continued" line printing.  The result of
-this is oddly wrapped task info, for example:
+Hi,
+I was advised to resend the patchset as a v2 where all the patches are
+in a flat hierarchy. So here is a complete set which hopefully pleases
+all requirements.
+As the previous fixes have by now all landed into linux-next, no
+additional patches are required for testing.
 
-  % echo t > /proc/sysrq-trigger
-  % dmesg
-  ...
-  runnable tasks:
-  ...
-  [   29.608611]  I
-  [   29.608613]       rcu_sched     8      3252.013846      4087   120
-  [   29.608614]         0.000000        29.090111         0.000000
-  [   29.608615]  0 0
-  [   29.608616]  /
+Thanks,
+ Jonas
 
-Modify SEQ_printf to use pr_cont() for expected one-line results:
+--
 
-  % echo t > /proc/sysrq-trigger
-  % dmesg
-  ...
-  runnable tasks:
-  ...
-  [  106.716329]  S        cpuhp/5    37      2006.315026        14   120         0.000000         0.496893         0.000000 0 0 /
+Jonas Rabenstein (11):
+  block: sed-opal: use correct macro for method length
+  block: sed-opal: unify space check in add_token_*
+  block: sed-opal: unify cmd start and finalize
+  block: sed-opal: unify error handling of responses
+  block: sed-opal: print failed function address
+  block: sed-opal: split generation of bytestring header and content
+  block: sed-opal: add ioctl for done-mark of shadow mbr
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: unify retrieval of table columns
+  block: sed-opal: get metadata about opal-sed tables
+  block: sed-opal: check size of shadow mbr
 
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
----
- kernel/sched/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/opal_proto.h            |  18 ++
+ block/sed-opal.c              | 619 +++++++++++++++++++++---------------------
+ include/linux/sed-opal.h      |   2 +
+ include/uapi/linux/sed-opal.h |   9 +
+ 4 files changed, 339 insertions(+), 309 deletions(-)
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 1ca0130ed4f9..50026aa2d81e 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -32,7 +32,7 @@
- 	if (m)					\
- 		seq_printf(m, x);		\
- 	else					\
--		printk(x);			\
-+		pr_cont(x);			\
-  } while (0)
- 
- /*
 -- 
-1.8.3.1
+2.16.1
