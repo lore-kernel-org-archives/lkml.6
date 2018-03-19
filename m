@@ -1,182 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755443AbeCSJdB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:33:01 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:36457 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755352AbeCSJc6 (ORCPT
+        id S932493AbeCSJff (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:35:35 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33112 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932421AbeCSJfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:32:58 -0400
-X-Google-Smtp-Source: AG47ELupqQyTuI5lNWDtm6/0Jm5xJZsl7rASbnkvPUaF+4rrp4mBWeGb4+BxVFGvfBeo03JRh+QEYg==
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-References: <27165802.vQ9JbjrmvU@merkaba> <4373847.u3KAOBid1D@merkaba>
- <d9c6e12b-a1ea-92e1-04ba-010e3db7c480@redhat.com>
- <2906688.e4ghZiFuBA@merkaba>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b9185dcc-aaf8-6ef8-a0c2-3b2e4fe55e54@redhat.com>
-Date: Mon, 19 Mar 2018 10:32:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Mar 2018 05:35:32 -0400
+X-Google-Smtp-Source: AG47ELt3DNv81IZWL+B5S7hrVvc8zQTDfEL2fNIqOtoLMCh0DCASueNlGnuhXsUmBbtVfW6vwU/Dw2WbFAxGmARwkYE=
 MIME-Version: 1.0
-In-Reply-To: <2906688.e4ghZiFuBA@merkaba>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180304124551.22565-1-brgl@bgdev.pl>
+References: <20180304124551.22565-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 19 Mar 2018 10:35:31 +0100
+Message-ID: <CAMRc=McpwoE-QL8b+5FeWkOgHCNZZq3AKcxzOJ11+b+Pb=TECQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mockup: fix a potential crash when creating debugfs entries
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+2018-03-04 13:45 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> If we failed to create the top debugfs directory, we must not try to
+> create the child nodes. We currently only check if gpio_mockup_dbg_dir
+> is not NULL, but it can also contain an errno if debugfs is disabled
+> in build options. Use IS_ERR_OR_NULL() instead.
+>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  drivers/gpio/gpio-mockup.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index 3a545ad17817..b5876b07b0f7 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -314,7 +314,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+>         if (rv)
+>                 return rv;
+>
+> -       if (gpio_mockup_dbg_dir)
+> +       if (!IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
+>                 gpio_mockup_debugfs_setup(dev, chip);
+>
+>         return 0;
+> --
+> 2.16.1
+>
 
-On 18-03-18 23:06, Martin Steigerwald wrote:
-> Hi Hans.
-> 
-> Hans de Goede - 18.03.18, 22:34:
->> On 14-03-18 13:48, Martin Steigerwald wrote:
->>> Hans de Goede - 14.03.18, 12:05:
->>>> Hi,
->>>>
->>>> On 14-03-18 12:01, Martin Steigerwald wrote:
->>>>> Hans de Goede - 11.03.18, 15:37:
->>>>>> Hi Martin,
->>>>>>
->>>>>> On 11-03-18 09:20, Martin Steigerwald wrote:
->>>>>>> Hello.
->>>>>>>
->>>>>>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
->>>>>>> with SMART checks occassionally failing like this:
->>>>>>>
->>>>>>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
->>>>>>> checks
->>>>>>> udisksd[24408]: Error performing housekeeping for drive
->>>>>>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error
->>>>>>> updating
->>>>>>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected
->>>>>>> sense
->>>>>>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00
->>>>>>> 50
->>>>>>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00
->>>>>>> 00
->>>>>>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
->>>>>>> udisksd[24408]: Error performing housekeeping for drive
->>>>>>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error
->>>>>>> updating
->>>>>>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
->>>>>>> sense
->>>>>>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00
->>>>>>> 00
->>>>>>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
->>>>>>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
->>>>>>>
->>>>>>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad
->>>>>>> T520)
->>>>>>>
->>>>>>> However when I then check manually with smartctl -a | -x | -H the
->>>>>>> device
->>>>>>> reports SMART data just fine.
->>>>>>>
->>>>>>> As smartd correctly detects that device is in sleep mode, this may be
->>>>>>> an
->>>>>>> userspace issue in udisksd.
->>>>>>>
->>>>>>> Also at some boot attempts the boot hangs with a message like "could
->>>>>>> not
->>>>>>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
->>>>>>> on to LVs (each on one of the SSDs). A configuration that requires a
->>>>>>> manual
->>>>>>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
->>>>>>> btrfs device scan).
->>>>>>>
->>>>>>> I wonder whether that has to do with the new SATA LPM policy stuff,
->>>>>>> but
->>>>>>> as
->>>>>>> I had issues with
->>>>>>>
->>>>>>> 3 => Medium power with Device Initiated PM enabled
->>>>>>>
->>>>>>> (machine did not boot, which could also have been caused by me
->>>>>>> accidentally
->>>>>>> removing all TCP/IP network support in the kernel with that setting)
->>>>>>>
->>>>>>> I set it back to
->>>>>>>
->>>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=0
->>>>>>>
->>>>>>> (firmware settings)
->>>>>>
->>>>>> Right, so at that settings the LPM policy changes are effectively
->>>>>> disabled and cannot explain your SMART issues.
->>>>>>
->>>>>> Still I would like to zoom in on this part of your bug report, because
->>>>>> for Fedora 28 we are planning to ship with
->>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3
->>>>>> and AFAIK Ubuntu has similar plans.
->>>>>>
->>>>>> I suspect that the issue you were seeing with
->>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've
->>>>>> attached
->>>>>> a patch for you to test, which disabled LPM for your model Crucial SSD
->>>>>> (but
->>>>>> keeps it on for the Intel disk) if you can confirm that with that patch
->>>>>> you
->>>>>> can run with
->>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
->>>>>
->>>>> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system
->>>>> successfully
->>>>> booted three times in a row. So feel free to add tested-by.
->>>>
->>>> Thanks.
->>>>
->>>> To be clear, you're talking about 4.16-rc5 with the patch I made to
->>>> blacklist the Crucial disk I assume, not just plain 4.16-rc5, right ?
->>>
->>> 4.16-rc5 with your
->>>
->>> 0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.patch
->>
->> I was about to submit this upstream and was planning on extending it to
->> also cover the 960GB version, which lead to me doing a quick google.
->> Judging from the google results it seems that there are multiple firmware
->> versions of this SSD out there and I wonder if you are perhaps running
->> an older version of the firmware. If you do:
->>
->> dmesg | grep Crucial_CT480M500
->>
->> You should see something like this:
->>
->> ata2.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
->>
->> I'm interested in the "MU03" part, what is that in your case?
-> 
-> Although I never updated the firmware, I do have MU03:
-> 
-> % lsscsi | grep Crucial
-> [2:0:0:0]    disk    ATA      Crucial_CT480M50 MU03  /dev/sdb
-> 
-> % dmesg | grep Crucial_CT480M500
-> [    2.424537] ata3.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
+Hi Linus,
 
-Thanks. So there is an MU05 update:
+gentle ping for this one as it causes a crash if debugfs is disabled.
 
-www.crucial.com/wcsstore/CrucialSAS/firmware/M500/MU05/crucial-m500-iso-firmware-update-mu05-en.pdf
-
-Which according to its changelog features:
-"Improved drive latency performance in applications with SMART polling"
-
-Which is not relevant to the LPM issues you are seeing, but seems relevant to
-the other issues you are seeing.
-
-Unfortunately the MU05 update does not seem to specifically address any
-LPM issues, so I'm just going to do the blacklist for all 480GB+ models
-for now (my experience with other Crucial models is that smaller variants
-seem to not suffer from LPM issues).
-
-Regards,
-
-Hans
+Bart
