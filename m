@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsaVYtIhvQwDI3pk6r/CEUo1CF4exXBHDoAZ0GwVwojVdnysgdfXFCkYrSCjt689UXx3I51
-ARC-Seal: i=1; a=rsa-sha256; t=1521484006; cv=none;
+X-Google-Smtp-Source: AG47ELusnqrdXj7cLTpmzqFS9MYtAx/5VWbOzggEjqGJIL1nsX1LBsOvZNQr+DVz0rMw51Qt0gwa
+ARC-Seal: i=1; a=rsa-sha256; t=1521484004; cv=none;
         d=google.com; s=arc-20160816;
-        b=PZWPOD/nwwVx/ygstYDhAocGhLdvIg7aclNKBBrQECOTpwlhpKAUF67mUC4KXFJD0w
-         EDUKdQnzRjKSTgVX6EjHy+rXpXpn4tUzgtbYmkrdro+kDtCms9xz00e54gRSBBH6iF50
-         K//3Ix5i8slEvyUPHKsy5nwsjuee4AoEw13JOKZi0/gkZ1mdzQe8dCRSuQ/+3fNImX/7
-         PnZqQisW2GiCm5Yu2HqkZrpkJ7Ug/y5MfWZTQLSwh4k+n8mDl5aWuNgS3E0wUSBUmVeQ
-         5J3kpWyfr6gqO9NGYCuerSHBnM1ULdeF7OQrM96U7S+ESbwspfcWXEQpV/dWlMbcpxzd
-         V0WA==
+        b=WDUHVrxiPoCCSyTQaCPqnE0g4kGVZLU5WOSj8gMSV+lrL99MkchAa1l8jTjUuX8i1f
+         rgS3D6m4f09IBP46RsEYci2ztaZPBrBq9PEhji47+R3RNQV91QVbAhAlz6eqD6cBpKtl
+         P9EogpDyeyYOVl21DKveXDstxuWGi75/nzve+POOfkpCuTAvgzh6kvZaGjmOOuPbJUkt
+         hPJxPvjv0gRn1Xz1uD4rO+qf6OeG4YaEhaXI8FKu9YOIS7bXaIN5UpVZVQZ5WSvMj0at
+         thzNZ/LAvcZQtpmK3c9TU5cHjXLRmPjIrWiL0/aTyT2JUwwvBFf56N8EdfEUU/lAcBx4
+         4dGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KieoKMRiuYZpUA1GyeO0a9LLOxyNhm7DlCFHFNLJ8kY=;
-        b=WwzrG88syS883M2LRoJfcPkNHl2TkA0vVryDSEisJr89DY5puyPlOicCvZKT3ZcPcT
-         GOtFdKvZGr5U8PKZa5BqBXZDMOgpNpV/SNUSR25zJ4wXGYHJzpfiYoqAXFQvuKNStYTA
-         tIz3NsQQBQUYChthx7VDMAufYNsORw7AmUrm+Ysx4+oXd9Yu8SKHQKmvoy0IyKo33xIf
-         E1mSepQOFfWoK3wiVryJKAGKIr0wCdI6Wc1eUydR4tKgRnRkGEtAoEW79vBeHsF681QM
-         lF0ifOX/iKRXRQ3vhJu1PlxJ5KbQVFeXr0Kw8DDfp4jhMdbC4nU++XauOutSm0Ul1vBZ
-         L1Ew==
+        bh=6ZbTLjYnGr/UMuMrtvlEdPqizw7VkYBklbZKVyKW9K4=;
+        b=VzCBH5cK/PNLgNhQTw2YjFl5ubPaIURI05lMV1rbOANb4tfhH5j/PFoQbfEV/wuHPo
+         3fBw3g7JNOcNBL90+b2rDrFcMSrqfKJ5pRlts2wyf+SX1zIzuVXLBVdXA1TwTXK1PPFY
+         Qmm7eIIY9MgxNhLGFK9csfE1US0iBUBzjNJ3tXvqgvZ2k23JMUePWtHMNrsQo62wsUCu
+         UqjzBrQ+OQZHecsApHVU79zeszXJhJ6PsgkVh+PeB0XakkZVl6mn3gYfq8gKB9q316ai
+         79SG5r6mGtjmz9B3LZcOUKG/cm8UQRnJGkHIByUXyn4gGdf9MUdpGgmeuTOWQPOBPB3S
+         eM5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Christophe Varoqui <christophe.varoqui@opensvc.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+	SCSI ML <linux-scsi@vger.kernel.org>,
+	device-mapper development <dm-devel@redhat.com>,
+	Xose Vazquez Perez <xose.vazquez@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 197/241] media: vsp1: Prevent suspending and resuming DRM pipelines
-Date: Mon, 19 Mar 2018 19:07:42 +0100
-Message-Id: <20180319180759.347810101@linuxfoundation.org>
+Subject: [PATCH 4.9 196/241] scsi: dh: add new rdac devices
+Date: Mon, 19 Mar 2018 19:07:41 +0100
+Message-Id: <20180319180759.278873126@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391613778820847?=
-X-GMAIL-MSGID: =?utf-8?q?1595391613778820847?=
+X-GMAIL-THRID: =?utf-8?q?1595390947989892367?=
+X-GMAIL-MSGID: =?utf-8?q?1595391611155146493?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,59 +56,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Xose Vazquez Perez <xose.vazquez@gmail.com>
 
 
-[ Upstream commit a17d2d6cd9985ca09a9e384f1bc71d710f7e5203 ]
+[ Upstream commit 4b3aec2bbbce1c35f50e7475a9fd78d24b9ea4ea ]
 
-When used as part of a display pipeline, the VSP is stopped and
-restarted explicitly by the DU from its suspend and resume handlers.
-There is thus no need to stop or restart pipelines in the VSP suspend
-and resume handlers, and doing so would cause the hardware to be
-left in a misconfigured state.
+Add IBM 3542 and 3552, arrays: FAStT200 and FAStT500.
 
-Ensure that the VSP suspend and resume handlers do not affect DRM-based
-pipelines.
+Add full STK OPENstorage family, arrays: 9176, D173, D178, D210, D220,
+D240 and D280.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Add STK BladeCtlr family, arrays: B210, B220, B240 and B280.
+
+These changes were done in multipath-tools time ago.
+
+Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Christophe Varoqui <christophe.varoqui@opensvc.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+Cc: SCSI ML <linux-scsi@vger.kernel.org>
+Cc: device-mapper development <dm-devel@redhat.com>
+Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/vsp1/vsp1_drv.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/scsi/scsi_dh.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -509,7 +509,13 @@ static int __maybe_unused vsp1_pm_suspen
- {
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
- 
--	vsp1_pipelines_suspend(vsp1);
-+	/*
-+	 * When used as part of a display pipeline, the VSP is stopped and
-+	 * restarted explicitly by the DU.
-+	 */
-+	if (!vsp1->drm)
-+		vsp1_pipelines_suspend(vsp1);
-+
- 	pm_runtime_force_suspend(vsp1->dev);
- 
- 	return 0;
-@@ -520,7 +526,13 @@ static int __maybe_unused vsp1_pm_resume
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
- 
- 	pm_runtime_force_resume(vsp1->dev);
--	vsp1_pipelines_resume(vsp1);
-+
-+	/*
-+	 * When used as part of a display pipeline, the VSP is stopped and
-+	 * restarted explicitly by the DU.
-+	 */
-+	if (!vsp1->drm)
-+		vsp1_pipelines_resume(vsp1);
- 
- 	return 0;
- }
+--- a/drivers/scsi/scsi_dh.c
++++ b/drivers/scsi/scsi_dh.c
+@@ -56,10 +56,13 @@ static const struct scsi_dh_blist scsi_d
+ 	{"IBM", "1815",			"rdac", },
+ 	{"IBM", "1818",			"rdac", },
+ 	{"IBM", "3526",			"rdac", },
++	{"IBM", "3542",			"rdac", },
++	{"IBM", "3552",			"rdac", },
+ 	{"SGI", "TP9",			"rdac", },
+ 	{"SGI", "IS",			"rdac", },
+-	{"STK", "OPENstorage D280",	"rdac", },
++	{"STK", "OPENstorage",		"rdac", },
+ 	{"STK", "FLEXLINE 380",		"rdac", },
++	{"STK", "BladeCtlr",		"rdac", },
+ 	{"SUN", "CSM",			"rdac", },
+ 	{"SUN", "LCSM100",		"rdac", },
+ 	{"SUN", "STK6580_6780",		"rdac", },
