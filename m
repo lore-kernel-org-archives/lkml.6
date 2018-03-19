@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtiA1uvkisGyHGpvPHzCLQnTr5f1omqOVyl8A4OhSN7/IxVKe/yy7kb8V8k45f5VBw+CRV1
-ARC-Seal: i=1; a=rsa-sha256; t=1521483747; cv=none;
+X-Google-Smtp-Source: AG47ELsm3gnZUnVxhHKup8484SrXbhmL+Yx2L27lk6H49t1gad5PEnCmL7e3iDM7t3Uh/u1aKRvm
+ARC-Seal: i=1; a=rsa-sha256; t=1521483744; cv=none;
         d=google.com; s=arc-20160816;
-        b=ryk9TmCRk2Vyj6ejRofkyRqU8/u9G7ScYX6Us4PBEaLrB7IKQANd5W0YEeLZtoCv2H
-         dkZb/YlRrQdF7Z2xwDf1ZWxhNz6Onwsjem6v7+6XlaPwzgrkcfnE6BxZm0Y68TB55ZsO
-         3LL1D4ce0KkYw5fB93fk+wGMOftJzKnPcUTnb+b7NSR8zBUN4FWBLfRQZoNokOSgHpKE
-         Hq+h6FIZjdP/BsQox2jT4tjPaROQam4PmKXY0ecdpXOBiy2f79ahDcEm5yT/Nz49tNlF
-         4VK/YXJ/ZnEJ9ENx0A0iNjgqBqHaUBm4ShtP41b98sXyhQ/RubD133UBSvuPYrcRxXdV
-         3/aA==
+        b=0t8NvPD3EBAqBv20e1mkPmv/fl9b0XitHOG45wkiDgWAtErGX1dPYl3uLFzPQCoWnx
+         uZebAG67nE6fIvTxr1idwd4V1HaH+JnvAW2I7/9oISU1kLYH3XvJHpE7+CdE8M2JQ6yQ
+         j53iKPVDmwdxQbJ03YGe/IZs9ZxHExar78lPf55wPQdnQneNyI0bhYVyUbaudeKYfI/l
+         O9kvsVVzbSOU82s8cXLGKiM9LplDXneMc4+6hYTbTKvlae8UbJSerkQ/DP8m/NdbLEdz
+         NrpZ0SepW2mu3IevnVFhsv4gB7LG1k2a3JFtxrjCAV7G7tqmqYG/WGaxd/iwLXioVzNb
+         gOYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ozXyUYdnL9/TEgriUhtYWIugrJQYwif9BSEfyoNCkrA=;
-        b=KfSoYsg1XkEtkbhvQnUV9P8AdYA4SKAYB7f8DoE40KwqOMye7SnkmBuOI9xd1NKlh7
-         I95ohMnwYYfIhVlP8ESAXFelfHCreBLswct+a/7OvOzsWHfk22Akz1rLlonTrlY8Gpxw
-         E9L7TAA+H1elXcUicfOb2aos07k7gtXrGiy0FlzfUQ9yV4XisA3cZHQ7L6VyV5kdgl10
-         B8Y2RQHjG5FqNJCRu6Ih/pQKlZBX9r6DUZVpNZS2WcdY8IkbOnBuEseUDI4MIoZbXD7j
-         eQws5uktKXbS/kAweQJBW3hpS2H3af7VsPBu7f1YKbjxPpy6Va/2+O2ATZI63/7bGsWd
-         MsIA==
+        bh=SQnHc3Q3PTfHcn27IqkRnWWjs5B2m0p2jU3o8oeQ3PM=;
+        b=QaG7GlXl7NHWb6AqmCECRAz7i1KeVqDu4yt+NGfxiMiPerkh8u16VXn6p2tMLtuM5c
+         9adqCxD7K8My3Of43fK/n0K0lIkfj6GQPfd0U4MqG+RcBQbVTwJMClpoTEYPt00bD147
+         jrbbv5Tm9xlUUcQ2xGhptZpeejz9EFRJIw4pr9YXySCYZ+zAV1ub433HnVsd0jKdFVMZ
+         J2dyElqF9YUE7WEWKzP4I3YYu2TOTSKLhOa4a8A92vQ1UIJ3KvCUxm7nHAZod9mWZYJ/
+         3SmfDnBaBm6CzncGN0CsOgSZponLc3uL9n80muOeYvFitcqrYw8oLz2/EkGI5KdqCY+z
+         aonA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Baruch Siach <baruch@tkos.co.il>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	Eric Anholt <eric@anholt.net>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 067/241] ARM: dts: bcm2835: add index to the ethernet alias
-Date: Mon, 19 Mar 2018 19:05:32 +0100
-Message-Id: <20180319180753.976719226@linuxfoundation.org>
+Subject: [PATCH 4.9 066/241] usb: dwc3: make sure UX_EXIT_PX is cleared
+Date: Mon, 19 Mar 2018 19:05:31 +0100
+Message-Id: <20180319180753.935840605@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391342305392366?=
-X-GMAIL-MSGID: =?utf-8?q?1595391342305392366?=
+X-GMAIL-THRID: =?utf-8?q?1595391338668454298?=
+X-GMAIL-MSGID: =?utf-8?q?1595391338668454298?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
 
-[ Upstream commit 10b6c0c2e2bb8cd1be682f8d36ef597e3419cb88 ]
+[ Upstream commit 1966b8657d058ecb95031809b607bf3fd1e01c10 ]
 
-An alias name should have an index number even when it is the only of its type.
-This allows U-Boot to add the local-mac-address property. Otherwise U-Boot
-skips the alias.
+This bit is only supposed to be used with known
+buggy PHYs, however some platforms might erroneously
+set it. In order to avoid it, let's make sure this
+bit is always cleared. If some PHY needs this, we
+will need to add a quirk flag.
 
-Fixes: 6a93792774 ("ARM: bcm2835: dt: Add the ethernet to the device trees")
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi |    2 +-
- arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/core.c |    6 ++++++
+ drivers/usb/dwc3/core.h |    1 +
+ 2 files changed, 7 insertions(+)
 
---- a/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
-+++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
-@@ -1,6 +1,6 @@
- / {
- 	aliases {
--		ethernet = &ethernet;
-+		ethernet0 = &ethernet;
- 	};
- };
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -464,6 +464,12 @@ static int dwc3_phy_setup(struct dwc3 *d
+ 	reg = dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0));
  
---- a/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
-+++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
-@@ -1,6 +1,6 @@
- / {
- 	aliases {
--		ethernet = &ethernet;
-+		ethernet0 = &ethernet;
- 	};
- };
- 
+ 	/*
++	 * Make sure UX_EXIT_PX is cleared as that causes issues with some
++	 * PHYs. Also, this bit is not supposed to be used in normal operation.
++	 */
++	reg &= ~DWC3_GUSB3PIPECTL_UX_EXIT_PX;
++
++	/*
+ 	 * Above 1.94a, it is recommended to set DWC3_GUSB3PIPECTL_SUSPHY
+ 	 * to '0' during coreConsultant configuration. So default value
+ 	 * will be '0' when the core is reset. Application needs to set it
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -223,6 +223,7 @@
+ #define DWC3_GUSB3PIPECTL_PHYSOFTRST	(1 << 31)
+ #define DWC3_GUSB3PIPECTL_U2SSINP3OK	(1 << 29)
+ #define DWC3_GUSB3PIPECTL_DISRXDETINP3	(1 << 28)
++#define DWC3_GUSB3PIPECTL_UX_EXIT_PX	(1 << 27)
+ #define DWC3_GUSB3PIPECTL_REQP1P2P3	(1 << 24)
+ #define DWC3_GUSB3PIPECTL_DEP1P2P3(n)	((n) << 19)
+ #define DWC3_GUSB3PIPECTL_DEP1P2P3_MASK	DWC3_GUSB3PIPECTL_DEP1P2P3(7)
