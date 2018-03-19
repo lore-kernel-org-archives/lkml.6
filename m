@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvyp7KXUmmPtmlIh4a9ihhEhy35vy2SMekkcJ+FsiaxBj+qFI+ZoIsxg6GNqK0AUZteJ9J8
-ARC-Seal: i=1; a=rsa-sha256; t=1521483295; cv=none;
+X-Google-Smtp-Source: AG47ELtyuI0GTqs6+XfFAWuEu7jReuRIibo+aHdPLn5gPV+AviQ3tQJCLsuNx2BMUYogjJoq1d2v
+ARC-Seal: i=1; a=rsa-sha256; t=1521483290; cv=none;
         d=google.com; s=arc-20160816;
-        b=qwNrUulJyTRjYYerUHNq+jFeuQ2TyhSvs9mC7VixXEGwXm6D7u3YuD/yrsTOUysN1t
-         Cw/vW7khsIgNNPNkj15DE5eFcPntJQv+JAAzmEaNAyaHduVu68mFShbBkuFf/2hqQJb5
-         6CXzUlKWbNcotzWCkpJBC//O1eZzrruuV+4F0VHHxkuGCZRFjvLlSiLCwpfOE8aLzuiR
-         qZebK2T29bVCsG38b7Y8Zkn2/h8LRm0l+8ZHYghLO3Z9LLv/PvinOWXYkEETaoOEpIn3
-         Z5p4DEiKFlTHc0qu3CJjh6mPUPDH4wuBUaoTHNwqHzROMpzwZXCCQIpGUmtxGWuc3F4u
-         0IiQ==
+        b=lI3V1djplpFUFqtx8YpVmkI9yePE+PxWUv+07DdZLc9Qy6EFSHvkonb/H7Qypt+WKk
+         8lXk8MgiHPc219vZDbUvdiDlFRmFSgRm/pEcoLv3I9XInMyFV8IxUupPrbWpQF6x37Lm
+         SGTvV6OAjuPEjICtuU4b/vFPOSb1mtk7WB1VpWtGPgrSsyji9kd2jGSQf+wAQkt4gvru
+         cVJK+JkNEqOtSCx/6MyOHKOCyoXz8ZmGAHTFeT9vBvxqooopFi3ju3hECOdD0g+dWzKG
+         tV7vkT5mI6p3cCyctvZ+rJA1af1GwP6mFtRSUetZJyH33uZunh5XkyNTK0JHrmtk1x8d
+         KONw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aoDNvGd3miw86H1uZNsTvg5cEHSCKn972IIMbznw6d4=;
-        b=hA0amg38GScq2jp9cBWiL++OAvV2llusPZLKMvl7PELZi+T8Fw3Rd0Iyvy8mjCGq4v
-         Y4WOeGObESmZ+93K+539sXXKMtQ/ex3Kx7nXQTTm80scUcRMLIzhDbv4l9DMgeaQNPui
-         y6ox4D6ghO7bAQPmQnom9XepsRcbTGNL7Zjlr3KvurT6ICbIbs3MIHDRUrokYJX0VbSj
-         O1PcHcMIs4SxKzveZhxkaw+qcTGXVzDp6/mspswDowEwF8qCgmfdFjGeJvYeyHAIvl2Y
-         tfT29ruTKR1k+X55PJAl/cqB2UVBZFATS84u6Kcb9xW/u1A2MIhr8PDwfYkjPedHw955
-         YiTg==
+        bh=E6LqrSz3GwkxeRnNfzET8RnXqx2wqBO0xbeFNw9Y9GI=;
+        b=ByGsXbscdhgeSJyO31q/LEObSdJIoUuoTjc4KBUxwuARUXx8aVaqeidChn+JZiBYyJ
+         9Cq3M9/KfOPoX72e9SSwPZUra64iDWVoQBBrn0VYz8Lm9x2SjJm/xrvzZmpOqdGXeouz
+         hatHpDh7elB8rB3JMxb5wnx4Tnyt4L89w3dozj8Ed1bQM+Zbn68F0oEYtyMpwoCP+1Ru
+         hqzYH7lkuXntdVoFCmMVTLHMhQOhGm62ADObqdtAn1itBrmkQGHOgln+qkF5Y3/sNBGC
+         aQyNgwmfUUKzRUN46AviwHrbLPtdn77AjbrSJiSonQX2DEwqMU+ztg+LZRLY9qc5DY+t
+         AFyw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	John Youn <johnyoun@synopsys.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Chen Yu <chenyu56@huawei.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	John Stultz <john.stultz@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 070/134] drivers/perf: arm_pmu: handle no platform_device
-Date: Mon, 19 Mar 2018 19:05:53 +0100
-Message-Id: <20180319171859.341765752@linuxfoundation.org>
+Subject: [PATCH 4.4 068/134] usb: dwc2: Make sure we disconnect the gadget state
+Date: Mon, 19 Mar 2018 19:05:51 +0100
+Message-Id: <20180319171859.057406471@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390868408579074?=
-X-GMAIL-MSGID: =?utf-8?q?1595390868408579074?=
+X-GMAIL-THRID: =?utf-8?q?1595390862547164468?=
+X-GMAIL-MSGID: =?utf-8?q?1595390862547164468?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +58,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: John Stultz <john.stultz@linaro.org>
 
 
-[ Upstream commit 7654137071fa706e5c91f4f27bc2a5cd7e435a9b ]
+[ Upstream commit dad3f793f20fbb5c0c342f0f5a0bdf69a4d76089 ]
 
-In armpmu_dispatch_irq() we look at arm_pmu::plat_device to acquire
-platdata, so that we can defer to platform-specific IRQ handling,
-required on some 32-bit parts. With the advent of ACPI we won't always
-have a platform_device, and so we must avoid trying to dereference
-fields from it.
+I had seen some odd behavior with HiKey's usb-gadget interface
+that I finally seemed to have chased down. Basically every other
+time I plugged in the OTG port, the gadget interface would
+properly initialize. The other times, I'd get a big WARN_ON
+in dwc2_hsotg_init_fifo() about the fifo_map not being clear.
 
-This patch fixes up armpmu_dispatch_irq() to avoid doing so, introducing
-a new armpmu_get_platdata() helper.
+Ends up if we don't disconnect the gadget state, the fifo-map
+doesn't get cleared properly, which causes WARN_ON messages and
+also results in the device not properly being setup as a gadget
+every other time the OTG port is connected.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+So this patch adds a call to dwc2_hsotg_disconnect() in the
+reset path so the state is properly cleared.
+
+With it, the gadget interface initializes properly on every
+plug in.
+
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Amit Pundir <amit.pundir@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: John Youn <johnyoun@synopsys.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Chen Yu <chenyu56@huawei.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Acked-by: John Youn <johnyoun@synopsys.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/perf/arm_pmu.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/usb/dwc2/hcd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -321,10 +321,16 @@ validate_group(struct perf_event *event)
- 	return 0;
- }
- 
-+static struct arm_pmu_platdata *armpmu_get_platdata(struct arm_pmu *armpmu)
-+{
-+	struct platform_device *pdev = armpmu->plat_device;
-+
-+	return pdev ? dev_get_platdata(&pdev->dev) : NULL;
-+}
-+
- static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
- {
- 	struct arm_pmu *armpmu;
--	struct platform_device *plat_device;
- 	struct arm_pmu_platdata *plat;
- 	int ret;
- 	u64 start_clock, finish_clock;
-@@ -336,8 +342,8 @@ static irqreturn_t armpmu_dispatch_irq(i
- 	 * dereference.
- 	 */
- 	armpmu = *(void **)dev;
--	plat_device = armpmu->plat_device;
--	plat = dev_get_platdata(&plat_device->dev);
-+
-+	plat = armpmu_get_platdata(armpmu);
- 
- 	start_clock = sched_clock();
- 	if (plat && plat->handle_irq)
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -1385,6 +1385,7 @@ static void dwc2_conn_id_status_change(s
+ 		dwc2_core_init(hsotg, false, -1);
+ 		dwc2_enable_global_interrupts(hsotg);
+ 		spin_lock_irqsave(&hsotg->lock, flags);
++		dwc2_hsotg_disconnect(hsotg);
+ 		dwc2_hsotg_core_init_disconnected(hsotg, false);
+ 		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_hsotg_core_connect(hsotg);
