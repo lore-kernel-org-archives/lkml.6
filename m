@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtlKhTxQ8zDKGgABH4N1kv3VSS3WpHf78wPO7VsYDNiBpdAR7hqMSnJf586Cy1Ll8Ro2N3y
-ARC-Seal: i=1; a=rsa-sha256; t=1521483886; cv=none;
+X-Google-Smtp-Source: AG47ELsTUbggAdytWjHdW83l5itnA+axOJW9TQR+rJ6haDW89bRhcmmHPGZDbnwsG+UGUzRKCNQk
+ARC-Seal: i=1; a=rsa-sha256; t=1521483884; cv=none;
         d=google.com; s=arc-20160816;
-        b=bnNhmSiRmSZHh0h4EDzUSaieyvZio9lgijEtTc22Q822yrs6onKQyAfFQgZNbkg887
-         RfDdZO8uTHmMWqDO9CMzJK8cdrnXgsioCL1+hifVnGgx59OdzSWW5UOMX/QiL73996iZ
-         tbyTxlP6SiaMfHAsfaPIk+s1382vVNbLdhFVM6NF0psdb1xjr9X5NeAym7tJFKmxWPLr
-         9TbsRGViglTdcTB21LvU0L7asSw6mbLT1q/qaZ8aBFFEuYHMCD9e8CwryLyNW90SJfM/
-         8n6VzL4x6cjMckua9o8vn2Rj1ZTtb/IegeKLgdjuOKAn3a7V2CfVletU8Pk/3XfHDgMP
-         L39g==
+        b=ik7HLrQ3FhsvsyrHH31VqyHwrxdLbwHpfCL3ZKqVeJq1Mk+ApiXQshlbDhxa2XzAlR
+         JU4NfJ0XSVEko1IKWZDq7WoK0lcAOBC6EjDpaUXxvazm64RJ5OXIx41UY4Y5DaQdACIT
+         KF5BzyeX5vEER4Kmaxm7f6PsJqP8vw3Oq+C/qigxi0rdgczEDhPcczuOWG/ejzJ5NaWs
+         izTmAzhuOQOWE79lxcTHGI2EQt5PLfM2ZsVAroF0THlWuz9J+C+oFGPNhiKFiu2CDJ0N
+         bTevjyX024wsO1i06yq/HPFUpb91KAbC1vsp/sGPcj+UI6fs4YSXA1ZXz04oCWf+5NRc
+         z6JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jJcIzNGpqhTu4EcQkleIYW4XZH+7LZZMv9++QOVlE1M=;
-        b=MfqzMahywZY03MjTQYau/YeUgUR4lRO9lKkzcUVt6E8b9BXjZCHVDvZcdcJ/DTMUJu
-         lwLnZWxZ7QJ41IOgSPfOSknLS9B1NioSIt12eIFlqFJvfoTF9FK4ltJxPk/JlHaglTf9
-         EoQYb+Ht7NH06/rzUJ9HjQ4T1exHII4YseBgnOGNtRx7gRQ3SryS2ZV1O46ySGuY2Dzu
-         RHoss9o5obc1ZmGbugLQCO/4bRG0aBVyDpfps/ldKe4TeUVpLRi3NbHM+eXi8D3zqtL9
-         scvWoJG1Voc/pLYZ8FIS91d6qDllsTY5CiA5h9B4c0SWBi4AQ+xo8kHWxeWMf+0xKgfm
-         /2+g==
+        bh=0v3HRY50vYU0PwM1UVl0Gad/3ow5H1AAghNmVno68jA=;
+        b=iK7rRUM0kzINQjU/+dSeZC2MxUX8JMvUeNyXW8aHkp4DEnKN4Mn2JZIfH9FODAiHQn
+         D0LBvk6HzxoyWGh99yK12rdeOOsPwRyjgSke1hHdmaFs+J7AbmP/CIX07ben+U5sq1ZM
+         rs5iklnbq8YDWvk3sjMqZO5HYxij3tXLDf0byGH1NUeYxJCfBeGP9WnZs5+X2rP+3kyx
+         jP1sMquJD0ZQLA0vz2nq6jDsOwqEAUHp4vquI9+nLx2QJx9eyL9eeMryCh+/cSeR+eun
+         H4ricZiAuDy1HeCqXzUwQh8bL4zaWd5I8dW+emNxxsHZhGHOx/jSh80tzL6zWbZ1wWfx
+         Y8VA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,25 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ye Xiaolong <xiaolong.ye@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 154/241] pwm: tegra: Increase precision in PWM rate calculation
-Date: Mon, 19 Mar 2018 19:06:59 +0100
-Message-Id: <20180319180757.557584913@linuxfoundation.org>
+Subject: [PATCH 4.9 153/241] kprobes/x86: Set kprobes pages read-only
+Date: Mon, 19 Mar 2018 19:06:58 +0100
+Message-Id: <20180319180757.511132837@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +54,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390982053089635?=
-X-GMAIL-MSGID: =?utf-8?q?1595391488366735260?=
+X-GMAIL-THRID: =?utf-8?q?1595390679028073105?=
+X-GMAIL-MSGID: =?utf-8?q?1595391485194248899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,80 +63,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Laxman Dewangan <ldewangan@nvidia.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
 
-[ Upstream commit 250b76f43f57d578ebff5e7211eb2c73aa5cd6ca ]
+[ Upstream commit d0381c81c2f782fa2131178d11e0cfb23d50d631 ]
 
-The rate of the PWM calculated as follows:
+Set the pages which is used for kprobes' singlestep buffer
+and optprobe's trampoline instruction buffer to readonly.
+This can prevent unexpected (or unintended) instruction
+modification.
 
-	hz = NSEC_PER_SEC / period_ns;
- 	rate = (rate + (hz / 2)) / hz;
+This also passes rodata_test as below.
 
-This has the precision loss in lower PWM rate.
+Without this patch, rodata_test shows a warning:
 
-Change this to have more precision as:
+  WARNING: CPU: 0 PID: 1 at arch/x86/mm/dump_pagetables.c:235 note_page+0x7a9/0xa20
+  x86/mm: Found insecure W+X mapping at address ffffffffa0000000/0xffffffffa0000000
 
-	hz = DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC * 100, period_ns);
-	rate = DIV_ROUND_CLOSEST(rate * 100, hz)
+With this fix, no W+X pages are found:
 
-Example:
+  x86/mm: Checked W+X mappings: passed, no W+X pages found.
+  rodata_test: all tests were successful
 
-1. period_ns = 16672000, PWM clock rate is 200 KHz.
-
-	Based on old formula
-		hz = NSEC_PER_SEC / period_ns
-		   = 1000000000ul/16672000
-		   = 59 (59.98)
-		rate = (200K + 59/2)/59 = 3390
-
-	Based on new method:
-		hz = 5998
-		rate = DIV_ROUND_CLOSE(200000*100, 5998) = 3334
-
-	If we measure the PWM signal rate, we will get more accurate
-	period with rate value of 3334 instead of 3390.
-
-2.  period_ns = 16803898, PWM clock rate is 200 KHz.
-
-	Based on old formula:
-		hz = 59, rate = 3390
-
-	Based on new formula:
-		hz = 5951, rate = 3360
-
-	The PWM signal rate of 3360 is more near to requested period
-	than 3333.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Reported-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ye Xiaolong <xiaolong.ye@intel.com>
+Link: http://lkml.kernel.org/r/149076375592.22469.14174394514338612247.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pwm/pwm-tegra.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kernel/kprobes/core.c |    4 ++++
+ arch/x86/kernel/kprobes/opt.c  |    3 +++
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -76,6 +76,7 @@ static int tegra_pwm_config(struct pwm_c
- 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
- 	unsigned long long c = duty_ns;
- 	unsigned long rate, hz;
-+	unsigned long long ns100 = NSEC_PER_SEC;
- 	u32 val = 0;
- 	int err;
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -409,6 +409,8 @@ static int arch_copy_kprobe(struct kprob
+ {
+ 	int ret;
  
-@@ -95,9 +96,11 @@ static int tegra_pwm_config(struct pwm_c
- 	 * cycles at the PWM clock rate will take period_ns nanoseconds.
- 	 */
- 	rate = clk_get_rate(pc->clk) >> PWM_DUTY_WIDTH;
--	hz = NSEC_PER_SEC / period_ns;
++	set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
++
+ 	/* Copy an instruction with recovering if other optprobe modifies it.*/
+ 	ret = __copy_instruction(p->ainsn.insn, p->addr);
+ 	if (!ret)
+@@ -423,6 +425,8 @@ static int arch_copy_kprobe(struct kprob
+ 	else
+ 		p->ainsn.boostable = -1;
  
--	rate = (rate + (hz / 2)) / hz;
-+	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
-+	ns100 *= 100;
-+	hz = DIV_ROUND_CLOSEST_ULL(ns100, period_ns);
-+	rate = DIV_ROUND_CLOSEST(rate * 100, hz);
++	set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
++
+ 	/* Check whether the instruction modifies Interrupt Flag or not */
+ 	p->ainsn.if_modifier = is_IF_modifier(p->ainsn.insn);
  
- 	/*
- 	 * Since the actual PWM divider is the register's frequency divider
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -371,6 +371,7 @@ int arch_prepare_optimized_kprobe(struct
+ 	}
+ 
+ 	buf = (u8 *)op->optinsn.insn;
++	set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
+ 
+ 	/* Copy instructions into the out-of-line buffer */
+ 	ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr);
+@@ -393,6 +394,8 @@ int arch_prepare_optimized_kprobe(struct
+ 	synthesize_reljump(buf + TMPL_END_IDX + op->optinsn.size,
+ 			   (u8 *)op->kp.addr + op->optinsn.size);
+ 
++	set_memory_ro((unsigned long)buf & PAGE_MASK, 1);
++
+ 	flush_icache_range((unsigned long) buf,
+ 			   (unsigned long) buf + TMPL_END_IDX +
+ 			   op->optinsn.size + RELATIVEJUMP_SIZE);
