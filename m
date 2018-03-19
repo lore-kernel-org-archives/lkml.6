@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032132AbeCSSh7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 14:37:59 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:58480 "EHLO
+        id S970412AbeCSSkM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:40:12 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:34863 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935161AbeCSShx (ORCPT
+        by vger.kernel.org with ESMTP id S970430AbeCSShl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:37:53 -0400
+        Mon, 19 Mar 2018 14:37:41 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
-X-Quarantine-ID: <AKEr0D1U9mQO>
+X-Quarantine-ID: <UKorTSUQPEnf>
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-RRZE-Flag: Not-Spam
 X-RRZE-Submit-IP: 2003:d5:3db:1800:60b5:55d8:d757:229
@@ -21,9 +21,9 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 04/11] block: sed-opal: unify error handling of responses
-Date: Mon, 19 Mar 2018 19:36:46 +0100
-Message-Id: <4a20f9848927d0f654491136e4821f2adab131cc.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH v2 02/11] block: sed-opal: unify space check in add_token_*
+Date: Mon, 19 Mar 2018 19:36:44 +0100
+Message-Id: <955fd10854ed68f6925612ae73cdaa4637cfb5e4.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
 References: <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
@@ -33,109 +33,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also response_get_token had already been in place, its functionality had
-been duplicated within response_get_{u64,bytestring} with the same error
-handling. Unify the handling by reusing response_get_token within the
-other functions.
+All add_token_* functions have a common set of conditions that have to
+be checked. Use a common function for those checks in order to avoid
+different behaviour as well as code duplication.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index efe5d2a7f3dc..30f6e46518a6 100644
+index 5aa41744b8f1..771b4cfff95c 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -697,6 +697,11 @@ static const struct opal_resp_tok *response_get_token(
- {
- 	const struct opal_resp_tok *tok;
+@@ -510,15 +510,24 @@ static int opal_discovery0(struct opal_dev *dev, void *data)
+ 	return opal_discovery0_end(dev);
+ }
  
-+	if (!resp) {
-+		pr_debug("Response is NULL\n");
-+		return ERR_PTR(-EINVAL);
-+	}
+-static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++static bool can_add(int *err, struct opal_dev *cmd, size_t len)
+ {
+ 	if (*err)
+-		return;
+-	if (cmd->pos >= IO_BUFFER_LENGTH - 1) {
+-		pr_debug("Error adding u8: end of buffer.\n");
++		return false;
 +
- 	if (n >= resp->num) {
- 		pr_debug("Token number doesn't exist: %d, resp: %d\n",
- 			 n, resp->num);
-@@ -879,27 +884,19 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
- 				  const char **store)
- {
- 	u8 skip;
--	const struct opal_resp_tok *token;
-+	const struct opal_resp_tok *tok;
- 
- 	*store = NULL;
--	if (!resp) {
--		pr_debug("Response is NULL\n");
--		return 0;
--	}
--
--	if (n > resp->num) {
--		pr_debug("Response has %d tokens. Can't access %d\n",
--			 resp->num, n);
-+	tok = response_get_token(resp, n);
-+	if (IS_ERR(tok))
- 		return 0;
--	}
- 
--	token = &resp->toks[n];
--	if (token->type != OPAL_DTA_TOKENID_BYTESTRING) {
-+	if (tok->type != OPAL_DTA_TOKENID_BYTESTRING) {
- 		pr_debug("Token is not a byte string!\n");
- 		return 0;
++	if (len > IO_BUFFER_LENGTH || cmd->pos >= IO_BUFFER_LENGTH - len) {
++		pr_debug("Error adding %zu bytes: end of buffer.\n", len);
+ 		*err = -ERANGE;
+-		return;
++		return false;
  	}
- 
--	switch (token->width) {
-+	switch (tok->width) {
- 	case OPAL_WIDTH_TINY:
- 	case OPAL_WIDTH_SHORT:
- 		skip = 1;
-@@ -915,37 +912,29 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
- 		return 0;
- 	}
- 
--	*store = token->pos + skip;
--	return token->len - skip;
-+	*store = tok->pos + skip;
-+	return tok->len - skip;
++
++	return true;
++}
++
++static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++{
++	if (!can_add(err, cmd, 1))
++		return;
+ 	cmd->cmd[cmd->pos++] = tok;
  }
  
- static u64 response_get_u64(const struct parsed_resp *resp, int n)
- {
--	if (!resp) {
--		pr_debug("Response is NULL\n");
--		return 0;
--	}
-+	const struct opal_resp_tok *tok;
+@@ -563,9 +572,8 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
+ 	msb = fls64(number);
+ 	len = DIV_ROUND_UP(msb, 8);
  
--	if (n > resp->num) {
--		pr_debug("Response has %d tokens. Can't access %d\n",
--			 resp->num, n);
-+	tok = response_get_token(resp, n);
-+	if (IS_ERR(tok))
- 		return 0;
--	}
- 
--	if (resp->toks[n].type != OPAL_DTA_TOKENID_UINT) {
--		pr_debug("Token is not unsigned it: %d\n",
--			 resp->toks[n].type);
-+	if (tok->type != OPAL_DTA_TOKENID_UINT) {
-+		pr_debug("Token is not unsigned it: %d\n", tok->type);
- 		return 0;
+-	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
++	if (!can_add(err, cmd, len + 1)) {
+ 		pr_debug("Error adding u64: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
+ 	}
+ 	add_short_atom_header(cmd, false, false, len);
+@@ -587,9 +595,8 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
+ 		is_short_atom = false;
  	}
  
--	if (!(resp->toks[n].width == OPAL_WIDTH_TINY ||
--	      resp->toks[n].width == OPAL_WIDTH_SHORT)) {
--		pr_debug("Atom is not short or tiny: %d\n",
--			 resp->toks[n].width);
-+	if (tok->width != OPAL_WIDTH_TINY && tok->width != OPAL_WIDTH_SHORT) {
-+		pr_debug("Atom is not short or tiny: %d\n", tok->width);
- 		return 0;
+-	if (len >= IO_BUFFER_LENGTH - cmd->pos - header_len) {
++	if (!can_add(err, cmd, header_len + len)) {
+ 		pr_debug("Error adding bytestring: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
  	}
  
--	return resp->toks[n].stored.u;
-+	return tok->stored.u;
- }
- 
- static bool response_token_matches(const struct opal_resp_tok *token, u8 match)
 -- 
 2.16.1
