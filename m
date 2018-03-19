@@ -1,279 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754951AbeCSEPa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 00:15:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41503 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751084AbeCSEP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 00:15:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,328,1517904000";
-   d="scan'208";a="36111795"
-From: Yu Chen <yu.c.chen@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Rui Zhang <rui.zhang@intel.com>, Lukas Wunner <lukas@wunner.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH][v4] PM / sleep: Do not delay the synchronization of MTRR during resume
-Date: Mon, 19 Mar 2018 12:18:43 +0800
-Message-Id: <20180319041843.28218-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.13.6
+        id S1755168AbeCSEPq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 00:15:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48502 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754531AbeCSEPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 00:15:44 -0400
+Date: Mon, 19 Mar 2018 04:15:35 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
+        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 18/19] clocksource: add timer-nationalchip.c
+Message-ID: <20180319041522.zyjdjrxtd2va3m2a@salmiak>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <04f5a0702fc14e934e6f5a456cad8682d0b15aa2.1521399976.git.ren_guo@c-sky.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04f5a0702fc14e934e6f5a456cad8682d0b15aa2.1521399976.git.ren_guo@c-sky.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Yu <yu.c.chen@intel.com>
+Hi,
 
-Sometimes it is too late for the APs to adjust their MTRRs
-to the valid ones saved before suspend - currently this
-action is performed by set_mtrr_state() after all the APs
-have been brought up. In some cases the BIOS might scribble
-the MTRR across suspend, as a result we might get invalid
-MTRR after resumed back, thus every instruction runs on
-this AP would be extremely slow if it happended to be a
-'uncached' MTRR. It is necessary to synchronize the MTRR
-as early as possible to get it fixed during each AP's
-online - this is what this patch does.
+On Mon, Mar 19, 2018 at 03:51:40AM +0800, Guo Ren wrote:
+> +#define NC_VA_COUNTER_1_STATUS		(void *)(timer_reg + 0x00)
+> +#define NC_VA_COUNTER_1_VALUE		(void *)(timer_reg + 0x04)
+> +#define NC_VA_COUNTER_1_CONTROL		(void *)(timer_reg + 0x10)
+> +#define NC_VA_COUNTER_1_CONFIG		(void *)(timer_reg + 0x20)
+> +#define NC_VA_COUNTER_1_PRE		(void *)(timer_reg + 0x24)
+> +#define NC_VA_COUNTER_1_INI		(void *)(timer_reg + 0x28)
+> +#define NC_VA_COUNTER_2_STATUS		(void *)(timer_reg + 0x40)
+> +#define NC_VA_COUNTER_2_VALUE		(void *)(timer_reg + 0x44)
+> +#define NC_VA_COUNTER_2_CONTROL		(void *)(timer_reg + 0x50)
+> +#define NC_VA_COUNTER_2_CONFIG		(void *)(timer_reg + 0x60)
+> +#define NC_VA_COUNTER_2_PRE		(void *)(timer_reg + 0x64)
+> +#define NC_VA_COUNTER_2_INI		(void *)(timer_reg + 0x68)
+> +#define NC_VA_COUNTER_3_STATUS		(void *)(timer_reg + 0x80)
+> +#define NC_VA_COUNTER_3_VALUE		(void *)(timer_reg + 0x84)
+> +#define NC_VA_COUNTER_3_CONTROL		(void *)(timer_reg + 0x90)
+> +#define NC_VA_COUNTER_3_CONFIG		(void *)(timer_reg + 0xa0)
+> +#define NC_VA_COUNTER_3_PRE		(void *)(timer_reg + 0xa4)
+> +#define NC_VA_COUNTER_3_INI		(void *)(timer_reg + 0xa8)
 
-Moreover, since we have put the synchronization earlier, there is
-a side effect that, during each AP's online, the previous APs already
-been brought up will be forced to run mtrr_rendezvous_handler() and
-reprogram the MTRR again and again. This symptom can be mitigated
-by checking if this cpu has already run the synchronization
-during the enable_nonboot_cpus() stage, if it is, we can safely
-bypass the reprogramming action. (We can not bypass the
-mtrr_rendezvous_handler(), because the other online cpus must be
-stopped running the VMX transaction while one cpu is updating
-its MTRR, which is described here:
-Commit d0af9eed5aa9 ("x86, pat/mtrr: Rendezvous all the cpus for
-MTRR/PAT init")
+Please define the offsets alone, e.g.
 
-This patch does not impact the normal boot up nor cpu hotplug.
+#define NC_VA_COUNTER_1_STATUS	0x00
+#define NC_VA_COUNTER_1_VALUE	0x04
 
-On a platform with invalid MTRR after resumed,
-1. before this patch:
-   [  619.810899] Enabling non-boot CPUs ...
-   [  619.825537] smpboot: Booting Node 0 Processor 1 APIC 0x2
-   [  621.723809] CPU1 is up
-   [  621.840228] smpboot: Booting Node 0 Processor 3 APIC 0x3
-   [  626.690900] CPU3 is up
+... the base address should be added when calling the io accessor. Please see
+below.
 
-It took cpu1 621.723809 - 619.825537 = 1898.272 ms, and
-cpu3 626.690900 - 621.840228 = 4850.672 ms.
+> +static unsigned int timer_reg;
 
-2. after this patch:
-   [  106.931790] smpboot: Booting Node 0 Processor 1 APIC 0x2
-   [  106.948360] CPU1 is up
-   [  106.986534] smpboot: Booting Node 0 Processor 3 APIC 0x3
-   [  106.990702] CPU3 is up
+This should be a void __iomem *, e.g.
 
-It took cpu1 106.948360 - 106.931790 = 16.57 ms, and
-cpu3 106.990702 - 106.986534 = 4.16 ms.
+static void __iomem *timer_base;
 
-For comparison, suspend on a 88 cpus Xeon Broadwell
-platform is also tested, and the result shows that
-with this patch applied, the overall APs online time has
-decreased a little bit, this is because since the synchronizing
-of MTRR has been performed earlier, the MTRRs get updated
-to the correct value earlier.
+... though it would be better for this to be associated with the instance of
+the clock_event_device, so that there can be multiple instances in a system.
 
-Tested 5 times, data illustrated below:
+> +
+> +static inline void timer_reset(void)
+> +{
+> +	__raw_writel(0x1,	NC_VA_COUNTER_1_CONTROL);
+> +	__raw_writel(0x0,	NC_VA_COUNTER_1_CONTROL);
+> +	__raw_writel(0x3,	NC_VA_COUNTER_1_CONFIG);
+> +	__raw_writel(26,	NC_VA_COUNTER_1_PRE);
 
-1. before this patch:
+Should this be 26 or 0x26?
 
-[   64.549430] Enabling non-boot CPUs ...
-[   66.253304] End enabling non-boot CPUs
-overall cpu online: 1.703874 second
+It would be nice to have mnemonics for these magic numbers.
 
-[   62.159063] Enabling non-boot CPUs ...
-[   64.483443] End enabling non-boot CPUs
-overall cpu online: 2.32438 second
+Please use writel_relaxed() rather than __raw_writel(). e.g.
 
-[   58.351449] Enabling non-boot CPUs ...
-[   60.796951] End enabling non-boot CPUs
-overall cpu online: 2.445502 second
+	writel_relaxed(0x1, timer_base + NC_VA_COUNTER_1_CONTROL);
+	writel_relaxed(0x0, timer_base + NC_VA_COUNTER_1_CONTROL);
+	writel_relaxed(0x3, timer_base + NC_VA_COUNTER_1_CONTROL);
+	writel_relaxed(26, timer_base + NC_VA_COUNTER_1_PRE);
 
-[   64.491317] Enabling non-boot CPUs ...
-[   66.996208] End enabling non-boot CPUs
-overall cpu online: 2.504891 second
+[...]
 
-[   60.593235] Enabling non-boot CPUs ...
-[   63.397886] End enabling non-boot CPUs
-overall cpu online: 2.804651 second
+> +static int __init nc_timer_init(struct device_node *np)
+> +{
+> +	unsigned int irq;
+> +	unsigned int freq;
+> +
+> +	/* parse from devicetree */
+> +	timer_reg = (unsigned int) of_iomap(np, 0);
+> +	if (!timer_reg)
+> +		panic("%s, of_iomap err.\n", __func__);
+> +
+> +	irq = irq_of_parse_and_map(np, 0);
+> +	if (!irq)
+> +		panic("%s, irq_parse err.\n", __func__);
+> +
+> +	if (of_property_read_u32(np, "clock-frequency", &freq))
+> +		panic("%s, clock-frequency error.\n", __func__);
+> +
+> +	pr_info("Nationalchip Timer Init, reg: %x, irq: %d, freq: %d.\n",
+> +		timer_reg, irq, freq);
+> +
+> +	/* setup irq */
+> +	if (request_irq(irq, timer_interrupt, IRQF_TIMER, np->name, &nc_ced))
+> +		panic("%s timer_interrupt error.\n", __func__);
+> +
+> +	/* register */
+> +	clockevents_config_and_register(&nc_ced, freq, 1, ULONG_MAX);
+> +
+> +	nc_csd_enable();
+> +	clocksource_mmio_init(NC_VA_COUNTER_2_VALUE, "nationalchip-clksource", freq, 200, 32, clocksource_mmio_readl_up);
+> +
+> +	sched_clock_register(nc_sched_clock_read, 32, freq);
+> +
+> +	return 0;
+> +}
+> +CLOCKSOURCE_OF_DECLARE(nc_timer, "nationalchip,timer-v1", nc_timer_init);
 
-Average: 2.3566596 second
+This needs a devicetree binding document. Please see Documentation/devicetree/bindings/submitting-patches.txt.
 
-2. after this patch:
-
-[   66.077368] Enabling non-boot CPUs ...
-[   68.343374] End enabling non-boot CPUs
-overall cpu online: 2.266006 second
-
-[   64.594605] Enabling non-boot CPUs ...
-[   66.092688] End enabling non-boot CPUs
-overall cpu online: 1.498083 second
-
-[   64.778546] Enabling non-boot CPUs ...
-[   66.277577] End enabling non-boot CPUs
-overall cpu online: 1.499031 second
-
-[   63.773091] Enabling non-boot CPUs ...
-[   65.601637] End enabling non-boot CPUs
-overall cpu online: 1.828546 second
-
-[   64.638855] Enabling non-boot CPUs ...
-[   66.327098] End enabling non-boot CPUs
-overall cpu online: 1.688243 second
-
-Average: 1.7559818 second
-
-With the patch applied, the cpu online time during resume
-has decreased by about 6 seconds on a bogus MTRR platform,
-and decreased by about 600ms on a 88 cpus Xeon platform after
-resumed.
-
-Quote from Lukas:
-"Just for the record, this series cuts down resume time from system sleep
-by 4-5 seconds on my MacBookPro9,1.  Great work, looking forward to this
-being respun and merged."
-
-Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Rui Zhang <rui.zhang@intel.com>
-Tested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- arch/x86/include/asm/mtrr.h     |  2 ++
- arch/x86/kernel/cpu/mtrr/main.c | 29 ++++++++++++++++++++++++++---
- arch/x86/kernel/smpboot.c       |  4 ++--
- 3 files changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
-index dbff1456d215..182cc96f79cb 100644
---- a/arch/x86/include/asm/mtrr.h
-+++ b/arch/x86/include/asm/mtrr.h
-@@ -49,6 +49,7 @@ extern void mtrr_aps_init(void);
- extern void mtrr_bp_restore(void);
- extern int mtrr_trim_uncached_memory(unsigned long end_pfn);
- extern int amd_special_default_mtrr(void);
-+extern void set_mtrr_aps_check(bool enable);
- #  else
- static inline u8 mtrr_type_lookup(u64 addr, u64 end, u8 *uniform)
- {
-@@ -93,6 +94,7 @@ static inline void mtrr_bp_init(void)
- #define set_mtrr_aps_delayed_init() do {} while (0)
- #define mtrr_aps_init() do {} while (0)
- #define mtrr_bp_restore() do {} while (0)
-+#define set_mtrr_aps_check(enable) do {} while (0)
- #  endif
- 
- #ifdef CONFIG_COMPAT
-diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-index 7468de429087..e3e92f41d2b6 100644
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -59,6 +59,7 @@
- #define MTRR_TO_PHYS_WC_OFFSET 1000
- 
- u32 num_var_ranges;
-+static bool mtrr_aps_check;
- static bool __mtrr_enabled;
- 
- static bool mtrr_enabled(void)
-@@ -66,6 +67,11 @@ static bool mtrr_enabled(void)
- 	return __mtrr_enabled;
- }
- 
-+void set_mtrr_aps_check(bool enable)
-+{
-+	mtrr_aps_check = enable;
-+}
-+
- unsigned int mtrr_usage_table[MTRR_MAX_VAR_RANGES];
- static DEFINE_MUTEX(mtrr_mutex);
- 
-@@ -148,6 +154,7 @@ struct set_mtrr_data {
- 	unsigned long	smp_size;
- 	unsigned int	smp_reg;
- 	mtrr_type	smp_type;
-+	int		smp_cpu;
- };
- 
- /**
-@@ -178,6 +185,19 @@ static int mtrr_rendezvous_handler(void *info)
- 		mtrr_if->set(data->smp_reg, data->smp_base,
- 			     data->smp_size, data->smp_type);
- 	} else if (mtrr_aps_delayed_init || !cpu_online(smp_processor_id())) {
-+		/*
-+		 * Reduce redundancy by only syncing the cpu
-+		 * who has issued the sync request during resumed:
-+		 * start_secondary() ->
-+		 *  smp_callin() ->
-+		 *   smp_store_cpu_info() ->
-+		 *    identify_secondary_cpu() ->
-+		 *     mtrr_ap_init() ->
-+		 *      set_mtrr_from_inactive_cpu(smp_processor_id())
-+		 */
-+		if (mtrr_aps_check &&
-+		    data->smp_cpu != smp_processor_id())
-+			return 0;
- 		mtrr_if->set_all();
- 	}
- 	return 0;
-@@ -231,7 +251,8 @@ set_mtrr(unsigned int reg, unsigned long base, unsigned long size, mtrr_type typ
- 	struct set_mtrr_data data = { .smp_reg = reg,
- 				      .smp_base = base,
- 				      .smp_size = size,
--				      .smp_type = type
-+				      .smp_type = type,
-+				      .smp_cpu = smp_processor_id()
- 				    };
- 
- 	stop_machine(mtrr_rendezvous_handler, &data, cpu_online_mask);
-@@ -243,7 +264,8 @@ static void set_mtrr_cpuslocked(unsigned int reg, unsigned long base,
- 	struct set_mtrr_data data = { .smp_reg = reg,
- 				      .smp_base = base,
- 				      .smp_size = size,
--				      .smp_type = type
-+				      .smp_type = type,
-+				      .smp_cpu = smp_processor_id()
- 				    };
- 
- 	stop_machine_cpuslocked(mtrr_rendezvous_handler, &data, cpu_online_mask);
-@@ -255,7 +277,8 @@ static void set_mtrr_from_inactive_cpu(unsigned int reg, unsigned long base,
- 	struct set_mtrr_data data = { .smp_reg = reg,
- 				      .smp_base = base,
- 				      .smp_size = size,
--				      .smp_type = type
-+				      .smp_type = type,
-+				      .smp_cpu = smp_processor_id()
- 				    };
- 
- 	stop_machine_from_inactive_cpu(mtrr_rendezvous_handler, &data,
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index ff99e2b6fc54..aff560e7cd86 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1261,12 +1261,12 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 
- void arch_enable_nonboot_cpus_begin(void)
- {
--	set_mtrr_aps_delayed_init();
-+	set_mtrr_aps_check(true);
- }
- 
- void arch_enable_nonboot_cpus_end(void)
- {
--	mtrr_aps_init();
-+	set_mtrr_aps_check(false);
- }
- 
- /*
--- 
-2.13.6
+Thanks,
+Mark
