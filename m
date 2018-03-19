@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3954714-1521499171-2-10406332176815764299
+X-Cyrus-Session-Id: sloti22d1t05-3954714-1521499139-2-14486698225493867614
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,62 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521499171; b=PCDwG7NKLPqwRLi4zKWyKYXfSlyKJ2ZOgtD4KYdcmc58n3V
-    kk/C6uifCnDWHMgOhzUoRMhUKo2MCRpJyhlISJFhUUQYR7pQak1ET39O9Vby0S9z
-    WiCYvsQ4pO+ByJW/RTZWvcjJ80xFc3tvYIrXGYYxGGWdkQu+RVjDBJ+iA78zF3//
-    rX4+bsDyvZd84vMLx5H3Y/WMJ8+vNM25WCXkbC3p93tUKvB5SHQrBUCcxOye14LA
-    R0ppv6xkVQslyt9EGixvfU/+Hv9aIKgE5kBDBIoqmye5QZPkbSIXtnt4HtkVrs1/
-    rmAragwD7V+feEwx/GjLCllwefTg8OyJ2TeDpVw==
+    t=1521499138; b=DPniYCC0CvdJlNtarQR5CFWMebPd0dQ6yB4VTYLEuM/peAV
+    TB1kwWgWyfOd80fZJTzxIbuU3As7KX5NhAd5vRJTKvcJZbTBK79l3oV98oUsJ2wA
+    jzl7ggPjHqovk7LxVJuVq+GJJ+Yow9C+7mWx7b8NHzs0BVV8uR9i5YGQUmJzAEGy
+    GR3Edvxpm2UeIXQQzyjuQSE5oyikCeJa6yBR8Fckf8C0hrQwHMIlf0Dm6fk9mSk2
+    wkOcBF1LjGXMcm2dVKD0X9ON8ZWShhoWlob167RSvX9t7TRGaCvHxka6MpCerJhl
+    DIpyPgVsbEbMrw5VEMlDpcE6XWy+5+BfWiLhmwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521499171; bh=mIJuwr
-    jFuy00NElqImksnC9O3kkCJ6r8PR1wnoSdw/A=; b=r/tdzPvooeotwkfpF0MQcR
-    o0XxyPxgMecrAUEZ1M79bxkCUdeKtL1rMvb673NFasZxNhvgrVecECtXwj4WU2Zo
-    mZk/V8SjjVUxmhYv0Rv+lIlG1NSu8bBTcxP3kegtZCtVHim5KmG3lgN5qfJAduRn
-    b4l+VDJuvHOcfomhsecAK6ewT5BJr1FcStaKjHOvhjKWAu0AAOFyFnP/NkskR2ma
-    /3s5ju4WfPoMu5kRFk5kHWAd9KT6lMfk3yZnkhf//fNrPwWUhoR0LJufVd7dTfZY
-    bM1dTfPejCalIaoyCCaLE/nTzbZTVt9CzMx1XLajk8UmzDNi9hRm9VpmFCnxhjTw
+    :mime-version:sender:list-id; s=arctest; t=1521499138; bh=DCBVMs
+    Mw//Gdt/8M57LnVssVIvYys2kQfkg8NtAXa3g=; b=YT8ku/v/ZIM9zcYQ6AC5ni
+    EavW5ZLJw0PYmmDBv7TXaRqFVxhYdJE1YkV6mT2OgBeIIiHKaMjqVlU0jqCy4WQr
+    fEMCOGnwPLoDcO2gvmHpSig1JNPI6uA2ly3oIbXd6bFdYYRU625eZcaSil6OQM/y
+    2LGsl8pqAabv/TrEsmP4t9Vigh2tYRzIvilC3lZ8T4Mgn3XBbq9LI/L/NZZ/IejL
+    Fy/VcNLv+Zq1CGbqcC53hvKs8sG6P6KA3wyN+h9wwPW4l8WdaxKTOR/nJss4FZyM
+    KM3THRPMRz12nGywrS6l5ZhM0xRV+9Vj/2SLO5Wq3GxuBwKyM0YNg70yn4crKXVw
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=F26pXLH1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=e5I3X6xb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehinhhtvghlrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleekledtnecuvehluhhsthgvrhfuihiivgepge;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedufeduvdefnecuvehluhhsthgvrhfuihiivgepfeef;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=F26pXLH1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=e5I3X6xb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecuffhomhgrihhnpehinhhtvghlrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleekledtnecuvehluhhsthgvrhfuihiivgepge;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedufeduvdefnecuvehluhhsthgvrhfuihiivgepfeef;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933337AbeCSWjM (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:39:12 -0400
+        id S936521AbeCSWir (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:38:47 -0400
 Received: from mail-co1nam03on0122.outbound.protection.outlook.com ([104.47.40.122]:59200
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933327AbeCSPr2 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:47:28 -0400
+        id S933400AbeCSPrb (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:47:31 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+CC: Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 021/124] VFS: close race between getcwd() and
- d_move()
-Thread-Topic: [PATCH AUTOSEL for 4.15 021/124] VFS: close race between
- getcwd() and d_move()
-Thread-Index: AQHTv5mQmSW1GNUcFEax9DZp3kcERQ==
-Date: Mon, 19 Mar 2018 15:47:20 +0000
-Message-ID: <20180319154645.11350-21-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 023/124] clk: divider: fix incorrect usage of
+ container_of
+Thread-Topic: [PATCH AUTOSEL for 4.15 023/124] clk: divider: fix incorrect
+ usage of container_of
+Thread-Index: AQHTv5mSP2zHaZ4cq060CURoHsqBPQ==
+Date: Mon, 19 Mar 2018 15:47:22 +0000
+Message-ID: <20180319154645.11350-23-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:Vv/O+Rpegaa7wB1svYzaSzjrdp33bAtb7GN/M75QFMzVuzT59LzVu2wlu2djxMkia5uk50bTs9grpTDJH/S03liTM7rp0lmfnmbPHn/+0SBH/+ONxROdo3oXm5ZJkgZNlWOO1cuIbr0iAHMZ3fLqcFGNsiykmRDUEN48YZ0wezTBWN5tR0UGjXJTvqe0JfdQBjcXmRgaK6X0xlBLgUIS9Htngj1ZyEjIHXCEH8i3WWMroJ8V6x39J0s4+4sDdR3L;20:e4MfnvHM4SCkODx53hNujlvGpFz9XzkRqh38kPgXakrydh79N0guBo5/1eixSbFvRPDiBX7XTerNu1uSHNQYVlz7ORv1AYR8Vg1UGBUE+UiYKl4NKRprsvg4cGhsprWWBDi0BA7fJeOGOhT+9YeLpepwbHXaQeKJBJ/T1GqmSEY=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:t1miwE1ZjwpwO2E2FJJLXOJnxN+zuf2kPEnHJQYOI2SqnV7i1Teqex0sm4oK20iPnFMl82DMmYAcg6wdY/rMtcIeGYHyrFaM05f7eflHip1kgzMH10SJX57L+TaxGBMiNUTzYiEV1JN1EAqfVDh3jSDtbosUnAn6sHFHznQedjVnwzvqhb88FbllTXxxAQ3TZCadSh2V1NE9WRNuGLyyf/TvrUZjbXUn65VtsGygGTovsR8kH+AkdtK0U16JZhA/;20:wWuNg7qLTd/F/+mUio+NTMkkQPRLd1kUvMvt+IP3qgtJUcHluyQAqehBI7XI4LMWUzyDjJp536FG9JLiTFHSuWjhVujqbUj/grNczxVFflN68RSFttYAzj4VnhMITOR+ndesnBaYwcapse+mNutEy8doI9XF4dKEmib+BYTJm+M=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 49cbd878-b24b-4bc9-afc1-08d58db0b6ed
+x-ms-office365-filtering-correlation-id: c5916d68-80cc-4c36-38ef-08d58db0b791
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0998;
 x-ms-traffictypediagnostic: DM5PR2101MB0998:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0998F75CDF2B5B7EFFBFB54BFBD40@DM5PR2101MB0998.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(20558992708506)(89211679590171)(228905959029699);
+x-microsoft-antispam-prvs: <DM5PR2101MB09985190540393AA515292D6FBD40@DM5PR2101MB0998.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(58145275503218);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0998;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0998;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(376002)(396003)(346002)(199004)(189003)(3846002)(6116002)(966005)(8936002)(6486002)(102836004)(68736007)(6506007)(2900100001)(22452003)(25786009)(3660700001)(7736002)(76176011)(6512007)(72206003)(86362001)(53936002)(8676002)(81156014)(6436002)(81166006)(305945005)(6306002)(478600001)(99286004)(2950100002)(14454004)(6666003)(10290500003)(186003)(107886003)(2501003)(106356001)(26005)(86612001)(97736004)(5660300001)(10090500001)(110136005)(54906003)(316002)(2906002)(66066001)(105586002)(4326008)(36756003)(3280700002)(1076002)(5250100002)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: /8eyMea0azY8MLfPA0E6vjSit6jWhjv1Tbm5JKjqCU3+yMdk39cZKEC9knYo7yhev+0/TeD0ISY/U5avQwdlaX0ZEZaUvkkd5iGJIYvdPb8WbA2pkLw2ocP+PZAR5iaZNKZeYU4AccJdetxDspNZW2pEhodnz3KSAFJx19pmwP2NPZyvdJvjSEqgHAIJF9MZDyQpIB64wchYuoeVnbMHYPCigXb3+XOAWAF8ONQV+Nf3w82UY/du1mRYG1bebNigy8lQISnaWThEeri5610nYFgmWusBnKfSi3HvV/NHpauYhPMoczRYd80+aJO1eLCeE6GJyNW/mFRzDVL7EEv86A==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(376002)(396003)(346002)(199004)(189003)(3846002)(6116002)(8936002)(6486002)(102836004)(68736007)(6506007)(2900100001)(22452003)(25786009)(3660700001)(7736002)(76176011)(6512007)(72206003)(86362001)(53936002)(8676002)(81156014)(6436002)(81166006)(305945005)(478600001)(99286004)(2950100002)(14454004)(6666003)(10290500003)(186003)(107886003)(2501003)(106356001)(26005)(86612001)(97736004)(5660300001)(10090500001)(110136005)(54906003)(316002)(2906002)(66066001)(105586002)(4326008)(36756003)(3280700002)(1076002)(5250100002)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 7xYmSaJ3f8UxD+2gU56PcfgdVO+Cos0EnseA84lBwWDhyFiVM5oDxeXTzlC5KYRYv2g5zgwdZA2FWbrmxv2frA7FNxdex7yZXdJFNOFFRHiUDf41qO8JwBhZNAhMKmgns0LoaIUaH1Qszyl2N9LrlMpXDLK8gjtxA6KgH5pM3/yqXkJ62YXs6ydBm42fq7h82dxt3uNwh7KlUEAFWs9+UnJEeYVTgvJtcJ+cKLkEy+QuFu0xcuGCnYKRkPbavc+JX66K0ZmcU13P8b8gwglPMTnbGc/CfQ+R1n0ie3eNOlaReqEEcxGMavPbF9wYBBOK04OeKqY4WDy5sclm7MDwqw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49cbd878-b24b-4bc9-afc1-08d58db0b6ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:20.5482
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5916d68-80cc-4c36-38ef-08d58db0b791
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:47:22.7797
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -108,117 +109,183 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: NeilBrown <neilb@suse.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 61647823aa920e395afcce4b57c32afb51456cab ]
+[ Upstream commit 12a26c298d2a8b1cab498533fa65198e49e3afd3 ]
 
-d_move() will call __d_drop() and then __d_rehash()
-on the dentry being moved.  This creates a small window
-when the dentry appears to be unhashed.  Many tests
-of d_unhashed() are made under ->d_lock and so are safe
-from racing with this window, but some aren't.
-In particular, getcwd() calls d_unlinked() (which calls
-d_unhashed()) without d_lock protection, so it can race.
+divider_recalc_rate() is an helper function used by clock divider of
+different types, so the structure containing the 'hw' pointer is not
+always a 'struct clk_divider'
 
-This races has been seen in practice with lustre, which uses d_move() as
-part of name lookup.  See:
-   https://jira.hpdd.intel.com/browse/LU-9735
-It could race with a regular rename(), and result in ENOENT instead
-of either the 'before' or 'after' name.
+At the following line:
+> div =3D _get_div(table, val, flags, divider->width);
 
-The race can be demonstrated with a simple program which
-has two threads, one renaming a directory back and forth
-while another calls getcwd() within that directory: it should never
-fail, but does.  See:
-  https://patchwork.kernel.org/patch/9455345/
+in several cases, the value of 'divider->width' is garbage as the actual
+structure behind this memory is not a 'struct clk_divider'
 
-We could fix this race by taking d_lock and rechecking when
-d_unhashed() reports true.  Alternately when can remove the window,
-which is the approach this patch takes.
+Fortunately, this width value is used by _get_val() only when
+CLK_DIVIDER_MAX_AT_ZERO flag is set. This has never been the case so
+far when the structure is not a 'struct clk_divider'. This is probably
+why we did not notice this bug before
 
-___d_drop() is introduce which does *not* clear d_hash.pprev
-so the dentry still appears to be hashed.  __d_drop() calls
-___d_drop(), then clears d_hash.pprev.
-__d_move() now uses ___d_drop() and only clears d_hash.pprev
-when not rehashing.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: afe76c8fd030 ("clk: allow a clk divider with max divisor when zero")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/dcache.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/clk/clk-divider.c                  | 7 +++----
+ drivers/clk/hisilicon/clkdivider-hi6220.c  | 2 +-
+ drivers/clk/nxp/clk-lpc32xx.c              | 2 +-
+ drivers/clk/qcom/clk-regmap-divider.c      | 2 +-
+ drivers/clk/sunxi-ng/ccu_div.c             | 2 +-
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c | 2 +-
+ drivers/rtc/rtc-ac100.c                    | 6 ++++--
+ include/linux/clk-provider.h               | 2 +-
+ 8 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 5c7df1df81ff..10b47d16a8a4 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -468,9 +468,11 @@ static void dentry_lru_add(struct dentry *dentry)
-  * d_drop() is used mainly for stuff that wants to invalidate a dentry for=
- some
-  * reason (NFS timeouts or autofs deletes).
-  *
-- * __d_drop requires dentry->d_lock.
-+ * __d_drop requires dentry->d_lock
-+ * ___d_drop doesn't mark dentry as "unhashed"
-+ *   (dentry->d_hash.pprev will be LIST_POISON2, not NULL).
-  */
--void __d_drop(struct dentry *dentry)
-+static void ___d_drop(struct dentry *dentry)
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 4ed516cb7276..b49942b9fe50 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -118,12 +118,11 @@ static unsigned int _get_val(const struct clk_div_tab=
+le *table,
+ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_=
+rate,
+ 				  unsigned int val,
+ 				  const struct clk_div_table *table,
+-				  unsigned long flags)
++				  unsigned long flags, unsigned long width)
  {
- 	if (!d_unhashed(dentry)) {
- 		struct hlist_bl_head *b;
-@@ -486,12 +488,17 @@ void __d_drop(struct dentry *dentry)
+-	struct clk_divider *divider =3D to_clk_divider(hw);
+ 	unsigned int div;
 =20
- 		hlist_bl_lock(b);
- 		__hlist_bl_del(&dentry->d_hash);
--		dentry->d_hash.pprev =3D NULL;
- 		hlist_bl_unlock(b);
- 		/* After this call, in-progress rcu-walk path lookup will fail. */
- 		write_seqcount_invalidate(&dentry->d_seq);
- 	}
+-	div =3D _get_div(table, val, flags, divider->width);
++	div =3D _get_div(table, val, flags, width);
+ 	if (!div) {
+ 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+ 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+@@ -145,7 +144,7 @@ static unsigned long clk_divider_recalc_rate(struct clk=
+_hw *hw,
+ 	val &=3D div_mask(divider->width);
+=20
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+-				   divider->flags);
++				   divider->flags, divider->width);
  }
-+
-+void __d_drop(struct dentry *dentry)
-+{
-+	___d_drop(dentry);
-+	dentry->d_hash.pprev =3D NULL;
-+}
- EXPORT_SYMBOL(__d_drop);
 =20
- void d_drop(struct dentry *dentry)
-@@ -2381,7 +2388,7 @@ EXPORT_SYMBOL(d_delete);
- static void __d_rehash(struct dentry *entry)
- {
- 	struct hlist_bl_head *b =3D d_hash(entry->d_name.hash);
--	BUG_ON(!d_unhashed(entry));
-+
- 	hlist_bl_lock(b);
- 	hlist_bl_add_head_rcu(&entry->d_hash, b);
- 	hlist_bl_unlock(b);
-@@ -2816,9 +2823,9 @@ static void __d_move(struct dentry *dentry, struct de=
-ntry *target,
- 	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_NESTED);
+ static bool _is_valid_table_div(const struct clk_div_table *table,
+diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisili=
+con/clkdivider-hi6220.c
+index a1c1f684ad58..9f46cf9dcc65 100644
+--- a/drivers/clk/hisilicon/clkdivider-hi6220.c
++++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
+@@ -56,7 +56,7 @@ static unsigned long hi6220_clkdiv_recalc_rate(struct clk=
+_hw *hw,
+ 	val &=3D div_mask(dclk->width);
 =20
- 	/* unhash both */
--	/* __d_drop does write_seqcount_barrier, but they're OK to nest. */
--	__d_drop(dentry);
--	__d_drop(target);
-+	/* ___d_drop does write_seqcount_barrier, but they're OK to nest. */
-+	___d_drop(dentry);
-+	___d_drop(target);
+ 	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
+-				   CLK_DIVIDER_ROUND_CLOSEST);
++				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
+ }
 =20
- 	/* Switch the names.. */
- 	if (exchange)
-@@ -2830,6 +2837,8 @@ static void __d_move(struct dentry *dentry, struct de=
-ntry *target,
- 	__d_rehash(dentry);
- 	if (exchange)
- 		__d_rehash(target);
-+	else
-+		target->d_hash.pprev =3D NULL;
+ static long hi6220_clkdiv_round_rate(struct clk_hw *hw, unsigned long rate=
+,
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 7b359afd620e..a6438f50e6db 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -956,7 +956,7 @@ static unsigned long clk_divider_recalc_rate(struct clk=
+_hw *hw,
+ 	val &=3D div_mask(divider->width);
 =20
- 	/* ... and switch them in the tree */
- 	if (IS_ROOT(dentry)) {
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+-				   divider->flags);
++				   divider->flags, divider->width);
+ }
+=20
+ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-r=
+egmap-divider.c
+index 53484912301e..928fcc16ee27 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.c
++++ b/drivers/clk/qcom/clk-regmap-divider.c
+@@ -59,7 +59,7 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
+ 	div &=3D BIT(divider->width) - 1;
+=20
+ 	return divider_recalc_rate(hw, parent_rate, div, NULL,
+-				   CLK_DIVIDER_ROUND_CLOSEST);
++				   CLK_DIVIDER_ROUND_CLOSEST, divider->width);
+ }
+=20
+ const struct clk_ops clk_regmap_div_ops =3D {
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.=
+c
+index baa3cf96507b..302a18efd39f 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -71,7 +71,7 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *h=
+w,
+ 						  parent_rate);
+=20
+ 	val =3D divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+-				  cd->div.flags);
++				  cd->div.flags, cd->div.width);
+=20
+ 	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		val /=3D cd->fixed_post_div;
+diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c b/drivers/gpu/drm/m=
+sm/dsi/pll/dsi_pll_14nm.c
+index fe15aa64086f..71fe60e5f01f 100644
+--- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
++++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+@@ -698,7 +698,7 @@ static unsigned long dsi_pll_14nm_postdiv_recalc_rate(s=
+truct clk_hw *hw,
+ 	val &=3D div_mask(width);
+=20
+ 	return divider_recalc_rate(hw, parent_rate, val, NULL,
+-				   postdiv->flags);
++				   postdiv->flags, width);
+ }
+=20
+ static long dsi_pll_14nm_postdiv_round_rate(struct clk_hw *hw,
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+index 9e336184491c..0282ccc6181c 100644
+--- a/drivers/rtc/rtc-ac100.c
++++ b/drivers/rtc/rtc-ac100.c
+@@ -137,13 +137,15 @@ static unsigned long ac100_clkout_recalc_rate(struct =
+clk_hw *hw,
+ 		div =3D (reg >> AC100_CLKOUT_PRE_DIV_SHIFT) &
+ 			((1 << AC100_CLKOUT_PRE_DIV_WIDTH) - 1);
+ 		prate =3D divider_recalc_rate(hw, prate, div,
+-					    ac100_clkout_prediv, 0);
++					    ac100_clkout_prediv, 0,
++					    AC100_CLKOUT_PRE_DIV_WIDTH);
+ 	}
+=20
+ 	div =3D (reg >> AC100_CLKOUT_DIV_SHIFT) &
+ 		(BIT(AC100_CLKOUT_DIV_WIDTH) - 1);
+ 	return divider_recalc_rate(hw, prate, div, NULL,
+-				   CLK_DIVIDER_POWER_OF_TWO);
++				   CLK_DIVIDER_POWER_OF_TWO,
++				   AC100_CLKOUT_DIV_WIDTH);
+ }
+=20
+ static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7c925e6211f1..48171b349b88 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -412,7 +412,7 @@ extern const struct clk_ops clk_divider_ro_ops;
+=20
+ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_=
+rate,
+ 		unsigned int val, const struct clk_div_table *table,
+-		unsigned long flags);
++		unsigned long flags, unsigned long width);
+ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+ 			       unsigned long rate, unsigned long *prate,
+ 			       const struct clk_div_table *table,
 --=20
 2.14.1
