@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuTM1hyB5V070LdnGdC0Cjptck8SSjUCrqjyKW3B5d0nRSqw6JKgfixl8tNYpSlNB+Ee9Vi
-ARC-Seal: i=1; a=rsa-sha256; t=1521483301; cv=none;
+X-Google-Smtp-Source: AG47ELtB0UEY//1TJL3azW0WmoIxN6FM6vABvXMWnO6Sc64XG4ixk6DYGkZfcL9nc7mo0NAD4v0n
+ARC-Seal: i=1; a=rsa-sha256; t=1521483298; cv=none;
         d=google.com; s=arc-20160816;
-        b=jNDd8S7Y3oW1JQxiYK1RA5X5zVMtVV4Rc113srUp3LFR7KeCmUGGcxnT4gmnFq3ClH
-         dmPs4qXeQvL6Urh7wzo3WW5HQHfI7Gc4n2+s2bTK+FOZZ2SiqkqIxKQjMNfCE2OLtRiA
-         d0apuGhwa8+AUEmi4YWB3QBE+761XC7qdWocsVCsRDcS2V2oND/b7pAp3LbIGkioQg0P
-         6fnm+3rHvZxaflKCWLzRSSKI4ySNf92n40TOVFruN+dMC3wRJkRk0rNanvnXUTEnrNGD
-         Nqz8P8XAGVEZELEnQG6sQWEri74AT3CrcqYW99bgueDZTCKJkmbqZdZHoMRNFzzdhFgV
-         uT1A==
+        b=o3pnaJo8uvgn5RdCJj6goPgUbz/ua0+CspgNZi/r9+eaZqmdNuJzQOsWGpbeuVxgf+
+         WRWtZ3W03UA100sxiPQqZLYnZM/HDqbOfRtGxa87zgB4C8/yBuwtH9KFK13rGk4RzNPN
+         YTZn7lxF7qtoFcDzp0t929pAQnSz7Mgqmg6h09vXTTOJvb0Pfl2Pm3ECq/90RNOAYm/a
+         YVMNG3q0WcqwPIQjUTJzit3wl3Y86Obs0jYn/Ifv6DHDxpqPdb7yWuAWL+v2yKwP5AKj
+         dfhtKeQsqkBFWwIYpBBSG6XKsnfj/+F1FDeTZTRhq+y+J5ukY8MYMquOuxIFhiQM5ba5
+         Xlcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=z3ocbS9Kvlmoo1vbNEVeCpcSZ3WVCkF2pzkyG3IaFT0=;
-        b=IRuP7p2G6ZzwKiD+KXVNiSAE2gHY7cxzcLl3Ic5bIs4UyQt3HOBsUxAhYEEHVxd5o+
-         z121Qg+ylg1bDYTCmrZT6DW2xYI/yFu00rmp5Mhlw9MQwZOU3osTxxDlc4r1fBUYSAqM
-         KXHGLgQw3gl6O6sBSx89G6X7inZqpkqO2mISOrT24BFEOgcA9JY16XoNP7G85wLpeoWg
-         a8guy9cfU+2mkmY/TPqxtPiZCdu3Un7hXCAb0inJnNfaOmwx2wDvdP0pQdO+EMsIaCrM
-         S1HsywO2pPANPGzwy3BNgsTyVFruzK5BA/TIw8SWkZo+wUl11DPPj4pQb16r9NuU0ntv
-         mr2Q==
+        bh=TKVyeHAURhW4yUSIHQCMUTM/yyfhOW94CZKUVdGhL4c=;
+        b=PXMIskBgZYGd7I7WzNha5B4HMp4EErm6asQOfGO9IeLtfjnJ7kySP3Ip4sDdTawZhW
+         6Gu86NVrprOvxIxakRTX4lVEKMQEwaVGgFhQpkyzVLzknz7wuSTp0buvIuPuPyX+nzLX
+         hscJdYOuUfWVrV3j9BbRXBtJhBf43tHjmLDM2KQjkoDTzKvApKy/Oo2HuI9ev8PJnRwD
+         ToyHtjVHihCaZeE+BXA5GG5MLXcfvQLxX4YLULUZvW2RYWtenkOSS0QBa3P8VdaxncNX
+         hb2Ys5dUbprdMx4UJGHbBy7wIUO/t/hnE8Xblfemw3vzfk54aw2ehiyoE3TMx1GMHiPV
+         bJRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Yunlei He <heyunlei@huawei.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 040/134] bonding: refine bond_fold_stats() wrap detection
-Date: Mon, 19 Mar 2018 19:05:23 +0100
-Message-Id: <20180319171855.117165172@linuxfoundation.org>
+Subject: [PATCH 4.4 039/134] f2fs: relax node version check for victim data in gc
+Date: Mon, 19 Mar 2018 19:05:22 +0100
+Message-Id: <20180319171854.987259946@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390874214479458?=
-X-GMAIL-MSGID: =?utf-8?q?1595390874214479458?=
+X-GMAIL-THRID: =?utf-8?q?1595390871217961883?=
+X-GMAIL-MSGID: =?utf-8?q?1595390871217961883?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
 
-[ Upstream commit 142c6594acbcc32391af9c15f8cd65c6c177698f ]
+[ Upstream commit c13ff37e359bb3eacf4e1760dcea8d9760aa7459 ]
 
-Some device drivers reset their stats at down/up events, possibly
-fooling bonding stats, since they operate with relative deltas.
+- has_not_enough_free_secs
+node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
 
-It is nearly not possible to fix drivers, since some of them compute the
-tx/rx counters based on per rx/tx queue stats, and the queues can be
-reconfigured (ethtool -L) between the down/up sequence.
+          - f2fs_gc
+             - get_victim_by_default
+alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
 
-Lets avoid accumulating 'negative' values that render bonding stats
-useless.
+                - do_garbage_collect
+start_segno 3976, end_segno 3977   type 0
 
-It is better to lose small deltas, assuming the bonding stats are
-fetched at a reasonable frequency.
+                  - is_alive
+nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
 
-Fixes: 5f0c5f73e5ef ("bonding: make global bonding stats more reliable")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+                   - gc_data_segment 766, segno 3976, block 512/426 not alive
+
+So, this patch fixes subtle corrupted case where node version does not match
+to summary version which results in infinite loop by gc.
+
+Reported-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/f2fs/gc.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3276,12 +3276,17 @@ static void bond_fold_stats(struct rtnl_
- 	for (i = 0; i < sizeof(*_res) / sizeof(u64); i++) {
- 		u64 nv = new[i];
- 		u64 ov = old[i];
-+		s64 delta = nv - ov;
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -522,8 +522,10 @@ static bool is_alive(struct f2fs_sb_info
+ 	get_node_info(sbi, nid, dni);
  
- 		/* detects if this particular field is 32bit only */
- 		if (((nv | ov) >> 32) == 0)
--			res[i] += (u32)nv - (u32)ov;
--		else
--			res[i] += nv - ov;
-+			delta = (s64)(s32)((u32)nv - (u32)ov);
-+
-+		/* filter anomalies, some drivers reset their stats
-+		 * at down/up events.
-+		 */
-+		if (delta > 0)
-+			res[i] += delta;
+ 	if (sum->version != dni->version) {
+-		f2fs_put_page(node_page, 1);
+-		return false;
++		f2fs_msg(sbi->sb, KERN_WARNING,
++				"%s: valid data with mismatched node version.",
++				__func__);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
  	}
- }
  
+ 	*nofs = ofs_of_node(node_page);
