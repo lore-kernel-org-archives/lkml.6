@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtVsnCr1RplJYhEUs/igLVSfs79S/7igul+gy0Tu3RDe43y+9mD4Knd8y6b3zA/q6nyOA7q
-ARC-Seal: i=1; a=rsa-sha256; t=1521484083; cv=none;
+X-Google-Smtp-Source: AG47ELuQQOGNvnFFqnwKlYXEML0sc6FBJi9hgCKAjomXLShLVmhpoIHR8tDAOS4kujVv4QzFA0/p
+ARC-Seal: i=1; a=rsa-sha256; t=1521484080; cv=none;
         d=google.com; s=arc-20160816;
-        b=J5wibaReBRgkq9nNhwcNONEY8NeYXvJAGDgkk0UfiDpg7n8i60UO8pvNHXzBXgxlX2
-         0KOmarCKdXFj6ZNbkhjM7nP08QYtGWrKGsTh2YjdBJLH23G3siyk1WGQrUNPWnwXl5Wd
-         /b+sIaIxyDfWK9CEcTYbsanNP6YhiZTx5sP6Eefyr67iv+x/hwgkwkqbxnTkAObzS70g
-         +j99L9atBujiFVkCdEDX4l5Nj0b/BgA4oLd+BjjWDn4/Od5BPLz5Odk1YkEo864T6Pdn
-         iH/26beqJWLFGaCejQ72tjmZ6PT/fqcUaBBzjOesI8BRJSKe+bp9J8wu6elQqbqyoHTV
-         d5jA==
+        b=LglYMK/eCApLY7xcvGT9WALLBC6okbgQVfGuOXolD8pF290eOA49QBDyNOVtVdZmb4
+         eg1w9gN/vBSyg4Nxjctzb4jvYP3gIycKK3Qz4Jnr/xD5Z4TMJTzWvb/Gf4rKTgmWSqEO
+         qk4qiPYHx7YY+ZO3cbV+JtSEHfeo7uu9mI8JPPD9airQRjcWvKdxIBtQCslsM5LVpsLb
+         pJeUlj5q6H74dZB3ScDgscrnkcmcAYtVkG/h6w47fn+ItWz+xP9/+oYzoaD+6gGPjJ12
+         Q0Ai7nqER7CFIghY5uJcjbqxahYfADYJb54rrdE0hDHmEtzNpkGhmsHS3tTYOyl6RcDF
+         pGyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=s6dWLI825xQ9fXLGfcxns2nZKhUiuWnM4dXmWvxjo7Q=;
-        b=W9uxtMzSx6YexhMV4B3VOhxElnloYqQBq7ZMhCdKBP2Ej1z4bgiwkqCocuK1kIfJf6
-         sYMv1WwtE9LyEQ2T2l2yu2ECUvpqbbU92yFJkiR33UswFFb52fYzJjachELc9UkCzmmf
-         JAM9FRHgWYk/vtdyfrUeHyYf5Uct2AppxH82mh+wOy/PEj3Md4jxUcJkwjV7jseHWqff
-         ufgc2oOv5jLiQN0Fw9jsCVDSMJod3qjik98SF9afIlqeVd5lutpwr10MPINd5hZ3PHeZ
-         BpiLkB0unGJqvue/+kjuBVK1PAPFuDWIY2+prQ/nhtgXoLTWf7WUbo1Fb7j3Wz4mj8Wl
-         r6IQ==
+        bh=3V7aeG/qVk1ViPaXlsE0fOO9XPKX2ZZmbXlYY1qumzw=;
+        b=iFmhb/DIIO5wF9Xyx9vW7FDUl/PIZcjBRQEywQIvJ4/lc8ciYvFhDYLD+0SeW0PuA7
+         LwUrsptHD5Tkw9EHqUSbpId8gU/BVVXt9dOJMUfJChjic6+yRgV54Z91VTHBmP7LDA5S
+         VPc54OY/5BACuzi/8uQs//RINyytQ9XTUX416O0odOfXM7gRRNzwrHBgxGT0diaGtPiw
+         Vj8KpNqXnka+YRyOF5p9r5R1aUiMlfOaSSWThjJMAIQZqf/8DtqQZvlInG+K51/dDCgD
+         QtJHLr3xahvKnKskArUm3obx251ZXxLeb1Kg/FMFYzp97e8a91tDh5TMsSe+lxM520FX
+         /jmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 226/241] drm/amdgpu: fix prime teardown order
-Date: Mon, 19 Mar 2018 19:08:11 +0100
-Message-Id: <20180319180800.529160974@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 225/241] ALSA: seq: Clear client entry before deleting else at closing
+Date: Mon, 19 Mar 2018 19:08:10 +0100
+Message-Id: <20180319180800.488107639@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391693879496506?=
-X-GMAIL-MSGID: =?utf-8?q?1595391693879496506?=
+X-GMAIL-THRID: =?utf-8?q?1595390647940605831?=
+X-GMAIL-MSGID: =?utf-8?q?1595391690691373700?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +48,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian König <christian.koenig@amd.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 342038d92403b3efa1138a8599666b9f026279d6 upstream.
+commit a2ff19f7b70118ced291a28d5313469914de451b upstream.
 
-We unmapped imported DMA-bufs when the GEM handle was dropped, not when the
-hardware was done with the buffere.
+When releasing a client, we need to clear the clienttab[] entry at
+first, then call snd_seq_queue_client_leave().  Otherwise, the
+in-flight cell in the queue might be picked up by the timer interrupt
+via snd_seq_check_queue() before calling snd_seq_queue_client_leave(),
+and it's delivered to another queue while the client is clearing
+queues.  This may eventually result in an uncleared cell remaining in
+a queue, and the later snd_seq_pool_delete() may need to wait for a
+long time until the event gets really processed.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+By moving the clienttab[] clearance at the beginning of release, any
+event delivery of a cell belonging to this client will fail at a later
+point, since snd_seq_client_ptr() returns NULL.  Thus the cell that
+was picked up by the timer interrupt will be returned immediately
+without further delivery, and the long stall of snd_seq_delete_pool()
+can be avoided, too.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    |    2 --
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |    2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/core/seq/seq_clientmgr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -36,8 +36,6 @@ void amdgpu_gem_object_free(struct drm_g
- 	struct amdgpu_bo *robj = gem_to_amdgpu_bo(gobj);
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -255,12 +255,12 @@ static int seq_free_client1(struct snd_s
  
- 	if (robj) {
--		if (robj->gem_base.import_attach)
--			drm_prime_gem_destroy(&robj->gem_base, robj->tbo.sg);
- 		amdgpu_mn_unregister(robj);
- 		amdgpu_bo_unref(&robj);
- 	}
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -94,6 +94,8 @@ static void amdgpu_ttm_bo_destroy(struct
- 
- 	amdgpu_update_memory_usage(bo->adev, &bo->tbo.mem, NULL);
- 
-+	if (bo->gem_base.import_attach)
-+		drm_prime_gem_destroy(&bo->gem_base, bo->tbo.sg);
- 	drm_gem_object_release(&bo->gem_base);
- 	amdgpu_bo_unref(&bo->parent);
- 	if (!list_empty(&bo->shadow_list)) {
+ 	if (!client)
+ 		return 0;
+-	snd_seq_delete_all_ports(client);
+-	snd_seq_queue_client_leave(client->number);
+ 	spin_lock_irqsave(&clients_lock, flags);
+ 	clienttablock[client->number] = 1;
+ 	clienttab[client->number] = NULL;
+ 	spin_unlock_irqrestore(&clients_lock, flags);
++	snd_seq_delete_all_ports(client);
++	snd_seq_queue_client_leave(client->number);
+ 	snd_use_lock_sync(&client->use_lock);
+ 	snd_seq_queue_client_termination(client->number);
+ 	if (client->pool)
