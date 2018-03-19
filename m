@@ -1,77 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755358AbeCSMgK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 08:36:10 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:58973 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753151AbeCSMgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 08:36:06 -0400
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
-Date: Mon, 19 Mar 2018 13:35:59 +0100
-Message-ID: <1592165.6qU88H7nrm@merkaba>
-In-Reply-To: <f6f20cd6-0d52-4501-f8ea-c4da9ec128cf@redhat.com>
-References: <27165802.vQ9JbjrmvU@merkaba> <a3af4fed-a728-5be2-2224-6a0573406c5b@leemhuis.info> <f6f20cd6-0d52-4501-f8ea-c4da9ec128cf@redhat.com>
+        id S1755433AbeCSMgk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 08:36:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51914 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755380AbeCSMgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 08:36:37 -0400
+Date: Mon, 19 Mar 2018 12:36:29 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
+        Sekhar Nori <nsekhar@ti.com>, John Keeping <john@metanate.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] PCI: endpoint: BAR width should not depend on
+ sizeof dma_addr_t
+Message-ID: <20180319123629.GA8830@e107981-ln.cambridge.arm.com>
+References: <20180308133331.19464-1-niklas.cassel@axis.com>
+ <20180308133331.19464-2-niklas.cassel@axis.com>
+ <20180316180220.GA13505@red-moon>
+ <20180317005513.GB22414@axis.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180317005513.GB22414@axis.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thorsten.
-
-Hans de Goede - 19.03.18, 10:50:
-> On 19-03-18 10:42, Thorsten Leemhuis wrote:
-> > Hi! On 11.03.2018 09:20, Martin Steigerwald wrote:
-> >> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+On Sat, Mar 17, 2018 at 01:55:13AM +0100, Niklas Cassel wrote:
+> On Fri, Mar 16, 2018 at 06:02:20PM +0000, Lorenzo Pieralisi wrote:
+> > On Thu, Mar 08, 2018 at 02:33:26PM +0100, Niklas Cassel wrote:
+> > > If a BAR supports 64-bit width or not depends on the hardware,
+> > > and should thus not depend on sizeof(dma_addr_t).
+> > > 
+> > > Since this driver is generic, default to always using BAR width
+> > > of 32-bits. 64-bit BARs can easily be tested by replacing
+> > > PCI_BASE_ADDRESS_MEM_TYPE_32 with PCI_BASE_ADDRESS_MEM_TYPE_64
+> > > in bar_flags.
+> > > 
+> > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > > ---
+> > > Note to Lorenzo/Bjorn:
+> > > It is not trivial to convert the bar_size + bar_flags +
+> > > struct pci_epf->bar member array to an array of struct resources,
+> > > since we need to be able to store the addresses returned
+> > > by dma_alloc_coherent(), which is of type dma_addr_t.
+> > > struct resource uses resource_size_t, which is defined as phys_addr_t.
+> > > E.g. ARTPEC-7 uses 64-bit dma_addr_t, but only 32-bit phys_addr_t.
+> > > 
+> > >  drivers/pci/endpoint/functions/pci-epf-test.c | 15 +++++++++------
+> > >  1 file changed, 9 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > index 800da09d9005..7c70433b11a7 100644
+> > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > @@ -71,6 +71,14 @@ struct pci_epf_test_data {
+> > >  };
+> > >  
+> > >  static int bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
+> > > +static int bar_flags[] = {
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> > > +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32
+> > > +};
 > > 
-> >> with SMART checks occassionally failing like this:
-> > Martin (or someone else): Could you gibe a status update? I have this
-> > issue on my list or regressions, but it's hard to follow as two
-> > different issues seem to be discussed. Or is it just one issue? Did the
-
-There are at least two issues.
-
-> > patch/discussion that Bart pointed to help? Is the issue still showing
-> > up in rc6?
+> > Niklas,
+> > 
+> > I think you are almost there, I have one question though to address
+> > that can even simplify the patchset.
+> > 
+> > If, according to your own commit logs (and my reading of the code), the
+> > Cadence driver makes a decision on the BAR size just by checking the
+> > corresponding region size (I would be happy to hear the reason
+> > underpinning that choice, BTW), why can't we do the same for DWC (ie to
+> > let the DWC driver decides whether a BAR should be 64 or 32 bits ?)
 > 
-> Your right there are 2 issues here:
+> We could, but I think that would be a mistake.
 > 
-> 1) The Crucial M500 SSD (at least the 480GB MU03 firmware version) does
-> not like enabling SATA link power-management at a level of min_power
-> or at the new(ish) med_power_with_dipm level. This problem exists in
-> older kernels too, so this is not really a regression.
+> The API that the user/"endpoint function" has available to configure
+> the BARs:
+> pci_epc_set_bar()
 > 
-> New in 4.16 is a Kconfig option to enable SATA LPM by default, which
-> makes this existing problem much more noticeable. Not sure if you want
-> to count this as a regression. Either way I'm preparing and sending
-> out a patch fixing this (by blacklisting LPM for this model SSD) right
-> now.
+> If the user, for some reason, wants to configure a BAR with a
+> 64-bit width, even though the BAR size is less than 4 GB,
+> I think that the API should allow that.
 
-Yes, and this is fixed by the nolpm quirk patch of Hans.
+Yes, that's a good point, thanks a lot for the explanation.
 
-> 2) There seem to be some latency issues in the MU03 version of the
-> firmware, triggered by polling SMART data, which causes lvmetad to
-> timeout in some cases. Note I'm not involved in that part of this
-> thread, but I believe that issue is currently unresolved.
+Lorenzo
 
-Additionally I get a failure on boot / resume from hibernation in 
-blk_mq_terminate_expire occassionally. But I tend to believe that this is the 
-same issue.
-
-This is still unresolved as of 4.16-rc6 + nolpm quick patch from Hans and the 
-"Change synchronize_rcu() in scsi_device_quiesce() into synchronize_sched()" 
-patch by Bart. Cause I had this occassional boot failure with it already.
-
-The patch by Bart seems to be related to another issue of the blk-mq quiescing 
-stuff.
-
-Thanks,
--- 
-Martin
+> This would not be possible if pci_epc_set_bar() would start to
+> ignore PCI_BASE_ADDRESS_MEM_TYPE_64 from the flags parameter
+> (and BAR width thus only being controlled by the size parameter).
+> 
+> int pci_epc_set_bar(struct pci_epc *epc, u8 func_no, enum pci_barno bar,
+> 	            dma_addr_t bar_phys, size_t size, int flags);
+> 
+> 
+> 
+> Best regards,
+> Niklas
