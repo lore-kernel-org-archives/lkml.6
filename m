@@ -1,61 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970909AbeCSTvR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:51:17 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:32947 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969480AbeCSTvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:51:13 -0400
-Date: Mon, 19 Mar 2018 20:50:59 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Jan Kiszka <jan.kiszka@siemens.com>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>,
-        Juergen Gross <jgross@suse.com>, Mark Rutland <mark.rutland@arm.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v5 0/7] jailhouse: Enhance secondary Jailhouse guest
- support /wrt PCI
-In-Reply-To: <20180319194813.GJ77194@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1803192049500.1520@nanos.tec.linutronix.de>
-References: <cover.1520408357.git.jan.kiszka@siemens.com> <20180319194813.GJ77194@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S969465AbeCSSTn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 14:19:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S969417AbeCSSTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:19:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7742177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8BIT
+To: Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87bmfs1a8w.fsf@bootlin.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Shadi Ammouri <shadi@marvell.com>,
+        Omri Itach <omrii@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+        Igal Liberman <igall@marvell.com>, Marcin Wojtas <mw@semihalf.com>
+References: <20180228140751.10819-1-gregory.clement@bootlin.com>
+ <87bmfs1a8w.fsf@bootlin.com>
+Message-ID: <152148357023.242365.11271637218580901412@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: mvebu: cp110: Fix clock tree representation
+Date: Mon, 19 Mar 2018 11:19:30 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn,
-
-On Mon, 19 Mar 2018, Bjorn Helgaas wrote:
-
-> On Wed, Mar 07, 2018 at 08:39:11AM +0100, Jan Kiszka wrote:
-> > Basic x86 support [1] for running Linux as secondary Jailhouse [2] guest
-> > is currently pending in the tip tree. This builds on top and enhances
-> > the PCI support for x86 and also ARM guests (ARM[64] does not require
-> > platform patches and works already).
-> > ...
+Quoting Gregory CLEMENT (2018-03-13 04:32:47)
+> Hi,
+>  
+>  On mer., févr. 28 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 > 
-> Hi Jan,
+> > Thanks to new documentation, we have a better view of the clock tree.
+> > There were few mistakes in the first version of this driver, the main one
+> > being the parental link between the clocks. Actually the tree is more
+> > flat that we though. Most of the IP blocks require two clocks: one for
+> > the IP itself and one for accessing the registers, and unlike what we
+> > wrote there is no link between these two clocks.
+> >
+> > The other mistakes were about the name of the clocks: the root clock is
+> > not the Audio PLL but the PLL0, and what we called the EIP clock is named
+> > the x2 Core clock and is used by other IP block than the EIP ones.
 > 
-> What tree do you plan to merge this through?  I was sort of assuming
-> x86, since the main point of jailhouse is not PCI, but I do notice
-> most of the changes here are PCI-related, so thought I should make
-> sure you're not waiting on me.
+> Do you have any feedback on this patch?
+> 
+> I would like to have time to address them if you have any remark.
+> 
+> Else do you want a Pull Request or could you apply it directly?
+> 
+> The only other patch around the mvebu clocks was set a few days ago [1]
+> and seems to be eventually a fix patch. That means that there would be
+> only one patch in the Pull Request for 4.17, but I can do it if you
+> prefer.
+> 
 
-I picked it up already. It's sitting in tip x86/platform
-
-Thanks,
-
-	tglx
+Please don't send single patch PRs. I'll pick this up. Thanks.
