@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELukv1c7ltkeIUbUVFXoKBYSW9WG+J8WtWJJwQ4rf6OsgC+I3ZWtQBEjO0mejTglQxxY8w3u
-ARC-Seal: i=1; a=rsa-sha256; t=1521483783; cv=none;
+X-Google-Smtp-Source: AG47ELtYJUhnrPH+fgF668KIbH/kWD89D+hcgeLRRFoMisXQSMKs5eKBBZgNYKxtnLZj2pW4T1qO
+ARC-Seal: i=1; a=rsa-sha256; t=1521483780; cv=none;
         d=google.com; s=arc-20160816;
-        b=mlkDKq6pjHYOygujo4tSsW0LYrdv5vRXeaD04LLNCn62H5NfmVnNQDqoNMq4vh1zAE
-         WFYnLe2rGcZNiy7/uaeAD85i1/zsU/ronZ2iNOGsQKQNzw/zB0Y3MCx+lyhfy6rkssYA
-         m7MfmjREhNHAYa9t7Jz5FsuB6Pv5m5xYceWM579+JrGoPbdAa0O/L+gkBZWHYSnEarWp
-         MXr4SSMVMHOz4Dd8oj1GAIDB7nQEQOam8MOVXeEBCB1ey4xOeSfD8Jk3ecjY7JZ22XRV
-         C5oAeWNRVICBErLXes3pSUnOELujDF6DYB8dYvrxyGeepSOAOWqSm8V9Fpp2jB2NCo3b
-         jRAg==
+        b=BH/qcNYBPjuQg7iJGxi8d8HTJKegkqf+TEE0R0KRv39oYicyZWFP+TOmFnSa6AtC/j
+         ZsBalV4CVbS/OZq4JvtDLgdUwPKIjlT5vs9G1TKDUzb7hm7X7ncmAoSKBDBrtS3d2W47
+         zA4IT0DfsVloiL0P0J/rM8h6e8haQiq6RYDCcCHx4HFs3hBgPbrTJQ7MskY0uO4bs7AD
+         hv4NTkv6Rab/KMSRbzXSLJxdfattlNGRWoUh/5oLxFiVo2VbjghwXIscGKheZinP17qS
+         y+3PMa+KdT2kwxbPHaLP3TcHONKNTTQ3d33ROjb1tG5D53Om6pdnaWVMhhaV0Ma4WESL
+         bzQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=js4yHisp8v3Mo3Mh8onS5QlNpwH5uQ2OwVtvz+TuU2M=;
-        b=prMyRHGOGa1GRpEkXi0K2M657JoEdFevlQ3+qJkL+7pE3PH9bxwOIv0bb9XoE0VqZY
-         wX3dQBxHaBecSkIPVM/x8gbvkctamLoSkOP3m0j5rYjPHmhT5F3lzK2pHx2rpwP4kxDu
-         iu19YKlKw7Ll+0s4AnFy8Panc5z4hfGxkX1RK7H2vWgppjHGR5nWqlyuVPOnMxyaDkzI
-         ejo8fTbhHFAVq3CyYMmgM6dGrJk+WVvHtKQQp2/sOwxhel0KkvMnw/XGGQWxwiqfLlVg
-         eAl9l0AsxDlCzfQrGYHJosEgoUxmHtqzIUOyV0EVdr4xndAS5hGjSYTG7Deezq3hWJIV
-         7lRQ==
+        bh=gL21BlfTNmFLf9NC9gTEMPuwukS0BnRx1L7KJn9XWbM=;
+        b=RSF+gOgVkqHjz/FjkUT2yHfKHogo/J7seKhXro2afN4gWyAFMzrIQj0sm7UNWHYnvw
+         JJyp3IUIcCQrlsCqBWf0NxrcSzxwU8dm+OYzOJj7mKJLXj/pNN8ftEXcAYs1PTpeK+fE
+         YeoOIWe4Qfwp1bxP8QLbGcD4CO2FPgyR1Vg+LarAKZchZlToXDWpvmMjfbiR1W7f8B8T
+         rZPYx6AGUQCrPp2NXLoBrnPP++4nE8P3KSQr07xTwiKuYh1bMJUj9sFdUqaLJ82Wc7IL
+         IXHPFzHeIIBBYEe34nOpUFFeBPoIdelr9EN7SkJJ2Q02n4H1OGp+GopHpXEd9ECmGT2B
+         YAzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	John Johansen <john.johansen@canonical.com>,
-	James Morris <james.l.morris@oracle.com>,
+	Yuval Mintz <Yuval.Mintz@cavium.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 116/241] apparmor: Make path_max parameter readonly
-Date: Mon, 19 Mar 2018 19:06:21 +0100
-Message-Id: <20180319180756.006729462@linuxfoundation.org>
+Subject: [PATCH 4.9 115/241] qed: Correct MSI-x for storage
+Date: Mon, 19 Mar 2018 19:06:20 +0100
+Message-Id: <20180319180755.968501050@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390560477721446?=
-X-GMAIL-MSGID: =?utf-8?q?1595391379429016566?=
+X-GMAIL-THRID: =?utf-8?q?1595391376451817393?=
+X-GMAIL-MSGID: =?utf-8?q?1595391376451817393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,81 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
 
 
-[ Upstream commit 622f6e3265707ebf02ba776ac6e68003bcc31213 ]
+[ Upstream commit 2f78227874754b1e10cd348fd6e7693b0dabb3f6 ]
 
-The path_max parameter determines the max size of buffers allocated
-but it should  not be setable at run time. If can be used to cause an
-oops
+When qedr is enabled, qed would try dividing the msi-x vectors between
+L2 and RoCE, starting with L2 and providing it with sufficient vectors
+for its queues.
 
-root@ubuntu:~# echo 16777216 > /sys/module/apparmor/parameters/path_max
-root@ubuntu:~# cat /sys/module/apparmor/parameters/path_max
-Killed
+Problem is qed would also do that for storage partitions, and as those
+don't need queues it would lead qed to award those partitions with 0
+msi-x vectors, causing them to believe theye're using INTa and
+preventing them from operating.
 
-[  122.141911] BUG: unable to handle kernel paging request at ffff880080945fff
-[  122.143497] IP: [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.144742] PGD 220c067 PUD 0
-[  122.145453] Oops: 0002 [#1] SMP
-[  122.146204] Modules linked in: vmw_vsock_vmci_transport vsock ppdev vmw_balloon snd_ens1371 btusb snd_ac97_codec gameport snd_rawmidi btrtl snd_seq_device ac97_bus btbcm btintel snd_pcm input_leds bluetooth snd_timer snd joydev soundcore serio_raw coretemp shpchp nfit parport_pc i2c_piix4 8250_fintek vmw_vmci parport mac_hid ib_iser rdma_cm iw_cm ib_cm ib_sa ib_mad ib_core ib_addr iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi autofs4 btrfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel aes_x86_64 lrw gf128mul glue_helper ablk_helper cryptd vmwgfx psmouse mptspi ttm mptscsih drm_kms_helper mptbase syscopyarea scsi_transport_spi sysfillrect
-[  122.163365]  ahci sysimgblt e1000 fb_sys_fops libahci drm pata_acpi fjes
-[  122.164747] CPU: 3 PID: 1501 Comm: bash Not tainted 4.4.0-59-generic #80-Ubuntu
-[  122.166250] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 07/02/2015
-[  122.168611] task: ffff88003496aa00 ti: ffff880076474000 task.ti: ffff880076474000
-[  122.170018] RIP: 0010:[<ffffffff81228844>]  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.171525] RSP: 0018:ffff880076477b90  EFLAGS: 00010206
-[  122.172462] RAX: ffff880080945fff RBX: 0000000000000000 RCX: 0000000001000000
-[  122.173709] RDX: 0000000000ffffff RSI: ffff880080946000 RDI: ffff8800348a1010
-[  122.174978] RBP: ffff880076477bb8 R08: ffff880076477c80 R09: 0000000000000000
-[  122.176227] R10: 00007ffffffff000 R11: ffff88007f946000 R12: ffff88007f946000
-[  122.177496] R13: ffff880076477c80 R14: ffff8800348a1010 R15: ffff8800348a2400
-[  122.178745] FS:  00007fd459eb4700(0000) GS:ffff88007b6c0000(0000) knlGS:0000000000000000
-[  122.180176] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  122.181186] CR2: ffff880080945fff CR3: 0000000073422000 CR4: 00000000001406e0
-[  122.182469] Stack:
-[  122.182843]  00ffffff00000001 ffff880080946000 0000000000000000 0000000000000000
-[  122.184409]  00000000570f789c ffff880076477c30 ffffffff81385671 ffff88007a2e7a58
-[  122.185810]  0000000000000000 ffff880076477c88 01000000008a1000 0000000000000000
-[  122.187231] Call Trace:
-[  122.187680]  [<ffffffff81385671>] aa_path_name+0x81/0x370
-[  122.188637]  [<ffffffff813875dd>] profile_transition+0xbd/0xb80
-[  122.190181]  [<ffffffff811af9bc>] ? zone_statistics+0x7c/0xa0
-[  122.191674]  [<ffffffff81389b20>] apparmor_bprm_set_creds+0x9b0/0xac0
-[  122.193288]  [<ffffffff812e1971>] ? ext4_xattr_get+0x81/0x220
-[  122.194793]  [<ffffffff812e800c>] ? ext4_xattr_security_get+0x1c/0x30
-[  122.196392]  [<ffffffff813449b9>] ? get_vfs_caps_from_disk+0x69/0x110
-[  122.198004]  [<ffffffff81232d4f>] ? mnt_may_suid+0x3f/0x50
-[  122.199737]  [<ffffffff81344b03>] ? cap_bprm_set_creds+0xa3/0x600
-[  122.201377]  [<ffffffff81346e53>] security_bprm_set_creds+0x33/0x50
-[  122.203024]  [<ffffffff81214ce5>] prepare_binprm+0x85/0x190
-[  122.204515]  [<ffffffff81216545>] do_execveat_common.isra.33+0x485/0x710
-[  122.206200]  [<ffffffff81216a6a>] SyS_execve+0x3a/0x50
-[  122.207615]  [<ffffffff81838795>] stub_execve+0x5/0x5
-[  122.208978]  [<ffffffff818384f2>] ? entry_SYSCALL_64_fastpath+0x16/0x71
-[  122.210615] Code: f8 31 c0 48 63 c2 83 ea 01 48 c7 45 e8 00 00 00 00 48 01 c6 85 d2 48 c7 45 f0 00 00 00 00 48 89 75 e0 89 55 dc 78 0c 48 8d 46 ff <c6> 46 ff 00 48 89 45 e0 48 8d 55 e0 48 8d 4d dc 48 8d 75 e8 e8
-[  122.217320] RIP  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.218860]  RSP <ffff880076477b90>
-[  122.219919] CR2: ffff880080945fff
-[  122.220936] ---[ end trace 506cdbd85eb6c55e ]---
-
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: James Morris <james.l.morris@oracle.com>
+Fixes: 51ff17251c9c ("qed: Add support for RoCE hw init")
+Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/apparmor/lsm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -707,7 +707,7 @@ module_param_named(logsyscall, aa_g_logs
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -711,7 +711,8 @@ static int qed_slowpath_setup_int(struct
+ 	cdev->int_params.fp_msix_cnt = cdev->int_params.out.num_vectors -
+ 				       cdev->num_hwfns;
  
- /* Maximum pathname length before accesses will start getting rejected */
- unsigned int aa_g_path_max = 2 * PATH_MAX;
--module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR | S_IWUSR);
-+module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
+-	if (!IS_ENABLED(CONFIG_QED_RDMA))
++	if (!IS_ENABLED(CONFIG_QED_RDMA) ||
++	    QED_LEADING_HWFN(cdev)->hw_info.personality != QED_PCI_ETH_ROCE)
+ 		return 0;
  
- /* Determines how paranoid loading of policy is and how much verification
-  * on the loaded policy is done.
+ 	for_each_hwfn(cdev, i)
