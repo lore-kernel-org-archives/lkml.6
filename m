@@ -1,56 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932607AbeCSJtL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:49:11 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39589 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755299AbeCSJtJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:49:09 -0400
-X-Google-Smtp-Source: AG47ELvZjz05nn5Qs88h4u6YJ+xZ8tOcm0983qfdwp/reDrRCcP2jtvWX/dzl+pSabJL1a0gnK2INoO9vXYhC/frL50=
+        id S932739AbeCSJu1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:50:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:50694 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932682AbeCSJuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:50:22 -0400
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, robh@kernel.org,
+        mathieu.poirier@linaro.org, peterz@infradead.org, sudeep.holla@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        marc.zyngier@arm.com, jonathan.cameron@huawei.com,
+        frowand.list@gmail.com, leo.yan@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180102112533.13640-1-suzuki.poulose@arm.com>
+ <20180102112533.13640-9-suzuki.poulose@arm.com>
+ <5A90B77E.8040105@codeaurora.org> <20180225143653.peb4quk3ha5h3t5x@salmiak>
+ <5A972A7D.9020301@codeaurora.org>
+ <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
+ <5A986425.9080007@codeaurora.org>
+ <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
+ <5A99A3DC.9020400@codeaurora.org>
+ <20180305105925.4cjiqejfid7rswe6@lakrids.cambridge.arm.com>
+ <5A9DC03B.8020201@codeaurora.org>
+ <f340190f-8286-bd3c-c743-79a3d48cc33d@arm.com>
+ <5AA05B57.9010005@codeaurora.org>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <c1b68ed8-d0a9-7672-4f72-b804d54155cf@arm.com>
+Date: Mon, 19 Mar 2018 09:50:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180319094549.GG4043@hirez.programming.kicks-ass.net>
-References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <4980385.RayypyZ8dA@aspire.rjw.lan>
- <20180319094549.GG4043@hirez.programming.kicks-ass.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 19 Mar 2018 10:49:08 +0100
-X-Google-Sender-Auth: T8rcv-supiNZJae54R5yGhhod04
-Message-ID: <CAJZ5v0jz63BwRR6Hybz1rwXs1HS2WdzqSRDW_bOkd5_3DotLdg@mail.gmail.com>
-Subject: Re: [RFT][PATCH v5 6/7] cpuidle: menu: Refine idle state selection
- for running tick
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5AA05B57.9010005@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 10:45 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Thu, Mar 15, 2018 at 11:16:41PM +0100, Rafael J. Wysocki wrote:
->
->> --- linux-pm.orig/kernel/time/tick-sched.c
->> +++ linux-pm/kernel/time/tick-sched.c
->> @@ -1031,10 +1031,11 @@ void tick_nohz_irq_exit(void)
+On 07/03/18 21:36, Saravana Kannan wrote:
+> On 03/07/2018 06:59 AM, Suzuki K Poulose wrote:
 >>
->>  /**
->>   * tick_nohz_get_sleep_length - return the expected length of the current sleep
->> + * @cur_ret: pointer for returning the current time to the next event
->
-> Both name and description are confusing, what it actually appears to
-> return is the duration until the next event. Which would suggest a name
-> like: delta_next or something along those lines.
->
-> But 'cur' short for current, is very misleading.
+>>
+>> Hi Saravana,
+>>
+>> Sorry for the late response, I was out on vacation.
+>>
+>> On 05/03/18 22:10, Saravana Kannan wrote:
+>>> On 03/05/2018 02:59 AM, Mark Rutland wrote:
+>>>> On Fri, Mar 02, 2018 at 11:19:56AM -0800, Saravana Kannan wrote:
+>>>>> On 03/02/2018 02:42 AM, Mark Rutland wrote:
+>>>>>> It's important to note that the DSU PMU's event_init() ensures events
+>>>>>> are affine to a single CPU, and the perf core code serializes
+>>>>>> operations
+>>>>>> on those events via the context lock.
+>>>>>
+>>>>> Ah, I see that now. Thanks!
+>>>>>
+>>>>>> Therefore, two CPUs *won't* try to access the registers
+>>>>>> simultaneously.
+>>>>>
+>>>>> Right, and this driver seems to be going through a lot of work to
+>>>>> make sure
+>>>>> all events are read in one CPU.
+>>>>>
+>>>>> Do you even have an upstream target where there are multiple DSU's in a
+>>>>> system?
+>>>>
+>>>> I have no idea, though I do beleive that it's possible for a system to
+>>>> have multiple DSUs.
+>>>>
+>>>>> If not, we can simplify a ton of this code (no hotplug notifiers, no
+>>>>> migrating PMUs, no SMP calls, etc) by just adding a spinlock and
+>>>>> letting any
+>>>>> CPU read these DSU counters.
+>>>>
+>>>> Regardless of whether we allow arbitrary CPUs to read the counters,
+>>>> other logic still needs to be CPU affine, and we'll still need hotplug
+>>>> notifiers and event migration.
+>>>
+>>> If you have to support multiple DSUs in a system, then the need is
+>>> obvious. But if you don't have to support multiple DSU, it's not
+>>> obvious to me on why you still need CPU affining or hotplug notifiers.
+>>> Could you please provide me pointers for general understanding?
+>>>
+>>
+>> We need to support multiple DSUs as such configurations are possible.
+>>
+>>>
+>>>> I am not necessarily opposed to allowing read() calls from associated
+>>>> CPUs, but as before, I'll leave that to Suzuki.
+>>
+>> I am fine with reading the registers from any of the associated CPUs.
+>>
+> 
+> If that's the case, can you please use my patch?
 
-OK, I'll change that.
+The DSU driver is already mainline. Please feel free to send a patch with me in Cc.
 
-Thanks!
+> And if it looks good to you, give an Ack and ask Peter to pull it in as you'd be the user?
+
+As mentioned above, when you send a patch, please do keep me in Cc, and will do the
+needful.
+
+Thanks
+Suzuki
