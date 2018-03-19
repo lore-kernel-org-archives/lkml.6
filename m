@@ -1,51 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932581AbeCSJht (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:37:49 -0400
-Received: from mga05.intel.com ([192.55.52.43]:30290 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754923AbeCSJhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:37:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,329,1517904000";
-   d="scan'208";a="26060449"
-Date: Mon, 19 Mar 2018 11:37:35 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
-Message-ID: <20180319093735.GA4587@linux.intel.com>
-References: <20180310151545.22237-1-tomas.winkler@intel.com>
+        id S932547AbeCSJjx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:39:53 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39843 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752603AbeCSJjv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:39:51 -0400
+X-Google-Smtp-Source: AG47ELseA1AD9l7RWEIihVT/mUSqTosyW9/+VeHrIKOHTVE+pDnT0fBFHNpJCnFLbrwfn6wcnpUvYrfJBFr0DbInH+8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180310151545.22237-1-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180319091159.GF4043@hirez.programming.kicks-ass.net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <2021405.tG9RYD54xL@aspire.rjw.lan>
+ <20180319091159.GF4043@hirez.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 19 Mar 2018 10:39:50 +0100
+X-Google-Sender-Auth: JEQH4RJCwBTdvqjtFvjKU0J4Gf4
+Message-ID: <CAJZ5v0gHTyhXvYiLALbO8DrURBfHdUehQp2oi3iSwcCVkc7A+w@mail.gmail.com>
+Subject: Re: [RFT][PATCH v5 4/7] cpuidle: Return nohz hint from cpuidle_select()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 05:15:45PM +0200, Tomas Winkler wrote:
-> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
-> of crypto keys which can be a computationally intensive task.
-> The timeout is set to 3min.
-> Rather than increasing default timeout a new constant is
-> added, to not stall for too long on regular commands failures.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+On Mon, Mar 19, 2018 at 10:11 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Mar 15, 2018 at 11:11:35PM +0100, Rafael J. Wysocki wrote:
+>
+> I would suggest s/nohz_ret/stop_tick/ throughout, because I keep
+> forgetting which way around the boolean works and the new name doesn't
+> confuse.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+OK
 
-PS. Please format the long description properly. Now the lines cut from
-weird places. I use gq command in Vim to get that done. The description
-itself is nice and concise.
+>> Index: linux-pm/drivers/cpuidle/governors/menu.c
+>> ===================================================================
+>> --- linux-pm.orig/drivers/cpuidle/governors/menu.c
+>> +++ linux-pm/drivers/cpuidle/governors/menu.c
+>> @@ -275,12 +275,16 @@ again:
+>>       goto again;
+>>  }
+>>
+>> +#define TICK_USEC_HZ   ((USEC_PER_SEC + HZ/2) / HZ)
+>
+> Do we want to put that next to TICK_NSEC?
 
-/Jarkko
+That would be one change too far IMHO.
+
+> Also, there are only 2 users of the existing TICK_USEC, do we want to:
+>
+>   s/TICK_USEC/USER_&/
+>
+> and then rename the new thing to TICK_USEC ?
+
+Well, that can be done.
+
+>>  /**
+>>   * menu_select - selects the next idle state to enter
+>>   * @drv: cpuidle driver containing state data
+>>   * @dev: the CPU
+>> + * @nohz_ret: indication on whether or not to stop the tick
+>>   */
+>> +static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>> +                    bool *nohz_ret)
+>>  {
+>>       struct menu_device *data = this_cpu_ptr(&menu_devices);
+>>       struct device *device = get_cpu_device(dev->cpu);
+>> @@ -303,8 +307,10 @@ static int menu_select(struct cpuidle_dr
+>>               latency_req = resume_latency;
+>>
+>>       /* Special case when user has set very strict latency requirement */
+>> +     if (unlikely(latency_req == 0)) {
+>> +             *nohz_ret = false;
+>>               return 0;
+>> +     }
+>>
+>>       /* determine the expected residency time, round up */
+>>       data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
+>> @@ -354,6 +360,7 @@ static int menu_select(struct cpuidle_dr
+>>       if (latency_req > interactivity_req)
+>>               latency_req = interactivity_req;
+>>
+>> +     expected_interval = data->predicted_us;
+>>       /*
+>>        * Find the idle state with the lowest power while satisfying
+>>        * our constraints.
+>> @@ -369,15 +376,30 @@ static int menu_select(struct cpuidle_dr
+>>                       idx = i; /* first enabled state */
+>>               if (s->target_residency > data->predicted_us)
+>>                       break;
+>> +             if (s->exit_latency > latency_req) {
+>> +                     /*
+>> +                      * If we break out of the loop for latency reasons, use
+>> +                      * the target residency of the selected state as the
+>> +                      * expected idle duration so that the tick is retained
+>> +                      * as long as that target residency is low enough.
+>> +                      */
+>> +                     expected_interval = drv->states[idx].target_residency;
+>>                       break;
+>> +             }
+>>               idx = i;
+>>       }
+>>
+>>       if (idx == -1)
+>>               idx = 0; /* No states enabled. Must use 0. */
+>>
+>> +     /*
+>> +      * Don't stop the tick if the selected state is a polling one or if the
+>> +      * expected idle duration is shorter than the tick period length.
+>> +      */
+>> +     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+>> +         expected_interval < TICK_USEC_HZ)
+>> +             *nohz_ret = false;
+>> +
+>>       data->last_state_idx = idx;
+>>
+>>       return data->last_state_idx;
+>
+> Yes, much clearer, Thanks!
+
+But this has regressed since the v4, please see
+https://patchwork.kernel.org/patch/10291097/
+
+Thanks!
