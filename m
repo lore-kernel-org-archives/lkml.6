@@ -1,29 +1,29 @@
 Return-Path: <elfring@users.sourceforge.net>
-X-Google-Smtp-Source: AG47ELvVn6bJxfo+GCzlzTL4GZY3NDTXYyB3CSslBX5+NtiNYB+hQvMUsAPiCcFfOc25YYKT5shZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521882520; cv=none;
+X-Google-Smtp-Source: AG47ELuR4jDrQqBAbaYVdoR302sqbRF47gGtle0F6R7uPNTbbzQrbPIQcnYcyRiqBvWEYQnULajZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521453117; cv=none;
         d=google.com; s=arc-20160816;
-        b=R2pDQWW0/HYKV9CW6zsF/Y3DAQgbp4vTHfuTwqjMDsialpZw553hUYPuHaXP/fPMtV
-         IBTTuNs8DdwcIl8I2JJ9SQBnjI0MnNYVbpzu574st3JFd/ebiAq1hShme7PgUeK80Csa
-         iwLP4Tx5rdTd+jdlTcqP28hNPq7Yf3bJzChHeXN6tLUCvI0KrR8O4VOMBP03G9kVFD9V
-         yj/Rjui8SLQH0GU7Ke7CNZSVT69ayBBYr33WCJgWy95DBsIFUAeOaEKb1tTCzJrwR/zv
-         LuXxiAXpKz66Qx129Xv+3llptjszVlOobPl4KYrEiTGRvdK//SjvGQOHKkepq9qI5XBZ
-         KzDw==
+        b=At7NVj+jhZHt91vlOu8Er5g6jG62N4Oke++LD4WS5GJNhUGlU3kMKv3oRSKN1pRMyC
+         cKEgwRYotoePTPqbNtf6doNNljgjV32SRwYQmN10JzyIplHyC5r0mUuZP/lsAWCVZwhY
+         bU6Q1XzxrOYPbbYyc320s1GJutYew1qqLQuckeMrSEYQsckCOFmhWtGSEHsTz3bga3vE
+         sJxKcNxgA1WOtBHAl9ua02QhGhdGU5cQ1COG/NIWTdfwsx4FLQSrIIVbs3BK99FczwvD
+         fuvU6K9S+YzHpT2RgCHJh7pfEO8f+PkjNPbcUNu7lHsrK+6c6qUbRIyEyNhyfFcKaFXr
+         /Giw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=xCzBhfx9pKE2vOje5jChCWcPZA5s1L6wwwcRGKSo2iM=;
-        b=VqXobrQflVBzvc3ldIwr9tH8Qzbas7KxgBtzpAjfsP2ZjjmfI5wTdGntryNIcBcz1u
-         iQHVyo432C309D2SJ+3CS+hV11BEfomy4hP/2hON1tUFlrdb2SCl6V9kpYeCxMWNiuUB
-         h9LR2SplcZbElpRgKYVvROlJXDq2az16vjC/wMSh+sksMX/Z0f7pBvJLVprkYY4uaGOQ
-         RYksiWD+4vfL12ExSCQ5y8nGN2CEkurqnY/wGdi3s7i/slt8VJdLoi4x5yai0pf61v5u
-         zQxZcBeWJ4dcbsrQxeQa4KZR+zhoIfWyD0GSMdp1lCUphx4+rW+VGXlZb6gTfOm4F+Ts
-         SjDQ==
+        bh=okPrt69TxKtQznFCRQkCZCA16ZHGrWMhXUAsIEyOStk=;
+        b=Fjlaxxac1M8C5JkNDumyWeYRCCe0O2oN9ZGRXLvYC+RptFHweQrL6fXbIZ0qXFo2qE
+         ZhePPAIsMg04AR4iMcYrvkVsYuJKgf/EGUsScyjBo/PtUkXWHEsUhiCExRFL1X3qbqIz
+         u0rGGULJVdmgQZI6c3IFNNl5wWrNTn+/ICSS4X1vQWVlTifNUqpUUV5mRSWO12WVXc3K
+         QiJqb1uofWvSVAt9n3Fei8yA1FyRy6VDCe6pKYQ6NBwRiTToQWB+AnCiolEBpQstyLJy
+         DZG03kdBWDo4fXF5yedz1fxLdkLQEl6FTM4ttYH3PkCb7OidYJNDSGUZjGit17sHD5qf
+         bVqg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 217.72.192.78 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.17.11 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
        dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 217.72.192.78 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.17.11 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
        dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
 Subject: Re: iio/gyro/bmg160_core: Improve unlocking of a mutex in five
  functions
@@ -39,8 +39,8 @@ References: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
  <73f0a187-57d1-c877-ba9f-3b15f6a61640@users.sourceforge.net>
  <20180318101506.460f3967@archlinux>
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <7faecfbc-0fea-b262-a81e-578615358081@users.sourceforge.net>
-Date: Sat, 24 Mar 2018 10:08:34 +0100
+Message-ID: <4f0c5eb0-e7c2-9c27-387a-e62b19f0578a@users.sourceforge.net>
+Date: Mon, 19 Mar 2018 10:51:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -48,26 +48,26 @@ In-Reply-To: <20180318101506.460f3967@archlinux>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:27tg7BZeTS/ti/HCmUkE2GmcGUY1F6VmEAORDfrKyXM/IG2d1gZ
- Wa5MQY23Hs0Uxm9n/+CUkRIQv51aZFDmuPUfH/eGgsTVxodNUNBuDzXqznRnQ71rAowine+
- wkdLAUFSbte96f6R9fLwu5JS+v/UiRrXhyQqhQtFZTJgoE7zgw9yxd2prMIXIkUnVmICiRl
- rt0F5xJVoBogOl060eJYA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WJZ7peOpdcE=:i0j5S0KogZSyzwojO9MvEL
- DUoAm3geilSKWUhnMxXc1MiuwpCPOIh7R2vkwFrN1qTrJr48C92CyprF1dNRb1a3o89AOoRJm
- zmaMETnDMCY2qmyEwWLl63uZIQqXcwE+E4QWcmivZBMr0UwF1EUj+ST16B56zX5EAV7vfHQ9s
- r7mRp2AhBHkNIM7hL8YZ/hN/2HItcceUPQ7kTdagsrE0HIzMDUg+2TGmJyhkovX+ca1HchJRw
- jCsZUqptTRjlFyYj8ywPEfIH3jEOgCMAxp1lpb9iNY5rTqoE8/L6Dd3tuXGpdTgKmzD0vz6Co
- M83B3msBdMGHi2Jbs8HDkQVrFHcrSnPXDVvvHqT+OJLzrmnWYqM2WhzT2rAQBM5l4S7COnBEl
- T8f0CBp9Dea3v+xD0K5WzDZ1NOxpdYFLm4H7EjWXr/jeZyp7j40oDizLdbXpKPYRxG5OBxkmH
- KC+lyCeH3m3wL7innCxq/qZMYxOl2ERN0vpLaFlRrQu2ebUqdkE5Ax8vYn5oujrMAH/YBzRz9
- RHAfJ1Q1MWS5hgslECTCdfcC29IZQ7dw+Fu6NbL2MIRZnN9fxM1THrUuXCJ1mrnV5QD2qkwek
- ppKUnoDEPU518uorg4bBOhG0jPCCPxinDcSJEshRJAfALK2v9lzU7EEEBgXD3jCGHM4C8E9f7
- Wlp6I7dD7qv2XPNZ1xsVPj1a2cxpvV7cPYEZ7oN92K7meoaFHGiap6Pqxq+k92TtPYVTSbAnu
- WYojEM3XsET73FXMSeeOw6uKoI51nyAO9uGNSU1biS6VcOzkbTvwiNY2ehSzxZx6DBPKy4zjG
- k72UK3mt3W9PEqh4Rb+GhC0t8jsvaAi4BhOZUnQDdseE6Rkkuo=
+X-Provags-ID: V03:K0:olI4GfvbaxpM0yEkNh3MjnpHzJFmtoqItMLvgTNyOEozYKYdfr7
+ h309JKpdwXMcI1mMZEfOOcBmD7Nx6IUHf1UG6mP9e/wY2q/469gMsLHicxf9+Bbdk/QwDx8
+ zOOjymy2SFc0BR5mJz3EJgg9j/LOTMWgupT1QmDCrQZ1VQwBbrHNddqy47IDc5PuVHATbv8
+ ZeStsaGMCn/ijP2AHmXew==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Hl3MLvA8Dbw=:HLlLGcewQ1BKQSpleq3w1m
+ MnyLdc7oguSLIcQTLp/mWeXnfHUf/QDVYslxTpYzATPBuxbl6o5d/Amx8Co4u3YniAX9of+z3
+ 78jtwQ9VSTXMaju7MUcXXb1VFzA9X1eVPsTPduY3PeQEeTSYERL/4hWBhAmKO+TEDtxEmybv7
+ +AeeDH66EsLiZ0g5v6QxrhVMJRwdkwNsT5xuIkbG5/4ehWCYkqYdUEJW9JVbChu0hQycSzftA
+ NImAubTT7JWsqNZtr5Nn0wlej0pur/EKm8pvtCtX+sKci4eTBd+b2Qteuhb6A87qgetXfITSa
+ 9YCbd35lrKqVDAwz824MI0MzVi1pq0/EMnKx2Iz36ZsBK7mwhGbrtHeZvBAWhQOrSVmEF53Fa
+ tz98bcclPcep6QCzR5iyFnMimx+62mkl0KQSMrlb0bztCEqQdgbsVW0ogg2DkS14BXIr+AL1A
+ dWG8YHkJWwiWihZ3VUQtiAcPeg5YLz1fnGzV5B15LMOe1ukFXZ5eanYgWhlw7lsmiZzU+VDTS
+ jf942OUAmXQrVQQ+Seg+NAC+84ocX1G2ePHB/0NyWs/s8ExjWTybLRU841wLJJMBuBaU8oIvc
+ c9jA47pyiYIMiew/fXB+x3ExiLOnZAcvGYIYA7BF5C5YUjC07XIgInPJpISG6n+wjLV7APL5c
+ xVfHF9jG4hsAt0eRjjUSUoJwIl5slyNJtvF9XsEs5WBwlBDeisrcUpXXPRTRbG0YrOHQjHPO0
+ f+68QYwfdiSrhs5yK/6dJmT4KsyELHVD6Y/WaYJUWPmCDUiEFFEY0acISlmDWD7BmvJv1xPcO
+ FD7Qto0nzoQadsJ2uJ2q4xl8K1r9wQ8aSVBIoUM/HFCuoWnyc4=
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594926606648991207?=
-X-GMAIL-MSGID: =?utf-8?q?1595809485643383562?=
+X-GMAIL-MSGID: =?utf-8?q?1595359223603488016?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -76,7 +76,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 > You are correct, this does however reflect the issue with the resulting
 > lack of balance here.
 
-Do you find changes for the other function implementations easier to integrate?
+I suggest to reconsider affected software aspects a bit more.
+
+
+> I saw the mutex was getting unlocked outside the local scope and so assumed
+> that it was also take outside the local scope.
+
+Assumptions and corresponding expectations might need further clarifications.
+
+
+> That isn't true, so we have hurt readability.
+
+Does your conclusion need any adjustment?
+
+
+> I read it quickly and got the wrong idea which generally implies it is not
+> as clear as we would like.
+> 
+> Hence this change isn't going anywhere I'm afraid.
+
+I imagine that more time will be needed then to get used to additional adjustments
+of implementation details in these functions.
 
 Regards,
 Markus
