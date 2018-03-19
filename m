@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELslbYxZ+ankfzVgvCDSrw+s/AEnOZDjXTg4G4ImyaG4LZVoM9vFB2ovHnCpLgvmZnLHhFVh
-ARC-Seal: i=1; a=rsa-sha256; t=1521483592; cv=none;
+X-Google-Smtp-Source: AG47ELuwzOys1MtOoNCrIjs6oXJQO1uExsSv7yff0ok/OdfyVXOmDtrQVHPF7c+yv1zXvNZguiqA
+ARC-Seal: i=1; a=rsa-sha256; t=1521483586; cv=none;
         d=google.com; s=arc-20160816;
-        b=qXxEelWrD6szsDUPdglcIDlQ7VdajDgb6LsjzYYvO9MiSEYRZLyQvNU1a/CrB/kZWV
-         7JdOFD5dDR2pLRISUGr7541hQoXB05Q2YJiBEgnlJyQM118wX0U1L5sxJ/DkZJ/zr1po
-         Gdxn7G91gHsvwT9IVrtah70hVMB1nUhMaj05Vsfgiu6lETCRanjf95rDEa/lh+HaMlyl
-         ALi53RIoyFw5zEnoeh4Gbu5JKXDStiS2K3HMPcw0ozJDD1rViJuaQWBHkOfo5jXzncAR
-         lhgGUKnOnQbmxx5MPUSitICD6eSg0PlLQqAeS4uUVjbo6keaOaXUVBC6b2oxG8laPgl1
-         daTA==
+        b=mx+ckOtkDCWVLTC0UYXGXg19WeLjKOw8t+jBvFKJy4BU3mD7eltouHkthJ79XxfT1A
+         DVoE5aZY2Qn73FT1lQ269GArxWRp40sOvywfLZJNp57BjxBrrI8ujDYfud5txug3McQT
+         PjeWvX9x1KlxxlwVUhexyDO4ly5SlzLw7Gvj0qvXqigiCYEtJoWRtOi8poU86K9lYs0e
+         x87x/jXP4Cz4dMgHFARXAYNRJov1IqGNcJOkITwELfnPNVDBwJ+LoPegPrMv9wCgPB0t
+         W8N+SPtI4F7pGzL5iV3YO9eN4ltHVUmEVn8KAZe5BO7QoNtjZXTcA9pUummiKcI7LW7R
+         0GEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gkCJWN55E+IiYKprfB5HBKA+fhQFGQBnHVypWP/kLyE=;
-        b=LvWrczGubd482x+IvwjPy2H4n71Q0g1MLQJLhaSV/IhTJBoxjmEFPAPsrIvh5wM4sQ
-         7nUNztoywRJ0EG9/+P1UJwM29Xkhpdp317z+iOQeSVtYmGkYeX46T1PNAM57pUpnsv90
-         iCWzSsrK+YNQRMRffRJRt9/37/C/0Ynnxnb7Z4cL1MOvZUOgJAH4/rLKzXkflBX4JWWp
-         i7ZCmLBaBwkunropj/GdI65OX5xjCT9Zkjxb9KKBdWJNj8lF9Kvx+IRHTivBqnggIQ4V
-         i3riPX55wSdb4bwZ2Q7L5z5MylMz249c502vmTNQC5D7LKcuC9u4kvWvh4Q2jmiT4jrJ
-         FFAw==
+        bh=7MrefO+rjvN91aCxnr/Unl0xbc9Yj92wAe6ULAPmXZo=;
+        b=OBjx3liQ+0RhWiaQLsoDSE/XRZPmSgNt54JebDrQdl4qUKxpdJjd48jQLb6JvP/yrV
+         lS6I/hkfPuGxXCPpGlU7beTNfbvvCrUTandZnEhQ+FY7OIiDdvVeRq1Tb7hgAIXfNVio
+         ijBqIIu9w5hzWPFn/fei02tzgCPeMVibONezUi5Gq5D8sbDBz0bnZEOIyG5/ZfLyamGN
+         mdcY8AMJPdslp7VQhq3k+d/81p78yt1qaouftijYAQxmUux8SxAlTVvQODC1g9pGxJIu
+         5c07VRSxCJZWdsnyOerwYhKNOJ6Z6wFyUJxYPtVGyh6gobSDlIU/TxthxswO0b0Yusq3
+         f4pQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jonas Jensen <jonas.jensen@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Olof Johansson <olof@lixom.net>,
+	Tomasz Kramkowski <tk@the-tk.com>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 045/241] ARM: dts: Adjust moxart IRQ controller and flags
-Date: Mon, 19 Mar 2018 19:05:10 +0100
-Message-Id: <20180319180753.060143251@linuxfoundation.org>
+Subject: [PATCH 4.9 043/241] HID: clamp input to logical range if no null state
+Date: Mon, 19 Mar 2018 19:05:08 +0100
+Message-Id: <20180319180752.977991321@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390501223106885?=
-X-GMAIL-MSGID: =?utf-8?q?1595391179650567661?=
+X-GMAIL-THRID: =?utf-8?q?1595390498609156118?=
+X-GMAIL-MSGID: =?utf-8?q?1595391173498147386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,117 +51,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Tomasz Kramkowski <tk@the-tk.com>
 
 
-[ Upstream commit c2a736b698008d296c5010ec39077eeb5796109f ]
+[ Upstream commit c3883fe06488a483658ba5d849b70e49bee15e7c ]
 
-The moxart interrupt line flags were not respected in previous
-driver: instead of assigning them per-consumer, a fixes mask
-was set in the controller.
+This patch fixes an issue in drivers/hid/hid-input.c where values
+outside of the logical range are not clamped when "null state" bit of
+the input control is not set.
 
-With the migration to a standard Faraday driver we need to
-set up and handle the consumer flags correctly. Also remove
-the Moxart-specific flags when switching to using real consumer
-flags.
+This was discussed on the lists [1] and this change stems from the fact
+due to the ambiguity of the HID specification it might be appropriate to
+follow Microsoft's own interpretation of the specification. As noted in
+Microsoft's documentation [2] in the section titled "Required HID usages
+for digitizers" it is noted that values reported outside the logical
+range "will be considered as invalid data and the value will be changed
+to the nearest boundary value (logical min/max)."
 
-Extend the register window to 0x100 bytes as we may have a few
-more registers in there and it doesn't hurt.
+This patch fixes an issue where the (1292:4745) Innomedia INNEX
+GENESIS/ATARI reports out of range values for its X and Y axis of the
+DPad which, due to the null state bit being unset, are forwarded to
+userspace as is. Now these values will get clamped to the logical range
+before being forwarded to userspace. This device was also used to test
+this patch.
 
-Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
-Signed-off-by: Jonas Jensen <jonas.jensen@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+This patch expands on commit 3f3752705dbd ("HID: reject input outside
+logical range only if null state is set").
+
+[1]: http://lkml.kernel.org/r/20170307131036.GA853@gaia.local
+[2]: https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
+
+Signed-off-by: Tomasz Kramkowski <tk@the-tk.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/moxart-uc7112lx.dts |    2 +-
- arch/arm/boot/dts/moxart.dtsi         |   17 +++++++++--------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/hid/hid-input.c |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/arch/arm/boot/dts/moxart-uc7112lx.dts
-+++ b/arch/arm/boot/dts/moxart-uc7112lx.dts
-@@ -6,7 +6,7 @@
-  */
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1149,19 +1149,26 @@ void hidinput_hid_event(struct hid_devic
  
- /dts-v1/;
--/include/ "moxart.dtsi"
-+#include "moxart.dtsi"
+ 	/*
+ 	 * Ignore out-of-range values as per HID specification,
+-	 * section 5.10 and 6.2.25.
++	 * section 5.10 and 6.2.25, when NULL state bit is present.
++	 * When it's not, clamp the value to match Microsoft's input
++	 * driver as mentioned in "Required HID usages for digitizers":
++	 * https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
+ 	 *
+ 	 * The logical_minimum < logical_maximum check is done so that we
+ 	 * don't unintentionally discard values sent by devices which
+ 	 * don't specify logical min and max.
+ 	 */
+ 	if ((field->flags & HID_MAIN_ITEM_VARIABLE) &&
+-	    (field->flags & HID_MAIN_ITEM_NULL_STATE) &&
+-	    (field->logical_minimum < field->logical_maximum) &&
+-	    (value < field->logical_minimum ||
+-	     value > field->logical_maximum)) {
+-		dbg_hid("Ignoring out-of-range value %x\n", value);
+-		return;
++	    (field->logical_minimum < field->logical_maximum)) {
++		if (field->flags & HID_MAIN_ITEM_NULL_STATE &&
++		    (value < field->logical_minimum ||
++		     value > field->logical_maximum)) {
++			dbg_hid("Ignoring out-of-range value %x\n", value);
++			return;
++		}
++		value = clamp(value,
++			      field->logical_minimum,
++			      field->logical_maximum);
+ 	}
  
- / {
- 	model = "MOXA UC-7112-LX";
---- a/arch/arm/boot/dts/moxart.dtsi
-+++ b/arch/arm/boot/dts/moxart.dtsi
-@@ -6,6 +6,7 @@
-  */
- 
- /include/ "skeleton.dtsi"
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	compatible = "moxa,moxart";
-@@ -36,8 +37,8 @@
- 		ranges;
- 
- 		intc: interrupt-controller@98800000 {
--			compatible = "moxa,moxart-ic";
--			reg = <0x98800000 0x38>;
-+			compatible = "moxa,moxart-ic", "faraday,ftintc010";
-+			reg = <0x98800000 0x100>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 			interrupt-mask = <0x00080000>;
-@@ -59,7 +60,7 @@
- 		timer: timer@98400000 {
- 			compatible = "moxa,moxart-timer";
- 			reg = <0x98400000 0x42>;
--			interrupts = <19 1>;
-+			interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
- 			clocks = <&clk_apb>;
- 		};
- 
-@@ -80,7 +81,7 @@
- 		dma: dma@90500000 {
- 			compatible = "moxa,moxart-dma";
- 			reg = <0x90500080 0x40>;
--			interrupts = <24 0>;
-+			interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 		};
- 
-@@ -93,7 +94,7 @@
- 		sdhci: sdhci@98e00000 {
- 			compatible = "moxa,moxart-sdhci";
- 			reg = <0x98e00000 0x5C>;
--			interrupts = <5 0>;
-+			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clk_apb>;
- 			dmas =  <&dma 5>,
- 				<&dma 5>;
-@@ -120,7 +121,7 @@
- 		mac0: mac@90900000 {
- 			compatible = "moxa,moxart-mac";
- 			reg = <0x90900000 0x90>;
--			interrupts = <25 0>;
-+			interrupts = <25 IRQ_TYPE_LEVEL_HIGH>;
- 			phy-handle = <&ethphy0>;
- 			phy-mode = "mii";
- 			status = "disabled";
-@@ -129,7 +130,7 @@
- 		mac1: mac@92000000 {
- 			compatible = "moxa,moxart-mac";
- 			reg = <0x92000000 0x90>;
--			interrupts = <27 0>;
-+			interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
- 			phy-handle = <&ethphy1>;
- 			phy-mode = "mii";
- 			status = "disabled";
-@@ -138,7 +139,7 @@
- 		uart0: uart@98200000 {
- 			compatible = "ns16550a";
- 			reg = <0x98200000 0x20>;
--			interrupts = <31 8>;
-+			interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			clock-frequency = <14745600>;
+ 	/*
