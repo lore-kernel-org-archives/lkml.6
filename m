@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtdySvDKc2fNagq3AFrE3KuOoycEGC+kuwrK+Q4i1Ub4DPzGFvJnbXqz3wMzdUIKqWoZitG
-ARC-Seal: i=1; a=rsa-sha256; t=1521483222; cv=none;
+X-Google-Smtp-Source: AG47ELvAz0x0IrT/+QcmqEPfCpyW0my2dOxk6vLHgw2KowZAzMCeuP4EDYpy1bNS2pTRIH1YOXQF
+ARC-Seal: i=1; a=rsa-sha256; t=1521483220; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z+9EiQO4HPq2yDfxDyBJBbwlf7xKd2ZnXbm0Q0MYyLtwmcu6qDLDIExDBvSAIq37kS
-         zJW8RbpIIrBI3X5sEhvAxioRQwshA6y3Ro+gFPAlaKRwREHo17WU2OB/9n+rFFYiz9ml
-         viW669hBIut9FLa6E2JnQ0peCyMmAqENfP5dPTUSlA74VjI48jXYkSQySlv0rEfbllRr
-         3LdOCFAO03qXuPg8jMa+AQq49oPtxWgDdpWkQPNNyfWc/KRMeZVQobHgD7nIG6oYOPMm
-         6OWITjP82s2vqRmHHUOyw/+mehlGHoMH/aswomhIZJo7NqnM2lUp9r2Kj9ZnWrbwqQAg
-         e0oQ==
+        b=TQvsaULAN1260+qaxcABFNuNMJEk6Bf20OMvGtdlvJ2xoFmz1CLjFiRLm7FwZNRVtj
+         B1u5jHU9lF2UP5REqpIJSNaHJ5U4FLuA1PFv6Vua1Ws5i1ojcaOul/JeYPDwIjqe4tYi
+         8rCVxUiBMyGc9utGVcLu6kZO0OmhV7Gd50anztd91UTGWkiY7J3SgIjpMTVx9hSq8quX
+         RpjD8w9dWRDPFbvBjPEKoOwveApemqRGFcUkY7P0qHGIg6ESKqNw/lVmt3iiHAUtTvPh
+         sGd4PclargtgBI3HDuf7QW3n21zazk4C2JJzaTLWgcrW8JcbMprs0pDWiAw0ANwKIj6/
+         JcDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Mh2HkyhudG/Qu17OeipN4bRXizBGlrdbOSQHjg2jTSQ=;
-        b=tE0gLf1eZvRv/03c6OM6h2C+di75jLZf4lVErMPHDsM3/h5pgz+27urwbL/mj+fOGO
-         ei0MAE6e+raP0SZrnUR2ngf7h4Lb+fWP3xS3hC0DHJVUSL1B7C2uvNIHePN5uegR/Ek0
-         XRTbpPk/YkDd5miKqkrnZHt9xKGoxHYTV+/dvUyTE8n/Z5pwEfz0z0xPSZsXs3g4hycm
-         +0wGMT01L6490PWaSUrYh9KY+xtZ+CyhX3O1XL+C4Ap543bH7BgysFhAim1k9HFtgz9W
-         BHgNJq9pLhWQeG0fcho23srU4Chj/DFX8erUUzBOt0CrQU3Wg0MlZrH9uChM/AU3LErt
-         epYA==
+        bh=icx4Ovhar9CbCPaEa7Q3oVqzldNQIP4OTrqlbq3tMTs=;
+        b=fGPbUzk0Kw2fcmxY/Hv+rOmaOn1TzOhpVdclYmgXR9DhiNk9lDKYrv+NaccRVaApuS
+         676UpOKUV20+Yi75LPr5IJFZF7MUtme3/nVeDGZx3TbcasNpthu5OlLagtw34x86w1kR
+         +sqOdZyLaS9DaHBKCqL4srmMVB7sXewr+MQT2Q2Ro3BvutGR54IY/Vutwaw/HaoZq8sd
+         Nxv9lFlNnOtrAxqylIoEhptC6nrkCHso9buU8kJ89B7rTbrgSh72czeSEX/kcbdaXo/g
+         IyAaC+NRjJSRzcuDG5ODjcFpjsYNYb/e1Nv+jhZmz22VyeikJY/hrUtUZy994yPZ0uxX
+         MsWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	kbuild test robot <fengguang.wu@intel.com>,
-	Vincent Cuissard <cuissard@marvell.com>,
-	Tobias Klauser <tklauser@distanz.ch>,
-	Samuel Ortiz <sameo@linux.intel.com>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	LKP <lkp@01.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-mm@kvack.org,
+	Ingo Molnar <mingo@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 045/134] NFC: nfcmrvl: Include unaligned.h instead of access_ok.h
-Date: Mon, 19 Mar 2018 19:05:28 +0100
-Message-Id: <20180319171855.867401530@linuxfoundation.org>
+Subject: [PATCH 4.4 036/134] mm: Fix false-positive VM_BUG_ON() in page_cache_{get,add}_speculative()
+Date: Mon, 19 Mar 2018 19:05:19 +0100
+Message-Id: <20180319171854.521145165@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -43,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390791667093020?=
-X-GMAIL-MSGID: =?utf-8?q?1595390791667093020?=
+X-GMAIL-THRID: =?utf-8?q?1595390529302865915?=
+X-GMAIL-MSGID: =?utf-8?q?1595390789087634185?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,50 +59,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tobias Klauser <tklauser@distanz.ch>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
 
-[ Upstream commit d916d923724d59cde99ee588f15eec59dd863bbd ]
+[ Upstream commit 591a3d7c09fa08baff48ad86c2347dbd28a52753 ]
 
-Including linux/unaligned/access_ok.h causes the allmodconfig build on
-ia64 (and maybe others) to fail with the following warnings:
+0day testing by Fengguang Wu triggered this crash while running Trinity:
 
-include/linux/unaligned/access_ok.h:7:19: error: redefinition of 'get_unaligned_le16'
-include/linux/unaligned/access_ok.h:12:19: error: redefinition of 'get_unaligned_le32'
-include/linux/unaligned/access_ok.h:17:19: error: redefinition of 'get_unaligned_le64'
-include/linux/unaligned/access_ok.h:22:19: error: redefinition of 'get_unaligned_be16'
-include/linux/unaligned/access_ok.h:27:19: error: redefinition of 'get_unaligned_be32'
-include/linux/unaligned/access_ok.h:32:19: error: redefinition of 'get_unaligned_be64'
-include/linux/unaligned/access_ok.h:37:20: error: redefinition of 'put_unaligned_le16'
-include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_le32'
-include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_le64'
-include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be16'
-include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be32'
-include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be64'
+  kernel BUG at include/linux/pagemap.h:151!
+  ...
+  CPU: 0 PID: 458 Comm: trinity-c0 Not tainted 4.11.0-rc2-00251-g2947ba0 #1
+  ...
+  Call Trace:
+   __get_user_pages_fast()
+   get_user_pages_fast()
+   get_futex_key()
+   futex_requeue()
+   do_futex()
+   SyS_futex()
+   do_syscall_64()
+   entry_SYSCALL64_slow_path()
 
-Fix these by including asm/unaligned.h instead and leave it up to the
-architecture to decide how to implement unaligned accesses.
+It' VM_BUG_ON() due to false-negative in_atomic(). We call
+page_cache_get_speculative() with disabled local interrupts.
+It should be atomic enough.
 
-Fixes: 3194c6870158 ("NFC: nfcmrvl: add firmware download support")
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Link: https://lkml.org/lkml/2016/10/22/247
-Cc: Vincent Cuissard <cuissard@marvell.com>
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
+So let's check for disabled interrupts in the VM_BUG_ON() condition
+too, to resolve this.
+
+( This got triggered by the conversion of the x86 GUP code to the
+  generic GUP code. )
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: LKP <lkp@01.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20170324114709.pcytvyb3d6ajux33@black.fi.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/nfcmrvl/fw_dnld.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/pagemap.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/nfc/nfcmrvl/fw_dnld.c
-+++ b/drivers/nfc/nfcmrvl/fw_dnld.c
-@@ -17,7 +17,7 @@
-  */
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -153,7 +153,7 @@ static inline int page_cache_get_specula
  
- #include <linux/module.h>
--#include <linux/unaligned/access_ok.h>
-+#include <asm/unaligned.h>
- #include <linux/firmware.h>
- #include <linux/nfc.h>
- #include <net/nfc/nci.h>
+ #ifdef CONFIG_TINY_RCU
+ # ifdef CONFIG_PREEMPT_COUNT
+-	VM_BUG_ON(!in_atomic());
++	VM_BUG_ON(!in_atomic() && !irqs_disabled());
+ # endif
+ 	/*
+ 	 * Preempt must be disabled here - we rely on rcu_read_lock doing
+@@ -191,7 +191,7 @@ static inline int page_cache_add_specula
+ 
+ #if !defined(CONFIG_SMP) && defined(CONFIG_TREE_RCU)
+ # ifdef CONFIG_PREEMPT_COUNT
+-	VM_BUG_ON(!in_atomic());
++	VM_BUG_ON(!in_atomic() && !irqs_disabled());
+ # endif
+ 	VM_BUG_ON_PAGE(page_count(page) == 0, page);
+ 	atomic_add(count, &page->_count);
