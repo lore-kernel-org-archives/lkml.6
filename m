@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtnXNiSz/kWSonGKAx6/bzZ23v8jhWGyC58nkK5RdJkAFEvagSow5EFKBI1lxmjGXqjwRLO
-ARC-Seal: i=1; a=rsa-sha256; t=1521483225; cv=none;
+X-Google-Smtp-Source: AG47ELtdySvDKc2fNagq3AFrE3KuOoycEGC+kuwrK+Q4i1Ub4DPzGFvJnbXqz3wMzdUIKqWoZitG
+ARC-Seal: i=1; a=rsa-sha256; t=1521483222; cv=none;
         d=google.com; s=arc-20160816;
-        b=DTR85SSBjGA99SmZtwKXYQY+6bwY5DqJoO3dOun40pscvR2s+yQmvzqf2aWmXF86Zj
-         lFmC3CSgAIHJbR16/HKeiRjqfLECXxkwnfZyolNwgy37Ub2RPglUP9taXPqAFMR+CVov
-         aCk++zpEMzeffgSFN1Hy7DfhGeGb9SGbEb5BQbIF2X82TwNq4XqD463A+ayzBYWS7wQX
-         YSvplV7fsbXSotGw9umBEhhyR/O8BSjXGit17qGf3OdKINwKWVj/ml3/JNiOnmNTyQkm
-         3Gr1emdNTfcQCE3wDzpU5nAjXe3Aaw5HqihErx3fCMMTzXdQ45Rd328JSvsAuCkJEWBq
-         UOJg==
+        b=Z+9EiQO4HPq2yDfxDyBJBbwlf7xKd2ZnXbm0Q0MYyLtwmcu6qDLDIExDBvSAIq37kS
+         zJW8RbpIIrBI3X5sEhvAxioRQwshA6y3Ro+gFPAlaKRwREHo17WU2OB/9n+rFFYiz9ml
+         viW669hBIut9FLa6E2JnQ0peCyMmAqENfP5dPTUSlA74VjI48jXYkSQySlv0rEfbllRr
+         3LdOCFAO03qXuPg8jMa+AQq49oPtxWgDdpWkQPNNyfWc/KRMeZVQobHgD7nIG6oYOPMm
+         6OWITjP82s2vqRmHHUOyw/+mehlGHoMH/aswomhIZJo7NqnM2lUp9r2Kj9ZnWrbwqQAg
+         e0oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jyUtGWnLHAtnPjp6Rp5AjDqHozdB64dhUM/SDORUCgY=;
-        b=SSlubnaoTrImNqU6Nf42M1C9TAEdCUHL5Ydo6p1PR7lkZ9GCH0S9Q7N7TgUzoQcseF
-         OFyzuupDkWZKATS5AgnargYIqF0dwDwu03ZmcPcQfN1GHi/g6cgPKHh5c1y+xhaaPz0q
-         1/M0It6Q3pYgKJqYEICo21I46ceclsYX5+T000wLjZEvmxuB+J7ufsVKIODAdXpRBKhq
-         AW1PVOafBYa4gr1k8cTKTTYqf1WQWjcXVz3V+ORciH2ZK/I7l1QSoelp2YG5IfHm4kKG
-         MNeH7S4KMZXwAf1GPnGSgO15cJmEY0aNxTGUSOq01gEngTTPtdnZgiiZ9YF2WcPdLztj
-         3i6A==
+        bh=Mh2HkyhudG/Qu17OeipN4bRXizBGlrdbOSQHjg2jTSQ=;
+        b=tE0gLf1eZvRv/03c6OM6h2C+di75jLZf4lVErMPHDsM3/h5pgz+27urwbL/mj+fOGO
+         ei0MAE6e+raP0SZrnUR2ngf7h4Lb+fWP3xS3hC0DHJVUSL1B7C2uvNIHePN5uegR/Ek0
+         XRTbpPk/YkDd5miKqkrnZHt9xKGoxHYTV+/dvUyTE8n/Z5pwEfz0z0xPSZsXs3g4hycm
+         +0wGMT01L6490PWaSUrYh9KY+xtZ+CyhX3O1XL+C4Ap543bH7BgysFhAim1k9HFtgz9W
+         BHgNJq9pLhWQeG0fcho23srU4Chj/DFX8erUUzBOt0CrQU3Wg0MlZrH9uChM/AU3LErt
+         epYA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
+	kbuild test robot <fengguang.wu@intel.com>,
+	Vincent Cuissard <cuissard@marvell.com>,
+	Tobias Klauser <tklauser@distanz.ch>,
 	Samuel Ortiz <sameo@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 046/134] NFC: nfcmrvl: double free on error path
-Date: Mon, 19 Mar 2018 19:05:29 +0100
-Message-Id: <20180319171856.024098991@linuxfoundation.org>
+Subject: [PATCH 4.4 045/134] NFC: nfcmrvl: Include unaligned.h instead of access_ok.h
+Date: Mon, 19 Mar 2018 19:05:28 +0100
+Message-Id: <20180319171855.867401530@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390794553494961?=
-X-GMAIL-MSGID: =?utf-8?q?1595390794553494961?=
+X-GMAIL-THRID: =?utf-8?q?1595390791667093020?=
+X-GMAIL-MSGID: =?utf-8?q?1595390791667093020?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +52,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tobias Klauser <tklauser@distanz.ch>
 
 
-[ Upstream commit ca42fb9e52d155547e6cf18cf26bce3e1a6af4ea ]
+[ Upstream commit d916d923724d59cde99ee588f15eec59dd863bbd ]
 
-The nci_spi_send() function calls kfree_skb(skb) on both error and
-success so this extra kfree_skb() is a double free.
+Including linux/unaligned/access_ok.h causes the allmodconfig build on
+ia64 (and maybe others) to fail with the following warnings:
 
-Fixes: caf6e49bf6d0 ("NFC: nfcmrvl: add spi driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+include/linux/unaligned/access_ok.h:7:19: error: redefinition of 'get_unaligned_le16'
+include/linux/unaligned/access_ok.h:12:19: error: redefinition of 'get_unaligned_le32'
+include/linux/unaligned/access_ok.h:17:19: error: redefinition of 'get_unaligned_le64'
+include/linux/unaligned/access_ok.h:22:19: error: redefinition of 'get_unaligned_be16'
+include/linux/unaligned/access_ok.h:27:19: error: redefinition of 'get_unaligned_be32'
+include/linux/unaligned/access_ok.h:32:19: error: redefinition of 'get_unaligned_be64'
+include/linux/unaligned/access_ok.h:37:20: error: redefinition of 'put_unaligned_le16'
+include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_le32'
+include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_le64'
+include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be16'
+include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be32'
+include/linux/unaligned/access_ok.h:42:20: error: redefinition of 'put_unaligned_be64'
+
+Fix these by including asm/unaligned.h instead and leave it up to the
+architecture to decide how to implement unaligned accesses.
+
+Fixes: 3194c6870158 ("NFC: nfcmrvl: add firmware download support")
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Link: https://lkml.org/lkml/2016/10/22/247
+Cc: Vincent Cuissard <cuissard@marvell.com>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/nfcmrvl/spi.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/nfc/nfcmrvl/fw_dnld.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nfc/nfcmrvl/spi.c
-+++ b/drivers/nfc/nfcmrvl/spi.c
-@@ -96,10 +96,9 @@ static int nfcmrvl_spi_nci_send(struct n
- 	/* Send the SPI packet */
- 	err = nci_spi_send(drv_data->nci_spi, &drv_data->handshake_completion,
- 			   skb);
--	if (err != 0) {
-+	if (err)
- 		nfc_err(priv->dev, "spi_send failed %d", err);
--		kfree_skb(skb);
--	}
-+
- 	return err;
- }
+--- a/drivers/nfc/nfcmrvl/fw_dnld.c
++++ b/drivers/nfc/nfcmrvl/fw_dnld.c
+@@ -17,7 +17,7 @@
+  */
  
+ #include <linux/module.h>
+-#include <linux/unaligned/access_ok.h>
++#include <asm/unaligned.h>
+ #include <linux/firmware.h>
+ #include <linux/nfc.h>
+ #include <net/nfc/nci.h>
