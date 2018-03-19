@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3175828-1521474869-2-1107601513864856431
+X-Cyrus-Session-Id: sloti22d1t05-3175828-1521474863-2-10988276419041274788
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521474868; b=ovKFWmnZU5mNdZNEda+itoKfhBNBsw2UVLxR7T1bdBy9BMU
-    n2l7MBYXT3SXG6pDH7z1YJqzeKHgK/fx/rnq7kgi/i5bczJ9ACOfuVWhTwJbLWj7
-    ATNvhW7JdBQlJ7XDRHEEa9CC4O/D7N1UGOlwuDU9q1czEjv8KPKvwkM9jY0sZ+M3
-    lOCPo3PRwz8qbRpJSdxV0mmig7CZll5iQuw27r10+VXuGb2aMTXA+a7FVsQGLYDf
-    rv0CPPSdbzQihPO8SIGWZ9XL4SyPq60ZXZ8PqarsobdKcKkCBnF4iVH/pYoudMHd
-    6wsqaa0m/E7vjSa8nFnEwr7GMMoOrP/1PsR5F4g==
+    t=1521474863; b=HKqD5NYqnyaJAy1Br6GJH9NsTEc9zTIkn6My7Ta1ej6eXTe
+    DVQ+x4HYa1gHQpVKBJ/YE5areqHraTGmIB+bmu+z1qiJIx5Ty9XI38x7pe+CcYkI
+    NNl9JxNpAeoHB1Ou5p/ko2rYm4iQ5ArdQ7898IxooZKThp7JLocsjl/j1b6kU1Eb
+    j27H5cib5M6GuOi/gbtDWhu86uJYJMD0k2eL4aVxsNkXZwE8hEl3jTfzFPGGI0tn
+    BQaGRIKtVfOCid4OhD6o1H2GM7G/5hblo96OMv2zQuU7bznoGH1Qtd/DCU12wrxg
+    JolmTrtU/MAtyA7Ss/nx9PDik4DAnX9hj382bvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521474868; bh=BrLlYt
-    XOMcWYd4E0X4uqmbyIz90cmvoYledCMBRlJa0=; b=oCmnwCxhL0MQXD4kcC21/4
-    7vF2A3UoGkz/xGHk9bziUngBHa9H5EqvBahA5ngIOgJ3v6VYqYU+cH8N82Ux2Za1
-    K591WmPUfPXbGO6cFxDs7BCG1rTGn0/lAa7gnSejppU3zVgCcWgibJ2NGJlELNYU
-    +biB84qNQX2B0g9GAznV1QruIpCAXkVVNoQv6McgpGolNBsR7yZFqaInaB9q9IXd
-    IgDXdLwY+9UKFTWS6nA31lDOtewBX2z9ljXDoT8ivLawj9bWmF42dcTy5dcAWHpw
-    yEDDEqM9pTnCa7hvGzBskpHv6NNRfRUGZHqZEle2SB5cUMox417YFQ4CEDPVrepw
+    :mime-version:sender:list-id; s=arctest; t=1521474863; bh=sUDxol
+    FVS7ZkATKDzeEseacuxWE6An5KrAsfY+ybUks=; b=qGHZCRN1eVDka22BL6iXGo
+    IT7CUHfSQ1oJleB2U/iDCtdqTw/Gy+zgxBvWwczvTXUdg5hLPoUrZPrlqNwxTwns
+    qFs+ZzccZh/NVz/HZ8x8XxuMa/mfCL1977FwEaHx1WX6Lo6ihUKcAtlJ1XDPNMnv
+    c5LWBT3RpocydP5oSH1BYwt+jBfMsggcUzAWUgFILlOk+8WknSIVJcrYxww8K2M8
+    +eXaZpFcYW//jdg7etzgSQnupRPKnREeVFj2/yp1lhey1RHtk5iXlWtAme3X40RI
+    JOa84YfTYOUtn/mC/4EQ9YAtpznchC0PNThaCrCMbKtu6Aiy/mrJME8/OZGYuvKg
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=I41VxjmZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Q8dZRqsD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkedvjeefnecuvehluhhsthgvrhfuihiivgepgeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkedtvdeinecuvehluhhsthgvrhfuihiivgepfeei;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=I41VxjmZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Q8dZRqsD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkedvjeefnecuvehluhhsthgvrhfuihiivgepgeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkedtvdeinecuvehluhhsthgvrhfuihiivgepfeei;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934022AbeCSPyX (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:54:23 -0400
-Received: from mail-bl2nam02on0123.outbound.protection.outlook.com ([104.47.38.123]:41056
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S934178AbeCSPyV (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:54:21 -0400
+Received: from mail-by2nam01on0114.outbound.protection.outlook.com ([104.47.34.114]:57771
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934047AbeCSPuH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:50:07 -0400
+        id S933767AbeCSPuJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:50:09 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC: Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 111/124] sdhci: Advertise 2.0v supply on SDIO
- host controller
-Thread-Topic: [PATCH AUTOSEL for 4.15 111/124] sdhci: Advertise 2.0v supply on
- SDIO host controller
-Thread-Index: AQHTv5nP3B10rPwBckmns8pOprJYAg==
-Date: Mon, 19 Mar 2018 15:49:05 +0000
-Message-ID: <20180319154645.11350-111-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 112/124] ibmvnic: Don't handle RX interrupts
+ when not up.
+Thread-Topic: [PATCH AUTOSEL for 4.15 112/124] ibmvnic: Don't handle RX
+ interrupts when not up.
+Thread-Index: AQHTv5nPANn1RP89ykyuWTPjSVWeBw==
+Date: Mon, 19 Mar 2018 15:49:06 +0000
+Message-ID: <20180319154645.11350-112-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:fEHhl+F4tWsyJlDOd+p/B7ZZKx7seg7CUPEDjEpM4QGX7cZ48bukvpq9WRtpzHViuDOMuDB8bVzGB/awkoiXLMv5QvRExpvdn/UwmixIto0LYB0q3ydiQm7K2EMHbIav3mrweepcvLceHwlCVToB/abgeLUn9rr8bLA78qeUMfULkgO3idMlYVBd720lg6EOPKUTJlW0v4J2XvrEUuNrYP4ZP2d8Smmx3DP+q13ZaOixBro8+b5lqINtpuNV9Oo/;20:sjX16C1fMBEB3LYpwG0eLQ/7d+kkOI9s/aJxLv1ParzWQ5HUhk8fLM3yVkvT0+IhAcOeQA4COw1F0hJqsOvpfpXjKaqKeK6hrXaouhWVh+/QcA+cJ5MAxpB2B7b2gPIjh0AFYF6bqfZ/YvCxy1hgAnNERUXz+U2ZmihoiI6XRcw=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:eUKFdpPO+snrC1aeWHIEBcRLFy8AhWP5c9clnpMgLGC4yul8i2DpxcIY3JR7EJbStuPCgNQ0lh1QQrj056dZJxRH14yQiEsQdIxF7frpN4P7BR95PU2JygoWpr4jK482yUWwMk5/JAKjPRemiPsjwxRh1Av8ViJ4ueudBRexDN1HnvxKa8Q0JhtTV/Z0LVAT64Qz+Nr9zIFM65VQZSOsQv6c/IDz8mwdIK0A23Y2mPcHyHA3/X+Tb6u6fNZrewJ0;20:/CzRu3zWQVVRTjrcmbj4PYyJGbXw73ajBUT+FvfP+ZW1zdQq6/899w3xQtuiEm11Qwe6c+N1zmG5IbP7AfCaOKnGeVsglPS3LLDFfTgCFQoBMAwPMKuu/6+cgJw2kOQW0r/4Mmo3Rir3EHVTb/ww4/ibiErXhcdFY9kteb2RLH8=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ed542f3a-5cab-4c91-e30c-08d58db11181
+x-ms-office365-filtering-correlation-id: 2fabb904-edd5-4d28-66e5-08d58db111cc
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1109;
 x-ms-traffictypediagnostic: DM5PR2101MB1109:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1109093832AB5765DAC1BB68FBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-microsoft-antispam-prvs: <DM5PR2101MB11097BBD6308053909C2F396FBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(104084551191319);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1109;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1109;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(376002)(346002)(199004)(189003)(81166006)(10290500003)(107886003)(81156014)(106356001)(6506007)(8676002)(3846002)(36756003)(8936002)(97736004)(6116002)(1076002)(102836004)(68736007)(6666003)(3280700002)(2950100002)(3660700001)(478600001)(72206003)(2906002)(14454004)(76176011)(66066001)(6512007)(5250100002)(10090500001)(2501003)(53936002)(6486002)(6436002)(26005)(316002)(22452003)(305945005)(7736002)(4326008)(25786009)(86362001)(575784001)(86612001)(5660300001)(2900100001)(99286004)(54906003)(186003)(105586002)(110136005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: J/ddDjkSZCtsA4MYCVXajGjg3iZDA5ErcHl1yN8QWDmLUyGH8sfbmIrWxFaU9jEeBTlDQck3P2xvjTe9LdWJszg3A536KTFivPOeuB0DR8Wrn48VcYu30mVxDOkiMH4CA1bmKj9w6//kxubI+k0FKy5dlyOUnwA1QAYx5yhGihGCmEcmr7MM8oyU9rlVVsZEjAW/lMqtXvLxVjFCDWknQQk0uqNG5XiBBkqWGWlYJnUcBSQrruYnCZgO54Ye/QwwQv642OCztoI1HOP1rMl84cpXzSmMlF8S1AlEZGCYPHoi2GCzSMwcQ1x+rbTGrQdrXf83mLrA1sJjHw2nH3c25w==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(376002)(346002)(199004)(189003)(81166006)(10290500003)(107886003)(81156014)(106356001)(6506007)(8676002)(3846002)(36756003)(8936002)(97736004)(6116002)(1076002)(102836004)(68736007)(6666003)(3280700002)(2950100002)(3660700001)(478600001)(72206003)(59450400001)(2906002)(14454004)(76176011)(66066001)(6512007)(5250100002)(10090500001)(2501003)(53936002)(6486002)(6436002)(26005)(316002)(22452003)(305945005)(7736002)(4326008)(25786009)(86362001)(575784001)(86612001)(5660300001)(2900100001)(99286004)(54906003)(186003)(105586002)(110136005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: geDN5PMj9mEPsIr3rSvu4iJ/NS0Gb0fYbDaFck52JDcfdXhhb/GyaZ3V/yeieEGO2HCxWIF+8HpWNP0toTEhmPdhHghrq8q9UqGMZbeLUj4dyqQXh2NHsvOd3Ck/w5qVWK/hzIOqvjCtX2xF8UPxCvSwcHIysmOQIu3IhHM9OoPNdoyYhjBunQVtosUj8AvyaDSoAiUFkzZVWiWj0yeY/4eFofQY1F16uppcbm1lHh8iouG+F7ab/pn2t/YuRMzRj5OK+o++a+/ufdmUPE57lhTTdsKKRjL1timQAeNeaX9fv3BJuMVoTFXGHOUvrJkPzSJq9P7DjQFCwM07pDC8Ww==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed542f3a-5cab-4c91-e30c-08d58db11181
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:05.3584
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fabb904-edd5-4d28-66e5-08d58db111cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:06.3101
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -109,64 +109,51 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
 
-[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
+[ Upstream commit 09fb35ead58cd557aa9b20576d15816bc91a4deb ]
 
-On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
-requires 2.0v, while the host, according to Intel Merrifield TRM,
-supports 1.8v supply only.
+Initiating a kdump via the command line can cause a pending interrupt
+to be handled by the ibmvnic driver when initializing the sub-CRQ
+irqs during driver initialization.
 
-The card announces itself as
+NIP [d000000000ca34f0] ibmvnic_interrupt_rx+0x40/0xd0 [ibmvnic]
+LR [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
+Call Trace:
+[c000000047fcfde0] [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
+[c000000047fcfea0] [c00000000813317c] handle_irq_event_percpu+0x3c/0x90
+[c000000047fcfee0] [c00000000813323c] handle_irq_event+0x6c/0xd0
+[c000000047fcff10] [c0000000081385e0] handle_fasteoi_irq+0xf0/0x250
+[c000000047fcff40] [c0000000081320a0] generic_handle_irq+0x50/0x80
+[c000000047fcff60] [c000000008014984] __do_irq+0x84/0x1d0
+[c000000047fcff90] [c000000008027564] call_do_irq+0x14/0x24
+[c00000003c92af00] [c000000008014b70] do_IRQ+0xa0/0x120
+[c00000003c92af50] [c000000008002594] hardware_interrupt_common+0x114/0x180
 
-  mmc2: new ultra high speed DDR50 SDIO card at address 0001
-
-Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
-and add a special case to sdhci_set_power_noreg() to override 2.0v supply
-by enforcing 1.8v power choice.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/host/sdhci-pci-core.c | 2 ++
- drivers/mmc/host/sdhci.c          | 7 +++++++
- 2 files changed, 9 insertions(+)
+ drivers/net/ethernet/ibm/ibmvnic.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci=
--core.c
-index bf93e8b0b191..b8fa17a759dd 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -805,6 +805,8 @@ static int intel_mrfld_mmc_probe_slot(struct sdhci_pci_=
-slot *slot)
- 		slot->host->quirks2 |=3D SDHCI_QUIRK2_NO_1_8_V;
- 		break;
- 	case INTEL_MRFLD_SDIO:
-+		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
-+		slot->host->ocr_mask =3D MMC_VDD_20_21 | MMC_VDD_165_195;
- 		slot->host->mmc->caps |=3D MMC_CAP_NONREMOVABLE |
- 					 MMC_CAP_POWER_OFF_CARD;
- 		break;
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index d24306b2b839..3a5f305fd442 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1470,6 +1470,13 @@ void sdhci_set_power_noreg(struct sdhci_host *host, =
-unsigned char mode,
- 	if (mode !=3D MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-+		/*
-+		 * Without a regulator, SDHCI does not support 2.0v
-+		 * so we only get here if the driver deliberately
-+		 * added the 2.0v range to ocr_avail. Map it to 1.8v
-+		 * for the purpose of turning on the power.
-+		 */
-+		case MMC_VDD_20_21:
- 			pwr =3D SDHCI_POWER_180;
- 			break;
- 		case MMC_VDD_29_30:
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/=
+ibmvnic.c
+index b65f5f3ac034..6e064c04ce0b 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -2484,6 +2484,12 @@ static irqreturn_t ibmvnic_interrupt_rx(int irq, voi=
+d *instance)
+ 	struct ibmvnic_sub_crq_queue *scrq =3D instance;
+ 	struct ibmvnic_adapter *adapter =3D scrq->adapter;
+=20
++	/* When booting a kdump kernel we can hit pending interrupts
++	 * prior to completing driver initialization.
++	 */
++	if (unlikely(adapter->state !=3D VNIC_OPEN))
++		return IRQ_NONE;
++
+ 	adapter->rx_stats_buffers[scrq->scrq_num].interrupts++;
+=20
+ 	if (napi_schedule_prep(&adapter->napi[scrq->scrq_num])) {
 --=20
 2.14.1
