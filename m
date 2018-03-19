@@ -1,242 +1,123 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521284912; cv=none;
-        d=google.com; s=arc-20160816;
-        b=pd6qcxVPec/9DYHAaFjaY+vuqy6d2r3KoCkJBAbbI34WsAg4XS9lUJFa/q0qqEMJ8N
-         hRLVCnixzm5BzeBryzpq0psMkhDVRvImtu5G7BxMUV2CeVm4kWiW09mlOzeNQNv6NRoC
-         1DE3N8suBJdA1zThjMpg2nENsKVXDTwvZgpj4VN0ZaVoqsbn6SLRuyRHpPglc9+TLutS
-         s/4mChUwPA1sLSdlo/I1VKH35C1KVXjSRUL02NCj1FNfQjMccfR8yZTEGjyCn7rHmora
-         NmsH+8KqBsTIfNwwgTK1MRc0MORWLiqejiSpYqKE9r+r/KUSaCR8fhlQE+VlrIMZzVfu
-         wMKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=jAIq7pw8PEY02YiDlDCerPUbTsAfQcOOpTw4LmZjMXQ=;
-        b=T75nEXHlswGJRILp7yUlhLB1itosqU43C5YFL5GoLWBgfc7FEh3WCSbXYv5oMjml4V
-         /siEBoVsJwWkKEYu5n9yn0+WIBBG6nSv+U5i6d0EF5cepbqPHX7GEO//pZtEUKrPFk8Q
-         TjtuPL7mow5bdc8kVsTgk7/DDeHHzt4xuZ8F4xpawKgbKAFe+ryNBNrOcBB3tXEQwDp6
-         uyBc947T/715EvnzElu/87W5GDB64yyRq4YVebfn17a4bDimgUMqZvKAi6BKdqWW3kjP
-         g121DT9LZ7eUi6+/JFfmdbNlzkDDIIzHrIhhq2JgeDGMobTz/u699uaRdhFJA8YkHzIO
-         ep0Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AG47ELsnm0jPmgfZEZcttrc0BM+9eIxbaq20fuKalniSKW8wgin/rjRvEkhMNgPMzQRz70XCYi0Ldg==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: ebiederm@xmission.com,
-	gregkh@linuxfoundation.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: serge@hallyn.com,
-	avagin@virtuozzo.com,
-	ktkhai@virtuozzo.com,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 2/2 v3] netns: send uevent messages
-Date: Sat, 17 Mar 2018 12:08:26 +0100
-Message-Id: <20180317110826.1581-2-christian.brauner@ubuntu.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2640480-1521458300-2-3329566065472384425
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521458300; b=HJTFPkmFPL7Wvg6qFs9Sictl9vxjKBEzvM33bsHMIOjPaJn
+    blWYuqOLjjTGFPNWhutYRggTk9VM1fuNoqnhuuG6q55r7wpgtotrFV7D0d7Go9VI
+    974AfbVZdWxbJCKvewDbGs/7HiCxKIotZkwxALO5xJou9nLLswOLSr8DEyU3LZlq
+    yMJWpW4s8ZVFou9owuP7DyB5ogYgwM7v/pN1sRKYZjj9LwY16zJRd9YeDBNN8zmN
+    aJh+ZfVwaU1Nb9Go7MIPk7aFch7r5trwlJXCHHFfD9ePJafS724ns6+r3OHv2oyV
+    jUBaqJDhLwv6mD6ANUCNPTegJhv04lgRVC0JBgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521458300; bh=d
+    i31okvjMcEYeobuu/x4GKgJUKxOaSDqsSKimiaMqsw=; b=C1IiyB31Tzx06hPZm
+    YfEO3zAbVlMXfnix41m5z+/I2v4lwvsnk6+p2z/hBqQ/uj614ggb+usQN6p2x75l
+    nJ7kHIz3Atq8A8lIDTteVu8BsXoiKm3AdXk4DiIelnyumj8uiGbWgzv6c8ZejWAQ
+    Zis03JlksGYCyhZqwgFuh9shu1PRVELOpopyCnD+s1OqKQJD+zVuSGvbil/fXBNZ
+    vRstQ+XooMBe3Jgjj3zDj3I6/QN3fR+O2N3lekViClNoTQx3IqlgZDIj7KExMvD9
+    +ylMMO4Ht9gBq+jzX8pmtR2UK0MCj7XxVGcD9xMF59GGDg5HreApRwn+KvjEUp+8
+    eFHEg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddvgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffogghpjefjgedufedttgfgvghssehtjeertdertddvnecuhfhrohhmpeevohhlihhnucfmihhnghcuoegtohhlihhnrdhkihhnghestggrnhhonhhitggrlhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudefjedpledurddukeelrdekledrudduvdenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudefjedphhgvlhhopehfrhgrgihinhhushdrohhsuhhoshhlrdhorhhgpdhmrghilhhfrhhomhepoegurhhivhgvrhguvghvqdguvghvvghlqdgsohhunhgtvghssehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghequcfukfgkgfepgeelgeeguceuqfffjgepjeeukffvnecuvehluhhsthgvrhfuihiivgeptd;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddvgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffogghpjefjgedufedttgfgvghssehtjeertdertddvnecuhfhrohhmpeevohhlihhnucfmihhnghcuoegtohhlihhnrdhkihhnghestggrnhhonhhitggrlhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudefjedpledurddukeelrdekledrudduvdenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudefjedphhgvlhhopehfrhgrgihinhhushdrohhsuhhoshhlrdhorhhgpdhmrghilhhfrhhomhepoegurhhivhgvrhguvghvqdguvghvvghlqdgsohhunhgtvghssehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghequcfukfgkgfepgeelgeeguceuqfffjgepjeeukffvnecuvehluhhsthgvrhfuihiivgeptd;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Colin King <colin.king@canonical.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: [PATCH] staging: media: davinci_vpfe: fix spelling of
+ resizer_configure_in_continious_mode
+Date: Mon, 19 Mar 2018 11:18:09 +0000
+Message-Id: <20180319111809.1275-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180317110826.1581-1-christian.brauner@ubuntu.com>
-References: <20180317110826.1581-1-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595182848278643732?=
-X-GMAIL-MSGID: =?utf-8?q?1595182848278643732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds a receive method to NETLINK_KOBJECT_UEVENT netlink sockets
-to allow sending uevent messages into the network namespace the socket
-belongs to.
+From: Colin Ian King <colin.king@canonical.com>
 
-Currently non-initial network namespaces are already isolated and don't
-receive uevents. There are a number of cases where it is beneficial for a
-sufficiently privileged userspace process to send a uevent into a network
-namespace.
+Trivial fix: rename function resizer_configure_in_continious_mode to
+resizer_configure_in_continuous_mode to fix spelling mistake.
 
-One such use case would be debugging and fuzzing of a piece of software
-which listens and reacts to uevents. By running a copy of that software
-inside a network namespace, specific uevents could then be presented to it.
-More concretely, this would allow for easy testing of udevd/ueventd.
-
-This will also allow some piece of software to run components inside a
-separate network namespace and then effectively filter what that software
-can receive. Some examples of software that do directly listen to uevents
-and that we have in the past attempted to run inside a network namespace
-are rbd (CEPH client) or the X server.
-
-Implementation:
-The implementation has been kept as simple as possible from the kernel's
-perspective. Specifically, a simple input method uevent_net_rcv() is added
-to NETLINK_KOBJECT_UEVENT sockets which completely reuses existing
-af_netlink infrastructure and does neither add an additional netlink family
-nor requires any user-visible changes.
-
-For example, by using netlink_rcv_skb() we can make use of existing netlink
-infrastructure to report back informative error messages to userspace.
-
-Furthermore, this implementation does not introduce any overhead for
-existing uevent generating codepaths. The struct netns got a new uevent
-socket member that records the uevent socket associated with that network
-namespace including its position in the uevent socket list. Since we record
-the uevent socket for each network namespace in struct net we don't have to
-walk the whole uevent socket list. Instead we can directly retrieve the
-relevant uevent socket and send the message. At exit time we can now also
-trivially remove the uevent socket from the uevent socket list. This keeps
-the codepath very performant without introducing needless overhead and even
-makes older codepaths faster.
-
-Uevent sequence numbers are kept global. When a uevent message is sent to
-another network namespace the implementation will simply increment the
-global uevent sequence number and append it to the received uevent. This
-has the advantage that the kernel will never need to parse the received
-uevent message to replace any existing uevent sequence numbers. Instead it
-is up to the userspace process to remove any existing uevent sequence
-numbers in case the uevent message to be sent contains any.
-
-Security:
-In order for a caller to send uevent messages to a target network namespace
-the caller must have CAP_SYS_ADMIN in the owning user namespace of the
-target network namespace. Additionally, any received uevent message is
-verified to not exceed size UEVENT_BUFFER_SIZE. This includes the space
-needed to append the uevent sequence number.
-
-Testing:
-This patch has been tested and verified to work with the following udev
-implementations:
-1. CentOS 6 with udevd version 147
-2. Debian Sid with systemd-udevd version 237
-3. Android 7.1.1 with ueventd
-
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Changelog v2->v3:
-* Use reverse christmas tree ordering for local variables.
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changelog v1->v2:
-* Add the whole struct uevent_sock to struct net not just the socket
-  member. Since struct uevent_sock records the position of the uevent
-  socket in the uevent socket list we can trivially remove it from the
-  uevent socket list during cleanup. This speeds up the old removal
-  codepath. list_del() will hitl __list_del_entry_valid() in its call chain
-  which will validate that the element is a member of the list. If it isn't
-  it will take care that the list is not modified.
-
-Changelog v0->v1:
-* Hold mutex_lock() until uevent is sent to preserve uevent message
-  ordering. See udev and commit for reference:
-
-  commit 7b60a18da393ed70db043a777fd9e6d5363077c4
-  Author: Andrew Vagin <avagin@openvz.org>
-  Date:   Wed Mar 7 14:49:56 2012 +0400
-
-      uevent: send events in correct order according to seqnum (v3)
-
-      The queue handling in the udev daemon assumes that the events are
-      ordered.
----
- lib/kobject_uevent.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
-
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index cbdc60542cab..7631513f856e 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -25,6 +25,7 @@
- #include <linux/uuid.h>
- #include <linux/ctype.h>
- #include <net/sock.h>
-+#include <net/netlink.h>
- #include <net/net_namespace.h>
- 
- 
-@@ -604,12 +605,88 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
- EXPORT_SYMBOL_GPL(add_uevent_var);
- 
- #if defined(CONFIG_NET)
-+static int uevent_net_broadcast(struct sock *usk, struct sk_buff *skb,
-+				struct netlink_ext_ack *extack)
-+{
-+	/* u64 to chars: 2^64 - 1 = 21 chars */
-+	char buf[sizeof("SEQNUM=") + 21];
-+	struct sk_buff *skbc;
-+	int ret;
-+
-+	/* bump and prepare sequence number */
-+	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", ++uevent_seqnum);
-+	if (ret < 0 || (size_t)ret >= sizeof(buf))
-+		return -ENOMEM;
-+	ret++;
-+
-+	/* verify message does not overflow */
-+	if ((skb->len + ret) > UEVENT_BUFFER_SIZE) {
-+		NL_SET_ERR_MSG(extack, "uevent message too big");
-+		return -EINVAL;
-+	}
-+
-+	/* copy skb and extend to accommodate sequence number */
-+	skbc = skb_copy_expand(skb, 0, ret, GFP_KERNEL);
-+	if (!skbc)
-+		return -ENOMEM;
-+
-+	/* append sequence number */
-+	skb_put_data(skbc, buf, ret);
-+
-+	/* remove msg header */
-+	skb_pull(skbc, NLMSG_HDRLEN);
-+
-+	/* set portid 0 to inform userspace message comes from kernel */
-+	NETLINK_CB(skbc).portid = 0;
-+	NETLINK_CB(skbc).dst_group = 1;
-+
-+	ret = netlink_broadcast(usk, skbc, 0, 1, GFP_KERNEL);
-+	/* ENOBUFS should be handled in userspace */
-+	if (ret == -ENOBUFS || ret == -ESRCH)
-+		ret = 0;
-+
-+	return ret;
-+}
-+
-+static int uevent_net_rcv_skb(struct sk_buff *skb, struct nlmsghdr *nlh,
-+			      struct netlink_ext_ack *extack)
-+{
-+	struct net *net;
-+	int ret;
-+
-+	if (!nlmsg_data(nlh))
-+		return -EINVAL;
-+
-+	/*
-+	 * Verify that we are allowed to send messages to the target
-+	 * network namespace. The caller must have CAP_SYS_ADMIN in the
-+	 * owning user namespace of the target network namespace.
-+	 */
-+	net = sock_net(NETLINK_CB(skb).sk);
-+	if (!netlink_ns_capable(skb, net->user_ns, CAP_SYS_ADMIN)) {
-+		NL_SET_ERR_MSG(extack, "missing CAP_SYS_ADMIN capability");
-+		return -EPERM;
-+	}
-+
-+	mutex_lock(&uevent_sock_mutex);
-+	ret = uevent_net_broadcast(net->uevent_sock->sk, skb, extack);
-+	mutex_unlock(&uevent_sock_mutex);
-+
-+	return ret;
-+}
-+
-+static void uevent_net_rcv(struct sk_buff *skb)
-+{
-+	netlink_rcv_skb(skb, &uevent_net_rcv_skb);
-+}
-+
- static int uevent_net_init(struct net *net)
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+index 857b0e847c5e..1ee216d71d42 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+@@ -480,7 +480,7 @@ resizer_configure_common_in_params(struct vpfe_resizer_device *resizer)
+ 	return 0;
+ }
+ static int
+-resizer_configure_in_continious_mode(struct vpfe_resizer_device *resizer)
++resizer_configure_in_continuous_mode(struct vpfe_resizer_device *resizer)
  {
- 	struct uevent_sock *ue_sk;
- 	struct netlink_kernel_cfg cfg = {
- 		.groups	= 1,
--		.flags	= NL_CFG_F_NONROOT_RECV,
-+		.input = uevent_net_rcv,
-+		.flags	= NL_CFG_F_NONROOT_RECV
- 	};
- 
- 	ue_sk = kzalloc(sizeof(*ue_sk), GFP_KERNEL);
+ 	struct device *dev = resizer->crop_resizer.subdev.v4l2_dev->dev;
+ 	struct resizer_params *param = &resizer->config;
+@@ -1242,7 +1242,7 @@ static int resizer_do_hw_setup(struct vpfe_resizer_device *resizer)
+ 		    ipipeif_source == IPIPEIF_OUTPUT_RESIZER)
+ 			ret = resizer_configure_in_single_shot_mode(resizer);
+ 		else
+-			ret =  resizer_configure_in_continious_mode(resizer);
++			ret =  resizer_configure_in_continuous_mode(resizer);
+ 		if (ret)
+ 			return ret;
+ 		ret = config_rsz_hw(resizer, param);
 -- 
 2.15.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
