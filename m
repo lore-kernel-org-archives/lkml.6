@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S972375AbeCSWOU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 18:14:20 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:44984 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S972327AbeCSWON (ORCPT
+        id S972386AbeCSWOl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 18:14:41 -0400
+Received: from hqdc-proxy-mwg015-o.oracle.com ([148.87.23.18]:16690 "EHLO
+        jhdev.us.oracle.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934286AbeCSWOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 18:14:13 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Mar 2018 23:14:11 +0100
-From: Stefan Agner <stefan@agner.ch>
-To: broonie@kernel.org
-Cc: geert+renesas@glider.be, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: rspi: use correct enum for DMA transfer direction
-In-Reply-To: <20180319214231.15529-1-stefan@agner.ch>
-References: <20180319214231.15529-1-stefan@agner.ch>
-Message-ID: <8da7711094622e4c84316ce1d5a96d0c@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
+        Mon, 19 Mar 2018 18:14:37 -0400
+From: Jonathan Helman <jonathan.helman@oracle.com>
+To: mst@redhat.com, jasowang@redhat.com
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        Jonathan Helman <jonathan.helman@oracle.com>
+Subject: [PATCH v2] virtio_balloon: export hugetlb page allocation counts
+Date: Mon, 19 Mar 2018 15:14:14 -0700
+Message-Id: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.03.2018 22:42, Stefan Agner wrote:
-> Use enum dma_transfer_direction as required by dmaengine_prep_slave_sg
-> instead of enum dma_data_direction.
-> 
-> This fixes two warnings when building with clang:
->   drivers/spi/spi-rspi.c:538:26: warning: implicit conversion from enumeration
->       type 'enum dma_data_direction' to different enumeration type
->       'enum dma_transfer_direction' [-Wenum-conversion]
->                                         rx->sgl, rx->nents, DMA_FROM_DEVICE,
->                                                             ^~~~~~~~~~~~~~~
->   drivers/spi/spi-rspi.c:558:26: warning: implicit conversion from enumeration
->       type 'enum dma_data_direction' to different enumeration type
->       'enum dma_transfer_direction' [-Wenum-conversion]
->                                         tx->sgl, tx->nents, DMA_TO_DEVICE,
->                                                             ^~~~~~~~~~~~~
-> 
+Export the number of successful and failed hugetlb page
+allocations via the virtio balloon driver. These 2 counts
+come directly from the vm_events HTLB_BUDDY_PGALLOC and
+HTLB_BUDDY_PGALLOC_FAIL.
 
-Please ignore this patch, I managed to mix up the direction. Will send a
-v2.
+Signed-off-by: Jonathan Helman <jonathan.helman@oracle.com>
+---
+ drivers/virtio/virtio_balloon.c     | 6 ++++++
+ include/uapi/linux/virtio_balloon.h | 4 +++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
---
-Stefan
-
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/spi/spi-rspi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-> index 0835a8d88fb8..3e5a31d338fe 100644
-> --- a/drivers/spi/spi-rspi.c
-> +++ b/drivers/spi/spi-rspi.c
-> @@ -535,7 +535,7 @@ static int rspi_dma_transfer(struct rspi_data
-> *rspi, struct sg_table *tx,
->  	/* First prepare and submit the DMA request(s), as this may fail */
->  	if (rx) {
->  		desc_rx = dmaengine_prep_slave_sg(rspi->master->dma_rx,
-> -					rx->sgl, rx->nents, DMA_FROM_DEVICE,
-> +					rx->sgl, rx->nents, DMA_MEM_TO_DEV,
->  					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
->  		if (!desc_rx) {
->  			ret = -EAGAIN;
-> @@ -555,7 +555,7 @@ static int rspi_dma_transfer(struct rspi_data
-> *rspi, struct sg_table *tx,
->  
->  	if (tx) {
->  		desc_tx = dmaengine_prep_slave_sg(rspi->master->dma_tx,
-> -					tx->sgl, tx->nents, DMA_TO_DEVICE,
-> +					tx->sgl, tx->nents, DMA_DEV_TO_MEM,
->  					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
->  		if (!desc_tx) {
->  			ret = -EAGAIN;
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index dfe5684..6b237e3 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -272,6 +272,12 @@ static unsigned int update_balloon_stats(struct virtio_balloon *vb)
+ 				pages_to_bytes(events[PSWPOUT]));
+ 	update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, events[PGMAJFAULT]);
+ 	update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, events[PGFAULT]);
++#ifdef CONFIG_HUGETLB_PAGE
++	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
++		    events[HTLB_BUDDY_PGALLOC]);
++	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
++		    events[HTLB_BUDDY_PGALLOC_FAIL]);
++#endif
+ #endif
+ 	update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+ 				pages_to_bytes(i.freeram));
+diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+index 4e8b830..40297a3 100644
+--- a/include/uapi/linux/virtio_balloon.h
++++ b/include/uapi/linux/virtio_balloon.h
+@@ -53,7 +53,9 @@ struct virtio_balloon_config {
+ #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
+ #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in /proc */
+ #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+-#define VIRTIO_BALLOON_S_NR       8
++#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page allocations */
++#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
++#define VIRTIO_BALLOON_S_NR       10
+ 
+ /*
+  * Memory statistics structure.
+-- 
+1.8.3.1
