@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933511AbeCSPdn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:33:43 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45868 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933135AbeCSPdh (ORCPT
+        id S933364AbeCSPdj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:33:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37281 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933132AbeCSPde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:33:37 -0400
-X-Google-Smtp-Source: AG47ELsGbjr7BlgpMKcee77MWCipgWDONWYgym5aYLjm43PfnlVDr6OXlEP8ELhcB4duLIHoDYGAXg==
+        Mon, 19 Mar 2018 11:33:34 -0400
+X-Google-Smtp-Source: AG47ELsMBbSOSWxvYmoJzFFZ7YOoPeRyqqi9r0BzxKV1Fqjo/rUUAKpmCD+RkV6127Uksx8X9iaaXw==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Santosh Shilimkar <ssantosh@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 3/4] ARM: davinci: add aemif & nand support to da850-lcdk in legacy mode
-Date: Mon, 19 Mar 2018 16:33:13 +0100
-Message-Id: <20180319153314.26120-4-brgl@bgdev.pl>
+Subject: [PATCH v2 2/4] memory: aemif: add support for board files
+Date: Mon, 19 Mar 2018 16:33:12 +0100
+Message-Id: <20180319153314.26120-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180319153314.26120-1-brgl@bgdev.pl>
 References: <20180319153314.26120-1-brgl@bgdev.pl>
@@ -26,170 +26,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now have support for aemif & nand from board files. As an example
-add support for nand to da850-lcdk in legacy mode.
+Currently aemif is supported in two places separately. By the platform
+driver in drivers/memory and by a hand crafted driver in mach-davinci.
+
+We want to drop the latter but also keep the legacy mode. Add support
+for board files to the aemif driver.
+
+The new structure in platform data currently only contains the chip
+select number, since currently existing users don't require anything
+else, but it can be extended in the future.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+ drivers/memory/ti-aemif.c              | 57 ++++++++++++++++++++++------------
+ include/linux/platform_data/ti-aemif.h |  9 ++++++
+ 2 files changed, 46 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 6c997c59a3cd..9c3de56b54e4 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -16,6 +16,11 @@
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
-+#include <linux/mtd/rawnand.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/platform_data/mtd-davinci.h>
-+#include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/regulator/machine.h>
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index 588e58d40d1b..27d2b076f465 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -339,9 +339,6 @@ static int aemif_probe(struct platform_device *pdev)
+ 	struct aemif_platform_data *pdata;
+ 	struct of_dev_auxdata *dev_lookup;
  
- #include <asm/mach-types.h>
-@@ -162,6 +167,129 @@ static __init void omapl138_hawk_mmc_init(void)
- 	gpiod_remove_lookup_table(&mmc_gpios_table);
- }
+-	if (np == NULL)
+-		return 0;
+-
+ 	aemif = devm_kzalloc(dev, sizeof(*aemif), GFP_KERNEL);
+ 	if (!aemif)
+ 		return -ENOMEM;
+@@ -363,8 +360,10 @@ static int aemif_probe(struct platform_device *pdev)
  
-+static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
-+	{
-+		.name		= "u-boot env",
-+		.offset		= 0,
-+		.size		= SZ_128K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	 },
-+	{
-+		.name		= "u-boot",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= SZ_128K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	},
-+	{
-+		.name		= "free space",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= MTDPART_SIZ_FULL,
-+		.mask_flags	= 0,
-+	},
-+};
-+
-+static struct davinci_aemif_timing omapl138_hawk_nandflash_timing = {
-+	.wsetup		= 24,
-+	.wstrobe	= 21,
-+	.whold		= 14,
-+	.rsetup		= 19,
-+	.rstrobe	= 50,
-+	.rhold		= 0,
-+	.ta		= 20,
-+};
-+
-+static struct davinci_nand_pdata omapl138_hawk_nandflash_data = {
-+	.parts		= omapl138_hawk_nandflash_partition,
-+	.nr_parts	= ARRAY_SIZE(omapl138_hawk_nandflash_partition),
-+	.ecc_mode	= NAND_ECC_HW,
-+	.ecc_bits	= 4,
-+	.bbt_options	= NAND_BBT_USE_FLASH,
-+	.options	= NAND_BUSWIDTH_16,
-+	.timing		= &omapl138_hawk_nandflash_timing,
-+	.mask_chipsel	= 0,
-+	.mask_ale	= 0,
-+	.mask_cle	= 0,
-+};
-+
-+static struct resource omapl138_hawk_nandflash_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CS3_BASE,
-+		.end	= DA8XX_AEMIF_CS3_BASE + SZ_32M,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct resource omapl138_hawk_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	}
-+};
-+
-+static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
-+	}
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &omapl138_hawk_nandflash_data,
-+		},
-+		.resource	= omapl138_hawk_nandflash_resource,
-+		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
-+		.id		= 0,
-+	}
-+};
-+
-+static struct aemif_platform_data omapl138_hawk_aemif_pdata = {
-+	.cs_offset = 2,
-+	.abus_data = omapl138_hawk_aemif_abus_data,
-+	.num_abus_data = ARRAY_SIZE(omapl138_hawk_aemif_abus_data),
-+	.sub_devices = omapl138_hawk_aemif_devices,
-+	.num_sub_devices = ARRAY_SIZE(omapl138_hawk_aemif_devices),
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_device = {
-+	.name		= "ti-aemif",
-+	.dev = {
-+		.platform_data	= &omapl138_hawk_aemif_pdata,
-+	},
-+	.resource	= omapl138_hawk_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(omapl138_hawk_aemif_resource),
-+	.id		= -1,
-+};
-+
-+static const short omapl138_hawk_nand_pins[] = {
-+	DA850_EMA_WAIT_1, DA850_NEMA_OE, DA850_NEMA_WE, DA850_NEMA_CS_3,
-+	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
-+	DA850_EMA_D_4, DA850_EMA_D_5, DA850_EMA_D_6, DA850_EMA_D_7,
-+	DA850_EMA_D_8, DA850_EMA_D_9, DA850_EMA_D_10, DA850_EMA_D_11,
-+	DA850_EMA_D_12, DA850_EMA_D_13, DA850_EMA_D_14, DA850_EMA_D_15,
-+	DA850_EMA_A_1, DA850_EMA_A_2,
-+	-1
-+};
-+
-+static int omapl138_hawk_register_aemif(void)
-+{
-+	int ret;
-+
-+	ret = davinci_cfg_reg_list(omapl138_hawk_nand_pins);
-+	if (ret)
-+		pr_warn("%s: NAND mux setup failed: %d\n", __func__, ret);
-+
-+	return platform_device_register(&omapl138_hawk_aemif_device);
-+}
-+
- static irqreturn_t omapl138_hawk_usb_ocic_irq(int irq, void *dev_id);
- static da8xx_ocic_handler_t hawk_usb_ocic_handler;
+ 	aemif->clk_rate = clk_get_rate(aemif->clk) / MSEC_PER_SEC;
  
-@@ -294,6 +422,10 @@ static __init void omapl138_hawk_init(void)
+-	if (of_device_is_compatible(np, "ti,da850-aemif"))
++	if (np && of_device_is_compatible(np, "ti,da850-aemif"))
+ 		aemif->cs_offset = 2;
++	else if (pdata)
++		aemif->cs_offset = pdata->cs_offset;
  
- 	omapl138_hawk_usb_init();
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	aemif->base = devm_ioremap_resource(dev, res);
+@@ -373,15 +372,23 @@ static int aemif_probe(struct platform_device *pdev)
+ 		goto error;
+ 	}
  
-+	ret = omapl138_hawk_register_aemif();
-+	if (ret)
-+		pr_warn("%s: aemif registration failed: %d\n", __func__, ret);
+-	/*
+-	 * For every controller device node, there is a cs device node that
+-	 * describe the bus configuration parameters. This functions iterate
+-	 * over these nodes and update the cs data array.
+-	 */
+-	for_each_available_child_of_node(np, child_np) {
+-		ret = of_aemif_parse_abus_config(pdev, child_np);
+-		if (ret < 0)
+-			goto error;
++	if (np) {
++		/*
++		 * For every controller device node, there is a cs device node
++		 * that describe the bus configuration parameters. This
++		 * functions iterate over these nodes and update the cs data
++		 * array.
++		 */
++		for_each_available_child_of_node(np, child_np) {
++			ret = of_aemif_parse_abus_config(pdev, child_np);
++			if (ret < 0)
++				goto error;
++		}
++	} else if (pdata && pdata->num_abus_data > 0) {
++		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
++			aemif->cs_data[i].cs = pdata->abus_data->cs;
++			aemif_get_hw_params(pdev, i);
++		}
+ 	}
+ 
+ 	for (i = 0; i < aemif->num_cs; i++) {
+@@ -394,14 +401,24 @@ static int aemif_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/*
+-	 * Create a child devices explicitly from here to
+-	 * guarantee that the child will be probed after the AEMIF timing
+-	 * parameters are set.
++	 * Create a child devices explicitly from here to guarantee that the
++	 * child will be probed after the AEMIF timing parameters are set.
+ 	 */
+-	for_each_available_child_of_node(np, child_np) {
+-		ret = of_platform_populate(child_np, NULL, dev_lookup, dev);
+-		if (ret < 0)
+-			goto error;
++	if (np) {
++		for_each_available_child_of_node(np, child_np) {
++			ret = of_platform_populate(child_np, NULL,
++						   dev_lookup, dev);
++			if (ret < 0)
++				goto error;
++		}
++	} else {
++		for (i = 0; i < pdata->num_sub_devices; i++) {
++			ret = platform_device_register(&pdata->sub_devices[i]);
++			if (ret) {
++				dev_warn(dev, "Error register sub device %s\n",
++					 pdata->sub_devices[i].name);
++			}
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/platform_data/ti-aemif.h b/include/linux/platform_data/ti-aemif.h
+index ac72e115093c..dfe8901128c9 100644
+--- a/include/linux/platform_data/ti-aemif.h
++++ b/include/linux/platform_data/ti-aemif.h
+@@ -16,8 +16,17 @@
+ 
+ #include <linux/of_platform.h>
+ 
++struct aemif_abus_data {
++	u32 cs;
++};
 +
- 	ret = da8xx_register_watchdog();
- 	if (ret)
- 		pr_warn("%s: watchdog registration failed: %d\n",
+ struct aemif_platform_data {
+ 	struct of_dev_auxdata *dev_lookup;
++	u32 cs_offset;
++	struct aemif_abus_data *abus_data;
++	size_t num_abus_data;
++	struct platform_device *sub_devices;
++	size_t num_sub_devices;
+ };
+ 
+ #endif /* __TI_DAVINCI_AEMIF_DATA_H__ */
 -- 
 2.16.1
