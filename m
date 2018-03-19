@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484524-2-5141839324528338577
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484516-2-16764432993535755983
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,57 +13,56 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484524; b=JwNJCAX4SzSEi2GNo6pxH7wBhJh0sX9KkdjY20H5xgRAem4
-    RBYstw0IQrmZFkie5hvX2liqTdDDM3kCvyRC/yg65nChH2xpihnfhZ54U6EGo4Jq
-    rxBdefNOueTxzl8thEUu2I+Sr8lZJYRjzrpuA/uv8Fv/+LkZYtut75maqdhgtdbQ
-    tdINBF2Edp/KFWKJ7afY4jvvAOQjDAqNEteT3A4YJVMSQvl5Hsd47pO/LAXlilNe
-    m5qjaehXu1rUHuB9MDJQnZ+5BkzBJQhnLRKlnLrzcs2CzjXlDmO5akQoqQ8BHIRY
-    4vj2hM0y2eB6EUvEExQz8e/TO8z+Vrp/BHUvxUQ==
+    t=1521484515; b=cEdubC0luFQz8vAjSv9BOmCDtOqJld6RZ58mrrQhrU5oqXd
+    GEthxNVE2M9xjYKF3puoIo1kpxCOAEM6BWRcGMxadn//N6K7KEswq05i6mlnennm
+    8uEERupd9sFZvy18f22ZsHYs9KYqow2rx4y8mAY56ENL2Nvopa7RIM2XwxmZdz4E
+    UIa13PV5OTzebOQLglL1J3IF+QRfJs//81o/g2tJh+WorfTuukhC29XyJOxXHPFa
+    cp8vV9C+cUFT1Z1wivFxtqUK32n19DRwKXaI/2+8G1EQZvo0rpukZfhdhsKJ8OQJ
+    oHW/dmb1HVqAPD7kFD9WmxMnc+vZUq3/W6Sst8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484524; bh=TpUEAS1TDI6xpcnd0edlwZ5Yho
-    Q1X3Np0X766yAJbu0=; b=hQZDCvpJzbIbd4PQgh4uF45gr8vDtUo/B0OQhwMNmr
-    5w4h1heBGqBAGn4cA3E8G5Ns0D6m3NXl5Lw8DhhGnxbKp0Kq9wzgFLkJh5AWq5Rj
-    l5wczWnMV8oMwXMD3VKESwps5qbzKqN8Su9Bnk5SKOtZ65WuBJvJy8KnToRjZNzT
-    KS1B03YqzK6QcEL+PcVuZKyAF2VMoveB8mO1F5dgyHfp19xHuzYDAck5m3EHVc1f
-    cJXwVrqa6sQDftHBuawv9I9GKShoO5YNnY3XFaeKSPhZXGY1i4AKfluQMtXgSMA/
-    Oh5bjeM9nTusNyf/Y8Csw3llCw2+lomtE0Tl819VIJMw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484515; bh=+bP0nq2IT6b6GU/XjLtMEXfcy8
+    Dh7CaTFQhEOwHT+P8=; b=hj+be0p9X5pzd0RhwbW+PAxHf/WM1cJ/lexZG84afx
+    B5uB7wOQLH1Ag0zeVxu0xnIe/4/iTXjIb7SUGIchapaZNWN55Hb+U2KBhymMfUy4
+    ofiQBDPUD9xY3WWrCKtDsLd5nZZ19JlYL+Dst+SDQ54CzGUCyBb2uuTcwxjUsZ/m
+    ONPv2cbyLD5r6u1TGBAE+5wdPdWjm1nHBjMTopxsnZ5bNMtm0uNoGWi0+/ylgTBt
+    JKNvJJqVNCkKiUBUW/CSqjOBGgVOco+b7+ga8GfqrSlnp4tlHZzlHehkzLmp/7Ei
+    U7gAi0z9MOi5WdM67FFPjJ41aOha35E7HNchxygDme2w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefudduieenucevlhhushhtvghrufhiiigvpeduvd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudeifeenucevlhhushhtvghrufhiiigvpeekvd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefudduieenucevlhhushhtvghrufhiiigvpeduvd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudeifeenucevlhhushhtvghrufhiiigvpeekvd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032166AbeCSSdH (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:33:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54146 "EHLO
+        id S1032183AbeCSSdP (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:33:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032160AbeCSSdE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:04 -0400
+        with ESMTP id S1032180AbeCSSdN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.15 51/52] phy: phy-brcm-usb-init: DRD mode can cause crash on startup
-Date: Mon, 19 Mar 2018 19:08:49 +0100
-Message-Id: <20180319180737.751421102@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.15 29/52] irqchip/gic-v3-its: Ensure nr_ites >= nr_lpis
+Date: Mon, 19 Mar 2018 19:08:27 +0100
+Message-Id: <20180319180736.693337312@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -81,43 +80,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Cooper <al.cooper@broadcom.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 0aa0c12262fd848c48448c39ff6c1c097be00dd4 upstream.
+commit 4f2c7583e33eb08dc09dd2e25574b80175ba7d93 upstream.
 
-This is caused by a bug in the BDC core. When the BDC core comes
-out of reset and it's not selected, it gets a backup clock. When
-the BDC core is selected, it get's the main clock. If HOST mode
-is then selected the BDC core has the main clock shut off but
-the backup clock is not restored.
+When struct its_device instances are created, the nr_ites member
+will be set to a power of 2 that equals or exceeds the requested
+number of MSIs passed to the msi_prepare() callback. At the same
+time, the LPI map is allocated to be some multiple of 32 in size,
+where the allocated size may be less than the requested size
+depending on whether a contiguous range of sufficient size is
+available in the global LPI bitmap.
 
-The failure scenario and cause are as follows:
-- DRD mode is active
-- Device mode is selected first in bootloader
-- When host mode is now selected, the clock to the BDC is cut off.
-- BDC registers are inaccessible and therefore the BDC driver
-  crashes upon Linux boot.
+This may result in the situation where the nr_ites < nr_lpis, and
+since nr_ites is what we program into the hardware when we map the
+device, the additional LPIs will be non-functional.
 
-The fix is to have the phy driver always force a BDC reset on
-startup.
+For bog standard hardware, this does not really matter. However,
+in cases where ITS device IDs are shared between different PCIe
+devices, we may end up allocating these additional LPIs without
+taking into account that they don't actually work.
 
-Fixes: 49859e55e364 ("phy: usb: phy-brcm-usb: Add Broadcom STB USB phy driver")
-Signed-off-by: Al Cooper <alcooperx@gmail.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+So let's make nr_ites at least 32. This ensures that all allocated
+LPIs are 'live', and that its_alloc_device_irq() will fail when
+attempts are made to allocate MSIs beyond what was allocated in
+the first place.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[maz: updated comment]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/broadcom/phy-brcm-usb-init.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/irqchip/irq-gic-v3-its.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/phy/broadcom/phy-brcm-usb-init.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
-@@ -917,6 +917,7 @@ void brcm_usb_init_common(struct brcm_us
- 			USB_CTRL_UNSET_FAMILY(params, USB_PM, BDC_SOFT_RESETB);
- 			break;
- 		default:
-+			USB_CTRL_UNSET_FAMILY(params, USB_PM, BDC_SOFT_RESETB);
- 			USB_CTRL_SET_FAMILY(params, USB_PM, BDC_SOFT_RESETB);
- 		break;
- 		}
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1412,7 +1412,7 @@ static struct irq_chip its_irq_chip = {
+  * This gives us (((1UL << id_bits) - 8192) >> 5) possible allocations.
+  */
+ #define IRQS_PER_CHUNK_SHIFT	5
+-#define IRQS_PER_CHUNK		(1 << IRQS_PER_CHUNK_SHIFT)
++#define IRQS_PER_CHUNK		(1UL << IRQS_PER_CHUNK_SHIFT)
+ #define ITS_MAX_LPI_NRBITS	16 /* 64K LPIs */
+ 
+ static unsigned long *lpi_bitmap;
+@@ -2119,11 +2119,10 @@ static struct its_device *its_create_dev
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	/*
+-	 * At least one bit of EventID is being used, hence a minimum
+-	 * of two entries. No, the architecture doesn't let you
+-	 * express an ITT with a single entry.
++	 * We allocate at least one chunk worth of LPIs bet device,
++	 * and thus that many ITEs. The device may require less though.
+ 	 */
+-	nr_ites = max(2UL, roundup_pow_of_two(nvecs));
++	nr_ites = max(IRQS_PER_CHUNK, roundup_pow_of_two(nvecs));
+ 	sz = nr_ites * its->ite_size;
+ 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+ 	itt = kzalloc(sz, GFP_KERNEL);
