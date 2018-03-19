@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvHTYamn/c6zOYxaV8SCPPdLmbuCi/5Sieg8NeCs8cMSa6lQJaUk7r5up4sWyaUviozD+ft
-ARC-Seal: i=1; a=rsa-sha256; t=1521483618; cv=none;
+X-Google-Smtp-Source: AG47ELvBaFgzqMtT6HBxJob1opc6qMSSderWWnXidiSycrD+4ECF62CQGJTL5OWzuNoOc7tu0U7H
+ARC-Seal: i=1; a=rsa-sha256; t=1521483615; cv=none;
         d=google.com; s=arc-20160816;
-        b=VuGJadTgqq27oqaWPymW6o7+cPhxiAsqBeJTm4824hFZ+vpsdKZ425i12XZxPBjUbB
-         rTYjl3PCfgRDemfiXKk1Pwgdpzu9Qi7VJ9YXkXVK8twlgFW2x7BGdjAcjytKu6S/r4pA
-         ojgEztqxWYGQ1no/Pg1KjrI2Mo2Dz+7EpNPVAYqIHErdhzvfynCnNXCmU2JnwKQAo8jP
-         wtGiG66nRol1lKiyQ7fjCX1izP5/MW5ruy7D9m7kTnrDZu2CFkt0WFH3jwwCC3J6Bgmy
-         ciEfrNYxd7mhzaMfglFfEpIQa7686JUF6cFJOPPaeI28bggrEiuqeQGlZIICYbI9+Gzg
-         KQsQ==
+        b=JiGA3DRtRLWNimO+JP3L2ehusMs3B67ROgLNwxUQhIW2yeFyXEncy+9Mj352wTAPi9
+         NfvY9wXkgs9kOYRsGDHKDJv8IIoZCrkTMVhHMaKEsnVMur6lcxm6ECGgXcp6qfGGtJx+
+         CiWZ/CJlSQWji1Go3MCX0uSYQ8eImPXfQZTiwCgqK5YEFLNuTJ8OmT1m9oHoK983KfYG
+         Gmvu8Y03tqlxNK6nNjcmw496JT83Cm5CO1GtqBqEZK9v10ACjcKEAAgXZVkBqu2NU4K7
+         A6P3Q0PVNZq5JdJOh2Eb3WkW/4O7SahTmcKxUd3p3Qh5tXAZ2fxjeH8T/x8Inpez3A1z
+         KDmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EoB40qHLU/55MGSt36sKKG4rxn1HMnk2qoqj9k79EH4=;
-        b=IH02W3C7t4BqA3Ox3qveCkeXKlFY/EBdVSnpDUtqRMzEJdmWfcK6wzXNtfdFYljNRG
-         2i/SlofRGR2aoKz6VobJBsfUPLxJ/Pjh+O19s/T1pH8Gcb17KhOpvIduTVo/SdUFaeR0
-         HOrJhFt6FjK2u0ZJ4LA9iCTQRyNpOvnpKKVI2FKt9HiU0r/rDR1fhNAhlsCFjhB9ylUQ
-         Nw0iiQK5hG+5yj1roZ6VbmAIvVU4X0non+fIx/HpH8KnfSFGN5vcEt1ZpFypav1tpbVd
-         BqdLNNUTuu75atgqgPv6wTpJ7VfNCdLGqAMW0a9wLROpaJkjNqmJ0fGLu4MQjnqo+Nru
-         2SXA==
+        bh=NB60m3a5ZJAGC8m0CO4GObmCzpQfM45D8y1e0BpKRN0=;
+        b=r6/Wa4w6yrhHI4yqIqzcz6tD+p/ds28eBBVO4xQaeRGDkU34ph7nbxTY0cPNLWD+3B
+         F3I7rOcPs3cxzIVKV7qKZjWXTbIOoiri78ZoSZG+wsO0K1hYO9vvYwoAeRcBC4VBvDqR
+         ZyBE3/tdPdk7lgouuD+dkrHqFRD7tj1060lv0LXC7sHITSfqMoyrMA1kaMKt6c2Xt/s8
+         1Iipw++XVMVfvSBUpKuHF2IAIMbquHpoX5F9cmS+RO+rjcYRxQdVQ9QFdWY/arv041C7
+         nPwjO3Zg02rmnfwEJ/wjx3k964xyLS5DzFSKLQj3zN88arlFpRxQvrkMsySXlXgKOcWh
+         2xQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Satish Kharat <satishkh@cisco.com>,
-	Sesidhar Baddela <sebaddel@cisco.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Stephane Eranian <eranian@google.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 053/241] scsi: fnic: Fix for "Number of Active IOs" in fnicstats becoming negative
-Date: Mon, 19 Mar 2018 19:05:18 +0100
-Message-Id: <20180319180753.416154897@linuxfoundation.org>
+Subject: [PATCH 4.9 026/241] perf tools: Make perf_event__synthesize_mmap_events() scale
+Date: Mon, 19 Mar 2018 19:04:51 +0100
+Message-Id: <20180319180752.248879504@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391206708329457?=
-X-GMAIL-MSGID: =?utf-8?q?1595391206708329457?=
+X-GMAIL-THRID: =?utf-8?q?1595390579832084983?=
+X-GMAIL-MSGID: =?utf-8?q?1595391204064498294?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,59 +54,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Satish Kharat <satishkh@cisco.com>
+From: Stephane Eranian <eranian@google.com>
 
 
-[ Upstream commit 7ef539c88d7d394410d547c9f082d477093a2a22 ]
+[ Upstream commit 88b897a30c525c2eee6e7f16e1e8d0f18830845e ]
 
-Fixing the IO stats update (Active IOs and IO completion) to prevent
-"Number of Active IOs" from becoming negative in the fnistats output.
+This patch significantly improves the execution time of
+perf_event__synthesize_mmap_events() when running perf record on systems
+where processes have lots of threads.
 
-Signed-off-by: Satish Kharat <satishkh@cisco.com>
-Signed-off-by: Sesidhar Baddela <sebaddel@cisco.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+It just happens that cat /proc/pid/maps support uses a O(N^2) algorithm to
+generate each map line in the maps file.  If you have 1000 threads, then you
+have necessarily 1000 stacks.  For each vma, you need to check if it
+corresponds to a thread's stack.  With a large number of threads, this can take
+a very long time. I have seen latencies >> 10mn.
+
+As of today, perf does not use the fact that a mapping is a stack, therefore we
+can work around the issue by using /proc/pid/tasks/pid/maps.  This entry does
+not try to map a vma to stack and is thus much faster with no loss of
+functonality.
+
+The proc-map-timeout logic is kept in case users still want some upper limit.
+
+In V2, we fix the file path from /proc/pid/tasks/pid/maps to actual
+/proc/pid/task/pid/maps, tasks -> task.  Thanks Arnaldo for catching this.
+
+Committer note:
+
+This problem seems to have been elliminated in the kernel since commit :
+b18cb64ead40 ("fs/proc: Stop trying to report thread stacks").
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20170315135059.GC2177@redhat.com
+Link: http://lkml.kernel.org/r/1489598233-25586-1-git-send-email-eranian@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/fnic/fnic_scsi.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ tools/perf/util/event.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/fnic/fnic_scsi.c
-+++ b/drivers/scsi/fnic/fnic_scsi.c
-@@ -1127,12 +1127,6 @@ static void fnic_fcpio_itmf_cmpl_handler
- 		else
- 			CMD_ABTS_STATUS(sc) = hdr_status;
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -255,8 +255,8 @@ int perf_event__synthesize_mmap_events(s
+ 	if (machine__is_default_guest(machine))
+ 		return 0;
  
--		atomic64_dec(&fnic_stats->io_stats.active_ios);
--		if (atomic64_read(&fnic->io_cmpl_skip))
--			atomic64_dec(&fnic->io_cmpl_skip);
--		else
--			atomic64_inc(&fnic_stats->io_stats.io_completions);
--
- 		if (!(CMD_FLAGS(sc) & (FNIC_IO_ABORTED | FNIC_IO_DONE)))
- 			atomic64_inc(&misc_stats->no_icmnd_itmf_cmpls);
+-	snprintf(filename, sizeof(filename), "%s/proc/%d/maps",
+-		 machine->root_dir, pid);
++	snprintf(filename, sizeof(filename), "%s/proc/%d/task/%d/maps",
++		 machine->root_dir, pid, pid);
  
-@@ -1173,6 +1167,11 @@ static void fnic_fcpio_itmf_cmpl_handler
- 					(((u64)CMD_FLAGS(sc) << 32) |
- 					CMD_STATE(sc)));
- 				sc->scsi_done(sc);
-+				atomic64_dec(&fnic_stats->io_stats.active_ios);
-+				if (atomic64_read(&fnic->io_cmpl_skip))
-+					atomic64_dec(&fnic->io_cmpl_skip);
-+				else
-+					atomic64_inc(&fnic_stats->io_stats.io_completions);
- 			}
- 		}
- 
-@@ -1962,6 +1961,11 @@ int fnic_abort_cmd(struct scsi_cmnd *sc)
- 	/* Call SCSI completion function to complete the IO */
- 		sc->result = (DID_ABORT << 16);
- 		sc->scsi_done(sc);
-+		atomic64_dec(&fnic_stats->io_stats.active_ios);
-+		if (atomic64_read(&fnic->io_cmpl_skip))
-+			atomic64_dec(&fnic->io_cmpl_skip);
-+		else
-+			atomic64_inc(&fnic_stats->io_stats.io_completions);
- 	}
- 
- fnic_abort_cmd_end:
+ 	fp = fopen(filename, "r");
+ 	if (fp == NULL) {
