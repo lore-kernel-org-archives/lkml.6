@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsq2twJ/AJlWf6+7jNjG9dl8cpG9yvxrYSBteNSSTazhA0oDfg+OUxE2wWkR3ZFptXj//EL
-ARC-Seal: i=1; a=rsa-sha256; t=1521483879; cv=none;
+X-Google-Smtp-Source: AG47ELs9ModZy3xqWKKI5g+uXJ8BW9iw07dtPx/6WwVOyLmb6Mzbg0DqR+9Vzj9cNaJaGm0W6oRZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483876; cv=none;
         d=google.com; s=arc-20160816;
-        b=fb7+uxQRfk2TRs2ASYTpBHvFXM0b7t7hrdm3FYM01eXx1Vdv1Ztfe7hSf5ZmYUHqkw
-         F3zKoQhXL9qFtjIORq6zOwl4lvZyd2XV/qo5HCbSF6bfXXGS8TeRYS5sQPPfJoqEF2M+
-         zPXbFusiYVyuztUehFRDJOAb3jXb2+J93cQwSAcpBKtzB30jjDrDQPR3mVTx4NRGUfxx
-         yOo6VbeTDytVkM/LgfE4hZA5EwJBc51ieFGjB61UuvJa98AhEOZ4sffd/IkwN3iblV2q
-         yrFYpuPEp6TBSnxV/VHF5jtBoC2KcB24tJQajzsB7HzTCL/3i/BvCXHQjw2LW6oKFeT7
-         ATUw==
+        b=FvY4tY2x8bOaxlSqxKLua5aNdzHf1HWkjNcf284frwrNuf9mW3HDEUTmAJ9I9HTn+h
+         27lAhiRMUs6DxHyzuybdaPgbviDbLenKg7QKI3j/wJaoALYBiVpqu1+Z4XHPDL//I3L9
+         xw3+ZVIn9gokWH3lTweUyaGXST3COIGkJj43joOzAm/JsO5c+aVRX1PpLzcYEmwOHSWi
+         UEILYljGjqGVeorh/rtyrTzXQVKg9iVCcywD2hA1RtB0LmIDUHgtwq7IifKNbPavWh+B
+         zPD+Hh9ZVmI430Jod4rpO91w5JlpT38sf4/8yXgMbVdu/RbCuBCLggGbBI7EGEG9HXug
+         AoLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8Ow/VO5JDVz16uZX4rvzqz6VmEpPj+og87ZGJ+aNJS0=;
-        b=dkEHIYPdva7UylBmASpYFiPvCNfxV/ztNHBiB2cNHgWLRkeITb0Irf6s678CXWxswM
-         esKb2bet9EhLQum0rRx+zirGUaYAlsPLmrEZ0IaHJa3b3S8ippExplqCKoRJwxmPSAxT
-         ubauEZy4v6oWukVzgoC9jzQxgNly2O35VwhfFBmOP9dvfVayk5jA5+qa97Y3Y/A6kJWB
-         dO0eHwAVr6uWiF8rdBT2uBmQYyudNdxZ9y3EHnLlUrPJtqmYYooIaJFZwVeqOWry69TC
-         9S9wgjq7NafpwHdNwfpT7PZ7p+Jk88OncL+M/bT4I10bamrhu5tWfTP9ru3pDiskMIRq
-         x9aQ==
+        bh=92UALv014qQnNjdqmR4he8Ddh2p3B+azxMiDH3KvDik=;
+        b=xLGtZdCPtJd7ibcGJkLTQtRGxpVlj+5eh8BcKdVVnLcAMJyXdZfQyffHkWEQEYrdVo
+         FrGmHYKvWDRFRq0bhbR2vmE4T07URIRJwkDHY8XMNP4Ve1lrHFKfJZprPagVkkYGWX6D
+         C6NY4rF3aKBrRqU6rH9CuoSNUcnJE05MQQwLNlbOAC5RC8Mq8JjxtYMcaMEm99LaKlmX
+         8NlooACuuew/ugTOROOntX1Jb1WYPGrenfsyEFjK8Vuc0exmo9jqpA6jxfLmLzcnsRCQ
+         0cdXQL/DSvDqjo0J8rVFsMabDQOFBuT9PPmkOc7rRtMMc7cfBJ2zoqcNdhOuq1Daz12E
+         AEFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Senthilnathan Veppur <senthilnathanx.veppur@intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Takashi Iwai <tiwai@suse.de>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 151/241] ALSA: hda: Add Geminilake id to SKL_PLUS
-Date: Mon, 19 Mar 2018 19:06:56 +0100
-Message-Id: <20180319180757.434053664@linuxfoundation.org>
+Subject: [PATCH 4.9 150/241] scsi: sg: close race condition in sg_remove_sfp_usercontext()
+Date: Mon, 19 Mar 2018 19:06:55 +0100
+Message-Id: <20180319180757.394220388@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391479995544693?=
-X-GMAIL-MSGID: =?utf-8?q?1595391479995544693?=
+X-GMAIL-THRID: =?utf-8?q?1595390673021014173?=
+X-GMAIL-MSGID: =?utf-8?q?1595391477032212002?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +52,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+From: Hannes Reinecke <hare@suse.de>
 
 
-[ Upstream commit 12ee4022f67f8854061b46e5c0a7ad6258ab66c2 ]
+[ Upstream commit 97d27b0dd015e980ade63fda111fd1353276e28b ]
 
-Geminilake is Skylake family platform. So add it's id to skl_plus check.
+sg_remove_sfp_usercontext() is clearing any sg requests, but needs to
+take 'rq_list_lock' when modifying the list.
 
-Fixes: 126cfa2f5e15 ("ALSA: hda: Add Geminilake HDMI codec ID")
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Cc: Senthilnathan Veppur <senthilnathanx.veppur@intel.com>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Cc: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Tested-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/hda_intel.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/sg.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -369,8 +369,10 @@ enum {
- #define IS_KBL_LP(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x9d71)
- #define IS_KBL_H(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0xa2f0)
- #define IS_BXT(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x5a98)
-+#define IS_GLK(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x3198)
- #define IS_SKL_PLUS(pci) (IS_SKL(pci) || IS_SKL_LP(pci) || IS_BXT(pci)) || \
--			IS_KBL(pci) || IS_KBL_LP(pci) || IS_KBL_H(pci)
-+			IS_KBL(pci) || IS_KBL_LP(pci) || IS_KBL_H(pci)	|| \
-+			IS_GLK(pci)
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -524,6 +524,7 @@ sg_read(struct file *filp, char __user *
+ 	} else
+ 		count = (old_hdr->result == 0) ? 0 : -EIO;
+ 	sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	retval = count;
+ free_old_hdr:
+ 	kfree(old_hdr);
+@@ -564,6 +565,7 @@ sg_new_read(Sg_fd * sfp, char __user *bu
+ 	}
+ err_out:
+ 	err2 = sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	return err ? : err2 ? : count;
+ }
  
- static char *driver_short_names[] = {
- 	[AZX_DRIVER_ICH] = "HDA Intel",
+@@ -800,6 +802,7 @@ sg_common_write(Sg_fd * sfp, Sg_request
+ 		SCSI_LOG_TIMEOUT(1, sg_printk(KERN_INFO, sfp->parentdp,
+ 			"sg_common_write: start_req err=%d\n", k));
+ 		sg_finish_rem_req(srp);
++		sg_remove_request(sfp, srp);
+ 		return k;	/* probably out of space --> ENOMEM */
+ 	}
+ 	if (atomic_read(&sdp->detaching)) {
+@@ -812,6 +815,7 @@ sg_common_write(Sg_fd * sfp, Sg_request
+ 		}
+ 
+ 		sg_finish_rem_req(srp);
++		sg_remove_request(sfp, srp);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -1302,6 +1306,7 @@ sg_rq_end_io_usercontext(struct work_str
+ 	struct sg_fd *sfp = srp->parentfp;
+ 
+ 	sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	kref_put(&sfp->f_ref, sg_remove_sfp);
+ }
+ 
+@@ -1846,8 +1851,6 @@ sg_finish_rem_req(Sg_request *srp)
+ 	else
+ 		sg_remove_scat(sfp, req_schp);
+ 
+-	sg_remove_request(sfp, srp);
+-
+ 	return ret;
+ }
+ 
+@@ -2194,12 +2197,17 @@ sg_remove_sfp_usercontext(struct work_st
+ 	struct sg_fd *sfp = container_of(work, struct sg_fd, ew.work);
+ 	struct sg_device *sdp = sfp->parentdp;
+ 	Sg_request *srp;
++	unsigned long iflags;
+ 
+ 	/* Cleanup any responses which were never read(). */
++	write_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 	while (!list_empty(&sfp->rq_list)) {
+ 		srp = list_first_entry(&sfp->rq_list, Sg_request, entry);
+ 		sg_finish_rem_req(srp);
++		list_del(&srp->entry);
++		srp->parentfp = NULL;
+ 	}
++	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+ 
+ 	if (sfp->reserve.bufflen > 0) {
+ 		SCSI_LOG_TIMEOUT(6, sg_printk(KERN_INFO, sdp,
