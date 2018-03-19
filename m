@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvluyaaP9kYdBHmbfevbOR+CGEF5UIM+IRQ1dmuOdJbtA3yBCzMe9vXbcoPU0EEuPpC7qfS
-ARC-Seal: i=1; a=rsa-sha256; t=1521484173; cv=none;
+X-Google-Smtp-Source: AG47ELsUa360YcM36s6G1NTV48YQzp8rpRt7WS5ZuqMdCRjkoAqYLFtilaPlVsElKqE7DciyZMyL
+ARC-Seal: i=1; a=rsa-sha256; t=1521484167; cv=none;
         d=google.com; s=arc-20160816;
-        b=IJoNtZ4XLNrg8eGcb61AczFklokOhcFJGSnfmsH/XPyIe4yVDYckqejoYUew2deq7C
-         1YNWh8s8NHthfJpc/UT7EIJbMkpOjCaZcOb19NnGuVkcGq1NG19UgEVsStFC5Z11SuOz
-         Pcq4EJIXscufeH2CxPvPgchtows3kDEHSwsQ5NXc/A/a3CfI6IwVpGYgneO7PCPs3TO8
-         P0A/m26xpVhIQXsv7vlu5vqjSTHK1cuSZakBL9Lz9geUqB2WwO6xcvMuqp+LDiYVLdQA
-         /99Dn+77Vthqu587+7EaxvP0pQHw1PIl5xuVb7wDYTYKceCrk4Xs0xQrC0CgeBENVr0N
-         4X/A==
+        b=tM69vhOwuRV2jjdIAy0q/gXBJrWZARHiZtx0vtubu5WeSZ3bi1L0j+Qp9hKGlC8JNo
+         W+dWcbanWaRduxwRl1V71q8scrB8BtWY0RGudk+dNw5MJ+IaownrRVC3Ij684KGMrV+t
+         xUM07i1HUHjrtryhYY7BBdowUXfBGGSLV+VDpelXzTxwfWr9Uz4dAXHkg+WOJORyGqYY
+         AACsHab0TG91Htm1ew/EJQgATI7gD2ygoB9r9S/IqIrz+SeXMY1vm9zKtfWZUNqmylNE
+         kddsDXdCHi6hmMqvuNrtZJrWBuaUIhxDQG6d6Q4U46r9YW2wjhVwGTuG+ZlHWa8xs65B
+         KgVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Cehx00yBSIscqUqZi6flj0RmZbu+oybTgCQs9Y2BCxs=;
-        b=AL97MQg/2ZGmbUXOFUJ0bm4ZyMIBMUnQF7+jBWvxdY0LRVQser9M1vPGQszVQ/MLO7
-         BY26G7xqhl9mU4RJw8RoO2yrJFLCrVLbmAG4p/jsAHYF+WUsZgg5gmetF4y2KTzkoP8T
-         c26H2uxjjZUanGpkyl67NXHLso29cJh3rlUt0CZDNEDuxovT7d4Se5ojmpU2I5L1njSo
-         nvC+nne7HpWqGRrpdK0km7FzLklAHH1nm1J0X4mIE9q6K1pt7ncUjXQhH0t9abBWusjU
-         WBGFwHh2RhsdFkNF4aivaSAvbGnnMl8UM6nGgXqorUY6F/MHn8Qkvaaicy/qrYPyfPfT
-         6+QA==
+        bh=NeDNzi3ZHudXlDXWURNRexqCc5MmubJ/vGbHTgT3w84=;
+        b=JooaTCndJhWH3KUV8VychnbSm95ch6R8yk7JBg79xHk973FMUSbFEr2McDeuwOQPAd
+         nwd0EMYPkJldy0QIPBWiQXiVqC75oXs/TnOWD+/wXRwES4/6CgCJCSmqFs0kb5lwLSXc
+         QA1cHq/p7MNzKs3WOgOAObRY1Gadi6CtnT6aVVNxAupF9engHiom09IFNPwLqCnlnzpN
+         6B61hqc0IZFYcNEtmKA2hK/O6rGE5huOMBKqpRbF00JHNbYi6xR7OIyteTaMsdKC3hKW
+         k0qFsyHj9jjFz97EsKu1K0I9VH6/SmG9/T/imEih5Z79VMthuUOq/b4hnEw0a/VsU1u7
+         ot7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pierre Moreau <pierre.morrow@free.fr>,
-	Lukas Wunner <lukas@wunner.de>,
-	Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.14 17/41] drm/nouveau/bl: Fix oops on driver unbind
-Date: Mon, 19 Mar 2018 19:08:17 +0100
-Message-Id: <20180319180733.382875577@linuxfoundation.org>
+	Nicolai Stange <nstange@suse.de>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 15/41] ALSA: seq: Fix possible UAF in snd_seq_check_queue()
+Date: Mon, 19 Mar 2018 19:08:15 +0100
+Message-Id: <20180319180733.220848226@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391788434756898?=
-X-GMAIL-MSGID: =?utf-8?q?1595391788434756898?=
+X-GMAIL-THRID: =?utf-8?q?1595390645359098514?=
+X-GMAIL-MSGID: =?utf-8?q?1595391782089461227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +49,168 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 76f2e2bc627f7d08360ac731b6277d744d4eb599 upstream.
+commit d0f833065221cbfcbadf19fd4102bcfa9330006a upstream.
 
-Unbinding nouveau on a dual GPU MacBook Pro oopses because we iterate
-over the bl_connectors list in nouveau_backlight_exit() but skipped
-initializing it in nouveau_backlight_init().  Stacktrace for posterity:
+Although we've covered the races between concurrent write() and
+ioctl() in the previous patch series, there is still a possible UAF in
+the following scenario:
 
-    BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-    IP: nouveau_backlight_exit+0x2b/0x70 [nouveau]
-    nouveau_display_destroy+0x29/0x80 [nouveau]
-    nouveau_drm_unload+0x65/0xe0 [nouveau]
-    drm_dev_unregister+0x3c/0xe0 [drm]
-    drm_put_dev+0x2e/0x60 [drm]
-    nouveau_drm_device_remove+0x47/0x70 [nouveau]
-    pci_device_remove+0x36/0xb0
-    device_release_driver_internal+0x157/0x220
-    driver_detach+0x39/0x70
-    bus_remove_driver+0x51/0xd0
-    pci_unregister_driver+0x2a/0xa0
-    nouveau_drm_exit+0x15/0xfb0 [nouveau]
-    SyS_delete_module+0x18c/0x290
-    system_call_fast_compare_end+0xc/0x6f
+A: user client closed		B: timer irq
+  -> snd_seq_release()		  -> snd_seq_timer_interrupt()
+    -> snd_seq_free_client()	    -> snd_seq_check_queue()
+				      -> cell = snd_seq_prioq_cell_peek()
+      -> snd_seq_prioq_leave()
+         .... removing all cells
+      -> snd_seq_pool_done()
+         .... vfree()
+				      -> snd_seq_compare_tick_time(cell)
+				         ... Oops
 
-Fixes: b53ac1ee12a3 ("drm/nouveau/bl: Do not register interface if Apple GMUX detected")
-Cc: stable@vger.kernel.org # v4.10+
-Cc: Pierre Moreau <pierre.morrow@free.fr>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+So the problem is that a cell is peeked and accessed without any
+protection until it's retrieved from the queue again via
+snd_seq_prioq_cell_out().
+
+This patch tries to address it, also cleans up the code by a slight
+refactoring.  snd_seq_prioq_cell_out() now receives an extra pointer
+argument.  When it's non-NULL, the function checks the event timestamp
+with the given pointer.  The caller needs to pass the right reference
+either to snd_seq_tick or snd_seq_realtime depending on the event
+timestamp type.
+
+A good news is that the above change allows us to remove the
+snd_seq_prioq_cell_peek(), too, thus the patch actually reduces the
+code size.
+
+Reviewed-by: Nicolai Stange <nstange@suse.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_backlight.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/core/seq/seq_prioq.c |   28 ++++++++++++++--------------
+ sound/core/seq/seq_prioq.h |    6 ++----
+ sound/core/seq/seq_queue.c |   28 +++++++++-------------------
+ 3 files changed, 25 insertions(+), 37 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-@@ -268,13 +268,13 @@ nouveau_backlight_init(struct drm_device
- 	struct nvif_device *device = &drm->client.device;
- 	struct drm_connector *connector;
+--- a/sound/core/seq/seq_prioq.c
++++ b/sound/core/seq/seq_prioq.c
+@@ -87,7 +87,7 @@ void snd_seq_prioq_delete(struct snd_seq
+ 	if (f->cells > 0) {
+ 		/* drain prioQ */
+ 		while (f->cells > 0)
+-			snd_seq_cell_free(snd_seq_prioq_cell_out(f));
++			snd_seq_cell_free(snd_seq_prioq_cell_out(f, NULL));
+ 	}
+ 	
+ 	kfree(f);
+@@ -214,8 +214,18 @@ int snd_seq_prioq_cell_in(struct snd_seq
+ 	return 0;
+ }
  
-+	INIT_LIST_HEAD(&drm->bl_connectors);
++/* return 1 if the current time >= event timestamp */
++static int event_is_ready(struct snd_seq_event *ev, void *current_time)
++{
++	if ((ev->flags & SNDRV_SEQ_TIME_STAMP_MASK) == SNDRV_SEQ_TIME_STAMP_TICK)
++		return snd_seq_compare_tick_time(current_time, &ev->time.tick);
++	else
++		return snd_seq_compare_real_time(current_time, &ev->time.time);
++}
 +
- 	if (apple_gmux_present()) {
- 		NV_INFO(drm, "Apple GMUX detected: not registering Nouveau backlight interface\n");
- 		return 0;
+ /* dequeue cell from prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f)
++struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
++						  void *current_time)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	unsigned long flags;
+@@ -227,6 +237,8 @@ struct snd_seq_event_cell *snd_seq_prioq
+ 	spin_lock_irqsave(&f->lock, flags);
+ 
+ 	cell = f->head;
++	if (cell && current_time && !event_is_ready(&cell->event, current_time))
++		cell = NULL;
+ 	if (cell) {
+ 		f->head = cell->next;
+ 
+@@ -252,18 +264,6 @@ int snd_seq_prioq_avail(struct snd_seq_p
+ 	return f->cells;
+ }
+ 
+-
+-/* peek at cell at the head of the prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq * f)
+-{
+-	if (f == NULL) {
+-		pr_debug("ALSA: seq: snd_seq_prioq_cell_in() called with NULL prioq\n");
+-		return NULL;
+-	}
+-	return f->head;
+-}
+-
+-
+ static inline int prioq_match(struct snd_seq_event_cell *cell,
+ 			      int client, int timestamp)
+ {
+--- a/sound/core/seq/seq_prioq.h
++++ b/sound/core/seq/seq_prioq.h
+@@ -44,14 +44,12 @@ void snd_seq_prioq_delete(struct snd_seq
+ int snd_seq_prioq_cell_in(struct snd_seq_prioq *f, struct snd_seq_event_cell *cell);
+ 
+ /* dequeue cell from prioq */ 
+-struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f);
++struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
++						  void *current_time);
+ 
+ /* return number of events available in prioq */
+ int snd_seq_prioq_avail(struct snd_seq_prioq *f);
+ 
+-/* peek at cell at the head of the prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq *f);
+-
+ /* client left queue */
+ void snd_seq_prioq_leave(struct snd_seq_prioq *f, int client, int timestamp);        
+ 
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -277,30 +277,20 @@ void snd_seq_check_queue(struct snd_seq_
+ 
+       __again:
+ 	/* Process tick queue... */
+-	while ((cell = snd_seq_prioq_cell_peek(q->tickq)) != NULL) {
+-		if (snd_seq_compare_tick_time(&q->timer->tick.cur_tick,
+-					      &cell->event.time.tick)) {
+-			cell = snd_seq_prioq_cell_out(q->tickq);
+-			if (cell)
+-				snd_seq_dispatch_event(cell, atomic, hop);
+-		} else {
+-			/* event remains in the queue */
++	for (;;) {
++		cell = snd_seq_prioq_cell_out(q->tickq,
++					      &q->timer->tick.cur_tick);
++		if (!cell)
+ 			break;
+-		}
++		snd_seq_dispatch_event(cell, atomic, hop);
  	}
  
--	INIT_LIST_HEAD(&drm->bl_connectors);
 -
- 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
- 		if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS &&
- 		    connector->connector_type != DRM_MODE_CONNECTOR_eDP)
+ 	/* Process time queue... */
+-	while ((cell = snd_seq_prioq_cell_peek(q->timeq)) != NULL) {
+-		if (snd_seq_compare_real_time(&q->timer->cur_time,
+-					      &cell->event.time.time)) {
+-			cell = snd_seq_prioq_cell_out(q->timeq);
+-			if (cell)
+-				snd_seq_dispatch_event(cell, atomic, hop);
+-		} else {
+-			/* event remains in the queue */
++	for (;;) {
++		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
++		if (!cell)
+ 			break;
+-		}
++		snd_seq_dispatch_event(cell, atomic, hop);
+ 	}
+ 
+ 	/* free lock */
