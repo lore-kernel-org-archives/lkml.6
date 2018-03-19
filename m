@@ -1,85 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971584AbeCSUvY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:51:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967942AbeCSUvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:51:17 -0400
-Subject: Re: [RFC 01/12] KVM: arm/arm64: Avoid multiple dist->spis kfree
-To: Marc Zyngier <marc.zyngier@arm.com>, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org
-References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
- <1521451220-27754-2-git-send-email-eric.auger@redhat.com>
- <92f4b34e-f361-869a-7fca-c62a70e646b7@arm.com>
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <5371a89a-c0f7-6c45-3e3a-abd3ba108c97@redhat.com>
-Date: Mon, 19 Mar 2018 21:51:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S971601AbeCSUwe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:52:34 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:33766 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966623AbeCSSJD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:09:03 -0400
+X-Google-Smtp-Source: AG47ELvVOqV+krMMmOWeAQxqAYIrdAVUH5vs7kqmAgRNujXt8Geo0Lb87H0bLuNREr8o2CEDVTZ0wowcQjdwSheYbgY=
 MIME-Version: 1.0
-In-Reply-To: <92f4b34e-f361-869a-7fca-c62a70e646b7@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180319174559.GG1757@magnolia>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152112916514.24669.8643877835071945330.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180319174559.GG1757@magnolia>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 19 Mar 2018 11:09:02 -0700
+Message-ID: <CAPcyv4hM5HOn-Gjn-Nqp_5rPL9ZK2MAjW79WvZaS7DbJnKDhbA@mail.gmail.com>
+Subject: Re: [PATCH v6 14/15] xfs: prepare xfs_break_layouts() for another
+ layout type
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 19/03/18 14:46, Marc Zyngier wrote:
-> On 19/03/18 09:20, Eric Auger wrote:
->> in case kvm_vgic_map_resources() fails, typically if the vgic
->> distributor is not defined, __kvm_vgic_destroy will be called
->> several times. Indeed kvm_vgic_map_resources() is called on
->> first vcpu run. As a result dist->spis is freeed twice and on
->> the second time it causes a "kernel BUG at mm/slub.c:3912!"
+On Mon, Mar 19, 2018 at 10:45 AM, Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> On Thu, Mar 15, 2018 at 08:52:45AM -0700, Dan Williams wrote:
+>> When xfs is operating as the back-end of a pNFS block server, it prevents
+>> collisions between local and remote operations by requiring a lease to
+>> be held for remotely accessed blocks. Local filesystem operations break
+>> those leases before writing or mutating the extent map of the file.
 >>
->> This patch avoids freeing dist->spis twice.
+>> A similar mechanism is needed to prevent operations on pinned dax
+>> mappings, like device-DMA, from colliding with extent unmap operations.
 >>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> BREAK_WRITE and BREAK_TRUNCATE are introduced as two distinct levels of
+>> layout breaking.
+>>
+>> Layouts are broken in the BREAK_WRITE case to ensure that layout-holders
+>> do not collide with local writes. Additionally, layouts are broken in
+>> the BREAK_TRUNCATE case to make sure the layout-holder has a consistent
+>> view of the file's extent map. While BREAK_WRITE breaks can be satisfied
+>> be recalling FL_LAYOUT leases, BREAK_TRUNCATE breaks additionally
+>> require waiting for busy dax-pages to go idle.
+>>
+>> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+>> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+>> Reported-by: Dave Chinner <david@fromorbit.com>
+>> Reported-by: Christoph Hellwig <hch@lst.de>
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 >> ---
->>  virt/kvm/arm/vgic/vgic-init.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>  fs/xfs/xfs_file.c  |   23 +++++++++++++++++------
+>>  fs/xfs/xfs_inode.h |   18 ++++++++++++++++--
+>>  fs/xfs/xfs_ioctl.c |    2 +-
+>>  fs/xfs/xfs_iops.c  |    5 +++--
+>>  4 files changed, 37 insertions(+), 11 deletions(-)
 >>
->> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
->> index 743ca5c..38fd5f1 100644
->> --- a/virt/kvm/arm/vgic/vgic-init.c
->> +++ b/virt/kvm/arm/vgic/vgic-init.c
->> @@ -324,7 +324,10 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
->>  	dist->ready = false;
->>  	dist->initialized = false;
->>  
->> -	kfree(dist->spis);
->> +	if (dist->spis) {
->> +		kfree(dist->spis);
->> +		dist->spis = NULL;
->> +	}
-> 
-> Given that kfree(NULL) is always a valid thing to do, you could write
-> the same thing just as
-> 
-> 	dist-> spis = NULL;
-> 
-> without any test.
-sure
-> 
->>  	dist->nr_spis = 0;
->>  
->>  	if (vgic_supports_direct_msis(kvm))
+>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+>> index 5742d395a4e4..399c5221f101 100644
+>> --- a/fs/xfs/xfs_file.c
+>> +++ b/fs/xfs/xfs_file.c
+>> @@ -352,7 +352,7 @@ xfs_file_aio_write_checks(
 >>
-> 
-> You also may want to add a Fixes tag to it.
-OK
+>>       xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+>>       *iolock |= XFS_MMAPLOCK_EXCL;
+>> -     error = xfs_break_layouts(inode, iolock);
+>> +     error = xfs_break_layouts(inode, iolock, BREAK_WRITE);
+>>       if (error) {
+>>               *iolock &= ~XFS_MMAPLOCK_EXCL;
+>>               xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+>> @@ -762,7 +762,8 @@ xfs_file_write_iter(
+>>  int
+>>  xfs_break_layouts(
+>>       struct inode            *inode,
+>> -     uint                    *iolock)
+>> +     uint                    *iolock,
+>> +     enum layout_break_reason reason)
+>>  {
+>>       struct xfs_inode        *ip = XFS_I(inode);
+>>       int                     ret;
+>> @@ -770,9 +771,19 @@ xfs_break_layouts(
+>>       ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
+>>                               | XFS_MMAPLOCK_EXCL));
+>>
+>> -     ret = xfs_break_leased_layouts(inode, iolock);
+>> -     if (ret > 0)
+>> -             ret = 0;
+>> +     switch (reason) {
+>> +     case BREAK_TRUNCATE:
+>> +             /* fall through */
+>> +     case BREAK_WRITE:
+>> +             ret = xfs_break_leased_layouts(inode, iolock);
+>> +             if (ret > 0)
+>> +                     ret = 0;
+>> +             break;
+>> +     default:
+>> +             ret = -EINVAL;
+>> +             break;
+>> +     }
+>> +
+>>       return ret;
+>>  }
+>>
+>> @@ -802,7 +813,7 @@ xfs_file_fallocate(
+>>               return -EOPNOTSUPP;
+>>
+>>       xfs_ilock(ip, iolock);
+>> -     error = xfs_break_layouts(inode, &iolock);
+>> +     error = xfs_break_layouts(inode, &iolock, BREAK_TRUNCATE);
+>>       if (error)
+>>               goto out_unlock;
+>>
+>> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+>> index 74c63f3a720f..1a66c7afcf45 100644
+>> --- a/fs/xfs/xfs_inode.h
+>> +++ b/fs/xfs/xfs_inode.h
+>> @@ -379,6 +379,20 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
+>>                                       >> XFS_ILOCK_SHIFT)
+>>
+>>  /*
+>> + * Layouts are broken in the BREAK_WRITE case to ensure that
+>> + * layout-holders do not collide with local writes. Additionally,
+>> + * layouts are broken in the BREAK_TRUNCATE case to make sure the
+>> + * layout-holder has a consistent view of the file's extent map. While
+>> + * BREAK_WRITE breaks can be satisfied be recalling FL_LAYOUT leases,
+>> + * BREAK_TRUNCATE breaks additionally require waiting for busy dax-pages
+>> + * to go idle.
+>> + */
+>> +enum layout_break_reason {
+>> +        BREAK_WRITE,
+>
+> I wonder if this belongs in a system header file since the same general
+> principle is going to apply to ext4 and others?  If this really is a
+> special xfs thing, then please use the "XFS_" prefix.
+>
+>> +        BREAK_TRUNCATE,
+>
+> The "truncate" part of the name misled me for a bit.  That operation is
+> really about "make sure there are no busy dax pages because we're about
+> to change some file pmem^Wblock mappings", right?  Truncation, hole
+> punching, reflinking, and zero_range (because it punches the range and
+> reallocates unwritten extents) all have to wait for busy dax pages to
+> become free before they can begin unmapping blocks.  So this isn't just
+> about truncation specifically; can I suggest "BREAK_UNMAPI" ?
 
-Thanks
+I like that name better.
 
-Eric
-> 
-> Thanks,
-> 
-> 	M.
-> 
+It isn't clear that this needs to go to a system header because I
+expect ext4 will only support BREAK_UNMAPI for dax and not care about
+BREAK_WRITE since that is an XFS-only / pNFS-only distinction in
+current code. However, I'll let Jan chime in if this guess is
+incorrect and ext4 plans to add pNFS block-server support.
+
+> (I also haven't figured out whether the same requirements apply to
+> things that *add* extent maps to the file, but I have to run to a
+> meeting in a few so wanted to get this email sent.)
+
+Add should not be a problem because DMA only ever starts after extents
+are added, i.e. there's no risk of DMA starting to invalid address
+because fs/dax.c arranges for extents to be allocated at fault time.
