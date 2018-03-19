@@ -1,9 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3175828-1521474734-2-13439110818856102536
+X-Cyrus-Session-Id: sloti22d1t05-3114250-1521474731-2-15958997588600795909
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, DCC_CHECK 1.1, FSL_BULK_SIG 1.316,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
@@ -13,65 +14,67 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521474734; b=lEcG1v5KsokMS51wA9S4xfT6PUMXlirUeEMIcdqkxNyqT0I
-    fhxoVjbCCkjxtL+v6SxfjeOqJF5lsLZaWS5xEtDkvE3vdMDXijnsaazxiOFesc72
-    6sIX4OzKLvsvpeFEvaiA70YcGuKs+R9Dvu4Frf1M2xeWvMV2QraBuEQJc1WwE9i2
-    OA4UeH63RV3qsZjYYAcuD51Bnqt/YlgtkOVRmCwLOzrXgO3oyKYLVBBOoBslYGeF
-    EUA9psc0uSyU3KwTRREojBXyAJi45C9C8aBcmBKfozyZDzqwHgUOWVt7Wmc2XXrI
-    K4a8u0Gd6mL2fvo9YzQt5k4q/1nmResp9+pl84g==
+    t=1521474730; b=S7N/0mYSvedJhrCntIoDVcSTHqYRexQ5dkfklZ5ElDISYVT
+    +4ZGTMcop+ahh8FNXgJ89a/wuw4zJHCZS4SUt/6CmGimfJTBC+kVzprlV69usjCb
+    veWiQFd1Go7dZUOS1nQJ4MozIjCaO+Ia9U+G2sDVldvOTCJqHRrOyX9W4cenaT0v
+    ij4FJ4mwY+1hyfkl4A5oObxF0+U9osKO+0m+86Db7BN8FjMkUP9jpd/vXYgBFvoh
+    paefeZm2FQxVTgJHRzIfDZKV77t3cFO388m0wkRb6T0dCI+zuMoyOE5/l3aVHR3R
+    p8XWCvFtGZ87pOeUZ8JVlZW+gI+NyazOyzMi4iA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521474734; bh=XjTb+F
-    V6a+ei1GqZhrkj6xRWOwKJxuIEkv0VdfFt09U=; b=Tp+eZj8zct65jOpkrQCDjF
-    7tHKr9UvnsW36KXIVEz1Zw7ABWM66f7xsHQiPF+Emaukq2iaIRS16jMmds2QW8Zy
-    b+DMHVG5eFYn23Z+KQvHWymElihvLy3lCDdiwD/aBHdHbEmabnejS6WM07PclOCe
-    N9rj1OtFGDG/focy0t9p76I1rDQjIJfBRyYzWa00spSEZUWlK/CCXpo3B72KqhwS
-    hbIQxFVHTde3mGg01xbGv900jkwwPgYAgODAQv5vTXcofXT7K4dYNOQLavZjUVWq
-    GmWmAMUIl+VBFbPEUtD5DOqaleA6mFAQQJKTphrrgndCvVcWypQgjf9mlZF9xIDg
+    :mime-version:sender:list-id; s=arctest; t=1521474730; bh=kHQv4x
+    g3Njc8S5tHrad90KiE0vZ0Aj6ZqW8faQ4NirE=; b=AaB8IZ/TYXMJEMJ7m0BVOv
+    U0HinfElOnE9u6OLdQ4D4ek28TeRU0O952HNPus2GjqFEufr9CQe7HCzZa5E1eHa
+    yLc96Ehz/ioYS2V9rEN9PNGbHd5cc2tdKotgVQA0jDha0GxIrDcHAt9Gm4SKsq9x
+    TfXPWTHCZ0bitbhZvOiIgAR80AI4IOpDB0bbR/CDzk29gU4Uxjj17WBXZQ6QNpkD
+    rJF02yaHBi5hyt1WP5kfxghk+JSC3aUJkC1W9h0nOPEPpT81kMZmGtR5VlMyOgU6
+    WKKKQDhZpmLax7T+5zj6X3an0bE9kG5/6z1u6xedF5drnvyRYFytyvZZujbU6EMg
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ge/24d2t x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YZInhwVH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepghhnuhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepuddtgedugeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdejleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutdeftdeinecuvehluhhsthgvrhfuihiivgepudei;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ge/24d2t x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YZInhwVH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdektdculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepghhnuhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepuddtgedugeenucevlhhushhtvghrufhiiigvpeef;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdejleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutdeftdeinecuvehluhhsthgvrhfuihiivgepudei;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934084AbeCSPuT (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:50:19 -0400
-Received: from mail-by2nam01on0114.outbound.protection.outlook.com ([104.47.34.114]:57771
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S934094AbeCSPu0 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:50:26 -0400
+Received: from mail-bl2nam02on0111.outbound.protection.outlook.com ([104.47.38.111]:9280
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934070AbeCSPuP (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:50:15 -0400
+        id S934088AbeCSPuU (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:50:20 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Richard Biener <rguenther@suse.de>,
-        Jakub Jelinek <jakub@gcc.gnu.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+CC: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Kumar Gala <kumar.gala@freescale.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 115/124] crypto: aes-generic - build with -Os
- on gcc-7+
-Thread-Topic: [PATCH AUTOSEL for 4.15 115/124] crypto: aes-generic - build
- with -Os on gcc-7+
-Thread-Index: AQHTv5nSHXcUmL9aeUm4bSTOGIaRSA==
-Date: Mon, 19 Mar 2018 15:49:10 +0000
-Message-ID: <20180319154645.11350-115-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 120/124] signal/powerpc: Document conflicts
+ with SI_USER and SIGFPE and SIGTRAP
+Thread-Topic: [PATCH AUTOSEL for 4.15 120/124] signal/powerpc: Document
+ conflicts with SI_USER and SIGFPE and SIGTRAP
+Thread-Index: AQHTv5nW5xRLbmWqQ0m4B5eZ24XUqw==
+Date: Mon, 19 Mar 2018 15:49:17 +0000
+Message-ID: <20180319154645.11350-120-alexander.levin@microsoft.com>
 References: <20180319154645.11350-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319154645.11350-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,27 +83,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:OTKngZ/CJbR2Fc+yZmoB3wnaFLtsWKabse4hQx+q+OgGgu9pADE9ETrNlPknUGQwpKhdEhD0BM0x28hqaV27kfYSmDGeVx1IlXIL//E7fE6JasWmAj/GUTwsSXjBYQ4WZaf0qhvpehsJwdHOhrX6noFtGrpAWMktU+8kg26krteGeda6Z2ElhZX8m/t83PH6a7e2TF0zBinA2yWu7YSgHGzfL3xdKJf7sklY5Lzb84Y1yX12V5mZxEYyebv1Y9Qa;20:fZOmj1AnYqloz4EAKbdX/cqFheE+Ff/AapMNZqtfPeABi4CgmSfBdcOGjzNaKfXOQn+EsEq6FPWbNfykxp4zsQanjD40Omz/bcxLKQo+PjwJlWtyi8hga42PdWSrza4MIoGi1C7xKwUoZTtopzi8Zcmb+NL7ZUnkn4PvzQLUDX4=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:l0BqehK7jZsmnTUR+q1P40rl0n3eVZ57YXtUF/moKRActIcrJJrQph1h8SPyYp2TG+fRSeIw0TYRWJsiVLY4iBwZ+Ehe9ZATcA1qKJ3XDRWDSYfSvIXn+sMM4YHUO5lHhap6BlE5BanLjR58kCzZ71cLCu/KXBwu/3+aNrDlQ81haOd8nyrCIfZonc9Da27+hp1AFhQwvHZWwiuOu1aLoviYATOiGBGj/w6erIb6mbvzdoNUghvHmyPqtleasXHi;20:s1DeMkal64xXz5MjmRC1PQthuvVEXi/oPLfki8m0gBgA5nrtYacoSKaayCA3qWOI8ps3ynVLRkp9Oa0tLgA9AHa/ncJeA2CqIowQvReY5Q4yXW/1EemBj84a+CLFWhtggmbU0fnyg+UWDmvkJ3Jn+pDwhpdw9ij4TKcYcst3HN4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7c30531d-b251-4c46-8df7-08d58db112fe
+x-ms-office365-filtering-correlation-id: bab5f5b6-05fa-428b-7a01-08d58db116bd
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1109;
 x-ms-traffictypediagnostic: DM5PR2101MB1109:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB11099ED8C84D3BD0A5075DD8FBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(22074186197030)(89211679590171)(183786458502308);
+x-microsoft-antispam-prvs: <DM5PR2101MB1109610BDA16D70A9C8F88D7FBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(65623756079841)(101931422205132)(84791874153150);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1109;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1109;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(376002)(346002)(199004)(189003)(81166006)(10290500003)(107886003)(81156014)(106356001)(6506007)(8676002)(3846002)(36756003)(8936002)(97736004)(6116002)(1076002)(102836004)(68736007)(6666003)(3280700002)(2950100002)(3660700001)(478600001)(72206003)(59450400001)(2906002)(14454004)(966005)(76176011)(66066001)(6512007)(6306002)(5250100002)(10090500001)(2501003)(53936002)(6486002)(6436002)(26005)(316002)(22452003)(305945005)(7736002)(4326008)(25786009)(86362001)(86612001)(5660300001)(2900100001)(99286004)(54906003)(186003)(105586002)(110136005)(22906009)(41533002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: piRyZvFOhXs4vK6OFS3+WfvUAVWk6IqenPbaBe2QLpFFB9oWxx9zaGM6wIDFP1wYc8vtM/uTCqR8CcIkIe5wCFJEX4QZPG5Fg7MSw5f0uNP9HHStVdRqhjWsnnglVdd7xBHL3vup6gS0X0CKQ/7uxhchphg+B3Vlg6sitVY/gA35yMsk0/YzvxURwN59EpJWfBH+/KXhwIVZ/ZHGwQNN+x/UZ3es29WRyUnC9R/AqjXd1ecWISnP1U/WPibqzErPAqHYEx/SsPLEmqq7OiJVItsiqrAruUwpbltZ73dcfhgshjllFFdJwL4L6G1Upq7PdcGzLQ8BlZ+uAr8Bh79/Vg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(376002)(346002)(199004)(189003)(81166006)(10290500003)(107886003)(81156014)(106356001)(6506007)(8676002)(3846002)(36756003)(8936002)(97736004)(6116002)(1076002)(102836004)(68736007)(6666003)(3280700002)(2950100002)(3660700001)(478600001)(72206003)(2906002)(14454004)(966005)(76176011)(66066001)(8666007)(6512007)(6306002)(5250100002)(10090500001)(2501003)(53936002)(6486002)(6436002)(26005)(316002)(22452003)(305945005)(7736002)(4326008)(25786009)(86362001)(575784001)(86612001)(5660300001)(2900100001)(99286004)(54906003)(186003)(105586002)(110136005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: OdrvcxZu+ms8Iytqfa+5f8jHKkgkG9oKBTfQYc/5OoizqDSG02r5QpF6+PE3Z0LsUEMDt1VSsQ8Ykg+wvF2GsypViBxEBE902s6cDW07K+fiDliZhJQzivnjP13s4MueeHSPqi9nvNHPK+dKYFuXUPmEFjEJnl9/RqMXwvTttp2D2/hBddbW8cc+25iXxg6Oc0iAHc7ru0mIkS7rgdRdjou4DbKAXr97oxeQ5okGSnZ19PvvHW/LpirIEMRa96w+odnCQKPP+PkA55NHRw8xB2GOz5BFRy66s3aGASRpY0v1OnRW8DL6VhhNgKzh2nSF6sfM1+9odeffUYOv6cKcFA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c30531d-b251-4c46-8df7-08d58db112fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:10.6131
+X-MS-Exchange-CrossTenant-Network-Message-Id: bab5f5b6-05fa-428b-7a01-08d58db116bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:49:17.0826
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -111,95 +114,121 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit 148b974deea927f5dbb6c468af2707b488bfa2de ]
+[ Upstream commit cf4674c46c66e45f238f8f7e81af2a444b970c0a ]
 
-While testing other changes, I discovered that gcc-7.2.1 produces badly
-optimized code for aes_encrypt/aes_decrypt. This is especially true when
-CONFIG_UBSAN_SANITIZE_ALL is enabled, where it leads to extremely
-large stack usage that in turn might cause kernel stack overflows:
+Setting si_code to 0 results in a userspace seeing an si_code of 0.
+This is the same si_code as SI_USER.  Posix and common sense requires
+that SI_USER not be a signal specific si_code.  As such this use of 0
+for the si_code is a pretty horribly broken ABI.
 
-crypto/aes_generic.c: In function 'aes_encrypt':
-crypto/aes_generic.c:1371:1: warning: the frame size of 4880 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-crypto/aes_generic.c: In function 'aes_decrypt':
-crypto/aes_generic.c:1441:1: warning: the frame size of 4864 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
+Further use of si_code =3D=3D 0 guaranteed that copy_siginfo_to_user saw a
+value of __SI_KILL and now sees a value of SIL_KILL with the result
+that uid and pid fields are copied and which might copying the si_addr
+field by accident but certainly not by design.  Making this a very
+flakey implementation.
 
-I verified that this problem exists on all architectures that are
-supported by gcc-7.2, though arm64 in particular is less affected than
-the others. I also found that gcc-7.1 and gcc-8 do not show the extreme
-stack usage but still produce worse code than earlier versions for this
-file, apparently because of optimization passes that generally provide
-a substantial improvement in object code quality but understandably fail
-to find any shortcuts in the AES algorithm.
+Utilizing FPE_FIXME and TRAP_FIXME, siginfo_layout() will now return
+SIL_FAULT and the appropriate fields will be reliably copied.
 
-Possible workarounds include
-
-a) disabling -ftree-pre and -ftree-sra optimizations, this was an earlier
-   patch I tried, which reliably fixed the stack usage, but caused a
-   serious performance regression in some versions, as later testing
-   found.
-
-b) disabling UBSAN on this file or all ciphers, as suggested by Ard
-   Biesheuvel. This would lead to massively better crypto performance in
-   UBSAN-enabled kernels and avoid the stack usage, but there is a concern
-   over whether we should exclude arbitrary files from UBSAN at all.
-
-c) Forcing the optimization level in a different way. Similar to a),
-   but rather than deselecting specific optimization stages,
-   this now uses "gcc -Os" for this file, regardless of the
-   CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/SIZE option. This is a reliable
-   workaround for the stack consumption on all architecture, and I've
-   retested the performance results now on x86, cycles/byte (lower is
-   better) for cbc(aes-generic) with 256 bit keys:
-
-			-O2     -Os
-	gcc-6.3.1	14.9	15.1
-	gcc-7.0.1	14.7	15.3
-	gcc-7.1.1	15.3	14.7
-	gcc-7.2.1	16.8	15.9
-	gcc-8.0.0	15.5	15.6
-
-This implements the option c) by enabling forcing -Os on all compiler
-versions starting with gcc-7.1. As a workaround for PR83356, it would
-only be needed for gcc-7.2+ with UBSAN enabled, but since it also shows
-better performance on gcc-7.1 without UBSAN, it seems appropriate to
-use the faster version here as well.
-
-Side note: during testing, I also played with the AES code in libressl,
-which had a similar performance regression from gcc-6 to gcc-7.2,
-but was three times slower overall. It might be interesting to
-investigate that further and possibly port the Linux implementation
-into that.
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D83356
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D83651
-Cc: Richard Biener <rguenther@suse.de>
-Cc: Jakub Jelinek <jakub@gcc.gnu.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Possible ABI fixes includee:
+- Send the signal without siginfo
+- Don't generate a signal
+- Possibly assign and use an appropriate si_code
+- Don't handle cases which can't happen
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Kumar Gala <kumar.gala@freescale.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:  linuxppc-dev@lists.ozlabs.org
+Ref: 9bad068c24d7 ("[PATCH] ppc32: support for e500 and 85xx")
+Ref: 0ed70f6105ef ("PPC32: Provide proper siginfo information on various ex=
+ceptions.")
+History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.=
+git
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- crypto/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/include/uapi/asm/siginfo.h | 15 +++++++++++++++
+ arch/powerpc/kernel/traps.c             | 10 +++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/crypto/Makefile b/crypto/Makefile
-index d674884b2d51..daa69360e054 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_CRYPTO_TWOFISH_COMMON) +=3D twofish_common.o
- obj-$(CONFIG_CRYPTO_SERPENT) +=3D serpent_generic.o
- CFLAGS_serpent_generic.o :=3D $(call cc-option,-fsched-pressure)  # https:=
-//gcc.gnu.org/bugzilla/show_bug.cgi?id=3D79149
- obj-$(CONFIG_CRYPTO_AES) +=3D aes_generic.o
-+CFLAGS_aes_generic.o :=3D $(call cc-ifversion, -ge, 0701, -Os) # https://g=
-cc.gnu.org/bugzilla/show_bug.cgi?id=3D83356
- obj-$(CONFIG_CRYPTO_AES_TI) +=3D aes_ti.o
- obj-$(CONFIG_CRYPTO_CAMELLIA) +=3D camellia_generic.o
- obj-$(CONFIG_CRYPTO_CAST_COMMON) +=3D cast_common.o
+diff --git a/arch/powerpc/include/uapi/asm/siginfo.h b/arch/powerpc/include=
+/uapi/asm/siginfo.h
+index 1a691141e49f..444ca6c9989a 100644
+--- a/arch/powerpc/include/uapi/asm/siginfo.h
++++ b/arch/powerpc/include/uapi/asm/siginfo.h
+@@ -18,4 +18,19 @@
+ #undef NSIGTRAP
+ #define NSIGTRAP	4
+=20
++/*
++ * SIGFPE si_codes
++ */
++#ifdef __KERNEL__
++#define FPE_FIXME	0	/* Broken dup of SI_USER */
++#endif /* __KERNEL__ */
++
++/*
++ * SIGTRAP si_codes
++ */
++#ifdef __KERNEL__
++#define TRAP_FIXME	0	/* Broken dup of SI_USER */
++#endif /* __KERNEL__ */
++
++
+ #endif	/* _ASM_POWERPC_SIGINFO_H */
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index f3eb61be0d30..f2e6e1838952 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -917,7 +917,7 @@ void unknown_exception(struct pt_regs *regs)
+ 	printk("Bad trap at PC: %lx, SR: %lx, vector=3D%lx\n",
+ 	       regs->nip, regs->msr, regs->trap);
+=20
+-	_exception(SIGTRAP, regs, 0, 0);
++	_exception(SIGTRAP, regs, TRAP_FIXME, 0);
+=20
+ 	exception_exit(prev_state);
+ }
+@@ -939,7 +939,7 @@ void instruction_breakpoint_exception(struct pt_regs *r=
+egs)
+=20
+ void RunModeException(struct pt_regs *regs)
+ {
+-	_exception(SIGTRAP, regs, 0, 0);
++	_exception(SIGTRAP, regs, TRAP_FIXME, 0);
+ }
+=20
+ void single_step_exception(struct pt_regs *regs)
+@@ -978,7 +978,7 @@ static void emulate_single_step(struct pt_regs *regs)
+=20
+ static inline int __parse_fpscr(unsigned long fpscr)
+ {
+-	int ret =3D 0;
++	int ret =3D FPE_FIXME;
+=20
+ 	/* Invalid operation */
+ 	if ((fpscr & FPSCR_VE) && (fpscr & FPSCR_VX))
+@@ -1929,7 +1929,7 @@ void SPEFloatingPointException(struct pt_regs *regs)
+ 	extern int do_spe_mathemu(struct pt_regs *regs);
+ 	unsigned long spefscr;
+ 	int fpexc_mode;
+-	int code =3D 0;
++	int code =3D FPE_FIXME;
+ 	int err;
+=20
+ 	flush_spe_to_thread(current);
+@@ -1998,7 +1998,7 @@ void SPEFloatingPointRoundException(struct pt_regs *r=
+egs)
+ 		printk(KERN_ERR "unrecognized spe instruction "
+ 		       "in %s at %lx\n", current->comm, regs->nip);
+ 	} else {
+-		_exception(SIGFPE, regs, 0, regs->nip);
++		_exception(SIGFPE, regs, FPE_FIXME, regs->nip);
+ 		return;
+ 	}
+ }
 --=20
 2.14.1
