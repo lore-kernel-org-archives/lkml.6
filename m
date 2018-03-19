@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970835AbeCSTCa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41774 "EHLO mail.kernel.org"
+        id S1030322AbeCSTCg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:02:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969787AbeCSTCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:02:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD45217D6
+        id S970158AbeCSTCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:02:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA92521839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 11/14] perf annotate: Use ops->target.name when available for unresolved call targets
-Date: Mon, 19 Mar 2018 16:01:33 -0300
-Message-Id: <20180319190136.7441-12-acme@kernel.org>
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 13/14] objtool, perf: Fix GCC 8 -Wrestrict error
+Date: Mon, 19 Mar 2018 16:01:35 -0300
+Message-Id: <20180319190136.7441-14-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180319190136.7441-1-acme@kernel.org>
 References: <20180319190136.7441-1-acme@kernel.org>
@@ -30,82 +29,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-There is a bug where when using 'perf annotate timerqueue_add' the
-target for its only routine called with the 'callq' instruction,
-'rb_insert_color', doesn't get resolved from its address when parsing
-that 'callq' instruction.
+Starting with recent GCC 8 builds, objtool and perf fail to build with
+the following error:
 
-That symbol resolution works when using 'perf report --tui' and then
-doing annotation for 'timerqueue_add' from there, the vmlinux
-dso->symbols rb_tree somehow gets in a state that we can't find that
-address, that is a bug that has to be further investigated.
+  ../str_error_r.c: In function ‘str_error_r’:
+  ../str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+     snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
 
-But since the objdump output has the function name, i.e. the raw objdump
-disassembled line looks like:
+The code seems harmless, but there's probably no benefit in printing the
+'buf' pointer in this situation anyway, so just remove it to make GCC
+happy.
 
-So, before:
-
-  # perf annotate timerqueue_add
-
-              │      mov    %rbx,%rdi
-              │      mov    %rbx,(%rdx)
-              │    → callq  *ffffffff8184dc80
-              │      mov    0x8(%rbp),%rdx
-              │      test   %rdx,%rdx
-              │    ↓ je     67
-
-  # perf report
-
-              │      mov    %rbx,%rdi
-              │      mov    %rbx,(%rdx)
-              │    → callq  rb_insert_color
-              │      mov    0x8(%rbp),%rdx
-              │      test   %rdx,%rdx
-              │    ↓ je     67
-
-And after both look the same:
-
-  # perf annotate timerqueue_add
-
-              │      mov    %rbx,%rdi
-              │      mov    %rbx,(%rdx)
-              │    → callq  rb_insert_color
-              │      mov    0x8(%rbp),%rdx
-              │      test   %rdx,%rdx
-              │    ↓ je     67
-
->From 'perf report' one can annotate and navigate to that 'rb_insert_color'
-function, but not directly from 'perf annotate timerqueue_add', that
-remains to be investigated and fixed.
-
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-nkktz6355rhqtq7o8atr8f8r@git.kernel.org
+Link: http://lkml.kernel.org/r/20180316031154.juk2uncs7baffctp@treble
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/lib/str_error_r.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index ddad87f34a68..535357c6ce02 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -238,6 +238,9 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
- 	if (ops->target.addr == 0)
- 		return ins__raw_scnprintf(ins, bf, size, ops);
- 
-+	if (ops->target.name)
-+		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.name);
-+
- 	return scnprintf(bf, size, "%-6s *%" PRIx64, ins->name, ops->target.addr);
+diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
+index d6d65537b0d9..6aad8308a0ac 100644
+--- a/tools/lib/str_error_r.c
++++ b/tools/lib/str_error_r.c
+@@ -22,6 +22,6 @@ char *str_error_r(int errnum, char *buf, size_t buflen)
+ {
+ 	int err = strerror_r(errnum, buf, buflen);
+ 	if (err)
+-		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
++		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, [buf], %zd)=%d", errnum, buflen, err);
+ 	return buf;
  }
- 
 -- 
 2.14.3
