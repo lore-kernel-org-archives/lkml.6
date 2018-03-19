@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484064-2-15605975409415546218
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484062; b=ocGp01ZXzNl4h1mC8grHlODMPT89OHwVvSa60rLTUU+uqXc
-    pKtYPdrE0XgAZNd9qFB6COmgP1OQDN79HfAaz/E09iQ+vmjNYNSjjZo/cYV6Khr5
-    dBvPvRjGi2vJsSyGJkrw1C+oXPxhyW5tDAc2mLWZN23zH57o5ngfPhO1DEfqbKOZ
-    ucuWdR0uSbbNBAOq5mNLLl2qQfIXubIZQ0XSI81eyNq5yJbl9dzDwDuOENVTJtKN
-    jvmYk7tQ4rW9ryN2yi7rsr+MPHSGYjypeAeihKeLHCks7czRwi7Of7Hs5iV5o0r1
-    2TcwvjdmsFrMBsEPV62X68fMSqoWyLtuKvC+v8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484062; bh=AnnCdpY8XLXVLqLcNcCSTSduRL
-    zyOQN46XWi3aEOh2A=; b=h76zqeAoJ3Rw0LOHby1Fc6DyufGz9RLXL5J9QqsZNO
-    XqzjhOUR5a/JT8Ar7uaKuJUrnnnjo8ki36pyNrbc0APbplDphfaCeUr4KT6jBK3C
-    KFHnOWS8gF7jFk/t/NB0U165jV3t80upsDoo9cyMtsFL39nDACKRNWRyGL++QtGr
-    K4lsxdA9MLGeQIBRwkf8aJPQ8+ax2xBIp76uPMlEyXCTBUFwSc+wJTTRxRoxa3Yz
-    T7PnxRfgis+nPOXaQQ1R/UxwQMMhMxYMcAqZV6HNK1jkZqyWnBkV7cCeVR9t7D33
-    z2UlXLCSNfoxmBgN7MYCOEdtgtcYThGk2qApdQDPMaHw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeduieenucevlhhushhtvghrufhiiigvpeektd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeduieenucevlhhushhtvghrufhiiigvpeektd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031627AbeCSS1i (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:27:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51302 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970041AbeCSS1g (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:27:36 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELs4chsHf21yiRFPlV5Se1W2KRKtwJSmKjzvm2ai7848MldQW2+nV45e5/vbzLYiIHaLV/r7
+ARC-Seal: i=1; a=rsa-sha256; t=1521484063; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gtXoKL+WwJahTyw5nEn5m+X8a4dcP440fuNIlob/4RmidRmS7Xow+UOSn44kY3C6GO
+         m9heK5iVppPMH+kGdf1dbjXiLoF2EJD2jlpAG/kfVVvWjM6at/GrUm5rJ8WaGyo7EpH1
+         oNxNlqTJWTBAbPzpFDkO3R6As19HY4wok1/KAi48oCPpnKGd5Xze7V3raET+7do59GPQ
+         tB2Y7U8Z8sbz1RXlfbZthlQ7LxkUjcgcZbxUScAkdimaa8MeGBRkBwpsGmIVceBoeiM+
+         aPCYbLse/pUEcME37qVYdeq3wcyOWc43Gx0UNkPN1AeN2IJ60kuSHZHFsNygowjVwqT8
+         EkZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=4QHzFVY2NQqUl43oMM/vJmqtWaaXXzujAj7ObWgv1JE=;
+        b=PsaYXGLbyJeSRxZVnrfOVDBokEQ6MBJaxL49imfFTLW/fK6NNx9GmqdStkeHnOjgHp
+         TtZyo6I9dcOZt3PnsDDNauO6ueKbp6qcqwRTUyaE4nHgTWu+wWUcm8JgbE83WIQLiFT4
+         HqQQwiCrIU1VH96Kk9mdtCZVS2I1S6Ddw6MQFig4oPMUW7ZuK0iYzAtbAo5l7zOmccbE
+         eJ3QsJiG2U58jY0TprGesvF3KX+iGFVT/WtX6r6V8fRe3HyfQbsl6Ldeom+QGC7+ZGU0
+         LNCj2eRvbkMd5H3NfvirUlYYTWajf+Kb/uWDHXzFbllQcAeNggjQ56U8fH/z0hUSXb3V
+         iVRw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Kent <raven@themaw.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 180/241] userns: Dont fail follow_automount based on s_user_ns
-Date: Mon, 19 Mar 2018 19:07:25 +0100
-Message-Id: <20180319180758.600238403@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 183/241] power: supply: ab8500_charger: Bail out in case of error in ab8500_charger_init_hw_registers()
+Date: Mon, 19 Mar 2018 19:07:28 +0100
+Message-Id: <20180319180758.722055266@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391673878383494?=
+X-GMAIL-MSGID: =?utf-8?q?1595391673878383494?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,49 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit bbc3e471011417598e598707486f5d8814ec9c01 ]
+[ Upstream commit 09edcb647542487864e23aa8d2ef26be3e08978a ]
 
-When vfs_submount was added the test to limit automounts from
-filesystems that with s_user_ns != &init_user_ns accidentially left
-in follow_automount.  The test was never about any security concerns
-and was always about how do we implement this for filesystems whose
-s_user_ns != &init_user_ns.
+If an error occurs when we enable the backup battery charging, we should
+go through the error handling path directly.
 
-At the moment this check makes no difference as there are no
-filesystems that both set FS_USERNS_MOUNT and implement d_automount.
+Before commit db43e6c473b5 ("ab8500-bm: Add usb power path support") this
+was the case, but this commit has added some code between the last test and
+the 'out' label.
+So, in case of error, this added code is executed and the error may be
+silently ignored.
 
-Remove this check now while I am thinking about it so there will not
-be odd booby traps for someone who does want to make this combination
-work.
+Fix it by adding the missing 'goto out', as done in all other error
+handling paths.
 
-vfs_submount still needs improvements to allow this combination to work,
-and vfs_submount contains a check that presents a warning.
-
-The autofs4 filesystem could be modified to set FS_USERNS_MOUNT and it would
-need not work on this code path, as userspace performs the mounts.
-
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Fixes: aeaa4a79ff6a ("fs: Call d_automount with the filesystems creds")
-Acked-by:  Ian Kent <raven@themaw.net>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: db43e6c473b5 ("ab8500-bm: Add usb power path support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/namei.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/power/supply/ab8500_charger.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1121,9 +1121,6 @@ static int follow_automount(struct path
- 	    path->dentry->d_inode)
- 		return -EISDIR;
+--- a/drivers/power/supply/ab8500_charger.c
++++ b/drivers/power/supply/ab8500_charger.c
+@@ -3221,8 +3221,10 @@ static int ab8500_charger_init_hw_regist
+ 	ret = abx500_mask_and_set_register_interruptible(di->dev,
+ 		AB8500_RTC, AB8500_RTC_CTRL_REG,
+ 		RTC_BUP_CH_ENA, RTC_BUP_CH_ENA);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		dev_err(di->dev, "%s mask and set failed\n", __func__);
++		goto out;
++	}
  
--	if (path->dentry->d_sb->s_user_ns != &init_user_ns)
--		return -EACCES;
--
- 	nd->total_link_count++;
- 	if (nd->total_link_count >= 40)
- 		return -ELOOP;
+ 	if (is_ab8540(di->parent)) {
+ 		ret = abx500_mask_and_set_register_interruptible(di->dev,
