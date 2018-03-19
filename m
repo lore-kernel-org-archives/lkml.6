@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtrIq7KHoT8L6/2d2EgDtueJEWNUYrqRTbSFfN2dBVVQHxK6EbeFPcZB8NS9RIbahX+ewK8
-ARC-Seal: i=1; a=rsa-sha256; t=1521483233; cv=none;
+X-Google-Smtp-Source: AG47ELtnXNiSz/kWSonGKAx6/bzZ23v8jhWGyC58nkK5RdJkAFEvagSow5EFKBI1lxmjGXqjwRLO
+ARC-Seal: i=1; a=rsa-sha256; t=1521483225; cv=none;
         d=google.com; s=arc-20160816;
-        b=lKYxDkTaUglz7ZVMhEqrZfCjKA6Xb8+iUxGwLFbemWdxXhuD8nTtOQiSvTcg6t2dNs
-         a3ptns7pcG7REeFZ5Hy9hV1W4Xdmh4h8aN1o2U4LufY8d99Kba+2g+GVSHfDHx6IJOvD
-         8nl202pT8BtBgQrFIZFaC5WRxxwTga9hU0DGYemWjaqlWkOnGqfzRujV3nHzR5xGXhN9
-         pdEdGEoPSDTnqA2YummdYG38vt6I/oBtAVgEmb29fULnMJ/ExXfFxqCmyVwsOL/pI0YA
-         dr6ZSakFN9JCQep9Fpo/gRBFlAgVBdWpf878JApKgn5xi34HRyAwG2CXncjmL8/qKJXb
-         zF7g==
+        b=DTR85SSBjGA99SmZtwKXYQY+6bwY5DqJoO3dOun40pscvR2s+yQmvzqf2aWmXF86Zj
+         lFmC3CSgAIHJbR16/HKeiRjqfLECXxkwnfZyolNwgy37Ub2RPglUP9taXPqAFMR+CVov
+         aCk++zpEMzeffgSFN1Hy7DfhGeGb9SGbEb5BQbIF2X82TwNq4XqD463A+ayzBYWS7wQX
+         YSvplV7fsbXSotGw9umBEhhyR/O8BSjXGit17qGf3OdKINwKWVj/ml3/JNiOnmNTyQkm
+         3Gr1emdNTfcQCE3wDzpU5nAjXe3Aaw5HqihErx3fCMMTzXdQ45Rd328JSvsAuCkJEWBq
+         UOJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CI29eV/3OFXEl/18kqMkmxViz7Rwhqu7MpMeUwJUYgc=;
-        b=VSlIMazcmoqOIURQfwng19OABeJqQbGkWk7uE+A2C7sBXLunaGvNxy31UA9pomleyJ
-         SFZ5kxYxw7styuQxuoxkgiULHUtLwvTJxL2jvak0OHBSuYElZGEhysF1vX9dALehP2vG
-         Zb1m+fubWhZQzbSirO3SNfa2lLaPHpC7wmlyrbpIKFgjaMTa3X6gPJOn5GhsRA5obXTy
-         Dbf5K1xi+jmJmAHEi9UkIAcxAp2Njp8+aAXN7LhMl+ubY18YFoxujtw25MUDdgyrqPIn
-         4eDxy1ohWHcwsGtsnIZLpbapoYBhVL8BhdOi7Jk40QrsVuJ6bCLqvbD3itoLfREaX31W
-         8+/A==
+        bh=jyUtGWnLHAtnPjp6Rp5AjDqHozdB64dhUM/SDORUCgY=;
+        b=SSlubnaoTrImNqU6Nf42M1C9TAEdCUHL5Ydo6p1PR7lkZ9GCH0S9Q7N7TgUzoQcseF
+         OFyzuupDkWZKATS5AgnargYIqF0dwDwu03ZmcPcQfN1GHi/g6cgPKHh5c1y+xhaaPz0q
+         1/M0It6Q3pYgKJqYEICo21I46ceclsYX5+T000wLjZEvmxuB+J7ufsVKIODAdXpRBKhq
+         AW1PVOafBYa4gr1k8cTKTTYqf1WQWjcXVz3V+ORciH2ZK/I7l1QSoelp2YG5IfHm4kKG
+         MNeH7S4KMZXwAf1GPnGSgO15cJmEY0aNxTGUSOq01gEngTTPtdnZgiiZ9YF2WcPdLztj
+         3i6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anton Blanchard <anton@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Samuel Ortiz <sameo@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 049/134] powerpc: Avoid taking a data miss on every userspace instruction miss
-Date: Mon, 19 Mar 2018 19:05:32 +0100
-Message-Id: <20180319171856.441209238@linuxfoundation.org>
+Subject: [PATCH 4.4 046/134] NFC: nfcmrvl: double free on error path
+Date: Mon, 19 Mar 2018 19:05:29 +0100
+Message-Id: <20180319171856.024098991@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390545850143108?=
-X-GMAIL-MSGID: =?utf-8?q?1595390803189165871?=
+X-GMAIL-THRID: =?utf-8?q?1595390794553494961?=
+X-GMAIL-MSGID: =?utf-8?q?1595390794553494961?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anton Blanchard <anton@samba.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit a7a9dcd882a67b68568868b988289fce5ffd8419 ]
+[ Upstream commit ca42fb9e52d155547e6cf18cf26bce3e1a6af4ea ]
 
-Early on in do_page_fault() we call store_updates_sp(), regardless of
-the type of exception. For an instruction miss this doesn't make
-sense, because we only use this information to detect if a data miss
-is the result of a stack expansion instruction or not.
+The nci_spi_send() function calls kfree_skb(skb) on both error and
+success so this extra kfree_skb() is a double free.
 
-Worse still, it results in a data miss within every userspace
-instruction miss handler, because we try and load the very instruction
-we are about to install a pte for!
-
-A simple exec microbenchmark runs 6% faster on POWER8 with this fix:
-
- #include <stdlib.h>
- #include <stdio.h>
- #include <unistd.h>
-
-int main(int argc, char *argv[])
-{
-	unsigned long left = atol(argv[1]);
-	char leftstr[16];
-
-	if (left-- == 0)
-		return 0;
-
-	sprintf(leftstr, "%ld", left);
-	execlp(argv[0], argv[0], leftstr, NULL);
-	perror("exec failed\n");
-
-	return 0;
-}
-
-Pass the number of iterations on the command line (eg 10000) and time
-how long it takes to execute.
-
-Signed-off-by: Anton Blanchard <anton@samba.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: caf6e49bf6d0 ("NFC: nfcmrvl: add spi driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nfc/nfcmrvl/spi.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -294,7 +294,7 @@ int __kprobes do_page_fault(struct pt_re
- 	 * can result in fault, which will cause a deadlock when called with
- 	 * mmap_sem held
- 	 */
--	if (user_mode(regs))
-+	if (!is_exec && user_mode(regs))
- 		store_update_sp = store_updates_sp(regs);
+--- a/drivers/nfc/nfcmrvl/spi.c
++++ b/drivers/nfc/nfcmrvl/spi.c
+@@ -96,10 +96,9 @@ static int nfcmrvl_spi_nci_send(struct n
+ 	/* Send the SPI packet */
+ 	err = nci_spi_send(drv_data->nci_spi, &drv_data->handshake_completion,
+ 			   skb);
+-	if (err != 0) {
++	if (err)
+ 		nfc_err(priv->dev, "spi_send failed %d", err);
+-		kfree_skb(skb);
+-	}
++
+ 	return err;
+ }
  
- 	if (user_mode(regs))
