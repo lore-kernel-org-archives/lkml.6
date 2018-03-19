@@ -1,117 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755122AbeCSBdN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:33:13 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40526 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755069AbeCSBdK (ORCPT
+        id S1755104AbeCSBj6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:39:58 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:32809 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754916AbeCSBj4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 21:33:10 -0400
-X-Google-Smtp-Source: AG47ELtARb3rHigxOlWMsiaFT5hapOZ9dv0g0xmKy+CRa7HARpllmRLxSw87m6drJ5QIkssUlQcApw==
-Subject: Re: [PATCH v2 2/5] soc: mediatek: update power domain data of MT2712
-To: Weiyi Lu <weiyi.lu@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-Cc: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
- <20180312070342.4335-4-weiyi.lu@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <dda77bd3-cbf2-1954-bc52-7f851ec4844f@gmail.com>
-Date: Mon, 19 Mar 2018 02:33:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 18 Mar 2018 21:39:56 -0400
+X-Google-Smtp-Source: AG47ELuemFmMuhgm+gM2FjF+nN6rDkOfpLeiqpOAXwmvVC8deF5KvQdOftg5/Vng+EfcLEo8kw/yjAAexGj3ytVHXfg=
 MIME-Version: 1.0
-In-Reply-To: <20180312070342.4335-4-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201803180239.bVSVPTE1%fengguang.wu@intel.com>
+References: <20180315204401.68282-2-joelaf@google.com> <201803180239.bVSVPTE1%fengguang.wu@intel.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Sun, 18 Mar 2018 18:39:54 -0700
+Message-ID: <CAJWu+orG8WGqfsMd0=Z-4vCskW=LzRfWkQyNjZxSoDbE2YtKSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] tracing: Improve design of preemptirq tracepoints
+ and its users
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Mar 17, 2018 at 12:03 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Joel,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc5 next-20180316]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes/Improve-preemptirq-tracepoint-usage/20180317-155535
+> config: arm-moxart_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm
+>
+> All errors (new ones prefixed by >>):
+>
+>    arch/arm/kernel/entry-common.o: In function `no_work_pending':
+>>> (.entry.text+0x64): undefined reference to `trace_hardirqs_on'
+>    arch/arm/kernel/entry-common.o: In function `vector_swi':
+>    (.entry.text+0xf8): undefined reference to `trace_hardirqs_on'
+>    arch/arm/kernel/entry-armv.o: In function `__dabt_svc':
+>>> (.entry.text+0xa4): undefined reference to `trace_hardirqs_off'
+>    (.entry.text+0xb8): undefined reference to `trace_hardirqs_on'
+>    (.entry.text+0xc0): undefined reference to `trace_hardirqs_off'
+>    arch/arm/kernel/entry-armv.o: In function `__irq_svc':
 
+Fixed in the next rev. Sigh :-( Turns out kernel/trace/ wasn't being
+built at all because of a combination of
+CONFIG_PREEMPTIRQ_TRACEPOINTS=y but CONFIG_TRACING=n
 
-On 03/12/2018 08:03 AM, Weiyi Lu wrote:
-> 1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
-> according to MT2712 ECO design change
-> 2. add subdomain support for MT2712
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+I think the next rev looks much better now and its getting there, but
+I have to thoroughly test it before posting it again..
 
-Pushed to v4.16-next/soc
+thanks,
 
-Thanks!
-
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 59bd749c2f25..edf8fd6c2c85 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
->  		.name = "mfg",
->  		.sta_mask = PWR_STATUS_MFG,
->  		.ctl_offs = SPM_MFG_PWR_CON,
-> -		.sram_pdn_bits = GENMASK(11, 8),
-> -		.sram_pdn_ack_bits = GENMASK(19, 16),
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(16, 16),
->  		.clk_id = {CLK_MFG},
->  		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
->  		.active_wakeup = true,
->  	},
-> +	[MT2712_POWER_DOMAIN_MFG_SC1] = {
-> +		.name = "mfg_sc1",
-> +		.sta_mask = BIT(22),
-> +		.ctl_offs = 0x02c0,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(16, 16),
-> +		.clk_id = {CLK_NONE},
-> +		.active_wakeup = true,
-> +	},
-> +	[MT2712_POWER_DOMAIN_MFG_SC2] = {
-> +		.name = "mfg_sc2",
-> +		.sta_mask = BIT(23),
-> +		.ctl_offs = 0x02c4,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(16, 16),
-> +		.clk_id = {CLK_NONE},
-> +		.active_wakeup = true,
-> +	},
-> +	[MT2712_POWER_DOMAIN_MFG_SC3] = {
-> +		.name = "mfg_sc3",
-> +		.sta_mask = BIT(30),
-> +		.ctl_offs = 0x01f8,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(16, 16),
-> +		.clk_id = {CLK_NONE},
-> +		.active_wakeup = true,
-> +	},
-> +};
-> +
-> +static const struct scp_subdomain scp_subdomain_mt2712[] = {
-> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
-> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
-> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
-> +	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
-> +	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
-> +	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
->  };
->  
->  /*
-> @@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
->  static const struct scp_soc_data mt2712_data = {
->  	.domains = scp_domain_data_mt2712,
->  	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
-> +	.subdomains = scp_subdomain_mt2712,
-> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
->  	.regs = {
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-> 
+- Joel
