@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuEaNKQSZpJxPRBx8N1MrWKHLnUKa6U/oupM0EmavdNAoAuu3GCN+iAUh4eXlK4iPrSAa4w
-ARC-Seal: i=1; a=rsa-sha256; t=1521483515; cv=none;
+X-Google-Smtp-Source: AG47ELt2Cl23jz+K/4eugKnn5sQ49Ra5QSnp5PzVnotO2xMhechkVI7AjMeUU/g29gOatpaj9yEg
+ARC-Seal: i=1; a=rsa-sha256; t=1521483513; cv=none;
         d=google.com; s=arc-20160816;
-        b=svHTA8RcMuYV65BCE6TM4EJTkEYu4eGunSRaF4BmreTjZpVmzMW+xdjwP4ZI+rI+pM
-         euZIWY+teelSQjmL6VcbMaoxx1gb+E1sEvcKegENNlyxpFKIjqMNF3qs/liyOTTOYMgc
-         ZO7AxVtpLvAHI70iPxzc3+oTsrJjZHPXJhPzWk3HfjGCQEEZAYZozUfIkS92U6ro/Afq
-         p1RR5VcAKr2dYBnz38px8MHaFTQFLFA11rodQyv4J/J4J8SNK8/+ISc0FvtnejH/hB5/
-         UmUbRW7cYkq6UYl1SS59F9mRWNy4HEM5jAJez0EvDmD/XtDsNX2+iYsNcNydTWHwgDUE
-         RTnA==
+        b=zFRCrHSC5OG1x9fw8DOyeDN+HfOiWPvr1Z2po+HqKLtg2T/n6dJvgRb92WBvEGX3hS
+         WXx5a44niMDbnbQge2X0zeX+lmqSPr7eqY0/zF92ADtvv66M7sgQuF76CZbNfQSp6Fel
+         6jGbclyflF/eb2q5PSvpKUR93gdHo6F2BjCCSj1W+6NFjSjZ8unXaepPhzWbRWXGjhBu
+         K+GW9JimNCPLcIe+5R8aWR2UwBDd69Ou+FRoYLeYwOw12fapHjLs+F7n758+iPmNC/0L
+         DIV1QUxKvfe5sW9Ql4WwjFdRxeqqHKlZrYoZQRpUt0f917euYpXfkPQHqDDsnKnYl694
+         FaeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1Wl4Djimu/dLk4GQhVqfhdWyhGMwPRoJ5Gb4WxzL134=;
-        b=XQaVsDelgll13nQYcqI3tVdyV2HxWpGW4nkILCJAZqDHQYXAzea7kMydErm4xzIiK6
-         s6w58BNSE8Ia88w7nFPTdOUfL7taRZvgZo2lrDz9QV+pL6U3x70XwxjYftYTwDeSH9je
-         eIdmTyB4S3Po4b4hrWHiCLWXrznpus7gWLV5FNExVonxiKNE4xyLIR8L29k5+mPoKh4P
-         YROoT5KD0dreOQdRi6R6k/07WNKqsE2ZhePxoKtyYppoc3Sv60bNrHDsHtxgQmv/YzzD
-         kw5ZHdrQ2ssrQn1YlMxzHpiihzlcTQizLrQL4D/yk8e8J67CT9j35/NfkDq7vbyRYSR4
-         Jf2g==
+        bh=7uun66CoH6yGtz9KrI99Zp3bV5lTO8Wws8sEC/3vCUQ=;
+        b=b/aK4l8sP697iQvC0TqzkRvIMw1TWG5M+vz5+KBMhiU6cXAV9C5RBbeooE0zzmd5qh
+         sBKB2eEC/BOPS5qrWs86trmBZ1MGJ35CKQpj1ViH7BsIRPr7OZjvlNo01eJZFi0GLE0m
+         XwGvecRU63icbNbQdp2dmhDYCsV8mFq1RieDRjJMbUFoEwQgFNms/ul7K/WYvc7ThMqU
+         t6Zoxlj3uqgCiWWgd5L7ttVq6bHIhcO9lbj9MqsSN2uCR4t5iAvusfIldFk4J1oDn3im
+         NBDVmpr310O/TnPEyf8ZTSRCnefobjZLUMQBXqQReVTjXcz1D/8YAIDiZZ8cJUm3Txyh
+         2boA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Prarit Bhargava <prarit@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	David Arcari <darcari@redhat.com>,
-	Myron Stowe <mstowe@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Keith Busch <keith.busch@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 018/241] PCI/MSI: Stop disabling MSI/MSI-X in pci_device_shutdown()
-Date: Mon, 19 Mar 2018 19:04:43 +0100
-Message-Id: <20180319180751.920812867@linuxfoundation.org>
+Subject: [PATCH 4.9 017/241] net: mvpp2: set dma mask and coherent dma mask on PPv2.2
+Date: Mon, 19 Mar 2018 19:04:42 +0100
+Message-Id: <20180319180751.880741514@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390574168988527?=
-X-GMAIL-MSGID: =?utf-8?q?1595391099191949383?=
+X-GMAIL-THRID: =?utf-8?q?1595390557556706046?=
+X-GMAIL-MSGID: =?utf-8?q?1595391096373928476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,67 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
 
-[ Upstream commit fda78d7a0ead144f4b2cdb582dcba47911f4952c ]
+[ Upstream commit 2067e0a13cfe0b1bdca7b91bc5e4f2740b07d478 ]
 
-The pci_bus_type .shutdown method, pci_device_shutdown(), is called from
-device_shutdown() in the kernel restart and shutdown paths.
+On PPv2.2, the streaming mappings can be anywhere in the first 40 bits
+of the physical address space. However, for the coherent mappings, we
+still need them to be in the first 32 bits of the address space,
+because all BM pools share a single register to store the high 32 bits
+of the BM pool address, which means all BM pools must be allocated in
+the same 4GB memory area.
 
-Previously, pci_device_shutdown() called pci_msi_shutdown() and
-pci_msix_shutdown().  This disables MSI and MSI-X, which causes the device
-to fall back to raising interrupts via INTx.  But the driver is still bound
-to the device, it doesn't know about this change, and it likely doesn't
-have an INTx handler, so these INTx interrupts cause "nobody cared"
-warnings like this:
-
-  irq 16: nobody cared (try booting with the "irqpoll" option)
-  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.8.2-1.el7_UNSUPPORTED.x86_64 #1
-  Hardware name: Hewlett-Packard HP Z820 Workstation/158B, BIOS J63 v03.90 06/
-  ...
-
-The MSI disabling code was added by d52877c7b1af ("pci/irq: let
-pci_device_shutdown to call pci_msi_shutdown v2") because a driver left MSI
-enabled and kdump failed because the kexeced kernel wasn't prepared to
-receive the MSI interrupts.
-
-Subsequent commits 1851617cd2da ("PCI/MSI: Disable MSI at enumeration even
-if kernel doesn't support MSI") and  e80e7edc55ba ("PCI/MSI: Initialize MSI
-capability for all architectures") changed the kexeced kernel to disable
-all MSIs itself so it no longer depends on the crashed kernel to clean up
-after itself.
-
-Stop disabling MSI/MSI-X in pci_device_shutdown().  This resolves the
-"nobody cared" unhandled IRQ issue above.  It also allows PCI serial
-devices, which may rely on the MSI interrupts, to continue outputting
-messages during reboot/shutdown.
-
-[bhelgaas: changelog, drop pci_msi_shutdown() and pci_msix_shutdown() calls
-altogether]
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=187351
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: Alex Williamson <alex.williamson@redhat.com>
-CC: David Arcari <darcari@redhat.com>
-CC: Myron Stowe <mstowe@redhat.com>
-CC: Lukas Wunner <lukas@wunner.de>
-CC: Keith Busch <keith.busch@intel.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pci-driver.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -463,8 +463,6 @@ static void pci_device_shutdown(struct d
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6420,6 +6420,20 @@ static int mvpp2_probe(struct platform_d
+ 	/* Get system's tclk rate */
+ 	priv->tclk = clk_get_rate(priv->pp_clk);
  
- 	if (drv && drv->shutdown)
- 		drv->shutdown(pci_dev);
--	pci_msi_shutdown(pci_dev);
--	pci_msix_shutdown(pci_dev);
- 
- 	/*
- 	 * If this is a kexec reboot, turn off Bus Master bit on the
++	if (priv->hw_version == MVPP22) {
++		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(40));
++		if (err)
++			goto err_mg_clk;
++		/* Sadly, the BM pools all share the same register to
++		 * store the high 32 bits of their address. So they
++		 * must all have the same high 32 bits, which forces
++		 * us to restrict coherent memory to DMA_BIT_MASK(32).
++		 */
++		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
++		if (err)
++			goto err_mg_clk;
++	}
++
+ 	/* Initialize network controller */
+ 	err = mvpp2_init(pdev, priv);
+ 	if (err < 0) {
