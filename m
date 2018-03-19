@@ -1,80 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933294AbeCSNS1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:18:27 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40670 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932883AbeCSNSX (ORCPT
+        id S933186AbeCSNT4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:19:56 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:36002 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932635AbeCSNTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:18:23 -0400
-Date: Mon, 19 Mar 2018 13:18:05 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net, kishon@ti.com,
-        gregory.clement@bootlin.com, jason@lakedaemon.net,
-        sebastian.hesselbarth@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR interface
- to use in-band negotiation
-Message-ID: <20180319131804.GD2743@n2100.armlinux.org.uk>
+        Mon, 19 Mar 2018 09:19:55 -0400
+From: Stefan Chulski <stefanc@marvell.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Antoine Tenart <antoine.tenart@bootlin.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+ interface to use in-band negotiation
+Thread-Topic: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+ interface to use in-band negotiation
+Thread-Index: AQHTvT77nBQG5ffkBEaqTn9C4RyF8qPXI08AgAAm5YCAABwLgIAAAhSAgAAiFzD//+BJgIAAI9Aw
+Date: Mon, 19 Mar 2018 13:19:24 +0000
+Message-ID: <02614799e30f4823a97fca0e9f29b14b@IL-EXCH01.marvell.com>
 References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
  <20180316103351.16616-3-antoine.tenart@bootlin.com>
- <20180316155307.GQ9418@n2100.armlinux.org.uk>
- <20180319085252.GF4519@kwain>
- <20180319111205.GB2743@n2100.armlinux.org.uk>
- <20180319125227.GI4519@kwain>
+ <20180316155307.GQ9418@n2100.armlinux.org.uk> <20180319085252.GF4519@kwain>
+ <20180319111205.GB2743@n2100.armlinux.org.uk> <20180319125227.GI4519@kwain>
  <20180319125953.GD19795@lunn.ch>
- <20180319131009.GJ4519@kwain>
+ <54e290a192734831b5db22191f056a81@IL-EXCH01.marvell.com>
+ <20180319130823.GA22306@lunn.ch>
+In-Reply-To: <20180319130823.GA22306@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [199.203.130.14]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319131009.GJ4519@kwain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_09:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1803190155
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 02:10:09PM +0100, Antoine Tenart wrote:
-> Hi Andrew,
-> 
-> On Mon, Mar 19, 2018 at 01:59:53PM +0100, Andrew Lunn wrote:
-> > 
-> > If they don't have PHYs, how are the connected to the outside world?
-> 
-> On 7k/8k you have the following scheme for 10G only interfaces:
-> 
->    MAC -- Comphy -- PHY -- SFP cage -- ...
-> 
-> Or
-> 
->    MAC -- Comphy -- SFP cage -- ...
-> 
-> The comphy provides serdes lanes, and can be configured in various
-> modes (SGMII, 2500SGMII, 10GKR...).
 
-Right - the correct mode is dependent on the SFP module plugged into
-the cage.  Trying to describe this by ignoring the SFP cage isn't
-going to work out well for end-user functionality, though is fine if
-you're just hacking a configuration to test (which would not be
-suitable for mainline kernels!)
 
-As I've recently replied to Yan, this is a configuration I haven't
-tested yet, and it's entirely possible that phylink may need some
-tweaks for it.
+> -----Original Message-----
+> From: Andrew Lunn [mailto:andrew@lunn.ch]
+> Sent: Monday, March 19, 2018 3:08 PM
+> To: Stefan Chulski <stefanc@marvell.com>
+> Cc: Antoine Tenart <antoine.tenart@bootlin.com>; Russell King - ARM Linux
+> <linux@armlinux.org.uk>; davem@davemloft.net; kishon@ti.com;
+> gregory.clement@bootlin.com; jason@lakedaemon.net;
+> sebastian.hesselbarth@gmail.com; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; thomas.petazzoni@bootlin.com;
+> maxime.chevallier@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai
+> <nadavh@marvell.com>; Yan Markman <ymarkman@marvell.com>;
+> mw@semihalf.com; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+> interface to use in-band negotiation
+> 
+> > > If they don't have PHYs, how are the connected to the outside world?
+> > >
+> > >    Andrew
+> >
+> > By external SFP or direct attached cable.
+> 
+> Maybe i'm missing something, but don't you just need to add an SFP device
+> in the device tree. The SFP code and PHYLINK will work together, query what
+> the SFP module is, use the GPIOs to determine link up/down and module
+> present, and tell the MAC how to configure the MAC-SFP link?
+> 
+>      Andrew
 
-What you have is a very similar setup to what is on Clearfog with
-its SFP cage, where the SFP cage is connected directly to the
-Armada 388.  That only has to deal with 2500base-X / 1000base-X /
-SGMII and not 10G.
+phylink pool SFP loss signal to determine link up/down?
 
-What I want is to avoid hacks as much as possible here - if there is
-a short-coming with SFP/phylink here, we need to address that
-properly.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Stefan,
+Best Regards.
