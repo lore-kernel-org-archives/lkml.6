@@ -1,119 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971233AbeCSUNn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:13:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54420 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969087AbeCSUNe (ORCPT
+        id S971239AbeCSUO3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:14:29 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46337 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969087AbeCSUOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:13:34 -0400
-Date: Mon, 19 Mar 2018 21:13:27 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 1/2] x86: Force asm-goto
-Message-ID: <20180319201327.GJ4043@hirez.programming.kicks-ass.net>
-References: <20180319154124.337947038@infradead.org>
- <20180319154717.652679334@infradead.org>
- <alpine.DEB.2.21.1803192055410.1520@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803192055410.1520@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 19 Mar 2018 16:14:20 -0400
+X-Google-Smtp-Source: AG47ELtZfKO7nIHLXbVfMMzI5WRP9d+gZgMPSIO6IaW+T7mv8OHONVdDDfhD3I7Zf0nRUe3/PKvb1g==
+From: Matt Porter <mporter@konsulko.com>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
+        / MXC ARM ARCHITECTURE),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] arm: dts: hummingboard: convert onboard audio to simple-audio-card
+Date: Mon, 19 Mar 2018 16:14:13 -0400
+Message-Id: <20180319201414.29481-1-mporter@konsulko.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 08:57:48PM +0100, Thomas Gleixner wrote:
-> On Mon, 19 Mar 2018, Peter Zijlstra wrote:
-> 
-> > We want to start using asm-goto to guarantee the absence of dynamic
-> > branches (and thus speculation).
-> > 
-> > A primary prerequisite for this is of course that the compiler
-> > supports asm-goto. This effecively lifts the minimum GCC version to
-> > build an x86 kernel to gcc-4.5.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  Makefile          |   13 +++++++------
-> >  arch/x86/Makefile |    4 ++++
-> >  2 files changed, 11 insertions(+), 6 deletions(-)
-> > 
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -494,6 +494,13 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-ex
-> >  RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-> >  export RETPOLINE_CFLAGS
-> >  
-> > +# check for 'asm goto'
-> > +ifeq ($(shell $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
-> 
-> Why are you not using the shell-cached version which you remove further
-> down?
+The HB onboard audio currently makes use of the imx-audio-sgtl5000
+binding. This binding does not support auxiliary audio devices such
+as external amplifiers. The simple-audio-card binding does support
+this property which allows systems incorporating the HB to add an
+auxiliary device that's attached to the HB audio jack with an
+overlay. Convert the HB onboard audio to use simple-audio-card for
+this additional flexibility.
 
-Bah, I'm an idiot. I fixed that up at least two times, but clearly I
-forgot to check that again before sending.
-
+Signed-off-by: Matt Porter <mporter@konsulko.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
-Subject: x86: Force asm-goto
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed Jan 17 11:42:07 CET 2018
+v2:
+    - also convert HB1 to simple-audio-card
+    - retain original card name as "On-board Codec" [case change]
 
-We want to start using asm-goto to guarantee the absence of dynamic
-branches (and thus speculation).
+ arch/arm/boot/dts/imx6qdl-hummingboard.dtsi  | 52 ++++++++++++++++++++++------
+ arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi | 48 ++++++++++++++++++++-----
+ 2 files changed, 82 insertions(+), 18 deletions(-)
 
-A primary prerequisite for this is of course that the compiler
-supports asm-goto. This effecively lifts the minimum GCC version to
-build an x86 kernel to gcc-4.5.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- Makefile          |   13 +++++++------
- arch/x86/Makefile |    4 ++++
- 2 files changed, 11 insertions(+), 6 deletions(-)
-
---- a/Makefile
-+++ b/Makefile
-@@ -494,6 +494,13 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-ex
- RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
- export RETPOLINE_CFLAGS
+diff --git a/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi b/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi
+index 92583238ca4a..2f6e51fbd4bc 100644
+--- a/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-hummingboard.dtsi
+@@ -38,6 +38,7 @@
+  *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
++#include <dt-bindings/sound/fsl-imx-audmux.h>
  
-+# check for 'asm goto'
-+ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
-+  CC_HAVE_ASM_GOTO := 1
-+  KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
-+  KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
-+endif
+ / {
+ 	chosen {
+@@ -105,17 +106,27 @@
+ 		vin-supply = <&v_5v0>;
+ 	};
+ 
+-	sound-sgtl5000 {
+-		audio-codec = <&sgtl5000>;
+-		audio-routing =
+-			"MIC_IN", "Mic Jack",
+-			"Mic Jack", "Mic Bias",
++	audio: sound-sgtl5000 {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "On-board Codec";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sound_codec>;
++		simple-audio-card,frame-master = <&sound_codec>;
++		simple-audio-card,widgets =
++			"Microphone", "Headphone Jack",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"MIC_IN", "Headphone Jack",
++			"Headphone Jack", "Mic Bias",
+ 			"Headphone Jack", "HP_OUT";
+-		compatible = "fsl,imx-audio-sgtl5000";
+-		model = "On-board Codec";
+-		mux-ext-port = <5>;
+-		mux-int-port = <1>;
+-		ssi-controller = <&ssi1>;
 +
- ifeq ($(config-targets),1)
- # ===========================================================================
- # *config targets only - make sure prerequisites are updated, and descend
-@@ -658,12 +665,6 @@ KBUILD_CFLAGS += $(call cc-ifversion, -l
- # Tell gcc to never replace conditional load with a non-conditional one
- KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
- 
--# check for 'asm goto'
--ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
--	KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
--	KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
--endif
--
- include scripts/Makefile.kcov
- include scripts/Makefile.gcc-plugins
- 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -181,6 +181,10 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
-   endif
- endif
- 
-+ifndef CC_HAVE_ASM_GOTO
-+  $(error Compiler lacks asm-goto support.)
-+endif
++		sound_cpu: simple-audio-card,cpu {
++			sound-dai = <&ssi1>;
++		};
 +
- #
- # Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent a
- # GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46226).  There's no way
++		sound_codec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
+ 	};
+ 
+ 	sound-spdif {
+@@ -129,6 +140,26 @@
+ 
+ &audmux {
+ 	status = "okay";
++
++	ssi1 {
++		fsl,audmux-port = <0>;
++		fsl,port-config = <
++			(IMX_AUDMUX_V2_PTCR_SYN |
++			 IMX_AUDMUX_V2_PTCR_TFSEL(4) |
++			 IMX_AUDMUX_V2_PTCR_TCSEL(4) |
++			 IMX_AUDMUX_V2_PTCR_TFSDIR |
++			 IMX_AUDMUX_V2_PTCR_TCLKDIR)
++			 IMX_AUDMUX_V2_PDCR_RXDSEL(4)
++		>;
++	};
++
++	pins5 {
++		fsl,audmux-port = <4>;
++		fsl,port-config = <
++			IMX_AUDMUX_V2_PTCR_SYN
++			IMX_AUDMUX_V2_PDCR_RXDSEL(0)
++		>;
++	};
+ };
+ 
+ &can1 {
+@@ -161,6 +192,7 @@
+ 		compatible = "fsl,sgtl5000";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_hummingboard_sgtl5000>;
++		#sound-dai-cells = <0>;
+ 		reg = <0x0a>;
+ 		VDDA-supply = <&v_3v2>;
+ 		VDDIO-supply = <&v_3v2>;
+diff --git a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
+index dffbc92e0023..47d780fafd87 100644
+--- a/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-hummingboard2.dtsi
+@@ -38,6 +38,7 @@
+  *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
++#include <dt-bindings/sound/fsl-imx-audmux.h>
+ 
+ / {
+ 	chosen {
+@@ -145,22 +146,52 @@
+ 		vin-supply = <&v_5v0>;
+ 	};
+ 
+-	sound-sgtl5000 {
+-		audio-codec = <&sgtl5000>;
+-		audio-routing =
++	audio: sound-sgtl5000 {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "On-board Codec";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sound_codec>;
++		simple-audio-card,frame-master = <&sound_codec>;
++		simple-audio-card,widgets =
++			"Microphone", "Mic Jack",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
+ 			"MIC_IN", "Mic Jack",
+ 			"Mic Jack", "Mic Bias",
+ 			"Headphone Jack", "HP_OUT";
+-		compatible = "fsl,imx-audio-sgtl5000";
+-		model = "On-board Codec";
+-		mux-ext-port = <5>;
+-		mux-int-port = <1>;
+-		ssi-controller = <&ssi1>;
++
++		sound_cpu: simple-audio-card,cpu {
++			sound-dai = <&ssi1>;
++		};
++
++		sound_codec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
+ 	};
+ };
+ 
+ &audmux {
+ 	status = "okay";
++
++	ssi1 {
++		fsl,audmux-port = <0>;
++		fsl,port-config = <
++			(IMX_AUDMUX_V2_PTCR_SYN |
++			 IMX_AUDMUX_V2_PTCR_TFSEL(4) |
++			 IMX_AUDMUX_V2_PTCR_TCSEL(4) |
++			 IMX_AUDMUX_V2_PTCR_TFSDIR |
++			 IMX_AUDMUX_V2_PTCR_TCLKDIR)
++			 IMX_AUDMUX_V2_PDCR_RXDSEL(4)
++		>;
++	};
++
++	pins5 {
++		fsl,audmux-port = <4>;
++		fsl,port-config = <
++			IMX_AUDMUX_V2_PTCR_SYN
++			IMX_AUDMUX_V2_PDCR_RXDSEL(0)
++		>;
++	};
+ };
+ 
+ &ecspi2 {
+@@ -193,6 +224,7 @@
+ 		compatible = "fsl,sgtl5000";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_hummingboard2_sgtl5000>;
++		#sound-dai-cells = <0>;
+ 		reg = <0x0a>;
+ 		VDDA-supply = <&v_3v2>;
+ 		VDDD-supply = <&vcc_1p8>;
+-- 
+2.11.0
