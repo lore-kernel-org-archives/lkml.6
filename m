@@ -1,109 +1,89 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-820325-1521531834-2-219204261520003556
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521531834; b=n2UPRt5jS/UyUJuYqhO2oyHwKWzAkZn6z1IrZfxgw3kqAgF
-    QYIgdNbhyPr71CrcUHzXf/3agrPcnEzsgV2mK0Zvukq5IyaLwwPpiIRn8i4bOSZg
-    LQND45ixwYnQVzURDEn5WUHmR1R6EDYRGZj2jJx04/Lfwz2lo9rNSdGilNpDadkd
-    YKkMtNMm06LoatwBfQ1jeRW4TfOEhfeXQ0aX3IyJMqGy5ROBnam+iEYYTXTKtv5d
-    yRTbcEBWhVH1ZZ23FRu/6z1nLE4bmW8xxClnk+7XPYAcymDFyu3K1oCtE3zsKKru
-    MDOufdoxdwaI5dfPJIw+tKUcLbjowsymuEMYEfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521531834; bh=xT19uOKYbMcKscEEuNZxhjYiq3
-    nTLlYIiPee+cozecc=; b=bug5aYw2/jIFSvmWuDH+Dsr4uBb4eckp4UV3PJ0Sds
-    fsCmnzAVtpRbYhFS1JRoJdDVAEOuBBGCcmWBFn1aX9Spc4XnPwkaJVJ/zPdWZ8IY
-    XUD+pzZGN11qtGOFsxFpBSYrWfGL3+X6cDmkzlxELdzLK+niHYJGB5lsv6CQkjLF
-    FRR79Ei6Xghk/lOSkjF5syh5xUtz4UWsoYko61Rl1AdilY6tq+2bmss7/Cc8wG5N
-    ot3UkXJc8wxfpuJEnP0R4vbXPDJ1KSbKm+u9SNoJb7yE84iWe1DQ8/p7jJ4YJGOV
-    s+YBRmIPNNQpbqVqDq32xScU7SkyWpuSY7oEQFO7nuSA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeCTHnW (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Mar 2018 03:43:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38282 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeCTHnW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 20 Mar 2018 03:43:22 -0400
-Date: Tue, 20 Mar 2018 08:43:20 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Return-Path: <dan.rue@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521503396; cv=none;
+        d=google.com; s=arc-20160816;
+        b=XBq8wHCSE+ZI5Jf99UEDq/lqjLoOXARgCHPSkO302WNmsEZevWfOQCIdVPhWKTTlr0
+         df0aQmV4YM9nDkc9tJlSxNT2+oHUttcUygHdpbUIiQQxrrvfEk/rzHjR+IqCPaLMoynK
+         Il+Aj4GlrP3jbrZWaINj+EgnDcdwhhs2faEvd4a0644CsYInpgHbbysgjjo4xNqzJ98w
+         8vpi8HArwNeCAvhyXMeZSTg0bMZ65uxrabXboWmXR71kPaB8AhN3xC+BrZCHXi9ud2uU
+         DYSQAX6D0P3UO2PluImhva4BS+abXdi8lj7BcSrH2MyLe0kihZ9rShv2+jkgBzZ4+xax
+         C6TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=2d2z87c/XXOHj23kiYJWQhmMscIKCyd9Ov9PYGX0E+o=;
+        b=z6WMtSfhnG8BDLZ0Jbfo5c6vBcUG02wBZ0vGATgJFNMUdGZSjRFgtZsDTSHD8Zz+VS
+         inF89OdaVhUAeNUv6gevu3XVqa3ofwNUvWOT2EvvzPnUlET8lo1M81CVuwxpEkULfOie
+         HL/9kJnYmDWwWlHTDyXR0GWbiwTwJQee3KbV03MvTStpkiy9a1yIRmYq6IlUpgSV3vHt
+         TLB83/eLYcCBvH8zVf7KKva4JxVQ2wNibdbNnaOILO/TB5QHpm4KrjB18ObHXzBrcDZC
+         z9vhVQzMhY5jOHJFr38X7FF1/wSYtcK4uhNa8tVg9Vbml3wErl1z04G9hCnJGgadJ+6n
+         Y3pg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Ao+aNXoE;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Ao+aNXoE;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELvQY90LXRloulHwCo/s3ZckwVCw8BQcQjlIeXyByaqMXKXrQTVuCo35VFF/gWXZLvJrLRJedw==
+Date: Tue, 20 Mar 2018 07:49:53 +0800
+From: Dan Rue <dan.rue@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
+	shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, stable@vger.kernel.org,
+	akpm@linux-foundation.org, torvalds@linux-foundation.org,
+	linux@roeck-us.net
 Subject: Re: [PATCH 4.4 000/134] 4.4.123-stable review
-Message-ID: <20180320074320.GC8152@kroah.com>
+Message-ID: <20180319234953.ox3v57p77t33ipd2@xps>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
+	shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, stable@vger.kernel.org,
+	akpm@linux-foundation.org, torvalds@linux-foundation.org,
+	linux@roeck-us.net
 References: <20180319171849.024066323@linuxfoundation.org>
- <20180319205705.GA30951@flashbox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180319205705.GA30951@flashbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
+User-Agent: NeoMutt/20180223
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595390786580465385?=
+X-GMAIL-MSGID: =?utf-8?q?1595411945451693633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 01:57:05PM -0700, Nathan Chancellor wrote:
-> On Mon, Mar 19, 2018 at 07:04:43PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.123 release.
-> > There are 134 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Mar 21 17:18:04 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> >
+On Mon, Mar 19, 2018 at 07:04:43PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.123 release.
+> There are 134 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Merged, compiled, and flashed onto my OnePlus 5.
-> 
-> No initial issues noticed in general usage or dmesg.
+> Responses should be made by Wed Mar 21 17:18:04 UTC 2018.
+> Anything received after that time might be too late.
 
-Great, thanks for testing and letting me know.
+4.4 fails to build on arm32 with default config due to
+b4df31e348a4 ("ARM: DRA7: hwmod_data: Prevent wait_target_disable error for usb_otg_ss")
 
-greg k-h
+#
+# make -j10 -k -s ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=build-arm multi_v7_defconfig
+#
+#
+# make -j10 -k -s ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=build-arm 
+#
+../arch/arm/mach-omap2/omap_hwmod_7xx_data.c:2243:12: error: 'HWMOD_CLKDM_NOAUTO' undeclared here (not in a function)
+  .flags  = HWMOD_CLKDM_NOAUTO,
+            ^
+../scripts/Makefile.build:269: recipe for target 'arch/arm/mach-omap2/omap_hwmod_7xx_data.o' failed
+make[2]: *** [arch/arm/mach-omap2/omap_hwmod_7xx_data.o] Error 1
+make[2]: Target '__build' not remade because of errors.
+/home/buildslave/workspace/kernel-single-defconfig-builder/defconfig/multi_v7_defconfig/label/builder/Makefile:969: recipe for target 'arch/arm/mach-omap2' failed
+make[1]: *** [arch/arm/mach-omap2] Error 2
+make[1]: Target '_all' not remade because of errors.
+Makefile:152: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
+make: Target '_all' not remade because of errors.
+
+Dan
