@@ -1,67 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484293-2-8749425506634342186
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484292; b=k3K0S3U3GpYlIh5fEZlD7YN203KZ3Gf5gz1LV5DEW3YI3vE
-    geYM0duoFN9nbUfrzXZja9gr6JrForux9P0iRN8+mv4F8HB9SggoUkBprzRVv6Wh
-    SkZ6bG80bv/WK0z7yr4sToEUilyGkjBJhMzgZtdU7crC3Kg6Vyt8ARqHAln5dT4f
-    Fe0U3yUXjCajENJUA6zivfEMMl1H/fm6NvpDB+r4bSHoaMcwzWe8iZiMiN2z2KuQ
-    PhdW0OaUEo1/bvBRZ3G3mJ7HL8ZHFo1dprxG5lA2BVSqrytzTWUxkZY+Y7OoJidM
-    A3tfDCHkoQgIPdCVynWZhchElZknlbDAtSClAWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484292; bh=XE25kcUgPjZdtay+ma7u6ZC3m1
-    C3XcryFxot5/UlRdY=; b=LHmo+D4UfKZF+juSKAMjFhAm5sjpIZKsoDbqtpEc+D
-    tJRaHMP8LkLVGGGAlyqKVMO4WRIEizmwRNHVowURBOqC5CAu923IdezwWb0CnDjp
-    VO5OukhE6i9dZnv0tVfVpBMs3/c7a7dfV2BTe5+jD23ibOTb8A+jhqujbT7xmSk5
-    btqP1JwBeGu5TlqOTXI/oWGaklZin9w9uHB0Ud4vAC1Bc0pSqNCEwfmEMqM8Oi/g
-    y1/bKUzB5ryZ3Z5GqOrx9WsdjDv9UYoktWXCQFe0tW78wZjFTzyB+bA2YGza+UM1
-    37dbJ1zBa+i4UxPygH/QcRML8RqYWrXTPKpJUBFYVzuw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeejkeenucevlhhushhtvghrufhiiigvpedule;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeffeejkeenucevlhhushhtvghrufhiiigvpedule;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032052AbeCSSb3 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:31:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53544 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032087AbeCSSbV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:31:21 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELviq0hUB+FOpfQ557e3KsogqbtlLQwj/4DnKhpTjHtUd3XS//M1xZDfjE+wXZVz9rwFMJCF
+ARC-Seal: i=1; a=rsa-sha256; t=1521484292; cv=none;
+        d=google.com; s=arc-20160816;
+        b=T2cUiLtcgZOO0jsgQKQat5BpQpqGESK8EdKGeoVSvW7Jlp+2V2hH9gxUMoMCvtq0lH
+         C7TBBKHiSWiZ2arEgqdtlGn56bwhB43E/GBuuil0ppYxx+WEt3s7mVy8xj8OHaCF2myz
+         LvDhmyod+gk9VmPnNO6zAiZIlix5MntuAWZrbnEJ6SPi9m42SKRhDK/ydsAoqf5D5dQN
+         G9tgtEkErMis5jX473vfo1/F9bVQxckkGVvKo9sbNXXJ25gciW3vpHu1qtX/er+eYLYF
+         U7y6I49rmaj3tPvpBZaQ+8PSr8yni6j1x2ORN9AVMxhylz3+73DYkU3KWv/sfpSLFyj8
+         xpig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=HnsDKGnAJo8H00i63epp0dgIPEMV7qyWTLDIdZ8I57M=;
+        b=ahWnkC0QA5DENxd5CVAOnwySpEOG3hhLdw9izamhXnUPN3YZFMwFe3UC6Tbvv2Fjl4
+         z1riGjpNg4mFqrojAQ2LqXyvtY3volLsGALiinObihrRwS5Me6EJMIm2zP3IkC8+krDF
+         KzS6nE2NCDjESFTRksj2oBTo2lSytP2Ay5Cn4sqdt9ouweS96R0OpEYCmpO/cYAUZ94W
+         JuQ1Y5jwxxdrvROpU2MkRrlKr9p85/YWHkcLOreXwUtoFLrSLEXO6P2L6EgDtrUKXYGS
+         1XDdN1Y/EBBFvC3i309hSWvxj2lTuKX2AAvsUe9wVv/rJL4fH3hUMzZHGR0VxIyEM/3R
+         66aw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 14/52] ALSA: seq: Clear client entry before deleting else at closing
-Date: Mon, 19 Mar 2018 19:08:12 +0100
-Message-Id: <20180319180735.933761422@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.15 18/52] drm/radeon: fix prime teardown order
+Date: Mon, 19 Mar 2018 19:08:16 +0100
+Message-Id: <20180319180736.158011282@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -69,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391794340930448?=
+X-GMAIL-MSGID: =?utf-8?q?1595391913312678425?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,48 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Christian König <christian.koenig@amd.com>
 
-commit a2ff19f7b70118ced291a28d5313469914de451b upstream.
+commit 0f4f715bc6bed3bf14c5cd7d5fe88d443e756b14 upstream.
 
-When releasing a client, we need to clear the clienttab[] entry at
-first, then call snd_seq_queue_client_leave().  Otherwise, the
-in-flight cell in the queue might be picked up by the timer interrupt
-via snd_seq_check_queue() before calling snd_seq_queue_client_leave(),
-and it's delivered to another queue while the client is clearing
-queues.  This may eventually result in an uncleared cell remaining in
-a queue, and the later snd_seq_pool_delete() may need to wait for a
-long time until the event gets really processed.
+We unmapped imported DMA-bufs when the GEM handle was dropped, not when the
+hardware was done with the buffere.
 
-By moving the clienttab[] clearance at the beginning of release, any
-event delivery of a cell belonging to this client will fail at a later
-point, since snd_seq_client_ptr() returns NULL.  Thus the cell that
-was picked up by the timer interrupt will be returned immediately
-without further delivery, and the long stall of snd_seq_delete_pool()
-can be avoided, too.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_clientmgr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_gem.c    |    2 --
+ drivers/gpu/drm/radeon/radeon_object.c |    2 ++
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -255,12 +255,12 @@ static int seq_free_client1(struct snd_s
+--- a/drivers/gpu/drm/radeon/radeon_gem.c
++++ b/drivers/gpu/drm/radeon/radeon_gem.c
+@@ -34,8 +34,6 @@ void radeon_gem_object_free(struct drm_g
+ 	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
  
- 	if (!client)
- 		return 0;
--	snd_seq_delete_all_ports(client);
--	snd_seq_queue_client_leave(client->number);
- 	spin_lock_irqsave(&clients_lock, flags);
- 	clienttablock[client->number] = 1;
- 	clienttab[client->number] = NULL;
- 	spin_unlock_irqrestore(&clients_lock, flags);
-+	snd_seq_delete_all_ports(client);
-+	snd_seq_queue_client_leave(client->number);
- 	snd_use_lock_sync(&client->use_lock);
- 	snd_seq_queue_client_termination(client->number);
- 	if (client->pool)
+ 	if (robj) {
+-		if (robj->gem_base.import_attach)
+-			drm_prime_gem_destroy(&robj->gem_base, robj->tbo.sg);
+ 		radeon_mn_unregister(robj);
+ 		radeon_bo_unref(&robj);
+ 	}
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -82,6 +82,8 @@ static void radeon_ttm_bo_destroy(struct
+ 	mutex_unlock(&bo->rdev->gem.mutex);
+ 	radeon_bo_clear_surface_reg(bo);
+ 	WARN_ON_ONCE(!list_empty(&bo->va));
++	if (bo->gem_base.import_attach)
++		drm_prime_gem_destroy(&bo->gem_base, bo->tbo.sg);
+ 	drm_gem_object_release(&bo->gem_base);
+ 	kfree(bo);
+ }
