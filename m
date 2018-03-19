@@ -1,35 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969746AbeCSTpS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:45:18 -0400
-Received: from verein.lst.de ([213.95.11.211]:32894 "EHLO newverein.lst.de"
+        id S970164AbeCSTsf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:48:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966229AbeCSTpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:45:14 -0400
-Date: Mon, 19 Mar 2018 20:45:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
-Message-ID: <20180319194513.GA3160@lst.de>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com> <20180319173345.GF1757@magnolia> <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
+        id S969556AbeCSTsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:48:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9678921720
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 19 Mar 2018 14:48:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Benedikt Spranger <b.spranger@linutronix.de>,
+        Juergen Gross <jgross@suse.com>, Mark Rutland <mark.rutland@arm.com>,
+        Otavio Pontes <otavio.pontes@intel.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v5 0/7] jailhouse: Enhance secondary Jailhouse guest
+ support /wrt PCI
+Message-ID: <20180319194813.GJ77194@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1520408357.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 10:57:55AM -0700, Dan Williams wrote:
-> I don't see anything to adapt with respect to mmap locks since reflink
-> and dax are mutually exclusive.
+On Wed, Mar 07, 2018 at 08:39:11AM +0100, Jan Kiszka wrote:
+> Basic x86 support [1] for running Linux as secondary Jailhouse [2] guest
+> is currently pending in the tip tree. This builds on top and enhances
+> the PCI support for x86 and also ARM guests (ARM[64] does not require
+> platform patches and works already).
+> ...
 
-For now.  I'll change that pretty soon.
+Hi Jan,
+
+What tree do you plan to merge this through?  I was sort of assuming
+x86, since the main point of jailhouse is not PCI, but I do notice
+most of the changes here are PCI-related, so thought I should make
+sure you're not waiting on me.
+
+> Jan Kiszka (6):
+>   jailhouse: Provide detection for non-x86 systems
+>   PCI: Scan all functions when running over Jailhouse
+>   x86: Align x86_64 PCI_MMCONFIG with 32-bit variant
+>   x86: Consolidate PCI_MMCONFIG configs
+>   x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
+>   MAINTAINERS: Add entry for Jailhouse
+> 
+> Otavio Pontes (1):
+>   x86/jailhouse: Enable PCI mmconfig access in inmates
+> 
+>  Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+>  MAINTAINERS                                     |  7 +++++++
+>  arch/x86/Kconfig                                | 12 +++++++-----
+>  arch/x86/include/asm/jailhouse_para.h           |  2 +-
+>  arch/x86/include/asm/pci_x86.h                  |  2 ++
+>  arch/x86/kernel/Makefile                        |  2 +-
+>  arch/x86/kernel/cpu/amd.c                       |  2 +-
+>  arch/x86/kernel/jailhouse.c                     |  8 ++++++++
+>  arch/x86/pci/legacy.c                           |  4 +++-
+>  arch/x86/pci/mmconfig-shared.c                  |  4 ++--
+>  drivers/pci/probe.c                             | 22 +++++++++++++++++++---
+>  include/linux/hypervisor.h                      | 17 +++++++++++++++--
+>  12 files changed, 74 insertions(+), 16 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
+> 
+> -- 
+> 2.13.6
+> 
