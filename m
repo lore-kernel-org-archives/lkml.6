@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3357373-1521479929-2-18318381720472652673
+X-Cyrus-Session-Id: sloti22d1t05-3357373-1521479923-2-9917880300979893730
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521479928; b=mAX+VmT2k9lXMvH89h03KhQmr9rzKLMdGDWQA9yugwmEROv
-    iKpCfjOcQ2xMuH4BTSlsb/B2WLIJmqzEttNJLtv9VLu/VkWnQ7LtfWbRasRJ7PhB
-    uTGrAcUkMoPgKoATALhu12cYOC5w4vewmylbJlBVPm6xzI49kNb5psBzZlRJux9j
-    mkJ7ZUGO9knvmAZgCA/4wfzh83+AHmtmImHF5Af0fWL+JlhQz1qOYEpTWWFUpTUI
-    l84FE3SBH7FM5x7jRsTHJPJEZmXUbK+sQYIgUcjcTqeGrAf2GIDsctSOI9oBK8+D
-    oLrvW7Jq82LiWg9Pjv9gbEPB4yiUP1Q5hLkRnJQ==
+    t=1521479922; b=gda//dPWF2c7D+6Aq02hTKh8Y46OPTOj719xwyueqw7lQaz
+    XKlTIv1/7RTriScxlT4ATVigxgpXyByVxFUcRGaGYW2H3Ji9SRtXONsaSMFzcrnS
+    oQUD2VR5NYiMLg2t/9yDL5UkP/ol4wiaC2PfREFEIrJd19tfL4BaA1d3j+Wp832Y
+    IjaTv6TLafdWjD+F00kh8kHKU2yvh6/U/bzsM0d6YNMZ/Hba+tClCf/f5OhMAzg3
+    P9GNjiRQWpvKi0fx5ABCcnQa4EErcqVGUojF/kSnAznuaVzADLzpVySccTJehigK
+    VrdtYPjqIMX+et/INJQyXGjVjFhad3zp6pC8OBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521479928; bh=+Hod+9
-    e3U3wkKTsnqHhTWMe7Em3H7DttXOoufNgPiqc=; b=aIIhxKJC9QYtPIKjCdHCkq
-    40/+YjtV+eIN5vd0OBBTKI8lf/5m5SvCU1DmIxwFNpVMFIDtIBsKX2/46/Hqpg6Q
-    jKykQxVtmwMVmFFhuMzDTIguO2qpMxrmQTwo7oueXBeJUQ3MgYjCUar9l1G67Vgw
-    gh1WZiDxohL0ynlr71mCgGggnzU71z2DDz032HJR4wDwfaLgFxlj3j5Xzm0lJIG9
-    fOPwMGtDFBjILlSpDF9J9JO+oOS0Le017KV75X6YTaVIbrPpVI0RQbtnIHzsuCMw
-    8hvHWxyEKA5jJOx6mPbMGXvoslOhN9HrM5ZsJjVDKn+v79OBYY/1DfdBSIhAl0OA
+    :mime-version:sender:list-id; s=arctest; t=1521479922; bh=1w50QN
+    wzYOwQkGTF0mSRnf3UaT3yV9w62A9G3nRR/G4=; b=Qq4bDbQBCUyqPvW4T+MjJI
+    Nio+IXwP+RMhT1BEstyaHcrzSlGWqZsnLF9Vi5dsAGRy5gk3ar/BUAoinbN/QPjv
+    tJOF4SdmJ1sQxE/IHMmaowFIuv3NxZCol2bJeHSjR4zUYOy3cWUoM0TpgRYgaVzA
+    Tmn6C1Ejjg4hxVTlw01/6wgcg2PHId8PP2Gh54/p+3KeDCZYjTZnWapAIf7UAcC+
+    5HVN9a8C0k+NwKPrLF3VlFVDN/BcoaLw2qhusx/X9/DzbGLM/2+8xGTDT7jnwh/x
+    KKd1zvOYxglyAY0J7xT6JhjA2zQ3Ge/zKdbjdB1eVwCdWqkph++LwLHuB3g27Bzw
     ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WyKqSeAB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EJx1QNEX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeelleehheenucevlhhushhtvghrufhiiigvpedvge;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleduudehnecuvehluhhsthgvrhfuihiivgepgeel;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WyKqSeAB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EJx1QNEX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeelleehheenucevlhhushhtvghrufhiiigvpedvge;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepleduudehnecuvehluhhsthgvrhfuihiivgepgeel;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966483AbeCSQJf (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 12:09:35 -0400
-Received: from mail-by2nam01on0128.outbound.protection.outlook.com ([104.47.34.128]:46817
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S966508AbeCSRSS (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 13:18:18 -0400
+Received: from mail-sn1nam01on0103.outbound.protection.outlook.com ([104.47.32.103]:51328
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966416AbeCSQJL (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:09:11 -0400
+        id S966504AbeCSQJq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:09:46 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Maurizio Lombardi <mlombard@redhat.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 073/167] scsi: bnx2fc: fix race condition in
- bnx2fc_get_host_stats()
-Thread-Topic: [PATCH AUTOSEL for 4.4 073/167] scsi: bnx2fc: fix race condition
- in bnx2fc_get_host_stats()
-Thread-Index: AQHTv5xMwQ/L5Hzfc0GLBZd/nd2Syg==
-Date: Mon, 19 Mar 2018 16:06:53 +0000
-Message-ID: <20180319160513.16384-73-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 092/167] vfb: fix video mode and line_length
+ being set when loaded
+Thread-Topic: [PATCH AUTOSEL for 4.4 092/167] vfb: fix video mode and
+ line_length being set when loaded
+Thread-Index: AQHTv5xalNY8PoCxoUiOXeNL9Dw24w==
+Date: Mon, 19 Mar 2018 16:07:17 +0000
+Message-ID: <20180319160513.16384-92-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,139 +78,139 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0965;7:6rX1D+mf1QLGbrklqnF6BwMPTo8R6xMnGNyqWWhyhJn/LnX9BSBIqAx9Vb8J+M+P7fetgtI8UaG16mSUd1tRPKj8g/260zwsd55cxV4MECPsNn1kT77d6fRVHmhWxEPK/3ZsOtbevFNUD4WQbDOZl1onjmO7/Hj9f5vWNFvlKvrJKSchsam6w+JNZy/RqfgHGEbRMSdzyV+IcByfGy+ux6C74el4ZhAaih/s+i0DnffN/wbIgWlUy3rrsB+gIxON;20:mGvJZr8CBNDdY4jsxUduQwUUnExYzP/yLg8gn3Bgco9QcuBWGrt4A0hOQlZneHxp68VP224v2iTy/WdbobvhseCgXSA+6tf25P/SU+TsHdjtl8oXfXVYdKICqbwUz6tKY/3Mp/PYT+qRI+ztAK4i/tOeNFYkghEx/dC5Nn8QM5M=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:Ejesfsyx8L1GWhtH+kbdI4yj7ms/coUkMY8VY09omnwyqEA0bh5W3NnFtsEqSN2yT+j/Vuu/OtaKrcQ+/gJZ0dVeixdYJwYebbjaZ7d15V51/ds410RnIMcGbJ56jRa6tFywEFRV3FUtIl9/fPzAmKdIB9wbnMX9Pk+Ls998iUXymGjlF6TegHWs+6FGiOHuWB4W7GiOMKpMBy8eqBZWp5FA5O8tQM6TyrtMHEfFc6lOxxN5+v6m6ZddOtFSE6N0;20:hbWHXO4H5OOkGkDtZwD3WXsxRv55goywGS2KBY1jC7k3HpYpCfuqTejR3jLnN9RA5tefszoGu5M3MhNQeNvbVDPLLe9q5Fwj4sYFw9UVCjK8Z24UXMwGBmk88VJZynzm7ZXWZCy1ck26Zzxc9zyhEdWqByZS/JH+vFkfzjmmr4g=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e434268e-634b-4f9d-179e-08d58db3ba13
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0965;
-x-ms-traffictypediagnostic: DM5PR2101MB0965:
+x-ms-office365-filtering-correlation-id: accafa81-df33-4302-e9b3-08d58db3d3d1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
+x-ms-traffictypediagnostic: DM5PR2101MB0902:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09650E264C43762BA6708593FBD40@DM5PR2101MB0965.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0965;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0965;
+x-microsoft-antispam-prvs: <DM5PR2101MB09027943532947D681F4DB1FFBD40@DM5PR2101MB0902.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39860400002)(376002)(39380400002)(189003)(199004)(25786009)(7736002)(6506007)(86362001)(575784001)(86612001)(10090500001)(478600001)(53936002)(6666003)(6512007)(15760500003)(36756003)(2950100002)(8936002)(110136005)(54906003)(105586002)(14454004)(107886003)(72206003)(10290500003)(316002)(102836004)(2501003)(59450400001)(5250100002)(99286004)(22452003)(305945005)(6436002)(6486002)(1076002)(76176011)(26005)(4326008)(186003)(97736004)(106356001)(3660700001)(3846002)(6116002)(5660300001)(68736007)(2900100001)(8676002)(81166006)(81156014)(3280700002)(2906002)(66066001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0965;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: iJCIY4Ac5IkBa2LihQ2mTHcqelgRPBmD/pYNlkkxoUgF3kfb6zEuvbSEoo6zlar89rhaXR8o+d0LXSOw/X4N0ZcJGvXN5+TGKjQO+L9yKbNWlLwFD1XTg9XZPqCPF7rIYkv5/jzP19MhSqkZzaN52dQjbO1bpKbuoCy0GBKfxCSj73ZooGVwWXPZbZs5HT8NpI9MaeVYPJBbbsJZWx8tWcxjCo0E0y+Tw9IWmOeQAJ/XyOQ4EBIKBmjHywZzYrdkh2dlOASDG5WUrqZOrnB96WzCN22J1vCNqC9/Vk5GML/9ydxRgutPBUjU6wbMw7W9b55frXRgwnniE/SM83J16Q==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(4326008)(305945005)(7736002)(66066001)(105586002)(316002)(8676002)(25786009)(8936002)(6666003)(2950100002)(5660300001)(97736004)(81166006)(81156014)(3280700002)(22452003)(99286004)(186003)(2906002)(76176011)(5250100002)(54906003)(10090500001)(110136005)(6116002)(2900100001)(3846002)(2501003)(1076002)(86612001)(107886003)(106356001)(6436002)(6512007)(575784001)(86362001)(53936002)(6506007)(6486002)(26005)(14454004)(10290500003)(102836004)(68736007)(3660700001)(478600001)(72206003)(36756003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: Xgu6poX9fZX20U8WCKacWNhWv2kisZ4f2TtCORhgVQ6VICdcnGeG11UCKRW74/st1RPjCdhz7STq0RvOBfqxbU0v1/GsVxQ2Epd1lFSQBX7ehMRCc4181OXUEw9ufwyT31nUOYilKrkGcK7oKOBcXXi4oqF7ndGy9zgWoSOzG9WOyUzOnXmjcmGcOtEd9a7c3RtBEbOdjx9eEUrvBi97eYUXyWnLSfkMGRQydt4fIwNslokuq1mAYBBw5oWQmCAxoTwXHxndFpuUwUy/PZHu/OSBNzis4MwSW08vzXMnACp+RNo9XYnCPOUgTZD79c26HTFLcbGErfXnmHCLM1GF/Q==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e434268e-634b-4f9d-179e-08d58db3ba13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:06:53.7362
+X-MS-Exchange-CrossTenant-Network-Message-Id: accafa81-df33-4302-e9b3-08d58db3d3d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:07:17.3389
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0965
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0902
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
 
-[ Upstream commit c2dd893a3b0772d1c680e109b9d5715d7f73022b ]
+[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
 
-If multiple tasks attempt to read the stats, it may happen that the
-start_req_done completion is re-initialized while still being used by
-another task, causing a list corruption.
+Currently, when loading the vfb module, the newly created fbdev
+has a line_length of 0, and its video mode would be PSEUDOCOLOR
+regardless of color depth. (The former could be worked around by
+calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
+flag set.) This patch automatically sets the line_length correctly,
+and the video mode is derived from the bit depth now as well.
 
-This patch fixes the bug by adding a mutex to serialize the calls to
-bnx2fc_get_host_stats().
+Thanks to Geert Uytterhoeven for confirming the bug and helping me with
+the patch.
 
-WARNING: at lib/list_debug.c:48 list_del+0x6e/0xa0() (Not tainted)
-Hardware name: PowerEdge R820
-list_del corruption. prev->next should be ffff882035627d90, but was ffff884=
-069541588
+Output of `fbset -i' before the patch:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
 
-Pid: 40267, comm: perl Not tainted 2.6.32-642.3.1.el6.x86_64 #1
-Call Trace:
- [<ffffffff8107c691>] ? warn_slowpath_common+0x91/0xe0
- [<ffffffff8107c796>] ? warn_slowpath_fmt+0x46/0x60
- [<ffffffff812ad16e>] ? list_del+0x6e/0xa0
- [<ffffffff81547eed>] ? wait_for_common+0x14d/0x180
- [<ffffffff8106c4a0>] ? default_wake_function+0x0/0x20
- [<ffffffff81547fd3>] ? wait_for_completion_timeout+0x13/0x20
- [<ffffffffa05410b1>] ? bnx2fc_get_host_stats+0xa1/0x280 [bnx2fc]
- [<ffffffffa04cf630>] ? fc_stat_show+0x90/0xc0 [scsi_transport_fc]
- [<ffffffffa04cf8b6>] ? show_fcstat_tx_frames+0x16/0x20 [scsi_transport_fc]
- [<ffffffff8137c647>] ? dev_attr_show+0x27/0x50
- [<ffffffff8113b9be>] ? __get_free_pages+0xe/0x50
- [<ffffffff812170e1>] ? sysfs_read_file+0x111/0x200
- [<ffffffff8119a305>] ? vfs_read+0xb5/0x1a0
- [<ffffffff8119b0b6>] ? fget_light_pos+0x16/0x50
- [<ffffffff8119a651>] ? sys_read+0x51/0xb0
- [<ffffffff810ee1fe>] ? __audit_syscall_exit+0x25e/0x290
- [<ffffffff8100b0d2>] ? system_call_fastpath+0x16/0x1b
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : PSEUDOCOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 0                    <-- note this
+    Accelerator : No
 
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Acked-by: Chad Dupuis <chad.dupuis@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+After:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
+
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : TRUECOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 5464
+    Accelerator : No
+
+Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency=
+>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+[b.zolnierkie: minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/bnx2fc/bnx2fc.h      |  1 +
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 10 ++++++++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/vfb.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc.h b/drivers/scsi/bnx2fc/bnx2fc.h
-index 499e369eabf0..8bc1625337f6 100644
---- a/drivers/scsi/bnx2fc/bnx2fc.h
-+++ b/drivers/scsi/bnx2fc/bnx2fc.h
-@@ -191,6 +191,7 @@ struct bnx2fc_hba {
- 	struct bnx2fc_cmd_mgr *cmd_mgr;
- 	spinlock_t hba_lock;
- 	struct mutex hba_mutex;
-+	struct mutex hba_stats_mutex;
- 	unsigned long adapter_state;
- 		#define ADAPTER_STATE_UP		0
- 		#define ADAPTER_STATE_GOING_DOWN	1
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc=
-_fcoe.c
-index 67405c628864..d0b227ffbd5f 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -641,15 +641,17 @@ static struct fc_host_statistics *bnx2fc_get_host_sta=
-ts(struct Scsi_Host *shost)
- 	if (!fw_stats)
- 		return NULL;
-=20
-+	mutex_lock(&hba->hba_stats_mutex);
+diff --git a/drivers/video/fbdev/vfb.c b/drivers/video/fbdev/vfb.c
+index b9c2f81fb6b9..556c39997aab 100644
+--- a/drivers/video/fbdev/vfb.c
++++ b/drivers/video/fbdev/vfb.c
+@@ -291,8 +291,23 @@ static int vfb_check_var(struct fb_var_screeninfo *var=
+,
+  */
+ static int vfb_set_par(struct fb_info *info)
+ {
++	switch (info->var.bits_per_pixel) {
++	case 1:
++		info->fix.visual =3D FB_VISUAL_MONO01;
++		break;
++	case 8:
++		info->fix.visual =3D FB_VISUAL_PSEUDOCOLOR;
++		break;
++	case 16:
++	case 24:
++	case 32:
++		info->fix.visual =3D FB_VISUAL_TRUECOLOR;
++		break;
++	}
 +
- 	bnx2fc_stats =3D fc_get_host_stats(shost);
-=20
- 	init_completion(&hba->stat_req_done);
- 	if (bnx2fc_send_stat_req(hba))
--		return bnx2fc_stats;
-+		goto unlock_stats_mutex;
- 	rc =3D wait_for_completion_timeout(&hba->stat_req_done, (2 * HZ));
- 	if (!rc) {
- 		BNX2FC_HBA_DBG(lport, "FW stat req timed out\n");
--		return bnx2fc_stats;
-+		goto unlock_stats_mutex;
- 	}
- 	BNX2FC_STATS(hba, rx_stat2, fc_crc_cnt);
- 	bnx2fc_stats->invalid_crc_count +=3D hba->bfw_stats.fc_crc_cnt;
-@@ -671,6 +673,9 @@ static struct fc_host_statistics *bnx2fc_get_host_stats=
-(struct Scsi_Host *shost)
-=20
- 	memcpy(&hba->prev_stats, hba->stats_buffer,
- 	       sizeof(struct fcoe_statistics_params));
+ 	info->fix.line_length =3D get_line_length(info->var.xres_virtual,
+ 						info->var.bits_per_pixel);
 +
-+unlock_stats_mutex:
-+	mutex_unlock(&hba->hba_stats_mutex);
- 	return bnx2fc_stats;
+ 	return 0;
  }
 =20
-@@ -1302,6 +1307,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cn=
-ic_dev *cnic)
- 	}
- 	spin_lock_init(&hba->hba_lock);
- 	mutex_init(&hba->hba_mutex);
-+	mutex_init(&hba->hba_stats_mutex);
+@@ -525,6 +540,8 @@ static int vfb_probe(struct platform_device *dev)
+ 		goto err2;
+ 	platform_set_drvdata(dev, info);
 =20
- 	hba->cnic =3D cnic;
-=20
++	vfb_set_par(info);
++
+ 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n"=
+,
+ 		videomemorysize >> 10);
+ 	return 0;
 --=20
 2.14.1
