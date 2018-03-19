@@ -1,70 +1,63 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3606188-1521489192-2-16706912722792335727
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521489191; b=Hd47fZVeZISu9conrTJyC2+vNBFjYbBLt3h6gh2k/x4057b
-    Ow4xgmks7UwRGpm74cfIyVEWxVgkBdKfI+3I49hFhxZcJY/pYqv5y3z25/rcVg6H
-    lMsZsYJSANgPnPslXemOvk9Pzc3dicVRrDnQGgou7ncey8aXiUHgaa8Z/Mcwba/+
-    JhQAOB9GYxVCk5ZBoFcnGC2PyexqcIyU4sc/IoVJ10L8+Po/zQndOrN88oh+Vewl
-    dulAFjbOXBH9MPHa63FQDDCM32DDW6RMRGs/b4UeQqTvR5Lh4n4PERoKF2mcEMxj
-    YgcmanUM1yHvrZG1P0R7qCMDwHOPVeL3kri1aUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521489191; bh=/cIIyhtrykWkIRme3uAF1aQ/RP
-    zBf/ax6kATjXbmS5w=; b=A6TtOp1JRNO3aOwk2Zeyj5cGzfwmuh5Wtu6b6opTgE
-    CbwzasdVJlJv20cPaR361h+2T8EB1GRT4TNpgstn1KgIRJs4oDCE2W7sayubOel4
-    Z0IJFEiYIU4eFIUc87L/mXaOdA5Bdz8d36djxjvj5tf/6Z1xOP/a7yWQMvC/bOvI
-    DOMvrFaXU/bwUHPt8EYL0t9AqujV7YVLs495asp9BnZzbJEamPs6Dim4QKipNf7Z
-    fsW6tVRPEzz1XeJtfx+1LyOn79U2RJWSPLPVvjRdp3Afwn3uwkbT1EsRCWwHdKll
-    G+DDnhcISttmmRSob2rTZ5BdxBJDmgmQTwv1RwWA0u8g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddufeduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinheplhhinhhugihfohhunhgurghtihhonhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehkeelheenucevlhhushhtvghrufhiiigvpedv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddufeduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinheplhhinhhugihfohhunhgurghtihhonhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeehkeelheenucevlhhushhtvghrufhiiigvpedv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969426AbeCSSTf (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:19:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47236 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969371AbeCSSTa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:19:30 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELt7MymBlkn3RNX4LaAF42wczuqjy6SW2NxhMEOUn/kcwja5a6c7YJf79Hze+R2TuRK5FyD5
+ARC-Seal: i=1; a=rsa-sha256; t=1521484147; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mFiAuizHC8HjxmjkTBOOIPgdHBzBJ6R4VI0aUDtMpUfjjx5SKfprMqmOdkeeZAsOFy
+         MQZsAMp1nRgOPxVghaFFQ9AL31TOnZQ3yiX1U0ksi2hBpN0WR50k54VPf05zKkNXQeNa
+         TMMEcGJS67vOd/SqJ4vTZ1fzm7Xx4tgZQog0sgiiS+XXtCez75pUgeX6Ww6wZKahLKGC
+         MOvYL/6XxwFfYuoxuCWlrhOLefth5ZWixHHlUKmi2UuSFn8qCUrCM2WPQJZckYbu3N46
+         AVGY5mpFcxRzdjLudurYY7Gijz8oQ/TUqgfYkCjfnAkh0ORthS/aKLYbMoJFc0Hue/VV
+         /3ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=xVEwT1rDw53Elxf7JpX/tDNUevArs07WzgRVR4ApLwo=;
+        b=pNj29cT7wig/PxaOkCGqqo3WS8ovCdP74G6u3IAGp8lwD1XgG0YmKx37sEb9/QL9e1
+         S9JlEvaBib+ywmd0Mxz7dfzO14u6XQJmeH2cGmmGwhpnOXMU6lwH37nxOlsXBXFfvR+s
+         lilwCvujdnXQipABa+l0coZp3tt9IjcM4atByaI5gC4mGuCmsPQduvNnubLzJecTn4Uf
+         dSxJJCS0Y/Lip6cbWqd5VP40IfvM1hk2sUF1lvqAaXS5IEpNT9qWbdvFbxOjmyqarmbP
+         29EEJOrkK3NOK3nm1YLi4mtg45JleLXJCnCCSt9gp0rWJGiRk6m9oKulSZ+OffIPQfm4
+         cWBA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nik Unger <njunger@uwaterloo.ca>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 038/241] netem: apply correct delay when rate throttling
-Date: Mon, 19 Mar 2018 19:05:03 +0100
-Message-Id: <20180319180752.782095032@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Borislav Petkov <bp@suse.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Chen Yucong <slaoub@gmail.com>,
+	Chris Metcalf <cmetcalf@mellanox.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Paul Gortmaker <paul.gortmaker@windriver.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	ricardo.neri@intel.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 214/241] selftests/x86: Add tests for User-Mode Instruction Prevention
+Date: Mon, 19 Mar 2018 19:07:59 +0100
+Message-Id: <20180319180800.035896589@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -72,9 +65,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391050324869540?=
+X-GMAIL-MSGID: =?utf-8?q?1595391761982366986?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,108 +76,169 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nik Unger <njunger@uwaterloo.ca>
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 
+commit 9390afebe1d3f5a0be18b1afdd0ce09d67cebf9e upstream.
 
-[ Upstream commit 5080f39e8c72e01cf37e8359023e7018e2a4901e ]
+Certain user space programs that run on virtual-8086 mode may utilize
+instructions protected by the User-Mode Instruction Prevention (UMIP)
+security feature present in new Intel processors: SGDT, SIDT and SMSW. In
+such a case, a general protection fault is issued if UMIP is enabled. When
+such a fault happens, the kernel traps it and emulates the results of
+these instructions with dummy values. The purpose of this new
+test is to verify whether the impacted instructions can be executed
+without causing such #GP. If no #GP exceptions occur, we expect to exit
+virtual-8086 mode from INT3.
 
-I recently reported on the netem list that iperf network benchmarks
-show unexpected results when a bandwidth throttling rate has been
-configured for netem. Specifically:
+The instructions protected by UMIP are executed in representative use
+cases:
 
-1) The measured link bandwidth *increases* when a higher delay is added
-2) The measured link bandwidth appears higher than the specified limit
-3) The measured link bandwidth for the same very slow settings varies significantly across
-  machines
+ a) displacement-only memory addressing
+ b) register-indirect memory addressing
+ c) results stored directly in operands
 
-The issue can be reproduced by using tc to configure netem with a
-512kbit rate and various (none, 1us, 50ms, 100ms, 200ms) delays on a
-veth pair between network namespaces, and then using iperf (or any
-other network benchmarking tool) to test throughput. Complete detailed
-instructions are in the original email chain here:
-https://lists.linuxfoundation.org/pipermail/netem/2017-February/001672.html
+Unfortunately, it is not possible to check the results against a set of
+expected values because no emulation will occur in systems that do not
+have the UMIP feature. Instead, results are printed for verification. A
+simple verification is done to ensure that results of all tests are
+identical.
 
-There appear to be two underlying bugs causing these effects:
-
-- The first issue causes long delays when the rate is slow and no
-  delay is configured (e.g., "rate 512kbit"). This is because SKBs are
-  not orphaned when no delay is configured, so orphaning does not
-  occur until *after* the rate-induced delay has been applied. For
-  this reason, adding a tiny delay (e.g., "rate 512kbit delay 1us")
-  dramatically increases the measured bandwidth.
-
-- The second issue is that rate-induced delays are not correctly
-  applied, allowing SKB delays to occur in parallel. The indended
-  approach is to compute the delay for an SKB and to add this delay to
-  the end of the current queue. However, the code does not detect
-  existing SKBs in the queue due to improperly testing sch->q.qlen,
-  which is nonzero even when packets exist only in the
-  rbtree. Consequently, new SKBs do not wait for the current queue to
-  empty. When packet delays vary significantly (e.g., if packet sizes
-  are different), then this also causes unintended reordering.
-
-I modified the code to expect a delay (and orphan the SKB) when a rate
-is configured. I also added some defensive tests that correctly find
-the latest scheduled delivery time, even if it is (unexpectedly) for a
-packet in sch->q. I have tested these changes on the latest kernel
-(4.11.0-rc1+) and the iperf / ping test results are as expected.
-
-Signed-off-by: Nik Unger <njunger@uwaterloo.ca>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Chen Yucong <slaoub@gmail.com>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Huang Rui <ray.huang@amd.com>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi V. Shankar <ravi.v.shankar@intel.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: ricardo.neri@intel.com
+Link: http://lkml.kernel.org/r/1509935277-22138-12-git-send-email-ricardo.neri-calderon@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/sch_netem.c |   26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
 
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -462,7 +462,7 @@ static int netem_enqueue(struct sk_buff
- 	/* If a delay is expected, orphan the skb. (orphaning usually takes
- 	 * place at TX completion time, so _before_ the link transit delay)
- 	 */
--	if (q->latency || q->jitter)
-+	if (q->latency || q->jitter || q->rate)
- 		skb_orphan_partial(skb);
+---
+ tools/testing/selftests/x86/entry_from_vm86.c |   73 +++++++++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 1 deletion(-)
+
+--- a/tools/testing/selftests/x86/entry_from_vm86.c
++++ b/tools/testing/selftests/x86/entry_from_vm86.c
+@@ -95,6 +95,22 @@ asm (
+ 	"int3\n\t"
+ 	"vmcode_int80:\n\t"
+ 	"int $0x80\n\t"
++	"vmcode_umip:\n\t"
++	/* addressing via displacements */
++	"smsw (2052)\n\t"
++	"sidt (2054)\n\t"
++	"sgdt (2060)\n\t"
++	/* addressing via registers */
++	"mov $2066, %bx\n\t"
++	"smsw (%bx)\n\t"
++	"mov $2068, %bx\n\t"
++	"sidt (%bx)\n\t"
++	"mov $2074, %bx\n\t"
++	"sgdt (%bx)\n\t"
++	/* register operands, only for smsw */
++	"smsw %ax\n\t"
++	"mov %ax, (2080)\n\t"
++	"int3\n\t"
+ 	".size vmcode, . - vmcode\n\t"
+ 	"end_vmcode:\n\t"
+ 	".code32\n\t"
+@@ -103,7 +119,7 @@ asm (
  
- 	/*
-@@ -530,21 +530,31 @@ static int netem_enqueue(struct sk_buff
- 		now = psched_get_time();
+ extern unsigned char vmcode[], end_vmcode[];
+ extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
+-	vmcode_sti[], vmcode_int3[], vmcode_int80[];
++	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[];
  
- 		if (q->rate) {
--			struct sk_buff *last;
-+			struct netem_skb_cb *last = NULL;
+ /* Returns false if the test was skipped. */
+ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+@@ -160,6 +176,58 @@ static bool do_test(struct vm86plus_stru
+ 	return true;
+ }
+ 
++void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
++{
++	struct table_desc {
++		unsigned short limit;
++		unsigned long base;
++	} __attribute__((packed));
 +
-+			if (sch->q.tail)
-+				last = netem_skb_cb(sch->q.tail);
-+			if (q->t_root.rb_node) {
-+				struct sk_buff *t_skb;
-+				struct netem_skb_cb *t_last;
++	/* Initialize variables with arbitrary values */
++	struct table_desc gdt1 = { .base = 0x3c3c3c3c, .limit = 0x9999 };
++	struct table_desc gdt2 = { .base = 0x1a1a1a1a, .limit = 0xaeae };
++	struct table_desc idt1 = { .base = 0x7b7b7b7b, .limit = 0xf1f1 };
++	struct table_desc idt2 = { .base = 0x89898989, .limit = 0x1313 };
++	unsigned short msw1 = 0x1414, msw2 = 0x2525, msw3 = 3737;
 +
-+				t_skb = netem_rb_to_skb(rb_last(&q->t_root));
-+				t_last = netem_skb_cb(t_skb);
-+				if (!last ||
-+				    t_last->time_to_send > last->time_to_send) {
-+					last = t_last;
-+				}
-+			}
++	/* UMIP -- exit with INT3 unless kernel emulation did not trap #GP */
++	do_test(vm86, vmcode_umip - vmcode, VM86_TRAP, 3, "UMIP tests");
++
++	/* Results from displacement-only addressing */
++	msw1 = *(unsigned short *)(test_mem + 2052);
++	memcpy(&idt1, test_mem + 2054, sizeof(idt1));
++	memcpy(&gdt1, test_mem + 2060, sizeof(gdt1));
++
++	/* Results from register-indirect addressing */
++	msw2 = *(unsigned short *)(test_mem + 2066);
++	memcpy(&idt2, test_mem + 2068, sizeof(idt2));
++	memcpy(&gdt2, test_mem + 2074, sizeof(gdt2));
++
++	/* Results when using register operands */
++	msw3 = *(unsigned short *)(test_mem + 2080);
++
++	printf("[INFO]\tResult from SMSW:[0x%04x]\n", msw1);
++	printf("[INFO]\tResult from SIDT: limit[0x%04x]base[0x%08lx]\n",
++	       idt1.limit, idt1.base);
++	printf("[INFO]\tResult from SGDT: limit[0x%04x]base[0x%08lx]\n",
++	       gdt1.limit, gdt1.base);
++
++	if (msw1 != msw2 || msw1 != msw3)
++		printf("[FAIL]\tAll the results of SMSW should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SMSW are identical.\n");
++
++	if (memcmp(&gdt1, &gdt2, sizeof(gdt1)))
++		printf("[FAIL]\tAll the results of SGDT should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SGDT are identical.\n");
++
++	if (memcmp(&idt1, &idt2, sizeof(idt1)))
++		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
++	else
++		printf("[PASS]\tAll the results from SIDT are identical.\n");
++}
++
+ int main(void)
+ {
+ 	struct vm86plus_struct v86;
+@@ -218,6 +286,9 @@ int main(void)
+ 	v86.regs.eax = (unsigned int)-1;
+ 	do_test(&v86, vmcode_int80 - vmcode, VM86_INTx, 0x80, "int80");
  
--			if (sch->q.qlen)
--				last = sch->q.tail;
--			else
--				last = netem_rb_to_skb(rb_last(&q->t_root));
- 			if (last) {
- 				/*
- 				 * Last packet in queue is reference point (now),
- 				 * calculate this time bonus and subtract
- 				 * from delay.
- 				 */
--				delay -= netem_skb_cb(last)->time_to_send - now;
-+				delay -= last->time_to_send - now;
- 				delay = max_t(psched_tdiff_t, 0, delay);
--				now = netem_skb_cb(last)->time_to_send;
-+				now = last->time_to_send;
- 			}
- 
- 			delay += packet_len_2_sched_time(qdisc_pkt_len(skb), q);
++	/* UMIP -- should exit with INTx 0x80 unless UMIP was not disabled */
++	do_umip_tests(&v86, addr);
++
+ 	/* Execute a null pointer */
+ 	v86.regs.cs = 0;
+ 	v86.regs.ss = 0;
