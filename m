@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuPWhFX6M6tpglkHkg5WK1aK+LGXj9btQieg22b8ffQm0r0vAeiRRgfmPgnwa05ejtXUXdZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521484273; cv=none;
+X-Google-Smtp-Source: AG47ELvS4URD/S1L6pwnFTnuabTe8SCce15YPSTuFZhDLY5BseRbG32qIOjVFxuMqkvZeO3FLGTv
+ARC-Seal: i=1; a=rsa-sha256; t=1521484271; cv=none;
         d=google.com; s=arc-20160816;
-        b=R+80/9wmg/b01mjxDpaLxuFwR68gMlSywAxHSHJtC7oaBC7ZQMC+yEhentGegJZrP4
-         n4pS2OYwpz29qQrCwmQZeWWbjlStORT6X0y5tq0yiIlE3Kp11efl5fdIeMD9wAhxkjfj
-         jjuvPzRF9RvxSoYWxo1PPnOCxehPzu5uEIKfUJZi4Qx+EauF0tFnty7UKesG4DP7QXvL
-         XW+2MB+0B+q96BGVUXlrUhVM8EiKdKK7DOj8anXpoCLnGsNAca6uF/2musP5REWgmV1j
-         6JegGCxL49GMds20j6XPKMFV+5lJb5g4bneGAlooDIo7B1lp17XBcXF7ylUQ+DJ5Qc1Y
-         pimQ==
+        b=plKRSmxZMaeIKE54/xBYplprshUrOXhFjbNpxed9k6h2FZGunV/j42HDPqmKoJADce
+         F3o0HDOu7cnzhlplDS/GMhG0CVghYMbTm7kT8rMfQdEsKPGLYjg0rv5Vpw7ful5tNNHX
+         c6NTiwOeRHsxd53wU6jQkDvpKIjd78mVHNx0quL9ZktveSlmDcoaICxOndaMb8SBZRi7
+         x/t9An9U3W0hYkhKdRhUPykftJtzvMYOBCTFf42ZBIEMEfdlZ7PpuM8qyyhmsx9gqawX
+         g/F9PCNvgCJ/ZL1h/dHwmsJQh5ABY5lqVmTXv+oypuogJio2LOKrbMYKNtE/YYuw20ie
+         SwYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u9kVfrKrfhC7XhFBmFz6BqhwRRYW8JKqQdk6DV79q6c=;
-        b=opd6Ys8Rte/XdvDP6ryCbuJc0zFSH4msSBQw8r1pJmMVk1n0wqWA0visNImEmrJwkG
-         +sRGUoo9z+sKlH4L+2iI7o1MiyGYxZ/svkL3UUc2HzNILIKbUY3RWR4mr3DVx8Ew8zxK
-         TRT76Vqbq/v/otDvCV2bHd4867S2VLwwwc5aK1nuW8zrmX8AubWlxI+amooqiM705Y3k
-         +gldJ0BDnrYQ0gqkqSVgRbQZr+sVEGxRy3DB5dMOR12LGRmcIeGI6/y0y3Xyb5sHQ4i4
-         0eDPpxop6TkQz2PkPjUoBtALeun4Zcf6nGgw8jvCN3LEEgKnylboFGsiEW8DB8MH7MRF
-         VV8A==
+        bh=F9u+CYLHyrvYRCoK9EoXsYzPLp+/ePFXGOmJOJqEtJo=;
+        b=dwbmUiFNc7gtl8+0WK3lE52pUcR9Ieb28zVb/gg+F35P/7tbiwxiDeDIJS5f2PZBPU
+         ULpceumYC/70jhOtw7BxuPP46Gd6494rLKuYudxPIj+HzjPbWS3i9I2h6FRRZqnSvC7g
+         nUVIejjRxyck8BclIC+ra5E6vaMsWfETFVE7di78mnO9rFwBv+/jQpQHVH5/DcNjpRXK
+         cBd3P12ge98J2ssKh38igoW+c07bjt0rA2+juPzyupZmrhvKJPMfV2gIeH4tD2CnOyl7
+         05FFD8CQ/NVRLHqmGEXoexM7TiqftJXa3R6M5JWYkkVgzX5BH7WTJAwaHH6hBuqmEndz
+         pODg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 11/52] ALSA: pcm: Fix UAF in snd_pcm_oss_get_formats()
-Date: Mon, 19 Mar 2018 19:08:09 +0100
-Message-Id: <20180319180735.741994907@linuxfoundation.org>
+	John David Anglin <dave.anglin@bell.net>,
+	Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.15 10/52] parisc: Handle case where flush_cache_range is called with no context
+Date: Mon, 19 Mar 2018 19:08:08 +0100
+Message-Id: <20180319180735.675295481@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390642761119786?=
-X-GMAIL-MSGID: =?utf-8?q?1595391894039173500?=
+X-GMAIL-THRID: =?utf-8?q?1595391753021441659?=
+X-GMAIL-MSGID: =?utf-8?q?1595391891340560787?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,49 +49,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit 01c0b4265cc16bc1f43f475c5944c55c10d5768f upstream.
+commit 9ef0f88fe5466c2ca1d2975549ba6be502c464c1 upstream.
 
-snd_pcm_oss_get_formats() has an obvious use-after-free around
-snd_mask_test() calls, as spotted by syzbot.  The passed format_mask
-argument is a pointer to the hw_params object that is freed before the
-loop.  What a surprise that it has been present since the original
-code of decades ago...
+Just when I had decided that flush_cache_range() was always called with
+a valid context, Helge reported two cases where the
+"BUG_ON(!vma->vm_mm->context);" was hit on the phantom buildd:
 
-Reported-by: syzbot+4090700a4f13fccaf648@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+ kernel BUG at /mnt/sdb6/linux/linux-4.15.4/arch/parisc/kernel/cache.c:587!
+ CPU: 1 PID: 3254 Comm: kworker/1:2 Tainted: G D 4.15.0-1-parisc64-smp #1 Debian 4.15.4-1+b1
+ Workqueue: events free_ioctx
+  IAOQ[0]: flush_cache_range+0x164/0x168
+  IAOQ[1]: flush_cache_page+0x0/0x1c8
+  RP(r2): unmap_page_range+0xae8/0xb88
+ Backtrace:
+  [<00000000404a6980>] unmap_page_range+0xae8/0xb88
+  [<00000000404a6ae0>] unmap_single_vma+0xc0/0x188
+  [<00000000404a6cdc>] zap_page_range_single+0x134/0x1f8
+  [<00000000404a702c>] unmap_mapping_range+0x1cc/0x208
+  [<0000000040461518>] truncate_pagecache+0x98/0x108
+  [<0000000040461624>] truncate_setsize+0x9c/0xb8
+  [<00000000405d7f30>] put_aio_ring_file+0x80/0x100
+  [<00000000405d803c>] aio_free_ring+0x8c/0x290
+  [<00000000405d82c0>] free_ioctx+0x80/0x180
+  [<0000000040284e6c>] process_one_work+0x21c/0x668
+  [<00000000402854c4>] worker_thread+0x20c/0x778
+  [<0000000040291d44>] kthread+0x2d4/0x2e0
+  [<0000000040204020>] end_fault_vector+0x20/0xc0
+
+This indicates that we need to handle the no context case in
+flush_cache_range() as we do in flush_cache_mm().
+
+In thinking about this, I realized that we don't need to flush the TLB
+when there is no context.  So, I added context checks to the large flush
+cases in flush_cache_mm() and flush_cache_range().  The large flush case
+occurs frequently in flush_cache_mm() and the change should improve fork
+performance.
+
+The v2 version of this change removes the BUG_ON from flush_cache_page()
+by skipping the TLB flush when there is no context.  I also added code
+to flush the TLB in flush_cache_mm() and flush_cache_range() when we
+have a context that's not current.  Now all three routines handle TLB
+flushes in a similar manner.
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Cc: stable@vger.kernel.org # 4.9+
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/parisc/kernel/cache.c |   41 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 32 insertions(+), 9 deletions(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1762,10 +1762,9 @@ static int snd_pcm_oss_get_formats(struc
- 		return -ENOMEM;
- 	_snd_pcm_hw_params_any(params);
- 	err = snd_pcm_hw_refine(substream, params);
--	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
--	kfree(params);
- 	if (err < 0)
--		return err;
-+		goto error;
-+	format_mask = hw_param_mask_c(params, SNDRV_PCM_HW_PARAM_FORMAT);
- 	for (fmt = 0; fmt < 32; ++fmt) {
- 		if (snd_mask_test(format_mask, fmt)) {
- 			int f = snd_pcm_oss_format_to(fmt);
-@@ -1773,7 +1772,10 @@ static int snd_pcm_oss_get_formats(struc
- 				formats |= f;
+--- a/arch/parisc/kernel/cache.c
++++ b/arch/parisc/kernel/cache.c
+@@ -543,7 +543,8 @@ void flush_cache_mm(struct mm_struct *mm
+ 	   rp3440, etc.  So, avoid it if the mm isn't too big.  */
+ 	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
+ 	    mm_total_size(mm) >= parisc_cache_flush_threshold) {
+-		flush_tlb_all();
++		if (mm->context)
++			flush_tlb_all();
+ 		flush_cache_all();
+ 		return;
+ 	}
+@@ -571,6 +572,8 @@ void flush_cache_mm(struct mm_struct *mm
+ 			pfn = pte_pfn(*ptep);
+ 			if (!pfn_valid(pfn))
+ 				continue;
++			if (unlikely(mm->context))
++				flush_tlb_page(vma, addr);
+ 			__flush_cache_page(vma, addr, PFN_PHYS(pfn));
  		}
  	}
--	return formats;
+@@ -579,26 +582,46 @@ void flush_cache_mm(struct mm_struct *mm
+ void flush_cache_range(struct vm_area_struct *vma,
+ 		unsigned long start, unsigned long end)
+ {
++	pgd_t *pgd;
++	unsigned long addr;
 +
-+ error:
-+	kfree(params);
-+	return err < 0 ? err : formats;
+ 	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
+ 	    end - start >= parisc_cache_flush_threshold) {
+-		flush_tlb_range(vma, start, end);
++		if (vma->vm_mm->context)
++			flush_tlb_range(vma, start, end);
+ 		flush_cache_all();
+ 		return;
+ 	}
+ 
+-	flush_user_dcache_range_asm(start, end);
+-	if (vma->vm_flags & VM_EXEC)
+-		flush_user_icache_range_asm(start, end);
+-	flush_tlb_range(vma, start, end);
++	if (vma->vm_mm->context == mfsp(3)) {
++		flush_user_dcache_range_asm(start, end);
++		if (vma->vm_flags & VM_EXEC)
++			flush_user_icache_range_asm(start, end);
++		flush_tlb_range(vma, start, end);
++		return;
++	}
++
++	pgd = vma->vm_mm->pgd;
++	for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
++		unsigned long pfn;
++		pte_t *ptep = get_ptep(pgd, addr);
++		if (!ptep)
++			continue;
++		pfn = pte_pfn(*ptep);
++		if (pfn_valid(pfn)) {
++			if (unlikely(vma->vm_mm->context))
++				flush_tlb_page(vma, addr);
++			__flush_cache_page(vma, addr, PFN_PHYS(pfn));
++		}
++	}
  }
  
- static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
+ void
+ flush_cache_page(struct vm_area_struct *vma, unsigned long vmaddr, unsigned long pfn)
+ {
+-	BUG_ON(!vma->vm_mm->context);
+-
+ 	if (pfn_valid(pfn)) {
+-		flush_tlb_page(vma, vmaddr);
++		if (likely(vma->vm_mm->context))
++			flush_tlb_page(vma, vmaddr);
+ 		__flush_cache_page(vma, vmaddr, PFN_PHYS(pfn));
+ 	}
+ }
