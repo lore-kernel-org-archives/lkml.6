@@ -1,41 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971656AbeCSUxj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:53:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S971632AbeCSUxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:53:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE5A204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520931243-29091-1-git-send-email-mike.looijmans@topic.nl>
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-References: <1520931243-29091-1-git-send-email-mike.looijmans@topic.nl>
-Message-ID: <152149281366.242365.13850922141460907992@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: clk-gpio: Allow GPIO to sleep in set/get_parent
-Date: Mon, 19 Mar 2018 13:53:33 -0700
+        id S971675AbeCSUxr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:53:47 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:16685 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S971632AbeCSUxl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:53:41 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 19 Mar 2018 21:53:39 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: masaki.ota@jp.alps.com, jikos@kernel.org,
+        benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
+Date: Mon, 19 Mar 2018 21:53:25 +0100
+Message-Id: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mike Looijmans (2018-03-13 01:54:03)
-> When changing or retrieving clock parents, the caller is in a sleepable
-> state (like prepare) so the GPIO operation need not be atomic. Replace
-> gpiod_{g|s}et_value with gpiod_{g|s}et_value_cansleep in the {g|s}et_parent
-> calls for the GPIO based clock mux.
-> 
-> This fixes a "slowpath" warning when the GPIO controller is an I2C expander
-> or something similar.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
+All is said in the subject and below.
 
-Applied to clk-next
+These patches are untested. Especially, patch 1 slightly changes the behavior
+of 't4_read_write_register()'.
+This looks logical to me, but please, review it carefully.
+
+Christophe JAILLET (4):
+  HID: alps: Report an error if we receive invalid data in
+    't4_read_write_register()'
+  HID: alps: Save a memory allocation in 't4_read_write_register()' when
+    writing data
+  HID: alps: Check errors returned by 't4_read_write_register()'
+  HID: alps: Fix some style in 't4_read_write_register()'
+
+ drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
+
+-- 
+2.14.1
