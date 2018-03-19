@@ -1,49 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755869AbeCSP1y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:27:54 -0400
-Received: from mail-yb0-f180.google.com ([209.85.213.180]:42483 "EHLO
-        mail-yb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755819AbeCSP1t (ORCPT
+        id S1755882AbeCSP2N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:28:13 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40502 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755773AbeCSP2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:27:49 -0400
-X-Google-Smtp-Source: AG47ELsxD6cX5+RTTcKvkbLkdVNUWfOK7DIinIgauZSLy2p9Xgny1+1aLTGLiUYMwjIf3kZLCHvBwQ==
-Date: Mon, 19 Mar 2018 08:27:46 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: make manage_workers() and pool destruction
- exclusive
-Message-ID: <20180319152746.GN2943022@devbig577.frc2.facebook.com>
-References: <20180319073508.3100-1-jiangshanlai@gmail.com>
+        Mon, 19 Mar 2018 11:28:05 -0400
+X-Google-Smtp-Source: AG47ELu5n3fGspgPZ+flQi1ORU+hKUezp/JRsmYj2wkJbbjleQ+xYkgVdfa4o0YsSLck05WGbSJmp32qJIp+n1CJy34=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319073508.3100-1-jiangshanlai@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b86f173b8333cb6cc1c7e32ec2ab1e38fae4ecf8.1521399976.git.ren_guo@c-sky.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <b86f173b8333cb6cc1c7e32ec2ab1e38fae4ecf8.1521399976.git.ren_guo@c-sky.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 19 Mar 2018 23:28:03 +0800
+X-Google-Sender-Auth: no3h05YwrL6maGiq1U_bVcgUR7k
+Message-ID: <CAK8P3a3uoiXRk0azD=LU033M3-FGr8e=HgUErDXuVMwvLWa6Gw@mail.gmail.com>
+Subject: Re: [PATCH 16/19] csky: Device tree
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 03:35:07PM +0800, Lai Jiangshan wrote:
-> The original code allows destroying the pool when the pool
-> is still active in manage_workers(). A synchronization
-> mechanism between manage_workers() and pool destruction
-> was added for protection.
-> 
-> This patch simply makes manage_workers() and pool destruction
-> exclusive by getting an indirect refcount of the pool in
-> manage_workers(). "indirect" means it gets a refcount of
-> the first involved pwq which holds a refcount of the pool.
-> This refcount can prevent the pool from being destroyed.
-> 
-> The original synchronization mechanism (wq_manager_wait)
-> is also removed.
+On Mon, Mar 19, 2018 at 3:51 AM, Guo Ren <ren_guo@c-sky.com> wrote:
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 
-Hmm... idk, this is more indirect and subtle than the existing code
-and it's not like the existing code was overly complicated.
+Please add a changelog text to each patch, and send patches that add
+.dts files or
+binding documents to the devicetree mailing list.
 
-Thanks.
+> ---
+>  arch/csky/boot/dts/gx6605s.dts         | 159 +++++++++++++++++++++++++++++++++
+>  arch/csky/boot/dts/include/dt-bindings |   1 +
+>  arch/csky/boot/dts/qemu.dts            |  87 ++++++++++++++++++
+>  3 files changed, 247 insertions(+)
+>  create mode 100644 arch/csky/boot/dts/gx6605s.dts
+>  create mode 120000 arch/csky/boot/dts/include/dt-bindings
+>  create mode 100644 arch/csky/boot/dts/qemu.dts
+>
+> diff --git a/arch/csky/boot/dts/gx6605s.dts b/arch/csky/boot/dts/gx6605s.dts
+> new file mode 100644
+> index 0000000..0d34d22
+> --- /dev/null
+> +++ b/arch/csky/boot/dts/gx6605s.dts
+> @@ -0,0 +1,159 @@
+> +/dts-v1/;
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
 
--- 
-tejun
+It is usually better for an SoC based board to split the SoC specific into a
+separate .dtsi file that gets included by the board .dts file.
+
+> +/ {
+> +       model = "Nationalchip gx6605s ck610";
+> +       compatible = "nationalchip,gx6605s,ck610";
+
+Is ck610 the name of the CPU core? The general convention is to have the
+top-level "compatible" property list first the name of the board, then the
+name of the soc, but not the name of the CPU core.
+
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+> +
+> +       memory {
+> +               device_type = "memory";
+> +               reg = <0x10000000 0x04000000>;
+> +       };
+> +
+> +       cpus {
+> +               #address-cells = <0>;
+> +               #size-cells = <0>;
+> +
+> +               cpu {
+> +                       device_type = "cpu";
+> +                       ccr     = <0x7d>;
+> +                       hint    = <0x1c>;
+
+Here you should list the specific type of CPU in the compatible property and
+document the binding for that string in the Documentations/devicetree/bindings
+hierarchy. Without a binding, the 'ccr' and 'hint' properties make no sense.
+
+If there is any chance that you could have SMP systems in the future, it
+would be better to start with #address-cells=<1>, with appropriate reg
+properties.
+
+> +       soc {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               compatible = "simple-bus";
+> +               ranges;
+> +
+> +               intc: interrupt-controller {
+> +                       compatible = "nationalchip,intc-v1,ave";
+> +                       reg = <0x00500000 0x400>;
+
+Each node with a register property also needs the address in the
+node name, e.g. "interrupt-controller@500000"
+
+Try building the dtb file with 'make W=1' to get warnings about
+when you got that wrong.
+
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <1>;
+> +               };
+> +
+> +               timer0 {
+> +                       compatible = "nationalchip,timer-v1";
+
+This should be "timer@400"
+
+Also, each device node should have a binding documentation
+to explain the binding associated with that "compatible"
+string.
+
+> +                       reg = <0x0020a000 0x400>;
+> +                       clock-frequency = <1000000>;
+> +                       interrupts = <10>;
+> +                       interrupt-parent = <&intc>;
+> +               };
+> +
+> +               ehci: ehci-hcd {
+> +                       compatible = "generic-ehci";
+> +                       reg = <0x00900000 0x400>;
+> +                       interrupt-parent = <&intc>;
+> +                       interrupts = <59>;
+> +               };
+> +
+> +               ohci0: ohci-hcd0 {
+
+
+The names here should be "usb@...", not "ehci-hcd"
+
+> +       chosen {
+> +               bootargs = "console=ttyS0,115200 rdinit=/sbin/init root=/dev/ram0";
+> +       };
+
+The bootargs should not be in the dts file normally, they should come from the
+boot loader. For the console, use the "stdout-path" property.
+
+         Arnd
