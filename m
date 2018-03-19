@@ -1,40 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932883AbeCSO4k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:56:40 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60447 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754406AbeCSO4h (ORCPT
+        id S1755568AbeCSO5S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:57:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33359 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755380AbeCSO5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:56:37 -0400
-Date: Mon, 19 Mar 2018 15:56:24 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-cc: x86@kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: use generic dma-direct and swiotlb code for x86 V3
-In-Reply-To: <20180319103826.12853-1-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.1803191556140.2010@nanos.tec.linutronix.de>
-References: <20180319103826.12853-1-hch@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 19 Mar 2018 10:57:13 -0400
+From: Colin King <colin.king@canonical.com>
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] qede:  fix spelling mistake: "registeration" -> "registration"
+Date: Mon, 19 Mar 2018 14:57:11 +0000
+Message-Id: <20180319145711.6591-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018, Christoph Hellwig wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Hi all,
-> 
-> this series switches the x86 code the the dma-direct implementation
-> for direct (non-iommu) dma and the generic swiotlb ops.  This includes
-> getting rid of the special ops for the AMD memory encryption case and
-> the STA2x11 SOC.  The generic implementations are based on the x86
-> code, so they provide the same functionality.
+Trivial fix to spelling mistakes in DP_ERR error message text and
+comments
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qede/qede_main.c | 4 ++--
+ drivers/net/ethernet/qlogic/qede/qede_ptp.c  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_main.c b/drivers/net/ethernet/qlogic/qede/qede_main.c
+index 5c28209e97d0..a01e7d6e5442 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -288,7 +288,7 @@ int __init qede_init(void)
+ 	}
+ 
+ 	/* Must register notifier before pci ops, since we might miss
+-	 * interface rename after pci probe and netdev registeration.
++	 * interface rename after pci probe and netdev registration.
+ 	 */
+ 	ret = register_netdevice_notifier(&qede_netdev_notifier);
+ 	if (ret) {
+@@ -988,7 +988,7 @@ static int __qede_probe(struct pci_dev *pdev, u32 dp_module, u8 dp_level,
+ 	if (rc)
+ 		goto err3;
+ 
+-	/* Prepare the lock prior to the registeration of the netdev,
++	/* Prepare the lock prior to the registration of the netdev,
+ 	 * as once it's registered we might reach flows requiring it
+ 	 * [it's even possible to reach a flow needing it directly
+ 	 * from there, although it's unlikely].
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ptp.c b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+index 9b2280badaf7..02adb513f475 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ptp.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+@@ -485,7 +485,7 @@ int qede_ptp_enable(struct qede_dev *edev, bool init_tc)
+ 	ptp->clock = ptp_clock_register(&ptp->clock_info, &edev->pdev->dev);
+ 	if (IS_ERR(ptp->clock)) {
+ 		rc = -EINVAL;
+-		DP_ERR(edev, "PTP clock registeration failed\n");
++		DP_ERR(edev, "PTP clock registration failed\n");
+ 		goto err2;
+ 	}
+ 
+-- 
+2.15.1
