@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs8KY4LTIF23A+4VE5+XbHVfDkO06ApotBT9HD4e9qBXLBChOkom5wICzhct2ReVFf6KzY/
-ARC-Seal: i=1; a=rsa-sha256; t=1521483613; cv=none;
+X-Google-Smtp-Source: AG47ELsrojziKsoV4m9cH7al/QnztiMgRD3Hkh2/+DauCTcpxYU1RnZT2Tv1ca6gWRY9YPVl/3IB
+ARC-Seal: i=1; a=rsa-sha256; t=1521483610; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vx+UYEK8vSZnZMKw6kUjyOSx3ohVIe1JWxRlqwcFZ5BfZSKZ4RNxsxy2/CJW+hm3Ed
-         9zWXWyIGGX1hjduOw5fOOo8DA8fj1iPl0EXDII1PKAlYTvS9ZeqO7bdTNAAVrl4ZXm2Z
-         n0SxFYrJD50Zsr4aLfIf8hMzkjDWxf9ppJcvVo0xv4hFirwcgMUQi79kIeH5cFTF2y6w
-         M6wYDs+Q/6q+ddcVmGDAcoKN0vV1Mhbf0nxFH1rAILXKlY9dgG+3W60vLD/nIgu11Dgo
-         xbNpYKi/+QhMmw7Aa/p4xJCu2YBfI7Z8027V1B73SpF2XwqVtsaphxmczi8l1yz/v174
-         610w==
+        b=0s3JhWDMtMujVBgCN8XLdxYWka/mRXgqEKUn3l32TXsT9qhA9pUYWL03lkAOVlkZOQ
+         KWDPadAfQXjCwLOg4okB8ChQbHZsNBHbA57t/yDoklQgpkQmAg8Cr0dYb/rwB2ZDtCvw
+         tYtvMgDEOL/DJqoAT2gwPprGYnlT7V7AEISHWKWJaW+5dfg2DY0x2VkknTlxutnqOzdr
+         /PV9zzipuvWYgIJPP5XrCRuYbOsqroPhdzWJDd+LMgeV6Qh/7UAz/7IxCtax2GAdD7N+
+         Dk1iJiMMuPtytUooF+q7dPSsiMa57NdMEliufaYiFkMUcftRx1/y88QIrXEPWVidZut3
+         Gw2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IBaW3QMCg0d02GOZ1t6kdxTFs1jR/vLx0CTbAzPoTZo=;
-        b=Z6a27QQ1roa2XXBsdWvGQPsWRhrn24HZ7TIZJ1XqVEET4jkttgM1dNZd1CM7A1Qy1T
-         TXp/IlJeKtlkbUVlXXevvXiKAnLoO7++AtBclMfHJDPiV8ucRuDgpUU7247Su3Ym/Iql
-         LrtCmDPBWwMfB30ChxJ7j55Ve5QXK+X66PvGAdbcDpkHmK6edu7qTPaPPTnRauGEm3jU
-         BP1ij7Zv6ReZluB7/d3nSnc1sVkYHIfU7Bn5ZxBYkJFnYsvXtinU9GqJodqp8Lzj8o/K
-         nF7Ml0INE+oP6nRA0QF/I+gu7NBgESr7M9lhJGzTr2TvmvZqeyDH9o7jd4ofpe0l2a4P
-         aZ9Q==
+        bh=yjWWWnpUjp5bmJ5DMJojYvxrRlNz83tjkpdVQVPOmhU=;
+        b=sCMNgvbpsyrdTnmOSf+aaR07U7WiMLHW9laqqIACkjxP+6m7t2eMLUhS2YaBA7xueE
+         vbJie/L3AinVAxbYFPpvgI2f3uCG6As+8+eQqDvMSlBNN6NFI1tnZo9owIUnlksLlcKa
+         a5B388rfhaCTGVRk+tNMQVQNldF5p9grcYMO88thINvRS42t7/cLNoHV3PRm28kfYwws
+         zdHRACS57pXpfq/tc3w1Em7C7UZeEf9R0/38uZp8xf0GU20Q+75iG0mrQ9vt9WptpMQE
+         BkYKL0YaMW4kkbKjVvHS6YFQDdX+v8VLEAK2rHhOd5tl7zTK8XiaOSxwAmnEqtQhpCNy
+         y8BQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,26 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matt Fleming <matt@codeblueprint.co.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Garnier <thgarnie@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-efi@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
+	Anton Sviridenko <anton@corp.bluecherry.net>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 052/241] x86/boot/32: Defer resyncing initial_page_table until per-cpu is set up
-Date: Mon, 19 Mar 2018 19:05:17 +0100
-Message-Id: <20180319180753.377148577@linuxfoundation.org>
+Subject: [PATCH 4.9 051/241] [media] solo6x10: release vb2 buffers in solo_stop_streaming()
+Date: Mon, 19 Mar 2018 19:05:16 +0100
+Message-Id: <20180319180753.329206833@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -55,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391201432890069?=
-X-GMAIL-MSGID: =?utf-8?q?1595391201432890069?=
+X-GMAIL-THRID: =?utf-8?q?1595390735713545619?=
+X-GMAIL-MSGID: =?utf-8?q?1595391198623295653?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -64,94 +51,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Anton Sviridenko <anton@corp.bluecherry.net>
 
 
-[ Upstream commit 23b2a4ddebdd17fad265b4bb77256c2e4ec37dee ]
+[ Upstream commit 6e4c8480bd2eb95309ad3c875e11d2cad98f9188 ]
 
-The x86 smpboot trampoline expects initial_page_table to have the
-GDT mapped.  If the GDT ends up in a virtually mapped per-cpu page,
-then it won't be in the page tables at all until perc-pu areas are
-set up.  The result will be a triple fault the first time that the
-CPU attempts to access the GDT after LGDT loads the perc-pu GDT.
+Fixes warning that appears in dmesg after closing V4L2 userspace
+application that plays video from the display device
+(first device from V4L2 device nodes provided by solo, usually /dev/video0
+when no other V4L2 devices are present). Encoder device nodes are not
+affected. Can be reproduced by starting and closing
 
-This appears to be an old bug, but somehow the GDT fixmap rework
-is triggering it.  This seems to have something to do with the
-memory layout.
+ffplay -f video4linux2  /dev/video0
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/a553264a5972c6a86f9b5caac237470a0c74a720.1490218061.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[ 8130.281251] ------------[ cut here ]------------
+[ 8130.281256] WARNING: CPU: 1 PID: 20414 at drivers/media/v4l2-core/videobuf2-core.c:1651 __vb2_queue_cancel+0x14b/0x230
+[ 8130.281257] Modules linked in: ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat solo6x10 x86_pkg_temp_thermal vboxpci(O) vboxnetadp(O) vboxnetflt(O) vboxdrv(O)
+[ 8130.281264] CPU: 1 PID: 20414 Comm: ffplay Tainted: G           O    4.10.0-gentoo #1
+[ 8130.281264] Hardware name: ASUS All Series/B85M-E, BIOS 2301 03/30/2015
+[ 8130.281265] Call Trace:
+[ 8130.281267]  dump_stack+0x4f/0x72
+[ 8130.281270]  __warn+0xc7/0xf0
+[ 8130.281271]  warn_slowpath_null+0x18/0x20
+[ 8130.281272]  __vb2_queue_cancel+0x14b/0x230
+[ 8130.281273]  vb2_core_streamoff+0x23/0x90
+[ 8130.281275]  vb2_streamoff+0x24/0x50
+[ 8130.281276]  vb2_ioctl_streamoff+0x3d/0x50
+[ 8130.281278]  v4l_streamoff+0x15/0x20
+[ 8130.281279]  __video_do_ioctl+0x25e/0x2f0
+[ 8130.281280]  video_usercopy+0x279/0x520
+[ 8130.281282]  ? v4l_enum_fmt+0x1330/0x1330
+[ 8130.281285]  ? unmap_region+0xdf/0x110
+[ 8130.281285]  video_ioctl2+0x10/0x20
+[ 8130.281286]  v4l2_ioctl+0xce/0xe0
+[ 8130.281289]  do_vfs_ioctl+0x8b/0x5b0
+[ 8130.281290]  ? __fget+0x72/0xa0
+[ 8130.281291]  SyS_ioctl+0x74/0x80
+[ 8130.281294]  entry_SYSCALL_64_fastpath+0x13/0x94
+[ 8130.281295] RIP: 0033:0x7ff86fee6b27
+[ 8130.281296] RSP: 002b:00007ffe467f6a08 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[ 8130.281297] RAX: ffffffffffffffda RBX: 00000000d1a4d788 RCX: 00007ff86fee6b27
+[ 8130.281297] RDX: 00007ffe467f6a14 RSI: 0000000040045613 RDI: 0000000000000006
+[ 8130.281298] RBP: 000000000373f8d0 R08: 00000000ffffffff R09: 00007ff860001140
+[ 8130.281298] R10: 0000000000000243 R11: 0000000000000246 R12: 0000000000000000
+[ 8130.281299] R13: 00000000000000a0 R14: 00007ffe467f6530 R15: 0000000001f32228
+[ 8130.281300] ---[ end trace 00695dc96be646e7 ]---
+
+Signed-off-by: Anton Sviridenko <anton@corp.bluecherry.net>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/setup.c        |   15 ---------------
- arch/x86/kernel/setup_percpu.c |   21 +++++++++++++++++++++
- 2 files changed, 21 insertions(+), 15 deletions(-)
+ drivers/media/pci/solo6x10/solo6x10-v4l2.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1200,21 +1200,6 @@ void __init setup_arch(char **cmdline_p)
+--- a/drivers/media/pci/solo6x10/solo6x10-v4l2.c
++++ b/drivers/media/pci/solo6x10/solo6x10-v4l2.c
+@@ -341,6 +341,17 @@ static void solo_stop_streaming(struct v
+ 	struct solo_dev *solo_dev = vb2_get_drv_priv(q);
  
- 	kasan_init();
- 
--#ifdef CONFIG_X86_32
--	/* sync back kernel address range */
--	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			KERNEL_PGD_PTRS);
--
--	/*
--	 * sync back low identity map too.  It is used for example
--	 * in the 32-bit EFI stub.
--	 */
--	clone_pgd_range(initial_page_table,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
--#endif
--
- 	tboot_probe();
- 
- 	map_vsyscall();
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -287,4 +287,25 @@ void __init setup_per_cpu_areas(void)
- 
- 	/* Setup cpu initialized, callin, callout masks */
- 	setup_cpu_local_masks();
+ 	solo_stop_thread(solo_dev);
 +
-+#ifdef CONFIG_X86_32
-+	/*
-+	 * Sync back kernel address range.  We want to make sure that
-+	 * all kernel mappings, including percpu mappings, are available
-+	 * in the smpboot asm.  We can't reliably pick up percpu
-+	 * mappings using vmalloc_fault(), because exception dispatch
-+	 * needs percpu data.
-+	 */
-+	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
-+			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-+			KERNEL_PGD_PTRS);
++	spin_lock(&solo_dev->slock);
++	while (!list_empty(&solo_dev->vidq_active)) {
++		struct solo_vb2_buf *buf = list_entry(
++				solo_dev->vidq_active.next,
++				struct solo_vb2_buf, list);
 +
-+	/*
-+	 * sync back low identity map too.  It is used for example
-+	 * in the 32-bit EFI stub.
-+	 */
-+	clone_pgd_range(initial_page_table,
-+			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-+			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
-+#endif
++		list_del(&buf->list);
++		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
++	}
++	spin_unlock(&solo_dev->slock);
+ 	INIT_LIST_HEAD(&solo_dev->vidq_active);
  }
+ 
