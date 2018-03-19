@@ -1,106 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755429AbeCSJci (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:32:38 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45150 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755393AbeCSJcf (ORCPT
+        id S1755443AbeCSJdB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:33:01 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:36457 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755352AbeCSJc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:32:35 -0400
-X-Google-Smtp-Source: AG47ELs8povAKv1aw2hrG4ebjPveFBORtFCFTb7NCQpb03qu9pceIK5Fuk2P9U6Eq8WwLi4/LyWQZQ==
-From: Alexandre Courbot <acourbot@chromium.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [PATCH v2] venus: vdec: fix format enumeration
-Date: Mon, 19 Mar 2018 18:32:29 +0900
-Message-Id: <20180319093229.76253-1-acourbot@chromium.org>
-X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+        Mon, 19 Mar 2018 05:32:58 -0400
+X-Google-Smtp-Source: AG47ELupqQyTuI5lNWDtm6/0Jm5xJZsl7rASbnkvPUaF+4rrp4mBWeGb4+BxVFGvfBeo03JRh+QEYg==
+Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
+ runtime and could not connect to lvmetad at some boot attempts
+To: Martin Steigerwald <martin@lichtvoll.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Tejun Heo <tj@kernel.org>
+References: <27165802.vQ9JbjrmvU@merkaba> <4373847.u3KAOBid1D@merkaba>
+ <d9c6e12b-a1ea-92e1-04ba-010e3db7c480@redhat.com>
+ <2906688.e4ghZiFuBA@merkaba>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b9185dcc-aaf8-6ef8-a0c2-3b2e4fe55e54@redhat.com>
+Date: Mon, 19 Mar 2018 10:32:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <2906688.e4ghZiFuBA@merkaba>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_format_by_index() stops enumerating formats as soon as the index
-matches, and returns NULL if venus_helper_check_codec() finds out that
-the format is not supported. This prevents formats to be properly
-enumerated if a non-supported format is present, as the enumeration will
-end with it.
+Hi,
 
-Fix this by moving the call to venus_helper_check_codec() into the loop,
-and keep enumerating when it fails.
+On 18-03-18 23:06, Martin Steigerwald wrote:
+> Hi Hans.
+> 
+> Hans de Goede - 18.03.18, 22:34:
+>> On 14-03-18 13:48, Martin Steigerwald wrote:
+>>> Hans de Goede - 14.03.18, 12:05:
+>>>> Hi,
+>>>>
+>>>> On 14-03-18 12:01, Martin Steigerwald wrote:
+>>>>> Hans de Goede - 11.03.18, 15:37:
+>>>>>> Hi Martin,
+>>>>>>
+>>>>>> On 11-03-18 09:20, Martin Steigerwald wrote:
+>>>>>>> Hello.
+>>>>>>>
+>>>>>>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+>>>>>>> with SMART checks occassionally failing like this:
+>>>>>>>
+>>>>>>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
+>>>>>>> checks
+>>>>>>> udisksd[24408]: Error performing housekeeping for drive
+>>>>>>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error
+>>>>>>> updating
+>>>>>>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected
+>>>>>>> sense
+>>>>>>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00
+>>>>>>> 50
+>>>>>>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00
+>>>>>>> 00
+>>>>>>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
+>>>>>>> udisksd[24408]: Error performing housekeeping for drive
+>>>>>>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error
+>>>>>>> updating
+>>>>>>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
+>>>>>>> sense
+>>>>>>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00
+>>>>>>> 00
+>>>>>>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
+>>>>>>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+>>>>>>>
+>>>>>>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad
+>>>>>>> T520)
+>>>>>>>
+>>>>>>> However when I then check manually with smartctl -a | -x | -H the
+>>>>>>> device
+>>>>>>> reports SMART data just fine.
+>>>>>>>
+>>>>>>> As smartd correctly detects that device is in sleep mode, this may be
+>>>>>>> an
+>>>>>>> userspace issue in udisksd.
+>>>>>>>
+>>>>>>> Also at some boot attempts the boot hangs with a message like "could
+>>>>>>> not
+>>>>>>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
+>>>>>>> on to LVs (each on one of the SSDs). A configuration that requires a
+>>>>>>> manual
+>>>>>>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
+>>>>>>> btrfs device scan).
+>>>>>>>
+>>>>>>> I wonder whether that has to do with the new SATA LPM policy stuff,
+>>>>>>> but
+>>>>>>> as
+>>>>>>> I had issues with
+>>>>>>>
+>>>>>>> 3 => Medium power with Device Initiated PM enabled
+>>>>>>>
+>>>>>>> (machine did not boot, which could also have been caused by me
+>>>>>>> accidentally
+>>>>>>> removing all TCP/IP network support in the kernel with that setting)
+>>>>>>>
+>>>>>>> I set it back to
+>>>>>>>
+>>>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=0
+>>>>>>>
+>>>>>>> (firmware settings)
+>>>>>>
+>>>>>> Right, so at that settings the LPM policy changes are effectively
+>>>>>> disabled and cannot explain your SMART issues.
+>>>>>>
+>>>>>> Still I would like to zoom in on this part of your bug report, because
+>>>>>> for Fedora 28 we are planning to ship with
+>>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3
+>>>>>> and AFAIK Ubuntu has similar plans.
+>>>>>>
+>>>>>> I suspect that the issue you were seeing with
+>>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've
+>>>>>> attached
+>>>>>> a patch for you to test, which disabled LPM for your model Crucial SSD
+>>>>>> (but
+>>>>>> keeps it on for the Intel disk) if you can confirm that with that patch
+>>>>>> you
+>>>>>> can run with
+>>>>>> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
+>>>>>
+>>>>> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system
+>>>>> successfully
+>>>>> booted three times in a row. So feel free to add tested-by.
+>>>>
+>>>> Thanks.
+>>>>
+>>>> To be clear, you're talking about 4.16-rc5 with the patch I made to
+>>>> blacklist the Crucial disk I assume, not just plain 4.16-rc5, right ?
+>>>
+>>> 4.16-rc5 with your
+>>>
+>>> 0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.patch
+>>
+>> I was about to submit this upstream and was planning on extending it to
+>> also cover the 960GB version, which lead to me doing a quick google.
+>> Judging from the google results it seems that there are multiple firmware
+>> versions of this SSD out there and I wonder if you are perhaps running
+>> an older version of the firmware. If you do:
+>>
+>> dmesg | grep Crucial_CT480M500
+>>
+>> You should see something like this:
+>>
+>> ata2.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
+>>
+>> I'm interested in the "MU03" part, what is that in your case?
+> 
+> Although I never updated the firmware, I do have MU03:
+> 
+> % lsscsi | grep Crucial
+> [2:0:0:0]    disk    ATA      Crucial_CT480M50 MU03  /dev/sdb
+> 
+> % dmesg | grep Crucial_CT480M500
+> [    2.424537] ata3.00: ATA-9: Crucial_CT480M500SSD3, MU03, max UDMA/133
 
-Fixes: 29f0133ec6 media: venus: use helper function to check supported codecs
+Thanks. So there is an MU05 update:
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
----
- drivers/media/platform/qcom/venus/vdec.c | 13 +++++++------
- drivers/media/platform/qcom/venus/venc.c | 13 +++++++------
- 2 files changed, 14 insertions(+), 12 deletions(-)
+www.crucial.com/wcsstore/CrucialSAS/firmware/M500/MU05/crucial-m500-iso-firmware-update-mu05-en.pdf
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index c9e9576bb08a..49bbd1861d3a 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -135,20 +135,21 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
- 		return NULL;
- 
- 	for (i = 0; i < size; i++) {
-+		bool valid;
-+
- 		if (fmt[i].type != type)
- 			continue;
--		if (k == index)
-+		valid = type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE ||
-+			venus_helper_check_codec(inst, fmt[i].pixfmt);
-+		if (k == index && valid)
- 			break;
--		k++;
-+		if (valid)
-+			k++;
- 	}
- 
- 	if (i == size)
- 		return NULL;
- 
--	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
--	    !venus_helper_check_codec(inst, fmt[i].pixfmt))
--		return NULL;
--
- 	return &fmt[i];
- }
- 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index e3a10a852cad..6b2ce479584e 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -120,20 +120,21 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
- 		return NULL;
- 
- 	for (i = 0; i < size; i++) {
-+		bool valid;
-+
- 		if (fmt[i].type != type)
- 			continue;
--		if (k == index)
-+		valid = type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ||
-+			venus_helper_check_codec(inst, fmt[i].pixfmt);
-+		if (k == index && valid)
- 			break;
--		k++;
-+		if (valid)
-+			k++;
- 	}
- 
- 	if (i == size)
- 		return NULL;
- 
--	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
--	    !venus_helper_check_codec(inst, fmt[i].pixfmt))
--		return NULL;
--
- 	return &fmt[i];
- }
- 
--- 
-2.16.2.804.g6dcf76e118-goog
+Which according to its changelog features:
+"Improved drive latency performance in applications with SMART polling"
+
+Which is not relevant to the LPM issues you are seeing, but seems relevant to
+the other issues you are seeing.
+
+Unfortunately the MU05 update does not seem to specifically address any
+LPM issues, so I'm just going to do the blacklist for all 480GB+ models
+for now (my experience with other Crucial models is that smaller variants
+seem to not suffer from LPM issues).
+
+Regards,
+
+Hans
