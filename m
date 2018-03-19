@@ -1,94 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933467AbeCSNyE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:54:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55001 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933417AbeCSNxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:53:55 -0400
-X-Google-Smtp-Source: AG47ELtWkd2ahJl3fKN9FMzGNnvtcgnntqvQoBg6RRdHTJ230yygK68qcDegtaHNL/sc+BafzKZeCg==
-Date: Mon, 19 Mar 2018 14:53:51 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Joe Perches <joe@perches.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
-Message-ID: <20180319135351.GL14155@phenom.ffwll.local>
-Mail-Followup-To: Joe Perches <joe@perches.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
- <20180316074150.GE25297@phenom.ffwll.local>
- <1521203342.6119.5.camel@perches.com>
+        id S933088AbeCSNzL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:55:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60672 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755126AbeCSNzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 09:55:08 -0400
+Date: Mon, 19 Mar 2018 14:55:05 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+Message-ID: <20180319135505.py4evmbexm2asvlo@flea>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+ <20180223133742.26044-11-mylene.josserand@bootlin.com>
+ <6329fbb6-13a1-41fe-f6cf-f2f0d4b2e5f9@arm.com>
+ <20180318200715.363f3135@dell-desktop.home>
+ <CAGb2v65QHkuM2GmT4MC+tp+HqN2ecqeZt8bB5OvZm2br1AJJ-w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1521203342.6119.5.camel@perches.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAGb2v65QHkuM2GmT4MC+tp+HqN2ecqeZt8bB5OvZm2br1AJJ-w@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 05:29:02AM -0700, Joe Perches wrote:
-> On Fri, 2018-03-16 at 08:41 +0100, Daniel Vetter wrote:
-> > On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
-> > > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
-> > > arguments that can be removed by creating separate functins.
-> > > 
-> > > Create specific functions for these calls to reduce x86/64 defconfig
-> > > size by ~20k.
-> > > 
-> > > Modify the existing macros to use the specific calls.
-> > > 
-> > > new:
-> > > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
-> > > 
-> > > old:
-> > > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
-> > > 
-> > > Miscellanea:
-> > > 
-> > > o intel_display requires a change to use the specific calls.
-> > > 
-> > > Signed-off-by: Joe Perches <joe@perches.com>
-> > 
-> > Impressed with the size of the bikeshed piled on top of this I decided to
-> > cut this all short by merging it.
+On Mon, Mar 19, 2018 at 10:14:19AM +0800, Chen-Yu Tsai wrote:
+> On Mon, Mar 19, 2018 at 3:07 AM, Mylène Josserand
+> <mylene.josserand@bootlin.com> wrote:
+> > Hello Mark,
+> >
+> > Please, excuse me for this late answer and thank you for the review!
+> >
+> > On Wed, 7 Mar 2018 12:18:33 +0000
+> > Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >
+> >> On 23/02/18 13:37, Mylène Josserand wrote:
+> >> > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
+> >>
+> >> Only on A7? Is that specific to your platform?
+> >
+> > I do not really know other Allwinner's platforms about this subject. At
+> > least, the sun9i-a80 which is a Cortex-a15/a7 does not need that but it
+> > is necessary for sun8i-a83t which is a cortex-a7. Maybe, Chen-Yu or
+> > Maxime could help us on it.
 > 
-> Thanks.
-> 
-> There was a similar patch for the DRM_DEV_ macros
-> awhile ago that also reduced object code.
-> 
-> https://lkml.org/lkml/2017/9/25/247
-> 
-> Never applied.
-> 
-> Want a remerge resend?
+> AFAIK all Allwinner CPUs need it if there isn't a firmware (PSCI) layer
+> beneath the kernel that will do the setup. We just have
+> "arm,cpu-registers-not-fw-configured" set for all the other SoCs that
+> have in-kernel SMP support, which includes the A31, A23, A33 and A80.
 
-Yeah dropped out of my inbox, resending is easier. Please do so.
+Most of these ones are here for historical reasons though. Now that we
+have U-Boot properly setting it up, we could probably remove it.
 
-In case you wonder, I try to fairly intentionally drop stuff on the floor,
-to force other people on dri-devel to not load everything onto me, making
-me a bottleneck. But then occasionally a patch drops through all nets
-because tracking mailing lists is impossible :-/
--Daniel
+Maxime
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
