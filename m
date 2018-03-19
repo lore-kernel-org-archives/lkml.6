@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755510AbeCSMSw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 08:18:52 -0400
-Received: from mailxx.hitachi.co.jp ([133.145.228.50]:50525 "EHLO
+        id S1755524AbeCSMSy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 08:18:54 -0400
+Received: from mailxx.hitachi.co.jp ([133.145.228.50]:50524 "EHLO
         mailxx.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754511AbeCSMSt (ORCPT
+        with ESMTP id S1754761AbeCSMSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Mar 2018 08:18:49 -0400
-Message-ID: <5AAFA69E.2050007@hitachi.com>
-Date: Mon, 19 Mar 2018 21:01:34 +0900
+Message-ID: <5AAFA682.2080901@hitachi.com>
+Date: Mon, 19 Mar 2018 21:01:06 +0900
 From: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20120614 Thunderbird/13.0.1
 MIME-Version: 1.0
 To: idryomov@gmail.com, sage@redhat.com, elder@kernel.org,
         ceph-devel@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rbd: add 'thick' sysfs rbd device attribute
+Subject: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags bit
 Content-Type: text/plain; charset=ISO-2022-JP
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
@@ -23,27 +23,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the description of sysfs thick entry.
+This patch adds a user interface to prevent from issuing discard
+requests onto the specified rbd device. This is needed for
+thick-provisioned images. To avoid discarding allocated blocks on
+thick-provision image, users can specify this flag bit via sysfs
+(/sys/bus/rbd/devices/<dev-id>/thick).
+
+When users write "1" to the file, rbd doesn't issue discard
+operation; meanwhile, if users write "0" to the file then rbd
+issues discard operation.
 
 Signed-off-by: Hitoshi Kamei <hitoshi.kamei.xm@hitachi.com>
 Cc: Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>
 ---
- Documentation/ABI/testing/sysfs-bus-rbd | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/block/rbd.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-rbd b/Documentation/ABI/testing/sysfs-bus-rbd
-index f208ac58d613..3023f39328b1 100644
---- a/Documentation/ABI/testing/sysfs-bus-rbd
-+++ b/Documentation/ABI/testing/sysfs-bus-rbd
-@@ -119,3 +119,9 @@ parent
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8e40da093766..dba60ef43a47 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -427,6 +427,7 @@ enum rbd_dev_flags {
+ 	RBD_DEV_FLAG_EXISTS,	/* mapped snapshot has not been deleted */
+ 	RBD_DEV_FLAG_REMOVING,	/* this mapping is being removed */
+ 	RBD_DEV_FLAG_BLACKLISTED, /* our ceph_client is blacklisted */
++	RBD_DEV_FLAG_THICK,	/* image is thick-provisioned */
+ };
 
- 	Information identifying the chain of parent images in a layered rbd
- 	image.  Entries are separated by empty lines.
+ static DEFINE_MUTEX(client_mutex);	/* Serialize client creation */
+@@ -4011,6 +4012,15 @@ static void rbd_queue_workfn(struct work_struct *work)
+ 		goto err;
+ 	}
+
++	/* Ignore/skip discard requests for thick-provision image */
 +
-+thick
++	if (op_type == OBJ_OP_DISCARD &&
++	    test_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags)) {
++		dout("%s: Ignored a discard request\n", __func__);
++		result = 0;
++		goto err_rq;
++	}
 +
-+	Specifying thick-provision image by writing "1" to this file.
-+	And, releasing the flag of thick-provision image by writing
-+	"0" to this file.
+ 	/* Ignore/skip any zero-length requests */
+
+ 	if (!length) {
+@@ -4600,6 +4610,32 @@ static ssize_t rbd_image_refresh(struct device *dev,
+ 	return size;
+ }
+
++static ssize_t rbd_thick_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf,
++				 size_t size)
++{
++	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
++
++	spin_lock_irq(&rbd_dev->lock);
++	if (!strncmp(buf, "1", size))
++		set_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags);
++	else if (!strncmp(buf, "0", size))
++		clear_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags);
++	spin_unlock_irq(&rbd_dev->lock);
++
++	return size;
++}
++
++static ssize_t rbd_thick_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
++	int is_thick = test_bit(RBD_DEV_FLAG_THICK, &rbd_dev->flags) ? 1 : 0;
++
++	return sprintf(buf, "%d\n", is_thick);
++}
++
+ static DEVICE_ATTR(size, S_IRUGO, rbd_size_show, NULL);
+ static DEVICE_ATTR(features, S_IRUGO, rbd_features_show, NULL);
+ static DEVICE_ATTR(major, S_IRUGO, rbd_major_show, NULL);
+@@ -4616,6 +4652,7 @@ static DEVICE_ATTR(refresh, S_IWUSR, NULL, rbd_image_refresh);
+ static DEVICE_ATTR(current_snap, S_IRUGO, rbd_snap_show, NULL);
+ static DEVICE_ATTR(snap_id, S_IRUGO, rbd_snap_id_show, NULL);
+ static DEVICE_ATTR(parent, S_IRUGO, rbd_parent_show, NULL);
++static DEVICE_ATTR(thick, 0644, rbd_thick_show, rbd_thick_store);
+
+ static struct attribute *rbd_attrs[] = {
+ 	&dev_attr_size.attr,
+@@ -4634,6 +4671,7 @@ static struct attribute *rbd_attrs[] = {
+ 	&dev_attr_snap_id.attr,
+ 	&dev_attr_parent.attr,
+ 	&dev_attr_refresh.attr,
++	&dev_attr_thick.attr,
+ 	NULL
+ };
+
 -- 
 2.15.1
