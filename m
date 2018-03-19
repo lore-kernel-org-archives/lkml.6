@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuIodo0gbxWt46oc0ImEoMMbnvODjGrwRqRZ5yzZy8hYO/VLpvjcvcYU8h/Zpz4GToC8ZP3
-ARC-Seal: i=1; a=rsa-sha256; t=1521483895; cv=none;
+X-Google-Smtp-Source: AG47ELvR/mveJIUHHDpSFjuAwb23Flv4VmXSG3gGHNh036/cMy1wTcZ5UgzC4vHR0111WFOjBOA4
+ARC-Seal: i=1; a=rsa-sha256; t=1521483892; cv=none;
         d=google.com; s=arc-20160816;
-        b=VI9dnNQGHUQig77AgksS8N+HlTl35fJB4KYNA59Nz9bAfykA7xumjV0Y3YAb4bgEoe
-         GQHzc8S/xPJjWpr0mrkRprWG61FIZp5Vm4+/8xcCueVqUuNlvgl3mTmXcjpv6wODrz3+
-         Jswv94SHfiMuTlV9p3ieYf9Bw1UnrFcuTd/GDQgZtRLE03seEQBMaWFBb4b7/H5nbc4h
-         CZUqx551CuxMRv3o5wTF1cHH2mfkQ6QfZPd01Al7ZDBtgVp45fv021eF7UHWUImVEP06
-         mDqE6g+/A6QxnLZMS+36nrlVrufYd9REfjJN7Epoc/xZfiycE/7ytBBbEB7zZLqq00gZ
-         5XMw==
+        b=f7VPcOJFwksOhyDEt0WBFUBjwdhTphdaxsWxlRuM7rGiP4tG8FX+Dd9ag2RX74jDtr
+         UViYYUFOgZatO2llBuvmws0XZa4pcp3P1xqpQZlE+FuqdvoT+JNv+4qswhHKEU8sBIzS
+         X0NkvT+RwCiGIsj2jnTVoDmAouJnazk1KpyJNlSpkmokstWc6gm65IHv2atYeyfkhP2Z
+         2SmIirrNxsLdNXy0ZBMSnqAUn8WCvz0Iw7sPdBEk2JCUzygwIBZyaT5fu+COpZwIFezD
+         zGGZIcCACZ1tleL82oNqHnmcur2PmHDQpZ+Onu0jbpFaoCH80dsahDF89l2KPRVqyqW/
+         mEWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GzG44Y5TpcqWAppRUO8wpXrg/9TGF092F+zO+/bQYEg=;
-        b=UThkJL4LmHa3qAMXr2t7lSM3Q7ozWUgI2wJNio7Ob0KhJH6iI1114GCaMdER2FooRH
-         5dPY7gDcjyzL1NWW1X2ncVsjkF6QhtYP7RQHmnEoMps8lvFj4AD1x5mOgiioogJ7rQes
-         ptOPHUlaQxfCvK11m8yf6nK4osPg7SJ/0OlgJLs8rZ54wKOd+gBOGsq9JVM0qNRmytht
-         a9JOISPIiSmiBSFaVjn0cXwTL5pg/tRw/MwSnir2eGy9535jhzVN84wpsDuJlO7q4p0d
-         Vu6Dy3fhIeBtKOFciHLuIIlx98ro9Za5igSIf8AFxvJfF6HdOUKtYdFGKBx2SJkjD3Ex
-         G7uQ==
+        bh=zLMGdmJjjffiniJQ4ndbhQwX8bB/9dhlEzZaaJEJS6s=;
+        b=TAefOBmOZGYnkCq6Y38iXTfGpvJzGPBBhMW7nQ0NpRLhF3sLmGEhJZEwcLnsqtXamP
+         5NQ/aNvjHs8/dpAPvupGwXNKK0ocRL0nwwSMGGiHH/Dqb4dll4tTXj/iVPND97blFvFp
+         ZeT2BaTA4PDDoDTPzsQqLZ1pEr+F1xqW7wKmFx73cSDv5m4uu2lbUwli0O9ZVZpygeja
+         FPbwO7H6S1HVnqAmcIPJB0HjQtlAibrLaeXhk1lHG1ZYuulDYfXHTEKDk4+zuM9clKY/
+         +ZjOeLTmSNRLSJImo8NTjztwxm/wq9/RYvaHKSWaXXl98s3oeh8XthdUGev3fRVng1OR
+         43Qw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Scott <michael.scott@linaro.org>,
-	Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+	Dean Jenkins <Dean_Jenkins@mentor.com>,
 	Marcel Holtmann <marcel@holtmann.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 157/241] Bluetooth: 6lowpan: fix delay work init in add_peer_chan()
-Date: Mon, 19 Mar 2018 19:07:02 +0100
-Message-Id: <20180319180757.671943434@linuxfoundation.org>
+Subject: [PATCH 4.9 156/241] Bluetooth: Avoid bt_accept_unlink() double unlinking
+Date: Mon, 19 Mar 2018 19:07:01 +0100
+Message-Id: <20180319180757.629475999@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391496612397287?=
-X-GMAIL-MSGID: =?utf-8?q?1595391496612397287?=
+X-GMAIL-THRID: =?utf-8?q?1595391494156839406?=
+X-GMAIL-MSGID: =?utf-8?q?1595391494156839406?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,82 +50,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Scott <michael.scott@linaro.org>
+From: Dean Jenkins <Dean_Jenkins@mentor.com>
 
 
-[ Upstream commit d2891c4d071d807f01cc911dc42a68f4568d65cf ]
+[ Upstream commit 27bfbc21a0c0f711fa5382de026c7c0700c9ea28 ]
 
-When adding 6lowpan devices very rapidly we sometimes see a crash:
-[23122.306615] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.9.0-43-arm64 #1 Debian 4.9.9.linaro.43-1
-[23122.315400] Hardware name: HiKey Development Board (DT)
-[23122.320623] task: ffff800075443080 task.stack: ffff800075484000
-[23122.326551] PC is at expire_timers+0x70/0x150
-[23122.330907] LR is at run_timer_softirq+0xa0/0x1a0
-[23122.335616] pc : [<ffff000008142dd8>] lr : [<ffff000008142f58>] pstate: 600001c5
+There is a race condition between a thread calling bt_accept_dequeue()
+and a different thread calling bt_accept_unlink(). Protection against
+concurrency is implemented using sk locking. However, sk locking causes
+serialisation of the bt_accept_dequeue() and bt_accept_unlink() threads.
+This serialisation can cause bt_accept_dequeue() to obtain the sk from the
+parent list but becomes blocked waiting for the sk lock held by the
+bt_accept_unlink() thread. bt_accept_unlink() unlinks sk and this thread
+releases the sk lock unblocking bt_accept_dequeue() which potentially runs
+bt_accept_unlink() again on the same sk causing a crash. The attempt to
+double unlink the same sk from the parent list can cause a NULL pointer
+dereference crash due to bt_sk(sk)->parent becoming NULL on the first
+unlink, followed by the second unlink trying to execute
+bt_sk(sk)->parent->sk_ack_backlog-- in bt_accept_unlink() which crashes.
 
-This was due to add_peer_chan() unconditionally initializing the
-lowpan_btle_dev->notify_peers delayed work structure, even if the
-lowpan_btle_dev passed into add_peer_chan() had previously been
-initialized.
+When sk is in the parent list, bt_sk(sk)->parent will be not be NULL.
+When sk is removed from the parent list, bt_sk(sk)->parent is set to
+NULL. Therefore, add a defensive check for bt_sk(sk)->parent not being
+NULL to ensure that sk is still in the parent list after the sk lock has
+been taken in bt_accept_dequeue(). If bt_sk(sk)->parent is detected as
+being NULL then restart the loop so that the loop variables are refreshed
+to use the latest values. This is necessary as list_for_each_entry_safe()
+is not thread safe so causing a risk of an infinite loop occurring as sk
+could point to itself.
 
-Normally, this would go unnoticed as the delayed work timer is set for
-100 msec, however when calling add_peer_chan() faster than 100 msec it
-clears out a previously queued delay work causing the crash above.
+In addition, in bt_accept_dequeue() increase the sk reference count to
+protect against early freeing of sk. Early freeing can be possible if the
+bt_accept_unlink() thread calls l2cap_sock_kill() or rfcomm_sock_kill()
+functions before bt_accept_dequeue() gets the sk lock.
 
-To fix this, let add_peer_chan() know when a new lowpan_btle_dev is passed
-in so that it only performs the delay work initialization when needed.
+For test purposes, the probability of failure can be increased by putting
+a msleep of 1 second in bt_accept_dequeue() between getting the sk and
+waiting for the sk lock. This exposes the fact that the loop
+list_for_each_entry_safe(p, n, &bt_sk(parent)->accept_q) is not safe from
+threads that unlink sk from the list in parallel with the loop which can
+cause sk to become stale within the loop.
 
-Signed-off-by: Michael Scott <michael.scott@linaro.org>
-Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bluetooth/6lowpan.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/bluetooth/af_bluetooth.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/net/bluetooth/6lowpan.c
-+++ b/net/bluetooth/6lowpan.c
-@@ -755,7 +755,8 @@ static void set_ip_addr_bits(u8 addr_typ
+--- a/net/bluetooth/af_bluetooth.c
++++ b/net/bluetooth/af_bluetooth.c
+@@ -163,6 +163,9 @@ void bt_accept_enqueue(struct sock *pare
  }
+ EXPORT_SYMBOL(bt_accept_enqueue);
  
- static struct l2cap_chan *add_peer_chan(struct l2cap_chan *chan,
--					struct lowpan_btle_dev *dev)
-+					struct lowpan_btle_dev *dev,
-+					bool new_netdev)
++/* Calling function must hold the sk lock.
++ * bt_sk(sk)->parent must be non-NULL meaning sk is in the parent list.
++ */
+ void bt_accept_unlink(struct sock *sk)
  {
- 	struct lowpan_peer *peer;
+ 	BT_DBG("sk %p state %d", sk, sk->sk_state);
+@@ -181,11 +184,32 @@ struct sock *bt_accept_dequeue(struct so
  
-@@ -786,7 +787,8 @@ static struct l2cap_chan *add_peer_chan(
- 	spin_unlock(&devices_lock);
+ 	BT_DBG("parent %p", parent);
  
- 	/* Notifying peers about us needs to be done without locks held */
--	INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
-+	if (new_netdev)
-+		INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
- 	schedule_delayed_work(&dev->notify_peers, msecs_to_jiffies(100));
++restart:
+ 	list_for_each_entry_safe(s, n, &bt_sk(parent)->accept_q, accept_q) {
+ 		sk = (struct sock *)s;
  
- 	return peer->chan;
-@@ -843,6 +845,7 @@ out:
- static inline void chan_ready_cb(struct l2cap_chan *chan)
- {
- 	struct lowpan_btle_dev *dev;
-+	bool new_netdev = false;
++		/* Prevent early freeing of sk due to unlink and sock_kill */
++		sock_hold(sk);
+ 		lock_sock(sk);
  
- 	dev = lookup_dev(chan->conn);
- 
-@@ -853,12 +856,13 @@ static inline void chan_ready_cb(struct
- 			l2cap_chan_del(chan, -ENOENT);
- 			return;
- 		}
-+		new_netdev = true;
- 	}
- 
- 	if (!try_module_get(THIS_MODULE))
- 		return;
- 
--	add_peer_chan(chan, dev);
-+	add_peer_chan(chan, dev, new_netdev);
- 	ifup(dev->netdev);
- }
- 
++		/* Check sk has not already been unlinked via
++		 * bt_accept_unlink() due to serialisation caused by sk locking
++		 */
++		if (!bt_sk(sk)->parent) {
++			BT_DBG("sk %p, already unlinked", sk);
++			release_sock(sk);
++			sock_put(sk);
++
++			/* Restart the loop as sk is no longer in the list
++			 * and also avoid a potential infinite loop because
++			 * list_for_each_entry_safe() is not thread safe.
++			 */
++			goto restart;
++		}
++
++		/* sk is safely in the parent list so reduce reference count */
++		sock_put(sk);
++
+ 		/* FIXME: Is this check still needed */
+ 		if (sk->sk_state == BT_CLOSED) {
+ 			bt_accept_unlink(sk);
