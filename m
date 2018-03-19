@@ -1,74 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755556AbeCSOzd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:55:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52388 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755270AbeCSOz3 (ORCPT
+        id S932883AbeCSO4k (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:56:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60447 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754406AbeCSO4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:55:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65FAF6055D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date: Mon, 19 Mar 2018 08:55:25 -0600
-From: Jordan Crouse <jcrouse@codeaurora.org>
-To: Channagoud Kadabi <ckadabi@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
-Subject: Re: [PATCH 2/2] drivers: soc: Add LLCC driver
-Message-ID: <20180319145525.GD28808@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Channagoud Kadabi <ckadabi@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
-References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
- <1516924513-20183-3-git-send-email-ckadabi@codeaurora.org>
+        Mon, 19 Mar 2018 10:56:37 -0400
+Date: Mon, 19 Mar 2018 15:56:24 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Christoph Hellwig <hch@lst.de>
+cc: x86@kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: use generic dma-direct and swiotlb code for x86 V3
+In-Reply-To: <20180319103826.12853-1-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1803191556140.2010@nanos.tec.linutronix.de>
+References: <20180319103826.12853-1-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516924513-20183-3-git-send-email-ckadabi@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 03:55:13PM -0800, Channagoud Kadabi wrote:
-> LLCC (Last Level Cache Controller) provides additional cache memory
-> in the system. LLCC is partitioned into muliple slices and each
-> slice gets its own priority, size, ID and other config parameters.
-> LLCC driver programs these parameters for each slice. Clients that
-> are assigned to use LLCC need to get information such size & ID of the
-> slice for their usecase and activate or deactivate the slice as needed.
-> LLCC driver provides API interfaces for the clients to perform these
-> operations.
+On Mon, 19 Mar 2018, Christoph Hellwig wrote:
 
-<snip>
+> Hi all,
+> 
+> this series switches the x86 code the the dma-direct implementation
+> for direct (non-iommu) dma and the generic swiotlb ops.  This includes
+> getting rid of the special ops for the AMD memory encryption case and
+> the STA2x11 SOC.  The generic implementations are based on the x86
+> code, so they provide the same functionality.
 
-> +/**
-> + * llcc_slice_deactivate - Deactivate the llcc slice
-> + * @desc: Pointer to llcc slice descriptor
-> + *
-> + * A value zero will be returned on success and a negative errno will
-> + * be returned in error cases
-> + */
-> +int llcc_slice_deactivate(struct llcc_slice_desc *desc)
-> +{
-> +	u32 act_ctrl_val;
-> +	int rc = -EINVAL;
-> +	struct llcc_drv_data *drv;
-> +
-> +	if (desc == NULL) {
-> +		pr_err("Input descriptor supplied is invalid\n");
-
-Sorry that this is out of the blue, but I was reviewing a client driver that
-uses this API. This should not print an error - we should be allowed to safely
-pass a null pointer from an aborted sequence in the driver without the
-conditional checks and it shouldn't generate a bit of log spam as it goes about
-it's business.
-
-Jordan
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
