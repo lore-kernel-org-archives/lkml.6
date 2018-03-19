@@ -1,69 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484239-2-13744064486274809083
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484239; b=l4aRJ8/QxJH1gQTyKtIyB+/7rEv1iJe7YDx8P6o+TuJ3qxp
-    i1S1gOEkH4z0SjSW5w0zm7im1cW9eFZ5xfFylJ0K6sFga2XHwLE5u8JVaW4qxvnN
-    IRv3kOb4u1Gps8+fXYmWlF0saebcs8tI4CRiI7ZKUqpXThYkVLNG6ZsMNReLkrhr
-    QkmhLK8AcXUaeEpxc8424xUmJSU1y3rhz9Fdc7LVknpuXiPm6FrEi1rvqgb05Dom
-    udWXDBfe664wr9tl4MErAvo9BUQgKzGlARVU5S7sI6/wjVH7FxY0nO4Zdm0gISuS
-    AgnT0l9fTh7nuYqMCHVejfQpiOm5qSz24b1oXdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484239; bh=SgCzP1h+8Ly5gHkGYzHriEZF4g
-    ghFm0gInELuoWMiGU=; b=S4gfD8i0+Bo3Px/pWenR+VZIj5zZM4siSxqs/OhfCz
-    y1ms1n5cNVHJ+BVFhkbBTUtR+vFkl6DE1kAuC6EKriOiRp447JbWaaeOUxgHsq6o
-    SfkFCwVzdu48LKQndpePCAdvHTHv8/vhmSYqJmSULHDX2XIxFJmTy3tMsNccPpPS
-    WwB/Pp2ikilKA3z/ktXvvxhe68ysQmThGmESjUxj221CyJi+690x4NpQsOelivfs
-    Oz6f0/hrkzT2AB8cOhHc0ErtURT+rWIahFQXAszHXaJNU2wOeaOMPAFdBNO7fge5
-    4M0OgIObKRDuRE+tQrY/VJksh1+GD+565WJP/jj64P/g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefuddtleenucevlhhushhtvghrufhiiigvpeejfe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefuddtleenucevlhhushhtvghrufhiiigvpeejfe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970164AbeCSSad (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:30:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53242 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031949AbeCSSaa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:30:30 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELu90XiVsnloK9ie6Q6AtFoLNtAQb0JJKsI9y7C6ahfUB/nt4tvFaUusdHvirbUEUPaMG4Ki
+ARC-Seal: i=1; a=rsa-sha256; t=1521484238; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rYZZbKmtnf0aRDT0ldusJJILX5NDTABlLI9wXdz5GWpz0jsC2/Sxmp00u/0L+kBsC8
+         NGxvoJgOYCDz8fFYPumWelIa5n3vWSrz1cxovcNzLqLJRRzAAX1MpKgMgSypIAeXwBwH
+         vzHU4SGbY3AfEgG+2SEGHhFsJxwFN/95qbMSLcru4ExJIa1AhUH8sM/7C0S9YGTYu2Fy
+         2TjJjyj0oqwmeN1gkD378SbU1Xf2ivtE31A2MWpSf94Rcj+teAze3eRio74o/PDYyKnj
+         67zwCqTKclF47mQeSihWhEbs60j1aveSnMK9LbgHVexTJBqJ0HSlj4IccF4oEgzeWz8V
+         Vr2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=MZfQoroOtUsjJW3Sqo12HopZNF2Z3OusX90/KCvf30g=;
+        b=MOpRW+/kHZ8np/euZm0XsO4nc1eCTANqe4/lpFUtXeX97/5zYROSicw4cEwjs8WKyi
+         0dDUzPD7cOPazv7o2VBdSjftqaSeM0pna1BtD4iz84htGWFPkpsoBA4iwugHC4m7BB99
+         /Kr1jX709cOOMHWjdnLqSZRR0wyvBG9qjLOjv26YF4ce+7lOWUmutJEybQSQBOIoQnz4
+         qD31PVvN9E42LADN4AFFGxNqsTZqpbvwY7zyTddiN9eWNNp7BMKCh++PreZHtxcb3ARO
+         mFT42iIKVIvYdj51k9z2tUhOyTwhKCOnygd9BfNm+KJlZ5gedF7z36G19E46uRsB3OBg
+         4r0A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 37/41] scsi: qla2xxx: Fix NULL pointer access for fcport structure
-Date: Mon, 19 Mar 2018 19:08:37 +0100
-Message-Id: <20180319180734.620851158@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Wei Yongjun <weiyongjun1@huawei.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 40/41] USB: gadget: udc: Add missing platform_device_put() on error in bdc_pci_probe()
+Date: Mon, 19 Mar 2018 19:08:40 +0100
+Message-Id: <20180319180734.792136619@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -71,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391041891799420?=
+X-GMAIL-MSGID: =?utf-8?q?1595391856832329882?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,44 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 5c25d451163cab9be80744cbc5448d6b95ab8d1a upstream.
+commit 8874ae5f15f3feef3b4a415b9aed51edcf449aa1 upstream.
 
-when processing iocb in a timeout case, driver was trying to log messages
-without verifying if the fcport structure could have valid data. This
-results in a NULL pointer access.
+Add the missing platform_device_put() before return from bdc_pci_probe()
+in the platform_device_add_resources() error handling case.
 
-Fixes: 726b85487067("qla2xxx: Add framework for async fabric discovery")
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for Broadcom USB3.0 device controller IP BDC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/udc/bdc/bdc_pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -102,11 +102,16 @@ qla2x00_async_iocb_timeout(void *data)
- 	struct srb_iocb *lio = &sp->u.iocb_cmd;
- 	struct event_arg ea;
+--- a/drivers/usb/gadget/udc/bdc/bdc_pci.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_pci.c
+@@ -82,6 +82,7 @@ static int bdc_pci_probe(struct pci_dev
+ 	if (ret) {
+ 		dev_err(&pci->dev,
+ 			"couldn't add resources to bdc device\n");
++		platform_device_put(bdc);
+ 		return ret;
+ 	}
  
--	ql_dbg(ql_dbg_disc, fcport->vha, 0x2071,
--	    "Async-%s timeout - hdl=%x portid=%06x %8phC.\n",
--	    sp->name, sp->handle, fcport->d_id.b24, fcport->port_name);
-+	if (fcport) {
-+		ql_dbg(ql_dbg_disc, fcport->vha, 0x2071,
-+		    "Async-%s timeout - hdl=%x portid=%06x %8phC.\n",
-+		    sp->name, sp->handle, fcport->d_id.b24, fcport->port_name);
- 
--	fcport->flags &= ~FCF_ASYNC_SENT;
-+		fcport->flags &= ~FCF_ASYNC_SENT;
-+	} else {
-+		pr_info("Async-%s timeout - hdl=%x.\n",
-+		    sp->name, sp->handle);
-+	}
- 
- 	switch (sp->type) {
- 	case SRB_LOGIN_CMD:
