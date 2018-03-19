@@ -1,72 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483118-2-8990923767595737865
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483117; b=kows4DV3e1tv54P61qShZeYGI8U44DBQlE8BOZxDye/m28L
-    2t1reiEERFJafOWK0exnSi+g33fQB/7fZvS4KKBu9MsnxJIHXPUKHNYAU+9jwvwC
-    o44QUmaYmYHr1jbm07YVnp21AOzf2Ws6TztzmOnmWfKiVDngE/fayzVfmpXW5iU8
-    ImNhaRoaC0xX7x6yu8e7iAFxLd+IZXV49e9FmDnuUWUIJEcqp1eqUYtW6fwKPN+K
-    IiVeZtTd8UnfqPvuE/oqMKn04KPb4MUuIEnRbxkRlYwq7y5/OdXiYuc6szVYW//M
-    P4ZckpUfjMtzqaK63J20/KRmOlo8iN+gWCbRqrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483117; bh=PldDpC64PWJKBb288diEyj6Xso
-    1tZ0zyP41vbVtLHoc=; b=EM4cdW4zvlusO5bIKKgeHb4iL3WyPAy057pfnOdyN/
-    GNacWQ6rg3VigRXsJU0yhUTy5QSTjwLXwVDPXw2FI8AG+Iqq88IWbfafXVkvD/UH
-    r3cP6GS/Fb9Eq5O9xtyogADWYys//D3iTTEOyRTnRusaGmZSYCptuFT+7y81hjLw
-    0WOnw08mK5KCZBFWRA0OwPubqdTomVW1ItKZWIZ5o1JHJLI7jK6OmMFWlWUKD2eO
-    YHgEXPStrVLgf+1I6Mc3ipDFxyv2wHtGn1ADHbECy7IjXUs/9la4VdwuVRlYYFt9
-    YIICRRLVojbGW4h20B+AH0i1LAIA8nq6n91FqLZGtxoQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvdeiieenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvdeiieenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967703AbeCSSLm (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:11:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42394 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935527AbeCSSLj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:11:39 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvE/8WZIlunir2UZyUvBvAWHwX6cRiUBbeiRr46jJA1QFvyC+jea+f/wrKtn0YKZJ+ML8ms
+ARC-Seal: i=1; a=rsa-sha256; t=1521483117; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GQqyq9u/rDA7FUzX+beEToX7RyMMm1m2VmXn5O0L4d8ZWLo4sbWE6wenza5ZRMb9SW
+         oXI2MeLZdxA/Jxajxu8n0fvRCu/IigldJOyEnzd/6r+geZgpuBW0ObxDjx0FF1Wou0IF
+         Yrq/n6WPSk9ZnhPWPCILonmg+7Fxl4cBujbMIwet8EimEANKfsZo213CQfDeUFZNGtVo
+         DUpBpgJ+RRN4N2jr9XcS3QcnlRiVSCFJicpIbvN5h2lf9SVDsJV5+JCahLj9sHtiFVqc
+         xNDYOPlrOQQZo1ih+mXI8l4t9iFklRr8wQF+W5S7iQ4tT9brQcIHVsPYMKYTyhZ85L2J
+         vrdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=EAyxD6qFt5LcxD6hOsxZrTbwPRVEQ10GXwyCQsKRCD0=;
+        b=B5XAI0ql0YCWNefgHTDydikOA5XavmabRn6xvCJj6Bql1CM92k3Bne2JK/zlNzGw3B
+         7EGK7/L/x9TDVg6/jAfIJv1aqHRhNDNuWEdNfthDfL1/bxjtmQHJkUMSA2g/O17yGN2X
+         db7B4vnHbDkdgNuqbu0DJELZ8DhMWa+0nFDWyxgwYo/EI5Wf43n5NrIXAFRwU/YD91VR
+         je6mxNQTwPbDSzHCfygzidbkbF7XCPVHKRyDJPxzYLQpGdpsxnMSlzfqoi8ARJvLOtxl
+         jDTUYxViZ8MBAhFLUKIla+H9RjI6+5qVOa/JUBN5umrrzOH3/4vyu9kQeVPxssXRPCpg
+         OhIA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Chris Clayton <chris2553@googlemail.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Cristian Crinteanu <crinteanu.cristian@gmail.com>
-Subject: [PATCH 3.18 66/68] scsi: sg: fix SG_DXFER_FROM_DEV transfers
-Date: Mon, 19 Mar 2018 19:06:44 +0100
-Message-Id: <20180319171837.154460408@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dedy Lansky <qca_dlansky@qca.qualcomm.com>,
+	Maya Erez <qca_merez@qca.qualcomm.com>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 43/68] wil6210: fix memory access violation in wil_memcpy_from/toio_32
+Date: Mon, 19 Mar 2018 19:06:21 +0100
+Message-Id: <20180319171833.920667087@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -74,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390681603963623?=
+X-GMAIL-MSGID: =?utf-8?q?1595390681603963623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,44 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Dedy Lansky <qca_dlansky@qca.qualcomm.com>
 
-commit 68c59fcea1f2c6a54c62aa896cc623c1b5bc9b47 upstream.
 
-SG_DXFER_FROM_DEV transfers do not necessarily have a dxferp as we set
-it to NULL for the old sg_io read/write interface, but must have a
-length bigger than 0. This fixes a regression introduced by commit
-28676d869bbb ("scsi: sg: check for valid direction before starting the
-request")
+[ Upstream commit 0f6edfe2bbbb59d161580cb4870fcc46f5490f85 ]
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Fixes: 28676d869bbb ("scsi: sg: check for valid direction before starting the request")
-Reported-by: Chris Clayton <chris2553@googlemail.com>
-Tested-by: Chris Clayton <chris2553@googlemail.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Tested-by: Chris Clayton <chris2553@googlemail.com>
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Cristian Crinteanu <crinteanu.cristian@gmail.com>
+In case count is not multiple of 4, there is a read access in
+wil_memcpy_toio_32() from outside src buffer boundary.
+In wil_memcpy_fromio_32(), in case count is not multiple of 4, there is
+a write access to outside dst io memory boundary.
+
+Fix these issues with proper handling of the last 1 to 4 copied bytes.
+
+Signed-off-by: Dedy Lansky <qca_dlansky@qca.qualcomm.com>
+Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/sg.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/main.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -769,8 +769,11 @@ static bool sg_is_valid_dxfer(sg_io_hdr_
- 		if (hp->dxferp || hp->dxfer_len > 0)
- 			return false;
- 		return true;
--	case SG_DXFER_TO_DEV:
- 	case SG_DXFER_FROM_DEV:
-+		if (hp->dxfer_len < 0)
-+			return false;
-+		return true;
-+	case SG_DXFER_TO_DEV:
- 	case SG_DXFER_TO_FROM_DEV:
- 		if (!hp->dxferp || hp->dxfer_len == 0)
- 			return false;
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -59,9 +59,15 @@ void wil_memcpy_fromio_32(void *dst, con
+ 	u32 *d = dst;
+ 	const volatile u32 __iomem *s = src;
+ 
+-	/* size_t is unsigned, if (count%4 != 0) it will wrap */
+-	for (count += 4; count > 4; count -= 4)
++	for (; count >= 4; count -= 4)
+ 		*d++ = __raw_readl(s++);
++
++	if (unlikely(count)) {
++		/* count can be 1..3 */
++		u32 tmp = __raw_readl(s);
++
++		memcpy(d, &tmp, count);
++	}
+ }
+ 
+ void wil_memcpy_toio_32(volatile void __iomem *dst, const void *src,
+@@ -70,8 +76,16 @@ void wil_memcpy_toio_32(volatile void __
+ 	volatile u32 __iomem *d = dst;
+ 	const u32 *s = src;
+ 
+-	for (count += 4; count > 4; count -= 4)
++	for (; count >= 4; count -= 4)
+ 		__raw_writel(*s++, d++);
++
++	if (unlikely(count)) {
++		/* count can be 1..3 */
++		u32 tmp = 0;
++
++		memcpy(&tmp, s, count);
++		__raw_writel(tmp, d);
++	}
+ }
+ 
+ static void wil_disconnect_cid(struct wil6210_priv *wil, int cid)
