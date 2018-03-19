@@ -1,230 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933088AbeCSKmp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 06:42:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54982 "EHLO
+        id S1755463AbeCSKtX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 06:49:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59892 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932487AbeCSKin (ORCPT
+        with ESMTP id S1754894AbeCSKtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:38:43 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: x86@kernel.org
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/14] x86: remove X86_PPRO_FENCE
-Date: Mon, 19 Mar 2018 11:38:13 +0100
-Message-Id: <20180319103826.12853-2-hch@lst.de>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180319103826.12853-1-hch@lst.de>
-References: <20180319103826.12853-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 19 Mar 2018 06:49:15 -0400
+Date: Mon, 19 Mar 2018 11:49:00 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Doug Smythies <dsmythies@telus.net>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Rik van Riel <riel@surriel.com>, Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v5 0/7] sched/cpuidle: Idle loop rework
+Message-ID: <20180319104900.GH4043@hirez.programming.kicks-ass.net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan>
+ <001a01d3be0a$ad3a0ed0$07ae2c70$@net>
+ <2043615.lCdO10SMaB@aspire.rjw.lan>
+ <CAJZ5v0h0wbu_hxCyBKLxFnWRFkK6ObqTmYRHAWgHyXTd57aH9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h0wbu_hxCyBKLxFnWRFkK6ObqTmYRHAWgHyXTd57aH9Q@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were only a few Pentium Pro multiprocessors systems where this
-errata applied. They are more than 20 years old now, and we've slowly
-dropped places where put the workarounds in and discouraged anyone
-from enabling the workaround.
+On Sun, Mar 18, 2018 at 05:15:22PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Mar 18, 2018 at 12:00 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > @@ -354,6 +360,7 @@ static int menu_select(struct cpuidle_dr
+> >         if (latency_req > interactivity_req)
+> >                 latency_req = interactivity_req;
+> >
+> > +       expected_interval = TICK_USEC_HZ;
+> >         /*
+> >          * Find the idle state with the lowest power while satisfying
+> >          * our constraints.
+> > @@ -367,17 +374,44 @@ static int menu_select(struct cpuidle_dr
+> >                         continue;
+> >                 if (idx == -1)
+> >                         idx = i; /* first enabled state */
+> > -               if (s->target_residency > data->predicted_us)
+> > +               if (s->target_residency > data->predicted_us) {
+> > +                       /*
+> > +                        * Retain the tick if the selected state is shallower
+> > +                        * than the deepest available one with target residency
+> > +                        * within the tick period range.
+> > +                        *
+> > +                        * This allows the tick to be stopped even if the
+> > +                        * predicted idle duration is within the tick period
+> > +                        * range to counter the effect by which the prediction
+> > +                        * may be skewed towards lower values due to the tick
+> > +                        * bias.
+> > +                        */
+> > +                       expected_interval = s->target_residency;
+> >                         break;
+> 
+> BTW, I guess I need to explain the motivation here more thoroughly, so
+> here it goes.
+> 
+> The governor predicts idle duration under the assumption that the
+> tick will be stopped, so if the result of the prediction is within the tick
+> period range and it is not accurate, that needs to be taken into
+> account in the governor's statistics.  However, if the tick is allowed
+> to run every time the governor predicts idle duration within the tick
+> period range, the governor will always see that it was "almost
+> right" and the correction factor applied by it to improve the
+> prediction next time will not be sufficient.  For this reason, it
+> is better to stop the tick at least sometimes when the governor
+> predicts idle duration within the tick period range and the idea
+> here is to do that when the selected state is the deepest available
+> one with the target residency within the tick period range.  This
+> allows the opportunity to save more energy to be seized which
+> balances the extra overhead of stopping the tick.
 
-Get rid of it for good.
+My brain is just not willing to understand how that work this morning.
+Also it sounds really dodgy.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Should we not look to something like this instead?
+
 ---
- arch/x86/Kconfig.cpu                        | 13 -------------
- arch/x86/entry/vdso/vdso32/vclock_gettime.c |  2 --
- arch/x86/include/asm/barrier.h              | 30 -----------------------------
- arch/x86/include/asm/io.h                   | 15 ---------------
- arch/x86/kernel/pci-nommu.c                 | 19 ------------------
- arch/x86/um/asm/barrier.h                   |  4 ----
- 6 files changed, 83 deletions(-)
-
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 8b8d2297d486..638411f22267 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -315,19 +315,6 @@ config X86_L1_CACHE_SHIFT
- 	default "4" if MELAN || M486 || MGEODEGX1
- 	default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_LX
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -119,6 +119,7 @@ extern void tick_nohz_idle_stop_tick(voi
+ extern void tick_nohz_idle_retain_tick(void);
+ extern void tick_nohz_idle_restart_tick(void);
+ extern void tick_nohz_idle_enter(void);
++extern bool tick_nohz_idle_got_tick(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+ extern ktime_t tick_nohz_get_sleep_length(void);
+@@ -142,6 +143,7 @@ static inline void tick_nohz_idle_stop_t
+ static inline void tick_nohz_idle_retain_tick(void) { }
+ static inline void tick_nohz_idle_restart_tick(void) { }
+ static inline void tick_nohz_idle_enter(void) { }
++static inline bool tick_nohz_idle_got_tick(void) { return false; }
+ static inline void tick_nohz_idle_exit(void) { }
  
--config X86_PPRO_FENCE
--	bool "PentiumPro memory ordering errata workaround"
--	depends on M686 || M586MMX || M586TSC || M586 || M486 || MGEODEGX1
--	---help---
--	  Old PentiumPro multiprocessor systems had errata that could cause
--	  memory operations to violate the x86 ordering standard in rare cases.
--	  Enabling this option will attempt to work around some (but not all)
--	  occurrences of this problem, at the cost of much heavier spinlock and
--	  memory barrier operations.
--
--	  If unsure, say n here. Even distro kernels should think twice before
--	  enabling this: there are few systems, and an unlikely bug.
--
- config X86_F00F_BUG
- 	def_bool y
- 	depends on M586MMX || M586TSC || M586 || M486
-diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-index 7780bbfb06ef..9242b28418d5 100644
---- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-@@ -5,8 +5,6 @@
- #undef CONFIG_OPTIMIZE_INLINING
- #endif
+ static inline ktime_t tick_nohz_get_sleep_length(void)
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -198,10 +198,13 @@ static void cpuidle_idle_call(void)
+ 		rcu_idle_enter();
  
--#undef CONFIG_X86_PPRO_FENCE
--
- #ifdef CONFIG_X86_64
- 
- /*
-diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-index e1259f043ae9..042b5e892ed1 100644
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -52,11 +52,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
- 					   "lfence", X86_FEATURE_LFENCE_RDTSC)
- 
--#ifdef CONFIG_X86_PPRO_FENCE
--#define dma_rmb()	rmb()
--#else
- #define dma_rmb()	barrier()
--#endif
- #define dma_wmb()	barrier()
- 
- #ifdef CONFIG_X86_32
-@@ -68,30 +64,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #define __smp_wmb()	barrier()
- #define __smp_store_mb(var, value) do { (void)xchg(&var, value); } while (0)
- 
--#if defined(CONFIG_X86_PPRO_FENCE)
--
--/*
-- * For this option x86 doesn't have a strong TSO memory
-- * model and we should fall back to full barriers.
-- */
--
--#define __smp_store_release(p, v)					\
--do {									\
--	compiletime_assert_atomic_type(*p);				\
--	__smp_mb();							\
--	WRITE_ONCE(*p, v);						\
--} while (0)
--
--#define __smp_load_acquire(p)						\
--({									\
--	typeof(*p) ___p1 = READ_ONCE(*p);				\
--	compiletime_assert_atomic_type(*p);				\
--	__smp_mb();							\
--	___p1;								\
--})
--
--#else /* regular x86 TSO memory ordering */
--
- #define __smp_store_release(p, v)					\
- do {									\
- 	compiletime_assert_atomic_type(*p);				\
-@@ -107,8 +79,6 @@ do {									\
- 	___p1;								\
- })
- 
--#endif
--
- /* Atomic operations are already serializing on x86 */
- #define __smp_mb__before_atomic()	barrier()
- #define __smp_mb__after_atomic()	barrier()
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 95e948627fd0..f6e5b9375d8c 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -232,21 +232,6 @@ extern void set_iounmap_nonlazy(void);
-  */
- #define __ISA_IO_base ((char __iomem *)(PAGE_OFFSET))
- 
--/*
-- *	Cache management
-- *
-- *	This needed for two cases
-- *	1. Out of order aware processors
-- *	2. Accidentally out of order processors (PPro errata #51)
-- */
--
--static inline void flush_write_buffers(void)
--{
--#if defined(CONFIG_X86_PPRO_FENCE)
--	asm volatile("lock; addl $0,0(%%esp)": : :"memory");
--#endif
--}
--
- #endif /* __KERNEL__ */
- 
- extern void native_io_delay(void);
-diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
-index 618285e475c6..ac7ea3a8242f 100644
---- a/arch/x86/kernel/pci-nommu.c
-+++ b/arch/x86/kernel/pci-nommu.c
-@@ -37,7 +37,6 @@ static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
- 	WARN_ON(size == 0);
- 	if (!check_addr("map_single", dev, bus, size))
- 		return NOMMU_MAPPING_ERROR;
--	flush_write_buffers();
- 	return bus;
- }
- 
-@@ -72,25 +71,9 @@ static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
- 			return 0;
- 		s->dma_length = s->length;
+ 		entered_state = call_cpuidle(drv, dev, next_state);
+-		/*
+-		 * Give the governor an opportunity to reflect on the outcome
+-		 */
+-		cpuidle_reflect(dev, entered_state);
++
++		if (!tick_nohz_idle_got_tick()) {
++			/*
++			 * Give the governor an opportunity to reflect on the outcome
++			 */
++			cpuidle_reflect(dev, entered_state);
++		}
  	}
--	flush_write_buffers();
- 	return nents;
+ 
+ exit_idle:
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -996,6 +996,21 @@ void tick_nohz_idle_enter(void)
+ 	local_irq_enable();
  }
  
--static void nommu_sync_single_for_device(struct device *dev,
--			dma_addr_t addr, size_t size,
--			enum dma_data_direction dir)
--{
--	flush_write_buffers();
--}
--
--
--static void nommu_sync_sg_for_device(struct device *dev,
--			struct scatterlist *sg, int nelems,
--			enum dma_data_direction dir)
--{
--	flush_write_buffers();
--}
--
- static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
- {
- 	return dma_addr == NOMMU_MAPPING_ERROR;
-@@ -101,8 +84,6 @@ const struct dma_map_ops nommu_dma_ops = {
- 	.free			= dma_generic_free_coherent,
- 	.map_sg			= nommu_map_sg,
- 	.map_page		= nommu_map_page,
--	.sync_single_for_device = nommu_sync_single_for_device,
--	.sync_sg_for_device	= nommu_sync_sg_for_device,
- 	.is_phys		= 1,
- 	.mapping_error		= nommu_mapping_error,
- 	.dma_supported		= x86_dma_supported,
-diff --git a/arch/x86/um/asm/barrier.h b/arch/x86/um/asm/barrier.h
-index b7d73400ea29..f31e5d903161 100644
---- a/arch/x86/um/asm/barrier.h
-+++ b/arch/x86/um/asm/barrier.h
-@@ -30,11 +30,7 @@
++bool tick_nohz_idle_got_tick(void)
++{
++	struct tick_sched *ts;
++	bool got_tick = false;
++
++	ts = this_cpu_ptr(&tick_cpu_sched);
++
++	if (ts->inidle == 2) {
++		got_tick = true;
++		ts->inidle = 1;
++	}
++
++	return got_tick;
++}
++
+ /**
+  * tick_nohz_irq_exit - update next tick event from interrupt exit
+  *
+@@ -1142,6 +1157,9 @@ static void tick_nohz_handler(struct clo
+ 	struct pt_regs *regs = get_irq_regs();
+ 	ktime_t now = ktime_get();
  
- #endif /* CONFIG_X86_32 */
++	if (ts->inidle)
++		ts->inidle = 2;
++
+ 	dev->next_event = KTIME_MAX;
  
--#ifdef CONFIG_X86_PPRO_FENCE
--#define dma_rmb()	rmb()
--#else /* CONFIG_X86_PPRO_FENCE */
- #define dma_rmb()	barrier()
--#endif /* CONFIG_X86_PPRO_FENCE */
- #define dma_wmb()	barrier()
+ 	tick_sched_do_timer(now);
+@@ -1239,6 +1257,9 @@ static enum hrtimer_restart tick_sched_t
+ 	struct pt_regs *regs = get_irq_regs();
+ 	ktime_t now = ktime_get();
  
- #include <asm-generic/barrier.h>
--- 
-2.14.2
++	if (ts->inidle)
++		ts->inidle = 2;
++
+ 	tick_sched_do_timer(now);
+ 
+ 	/*
