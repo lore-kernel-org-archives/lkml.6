@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELswTOFb1kMYVv/Z9nLEzyCkvD7UvFyuem53xT//G/SMJxC/apm8auKV21bVDzJFx0312kr/
-ARC-Seal: i=1; a=rsa-sha256; t=1521484020; cv=none;
+X-Google-Smtp-Source: AG47ELsbkDYqHjX0BJeWQ7ZCp/QULcqtpmTXtMDXMiK6bofS86yY/TU7vx9QSdsFmjMLx9IlZ7F4
+ARC-Seal: i=1; a=rsa-sha256; t=1521484017; cv=none;
         d=google.com; s=arc-20160816;
-        b=t2vcRhhQ9NXBcgGIMcGkZ9jAreCbypkiCY5jNrmtFiCNfpKU0p3w4J77pNXOaSZxZq
-         QdPFGtPS6YvvdZ7+ufphW49RMQLWtUnrTNbG3cvfsjEDCIUgdsqqjp+c59b3WE5loWoi
-         YB/EJvZvK2O1Om74av7vaSAZlfhZAPIDIkQvSgfAN3NUjZmtbmpBTQKGEuF9mvIPXKD6
-         WxtKfFX1CkMxULfcjniTjf2o0VvgI6ck/+Eeqv4IaUpMYnaW6FacBP/+4bVLuC7IbxC5
-         opxU3MtaW5NWd/gGpwJXkzS2UKvgRBl2hyPOKPU5roKguFQS9rUSZ1bUlKdPpzYjY30Q
-         xX5g==
+        b=rpM+2STyiAjQL3PIAgiS6fczm61DbzAIJjjOF1MhBUm6gO7pvIXduqvlPf56v3Lxjo
+         Du6df7arL5hN/xfVarnySw4YJ1brOkJWfjhpSi5bLB+g2+YTNssOuvczNAievJBi/K+1
+         dVBdRFMQagjcc/rV440HSzj7kp0EGC3hc8IeS0t/W5qxtfAz7ZLx17InREQeCjeqQ7Bl
+         ti5Yjn+PxnDXQVqDb4Bd/MWM8ZkTqOw7TgI1DfFyKefV9YctdmiPbGKwyTiE5Zi2F5Vz
+         EGAOP/o+jUarOZp7OwMOh3usjF4eqpqgkLVT5fGf8lo6jYdDa8hvf6hu87agLxIEGNFJ
+         wVPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QvJ6qyqWq65wbrJtwlWTFn43ivQpoQV9OWmzS3gKEoc=;
-        b=JJIOBYR87uBhkG+PsQtSXszvj7LxY8TPDzjz+/Rs8O2HvCdEjtbsQaZz3zLcgsml8H
-         k1p3KbOh5DqJXNmEYtYSlwkfRcaG/2UX2utJjdhtVL3RivfelFds7OX4hDgpDI6o7tsD
-         ojQsjiKzVdWWw/dphWCtOdO/rLmnqMMPYcBIUllEA6HVfdo199+KA2jfuiPm2g0BIqiK
-         uPGyLu7m4h70XYi6L9vc6ceaSMy3TnHnLTZ5lQN2nQCxX0Vv31Du+Ub791cggMmkKxZK
-         o1angOwJPOJFSQfYYxXpCWQktk0wr/C2aHiLYZDtF/BUqgOwOQws/5nvEhk7LroYIOZm
-         L/hg==
+        bh=Z0UzZ5f8qH4TrSdNis7AXNzMMu7IdaZPv0vS8xnPW3I=;
+        b=QVVNiTpliHFG3QXWutBSuBFPhNcftSlXrNTiWDs6LZolCCIJJZrW5SryK+f4odriQl
+         VjL2/5SEnw/wVe2UnJUN9APmjh1Mku1qXAmXPMqv5g5tqpv4wkbvMgxGKq+N2SEbxykp
+         EZqU8fssjVc/agG2qycJLjoST9HL4D892jral6/dxW3E6HZD6mHsyn3ZrnPj5CxYLqL+
+         W6S7nJkcOHZtdgi7iCRqLydtcesHGMm3BYwYV0HaLuT5MotT0xRkdo/ViDQDLYG18e2J
+         k/eFp6NcE8o1jZPfPfWsNek6RX/5Lg1Z76t5CN5SmDMlUWMvciErjozBPvXYgizdlCHO
+         U0Lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-	Mika Kuoppala <mika.kuoppala@intel.com>,
-	drm-intel-fixes@lists.freedesktop.org,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 202/241] agp/intel: Flush all chipset writes after updating the GGTT
-Date: Mon, 19 Mar 2018 19:07:47 +0100
-Message-Id: <20180319180759.545315079@linuxfoundation.org>
+Subject: [PATCH 4.9 201/241] powerpc/modules: Dont try to restore r2 after a sibling call
+Date: Mon, 19 Mar 2018 19:07:46 +0100
+Message-Id: <20180319180759.506954903@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390961971643504?=
-X-GMAIL-MSGID: =?utf-8?q?1595391628259057096?=
+X-GMAIL-THRID: =?utf-8?q?1595391625449125176?=
+X-GMAIL-MSGID: =?utf-8?q?1595391625449125176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,44 +51,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
 
-[ Upstream commit 8516673a996870ea0ceb337ee4f83c33c5ec3111 ]
+[ Upstream commit b9eab08d012fa093947b230f9a87257c27fb829b ]
 
-Before accessing the GGTT we must flush the PTE writes and make them
-visible to the chipset, or else the indirect access may end up in the
-wrong page. In commit 3497971a71d8 ("agp/intel: Flush chipset writes
-after updating a single PTE"), we noticed corruption of the uploads for
-pwrite and for capturing GPU error states, but it was presumed that the
-explicit calls to intel_gtt_chipset_flush() were sufficient for the
-execbuffer path. However, we have not been flushing the chipset between
-the PTE writes and access via the GTT itself.
+When attempting to load a livepatch module, I got the following error:
 
-For simplicity, do the flush after any PTE update rather than try and
-batch the flushes on a just-in-time basis.
+  module_64: patch_module: Expect noop after relocate, got 3c820000
 
-References: 3497971a71d8 ("agp/intel: Flush chipset writes after updating a single PTE")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Mika Kuoppala <mika.kuoppala@intel.com>
-Cc: drm-intel-fixes@lists.freedesktop.org
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171208214616.30147-1-chris@chris-wilson.co.uk
+The error was triggered by the following code in
+unregister_netdevice_queue():
+
+  14c:   00 00 00 48     b       14c <unregister_netdevice_queue+0x14c>
+                         14c: R_PPC64_REL24      net_set_todo
+  150:   00 00 82 3c     addis   r4,r2,0
+
+GCC didn't insert a nop after the branch to net_set_todo() because it's
+a sibling call, so it never returns.  The nop isn't needed after the
+branch in that case.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Reviewed-and-tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/agp/intel-gtt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/include/asm/code-patching.h |    1 +
+ arch/powerpc/kernel/module_64.c          |   12 +++++++++++-
+ arch/powerpc/lib/code-patching.c         |    5 +++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
---- a/drivers/char/agp/intel-gtt.c
-+++ b/drivers/char/agp/intel-gtt.c
-@@ -871,6 +871,8 @@ void intel_gtt_insert_sg_entries(struct
- 		}
- 	}
- 	wmb();
-+	if (intel_private.driver->chipset_flush)
-+		intel_private.driver->chipset_flush();
- }
- EXPORT_SYMBOL(intel_gtt_insert_sg_entries);
+--- a/arch/powerpc/include/asm/code-patching.h
++++ b/arch/powerpc/include/asm/code-patching.h
+@@ -30,6 +30,7 @@ int patch_branch(unsigned int *addr, uns
+ int patch_instruction(unsigned int *addr, unsigned int instr);
  
+ int instr_is_relative_branch(unsigned int instr);
++int instr_is_relative_link_branch(unsigned int instr);
+ int instr_is_branch_to_addr(const unsigned int *instr, unsigned long addr);
+ unsigned long branch_target(const unsigned int *instr);
+ unsigned int translate_branch(const unsigned int *dest,
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -494,7 +494,17 @@ static bool is_early_mcount_callsite(u32
+    restore r2. */
+ static int restore_r2(u32 *instruction, struct module *me)
+ {
+-	if (is_early_mcount_callsite(instruction - 1))
++	u32 *prev_insn = instruction - 1;
++
++	if (is_early_mcount_callsite(prev_insn))
++		return 1;
++
++	/*
++	 * Make sure the branch isn't a sibling call.  Sibling calls aren't
++	 * "link" branches and they don't return, so they don't need the r2
++	 * restore afterwards.
++	 */
++	if (!instr_is_relative_link_branch(*prev_insn))
+ 		return 1;
+ 
+ 	if (*instruction != PPC_INST_NOP) {
+--- a/arch/powerpc/lib/code-patching.c
++++ b/arch/powerpc/lib/code-patching.c
+@@ -95,6 +95,11 @@ int instr_is_relative_branch(unsigned in
+ 	return instr_is_branch_iform(instr) || instr_is_branch_bform(instr);
+ }
+ 
++int instr_is_relative_link_branch(unsigned int instr)
++{
++	return instr_is_relative_branch(instr) && (instr & BRANCH_SET_LINK);
++}
++
+ static unsigned long branch_iform_target(const unsigned int *instr)
+ {
+ 	signed long imm;
