@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtrBLBhPFylF33GyKFzPYCCqb+N+pQ1x7RdXzI1DNNomFLgeLO/AoyV7O92DSp+iI1apAeF
-ARC-Seal: i=1; a=rsa-sha256; t=1521483067; cv=none;
+X-Google-Smtp-Source: AG47ELutgDKO04joTquU56AFStAxsSub319izkFOsNbif7pbplg5A2JfbmmFfveAdHmwaJz0nYay
+ARC-Seal: i=1; a=rsa-sha256; t=1521483064; cv=none;
         d=google.com; s=arc-20160816;
-        b=rkk0FVf4oaAKpZ7O9GT/Z7wW7xlMCAue1kBJOGH0CniEyed12N1fmivceCTM4TQ76T
-         hmM1aKzNjlv/O6I/oHEYPr4vOSt0jGv8/0jufe6ccmpyUrFw1UzzNHNqJ2dxZoU2YJbD
-         dSJeX3rtdcSzGnFjNhAP56xjz/U6D8hFHQmjMpFCB3EIMOWW+5dtaQl8ujHjxiJQLLJ8
-         igNBpR9myhWJ4ifBWM8UwO1LgHcOr9GA2Ajhf5En0dQIMViUEvlD9bUhDch/gh6SbULL
-         +fiAwRXGayuXWlkfubxzYlpqh6bGDJK2ENaZNMzQSTwj/jQ+RkLYQPiW7yoMqmVZp5jy
-         3dig==
+        b=09iOIcQMHTqmIA4S3R/D3PlYjTtU9ycNy714v+GQURMYwjjyeiadyZ4zYT4hWgP/qH
+         SFSPPLQ7vuPRuqMs360Bqi/kl34Q1QPhnGgrnSagsPxqjrUBtkRUB8KakuVPWTdLieLA
+         0xa0AwTqyXBTeE6ytzJUVe+ErcNFpO4AmEqtHPcm+SiXFiiIA7PpNdaRH2Z1UNzsNwnP
+         6VNj6yaF+X4ZUBCOjciwmpj0aDOz8dOJfBc6Y2XTMDcyK3Uf4Ipj7ixD5VDZ37uE1zIg
+         nITuogqXyhHA88mXxLE9FWI95v6WYouAAyGS3sEPGldBbcViXCjvkLHT1sVa95yNkec8
+         vKUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Lm8v4JKFaP39l9nwZmRYveX2dCR3VX/K9KEmHUq4fxI=;
-        b=xh+yqPp7tEQw0XyRtNcKEcNcXixvd8KAcKaUBq2vfkw0PajPmBgQiJ+UBal2C5pH9D
-         cuDX0LHfV/wLifQHffcDmCEadvoi8+0Tur4erZeLEA1dByHy37CKmNZY0TIA1KLRazuw
-         P5SO5idAOZv4xdllu2BApiuqBs8pcXMEFR8+ySzo0PygonjclhKBNf0mDTY+d+pwDGLA
-         XOhDjWFlFXVVwdwr9OTq3Zx73SKF5qES2PQKOajaom5ei0UHhznlA47eVMG7R9h0FZua
-         aquatvoqLclVh8by1FCkh7JP513qGy1VhU7BRIk20KFP2S+GFvQzHKAEOhf9inr6z6y3
-         bwZQ==
+        bh=2Lx+89o9Ti1sxtC8qI8LdHwIxpivqAq6gBkXjdPI6jY=;
+        b=R7rZdhbesr4q9d4RClDwaERYRcGyzp+DcdW+ouA+hoFF5u0i9NpaWT/w1+P9QCGs8I
+         x7AFiTPLSUfcf9F4+meLZJ6hm7x63LuKgLT3+yKA5xwwxBSMKxMAePQJLWxGdhSznI9N
+         EmCyUHzmU+m1UThIi5MhzCUvozhPPVrolD6ZrVT3CMSFfJxgJYKpkWwZ7AzyeJ7xlB6k
+         ax8wMNG4HeLgFlB3Ggeib/2cNaMxBZyz2aTZ/QzWK3OIZ4PO0xAczmbYB606FCKEWk67
+         XphTObPCMOGLjYPD0E5XRwf/JKWyXCXuGjMxYBtvYviazzXfHxbPe2hhD862p5Brp2oC
+         DLFg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephen Hemminger <sthemmin@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	David Carrillo-Cisneros <davidcc@google.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	He Kuang <hekuang@huawei.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Paul Turner <pjt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Simon Que <sque@chromium.org>,
+	Stephane Eranian <eranian@google.com>,
+	Wang Nan <wangnan0@huawei.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 55/68] veth: set peer GSO values
-Date: Mon, 19 Mar 2018 19:06:33 +0100
-Message-Id: <20180319171835.597351843@linuxfoundation.org>
+Subject: [PATCH 3.18 37/68] perf inject: Copy events when reordering events in pipe mode
+Date: Mon, 19 Mar 2018 19:06:15 +0100
+Message-Id: <20180319171833.047797100@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -41,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390628799057705?=
-X-GMAIL-MSGID: =?utf-8?q?1595390628799057705?=
+X-GMAIL-THRID: =?utf-8?q?1595390625920673495?=
+X-GMAIL-MSGID: =?utf-8?q?1595390625920673495?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +60,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: David Carrillo-Cisneros <davidcc@google.com>
 
 
-[ Upstream commit 72d24955b44a4039db54a1c252b5031969eeaac3 ]
+[ Upstream commit 1e0d4f0200e4dbdfc38d818f329d8a0955f7c6f5 ]
 
-When new veth is created, and GSO values have been configured
-on one device, clone those values to the peer.
+__perf_session__process_pipe_events reuses the same memory buffer to
+process all events in the pipe.
 
-For example:
-   # ip link add dev vm1 gso_max_size 65530 type veth peer name vm2
+When reordering is needed (e.g. -b option), events are not immediately
+flushed, but kept around until reordering is possible, causing
+memory corruption.
 
-This should create vm1 <--> vm2 with both having GSO maximum
-size set to 65530.
+The problem is usually observed by a "Unknown sample error" output. It
+can easily be reproduced by:
 
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  perf record -o - noploop | perf inject -b > output
+
+Committer testing:
+
+Before:
+
+  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
+  stress: info: [8297] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
+  stress: info: [8297] successful run completed in 2s
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB - ]
+  Warning:
+  Found 1 unknown events!
+
+  Is this an older tool processing a perf.data file generated by a more recent tool?
+
+  If that is not the case, consider reporting to linux-kernel@vger.kernel.org.
+
+  $
+
+After:
+
+  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
+  stress: info: [9027] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
+  stress: info: [9027] successful run completed in 2s
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB - ]
+  no symbols found in /usr/bin/stress, maybe install a debug package?
+  no symbols found in /usr/bin/stress, maybe install a debug package?
+  $
+
+Signed-off-by: David Carrillo-Cisneros <davidcc@google.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Simon Que <sque@chromium.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20170410201432.24807-3-davidcc@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/veth.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/ordered-events.c |    3 ++-
+ tools/perf/util/session.c        |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -382,6 +382,9 @@ static int veth_newlink(struct net *src_
- 	if (ifmp && (dev->ifindex != 0))
- 		peer->ifindex = ifmp->ifi_index;
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -80,7 +80,7 @@ static union perf_event *dup_event(struc
  
-+	peer->gso_max_size = dev->gso_max_size;
-+	peer->gso_max_segs = dev->gso_max_segs;
-+
- 	err = register_netdevice(peer);
- 	put_net(net);
- 	net = NULL;
+ static void free_dup_event(struct ordered_events *oe, union perf_event *event)
+ {
+-	if (oe->copy_on_queue) {
++	if (event && oe->copy_on_queue) {
+ 		oe->cur_alloc_size -= event->header.size;
+ 		free(event);
+ 	}
+@@ -151,6 +151,7 @@ void ordered_events__delete(struct order
+ 	list_move(&event->list, &oe->cache);
+ 	oe->nr_events--;
+ 	free_dup_event(oe, event->event);
++	event->event = NULL;
+ }
+ 
+ static int __ordered_events__flush(struct perf_session *s,
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1080,6 +1080,7 @@ static int __perf_session__process_pipe_
+ 	buf = malloc(cur_size);
+ 	if (!buf)
+ 		return -errno;
++	ordered_events__set_copy_on_queue(oe, true);
+ more:
+ 	event = buf;
+ 	err = readn(fd, event, sizeof(struct perf_event_header));
