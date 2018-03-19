@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339826-1521479111-2-4890845236581884526
+X-Cyrus-Session-Id: sloti22d1t05-3293580-1521479064-2-17225074925103492923
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521479110; b=BiHxcpU4Tvq3D9Aauebq5V7L2cz4k+86XFNa/72X5eObaP5
-    FGtOQ5XGsnheguupgmc2KDLjMAmnAzdX5okwedpMYbuaewxUxKoMVEUIWp2y6CuV
-    RPRp1ZkzcKmr41Qk5zEVL3c4VwpcDUkmzgH09MR2gbheRAJ82aNaYfs4oaE6I90H
-    u326nvVFfe9oEI1eeSYqOzuqRX0ik6ksSMcfro0ooSgVV9A9pnIpcZLYLF2sPIFe
-    U9wOIAHEH8gGXfbshS12CJxQpNHrqUx1Pc+Xv45AVBsnCZzqJPEo3xpSQEgORqQ+
-    +CqHK6n3L6tw6nNupPJI68/zM7GEQ5Y/OBkdvmg==
+    t=1521479064; b=ZT97SE3ZyxKpWa08OIPFGQaeHCPjGfnSCaQu5h9+ebXlcOa
+    Np03V8LbA9JvHpMLqrm+jLIv5bIkTGai0vKgSyaEwkmrjFC/hDzdodAWzouxNoOX
+    nKv5IoYe8ZNbcLDNhr8OFGCMShKyvP0AxbE26Yi1RwcCrj+nnqykpBzZNo+jivNj
+    OLKwDvHLXb43xTAo0+1YNPWHt3bHVyLMrZU4WXkcDVdUV7QWp9g6xo7IB+2MPwzS
+    kVr7I7XE6jtGnhCABylFBuQPLKsNYdYOZfIxDUC+99C1gwkj4tgr4zvulV4DT0Hw
+    Elt4bnMPgd8I338rmCLf+XK0aOz9MKIWugebcVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521479110; bh=PYI25G
-    OEYtEwLiz6aWIevU99da9KRatjgjtfvwsiR5g=; b=o0W8fQjW+YMkr2X3Xva6B5
-    1Ab5Ode+VXheTPnBuRcVzFDzer/r5sWBo3IoQlLVeIpG9zk6Ztf065Mz4D0ATILh
-    XT0+7ucwXRGP3azkH+3CnxaUbVnKEZCRjwU6MipZ/9E9bSccncpIafafM0nPh/tj
-    v9aKAPASBEQESegl7FwQbxrPZPnKspUMMJh4d3T29kt8Rx5/xRttHnrzc0Lyw4YV
-    StNIKELf6KEv3Yq/JhUHj2T3AK3hxWrtnBQP5VWejEBJbI1d15nQQ+Ek8tLTo52q
-    AqDU/pRlznODXLaVZpif3u9rEfdy90xkiV5JEX1IdK5xix9I75si1mQam2V7HJZA
+    :mime-version:sender:list-id; s=arctest; t=1521479064; bh=/W1BvY
+    kuxlnyFWZRD/S3Is3szUhIEhdjw6dEVeuBlK8=; b=ImLBF+B6IHwfRN5E2VjWbP
+    iZAE7DUJrJ/cO6skLXhBM4iFmGIfxWrDyzgbK2lkvQ8SpO5KM2NG2wpOds4h10gM
+    lpUm/JN2GpHw4KwgP69/B2IDSkmIwbm2WS37OdGMudXKQj/pqf8AnrLKmzh59EZ/
+    BMLve9XmGqh2kSz2LuSuHb2xFIlNu9gv1/t2I+mmKWWOPBUnCViTbUE4kQf+IPIe
+    ZFF11Bw1EG6h+FsPZLy64Ozl+0r7ULzwpqy68ZEFp3jl6EX1EWVbBLhN+r5ulLng
+    PCGZMI6xSVFyXGkCeDrZ6xQ0fT4NutTzmjlwJ9jmyCE+ERK7pWnMv4Jx1Fo9hDLg
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fLNjcqSt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=N9cUeJWe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeljeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjedvkeeknecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelieculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeelkeefnecuvehluhhsthgvrhfuihiivgepudef;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fLNjcqSt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=N9cUeJWe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeljeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjedvkeeknecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdelieculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeelkeefnecuvehluhhsthgvrhfuihiivgepudef;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967647AbeCSRCA (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 13:02:00 -0400
-Received: from mail-sn1nam02on0118.outbound.protection.outlook.com ([104.47.36.118]:57012
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S967706AbeCSRCC (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 13:02:02 -0400
+Received: from mail-co1nam03on0115.outbound.protection.outlook.com ([104.47.40.115]:37952
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966702AbeCSQLD (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S966204AbeCSQLD (ORCPT <rfc822;stable@vger.kernel.org>);
         Mon, 19 Mar 2018 12:11:03 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+CC: Jag Raman <jag.raman@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 148/167] cpuidle: dt: Add missing
- 'of_node_put()'
-Thread-Topic: [PATCH AUTOSEL for 4.4 148/167] cpuidle: dt: Add missing
- 'of_node_put()'
-Thread-Index: AQHTv5yEycSkrKtB506IgDrY7h6WqQ==
-Date: Mon, 19 Mar 2018 16:08:28 +0000
-Message-ID: <20180319160513.16384-148-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 145/167] sparc64: ldc abort during vds iso
+ boot
+Thread-Topic: [PATCH AUTOSEL for 4.4 145/167] sparc64: ldc abort during vds
+ iso boot
+Thread-Index: AQHTv5yC3zgjdU4WGE+t6KhkqIyhcA==
+Date: Mon, 19 Mar 2018 16:08:24 +0000
+Message-ID: <20180319160513.16384-145-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,70 +78,90 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:gonbH2XywMZbqeIgznuCIcHpYu4wOz/H1jLWdH9xBWgvjwh+jwQ2Wdl2e5wbVEQ05ActIcRuFlPLw6Vbd6Qd6OPwCUhB/YHsjYkDwXcm+yZg7gzBhk5jIKQsHRkQkDCt8Gredh7W2pD6HGpHMqmoi/e0CeIwEA9bncppwkL4VuYdWIkL0zJQHMBkTtqdCQdCV3tzWVXblBUpkQkQwpn+oZ7wML4pZ/cRiENeD6jXwNxtx145eqTPvi5jJoU1llk4;20:iNxBJMoqTRq6ehpTvkOyTZXMer5Y08uu+Kq5SbPFS7GLNbQIk0Hd8cbqAsj81p6Obfbkily6VG5CF8ClKIezov/X7m1Gndn3jafmftOL6nmaJNWrYOT8bVXm0/6I+sh08AvP2yF5DS+Iz0qA0QMmkt6Pz46DpSmS6nuy6h2s7PQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;7:tNII1CMAE/UpmWYf95Ugy2fHTvUDGILHwKmL3FvyuhOaqA1sCahgiFe2R3bbxOdYzImsX70ViyfaGcbPiXU+ZCCP1DlQq5h0OCN+z2zKQh4/3c0NwXmVznMI3VMJqQ8N05KhZyDkWZaRGwi0KLkANnCEhoA9mRjG//VCfYMdEsoJIyouLy2N/I68gS7shGN7GBEdRnBte5hTz+7dTBpPYVeF8UPv9sOKJi1Z2eJ5bzJR2cdWw2vtnsntYE/cAIkr;20:/ACJ7tg8+qKkpB1oqplwp0RNIy8cQL9dU2Jxv3hF8kGotRIzXP4onrnVUzKOX9ua1Olbng4f3l2SmJLfwBVZJQRXHmEFst9vgn8patyWe6HnHCrrt+xIqTfj9jPJuUJPflgL810xCAhDk5AZ3jmJYBAnqiagM5uA91A2ST4kOro=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d47bea79-3d2f-452b-bd74-08d58db3fb01
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1095;
-x-ms-traffictypediagnostic: DM5PR2101MB1095:
+x-ms-office365-filtering-correlation-id: 521a0e7c-2f85-4da1-0bd3-08d58db3fa17
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
+x-ms-traffictypediagnostic: DM5PR2101MB0888:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1095EC23B3C97853DC3D6E20FBD40@DM5PR2101MB1095.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(155761271638844)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1095;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1095;
+x-microsoft-antispam-prvs: <DM5PR2101MB0888D961F92EF49DA08ACB4FFBD40@DM5PR2101MB0888.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(396003)(39380400002)(189003)(199004)(305945005)(316002)(1076002)(7736002)(14454004)(86612001)(25786009)(8936002)(2950100002)(110136005)(66066001)(186003)(10090500001)(6666003)(5250100002)(2501003)(99286004)(76176011)(86362001)(4326008)(68736007)(3660700001)(105586002)(8676002)(81166006)(81156014)(106356001)(3280700002)(72206003)(10290500003)(478600001)(2900100001)(59450400001)(97736004)(54906003)(6512007)(53936002)(6506007)(102836004)(6436002)(5660300001)(6486002)(107886003)(26005)(2906002)(22452003)(6116002)(3846002)(36756003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: p++jIAgPME2O1/9jqfNl73QHla11ywFvchmow1Erp1KZD64+DT5YvzTQoUOOI4vr3NuKiue3BCsns9PmZ1RZPcmvbaMO/GyzMk1WlhhyRM0gm5P/p77ffxzoVurPg9QpV1qNPEPMh0fTIknJNIzHprdNiWJaxKnAaevTTRlLPMTydJRRwYEFo5S6J79i09GKbl2byP85Nsys7TKiy+nHYTCMjAh61k7JYKUJOGMTmgihWEUxmneNKpCtcvemHPHVCJT7zwcI0FguWuD+yefFCRCMVvjVKfjKswN6Gj2TNJug8VRXVxQPerxRSVxwRW5WKvS56mO09Uz6o6SRy0Hvlg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(366004)(39380400002)(376002)(189003)(199004)(6486002)(72206003)(106356001)(86362001)(3660700001)(6436002)(68736007)(53936002)(107886003)(8936002)(81166006)(8676002)(81156014)(2906002)(6116002)(4326008)(6512007)(1076002)(86612001)(66066001)(25786009)(7736002)(3846002)(305945005)(5660300001)(99286004)(5250100002)(110136005)(478600001)(36756003)(54906003)(2501003)(6506007)(186003)(59450400001)(26005)(14454004)(6666003)(2900100001)(316002)(2950100002)(102836004)(10290500003)(3280700002)(97736004)(76176011)(10090500001)(22452003)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: eOQZutp3GTqFvC5C56oBRHye8whXOZVplDV3F7+sXVMkfNSx18HGByuDkhlj/d51/jAqNdIwUeWaxqERycvARvX8LN/CTTmUxJUWldSHe0lgLqAVJKH94KFJEGkzOgmGQzVy4ZoXpzPxfkkGXukZBCnLdYJWd4sNk6IsmwsDSgtV7Pb8SFW4JKEr8XkIAd7shfzeAQnott1JTeU1RugI1qv9SWvp82lm1/XFRO+R5nmKKnSxK2sb5vjCbM4YBMU/zZJHPKpr3UdRiglpNUYPHKEh7idyG5U7c0Rlt3VXQn/M9BxpwMhsEoVv7Gq55tca0u86zo2baWqOm32s7jfG/w==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d47bea79-3d2f-452b-bd74-08d58db3fb01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:08:28.2201
+X-MS-Exchange-CrossTenant-Network-Message-Id: 521a0e7c-2f85-4da1-0bd3-08d58db3fa17
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:08:24.8327
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1095
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Jag Raman <jag.raman@oracle.com>
 
-[ Upstream commit b2cdd8e1b54849477a32d820acc2e87828a38f3d ]
+[ Upstream commit 6c95483b768c62f8ee933ae08a1bdbcb78b5410f ]
 
-'of_node_put()' should be called on pointer returned by
-'of_parse_phandle()' when done. In this function this is done in all path
-except this 'continue', so add it.
+Orabug: 20902628
 
-Fixes: 97735da074fd (drivers: cpuidle: Add status property to ARM idle stat=
-es)
-Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+When an ldc control-only packet is received during data exchange in
+read_nonraw(), a new rx head is calculated but the rx queue head is not
+actually advanced (rx_set_head() is not called) and a branch is taken to
+'no_data' at which point two things can happen depending on the value
+of the newly calculated rx head and the current rx tail:
+
+- If the rx queue is determined to be not empty, then the wrong packet
+  is picked up.
+
+- If the rx queue is determined to be empty, then a read error (EAGAIN)
+  is eventually returned since it is falsely assumed that more data was
+  expected.
+
+The fix is to update the rx head and return in case of a control only
+packet during data exchange.
+
+Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+Reviewed-by: Aaron Young <aaron.young@oracle.com>
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/cpuidle/dt_idle_states.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/sparc/kernel/ldc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_sta=
-tes.c
-index a5c111b67f37..ea11a33e7fff 100644
---- a/drivers/cpuidle/dt_idle_states.c
-+++ b/drivers/cpuidle/dt_idle_states.c
-@@ -174,8 +174,10 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
- 		if (!state_node)
- 			break;
+diff --git a/arch/sparc/kernel/ldc.c b/arch/sparc/kernel/ldc.c
+index 59d503866431..9cc600b2d68c 100644
+--- a/arch/sparc/kernel/ldc.c
++++ b/arch/sparc/kernel/ldc.c
+@@ -1733,9 +1733,14 @@ static int read_nonraw(struct ldc_channel *lp, void =
+*buf, unsigned int size)
 =20
--		if (!of_device_is_available(state_node))
-+		if (!of_device_is_available(state_node)) {
-+			of_node_put(state_node);
- 			continue;
-+		}
+ 		lp->rcv_nxt =3D p->seqid;
 =20
- 		if (!idle_state_valid(state_node, i, cpumask)) {
- 			pr_warn("%s idle state not valid, bailing out\n",
++		/*
++		 * If this is a control-only packet, there is nothing
++		 * else to do but advance the rx queue since the packet
++		 * was already processed above.
++		 */
+ 		if (!(p->type & LDC_DATA)) {
+ 			new =3D rx_advance(lp, new);
+-			goto no_data;
++			break;
+ 		}
+ 		if (p->stype & (LDC_ACK | LDC_NACK)) {
+ 			err =3D data_ack_nack(lp, p);
 --=20
 2.14.1
