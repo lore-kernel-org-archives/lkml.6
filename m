@@ -1,69 +1,50 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483116-2-2179617042503538540
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483115; b=s4zc4skgo6OJcF42YCH//tFdc+CYfhk4XPPcbFuEdURK2xb
-    xI/6iKBMHxTsNsYslH5LaJuM3emjs3QhyMvwFzRUhJNfoIDRivD6N4Vy1PP85Md+
-    z/HapBgFEBiXRdhSJU6667dXHl4pMZcg4AQ+NXbojcyQW/tEbpySTyD/DrGRuJzm
-    pxf8qmBSH4BnNyO40/l23EjhzHcMsYJqwFos8oEC+6MyznhJjWEb36Kv2uvDeKQj
-    BbIlDNMTCaGCrQ8yPosj+LcddskZSoTn73G2bv3/FE9EbFEQZkFDC02xKZl4BL+m
-    ugD9EsnfdjySQOv13iRZujjOgWhowbm5grZkbbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483115; bh=D8FiWl42AIx6QwenhjswJFxuhV
-    nOKyqhaEcsa7YWW0U=; b=KAP/6CnloYJc+ItXbd6sESfC25yR1aR8nOZXiKAMqC
-    kxk+ah4IvVg993S/gQ9qqKmD1UlOoJJTutDZoRuHQmB4pU8Iz3elKsEdMclj6YXX
-    FPicp0DEAOxc6ow5HWz7PmPxkr2jq8ZV6MWq0x459fxzpFIWdExf7Ia4sKJsJWGK
-    Ka64MCjh6hIGDyKWIZfo8AaTnRq36r+Crt9/9MhCkbgFPow3wPPBIBEuxCSe4td9
-    G9u96d4KZGXltVUwsWJH2M0nEyrIbBj+VkXYdl/8rzn2mTCkLwu1jimwo+Hzec06
-    94uDtNBgCk0Q6r0ulSpw7HxbbDdCXPeOTR7vCC125XiQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjeejkeenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutdelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvjeejkeenucevlhhushhtvghrufhiiigvpedt;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968759AbeCSSLS (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:11:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42218 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968757AbeCSSLP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:11:15 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELunRGI7haHmed7bUsc6A91fAEdb25CIZcwjRpmhkK9gWqnVcz5VPnyq5MU3miZKXf8yrEUr
+ARC-Seal: i=1; a=rsa-sha256; t=1521483115; cv=none;
+        d=google.com; s=arc-20160816;
+        b=sD43Bx1DjRN2hziNCKJcc4b/k+3lm7I01W4dEJNpaWfqaylCl2jywI8+3/7UWmHnYJ
+         xW0rOwLBWUOOug4a9HvIhfoVZS6/S3JgeDwI2Dl81rr6Gr0CM+CLGacAh8bxsHINkqty
+         3avft2sbCEGpeIWcvZdobqIuslOsUHYRKpKS2yIzPPW84ILOLGt6J3vJR8RoHQW+l3NJ
+         8EAUdyv0+O0b1oB0D0Ei21HW5npnDleOE9GRXd1AMBJxiyj9Mgmtrl1lnydSTZn5roTP
+         2aOBnyNVaS6di5+q7b4wrkQKGT31/Ew2KPPMnT6Yze5LPIUBgyQbGWbBOwvc5gDQKLEa
+         rWCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/liYlAj7M7ZmcE0DfeNO1RkKO4n424HjZRK2TQZJOhc=;
+        b=PZ55tNwF94yEf4mu4gWQ8yR2h3sv9geU6Agm8oRbnEDqi/BgatA98eq1uVQP6Dvr7+
+         peAZd4aD0BkobC1e9XA9y756TFBNCYokhMe2F8RT2wQOxt/J9DkU6i1PsG4Lvgc3+a3O
+         AOzTJevdIjij8wEjhrIMkVH4mW0YT2EaxdIZdTDqWsx5s7rTQw+6BcavIOgkS/59iMEh
+         fl2cFFzwVjYpIDm9jz6ECY0G0QnhuwB9HN3XsPIzyh8BRbFbRFjZCE2Z02emgRl3Y2TP
+         8RBUyTdZcfw6TSaWIklzmgSPXzaLnI10OCSMoY0HvEjq3CeA/4uqEGP7+zSnZYzuZ94H
+         K/2g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, SeongJae Park <sj38.park@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 58/68] rcutorture/configinit: Fix build directory error message
-Date: Mon, 19 Mar 2018 19:06:36 +0100
-Message-Id: <20180319171835.987452001@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ye Xiaolong <xiaolong.ye@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 42/68] kprobes/x86: Set kprobes pages read-only
+Date: Mon, 19 Mar 2018 19:06:20 +0100
+Message-Id: <20180319171833.753962691@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -71,9 +52,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390679028073105?=
+X-GMAIL-MSGID: =?utf-8?q?1595390679028073105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,35 +63,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: SeongJae Park <sj38.park@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
 
-[ Upstream commit 2adfa4210f8f35cdfb4e08318cc06b99752964c2 ]
+[ Upstream commit d0381c81c2f782fa2131178d11e0cfb23d50d631 ]
 
-The 'configinit.sh' script checks the format of optional argument for the
-build directory, printing an error message if the format is not valid.
-However, the error message uses the wrong variable, indicating an empty
-string even though the user entered a non-empty (but erroneous) string.
-This commit fixes the script to use the correct variable.
+Set the pages which is used for kprobes' singlestep buffer
+and optprobe's trampoline instruction buffer to readonly.
+This can prevent unexpected (or unintended) instruction
+modification.
 
-Fixes: c87b9c601ac8 ("rcutorture: Add KVM-based test framework")
+This also passes rodata_test as below.
 
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Without this patch, rodata_test shows a warning:
+
+  WARNING: CPU: 0 PID: 1 at arch/x86/mm/dump_pagetables.c:235 note_page+0x7a9/0xa20
+  x86/mm: Found insecure W+X mapping at address ffffffffa0000000/0xffffffffa0000000
+
+With this fix, no W+X pages are found:
+
+  x86/mm: Checked W+X mappings: passed, no W+X pages found.
+  rodata_test: all tests were successful
+
+Reported-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ye Xiaolong <xiaolong.ye@intel.com>
+Link: http://lkml.kernel.org/r/149076375592.22469.14174394514338612247.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/rcutorture/bin/configinit.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/kprobes/core.c |    4 ++++
+ arch/x86/kernel/kprobes/opt.c  |    3 +++
+ 2 files changed, 7 insertions(+)
 
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -51,7 +51,7 @@ then
- 			mkdir $builddir
- 		fi
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -378,6 +378,8 @@ static int arch_copy_kprobe(struct kprob
+ {
+ 	int ret;
+ 
++	set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
++
+ 	/* Copy an instruction with recovering if other optprobe modifies it.*/
+ 	ret = __copy_instruction(p->ainsn.insn, p->addr);
+ 	if (!ret)
+@@ -392,6 +394,8 @@ static int arch_copy_kprobe(struct kprob
  	else
--		echo Bad build directory: \"$builddir\"
-+		echo Bad build directory: \"$buildloc\"
- 		exit 2
- 	fi
- fi
+ 		p->ainsn.boostable = -1;
+ 
++	set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
++
+ 	/* Check whether the instruction modifies Interrupt Flag or not */
+ 	p->ainsn.if_modifier = is_IF_modifier(p->ainsn.insn);
+ 
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -344,6 +344,7 @@ int arch_prepare_optimized_kprobe(struct
+ 	}
+ 
+ 	buf = (u8 *)op->optinsn.insn;
++	set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
+ 
+ 	/* Copy instructions into the out-of-line buffer */
+ 	ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr);
+@@ -366,6 +367,8 @@ int arch_prepare_optimized_kprobe(struct
+ 	synthesize_reljump(buf + TMPL_END_IDX + op->optinsn.size,
+ 			   (u8 *)op->kp.addr + op->optinsn.size);
+ 
++	set_memory_ro((unsigned long)buf & PAGE_MASK, 1);
++
+ 	flush_icache_range((unsigned long) buf,
+ 			   (unsigned long) buf + TMPL_END_IDX +
+ 			   op->optinsn.size + RELATIVEJUMP_SIZE);
