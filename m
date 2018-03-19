@@ -1,79 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521483963-2-8194532550260672768
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483962; b=NhJlWcBy9yQnmeGeCY4/fkDsgVzmuKsJUPSfuiALcSJ1ouj
-    T+P/PFqg0ihAhtxp7p1jOjFBj7UYo48ZIq16MTB+ijvbFv4xyFGry6r+Zui7NhZz
-    IbzgzQxMx1Oe7VBRxTovptRUKWajzYFWXDHBNZunttJM2v/de/2+FeHZpXdIT1QR
-    A5xokzwiXh1N88edPPwR6hPV8HFrMAHhPq+D+HmnvxX4u6e2JC9WOmaLyNhy7E1U
-    g7EDzKTdcBWIyFnLHrP+QPfM+HNTZlliNw3tH7j+koPo3jUWHUf+FaL+mza5xZd0
-    x/X3iH/0IyNQ3H3QzgtLpAYamUtMCBJLOG73ifA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483962; bh=u4KqlKwOPy3QjUH9IIOY9EWkzG
-    JDadvVRn9QKkFLOnM=; b=Svff8lZ5t0HEvr60qZ7IunrbQMdGUISrOkuzcFsLV2
-    6UodmfJ0CkodCXb5vP1pAoMaGnKP4rOMHZBzSPt7hLxkBsImMP2+0k+U9RPUIqk3
-    RDGO4JIdeBM5m1Sva48njUZLo7J1qmdYIbGqxZoVGrO0X7R1xDc5KzfSm0UrE5M6
-    q0PQFoCjfZk3vTiR0e3mqLHw3YOkTdlbwS0xRQMfb932B6ywEJVUVuCAuqyvf/jH
-    5e0d8hDUEJYRlRWCZBog9J17e8fgFPUml1jbGropF2m2wmrnh+Cr7izMK/nnX6Wn
-    bZlCGAPnD4EBkjZcahE0b4ZnPNtunmQQNLlR0oeVX6OQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepheegtdeinecuvehluhhsthgvrhfuihiivgepud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepheegtdeinecuvehluhhsthgvrhfuihiivgepud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969828AbeCSSZ7 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:25:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50636 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969822AbeCSSZ5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:25:57 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsJrYULL4ejFGLvmzXGQlFGJoOovkw1Jew4+h1ByBYmkAPZIvV69cySuv3z8icG82eXXQJt
+ARC-Seal: i=1; a=rsa-sha256; t=1521483960; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NP9Mi2Fz26Xwa0lg0Oc/j79qG3gCDw/cCQZJDlW8SWrnaw1syMSqax67EUq1WrzL+W
+         nO+nhyMGDurG3KccP06p8YFJoaueeO0if38gVcrvCx9vGW427UjUS2utl8zp47AgeDVe
+         tZpnWRMS1WZXVhq8tpEJpHtshCvPEATL2NlSlspjfb8W+fnQj9oQZ9xJAmPkR2n034Zv
+         dVNsD0Shq45ZztspZrEWkdWMT14oo3HF20GifPJjqf4VhLE7TtBiiJEP+By+ZqSm6mdT
+         2Nj6wIXxBAG5ydXEm9d0kv+2av0G8z+UfKdmuyqjKtdcHtMcIKEdH6gi8LaPzp5bc7tE
+         PS8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=uswYoHDQZvVyNb6VvLutqc6PyFyXzp2Ro01730/QVf0=;
+        b=LwxtOChPFTmpOsxSmvNiUiG9414ZAAa96rv1UAJhKKKNs9FGwqdwjX3jrWShLj6MaT
+         2oRFBt1Di5ZphBrPYaIzj+TmvfEBxvOP5++LpyxyaW0fGYMo8jzz70I2ffQZJGWu/t/K
+         KgDjgDkZBTJzCTCR+/WGePKDGaaC+EywXHfULPiWavj6Dgen6KRqDSs5LdzUgxrp2jS0
+         ZRbgNxySXpVusuHh7VDKjTsZiGvWYT1kuztXOVpRtyOw3Of8NP0KYk4Y0Pvd8AnrRTOB
+         9Im5gXYEAixeJYoMWQBOtgjEe7PrK4t1efuB62n9Ffnzj6UDkWzVEE0yX+OvupnP8RsQ
+         /zZw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, He Kuang <hekuang@huawei.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Simon Que <sque@chromium.org>,
-        Stephane Eranian <eranian@google.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 144/241] perf inject: Copy events when reordering events in pipe mode
-Date: Mon, 19 Mar 2018 19:06:49 +0100
-Message-Id: <20180319180757.148507572@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Fugang Duan <B38611@freescale.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 145/241] net: fec: add phy-reset-gpios PROBE_DEFER check
+Date: Mon, 19 Mar 2018 19:06:50 +0100
+Message-Id: <20180319180757.191602215@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -81,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391565217059227?=
+X-GMAIL-MSGID: =?utf-8?q?1595391565217059227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,99 +50,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Carrillo-Cisneros <davidcc@google.com>
+From: Fugang Duan <fugang.duan@nxp.com>
 
 
-[ Upstream commit 1e0d4f0200e4dbdfc38d818f329d8a0955f7c6f5 ]
+[ Upstream commit 9269e5560b261eb9ee157497890dc0948db76cf8 ]
 
-__perf_session__process_pipe_events reuses the same memory buffer to
-process all events in the pipe.
+Many boards use i2c/spi expander gpio as phy-reset-gpios and these
+gpios maybe registered after fec port, driver should check the return
+value of .of_get_named_gpio().
 
-When reordering is needed (e.g. -b option), events are not immediately
-flushed, but kept around until reordering is possible, causing
-memory corruption.
-
-The problem is usually observed by a "Unknown sample error" output. It
-can easily be reproduced by:
-
-  perf record -o - noploop | perf inject -b > output
-
-Committer testing:
-
-Before:
-
-  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
-  stress: info: [8297] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
-  stress: info: [8297] successful run completed in 2s
-  [ perf record: Woken up 3 times to write data ]
-  [ perf record: Captured and wrote 0.000 MB - ]
-  Warning:
-  Found 1 unknown events!
-
-  Is this an older tool processing a perf.data file generated by a more recent tool?
-
-  If that is not the case, consider reporting to linux-kernel@vger.kernel.org.
-
-  $
-
-After:
-
-  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
-  stress: info: [9027] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
-  stress: info: [9027] successful run completed in 2s
-  [ perf record: Woken up 3 times to write data ]
-  [ perf record: Captured and wrote 0.000 MB - ]
-  no symbols found in /usr/bin/stress, maybe install a debug package?
-  no symbols found in /usr/bin/stress, maybe install a debug package?
-  $
-
-Signed-off-by: David Carrillo-Cisneros <davidcc@google.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: He Kuang <hekuang@huawei.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Paul Turner <pjt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Simon Que <sque@chromium.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/20170410201432.24807-3-davidcc@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Fugang Duan <B38611@freescale.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/ordered-events.c |    3 ++-
- tools/perf/util/session.c        |    1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fec_main.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -79,7 +79,7 @@ static union perf_event *dup_event(struc
- 
- static void free_dup_event(struct ordered_events *oe, union perf_event *event)
- {
--	if (oe->copy_on_queue) {
-+	if (event && oe->copy_on_queue) {
- 		oe->cur_alloc_size -= event->header.size;
- 		free(event);
- 	}
-@@ -150,6 +150,7 @@ void ordered_events__delete(struct order
- 	list_move(&event->list, &oe->cache);
- 	oe->nr_events--;
- 	free_dup_event(oe, event->event);
-+	event->event = NULL;
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3209,7 +3209,7 @@ static int fec_enet_init(struct net_devi
  }
  
- int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1628,6 +1628,7 @@ static int __perf_session__process_pipe_
- 	buf = malloc(cur_size);
- 	if (!buf)
- 		return -errno;
-+	ordered_events__set_copy_on_queue(oe, true);
- more:
- 	event = buf;
- 	err = readn(fd, event, sizeof(struct perf_event_header));
+ #ifdef CONFIG_OF
+-static void fec_reset_phy(struct platform_device *pdev)
++static int fec_reset_phy(struct platform_device *pdev)
+ {
+ 	int err, phy_reset;
+ 	bool active_high = false;
+@@ -3217,7 +3217,7 @@ static void fec_reset_phy(struct platfor
+ 	struct device_node *np = pdev->dev.of_node;
+ 
+ 	if (!np)
+-		return;
++		return 0;
+ 
+ 	of_property_read_u32(np, "phy-reset-duration", &msec);
+ 	/* A sane reset duration should not be longer than 1s */
+@@ -3225,8 +3225,10 @@ static void fec_reset_phy(struct platfor
+ 		msec = 1;
+ 
+ 	phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
+-	if (!gpio_is_valid(phy_reset))
+-		return;
++	if (phy_reset == -EPROBE_DEFER)
++		return phy_reset;
++	else if (!gpio_is_valid(phy_reset))
++		return 0;
+ 
+ 	active_high = of_property_read_bool(np, "phy-reset-active-high");
+ 
+@@ -3235,7 +3237,7 @@ static void fec_reset_phy(struct platfor
+ 			"phy-reset");
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", err);
+-		return;
++		return err;
+ 	}
+ 
+ 	if (msec > 20)
+@@ -3244,14 +3246,17 @@ static void fec_reset_phy(struct platfor
+ 		usleep_range(msec * 1000, msec * 1000 + 1000);
+ 
+ 	gpio_set_value_cansleep(phy_reset, !active_high);
++
++	return 0;
+ }
+ #else /* CONFIG_OF */
+-static void fec_reset_phy(struct platform_device *pdev)
++static int fec_reset_phy(struct platform_device *pdev)
+ {
+ 	/*
+ 	 * In case of platform probe, the reset has been done
+ 	 * by machine code.
+ 	 */
++	return 0;
+ }
+ #endif /* CONFIG_OF */
+ 
+@@ -3422,6 +3427,7 @@ fec_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to enable phy regulator: %d\n", ret);
++			clk_disable_unprepare(fep->clk_ipg);
+ 			goto failed_regulator;
+ 		}
+ 	} else {
+@@ -3434,7 +3440,9 @@ fec_probe(struct platform_device *pdev)
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
+-	fec_reset_phy(pdev);
++	ret = fec_reset_phy(pdev);
++	if (ret)
++		goto failed_reset;
+ 
+ 	if (fep->bufdesc_ex)
+ 		fec_ptp_init(pdev);
+@@ -3495,8 +3503,10 @@ failed_init:
+ 	fec_ptp_stop(pdev);
+ 	if (fep->reg_phy)
+ 		regulator_disable(fep->reg_phy);
++failed_reset:
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ failed_regulator:
+-	clk_disable_unprepare(fep->clk_ipg);
+ failed_clk_ipg:
+ 	fec_enet_clk_enable(ndev, false);
+ failed_clk:
