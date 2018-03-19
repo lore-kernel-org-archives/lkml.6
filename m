@@ -1,63 +1,36 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv/40p7KJWJfdD+IymhVu6pqv958aIe5F4TGc6VkgFTwFyh1Bk+44ZL1dXEbIpm9IsVLB1y
-ARC-Seal: i=1; a=rsa-sha256; t=1521483469; cv=none;
+X-Google-Smtp-Source: AG47ELv0gUs3pEaN3/+npWiX7bvOI8jx8o9cO6XfReeGjXp/DW+wNDHzjCqA4nKZ1YSuiTPO++xN
+ARC-Seal: i=1; a=rsa-sha256; t=1521483466; cv=none;
         d=google.com; s=arc-20160816;
-        b=nSQjy1WJbUaYcvziKFRC6nP5JHhiFzXs0ZMoT1y0J/1xZJz729atSo07P3zEw6jOF8
-         ZF7ef5MyxJ6welJHkjKTp7S6eARI3L8djkWNgP6nYj7mx8t8HnH19n8ZD7dDUNxn0Bs1
-         TPvOtiLt/NTYg9dVn45TbHULL9mGicsvnZ+j7TgmhkMCKl6DJ5Th9o/wwLH5UkOdwkoR
-         /2JRComAzcLxlXk82LoTOcDdV7lWUkk49oH0YFWjclBPM5vNoJuNsTViXVCnKS2cT+vF
-         FgKlUu2kanN3Z6qWCfhG2YcWFWX7mJTox6Xat/p92Og0Fif1cOjSI2Wf02FyO8zpVKaO
-         rwuw==
+        b=vtJgHDYJsdiEGfhRIHJlTxoIwijU8ZCPjXyz8GwMGw0RpMXcUp890cX0iABcXA4Z86
+         Sc0kx/eezeLayi3U2XKWsHM62/d6LtmbjzC0HTSVi2uzQwYhSw9fJVpMrfgTuGHIJ+c8
+         SaYT/wu0JiBkYqsv0pddJVYoCNegDCXAqFPYHswreKeuI8R4iOdU4Q1ajGF3srWDoLx1
+         37R1Jac4zCFXA732ZDN0uoSm7PfWm/H4dhmkCUFiLObzjmO9QjJxHlxAdLGeBW+DrrZw
+         lplp7t3JWGvJVUDQbeEsvfDnX8t1ydXAW8dZO9ZN49BeljEfAzh2X+kfK+uowpGtvQ6o
+         u99g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p9PTJg15rKwByViyS5V/fJ5yfWARfKTuf9slm/lBFsw=;
-        b=nF5knu9cYohhZEczFbgUsfUEIiIXu+iS623EzqEy7jd9zcgfyyoLn4cRLZWwJPCBnH
-         wWSCSO7Bd3K4x2gV2+NdW85Gycg9aWfBUTvoL9ks2dlO6NyZb2ymCf3Rx501l+wBrkj5
-         AXeYijkfrnhbCGujs8prsqUaQo6qHquSLbfR7qDqu9QRQqdRsMFL8zDgcPT2ZW1rf82G
-         yolwL+xxd9VNicz4bEwhKSwF+JsfE9OnqLvvSmuAHL6C2lo5a9shxrugwOCYBgvYBvbb
-         KvrlGZq8QuuHGFbO+xgiH4f9mxcEHE7SZCpY0749VAdbma+CxKZsPcY37Kyrp1087BX0
-         IoHg==
+        bh=LFUMWEpjhi9szBLCWJos4GQcziqM0QuG5cXCQzQeVgY=;
+        b=sXJJkUmZd7abQhhMglN8sEY9PqLE9K/eaocnMm4+XeEhqdbA31zyYpIM/F338+h83V
+         J5HPUwNoU6sB14ImpVKHZc84siv/0LoYfu3KRCfIOIutaS0QpIACqhWW3rQ13iSJKAWA
+         s5VSyvwKAVAQkfwy9zeq4vWyP83dVAiGmgEANtqP06KfebpdLdCg1uKQWbZJyTuIDt55
+         k6vfYirn02yT18nsajcMJkRKtqQRhbiVMYi1/6p3Vhl+OnUgqWenKe01PLuiWYgBDTbx
+         X62WtGEhzHKCbFYc6AbVWFpPmBM7fAJpg9ugiMJhLqdCLpSTkD9h6PTcJURy6Tch9J60
+         4G3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Borislav Petkov <bp@suse.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Chen Yucong <slaoub@gmail.com>,
-	Chris Metcalf <cmetcalf@mellanox.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	ricardo.neri@intel.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 111/134] selftests/x86: Add tests for User-Mode Instruction Prevention
-Date: Mon, 19 Mar 2018 19:06:34 +0100
-Message-Id: <20180319171905.310966620@linuxfoundation.org>
+	Jann Horn <jannh@google.com>,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.4 134/134] bpf: fix incorrect sign extension in check_alu_op()
+Date: Mon, 19 Mar 2018 19:06:57 +0100
+Message-Id: <20180319171908.560879519@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -67,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391050324869540?=
-X-GMAIL-MSGID: =?utf-8?q?1595391050324869540?=
+X-GMAIL-THRID: =?utf-8?q?1595391047586032261?=
+X-GMAIL-MSGID: =?utf-8?q?1595391047586032261?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -76,169 +49,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+From: Jann Horn <jannh@google.com>
 
-commit 9390afebe1d3f5a0be18b1afdd0ce09d67cebf9e upstream.
+commit 95a762e2c8c942780948091f8f2a4f32fce1ac6f upstream.
 
-Certain user space programs that run on virtual-8086 mode may utilize
-instructions protected by the User-Mode Instruction Prevention (UMIP)
-security feature present in new Intel processors: SGDT, SIDT and SMSW. In
-such a case, a general protection fault is issued if UMIP is enabled. When
-such a fault happens, the kernel traps it and emulates the results of
-these instructions with dummy values. The purpose of this new
-test is to verify whether the impacted instructions can be executed
-without causing such #GP. If no #GP exceptions occur, we expect to exit
-virtual-8086 mode from INT3.
+Distinguish between
+BPF_ALU64|BPF_MOV|BPF_K (load 32-bit immediate, sign-extended to 64-bit)
+and BPF_ALU|BPF_MOV|BPF_K (load 32-bit immediate, zero-padded to 64-bit);
+only perform sign extension in the first case.
 
-The instructions protected by UMIP are executed in representative use
-cases:
+This patch differs from the mainline one because the verifier's internals
+have changed in the meantime. Mainline tracks register values as 64-bit
+values; however, 4.4 still stores tracked register values as 32-bit
+values with sign extension. Therefore, in the case of a 32-bit op with
+negative immediate, the value can't be tracked; leave the register as
+UNKNOWN_VALUE (set by the preceding check_reg_arg() call).
 
- a) displacement-only memory addressing
- b) register-indirect memory addressing
- c) results stored directly in operands
 
-Unfortunately, it is not possible to check the results against a set of
-expected values because no emulation will occur in systems that do not
-have the UMIP feature. Instead, results are printed for verification. A
-simple verification is done to ensure that results of all tests are
-identical.
+I have manually tested this patch on top of 4.4.122. For the following BPF
+bytecode:
 
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Chen Yucong <slaoub@gmail.com>
-Cc: Chris Metcalf <cmetcalf@mellanox.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Huang Rui <ray.huang@amd.com>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi V. Shankar <ravi.v.shankar@intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: ricardo.neri@intel.com
-Link: http://lkml.kernel.org/r/1509935277-22138-12-git-send-email-ricardo.neri-calderon@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+        BPF_MOV64_IMM(BPF_REG_1, 1),
+        BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 1, 1),
+        BPF_EXIT_INSN(),
+
+        BPF_MOV32_IMM(BPF_REG_1, 1),
+        BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 1, 1),
+        BPF_EXIT_INSN(),
+
+        BPF_MOV64_IMM(BPF_REG_1, -1),
+        BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, -1, 1),
+        BPF_EXIT_INSN(),
+
+        BPF_MOV32_IMM(BPF_REG_1, -1),
+        BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, -1, 2),
+        BPF_MOV32_IMM(BPF_REG_0, 42),
+        BPF_EXIT_INSN(),
+
+        BPF_MOV32_IMM(BPF_REG_0, 43),
+        BPF_EXIT_INSN()
+
+Verifier output on 4.4.122 without this patch:
+
+0: (b7) r1 = 1
+1: (15) if r1 == 0x1 goto pc+1
+3: (b4) (u32) r1 = (u32) 1
+4: (15) if r1 == 0x1 goto pc+1
+6: (b7) r1 = -1
+7: (15) if r1 == 0xffffffff goto pc+1
+9: (b4) (u32) r1 = (u32) -1
+10: (15) if r1 == 0xffffffff goto pc+2
+13: (b4) (u32) r0 = (u32) 43
+14: (95) exit
+
+Verifier output on 4.4.122+ with this patch:
+
+0: (b7) r1 = 1
+1: (15) if r1 == 0x1 goto pc+1
+3: (b4) (u32) r1 = (u32) 1
+4: (15) if r1 == 0x1 goto pc+1
+6: (b7) r1 = -1
+7: (15) if r1 == 0xffffffff goto pc+1
+9: (b4) (u32) r1 = (u32) -1
+10: (15) if r1 == 0xffffffff goto pc+2
+ R1=inv R10=fp
+11: (b4) (u32) r0 = (u32) 42
+12: (95) exit
+
+from 10 to 13: R1=imm-1 R10=fp
+13: (b4) (u32) r0 = (u32) 43
+14: (95) exit
+
+
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/testing/selftests/x86/entry_from_vm86.c |   73 +++++++++++++++++++++++++-
- 1 file changed, 72 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/x86/entry_from_vm86.c
-+++ b/tools/testing/selftests/x86/entry_from_vm86.c
-@@ -95,6 +95,22 @@ asm (
- 	"int3\n\t"
- 	"vmcode_int80:\n\t"
- 	"int $0x80\n\t"
-+	"vmcode_umip:\n\t"
-+	/* addressing via displacements */
-+	"smsw (2052)\n\t"
-+	"sidt (2054)\n\t"
-+	"sgdt (2060)\n\t"
-+	/* addressing via registers */
-+	"mov $2066, %bx\n\t"
-+	"smsw (%bx)\n\t"
-+	"mov $2068, %bx\n\t"
-+	"sidt (%bx)\n\t"
-+	"mov $2074, %bx\n\t"
-+	"sgdt (%bx)\n\t"
-+	/* register operands, only for smsw */
-+	"smsw %ax\n\t"
-+	"mov %ax, (2080)\n\t"
-+	"int3\n\t"
- 	".size vmcode, . - vmcode\n\t"
- 	"end_vmcode:\n\t"
- 	".code32\n\t"
-@@ -103,7 +119,7 @@ asm (
- 
- extern unsigned char vmcode[], end_vmcode[];
- extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
--	vmcode_sti[], vmcode_int3[], vmcode_int80[];
-+	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[];
- 
- /* Returns false if the test was skipped. */
- static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
-@@ -160,6 +176,58 @@ static bool do_test(struct vm86plus_stru
- 	return true;
- }
- 
-+void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
-+{
-+	struct table_desc {
-+		unsigned short limit;
-+		unsigned long base;
-+	} __attribute__((packed));
-+
-+	/* Initialize variables with arbitrary values */
-+	struct table_desc gdt1 = { .base = 0x3c3c3c3c, .limit = 0x9999 };
-+	struct table_desc gdt2 = { .base = 0x1a1a1a1a, .limit = 0xaeae };
-+	struct table_desc idt1 = { .base = 0x7b7b7b7b, .limit = 0xf1f1 };
-+	struct table_desc idt2 = { .base = 0x89898989, .limit = 0x1313 };
-+	unsigned short msw1 = 0x1414, msw2 = 0x2525, msw3 = 3737;
-+
-+	/* UMIP -- exit with INT3 unless kernel emulation did not trap #GP */
-+	do_test(vm86, vmcode_umip - vmcode, VM86_TRAP, 3, "UMIP tests");
-+
-+	/* Results from displacement-only addressing */
-+	msw1 = *(unsigned short *)(test_mem + 2052);
-+	memcpy(&idt1, test_mem + 2054, sizeof(idt1));
-+	memcpy(&gdt1, test_mem + 2060, sizeof(gdt1));
-+
-+	/* Results from register-indirect addressing */
-+	msw2 = *(unsigned short *)(test_mem + 2066);
-+	memcpy(&idt2, test_mem + 2068, sizeof(idt2));
-+	memcpy(&gdt2, test_mem + 2074, sizeof(gdt2));
-+
-+	/* Results when using register operands */
-+	msw3 = *(unsigned short *)(test_mem + 2080);
-+
-+	printf("[INFO]\tResult from SMSW:[0x%04x]\n", msw1);
-+	printf("[INFO]\tResult from SIDT: limit[0x%04x]base[0x%08lx]\n",
-+	       idt1.limit, idt1.base);
-+	printf("[INFO]\tResult from SGDT: limit[0x%04x]base[0x%08lx]\n",
-+	       gdt1.limit, gdt1.base);
-+
-+	if (msw1 != msw2 || msw1 != msw3)
-+		printf("[FAIL]\tAll the results of SMSW should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SMSW are identical.\n");
-+
-+	if (memcmp(&gdt1, &gdt2, sizeof(gdt1)))
-+		printf("[FAIL]\tAll the results of SGDT should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SGDT are identical.\n");
-+
-+	if (memcmp(&idt1, &idt2, sizeof(idt1)))
-+		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
-+	else
-+		printf("[PASS]\tAll the results from SIDT are identical.\n");
-+}
-+
- int main(void)
- {
- 	struct vm86plus_struct v86;
-@@ -218,6 +286,9 @@ int main(void)
- 	v86.regs.eax = (unsigned int)-1;
- 	do_test(&v86, vmcode_int80 - vmcode, VM86_INTx, 0x80, "int80");
- 
-+	/* UMIP -- should exit with INTx 0x80 unless UMIP was not disabled */
-+	do_umip_tests(&v86, addr);
-+
- 	/* Execute a null pointer */
- 	v86.regs.cs = 0;
- 	v86.regs.ss = 0;
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1135,7 +1135,8 @@ static int check_alu_op(struct verifier_
+ 				regs[insn->dst_reg].type = UNKNOWN_VALUE;
+ 				regs[insn->dst_reg].map_ptr = NULL;
+ 			}
+-		} else {
++		} else if (BPF_CLASS(insn->code) == BPF_ALU64 ||
++			   insn->imm >= 0) {
+ 			/* case: R = imm
+ 			 * remember the value we stored into this reg
+ 			 */
