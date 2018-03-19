@@ -1,258 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755195AbeCSBsV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 21:48:21 -0400
-Received: from foss.arm.com ([217.140.101.70]:47852 "EHLO foss.arm.com"
+        id S1755234AbeCSBsy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 21:48:54 -0400
+Received: from mga09.intel.com ([134.134.136.24]:3843 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755169AbeCSBsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 21:48:17 -0400
-Date: Mon, 19 Mar 2018 01:48:07 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org, jason@lakedaemon.net,
-        arnd@arndb.de, c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 02/19] csky: Exception handling and syscall
-Message-ID: <20180319014755.s2n65f3hzzemc7do@salmiak>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
+        id S1755148AbeCSBsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 21:48:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,328,1517904000";
+   d="scan'208";a="34895139"
+From: "Zhang, Ning A" <ning.a.zhang@intel.com>
+To: "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] init: no need to wait device probe
+Thread-Topic: [PATCH] init: no need to wait device probe
+Thread-Index: AQHTvC4oPpoftVNZxU6nBd7ac+cno6PUSsoAgAH/koA=
+Date: Mon, 19 Mar 2018 01:48:46 +0000
+Message-ID: <1521424125.31985.0.camel@intel.com>
+References: <20180315072029.11441-1-ning.a.zhang@intel.com>
+         <403951f8-a083-40d4-d58e-1f69ced6195a@infradead.org>
+In-Reply-To: <403951f8-a083-40d4-d58e-1f69ced6195a@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.113]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5271E021916E0146879BEEF723477BF0@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe603a94a7755528ff6f5ac288a017e2a20071c4.1521399976.git.ren_guo@c-sky.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2J1mxFU025044
 
-Hi,
+在 2018-03-17六的 12:17 -0700，Randy Dunlap写道：
+> Maintainers don't mine mailing lists for patches to apply.
 
-On Mon, Mar 19, 2018 at 03:51:24AM +0800, Guo Ren wrote:
-> +inline static unsigned int
-> +get_regs_value(unsigned int rx, struct pt_regs *regs)
-> +{
-> +	unsigned int value;
-> +
-> +	if(rx == 0){
-> +		if(user_mode(regs)){
-> +			asm volatile("mfcr %0, ss1\n":"=r"(value));
+thank you very much, I will resend my patch.
 
-Here you open code an MFCR instruction.
-
-I guess MFCR stands for something like move-from-control-register, and MTCR
-stands for move-to-control-register?
-
-I see that later on you have helpers for specific registers, e.g. mfcr_cpuidrr().
-
-You might want to follow the example of arm64's read_sysreg() and
-write_sysreg(), and have general purpose helpers for thos instructions, e.g.
-
-#define mfcr(reg)						\
-({								\
-	unsigned long __mfcr_val;				\
-	asm volatile("mfcr %0, " #reg "\n" : "=r" (__mfr_val));	\
-	__mfcr_val;						\
-})
-
-... which avoids needing helpers for each register, as you can do:
-
-ss1_val = mfcr(ss1);
-cpuidrr_val = mfcr(cpuidrr);
-
-[...]
-
-> +static __init void setup_cpu_msa(void)
-> +{
-> +	if (memblock_start_of_DRAM() != (PHYS_OFFSET + CONFIG_RAM_BASE)) {
-> +		pr_err("C-SKY: dts-DRAM doesn't fit .config: %x-%x.\n",
-> +			memblock_start_of_DRAM(),
-> +			PHYS_OFFSET + CONFIG_RAM_BASE);
-> +		return;
-> +	}
-
-If this is a problem, is it safe to continue at all?
-
-Why does the base address of RAM matter?
-
-> +
-> +	mtcr_msa0(PHYS_OFFSET | 0xe);
-> +	mtcr_msa1(PHYS_OFFSET | 0x6);
-
-As with MFCR, you could use a generic helper here, e.g.
-
-#define mtcr(val, reg)								\
-do {										\
-	asm volatile("mtcr %0, " #reg "\n" : "=r" ((unsigned long)val));	\
-} while (0);
-
-mtcr(PHYS_OFFSET | 0xe, msa0)
-mtcr(PHYS_OFFSET | 0x6, msa1)
-
-> +}
-> +
-> +__init void cpu_dt_probe(void)
-> +{
-> +	setup_cpu_msa();
-> +}
-> +
-> +static int c_show(struct seq_file *m, void *v)
-> +{
-> +	seq_printf(m, "C-SKY CPU : %s\n", CSKYCPU_DEF_NAME);
-> +	seq_printf(m, "revision  : 0x%08x\n", mfcr_cpuidrr());
-> +	seq_printf(m, "ccr reg   : 0x%08x\n", mfcr_ccr());
-> +	seq_printf(m, "ccr2 reg  : 0x%08x\n", mfcr_ccr2());
-> +	seq_printf(m, "hint reg  : 0x%08x\n", mfcr_hint());
-> +	seq_printf(m, "msa0 reg  : 0x%08x\n", mfcr_msa0());
-> +	seq_printf(m, "msa1 reg  : 0x%08x\n", mfcr_msa1());
-
-Do these need to be exposed to userspace?
-
-Does this arch support SMP? I see you don't log information per-cpu.
-
-[...]
-
-> diff --git a/arch/csky/kernel/entry.S b/arch/csky/kernel/entry.S
-
-> +#define THREADSIZE_MASK_BIT 13
-
-You might want to define this as THREAD_SHIFT, and define THREAD_SIZE in terms
-of it, so that they're guaranteed to be in sync
-
-e.g. in your <asm/thread_info.h> have:
-
-#define THREAD_SHIFT	13
-#define THREAD_SIZE	(1 << THREAD_SHIFT)
-
-[...]
-
-> +ENTRY(csky_systemcall)
-> +	SAVE_ALL_TRAP
-> +
-> +	psrset  ee, ie
-> +
-> +	/* Stack frame for syscall, origin call set_esp0 */
-> +	mov     r12, sp
-> +
-> +	bmaski  r11, 13
-> +	andn    r12, r11
-> +	bgeni   r11, 9
-> +	addi    r11, 32
-> +	addu    r12, r11
-> +	st      sp, (r12, 0)
-> +
-> +	lrw     r11, __NR_syscalls
-> +	cmphs   syscallid, r11                 /* Check nr of syscall */
-> +	bt      ret_from_exception
-> +
-> +	lrw     r13, sys_call_table
-> +	ixw     r13, syscallid                 /* Index into syscall table */
-> +	ldw     r11, (r13)               /* Get syscall function */
-> +	cmpnei  r11, 0                  /* Check for not null */
-> +	bf      ret_from_exception
-> +
-> +	mov     r9, sp				 /* Get task pointer */
-> +	bmaski  r10, THREADSIZE_MASK_BIT
-> +	andn    r9, r10                      /* Get thread_info */
-
-If you have a spare register that you can point at the current task (or you
-have preemption-safe percpu ops), I'd recommend moving the thread_info off of
-the stack, and implementing THREAD_INFO_IN_TASK_STRUCT.
-
-[...]
-
-> +ENTRY(csky_get_tls)
-> +	USPTOKSP
-> +
-> +	/* increase epc for continue */
-> +	mfcr	a0, epc
-> +	INCTRAP	a0
-> +	mtcr	a0, epc
-> +
-> +	/* get current task thread_info with kernel 8K stack */
-> +	bmaski   a0, (PAGE_SHIFT + 1)
-
-For consistency, and in case you change your stack size in future, this should
-be THREADSIZE_MASK_BIT.
-
-[...]
-
-> +/*
-> + * This routine handles page faults.  It determines the address,
-> + * and the problem, and then passes it off to one of the appropriate
-> + * routines.
-> + */
-> +asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long write,
-> +                              unsigned long mmu_meh)
-> +{
-> +        struct vm_area_struct * vma = NULL;
-> +        struct task_struct *tsk = current;
-> +        struct mm_struct *mm = tsk->mm;
-> +        siginfo_t info;
-> +	int fault;
-> +	unsigned long address = mmu_meh & PAGE_MASK;
-> +
-> +        info.si_code = SEGV_MAPERR;
-> +
-> +        /*
-> +         * We fault-in kernel-space virtual memory on-demand. The
-> +         * 'reference' page table is init_mm.pgd.
-> +         *
-> +         * NOTE! We MUST NOT take any locks for this case. We may
-> +         * be in an interrupt or a critical region, and should
-> +         * only copy the information from the master page table,
-> +         * nothing more.
-> +         */
-> +        if (unlikely(address >= VMALLOC_START && address <= VMALLOC_END))
-> +                goto vmalloc_fault;
-
-You might want to check if this was a user mode fault here, so that users can't trigger vmalloc faults.
-
-Thanks,
-Mark.
-
-> +vmalloc_fault:
-> +        {
-> +                /*
-> +                 * Synchronize this task's top level page-table
-> +                 * with the 'reference' page table.
-> +                 *
-> +                 * Do _not_ use "tsk" here. We might be inside
-> +                 * an interrupt in the middle of a task switch..
-> +                 */
-> +                int offset = __pgd_offset(address);
-> +                pgd_t *pgd, *pgd_k;
-> +                pud_t *pud, *pud_k;
-> +                pmd_t *pmd, *pmd_k;
-> +                pte_t *pte_k;
-> +
-> +                unsigned long pgd_base;
-> +		pgd_base = tlb_get_pgd();
-> +                pgd = (pgd_t *)pgd_base + offset;
-> +                pgd_k = init_mm.pgd + offset;
-> +
-> +                if (!pgd_present(*pgd_k))
-> +                        goto no_context;
-> +                set_pgd(pgd, *pgd_k);
-> +
-> +                pud = (pud_t *)pgd;
-> +                pud_k = (pud_t *)pgd_k;
-> +                if (!pud_present(*pud_k))
-> +                        goto no_context;
-> +
-> +                pmd = pmd_offset(pud, address);
-> +                pmd_k = pmd_offset(pud_k, address);
-> +                if (!pmd_present(*pmd_k))
-> +                        goto no_context;
-> +                set_pmd(pmd, *pmd_k);
-> +
-> +                pte_k = pte_offset_kernel(pmd_k, address);
-> +                if (!pte_present(*pte_k))
-> +                        goto no_context;
-> +                return;
-> +        }
-> +}
-> +
-> -- 
-> 2.7.4
-> 
+BR.
+Ning.
