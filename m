@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuAq13cWDu+zxcxYd6WscmPsAn1Plh5QKSakF6x6O5XMpGbG/wGBmAEc/mBrzRFnPLtzCH0
-ARC-Seal: i=1; a=rsa-sha256; t=1521483331; cv=none;
+X-Google-Smtp-Source: AG47ELt7+01g18pDZECXdv8XQBiWjtgrSpbPwSxBrBJfwlrTFx+aBdOloZwI3cnXCgHRV9gmY+8R
+ARC-Seal: i=1; a=rsa-sha256; t=1521483328; cv=none;
         d=google.com; s=arc-20160816;
-        b=iPv5K7ma3/Zs5RFqGGyEj2r5lYwrBidBioGWpFzlsxM3HDYd1WDminx7l1AKuqoKwX
-         eUJydWy603b2HWjbwUUPbuWDP8SwrvzDSvaboYuTamrtY2UDmni0wF9/hRfo7O16mPU+
-         XeFeur2ExAeaaNcd6sEo392vh9aw4+12s/iEtwZZ+rjmEdMQcqAMZZOIIc1Io5UMuXL+
-         HK9iqr2GdibMxQlIhTg74fXJ1nfUMZiZ66jT+cJcc+pVwrktRFup1g88mtSkqtSAC84T
-         vP4jA1CgC6RtSjt3ljQ11DmK9+kumVVUx90OnGqbYq3J/BhwlN2VSoGaNu+uoXMl8xLw
-         qP7A==
+        b=yHIhL+OuCuG0RtY3/SM813RVd1fcpY7dcGCx1HMFmt3GoeIgC2E7Xfo6TZr/7ay2Ox
+         2YwUUcULAPxCGCdnF+ZP1HwXFQ2KIgJBFE+Zj8L7JT39Ym7C8tKKJxrlavXdrvKq5dvv
+         x5vO9LI3mHVbvyPBNs5GPeKsD2IVuVXtcnEjlYI02t6AZGFgZQ2RCiuGSviHXpfqqO56
+         zi5XCsriVxfl1T/8O0jqUiWSv292kRXTuctDoruklRXH22GVZUG0atj+uHrjKAc0+wPN
+         hqCfKNJscFBjfanRfOVAPDFc0RmQaB25w4fNDybVrG5Ae2otlrC4E+NHkbtI9dppwA3w
+         +9Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ru7zZObQZ15/sG6ocuUbvcraN8r7atq87tlAcpV80qw=;
-        b=pNjsRCZkR0BYNRblGuVOXzeEwDm9oBOK6uljIFXWP2r7Gu+SDdPbhH8GqdYUJybNXe
-         b/0Nvk2twgy8DFO5VxL/jx7oSAm59p3JLEd0h7o+y28+mzdpatEjVKCpHaKf+QM57r+h
-         EHXhdPCswE1RKjAoIRat9XUbgDVQA99Axnm01ZujNh7ygNFi2Wvyat3ext/tLlZ3T5Go
-         VEaHGTx6267xTnlVvmiJBGMxGiRnbjK1FiQedL6XWM5+FM/QaIu//cjwBN/gixKPddNZ
-         24g1Ycmw4tS3fERnwbuuWv0ZTe1i3/mu/M66IZ4vIdOBi+7vKaGizvkPJLGdmnurH3Yp
-         oYhw==
+        bh=HQbpuZ2FyKL7WoKoRXLgB7UpgELm47galCPuuVhcx1s=;
+        b=hba/fnpQbrVQ64WrL4T2qwmEDfvr41p6gV5+ymfY8oakAirFWuYLnvCrcmCnIlXsCn
+         eg0xPlbBzaAWAqBrx0u1FdgzjvrP476YucIaf9e+tGlD+Gk9WtpNqfM6M7i/fDTgsT7B
+         JJPkG8rKNqas3/9vitUp9oJ1y1ML0xbRqv1TuV2528pTmRqDKPl95zV4gza8TBtNte6U
+         q72YGrej7g7q00weVFWR20wnxzKj3cg4beppuzdkL0JVuEhZG0+uaS+njXi5fkxKzAkF
+         Mmy270NcQzdkUEsdR1I+kHW3nIceqdQFXjgZANRQh6Jn+kkc6rItmv5BaxGb/PaGQI3p
+         lZ7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 085/134] test_firmware: fix setting old custom fw path back on exit
-Date: Mon, 19 Mar 2018 19:06:08 +0100
-Message-Id: <20180319171901.557456225@linuxfoundation.org>
+Subject: [PATCH 4.4 084/134] sched: Stop resched_cpu() from sending IPIs to offline CPUs
+Date: Mon, 19 Mar 2018 19:06:07 +0100
+Message-Id: <20180319171901.416762985@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390905118986073?=
-X-GMAIL-MSGID: =?utf-8?q?1595390905118986073?=
+X-GMAIL-THRID: =?utf-8?q?1595390597309661701?=
+X-GMAIL-MSGID: =?utf-8?q?1595390902154393953?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
-[ Upstream commit 65c79230576873b312c3599479c1e42355c9f349 ]
+[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
 
-The file /sys/module/firmware_class/parameters/path can be used
-to set a custom firmware path. The fw_filesystem.sh script creates
-a temporary directory to add a test firmware file to be used during
-testing, in order for this to work it uses the custom path syfs file
-and it was supposed to reset back the file on execution exit. The
-script failed to do this due to a typo, it was using OLD_PATH instead
-of OLD_FWPATH, since its inception since v3.17.
+The rcutorture test suite occasionally provokes a splat due to invoking
+resched_cpu() on an offline CPU:
 
-Its not as easy to just keep the old setting, it turns out that
-resetting an empty setting won't actually do what we want, we need
-to check if it was empty and set an empty space.
+WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
+Modules linked in:
+CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+task: ffff902ede9daf00 task.stack: ffff96c50010c000
+RIP: 0010:native_smp_send_reschedule+0x37/0x40
+RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
+RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
+RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
+R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
+FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+Call Trace:
+ resched_curr+0x8f/0x1c0
+ resched_cpu+0x2c/0x40
+ rcu_implicit_dynticks_qs+0x152/0x220
+ force_qs_rnp+0x147/0x1d0
+ ? sync_rcu_exp_select_cpus+0x450/0x450
+ rcu_gp_kthread+0x5a9/0x950
+ kthread+0x142/0x180
+ ? force_qs_rnp+0x1d0/0x1d0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x27/0x40
+Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
+---[ end trace 26df9e5df4bba4ac ]---
 
-Without this we end up having the temporary path always set after
-we run these tests.
+This splat cannot be generated by expedited grace periods because they
+always invoke resched_cpu() on the current CPU, which is good because
+expedited grace periods require that resched_cpu() unconditionally
+succeed.  However, other parts of RCU can tolerate resched_cpu() acting
+as a no-op, at least as long as it doesn't happen too often.
 
-Fixes: 0a8adf58475 ("test: add firmware_class loader test")
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This commit therefore makes resched_cpu() invoke resched_curr() only if
+the CPU is either online or is the current CPU.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/firmware/fw_filesystem.sh |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/sched/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -28,7 +28,10 @@ test_finish()
- 	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
- 		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
- 	fi
--	echo -n "$OLD_PATH" >/sys/module/firmware_class/parameters/path
-+	if [ "$OLD_FWPATH" = "" ]; then
-+		OLD_FWPATH=" "
-+	fi
-+	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
- 	rm -f "$FW"
- 	rmdir "$FWPATH"
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -601,7 +601,8 @@ void resched_cpu(int cpu)
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&rq->lock, flags);
+-	resched_curr(rq);
++	if (cpu_online(cpu) || cpu == smp_processor_id())
++		resched_curr(rq);
+ 	raw_spin_unlock_irqrestore(&rq->lock, flags);
  }
+ 
