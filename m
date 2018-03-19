@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483674-2-6883116707428947488
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483673; b=A8WoYUzNcFh17eM6b57XYLbEMgv3JnayX82tfa8NgyLSMUh
-    n7+YYwet1u5N/sNHIs3/UKPsOojbKPExMLvwI9SAuJXegJs2Glabd+P0pzheA5qt
-    Z6aGg7rzYZTv841hMekXBxSeh2lkVn7qMcGaxSmqF/IJoEbfiMMeS4AGnUKe32x8
-    5pl3DYAsru0/4O8P8Y939Jfzc/AKXqygSsRXtbGV5UXb3DotnJJNVfQj9i77fNZE
-    6ySTT2W2MxQ+aTUQpRn6p2E/AO4wTCWklIneTymaZ/8+Ij6W+ETw2EWf5hza88W1
-    zeSBKAXJPHUbHvNLe7s7X7eLUJt6LkkkgTgODXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483673; bh=dt93g7RG8KH6QJI/BCp9P1QYBd
-    Wmv8XtVcP2maPs1h0=; b=kP85/u5PrqAcdop0C5oqo0wz7ukjuA1iAbO1YJt5sm
-    oiIf0bLw9Pq/Wi1OL0tfrY00UJF3BXUYMG0yXCMhMSeG+9rQncRP8PdGdS1GRK7q
-    /u6CAbmX2FaDzNZKhOKFIm3wE9x4IW72LI/4duKURzmTyBUCkhoRXyphHmcMOPUl
-    +wYKeF0EA6a9/PCxcH07o1zpQcZ3XMbHEeISUfsBXsdvVpAnyJDzi4CFZVuwVjMj
-    5SBYPKr+3brCoLmudQMsbMvqO0qaeGMslWnXOoJFIRpLuOqNLRosVN9DFg1vQQTp
-    zzKaLTy6PJMLoMjr92O4IZiM5QLLeob+syVmpQ9aTxdA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinheprghnrghlohhgrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepvdelkeeknecuvehluhhsthgvrhfuihiivgepud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinheprghnrghlohhgrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepvdelkeeknecuvehluhhsthgvrhfuihiivgepud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031033AbeCSSVG (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:21:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47958 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031021AbeCSSVE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:21:04 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELub/CP3CoNX7KdbxMVrF2OwdbwUNQ1Hw2y40Vlt/2fmcaGPO3Uk4PSJr/yfZr0QiUpj1E2w
+ARC-Seal: i=1; a=rsa-sha256; t=1521483672; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jg0Tp4SGf88sVqx+GGP0TifJLwizAB+tifbXZ77tO/Wm2a96ebt9CU4HEPyd+OV+TE
+         oLhZkQgrT7x11SenSLx1522OsjhFP2gvdguLCKe9PBY30aYsNQQfbk35XlIK0RYnD729
+         amweNpz335t7sp9iOaD9+A8mDWjmCLaFvHbfVNAP0BCwplnwLSt95ZtQBpA6g8X/V6b2
+         pZwgV/I9IW4uOf6Nb7igIsSoQXGj89yIy3lbRuGhKSzf0dZ6yiMgcxat+rSSFDbZCjSa
+         LHAE2AAeGv3VitNiBKcNFsImI38wvZnMUDG+PwhUo6h3jErIZMiyL8K/5o8ckeLqbs9O
+         JORw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/kZv9rNjqwFGPiPzk1R3hyGwxB1c895M4KfplsvTph4=;
+        b=KKeTD+IPDFSEMVv3UvmorHWiW+kKvb+eKTVgzSq3m++/67OfxD79BB9pgh4AfWCIfO
+         +yxJuGQsPT1AkL95a9UHM9e1XTTPEJ0uLsu9bu6VnG2xI35MZkJnWPvRiYqDZ78LSHMs
+         jApw0/VJB42L4iMEvgk2k/1fizTciLZPDHziZlA979YCjY5cuc1mqmKjncXceJW7acwm
+         j7lcTTZJEFlLne0HSPiYSNsBo3C5+yEovmKf2Oufx3tA7QBO318drqcpzWDtgGVNeiDd
+         DrjtyXaSwXlOtmtx3bOb4Z7STDXV/Fv7wCnJzB7iZAwZyceEkPrNQlhJV4nqUj6v1ZVj
+         d6hg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shikhar Dogra <shidogra@cisco.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 072/241] driver: (adm1275) set the m,b and R coefficients correctly for power
-Date: Mon, 19 Mar 2018 19:05:37 +0100
-Message-Id: <20180319180754.184440787@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 075/241] ALSA: firewire-lib: add a quirk of packet without valid EOH in CIP format
+Date: Mon, 19 Mar 2018 19:05:40 +0100
+Message-Id: <20180319180754.309225360@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391263239901083?=
+X-GMAIL-MSGID: =?utf-8?q?1595391263239901083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,37 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shikhar Dogra <shidogra@cisco.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
 
-[ Upstream commit 6faecba0b3da7b617bf72bef422bf0d3bb6dfe7d ]
+[ Upstream commit 2128f78f75a36a34dfef0e127273c2f820c5c904 ]
 
-Seems like coefficient values for m, b and R under power have been
-put in the wrong order. Rearranging them properly to get correct
-values of coefficients for power.
+In IEC 61883-1, when two quadlets CIP header is used, the most significant
+bit in second CIP header stands. However, packets from units with MOTU
+protocol version 3 have a quirk without this flag. Current packet streaming
+layer handles this as protocol error.
 
-For specs, please refer to table 7 (page 35) on
-http://www.analog.com/media/en/technical-documentation/data-sheets/ADM1075.pdf
+This commit adds a new enumeration constant for this quirk, to handle MOTU
+protocol version 3.
 
-Fixes: 904b296f308d ("hwmon: (adm1275) Introduce configuration data structure for coeffcients")
-Signed-off-by: Shikhar Dogra <shidogra@cisco.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/pmbus/adm1275.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/firewire/amdtp-stream.c |    5 +++--
+ sound/firewire/amdtp-stream.h |    3 +++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -101,8 +101,8 @@ static const struct coefficients adm1075
- 	[0] = { 27169, 0, -1 },		/* voltage */
- 	[1] = { 806, 20475, -1 },	/* current, irange25 */
- 	[2] = { 404, 20475, -1 },	/* current, irange50 */
--	[3] = { 0, -1, 8549 },		/* power, irange25 */
--	[4] = { 0, -1, 4279 },		/* power, irange50 */
-+	[3] = { 8549, 0, -1 },		/* power, irange25 */
-+	[4] = { 4279, 0, -1 },		/* power, irange50 */
+--- a/sound/firewire/amdtp-stream.c
++++ b/sound/firewire/amdtp-stream.c
+@@ -471,8 +471,9 @@ static int handle_in_packet(struct amdtp
+ 	 * This module supports 'Two-quadlet CIP header with SYT field'.
+ 	 * For convenience, also check FMT field is AM824 or not.
+ 	 */
+-	if (((cip_header[0] & CIP_EOH_MASK) == CIP_EOH) ||
+-	    ((cip_header[1] & CIP_EOH_MASK) != CIP_EOH)) {
++	if ((((cip_header[0] & CIP_EOH_MASK) == CIP_EOH) ||
++	     ((cip_header[1] & CIP_EOH_MASK) != CIP_EOH)) &&
++	    (!(s->flags & CIP_HEADER_WITHOUT_EOH))) {
+ 		dev_info_ratelimited(&s->unit->device,
+ 				"Invalid CIP header for AMDTP: %08X:%08X\n",
+ 				cip_header[0], cip_header[1]);
+--- a/sound/firewire/amdtp-stream.h
++++ b/sound/firewire/amdtp-stream.h
+@@ -29,6 +29,8 @@
+  * @CIP_JUMBO_PAYLOAD: Only for in-stream. The number of data blocks in an
+  *	packet is larger than IEC 61883-6 defines. Current implementation
+  *	allows 5 times as large as IEC 61883-6 defines.
++ * @CIP_HEADER_WITHOUT_EOH: Only for in-stream. CIP Header doesn't include
++ *	valid EOH.
+  */
+ enum cip_flags {
+ 	CIP_NONBLOCKING		= 0x00,
+@@ -39,6 +41,7 @@ enum cip_flags {
+ 	CIP_SKIP_DBC_ZERO_CHECK	= 0x10,
+ 	CIP_EMPTY_HAS_WRONG_DBC	= 0x20,
+ 	CIP_JUMBO_PAYLOAD	= 0x40,
++	CIP_HEADER_WITHOUT_EOH	= 0x80,
  };
  
- static const struct coefficients adm1275_coefficients[] = {
+ /**
