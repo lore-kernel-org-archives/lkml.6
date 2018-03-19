@@ -1,86 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932922AbeCSJDC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:03:02 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:51364 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932274AbeCSJC6 (ORCPT
+        id S1755417AbeCSJDS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:03:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54043 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932857AbeCSJC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:02:58 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2J91Vk9014340
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Cao jin <caoj.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH v2 5/5] kbuild: move modname and modname-multi close to modname_flags
-Date: Mon, 19 Mar 2018 18:01:27 +0900
-Message-Id: <1521450087-27291-5-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521450087-27291-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1521450087-27291-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 19 Mar 2018 05:02:27 -0400
+Message-ID: <1521450140.5471.1.camel@pengutronix.de>
+Subject: Re: [PATCH v3 1/2] dt-bindings: reset: add STM32MP1 resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, gabriel.fernandez.st@gmail.com,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org
+Date: Mon, 19 Mar 2018 10:02:20 +0100
+In-Reply-To: <1521444351-29550-2-git-send-email-gabriel.fernandez@st.com>
+References: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
+         <1521444351-29550-2-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a cosmetic change to put related code close together.
+Hi Gabriel,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Cao jin <caoj.fnst@cn.fujitsu.com>
----
+On Mon, 2018-03-19 at 08:25 +0100, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch adds the reset binding entry for STM32MP1
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Changes in v2: None
+thank you, both applied to reset/next.
 
- scripts/Makefile.build |  2 --
- scripts/Makefile.lib   | 14 ++++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index f5858f6..93d05e3 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -131,8 +131,6 @@ $(real-objs-m:.o=.lst): quiet_modtag := [M]
- 
- $(obj-m)              : quiet_modtag := [M]
- 
--modname = $(if $(modname-multi),$(modname-multi),$(basetarget))
--
- quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
- cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
- 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 537629f..33af8d4 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -77,6 +77,14 @@ multi-used-y	:= $(addprefix $(obj)/,$(multi-used-y))
- multi-used-m	:= $(addprefix $(obj)/,$(multi-used-m))
- subdir-ym	:= $(addprefix $(obj)/,$(subdir-ym))
- 
-+# Finds the multi-part object the current object will be linked into.
-+# If the object belongs to two or more multi-part objects, all of them are
-+# concatenated with a colon separator.
-+modname-multi = $(subst $(space),:,$(sort $(foreach m,$(multi-used),\
-+		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))),$(m:.o=)))))
-+
-+modname = $(if $(modname-multi),$(modname-multi),$(basetarget))
-+
- # These flags are needed for modversions and compiling, so we define them here
- # $(modname_flags) defines KBUILD_MODNAME as the name of the module it will
- # end up in (or would, if it gets compiled in)
-@@ -162,12 +170,6 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
- 		 $(addprefix -I,$(DTC_INCLUDE))                          \
- 		 -undef -D__DTS__
- 
--# Finds the multi-part object the current object will be linked into
--# If the object belongs to two or more multi-part objects, all of them are
--# concatenated with a colon separator.
--modname-multi = $(subst $(space),:,$(sort $(foreach m,$(multi-used),\
--		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))),$(m:.o=)))))
--
- # Useful for describing the dependency of composite objects
- # Usage:
- #   $(call multi_depend, multi_used_targets, suffix_to_remove, suffix_to_add)
--- 
-2.7.4
+regards
+Philipp
