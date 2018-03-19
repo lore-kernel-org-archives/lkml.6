@@ -1,61 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968014AbeCSTau (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:30:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48378 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965715AbeCSTad (ORCPT
+        id S968423AbeCSTbD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:31:03 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.251]:23871 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S968009AbeCSTa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:30:33 -0400
-Date: Mon, 19 Mar 2018 12:30:31 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Ian Kent <raven@themaw.net>, autofs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Subject: Re: [PATCH] autofs4: Use wait_event_killable
-Message-ID: <20180319193031.GC6739@bombadil.infradead.org>
-References: <20180319191609.23880-1-willy@infradead.org>
- <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
+        Mon, 19 Mar 2018 15:30:57 -0400
+Date: Mon, 19 Mar 2018 14:30:53 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
+Cc: intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/i915/gvt/scheduler: fix potential NULL pointer
+ dereference
+Message-ID: <20180319193053.GA7016@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.36.34
+X-Source-L: No
+X-Exim-ID: 1ey0Uh-0041gY-6N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.36.34]:37902
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 12:25:58PM -0700, David Rientjes wrote:
-> On Mon, 19 Mar 2018, Matthew Wilcox wrote:
-> >  	 * wq->name.name is NULL iff the lock is already released
-> >  	 * or the mount has been made catatonic.
-> >  	 */
-> > -	if (wq->name.name) {
-> > -		/* Block all but "shutdown" signals while waiting */
-> > -		unsigned long shutdown_sigs_mask;
-> > -		unsigned long irqflags;
-> > -		sigset_t oldset;
-> > -
-[...]
-> > -
-> > -		wait_event_interruptible(wq->queue, wq->name.name == NULL);
-[...]
-> > -	} else {
-> > -		pr_debug("skipped sleeping\n");
-> > -	}
-> > -
-> > +	wait_event_killable(wq->queue, wq->name.name == NULL);
->
-> I understand converting the wait_event_interruptible() to 
-> wait_event_killable(), but why was the above wait_event_interruptible() 
-> only called when wq->name.name != NULL?  
+_workload_ is being dereferenced before it is null checked, hence
+there is a potential null pointer dereference.
 
-My guess is that it was to avoid the overhead of diddling the signal set
-when wq->name.name was already NULL.  I don't really kow though, it
-predates git history and I'm too lazy to go and poke through the historical
-repos to see if that reason was captured by BitKeeper.
+Fix this by moving the pointer dereference after _workload_ has
+been null checked.
 
-> wait_event_{killable,interruptible}() will return without sleeping when 
-> wq->name.name == NULL, so I suppose it has something to do with the 
-> comment above it.
+Addresses-Coverity-ID: 1430136 ("Dereference before null check")
+Fixes: fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/i915/gvt/scheduler.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/scheduler.c b/drivers/gpu/drm/i915/gvt/scheduler.c
+index 0681264..be1a297 100644
+--- a/drivers/gpu/drm/i915/gvt/scheduler.c
++++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+@@ -60,9 +60,9 @@ static void set_context_pdp_root_pointer(
+ static void sr_oa_regs(struct intel_vgpu_workload *workload,
+ 		u32 *reg_state, bool save)
+ {
+-	struct drm_i915_private *dev_priv = workload->vgpu->gvt->dev_priv;
+-	u32 ctx_oactxctrl = dev_priv->perf.oa.ctx_oactxctrl_offset;
+-	u32 ctx_flexeu0 = dev_priv->perf.oa.ctx_flexeu0_offset;
++	struct drm_i915_private *dev_priv;
++	u32 ctx_oactxctrl;
++	u32 ctx_flexeu0;
+ 	int i = 0;
+ 	u32 flex_mmio[] = {
+ 		i915_mmio_reg_offset(EU_PERF_CNTL0),
+@@ -77,6 +77,10 @@ static void sr_oa_regs(struct intel_vgpu_workload *workload,
+ 	if (!workload || !reg_state || workload->ring_id != RCS)
+ 		return;
+ 
++	dev_priv = workload->vgpu->gvt->dev_priv;
++	ctx_oactxctrl = dev_priv->perf.oa.ctx_oactxctrl_offset;
++	ctx_flexeu0 = dev_priv->perf.oa.ctx_flexeu0_offset;
++
+ 	if (save) {
+ 		workload->oactxctrl = reg_state[ctx_oactxctrl + 1];
+ 
+-- 
+2.7.4
