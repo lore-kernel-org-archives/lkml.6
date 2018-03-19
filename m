@@ -1,83 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968135AbeCSReM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:34:12 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37831 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968089AbeCSRd7 (ORCPT
+        id S968148AbeCSRef (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:34:35 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:56660 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966080AbeCSRd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Mar 2018 13:33:59 -0400
-Date: Mon, 19 Mar 2018 18:33:56 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Woody Suwalski <terraluna977@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Netdev list <netdev@vger.kernel.org>
-Subject: Re: linux-next on x60: network manager often complains "network is
- disabled" after resume
-Message-ID: <20180319173356.GA28462@amd>
-References: <20180318104023.GA10392@amd>
- <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
- <20180319092106.GA5683@amd>
- <1521474008.20208.2.camel@redhat.com>
+Date: Mon, 19 Mar 2018 10:33:45 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
+Message-ID: <20180319173345.GF1757@magnolia>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521474008.20208.2.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836 signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803190149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
+> In preparation for adding coordination between truncate operations and
+> busy dax-pages, extend xfs_break_layouts() to assume it must be called
+> with the mmap lock held. This locking scheme will be required for
+> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
+> pages mapped into the file's address space).
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If I'm reading this right, you've added a requirement (for xfs anyway)
+that we have to have grabbed MMAPLOCK_EXCL before calling break_layout()
+so that the layout breaking process will block until active dmas have
+finished.
 
-On Mon 2018-03-19 10:40:08, Dan Williams wrote:
-> On Mon, 2018-03-19 at 10:21 +0100, Pavel Machek wrote:
-> > On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
-> > > Pavel Machek wrote:
-> > > > Hi!
-> > > >=20
-> > > > With recent linux-next, after resume networkmanager often claims
-> > > > that
-> > > > "network is disabled". Sometimes suspend/resume clears that.
-> > > >=20
-> > > > Any ideas? Does it work for you?
-> > > > 								=09
-> > > > Pavel
-> > >=20
-> > > Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
-> >=20
-> > Thanks for testing... but yes, 4.16 should be ok. If not fixed,
-> > problem will appear in 4.17-rc1.
->=20
-> Where does the complaint occur?  In the GUI, or with nmcli, or
-> somewhere else?  Also, what's the output of "nmcli dev" after resume?
+In 4.16 we added xfs_iolock_two_inodes_and_break_layout (in
+xfs_reflink.c) to break pnfs leases for files that are about to be
+reflinked (since pnfs and reflink aren't compatible either).  I think
+that function will have to be adapted to take the appropriate mmap locks
+too -- definitely the exclusive mmap lock for the destination file
+because we anticipate punching out blocks.  I'm not sure about the
+source file; I think taking the shared mmap lock is fine for that?
 
-In the GUI. I click in place where I'd select access point, and menu
-does not show up, telling me that "network is disabled".
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+--D
 
---huq684BweRXVnRxX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqv9IQACgkQMOfwapXb+vKLVQCdHKSfD6Gendp0RBGYXYn0dU+A
-WVgAnjd2MOtv/s8FpKJ0M96ZaHllzsuY
-=w98g
------END PGP SIGNATURE-----
-
---huq684BweRXVnRxX--
+> 
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  fs/xfs/xfs_file.c  |   14 +++++++++-----
+>  fs/xfs/xfs_ioctl.c |    5 +----
+>  fs/xfs/xfs_iops.c  |   10 +++++++---
+>  fs/xfs/xfs_pnfs.c  |    6 ++++--
+>  4 files changed, 21 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 9ea08326f876..ba969019bf26 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -350,9 +350,16 @@ xfs_file_aio_write_checks(
+>  	if (error <= 0)
+>  		return error;
+>  
+> +	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+> +	*iolock |= XFS_MMAPLOCK_EXCL;
+>  	error = xfs_break_layouts(inode, iolock);
+> -	if (error)
+> +	if (error) {
+> +		*iolock &= ~XFS_MMAPLOCK_EXCL;
+> +		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+>  		return error;
+> +	}
+> +	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+> +	*iolock &= ~XFS_MMAPLOCK_EXCL;
+>  
+>  	/*
+>  	 * For changing security info in file_remove_privs() we need i_rwsem
+> @@ -768,7 +775,7 @@ xfs_file_fallocate(
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	long			error;
+>  	enum xfs_prealloc_flags	flags = 0;
+> -	uint			iolock = XFS_IOLOCK_EXCL;
+> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
+>  	loff_t			new_size = 0;
+>  	bool			do_file_insert = false;
+>  
+> @@ -782,9 +789,6 @@ xfs_file_fallocate(
+>  	if (error)
+>  		goto out_unlock;
+>  
+> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+> -	iolock |= XFS_MMAPLOCK_EXCL;
+> -
+>  	if (mode & FALLOC_FL_PUNCH_HOLE) {
+>  		error = xfs_free_file_space(ip, offset, len);
+>  		if (error)
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 89fb1eb80aae..4151fade4bb1 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -614,7 +614,7 @@ xfs_ioc_space(
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	struct iattr		iattr;
+>  	enum xfs_prealloc_flags	flags = 0;
+> -	uint			iolock = XFS_IOLOCK_EXCL;
+> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
+>  	int			error;
+>  
+>  	/*
+> @@ -648,9 +648,6 @@ xfs_ioc_space(
+>  	if (error)
+>  		goto out_unlock;
+>  
+> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+> -	iolock |= XFS_MMAPLOCK_EXCL;
+> -
+>  	switch (bf->l_whence) {
+>  	case 0: /*SEEK_SET*/
+>  		break;
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 951e84df5576..d23aa08426f9 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1028,13 +1028,17 @@ xfs_vn_setattr(
+>  
+>  	if (iattr->ia_valid & ATTR_SIZE) {
+>  		struct xfs_inode	*ip = XFS_I(d_inode(dentry));
+> -		uint			iolock = XFS_IOLOCK_EXCL;
+> +		uint			iolock;
+> +
+> +		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+> +		iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
+>  
+>  		error = xfs_break_layouts(d_inode(dentry), &iolock);
+> -		if (error)
+> +		if (error) {
+> +			xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+>  			return error;
+> +		}
+>  
+> -		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+>  		error = xfs_vn_setattr_size(dentry, iattr);
+>  		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+>  	} else {
+> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
+> index aa6c5c193f45..9fe661c2d59c 100644
+> --- a/fs/xfs/xfs_pnfs.c
+> +++ b/fs/xfs/xfs_pnfs.c
+> @@ -38,12 +38,14 @@ xfs_break_layouts(
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	int			error;
+>  
+> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
+> +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
+> +				| XFS_MMAPLOCK_EXCL));
+>  
+>  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
+>  		xfs_iunlock(ip, *iolock);
+>  		error = break_layout(inode, true);
+> -		*iolock = XFS_IOLOCK_EXCL;
+> +		*iolock &= ~XFS_IOLOCK_SHARED;
+> +		*iolock |= XFS_IOLOCK_EXCL;
+>  		xfs_ilock(ip, *iolock);
+>  	}
+>  
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
