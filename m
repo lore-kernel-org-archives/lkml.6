@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELszxi6Y21H28nKKF6BLIi2T4dZEEK3/rbTdf78ECFUt7+eQoqY0z7S4Hwx8aag+enbKsn8D
-ARC-Seal: i=1; a=rsa-sha256; t=1521483568; cv=none;
+X-Google-Smtp-Source: AG47ELsDyXb9sPx0OeGwPVkeuGpKeQecRby8pY8rmzfx0txtp19AQZZQ5hQaDzlpKivLL1GHcyJ9
+ARC-Seal: i=1; a=rsa-sha256; t=1521483565; cv=none;
         d=google.com; s=arc-20160816;
-        b=H4MGdhvGgJD8d+bjX4GbJxOJrJrW9ujdmYV4CcPX2QfSo5on2kPLMtnUIBOzbkSdoA
-         JEleU0MC6EURG7fp3FYREkxtLSwep1BW+jhL6eJaJWIxVOD8IlA5ZTxceEFD7UiSjkpW
-         87/NWrrq2hJx7kJgDd/yCnGJFjEEp62qIKrYPMCSC3R3y4dsMm0wSypEKkBWssukESzD
-         /DrSbhn+teblk36pmNrF+yJNI6FEg0F+2G65mJFro0QhXSuJWiG400O10RFtlXZmy0kP
-         L9/XL5Naye3CHHctW6Nk3X1kah+I2JWSDlCKJzgqsyy3GhxRzCZ/us9ZJXIH2GC/50me
-         Y8Ng==
+        b=wEGPslyCFNc79sNDKaHY3XO3A2ZSWFnV4/gB5FPmJ21Rnl+67WvXCr/lcMof2wnvsU
+         Yva8MTYoErIbQ9BfMzOEGyX0jPMFSgeroo7LPNpG8CvU04eGCJxqVuOatSMwVaaTHC5E
+         4DRlbPSojjjyQgzCstI4kaHZkq9dsMTPRYOvNxfKCAJoVGlDCRAFKhVLcQLVnYxH7t+H
+         kQ4AJNdTleW8j/bC+5ENmlu4FRYDZqE1y2LszLncDIoJLMpuHfSw39ZRWNdErTnK1VsV
+         t6kuCybXraRom0Tr0Xlvu2zrbJnAjyLmL03jUsVNUpKwsAGD4AsnjoDL4J8QXRFuDdwI
+         Pl+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zngn5PEDMBwMFwV8lN5+l9qVqM994fmJ8WahoXuh8Mg=;
-        b=shlygvHwxVvzpHWeNgtwwL7DNre+XrhFcBjDDTUeYSn2v+T1+d/wlvnmCGCgBKhtsu
-         tuuV1qmZ4tU+whXLGAz4v5zFWNLl8gfTCrnlTK6op95GB/HjBkZJWgDFNHSuw0Nnofco
-         hQDsrHSEJxRNMJvp4CRUNeNCLwbI6uc0V64wr2YZU0WR11sfJ0eERqKBTui/KgZIDx9R
-         N6iSnK5X6CVBZ++RQzhxFYF50WvUSsA39ggzFB6uQ8qc/Fxg9W1SoCAiR8Ag6C5HkiyP
-         UmI1AvVm+o6y03m7hwhkqolcvGkRrqXuo3+WqMfPKT5p3iA6mopr18SBJJ6b9RbVjFFD
-         BQ/A==
+        bh=ojNTAANax4DunH/F2dTjEYZH3MqEdMLGQ5YbnDXkWnk=;
+        b=TC50HjV94k/FZ9POpapM2QIlmTE/qeXXvraI8dPA/vQvY7tILJzPEgu+mhflCe24SU
+         Qk8cK9jjWFIHTpgjJ+OJAxs9DOXAC9sYp2LeQkUk2GUXBWN2F0XYTnJDPG1XKvguLHrT
+         r24312G2sB3sdP5HL2KDy5YzvoJ30B1AKfnKwiZQO7xsAgfmeBh49hZYvmNKoPc9qStS
+         x0qI7Scniw8pflhiBsqcXupSvrxdJBdCs8coWCAFYl4n2TB1GeNb9aOJSethApuWWUnG
+         1kE8pnarB9tCQfCgdTYbnWPcStdd5C599eg9ekaVOND7VFWtihx47d/e2X1BpAX43tx6
+         m86A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Steve Lin <steven.lin1@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jon.mason@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Eric Anholt <eric@anholt.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 037/241] net: ethernet: bgmac: Allow MAC address to be specified in DTB
-Date: Mon, 19 Mar 2018 19:05:02 +0100
-Message-Id: <20180319180752.730334921@linuxfoundation.org>
+Subject: [PATCH 4.9 036/241] ARM: bcm2835: Enable missing CMA settings for VC4 driver
+Date: Mon, 19 Mar 2018 19:05:01 +0100
+Message-Id: <20180319180752.673588665@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391153940551541?=
-X-GMAIL-MSGID: =?utf-8?q?1595391153940551541?=
+X-GMAIL-THRID: =?utf-8?q?1595391150860110595?=
+X-GMAIL-MSGID: =?utf-8?q?1595391150860110595?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,85 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steve Lin <steven.lin1@broadcom.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
 
-[ Upstream commit 2f771399a3a2c371c140ff33544a583c6fbc5fd9 ]
+[ Upstream commit bdd3c25423cb42171446940bca0946e0443e1a84 ]
 
-Allows the BCMA version of the bgmac driver to obtain MAC address
-from the device tree.  If no MAC address is specified there, then
-the previous behavior (obtaining MAC address from SPROM) is
-used.
+Currently bcm2835_defconfig has CMA disabled which makes the
+HDMI output on a Raspberry Pi 1 stop working during boot:
 
-Signed-off-by: Steve Lin <steven.lin1@broadcom.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+    fb: switching to vc4drmfb from simple
+    Console: switching to colour dummy device 80x30
+    [drm] Initialized vc4 0.0.0 20140616 for soc:gpu on minor 0
+    [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+    [drm] Driver supports precise vblank timestamp query.
+    vc4-drm soc:gpu: failed to allocate buffer with size 9216000
+    vc4-drm soc:gpu: Failed to set initial hw configuration.
+
+So enable CMA and DMA_CMA in bcm2835_defconfig.
+
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Fixes: 4400d9ac05ee ("ARM: bcm2835: Enable the VC4 graphics driver in the defconfig")
+Reviewed-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac-bcma.c |   39 +++++++++++++++++------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ arch/arm/configs/bcm2835_defconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bgmac-bcma.c
-+++ b/drivers/net/ethernet/broadcom/bgmac-bcma.c
-@@ -11,6 +11,7 @@
- #include <linux/bcma/bcma.h>
- #include <linux/brcmphy.h>
- #include <linux/etherdevice.h>
-+#include <linux/of_net.h>
- #include "bgmac.h"
- 
- static inline bool bgmac_is_bcm4707_family(struct bcma_device *core)
-@@ -96,7 +97,7 @@ static int bgmac_probe(struct bcma_devic
- 	struct ssb_sprom *sprom = &core->bus->sprom;
- 	struct mii_bus *mii_bus;
- 	struct bgmac *bgmac;
--	u8 *mac;
-+	const u8 *mac = NULL;
- 	int err;
- 
- 	bgmac = kzalloc(sizeof(*bgmac), GFP_KERNEL);
-@@ -110,21 +111,27 @@ static int bgmac_probe(struct bcma_devic
- 
- 	bcma_set_drvdata(core, bgmac);
- 
--	switch (core->core_unit) {
--	case 0:
--		mac = sprom->et0mac;
--		break;
--	case 1:
--		mac = sprom->et1mac;
--		break;
--	case 2:
--		mac = sprom->et2mac;
--		break;
--	default:
--		dev_err(bgmac->dev, "Unsupported core_unit %d\n",
--			core->core_unit);
--		err = -ENOTSUPP;
--		goto err;
-+	if (bgmac->dev->of_node)
-+		mac = of_get_mac_address(bgmac->dev->of_node);
-+
-+	/* If no MAC address assigned via device tree, check SPROM */
-+	if (!mac) {
-+		switch (core->core_unit) {
-+		case 0:
-+			mac = sprom->et0mac;
-+			break;
-+		case 1:
-+			mac = sprom->et1mac;
-+			break;
-+		case 2:
-+			mac = sprom->et2mac;
-+			break;
-+		default:
-+			dev_err(bgmac->dev, "Unsupported core_unit %d\n",
-+				core->core_unit);
-+			err = -ENOTSUPP;
-+			goto err;
-+		}
- 	}
- 
- 	ether_addr_copy(bgmac->mac_addr, mac);
+--- a/arch/arm/configs/bcm2835_defconfig
++++ b/arch/arm/configs/bcm2835_defconfig
+@@ -1,6 +1,5 @@
+ # CONFIG_LOCALVERSION_AUTO is not set
+ CONFIG_SYSVIPC=y
+-CONFIG_FHANDLE=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BSD_PROCESS_ACCT=y
+@@ -32,6 +31,7 @@ CONFIG_PREEMPT_VOLUNTARY=y
+ CONFIG_AEABI=y
+ CONFIG_KSM=y
+ CONFIG_CLEANCACHE=y
++CONFIG_CMA=y
+ CONFIG_SECCOMP=y
+ CONFIG_KEXEC=y
+ CONFIG_CRASH_DUMP=y
+@@ -52,6 +52,7 @@ CONFIG_MAC80211=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ # CONFIG_STANDALONE is not set
++CONFIG_DMA_CMA=y
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_SCSI_CONSTANTS=y
+@@ -62,7 +63,6 @@ CONFIG_USB_NET_SMSC95XX=y
+ CONFIG_ZD1211RW=y
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_LEGACY_PTYS is not set
+-# CONFIG_DEVKMEM is not set
+ CONFIG_SERIAL_AMBA_PL011=y
+ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
+ CONFIG_TTY_PRINTK=y
