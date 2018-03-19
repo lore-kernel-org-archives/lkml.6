@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuL5j4L8KZJzUEiBss6UEaC1N/4nvp+BZXL6mQ5VJDxj/MrQbSuaDXkpo57IdfcDf0VOhKY
-ARC-Seal: i=1; a=rsa-sha256; t=1521483004; cv=none;
+X-Google-Smtp-Source: AG47ELvG5Aa08nPKAiLjK7C+y+NJQZ4M34Z8TK6u6OmKkjsyRvZxqgcS8mP49mCb2rBZOEGIc7br
+ARC-Seal: i=1; a=rsa-sha256; t=1521483002; cv=none;
         d=google.com; s=arc-20160816;
-        b=leIfa3w95c/ZEkBWISz40RrFUjoEWHIstf09/go10fXSTYub2GEx+Vk4M90ww0KVfA
-         Cfj8MWvI8yde7G7csyqHu4/yYAL8lOLZyfS0Lhb9h8+tqA8HiZ1XCxwQOnAoS7ux8GzX
-         a/+fvQS4fJVRCcu9YMrYf6WGReyqmonPYMR0Tpwimn53IZYTNKKK5uDI4PEmy4ww12yi
-         xNH9ghP5onZMePTOF+QVFcJ4TJhoTvOKW24biNSnssr55Y8rWnfbfKk+9u+iz0CL4VCa
-         J72wQSCOKaQPV4jFibu0iC/YVi9h9FBYym2xqXGTesVPt3xpJ1qBXzBd8TcQOjoB4MSt
-         m4ag==
+        b=g4J45r/KQ0ZqfFa59Ctf2s9NDxSWy48f0OXLLolahp8FsFn7EgZnWYFyT/IkpaMma0
+         bqaoSCQTB6p3LysgB7SgKbpaSVHxefO3fINYDnZb1ei4RtP9ZRpSZAiNpDP2/FKS0G2l
+         MZAumf+MRFBH3uetJNOU52rMkQACOBmolcGbTkgiz7kpLmWNXqjaEKW1VIUT5Mmb7lOd
+         S2MTuLtC3plRtounI4B74W5E5FWziwmmyn0PtxgqzYOxtlQP0+BzNqTLtO3A4kHEojF2
+         Lg0Oup7016Vmz2Ww2UhjyKvOWvvM7jmO4PrjI8y4UuGEK7tOZC++GcjaR04b9ydY7d3s
+         O/Ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/BsrWoaFl2XsutFAUSvJct1ZJ+iR9W30ZnxaXVWN1V8=;
-        b=piw7uiMOqdgRDkUqtZyX+4MZQCdpPJtlTDq4C7QK4JMKc72uihY/0pXg79omWiP7Zt
-         wWScxx8uPs+RZuSoZ5Y18Gu7GuDviU0Gvu+fLwwTS4QnsuCKn5W0M3dlif606NfUtE5g
-         dw2S9x/9XMtyRDiB8IIdQWhiDBLQPV8K1HcZaFO4pBePk2ZUp1ifj9fvw77RK6UM/+AX
-         7tNTePWFSKi4OVZam6zbCap5VuamB6P8PtRBGxWfuFjYbMqxXoOciPf396Oh1p+Xxm16
-         DrZ9Xx6pMa138pGm0zRXtBpXjfbBJT3YUeNNZDE3XJCOUU14ugM+ctFq29qOwXYC2/jB
-         z49w==
+        bh=m4Ibh4to2x+pzzw14SBFHw80SIs/vg4ZXKR1hMN6vzk=;
+        b=hhXydlJfEYLAjklPW/XjQkaLlFWs2OnEM8sXy/VfG6uWk9lPQc173uCv26M/6ZvX6w
+         57bB8GxnyLmDeLts3dvEuk7Vfy0oQ+EQGXmej85XDKRAn4qoa9tnPXoTKx3GaLNmAcRY
+         WEiCC+mxV7DKsenNra7KvHx0zJZGCTQo7f41RFX2w7SkiGL34UDLKMs9xNvaHoEldjRh
+         DkTpeVJ5UVZLS8U8EHv2kM3JouvmiO3Om3Kgf1cc8fejsKRWUnf4rYc/5w5XJIEWE9h5
+         3iIvXIrUql9b+Fp1j5At9oCTC8ZSzaEN+SlckUrt6HkV6Yncc6/9kdwclUILlRTZQHUc
+         mavQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nate Watterson <nwatters@codeaurora.org>,
-	Joerg Roedel <jroedel@suse.de>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	John Johansen <john.johansen@canonical.com>,
+	James Morris <james.l.morris@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 31/68] iommu/iova: Fix underflow bug in __alloc_and_insert_iova_range
-Date: Mon, 19 Mar 2018 19:06:09 +0100
-Message-Id: <20180319171832.134049442@linuxfoundation.org>
+Subject: [PATCH 3.18 30/68] apparmor: Make path_max parameter readonly
+Date: Mon, 19 Mar 2018 19:06:08 +0100
+Message-Id: <20180319171832.014048042@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390563257454216?=
-X-GMAIL-MSGID: =?utf-8?q?1595390563257454216?=
+X-GMAIL-THRID: =?utf-8?q?1595390560477721446?=
+X-GMAIL-MSGID: =?utf-8?q?1595390560477721446?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +51,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nate Watterson <nwatters@codeaurora.org>
+From: John Johansen <john.johansen@canonical.com>
 
 
-[ Upstream commit 5016bdb796b3726eec043ca0ce3be981f712c756 ]
+[ Upstream commit 622f6e3265707ebf02ba776ac6e68003bcc31213 ]
 
-Normally, calling alloc_iova() using an iova_domain with insufficient
-pfns remaining between start_pfn and dma_limit will fail and return a
-NULL pointer. Unexpectedly, if such a "full" iova_domain contains an
-iova with pfn_lo == 0, the alloc_iova() call will instead succeed and
-return an iova containing invalid pfns.
+The path_max parameter determines the max size of buffers allocated
+but it should  not be setable at run time. If can be used to cause an
+oops
 
-This is caused by an underflow bug in __alloc_and_insert_iova_range()
-that occurs after walking the "full" iova tree when the search ends
-at the iova with pfn_lo == 0 and limit_pfn is then adjusted to be just
-below that (-1). This (now huge) limit_pfn gives the impression that a
-vast amount of space is available between it and start_pfn and thus
-a new iova is allocated with the invalid pfn_hi value, 0xFFF.... .
+root@ubuntu:~# echo 16777216 > /sys/module/apparmor/parameters/path_max
+root@ubuntu:~# cat /sys/module/apparmor/parameters/path_max
+Killed
 
-To rememdy this, a check is introduced to ensure that adjustments to
-limit_pfn will not underflow.
+[  122.141911] BUG: unable to handle kernel paging request at ffff880080945fff
+[  122.143497] IP: [<ffffffff81228844>] d_absolute_path+0x44/0xa0
+[  122.144742] PGD 220c067 PUD 0
+[  122.145453] Oops: 0002 [#1] SMP
+[  122.146204] Modules linked in: vmw_vsock_vmci_transport vsock ppdev vmw_balloon snd_ens1371 btusb snd_ac97_codec gameport snd_rawmidi btrtl snd_seq_device ac97_bus btbcm btintel snd_pcm input_leds bluetooth snd_timer snd joydev soundcore serio_raw coretemp shpchp nfit parport_pc i2c_piix4 8250_fintek vmw_vmci parport mac_hid ib_iser rdma_cm iw_cm ib_cm ib_sa ib_mad ib_core ib_addr iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi autofs4 btrfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel aes_x86_64 lrw gf128mul glue_helper ablk_helper cryptd vmwgfx psmouse mptspi ttm mptscsih drm_kms_helper mptbase syscopyarea scsi_transport_spi sysfillrect
+[  122.163365]  ahci sysimgblt e1000 fb_sys_fops libahci drm pata_acpi fjes
+[  122.164747] CPU: 3 PID: 1501 Comm: bash Not tainted 4.4.0-59-generic #80-Ubuntu
+[  122.166250] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 07/02/2015
+[  122.168611] task: ffff88003496aa00 ti: ffff880076474000 task.ti: ffff880076474000
+[  122.170018] RIP: 0010:[<ffffffff81228844>]  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
+[  122.171525] RSP: 0018:ffff880076477b90  EFLAGS: 00010206
+[  122.172462] RAX: ffff880080945fff RBX: 0000000000000000 RCX: 0000000001000000
+[  122.173709] RDX: 0000000000ffffff RSI: ffff880080946000 RDI: ffff8800348a1010
+[  122.174978] RBP: ffff880076477bb8 R08: ffff880076477c80 R09: 0000000000000000
+[  122.176227] R10: 00007ffffffff000 R11: ffff88007f946000 R12: ffff88007f946000
+[  122.177496] R13: ffff880076477c80 R14: ffff8800348a1010 R15: ffff8800348a2400
+[  122.178745] FS:  00007fd459eb4700(0000) GS:ffff88007b6c0000(0000) knlGS:0000000000000000
+[  122.180176] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  122.181186] CR2: ffff880080945fff CR3: 0000000073422000 CR4: 00000000001406e0
+[  122.182469] Stack:
+[  122.182843]  00ffffff00000001 ffff880080946000 0000000000000000 0000000000000000
+[  122.184409]  00000000570f789c ffff880076477c30 ffffffff81385671 ffff88007a2e7a58
+[  122.185810]  0000000000000000 ffff880076477c88 01000000008a1000 0000000000000000
+[  122.187231] Call Trace:
+[  122.187680]  [<ffffffff81385671>] aa_path_name+0x81/0x370
+[  122.188637]  [<ffffffff813875dd>] profile_transition+0xbd/0xb80
+[  122.190181]  [<ffffffff811af9bc>] ? zone_statistics+0x7c/0xa0
+[  122.191674]  [<ffffffff81389b20>] apparmor_bprm_set_creds+0x9b0/0xac0
+[  122.193288]  [<ffffffff812e1971>] ? ext4_xattr_get+0x81/0x220
+[  122.194793]  [<ffffffff812e800c>] ? ext4_xattr_security_get+0x1c/0x30
+[  122.196392]  [<ffffffff813449b9>] ? get_vfs_caps_from_disk+0x69/0x110
+[  122.198004]  [<ffffffff81232d4f>] ? mnt_may_suid+0x3f/0x50
+[  122.199737]  [<ffffffff81344b03>] ? cap_bprm_set_creds+0xa3/0x600
+[  122.201377]  [<ffffffff81346e53>] security_bprm_set_creds+0x33/0x50
+[  122.203024]  [<ffffffff81214ce5>] prepare_binprm+0x85/0x190
+[  122.204515]  [<ffffffff81216545>] do_execveat_common.isra.33+0x485/0x710
+[  122.206200]  [<ffffffff81216a6a>] SyS_execve+0x3a/0x50
+[  122.207615]  [<ffffffff81838795>] stub_execve+0x5/0x5
+[  122.208978]  [<ffffffff818384f2>] ? entry_SYSCALL_64_fastpath+0x16/0x71
+[  122.210615] Code: f8 31 c0 48 63 c2 83 ea 01 48 c7 45 e8 00 00 00 00 48 01 c6 85 d2 48 c7 45 f0 00 00 00 00 48 89 75 e0 89 55 dc 78 0c 48 8d 46 ff <c6> 46 ff 00 48 89 45 e0 48 8d 55 e0 48 8d 4d dc 48 8d 75 e8 e8
+[  122.217320] RIP  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
+[  122.218860]  RSP <ffff880076477b90>
+[  122.219919] CR2: ffff880080945fff
+[  122.220936] ---[ end trace 506cdbd85eb6c55e ]---
 
-This issue has been observed in the wild, and is easily reproduced with
-the following sample code.
-
-	struct iova_domain *iovad = kzalloc(sizeof(*iovad), GFP_KERNEL);
-	struct iova *rsvd_iova, *good_iova, *bad_iova;
-	unsigned long limit_pfn = 3;
-	unsigned long start_pfn = 1;
-	unsigned long va_size = 2;
-
-	init_iova_domain(iovad, SZ_4K, start_pfn, limit_pfn);
-	rsvd_iova = reserve_iova(iovad, 0, 0);
-	good_iova = alloc_iova(iovad, va_size, limit_pfn, true);
-	bad_iova = alloc_iova(iovad, va_size, limit_pfn, true);
-
-Prior to the patch, this yielded:
-	*rsvd_iova == {0, 0}   /* Expected */
-	*good_iova == {2, 3}   /* Expected */
-	*bad_iova  == {-2, -1} /* Oh no... */
-
-After the patch, bad_iova is NULL as expected since inadequate
-space remains between limit_pfn and start_pfn after allocating
-good_iova.
-
-Signed-off-by: Nate Watterson <nwatters@codeaurora.org>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/iova.c |    2 +-
+ security/apparmor/lsm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -118,7 +118,7 @@ static int __alloc_and_insert_iova_range
- 				break;	/* found a free slot */
- 		}
- adjust_limit_pfn:
--		limit_pfn = curr_iova->pfn_lo - 1;
-+		limit_pfn = curr_iova->pfn_lo ? (curr_iova->pfn_lo - 1) : 0;
- move_left:
- 		prev = curr;
- 		curr = rb_prev(curr);
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -735,7 +735,7 @@ module_param_named(logsyscall, aa_g_logs
+ 
+ /* Maximum pathname length before accesses will start getting rejected */
+ unsigned int aa_g_path_max = 2 * PATH_MAX;
+-module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR | S_IWUSR);
++module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
+ 
+ /* Determines how paranoid loading of policy is and how much verification
+  * on the loaded policy is done.
