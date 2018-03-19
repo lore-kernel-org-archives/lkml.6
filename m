@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtgFa30np5prTRRG9Bl+hrLWT/N8UxLPxnREX7xy83V3e8/cCWx+NAElE0hBm3+avJdK2Zy
-ARC-Seal: i=1; a=rsa-sha256; t=1521483439; cv=none;
+X-Google-Smtp-Source: AG47ELsY4DWlfqQYRa1dM5Ng3u5JJiWnpnWrYFcmpQKNTVRVTzAIePlv9r5IhxWxtcF5x8ggyBWB
+ARC-Seal: i=1; a=rsa-sha256; t=1521483436; cv=none;
         d=google.com; s=arc-20160816;
-        b=o3a2rbi8DNxw+4txVIxfmKDAePQr7iFFxdbjqAqHZUjMIFWGBxfsXwupZoHxLHIesM
-         IajlO6kwAlybmEoIAJUNLfcRbFdUh05ursu4XUNRYON7lQLeznVWjcwx8Jky62sTL098
-         RloXHQpHhoD1cNXmJml73wFH/LLsRwop7bYz3mDPV8M9Oglxhwm8lICBvBLKkMIQYw5+
-         Ymo0Ui7DpI24nQ1YDbQ++RqRwrWgFHq+JwGgx+qMnm8KEz3rlWfbij2Mp1/fL14HNzby
-         lJ9Dy0vlQNsrx0+abUs57gJJp1NNP4BZUrdxWV/dSJpOySU+jxrCJGjeAcGwqNXV1OSk
-         QYIA==
+        b=efWCEDyhGQm345ApxpoREs60apCMA8I6E+Gp7cyoPkUy3P4j8KfsySbzSL8LMXBquL
+         DszcbqHBnpuwF3odfIShkMGGoTgfZzwGFe/ovV2CDXvddK+Yty86ziQIiJ6hulY2ujS2
+         nML8wk7WS0rOCbyojWW1C0FbWYUINMuBLJ8h3gFQtrZycH0GZOBnku1kdP7P9hHL9xTs
+         x7B+yqIWIP59yrqQB77TCQwUDMzFgfds/ND1NL1LiTBjWGah8EepTOAm7McKURVmNY8s
+         hCJMuc+WgNnJIVd/09JndEUSviDGUFM+J2YXB8wZOORmqgI55W1hXcnN2pKZDm5JlCxC
+         Z73Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Kb7dvoYRhthGdirEQVoHI3BITRqnlMeBy6o4RAeqDMo=;
-        b=POky78I5WduMADRnjUX+3z4D5+XLhYLXcvyS2Okj5gVoILnYT5T3VJ5NyVbk2wOplr
-         55JAwDU+eaJywWsM/B+53Mk7L9poZfF9A6vwEF+GA0eEKZRvZF1UpfyFvx5oZlBk5vGq
-         SKmw2R1NzhWzLH4mbXsnxfvSvljyrtzpjsnsy63IIh3XA4UZTfctD6NIWnNci0TBlBa9
-         bW5BiXr2SF8iWTNWd27sFF5oItYHKZa/wTjQTKLFpYCAnByq2f6/E8ijfmy6KMB3Y5mn
-         qD/xV5O75WTGDOtVtlRA3TLiBCF2UdFr+eSHjSr9/4c5+5sOmNwJOX8sr7CpEKCiX6Zd
-         vh4g==
+        bh=hEFsK66u/qvAcu2RNzaj+6Bfl7+Y+Vs2iQK967iWSc4=;
+        b=WoeVOg/Nrjs3xH5levZw7Bpfs2al07plyJMu7AXvodH1x1OhBuH5mjqIH+dXKv2b3z
+         C4yXuTO875SDzap/vI81EjdsLTY1j2FYmXoohR4z5hdGvEpSgQudfxKKOdRGP75G+teC
+         sqg9VSmbvEFta14gK97Cxi2lftClObtMthYtRScrsNWhOV9T1AiIAJoeiNaUeKMBYd32
+         vNCx9P8QSBYhb7dhxjzMerrDY3cPs9hshghR1tJqVqrEbq9Hqe56nizP1d5aIa/uZy03
+         wBJXoyhrlK6Slr/C4WulUnRKJga+jE4KAArSoIOpoS0hQKfaeBUeS+aOirzZHZK6cafz
+         R7Ew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.4 125/134] irqchip/gic-v3-its: Ensure nr_ites >= nr_lpis
-Date: Mon, 19 Mar 2018 19:06:48 +0100
-Message-Id: <20180319171907.316294556@linuxfoundation.org>
+	Tejun Heo <tj@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 124/134] fs/aio: Use RCU accessors for kioctx_table->table[]
+Date: Mon, 19 Mar 2018 19:06:47 +0100
+Message-Id: <20180319171907.175053555@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391018593755377?=
-X-GMAIL-MSGID: =?utf-8?q?1595391018593755377?=
+X-GMAIL-THRID: =?utf-8?q?1595390659140496650?=
+X-GMAIL-MSGID: =?utf-8?q?1595391015812212519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +51,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Tejun Heo <tj@kernel.org>
 
-commit 4f2c7583e33eb08dc09dd2e25574b80175ba7d93 upstream.
+commit d0264c01e7587001a8c4608a5d1818dba9a4c11a upstream.
 
-When struct its_device instances are created, the nr_ites member
-will be set to a power of 2 that equals or exceeds the requested
-number of MSIs passed to the msi_prepare() callback. At the same
-time, the LPI map is allocated to be some multiple of 32 in size,
-where the allocated size may be less than the requested size
-depending on whether a contiguous range of sufficient size is
-available in the global LPI bitmap.
+While converting ioctx index from a list to a table, db446a08c23d
+("aio: convert the ioctx list to table lookup v3") missed tagging
+kioctx_table->table[] as an array of RCU pointers and using the
+appropriate RCU accessors.  This introduces a small window in the
+lookup path where init and access may race.
 
-This may result in the situation where the nr_ites < nr_lpis, and
-since nr_ites is what we program into the hardware when we map the
-device, the additional LPIs will be non-functional.
+Mark kioctx_table->table[] with __rcu and use the approriate RCU
+accessors when using the field.
 
-For bog standard hardware, this does not really matter. However,
-in cases where ITS device IDs are shared between different PCIe
-devices, we may end up allocating these additional LPIs without
-taking into account that they don't actually work.
-
-So let's make nr_ites at least 32. This ensures that all allocated
-LPIs are 'live', and that its_alloc_device_irq() will fail when
-attempts are made to allocate MSIs beyond what was allocated in
-the first place.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[maz: updated comment]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[ardb: trivial tweak of unrelated context]
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jann Horn <jannh@google.com>
+Fixes: db446a08c23d ("aio: convert the ioctx list to table lookup v3")
+Cc: Benjamin LaHaise <bcrl@kvack.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org # v3.12+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/aio.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -663,7 +663,7 @@ static struct irq_chip its_irq_chip = {
-  * This gives us (((1UL << id_bits) - 8192) >> 5) possible allocations.
-  */
- #define IRQS_PER_CHUNK_SHIFT	5
--#define IRQS_PER_CHUNK		(1 << IRQS_PER_CHUNK_SHIFT)
-+#define IRQS_PER_CHUNK		(1UL << IRQS_PER_CHUNK_SHIFT)
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -68,9 +68,9 @@ struct aio_ring {
+ #define AIO_RING_PAGES	8
  
- static unsigned long *lpi_bitmap;
- static u32 lpi_chunks;
-@@ -1168,11 +1168,10 @@ static struct its_device *its_create_dev
+ struct kioctx_table {
+-	struct rcu_head	rcu;
+-	unsigned	nr;
+-	struct kioctx	*table[];
++	struct rcu_head		rcu;
++	unsigned		nr;
++	struct kioctx __rcu	*table[];
+ };
  
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	/*
--	 * At least one bit of EventID is being used, hence a minimum
--	 * of two entries. No, the architecture doesn't let you
--	 * express an ITT with a single entry.
-+	 * We allocate at least one chunk worth of LPIs bet device,
-+	 * and thus that many ITEs. The device may require less though.
- 	 */
--	nr_ites = max(2UL, roundup_pow_of_two(nvecs));
-+	nr_ites = max(IRQS_PER_CHUNK, roundup_pow_of_two(nvecs));
- 	sz = nr_ites * its->ite_size;
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
- 	itt = kzalloc(sz, GFP_KERNEL);
+ struct kioctx_cpu {
+@@ -327,7 +327,7 @@ static int aio_ring_mremap(struct vm_are
+ 	for (i = 0; i < table->nr; i++) {
+ 		struct kioctx *ctx;
+ 
+-		ctx = table->table[i];
++		ctx = rcu_dereference(table->table[i]);
+ 		if (ctx && ctx->aio_ring_file == file) {
+ 			if (!atomic_read(&ctx->dead)) {
+ 				ctx->user_id = ctx->mmap_base = vma->vm_start;
+@@ -651,9 +651,9 @@ static int ioctx_add_table(struct kioctx
+ 	while (1) {
+ 		if (table)
+ 			for (i = 0; i < table->nr; i++)
+-				if (!table->table[i]) {
++				if (!rcu_access_pointer(table->table[i])) {
+ 					ctx->id = i;
+-					table->table[i] = ctx;
++					rcu_assign_pointer(table->table[i], ctx);
+ 					spin_unlock(&mm->ioctx_lock);
+ 
+ 					/* While kioctx setup is in progress,
+@@ -828,8 +828,8 @@ static int kill_ioctx(struct mm_struct *
+ 	}
+ 
+ 	table = rcu_dereference_raw(mm->ioctx_table);
+-	WARN_ON(ctx != table->table[ctx->id]);
+-	table->table[ctx->id] = NULL;
++	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
++	RCU_INIT_POINTER(table->table[ctx->id], NULL);
+ 	spin_unlock(&mm->ioctx_lock);
+ 
+ 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
+@@ -874,7 +874,8 @@ void exit_aio(struct mm_struct *mm)
+ 
+ 	skipped = 0;
+ 	for (i = 0; i < table->nr; ++i) {
+-		struct kioctx *ctx = table->table[i];
++		struct kioctx *ctx =
++			rcu_dereference_protected(table->table[i], true);
+ 
+ 		if (!ctx) {
+ 			skipped++;
+@@ -1063,7 +1064,7 @@ static struct kioctx *lookup_ioctx(unsig
+ 	if (!table || id >= table->nr)
+ 		goto out;
+ 
+-	ctx = table->table[id];
++	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+ 		percpu_ref_get(&ctx->users);
+ 		ret = ctx;
