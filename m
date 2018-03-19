@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs6dMi5tTjHY8sLYtYjOSaikyYlMEXx2fsJMwL4gdK1lee2iEeEuy/0zEXNUIlKfIm/h/u4
-ARC-Seal: i=1; a=rsa-sha256; t=1521483507; cv=none;
+X-Google-Smtp-Source: AG47ELsDc4f8H3eUPu0UGg34DHffMlX+YqmNUGzJtenxnW31UljznRhIBBx3onwlMeIjIzUooVKZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483505; cv=none;
         d=google.com; s=arc-20160816;
-        b=vE8UtsswLlewtB5hFa9hSp1EsF8RQn7XBGs0ZntmwbXnT37C5HFD8n/a/i/XZ1BaMC
-         W/YO39BAv9bFHXugzG1TZpJt/6ZkrVTWCmnJAnLtk3I/JPDV5AxpkRhjEqZrtwF1UDAb
-         CJm5oZu16+konvkAMdrm9QGHOy+t6f+Lm2BfsH8z4Dc5QucZN2/eahFfY1kQsqpgoOkP
-         w4DkrcY/CR+0Kw1iQxiR0ntr0BlOKXee3vQ0EYUp9mZbnQTADeVDUOoTF9HoXXV5+Tvv
-         JVuKuBK3DTCH5apPsUAkVSXYs1kEY5KG2Km8zRtuEOmFwMVMjEEGRLnBGK65dQwCn0hG
-         Zy0A==
+        b=UemGDetB88vNgJZsKbov5tcvHgDXLYyXludE4FWQByd4AatgtQTdxqVXrEPwVWUjJM
+         oAdJ2Kw46MA5DZoztBAjMZ4K8u77XTNiY1sQZMui0DiOL/bS9M+P9zruhRPeQVfyhHqD
+         9JTy8nfd0R+t+JphxDjq9PRhiSuhcvbXSKb3ZwWEwFp3hB09JrNVNn7OmikYuNdKPWUu
+         468R+G5KpvNqtmaxUtdoPFgJmQGOILIPri4AIQl9C6/i/sA5oYtmCIphdsB2llI7Ohxf
+         wLs7QOgL/eidIwBrq6JJP+SLS4LdHvl+t114+ULZlPzZgQwHMVdZjvJx88ub00zbMH/Z
+         U4mQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J20vZTLdvB8c8eLxZ5x/lzcCZtNJv7NIe3bX3+P/yqA=;
-        b=ofXQ6Z9PyORGX2MHOQ1+V9qL7IdAbydoI3dcBGEa7uxJGJ5rA0ekAq0u1MJAzvQfbg
-         6jOz2kBwVw7L7qfbi6Ma+DuciZD7PK1u/1RFctwO28DhXvANhrc47Ms24OQlQLyfeN+o
-         ACkNUbhn8xEQdPCu4L455MleIF0FjgkEDQ15w3m0w0VLpTzzIRb41qpn3HlduQQg9cgZ
-         w5oZ4Jnu4obKxauuVt8aPerODfIAuI//v7xfrWP+8KqfxoNCrFgjd403eFr4XCbJHzgP
-         1S/ISPXF39Lpc5v9c6y5eq+dNskrmcR7XnXRNRfSustHvHODYyHwvCHOSWF6VjvJ9+ng
-         ih3w==
+        bh=m8tyK2XdGnjlnumf5srQW6/7ORsua7ubLGTepTgFiZU=;
+        b=pRycgYaondeUxNJYH98/xGFjl0RcOCVZLaYTlAqNS2oGjtfaEHK+T0EGg0Wb7/9W1v
+         qADi6f9iaaKCC82FT8Jt67jYD22c+zC1Im+nsln3FJ43ar6u3JysP8eiUbQUDZDW1eCW
+         u4eJHT/GA415ETdd4YNmahaQj096iTZ58vQq1LkqSOyzEhAnTryTBXbJJaM176E7BJt0
+         podCmSTlGk4ivJXH9l9uD6aP7AMXQLTjAe2HxuH8VtBfy8aIMo4t8nJFkokU4N/XV4If
+         MDg+25gnBWdAnDR1v/vGy7VNAnQEa2gXuXPQldIifdpQy753pE7vk7F1KLDxqfCEotCS
+         tsJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 015/241] ath10k: fix a warning during channel switch with multiple vaps
-Date: Mon, 19 Mar 2018 19:04:40 +0100
-Message-Id: <20180319180751.804953757@linuxfoundation.org>
+Subject: [PATCH 4.9 014/241] drm/sun4i: Set drm_crtc.port to the underlying TCONs output port node
+Date: Mon, 19 Mar 2018 19:04:39 +0100
+Message-Id: <20180319180751.766649626@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390777971895276?=
-X-GMAIL-MSGID: =?utf-8?q?1595391090586577561?=
+X-GMAIL-THRID: =?utf-8?q?1595391088087471466?=
+X-GMAIL-MSGID: =?utf-8?q?1595391088087471466?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +50,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
 
-[ Upstream commit c73f8c00330f59ce9b1ace9ff698aca83390d358 ]
+[ Upstream commit 7544860733d158e3edbf309f27e79e258c8f66bd ]
 
-Doing a channel switch via hostapd_cli seems to update
-the new channel context for each VAP's appropriately as below
-in 'ath10k_mac_update_vif_chan', hence we can safely suppress the
-warning that shows up during this operation and dump the warning only
-if no vaps are available for channel switch
+The way drm_of_find_possible_crtcs works is it tries to match the
+remote-endpoint of the given node's various endpoints to all the
+crtc's .port field. Thus we need to set drm_crtc.port to the output
+port node of the underlying TCON.
 
-hostapd_cli -i wlan0 chan_switch 5 5200
-OK
-
-ath10k_pci : mac chanctx switch n_vifs 3 mode 1
-ath10k_pci : mac chanctx switch vdev_id 2 freq 5180->5200 width 0->0
-ath10k_pci : mac chanctx switch vdev_id 1 freq 5180->5200 width 0->0
-ath10k_pci : mac chanctx switch vdev_id 0 freq 5180->5200 width 0->0
-
-Call Trace:
-
-WARNING: backports-20161201-3.14.77-9ab3068/drivers/net/wireless/ath/ath10k/mac.c:7126
-[<c022f2d4>] (warn_slowpath_null) from [<bf7f150c>]
-(ath10k_reconfig_complete+0xe4/0x25c [ath10k_core])
-[<bf7f150c>] (ath10k_reconfig_complete [ath10k_core])
-[<bf7f35f0>] (ath10k_mac_vif_ap_csa_work+0x214/0x370 [ath10k_core])
-[<bf7f38b8>] (ath10k_mac_op_change_chanctx+0x108/0x128 [ath10k_core])
-[<bf782ac0>] (ieee80211_recalc_chanctx_min_def+0x30c/0x430 [mac80211])
-[<bf7830a4>] (ieee80211_recalc_smps_chanctx+0x2ec/0x840 [mac80211])
-[<bf7843e8>] (ieee80211_vif_use_reserved_context+0x7c/0xf8 [mac80211])
-[<bf7843e8>] (ieee80211_vif_use_reserved_context [mac80211])
-[<bf76e5d4>] (ieee80211_csa_finalize_work+0x5c/0x88 [mac80211])
-
-Fixes: d7bf4b4aba05 ("ath10k: fix ar->rx_channel updating logic")
-Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_crtc.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -7070,7 +7070,7 @@ ath10k_mac_update_rx_channel(struct ath1
- 	lockdep_assert_held(&ar->data_lock);
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+@@ -19,6 +19,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/ioport.h>
+ #include <linux/of_address.h>
++#include <linux/of_graph.h>
+ #include <linux/of_irq.h>
+ #include <linux/regmap.h>
  
- 	WARN_ON(ctx && vifs);
--	WARN_ON(vifs && n_vifs != 1);
-+	WARN_ON(vifs && !n_vifs);
+@@ -136,5 +137,9 @@ struct sun4i_crtc *sun4i_crtc_init(struc
  
- 	/* FIXME: Sort of an optimization and a workaround. Peers and vifs are
- 	 * on a linked list now. Doing a lookup peer -> vif -> chanctx for each
+ 	drm_crtc_helper_add(&scrtc->crtc, &sun4i_crtc_helper_funcs);
+ 
++	/* Set crtc.port to output port node of the tcon */
++	scrtc->crtc.port = of_graph_get_port_by_id(drv->tcon->dev->of_node,
++						   1);
++
+ 	return scrtc;
+ }
