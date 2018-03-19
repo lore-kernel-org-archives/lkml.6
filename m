@@ -1,231 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755396AbeCSHw2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:52:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:35355 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755285AbeCSHwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:52:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,329,1517904000";
-   d="scan'208";a="26831926"
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Topic: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Index: AQHTvHwgJKD0PzK49EKiN4zj+umOtKPXM8CA
-Date: Mon, 19 Mar 2018 07:51:58 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
- <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
-In-Reply-To: <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWNiNGFlN2ItNTllMy00NDQwLThhNTEtODE5NTlmYmM5MzBkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InYxRU0zVkw2MTE5NHFkeWd0T2loRlNaeHZhaHJ6TDlJbXQ2WnB3SW1weUE9In0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1755380AbeCSH45 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:56:57 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:8319 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeCSH4x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 03:56:53 -0400
+Date: Mon, 19 Mar 2018 13:25:56 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Subject: Re: [RFC v2 0/2] kernel: add support to collect hardware logs in
+ crash recovery kernel
+Message-ID: <20180319075555.GA22955@chelsio.com>
+References: <1521198725-13463-1-git-send-email-rahul.lakkireddy@chelsio.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521198725-13463-1-git-send-email-rahul.lakkireddy@chelsio.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Shameer Kolothum
-> Sent: Friday, March 16, 2018 12:35 AM
+On Friday, March 03/16/18, 2018 at 16:42:03 +0530, Rahul Lakkireddy wrote:
+> On production servers running variety of workloads over time, kernel
+> panic can happen sporadically after days or even months. It is
+> important to collect as much debug logs as possible to root cause
+> and fix the problem, that may not be easy to reproduce. Snapshot of
+> underlying hardware/firmware state (like register dump, firmware
+> logs, adapter memory, etc.), at the time of kernel panic will be very
+> helpful while debugging the culprit device driver.
 > 
-> This retrieves the reserved regions associated with dev group and
-> checks for conflicts with any existing dma mappings. Also update
-> the iova list excluding the reserved regions.
+> This series of patches add new generic framework that enable device
+> drivers to collect device specific snapshot of the hardware/firmware
+> state of the underlying device in the crash recovery kernel. In crash
+> recovery kernel, the collected logs are exposed via /proc/crashdd/
+> directory, which is copied by user space scripts for post-analysis.
 > 
-> Signed-off-by: Shameer Kolothum
-> <shameerali.kolothum.thodi@huawei.com>
+> A kernel module crashdd is newly added. In crash recovery kernel,
+> crashdd exposes /proc/crashdd/ directory containing device specific
+> hardware/firmware logs.
+> 
+> The sequence of actions done by device drivers to append their device
+> specific hardware/firmware logs to /proc/crashdd/ directory are as
+> follows:
+> 
+> 1. During probe (before hardware is initialized), device drivers
+> register to the crashdd module (via crashdd_add_dump()), with
+> callback function, along with buffer size and log name needed for
+> firmware/hardware log collection.
+> 
+> 2. Crashdd creates a driver's directory under /proc/crashdd/<driver>.
+> Then, it allocates the buffer with requested size and invokes the
+> device driver's registered callback function.
+> 
+> 3. Device driver collects all hardware/firmware logs into the buffer
+> and returns control back to crashdd.
+> 
+> 4. Crashdd exposes the buffer as a file via
+> /proc/crashdd/<driver>/<dump_file>.
+> 
+> 5. User space script (/usr/lib/kdump/kdump-lib-initramfs.sh) copies
+> the entire /proc/crashdd/ directory to /var/crash/ directory.
+> 
+> Patch 1 adds crashdd module to allow drivers to register callback to
+> collect the device specific hardware/firmware logs.  The module also
+> exports /proc/crashdd/ directory containing the hardware/firmware logs.
+> 
+> Patch 2 shows a cxgb4 driver example using the API to collect
+> hardware/firmware logs in crash recovery kernel, before hardware is
+> initialized.  The logs for the devices are made available under
+> /proc/crashdd/cxgb4/ directory.
+> 
+> Suggestions and feedback will be much appreciated.
+> 
+> Thanks,
+> Rahul
+> 
+> RFC v1: https://www.spinics.net/lists/netdev/msg486562.html
+> 
 > ---
->  drivers/vfio/vfio_iommu_type1.c | 90
-> +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 90 insertions(+)
+> v2:
+> - Added new crashdd module that exports /proc/crashdd/ containing
+>   driver's registered hardware/firmware logs in patch 1.
+> - Replaced the API to allow drivers to register their hardware/firmware
+>   log collect routine in crash recovery kernel in patch 1.
+> - Updated patch 2 to use the new API in patch 1.
 > 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c
-> b/drivers/vfio/vfio_iommu_type1.c
-> index 1123c74..cfe2bb2 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
-> list_head *iova,
->  	return 0;
->  }
+> Rahul Lakkireddy (2):
+>   proc/crashdd: add API to collect hardware dump in second kernel
+>   cxgb4: collect hardware dump in second kernel
 > 
-> +/*
-> + * Check reserved region conflicts with existing dma mappings
-> + */
-> +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-> +				struct list_head *resv_regions)
-> +{
-> +	struct iommu_resv_region *region;
-> +
-> +	/* Check for conflict with existing dma mappings */
-> +	list_for_each_entry(region, resv_regions, list) {
-> +		if (vfio_find_dma(iommu, region->start, region->length))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +/*
-> + * Check iova region overlap with  reserved regions and
-> + * exclude them from the iommu iova range
-> + */
-> +static int vfio_iommu_resv_exclude(struct list_head *iova,
-> +					struct list_head *resv_regions)
-> +{
-> +	struct iommu_resv_region *resv;
-> +	struct vfio_iova *n, *next;
-> +
-> +	list_for_each_entry(resv, resv_regions, list) {
-> +		phys_addr_t start, end;
-> +
-> +		start = resv->start;
-> +		end = resv->start + resv->length - 1;
-> +
-> +		list_for_each_entry_safe(n, next, iova, list) {
-> +			int ret = 0;
-> +
-> +			/* No overlap */
-> +			if ((start > n->end) || (end < n->start))
-> +				continue;
-> +			/*
-> +			 * Insert a new node if current node overlaps with
-> the
-> +			 * reserve region to exlude that from valid iova
-> range.
-> +			 * Note that, new node is inserted before the
-> current
-> +			 * node and finally the current node is deleted
-> keeping
-> +			 * the list updated and sorted.
-> +			 */
-> +			if (start > n->start)
-> +				ret = vfio_iommu_iova_insert(&n->list,
-> +							n->start, start - 1);
-> +			if (!ret && end < n->end)
-> +				ret = vfio_iommu_iova_insert(&n->list,
-> +							end + 1, n->end);
-> +			if (ret)
-> +				return ret;
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 +++
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  12 ++
+>  fs/proc/Kconfig                                  |  11 +
+>  fs/proc/Makefile                                 |   1 +
+>  fs/proc/crashdd.c                                | 263 +++++++++++++++++++++++
+>  include/linux/crashdd.h                          |  43 ++++
+>  8 files changed, 362 insertions(+)
+>  create mode 100644 fs/proc/crashdd.c
+>  create mode 100644 include/linux/crashdd.h
+> 
+> -- 
+> 2.14.1
+> 
 
-Is it safer to delete the 1st node here in case of failure of the 2nd node?
-There is no problem with current logic since upon error iova_copy will
-be released anyway. However this function alone doesn't assume the
-fact of a temporary list, thus it's better to keep the list clean w/o garbage
-left from any error handling.
+Does anyone have any comments with this approach?  If there are no
+comments, then I'll re-spin this RFC to Patch series.
 
-> +
-> +			list_del(&n->list);
-> +			kfree(n);
-> +		}
-> +	}
-> +
-> +	if (list_empty(iova))
-> +		return -EINVAL;
-
-if list_empty should BUG_ON here? or do we really need this check?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static void vfio_iommu_resv_free(struct list_head *resv_regions)
-> +{
-> +	struct iommu_resv_region *n, *next;
-> +
-> +	list_for_each_entry_safe(n, next, resv_regions, list) {
-> +		list_del(&n->list);
-> +		kfree(n);
-> +	}
-> +}
-> +
->  static void vfio_iommu_iova_free(struct list_head *iova)
->  {
->  	struct vfio_iova *n, *next;
-> @@ -1366,6 +1442,7 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
->  	phys_addr_t resv_msi_base;
->  	struct iommu_domain_geometry geo;
->  	LIST_HEAD(iova_copy);
-> +	LIST_HEAD(group_resv_regions);
-> 
->  	mutex_lock(&iommu->lock);
-> 
-> @@ -1444,6 +1521,13 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
->  		goto out_detach;
->  	}
-> 
-> +	iommu_get_group_resv_regions(iommu_group,
-> &group_resv_regions);
-> +
-> +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
-> +		ret = -EINVAL;
-> +		goto out_detach;
-> +	}
-> +
->  	/* Get a copy of the current iova list and work on it */
->  	ret = vfio_iommu_iova_get_copy(iommu, &iova_copy);
->  	if (ret)
-> @@ -1454,6 +1538,10 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
->  	if (ret)
->  		goto out_detach;
-> 
-> +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
-> +	if (ret)
-> +		goto out_detach;
-> +
->  	resv_msi = vfio_iommu_has_sw_msi(iommu_group,
-> &resv_msi_base);
-> 
->  	INIT_LIST_HEAD(&domain->group_list);
-> @@ -1514,6 +1602,7 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
->  	/* Delete the old one and insert new iova list */
->  	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
->  	mutex_unlock(&iommu->lock);
-> +	vfio_iommu_resv_free(&group_resv_regions);
-> 
->  	return 0;
-> 
-> @@ -1522,6 +1611,7 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
->  out_domain:
->  	iommu_domain_free(domain->domain);
->  	vfio_iommu_iova_free(&iova_copy);
-> +	vfio_iommu_resv_free(&group_resv_regions);
->  out_free:
->  	kfree(domain);
->  	kfree(group);
-> --
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+Thanks,
+Rahul
