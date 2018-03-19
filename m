@@ -1,51 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933088AbeCSPkM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:40:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932670AbeCSPkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:40:11 -0400
-Message-ID: <1521474008.20208.2.camel@redhat.com>
-Subject: Re: linux-next on x60: network manager often complains "network is
- disabled" after resume
-From: Dan Williams <dcbw@redhat.com>
-To: Pavel Machek <pavel@ucw.cz>, Woody Suwalski <terraluna977@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Netdev list <netdev@vger.kernel.org>
-Date: Mon, 19 Mar 2018 10:40:08 -0500
-In-Reply-To: <20180319092106.GA5683@amd>
-References: <20180318104023.GA10392@amd>
-         <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
-         <20180319092106.GA5683@amd>
+        id S933132AbeCSPmM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:42:12 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:46801 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932418AbeCSPmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:42:09 -0400
+X-Google-Smtp-Source: AG47ELtL3bE57265jwfJlnXiUFC0qy0NSS24EvjypPlk6Jtsvr+X9H/ZJh5ndyUYwWPLRWiwea3xccBwdu7qI1kloXc=
+MIME-Version: 1.0
+In-Reply-To: <20180212210053.GO9418@n2100.armlinux.org.uk>
+References: <20180212142439.15885-1-brgl@bgdev.pl> <36b4b8a0-0254-c6fa-c84f-ceab20c326ad@lechnology.com>
+ <20180212210053.GO9418@n2100.armlinux.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 19 Mar 2018 16:42:07 +0100
+Message-ID: <CAMRc=MfD0m6rs7hVyf9B5ScCa1Wu9zUGYMNs-tmQJUqeSpNPdA@mail.gmail.com>
+Subject: Re: [PATCH] clk: don't call __of_clk_get_by_name() unnecessarily from clk_get()
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-19 at 10:21 +0100, Pavel Machek wrote:
-> On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
-> > Pavel Machek wrote:
-> > > Hi!
-> > > 
-> > > With recent linux-next, after resume networkmanager often claims
-> > > that
-> > > "network is disabled". Sometimes suspend/resume clears that.
-> > > 
-> > > Any ideas? Does it work for you?
-> > > 									
-> > > Pavel
-> > 
-> > Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
-> 
-> Thanks for testing... but yes, 4.16 should be ok. If not fixed,
-> problem will appear in 4.17-rc1.
+2018-02-12 22:00 GMT+01:00 Russell King - ARM Linux <linux@armlinux.org.uk>:
+> On Mon, Feb 12, 2018 at 02:51:57PM -0600, David Lechner wrote:
+>> On 02/12/2018 08:24 AM, Bartosz Golaszewski wrote:
+>> >From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> >
+>> >The way this function is implemented caused some confusion when
+>> >converting the TI DaVinci platform to using the common clock framework.
+>> >
+>> >Current kernel supports booting DaVinci boards both in device tree as
+>> >well as legacy, board-file mode. In the latter, we always end up
+>> >calling clk_get_sys() as of_node is NULL and __of_clk_get_by_name()
+>> >returns -ENOENT.
+>> >
+>> >It was not obvious at first glance how clk_get(dev, NULL) will work in
+>> >board-file mode since we always call __of_clk_get_by_name(). Let's make
+>> >it clearer by checking if of_node is NULL and skipping right to
+>> >clk_get_sys().
+>> >
+>> >Cc: Sekhar Nori <nsekhar@ti.com>
+>> >Cc: Kevin Hilman <khilman@baylibre.com>
+>> >Cc: David Lechner <david@lechnology.com>
+>> >Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> >---
+>> >  drivers/clk/clkdev.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> >diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+>> >index 7513411140b6..f394e8964909 100644
+>> >--- a/drivers/clk/clkdev.c
+>> >+++ b/drivers/clk/clkdev.c
+>> >@@ -199,7 +199,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+>> >     const char *dev_id = dev ? dev_name(dev) : NULL;
+>> >     struct clk *clk;
+>> >-    if (dev) {
+>> >+    if (dev && dev->of_node) {
+>> >             clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
+>> >             if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+>> >                     return clk;
+>> >
+>>
+>> Shouldn't you be sending this to the linux-clk mailing list and cc'ing
+>> the clock maintainers?
+>
+> No, I'm the maintainer for clkdev, as per MAINTAINERS.
+>
+>> FWIW, it seems pretty clear to me that if we are using a board file
+>> then we should expect clk_get_sys() to be called because there is
+>> no device tree.
+>
+> clk_get() pre-dates DT, and using it has no bearing on whether DT is
+> in use or not.  The above change looks correct to me - if the
+> struct device is not a DT device, then we shouldn't be trying to look
+> up the clock in DT.
+>
+> --
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+> According to speedtest.net: 8.21Mbps down 510kbps up
 
-Where does the complaint occur?  In the GUI, or with nmcli, or
-somewhere else?  Also, what's the output of "nmcli dev" after resume?
+Hi Russell,
 
-Dan
+can you pick this patch up for 4.17?
+
+Thanks in advance,
+Bartosz
