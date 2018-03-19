@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeCSNT4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:19:56 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:36002 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932635AbeCSNTz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:19:55 -0400
-From: Stefan Chulski <stefanc@marvell.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Antoine Tenart <antoine.tenart@bootlin.com>,
+        id S933205AbeCSNXY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:23:24 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:35307 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932635AbeCSNXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 09:23:18 -0400
+Date: Mon, 19 Mar 2018 14:23:11 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stefan Chulski <stefanc@marvell.com>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
         "davem@davemloft.net" <davem@davemloft.net>,
         "kishon@ti.com" <kishon@ti.com>,
@@ -25,72 +25,34 @@ CC: Antoine Tenart <antoine.tenart@bootlin.com>,
         "mw@semihalf.com" <mw@semihalf.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
+Subject: Re: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
  interface to use in-band negotiation
-Thread-Topic: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
- interface to use in-band negotiation
-Thread-Index: AQHTvT77nBQG5ffkBEaqTn9C4RyF8qPXI08AgAAm5YCAABwLgIAAAhSAgAAiFzD//+BJgIAAI9Aw
-Date: Mon, 19 Mar 2018 13:19:24 +0000
-Message-ID: <02614799e30f4823a97fca0e9f29b14b@IL-EXCH01.marvell.com>
+Message-ID: <20180319132311.GA26039@lunn.ch>
 References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
  <20180316103351.16616-3-antoine.tenart@bootlin.com>
- <20180316155307.GQ9418@n2100.armlinux.org.uk> <20180319085252.GF4519@kwain>
- <20180319111205.GB2743@n2100.armlinux.org.uk> <20180319125227.GI4519@kwain>
+ <20180316155307.GQ9418@n2100.armlinux.org.uk>
+ <20180319085252.GF4519@kwain>
+ <20180319111205.GB2743@n2100.armlinux.org.uk>
+ <20180319125227.GI4519@kwain>
  <20180319125953.GD19795@lunn.ch>
  <54e290a192734831b5db22191f056a81@IL-EXCH01.marvell.com>
  <20180319130823.GA22306@lunn.ch>
-In-Reply-To: <20180319130823.GA22306@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [199.203.130.14]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <02614799e30f4823a97fca0e9f29b14b@IL-EXCH01.marvell.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_09:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1803190155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02614799e30f4823a97fca0e9f29b14b@IL-EXCH01.marvell.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> phylink pool SFP loss signal to determine link up/down?
 
+Yes, the SFP driver will act on a GPIO for link up/down, and a GPIO
+for module prescience. When it detects an SFP module hotplugged, it
+reads the EEPROM to find out what sort of module it is, and what mode
+should be used between the MAC and SFP module. It will also handle if
+the SFP module is copper, and has a PHY in it...
 
-> -----Original Message-----
-> From: Andrew Lunn [mailto:andrew@lunn.ch]
-> Sent: Monday, March 19, 2018 3:08 PM
-> To: Stefan Chulski <stefanc@marvell.com>
-> Cc: Antoine Tenart <antoine.tenart@bootlin.com>; Russell King - ARM Linux
-> <linux@armlinux.org.uk>; davem@davemloft.net; kishon@ti.com;
-> gregory.clement@bootlin.com; jason@lakedaemon.net;
-> sebastian.hesselbarth@gmail.com; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; thomas.petazzoni@bootlin.com;
-> maxime.chevallier@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai
-> <nadavh@marvell.com>; Yan Markman <ymarkman@marvell.com>;
-> mw@semihalf.com; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [EXT] Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR
-> interface to use in-band negotiation
-> 
-> > > If they don't have PHYs, how are the connected to the outside world?
-> > >
-> > >    Andrew
-> >
-> > By external SFP or direct attached cable.
-> 
-> Maybe i'm missing something, but don't you just need to add an SFP device
-> in the device tree. The SFP code and PHYLINK will work together, query what
-> the SFP module is, use the GPIOs to determine link up/down and module
-> present, and tell the MAC how to configure the MAC-SFP link?
-> 
->      Andrew
-
-phylink pool SFP loss signal to determine link up/down?
-
-Stefan,
-Best Regards.
+       Andrew
