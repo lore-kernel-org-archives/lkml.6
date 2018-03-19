@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755836AbeCSPZJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:25:09 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42630 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755793AbeCSPZH (ORCPT
+        id S1755850AbeCSPZS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 11:25:18 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41782 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755842AbeCSPZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:25:07 -0400
-X-Google-Smtp-Source: AG47ELuUYXMA6w+X8XlF6feG5SKtWipfsjPywR5N23y0ZKWpwAanm+RQ2VKzu7M8xWU2NeZ4Okkrfw==
+        Mon, 19 Mar 2018 11:25:10 -0400
+X-Google-Smtp-Source: AG47ELuUKEJOdY6dDN9vcw3DkLKOEiOpC+Dh+f8EqETWbN6h9vk0UH6UCkb6TqH6d/ewyuiYah3YNw==
 From: Eric Dumazet <edumazet@google.com>
 To: x86 <x86@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>,
@@ -15,27 +15,24 @@ Cc: lkml <linux-kernel@vger.kernel.org>,
         Eric Dumazet <eric.dumazet@gmail.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>
-Subject: [PATCH v2 1/2] x86, msr: add rdmsr_safe_on_cpu_resched() and use it in msr_read()
-Date: Mon, 19 Mar 2018 08:25:02 -0700
-Message-Id: <20180319152503.123372-1-edumazet@google.com>
+Subject: [PATCH v2 2/2] x86, cpuid: allow cpuid_read() to schedule
+Date: Mon, 19 Mar 2018 08:25:03 -0700
+Message-Id: <20180319152503.123372-2-edumazet@google.com>
 X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180319152503.123372-1-edumazet@google.com>
+References: <20180319152503.123372-1-edumazet@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed high latencies caused by a daemon periodically reading
-various MSR on all cpus. KASAN kernels would see ~10ms latencies
-simply reading one MSR. Even without KASAN, sending IPI to CPU
+I noticed high latencies caused by a daemon periodically reading various
+MSR and cpuid on all cpus. KASAN kernels would see ~10ms latencies
+simply reading one cpuid. Even without KASAN, sending IPI to CPU
 in deep sleep state or blocking hard IRQ in a a long section,
-then waiting for the answer can consume hundreds of usec.
+then waiting for the answer can consume hundreds of usec or more.
 
-This patch adds rdmsr_safe_on_cpu_resched() which does not spin.
-
-I use this function from msr_read() but future patches might
-convert other callers to use this variant as well.
-
-Overall daemon cpu usage was reduced by 35 %,
-and latencies caused by msr_read() disappeared.
+Switching to smp_call_function_single_async() and a completion
+allows to reschedule and not burn cpu cycles.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
@@ -43,117 +40,85 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Hugh Dickins <hughd@google.com>
 ---
-v2: fixed the missing part for !CONFIG_SMP
+ arch/x86/kernel/cpuid.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
- arch/x86/include/asm/msr.h |  6 ++++++
- arch/x86/kernel/msr.c      |  2 +-
- arch/x86/lib/msr-smp.c     | 43 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 30df295f6d94c8ac6d87613acae8a32c50436c6d..15e220243a4d5e9da524fb7733e23e2766b6eb12 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -321,6 +321,7 @@ int wrmsrl_on_cpu(unsigned int cpu, u32 msr_no, u64 q);
- void rdmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs);
- void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs);
- int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h);
-+int rdmsr_safe_on_cpu_resched(unsigned int cpu, u32 msr_no, u32 *l, u32 *h);
- int wrmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h);
- int rdmsrl_safe_on_cpu(unsigned int cpu, u32 msr_no, u64 *q);
- int wrmsrl_safe_on_cpu(unsigned int cpu, u32 msr_no, u64 q);
-@@ -362,6 +363,11 @@ static inline int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no,
- {
- 	return rdmsr_safe(msr_no, l, h);
- }
-+static inline int rdmsr_safe_on_cpu_resched(unsigned int cpu, u32 msr_no,
-+					    u32 *l, u32 *h)
-+{
-+	return rdmsr_safe(msr_no, l, h);
-+}
- static inline int wrmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
- {
- 	return wrmsr_safe(msr_no, l, h);
-diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
-index ef688804f80d33088fef15448996a97f69e2b193..d464858cdcad59cb08a913388d60f1aee6d2277a 100644
---- a/arch/x86/kernel/msr.c
-+++ b/arch/x86/kernel/msr.c
-@@ -60,7 +60,7 @@ static ssize_t msr_read(struct file *file, char __user *buf,
- 		return -EINVAL;	/* Invalid chunk size */
- 
- 	for (; count; count -= 8) {
--		err = rdmsr_safe_on_cpu(cpu, reg, &data[0], &data[1]);
-+		err = rdmsr_safe_on_cpu_resched(cpu, reg, &data[0], &data[1]);
- 		if (err)
- 			break;
- 		if (copy_to_user(tmp, &data, 8)) {
-diff --git a/arch/x86/lib/msr-smp.c b/arch/x86/lib/msr-smp.c
-index 693cce0be82dffb822cecd0c7e38d2821aff896c..80eb10a759fd8356519c05db5c311285027d3463 100644
---- a/arch/x86/lib/msr-smp.c
-+++ b/arch/x86/lib/msr-smp.c
-@@ -2,6 +2,7 @@
- #include <linux/export.h>
- #include <linux/preempt.h>
- #include <linux/smp.h>
+diff --git a/arch/x86/kernel/cpuid.c b/arch/x86/kernel/cpuid.c
+index 0931a105ffe16cde4640e759efa600b23a756d84..1d300f96df4b316dbe3392c8221467cfd8593272 100644
+--- a/arch/x86/kernel/cpuid.c
++++ b/arch/x86/kernel/cpuid.c
+@@ -40,6 +40,7 @@
+ #include <linux/notifier.h>
+ #include <linux/uaccess.h>
+ #include <linux/gfp.h>
 +#include <linux/completion.h>
+ 
+ #include <asm/processor.h>
  #include <asm/msr.h>
+@@ -47,19 +48,27 @@
+ static struct class *cpuid_class;
+ static enum cpuhp_state cpuhp_cpuid_state;
  
- static void __rdmsr_on_cpu(void *info)
-@@ -159,6 +160,9 @@ static void __wrmsr_safe_on_cpu(void *info)
- 	rv->err = wrmsr_safe(rv->msr_no, rv->reg.l, rv->reg.h);
- }
- 
-+/* Note: This version spins in smp_call_function_single().
-+ * Consider using rdmsr_safe_on_cpu_resched() variant instead.
-+ */
- int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
- {
- 	int err;
-@@ -175,6 +179,45 @@ int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
- }
- EXPORT_SYMBOL(rdmsr_safe_on_cpu);
- 
-+struct msr_info_completion {
-+	struct msr_info		msr;
-+	struct completion	done;
++struct cpuid_regs_done {
++	struct cpuid_regs regs;
++	struct completion done;
 +};
 +
-+static void __rdmsr_safe_on_cpu_resched(void *info)
-+{
-+	struct msr_info_completion *rv = info;
-+
-+	__rdmsr_safe_on_cpu(&rv->msr);
-+	complete(&rv->done);
-+}
-+
-+/* This variant of rdmsr_safe_on_cpu() does reschedule instead of polling */
-+int rdmsr_safe_on_cpu_resched(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
-+{
-+	struct msr_info_completion rv;
-+	call_single_data_t csd = {
-+		.func	= __rdmsr_safe_on_cpu_resched,
-+		.info	= &rv,
-+	};
-+	int err;
-+
-+	memset(&rv, 0, sizeof(rv));
-+	init_completion(&rv.done);
-+	rv.msr.msr_no = msr_no;
-+
-+	err = smp_call_function_single_async(cpu, &csd);
-+	if (!err) {
-+		wait_for_completion(&rv.done);
-+		err = rv.msr.err;
-+	}
-+	*l = rv.msr.reg.l;
-+	*h = rv.msr.reg.h;
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(rdmsr_safe_on_cpu_resched);
-+
- int wrmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
+ static void cpuid_smp_cpuid(void *cmd_block)
  {
- 	int err;
+-	struct cpuid_regs *cmd = (struct cpuid_regs *)cmd_block;
++	struct cpuid_regs_done *cmd = cmd_block;
++
++	cpuid_count(cmd->regs.eax, cmd->regs.ecx,
++		    &cmd->regs.eax, &cmd->regs.ebx,
++		    &cmd->regs.ecx, &cmd->regs.edx);
+ 
+-	cpuid_count(cmd->eax, cmd->ecx,
+-		    &cmd->eax, &cmd->ebx, &cmd->ecx, &cmd->edx);
++	complete(&cmd->done);
+ }
+ 
+ static ssize_t cpuid_read(struct file *file, char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
+ 	char __user *tmp = buf;
+-	struct cpuid_regs cmd;
++	struct cpuid_regs_done cmd;
+ 	int cpu = iminor(file_inode(file));
+ 	u64 pos = *ppos;
+ 	ssize_t bytes = 0;
+@@ -68,19 +77,28 @@ static ssize_t cpuid_read(struct file *file, char __user *buf,
+ 	if (count % 16)
+ 		return -EINVAL;	/* Invalid chunk size */
+ 
++	init_completion(&cmd.done);
+ 	for (; count; count -= 16) {
+-		cmd.eax = pos;
+-		cmd.ecx = pos >> 32;
+-		err = smp_call_function_single(cpu, cpuid_smp_cpuid, &cmd, 1);
++		call_single_data_t csd = {
++			.func = cpuid_smp_cpuid,
++			.info = &cmd,
++		};
++
++		cmd.regs.eax = pos;
++		cmd.regs.ecx = pos >> 32;
++
++		err = smp_call_function_single_async(cpu, &csd);
+ 		if (err)
+ 			break;
+-		if (copy_to_user(tmp, &cmd, 16)) {
++		wait_for_completion(&cmd.done);
++		if (copy_to_user(tmp, &cmd.regs, 16)) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
+ 		tmp += 16;
+ 		bytes += 16;
+ 		*ppos = ++pos;
++		reinit_completion(&cmd.done);
+ 	}
+ 
+ 	return bytes ? bytes : err;
 -- 
 2.16.2.804.g6dcf76e118-goog
