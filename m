@@ -1,86 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932828AbeCSIyA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:54:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35996 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751617AbeCSIx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:53:57 -0400
-Date: Mon, 19 Mar 2018 09:53:55 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Li RongQing <lirongqing@baidu.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: [PATCH] mm/memcontrol.c: speed up to force empty a memory cgroup
-Message-ID: <20180319085355.GQ23100@dhcp22.suse.cz>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S932793AbeCSJCP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:02:15 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:49938 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932387AbeCSJCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:02:11 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2J91Vk7014340
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Cao jin <caoj.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH v2 3/5] kbuild: fix modname for composite modules
+Date: Mon, 19 Mar 2018 18:01:25 +0900
+Message-Id: <1521450087-27291-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521450087-27291-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1521450087-27291-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-03-18 16:29:30, Li RongQing wrote:
-> mem_cgroup_force_empty() tries to free only 32 (SWAP_CLUSTER_MAX) pages
-> on each iteration, if a memory cgroup has lots of page cache, it will
-> take many iterations to empty all page cache, so increase the reclaimed
-> number per iteration to speed it up. same as in mem_cgroup_resize_limit()
-> 
-> a simple test show:
-> 
->   $dd if=aaa  of=bbb  bs=1k count=3886080
->   $rm -f bbb
->   $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
-> 
-> Before: 0m0.252s ===> after: 0m0.178s
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
 
-Andrey was proposing something similar [1]. My main objection was that
-his approach might lead to over-reclaim. Your approach is more
-conservative because it just increases the batch size. The size is still
-rather arbitrary. Same as SWAP_CLUSTER_MAX but that one is a commonly
-used unit of reclaim in the MM code.
+Commit cf4f21938e13 ("kbuild: Allow to specify composite modules
+with modname-m") added modname-m support, but missed to update the
+corresponding multi-objs-m & modname-multi definition.
 
-I would be really curious about more detailed explanation why having a
-larger batch yields to a better performance because we are doingg
-SWAP_CLUSTER_MAX batches at the lower reclaim level anyway.
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-[1] http://lkml.kernel.org/r/20180119132544.19569-2-aryabinin@virtuozzo.com
+Changes in v2: None
 
-> 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
->  mm/memcontrol.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 670e99b68aa6..8910d9e8e908 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2480,7 +2480,7 @@ static int mem_cgroup_resize_limit(struct mem_cgroup *memcg,
->  		if (!ret)
->  			break;
->  
-> -		if (!try_to_free_mem_cgroup_pages(memcg, 1,
-> +		if (!try_to_free_mem_cgroup_pages(memcg, 1024,
->  					GFP_KERNEL, !memsw)) {
->  			ret = -EBUSY;
->  			break;
-> @@ -2610,7 +2610,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
->  		if (signal_pending(current))
->  			return -EINTR;
->  
-> -		progress = try_to_free_mem_cgroup_pages(memcg, 1,
-> +		progress = try_to_free_mem_cgroup_pages(memcg, 1024,
->  							GFP_KERNEL, true);
->  		if (!progress) {
->  			nr_retries--;
-> -- 
-> 2.11.0
+ scripts/Makefile.lib | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 7feb960..35c868f 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -50,7 +50,7 @@ single-used-m := $(sort $(filter-out $(multi-used-m),$(obj-m)))
+ # Build list of the parts of our composite objects, our composite
+ # objects depend on those (obviously)
+ multi-objs-y := $(foreach m, $(multi-used-y), $($(m:.o=-objs)) $($(m:.o=-y)))
+-multi-objs-m := $(foreach m, $(multi-used-m), $($(m:.o=-objs)) $($(m:.o=-y)))
++multi-objs-m := $(foreach m, $(multi-used-m), $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m)))
+ 
+ # $(subdir-obj-y) is the list of objects in $(obj-y) which uses dir/ to
+ # tell kbuild to descend
+@@ -173,7 +173,7 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
+ # If the object belongs to two or more multi-part objects, all of them are
+ # concatenated with a colon separator.
+ modname-multi = $(subst $(space),:,$(sort $(foreach m,$(multi-used),\
+-		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=)))))
++		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))),$(m:.o=)))))
+ 
+ # Useful for describing the dependency of composite objects
+ # Usage:
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
