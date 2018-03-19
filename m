@@ -1,72 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932737AbeCSI30 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 04:29:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932510AbeCSI3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:29:07 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 2/2] perf tools: Fix python extension build for gcc 8
-Date: Mon, 19 Mar 2018 09:29:02 +0100
-Message-Id: <20180319082902.4518-2-jolsa@kernel.org>
-In-Reply-To: <20180319082902.4518-1-jolsa@kernel.org>
-References: <20180319082902.4518-1-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S932753AbeCSI3s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 04:29:48 -0400
+Received: from mx133-tc.baidu.com ([61.135.168.133]:10521 "EHLO
+        tc-sys-mailedm06.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932143AbeCSI3n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:29:43 -0400
+From: Li RongQing <lirongqing@baidu.com>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org, mhocko@kernel.org
+Subject: [PATCH] mm/memcontrol.c: speed up to force empty a memory cgroup
+Date: Mon, 19 Mar 2018 16:29:30 +0800
+Message-Id: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: root <root@riddick.tpb.lab.eng.brq.redhat.com>
+mem_cgroup_force_empty() tries to free only 32 (SWAP_CLUSTER_MAX) pages
+on each iteration, if a memory cgroup has lots of page cache, it will
+take many iterations to empty all page cache, so increase the reclaimed
+number per iteration to speed it up. same as in mem_cgroup_resize_limit()
 
-The gcc 8 won't compile python extension code with
-following errors (one example):
+a simple test show:
 
-  python.c:830:15: error: cast between incompatible  function types from              \
-  ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’                       \
-  uct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to     \
-  ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _objeuct \
-  _object *)’} [-Werror=cast-function-type]
-     .ml_meth  = (PyCFunction)pyrf_evsel__open,
+  $dd if=aaa  of=bbb  bs=1k count=3886080
+  $rm -f bbb
+  $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
 
-The problem with PyMethodDef::ml_meth callback is that
-its type is determined based on PyMethodDef::ml_flags
-value, which we set as METH_VARARGS | METH_KEYWORDS.
+Before: 0m0.252s ===> after: 0m0.178s
 
-That indicates that the callback is expecting extra PyObject* arg,
-and is actually PyCFunctionWithKeywords type, but the base
-PyMethodDef::ml_meth type stays PyCFunction.
-
-Previous gccs did not find this, gcc8 now does. Fixing
-this by silencing this warning for python.c build.
-
-Link: http://lkml.kernel.org/n/tip-gyl1jq6b27e9ad0wm9x4v1vr@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- tools/perf/util/setup.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memcontrol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 6891635b50c3..1a3fac37112d 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -27,7 +27,7 @@ class install_lib(_install_lib):
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 670e99b68aa6..8910d9e8e908 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2480,7 +2480,7 @@ static int mem_cgroup_resize_limit(struct mem_cgroup *memcg,
+ 		if (!ret)
+ 			break;
  
- cflags = getenv('CFLAGS', '').split()
- # switch off several checks (need to be at the end of cflags list)
--cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
-+cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-cast-function-type' ]
+-		if (!try_to_free_mem_cgroup_pages(memcg, 1,
++		if (!try_to_free_mem_cgroup_pages(memcg, 1024,
+ 					GFP_KERNEL, !memsw)) {
+ 			ret = -EBUSY;
+ 			break;
+@@ -2610,7 +2610,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+ 		if (signal_pending(current))
+ 			return -EINTR;
  
- src_perf  = getenv('srctree') + '/tools/perf'
- build_lib = getenv('PYTHON_EXTBUILD_LIB')
+-		progress = try_to_free_mem_cgroup_pages(memcg, 1,
++		progress = try_to_free_mem_cgroup_pages(memcg, 1024,
+ 							GFP_KERNEL, true);
+ 		if (!progress) {
+ 			nr_retries--;
 -- 
-2.13.6
+2.11.0
