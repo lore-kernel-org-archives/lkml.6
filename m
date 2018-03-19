@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtHRhEn9KAY/3/4XOPrxRyu1wtfsr1LrkTrr7+URxvWafEW/tsUpnM/NNVEGMp+hBpX7pyq
-ARC-Seal: i=1; a=rsa-sha256; t=1521483578; cv=none;
+X-Google-Smtp-Source: AG47ELsTqgm7mhi8lxedAAspgx6lhyOyJTZUk8R6fwE/oRlMTmRYD5EQdl/IDMyYLDMNkWMKoka6
+ARC-Seal: i=1; a=rsa-sha256; t=1521483576; cv=none;
         d=google.com; s=arc-20160816;
-        b=xRAsNLJ8W/Rb02v+SiXdvXZ0BKV75/YqJ4Kh8Cam6jA7WRGcDiP9B0LfEBxkdlbUWl
-         VEJGftOnEBtr/Z/5C3uUlkEWfLhs65/M/OB7q+Q3h7ua6lN6w1exDFMM9cKDPk2LWjWc
-         HgZZJgTXY90tWmUt0d2k/tJDVDZfywkP3M+kyUvEM3oEBNqvqY4PRwBc6OB7ivvERE8/
-         OLAlIFuWmxrdQmriaLP/D8gGGCoPJMP24+LdfnNy6uhxt+pPBvYpqqfkd7NPBS5rf6py
-         P6+9//ns+2jMYWnMXpMbtqv7KP+5sm1IAL7Pf67dAne4+vwwHs240sxUugxt5hW6xTVT
-         6RUw==
+        b=vqETo5AZ2I3Wj4hUJ7Uye4KIWCsNwR2smnmSLRAmSVJWZ0DusjRHNnHu66MsWMKYFz
+         ys5VOp9hf+Bkfy/9CtmgjwA7W0PDSjFy2V2crwC5VGfSWL+2WZ00iWJB+zC7JxdIKcl/
+         PMqYv8GoBbQi9Ffs35RQtIjVnMDHC/BBSBuO2nkEnh30PFDUVRfEnKZtaYWMgELWsSGk
+         wDdfEPv5wppFsRXxBDsdmIcr39DwrVCHhPj0GeUVfH9GmyYhGVZBLIKaUbiA8OGykTm9
+         8gPZI07voKHOjcY2xFtNWiZhj9mweMLauA9q/VnalFTuWm2eYA9TIMm0czrdnAQW3sWJ
+         5jFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vNnxqQkVq+7smwG+NKZdeQsei0FVIGJaYPBRPpoTxQs=;
-        b=XGkgQCztEEshxIL2xbbfiylmeW505U/W/KKhJH91Lzf/7cbDtMUVxGfpFG3J79b7N8
-         RUXeQwU6kCUj/F7tiqA6zAJTREIvYBSZFgHqmmNSr3mdN0UEVU2rq3ZZcV9e6Gtyxo/V
-         bB2itO1NulPZMLQ9OQxJYt11EI2nyP+LfaGh5NXW2yBcgtkzB9OYCxbV7Eg4RPAzkx3e
-         UIa+DHi/Ov73Mufjt+whzyVDEr5bm0mMA+OV2Rna7a2NwXKNx1775z+6Z4Aw9WUWkoQ9
-         SJ+ro4NQBtUvpQNkUsGloFVOAluo8e+CG85h0iHWRaIeI/6bxTVERVaM+5DkL/czOUYr
-         3+xg==
+        bh=CvttG7Z8QqJ/CHEiwfpa5cK3vZld6mTXtIocDzQZXQA=;
+        b=aFrWrTe84IiFaXqGD74WmqJQ1hYyUUkXvfHF9Pqx+eKYDiziHkgCtTMyguzM0xnLC8
+         Rz6JzIC6ycrEQpXe1DEO9uyBLiribUKIJpsPaDxo7u92G9/tS1lw0PdUsqvpEqjm1HLi
+         Ji0C7MgN2EIjv2NJJFrK8eHIWUGE2Q0Cmk5JE8SiSz640W7rExWid3VYJvItGf006C2Y
+         4miBmld9rPIT3sIb9T1V/inTc+ngkjyfFbWrNXGU4AMCSEjSqHE6mIrqJ6e9dvXKZR2P
+         07KaLksKTcGjIIwxvqO45B0GnZhncZSGioGSsPNRSvAHwyWYSF12u1TPlf3uRFuApcG1
+         1YsA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	tomi.valkeinen@ti.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 041/241] perf probe: Fix concat_probe_trace_events
-Date: Mon, 19 Mar 2018 19:05:06 +0100
-Message-Id: <20180319180752.898616948@linuxfoundation.org>
+Subject: [PATCH 4.9 040/241] omapfb: dss: Handle return errors in dss_init_ports()
+Date: Mon, 19 Mar 2018 19:05:05 +0100
+Message-Id: <20180319180752.861721795@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391164951127831?=
-X-GMAIL-MSGID: =?utf-8?q?1595391164951127831?=
+X-GMAIL-THRID: =?utf-8?q?1595391162244534313?=
+X-GMAIL-MSGID: =?utf-8?q?1595391162244534313?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
 
-[ Upstream commit f0a30dca5f84fe8048271799b56677ac2279de66 ]
+[ Upstream commit 0348aaa34412e24ebe622a2b1b013e68d6ae5412 ]
 
-'*ntevs' contains number of elements present in 'tevs' array. If there
-are no elements in array, 'tevs2' can be directly assigned to 'tevs'
-without allocating more space. So the condition should be  '*ntevs == 0'
-not  'ntevs == 0'.
+dss_init_ports() is not handling return errors from dpi_init_port() and
+sdi_init_port(). It is also always returning 0 currently which results in
+part of error handling code in dss_bind() being unused.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 42bba263eb58 ("perf probe: Allow wildcard for cached events")
-Link: http://lkml.kernel.org/r/20170308065908.4128-1-ravi.bangoria@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fix dss_init_ports() to handle return errors from dpi_init_port() and
+sdi_init_port().
+
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: tomi.valkeinen@ti.com
+[b.zolnierkie: fail early on errors, minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/probe-event.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/dss/dss.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -3060,7 +3060,7 @@ concat_probe_trace_events(struct probe_t
- 	struct probe_trace_event *new_tevs;
- 	int ret = 0;
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dss.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
+@@ -941,11 +941,13 @@ static int dss_init_features(struct plat
+ 	return 0;
+ }
  
--	if (ntevs == 0) {
-+	if (*ntevs == 0) {
- 		*tevs = *tevs2;
- 		*ntevs = ntevs2;
- 		*tevs2 = NULL;
++static void dss_uninit_ports(struct platform_device *pdev);
++
+ static int dss_init_ports(struct platform_device *pdev)
+ {
+ 	struct device_node *parent = pdev->dev.of_node;
+ 	struct device_node *port;
+-	int r;
++	int r, ret = 0;
+ 
+ 	if (parent == NULL)
+ 		return 0;
+@@ -972,17 +974,21 @@ static int dss_init_ports(struct platfor
+ 
+ 		switch (port_type) {
+ 		case OMAP_DISPLAY_TYPE_DPI:
+-			dpi_init_port(pdev, port);
++			ret = dpi_init_port(pdev, port);
+ 			break;
+ 		case OMAP_DISPLAY_TYPE_SDI:
+-			sdi_init_port(pdev, port);
++			ret = sdi_init_port(pdev, port);
+ 			break;
+ 		default:
+ 			break;
+ 		}
+-	} while ((port = omapdss_of_get_next_port(parent, port)) != NULL);
++	} while (!ret &&
++		 (port = omapdss_of_get_next_port(parent, port)) != NULL);
+ 
+-	return 0;
++	if (ret)
++		dss_uninit_ports(pdev);
++
++	return ret;
+ }
+ 
+ static void dss_uninit_ports(struct platform_device *pdev)
