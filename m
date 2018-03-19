@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891247-1521497470-2-8829559104764803698
+X-Cyrus-Session-Id: sloti22d1t05-3907919-1521497469-2-7140978375735286869
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,64 +13,64 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521497469; b=BvcF2R61kKVMZe7CPGsBRZ/KtxAGbDrT4SlZ4O1afb5kS3K
-    8mzwejBlq95WcyJXzp7a9PRbgZ0QyWOngNwhP/OVcOURZpYW6OqCF+JW+Y9UN+Q/
-    YVHkks+04m3C/9xw5VC+k8aFHhFc4xWieDziqZ8UO23Vh+7dw30RO2K2ipXhqNFM
-    K6OLpHWw2r5w0dWF7pWIAbpfJ1CWjcEi5gEvw3o72Ekmu38MMiVTiPIGJoYSUZa6
-    mHUzLm+oXeX2vBWyIahiE2PPeElfKzwAOD6b0y9B+QUjShWrT+RQOPX5eQ+CaAGp
-    fYE5nji+ld51+9X11uqA9eAmGVZrR3YI6tI7ahA==
+    t=1521497468; b=lzW1uBH7XMJDETEAdXuFWQ9leEeRmP96thwVTeiNamagsHa
+    RxlaNEyGfenyxXaTmO3zk8E8TbQjnAebYBtjPBsNSnWefefO3fDuM2in1Noq59eJ
+    Z7n28LtSAJ4l49vHba94gRsKha2Onu/SL4EiHYWfgYwYTsjqiSXcM0vA5jxZVkuw
+    iBXggjoMGD+bH9pkpJWvfWUJn7NwGAdt1h3i7jZwBx6S9L4EdviRTknGg05epK4v
+    r2eTBrYZ08M2dNPuAGgBqwG6JTJOjyvl4nUua/8kdDDOkh9U6owOoHXX3VQZ5+qJ
+    Awn16qGymboVlwhjePAhzk9iXG1ZDsCS01OSCVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521497469; bh=WRvw5G
-    ZxDPY/S9baAQxEvZWmvk3/AH4eX9WzyjP2K/c=; b=Q/C3lJkkO4zUCYFK1EooNf
-    qJLP2CtwETP/99WDJSA0IP4YQkYKy++Ecdr1Zo7b4JhlF5nRjmlWVjItnKcGHoqK
-    6a1qObPdqOLl26FxsplYoxVZauN6fssXhGp6Hzkrvy64Naai/p6uKwLlpN9icGZP
-    +8mHQ/HsfhXpWN8SvzREyVFong5HzeplLixZIx7J4FhYsjubBlJPVDVT1T1rRWpa
-    MKs1pMhNUXV37Lqc54YmVTD0iInwmx+LzMufTjq6Ngf6fJFZ4+ZHUIXD0EyZ+Ktm
-    71cNV77IM99nrN0KxPnb40l07TX927+cA6g1Mew9CnKjeXo7yqeFhd5/n3mFxwKg
+    :mime-version:sender:list-id; s=arctest; t=1521497468; bh=Ql6qBF
+    G2veQpDTw1XrQKc9/Wv+nWhSXERxa0w6oVhcc=; b=kxiVcF5ajXdePmrOAna6WA
+    FMf2NkLvR1Phc7778ZPFoxjAfDagcgkJ3VOuH3Hu6DbFN9siCMRKXzHeionqBZ8x
+    BrlfTLcV9f8C9vvm883y0g9v2cCHlHYC8xR+Fxk1LAzeum8R7wEixqUY2vkpITUq
+    l8kcIISdqBKv1ZLIBQ5GX0rFDT17e7PLUW9NJ9Lu4kkS0FusYfVzCvdcGq2sYz3g
+    WL0E3+VWTuReI7I7JqGA5mumyMCqWBVBXlpexSlfDH7IWJEdnoCXOFAZU2e+uYqC
+    WMa+RpfMiwpFpUEnrJSZH/Oh5vRiVWJ/ERhngSJKMNGm9kBQyTNJe+XIAhLnW7tQ
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XV1brorU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Kf7z9y9H x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdehleenucevlhhushhtvghrufhiiigvpeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeeiieenucevlhhushhtvghrufhiiigvpeeg;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XV1brorU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Kf7z9y9H x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdehleenucevlhhushhtvghrufhiiigvpeeg;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejfeeiieenucevlhhushhtvghrufhiiigvpeeg;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934135AbeCSWKx (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:10:53 -0400
-Received: from mail-cys01nam02on0125.outbound.protection.outlook.com ([104.47.37.125]:46720
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S972209AbeCSWKA (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:10:00 -0400
+Received: from mail-bn3nam01on0109.outbound.protection.outlook.com ([104.47.33.109]:27808
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932872AbeCSPyk (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:54:40 -0400
+        id S934260AbeCSPyp (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:54:45 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Hangbin Liu <liuhangbin@gmail.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+CC: Peng Li <lipeng321@huawei.com>,
+        Mingguang Qu <qumingguang@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 14/97] l2tp: fix missing print session offset
- info
-Thread-Topic: [PATCH AUTOSEL for 4.14 14/97] l2tp: fix missing print session
- offset info
-Thread-Index: AQHTv5qV5wFA6+6W9kudHUBAHX8A1A==
-Date: Mon, 19 Mar 2018 15:54:37 +0000
-Message-ID: <20180319155411.12348-14-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 12/97] net: hns3: free the ring_data
+ structrue when change tqps
+Thread-Topic: [PATCH AUTOSEL for 4.14 12/97] net: hns3: free the ring_data
+ structrue when change tqps
+Thread-Index: AQHTv5qUF2wIils3BUON4edQXjFleg==
+Date: Mon, 19 Mar 2018 15:54:35 +0000
+Message-ID: <20180319155411.12348-12-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,67 +79,71 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:8Ak3xkfpkXaeXuODGU8i36ZWnxdwu23FcXyq6C/GbNSEeIYVbst2KM4uK5uXQr6zccotjZQ4H8tCHruBwE1OrZkW1SwAOdzP02i/6tClh5SGOLG4bGr/nKrLerPEEttQAP2cSu3NLRJ6f3OS5+1Qlr0rYVl1FBb/yBirEIDmVAYLwg1eyiUnlA+CiO/rnJyaBzOkyAehwe+P/c8fJ2MNgcvvsI+mNPx/Lgylg6NI/XGRlnxkhlhtVg00BKXofbLJ;20:0uGmpbDq4sbT8VmhV0w8tiXoHRqrCinyEd22X1kvQhsQfw2pOfDnQlI9OFPJrl0D065X2Gl92O6YVR+Wiqoa6WIi1xn4r/W9vc5u1zmi8OdQQAW8Nn44z0jHbSxOAmOtnY1WMZAWz2s/vA5mvQV9aivUZdJXjvl2yLJrBxIvofU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0903;7:8r1atBmge4CZxCyaShm7UlF6yfRYRFINkyoPbW2kZhNYk5Gj3UDtOziuaJ41j+6d33L8O5WatqwldrdoMETK/bzx7dYi9D5qYgGrBf7wFA7vSAdD6Etj/qGrX8r+H08nXohOguyLqGWyvVm0Jfg4YJHrGxVtIXZCqZ0v6nnU3eWW5/86p3Qm+vC4GqYhF8qg1brhT8lEPuyIsWCh+wE7jE3fHFO5WsPstLs1+FCwhcT+6EQ9xb1vU7BQRZm3Tpp3;20:HkW6XZILwpxlDwGwcxq/hNxzdZcrAXYNGUkhNkNmTk+URDBez4k0I9iRzFvCn+uRcZxBvVELnzMguS1hu/eytGt9086MMnivTZJVIp63t3pytixENEb03IMl4E3EQCQgYozYN9Umw/bPasqf5hrLCNVOphqin9F6XoMFxAzVABU=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ae5cf891-1d76-414a-f07b-08d58db1b830
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
-x-ms-traffictypediagnostic: DM5PR2101MB0806:
+x-ms-office365-filtering-correlation-id: 768734e6-64fb-4ace-ba0a-08d58db1b6b4
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0903;
+x-ms-traffictypediagnostic: DM5PR2101MB0903:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0806558F91476B42F9AF85B0FBD40@DM5PR2101MB0806.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
+x-microsoft-antispam-prvs: <DM5PR2101MB09039A41EF7E501F515A0315FBD40@DM5PR2101MB0903.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0903;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0903;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(39380400002)(366004)(199004)(189003)(14454004)(105586002)(6486002)(316002)(86612001)(68736007)(106356001)(36756003)(6436002)(99286004)(2501003)(5250100002)(107886003)(54906003)(110136005)(97736004)(5660300001)(22452003)(26005)(186003)(6512007)(102836004)(6506007)(53936002)(86362001)(2906002)(25786009)(478600001)(66066001)(2900100001)(72206003)(7736002)(8936002)(3280700002)(4326008)(8676002)(39060400002)(81156014)(81166006)(10290500003)(10090500001)(1076002)(3846002)(6116002)(3660700001)(2950100002)(305945005)(76176011)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: X1EQl3pSs1Ba5zKZHBRl8GeOdXzGgeXF1WaRI7m5Y8bIPuO5KkbGTorlQFjJFCyJFmnZ7wEqomBHSVbdAQ+6LZ/2JKarqTiGyMJwg9CI1fOrjE3V+9ufHQMgpSVlHOjz45pDFqBkrwYzjd0+BF5kP38GKwxTkjo7JUhTq/rik2aqPFNE3CrxiQH+T7ggorKJrwrV8QmzW9O7rv5lT/6DTNYJP2oXdgG/thUOXuCVLxvs1pFmdZQ9+7hIyRqq0TOMjvLe68BZW4l+WCLiXzt7/67YQZkYHKa6GywmpY+qRZswbIaQPNsIWy9LfFwSscb4xlstgr8E5NMD3EDRLYjQkw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(396003)(39860400002)(366004)(346002)(189003)(199004)(106356001)(99286004)(22452003)(5250100002)(66066001)(2950100002)(2501003)(105586002)(54906003)(86612001)(110136005)(316002)(5660300001)(102836004)(3660700001)(36756003)(6486002)(478600001)(2906002)(97736004)(10090500001)(26005)(186003)(53936002)(1076002)(6116002)(3846002)(72206003)(81156014)(7736002)(305945005)(8676002)(81166006)(10290500003)(107886003)(6512007)(8936002)(68736007)(6506007)(76176011)(14454004)(4326008)(2900100001)(3280700002)(25786009)(86362001)(6436002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0903;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: KDxnVTCeEA3GG+nnIO1FHbxC8riBGSUMZBxbpyztuX7DtzWJ5m3odK3CW4fGCb+etSF7PfI28/LYwIBId2WlXCFlutQxLT9LpcyBkOSPSdfQpMnXeJt17cCwnMUsJLo3ETJNMvg4cFjEkM6ZIhn3G0SoV/chHaF/lUWjMOp2wOANsRN5oc+qXkngwh0o6KP6BXBocoeyk92ynvGB7RrZYsse+psQeZycNrrGaBWtfHjtHbgZFwNFuv6eMOcESsLYgQIWCQzKybxTTVtHnSpVS6+qdZkStRexFG7QQrVEcf3neis2f0g/9WtQjK4hlIBs9lR3zcZyp2gwiQ9q5gQWgA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae5cf891-1d76-414a-f07b-08d58db1b830
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:54:38.0154
+X-MS-Exchange-CrossTenant-Network-Message-Id: 768734e6-64fb-4ace-ba0a-08d58db1b6b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:54:35.5157
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0806
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0903
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit 820da5357572715c6235ba3b3daa2d5b43a1198f ]
+[ Upstream commit 99fdf6b1cadf41bb253408589788f025027274f3 ]
 
-Report offset parameter in L2TP_CMD_SESSION_GET command if
-it has been configured by userspace
+This patch fixes a memory leak problems in change tqps process,
+the function hns3_uninit_all_ring and hns3_init_all_ring
+may be called many times.
 
-Fixes: 309795f4bec ("l2tp: Add netlink control API for L2TP")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Mingguang Qu <qumingguang@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/l2tp/l2tp_netlink.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/l2tp/l2tp_netlink.c b/net/l2tp/l2tp_netlink.c
-index c28223d8092b..fca69c3771f5 100644
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -765,6 +765,8 @@ static int l2tp_nl_session_send(struct sk_buff *skb, u3=
-2 portid, u32 seq, int fl
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drive=
+rs/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+index 186772493711..3e7e13b9a385 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -2687,8 +2687,12 @@ static int hns3_uninit_all_ring(struct hns3_nic_priv=
+ *priv)
+ 			h->ae_algo->ops->reset_queue(h, i);
 =20
- 	if ((session->ifname[0] &&
- 	     nla_put_string(skb, L2TP_ATTR_IFNAME, session->ifname)) ||
-+	    (session->offset &&
-+	     nla_put_u16(skb, L2TP_ATTR_OFFSET, session->offset)) ||
- 	    (session->cookie_len &&
- 	     nla_put(skb, L2TP_ATTR_COOKIE, session->cookie_len,
- 		     &session->cookie[0])) ||
+ 		hns3_fini_ring(priv->ring_data[i].ring);
++		devm_kfree(priv->dev, priv->ring_data[i].ring);
+ 		hns3_fini_ring(priv->ring_data[i + h->kinfo.num_tqps].ring);
++		devm_kfree(priv->dev,
++			   priv->ring_data[i + h->kinfo.num_tqps].ring);
+ 	}
++	devm_kfree(priv->dev, priv->ring_data);
+=20
+ 	return 0;
+ }
 --=20
 2.14.1
