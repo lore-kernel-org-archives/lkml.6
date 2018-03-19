@@ -1,38 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtqLRJy8BWtp0ydJQHPpnzE9oDU7K4TTDyfvH09WM/McX4UrzeQS7XXCdGOECwON9gVoCsK
-ARC-Seal: i=1; a=rsa-sha256; t=1521483518; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HbYOd4Y4Y1laX6YqA96NSBp20kaADWARDuJ8QC5tLYj6kZExE3lmwNRqB/Lmj2R0Jq
-         VXaJy0yb5Uia8WCePLlKOsNXgMZ/NV2oy/0cy8XJRn9jMUzoiDwpJYmtBS2tpx9AgJBv
-         wvbklA/cAvBH0lvqdja9+knHX3azzXidmOa+uf54brqGeWbSVeZLv8WOKLtFz0RLXgzF
-         Y9VNcH0JvSFDtXaoKWv1eJZHbI1qRMPL6atO2jdAkYRmlFGJfQWC/KIBgsZNoJW7bcbx
-         bKD9n7vQfIcezmZp6P17bzaQl/R3GfWs/MCqcicekRMZs4OQ8DinV9hkvjBtX6nk31pR
-         VK1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=4lsTRZQRBVWIMYI6ShUAVr0j3tI48ahAhwUcsPmmuW8=;
-        b=YC0kDCkUIWiXDvKA1HJ6ln3PbZQCMsRtjFfOMPzseFVe2GBxNbqR19VWby8nOv3DCG
-         H0EJGpp/W8IUQa6QgG4j97g8Oi59O+ze5TL1syotLNQhMU9nIWhkshFDFmFzCFV9GWlV
-         yMhP0qmvmw71CeNeSY7Ds3lI8oyLygTT2LbKsWQHjt9GcaHwNqxY2ZzEWFwV8Uv3HLcs
-         IkY4v4wsdBT2Ae0wOG6sF3jFUy5U1t7a1ds0bilPogWaRd1Gx2jPmIGW/lAG5MuVWq8K
-         oiHZ+O6A9FQr4ZM3YeftfA4C8K5emzJ/hgJ3V0PHqGiqV85kJrqL8Db5d17Cirbvg2V6
-         Ufhw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3440611-1521483518-2-9135689434190084976
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521483517; b=dyp2wD22p38W6S0f5GVNYQad5CHGdbKZhaYmqFYxvIVpnxV
+    LAyn2WGvDuQ9AUypnDoKIYFZQFGgf7yk/FEwdHv8fvQFwh/rcggvDJA+Dls3jM1E
+    YboFMhvCvtlL+fuBrBXQ2t3O6YeGL4Ojv8aLi3ptSz1p2c76nJ+hQYVAYzrupEu4
+    rLGo4sm/JGRk+0cWWCJDqKfA4YIrKKsswYohlckmrjkSaCEe17KoXDuSC09gZ/cK
+    MzgDMGMqqkfMtg+hoDQdloOQZXFZaqH0uPSTWjGbKMZqfn2bTxRYHWfrEVLUq0+5
+    3KTDtZdvyD0HnXRHUSKFmrMlaguVxWPyIdjFfnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521483517; bh=l4yLsLIHYJGNN9rUL+CgZduOb3
+    Ww511U2c/uPRkvX6g=; b=GdErRbAfgO+NX8lOvmCM8YBqeQBFqPZY7TeRep2ggj
+    Y68Hx1pIu6UbKicZ+PFdnk1FcI0FrkG1K39a4TveLSykfKJo5H/FtGa6DqSww+Y0
+    t+6+FwAcSpVIBpL8BnUkyjkWnuGFJ9krU/LA47w5i8XqKMPW3puo2S7nySU5QsyB
+    y/0dUoT2TiRxFPOqRje7OZS8V1fBxD5+U2nENwr0QCuCyxTDXiV/7VZIvv+l8qnh
+    /cRkotHl03LbzNBBarKliSVzAP3EtUrGb+lgjs3F7n+egEG4UIeHjVvMcgtlutUT
+    S4XwsopvoNYr+av/90ojcHscby7YzZw8rZiByISaoueA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegtdegleenucevlhhushhtvghrufhiiigvpeelge;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegtdegleenucevlhhushhtvghrufhiiigvpeelge;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S968989AbeCSSSZ (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:18:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46002 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969305AbeCSSSX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:18:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 019/241] selinux: check for address length in selinux_socket_bind()
-Date: Mon, 19 Mar 2018 19:04:44 +0100
-Message-Id: <20180319180751.966983534@linuxfoundation.org>
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 013/241] drm/sun4i: Fix up error path cleanup for master bind function
+Date: Mon, 19 Mar 2018 19:04:38 +0100
+Message-Id: <20180319180751.722463516@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390577263174550?=
-X-GMAIL-MSGID: =?utf-8?q?1595391102366245693?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,104 +81,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
 
-[ Upstream commit e2f586bd83177d22072b275edd4b8b872daba924 ]
+[ Upstream commit 9d56defb44b15427f4342c543a70fb7886fc06f5 ]
 
-KMSAN (KernelMemorySanitizer, a new error detection tool) reports use of
-uninitialized memory in selinux_socket_bind():
+The master bind function calls numerous drm functions which initialize
+underlying structures. It also tries to bind the various components
+of the display pipeline, some of which may add additional drm objects.
 
-==================================================================
-BUG: KMSAN: use of unitialized memory
-inter: 0
-CPU: 3 PID: 1074 Comm: packet2 Tainted: G    B           4.8.0-rc6+ #1916
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
- 0000000000000000 ffff8800882ffb08 ffffffff825759c8 ffff8800882ffa48
- ffffffff818bf551 ffffffff85bab870 0000000000000092 ffffffff85bab550
- 0000000000000000 0000000000000092 00000000bb0009bb 0000000000000002
-Call Trace:
- [<     inline     >] __dump_stack lib/dump_stack.c:15
- [<ffffffff825759c8>] dump_stack+0x238/0x290 lib/dump_stack.c:51
- [<ffffffff818bdee6>] kmsan_report+0x276/0x2e0 mm/kmsan/kmsan.c:1008
- [<ffffffff818bf0fb>] __msan_warning+0x5b/0xb0 mm/kmsan/kmsan_instr.c:424
- [<ffffffff822dae71>] selinux_socket_bind+0xf41/0x1080 security/selinux/hooks.c:4288
- [<ffffffff8229357c>] security_socket_bind+0x1ec/0x240 security/security.c:1240
- [<ffffffff84265d98>] SYSC_bind+0x358/0x5f0 net/socket.c:1366
- [<ffffffff84265a22>] SyS_bind+0x82/0xa0 net/socket.c:1356
- [<ffffffff81005678>] do_syscall_64+0x58/0x70 arch/x86/entry/common.c:292
- [<ffffffff8518217c>] entry_SYSCALL64_slow_path+0x25/0x25 arch/x86/entry/entry_64.o:?
-chained origin: 00000000ba6009bb
- [<ffffffff810bb7a7>] save_stack_trace+0x27/0x50 arch/x86/kernel/stacktrace.c:67
- [<     inline     >] kmsan_save_stack_with_flags mm/kmsan/kmsan.c:322
- [<     inline     >] kmsan_save_stack mm/kmsan/kmsan.c:337
- [<ffffffff818bd2b8>] kmsan_internal_chain_origin+0x118/0x1e0 mm/kmsan/kmsan.c:530
- [<ffffffff818bf033>] __msan_set_alloca_origin4+0xc3/0x130 mm/kmsan/kmsan_instr.c:380
- [<ffffffff84265b69>] SYSC_bind+0x129/0x5f0 net/socket.c:1356
- [<ffffffff84265a22>] SyS_bind+0x82/0xa0 net/socket.c:1356
- [<ffffffff81005678>] do_syscall_64+0x58/0x70 arch/x86/entry/common.c:292
- [<ffffffff8518217c>] return_from_SYSCALL_64+0x0/0x6a arch/x86/entry/entry_64.o:?
-origin description: ----address@SYSC_bind (origin=00000000b8c00900)
-==================================================================
+This patch adds proper cleanup functions in the error path of the
+master bind function.
 
-(the line numbers are relative to 4.8-rc6, but the bug persists upstream)
+This requires the patch "drm/sun4i: Move drm_mode_config_cleanup call
+to main driver", which splits out drm_mode_config_cleanup from
+sun4i_framebuffer_free so we can call it separately.
 
-, when I run the following program as root:
-
-=======================================================
-  #include <string.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-
-  int main(int argc, char *argv[]) {
-    struct sockaddr addr;
-    int size = 0;
-    if (argc > 1) {
-      size = atoi(argv[1]);
-    }
-    memset(&addr, 0, sizeof(addr));
-    int fd = socket(PF_INET6, SOCK_DGRAM, IPPROTO_IP);
-    bind(fd, &addr, size);
-    return 0;
-  }
-=======================================================
-
-(for different values of |size| other error reports are printed).
-
-This happens because bind() unconditionally copies |size| bytes of
-|addr| to the kernel, leaving the rest uninitialized. Then
-security_socket_bind() reads the IP address bytes, including the
-uninitialized ones, to determine the port, or e.g. pass them further to
-sel_netnode_find(), which uses them to calculate a hash.
-
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
-[PM: fixed some whitespace damage]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/selinux/hooks.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_drv.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4328,10 +4328,18 @@ static int selinux_socket_bind(struct so
- 		u32 sid, node_perm;
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -145,7 +145,7 @@ static int sun4i_drv_bind(struct device
+ 	ret = component_bind_all(drm->dev, drm);
+ 	if (ret) {
+ 		dev_err(drm->dev, "Couldn't bind all pipelines components\n");
+-		goto free_drm;
++		goto cleanup_mode_config;
+ 	}
  
- 		if (family == PF_INET) {
-+			if (addrlen < sizeof(struct sockaddr_in)) {
-+				err = -EINVAL;
-+				goto out;
-+			}
- 			addr4 = (struct sockaddr_in *)address;
- 			snum = ntohs(addr4->sin_port);
- 			addrp = (char *)&addr4->sin_addr.s_addr;
- 		} else {
-+			if (addrlen < SIN6_LEN_RFC2133) {
-+				err = -EINVAL;
-+				goto out;
-+			}
- 			addr6 = (struct sockaddr_in6 *)address;
- 			snum = ntohs(addr6->sin6_port);
- 			addrp = (char *)&addr6->sin6_addr.s6_addr;
+ 	/* Create our layers */
+@@ -153,7 +153,7 @@ static int sun4i_drv_bind(struct device
+ 	if (IS_ERR(drv->layers)) {
+ 		dev_err(drm->dev, "Couldn't create the planes\n");
+ 		ret = PTR_ERR(drv->layers);
+-		goto free_drm;
++		goto cleanup_mode_config;
+ 	}
+ 
+ 	/* Create our CRTC */
+@@ -161,7 +161,7 @@ static int sun4i_drv_bind(struct device
+ 	if (!drv->crtc) {
+ 		dev_err(drm->dev, "Couldn't create the CRTC\n");
+ 		ret = -EINVAL;
+-		goto free_drm;
++		goto cleanup_mode_config;
+ 	}
+ 	drm->irq_enabled = true;
+ 
+@@ -173,7 +173,7 @@ static int sun4i_drv_bind(struct device
+ 	if (IS_ERR(drv->fbdev)) {
+ 		dev_err(drm->dev, "Couldn't create our framebuffer\n");
+ 		ret = PTR_ERR(drv->fbdev);
+-		goto free_drm;
++		goto cleanup_mode_config;
+ 	}
+ 
+ 	/* Enable connectors polling */
+@@ -181,10 +181,16 @@ static int sun4i_drv_bind(struct device
+ 
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
+-		goto free_drm;
++		goto finish_poll;
+ 
+ 	return 0;
+ 
++finish_poll:
++	drm_kms_helper_poll_fini(drm);
++	sun4i_framebuffer_free(drm);
++cleanup_mode_config:
++	drm_mode_config_cleanup(drm);
++	drm_vblank_cleanup(drm);
+ free_drm:
+ 	drm_dev_unref(drm);
+ 	return ret;
