@@ -1,72 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969147AbeCSVLe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 17:11:34 -0400
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:39370 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968048AbeCSVLU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:11:20 -0400
-X-Google-Smtp-Source: AIpwx4/xEN8+I7U5LOA57UNUDG0YjLycmw6/wcHu8b2TYF3vlt3rIwIpcFScrSToQwAV8HHiA8CAZJOsxxs1ZtdFulA=
+        id S969653AbeCSVMd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 17:12:33 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1223 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S969549AbeCSVMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:12:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,332,1517904000";
+   d="scan'208";a="40345155"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+CC: "luto@kernel.org" <luto@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Topic: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Index: AQHTv61aFYaSukXqZEajMVMtZoAMNaPYYJOA//+n1Zw=
+Date: Mon, 19 Mar 2018 21:12:17 +0000
+Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66AC322B@CRSMSX101.amr.corp.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>,<fa579920-fe34-80fb-4244-5b840b99e72c@linux.intel.com>
+In-Reply-To: <fa579920-fe34-80fb-4244-5b840b99e72c@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.9.41]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-From: "H.J. Lu" <hjl.tools@gmail.com>
-Date: Mon, 19 Mar 2018 14:11:18 -0700
-Message-ID: <CAMe9rOoa81MC=oFW3coLuxha0pp6qdZowYR_o_my=n7ZXjVu=g@mail.gmail.com>
-Subject: [PATCH] x86: Don't build vDSO with $(RETPOLINE_CFLAGS) -DRETPOLINE
-To: LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: multipart/mixed; boundary="00000000000034b08f0567ca6697"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---00000000000034b08f0567ca6697
-Content-Type: text/plain; charset="UTF-8"
+On 3/19/2018 01:05 PM, Dave Hansen wrote:
+>> When FSGSBASE is enabled, SWAPGS needs if and only if (current)
+>> GS base is not the kernel's.
+> Do you mean "SWAPGS is needed..."?
+Yes, will change.
 
-vDSO code runs in userspace.  Don't compile it with retpoline.
+>> FSGSBASE instructions allow user to write any value on GS base;
+>> even negative. Sign check on the current GS base is not
+>> sufficient. Fortunately, reading GS base is fast. Kernel GS
+>> base is also known from the offset table with the CPU number.
+>>
+>> GS-compatible RDPID macro is included.
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+> This description could use some work.  I think you're trying to say
+> that, currently, userspace can't modify GS base and the kernel's
+> conventions are that a negative GS base means it is a kernel value and a
+> positive GS base means it is a user vale.  But, with your new patches,
+> userspace can put arbitrary data in there, breaking the exising assumption.
+> Correct?
+Yes.
 
+> This also needs to explain a bit of the theory about how we go finding
+> the kernel GS base value.
+> Also, this is expected to improve paranoid_entry speed, right?  The
+> rdmsr goes away so this should be faster.  Should that be mentioned?
+I'm a bit reluctant to claim any performance benefit here yet (without having any strong empirical evidence).
 
--- 
-H.J.
+>> + * SWAPGS needs when it comes from user space.
+> The grammar here needs some work.
+>        "SWAPGS is needed when entering from userspace".
+Okay
 
---00000000000034b08f0567ca6697
-Content-Type: text/x-patch; charset="US-ASCII";
-	name="0001-x86-Don-t-build-vDSO-with-RETPOLINE_CFLAGS-DRETPOLIN.patch"
-Content-Disposition: attachment;
-	filename="0001-x86-Don-t-build-vDSO-with-RETPOLINE_CFLAGS-DRETPOLIN.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jeyq5ka20
+>>  To check where-it-from,
+>> + * read GS base from RDMSR/MSR_GS_BASE and check if negative or not.
+>> + * This works without FSGSBASE.
+>> + * When FSGSBASE enabled, arbitrary GS base can be put by a user-level
+>> + * task, which means negative value is possible. Direct comparison
+>> + * between the current and kernel GS bases determines the necessity of
+>> + * SWAPGS; do if and only if unmatched.
+>> + *
+>> + * Return: ebx=0: need SWAPGS on exit, ebx=1: otherwise
+>>   */
+> I don't think this really belongs in a comment above the function.  I'd
+> just explain overall that we are trying to determine if we interrupted
+> userspace or not.
+I'd rather sync-up with you about comments before posting a revision.
 
-RnJvbSA3MTE5MjY0MDllNDI4NjJkZTA4NjMzZWMwNTc4OTIxOTVmZGNlNGUwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiAiSC5KLiBMdSIgPGhqbC50b29sc0BnbWFpbC5jb20+CkRhdGU6
-IEZyaSwgMTYgTWFyIDIwMTggMTQ6NTg6MjkgLTA3MDAKU3ViamVjdDogW1BBVENIXSB4ODY6IERv
-bid0IGJ1aWxkIHZEU08gd2l0aCAkKFJFVFBPTElORV9DRkxBR1MpIC1EUkVUUE9MSU5FCgp2RFNP
-IGNvZGUgcnVucyBpbiB1c2Vyc3BhY2UuICBEb24ndCBjb21waWxlIGl0IHdpdGggcmV0cG9saW5l
-LgoKU2lnbmVkLW9mZi1ieTogSC5KLiBMdSA8aGpsLnRvb2xzQGdtYWlsLmNvbT4KLS0tCiBhcmNo
-L3g4Ni9lbnRyeS92ZHNvL01ha2VmaWxlIHwgMyArKy0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
-dGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9lbnRyeS92ZHNv
-L01ha2VmaWxlIGIvYXJjaC94ODYvZW50cnkvdmRzby9NYWtlZmlsZQppbmRleCAxYjhlMDQxZDQ5
-NzkuLmVlYmNjM2JlZGJmMCAxMDA2NDQKLS0tIGEvYXJjaC94ODYvZW50cnkvdmRzby9NYWtlZmls
-ZQorKysgYi9hcmNoL3g4Ni9lbnRyeS92ZHNvL01ha2VmaWxlCkBAIC03Niw3ICs3Niw3IEBAIENG
-TCA6PSAkKFBST0ZJTElORykgLW1jbW9kZWw9c21hbGwgLWZQSUMgLU8yIC1mYXN5bmNocm9ub3Vz
-LXVud2luZC10YWJsZXMgLW02NCBcCiAgICAgICAgLWZuby1vbWl0LWZyYW1lLXBvaW50ZXIgLWZv
-cHRpbWl6ZS1zaWJsaW5nLWNhbGxzIFwKICAgICAgICAtRERJU0FCTEVfQlJBTkNIX1BST0ZJTElO
-RyAtREJVSUxEX1ZEU08KIAotJCh2b2Jqcyk6IEtCVUlMRF9DRkxBR1MgOj0gJChmaWx0ZXItb3V0
-ICQoR0NDX1BMVUdJTlNfQ0ZMQUdTKSwkKEtCVUlMRF9DRkxBR1MpKSAkKENGTCkKKyQodm9ianMp
-OiBLQlVJTERfQ0ZMQUdTIDo9ICQoZmlsdGVyLW91dCAkKEdDQ19QTFVHSU5TX0NGTEFHUykgJChS
-RVRQT0xJTkVfQ0ZMQUdTKSAtRFJFVFBPTElORSwkKEtCVUlMRF9DRkxBR1MpKSAkKENGTCkKIAog
-IwogIyB2RFNPIGNvZGUgcnVucyBpbiB1c2Vyc3BhY2UgYW5kIC1wZyBkb2Vzbid0IGhlbHAgd2l0
-aCBwcm9maWxpbmcgYW55d2F5LgpAQCAtMTc3LDYgKzE3Nyw3IEBAIEtCVUlMRF9DRkxBR1NfMzIg
-Oj0gJChmaWx0ZXItb3V0IC1tY21vZGVsPWtlcm5lbCwkKEtCVUlMRF9DRkxBR1NfMzIpKQogS0JV
-SUxEX0NGTEFHU18zMiA6PSAkKGZpbHRlci1vdXQgLWZuby1waWMsJChLQlVJTERfQ0ZMQUdTXzMy
-KSkKIEtCVUlMRF9DRkxBR1NfMzIgOj0gJChmaWx0ZXItb3V0IC1tZmVudHJ5LCQoS0JVSUxEX0NG
-TEFHU18zMikpCiBLQlVJTERfQ0ZMQUdTXzMyIDo9ICQoZmlsdGVyLW91dCAkKEdDQ19QTFVHSU5T
-X0NGTEFHUyksJChLQlVJTERfQ0ZMQUdTXzMyKSkKK0tCVUlMRF9DRkxBR1NfMzIgOj0gJChmaWx0
-ZXItb3V0ICQoUkVUUE9MSU5FX0NGTEFHUykgLURSRVRQT0xJTkUsJChLQlVJTERfQ0ZMQUdTXzMy
-KSkKIEtCVUlMRF9DRkxBR1NfMzIgKz0gLW0zMiAtbXNvZnQtZmxvYXQgLW1yZWdwYXJtPTAgLWZw
-aWMKIEtCVUlMRF9DRkxBR1NfMzIgKz0gJChjYWxsIGNjLW9wdGlvbiwgLWZuby1zdGFjay1wcm90
-ZWN0b3IpCiBLQlVJTERfQ0ZMQUdTXzMyICs9ICQoY2FsbCBjYy1vcHRpb24sIC1mb3B0aW1pemUt
-c2libGluZy1jYWxscykKLS0gCjIuMTQuMwoK
---00000000000034b08f0567ca6697--
+>> +     movl    $1, %ebx
+> I know it wasn't commented before, but please add a comment about what
+> this is doing.
+Okay, as long as this comment doesn't go too much.
+
+>> +     /*
+>> +      * Read current GS base with RDGSBASE. Kernel GS base is found
+>> +      * by CPU number and its offset value.
+>> +      */
+>> +     ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase", \
+>> +             "RDGSBASE %rdx", X86_FEATURE_FSGSBASE
+>I'd rather this be:
+>        ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase", "nop",\
+>                X86_FEATURE_FSGSBASE
+>        RDGSBASE           %rdx
+>        READ_KERNEL_GSBASE %rax
+>        /* See if the kernel GS_BASE value is in GS base register */
+>        cmpq    %rdx, %rax
+>        ...
+>It's a lot more readable than what you have.
+Yes, if it helps your readability.
+
+>> +     jne     .Lparanoid_entry_swapgs
+>> +     ret
+>> +
+>> +.Lparanoid_entry_no_fsgsbase:
+>> +     /*
+>> +      * A (slow) RDMSR is surefire without FSGSBASE.
+>> I'd say:
+>>        FSGSBASE is not in use, so depend on the kernel-enforced
+>>        convention that a negative GS base indicates a kernel value.
+Okay, as the detail comment at the entry should be moved like that.
+
+>> +      * The READ_MSR_GSBASE macro scratches %ecx, %eax, and %edx.
+> "clobbers" is the normal terminology for this, not "scratches".
+Got it.
+
+>> +.Lparanoid_entry_swapgs:
+>> +     SWAPGS
+>> +     xorl    %ebx, %ebx
+>>       ret
+>>  END(paranoid_entry)
+> ^^ Please comment the xorl, especially now that it's farther away from
+> the comment explaining what it is for.
+Okay (but if not too much)
+
+> +.macro READ_KERNEL_GSBASE_RDPID reg:req
+> This needs some explanation.  Maybe:
+> /*
+>  * Fetch the per-cpu GSBASE value for this processor and
+>  * put it in @reg.  We normally use %GS for accessing per-cpu
+>  * data, but we are setting up %GS here and obviously can not
+>  * use %GS itself to access per-cpu data.
+>  */
+Let me think.
+
+>> +     /*
+>> +      * processor id is written during vDSO (virtual dynamic shared object)
+>> +      * initialization. 12 bits for the CPU and 8 bits for the node.
+>> +      */
+>> +     andq    $0xFFF, \reg
+> This begs the question: when do we initialize the VDSO?  Is that before
+> or after the first paranoid_entry interrupt?  Also, why the magic
+> number?  Shouldn't this come out of a macro somewhere rather than having
+> to hard-code and spell out the convention?
+Hoped the comment to be explanatory; but, agree that the hard-code anyways is bad.
+
+>> +.macro READ_KERNEL_GSBASE reg:req
+>> +     ALTERNATIVE "READ_KERNEL_GSBASE_CPU_SEG_LIMIT \reg", \
+>> +             "READ_KERNEL_GSBASE_RDPID \reg", X86_FEATURE_RDPID
+>> +.endm
+> Can I suggest a different indentation?
+>        ALTERNATIVE \
+>                "READ_KERNEL_GSBASE_CPU_SEG_LIMIT \reg", \
+>                "READ_KERNEL_GSBASE_RDPID \reg",
+>                X86_FEATURE_RDPID
+Sure, you can.
