@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELudHqux/DBmxOv3mflkPqtTeD+0WXvDsWlfo5/0XQV6JC2OhE6K+f/nUHWR8q99E1xG6ZaZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521483150; cv=none;
+X-Google-Smtp-Source: AG47ELuAWjUoWMshyNUWCFJJ6dpPMZm6K7liQL1n7Ue0aKFLgW/PC9V5QzM5BEN5ltw41xo2a6Z2
+ARC-Seal: i=1; a=rsa-sha256; t=1521483145; cv=none;
         d=google.com; s=arc-20160816;
-        b=JacONihd5swLgaoj0adXOP0u4xL9+gXESpRXYIBaFGuZ7gKp5WXY7n1E9d4dx57Zr+
-         oVaM/2SqT5MCYy+af7mbto4sQ1e3OGrbrWccx1i9wc8oKZndZX3ubutg25XzZHA0/TlJ
-         D2Y4KftCSpTebejkIF/pG8aNgHnelTI+dbIccprIro35CPRKTTZvxLU4jSsW2Cr/SDWG
-         oVeSBKtdKwWDL0UMmgLJ4EkzvYYV06uDKnbIs5MOJKjmWfHqhK5a0aiw8POzaOsJobAC
-         WNZ6o0TGoy+WDMxmomDPw/0T22PTCnJLiD0Wju1W7pIhWh3/7jXG43zh9YiPbAPyOWq4
-         atLg==
+        b=NxMqIaSoZTgT9qDG951mujAZTPgsD0gnSsKUAzUAMXShDuxFLooj4aPPc/ScMcF01k
+         +/WevG9rF+m5n0PLBmRuNgV7YN8m86mLzk538nJWj+OMQKiVgXuQ9X5n6PEw8fPAZM34
+         3bjCB80Jhp1SvX6/KzZcJ6MK6dg2ETJxS64Y45KOpKVClUPkck9LmyR3HTa1LTi+Bk1c
+         s+N7MMF4bS+NR8wSGWMG3ScgvF6QCUNuWg2kPJXKqtJ/pySvO7zy/QherQnePVKGRj9i
+         0XFvK7mErrtIMK2Bo7x9lVxxU98ba1ZOaIcC0RxAXzMTUEQUFo73uqnYv/1qrvz/ONdn
+         Euww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=620kqG05OJAaPkSuSGPQw6+4IBMc8RP+0reTpSWcry0=;
-        b=SPKgxTry4/K0bVggAGKalRJhQ7fZyxYzoczAXVny5jbcCkX1gJWyGI4B8b0XN0NKPq
-         5u4mSvFdvuhDFD1/ebH89UrEcz4o8Xx5HzIlrBFfl/iUHHnwk5tk+T4FSrwtAmm8nMWI
-         t5MV+uH6PttPSDfdmOf3kvUrJjbMzOiGyOoOXNgA2rEuWmNW9W3K2lF8pDHDvYKWdn88
-         3/EMu2P4AzFzb7hRVrqCBNk4qTqrm5stMmg0wvNAHDzVZJny0rcRvS60pQEFFkczQ8Ux
-         RVTHJw09HRuJIAXWGsKHP7e3ieEIylKLICOnkpr971Lairepe4SXghcloxzHi6YUwNFg
-         FDKw==
+        bh=azAx/GE2ymwmUcRA6/FLQnTqAbE1XXaMRp/E9k2IYXY=;
+        b=cVN2Iinl7tDVIwXooCeY7yPtj8RI7O2oA2CFBc6tSkRB2pk+3ygXFq9Gq3jPagrUnB
+         qGZIWxShN4MPQ5z9D5+eAwIPgD2niQlmEiqrE6VcV/OHE9uFsA8VssE/TSDhv4IR6HoX
+         hivoIKv/BvENBmX2f5qAkQYZbLvix1riC+Q7TZAGcyPpU62tdBMOFAlAEDoj4aHE2F12
+         8TV2VZhfNJ7IEQoKeaeZ64opZkWy2NkUxrZCptx1xU4atpjHz9WttUxezo4+ceKk+o9u
+         8Y7cSEVzklfnOopzlcTLVT8Qq8hiI4hBjxF+jQPCFHLX9PhvxMhwcL3WW6TGuZ4Q22oS
+         KwfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Wang Nan <wangnan0@huawei.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 018/134] perf probe: Return errno when not hitting any event
-Date: Mon, 19 Mar 2018 19:05:01 +0100
-Message-Id: <20180319171851.774653308@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mario Kleiner <mario.kleiner.de@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Sasha Levin <alexander.levin@microsoft.com>,
+	Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.4 016/134] drm: Defer disabling the vblank IRQ until the next interrupt (for instant-off)
+Date: Mon, 19 Mar 2018 19:04:59 +0100
+Message-Id: <20180319171851.468411917@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -46,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390716323570935?=
-X-GMAIL-MSGID: =?utf-8?q?1595390716323570935?=
+X-GMAIL-THRID: =?utf-8?q?1595390585617290166?=
+X-GMAIL-MSGID: =?utf-8?q?1595390710012009387?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,57 +56,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
 
-[ Upstream commit 70946723eeb859466f026274b29c6196e39149c4 ]
+[ Upstream commit 608b20506941969ea30d8c08dc9ae02bb87dbf7d ]
 
-On old perf, when using 'perf probe -d' to delete an inexistent event,
-it returns errno, eg,
+On vblank instant-off systems, we can get into a situation where the cost
+of enabling and disabling the vblank IRQ around a drmWaitVblank query
+dominates. And with the advent of even deeper hardware sleep state,
+touching registers becomes ever more expensive.  However, we know that if
+the user wants the current vblank counter, they are also very likely to
+immediately queue a vblank wait and so we can keep the interrupt around
+and only turn it off if we have no further vblank requests queued within
+the interrupt interval.
 
-  -bash-4.3# perf probe -d xxx  || echo $?
-  Info: Event "*:xxx" does not exist.
-    Error: Failed to delete events.
-  255
+After vblank event delivery, this patch adds a shadow of one vblank where
+the interrupt is kept alive for the user to query and queue another vblank
+event. Similarly, if the user is using blocking drmWaitVblanks, the
+interrupt will be disabled on the IRQ following the wait completion.
+However, if the user is simply querying the current vblank counter and
+timestamp, the interrupt will be disabled after every IRQ and the user
+will enabled it again on the first query following the IRQ.
 
-But now perf_del_probe_events() will always set ret = 0, different from
-previous del_perf_probe_events(). After this, it returns errno again,
-eg,
+v2: Mario Kleiner -
+After testing this, one more thing that would make sense is to move
+the disable block at the end of drm_handle_vblank() instead of at the
+top.
 
-  -bash-4.3# ./perf probe -d xxx  || echo $?
-  "xxx" does not hit any event.
-    Error: Failed to delete events.
-  254
+Turns out that if high precision timestaming is disabled or doesn't
+work for some reason (as can be simulated by echo 0 >
+/sys/module/drm/parameters/timestamp_precision_usec), then with your
+delayed disable code at its current place, the vblank counter won't
+increment anymore at all for instant queries, ie. with your other
+"instant query" patches. Clients which repeatedly query the counter
+and wait for it to progress will simply hang, spinning in an endless
+query loop. There's that comment in vblank_disable_and_save:
 
-And it is more appropriate to return -ENOENT instead of -EPERM.
+"* Skip this step if there isn't any high precision timestamp
+ * available. In that case we can't account for this and just
+ * hope for the best.
+ */
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: dddc7ee32fa1 ("perf probe: Fix an error when deleting probes successfully")
-Link: http://lkml.kernel.org/r/1489738592-61011-1-git-send-email-wangkefeng.wang@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+With the disable happening after leading edge of vblank (== hw counter
+increment already happened) but before the vblank counter/timestamp
+handling in drm_handle_vblank, that step is needed to keep the counter
+progressing, so skipping it is bad.
+
+Now without high precision timestamping support, a kms driver must not
+set dev->vblank_disable_immediate = true, as this would cause problems
+for clients, so this shouldn't matter, but it would be good to still
+make this robust against a future kms driver which might have
+unreliable high precision timestamping, e.g., high precision
+timestamping that intermittently doesn't work.
+
+v3: Patch before coffee needs extra coffee.
+
+Testcase: igt/kms_vblank
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Michel Dänzer <michel@daenzer.net>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dave Airlie <airlied@redhat.com>,
+Cc: Mario Kleiner <mario.kleiner.de@gmail.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: http://patchwork.freedesktop.org/patch/msgid/20170315204027.20160-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-probe.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_irq.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/tools/perf/builtin-probe.c
-+++ b/tools/perf/builtin-probe.c
-@@ -405,9 +405,9 @@ static int perf_del_probe_events(struct
+--- a/drivers/gpu/drm/drm_irq.c
++++ b/drivers/gpu/drm/drm_irq.c
+@@ -1271,9 +1271,9 @@ void drm_vblank_put(struct drm_device *d
+ 	if (atomic_dec_and_test(&vblank->refcount)) {
+ 		if (drm_vblank_offdelay == 0)
+ 			return;
+-		else if (dev->vblank_disable_immediate || drm_vblank_offdelay < 0)
++		else if (drm_vblank_offdelay < 0)
+ 			vblank_disable_fn((unsigned long)vblank);
+-		else
++		else if (!dev->vblank_disable_immediate)
+ 			mod_timer(&vblank->disable_timer,
+ 				  jiffies + ((drm_vblank_offdelay * HZ)/1000));
  	}
+@@ -1902,6 +1902,16 @@ bool drm_handle_vblank(struct drm_device
+ 	wake_up(&vblank->queue);
+ 	drm_handle_vblank_events(dev, pipe);
  
- 	if (ret == -ENOENT && ret2 == -ENOENT)
--		pr_debug("\"%s\" does not hit any event.\n", str);
--		/* Note that this is silently ignored */
--	ret = 0;
-+		pr_warning("\"%s\" does not hit any event.\n", str);
-+	else
-+		ret = 0;
++	/* With instant-off, we defer disabling the interrupt until after
++	 * we finish processing the following vblank. The disable has to
++	 * be last (after drm_handle_vblank_events) so that the timestamp
++	 * is always accurate.
++	 */
++	if (dev->vblank_disable_immediate &&
++	    drm_vblank_offdelay > 0 &&
++	    !atomic_read(&vblank->refcount))
++		vblank_disable_fn((unsigned long)vblank);
++
+ 	spin_unlock_irqrestore(&dev->event_lock, irqflags);
  
- error:
- 	if (kfd >= 0)
+ 	return true;
