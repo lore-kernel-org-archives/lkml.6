@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsJPbbp6ULfgPrjojQiG1AHdqWRYMUWKVwO2O+wSXHr03HLfzv4rNps3gp+6iAKxpK+L9hu
-ARC-Seal: i=1; a=rsa-sha256; t=1521484023; cv=none;
+X-Google-Smtp-Source: AG47ELswTOFb1kMYVv/Z9nLEzyCkvD7UvFyuem53xT//G/SMJxC/apm8auKV21bVDzJFx0312kr/
+ARC-Seal: i=1; a=rsa-sha256; t=1521484020; cv=none;
         d=google.com; s=arc-20160816;
-        b=ymnUND6Zyo2aseH8FzHhm/SF2/hyLNuqechzeTNZNFc6ewg3ddzw4a9/YYjyWR9mCY
-         hKbkgSaThMmrC2HFt7D2MVJXqlHd1oHneNK7iGCR2Ilq9DupT8yKu+RjO5cadO8cJeKz
-         fcH0V81hicSg740NXP6/r3uWuuGNzCHQz9wnib/OhCFg/g9rFsDYfJ90CoQgSjFi7w+2
-         MKKvQD2HDaCzZy6e6Tp4bm0JffsI6T44ivx7vMOW2q2u38gtuuEhDwryD+bhfritGjKi
-         LuoQKxyENtPLlRAYeP3I12QhI9fzVXkUmh7m12lTbxjF0c1ZyUzqNoY8qOpTClRkfAaq
-         UwXg==
+        b=t2vcRhhQ9NXBcgGIMcGkZ9jAreCbypkiCY5jNrmtFiCNfpKU0p3w4J77pNXOaSZxZq
+         QdPFGtPS6YvvdZ7+ufphW49RMQLWtUnrTNbG3cvfsjEDCIUgdsqqjp+c59b3WE5loWoi
+         YB/EJvZvK2O1Om74av7vaSAZlfhZAPIDIkQvSgfAN3NUjZmtbmpBTQKGEuF9mvIPXKD6
+         WxtKfFX1CkMxULfcjniTjf2o0VvgI6ck/+Eeqv4IaUpMYnaW6FacBP/+4bVLuC7IbxC5
+         opxU3MtaW5NWd/gGpwJXkzS2UKvgRBl2hyPOKPU5roKguFQS9rUSZ1bUlKdPpzYjY30Q
+         xX5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DHh0gyOsvzpGPKWhUjk9ipeDVOpT1bNZRQUDYM+zrzw=;
-        b=k7YtXrrJR5xSMwQvB3cXzv2FUnF1BF2Xv0fUGYJMqHvC6Y7bQtNpYdplVgfyitiJJ3
-         kRRuYkJWIrmtbUUwCUoVjn/pYBfrL7H4tbZxxs6IrNgu7tAAhUj26tvijJ2wutCaNYQg
-         dWegNC0Ipv94trwzca9hwSQV2Sr4DSsdtOBvIVthMj9RZJIX+LevBdvLq45mCPILuz2P
-         u4+kHBFQaLiDowh3D3rb0l+ymc2Bw9XHz84J5FFLY2RLb+Pd08CxNEx1F0LuSLo3zA1S
-         Iz5Bn8C43D468In9zEZPwgH8wkkI+46IBcsuRcpaAUDmM1dnDUl8u8Wd0DdYKnmNRwlL
-         ytsA==
+        bh=QvJ6qyqWq65wbrJtwlWTFn43ivQpoQV9OWmzS3gKEoc=;
+        b=JJIOBYR87uBhkG+PsQtSXszvj7LxY8TPDzjz+/Rs8O2HvCdEjtbsQaZz3zLcgsml8H
+         k1p3KbOh5DqJXNmEYtYSlwkfRcaG/2UX2utJjdhtVL3RivfelFds7OX4hDgpDI6o7tsD
+         ojQsjiKzVdWWw/dphWCtOdO/rLmnqMMPYcBIUllEA6HVfdo199+KA2jfuiPm2g0BIqiK
+         uPGyLu7m4h70XYi6L9vc6ceaSMy3TnHnLTZ5lQN2nQCxX0Vv31Du+Ub791cggMmkKxZK
+         o1angOwJPOJFSQfYYxXpCWQktk0wr/C2aHiLYZDtF/BUqgOwOQws/5nvEhk7LroYIOZm
+         L/hg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adiel Aloni <adiel.aloni@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+	Mika Kuoppala <mika.kuoppala@intel.com>,
+	drm-intel-fixes@lists.freedesktop.org,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 203/241] mac80211_hwsim: enforce PS_MANUAL_POLL to be set after PS_ENABLED
-Date: Mon, 19 Mar 2018 19:07:48 +0100
-Message-Id: <20180319180759.586466536@linuxfoundation.org>
+Subject: [PATCH 4.9 202/241] agp/intel: Flush all chipset writes after updating the GGTT
+Date: Mon, 19 Mar 2018 19:07:47 +0100
+Message-Id: <20180319180759.545315079@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390965209243785?=
-X-GMAIL-MSGID: =?utf-8?q?1595391631592844714?=
+X-GMAIL-THRID: =?utf-8?q?1595390961971643504?=
+X-GMAIL-MSGID: =?utf-8?q?1595391628259057096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +53,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adiel Aloni <adiel.aloni@intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
 
-[ Upstream commit e16ea4bb516bc21ea2202f2107718b29218bea59 ]
+[ Upstream commit 8516673a996870ea0ceb337ee4f83c33c5ec3111 ]
 
-Enforce using PS_MANUAL_POLL in ps hwsim debugfs to trigger a poll,
-only if PS_ENABLED was set before.
-This is required due to commit c9491367b759 ("mac80211: always update the
-PM state of a peer on MGMT / DATA frames") that enforces the ap to
-check only mgmt/data frames ps bit, and then update station's power save
-accordingly.
-When sending only ps-poll (control frame) the ap will not be aware that
-the station entered power save.
-Setting ps enable before triggering ps_poll, will send NDP with PM bit
-enabled first.
+Before accessing the GGTT we must flush the PTE writes and make them
+visible to the chipset, or else the indirect access may end up in the
+wrong page. In commit 3497971a71d8 ("agp/intel: Flush chipset writes
+after updating a single PTE"), we noticed corruption of the uploads for
+pwrite and for capturing GPU error states, but it was presumed that the
+explicit calls to intel_gtt_chipset_flush() were sufficient for the
+execbuffer path. However, we have not been flushing the chipset between
+the PTE writes and access via the GTT itself.
 
-Signed-off-by: Adiel Aloni <adiel.aloni@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+For simplicity, do the flush after any PTE update rather than try and
+batch the flushes on a just-in-time basis.
+
+References: 3497971a71d8 ("agp/intel: Flush chipset writes after updating a single PTE")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Mika Kuoppala <mika.kuoppala@intel.com>
+Cc: drm-intel-fixes@lists.freedesktop.org
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171208214616.30147-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/char/agp/intel-gtt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -728,16 +728,21 @@ static int hwsim_fops_ps_write(void *dat
- 	    val != PS_MANUAL_POLL)
- 		return -EINVAL;
+--- a/drivers/char/agp/intel-gtt.c
++++ b/drivers/char/agp/intel-gtt.c
+@@ -871,6 +871,8 @@ void intel_gtt_insert_sg_entries(struct
+ 		}
+ 	}
+ 	wmb();
++	if (intel_private.driver->chipset_flush)
++		intel_private.driver->chipset_flush();
+ }
+ EXPORT_SYMBOL(intel_gtt_insert_sg_entries);
  
--	old_ps = data->ps;
--	data->ps = val;
--
--	local_bh_disable();
- 	if (val == PS_MANUAL_POLL) {
-+		if (data->ps != PS_ENABLED)
-+			return -EINVAL;
-+		local_bh_disable();
- 		ieee80211_iterate_active_interfaces_atomic(
- 			data->hw, IEEE80211_IFACE_ITER_NORMAL,
- 			hwsim_send_ps_poll, data);
--		data->ps_poll_pending = true;
--	} else if (old_ps == PS_DISABLED && val != PS_DISABLED) {
-+		local_bh_enable();
-+		return 0;
-+	}
-+	old_ps = data->ps;
-+	data->ps = val;
-+
-+	local_bh_disable();
-+	if (old_ps == PS_DISABLED && val != PS_DISABLED) {
- 		ieee80211_iterate_active_interfaces_atomic(
- 			data->hw, IEEE80211_IFACE_ITER_NORMAL,
- 			hwsim_send_nullfunc_ps, data);
