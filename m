@@ -1,67 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965345AbeCSRwG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:52:06 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:41744 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965837AbeCSRv7 (ORCPT
+        id S1030231AbeCSRwS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:52:18 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40359 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965752AbeCSRwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:51:59 -0400
-X-Google-Smtp-Source: AG47ELsVuzoRn300rA+Jd52YbJ70SpoV3wvrEvLURc3FoTyERp93yLo+ze6pl+c6ToxcZKem7tuslw==
-Date: Mon, 19 Mar 2018 10:51:57 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: "Li,Rongqing" <lirongqing@baidu.com>
-cc: Michal Hocko <mhocko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH=5D_mm=2Fmemcontrol=2Ec=3A_speed_up_to_force_empty_a_memory_cgroup?=
-In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
-Message-ID: <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com> <20180319085355.GQ23100@dhcp22.suse.cz> <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com> <20180319103756.GV23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 19 Mar 2018 13:52:10 -0400
+X-Google-Smtp-Source: AG47ELsyxYDKwRZ9MhNvhft3ZYJQImf5+SErAKzO3iy6Wo0lBnVpSWcb2D4QgwgPtKt3DZ9loIxGUg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1521193500-4696-1-git-send-email-mgautam@codeaurora.org> <1521193500-4696-5-git-send-email-mgautam@codeaurora.org>
+In-Reply-To: <1521193500-4696-5-git-send-email-mgautam@codeaurora.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Mon, 19 Mar 2018 17:51:31 +0000
+X-Gmail-Original-Message-ID: <CAE=gft6yM58dru2DnjASbi+YG_KanDbBhO2nCLBerZw4NjT-=g@mail.gmail.com>
+Message-ID: <CAE=gft6yM58dru2DnjASbi+YG_KanDbBhO2nCLBerZw4NjT-=g@mail.gmail.com>
+Subject: Re: [PATCH 4/6] phy: qcom-qmp: Add QMP V3 USB3 UNI PHY support for sdm845
+To: Manu Gautam <mgautam@codeaurora.org>
+Cc: kishon@ti.com, linux-arm-msm@vger.kernel.org,
+        vivek.gautam@codeaurora.org, varada@codeaurora.org,
+        weiyongjun1@huawei.com, fengguang.wu@intel.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018, Li,Rongqing wrote:
+Hi Manu,
 
-> > > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
-> > > stack of try_to_free_mem_cgroup_pages is too long, increase the
-> > > nr_to_reclaim can reduce times of calling
-> > > function[do_try_to_free_pages, shrink_zones, hrink_node ]
-> > >
-> > > mem_cgroup_resize_limit
-> > > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
-> > > --->SWAP_CLUSTER_MAX),
-> > >    ---> do_try_to_free_pages
-> > >      ---> shrink_zones
-> > >       --->shrink_node
-> > >        ---> shrink_node_memcg
-> > >          ---> shrink_list          <-------loop will happen in this place
-> > [times=1024/32]
-> > >            ---> shrink_page_list
-> > 
-> > Can you actually measure this to be the culprit. Because we should rethink
-> > our call path if it is too complicated/deep to perform well.
-> > Adding arbitrary batch sizes doesn't sound like a good way to go to me.
-> 
-> Ok, I will try
-> 
+On Fri, Mar 16, 2018 at 2:46 AM Manu Gautam <mgautam@codeaurora.org> wrote:
 
-Looping in mem_cgroup_resize_limit(), which takes memcg_limit_mutex on 
-every iteration which contends with lowering limits in other cgroups (on 
-our systems, thousands), calling try_to_free_mem_cgroup_pages() with less 
-than SWAP_CLUSTER_MAX is lame.  It would probably be best to limit the 
-nr_pages to the amount that needs to be reclaimed, though, rather than 
-over reclaiming.
+> QMP V3 UNI PHY is a single lane USB3 PHY without support
+> for DisplayPort (DP).
+> Main difference from DP combo QMPv3 PHY is that UNI PHY
+> doesn't have dual RX/TX lanes and no separate DP_COM
+> block for configuration related to type-c or DP.
+> While at it, fix has_pwrdn_delay attribute for USB-DP
+> PHY configuration.
 
-If you wanted to be invasive, you could change page_counter_limit() to 
-return the count - limit, fix up the callers that look for -EBUSY, and 
-then use max(val, SWAP_CLUSTER_MAX) as your nr_pages.
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
+>   drivers/phy/qualcomm/phy-qcom-qmp.c | 148
+++++++++++++++++++++++++++++++++++++
+>   drivers/phy/qualcomm/phy-qcom-qmp.h |   5 ++
+>   2 files changed, 153 insertions(+)
+
+...
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h
+b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> index d1c6905..5d78d43 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> @@ -214,6 +214,8 @@
+>   #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN            0x030
+>   #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE    0x034
+>   #define QSERDES_V3_RX_RX_TERM_BW                       0x07c
+> +#define QSERDES_V3_RX_VGA_CAL_CNTRL1                   0x0bc
+
+I noticed you add this definition, but never use it. Are you missing a
+QMP_PHY_INIT_CFG line for this register in qmp_v3_usb3_uniphy_rx_tbl[], or
+is that register "don't care"? It looks important, and while its default
+value out of reset might be valid, you never know what nutty value boot
+firmware might set it to.
+
+> +#define QSERDES_V3_RX_VGA_CAL_CNTRL2                   0x0c0
+>   #define QSERDES_V3_RX_RX_EQ_GAIN2_LSB                  0x0c8
+>   #define QSERDES_V3_RX_RX_EQ_GAIN2_MSB                  0x0cc
+>   #define QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2            0x0d4
+> @@ -227,6 +229,7 @@
+>   #define QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL            0x10c
+>   #define QSERDES_V3_RX_RX_BAND                          0x110
+>   #define QSERDES_V3_RX_RX_INTERFACE_MODE                        0x11c
+> +#define QSERDES_V3_RX_RX_MODE_00                       0x164
+
+>   /* Only for QMP V3 PHY - PCS registers */
+>   #define QPHY_V3_PCS_POWER_DOWN_CONTROL                 0x004
+> @@ -273,6 +276,8 @@
+>   #define QPHY_V3_PCS_FLL_CNT_VAL_H_TOL                  0x0d0
+>   #define QPHY_V3_PCS_FLL_MAN_CODE                       0x0d4
+>   #define QPHY_V3_PCS_RX_SIGDET_LVL                      0x1d8
+> +#define QPHY_V3_PCS_REFGEN_REQ_CONFIG1                 0x20c
+> +#define QPHY_V3_PCS_REFGEN_REQ_CONFIG2                 0x210
+
+>   /* Only for QMP V3 PHY - PCS_MISC registers */
+>   #define QPHY_V3_PCS_MISC_CLAMP_ENABLE                  0x0c
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm"
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
