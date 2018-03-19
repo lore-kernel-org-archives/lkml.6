@@ -1,98 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934086AbeCSXMN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 19:12:13 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12313 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933619AbeCSXMM (ORCPT
+        id S934171AbeCSXNF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 19:13:05 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:34747 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933619AbeCSXNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 19:12:12 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Mar 2018 16:12:11 -0700
-Subject: Re: [PATCH 11/14] mm/hmm: move hmm_pfns_clear() closer to where it is
- use
-To: <jglisse@redhat.com>, <linux-mm@kvack.org>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180316203552.4155-1-jglisse@redhat.com>
- <20180316203552.4155-2-jglisse@redhat.com>
-X-Nvconfidentiality: public
-From: John Hubbard <jhubbard@nvidia.com>
-Message-ID: <80d6ed4e-3e7a-ef22-c931-79491eeedbe7@nvidia.com>
-Date: Mon, 19 Mar 2018 16:12:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Mar 2018 19:13:02 -0400
+X-Google-Smtp-Source: AG47ELtoX67ZpI/Er3LGPDutHEAFMEt+0wdwta+08zMc+zTU97VUpMv2l3NsObKjNOx8z494ce+Ehr8SNG6vUtT7AKo=
 MIME-Version: 1.0
-In-Reply-To: <20180316203552.4155-2-jglisse@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL102.nvidia.com (172.18.146.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+References: <20180309121549.630-1-harry.pan@intel.com> <20180309121549.630-3-harry.pan@intel.com>
+ <cfac6f03-7700-dfe3-d1e6-9bf7f5a1d9c6@google.com>
+In-Reply-To: <cfac6f03-7700-dfe3-d1e6-9bf7f5a1d9c6@google.com>
+From: Puthikorn Voravootivat <puthik@google.com>
+Date: Mon, 19 Mar 2018 23:12:45 +0000
+Message-ID: <CANCcNXe-_orzk1-83=aSpbajfjFSznU4bo=8RVmL1bELeeaozw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] perf/x86/intel: Enable C-state residency events for
+ Cannon Lake
+To: Benson Leung <bleung@google.com>
+Cc: harry.pan@intel.com, linux-kernel@vger.kernel.org, gs0622@gmail.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        Kan.liang@intel.com, bleung@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/16/2018 01:35 PM, jglisse@redhat.com wrote:
-> From: Jérôme Glisse <jglisse@redhat.com>
-> 
-> Move hmm_pfns_clear() closer to where it is use to make it clear it
-> is not use by page table walkers.
-> 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> ---
->  mm/hmm.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+On Mon, Mar 19, 2018 at 4:09 PM Benson Leung <bleung@google.com> wrote:
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Hi Harry,
 
-> 
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index 857eec622c98..3a708f500b80 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -297,14 +297,6 @@ static int hmm_pfns_bad(unsigned long addr,
->  	return 0;
->  }
->  
-> -static void hmm_pfns_clear(uint64_t *pfns,
-> -			   unsigned long addr,
-> -			   unsigned long end)
-> -{
-> -	for (; addr < end; addr += PAGE_SIZE, pfns++)
-> -		*pfns = 0;
-> -}
-> -
->  /*
->   * hmm_vma_walk_hole() - handle a range back by no pmd or no pte
->   * @start: range virtual start address (inclusive)
-> @@ -463,6 +455,14 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
->  	return 0;
->  }
->  
-> +static void hmm_pfns_clear(uint64_t *pfns,
-> +			   unsigned long addr,
-> +			   unsigned long end)
-> +{
-> +	for (; addr < end; addr += PAGE_SIZE, pfns++)
-> +		*pfns = 0;
-> +}
-> +
+> On 03/09/2018 04:15 AM, Harry Pan wrote:
+> > Cannon Lake supports C1/C3/C6/C7, PC2/PC3/PC6/PC7/PC8/PC9/PC10
+> > state residency counters, this patch enables those counters.
+> >
+> > The MSR information is based on Intel Software Developers' Manual,
+> > Vol. 4, Order No. 335592.
+> >
+> > Signed-off-by: Harry Pan <harry.pan@intel.com>
 
-Yep, identical, so no functional changes.
+> Reviewed-by: Benson Leung <bleung@chromium.org>
 
->  static void hmm_pfns_special(struct hmm_range *range)
->  {
->  	unsigned long addr = range->start, i = 0;
+Tested-by: Puthikorn Voravootivat <puthik@chromium.org>
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> > ---
+> >  arch/x86/events/intel/cstate.c | 44
++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 31 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/arch/x86/events/intel/cstate.c
+b/arch/x86/events/intel/cstate.c
+> > index 72db0664a53d..9aca448bb8e6 100644
+> > --- a/arch/x86/events/intel/cstate.c
+> > +++ b/arch/x86/events/intel/cstate.c
+> > @@ -40,50 +40,51 @@
+> >   * Model specific counters:
+> >   *   MSR_CORE_C1_RES: CORE C1 Residency Counter
+> >   *                    perf code: 0x00
+> > - *                    Available model: SLM,AMT,GLM
+> > + *                    Available model: SLM,AMT,GLM,CNL
+> >   *                    Scope: Core (each processor core has a MSR)
+> >   *   MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
+> >   *                          perf code: 0x01
+> > - *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL,GLM
+> > + *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL,GLM,
+> > +                                             CNL
+> >   *                          Scope: Core
+> >   *   MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
+> >   *                          perf code: 0x02
+> > - *                          Available model:
+SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
+> > - *                                           SKL,KNL,GLM
+> > + *                          Available model:
+SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+> > + *                                           SKL,KNL,GLM,CNL
+> >   *                          Scope: Core
+> >   *   MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
+> >   *                          perf code: 0x03
+> > - *                          Available model: SNB,IVB,HSW,BDW,SKL
+> > + *                          Available model: SNB,IVB,HSW,BDW,SKL,CNL
+> >   *                          Scope: Core
+> >   *   MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
+> >   *                          perf code: 0x00
+> > - *                          Available model:
+SNB,IVB,HSW,BDW,SKL,KNL,GLM
+> > + *                          Available model:
+SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+> >   *                          perf code: 0x01
+> > - *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL
+> > - *                                           GLM
+> > + *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
+> > + *                                           GLM,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
+> >   *                          perf code: 0x02
+> >   *                          Available model:
+SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
+> > - *                                           SKL,KNL,GLM
+> > + *                                           SKL,KNL,GLM,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
+> >   *                          perf code: 0x03
+> > - *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL
+> > + *                          Available model:
+NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
+> >   *                          perf code: 0x04
+> > - *                          Available model: HSW ULT only
+> > + *                          Available model: HSW ULT,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
+> >   *                          perf code: 0x05
+> > - *                          Available model: HSW ULT only
+> > + *                          Available model: HSW ULT,CNL
+> >   *                          Scope: Package (physical package)
+> >   *   MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+> >   *                          perf code: 0x06
+> > - *                          Available model: HSW ULT, GLM
+> > + *                          Available model: HSW ULT,GLM,CNL
+> >   *                          Scope: Package (physical package)
+> >   *
+> >   */
+> > @@ -486,6 +487,21 @@ static const struct cstate_model hswult_cstates
+__initconst = {
+> >                                 BIT(PERF_CSTATE_PKG_C10_RES),
+> >  };
+> >
+> > +static const struct cstate_model cnl_cstates __initconst = {
+> > +     .core_events            = BIT(PERF_CSTATE_CORE_C1_RES) |
+> > +                               BIT(PERF_CSTATE_CORE_C3_RES) |
+> > +                               BIT(PERF_CSTATE_CORE_C6_RES) |
+> > +                               BIT(PERF_CSTATE_CORE_C7_RES),
+> > +
+> > +     .pkg_events             = BIT(PERF_CSTATE_PKG_C2_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C3_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C6_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C7_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C8_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C9_RES) |
+> > +                               BIT(PERF_CSTATE_PKG_C10_RES),
+> > +};
+> > +
+> >  static const struct cstate_model slm_cstates __initconst = {
+> >       .core_events            = BIT(PERF_CSTATE_CORE_C1_RES) |
+> >                                 BIT(PERF_CSTATE_CORE_C6_RES),
+> > @@ -557,6 +573,8 @@ static const struct x86_cpu_id
+intel_cstates_match[] __initconst = {
+> >       X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_MOBILE,  snb_cstates),
+> >       X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_DESKTOP, snb_cstates),
+> >
+> > +     X86_CSTATES_MODEL(INTEL_FAM6_CANNONLAKE_MOBILE, cnl_cstates),
+> > +
+> >       X86_CSTATES_MODEL(INTEL_FAM6_XEON_PHI_KNL, knl_cstates),
+> >       X86_CSTATES_MODEL(INTEL_FAM6_XEON_PHI_KNM, knl_cstates),
+> >
+> >
+
+> Thank you!
+> --
+> Benson Leung
+> Staff Software Engineer
+> Chrome OS Kernel
+> Google Inc.
+> bleung@google.com
+> Chromium OS Project
+> bleung@chromium.org
