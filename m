@@ -1,71 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484166-2-13672455193396189809
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES da,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484165; b=dmUoeWJDynPoo+NnbjXrKvokLvuoB6IZFOE4wwcWZ02w6yt
-    Mq4MPgsJD2fvGj+HQ1pHCA2T+VnPdWGCzRBtsCzacuWeRuOGqmgXDPvhhPVlUcYT
-    DHHn7+ryvTBASulb2UqmF4FVIqI9i9RiwXw1jHkMQS9zxcqVoO2/3ncp1Xbw/RTE
-    3zGLZvPc40fCHnBoomLMaCtVotVytRIelWHFV3ddR/MIK4EGAGAZfhzmiJkWgpwU
-    KEn6fQ6fcc2Os7xhikRHWTY+rQck4yev3hp5zUO8YyaVq9AN89w2adsnbheJ6jpS
-    xQOAwE/1ZdtqV4v+ySb0rffjkWgOxaMA6HPsxPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484165; bh=bO38c7AeD4qwKnXA7BvTis2gQL
-    7QZtueGOFrh4A0Ulk=; b=SW+nR2V9QKbY7fefRVkXyvb3urEafEZaTbyEsnqwEs
-    FnnMo9JieQF1i9pH4ApP3i1e1WkbDEfpKJKUvuYi1NCU7but6z050WKZsdp1+x4j
-    pnn24VbxXhuKGsHDbZn+G7P84nAwCOINDviR0RigG9WaNJO3S3ccA725wVyjLAme
-    j29XLUP7h6/7OQvO4PciZukA4t226n28IZdAqztXw9qoql5YQ01kNp808CRJtr4E
-    VI+7bfamXM/aQXKwI/SpSvD6ACFaLAeCMKUEsCa4NNZeynaFy4mRQlJAa48lKjFd
-    yCMwpl8Fk45ONggH100HGHVToKLYbJBY5EqBGVvzBabA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeefjeeinecuvehluhhsthgvrhfuihiivgeptd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpledtrdelvddriedurddvtddvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeefjeeinecuvehluhhsthgvrhfuihiivgeptd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031826AbeCSS3U (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:29:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52686 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967819AbeCSS3Q (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:29:16 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtQhPRgN2BAQbyIpz6T96kJRLxuHXK0sBGxLY6HOqyzsd7T7izKwmRXiY4WBuKkc+yOEQoy
+ARC-Seal: i=1; a=rsa-sha256; t=1521484164; cv=none;
+        d=google.com; s=arc-20160816;
+        b=tbvJzGmbbz27U7o1oEOyB6lpMSF0shmRo4RoxP1WufsaWWXqa0gWkp3ZeE/Atgu2fX
+         jYTM7Wuw89JxtJg1+2zHoC9pWCCThAIwVR2Y8TVaw4LMI4fNvZqejUR8lrK/YRSDIZf/
+         A+NBSgNKHnFe/6OPK8gwWv3sfaoexzxNOAYWCI75ATByj1DN2SzjWiKcXSczqyHaBxkn
+         80mnsWpEfKdEG5CfOplYwtvyGtORtfuq50Ds1DTJ5uezNjMBGHAwM5caq4X2vmepp5n5
+         ESbecljANMcy0R3yCONDE8lSTZ5ofX58s89WBV0azO9PacncIHHLbZJhPagr+C7LOgX6
+         wN9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=vBgXIMR00nQh3ewO4hOlwShre67GA2/2meRv/5uGsC0=;
+        b=FjiuwsGEfhS68vnK4uNL9cRZ8N2jnwJ7ra5tmckprjOGx1zjqspTAGonR3N2GZzL/H
+         XwyVDajOhXWa4kM7SA3mOaZ+XLvckz/M5hNeBfhTRXawGgTh2wGr/SIj9Q4lOvBJG/cD
+         fMVH4urkh82aSjmfiDEO4qgNITm5yLYFkSM2Bj24Gaf1XAIFi3YHUPkGTCCBuDr1i6Kd
+         BKdelGmVnyoLKPqmdnygBb8y9Y/aeJXW8ZnKO3gfh99un8AgR4MNmR8Y1ijuvPCQbpGd
+         CEdSpRyckPvyMnzYaQwRnuIj3pYaf+7ErEm/Pwu367oJbCBGZqNVYETFfHev05wZcv02
+         4ESw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gratian Crisan <gratian.crisan@ni.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 4.14 11/41] x86/mm: Fix vmalloc_fault to use pXd_large
-Date: Mon, 19 Mar 2018 19:08:11 +0100
-Message-Id: <20180319180732.937782326@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 14/41] ALSA: hda - Revert power_save option default value
+Date: Mon, 19 Mar 2018 19:08:14 +0100
+Message-Id: <20180319180733.158794628@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
 References: <20180319180732.195217948@linuxfoundation.org>
@@ -73,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391067718842348?=
+X-GMAIL-MSGID: =?utf-8?q?1595391779470136198?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -83,57 +49,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 18a955219bf7d9008ce480d4451b6b8bf4483a22 upstream.
+commit 40088dc4e1ead7df31728c73f5b51d71da18831d upstream.
 
-Gratian Crisan reported that vmalloc_fault() crashes when CONFIG_HUGETLBFS
-is not set since the function inadvertently uses pXn_huge(), which always
-return 0 in this case.  ioremap() does not depend on CONFIG_HUGETLBFS.
+With the commit 1ba8f9d30817 ("ALSA: hda: Add a power_save
+blacklist"), we changed the default value of power_save option to -1
+for processing the power-save blacklist.
+Unfortunately, this seems breaking user-space applications that
+actually read the power_save parameter value via sysfs and judge /
+adjust the power-saving status.  They see the value -1 as if the
+power-save is turned off, although the actual value is taken from
+CONFIG_SND_HDA_POWER_SAVE_DEFAULT and it can be a positive.
 
-Fix vmalloc_fault() to call pXd_large() instead.
+So, overall, passing -1 there was no good idea.  Let's partially
+revert it -- at least for power_save option default value is restored
+again to CONFIG_SND_HDA_POWER_SAVE_DEFAULT.  Meanwhile, in this patch,
+we keep the blacklist behavior and make is adjustable via the new
+option, pm_blacklist.
 
-Fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
-Reported-by: Gratian Crisan <gratian.crisan@ni.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/20180313170347.3829-2-toshi.kani@hpe.com
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
+Fixes: 1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/pci/hda/hda_intel.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -330,7 +330,7 @@ static noinline int vmalloc_fault(unsign
- 	if (!pmd_k)
- 		return -1;
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -181,11 +181,15 @@ static const struct kernel_param_ops par
+ };
+ #define param_check_xint param_check_int
  
--	if (pmd_huge(*pmd_k))
-+	if (pmd_large(*pmd_k))
- 		return 0;
+-static int power_save = -1;
++static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ module_param(power_save, xint, 0644);
+ MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
+ 		 "(in second, 0 = disable).");
  
- 	pte_k = pte_offset_kernel(pmd_k, address);
-@@ -479,7 +479,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
- 		BUG();
++static bool pm_blacklist = true;
++module_param(pm_blacklist, bool, 0644);
++MODULE_PARM_DESC(pm_blacklist, "Enable power-management blacklist");
++
+ /* reset the HD-audio controller in power save mode.
+  * this may give more power-saving, but will take longer time to
+  * wake up.
+@@ -2300,10 +2304,9 @@ static int azx_probe_continue(struct azx
  
--	if (pud_huge(*pud))
-+	if (pud_large(*pud))
- 		return 0;
+ 	val = power_save;
+ #ifdef CONFIG_PM
+-	if (val == -1) {
++	if (pm_blacklist) {
+ 		const struct snd_pci_quirk *q;
  
- 	pmd = pmd_offset(pud, address);
-@@ -490,7 +490,7 @@ static noinline int vmalloc_fault(unsign
- 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
- 		BUG();
- 
--	if (pmd_huge(*pmd))
-+	if (pmd_large(*pmd))
- 		return 0;
- 
- 	pte_ref = pte_offset_kernel(pmd_ref, address);
+-		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
+ 		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
+ 		if (q && val) {
+ 			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
