@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsVb4RK+pEb4iyVEBQK5RKAPaC3+DVNHimKh6F2/icG6ZG/o3YsAmZbnIXvtzAnuY6ga5k/
-ARC-Seal: i=1; a=rsa-sha256; t=1521483269; cv=none;
+X-Google-Smtp-Source: AG47ELsKQwEPmnzbxHO7n97t8lu9dCr2UZqmnm2ccnZt4dIvpgHoaFNkW4k36bWbwK2k8IgzByZ9
+ARC-Seal: i=1; a=rsa-sha256; t=1521483266; cv=none;
         d=google.com; s=arc-20160816;
-        b=RGZWSMiOCbNXaG+RrbBZSNq3htisVMPE42JUOOJ06al/HqE3rcshHhAMghKYZZ1f7Y
-         YQr8smDGkCzby74sWvNuWPA6cHswTZSRjoqS6dRG5EFkYxSl91SF0Y4LKFvVE1JfO5P5
-         sg6CQ0lnufAemcEpyBRNac0h8+GUHjVwI+I2Fn3ujz7dZxAlhiHvj19irhIJnCjOFcxb
-         /Y7xFCmGmvd35UU6iA5dXB0rT74PFkz0k63VmdkjGPOhBhEi7uxppksr5W/dWk6HeBmf
-         HX2mKc9qzo60vFf6qT2Na5BGQ3yiwcpVTXYOK5FwGrjWIQsvZ4FE8mQ0Tg6Wqrad+6Vv
-         wurw==
+        b=s29BlxjiZ80uSh9wQp27CN3z0WlndfsNwB+zrq4nRDsE/zKd2/rKOAFujK94UjRyrf
+         aODuGAFvQ9IKOFcUiMAewsvAe/oox5OEbwMNUyhfco6DRz/xQmj2Dcrd2nacWPsV7fAl
+         aIJZ7Ag+SZCgRYC1T4T7eERZA0AsJq2LG8VeGN/yS2hh0WzjgMoYq54JRPp5G/9AqvDf
+         VLTGlgdkX3AQu1sarFVkGiLvEtyHTDdqyxDzQeB6Wgid+4sqKFPTDdijO8ZA4YVwyB+k
+         PJXjpoEAa3GL5ZDcJFTxSdTXQvhiQtmhIsmr455TV0pxd9bP4pXrOBiJ2BERVkpZ0ig+
+         ny2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R9so2eTh9LntcYSgco/L5xEZRjiaT9FyFrul6vboqy8=;
-        b=NEyciDsvX1Ing1UUdtsHAvQnp8nM7WxpR5KoqjCRZh1Po9zgc10bVI/Q6jog4/vwa1
-         +8V2Z1Vp0z1IAJ6aJeYFSdE61gziYY28fFj3jPaIDlwYaKU+Y7DU+8Q178NiA75UK51C
-         ckxP0MzicW5J2YbbRAc/mYjfobZ1wE2gGofvasA9/toMuQ3HJwlgAeu2NSTW5aGco/kq
-         AiK4RTarFZRvhr0btbHzuUdIxb0G6QLeTmJI1ZW1CT7aCM/RWpdIMpUYuUHmtC39GMG1
-         fatej/vss8Aw2XEc4ipfuhK6tto9xy5FZ6zp8eikyqpEoQflPFXZaBHqBx9fislNIxl/
-         4g1g==
+        bh=LmAkflzbJ0qvR5NEINntMtlB5LOaeYegx8eDPOProD8=;
+        b=oHB5hCtJ57k5v2YkJycCAhE3hNi1QpGZ0PYlpL6WXtA+I0+886zYSGu6sL6PW8aulB
+         YdL2ZMOovsAuup8+paAKIuqpYo9NeY2ZHzaLxmQTDCpn3KvX3eQQ+6n0bc2gj7U3QLJq
+         MP+Mw9FoqlbWkTQAXl2qXIl53O00V5Pgs+7qVrEExM/Goc6gRdTGD4kB04+ZkxSrhhDG
+         d2xiyc6/wy3MxQrKqcO/6fv5LMbLb0q7K+4XVNkxEex/51Q6YxJCmE8A/z8UfrTwvBhL
+         R3pXtyCfZds7ekIz6R8h89j4rqfs50fxw7OFhTdLiatxgU3HazqdmV9Kyq3UUo5uvUsy
+         j32A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Leach <mike.leach@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>,
+	amd-gfx@lists.freedesktop.org,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 061/134] coresight: Fixes coresight DT parse to get correct output port ID.
-Date: Mon, 19 Mar 2018 19:05:44 +0100
-Message-Id: <20180319171858.124822699@linuxfoundation.org>
+Subject: [PATCH 4.4 060/134] drm/amdgpu: Fail fb creation from imported dma-bufs. (v2)
+Date: Mon, 19 Mar 2018 19:05:43 +0100
+Message-Id: <20180319171857.980738204@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390840577337928?=
-X-GMAIL-MSGID: =?utf-8?q?1595390840577337928?=
+X-GMAIL-THRID: =?utf-8?q?1595390837447532927?=
+X-GMAIL-MSGID: =?utf-8?q?1595390837447532927?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Leach <mike.leach@linaro.org>
+From: Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>
 
 
-[ Upstream commit eeedc5421dd3b51de73e6106405c5c77f920f281 ]
+[ Upstream commit 1769152ac64b0b07583f696b621624df2ca4c840 ]
 
-Corrected to get the port numbering to allow programmable replicator driver
-to operate correctly.
+Any use of the framebuffer will migrate it to VRAM, which is not sensible for
+an imported dma-buf.
 
-By convention, CoreSight devices number ports, not endpoints in
-the .dts files:-
+v2: Use DRM_DEBUG_KMS to prevent userspace accidentally spamming dmesg.
 
-port {
-     reg<N>
-     endpoint {
-     }
-}
-
-Existing code read endpoint number - always 0x0, rather than the correct
-port number.
-
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>
+CC: amd-gfx@lists.freedesktop.org
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/of_coresight.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -150,7 +150,7 @@ struct coresight_platform_data *of_get_c
- 				continue;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -560,6 +560,12 @@ amdgpu_user_framebuffer_create(struct dr
+ 		return ERR_PTR(-ENOENT);
+ 	}
  
- 			/* The local out port number */
--			pdata->outports[i] = endpoint.id;
-+			pdata->outports[i] = endpoint.port;
- 
- 			/*
- 			 * Get a handle on the remote port and parent
++	/* Handle is imported dma-buf, so cannot be migrated to VRAM for scanout */
++	if (obj->import_attach) {
++		DRM_DEBUG_KMS("Cannot create framebuffer from imported dma_buf\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	amdgpu_fb = kzalloc(sizeof(*amdgpu_fb), GFP_KERNEL);
+ 	if (amdgpu_fb == NULL) {
+ 		drm_gem_object_unreference_unlocked(obj);
