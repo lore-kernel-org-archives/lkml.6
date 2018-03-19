@@ -1,118 +1,157 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4041595-1521504683-2-8947073247761017614
+X-Cyrus-Session-Id: sloti22d1t05-2356021-1521448555-2-10647328194300582656
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521504682; b=XxgNKmOabDXM8mKe3WrhjdfenB+I4z6k9PfNIXMNcRh4p1Y
-    RmJMR1BOI8kfq1ILkNhl6dqzu4Fn+Hpl83SePGx66dgYebWHMuXNoArlrisyS/tn
-    VIJLyUJTRc3TQoWzAAFtHd9S+7T2FU5dZMa6tjGzqU8xgug5jU5VoWGkOyrffM2v
-    DgAQJrfcKG6BOsadOrqZcluroFiqjd96F5vHfcZGoXYc9JcgkUFmaLu14rphPK00
-    KPCBG8QHLAq9FVZRJvUTlJESZIZxZNJxUUAiZMffoVgsnjL03qOtjIBNQTcVivtQ
-    X9ImjUUFYP0Q9+6J2ZlodG+2n3zYwzwBsSg+Nmw==
+    t=1521448554; b=FX8ZrPlrRfHhYBE4JVdZ6WEgFjHtnQbuBE+/tFUDs2rWttD
+    LXoO6U/z6O5p13BHW366C3T5GNkHmvM03MWkcxJ2ku8IUW2c/cKsucbrS1PB0uUm
+    NLxNoN6I9hf4wJNI+uETS00fuu9D+YX7Aqq/cyV6lxlgHCn6uoGFIpdrNLy5qleW
+    5f1ATCiCM1nGIo5jUy+TtJ5LYBj1v4v0ehxddIlP6JdwbX6SNFC03BBHIYJ4YSbQ
+    g8qKvq5kjvxX0YkPGXpaGm1GHDpgfCH0C6cYucEAsYnxBbzjOY6zqlucR2uNE8uO
+    wJZcq2qBb4p8GoRO0AOzozHMogrw4sDCUCL6w4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521504682; bh=zAp7Uj0lllNCAt0PsRMnonvQLA
-    G/hC2RW+RF3wf3IbY=; b=GlyIgdUnuXGztOesP/lvfj2toR54z9dn9zNrmMTw87
-    WcHuwPJKuJhCOvzkqgvQbHahC09nlQsNJSw/X9uSDca1OYZ5V0rOe4OCEop9FKiC
-    4kb0cbQpGe6edd00TsbjnlxJnWYsXlkMzZZzHTEz/X3dDENingHxdAKppjIOCYm1
-    wZFvDUm+8X9RW23SsHGNUxiqNc9uue0uAk2HrN6+VhliaYk6NJmAdFPczP4yvbkD
-    6MOf+9Ne2JoftDFsB4Hxn+tZyM/u1z0qup6972DviUcIS6WQvpxddsCZHvyXHxSs
-    y38vf/1wMd4vesQyzO7U2iL3ekTh9IZ7K+cAAVJstX5A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=HL/0B/HD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    :list-id; s=arctest; t=1521448554; bh=P04viyHtw6AalIUG8+Xx/DCyWl
+    wWYzk+b0YQ0Y+dcDI=; b=w/9mz2S59+i1/0txcn5rDW32xVEXVQ9BNGONN52/NB
+    LbjlWRIUNkFAEyei022aMNs1gH/ulEXU741es9Wc++gvOzr1rQkhWxOLs+ZK2ABd
+    Qv4VxTTH7BA9LtybJfqYBzIEKbsu8AKb1MIW2uUBn0MCpZhzK8NV+p6EcTFEXAv1
+    3NsSkPQrPxgaTCWtYNORXisVSmJkcsZZ/vSUiEMU/swMXQJwZNZzPi0y1/Yh7S2m
+    g30FSOy1xl3TNhgs3fsZIrf9JvQsgV8WiLoiVxirceYNiuv4k7Vle3kKqsEgAAR5
+    cuDdphBNtgU/hKxfClKmEufvDZzZ9cs+WYD+3OnLY0Yw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdduleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpedfffgrrhhrihgtkhculfdrucghohhnghdfuceouggrrhhrihgtkhdrfihonhhgsehorhgrtghlvgdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpddugedurddugeeirdduudeirddvvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeolhhinhhugidqrghpihdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepgeegvdefnecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgdduvdegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpeevhhhrihhsthhophhhucfjvghllhifihhguceohhgthheslhhsthdruggvqeenucffohhmrghinhepkhhvrggtkhdrohhrghdpkhgvrhhnvghlrdhorhhgpdhprghguhhrvgdrihhopdhgihhthhhusgdrtghomhdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddtledrudefvddrudektddrieejpddvudefrdelhedruddurddvuddunecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehlihhnuhigqdgrphhiqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegieegleenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=HL/0B/HD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdduleculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpedfffgrrhhrihgtkhculfdrucghohhnghdfuceouggrrhhrihgtkhdrfihonhhgsehorhgrtghlvgdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddtledrudefvddrudektddrieejpddugedurddugeeirdduudeirddvvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeolhhinhhugidqrghpihdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepgeegvdefnecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgdduvdegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjfghsphejsehttdertddtredvnecuhfhrohhmpeevhhhrihhsthhophhhucfjvghllhifihhguceohhgthheslhhsthdruggvqeenucffohhmrghinhepkhhvrggtkhdrohhrghdpkhgvrhhnvghlrdhorhhgpdhprghguhhrvgdrihhopdhgihhthhhusgdrtghomhdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddtledrudefvddrudektddrieejpddvudefrdelhedruddurddvuddunecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehlihhnuhigqdgrphhiqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegieegleenucevlhhushhtvghrufhiiigvpedt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934386AbeCTALT (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 20:11:19 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49636 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933323AbeCTALS (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 19 Mar 2018 20:11:18 -0400
-Date: Mon, 19 Mar 2018 17:11:07 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, Avi Kivity <avi@scylladb.com>,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/36] aio: don't print the page size at boot time
-Message-ID: <20180320001107.GD4860@magnolia>
+        id S1754531AbeCSIfw (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 04:35:52 -0400
+Received: from verein.lst.de ([213.95.11.211]:57750 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753013AbeCSIfu (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:35:50 -0400
+Date: Mon, 19 Mar 2018 09:35:48 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: aio poll, io_pgetevents and a new in-kernel poll API V5
+Message-ID: <20180319083548.GA21224@lst.de>
 References: <20180305212743.16664-1-hch@lst.de>
- <20180305212743.16664-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180305212743.16664-2-hch@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803190149
+In-Reply-To: <20180305212743.16664-1-hch@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 01:27:08PM -0800, Christoph Hellwig wrote:
-> The page size is in no way related to the aio code, and printing it in
-> the (debug) dmesg at every boot serves no purpose.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Jeff Moyer <jmoyer@redhat.com>
+Hi everyone,
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+this posting has been out for 2 weeks now, without any replies except
+for Jeff reminding of the missing reviews he already gave me in the
+previous version.
 
---D
+Canwe make some progress on this?  Especially as all the aio bits
+have gotten reviews from Jeff.
 
-> ---
->  fs/aio.c | 3 ---
->  1 file changed, 3 deletions(-)
+On Mon, Mar 05, 2018 at 01:27:07PM -0800, Christoph Hellwig wrote:
+> Hi all,
 > 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index a062d75109cb..03d59593912d 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -264,9 +264,6 @@ static int __init aio_setup(void)
->  
->  	kiocb_cachep = KMEM_CACHE(aio_kiocb, SLAB_HWCACHE_ALIGN|SLAB_PANIC);
->  	kioctx_cachep = KMEM_CACHE(kioctx,SLAB_HWCACHE_ALIGN|SLAB_PANIC);
-> -
-> -	pr_debug("sizeof(struct page) = %zu\n", sizeof(struct page));
-> -
->  	return 0;
->  }
->  __initcall(aio_setup);
-> -- 
-> 2.14.2
+> this series adds support for the IOCB_CMD_POLL operation to poll for the
+> readyness of file descriptors using the aio subsystem.  The API is based
+> on patches that existed in RHAS2.1 and RHEL3, which means it already is
+> supported by libaio.  To implement the poll support efficiently new
+> methods to poll are introduced in struct file_operations:  get_poll_head
+> and poll_mask.  The first one returns a wait_queue_head to wait on
+> (lifetime is bound by the file), and the second does a non-blocking
+> check for the POLL* events.  This allows aio poll to work without
+> any additional context switches, unlike epoll.
 > 
+> To make the interface fully useful a new io_pgetevents system call is
+> added, which atomically saves and restores the signal mask over the
+> io_pgetevents system call.  It it the logical equivalent to pselect and
+> ppoll for io_pgetevents.
+> 
+> The corresponding libaio changes for io_pgetevents support and
+> documentation, as well as a test case will be posted in a separate
+> series.
+> 
+> The changes were sponsored by Scylladb, and improve performance
+> of the seastar framework up to 10%, while also removing the need
+> for a privileged SCHED_FIFO epoll listener thread.
+> 
+>     git://git.infradead.org/users/hch/vfs.git aio-poll.5
+> 
+> Gitweb:
+> 
+>     http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-poll.5
+> 
+> Libaio changes:
+> 
+>     https://pagure.io/libaio.git io-poll
+> 
+> Seastar changes (not updated for the new io_pgetevens ABI yet):
+> 
+>     https://github.com/avikivity/seastar/commits/aio
+> 
+> Changes since V4:
+>  - rebased ontop of Linux 4.16-rc4
+> 
+> Changes since V3:
+>  - remove the pre-sleep ->poll_mask call in vfs_poll,
+>    allow ->get_poll_head to return POLL* values.
+> 
+> Changes since V2:
+>  - removed a double initialization
+>  - new vfs_get_poll_head helper
+>  - document that ->get_poll_head can return NULL
+>  - call ->poll_mask before sleeping
+>  - various ACKs
+>  - add conversion of random to ->poll_mask
+>  - add conversion of af_alg to ->poll_mask
+>  - lacking ->poll_mask support now returns -EINVAL for IOCB_CMD_POLL
+>  - reshuffled the series so that prep patches and everything not
+>    requiring the new in-kernel poll API is in the beginning
+> 
+> Changes since V1:
+>  - handle the NULL ->poll case in vfs_poll
+>  - dropped the file argument to the ->poll_mask socket operation
+>  - replace the ->pre_poll socket operation with ->get_poll_head as
+>    in the file operations
+> 
+> --
+> To unsubscribe, send a message with 'unsubscribe linux-aio' in
+> the body to majordomo@kvack.org.  For more info on Linux AIO,
+> see: http://www.kvack.org/aio/
+> Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+---end quoted text---
