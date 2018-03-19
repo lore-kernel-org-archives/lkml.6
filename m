@@ -1,92 +1,90 @@
 Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1521451064; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521451061; cv=none;
         d=google.com; s=arc-20160816;
-        b=ydmKQu8O9GdoDa2KSmWGH9sjcfxfLvmM+/oWloU8dcSpoeU16M+3UdW4FZanYdwnF8
-         3gPWBIDBWRRRfmljB0hb0u9h+v5edPP/ZMp9He2H7u1/hiTqdBLy+O4f0R9zgmcoEiOs
-         p2mM2VCXFJnCVwch6+cq17XBIsOfTyEDJZoy6OSUU++CLsv/ODBamy2pKwLTSx8C7UZR
-         MWwF4FYvZpuAhkZEK88KhozmLqVTCqXXRIICSa08IOsM0Cqz6TWw3o4YUBOo2wHEBPBC
-         fqvSwDR5LSkkV6+PGbUGyWpI9Mkd6RSYTO37A6anQMhPvIE4lTI4y/d1bvw77gSn0GDm
-         Pupg==
+        b=cELYe+FINRp9HwBzfP+Q8CwwTS31cR0F3jdSI6LvWTKSgprZkhDxp/U9JSpXiN1L3P
+         IJ3cQAxQWDWAaFxmbscWAKtlkk5yheEpsmNFMy1V1U2/bQ0eBAFbAYnKOCHEtCeckB9e
+         4E0v7L5dUL5SnZJziVdJuQbttK9WEcVxmyq+NRHm+JbS9tJX8/UPr+nfzqegO254o/a+
+         iE7ZMHH0bxz4iJv9VPODPNuTrcYXDh2Hl+7AzEBFKsKVYdwDTbPfx2+CZbJtT1yXxuoB
+         6nhqAPGC2ZT87MWOVasFnezVk1tEawJrdqWftbpghzgCMaDyTx5LV3outjD/+7ILBe4+
+         bKjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=YAZjNh/QSMTQSs8+zfxvCc4WuRCEKEooPQot8yEQH2Y=;
-        b=XKmLiGi5UaJ9tKF3H9Mtraj7c77zPCN43gZPs5ra5SXdFj7YCmAm2b8PlDT1HHFEw1
-         TXcsb+XYsxgqg9178M1vWsaxEVu6wop3keto4+Nb+V5E+6wPasYj2vsDT2yOooOvKWPl
-         JvmS44IpA2qjyD6LtXsZpsif31L2C/uD7o1Qvn5iYAMTc/Tixx3If/NyKNDK2lUmD3ze
-         baMf+0NpZj+5SPNMRu/H4HZxmLIPxfrBJMW5AncwnG0Qp3vdS/es/VhElybl6pzxs+NV
-         n/qZipfdynYLh/oTcjKq4kxzvDEdxL+uY+u8/U/0AN9jHQImtvFFTOH+EPP4tiJKdGuD
-         Vhgg==
+        bh=YLo4/PHlUDB4HkmjE1LT7SzGRoOgICNlfDb7BEuTBO0=;
+        b=zfQp/eeHb1ZZHY6FzGqCCzvzvU+3YKpKJ4BhjhvicZg8L4vIl5nggLGpzg/laejWYz
+         ogWERnVc6Hky2UxoLWR/nQHWm64kRsvRcXYDaEajQtmxLEXIMaYG7Xi+JR51jLnGazR7
+         JYe8l+3cuzU/tulk2MsITcYfGMjjv39U/bt2RYX1dOsW5Olr7AtGjhdDk4tNvwLZzLTO
+         Izmg7K+DXuAEuxe6L78at1WLpskOY/smz3wPu3fJ9FiPxPPPiMnEYfrb00lLhVOiG6Wr
+         jLr5qqlb7sEe75Ml+slTTGmgsyuoDWEvBpi37z5bayAibvG6QTD566+u8SET4o5EhWId
+         j/LQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=xS5eYslX;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=qlpUNYwz;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=xS5eYslX;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=qlpUNYwz;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AG47ELumJHw4U9NZ8yd1DGxJ7s/2c6mpmUaxvny3fKVYITfcA9NsjG9iwuPdz76ab1GhA/2Si8/uPg==
+X-Google-Smtp-Source: AG47ELu90mOpmj5FWU9k2186cmzKOUT0K2cJUeNCiKkZ7uuf+DjBs9qUu1+iIod5nBt0hZnXiEWevQ==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 15/21] eeprom: at24: switch to using probe_new() from the i2c framework
-Date: Mon, 19 Mar 2018 10:17:15 +0100
-Message-Id: <20180319091721.18193-16-brgl@bgdev.pl>
+Subject: [PATCH 14/21] eeprom: at24: provide and use at24_base_client_dev()
+Date: Mon, 19 Mar 2018 10:17:14 +0100
+Message-Id: <20180319091721.18193-15-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180319091721.18193-1-brgl@bgdev.pl>
 References: <20180319091721.18193-1-brgl@bgdev.pl>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595357071143199806?=
-X-GMAIL-MSGID: =?utf-8?q?1595357071143199806?=
+X-GMAIL-THRID: =?utf-8?q?1595357068450450071?=
+X-GMAIL-MSGID: =?utf-8?q?1595357068450450071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the new probe() style for i2c drivers.
+Use a helper function for accessing the device struct of the base
+i2c client. This routine is named in a way that reflects its purpose
+unlike the previously hand-coded dereferencing.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/misc/eeprom/at24.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/misc/eeprom/at24.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 02b710919b8b..243d46912f29 100644
+index ea5e81cb8e8c..02b710919b8b 100644
 --- a/drivers/misc/eeprom/at24.c
 +++ b/drivers/misc/eeprom/at24.c
-@@ -516,13 +516,14 @@ static unsigned int at24_get_offset_adj(u8 flags, unsigned int byte_len)
- 	}
+@@ -260,6 +260,11 @@ static struct at24_client *at24_translate_offset(struct at24_data *at24,
+ 	return &at24->client[i];
  }
  
--static int at24_probe(struct i2c_client *client, const struct i2c_device_id *id)
-+static int at24_probe(struct i2c_client *client)
- {
- 	struct regmap_config regmap_config = { };
- 	struct nvmem_config nvmem_config = { };
- 	const struct at24_chip_data *cd = NULL;
- 	struct at24_platform_data pdata = { };
- 	struct device *dev = &client->dev;
-+	const struct i2c_device_id *id;
- 	unsigned int i, num_addresses;
- 	struct at24_data *at24;
- 	size_t at24_size;
-@@ -530,6 +531,8 @@ static int at24_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	u8 test_byte;
- 	int err;
- 
-+	id = i2c_match_id(at24_ids, client);
++static struct device *at24_base_client_dev(struct at24_data *at24)
++{
++	return &at24->client[0].client->dev;
++}
 +
- 	if (dev->platform_data) {
- 		pdata = *(struct at24_platform_data *)dev->platform_data;
- 	} else {
-@@ -714,7 +717,7 @@ static struct i2c_driver at24_driver = {
- 		.of_match_table = at24_of_match,
- 		.acpi_match_table = ACPI_PTR(at24_acpi_ids),
- 	},
--	.probe = at24_probe,
-+	.probe_new = at24_probe,
- 	.remove = at24_remove,
- 	.id_table = at24_ids,
- };
+ static size_t at24_adjust_read_count(struct at24_data *at24,
+ 				      unsigned int offset, size_t count)
+ {
+@@ -371,7 +376,7 @@ static int at24_read(void *priv, unsigned int off, void *val, size_t count)
+ 	int ret;
+ 
+ 	at24 = priv;
+-	dev = &at24->client[0].client->dev;
++	dev = at24_base_client_dev(at24);
+ 
+ 	if (unlikely(!count))
+ 		return count;
+@@ -418,7 +423,7 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
+ 	int ret;
+ 
+ 	at24 = priv;
+-	dev = &at24->client[0].client->dev;
++	dev = at24_base_client_dev(at24);
+ 
+ 	if (unlikely(!count))
+ 		return -EINVAL;
 -- 
 2.16.1
