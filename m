@@ -1,138 +1,180 @@
 Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AG47ELtAOZKvVgKElipkW0/qBcL7ClKSRLsC/RrHwO8Nb6xDEwlaLdYf2MN3MsdsbyY28P8sMYGQ
-ARC-Seal: i=1; a=rsa-sha256; t=1521529581; cv=none;
+X-Google-Smtp-Source: AG47ELt2sJek2vzArWsaOKgelgkorpJd8MYw5DMSowV/d7D3GJAPEpqXUtqePa30qb0gk/4l32pX
+ARC-Seal: i=1; a=rsa-sha256; t=1521463281; cv=none;
         d=google.com; s=arc-20160816;
-        b=tnO78V4N24ZKwUiXActG9p86o6gkAKjL+tTDAxv5TUp6kM5JaoCqFN6osKk9w72fCP
-         bXFnJThb1vRgqQFIXBkLbgt7Kv1ItabONrWWkNFGgZQViW37SuHOW5WvKMF4tLKHiFGl
-         TukSfQrm+V7QKKM3cR8JZGh94wuJKs1ETFavC0FLgcJpX8gkUVjSQgJPqMTn7g2atTq/
-         OoF3F0AS5QgJHo36ZDB9hnxF26NP9+4Hv8jFx5LWmk2XtTtSgh9aqoigzvRKIDwMQ9MF
-         RIdGN07sPva3GcJPHS3lOrwetGe790LdYbUCa3m56lCKj+0507YEuZ/G4RdF4hdm9KAt
-         QSiA==
+        b=LzGNZmihAPfL/6sn8JAUmJrUBgWTaRHltUW0Ux9N9W9toGodCua97uzXq2xuVMxHZX
+         lw0bUeLJAkBu1tRKfYmafmUF/xuOVbDercNzyr8MuKdYEVh6FoMIhl/wiQQHb2YIdV5V
+         JBzKdQCRzNE1LDMYZANsJU4irNfxcH/2CDInIUHczcfOTlbw9rbgBIDGF3AQhujpe7DJ
+         TQpfkkQ12X0LCKVLGaP0PDjw3rr5Gzcgp9KY+wCG7fmF/D9zzjYEiugTOWPuEwaTcOi8
+         gMMxIe7drgw4vN70XT4di3iI7SuNCVfBGV3ZTgDDCJqt0GLl8+aAy86HCFHVcC0k6TZp
+         IzUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=2oF289IOF/tqxW3h0H4piUKvRu8YmDjOt7Kt3fM/ejo=;
-        b=QUaBmiElRVARIW3fZSM9ce56HTQP0eXKL/MkTdhnPVX4M22Leskbdf1RyVF2bvrI4S
-         JamAD8KqBcRiOToDl1vPT2n4sLH9f2yFxsXnGf/a7h5k4DGLpE+NzFnm16jy9NYcQqbu
-         3SCWlQCYHJZxUs+xJuTwbh7Rl62JHkOqBeVd126Fu5DQH7zyfJR9DGHK2GYHMkW84vqa
-         xQfUCUmpXfeEZSI6GRIO5N7GlIEv+x6YQGeMgrwd5dudG/allHSflqzvS7g61dwTozjg
-         l2+cIsUtiX667Th6BLtopmqA5mWcyAtZ5KvlqopsM8utSvuyCDahbtCezqFHSVZAqdMn
-         askQ==
+        bh=MF4Nz0+9XaONo63fWjFwKWaOMcg7PA+N3j6UAZuYG2A=;
+        b=j2fiw1/w7jibP6AO1bTwmFvirfrI6VIn0XolG+WtmYAQLSVgZQpznFjZlHaH8h13UE
+         dN3RBvt6cOQJh6eJdpZTV1hD2yp4qp4kRvI8RFfIexcjvBNMiaiJ7uAFYI6ijeAUKleO
+         nRGnilyP8mrhF5qGAZYLBIUW+UoQv1jHdY0Bq8F6zzZozcEJCy1H7gU1FJUa8w2deiOd
+         /wiX1ecsQv18GXBo8+Mg57bznXVlXQlq+KnoMp/OujYgLp9mY8qTu6ObqyySEDcd4Yca
+         vvh2ukMGi2Dm6IlC1EZTKXMzCGtefEvFJyyELyfJJA8mY3P1Cy8xsLBmJvErJgSBZgf2
+         SnIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=VVQc3Er0;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=ENvVdtCi;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Jr6xrya/;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=TU1AmgqE;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=VVQc3Er0;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=ENvVdtCi;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Jr6xrya/;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=TU1AmgqE;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 117DE60128
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2926A607E5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH v3 2/3] arm64: Implement page table free interfaces
-To: "Kani, Toshi" <toshi.kani@hpe.com>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "takahiro.akashi@linaro.org" <takahiro.akashi@linaro.org>,
- "james.morse@arm.com" <james.morse@arm.com>,
- "kristina.martsenko@arm.com" <kristina.martsenko@arm.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "marc.zyngier@arm.com" <marc.zyngier@arm.com>, "arnd@arndb.de"
- <arnd@arndb.de>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
- <1521463256-19858-3-git-send-email-cpandya@codeaurora.org>
- <1521487759.2693.224.camel@hpe.com>
 From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <be70a3da-be35-cdee-97a4-ca4e867ca7fb@codeaurora.org>
-Date: Tue, 20 Mar 2018 12:36:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1521487759.2693.224.camel@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mark.rutland@arm.com
+Cc: arnd@arndb.de,
+	ard.biesheuvel@linaro.org,
+	marc.zyngier@arm.com,
+	james.morse@arm.com,
+	kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org,
+	toshi.kani@hpe.com,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v3 1/3] ioremap: Update pgtable free interfaces with addr
+Date: Mon, 19 Mar 2018 18:10:54 +0530
+Message-Id: <1521463256-19858-2-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
+References: <1521463256-19858-1-git-send-email-cpandya@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595007777008930452?=
-X-GMAIL-MSGID: =?utf-8?q?1595439402788338224?=
+X-GMAIL-THRID: =?utf-8?q?1595369882117983930?=
+X-GMAIL-MSGID: =?utf-8?q?1595369882117983930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This patch ("mm/vmalloc: Add interfaces to free unmapped
+page table") adds following 2 interfaces to free the page
+table in case we implement huge mapping.
 
+pud_free_pmd_page() and pmd_free_pte_page()
 
-On 3/20/2018 12:59 AM, Kani, Toshi wrote:
-> On Mon, 2018-03-19 at 18:10 +0530, Chintan Pandya wrote:
->> Implement pud_free_pmd_page() and pmd_free_pte_page().
->>
->> Implementation requires,
->>   1) Freeing of the un-used next level page tables
->>   2) Clearing off the current pud/pmd entry
->>   3) Invalidate TLB which could have previously
->>      valid but not stale entry
->>
->> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
->> ---
->>   arch/arm64/mm/mmu.c | 30 ++++++++++++++++++++++++++++--
->>   1 file changed, 28 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index da98828..c70f139 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -45,6 +45,7 @@
->>   #include <asm/memblock.h>
->>   #include <asm/mmu_context.h>
->>   #include <asm/ptdump.h>
->> +#include <asm/tlbflush.h>
->>   
->>   #define NO_BLOCK_MAPPINGS	BIT(0)
->>   #define NO_CONT_MAPPINGS	BIT(1)
->> @@ -975,10 +976,35 @@ int pmd_clear_huge(pmd_t *pmdp)
->>   
->>   int pud_free_pmd_page(pud_t *pud, unsigned long addr)
->>   {
->> -	return pud_none(*pud);
->> +	pmd_t *pmd;
->> +	int i;
->> +
->> +	pmd = __va(pud_val(*pud));
->> +	if (pud_val(*pud)) {
->> +		for (i = 0; i < PTRS_PER_PMD; i++)
->> +			pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE));
->> +
->> +		free_page((unsigned long) pmd);
-> 
-> Why do you want to free this pmd page before clearing the pud entry on
-> this arm64 version (as it seems you intentionally changed it from the
-> x86 version)?  It can be reused while being pointed by the pud.  Same
-> for pmd.
-Noted.
-> 
->> +		pud_clear(pud);
->> +		flush_tlb_kernel_range(addr, addr + PUD_SIZE);
-> 
-> Since you purge the entire pud range here, do you still need to call
-> pmd_free_pte_page() to purge each pmd range?  This looks very expensive.
-> You may want to consider if calling internal __pmd_free_pte_page()
-> without the purge operation works.
-I completely missed that. Sure, will fix this.
+Some architectures (like arm64) needs to do proper TLB
+maintanance after updating pagetable entry even in map.
+Why ? Read this,
+https://patchwork.kernel.org/patch/10134581/
 
-I will upload v4 fixing all 4 comments.
-> 
-> -Toshi
-> 
+Pass 'addr' in these interfaces so that proper TLB ops
+can be performed.
 
-Chintan
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+---
+ arch/arm64/mm/mmu.c           | 4 ++--
+ arch/x86/mm/pgtable.c         | 4 ++--
+ include/asm-generic/pgtable.h | 8 ++++----
+ lib/ioremap.c                 | 4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 2dbb2c9..da98828 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -973,12 +973,12 @@ int pmd_clear_huge(pmd_t *pmdp)
+ 	return 1;
+ }
+ 
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return pud_none(*pud);
+ }
+ 
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	return pmd_none(*pmd);
+ }
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 34cda7e..20b0322 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -710,7 +710,7 @@ int pmd_clear_huge(pmd_t *pmd)
+  * Context: The pud range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pud_free_pmd_page(pud_t *pud)
++int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	pmd_t *pmd;
+ 	int i;
+@@ -737,7 +737,7 @@ int pud_free_pmd_page(pud_t *pud)
+  * Context: The pmd range has been unmaped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+-int pmd_free_pte_page(pmd_t *pmd)
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+ 	pte_t *pte;
+ 
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 2490800..7f00c2d 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -983,8 +983,8 @@ static inline int p4d_clear_huge(p4d_t *p4d)
+ int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
+ int pud_clear_huge(pud_t *pud);
+ int pmd_clear_huge(pmd_t *pmd);
+-int pud_free_pmd_page(pud_t *pud);
+-int pmd_free_pte_page(pmd_t *pmd);
++int pud_free_pmd_page(pud_t *pud, unsigned long addr);
++int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
+ #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
+ static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+ {
+@@ -1010,11 +1010,11 @@ static inline int pmd_clear_huge(pmd_t *pmd)
+ {
+ 	return 0;
+ }
+-static inline int pud_free_pmd_page(pud_t *pud)
++static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+ 	return 0;
+ }
+-static inline int pmd_free_pte_page(pud_t *pmd)
++static inline int pmd_free_pte_page(pud_t *pmd, unsigned long addr)
+ {
+ 	return 0;
+ }
+diff --git a/lib/ioremap.c b/lib/ioremap.c
+index 54e5bba..517f585 100644
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -92,7 +92,7 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+ 		if (ioremap_pmd_enabled() &&
+ 		    ((next - addr) == PMD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+-		    pmd_free_pte_page(pmd)) {
++		    pmd_free_pte_page(pmd, addr)) {
+ 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+ 				continue;
+ 		}
+@@ -119,7 +119,7 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
+ 		if (ioremap_pud_enabled() &&
+ 		    ((next - addr) == PUD_SIZE) &&
+ 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
+-		    pud_free_pmd_page(pud)) {
++		    pud_free_pmd_page(pud, addr)) {
+ 			if (pud_set_huge(pud, phys_addr + addr, prot))
+ 				continue;
+ 		}
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
 Collaborative Project
