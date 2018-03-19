@@ -1,33 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031145AbeCSUBa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:01:30 -0400
-Received: from verein.lst.de ([213.95.11.211]:33046 "EHLO newverein.lst.de"
+        id S971087AbeCSUB4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:01:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:33050 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030883AbeCSUBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:01:21 -0400
-Date: Mon, 19 Mar 2018 21:01:20 +0100
+        id S971073AbeCSUBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:01:52 -0400
+Date: Mon, 19 Mar 2018 21:01:51 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 Cc: Scott Bauer <scott.bauer@intel.com>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 10/11] block: sed-opal: get metadata about opal-sed
-        tables
-Message-ID: <20180319200120.GJ3380@lst.de>
-References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de> <623d80cb07538e630a12a1c925e9c87b8e14dd6b.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH v2 11/11] block: sed-opal: check size of shadow mbr
+Message-ID: <20180319200151.GK3380@lst.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de> <72e19ec70ffac23fff658c60eaae0db850150ca1.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <623d80cb07538e630a12a1c925e9c87b8e14dd6b.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+In-Reply-To: <72e19ec70ffac23fff658c60eaae0db850150ca1.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 07:36:52PM +0100, Jonas Rabenstein wrote:
-> Every opal-sed table is described in the OPAL_TABLE_TABLE. Provide a
-> function to get desired metadata information out of that table.
+On Mon, Mar 19, 2018 at 07:36:53PM +0100, Jonas Rabenstein wrote:
+> Check whether the shadow mbr does fit in the provided space on the
+> target. Also a proper firmware should handle this case and return an
+> error we may prevent problems or even damage with crappy firmwares.
+> 
+> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> 
+> diff --git a/block/sed-opal.c b/block/sed-opal.c
+> index 51f8034edbf7..9c73bd24c55f 100644
+> --- a/block/sed-opal.c
+> +++ b/block/sed-opal.c
+> @@ -1545,6 +1545,20 @@ static int write_shadow_mbr(struct opal_dev *dev, void *data)
+>  	u64 len;
+>  	int err = 0;
+>  
+> +	/* do we fit in the available shadow mbr space? */
+> +	err = generic_get_table_info(dev, OPAL_MBR, OPAL_TABLE_ROWS);
 
-Your new function doesn't seem to be used at all.
+And here it gets used.  So this should be merged with the previous patch.
