@@ -1,42 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030827AbeCSUrM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39774 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935028AbeCSUqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:46:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0314621737
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S968930AbeCSUrc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:47:32 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35628 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968664AbeCSSJx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 14:09:53 -0400
+X-Google-Smtp-Source: AG47ELv0MvuL5OxTxRCJpchNtMwTU47tMbcQzT1BKSJB9ZxD4vLhOwk5h7SNN1LG5CyKT7RM2xqgTQ==
+Date: Mon, 19 Mar 2018 19:09:50 +0100
+From: Paolo Pisati <p.pisati@gmail.com>
+To: Moritz Fischer <mdf@kernel.org>
+Cc: Paolo Pisati <p.pisati@gmail.com>, Alan Tull <atull@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+Message-ID: <20180319180950.GA15921@harukaze>
+References: <1521215669-23874-1-git-send-email-p.pisati@gmail.com>
+ <1521215669-23874-3-git-send-email-p.pisati@gmail.com>
+ <20180316162654.bcr7d46om2tnhm7l@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, patrice.chotard@st.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Patrice Chotard <patrice.chotard@st.com>
-References: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-Message-ID: <152149239740.242365.14969514277401903715@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RESEND PATCH] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Mon, 19 Mar 2018 13:46:37 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180316162654.bcr7d46om2tnhm7l@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting patrice.chotard@st.com (2018-03-12 02:04:07)
-> From: Patrice Chotard <patrice.chotard@st.com>
+On Fri, Mar 16, 2018 at 09:26:54AM -0700, Moritz Fischer wrote:
+> >
+> > +static enum fpga_mgr_states machxo2_spi_state(struct fpga_manager *mgr)
+> > +{
+> > +	return FPGA_MGR_STATE_UNKNOWN;
+> > +}
 > 
-> STM32F769 has 2 SDMMC port, add clock entry for the second one.
+> To understand this correctly: Further up you have a way to determine the
+> state you're in, but then you only use that for debug printout, while
+> here where you should provide the status you say FPGA_MGR_STATE_UNKNOWN?
 > 
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> Am I missing something here?
 
-Applied to clk-next
+This is more of a generic function ('What's the state of the FPGA now?') while
+dump_status_reg() is invoked after a specific SPI command is sent to the FPGA to
+keep track of the status of the chip and check that it adhere to the state
+machine.
+
+I'll send a v7.
+-- 
+bye,
+p.
