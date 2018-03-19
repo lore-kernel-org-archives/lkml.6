@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3891259-1521497119-2-2360998578244163144
+X-Cyrus-Session-Id: sloti22d1t05-3907919-1521497118-2-3197452746939340254
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,63 +13,64 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521497118; b=AwR2EV3M+rewoqNuPJy4SQuQkM1ITHDtqWcwojVtDKwi4AP
-    IZCL603RcgQbTKtRf9EOUQAG1fKPFHZewjAY44DSDZwSoLmapRXuL9mi+hwbynfi
-    em0ozOHSK470ddZk4wejlo85l8iP4A9ZxXdTB6XHlrgvcU/As3x4vwlPufKoWxXo
-    BqjyeZw6+114I2UFRnXmfccXDbjvFotugtfLjPURrLlVBu81nzT+EhFkZyAL/T3i
-    FDsPWBdm9GS/fpSVw8UjL9ddGwxawwt8KyVOdwzIF4ZXaCmZmXMdocvig3pN+lLL
-    ELpCRdqMELGgzeEAozCoi0ndAL8o6QqwRzBDv6A==
+    t=1521497117; b=vjIs4aD8kFt28YQv2KDWmNBX3yUhnrOQdgq7E3RSzEBvmDj
+    BKbEj1KUnDZltgP4x1tyIfxa17RqhCC9JO0+dIdv3y75cIlsoFCW781uSU6Sjonz
+    rt8FaCqIgE4UKbBvykzGRfiLuRDGNc+oZY00q7aU1qhYNkKpXH/+N4A6lwim02HG
+    A0BGKb3wR0KB24IOokRwKaFjWnuGFXru1k3ZWvS8ijr/5YYc/SKfIALANpImL6Yl
+    GrcwjfgCC+FVbSBuQpvgpjzTQ/byHPI2v3Hrm781v+bTHRrAON91lH4kyfKrGeo0
+    ShhwT5m0DunIBdF+Kjd0CwusIBTVO8zcIBQ38dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521497118; bh=Tev3jq
-    i7EoOVLw4NCqv9KQ9MK3m1XQzM+RKYeIcaUhU=; b=ECx9kTvz1c74QuR+yiEi9b
-    D22QmO03S2NESuTsZDHxymFqy0eSFRmEhABVDNHqeQovy8dqvTBA0ya54+gr9Emw
-    K6lg+FengtUxK2n47BRnM078eC/2zqqDRwwqnfmOSGGVgA1txgxX1XevrJZXsQxu
-    icCE1/1L3FCNwwcsT6upGiwf8GWB7CmCr+jERJjd6ZRik/+XYdR6XMGbtYUJR/LU
-    EHM8jmOrSHm5QZjGUgW7B6FgJCcPO9Ars7eVLl+gu9tpQyAb9rdxHaNlha3qj44G
-    LVoaR5ka/mTWb9Mc25mogxT6v0a3889iwCqiwBFneTPQcCy0Lcs4o5sUMRVFHfhA
+    :mime-version:sender:list-id; s=arctest; t=1521497117; bh=4bY7sI
+    SE7RVUkK6KMNNS3CC9ahe2U4JJ9Pzzkc/Vh8M=; b=VU+o9Wff2sLqqI791m8unQ
+    l3DEujeWGMiuAqxsLA61LR4JVWFfbilcbWfqzz69Cv3IymuTm6fvYxylXyzA/YdM
+    Ut3JtrEUfhRyaDS/ffnQnaGn19/N5MpIyApPN+BweHjdGmB4YbgPS1aY1YuFuuU2
+    c81VKtutiTiC9dsZCu2h2dLtBCqgwS4xQCkLZaajbVGQpx2wZ5pFItPcoSjrIAXO
+    uvNFj7TbajKBwL6V7GMX90E8bXxgfVZV9g010B9p7hf19vtPsKRHi5iZO4sWXPWA
+    sqm4JSoj72pdIPoiWj/bPUqrbWSBbAL52R0/eDSR3z2tiBtoIaCbYodBG9daxAdQ
     ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WoUrnykh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=KFQr9LiE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduuddvkeelnecuvehluhhsthgvrhfuihiivgepuddu;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutddtvdeinecuvehluhhsthgvrhfuihiivgepuddu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WoUrnykh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=KFQr9LiE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduuddvkeelnecuvehluhhsthgvrhfuihiivgepuddu;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduheekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedutddtvdeinecuvehluhhsthgvrhfuihiivgepuddu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933560AbeCSWEr (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 18:04:47 -0400
-Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:43956
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934135AbeCSPzr (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S934390AbeCSPzr (ORCPT <rfc822;greg@kroah.com>);
         Mon, 19 Mar 2018 11:55:47 -0400
+Received: from mail-by2nam01on0098.outbound.protection.outlook.com ([104.47.34.98]:21274
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933974AbeCSPzj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:55:39 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+CC: Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 40/97] powernv-cpufreq: Add helper to extract
- pstate from PMSR
-Thread-Topic: [PATCH AUTOSEL for 4.14 40/97] powernv-cpufreq: Add helper to
- extract pstate from PMSR
-Thread-Index: AQHTv5qtRd318I9JIEilPMdrOvZKSA==
-Date: Mon, 19 Mar 2018 15:55:17 +0000
-Message-ID: <20180319155411.12348-40-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 32/97] scsi: mpt3sas: Proper handling of
+ set/clear of "ATA command pending" flag.
+Thread-Topic: [PATCH AUTOSEL for 4.14 32/97] scsi: mpt3sas: Proper handling of
+ set/clear of "ATA command pending" flag.
+Thread-Index: AQHTv5qmWPLU3TaoCUya48F2tA7zww==
+Date: Mon, 19 Mar 2018 15:55:06 +0000
+Message-ID: <20180319155411.12348-32-alexander.levin@microsoft.com>
 References: <20180319155411.12348-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155411.12348-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,173 +79,135 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:+Cpuv48FEPs23XdIl2MT3r/QOiCJso7Fkzwkue5NsPm5vl7lFrgp3Kr+obiqArQmGrYGjd6/YRMMSeHT9V/z9zWfbAwqJgvcdimnKBugQ6+EAixqlTXcEchKuCWNGwGzAXwU7YkYilqZ1FsZp39t+9pDANjtrri+URb2+0qyAMLwpTCgbOsynoBRk2d48OSa+cj/x4GrO/g3tBOa8/nyB9SOpzAZon52nx4UH/wAQQJh528SeX8kGBWSJQhuLxdW;20:cvDFRsGs9xcg13arK/tGXoj3RH7RoyfZBW1uSXxqV/fJmWDhnYTj83bUN79VjK82YzNowBj9rafU04bs/h9p06LmisYznefseXJtKAbX4gHzoZ5FZl7q7KvaeiTsgZQiJ+fDBjvRbJjZJFTHuoQwIwq5fS0pkQL5CHB/dI4ISYY=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0807;7:a38PuT1OuXLeySMzIaXtXWI22GdGJqkQw7JisOWf+Vo7ZzwiBNGeEmFaxmMqaQcjIJ+T0jy9Zis0uNBRfKPfWi5jn/heswsnG2ysdxtK3gkAiv7V1544JL9HvMz23Kdl4lzONMwXkg8e0okxhNe8p78dNW9QQDWoNR0BwnnUu29ZKXFfx0BybYbHghlb2xQjsIecFgU0hzM7aCD5djLWuCWpNISsyOPH3WpBcl81WXz+IJCEDPpV8flI+aan+Jtx;20:Z2Qsxm2F+VndnGmhNqHN1dcOMEVc7VBo6VkVoEezg1VrHOkimL93GMe5OAtPxNNTy/fAwXJOCWx8CEz78iJxMOCCiaFQzycau5vmXlmJwT+SJOF+BnIIghFttYS3+oM7t9sEDkmcPznCPZWcmgLqf6+PzJUwDZjz+0slW/UiHG8=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: be053b40-a248-4421-6269-08d58db1df96
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0967;
-x-ms-traffictypediagnostic: DM5PR2101MB0967:
+x-ms-office365-filtering-correlation-id: a3ca99df-2eeb-4822-3e63-08d58db1da9e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0807;
+x-ms-traffictypediagnostic: DM5PR2101MB0807:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0967397F3FC9A510B3D965B3FBD40@DM5PR2101MB0967.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(104084551191319)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0967;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0967;
+x-microsoft-antispam-prvs: <DM5PR2101MB0807E6A02FDC1B176A720744FBD40@DM5PR2101MB0807.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0807;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0807;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(376002)(39860400002)(366004)(346002)(189003)(199004)(54906003)(59450400001)(10090500001)(110136005)(5250100002)(2501003)(1076002)(6116002)(3846002)(2900100001)(99286004)(22452003)(3280700002)(186003)(2906002)(76176011)(86612001)(26005)(6486002)(10290500003)(102836004)(14454004)(36756003)(68736007)(3660700001)(72206003)(478600001)(107886003)(106356001)(53936002)(6506007)(6512007)(6436002)(86362001)(105586002)(316002)(7736002)(4326008)(305945005)(66066001)(81156014)(81166006)(5660300001)(97736004)(8936002)(25786009)(8676002)(2950100002)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: +igXxP9IP/la+70CZLpi/25gCeKMYYVr/Jb5+OVCsFvTJu0Ib2R7xo8TlnA/Js8Xv9e1kB8FSoMsxpf7WaNz6U3EXhaHAH3J5gk3gTn8t4PTK1dT7oTdxJvTWMF/2175C+95DLbmYLpVyXS5906RW1YhzoEG+wfgkvoH7W/XRlxDUig9GfnRxGH4aYLXOaofV7mqW9/al/nznDdmfBuCgx48Hp/tvdkH4GNBc7aKBy0LOLOTx0RLLZMJGbP6BXvbwq36C589hYvGqQPUJuu0vtJ8Y9+bRtxaF2m92JhZ/vGR61F0pkd8PtsgZ75YhLckpO7426oo7TBcKNdKu6rawg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39380400002)(39860400002)(199004)(189003)(26005)(10290500003)(305945005)(6666003)(68736007)(186003)(102836004)(4326008)(25786009)(66066001)(6506007)(8676002)(59450400001)(2900100001)(5660300001)(7736002)(2950100002)(81166006)(10090500001)(81156014)(97736004)(2501003)(5250100002)(3280700002)(316002)(76176011)(478600001)(8936002)(99286004)(53936002)(575784001)(36756003)(86612001)(72206003)(107886003)(110136005)(54906003)(6512007)(14454004)(6436002)(22452003)(3660700001)(3846002)(6486002)(6116002)(106356001)(1076002)(105586002)(2906002)(86362001)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0807;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: tSPj6S93qRSWGZQDN2Fly945QniF/v5gmr+wyjU6r47Z5gKDvAJOvHtEAtr8LIK0z9TOZ6wBbPi1qniwMJWKV3xqkvcb0KSaIDk9NBkziB2hk5OawYO09xQRXaroVePKuT86asOit8E3Z4vJS6RyGQL8sD+9CHIKZT3livJGZ57Q1XNxobbJgh2FtgLSOpV/bfDp9BprjRGJXBqKFKM7OOVXjDO9mkyHUJ33AsDFmsYSVFbha96HQkRt7/WKctKgo9n0oVWEmtVnOffOSartoJi/v7UO2k3rU2pY26hRpGDU+Z83PGuYvDdUsTRRrf7j93oEeB5d1nJlxQB8WesB7w==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be053b40-a248-4421-6269-08d58db1df96
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:17.4073
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3ca99df-2eeb-4822-3e63-08d58db1da9e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:55:06.3335
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0967
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0807
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+From: Chaitra P B <chaitra.basappa@broadcom.com>
 
-[ Upstream commit ee1f4a7dafa997816ff3de96155c6f3edc21c1e6 ]
+[ Upstream commit f49d4aed1315a7b766d855f1367142e682b0cc87 ]
 
-On POWERNV platform, the fields for pstates in the Power Management
-Status Register (PMSR) and the Power Management Control Register
-(PMCR) are 8-bits wide. On POWER8 the pstates are negatively numbered
-while on POWER9 they are positively numbered.
+1. In IO path, setting of "ATA command pending" flag early before device
+   removal, invalid device handle etc., checks causes any new commands
+   to be always returned with SAM_STAT_BUSY and when the driver removes
+   the drive the SML issues SYNC Cache command and that command is
+   always returned with SAM_STAT_BUSY and thus making SYNC Cache command
+   to requeued.
 
-The device-tree exports pstates as 32-bit entries. The device-tree
-implementation sign-extends the 8-bit pstate values to obtain the
-corresponding 32-bit entry.
+2. If the driver gets an ATA PT command for a SATA drive then the driver
+   set "ATA command pending" flag in device specific data structure not
+   to allow any further commands until the ATA PT command is completed.
+   However, after setting the flag if the driver decides to return the
+   command back to upper layers without actually issuing to the firmware
+   (i.e., returns from qcmd failure return paths) then the corresponding
+   flag is not cleared and this prevents the driver from sending any new
+   commands to the drive.
 
-Eg: On POWER8, a pstate value 0x82 [-126] is represented in the
-device-tree as 0xfffffff82 while on POWER9, the same value 0x82 [130]
-is represented in the device-tree as 0x00000082.
+This patch fixes above two issues by setting of "ATA command pending"
+flag after checking for whether device deleted, invalid device handle,
+device busy with task management. And by setting "ATA command pending"
+flag to false in all of the qcmd failure return paths after setting the
+flag.
 
-The powernv-cpufreq driver implementation represents pstates using the
-integer type. In multiple places in the driver, the code interprets
-the pstates extracted from the PMSR as a signed byte and assigns it to
-a integer variable to get the sign-extention.
-
-On POWER9 platforms which have greater than 128 pstates, this results
-in the driver performing incorrect sign-extention, and thereby
-treating a legitimate pstate (say 130) as an invalid pstates (since it
-is interpreted as -126).
-
-This patch fixes the issue by implementing a helper function to
-extract Pstates from PMSR register, and correctly sign-extend it to be
-consistent with the values provided by the device-tree.
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chaitra P B <chaitra.basappa@broadcom.com>
+Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/cpufreq/powernv-cpufreq.c | 37 +++++++++++++++++++++++------------=
---
- 1 file changed, 23 insertions(+), 14 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cp=
-ufreq.c
-index 7e1e5bbcf430..6b3a63545619 100644
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -41,11 +41,9 @@
- #define POWERNV_MAX_PSTATES	256
- #define PMSR_PSAFE_ENABLE	(1UL << 30)
- #define PMSR_SPR_EM_DISABLE	(1UL << 31)
--#define PMSR_MAX(x)		((x >> 32) & 0xFF)
-+#define MAX_PSTATE_SHIFT	32
- #define LPSTATE_SHIFT		48
- #define GPSTATE_SHIFT		56
--#define GET_LPSTATE(x)		(((x) >> LPSTATE_SHIFT) & 0xFF)
--#define GET_GPSTATE(x)		(((x) >> GPSTATE_SHIFT) & 0xFF)
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mp=
+t3sas_scsih.c
+index 33ff691878e2..5b953aee19c2 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -4103,19 +4103,6 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd=
+ *scmd)
+ 		return 0;
+ 	}
 =20
- #define MAX_RAMP_DOWN_TIME				5120
- /*
-@@ -93,6 +91,7 @@ struct global_pstate_info {
- };
-=20
- static struct cpufreq_frequency_table powernv_freqs[POWERNV_MAX_PSTATES+1]=
-;
-+u32 pstate_sign_prefix;
- static bool rebooting, throttled, occ_reset;
-=20
- static const char * const throttle_reason[] =3D {
-@@ -147,6 +146,20 @@ static struct powernv_pstate_info {
- 	bool wof_enabled;
- } powernv_pstate_info;
-=20
-+static inline int extract_pstate(u64 pmsr_val, unsigned int shift)
-+{
-+	int ret =3D ((pmsr_val >> shift) & 0xFF);
-+
-+	if (!ret)
-+		return ret;
-+
-+	return (pstate_sign_prefix | ret);
-+}
-+
-+#define extract_local_pstate(x) extract_pstate(x, LPSTATE_SHIFT)
-+#define extract_global_pstate(x) extract_pstate(x, GPSTATE_SHIFT)
-+#define extract_max_pstate(x)  extract_pstate(x, MAX_PSTATE_SHIFT)
-+
- /* Use following macros for conversions between pstate_id and index */
- static inline int idx_to_pstate(unsigned int i)
- {
-@@ -277,6 +290,9 @@ static int init_powernv_pstates(void)
-=20
- 	powernv_pstate_info.nr_pstates =3D nr_pstates;
- 	pr_debug("NR PStates %d\n", nr_pstates);
-+
-+	pstate_sign_prefix =3D pstate_min & ~0xFF;
-+
- 	for (i =3D 0; i < nr_pstates; i++) {
- 		u32 id =3D be32_to_cpu(pstate_ids[i]);
- 		u32 freq =3D be32_to_cpu(pstate_freqs[i]);
-@@ -437,17 +453,10 @@ struct powernv_smp_call_data {
- static void powernv_read_cpu_freq(void *arg)
- {
- 	unsigned long pmspr_val;
--	s8 local_pstate_id;
- 	struct powernv_smp_call_data *freq_data =3D arg;
-=20
- 	pmspr_val =3D get_pmspr(SPRN_PMSR);
--
 -	/*
--	 * The local pstate id corresponds bits 48..55 in the PMSR.
--	 * Note: Watch out for the sign!
+-	 * Bug work around for firmware SATL handling.  The loop
+-	 * is based on atomic operations and ensures consistency
+-	 * since we're lockless at this point
 -	 */
--	local_pstate_id =3D (pmspr_val >> 48) & 0xFF;
--	freq_data->pstate_id =3D local_pstate_id;
-+	freq_data->pstate_id =3D extract_local_pstate(pmspr_val);
- 	freq_data->freq =3D pstate_id_to_freq(freq_data->pstate_id);
+-	do {
+-		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
+-			scmd->result =3D SAM_STAT_BUSY;
+-			scmd->scsi_done(scmd);
+-			return 0;
+-		}
+-	} while (_scsih_set_satl_pending(scmd, true));
+-
+ 	sas_target_priv_data =3D sas_device_priv_data->sas_target;
 =20
- 	pr_debug("cpu %d pmsr %016lX pstate_id %d frequency %d kHz\n",
-@@ -521,7 +530,7 @@ static void powernv_cpufreq_throttle_check(void *data)
- 	chip =3D this_cpu_read(chip_info);
+ 	/* invalid device handle */
+@@ -4141,6 +4128,19 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd=
+ *scmd)
+ 	    sas_device_priv_data->block)
+ 		return SCSI_MLQUEUE_DEVICE_BUSY;
 =20
- 	/* Check for Pmax Capping */
--	pmsr_pmax =3D (s8)PMSR_MAX(pmsr);
-+	pmsr_pmax =3D extract_max_pstate(pmsr);
- 	pmsr_pmax_idx =3D pstate_to_idx(pmsr_pmax);
- 	if (pmsr_pmax_idx !=3D powernv_pstate_info.max) {
- 		if (chip->throttled)
-@@ -644,8 +653,8 @@ void gpstate_timer_handler(unsigned long data)
- 	 * value. Hence, read from PMCR to get correct data.
- 	 */
- 	val =3D get_pmspr(SPRN_PMCR);
--	freq_data.gpstate_id =3D (s8)GET_GPSTATE(val);
--	freq_data.pstate_id =3D (s8)GET_LPSTATE(val);
-+	freq_data.gpstate_id =3D extract_global_pstate(val);
-+	freq_data.pstate_id =3D extract_local_pstate(val);
- 	if (freq_data.gpstate_id  =3D=3D freq_data.pstate_id) {
- 		reset_gpstates(policy);
- 		spin_unlock(&gpstates->gpstate_lock);
++	/*
++	 * Bug work around for firmware SATL handling.  The loop
++	 * is based on atomic operations and ensures consistency
++	 * since we're lockless at this point
++	 */
++	do {
++		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
++			scmd->result =3D SAM_STAT_BUSY;
++			scmd->scsi_done(scmd);
++			return 0;
++		}
++	} while (_scsih_set_satl_pending(scmd, true));
++
+ 	if (scmd->sc_data_direction =3D=3D DMA_FROM_DEVICE)
+ 		mpi_control =3D MPI2_SCSIIO_CONTROL_READ;
+ 	else if (scmd->sc_data_direction =3D=3D DMA_TO_DEVICE)
+@@ -4167,6 +4167,7 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd =
+*scmd)
+ 	if (!smid) {
+ 		pr_err(MPT3SAS_FMT "%s: failed obtaining a smid\n",
+ 		    ioc->name, __func__);
++		_scsih_set_satl_pending(scmd, false);
+ 		goto out;
+ 	}
+ 	mpi_request =3D mpt3sas_base_get_msg_frame(ioc, smid);
+@@ -4197,6 +4198,7 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd =
+*scmd)
+ 	if (mpi_request->DataLength) {
+ 		if (ioc->build_sg_scmd(ioc, scmd, smid)) {
+ 			mpt3sas_base_free_smid(ioc, smid);
++			_scsih_set_satl_pending(scmd, false);
+ 			goto out;
+ 		}
+ 	} else
 --=20
 2.14.1
