@@ -1,89 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755731AbeCSOga (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:36:30 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:43249 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755711AbeCSOg1 (ORCPT
+        id S933656AbeCSOlG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:41:06 -0400
+Received: from mail-yb0-f180.google.com ([209.85.213.180]:38562 "EHLO
+        mail-yb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933327AbeCSOlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:36:27 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2JEaDJJ016918
-X-Nifty-SrcIP: [209.85.217.179]
-X-Google-Smtp-Source: AG47ELvFRZulokHYr6MmoIenU25jLOjX81RgzZUPbaJ0ermDLGhusYPLTwQbJGgEIHxf7mo6g1bF0irLKsH76aylDkk=
+        Mon, 19 Mar 2018 10:41:04 -0400
+X-Google-Smtp-Source: AG47ELvCL4y4ZVWIhpK3+RE3VOW8gVfwrwILPAWazZIdGiO2sWMGcBmnymGFbN7Qo3DYPN1dcVQV1A==
+Date: Mon, 19 Mar 2018 07:41:01 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>, linux-ide@vger.kernel.org,
+        linux-m68k@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] ata: add Amiga Gayle PATA controller driver
+Message-ID: <20180319144101.GH2943022@devbig577.frc2.facebook.com>
+References: <CGME20180316161549epcas1p23166605ea9922198486e0c07bd184ed8@epcas1p2.samsung.com>
+ <24149929.AaKeg4hYhL@amdc3058>
+ <CAOFm3uEb6r33V9=Maxd72pM6vdwfMkvhap01+zEd6bnDuEAVKw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180319012158.26411-1-suzuki.katsuhiro@socionext.com>
-References: <20180319012158.26411-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 19 Mar 2018 23:35:32 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ__FYvJdvxPhzazyi4fSCwkMzCWGVVjy5FKfOp+-hfcg@mail.gmail.com>
-Message-ID: <CAK7LNAQ__FYvJdvxPhzazyi4fSCwkMzCWGVVjy5FKfOp+-hfcg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: uniphier: add syscon property for UniPhier
- sound system
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOFm3uEb6r33V9=Maxd72pM6vdwfMkvhap01+zEd6bnDuEAVKw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-19 10:21 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> This patch adds syscon property for specifying soc-glue core into
-> device-tree of LD11/LD20 SoC.
->
-> Currently, soc-glue core is used for changing the state of S/PDIF
-> signal output pin to signal output state or Hi-Z state.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
->  arch/arm/boot/dts/uniphier-pxs2.dtsi             | 4 +++-
+Hello,
 
+On Sat, Mar 17, 2018 at 10:24:18PM -0700, Philippe Ombredanne wrote:
+> > v2:
+> > - clarify license version (it should be GPL 2.0)
+> > - use SPDX header
+> 
+> For the use of SPDX ids, you have my ack: (I am not qualified for the rest)
+> 
+> Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
 
-Please split PXs2 changes into a different patch.
+I don't think it's a good idea to add this acked-by when it's purely
+based on a single liner license tag.  I understand that you want to
+encourage use of the new tags but this can be misleading and it'd be
+great if you reconsider sending out acks like this.
 
-
->  arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 4 +++-
->  arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 4 +++-
->  3 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> index 595045441c9c..c72c0a123c87 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> @@ -243,6 +243,8 @@
->                         resets = <&sys_rst 40>;
->                         #sound-dai-cells = <1>;
->
-> +                       socionext,syscon = <&sg>;
-
-
-Remove unneeded blank line between properties.
-
-
-> +
->                         i2s_port0: port@0 {
->                                 i2s_hdmi: endpoint {
->                                 };
-> @@ -418,7 +420,7 @@
->                         };
->                 };
->
-> -               soc-glue@5f800000 {
-> +               sg: soc-glue@5f800000 {
->                         compatible = "socionext,uniphier-pxs2-soc-glue",
->                                      "simple-mfd", "syscon";
->                         reg = <0x5f800000 0x2000>;
-
-
-Could you use 'soc_glue', please?
-I saw a conflict between 'sg' and 'soc_glue' among Socionext engineers
-and I prefer the latter.
-
-
+Thanks.
 
 -- 
-Best Regards
-Masahiro Yamada
+tejun
