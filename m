@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvaxwgtCrGvmFwpwj6EttnpCJifNkLd/L38lsCuVlINxJJ2IqVCu9jN38zdrb9SF2I39ugc
-ARC-Seal: i=1; a=rsa-sha256; t=1521483600; cv=none;
+X-Google-Smtp-Source: AG47ELuwjkTKgIGKH5VvhZMlvfsupiln2w5u5QQ7nnMWUKTDSI4ZYCgIjFUbS+7mTHLj2uKtCGzv
+ARC-Seal: i=1; a=rsa-sha256; t=1521483597; cv=none;
         d=google.com; s=arc-20160816;
-        b=iyZNAH76gwQJ9A9NziAe74/z69PsC4d7CEGJLEGaaC73OBcc8LofyrMBO2shDXG+r6
-         /LQnq/k0+SEe/oaqHyf1P2BAtM8WyVkCO5RTqynyVIOPh3FTxNkldhEWm+Apz4hHCYm4
-         9VQYD11KLUTUO33g1HmdiGk3euPAn4eHpyX/dxVilc10ZD2GRtRpf6UAYKc+cY33CuZb
-         n66XjBal8hYXxuvBTbLWJBvHgG0ZhgzTw4xz5H03MCvmG2J+zUqXl6twdNxCQiRK+cC8
-         3vPbQRlqd3Eho2+p3UY4trosN+3gZ8ZFucwBbtYtLJVqveuT+a0MzCz08GhIaEcZamfH
-         EjNA==
+        b=RrBQHfbQT3kHF5OO+2Sj8N2DbeRnqCSNQmvXxYGoLGnUPZQapGA6b+X+nILG+Y6Vg7
+         nMpCryDMehIeqKScMwg5Cnc5NU2uWvcjy/c1YD5xoYGzjuRCfYlXO+unMNOTgpSP3j4D
+         2U+gZaqGT29WZItsw+4rlLTjd4kRDtB8MR2oH+TT2feS3IO9hDF+dRM7U663B/11kLtK
+         yDH8YEJnY/Z4A7B9oD0JyRz4jI1saavRGxvcLw9MmnFNhSlmIGqVcgrXLfqs/aN2+R9L
+         BvJ/Y1lNTIsDnQvv61tCcUtTIX0J6YvQYzQaeUfEdlEYjgZRTUOQKsnKFJzwj4gN+Wgy
+         nahw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TdQsaFgk7FpD4F0dQzMzCERRCer82wdcw3bBJ2TgtGM=;
-        b=HHEkkt+ZmfMVvmUP/r7Rkj35ptDzkYV/JTkv3pIm4M3QXfcQn6oOMBRPjK/NwgoVvy
-         b0An51q9ayadzVKYlaYLHdooFhxz2EMegVC0D7B2YgEnpykAZPmGibaMh1JPVabZ0qU1
-         GtrHIXxJ5Pe0T3z5nbV2J8U9f78N4Q0iltklDRSpE/EWRS7GzCGBN2y3YIpvvwGg3Y+j
-         dKbU9DdEuvkinrDST/rnaWq+0SmaTkA/gbTgI/r4GrIsBRNp0DPaMCXzj3NoyqEMATa6
-         +lut+vpEdRMcmjgdRQwgmacAVdoCxtGgpNP92pfqnqsCEYYYW4sTCvc9k68R7IxBiZ1o
-         J0DA==
+        bh=nS8rgg+QN91CVYX5EmJyVEJpVE4AL0u9NZNDo948xTw=;
+        b=1CMoPleu+NXFnQLrdCxppiLwQvaXzy1j6AAqjHEbgGdJy07eEdZ/jVNyyeMaysxEyL
+         P2uJZy/KeLaduqAvJIBljpFMIdDylsCogqkU/m5b56tHTMBJqrwllvuYGDAqrkJvggAK
+         B15tkn8KxlosN2N4wjO1eKXjQD8U5fJugOwOqMkE9pi3bqbtFjrKc02mJ5zftHJe01tw
+         0HUDFNOaFSZVoRUX+I0UCKzWPQ8I5G8OuOyFMlxdQ/kK4B75jfChWjNsJxKoYOvFKF2M
+         L9e1T2FKeqiYnJF/MWXN54CEAuPrT9nevwuTXhv+K8lZiuKW1oeHQuGLhNXbVfQEq8JR
+         RQfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Drake <dsd@gentoo.org>,
-	Johan Hovold <johan@kernel.org>,
-	Kalle Valo <kvalo@codeaurora.org>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 048/241] zd1211rw: fix NULL-deref at probe
-Date: Mon, 19 Mar 2018 19:05:13 +0100
-Message-Id: <20180319180753.190838192@linuxfoundation.org>
+Subject: [PATCH 4.9 047/241] s390/topology: fix typo in early topology code
+Date: Mon, 19 Mar 2018 19:05:12 +0100
+Message-Id: <20180319180753.137554986@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391187722604375?=
-X-GMAIL-MSGID: =?utf-8?q?1595391187722604375?=
+X-GMAIL-THRID: =?utf-8?q?1595391185042175829?=
+X-GMAIL-MSGID: =?utf-8?q?1595391185042175829?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +50,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
 
-[ Upstream commit ca260ece6a57dc7d751e0685f51fa2c55d851873 ]
+[ Upstream commit 4fd4dd8bffb112d1e6549e0ff09e9fa3c8cc2b96 ]
 
-Make sure to check the number of endpoints to avoid dereferencing a
-NULL-pointer or accessing memory beyond the endpoint array should a
-malicious device lack the expected endpoints.
+Use MACHINE_FLAG_TOPOLOGY instead of MACHINE_HAS_TOPOLOGY when
+clearing the bit that indicates if the machine provides topology
+information (and if it should be used). Currently works anyway.
 
-Fixes: a1030e92c150 ("[PATCH] zd1211rw: Convert installer CDROM device into WLAN device")
-Cc: Daniel Drake <dsd@gentoo.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 68cc795d1933 ("s390/topology: make "topology=off" parameter work")
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/zydas/zd1211rw/zd_usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/kernel/early.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-@@ -1278,6 +1278,9 @@ static int eject_installer(struct usb_in
- 	u8 bulk_out_ep;
- 	int r;
+--- a/arch/s390/kernel/early.c
++++ b/arch/s390/kernel/early.c
+@@ -372,7 +372,7 @@ static int __init topology_setup(char *s
  
-+	if (iface_desc->desc.bNumEndpoints < 2)
-+		return -ENODEV;
-+
- 	/* Find bulk out endpoint */
- 	for (r = 1; r >= 0; r--) {
- 		endpoint = &iface_desc->endpoint[r].desc;
+ 	rc = kstrtobool(str, &enabled);
+ 	if (!rc && !enabled)
+-		S390_lowcore.machine_flags &= ~MACHINE_HAS_TOPOLOGY;
++		S390_lowcore.machine_flags &= ~MACHINE_FLAG_TOPOLOGY;
+ 	return rc;
+ }
+ early_param("topology", topology_setup);
