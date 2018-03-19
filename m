@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3827995-1521495463-2-7507407984003897912
+X-Cyrus-Session-Id: sloti22d1t05-3827928-1521495417-2-12818804877645599319
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,64 +13,62 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521495462; b=MxlrbN2d13GK/57miKnkMm+y7Svm6KO/0mH/45dB1Dnj4rW
-    /ULlhLMEi7bWI/GR36QxjvYybei7jtwKOAcjSyO8usTFFlv8doRUYM5prDsGcZIV
-    3RrqRksplQAA/rcXuK503udQ9bYt9L/IfSxzx+z5MfKTLuWayu4UygL7/2rZI+5g
-    7gOJmwOG8BMePGc3NXRxS0m83MIJaOyOGmh0r8DhLjbo1KV7It0mmTL/bjTiUEA7
-    ON7YlvIiD4KULMvVo63DoauIZqUiMupmh9WSFhdP4Mgi1T8DYQcWjhdn8CAHUv2a
-    I7ohrp/emdgGBp27mpnkvwXrQfszDznm1X/9Wtw==
+    t=1521495417; b=Ccc0kQQYG1X1h+cYngd7oGRvIeGkHL2/2Ow3UGcRcg9+dh9
+    wQ1/QcseULwcrkuvnUPaOKay3j+GDeGIWWISHF+YgKV8Ep5dp7CeRmjta9zIAobk
+    k0ldY5rkqonBMjKUbk/Fzk+rS/rfUsqCCR5aRIhwVL1sgrdZYw6sVs8f+Rh/Vsqz
+    aLDntYqcUaF8yDjk5zrSePUoZV5AlGiwZHMsr8b1KkkeZ50HP6y8ltSdyzuQbJ7B
+    BvYuyMd08VRh2I7+LiqM48rXdvjAixARZTQVAvuqCiPFYZR4CBHYYA/tfxytqmE8
+    1Pen92AR7Rnnn/K7qaXfnqiT4Y3O1HkSck/5f4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521495462; bh=LXr0So
-    atjFmdym0n0oIL+fZDjaFVysSPn4Bhnfd4RoQ=; b=JkxKYerhxliUc7ujQ3Zd9F
-    Lmcj/cNLo7tc1SkQVj1+5Ng7iSXSz2EdDN2MP2a/UfmuhvJXcUjS0A8zkiBQimkf
-    mO24IgI9nMQnS4rNVHLxRvLzXbW3IkpzhgE1qn4MHcV+5ZCEouBQSDR1qmPAkqDv
-    e6/MqxVCXnDjkrphHZXrfF+6WdDSPU99plnYCFyrfuHHqky79r5Cp44GkBuZCKaz
-    AhopgvWyAnO8vqeVO1VWUWRWBIJJlScDzf1RIxUPhIIES8HMWzT0jzE2s6r/IMCN
-    w9Si/QH6vLRNckJZMDIwEGTVZHoYErwbwCBZg5rlfXOrVe9ih2izuB7/bHKvaDAw
+    :mime-version:sender:list-id; s=arctest; t=1521495417; bh=391g0p
+    IWF0QHDnGKd/x052NnSieAbr47FQRs6NtUBJ4=; b=XBG+O2b67NLnaQnczmjCZl
+    QzOechAgcvUQx8IP2ThrM/cnU+MG3+nB50LoFsSmzzU291BWOanGtBHgL3IuwTZo
+    izk+kQ+Uqke/6PfWutNMCkMaBjfxsBrU5QuaeYQUIha4umcu+VaRMAZ16+nlxums
+    zePh/xKrpfH6Z+ZBg73Opxfj4OAQv1dqZZ4lXXw3a8f7L/v/Zg5OkQw23An1oPzp
+    +qtCg9JXbRgcx2T0JTI6HcXvutKbuwCJvgZCanN+PSXyx8nPZ8zsF+BPBSm70PK6
+    7gvSsFpaSVTb1U/EekblykKV6w7MXgB85h0++3b5ppoeSZzp1qYV8CG/DFtrlCfw
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hh/70Cnh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aQUfBgnY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieeiheenucevlhhushhtvghrufhiiigvpeefge;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeekfeejnecuvehluhhsthgvrhfuihiivgepvdeh;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hh/70Cnh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aQUfBgnY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeekieeiheenucevlhhushhtvghrufhiiigvpeefge;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduhedvucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepkeekfeejnecuvehluhhsthgvrhfuihiivgepvdeh;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971909AbeCSVg7 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:36:59 -0400
-Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:62208
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S965112AbeCSP7Z (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 11:59:25 -0400
+Received: from mail-bl2nam02on0100.outbound.protection.outlook.com ([104.47.38.100]:52960
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965114AbeCSP70 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:59:26 -0400
+        id S965087AbeCSP7T (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:59:19 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 052/281] arm64: perf: Ignore exclude_hv when
- kernel is running in HYP
-Thread-Topic: [PATCH AUTOSEL for 4.9 052/281] arm64: perf: Ignore exclude_hv
- when kernel is running in HYP
-Thread-Index: AQHTv5sslrxI0uoFykKx1dYwbyUB2A==
-Date: Mon, 19 Mar 2018 15:58:51 +0000
-Message-ID: <20180319155742.13731-52-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 047/281] clk: renesas: rcar-gen2: Fix PLL0 on
+ R-Car V2H and E2
+Thread-Topic: [PATCH AUTOSEL for 4.9 047/281] clk: renesas: rcar-gen2: Fix
+ PLL0 on R-Car V2H and E2
+Thread-Index: AQHTv5sp1qTyHhGHtU+TjFyOSvCjfg==
+Date: Mon, 19 Mar 2018 15:58:45 +0000
+Message-ID: <20180319155742.13731-47-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,27 +77,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:k5ZYZEkn3Q4ScXgLfTgdDCR4tQSHunUxol+gRPF9MhNheccD0s5afokX5GhI7LXJWyfikanQJMINx+EXOG/10Uyo3gid/JSfgcuBgYcM/4i6tPO/7Dbe+K0f6fvCmKe/+6KCtf+xFFmEAqA9G5EbYPRw0Per5Cg2sKQiBGkzLzJLx6/PQEmXsirFXnWSJNSS/CoM3GzH+RyU8RI+al8jP53DWERiC8z0r+IdyS+UM3L9ksxAin9ivHpOvzXv3kPc;20:7BO3Ns7UNG+KbSOakzc5WuoJd1Kgq0p8AmQhfS21esgNw/7j2ck9+GyO30wu60pBB2rSp39Od6wG32DWj4Np8yhHEHUZHkssyGfilISW6aKIiLY3RLNqcVLbRtaLN0/WVcBadweCQNX/gy5YWr4ROc+oJWY+s9DgDvKnWk+BdcM=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:6Zi2YL6yYnFIPo/4jOBMuWIvPXqiG/z/gV4qANtxWdJKna4gsqP3HdXrahxcnBMqIlPW5+BFJup0V1syrRGkBg8kwbqnU1jCq81o5/qKW6ZQT4TFz8zvu4Fcm098RuODVuRPS3AhZP2Yma6oDedNvOLTfhumIliPgmvVUAUmKeYu1gSo//KHrwp1g43OSh3cdXtN2JZVcmt8ki76YfB+yR6rY3NL7DMUinIw2uzIMyjLbrxrOQcF1txMUpJyZAs5;20:aYOcejLiat+EF+Lhsww68855lzOfZT3oLqJAYlZ7VssobJO2XoeRbWtVs5E5Lqwg71s6+vCypqVZNwwfFdpesmDCVdT85KpkUrWGJea0dHq67EdUaEo+J8coHM/9K/cy++SvQlyZWjcUCPBvx6owTPUtlaj1L+JwKCqcDxC9y6E=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f86c3e86-235b-4107-13f9-08d58db25faa
+x-ms-office365-filtering-correlation-id: d43ff060-8dd7-4b4a-8d3e-08d58db25d75
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1109;
 x-ms-traffictypediagnostic: DM5PR2101MB1109:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB11099C7B2AB85E36316C7C6EFBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(278428928389397)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB11092B9BBF37FDBB80E9F6D5FBD40@DM5PR2101MB1109.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1109;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1109;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(396003)(366004)(39860400002)(199004)(189003)(26005)(316002)(53936002)(6486002)(6436002)(7736002)(305945005)(22452003)(66066001)(76176011)(6512007)(5250100002)(10090500001)(2501003)(99286004)(105586002)(110136005)(54906003)(186003)(2900100001)(4326008)(25786009)(86612001)(5660300001)(86362001)(8936002)(6116002)(97736004)(3846002)(36756003)(102836004)(1076002)(10290500003)(81166006)(8676002)(6506007)(106356001)(107886003)(81156014)(478600001)(72206003)(14454004)(2906002)(6666003)(2950100002)(3280700002)(68736007)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: HBOYCUwa2p2dlnqivcwprBIteYBtIwpzs5AuT98GCG0oG5N3+RLxR+Hik+Tt4uTLOra48v8HcfLIIh9M+27todFzQSwrA+yKeS9RPyFi4Ax1ABq5YHF756jjjNunLID/6GzoHyAOIKEp2eRxVzW80YGDkgWeKedAxJcvC8+hMLu71P15cqO8sJLMS/SdZcTNZhmG23nJR2tpOZ5hddhzOfWehMlXpu2VzAHuhY5uULPnGadYBKuUkbNBuNftlXsJ5eNwv8CDp4zpZEczw3IlkKKGNcsRgHeCpfxrfTDdk6r9owBzrO61MDWIoEVRybjNz6dAcLioehyTXoUdCNwVjg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(396003)(366004)(39860400002)(199004)(189003)(26005)(316002)(53936002)(6486002)(6436002)(7736002)(305945005)(22452003)(66066001)(76176011)(6512007)(5250100002)(10090500001)(2501003)(99286004)(105586002)(110136005)(54906003)(186003)(2900100001)(4326008)(25786009)(86612001)(5660300001)(575784001)(86362001)(8936002)(6116002)(97736004)(3846002)(36756003)(102836004)(1076002)(10290500003)(81166006)(8676002)(6506007)(106356001)(107886003)(81156014)(478600001)(72206003)(14454004)(2906002)(6666003)(2950100002)(3280700002)(68736007)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: iH7jzRb6OdX5+hsfRbb2mSlO3J0jL8op0wImBPCiD71ZJGP8LeK9EfKmywPI/+mzDbMIegfM5E27XAxG94pvzI1RaCPKfwgKNxH8gm1wPDboMNRTJ/tK+X+rCNIirh7HaeuiTghhQ8lLwcl3i7XSKOPK2iJjFBAeBPNTlPu9OxCGLpfA60TXO8rTR9cKvMTqa8RxhuGgGivQlatYJ+CKMNYmeigtd4Cg8LV8Arj2uU/NiV9PIAFk6Xrnj8p4MIVT72UNg+soImpHBMzQmz4cMM6MNRO2EQUwxUGIcjThFVLFMUaUkddTcQcm8Y0jst/AIa61QmsETtaSFcTT1Vyk1w==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f86c3e86-235b-4107-13f9-08d58db25faa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:51.4789
+X-MS-Exchange-CrossTenant-Network-Message-Id: d43ff060-8dd7-4b4a-8d3e-08d58db25d75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:58:45.7137
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -110,69 +108,82 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 78a19cfdf37d19002c83c8790853c1cc10feccdc ]
+[ Upstream commit b7c563c489e94417efbad68d057ea5d2030ae44c ]
 
-commit d98ecdaca296 ("arm64: perf: Count EL2 events if the kernel is
-running in HYP") returns -EINVAL when perf system call perf_event_open is
-called with exclude_hv !=3D exclude_kernel. This change breaks applications
-on VHE enabled ARMv8.1 platforms. The issue was observed with HHVM
-application, which calls perf_event_open with exclude_hv =3D 1 and
-exclude_kernel =3D 0.
+R-Car V2H and E2 do not have the PLL0CR register, but use a fixed
+multiplier (depending on mode pins) and divider.
 
-There is no separate hypervisor privilege level when VHE is enabled, the
-host kernel runs at EL2. So when VHE is enabled, we should ignore
-exclude_hv from the application. This behaviour is consistent with PowerPC
-where the exclude_hv is ignored when the hypervisor is not present and with
-x86 where this flag is ignored.
+This corrects the clock rate of "pll0" (PLL0 VCO after post divider) on
+R-Car V2H and E2 from 1.5 GHz to 1 GHz.
 
-Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-[will: added comment to justify the behaviour of exclude_hv]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Inspired by Sergei Shtylyov's work for the common R-Car Gen2 and RZ/G
+Clock Pulse Generator support core.
+
+Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
+Fixes: 0dce5454d5c25858 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm64/kernel/perf_event.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/clk-rcar-gen2.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.=
-c
-index 57ae9d9ed9bb..199a23f058d5 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -871,15 +871,24 @@ static int armv8pmu_set_event_filter(struct hw_perf_e=
-vent *event,
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-=
+rcar-gen2.c
+index 00e6aba4b9c0..c55d5fe116d6 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -271,11 +271,14 @@ struct cpg_pll_config {
+ 	unsigned int extal_div;
+ 	unsigned int pll1_mult;
+ 	unsigned int pll3_mult;
++	unsigned int pll0_mult;		/* For R-Car V2H and E2 only */
+ };
 =20
- 	if (attr->exclude_idle)
- 		return -EPERM;
--	if (is_kernel_in_hyp_mode() &&
--	    attr->exclude_kernel !=3D attr->exclude_hv)
--		return -EINVAL;
+ static const struct cpg_pll_config cpg_pll_configs[8] __initconst =3D {
+-	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
+-	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
++	{ 1, 208, 106, 200 }, { 1, 208,  88, 200 },
++	{ 1, 156,  80, 150 }, { 1, 156,  66, 150 },
++	{ 2, 240, 122, 230 }, { 2, 240, 102, 230 },
++	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
+ };
+=20
+ /* SDHI divisors */
+@@ -297,6 +300,12 @@ static const struct clk_div_table cpg_sd01_div_table[]=
+ =3D {
+=20
+ static u32 cpg_mode __initdata;
+=20
++static const char * const pll0_mult_match[] =3D {
++	"renesas,r8a7792-cpg-clocks",
++	"renesas,r8a7794-cpg-clocks",
++	NULL
++};
 +
-+	/*
-+	 * If we're running in hyp mode, then we *are* the hypervisor.
-+	 * Therefore we ignore exclude_hv in this configuration, since
-+	 * there's no hypervisor to sample anyway. This is consistent
-+	 * with other architectures (x86 and Power).
-+	 */
-+	if (is_kernel_in_hyp_mode()) {
-+		if (!attr->exclude_kernel)
-+			config_base |=3D ARMV8_PMU_INCLUDE_EL2;
-+	} else {
-+		if (attr->exclude_kernel)
-+			config_base |=3D ARMV8_PMU_EXCLUDE_EL1;
-+		if (!attr->exclude_hv)
-+			config_base |=3D ARMV8_PMU_INCLUDE_EL2;
-+	}
- 	if (attr->exclude_user)
- 		config_base |=3D ARMV8_PMU_EXCLUDE_EL0;
--	if (!is_kernel_in_hyp_mode() && attr->exclude_kernel)
--		config_base |=3D ARMV8_PMU_EXCLUDE_EL1;
--	if (!attr->exclude_hv)
--		config_base |=3D ARMV8_PMU_INCLUDE_EL2;
-=20
- 	/*
- 	 * Install the filter into config_base as this is used to
+ static struct clk * __init
+ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg =
+*cpg,
+ 			     const struct cpg_pll_config *config,
+@@ -317,9 +326,15 @@ rcar_gen2_cpg_register_clock(struct device_node *np, s=
+truct rcar_gen2_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value =3D clk_readl(cpg->reg + CPG_PLL0CR);
++		if (of_device_compatible_match(np, pll0_mult_match)) {
++			/* R-Car V2H and E2 do not have PLL0CR */
++			mult =3D config->pll0_mult;
++			div =3D 3;
++		} else {
++			u32 value =3D clk_readl(cpg->reg + CPG_PLL0CR);
++			mult =3D ((value >> 24) & ((1 << 7) - 1)) + 1;
++		}
+ 		parent_name =3D "main";
+-		mult =3D ((value >> 24) & ((1 << 7) - 1)) + 1;
+ 	} else if (!strcmp(name, "pll1")) {
+ 		parent_name =3D "main";
+ 		mult =3D config->pll1_mult / 2;
 --=20
 2.14.1
