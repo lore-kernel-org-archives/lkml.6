@@ -1,144 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968405AbeCSRzx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:55:53 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50231 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965686AbeCSRzk (ORCPT
+        id S1030345AbeCSR6I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:58:08 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:38944 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967814AbeCSR54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:55:40 -0400
-X-Google-Smtp-Source: AG47ELvweM6Vg9DM4q3EDPv6hzeSvjNZgT9LcqUV4Mn2wk+3Bs07K6gEHO1qy7Cs9nZe86VD9dntIQ==
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for
- brcmfmac
-To: Alexey Roslyakov <alexey.roslyakov@gmail.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, kvalo@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
- <20180319014032.9394-3-alexey.roslyakov@gmail.com>
- <5AAF838D.2030105@broadcom.com>
- <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
-Date: Mon, 19 Mar 2018 10:55:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Mar 2018 13:57:56 -0400
+X-Google-Smtp-Source: AG47ELuhRwtAOjOLVmjCJYZOWZpeOf88f7h4ewIng4nvwGp9+9/rfJY4zHCMjgpdO6v52XMu4HOk3HFdQnocOQA9XiY=
 MIME-Version: 1.0
-In-Reply-To: <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180319173345.GF1757@magnolia>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180319173345.GF1757@magnolia>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 19 Mar 2018 10:57:55 -0700
+Message-ID: <CAPcyv4hsLSR=eG8=yLtOhrOaUjqjV5S8pwwmP3oOLrknWQS6Mg@mail.gmail.com>
+Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
-> Hi Arend,
-> I appreciate your response. In my opinion, it has nothing to do with
-> SDIO host, because it defines "quirks" in the driver itself.
+On Mon, Mar 19, 2018 at 10:33 AM, Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
+>> In preparation for adding coordination between truncate operations and
+>> busy dax-pages, extend xfs_break_layouts() to assume it must be called
+>> with the mmap lock held. This locking scheme will be required for
+>> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
+>> pages mapped into the file's address space).
+>
+> If I'm reading this right, you've added a requirement (for xfs anyway)
+> that we have to have grabbed MMAPLOCK_EXCL before calling break_layout()
+> so that the layout breaking process will block until active dmas have
+> finished.
+>
+> In 4.16 we added xfs_iolock_two_inodes_and_break_layout (in
+> xfs_reflink.c) to break pnfs leases for files that are about to be
+> reflinked (since pnfs and reflink aren't compatible either).  I think
+> that function will have to be adapted to take the appropriate mmap locks
+> too -- definitely the exclusive mmap lock for the destination file
+> because we anticipate punching out blocks.  I'm not sure about the
+> source file; I think taking the shared mmap lock is fine for that?
 
-It is not clear to me from your patch series whether the problem is that:
-
-- the SDIO device has a specific alignment requirements, which would be
-either a SDIO device driver limitation/issue or maybe the underlying
-hardware device/firmware requiring that
-
-- the SDIO host controller used is not capable of coping nicely with
-these said limitations
-
-It seems to me like what you are doing here is a) applicable to possibly
-more SDIO devices and host combinations, and b) should likely be done at
-the layer between the host and device, such that it is available to more
-combinations.
-
-> If I get it right, you mean something like this:
-> 
-> mmc3: mmc@1c12000 {
-> ...
->         broken-sg-support;
->         sd-head-align = 4;
->         sd-sgentry-align = 512;
-> 
->         brcmf: wifi@1 {
->                 ...
->         };
-> };
-> 
-> Where dt: bindings documentation for these entries should reside?
-> In generic MMC bindings? Well, this is the very special case and
-> mmc-linux maintainer will unlikely to accept these changes.
-> Also, extra kernel code modification might be required. It could make
-> quite trivial change much more complex.
-
-If the MMC maintainers are not copied on this patch series, it will
-likely be hard for them to identify this patch series and chime in...
-
-> 
->> Also I am not sure if the broken-sg-support is still needed. We added that for omap_hsmmc, but that has since changed to scatter-gather emulation so it might not be needed anymore.
-> 
-> I've experienced the problem with rk3288 (dw-mmc host) and sdio
-> settings like above solved it.
-> Frankly, I haven't investigated any deeper which one of the settings
-> helped in my case yet...
-> I will try to get rid of broken-sg-support first and let you know if
-> it does make any difference.
-> 
-> All the best,
->   Alex.
-> 
-> On 19 March 2018 at 16:31, Arend van Spriel
-> <arend.vanspriel@broadcom.com> wrote:
->> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
->>>
->>> In case if the host has higher align requirements for SG items, allow
->>> setting device-specific aligns for scatterlist items.
->>>
->>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
->>> ---
->>>   Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt | 5
->>> +++++
->>>   1 file changed, 5 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>> index 86602f264dce..187b8c1b52a7 100644
->>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>> @@ -17,6 +17,11 @@ Optional properties:
->>>         When not specified the device will use in-band SDIO interrupts.
->>>    - interrupt-names : name of the out-of-band interrupt, which must be
->>> set
->>>         to "host-wake".
->>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO host
->>> +       controller has higher align requirement than 32 bytes for each
->>> +       scatterlist item.
->>> + - brcm,sd-head-align : alignment requirement for start of data buffer.
->>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
->>> entry.
->>
->>
->> Hi Alexey,
->>
->> Thanks for the patch. However, the problem with these is that they are
->> characterizing the host controller and not the wireless device. So from
->> device tree perspective , which is to describe the hardware, these
->> properties should be SDIO host controller properties. Also I am not sure if
->> the broken-sg-support is still needed. We added that for omap_hsmmc, but
->> that has since changed to scatter-gather emulation so it might not be needed
->> anymore.
->>
->> Regards,
->> Arend
-> 
-> 
-> 
-
-
--- 
-Florian
+I don't see anything to adapt with respect to mmap locks since reflink
+and dax are mutually exclusive. The new lock coordination and layout
+breaking in xfs_break_dax_layouts() only applies to dax vs truncate,
+so xfs_iolock_two_inodes_and_break_layout() looks ok to me as is.
