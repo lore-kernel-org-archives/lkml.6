@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvMsRtB+9DX0WUdcyvVqBOgi63EmMFMKFcJlpbzNPhgTvulpoy0TAw/JH1VrbqWTwIrcxzo
-ARC-Seal: i=1; a=rsa-sha256; t=1521483379; cv=none;
+X-Google-Smtp-Source: AG47ELvyiWM17brp40pJ3FOcQ6kU/ptHcSnsSin63fLx5WoOH3A/BgqWJX+KWzykQ6srK6546P9J
+ARC-Seal: i=1; a=rsa-sha256; t=1521483374; cv=none;
         d=google.com; s=arc-20160816;
-        b=A4sdhWNBd/bIuiFQSaR+amc6NTKjk1xyuGX0vxlI/1dKD1l5MXuLHSJ/5KnNoTF9nu
-         rkmZVkrwZfd/4eY8QvsCwpzWA1J8yRQK7eml9Bd67tCrIzCEh5O7cEBlhmQ4W7ZwwHGe
-         Hq0v9GxZmIQc+ks4gVz/mw68ppvmubSM4lLTi4U3tCQZ8/LeQx5HISKbxFXcg0sy8/CK
-         OfEDePMxHavIpSK2zz+w+AIIWBDdyPodqwUMJZvuKZTcvoFdkcM+imNCJ3YLIPCvaC8P
-         +/ngSuS1ciD8TviCtNapt93VBq85DtKSlJZWACp+aLRBp1uCH5i5VRsp2RK3ZkrqoabW
-         6wDw==
+        b=xO8YMhivtIq3iifPWLbk5NeLYv+dwKmtzIXhs1gp7WWuV3dI5SVfOKqnb9agJCRUXK
+         PGtMuztuNEB+u1wMX3Bezd3CO2oDlMWSgTIWdK6BCxabTnZFsYU7VQnFk0WG7rThjccI
+         731xOz1Pbd9S0pjgqXW2DpRbGEss0aNFk7jkhIC/MOcJ1yXg3va6PpKd0TozKnUq/CMl
+         ePShAna4t8lXRb/hGeQUTGSpRZIi7PYPzEMV0uGy6xc6GVSEwGsC4kv8qXmXZf+3+txv
+         MKMQ9dyDJ7Bm6928imnwnGqRhQDk9tl232BP7qcdJ84JZSUcRUe85avIFUuwqK+eql2i
+         u7Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=O21O4p3mT3YWmYYagH80rk1Z+pdTLsGGteCPgF9I3F8=;
-        b=sRM4+rGLciIeY4XipDtsHjfS3IfMoYmameT1BUE1kw9MQ6w//pZ3Wgpn+lo2LvltyN
-         1sYsBhTt8qvwL2yNmr57fzFzfeU8EEsrrp7X5AT0Hty4QonW25fJTAHCr7QGdUIcTamU
-         JAEPP9liZkwV3xXBDp2jps5oPd6t/u0KN1MiF3Oh+quY4p2Xno+fjAny8b39bLNJdBOA
-         tYLbiIQzHz37WznTuVqmWahyiOMD5VrPxSZ7onwZx7IB4kU42JpYWG6XYjqBnHjt9Ipe
-         fp5FxPe8IfWEHdC6FdbxMNPJcUch3KKU/2UP14W7+8aHbZVXy7SAIcTrHgBacNefU/0C
-         kEgQ==
+        bh=VI4BUmhRemTmhDgj9ci9ntgrE1OSsc4S/f1v6GZiyKM=;
+        b=tFdKCXl1hz1inM0rL1EpC0tLV1gT5F9+SGr15iWss+d/g8cBWyLCfOr67rDc+62IYV
+         tTXNJh2SINAizGUHrCsqQ14o0a6oEW8jVR7c+M2XYGlMLXm7Kmh5v4FVhd+GE9HOUXCS
+         bgFaERNGQDn+zxTWl34yZf5E7TQBw0yPIfIQxXYC3Oi/sV3udm17J2KcZAkuWybdfML9
+         AE2dpqaTEU5V27IQt1nlruxP9oXHHncS0vNXnnUW3Ss152uc9TFscR3C1LCCvmigik49
+         nyR9mXfjBZBaJMqAB08z5Voawh/k7y9kd0FL9rqVii9nQhYFiLGoxT6Tzpdom7gOq/At
+         E++A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephen Hemminger <sthemmin@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 101/134] veth: set peer GSO values
-Date: Mon, 19 Mar 2018 19:06:24 +0100
-Message-Id: <20180319171903.826889201@linuxfoundation.org>
+Subject: [PATCH 4.4 100/134] media: cpia2: Fix a couple off by one bugs
+Date: Mon, 19 Mar 2018 19:06:23 +0100
+Message-Id: <20180319171903.684047783@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390628799057705?=
-X-GMAIL-MSGID: =?utf-8?q?1595390956426594653?=
+X-GMAIL-THRID: =?utf-8?q?1595390622995940501?=
+X-GMAIL-MSGID: =?utf-8?q?1595390950867110706?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 72d24955b44a4039db54a1c252b5031969eeaac3 ]
+[ Upstream commit d5ac225c7d64c9c3ef821239edc035634e594ec9 ]
 
-When new veth is created, and GSO values have been configured
-on one device, clone those values to the peer.
+The cam->buffers[] array has cam->num_frames elements so the > needs to
+be changed to >= to avoid going beyond the end of the array.  The
+->buffers[] array is allocated in cpia2_allocate_buffers() if you want
+to confirm.
 
-For example:
-   # ip link add dev vm1 gso_max_size 65530 type veth peer name vm2
+Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
 
-This should create vm1 <--> vm2 with both having GSO maximum
-size set to 65530.
-
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/veth.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/usb/cpia2/cpia2_v4l.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -399,6 +399,9 @@ static int veth_newlink(struct net *src_
- 	if (ifmp && (dev->ifindex != 0))
- 		peer->ifindex = ifmp->ifi_index;
+--- a/drivers/media/usb/cpia2/cpia2_v4l.c
++++ b/drivers/media/usb/cpia2/cpia2_v4l.c
+@@ -812,7 +812,7 @@ static int cpia2_querybuf(struct file *f
+ 	struct camera_data *cam = video_drvdata(file);
  
-+	peer->gso_max_size = dev->gso_max_size;
-+	peer->gso_max_segs = dev->gso_max_segs;
-+
- 	err = register_netdevice(peer);
- 	put_net(net);
- 	net = NULL;
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+@@ -863,7 +863,7 @@ static int cpia2_qbuf(struct file *file,
+ 
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+ 	   buf->memory != V4L2_MEMORY_MMAP ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	DBG("QBUF #%d\n", buf->index);
