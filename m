@@ -1,118 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964974AbeCSP6g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 11:58:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:54286 "EHLO foss.arm.com"
+        id S934846AbeCSQAY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 12:00:24 -0400
+Received: from vern.gendns.com ([206.190.152.46]:39518 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934680AbeCSP50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:57:26 -0400
-Subject: Re: [RFC 03/12] KVM: arm/arm64: Record RDIST Last bit at registration
-To: Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-References: <1521451220-27754-1-git-send-email-eric.auger@redhat.com>
- <1521451220-27754-4-git-send-email-eric.auger@redhat.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <3943c306-5204-3a2b-0e06-7c8a4298c9fc@arm.com>
-Date: Mon, 19 Mar 2018 15:57:21 +0000
+        id S934790AbeCSP7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:59:46 -0400
+Subject: =?UTF-8?Q?Re:_[PATCH_v8_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com>
+Date: Mon, 19 Mar 2018 10:59:47 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1521451220-27754-4-git-send-email-eric.auger@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/03/18 09:20, Eric Auger wrote:
-> To prepare for multiple RDIST regions, let's record the RDIST
-> Last bit field when registering the IO device.
+On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
+> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 19 patches create new clock drivers
+>> using the common clock framework. There are basically 3 groups of clocks -
+>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+>> unique init data, which is the reason for so many patches.
+>>
+>> Then, starting with "ARM: davinci: pass clock as parameter to
+>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>> around the legacy clocks so that we can switch easily between the old and the
+>> new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final three patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+>> OMAP-L138 LCDK (both device tree and legacy board file).
+>>
 > 
-> As a reminder the Last bit indicates whether the redistributor
-> is the highest one in a series of contiguous redistributor pages.
+> Hi David,
 > 
-> Since at the moment KVM only supports a single redist region,
-> the RDIST tagged with the last bit set to true corresponds to the
-> highest vCPU one.
+> thanks, with the u-boot fix everything seems to work fine. I tested
+> da850-lcdk and da850-evm boards in DT and board file modes.
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  include/kvm/arm_vgic.h           | 1 +
->  virt/kvm/arm/vgic/vgic-mmio-v3.c | 6 +++++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
+> I'll be working with this series in the following days and will do
+> some thorough testing and rebase my aemif series on top of it. I'll
+> also use the recently merged reset support for board files to get rid
+> of the exported reset functions.
 > 
-> diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-> index cdbd142..1c8c0ff 100644
-> --- a/include/kvm/arm_vgic.h
-> +++ b/include/kvm/arm_vgic.h
-> @@ -312,6 +312,7 @@ struct vgic_cpu {
->  	 */
->  	struct vgic_io_device	rd_iodev;
->  	struct vgic_io_device	sgi_iodev;
-> +	bool rdist_last; /* Is the RDIST the last one of the RDIST region? */
->  
->  	/* Contains the attributes and gpa of the LPI pending tables. */
->  	u64 pendbaser;
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index 671fe81..75fe689 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -184,12 +184,13 @@ static unsigned long vgic_mmio_read_v3r_typer(struct kvm_vcpu *vcpu,
->  					      gpa_t addr, unsigned int len)
->  {
->  	unsigned long mpidr = kvm_vcpu_get_mpidr_aff(vcpu);
-> +	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
->  	int target_vcpu_id = vcpu->vcpu_id;
->  	u64 value;
->  
->  	value = (u64)(mpidr & GENMASK(23, 0)) << 32;
->  	value |= ((target_vcpu_id & 0xffff) << 8);
-> -	if (target_vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1)
-> +	if (vgic_cpu->rdist_last)
->  		value |= GICR_TYPER_LAST;
->  	if (vgic_has_its(vcpu->kvm))
->  		value |= GICR_TYPER_PLPIS;
-> @@ -580,6 +581,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm *kvm = vcpu->kvm;
->  	struct vgic_dist *vgic = &kvm->arch.vgic;
-> +	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
->  	struct vgic_io_device *rd_dev = &vcpu->arch.vgic_cpu.rd_iodev;
->  	struct vgic_io_device *sgi_dev = &vcpu->arch.vgic_cpu.sgi_iodev;
->  	gpa_t rd_base, sgi_base;
-> @@ -632,6 +634,8 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
->  	}
->  
->  	vgic->vgic_redist_free_offset += 2 * SZ_64K;
-> +	vgic_cpu->rdist_last =
-> +		(vcpu->vcpu_id == atomic_read(&vcpu->kvm->online_vcpus) - 1);
->  out:
->  	mutex_unlock(&kvm->slots_lock);
->  	return ret;
+> Thanks for your work!
+> 
+> Best regards,
+> Bartosz Golaszewski
 > 
 
-I don't really like the idea of keeping this "Last" bit around, because
-it doesn't have much to do with the state of a redistributor, and has
-more to do with its position in the region.
-
-What is wrong with the current approach of dynamically computing the
-Last bit? If you have multiple regions, all you need to know is which
-region this redistributor belongs to. From that point (and assuming you
-know how many redistributors have been instantiated in that region, you
-can know whether the Last bit is set or not.
-
-One of the issue is that the current code works in term of "target cpu",
-while we really want is to use the addr parameter to work out if the
-Last bit is set or not. I'd be a lot more confident if we emulate it
-like that (which is how the HW would generate it too).
-
-What do you think?
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Sounds like a good plan to me. FYI, I've started a common-clk-v9 branch
+on my GitHub already with a few minor fixes.
