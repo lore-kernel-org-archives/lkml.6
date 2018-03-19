@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3Q7y1ksRSHYYHJrcDyMgl69LXu7+PLBWR0ivn3Hdd6N3MQGKXP9ThBscGPM/jngG6st/v
-ARC-Seal: i=1; a=rsa-sha256; t=1521484088; cv=none;
+X-Google-Smtp-Source: AG47ELvPx9l+MyKZTRx8nG4u+6xoln9MAd3EOWNvnSogOM0pZ8nOBViU45NchB2ytPH11REPSH74
+ARC-Seal: i=1; a=rsa-sha256; t=1521484085; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gp7/zVYQW3Bt/aLZ91mp1aa7AJnVXki0O8+3uObhjkZTgazDkn/0HW/cUFxXXfuvTJ
-         XDYlBQkY9fv7+dBXA7kHX7iIq3sIQtMrBvlkyHthVvyAPtAbFili30n/l+z0RWylhXuy
-         vqhcuZnpNS0r4JK6fAIhuVJHD2XDm80GCQIQUdsL6aNbDdmgEUzzwVqTWplET+fI2oj0
-         DVgZJ9CoLpXOQiBIsqAwHeFHl/BzNFXTkNgEdmKHlwlPuXg5xTA8ONzFxCdfAfX3f9HR
-         bjrN+ZzxcUQB1wz7EYe6Yn5UZ8kYLsEgH0UOArrOP1dCAOLrzGdv26KN6zyzvsMJC+Jb
-         C9jg==
+        b=GnY2vzwXC5XUxW6GL95tkNdK9ZgGEQsIRvaHG1oqJKoa0nI+1SGiZaY67o2oqO7d5o
+         xupyVeMMWeJ3lAOPHQit+ep2BfMtLUPtAG0lVzBwA8AFcUNhwZRT/eda6SMizwkdzIYv
+         xPbfigKQ3U9EFFMiYXvdvhn3KL0eY+j5RQ11UUYYW+WU2z7sgx2vpDGoOpJ2SnzXe1NU
+         6qaAgwkzlwuFqagRx8MHLMHWcdEY3CVeBdrdi290I4ZzVIkRmMyZwkxnonBj12LqNnOG
+         3nJvox2APP7FN9BkZOVi6ki2emWcQycvXZqfwqnsQZP4QXe7sqIqpG7mX4vh5At7bVmJ
+         NT6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Cai26+8snd7qFUyVJ4bUmfrarI0gXiE8ulO4sZ3Vxg8=;
-        b=yhrD+0aeIvpVK/v+Kn/vkzoE1ifMuI05kpP1zardJvpZ+ZTdCc20CJG/JLgntWPeSq
-         G5oIVpn3Vyh8AHWjjjoIWsFoKSpZDCWNi86u78Q9W9JxdDYKns9RQSYlBkdbTCpJ2Iu2
-         q57NG6jWQxCIdYEW47mwPR6IwPZvu8y6IQO5HE0KH+bhfC0fuugU+kxKwEAZ/IjAT/OB
-         29GjrVa1Yu+YB+gPEwmFXEUKMfJ2ROb2HfjsfqkFLjevMC3wEGxrP6fmhgzAEWC1yqOZ
-         R9Q2dIJvBExTDjO8zWG961Rs+/NcRPJcRt5/TtHQ3f/iUWiE9tqeD6TxkG8xKV9WsM/0
-         mjQw==
+        bh=ThwJFwjFmYUAGGlNQqvRbwPik+BbB2xsNGAmOsVoHDM=;
+        b=i57TnS8urGQh4GEPjysYOat4Nt35roOGa66yxpm0q4ltFvDKzRDBqGr+cE1WhtPI5N
+         ZI9LDPki44AfholV9N103d9DnpJL9OnrTAcYQIX4FBCabnRVg8rK2hzx+4KMlefXKtb6
+         FxrBxv6xHyK5Ix/L0ZhpnO9mWbCuLz5f/PnZGVSMWLgqk9NJWpyiVEkbOx5YlRelvdtT
+         NyLrXKFPx5bFXfoPlfUaoFw2rvEfrKRZsp75dzLvB/QmZ6ruu8rNa68ZSeiI/kXXwsmL
+         VBSriGRvwB/3/YCz+AHPRdMhSZCZbffk/iu9DY8/SeZu4VTPGSnjlh0xwmS8y9MKgTm0
+         je/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 228/241] fs: Teach path_connected to handle nfs filesystems with multiple roots.
-Date: Mon, 19 Mar 2018 19:08:13 +0100
-Message-Id: <20180319180800.613855060@linuxfoundation.org>
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>
+Subject: [PATCH 4.9 227/241] drm/amdgpu/dce: Dont turn off DP sink when disconnected
+Date: Mon, 19 Mar 2018 19:08:12 +0100
+Message-Id: <20180319180800.571303374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391007817216634?=
-X-GMAIL-MSGID: =?utf-8?q?1595391699472307171?=
+X-GMAIL-THRID: =?utf-8?q?1595391004323792945?=
+X-GMAIL-MSGID: =?utf-8?q?1595391696559501687?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,102 +49,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit 95dd77580ccd66a0da96e6d4696945b8cea39431 upstream.
+commit 7d617264eb22b18d979eac6e85877a141253034e upstream.
 
-On nfsv2 and nfsv3 the nfs server can export subsets of the same
-filesystem and report the same filesystem identifier, so that the nfs
-client can know they are the same filesystem.  The subsets can be from
-disjoint directory trees.  The nfsv2 and nfsv3 filesystems provides no
-way to find the common root of all directory trees exported form the
-server with the same filesystem identifier.
+Turning off the sink in this case causes various issues, because
+userspace expects it to stay on until it turns it off explicitly.
 
-The practical result is that in struct super s_root for nfs s_root is
-not necessarily the root of the filesystem.  The nfs mount code sets
-s_root to the root of the first subset of the nfs filesystem that the
-kernel mounts.
+Instead, turn the sink off and back on when a display is connected
+again. This dance seems necessary for link training to work correctly.
 
-This effects the dcache invalidation code in generic_shutdown_super
-currently called shrunk_dcache_for_umount and that code for years
-has gone through an additional list of dentries that might be dentry
-trees that need to be freed to accomodate nfs.
-
-When I wrote path_connected I did not realize nfs was so special, and
-it's hueristic for avoiding calling is_subdir can fail.
-
-The practical case where this fails is when there is a move of a
-directory from the subtree exposed by one nfs mount to the subtree
-exposed by another nfs mount.  This move can happen either locally or
-remotely.  With the remote case requiring that the move directory be cached
-before the move and that after the move someone walks the path
-to where the move directory now exists and in so doing causes the
-already cached directory to be moved in the dcache through the magic
-of d_splice_alias.
-
-If someone whose working directory is in the move directory or a
-subdirectory and now starts calling .. from the initial mount of nfs
-(where s_root == mnt_root), then path_connected as a heuristic will
-not bother with the is_subdir check.  As s_root really is not the root
-of the nfs filesystem this heuristic is wrong, and the path may
-actually not be connected and path_connected can fail.
-
-The is_subdir function might be cheap enough that we can call it
-unconditionally.  Verifying that will take some benchmarking and
-the result may not be the same on all kernels this fix needs
-to be backported to.  So I am avoiding that for now.
-
-Filesystems with snapshots such as nilfs and btrfs do something
-similar.  But as the directory tree of the snapshots are disjoint
-from one another and from the main directory tree rename won't move
-things between them and this problem will not occur.
-
+Bugzilla: https://bugs.freedesktop.org/105308
 Cc: stable@vger.kernel.org
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Fixes: 397d425dc26d ("vfs: Test for and handle paths that are unreachable from their mnt_root")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c         |    5 +++--
- fs/nfs/super.c     |    2 ++
- include/linux/fs.h |    1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |   29 +++++++++----------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -578,9 +578,10 @@ static int __nd_alloc_stack(struct namei
- static bool path_connected(const struct path *path)
- {
- 	struct vfsmount *mnt = path->mnt;
-+	struct super_block *sb = mnt->mnt_sb;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+@@ -69,25 +69,18 @@ void amdgpu_connector_hotplug(struct drm
+ 		/* don't do anything if sink is not display port, i.e.,
+ 		 * passive dp->(dvi|hdmi) adaptor
+ 		 */
+-		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT) {
+-			int saved_dpms = connector->dpms;
+-			/* Only turn off the display if it's physically disconnected */
+-			if (!amdgpu_display_hpd_sense(adev, amdgpu_connector->hpd.hpd)) {
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+-			} else if (amdgpu_atombios_dp_needs_link_train(amdgpu_connector)) {
+-				/* Don't try to start link training before we
+-				 * have the dpcd */
+-				if (amdgpu_atombios_dp_get_dpcd(amdgpu_connector))
+-					return;
++		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT &&
++		    amdgpu_display_hpd_sense(adev, amdgpu_connector->hpd.hpd) &&
++		    amdgpu_atombios_dp_needs_link_train(amdgpu_connector)) {
++			/* Don't start link training before we have the DPCD */
++			if (amdgpu_atombios_dp_get_dpcd(amdgpu_connector))
++				return;
  
--	/* Only bind mounts can have disconnected paths */
--	if (mnt->mnt_root == mnt->mnt_sb->s_root)
-+	/* Bind mounts and multi-root filesystems can have disconnected paths */
-+	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
- 		return true;
- 
- 	return is_subdir(path->dentry, mnt->mnt_root);
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2613,6 +2613,8 @@ struct dentry *nfs_fs_mount_common(struc
- 		/* initial superblock/root creation */
- 		mount_info->fill_super(s, mount_info);
- 		nfs_get_cache_cookie(s, mount_info->parsed, mount_info->cloned);
-+		if (!(server->flags & NFS_MOUNT_UNSHARED))
-+			s->s_iflags |= SB_I_MULTIROOT;
+-				/* set it to OFF so that drm_helper_connector_dpms()
+-				 * won't return immediately since the current state
+-				 * is ON at this point.
+-				 */
+-				connector->dpms = DRM_MODE_DPMS_OFF;
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+-			}
+-			connector->dpms = saved_dpms;
++			/* Turn the connector off and back on immediately, which
++			 * will trigger link training
++			 */
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+ 		}
  	}
- 
- 	mntroot = nfs_get_root(s, mount_info->mntfh, dev_name);
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1319,6 +1319,7 @@ struct mm_struct;
- #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
- #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
- #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
-+#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
- 
- /* sb->s_iflags to limit user namespace mounts */
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
+ }
