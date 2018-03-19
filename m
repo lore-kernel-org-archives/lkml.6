@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966640AbeCSRL6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:11:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966172AbeCSRLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:11:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570F72178C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 19 Mar 2018 12:11:40 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: khalid.aziz@oracle.com, sparclinux@vger.kernel.org,
-        linux-pci@vger.kernel.org, yinghai@kernel.org,
-        linux-kernel@vger.kernel.org, david.ahern@oracle.com, linux@iam.tj
-Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
-Message-ID: <20180319171140.GA52750@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
- <20180318.120734.1936832399192758981.davem@davemloft.net>
+        id S967529AbeCSRPl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:15:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58182 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967805AbeCSRP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 13:15:28 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        linux-audit@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] audit: set TIF_AUDIT_SYSCALL only if audit filter has been populated
+Date: Mon, 19 Mar 2018 13:15:22 -0400
+Message-ID: <1703251.0Aix3r8zCV@x2>
+Organization: Red Hat
+In-Reply-To: <CALCETrU7diwpacgGPQvt8J-jq0o=nhxb0N6XYUinoQcTaqqd_Q@mail.gmail.com>
+References: <nycvar.YFH.7.76.1803071120410.15778@cbobk.fhfr.pm> <nycvar.YFH.7.76.1803140124210.15778@cbobk.fhfr.pm> <CALCETrU7diwpacgGPQvt8J-jq0o=nhxb0N6XYUinoQcTaqqd_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180318.120734.1936832399192758981.davem@davemloft.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 12:07:34PM -0400, David Miller wrote:
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Date: Tue, 20 Feb 2018 17:39:35 -0600
-> 
-> > Both these patches are on my pci/sparc branch and appeared in the
-> > Feb 19 linux-next tree.
+On Tuesday, March 13, 2018 8:35:44 PM EDT Andy Lutomirski wrote:
+> On Wed, Mar 14, 2018 at 12:28 AM, Jiri Kosina <jikos@kernel.org> wrote:
+> > On Wed, 14 Mar 2018, Andy Lutomirski wrote:
+> >> > Yes...I wished I was in on the beginning of this discussion. Here's
+> >> > the
+> >> > problem. We need all tasks auditable unless specifically dismissed as
+> >> > uninteresting. This would be a task,never rule.
+> >> > 
+> >> > The way we look at it, is if it boots with audit=1, then we know
+> >> > auditd
+> >> > is expected to run at some point. So, we need all tasks to stay
+> >> > auditable. If they weren't and auditd enabled auditing, then we'd need
+> >> > to walk the whole proctable and stab TIF_AUDIT_SYSCALL into every
+> >> > process in the system. It was decided that this is too ugly.
+> >> 
+> >> When was that decided?  That's what this patch does.
 > > 
-> > Any testing and feedback (especially on the second patch, which should
-> > change /proc/iomem) would be great.
+> > I'd like to see some more justification as well.
 > > 
-> > They're headed for v4.17 unless I hear about issues.
-> > 
-> > It would be useful to hear about what's still broken so I can try to
-> > pull in the other patches.
+> > Namely, if I compare "setting TIF_AUDIT_SYSCALL for every process on a
+> > need-to-be-so basis" to "we always go through the slow path and
+> > pessimistically assume that audit is enabled and has reasonable ruleset
+> > loaded", I have my own (different) opinion of what is too ugly.
 > 
-> I don't understand why you put the SYSTEM and Video ROM at addresses
-> relative to absolute zero.  The result of this is that it might
-> overlap real physical memory.
+> Me too.
 > 
-> If a VGA card is present, it's ROM will respond to those addresses
-> relative to the PCI controller's MEM space area.
+> That being said, on re-review of my old code, I think that
+> audit_dec_n_rules() may be the wrong approach.  It may be better to
+> leave TIF_AUDIT_SYSCALL set but to make the audit code itself clear
+> the flag the next time through.  That way we don't end up with a
+> partially filled in syscall audit record that never gets consumed if
+> we clear TIF_AUDIT_SYSCALL in the middle of a syscall.
 
-I could have worded the changelog better.  This is about reserving PCI
-bus addresses 0xc0000-0xc7fff, not the VGA framebuffer at
-0xa0000-0xbffff.
+So what happened when auditd is being restarted due to system update? Its 
+possible to have no auditd, no rules, and audit_enabled == 0. But its getting 
+ready to start a new auditd, enable audit, and load rules. In this case, we 
+expect tasks already dismissed by task filter to stay dismissed because the 
+task filter only runs at fork time.
 
-If I understand correctly, a VGA device will respond to the
-framebuffer at 0xa0000-0xbffff, but the device itself will not respond
-to the 0xc0000-0xc7fff range.  I think the typical x86 PC arrangement
-is that the BIOS reads the VGA option ROM using the normal relocatable
-expansion ROM BAR and copies it into system memory at 0xc0000, so it
-is in real physical memory.
+For example, suppose httpd is not desired to be audited. The admin sets up a 
+task rule that sets it to never for httpd. The rule triggers at fork and 
+marks it inauditable. Would this patch cause httpd to suddenly become 
+auditable again during an auditd restart?
 
-I don't know what sparc firmware does, but I'm assuming the VGA PCI
-device behaves the same in that it wouldn't respond to 0xc0000 itself.
+Rather than play run time games which is ultimately racey and prone to 
+missing something, what about the approach of controlling this from a boot 
+variable and letting user space see an error should auditing try to do its 
+normal thing when its not wanted? This way auditd can exit and there aren't 
+any races.
 
-> Their legacy resources are "hardwired", but those hardwired addresses
-> need to be relative to the PCI host controller's MEM areas in order
-> for them to be accessible.
-> 
-> I could understand removing the System ROM resource altogether, that
-> makes a lot of sense to me.
-
-Do you want me to remove the System ROM resource?  If so, I'll
-make a separate patch to remove it, followed by one that does
-whatever we figure out is the right thing for the video ROM.
-
-Thanks for the feedback.
-
-Bjorn
+-Steve
