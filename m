@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsObINscjBhp0soNEZ0GPEH/3R5T4XUVRbHeVqGTYCpFExZ1avTonqMpf93cDhywxYVsFBn
-ARC-Seal: i=1; a=rsa-sha256; t=1521483865; cv=none;
+X-Google-Smtp-Source: AG47ELtz0u9FKlRc2+uTkGn7GoZBYbcDnJoDsRi38T4LypXIut1N3IOhyMfZLgUDAXBzflRTlEP5
+ARC-Seal: i=1; a=rsa-sha256; t=1521483863; cv=none;
         d=google.com; s=arc-20160816;
-        b=KKm/Ymg816rGyePCqnFkAWijzN6JHyYli21xqMdT9ztQQllOst8BbZdA2REYt6LEIL
-         WKsFv/4gjbRrV2wme/jXUUEwRXJO8A+/q5gTS4dGOLpvUnyNtnPEqIpcPYPX7k3/kthv
-         d3BVRno9LWXq1s2PvbbogI2BDN5Twf0lAbmresFDlNMnk7ArKa2LWp1bu1QghvLJf4ll
-         XeZwHJVHqCLkxG96CGyg5XL7Xz9ztZR7QWd98133rzl1bDxs6am60TfndENEvsV0mhsV
-         8EfyNHi22rEnEByM7x18fCO+D9W3912+VztVc2thu3X5gYE9S+zA2smQTJ9xqqjHJuwM
-         hNkQ==
+        b=ozVbhdssTCwoeIFiyyTF/OaBislO5fIIvrPsPd44HfKRNx2zOL94Vf/U9aK1fgFwlz
+         JWFEs8mjuhCnkUOnHxLbZI4PNjXSkZ7XEk9zckwFWI4wuCilGAqeNKixtNlXJu2M0I3R
+         CtU/Ih89k+Q4Ses/sz8Ws5dYWiou3enkBBZw8Mpq5xVgKDv/SGqQmSs4apDZ5kJ599up
+         ryOp7QfozLVjdF5kFfH7C1wjtJH5M177rOcATdoFO675F+twihjhaCCxMHxTgJYPH/b+
+         hG2IqBrgAQoZupfM+ttRB/dXcQTJ1GSURrtsthGmZLOwLme/jW2Kv2RFgDLsSrDMAdZ4
+         0Ctg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GzcUhbO/kD4huPYPGGdo2mdnK02ZQU4imrIs92cNvYQ=;
-        b=e7Z4D3OTCgu2K5yc/vNMtwjhXk3zJNN8E/kudVSibxlY3bU9yL/WQq2XijEfhBoQv5
-         Ke8FSF0mPIhjdN8juqQA9sJ/QtnpivmWefeFVu6X4XGv589GmZw3KIQ6B1H5YW3LuX9P
-         kaVC+52tHELHmOaBRVBomrLU12DFHs+DkuwsRsj8nVK+t3E6IdKkCqNtoIn/Hfna1IQb
-         fjZ9uAzhRusPW9S3OPCqtI1apYLgFHW0985lH7Yyjt0ivSBF/W8lh/MHCk3rtVj1n9Z9
-         QjYC/qNTAGgmneZNxQg+cJ0nGTPt27WGzgIWwB4/dk/NB4M703UN/Qz8RyNE/y0m1Xhw
-         RMYw==
+        bh=XkGKSS3NP0Uy3m6D6Px1BrUOExPT+ORsGngyvWbLLRM=;
+        b=yWVy1lRXG0nPAkB0wr3X7OOxtHBzdmPTF+bYcvut/7BzD5evP3g/bB9Djez8BN+3SE
+         nh/E/ENiLsBregqxzTcS0if6YePUH+yja7R3tASMxpyqgLx8mHvX7Rd1JydlCRm9GN+u
+         ySjwIpKCnhH26Z0be8YC45Q04MNvzKWZthCeH/0eoHzDYdavOr/+bCaExmhyzTcS5P9h
+         cAL2vdv86Ttu7tD+iCGib+6x93s3Z2jZFtTy0v78abr1jnIdTMigyMnJEC1ysGTgMDjw
+         2s1EK2EfmR2f+al9mvYuDisUzx+TdLawW6GHOR2iTq9txQJPVzhWK/smme91RqQKeBHV
+         qT8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 099/241] net/faraday: Add missing include of of.h
-Date: Mon, 19 Mar 2018 19:06:04 +0100
-Message-Id: <20180319180755.301772104@linuxfoundation.org>
+Subject: [PATCH 4.9 108/241] ASoC: rt5677: Add OF device ID table
+Date: Mon, 19 Mar 2018 19:06:13 +0100
+Message-Id: <20180319180755.666233581@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390548552931804?=
-X-GMAIL-MSGID: =?utf-8?q?1595391465931826199?=
+X-GMAIL-THRID: =?utf-8?q?1595391463626429173?=
+X-GMAIL-MSGID: =?utf-8?q?1595391463626429173?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 
 
-[ Upstream commit d39004ab136ebb6949a7dda9d24376f3d6209295 ]
+[ Upstream commit 7b87463edf3e2c16d72eeea3d1cf3c12bb5487c6 ]
 
-Breaking the include loop netdevice.h, dsa.h, devlink.h broke this
-driver, it depends on includes brought in by these headers. Adding
-linux/of.h fixes it.
+The driver doesn't have a struct of_device_id table but supported devices
+are registered via Device Trees. This is working on the assumption that a
+I2C device registered via OF will always match a legacy I2C device ID and
+that the MODALIAS reported will always be of the form i2c:<device>.
 
-Fixes: ed0e39e97d34 ("net: break include loop netdevice.h, dsa.h, devlink.h")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But this could change in the future so the correct approach is to have an
+OF device ID table if the devices are registered via OF.
+
+Before this patch:
+
+$ modinfo sound/soc/codecs/snd-soc-rt5677.ko | grep alias
+alias:          i2c:RT5677CE:00
+alias:          i2c:rt5676
+alias:          i2c:rt5677
+
+After this patch:
+
+$ modinfo sound/soc/codecs/snd-soc-rt5677.ko | grep alias
+alias:          of:N*T*Crealtek,rt5677C*
+alias:          of:N*T*Crealtek,rt5677
+alias:          i2c:RT5677CE:00
+alias:          i2c:rt5676
+alias:          i2c:rt5677
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/faraday/ftgmac100.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/rt5677.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -28,6 +28,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
-+#include <linux/of.h>
- #include <linux/phy.h>
- #include <linux/platform_device.h>
- #include <net/ip.h>
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -5035,6 +5035,12 @@ static const struct i2c_device_id rt5677
+ };
+ MODULE_DEVICE_TABLE(i2c, rt5677_i2c_id);
+ 
++static const struct of_device_id rt5677_of_match[] = {
++	{ .compatible = "realtek,rt5677", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rt5677_of_match);
++
+ static const struct acpi_gpio_params plug_det_gpio = { RT5677_GPIO_PLUG_DET, 0, false };
+ static const struct acpi_gpio_params mic_present_gpio = { RT5677_GPIO_MIC_PRESENT_L, 0, false };
+ static const struct acpi_gpio_params headphone_enable_gpio = { RT5677_GPIO_HP_AMP_SHDN_L, 0, false };
+@@ -5294,6 +5300,7 @@ static int rt5677_i2c_remove(struct i2c_
+ static struct i2c_driver rt5677_i2c_driver = {
+ 	.driver = {
+ 		.name = "rt5677",
++		.of_match_table = rt5677_of_match,
+ 	},
+ 	.probe = rt5677_i2c_probe,
+ 	.remove   = rt5677_i2c_remove,
