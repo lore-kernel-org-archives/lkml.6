@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvuCntpa4nwh42IOcrGsPqcyxDIVlO776K/95JIhg4uKwqGWfxjE37CK1TqxcQgxAKOlWMl
-ARC-Seal: i=1; a=rsa-sha256; t=1521483642; cv=none;
+X-Google-Smtp-Source: AG47ELs23HMQ/9uJcgBqkIMPpLDaQP1W/UY9ENs77uVVdjnFllCcCSxQ4Q8u4vqLs+hWCC8etqrZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521483639; cv=none;
         d=google.com; s=arc-20160816;
-        b=utWKw06JPwDeztr8g+cMbjN9vWRCiV8R7SxclD8iyaWPbisGBkVNqdI5xqg8GduKlY
-         ef88rAVlX/O0FlE03GkG/LsiI6X8yP/J3QUFSRds/asdrmbiWh7oguvyBH4626is3kOK
-         cX+wkGsADIDd20Z0wqZlvR5GPguFsSQIODXk1XD+cvgloysmQy31LQxRDg0jSBG3IW3+
-         BItDAFGHwjgR7EgfP8AE9RAC49uNFUkfcvEh4lVd0bAcs3vmr06d4u4l1FCd0maJSRxj
-         3pQlqkUTbeyGtDM/ZOnTPQHwiUhCq5khjCbbpBih3O8yANGrE+dAiOJEZIRXcg+W/urX
-         GOWQ==
+        b=t3e7fGrusTl7bJb8CL/o7oTec31cw8Xg2oig5VhNgL22TsZ1pBjqjv/P15/dnPOHL7
+         wSiFRrJcocTX+/wsnAQNULqU/COquYgdgH6QjT4RGcKwh2XOoUZ/gs2Kvmm6nxZWuKiP
+         PlO73GPijRvlbq9ugdWKRkYr5Mic912iQLQJJn1iOOiOrV3+oT4ds940bCEFTXO9DUYr
+         JziM5vcZWnJSMBcOrSlfBTmgm2DDTc5PTXF78hpHumu6Oo9INOfyWz3py2snTjqrjCGX
+         ssO7+06y5QLY+CuNUCkjbCslLMoZ3CkeZGWT2JzGpsgYiDaZk0AK6Eyj5mCBykNC0Q1V
+         Zj2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6fCjedc9f4H3riZGCrsK41qqkMrnxu66whZiblUe8A4=;
-        b=O/tB27u+f+SxYIK5CvmYHjGayY9XY+r2DCQzGM1zXjfxyZgwOPYPl6Den5krptJWIQ
-         4tcJnSaImKdnbITjrK1rmKXImug2jLkzra4QDUxE1XHCPKOX/zIVxcrB80bLWrCMGGo/
-         yhtzo90QI6T1FAmEDpXgRm51gnWCpndyUXxVWI2CHoK2QqyMnGDwGtPt5v4PMUrq3Rgk
-         va2sld0seXcVkpqKim9wJEQ0rJNT6+0oLpK8ZDyZ+LxBe3TNyUitB8m1tE0XHAkOi1ci
-         f6ujw7pQyxIPmJme6JtzEzl/vwkZ6kzIMyK736HpZ7zyB9sHMYmks/EuWsT6KEWRHejA
-         /GPw==
+        bh=rHaZRoX4Iitc3yEyjnxYrHqUZNQBVDNaNf6prpAfzYs=;
+        b=SFq9mZz95AOxfa4Rb2HloRd5kvIBYnkXOaqWWi94CAXT5brlpvPe/0/DOl4X55xHLR
+         OZneEUbtMGdWJQqfBNtz6KU6nvmbnxipzgSy9VtO+iIfH7KMshRqhnBjtyFARbjJDkIC
+         06OTfzdkTrlmi4hLBF2JtvoxiWW76KVW8fXPa30o0RtTraSu4m2bzO5bfYz8tUSN+8tm
+         zh25QeKLRVTQq3FqJ0jEX419kbSKbOa17Ejk/plmwvtEiQSRmJKn9rSm7HzRf5x9uVyi
+         wDQVq9Vikwq7K4QzJJo7BRwb2hhcnMSdm+BxwvIOVirj2byW5z9rs1BP6dp52VOsIrBJ
+         3kCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quan Nguyen <qnguyen@apm.com>,
-	Iyappan Subramanian <isubramanian@apm.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Al Cooper <alcooperx@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 028/241] drivers: net: xgene: Fix hardware checksum setting
-Date: Mon, 19 Mar 2018 19:04:53 +0100
-Message-Id: <20180319180752.333911485@linuxfoundation.org>
+Subject: [PATCH 4.9 027/241] ARM: brcmstb: Enable ZONE_DMA for non 64-bit capable peripherals
+Date: Mon, 19 Mar 2018 19:04:52 +0100
+Message-Id: <20180319180752.292056472@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390583134295858?=
-X-GMAIL-MSGID: =?utf-8?q?1595391232311131278?=
+X-GMAIL-THRID: =?utf-8?q?1595391229318140221?=
+X-GMAIL-MSGID: =?utf-8?q?1595391229318140221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quan Nguyen <qnguyen@apm.com>
+From: Al Cooper <alcooperx@gmail.com>
 
 
-[ Upstream commit e026e700d940a1ea3d3bc84d92ac668b1f015462 ]
+[ Upstream commit 3c51b9c7f1fae00c25f1e34da649a288e3fea1ae ]
 
-This patch fixes the hardware checksum settings by properly program
-the classifier. Otherwise, packet may be received with checksum error
-on X-Gene1 SoC.
+Some Host Controller hardware blocks, like the OHCI, EHCI and SDIO
+controllers, have hardware blocks that are not capable of doing 64 bit
+DMA. These host controllers fail on boards with >3GB of memory because
+the memory above 3GB is located physically >= 0x100000000 and can only
+be accessed using 64 DMA. The way Linux is currently configured for
+BRCMSTB systems, the memory given to drivers for DMA through functions
+like dma_alloc_coherent() comes from CMA memory and CMA memory is taken
+from the top of physical memory. When these drivers get a DMA buffer
+with an address >=0x100000000, they end up dropping the upper 32 bit of
+the address causing the hardware to DMA to incorrect memory, typically
+BMEM (custom memory carveout). This issue was discovered on a
+BCM97449SSV_DDR4 system with 4GB or memory.
 
-Signed-off-by: Quan Nguyen <qnguyen@apm.com>
-Signed-off-by: Iyappan Subramanian <isubramanian@apm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The fix is to enable CONFIG_ZONE_DMA. On ARM systems this makes sure
+that all DMA memory is located within the first 32 bits of address
+space.
+
+Signed-off-by: Al Cooper <alcooperx@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/apm/xgene/xgene_enet_hw.c |    1 +
- drivers/net/ethernet/apm/xgene/xgene_enet_hw.h |    1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/mach-bcm/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
-+++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
-@@ -560,6 +560,7 @@ static void xgene_enet_cle_bypass(struct
- 	xgene_enet_rd_csr(pdata, CLE_BYPASS_REG0_0_ADDR, &cb);
- 	cb |= CFG_CLE_BYPASS_EN0;
- 	CFG_CLE_IP_PROTOCOL0_SET(&cb, 3);
-+	CFG_CLE_IP_HDR_LEN_SET(&cb, 0);
- 	xgene_enet_wr_csr(pdata, CLE_BYPASS_REG0_0_ADDR, cb);
- 
- 	xgene_enet_rd_csr(pdata, CLE_BYPASS_REG1_0_ADDR, &cb);
---- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.h
-+++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.h
-@@ -163,6 +163,7 @@ enum xgene_enet_rm {
- #define CFG_RXCLK_MUXSEL0_SET(dst, val)	xgene_set_bits(dst, val, 26, 3)
- 
- #define CFG_CLE_IP_PROTOCOL0_SET(dst, val)	xgene_set_bits(dst, val, 16, 2)
-+#define CFG_CLE_IP_HDR_LEN_SET(dst, val)	xgene_set_bits(dst, val, 8, 5)
- #define CFG_CLE_DSTQID0_SET(dst, val)		xgene_set_bits(dst, val, 0, 12)
- #define CFG_CLE_FPSEL0_SET(dst, val)		xgene_set_bits(dst, val, 16, 4)
- #define CFG_MACMODE_SET(dst, val)		xgene_set_bits(dst, val, 18, 2)
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -199,6 +199,7 @@ config ARCH_BRCMSTB
+ 	select BRCMSTB_L2_IRQ
+ 	select BCM7120_L2_IRQ
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
++	select ZONE_DMA if ARM_LPAE
+ 	select SOC_BRCMSTB
+ 	select SOC_BUS
+ 	help
