@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu7mVpvq2+eZAd/ZO9fRLAj/OqUvEntC2ArDfbNVjlse+7PWQHMG4mJ6uRdZhF0KUdPc3lj
-ARC-Seal: i=1; a=rsa-sha256; t=1521483010; cv=none;
+X-Google-Smtp-Source: AG47ELsTjZZRrP9vRsPDv5LLKfb+bH7aHVHdIK7VNwgwcUvsx2UxR2zrUSRSMx7UO+FC1I+ebrrK
+ARC-Seal: i=1; a=rsa-sha256; t=1521483007; cv=none;
         d=google.com; s=arc-20160816;
-        b=nrMXdbOySXt60viTfFFW0qcJzbxQ41vqPk35vRONGoyE7OcVCZZj4c4yGPjy3sdszh
-         AtO86XByzmNpLsm6K7nKavVz568zuYJhBVOX2Q9gj18rNu0tomKyXjYoh91rJv7dpF+z
-         MPGrkPq5YeunaN1LbkIWpeDRDaXtFHqKPSJELGDmQs+LD4Ph/eutUTo65kCubl53hbWT
-         n/ij+BYqRb/FrzPSL4cVn0um17MlPul+cE236igeVbIbvFgdMsNVtYHSPIOqKHlVq0sU
-         5zrxhsxh1GDSLO1dmAR142urVAuxPnqMCq6ikkDLcvUU6PiWTl5LBIVfxFlFpx+lHZQe
-         CSTQ==
+        b=OXtHjI7A9HZfiNbhJsX8u1oGFxaYdWq5QAZPiHuA4EOJBxqx5McWm30Q7lLfPFo+D8
+         eNwrQcY9lxb/6pnxXLD4O755jDtvGAOjEsR4P+tuZYmedZLJ4mNOrASk4HvxneFKStB5
+         YV5gXA6mGVSIO1fkznYcruzV/gObAm2ViP23Ll40FiOXBtPAd8llg5sQ+fZm2xr6Po37
+         TcaXfnpVxzXPS/pdpeSTjZAsv7h4w5gTUhsPwrEKaM7vNJNKncT1fgARk9ieldoY4JGG
+         R7CgJ2mW5E3bWluorz8gts5QUQYgUewmCXHBz00/2ESspyYkG89aBziLp2xZZlIK13Kn
+         qz2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=APgrhFFnz5F/rKmynD7LhwNhl8qjoWwaEbObtmIuF2M=;
-        b=Q1cQTJ9WgixCgg1Kq0iOA0xkSsrlUtrwSFuxd+WhjN940AciLdtqlKcqTeInAdRGFY
-         /FQdNuiDIWGaHPO+fdowcW59D8A1+CArlPmmOEMHdlhktvrAjCpiNT0BBu3UJbAp92dR
-         DiRgNlAisiDJU3GZHq2XegqMkNY8BdWlDjwh7xrpJbYao57OJOb8WslcCi1q09oKkPmC
-         dc5BkCFlBvoPqKpJKye3egZGqn6oR/preGIaEoRWr8dIKimAAvmyW4MaPIudgz9BOQfR
-         ZqnY1AZmFoV5l7GKTHSvomDOUB1ae/mB5yz08si8lnJfX7YbH6a5gAkZc/GP9JoGSDJc
-         1GmA==
+        bh=0fiNQ5Uf3q6Aesj17ky96pMD2wC+oYgf9NjLmXhhr50=;
+        b=KNcMDsfOAudKTz9j6sIgko6KRhOXhClmn3YA1+Ol3Vjhv2zdgLX+529LoQ86/HzsyH
+         0sevkSiX2XkWSH53R5zUTbLdgW7IKIo8fhBq1K0c4jgj+J+SutucelwP7TEiAQmXRx6H
+         TODNzEewdvXtyxNFZrImJNGRuObcqQosV00bcqcvP3gKKixLDHEJjDzk+RmHWafJqiv6
+         Q3WL1zFYPNqoPQMrfHA/BFT6tFWOEOIkk2sYjCHoIibMxlwcoUmeWeeBkqyAlkbM7EsB
+         jafGG372s3DkSkoTbZG6mnZrOS9AWB1ylCwLWLGcq6luHrck06mepQBEN9E68ZtMIqW+
+         DDnw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>,
-	amd-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
+	Liam Beguin <lbeguin@tycoint.com>,
+	Sylvain Lemieux <slemieux@tycoint.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 33/68] drm/radeon: Fail fb creation from imported dma-bufs.
-Date: Mon, 19 Mar 2018 19:06:11 +0100
-Message-Id: <20180319171832.433485054@linuxfoundation.org>
+Subject: [PATCH 3.18 32/68] video: ARM CLCD: fix dma allocation size
+Date: Mon, 19 Mar 2018 19:06:10 +0100
+Message-Id: <20180319171832.268160999@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390568975323259?=
-X-GMAIL-MSGID: =?utf-8?q?1595390568975323259?=
+X-GMAIL-THRID: =?utf-8?q?1595390565607100523?=
+X-GMAIL-MSGID: =?utf-8?q?1595390565607100523?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,39 +53,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>
+From: Liam Beguin <lbeguin@tycoint.com>
 
 
-[ Upstream commit a294043b2fbd8de69d161457ed0c7a4026bbfa5a ]
+[ Upstream commit 9a1c779e6b06855e41099caa6f15b3b584dfa88c ]
 
-Any use of the framebuffer will migrate it to VRAM, which is not sensible for
-an imported dma-buf.
+This patch forces the frambuffer size to be aligned on kernel pages.
 
-v2: Use DRM_DEBUG_KMS to prevent userspace accidentally spamming dmesg.
+During the board startup, the splash screed did appear;
+the "ts_test" program or our application were not able to start.
 
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Christopher James Halse Rogers <christopher.halse.rogers@canonical.com>
-CC: amd-gfx@lists.freedesktop.org
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+The following error message was reported:
+error: failed to map framebuffer device to memory.
+LinuxFB: driver cannot connect
+
+The issue was discovered, on the LPC32xx platform, during the migration
+of the LCD definition from the board file to the device tree.
+
+Signed-off-by: Liam Beguin <lbeguin@tycoint.com>
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/radeon/radeon_display.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/video/fbdev/amba-clcd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -1320,6 +1320,12 @@ radeon_user_framebuffer_create(struct dr
- 		return ERR_PTR(-ENOENT);
- 	}
+--- a/drivers/video/fbdev/amba-clcd.c
++++ b/drivers/video/fbdev/amba-clcd.c
+@@ -757,8 +757,8 @@ static int clcdfb_of_dma_setup(struct cl
+ 	if (err)
+ 		return err;
  
-+	/* Handle is imported dma-buf, so cannot be migrated to VRAM for scanout */
-+	if (obj->import_attach) {
-+		DRM_DEBUG_KMS("Cannot create framebuffer from imported dma_buf\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	radeon_fb = kzalloc(sizeof(*radeon_fb), GFP_KERNEL);
- 	if (radeon_fb == NULL) {
- 		drm_gem_object_unreference_unlocked(obj);
+-	framesize = fb->panel->mode.xres * fb->panel->mode.yres *
+-			fb->panel->bpp / 8;
++	framesize = PAGE_ALIGN(fb->panel->mode.xres * fb->panel->mode.yres *
++			fb->panel->bpp / 8);
+ 	fb->fb.screen_base = dma_alloc_coherent(&fb->dev->dev, framesize,
+ 			&dma, GFP_KERNEL);
+ 	if (!fb->fb.screen_base)
