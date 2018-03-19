@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtTrxgGDKcLkjJNCwvUp49PE2prE5oDbqhHpTSY3mywu9Tct3SGFILqRmCoWwNzj77GeHfX
-ARC-Seal: i=1; a=rsa-sha256; t=1521483777; cv=none;
+X-Google-Smtp-Source: AG47ELt08r8GRXjY7z5J16UkRMK3FZvJPoRRXiNbg3z3+NGZL+I8EPAj85p7+SFDAAhh04Mz11T7
+ARC-Seal: i=1; a=rsa-sha256; t=1521483774; cv=none;
         d=google.com; s=arc-20160816;
-        b=wGl4JcJqrU9LSnYVvDfCD1EaAG0CyF30zLGBHmu9WeNQvOP66h+KxQx9B6XO8mUBPf
-         cYKGlTUuMPLbXJJldePNSA/+aAfEnwuQLgvdsIC8owia3UAomgIObOgDaHnB7LWYDdhG
-         +oe011ui63MnJPO6hrRLQ6dEVqG7KzKtFA26oA40MFFt7U4Yg0644Ws8+vzZLNtS2SRv
-         lQC4Hi3kMDQFQNf6ad4Pes8EOoUDFytlhCpmd0h3x44/DpQ3sDYc78D7RF+EQL/KMkiW
-         STzZyYkmgLcz8pC0+ovxSvIvBGkr0JQBKWxD0LuRBAjDt+EY/8QyGavc569CyjRoB7Hw
-         8mNA==
+        b=gOGS/z5y+O42pbLtYos9dRoVZETjO8INLD9jXOjk31ASrcfhYAm4OBhk30tn3Ykvdr
+         6sdj2PRFWSG+2SUX5wGg7sgyr9hYkNOxSX7qPWWdBHFqYzA0WbomiCKV4OahEFOxRjsT
+         EzswEIGDey/g75R90FTrzhuhz3M2oNF8zPh9XAk6NeufIOYho21IZG3IbAa1sTobvcoY
+         GtG62jAhv17DVgZA853zWn+A3GVcaHLu0rP0FlH+9OevqAXUftfrf8hURDMd+LhnzwLt
+         YHfYqG7DelVQ50UVi5RUYraGlfI4zBqeP9ZkFnN0bU+w7zS/CfGQP+faTmBIU66NPy9I
+         MAbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zcY1Vltpw7gzXqdP0G1pyGYUH13TMIFdeWtKvaR7Q0Y=;
-        b=kT5/VaaMzKwVAYHRkT+d/o1Xz2MqpSYh9N4KYTBCwI1QyPy0QhiGZaKv/ERv3Df4CO
-         JLHxsPvCMV+GE2xOPTqo7aXIUyE+lFjaCUjQhWECUyvMOPjwpLtRitc+/cSIckKvka05
-         YJz61xnF9baw/OW+iA8TLvqdZgglJcrcqIXFdbMuJ8WgV2ggtpbYFNEFiBVwHe7JmKAW
-         +JhYJsbhyAKfcUaY8hwjIS2R0dOquJy/y7BfwKN0CMfBdpDt3IA1Y5rcMRtwjp4FOBgN
-         lUkZi3SFVcxnohfBsumO1Nya6OR0aB7FXUgIwbp6aD2buFP8fiESWc8idRT20tvaABoC
-         N3hA==
+        bh=D/neUQz4H+XneK3fuw9+g9WPJDdpmIul8lb/ZsG9c1k=;
+        b=wk9q4lkW9aFqjZdeNHmWmqrrNgBTsGfSJf2H3crgzk3Q7bkUGxJnte3JfLHeJwxCiG
+         cPob+DlmVgIQFn9qJ1xm/iaGQOXHSHApixX0vawzm8MizSutnF8P1ejhPTVE4xfxIxTl
+         bjGeGW1avRHq2I1yoltabMFYBiPLb/Kop323HSw/MI6GY82hnJk+e7yxee6gP9y2emul
+         1NqmaCEngF7Z+GGP4Y6S50WbgXZNBg59DLX60xNKFIGmj5w+zKtPOMFksSfLrCQnLJVs
+         G0qs1wEBmsOpFCn8LW9rwlPeupdAQlv/B4Rgk4xTGnIGsst5mPxpP1Sf1IUpG0rJpYun
+         1k0A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Song Liu <songliubraving@fb.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Thor Thayer <thor.thayer@linux.intel.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Borislav Petkov <bp@suse.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 114/241] scsi: ses: dont get power status of SES device slot on probe
-Date: Mon, 19 Mar 2018 19:06:19 +0100
-Message-Id: <20180319180755.922534281@linuxfoundation.org>
+Subject: [PATCH 4.9 113/241] EDAC, altera: Fix peripheral warnings for Cyclone5
+Date: Mon, 19 Mar 2018 19:06:18 +0100
+Message-Id: <20180319180755.884323785@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390823017346049?=
-X-GMAIL-MSGID: =?utf-8?q?1595391373359930413?=
+X-GMAIL-THRID: =?utf-8?q?1595391369791014448?=
+X-GMAIL-MSGID: =?utf-8?q?1595391369791014448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,115 +51,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
 
-[ Upstream commit 75106523f39751390b5789b36ee1d213b3af1945 ]
+[ Upstream commit 25b223ddfe2a557307c05fe673e09d94ae950877 ]
 
-The commit 08024885a2a3 ("ses: Add power_status to SES device slot")
-introduced the 'power_status' attribute to enclosure components and
-the associated callbacks.
+The peripherals' RAS functionality only exist on the Arria10 SoCFPGA.
+The Cyclone5 initialization generates EDAC warnings when the peripherals
+aren't found in the device tree. Fix by checking for Arria10 in the init
+functions.
 
-There are 2 callbacks available to get the power status of a device:
-1) ses_get_power_status() for 'struct enclosure_component_callbacks'
-2) get_component_power_status() for the sysfs device attribute
-(these are available for kernel-space and user-space, respectively.)
-
-However, despite both methods being available to get power status
-on demand, that commit also introduced a call to get power status
-in ses_enclosure_data_process().
-
-This dramatically increased the total probe time for SCSI devices
-on larger configurations, because ses_enclosure_data_process() is
-called several times during the SCSI devices probe and loops over
-the component devices (but that is another problem, another patch).
-
-That results in a tremendous continuous hammering of SCSI Receive
-Diagnostics commands to the enclosure-services device, which does
-delay the total probe time for the SCSI devices __significantly__:
-
-  Originally, ~34 minutes on a system attached to ~170 disks:
-
-    [ 9214.490703] mpt3sas version 13.100.00.00 loaded
-    ...
-    [11256.580231] scsi 17:0:177:0: qdepth(16), tagged(1), simple(0),
-                   ordered(0), scsi_level(6), cmd_que(1)
-
-  With this patch, it decreased to ~2.5 minutes -- a 13.6x faster
-
-    [ 1002.992533] mpt3sas version 13.100.00.00 loaded
-    ...
-    [ 1151.978831] scsi 11:0:177:0: qdepth(16), tagged(1), simple(0),
-                   ordered(0), scsi_level(6), cmd_que(1)
-
-Back to the commit discussion.. on the ses_get_power_status() call
-introduced in ses_enclosure_data_process(): impact of removing it.
-
-That may possibly be in place to initialize the power status value
-on device probe.  However, those 2 functions available to retrieve
-that value _do_ automatically refresh/update it.  So the potential
-benefit would be a direct access of the 'power_status' field which
-does not use the callbacks...
-
-But the only reader of 'struct enclosure_component::power_status'
-is the get_component_power_status() callback for sysfs attribute,
-and it _does_ check for and call the .get_power_status callback,
-(which indeed is defined and implemented by that commit), so the
-power status value is, again, automatically updated.
-
-So, the remaining potential for a direct/non-callback access to
-the power_status attribute would be out-of-tree modules -- well,
-for those, if they are for whatever reason interested in values
-that are set during device probe and not up-to-date by the time
-they need it.. well, that would be curious.
-
-Well, to handle that more properly, set the initial power state
-value to '-1' (i.e., uninitialized) instead of '1' (power 'on'),
-and check for it in that callback which may do an direct access
-to the field value _if_ a callback function is not defined.
-
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Fixes: 08024885a2a3 ("ses: Add power_status to SES device slot")
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1491415262-5018-1-git-send-email-thor.thayer@linux.intel.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/enclosure.c |    7 ++++++-
- drivers/scsi/ses.c       |    1 -
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/edac/altera_edac.c |   22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
---- a/drivers/misc/enclosure.c
-+++ b/drivers/misc/enclosure.c
-@@ -148,7 +148,7 @@ enclosure_register(struct device *dev, c
- 	for (i = 0; i < components; i++) {
- 		edev->component[i].number = -1;
- 		edev->component[i].slot = -1;
--		edev->component[i].power_status = 1;
-+		edev->component[i].power_status = -1;
- 	}
- 
- 	mutex_lock(&container_list_lock);
-@@ -600,6 +600,11 @@ static ssize_t get_component_power_statu
- 
- 	if (edev->cb->get_power_status)
- 		edev->cb->get_power_status(edev, ecomp);
-+
-+	/* If still uninitialized, the callback failed or does not exist. */
-+	if (ecomp->power_status == -1)
-+		return (edev->cb->get_power_status) ? -EIO : -ENOTTY;
-+
- 	return snprintf(buf, 40, "%s\n", ecomp->power_status ? "on" : "off");
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1020,13 +1020,23 @@ out:
+ 	return ret;
  }
  
---- a/drivers/scsi/ses.c
-+++ b/drivers/scsi/ses.c
-@@ -548,7 +548,6 @@ static void ses_enclosure_data_process(s
- 					ecomp = &edev->component[components++];
- 
- 				if (!IS_ERR(ecomp)) {
--					ses_get_power_status(edev, ecomp);
- 					if (addl_desc_ptr)
- 						ses_process_descriptor(
- 							ecomp,
++static int socfpga_is_a10(void)
++{
++	return of_machine_is_compatible("altr,socfpga-arria10");
++}
++
+ static int validate_parent_available(struct device_node *np);
+ static const struct of_device_id altr_edac_a10_device_of_match[];
+ static int __init __maybe_unused altr_init_a10_ecc_device_type(char *compat)
+ {
+ 	int irq;
+-	struct device_node *child, *np = of_find_compatible_node(NULL, NULL,
+-					"altr,socfpga-a10-ecc-manager");
++	struct device_node *child, *np;
++
++	if (!socfpga_is_a10())
++		return -ENODEV;
++
++	np = of_find_compatible_node(NULL, NULL,
++				     "altr,socfpga-a10-ecc-manager");
+ 	if (!np) {
+ 		edac_printk(KERN_ERR, EDAC_DEVICE, "ECC Manager not found\n");
+ 		return -ENODEV;
+@@ -1542,8 +1552,12 @@ static const struct edac_device_prv_data
+ static int __init socfpga_init_sdmmc_ecc(void)
+ {
+ 	int rc = -ENODEV;
+-	struct device_node *child = of_find_compatible_node(NULL, NULL,
+-						"altr,socfpga-sdmmc-ecc");
++	struct device_node *child;
++
++	if (!socfpga_is_a10())
++		return -ENODEV;
++
++	child = of_find_compatible_node(NULL, NULL, "altr,socfpga-sdmmc-ecc");
+ 	if (!child) {
+ 		edac_printk(KERN_WARNING, EDAC_DEVICE, "SDMMC node not found\n");
+ 		return -ENODEV;
