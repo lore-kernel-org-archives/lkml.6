@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs23HMQ/9uJcgBqkIMPpLDaQP1W/UY9ENs77uVVdjnFllCcCSxQ4Q8u4vqLs+hWCC8etqrZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521483639; cv=none;
+X-Google-Smtp-Source: AG47ELteqchKfTg3lvo7KIyA4fcW+lX3Iqj27uH4yps9wecNdidieKnN4Tzd3Fj00yLaXjm/qUnG
+ARC-Seal: i=1; a=rsa-sha256; t=1521483637; cv=none;
         d=google.com; s=arc-20160816;
-        b=t3e7fGrusTl7bJb8CL/o7oTec31cw8Xg2oig5VhNgL22TsZ1pBjqjv/P15/dnPOHL7
-         wSiFRrJcocTX+/wsnAQNULqU/COquYgdgH6QjT4RGcKwh2XOoUZ/gs2Kvmm6nxZWuKiP
-         PlO73GPijRvlbq9ugdWKRkYr5Mic912iQLQJJn1iOOiOrV3+oT4ds940bCEFTXO9DUYr
-         JziM5vcZWnJSMBcOrSlfBTmgm2DDTc5PTXF78hpHumu6Oo9INOfyWz3py2snTjqrjCGX
-         ssO7+06y5QLY+CuNUCkjbCslLMoZ3CkeZGWT2JzGpsgYiDaZk0AK6Eyj5mCBykNC0Q1V
-         Zj2A==
+        b=p17wJaas9B7B38VwVF4de+NOm1QLilGQE5D1vL6OodkERo9EjFl2HpDOjE0GzvtcEI
+         G7xLGly6GI/qmI2EBYatl6vqyIGr5VQbp8lORk8nZpKg+ynlLaY7gVI9ccMBG7/7S//g
+         3so8ogDiFX5pfCp1IjJsh2vJXwW0xfzmOYtNJbsE7jwC062e6Q5xjPReCHJgP272rZGy
+         zShBckcQgCtrN5odDscBUWUWD6fDniejBNQ66+J9WKtdZ1UxheK2K2zoz6zcKk4tiBCZ
+         DMrAQaXbENzvWZGZIgX/b1/ZOBPWf1EBdO/1sTQ5NwkaRkEWz2PbHW/tQilGAooJ4M1d
+         IsYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rHaZRoX4Iitc3yEyjnxYrHqUZNQBVDNaNf6prpAfzYs=;
-        b=SFq9mZz95AOxfa4Rb2HloRd5kvIBYnkXOaqWWi94CAXT5brlpvPe/0/DOl4X55xHLR
-         OZneEUbtMGdWJQqfBNtz6KU6nvmbnxipzgSy9VtO+iIfH7KMshRqhnBjtyFARbjJDkIC
-         06OTfzdkTrlmi4hLBF2JtvoxiWW76KVW8fXPa30o0RtTraSu4m2bzO5bfYz8tUSN+8tm
-         zh25QeKLRVTQq3FqJ0jEX419kbSKbOa17Ejk/plmwvtEiQSRmJKn9rSm7HzRf5x9uVyi
-         wDQVq9Vikwq7K4QzJJo7BRwb2hhcnMSdm+BxwvIOVirj2byW5z9rs1BP6dp52VOsIrBJ
-         3kCA==
+        bh=Y+ujeQhtXQY+gGH0MSa3ySzmD6kIRusTrKQKv/UUIRI=;
+        b=0PmCsdku1ZEwCJGppUN+sUUXIIBGccj8TQ1sf2YUelNB2/8No0gciY4y0qtXVqzIC8
+         dVXdFdVy/S1gQhphC4L/qN/UxFdcf/bsr1x0a97CquMmtVz9fVBp1VEihjJkBsGqDLAK
+         trIDZwqCLQ0d/UIkeMAJibKlZ5qSIrq3TpJ/sbxK1mlhmx+3JNo2QN6L8lxeJjz6ty12
+         fJN0a2uVc35N07a702dHApXkXsXYofEIDMPyX4bKATIyqhoLW0V85jmlaCMWL87Z5rhW
+         /aAAsgX28gUS4CLEg1fy22nFKLfFMiYSAy8ZuVnCiKW/Egpp+v+W5NfDirDwA3LXAH33
+         yp4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Cooper <alcooperx@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	Xiaofeng Wang <xiaofwan@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 027/241] ARM: brcmstb: Enable ZONE_DMA for non 64-bit capable peripherals
-Date: Mon, 19 Mar 2018 19:04:52 +0100
-Message-Id: <20180319180752.292056472@linuxfoundation.org>
+Subject: [PATCH 4.9 060/241] PCI: hv: Properly handle PCI bus remove
+Date: Mon, 19 Mar 2018 19:05:25 +0100
+Message-Id: <20180319180753.687625995@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391229318140221?=
-X-GMAIL-MSGID: =?utf-8?q?1595391229318140221?=
+X-GMAIL-THRID: =?utf-8?q?1595391226422279783?=
+X-GMAIL-MSGID: =?utf-8?q?1595391226422279783?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +52,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Cooper <alcooperx@gmail.com>
+From: Long Li <longli@microsoft.com>
 
 
-[ Upstream commit 3c51b9c7f1fae00c25f1e34da649a288e3fea1ae ]
+[ Upstream commit d3a78d8bf759d8848339dcc367c4c1678b57a08b ]
 
-Some Host Controller hardware blocks, like the OHCI, EHCI and SDIO
-controllers, have hardware blocks that are not capable of doing 64 bit
-DMA. These host controllers fail on boards with >3GB of memory because
-the memory above 3GB is located physically >= 0x100000000 and can only
-be accessed using 64 DMA. The way Linux is currently configured for
-BRCMSTB systems, the memory given to drivers for DMA through functions
-like dma_alloc_coherent() comes from CMA memory and CMA memory is taken
-from the top of physical memory. When these drivers get a DMA buffer
-with an address >=0x100000000, they end up dropping the upper 32 bit of
-the address causing the hardware to DMA to incorrect memory, typically
-BMEM (custom memory carveout). This issue was discovered on a
-BCM97449SSV_DDR4 system with 4GB or memory.
+hv_pci_devices_present() is called in hv_pci_remove() when we remove a PCI
+device from the host, e.g., by disabling SR-IOV on a device.  In
+hv_pci_remove(), the bus is already removed before the call, so we don't
+need to rescan the bus in the workqueue scheduled from
+hv_pci_devices_present().
 
-The fix is to enable CONFIG_ZONE_DMA. On ARM systems this makes sure
-that all DMA memory is located within the first 32 bits of address
-space.
+By introducing bus state hv_pcibus_removed, we can avoid this situation.
 
-Signed-off-by: Al Cooper <alcooperx@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reported-by: Xiaofeng Wang <xiaofwan@redhat.com>
+Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-bcm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/host/pci-hyperv.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -199,6 +199,7 @@ config ARCH_BRCMSTB
- 	select BRCMSTB_L2_IRQ
- 	select BCM7120_L2_IRQ
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
-+	select ZONE_DMA if ARM_LPAE
- 	select SOC_BRCMSTB
- 	select SOC_BUS
- 	help
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -351,6 +351,7 @@ enum hv_pcibus_state {
+ 	hv_pcibus_init = 0,
+ 	hv_pcibus_probed,
+ 	hv_pcibus_installed,
++	hv_pcibus_removed,
+ 	hv_pcibus_maximum
+ };
+ 
+@@ -1489,13 +1490,24 @@ static void pci_devices_present_work(str
+ 		put_pcichild(hpdev, hv_pcidev_ref_initial);
+ 	}
+ 
+-	/* Tell the core to rescan bus because there may have been changes. */
+-	if (hbus->state == hv_pcibus_installed) {
++	switch(hbus->state) {
++	case hv_pcibus_installed:
++		/*
++		* Tell the core to rescan bus
++		* because there may have been changes.
++		*/
+ 		pci_lock_rescan_remove();
+ 		pci_scan_child_bus(hbus->pci_bus);
+ 		pci_unlock_rescan_remove();
+-	} else {
++		break;
++
++	case hv_pcibus_init:
++	case hv_pcibus_probed:
+ 		survey_child_resources(hbus);
++		break;
++
++	default:
++		break;
+ 	}
+ 
+ 	up(&hbus->enum_sem);
+@@ -2170,6 +2182,7 @@ static int hv_pci_probe(struct hv_device
+ 	hbus = kzalloc(sizeof(*hbus), GFP_KERNEL);
+ 	if (!hbus)
+ 		return -ENOMEM;
++	hbus->state = hv_pcibus_init;
+ 
+ 	/*
+ 	 * The PCI bus "domain" is what is called "segment" in ACPI and
+@@ -2312,6 +2325,7 @@ static int hv_pci_remove(struct hv_devic
+ 		pci_stop_root_bus(hbus->pci_bus);
+ 		pci_remove_root_bus(hbus->pci_bus);
+ 		pci_unlock_rescan_remove();
++		hbus->state = hv_pcibus_removed;
+ 	}
+ 
+ 	ret = hv_send_resources_released(hdev);
