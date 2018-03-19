@@ -1,338 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933568AbeCSO1L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:27:11 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:42181 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932708AbeCSO1K (ORCPT
+        id S933620AbeCSO2R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:28:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46829 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932708AbeCSO2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:27:10 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w2JEQvcL017507
-X-Nifty-SrcIP: [209.85.217.179]
-X-Google-Smtp-Source: AG47ELsTCbPymovGuf8woDMEY4NR2zisJZUwDpjABSEyNzIK6Un4B11YnoJrGwbWEF1IbU/3uojX5PGyJGMMj/9c18A=
+        Mon, 19 Mar 2018 10:28:14 -0400
+Date: Mon, 19 Mar 2018 07:27:58 -0700
+From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-a84d1169164b274f13b97a23ff235c000efe3b49@git.kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, mingo@kernel.org, john.stultz@linaro.org,
+        sboyd@kernel.org, viro@zeniv.linux.org.uk
+Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, john.stultz@linaro.org, mingo@kernel.org,
+        sboyd@kernel.org, viro@zeniv.linux.org.uk
+In-Reply-To: <20180315161739.576085-1-arnd@arndb.de>
+References: <20180315161739.576085-1-arnd@arndb.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] y2038: Introduce struct __kernel_old_timeval
+Git-Commit-ID: a84d1169164b274f13b97a23ff235c000efe3b49
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1521447194-26514-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1521447194-26514-1-git-send-email-hayashi.kunihiko@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 19 Mar 2018 23:26:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASO71M_LDtpOs4Z_wTCz22rrjkLSbZiYRwM7xungGT2Ag@mail.gmail.com>
-Message-ID: <CAK7LNASO71M_LDtpOs4Z_wTCz22rrjkLSbZiYRwM7xungGT2Ag@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: uniphier: add UART hardware flow control pin-mux settings
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-19 17:13 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
-> UniPhier SoCs have the following pins for hardware flow control of UART:
->   XRTS, XCTS
-> and for modem control of UART:
->   XDTR, XDSR, XDCD, XRI
->
-> The port number with the flow control is SoC-dependent.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
+Commit-ID:  a84d1169164b274f13b97a23ff235c000efe3b49
+Gitweb:     https://git.kernel.org/tip/a84d1169164b274f13b97a23ff235c000efe3b49
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Thu, 15 Mar 2018 17:12:40 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 19 Mar 2018 15:23:03 +0100
 
+y2038: Introduce struct __kernel_old_timeval
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Dealing with 'struct timeval' users in the y2038 series is a bit tricky:
 
+We have two definitions of timeval that are visible to user space,
+one comes from glibc (or some other C library), the other comes from
+linux/time.h. The kernel copy is what we want to be used for a number of
+structures defined by the kernel itself, e.g. elf_prstatus (used it core
+dumps), sysinfo and rusage (used in system calls).  These generally tend
+to be used for passing time intervals rather than absolute (epoch-based)
+times, so they do not suffer from the y2038 overflow. Some of them
+could be changed to use 64-bit timestamps by creating new system calls,
+others like the core files cannot easily be changed.
 
->  drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 5 ++++-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c | 5 ++++-
->  9 files changed, 36 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-> index 8a5ecd6..eba7eb6 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-> @@ -504,6 +504,8 @@ static const unsigned uart2_pins[] = {90, 91};
->  static const int uart2_muxvals[] = {1, 1};
->  static const unsigned uart3_pins[] = {94, 95};
->  static const int uart3_muxvals[] = {1, 1};
-> +static const unsigned uart3_ctsrts_pins[] = {96, 97, 98, 99, 100, 101};
-> +static const int uart3_ctsrts_muxvals[] = {1, 1, 1, 1, 1, 1};
->  static const unsigned usb0_pins[] = {46, 47};
->  static const int usb0_muxvals[] = {0, 0};
->  static const unsigned usb1_pins[] = {48, 49};
-> @@ -562,6 +564,7 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> +       UNIPHIER_PINCTRL_GROUP(uart3_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(usb0),
->         UNIPHIER_PINCTRL_GROUP(usb1),
->         UNIPHIER_PINCTRL_GROUP(usb2),
-> @@ -586,7 +589,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->  static const char * const uart0_groups[] = {"uart0"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
-> -static const char * const uart3_groups[] = {"uart3"};
-> +static const char * const uart3_groups[] = {"uart3", "uart3_ctsrts"};
->  static const char * const usb0_groups[] = {"usb0"};
->  static const char * const usb1_groups[] = {"usb1"};
->  static const char * const usb2_groups[] = {"usb2"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-> index 3be7967..353a33d 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-> @@ -591,6 +591,8 @@ static const unsigned uart2_pins[] = {90, 91};
->  static const int uart2_muxvals[] = {1, 1};
->  static const unsigned uart3_pins[] = {94, 95};
->  static const int uart3_muxvals[] = {1, 1};
-> +static const unsigned uart3_ctsrts_pins[] = {96, 97, 98, 99, 100, 101};
-> +static const int uart3_ctsrts_muxvals[] = {1, 1, 1, 1, 1, 1};
->  static const unsigned usb0_pins[] = {46, 47};
->  static const int usb0_muxvals[] = {0, 0};
->  static const unsigned usb1_pins[] = {48, 49};
-> @@ -648,6 +650,7 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> +       UNIPHIER_PINCTRL_GROUP(uart3_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(usb0),
->         UNIPHIER_PINCTRL_GROUP(usb1),
->         UNIPHIER_PINCTRL_GROUP(usb2),
-> @@ -672,7 +675,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->  static const char * const uart0_groups[] = {"uart0"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
-> -static const char * const uart3_groups[] = {"uart3"};
-> +static const char * const uart3_groups[] = {"uart3", "uart3_ctsrts"};
->  static const char * const usb0_groups[] = {"usb0"};
->  static const char * const usb1_groups[] = {"usb1"};
->  static const char * const usb2_groups[] = {"usb2"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-> index 8403828..0b10ebc 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-> @@ -590,6 +590,8 @@ static const unsigned system_bus_cs3_pins[] = {156};
->  static const int system_bus_cs3_muxvals[] = {1};
->  static const unsigned uart0_pins[] = {85, 88};
->  static const int uart0_muxvals[] = {1, 1};
-> +static const unsigned uart0_ctsrts_pins[] = {86, 87, 89};
-> +static const int uart0_ctsrts_muxvals[] = {1, 1, 1};
->  static const unsigned uart1_pins[] = {155, 156};
->  static const int uart1_muxvals[] = {13, 13};
->  static const unsigned uart1b_pins[] = {69, 70};
-> @@ -644,6 +646,7 @@ static const struct uniphier_pinctrl_group uniphier_ld4_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs3),
->         UNIPHIER_PINCTRL_GROUP(uart0),
-> +       UNIPHIER_PINCTRL_GROUP(uart0_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart1b),
->         UNIPHIER_PINCTRL_GROUP(uart2),
-> @@ -669,7 +672,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs1",
->                                                  "system_bus_cs2",
->                                                  "system_bus_cs3"};
-> -static const char * const uart0_groups[] = {"uart0"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
->  static const char * const uart1_groups[] = {"uart1", "uart1b"};
->  static const char * const uart2_groups[] = {"uart2"};
->  static const char * const uart3_groups[] = {"uart3"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> index 493a90c..8e4d45fe 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> @@ -785,6 +785,8 @@ static const unsigned system_bus_cs5_pins[] = {55};
->  static const int system_bus_cs5_muxvals[] = {6};
->  static const unsigned uart0_pins[] = {135, 136};
->  static const int uart0_muxvals[] = {3, 3};
-> +static const unsigned uart0_ctsrts_pins[] = {137, 138, 139, 140, 141, 124};
-> +static const int uart0_ctsrts_muxvals[] = {3, 3, 3, 3, 3, 3};
->  static const unsigned uart0b_pins[] = {11, 12};
->  static const int uart0b_muxvals[] = {2, 2};
->  static const unsigned uart1_pins[] = {115, 116};
-> @@ -856,6 +858,7 @@ static const struct uniphier_pinctrl_group uniphier_ld6b_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs4),
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs5),
->         UNIPHIER_PINCTRL_GROUP(uart0),
-> +       UNIPHIER_PINCTRL_GROUP(uart0_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart0b),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart1b),
-> @@ -885,7 +888,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs3",
->                                                  "system_bus_cs4",
->                                                  "system_bus_cs5"};
-> -static const char * const uart0_groups[] = {"uart0", "uart0b"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts", "uart0b"};
->  static const char * const uart1_groups[] = {"uart1", "uart1b"};
->  static const char * const uart2_groups[] = {"uart2", "uart2b"};
->  static const char * const usb0_groups[] = {"usb0"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-> index 603204a..24788a7 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-> @@ -1078,6 +1078,8 @@ static const unsigned uart2_pins[] = {131, 132};
->  static const int uart2_muxvals[] = {0, 0};
->  static const unsigned uart3_pins[] = {88, 89};
->  static const int uart3_muxvals[] = {2, 2};
-> +static const unsigned uart3_ctsrts_pins[] = {80, 81, 82, 83, 90, 91};
-> +static const int uart3_ctsrts_muxvals[] = {2, 2, 2, 2, 2, 2};
->  static const unsigned usb0_pins[] = {180, 181};
->  static const int usb0_muxvals[] = {0, 0};
->  static const unsigned usb1_pins[] = {182, 183};
-> @@ -1149,6 +1151,7 @@ static const struct uniphier_pinctrl_group uniphier_pro4_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> +       UNIPHIER_PINCTRL_GROUP(uart3_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(usb0),
->         UNIPHIER_PINCTRL_GROUP(usb1),
->         UNIPHIER_PINCTRL_GROUP(usb2),
-> @@ -1180,7 +1183,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->  static const char * const uart0_groups[] = {"uart0"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
-> -static const char * const uart3_groups[] = {"uart3"};
-> +static const char * const uart3_groups[] = {"uart3", "uart3_ctsrts"};
->  static const char * const usb0_groups[] = {"usb0"};
->  static const char * const usb1_groups[] = {"usb1"};
->  static const char * const usb2_groups[] = {"usb2"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> index 9381a4f..d5d5e57 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> @@ -842,6 +842,8 @@ static const unsigned uart0_pins[] = {47, 48};
->  static const int uart0_muxvals[] = {0, 0};
->  static const unsigned uart0b_pins[] = {227, 228};
->  static const int uart0b_muxvals[] = {3, 3};
-> +static const unsigned uart0b_ctsrts_pins[] = {229, 230, 231, 232, 233, 234};
-> +static const int uart0b_ctsrts_muxvals[] = {3, 3, 3, 3, 3, 3};
->  static const unsigned uart1_pins[] = {49, 50};
->  static const int uart1_muxvals[] = {0, 0};
->  static const unsigned uart2_pins[] = {51, 52};
-> @@ -913,6 +915,7 @@ static const struct uniphier_pinctrl_group uniphier_pro5_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs7),
->         UNIPHIER_PINCTRL_GROUP(uart0),
->         UNIPHIER_PINCTRL_GROUP(uart0b),
-> +       UNIPHIER_PINCTRL_GROUP(uart0b_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> @@ -940,7 +943,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs5",
->                                                  "system_bus_cs6",
->                                                  "system_bus_cs7"};
-> -static const char * const uart0_groups[] = {"uart0", "uart0b"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0b", "uart0b_ctsrts"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
->  static const char * const uart3_groups[] = {"uart3"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-> index c0ef40a..769960e 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-> @@ -774,6 +774,8 @@ static const unsigned uart0_pins[] = {217, 218};
->  static const int uart0_muxvals[] = {8, 8};
->  static const unsigned uart0b_pins[] = {179, 180};
->  static const int uart0b_muxvals[] = {10, 10};
-> +static const unsigned uart0b_ctsrts_pins[] = {176, 177, 178, 183, 184, 185};
-> +static const int uart0b_ctsrts_muxvals[] = {10, 10, 10, 10, 10, 10};
->  static const unsigned uart1_pins[] = {115, 116};
->  static const int uart1_muxvals[] = {8, 8};
->  static const unsigned uart2_pins[] = {113, 114};
-> @@ -842,6 +844,7 @@ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
->         UNIPHIER_PINCTRL_GROUP(uart0),
->         UNIPHIER_PINCTRL_GROUP(uart0b),
-> +       UNIPHIER_PINCTRL_GROUP(uart0b_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> @@ -868,7 +871,7 @@ static const char * const nand_groups[] = {"nand", "nand_cs1"};
->  static const char * const sd_groups[] = {"sd"};
->  static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs1"};
-> -static const char * const uart0_groups[] = {"uart0", "uart0b"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0b", "uart0b_ctsrts"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
->  static const char * const uart3_groups[] = {"uart3", "uart3b"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-> index dbe94a9..535bb2e 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-> @@ -816,6 +816,8 @@ static const unsigned int system_bus_cs1_pins[] = {15};
->  static const int system_bus_cs1_muxvals[] = {0};
->  static const unsigned int uart0_pins[] = {92, 93};
->  static const int uart0_muxvals[] = {0, 0};
-> +static const unsigned int uart0_ctsrts_pins[] = {243, 244, 245, 246, 247, 248};
-> +static const int uart0_ctsrts_muxvals[] = {3, 3, 3, 3, 3, 3};
->  static const unsigned int uart1_pins[] = {94, 95};
->  static const int uart1_muxvals[] = {0, 0};
->  static const unsigned int uart2_pins[] = {96, 97};
-> @@ -887,6 +889,7 @@ static const struct uniphier_pinctrl_group uniphier_pxs3_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus),
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
->         UNIPHIER_PINCTRL_GROUP(uart0),
-> +       UNIPHIER_PINCTRL_GROUP(uart0_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> @@ -912,7 +915,7 @@ static const char * const nand_groups[] = {"nand"};
->  static const char * const sd_groups[] = {"sd"};
->  static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs1"};
-> -static const char * const uart0_groups[] = {"uart0"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
->  static const char * const uart3_groups[] = {"uart3"};
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-> index 1af430d..0f921a6 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-> @@ -520,6 +520,8 @@ static const unsigned system_bus_cs5_pins[] = {13};
->  static const int system_bus_cs5_muxvals[] = {1};
->  static const unsigned uart0_pins[] = {70, 71};
->  static const int uart0_muxvals[] = {3, 3};
-> +static const unsigned uart0_ctsrts_pins[] = {72, 73, 74};
-> +static const int uart0_ctsrts_muxvals[] = {3, 3, 3};
->  static const unsigned uart1_pins[] = {114, 115};
->  static const int uart1_muxvals[] = {0, 0};
->  static const unsigned uart2_pins[] = {112, 113};
-> @@ -575,6 +577,7 @@ static const struct uniphier_pinctrl_group uniphier_sld8_groups[] = {
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs4),
->         UNIPHIER_PINCTRL_GROUP(system_bus_cs5),
->         UNIPHIER_PINCTRL_GROUP(uart0),
-> +       UNIPHIER_PINCTRL_GROUP(uart0_ctsrts),
->         UNIPHIER_PINCTRL_GROUP(uart1),
->         UNIPHIER_PINCTRL_GROUP(uart2),
->         UNIPHIER_PINCTRL_GROUP(uart3),
-> @@ -601,7 +604,7 @@ static const char * const system_bus_groups[] = {"system_bus",
->                                                  "system_bus_cs3",
->                                                  "system_bus_cs4",
->                                                  "system_bus_cs5"};
-> -static const char * const uart0_groups[] = {"uart0"};
-> +static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
->  static const char * const uart1_groups[] = {"uart1"};
->  static const char * const uart2_groups[] = {"uart2"};
->  static const char * const uart3_groups[] = {"uart3"};
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+An application using these interfaces likely also uses gettimeofday()
+or other interfaces that use absolute times, and pass 'struct timeval'
+pointers directly into kernel interfaces, so glibc must redefine their
+timeval based on a 64-bit time_t when they introduce their y2038-safe
+interfaces.
 
+The only reasonable way forward I see is to remove the 'timeval'
+definion from the kernel's uapi headers, and change the interfaces that
+we do not want to (or cannot) duplicate for 64-bit times to use a new
+__kernel_old_timeval definition instead. This type should be avoided
+for all new interfaces (those can use 64-bit nanoseconds, or the 64-bit
+version of timespec instead), and should be used with great care when
+converting existing interfaces from timeval, to be sure they don't suffer
+from the y2038 overflow, and only with consensus for the particular user
+that using __kernel_old_timeval is better than moving to a 64-bit based
+interface. The structure name is intentionally chosen to not conflict
+with user space types, and to be ugly enough to discourage its use.
 
+Note that ioctl based interfaces that pass a bare 'timeval' pointer
+cannot change to '__kernel_old_timeval' because the user space source
+code refers to 'timeval' instead, and we don't want to modify the user
+space sources if possible. However, any application that relies on a
+structure to contain an embedded 'timeval' (e.g. by passing a pointer
+to the member into a function call that expects a timeval pointer) is
+broken when that structure gets converted to __kernel_old_timeval. I
+don't see any way around that, and we have to rely on the compiler to
+produce a warning or compile failure that will alert users when they
+recompile their sources against a new libc.
 
--- 
-Best Regards
-Masahiro Yamada
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lkml.kernel.org/r/20180315161739.576085-1-arnd@arndb.de
+
+---
+ include/linux/time32.h    |  1 +
+ include/uapi/linux/time.h | 12 ++++++++++++
+ kernel/time/time.c        | 12 ++++++++++++
+ 3 files changed, 25 insertions(+)
+
+diff --git a/include/linux/time32.h b/include/linux/time32.h
+index 65b1de25198d..d2bcd4377b56 100644
+--- a/include/linux/time32.h
++++ b/include/linux/time32.h
+@@ -217,5 +217,6 @@ static inline s64 timeval_to_ns(const struct timeval *tv)
+  * Returns the timeval representation of the nsec parameter.
+  */
+ extern struct timeval ns_to_timeval(const s64 nsec);
++extern struct __kernel_old_timeval ns_to_kernel_old_timeval(s64 nsec);
+ 
+ #endif
+diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+index 61a187df8da2..16a296612ba4 100644
+--- a/include/uapi/linux/time.h
++++ b/include/uapi/linux/time.h
+@@ -42,6 +42,18 @@ struct itimerval {
+ 	struct timeval it_value;	/* current value */
+ };
+ 
++/*
++ * legacy timeval structure, only embedded in structures that
++ * traditionally used 'timeval' to pass time intervals (not absolute
++ * times). Do not add new users. If user space fails to compile
++ * here, this is probably because it is not y2038 safe and needs to
++ * be changed to use another interface.
++ */
++struct __kernel_old_timeval {
++	__kernel_long_t tv_sec;
++	__kernel_long_t tv_usec;
++};
++
+ /*
+  * The IDs of the various system clocks (for POSIX.1b interval timers):
+  */
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index bd4e6c7dd689..3044d48ebe56 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -488,6 +488,18 @@ struct timeval ns_to_timeval(const s64 nsec)
+ }
+ EXPORT_SYMBOL(ns_to_timeval);
+ 
++struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec)
++{
++	struct timespec64 ts = ns_to_timespec64(nsec);
++	struct __kernel_old_timeval tv;
++
++	tv.tv_sec = ts.tv_sec;
++	tv.tv_usec = (suseconds_t)ts.tv_nsec / 1000;
++
++	return tv;
++}
++EXPORT_SYMBOL(ns_to_kernel_old_timeval);
++
+ /**
+  * set_normalized_timespec - set timespec sec and nsec parts and normalize
+  *
