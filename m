@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsGl66Xb7utJcpM2H6Orv+gFBauF/m+nvc6WDJN1AaF3zCYL78rmLVNbiv4KhYt9nruxzrZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521483810; cv=none;
+X-Google-Smtp-Source: AG47ELtyb/qYQWKc+xJ3S8iKtES0gglRiAziS/RiqKQAdP3MWBNCInlJPXg2MJCrzEU5E1pCINeD
+ARC-Seal: i=1; a=rsa-sha256; t=1521483807; cv=none;
         d=google.com; s=arc-20160816;
-        b=EJJnhu7rbqx9+G/BpksuwMaaEYbrB6m1nq9g/CPXHdGB7oTJie7ycjLkfLWEJkVdEL
-         82z6dl7aocwIVZc6blMqSqHTcbgZ0tq3SfROSIqipzJ0pJYFvtvzdx5Ph0E42kR8rftf
-         xl6fG76gD/ute/JqaLmI5eI4Fpf4BXV5jsbc1HbMhjJ+2hfb4Cwi+N4kkWXk+n6CNSXr
-         B0fqckO1KF+SGogfaSB/shKDldHKagyVBtXjdDmbTeSZZS1Ijs7v7n5ThtxAVqCqXTdh
-         qOBK7lLb1jFdID3C6tVVe3mTFBipTk6djFiT5Mfx1OTaMhNW78Plqy254TBO4q2z34vX
-         LYrg==
+        b=hiKHqrX4AYYI0llmOuk+7nJ4s8kHtgE4nEaoa0KdRmLlUX+f3ORbSbjqBCZJFIpzEe
+         AQGGQW1TzMyMu57VgMuIEyygl1T5jJP4dPxT1MQ0EfvkwQeAFVQ6J5ug8jNHRWH5H8im
+         QsptRFM06u8Q/Hy9LSiHLRCVSgSbQKIAgIV3dm09AIIQxN9GJSaMDAIYpOMbChFXC3Op
+         ksxiGhzHNqpv87I3xRTsDvAhtETzQV59QRVVS82TyopVa/FIqW2+1u0G6biRFtvZfYbM
+         F9mJCB++kazt1mAD3JRvsxLM8j7csIy2IR3geGirn4JJFoFSRSJqAh4O7/jdjGWQ2Xfl
+         MH0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dJN6T9PhY8rcXe1B5n++IE1ORxD4GiOKv2YxlVLo9aA=;
-        b=yzksozvJE1/5jRg5V+xcixMQThgeXCsZjh5KmIxcbA2xcQW1rhDpEJsA01GFDpneCk
-         pMzGWsutWh3ISOhX80c2D/Jer351vPLyIlFobmoCVktBz+z4ktNnPRpq3XNJLlgJLgTm
-         rj2WN2efSJwM0/vyC6xNVtsLPc+SKYqQf85rC4UxvmqswaYcc1gpFoik703iCQKb86c6
-         bk0lR/QfRhyi1G0iAdXYNw6jOpg507glp7Uvb5KEWKe1AcZZtd1y2hIBFJwhU2z+OM5L
-         ueqsR/yWgshwz8skWqrfsPSoJvOlOtw+Yjx6cfsnksVWi3OiCN6U3QpVg2ePhc3RlztZ
-         tD4g==
+        bh=q4EVk2RoOBOKo0/V7Jv1sofeI83J1BGVe2ANd6LIzFQ=;
+        b=s08j059r/2j/twzsoJ8+VrAYLbjIjFt2YegHg1AppkuHni2eQhifeAPK2aJ5KOdGqu
+         gWp5VSjDuhGK72ifEuk0wWzaJ2xWiPrATdWxsCsus132AT5QRa3tYxI4GxbLRMHFMCEi
+         RP96D+o5n3rCn9v4YBLicN5/HyxgJ5lqE1GtlR8L7+LhUbzvbgcx6QUgFEE1i1Bon45T
+         /79XmJw/9O/zhM1QIpvyxBOr75o6AP/U1zYYSv3nHWg+rPkSPCrILUlxoOsvwMNRNzEu
+         FW/ORx0cUtctGm67tAueIZVbxNYD/F6cjYBkTxXXia8rCYHgisIdxDVVQSNgBRAjuKmt
+         TfDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Leach <mike.leach@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Mitch Williams <mitch.a.williams@intel.com>,
+	Stefan Assmann <sassmann@kpanic.de>,
+	Andrew Bowers <andrewx.bowers@intel.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 125/241] coresight: Fixes coresight DT parse to get correct output port ID.
-Date: Mon, 19 Mar 2018 19:06:30 +0100
-Message-Id: <20180319180756.380379105@linuxfoundation.org>
+Subject: [PATCH 4.9 124/241] i40e: only register client on iWarp-capable devices
+Date: Mon, 19 Mar 2018 19:06:29 +0100
+Message-Id: <20180319180756.334934447@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390840577337928?=
-X-GMAIL-MSGID: =?utf-8?q?1595391408409058910?=
+X-GMAIL-THRID: =?utf-8?q?1595391405470733489?=
+X-GMAIL-MSGID: =?utf-8?q?1595391405470733489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Leach <mike.leach@linaro.org>
+From: Mitch Williams <mitch.a.williams@intel.com>
 
 
-[ Upstream commit eeedc5421dd3b51de73e6106405c5c77f920f281 ]
+[ Upstream commit 004eb614c4d2fcc12a98714fd887a860582f203a ]
 
-Corrected to get the port numbering to allow programmable replicator driver
-to operate correctly.
+The client interface is only intended for use on devices that support
+iWarp. Only register with the client if this is the case.
 
-By convention, CoreSight devices number ports, not endpoints in
-the .dts files:-
+This fixes a panic when loading i40iw on X710 devices.
 
-port {
-     reg<N>
-     endpoint {
-     }
-}
-
-Existing code read endpoint number - always 0x0, rather than the correct
-port number.
-
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mitch Williams <mitch.a.williams@intel.com>
+Reported-by: Stefan Assmann <sassmann@kpanic.de>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/of_coresight.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -149,7 +149,7 @@ struct coresight_platform_data *of_get_c
- 				continue;
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -11142,10 +11142,12 @@ static int i40e_probe(struct pci_dev *pd
+ 		  round_jiffies(jiffies + pf->service_timer_period));
  
- 			/* The local out port number */
--			pdata->outports[i] = endpoint.id;
-+			pdata->outports[i] = endpoint.port;
+ 	/* add this PF to client device list and launch a client service task */
+-	err = i40e_lan_add_device(pf);
+-	if (err)
+-		dev_info(&pdev->dev, "Failed to add PF to client API service list: %d\n",
+-			 err);
++	if (pf->flags & I40E_FLAG_IWARP_ENABLED) {
++		err = i40e_lan_add_device(pf);
++		if (err)
++			dev_info(&pdev->dev, "Failed to add PF to client API service list: %d\n",
++				 err);
++	}
  
- 			/*
- 			 * Get a handle on the remote port and parent
+ #ifdef I40E_FCOE
+ 	/* create FCoE interface */
+@@ -11323,10 +11325,11 @@ static void i40e_remove(struct pci_dev *
+ 		i40e_vsi_release(pf->vsi[pf->lan_vsi]);
+ 
+ 	/* remove attached clients */
+-	ret_code = i40e_lan_del_device(pf);
+-	if (ret_code) {
+-		dev_warn(&pdev->dev, "Failed to delete client device: %d\n",
+-			 ret_code);
++	if (pf->flags & I40E_FLAG_IWARP_ENABLED) {
++		ret_code = i40e_lan_del_device(pf);
++		if (ret_code)
++			dev_warn(&pdev->dev, "Failed to delete client device: %d\n",
++				 ret_code);
+ 	}
+ 
+ 	/* shutdown and destroy the HMC */
