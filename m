@@ -1,213 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971784AbeCSU4f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:56:35 -0400
-Received: from mga14.intel.com ([192.55.52.115]:62511 "EHLO mga14.intel.com"
+        id S971814AbeCSU5e (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:57:34 -0400
+Received: from mga06.intel.com ([134.134.136.31]:41744 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968530AbeCSSIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 14:08:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S971562AbeCSU5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:57:23 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
-   d="scan'208";a="39330592"
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: x86@kernel.org
-Cc: luto@kernel.org, ak@linux.intel.com, hpa@zytor.com,
-        markus.t.metzger@intel.com, tony.luck@intel.com,
-        ravi.v.shankar@intel.com, linux-kernel@vger.kernel.org,
-        chang.seok.bae@intel.com
-Subject: [PATCH 10/15] x86/fsgsbase/64: Enable FSGSBASE instructions in helper functions
-Date: Mon, 19 Mar 2018 10:49:22 -0700
-Message-Id: <1521481767-22113-11-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+X-IronPort-AV: E=Sophos;i="5.48,332,1517904000";
+   d="scan'208";a="38821084"
+Date: Mon, 19 Mar 2018 22:57:17 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
+Subject: Re: [PATCH] tpm: TPM 2.0 selftest performance improvement
+Message-ID: <20180319205717.GC13178@linux.intel.com>
+References: <20180316174528.21018-1-nayna@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180316174528.21018-1-nayna@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helper functions switch on faster access to FS/GS, when
-FSGSBASE enabled.
+Hi
 
-Accessing user GS base needs a couple of SWPAGS. It is avoidable
-if the user GS base is copied at kernel entry and updated as
-changed, and (actual) GS base is written back at kernel exit.
-However, it costs more cycles to do that. The measured
-overhead was (almost) offset to the benefit.
+On Fri, Mar 16, 2018 at 11:15:28PM +0530, Nayna Jain wrote:
+> For selftest being run in the background, the TCG 2.0 Specification
+> provides the command TPM2_GetTestResult to check the status of selftest
+> completion.
+> 
+> When the partial selftest command is sent just after TPM initialization,
+> it is observed that it returns RC_COMMAND_CODE error, which as per TPM 2.0
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: Any Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
----
- arch/x86/include/asm/fsgsbase.h | 17 ++++------
- arch/x86/kernel/process_64.c    | 75 +++++++++++++++++++++++++++++++++++------
- 2 files changed, 72 insertions(+), 20 deletions(-)
+When does it return RC_COMMAND_COMMAND return code? Who is observing
+this? Please, do not use passive form.
 
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index cad2831..8936b7f 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -55,6 +55,8 @@ static __always_inline void wrgsbase(unsigned long gsbase)
- 			: "memory");
- }
- 
-+#include <asm/cpufeature.h>
-+
- /*
-  * Helper functions for reading/writing FS/GS base
-  */
-@@ -63,20 +65,15 @@ static inline unsigned long read_fsbase(void)
- {
- 	unsigned long fsbase;
- 
--	rdmsrl(MSR_FS_BASE, fsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE))
-+		fsbase = rdfsbase();
-+	else
-+		rdmsrl(MSR_FS_BASE, fsbase);
- 	return fsbase;
- }
- 
- void write_fsbase(unsigned long fsbase);
--
--static inline unsigned long read_shadow_gsbase(void)
--{
--	unsigned long gsbase;
--
--	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
--	return gsbase;
--}
--
-+unsigned long read_shadow_gsbase(void);
- void  write_shadow_gsbase(unsigned long gsbase);
- 
- #endif /* CONFIG_X86_64 */
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 4488f07..877636a 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -154,6 +154,38 @@ enum which_selector {
- };
- 
- /*
-+ * Interrupts are disabled here.
-+ * Out of line to be protected from kprobes.
-+ */
-+static noinline __kprobes unsigned long rd_shadow_gsbase(void)
-+{
-+	unsigned long gsbase, flags;
-+
-+	local_irq_save(flags);
-+	native_swapgs();
-+	gsbase = rdgsbase();
-+	native_swapgs();
-+	local_irq_restore(flags);
-+
-+	return gsbase;
-+}
-+
-+/*
-+ * Interrupts are disabled here.
-+ * Out of line to be protected from kprobes.
-+ */
-+static noinline __kprobes void wr_shadow_gsbase(unsigned long gsbase)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	native_swapgs();
-+	wrgsbase(gsbase);
-+	native_swapgs();
-+	local_irq_restore(flags);
-+}
-+
-+/*
-  * Saves the FS or GS base for an outgoing thread if FSGSBASE extensions are
-  * not available.  The goal is to be reasonably fast on non-FSGSBASE systems.
-  * It's forcibly inlined because it'll generate better code and this function
-@@ -319,16 +351,35 @@ static unsigned long task_seg_base(struct task_struct *task,
- 
- void write_fsbase(unsigned long fsbase)
- {
--	/* set the selector to 0 to not confuse __switch_to */
--	loadseg(FS, 0);
--	wrmsrl(MSR_FS_BASE, fsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		wrfsbase(fsbase);
-+	} else {
-+		/* set the selector to 0 to not confuse __switch_to */
-+		loadseg(FS, 0);
-+		wrmsrl(MSR_FS_BASE, fsbase);
-+	}
-+}
-+
-+unsigned long read_shadow_gsbase(void)
-+{
-+	unsigned long gsbase;
-+
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE))
-+		gsbase = rd_shadow_gsbase();
-+	else
-+		rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	return gsbase;
- }
- 
- void write_shadow_gsbase(unsigned long gsbase)
- {
--	/* set the selector to 0 to not confuse __switch_to */
--	loadseg(GS, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		wr_shadow_gsbase(gsbase);
-+	} else {
-+		/* set the selector to 0 to not confuse __switch_to */
-+		loadseg(GS, 0);
-+		wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	}
- }
- 
- unsigned long read_task_fsbase(struct task_struct *task)
-@@ -337,7 +388,8 @@ unsigned long read_task_fsbase(struct task_struct *task)
- 
- 	if (task == current)
- 		fsbase = read_fsbase();
--	else if (task->thread.fsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.fsindex == 0))
- 		fsbase = task->thread.fsbase;
- 	else
- 		fsbase = task_seg_base(task, task->thread.fsindex);
-@@ -351,7 +403,8 @@ unsigned long read_task_gsbase(struct task_struct *task)
- 
- 	if (task == current)
- 		gsbase = read_shadow_gsbase();
--	else if (task->thread.gsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.gsindex == 0))
- 		gsbase = task->thread.gsbase;
- 	else
- 		gsbase = task_seg_base(task, task->thread.gsindex);
-@@ -374,7 +427,8 @@ int write_task_fsbase(struct task_struct *task, unsigned long fsbase)
- 	task->thread.fsbase = fsbase;
- 	if (task == current)
- 		write_fsbase(fsbase);
--	task->thread.fsindex = 0;
-+	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
-+		task->thread.fsindex = 0;
- 	put_cpu();
- 
- 	return 0;
-@@ -391,7 +445,8 @@ int write_task_gsbase(struct task_struct *task, unsigned long gsbase)
- 	task->thread.gsbase = gsbase;
- 	if (task == current)
- 		write_shadow_gsbase(gsbase);
--	task->thread.gsindex = 0;
-+	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
-+		task->thread.gsindex = 0;
- 	put_cpu();
- 
- 	return 0;
--- 
-2.7.4
+> Specification, indicates "the response code that is returned if the TPM is
+> unmarshalling a value that it expects to be a TPM_CC and the input value is
+> not in the table." This doesn't indicate the exact status of selftest
+> command on TPM. But, it can be verified by sending the TPM2_GetTestResult.
+
+Where did you draw the conclusion that it doesn not indicate the
+exact status? What does RC_COMMAND_CODE anyway indicate then? Just
+trying to understand.
+
+Also, please check the grammar in last two sentences (the second one
+should probably be a subordinate clause).
+
+> This patch implements the TPM2_GetTestResult command and uses it to check
+> the selftest status, before sending the full selftest command after partial
+> selftest returns RC_COMMAND_CODE.
+
+Isn't that command implemented inside the TPM? You are implementing
+tpm2_get_selftest_result().
+
+> With this change, dmesg shows the TPM selftest completed at 1.243864
+> compared with the previous 1.939667 time.
+
+These numbers mean *absolutely nothing* to me as they are not
+connected to *anything*.
+
+
+
+
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm.h      |  2 ++
+>  drivers/char/tpm/tpm2-cmd.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 82ae7b722161..d95eeb7c002a 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -107,6 +107,7 @@ enum tpm2_return_codes {
+>  	TPM2_RC_FAILURE		= 0x0101,
+>  	TPM2_RC_DISABLED	= 0x0120,
+>  	TPM2_RC_COMMAND_CODE    = 0x0143,
+> +	TPM2_RC_NEEDS_TEST      = 0x0153,
+>  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+>  	TPM2_RC_REFERENCE_H0	= 0x0910,
+>  };
+> @@ -135,6 +136,7 @@ enum tpm2_command_codes {
+>  	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+>  	TPM2_CC_GET_CAPABILITY	= 0x017A,
+>  	TPM2_CC_GET_RANDOM	= 0x017B,
+> +	TPM2_CC_GET_TEST_RESULT = 0x017C,
+>  	TPM2_CC_PCR_READ	= 0x017E,
+>  	TPM2_CC_PCR_EXTEND	= 0x0182,
+>  	TPM2_CC_LAST		= 0x018F,
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 89a5397b18d2..494f6dfbc65d 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -823,6 +823,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+>  
+>  /**
+> + * tpm2_get_selftest_result() - get the status of self tests
+> + *
+> + * @chip: TPM chip to use
+> + *
+> + * Return: If error return rc, else return the result of the self tests.
+> + * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
+> + * TPM_RC_TESTING: Self tests are in progress.
+> + * TPM_RC_SUCCESS: Self tests completed successfully.
+> + * TPM_RC_FAILURE: Self tests completed failure.
+> + *
+> + * This function can be used to check the status of self tests on the TPM.
+> + */
+> +static int tpm2_get_selftest_result(struct tpm_chip *chip)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +	int test_result;
+> +	uint16_t data_size;
+> +	int len;
+> +	const struct tpm_output_header *header;
+> +
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
+> +	if (rc)
+> +		return rc;
+> +
+> +	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
+> +	if (len <  0)
+> +		return len;
+> +
+> +	header = (struct tpm_output_header *)buf.data;
+> +
+> +	rc = be32_to_cpu(header->return_code);
+> +	if (rc)
+> +		return rc;
+> +
+> +	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
+> +
+> +	test_result = be32_to_cpup((__be32 *)
+> +			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
+> +
+> +	return test_result;
+> +}
+> +
+> +/**
+>   * tpm2_do_selftest() - ensure that all self tests have passed
+>   *
+>   * @chip: TPM chip to use
+> @@ -851,10 +895,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+>  				      "attempting the self test");
+>  		tpm_buf_destroy(&buf);
+>  
+> +		dev_dbg(&chip->dev, "tpm selftest command returned %04x\n", rc);
+>  		if (rc == TPM2_RC_TESTING)
+>  			rc = TPM2_RC_SUCCESS;
+>  		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
+>  			return rc;
+> +
+> +		if (rc == TPM2_RC_COMMAND_CODE) {
+> +
+> +			dev_info(&chip->dev, "Check TPM Test Results\n");
+> +			rc = tpm2_get_selftest_result(chip);
+> +
+> +			dev_info(&chip->dev, "tpm self test result is %04x\n",
+> +					rc);
+> +			if (rc == TPM2_RC_TESTING)
+> +				rc = TPM2_RC_SUCCESS;
+> +			if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS
+> +					|| TPM2_RC_FAILURE)
+> +				return rc;
+> +		}
+>  	}
+>  
+>  	return rc;
+> -- 
+> 2.13.6
+> 
+
+The log messages do not have consistent wording and they are
+prefixed with "tpm" for no reason. I would advice to just remove
+them.
+
+You could probably measure the durations with ftrace by using
+the function_graph tracer...
+
+/Jarkko
