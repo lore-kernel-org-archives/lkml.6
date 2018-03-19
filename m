@@ -1,36 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvkMzqRpg2LRZyHC/WuCHwjaql5NIlblftpXfs8tdNbFh3LwrFKYiIRAeszKS7ueIOqjmPM
-ARC-Seal: i=1; a=rsa-sha256; t=1521484401; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YKijZRzEhgdouzUd0a7S53WIlFnbr9lj1a3ovre+S0zqJIR/GIgKOu9IBQNR3JX9cn
-         ffLdEWjNuW3AQWSjmXzafVD/3PdfH+vg/xwROcte1nKo5KA/KYE989FBL6K8M2Wkpxx7
-         kO6E/fXMEh54PWpeOH+/ojpLpXwsPXJh4y3ceUIUVx0pK1foduci6y2pCtdy6lQHEIiR
-         3GXhVRxBHmG6Wa/J4mGkoFtnHdD0pEuzrQqJIV/AQLNKe3LBd/WbPs5oZ2AhxOhjxM/v
-         rQVoQqCYVpqeH/o+tI5Zw8GrMd+7vdFxcZ9w4FN16WGPyGiztVLKj4OcyUp6HkuHp7/e
-         gUaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=u4vMonKr64y1mhQEONM1v9YS98xNM0mvAtTGb8XimDY=;
-        b=RDOwgUgRWZvsCkElPbRa79nDiV43Ox3vvknQ72MwJfSyb6iCFDmx5bVtFkEHlGY8Z7
-         rRWVZYM+qDxu61nlNWWX6BKc0AwGXpiuSHmol78qttX6cgxHV9t6okGd1wd2KEcu0BiY
-         qUJeBgU4eXLV7zbmeD1a6+dzjr1kIt48IAKACR5L9mwHT5yg5zHkZp5IqviV6qhkq8E5
-         XrLL9e+WXcu5QfqLgROrLWZxUc2vz9T2LebNHlM8v5JXkFtw5jv45trTTR3imJ2rH7uq
-         pezuT3KHWSWR++O8nG67d/Ty/iUFE+tyZbS4IEHRu/WHFWwRl9n5JjGibDEqjiTwX4v7
-         pBNw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484397-2-17201595065481780345
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521484396; b=nQPz4sYAxoxHC5iXEpe3mpbQRjSZ0nAqlS53SrjDIAEEX3A
+    4YiOyPsMLcSLwjZ/men2doMOiH8cPArW0E6iH8MwhuZSCbo3Q78tEL3cb50N+NA1
+    3aXGCE+qmWxf4mUf/ArEAzOezRRRWjtFSr/KGYj5eyUUO9z50Sk+wJVqfXYn9tIz
+    knoE35t+t1FpnU45Tbe9dm6/4kX9aEwMhCPjX0/WLuv6ndTtl4dA5WX/85Mqw7CL
+    R+Xy/0eOVA2zT+WFtQmX8U/WL4NyKRnLPb9ZFZqdin5So2t98ZnGvkA9ooFShxMI
+    XwwzIST3xSqJYCNMxp02c6ykdD/lXO5y1DZ3Ufw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521484396; bh=QJ6VYFte9k0kNSXbR7ub+uhRD+
+    /r/4p54RqKUImka5s=; b=umTw3qsikJS1J8B+cHSxCGkY8gMXSzVivhg62Vu8DG
+    hrtfJu8gAQvzFbcXUOV+KyxOG/i40yMX7+NdUJBZwx8s2XzV8Vo28NuweNV4w1Qs
+    YDct3v9bMKEjGSWK/s8fJ2dUnYZRxeV8c0BMi3iw8GRi7snb52gqAdNnF26yv0mG
+    h6AitqS4y06lq+1mRzpHF6AA2cPz5mN8eTwRDJ9lSV7cKHQePWPfNQpH/tg/Lz1K
+    INlzYra4lQzBo4/Dvj9wAOo4uJL48o+wOKUbSJOpNkjBVqN8MgUjqH9iW5AvLmWj
+    cwdhBZqxi+1/Nx+ksgTMojA7ZVrylao3cT/ckIHpPJzg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefjeeigeenucevlhhushhtvghrufhiiigvpeefie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefjeeigeenucevlhhushhtvghrufhiiigvpeefie;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1031898AbeCSSdM (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:33:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54172 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032179AbeCSSdK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 32/52] btrfs: Fix NULL pointer exception in find_bio_stripe
-Date: Mon, 19 Mar 2018 19:08:30 +0100
-Message-Id: <20180319180736.832491393@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        linux-rdma@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 28/52] RDMAVT: Fix synchronization around percpu_ref
+Date: Mon, 19 Mar 2018 19:08:26 +0100
+Message-Id: <20180319180736.648327623@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -38,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391882677400134?=
-X-GMAIL-MSGID: =?utf-8?q?1595392027067136238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,84 +83,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit 047fdea6341966a0898e3b16c51f54d4f5ba030a upstream.
+commit 74b44bbe80b4c62113ac1501482ea1ee40eb9d67 upstream.
 
-On detaching of a disk which is a part of a RAID6 filesystem, the
-following kernel OOPS may happen:
+rvt_mregion uses percpu_ref for reference counting and RCU to protect
+accesses from lkey_table.  When a rvt_mregion needs to be freed, it
+first gets unregistered from lkey_table and then rvt_check_refs() is
+called to wait for in-flight usages before the rvt_mregion is freed.
 
-[63122.680461] BTRFS error (device sdo): bdev /dev/sdo errs: wr 0, rd 0, flush 1, corrupt 0, gen 0
-[63122.719584] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
-[63122.719587] BTRFS error (device sdo): bdev /dev/sdo errs: wr 1, rd 0, flush 1, corrupt 0, gen 0
-[63122.803516] BTRFS warning (device sdo): lost page write due to IO error on /dev/sdo
-[63122.803519] BTRFS error (device sdo): bdev /dev/sdo errs: wr 2, rd 0, flush 1, corrupt 0, gen 0
-[63122.863902] BTRFS critical (device sdo): fatal error on device /dev/sdo
-[63122.935338] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-[63122.946554] IP: fail_bio_stripe+0x58/0xa0 [btrfs]
-[63122.958185] PGD 9ecda067 P4D 9ecda067 PUD b2b37067 PMD 0
-[63122.971202] Oops: 0000 [#1] SMP
-[63123.006760] CPU: 0 PID: 3979 Comm: kworker/u8:9 Tainted: G W 4.14.2-16-scst34x+ #8
-[63123.007091] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[63123.007402] Workqueue: btrfs-worker btrfs_worker_helper [btrfs]
-[63123.007595] task: ffff880036ea4040 task.stack: ffffc90006384000
-[63123.007796] RIP: 0010:fail_bio_stripe+0x58/0xa0 [btrfs]
-[63123.007968] RSP: 0018:ffffc90006387ad8 EFLAGS: 00010287
-[63123.008140] RAX: 0000000000000002 RBX: ffff88004beaa0b8 RCX: ffff8800b2bd5690
-[63123.008359] RDX: 0000000000000000 RSI: ffff88007bb43500 RDI: ffff88004beaa000
-[63123.008621] RBP: ffffc90006387ae8 R08: 0000000099100000 R09: ffff8800b2bd5600
-[63123.008840] R10: 0000000000000004 R11: 0000000000010000 R12: ffff88007bb43500
-[63123.009059] R13: 00000000fffffffb R14: ffff880036fc5180 R15: 0000000000000004
-[63123.009278] FS: 0000000000000000(0000) GS:ffff8800b7000000(0000) knlGS:0000000000000000
-[63123.009564] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[63123.009748] CR2: 0000000000000080 CR3: 00000000b0866000 CR4: 00000000000406f0
-[63123.009969] Call Trace:
-[63123.010085] raid_write_end_io+0x7e/0x80 [btrfs]
-[63123.010251] bio_endio+0xa1/0x120
-[63123.010378] generic_make_request+0x218/0x270
-[63123.010921] submit_bio+0x66/0x130
-[63123.011073] finish_rmw+0x3fc/0x5b0 [btrfs]
-[63123.011245] full_stripe_write+0x96/0xc0 [btrfs]
-[63123.011428] raid56_parity_write+0x117/0x170 [btrfs]
-[63123.011604] btrfs_map_bio+0x2ec/0x320 [btrfs]
-[63123.011759] ? ___cache_free+0x1c5/0x300
-[63123.011909] __btrfs_submit_bio_done+0x26/0x50 [btrfs]
-[63123.012087] run_one_async_done+0x9c/0xc0 [btrfs]
-[63123.012257] normal_work_helper+0x19e/0x300 [btrfs]
-[63123.012429] btrfs_worker_helper+0x12/0x20 [btrfs]
-[63123.012656] process_one_work+0x14d/0x350
-[63123.012888] worker_thread+0x4d/0x3a0
-[63123.013026] ? _raw_spin_unlock_irqrestore+0x15/0x20
-[63123.013192] kthread+0x109/0x140
-[63123.013315] ? process_scheduled_works+0x40/0x40
-[63123.013472] ? kthread_stop+0x110/0x110
-[63123.013610] ret_from_fork+0x25/0x30
-[63123.014469] RIP: fail_bio_stripe+0x58/0xa0 [btrfs] RSP: ffffc90006387ad8
-[63123.014678] CR2: 0000000000000080
-[63123.016590] ---[ end trace a295ea7259c17880 ]—
+rvt_check_refs() seems to have a couple issues.
 
-This is reproducible in a cycle, where a series of writes is followed by
-SCSI device delete command. The test may take up to few minutes.
+* It has a fast exit path which tests percpu_ref_is_zero().  However,
+  a percpu_ref reading zero doesn't mean that the object can be
+  released.  In fact, the ->release() callback might not even have
+  started executing yet.  Proceeding with freeing can lead to
+  use-after-free.
 
-Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-[ no signed-off-by provided ]
-Author: Dmitriy Gorokh <Dmitriy.Gorokh@wdc.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+* lkey_table is RCU protected but there is no RCU grace period in the
+  free path.  percpu_ref uses RCU internally but it's sched-RCU whose
+  grace periods are different from regular RCU.  Also, it generally
+  isn't a good idea to depend on internal behaviors like this.
+
+To address the above issues, this patch removes the fast exit and adds
+an explicit synchronize_rcu().
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: linux-rdma@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/raid56.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/sw/rdmavt/mr.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -1351,6 +1351,7 @@ static int find_bio_stripe(struct btrfs_
- 		stripe_start = stripe->physical;
- 		if (physical >= stripe_start &&
- 		    physical < stripe_start + rbio->stripe_len &&
-+		    stripe->dev->bdev &&
- 		    bio->bi_disk == stripe->dev->bdev->bd_disk &&
- 		    bio->bi_partno == stripe->dev->bdev->bd_partno) {
- 			return i;
+--- a/drivers/infiniband/sw/rdmavt/mr.c
++++ b/drivers/infiniband/sw/rdmavt/mr.c
+@@ -489,11 +489,13 @@ static int rvt_check_refs(struct rvt_mre
+ 	unsigned long timeout;
+ 	struct rvt_dev_info *rdi = ib_to_rvt(mr->pd->device);
+ 
+-	if (percpu_ref_is_zero(&mr->refcount))
+-		return 0;
+-	/* avoid dma mr */
+-	if (mr->lkey)
++	if (mr->lkey) {
++		/* avoid dma mr */
+ 		rvt_dereg_clean_qps(mr);
++		/* @mr was indexed on rcu protected @lkey_table */
++		synchronize_rcu();
++	}
++
+ 	timeout = wait_for_completion_timeout(&mr->comp, 5 * HZ);
+ 	if (!timeout) {
+ 		rvt_pr_err(rdi,
