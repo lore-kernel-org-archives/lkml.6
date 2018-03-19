@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2984275-1521470144-2-13079074894480973047
+X-Cyrus-Session-Id: sloti22d1t05-3042595-1521470143-2-4816573884204292640
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,54 +14,54 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521470143; b=AJ7R2MK4G+UeAkNSNAG5Ui1uccm9vM6MTMYv6XHKUT/eQTQ
-    7x82mY2Dq9due47JthHN8DwPvVBlSuJoyA4fa4td7001HL1aEr9O69zPVI3DJ836
-    0NTyZkdzT9SJPTSaOoIvyropDHmq2qOdYlScZp9yBP1LsN5uF3uR9fBPnh5+4mMA
-    pNeDwXPJwjes9p36ZHnWtnd6T73vGiZNkxYcYfhzpRcFrDlpa7ZBOueDGN52sOmn
-    P0ASIwGqsKzFQbPsM+kRYKwfSyC90LdfI+fQqEHRj0z5ZJ5KsVaiNJjCFz8YcjPc
-    fD5P+8pTvHFHXM4RoySayZ0cO/oeIKtExhDM4Tg==
+    t=1521470142; b=i9SZN/MnVMtd5t+Ie9c8Q7O6FymlzXw1AYsM1z167m05mh2
+    Fr7j6/q2jHy+DX0fOSI4qBYjga/UGVmu72Z0ZIqERiqzgQ4aaZDjkdwTiuoSvJLt
+    I0n6/k+wvPU37YBOAeSGjM0Ad/qjjiQA2T3+HMwAQ2dmF7qofptM9sf1wK+Fy3lC
+    Gwkg7yKeuffY5bV9nwfEDo5D7r9gOTJ80A8tR6kjub6yYg94V40BZc2l/GQnUgFd
+    Zn4dthIySC+xOeaA6klQrX8D1BOjiGYgqxmJCf49gxz3FirQFzVwvmm6yrv274uO
+    q7+K0b8ST+rQKE9u5AAg8oDbmtbazNg4P4dJsJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521470143; bh=F
-    PIZBIKXMAfanNsqBnSdYouhZTja5UZ77+92A1tJvlQ=; b=kFe0QznORmgRZxMM1
-    mB+XRqvS4Wzv4PJrY2WI+R1uBVwTx6Rpqou7iVCJ7b512FSaDKRNKL5sXCjYaYFn
-    VL051q1sJB4h/1J/Tj1zwDSwJRgSWSjt6kgEbi/v3CGpCFEJTV6luTKyu6IzBJkc
-    41/7IpklcEzr3k64RylSVAhQYi8ElHlC+O5JJ+MfjkDmTPYlVdjALVJ3W2el1qTl
-    dH1LgD+cA1pvJ93IELolOrzpVR5YgiEa/t91vE6CYFyPV6mSDc/I7AXp2IjzgPJA
-    /kV0Xi1gEJv1pp+tzhGnHT4Lpsyd3puCPFEmU+BvNa3KYG+2AZ8Ts3BkrA6iF8CB
-    lAqVQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KVbrrtMA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    :content-transfer-encoding:sender; s=arctest; t=1521470142; bh=0
+    PUnld5hIJy+Q6rQFAwf636V6d6GK7fAajODTAuP41g=; b=iyWl3UCFKfybBSC1O
+    TX/oxHfj0cfmYy5fix3whKoltu5/ESQ7zeUYq6jduGlfQk60QlY4BdOB5sEs4pKO
+    tcwY80zpFeh5e6ELbHsm0r7lqq8Kc8WoS+xWCxVCPr3cMY4xQrAX+uzZagVTzXk6
+    uPDVOJA9vH9ipBKUAULK77gwfJhtRrz+7GjdtXK13CThSa9K/paBJQzhbhSwiI6O
+    TXXwm2gbUl8YZqBIH/lXUo/iPOJIeEQFzRGMa5CV+cvyhHqsjdwNxB+F73lh4tB3
+    HMe/G9SEVfUZZS84qHroueBvQBYPspIe3eZ+jBgx5ZlhymYwjwZSQPM2snHU8SMq
+    diJhQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f/K7DDyA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=15 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeigeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvufffkffojghfphejjfegudeftdggtgfgvghssehtjeertdertddvnecuhfhrohhmpefrrghulhcuofgtsfhurgguvgcuoehprghulhhmtghquhgrugesghhmrghilhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudeffedpjeekrddukedrudekhedrudelgeenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudeffedphhgvlhhopehhvghmlhhotghkrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeehleejudcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedv;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Wyror7gT;
+    x-category=clean score=15 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeiheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvufffkffojghfphejjfegudeftdggtgfgvghssehtjeertdertddvnecuhfhrohhmpefrrghulhcuofgtsfhurgguvgcuoehprghulhhmtghquhgrugesghhmrghilhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudeffedpjeekrddukedrudekhedrudelgeenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudeffedphhgvlhhopehhvghmlhhotghkrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeeifedutdcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedu;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NMsfMchA;
     x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KVbrrtMA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f/K7DDyA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=15 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeigeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvufffkffojghfphejjfegudeftdggtgfgvghssehtjeertdertddvnecuhfhrohhmpefrrghulhcuofgtsfhurgguvgcuoehprghulhhmtghquhgrugesghhmrghilhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudeffedpjeekrddukedrudekhedrudelgeenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudeffedphhgvlhhopehhvghmlhhotghkrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeehleejudcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedv;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Wyror7gT;
+    x-category=clean score=15 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdeiheculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvufffkffojghfphejjfegudeftdggtgfgvghssehtjeertdertddvnecuhfhrohhmpefrrghulhcuofgtsfhurgguvgcuoehprghulhhmtghquhgrugesghhmrghilhdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudeffedpjeekrddukedrudekhedrudelgeenucfrrghrrghmpehinhgvthepudegtddrvdduuddrudeiiedrudeffedphhgvlhhopehhvghmlhhotghkrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeeifedutdcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedu;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NMsfMchA;
     x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELteurxfoIZskqPXInLppT+sYsmYsTVaLYW4f2JvmK7ImkfoFIbuAChBT1rVkvAdcE6qulGjUw==
+X-Google-Smtp-Source: AG47ELvhJheJTwh1XLYxxbqNVAez1DUPaedv66TzkYrq8lHuUJ0ThtHx2sAi1Er8uMm4sVOuBcxJmA==
 From: Paul McQuade <paulmcquad@gmail.com>
 To: paulmcquad@gmail.com
-Subject: [PATCH 4/5] Staging:rtl8723bs:os_dep blank line needed
-Date: Mon, 19 Mar 2018 14:34:59 +0000
-Message-Id: <20180319143500.19623-4-paulmcquad@gmail.com>
+Subject: [PATCH 3/5] Staging:rtl8723bs:os_dep braces not necessary
+Date: Mon, 19 Mar 2018 14:34:58 +0000
+Message-Id: <20180319143500.19623-3-paulmcquad@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319143500.19623-1-paulmcquad@gmail.com>
 References: <20180319143500.19623-1-paulmcquad@gmail.com>
@@ -89,25 +89,32 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-WARNING: Missing a blank line after declarations
+WARNING: braces {} are not necessary for any arm of this statement
 
 Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
 ---
- drivers/staging/rtl8723bs/os_dep/recv_linux.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/os_dep/recv_linux.c b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-index 117fda4fa1bf..b43e24c3a23a 100644
+index e804b430931c..117fda4fa1bf 100644
 --- a/drivers/staging/rtl8723bs/os_dep/recv_linux.c
 +++ b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-@@ -43,6 +43,7 @@ void rtw_os_recv_resource_free(struct recv_priv *precvpriv)
- {
- 	sint i;
- 	union recv_frame *precvframe;
-+
- 	precvframe = (union recv_frame*) precvpriv->precv_frame_buf;
+@@ -181,11 +181,11 @@ void rtw_os_recv_indicate_pkt(struct adapter *padapter, _pkt *pkt, struct rx_pkt
+ 		pkt->dev = padapter->pnetdev;
  
- 	for (i = 0; i < NR_RECVFRAME; i++)
+ #ifdef CONFIG_TCP_CSUM_OFFLOAD_RX
+-		if ((pattrib->tcpchk_valid == 1) && (pattrib->tcp_chkrpt == 1)) {
++		if ((pattrib->tcpchk_valid == 1) && (pattrib->tcp_chkrpt == 1))
+ 			pkt->ip_summed = CHECKSUM_UNNECESSARY;
+-		} else {
++		else
+ 			pkt->ip_summed = CHECKSUM_NONE;
+-		}
++
+ #else /* !CONFIG_TCP_CSUM_OFFLOAD_RX */
+ 		pkt->ip_summed = CHECKSUM_NONE;
+ #endif /* CONFIG_TCP_CSUM_OFFLOAD_RX */
 -- 
 2.16.2
 
