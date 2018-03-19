@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs4chsHf21yiRFPlV5Se1W2KRKtwJSmKjzvm2ai7848MldQW2+nV45e5/vbzLYiIHaLV/r7
-ARC-Seal: i=1; a=rsa-sha256; t=1521484063; cv=none;
+X-Google-Smtp-Source: AG47ELsZr/qDp/jh/eONbN6Go8SVTyD9PsVl5k3r8ReSrO2L0yh7KJ9HucWK2agHO2za9ICDilMO
+ARC-Seal: i=1; a=rsa-sha256; t=1521484061; cv=none;
         d=google.com; s=arc-20160816;
-        b=gtXoKL+WwJahTyw5nEn5m+X8a4dcP440fuNIlob/4RmidRmS7Xow+UOSn44kY3C6GO
-         m9heK5iVppPMH+kGdf1dbjXiLoF2EJD2jlpAG/kfVVvWjM6at/GrUm5rJ8WaGyo7EpH1
-         oNxNlqTJWTBAbPzpFDkO3R6As19HY4wok1/KAi48oCPpnKGd5Xze7V3raET+7do59GPQ
-         tB2Y7U8Z8sbz1RXlfbZthlQ7LxkUjcgcZbxUScAkdimaa8MeGBRkBwpsGmIVceBoeiM+
-         aPCYbLse/pUEcME37qVYdeq3wcyOWc43Gx0UNkPN1AeN2IJ60kuSHZHFsNygowjVwqT8
-         EkZg==
+        b=D/ZQJiawSrN/xkBz9CdKLtHqj9tSUO8Ejvd3Ke9KXqCIzUO8CYdQ7dL2OTa7ZkwlaP
+         BxeYxBIDTyEOlTh2Uz7oj3RCTFU/ePqqlHGxaVONm5L25wgayCMdEgx0E7zvS++8VneH
+         A2Ej8GXcYk5GWcvEwXHpZyawsrzjmXmczmDah3qzuUCqIQZ/Hvhje8aiqySMg3U0k1rK
+         gEdr9VIUu4eLJ9cVZon6JOuVnmb1Y/kWhSs884ywVivaUwzP3IYhnL8OMdwFwwnoUQ02
+         covwEcCjWiUsQz/VRov3wnVp20jyahnbUYcMygP157fcVzrdNUbJK2lYzeqZ7LaOXbYf
+         Be8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4QHzFVY2NQqUl43oMM/vJmqtWaaXXzujAj7ObWgv1JE=;
-        b=PsaYXGLbyJeSRxZVnrfOVDBokEQ6MBJaxL49imfFTLW/fK6NNx9GmqdStkeHnOjgHp
-         TtZyo6I9dcOZt3PnsDDNauO6ueKbp6qcqwRTUyaE4nHgTWu+wWUcm8JgbE83WIQLiFT4
-         HqQQwiCrIU1VH96Kk9mdtCZVS2I1S6Ddw6MQFig4oPMUW7ZuK0iYzAtbAo5l7zOmccbE
-         eJ3QsJiG2U58jY0TprGesvF3KX+iGFVT/WtX6r6V8fRe3HyfQbsl6Ldeom+QGC7+ZGU0
-         LNCj2eRvbkMd5H3NfvirUlYYTWajf+Kb/uWDHXzFbllQcAeNggjQ56U8fH/z0hUSXb3V
-         iVRw==
+        bh=QUYtdfBZDl4uHE9YtxdPihvbJCXXvU8q8UBzlSdTQ2w=;
+        b=XRxdnY0lUiEwJ4+irDigf2dnqy71kjTuYWFMCDcBAaj2nhMNdHq1ODrzJqhQh9lUAC
+         kgQjpug+u/Xlsj0BtIG2kTTvwHuThSZ1jN9sG5yuXJdmek/nL8M/na29mmTa6ZuS6k+v
+         cryq1DY6P3SeQWzJd6/cooZE+w1HSmiafBJQCg9Xv7DIhGaxpxZO3GVYjoS8afLC91fz
+         a3163EywVOg+lQy1X8Vt03Znz6Uq57hAMrym0Py+q3MblixV3XtnJx4j02vb9TGj92Gb
+         tQLhIiNcg8UILtdatS1pgzSnErqtDeZ58kKS90BpZ+qdsVtmpP+PNpc1PZaVPjaZ210w
+         6LiA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 183/241] power: supply: ab8500_charger: Bail out in case of error in ab8500_charger_init_hw_registers()
-Date: Mon, 19 Mar 2018 19:07:28 +0100
-Message-Id: <20180319180758.722055266@linuxfoundation.org>
+Subject: [PATCH 4.9 182/241] power: supply: ab8500_charger: Fix an error handling path
+Date: Mon, 19 Mar 2018 19:07:27 +0100
+Message-Id: <20180319180758.677378811@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391673878383494?=
-X-GMAIL-MSGID: =?utf-8?q?1595391673878383494?=
+X-GMAIL-THRID: =?utf-8?q?1595391671060606802?=
+X-GMAIL-MSGID: =?utf-8?q?1595391671060606802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,40 +53,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 09edcb647542487864e23aa8d2ef26be3e08978a ]
+[ Upstream commit bf59fddde1c3eab89eb8dca8f3d3dc097887d2bb ]
 
-If an error occurs when we enable the backup battery charging, we should
-go through the error handling path directly.
+'ret' is know to be 0 at this point, because it has not been updated by the
+the previous call to 'abx500_mask_and_set_register_interruptible()'.
 
-Before commit db43e6c473b5 ("ab8500-bm: Add usb power path support") this
-was the case, but this commit has added some code between the last test and
-the 'out' label.
-So, in case of error, this added code is executed and the error may be
-silently ignored.
+Fix it by updating 'ret' before checking if an error occurred.
 
-Fix it by adding the missing 'goto out', as done in all other error
-handling paths.
-
-Fixes: db43e6c473b5 ("ab8500-bm: Add usb power path support")
+Fixes: 84edbeeab67c ("ab8500-charger: AB8500 charger driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/ab8500_charger.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/power/supply/ab8500_charger.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/power/supply/ab8500_charger.c
 +++ b/drivers/power/supply/ab8500_charger.c
-@@ -3221,8 +3221,10 @@ static int ab8500_charger_init_hw_regist
- 	ret = abx500_mask_and_set_register_interruptible(di->dev,
+@@ -3218,7 +3218,7 @@ static int ab8500_charger_init_hw_regist
+ 	}
+ 
+ 	/* Enable backup battery charging */
+-	abx500_mask_and_set_register_interruptible(di->dev,
++	ret = abx500_mask_and_set_register_interruptible(di->dev,
  		AB8500_RTC, AB8500_RTC_CTRL_REG,
  		RTC_BUP_CH_ENA, RTC_BUP_CH_ENA);
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(di->dev, "%s mask and set failed\n", __func__);
-+		goto out;
-+	}
- 
- 	if (is_ab8540(di->parent)) {
- 		ret = abx500_mask_and_set_register_interruptible(di->dev,
+ 	if (ret < 0)
