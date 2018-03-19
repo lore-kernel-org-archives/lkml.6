@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3357373-1521480321-2-3634386386576962575
+X-Cyrus-Session-Id: sloti22d1t05-3357373-1521480320-2-5765949468519776729
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,61 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521480320; b=Qx1A8CJBSKgYYV9ZyIpiL2cFgoiwoKNMUd7Ug4qnJ9nfHvO
-    RE6BdOGJGA9/vr4ELMYMwbDIa2TZMTmKcWPbReIbKVuK5KYR8XLu8K0d1Myenlm7
-    gN3daZ/4+S2xYqoPBpDbu+/h+iRb5gqDfjlmluefpWBq2X7D9Hoy9pIpIpM3qARt
-    RMi5k3nu0uTkhOAZ6dQUYbuFIRDru6i4RX2ydI+wZNLHA36PFdYJaJGY7NBEshHJ
-    zKLc7Bt5LkKdfRrUwxs+f57rT3BHKhCqFlC9mzcdNCX3s/2iCSLS/7X0w0fdg4h0
-    q5S713ko/I+L1Nxj3YyOwQdJRseMBv9+sRoqk+Q==
+    t=1521480319; b=IFPpvNKFx4k5TLDMFcdJfgy0NGCv5U0Z+LlpC1+TApVFJND
+    e+AHol+6q7n9COA5tBG9bybtTOULkLhWkF6K6Lk2rRgn13LJDm3mqMEIQhhRLJf/
+    PH6P3g/5Fj2Hbe/kR6Lk3Fmr0qEh9jFmywEzil6xdz+TSFr/wUr5TiOgN2ne63rd
+    m42+G9ZfO9F0D2nDIdKunrmZzydOjJgwXW9NPy/2IwsXW6gpYQeIYTv8yhogo2Kc
+    JDnnA/x6aQyfXWkDQHu8Qpr/A7qSi8rC6WxYBqiAJPR2+tC/O5BBTHkw89Do3L7+
+    h7l2BKI8KyGZ1qjJLx+wDFJVf2Tzx0iTxVmQdLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521480320; bh=XN1f2n
-    ange4Nha5yJTyZBWdT8yg6RvFZe3CrJphbNLk=; b=tpzG26qTA7kFPqROiHw24e
-    PLGzee4VKP4CBTvCRD25JWHg36VSgzrvZlVM5zF/l48lboSD4/Bu9p6aF4STZGX6
-    Y7xFdTSf/YbGTwLenaK/AuiGfF/sTUwN7aMQjiMSiC/SbpoWdQMVFvuMp3QTTah+
-    A3UuyZi+zCYgzW1DA1OW+U6ZhCloHuraSxHsyg6iiQnGARERPz+beiphtLZN5hdf
-    81H3rfaXIx3VSzw8IK8uzZTgGffJTu1Guabtj+Xn2R0v6IiPPxWBAVxjbvjp5B8e
-    b+kfmglqRdSPdepI8CfaRUssnBzH50HtlE/LHbt5IahxOTL6zi+fKH0z68GDszyg
+    :mime-version:sender:list-id; s=arctest; t=1521480319; bh=7M4BAq
+    xNiz0bGwGHolcupcnNJXbhgkATi2Lek6riAiA=; b=wrgiR96j4dTYd7gCMgCG+/
+    3te1qJT7pGC47i02zGo1NhHEWSo7VN2PgV3hZlcyP5FWEYnswBOP9XAJJJcH25kR
+    5NRKfRWzSuZQGc+OJEzmVhwTb1rFYERyf8PxSm//EWd1ELOiXrgcgmeP+pU2kbYQ
+    FGX8ZkCsky5hy7jE+CoPBKHtSwS+mmiOiJhFqgZvHx1ECAsP1RZYc9LGY4OARnlY
+    adhY1jntDfrh6uPWUBM1VAeEd/EZDO6xu3gna03iucjrJIBrl+67TIfCc7VfVJbc
+    Ms7ockhCyuwAPNLtirtdM1bKyCd3AtzzRUFSnSDn+r/o4WmxkVn1pFb2CWWY9I8A
     ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lBZI0dpJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=e9p5MQA0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeejkeegnecuvehluhhsthgvrhfuihiivgepjeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdelgeenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lBZI0dpJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=e9p5MQA0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtudenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeejkeegnecuvehluhhsthgvrhfuihiivgepjeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddutddtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejvdelgeenucevlhhushhtvghrufhiiigvpeejle;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967924AbeCSRYp (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 13:24:45 -0400
-Received: from mail-dm3nam03on0096.outbound.protection.outlook.com ([104.47.41.96]:30671
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S966306AbeCSRYs (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 13:24:48 -0400
+Received: from mail-co1nam03on0111.outbound.protection.outlook.com ([104.47.40.111]:41411
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966297AbeCSQI2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S966296AbeCSQI2 (ORCPT <rfc822;stable@vger.kernel.org>);
         Mon, 19 Mar 2018 12:08:28 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Jonathan Cameron <jic23@kernel.org>,
+CC: Colin Ian King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 057/167] iio: hi8435: cleanup reset gpio
-Thread-Topic: [PATCH AUTOSEL for 4.4 057/167] iio: hi8435: cleanup reset gpio
-Thread-Index: AQHTv5w/7oBHFEA8vUmRBWo0RhulTg==
-Date: Mon, 19 Mar 2018 16:06:32 +0000
-Message-ID: <20180319160513.16384-57-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 053/167] ath5k: fix memory leak on buf on
+ failed eeprom read
+Thread-Topic: [PATCH AUTOSEL for 4.4 053/167] ath5k: fix memory leak on buf on
+ failed eeprom read
+Thread-Index: AQHTv5w89DE88rU+xUG5hEkknL8pbg==
+Date: Mon, 19 Mar 2018 16:06:26 +0000
+Message-ID: <20180319160513.16384-53-alexander.levin@microsoft.com>
 References: <20180319160513.16384-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319160513.16384-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,85 +78,73 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0805;7:2lw4zmeGVeGFsUAsV24G3n09C7C5HWfNc+M4zKbg/BPPUpDcYpmAmH5K4H0HS9ygDASzrL8orkH0/qQakCnm8M7CItdzbbxz/LiHA1EF5apPbtWWjwM6DpPZPYz2javJE9FPZV2dFi/xTSc0TPGhZclzafNlk00YKF96S3iiex9Px0S4cSyzZQZ7yMp4M6DyfaNJT4sFZuQWKkdZ1Kmr1r6crg8a7woCdrACWi/m6w0XWYG0Q47fDQYF/vCAtdKu;20:TIYXilDmowOdkhv/v741zeYgPBSdJCxBeY7wh0YgBlaa4N3sfg1sNWL7xrWHQ17D7fpVZskCdI/IouQ4iXvOydAvkKF32U2fqtWYS6itoxgO253ajaRSV7zBzPXp/pGYBVfyZ3Lk5XzAgGJttsZM5T3CUM1gaxzm57FjAQIPaUc=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1094;7:D66cAcEja3ztF7zDaCouXpCAktiqSRlV1H6+vxJuKfITpWEruqH/+DfSHbkdme34HkJ0b3KI0sJ4w+w4t1tBetYx94U9aQM1xcN/T83XGgI48aWSWQYlksWVmDedVjjjjSolOHoszJwFFDEZN9RuBnHhMyrrLlszSli+XlcafKEOVI8LkRBjhhR9WXzg1GHDJ1fPE45FfqzQ07OvLXvrMpYW8xzw3n+nvPfp4O54J4yA79GtR+GUGZhBJaQIRkuL;20:4RZDeGVnG+bQKcKUXhqQ+vgiTyzqiK88NF+hGfxfh37mHTnEAyLu4+4CNnrRZCSLjnJMZHB0vAwWXpC6TqqXWBGrhsX31vsXdlGimaZNnFFPM3+Badj4fka8NVGX7K9DuTbW8xRfFhLuUaTKCM+CkyiF6/09kBJpn267WCI0Z6k=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ef364d9f-59e3-4c5c-21f6-08d58db3a379
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0805;
-x-ms-traffictypediagnostic: DM5PR2101MB0805:
+x-ms-office365-filtering-correlation-id: 8f8e8c70-2fcd-4a1a-034f-08d58db3a238
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1094;
+x-ms-traffictypediagnostic: DM5PR2101MB1094:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08059F61167B6A6CC2D7E63AFBD40@DM5PR2101MB0805.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0805;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0805;
+x-microsoft-antispam-prvs: <DM5PR2101MB1094F06DF02DDBFDFE9BB8D5FBD40@DM5PR2101MB1094.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(198206253151910);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1094;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1094;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(346002)(366004)(396003)(39860400002)(199004)(189003)(575784001)(2950100002)(305945005)(186003)(86362001)(6506007)(3660700001)(6666003)(5660300001)(6116002)(8936002)(3846002)(1076002)(26005)(7736002)(6486002)(2900100001)(6436002)(2906002)(86612001)(68736007)(81166006)(81156014)(10090500001)(102836004)(8676002)(14454004)(105586002)(107886003)(25786009)(478600001)(2501003)(5250100002)(53936002)(3280700002)(316002)(54906003)(4326008)(6512007)(72206003)(66066001)(22452003)(10290500003)(99286004)(76176011)(36756003)(97736004)(106356001)(110136005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0805;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: XTeHI6JJYyLSxLC0Xe5RfpUNtH7OZ3hbPxw3XRw4N982vgR3V8jGczrsnjtJvE6Tmjv9HJjP/lrG6gRHG1f9nsoztlej7pEFG8sYwLsb4e68E69PqGoUAWXQG+x+HO6VQ8eKrDDu6T0Pv1TUGyU9yz9ZfcoIrRWfLbrejbpcqbDdREs2BnuWY/o9sC5uC3tu5mpVhYMDBs7Y8NsNr5KiOsEHNm1VRcUkXnz0IF/9uqvP0FrlFru3IKg2h+tNYqecF+vV/9j82FyM2RbkCCuXTZGCkb6rJJWzltwtBz5UGhXNAH5+/qsuUcAaHnKEb5zW2FDr95znyDHdbgVLyg0rBQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(396003)(376002)(39380400002)(199004)(189003)(106356001)(10290500003)(110136005)(22452003)(3280700002)(478600001)(54906003)(2906002)(2900100001)(2950100002)(10090500001)(186003)(26005)(97736004)(5660300001)(72206003)(66066001)(107886003)(102836004)(53936002)(59450400001)(6506007)(6512007)(316002)(7736002)(305945005)(1076002)(6436002)(36756003)(3846002)(6116002)(6486002)(105586002)(8676002)(8936002)(86612001)(68736007)(3660700001)(86362001)(575784001)(81166006)(81156014)(25786009)(2501003)(4326008)(76176011)(5250100002)(14454004)(99286004)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1094;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: akNWwWUtQQjSUBPWf43a68hX79OLT/+04OL6Zz5f1JsMnxnthuUZyH7zBZe2HgCWUuXfr5GhYtJeDewyfrctx3RdmMUBJlk5TudbIk3zEkfgp/dbBtmCoEsYOrjvVwhS1NfetblzPEok/8op9Y6NEYGM62QyR5vkctkoZ0mljuigW5rGevGWYZpdm8C3fb1VyUet0iK492VjjS1SXXBfoe87dygRtXREXlLp6qAsoZJGLi/iPd2WcP7kGdeHS/4AtogOzwTGWejt+gjJK80bbM33MWCrBvfArXaRd0x2fsxDWm17MBIGUy1Wf3pohpY3E06wiFJWIqLzGKihi4vvAQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef364d9f-59e3-4c5c-21f6-08d58db3a379
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:06:32.0668
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f8e8c70-2fcd-4a1a-034f-08d58db3a238
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:06:26.9882
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0805
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1094
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 61305664a542f874283f74bf0b27ddb31f5045d7 ]
+[ Upstream commit 8fed6823e06e43ee9cf7c0ffecec2f9111ce6201 ]
 
-Reset GPIO is active low.
+The AR5K_EEPROM_READ macro returns with -EIO if a read error
+occurs causing a memory leak on the allocated buffer buf. Fix
+this by explicitly calling ath5k_hw_nvram_read and exiting on
+the via the freebuf label that performs the necessary free'ing
+of buf when a read error occurs.
 
-Currently driver uses gpiod_set_value(1) to clean reset, which depends
-on device tree to contain GPIO_ACTIVE_HIGH - that does not match reality.
+Detected by CoverityScan, CID#1248782 ("Resource Leak")
 
-This fixes driver to use _raw version of gpiod_set_value() to enforce
-active-low semantics despite of what's written in device tree. Allowing
-device tree to override that only opens possibility for errors and does
-not add any value.
-
-Additionally, use _cansleep version to make things work with i2c-gpio
-and other sleeping gpio drivers.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/iio/adc/hi8435.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath5k/debug.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/hi8435.c b/drivers/iio/adc/hi8435.c
-index ba9e8fc747b8..7401f102dff4 100644
---- a/drivers/iio/adc/hi8435.c
-+++ b/drivers/iio/adc/hi8435.c
-@@ -453,13 +453,15 @@ static int hi8435_probe(struct spi_device *spi)
- 	priv->spi =3D spi;
-=20
- 	reset_gpio =3D devm_gpiod_get(&spi->dev, NULL, GPIOD_OUT_LOW);
--	if (IS_ERR(reset_gpio)) {
--		/* chip s/w reset if h/w reset failed */
-+	if (!IS_ERR(reset_gpio)) {
-+		/* need >=3D100ns low pulse to reset chip */
-+		gpiod_set_raw_value_cansleep(reset_gpio, 0);
-+		udelay(1);
-+		gpiod_set_raw_value_cansleep(reset_gpio, 1);
-+	} else {
-+		/* s/w reset chip if h/w reset is not available */
- 		hi8435_writeb(priv, HI8435_CTRL_REG, HI8435_CTRL_SRST);
- 		hi8435_writeb(priv, HI8435_CTRL_REG, 0);
--	} else {
--		udelay(5);
--		gpiod_set_value(reset_gpio, 1);
+diff --git a/drivers/net/wireless/ath/ath5k/debug.c b/drivers/net/wireless/=
+ath/ath5k/debug.c
+index 654a1e33f827..7c5f189cace7 100644
+--- a/drivers/net/wireless/ath/ath5k/debug.c
++++ b/drivers/net/wireless/ath/ath5k/debug.c
+@@ -939,7 +939,10 @@ static int open_file_eeprom(struct inode *inode, struc=
+t file *file)
  	}
 =20
- 	spi_set_drvdata(spi, idev);
+ 	for (i =3D 0; i < eesize; ++i) {
+-		AR5K_EEPROM_READ(i, val);
++		if (!ath5k_hw_nvram_read(ah, i, &val)) {
++			ret =3D -EIO;
++			goto freebuf;
++		}
+ 		buf[i] =3D val;
+ 	}
+=20
 --=20
 2.14.1
