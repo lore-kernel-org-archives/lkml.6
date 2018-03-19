@@ -1,67 +1,65 @@
-Return-Path: <dan.j.williams@intel.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520446429; cv=none;
+Return-Path: <jacek.anaszewski@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521487487; cv=none;
         d=google.com; s=arc-20160816;
-        b=P3YrCxeE4U/eJY5+LxEDTWyvFjMjGz+oIJ2SXMqBjruZt7QiJFID4g1vI49V+huotB
-         HqYbVgF8W3kkMjhYR7+8Cvo8oLCRS11tRoGSugORjltjAYy92p2XPqsYC5jHGOOpQ11z
-         BGMUoXNbR/aN/8bql4/VOYpgNrg7js3kixjjr/fUHbKXy3lfMb2aQcRAwqqqILO+U8/o
-         ZxO7eM0crR/ruXhMpWrqHhRrirql0IilQ7UYbhZo7xdA2px/xxUioJ/RPG+eiSRpS4MN
-         i48ufu5sZ4u7DUzl8Fu/ICJNzWuVDNnBedMzZ7bzF7MHJS27+90j493T5ARvDKQSBtiO
-         vQCw==
+        b=h54BIyK6gYtRgOa05VrrrdTUhwfMepNBy0l0+Jl4oEmbXbupiBvNJ1omZ3qSmwR1iw
+         mde+qw2IGIiYdThu0UcS9A8zGmyxCGFpUlVWchL/DtD4bvZyYJ/xaV38U2+Xm1l+npyh
+         z1JoJ883TgE0JDqTbSEQm62l7JTOYrYTc0OSlx2EgHY+phYZPqTCHxaaGWwRaK5TR32N
+         s5SqJuWUK0KiGh7hKsC2Ubed17v0X+pz0TnhFaeWkmkK0BmCOaqoJOKgP++0BXsUtuzp
+         paJd4MCJaAZrc9aqAcl+i5yyFSoWdatYfKcD3nOjlmGwF/mUWakUgzMhVJG6v+263epA
+         F8jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=PLMOuw7Ihhr1qKAnAIRo/aaiRpzFQ7UPKsYKurkXH00=;
-        b=mTs4G7IOIwF8Grgz7ZTqOzzgasN6fRjaVcHn6c3zXdcYpC2VDYybmm1EGZjwZFdxbR
-         rrvUufGkg2slaXZ9XSnwGSiiZtxSHYjmaq2lQzSOowVeaopGtL1eu+tBSOyUN5QvjTDR
-         TrU/O3IoIIFqdscEhMI5Im3iO9bxndzerLKmwN21mC29vpSvTRMHHuhsNpeqC1wmx7Hg
-         zGNWAr2dmfEYHwga5ydC35wSCT/WyTbN6hKrmp5Csu/4phyBtUMl3pOCS/khK/8TKskL
-         4tFLsmhOmkCWKjIytOpJIx2l5xPjnt9NgriEdGQ91ypfkEkikv3AeNXkkIkMWtpOKSLZ
-         XC7Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=xlEFjdyGICQUelcGArGkqqK6OnPwV/FT/8uGx2v9IvA=;
+        b=BhPE2K38u5Z2+a7juK1OT0djzTZkiy0mOlWOwcfA0K/SrRfmG4f7ethkpCd/y5us+5
+         UgyLWsKteS9eIQluzhoA5EpNQEASCDXdnyPcLpGCOp4kYwNTE16f1nb6zeRrNkwFyvDg
+         Fv2HTFOs/CsiQ0I73o84kTd4iz7tcNRUt2dlqjHyUSRaK0WygBpZ308KFOPiWo7n7CuI
+         Mc4JPGXnELcebxm6mGyU6nSpRtXOwo30rBKMSfFLTy8ru24Esx0yFv+40kwk2SkfnThc
+         mBMYHM96oCXsM0p5CemV5WEqtIJB02a5cmwBaFmefSkchwdJKh0dPos/NqUX3c63Dn6i
+         SE4A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=LU9t8fJy;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ATB1fnpU;
+       spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=LU9t8fJy;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
-X-Google-Smtp-Source: AG47ELuwCWoNXBM9CUskWD7udauy0ep6drEApx0eN8xmsmDp7AwublAszlJT8i3+D/026TVIL/6XWowZYBKOB+ivshk=
-MIME-Version: 1.0
-In-Reply-To: <20180215170104.GC25181@hirez.programming.kicks-ass.net>
-References: <alpine.DEB.2.21.1802151424490.1296@nanos.tec.linutronix.de>
- <45f8dece-e235-0831-4fe5-89ee7d27b959@prevas.dk> <CAPcyv4i-bULZp1WTUgUVtdEY5i_fTGkFWKBsVLDu6dsuxUwoug@mail.gmail.com>
- <alpine.DEB.2.21.1802151550330.1296@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1802151718320.1296@nanos.tec.linutronix.de> <20180215170104.GC25181@hirez.programming.kicks-ass.net>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 7 Mar 2018 10:13:48 -0800
-Message-ID: <CAPcyv4heWRhy4U23xGZ1-BzjWu5JNm1x=6nnnUeiSFZ4LbTQUA@mail.gmail.com>
-Subject: Re: [PATCH V2] posix-timers: Protect posix clock array access against speculation
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, David Woodhouse <dwmw@amazon.co.uk>,
-	Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ATB1fnpU;
+       spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELu6xVozGw2tMjAlgX703M4YsJDywzudtlwzXuhANxOtTx2w3WZwx+t5k36QyyTOO6bmS9+Mjg==
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	pavel@ucw.cz,
+	jacek.anaszewski@gmail.com
+Subject: [PATCH 4.9 v2 0/2] Clear LED_BLINK_SW flag in led_blink_set()
+Date: Mon, 19 Mar 2018 20:23:17 +0100
+Message-Id: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+X-Mailer: git-send-email 2.1.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592473683460033132?=
-X-GMAIL-MSGID: =?utf-8?q?1594303635290712978?=
+X-GMAIL-THRID: =?utf-8?q?1595395263169697427?=
+X-GMAIL-MSGID: =?utf-8?q?1595395263169697427?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 9:01 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Thu, Feb 15, 2018 at 05:21:55PM +0100, Thomas Gleixner wrote:
->> The clockid argument of clockid_to_kclock() comes straight from user space
->> via various syscalls and is used as index into the posix_clocks array.
->>
->> Protect it against spectre v1 array out of bounds speculation. Remove the
->> redundant check for !posix_clock[id] as this is another source for
->> speculation and does not provide any advantage over the return
->> posix_clock[id] path which returns NULL in that case anyway.
->>
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Cc: stable@vger.kernel.org
->
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
+The fix for brightness setting when setting delay_off=0 introduces
+a regression and has truncated commit message. Revert that patch
+and apply the one-line change required to fix the original issue
+in the way appropriate for the 4.9 code base.
 
-Curious where this ended up, I don't see it on tip/master. In any event:
+Changes from v1:
+ - added Reported-by and Signed-off-by tags
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Thanks,
+Jacek Anaszewski
+
+Jacek Anaszewski (2):
+  Revert "led: core: Fix brightness setting when setting delay_off=0"
+  led: core: Clear LED_BLINK_SW flag in led_blink_set()
+
+ drivers/leds/led-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+-- 
+2.1.4
