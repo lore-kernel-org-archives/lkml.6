@@ -1,124 +1,128 @@
-Return-Path: <outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1522403467; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=NkK0+3gBtJwAFC/EuS5adSKW0cWWWwEB2K5yb520qOhpWJVduQfAHw3VmhHohpyECW
-         4R225W3pJ9vJiht4MYjj10/AFqNuQnPw8LzQ5hw4Iw6tYCG9aaLRL2w+XG2w6+R53HqE
-         oiE3dxiCwyzKEvhtCeAJmhgIWYfHhpItqo3bqlnanYMJLo2dOP1I/vylXgDlRwYrCaSZ
-         8gPRxX1L2Eo6C3lgYsGxzeG3BAEYIy9qIrX7D0tsBRZFO7s1buaXTj5mDQNM0p3ulWCD
-         wGL+vAaSqnIUsecuRhVXdlZ13cb605Bd9ChcHhR92Rpk7GdXqe2aZ8c0MyOcGb2yFc69
-         XTUA==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :arc-authentication-results:arc-message-signature:sender
-         :dkim-signature:arc-authentication-results:arc-message-signature
-         :arc-authentication-results;
-        bh=xpOU23rxu7Wx+OnUdNMD8V0ZkMnutSgBpOM7dML2Y4k=;
-        b=ZWdxXXEkGpRQaToZbKHkqFGBnrGwYu2zY1NdoGXruiY+lEz+ZXP1pEpRhLt5pOkAff
-         LrmF8i9dr/pWtcu6ZrfsEcW+vJ09E8MG0m9jDBevbpUYEORa2qefbaBOFxzlK7EO8/VR
-         chzYEfDQfbIr6+LzwQgdSjlOb/Tizctq/1kTtlKRv4DTBV0QYMAEb60bV9J5TP1F+h9W
-         oNDAGuAKhMgohUexgbCvXZBrq2Z7lLvKurdlw2RZd+WVkSU5SxOnCKFojJt0Jzjt8Vjk
-         548Lh9kPJV/doiHlSyxSGmf0WLhg9uZQD6D/XeJBnydDfFFW4T0lIZZu8ivwVpq9GVFh
-         a8zA==
-ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=bLicxzI4;
-       arc=pass (i=2 spf=pass spfdomain=us.es);
-       spf=pass (google.com: domain of outreachy-kernel+bncbdji5mpt4aibbc4r7dkqkgqev3vqnny@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=bLicxzI4;
-       arc=pass (i=2 spf=pass spfdomain=us.es);
-       spf=pass (google.com: domain of outreachy-kernel+bncbdji5mpt4aibbc4r7dkqkgqev3vqnny@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com
-ARC-Seal: i=2; a=rsa-sha256; t=1522403467; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=mxe5KYXYPD/TNgWwK/DXmgTk+/liQpRU22uiZIex1Xlq5L3II66ksGZLd5tdkmxd5f
-         k0YlBA6eqRGJ3BGfSieTONOeE1eWCGF7vET3QldcM0V3vzbLgy40msVOIpgZMjMFKacO
-         OYzzhfsnr9lMmTOl083YuTMHAUdpcqGJ+ZWuzlbwcxtwgTpYQGzJ7rPnkWoITvl1Ci0Q
-         r41EzD5oFoLK0Ud/A3oLqKd1rqpy/x4fMqPDDUN+EzLw74dxW2ZkSQx5p17/cD+6sQSw
-         kQwGukrbWh61xvF3FLMp3dIczpRUOom86kTVH0wnyhKSeXmuQLZAAUqMpApI/Ly6xaxn
-         Z1QQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :arc-authentication-results:arc-message-signature:sender
-         :dkim-signature:arc-authentication-results;
-        bh=xpOU23rxu7Wx+OnUdNMD8V0ZkMnutSgBpOM7dML2Y4k=;
-        b=boHnZQOxHS5m14lkhDubMtQVIFYupyHkP1cp8LJILeDVhrMkxkjXyJahG1S/qizUEB
-         /fo6C0nfq/Ps8DNbkKRMKi9M4DIYtgMo9an9PlIgDZSqujz5wm6TWSq8O738ugGs3/xP
-         IR77ZZ5191UcG3r/impsVzvjXrtambb1QR4wHfHwDp80+dcYB0tqGpYhHg1l5afD6coN
-         j5Lt7AEN0DGS5S4KrREzNde8Ix4Xb1i3rMn/Raa54xW9xfJPlPfpUwu9K2EavvurD9D6
-         qVVG8TvqoWysbL+igPJkFRe342exUlCRb9ju87FDy+juZqfGcm3SoJuOJIFVUWdMuO4h
-         EaRQ==
-ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       spf=pass (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted sender) smtp.mailfrom=pneira@us.es
-Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AIpwx4/3342oGFUxBQpVzHX1J9nMBx8civq9MTF4q+C5HZnyfy7rOs+0Cbk1UwEHgjOYqfZIl+uSUQ==
-X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1522403466; cv=none;
-        d=google.com; s=arc-20160816;
-        b=n4v1vZpSgJ3nXbUSVo2yoqfjTJlWSpwOPtKDeyyy7kdY8XBK8zuYc9k/a41rNhCN1m
-         UVYB2roAZDk5wxrfLnxUEl8DfDX0Q1qzd6eAF0Fe0oagHtZvo5/0MOy6Uri99unCjJMx
-         4FAnLJqsU1g+02rI5f0ylPpTeM2aJzu6bWPU2MSLeDEW/kGg0CBqwGgGxqldJSv4udAU
-         eFpG5t2Foc+WOpWg5oGO/IvRtCDLYnmeP6CbkUpAbeRwRAALBMwtqO9v9E7GqeiNgOGN
-         sXVa0OEVekJNb9ApipKAgWB3cBRQ7jvZjRXdqgayeC6GpRFN3DnpF4zT6ei7pJfAr7lz
-         O+KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=EGzSBnni46b0zYzP5gvCj9ApBr0e9dK8d6u+Tv8pME0=;
-        b=IV1dOi2aKFHyQ3EZOobjLQUmzGCU1A6v0wyrtTHruQTP8qytQfHxCeeMXsBLj5VF2s
-         HTgN7gyDWoPYx9OupEeSPAbi944TJ3FvLIzprHu2pOvQHaH7kBU3vjs7dPIYSr2dzQsr
-         jycdujSMNZyGybAeILi/PGSXiG6k0JUywCfzvHEIPax7wshKe/tsOs1eVJ6go06gahVK
-         0STjStEydANulaBydxI/eH34RxNrezrrmszSu8uAOM//zu6rtWOENlceZK+Lhib8oZSc
-         z6znwSEtxmdNqDTaB+OuADLVUH5IsXCmRemj+oRtLRJHzRkcVDpvND2k+Dp+Tm/qRk2R
-         qyjw==
-ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       spf=pass (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted sender) smtp.mailfrom=pneira@us.es
-Date: Fri, 30 Mar 2018 11:51:00 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: outreachy-kernel <outreachy-kernel@googlegroups.com>,
-	Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-	Florian Westphal <fw@strlen.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [Outreachy kernel] Re: [PATCH] net: netfilter: Merge assignment with return
-Message-ID: <20180330095100.gujsk7v2rot22eni@salvia>
-References: <20180328190950.GA3151@seema-Inspiron-15-3567>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20180328190950.GA3151@seema-Inspiron-15-3567>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Original-Sender: pablo@netfilter.org
-X-Original-Authentication-Results: gmr-mx.google.com;       spf=pass
- (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted
- sender) smtp.mailfrom=pneira@us.es
-Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
-X-Google-Group-Id: 672804067692
-List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
-List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
-List-Archive: <https://groups.google.com/group/outreachy-kernel
-List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
- <https://groups.google.com/group/outreachy-kernel/subscribe>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2953273-1521468564-2-10737120118226292780
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521468563; b=IX+NpTpr11WapW6u4IUpI18HXFAkToRjn/hzJOvmwhJq9VE
+    Ab9o6Efm5Ip2DUcXUlNNeOAQ11ud8fP5YT4tWWcSrIt6wlWoHVvKSPMPTBMBatai
+    BRlhtItOZGwUzK1xy5JQOYJ10yiZKtQRd4GP6oKefDWlVE0qgay9eircbY3VhJaa
+    0MYD0lmXmCha9WgHZqq58dmk3MMb8fj+5d3OlRYqgD4fxXVB05xqEwLsuY5T+jgx
+    GlJXWOMQ3/spHXx5ORpskA9QwcBid/QWB/FeYUx1HTPphIC6839f6zObGLl9Hg6P
+    1ySRl5trRDah7iM/nkpsHLAFECZagZyZpwpRqxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521468563; bh=6WEnr7M7TcRIiYQktYlHJgsP9g
+    GPnTAp7LBxD6Pkl+M=; b=rrpfFgEyLNt9/WQfmPUv3l6WIwVGLZJMvi3LnRy1Rz
+    2SatejJXjUl3KLdHdsOqWjDnvtTWb5XlVWof8n9fvTGDREF+kJPyDV6BP9CBMBjB
+    cKGrq1VgO6lzissbUh1hIj3AfCnISHk72pjUA5Rh4RhXaYXfmUe8XKUuXOnHKUZR
+    KdQ9lWZvH/sIa427G3M1PjZvsdvzijUQ1vD5Da17jM3h0U3xzLMFxFgw7itwmVSo
+    3ma+bThaz+5eoAdgejBsQxjN31aJzdywEkeXXtH9SxOTlT6G69vpXzvcnoG6zTw1
+    wtOBaZoINCjxBuyy5rX9dtc1Zwbj4bs/ls2su2Q/huKw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdehkeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofhsphejsedttdertdertddtnecuhfhrohhmpefmrghiqdfjvghnghcuhfgvnhhguceokhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitggrlhdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedpuddugedrfedvrddutdekrdduudejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeduheejnecuvehluhhsthgvrhfuihiivgeptd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdehkeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofhsphejsedttdertdertddtnecuhfhrohhmpefmrghiqdfjvghnghcuhfgvnhhguceokhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitggrlhdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedpuddugedrfedvrddutdekrdduudejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepfeduheejnecuvehluhhsthgvrhfuihiivgeptd;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754380AbeCSOJU (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 10:09:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60447 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754216AbeCSOJT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 10:09:19 -0400
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: bhelgaas@google.com
+Cc: rafael.j.wysocki@intel.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] PCI / PM: Always check PME wakeup capability for runtime wakeup support
+Date: Mon, 19 Mar 2018 22:09:10 +0800
+Message-Id: <20180319140910.26496-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596209702586221835?=
-X-GMAIL-MSGID: =?utf-8?q?1596355738618591283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 12:39:50AM +0530, Arushi Singhal wrote:
-> Merge assignment with return statement to directly return the value.
+USB controller ASM1042 stops working after commit de3ef1eb1cd0 ("PM /
+core: Drop run_wake flag from struct dev_pm_info").
 
-Applied, thanks Arushi.
+The device in question is not power managed by platform firmware,
+furthermore, it only supports PME# from D3cold:
+Capabilities: [78] Power Management version 3
+       Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
+       Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
 
+Before commit de3ef1eb1cd0, the device never gets runtime suspended.
+After that commit, the device gets runtime suspended, so it does not
+respond to any PME#.
+
+usb_hcd_pci_probe() mandatorily calls device_wakeup_enable(), hence
+device_can_wakeup() in pci_dev_run_wake() always returns true.
+
+So pci_dev_run_wake() needs to check PME wakeup capability as its first
+condition.
+
+Fixes: de3ef1eb1cd0 ("PM / core: Drop run_wake flag from struct dev_pm_info")
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2: Explicitly check dev->pme_support.
+
+ drivers/pci/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd10d9b0..52821a21fc07 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2125,16 +2125,16 @@ bool pci_dev_run_wake(struct pci_dev *dev)
+ {
+ 	struct pci_bus *bus = dev->bus;
+ 
+-	if (device_can_wakeup(&dev->dev))
+-		return true;
+-
+ 	if (!dev->pme_support)
+ 		return false;
+ 
+ 	/* PME-capable in principle, but not from the target power state */
+-	if (!pci_pme_capable(dev, pci_target_state(dev, false)))
++	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
+ 		return false;
+ 
++	if (device_can_wakeup(&dev->dev))
++		return true;
++
+ 	while (bus->parent) {
+ 		struct pci_dev *bridge = bus->self;
+ 
 -- 
-You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180330095100.gujsk7v2rot22eni%40salvia.
-For more options, visit https://groups.google.com/d/optout.
+2.15.1
