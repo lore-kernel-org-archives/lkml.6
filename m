@@ -1,85 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754935AbeCSCgd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Mar 2018 22:36:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52843 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754531AbeCSCgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Mar 2018 22:36:31 -0400
-Subject: Re: [PATCH] f2fs: Set GF_NOFS in read_cache_page_gfp while doing
- f2fs_quota_read
-To: Ritesh Harjani <riteshh@codeaurora.org>, <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-CC: <stummala@codeaurora.org>
-References: <1521206633-21378-1-git-send-email-riteshh@codeaurora.org>
- <1521206633-21378-2-git-send-email-riteshh@codeaurora.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <173fc1c2-bc17-2167-cfda-3217fff8789f@huawei.com>
-Date: Mon, 19 Mar 2018 10:36:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1755054AbeCSCib (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Mar 2018 22:38:31 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:23818 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754579AbeCSCiZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Mar 2018 22:38:25 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w2J2cMma030646
+X-Nifty-SrcIP: [209.85.217.170]
+X-Google-Smtp-Source: AG47ELulvdCFP9pMk6HAePfgcygeW10NheXx2sv8JtWVlKnCCl+dLsnRp3xLDv7OC1cEWguCgMMX4vNO9HH8XaJXwXk=
 MIME-Version: 1.0
-In-Reply-To: <1521206633-21378-2-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <9026b476c29fdd2d68b2e90ab0a155d0@agner.ch>
+References: <1511784913-3396-1-git-send-email-yamada.masahiro@socionext.com> <9026b476c29fdd2d68b2e90ab0a155d0@agner.ch>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 19 Mar 2018 11:37:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQKzXK_MYAEh0kke96wA0MWmKhUjZhnbugX5WTf2kyTVw@mail.gmail.com>
+Message-ID: <CAK7LNAQKzXK_MYAEh0kke96wA0MWmKhUjZhnbugX5WTf2kyTVw@mail.gmail.com>
+Subject: Re: kbuild: move cc-option and cc-disable-warning after incl. arch Makefile
+To: Stefan Agner <stefan@agner.ch>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/16 21:23, Ritesh Harjani wrote:
-> Quota code itself is serializing the operations by taking mutex_lock.
-> It seems a below deadlock can happen if GF_NOFS is not used in
-> f2fs_quota_read
-> 
-> __switch_to+0x88
-> __schedule+0x5b0
-> schedule+0x78
-> schedule_preempt_disabled+0x20
-> __mutex_lock_slowpath+0xdc   		//mutex owner is itself
-> mutex_lock+0x2c
-> dquot_commit+0x30			//mutex_lock(&dqopt->dqio_mutex);
-> dqput+0xe0
-> __dquot_drop+0x80
-> dquot_drop+0x48
-> f2fs_evict_inode+0x218
-> evict+0xa8
-> dispose_list+0x3c
-> prune_icache_sb+0x58
-> super_cache_scan+0xf4
-> do_shrink_slab+0x208
-> shrink_slab.part.40+0xac
-> shrink_zone+0x1b0
-> do_try_to_free_pages+0x25c
-> try_to_free_pages+0x164
-> __alloc_pages_nodemask+0x534
-> do_read_cache_page+0x6c
-> read_cache_page+0x14
-> f2fs_quota_read+0xa4
-> read_blk+0x54
-> find_tree_dqentry+0xe4
-> find_tree_dqentry+0xb8
-> find_tree_dqentry+0xb8
-> find_tree_dqentry+0xb8
-> qtree_read_dquot+0x68
-> v2_read_dquot+0x24
-> dquot_acquire+0x5c			// mutex_lock(&dqopt->dqio_mutex);
-> dqget+0x238
-> __dquot_initialize+0xd4
-> dquot_initialize+0x10
-> dquot_file_open+0x34
-> f2fs_file_open+0x6c
-> do_dentry_open+0x1e4
-> vfs_open+0x6c
-> path_openat+0xa20
-> do_filp_open+0x4c
-> do_sys_open+0x178
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+2018-03-19 9:41 GMT+09:00 Stefan Agner <stefan@agner.ch>:
+> Hi Masahiro,
+>
+> On 27.11.2017 13:15, Masahiro Yamada wrote:
+>> Geert reported commit ae6b289a3789 ("kbuild: Set KBUILD_CFLAGS before
+>> incl. arch Makefile") broke cross-compilation using a cross-compiler
+>> that supports less compiler options than the host compiler.
+>>
+>> For example,
+>>
+>>   cc1: error: unrecognized command line option "-Wno-unused-but-set-variable"
+>>
+>> This problem happens on architectures that setup CROSS_COMPILE in their
+>> arch/*/Makefile.
+>>
+>> Move the cc-option and cc-disable-warning back to the original position,
+>> but keep the Clang target options.
+>
+> This seems to break arm (32-bit) clang support for me. It seems to break
+> correct compiler flag detection in some way.
+>
+> Just moving no-integrated-as back to before including the arch Makefile
+> seems to fix the issue:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Sorry, looks like I broke it.
 
-Thanks,
+
+
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -487,6 +487,7 @@ CLANG_GCC_TC        :=
+> --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+>  KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+>  KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> +KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+>  endif
+>
+>  RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern
+> -mindirect-branch-register
+> @@ -744,7 +745,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning,
+> tautological-compare)
+>  # See modpost pattern 2
+>  KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+>  KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+> -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+>  KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+>  else
+>
+> Does that sound like a reasonable fix?
+
+
+Yes, I think so.
+
+
+For consistency, please move
+KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+as well.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
