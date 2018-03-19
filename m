@@ -1,197 +1,439 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932703AbeCSLhA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 07:37:00 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40418 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932538AbeCSLgy (ORCPT
+        id S1755455AbeCSLlG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 07:41:06 -0400
+Received: from hub01.inventec.com ([61.220.76.161]:22121 "EHLO
+        mail.inventec.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755299AbeCSLlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 07:36:54 -0400
-X-Google-Smtp-Source: AG47ELtMwKlcQrht9cJRkzyE3D/WEyvr+qcJ5Cj/yPYkkvmPvWTR1ehCmURDRp9e+O/RyFPxA51ZLxgzdoNTCbmwdUk=
+        Mon, 19 Mar 2018 07:41:04 -0400
+X-Google-Smtp-Source: AG47ELtmsdEttnw0KumG7GdIKXzYPf4h71FMzP4ZwMEXEat8qlOHeDp/2kS7v5jY6q3IogAZ3rTVyw==
+From: Ken Chen <chen.kenyy@inventec.com>
+To: <linux@roeck-us.net>, <wsa@the-dreams.de>, <peda@axentia.se>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Ken Chen <chen.kenyy@inventec.com>, <joel@jms.id.au>
+Subject: [PATCH linux dev-4.16] drivers: i2c: master arbiter: create driver
+Date: Mon, 19 Mar 2018 19:38:08 +0800
+Message-ID: <20180319113808.23485-1-chen.kenyy@inventec.com>
+X-Mailer: git-send-email 2.9.3
+X-DNSRBL: 
+X-MAIL: IEC1-MSE-FE1.inventec.com w2JBZKkK057711
 MIME-Version: 1.0
-In-Reply-To: <20180319104900.GH4043@hirez.programming.kicks-ass.net>
-References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <001a01d3be0a$ad3a0ed0$07ae2c70$@net>
- <2043615.lCdO10SMaB@aspire.rjw.lan> <CAJZ5v0h0wbu_hxCyBKLxFnWRFkK6ObqTmYRHAWgHyXTd57aH9Q@mail.gmail.com>
- <20180319104900.GH4043@hirez.programming.kicks-ass.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 19 Mar 2018 12:36:52 +0100
-X-Google-Sender-Auth: r4O57rGYHX0XEhAgxtvupof8rMY
-Message-ID: <CAJZ5v0iE-LZ9TyahT7rsJW8zBnKfgnx6C-=SYJrpzspTQXV4zg@mail.gmail.com>
-Subject: Re: [RFT][PATCH v5 0/7] sched/cpuidle: Idle loop rework
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Doug Smythies <dsmythies@telus.net>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Rik van Riel <riel@surriel.com>, Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 11:49 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Sun, Mar 18, 2018 at 05:15:22PM +0100, Rafael J. Wysocki wrote:
->> On Sun, Mar 18, 2018 at 12:00 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > @@ -354,6 +360,7 @@ static int menu_select(struct cpuidle_dr
->> >         if (latency_req > interactivity_req)
->> >                 latency_req = interactivity_req;
->> >
->> > +       expected_interval = TICK_USEC_HZ;
->> >         /*
->> >          * Find the idle state with the lowest power while satisfying
->> >          * our constraints.
->> > @@ -367,17 +374,44 @@ static int menu_select(struct cpuidle_dr
->> >                         continue;
->> >                 if (idx == -1)
->> >                         idx = i; /* first enabled state */
->> > -               if (s->target_residency > data->predicted_us)
->> > +               if (s->target_residency > data->predicted_us) {
->> > +                       /*
->> > +                        * Retain the tick if the selected state is shallower
->> > +                        * than the deepest available one with target residency
->> > +                        * within the tick period range.
->> > +                        *
->> > +                        * This allows the tick to be stopped even if the
->> > +                        * predicted idle duration is within the tick period
->> > +                        * range to counter the effect by which the prediction
->> > +                        * may be skewed towards lower values due to the tick
->> > +                        * bias.
->> > +                        */
->> > +                       expected_interval = s->target_residency;
->> >                         break;
->>
->> BTW, I guess I need to explain the motivation here more thoroughly, so
->> here it goes.
->>
->> The governor predicts idle duration under the assumption that the
->> tick will be stopped, so if the result of the prediction is within the tick
->> period range and it is not accurate, that needs to be taken into
->> account in the governor's statistics.  However, if the tick is allowed
->> to run every time the governor predicts idle duration within the tick
->> period range, the governor will always see that it was "almost
->> right" and the correction factor applied by it to improve the
->> prediction next time will not be sufficient.  For this reason, it
->> is better to stop the tick at least sometimes when the governor
->> predicts idle duration within the tick period range and the idea
->> here is to do that when the selected state is the deepest available
->> one with the target residency within the tick period range.  This
->> allows the opportunity to save more energy to be seized which
->> balances the extra overhead of stopping the tick.
->
-> My brain is just not willing to understand how that work this morning.
-> Also it sounds really dodgy.
+Initial PCA9641 2 chennel I2C bus master arbiter
+with separate implementation. It has probe issue
+and difference device hehavior between PCA9541
+and PCA9641 in original PCA9641 patch.
 
-Well, I guess I can't really explain it better. :-)
+Signed-off-by: Ken Chen <chen.kenyy@inventec.com>
+---
+ drivers/i2c/muxes/Kconfig           |   9 +
+ drivers/i2c/muxes/Makefile          |   1 +
+ drivers/i2c/muxes/i2c-mux-pca9641.c | 360 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 370 insertions(+)
+ create mode 100644 drivers/i2c/muxes/i2c-mux-pca9641.c
 
-The reason why this works better than the original v5 is because of
-how menu_update() works AFAICS.
-
-> Should we not look to something like this instead?
->
-> ---
-> --- a/include/linux/tick.h
-> +++ b/include/linux/tick.h
-> @@ -119,6 +119,7 @@ extern void tick_nohz_idle_stop_tick(voi
->  extern void tick_nohz_idle_retain_tick(void);
->  extern void tick_nohz_idle_restart_tick(void);
->  extern void tick_nohz_idle_enter(void);
-> +extern bool tick_nohz_idle_got_tick(void);
->  extern void tick_nohz_idle_exit(void);
->  extern void tick_nohz_irq_exit(void);
->  extern ktime_t tick_nohz_get_sleep_length(void);
-> @@ -142,6 +143,7 @@ static inline void tick_nohz_idle_stop_t
->  static inline void tick_nohz_idle_retain_tick(void) { }
->  static inline void tick_nohz_idle_restart_tick(void) { }
->  static inline void tick_nohz_idle_enter(void) { }
-> +static inline bool tick_nohz_idle_got_tick(void) { return false; }
->  static inline void tick_nohz_idle_exit(void) { }
->
->  static inline ktime_t tick_nohz_get_sleep_length(void)
-> --- a/kernel/sched/idle.c
-> +++ b/kernel/sched/idle.c
-> @@ -198,10 +198,13 @@ static void cpuidle_idle_call(void)
->                 rcu_idle_enter();
->
->                 entered_state = call_cpuidle(drv, dev, next_state);
-> -               /*
-> -                * Give the governor an opportunity to reflect on the outcome
-> -                */
-> -               cpuidle_reflect(dev, entered_state);
-> +
-> +               if (!tick_nohz_idle_got_tick()) {
-> +                       /*
-> +                        * Give the governor an opportunity to reflect on the outcome
-> +                        */
-> +                       cpuidle_reflect(dev, entered_state);
-> +               }
-
-So I guess the idea is to only invoke menu_update() if the CPU was not
-woken up by the tick, right?
-
-I would check that in menu_reflect() (as the problem is really with
-the menu governor and not general).
-
-Also, do we really want to always disregard wakeups from the tick?
-
-Say, if the governor predicted idle duration of a few microseconds and
-the CPU is woken up by the tick, we want it to realize that it was way
-off, don't we?
-
->         }
->
->  exit_idle:
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -996,6 +996,21 @@ void tick_nohz_idle_enter(void)
->         local_irq_enable();
->  }
->
-> +bool tick_nohz_idle_got_tick(void)
-> +{
-> +       struct tick_sched *ts;
-> +       bool got_tick = false;
-> +
-> +       ts = this_cpu_ptr(&tick_cpu_sched);
-> +
-> +       if (ts->inidle == 2) {
-> +               got_tick = true;
-> +               ts->inidle = 1;
-> +       }
-> +
-> +       return got_tick;
-> +}
-
-Looks simple enough. :-)
-
-> +
->  /**
->   * tick_nohz_irq_exit - update next tick event from interrupt exit
->   *
-> @@ -1142,6 +1157,9 @@ static void tick_nohz_handler(struct clo
->         struct pt_regs *regs = get_irq_regs();
->         ktime_t now = ktime_get();
->
-> +       if (ts->inidle)
-> +               ts->inidle = 2;
-> +
->         dev->next_event = KTIME_MAX;
->
->         tick_sched_do_timer(now);
-> @@ -1239,6 +1257,9 @@ static enum hrtimer_restart tick_sched_t
->         struct pt_regs *regs = get_irq_regs();
->         ktime_t now = ktime_get();
->
-> +       if (ts->inidle)
-> +               ts->inidle = 2;
-> +
-
-Why do we need to do it here?
-
->         tick_sched_do_timer(now);
->
->         /*
+diff --git a/drivers/i2c/muxes/Kconfig b/drivers/i2c/muxes/Kconfig
+index 52a4a92..f9c51b8 100644
+--- a/drivers/i2c/muxes/Kconfig
++++ b/drivers/i2c/muxes/Kconfig
+@@ -73,6 +73,15 @@ config I2C_MUX_PCA954x
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-mux-pca954x.
+ 
++config I2C_MUX_PCA9641
++	tristate "NXP PCA9641 I2C Master demultiplexer"
++	help
++	  If you say yes here you get support for the NXP PCA9641
++	  I2C Master demultiplexer with an arbiter function.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-mux-pca9641.
++
+ config I2C_MUX_PINCTRL
+ 	tristate "pinctrl-based I2C multiplexer"
+ 	depends on PINCTRL
+diff --git a/drivers/i2c/muxes/Makefile b/drivers/i2c/muxes/Makefile
+index 6d9d865..a229a1a 100644
+--- a/drivers/i2c/muxes/Makefile
++++ b/drivers/i2c/muxes/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_I2C_MUX_LTC4306)	+= i2c-mux-ltc4306.o
+ obj-$(CONFIG_I2C_MUX_MLXCPLD)	+= i2c-mux-mlxcpld.o
+ obj-$(CONFIG_I2C_MUX_PCA9541)	+= i2c-mux-pca9541.o
+ obj-$(CONFIG_I2C_MUX_PCA954x)	+= i2c-mux-pca954x.o
++obj-$(CONFIG_I2C_MUX_PCA9641)	+= i2c-mux-pca9641.o
+ obj-$(CONFIG_I2C_MUX_PINCTRL)	+= i2c-mux-pinctrl.o
+ obj-$(CONFIG_I2C_MUX_REG)	+= i2c-mux-reg.o
+ 
+diff --git a/drivers/i2c/muxes/i2c-mux-pca9641.c b/drivers/i2c/muxes/i2c-mux-pca9641.c
+new file mode 100644
+index 0000000..bcf45c8
+--- /dev/null
++++ b/drivers/i2c/muxes/i2c-mux-pca9641.c
+@@ -0,0 +1,360 @@
++/*
++ * I2C demultiplexer driver for PCA9641 bus master demultiplexer
++ *
++ * Copyright (c) 2010 Ericsson AB.
++ *
++ * Author: Ken Chen <chen.kenyy@inventec.com>
++ *
++ * Derived from:
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/module.h>
++#include <linux/jiffies.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/device.h>
++#include <linux/i2c.h>
++#include <linux/i2c-mux.h>
++
++#include <linux/i2c/pca954x.h>
++
++/*
++ * The PCA9641 is two I2C bus masters demultiplexer. It supports two I2C masters
++ * connected to a single slave bus.
++ *
++ * It is designed for high reliability dual master I2C bus applications where
++ * correct system operation is required, even when two I2C master issue their
++ * commands at the same time. The arbiter will select a winner and let it work
++ * uninterrupted, and the losing master will take control of the I2C bus after
++ * the winnter has finished. The arbiter also allows for queued requests where
++ * a master requests the downstream bus while the other master has control.
++ *
++ */
++
++#define PCA9641_ID		0x01
++#define PCA9641_ID_MAGIC	0x38
++
++#define PCA9641_CONTROL		0x01
++#define PCA9641_STATUS		0x02
++#define PCA9641_TIME		0x03
++
++#define PCA9641_CTL_LOCK_REQ		BIT(0)
++#define PCA9641_CTL_LOCK_GRANT		BIT(1)
++#define PCA9641_CTL_BUS_CONNECT		BIT(2)
++#define PCA9641_CTL_BUS_INIT		BIT(3)
++#define PCA9641_CTL_SMBUS_SWRST		BIT(4)
++#define PCA9641_CTL_IDLE_TIMER_DIS	BIT(5)
++#define PCA9641_CTL_SMBUS_DIS		BIT(6)
++#define PCA9641_CTL_PRIORITY		BIT(7)
++
++#define PCA9641_STS_OTHER_LOCK		BIT(0)
++#define PCA9641_STS_BUS_INIT_FAIL	BIT(1)
++#define PCA9641_STS_BUS_HUNG		BIT(2)
++#define PCA9641_STS_MBOX_EMPTY		BIT(3)
++#define PCA9641_STS_MBOX_FULL		BIT(4)
++#define PCA9641_STS_TEST_INT		BIT(5)
++#define PCA9641_STS_SCL_IO		BIT(6)
++#define PCA9641_STS_SDA_IO		BIT(7)
++
++#define PCA9641_RES_TIME	0x03
++
++#define busoff(x, y)	(!((x) & PCA9641_CTL_LOCK_GRANT) && \
++			!((y) & PCA9641_STS_OTHER_LOCK))
++#define other_lock(x)	((x) & PCA9641_STS_OTHER_LOCK)
++#define lock_grant(x)	((x) & PCA9641_CTL_LOCK_GRANT)
++
++/* arbitration timeouts, in jiffies */
++#define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
++#define ARB2_TIMEOUT	(HZ / 4)	/* 250 ms until acquisition failure */
++
++/* arbitration retry delays, in us */
++#define SELECT_DELAY_SHORT	50
++#define SELECT_DELAY_LONG	1000
++
++struct pca9641 {
++	struct i2c_client *client;
++	unsigned long select_timeout;
++	unsigned long arb_timeout;
++};
++
++static const struct i2c_device_id pca9641_id[] = {
++	{"pca9641", 0},
++	{}
++};
++
++MODULE_DEVICE_TABLE(i2c, pca9641_id);
++
++#ifdef CONFIG_OF
++static const struct of_device_id pca9641_of_match[] = {
++	{ .compatible = "nxp,pca9641" },
++	{}
++};
++#endif
++
++/*
++ * Write to chip register. Don't use i2c_transfer()/i2c_smbus_xfer()
++ * as they will try to lock the adapter a second time.
++ */
++static int pca9641_reg_write(struct i2c_client *client, u8 command, u8 val)
++{
++	struct i2c_adapter *adap = client->adapter;
++	int ret;
++
++	if (adap->algo->master_xfer) {
++		struct i2c_msg msg;
++		char buf[2];
++
++		msg.addr = client->addr;
++		msg.flags = 0;
++		msg.len = 2;
++		buf[0] = command;
++		buf[1] = val;
++		msg.buf = buf;
++		ret = __i2c_transfer(adap, &msg, 1);
++	} else {
++		union i2c_smbus_data data;
++
++		data.byte = val;
++		ret = adap->algo->smbus_xfer(adap, client->addr,
++					     client->flags,
++					     I2C_SMBUS_WRITE,
++					     command,
++					     I2C_SMBUS_BYTE_DATA, &data);
++	}
++
++	return ret;
++}
++
++/*
++ * Read from chip register. Don't use i2c_transfer()/i2c_smbus_xfer()
++ * as they will try to lock adapter a second time.
++ */
++static int pca9641_reg_read(struct i2c_client *client, u8 command)
++{
++	struct i2c_adapter *adap = client->adapter;
++	int ret;
++	u8 val;
++
++	if (adap->algo->master_xfer) {
++		struct i2c_msg msg[2] = {
++			{
++				.addr = client->addr,
++				.flags = 0,
++				.len = 1,
++				.buf = &command
++			},
++			{
++				.addr = client->addr,
++				.flags = I2C_M_RD,
++				.len = 1,
++				.buf = &val
++			}
++		};
++		ret = __i2c_transfer(adap, msg, 2);
++		if (ret == 2)
++			ret = val;
++		else if (ret >= 0)
++			ret = -EIO;
++	} else {
++		union i2c_smbus_data data;
++
++		ret = adap->algo->smbus_xfer(adap, client->addr,
++					     client->flags,
++					     I2C_SMBUS_READ,
++					     command,
++					     I2C_SMBUS_BYTE_DATA, &data);
++		if (!ret)
++			ret = data.byte;
++	}
++	return ret;
++}
++
++/*
++ * Arbitration management functions
++ */
++static void pca9641_release_bus(struct i2c_client *client)
++{
++	pca9641_reg_write(client, PCA9641_CONTROL, 0);
++}
++
++/*
++ * Channel arbitration
++ *
++ * Return values:
++ *  <0: error
++ *  0 : bus not acquired
++ *  1 : bus acquired
++ */
++static int pca9641_arbitrate(struct i2c_client *client)
++{
++	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
++	struct pca9641 *data = i2c_mux_priv(muxc);
++	int reg_ctl, reg_sts;
++
++	reg_ctl = pca9641_reg_read(client, PCA9641_CONTROL);
++	if (reg_ctl < 0)
++		return reg_ctl;
++	reg_sts = pca9641_reg_read(client, PCA9641_STATUS);
++
++	if (busoff(reg_ctl, reg_sts)) {
++		/*
++		 * Bus is off. Request ownership or turn it on unless
++		 * other master requested ownership.
++		 */
++		reg_ctl |= PCA9641_CTL_LOCK_REQ;
++		pca9641_reg_write(client, PCA9641_CONTROL, reg_ctl);
++		reg_ctl = pca9641_reg_read(client, PCA9641_CONTROL);
++
++		if (lock_grant(reg_ctl)) {
++			/*
++			 * Other master did not request ownership,
++			 * or arbitration timeout expired. Take the bus.
++			 */
++			reg_ctl |= PCA9641_CTL_BUS_CONNECT \
++					| PCA9641_CTL_LOCK_REQ;
++			pca9641_reg_write(client, PCA9641_CONTROL, reg_ctl);
++			data->select_timeout = SELECT_DELAY_SHORT;
++
++			return 1;
++		} else {
++			/*
++			 * Other master requested ownership.
++			 * Set extra long timeout to give it time to acquire it.
++			 */
++			data->select_timeout = SELECT_DELAY_LONG * 2;
++		}
++	} else if (lock_grant(reg_ctl)) {
++		/*
++		 * Bus is on, and we own it. We are done with acquisition.
++		 */
++		reg_ctl |= PCA9641_CTL_BUS_CONNECT | PCA9641_CTL_LOCK_REQ;
++		pca9641_reg_write(client, PCA9641_CONTROL, reg_ctl);
++
++		return 1;
++	} else if (other_lock(reg_sts)) {
++		/*
++		 * Other master owns the bus.
++		 * If arbitration timeout has expired, force ownership.
++		 * Otherwise request it.
++		 */
++		data->select_timeout = SELECT_DELAY_LONG;
++		reg_ctl |= PCA9641_CTL_LOCK_REQ;
++		pca9641_reg_write(client, PCA9641_CONTROL, reg_ctl);
++	}
++	return 0;
++}
++
++static int pca9641_select_chan(struct i2c_mux_core *muxc, u32 chan)
++{
++	struct pca9641 *data = i2c_mux_priv(muxc);
++	struct i2c_client *client = data->client;
++	int ret;
++	unsigned long timeout = jiffies + ARB2_TIMEOUT;
++		/* give up after this time */
++
++	data->arb_timeout = jiffies + ARB_TIMEOUT;
++		/* force bus ownership after this time */
++
++	do {
++		ret = pca9641_arbitrate(client);
++		if (ret)
++			return ret < 0 ? ret : 0;
++
++		if (data->select_timeout == SELECT_DELAY_SHORT)
++			udelay(data->select_timeout);
++		else
++			msleep(data->select_timeout / 1000);
++	} while (time_is_after_eq_jiffies(timeout));
++
++	return -ETIMEDOUT;
++}
++
++static int pca9641_release_chan(struct i2c_mux_core *muxc, u32 chan)
++{
++	struct pca9641 *data = i2c_mux_priv(muxc);
++	struct i2c_client *client = data->client;
++
++	pca9641_release_bus(client);
++	return 0;
++}
++
++/*
++ * I2C init/probing/exit functions
++ */
++static int pca9641_probe(struct i2c_client *client,
++			 const struct i2c_device_id *id)
++{
++	struct i2c_adapter *adap = client->adapter;
++	struct pca954x_platform_data *pdata = dev_get_platdata(&client->dev);
++	struct i2c_mux_core *muxc;
++	struct pca9641 *data;
++	int force;
++	int ret;
++
++	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE_DATA))
++		return -ENODEV;
++
++	/*
++	 * I2C accesses are unprotected here.
++	 * We have to lock the adapter before releasing the bus.
++	 */
++	i2c_lock_adapter(adap);
++	pca9641_release_bus(client);
++	i2c_unlock_adapter(adap);
++
++	/* Create mux adapter */
++
++	force = 0;
++	if (pdata)
++		force = pdata->modes[0].adap_id;
++	muxc = i2c_mux_alloc(adap, &client->dev, 8, sizeof(*data),
++			     I2C_MUX_ARBITRATOR,
++			     pca9641_select_chan, pca9641_release_chan);
++	if (!muxc)
++		return -ENOMEM;
++
++	data = i2c_mux_priv(muxc);
++	data->client = client;
++
++	i2c_set_clientdata(client, muxc);
++
++
++	ret = i2c_mux_add_adapter(muxc, force, 0, 0);
++	if (ret) {
++		dev_err(&client->dev, "failed to register master demultiplexer\n");
++		return ret;
++	}
++
++	dev_info(&client->dev, "registered master demultiplexer for I2C %s\n",
++		 client->name);
++
++	return 0;
++}
++
++static int pca9641_remove(struct i2c_client *client)
++{
++	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
++
++	i2c_mux_del_adapters(muxc);
++	return 0;
++}
++
++static struct i2c_driver pca9641_driver = {
++	.driver = {
++		   .name = "pca9641",
++		   .of_match_table = of_match_ptr(pca9641_of_match),
++		   },
++	.probe = pca9641_probe,
++	.remove = pca9641_remove,
++	.id_table = pca9641_id,
++};
++
++module_i2c_driver(pca9641_driver);
++
++MODULE_AUTHOR("Ken Chen <chen.kenyy@inventec.com>");
++MODULE_DESCRIPTION("PCA9641 I2C master demultiplexer driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.9.3
