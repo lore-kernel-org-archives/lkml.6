@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484516-2-16764432993535755983
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484511-2-16514934799628042558
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,56 +13,58 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484515; b=cEdubC0luFQz8vAjSv9BOmCDtOqJld6RZ58mrrQhrU5oqXd
-    GEthxNVE2M9xjYKF3puoIo1kpxCOAEM6BWRcGMxadn//N6K7KEswq05i6mlnennm
-    8uEERupd9sFZvy18f22ZsHYs9KYqow2rx4y8mAY56ENL2Nvopa7RIM2XwxmZdz4E
-    UIa13PV5OTzebOQLglL1J3IF+QRfJs//81o/g2tJh+WorfTuukhC29XyJOxXHPFa
-    cp8vV9C+cUFT1Z1wivFxtqUK32n19DRwKXaI/2+8G1EQZvo0rpukZfhdhsKJ8OQJ
-    oHW/dmb1HVqAPD7kFD9WmxMnc+vZUq3/W6Sst8w==
+    t=1521484511; b=X9D0pSPtlcvSnoOvTGW9+MrFStwr3BC0ftW1Na0QvN1DVTy
+    NBxRe4MfEk4gWfB1ehGRLLw2eK1/vUvEXGXZG3zYD0y2g1bGIDzzNEYPHNSLZtjd
+    /SZQ9+SgAC20VIxWadAV8/ua4dWfqltRrkw1v8mTEmXzztLYM48KKIJhsvSBvZpc
+    XsbTxS3BBOyfyYulNOiSLrT1q/l5ncvJEMKK9xuZL8PkcxYOodcD7IC6F3noTrNf
+    B4F8VJFutaXhBRUxAzjk45HSToPkuZv4cw/1CzqbjHW8us3mSLZW6owEyfW/eJ+l
+    3NgZAuniSM7QmTst85EXGiI287FAv6Zj836ZfrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484515; bh=+bP0nq2IT6b6GU/XjLtMEXfcy8
-    Dh7CaTFQhEOwHT+P8=; b=hj+be0p9X5pzd0RhwbW+PAxHf/WM1cJ/lexZG84afx
-    B5uB7wOQLH1Ag0zeVxu0xnIe/4/iTXjIb7SUGIchapaZNWN55Hb+U2KBhymMfUy4
-    ofiQBDPUD9xY3WWrCKtDsLd5nZZ19JlYL+Dst+SDQ54CzGUCyBb2uuTcwxjUsZ/m
-    ONPv2cbyLD5r6u1TGBAE+5wdPdWjm1nHBjMTopxsnZ5bNMtm0uNoGWi0+/ylgTBt
-    JKNvJJqVNCkKiUBUW/CSqjOBGgVOco+b7+ga8GfqrSlnp4tlHZzlHehkzLmp/7Ei
-    U7gAi0z9MOi5WdM67FFPjJ41aOha35E7HNchxygDme2w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484511; bh=8si3MwNYefvv6HAh/VXXhjibX7
+    E/kTKry1rBNlUMJms=; b=Mh04vatp9lKdQ4x0wpXhaOlbKM5SZa72O0FVTtoiZx
+    nf8D3OTkdAy3q64n2mdVXWcw97+LwvNIVbXEcQBl2eTn/j+pwn3lnHiCEx4NSib+
+    MXE5lnlmakiXzvqZ8bYJDqN0ofKEXcQmb64HE6KNgzO1ZtIi7UNSi36bg7qGWm7O
+    fdhuMtVRx0ZsZ52H9B8guhUjNNlFw0xZGOpyZbOEevVObnl8OhNIDufR7Zgih6D/
+    hPYbAmC+TXvoMoCldG3c8Ows+NQ+/nZGXw/RzNz97qVz8+hQBHOYonFTsUbKW8fo
+    iYKNZo3OpSJ32V74xanpj3jRo/ANahCPgSD3RNCkhZ6g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudeifeenucevlhhushhtvghrufhiiigvpeekvd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefledtieenucevlhhushhtvghrufhiiigvpeek;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudegucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudeifeenucevlhhushhtvghrufhiiigvpeekvd;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudehucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefledtieenucevlhhushhtvghrufhiiigvpeek;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032183AbeCSSdP (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:33:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54190 "EHLO
+        id S1032068AbeCSSez (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:34:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032180AbeCSSdN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:13 -0400
+        with ESMTP id S1032187AbeCSSdQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:33:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.15 29/52] irqchip/gic-v3-its: Ensure nr_ites >= nr_lpis
-Date: Mon, 19 Mar 2018 19:08:27 +0100
-Message-Id: <20180319180736.693337312@linuxfoundation.org>
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Israel Rukshin <israelr@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.15 30/52] nvme: fix subsystem multiple controllers support check
+Date: Mon, 19 Mar 2018 19:08:28 +0100
+Message-Id: <20180319180736.736965575@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -80,64 +82,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Israel Rukshin <israelr@mellanox.com>
 
-commit 4f2c7583e33eb08dc09dd2e25574b80175ba7d93 upstream.
+commit b837b28394fb76993c28bb242db7061ee0417da6 upstream.
 
-When struct its_device instances are created, the nr_ites member
-will be set to a power of 2 that equals or exceeds the requested
-number of MSIs passed to the msi_prepare() callback. At the same
-time, the LPI map is allocated to be some multiple of 32 in size,
-where the allocated size may be less than the requested size
-depending on whether a contiguous range of sufficient size is
-available in the global LPI bitmap.
+There is a problem when another module (e.g. nvmet) takes a reference on
+the nvme block device and the physical nvme drive is removed.  In that
+case nvme_free_ctrl() will not be called and the controller state will be
+"deleting" or "dead" unless nvmet module releases the block device.
+Later on, the same nvme drive probes back and nvme_init_subsystem() will
+be called and fail due to duplicate subnqn (if the nvme device doesn't
+support subsystem with multiple controllers). This will cause a probe
+failure.  This commit changes the check of multiple controllers support
+at nvme_init_subsystem() by not counting all the controllers at "dead" or
+"deleting" state (this is safe because controllers at this state will
+never be active again).
 
-This may result in the situation where the nr_ites < nr_lpis, and
-since nr_ites is what we program into the hardware when we map the
-device, the additional LPIs will be non-functional.
-
-For bog standard hardware, this does not really matter. However,
-in cases where ITS device IDs are shared between different PCIe
-devices, we may end up allocating these additional LPIs without
-taking into account that they don't actually work.
-
-So let's make nr_ites at least 32. This ensures that all allocated
-LPIs are 'live', and that its_alloc_device_irq() will fail when
-attempts are made to allocate MSIs beyond what was allocated in
-the first place.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[maz: updated comment]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: ab9e00cc72fa ("nvme: track subsystems")
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Israel Rukshin <israelr@mellanox.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/nvme/host/core.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1412,7 +1412,7 @@ static struct irq_chip its_irq_chip = {
-  * This gives us (((1UL << id_bits) - 8192) >> 5) possible allocations.
-  */
- #define IRQS_PER_CHUNK_SHIFT	5
--#define IRQS_PER_CHUNK		(1 << IRQS_PER_CHUNK_SHIFT)
-+#define IRQS_PER_CHUNK		(1UL << IRQS_PER_CHUNK_SHIFT)
- #define ITS_MAX_LPI_NRBITS	16 /* 64K LPIs */
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2052,6 +2052,22 @@ static const struct attribute_group *nvm
+ 	NULL,
+ };
  
- static unsigned long *lpi_bitmap;
-@@ -2119,11 +2119,10 @@ static struct its_device *its_create_dev
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	/*
--	 * At least one bit of EventID is being used, hence a minimum
--	 * of two entries. No, the architecture doesn't let you
--	 * express an ITT with a single entry.
-+	 * We allocate at least one chunk worth of LPIs bet device,
-+	 * and thus that many ITEs. The device may require less though.
- 	 */
--	nr_ites = max(2UL, roundup_pow_of_two(nvecs));
-+	nr_ites = max(IRQS_PER_CHUNK, roundup_pow_of_two(nvecs));
- 	sz = nr_ites * its->ite_size;
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
- 	itt = kzalloc(sz, GFP_KERNEL);
++static int nvme_active_ctrls(struct nvme_subsystem *subsys)
++{
++	int count = 0;
++	struct nvme_ctrl *ctrl;
++
++	mutex_lock(&subsys->lock);
++	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
++		if (ctrl->state != NVME_CTRL_DELETING &&
++		    ctrl->state != NVME_CTRL_DEAD)
++			count++;
++	}
++	mutex_unlock(&subsys->lock);
++
++	return count;
++}
++
+ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ {
+ 	struct nvme_subsystem *subsys, *found;
+@@ -2090,7 +2106,7 @@ static int nvme_init_subsystem(struct nv
+ 		 * Verify that the subsystem actually supports multiple
+ 		 * controllers, else bail out.
+ 		 */
+-		if (!(id->cmic & (1 << 1))) {
++		if (nvme_active_ctrls(found) && !(id->cmic & (1 << 1))) {
+ 			dev_err(ctrl->device,
+ 				"ignoring ctrl due to duplicate subnqn (%s).\n",
+ 				found->subnqn);
