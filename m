@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtYi+P6OlExvFPw902MFZnlzpb4dxJj472CT187uX5iG1sZ+RyXmiUkbwlGqcw8WVlVrH9l
-ARC-Seal: i=1; a=rsa-sha256; t=1521483968; cv=none;
+X-Google-Smtp-Source: AG47ELvAnv/l67zqALPDfNNK9mSMkFXrHyq9Pszz3DfOKlJ83YboUMHae7k4knH8Y28CLROFH3gv
+ARC-Seal: i=1; a=rsa-sha256; t=1521483966; cv=none;
         d=google.com; s=arc-20160816;
-        b=HgEy0PQ0W4OL2khw6PjN89biPSIfE/Q0ejjMi6BWLcM16Gm8INUE8jKpgotlqOGlH6
-         Oe4n4go3HcbajscBGKtMwxU0TiBCF8wWg4HVh0YaD9YKm3LR97EoG7HLb72OU8d70spW
-         6dZXcOku70U6CZimbcwIZ3LylKhKrlBR38NkH3ZJycn9udh0KPeHGL0ZPmpvo5cbUSV1
-         bs6+HdJKew/fKY5BrRqznooDQpcpQDxL4UX5phrOIis8E/Ijvm96eje72qL/UDQyt75k
-         KMhpgEDgSnFqXr39cUpuC5Xr/AlFmByKRmfP0tHLxsbvvOKgQykkaq99e0XX5tzxLWgZ
-         mN/g==
+        b=G07Vh+Rg3V00vRIkxhEEzxJOSpjO/rbH88myHqXP8X6HY0i7k1KZ2umVr0zFtzxK31
+         Jvhm3GcCV9pMr0YFYbhb4cNSFlicF0y9lXEE/O2KLmbI6ciKj1CiYSzXtgkfcdLMsZ2s
+         fS59xTjB1dOK4TzcRq3Jg5PF4ThcJXlrDPrFxOs5xPSv5sgVOpelv7G1QZXinXrUaxRR
+         aVNf1B/ghUlxiyDqZ0RmKthPS8+p6DJH02f/Rpve+i+quZNO65V6gWWQDUVYF4D515NS
+         VLXhNNw5ttqE6OqiP4yz0cUQ4m7+QTOZAMOvQQ1FOP+qry91xsweGsr0kAiN8WfnVX1m
+         ttsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dKSmY1Aw/p00WDgoNADstyWvt9/aJ1qe7cg14dtos7A=;
-        b=fB8BCY3ehhXG94jiMaeHBWMJ0TiMsFv6ZkOZgtLwieAc7XpCwDqrTy6F51IPwe0s8C
-         clcTDs70SjoESHlhFnabgqLuQlH9Yi+K05uI8DIbB2RcGUfjdkNg6kfXjJEdSeDxyGXz
-         bn4xmVPryGKp11DiHw0ddOI2K5kEqTSWD2OyGs+PDl6+N3faxxJawCaziCldnnGnF0ya
-         NaFyPz2HEDo4fL3kUbZ3Wh6ZxPl8h0xLbGkADb2ZR+GsT8jpxoHfG1d3czjJhvPSX+UB
-         0Saa88VnH55TYTqTqYApEC8iz2yFXqvcHd8ZBx3LjnF/XD1dFRK/ZhcrNLTk9kdzcGVB
-         yzcw==
+        bh=D4Z2YFpxYtjjbl9u94v+o1XwmsqNloPr77NKCcVoFE0=;
+        b=nXzOFmCA+iu5pxqmkft3LAndL5LNBLg/ToEMxyq4T8E2QstEcfY0Zxu9zxxokPgBBc
+         IXKfRNbACnNlp7a6A0WG1KlZV3glOw1ge6yDFGaojYkh8YCs5xff0AdfPXuo5MF9ybsQ
+         hFCfDw6zQTpJlH5S8STsyDz9ur/fJlpJpWSb03eBgzBv2dJlQyxGPymIICc85Hq399ls
+         8uyRO+gQe9qS0x1V10XciRz+7oXnZ3Z5DtqiC83Y4tEfKepYVsAKe3QriHfIw4XwwJKP
+         lSXsk8pQfd6rvYuLyI4RxFNifm3GIolDudrVVJVOE/5iTyE5d4JoMOTBn1KCWkzzCqZ4
+         9Vbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
+	Alexey Kardashevskiy <aik@ozlabs.ru>,
+	Alex Williamson <alex.williamson@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 138/241] powerpc/nohash: Fix use of mmu_has_feature() in setup_initial_memory_limit()
-Date: Mon, 19 Mar 2018 19:06:43 +0100
-Message-Id: <20180319180756.902541981@linuxfoundation.org>
+Subject: [PATCH 4.9 147/241] vfio/powerpc/spapr_tce: Enforce IOMMU type compatibility check
+Date: Mon, 19 Mar 2018 19:06:52 +0100
+Message-Id: <20180319180757.272609289@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391574206462454?=
-X-GMAIL-MSGID: =?utf-8?q?1595391574206462454?=
+X-GMAIL-THRID: =?utf-8?q?1595391571138548957?=
+X-GMAIL-MSGID: =?utf-8?q?1595391571138548957?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
 
-[ Upstream commit 4868e3508d1934d28961f940ed6b9f1e347ab52c ]
+[ Upstream commit 1282ba7fc28dbc66c3f0e4aaafaaa228361d1ae5 ]
 
-setup_initial_memory_limit() is called from early_init_devtree(), which
-runs prior to feature patching. If the kernel is built with CONFIG_JUMP_LABEL=y
-and CONFIG_JUMP_LABEL_FEATURE_CHECKS=y then we will potentially get the
-wrong value.
+The existing SPAPR TCE driver advertises both VFIO_SPAPR_TCE_IOMMU and
+VFIO_SPAPR_TCE_v2_IOMMU types to the userspace and the userspace usually
+picks the v2.
 
-If we also have CONFIG_JUMP_LABEL_FEATURE_CHECK_DEBUG=y we get a warning
-and backtrace:
+Normally the userspace would create a container, attach an IOMMU group
+to it and only then set the IOMMU type (which would normally be v2).
 
-  Warning! mmu_has_feature() used prior to jump label init!
-  CPU: 0 PID: 0 Comm: swapper Not tainted 4.11.0-rc4-gccN-next-20170331-g6af2434 #1
-  Call Trace:
-  [c000000000fc3d50] [c000000000a26c30] .dump_stack+0xa8/0xe8 (unreliable)
-  [c000000000fc3de0] [c00000000002e6b8] .setup_initial_memory_limit+0xa4/0x104
-  [c000000000fc3e60] [c000000000d5c23c] .early_init_devtree+0xd0/0x2f8
-  [c000000000fc3f00] [c000000000d5d3b0] .early_setup+0x90/0x11c
-  [c000000000fc3f90] [c000000000000520] start_here_multiplatform+0x68/0x80
+However a specific IOMMU group may not support v2, in other words
+it may not implement set_window/unset_window/take_ownership/
+release_ownership and such a group should not be attached to
+a v2 container.
 
-Fix it by using early_mmu_has_feature().
+This adds extra checks that a new group can do what the selected IOMMU
+type suggests. The userspace can then test the return value from
+ioctl(VFIO_SET_IOMMU, VFIO_SPAPR_TCE_v2_IOMMU) and try
+VFIO_SPAPR_TCE_IOMMU.
 
-Fixes: c12e6f24d413 ("powerpc: Add option to use jump label for mmu_has_feature()")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/tlb_nohash.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vfio/vfio_iommu_spapr_tce.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -751,7 +751,7 @@ void setup_initial_memory_limit(phys_add
- 	 * avoid going over total available memory just in case...
- 	 */
- #ifdef CONFIG_PPC_FSL_BOOK3E
--	if (mmu_has_feature(MMU_FTR_TYPE_FSL_E)) {
-+	if (early_mmu_has_feature(MMU_FTR_TYPE_FSL_E)) {
- 		unsigned long linear_sz;
- 		unsigned int num_cams;
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -1332,8 +1332,16 @@ static int tce_iommu_attach_group(void *
  
+ 	if (!table_group->ops || !table_group->ops->take_ownership ||
+ 			!table_group->ops->release_ownership) {
++		if (container->v2) {
++			ret = -EPERM;
++			goto unlock_exit;
++		}
+ 		ret = tce_iommu_take_ownership(container, table_group);
+ 	} else {
++		if (!container->v2) {
++			ret = -EPERM;
++			goto unlock_exit;
++		}
+ 		ret = tce_iommu_take_ownership_ddw(container, table_group);
+ 		if (!tce_groups_attached(container) && !container->tables[0])
+ 			container->def_window_pending = true;
