@@ -1,54 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932891AbeCSOmO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:42:14 -0400
-Received: from mail-yw0-f181.google.com ([209.85.161.181]:45868 "EHLO
-        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755194AbeCSOmJ (ORCPT
+        id S933661AbeCSOnS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:43:18 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60410 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755243AbeCSOnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:42:09 -0400
-X-Google-Smtp-Source: AG47ELvKw/4cgOhtvQe0zkeRupiftjqii8HlhuY4YlIFB1rfC0PC4+3+rDC2Jl8y9KTh85IYNPzSJQ==
-Date: Mon, 19 Mar 2018 07:42:06 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, linux-ide@vger.kernel.org,
-        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ata: add Amiga Gayle PATA controller driver
-Message-ID: <20180319144206.GI2943022@devbig577.frc2.facebook.com>
-References: <CGME20180316161549epcas1p23166605ea9922198486e0c07bd184ed8@epcas1p2.samsung.com>
- <24149929.AaKeg4hYhL@amdc3058>
+        Mon, 19 Mar 2018 10:43:15 -0400
+Date: Mon, 19 Mar 2018 15:43:10 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, davem@davemloft.net,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        ganeshgr@chelsio.com, nirranjan@chelsio.com, indranil@chelsio.com
+Subject: Re: [RFC PATCH 2/3] x86/io: implement 256-bit IO read and write
+In-Reply-To: <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
+Message-ID: <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com> <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24149929.AaKeg4hYhL@amdc3058>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 05:15:47PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Add Amiga Gayle PATA controller driver. It enables libata support
-> for the on-board IDE interfaces on some Amiga models (A600, A1200,
-> A4000 and A4000T) and also for IDE interfaces on the Zorro expansion
-> bus (M-Tech E-Matrix 530 expansion card).
-> 
-> Thanks to John Paul Adrian Glaubitz and Michael Schmitz for help
-> with testing the driver.
-> 
-> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Cc: Michael Schmitz <schmitzmic@gmail.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On Mon, 19 Mar 2018, Rahul Lakkireddy wrote:
 
-Applied to libata/for-4.17.
+> Use VMOVDQU AVX CPU instruction when available to do 256-bit
+> IO read and write.
 
-Thanks, Bart.
+That's not what the patch does. See below.
 
--- 
-tejun
+> Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+> Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+
+That Signed-off-by chain is wrong....
+
+> +#ifdef CONFIG_AS_AVX
+> +#include <asm/fpu/api.h>
+> +
+> +static inline u256 __readqq(const volatile void __iomem *addr)
+> +{
+> +	u256 ret;
+> +
+> +	kernel_fpu_begin();
+> +	asm volatile("vmovdqu %0, %%ymm0" :
+> +		     : "m" (*(volatile u256 __force *)addr));
+> +	asm volatile("vmovdqu %%ymm0, %0" : "=m" (ret));
+> +	kernel_fpu_end();
+> +	return ret;
+
+You _cannot_ assume that the instruction is available just because
+CONFIG_AS_AVX is set. The availability is determined by the runtime
+evaluated CPU feature flags, i.e. X86_FEATURE_AVX.
+
+Aside of that I very much doubt that this is faster than 4 consecutive
+64bit reads/writes as you have the full overhead of
+kernel_fpu_begin()/end() for each access.
+
+You did not provide any numbers for this so its even harder to
+determine.
+
+As far as I can tell the code where you are using this is a debug
+facility. What's the point? Debug is hardly a performance critical problem.
+
+Thanks,
+
+	tglx
