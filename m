@@ -1,65 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933333AbeCSNkH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 09:40:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59630 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932528AbeCSNkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 09:40:05 -0400
-Date: Mon, 19 Mar 2018 11:59:11 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, linux@armlinux.org.uk,
-        wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, quentin.schulz@bootlin.com,
-        linux-kernel@vger.kernel.org, clabbe.montjoie@gmail.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-Message-ID: <20180319105911.o63otbbhld54br4r@flea>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
- <20180223133742.26044-11-mylene.josserand@bootlin.com>
- <6329fbb6-13a1-41fe-f6cf-f2f0d4b2e5f9@arm.com>
- <20180318200715.363f3135@dell-desktop.home>
+        id S933422AbeCSNlZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 09:41:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59701 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932793AbeCSNlX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 09:41:23 -0400
+From: Colin King <colin.king@canonical.com>
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915/gvt: fix spelling mistake: "registeration" -> "registration"
+Date: Mon, 19 Mar 2018 13:41:16 +0000
+Message-Id: <20180319134116.4478-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180318200715.363f3135@dell-desktop.home>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 08:07:15PM +0100, Mylène Josserand wrote:
-> Hello Mark,
-> 
-> Please, excuse me for this late answer and thank you for the review!
-> 
-> On Wed, 7 Mar 2018 12:18:33 +0000
-> Marc Zyngier <marc.zyngier@arm.com> wrote:
-> 
-> > On 23/02/18 13:37, Mylène Josserand wrote:
-> > > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.  
-> > 
-> > Only on A7? Is that specific to your platform?
-> 
-> I do not really know other Allwinner's platforms about this subject. At
-> least, the sun9i-a80 which is a Cortex-a15/a7 does not need that but it
-> is necessary for sun8i-a83t which is a cortex-a7. Maybe, Chen-Yu or
-> Maxime could help us on it.
+From: Colin Ian King <colin.king@canonical.com>
 
-This is not related to the CPU.
+Trivial fix to spelling mistake in gvt_err error message text
 
-On all the other SoCs but the A80 and the A83t, U-Boot will boot the
-system in HYP, and while switching to non-secure will setup CNTVOFF on
-the boot CPU.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/gvt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On the A80 and A83t, U-Boot will execute the kernel in secure, it will
-not switch to non-secure, and CNTVOFF will not be set on the boot CPU.
-
-Maxime
-
+diff --git a/drivers/gpu/drm/i915/gvt/gvt.c b/drivers/gpu/drm/i915/gvt/gvt.c
+index 61bd14fcb649..8c3422578cc4 100644
+--- a/drivers/gpu/drm/i915/gvt/gvt.c
++++ b/drivers/gpu/drm/i915/gvt/gvt.c
+@@ -444,7 +444,7 @@ int intel_gvt_init_device(struct drm_i915_private *dev_priv)
+ 
+ 	ret = intel_gvt_debugfs_init(gvt);
+ 	if (ret)
+-		gvt_err("debugfs registeration failed, go on.\n");
++		gvt_err("debugfs registration failed, go on.\n");
+ 
+ 	gvt_dbg_core("gvt device initialization is done\n");
+ 	dev_priv->gvt = gvt;
 -- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.15.1
