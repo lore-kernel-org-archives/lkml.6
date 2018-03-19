@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvG5Aa08nPKAiLjK7C+y+NJQZ4M34Z8TK6u6OmKkjsyRvZxqgcS8mP49mCb2rBZOEGIc7br
-ARC-Seal: i=1; a=rsa-sha256; t=1521483002; cv=none;
+X-Google-Smtp-Source: AG47ELuiUvJYAKS512RDhjVOfGYcbssQVtDGhVOuuK/AQxNHONfWgBLOw0T2Lb2ga8W5M0iphMda
+ARC-Seal: i=1; a=rsa-sha256; t=1521482999; cv=none;
         d=google.com; s=arc-20160816;
-        b=g4J45r/KQ0ZqfFa59Ctf2s9NDxSWy48f0OXLLolahp8FsFn7EgZnWYFyT/IkpaMma0
-         bqaoSCQTB6p3LysgB7SgKbpaSVHxefO3fINYDnZb1ei4RtP9ZRpSZAiNpDP2/FKS0G2l
-         MZAumf+MRFBH3uetJNOU52rMkQACOBmolcGbTkgiz7kpLmWNXqjaEKW1VIUT5Mmb7lOd
-         S2MTuLtC3plRtounI4B74W5E5FWziwmmyn0PtxgqzYOxtlQP0+BzNqTLtO3A4kHEojF2
-         Lg0Oup7016Vmz2Ww2UhjyKvOWvvM7jmO4PrjI8y4UuGEK7tOZC++GcjaR04b9ydY7d3s
-         O/Ug==
+        b=iMTFN1GzVy8kSqdnvINO4hDSLgGe8OO/BZ+rMhsvAovBI4EGW/0skRcVp/iiUlr3Uo
+         5XLuhmHmHdrY8xnmo7l5ETgX9if1TLZVREeDkOGyab8tKNZers9O1WJp8TifoJ83iRPF
+         lx68NzAvj9vxjlCK0woEmVpdCNORRdX2zkkw0kQyj3+eksKjeTuKB38I45Mcyo46/eDR
+         LgBe6RfxLRawWSe/prc5G84iWJgnayzUs89gb/AK3CBGJNRg8sOjJ5f7Axn0Lg5auF7k
+         EEUqBsrgXG8CYl9Ttl0z6E1ZK0fnjBxEVSpuFV+3RZJSJbF/iDIyg0mXKfRM2W3H+idU
+         jSRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=m4Ibh4to2x+pzzw14SBFHw80SIs/vg4ZXKR1hMN6vzk=;
-        b=hhXydlJfEYLAjklPW/XjQkaLlFWs2OnEM8sXy/VfG6uWk9lPQc173uCv26M/6ZvX6w
-         57bB8GxnyLmDeLts3dvEuk7Vfy0oQ+EQGXmej85XDKRAn4qoa9tnPXoTKx3GaLNmAcRY
-         WEiCC+mxV7DKsenNra7KvHx0zJZGCTQo7f41RFX2w7SkiGL34UDLKMs9xNvaHoEldjRh
-         DkTpeVJ5UVZLS8U8EHv2kM3JouvmiO3Om3Kgf1cc8fejsKRWUnf4rYc/5w5XJIEWE9h5
-         3iIvXIrUql9b+Fp1j5At9oCTC8ZSzaEN+SlckUrt6HkV6Yncc6/9kdwclUILlRTZQHUc
-         mavQ==
+        bh=y0hpjRBIF9UckbKoSU/cR0ZzCEUz0ty+tPE+cU5DN5E=;
+        b=l0sVDkaOG4ecYbAW/HlMCyWKFaNY1RKO8Jxcstlm8H88OwaT/gXe9eDa7QyAOPIomu
+         PuLhrdTZUysiIFH+txao/yTcFSuULZCUHR89E3EyWKLIosboZ0UMfCuQeCDuIYKdaNZV
+         fMt1o8i1Qq2EFJBXvVDKL8w2u30MPpk3T6i5tfyMoM/4ZUo6fK9236HmxCLrFCLmrvZc
+         2QCuD8TuBD8/xdmExPbX6A7Pi7cb7pwUJ0DeXi6yggwrbQojcb7onNtUBkumEG8nagF2
+         8qgCN43xJ/7Yi5flaxnFVIsS+FrFv8o6Mn07pdwbAMR3mFGSq+Rnc4knGkBZuOjvNBrw
+         B/6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	John Johansen <john.johansen@canonical.com>,
-	James Morris <james.l.morris@oracle.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 30/68] apparmor: Make path_max parameter readonly
-Date: Mon, 19 Mar 2018 19:06:08 +0100
-Message-Id: <20180319171832.014048042@linuxfoundation.org>
+Subject: [PATCH 3.18 03/68] net: mvpp2: set dma mask and coherent dma mask on PPv2.2
+Date: Mon, 19 Mar 2018 19:05:41 +0100
+Message-Id: <20180319171828.377722653@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171827.899658615@linuxfoundation.org>
 References: <20180319171827.899658615@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390560477721446?=
-X-GMAIL-MSGID: =?utf-8?q?1595390560477721446?=
+X-GMAIL-THRID: =?utf-8?q?1595390557556706046?=
+X-GMAIL-MSGID: =?utf-8?q?1595390557556706046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,81 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
 
-[ Upstream commit 622f6e3265707ebf02ba776ac6e68003bcc31213 ]
+[ Upstream commit 2067e0a13cfe0b1bdca7b91bc5e4f2740b07d478 ]
 
-The path_max parameter determines the max size of buffers allocated
-but it should  not be setable at run time. If can be used to cause an
-oops
+On PPv2.2, the streaming mappings can be anywhere in the first 40 bits
+of the physical address space. However, for the coherent mappings, we
+still need them to be in the first 32 bits of the address space,
+because all BM pools share a single register to store the high 32 bits
+of the BM pool address, which means all BM pools must be allocated in
+the same 4GB memory area.
 
-root@ubuntu:~# echo 16777216 > /sys/module/apparmor/parameters/path_max
-root@ubuntu:~# cat /sys/module/apparmor/parameters/path_max
-Killed
-
-[  122.141911] BUG: unable to handle kernel paging request at ffff880080945fff
-[  122.143497] IP: [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.144742] PGD 220c067 PUD 0
-[  122.145453] Oops: 0002 [#1] SMP
-[  122.146204] Modules linked in: vmw_vsock_vmci_transport vsock ppdev vmw_balloon snd_ens1371 btusb snd_ac97_codec gameport snd_rawmidi btrtl snd_seq_device ac97_bus btbcm btintel snd_pcm input_leds bluetooth snd_timer snd joydev soundcore serio_raw coretemp shpchp nfit parport_pc i2c_piix4 8250_fintek vmw_vmci parport mac_hid ib_iser rdma_cm iw_cm ib_cm ib_sa ib_mad ib_core ib_addr iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi autofs4 btrfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel aes_x86_64 lrw gf128mul glue_helper ablk_helper cryptd vmwgfx psmouse mptspi ttm mptscsih drm_kms_helper mptbase syscopyarea scsi_transport_spi sysfillrect
-[  122.163365]  ahci sysimgblt e1000 fb_sys_fops libahci drm pata_acpi fjes
-[  122.164747] CPU: 3 PID: 1501 Comm: bash Not tainted 4.4.0-59-generic #80-Ubuntu
-[  122.166250] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 07/02/2015
-[  122.168611] task: ffff88003496aa00 ti: ffff880076474000 task.ti: ffff880076474000
-[  122.170018] RIP: 0010:[<ffffffff81228844>]  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.171525] RSP: 0018:ffff880076477b90  EFLAGS: 00010206
-[  122.172462] RAX: ffff880080945fff RBX: 0000000000000000 RCX: 0000000001000000
-[  122.173709] RDX: 0000000000ffffff RSI: ffff880080946000 RDI: ffff8800348a1010
-[  122.174978] RBP: ffff880076477bb8 R08: ffff880076477c80 R09: 0000000000000000
-[  122.176227] R10: 00007ffffffff000 R11: ffff88007f946000 R12: ffff88007f946000
-[  122.177496] R13: ffff880076477c80 R14: ffff8800348a1010 R15: ffff8800348a2400
-[  122.178745] FS:  00007fd459eb4700(0000) GS:ffff88007b6c0000(0000) knlGS:0000000000000000
-[  122.180176] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  122.181186] CR2: ffff880080945fff CR3: 0000000073422000 CR4: 00000000001406e0
-[  122.182469] Stack:
-[  122.182843]  00ffffff00000001 ffff880080946000 0000000000000000 0000000000000000
-[  122.184409]  00000000570f789c ffff880076477c30 ffffffff81385671 ffff88007a2e7a58
-[  122.185810]  0000000000000000 ffff880076477c88 01000000008a1000 0000000000000000
-[  122.187231] Call Trace:
-[  122.187680]  [<ffffffff81385671>] aa_path_name+0x81/0x370
-[  122.188637]  [<ffffffff813875dd>] profile_transition+0xbd/0xb80
-[  122.190181]  [<ffffffff811af9bc>] ? zone_statistics+0x7c/0xa0
-[  122.191674]  [<ffffffff81389b20>] apparmor_bprm_set_creds+0x9b0/0xac0
-[  122.193288]  [<ffffffff812e1971>] ? ext4_xattr_get+0x81/0x220
-[  122.194793]  [<ffffffff812e800c>] ? ext4_xattr_security_get+0x1c/0x30
-[  122.196392]  [<ffffffff813449b9>] ? get_vfs_caps_from_disk+0x69/0x110
-[  122.198004]  [<ffffffff81232d4f>] ? mnt_may_suid+0x3f/0x50
-[  122.199737]  [<ffffffff81344b03>] ? cap_bprm_set_creds+0xa3/0x600
-[  122.201377]  [<ffffffff81346e53>] security_bprm_set_creds+0x33/0x50
-[  122.203024]  [<ffffffff81214ce5>] prepare_binprm+0x85/0x190
-[  122.204515]  [<ffffffff81216545>] do_execveat_common.isra.33+0x485/0x710
-[  122.206200]  [<ffffffff81216a6a>] SyS_execve+0x3a/0x50
-[  122.207615]  [<ffffffff81838795>] stub_execve+0x5/0x5
-[  122.208978]  [<ffffffff818384f2>] ? entry_SYSCALL_64_fastpath+0x16/0x71
-[  122.210615] Code: f8 31 c0 48 63 c2 83 ea 01 48 c7 45 e8 00 00 00 00 48 01 c6 85 d2 48 c7 45 f0 00 00 00 00 48 89 75 e0 89 55 dc 78 0c 48 8d 46 ff <c6> 46 ff 00 48 89 45 e0 48 8d 55 e0 48 8d 4d dc 48 8d 75 e8 e8
-[  122.217320] RIP  [<ffffffff81228844>] d_absolute_path+0x44/0xa0
-[  122.218860]  RSP <ffff880076477b90>
-[  122.219919] CR2: ffff880080945fff
-[  122.220936] ---[ end trace 506cdbd85eb6c55e ]---
-
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/apparmor/lsm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvpp2.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -735,7 +735,7 @@ module_param_named(logsyscall, aa_g_logs
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6339,6 +6339,20 @@ static int mvpp2_probe(struct platform_d
+ 	/* Get system's tclk rate */
+ 	priv->tclk = clk_get_rate(priv->pp_clk);
  
- /* Maximum pathname length before accesses will start getting rejected */
- unsigned int aa_g_path_max = 2 * PATH_MAX;
--module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR | S_IWUSR);
-+module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
- 
- /* Determines how paranoid loading of policy is and how much verification
-  * on the loaded policy is done.
++	if (priv->hw_version == MVPP22) {
++		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(40));
++		if (err)
++			goto err_mg_clk;
++		/* Sadly, the BM pools all share the same register to
++		 * store the high 32 bits of their address. So they
++		 * must all have the same high 32 bits, which forces
++		 * us to restrict coherent memory to DMA_BIT_MASK(32).
++		 */
++		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
++		if (err)
++			goto err_mg_clk;
++	}
++
+ 	/* Initialize network controller */
+ 	err = mvpp2_init(pdev, priv);
+ 	if (err < 0) {
