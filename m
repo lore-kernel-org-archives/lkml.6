@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtTxdKkHXDR/FvFdA9UJBsquhAlm3DrQ5RoQpJk25DMCGhz6rXEqHi7aGJVoP6cPKNA/Pq4
-ARC-Seal: i=1; a=rsa-sha256; t=1521483417; cv=none;
+X-Google-Smtp-Source: AG47ELtbGrUbNLfYOoDT4YRdN/l1fwoCK3TxQEom0XkUCLUpM/08xhoyYxg5WlIFcjrTl8qaIRdl
+ARC-Seal: i=1; a=rsa-sha256; t=1521483414; cv=none;
         d=google.com; s=arc-20160816;
-        b=I41KzVfjCCdcL74fS0cDfdRzpebk4x/gB3A/rN465Mevd8lCeH1MbRvIP/wKdbPxqb
-         mm/jK7sYlx08LCVMcUcCdb+d9n9sm/cmxEXnudwQFOLHBEQzbflyKKUqFFEjjqn41hhn
-         ax1VHJxvK6351+Z9RhZMheM1NIbuA7biPItTuT/AbNYy9i2IAYnbOYgQzTADxEVRiqmr
-         bFRNsLVk4WKH7wUi7PTNF0VeN/2bRXb5xOOgrls9m1ElFSewdH4+jfvI4PeWtMB9xTAV
-         wymXnFp8K7TjlsZiRkgie3qjWYe/nY3RJhiHxx2vaBHy1AVGmVBcsZbhbPaEENOHv+Pe
-         ueuQ==
+        b=cmwSnILIEgPHxs/kY3hJ6UfvTx+DSloMdVA4Jz/I14s+Qa1g3BJ7c/hjMAg3qPNRKJ
+         UiktYCkEn/+Ott+jJy6/2tkiEtn3G+TdGsAi01C+Ik72c9D/zLhxRvcEhTksRjh5RvhA
+         DYGSp4fvxeubSV3nwGggLE0hgwQ4iHOwnvG3+EGmPApoUpMmNOyItkaxEncySD4b+8Hp
+         UPiim4DRlJxfeiURzmxKkd90c9Holoi2aDYKyfaFl8xdJsuFvfZTDfdDq9UrWIW9pZAb
+         s9AsV3gZcXYq0ra1YrgcyqQ3GmiIjqY4BjSOgTY79Wcqfj4GKh6X1TDiz8c4Zsq19YL3
+         uXsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DdBVoic6yR7xEj2GrNDrixUl5JsghFoMcRq0p9gbTL8=;
-        b=Yy7QsuVJ+1pUdkp5rMC4d+5X6V587/6CLAcN0JxbmrxeujvZ11OySi4tB5qALnm/vp
-         4GvLQzywI/nD9rJ1Evom3pwWh5rpFWyP5yOZB3/rhSlu481VARi0fFj3ZXtsLztIUcax
-         RFvBtUH6pIwxBGL1fJjLuCYEwpvjgfhbKkZsqZtGKCIKG46EfFDNVDVotUY1lDQIeGlw
-         AHP+5A27rUx5ZbaB0k39BXpC+79HGE+X1FEWny4YtVRehU0tHS9xW6ITNxKkOVmW3qVm
-         fkMlZYr3jLBrNsSE/0s5ObMJlpEIH3J6i34+AF5H12cWlKjHghGErxgK5WIdmOD5JCh3
-         fUfQ==
+        bh=mMbJB9NmQ/DqbVWOiqIVxIgJM54zLlPWrxdNztPhNcY=;
+        b=C7vAzTJm+Co5cCUkWFk4/23Nmkt0HnJZvx/AG9dNubnMRcTAggNqF4RIqNs0Sy9wTN
+         rABoAdc5y7Ig2gKovCWZoZGVaiPhdD5AhAbMTxd6Js5wrcgOC27Ib0hc1vGrilqBp7O2
+         UVAso34jm83xLKoUm4Hr6jGT1MFM7ngdk3aHL5gD2A0Un7p6fbg3E4nGmfneFWlIxGeZ
+         bSXkZrUtLiZjJ9giTv4QYLUzT0w+efQtUjFOPmxFEnfNI9UBCzI+NMHQNghXAVWRT+JA
+         c7ayg+PGZUPMuYM/3O4M78SFDvPlpd10HRXhtMhw8Ze9G86bJ38W2ZA0dqITC2Xdb3jo
+         Z4qg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	David Carrillo-Cisneros <davidcc@google.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	He Kuang <hekuang@huawei.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Paul Turner <pjt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Simon Que <sque@chromium.org>,
+	Stephane Eranian <eranian@google.com>,
+	Wang Nan <wangnan0@huawei.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 109/134] ima: relax requiring a file signature for new files with zero length
-Date: Mon, 19 Mar 2018 19:06:32 +0100
-Message-Id: <20180319171905.020768938@linuxfoundation.org>
+Subject: [PATCH 4.4 071/134] perf inject: Copy events when reordering events in pipe mode
+Date: Mon, 19 Mar 2018 19:05:54 +0100
+Message-Id: <20180319171859.504067912@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -40,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390639959423215?=
-X-GMAIL-MSGID: =?utf-8?q?1595390995909702379?=
+X-GMAIL-THRID: =?utf-8?q?1595390625920673495?=
+X-GMAIL-MSGID: =?utf-8?q?1595390993127940603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +60,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: David Carrillo-Cisneros <davidcc@google.com>
 
 
-[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
+[ Upstream commit 1e0d4f0200e4dbdfc38d818f329d8a0955f7c6f5 ]
 
-Custom policies can require file signatures based on LSM labels.  These
-files are normally created and only afterwards labeled, requiring them
-to be signed.
+__perf_session__process_pipe_events reuses the same memory buffer to
+process all events in the pipe.
 
-Instead of requiring file signatures based on LSM labels, entire
-filesystems could require file signatures.  In this case, we need the
-ability of writing new files without requiring file signatures.
+When reordering is needed (e.g. -b option), events are not immediately
+flushed, but kept around until reordering is possible, causing
+memory corruption.
 
-The definition of a "new" file was originally defined as any file with
-a length of zero.  Subsequent patches redefined a "new" file to be based
-on the FILE_CREATE open flag.  By combining the open flag with a file
-size of zero, this patch relaxes the file signature requirement.
+The problem is usually observed by a "Unknown sample error" output. It
+can easily be reproduced by:
 
-Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+  perf record -o - noploop | perf inject -b > output
+
+Committer testing:
+
+Before:
+
+  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
+  stress: info: [8297] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
+  stress: info: [8297] successful run completed in 2s
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB - ]
+  Warning:
+  Found 1 unknown events!
+
+  Is this an older tool processing a perf.data file generated by a more recent tool?
+
+  If that is not the case, consider reporting to linux-kernel@vger.kernel.org.
+
+  $
+
+After:
+
+  $ perf record -o - stress -t 2 -c 2 | perf inject -b > /dev/null
+  stress: info: [9027] dispatching hogs: 2 cpu, 0 io, 0 vm, 0 hdd
+  stress: info: [9027] successful run completed in 2s
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB - ]
+  no symbols found in /usr/bin/stress, maybe install a debug package?
+  no symbols found in /usr/bin/stress, maybe install a debug package?
+  $
+
+Signed-off-by: David Carrillo-Cisneros <davidcc@google.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Simon Que <sque@chromium.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20170410201432.24807-3-davidcc@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/ima/ima_appraise.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/ordered-events.c |    3 ++-
+ tools/perf/util/session.c        |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -206,7 +206,8 @@ int ima_appraise_measurement(int func, s
- 		if (opened & FILE_CREATED)
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
--		    !(iint->flags & IMA_DIGSIG_REQUIRED))
-+		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-+		     (inode->i_size == 0)))
- 			status = INTEGRITY_PASS;
- 		goto out;
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -79,7 +79,7 @@ static union perf_event *dup_event(struc
+ 
+ static void free_dup_event(struct ordered_events *oe, union perf_event *event)
+ {
+-	if (oe->copy_on_queue) {
++	if (event && oe->copy_on_queue) {
+ 		oe->cur_alloc_size -= event->header.size;
+ 		free(event);
  	}
+@@ -150,6 +150,7 @@ void ordered_events__delete(struct order
+ 	list_move(&event->list, &oe->cache);
+ 	oe->nr_events--;
+ 	free_dup_event(oe, event->event);
++	event->event = NULL;
+ }
+ 
+ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1437,6 +1437,7 @@ static int __perf_session__process_pipe_
+ 	buf = malloc(cur_size);
+ 	if (!buf)
+ 		return -errno;
++	ordered_events__set_copy_on_queue(oe, true);
+ more:
+ 	event = buf;
+ 	err = readn(fd, event, sizeof(struct perf_event_header));
