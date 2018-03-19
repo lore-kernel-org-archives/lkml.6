@@ -1,32 +1,32 @@
 Return-Path: <mika.westerberg@linux.intel.com>
-X-Google-Smtp-Source: AG47ELulMkDb+b2SJt80033vegISgm8giotIZluJXgTMsEUO7nyRAd8Th4YSBduIGOZ0exGeUgQM
+X-Google-Smtp-Source: AG47ELtI17o1dBdvHHvmrPENiBi20VK3VzYyMNu611ULP34Hd9CDfQvuNYoJFBXBln1WGmFWVnfr
 ARC-Seal: i=1; a=rsa-sha256; t=1521476832; cv=none;
         d=google.com; s=arc-20160816;
-        b=N8spn6geFuJkVB5kE6YdP9mOK1qHxtaTq5jlFi7PVzba7nCX/oEnuOQE5sAtAKaEP2
-         npUMYgxOMHudXHKdEZhUwbuuir4nL1D58YawoDjCr52dAIWB4xk6//hpDL18e1IaVdc2
-         lUJLxQTNxZYMux+OoxC1VObwFhOrI63RTYjwlSQTuetFWhzqE2YnyI0Z73+ij1UYLJgv
-         myYNbLrx6j6eDttnMUHJSVnGZy8ZwagKjwnYvdwUU7MhR5G3RUCBM35AQKqy8VF9kLpM
-         MjtORnWq02FiHu5Ahgr066nq97h+3EX10C3FCUyotW0sD51I6NdLtJ6lEyqEZBHxt6JB
-         3WvQ==
+        b=PadqYS7FywVIPn7cvg5xX6mtNoOwTPIeZ8SkE0VdaNF/I7DOi7mYdWTjbTg69a1Rgl
+         kKZQJ8oXlC++rQlQtzk8nLmF0Wl0q0p9kEOl0QAw0LbBdD67CZy/2LVrufYhydXfQHtt
+         HdqDhysteFbOT6V2WA4BT2GBCnfLCRFdZWim9/vWuRfZnmhSDev7BAGP3r+GtsqvtG96
+         AU9aHqweRATsF4VEwSIhXciKGtsLSB1aAPEdRR7CVLWZPgAplm17byLANXJ7m+rplwJO
+         SOFig7vK0dNyjX90HP6xJNS26UeQ7sbPlbLWV7JzGP2ScUjN7cUOTrPZtbYv+OCvzbHP
+         KAvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=HYbNKIHLgUPNVH4L56t678n5PHZpxKEFPdtpOJAQUlU=;
-        b=0TtoYEyQ8uudMN5VuBPJfiNN/kuYAe6d5c+ou0pvHyFTAdh6AiBS25Xz/kyx2s2JEB
-         BIySSORPth2yB6TFAkWbppTnL0t69QGvPgUJEmzf/FMAmmJ3kEttSMNAWst/M/JeOsyB
-         Sh4547DSrjKJgkTkbXdrfsgnUsb65wBv63vQWsrJmU1hrvN1vHoQbaomQ70+/clI97X9
-         2ghIolm3S17E7oIEFsqS4HJhHxfREtNxV96cGHkm0M3qb+nSoIvQS68yVjdoXyQuUMQW
-         HXmFJ5Q5lGztskoV56S8bNohoSHLtH3q2zylrR8kfGZULXvdZlDB3cK8ZOnvsQ1xO4iT
-         8teQ==
+        bh=7mIUGu3qq5WTpwiQ7GJDZ+M7SLn13m7FckmHDspMuJE=;
+        b=wfjzSFmuVGEGJy+9VyviICuaucMXAYyGa4vDjumsHUQ1qiX3pfbZWAEKXxcHvBAtMy
+         8m+UoD4gSsdTWk9g/ris2+1HcNM7X/UPpQGrgDLSg+Su8wxkzhOE91CCPJ+p1p4LCTdQ
+         qSUbAyXydjnOiiK8hJI90HNWFETV9JSH9jsEBz4wx7Lsh/u9yxw86cfjNhnmA2jmT0iy
+         rSQYGywf4S/G32+sgqrKSb9g++r7CHpXIEz77rZgab+QFUd8SGaybOYREGk650GbPkao
+         dZNLHJ3gubZj90RvOCRZMiDOeP7PkAfEiArMi41YGGjQHvrDS6ekB0WjRD5Ojt/NP8b6
+         8brw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
+       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
+       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,331,1517904000";
-   d="scan'208";a="25258487"
+   d="scan'208";a="212938688"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Andreas Noever <andreas.noever@gmail.com>,
@@ -34,267 +34,61 @@ Cc: Andreas Noever <andreas.noever@gmail.com>,
 	Yehezkel Bernat <yehezkel.bernat@intel.com>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/19] thunderbolt: Add support for preboot ACL
-Date: Mon, 19 Mar 2018 19:27:00 +0300
-Message-Id: <20180319162703.5331-17-mika.westerberg@linux.intel.com>
+Subject: [PATCH 14/19] thunderbolt: Move driver ready handling to struct icm
+Date: Mon, 19 Mar 2018 19:26:58 +0300
+Message-Id: <20180319162703.5331-15-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 References: <20180319162703.5331-1-mika.westerberg@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595384090938461095?=
-X-GMAIL-MSGID: =?utf-8?q?1595384090938461095?=
+X-GMAIL-THRID: =?utf-8?q?1595384090739294971?=
+X-GMAIL-MSGID: =?utf-8?q?1595384090739294971?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Preboot ACL is a mechanism that allows connecting Thunderbolt devices
-boot time in more secure way than the legacy Thunderbolt boot support.
-As with the legacy boot option, this also needs to be enabled from the
-BIOS before booting is allowed. Difference to the legacy mode is that
-the userspace software explicitly adds device UUIDs by sending a special
-message to the ICM firmware. Only the devices listed in the boot ACL are
-connected automatically during the boot. This works in both "user" and
-"secure" security levels.
+Intel Titan Ridge uses slightly different format for ICM driver ready
+response, so add a new ->driver_ready() callback to struct icm and move
+the existing handling to a separate function which we then use in Falcon
+Ridge and Alpine Ridge.
 
-We implement this in Linux by exposing a new sysfs attribute (boot_acl)
-below each Thunderbolt domain. The userspace software can then update
-the full list as needed.
+No functional changes intended.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- Documentation/ABI/testing/sysfs-bus-thunderbolt |  23 ++++
- drivers/thunderbolt/domain.c                    | 123 ++++++++++++++++++
- drivers/thunderbolt/icm.c                       | 158 ++++++++++++++++++++++--
- drivers/thunderbolt/tb.h                        |   4 +
- drivers/thunderbolt/tb_msgs.h                   |  35 +++++-
- include/linux/thunderbolt.h                     |   2 +
- 6 files changed, 335 insertions(+), 10 deletions(-)
+ drivers/thunderbolt/icm.c     | 42 +++++++++++++++++++++++++++++++-----------
+ drivers/thunderbolt/tb_msgs.h |  6 ++++--
+ 2 files changed, 35 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-index 1f145b727d76..4ed229789852 100644
---- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
-+++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-@@ -1,3 +1,26 @@
-+What: /sys/bus/thunderbolt/devices/.../domainX/boot_acl
-+Date:		Jun 2018
-+KernelVersion:	4.17
-+Contact:	thunderbolt-software@lists.01.org
-+Description:	Holds a comma separated list of device unique_ids that
-+		are allowed to be connected automatically during system
-+		startup (e.g boot devices). The list always contains
-+		maximum supported number of unique_ids where unused
-+		entries are empty. This allows the userspace software
-+		to determine how many entries the controller supports.
-+		If there are multiple controllers, each controller has
-+		its own ACL list and size may be different between the
-+		controllers.
-+
-+		System BIOS may have an option "Preboot ACL" or similar
-+		that needs to be selected before this list is taken into
-+		consideration.
-+
-+		Software always updates a full list in each write.
-+
-+		If a device is authorized automatically during boot its
-+		boot attribute is set to 1.
-+
- What: /sys/bus/thunderbolt/devices/.../domainX/security
- Date:		Sep 2017
- KernelVersion:	4.13
-diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
-index 9b90115319ce..ab4b304306f7 100644
---- a/drivers/thunderbolt/domain.c
-+++ b/drivers/thunderbolt/domain.c
-@@ -119,6 +119,110 @@ static const char * const tb_security_names[] = {
- 	[TB_SECURITY_DPONLY] = "dponly",
- };
- 
-+static ssize_t boot_acl_show(struct device *dev, struct device_attribute *attr,
-+			     char *buf)
-+{
-+	struct tb *tb = container_of(dev, struct tb, dev);
-+	uuid_t *uuids;
-+	ssize_t ret;
-+	int i;
-+
-+	uuids = kcalloc(tb->nboot_acl, sizeof(uuid_t), GFP_KERNEL);
-+	if (!uuids)
-+		return -ENOMEM;
-+
-+	if (mutex_lock_interruptible(&tb->lock)) {
-+		ret = -ERESTARTSYS;
-+		goto out;
-+	}
-+	ret = tb->cm_ops->get_boot_acl(tb, uuids, tb->nboot_acl);
-+	if (ret) {
-+		mutex_unlock(&tb->lock);
-+		goto out;
-+	}
-+	mutex_unlock(&tb->lock);
-+
-+	for (ret = 0, i = 0; i < tb->nboot_acl; i++) {
-+		if (!uuid_is_null(&uuids[i]))
-+			ret += snprintf(buf + ret, PAGE_SIZE - ret, "%pUb",
-+					&uuids[i]);
-+
-+		ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s",
-+			       i < tb->nboot_acl - 1 ? "," : "\n");
-+	}
-+
-+out:
-+	kfree(uuids);
-+	return ret;
-+}
-+
-+static ssize_t boot_acl_store(struct device *dev, struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct tb *tb = container_of(dev, struct tb, dev);
-+	char *str, *s, *uuid_str;
-+	ssize_t ret = 0;
-+	uuid_t *acl;
-+	int i = 0;
-+
-+	/*
-+	 * Make sure the value is not bigger than tb->nboot_acl * UUID
-+	 * length + commas and optional "\n". Also the smallest allowable
-+	 * string is tb->nboot_acl * ",".
-+	 */
-+	if (count > (UUID_STRING_LEN + 1) * tb->nboot_acl + 1)
-+		return -EINVAL;
-+	if (count < tb->nboot_acl - 1)
-+		return -EINVAL;
-+
-+	str = kstrdup(buf, GFP_KERNEL);
-+	if (!str)
-+		return -ENOMEM;
-+
-+	acl = kcalloc(tb->nboot_acl, sizeof(uuid_t), GFP_KERNEL);
-+	if (!acl) {
-+		ret = -ENOMEM;
-+		goto err_free_str;
-+	}
-+
-+	uuid_str = strim(str);
-+	while ((s = strsep(&uuid_str, ",")) != NULL && i < tb->nboot_acl) {
-+		size_t len = strlen(s);
-+
-+		if (len) {
-+			if (len != UUID_STRING_LEN) {
-+				ret = -EINVAL;
-+				goto err_free_acl;
-+			}
-+			ret = uuid_parse(s, &acl[i]);
-+			if (ret)
-+				goto err_free_acl;
-+		}
-+
-+		i++;
-+	}
-+
-+	if (s || i < tb->nboot_acl) {
-+		ret = -EINVAL;
-+		goto err_free_acl;
-+	}
-+
-+	if (mutex_lock_interruptible(&tb->lock)) {
-+		ret = -ERESTARTSYS;
-+		goto err_free_acl;
-+	}
-+	ret = tb->cm_ops->set_boot_acl(tb, acl, tb->nboot_acl);
-+	mutex_unlock(&tb->lock);
-+
-+err_free_acl:
-+	kfree(acl);
-+err_free_str:
-+	kfree(str);
-+
-+	return ret ?: count;
-+}
-+static DEVICE_ATTR_RW(boot_acl);
-+
- static ssize_t security_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
- {
-@@ -129,11 +233,30 @@ static ssize_t security_show(struct device *dev, struct device_attribute *attr,
- static DEVICE_ATTR_RO(security);
- 
- static struct attribute *domain_attrs[] = {
-+	&dev_attr_boot_acl.attr,
- 	&dev_attr_security.attr,
- 	NULL,
- };
- 
-+static umode_t domain_attr_is_visible(struct kobject *kobj,
-+				      struct attribute *attr, int n)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct tb *tb = container_of(dev, struct tb, dev);
-+
-+	if (attr == &dev_attr_boot_acl.attr) {
-+		if (tb->nboot_acl &&
-+		    tb->cm_ops->get_boot_acl &&
-+		    tb->cm_ops->set_boot_acl)
-+			return attr->mode;
-+		return 0;
-+	}
-+
-+	return attr->mode;
-+}
-+
- static struct attribute_group domain_attr_group = {
-+	.is_visible = domain_attr_is_visible,
- 	.attrs = domain_attrs,
- };
- 
 diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index bece5540b06b..93a198a17f42 100644
+index 1c10aa8d224d..5d3cd740b71f 100644
 --- a/drivers/thunderbolt/icm.c
 +++ b/drivers/thunderbolt/icm.c
-@@ -56,6 +56,7 @@
-  * @vnd_cap: Vendor defined capability where PCIe2CIO mailbox resides
-  *	     (only set when @upstream_port is not %NULL)
-  * @safe_mode: ICM is in safe mode
-+ * @max_boot_acl: Maximum number of preboot ACL entries (%0 if not supported)
+@@ -59,6 +59,7 @@
   * @is_supported: Checks if we can support ICM on this controller
   * @get_mode: Read and return the ICM firmware mode (optional)
   * @get_route: Find a route string for given switch
-@@ -69,13 +70,15 @@ struct icm {
- 	struct mutex request_lock;
- 	struct delayed_work rescan_work;
- 	struct pci_dev *upstream_port;
-+	size_t max_boot_acl;
- 	int vnd_cap;
- 	bool safe_mode;
++ * @driver_ready: Send driver ready message to ICM
+  * @device_connected: Handle device connected ICM message
+  * @device_disconnected: Handle device disconnected ICM message
+  * @xdomain_connected - Handle XDomain connected ICM message
+@@ -73,6 +74,8 @@ struct icm {
  	bool (*is_supported)(struct tb *tb);
  	int (*get_mode)(struct tb *tb);
  	int (*get_route)(struct tb *tb, u8 link, u8 depth, u64 *route);
- 	int (*driver_ready)(struct tb *tb,
--			    enum tb_security_level *security_level);
-+			    enum tb_security_level *security_level,
-+			    size_t *nboot_acl);
++	int (*driver_ready)(struct tb *tb,
++			    enum tb_security_level *security_level);
  	void (*device_connected)(struct tb *tb,
  				 const struct icm_pkg_header *hdr);
  	void (*device_disconnected)(struct tb *tb,
-@@ -250,7 +253,8 @@ static int icm_fr_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
- }
- 
- static int
--icm_fr_driver_ready(struct tb *tb, enum tb_security_level *security_level)
-+icm_fr_driver_ready(struct tb *tb, enum tb_security_level *security_level,
-+		    size_t *nboot_acl)
- {
- 	struct icm_fr_pkg_driver_ready_response reply;
- 	struct icm_pkg_driver_ready request = {
-@@ -827,6 +831,30 @@ static int icm_ar_get_mode(struct tb *tb)
- 	return nhi_mailbox_mode(nhi);
+@@ -246,6 +249,27 @@ static int icm_fr_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
+ 	return ret;
  }
  
 +static int
-+icm_ar_driver_ready(struct tb *tb, enum tb_security_level *security_level,
-+		    size_t *nboot_acl)
++icm_fr_driver_ready(struct tb *tb, enum tb_security_level *security_level)
 +{
-+	struct icm_ar_pkg_driver_ready_response reply;
++	struct icm_fr_pkg_driver_ready_response reply;
 +	struct icm_pkg_driver_ready request = {
 +		.hdr.code = ICM_DRIVER_READY,
 +	};
@@ -307,323 +101,79 @@ index bece5540b06b..93a198a17f42 100644
 +		return ret;
 +
 +	if (security_level)
-+		*security_level = reply.info & ICM_AR_INFO_SLEVEL_MASK;
-+	if (nboot_acl && (reply.info & ICM_AR_INFO_BOOT_ACL_SUPPORTED))
-+		*nboot_acl = (reply.info & ICM_AR_INFO_BOOT_ACL_MASK) >>
-+				ICM_AR_INFO_BOOT_ACL_SHIFT;
-+	return 0;
-+}
-+
- static int icm_ar_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
- {
- 	struct icm_ar_pkg_get_route_response reply;
-@@ -849,6 +877,87 @@ static int icm_ar_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
- 	return 0;
- }
- 
-+static int icm_ar_get_boot_acl(struct tb *tb, uuid_t *uuids, size_t nuuids)
-+{
-+	struct icm_ar_pkg_preboot_acl_response reply;
-+	struct icm_ar_pkg_preboot_acl request = {
-+		.hdr = { .code = ICM_PREBOOT_ACL },
-+	};
-+	int ret, i;
-+
-+	memset(&reply, 0, sizeof(reply));
-+	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
-+			  1, ICM_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	if (reply.hdr.flags & ICM_FLAGS_ERROR)
-+		return -EIO;
-+
-+	for (i = 0; i < nuuids; i++) {
-+		u32 *uuid = (u32 *)&uuids[i];
-+
-+		uuid[0] = reply.acl[i].uuid_lo;
-+		uuid[1] = reply.acl[i].uuid_hi;
-+
-+		if (uuid[0] == 0xffffffff && uuid[1] == 0xffffffff) {
-+			/* Map empty entries to null UUID */
-+			uuid[0] = 0;
-+			uuid[1] = 0;
-+		} else {
-+			/* Upper two DWs are always one's */
-+			uuid[2] = 0xffffffff;
-+			uuid[3] = 0xffffffff;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int icm_ar_set_boot_acl(struct tb *tb, const uuid_t *uuids,
-+			       size_t nuuids)
-+{
-+	struct icm_ar_pkg_preboot_acl_response reply;
-+	struct icm_ar_pkg_preboot_acl request = {
-+		.hdr = {
-+			.code = ICM_PREBOOT_ACL,
-+			.flags = ICM_FLAGS_WRITE,
-+		},
-+	};
-+	int ret, i;
-+
-+	for (i = 0; i < nuuids; i++) {
-+		const u32 *uuid = (const u32 *)&uuids[i];
-+
-+		if (uuid_is_null(&uuids[i])) {
-+			/*
-+			 * Map null UUID to the empty (all one) entries
-+			 * for ICM.
-+			 */
-+			request.acl[i].uuid_lo = 0xffffffff;
-+			request.acl[i].uuid_hi = 0xffffffff;
-+		} else {
-+			/* Two high DWs need to be set to all one */
-+			if (uuid[2] != 0xffffffff || uuid[3] != 0xffffffff)
-+				return -EINVAL;
-+
-+			request.acl[i].uuid_lo = uuid[0];
-+			request.acl[i].uuid_hi = uuid[1];
-+		}
-+	}
-+
-+	memset(&reply, 0, sizeof(reply));
-+	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
-+			  1, ICM_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	if (reply.hdr.flags & ICM_FLAGS_ERROR)
-+		return -EIO;
++		*security_level = reply.security_level & ICM_FR_SLEVEL_MASK;
 +
 +	return 0;
 +}
 +
- static void icm_handle_notification(struct work_struct *work)
+ static int icm_fr_approve_switch(struct tb *tb, struct tb_switch *sw)
  {
- 	struct icm_notification *n = container_of(work, typeof(*n), work);
-@@ -895,13 +1004,14 @@ static void icm_handle_event(struct tb *tb, enum tb_cfg_pkg_type type,
- }
- 
+ 	struct icm_fr_pkg_approve_device request;
+@@ -869,21 +893,15 @@ static void icm_handle_event(struct tb *tb, enum tb_cfg_pkg_type type,
  static int
--__icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
-+__icm_driver_ready(struct tb *tb, enum tb_security_level *security_level,
-+		   size_t *nboot_acl)
+ __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
  {
- 	struct icm *icm = tb_priv(tb);
+-	struct icm_pkg_driver_ready_response reply;
+-	struct icm_pkg_driver_ready request = {
+-		.hdr.code = ICM_DRIVER_READY,
+-	};
++	struct icm *icm = tb_priv(tb);
  	unsigned int retries = 50;
  	int ret;
  
--	ret = icm->driver_ready(tb, security_level);
-+	ret = icm->driver_ready(tb, security_level, nboot_acl);
- 	if (ret) {
- 		tb_err(tb, "failed to send driver ready to ICM\n");
+-	memset(&reply, 0, sizeof(reply));
+-	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
+-			  1, ICM_TIMEOUT);
+-	if (ret)
++	ret = icm->driver_ready(tb, security_level);
++	if (ret) {
++		tb_err(tb, "failed to send driver ready to ICM\n");
  		return ret;
-@@ -1168,7 +1278,18 @@ static int icm_driver_ready(struct tb *tb)
- 		return 0;
- 	}
- 
--	return __icm_driver_ready(tb, &tb->security_level);
-+	ret = __icm_driver_ready(tb, &tb->security_level, &tb->nboot_acl);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Make sure the number of supported preboot ACL matches what we
-+	 * expect or disable the whole feature.
-+	 */
-+	if (tb->nboot_acl > icm->max_boot_acl)
-+		tb->nboot_acl = 0;
-+
-+	return 0;
- }
- 
- static int icm_suspend(struct tb *tb)
-@@ -1264,7 +1385,7 @@ static void icm_complete(struct tb *tb)
- 	 * Now all existing children should be resumed, start events
- 	 * from ICM to get updated status.
- 	 */
--	__icm_driver_ready(tb, NULL);
-+	__icm_driver_ready(tb, NULL, NULL);
+-
+-	if (security_level)
+-		*security_level = reply.security_level & 0xf;
++	}
  
  	/*
- 	 * We do not get notifications of devices that have been
-@@ -1317,7 +1438,7 @@ static int icm_disconnect_pcie_paths(struct tb *tb)
- 	return nhi_mailbox_cmd(tb->nhi, NHI_MAILBOX_DISCONNECT_PCIE_PATHS, 0);
- }
- 
--/* Falcon Ridge and Alpine Ridge */
-+/* Falcon Ridge */
- static const struct tb_cm_ops icm_fr_ops = {
- 	.driver_ready = icm_driver_ready,
- 	.start = icm_start,
-@@ -1333,6 +1454,24 @@ static const struct tb_cm_ops icm_fr_ops = {
- 	.disconnect_xdomain_paths = icm_fr_disconnect_xdomain_paths,
- };
- 
-+/* Alpine Ridge */
-+static const struct tb_cm_ops icm_ar_ops = {
-+	.driver_ready = icm_driver_ready,
-+	.start = icm_start,
-+	.stop = icm_stop,
-+	.suspend = icm_suspend,
-+	.complete = icm_complete,
-+	.handle_event = icm_handle_event,
-+	.get_boot_acl = icm_ar_get_boot_acl,
-+	.set_boot_acl = icm_ar_set_boot_acl,
-+	.approve_switch = icm_fr_approve_switch,
-+	.add_switch_key = icm_fr_add_switch_key,
-+	.challenge_switch_key = icm_fr_challenge_switch_key,
-+	.disconnect_pcie_paths = icm_disconnect_pcie_paths,
-+	.approve_xdomain_paths = icm_fr_approve_xdomain_paths,
-+	.disconnect_xdomain_paths = icm_fr_disconnect_xdomain_paths,
-+};
-+
- struct tb *icm_probe(struct tb_nhi *nhi)
- {
- 	struct icm *icm;
-@@ -1364,15 +1503,16 @@ struct tb *icm_probe(struct tb_nhi *nhi)
- 	case PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_LP_NHI:
- 	case PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_C_4C_NHI:
- 	case PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_C_2C_NHI:
-+		icm->max_boot_acl = ICM_AR_PREBOOT_ACL_ENTRIES;
- 		icm->is_supported = icm_ar_is_supported;
- 		icm->get_mode = icm_ar_get_mode;
- 		icm->get_route = icm_ar_get_route;
--		icm->driver_ready = icm_fr_driver_ready;
-+		icm->driver_ready = icm_ar_driver_ready;
+ 	 * Hold on here until the switch config space is accessible so
+@@ -1329,6 +1347,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
+ 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_4C_NHI:
+ 		icm->is_supported = icm_fr_is_supported;
+ 		icm->get_route = icm_fr_get_route;
++		icm->driver_ready = icm_fr_driver_ready;
  		icm->device_connected = icm_fr_device_connected;
  		icm->device_disconnected = icm_fr_device_disconnected;
  		icm->xdomain_connected = icm_fr_xdomain_connected;
- 		icm->xdomain_disconnected = icm_fr_xdomain_disconnected;
--		tb->cm_ops = &icm_fr_ops;
-+		tb->cm_ops = &icm_ar_ops;
- 		break;
- 	}
- 
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 9c9cef875ca8..9d9f0ca16bfb 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -200,6 +200,8 @@ struct tb_path {
-  * @suspend: Connection manager specific suspend
-  * @complete: Connection manager specific complete
-  * @handle_event: Handle thunderbolt event
-+ * @get_boot_acl: Get boot ACL list
-+ * @set_boot_acl: Set boot ACL list
-  * @approve_switch: Approve switch
-  * @add_switch_key: Add key to switch
-  * @challenge_switch_key: Challenge switch using key
-@@ -217,6 +219,8 @@ struct tb_cm_ops {
- 	void (*complete)(struct tb *tb);
- 	void (*handle_event)(struct tb *tb, enum tb_cfg_pkg_type,
- 			     const void *buf, size_t size);
-+	int (*get_boot_acl)(struct tb *tb, uuid_t *uuids, size_t nuuids);
-+	int (*set_boot_acl)(struct tb *tb, const uuid_t *uuids, size_t nuuids);
- 	int (*approve_switch)(struct tb *tb, struct tb_switch *sw);
- 	int (*add_switch_key)(struct tb *tb, struct tb_switch *sw);
- 	int (*challenge_switch_key)(struct tb *tb, struct tb_switch *sw,
+@@ -1344,6 +1363,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
+ 		icm->is_supported = icm_ar_is_supported;
+ 		icm->get_mode = icm_ar_get_mode;
+ 		icm->get_route = icm_ar_get_route;
++		icm->driver_ready = icm_fr_driver_ready;
+ 		icm->device_connected = icm_fr_device_connected;
+ 		icm->device_disconnected = icm_fr_device_disconnected;
+ 		icm->xdomain_connected = icm_fr_xdomain_connected;
 diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
-index 9f52f842257a..496b91f3b579 100644
+index 476bc04cac6c..931db2a7c7b3 100644
 --- a/drivers/thunderbolt/tb_msgs.h
 +++ b/drivers/thunderbolt/tb_msgs.h
-@@ -102,6 +102,7 @@ enum icm_pkg_code {
- 	ICM_ADD_DEVICE_KEY = 0x6,
- 	ICM_GET_ROUTE = 0xa,
- 	ICM_APPROVE_XDOMAIN = 0x10,
-+	ICM_PREBOOT_ACL = 0x18,
+@@ -127,14 +127,16 @@ struct icm_pkg_driver_ready {
+ 	struct icm_pkg_header hdr;
  };
  
- enum icm_event_code {
-@@ -122,12 +123,13 @@ struct icm_pkg_header {
- #define ICM_FLAGS_NO_KEY		BIT(1)
- #define ICM_FLAGS_SLEVEL_SHIFT		3
- #define ICM_FLAGS_SLEVEL_MASK		GENMASK(4, 3)
-+#define ICM_FLAGS_WRITE			BIT(7)
- 
- struct icm_pkg_driver_ready {
+-struct icm_pkg_driver_ready_response {
++/* Falcon Ridge & Alpine Ridge common messages */
++
++struct icm_fr_pkg_driver_ready_response {
  	struct icm_pkg_header hdr;
+ 	u8 romver;
+ 	u8 ramver;
+ 	u16 security_level;
  };
  
 -/* Falcon Ridge & Alpine Ridge common messages */
-+/* Falcon Ridge only messages */
++#define ICM_FR_SLEVEL_MASK		0xf
  
- struct icm_fr_pkg_driver_ready_response {
- 	struct icm_pkg_header hdr;
-@@ -138,6 +140,8 @@ struct icm_fr_pkg_driver_ready_response {
- 
- #define ICM_FR_SLEVEL_MASK		0xf
- 
-+/* Falcon Ridge & Alpine Ridge common messages */
-+
  struct icm_fr_pkg_get_topology {
  	struct icm_pkg_header hdr;
- };
-@@ -274,6 +278,18 @@ struct icm_fr_pkg_approve_xdomain_response {
- 
- /* Alpine Ridge only messages */
- 
-+struct icm_ar_pkg_driver_ready_response {
-+	struct icm_pkg_header hdr;
-+	u8 romver;
-+	u8 ramver;
-+	u16 info;
-+};
-+
-+#define ICM_AR_INFO_SLEVEL_MASK		GENMASK(3, 0)
-+#define ICM_AR_INFO_BOOT_ACL_SHIFT	7
-+#define ICM_AR_INFO_BOOT_ACL_MASK	GENMASK(11, 7)
-+#define ICM_AR_INFO_BOOT_ACL_SUPPORTED	BIT(13)
-+
- struct icm_ar_pkg_get_route {
- 	struct icm_pkg_header hdr;
- 	u16 reserved;
-@@ -288,6 +304,23 @@ struct icm_ar_pkg_get_route_response {
- 	u32 route_lo;
- };
- 
-+struct icm_ar_boot_acl_entry {
-+	u32 uuid_lo;
-+	u32 uuid_hi;
-+};
-+
-+#define ICM_AR_PREBOOT_ACL_ENTRIES	16
-+
-+struct icm_ar_pkg_preboot_acl {
-+	struct icm_pkg_header hdr;
-+	struct icm_ar_boot_acl_entry acl[ICM_AR_PREBOOT_ACL_ENTRIES];
-+};
-+
-+struct icm_ar_pkg_preboot_acl_response {
-+	struct icm_pkg_header hdr;
-+	struct icm_ar_boot_acl_entry acl[ICM_AR_PREBOOT_ACL_ENTRIES];
-+};
-+
- /* XDomain messages */
- 
- struct tb_xdomain_header {
-diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
-index 27b9be34d4b9..47251844d064 100644
---- a/include/linux/thunderbolt.h
-+++ b/include/linux/thunderbolt.h
-@@ -65,6 +65,7 @@ enum tb_security_level {
-  * @cm_ops: Connection manager specific operations vector
-  * @index: Linux assigned domain number
-  * @security_level: Current security level
-+ * @nboot_acl: Number of boot ACLs the domain supports
-  * @privdata: Private connection manager specific data
-  */
- struct tb {
-@@ -77,6 +78,7 @@ struct tb {
- 	const struct tb_cm_ops *cm_ops;
- 	int index;
- 	enum tb_security_level security_level;
-+	size_t nboot_acl;
- 	unsigned long privdata[0];
- };
- 
 -- 
 2.16.2
