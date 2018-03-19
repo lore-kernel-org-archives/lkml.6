@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtKit6pXZS8AUw+/05fgMnRQAdLBI2RQZDu+aXdid5ok2CdSh5DrhfQk0oKSrN80LG8gGHG
-ARC-Seal: i=1; a=rsa-sha256; t=1521484326; cv=none;
+X-Google-Smtp-Source: AG47ELtM6pnagt8e1n835+Bx9astg26oC4XMWIzFoWrSiynfFH6VsnEa1UqgmoUcCAzYBGzvqwbk
+ARC-Seal: i=1; a=rsa-sha256; t=1521484323; cv=none;
         d=google.com; s=arc-20160816;
-        b=PJRKqJmPCU29wvALibwhmkPxWhtF2puEEFhlUBqKZpV3ItVuPm32oXh1+KubV60wrt
-         5Jy6v7E+mFD5ITVi4C4O2fMA3+QqbqWKzKLCRiG2wKBXuVECNCnYgL5fjoKonEGqA5tT
-         R9JCdLWO5wTYUEbSaTIiSuP2O0zErJjsVdzFTAcwnxTn3CgjfzBS3r3OBbpIqjHllROs
-         1ZJFDv7D2hVBorMKHNYW2UA4D3KR6DR2uiwAEv9zgcwGzYYzZEjQJwOv6jYHIEpE4abt
-         8n8kiMCRqGk7iLUXXxB885jn/V5HRU/Sk/UlFFGhQcKIed8+21bl3MktEPIEKAQlMBTN
-         Zs9w==
+        b=bw/TDJcLjHCvFXBFzYNZ9Bq1zZrqs+41Ovsn9i/bqhc1rwHHv3B41kCQEr4J5sljpf
+         8R7gahF2b9NM2AMli4REZUgMoQIFyBYhO0Fd13iuz3Eigqb09Td8KlWlPyQvJSpazyqr
+         9bhKlNRepL+D0kVMVeNwTXQM6ZQOfnIA6EA7BK6N5ZpkXYAg796WYzN+z8PB6swbAJV9
+         V8bYKt/tbogtRnxOfxPB1g48Fwwjhfs18bmYareNI4WZHxTY1FH72fNt2SfIB/Allh84
+         A9+bQSq4wG25bRyUqA48VlCzRmuNVPzRNLpPhFf0YNi/fOJzcEL44Zlie8wQs/kR3rp3
+         ow1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dME6I52f+l4YRmDSecp3yXa+H5ut31mvN9e4YTj6oHA=;
-        b=GitghcfCT7xloUpUL6R8evQmw7eSn24IUJMqogkkP0oicVLo5uZ27W/Qyv3R57r/Yh
-         9gmCt5TNnTIZilQ773ezzVV+nuZip710CmPtEZxPWK2SL2uL4SX91T/9ezX0MYay8RFb
-         g5X3l/zSMnco+W9pzL7ztXbIb4s1lI5aqZrfofymp67TjwrOTAu9qy2of2rlef5RUdC+
-         8jjwkZk7We7EwlqizffjRMyUsJDh1gHsaxIlfvGBaW7sUbCnb9JS07+NTqFQ0AUEbQqK
-         bgd4I+uLYqo3kUNbIPlSEyR1/qK1khN0laXGJ9BeAYE5J2U+Pgkosns1nv//yfRjFBOd
-         xx6Q==
+        bh=7CqXmprZ6k2c+XXWbrB8tOTpVJ6YFo1UH5INVR1Id/M=;
+        b=BQa6A2FYOh4jl5yBsYeA4airM0i4TzyKGensFLK7uw7V/tN56BmKgCFSLsW6ajG69w
+         e90SDIKwafqTomTKzFHbRlW3l6crBFx9LreLSkZ6i1AbAkf/uTBQKovJCeyh6Zo6H/xB
+         1vpwPgkCGqpTRD48qnGtvXLPyBx6K5R8v+81vufZ/WAtWvrzpeEAzI22faCkYOslgYL1
+         EAZXz6ty2+oALCb/F/7/fmjqkLDutM+yqJspjjVi0PJej9cHpiS/aNe4DNMDVCncf/My
+         ke0TEWT/L4KA44VlGM5+40436dP9XHJv0Zg0znEw1HSbbMpJMqTJ2ATEqDroc2bmd0fI
+         sJIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Sergeyev <sergeev917@gmail.com>,
+	Andy Whitcroft <apw@canonical.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Jia Zhang <qianyue.zj@alibaba-inc.com>,
-	Kyle Huey <me@kylehuey.com>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.15 07/52] x86/speculation: Remove Skylake C2 from Speculation Control microcode blacklist
-Date: Mon, 19 Mar 2018 19:08:05 +0100
-Message-Id: <20180319180735.457297554@linuxfoundation.org>
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 06/52] x86/speculation, objtool: Annotate indirect calls/jumps for objtool on 32-bit kernels
+Date: Mon, 19 Mar 2018 19:08:04 +0100
+Message-Id: <20180319180735.398008576@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -43,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391747267778863?=
-X-GMAIL-MSGID: =?utf-8?q?1595391948550750110?=
+X-GMAIL-THRID: =?utf-8?q?1595391744762419603?=
+X-GMAIL-MSGID: =?utf-8?q?1595391945904846228?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,43 +60,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Sergeyev <sergeev917@gmail.com>
+From: Andy Whitcroft <apw@canonical.com>
 
-commit e3b3121fa8da94cb20f9e0c64ab7981ae47fd085 upstream.
+commit a14bff131108faf50cc0cf864589fd71ee216c96 upstream.
 
-In accordance with Intel's microcode revision guidance from March 6 MCU
-rev 0xc2 is cleared on both Skylake H/S and Skylake Xeon E3 processors
-that share CPUID 506E3.
+In the following commit:
 
-Signed-off-by: Alexander Sergeyev <sergeev917@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kyle Huey <me@kylehuey.com>
+  9e0e3c5130e9 ("x86/speculation, objtool: Annotate indirect calls/jumps for objtool")
+
+... we added annotations for CALL_NOSPEC/JMP_NOSPEC on 64-bit x86 kernels,
+but we did not annotate the 32-bit path.
+
+Annotate it similarly.
+
+Signed-off-by: Andy Whitcroft <apw@canonical.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180313193856.GA8580@localhost.localdomain
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180314112427.22351-1-apw@canonical.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -105,7 +105,7 @@ static void probe_xeon_phi_r3mwait(struc
- /*
-  * Early microcode releases for the Spectre v2 mitigation were broken.
-  * Information taken from;
-- * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
-+ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/03/microcode-update-guidance.pdf
-  * - https://kb.vmware.com/s/article/52345
-  * - Microcode revisions observed in the wild
-  * - Release note from 20180108 microcode release
-@@ -123,7 +123,6 @@ static const struct sku_microcode spectr
- 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
--	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -183,7 +183,10 @@
+  * otherwise we'll run out of registers. We don't care about CET
+  * here, anyway.
+  */
+-# define CALL_NOSPEC ALTERNATIVE("call *%[thunk_target]\n",	\
++# define CALL_NOSPEC						\
++	ALTERNATIVE(						\
++	ANNOTATE_RETPOLINE_SAFE					\
++	"call *%[thunk_target]\n",				\
+ 	"       jmp    904f;\n"					\
+ 	"       .align 16\n"					\
+ 	"901:	call   903f;\n"					\
