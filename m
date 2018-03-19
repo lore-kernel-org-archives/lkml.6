@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt7+01g18pDZECXdv8XQBiWjtgrSpbPwSxBrBJfwlrTFx+aBdOloZwI3cnXCgHRV9gmY+8R
-ARC-Seal: i=1; a=rsa-sha256; t=1521483328; cv=none;
+X-Google-Smtp-Source: AG47ELtFwgPrc8u/hepgDbG49VyQYcA5rTPTJV20KsywXZz+40fgAGqRL1OAIzS+/X7N/KuMd+95
+ARC-Seal: i=1; a=rsa-sha256; t=1521483325; cv=none;
         d=google.com; s=arc-20160816;
-        b=yHIhL+OuCuG0RtY3/SM813RVd1fcpY7dcGCx1HMFmt3GoeIgC2E7Xfo6TZr/7ay2Ox
-         2YwUUcULAPxCGCdnF+ZP1HwXFQ2KIgJBFE+Zj8L7JT39Ym7C8tKKJxrlavXdrvKq5dvv
-         x5vO9LI3mHVbvyPBNs5GPeKsD2IVuVXtcnEjlYI02t6AZGFgZQ2RCiuGSviHXpfqqO56
-         zi5XCsriVxfl1T/8O0jqUiWSv292kRXTuctDoruklRXH22GVZUG0atj+uHrjKAc0+wPN
-         hqCfKNJscFBjfanRfOVAPDFc0RmQaB25w4fNDybVrG5Ae2otlrC4E+NHkbtI9dppwA3w
-         +9Bw==
+        b=ObOFeo1IkznEz17ZBgYWKzlVtvamdoKbKQMSEWJzABBKqBAKXo9LgEhoAm9A8duei9
+         gX7L7qm6ibh0rUygF14BgDxvdtMMsb0eU1B0vPLIT04xQxDkBPVeRdy8cQAfQUNeQrhi
+         nttTEOEJenc4VMR2a0UNU5ezyEfh4V8+2eJi7kWijNzYtoSo9NQbSoy2kENNzpFQsnEX
+         +wajBYzA6rXNDupxw8Ym1q2nKmEJlXQ8mgbQWT5T7P22GjH5PXq28FwN1Msuq63Xv/Co
+         tk3YErwb8BfgiUBBJKCHNF2qstXx6bCrr2ehyWOMNbJJLX2twNHHFpJvBl5ZgoiqjtUy
+         SUpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HQbpuZ2FyKL7WoKoRXLgB7UpgELm47galCPuuVhcx1s=;
-        b=hba/fnpQbrVQ64WrL4T2qwmEDfvr41p6gV5+ymfY8oakAirFWuYLnvCrcmCnIlXsCn
-         eg0xPlbBzaAWAqBrx0u1FdgzjvrP476YucIaf9e+tGlD+Gk9WtpNqfM6M7i/fDTgsT7B
-         JJPkG8rKNqas3/9vitUp9oJ1y1ML0xbRqv1TuV2528pTmRqDKPl95zV4gza8TBtNte6U
-         q72YGrej7g7q00weVFWR20wnxzKj3cg4beppuzdkL0JVuEhZG0+uaS+njXi5fkxKzAkF
-         Mmy270NcQzdkUEsdR1I+kHW3nIceqdQFXjgZANRQh6Jn+kkc6rItmv5BaxGb/PaGQI3p
-         lZ7g==
+        bh=DUn8wCk4kVQXM8G+j7ehJkCHuXD/iutk8XlEKqNp0c0=;
+        b=h74MvsJfWqAUb3OmoCR8ZHFgtrwvMUwV9WRHsCGsV3PrIazbIg6E588s9eC7f/sZZO
+         kEh2XlkD/nTlREZ5fr5Dc5ZQdALliTy6UwFh5Q5iV3JWQTchhNMJ0p3uid/Sbdj+OA4t
+         KBdrqiRF8zzD9feRpHlAKslNTs43bcngOYMr3XlrNXFpg8GGzrzEeWeXHa+0ro1YiOSB
+         8bkqrJvwWWnX7PTdphxk9ceCbaVj8Mv3N90rwTIBn6lSx67eV1lI5JzCHHQQlmQPO5Zl
+         +G02KIStcUdyW+X7m+v4eVPU/0LFW8kRGCtppRCu3cl9w99CiBJW4K+2m03uaw+RXOT1
+         Cp+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 084/134] sched: Stop resched_cpu() from sending IPIs to offline CPUs
-Date: Mon, 19 Mar 2018 19:06:07 +0100
-Message-Id: <20180319171901.416762985@linuxfoundation.org>
+Subject: [PATCH 4.4 083/134] sched: Stop switched_to_rt() from sending IPIs to offline CPUs
+Date: Mon, 19 Mar 2018 19:06:06 +0100
+Message-Id: <20180319171901.267391119@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390597309661701?=
-X-GMAIL-MSGID: =?utf-8?q?1595390902154393953?=
+X-GMAIL-THRID: =?utf-8?q?1595390899532847799?=
+X-GMAIL-MSGID: =?utf-8?q?1595390899532847799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,68 +54,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
-[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
+[ Upstream commit 2fe2582649aa2355f79acddb86bd4d6c5363eb63 ]
 
 The rcutorture test suite occasionally provokes a splat due to invoking
-resched_cpu() on an offline CPU:
+rt_mutex_lock() which needs to boost the priority of a task currently
+sitting on a runqueue that belongs to an offline CPU:
 
-WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
+WARNING: CPU: 0 PID: 12 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
 Modules linked in:
-CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+CPU: 0 PID: 12 Comm: rcub/7 Not tainted 4.14.0-rc4+ #1
 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-task: ffff902ede9daf00 task.stack: ffff96c50010c000
+task: ffff9ed3de5f8cc0 task.stack: ffffbbf80012c000
 RIP: 0010:native_smp_send_reschedule+0x37/0x40
-RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
-RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
-RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
-RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
-R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
-FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
+RSP: 0018:ffffbbf80012fd10 EFLAGS: 00010082
+RAX: 000000000000002f RBX: ffff9ed3dd9cb300 RCX: 0000000000000004
+RDX: 0000000080000004 RSI: 0000000000000086 RDI: 00000000ffffffff
+RBP: ffffbbf80012fd10 R08: 000000000009da7a R09: 0000000000007b9d
+R10: 0000000000000001 R11: ffffffffbb57c2cd R12: 000000000000000d
+R13: ffff9ed3de5f8cc0 R14: 0000000000000061 R15: ffff9ed3ded59200
+FS:  0000000000000000(0000) GS:ffff9ed3dea00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+CR2: 00000000080686f0 CR3: 000000001b9e0000 CR4: 00000000000006f0
 Call Trace:
- resched_curr+0x8f/0x1c0
- resched_cpu+0x2c/0x40
- rcu_implicit_dynticks_qs+0x152/0x220
- force_qs_rnp+0x147/0x1d0
- ? sync_rcu_exp_select_cpus+0x450/0x450
- rcu_gp_kthread+0x5a9/0x950
- kthread+0x142/0x180
- ? force_qs_rnp+0x1d0/0x1d0
+ resched_curr+0x61/0xd0
+ switched_to_rt+0x8f/0xa0
+ rt_mutex_setprio+0x25c/0x410
+ task_blocks_on_rt_mutex+0x1b3/0x1f0
+ rt_mutex_slowlock+0xa9/0x1e0
+ rt_mutex_lock+0x29/0x30
+ rcu_boost_kthread+0x127/0x3c0
+ kthread+0x104/0x140
+ ? rcu_report_unblock_qs_rnp+0x90/0x90
  ? kthread_create_on_node+0x40/0x40
- ret_from_fork+0x27/0x40
-Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
----[ end trace 26df9e5df4bba4ac ]---
+ ret_from_fork+0x22/0x30
+Code: f0 00 0f 92 c0 84 c0 74 14 48 8b 05 34 74 c5 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 a0 c6 fc b9 e8 d5 b5 06 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 a2 d1 13 02 85 c0 75 38 55 48
 
-This splat cannot be generated by expedited grace periods because they
-always invoke resched_cpu() on the current CPU, which is good because
-expedited grace periods require that resched_cpu() unconditionally
-succeed.  However, other parts of RCU can tolerate resched_cpu() acting
-as a no-op, at least as long as it doesn't happen too often.
+But the target task's priority has already been adjusted, so the only
+purpose of switched_to_rt() invoking resched_curr() is to wake up the
+CPU running some task that needs to be preempted by the boosted task.
+But the CPU is offline, which presumably means that the task must be
+migrated to some other CPU, and that this other CPU will undertake any
+needed preemption at the time of migration.  Because the runqueue lock
+is held when resched_curr() is invoked, we know that the boosted task
+cannot go anywhere, so it is not necessary to invoke resched_curr()
+in this particular case.
 
-This commit therefore makes resched_cpu() invoke resched_curr() only if
-the CPU is either online or is the current CPU.
+This commit therefore makes switched_to_rt() refrain from invoking
+resched_curr() when the target CPU is offline.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/sched/rt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -601,7 +601,8 @@ void resched_cpu(int cpu)
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&rq->lock, flags);
--	resched_curr(rq);
-+	if (cpu_online(cpu) || cpu == smp_processor_id())
-+		resched_curr(rq);
- 	raw_spin_unlock_irqrestore(&rq->lock, flags);
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2144,7 +2144,7 @@ static void switched_to_rt(struct rq *rq
+ 		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
+ 			queue_push_tasks(rq);
+ #endif /* CONFIG_SMP */
+-		if (p->prio < rq->curr->prio)
++		if (p->prio < rq->curr->prio && cpu_online(cpu_of(rq)))
+ 			resched_curr(rq);
+ 	}
  }
- 
