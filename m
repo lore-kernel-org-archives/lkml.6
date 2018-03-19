@@ -1,123 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932646AbeCSJMb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:12:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46212 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932426AbeCSJM3 (ORCPT
+        id S933080AbeCSJSd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:18:33 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:50693 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933035AbeCSJR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:12:29 -0400
-Date: Mon, 19 Mar 2018 10:11:59 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT][PATCH v5 4/7] cpuidle: Return nohz hint from
- cpuidle_select()
-Message-ID: <20180319091159.GF4043@hirez.programming.kicks-ass.net>
-References: <2142751.3U6XgWyF8u@aspire.rjw.lan>
- <2021405.tG9RYD54xL@aspire.rjw.lan>
+        Mon, 19 Mar 2018 05:17:59 -0400
+X-Google-Smtp-Source: AG47ELvl991lZS+Zi1TFkpGHT+0FKvIYb8JvzLoro2HUNsBgtxs5uCoh2PtxhlkJ2ttKHfO3zLcL3Q==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2021405.tG9RYD54xL@aspire.rjw.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1521033957.1130.5.camel@bootlin.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com> <CAPBb6MUeUaHZj9y1N7wJk9yS8QL+zTqWCGvujcKCY0YpdeiyWg@mail.gmail.com>
+ <1520606128.15946.22.camel@bootlin.com> <CAPBb6MWAXjCWJB6x-osFKZ-wGzMiucL6oa1ZHEzTgscpJTs35Q@mail.gmail.com>
+ <1521033957.1130.5.camel@bootlin.com>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Mon, 19 Mar 2018 18:17:37 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MUXGyQiU26fxChbLBU9cRKRMGZWa-CNvL0GM1s94Y98rA@mail.gmail.com>
+Message-ID: <CAPBb6MUXGyQiU26fxChbLBU9cRKRMGZWa-CNvL0GM1s94Y98rA@mail.gmail.com>
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 11:11:35PM +0100, Rafael J. Wysocki wrote:
+On Wed, Mar 14, 2018 at 10:25 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+> Hi,
+>
+> On Tue, 2018-03-13 at 19:24 +0900, Alexandre Courbot wrote:
+>> On Fri, Mar 9, 2018 at 11:35 PM, Paul Kocialkowski
+>> <paul.kocialkowski@bootlin.com> wrote:
+>> > Hi,
+>> >
+>> > On Thu, 2018-03-08 at 22:48 +0900, Alexandre Courbot wrote:
+>> > > Hi Paul!
+>> > >
+>> > > Thanks a lot for taking the time to try this! I am also working on
+>> > > getting it to work with an actual driver, but you apparently found
+>> > > rough edges that I missed.
+>> > >
+>> > > On Thu, Mar 8, 2018 at 1:37 AM, Paul Kocialkowski
+>> > > <paul.kocialkowski@bootlin.com> wrote:
+>> > > > On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
+>
+> [...]
+>
+>> > > > > +static int vim2m_request_submit(struct media_request *req,
+>> > > > > +                             struct media_request_entity_data
+>> > > > > *_data)
+>> > > > > +{
+>> > > > > +     struct v4l2_request_entity_data *data;
+>> > > > > +
+>> > > > > +     data = to_v4l2_entity_data(_data);
+>> > > >
+>> > > > We need to call v4l2_m2m_try_schedule here so that m2m
+>> > > > scheduling
+>> > > > can
+>> > > > happen when only 2 buffers were queued and no other action was
+>> > > > taken
+>> > > > from usespace. In that scenario, m2m scheduling currently
+>> > > > doesn't
+>> > > > happen.
+>> > >
+>> > > I don't think I understand the sequence of events that results in
+>> > > v4l2_m2m_try_schedule() not being called. Do you mean something
+>> > > like:
+>> > >
+>> > > *
+>> > > * QBUF on output queue with request set
+>> > > * QBUF on capture queue
+>> > > * SUBMIT_REQUEST
+>> > >
+>> > > ?
+>> > >
+>> > > The call to vb2_request_submit() right after should trigger
+>> > > v4l2_m2m_try_schedule(), since the buffers associated to the
+>> > > request
+>> > > will enter the vb2 queue and be passed to the m2m framework, which
+>> > > will then call v4l2_m2m_try_schedule(). Or maybe you are thinking
+>> > > about a different sequence of events?
+>> >
+>> > This is indeed the sequence of events that I'm seeing, but the
+>> > scheduling call simply did not happen on vb2_request_submit. I
+>> > suppose I will need to investigate some more to find out exactly
+>> > why.
+>> >
+>> > IIRC, the m2m qbuf function is called (and fails to schedule) when
+>> > the
+>> > ioctl happens, not when the task is submitted.
+>> >
+>> > This issue is seen with vim2m as well as the rencently-submitted
+>> > sunxi-
+>> > cedrus driver (with the in-driver calls to v4l2_m2m_try_schedule
+>> > removed, obviously). If needs be, I could provide a standalone test
+>> > program to reproduce it.
+>>
+>> If you have a standalone program that can reproduce this on vim2m,
+>> then I would like to see it indeed, if only to understand what I have
+>> missed.
+>
+> You can find the test file for this use case at:
+> https://gist.github.com/paulkocialkowski/4cfa350e1bbe8e3bf714480bba83ea72
 
-I would suggest s/nohz_ret/stop_tick/ throughout, because I keep
-forgetting which way around the boolean works and the new name doesn't
-confuse.
-
-
-> Index: linux-pm/drivers/cpuidle/governors/menu.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpuidle/governors/menu.c
-> +++ linux-pm/drivers/cpuidle/governors/menu.c
-> @@ -275,12 +275,16 @@ again:
->  	goto again;
->  }
->  
-> +#define TICK_USEC_HZ   ((USEC_PER_SEC + HZ/2) / HZ)
-
-Do we want to put that next to TICK_NSEC?
-
-Also, there are only 2 users of the existing TICK_USEC, do we want to:
-
-  s/TICK_USEC/USER_&/
-
-and then rename the new thing to TICK_USEC ?
-
->  /**
->   * menu_select - selects the next idle state to enter
->   * @drv: cpuidle driver containing state data
->   * @dev: the CPU
-> + * @nohz_ret: indication on whether or not to stop the tick
->   */
-> +static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-> +		       bool *nohz_ret)
->  {
->  	struct menu_device *data = this_cpu_ptr(&menu_devices);
->  	struct device *device = get_cpu_device(dev->cpu);
-> @@ -303,8 +307,10 @@ static int menu_select(struct cpuidle_dr
->  		latency_req = resume_latency;
->  
->  	/* Special case when user has set very strict latency requirement */
-> +	if (unlikely(latency_req == 0)) {
-> +		*nohz_ret = false;
->  		return 0;
-> +	}
->  
->  	/* determine the expected residency time, round up */
->  	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
-> @@ -354,6 +360,7 @@ static int menu_select(struct cpuidle_dr
->  	if (latency_req > interactivity_req)
->  		latency_req = interactivity_req;
->  
-> +	expected_interval = data->predicted_us;
->  	/*
->  	 * Find the idle state with the lowest power while satisfying
->  	 * our constraints.
-> @@ -369,15 +376,30 @@ static int menu_select(struct cpuidle_dr
->  			idx = i; /* first enabled state */
->  		if (s->target_residency > data->predicted_us)
->  			break;
-> +		if (s->exit_latency > latency_req) {
-> +			/*
-> +			 * If we break out of the loop for latency reasons, use
-> +			 * the target residency of the selected state as the
-> +			 * expected idle duration so that the tick is retained
-> +			 * as long as that target residency is low enough.
-> +			 */
-> +			expected_interval = drv->states[idx].target_residency;
->  			break;
-> +		}
->  		idx = i;
->  	}
->  
->  	if (idx == -1)
->  		idx = 0; /* No states enabled. Must use 0. */
->  
-> +	/*
-> +	 * Don't stop the tick if the selected state is a polling one or if the
-> +	 * expected idle duration is shorter than the tick period length.
-> +	 */
-> +	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-> +	    expected_interval < TICK_USEC_HZ)
-> +		*nohz_ret = false;
-> +
->  	data->last_state_idx = idx;
->  
->  	return data->last_state_idx;
-
-Yes, much clearer, Thanks!
+Thanks, I have been able to see what the issue was. One indeed needs
+to call v4l2_m2m_try_schedule() when the request is queued, since the
+driver qbuf() hook does not do it automatically.
