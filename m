@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuAPhd4ULXlm+hH9nbVJprgksAVyotBPJUf4bgnj/vWCRnE2mbMpqz1TssxI4lYf+VsRBRb
-ARC-Seal: i=1; a=rsa-sha256; t=1521483532; cv=none;
+X-Google-Smtp-Source: AG47ELspfRshe+BVUE3dsRBUuw1P9IqJT6uLgNiVKHDvrjJVAcNcGlXg2nPru3X7glUtiaq0hPJG
+ARC-Seal: i=1; a=rsa-sha256; t=1521483529; cv=none;
         d=google.com; s=arc-20160816;
-        b=cCvP58jkA8Mc2B6PPxgjKmRL0n2/Tx4eLW15ZwzzLIoMseGWOf4eaGT/ceNaR9CQPH
-         ScjrD6qFejX3Q2c+kw2vdAkgef0RTfyWzh7Ciww62Yf89QSaoYRoiyXDanHNg2AglQkE
-         f0WJVAeMAMZ+meFJJOr0V7JRpVc9k6qxivB/Jayc+fSq51rDq5GOKkIZaeiNnGZCMrO1
-         5AJb3InzJjzWlWCfFfV+a3vjiQtl4tk2EN6UNDMrdOxS43kHclHjgidgNKHUNkFDF0xP
-         58DsuJlx1ps2bsm9Su6aJQOJdujsdzTM3lX4N23MntRI0uy+X7FODf7+fEDfSOVSCB27
-         p4aw==
+        b=HOM06wV8UiNXfrL4jCpNLycwoB4JM7NecN8KQeAQ5glVgGlN0DJqq43EElctLaYyPb
+         T8JxIqdGTbz+qZ/k4DOI1RAfHBtvpMPlHu/XlIFYFq+7SxmNUsemCz1wcSQ64rMB8eKY
+         chl2F1wn93vt/r2T3oIYXt8RMqnmXWFZ0rWAJ4icntPEvVfee4h/e1w/beBDDUwirx3n
+         Ky9MIMdkKqQhQbMyQzZTeBftCsmFIcQ0jqO/kYocJMhwT3FQOeZfjk9W6l4EH+gIWicK
+         UxpqZJ4T3Ki+SUdyjk2crhjUcsWB9IbcS1Toy+iefMGOexrJ8KPH7vq/s90Bfj4gIBCZ
+         GeUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XkqPXvpWNns8/CzQ8nhiEgkgjiDYaO3PCMJxh7ImzxM=;
-        b=tTTG469jwdW+y/SaCNLOpRuqiCVk/Iq9ZSWYtWzPIIhTcDuQMCdXfBzE1FMiJNwKCB
-         4ypC5/7ftEDMZCVGfiLo08NweTZTjGYOJBXtMFsZ+HIQig1FGRhXO6no1tzCirSGqF4I
-         pWUYvxQgoGrSOHgBQPnTaqzhPeYVbN1D3Wh+6ucSN6L3AgHspe4Qh+08e0U2oCpi6sHA
-         pF4OztL6sjiIb10tcw1jP/kZWHsNt4w/FiWxJMwI4AMJN1uk5olYpT7qp/88kxkZuyJw
-         gc3dHDbiPBQwAZvjTq7cSftyNPgbo1K0slj+xOVwbjk6x21W6B8DRhBvaO1cOjxXnNzC
-         QTog==
+        bh=6FDiO2tkTNNisq0vYo3Mk2A/QqklwA8M+72LH9b5CyQ=;
+        b=O65PlazzRaIXCVR+vfQaLuWpU6RrVM+oyFQoyRqD7Ns702sUR+iUAqR7/xY4PCEwg3
+         K04VNK7OiPJ1AJ5B92lCWtf9kfWI0kGpVPkxgneNEQK3Dgg5jtTcbdgtzjwyNaiFD+hm
+         VlLEt6AtRJ6LDVSXvNHjoCWHecuCx8vq91wkM3k8XOWeMXmkchPhAowmsaIU3pxAlBY/
+         ihMB3Ylq40YwWvoUAIvC5a1M+Yhf7lQnHC0ckYk/+PRJ5+OHwYoHH7injyrDbnHp4Jvd
+         JWJwQavv69hIPf2LUeiL/4o2wegQBr4PTzboo1hWCD/KV37zNA0oCxc94Sl8D6PJJwpb
+         cRsg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Xunlei Pang <xlpang@redhat.com>,
 	Borislav Petkov <bp@suse.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Robert Richter <rric@kernel.org>,
-	Vince Weaver <vince@deater.net>,
+	Tony Luck <tony.luck@intel.com>,
+	Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+	kexec@lists.infradead.org,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 003/241] perf stat: Issue a HW watchdog disable hint
-Date: Mon, 19 Mar 2018 19:04:28 +0100
-Message-Id: <20180319180751.316243264@linuxfoundation.org>
+Subject: [PATCH 4.9 022/241] x86/mce: Handle broadcasted MCE gracefully with kexec
+Date: Mon, 19 Mar 2018 19:04:47 +0100
+Message-Id: <20180319180752.087801059@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -45,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391116141665242?=
-X-GMAIL-MSGID: =?utf-8?q?1595391116141665242?=
+X-GMAIL-THRID: =?utf-8?q?1595391113151628350?=
+X-GMAIL-MSGID: =?utf-8?q?1595391113151628350?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,112 +56,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Xunlei Pang <xlpang@redhat.com>
 
 
-[ Upstream commit 02d492e5dcb72c004d213756eb87c9d62a6d76a7 ]
+[ Upstream commit 5bc329503e8191c91c4c40836f062ef771d8ba83 ]
 
-When using perf stat on an AMD F15h system with the default hw events
-attributes, some of the events don't get counted:
+When we are about to kexec a crash kernel and right then and there a
+broadcasted MCE fires while we're still in the first kernel and while
+the other CPUs remain in a holding pattern, the #MC handler of the
+first kernel will timeout and then panic due to never completing MCE
+synchronization.
 
- Performance counter stats for 'sleep 1':
+Handle this in a similar way as to when the CPUs are offlined when that
+broadcasted MCE happens.
 
-          0.749208      task-clock (msec)         #    0.001 CPUs utilized
-                 1      context-switches          #    0.001 M/sec
-                 0      cpu-migrations            #    0.000 K/sec
-                54      page-faults               #    0.072 M/sec
-         1,122,815      cycles                    #    1.499 GHz
-           286,740      stalled-cycles-frontend   #   25.54% frontend cycles idle
-     <not counted>      stalled-cycles-backend                                        (0.00%)
-     ^^^^^^^^^^^^
-     <not counted>      instructions                                                  (0.00%)
-     ^^^^^^^^^^^^
-     <not counted>      branches                                                      (0.00%)
-     <not counted>      branch-misses                                                 (0.00%)
+[ Boris: rewrote commit message and comments. ]
 
-       1.001550070 seconds time elapsed
-
-The reason is that we have the HW watchdog consuming one PMU counter and
-when perf tries to schedule 6 events on 6 counters and some of those
-counters are constrained to only a specific subset of PMCs by the
-hardware, the event scheduling fails.
-
-So issue a hint to disable the HW watchdog around a perf stat session.
-
-Committer note:
-
-Testing it...
-
-  # perf stat -d usleep 1
-
-   Performance counter stats for 'usleep 1':
-
-          1.180203      task-clock (msec)         #    0.490 CPUs utilized
-                 1      context-switches          #    0.847 K/sec
-                 0      cpu-migrations            #    0.000 K/sec
-                54      page-faults               #    0.046 M/sec
-           184,754      cycles                    #    0.157 GHz
-           714,553      instructions              #    3.87  insn per cycle
-           154,661      branches                  #  131.046 M/sec
-             7,247      branch-misses             #    4.69% of all branches
-           219,984      L1-dcache-loads           #  186.395 M/sec
-            17,600      L1-dcache-load-misses     #    8.00% of all L1-dcache hits    (90.16%)
-     <not counted>      LLC-loads                                                     (0.00%)
-     <not counted>      LLC-load-misses                                               (0.00%)
-
-       0.002406823 seconds time elapsed
-
-  Some events weren't counted. Try disabling the NMI watchdog:
-	echo 0 > /proc/sys/kernel/nmi_watchdog
-	perf stat ...
-	echo 1 > /proc/sys/kernel/nmi_watchdog
-  #
-
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Xunlei Pang <xlpang@redhat.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Vince Weaver <vince@deater.net>
-Link: http://lkml.kernel.org/r/20170211183218.ijnvb5f7ciyuunx4@pd.tnic
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Tony Luck <tony.luck@intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: kexec@lists.infradead.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1487857012-9059-1-git-send-email-xlpang@redhat.com
+Link: http://lkml.kernel.org/r/20170313095019.19351-1-bp@alien8.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-stat.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/include/asm/reboot.h    |    1 +
+ arch/x86/kernel/cpu/mcheck/mce.c |   18 ++++++++++++++++--
+ arch/x86/kernel/reboot.c         |    5 +++--
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -146,6 +146,7 @@ static aggr_get_id_t		aggr_get_id;
- static bool			append_file;
- static const char		*output_name;
- static int			output_fd;
-+static int			print_free_counters_hint;
+--- a/arch/x86/include/asm/reboot.h
++++ b/arch/x86/include/asm/reboot.h
+@@ -15,6 +15,7 @@ struct machine_ops {
+ };
  
- struct perf_stat {
- 	bool			 record;
-@@ -1109,6 +1110,9 @@ static void printout(int id, int nr, str
- 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
- 			csv_sep);
+ extern struct machine_ops machine_ops;
++extern int crashing_cpu;
  
-+		if (counter->supported)
-+			print_free_counters_hint = 1;
+ void native_machine_crash_shutdown(struct pt_regs *regs);
+ void native_machine_shutdown(void);
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -48,6 +48,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
++#include <asm/reboot.h>
+ 
+ #include "mce-internal.h"
+ 
+@@ -1081,9 +1082,22 @@ void do_machine_check(struct pt_regs *re
+ 	 * on Intel.
+ 	 */
+ 	int lmce = 1;
++	int cpu = smp_processor_id();
+ 
+-	/* If this CPU is offline, just bail out. */
+-	if (cpu_is_offline(smp_processor_id())) {
++	/*
++	 * Cases where we avoid rendezvous handler timeout:
++	 * 1) If this CPU is offline.
++	 *
++	 * 2) If crashing_cpu was set, e.g. we're entering kdump and we need to
++	 *  skip those CPUs which remain looping in the 1st kernel - see
++	 *  crash_nmi_callback().
++	 *
++	 * Note: there still is a small window between kexec-ing and the new,
++	 * kdump kernel establishing a new #MC handler where a broadcasted MCE
++	 * might not get handled properly.
++	 */
++	if (cpu_is_offline(cpu) ||
++	    (crashing_cpu != -1 && crashing_cpu != cpu)) {
+ 		u64 mcgstatus;
+ 
+ 		mcgstatus = mce_rdmsrl(MSR_IA32_MCG_STATUS);
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -769,10 +769,11 @@ void machine_crash_shutdown(struct pt_re
+ #endif
+ 
+ 
++/* This is the CPU performing the emergency shutdown work. */
++int crashing_cpu = -1;
 +
- 		fprintf(stat_config.output, "%-*s%s",
- 			csv_output ? 0 : unit_width,
- 			counter->unit, csv_sep);
-@@ -1477,6 +1481,13 @@ static void print_footer(void)
- 				avg_stats(&walltime_nsecs_stats));
- 	}
- 	fprintf(output, "\n\n");
-+
-+	if (print_free_counters_hint)
-+		fprintf(output,
-+"Some events weren't counted. Try disabling the NMI watchdog:\n"
-+"	echo 0 > /proc/sys/kernel/nmi_watchdog\n"
-+"	perf stat ...\n"
-+"	echo 1 > /proc/sys/kernel/nmi_watchdog\n");
- }
+ #if defined(CONFIG_SMP)
  
- static void print_counters(struct timespec *ts, int argc, const char **argv)
+-/* This keeps a track of which one is crashing cpu. */
+-static int crashing_cpu;
+ static nmi_shootdown_cb shootdown_callback;
+ 
+ static atomic_t waiting_for_crash_ipi;
