@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtcL1qKC6x3aagkWqtkr/rsP6k348SzL1QoeHP4YpQcHvS+PCkSR0utDApC+MzOZ8Pp7dri
-ARC-Seal: i=1; a=rsa-sha256; t=1521484126; cv=none;
+X-Google-Smtp-Source: AG47ELve/dlsjt2O+sFyeJbrFdVgt9z3p+P6f6nWxFxBvMKlnxXGgowBmkGk1gWP9zaa8i2B2kBZ
+ARC-Seal: i=1; a=rsa-sha256; t=1521484123; cv=none;
         d=google.com; s=arc-20160816;
-        b=cBlP9Ggmq6Eh43z8paEL697K3eRfmQl2y4XhrOAiFexSEe59H/mDVGBWNFtgO9Kqtz
-         G5I+kHM8XCEkodzrDzQv3iymPCT0zBBgBTF5YJkhkiLxvhfdjT2jx69832KkilVRPbVC
-         /Y6ZpIu38nrAQF4a1sFZQdUUYoty0ugLl7qkkAK1rTMlbWGOXgB9BxksJg9uUM5jU8Xl
-         mkLgxpooDXYRbDbAYlh5XtRToAE/bU+N9GljOGXfR0APaDvzUDgNEnonfPSOf2USXGxm
-         nBtJm4ekwdsph42pBcXDEalBJ4fzdoCZXRBznfIP6wRhbzbWHaGB9M2MW7VpoqXrkDI/
-         Jxzg==
+        b=xE6/jajHVCoMcD9dL5QyOYdfK5O5/4C6l839t7OLU/nEhiwhy5e+hTyJEeI1cIqlcz
+         e/tQDVWQJfOp/4Si/imUHlBUJQrO/rj8WMpduJOw1CZzA83si6jt6k6mBQyuBM6sSgYe
+         tV7TYfKryAvNGBaUWNMwwpzyXqUNVdp4kNQyx99iho8NPKC5evea+YmJ5WOh9YkCedgZ
+         xqZ+pxBO83HROteuDcw+S48TwUTzfLDQG+bT8M/pLoCmR4yAspPCa8Q2Wl2a3nXKVi7o
+         nArbhduVjHJL+MG3NKDuNaU20qwNGYoyo8EyseiK+dKUvDNG4PXKAq+wEhDIeCazkZf8
+         g69A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uh+k10GLligx4bglF1bgAB6zBxznwM/VWBePCTO+sFY=;
-        b=TKTEhc9eHtQSCqP4m1LMO3nTkNACtcgNV6dcvr05QOpImsRl+nci2sJJmsjDZna8EV
-         ICc67WYAGTvpmx52+afDzrEAeMRP3FWkTynlY0NtKaR37pknNqZqA249OQqNywcrRbAZ
-         kqyH9/2cc1axjvgQu9o3K+K9ERW32LudsEI26fCHAJFpX/2fvO857q1rUZ01EtSlp499
-         9SCSiL7zSKsoJnDdbtAf8/TlGorLpmy2iyfoR9FuSGJuHAa91d1PVuqtxPkRnQ4lL0OC
-         bWxgRTXr5Kphbw3MbuK8vMod//IB7X6TxcqxQHXExyh1BtqtZs7ZOmzjgv+Djk/U4XOu
-         cD7g==
+        bh=anYGwOQNaT6EQ5Ea4uSTWj8sZlCLZmxCOIUpzK2iJmc=;
+        b=SWuTciHtpiYNgJvj/pwIqHBo8KFnRITAiOU1KnONaskdMna9nN04H0ujcVN4PLBJIL
+         3HeArf+FeqB2Lm6J/ddwxrf0mFlfOSLTnK8N6wcDNJozRRxRlP1az+fxysuhCtp2Z55Q
+         epmcddIzaBeD8+Urth5eBH79GaAGr2dftSylWPAIDFxzzAn3Cu8Z/Ts6JxKW1Jy9nWih
+         asQ6YQn0/0o2isjH/2My6jWFECEjxpjIrpDU4fahoOOu2Ycg5OwlWHegC0AXHMWzEsEr
+         F9djhgJQFPdNSgdWDUvuU1Sy9cN8jc2cqtXTtD6yC0YCM/tuGbg4w1YFSuA7zEe6pmj4
+         BDEw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Thinh Nguyen <thinhn@synopsys.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 241/241] usb: gadget: bdc: 64-bit pointer capability check
-Date: Mon, 19 Mar 2018 19:08:26 +0100
-Message-Id: <20180319180801.149222902@linuxfoundation.org>
+Subject: [PATCH 4.9 240/241] usb: dwc3: Fix GDBGFIFOSPACE_TYPE values
+Date: Mon, 19 Mar 2018 19:08:25 +0100
+Message-Id: <20180319180801.105762772@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391044924888972?=
-X-GMAIL-MSGID: =?utf-8?q?1595391738887099974?=
+X-GMAIL-THRID: =?utf-8?q?1595391736203563121?=
+X-GMAIL-MSGID: =?utf-8?q?1595391736203563121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit c8e4e5bdb62a5ac6f860ebcaaf7b467b62f453f1 upstream.
+commit b16ea8b9492e99e03b1269fe93ebdbf8e4eabf8a upstream.
 
-Corrected the register to check the 64-bit pointer
-capability state. 64-bit pointer implementation capability
-was checking in wrong register, which causes the BDC
-enumeration failure in 64-bit memory address.
+The FIFO/Queue type values are incorrect. Correct them according to
+DWC_usb3 programming guide section 1.2.27 (or DWC_usb31 section 1.2.25).
 
-Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for
-Broadcom USB3.0 device controller IP BDC")
+Additionally, this patch includes ProtocolStatusQ and AuxEventQ types.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Fixes: cf6d867d3b57 ("usb: dwc3: core: add fifo space helper")
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/bdc/bdc_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc3/core.h |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -475,7 +475,7 @@ static int bdc_probe(struct platform_dev
- 	bdc->dev = dev;
- 	dev_dbg(bdc->dev, "bdc->regs: %p irq=%d\n", bdc->regs, bdc->irq);
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -159,13 +159,15 @@
+ #define DWC3_GDBGFIFOSPACE_TYPE(n)	(((n) << 5) & 0x1e0)
+ #define DWC3_GDBGFIFOSPACE_SPACE_AVAILABLE(n) (((n) >> 16) & 0xffff)
  
--	temp = bdc_readl(bdc->regs, BDC_BDCSC);
-+	temp = bdc_readl(bdc->regs, BDC_BDCCAP1);
- 	if ((temp & BDC_P64) &&
- 			!dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64))) {
- 		dev_dbg(bdc->dev, "Using 64-bit address\n");
+-#define DWC3_TXFIFOQ		1
+-#define DWC3_RXFIFOQ		3
+-#define DWC3_TXREQQ		5
+-#define DWC3_RXREQQ		7
+-#define DWC3_RXINFOQ		9
+-#define DWC3_DESCFETCHQ		13
+-#define DWC3_EVENTQ		15
++#define DWC3_TXFIFOQ		0
++#define DWC3_RXFIFOQ		1
++#define DWC3_TXREQQ		2
++#define DWC3_RXREQQ		3
++#define DWC3_RXINFOQ		4
++#define DWC3_PSTATQ		5
++#define DWC3_DESCFETCHQ		6
++#define DWC3_EVENTQ		7
++#define DWC3_AUXEVENTQ		8
+ 
+ /* Global RX Threshold Configuration Register */
+ #define DWC3_GRXTHRCFG_MAXRXBURSTSIZE(n) (((n) & 0x1f) << 19)
