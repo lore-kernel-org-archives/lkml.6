@@ -1,69 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3444635-1521483479-5-8135920020911332322
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521483479; b=havt+CPzp/lBb45eQ5EohKxKYANI8NpsU/BwF6mpPH3BeV/
-    /z+2qu9jY4jAKeTuDt681yiOrActDxq0yvccs42e/Rb3FRD1VmdPO5MuPT+KIFpe
-    2eRC88vhOleNysPJlGIDBgSSIsu0gk4ldTA4R3n4CMkKWU1sV8kzp2ag9gT6Fb1S
-    nsqCBSDcoUo4rAXjySfZrvvC4yPQqkCaWSWJrRA1bhfa1zl5uh6Bwnz3RXr4ejD2
-    ShkRJTT9cArGVX2jSkYJeSsZ2WZRjXw1gN5CpQIhc+WBHT356X2hwLFXo7JPTrfJ
-    1u5X6G3bYPqtxg8C8hwd7LJM6xh4cqcOP0XBrNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521483479; bh=SJhIuVqjczZ37dhGkKVESOehXE
-    QxSHs8jxFmRgvL9Nk=; b=ulzHioCDVS4EQo0sazPmZh0aaX5TQCUp7Bt/Wjx0qE
-    3KeEX1JVh4mVQqY9tCqL3ieudmRP2/Lk2QZXyMijxNIuq9jZoPUz22uB3zxGRIZK
-    9e8DA1TMs6daM4osaXOuOCswbBMChiQtHPcsBtftcJIQkS94tAftD8cTCJnoVLCU
-    McGyZJrwZS7y3MxKwCvFql28lOV6N33BDIJQ77F0jY87QErkrcOu30Q22yYDFBZx
-    u3zlA7+WfDhTDDU3WwVG2qw5Mu7gFtMISyXa3+jKj9y97dfOywaljYXaQm/JnCHv
-    HNgWM8Gh8QBlPAdrvEivyNogzN+xSID+CWLSJj4gfHMw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleejheenucevlhhushhtvghrufhiiigvpeejud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudduucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleejheenucevlhhushhtvghrufhiiigvpeejud;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969179AbeCSSRj (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:17:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45620 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969171AbeCSSRi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:17:38 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuLu3fzyXvshAfQ8lky4BQtpTvaoNogTnu+6R9yG8gnpXiDXVJrk8+lCkW2cy9ZSZ3CKSIL
+ARC-Seal: i=1; a=rsa-sha256; t=1521483477; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hBVdpAzXN/dn2cUw8Zpf7vDTSqnyQqFZw4Dj+CF5tx4+Dsc0FtcVl41n5cUnn4NNJM
+         ba4Rkdwwex8omPQQ5u3iJUYEXhZdcvLyOSZzOcNgAaI0XAe7a10RozBjZB0R7vwi/DBj
+         m3YKwd/klWqbZ264WLZSLZgyfutEJ1jcvFkznYQXP2eKacJS0U6Yhxx2w9+zGOG9b0b9
+         1JrdnGOeoDA5hh2W3ntFmLqla5xaf588n7LzE+NNEzUMyo4vW0Vm8Z0eXr/XCBAXRsyU
+         eS6Snc+PJdXXSOB3jscDG9j0k/eCAYKZbt0XbP9ycgK5iGjQdu8tcTJTGsORZcEm0IVX
+         a73w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=nQypa26QO26F4wgnisr1/felO3rGExSnhn/QtzRpmEo=;
+        b=GK4JRMM5AEvrGJMUNXbbOdrZYRm2dGrpYcPGmO3XiV57y1s8dVidkBO1kEaCBzeTjN
+         p8OXWfQNdfUf1q61++6wVZljlbO3RdHSSEaPsEASePSrnON8Lv/YMUMJccG23/nw3tO+
+         eICrAePqf4k26wbl7Qzl9dZ7qn+SKKqZ9jyw8UODYfhSrBDMKqpWqrtEXxWjfMLij1Sz
+         MeG+9h7l2FW4NF6C+cfiwpQMcuhFQFsPQ/2LA5h/jvh1UVVuXbhn9ueqB2MpUJVDphz0
+         1z8Th4MqBcLTgV9fY+lelIfxX7a/+WtMLzsfmZT7r1o6nMzn4n0+ERy8T3eRDzjchJMx
+         t2Xw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 131/134] btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device
-Date: Mon, 19 Mar 2018 19:06:54 +0100
-Message-Id: <20180319171908.164096609@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Stas Sergeev <stsp@list.ru>,
+	Bart Oldeman <bartoldeman@gmail.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 114/134] x86/vm86/32: Fix POPF emulation
+Date: Mon, 19 Mar 2018 19:06:37 +0100
+Message-Id: <20180319171905.750832502@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -71,9 +48,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595391058826275806?=
+X-GMAIL-MSGID: =?utf-8?q?1595391058826275806?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,39 +59,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit fd649f10c3d21ee9d7542c609f29978bdf73ab94 upstream.
+commit b5069782453459f6ec1fdeb495d9901a4545fcb5 upstream.
 
-Commit 4fde46f0cc71 ("Btrfs: free the stale device") introduced
-btrfs_free_stale_device which iterates the device lists for all
-registered btrfs filesystems and deletes those devices which aren't
-mounted. In a btrfs_devices structure has only 1 device attached to it
-and it is unused then btrfs_free_stale_devices will proceed to also free
-the btrfs_fs_devices struct itself. Currently this leads to a use after
-free since list_for_each_entry will try to perform a check on the
-already freed memory to see if it has to terminate the loop.
+POPF would trap if VIP was set regardless of whether IF was set.  Fix it.
 
-The fix is to use 'break' when we know we are freeing the current
-fs_devs.
-
-Fixes: 4fde46f0cc71 ("Btrfs: free the stale device")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Suggested-by: Stas Sergeev <stsp@list.ru>
+Reported-by: Bart Oldeman <bartoldeman@gmail.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Fixes: 5ed92a8ab71f ("x86/vm86: Use the normal pt_regs area for vm86")
+Link: http://lkml.kernel.org/r/ce95f40556e7b2178b6bc06ee9557827ff94bd28.1521003603.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/vm86_32.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -568,6 +568,7 @@ void btrfs_free_stale_device(struct btrf
- 				btrfs_sysfs_remove_fsid(fs_devs);
- 				list_del(&fs_devs->list);
- 				free_fs_devices(fs_devs);
-+				break;
- 			} else {
- 				fs_devs->num_devices--;
- 				list_del(&dev->dev_list);
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -715,7 +715,8 @@ void handle_vm86_fault(struct kernel_vm8
+ 	return;
+ 
+ check_vip:
+-	if (VEFLAGS & X86_EFLAGS_VIP) {
++	if ((VEFLAGS & (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) ==
++	    (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) {
+ 		save_v86_state(regs, VM86_STI);
+ 		return;
+ 	}
