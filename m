@@ -1,67 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490082-1521484096-2-5784584594389481003
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484096; b=MS0F5V97PxzuypzycfsQUTvHPMUN5F3ipOfQ7IF/Dt/Tf8T
-    3Og4OU1jsxEit2B2FM6fBwLFKc9WaUmrAYPF/4gO5DnwINQ2POHQVwX4mwBVa/sN
-    Q+DXHr6Ygtxd3ZXGynz/VKp3v7d+qty+iGm7dsANvi7UsURw5RNmh58TOY1jIIWF
-    5CMm5f3CNuFZKizHgiLt3tYLcgMP2qrxI4Yu6K8t3BDmMUehJqT73QTcKHNCMUk6
-    Iw68YssWeGDhFc/S1EmDwSwcaRGLWSa8LNdypDZG+Guihmtvy1O2Dq10ggbr+vSU
-    O0DJJhzOIdbgeymbc4XQIxwAp2/kasBVAM4h6Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484096; bh=3PBwZxUWfXZB+lcNJQn1OddHiO
-    PSO8breKmQo+NxhzQ=; b=Lp2JkxacldYAm6+CxSVLb0V/qS/FHMxivIUQ7MduGm
-    jCXA5df+mapi7h6MnBNuHpaSPZyFpqHKSMAx8evbsNrX9K3NNQQ2cDh6vVSsOyPz
-    1clG0At28bUNsClxfJAWPOCL7G0aEpULRTQVvKTrP4VLRuySXD1tvI9Yzzh7KJZZ
-    l3toeAAIrNHFBcd2UhzeUB3+R6csBgC1KnVBM9BRVeC/CRs4dQeMDVMwYGkva4rl
-    ihtcbzfKZBCJWarJ/xiLAaaiAkG/OMmLxa4V2pWy/3P3rknF89T/ABovZZ/hBcCv
-    bnkZIWlv7wEw12hFa/y5qdlcxT9SRJAHCuz/cSiSX8ow==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleegtdenucevlhhushhtvghrufhiiigvpeehge;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudefucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpedvleegtdenucevlhhushhtvghrufhiiigvpeehge;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970106AbeCSS2N (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:28:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51536 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970098AbeCSS2L (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:28:11 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsQdcQp95czoLDRI2FkE38/+lB6UHhmJAjQ99ayxmH00OAGqXAgvf4t/+uDnqrBzwpBjESg
+ARC-Seal: i=1; a=rsa-sha256; t=1521484093; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hx44QnXMmh1gU9It5Jz4tBOS2qdWaQTO+5kqB/g3wlvTQO4wNTXeN+Vfx/F3tPfpUM
+         XjT807XxT7ucoiQNE//wo7ddrHnk9B9dkg+/BSsFObaEy9bS363MBh0rve58jNbP+Gg7
+         gLudZ355Dh3FzT9Wc11CBpeAzxcOewOfT0w0J92srFmzd3jCHG8Owo/0Su6GOqixrccW
+         joB5yw3J93HukBToX95T7hfb0PHKogYH3BU2bl2B5M06IGsMGNfbxy3p+AgNh58vloPJ
+         qhEnqViO6zSqN9AybO9k30pnCXE7wFdiz9Fexts88lChZ+/J3KJ7guCTbt61oMJEsAL7
+         b7CQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=8FCd8tKUeK8yAC+58onESIWJhTjEqtrEI8ZB7pfjklk=;
+        b=DpdffKNPvL2xFNxvVxIEVR0Bex73FIF2XDVi0qIIQ5/wFsmiylRRGHjPGxehIugBwW
+         /AYpqyGyoDKwy9V05n2tMoG8ytAC1pu5emqDHX4Ej6KUiqImSq8jOeBLPmwcuam+pVZP
+         xoV2gCkaICIIK3K+oPMG/loM+7gQle+6ZR8MmaNgYtWm1T3sVaz7+7/a7iLTfnUCA0HE
+         gQz4gmC7FY6F9QHaQxmsdtPlrWwtdpPl9EHQRWhZ7XplXxT1XoIjJj/Ki7VUjk9iGE7B
+         dOcK+Z1/DASmqcjunmVKViVg40kijdz0Qb6bWeNeISK58XC3oDA2ZB1tMc9fdIbcnUDz
+         l8hQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 229/241] lock_parent() needs to recheck if dentry got __dentry_killed under it
-Date: Mon, 19 Mar 2018 19:08:14 +0100
-Message-Id: <20180319180800.652668687@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 230/241] fs/aio: Add explicit RCU grace period when freeing kioctx
+Date: Mon, 19 Mar 2018 19:08:15 +0100
+Message-Id: <20180319180800.691401226@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -69,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390653676229913?=
+X-GMAIL-MSGID: =?utf-8?q?1595391705216288864?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,47 +51,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Tejun Heo <tj@kernel.org>
 
-commit 3b821409632ab778d46e807516b457dfa72736ed upstream.
+commit a6d7cff472eea87d96899a20fa718d2bab7109f3 upstream.
 
-In case when dentry passed to lock_parent() is protected from freeing only
-by the fact that it's on a shrink list and trylock of parent fails, we
-could get hit by __dentry_kill() (and subsequent dentry_kill(parent))
-between unlocking dentry and locking presumed parent.  We need to recheck
-that dentry is alive once we lock both it and parent *and* postpone
-rcu_read_unlock() until after that point.  Otherwise we could return
-a pointer to struct dentry that already is rcu-scheduled for freeing, with
-->d_lock held on it; caller's subsequent attempt to unlock it can end
-up with memory corruption.
+While fixing refcounting, e34ecee2ae79 ("aio: Fix a trinity splat")
+incorrectly removed explicit RCU grace period before freeing kioctx.
+The intention seems to be depending on the internal RCU grace periods
+of percpu_ref; however, percpu_ref uses a different flavor of RCU,
+sched-RCU.  This can lead to kioctx being freed while RCU read
+protected dereferences are still in progress.
 
-Cc: stable@vger.kernel.org # 3.12+, counting backports
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fix it by updating free_ioctx() to go through call_rcu() explicitly.
+
+v2: Comment added to explain double bouncing.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jann Horn <jannh@google.com>
+Fixes: e34ecee2ae79 ("aio: Fix a trinity splat")
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org # v3.13+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/aio.c |   23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -637,11 +637,16 @@ again:
- 		spin_unlock(&parent->d_lock);
- 		goto again;
- 	}
--	rcu_read_unlock();
--	if (parent != dentry)
-+	if (parent != dentry) {
- 		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
--	else
-+		if (unlikely(dentry->d_lockref.count < 0)) {
-+			spin_unlock(&parent->d_lock);
-+			parent = NULL;
-+		}
-+	} else {
- 		parent = NULL;
-+	}
-+	rcu_read_unlock();
- 	return parent;
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -115,7 +115,8 @@ struct kioctx {
+ 	struct page		**ring_pages;
+ 	long			nr_pages;
+ 
+-	struct work_struct	free_work;
++	struct rcu_head		free_rcu;
++	struct work_struct	free_work;	/* see free_ioctx() */
+ 
+ 	/*
+ 	 * signals when all in-flight requests are done
+@@ -581,6 +582,12 @@ static int kiocb_cancel(struct aio_kiocb
+ 	return cancel(&kiocb->common);
  }
  
++/*
++ * free_ioctx() should be RCU delayed to synchronize against the RCU
++ * protected lookup_ioctx() and also needs process context to call
++ * aio_free_ring(), so the double bouncing through kioctx->free_rcu and
++ * ->free_work.
++ */
+ static void free_ioctx(struct work_struct *work)
+ {
+ 	struct kioctx *ctx = container_of(work, struct kioctx, free_work);
+@@ -594,6 +601,14 @@ static void free_ioctx(struct work_struc
+ 	kmem_cache_free(kioctx_cachep, ctx);
+ }
+ 
++static void free_ioctx_rcufn(struct rcu_head *head)
++{
++	struct kioctx *ctx = container_of(head, struct kioctx, free_rcu);
++
++	INIT_WORK(&ctx->free_work, free_ioctx);
++	schedule_work(&ctx->free_work);
++}
++
+ static void free_ioctx_reqs(struct percpu_ref *ref)
+ {
+ 	struct kioctx *ctx = container_of(ref, struct kioctx, reqs);
+@@ -602,8 +617,8 @@ static void free_ioctx_reqs(struct percp
+ 	if (ctx->rq_wait && atomic_dec_and_test(&ctx->rq_wait->count))
+ 		complete(&ctx->rq_wait->comp);
+ 
+-	INIT_WORK(&ctx->free_work, free_ioctx);
+-	schedule_work(&ctx->free_work);
++	/* Synchronize against RCU protected table->table[] dereferences */
++	call_rcu(&ctx->free_rcu, free_ioctx_rcufn);
+ }
+ 
+ /*
+@@ -825,7 +840,7 @@ static int kill_ioctx(struct mm_struct *
+ 	table->table[ctx->id] = NULL;
+ 	spin_unlock(&mm->ioctx_lock);
+ 
+-	/* percpu_ref_kill() will do the necessary call_rcu() */
++	/* free_ioctx_reqs() will do the necessary RCU synchronization */
+ 	wake_up_all(&ctx->wait);
+ 
+ 	/*
