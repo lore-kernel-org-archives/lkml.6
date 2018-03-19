@@ -1,100 +1,155 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2597693-1521060115-2-691258785584524664
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3891247-1521497676-2-12254473734527215524
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521060114; b=TodQ/IRwpHRnqU0cxy4SWu5sL1/SkDkc5k9tdBQ68t4sq7u
-    RdHE8aOR2jhDDJgaFHKZeADil5NXIwcoxYPTsX6Auvq6p4wkFyAG77Q4K8M3Z8uo
-    7R7VyD+LUnzG4JHv7sUL18EA1aOYd3ABemVgRD8QV8K8dXN72ezS+Y1DIcLOwQE0
-    HG41f48Vlne4GrdVOPjpOYv0U+Te91xPZQhfpfvdBAWtPn8hN7NU9VwqBBK9nECf
-    qQeBppOu0DTrr6ZuNsjVwcCJ8LUzvK1GyO7lgpNgvBN/LXDW7RSyrUO7pV+G6PGk
-    f7bIIPLKndi+pAjXvsY59DXmQSz6oApV9i44bHw==
+    t=1521497675; b=G8Lz8oCnpjcxHnRlkX5bGzZS5Wo4y7CSCkV3q39UpGEzPNu
+    8Rr6clKp6TFPVO/8rubVSTfGcGA8cHY3tiYNrj/dHTdxBdgn24xqJoqrtQ2BvmnT
+    +0O2StPAEsGs+15sh2T3rSN8af/oNKFVOgkP8tO/1qp0eBN+aLcVsT+t0qjcQeuA
+    S6uUNgMx3cEQKuycP0Vg7nYMl1W9oLIMUGkJoBDiyfymMZjSYAZ8MHWeLGjXsUgI
+    5UjoUs//YmwFwr3N70sRRXV72OnewrVs69s2k4pgzn9yY1lnfckfHgKJqkbHmNBY
+    cGnFMusYiOVuNFyTK9gaqEG87S5aQn3sLD9Lwiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521060114; bh=Z+ZHlvBSTXwY+8StaU9dDBejVF
-    NNiMBzId5N/xq9E0Q=; b=eLw7pLgpJnrmqiGcZqPrY87quHzULmba2sS2qE5AMz
-    JBC6scJYSLxglWSmgnnizM9kQxAaPo7Ybo/dqVqucw9E6ZgtNJ+G7n9FdxDWjlpO
-    Plx7qHbdN5d7gLCmC3UhhyB+2EfTUNwUzLqB67rd322TfOKxSJthRmAskVvtbOvj
-    UXiT6oA0GSYx9QbUFvTOik1qsPdScj89N8jh0C4edzHrZfgA2xqug+yU2jdYlR5Q
-    FmHH3DH7ldOB5xIe+iNyHmT3XZCHdsG4CVbp+KRGUUIywKohvCXQ77K9smQntihu
-    A4Y144mPMm5Ztbt7/jzTHiGEmdC4DyMzcuKOm5pM9Y5A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dominikbrodowski.net;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1521497675; bh=oMRaz1qeOAC5qrMItn5ynvB7XS
+    +MEUv3PI988JLvk3g=; b=mS843RXta8BRRXljtNj8e4ryUDzB4VyycP/FYWzKjC
+    NsIm9/ZSM4bmQKzYm0+mbshKnZP0rBMpg1nD2n3fxKMfSj/+l4YEUQppWWuj4isf
+    AZ3ymQR3cDJdvW9Kjs4tusb9RmejYabipF+4rDflY99ErXmqNiJyR5qZzIfwhCRx
+    l+5kQIfYHJ45u8hJCb8HYe4BZovh+rd2SCuPfYLrdDfdaeiMo6OTmaNud0Kvaa0x
+    B5kd8T8BEkdb+NoGvopX70U+hOh9tRZhIxDZ27kGQjOZS+m8ulioOX09ULTnvOuv
+    kxFyKAme0VIb8z8IbzSgfKNZa11vp4XVfrb2+yfjdgpg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=KJm/ZauH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejieduheenucevlhhushhtvghrufhiiigvpeeg;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dominikbrodowski.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dominikbrodowski.net;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=KJm/ZauH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduiedtucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejieduheenucevlhhushhtvghrufhiiigvpeeg;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dominikbrodowski.net header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeCNUlO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 16:41:14 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59206 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeCNUlM (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 14 Mar 2018 16:41:12 -0400
-Date: Wed, 14 Mar 2018 21:36:45 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Tautschnig, Michael" <tautschn@amazon.co.uk>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86/sigreturn: use SYSCALL_DEFINE0
-Message-ID: <20180314203645.GA21437@light.dominikbrodowski.net>
-References: <9C9981F4-0E5E-42A7-8788-70F3DEAD258D@amazon.com>
- <alpine.DEB.2.21.1803142102300.1946@nanos.tec.linutronix.de>
+        id S934247AbeCSWN7 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 18:13:59 -0400
+Received: from mail-cys01nam02on0138.outbound.protection.outlook.com ([104.47.37.138]:11712
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934147AbeCSPyV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 11:54:21 -0400
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Shiraz Saleem <shiraz.saleem@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 01/97] i40iw: Fix sequence number for the
+ first partial FPDU
+Thread-Topic: [PATCH AUTOSEL for 4.14 01/97] i40iw: Fix sequence number for
+ the first partial FPDU
+Thread-Index: AQHTv5qK/oCzsgE4e0KaHkRyuyqMLA==
+Date: Mon, 19 Mar 2018 15:54:19 +0000
+Message-ID: <20180319155411.12348-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:ysSGp+W2Pxy4jd4//RiklggmC81Zg3LQ0U97078zYCR8CJm+wYphlVER38DRRYisG9V80AnSuKOc9l7lh5FmlhCZX4wamGSXasqdMXbrv+/CYtyg3+anm8IW3ITe5RaiU7wL/DeeDnZwzUPkldHPOeyWiMJrV32hJmUqE4EpucUY8YNJ8enUydo2GSgjXVd6y336qwW/9kNUYAkOwThn9BdW0sqYuiLqdqzvOq3UQHHi4swQqabv2Obt60fnfPyC;20:MG7Eq6Nm5V2zktTvqCGXCiamZG/7AEQXTYUbuQO9cOz9aQ0v9DqmLe+muqHOF5BZdKn4ThA/m0X3RH6oBB8+IkdFjOI6FTB5+/T2IDmug6RaOX9NbEMbrAt745B1k5sDDv1u/c9S/l8fjlYE+y5tN4swx4vtndn8/NpqJYBPSUc=
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2436855c-461f-420f-c5cc-08d58db1ad30
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
+x-ms-traffictypediagnostic: DM5PR2101MB0806:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB080644BAA70CEBCA0020D989FBD40@DM5PR2101MB0806.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
+x-forefront-prvs: 06167FAD59
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(39380400002)(366004)(199004)(189003)(14454004)(105586002)(6486002)(316002)(86612001)(68736007)(106356001)(36756003)(6436002)(99286004)(2501003)(5250100002)(107886003)(54906003)(110136005)(97736004)(5660300001)(22452003)(26005)(186003)(6512007)(59450400001)(102836004)(6506007)(53936002)(86362001)(575784001)(2906002)(25786009)(478600001)(66066001)(2900100001)(72206003)(7736002)(8936002)(3280700002)(4326008)(8676002)(81156014)(81166006)(10290500003)(10090500001)(1076002)(3846002)(6116002)(3660700001)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: SjFRQBFgbTxzhCS+OVb3LdW2ulPLXuwlPV21eJrXgTuwIRPf/LnXhSNyvde7wy/u3YMt/uH/6/Gx/BUI0Ypg67tl5KvdHcZ+RaUf3K0R3jaduFhhwEgEtJjAZh7T+oTR03LzXH2FY9ptmYKInm9bLoD5yCfGhhUHbeRvgIJtPJ1TpILFigmLp4JeMe2bjlZoGGhO+0ZlBkEw7il2seA8K55PHOkBOqzScRcpP9MZsJIvepbAk1aS349weOr66pfBxl34PqH1FzxPv+oB/8J4uqBg44VIoMeU5LQhIJGIJtk/qZq6SOp2TPubBlC/mEBWfBFn01lMKP1ExdIQr21HfQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803142102300.1946@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2436855c-461f-420f-c5cc-08d58db1ad30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:54:19.6034
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0806
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 09:04:13PM +0100, Thomas Gleixner wrote:
-> On Wed, 14 Mar 2018, Tautschnig, Michael wrote:
-> 
-> > All definitions of syscalls in x86 except for those patched here have
-> > already been using the appropriate SYSCALL_DEFINE*.
-> 
-> Dominik, do you have more urgent stuff queued in that area?
-> 
-> If yes, please add: Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> If not, I simply route it through x86/urgent for 4.16.
+From: Shiraz Saleem <shiraz.saleem@intel.com>
 
-Thanks for asking! Nothing urgent from my side, only stuff for 4.17, so it
-would be great if you could route it through x86/urgent.
+[ Upstream commit df8b13a1b23356d01dfc4647a5629cdb0f4ce566 ]
 
-Thanks,
-	Dominik
+Partial FPDU processing is broken as the sequence number
+for the first partial FPDU is wrong due to incorrect
+Q2 buffer offset. The offset should be 64 rather than 16.
+
+Fixes: 786c6adb3a94 ("i40iw: add puda code")
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/infiniband/hw/i40iw/i40iw_d.h    | 1 +
+ drivers/infiniband/hw/i40iw/i40iw_puda.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_d.h b/drivers/infiniband/hw/=
+i40iw/i40iw_d.h
+index 24eabcad5e40..019ad3b939f9 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_d.h
++++ b/drivers/infiniband/hw/i40iw/i40iw_d.h
+@@ -93,6 +93,7 @@
+ #define RDMA_OPCODE_MASK        0x0f
+ #define RDMA_READ_REQ_OPCODE    1
+ #define Q2_BAD_FRAME_OFFSET     72
++#define Q2_FPSN_OFFSET          64
+ #define CQE_MAJOR_DRV           0x8000
+=20
+ #define I40IW_TERM_SENT 0x01
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_puda.c b/drivers/infiniband/=
+hw/i40iw/i40iw_puda.c
+index 59f70676f0e0..14d38d733cb4 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_puda.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_puda.c
+@@ -1376,7 +1376,7 @@ static void i40iw_ieq_handle_exception(struct i40iw_p=
+uda_rsrc *ieq,
+ 	u32 *hw_host_ctx =3D (u32 *)qp->hw_host_ctx;
+ 	u32 rcv_wnd =3D hw_host_ctx[23];
+ 	/* first partial seq # in q2 */
+-	u32 fps =3D qp->q2_buf[16];
++	u32 fps =3D *(u32 *)(qp->q2_buf + Q2_FPSN_OFFSET);
+ 	struct list_head *rxlist =3D &pfpdu->rxlist;
+ 	struct list_head *plist;
+=20
+--=20
+2.14.1
