@@ -1,42 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032023AbeCSUl6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 16:41:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
+        id S971396AbeCSUmw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 16:42:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030438AbeCSUlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:41:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6530D217D5
+        id S968768AbeCSUmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 16:42:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB8321737
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-To: Rob Herring <robh+dt@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9ff8a4ae99e50bc5f9f1ae6c7a454cb80451fd5b.1520327262.git.ryder.lee@mediatek.com>
-Cc: devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
-        Garlic Tseng <garlic.tseng@mediatek.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
- <9ff8a4ae99e50bc5f9f1ae6c7a454cb80451fd5b.1520327262.git.ryder.lee@mediatek.com>
-Message-ID: <152149210481.242365.6023758294737799949@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180308082332.31063-1-suzuki.katsuhiro@socionext.com>
+Cc: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
+References: <20180308082332.31063-1-suzuki.katsuhiro@socionext.com>
+Message-ID: <152149215831.242365.8299304914575965159@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v4 5/6] dt-bindings: clock: mediatek: add audsys support for
- MT2701
-Date: Mon, 19 Mar 2018 13:41:44 -0700
+Subject: Re: [PATCH] clk: uniphier: add Pro4/Pro5/PXs2 audio system clock
+Date: Mon, 19 Mar 2018 13:42:38 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Ryder Lee (2018-03-06 01:09:30)
-> This patch adds a compatible string for MT2701.
+Quoting Katsuhiro Suzuki (2018-03-08 00:23:32)
+> Add clock for audio subsystem (AIO) on UniPhier
+> Pro4/Pro5/PXs2 SoCs.
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 > ---
 
 Applied to clk-next
