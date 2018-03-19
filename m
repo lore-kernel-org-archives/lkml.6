@@ -1,205 +1,137 @@
-Return-Path: <ji_hun.kim@samsung.com>
-X-Google-Smtp-Source: AG47ELu7SyiuylYTJWGUt6WIUquq1VJXil5lz94jIMrS85Imx63VJ/SzXPG8633B37Bgg/+kCaVp
-ARC-Seal: i=1; a=rsa-sha256; t=1521433501; cv=none;
-        d=google.com; s=arc-20160816;
-        b=sz/mkJgUv/x80Rsec77q2gcv0l0cfIlbRqNGd8GRUgVx3CH+0mIfG/0h+lRoByi9Fq
-         tPgCWMxkmMPGQS3nislnxLLr0dJlz5x/RkOeh7CoSjnibSfSX1j4sZAX6cL66iHjqnZZ
-         k4nwukYX82zSIDnIOMAln1jW2vBaITNEA1oE+bmEXcl53tw0O0lx5yY9ANt0/MB4RklP
-         NOxzmHk6Gb84nAlKMIrt9v6jjeRo2Pa+DJORDAilcR38VKfH98sCz1iL6SN7FIvbcBxh
-         7iHPediF1yQNou1lTv7ksiXg1TvPM6/o4h2DjDlTKMKCcUXAkk2ubTGpODvxMLlcTOmu
-         aheg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:user-agent:in-reply-to
-         :content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=khbh6xUwak/aqPfxZWO4pxOIrq5DrROH5XFGsNNN7lg=;
-        b=pR7ndWzSxLAxkmKIrI/7gqiu3DutOnjuCJTqeI6oHSYHGyf/+6F7RBVw0SY1wNkFuR
-         2eV9sZEz7qGhChsB6LMwRn5w0eN1kMQFOsirIoM6pqQl1WKRUm53Q/mW4JN0rifDpPcp
-         XS8ssBgNK7kPUvIrb70WSrv10eV6otu++8LU540fA/RLCJrNwwQbVwExBWVm/ASJK/ll
-         Ew67M6erb4KFsE5xKzkAJE7A3Y5laBjJ9uTby9npckbWbLp6vX4oTEVk7dFHxkj9WRJe
-         ugaEeqQDUgQQl16eBiYBphLl1Vs37wPeMMzqhTref1Uk1M5t6J2cdLC4ehQMjU+5fjKY
-         Ig5A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=FxPgzgy1;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=FxPgzgy1;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180319042459epoutp035ab6b26987831697a2e128b786febee9~dN7TlC6Ti2919229192epoutp03I
-X-AuditID: b6c32a36-c91ff70000001028-14-5aaf3b99da41
-Date: Mon, 19 Mar 2018 13:24:57 +0900
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: mchehab@kernel.org, gregkh@linuxfoundation.org,
-	arvind.yadav.cs@gmail.com, ji_hun.kim@samsung.com,
-	linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2220729-1521443709-2-13933862262829909446
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521443708; b=RXVIRT7Br4raBoIWrhYqCkgcf3bsg9s4P/wMva7y2Zuw1ze
+    AfSWp6WKSHFjYZm1ud2oylHTXsZwl/j3aD9jnxtt7FKp+FiCz1sgF7yHyyYt0pRr
+    Lwzj9aAl+T7YhRLrcdk7HNP7Ax8FsHSaO4xnHygOIoWpoOFbKdgc+ixn5Ah/5xSi
+    v1uJvXglICFJ76SCg1kWOUGs4hvinTrUYtFHdYac9wJVo+54DGd1GFVcauvlJIOu
+    odi4fRKH8c+oUyQc97zLJ08W+mgVveDjjkiOLHi/bq8shb0wX3yjyS/FQ2rg2bVJ
+    PSvfOZEWxiPVE0flGMaYnq9N8IvVNyZEjkNvr2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521443708; bh=u
+    d6bF3IqzSWy1ZL1al4Hek7+mXp/k4HNCyGu7UyCrT0=; b=Rn1Z2VIyt0SSJbbaV
+    WmQJQIbhCDdNWGd6wLMEgy4QvmUAE/jUbgUzNIWS+plY3L8GENP0MA7IJ7SY0Pn7
+    Fb1e/uhaqNLkAsi7mLBgTPUU24i9kDuTw0YqL3uUz04RwaGBybeaBabPOcn9qIvw
+    NhJjj9FXHZtezohAyrx81AWjaritFyemnhnFva+ukNR5wKCDB429/FrI7UBRQCpK
+    dWMYwHIHCCZPFemd5eMmFZ5aOEbQZmA6R/eKawID3QRwIhmEWYscZ3hX11rhbfgG
+    R0urf4/jUqbcUFAs4Dun2R4N7cj7Dxku415lNII8cWyjwowi/G34Ma2VV3o7faag
+    NW/xg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=QmxvqP+4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgddutdejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggujggfphejjfegudeftdgtgfgvshesthejredttdervdenucfhrhhomhepffgrnhcuvegrrhhpvghnthgvrhcuoegurghnrdgtrghrphgvnhhtvghrsehorhgrtghlvgdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudefkedpudeguddrudegiedrudduiedruddvnecurfgrrhgrmhepihhnvghtpedugedtrddvuddurdduieeirddufeekpdhhvghlohepfihhihhtvggrlhguvghrrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeeigeeiudcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=QmxvqP+4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedruddvgddutdejucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggujggfphejjfegudeftdgtgfgvshesthejredttdervdenucfhrhhomhepffgrnhcuvegrrhhpvghnthgvrhcuoegurghnrdgtrghrphgvnhhtvghrsehorhgrtghlvgdrtghomheqnecuffhomhgrihhnpehlihhnuhigughrihhvvghrphhrohhjvggtthdrohhrghenucfkphepudegtddrvdduuddrudeiiedrudefkedpudeguddrudegiedrudduiedruddvnecurfgrrhgrmhepihhnvghtpedugedtrddvuddurdduieeirddufeekpdhhvghlohepfihhihhtvggrlhguvghrrdhoshhuohhslhdrohhrghdpmhgrihhlfhhrohhmpeeoughrihhvvghruggvvhdquggvvhgvlhdqsghouhhntggvsheslhhinhhugigurhhivhgvrhhprhhojhgvtghtrdhorhhgqecuuffkkgfgpeeigeeiudcuuefqffgjpeejuefkvfenucevlhhushhtvghrufhiiigvpedt;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Mon, 19 Mar 2018 10:14:35 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ji-Hun Kim <ji_hun.kim@samsung.com>
 Subject: Re: Re: [PATCH] staging: media: davinci_vpfe: add error handling on
  kmalloc failure
-Message-id: <20180319042457.GB2915@ubuntu>
-MIME-version: 1.0
-Content-type: text/plain; charset="us-ascii"
-Content-disposition: inline
-In-reply-to: <20180316083234.yq7a4rx6w35amflu@mwanda>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdljTQHem9foog71TrS2u9S5ktnj9bzqL
-	xZ4zv9gtmhevZ7PoP72d0WLrLWmLy7vmsFn0bNjKarFs0x8mB06Pe/sOs3jsnHWX3WPTqk42
-	j/1z17B7fHx6i8Wjb8sqRo/Pm+QC2KNSbTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0t
-	LcyVFPISc1NtlVx8AnTdMnOALlNSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CpFGxoa6Rka
-	mOsZGRnpmZjHWhmZApUkpGbseVVa0KBc8bH3ClsD40TRLkZODgkBE4kz724xdTFycQgJ7GCU
-	uHR4EitIQkjgO6PEsiYuuKJV26GKdjNK3J/5mwXCecko8f7zRzaQKhYBVYkDp64xgthsApoS
-	G7shbBEBHYnLnT/YQWxmgceMEj0LLEBsYYE4iTv/bjKB2LwCWhKz2qYyQ9iCEj8m32OBqNeR
-	OHtsHSOELS3x6O8MsDmcAqYSH6bsALtUVEBFYsrJbWwgB0kIXGeT+LJ7EVADB5DjIrFvlTvE
-	B8ISr45vYYcIS0tcOmoLEa6WWHBlBwuEXSNx8/9SJgjbWKK35wIzxFo+iXdfe1ghWnklOtqE
-	IEo8JDqW3WCFsB0lHt34DA2So4wS15vPs05glJ2F5JtZSL6ZheSbBYzMqxjFUguKc9NTiw0L
-	jPSKE3OLS/PS9ZLzczcxglOfltkOxkXnfA4xCnAwKvHwOhxdFyXEmlhWXJl7iFGCg1lJhPfp
-	FaAQb0piZVVqUX58UWlOavEhRlNgjExklhJNzgem5bySeEMTSwMTMyNTU0MDCxMlcd6AAJco
-	IYH0xJLU7NTUgtQimD4mDk6pBsakS96hh10UWja7lb44/NH44Kf8Q4of3red/nE5bHm2SYp1
-	hkbFav0D3zoLd776WR+vGyMnstn/6lq+TXKropeV9tediTqqHcj4dnHvrv8nsr9bOqxvCl9y
-	TdA5KnwiR5vwlJgLa9O0HbRnPNRXib6idr5oZ+Hq/SvEdmVcvsT3MMjrY552oIESS3FGoqEW
-	c1FxIgCcIKaAkwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t9jAd2Z1uujDNafUrO41ruQ2eL1v+ks
-	FnvO/GK3aF68ns2i//R2Routt6QtLu+aw2bRs2Erq8WyTX+YHDg97u07zOKxc9Zddo9NqzrZ
-	PPbPXcPu8fHpLRaPvi2rGD0+b5ILYI/isklJzcksSy3St0vgytjzqrSgQbniY+8VtgbGiaJd
-	jJwcEgImEmdWbWfqYuTiEBLYySjx8+lRZgjnJaPErtffGEGqWARUJQ6cugZmswloSmzshrBF
-	BHQkLnf+YAdpYBZ4zCjR8PcSE0hCWCBO4s6/m2A2r4CWxKy2qVBTjzNKrH20mREiISjxY/I9
-	FhCbGaho/c7jTBC2tMSjvzPYQWxOAVOJD1N2sILYogIqElNObmObwMg/C0n7LCTts5C0L2Bk
-	XsUomVpQnJueW2xUYJiXWq5XnJhbXJqXrpecn7uJERj+2w5r9e1gvL8k/hCjAAejEg+vw9F1
-	UUKsiWXFlbmHGCU4mJVEeJ9eAQrxpiRWVqUW5ccXleakFh9ilOZgURLnvZ13LFJIID2xJDU7
-	NbUgtQgmy8TBKdXAmLek9sb0ya+ljnIJzn/BeVFspT/bjRPOER3fPluXpN4Q77HcdNktuLDv
-	790FVx03TunxY69aeVDV0u5Ir/HEOesCpuu+E5Q3eSqqbn+0he3aJZbNvw8vfTXZ+OBjD2NX
-	R9WLavdvPtoyXefunXCve4INebeF/jAGOt24s++q1KzcMtFfxSV7IpRYijMSDbWYi4oTAYYm
-	XUR7AgAA
-X-CMS-MailID: 20180319042457epcas1p1a4cd48add460a6f07111e5fb1161a75d
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180316045841epcas2p34dc11231c65e2032e88ac7138db2daee
-X-RootMTR: 20180316045841epcas2p34dc11231c65e2032e88ac7138db2daee
+Message-ID: <20180319071435.svpg72uomxfc6hoj@mwanda>
 References: <CGME20180316045841epcas2p34dc11231c65e2032e88ac7138db2daee@epcas2p3.samsung.com>
-	<1521176303-17546-1-git-send-email-ji_hun.kim@samsung.com>
-	<20180316083234.yq7a4rx6w35amflu@mwanda>
+ <1521176303-17546-1-git-send-email-ji_hun.kim@samsung.com>
+ <20180316083234.yq7a4rx6w35amflu@mwanda>
+ <20180319042457.GB2915@ubuntu>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180319042457.GB2915@ubuntu>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8836
+ signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=732
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803190007
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ arvind.yadav.cs@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595068985971756322?=
-X-GMAIL-MSGID: =?utf-8?q?1595338655452845074?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 11:32:34AM +0300, Dan Carpenter wrote:
-> On Fri, Mar 16, 2018 at 01:58:23PM +0900, Ji-Hun Kim wrote:
-> > There is no failure checking on the param value which will be allocated
-> > memory by kmalloc. Add a null pointer checking statement. Then goto error:
-> > and return -ENOMEM error code when kmalloc is failed.
+On Mon, Mar 19, 2018 at 01:24:57PM +0900, Ji-Hun Kim wrote:
+> >   1294                          } else if (to && !from && size) {
+> >   1295                                  rval = module_if->set(ipipe, NULL);
+> >   1296                                  if (rval)
+> >   1297                                          goto error;
 > > 
-> > Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
-> > ---
-> >  drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
+> > And here again goto free_params.
 > > 
-> > diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-> > index 6a3434c..55a922c 100644
-> > --- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-> > +++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-> > @@ -1280,6 +1280,10 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
-> >  
-> >  			params = kmalloc(sizeof(struct ipipe_module_params),
-> >  					 GFP_KERNEL);
-> > +			if (!params) {
-> > +				rval = -ENOMEM;
-> > +				goto error;
->                                 ^^^^^^^^^^
+> >   1298                          }
+> >   1299                          kfree(params);
+> >   1300                  }
+> >   1301          }
+> >   1302  error:
+> >   1303          return rval;
+> > 
+> > 
+> > Change this to:
+> > 
+> > 	return 0;
+> Instead of returning rval, returning 0 would be fine? It looks that should
+> return rval in normal case.
 > 
-> What does "goto error" do, do you think?  It's not clear from the name.
-> When you have an unclear goto like this it often means the error
-> handling is going to be buggy.
-> 
-> In this case, it does nothing so a direct "return -ENOMEM;" would be
-> more clear.  But the rest of the error handling is buggy.
-Hi Dan,
-I appreciate for your specific feedbacks. It looks more clear. And I'd
-like you to see my question below. I will send the patch v2.
 
-> 
->   1263  static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
->   1264  {
->   1265          struct vpfe_ipipe_device *ipipe = v4l2_get_subdevdata(sd);
->   1266          unsigned int i;
->   1267          int rval = 0;
->   1268  
->   1269          for (i = 0; i < ARRAY_SIZE(ipipe_modules); i++) {
->   1270                  unsigned int bit = 1 << i;
->   1271  
->   1272                  if (cfg->flag & bit) {
->   1273                          const struct ipipe_module_if *module_if =
->   1274                                                  &ipipe_modules[i];
->   1275                          struct ipipe_module_params *params;
->   1276                          void __user *from = *(void * __user *)
->   1277                                  ((void *)cfg + module_if->config_offset);
->   1278                          size_t size;
->   1279                          void *to;
->   1280  
->   1281                          params = kmalloc(sizeof(struct ipipe_module_params),
->   1282                                           GFP_KERNEL);
-> 
-> Do a direct return:
-> 
-> 				if (!params)
-> 					return -ENOMEM;
-> 
->   1283                          to = (void *)params + module_if->param_offset;
->   1284                          size = module_if->param_size;
->   1285  
->   1286                          if (to && from && size) {
->   1287                                  if (copy_from_user(to, from, size)) {
->   1288                                          rval = -EFAULT;
->   1289                                          break;
-> 
-> The most recent thing we allocated is "params" so lets do a
-> "goto free_params;".  We'll have to declare "params" at the start of the
-> function instead inside this block.
-> 
->   1290                                  }
->   1291                                  rval = module_if->set(ipipe, to);
->   1292                                  if (rval)
->   1293                                          goto error;
-> 
-> goto free_params again since params is still the most recent thing we
-> allocated.
-> 
->   1294                          } else if (to && !from && size) {
->   1295                                  rval = module_if->set(ipipe, NULL);
->   1296                                  if (rval)
->   1297                                          goto error;
-> 
-> And here again goto free_params.
-> 
->   1298                          }
->   1299                          kfree(params);
->   1300                  }
->   1301          }
->   1302  error:
->   1303          return rval;
-> 
-> 
-> Change this to:
-> 
-> 	return 0;
-Instead of returning rval, returning 0 would be fine? It looks that should
-return rval in normal case.
+In the proposed code, the errors all do a return or a goto so "rval"
+would be zero here.  Then the error path would look like:
 
-> 
-> free_params:
-> 	kfree(params);
-> 	return rval;
-> 
->   1304  }
-> 
-> regards,
-> dan carpenter
-> 
-> 
-Thanks,
-Ji-Hun
+err_free_params:
+	kfree(params);
+	return rval;
+}
+
+regards,
+dan carpenter
+
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
