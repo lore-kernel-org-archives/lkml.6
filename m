@@ -1,39 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030982AbeCST61 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 15:58:27 -0400
-Received: from verein.lst.de ([213.95.11.211]:32996 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970929AbeCST6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 15:58:02 -0400
-Date: Mon, 19 Mar 2018 20:58:01 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc: Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 04/11] block: sed-opal: unify error handling of
-        responses
-Message-ID: <20180319195801.GF3380@lst.de>
-References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de> <4a20f9848927d0f654491136e4821f2adab131cc.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+        id S1031012AbeCST6q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 15:58:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:32963 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936041AbeCST5x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 15:57:53 -0400
+Date: Mon, 19 Mar 2018 20:57:48 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/2] x86: Force asm-goto
+In-Reply-To: <20180319154717.652679334@infradead.org>
+Message-ID: <alpine.DEB.2.21.1803192055410.1520@nanos.tec.linutronix.de>
+References: <20180319154124.337947038@infradead.org> <20180319154717.652679334@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a20f9848927d0f654491136e4821f2adab131cc.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 07:36:46PM +0100, Jonas Rabenstein wrote:
-> Also response_get_token had already been in place, its functionality had
-> been duplicated within response_get_{u64,bytestring} with the same error
-> handling. Unify the handling by reusing response_get_token within the
-> other functions.
+On Mon, 19 Mar 2018, Peter Zijlstra wrote:
 
-Should probably be one patch for each of the two separate changes.
+> We want to start using asm-goto to guarantee the absence of dynamic
+> branches (and thus speculation).
+> 
+> A primary prerequisite for this is of course that the compiler
+> supports asm-goto. This effecively lifts the minimum GCC version to
+> build an x86 kernel to gcc-4.5.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  Makefile          |   13 +++++++------
+>  arch/x86/Makefile |    4 ++++
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -494,6 +494,13 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-ex
+>  RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+>  export RETPOLINE_CFLAGS
+>  
+> +# check for 'asm goto'
+> +ifeq ($(shell $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
 
-Except for that this looks fine to me:
+Why are you not using the shell-cached version which you remove further
+down?
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks,
+
+	tglx
