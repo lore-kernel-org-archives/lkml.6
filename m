@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484910-2-10354885798287778409
+X-Cyrus-Session-Id: sloti22d1t05-3490358-1521484891-2-15421231040940939380
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roenca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,58 +13,57 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521484909; b=vthxiL9Kxy/FcjwrGC8IzbczzKdhuR1iZtuLAeV6u1aDNoV
-    AGj6d0RqAHVDUYtl0rVZ+mC0eWLoHI2q7B6NhqYcNfYKq9TBSr0IDsd7qrQr2o+T
-    i5e7dUTrGRF97dvF9SojTWTOwPgs9AT4w71vFNNd81VmgQWdQ2ZvXZVoSJSeMPkp
-    9Ci/7CmUTlBkiavP2gGqcWPgsIUf+H+1jwB+xuuQcYFJr6XIsCre06cmnRG+wRal
-    Ps99ocdMmZQVLtnaVjxoYDaLnvFzh8qc7u1zP+gzi24rOnRN43KG1JYYMZ8fs064
-    HKvVZjKr9Sw6gOxcJjSzj5RQSUJLtUSyhqw4i/g==
+    t=1521484891; b=YBHebU1yRjYHIrBeM6I3fn6Y7UtLGs0XZXleSdCsymLNpDe
+    3oIB7fTt6AwZRJQWHzMB/MPgpFN4STugp4v122b2U7WUhc7RRad9J3HC2MiQcHcV
+    Xmmw8E7mrdxUDw2diJjmY5nY6TQKU6gOzjVtdLbyFJBTDCmmWSa5BYtOgneEaw5r
+    S3A+irbfyI7TROFsPXMS3LgaQwvnc4lAdX7+N4FNXs/5xh34j5vQETKuoWipB59v
+    131iWiZrn4b07yTyXxmdrI0JGoeYUk2U2JJfNYvcRIc/LOrW9CGLaoj+58zoK4Tg
+    Mae6c2BsR+NxuWIrm4Y42ylk0AJmwhMC469/UFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521484909; bh=H6C+DUXrOiHqqaQVNIvn2CAYwe
-    82UZ17dlhf/E7BSl0=; b=OYWD0XcUF5/0978psOGR435GJGWbzFOl8ap9RtWtGB
-    3NXn4Ym+vIIF6H69C2ijIY2Gv3X4fYV8XaVPr/NAG411UL9O57lpfZ5tYEfaRv+0
-    iml5odtvBSn/vrzDiRmnqKZpXh8x/WMwMgblnhhf+CGjYrUo0CKZNohWKhYg5Hf2
-    RBizOXjqMGSYpn4Vs5aZR554anxT8qrPoHoQv+imeImj/xyzR/0nGn277I/4LXWl
-    VeI1s11B4/tV6qE9G5nr8artaLl8Yl7iu7aNU1A8EN7yWQ+PSBvCTM+az0ZvbCkP
-    Ltx19XoziYTE+dH9z6QF46gIlZ6gaIVtzPUGv2EvQczg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521484891; bh=oYAvJwUDA/h7Hm4HxdEFfSfSqj
+    xiX3JXJFNzQ3x6aLY=; b=mi+ILhFDmNT+WtOVpJru9euUBkbDzL/9w5UM5hF2y1
+    ngMTDWWVFRpKZTfNPupk5kLtRBpOA3JCvpzeatw956bEWQyUgTtcdK4EUzKaqAm0
+    ja/BJh+7eGS0mbG5TSMQENKNUDnz9hHzrv72RAkYHul20y6Wz/01HUj92s9+jeUO
+    +sJwIF1tu/lzf9MZQLpqgVB0XTYkyVMZgim8szrrVinmqFXfndAiQzeRcRjmPIxg
+    LJlyfmnj1y9nYh7GRD21i7M60Tpm0vhNa1qryQ0sVzUmJJ0cCZC0050Df8guYS3e
+    4TYC0n17XgAUpsE/8e8xROBLuDTmQpaM4pJkXsozxUbw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeghedvleenucevlhhushhtvghrufhiiigvpeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeiieelfeenucevlhhushhtvghrufhiiigvpedutd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeghedvleenucevlhhushhtvghrufhiiigvpeel;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudeiucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgfgggtshhpjeesthdtfedtreerjeenucfhrhhomhepifhrvghgucfmrhhorghhqdfjrghrthhmrghnuceoghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgqeenucfkphepvddtledrudefvddrudektddrieejpdeltddrledvrdeiuddrvddtvdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeeiieelfeenucevlhhushhtvghrufhiiigvpedutd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970355AbeCSScs (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 14:32:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54050 "EHLO
+        id S1032181AbeCSSlH (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 14:41:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970343AbeCSScq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:32:46 -0400
+        with ESMTP id S970218AbeCSScv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 14:32:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 27/52] fs/aio: Use RCU accessors for kioctx_table->table[]
-Date: Mon, 19 Mar 2018 19:08:25 +0100
-Message-Id: <20180319180736.596183624@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.15 46/52] usb: dwc3: core: Power-off core/PHYs on system_suspend in host mode
+Date: Mon, 19 Mar 2018 19:08:44 +0100
+Message-Id: <20180319180737.522895594@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180734.976730813@linuxfoundation.org>
 References: <20180319180734.976730813@linuxfoundation.org>
@@ -82,94 +81,170 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-commit d0264c01e7587001a8c4608a5d1818dba9a4c11a upstream.
+commit c4a5153e87fdf6805f63ff57556260e2554155a5 upstream.
 
-While converting ioctx index from a list to a table, db446a08c23d
-("aio: convert the ioctx list to table lookup v3") missed tagging
-kioctx_table->table[] as an array of RCU pointers and using the
-appropriate RCU accessors.  This introduces a small window in the
-lookup path where init and access may race.
+Commit 689bf72c6e0d ("usb: dwc3: Don't reinitialize core during
+host bus-suspend/resume") updated suspend/resume routines to not
+power_off and reinit PHYs/core for host mode.
+It broke platforms that rely on DWC3 core to power_off PHYs to
+enter low power state on system suspend.
 
-Mark kioctx_table->table[] with __rcu and use the approriate RCU
-accessors when using the field.
+Perform dwc3_core_exit/init only during host mode system_suspend/
+resume to addresses power regression from above mentioned patch
+and also allow USB session to stay connected across
+runtime_suspend/resume in host mode. While at it also replace
+existing checks for HOST only dr_mode with current_dr_role to
+have similar core driver behavior for both Host-only and DRD+Host
+configurations.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: db446a08c23d ("aio: convert the ioctx list to table lookup v3")
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org # v3.12+
+Fixes: 689bf72c6e0d ("usb: dwc3: Don't reinitialize core during host bus-suspend/resume")
+Reviewed-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/aio.c |   21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/usb/dwc3/core.c |   36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -68,9 +68,9 @@ struct aio_ring {
- #define AIO_RING_PAGES	8
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -100,6 +100,8 @@ static void dwc3_set_prtcap(struct dwc3
+ 	reg &= ~(DWC3_GCTL_PRTCAPDIR(DWC3_GCTL_PRTCAP_OTG));
+ 	reg |= DWC3_GCTL_PRTCAPDIR(mode);
+ 	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
++
++	dwc->current_dr_role = mode;
+ }
  
- struct kioctx_table {
--	struct rcu_head	rcu;
--	unsigned	nr;
--	struct kioctx	*table[];
-+	struct rcu_head		rcu;
-+	unsigned		nr;
-+	struct kioctx __rcu	*table[];
- };
+ static void __dwc3_set_mode(struct work_struct *work)
+@@ -133,8 +135,6 @@ static void __dwc3_set_mode(struct work_
  
- struct kioctx_cpu {
-@@ -330,7 +330,7 @@ static int aio_ring_mremap(struct vm_are
- 	for (i = 0; i < table->nr; i++) {
- 		struct kioctx *ctx;
+ 	dwc3_set_prtcap(dwc, dwc->desired_dr_role);
  
--		ctx = table->table[i];
-+		ctx = rcu_dereference(table->table[i]);
- 		if (ctx && ctx->aio_ring_file == file) {
- 			if (!atomic_read(&ctx->dead)) {
- 				ctx->user_id = ctx->mmap_base = vma->vm_start;
-@@ -666,9 +666,9 @@ static int ioctx_add_table(struct kioctx
- 	while (1) {
- 		if (table)
- 			for (i = 0; i < table->nr; i++)
--				if (!table->table[i]) {
-+				if (!rcu_access_pointer(table->table[i])) {
- 					ctx->id = i;
--					table->table[i] = ctx;
-+					rcu_assign_pointer(table->table[i], ctx);
- 					spin_unlock(&mm->ioctx_lock);
+-	dwc->current_dr_role = dwc->desired_dr_role;
+-
+ 	spin_unlock_irqrestore(&dwc->lock, flags);
  
- 					/* While kioctx setup is in progress,
-@@ -849,8 +849,8 @@ static int kill_ioctx(struct mm_struct *
- 	}
+ 	switch (dwc->desired_dr_role) {
+@@ -218,7 +218,7 @@ static int dwc3_core_soft_reset(struct d
+ 	 * XHCI driver will reset the host block. If dwc3 was configured for
+ 	 * host-only mode, then we can return early.
+ 	 */
+-	if (dwc->dr_mode == USB_DR_MODE_HOST)
++	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_HOST)
+ 		return 0;
  
- 	table = rcu_dereference_raw(mm->ioctx_table);
--	WARN_ON(ctx != table->table[ctx->id]);
--	table->table[ctx->id] = NULL;
-+	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
-+	RCU_INIT_POINTER(table->table[ctx->id], NULL);
- 	spin_unlock(&mm->ioctx_lock);
+ 	reg = dwc3_readl(dwc->regs, DWC3_DCTL);
+@@ -915,7 +915,6 @@ static int dwc3_core_init_mode(struct dw
  
- 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
-@@ -895,7 +895,8 @@ void exit_aio(struct mm_struct *mm)
+ 	switch (dwc->dr_mode) {
+ 	case USB_DR_MODE_PERIPHERAL:
+-		dwc->current_dr_role = DWC3_GCTL_PRTCAP_DEVICE;
+ 		dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_DEVICE);
  
- 	skipped = 0;
- 	for (i = 0; i < table->nr; ++i) {
--		struct kioctx *ctx = table->table[i];
-+		struct kioctx *ctx =
-+			rcu_dereference_protected(table->table[i], true);
+ 		if (dwc->usb2_phy)
+@@ -931,7 +930,6 @@ static int dwc3_core_init_mode(struct dw
+ 		}
+ 		break;
+ 	case USB_DR_MODE_HOST:
+-		dwc->current_dr_role = DWC3_GCTL_PRTCAP_HOST;
+ 		dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
  
- 		if (!ctx) {
- 			skipped++;
-@@ -1084,7 +1085,7 @@ static struct kioctx *lookup_ioctx(unsig
- 	if (!table || id >= table->nr)
- 		goto out;
+ 		if (dwc->usb2_phy)
+@@ -1279,7 +1277,7 @@ static int dwc3_remove(struct platform_d
+ }
  
--	ctx = table->table[id];
-+	ctx = rcu_dereference(table->table[id]);
- 	if (ctx && ctx->user_id == ctx_id) {
- 		percpu_ref_get(&ctx->users);
- 		ret = ctx;
+ #ifdef CONFIG_PM
+-static int dwc3_suspend_common(struct dwc3 *dwc)
++static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ {
+ 	unsigned long	flags;
+ 
+@@ -1291,6 +1289,10 @@ static int dwc3_suspend_common(struct dw
+ 		dwc3_core_exit(dwc);
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_HOST:
++		/* do nothing during host runtime_suspend */
++		if (!PMSG_IS_AUTO(msg))
++			dwc3_core_exit(dwc);
++		break;
+ 	default:
+ 		/* do nothing */
+ 		break;
+@@ -1299,7 +1301,7 @@ static int dwc3_suspend_common(struct dw
+ 	return 0;
+ }
+ 
+-static int dwc3_resume_common(struct dwc3 *dwc)
++static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+ {
+ 	unsigned long	flags;
+ 	int		ret;
+@@ -1315,6 +1317,13 @@ static int dwc3_resume_common(struct dwc
+ 		spin_unlock_irqrestore(&dwc->lock, flags);
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_HOST:
++		/* nothing to do on host runtime_resume */
++		if (!PMSG_IS_AUTO(msg)) {
++			ret = dwc3_core_init(dwc);
++			if (ret)
++				return ret;
++		}
++		break;
+ 	default:
+ 		/* do nothing */
+ 		break;
+@@ -1326,12 +1335,11 @@ static int dwc3_resume_common(struct dwc
+ static int dwc3_runtime_checks(struct dwc3 *dwc)
+ {
+ 	switch (dwc->current_dr_role) {
+-	case USB_DR_MODE_PERIPHERAL:
+-	case USB_DR_MODE_OTG:
++	case DWC3_GCTL_PRTCAP_DEVICE:
+ 		if (dwc->connected)
+ 			return -EBUSY;
+ 		break;
+-	case USB_DR_MODE_HOST:
++	case DWC3_GCTL_PRTCAP_HOST:
+ 	default:
+ 		/* do nothing */
+ 		break;
+@@ -1348,7 +1356,7 @@ static int dwc3_runtime_suspend(struct d
+ 	if (dwc3_runtime_checks(dwc))
+ 		return -EBUSY;
+ 
+-	ret = dwc3_suspend_common(dwc);
++	ret = dwc3_suspend_common(dwc, PMSG_AUTO_SUSPEND);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1364,7 +1372,7 @@ static int dwc3_runtime_resume(struct de
+ 
+ 	device_init_wakeup(dev, false);
+ 
+-	ret = dwc3_resume_common(dwc);
++	ret = dwc3_resume_common(dwc, PMSG_AUTO_RESUME);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1411,7 +1419,7 @@ static int dwc3_suspend(struct device *d
+ 	struct dwc3	*dwc = dev_get_drvdata(dev);
+ 	int		ret;
+ 
+-	ret = dwc3_suspend_common(dwc);
++	ret = dwc3_suspend_common(dwc, PMSG_SUSPEND);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1427,7 +1435,7 @@ static int dwc3_resume(struct device *de
+ 
+ 	pinctrl_pm_select_default_state(dev);
+ 
+-	ret = dwc3_resume_common(dwc);
++	ret = dwc3_resume_common(dwc, PMSG_RESUME);
+ 	if (ret)
+ 		return ret;
+ 
