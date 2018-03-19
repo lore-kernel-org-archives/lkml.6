@@ -1,120 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933080AbeCSJSd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 05:18:33 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:50693 "EHLO
+        id S933132AbeCSJTn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 05:19:43 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:35735 "EHLO
         mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933035AbeCSJR7 (ORCPT
+        with ESMTP id S933006AbeCSJRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:17:59 -0400
-X-Google-Smtp-Source: AG47ELvl991lZS+Zi1TFkpGHT+0FKvIYb8JvzLoro2HUNsBgtxs5uCoh2PtxhlkJ2ttKHfO3zLcL3Q==
+        Mon, 19 Mar 2018 05:17:47 -0400
+X-Google-Smtp-Source: AG47ELsAgesszY8RLgkKPksTWnHOL+NSngcGpuLnczc9MINpVZnr+0fKKzz/24AtbMFikR80wOlqSg==
+Subject: Re: linux-next on x60: network manager often complains "network is
+ disabled" after resume
+To: Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>
+Cc: Netdev list <netdev@vger.kernel.org>
+References: <20180318104023.GA10392@amd>
+From: Woody Suwalski <terraluna977@gmail.com>
+Message-ID: <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
+Date: Mon, 19 Mar 2018 05:17:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
+ SeaMonkey/2.49.2
 MIME-Version: 1.0
-In-Reply-To: <1521033957.1130.5.camel@bootlin.com>
-References: <20180220044425.169493-20-acourbot@chromium.org>
- <1520440654.1092.15.camel@bootlin.com> <CAPBb6MUeUaHZj9y1N7wJk9yS8QL+zTqWCGvujcKCY0YpdeiyWg@mail.gmail.com>
- <1520606128.15946.22.camel@bootlin.com> <CAPBb6MWAXjCWJB6x-osFKZ-wGzMiucL6oa1ZHEzTgscpJTs35Q@mail.gmail.com>
- <1521033957.1130.5.camel@bootlin.com>
-From: Alexandre Courbot <acourbot@chromium.org>
-Date: Mon, 19 Mar 2018 18:17:37 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUXGyQiU26fxChbLBU9cRKRMGZWa-CNvL0GM1s94Y98rA@mail.gmail.com>
-Message-ID: <CAPBb6MUXGyQiU26fxChbLBU9cRKRMGZWa-CNvL0GM1s94Y98rA@mail.gmail.com>
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180318104023.GA10392@amd>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 10:25 PM, Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
-> Hi,
+Pavel Machek wrote:
+> Hi!
 >
-> On Tue, 2018-03-13 at 19:24 +0900, Alexandre Courbot wrote:
->> On Fri, Mar 9, 2018 at 11:35 PM, Paul Kocialkowski
->> <paul.kocialkowski@bootlin.com> wrote:
->> > Hi,
->> >
->> > On Thu, 2018-03-08 at 22:48 +0900, Alexandre Courbot wrote:
->> > > Hi Paul!
->> > >
->> > > Thanks a lot for taking the time to try this! I am also working on
->> > > getting it to work with an actual driver, but you apparently found
->> > > rough edges that I missed.
->> > >
->> > > On Thu, Mar 8, 2018 at 1:37 AM, Paul Kocialkowski
->> > > <paul.kocialkowski@bootlin.com> wrote:
->> > > > On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
+> With recent linux-next, after resume networkmanager often claims that
+> "network is disabled". Sometimes suspend/resume clears that.
 >
-> [...]
->
->> > > > > +static int vim2m_request_submit(struct media_request *req,
->> > > > > +                             struct media_request_entity_data
->> > > > > *_data)
->> > > > > +{
->> > > > > +     struct v4l2_request_entity_data *data;
->> > > > > +
->> > > > > +     data = to_v4l2_entity_data(_data);
->> > > >
->> > > > We need to call v4l2_m2m_try_schedule here so that m2m
->> > > > scheduling
->> > > > can
->> > > > happen when only 2 buffers were queued and no other action was
->> > > > taken
->> > > > from usespace. In that scenario, m2m scheduling currently
->> > > > doesn't
->> > > > happen.
->> > >
->> > > I don't think I understand the sequence of events that results in
->> > > v4l2_m2m_try_schedule() not being called. Do you mean something
->> > > like:
->> > >
->> > > *
->> > > * QBUF on output queue with request set
->> > > * QBUF on capture queue
->> > > * SUBMIT_REQUEST
->> > >
->> > > ?
->> > >
->> > > The call to vb2_request_submit() right after should trigger
->> > > v4l2_m2m_try_schedule(), since the buffers associated to the
->> > > request
->> > > will enter the vb2 queue and be passed to the m2m framework, which
->> > > will then call v4l2_m2m_try_schedule(). Or maybe you are thinking
->> > > about a different sequence of events?
->> >
->> > This is indeed the sequence of events that I'm seeing, but the
->> > scheduling call simply did not happen on vb2_request_submit. I
->> > suppose I will need to investigate some more to find out exactly
->> > why.
->> >
->> > IIRC, the m2m qbuf function is called (and fails to schedule) when
->> > the
->> > ioctl happens, not when the task is submitted.
->> >
->> > This issue is seen with vim2m as well as the rencently-submitted
->> > sunxi-
->> > cedrus driver (with the in-driver calls to v4l2_m2m_try_schedule
->> > removed, obviously). If needs be, I could provide a standalone test
->> > program to reproduce it.
->>
->> If you have a standalone program that can reproduce this on vim2m,
->> then I would like to see it indeed, if only to understand what I have
->> missed.
->
-> You can find the test file for this use case at:
-> https://gist.github.com/paulkocialkowski/4cfa350e1bbe8e3bf714480bba83ea72
+> Any ideas? Does it work for you?
+> 									Pavel
+Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
 
-Thanks, I have been able to see what the issue was. One indeed needs
-to call v4l2_m2m_try_schedule() when the request is queued, since the
-driver qbuf() hook does not do it automatically.
+Woody
