@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuqdlzgtNdJJ2GX48cc5d6nhuwO5WkxvQeTcWZNL1OD0nV533GTdc1GoofZe9JYmZvx6WJA
-ARC-Seal: i=1; a=rsa-sha256; t=1521483209; cv=none;
+X-Google-Smtp-Source: AG47ELsJj+SAZxY5tKan/lT9va6Ovutu6cJ5nkmGF+5rOx4Tdx0+vtx7qFtefsnqEKb8s1kydfrU
+ARC-Seal: i=1; a=rsa-sha256; t=1521483206; cv=none;
         d=google.com; s=arc-20160816;
-        b=sRfGl+8Vlp1CuIZhe6Dxvg2szqMZhWZCV40NUHXgCUXEobEOkNLRiMDP2bb4nIOxq5
-         BdPGyeAfKvfAu6Zt5pMXXSBU1OmKXANTn3xcJLD2vMau5s4QbJGIl8Xk41yQos2YHiuM
-         OrC/uU/UtwkOZdTp+t0MfjVn06EBgZqop2jseqq038reaLfj8MIK3HUJ4/NAwicsCLhO
-         H8tfKg9hM27j/dKsNaNxjxVmRUmrPb3qwFxHtUntAfItAiSDTRl4jDVuzI8zqYksXvy8
-         Ox0jITRC4CzCD+afKnUyWdkinzaBJm544l1lNOsTEMTVEB0OggaZxk74wXXh74RmOmdp
-         uHtw==
+        b=sDgPGDOCcvzjozL5D4FXJqKt180mORNXUJlsMVLF004pPAZobLrXM7HncXKICmHwD/
+         qvGYG00Gtgdh81HZxM/yiYIPESwTn43K682HYOYxElZXxvoGbw90J6f6QkpSLRUe41+F
+         1H3air2Jk1HfgN8Y5SUOSan+MKo2inKk3Z6cE02IrRKVPq9UNIvtLZWBoM+/7rd7qZ45
+         mnNwGmxR1lXff7/lFZwj2WKD0Vl6wE6YtSQCtuJKsMWvi3JnGR2o30VR4X/6qJySY9OY
+         6dPMwfOg3a44XZmzO4JJDkOF3i/XFQVbAEMoCpmfaxmkI1kkQ7Lr10SDY9bZRy8SJNZ9
+         9VeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l3tM1sLibZj3CHp62HFKhGxu5oVf4qFfY6TEMoV0gng=;
-        b=0alkvQbS6mxfbj0hHuA3qywHUmFBwkaHl++ze9AjPby7Ba1fC/ToKGwIkNOaQj/ZAN
-         NQ4aWSEnIbVhQ/5tOnWVLziBJMIWa6/luLSddlECHatpIYjzYgZqXZ3i47z84XBK0Fqz
-         +uRPsIZJxfdN/w84c+b4NqTF4AIX+7oA0puepWEmJfbWulCuaBGxD7RaSFYwQROPwWGf
-         IYqvMd+6inMl14BpPu4wxgzwORISLS3mcLQT5SAzhP2LH63sNknpVvFw5Ov3f87XJMIJ
-         qqsc6dvyDbqUvw2+dGL12Kw2LMk+PjSmgF5YMoJ3V3WMYyD4UO+lDstz35vWs2jZr2S6
-         A9ww==
+        bh=hNzUWJ+f9Zjq2t0n6CoenRVFsFmFAQa6lCkTtoSvV/Y=;
+        b=EbNcFev19U1hMh0PpmkRr6uRD8/vCARTVltRA1dMXywqILQs54wT5w8Fux24YO6pbZ
+         4kbDNdw4hhvr4IsHcv0gKxG8dgjGX44AwizcZksL6AoLdqpyb7uNj6KTnaUWPeSBeSbl
+         xU5uYXEJHMIGnEdhkD1ABPNOTcFjDPY6Yu4BX28dG6Unlqh8LyfKW3VvRUHA7KODrefa
+         bEVUw6DNEPM9Ru8hpQ29+gPGt37YRfSiNjryU8Rk2hGJJcwg4LkrMcXIJoJzbSJyvuhC
+         +nHEnE3FHt8pQiwqQ5433MTPmCoLtNPO4hjZ4sdHIG8RmN4mXSgPoK8BWtr32ZESdURv
+         hUYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
+	Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+	Gerd Hoffmann <kraxel@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 007/134] ath10k: fix a warning during channel switch with multiple vaps
-Date: Mon, 19 Mar 2018 19:04:50 +0100
-Message-Id: <20180319171850.177736568@linuxfoundation.org>
+Subject: [PATCH 4.4 006/134] drm: qxl: Dont alloc fbdev if emulation is not supported
+Date: Mon, 19 Mar 2018 19:04:49 +0100
+Message-Id: <20180319171850.031988464@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390777971895276?=
-X-GMAIL-MSGID: =?utf-8?q?1595390777971895276?=
+X-GMAIL-THRID: =?utf-8?q?1595390775258381600?=
+X-GMAIL-MSGID: =?utf-8?q?1595390775258381600?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +50,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 
 
-[ Upstream commit c73f8c00330f59ce9b1ace9ff698aca83390d358 ]
+[ Upstream commit 861078381ba56b56808113736000d9e7ead349c8 ]
 
-Doing a channel switch via hostapd_cli seems to update
-the new channel context for each VAP's appropriately as below
-in 'ath10k_mac_update_vif_chan', hence we can safely suppress the
-warning that shows up during this operation and dump the warning only
-if no vaps are available for channel switch
+If fbdev emulation is disabled, the QXL shutdown path will try to clean
+a framebuffer that wasn't initialized, hitting the Oops below.  The
+problem is that even when FBDEV_EMULATION is disabled we allocate the
+qfbdev strutucture, but we don't initialize it.  The fix is to stop
+allocating the memory, since it won't be used.  This allows the existing
+verification in the cleanup hook to do it's job preventing the oops.
 
-hostapd_cli -i wlan0 chan_switch 5 5200
-OK
+Now that we don't allocate the unused fbdev structure, we need to be
+careful when dereferencing it in the PM suspend hook.
 
-ath10k_pci : mac chanctx switch n_vifs 3 mode 1
-ath10k_pci : mac chanctx switch vdev_id 2 freq 5180->5200 width 0->0
-ath10k_pci : mac chanctx switch vdev_id 1 freq 5180->5200 width 0->0
-ath10k_pci : mac chanctx switch vdev_id 0 freq 5180->5200 width 0->0
+[   24.284684] BUG: unable to handle kernel NULL pointer dereference at 00000000000002e0
+[   24.285627] IP: mutex_lock+0x18/0x30
+[   24.286049] PGD 78cdf067
+[   24.286050] PUD 7940f067
+[   24.286344] PMD 0
+[   24.286649]
+[   24.287072] Oops: 0002 [#1] SMP
+[   24.287422] Modules linked in: qxl
+[   24.287806] CPU: 0 PID: 2328 Comm: bash Not tainted 4.10.0-rc5+ #97
+[   24.288515] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.9.3-20161025_171302-gandalf 04/01/2014
+[   24.289681] task: ffff88007c4c0000 task.stack: ffffc90001b58000
+[   24.290354] RIP: 0010:mutex_lock+0x18/0x30
+[   24.290812] RSP: 0018:ffffc90001b5bcb0 EFLAGS: 00010246
+[   24.291401] RAX: 0000000000000000 RBX: 00000000000002e0 RCX: 0000000000000000
+[   24.292209] RDX: ffff88007c4c0000 RSI: 0000000000000001 RDI: 00000000000002e0
+[   24.292987] RBP: ffffc90001b5bcb8 R08: fffffffffffffffe R09: 0000000000000001
+[   24.293797] R10: ffff880078d80b80 R11: 0000000000011400 R12: 0000000000000000
+[   24.294601] R13: 00000000000002e0 R14: ffffffffa0009c28 R15: 0000000000000060
+[   24.295439] FS:  00007f30e3acbb40(0000) GS:ffff88007fc00000(0000) knlGS:0000000000000000
+[   24.296364] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   24.296997] CR2: 00000000000002e0 CR3: 0000000078c7b000 CR4: 00000000000006f0
+[   24.297813] Call Trace:
+[   24.298097]  drm_framebuffer_cleanup+0x1f/0x70
+[   24.298612]  qxl_fbdev_fini+0x68/0x90 [qxl]
+[   24.299074]  qxl_modeset_fini+0xd/0x30 [qxl]
+[   24.299562]  qxl_pci_remove+0x22/0x50 [qxl]
+[   24.300025]  pci_device_remove+0x34/0xb0
+[   24.300507]  device_release_driver_internal+0x150/0x200
+[   24.301082]  device_release_driver+0xd/0x10
+[   24.301587]  unbind_store+0x108/0x150
+[   24.301993]  drv_attr_store+0x20/0x30
+[   24.302402]  sysfs_kf_write+0x32/0x40
+[   24.302827]  kernfs_fop_write+0x108/0x190
+[   24.303269]  __vfs_write+0x23/0x120
+[   24.303678]  ? security_file_permission+0x36/0xb0
+[   24.304193]  ? rw_verify_area+0x49/0xb0
+[   24.304636]  vfs_write+0xb0/0x190
+[   24.305004]  SyS_write+0x41/0xa0
+[   24.305362]  entry_SYSCALL_64_fastpath+0x1a/0xa9
+[   24.305887] RIP: 0033:0x7f30e31d9620
+[   24.306285] RSP: 002b:00007ffc54b47e68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   24.307128] RAX: ffffffffffffffda RBX: 00007f30e3497600 RCX: 00007f30e31d9620
+[   24.307928] RDX: 000000000000000d RSI: 0000000000da2008 RDI: 0000000000000001
+[   24.308727] RBP: 000000000070bc60 R08: 00007f30e3498760 R09: 00007f30e3acbb40
+[   24.309504] R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000001
+[   24.310295] R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffc54b47f34
+[   24.311095] Code: 0e 01 e9 7b fe ff ff 66 90 66 2e 0f 1f 84 00 00 00 00 00
+55 48 89 e5 53 48 89 fb e8 83 e8 ff ff 65 48 8b 14 25 40 c4 00 00 31 c0 <3e>
+48 0f b1 13 48 85 c0 74 08 48 89 df e8 66 fd ff ff 5b 5d c3
+[   24.313182] RIP: mutex_lock+0x18/0x30 RSP: ffffc90001b5bcb0
+[   24.313811] CR2: 00000000000002e0
+[   24.314208] ---[ end trace 29669c1593cae14b ]---
 
-Call Trace:
-
-WARNING: backports-20161201-3.14.77-9ab3068/drivers/net/wireless/ath/ath10k/mac.c:7126
-[<c022f2d4>] (warn_slowpath_null) from [<bf7f150c>]
-(ath10k_reconfig_complete+0xe4/0x25c [ath10k_core])
-[<bf7f150c>] (ath10k_reconfig_complete [ath10k_core])
-[<bf7f35f0>] (ath10k_mac_vif_ap_csa_work+0x214/0x370 [ath10k_core])
-[<bf7f38b8>] (ath10k_mac_op_change_chanctx+0x108/0x128 [ath10k_core])
-[<bf782ac0>] (ieee80211_recalc_chanctx_min_def+0x30c/0x430 [mac80211])
-[<bf7830a4>] (ieee80211_recalc_smps_chanctx+0x2ec/0x840 [mac80211])
-[<bf7843e8>] (ieee80211_vif_use_reserved_context+0x7c/0xf8 [mac80211])
-[<bf7843e8>] (ieee80211_vif_use_reserved_context [mac80211])
-[<bf76e5d4>] (ieee80211_csa_finalize_work+0x5c/0x88 [mac80211])
-
-Fixes: d7bf4b4aba05 ("ath10k: fix ar->rx_channel updating logic")
-Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Link: http://patchwork.freedesktop.org/patch/msgid/20170227203330.18542-1-krisman@collabora.co.uk
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/qxl/qxl_fb.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6427,7 +6427,7 @@ ath10k_mac_update_rx_channel(struct ath1
- 	lockdep_assert_held(&ar->data_lock);
+--- a/drivers/gpu/drm/qxl/qxl_fb.c
++++ b/drivers/gpu/drm/qxl/qxl_fb.c
+@@ -494,9 +494,11 @@ static const struct drm_fb_helper_funcs
  
- 	WARN_ON(ctx && vifs);
--	WARN_ON(vifs && n_vifs != 1);
-+	WARN_ON(vifs && !n_vifs);
+ int qxl_fbdev_init(struct qxl_device *qdev)
+ {
++	int ret = 0;
++
++#ifdef CONFIG_DRM_FBDEV_EMULATION
+ 	struct qxl_fbdev *qfbdev;
+ 	int bpp_sel = 32; /* TODO: parameter from somewhere? */
+-	int ret;
  
- 	/* FIXME: Sort of an optimization and a workaround. Peers and vifs are
- 	 * on a linked list now. Doing a lookup peer -> vif -> chanctx for each
+ 	qfbdev = kzalloc(sizeof(struct qxl_fbdev), GFP_KERNEL);
+ 	if (!qfbdev)
+@@ -531,6 +533,8 @@ fini:
+ 	drm_fb_helper_fini(&qfbdev->helper);
+ free:
+ 	kfree(qfbdev);
++#endif
++
+ 	return ret;
+ }
+ 
+@@ -546,6 +550,9 @@ void qxl_fbdev_fini(struct qxl_device *q
+ 
+ void qxl_fbdev_set_suspend(struct qxl_device *qdev, int state)
+ {
++	if (!qdev->mode_info.qfbdev)
++		return;
++
+ 	drm_fb_helper_set_suspend(&qdev->mode_info.qfbdev->helper, state);
+ }
+ 
