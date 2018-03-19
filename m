@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvAz0x0IrT/+QcmqEPfCpyW0my2dOxk6vLHgw2KowZAzMCeuP4EDYpy1bNS2pTRIH1YOXQF
-ARC-Seal: i=1; a=rsa-sha256; t=1521483220; cv=none;
+X-Google-Smtp-Source: AG47ELu8gGz0m3qass26ZEn9927oRzESkK9G74eDS4hSx5Ixj7/Ta0jkCQQh+eBt/zZhDpDnjw1p
+ARC-Seal: i=1; a=rsa-sha256; t=1521483212; cv=none;
         d=google.com; s=arc-20160816;
-        b=TQvsaULAN1260+qaxcABFNuNMJEk6Bf20OMvGtdlvJ2xoFmz1CLjFiRLm7FwZNRVtj
-         B1u5jHU9lF2UP5REqpIJSNaHJ5U4FLuA1PFv6Vua1Ws5i1ojcaOul/JeYPDwIjqe4tYi
-         8rCVxUiBMyGc9utGVcLu6kZO0OmhV7Gd50anztd91UTGWkiY7J3SgIjpMTVx9hSq8quX
-         RpjD8w9dWRDPFbvBjPEKoOwveApemqRGFcUkY7P0qHGIg6ESKqNw/lVmt3iiHAUtTvPh
-         sGd4PclargtgBI3HDuf7QW3n21zazk4C2JJzaTLWgcrW8JcbMprs0pDWiAw0ANwKIj6/
-         JcDA==
+        b=APA9ZKXV1J0HyzXkkR9Wh4jg5lwrQ5rseiJ3/ACw7CaLVnmwuKQ0dg3G83Fua1UZJk
+         WYK4pUrTZWh/jT3hSeQEB+JhY/ZRMU3WJQVMHHJ3WRLBpIQ1/idcXv9TRC3XRSMNF3vo
+         o5+41F296ZQfdN2cvLxAxwmb4e3cGkYz0LXBgbr48qjuVbcuCV5XI8UABq64xEStAj5g
+         xSotSUI1Uqb8iRYHU9+PnKaxkjPz4+D2EWRlQ6H0M7XKfAQ36nrI33Dn8lAr8owMYwL8
+         tUAMguctaUoVGEW/A/YGQBVFYtvhH5IE9ukH4DH4CNfA3ns532hpaRhk2COSJVyWJ1zz
+         6+RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=icx4Ovhar9CbCPaEa7Q3oVqzldNQIP4OTrqlbq3tMTs=;
-        b=fGPbUzk0Kw2fcmxY/Hv+rOmaOn1TzOhpVdclYmgXR9DhiNk9lDKYrv+NaccRVaApuS
-         676UpOKUV20+Yi75LPr5IJFZF7MUtme3/nVeDGZx3TbcasNpthu5OlLagtw34x86w1kR
-         +sqOdZyLaS9DaHBKCqL4srmMVB7sXewr+MQT2Q2Ro3BvutGR54IY/Vutwaw/HaoZq8sd
-         Nxv9lFlNnOtrAxqylIoEhptC6nrkCHso9buU8kJ89B7rTbrgSh72czeSEX/kcbdaXo/g
-         IyAaC+NRjJSRzcuDG5ODjcFpjsYNYb/e1Nv+jhZmz22VyeikJY/hrUtUZy994yPZ0uxX
-         MsWw==
+        bh=oSjX3Q8NZEkHKGnujRZCkWodxDXPUBRWPNGTZnUSlJU=;
+        b=sjwvPVhbBRKhJGbthOp9wQvrmPbET47FTBNH7Dv6Z/amKiQ0VhebGCLbU3aqTkbjKy
+         odwTWi85e1kI/Yw6AelkAbsWB5b5EtIn2ex/5yo0Dsmbh9OjsafRbgowheRwUrq2JxLb
+         yVWeI6KG0lmSlWlUf69OX4DPOJPzf9qYHPwvtkBnTEbIv9BHVGJNUz5o0/5OZxWlPx7X
+         KbBxiAWKgTgV48H+2ZGgD9EwighSf1y0zN713U3AEEZbtYFEb/X3laQtSAwOIOhpN3uh
+         zEbScTnel19RdGoUxE/8FqE31MxPOr9n6+Y/SjI3IwfeIYf07+oWpFtee3Tv7P8bLtEU
+         A/UA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>,
-	LKP <lkp@01.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-mm@kvack.org,
-	Ingo Molnar <mingo@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 036/134] mm: Fix false-positive VM_BUG_ON() in page_cache_{get,add}_speculative()
-Date: Mon, 19 Mar 2018 19:05:19 +0100
-Message-Id: <20180319171854.521145165@linuxfoundation.org>
+Subject: [PATCH 4.4 008/134] net: mvpp2: set dma mask and coherent dma mask on PPv2.2
+Date: Mon, 19 Mar 2018 19:04:51 +0100
+Message-Id: <20180319171850.300796587@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -50,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390529302865915?=
-X-GMAIL-MSGID: =?utf-8?q?1595390789087634185?=
+X-GMAIL-THRID: =?utf-8?q?1595390557556706046?=
+X-GMAIL-MSGID: =?utf-8?q?1595390780462437336?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,72 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
 
-[ Upstream commit 591a3d7c09fa08baff48ad86c2347dbd28a52753 ]
+[ Upstream commit 2067e0a13cfe0b1bdca7b91bc5e4f2740b07d478 ]
 
-0day testing by Fengguang Wu triggered this crash while running Trinity:
+On PPv2.2, the streaming mappings can be anywhere in the first 40 bits
+of the physical address space. However, for the coherent mappings, we
+still need them to be in the first 32 bits of the address space,
+because all BM pools share a single register to store the high 32 bits
+of the BM pool address, which means all BM pools must be allocated in
+the same 4GB memory area.
 
-  kernel BUG at include/linux/pagemap.h:151!
-  ...
-  CPU: 0 PID: 458 Comm: trinity-c0 Not tainted 4.11.0-rc2-00251-g2947ba0 #1
-  ...
-  Call Trace:
-   __get_user_pages_fast()
-   get_user_pages_fast()
-   get_futex_key()
-   futex_requeue()
-   do_futex()
-   SyS_futex()
-   do_syscall_64()
-   entry_SYSCALL64_slow_path()
-
-It' VM_BUG_ON() due to false-negative in_atomic(). We call
-page_cache_get_speculative() with disabled local interrupts.
-It should be atomic enough.
-
-So let's check for disabled interrupts in the VM_BUG_ON() condition
-too, to resolve this.
-
-( This got triggered by the conversion of the x86 GUP code to the
-  generic GUP code. )
-
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: LKP <lkp@01.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20170324114709.pcytvyb3d6ajux33@black.fi.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/pagemap.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -153,7 +153,7 @@ static inline int page_cache_get_specula
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6448,6 +6448,20 @@ static int mvpp2_probe(struct platform_d
+ 	/* Get system's tclk rate */
+ 	priv->tclk = clk_get_rate(priv->pp_clk);
  
- #ifdef CONFIG_TINY_RCU
- # ifdef CONFIG_PREEMPT_COUNT
--	VM_BUG_ON(!in_atomic());
-+	VM_BUG_ON(!in_atomic() && !irqs_disabled());
- # endif
- 	/*
- 	 * Preempt must be disabled here - we rely on rcu_read_lock doing
-@@ -191,7 +191,7 @@ static inline int page_cache_add_specula
- 
- #if !defined(CONFIG_SMP) && defined(CONFIG_TREE_RCU)
- # ifdef CONFIG_PREEMPT_COUNT
--	VM_BUG_ON(!in_atomic());
-+	VM_BUG_ON(!in_atomic() && !irqs_disabled());
- # endif
- 	VM_BUG_ON_PAGE(page_count(page) == 0, page);
- 	atomic_add(count, &page->_count);
++	if (priv->hw_version == MVPP22) {
++		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(40));
++		if (err)
++			goto err_mg_clk;
++		/* Sadly, the BM pools all share the same register to
++		 * store the high 32 bits of their address. So they
++		 * must all have the same high 32 bits, which forces
++		 * us to restrict coherent memory to DMA_BIT_MASK(32).
++		 */
++		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
++		if (err)
++			goto err_mg_clk;
++	}
++
+ 	/* Initialize network controller */
+ 	err = mvpp2_init(pdev, priv);
+ 	if (err < 0) {
