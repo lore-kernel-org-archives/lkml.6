@@ -1,211 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932472AbeCSH02 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 03:26:28 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:32005 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932147AbeCSH0X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 03:26:23 -0400
-From: <gabriel.fernandez@st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, <gabriel.fernandez@st.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <gabriel.fernandez.st@gmail.com>, Loic PALLARDY <loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH v3 2/2] reset: stm32mp1: Enable stm32mp1 reset driver
-Date: Mon, 19 Mar 2018 08:25:51 +0100
-Message-ID: <1521444351-29550-3-git-send-email-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
-References: <1521444351-29550-1-git-send-email-gabriel.fernandez@st.com>
+        id S1755343AbeCSHby (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 03:31:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:27246 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754511AbeCSHbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 03:31:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,329,1517904000";
+   d="scan'208";a="209408537"
+From: "Kang, Luwei" <luwei.kang@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>
+Subject: RE: [PATCH v5 11/11] KVM: x86: Disable Intel Processor Trace when
+ VMXON in L1 guest
+Thread-Topic: [PATCH v5 11/11] KVM: x86: Disable Intel Processor Trace when
+ VMXON in L1 guest
+Thread-Index: AQHTtCVPU0oo6wiRS0av5olULCWX0aPSqpoAgASTjnA=
+Date: Mon, 19 Mar 2018 07:31:49 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E167EFC16F@SHSMSX101.ccr.corp.intel.com>
+References: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
+ <1520165241-15819-12-git-send-email-luwei.kang@intel.com>
+ <a8686725-ce27-8000-dee5-5a39d3629dd8@redhat.com>
+In-Reply-To: <a8686725-ce27-8000-dee5-5a39d3629dd8@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTU2MzY0ZGEtYmJkNC00NjBiLWE1ZmUtNTBjOWY2YzViNGM4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJrVXNTT1FTUmxaVTdWZnZjbGgyalpOQk5hSnFiWUc3aGd5RHYyS1hSTVpBQkZ0UjVQXC9uSjVqYmtYUGNXK1IxZiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-19_04:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2J7W1o4022218
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > +	if (pt_mode == PT_MODE_HOST_GUEST) {
+> 
+> This would be vmx_pt_supported(), but I think it's better to remove that function and just test pt_mode ==
+> PT_MODE_HOST_GUEST everywhere (or !=).
 
-stm32mp1 RCC IP 1 has a reset SET register and a reset CLEAR register.
+Hi Paolo,
+    There have so many vmx_pt_supported() invoked in MSRs read/write (patch 9) patch and I think it can be replaced by  pt_mode check.
+    But I think this function need to be reserved in patch 5(cpuid emulation). What is your opinion?
 
-Writing '0' on reset SET register has no effect
-Writing '1' on reset SET register
-	activates the reset of the corresponding peripheral
+Thanks,
+Luwei Kang
 
-Writing '0' on reset CLEAR register	has no effect
-Writing '1' on reset CLEAR register
-	releases the reset of the corresponding peripheral
-
-See Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/reset/Kconfig          |   6 +++
- drivers/reset/Makefile         |   1 +
- drivers/reset/reset-stm32mp1.c | 115 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 122 insertions(+)
- create mode 100644 drivers/reset/reset-stm32mp1.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 1efbc6c..c0b292b 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -97,6 +97,12 @@ config RESET_SIMPLE
- 	   - Allwinner SoCs
- 	   - ZTE's zx2967 family
- 
-+config RESET_STM32MP157
-+	bool "STM32MP157 Reset Driver" if COMPILE_TEST
-+	default MACH_STM32MP157
-+	help
-+	  This enables the RCC reset controller driver for STM32 MPUs.
-+
- config RESET_SUNXI
- 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
- 	default ARCH_SUNXI
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 132c24f..c1261dc 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
-+obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
-new file mode 100644
-index 0000000..b221a28
---- /dev/null
-+++ b/drivers/reset/reset-stm32mp1.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+
-+#define CLR_OFFSET 0x4
-+
-+struct stm32_reset_data {
-+	struct reset_controller_dev	rcdev;
-+	void __iomem			*membase;
-+};
-+
-+static inline struct stm32_reset_data *
-+to_stm32_reset_data(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct stm32_reset_data, rcdev);
-+}
-+
-+static int stm32_reset_update(struct reset_controller_dev *rcdev,
-+			      unsigned long id, bool assert)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
-+	void __iomem *addr;
-+
-+	addr = data->membase + (bank * reg_width);
-+	if (!assert)
-+		addr += CLR_OFFSET;
-+
-+	writel(BIT(offset), addr);
-+
-+	return 0;
-+}
-+
-+static int stm32_reset_assert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, true);
-+}
-+
-+static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, false);
-+}
-+
-+static int stm32_reset_status(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
-+	u32 reg;
-+
-+	reg = readl(data->membase + (bank * reg_width));
-+
-+	return !!(reg & BIT(offset));
-+}
-+
-+static const struct reset_control_ops stm32_reset_ops = {
-+	.assert		= stm32_reset_assert,
-+	.deassert	= stm32_reset_deassert,
-+	.status		= stm32_reset_status,
-+};
-+
-+static const struct of_device_id stm32_reset_dt_ids[] = {
-+	{ .compatible = "st,stm32mp1-rcc"},
-+	{ /* sentinel */ },
-+};
-+
-+static int stm32_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct stm32_reset_data *data;
-+	void __iomem *membase;
-+	struct resource *res;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	membase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(membase))
-+		return PTR_ERR(membase);
-+
-+	data->membase = membase;
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
-+	data->rcdev.ops = &stm32_reset_ops;
-+	data->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static struct platform_driver stm32_reset_driver = {
-+	.probe	= stm32_reset_probe,
-+	.driver = {
-+		.name		= "stm32mp1-reset",
-+		.of_match_table	= stm32_reset_dt_ids,
-+	},
-+};
-+
-+builtin_platform_driver(stm32_reset_driver);
--- 
-1.9.1
+> 
+> Paolo
+> 
+> > +		vmx->pt_desc.guest.ctl = 0;
+> > +		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
+> > +		pt_set_intercept_for_msr(vmx, 1);
+> > +	}
+> > +
