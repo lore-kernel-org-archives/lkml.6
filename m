@@ -1,315 +1,259 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755619AbeCSOQi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 10:16:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51103 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755566AbeCSOQb (ORCPT
+        id S933419AbeCSOT1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 10:19:27 -0400
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34320 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754380AbeCSOTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 10:16:31 -0400
-X-Google-Smtp-Source: AG47ELubtnB9daMm0zasA9JVLMCW7Hepm8BKIID1GTiwY/i5MNoInU9D6AUJzl0Clbl1/UdCRg0riA==
-Date: Mon, 19 Mar 2018 15:16:27 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Joe Perches <joe@perches.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: Reduce object size of DRM_DEV_<LEVEL> uses
-Message-ID: <20180319141627.GR14155@phenom.ffwll.local>
-Mail-Followup-To: Joe Perches <joe@perches.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <e5c164946e15375ac71b69b75f296efdf0b76e6d.1521233717.git.joe@perches.com>
+        Mon, 19 Mar 2018 10:19:25 -0400
+X-Google-Smtp-Source: AG47ELsbhr6T0mjaXFwSHuqXvNcsQ1oJMbaZJwFt7fr1dCUu1HEbj7bWUBPeLRRzvUS7OqAJEfqgpA==
+Subject: Re: [PATCH RESEND v2 1/2] drm/xen-front: Add support for Xen PV
+ display frontend
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
+ <1520958066-22875-2-git-send-email-andr2000@gmail.com>
+ <20180316082330.GF25297@phenom.ffwll.local>
+ <b466004a-821e-60b7-787b-526e10a67505@gmail.com>
+ <20180319135141.GK14155@phenom.ffwll.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
+Message-ID: <0808bf3b-7301-cc28-1cb5-40a4c8aad5cc@gmail.com>
+Date: Mon, 19 Mar 2018 16:19:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5c164946e15375ac71b69b75f296efdf0b76e6d.1521233717.git.joe@perches.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180319135141.GK14155@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 01:56:27PM -0700, Joe Perches wrote:
-> These macros are similar to the DRM_<LEVEL> with the addition
-> of a struct device * to the arguments.
-> 
-> Convert the single drm_dev_printk function into 2 separate functions.
-> drm_dev_printk with a KERN_<LEVEL> * for generic use and drm_dev_dbg
-> for conditional masked use.
-> 
-> Remove the __func__ argument and use __builtin_return_address(0) to be
-> similar to the DRM_<LEVEL> macros uses.
-> 
-> Convert the DRM_DEV_<LEVEL> macros to remove now unnecessary arguments
-> and use a consistent style.
-> 
-> These macros are rarely used in the generic gpu/drm code so the code
-> size does not change much for a defconfig, but when more drivers are
-> enabled, there is ~4k savings.
-> 
-> Many of these macros have no existing use at all.
-> 
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 1877530	  44651	    995	1923176	 1d5868	(TOTALS)
-> 
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 1877527	  44651	    995	1923173	 1d5865	(TOTALS)
-> 
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 17166750	2689238	 108352	19964340	130a1b4	(TOTALS)
-> 
-> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> 17168888	2691734	 108352	19968974	130b3ce	(TOTALS)
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+On 03/19/2018 03:51 PM, Daniel Vetter wrote:
+> On Fri, Mar 16, 2018 at 12:52:09PM +0200, Oleksandr Andrushchenko wrote:
+>> Hi, Daniel!
+>> Sorry, if I strip the patch too much below.
+>>
+>> On 03/16/2018 10:23 AM, Daniel Vetter wrote:
+>>> S-o-b line went missing here :-)
+>> will restore it back ;)
+>>> I've read through it, 2 actual review comments (around hot-unplug and
+>>> around the error recovery for failed flips), a few bikesheds, but looks
+>>> all reasonable to me. And much easier to read as one big patch (it's just
+>>> 3k).
+>>>
+>>> One more thing I'd do as a follow-up (don't rewrite everything, this is
+>>> close to merge, better to get it in first): You have a lot of indirections
+>>> and function calls across sources files. That's kinda ok if you have a
+>>> huge driver with 100+k lines of code where you have to split things up.
+>>> But for a small driver like yours here it's a bit overkill.
+>> will review and try to rework after the driver is in
+I'll probably merge xen_drm_front_drv.c and xen_drm_front.c now as
+anyway I have to re-work driver unloading, e.g. "fishy" code below.
+>>> Personally I'd merge at least the xen backend stuff into the corresponding
+>>> kms code, but that's up to you.
+>> I prefer to have it in smaller chunks and all related code at
+>> one place, so it is easier to maintain. That is why I didn't
+>> plumb frontend <-> backend code right into the KMS code.
+>>> And as mentioned, if you decide to do
+>>> that, a follow-up patch (once this has merged) is perfectly fine.
+>> Ok, after the merge
+> If you prefer your current layout, then pls keep it. Bikeshed = personal
+> style nit, feel free to ignore if you like stuff differently. In the end
+> it's your driver, not mine, and I can easily navigate the current code
+> (with a few extra jumps).
+Some of the indirections will be removed by merging
+xen_drm_front_drv.c and xen_drm_front.c. Are these what you
+mean or is there anything else?
+> -Daniel
+>
+>>> -Daniel
+>>>
+>>>> +int xen_drm_front_dbuf_create_from_sgt(struct xen_drm_front_info *front_info,
+>>>> +		uint64_t dbuf_cookie, uint32_t width, uint32_t height,
+>>>> +		uint32_t bpp, uint64_t size, struct sg_table *sgt)
+>>>> +{
+>>>> +	return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
+>>>> +			bpp, size, NULL, sgt);
+>>>> +}
+>>>> +
+>>>> +int xen_drm_front_dbuf_create_from_pages(struct xen_drm_front_info *front_info,
+>>>> +		uint64_t dbuf_cookie, uint32_t width, uint32_t height,
+>>>> +		uint32_t bpp, uint64_t size, struct page **pages)
+>>>> +{
+>>>> +	return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
+>>>> +			bpp, size, pages, NULL);
+>>>> +}
+>>> The above two wrappers seem a bit much, just to set sgt = NULL or pages =
+>>> NULL in one of them. I'd drop them, but that's a bikeshed so feel free to
+>>> ignore.
+>> I had that the way you say in some of the previous implementations,
+>> but finally decided to have these dummy wrappers: seems
+>> to be cleaner this way
+>>>> +static void displback_disconnect(struct xen_drm_front_info *front_info)
+>>>> +{
+>>>> +	bool removed = true;
+>>>> +
+>>>> +	if (front_info->drm_pdev) {
+>>>> +		if (xen_drm_front_drv_is_used(front_info->drm_pdev)) {
+>>>> +			DRM_WARN("DRM driver still in use, deferring removal\n");
+>>>> +			removed = false;
+>>>> +		} else
+>>>> +			xen_drv_remove_internal(front_info);
+>>> Ok this logic here is fishy, since you're open-coding the drm unplug
+>>> infrastructure, but slightly differently and slightyl racy. If you have a
+>>> driver where your underlying "hw" (well it's virtual here, but same idea)
+>>> can disappear any time while userspace is still using the drm driver, you
+>>> need to use the drm_dev_unplug() function and related code.
+>>> drm_dev_unplug() works like drm_dev_unregister, except for the hotplug
+>>> case.
+>>>
+>>> Then you also have to guard all the driver entry points where you do
+>>> access the backchannel using drm_dev_is_unplugged() (I've seen a few of
+>>> those already). Then you can rip out all the logic here and the xen_drm_front_drv_is_used() helper.
+>> Will rework it with drm_dev_unplug, thank you
+>>> I thought there's some patches from Noralf in-flight that improved the
+>>> docs on this, I need to check
+Yes, I will definitely use those as soon as they are available.
+But at the moment let me clarify a bit on the use-cases for driver
+unplugging and backend disconnection.
 
-Thanks for the resend, applied.
--Daniel
+The backend, by disconnecting, expects full DRM driver teardown, because,
+for example, it might need to replace current frontend’s configuration
+completely or stop supporting para-virtualized display for some reason.
 
-> ---
->  drivers/gpu/drm/drm_print.c | 37 +++++++++++++-----
->  include/drm/drm_print.h     | 94 ++++++++++++++++++++++-----------------------
->  2 files changed, 74 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> index 79abf6d5b4db..b25f98f33f6c 100644
-> --- a/drivers/gpu/drm/drm_print.c
-> +++ b/drivers/gpu/drm/drm_print.c
-> @@ -63,16 +63,34 @@ void drm_printf(struct drm_printer *p, const char *f, ...)
->  }
->  EXPORT_SYMBOL(drm_printf);
->  
-> -#define DRM_PRINTK_FMT "[" DRM_NAME ":%s]%s %pV"
-> -
->  void drm_dev_printk(const struct device *dev, const char *level,
-> -		    unsigned int category, const char *function_name,
-> -		    const char *prefix, const char *format, ...)
-> +		    const char *format, ...)
-> +{
-> +	struct va_format vaf;
-> +	va_list args;
-> +
-> +	va_start(args, format);
-> +	vaf.fmt = format;
-> +	vaf.va = &args;
-> +
-> +	if (dev)
-> +		dev_printk(level, dev, "[" DRM_NAME ":%ps] %pV",
-> +			   __builtin_return_address(0), &vaf);
-> +	else
-> +		printk("%s" "[" DRM_NAME ":%ps] %pV",
-> +		       level, __builtin_return_address(0), &vaf);
-> +
-> +	va_end(args);
-> +}
-> +EXPORT_SYMBOL(drm_dev_printk);
-> +
-> +void drm_dev_dbg(const struct device *dev, unsigned int category,
-> +		 const char *format, ...)
->  {
->  	struct va_format vaf;
->  	va_list args;
->  
-> -	if (category != DRM_UT_NONE && !(drm_debug & category))
-> +	if (!(drm_debug & category))
->  		return;
->  
->  	va_start(args, format);
-> @@ -80,14 +98,15 @@ void drm_dev_printk(const struct device *dev, const char *level,
->  	vaf.va = &args;
->  
->  	if (dev)
-> -		dev_printk(level, dev, DRM_PRINTK_FMT, function_name, prefix,
-> -			   &vaf);
-> +		dev_printk(KERN_DEBUG, dev, "[" DRM_NAME ":%ps] %pV",
-> +			   __builtin_return_address(0), &vaf);
->  	else
-> -		printk("%s" DRM_PRINTK_FMT, level, function_name, prefix, &vaf);
-> +		printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
-> +		       __builtin_return_address(0), &vaf);
->  
->  	va_end(args);
->  }
-> -EXPORT_SYMBOL(drm_dev_printk);
-> +EXPORT_SYMBOL(drm_dev_dbg);
->  
->  void drm_dbg(unsigned int category, const char *format, ...)
->  {
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index 3a40c5a3a5fa..e1a46e9991cc 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -196,10 +196,13 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
->  #define DRM_UT_STATE		0x40
->  #define DRM_UT_LEASE		0x80
->  
-> -__printf(6, 7)
-> +__printf(3, 4)
->  void drm_dev_printk(const struct device *dev, const char *level,
-> -		    unsigned int category, const char *function_name,
-> -		    const char *prefix, const char *format, ...);
-> +		    const char *format, ...);
-> +__printf(3, 4)
-> +void drm_dev_dbg(const struct device *dev, unsigned int category,
-> +		 const char *format, ...);
-> +
->  __printf(2, 3)
->  void drm_dbg(unsigned int category, const char *format, ...);
->  __printf(1, 2)
-> @@ -208,10 +211,7 @@ void drm_err(const char *format, ...);
->  /* Macros to make printk easier */
->  
->  #define _DRM_PRINTK(once, level, fmt, ...)				\
-> -	do {								\
-> -		printk##once(KERN_##level "[" DRM_NAME "] " fmt,	\
-> -			     ##__VA_ARGS__);				\
-> -	} while (0)
-> +	printk##once(KERN_##level "[" DRM_NAME "] " fmt, ##__VA_ARGS__)
->  
->  #define DRM_INFO(fmt, ...)						\
->  	_DRM_PRINTK(, INFO, fmt, ##__VA_ARGS__)
-> @@ -234,8 +234,7 @@ void drm_err(const char *format, ...);
->   * @fmt: printf() like format string.
->   */
->  #define DRM_DEV_ERROR(dev, fmt, ...)					\
-> -	drm_dev_printk(dev, KERN_ERR, DRM_UT_NONE, __func__, " *ERROR*",\
-> -		       fmt, ##__VA_ARGS__)
-> +	drm_dev_printk(dev, KERN_ERR, "*ERROR* " fmt, ##__VA_ARGS__)
->  #define DRM_ERROR(fmt, ...)						\
->  	drm_err(fmt, ##__VA_ARGS__)
->  
-> @@ -258,8 +257,7 @@ void drm_err(const char *format, ...);
->  	DRM_DEV_ERROR_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_INFO(dev, fmt, ...)					\
-> -	drm_dev_printk(dev, KERN_INFO, DRM_UT_NONE, __func__, "", fmt,	\
-> -		       ##__VA_ARGS__)
-> +	drm_dev_printk(dev, KERN_INFO, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEV_INFO_ONCE(dev, fmt, ...)				\
->  ({									\
-> @@ -276,53 +274,46 @@ void drm_err(const char *format, ...);
->   * @dev: device pointer
->   * @fmt: printf() like format string.
->   */
-> -#define DRM_DEV_DEBUG(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_CORE, __func__, "", fmt,	\
-> -		       ##args)
-> +#define DRM_DEV_DEBUG(dev, fmt, ...)					\
-> +	drm_dev_dbg(dev, DRM_UT_CORE, fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG(fmt, ...)						\
->  	drm_dbg(DRM_UT_CORE, fmt, ##__VA_ARGS__)
->  
-> -#define DRM_DEV_DEBUG_DRIVER(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_DRIVER, __func__, "",	\
-> -		       fmt, ##args)
-> +#define DRM_DEV_DEBUG_DRIVER(dev, fmt, ...)				\
-> +	drm_dev_dbg(dev, DRM_UT_DRIVER,	fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG_DRIVER(fmt, ...)					\
->  	drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
->  
-> -#define DRM_DEV_DEBUG_KMS(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_KMS, __func__, "", fmt,	\
-> -		       ##args)
-> +#define DRM_DEV_DEBUG_KMS(dev, fmt, ...)				\
-> +	drm_dev_dbg(dev, DRM_UT_KMS, fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG_KMS(fmt, ...)						\
->  	drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
->  
-> -#define DRM_DEV_DEBUG_PRIME(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_PRIME, __func__, "",	\
-> -		       fmt, ##args)
-> +#define DRM_DEV_DEBUG_PRIME(dev, fmt, ...)				\
-> +	drm_dev_dbg(dev, DRM_UT_PRIME, fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG_PRIME(fmt, ...)					\
->  	drm_dbg(DRM_UT_PRIME, fmt, ##__VA_ARGS__)
->  
-> -#define DRM_DEV_DEBUG_ATOMIC(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ATOMIC, __func__, "",	\
-> -		       fmt, ##args)
-> +#define DRM_DEV_DEBUG_ATOMIC(dev, fmt, ...)				\
-> +	drm_dev_dbg(dev, DRM_UT_ATOMIC,	fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG_ATOMIC(fmt, ...)					\
->  	drm_dbg(DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
->  
-> -#define DRM_DEV_DEBUG_VBL(dev, fmt, args...)				\
-> -	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_VBL, __func__, "", fmt,	\
-> -		       ##args)
-> +#define DRM_DEV_DEBUG_VBL(dev, fmt, ...)				\
-> +	drm_dev_dbg(dev, DRM_UT_VBL, fmt, ##__VA_ARGS__)
->  #define DRM_DEBUG_VBL(fmt, ...)						\
->  	drm_dbg(DRM_UT_VBL, fmt, ##__VA_ARGS__)
->  
->  #define DRM_DEBUG_LEASE(fmt, ...)					\
->  	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
->  
-> -#define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, level, fmt, args...)	\
-> +#define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, category, fmt, ...)	\
->  ({									\
->  	static DEFINE_RATELIMIT_STATE(_rs,				\
->  				      DEFAULT_RATELIMIT_INTERVAL,	\
->  				      DEFAULT_RATELIMIT_BURST);		\
->  	if (__ratelimit(&_rs))						\
-> -		drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ ## level,	\
-> -			       __func__, "", fmt, ##args);		\
-> +		drm_dev_dbg(dev, category, fmt, ##__VA_ARGS__);		\
->  })
->  
->  /**
-> @@ -331,21 +322,28 @@ void drm_err(const char *format, ...);
->   * @dev: device pointer
->   * @fmt: printf() like format string.
->   */
-> -#define DRM_DEV_DEBUG_RATELIMITED(dev, fmt, args...)			\
-> -	DEV__DRM_DEFINE_DEBUG_RATELIMITED(dev, CORE, fmt, ##args)
-> -#define DRM_DEBUG_RATELIMITED(fmt, args...)				\
-> -	DRM_DEV_DEBUG_RATELIMITED(NULL, fmt, ##args)
-> -#define DRM_DEV_DEBUG_DRIVER_RATELIMITED(dev, fmt, args...)		\
-> -	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRIVER, fmt, ##args)
-> -#define DRM_DEBUG_DRIVER_RATELIMITED(fmt, args...)			\
-> -	DRM_DEV_DEBUG_DRIVER_RATELIMITED(NULL, fmt, ##args)
-> -#define DRM_DEV_DEBUG_KMS_RATELIMITED(dev, fmt, args...)		\
-> -	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, KMS, fmt, ##args)
-> -#define DRM_DEBUG_KMS_RATELIMITED(fmt, args...)				\
-> -	DRM_DEV_DEBUG_KMS_RATELIMITED(NULL, fmt, ##args)
-> -#define DRM_DEV_DEBUG_PRIME_RATELIMITED(dev, fmt, args...)		\
-> -	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, PRIME, fmt, ##args)
-> -#define DRM_DEBUG_PRIME_RATELIMITED(fmt, args...)			\
-> -	DRM_DEV_DEBUG_PRIME_RATELIMITED(NULL, fmt, ##args)
-> +#define DRM_DEV_DEBUG_RATELIMITED(dev, fmt, ...)			\
-> +	_DEV_DRM_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_CORE,		\
-> +					  fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_RATELIMITED(fmt, ...)					\
-> +	DRM_DEV_DEBUG_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
-> +
-> +#define DRM_DEV_DEBUG_DRIVER_RATELIMITED(dev, fmt, ...)			\
-> +	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_DRIVER,		\
-> +					  fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_DRIVER_RATELIMITED(fmt, ...)				\
-> +	DRM_DEV_DEBUG_DRIVER_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
-> +
-> +#define DRM_DEV_DEBUG_KMS_RATELIMITED(dev, fmt, ...)			\
-> +	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_KMS,		\
-> +					  fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_KMS_RATELIMITED(fmt, ...)				\
-> +	DRM_DEV_DEBUG_KMS_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
-> +
-> +#define DRM_DEV_DEBUG_PRIME_RATELIMITED(dev, fmt, ...)			\
-> +	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_PRIME,		\
-> +					  fmt, ##__VA_ARGS__)
-> +#define DRM_DEBUG_PRIME_RATELIMITED(fmt, ...)				\
-> +	DRM_DEV_DEBUG_PRIME_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
->  
->  #endif /* DRM_PRINT_H_ */
-> -- 
-> 2.15.0
-> 
+This means that once I have displback_disconnected callback (on XenBus state
+change) I am trying to unregister and remove the DRM driver which seems 
+to be
+not possible if I have relevant code in DRM callbacks (e.g. I cannot try 
+removing
+driver from driver's callback).
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+So, even if I add drm_dev_unplug (which anyway seems to be the right thing)
+I’ll have to have that fishy code for XenBus state handling.
+
+These are the unplug/disconnect use-cases we have:
+
+1. Rmmod
+========
+1.1. If DRM driver is not in use
+We can call xen_drv_remove_internal immediately and remove both DRM and 
+XenBus drivers
+
+1.2. If DRM driver is in use
+In this case usage count of the module is non-zero and driver cannot be 
+removed
+
+2. Backend disconnect callback
+==============================
+2.0. Call drm_dev_unplug as the first step
+
+2.1. If DRM driver is not in use (dev->open_count == 0)
+(The check of dev->open_count against zero should be safe,
+as before that we call drm_dev_unplug, so the framework will not allow 
+open_count
+to be incremented).
+This is similar to 1.1 and we can call xen_drv_remove_internal 
+immediately and
+remove both DRM and XenBus drivers
+
+2.2. DRM driver is in use (dev->open_count != 0)
+This seems to be the only *really fishy place*.
+In this case drm_dev_unplug will not allow new clients for the DRM driver,
+but we cannot start removing DRM driver until the last client closes the 
+DRM device.
+
+This is the change I am planning to introduce:
+
+User-space may hold the DRM device in use for unlimited time, so we 
+cannot hang in XenBus’
+displback_disconnected callback indefinitely, but have to defer DRM 
+driver deletion:
+we switch frontend driver’s XenBus state to XenbusStateReconfiguring 
+(telling the backend to
+wait until we release the DRM driver) and on drm_drv.lastclose callback 
+schedule a deferred
+work which will check for dev->open_count == 0 to become true, so we can 
+remove DRM driver
+and change frontend’s XenBus state to XenbusStateInitialising.
+If at the time of the check dev->open_count != 0 then we reschedule the 
+same work with
+start up delay, and re-check later. This rescheduling happens until 
+dev->open_count == 0,
+which is the marker for DRM driver removal.
+
+Does the above makes sense?
+If so, then I’ll have this implemented in v4 of the driver.
+
+>>>> +#define XEN_DRM_NUM_VIDEO_MODES		1
+>>>> +#define XEN_DRM_CRTC_VREFRESH_HZ	60
+>>>> +
+>>>> +static int connector_get_modes(struct drm_connector *connector)
+>>>> +{
+>>>> +	struct xen_drm_front_drm_pipeline *pipeline =
+>>>> +			to_xen_drm_pipeline(connector);
+>>>> +	struct drm_display_mode *mode;
+>>>> +	struct videomode videomode;
+>>>> +	int width, height;
+>>>> +
+>>>> +	mode = drm_mode_create(connector->dev);
+>>>> +	if (!mode)
+>>>> +		return 0;
+>>>> +
+>>>> +	memset(&videomode, 0, sizeof(videomode));
+>>>> +	videomode.hactive = pipeline->width;
+>>>> +	videomode.vactive = pipeline->height;
+>>>> +	width = videomode.hactive + videomode.hfront_porch +
+>>>> +			videomode.hback_porch + videomode.hsync_len;
+>>>> +	height = videomode.vactive + videomode.vfront_porch +
+>>>> +			videomode.vback_porch + videomode.vsync_len;
+>>>> +	videomode.pixelclock = width * height * XEN_DRM_CRTC_VREFRESH_HZ;
+>>>> +	mode->type = DRM_MODE_TYPE_PREFERRED | DRM_MODE_TYPE_DRIVER;
+>>>> +
+>>>> +	drm_display_mode_from_videomode(&videomode, mode);
+>>>> +	drm_mode_probed_add(connector, mode);
+>>>> +	return XEN_DRM_NUM_VIDEO_MODES;
+>>> Bikeshed: just hardcode this to 1, the #define is imo more confusing.
+>> ok, will remove #define
+>>>> +
+>>>> +	}
+>>>> +	/*
+>>>> +	 * Send page flip request to the backend *after* we have event cached
+>>>> +	 * above, so on page flip done event from the backend we can
+>>>> +	 * deliver it and there is no race condition between this code and
+>>>> +	 * event from the backend.
+>>>> +	 * If this is not a page flip, e.g. no flip done event from the backend
+>>>> +	 * is expected, then send now.
+>>>> +	 */
+>>>> +	if (!display_send_page_flip(pipe, old_plane_state))
+>>>> +		xen_drm_front_kms_send_pending_event(pipeline);
+>>> The control flow here is a bit confusing. I'd put the call to send out the
+>>> event right away in case of a failure to communicate with the backend into
+>>> display_send_page_flip() itself. Then drop the bool return value and make
+>>> it void, and also push the comment explaining what you do in case of
+>>> errors into that function.
+>> The reason for having bool for page flip here is that we
+>> need to send pending event for display enable/disable, for example.
+>> So, I decided to make it this way:
+>> 1. page flip handled - handles pending event internally
+>> (defers sending until frame done event from the backend)
+>> 2. page flip failed - handles externally in case of any
+>> page flip related error, e.g. "not handled" cases, either
+>> due to backend communication error or whatever else
+>> 3. all other cases, but page flip
+>>> That way the error handling and recovery is all neatly tied together in
+>>> one place instead of spread around.
+>> Well, I tried to keep it all at one place, but as we decided
+>> to implement connector hotplug for error delivery it
+>> became split. Also, I handle frame done event time-outs there.
+> You can leave things as-is if you prefer, just for me it looked a bit
+> confusion and unecessarily complex.
+I'll think more if I can simplify this
+> -Daniel
+Thank you,
+Oleksandr Andrushchenko
