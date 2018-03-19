@@ -1,146 +1,122 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1168001-1522340041-2-17837750700710123112
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522340040; b=vh7J9LPqRrJZuYLSDHaUBqH5odNvk1LfkDJ32llIDrYm24tEE7
-    S8BrixTYehpnMbX4VpkHNR9lgViEnTt1czSL+5gIiYAF1b1mzpvgYU/E5IA4VQeY
-    FlBD82Oka2pQveN2e/nGNwBZDDPMqIjWEHFh1MdKVyuyAX7eE9vStTbXTN/xflfY
-    OO0hxyr1g4qteWo2upKZsXEGS8GyjV7Thn1vWBxZdOLeCkjOjODDfver0E8cuZlR
-    hlPeNkhK1ykqKNol4l81RoReeYANEMjKPOaRi1O/xKfFkAmH1xOJJPOHPjPpitQj
-    UJpPbIXJ8s1tQAYUN/iaWjjB9clyTkpx9pcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522340040;
-    bh=eMAUFiEADnPj6J4ZZptR2OfIOD6mhRcrBOsZ7YhjnaM=; b=J2At6QXS7dSC
-    2EEYEIfbQtjTJrKRzTDMcY67edxJAGKaBZOsuowxgFdkBL5aDFb8G9UoGUgNw6xV
-    6awDCnGr7fKsxBo4YUlZtPRErkIfaZX5VWaRaaMSfYGYu62feVduiCMICteg9wOV
-    kCKSXcLZWcH+xjwP//HkBTV8txZ5vmf9wg3PSb1pXU+q1Jzm8j2gd3K54dqI/j6e
-    QqMKdC4jlf0dIXtqO6QSxJ4Q8HPcmsSXivbPk/BAYA123sMrMQ3sj/sra4RJvByb
-    CTRO59nj3cK8LpyY/fjtmuhiswj3fjizG56O08I7pSWaIxEGqqMIztS+nTMyliqm
-    pGZlRfatRw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH9vCY39n6CvCcTHPn5Xpm27oB3pcgMeqOBLECZOR+KqrJnmt++m03GME+curqjBnf4+Dil2RhBK0axsd1bvp6nkr1w3Kqwxz5fsOOdOeJA+iF8mjHr+
-    FM9CEr5bpMzbb5MG2tkhvjOSIcorsfdOouezY1fn4tvaDrBdZ6qwqChCwcqOcn5hx4jCnOh9xomwcz3/wtEzg6KHU04Ai0rChaaU5VMNp0oQ5LcN3ULYYp62
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=1XWaLZrsAAAA:8 a=Lyni5Ml3Mjy5FSvaWBsA:9 a=QEXdDO2ut3YA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeC2QN7 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 12:13:59 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:43532 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbeC2QN6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 12:13:58 -0400
-Message-ID: <1522340036.2654.20.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 014/134] perf tools: Make
- perf_event__synthesize_mmap_events() scale
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Date: Thu, 29 Mar 2018 17:13:56 +0100
-In-Reply-To: <20180319171851.147448695@linuxfoundation.org>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELu551R9gHb8+O+pVO9tTviEm5kkKuP8iaXALL4P5WxDvQn0nchFY6ucR59qL9DpQvr38omj
+ARC-Seal: i=1; a=rsa-sha256; t=1521483214; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oUcPKCQpytcl/sV9Yxfch/HCu1wLMZaUqqvsCLmJ6WC5qpY/DW2cfhSITaMkMLiGW5
+         cCFRv63qkb3yFWZAteVADxKp/K16w3H92XC0OUYo/Ni5972mAepY2ujUEWUk/zNxt+B8
+         PQBwzhezR1GxnpiMyiJSvdiiJ418rArrtN6MUu3+zDDOaJ+YfJsEm6Aol4guM/QIlf8V
+         z/wb0IbT8sD5dBm7HdfE/4VCNeiImdd95pjKojzl3CzsfhRzAuw6dwE8RWN+a1Y13bR1
+         Y2SZ1HIzgBW11H+kol5p96RNgauGD85eNQYCIWKLplMjsZ45K6WnPHPnFXDF55ClYSZg
+         /WMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=RyIVF2MP7xpZBYw/VmVEB8jB1CJLODif7mNzWPvIp8c=;
+        b=zZhrmKDDOCMQOej9rzLstCel2didl/RL2Ig7Syj8+ZKCxonWYgaW1ZhAlwqDMpHWGJ
+         cp+3zx4dgYJdmb8l/FYowRCSIWF7WiQziOW31DoJU0nHA+2uvbb3opbjA/qB7OpuA7Od
+         LT+PiScgj03+ALElzwNRuh/KYhECZ4CGEnx5PJlDFV97M3Q+Zm2jAQDon45P6GDegjrB
+         r6SZ7C3iruls29umeyVNau6VodJHc7d93FS7+HLqfdz+9pJyHcObxAV+YYYEHmv4DlAv
+         STRCTeut0XEc/L729wfLq9XylP7EpMd9+C63cl5VEY50oPIDOhe6hGnek6TbhwGvWGwB
+         9p2w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Prarit Bhargava <prarit@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	David Arcari <darcari@redhat.com>,
+	Myron Stowe <mstowe@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Keith Busch <keith.busch@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 009/134] PCI/MSI: Stop disabling MSI/MSI-X in pci_device_shutdown()
+Date: Mon, 19 Mar 2018 19:04:52 +0100
+Message-Id: <20180319171850.444128621@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
-         <20180319171851.147448695@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595390574168988527?=
+X-GMAIL-MSGID: =?utf-8?q?1595390783467864632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-03-19 at 19:04 +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Stephane Eranian <eranian@google.com>
-> 
-> 
-> [ Upstream commit 88b897a30c525c2eee6e7f16e1e8d0f18830845e ]
-> 
-> This patch significantly improves the execution time of
-> perf_event__synthesize_mmap_events() when running perf record on systems
-> where processes have lots of threads.
-> 
-> It just happens that cat /proc/pid/maps support uses a O(N^2) algorithm to
-> generate each map line in the maps file.  If you have 1000 threads, then you
-> have necessarily 1000 stacks.  For each vma, you need to check if it
-> corresponds to a thread's stack.  With a large number of threads, this can take
-> a very long time. I have seen latencies >> 10mn.
-> 
-> As of today, perf does not use the fact that a mapping is a stack, therefore we
-> can work around the issue by using /proc/pid/tasks/pid/maps.  This entry does
-> not try to map a vma to stack and is thus much faster with no loss of
-> functonality.
-> 
-> The proc-map-timeout logic is kept in case users still want some upper limit.
-> 
-> In V2, we fix the file path from /proc/pid/tasks/pid/maps to actual
-> /proc/pid/task/pid/maps, tasks -> task.  Thanks Arnaldo for catching this.
-> 
-> Committer note:
-> 
-> This problem seems to have been elliminated in the kernel since commit :
-> b18cb64ead40 ("fs/proc: Stop trying to report thread stacks").
-[...]
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I don't think so.  It looks like this was fixed by commit 65376df58217
-("proc: revert /proc/<pid>/maps [stack:TID] annotation") which we
-already have in 4.4-stable.  But older branches (3.16, 3.18, 4.1) don't
-have that and probably should do.
+------------------
 
-It looks like commit b18cb64ead40 ("fs/proc: Stop trying to report
-thread stacks") is also a candidate for stable.
+From: Prarit Bhargava <prarit@redhat.com>
 
-Ben.
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+[ Upstream commit fda78d7a0ead144f4b2cdb582dcba47911f4952c ]
+
+The pci_bus_type .shutdown method, pci_device_shutdown(), is called from
+device_shutdown() in the kernel restart and shutdown paths.
+
+Previously, pci_device_shutdown() called pci_msi_shutdown() and
+pci_msix_shutdown().  This disables MSI and MSI-X, which causes the device
+to fall back to raising interrupts via INTx.  But the driver is still bound
+to the device, it doesn't know about this change, and it likely doesn't
+have an INTx handler, so these INTx interrupts cause "nobody cared"
+warnings like this:
+
+  irq 16: nobody cared (try booting with the "irqpoll" option)
+  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.8.2-1.el7_UNSUPPORTED.x86_64 #1
+  Hardware name: Hewlett-Packard HP Z820 Workstation/158B, BIOS J63 v03.90 06/
+  ...
+
+The MSI disabling code was added by d52877c7b1af ("pci/irq: let
+pci_device_shutdown to call pci_msi_shutdown v2") because a driver left MSI
+enabled and kdump failed because the kexeced kernel wasn't prepared to
+receive the MSI interrupts.
+
+Subsequent commits 1851617cd2da ("PCI/MSI: Disable MSI at enumeration even
+if kernel doesn't support MSI") and  e80e7edc55ba ("PCI/MSI: Initialize MSI
+capability for all architectures") changed the kexeced kernel to disable
+all MSIs itself so it no longer depends on the crashed kernel to clean up
+after itself.
+
+Stop disabling MSI/MSI-X in pci_device_shutdown().  This resolves the
+"nobody cared" unhandled IRQ issue above.  It also allows PCI serial
+devices, which may rely on the MSI interrupts, to continue outputting
+messages during reboot/shutdown.
+
+[bhelgaas: changelog, drop pci_msi_shutdown() and pci_msix_shutdown() calls
+altogether]
+Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=187351
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: Alex Williamson <alex.williamson@redhat.com>
+CC: David Arcari <darcari@redhat.com>
+CC: Myron Stowe <mstowe@redhat.com>
+CC: Lukas Wunner <lukas@wunner.de>
+CC: Keith Busch <keith.busch@intel.com>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/pci/pci-driver.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -463,8 +463,6 @@ static void pci_device_shutdown(struct d
+ 
+ 	if (drv && drv->shutdown)
+ 		drv->shutdown(pci_dev);
+-	pci_msi_shutdown(pci_dev);
+-	pci_msix_shutdown(pci_dev);
+ 
+ #ifdef CONFIG_KEXEC_CORE
+ 	/*
