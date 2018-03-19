@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuismyZSA83j7Z3ZfZXx21N44xXISaEiD50AL2QLUUgTwiplxOGn2+2snSen+dKWXZJwgYS
-ARC-Seal: i=1; a=rsa-sha256; t=1521483742; cv=none;
+X-Google-Smtp-Source: AG47ELsT5VAMZVrKdSOCaJrky50mfS5MdivzKywvFHoO9TtNCyuom7/9LDOLWPsrNGvGNRzfOzWn
+ARC-Seal: i=1; a=rsa-sha256; t=1521483739; cv=none;
         d=google.com; s=arc-20160816;
-        b=GSECH9+4lsTohx87NX7OBUsnug97lNiEC6JqHET0+zD97xNTZKBHn92xtmJ0KP/xQb
-         hqurUYanAL67Dw/8pqauCZ5G4CQxqeafhoHcBmALcxh+tSrkzMozEx+b4eILyrWyp7pv
-         uQ8jE8aR+Ns21zWo/iS2nupOLq5SYXLKrbZILZxpndwzt2EoilXp3L21xt8cM9PEUoXF
-         UO85NnR1WPLQ3iuc8MsEXC5NLlel3ovx0jT5UIndpiXVT3xDdN4Kns2T3hN/mHo9tS2q
-         H5vVIhj/Y8SAAgSCELEJHfX4pcAsC1CSX61cd8uRPr2JCzfuR89WSz3uIWn2TxmwSYBj
-         J//w==
+        b=OzuoO+Hnli340zPC10C0hndTGAJoHA7/vlDYKBxHSXm70L46ZSbeG+to3Pbt3OtSnm
+         AdqsdPLs0T4peHeNP4GqKGisMMcv3dnxoVISraXioHtEz3U5X+XYD0SWLsyumWpFjXtq
+         2tmKF0Bk6kXb1HR6ctSTIJnjfINDwREx28tl/ujLaxYFH9QoMJKmcHvki6H8Z1zTfOHf
+         q4Azoffm5fzxxYsmPELl7hEaCB0qnadruh3bMaczrWLZtnzfbYJWFU82Eqz9SF66XpEc
+         ERp3s6VoBu4285Az+HfJ+44gLpNajLE7OgBN6upgOz4oNV8SR10nbSv5vJls0qTkW2A2
+         uu4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qvGFm/A+7YBfH9zgKjsnE/CztR9yCwhVjYLh0cNN698=;
-        b=ldBahSk60XL7Xgd19SOHs4BtB7XFlPYjLyRmkRpOp+h04+RSBWUTewXNiKsRUEYYFH
-         x3GDvbMV/MlK+SGtkrq81BEnev8wcyydWLWsZIAfDqurHHeLyt+4g7ADF0D7bqLI7uBW
-         a9fPo45I3GjUg/GygOa3e/gznoB9pfsCT2r5I19RqcJd8nMJCtz9j3fxMnItgwZWoN0p
-         ndbeM7IVlRzfx2q3fIpWizMx0zHQrqxK+qnFGEnOlkOBJGJUCMddQB5e7SRLvDlqcCWl
-         ZVhsCuQFrghe5CwXWlIRR5PEfn3BIH7V8TZ06omkP/crfJL1aPEnoWVm55VLOv9I7Eo3
-         TB8A==
+        bh=Jas5Sog+5XkCobqAjXr6AC9T5w+t/+KLQ72ae0WNzms=;
+        b=BmURA7ubiDIdN7UBIWqs7MFEP7VXioL5Vt5NuqPJzlY8z3tWZm7b1TIad7qqYOfh9e
+         MBjvkQLVwT/LwGhsIvoGa24ZN+VZBFADGdOCnUpoBgR/qxbwQHkQ7pt2uRJBigwmd4Gu
+         4vKuSzw+Z0gl0U6JwhIDHKWIKhjHQy11rCIK43ROuKJYt+r8tfHKatQJP3YkOnSuPIz0
+         2Knm3E7NV6sAijnUUPy8hWUaIAbarsHDap4YH6f0RO3y3uXinAzdcWikIDc8H/QLqZ6n
+         965H803pSjZrtx30Xv7htk5oOS1sEd8aGKad4b+71FhSnzSQ2WPq7av3m14gKbcbWWb+
+         R6zg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiada Wang <jiada_wang@mentor.com>,
-	Vinod Koul <vinod.koul@intel.com>,
+	lipeng <lipeng321@huawei.com>,
+	Yisen Zhuang <yisen.zhuang@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 065/241] dmaengine: imx-sdma: add 1ms delay to ensure SDMA channel is stopped
-Date: Mon, 19 Mar 2018 19:05:30 +0100
-Message-Id: <20180319180753.893514315@linuxfoundation.org>
+Subject: [PATCH 4.9 098/241] net: hns: Correct HNS RSS key set function
+Date: Mon, 19 Mar 2018 19:06:03 +0100
+Message-Id: <20180319180755.252239348@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
 References: <20180319180751.172155436@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390766580958175?=
-X-GMAIL-MSGID: =?utf-8?q?1595391336018286469?=
+X-GMAIL-THRID: =?utf-8?q?1595391333579099540?=
+X-GMAIL-MSGID: =?utf-8?q?1595391333579099540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,64 +52,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiada Wang <jiada_wang@mentor.com>
+From: lipeng <lipeng321@huawei.com>
 
 
-[ Upstream commit 7f3ff14b7eb1ffad132117f08a1973b48e653d43 ]
+[ Upstream commit 64ec10dc2ab8ef5bc6e76b1d4bc8203c08a6da1e ]
 
-sdma_disable_channel() cannot ensure dma is stopped to access
-module's FIFOs. There is chance SDMA core is running and accessing
-BD when disable of corresponding channel, this may cause sometimes
-even after call of .sdma_disable_channel(), SDMA core still be
-running and accessing module's FIFOs.
+This patch fixes below ethtool configuration error:
 
-According to NXP R&D team a delay of one BD SDMA cost time (maximum
-is 1ms) should be added after disable of the channel bit, to ensure
-SDMA core has really been stopped after SDMA clients call
-.device_terminate_all.
+localhost:~ # ethtool -X eth0 hkey XX:XX:XX...
+Cannot set Rx flow hash configuration: Operation not supported
 
-This patch introduces adds a new function sdma_disable_channel_with_delay()
-which simply adds 1ms delay after call sdma_disable_channel(),
-and set it as .device_terminate_all.
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: lipeng <lipeng321@huawei.com>
+Reviewed-by: Yisen Zhuang <yisen.zhuang@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/imx-sdma.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c |   27 +++++++++++++---------
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c  |    9 +++----
+ 2 files changed, 20 insertions(+), 16 deletions(-)
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -937,6 +937,21 @@ static int sdma_disable_channel(struct d
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -773,8 +773,9 @@ static int hns_ae_get_rss(struct hnae_ha
+ 		memcpy(key, ppe_cb->rss_key, HNS_PPEV2_RSS_KEY_SIZE);
+ 
+ 	/* update the current hash->queue mappings from the shadow RSS table */
+-	memcpy(indir, ppe_cb->rss_indir_table,
+-	       HNS_PPEV2_RSS_IND_TBL_SIZE * sizeof(*indir));
++	if (indir)
++		memcpy(indir, ppe_cb->rss_indir_table,
++		       HNS_PPEV2_RSS_IND_TBL_SIZE  * sizeof(*indir));
+ 
  	return 0;
  }
+@@ -785,15 +786,19 @@ static int hns_ae_set_rss(struct hnae_ha
+ 	struct hns_ppe_cb *ppe_cb = hns_get_ppe_cb(handle);
  
-+static int sdma_disable_channel_with_delay(struct dma_chan *chan)
-+{
-+	sdma_disable_channel(chan);
+ 	/* set the RSS Hash Key if specififed by the user */
+-	if (key)
+-		hns_ppe_set_rss_key(ppe_cb, (u32 *)key);
+-
+-	/* update the shadow RSS table with user specified qids */
+-	memcpy(ppe_cb->rss_indir_table, indir,
+-	       HNS_PPEV2_RSS_IND_TBL_SIZE * sizeof(*indir));
+-
+-	/* now update the hardware */
+-	hns_ppe_set_indir_table(ppe_cb, ppe_cb->rss_indir_table);
++	if (key) {
++		memcpy(ppe_cb->rss_key, key, HNS_PPEV2_RSS_KEY_SIZE);
++		hns_ppe_set_rss_key(ppe_cb, ppe_cb->rss_key);
++	}
 +
-+	/*
-+	 * According to NXP R&D team a delay of one BD SDMA cost time
-+	 * (maximum is 1ms) should be added after disable of the channel
-+	 * bit, to ensure SDMA core has really been stopped after SDMA
-+	 * clients call .device_terminate_all.
-+	 */
-+	mdelay(1);
++	if (indir) {
++		/* update the shadow RSS table with user specified qids */
++		memcpy(ppe_cb->rss_indir_table, indir,
++		       HNS_PPEV2_RSS_IND_TBL_SIZE  * sizeof(*indir));
 +
-+	return 0;
-+}
-+
- static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
++		/* now update the hardware */
++		hns_ppe_set_indir_table(ppe_cb, ppe_cb->rss_indir_table);
++	}
+ 
+ 	return 0;
+ }
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -1243,6 +1243,7 @@ hns_set_rss(struct net_device *netdev, c
  {
- 	struct sdma_engine *sdma = sdmac->sdma;
-@@ -1828,7 +1843,7 @@ static int sdma_probe(struct platform_de
- 	sdma->dma_device.device_prep_slave_sg = sdma_prep_slave_sg;
- 	sdma->dma_device.device_prep_dma_cyclic = sdma_prep_dma_cyclic;
- 	sdma->dma_device.device_config = sdma_config;
--	sdma->dma_device.device_terminate_all = sdma_disable_channel;
-+	sdma->dma_device.device_terminate_all = sdma_disable_channel_with_delay;
- 	sdma->dma_device.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	sdma->dma_device.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
- 	sdma->dma_device.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+ 	struct hns_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae_ae_ops *ops;
++	int ret;
+ 
+ 	if (AE_IS_VER1(priv->enet_ver)) {
+ 		netdev_err(netdev,
+@@ -1252,12 +1253,10 @@ hns_set_rss(struct net_device *netdev, c
+ 
+ 	ops = priv->ae_handle->dev->ops;
+ 
+-	/* currently hfunc can only be Toeplitz hash */
+-	if (key ||
+-	    (hfunc != ETH_RSS_HASH_NO_CHANGE && hfunc != ETH_RSS_HASH_TOP))
++	if (hfunc != ETH_RSS_HASH_NO_CHANGE && hfunc != ETH_RSS_HASH_TOP) {
++		netdev_err(netdev, "Invalid hfunc!\n");
+ 		return -EOPNOTSUPP;
+-	if (!indir)
+-		return 0;
++	}
+ 
+ 	return ops->set_rss(priv->ae_handle, indir, key, hfunc);
+ }
