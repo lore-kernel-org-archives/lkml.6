@@ -1,95 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030231AbeCSRwS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 13:52:18 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40359 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965752AbeCSRwK (ORCPT
+        id S968344AbeCSRwe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 13:52:34 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:39275 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965789AbeCSRw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:52:10 -0400
-X-Google-Smtp-Source: AG47ELsyxYDKwRZ9MhNvhft3ZYJQImf5+SErAKzO3iy6Wo0lBnVpSWcb2D4QgwgPtKt3DZ9loIxGUg==
+        Mon, 19 Mar 2018 13:52:26 -0400
+X-Google-Smtp-Source: AG47ELvN4gTj9mgwGnHlnPuBm3BZDvrIY7en1ZDymtQntYqVpln0CxkBOe4MUy81UhemgNrcbt5tZwXufz36TcOKPLQ=
 MIME-Version: 1.0
-References: <1521193500-4696-1-git-send-email-mgautam@codeaurora.org> <1521193500-4696-5-git-send-email-mgautam@codeaurora.org>
-In-Reply-To: <1521193500-4696-5-git-send-email-mgautam@codeaurora.org>
-From: Evan Green <evgreen@chromium.org>
-Date: Mon, 19 Mar 2018 17:51:31 +0000
-X-Gmail-Original-Message-ID: <CAE=gft6yM58dru2DnjASbi+YG_KanDbBhO2nCLBerZw4NjT-=g@mail.gmail.com>
-Message-ID: <CAE=gft6yM58dru2DnjASbi+YG_KanDbBhO2nCLBerZw4NjT-=g@mail.gmail.com>
-Subject: Re: [PATCH 4/6] phy: qcom-qmp: Add QMP V3 USB3 UNI PHY support for sdm845
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: kishon@ti.com, linux-arm-msm@vger.kernel.org,
-        vivek.gautam@codeaurora.org, varada@codeaurora.org,
-        weiyongjun1@huawei.com, fengguang.wu@intel.com,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <CAMpxmJX+BqnU=cK0KMOOCrXd4bB2RRZ30A-U3f3tk6K05csrTw@mail.gmail.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+ <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com> <CAHCN7xKQ47DnVXiZTJ-0myoth2SJ3wnyvDb2i07uKZDgomhgwQ@mail.gmail.com>
+ <CAMpxmJWoP+BDYeuqCnQ2txWy7wkxKuyjKODJqgDtRkq0ahY1mw@mail.gmail.com> <CAMpxmJX+BqnU=cK0KMOOCrXd4bB2RRZ30A-U3f3tk6K05csrTw@mail.gmail.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 19 Mar 2018 12:52:25 -0500
+Message-ID: <CAHCN7xLt6QqHodd=0HKXBxLjjn8ua5Re7NYW=sPeH+TmnXpkJQ@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v8_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
+        =?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manu,
+On Mon, Mar 19, 2018 at 11:15 AM, Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> 2018-03-19 17:14 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+>> 2018-03-19 17:11 GMT+01:00 Adam Ford <aford173@gmail.com>:
+>>> On Mon, Mar 19, 2018 at 10:59 AM, David Lechner <david@lechnology.com> wrote:
+>>>> On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
+>>>>>
+>>>>> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>>>
+>>>>>> This series converts mach-davinci to use the common clock framework.
+>>>>>>
+>>>>>> The series works like this, the first 19 patches create new clock drivers
+>>>>>> using the common clock framework. There are basically 3 groups of clocks
+>>>>>> -
+>>>>>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
+>>>>>> have
+>>>>>> unique init data, which is the reason for so many patches.
+>>>>>>
+>>>>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>>>>> davinci_timer_init()", we get the mach code ready for the switch by
+>>>>>> adding the
+>>>>>> code needed for the new clock drivers and adding #ifndef
+>>>>>> CONFIG_COMMON_CLK
+>>>>>> around the legacy clocks so that we can switch easily between the old and
+>>>>>> the
+>>>>>> new.
+>>>>>>
+>>>>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>>>>> switch
+>>>>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>>>>> of the old clock code.
+>>>>>>
+>>>>>> The final three patches add device tree clock support to the one SoC that
+>>>>>> supports it.
+>>>>>>
+>>>>>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+>>>>>> OMAP-L138 LCDK (both device tree and legacy board file).
+>>>>>>
 
-On Fri, Mar 16, 2018 at 2:46 AM Manu Gautam <mgautam@codeaurora.org> wrote:
 
-> QMP V3 UNI PHY is a single lane USB3 PHY without support
-> for DisplayPort (DP).
-> Main difference from DP combo QMPv3 PHY is that UNI PHY
-> doesn't have dual RX/TX lanes and no separate DP_COM
-> block for configuration related to type-c or DP.
-> While at it, fix has_pwrdn_delay attribute for USB-DP
-> PHY configuration.
+Does anyone have an LCD connected to the LCDC controller with device
+tree?  I posted an RFC patch a while ago for the DA850-EVM, but I got
+distracted and forgot about it, so I never working on getting the
+patch ready for acceptance.
 
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp.c | 148
-++++++++++++++++++++++++++++++++++++
->   drivers/phy/qualcomm/phy-qcom-qmp.h |   5 ++
->   2 files changed, 153 insertions(+)
+I am trying to test the LCD now, but I cannot get the screen to come
+up, but in the process, it appears as if the clocking to the LCD isn't
+quite right.  I know it used to work, but I am going to probe some
+pins, but I am getting warning messages I have never received before.
+The desired clock frequency is 9000000, but when I use the cpufreq in
+ondemand mode, I get the following messages:
 
-...
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h
-b/drivers/phy/qualcomm/phy-qcom-qmp.h
-> index d1c6905..5d78d43 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
-> @@ -214,6 +214,8 @@
->   #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN            0x030
->   #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE    0x034
->   #define QSERDES_V3_RX_RX_TERM_BW                       0x07c
-> +#define QSERDES_V3_RX_VGA_CAL_CNTRL1                   0x0bc
+#  echo ondemand > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+# tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+ calculated rate (54000000Hz)
+tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
 
-I noticed you add this definition, but never use it. Are you missing a
-QMP_PHY_INIT_CFG line for this register in qmp_v3_usb3_uniphy_rx_tbl[], or
-is that register "don't care"? It looks important, and while its default
-value out of reset might be valid, you never know what nutty value boot
-firmware might set it to.
+As ondemend is used and the processor scaling happens, the above
+message appears on and off.
 
-> +#define QSERDES_V3_RX_VGA_CAL_CNTRL2                   0x0c0
->   #define QSERDES_V3_RX_RX_EQ_GAIN2_LSB                  0x0c8
->   #define QSERDES_V3_RX_RX_EQ_GAIN2_MSB                  0x0cc
->   #define QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2            0x0d4
-> @@ -227,6 +229,7 @@
->   #define QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL            0x10c
->   #define QSERDES_V3_RX_RX_BAND                          0x110
->   #define QSERDES_V3_RX_RX_INTERFACE_MODE                        0x11c
-> +#define QSERDES_V3_RX_RX_MODE_00                       0x164
+I do not know if it impacts the LCD image since I haven't been able to
+get it working yet, but I'll troubleshoot it and when/if I can get the
+LCD working, I'll turn on the ondemand again and see how it behaves.
 
->   /* Only for QMP V3 PHY - PCS registers */
->   #define QPHY_V3_PCS_POWER_DOWN_CONTROL                 0x004
-> @@ -273,6 +276,8 @@
->   #define QPHY_V3_PCS_FLL_CNT_VAL_H_TOL                  0x0d0
->   #define QPHY_V3_PCS_FLL_MAN_CODE                       0x0d4
->   #define QPHY_V3_PCS_RX_SIGDET_LVL                      0x1d8
-> +#define QPHY_V3_PCS_REFGEN_REQ_CONFIG1                 0x20c
-> +#define QPHY_V3_PCS_REFGEN_REQ_CONFIG2                 0x210
+adam
 
->   /* Only for QMP V3 PHY - PCS_MISC registers */
->   #define QPHY_V3_PCS_MISC_CLAMP_ENABLE                  0x0c
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm"
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>> Hi David,
+>>>>>
+>>>>> thanks, with the u-boot fix everything seems to work fine. I tested
+>>>>> da850-lcdk and da850-evm boards in DT and board file modes.
+>>>>>
+>>>
+>>> I tested MMC and Ethernet.  Both appear to be operating normally, but
+>>> I have having USB issues.
+>>>
+>>> Should I be testing cpufreq?  I noticed that when changing the
+>>> frequencies, the USB appears to stop recognizing connections and
+>>> disconnections.
+>>>
+>>> I did some testing on the DA850-EVM with USB from your repo, and I'm
+>>> getting some crashing on MUSB unplug that do not appear in the
+>>> 4.16-RC6 from linux-stable:
+>>>
+>>>
+>>> ------------[ cut here ]------------
+>>> WARNING: CPU: 0 PID: 13 at drivers/dma/cppi41.c:694
+>>> cppi41_stop_chan+0x1f4/0x378 [cppi41]
+>>> Modules linked in: evbug evdev mousedev hid_generic usbhid hid
+>>> usb_f_ss_lb g_zero libcomposite configfs ofpart cmdlinepart m25p80
+>>> spi_nor cppi41 adv7343 tvp514x vpif_display vpif_capture
+>>> videobuf2_dma_con
+>>> tig videobuf2_memops videobuf2_v4l2 videobuf2_common v4l2_fwnode
+>>> v4l2_common snd_soc_simple_card tilcdc spi_davinci
+>>> snd_soc_simple_card_utils videodev pwm_tiecap spi_bitbang da8xx
+>>> drm_kms_helper phy_gener
+>>> ic syscopyarea ohci_da8xx musb_hdrc sysfillrect sysimgblt fb_sys_fops
+>>> ohci_hcd udc_core drm usbcore drm_panel_orientation_quirks usb_common
+>>> snd_soc_tlv320aic3x vpif snd_soc_davinci_mcasp snd_soc_edma snd_
+>>> soc_core snd_pcm_dmaengine snd_pcm rtc_omap snd_timer snd soundcore
+>>> phy_da8xx_usb davinci_nand nand nand_ecc mtd pwm_bl backlight
+>>> cpufreq_dt ti_aemif
+>>> CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.16.0-rc5-g291ba8b-dirty #3
+>>> Hardware name: Generic DA850/OMAP-L138/AM18x
+>>> Workqueue: usb_hub_wq hub_event [usbcore]
+>>> Backtrace:
+>>> [<c000df94>] (dump_backtrace) from [<c000e264>] (show_stack+0x18/0x1c)
+>>>  r7:00000009 r6:00000000 r5:bf339ad0 r4:00000000
+>>> [<c000e24c>] (show_stack) from [<c04864c0>] (dump_stack+0x20/0x28)
+>>> [<c04864a0>] (dump_stack) from [<c001ac38>] (__warn+0xd4/0xfc)
+>>> [<c001ab64>] (__warn) from [<c001ad7c>] (warn_slowpath_null+0x44/0x50)
+>>>  r8:c6c43080 r7:c05f1008 r6:bf338744 r5:000002b6 r4:bf339ad0
+>>> [<c001ad38>] (warn_slowpath_null) from [<bf338744>]
+>>> (cppi41_stop_chan+0x1f4/0x378 [cppi41])
+>>>  r6:c5e59410 r5:c5e59420 r4:c5feca50
+>>> [<bf338550>] (cppi41_stop_chan [cppi41]) from [<bf213dac>]
+>>> (cppi41_dma_channel_abort+0xe0/0x2a8 [musb_hdrc])
+>>>  r8:c6929180 r7:00000000 r6:c5c67290 r5:bf2175a0 r4:00000008
+>>> [<bf213ccc>] (cppi41_dma_channel_abort [musb_hdrc]) from [<bf20c4bc>]
+>>> (musb_cleanup_urb+0x60/0x210 [musb_hdrc])
+>>>  r10:00000001 r9:c5fca010 r8:c5c67290 r7:a0000093 r6:00000080 r5:c55b5100
+>>>  r4:c5fca5a8
+>>> [<bf20c45c>] (musb_cleanup_urb [musb_hdrc]) from [<bf20ca8c>]
+>>> (musb_urb_dequeue+0xfc/0x164 [musb_hdrc])
+>>>  r10:00000001 r9:40408280 r8:c5fca010 r7:a0000093 r6:00000000 r5:c55b5380
+>>>  r4:c55b5100
+>>> [<bf20c990>] (musb_urb_dequeue [musb_hdrc]) from [<bf10fd7c>]
+>>> (unlink1+0x34/0x13c [usbcore])
+>>>  r10:00000100 r9:c5cb2a00 r8:c55b5100 r7:ffffff94 r6:c5c6c000 r5:c5dd2380
+>>>  r4:c55b5100 r3:bf20c990
+>>> [<bf10fd48>] (unlink1 [usbcore]) from [<bf112424>]
+>>> (usb_hcd_flush_endpoint+0x164/0x1a4 [usbcore])
+>>>  r9:c5cb2a00 r8:c55b5100 r7:c5c6c000 r6:c5dd2398 r5:c5dd2380 r4:ffffe000
+>>> [<bf1122c0>] (usb_hcd_flush_endpoint [usbcore]) from [<bf11563c>]
+>>> (usb_disable_endpoint+0x50/0x94 [usbcore])
+>>>  r9:c5cb2a00 r8:bf39e898 r7:00000000 r6:c5c43000 r5:c5c43000 r4:c5dd2380
+>>> [<bf1155ec>] (usb_disable_endpoint [usbcore]) from [<bf1156c4>]
+>>> (usb_disable_interface+0x44/0x58 [usbcore])
+>>>  r5:c5dd2348 r4:00000000
+>>> [<bf115680>] (usb_disable_interface [usbcore]) from [<bf118044>]
+>>> (usb_unbind_interface+0x1c0/0x268 [usbcore])
+>>>  r7:c5cb2c00 r6:bf39e898 r5:c5cb2c20 r4:c5cb2c20
+>>> [<bf117e84>] (usb_unbind_interface [usbcore]) from [<c02ce180>]
+>>> (device_release_driver_internal+0x160/0x208)
+>>>  r10:00000100 r9:c5cb2a00 r8:00000034 r7:00000000 r6:bf39e898 r5:c5cb2c54
+>>>  r4:c5cb2c20
+>>> [<c02ce020>] (device_release_driver_internal) from [<c02ce240>]
+>>> (device_release_driver+0x18/0x1c)
+>>>  r9:c5cb2a00 r8:c05f1008 r7:c5c43070 r6:bf12895c r5:c5cb2c20 r4:c5dc91ac
+>>> [<c02ce228>] (device_release_driver) from [<c02ccf70>]
+>>> (bus_remove_device+0xd0/0x100)
+>>> [<c02ccea0>] (bus_remove_device) from [<c02c9c60>] (device_del+0x120/0x378)
+>>>  r7:c5c43070 r6:c5cb2c28 r5:00000000 r4:c5cb2c20
+>>> [<c02c9b40>] (device_del) from [<bf11576c>]
+>>> (usb_disable_device+0x94/0x1d8 [usbcore])
+>>>  r10:00000100 r9:c5cb2a00 r8:c5cb2c00 r7:c5c6c000 r6:00000001 r5:00000000
+>>>  r4:c5c43000
+>>> [<bf1156d8>] (usb_disable_device [usbcore]) from [<bf10bccc>]
+>>> (usb_disconnect+0xb4/0x244 [usbcore])
+>>>  r9:c5cb2a00 r8:c5c2d600 r7:c5c430a4 r6:c5c43070 r5:c5c43000 r4:00000000
+>>> [<bf10bc18>] (usb_disconnect [usbcore]) from [<bf10d788>]
+>>> (hub_event+0x678/0x11dc [usbcore])
+>>>  r10:00000100 r9:c05f1008 r8:c5c2dcf8 r7:c68fc400 r6:00000001 r5:40000000
+>>>  r4:00000000
+>>> [<bf10d110>] (hub_event [usbcore]) from [<c0031db0>]
+>>> (process_one_work+0x1d8/0x41c)
+>>>  r10:00000008 r9:00000000 r8:c060b1d0 r7:00000000 r6:c7ede200 r5:c6882480
+>>>  r4:c5c2dcf8
+>>> [<c0031bd8>] (process_one_work) from [<c0032030>] (worker_thread+0x3c/0x670)
+>>>  r10:00000008 r9:c060b1e4 r8:c061ab60 r7:c6882498 r6:ffffe000 r5:c060b1d0
+>>>  r4:c6882480
+>>> [<c0031ff4>] (worker_thread) from [<c0038270>] (kthread+0x134/0x14c)
+>>>  r10:c683fe90 r9:c0031ff4 r8:c6882480 r7:c6896000 r6:00000000 r5:c687bd80
+>>>  r4:c6803e80
+>>> [<c003813c>] (kthread) from [<c00090e0>] (ret_from_fork+0x14/0x34)
+>>> Exception stack(0xc6897fb0 to 0xc6897ff8)
+>>> 7fa0:                                     00000000 00000000 00000000 00000000
+>>> 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>>>  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c003813c
+>>>  r4:c687bd80
+>>> ---[ end trace cb9c7f93aaa3ed36 ]---
+>>> ------------[ cut here ]------------
+>>>
+>>>
+>>> adam
+>>>
+>>
+>> Hi Adam,
+>>
+>> this is a known issue and it's present in mainline and even in TI BSP.
+>> It's been deprioritized for now, but I'll return to debugging it once
+>> the common clock conversion is complete.
+>>
+>> Thanks,
+>> Bartosz
+>
+> Ugh, -ETOOEARLY
+>
+> I meant the ohci dying during cpufreq bug, not the crash you posted.
+>
+> Bart
