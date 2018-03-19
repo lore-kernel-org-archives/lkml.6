@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvRFU1Lp9kWoCzns7b1gLS1hfV9RNOZyb4tGmgB5Uyy2i8gNZdEbt1a/xiBFnXyzsp0I6R/
-ARC-Seal: i=1; a=rsa-sha256; t=1521483354; cv=none;
+X-Google-Smtp-Source: AG47ELtPttEUnauQK1omamhd2BkH14pOsT2CWrvzaOZeKeDXZ6emK0IrgJn/OfIW7Dfw671o94q5
+ARC-Seal: i=1; a=rsa-sha256; t=1521483352; cv=none;
         d=google.com; s=arc-20160816;
-        b=SdXlNCOgQ7aLPECwQ40znL+N6NZR9c+h2ALeW7UYv80pOlQRglk+LgsAVeh3xrgKoE
-         kyvWDyOZWWprnXjt4DGk7KCZLsGMhM/5CccuhzDdcQyIc7ITcCXUU2X22yhuVpp7upFu
-         ZmPZJTiiEKDHhFygyKi5QXeCsE6x8TfCjICRB09VRxDYCUk+67BW88J9hvcXjuAzLsUX
-         t3dB/L835SUsZsd+1ouHWeJQXj9yvXT6xS/Qcom05EGC3QCNEui9mFIJLjSq5K9V1suS
-         wQZyl/2i2fPgqvJyw+AvSfZIOS9fBh1b2M5N/besF4fZgDM4TUQWwkoo2OuSj8Tf2fgP
-         qXpg==
+        b=xtz9gixOf93JD/po/tlskyHef54Vu9UZojQXg7TmgHwz2cnhcv5xRE98/gcfn8tizi
+         oE5+4qrXmUca14VOwnmE+ZfAyRKFiBEPcUtgYQ5IBz8DEEBoNBDQG47XkMir12EpNJ32
+         TrPBYtwhw0HbSmezI6wG6JiRdjK3r9fVBuUs+iLcpE++P4k2yMrj7HYRg0DDJ4qqIwQE
+         KSzbHE0gfabUeiunVF1EVWunb/34wHNdSFFW62yx1rH/RgqWJZ7jvhz1NR3qj+4odzsw
+         2hoTZrVI1EJZ1Ba2tL/5AsVSANcOaI2/asVXJpK/8iB7ZcnO4YnJ57Vnz1MVpAkGLByf
+         exHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3cHwTE7JuE9NcF4/opsuU1vUC4AFMLfizF3EvCIHkKw=;
-        b=fwZ1m/guYyDs+5c7V6XXeXH88j/bMDlY5DvYkyVgD1viAB6edVOv2sK+Ue2c6HwdBD
-         pdQ5tNDISLk6SzeKt/2keT04kn7NDNBygUlrCz1877nOVgZZiqmdfkis8df/X2lYX1jg
-         OyG/ZrRJGPqe+D7YIJcVozK7ty1AN5V4xOYz+dHP560n9v4+FebQgWj+/xUFyPr1Y/Ga
-         2ZmR2F6MwfpoKE4TmbWQ4VXaRWX1pPWKdW8cHnYS8ky4hxhIdVydjKLzVqVwSSRZO5dA
-         8GyoG5Cs/XNBvhpI+zSpUHk50LA8+MbHzXe4NchRz23UQHQ1yXOLXKg6be0LY8+ujuMk
-         UarA==
+        bh=Y/xC9kEXQHVHh5DpR4pUf69y6tTR958p2Xgsfq1JU1o=;
+        b=Svq0gN/g3RLxrI3nbFTfLytnbyjLa61UTJNsc/9yssGU/ChDLQeoevNYdvetlLl5CL
+         x7AfVXDeBqXtvkS9o9wA6oiYikgA4Jod9vw9/033veFthMQp16S70V4KH1VYdUanOjL8
+         EnACYF5JSTebba5tOTBqrrmzqTJXIHEIDP8KxJnqdolmFwuHH7Kxb4k05QKVWPV88QlR
+         556DDexq7yqYTYN/n/h5nWvS640b8+B0JKNi96/CeY4bB/GBTXwvEP5i2ZMFMGMrGzeV
+         1AIEIjCEnsWw1GUhS3c+y+3DYVFiciL+YlEYrs6HatH/LtsdHY6n+S6MQfgEYtzxF7Xv
+         6L9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 093/134] clk: qcom: msm8916: fix mnd_width for codec_digcodec
-Date: Mon, 19 Mar 2018 19:06:16 +0100
-Message-Id: <20180319171902.717573470@linuxfoundation.org>
+Subject: [PATCH 4.4 092/134] cpufreq: Fix governor module removal race
+Date: Mon, 19 Mar 2018 19:06:15 +0100
+Message-Id: <20180319171902.578082436@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595390930256471292?=
-X-GMAIL-MSGID: =?utf-8?q?1595390930256471292?=
+X-GMAIL-THRID: =?utf-8?q?1595390927744329142?=
+X-GMAIL-MSGID: =?utf-8?q?1595390927744329142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
 
-[ Upstream commit d8e488e8242ecf129eebc440c92d800a99ca109d ]
+[ Upstream commit a8b149d32b663c1a4105273295184b78f53d33cf ]
 
-This patch fixes missing mnd_width for codec_digital clk, this is now set to
-8 inline with datasheet.
+It is possible to remove a cpufreq governor module after
+cpufreq_parse_governor() has returned success in
+store_scaling_governor() and before cpufreq_set_policy()
+acquires a reference to it, because the governor list is
+not protected during that period and nothing prevents the
+governor from being unregistered then.
 
-Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Prevent that from happening by acquiring an extra reference
+to the governor module temporarily in cpufreq_parse_governor(),
+under cpufreq_governor_mutex, and dropping it in
+store_scaling_governor(), when cpufreq_set_policy() returns.
+
+Note that the second cpufreq_parse_governor() call site is fine,
+because it only cares about the policy member of new_policy.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/qcom/gcc-msm8916.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/cpufreq/cpufreq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1437,6 +1437,7 @@ static const struct freq_tbl ftbl_codec_
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -551,6 +551,8 @@ static int cpufreq_parse_governor(char *
+ 			*governor = t;
+ 			err = 0;
+ 		}
++		if (t && !try_module_get(t->owner))
++			t = NULL;
  
- static struct clk_rcg2 codec_digcodec_clk_src = {
- 	.cmd_rcgr = 0x1c09c,
-+	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
- 	.freq_tbl = ftbl_codec_clk,
+ 		mutex_unlock(&cpufreq_governor_mutex);
+ 	}
+@@ -669,6 +671,10 @@ static ssize_t store_scaling_governor(st
+ 		return -EINVAL;
+ 
+ 	ret = cpufreq_set_policy(policy, &new_policy);
++
++	if (new_policy.governor)
++		module_put(new_policy.governor->owner);
++
+ 	return ret ? ret : count;
+ }
+ 
