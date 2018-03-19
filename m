@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3764808-1521494367-2-16642365540689351721
+X-Cyrus-Session-Id: sloti22d1t05-3763980-1521494356-2-6565916930767942151
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,63 +13,66 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521494367; b=Fg59czcp4L08zRDRhz1WFzTfZKASxGHjmWDAfVZ9NrjvNGf
-    FfQ6bCKlpBJSFEZIU/gYpdwhJ15vEzPEGFlJyCpgapJA8W1Lp3ULO7j6nkfiNV4a
-    basQhcCbGkpK1WXAJIdUeMwp5gj7TsRxs2RYlTjZx4QA88FchWHMapsRYGhwvyN3
-    7VOTxtrv5hBRJR0Ugbv1/DFyme/IcSgJ0qnLS/EVG1UwrLMo5NCuaA7dXU6vgVO/
-    SoP6YzdWIhiJZfJSG+IkCu768aec/o1DtOLQSUqAgc3K5qj6T9HtFc3jrOD8XagJ
-    X/kSpcJdWEZ6/K3nYFN8Zwy+quQSS2sOzFwTiIQ==
+    t=1521494355; b=YqV6d61DB4gt9ZeeVBu3dzw11ECr710FPprl2k7s5z8hyhE
+    fHB76/HuRNAxsN4dRf04woGekI/QPcAmHyi1/FNOSwO+/b0xLOe6LOXX1/znxpgy
+    m1flmOXCM3/svNaTX4WjpI77ND3hDGhQU9hqDK3wdw+jxiAmZppeMUWpY4Y6NBGu
+    0/XgtNWa3nZ5YcCCHrzx1uoUcHCHaHJUa0/wo1IE/4aKCFIfdayMFvOVxwy7QQau
+    a6PURn26XZCfcH57rR5Yh5SMlcJDSPH9lOxoHTQzJTaPTm5np0Whh8gB0Lhbq0zr
+    gFQx9dlkHQYyeNI4NESCxtM74uXFhHtJq6hsjsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521494367; bh=oIjciX
-    PkBj4RhGMQ3zEYYXn0vuiwwU1FqCFZtx3DrJc=; b=XI690V70Vq5z9Wb9HDDoow
-    /rSKvdncKE/jnZIahyQ3j6rOZzkZvGSwCVO5DJ27nAZFxRSpJ29osgcwdnVR4YuI
-    E3xjro28Ez/AgiTva31p4ggwOMvCA/eYtJTlTk+sjui9NCW5ZumYFLoXOnpVa4+R
-    wJDStPUQ6B8mw+XxhFLQVoEn+tM8E2/tnhS8z6FpiZK2K373Oopi0Ayq7K5RHhW/
-    u6E//nSgZLxiymmqMabBT7RXYxByrGaRfceZJev7jA2NimIXgWwM6PeZSDSLuNm7
-    6pHF8bGHTNJXUi/Ew246IjcLYLJcYXXRSF53E4/VD82B5lUnTg8rQ8RHzvl/WOTQ
+    :mime-version:sender:list-id; s=arctest; t=1521494355; bh=c3Iqo4
+    AmgKbYiX4m7D6uaYWV+Npay6nOl3fSglsAU/k=; b=OTlty7tfzaDpbgK8v0KkOh
+    AtpHCseSMQpoyyj7g75yJQI+8wdmdjtP6jtEYiLSH11sE+C5Rtv3bFGKqBDCdsic
+    dbBJuwxIPe68FtuyqGS2VU54v/fvM6yxxqfsFA67hOBaAZ+BAzRVGtcPl0kY9qbe
+    spuv+jx6dlY9oE23X284PGiNgWRVY/Q5MMANXpyrS08tZ242Lwdl2O08biVH1dmU
+    871oPjt1ypIlEU/I6SfEF0e+IuERbZAuklBHh3nUw0KxgA5mJxU8oxyCB1Z7/S+4
+    r3IVKZH+dW5jzjUB+QwjtxAVHjg1kximc7H2r/SDGVgF2veedopq+fpFjXTnImaQ
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P8LkkfhJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NR478GbP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejheehkeenucevlhhushhtvghrufhiiigvpeeghe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduudefjedunecuvehluhhsthgvrhfuihiivgepje;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P8LkkfhJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NR478GbP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeekucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeejheehkeenucevlhhushhtvghrufhiiigvpeeghe;
+    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgddugeelucdltddurdegtdefrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffuthffkfhfjghitgfggghsphejsehtqhertddttddunecuhfhrohhmpefurghshhgrucfnvghvihhnuceotehlvgigrghnuggvrhdrnfgvvhhinhesmhhitghrohhsohhfthdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedphedvrdduieekrdehgedrvdehvddpfhgvkedtmeemfegulegsmeejlegvjeemleegvggsmeehugeivdenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeduudefjedunecuvehluhhsthgvrhfuihiivgepje;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031426AbeCSVSb (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 17:18:31 -0400
-Received: from mail-by2nam03on0105.outbound.protection.outlook.com ([104.47.42.105]:9497
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S969464AbeCSVSg (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 17:18:36 -0400
+Received: from mail-dm3nam03on0128.outbound.protection.outlook.com ([104.47.41.128]:39043
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965270AbeCSQBA (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:01:00 -0400
+        id S965267AbeCSQA7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:00:59 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Michael Schmitz <schmitzmic@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
+CC: Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 107/281] fix race in
- drivers/char/random.c:get_reg()
-Thread-Topic: [PATCH AUTOSEL for 4.9 107/281] fix race in
- drivers/char/random.c:get_reg()
-Thread-Index: AQHTv5tVAuFit4TtTUWj2iUSZejoWg==
-Date: Mon, 19 Mar 2018 15:59:59 +0000
-Message-ID: <20180319155742.13731-107-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 110/281] tcp: better validation of received
+ ack sequences
+Thread-Topic: [PATCH AUTOSEL for 4.9 110/281] tcp: better validation of
+ received ack sequences
+Thread-Index: AQHTv5tXCpucKpYLJkau0sXcR2hGpw==
+Date: Mon, 19 Mar 2018 16:00:03 +0000
+Message-ID: <20180319155742.13731-110-alexander.levin@microsoft.com>
 References: <20180319155742.13731-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180319155742.13731-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,80 +81,177 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:U18D8EG+4o9bRfU66UZKnHeDdWr9JzmnEdf6jLFGZWCzsru/jE6sTV7dmm5ClAi/jlgEPdo/imWYTLvAOoP0CNEKuAnMnfPv27aZLD4oA7YQW+HVeI68jUYcoErPXGbd8EKwSXQBl1kO09DIm/ljjq/6yLLhNaabpCKVXeYLJcqC7oGZ2I1F5AuZEad1iGcfYLR6dFujHLK+6opQMyJ8Hbv6Nk+h99GFOU9lMocjibcaZX/gr+fDJG3xLGg8tT+Y;20:AwOxp2vn2Ypz0gn6oSkZ7MDO/WnB1tthoF8M3Uev7FqY/Z0t3YdjQJ7zOq0QJAZM0DuzoUpFT2tDJGTUthFZ7gyAYeSFwU9QVpcSH58ULue1LoxTmPzFg1wyrftx+Vo02oOUtwk4bEU6wbAcu1NNIC/Dhgpocozp+sncgz7H84g=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:Ta3pLxXIZsRv8PvNwv6xNObYpDbsFkbD2tRTed4akWU8G6KY5uFhDKZ/7wiob2q5XbiDo/IsxxIGTLC+ubOoGmnhccqPubtl1hurAm/lGrrbd8YeCYkRAmJOh5iZ84JEiUv6e94AQRu+NasqK/rjs+dbpM94ZYAD1OANdA6nFwEhOeAirkQECnnILWgZcpdly9db3fLtuolNe8LSnV0mV+2Mj7bn9lrg0BiObEVPRyMeZKt6TV58JdxEQwUu9cuG;20:jObly7xWV1MKE2XRuO+kzTPdzA/E6yZqqVs4efYO3u3f+kBjri/YY/tuyP3JJOGwU8pes2xwOmEPxV56Z7U5yf+jut2Ow4kYrule6/y7jjg1RLaCBXhHubm6oKZ1Lbe9tZbwJJodwMp4Ic67jiiCmpd7plW1dIUSuWBQQT/rjFg=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 12e16c7e-ddb6-4f40-e02d-08d58db2950a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
-x-ms-traffictypediagnostic: DM5PR2101MB1031:
+x-ms-office365-filtering-correlation-id: 222f06ef-6c48-48f7-c1fb-08d58db29605
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
+x-ms-traffictypediagnostic: DM5PR2101MB1015:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1031ABA86F0B1C38A7281F91FBD40@DM5PR2101MB1031.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(240460790083961);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
+x-microsoft-antispam-prvs: <DM5PR2101MB1015E985751B17973FF1F0AAFBD40@DM5PR2101MB1015.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(211936372134217)(153496737603132);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501300)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
 x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(396003)(39860400002)(39380400002)(199004)(189003)(25786009)(6506007)(59450400001)(66066001)(99286004)(76176011)(10290500003)(54906003)(68736007)(3660700001)(97736004)(22452003)(575784001)(107886003)(53936002)(86362001)(110136005)(2501003)(5250100002)(86612001)(14454004)(478600001)(72206003)(316002)(102836004)(26005)(186003)(6116002)(3846002)(7736002)(39060400002)(2950100002)(10090500001)(6436002)(3280700002)(6512007)(6666003)(2900100001)(8676002)(8936002)(36756003)(106356001)(105586002)(4326008)(5660300001)(305945005)(1076002)(81156014)(6486002)(81166006)(2906002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: nEVNoedU2Qha2j4NMJdgaejk6Qkd6altdTd7KZ4mtsgzc2w25wSbbqhtTVkwjk+pA74a0Q5cGWoZSHMnsNjg36owxXdoj7bNVhEJDM7PvpXNA6zUiEQVf+UgiNpwweMECMDD16X7F316wH2y31Pz+XqkzJ9g2YlA2SAd5TJT7YwGoJW0Yjdtv9ETRTha7aqT1m6ArvZXTzA9HcFNYQMsLlxGfVipwB1wumYAfdApaJelPbijkqT6+FeZ7QPp3YDZcLeS+YNjj1CglFnuO3OsYjMd/gbUSP5M+6Hgpwt5Ldj1Yx3me2WF2smPJr9FLQZB4SpKddlOiSB7SrdscocUJA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39380400002)(39860400002)(366004)(189003)(199004)(97736004)(72206003)(4326008)(99286004)(2900100001)(1076002)(186003)(10290500003)(36756003)(25786009)(66066001)(86612001)(102836004)(54906003)(110136005)(575784001)(26005)(86362001)(53936002)(5660300001)(6512007)(14454004)(478600001)(106356001)(107886003)(316002)(2950100002)(6666003)(22452003)(6506007)(7736002)(3280700002)(3660700001)(305945005)(8936002)(2906002)(6116002)(3846002)(6436002)(68736007)(2501003)(5250100002)(6486002)(10090500001)(76176011)(8676002)(81156014)(105586002)(81166006)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: Y3/CIizTqEQ9uRXoBibSeYUlWTiz3CyptLKFSRTO+4wOtlxdlFPQo/Jh1rz//QzmHZVdr+MyENP8kHkRdQJvn5EA6T1zGjBQlFtlLKCAqEcYCZN6i1LU0pDxaSgcnxvfRJdiFBUJhInMb1Mot55/Lbt7HGz/gl9W5WoPw0iamnmZ6sAa24K4ADuR+deqca1s9IUlLjc1Tz1KgYZhMTk/B6Xi0LFeAuNxSwejzD9EHb7ebaYx7Crs3VWojoI1Ut4CQ7Z1YA3pP1BP+BhK0uOZWpitI3q2yIDg7F/L5JjHuXrMAaxLKZCCTyUyFkCVZw58baQ8JNb7fSKjqv51IVIhFg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12e16c7e-ddb6-4f40-e02d-08d58db2950a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:00:00.0126
+X-MS-Exchange-CrossTenant-Network-Message-Id: 222f06ef-6c48-48f7-c1fb-08d58db29605
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 16:00:03.8613
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1031
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 9dfa7bba35ac08a63565d58c454dccb7e1bb0a08 ]
+[ Upstream commit d0e1a1b5a833b625c93d3d49847609350ebd79db ]
 
-get_reg() can be reentered on architectures with prioritized interrupts
-(m68k in this case), causing f->reg_index to be incremented after the
-range check. Out of bounds memory access past the pt_regs struct results.
-This will go mostly undetected unless access is beyond end of memory.
+Paul Fiterau Brostean reported :
 
-Prevent the race by disabling interrupts in get_reg().
+<quote>
+Linux TCP stack we analyze exhibits behavior that seems odd to me.
+The scenario is as follows (all packets have empty payloads, no window
+scaling, rcv/snd window size should not be a factor):
 
-Tested on m68k (Atari Falcon, and ARAnyM emulator).
+       TEST HARNESS (CLIENT)                        LINUX SERVER
 
-Kudos to Geert Uytterhoeven for helping to trace this race.
+   1.  -                                          LISTEN (server listen,
+then accepts)
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+   2.  - --> <SEQ=3D100><CTL=3DSYN>               --> SYN-RECEIVED
+
+   3.  - <-- <SEQ=3D300><ACK=3D101><CTL=3DSYN,ACK>  <-- SYN-RECEIVED
+
+   4.  - --> <SEQ=3D101><ACK=3D301><CTL=3DACK>      --> ESTABLISHED
+
+   5.  - <-- <SEQ=3D301><ACK=3D101><CTL=3DFIN,ACK>  <-- FIN WAIT-1 (server
+opts to close the data connection calling "close" on the connection
+socket)
+
+   6.  - --> <SEQ=3D101><ACK=3D99999><CTL=3DFIN,ACK> --> CLOSING (client se=
+nds
+FIN,ACK with not yet sent acknowledgement number)
+
+   7.  - <-- <SEQ=3D302><ACK=3D102><CTL=3DACK>      <-- CLOSING (ACK is 102
+instead of 101, why?)
+
+... (silence from CLIENT)
+
+   8.  - <-- <SEQ=3D301><ACK=3D102><CTL=3DFIN,ACK>  <-- CLOSING
+(retransmission, again ACK is 102)
+
+Now, note that packet 6 while having the expected sequence number,
+acknowledges something that wasn't sent by the server. So I would
+expect
+the packet to maybe prompt an ACK response from the server, and then be
+ignored. Yet it is not ignored and actually leads to an increase of the
+acknowledgement number in the server's retransmission of the FIN,ACK
+packet. The explanation I found is that the FIN  in packet 6 was
+processed, despite the acknowledgement number being unacceptable.
+Further experiments indeed show that the server processes this FIN,
+transitioning to CLOSING, then on receiving an ACK for the FIN it had
+send in packet 5, the server (or better said connection) transitions
+from CLOSING to TIME_WAIT (as signaled by netstat).
+
+</quote>
+
+Indeed, tcp_rcv_state_process() calls tcp_ack() but
+does not exploit the @acceptable status but for TCP_SYN_RECV
+state.
+
+What we want here is to send a challenge ACK, if not in TCP_SYN_RECV
+state. TCP_FIN_WAIT1 state is not the only state we should fix.
+
+Add a FLAG_NO_CHALLENGE_ACK so that tcp_rcv_state_process()
+can choose to send a challenge ACK and discard the packet instead
+of wrongly change socket state.
+
+With help from Neal Cardwell.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Paul Fiterau Brostean <p.fiterau-brostean@science.ru.nl>
+Cc: Neal Cardwell <ncardwell@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/char/random.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_input.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 08d1dd58c0d2..23f3fb45ff07 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1115,12 +1115,16 @@ static void add_interrupt_bench(cycles_t start)
- static __u32 get_reg(struct fast_pool *f, struct pt_regs *regs)
- {
- 	__u32 *ptr =3D (__u32 *) regs;
-+	unsigned long flags;
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 2f107e46355c..0c30f8fca07d 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -115,6 +115,7 @@ int sysctl_tcp_invalid_ratelimit __read_mostly =3D HZ/2=
+;
+ #define FLAG_DSACKING_ACK	0x800 /* SACK blocks contained D-SACK info */
+ #define FLAG_SACK_RENEGING	0x2000 /* snd_una advanced to a sacked seq */
+ #define FLAG_UPDATE_TS_RECENT	0x4000 /* tcp_replace_ts_recent() */
++#define FLAG_NO_CHALLENGE_ACK	0x8000 /* do not call tcp_send_challenge_ack=
+()	*/
 =20
- 	if (regs =3D=3D NULL)
- 		return 0;
-+	local_irq_save(flags);
- 	if (f->reg_idx >=3D sizeof(struct pt_regs) / sizeof(__u32))
- 		f->reg_idx =3D 0;
--	return *(ptr + f->reg_idx++);
-+	ptr +=3D f->reg_idx++;
-+	local_irq_restore(flags);
-+	return *ptr;
- }
+ #define FLAG_ACKED		(FLAG_DATA_ACKED|FLAG_SYN_ACKED)
+ #define FLAG_NOT_DUP		(FLAG_DATA|FLAG_WIN_UPDATE|FLAG_ACKED)
+@@ -3618,7 +3619,8 @@ static int tcp_ack(struct sock *sk, const struct sk_b=
+uff *skb, int flag)
+ 	if (before(ack, prior_snd_una)) {
+ 		/* RFC 5961 5.2 [Blind Data Injection Attack].[Mitigation] */
+ 		if (before(ack, prior_snd_una - tp->max_window)) {
+-			tcp_send_challenge_ack(sk, skb);
++			if (!(flag & FLAG_NO_CHALLENGE_ACK))
++				tcp_send_challenge_ack(sk, skb);
+ 			return -1;
+ 		}
+ 		goto old_ack;
+@@ -5967,13 +5969,17 @@ int tcp_rcv_state_process(struct sock *sk, struct s=
+k_buff *skb)
 =20
- void add_interrupt_randomness(int irq, int irq_flags)
+ 	/* step 5: check the ACK field */
+ 	acceptable =3D tcp_ack(sk, skb, FLAG_SLOWPATH |
+-				      FLAG_UPDATE_TS_RECENT) > 0;
++				      FLAG_UPDATE_TS_RECENT |
++				      FLAG_NO_CHALLENGE_ACK) > 0;
+=20
++	if (!acceptable) {
++		if (sk->sk_state =3D=3D TCP_SYN_RECV)
++			return 1;	/* send one RST */
++		tcp_send_challenge_ack(sk, skb);
++		goto discard;
++	}
+ 	switch (sk->sk_state) {
+ 	case TCP_SYN_RECV:
+-		if (!acceptable)
+-			return 1;
+-
+ 		if (!tp->srtt_us)
+ 			tcp_synack_rtt_meas(sk, req);
+=20
+@@ -6043,14 +6049,6 @@ int tcp_rcv_state_process(struct sock *sk, struct sk=
+_buff *skb)
+ 		 * our SYNACK so stop the SYNACK timer.
+ 		 */
+ 		if (req) {
+-			/* Return RST if ack_seq is invalid.
+-			 * Note that RFC793 only says to generate a
+-			 * DUPACK for it but for TCP Fast Open it seems
+-			 * better to treat this case like TCP_SYN_RECV
+-			 * above.
+-			 */
+-			if (!acceptable)
+-				return 1;
+ 			/* We no longer need the request sock. */
+ 			reqsk_fastopen_remove(sk, req, false);
+ 			tcp_rearm_rto(sk);
 --=20
 2.14.1
