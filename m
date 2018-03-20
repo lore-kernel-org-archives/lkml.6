@@ -1,69 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751669AbeCTBnX (ORCPT <rfc822;w@1wt.eu>);
+        id S1751713AbeCTBn3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 21:43:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751650AbeCTBnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Mar 2018 21:43:23 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34968 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbeCTBnV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 21:43:21 -0400
-X-Google-Smtp-Source: AG47ELttkDLSfpHeRgRn/bxGwpCtftf1j6we+i6pJ/r90mcV+hYcZu46OiQ1LXIfXCikjIVunrtxTg==
 Date: Tue, 20 Mar 2018 09:43:18 +0800
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, arnd.bergmann@linaro.org,
-        arm@kernel.org, Rafael Wysocki <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, daniel.lezcano@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/10] ARM: dts: gemini: Remove "cooling-{min|max}-level"
- for gpio-fan node
-Message-ID: <20180320014318.g7koh7ld3seucg4c@vireshk-mac-ubuntu>
-References: <cover.1518166039.git.viresh.kumar@linaro.org>
- <01ddf0ac8962feb63e8871a2c2c3498c763f649b.1518166039.git.viresh.kumar@linaro.org>
- <20180312043533.GU6842@vireshk-i7>
+From: Baoquan He <bhe@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Young <dyoung@redhat.com>
+Cc: herbert@gondor.apana.org.au, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        dhowells@redhat.com, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
+        bauerman@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, davem@davemloft.net,
+        vgoyal@redhat.com
+Subject: Re: [PATCH v8 01/13] resource: add walk_system_ram_res_rev()
+Message-ID: <20180320014318.GA2514@localhost.localdomain>
+References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+ <20180222111732.23051-2-takahiro.akashi@linaro.org>
+ <20180223083619.GA4433@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312043533.GU6842@vireshk-i7>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180223083619.GA4433@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-03-18, 10:05, Viresh Kumar wrote:
-> On 09-02-18, 14:28, Viresh Kumar wrote:
-> > The "cooling-min-level" and "cooling-max-level" properties are not
-> > parsed by any part of the kernel currently and the max cooling state of
-> > gpio-fan cooling device is found by referring to the
-> > "gpio-fan,speed-map" instead.
-> > 
-> > Remove the unused properties from the gpio-fan node.
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  arch/arm/boot/dts/gemini-dlink-dns-313.dts | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/gemini-dlink-dns-313.dts b/arch/arm/boot/dts/gemini-dlink-dns-313.dts
-> > index 08568ce24d06..727d16eb02d9 100644
-> > --- a/arch/arm/boot/dts/gemini-dlink-dns-313.dts
-> > +++ b/arch/arm/boot/dts/gemini-dlink-dns-313.dts
-> > @@ -78,8 +78,6 @@
-> >  		gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>,
-> >  			<&gpio0 12 GPIO_ACTIVE_HIGH>;
-> >  		gpio-fan,speed-map = <0 0>, <3000 1>, <6000 2>;
-> > -		cooling-min-level = <0>;
-> > -		cooling-max-level = <2>;
-> >  		#cooling-cells = <2>;
-> >  	};
-> >  
+On 02/23/18 at 04:36pm, Dave Young wrote:
+> Hi AKASHI,
 > 
-> @Linus: Can you please pick this one for 4.17 ?
+> On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
+> > This function, being a variant of walk_system_ram_res() introduced in
+> > commit 8c86e70acead ("resource: provide new functions to walk through
+> > resources"), walks through a list of all the resources of System RAM
+> > in reversed order, i.e., from higher to lower.
+> > 
+> > It will be used in kexec_file implementation on arm64.
+> 
+> I remember there was an old discussion about this, it should be added
+> in patch log why this is needed.
 
-@Arnd/Olof: Can you please pick this one up as well ?
+It's used to load kernel/initrd at the top of system RAM, and this is
+consistent with user space kexec behaviour.
 
--- 
-viresh
+In x86 64, Vivek didn't do like this since there's no reverse iomem
+resource iterating function, he just chose a match RAM region bottom up,
+then put kernel/initrd top down in the found RAM region. This is
+different than kexec_tools utility. I am considering to change resource
+sibling as double list, seems AKASHI's way is easier to be accepted by
+people. So I will use this one to change x86 64 code.
+
+Hi AKASHI,
+
+About arm64 kexec_file patches, will you post recently? Or any other
+plan?
+
+Thanks
+Baoquan
+
+> 
+> > 
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > ---
+> >  include/linux/ioport.h |  3 +++
+> >  kernel/resource.c      | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 60 insertions(+)
+> > 
+> > diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> > index da0ebaec25f0..f12d95fe038b 100644
+> > --- a/include/linux/ioport.h
+> > +++ b/include/linux/ioport.h
+> > @@ -277,6 +277,9 @@ extern int
+> >  walk_system_ram_res(u64 start, u64 end, void *arg,
+> >  		    int (*func)(struct resource *, void *));
+> >  extern int
+> > +walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+> > +			int (*func)(struct resource *, void *));
+> > +extern int
+> >  walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start, u64 end,
+> >  		    void *arg, int (*func)(struct resource *, void *));
+> >  
+> > diff --git a/kernel/resource.c b/kernel/resource.c
+> > index e270b5048988..bdaa93407f4c 100644
+> > --- a/kernel/resource.c
+> > +++ b/kernel/resource.c
+> > @@ -23,6 +23,8 @@
+> >  #include <linux/pfn.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/resource_ext.h>
+> > +#include <linux/string.h>
+> > +#include <linux/vmalloc.h>
+> >  #include <asm/io.h>
+> >  
+> >  
+> > @@ -486,6 +488,61 @@ int walk_mem_res(u64 start, u64 end, void *arg,
+> >  				     arg, func);
+> >  }
+> >  
+> > +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+> > +				int (*func)(struct resource *, void *))
+> > +{
+> > +	struct resource res, *rams;
+> > +	int rams_size = 16, i;
+> > +	int ret = -1;
+> > +
+> > +	/* create a list */
+> > +	rams = vmalloc(sizeof(struct resource) * rams_size);
+> > +	if (!rams)
+> > +		return ret;
+> > +
+> > +	res.start = start;
+> > +	res.end = end;
+> > +	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> > +	i = 0;
+> > +	while ((res.start < res.end) &&
+> > +		(!find_next_iomem_res(&res, IORES_DESC_NONE, true))) {
+> > +		if (i >= rams_size) {
+> > +			/* re-alloc */
+> > +			struct resource *rams_new;
+> > +			int rams_new_size;
+> > +
+> > +			rams_new_size = rams_size + 16;
+> > +			rams_new = vmalloc(sizeof(struct resource)
+> > +							* rams_new_size);
+> > +			if (!rams_new)
+> > +				goto out;
+> > +
+> > +			memcpy(rams_new, rams,
+> > +					sizeof(struct resource) * rams_size);
+> > +			vfree(rams);
+> > +			rams = rams_new;
+> > +			rams_size = rams_new_size;
+> > +		}
+> > +
+> > +		rams[i].start = res.start;
+> > +		rams[i++].end = res.end;
+> > +
+> > +		res.start = res.end + 1;
+> > +		res.end = end;
+> > +	}
+> > +
+> > +	/* go reverse */
+> > +	for (i--; i >= 0; i--) {
+> > +		ret = (*func)(&rams[i], arg);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> > +
+> > +out:
+> > +	vfree(rams);
+> > +	return ret;
+> > +}
+> > +
+> >  #if !defined(CONFIG_ARCH_HAS_WALK_MEMORY)
+> >  
+> >  /*
+> > -- 
+> > 2.16.2
+> > 
+> 
+> Thanks
+> Dave
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
