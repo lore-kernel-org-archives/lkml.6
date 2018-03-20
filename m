@@ -1,216 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCTHuQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:50:16 -0400
-Received: from mout.gmx.net ([212.227.15.19]:40811 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751805AbeCTHuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:50:12 -0400
-MIME-Version: 1.0
-Message-ID: <trinity-791d9452-e47f-4b31-aa93-f5fca597eaba-1521532205503@3c-app-mailcom-bs12>
-From: "Chengguang Xu" <cgxu519@gmx.com>
-To: yuanliang.wyl@alibaba-inc.com
-Cc: miklos <miklos@szeredi.hu>,
-        linux-unionfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?=28Resend=29_Re=3A_=E5=9B=9E=E5=A4=8D=EF=BC=9A=5BPATC?=
- =?UTF-8?Q?H=5D_fs/overlayfs=3A_Drop_?=
- =?UTF-8?Q?dentry_cache_to_prevent_unknown_file_status?=
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 Mar 2018 08:50:05 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <d4e3461e-7a46-41dd-a27b-d86a5c5144b9.yuanliang.wyl@alibaba-inc.com>
-References: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
- <trinity-46014179-644f-4087-8f6b-614fa55fca2a-1521528270006@3c-app-mailcom-bs12>
- <trinity-f09d5d8a-6967-4254-88db-cf7ea9270afe-1521529654015@3c-app-mailcom-bs12>
- <d4e3461e-7a46-41dd-a27b-d86a5c5144b9.yuanliang.wyl@alibaba-inc.com>
+        id S1751834AbeCTHxY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:53:24 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:57954
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751527AbeCTHxU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:53:20 -0400
+X-ASG-Debug-ID: 1521532396-093b7e71c10b440001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To: "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH] vfio-mdev/samples: change RDI interrupt condition
+Thread-Topic: [PATCH] vfio-mdev/samples: change RDI interrupt condition
+X-ASG-Orig-Subj: Re: [PATCH] vfio-mdev/samples: change RDI interrupt condition
+Thread-Index: AQHTtqxIeQWcfzn4sEm0fTEOSeK4O6PG5fWAgBFnhwA=
+Date: Tue, 20 Mar 2018 07:53:02 +0000
+Message-ID: <1521532382.3326.5.camel@hxt-semitech.com>
+References: <1520492887-8021-1-git-send-email-shunyong.yang@hxt-semitech.com>
+         <c14684a6-9388-e38a-c99a-a393c5bcf2a4@nvidia.com>
+In-Reply-To: <c14684a6-9388-e38a-c99a-a393c5bcf2a4@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.61]
+Content-Type: text/plain; charset="iso-8859-15"
+Content-ID: <249E22043C8DB740A09610F1D3810DAB@hxt-semitech.com>
 Content-Transfer-Encoding: 8BIT
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:/5kME0Vs0ReGQctzVMf/SwMUf3abaXK9G2aiAMtmh7Q
- 2Jsbh3nKkyx/xHRxD5+V962lp632JYmbfppVNib3Bfb9hxFlLI
- zxVH+tRq2jQmsZsplHPN9m1k9P3rWpHXZkN9ACV7gEgyY9/gDK
- eqdPeNiMXcoM3euFZ7WFAP84th77soLKgWxXDVjYiH/9HWu7tG
- WrAMzc+b8b8e2VKK8GVuFeoCUW0yM2btnv1sqiGraIckE9PGgH
- zdKI6s+tBErUQSQoEOSWHCqOiJkAqUYfzSRrMcgIVqmEqnPUAm KeNmJ4=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:l8DrFYKjIqM=:wJS6R9bKnlZ9cUdMCm1F29
- 1MHaAWZndMTELSTWkrSr3aCNYD7ryZ9f4R2WpRCJe+/mzFqZ+BVTZh/qNNsxhn7ABqzWS2C2/
- pgOjOhwf6tqVTMVdj/h2zTzAvICmekfLsbtiaqvKLVESQr4kie3BoSsDdbaj6zzRwVza8oDeL
- hEz+I7DWFuoYXp2vL8KStLMnpuEAUCCG7QqiPXKFS8QBVtahR+f+fyvvcI6W9zL/9Lz44J8mR
- 3Le4wKWzBdU3h1gN/a1lBGJngq0aWk6PSvC++E5J41Fqr2czLgZR9yvnOlbonJJIna8tcmiIB
- t89LiVTJUgVWvmk+VajQmfu4IsKW76HyVHEWJ70Kd7Jj0xUSTRksu5Sxsg38ISi/xL4lYk5OS
- hKb8bokBwbcNFz+DMQJRQlULggEecePq0k+5KFpOVnVYXHkfcr1jM4GFz+VzEFoTjBxBlMQe8
- qSn1smTQ3fSSE8To/u0cZu7fWZchiKNLi/vo4tAOgDZy59kq3CHx
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1521532396
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4945 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49123
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, resend email because of sending failure.
-If you have already received, please ignore it.
+Hi, Alex,
 
-Hi Yuanliang,
- 
-If you use ext4, you can try below command to check if filetype
-feature has already enabled.
- 
-tune2fs -l /dev/xxx | grep feature
- 
-If filetype feature is not enabled, please enable it first and
-check if the problem still persist.
- 
-The phenomenon I met is similar to yours in the previous email.
- 
-Thanks,
-Chengguang.
- 
----------
+Gentle ping. Could you please help to pull this patch?
+It's a small fix and Kirti has reviewed.
 
-Sent: Tuesday, March 20, 2018 at 3:22 PM
-From: 王元良 <yuanliang.wyl@alibaba-inc.com>
-To: "Chengguang Xu" <cgxu519@gmx.com>, "Chengguang Xu" <cgxu519@gmx.com>
-Cc: miklos <miklos@szeredi.hu>, linux-unionfs <linux-unionfs@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: 回复：[PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
-
-Hi, Chengguang
- 
-is the ftype for xfs only?
- 
-Could you describe in detail the problems that you have encountered on your side and give more on-site information may help?
- 
-------------------------------------------------------------------
-发件人：Chengguang Xu <cgxu519@gmx.com>
-发送时间：2018年3月20日(星期二) 15:07
-收件人：Chengguang Xu <cgxu519@gmx.com>
-抄　送：王元良(尉犁) <yuanliang.wyl@alibaba-inc.com>; miklos <miklos@szeredi.hu>; linux-unionfs <linux-unionfs@vger.kernel.org>; linux-kernel <linux-kernel@vger.kernel.org>
-主　题：Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
- Hi Yuanliang,
-
-Can you try ext4 or xfs(with ftype=1) as underlying fs? 
-It seems the phenomenon that I met on xfs(with ftype=0) as underlying fs.
-Thanks,
-Chengguang.
+Thanks.
+Shunyong.
 
 
-> Sent: Tuesday, March 20, 2018 at 2:44 PM
-> From: "Chengguang Xu" <cgxu519@gmx.com>
-> To: 王元良 <yuanliang.wyl@alibaba-inc.com>
-> Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
-> Subject: Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
->
-> Hi Yuanliang,
-> 
-> Can you explain how to reproduce it? and what filesystem do you use as underlying fs?
-> 
-> 
-> > Sent: Tuesday, March 20, 2018 at 2:03 PM
-> > From: 王元良 <yuanliang.wyl@alibaba-inc.com>
-> > To: miklos@szeredi.hu
-> > Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
-> > Subject: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
-> >
-> > When the dentry cache is not destroyed, statfs will
-> > take unknown status '?'
-> > Undestroyed cache dentry also caused new file creating fails
-> > 
-> > Drop it using d_delete may be a choice
-> > 
-> > [root@host /]
-> > Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> > Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache
-> > fast
-> > Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> > Cleaning up everything
-> > Cleaning up list of best yumcache
-> > Cleaning up list of fastest mirrors
-> > 
-> > [root@host /]
-> > Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> > Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> > Cleaning up everything
-> > Cleaning up list of best yumcache
-> > Traceback (most recent call last):
-> >     File "/usr/bin/yum", line 29, in <module>
-> >     yummain.user_main(sys.argv[1:], exit_code=True)
-> >     File "/usr/share/yum-cli/yummain.py", line 365, in user_main
-> >     errcode = main(args)
-> >     File "/usr/share/yum-cli/yummain.py", line 174, in main
-> >     result, resultmsgs = base.doCommands()
-> >     File "/usr/share/yum-cli/cli.py", line 573, in doCommands
-> >     return self.yum_cli_commands[self.basecmd].doCommand(self,
-> >      self.basecmd, self.extcmds)
-> >     File "/usr/share/yum-cli/yumcommands.py", line
-> >     1475, in doCommand
-> >     return base.cleanCli(extcmds)
-> >     File "/usr/share/yum-cli/cli.py", line 1666, in
-> >     cleanCli
-> >     self.plugins.run('clean')
-> >     File
-> >     "/usr/lib/python2.7/site-packages/yum/plugins.py", line 188, in run
-> >     func(conduitcls(self, self.base, conf, **kwargs))
-> >     File "/usr/lib/yum-plugins/branch.py", line 65, in clean_hook
-> >     os.remove(os.path.join(root,filespath))
-> >     OSError: [Errno 2] No such file or directory:
-> >        '/var/cache/yum/x86_64/x/xxxx.noarch.stable/
-> >       b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2'
-> > 
-> > [root@host /]
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/
-> >     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2:
-> >     No such file or directory
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/cachecookie:
-> >     No such file or directory
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/repomd.xml:
-> >     No such file or directory
-> >     total 0
-> >     ?????????? ? ?    ?     ?            ?
-> >     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2
-> >     ?????????? ? ?    ?     ?            ?
-> >     cachecookie
-> >     drwxr-xr-x 1 root root 30 Mar 15 16:12 gen
-> >     drwxr-xr-x 2 root root  6 Jan 31 13:13
-> >     packages
-> >     ?????????? ? ?    ?     ?            ?
-> >     repomd.xml
-> > 
-> > Signed-off-by: Yuanliang Wang <yuanliang.wyl@alibaba-inc.com>
-> > ---
-> >  fs/overlayfs/super.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index e7c8ac4..f9343d3 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -380,9 +380,15 @@ static int ovl_dentry_weak_revalidate(struct dentry *dentry, unsigned int flags)
-> >   return ret;
-> >  }
-> >  
-> > +static int ovl_dentry_delete(const struct dentry *dentry)
-> > +{
-> > + return 1;
-> > +}
-> > +
-> >  static const struct dentry_operations ovl_dentry_operations = {
-> >   .d_release = ovl_dentry_release,
-> >   .d_real = ovl_d_real,
-> > + .d_delete = ovl_dentry_delete,
-> >  };
-> >  
-> >  static const struct dentry_operations ovl_reval_dentry_operations = {
-> > -- 
-> > 1.8.3.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+On Fri, 2018-03-09 at 11:36 +0530, Kirti Wankhede wrote:
+> Thanks for fixing it.
+> Patch looks good to me.
+> +Alex to pull this patch.
+> 
+> Reviewed by: Kirti Wankhede <kwankhede@nvidia.com>
+> 
+> Thanks,
+> Kirti
+> 
+> On 3/8/2018 12:38 PM, Shunyong Yang wrote:
+> > 
+> > When FIFO mode is enabled, the receive data available interrupt
+> > (UART_IIR_RDI in code) should be triggered when the number of data
+> > in FIFO is equal or larger than interrupt trigger level.
+> > 
+> > This patch changes the trigger level check to ensure multiple bytes
+> > received from upper layer can trigger RDI interrupt correctly.
+> > 
+> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> > ---
+> > �samples/vfio-mdev/mtty.c | 2 +-
+> > �1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+> > index 09f255bdf3ac..7abb79d8313d 100644
+> > --- a/samples/vfio-mdev/mtty.c
+> > +++ b/samples/vfio-mdev/mtty.c
+> > @@ -534,7 +534,7 @@ static void handle_bar_read(unsigned int index,
+> > struct mdev_state *mdev_state,
+> > �
+> > �		/* Interrupt priority 2: Fifo trigger level
+> > reached */
+> > �		if ((ier & UART_IER_RDI) &&
+> > -		����(mdev_state->s[index].rxtx.count ==
+> > +		����(mdev_state->s[index].rxtx.count >=
+> > �		������mdev_state->s[index].intr_trigger_level))
+> > �			*buf |= UART_IIR_RDI;
+> > �
+> > 
