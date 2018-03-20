@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752327AbeCTGhY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:37:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36839 "EHLO
+        id S1751635AbeCTGiJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:38:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57903 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeCTGhV (ORCPT
+        with ESMTP id S1751310AbeCTGiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:37:21 -0400
-Date: Mon, 19 Mar 2018 23:37:11 -0700
+        Tue, 20 Mar 2018 02:38:06 -0400
+Date: Mon, 19 Mar 2018 23:35:49 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-a3jnkzh4xam0l954de5tn66d@git.kernel.org>
-Cc: tglx@linutronix.de, jolsa@kernel.org, hpa@zytor.com, dsahern@gmail.com,
-        mingo@kernel.org, adrian.hunter@intel.com, wangnan0@huawei.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, acme@redhat.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org,
-        dsahern@gmail.com, adrian.hunter@intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
-        acme@redhat.com
+Message-ID: <tip-nkktz6355rhqtq7o8atr8f8r@git.kernel.org>
+Cc: dsahern@gmail.com, jolsa@kernel.org, mingo@kernel.org, acme@redhat.com,
+        wangnan0@huawei.com, adrian.hunter@intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, ak@linux.intel.com,
+        yao.jin@linux.intel.com, hpa@zytor.com
+Reply-To: wangnan0@huawei.com, adrian.hunter@intel.com, namhyung@kernel.org,
+        mingo@kernel.org, dsahern@gmail.com, jolsa@kernel.org, acme@redhat.com,
+        hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        yao.jin@linux.intel.com, ak@linux.intel.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests bp_account: Fix build with clang-6
-Git-Commit-ID: 1cd618838b9703eabe4a75badf433382b12f6bef
+Subject: [tip:perf/core] perf annotate: Use ops->target.name when available
+ for unresolved call targets
+Git-Commit-ID: 4c9cb2c2b4b5530717f74b2252f8cc4c45b2a918
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,62 +34,87 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1cd618838b9703eabe4a75badf433382b12f6bef
-Gitweb:     https://git.kernel.org/tip/1cd618838b9703eabe4a75badf433382b12f6bef
+Commit-ID:  4c9cb2c2b4b5530717f74b2252f8cc4c45b2a918
+Gitweb:     https://git.kernel.org/tip/4c9cb2c2b4b5530717f74b2252f8cc4c45b2a918
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 19 Mar 2018 10:51:00 -0300
+AuthorDate: Fri, 16 Mar 2018 13:28:09 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 19 Mar 2018 13:51:54 -0300
+CommitDate: Mon, 19 Mar 2018 13:51:52 -0300
 
-perf tests bp_account: Fix build with clang-6
+perf annotate: Use ops->target.name when available for unresolved call targets
 
-To shut up this compiler warning:
+There is a bug where when using 'perf annotate timerqueue_add' the
+target for its only routine called with the 'callq' instruction,
+'rb_insert_color', doesn't get resolved from its address when parsing
+that 'callq' instruction.
 
-    CC       /tmp/build/perf/tests/bp_account.o
-    CC       /tmp/build/perf/tests/task-exit.o
-    CC       /tmp/build/perf/tests/sw-clock.o
-  tests/bp_account.c:106:20: error: pointer type mismatch ('int (*)(void)' and 'void *') [-Werror,-Wpointer-type-mismatch]
-          void *addr = is_x ? test_function : (void *) &the_var;
-                            ^ ~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~
-  1 error generated.
+That symbol resolution works when using 'perf report --tui' and then
+doing annotation for 'timerqueue_add' from there, the vmlinux
+dso->symbols rb_tree somehow gets in a state that we can't find that
+address, that is a bug that has to be further investigated.
 
-Noticed with clang 6 on fedora rawhide.
+But since the objdump output has the function name, i.e. the raw objdump
+disassembled line looks like:
 
-  [perfbuilder@44490f0e7241 perf]$ clang -v
-  clang version 6.0.0 (tags/RELEASE_600/final)
-  Target: x86_64-unknown-linux-gnu
-  Thread model: posix
-  InstalledDir: /usr/bin
-  Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-redhat-linux/8
-  Found candidate GCC installation: /usr/lib/gcc/x86_64-redhat-linux/8
-  Selected GCC installation: /usr/bin/../lib/gcc/x86_64-redhat-linux/8
-  Candidate multilib: .;@m64
-  Candidate multilib: 32;@m32
-  Selected multilib: .;@m64
-  [perfbuilder@44490f0e7241 perf]$
+So, before:
+
+  # perf annotate timerqueue_add
+
+              │      mov    %rbx,%rdi
+              │      mov    %rbx,(%rdx)
+              │    → callq  *ffffffff8184dc80
+              │      mov    0x8(%rbp),%rdx
+              │      test   %rdx,%rdx
+              │    ↓ je     67
+
+  # perf report
+
+              │      mov    %rbx,%rdi
+              │      mov    %rbx,(%rdx)
+              │    → callq  rb_insert_color
+              │      mov    0x8(%rbp),%rdx
+              │      test   %rdx,%rdx
+              │    ↓ je     67
+
+And after both look the same:
+
+  # perf annotate timerqueue_add
+
+              │      mov    %rbx,%rdi
+              │      mov    %rbx,(%rdx)
+              │    → callq  rb_insert_color
+              │      mov    0x8(%rbp),%rdx
+              │      test   %rdx,%rdx
+              │    ↓ je     67
+
+>From 'perf report' one can annotate and navigate to that 'rb_insert_color'
+function, but not directly from 'perf annotate timerqueue_add', that
+remains to be investigated and fixed.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
-Link: https://lkml.kernel.org/n/tip-a3jnkzh4xam0l954de5tn66d@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-nkktz6355rhqtq7o8atr8f8r@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/bp_account.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/annotate.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
-index 9e88d7608951..a20cbc445426 100644
---- a/tools/perf/tests/bp_account.c
-+++ b/tools/perf/tests/bp_account.c
-@@ -103,7 +103,7 @@ static int bp_accounting(int wp_cnt, int share)
- static int detect_cnt(bool is_x)
- {
- 	struct perf_event_attr attr;
--	void *addr = is_x ? test_function : (void *) &the_var;
-+	void *addr = is_x ? (void *)test_function : (void *)&the_var;
- 	int fd[100], cnt = 0, i;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index ddad87f34a68..535357c6ce02 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -238,6 +238,9 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
+ 	if (ops->target.addr == 0)
+ 		return ins__raw_scnprintf(ins, bf, size, ops);
  
- 	while (1) {
++	if (ops->target.name)
++		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.name);
++
+ 	return scnprintf(bf, size, "%-6s *%" PRIx64, ins->name, ops->target.addr);
+ }
+ 
