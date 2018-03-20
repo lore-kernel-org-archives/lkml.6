@@ -1,115 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751963AbeCTX1I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:27:08 -0400
-Received: from ozlabs.org ([103.22.144.67]:52777 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751864AbeCTX05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:26:57 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 10:26:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Brown <matthew.brown.dev@gmail.com>
-Subject: linux-next: manual merge of the powerpc tree with the asm-generic
- tree
-Message-ID: <20180321102618.4b46f1b4@canb.auug.org.au>
+        id S1751656AbeCTXbA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:31:00 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:36280 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751343AbeCTXa6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:30:58 -0400
+Date: Tue, 20 Mar 2018 23:30:46 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Stefan Agner <stefan@agner.ch>
+Cc: ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
+        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] bus: arm-cci: use asm unreachable
+Message-ID: <20180320233046.GL2743@n2100.armlinux.org.uk>
+References: <20180320230206.25289-1-stefan@agner.ch>
+ <20180320230206.25289-2-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TFT4Q.A+2o0jDHqMgMsW+KA"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320230206.25289-2-stefan@agner.ch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 21, 2018 at 12:02:02AM +0100, Stefan Agner wrote:
+> Mixing asm and C code is not recommended in a naked function by
+> gcc and leads to an error when using clang:
+>   drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
+>   function is not supported
+>         unreachable();
+>         ^
+> 
+> Instead of using the unreachable() macro use the assember variant
+> ASM_UNREACHABLE.  This will no longer emit __builtin_unreachable(),
+> but since the function is naked and its return type is void it seems
+> not to have aversive effects.
 
-Hi all,
+I think that unreachable() there is rather silly - this function
+*does* return, and the comments say as much.  Just delete the silly
+"unreachable()", there's no need to put an ASM_UNREACHABLE in there.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+The function is not declared as not returning, and nothing in this
+file uses it anyway - it's called from the mcpm code, which also
+_does_ expect this function to return (if it doesn't, then we're
+basically saying the CPU that called it is dead.)
 
-  lib/raid6/test/Makefile
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/bus/arm-cci.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+> index 5426c04fe24b..ee9da86fec47 100644
+> --- a/drivers/bus/arm-cci.c
+> +++ b/drivers/bus/arm-cci.c
+> @@ -2084,6 +2084,7 @@ asmlinkage void __naked cci_enable_port_for_self(void)
+>  
+>  "	mov	r0, #0 \n"
+>  "	bx	lr \n"
+> +	ASM_UNREACHABLE
+>  
+>  "	.align	2 \n"
+>  "5:	.word	cpu_port - . \n"
+> @@ -2103,8 +2104,6 @@ asmlinkage void __naked cci_enable_port_for_self(void)
+>  	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
+>  	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
+>  	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
+> -
+> -	unreachable();
+>  }
+>  
+>  /**
+> -- 
+> 2.16.2
+> 
 
-between commit:
-
-  fa523d54a7eb ("raid: remove tile specific raid6 implementation")
-
-from the asm-generic tree and commit:
-
-  751ba79cc552 ("lib/raid6/altivec: Add vpermxor implementation for raid6 Q=
- syndrome")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/raid6/test/Makefile
-index fabc477b1417,5050e270c06b..000000000000
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@@ -45,12 -45,17 +45,14 @@@ else ifeq ($(HAS_NEON),yes
-          CFLAGS +=3D -DCONFIG_KERNEL_MODE_NEON=3D1
-  else
-          HAS_ALTIVEC :=3D $(shell printf '\#include <altivec.h>\nvector in=
-t a;\n' |\
--                          gcc -c -x c - >&/dev/null && \
--                          rm ./-.o && echo yes)
-+                          gcc -c -x c - >/dev/null && rm ./-.o && echo yes)
-          ifeq ($(HAS_ALTIVEC),yes)
--                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o
-+                 CFLAGS +=3D -I../../../arch/powerpc/include
-+                 CFLAGS +=3D -DCONFIG_ALTIVEC
-+                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o \
-+                         vpermxor1.o vpermxor2.o vpermxor4.o vpermxor8.o
-          endif
-  endif
- -ifeq ($(ARCH),tilegx)
- -OBJS +=3D tilegx8.o
- -endif
- =20
-  .c.o:
-  	$(CC) $(CFLAGS) -c -o $@ $<
-@@@ -117,7 -137,8 +131,7 @@@ tables.c: mktable
-  	./mktables > tables.c
- =20
-  clean:
-- 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.=
-c raid6test
-+ 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c vpermxor*.c neo=
-n*.c tables.c raid6test
- -	rm -f tilegx*.c
- =20
-  spotless: clean
-  	rm -f *~
-
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmJoACgkQAVBC80lX
-0GychAf8DhcRUr84maMuU87eiGD0vPno6tdlBjG5Ssr9udvsirhDssuRzktRxRXN
-AFz8v3wQlm8HRVprTHrXNfsxAhApAtN6TejsslV0UeNDtIsG7dFrPX/OGo9UvNh3
-BnIc1s1dYyjh/jJlA+aZC5bCjlk7JVtEIEwqnxYjUBL7dgnraYVMUkKseiD/BmhZ
-N2bSnFSJIb3OJUqqQnC+/QEM0WMb0OWWGmDY23+GF4Y2Psnkz3oLJzmvNJkMQ574
-oAyCc5L7vwGzCMW2hpW0QVZW2IwvDkXri13fu4frVsJPCYRW1jDwdF5Nl3uIQbxY
-2HGBG6pO07KD0LCknZfj7TZGPekhpQ==
-=gxRa
------END PGP SIGNATURE-----
-
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA--
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
