@@ -1,137 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCTWhy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:37:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57046 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeCTWhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:37:48 -0400
-Date: Tue, 20 Mar 2018 16:37:44 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        id S1751522AbeCTWpc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:45:32 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44903 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbeCTWp3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:45:29 -0400
+X-Google-Smtp-Source: AG47ELvZ1Ck2VeApXkQS36ECgzj3s0vOZE2A0nV+/0rnls8AO3j6FCOngfmBUrB/yKUOH0zFrorc+A==
+Date: Tue, 20 Mar 2018 15:45:27 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+cc: Michal Hocko <mhocko@kernel.org>, "Li,Rongqing" <lirongqing@baidu.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Message-ID: <20180320163744.3c09fde0@t450s.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
-        <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>
+Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH=5D_mm=2Fmemcontrol=2Ec=3A_speed_up_to_force_empty_a_memory_cgroup?=
+In-Reply-To: <e265c518-968b-8669-ad22-671c781ad96e@virtuozzo.com>
+Message-ID: <alpine.DEB.2.20.1803201540290.45142@chino.kir.corp.google.com>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com> <20180319085355.GQ23100@dhcp22.suse.cz> <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com> <20180319103756.GV23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com> <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com> <20180320083950.GD23100@dhcp22.suse.cz> <alpine.DEB.2.20.1803201327060.167205@chino.kir.corp.google.com>
+ <56508bd0-e8d7-55fd-5109-c8dacf26b13e@virtuozzo.com> <alpine.DEB.2.20.1803201514340.14003@chino.kir.corp.google.com> <e265c518-968b-8669-ad22-671c781ad96e@virtuozzo.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018 07:51:58 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+On Wed, 21 Mar 2018, Andrey Ryabinin wrote:
 
-> > From: Shameer Kolothum
-> > Sent: Friday, March 16, 2018 12:35 AM
+> > Is SWAP_CLUSTER_MAX the best answer if I'm lowering the limit by 1GB?
 > > 
-> > This retrieves the reserved regions associated with dev group and
-> > checks for conflicts with any existing dma mappings. Also update
-> > the iova list excluding the reserved regions.
-> > 
-> > Signed-off-by: Shameer Kolothum
-> > <shameerali.kolothum.thodi@huawei.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 90
-> > +++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 90 insertions(+)
-> > 
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> > b/drivers/vfio/vfio_iommu_type1.c
-> > index 1123c74..cfe2bb2 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
-> > list_head *iova,
-> >  	return 0;
-> >  }
-> > 
-> > +/*
-> > + * Check reserved region conflicts with existing dma mappings
-> > + */
-> > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-> > +				struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *region;
-> > +
-> > +	/* Check for conflict with existing dma mappings */
-> > +	list_for_each_entry(region, resv_regions, list) {
-> > +		if (vfio_find_dma(iommu, region->start, region->length))
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * Check iova region overlap with  reserved regions and
-> > + * exclude them from the iommu iova range
-> > + */
-> > +static int vfio_iommu_resv_exclude(struct list_head *iova,
-> > +					struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *resv;
-> > +	struct vfio_iova *n, *next;
-> > +
-> > +	list_for_each_entry(resv, resv_regions, list) {
-> > +		phys_addr_t start, end;
-> > +
-> > +		start = resv->start;
-> > +		end = resv->start + resv->length - 1;
-> > +
-> > +		list_for_each_entry_safe(n, next, iova, list) {
-> > +			int ret = 0;
-> > +
-> > +			/* No overlap */
-> > +			if ((start > n->end) || (end < n->start))
-> > +				continue;
-> > +			/*
-> > +			 * Insert a new node if current node overlaps with
-> > the
-> > +			 * reserve region to exlude that from valid iova
-> > range.
-> > +			 * Note that, new node is inserted before the
-> > current
-> > +			 * node and finally the current node is deleted
-> > keeping
-> > +			 * the list updated and sorted.
-> > +			 */
-> > +			if (start > n->start)
-> > +				ret = vfio_iommu_iova_insert(&n->list,
-> > +							n->start, start - 1);
-> > +			if (!ret && end < n->end)
-> > +				ret = vfio_iommu_iova_insert(&n->list,
-> > +							end + 1, n->end);
-> > +			if (ret)
-> > +				return ret;  
 > 
-> Is it safer to delete the 1st node here in case of failure of the 2nd node?
-> There is no problem with current logic since upon error iova_copy will
-> be released anyway. However this function alone doesn't assume the
-> fact of a temporary list, thus it's better to keep the list clean w/o garbage
-> left from any error handling.
+> Absolutely not. I completely on your side here. 
+> I've tried to fix this recently - http://lkml.kernel.org/r/20180119132544.19569-2-aryabinin@virtuozzo.com
+> I guess that Andrew decided to not take my patch, because Michal wasn't
+> happy about it (see mail archives if you want more details).
+> 
 
-I don't think the proposal makes the list notably more sane on failure
-than we have here.  If the function returns an error and the list is
-modified in any way, how can the caller recover?  We're operating on a
-principle of modify a copy and throw it away on error, the only
-function level solution to the problem you're noting is to make each
-function generate a working copy, which is clearly inefficient.  This
-is a static function, not intended for general use, so I think a
-sufficient approach to address your concern is to simply note the error
-behavior in the comment above the function, the list is in an
-unknown/inconsistent state on error.  Thanks,
+I unfortunately didn't see this patch in January, it seems very similar to 
+what I was suggesting in this thread.  You do a page_counter_read() 
+directly in mem_cgroup_resize_limit() where my suggestion was to have 
+page_counter_limit() return the difference, but there's nothing 
+significantly different about what you proposed and what I suggested.
 
-Alex
+Perhaps the patch would be better off as a compromise between what you, I, 
+and Li RongQing have proposed/suggested: have page_counter_limit() return 
+the difference, and clamp it to some value proportional to the new limit.
