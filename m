@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753228AbeCTOCT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:02:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33302 "EHLO mx1.redhat.com"
+        id S1753456AbeCTOCZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:02:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752382AbeCTOCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:02:15 -0400
+        id S1752382AbeCTOCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:02:20 -0400
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -18,61 +18,241 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v6 0/7] Enlightened VMCS support for KVM on Hyper-V
-Date: Tue, 20 Mar 2018 15:02:04 +0100
-Message-Id: <20180320140211.7600-1-vkuznets@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v6 2/7] x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
+Date: Tue, 20 Mar 2018 15:02:06 +0100
+Message-Id: <20180320140211.7600-3-vkuznets@redhat.com>
+In-Reply-To: <20180320140211.7600-1-vkuznets@redhat.com>
+References: <20180320140211.7600-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v5:
-- Fix a couple of issues reported by kbuild test robot, both in
-  PATCH7 (hope Radim's Reviewed-by: stands).
+mshyperv.h now only contains fucntions/variables we define in kernel, all
+definitions from TLFS should go to hyperv-tlfs.h.
 
-When running nested KVM on Hyper-V it's possible to use so called
-'Enlightened VMCS' and do normal memory reads/writes instead of
-doing VMWRITE/VMREAD instructions. In addition, clean field mask
-provides a huge room for optimization on L0's side.
+'enum hv_cpuid_function' is removed as we already have this info in
+hyperv-tlfs.h, code in mshyperv.c is adjusted accordingly.
 
-Tight CPUID loop test shows significant speedup (E5-2667 v4 @ 3.20GHz):
-  Before: 18890 cycles
-  After: 8304 cycles
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 57 ++++++++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 78 +-------------------------------------
+ arch/x86/kernel/cpu/mshyperv.c     | 15 ++++----
+ 3 files changed, 66 insertions(+), 84 deletions(-)
 
-Ladi Prosek (1):
-  x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
-    HV_X64_MSR_VP_ASSIST_PAGE
-
-Vitaly Kuznetsov (6):
-  x86/hyper-v: move hyperv.h out of uapi
-  x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
-  x86/hyper-v: allocate and use Virtual Processor Assist Pages
-  x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
-  x86/hyper-v: detect nested features
-  x86/kvm: use Enlightened VMCS when running on Hyper-V
-
- MAINTAINERS                                        |   2 +-
- arch/x86/hyperv/hv_init.c                          |  45 ++-
- .../{uapi/asm/hyperv.h => asm/hyperv-tlfs.h}       | 295 ++++++++++++++++++-
- arch/x86/include/asm/kvm_host.h                    |   1 +
- arch/x86/include/asm/mshyperv.h                    |  94 +-----
- arch/x86/include/uapi/asm/kvm_para.h               |   1 -
- arch/x86/kernel/cpu/mshyperv.c                     |  22 +-
- arch/x86/kvm/hyperv.c                              |   8 +-
- arch/x86/kvm/lapic.h                               |   2 +-
- arch/x86/kvm/vmx.c                                 | 301 ++++++++++++++++++-
- arch/x86/kvm/vmx_evmcs.h                           | 324 +++++++++++++++++++++
- arch/x86/kvm/x86.c                                 |   2 +-
- drivers/hv/connection.c                            |   1 -
- drivers/hv/hv.c                                    |   1 -
- drivers/hv/hyperv_vmbus.h                          |   1 +
- drivers/hv/vmbus_drv.c                             |   1 -
- include/linux/hyperv.h                             |   1 -
- 17 files changed, 983 insertions(+), 119 deletions(-)
- rename arch/x86/include/{uapi/asm/hyperv.h => asm/hyperv-tlfs.h} (65%)
- create mode 100644 arch/x86/kvm/vmx_evmcs.h
-
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 795ddf10cdfb..97b7071b047b 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -244,6 +244,55 @@
+ #define HV_X64_MSR_CRASH_PARAMS		\
+ 		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
+ 
++/*
++ * Declare the MSR used to setup pages used to communicate with the hypervisor.
++ */
++union hv_x64_msr_hypercall_contents {
++	u64 as_uint64;
++	struct {
++		u64 enable:1;
++		u64 reserved:11;
++		u64 guest_physical_address:52;
++	};
++};
++
++/*
++ * TSC page layout.
++ */
++struct ms_hyperv_tsc_page {
++	volatile u32 tsc_sequence;
++	u32 reserved1;
++	volatile u64 tsc_scale;
++	volatile s64 tsc_offset;
++	u64 reserved2[509];
++};
++
++/*
++ * The guest OS needs to register the guest ID with the hypervisor.
++ * The guest ID is a 64 bit entity and the structure of this ID is
++ * specified in the Hyper-V specification:
++ *
++ * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
++ *
++ * While the current guideline does not specify how Linux guest ID(s)
++ * need to be generated, our plan is to publish the guidelines for
++ * Linux and other guest operating systems that currently are hosted
++ * on Hyper-V. The implementation here conforms to this yet
++ * unpublished guidelines.
++ *
++ *
++ * Bit(s)
++ * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
++ * 62:56 - Os Type; Linux is 0x100
++ * 55:48 - Distro specific identification
++ * 47:16 - Linux kernel version number
++ * 15:0  - Distro specific identification
++ *
++ *
++ */
++
++#define HV_LINUX_VENDOR_ID              0x8100
++
+ /* TSC emulation after migration */
+ #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
+ 
+@@ -305,6 +354,14 @@ enum HV_GENERIC_SET_FORMAT {
+ 	HV_GENERIC_SET_ALL,
+ };
+ 
++#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
++#define HV_HYPERCALL_FAST_BIT		BIT(16)
++#define HV_HYPERCALL_VARHEAD_OFFSET	17
++#define HV_HYPERCALL_REP_COMP_OFFSET	32
++#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
++#define HV_HYPERCALL_REP_START_OFFSET	48
++#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
++
+ /* hypercall status code */
+ #define HV_STATUS_SUCCESS			0
+ #define HV_STATUS_INVALID_HYPERCALL_CODE	2
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 044323a59354..38cfbe9a5794 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -9,25 +9,6 @@
+ #include <asm/hyperv-tlfs.h>
+ #include <asm/nospec-branch.h>
+ 
+-/*
+- * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
+- * is set by CPUID(HVCPUID_VERSION_FEATURES).
+- */
+-enum hv_cpuid_function {
+-	HVCPUID_VERSION_FEATURES		= 0x00000001,
+-	HVCPUID_VENDOR_MAXFUNCTION		= 0x40000000,
+-	HVCPUID_INTERFACE			= 0x40000001,
+-
+-	/*
+-	 * The remaining functions depend on the value of
+-	 * HVCPUID_INTERFACE
+-	 */
+-	HVCPUID_VERSION				= 0x40000002,
+-	HVCPUID_FEATURES			= 0x40000003,
+-	HVCPUID_ENLIGHTENMENT_INFO		= 0x40000004,
+-	HVCPUID_IMPLEMENTATION_LIMITS		= 0x40000005,
+-};
+-
+ struct ms_hyperv_info {
+ 	u32 features;
+ 	u32 misc_features;
+@@ -38,58 +19,9 @@ struct ms_hyperv_info {
+ 
+ extern struct ms_hyperv_info ms_hyperv;
+ 
+-/*
+- * Declare the MSR used to setup pages used to communicate with the hypervisor.
+- */
+-union hv_x64_msr_hypercall_contents {
+-	u64 as_uint64;
+-	struct {
+-		u64 enable:1;
+-		u64 reserved:11;
+-		u64 guest_physical_address:52;
+-	};
+-};
+-
+-/*
+- * TSC page layout.
+- */
+-
+-struct ms_hyperv_tsc_page {
+-	volatile u32 tsc_sequence;
+-	u32 reserved1;
+-	volatile u64 tsc_scale;
+-	volatile s64 tsc_offset;
+-	u64 reserved2[509];
+-};
+ 
+ /*
+- * The guest OS needs to register the guest ID with the hypervisor.
+- * The guest ID is a 64 bit entity and the structure of this ID is
+- * specified in the Hyper-V specification:
+- *
+- * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
+- *
+- * While the current guideline does not specify how Linux guest ID(s)
+- * need to be generated, our plan is to publish the guidelines for
+- * Linux and other guest operating systems that currently are hosted
+- * on Hyper-V. The implementation here conforms to this yet
+- * unpublished guidelines.
+- *
+- *
+- * Bit(s)
+- * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
+- * 62:56 - Os Type; Linux is 0x100
+- * 55:48 - Distro specific identification
+- * 47:16 - Linux kernel version number
+- * 15:0  - Distro specific identification
+- *
+- *
+- */
+-
+-#define HV_LINUX_VENDOR_ID              0x8100
+-
+-/*
+- * Generate the guest ID based on the guideline described above.
++ * Generate the guest ID.
+  */
+ 
+ static inline  __u64 generate_guest_id(__u64 d_info1, __u64 kernel_version,
+@@ -215,14 +147,6 @@ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ 	return hv_status;
+ }
+ 
+-#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
+-#define HV_HYPERCALL_FAST_BIT		BIT(16)
+-#define HV_HYPERCALL_VARHEAD_OFFSET	17
+-#define HV_HYPERCALL_REP_COMP_OFFSET	32
+-#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
+-#define HV_HYPERCALL_REP_START_OFFSET	48
+-#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
+-
+ /* Fast hypercall with 8 bytes of input and no output */
+ static inline u64 hv_do_fast_hypercall8(u16 code, u64 input1)
+ {
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 04f760432a17..0dfc568c110c 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -180,8 +180,8 @@ static void __init ms_hyperv_init_platform(void)
+ 	pr_info("Hyper-V: features 0x%x, hints 0x%x\n",
+ 		ms_hyperv.features, ms_hyperv.hints);
+ 
+-	ms_hyperv.max_vp_index = cpuid_eax(HVCPUID_IMPLEMENTATION_LIMITS);
+-	ms_hyperv.max_lp_index = cpuid_ebx(HVCPUID_IMPLEMENTATION_LIMITS);
++	ms_hyperv.max_vp_index = cpuid_eax(HYPERV_CPUID_IMPLEMENT_LIMITS);
++	ms_hyperv.max_lp_index = cpuid_ebx(HYPERV_CPUID_IMPLEMENT_LIMITS);
+ 
+ 	pr_debug("Hyper-V: max %u virtual processors, %u logical processors\n",
+ 		 ms_hyperv.max_vp_index, ms_hyperv.max_lp_index);
+@@ -189,11 +189,12 @@ static void __init ms_hyperv_init_platform(void)
+ 	/*
+ 	 * Extract host information.
+ 	 */
+-	if (cpuid_eax(HVCPUID_VENDOR_MAXFUNCTION) >= HVCPUID_VERSION) {
+-		hv_host_info_eax = cpuid_eax(HVCPUID_VERSION);
+-		hv_host_info_ebx = cpuid_ebx(HVCPUID_VERSION);
+-		hv_host_info_ecx = cpuid_ecx(HVCPUID_VERSION);
+-		hv_host_info_edx = cpuid_edx(HVCPUID_VERSION);
++	if (cpuid_eax(HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS) >=
++	    HYPERV_CPUID_VERSION) {
++		hv_host_info_eax = cpuid_eax(HYPERV_CPUID_VERSION);
++		hv_host_info_ebx = cpuid_ebx(HYPERV_CPUID_VERSION);
++		hv_host_info_ecx = cpuid_ecx(HYPERV_CPUID_VERSION);
++		hv_host_info_edx = cpuid_edx(HYPERV_CPUID_VERSION);
+ 
+ 		pr_info("Hyper-V Host Build:%d-%d.%d-%d-%d.%d\n",
+ 			hv_host_info_eax, hv_host_info_ebx >> 16,
 -- 
 2.14.3
