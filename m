@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751791AbeCTD7Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 23:59:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45326 "EHLO
+        id S1751861AbeCTD7W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 23:59:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45490 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeCTD7L (ORCPT
+        with ESMTP id S1751094AbeCTD7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 23:59:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1FC36055B
+        Mon, 19 Mar 2018 23:59:18 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08D6160C66
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,64 +19,55 @@ To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         absahu@codeaurora.org, marc.zyngier@arm.com
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v3 00/13] ARM: dts: ipq: updates to enable a few peripherals
-Date: Tue, 20 Mar 2018 09:28:43 +0530
-Message-Id: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v3 01/13] firmware: qcom: scm: Add ipq4019 soc compatible
+Date: Tue, 20 Mar 2018 09:28:44 +0530
+Message-Id: <1521518336-5467-2-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
+References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[v3]
-    * Fixed minor comments from v2,
-      https://www.spinics.net/lists/arm-kernel/msg641480.html
+Add the compatible for ipq4019.
+This does not need clocks to do scm calls.
 
-    * Added Abhishek's review tags
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ Documentation/devicetree/bindings/firmware/qcom,scm.txt | 3 ++-
+ drivers/firmware/qcom_scm.c                             | 3 +++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-[v2]
-    * Addressed all comments from Abhishek
-    * Removed dk01-c2 and dk04-c5 spinand based boards
-      as support for spinand is not complete
-    * Based all patches on top of Andy's for-next branch
-
-[V1]
-    * https://www.spinics.net/lists/arm-kernel/msg631318.html
-
-Sricharan R (13):
-  firmware: qcom: scm: Add ipq4019 soc compatible
-  ARM: dts: ipq4019: Add a few peripheral nodes
-  ARM: dts: ipq4019: Change the max opp frequency
-  ARM: dts: ipq4019: Update ipq4019-dk01.1 board data
-  ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-  ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3 board file
-  ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c1 board file
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
-  ARM: dts: ipq8074: Add peripheral nodes
-  ARM: dts: ipq8074: Add pcie nodes
-  ARM: dts: ipq8074: Enable few peripherals for hk01 board
-
- .../devicetree/bindings/firmware/qcom,scm.txt      |   3 +-
- arch/arm/boot/dts/Makefile                         |   4 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi      |  32 ++-
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts    |  20 ++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts    |   8 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi      | 135 +++++++++++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts    |  65 +++++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts    |  26 ++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi      |  83 +++++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi                | 136 ++++++++++-
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          | 103 ++++++++
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 262 ++++++++++++++++++++-
- drivers/firmware/qcom_scm.c                        |   3 +
- 13 files changed, 875 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
-
+diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
+index 7b40054..fcf6979 100644
+--- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
++++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
+@@ -11,9 +11,10 @@ Required properties:
+  * "qcom,scm-msm8660" for MSM8660 platforms
+  * "qcom,scm-msm8690" for MSM8690 platforms
+  * "qcom,scm-msm8996" for MSM8996 platforms
++ * "qcom,scm-ipq4019" for IPQ4019 platforms
+  * "qcom,scm" for later processors (MSM8916, APQ8084, MSM8974, etc)
+ - clocks: One to three clocks may be required based on compatible.
+- * No clock required for "qcom,scm-msm8996"
++ * No clock required for "qcom,scm-msm8996", "qcom,scm-ipq4019"
+  * Only core clock required for "qcom,scm-apq8064", "qcom,scm-msm8660", and "qcom,scm-msm8960"
+  * Core, iface, and bus clocks required for "qcom,scm"
+ - clock-names: Must contain "core" for the core clock, "iface" for the interface
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 5a7d6930..e778af7 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -603,6 +603,9 @@ static void qcom_scm_shutdown(struct platform_device *pdev)
+ 	{ .compatible = "qcom,scm-msm8996",
+ 	  .data = NULL, /* no clocks */
+ 	},
++	{ .compatible = "qcom,scm-ipq4019",
++	  .data = NULL, /* no clocks */
++	},
+ 	{ .compatible = "qcom,scm",
+ 	  .data = (void *)(SCM_HAS_CORE_CLK
+ 			   | SCM_HAS_IFACE_CLK
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
