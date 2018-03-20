@@ -1,67 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751484AbeCTWPU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:15:20 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:41506 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbeCTWPQ (ORCPT
+        id S1751480AbeCTWTH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:19:07 -0400
+Received: from mail1.med.uni-goettingen.de ([134.76.103.230]:44603 "EHLO
+        mail1.med.uni-goettingen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751031AbeCTWTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:15:16 -0400
-X-Google-Smtp-Source: AG47ELuCTZUBf4orh7A9FyCaf488tYm3Ts9/pKXikMm13N1wZEec2WQ2C6IvCuf5LPS95OApXQw2PQ==
-Date: Tue, 20 Mar 2018 15:15:13 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-cc: Michal Hocko <mhocko@kernel.org>, "Li,Rongqing" <lirongqing@baidu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH=5D_mm=2Fmemcontrol=2Ec=3A_speed_up_to_force_empty_a_memory_cgroup?=
-In-Reply-To: <56508bd0-e8d7-55fd-5109-c8dacf26b13e@virtuozzo.com>
-Message-ID: <alpine.DEB.2.20.1803201514340.14003@chino.kir.corp.google.com>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com> <20180319085355.GQ23100@dhcp22.suse.cz> <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com> <20180319103756.GV23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com> <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com> <20180320083950.GD23100@dhcp22.suse.cz> <alpine.DEB.2.20.1803201327060.167205@chino.kir.corp.google.com>
- <56508bd0-e8d7-55fd-5109-c8dacf26b13e@virtuozzo.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 20 Mar 2018 18:19:04 -0400
+From: "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
+To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: detecting integer constant expressions in macros
+Thread-Topic: detecting integer constant expressions in macros
+Thread-Index: AQHTwJiwGR/EgJUmakKV29wYTwhXcQ==
+Date: Tue, 20 Mar 2018 22:13:35 +0000
+Message-ID: <1521584015.31174.3.camel@med.uni-goettingen.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [134.76.125.21]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <458DAE36413F474585B2D9F34FD1FEE3@ads.local.med.uni-goettingen.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KMJA9H009358
 
-On Wed, 21 Mar 2018, Andrey Ryabinin wrote:
 
-> >>> It would probably be best to limit the 
-> >>> nr_pages to the amount that needs to be reclaimed, though, rather than 
-> >>> over reclaiming.
-> >>
-> >> How do you achieve that? The charging path is not synchornized with the
-> >> shrinking one at all.
-> >>
-> > 
-> > The point is to get a better guess at how many pages, up to 
-> > SWAP_CLUSTER_MAX, that need to be reclaimed instead of 1.
-> > 
-> >>> If you wanted to be invasive, you could change page_counter_limit() to 
-> >>> return the count - limit, fix up the callers that look for -EBUSY, and 
-> >>> then use max(val, SWAP_CLUSTER_MAX) as your nr_pages.
-> >>
-> >> I am not sure I understand
-> >>
-> > 
-> > Have page_counter_limit() return the number of pages over limit, i.e. 
-> > count - limit, since it compares the two anyway.  Fix up existing callers 
-> > and then clamp that value to SWAP_CLUSTER_MAX in 
-> > mem_cgroup_resize_limit().  It's a more accurate guess than either 1 or 
-> > 1024.
-> > 
-> 
-> JFYI, it's never 1, it's always SWAP_CLUSTER_MAX.
-> See try_to_free_mem_cgroup_pages():
-> ....	
-> 	struct scan_control sc = {
-> 		.nr_to_reclaim = max(nr_pages, SWAP_CLUSTER_MAX),
-> 
+Hi Linus,
 
-Is SWAP_CLUSTER_MAX the best answer if I'm lowering the limit by 1GB?
+here is an idea:
+
+a test for integer constant expressions which returns an
+integer constant expression itself which should be suitable
+for passing to __builtin_choose_expr might be:
+
+#define ICE_P(x) (sizeof(int) == sizeof(*(1 ? ((void*)((x) * 0l)) :
+(int*)1)))
+
+This also does not evaluate x itself on gcc although this is
+not guaranteed by the standard. (And I haven't tried any older
+gcc.)
+
+Best,
+Martin
