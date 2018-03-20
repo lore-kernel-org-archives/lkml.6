@@ -1,153 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeCTIWy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:22:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36210 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeCTIWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:22:50 -0400
-From: NeilBrown <neil@brown.name>
-To: John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-Date: Tue, 20 Mar 2018 19:22:40 +1100
-Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] MIPS: ralink: fix booting on mt7621
-In-Reply-To: <87efkf9z0o.fsf@notabene.neil.brown.name>
-References: <87efkf9z0o.fsf@notabene.neil.brown.name>
-Message-ID: <87605r9mwf.fsf@notabene.neil.brown.name>
+        id S1751912AbeCTI1C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:27:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33320 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeCTI04 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:26:56 -0400
+X-Google-Smtp-Source: AG47ELt1adXYPO44Hf0CxpIICn0oRXT16vCIPoWh3atY73OcrY7lxcLKdDwcTc3cg4zYaU+7V1e0Lg==
+Date: Tue, 20 Mar 2018 09:26:51 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Laight <David.Laight@ACULAB.COM>,
+        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+Message-ID: <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Further testing showed that the original version of this
-patch wasn't 100% reliable.  Very occasionally the read
-of SYSC_REG_CHIP_NAME0 returns garbage.  Repeating the
-read seems to be reliable, but it hasn't happened enough
-for me to be completely confident.
-So this version repeats that first read.
+> > Useful also for code that needs AVX-like registers to do things like CRCs.
+> 
+> x86/crypto/ has a lot of AVX optimized code.
+
+Yeah, that's true, but the crypto code is processing fundamentally bigger blocks 
+of data, which amortizes the cost of using kernel_fpu_begin()/_end().
+
+kernel_fpu_begin()/_end() is a pretty heavy operation because it does a full FPU 
+save/restore via the XSAVE[S] and XRSTOR[S] instructions, which can easily copy a 
+thousand bytes around! So kernel_fpu_begin()/_end() is probably a non-starter for 
+something small, like a single 256-bit or 512-bit word access.
+
+But there's actually a new thing in modern kernels: we got rid of (most of) lazy 
+save/restore FPU code, our new x86 FPU model is very "direct" with no FPU faults 
+taken normally.
+
+So assuming the target driver will only load on modern FPUs I *think* it should 
+actually be possible to do something like (pseudocode):
+
+	vmovdqa %ymm0, 40(%rsp)
+	vmovdqa %ymm1, 80(%rsp)
+
+	...
+	# use ymm0 and ymm1
+	...
+
+	vmovdqa 80(%rsp), %ymm1
+	vmovdqa 40(%rsp), %ymm0
+
+... without using the heavy XSAVE/XRSTOR instructions.
+
+Note that preemption probably still needs to be disabled and possibly there are 
+other details as well, but there should be no 'heavy' FPU operations.
+
+I think this should still preserve all user-space FPU state and shouldn't muck up 
+any 'weird' user-space FPU state (such as pending exceptions, legacy x87 running 
+code, NaN registers or weird FPU control word settings) we might have interrupted 
+either.
+
+But I could be wrong, it should be checked whether this sequence is safe. 
+Worst-case we might have to save/restore the FPU control and tag words - but those 
+operations should still be much faster than a full XSAVE/XRSTOR pair.
+
+So I do think we could do more in this area to improve driver performance, if the 
+code is correct and if there's actual benchmarks that are showing real benefits.
 
 Thanks,
-NeilBrown
 
-
-=2D---------------8<--------------------
-Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621
-has not been able to boot.
-
-This patched caused mips_cm_probe() to be called before
-mt7621.c::proc_soc_init().
-
-prom_soc_init() has a comment explaining that mips_cm_probe()
-"wipes out the bootloader config" and means that configuration
-registers are no longer available.  It has some code to re-enable
-this config.
-
-Before this re-enable code is run, the sysc register cannot be
-read, so when SYSC_REG_CHIP_NAME0 is read, a garbage value
-is returned and panic() is called.
-
-If we move the config-repair code to the top of prom_soc_init(),
-the registers can be read and boot can proceed.
-
-Very occasionally, the first register read after the reconfiguration
-returns garbage.  So repeat that read to be on the safe side.
-
-Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
-Signed-off-by: NeilBrown <neil@brown.name>
-=2D--
- arch/mips/ralink/mt7621.c | 43 +++++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
-
-diff --git a/arch/mips/ralink/mt7621.c b/arch/mips/ralink/mt7621.c
-index 1b274742077d..c37716407fbe 100644
-=2D-- a/arch/mips/ralink/mt7621.c
-+++ b/arch/mips/ralink/mt7621.c
-@@ -170,6 +170,29 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
- 	u32 n1;
- 	u32 rev;
-=20
-+	/* Early detection of CMP support */
-+	mips_cm_probe();
-+	mips_cpc_probe();
-+
-+	if (mips_cps_numiocu(0)) {
-+		/*
-+		 * mips_cm_probe() wipes out bootloader
-+		 * config for CM regions and we have to configure them
-+		 * again. This SoC cannot talk to pamlbus devices
-+		 * witout proper iocu region set up.
-+		 *
-+		 * FIXME: it would be better to do this with values
-+		 * from DT, but we need this very early because
-+		 * without this we cannot talk to pretty much anything
-+		 * including serial.
-+		 */
-+		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
-+		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
-+				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
-+	}
-+
-+	n0 =3D __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
-+	/* Sometimes first read returns garbage, so try again to be safe */
- 	n0 =3D __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
- 	n1 =3D __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
-=20
-@@ -194,26 +217,6 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
-=20
- 	rt2880_pinmux_data =3D mt7621_pinmux_data;
-=20
-=2D	/* Early detection of CMP support */
-=2D	mips_cm_probe();
-=2D	mips_cpc_probe();
-=2D
-=2D	if (mips_cps_numiocu(0)) {
-=2D		/*
-=2D		 * mips_cm_probe() wipes out bootloader
-=2D		 * config for CM regions and we have to configure them
-=2D		 * again. This SoC cannot talk to pamlbus devices
-=2D		 * witout proper iocu region set up.
-=2D		 *
-=2D		 * FIXME: it would be better to do this with values
-=2D		 * from DT, but we need this very early because
-=2D		 * without this we cannot talk to pretty much anything
-=2D		 * including serial.
-=2D		 */
-=2D		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
-=2D		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
-=2D				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
-=2D	}
-=20
- 	if (!register_cps_smp_ops())
- 		return;
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqwxNAACgkQOeye3VZi
-gbkmVBAAi3Nd636K1+EkS6U9RpLeTJvWp58517DnxsEVAIRYKxAOX7zZ+OBUtOck
-biplfu56/9sWcxvLol5MUlGeU/fATAgEM9A8CT+tAbgMCS3mKQ8Age2TCvE2QdkA
-hYd+KGyNxJYFl7PHU7zeo0VC45HgSYLKXyOctxqNN9/Va6c43ZnHC6WQyVJGtbsZ
-6hOxXJfH0oVzkSUBqSyvCyY5J8M4RWfXceTcBZW2Df7pBEjTYmdvpWuN8Nnnu/F2
-IYqABbYIFVSfX4ud7uN60cNSLwu55asBpS5htfMHlLiRVmrB6WVXqAn5zyCBQmcd
-ahqj3iPwZueylQNEzy4EWKDcUe9QQdX9cjdYC5t30cEB9ZXl48ZGI5nNthcpruRA
-vFWdcFYo8Znb+yKElmF7Gn3H/7/HJfvlOEyEKUftIfCP/HKQ1c6nx/lOaGr5Cpgh
-gLn3sk7RlI1EC8TdAQU7qDN1zyIKEijPSUjItHY7lfSghRtTXb0832QFHh5cw1b/
-YPI2Q+D7UJV2C83MQkrsgtpGbDDjQsSg9hKXySqlaVS63dy4/bqDFZi4wkerJemv
-/iFN4ZINW08d9On5fCxESevjy+WCLvsTDedNu0WhCvUD1r5HCPzu1snKGC8EsmO4
-msHf8jpkS/so1YmIBcXe5NXXWC/na7BDsTSY6ZAHoEHcLC6Pov0=
-=FILq
------END PGP SIGNATURE-----
---=-=-=--
+	Ingo
