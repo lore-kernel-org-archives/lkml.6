@@ -1,43 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753369AbeCTMhR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:37:17 -0400
-Received: from mail.us.es ([193.147.175.20]:55822 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753297AbeCTMhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:37:11 -0400
-Date: Tue, 20 Mar 2018 13:37:06 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH v2] netfilter: nf_tables: remove VLA usage
-Message-ID: <20180320123706.kfbsbhqws5hincvk@salvia>
-References: <20180313031617.GA2204@embeddedgus>
+        id S1753436AbeCTMhk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:37:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35370 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753248AbeCTMha (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 08:37:30 -0400
+Date: Tue, 20 Mar 2018 13:37:12 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, corbet@lwn.net,
+        rjw@rjwysocki.net, lenb@kernel.org, hpa@zytor.com
+Subject: Re: [PATCH 1/5] x86/smpboot: Add the missing description of
+ possible_cpus
+Message-ID: <20180320123712.GR4043@hirez.programming.kicks-ass.net>
+References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
+ <20180320110432.28127-2-douly.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313031617.GA2204@embeddedgus>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180320110432.28127-2-douly.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:16:17PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wvla, remove VLA and replace it
-> with dynamic memory allocation.
-> 
-> From a security viewpoint, the use of Variable Length Arrays can be
-> a vector for stack overflow attacks. Also, in general, as the code
-> evolves it is easy to lose track of how big a VLA can get. Thus, we
-> can end up having segfaults that are hard to debug.
-> 
-> Also, fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
+On Tue, Mar 20, 2018 at 07:04:28PM +0800, Dou Liyang wrote:
 
-Applied, thanks.
+> +	possible_cpus=	[s390,x86_64] Use this to set hotpluggable cpus.
+> +			This option sets possible_cpus bits in cpu_possible_map.
+> +			Thus keeping the numbers of bits set constant even if
+> +			the machine gets rebooted.
+
+That description, esp. the last sentence, doesn't make any kind of sense
+to me. What?
