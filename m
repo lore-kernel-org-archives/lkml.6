@@ -1,121 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753546AbeCTN7R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:59:17 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34106 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753098AbeCTN7O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:59:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] drm: bridge: lvds-encoder: on request, override the bus format
-Date: Tue, 20 Mar 2018 16:00:19 +0200
-Message-ID: <11191357.lM4H1k0N3I@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180317221525.18534-4-peda@axentia.se>
-References: <20180317221525.18534-1-peda@axentia.se> <20180317221525.18534-4-peda@axentia.se>
+        id S1753228AbeCTOCT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:02:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33302 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752382AbeCTOCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:02:15 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v6 0/7] Enlightened VMCS support for KVM on Hyper-V
+Date: Tue, 20 Mar 2018 15:02:04 +0100
+Message-Id: <20180320140211.7600-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Changes since v5:
+- Fix a couple of issues reported by kbuild test robot, both in
+  PATCH7 (hope Radim's Reviewed-by: stands).
 
-Thank you for the patch.
+When running nested KVM on Hyper-V it's possible to use so called
+'Enlightened VMCS' and do normal memory reads/writes instead of
+doing VMWRITE/VMREAD instructions. In addition, clean field mask
+provides a huge room for optimization on L0's side.
 
-On Sunday, 18 March 2018 00:15:25 EET Peter Rosin wrote:
-> If the bridge changes the bus format, allow this to be described in
-> the bridge, instead of providing false information about the bus
-> format of the panel itself.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  .../bindings/display/bridge/lvds-transmitter.txt       |  8 ++++++++
->  drivers/gpu/drm/bridge/lvds-encoder.c                  | 18 +++++++++++++++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> index 9d09190d9210..c0fbe74272e7 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> @@ -29,6 +29,14 @@ Required properties:
-> 
->  	      "ti,ds90c185"
-> 
-> +Optional properties:
-> +
-> +- interface-pix-fmt:
-> +	      Override the bus format of the panel, in case the bridge
-> +	      converts the signals. Recognized formats include:
-> +
-> +	      "rgb565"
+Tight CPUID loop test shows significant speedup (E5-2667 v4 @ 3.20GHz):
+  Before: 18890 cycles
+  After: 8304 cycles
 
-Please describe the format in more details, with an explicit mapping of bits 
-to signals, otherwise we'll end up again with multiple different 
-interpretations (at least when it comes to endianness).
+Ladi Prosek (1):
+  x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+    HV_X64_MSR_VP_ASSIST_PAGE
 
-> +
->  Required nodes:
-> 
->  This device has two video ports. Their connections are modeled using the OF
-> diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c
-> b/drivers/gpu/drm/bridge/lvds-encoder.c index 75b0d3f6e4de..acff3a5b0562
-> 100644
-> --- a/drivers/gpu/drm/bridge/lvds-encoder.c
-> +++ b/drivers/gpu/drm/bridge/lvds-encoder.c
-> @@ -39,6 +39,9 @@ static int lvds_encoder_probe(struct platform_device
-> *pdev) struct device_node *panel_node;
->  	struct drm_panel *panel;
->  	struct lvds_encoder *lvds_encoder;
-> +	u32 bus_format = 0;
-> +	const char *fmt;
-> +	int ret;
-> 
->  	lvds_encoder = devm_kzalloc(&pdev->dev, sizeof(*lvds_encoder),
->  				    GFP_KERNEL);
-> @@ -79,6 +82,21 @@ static int lvds_encoder_probe(struct platform_device
-> *pdev) if (IS_ERR(lvds_encoder->panel_bridge))
->  		return PTR_ERR(lvds_encoder->panel_bridge);
-> 
-> +	ret = of_property_read_string(pdev->dev.of_node,
-> +				      "interface-pix-fmt", &fmt);
-> +	if (!ret) {
-> +		if (!strcmp(fmt, "rgb565")) {
-> +			bus_format = MEDIA_BUS_FMT_RGB565_1X16;
+Vitaly Kuznetsov (6):
+  x86/hyper-v: move hyperv.h out of uapi
+  x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
+  x86/hyper-v: allocate and use Virtual Processor Assist Pages
+  x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+  x86/hyper-v: detect nested features
+  x86/kvm: use Enlightened VMCS when running on Hyper-V
 
-I think the string to fourcc conversion should take place in the DRM core, not 
-in the LVDS encoder driver. This would avoid ending up with multiple 
-incompatible conversions. It might even be better to move the DT parsing to 
-the core as well, not just the conversion.
-
-> +		} else {
-> +			dev_dbg(&pdev->dev,
-> +				"requested interface-pix-fmt not recognized\n");
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	if (bus_format)
-> +		drm_panel_bridge_set_bus_format(lvds_encoder->panel_bridge,
-> +						bus_format);
-> +
->  	/* The panel_bridge bridge is attached to the panel's of_node,
->  	 * but we need a bridge attached to our of_node for our user
->  	 * to look up.
+ MAINTAINERS                                        |   2 +-
+ arch/x86/hyperv/hv_init.c                          |  45 ++-
+ .../{uapi/asm/hyperv.h => asm/hyperv-tlfs.h}       | 295 ++++++++++++++++++-
+ arch/x86/include/asm/kvm_host.h                    |   1 +
+ arch/x86/include/asm/mshyperv.h                    |  94 +-----
+ arch/x86/include/uapi/asm/kvm_para.h               |   1 -
+ arch/x86/kernel/cpu/mshyperv.c                     |  22 +-
+ arch/x86/kvm/hyperv.c                              |   8 +-
+ arch/x86/kvm/lapic.h                               |   2 +-
+ arch/x86/kvm/vmx.c                                 | 301 ++++++++++++++++++-
+ arch/x86/kvm/vmx_evmcs.h                           | 324 +++++++++++++++++++++
+ arch/x86/kvm/x86.c                                 |   2 +-
+ drivers/hv/connection.c                            |   1 -
+ drivers/hv/hv.c                                    |   1 -
+ drivers/hv/hyperv_vmbus.h                          |   1 +
+ drivers/hv/vmbus_drv.c                             |   1 -
+ include/linux/hyperv.h                             |   1 -
+ 17 files changed, 983 insertions(+), 119 deletions(-)
+ rename arch/x86/include/{uapi/asm/hyperv.h => asm/hyperv-tlfs.h} (65%)
+ create mode 100644 arch/x86/kvm/vmx_evmcs.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.14.3
