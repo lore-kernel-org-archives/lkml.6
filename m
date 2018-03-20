@@ -1,149 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeCTWtx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:49:53 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33252 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751423AbeCTWtv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:49:51 -0400
-Message-ID: <1521586169.4426.42.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 4.16-rc6
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Tue, 20 Mar 2018 15:49:29 -0700
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751531AbeCTWvs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:51:48 -0400
+Received: from ozlabs.org ([103.22.144.67]:51417 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751317AbeCTWvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:51:46 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 21 Mar 2018 09:50:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: linux-next: manual merge of the arm64 tree with the asm-generic
+ tree
+Message-ID: <20180321095047.3aee181e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xBNHTtxHG4m6.K59ZtSdJPi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One driver patch (qla2xxx) which fixes a problem caused by an existing
-regression fix (FCP discovery is failing) and one generic fix to a
-longstanding bug in libsas that causes I/O eventually to hang to the
-device in the face of ATA error recovery.
+--Sig_/xBNHTtxHG4m6.K59ZtSdJPi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The patch is available here:
+Hi all,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-The short changelog is:
+  include/uapi/asm-generic/siginfo.h
 
-Himanshu Madhani (1):
-      scsi: qla2xxx: Remove FC_NO_LOOP_ID for FCP and FC-NVMe Discovery
+between commit:
 
-Jason Yan (1):
-      scsi: libsas: defer ata device eh commands to libata
+  0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally=
+")
 
-And the diffstat:
+from the asm-generic tree and commit:
 
- drivers/scsi/libsas/sas_scsi_host.c | 33 +++++++++++++--------------------
- drivers/scsi/qla2xxx/qla_init.c     |  1 -
- 2 files changed, 13 insertions(+), 21 deletions(-)
+  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
+ions")
 
-With full diff below.
+from the arm64 tree.
 
-James
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
----
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
-index 626727207889..a372af68d9a9 100644
---- a/drivers/scsi/libsas/sas_scsi_host.c
-+++ b/drivers/scsi/libsas/sas_scsi_host.c
-@@ -223,6 +223,7 @@ int sas_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
- static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
- {
- 	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
-+	struct domain_device *dev = cmd_to_domain_dev(cmd);
- 	struct sas_task *task = TO_SAS_TASK(cmd);
- 
- 	/* At this point, we only get called following an actual abort
-@@ -231,6 +232,14 @@ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
- 	 */
- 	sas_end_task(cmd, task);
- 
-+	if (dev_is_sata(dev)) {
-+		/* defer commands to libata so that libata EH can
-+		 * handle ata qcs correctly
-+		 */
-+		list_move_tail(&cmd->eh_entry, &sas_ha->eh_ata_q);
-+		return;
-+	}
-+
- 	/* now finish the command and move it on to the error
- 	 * handler done list, this also takes it off the
- 	 * error handler pending list.
-@@ -238,22 +247,6 @@ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
- 	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
- }
- 
--static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
--{
--	struct domain_device *dev = cmd_to_domain_dev(cmd);
--	struct sas_ha_struct *ha = dev->port->ha;
--	struct sas_task *task = TO_SAS_TASK(cmd);
--
--	if (!dev_is_sata(dev)) {
--		sas_eh_finish_cmd(cmd);
--		return;
--	}
--
--	/* report the timeout to libata */
--	sas_end_task(cmd, task);
--	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
--}
--
- static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
- {
- 	struct scsi_cmnd *cmd, *n;
-@@ -261,7 +254,7 @@ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd
- 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
- 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
- 		    cmd->device->lun == my_cmd->device->lun)
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 	}
- }
- 
-@@ -618,12 +611,12 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
- 		case TASK_IS_DONE:
- 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
- 				    task);
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 			continue;
- 		case TASK_IS_ABORTED:
- 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
- 				    __func__, task);
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 			continue;
- 		case TASK_IS_AT_LU:
- 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
-@@ -634,7 +627,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
- 					    "recovered\n",
- 					    SAS_ADDR(task->dev),
- 					    cmd->device->lun);
--				sas_eh_defer_cmd(cmd);
-+				sas_eh_finish_cmd(cmd);
- 				sas_scsi_clear_queue_lu(work_q, cmd);
- 				goto Again;
- 			}
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 00329dda6179..8d7fab3cd01d 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1719,7 +1719,6 @@ qla24xx_handle_plogi_done_event(struct scsi_qla_host *vha, struct event_arg *ea)
- 
- 			set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
- 			spin_lock_irqsave(&vha->hw->tgt.sess_lock, flags);
--			ea->fcport->loop_id = FC_NO_LOOP_ID;
- 			ea->fcport->chip_reset = vha->hw->base_qpair->chip_reset;
- 			ea->fcport->logout_on_delete = 1;
- 			ea->fcport->send_els_logo = 0;
+diff --cc include/uapi/asm-generic/siginfo.h
+index 5528cdb0b54a,4b3520bf67ba..000000000000
+--- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@@ -202,12 -219,18 +202,13 @@@ typedef struct siginfo=20
+  #define FPE_FLTRES	6	/* floating point inexact result */
+  #define FPE_FLTINV	7	/* floating point invalid operation */
+  #define FPE_FLTSUB	8	/* subscript out of range */
+ -#ifdef __frv__
+ -# define FPE_MDAOVF	9	/* media overflow */
+ -#endif
+ -#ifdef __ia64__
+ -# define __FPE_DECOVF	9	/* decimal overflow */
+ -# define __FPE_DECDIV	10	/* decimal division by zero */
+ -# define __FPE_DECERR	11	/* packed decimal error */
+ -# define __FPE_INVASC	12	/* invalid ASCII digit */
+ -# define __FPE_INVDEC	13	/* invalid decimal digit */
+ -#endif
+ +#define __FPE_DECOVF	9	/* decimal overflow */
+ +#define __FPE_DECDIV	10	/* decimal division by zero */
+ +#define __FPE_DECERR	11	/* packed decimal error */
+ +#define __FPE_INVASC	12	/* invalid ASCII digit */
+ +#define __FPE_INVDEC	13	/* invalid decimal digit */
+- #define NSIGFPE		13
++ #define FPE_FLTUNK	14	/* undiagnosed floating-point exception */
++ #define NSIGFPE		14
+ =20
+  /*
+   * SIGSEGV si_codes
+
+--Sig_/xBNHTtxHG4m6.K59ZtSdJPi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxkEcACgkQAVBC80lX
+0GybuQf8CE9hVBIuyWFTpYLEZWAU3/U80XmAyL8dyzgNtoYt1QbPbFLApWZOtBL1
+clRYXy3I6+o/wmRCQK5eaMzbWHSrNlmpCbHLI0C9tLGrugsuDtUJBQ4UR2UZqUxj
+So4I/XKXu+9CO/f72aK5/Pct6aT+DOQV0trzGEgNUlD07QfRhAQ7kHF83Oi6N4cZ
+haZFJEstrk8+KCBaqgCy4R2ZFL1HN8V2G1+XVCBWFlGxQdYZU2R3B/KLUVFGxkHL
+0DEl5N2ybbqNAwuda0Xf+uMdz83Agkyb94n5qQLvKvseigTd4qHURgdQxe+7rDaN
+/F9/RSlhehVSFz93iXZ5HxAzvMSuBw==
+=4WZn
+-----END PGP SIGNATURE-----
+
+--Sig_/xBNHTtxHG4m6.K59ZtSdJPi--
