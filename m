@@ -1,157 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751694AbeCTGoj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:44:39 -0400
-Received: from mout.gmx.net ([212.227.15.19]:39861 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeCTGoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:44:37 -0400
-MIME-Version: 1.0
-Message-ID: <trinity-46014179-644f-4087-8f6b-614fa55fca2a-1521528270006@3c-app-mailcom-bs12>
-From: "Chengguang Xu" <cgxu519@gmx.com>
-To: =?UTF-8?Q?=E7=8E=8B=E5=85=83=E8=89=AF?=
-        <yuanliang.wyl@alibaba-inc.com>
-Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?=E7=8E=8B=E5=85=83=E8=89=AF?=
-        <yuanliang.wyl@alibaba-inc.com>
-Subject: Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file
- status
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 Mar 2018 07:44:30 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
-References: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
-Content-Transfer-Encoding: 8BIT
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:W24GJxvb7j0h4LrEWv75aVhn4CIjbVPxInmHtEB9RF9
- szI8GeQgAzxXt/ITpcP9PQxhLL8rMHpWwWtpHFUjSRqF90L6Fw
- pEaRmhRPBoF8/X/gZ70gp07mpWnqPBTZmNlWoX71ouFKzuWQWW
- JMbUpY1fUKh8c+j2pJUdmls2uqDHPw10AGeXJwYqzayjchcPcf
- l/Po2ttFLQbZXNzzRGRmaKxxFgzF5Uj2L3m3y6koGeGWCBpW98
- eDYqulOSqeXlCyf3clQkqEwlQHSaX8r/jy9OZu9ZS+GpdoIuD1 SlZ/ew=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:dORSSwUyrkQ=:n0HsmI23yRI+tgmqz75rEK
- LgWj8m8hzBLyEATjGtS+XG1xd8WjEqcurvBMJYu51OOdo+Jzv+KOIq9TpStQqwPYaSnlWJ2nB
- REBDYKwsuRMn4H98MwI5aNtD7Cp/oSxRaGLfwaBLb3mlhQnB9vMSiKjNUeh+01R30GI5dHnzM
- OYMPBrqqBCxFxSDs/TPdP51xIEhG1RQGKOFaTYwmDfGTnBVlG6Nh40RjsTQfoACdPmZLsmHeg
- JfnBq/7qbrPuX4DUOkcIXawXD6Dgc3RtfQkSkYDx32axBEtJRXQfNW+7a6XbsXHNNYjX/kIek
- cc8Oj0Uc/3DbZmku0SCLjY65uN7jVDKtpdGEYq+g4xO6nwfRzIAD1ZXqhiGM7GPkMipgbq3li
- 5CA5fe+7Nz4Ovwe8e6SrsDF6DXCPsDifhqn6GseZvB0u02i4pYGRdkIpEfk/OmoehvB1o0gno
- dR8ijEh9MTpLoOwryZR7QDPFMDCBnUljpMp5PcjDHlqIshYsIRcU
+        id S1750986AbeCTGos (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:44:48 -0400
+Received: from prv3-mh.provo.novell.com ([137.65.250.26]:42786 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeCTGon (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 20 Mar 2018 02:44:43 -0400
+From: Gang He <ghe@suse.com>
+To: teigland@redhat.com
+Cc: Gang He <ghe@suse.com>, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dlm: prompt the user SCTP is experimental
+Date: Tue, 20 Mar 2018 14:45:27 +0800
+Message-Id: <1521528327-882-1-git-send-email-ghe@suse.com>
+X-Mailer: git-send-email 1.8.5.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yuanliang,
+As you know, DLM module can use TCP or SCTP protocols to
+communicate among the cluster.
+But, according to our testing, SCTP protocol is still considered
+experimental, since not all aspects are working correctly and
+it is not full tested.
+e.g. SCTP connection channel switch needs about 5mins hang in case
+one connection(ring) is broken.
+Then, I suggest to add a kernel print, which prompts the user SCTP
+protocol for DLM should be considered experimental, it is not
+recommended in production environment.
 
-Can you explain how to reproduce it? and what filesystem do you use as underlying fs?
+Signed-off-by: Gang He <ghe@suse.com>
+---
+ fs/dlm/lowcomms.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-> Sent: Tuesday, March 20, 2018 at 2:03 PM
-> From: 王元良 <yuanliang.wyl@alibaba-inc.com>
-> To: miklos@szeredi.hu
-> Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
-> Subject: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
->
-> When the dentry cache is not destroyed, statfs will
-> take unknown status '?'
-> Undestroyed cache dentry also caused new file creating fails
-> 
-> Drop it using d_delete may be a choice
-> 
-> [root@host /]
-> Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache
-> fast
-> Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> Cleaning up everything
-> Cleaning up list of best yumcache
-> Cleaning up list of fastest mirrors
-> 
-> [root@host /]
-> Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> Cleaning up everything
-> Cleaning up list of best yumcache
-> Traceback (most recent call last):
->     File "/usr/bin/yum", line 29, in <module>
->     yummain.user_main(sys.argv[1:], exit_code=True)
->     File "/usr/share/yum-cli/yummain.py", line 365, in user_main
->     errcode = main(args)
->     File "/usr/share/yum-cli/yummain.py", line 174, in main
->     result, resultmsgs = base.doCommands()
->     File "/usr/share/yum-cli/cli.py", line 573, in doCommands
->     return self.yum_cli_commands[self.basecmd].doCommand(self,
-> 	    self.basecmd, self.extcmds)
-> 	   File "/usr/share/yum-cli/yumcommands.py", line
->     1475, in doCommand
->     return base.cleanCli(extcmds)
->     File "/usr/share/yum-cli/cli.py", line 1666, in
->     cleanCli
->     self.plugins.run('clean')
->     File
->     "/usr/lib/python2.7/site-packages/yum/plugins.py", line 188, in run
->     func(conduitcls(self, self.base, conf, **kwargs))
->     File "/usr/lib/yum-plugins/branch.py", line 65, in clean_hook
->     os.remove(os.path.join(root,filespath))
->     OSError: [Errno 2] No such file or directory:
-> 	      '/var/cache/yum/x86_64/x/xxxx.noarch.stable/
-> 	     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2'
-> 
-> [root@host /]
->     ls: cannot access
->     /var/cache/yum/x86_64/x/xxxx.noarch.stable/
->     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2:
->     No such file or directory
->     ls: cannot access
->     /var/cache/yum/x86_64/x/xxxx.noarch.stable/cachecookie:
->     No such file or directory
->     ls: cannot access
->     /var/cache/yum/x86_64/x/xxxx.noarch.stable/repomd.xml:
->     No such file or directory
->     total 0
->     ?????????? ? ?    ?     ?            ?
->     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2
->     ?????????? ? ?    ?     ?            ?
->     cachecookie
->     drwxr-xr-x 1 root root 30 Mar 15 16:12 gen
->     drwxr-xr-x 2 root root  6 Jan 31 13:13
->     packages
->     ?????????? ? ?    ?     ?            ?
->     repomd.xml
-> 
-> Signed-off-by: Yuanliang Wang <yuanliang.wyl@alibaba-inc.com>
-> ---
->  fs/overlayfs/super.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index e7c8ac4..f9343d3 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -380,9 +380,15 @@ static int ovl_dentry_weak_revalidate(struct dentry *dentry, unsigned int flags)
->  	return ret;
->  }
->  
-> +static int ovl_dentry_delete(const struct dentry *dentry)
-> +{
-> +	return 1;
-> +}
-> +
->  static const struct dentry_operations ovl_dentry_operations = {
->  	.d_release = ovl_dentry_release,
->  	.d_real = ovl_d_real,
-> +	.d_delete = ovl_dentry_delete,
->  };
->  
->  static const struct dentry_operations ovl_reval_dentry_operations = {
-> -- 
-> 1.8.3.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index cff79ea..18fd85d 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -1307,6 +1307,7 @@ static int sctp_listen_for_all(void)
+ 		return -ENOMEM;
+ 
+ 	log_print("Using SCTP for communications");
++	log_print("SCTP protocol is experimental, use at your own risk");
+ 
+ 	result = sock_create_kern(&init_net, dlm_local_addr[0]->ss_family,
+ 				  SOCK_STREAM, IPPROTO_SCTP, &sock);
+-- 
+1.8.5.6
