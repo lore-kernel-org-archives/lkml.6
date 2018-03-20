@@ -1,121 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeCTWso (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:48:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51168 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751018AbeCTWsm (ORCPT
+        id S1751633AbeCTWtx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:49:53 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33252 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751423AbeCTWtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:48:42 -0400
-Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
- interpretive execution
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
- <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
- <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
- <5ed8017b-0168-9a50-234b-cfe9258eab72@linux.vnet.ibm.com>
- <17683324-f6e4-4328-54c1-1fce572faecd@linux.vnet.ibm.com>
- <8e10f1cb-3722-d231-2603-b7867420ac0a@linux.vnet.ibm.com>
- <5dd1bcd3-5d17-37c1-1184-7f75a1fd32bc@linux.vnet.ibm.com>
- <68e9e3ea-f99a-da88-5e56-21e38b438b4f@linux.vnet.ibm.com>
- <1347ed2e-7bdb-e455-971a-cf60899e3c19@linux.vnet.ibm.com>
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
-Date: Tue, 20 Mar 2018 23:48:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1347ed2e-7bdb-e455-971a-cf60899e3c19@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032022-0012-0000-0000-000005C17CB2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032022-0013-0000-0000-0000193D9CA3
-Message-Id: <6c42b3e2-0f32-b84b-ea73-4e99157720d3@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803200248
+        Tue, 20 Mar 2018 18:49:51 -0400
+Message-ID: <1521586169.4426.42.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.16-rc6
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Tue, 20 Mar 2018 15:49:29 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+One driver patch (qla2xxx) which fixes a problem caused by an existing
+regression fix (FCP discovery is failing) and one generic fix to a
+longstanding bug in libsas that causes I/O eventually to hang to the
+device in the face of ATA error recovery.
 
+The patch is available here:
 
-On 03/20/2018 06:58 PM, Tony Krowiak wrote:
-> I spoke with Christian this morning and he made a suggestion which I think would provide the best solution here.
-> This is my proposal:
-> 1. Get rid of the KVM_S390_VM_CRYPTO_INTERPRET_AP device attribute and return to setting ECA.28 from the
->    mdev device open callback.
-> 2. Since there may be vcpus online at the time the mdev device open is called, we must first take all running vcpus out of
->    SIE and block them. Christian suggested the kvm_s390_vcpu_block_all(struct kvm *kvm) function will do the trick. So I
->    propose introducing a function like the following to be called during mdev open:
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-There is one thing you missed, otherwise I'm *very* satisfied with this
-proposal.
+The short changelog is:
 
-What you have missed IMHO is vcpu hottplug. So IMHO you should keep
-kvm->arch.crypto.apie, and update it accordingly ...
+Himanshu Madhani (1):
+      scsi: qla2xxx: Remove FC_NO_LOOP_ID for FCP and FC-NVMe Discovery
 
+Jason Yan (1):
+      scsi: libsas: defer ata device eh commands to libata
 
-> 
->     int kvm_ap_set_interpretive_exec(struct kvm *kvm, bool enable)
->     {
->         int i;
->         struct kvm_vcpu *vcpu;
-> 
->         if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
->             return -EOPNOTSUPP;
-> 
->         mutex_lock(&kvm->lock);
-> 
->         kvm_s390_vcpu_block_all(kvm);
+And the diffstat:
 
-... let's say here.
+ drivers/scsi/libsas/sas_scsi_host.c | 33 +++++++++++++--------------------
+ drivers/scsi/qla2xxx/qla_init.c     |  1 -
+ 2 files changed, 13 insertions(+), 21 deletions(-)
 
-> 
->         kvm_for_each_vcpu(i, vcpu, kvm) {
+With full diff below.
 
-And here you can call kvm_s390_vcpu_crypto_setup(vcpu) (the changes to
-this function will be required for hotplug) if you like
+James
 
->             if (enable)
->                 vcpu->arch.sie_block->eca |= ECA_APIE;
->             else
->                 vcpu->arch.sie_block->eca &= ~ECA_APIE;
+---
 
-or keep this stuff, it does not really matter to me.
-
->         }
-> 
->         kvm_s390_vcpu_unblock_all(kvm);
-> 
->         mutex_unlock(&kvm->lock);
-> 
->         return 0;
->     }
-> 
->    This interface allows us to set ECA.28 even if vcpus are running
-
-I tend to agree. I will give it a proper review when this gets more
-formal (e.g. v4 (preferably) or patches to be fixed up to this series).
-
-Please don't forget to revisit the discussion on kvm_s390_vm_set_crypto:
-if the mechanism there isn't right for ECA.28 I think you should tell
-us why it's OK for the other attributes if it's OK. If it is not then
-I guess you will want to do a stand alone patch for that.
+diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
+index 626727207889..a372af68d9a9 100644
+--- a/drivers/scsi/libsas/sas_scsi_host.c
++++ b/drivers/scsi/libsas/sas_scsi_host.c
+@@ -223,6 +223,7 @@ int sas_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
+ {
+ 	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
++	struct domain_device *dev = cmd_to_domain_dev(cmd);
+ 	struct sas_task *task = TO_SAS_TASK(cmd);
+ 
+ 	/* At this point, we only get called following an actual abort
+@@ -231,6 +232,14 @@ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
+ 	 */
+ 	sas_end_task(cmd, task);
+ 
++	if (dev_is_sata(dev)) {
++		/* defer commands to libata so that libata EH can
++		 * handle ata qcs correctly
++		 */
++		list_move_tail(&cmd->eh_entry, &sas_ha->eh_ata_q);
++		return;
++	}
++
+ 	/* now finish the command and move it on to the error
+ 	 * handler done list, this also takes it off the
+ 	 * error handler pending list.
+@@ -238,22 +247,6 @@ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
+ 	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
+ }
+ 
+-static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
+-{
+-	struct domain_device *dev = cmd_to_domain_dev(cmd);
+-	struct sas_ha_struct *ha = dev->port->ha;
+-	struct sas_task *task = TO_SAS_TASK(cmd);
+-
+-	if (!dev_is_sata(dev)) {
+-		sas_eh_finish_cmd(cmd);
+-		return;
+-	}
+-
+-	/* report the timeout to libata */
+-	sas_end_task(cmd, task);
+-	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
+-}
+-
+ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
+ {
+ 	struct scsi_cmnd *cmd, *n;
+@@ -261,7 +254,7 @@ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd
+ 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
+ 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
+ 		    cmd->device->lun == my_cmd->device->lun)
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 	}
+ }
+ 
+@@ -618,12 +611,12 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
+ 		case TASK_IS_DONE:
+ 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
+ 				    task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_ABORTED:
+ 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
+ 				    __func__, task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_AT_LU:
+ 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
+@@ -634,7 +627,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
+ 					    "recovered\n",
+ 					    SAS_ADDR(task->dev),
+ 					    cmd->device->lun);
+-				sas_eh_defer_cmd(cmd);
++				sas_eh_finish_cmd(cmd);
+ 				sas_scsi_clear_queue_lu(work_q, cmd);
+ 				goto Again;
+ 			}
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 00329dda6179..8d7fab3cd01d 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1719,7 +1719,6 @@ qla24xx_handle_plogi_done_event(struct scsi_qla_host *vha, struct event_arg *ea)
+ 
+ 			set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
+ 			spin_lock_irqsave(&vha->hw->tgt.sess_lock, flags);
+-			ea->fcport->loop_id = FC_NO_LOOP_ID;
+ 			ea->fcport->chip_reset = vha->hw->base_qpair->chip_reset;
+ 			ea->fcport->logout_on_delete = 1;
+ 			ea->fcport->send_els_logo = 0;
