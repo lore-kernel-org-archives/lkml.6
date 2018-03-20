@@ -1,106 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeCTRws (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 13:52:48 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34550 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbeCTRwp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:52:45 -0400
-X-Google-Smtp-Source: AG47ELuHiB7r2ULsKGBpYNKZm/hV5rdNsd2O19cl2nVpb9dnCl8RqRh3VfjO7WxSxng6drJ5oOC+RM5xfUiMOcFKpx8=
+        id S1751706AbeCTRyX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 13:54:23 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:54214 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeCTRyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 13:54:22 -0400
+Date: Tue, 20 Mar 2018 18:53:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/10] x86/microcode/AMD: Check equivalence table
+ length in the late loader
+Message-ID: <20180320175308.GA9360@cz.tnic>
+References: <cover.1521150415.git.mail@maciej.szmigiero.name>
+ <1f29f9f9-0a9e-11e2-8e61-ba7c171e2bd9@maciej.szmigiero.name>
 MIME-Version: 1.0
-In-Reply-To: <20180319233913.GA1150@dastard>
-References: <CAM_iQpU9A+KpSdXceUuz-cUX+f91bttKwJCOE91LnTZmKofk_Q@mail.gmail.com>
- <CAM_iQpVBmhiN05ZpxEZ2cNLSJpczc7z=Sz7a1tnUGeQimtDTYA@mail.gmail.com> <20180319233913.GA1150@dastard>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Tue, 20 Mar 2018 10:52:24 -0700
-Message-ID: <CAM_iQpUgstCYjfqHdmoPf0PniMwXPU=uGkDmfYOtb4hwi_XN9Q@mail.gmail.com>
-Subject: Re: xfs: list corruption in xfs_setup_inode()
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1f29f9f9-0a9e-11e2-8e61-ba7c171e2bd9@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 4:39 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Mon, Mar 19, 2018 at 02:37:22PM -0700, Cong Wang wrote:
->> On Mon, Oct 30, 2017 at 2:55 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
->> > Hello,
->> >
->> > We triggered a list corruption (double add) warning below on our 4.9
->> > kernel (the 4.9 kernel we use is based on -stable release, with only a
->> > few unrelated networking backports):
->>
->> We still keep getting this warning on 4.9 kernel. Looking into this again,
->> it seems xfs_setup_inode() could be called twice if an XFS inode is gotten
->> from disk? Once in xfs_iget() => xfs_setup_existing_inode(), and once
->> in xfs_ialloc().
->
-> AFAICT, the only way this can happen is that if the inode ->i_mode
-> has been corrupted in some way. i.e. there is either on-disk or
-> in-memory corruption occurring.
->
->> Does the following patch (compile-only) make any sense? Again, I don't
->> want to pretend to understand XFS...
->
-> No, it doesn't make sense because a newly allocated inode should
-> always have a zero i_mode.
+On Fri, Mar 16, 2018 at 12:08:04AM +0100, Maciej S. Szmigiero wrote:
+> Before loading a CPU equivalence table from a microcode container file we
+> need to verify whether this file is actually large enough to contain the
+> table of a size indicated in this file.
+> If it is not, there is no point of continuing with loading it since
+> microcode patches are located after the equivalence table anyway.
+> 
+> This patch adds these checks to the late loader.
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 32 ++++++++++++++++++++++----------
+>  1 file changed, 22 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+> index 138c9fb983f2..ed24200cf936 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -551,28 +551,40 @@ static enum ucode_state apply_microcode_amd(int cpu)
+>  	return UCODE_UPDATED;
+>  }
+>  
+> -static int install_equiv_cpu_table(const u8 *buf)
+> +static int install_equiv_cpu_table(const u8 *buf, size_t buf_size)
+>  {
+>  	unsigned int *ibuf = (unsigned int *)buf;
+> -	unsigned int type = ibuf[1];
+> -	unsigned int size = ibuf[2];
+> +	unsigned int type, equiv_tbl_len;
 
-Got it.
+Ok, as a unification, let's make those u32 too.
 
->
-> Have you turned on memory poisoning to try to identify where the
-> corruption is coming from?
->
+-- 
+Regards/Gruss,
+    Boris.
 
-I don't consider it as a memory corruption until you point it out.
-Will try to add slub_debug.
-
-
-> And given that it might actually be on-disk corruption that is
-> causing this, have you run xfs_repair on these filesystems to
-> determine if they are free from on-disk corruption?
-
-Not yet, I can try when it happens again.
-
-
->
-> Indeed, that makes me wonder format are you running on these
-> filesystems, because on the more recent v5 format we don't read
-
-Seems I can't check the format on a mounted fs?
-
-$ xfs_db -x /dev/sda1
-xfs_db: /dev/sda1 contains a mounted filesystem
-
-fatal error -- couldn't initialize XFS library
-
-
-> newly allocated inodes from disk. Can you provide the info listed
-> here:
->
-> http://xfs.org/index.php/XFS_FAQ#Q:_What_information_should_I_include_when_reporting_a_problem.3F
->
-> as that will tell us what code paths are executing on inode
-> allocation.
->
-
-The machine is already rebooted after that warning, so I don't know if
-it is too late to collect xfs information, but here it is:
-
-$ xfs_repair -V
-xfs_repair version 4.5.0
-
-$ xfs_info /
-meta-data=/dev/sda1              isize=256    agcount=4, agsize=1310720 blks
-         =                       sectsz=512   attr=2, projid32bit=0
-         =                       crc=0        finobt=0 spinodes=0
-data     =                       bsize=4096   blocks=5242880, imaxpct=25
-         =                       sunit=0      swidth=0 blks
-naming   =version 2              bsize=4096   ascii-ci=0 ftype=0
-log      =internal               bsize=4096   blocks=2560, version=2
-         =                       sectsz=512   sunit=0 blks, lazy-count=1
-realtime =none                   extsz=4096   blocks=0, rtextents=0
+ECO tip #101: Trim your mails when you reply. Srsly.
