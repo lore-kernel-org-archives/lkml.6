@@ -1,96 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751472AbeCTPm0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:42:26 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48900 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeCTPmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:42:21 -0400
-Date: Tue, 20 Mar 2018 16:41:47 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/10] x86/microcode/AMD: Check equivalence table
- length in the early loader
-Message-ID: <20180320154147.GA6815@cz.tnic>
-References: <cover.1521150415.git.mail@maciej.szmigiero.name>
- <fe4fe465-b114-ffa5-7c2a-3ccb5b9ba38c@maciej.szmigiero.name>
+        id S1751557AbeCTPnO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:43:14 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:49098 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbeCTPnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:43:11 -0400
+Subject: Re: [PATCH v2 2/3] drm: bridge: Add LVDS decoder driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
+        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
+CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <dc468964-dc9c-65fb-7ec8-e180409ffa03@mentor.com>
+Date: Tue, 20 Mar 2018 17:42:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fe4fe465-b114-ffa5-7c2a-3ccb5b9ba38c@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 12:07:50AM +0100, Maciej S. Szmigiero wrote:
-> Before loading a CPU equivalence table from a microcode container file we
-> need to verify whether this file is actually large enough to contain the
-> table of a size indicated in this file.
-> If it is not, there is no point of continuing with loading it since
-> microcode patches are located after the equivalence table anyway.
+Hi Jacopo,
+
+On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
+> Add transparent LVDS decoder driver.
 > 
-> This patch adds these checks to the early loader.
+> A transparent LVDS decoder is a DRM bridge device that does not require
+> any configuration and converts LVDS input to digital CMOS/TTL parallel
+> data output.
 > 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  arch/x86/kernel/cpu/microcode/amd.c | 35 +++++++++++++++++++++++------------
->  1 file changed, 23 insertions(+), 12 deletions(-)
+>  drivers/gpu/drm/bridge/Kconfig        |   8 +++
+>  drivers/gpu/drm/bridge/Makefile       |   1 +
+>  drivers/gpu/drm/bridge/lvds-decoder.c | 129 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 138 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
 > 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 6a93be0f771c..138c9fb983f2 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -80,20 +80,33 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
->   * Returns the amount of bytes consumed while scanning. @desc contains all the
->   * data we're going to use in later stages of the application.
->   */
-> -static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-> +static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
->  {
->  	struct equiv_cpu_entry *eq;
-> -	ssize_t orig_size = size;
-> +	size_t orig_size = size;
->  	u32 *hdr = (u32 *)ucode;
-> +	unsigned int cont_magic, cont_type;
-> +	size_t equiv_tbl_len;
->  	u16 eq_id;
->  	u8 *buf;
->  
-> +	if (size < CONTAINER_HDR_SZ)
-> +		return 0;
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index 3b99d5a..e52a5af 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -32,6 +32,14 @@ config DRM_DUMB_VGA_DAC
+>  	help
+>  	  Support for RGB to VGA DAC based bridges
+> 
+> +config DRM_LVDS_DECODER
+> +	tristate "Transparent LVDS to parallel decoder support"
+> +	depends on OF
+> +	select DRM_PANEL_BRIDGE
+> +	help
+> +	  Support for transparent LVDS to parallel decoders that don't require
+> +	  any configuration.
 > +
-> +	cont_magic	= hdr[0];
-> +	cont_type	= hdr[1];
-> +	equiv_tbl_len	= hdr[2];
-
-All three are u32.
-
->  	/* Am I looking at an equivalence table header? */
-> -	if (hdr[0] != UCODE_MAGIC ||
-> -	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
-> -	    hdr[2] == 0)
-> +	if (cont_magic != UCODE_MAGIC ||
-> +	    cont_type != UCODE_EQUIV_CPU_TABLE_TYPE ||
-> +	    equiv_tbl_len == 0)
->  		return CONTAINER_HDR_SZ;
->  
-> +	if (equiv_tbl_len < sizeof(*eq) ||
-
-If you do this, then the above == 0 check can go.
-
-> +	    size - CONTAINER_HDR_SZ < equiv_tbl_len)
-> +		return size;
+>  config DRM_LVDS_ENCODER
+>  	tristate "Transparent parallel to LVDS encoder support"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index 373eb28..edc2332 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+>  obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+> +obj-$(CONFIG_DRM_LVDS_DECODER) += lvds-decoder.o
+>  obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
+>  obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
+>  obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
+> diff --git a/drivers/gpu/drm/bridge/lvds-decoder.c b/drivers/gpu/drm/bridge/lvds-decoder.c
+> new file mode 100644
+> index 0000000..319f4d5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/lvds-decoder.c
+> @@ -0,0 +1,129 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * LVDS to parallel data DRM bridge driver.
+> + *
+> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> + */
 > +
->  	buf = ucode;
->  
->  	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
+> +#include <drm/drmP.h>
+> +#include <drm/drm_bridge.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <linux/of_graph.h>
+> +
+> +struct lvds_decoder {
+> +	struct device *dev;
+> +
+> +	struct drm_bridge bridge;
+> +	struct drm_bridge *next;
+> +	struct drm_encoder *bridge_encoder;
+> +};
+> +
+> +static inline struct lvds_decoder *to_lvds_decoder(struct drm_bridge *bridge)
+> +{
+> +	return container_of(bridge, struct lvds_decoder, bridge);
+> +}
+> +
+> +static int lvds_decoder_attach(struct drm_bridge *bridge)
+> +{
+> +	struct lvds_decoder *lvds = to_lvds_decoder(bridge);
+> +
+> +	return drm_bridge_attach(bridge->encoder, lvds->next, bridge);
+> +}
+> +
+> +struct drm_bridge_funcs lvds_dec_bridge_func = {
 
--- 
-Regards/Gruss,
-    Boris.
+static const struct drm_bridge_funcs lvds_dec_bridge_func
 
-ECO tip #101: Trim your mails when you reply. Srsly.
+> +	.attach	= lvds_decoder_attach,
+> +};
+> +
+> +static int lvds_decoder_parse_dt(struct lvds_decoder *lvds)
+> +{
+> +	struct device_node *lvds_output;
+> +	struct device_node *remote;
+> +	int ret = 0;
+> +
+> +	lvds_output = of_graph_get_endpoint_by_regs(lvds->dev->of_node, 1, -1);
+> +	if (!lvds_output) {
+> +		dev_err(lvds->dev, "Missing endpoint in Port@1\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	remote = of_graph_get_remote_port_parent(lvds_output);
+
+Add of_node_put(lvds_output) right here to get rid of error_put_lvds_node
+goto label.
+
+> +	if (!remote) {
+> +		dev_err(lvds->dev, "Endpoint in Port@1 unconnected\n");
+> +		ret = -ENODEV;
+> +		goto error_put_lvds_node;
+> +	}
+> +
+> +	if (!of_device_is_available(remote)) {
+> +		dev_err(lvds->dev, "Port@1 remote endpoint is disabled\n");
+> +		ret = -ENODEV;
+> +		goto error_put_remote_node;
+> +	}
+> +
+> +	lvds->next = of_drm_find_bridge(remote);
+> +	if (!lvds->next)
+> +		ret = -EPROBE_DEFER;
+> +
+> +error_put_remote_node:
+> +	of_node_put(remote);
+> +error_put_lvds_node:
+> +	of_node_put(lvds_output);
+> +
+> +	return ret;
+> +}
+> +
+> +static int lvds_decoder_probe(struct platform_device *pdev)
+> +{
+> +	struct lvds_decoder *lvds;
+> +	int ret;
+> +
+> +	lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
+> +	if (!lvds)
+> +		return -ENOMEM;
+> +
+> +	lvds->dev = &pdev->dev;
+> +	platform_set_drvdata(pdev, lvds);
+> +
+> +	ret = lvds_decoder_parse_dt(lvds);
+> +	if (ret)
+> +		return ret;
+> +
+> +	lvds->bridge.driver_private = lvds;
+> +	lvds->bridge.of_node = pdev->dev.of_node;
+> +	lvds->bridge.funcs = &lvds_dec_bridge_func;
+> +
+> +	drm_bridge_add(&lvds->bridge);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lvds_decoder_remove(struct platform_device *pdev)
+> +{
+> +	struct lvds_decoder *lvds = platform_get_drvdata(pdev);
+> +
+> +	drm_bridge_remove(&lvds->bridge);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id lvds_decoder_match[] = {
+> +	{ .compatible = "lvds-decoder", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, lvds_decoder_match);
+> +#endif
+> +
+
+I would say "#ifdef CONFIG_OF" is redundant, because the driver "depends on OF".
+
+> +static struct platform_driver lvds_decoder_driver = {
+> +	.probe	= lvds_decoder_probe,
+> +	.remove	= lvds_decoder_remove,
+> +	.driver	= {
+> +		.name		= "lvds_decoder",
+> +		.of_match_table	= lvds_decoder_match,
+> +	},
+> +};
+> +module_platform_driver(lvds_decoder_driver);
+> +
+> +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
+> +MODULE_DESCRIPTION("Transparent LVDS to parallel data decoder");
+> +MODULE_LICENSE("GPL v2");
+
+--
+With best wishes,
+Vladimir
