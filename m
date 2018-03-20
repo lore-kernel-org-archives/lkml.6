@@ -1,83 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeCTGi7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:38:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41794 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751771AbeCTGi6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:38:58 -0400
-X-UUID: e246b5e27bf44fc39d0dfc9068289a14-20180320
-Message-ID: <1521527932.21199.4.camel@mtkswgap22>
-Subject: Re: [PATCH v4 3/6] clk: mediatek: add audsys support for MT2701
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        "Garlic Tseng" <garlic.tseng@mediatek.com>
-Date: Tue, 20 Mar 2018 14:38:52 +0800
-In-Reply-To: <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
-         <f1445b95864af04f1f90d3be96d0a485d1bb4560.1520327262.git.ryder.lee@mediatek.com>
-         <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1751694AbeCTGoj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:44:39 -0400
+Received: from mout.gmx.net ([212.227.15.19]:39861 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751334AbeCTGoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 02:44:37 -0400
 MIME-Version: 1.0
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23730.005
-X-TM-AS-Result: No-17.745800-8.000000-10
-X-TMASE-MatchedRID: wQVy7q402w34OiVTWoD8RCa1MaKuob8PC/ExpXrHizxGqWrQwZFUCIe2
-        B1kDoHWrwX0f1lPumDhPaUktJ/9D+psYdIGP6PlZXP5rFAucBUExXH/dlhvLv4KwF4K/wIz948f
-        E6PIFskBl/p5QlddQ8R9l1zPMOb+6TX7PJ/OU3vKDGx/OQ1GV8t0H8LFZNFG7JQhrLH5KSJ0=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--17.745800-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23730.005
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+Message-ID: <trinity-46014179-644f-4087-8f6b-614fa55fca2a-1521528270006@3c-app-mailcom-bs12>
+From: "Chengguang Xu" <cgxu519@gmx.com>
+To: =?UTF-8?Q?=E7=8E=8B=E5=85=83=E8=89=AF?=
+        <yuanliang.wyl@alibaba-inc.com>
+Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?=E7=8E=8B=E5=85=83=E8=89=AF?=
+        <yuanliang.wyl@alibaba-inc.com>
+Subject: Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file
+ status
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 20 Mar 2018 07:44:30 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
+References: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
+Content-Transfer-Encoding: 8BIT
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:W24GJxvb7j0h4LrEWv75aVhn4CIjbVPxInmHtEB9RF9
+ szI8GeQgAzxXt/ITpcP9PQxhLL8rMHpWwWtpHFUjSRqF90L6Fw
+ pEaRmhRPBoF8/X/gZ70gp07mpWnqPBTZmNlWoX71ouFKzuWQWW
+ JMbUpY1fUKh8c+j2pJUdmls2uqDHPw10AGeXJwYqzayjchcPcf
+ l/Po2ttFLQbZXNzzRGRmaKxxFgzF5Uj2L3m3y6koGeGWCBpW98
+ eDYqulOSqeXlCyf3clQkqEwlQHSaX8r/jy9OZu9ZS+GpdoIuD1 SlZ/ew=
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dORSSwUyrkQ=:n0HsmI23yRI+tgmqz75rEK
+ LgWj8m8hzBLyEATjGtS+XG1xd8WjEqcurvBMJYu51OOdo+Jzv+KOIq9TpStQqwPYaSnlWJ2nB
+ REBDYKwsuRMn4H98MwI5aNtD7Cp/oSxRaGLfwaBLb3mlhQnB9vMSiKjNUeh+01R30GI5dHnzM
+ OYMPBrqqBCxFxSDs/TPdP51xIEhG1RQGKOFaTYwmDfGTnBVlG6Nh40RjsTQfoACdPmZLsmHeg
+ JfnBq/7qbrPuX4DUOkcIXawXD6Dgc3RtfQkSkYDx32axBEtJRXQfNW+7a6XbsXHNNYjX/kIek
+ cc8Oj0Uc/3DbZmku0SCLjY65uN7jVDKtpdGEYq+g4xO6nwfRzIAD1ZXqhiGM7GPkMipgbq3li
+ 5CA5fe+7Nz4Ovwe8e6SrsDF6DXCPsDifhqn6GseZvB0u02i4pYGRdkIpEfk/OmoehvB1o0gno
+ dR8ijEh9MTpLoOwryZR7QDPFMDCBnUljpMp5PcjDHlqIshYsIRcU
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-19 at 13:31 -0700, Stephen Boyd wrote:
-> Quoting Ryder Lee (2018-03-06 01:09:28)
-> > +
-> > +static const struct of_device_id of_match_clk_mt2701_aud[] = {
-> > +       { .compatible = "mediatek,mt2701-audsys", },
-> > +       {}
-> > +};
-> > +
-> > +static int clk_mt2701_aud_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +       int r;
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
-> > +
-> > +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > +                              clk_data);
-> > +
-> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +       if (r) {
-> > +               dev_err(&pdev->dev,
-> > +                       "could not register clock provider: %s: %d\n",
-> > +                       pdev->name, r);
-> > +
-> > +               return r;
-> > +       }
-> 
-> This fails to remove the clk provider when devm_of_platform_populate()
-> returns an error.
-> 
-> > +
-> > +       return devm_of_platform_populate(&pdev->dev);
-> > +}
+Hi Yuanliang,
 
-I've sent a new one to fix it.
+Can you explain how to reproduce it? and what filesystem do you use as underlying fs?
 
-Thanks
+
+> Sent: Tuesday, March 20, 2018 at 2:03 PM
+> From: 王元良 <yuanliang.wyl@alibaba-inc.com>
+> To: miklos@szeredi.hu
+> Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
+> Subject: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
+>
+> When the dentry cache is not destroyed, statfs will
+> take unknown status '?'
+> Undestroyed cache dentry also caused new file creating fails
+> 
+> Drop it using d_delete may be a choice
+> 
+> [root@host /]
+> Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
+> Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache
+> fast
+> Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
+> Cleaning up everything
+> Cleaning up list of best yumcache
+> Cleaning up list of fastest mirrors
+> 
+> [root@host /]
+> Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
+> Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
+> Cleaning up everything
+> Cleaning up list of best yumcache
+> Traceback (most recent call last):
+>     File "/usr/bin/yum", line 29, in <module>
+>     yummain.user_main(sys.argv[1:], exit_code=True)
+>     File "/usr/share/yum-cli/yummain.py", line 365, in user_main
+>     errcode = main(args)
+>     File "/usr/share/yum-cli/yummain.py", line 174, in main
+>     result, resultmsgs = base.doCommands()
+>     File "/usr/share/yum-cli/cli.py", line 573, in doCommands
+>     return self.yum_cli_commands[self.basecmd].doCommand(self,
+> 	    self.basecmd, self.extcmds)
+> 	   File "/usr/share/yum-cli/yumcommands.py", line
+>     1475, in doCommand
+>     return base.cleanCli(extcmds)
+>     File "/usr/share/yum-cli/cli.py", line 1666, in
+>     cleanCli
+>     self.plugins.run('clean')
+>     File
+>     "/usr/lib/python2.7/site-packages/yum/plugins.py", line 188, in run
+>     func(conduitcls(self, self.base, conf, **kwargs))
+>     File "/usr/lib/yum-plugins/branch.py", line 65, in clean_hook
+>     os.remove(os.path.join(root,filespath))
+>     OSError: [Errno 2] No such file or directory:
+> 	      '/var/cache/yum/x86_64/x/xxxx.noarch.stable/
+> 	     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2'
+> 
+> [root@host /]
+>     ls: cannot access
+>     /var/cache/yum/x86_64/x/xxxx.noarch.stable/
+>     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2:
+>     No such file or directory
+>     ls: cannot access
+>     /var/cache/yum/x86_64/x/xxxx.noarch.stable/cachecookie:
+>     No such file or directory
+>     ls: cannot access
+>     /var/cache/yum/x86_64/x/xxxx.noarch.stable/repomd.xml:
+>     No such file or directory
+>     total 0
+>     ?????????? ? ?    ?     ?            ?
+>     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2
+>     ?????????? ? ?    ?     ?            ?
+>     cachecookie
+>     drwxr-xr-x 1 root root 30 Mar 15 16:12 gen
+>     drwxr-xr-x 2 root root  6 Jan 31 13:13
+>     packages
+>     ?????????? ? ?    ?     ?            ?
+>     repomd.xml
+> 
+> Signed-off-by: Yuanliang Wang <yuanliang.wyl@alibaba-inc.com>
+> ---
+>  fs/overlayfs/super.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index e7c8ac4..f9343d3 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -380,9 +380,15 @@ static int ovl_dentry_weak_revalidate(struct dentry *dentry, unsigned int flags)
+>  	return ret;
+>  }
+>  
+> +static int ovl_dentry_delete(const struct dentry *dentry)
+> +{
+> +	return 1;
+> +}
+> +
+>  static const struct dentry_operations ovl_dentry_operations = {
+>  	.d_release = ovl_dentry_release,
+>  	.d_real = ovl_d_real,
+> +	.d_delete = ovl_dentry_delete,
+>  };
+>  
+>  static const struct dentry_operations ovl_reval_dentry_operations = {
+> -- 
+> 1.8.3.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
