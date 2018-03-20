@@ -1,134 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753890AbeCTOEb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:04:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41876 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753284AbeCTOCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:02:22 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v6 3/7] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to HV_X64_MSR_VP_ASSIST_PAGE
-Date: Tue, 20 Mar 2018 15:02:07 +0100
-Message-Id: <20180320140211.7600-4-vkuznets@redhat.com>
-In-Reply-To: <20180320140211.7600-1-vkuznets@redhat.com>
-References: <20180320140211.7600-1-vkuznets@redhat.com>
+        id S1753802AbeCTOG6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:06:58 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:55162 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753650AbeCTOGv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:06:51 -0400
+X-Google-Smtp-Source: AG47ELuXfWDkFMr/TwuM0gvro0Iv234W4sBtgu2sRJ7yW9z7gmoSkkLIhGXpyjKydZhuSoW3QdAkshpxakEsO1O6TLQ=
+MIME-Version: 1.0
+In-Reply-To: <5AAFA661.60103@hitachi.com>
+References: <5AAFA661.60103@hitachi.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 20 Mar 2018 15:06:49 +0100
+Message-ID: <CAOi1vP8qz9GeP0Beypq1N8XFwzkPieEE1Qf6gJafPnngjNG86g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rbd: thick-provision image support
+To: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
+Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ladi Prosek <lprosek@redhat.com>
+On Mon, Mar 19, 2018 at 1:00 PM, KAMEI Hitoshi
+<hitoshi.kamei.xm@hitachi.com> wrote:
+> This patch series adds the thick-provision image support to
+> /drivers/block/rbd.c relating to https://github.com/ceph/ceph/pull/18317.
+> The rbd will not issue the discard operation to thick-provision
+> images, if applied.
+>
+> The rbd should not discard any allocated blocks of thick-provision
+> image to ensure writing data to rbd images. So this patch
+> prevents from discarding allocated blocks on thick-provision
+> image.
+>
+> This patch series creates sysfs file to manipulate thick-provision
+> status. If users write "1" to /sys/bus/rbd/devices/<dev-id>/thick,
+> then the image is changed to thick-provision image. And if users
+> write "0" to it, then the image is changed to thin-provision
+> image. I will add the code changing status for the rbd map command.
 
-The assist page has been used only for the paravirtual EOI so far, hence
-the "APIC" in the MSR name. Renaming to match the Hyper-V TLFS where it's
-called "Virtual VP Assist MSR".
+Hi Hitoshi,
 
-Signed-off-by: Ladi Prosek <lprosek@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/hyperv-tlfs.h | 10 +++++-----
- arch/x86/kvm/hyperv.c              |  8 ++++----
- arch/x86/kvm/lapic.h               |  2 +-
- arch/x86/kvm/x86.c                 |  2 +-
- 4 files changed, 11 insertions(+), 11 deletions(-)
+I think it should be a map time option -- e.g. rbd map -o thick.
+I don't see any reason for allowing tweaking this setting on a mapped
+image.
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 97b7071b047b..acdec9a957db 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -196,7 +196,7 @@
- #define HV_X64_MSR_EOI				0x40000070
- #define HV_X64_MSR_ICR				0x40000071
- #define HV_X64_MSR_TPR				0x40000072
--#define HV_X64_MSR_APIC_ASSIST_PAGE		0x40000073
-+#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
- 
- /* Define synthetic interrupt controller model specific registers. */
- #define HV_X64_MSR_SCONTROL			0x40000080
-@@ -331,10 +331,10 @@ struct hv_tsc_emulation_status {
- #define HVCALL_POST_MESSAGE			0x005c
- #define HVCALL_SIGNAL_EVENT			0x005d
- 
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
--		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
-+		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
- 
- #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
- #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index dc97f2544b6f..9fb0ed9b1670 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1009,17 +1009,17 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 			return 1;
- 		hv->vp_index = (u32)data;
- 		break;
--	case HV_X64_MSR_APIC_ASSIST_PAGE: {
-+	case HV_X64_MSR_VP_ASSIST_PAGE: {
- 		u64 gfn;
- 		unsigned long addr;
- 
--		if (!(data & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE)) {
-+		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
- 			hv->hv_vapic = data;
- 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
- 				return 1;
- 			break;
- 		}
--		gfn = data >> HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT;
-+		gfn = data >> HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT;
- 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
- 		if (kvm_is_error_hva(addr))
- 			return 1;
-@@ -1129,7 +1129,7 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_ICR, pdata);
- 	case HV_X64_MSR_TPR:
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
--	case HV_X64_MSR_APIC_ASSIST_PAGE:
-+	case HV_X64_MSR_VP_ASSIST_PAGE:
- 		data = hv->hv_vapic;
- 		break;
- 	case HV_X64_MSR_VP_RUNTIME:
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 56c36014f7b7..edce055e9fd7 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -109,7 +109,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
- 
- static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
- {
--	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE;
-+	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
- }
- 
- int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 18b5ca7a3197..372db116e010 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1032,7 +1032,7 @@ static u32 emulated_msrs[] = {
- 	HV_X64_MSR_VP_RUNTIME,
- 	HV_X64_MSR_SCONTROL,
- 	HV_X64_MSR_STIMER0_CONFIG,
--	HV_X64_MSR_APIC_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
-+	HV_X64_MSR_VP_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
- 	MSR_KVM_PV_EOI_EN,
- 
- 	MSR_IA32_TSC_ADJUST,
--- 
-2.14.3
+I looked through https://github.com/ceph/ceph/pull/18317 and I don't
+see an equivalent functionality there.  rbd_discard_on_zeroed_write_same
+set to false makes the actual zeroes go on the wire, but I don't see
+anything for ignoring discard requests.  Can you point me at that?
+
+Thanks,
+
+                Ilya
