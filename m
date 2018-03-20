@@ -1,300 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751951AbeCTGVQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:21:16 -0400
-Received: from hub02.inventec.com ([218.32.67.167]:55964 "EHLO
-        mail.inventec.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751416AbeCTGUy (ORCPT
+        id S1752043AbeCTGV4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:21:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41035 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeCTGUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:20:54 -0400
-X-Google-Smtp-Source: AG47ELuP5x5YBjKjk2Z8FYEF9PvsJPN0Wj5PBDtnMEfF+CkfZN/ZxEfQQMqSZQq884x3qisYJCVOFQ==
-From: Ken Chen <chen.kenyy@inventec.com>
-To: <linux@roeck-us.net>, <wsa@the-dreams.de>, <peda@axentia.se>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Ken Chen <chen.kenyy@inventec.com>, <joel@jms.id.au>
-Subject: [PATCH linux dev-4.16 v2] i2c: muxes: pca9641: new driver
-Date: Tue, 20 Mar 2018 14:19:09 +0800
-Message-ID: <20180320061909.5775-1-chen.kenyy@inventec.com>
-X-Mailer: git-send-email 2.9.3
-X-DNSRBL: 
-X-MAIL: IEC1-MSE-FE1.inventec.com w2K6GQbQ002080
+        Tue, 20 Mar 2018 02:20:50 -0400
+Date: Mon, 19 Mar 2018 23:20:26 -0700
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-03d9fcb701340de3446b4ff4ddb9f5407d1412f5@git.kernel.org>
+Cc: acme@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        dsahern@gmail.com, jolsa@kernel.org, hpa@zytor.com, jmario@redhat.com
+Reply-To: hpa@zytor.com, jmario@redhat.com, jolsa@kernel.org,
+        dsahern@gmail.com, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        peterz@infradead.org
+In-Reply-To: <20180309101442.9224-10-jolsa@kernel.org>
+References: <20180309101442.9224-10-jolsa@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf c2c report: Add cacheline address count column
+Git-Commit-ID: 03d9fcb701340de3446b4ff4ddb9f5407d1412f5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Ken Chen <chen.kenyy@inventec.com>
+Commit-ID:  03d9fcb701340de3446b4ff4ddb9f5407d1412f5
+Gitweb:     https://git.kernel.org/tip/03d9fcb701340de3446b4ff4ddb9f5407d1412f5
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Fri, 9 Mar 2018 11:14:42 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 16 Mar 2018 13:53:38 -0300
 
----
-v1->v2
-- Merged PCA9641 code into i2c-mux-pca9541.c
-- Modified title
-- Add PCA9641 detect function
----
- drivers/i2c/muxes/i2c-mux-pca9541.c | 184 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 174 insertions(+), 10 deletions(-)
+perf c2c report: Add cacheline address count column
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
-index 6a39ada..493f947 100644
---- a/drivers/i2c/muxes/i2c-mux-pca9541.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
-@@ -1,5 +1,5 @@
- /*
-- * I2C multiplexer driver for PCA9541 bus master selector
-+ * I2C multiplexer driver for PCA9541/PCA9641 bus master selector
-  *
-  * Copyright (c) 2010 Ericsson AB.
-  *
-@@ -26,8 +26,8 @@
- #include <linux/slab.h>
- 
- /*
-- * The PCA9541 is a bus master selector. It supports two I2C masters connected
-- * to a single slave bus.
-+ * The PCA9541/PCA9641 is a bus master selector. It supports two I2C masters 
-+ * connected to a single slave bus.
-  *
-  * Before each bus transaction, a master has to acquire bus ownership. After the
-  * transaction is complete, bus ownership has to be released. This fits well
-@@ -58,11 +58,43 @@
- #define PCA9541_ISTAT_MYTEST	(1 << 6)
- #define PCA9541_ISTAT_NMYTEST	(1 << 7)
- 
-+#define PCA9641_ID		0x00
-+#define PCA9641_ID_MAGIC	0x38
-+
-+#define PCA9641_CONTROL		0x01
-+#define PCA9641_STATUS		0x02
-+#define PCA9641_TIME		0x03
-+
-+#define PCA9641_CTL_LOCK_REQ		BIT(0)
-+#define PCA9641_CTL_LOCK_GRANT		BIT(1)
-+#define PCA9641_CTL_BUS_CONNECT		BIT(2)
-+#define PCA9641_CTL_BUS_INIT		BIT(3)
-+#define PCA9641_CTL_SMBUS_SWRST		BIT(4)
-+#define PCA9641_CTL_IDLE_TIMER_DIS	BIT(5)
-+#define PCA9641_CTL_SMBUS_DIS		BIT(6)
-+#define PCA9641_CTL_PRIORITY		BIT(7)
-+
-+#define PCA9641_STS_OTHER_LOCK		BIT(0)
-+#define PCA9641_STS_BUS_INIT_FAIL	BIT(1)
-+#define PCA9641_STS_BUS_HUNG		BIT(2)
-+#define PCA9641_STS_MBOX_EMPTY		BIT(3)
-+#define PCA9641_STS_MBOX_FULL		BIT(4)
-+#define PCA9641_STS_TEST_INT		BIT(5)
-+#define PCA9641_STS_SCL_IO		BIT(6)
-+#define PCA9641_STS_SDA_IO		BIT(7)
-+
-+#define PCA9641_RES_TIME	0x03
-+
- #define BUSON		(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
- #define MYBUS		(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
- #define mybus(x)	(!((x) & MYBUS) || ((x) & MYBUS) == MYBUS)
- #define busoff(x)	(!((x) & BUSON) || ((x) & BUSON) == BUSON)
- 
-+#define BUSOFF(x, y)	(!((x) & PCA9641_CTL_LOCK_GRANT) && \
-+			!((y) & PCA9641_STS_OTHER_LOCK))
-+#define other_lock(x)	((x) & PCA9641_STS_OTHER_LOCK)
-+#define lock_grant(x)	((x) & PCA9641_CTL_LOCK_GRANT)
-+
- /* arbitration timeouts, in jiffies */
- #define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
- #define ARB2_TIMEOUT	(HZ / 4)	/* 250 ms until acquisition failure */
-@@ -79,6 +111,7 @@ struct pca9541 {
- 
- static const struct i2c_device_id pca9541_id[] = {
- 	{"pca9541", 0},
-+	{"pca9641", 1},
- 	{}
- };
- 
-@@ -87,6 +120,7 @@ MODULE_DEVICE_TABLE(i2c, pca9541_id);
- #ifdef CONFIG_OF
- static const struct of_device_id pca9541_of_match[] = {
- 	{ .compatible = "nxp,pca9541" },
-+	{ .compatible = "nxp,pca9641" },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, pca9541_of_match);
-@@ -328,6 +362,125 @@ static int pca9541_release_chan(struct i2c_mux_core *muxc, u32 chan)
+Adding the 'PA cnt' column grouped under data cacheline address.
+
+It shows how many times the physical addresses changed for the hist
+entry. It does not show the number of different physical addresses for
+entry, because we don't store those. We only track the number of times
+we got different address than we currently hold, which is not expensive
+and gives similar info.
+
+  $ perf c2c report --stdio
+
+  #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----
+  # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt
+  # .....  ..................  ....  ......  .......  .......  .......  .......  .......
+  #
+        0  0xffff9ad56dca0a80     0       9       10    7.69%        2        2        0
+        1  0xffff9ad56dce0a80     0       9        9    7.69%        2        2        0
+        2  0xffff9ad37659ad80     0       1        2    3.85%        1        1        0
+
+  ...
+
+  #        ----- HITM -----  -- Store Refs --  --------- Data address ---------
+  #   Num      Rmt      Lcl   L1 Hit  L1 Miss              Offset  Node  PA cnt      Pid
+  # .....  .......  .......  .......  .......  ..................  ....  ......  .......
+  #
+    -------------------------------------------------------------
+        0        0        2        3        0  0xffff9ad56dca0a80
+    -------------------------------------------------------------
+             0.00%    0.00%   33.33%    0.00%                 0x0     0       1     2510
+             0.00%    0.00%   33.33%    0.00%                 0x4     0       1     2476
+             0.00%    0.00%   33.33%    0.00%                0x20     0       1        0
+             0.00%  100.00%    0.00%    0.00%                0x38     0       1        0
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Joe Mario <jmario@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180309101442.9224-10-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-c2c.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index a6336e4e2850..2126bfbcb385 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -507,6 +507,17 @@ dcacheline_node_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
+ 	return scnprintf(hpp->buf, hpp->size, "%*s", width, c2c_he->nodestr);
  }
  
- /*
-+ * Arbitration management functions
-+ */
-+static void pca9641_release_bus(struct i2c_client *client)
++static int
++dcacheline_node_count(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
++		      struct hist_entry *he)
 +{
-+	pca9541_reg_write(client, PCA9641_CONTROL, 0);
++	struct c2c_hist_entry *c2c_he;
++	int width = c2c_width(fmt, hpp, he->hists);
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++	return scnprintf(hpp->buf, hpp->size, "%*lu", width, c2c_he->paddr_cnt);
 +}
 +
-+/*
-+ * Channel arbitration
-+ *
-+ * Return values:
-+ *  <0: error
-+ *  0 : bus not acquired
-+ *  1 : bus acquired
-+ */
-+static int pca9641_arbitrate(struct i2c_client *client)
-+{
-+	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
-+	struct pca9541 *data = i2c_mux_priv(muxc);
-+	int reg_ctl, reg_sts;
-+
-+	reg_ctl = pca9541_reg_read(client, PCA9641_CONTROL);
-+	if (reg_ctl < 0)
-+		return reg_ctl;
-+	reg_sts = pca9541_reg_read(client, PCA9641_STATUS);
-+
-+	if (BUSOFF(reg_ctl, reg_sts)) {
-+		/*
-+		 * Bus is off. Request ownership or turn it on unless
-+		 * other master requested ownership.
-+		 */
-+		reg_ctl |= PCA9641_CTL_LOCK_REQ;
-+		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
-+		reg_ctl = pca9541_reg_read(client, PCA9641_CONTROL);
-+
-+		if (lock_grant(reg_ctl)) {
-+			/*
-+			 * Other master did not request ownership,
-+			 * or arbitration timeout expired. Take the bus.
-+			 */
-+			reg_ctl |= PCA9641_CTL_BUS_CONNECT
-+					| PCA9641_CTL_LOCK_REQ;
-+			pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
-+			data->select_timeout = SELECT_DELAY_SHORT;
-+
-+			return 1;
-+		} else {
-+			/*
-+			 * Other master requested ownership.
-+			 * Set extra long timeout to give it time to acquire it.
-+			 */
-+			data->select_timeout = SELECT_DELAY_LONG * 2;
-+		}
-+	} else if (lock_grant(reg_ctl)) {
-+		/*
-+		 * Bus is on, and we own it. We are done with acquisition.
-+		 */
-+		reg_ctl |= PCA9641_CTL_BUS_CONNECT | PCA9641_CTL_LOCK_REQ;
-+		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
-+
-+		return 1;
-+	} else if (other_lock(reg_sts)) {
-+		/*
-+		 * Other master owns the bus.
-+		 * If arbitration timeout has expired, force ownership.
-+		 * Otherwise request it.
-+		 */
-+		data->select_timeout = SELECT_DELAY_LONG;
-+		reg_ctl |= PCA9641_CTL_LOCK_REQ;
-+		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
-+	}
-+	return 0;
-+}
-+
-+static int pca9641_select_chan(struct i2c_mux_core *muxc, u32 chan)
-+{
-+	struct pca9541 *data = i2c_mux_priv(muxc);
-+	struct i2c_client *client = data->client;
-+	int ret;
-+	unsigned long timeout = jiffies + ARB2_TIMEOUT;
-+		/* give up after this time */
-+
-+	data->arb_timeout = jiffies + ARB_TIMEOUT;
-+		/* force bus ownership after this time */
-+
-+	do {
-+		ret = pca9641_arbitrate(client);
-+		if (ret)
-+			return ret < 0 ? ret : 0;
-+
-+		if (data->select_timeout == SELECT_DELAY_SHORT)
-+			udelay(data->select_timeout);
-+		else
-+			msleep(data->select_timeout / 1000);
-+	} while (time_is_after_eq_jiffies(timeout));
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int pca9641_release_chan(struct i2c_mux_core *muxc, u32 chan)
-+{
-+	struct pca9541 *data = i2c_mux_priv(muxc);
-+	struct i2c_client *client = data->client;
-+
-+	pca9641_release_bus(client);
-+	return 0;
-+}
-+
-+static int pca9641_detect_id(struct i2c_client *client)
-+{
-+	int reg;
-+
-+	reg = pca9541_reg_read(client, PCA9641_ID);
-+	if (reg == PCA9641_ID_MAGIC)
-+		return 1;
-+	else
-+		return 0;
-+}
-+/*
-  * I2C init/probing/exit functions
-  */
- static int pca9541_probe(struct i2c_client *client,
-@@ -339,34 +492,45 @@ static int pca9541_probe(struct i2c_client *client,
- 	struct pca9541 *data;
- 	int force;
- 	int ret;
-+	int detect_id;
+ static int offset_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
+ 			struct hist_entry *he)
+ {
+@@ -1252,7 +1263,7 @@ cl_idx_empty_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
+ 	}
  
- 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE_DATA))
- 		return -ENODEV;
+ static struct c2c_dimension dim_dcacheline = {
+-	.header		= HEADER_SPAN("--- Cacheline ----", "Address", 1),
++	.header		= HEADER_SPAN("--- Cacheline ----", "Address", 2),
+ 	.name		= "dcacheline",
+ 	.cmp		= dcacheline_cmp,
+ 	.entry		= dcacheline_entry,
+@@ -1267,10 +1278,18 @@ static struct c2c_dimension dim_dcacheline_node = {
+ 	.width		= 4,
+ };
  
-+	detect_id = pca9641_detect_id(client);
- 	/*
- 	 * I2C accesses are unprotected here.
- 	 * We have to lock the adapter before releasing the bus.
- 	 */
--	i2c_lock_adapter(adap);
--	pca9541_release_bus(client);
--	i2c_unlock_adapter(adap);
--
-+	if (detect_id == 0) {
-+		i2c_lock_adapter(adap);
-+		pca9541_release_bus(client);
-+		i2c_unlock_adapter(adap);
-+	} else {
-+		i2c_lock_adapter(adap);
-+		pca9641_release_bus(client);
-+		i2c_unlock_adapter(adap);
-+	}
- 	/* Create mux adapter */
+-static struct c2c_header header_offset_tui = HEADER_SPAN("-----", "Off", 1);
++static struct c2c_dimension dim_dcacheline_count = {
++	.header		= HEADER_LOW("PA cnt"),
++	.name		= "dcacheline_count",
++	.cmp		= empty_cmp,
++	.entry		= dcacheline_node_count,
++	.width		= 6,
++};
++
++static struct c2c_header header_offset_tui = HEADER_SPAN("-----", "Off", 2);
  
- 	force = 0;
- 	if (pdata)
- 		force = pdata->modes[0].adap_id;
--	muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
-+	if (detect_id == 0) {
-+		muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
- 			     I2C_MUX_ARBITRATOR,
- 			     pca9541_select_chan, pca9541_release_chan);
-+	} else {
-+		muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
-+			     I2C_MUX_ARBITRATOR,
-+			     pca9641_select_chan, pca9641_release_chan);
-+	}
- 	if (!muxc)
+ static struct c2c_dimension dim_offset = {
+-	.header		= HEADER_SPAN("--- Data address -", "Offset", 1),
++	.header		= HEADER_SPAN("--- Data address -", "Offset", 2),
+ 	.name		= "offset",
+ 	.cmp		= offset_cmp,
+ 	.entry		= offset_entry,
+@@ -1605,6 +1624,7 @@ static struct c2c_dimension dim_dcacheline_num_empty = {
+ static struct c2c_dimension *dimensions[] = {
+ 	&dim_dcacheline,
+ 	&dim_dcacheline_node,
++	&dim_dcacheline_count,
+ 	&dim_offset,
+ 	&dim_offset_node,
+ 	&dim_iaddr,
+@@ -2496,7 +2516,8 @@ static int ui_quirks(void)
+ 
+ 	/* Fix the zero line for dcacheline column. */
+ 	buf = fill_line("Cacheline", dim_dcacheline.width +
+-				     dim_dcacheline_node.width + 2);
++				     dim_dcacheline_node.width +
++				     dim_dcacheline_count.width + 4);
+ 	if (!buf)
  		return -ENOMEM;
  
- 	data = i2c_mux_priv(muxc);
- 	data->client = client;
--
- 	i2c_set_clientdata(client, muxc);
--
- 	ret = i2c_mux_add_adapter(muxc, force, 0, 0);
- 	if (ret)
- 		return ret;
--- 
-2.9.3
+@@ -2504,7 +2525,8 @@ static int ui_quirks(void)
+ 
+ 	/* Fix the zero line for offset column. */
+ 	buf = fill_line(nodestr, dim_offset.width +
+-			      dim_offset_node.width + 2);
++			         dim_offset_node.width +
++				 dim_dcacheline_count.width + 4);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+@@ -2626,7 +2648,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 		"percent_lcl_hitm,"
+ 		"percent_stores_l1hit,"
+ 		"percent_stores_l1miss,"
+-		"offset,offset_node,",
++		"offset,offset_node,dcacheline_count,",
+ 		add_pid   ? "pid," : "",
+ 		add_tid   ? "tid," : "",
+ 		add_iaddr ? "iaddr," : "",
+@@ -2789,6 +2811,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 			"cl_idx,"
+ 			"dcacheline,"
+ 			"dcacheline_node,"
++			"dcacheline_count,"
+ 			"tot_recs,"
+ 			"percent_hitm,"
+ 			"tot_hitm,lcl_hitm,rmt_hitm,"
