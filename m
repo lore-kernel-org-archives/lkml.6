@@ -1,85 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934979AbeCTBM2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 21:12:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53568 "EHLO
+        id S1751094AbeCTBWX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 21:22:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41872 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932939AbeCTBM0 (ORCPT
+        with ESMTP id S1750731AbeCTBWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 21:12:26 -0400
-Date: Tue, 20 Mar 2018 09:12:16 +0800
+        Mon, 19 Mar 2018 21:22:16 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: alsa-devel@alsa-project.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: uniphier: evea: add switch for changing source of
- line-in
-Message-ID: <20180320011216.GN2186@sirena.org.uk>
-References: <20180314123900.19505-1-suzuki.katsuhiro@socionext.com>
- <20180314162609.GV2186@sirena.org.uk>
- <001101d3bf39$6e3933c0$4aab9b40$@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Wi2ae8OABxFj6q5L"
-Content-Disposition: inline
-In-Reply-To: <001101d3bf39$6e3933c0$4aab9b40$@socionext.com>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To: Nicholas Lowell <nlowell@lexmark.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: giving regulator controlling gpios a non-empty label when used through the devicetree." to the regulator tree
+In-Reply-To: <1521465799-5589-1-git-send-email-nlowell@lexmark.com>
+Message-Id: <20180320012212.0740244007A@finisterre.ee.mobilebroadband>
+Date: Tue, 20 Mar 2018 01:22:12 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---Wi2ae8OABxFj6q5L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   regulator: giving regulator controlling gpios a non-empty label when used through the devicetree.
 
-On Mon, Mar 19, 2018 at 01:19:10PM +0900, Katsuhiro Suzuki wrote:
+has been applied to the regulator tree at
 
-> > I'll apply for now but this should really be a DAPM control so that we
-> > can power down things connected to the disconnected line inputs when
-> > recording.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-> Thanks a lot for your suggestion. I tried to change the implementation to DAPM
-> control as follows:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> I can see the value of ALINSW1 register at 'Line In 1 Mux',0 using
->   amixer get 'Line In 1 Mux',0
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> But I can't change the value.
->   amixer set 'Line In 1 Mux',0 LIN2
->   Simple mixer control 'Line In 1 Mux',0
->     Capabilities: enum
->     Items: 'LIN1' 'LIN2' 'LIN3'
->     Item0: 'LIN1'
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> Would you tell me what is wrong...
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Ugh, I *have* run into that before but I can't remember what triggers it
-and your code doesn't have any mistakes I can spot.  Unfortunately I'm
-at Linaro Connect this week and don't have a test system I can poke at
-with me to remind myself, and I'm still travelling next week
-unfortunately.
+Thanks,
+Mark
 
-I'd add some trace to the set code path to make sure everything is being
-called as expected.  It's somemthing really small that's hard to make a
-warning for in the code IIRC.
+>From 37ad490bab09b7c218e37b570069cf188f2616e7 Mon Sep 17 00:00:00 2001
+From: Nicholas Lowell <nlowell@lexmark.com>
+Date: Mon, 19 Mar 2018 09:23:14 -0400
+Subject: [PATCH] regulator: giving regulator controlling gpios a non-empty
+ label when used through the devicetree.
 
---Wi2ae8OABxFj6q5L
-Content-Type: application/pgp-signature; name="signature.asc"
+When the label is empty, it causes missing information and limits diagnostics
+for instances such as 'cat /sys/kernel/debug/gpio'
 
------BEGIN PGP SIGNATURE-----
+Setting the label to the regulator supply_name will point to the device
+using the gpio(s).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqwX+8ACgkQJNaLcl1U
-h9B+8Af/QQGTFkLC66sq2/jYkUs8UZJhHNj12km7M4MmEXAn7DBmnkE/EOBWonBW
-VkUyPNIpqrLEVd9ROjvHiBRzvGgJsnZUAJ0ZFVpWEYyFlp34nJdHNggw2KQPC8/n
-OXDXw203NShiCmzqBJ/G+kanSDSIiUGq+yXFoDApjemx6VjtKKxuf8Q9m8Ys54o2
-UWgmaDAVXmnikl+H9dV5GQ7y3II8OMVgYeYApPtzhW8PKKq+Hx4XesxcyT/UzLeW
-TEOQd6nkhrNYAG8RvBQqfBfG4xYIvrqjkm7kdo4udETAMPCQZlVya7hK0Mj37BLj
-z4UMUpRSlt1VSXTifOY2fml1/8/f3w==
-=WXd1
------END PGP SIGNATURE-----
+Signed-off-by: Nicholas Lowell <nlowell@lexmark.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/gpio-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---Wi2ae8OABxFj6q5L--
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index a2eb50719c7b..a86b8997bb54 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -196,6 +196,7 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 				break;
+ 			}
+ 			config->gpios[i].gpio = gpio;
++			config->gpios[i].label = config->supply_name;
+ 			if (proplen > 0) {
+ 				of_property_read_u32_index(np, "gpios-states",
+ 							   i, &ret);
+-- 
+2.16.2
