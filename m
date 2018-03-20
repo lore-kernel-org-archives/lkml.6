@@ -1,74 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751319AbeCTCHJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:07:09 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35234 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750731AbeCTCHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:07:06 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.02912532|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03296;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BN7lK90_1521511614;
-Date: Tue, 20 Mar 2018 10:06:54 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 06/19] csky: IRQ handling
-Message-ID: <20180320020651.GA14709@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <28baa2d92e5c3145afdff68ca784075afbb64d88.1521399976.git.ren_guo@c-sky.com>
- <alpine.DEB.2.21.1803191413300.2010@nanos.tec.linutronix.de>
+        id S1751351AbeCTCI1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:08:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750882AbeCTCI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:08:26 -0400
+Date: Mon, 19 Mar 2018 22:08:23 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+Subject: Re: [PATCH 09/14] mm/hmm: do not differentiate between empty entry
+ or missing directory
+Message-ID: <20180320020823.GA3436@redhat.com>
+References: <20180316191414.3223-1-jglisse@redhat.com>
+ <20180316191414.3223-10-jglisse@redhat.com>
+ <680af8e7-0f6d-85cb-f259-8a6a1d1dc9c3@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803191413300.2010@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <680af8e7-0f6d-85cb-f259-8a6a1d1dc9c3@nvidia.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Mon, Mar 19, 2018 at 04:06:11PM -0700, John Hubbard wrote:
 
-On Mon, Mar 19, 2018 at 02:16:37PM +0100, Thomas Gleixner wrote:
-> > +static inline unsigned long arch_local_irq_save(void)
-> > +{
-> > +	unsigned long flags;
+[...]
+
+> > @@ -419,7 +404,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+> >  		pfns[i] = 0;
+> >  
+> >  		if (pte_none(pte)) {
+> > -			pfns[i] = HMM_PFN_EMPTY;
+> > +			pfns[i] = 0;
 > 
-> Newline between declaration and code please.
-OK
-
-> > +void csky_do_IRQ(int irq, struct pt_regs *regs)
+> Why is this being set to zero? (0 == HMM_PFN_VALID, btw.)
+> I would have expected HMM_PFN_NONE. Actually, looking through the 
+> larger patchset, I think there are a couple of big questions about
+> these HMM_PFN_* flags. Maybe it's just that the comment documentation
+> has fallen completely behind, but it looks like there is an actual
+> problem in the code:
 > 
-> static? If not, then it needs a declaration in a header somewhere.
-Yes, need static.
-
-> > +asmlinkage void csky_do_auto_IRQ(struct pt_regs *regs)
-> > +{
-> > +	unsigned long irq, psr;
-> > +
-> > +	asm volatile("mfcr %0, psr":"=r"(psr));
-> > +
-> > +	irq = (psr >> 16) & 0xff;
-> > +
-> > +	if (irq == 10)
-> > +		irq = csky_get_auto_irqno();
-> > +	else
-> > +		irq -= 32;
+> 1. HMM_PFN_* used to be bit shifts, so setting them directly sometimes
+> worked. But now they are enum values, so that doesn't work anymore.
+> Yet they are still being set directly in places: the enum is being
+> treated as a flag, probably incorrectly.
 > 
-> Please add a comment explaining this magic here. Magic numbers w/o
-> explanation are bad.
-Yes, you are right. I will fixup them next.
+> Previously: 
+> 
+> #define HMM_PFN_VALID (1 << 0)
+> #define HMM_PFN_WRITE (1 << 1)
+> #define HMM_PFN_ERROR (1 << 2)
+> #define HMM_PFN_EMPTY (1 << 3)
+> ...
+> 
+> New:
+> 
+> enum hmm_pfn_flag_e {
+> 	HMM_PFN_VALID = 0,
+> 	HMM_PFN_WRITE,
+> 	HMM_PFN_ERROR,
+> 	HMM_PFN_NONE,
+> ...
+> 
+> Yet we still have, for example:
+> 
+>     pfns = HMM_PFN_ERROR;
+> 
+> This might be accidentally working, because HMM_PFN_ERROR
+> has a value of 2, so only one bit is set, but...yikes.
+> 
+> 2. The hmm_range.flags variable is a uint64_t* (pointer). And then
+> the patchset uses the HMM_PFN_* enum to *index* into that as an 
+> array. Something is highly suspect here, because...an array that is
+> indexed by HMM_PFN_* enums? It's certainly not documented that way.
+> 
+> Examples:
+>     range->flags[HMM_PFN_ERROR]
+>  
+>     range->flags[HMM_PFN_VALID] 
+> 
+> I'll go through and try to point these out right next to the relevant
+> parts of the patchset, but because I'm taking a little longer than 
+> I'd hoped to review this, I figured it's best to alert you earlier, as
+> soon as I spot something.
+> 
 
-PSR is our Processor Status Register and it store the vector number.
+I added more comments in v3 to explain this in last patch (15), and i
+also splited values and flags hoping this make it more clear. Maybe
+look at how nouveau use that NV_HMM_PAGE_FLAG* and NV_HMM_PAGE_VALUE*
+[1] [2]
 
-'10' is our auto-interrupt exception entry and we need get the irqno
-from the interrupt-controller.
+It is the same idea as pgprot_t vm_page_prot in vma struct except that
+it is per device driver and hence not something i can optimize away at
+build time for all possible user of HMM and thus why i use an array
+provided by each device driver.
 
-The "vector num > 32" is our vector interrupt exception entries, so we
-can calculate the irq-num by vector-num and no need to access the
-interrupt-controller's io regs.
+Hope this helps explaining it. Note that this would be best to discuss
+as last patch review as this patch has nothing to do with that.
 
-Best Regards
-  Guo Ren
+Cheers,
+Jérôme
+
+[1] https://cgit.freedesktop.org/~glisse/linux/commit/?h=nouveau-hmm&id=b5da479c212d1fe7b6734dd8e69045e23871fdc8
+[2] https://cgit.freedesktop.org/~glisse/linux/commit/?h=nouveau-hmm&id=1993d1b09f5941e0fab80c0b485eef296119d393
