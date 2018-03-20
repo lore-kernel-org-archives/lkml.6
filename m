@@ -1,128 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753078AbeCTLKZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:10:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752679AbeCTLFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:05:00 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 1/7] HID: multitouch: export a quirk for the button handling of touchpads
-Date: Tue, 20 Mar 2018 12:04:45 +0100
-Message-Id: <20180320110451.16582-2-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
-References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
+        id S1752723AbeCTLPa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:15:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44003 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751552AbeCTLP3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:15:29 -0400
+Date: Tue, 20 Mar 2018 04:15:06 -0700
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-2c2a9bbe7fecb2ad4981b6f4a56cacbfb849f848@git.kernel.org>
+Cc: mingo@kernel.org, jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+        torvalds@linux-foundation.org, eranian@google.com,
+        kan.liang@linux.intel.com, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com, vincent.weaver@maine.edu, linux-kernel@vger.kernel.org,
+        peterz@infradead.org
+Reply-To: jolsa@redhat.com, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
+        acme@redhat.com, tglx@linutronix.de, kan.liang@linux.intel.com,
+        eranian@google.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        vincent.weaver@maine.edu, hpa@zytor.com
+In-Reply-To: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
+References: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/x86/intel: Disable userspace RDPMC usage for
+ large PEBS
+Git-Commit-ID: 2c2a9bbe7fecb2ad4981b6f4a56cacbfb849f848
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using the class name, we better have a specific quirk for it
-so other classes can make use of it.
+Commit-ID:  2c2a9bbe7fecb2ad4981b6f4a56cacbfb849f848
+Gitweb:     https://git.kernel.org/tip/2c2a9bbe7fecb2ad4981b6f4a56cacbfb849f848
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Mon, 12 Feb 2018 14:20:35 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Mar 2018 08:52:58 +0100
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+perf/x86/intel: Disable userspace RDPMC usage for large PEBS
+
+Userspace RDPMC cannot possibly work for large PEBS, which was introduced in:
+
+  b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt handling (large PEBS interrupt threshold)")
+
+When the PEBS interrupt threshold is larger than one, there is no way
+to get exact auto-reload times and value for userspace RDPMC.  Disable
+the userspace RDPMC usage when large PEBS is enabled.
+
+The only exception is when the PEBS interrupt threshold is 1, in which
+case user-space RDPMC works well even with auto-reload events.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Fixes: b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt handling (large PEBS interrupt threshold)")
+Link: http://lkml.kernel.org/r/1518474035-21006-6-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+(cherry picked from commit 1af22eba248efe2de25658041a80a3d40fb3e92e)
 ---
- drivers/hid/hid-multitouch.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ arch/x86/events/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index a144d3064829..fc80a9bf3e39 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -74,6 +74,7 @@ MODULE_LICENSE("GPL");
- #define MT_QUIRK_TOUCH_SIZE_SCALING	BIT(15)
- #define MT_QUIRK_STICKY_FINGERS		BIT(16)
- #define MT_QUIRK_ASUS_CUSTOM_UP		BIT(17)
-+#define MT_QUIRK_WIN8_PTP_BUTTONS	BIT(18)
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 140d33288e78..3d24edfef3e4 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2118,7 +2118,8 @@ static int x86_pmu_event_init(struct perf_event *event)
+ 			event->destroy(event);
+ 	}
  
- #define MT_INPUTMODE_TOUCHSCREEN	0x02
- #define MT_INPUTMODE_TOUCHPAD		0x03
-@@ -241,7 +242,8 @@ static struct mt_class mt_classes[] = {
- 			MT_QUIRK_IGNORE_DUPLICATES |
- 			MT_QUIRK_HOVERING |
- 			MT_QUIRK_CONTACT_CNT_ACCURATE |
--			MT_QUIRK_STICKY_FINGERS },
-+			MT_QUIRK_STICKY_FINGERS |
-+			MT_QUIRK_WIN8_PTP_BUTTONS },
- 	{ .name = MT_CLS_EXPORT_ALL_INPUTS,
- 		.quirks = MT_QUIRK_ALWAYS_VALID |
- 			MT_QUIRK_CONTACT_CNT_ACCURATE,
-@@ -250,7 +252,8 @@ static struct mt_class mt_classes[] = {
- 		.quirks = MT_QUIRK_ALWAYS_VALID |
- 			MT_QUIRK_IGNORE_DUPLICATES |
- 			MT_QUIRK_HOVERING |
--			MT_QUIRK_CONTACT_CNT_ACCURATE,
-+			MT_QUIRK_CONTACT_CNT_ACCURATE |
-+			MT_QUIRK_WIN8_PTP_BUTTONS,
- 		.export_all_inputs = true },
+-	if (READ_ONCE(x86_pmu.attr_rdpmc))
++	if (READ_ONCE(x86_pmu.attr_rdpmc) &&
++	    !(event->hw.flags & PERF_X86_EVENT_FREERUNNING))
+ 		event->hw.flags |= PERF_X86_EVENT_RDPMC_ALLOWED;
  
- 	/*
-@@ -660,8 +663,7 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		 * MS PTP spec says that external buttons left and right have
- 		 * usages 2 and 3.
- 		 */
--		if ((cls->name == MT_CLS_WIN_8 ||
--			cls->name == MT_CLS_WIN_8_DUAL) &&
-+		if ((cls->quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
- 		    field->application == HID_DG_TOUCHPAD &&
- 		    (usage->hid & HID_USAGE) > 1)
- 			code--;
-@@ -773,9 +775,7 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
-  */
- static void mt_sync_frame(struct mt_device *td, struct input_dev *input)
- {
--	__s32 cls = td->mtclass.name;
--
--	if (cls == MT_CLS_WIN_8 || cls == MT_CLS_WIN_8_DUAL)
-+	if (td->mtclass.quirks & MT_QUIRK_WIN8_PTP_BUTTONS)
- 		input_event(input, EV_KEY, BTN_LEFT, td->left_button_state);
- 
- 	input_mt_sync_frame(input);
-@@ -827,7 +827,6 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 				bool first_packet)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
--	__s32 cls = td->mtclass.name;
- 	__s32 quirks = td->mtclass.quirks;
- 	struct input_dev *input = field->hidinput->input;
- 
-@@ -905,7 +904,7 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 			 * non finger/touch events in the first_packet of
- 			 * a (possible) multi-packet frame.
- 			 */
--			if ((cls == MT_CLS_WIN_8 || cls == MT_CLS_WIN_8_DUAL) &&
-+			if ((quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
- 			    !first_packet)
- 				return;
- 
-@@ -916,7 +915,7 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 			 * BTN_LEFT if either is pressed, so we or all values
- 			 * together and report the result in mt_sync_frame().
- 			 */
--			if ((cls == MT_CLS_WIN_8 || cls == MT_CLS_WIN_8_DUAL) &&
-+			if ((quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
- 			    usage->type == EV_KEY && usage->code == BTN_LEFT) {
- 				td->left_button_state |= value;
- 				return;
-@@ -940,7 +939,6 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
--	__s32 cls = td->mtclass.name;
- 	struct hid_field *field;
- 	bool first_packet;
- 	unsigned count;
-@@ -969,7 +967,7 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- 		 * of a possible multi-packet frame be checking that the
- 		 * timestamp has changed.
- 		 */
--		if ((cls == MT_CLS_WIN_8 || cls == MT_CLS_WIN_8_DUAL) &&
-+		if ((td->mtclass.quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
- 		    td->num_received == 0 && td->prev_scantime != scantime)
- 			td->num_expected = value;
- 		/* A non 0 contact count always indicates a first packet */
--- 
-2.14.3
+ 	return err;
