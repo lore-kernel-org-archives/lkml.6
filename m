@@ -1,58 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeCTPHI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:07:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeCTPHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:07:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBFC9217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+        id S1751553AbeCTPIW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:08:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33920 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeCTPIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:08:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 675026021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
+References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
+ <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
+ <20180320144801.GE19744@ziepe.ca>
+ <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <3e6cfa25-6b9f-24ff-499a-6df2740b658b@codeaurora.org>
+Date: Tue, 20 Mar 2018 10:08:16 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXCRYvLthy2FMccoDhnPzyPT5J_hcvD63e-DM9okVaxeg@mail.gmail.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com> <CALCETrXCRYvLthy2FMccoDhnPzyPT5J_hcvD63e-DM9okVaxeg@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 20 Mar 2018 15:06:44 +0000
-X-Gmail-Original-Message-ID: <CALCETrXwRoCyOMd0jTmY7zzt6asvB8ac0KCoHOyZgYhJyuhEVw@mail.gmail.com>
-Message-ID: <CALCETrXwRoCyOMd0jTmY7zzt6asvB8ac0KCoHOyZgYhJyuhEVw@mail.gmail.com>
-Subject: Re: [PATCH 00/15] x86: Enable FSGSBASE instructions
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, X86 ML <x86@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 3:05 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Mon, Mar 19, 2018 at 5:49 PM, Chang S. Bae <chang.seok.bae@intel.com> wrote:
->> FSGSBASE is 64-bit instruction set to allow read/write
->> FS/GS base from any privilege. As introduced from
->> Ivybridge, enabling effort has been revolving quite long
->> [2,3,4] for various reasons. After extended discussions [1],
->> this patchset is proposed to introduce new ABIs of
->> customizing FS/GS base (separate from its selector).
+On 3/20/2018 10:00 AM, Sinan Kaya wrote:
+> On 3/20/2018 9:48 AM, Jason Gunthorpe wrote:
+>> On Mon, Mar 19, 2018 at 10:47:43PM -0400, Sinan Kaya wrote:
+>>> Code includes wmb() followed by writel(). writel() already has a barrier on
+>>> some architectures like arm64.
+>>>
+>>> This ends up CPU observing two barriers back to back before executing the
+>>> register write.
+>>>
+>>> Since code already has an explicit barrier call, changing writel() to
+>>> writel_relaxed().
+>>>
+>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
+>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+>>> index 8329ec6..4a6b981 100644
+>>> +++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+>>> @@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
+>>>  
+>>>  	/* ring CMDQ DB */
+>>>  	wmb();
+>>> -	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+>>> -	       rcfw->cmdq_bar_reg_prod_off);
+>>> -	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+>>> -	       rcfw->cmdq_bar_reg_trig_off);
+>>> +	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+>>> +		       rcfw->cmdq_bar_reg_prod_off);
+>>> +	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+>>> +		       rcfw->cmdq_bar_reg_trig_off);
 >>
->> FSGSBASE-enabled VM can be located on hosts with
->> either HW virtualization or SW emulation. KVM advertises
->> FSGSBASE when physical CPU has and emulation is
->> supported in QEMU/TCG [5]. In a pool of mixed systems, VMM
->> may disable FSGSBASE for seamless VM migrations [6].
+>> Woah, this may not be safe..
 >>
->> A couple of major benefits are expected. Kernel will have
->> performance improvement in context switch by skipping MSR
->> write for GS base. User-level programs (such as JAVA-based)
->> benefit from avoiding system calls to edit FS/GS base.
->
-> Can you describe what changed since the last submission?  It looks
-> like a lot has changed and this series is much more complicated and
-> much more fragile than it used to be.  Why?
+>> The definition of writel_relaxed() is that it is fully unordered, so
+>> the above two writes may change order now. Broadcom guys would have to
+>> ack if that it is OK or not for their hardware.
+>>
+>> In general this is not an OK approach for a mechanical
+>> conversion.. Only the first writel can be convereted.
+>>
+>> You need to check all your patches to make sure there are no
+>> subsequent writel's in the places touched.
+> 
+> I paid special attention to this one and went to check the barriers
+> document. According to the document, writes (whether it is relaxed or not)
+> are always observed by the HW inorder with respect to each other.
+> It just doesn't guarantee anything above writel_relaxed() to be observed.
+> Since we already have a wmb(), this is taken care of. 
+> 
+> If somebody wants things to be observed after register write, there should
+> have been a wmb() or mmiowb() afterwards.
 
-Also, I've been getting lots of kbuild bot complaints about something
-that looks like this patches from your git tree as recently as March
-17.  Have you fixed those problems?
+Never mind, it will break some architectures. I'll only change the first one.
+
+ (1) On some systems, I/O stores are not strongly ordered across all CPUs, and
+     so for _all_ general drivers locks should be used and mmiowb() must be
+     issued prior to unlocking the critical section.
+
+ (2) If the accessor functions are used to refer to an I/O memory window with
+     relaxed memory access properties, then _mandatory_ memory barriers are
+     required to enforce ordering. 
+
+
+> 
+> 
+>>
+>> Jason
+>>
+> 
+> 
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
