@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751782AbeCTQoD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 12:44:03 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54568 "EHLO
+        id S1751919AbeCTQoH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 12:44:07 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51268 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751757AbeCTQnr (ORCPT
+        with ESMTP id S1751755AbeCTQnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 12:43:47 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -18,9 +18,9 @@ Cc: Frederic Weisbecker <fweisbec@gmail.com>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v7 1/8] time: tick-sched: Reorganize idle tick management code
-Date: Tue, 20 Mar 2018 16:13:36 +0100
-Message-ID: <2756593.6znKTA0Udp@aspire.rjw.lan>
+Subject: [RFT][PATCH v7 2/8] sched: idle: Do not stop the tick upfront in the idle loop
+Date: Tue, 20 Mar 2018 16:15:24 +0100
+Message-ID: <2802114.rPO26tdOrH@aspire.rjw.lan>
 In-Reply-To: <2390019.oHdSGtR3EE@aspire.rjw.lan>
 References: <2390019.oHdSGtR3EE@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -32,194 +32,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Prepare the scheduler tick code for reworking the idle loop to
-avoid stopping the tick in some cases.
+Push the decision whether or not to stop the tick somewhat deeper
+into the idle loop.
 
-The idea is to split the nohz idle entry call to decouple the idle
-time stats accounting and preparatory work from the actual tick stop
-code, in order to later be able to delay the tick stop once we reach
-more power-knowledgeable callers.
+Stopping the tick upfront leads to unpleasant outcomes in case the
+idle governor doesn't agree with the nohz code on the duration of the
+upcoming idle period.  Specifically, if the tick has been stopped and
+the idle governor predicts short idle, the situation is bad regardless
+of whether or not the prediction is accurate.  If it is accurate, the
+tick has been stopped unnecessarily which means excessive overhead.
+If it is not accurate, the CPU is likely to spend too much time in
+the (shallow, because short idle has been predicted) idle state
+selected by the governor [1].
 
-Move away the tick_nohz_start_idle() invocation from
-__tick_nohz_idle_enter(), rename the latter to
-__tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
-as a wrapper around it for calling it from the outside.
+As the first step towards addressing this problem, change the code
+to make the tick stopping decision inside of the loop in do_idle().
+In particular, do not stop the tick in the cpu_idle_poll() code path.
+Also don't do that in tick_nohz_irq_exit() which doesn't really have
+enough information on whether or not to stop the tick.
 
-Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
-of calling the entire __tick_nohz_idle_enter(), add another wrapper
-disabling and enabling interrupts around tick_nohz_idle_stop_tick()
-and make the current callers of tick_nohz_idle_enter() call it too
-to retain their current functionality.
-
+Link: https://marc.info/?l=linux-pm&m=150116085925208&w=2 # [1]
+Link: https://tu-dresden.de/zih/forschung/ressourcen/dateien/projekte/haec/powernightmares.pdf
+Suggested-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/x86/xen/smp_pv.c    |    1 +
- include/linux/tick.h     |   12 ++++++++++++
- kernel/sched/idle.c      |    1 +
- kernel/time/tick-sched.c |   46 +++++++++++++++++++++++++---------------------
- 4 files changed, 39 insertions(+), 21 deletions(-)
+ include/linux/tick.h     |    2 ++
+ kernel/sched/idle.c      |    9 ++++++---
+ kernel/time/tick-sched.c |   26 ++++++++++++++++++--------
+ 3 files changed, 26 insertions(+), 11 deletions(-)
 
-Index: linux-pm/include/linux/tick.h
-===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -114,6 +114,7 @@ enum tick_dep_bits {
- #ifdef CONFIG_NO_HZ_COMMON
- extern bool tick_nohz_enabled;
- extern int tick_nohz_tick_stopped(void);
-+extern void tick_nohz_idle_stop_tick(void);
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
-@@ -122,9 +123,18 @@ extern unsigned long tick_nohz_get_idle_
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
- extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
- extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
-+
-+static inline void tick_nohz_idle_stop_tick_protected(void)
-+{
-+	local_irq_disable();
-+	tick_nohz_idle_stop_tick();
-+	local_irq_enable();
-+}
-+
- #else /* !CONFIG_NO_HZ_COMMON */
- #define tick_nohz_enabled (0)
- static inline int tick_nohz_tick_stopped(void) { return 0; }
-+static inline void tick_nohz_idle_stop_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
- 
-@@ -134,6 +144,8 @@ static inline ktime_t tick_nohz_get_slee
- }
- static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
- static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
-+
-+static inline void tick_nohz_idle_stop_tick_protected(void) { }
- #endif /* !CONFIG_NO_HZ_COMMON */
- 
- #ifdef CONFIG_NO_HZ_FULL
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -539,14 +539,11 @@ static void tick_nohz_stop_idle(struct t
- 	sched_clock_idle_wakeup_event();
- }
- 
--static ktime_t tick_nohz_start_idle(struct tick_sched *ts)
-+static void tick_nohz_start_idle(struct tick_sched *ts)
- {
--	ktime_t now = ktime_get();
--
--	ts->idle_entrytime = now;
-+	ts->idle_entrytime = ktime_get();
- 	ts->idle_active = 1;
- 	sched_clock_idle_sleep_event();
--	return now;
- }
- 
- /**
-@@ -911,19 +908,21 @@ static bool can_stop_idle_tick(int cpu,
- 	return true;
- }
- 
--static void __tick_nohz_idle_enter(struct tick_sched *ts)
-+static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
- {
--	ktime_t now, expires;
-+	ktime_t expires;
- 	int cpu = smp_processor_id();
- 
--	now = tick_nohz_start_idle(ts);
--
- 	if (can_stop_idle_tick(cpu, ts)) {
- 		int was_stopped = ts->tick_stopped;
- 
- 		ts->idle_calls++;
- 
--		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
-+		/*
-+		 * The idle entry time should be a sufficient approximation of
-+		 * the current time at this point.
-+		 */
-+		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
- 		if (expires > 0LL) {
- 			ts->idle_sleeps++;
- 			ts->idle_expires = expires;
-@@ -937,16 +936,19 @@ static void __tick_nohz_idle_enter(struc
- }
- 
- /**
-- * tick_nohz_idle_enter - stop the idle tick from the idle task
-+ * tick_nohz_idle_stop_tick - stop the idle tick from the idle task
-  *
-  * When the next event is more than a tick into the future, stop the idle tick
-- * Called when we start the idle loop.
-- *
-- * The arch is responsible of calling:
-+ */
-+void tick_nohz_idle_stop_tick(void)
-+{
-+	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
-+}
-+
-+/**
-+ * tick_nohz_idle_enter - prepare for entering idle on the current CPU
-  *
-- * - rcu_idle_enter() after its last use of RCU before the CPU is put
-- *  to sleep.
-- * - rcu_idle_exit() before the first use of RCU after the CPU is woken up.
-+ * Called when we start the idle loop.
-  */
- void tick_nohz_idle_enter(void)
- {
-@@ -965,7 +967,7 @@ void tick_nohz_idle_enter(void)
- 
- 	ts = this_cpu_ptr(&tick_cpu_sched);
- 	ts->inidle = 1;
--	__tick_nohz_idle_enter(ts);
-+	tick_nohz_start_idle(ts);
- 
- 	local_irq_enable();
- }
-@@ -982,10 +984,12 @@ void tick_nohz_irq_exit(void)
- {
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
- 
--	if (ts->inidle)
--		__tick_nohz_idle_enter(ts);
--	else
-+	if (ts->inidle) {
-+		tick_nohz_start_idle(ts);
-+		__tick_nohz_idle_stop_tick(ts);
-+	} else {
- 		tick_nohz_full_update_tick(ts);
-+	}
- }
- 
- /**
-Index: linux-pm/arch/x86/xen/smp_pv.c
-===================================================================
---- linux-pm.orig/arch/x86/xen/smp_pv.c
-+++ linux-pm/arch/x86/xen/smp_pv.c
-@@ -425,6 +425,7 @@ static void xen_pv_play_dead(void) /* us
- 	 * data back is to call:
- 	 */
- 	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
- 
- 	cpuhp_online_idle(CPUHP_AP_ONLINE_IDLE);
- }
 Index: linux-pm/kernel/sched/idle.c
 ===================================================================
 --- linux-pm.orig/kernel/sched/idle.c
 +++ linux-pm/kernel/sched/idle.c
-@@ -221,6 +221,7 @@ static void do_idle(void)
+@@ -221,13 +221,13 @@ static void do_idle(void)
  
  	__current_set_polling();
  	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
+-	tick_nohz_idle_stop_tick_protected();
  
  	while (!need_resched()) {
  		check_pgt_cache();
+ 		rmb();
+ 
+ 		if (cpu_is_offline(cpu)) {
++			tick_nohz_idle_stop_tick_protected();
+ 			cpuhp_report_idle_dead();
+ 			arch_cpu_idle_dead();
+ 		}
+@@ -241,10 +241,13 @@ static void do_idle(void)
+ 		 * broadcast device expired for us, we don't want to go deep
+ 		 * idle as we know that the IPI is going to arrive right away.
+ 		 */
+-		if (cpu_idle_force_poll || tick_check_broadcast_expired())
++		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
++			tick_nohz_idle_restart_tick();
+ 			cpu_idle_poll();
+-		else
++		} else {
++			tick_nohz_idle_stop_tick();
+ 			cpuidle_idle_call();
++		}
+ 		arch_cpu_idle_exit();
+ 	}
+ 
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -984,12 +984,10 @@ void tick_nohz_irq_exit(void)
+ {
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+ 
+-	if (ts->inidle) {
++	if (ts->inidle)
+ 		tick_nohz_start_idle(ts);
+-		__tick_nohz_idle_stop_tick(ts);
+-	} else {
++	else
+ 		tick_nohz_full_update_tick(ts);
+-	}
+ }
+ 
+ /**
+@@ -1050,6 +1048,20 @@ static void tick_nohz_account_idle_ticks
+ #endif
+ }
+ 
++static void __tick_nohz_idle_restart_tick(struct tick_sched *ts, ktime_t now)
++{
++	tick_nohz_restart_sched_tick(ts, now);
++	tick_nohz_account_idle_ticks(ts);
++}
++
++void tick_nohz_idle_restart_tick(void)
++{
++	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
++
++	if (ts->tick_stopped)
++		__tick_nohz_idle_restart_tick(ts, ktime_get());
++}
++
+ /**
+  * tick_nohz_idle_exit - restart the idle tick from the idle task
+  *
+@@ -1074,10 +1086,8 @@ void tick_nohz_idle_exit(void)
+ 	if (ts->idle_active)
+ 		tick_nohz_stop_idle(ts, now);
+ 
+-	if (ts->tick_stopped) {
+-		tick_nohz_restart_sched_tick(ts, now);
+-		tick_nohz_account_idle_ticks(ts);
+-	}
++	if (ts->tick_stopped)
++		__tick_nohz_idle_restart_tick(ts, now);
+ 
+ 	local_irq_enable();
+ }
+Index: linux-pm/include/linux/tick.h
+===================================================================
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -115,6 +115,7 @@ enum tick_dep_bits {
+ extern bool tick_nohz_enabled;
+ extern int tick_nohz_tick_stopped(void);
+ extern void tick_nohz_idle_stop_tick(void);
++extern void tick_nohz_idle_restart_tick(void);
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+@@ -135,6 +136,7 @@ static inline void tick_nohz_idle_stop_t
+ #define tick_nohz_enabled (0)
+ static inline int tick_nohz_tick_stopped(void) { return 0; }
+ static inline void tick_nohz_idle_stop_tick(void) { }
++static inline void tick_nohz_idle_restart_tick(void) { }
+ static inline void tick_nohz_idle_enter(void) { }
+ static inline void tick_nohz_idle_exit(void) { }
+ 
