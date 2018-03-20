@@ -1,115 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753315AbeCTMvS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:51:18 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52593 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753170AbeCTMvQ (ORCPT
+        id S1753353AbeCTMv0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:51:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35456 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753170AbeCTMvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:51:16 -0400
-X-Google-Smtp-Source: AG47ELvZk2ousjdJiKMo+dhe6yIDbN/yagmgQa5g43qrn332836yYqYRIZDML+xnwnlstJivpxDGRQ==
-Date: Tue, 20 Mar 2018 15:50:46 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC, PATCH 19/22] x86/mm: Implement free_encrypt_page()
-Message-ID: <20180320125046.zcefctri5rzronau@node.shutemov.name>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-20-kirill.shutemov@linux.intel.com>
- <a692b2ff-b590-b731-ad14-18238f471a1c@intel.com>
+        Tue, 20 Mar 2018 08:51:19 -0400
+Date: Tue, 20 Mar 2018 13:51:02 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mulix@mulix.org, thomas.lendacky@amd.com, dwmw2@infradead.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, hch@lst.de, konrad.wilk@oracle.com,
+        jdmason@kudzu.us, tglx@linutronix.de, hpa@zytor.com
+Cc: linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/pti] x86/cpu: Remove the CONFIG_X86_PPRO_FENCE=y quirk
+Message-ID: <20180320125102.GT4043@hirez.programming.kicks-ass.net>
+References: <20180319103826.12853-2-hch@lst.de>
+ <tip-5927145efd5de71976e62e2822511b13014d7e56@git.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a692b2ff-b590-b731-ad14-18238f471a1c@intel.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <tip-5927145efd5de71976e62e2822511b13014d7e56@git.kernel.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 11:07:16AM -0800, Dave Hansen wrote:
-> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
-> > +void free_encrypt_page(struct page *page, int keyid, unsigned int order)
-> > +{
-> > +	int i;
-> > +	void *v;
-> > +
-> > +	for (i = 0; i < (1 << order); i++) {
-> > +		v = kmap_atomic_keyid(page, keyid + i);
-> > +		/* See comment in prep_encrypt_page() */
-> > +		clflush_cache_range(v, PAGE_SIZE);
-> > +		kunmap_atomic(v);
-> > +	}
-> > +}
+On Tue, Mar 20, 2018 at 04:04:49AM -0700, tip-bot for Christoph Hellwig wrote:
+
+> x86/cpu: Remove the CONFIG_X86_PPRO_FENCE=y quirk
 > 
-> Have you measured how slow this is?
+> There were only a few Pentium Pro multiprocessors systems where this
+> errata applied. They are more than 20 years old now, and we've slowly
+> dropped places which put the workarounds in and discouraged anyone
+> from enabling the workaround.
+> 
+> Get rid of it for good.
 
-Well, it's pretty bad.
-
-Tight loop of allocation/free a page (measured from within kernel) is
-4-6 times slower:
-
-Encryption off
-Order-0, 10000000 iterations: 50496616 cycles
-Order-0, 10000000 iterations: 46900080 cycles
-Order-0, 10000000 iterations: 46873540 cycles
-
-Encryption on
-Order-0, 10000000 iterations: 222021882 cycles
-Order-0, 10000000 iterations: 222315381 cycles
-Order-0, 10000000 iterations: 222289110 cycles
-
-Encryption off
-Order-9, 100000 iterations: 46829632 cycles
-Order-9, 100000 iterations: 46919952 cycles
-Order-9, 100000 iterations: 37647873 cycles
-
-Encryption on
-Order-9, 100000 iterations: 222407715 cycles
-Order-9, 100000 iterations: 222111657 cycles
-Order-9, 100000 iterations: 222335352 cycles
-
-On macro benchmark it's not that dramatic, but still bad -- 16% down:
-
-Encryption off
-
- Performance counter stats for 'sh -c make -j100 -B -k >/dev/null' (5 runs):
-
-    6769369.623773      task-clock (msec)         #   33.869 CPUs utilized            ( +-  0.02% )
-         1,086,729      context-switches          #    0.161 K/sec                    ( +-  0.83% )
-           193,153      cpu-migrations            #    0.029 K/sec                    ( +-  0.72% )
-       104,971,541      page-faults               #    0.016 M/sec                    ( +-  0.01% )
-20,179,502,944,932      cycles                    #    2.981 GHz                      ( +-  0.02% )
-15,244,481,306,390      stalled-cycles-frontend   #   75.54% frontend cycles idle     ( +-  0.02% )
-11,548,852,154,412      instructions              #    0.57  insn per cycle
-                                                  #    1.32  stalled cycles per insn  ( +-  0.00% )
- 2,488,836,449,779      branches                  #  367.661 M/sec                    ( +-  0.00% )
-    94,445,965,563      branch-misses             #    3.79% of all branches          ( +-  0.01% )
-
-     199.871815231 seconds time elapsed                                          ( +-  0.17% )
-
-Encryption on
-
- Performance counter stats for 'sh -c make -j100 -B -k >/dev/null' (5 runs):
-
-    8099514.432371      task-clock (msec)         #   34.959 CPUs utilized            ( +-  0.01% )
-         1,169,589      context-switches          #    0.144 K/sec                    ( +-  0.51% )
-           198,008      cpu-migrations            #    0.024 K/sec                    ( +-  0.77% )
-       104,953,906      page-faults               #    0.013 M/sec                    ( +-  0.01% )
-24,158,282,050,086      cycles                    #    2.983 GHz                      ( +-  0.01% )
-19,183,031,041,329      stalled-cycles-frontend   #   79.41% frontend cycles idle     ( +-  0.01% )
-11,600,772,560,767      instructions              #    0.48  insn per cycle
-                                                  #    1.65  stalled cycles per insn  ( +-  0.00% )
- 2,501,453,131,164      branches                  #  308.840 M/sec                    ( +-  0.00% )
-    94,566,437,048      branch-misses             #    3.78% of all branches          ( +-  0.01% )
-
-     231.684539584 seconds time elapsed                                          ( +-  0.15% )
-
-I'll check what we can do here.
-
--- 
- Kirill A. Shutemov
+Hoorah!! x86 is back to pure TSO.
