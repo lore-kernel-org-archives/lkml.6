@@ -1,29 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeCTG2Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:28:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43087 "EHLO
+        id S1752038AbeCTG2W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:28:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51687 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeCTG2U (ORCPT
+        with ESMTP id S1751803AbeCTG2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 02:28:20 -0400
-Date: Mon, 19 Mar 2018 23:28:05 -0700
-From: tip-bot for Martin Vuille <tipbot@zytor.com>
-Message-ID: <tip-3d20c6246690219881786de10d2dda93f616d0ac@git.kernel.org>
-Cc: namhyung@kernel.org, adrian.hunter@intel.com, jpmv27@aim.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com, jolsa@kernel.org,
-        wangnan0@huawei.com, tglx@linutronix.de, dsahern@gmail.com,
-        hpa@zytor.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, jolsa@kernel.org, wangnan0@huawei.com,
-        dsahern@gmail.com, hpa@zytor.com, mingo@kernel.org,
-        namhyung@kernel.org, jpmv27@aim.com, adrian.hunter@intel.com,
+Date: Mon, 19 Mar 2018 23:27:38 -0700
+From: tip-bot for Ganapatrao Kulkarni <tipbot@zytor.com>
+Message-ID: <tip-a8685f088819d21cd5aea5de4c184de427c3625d@git.kernel.org>
+Cc: wcohen@redhat.com, ganapatrao.kulkarni@cavium.com,
+        gpkulkarni@gklkml16.com, jolsa@redhat.com, peterz@infradead.org,
+        acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        john.garry@huawei.com, jnair@caviumnetworks.com, mingo@kernel.org,
+        will.deacon@arm.com, tglx@linutronix.de, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, robert.richter@cavium.com
+Reply-To: mingo@kernel.org, jnair@caviumnetworks.com, john.garry@huawei.com,
+        hpa@zytor.com, will.deacon@arm.com, tglx@linutronix.de,
+        robert.richter@cavium.com, alexander.shishkin@linux.intel.com,
+        mark.rutland@arm.com, wcohen@redhat.com, gpkulkarni@gklkml16.com,
+        ganapatrao.kulkarni@cavium.com, peterz@infradead.org, jolsa@redhat.com,
         linux-kernel@vger.kernel.org, acme@redhat.com
-In-Reply-To: <20180211212420.18388-1-jpmv27@aim.com>
-References: <20180211212420.18388-1-jpmv27@aim.com>
+In-Reply-To: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf unwind: Unwind with libdw doesn't take symfs
- into account
-Git-Commit-ID: 3d20c6246690219881786de10d2dda93f616d0ac
+Subject: [tip:perf/core] perf vendor events arm64: Enable JSON events for
+ ThunderX2 B0
+Git-Commit-ID: a8685f088819d21cd5aea5de4c184de427c3625d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,43 +40,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3d20c6246690219881786de10d2dda93f616d0ac
-Gitweb:     https://git.kernel.org/tip/3d20c6246690219881786de10d2dda93f616d0ac
-Author:     Martin Vuille <jpmv27@aim.com>
-AuthorDate: Sun, 11 Feb 2018 16:24:20 -0500
+Commit-ID:  a8685f088819d21cd5aea5de4c184de427c3625d
+Gitweb:     https://git.kernel.org/tip/a8685f088819d21cd5aea5de4c184de427c3625d
+Author:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+AuthorDate: Wed, 7 Mar 2018 16:38:03 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:55:51 -0300
+CommitDate: Fri, 16 Mar 2018 13:55:41 -0300
 
-perf unwind: Unwind with libdw doesn't take symfs into account
+perf vendor events arm64: Enable JSON events for ThunderX2 B0
 
-Path passed to libdw for unwinding doesn't include symfs path
-if specified, so unwinding fails because ELF file is not found.
+There is MIDR change on ThunderX2 B0, adding an entry to mapfile to
+enable JSON events for B0.
 
-Similar to unwinding with libunwind, pass symsrc_filename instead
-of long_name. If there is no symsrc_filename, fallback to long_name.
-
-Signed-off-by: Martin Vuille <jpmv27@aim.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/20180211212420.18388-1-jpmv27@aim.com
+Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ganapatrao Kulkarni <gpkulkarni@gklkml16.com>
+Cc: Jayachandran C <jnair@caviumnetworks.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <robert.richter@cavium.com>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20180307110803.32418-1-ganapatrao.kulkarni@cavium.com
+[ Fixup wrt recent patchset by John Garry ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/unwind-libdw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-index 1e9c974faf67..8e969f28cc59 100644
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -50,7 +50,7 @@ static int __report_module(struct addr_location *al, u64 ip,
- 
- 	if (!mod)
- 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
--				      dso->long_name, -1, al->map->start,
-+				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
- 				      false);
- 
- 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
+diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+index 8f11aeb003a9..f03e26ecb658 100644
+--- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
++++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+@@ -14,4 +14,5 @@
+ #Family-model,Version,Filename,EventType
+ 0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
+ 0x00000000420f5160,v1,cavium/thunderx2,core
++0x00000000430f0af0,v1,cavium/thunderx2,core
+ 0x00000000480fd010,v1,hisilicon/hip08,core
