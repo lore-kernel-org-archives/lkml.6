@@ -1,71 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeCTUMF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:12:05 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41188 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbeCTUMB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:12:01 -0400
-X-Google-Smtp-Source: AG47ELs3p9kr0MtbqfQIweyBQU65YRuCheBw+zmET4D3fJ+6KuqOJat44lKbUbGYKz3D9V1j+sVAY5YejJFUkRqchxg=
+        id S1751748AbeCTUMb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:12:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751343AbeCTUM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:12:28 -0400
+Subject: Re: [PATCH v5 2/2] cpuset: Add cpuset.flags control knob to v2
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+References: <1521148842-15486-1-git-send-email-longman@redhat.com>
+ <1521148842-15486-3-git-send-email-longman@redhat.com>
+ <20180319162654.GR2943022@devbig577.frc2.facebook.com>
+ <8e553b7e-cab6-1b5d-9110-cc5770ae16c4@redhat.com>
+Organization: Red Hat
+Message-ID: <cbe9b852-80b6-8341-b51c-4d754d00ce53@redhat.com>
+Date: Tue, 20 Mar 2018 16:12:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <b55492688f43df914037c48314db483a3c6ad05b.1521005283.git.rgb@redhat.com>
-References: <cover.1521005283.git.rgb@redhat.com> <b55492688f43df914037c48314db483a3c6ad05b.1521005283.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 20 Mar 2018 16:11:59 -0400
-Message-ID: <CAHC9VhQSjhjEkdrXhFVgMmnhAeR3EB_LB8nc2QtXuySqrUSmLQ@mail.gmail.com>
-Subject: Re: [PATCH ghak21 V3 2/2] audit: add refused symlink to audit_names
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8e553b7e-cab6-1b5d-9110-cc5770ae16c4@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 1:43 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Audit link denied events for symlinks had duplicate PATH records rather
-> than just updating the existing PATH record.  Update the symlink's PATH
-> record with the current dentry and inode information.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 50d2533..00f5041 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
->         if (nd->flags & LOOKUP_RCU)
->                 return -ECHILD;
->
-> +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
->         audit_log_link_denied("follow_link", &nd->stack[0].link);
+On 03/19/2018 12:33 PM, Waiman Long wrote:
+> On 03/19/2018 12:26 PM, Tejun Heo wrote:
+>> Hello, Waiman.
+>>
+>> On Thu, Mar 15, 2018 at 05:20:42PM -0400, Waiman Long wrote:
+>>> +	The currently supported flag is:
+>>> +
+>>> +	  sched_load_balance
+>>> +		When it is not set, there will be no load balancing
+>>> +		among CPUs on this cpuset.  Tasks will stay in the
+>>> +		CPUs they are running on and will not be moved to
+>>> +		other CPUs.
+>>> +
+>>> +		When it is set, tasks within this cpuset will be
+>>> +		load-balanced by the kernel scheduler.  Tasks will be
+>>> +		moved from CPUs with high load to other CPUs within
+>>> +		the same cpuset with less load periodically.
+>> Hmm... looks like this is something which can be decided by the cgroup
+>> itself and should be made delegatable.  Given that different flags
+>> might need different delegation settings and the precedence of
+>> memory.oom_group, I think it'd be better to make the flags separate
+>> bool files - ie. cpuset.sched_load_balance which contains 0/1 and
+>> marked delegatable.
+>>
+>> Thanks.
+>>
+> Sure. Will do that.
 
-That's the one, right above this comment ...
+After some thought, I am planning to impose the following additional
+constraints on how sched_load_balance works in v2.
 
-Be honest, this never compiled did it?
+1) sched_load_balance will be made hierarchical, the child will inherit
+the flag from its parent.
+2) cpu_exclusive will be implicitly associated with sched_load_balance.
+IOW, sched_load_balance => !cpu_exclusive, and !sched_load_balance =>
+cpu_exclusive.
+3) sched_load_balance cannot be 1 on a child if it is 0 on the parent.
 
-My confidence for these patches is really low right now, which is not
-good for something asking to go in at this stage in the -rcX
-development cycle.  There have been some delays due to review, so I'm
-willing to be a little flexible on timelines and accept stuff this
-week, but for the v4 patchset please provide before and after audit
-logs for both hard and soft links both where CWD is the same as the
-parent as well as different (eight logs total if I did the math
-right).  You can include them in the 0/2 patch as it's probably a bit
-much for the individual patches.
+With these changes, sched_load_balance will have to be set by the parent
+and so will not be delegatable. Please let me know your thought on that.
 
->         return -EACCES;
->  }
-> --
-> 1.8.3.1
-
--- 
-paul moore
-www.paul-moore.com
+Cheers,
+Longman
