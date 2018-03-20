@@ -1,54 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeCTIJg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:09:36 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:57753 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeCTIJd (ORCPT
+        id S1752159AbeCTIKI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:10:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37917 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeCTIKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:09:33 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 3/4] Bluetooth: trailing statements
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180319113222.6725-3-paulmcquad@gmail.com>
-Date: Tue, 20 Mar 2018 09:09:31 +0100
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <49319155-4ADA-4913-8177-B4E2AE1D83EA@holtmann.org>
-References: <20180319113222.6725-1-paulmcquad@gmail.com>
- <20180319113222.6725-3-paulmcquad@gmail.com>
-To: Paul McQuade <paulmcquad@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 20 Mar 2018 04:10:05 -0400
+Date: Tue, 20 Mar 2018 01:09:51 -0700
+From: tip-bot for Boris Ostrovsky <tipbot@zytor.com>
+Message-ID: <tip-f9ee6990bd505ecefa014f5e699b3c4d25860d80@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jgross@suse.com, mingo@kernel.org,
+        tglx@linutronix.de, boris.ostrovsky@oracle.com, luto@kernel.org,
+        hpa@zytor.com
+Reply-To: tglx@linutronix.de, boris.ostrovsky@oracle.com, hpa@zytor.com,
+        luto@kernel.org, mingo@kernel.org, jgross@suse.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180319143154.3742-1-boris.ostrovsky@oracle.com>
+References: <20180319143154.3742-1-boris.ostrovsky@oracle.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/vsyscall/64: Use proper accessor to update p4d
+ entry
+Git-Commit-ID: f9ee6990bd505ecefa014f5e699b3c4d25860d80
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Commit-ID:  f9ee6990bd505ecefa014f5e699b3c4d25860d80
+Gitweb:     https://git.kernel.org/tip/f9ee6990bd505ecefa014f5e699b3c4d25860d80
+Author:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+AuthorDate: Mon, 19 Mar 2018 10:31:54 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 20 Mar 2018 09:04:51 +0100
 
-> trailing statements should be on next line
-> 
-> Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
-> ---
-> drivers/bluetooth/hci_ll.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-> index 1b4417a623a4..06d859d82de8 100644
-> --- a/drivers/bluetooth/hci_ll.c
-> +++ b/drivers/bluetooth/hci_ll.c
-> @@ -567,7 +567,8 @@ static int read_local_version(struct hci_dev *hdev)
-> 	version = le16_to_cpu(ver->lmp_subver);
-> 
-> out:
-> -	if (err) bt_dev_err(hdev, "Failed to read TI version info: %d", err);
-> +	if (err)
-> +	bt_dev_err(hdev, "Failed to read TI version info: %d", err);
+x86/vsyscall/64: Use proper accessor to update p4d entry
 
-actually this needs to be indented one further since it is the action of the if clause.
+Writing to it directly does not work for Xen PV guests.
 
-Regards
+Fixes: 49275fef986a ("x86/vsyscall/64: Explicitly set _PAGE_USER in the pagetable hierarchy")
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180319143154.3742-1-boris.ostrovsky@oracle.com
 
-Marcel
+---
+ arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 8560ef68a9d6..317be365bce3 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -347,7 +347,7 @@ void __init set_vsyscall_pgtable_user_bits(pgd_t *root)
+ 	set_pgd(pgd, __pgd(pgd_val(*pgd) | _PAGE_USER));
+ 	p4d = p4d_offset(pgd, VSYSCALL_ADDR);
+ #if CONFIG_PGTABLE_LEVELS >= 5
+-	p4d->p4d |= _PAGE_USER;
++	set_p4d(p4d, __p4d(p4d_val(*p4d) | _PAGE_USER));
+ #endif
+ 	pud = pud_offset(p4d, VSYSCALL_ADDR);
+ 	set_pud(pud, __pud(pud_val(*pud) | _PAGE_USER));
