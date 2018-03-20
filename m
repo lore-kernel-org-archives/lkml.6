@@ -1,173 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752855AbeCTLhF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:37:05 -0400
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:42878 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeCTLhD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:37:03 -0400
-X-Google-Smtp-Source: AG47ELvd64ZWgER36Xx6puWPIGOB4tHe2PR1x36I/0W5311/z3fefVnNC3bbfXYyQKArGYOUytw8HAGiGnlYUjiyyRI=
+        id S1752880AbeCTLhl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:37:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51559 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751913AbeCTLhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:37:38 -0400
+Subject: Re: [RFC PATCH v2 1/4] mm/page_alloc: use helper functions to
+ add/remove a page to/from buddy
+To: Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-2-aaron.lu@intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <d9121a55-411e-37e0-2080-00b860612cc8@suse.cz>
+Date: Tue, 20 Mar 2018 12:35:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180307160430.yjkhlhyenpzk37pr@dell>
-References: <20180226102606.15093-1-enric.balletbo@collabora.com>
- <20180226102606.15093-6-enric.balletbo@collabora.com> <20180307160430.yjkhlhyenpzk37pr@dell>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Tue, 20 Mar 2018 12:37:01 +0100
-Message-ID: <CAFqH_52XJ=21GKf3xbwYQRbzMhE5FCzf3_rDZ0hhg3cYPHPDiQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] mfd: cros_ec_dev: Register cros_ec_accel_legacy
- driver as a subdevice.
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, kernel@collabora.com,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180320085452.24641-2-aaron.lu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2KBbCxx004662
 
-Hi Lee,
+On 03/20/2018 09:54 AM, Aaron Lu wrote:
+> There are multiple places that add/remove a page into/from buddy,
+> introduce helper functions for them.
+> 
+> This also makes it easier to add code when a page is added/removed
+> to/from buddy.
+> 
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+>  mm/page_alloc.c | 65 ++++++++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 39 insertions(+), 26 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3db9cfb2265b..3cdf1e10d412 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -736,12 +736,41 @@ static inline void set_page_order(struct page *page, unsigned int order)
+>  	__SetPageBuddy(page);
+>  }
+>  
+> +static inline void add_to_buddy_common(struct page *page, struct zone *zone,
+> +					unsigned int order, int mt)
+> +{
+> +	set_page_order(page, order);
+> +	zone->free_area[order].nr_free++;
 
-2018-03-07 17:04 GMT+01:00 Lee Jones <lee.jones@linaro.org>:
-> On Mon, 26 Feb 2018, Enric Balletbo i Serra wrote:
->
->> With this patch, the cros_ec_ctl driver will register the legacy
->> accelerometer driver (named cros_ec_accel_legacy) if it fails to
->> register sensors through the usual path cros_ec_sensors_register().
->> This legacy device is present on Chromebook devices with older EC
->> firmware only supporting deprecated EC commands (Glimmer based devices).
->>
->> Tested-by: Gwendal Grignou <gwendal@chromium.org>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> ---
->>
->> Changes in v3:
->> - [5/8] Add the Reviewed-by Andy Shevchenko.
->>
->> Changes in v2:
->> - [5/8] Add the Reviewed-by Gwendal.
->>
->>  drivers/mfd/cros_ec_dev.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 60 insertions(+)
->>
->> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
->> index 33fe1b439ee2..fd7f0068fb45 100644
->> --- a/drivers/mfd/cros_ec_dev.c
->> +++ b/drivers/mfd/cros_ec_dev.c
->> @@ -389,6 +389,63 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->>       kfree(msg);
->>  }
->>
->> +#define CROS_EC_SENSOR_LEGACY_NUM 2
->> +static struct mfd_cell cros_ec_accel_legacy_cells[CROS_EC_SENSOR_LEGACY_NUM];
->> +
->> +static void cros_ec_accel_legacy_register(struct cros_ec_dev *ec)
->> +{
->> +     struct cros_ec_device *ec_dev = ec->ec_dev;
->> +     u8 status;
->> +     int i, ret;
->> +     struct cros_ec_sensor_platform
->> +             sensor_platforms[CROS_EC_SENSOR_LEGACY_NUM];
->
-> I wish I had seen this struct before.  Yuk!
->
-> Why do you even need to know what 'number' the sensor is?
->
->> +     /*
->> +      * EC that need legacy support are the main EC, directly connected to
->
-> Nit: "ECs" or "needs".  If you choose "needs" you need to s/are/is/ as
-> well.
->
->> +      * the AP.
->> +      */
->> +     if (ec->cmd_offset != 0)
->> +             return;
->> +
->> +     /*
->> +      * Check if EC supports direct memory reads and if EC has
->> +      * accelerometers.
->> +      */
->> +     if (!ec_dev->cmd_readmem)
->> +             return;
->> +
->> +     ret = ec_dev->cmd_readmem(ec_dev, EC_MEMMAP_ACC_STATUS, 1, &status);
->> +     if (ret < 0) {
->
-> Is ret > 0 valid?
->
+The 'mt' parameter seems unused here. Otherwise
 
-Yes, ret > 0 is valid.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
->> +             dev_warn(ec->dev, "EC does not support direct reads.\n");
->> +             return;
->> +     }
->> +
->> +     /* Check if EC has accelerometers. */
->> +     if (!(status & EC_MEMMAP_ACC_STATUS_PRESENCE_BIT)) {
->> +             dev_info(ec->dev, "EC does not have accelerometers.\n");
->> +             return;
->> +     }
->> +
->> +     /*
->> +      * Register 2 accelerometers
->> +      */
->> +     for (i = 0; i < CROS_EC_SENSOR_LEGACY_NUM; i++) {
->> +             cros_ec_accel_legacy_cells[i].name = "cros-ec-accel-legacy";
->> +             sensor_platforms[i].sensor_num = i;
->> +             cros_ec_accel_legacy_cells[i].id = i;
->> +             cros_ec_accel_legacy_cells[i].platform_data =
->> +                     &sensor_platforms[i];
->> +             cros_ec_accel_legacy_cells[i].pdata_size =
->> +                     sizeof(struct cros_ec_sensor_platform);
->
-> There is no dynamic information here.
->
-> I'd rather you did this all statically.
->
-
-Ok, I will create a static mfd_cell struct.
-
->> +     }
->> +     ret = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
->> +                           cros_ec_accel_legacy_cells,
->> +                           CROS_EC_SENSOR_LEGACY_NUM,
->
-> ARRAY_SIZE() is less fragile.
->
-
-Ack.
-
->> +                           NULL, 0, NULL);
->> +     if (ret)
->> +             dev_err(ec_dev->dev, "failed to add EC sensors\n");
->> +}
->> +
->>  static const struct mfd_cell cros_ec_rtc_cell = {
->>       .name = "cros-ec-rtc",
->>  };
->> @@ -440,6 +497,9 @@ static int ec_device_probe(struct platform_device *pdev)
->>       /* check whether this EC is a sensor hub. */
->>       if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->>               cros_ec_sensors_register(ec);
->> +     else
->> +             /* Workaroud for older EC firmware */
->> +             cros_ec_accel_legacy_register(ec);
->>
->>       /* check whether this EC instance has RTC host command support */
->>       if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
->
-> --
-> Lee Jones
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-
-Thanks for the review. I'll prepare a new version of this patchset.
-   Enric
+> +}
+> +
+> +static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+> +					unsigned int order, int mt)
+> +{
+> +	add_to_buddy_common(page, zone, order, mt);
+> +	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
+> +}
+> +
+> +static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
+> +					unsigned int order, int mt)
+> +{
+> +	add_to_buddy_common(page, zone, order, mt);
+> +	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
+> +}
+> +
+>  static inline void rmv_page_order(struct page *page)
+>  {
+>  	__ClearPageBuddy(page);
+>  	set_page_private(page, 0);
+>  }
+>  
+> +static inline void remove_from_buddy(struct page *page, struct zone *zone,
+> +					unsigned int order)
+> +{
+> +	list_del(&page->lru);
+> +	zone->free_area[order].nr_free--;
+> +	rmv_page_order(page);
+> +}
+> +
+>  /*
+>   * This function checks whether a page is free && is the buddy
+>   * we can do coalesce a page and its buddy if
+> @@ -845,13 +874,10 @@ static inline void __free_one_page(struct page *page,
+>  		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
+>  		 * merge with it and move up one order.
+>  		 */
+> -		if (page_is_guard(buddy)) {
+> +		if (page_is_guard(buddy))
+>  			clear_page_guard(zone, buddy, order, migratetype);
+> -		} else {
+> -			list_del(&buddy->lru);
+> -			zone->free_area[order].nr_free--;
+> -			rmv_page_order(buddy);
+> -		}
+> +		else
+> +			remove_from_buddy(buddy, zone, order);
+>  		combined_pfn = buddy_pfn & pfn;
+>  		page = page + (combined_pfn - pfn);
+>  		pfn = combined_pfn;
+> @@ -883,8 +909,6 @@ static inline void __free_one_page(struct page *page,
+>  	}
+>  
+>  done_merging:
+> -	set_page_order(page, order);
+> -
+>  	/*
+>  	 * If this is not the largest possible page, check if the buddy
+>  	 * of the next-highest order is free. If it is, it's possible
+> @@ -901,15 +925,12 @@ static inline void __free_one_page(struct page *page,
+>  		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
+>  		if (pfn_valid_within(buddy_pfn) &&
+>  		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
+> -			list_add_tail(&page->lru,
+> -				&zone->free_area[order].free_list[migratetype]);
+> -			goto out;
+> +			add_to_buddy_tail(page, zone, order, migratetype);
+> +			return;
+>  		}
+>  	}
+>  
+> -	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
+> -out:
+> -	zone->free_area[order].nr_free++;
+> +	add_to_buddy_head(page, zone, order, migratetype);
+>  }
+>  
+>  /*
+> @@ -1731,9 +1752,7 @@ static inline void expand(struct zone *zone, struct page *page,
+>  		if (set_page_guard(zone, &page[size], high, migratetype))
+>  			continue;
+>  
+> -		list_add(&page[size].lru, &area->free_list[migratetype]);
+> -		area->nr_free++;
+> -		set_page_order(&page[size], high);
+> +		add_to_buddy_head(&page[size], zone, high, migratetype);
+>  	}
+>  }
+>  
+> @@ -1877,9 +1896,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
+>  							struct page, lru);
+>  		if (!page)
+>  			continue;
+> -		list_del(&page->lru);
+> -		rmv_page_order(page);
+> -		area->nr_free--;
+> +		remove_from_buddy(page, zone, current_order);
+>  		expand(zone, page, order, current_order, area, migratetype);
+>  		set_pcppage_migratetype(page, migratetype);
+>  		return page;
+> @@ -2795,9 +2812,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
+>  	}
+>  
+>  	/* Remove page from free list */
+> -	list_del(&page->lru);
+> -	zone->free_area[order].nr_free--;
+> -	rmv_page_order(page);
+> +	remove_from_buddy(page, zone, order);
+>  
+>  	/*
+>  	 * Set the pageblock if the isolated page is at least half of a
+> @@ -7886,9 +7901,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+>  		pr_info("remove from free list %lx %d %lx\n",
+>  			pfn, 1 << order, end_pfn);
+>  #endif
+> -		list_del(&page->lru);
+> -		rmv_page_order(page);
+> -		zone->free_area[order].nr_free--;
+> +		remove_from_buddy(page, zone, order);
+>  		for (i = 0; i < (1 << order); i++)
+>  			SetPageReserved((page+i));
+>  		pfn += (1 << order);
+> 
