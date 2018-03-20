@@ -1,93 +1,249 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeCTXes (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:34:48 -0400
-Received: from ozlabs.org ([103.22.144.67]:60209 "EHLO ozlabs.org"
+        id S1751861AbeCTXgJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:36:09 -0400
+Received: from smtp.polymtl.ca ([132.207.4.11]:53753 "EHLO smtp.polymtl.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751515AbeCTXer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:34:47 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 10:34:08 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>
-Subject: linux-next: manual merge of the sparc-next tree with the arm64 tree
-Message-ID: <20180321103408.49e62310@canb.auug.org.au>
+        id S1751390AbeCTXgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:36:07 -0400
+Date: Tue, 20 Mar 2018 23:35:46 +0000
+Message-ID: <20180320233546.Horde.R7YJoHwgHhxvd5TuazyH3GI@www.imp.polymtl.ca>
+From: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ftrace: support boot level tracing
+References: <1521570176.31676.3.camel@polymtl.ca>
+ <20180320180104.70e3eacd@gandalf.local.home>
+In-Reply-To: <20180320180104.70e3eacd@gandalf.local.home>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xelN5VzTy5GEMv40EPAOBoo"; protocol="application/pgp-signature"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Poly-FromMTA: (horde5.polymtl.ca [132.207.4.156]) at Tue, 20 Mar 2018 23:35:46 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xelN5VzTy5GEMv40EPAOBoo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Steven Rostedt <rostedt@goodmis.org> a écrit :
 
-Today's linux-next merge of the sparc-next tree got a conflict in:
+> On Tue, 20 Mar 2018 14:22:56 -0400
+> Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca> wrote:
+>
+> Would something like this work for you?
 
-  arch/x86/kernel/signal_compat.c
+Yes this is working great. I have also instrumented console and security
+initcalls, I used your previous patch, changes are below.
 
-between commit:
+> +	trace_initcall_level("pre_smp_initcalls");
 
-  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
-ions")
+This should be "early" I guess : trace_initcall_level("ealry");
 
-from the arm64 tree and commit:
 
-  d84bb709aa4a ("signals, sparc: Add signal codes for ADI violations")
+output of : trace_event=initcall_level
 
-from the sparc-next tree.
+[    0.327032]   <idle>-0       0.... 89576us : initcall_level: level=console
+[    0.327454]   <idle>-0       0.... 135819us : initcall_level:  
+level=security
+[    0.327887] swapper/-1       0.... 261166us : initcall_level: level=early
+[    0.328306] swapper/-1       0.... 265248us : initcall_level: level=early
+[    0.328742] swapper/-1       0.... 267969us : initcall_level: level=core
+[    0.329158] swapper/-1       0.... 270111us : initcall_level:  
+level=postcore
+[    0.329590] swapper/-1       0.... 271111us : initcall_level: level=arch
+[    0.330007] swapper/-1       0.... 272217us : initcall_level: level=subsys
+[    0.330429] swapper/-1       0.... 316236us : initcall_level: level=fs
+[    0.330833] swapper/-1       0.... 340523us : initcall_level: level=device
+[    0.331254] swapper/-1       0.... 388737us : initcall_level: level=late
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+PATCH with security and console instrumented
 
---=20
-Cheers,
-Stephen Rothwell
+---
+  include/trace/events/boot.h | 66  
++++++++++++++++++++++++++++++++++++++++++++++
+  init/main.c                 |  7 +++++
+  kernel/printk/printk.c      |  7 ++++-
+  security/security.c         |  8 +++++-
+  4 files changed, 86 insertions(+), 2 deletions(-)
+  create mode 100644 include/trace/events/boot.h
 
-diff --cc arch/x86/kernel/signal_compat.c
-index d2884e951bb5,838a4dc90a6d..000000000000
---- a/arch/x86/kernel/signal_compat.c
-+++ b/arch/x86/kernel/signal_compat.c
-@@@ -26,8 -26,8 +26,8 @@@ static inline void signal_compat_build_
-  	 * new fields are handled in copy_siginfo_to_user32()!
+diff --git a/include/trace/events/boot.h b/include/trace/events/boot.h
+new file mode 100644
+index 000000000000..ba0272a95813
+--- /dev/null
++++ b/include/trace/events/boot.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM boot
++
++#if !defined(_TRACE_BOOT_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_BOOT_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(initcall_level,
++
++        TP_PROTO(const char *level),
++
++        TP_ARGS(level),
++
++        TP_STRUCT__entry(
++                __string(level, level)
++        ),
++
++        TP_fast_assign(
++                __assign_str(level, level);
++        ),
++
++        TP_printk("level=%s", __get_str(level))
++);
++
++TRACE_EVENT(initcall_start,
++
++        TP_PROTO(initcall_t func),
++
++        TP_ARGS(func),
++
++        TP_STRUCT__entry(
++                __field(initcall_t, func)
++        ),
++
++        TP_fast_assign(
++                __entry->func = func;
++        ),
++
++        TP_printk("func=%pS", __entry->func)
++);
++
++TRACE_EVENT(initcall_finish,
++
++        TP_PROTO(initcall_t func, int ret),
++
++        TP_ARGS(func, ret),
++
++        TP_STRUCT__entry(
++                __field(initcall_t,        func)
++                __field(int,                ret)
++        ),
++
++        TP_fast_assign(
++                __entry->func = func;
++                __entry->ret = ret;
++        ),
++
++        TP_printk("func=%pS ret=%d", __entry->func, __entry->ret)
++);
++
++#endif /* if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ) */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+\ No newline at end of file
+diff --git a/init/main.c b/init/main.c
+index 969eaf140ef0..765189b3a92e 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -97,6 +97,9 @@
+  #include <asm/sections.h>
+  #include <asm/cacheflush.h>
+
++#define CREATE_TRACE_POINTS
++#include <trace/events/boot.h>
++
+  static int kernel_init(void *);
+
+  extern void init_IRQ(void);
+@@ -827,10 +830,12 @@ int __init_or_module do_one_initcall(initcall_t fn)
+  	if (initcall_blacklisted(fn))
+  		return -EPERM;
+
++	trace_initcall_start(fn);
+  	if (initcall_debug)
+  		ret = do_one_initcall_debug(fn);
+  	else
+  		ret = fn();
++	trace_initcall_finish(fn, ret);
+
+  	msgbuf[0] = 0;
+
+@@ -895,6 +900,7 @@ static void __init do_initcall_level(int level)
+  		   level, level,
+  		   NULL, &repair_env_string);
+
++	trace_initcall_level(initcall_level_names[level]);
+  	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
+  		do_one_initcall(*fn);
+  }
+@@ -929,6 +935,7 @@ static void __init do_pre_smp_initcalls(void)
+  {
+  	initcall_t *fn;
+
++	trace_initcall_level(initcall_level_names[0]);
+  	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+  		do_one_initcall(*fn);
+  }
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index f274fbef821d..0f10cfd1588e 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -52,6 +52,7 @@
+  #include <linux/uaccess.h>
+  #include <asm/sections.h>
+
++#include <trace/events/boot.h>
+  #define CREATE_TRACE_POINTS
+  #include <trace/events/printk.h>
+
+@@ -2781,6 +2782,7 @@ EXPORT_SYMBOL(unregister_console);
+   */
+  void __init console_init(void)
+  {
++	int ret;
+  	initcall_t *call;
+
+  	/* Setup the default TTY line discipline. */
+@@ -2791,8 +2793,11 @@ void __init console_init(void)
+  	 * inform about problems etc..
   	 */
-  	BUILD_BUG_ON(NSIGILL  !=3D 11);
- -	BUILD_BUG_ON(NSIGFPE  !=3D 13);
- +	BUILD_BUG_ON(NSIGFPE  !=3D 14);
-- 	BUILD_BUG_ON(NSIGSEGV !=3D 4);
-+ 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
-  	BUILD_BUG_ON(NSIGBUS  !=3D 5);
-  	BUILD_BUG_ON(NSIGTRAP !=3D 4);
-  	BUILD_BUG_ON(NSIGCHLD !=3D 6);
+  	call = __con_initcall_start;
++	trace_initcall_level("console");
+  	while (call < __con_initcall_end) {
+-		(*call)();
++		trace_initcall_start((*call));
++		ret = (*call)();
++		trace_initcall_finish((*call), ret);
+  		call++;
+  	}
+  }
+diff --git a/security/security.c b/security/security.c
+index 1cd8526cb0b7..9de51d599bb4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -30,6 +30,8 @@
+  #include <linux/string.h>
+  #include <net/flow.h>
 
---Sig_/xelN5VzTy5GEMv40EPAOBoo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
++#include <trace/events/boot.h>
++
+  #define MAX_LSM_EVM_XATTR	2
 
------BEGIN PGP SIGNATURE-----
+  /* Maximum number of letters for an LSM name string */
+@@ -45,10 +47,14 @@ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmnAACgkQAVBC80lX
-0GxDbQf+Ln9ODONtb5cYvaYlHsL+eBUbncVaSG/WGwAhuNOhwg1YP9FPlNEleOvX
-89zlt3y65wi3B+QgRP7MGh4FxCWJLLlhILbrNpfFYYZETpGnZUemFnluqnlX+Hcx
-faPBcHv01sPuVhN0dWQGMAFQmav4duTDSs6wwD9UaZq05wPCJqw55bdkMbGV54rw
-yOZbXEiPyWQw3EeKgm+oMKT0JxnLdvCpp7y/xY80jEY0NhHeVJ2Oz4rBIRVQHwBa
-ZNAoSZlgmZnk/cJFcz/GXZpUBb2sqWOg8Ju2mMvSJ2SWLgqpDDs/erH5pb+e7c0A
-iJxTMh9FWB72fw7pgzyW6m0lwYpSXA==
-=XtU2
------END PGP SIGNATURE-----
-
---Sig_/xelN5VzTy5GEMv40EPAOBoo--
+  static void __init do_security_initcalls(void)
+  {
++	int ret;
+  	initcall_t *call;
+  	call = __security_initcall_start;
++	trace_initcall_level("security");
+  	while (call < __security_initcall_end) {
+-		(*call) ();
++		trace_initcall_start((*call));
++		ret = (*call) ();
++		trace_initcall_finish((*call), ret);
+  		call++;
+  	}
+  }
+-- 
