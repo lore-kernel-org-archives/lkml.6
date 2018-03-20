@@ -1,215 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeCTJcu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:32:50 -0400
-Received: from mail-eopbgr00131.outbound.protection.outlook.com ([40.107.0.131]:60830
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752431AbeCTJcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:32:43 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Guenter Roeck <linux@roeck-us.net>,
-        Wolfram Sang <wsa@the-dreams.de>, Ken Chen <chen.kenyy@inventec.com>,
-        joel@jms.id.au, linux-i2c@vger.kernel.org
-Subject: [PATCH 3/3] i2c: mux: pca9541: prepare for PCA9641 support
-Date: Tue, 20 Mar 2018 10:32:00 +0100
-Message-Id: <20180320093200.19179-4-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180320093200.19179-1-peda@axentia.se>
-References: <20180320061909.5775-1-chen.kenyy@inventec.com>
- <20180320093200.19179-1-peda@axentia.se>
+        id S1752257AbeCTJfx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:35:53 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38072 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeCTJfu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:35:50 -0400
+X-Google-Smtp-Source: AG47ELsbP3jfrborrmMF4/ouN4VxY0dc5BbLdxIdTqlK+1TE4Aa9eiwK41fi2u3bITA2cOFOAnbAC5YOcMkBQxKKUfc=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: VI1PR0502CA0029.eurprd05.prod.outlook.com
- (2603:10a6:803:1::42) To DB6PR0202MB2776.eurprd02.prod.outlook.com
- (2603:10a6:4:a8::22)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 18b92142-38af-4cc3-5045-08d58e4586be
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2776;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;3:7VSC4K8X0xYOH16usYVhWLv6hobawDAyDTZtRBM2xaWGV2SyMKKrj66la6MZ2rwGqTlq/7lcl2tfcRreW1xg9cfW+mHeohakw3eWOfvl0Hn1ZXzryj81h2z5QpZaI2LCk4a3/jsOmw/brEURLS79xoPY7aobbFvaWpCeK2BlI4CAxL9OthCYW9pTHZDhcjSzb1NkLnUnhSRg6v/MrFF/82Qi0i+4g/dMNo/KLDzOl7zMCuPtdi3q4hToxUX5MqIt;25:dmbSDFbS3kt5prbPA2/lwiiBVlNpq3TpjN3D1FXgD+h4M+jI7pWx0ytIAPAdafuAKHwLxdTg8hM28/tFDnlx7sJeRIiYj0WN8MJEC1z7IM7YSy7/E+HQowZUHvAK8S0E9PyiskeYB3i15aHHbN6aLsgsioJY8yA0Vb1XUFQr2nHCRpHwC+1iiP/OGY0Lqn4Ys2imlErc8blvA60jWstaOBp1jgTqQGGz9fbvez921YDzEknMMyt9viaM9qIkf7sWMTksgD1qQD7WyKWN8+WPLJbm3PB7E8ID31PiBoOWpwG8wFXbw/6BrxhDkbjOyJPINslVuqjZAV2h91nkgvbL2w==;31:TUaUq+W6wyxZFAr2/JET/edMI78v+r8EssGDNYOg9NgiOEPn8hhn+4vvnW9YCoZ+TPBhDYqcD3pdrnRGxxjuqFIfyrm29O+e8Cz7NZX8eVJ5c1r7cbP7/WAwSTpMkd8BfLCWEdDJvBYmM8rEDX+lJzA1zImIhQAr6dvbE/cLGq1nwVYuWrII0VAEWUGDr90A2UBVca8jVoRQiylP5WC+Gl3L6w1HKSlyUWuxSypf/vI=
-X-MS-TrafficTypeDiagnostic: DB6PR0202MB2776:
-X-Microsoft-Antispam-PRVS: <DB6PR0202MB2776173264C0A0D9871C8639BCAB0@DB6PR0202MB2776.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(60795455431006);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231221)(944501309)(52105095)(3002001)(93006095)(93001095)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6072148)(6043046)(201708071742011);SRVR:DB6PR0202MB2776;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2776;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;4:9MJJrCIi6yrCElLe6esqBI5zBqnLpYefa5Xlrph4uZ8cCmjniv86VxW5naBt3MdFXzuCw3f7gOZ4W66KbcBD0i3reDbwJDPF3Awf6ggfuI+aofdov4gnvGttJ+DA/iM3l22rLY7//1C4K8VLzjGIDkq8nTHap1gTPhQNNZg1QmIrICmAQKfN5FDGiXzN1ch4e7Go9JtTtvFxQ2V3wpHJU4B13Hip7THoDFPsGOLHz4mYWEHlpaVS9WkZgMIxIEdkVHdszbFx6hSI16kkSSMtNrE23/s9kHE2hlNSLbQkx/RTPaOnsGZt+gBh0TsnVQ5J
-X-Forefront-PRVS: 061725F016
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39840400004)(39380400002)(346002)(396003)(199004)(189003)(8936002)(16586007)(54906003)(478600001)(81166006)(2351001)(6346003)(3846002)(2361001)(25786009)(76176011)(106356001)(8676002)(81156014)(51416003)(86362001)(6506007)(26005)(575784001)(316002)(386003)(186003)(16526019)(50226002)(53936002)(59450400001)(36756003)(68736007)(47776003)(4326008)(97736004)(5660300001)(66066001)(6486002)(6512007)(305945005)(50466002)(7736002)(2906002)(48376002)(1076002)(6116002)(2950100002)(6666003)(52116002)(6916009)(74482002)(105586002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2776;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2776;23:EyCJrXXrguiZ29uTKRXWBwbrjVTk2PnDDTXWxFm?=
- =?us-ascii?Q?OnF5Xt4q6G67wpJWL0qugMicx+Iisb8+6IgiPBAsj1m4OtLv6HrHmez3dKa5?=
- =?us-ascii?Q?k6yfQNpE/Kr/9sFd1VNN7pb1HiuaKGOgBp8tGdpSEfdpFzsckA+lYY1q7fKF?=
- =?us-ascii?Q?pyaHC7ajyd8+P2j4jMD/hjS7zhjEPySpwscSiocinRv0rGRD7HFf/dVTntcM?=
- =?us-ascii?Q?EL8y56ftiQnpyOQXxsgJAaa+TzBgM00SgWHlb94X4asPtYss/kHkO9irRiXz?=
- =?us-ascii?Q?5ICBDkl7DPcrUy6pIfdCrnGK6diIgDUN80dmrus5kd+w7JepYylTZmZX9Vv0?=
- =?us-ascii?Q?jFy91/Wx+vAmC+53Qwg9xBa3aESEp/v2mZDWOQKi50zNZMva//k+vuwJBKVW?=
- =?us-ascii?Q?HBmja80obi+dQN8gdMu8cgBZPvvpvZHitxANfuRR7b1u8ZA9MbGpvkEzCMLF?=
- =?us-ascii?Q?54xen2CM9x3Lugnx9k6Yh4RZV3cP9qphTstqdRrhh82SVUgf+FimYeIVFVUG?=
- =?us-ascii?Q?TLK35saoe/NsCDEo+1F2qJsLtz3FiL4szNE4WXiAMjODEAejrQKQdT38C/bB?=
- =?us-ascii?Q?fKnpCbquD/G/LLTaWu03PDuK4s9Gsc6iwyqizxP97R8brv/T1x6rK7a0zXjE?=
- =?us-ascii?Q?Sa577L3O2R8/5gAxOykzBQhHxDP2z/0ga9oURphnKHQYTKEJYieNqJ1TLqCB?=
- =?us-ascii?Q?S3ZUnkmN1Z53QwrWkPpcJS+lkxciU6wkczit5XMdDc8SKipN0kyReFHYoY62?=
- =?us-ascii?Q?ukOWXlVoZLirytHGypcdTnGUGJMsyjH2cv1kolJfx9rlHcryYd2bqykByZUh?=
- =?us-ascii?Q?7+kc05ebxM67um8nIU3h961Pe555byZ/eV6QrH6WieBNIqBUlaNsTv2kCkLs?=
- =?us-ascii?Q?xcoxeT6L8Lt1Nj2gigKuQXS5xG1O1sPfEvRiDcI7blqmiFygMJVyouxqN+70?=
- =?us-ascii?Q?YyAcHSi66wQ1YqwcZ8AofBERDo93Eb4ReRzruX0UkMXVR4dylXNdYYbdFozz?=
- =?us-ascii?Q?daGfatPEc2XBx6zrPfr+9C5EwKMZvL8dRAMbFvpZ3grEqSoYQRn9oIbmTbdk?=
- =?us-ascii?Q?jYYWSieKim+/8Iem0xka4FxmYDri7Kx6kaw1IVNRxTcUVsICsbviy9e64E3Z?=
- =?us-ascii?Q?bxNJctBENvr+Ek6ae/VSseyplhAfTnZU4jfdiGQGez+LshqoOXvw5Kl1QxyM?=
- =?us-ascii?Q?JLf2qeAdexOl3qIKLaGMg2oteesA5xYCyNkLsuq2RgbvIZBsYrBNAuvj3uYe?=
- =?us-ascii?Q?6cQYtYhmCLMVLcoDwKDkLPwfKoX/P4ntTXL0A72KA77utAEWVP3BkvGh50dZ?=
- =?us-ascii?Q?z0w=3D=3D?=
-X-Microsoft-Antispam-Message-Info: IujXv5QWPYvq51ZHu4/tz4WFM3VYFS0StBzAeKsUr031T0NR5zn60b837h6JqZO3pdUbtXv2AHBiMPp78YAyfs/S7oi0weaCvyPdrAihbcc3IA0THvdPuKHJWkX2DxK7mdB4uSbORGsHHBdC7Sw3DIWFEIQQtY15srEW721Xofds3mrMQVuCTd+3r0cAi2Jc
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;6:6D4C+21VwGWgCBoOv3PuDK0bfO0HGRknR9xq5uv/YJKp/YX3YbtQ8yY3udblAFdk5e3ts27ewuX1pHcDJy27H5HzNcUt4ceTA0hxhRjFGbH1XbamHelgZGiWV+TGZR7sAYE6IFvy6uUAma270NqC3w4uKRzItx5HJ1+/lqflKawVwXC8sZFyAklN1MIm/wfcAr/422Y5Xu4q72yBgbNLe3SoVvLBzB9rbxUlGW7ObXd1H3wXh3HbF44FYcsGVrXWsN283zapwzUrApTKQDTcuPRedBYjK49Iyu/1QR542+FrmuhnqZrx/yTR1LVXRBJyAB6euMk/pywd3/Nd9SbQE5MZ+Eme/d+jVwglehmuTRg=;5:ZA2E8ormcm4tcy2vzyjDd7fRc7whpGTpn/Y3I8G1umr1D9dRdWlhoy2vYDi1RirwZNVEWW0yuWqyiQITxZPrQPNA7v3dhn4UCnXuzoU97lk69UqKu1jPb2gQbTjrnWcGztBttQAzmGpgx/l2dPTfo5/AbBiMkEFSL08ZMRO4ZFM=;24:gO7oTDAEvoh9dP2CHl3wRGF7lUzSpXbzgYRPxul41370eOkJ7RKJT8yT7K6mc2IUzhztDn4uD1oYtU7z7gp3dzwsIT4I6Dt+P/MJakRcyzw=;7:tbqVmJtIJa54TyvnpcFPGwstb+uB3mN/NAB0cxqC9eQCha2MatIh09a/V6+6wSf0osaw1JY2S4eJbAw+ZF5QbeAedLNOWqqscri3oHp3D3kr1JPgCcGaA2pgSLTOL1A6ZcGeeP2ZfKEyQQpmohNJDXi/PvKQoqyIsfbvPrbdb9utIqjMmkiW6t9VSvP05FpYMG6dZ44ighrcRquBDcak/MiMgecvdyQBULwJIsOaH/Im8zYM3eO6kYu3vbeQf7X9
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2018 09:32:39.8706 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18b92142-38af-4cc3-5045-08d58e4586be
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2776
+In-Reply-To: <5AB0CE6B.2050109@broadcom.com>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+ <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
+ <CALFoz4aaEshpmyCxzut1t6cqSOSee4YP6vsi5G4Eei9m8hkZ3A@mail.gmail.com> <5AB0CE6B.2050109@broadcom.com>
+From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+Date: Tue, 20 Mar 2018 16:35:48 +0700
+Message-ID: <CALFoz4bug5h=p_FFFf_Xa=yBibkepY7H6spAUg4+zFLhX9tgUA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Kalle Valo <kvalo@codeaurora.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the arbitrate and release_bus implementation chip specific.
+Arend,
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/i2c/muxes/i2c-mux-pca9541.c | 62 +++++++++++++++++++++++++++----------
- 1 file changed, 45 insertions(+), 17 deletions(-)
+Agreed. Let's dismiss these patches.
+Now I'm curious if I can get the information about DMA SG limitations
+from MMC layer, I'll try to figure out something.
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
-index 47685eb4e0e9..cac629e36bf8 100644
---- a/drivers/i2c/muxes/i2c-mux-pca9541.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
-@@ -23,6 +23,7 @@
- #include <linux/i2c-mux.h>
- #include <linux/jiffies.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/platform_data/pca954x.h>
- #include <linux/slab.h>
- 
-@@ -70,26 +71,22 @@
- #define SELECT_DELAY_SHORT	50
- #define SELECT_DELAY_LONG	1000
- 
--struct pca9541 {
--	struct i2c_client *client;
--	unsigned long select_timeout;
--	unsigned long arb_timeout;
-+enum chip_name {
-+	pca9541,
- };
- 
--static const struct i2c_device_id pca9541_id[] = {
--	{"pca9541", 0},
--	{}
-+struct chip_desc {
-+	int (*arbitrate)(struct i2c_client *client);
-+	void (*release_bus)(struct i2c_client *client);
- };
- 
--MODULE_DEVICE_TABLE(i2c, pca9541_id);
-+struct pca9541 {
-+	const struct chip_desc *chip;
- 
--#ifdef CONFIG_OF
--static const struct of_device_id pca9541_of_match[] = {
--	{ .compatible = "nxp,pca9541" },
--	{}
-+	struct i2c_client *client;
-+	unsigned long select_timeout;
-+	unsigned long arb_timeout;
- };
--MODULE_DEVICE_TABLE(of, pca9541_of_match);
--#endif
- 
- static int pca9541_mybus(int ctl)
- {
-@@ -318,7 +315,7 @@ static int pca9541_select_chan(struct i2c_mux_core *muxc, u32 chan)
- 		/* force bus ownership after this time */
- 
- 	do {
--		ret = pca9541_arbitrate(client);
-+		ret = data->chip->arbitrate(client);
- 		if (ret)
- 			return ret < 0 ? ret : 0;
- 
-@@ -336,10 +333,32 @@ static int pca9541_release_chan(struct i2c_mux_core *muxc, u32 chan)
- 	struct pca9541 *data = i2c_mux_priv(muxc);
- 	struct i2c_client *client = data->client;
- 
--	pca9541_release_bus(client);
-+	data->chip->release_bus(client);
- 	return 0;
- }
- 
-+static const struct chip_desc chips[] = {
-+	[pca9541] = {
-+		.arbitrate = pca9541_arbitrate,
-+		.release_bus = pca9541_release_bus,
-+	},
-+};
-+
-+static const struct i2c_device_id pca9541_id[] = {
-+	{ "pca9541", pca9541 },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, pca9541_id);
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id pca9541_of_match[] = {
-+	{ .compatible = "nxp,pca9541", .data = &chips[pca9541] },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, pca9541_of_match);
-+#endif
-+
- /*
-  * I2C init/probing/exit functions
-  */
-@@ -348,6 +367,8 @@ static int pca9541_probe(struct i2c_client *client,
- {
- 	struct i2c_adapter *adap = client->adapter;
- 	struct pca954x_platform_data *pdata = dev_get_platdata(&client->dev);
-+	const struct of_device_id *match;
-+	const struct chip_desc *chip;
- 	struct i2c_mux_core *muxc;
- 	struct pca9541 *data;
- 	int force;
-@@ -356,12 +377,18 @@ static int pca9541_probe(struct i2c_client *client,
- 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE_DATA))
- 		return -ENODEV;
- 
-+	match = of_match_device(of_match_ptr(pca9541_of_match), &client->dev);
-+	if (match)
-+		chip = of_device_get_match_data(&client->dev);
-+	else
-+		chip = &chips[id->driver_data];
-+
- 	/*
- 	 * I2C accesses are unprotected here.
- 	 * We have to lock the adapter before releasing the bus.
- 	 */
- 	i2c_lock_adapter(adap);
--	pca9541_release_bus(client);
-+	chip->release_bus(client);
- 	i2c_unlock_adapter(adap);
- 
- 	/* Create mux adapter */
-@@ -376,6 +403,7 @@ static int pca9541_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	data = i2c_mux_priv(muxc);
-+	data->chip = chip;
- 	data->client = client;
- 
- 	i2c_set_clientdata(client, muxc);
+BTW, my specific setup (with default alignments) triggers kernel panic
+(I see brcm_* in backtrace). It's better if I create separate email
+chain for the issue.
+
+Thanks,
+  Alex.
+
+On 20 March 2018 at 16:03, Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+> On 3/20/2018 8:58 AM, Alexey Roslyakov wrote:
+>>
+>> Arend,
+>>
+>>> Also I am not sure if the broken-sg-support is still needed. We added
+>>> that for omap_hsmmc, but that has since changed to scatter-gather emulation
+>>> so it might not be needed anymore.
+>>
+>> I can confirm it doesn't impact wifi performance in case of rk3288+ap6335.
+>>
+>> But I still have to set settings->bus.sdio.sd_head_align = 4 and
+>> settings->bus.sdio.sd_sgentry_align = 512, otherwise
+>> brcmf_sdiod_sglist_rw fails:
+>>
+>>    974.888452] net_ratelimit: 8 callbacks suppressed
+>> [  974.888457] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed
+>> -84
+>> [  974.901527] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes
+>> failed: -5
+>> [  974.910248] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
+>> [  975.018041] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed
+>> -84
+>> [  975.025833] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes
+>> failed: -5
+>> [  975.033634] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
+>> [  975.033924] dwmmc_rockchip ff0d0000.dwmmc: Unexpected command
+>> timeout, state 0
+>> [  975.049209] brcmfmac: brcmf_sdio_readframes: RXHEADER FAILED: -84
+>> [  975.056034] brcmfmac: brcmf_sdio_rxfail: abort command, terminate
+>> frame, send NAK
+>> [  975.068367] brcmfmac: brcmf_sdio_hdparse: HW header length too long
+>> [  975.075379] brcmfmac: brcmf_sdio_rxfail: terminate frame
+>
+>
+> Hi Alex,
+>
+> Thanks for checking. In your case I think you do not need sd_head_align as
+> it will default to either 4 or 8:
+>
+> #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> #define ALIGNMENT  8
+> #else
+> #define ALIGNMENT  4
+> #endif
+>
+> I am not saying you should not be needing this. When it comes to DT people
+> are often tempted to accommodate a driver solution especially when such a
+> solution is already in place. However, DT is a hardware description and
+> these do not describe the wifi device. They are applicable to the wifi
+> device because it is a limitation of the host controller and as such should
+> be described in the DT binding of the host controller.
+>
+> Regards,
+> Arend
+>
+>
+>> Regards,
+>>    Alex
+>>
+>> On 20 March 2018 at 06:16, Arend van Spriel
+>> <arend.vanspriel@broadcom.com> wrote:
+>>>
+>>> + Uffe
+>>>
+>>> On 3/19/2018 6:55 PM, Florian Fainelli wrote:
+>>>>
+>>>>
+>>>> On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
+>>>>>
+>>>>>
+>>>>> Hi Arend,
+>>>>> I appreciate your response. In my opinion, it has nothing to do with
+>>>>> SDIO host, because it defines "quirks" in the driver itself.
+>>>>
+>>>>
+>>>>
+>>>> It is not clear to me from your patch series whether the problem is
+>>>> that:
+>>>>
+>>>> - the SDIO device has a specific alignment requirements, which would be
+>>>> either a SDIO device driver limitation/issue or maybe the underlying
+>>>> hardware device/firmware requiring that
+>>>>
+>>>> - the SDIO host controller used is not capable of coping nicely with
+>>>> these said limitations
+>>>>
+>>>> It seems to me like what you are doing here is a) applicable to possibly
+>>>> more SDIO devices and host combinations, and b) should likely be done at
+>>>> the layer between the host and device, such that it is available to more
+>>>> combinations.
+>>>
+>>>
+>>>
+>>> Indeed. That was my thought exactly and I can not imagine Uffe would push
+>>> back on that reasoning.
+>>>
+>>>>> If I get it right, you mean something like this:
+>>>>>
+>>>>> mmc3: mmc@1c12000 {
+>>>>> ...
+>>>>>           broken-sg-support;
+>>>>>           sd-head-align = 4;
+>>>>>           sd-sgentry-align = 512;
+>>>>>
+>>>>>           brcmf: wifi@1 {
+>>>>>                   ...
+>>>>>           };
+>>>>> };
+>>>>>
+>>>>> Where dt: bindings documentation for these entries should reside?
+>>>>> In generic MMC bindings? Well, this is the very special case and
+>>>>> mmc-linux maintainer will unlikely to accept these changes.
+>>>>> Also, extra kernel code modification might be required. It could make
+>>>>> quite trivial change much more complex.
+>>>>
+>>>>
+>>>>
+>>>> If the MMC maintainers are not copied on this patch series, it will
+>>>> likely be hard for them to identify this patch series and chime in...
+>>>
+>>>
+>>>
+>>> The main question is whether this is indeed a "very special case" as
+>>> Alexey
+>>> claims it to be or that it is likely to be applicable to other device and
+>>> host combinations as you are suggesting.
+>>>
+>>> If these properties are imposed by the host or host controller it would
+>>> make
+>>> sense to have these in the mmc bindings.
+>>>
+>>>>>
+>>>>>> Also I am not sure if the broken-sg-support is still needed. We added
+>>>>>> that for omap_hsmmc, but that has since changed to scatter-gather
+>>>>>> emulation
+>>>>>> so it might not be needed anymore.
+>>>>>
+>>>>>
+>>>>>
+>>>>> I've experienced the problem with rk3288 (dw-mmc host) and sdio
+>>>>> settings like above solved it.
+>>>>> Frankly, I haven't investigated any deeper which one of the settings
+>>>>> helped in my case yet...
+>>>>> I will try to get rid of broken-sg-support first and let you know if
+>>>>> it does make any difference.
+>>>
+>>>
+>>>
+>>> Are you using some chromebook. I have some lying around here so I could
+>>> also
+>>> look into it. What broadcom chipset do you have?
+>>>
+>>> Regards,
+>>> Arend
+>>>
+>>>
+>>>>> All the best,
+>>>>>     Alex.
+>>>>>
+>>>>> On 19 March 2018 at 16:31, Arend van Spriel
+>>>>> <arend.vanspriel@broadcom.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> In case if the host has higher align requirements for SG items, allow
+>>>>>>> setting device-specific aligns for scatterlist items.
+>>>>>>>
+>>>>>>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+>>>>>>> ---
+>>>>>>>
+>>>>>>> Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>>>> | 5
+>>>>>>> +++++
+>>>>>>>     1 file changed, 5 insertions(+)
+>>>>>>>
+>>>>>>> diff --git
+>>>>>>>
+>>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>>>>
+>>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>>>> index 86602f264dce..187b8c1b52a7 100644
+>>>>>>> ---
+>>>>>>>
+>>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>>>> +++
+>>>>>>>
+>>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>>>> @@ -17,6 +17,11 @@ Optional properties:
+>>>>>>>           When not specified the device will use in-band SDIO
+>>>>>>> interrupts.
+>>>>>>>      - interrupt-names : name of the out-of-band interrupt, which
+>>>>>>> must
+>>>>>>> be
+>>>>>>> set
+>>>>>>>           to "host-wake".
+>>>>>>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO
+>>>>>>> host
+>>>>>>> +       controller has higher align requirement than 32 bytes for
+>>>>>>> each
+>>>>>>> +       scatterlist item.
+>>>>>>> + - brcm,sd-head-align : alignment requirement for start of data
+>>>>>>> buffer.
+>>>>>>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
+>>>>>>> entry.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Hi Alexey,
+>>>>>>
+>>>>>> Thanks for the patch. However, the problem with these is that they are
+>>>>>> characterizing the host controller and not the wireless device. So
+>>>>>> from
+>>>>>> device tree perspective , which is to describe the hardware, these
+>>>>>> properties should be SDIO host controller properties. Also I am not
+>>>>>> sure
+>>>>>> if
+>>>>>> the broken-sg-support is still needed. We added that for omap_hsmmc,
+>>>>>> but
+>>>>>> that has since changed to scatter-gather emulation so it might not be
+>>>>>> needed
+>>>>>> anymore.
+>>>>>>
+>>>>>> Regards,
+>>>>>> Arend
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>
+>>
+>>
+>
+
+
+
 -- 
-2.11.0
+With best regards,
+  Alexey Roslyakov
+Email: alexey.roslyakov@gmail.com
