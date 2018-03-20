@@ -1,172 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751549AbeCTR0I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 13:26:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51296 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751411AbeCTR0B (ORCPT
+        id S1751770AbeCTR21 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 13:28:27 -0400
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:37256 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCTR2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:26:01 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        mhocko@kernel.org
-Subject: [PATCH] mm/hugetlb: prevent hugetlb VMA to be misaligned
-Date: Tue, 20 Mar 2018 18:25:54 +0100
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18032017-0008-0000-0000-000004E06562
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032017-0009-0000-0000-00001E7383BB
-Message-Id: <1521566754-30390-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803200198
+        Tue, 20 Mar 2018 13:28:22 -0400
+X-Google-Smtp-Source: AG47ELvw2HKdlXPx98XVD9NQ3nqg3Gig4tO/rIybQ9DCEMylQpIJy1Rh1hF3kojN2dGrglCQ9lu1NZrteA71PlP1OcA=
+MIME-Version: 1.0
+In-Reply-To: <002401d3c06e$fed035b0$fc70a110$@net>
+References: <2142751.3U6XgWyF8u@aspire.rjw.lan> <2148754.TY7qXgFyZy@aspire.rjw.lan>
+ <002401d3c06e$fed035b0$fc70a110$@net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 20 Mar 2018 18:28:21 +0100
+X-Google-Sender-Auth: 5IKYuoBreazpXjwvFYV3Ldf1NPU
+Message-ID: <CAJZ5v0hbW-v+392v2+Or4x0Azht7bKQaXy_8SAciMHBv9jX_pQ@mail.gmail.com>
+Subject: Re: [RFT][PATCH v5 7/7] cpuidle: menu: Avoid selecting shallow states
+ with stopped tick
+To: Doug Smythies <dsmythies@telus.net>
+Cc: Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Rik van Riel <riel@surriel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running the sampler detailed below, the kernel, if built with the VM
-debug option turned on (as many distro do), is panicing with the following
-message :
-kernel BUG at /build/linux-jWa1Fv/linux-4.15.0/mm/hugetlb.c:3310!
-Oops: Exception in kernel mode, sig: 5 [#1]
-LE SMP NR_CPUS=2048 NUMA PowerNV
-Modules linked in: kcm nfc af_alg caif_socket caif phonet fcrypt
-		8<--8<--8<--8< snip 8<--8<--8<--8<
-CPU: 18 PID: 43243 Comm: trinity-subchil Tainted: G         C  E
-4.15.0-10-generic #11-Ubuntu
-NIP:  c00000000036e764 LR: c00000000036ee48 CTR: 0000000000000009
-REGS: c000003fbcdcf810 TRAP: 0700   Tainted: G         C  E
-(4.15.0-10-generic)
-MSR:  9000000000029033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24002222  XER:
-20040000
-CFAR: c00000000036ee44 SOFTE: 1
-GPR00: c00000000036ee48 c000003fbcdcfa90 c0000000016ea600 c000003fbcdcfc40
-GPR04: c000003fd9858950 00007115e4e00000 00007115e4e10000 0000000000000000
-GPR08: 0000000000000010 0000000000010000 0000000000000000 0000000000000000
-GPR12: 0000000000002000 c000000007a2c600 00000fe3985954d0 00007115e4e00000
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR20: 00000fe398595a94 000000000000a6fc c000003fd9858950 0000000000018554
-GPR24: c000003fdcd84500 c0000000019acd00 00007115e4e10000 c000003fbcdcfc40
-GPR28: 0000000000200000 00007115e4e00000 c000003fbc9ac600 c000003fd9858950
-NIP [c00000000036e764] __unmap_hugepage_range+0xa4/0x760
-LR [c00000000036ee48] __unmap_hugepage_range_final+0x28/0x50
-Call Trace:
-[c000003fbcdcfa90] [00007115e4e00000] 0x7115e4e00000 (unreliable)
-[c000003fbcdcfb50] [c00000000036ee48]
-__unmap_hugepage_range_final+0x28/0x50
-[c000003fbcdcfb80] [c00000000033497c] unmap_single_vma+0x11c/0x190
-[c000003fbcdcfbd0] [c000000000334e14] unmap_vmas+0x94/0x140
-[c000003fbcdcfc20] [c00000000034265c] exit_mmap+0x9c/0x1d0
-[c000003fbcdcfce0] [c000000000105448] mmput+0xa8/0x1d0
-[c000003fbcdcfd10] [c00000000010fad0] do_exit+0x360/0xc80
-[c000003fbcdcfdd0] [c0000000001104c0] do_group_exit+0x60/0x100
-[c000003fbcdcfe10] [c000000000110584] SyS_exit_group+0x24/0x30
-[c000003fbcdcfe30] [c00000000000b184] system_call+0x58/0x6c
-Instruction dump:
-552907fe e94a0028 e94a0408 eb2a0018 81590008 7f9c5036 0b090000 e9390010
-7d2948f8 7d2a2838 0b0a0000 7d293038 <0b090000> e9230086 2fa90000 419e0468
----[ end trace ee88f958a1c62605 ]---
+On Tue, Mar 20, 2018 at 6:15 PM, Doug Smythies <dsmythies@telus.net> wrote:
+> On 2018.03.20 11:22 Doug Smythies wrote:
+>> On 2018.03.19 05:47 Thomas Ilsche wrote:
+>>> On 2018-03-15 23:19, Rafael J. Wysocki wrote:
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>
+>>>> If the scheduler tick has been stopped already and the governor
+>>>> selects a shallow idle state, the CPU can spend a long time in that
+>>>> state if the selection is based on an inaccurate prediction of idle
+>>>> time.  That effect turns out to be noticeable, so it needs to be
+>>>> mitigated.
+>>>
+>>> What are some common causes for that situation?
+>>> How could I trigger this for testing?
+>>
+>> It appeared quite readily with my simple 100% load
+>> on one CPU test. Back then (V3) there only 6 patches in the set,
+>> and before the re-spin there ended up being a patch 7 of 6, which
+>> made a significant difference in both package power and the
+>> histograms of times in each idle state.
+>>
+>> Reference:
+>> https://marc.info/?l=linux-pm&m=152075419526696&w=2
+>
+> I made a kernel (4.16-rc5) with only patches 1 to 6 of 7 (V6)
+> and also with the poll fix.
+>
+> I took an old graph:
+> http://fast.smythies.com/rjwv3pp_100.png
+>
+> and removed an obsolete line and added a line from this
+> kernel:
+>
+> http://fast.smythies.com/rjwv6m_100.png
+>
+> I also acquired a trace during the test and observe:
+>
+> Report: Summary:
+>
+> Idle State 0: Total Entries: 699 : PowerNightmares: 0 : Not PN time (seconds): 0.031169 : PN time: 0.000000 : Ratio: 0.000000
+> Idle State 1: Total Entries: 3855 : PowerNightmares: 106 : Not PN time (seconds): 0.123759 : PN time: 43.511914 : Ratio: 351.585856
+> Idle State 2: Total Entries: 3688 : PowerNightmares: 181 : Not PN time (seconds): 1.303237 : PN time: 63.241424 : Ratio: 48.526418
+> Idle State 3: Total Entries: 528 : PowerNightmares: 115 : Not PN time (seconds): 0.276290 : PN time: 44.764111 : Ratio: 162.018571
+>
+> Where "PowerNightmare" is defined as spending excessive time in an idle state,
+> and arbitrarily defined for my processor as:
+>
+> #define THRESHOLD_0 100       /* Idle state 0 PowerNightmare threshold in microseconds */
+> #define THRESHOLD_1 1000      /* Idle state 1 PowerNightmare threshold in microseconds */
+> #define THRESHOLD_2 2000      /* Idle state 2 PowerNightmare threshold in microseconds */
+> #define THRESHOLD_3 4000      /* Idle state 3 PowerNightmare threshold in microseconds */
+>
+> While this trace file was only about 15 megabytes, I have several 10s of gigabytes of trace data for
+> V4 + poll fix and never see any excessive time spent in any idle state.
 
-The panic is due to a VMA pointing to a hugetlb area while the
-vma->vm_start or vma->vm_end field are not aligned to the huge page
-boundaries. The sampler is just unmapping a part of the hugetlb area,
-leading to 2 VMAs which are not well aligned.  The same could be achieved
-by calling madvise() situation, as it is when running:
-stress-ng --shm-sysv 1
+Thanks for this work!
 
-The hugetlb code is assuming that the VMA will be well aligned when it is
-unmapped, so we must prevent such a VMA to be split or shrink to a
-misaligned address.
-
-This patch is preventing this by checking the new VMA's boundaries when a
-VMA is modified by calling vma_adjust().
-
-If this patch is applied, stable should be Cced.
-
---- Sampler used to hit the panic
-nclude <sys/ipc.h>
-
-unsigned long page_size;
-
-int main(void)
-{
-    int shmid, ret=1;
-    void *addr;
-
-    setbuf(stdout, NULL);
-    page_size = getpagesize();
-
-    shmid = shmget(0x1410, LENGTH, IPC_CREAT | SHM_HUGETLB | SHM_R |
-SHM_W);
-    if (shmid < 0) {
-	perror("shmget");
-	exit(1);
-    }
-
-    printf("shmid: %d\n", shmid);
-
-    addr = shmat(shmid, NULL, 0);
-    if (addr == (void*)-1) {
-	perror("shmat");
-	goto out;
-    }
-
-    /*
-     * The following munmap() call will split the VMA in 2, leading to
-     * unaligned to huge page size VMAs which will trigger a check when
-     * shmdt() is called.
-     */
-    if (munmap(addr + HPSIZE + page_size, page_size)) {
-	perror("munmap");
-	goto out;
-    }
-
-    if (shmdt(addr)) {
-	perror("shmdt");
-	goto out;
-    }
-
-    printf("test done.\n");
-    ret = 0;
-
-out:
-    shmctl(shmid, IPC_RMID, NULL);
-    return ret;
-}
---- End of code
-
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
----
- mm/mmap.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 188f195883b9..5dbf4b69a798 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -692,6 +692,17 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	long adjust_next = 0;
- 	int remove_next = 0;
- 
-+	if (is_vm_hugetlb_page(vma)) {
-+		/*
-+		 * We must check against the huge page boundarie to not
-+		 * create misaligned VMA.
-+		 */
-+		struct hstate *h = hstate_vma(vma);
-+
-+		if (start & ~huge_page_mask(h) || end & ~huge_page_mask(h))
-+			return -EINVAL;
-+	}
-+
- 	if (next && !insert) {
- 		struct vm_area_struct *exporter = NULL, *importer = NULL;
- 
--- 
-2.7.4
+I prefer it with patch [7/7]. :-)
