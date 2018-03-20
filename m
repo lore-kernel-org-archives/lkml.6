@@ -1,102 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeCTKyi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 06:54:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54175 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752161AbeCTKyc (ORCPT
+        id S1752161AbeCTLB6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:01:58 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:39106 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752533AbeCTLB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 06:54:32 -0400
-X-Google-Smtp-Source: AG47ELti/pXLFQ6B3E3fsHwRI5WBiN3pGJ/4Fc6WRbjx5rWU/aRR41N3zbTT2apw/NrBK7/kTrYEbQ==
-Date: Tue, 20 Mar 2018 11:54:27 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Laight <David.Laight@ACULAB.COM>,
-        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Message-ID: <20180320105427.bm4od7cpessbraag@gmail.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
- <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
- <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
+        Tue, 20 Mar 2018 07:01:56 -0400
+Subject: Re: [PATCH v2] MIPS: ralink: fix booting on mt7621
+To: NeilBrown <neil@brown.name>, John Crispin <john@phrozen.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+CC: <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <87efkf9z0o.fsf@notabene.neil.brown.name>
+ <87605r9mwf.fsf@notabene.neil.brown.name>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <cc33f000-16ed-b331-53b7-d767e20a4a9c@mips.com>
+Date: Tue, 20 Mar 2018 11:01:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <87605r9mwf.fsf@notabene.neil.brown.name>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.155.41]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1521543705-452060-25377-39749-1
+X-BESS-VER: 2018.3.1-r1803192000
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191229
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Neil,
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> On Tue, 20 Mar 2018, Ingo Molnar wrote:
-> > * Thomas Gleixner <tglx@linutronix.de> wrote:
-> > 
-> > > > So I do think we could do more in this area to improve driver performance, if the 
-> > > > code is correct and if there's actual benchmarks that are showing real benefits.
-> > > 
-> > > If it's about hotpath performance I'm all for it, but the use case here is
-> > > a debug facility...
-> > > 
-> > > And if we go down that road then we want a AVX based memcpy()
-> > > implementation which is runtime conditional on the feature bit(s) and
-> > > length dependent. Just slapping a readqq() at it and use it in a loop does
-> > > not make any sense.
-> > 
-> > Yeah, so generic memcpy() replacement is only feasible I think if the most 
-> > optimistic implementation is actually correct:
-> > 
-> >  - if no preempt disable()/enable() is required
-> > 
-> >  - if direct access to the AVX[2] registers does not disturb legacy FPU state in 
-> >    any fashion
-> > 
-> >  - if direct access to the AVX[2] registers cannot raise weird exceptions or have
-> >    weird behavior if the FPU control word is modified to non-standard values by 
-> >    untrusted user-space
-> > 
-> > If we have to touch the FPU tag or control words then it's probably only good for 
-> > a specialized API.
+On 20/03/18 08:22, NeilBrown wrote:
 > 
-> I did not mean to have a general memcpy replacement. Rather something like
-> magic_memcpy() which falls back to memcpy when AVX is not usable or the
-> length does not justify the AVX stuff at all.
+> Further testing showed that the original version of this
+> patch wasn't 100% reliable.  Very occasionally the read
+> of SYSC_REG_CHIP_NAME0 returns garbage.  Repeating the
+> read seems to be reliable, but it hasn't happened enough
+> for me to be completely confident.
+> So this version repeats that first read.
 
-OK, fair enough.
+You almost certainly need a sync() to ensure that the write to gcr_reg0 
+has completed before attempting to read sysc + SYSC_REG_CHIP_NAME0.
 
-Note that a generic version might still be worth trying out, if and only if it's 
-safe to access those vector registers directly: modern x86 CPUs will do their 
-non-constant memcpy()s via the common memcpy_erms() function - which could in 
-theory be an easy common point to be (cpufeatures-) patched to an AVX2 variant, if 
-size (and alignment, perhaps) is a multiple of 32 bytes or so.
+> 
+> Thanks,
+> NeilBrown
+> 
+> 
+> ----------------8<--------------------
+> Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621
+> has not been able to boot.
+> 
+> This patched caused mips_cm_probe() to be called before
+> mt7621.c::proc_soc_init().
+> 
+> prom_soc_init() has a comment explaining that mips_cm_probe()
+> "wipes out the bootloader config" and means that configuration
+> registers are no longer available.  It has some code to re-enable
+> this config.
+> 
+> Before this re-enable code is run, the sysc register cannot be
+> read, so when SYSC_REG_CHIP_NAME0 is read, a garbage value
+> is returned and panic() is called.
+> 
+> If we move the config-repair code to the top of prom_soc_init(),
+> the registers can be read and boot can proceed.
+> 
+> Very occasionally, the first register read after the reconfiguration
+> returns garbage.  So repeat that read to be on the safe side.
+> 
+> Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>   arch/mips/ralink/mt7621.c | 43 +++++++++++++++++++++++--------------------
+>   1 file changed, 23 insertions(+), 20 deletions(-)
+> 
+> diff --git a/arch/mips/ralink/mt7621.c b/arch/mips/ralink/mt7621.c
+> index 1b274742077d..c37716407fbe 100644
+> --- a/arch/mips/ralink/mt7621.c
+> +++ b/arch/mips/ralink/mt7621.c
+> @@ -170,6 +170,29 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
+>   	u32 n1;
+>   	u32 rev;
+>   
+> +	/* Early detection of CMP support */
+> +	mips_cm_probe();
+> +	mips_cpc_probe();
+> +
+> +	if (mips_cps_numiocu(0)) {
+> +		/*
+> +		 * mips_cm_probe() wipes out bootloader
+> +		 * config for CM regions and we have to configure them
+> +		 * again. This SoC cannot talk to pamlbus devices
+> +		 * witout proper iocu region set up.
+> +		 *
+> +		 * FIXME: it would be better to do this with values
+> +		 * from DT, but we need this very early because
+> +		 * without this we cannot talk to pretty much anything
+> +		 * including serial.
+> +		 */
+> +		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
+> +		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
+> +				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
 
-Assuming it's correct with arbitrary user-space FPU state and if it results in any 
-measurable speedups, which might not be the case: ERMS is supposed to be very 
-fast.
+i.e. Try putting a sync() here.
 
-So even if it's possible (which it might not be), it could end up being slower 
-than the ERMS version.
+> +	}
+> +
+> +	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
+> +	/* Sometimes first read returns garbage, so try again to be safe */
+
+Rather than doing this, which is a bit of a hack and there's no 
+guarantee the second read won't also read garbage without the barrier.
 
 Thanks,
+Matt
 
-	Ingo
+>   	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
+>   	n1 = __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
+>   
+> @@ -194,26 +217,6 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
+>   
+>   	rt2880_pinmux_data = mt7621_pinmux_data;
+>   
+> -	/* Early detection of CMP support */
+> -	mips_cm_probe();
+> -	mips_cpc_probe();
+> -
+> -	if (mips_cps_numiocu(0)) {
+> -		/*
+> -		 * mips_cm_probe() wipes out bootloader
+> -		 * config for CM regions and we have to configure them
+> -		 * again. This SoC cannot talk to pamlbus devices
+> -		 * witout proper iocu region set up.
+> -		 *
+> -		 * FIXME: it would be better to do this with values
+> -		 * from DT, but we need this very early because
+> -		 * without this we cannot talk to pretty much anything
+> -		 * including serial.
+> -		 */
+> -		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
+> -		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
+> -				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
+> -	}
+>   
+>   	if (!register_cps_smp_ops())
+>   		return;
+> 
