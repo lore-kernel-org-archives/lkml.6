@@ -1,31 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752994AbeCTLSb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:18:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42501 "EHLO
+        id S1753039AbeCTLSo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:18:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54673 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752968AbeCTLS3 (ORCPT
+        with ESMTP id S1752803AbeCTLSb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:18:29 -0400
-Date: Tue, 20 Mar 2018 04:17:05 -0700
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-174afc3e7dd7823df8218e16e7768b834097184e@git.kernel.org>
-Cc: hpa@zytor.com, kan.liang@linux.intel.com, mingo@kernel.org,
-        vincent.weaver@maine.edu, peterz@infradead.org, jolsa@redhat.com,
-        tglx@linutronix.de, acme@redhat.com, linux-kernel@vger.kernel.org,
-        eranian@google.com, torvalds@linux-foundation.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: tglx@linutronix.de, jolsa@redhat.com, peterz@infradead.org,
-        vincent.weaver@maine.edu, mingo@kernel.org, kan.liang@linux.intel.com,
-        hpa@zytor.com, alexander.shishkin@linux.intel.com,
-        torvalds@linux-foundation.org, eranian@google.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com
-In-Reply-To: <1520865937-22910-1-git-send-email-kan.liang@linux.intel.com>
-References: <1520865937-22910-1-git-send-email-kan.liang@linux.intel.com>
+        Tue, 20 Mar 2018 07:18:31 -0400
+Date: Tue, 20 Mar 2018 04:18:06 -0700
+From: tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-c917e0f259908e75bd2a65877e25f9d90c22c848@git.kernel.org>
+Cc: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+        vincent.weaver@maine.edu, songliubraving@fb.com, acme@redhat.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, kernel-team@fb.com, eranian@google.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com, ephiepark@fb.com
+Reply-To: mingo@kernel.org, vincent.weaver@maine.edu, songliubraving@fb.com,
+        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, ephiepark@fb.com, jolsa@redhat.com,
+        eranian@google.com, kernel-team@fb.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20180312165943.1057894-1-songliubraving@fb.com>
+References: <20180312165943.1057894-1-songliubraving@fb.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/intel: Rename confusing 'freerunning
- PEBS' API and implementation to 'large PEBS'
-Git-Commit-ID: 174afc3e7dd7823df8218e16e7768b834097184e
+Subject: [tip:perf/urgent] perf/cgroup: Fix child event counting bug
+Git-Commit-ID: c917e0f259908e75bd2a65877e25f9d90c22c848
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,26 +37,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  174afc3e7dd7823df8218e16e7768b834097184e
-Gitweb:     https://git.kernel.org/tip/174afc3e7dd7823df8218e16e7768b834097184e
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 12 Mar 2018 10:45:37 -0400
+Commit-ID:  c917e0f259908e75bd2a65877e25f9d90c22c848
+Gitweb:     https://git.kernel.org/tip/c917e0f259908e75bd2a65877e25f9d90c22c848
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Mon, 12 Mar 2018 09:59:43 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Mar 2018 08:58:29 +0100
+CommitDate: Tue, 20 Mar 2018 08:58:47 +0100
 
-perf/x86/intel: Rename confusing 'freerunning PEBS' API and implementation to 'large PEBS'
+perf/cgroup: Fix child event counting bug
 
-The 'freerunning PEBS' and 'large PEBS' are the same thing. Both of these
-names appear in the code and in the API, which causes confusion.
+When a perf_event is attached to parent cgroup, it should count events
+for all children cgroups:
 
-Rename 'freerunning PEBS' to 'large PEBS' to unify the code,
-which eliminates the confusion.
+   parent_group   <---- perf_event
+     \
+      - child_group  <---- process(es)
 
-No functional change.
+However, in our tests, we found this perf_event cannot report reliable
+results. Here is an example case:
 
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+  # create cgroups
+  mkdir -p /sys/fs/cgroup/p/c
+  # start perf for parent group
+  perf stat -e instructions -G "p"
+
+  # on another console, run test process in child cgroup:
+  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
+
+  # after the test process is done, stop perf in the first console shows
+
+       <not counted>      instructions              p
+
+The instruction should not be "not counted" as the process runs in the
+child cgroup.
+
+We found this is because perf_event->cgrp and cpuctx->cgrp are not
+identical, thus perf_event->cgrp are not updated properly.
+
+This patch fixes this by updating perf_cgroup properly for ancestor
+cgroup(s).
+
+Reported-by: Ephraim Park <ephiepark@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <jolsa@redhat.com>
+Cc: <kernel-team@fb.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
@@ -65,132 +89,56 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1520865937-22910-1-git-send-email-kan.liang@linux.intel.com
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/core.c       |  2 +-
- arch/x86/events/intel/core.c | 12 ++++++------
- arch/x86/events/intel/ds.c   |  6 +++---
- arch/x86/events/perf_event.h |  6 +++---
- 4 files changed, 13 insertions(+), 13 deletions(-)
+ kernel/events/core.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 3d24edfef3e4..88797c80b3e0 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2119,7 +2119,7 @@ static int x86_pmu_event_init(struct perf_event *event)
- 	}
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4b838470fac4..709a55b9ad97 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -724,9 +724,15 @@ static inline void __update_cgrp_time(struct perf_cgroup *cgrp)
  
- 	if (READ_ONCE(x86_pmu.attr_rdpmc) &&
--	    !(event->hw.flags & PERF_X86_EVENT_FREERUNNING))
-+	    !(event->hw.flags & PERF_X86_EVENT_LARGE_PEBS))
- 		event->hw.flags |= PERF_X86_EVENT_RDPMC_ALLOWED;
- 
- 	return err;
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 9b18a227fff7..1e41d7508d99 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2952,9 +2952,9 @@ static void intel_pebs_aliases_skl(struct perf_event *event)
- 	return intel_pebs_aliases_precdist(event);
+ static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
+ {
+-	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
+-	if (cgrp_out)
+-		__update_cgrp_time(cgrp_out);
++	struct perf_cgroup *cgrp = cpuctx->cgrp;
++	struct cgroup_subsys_state *css;
++
++	if (cgrp) {
++		for (css = &cgrp->css; css; css = css->parent) {
++			cgrp = container_of(css, struct perf_cgroup, css);
++			__update_cgrp_time(cgrp);
++		}
++	}
  }
  
--static unsigned long intel_pmu_free_running_flags(struct perf_event *event)
-+static unsigned long intel_pmu_large_pebs_flags(struct perf_event *event)
+ static inline void update_cgrp_time_from_event(struct perf_event *event)
+@@ -754,6 +760,7 @@ perf_cgroup_set_timestamp(struct task_struct *task,
  {
--	unsigned long flags = x86_pmu.free_running_flags;
-+	unsigned long flags = x86_pmu.large_pebs_flags;
- 
- 	if (event->attr.use_clockid)
- 		flags &= ~PERF_SAMPLE_TIME;
-@@ -2976,8 +2976,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 		if (!event->attr.freq) {
- 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
- 			if (!(event->attr.sample_type &
--			      ~intel_pmu_free_running_flags(event)))
--				event->hw.flags |= PERF_X86_EVENT_FREERUNNING;
-+			      ~intel_pmu_large_pebs_flags(event)))
-+				event->hw.flags |= PERF_X86_EVENT_LARGE_PEBS;
- 		}
- 		if (x86_pmu.pebs_aliases)
- 			x86_pmu.pebs_aliases(event);
-@@ -3460,7 +3460,7 @@ static __initconst const struct x86_pmu core_pmu = {
- 	.event_map		= intel_pmu_event_map,
- 	.max_events		= ARRAY_SIZE(intel_perfmon_event_map),
- 	.apic			= 1,
--	.free_running_flags	= PEBS_FREERUNNING_FLAGS,
-+	.large_pebs_flags	= LARGE_PEBS_FLAGS,
+ 	struct perf_cgroup *cgrp;
+ 	struct perf_cgroup_info *info;
++	struct cgroup_subsys_state *css;
  
  	/*
- 	 * Intel PMCs cannot be accessed sanely above 32-bit width,
-@@ -3502,7 +3502,7 @@ static __initconst const struct x86_pmu intel_pmu = {
- 	.event_map		= intel_pmu_event_map,
- 	.max_events		= ARRAY_SIZE(intel_perfmon_event_map),
- 	.apic			= 1,
--	.free_running_flags	= PEBS_FREERUNNING_FLAGS,
-+	.large_pebs_flags	= LARGE_PEBS_FLAGS,
- 	/*
- 	 * Intel PMCs cannot be accessed sanely above 32 bit width,
- 	 * so we install an artificial 1<<31 period regardless of
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 18c25ab28557..d8015235ba76 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -935,7 +935,7 @@ void intel_pmu_pebs_add(struct perf_event *event)
- 	bool needed_cb = pebs_needs_sched_cb(cpuc);
+ 	 * ctx->lock held by caller
+@@ -764,8 +771,12 @@ perf_cgroup_set_timestamp(struct task_struct *task,
+ 		return;
  
- 	cpuc->n_pebs++;
--	if (hwc->flags & PERF_X86_EVENT_FREERUNNING)
-+	if (hwc->flags & PERF_X86_EVENT_LARGE_PEBS)
- 		cpuc->n_large_pebs++;
+ 	cgrp = perf_cgroup_from_task(task, ctx);
+-	info = this_cpu_ptr(cgrp->info);
+-	info->timestamp = ctx->timestamp;
++
++	for (css = &cgrp->css; css; css = css->parent) {
++		cgrp = container_of(css, struct perf_cgroup, css);
++		info = this_cpu_ptr(cgrp->info);
++		info->timestamp = ctx->timestamp;
++	}
+ }
  
- 	pebs_update_state(needed_cb, cpuc, event->ctx->pmu);
-@@ -975,7 +975,7 @@ void intel_pmu_pebs_del(struct perf_event *event)
- 	bool needed_cb = pebs_needs_sched_cb(cpuc);
- 
- 	cpuc->n_pebs--;
--	if (hwc->flags & PERF_X86_EVENT_FREERUNNING)
-+	if (hwc->flags & PERF_X86_EVENT_LARGE_PEBS)
- 		cpuc->n_large_pebs--;
- 
- 	pebs_update_state(needed_cb, cpuc, event->ctx->pmu);
-@@ -1530,7 +1530,7 @@ void __init intel_ds_init(void)
- 			x86_pmu.pebs_record_size =
- 						sizeof(struct pebs_record_skl);
- 			x86_pmu.drain_pebs = intel_pmu_drain_pebs_nhm;
--			x86_pmu.free_running_flags |= PERF_SAMPLE_TIME;
-+			x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
- 			break;
- 
- 		default:
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 78f91ec1056e..39cd0615f04f 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -69,7 +69,7 @@ struct event_constraint {
- #define PERF_X86_EVENT_RDPMC_ALLOWED	0x0100 /* grant rdpmc permission */
- #define PERF_X86_EVENT_EXCL_ACCT	0x0200 /* accounted EXCL event */
- #define PERF_X86_EVENT_AUTO_RELOAD	0x0400 /* use PEBS auto-reload */
--#define PERF_X86_EVENT_FREERUNNING	0x0800 /* use freerunning PEBS */
-+#define PERF_X86_EVENT_LARGE_PEBS	0x0800 /* use large PEBS */
- 
- 
- struct amd_nb {
-@@ -88,7 +88,7 @@ struct amd_nb {
-  * REGS_USER can be handled for events limited to ring 3.
-  *
-  */
--#define PEBS_FREERUNNING_FLAGS \
-+#define LARGE_PEBS_FLAGS \
- 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_ADDR | \
- 	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
- 	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
-@@ -608,7 +608,7 @@ struct x86_pmu {
- 	struct event_constraint *pebs_constraints;
- 	void		(*pebs_aliases)(struct perf_event *event);
- 	int 		max_pebs_events;
--	unsigned long	free_running_flags;
-+	unsigned long	large_pebs_flags;
- 
- 	/*
- 	 * Intel LBR
+ static DEFINE_PER_CPU(struct list_head, cgrp_cpuctx_list);
