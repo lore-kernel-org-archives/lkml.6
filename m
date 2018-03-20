@@ -1,88 +1,61 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1907187-1521567172-2-16331282643783247802
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521567171; b=FRiq7jv50fuqK0iak5bDKhEWoa+Zy7uhLmP5Rlm71MFsh8N
-    8VQ1c3KAQEFi5CF0zbXvH6YrbdwhzEaf04tBtQpXdO1dkp0JDcqkNnRJSnzjeqEG
-    XFEF4TgVzfwaqS4BiwWeauR+JjDbFaf3u+YfZXZNBffu98A4H+jgEkUgt7lCY6fB
-    NIzLt+cjRyuHVekauG3uZrVtRIShOcZowp31a6b+srhc1t4gmLO/lV9XlTP1B1dl
-    TDW45AQLaNTBLIFnljFUNlUXznADrwaJ+E7Ue+uqHvVszuXxQrpHUnr3C+ST6uGC
-    srSR7S0jtvIwg7YL9ztqxqSx1/jgX4yTs0dP8EA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521567171; bh=4f5+kd8mMzWk1nZ1Ru4z5trSYgOAlPHLBabOgkqHsCU=; b=n
-    bUCHFnmOMMiddl9RNZ0ggcR8rIAtX5mre7EPRXwFkv5OuXrS51X5PivrIgoORcTk
-    pOLnF6LF3+jeYGAP21UIWgKHqxlWNWj3eK59DxDDCwmjeZ0hOm7IpwCPKO0YR6RU
-    /A+mRUSGsN8uHiXOZ1w9lrzjSeLgss6NgyJ//XUoR9iaI55zlewhRv7XAQLuDqhS
-    Qi/WgGGj6V9LM4W5V/P4xMML7Z/GT/mACm18e0F2V2nmwqFwJvp8VldkpVPw3a7H
-    3zLJpIIyc5BS/rn1vTigGcoeNoSKB8pRXlrtNhRUJKcGvhMNRQ8T1CrrgK1UbSlG
-    g4OwJEdQ1EP/21IHhdSYg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeCTRct (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Mar 2018 13:32:49 -0400
-Received: from osg.samsung.com ([64.30.133.232]:34062 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeCTRct (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:32:49 -0400
+Return-Path: <dan.rue@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521507594; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zwqnmNWZf3vPdnYfplHKGvWXh8sQdCqWAOdxRNY8hRilsByhhlVqWkv2dBXDHkM+Zu
+         VopM8KZSL30j5WkWrTqb9zGx/drc+t431WsuU/THz3dMJTcyfAYwln5OWsN5lURstlSo
+         Rr7L11shbzI3FXC4eWlPXmEosycGpePIjYS/4NLVXuWIKW147vNEGjXYAZ+sIv3xK3ja
+         f2S0tdXLf+R9VuHy+X2UcEs/g7NNC6QQ2FS9aiEPMhV6vrZlNuM2Ksd6JenaBGw1eoG9
+         JV5qd9cpSjGLgdftZeQ81f0pE8tFU86MYUaAV9eVuLd0TOGvORuKjm5ocLBRdwNcFsYv
+         ux0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=YDuLVeyugJZwnhQdUmTZmokbFB9MPKI7iGI+2cxXs9I=;
+        b=YrYhKNl77fE5MBn4bGVTbEllyGdXTb6KdkRjfwLKDZoYrp+hb7aWBJ0gUJEUbh+pV9
+         8y9l15xLkcAVszatEIeR4KTze6xgvrQX3eCxA0ZuXC4xG4eFG3Ct7JJWV/d26qjCKaEa
+         7jodfarIGpsQh4YPwe7gVDavSrMagaxFDDp7ZLb/qOHEUASPyWZng9XV+1zNstAn8KG2
+         6mdT6gMcT0i8UFB5YJWz7ERJ1dCzGlD+gdQU3L4myxNnisiPF6pZl/X6n2pXDzibl0oU
+         1D0cvKbn41y1fIO/p55IIvJAlzt7TWPu6q7yI22cehusUcO1EShmPlyl+cl7os3lKu1A
+         DBDQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HuR0jldC;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HuR0jldC;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELuTXo9qSVcF1t5M5OHDllvKwl8mcGcXCVnfx9cHWw5ps34t0RWkSWYZ6852KVsydl9OHK5QpQ==
+Date: Tue, 20 Mar 2018 08:59:51 +0800
+From: Dan Rue <dan.rue@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
+	shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, stable@vger.kernel.org,
+	akpm@linux-foundation.org, torvalds@linux-foundation.org,
+	linux@roeck-us.net
 Subject: Re: [PATCH 4.9 000/241] 4.9.89-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <20180320005951.ulw66htokgtdmfav@xps>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
+	shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
+	patches@kernelci.org, stable@vger.kernel.org,
+	akpm@linux-foundation.org, torvalds@linux-foundation.org,
+	linux@roeck-us.net
 References: <20180319180751.172155436@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <0c0b6fa6-5cfa-8e0a-2ae6-117ce25ddb75@osg.samsung.com>
-Date: Tue, 20 Mar 2018 11:32:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20180319180751.172155436@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: NeoMutt/20180223
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595391137042363427?=
+X-GMAIL-MSGID: =?utf-8?q?1595416348050646871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/19/2018 12:04 PM, Greg Kroah-Hartman wrote:
+On Mon, Mar 19, 2018 at 07:04:25PM +0100, Greg Kroah-Hartman wrote:
 > This is the start of the stable review cycle for the 4.9.89 release.
 > There are 241 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
@@ -96,13 +69,19 @@ On 03/19/2018 12:04 PM, Greg Kroah-Hartman wrote:
 > or in the git tree and branch at:
 > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
 > and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+I needed to revert the following in order to successfully build arm32
+and arm64 with default configs:
 
-thanks,
--- Shuah
+9b18a27ddaa0 ("ARM: dts: silk: Correct clock of DU1")
+181e698aaf8c ("ARM: dts: r8a7794: Correct clock of DU1")
+2bbf316eee1b ("soc/tegra: Fix link errors with PMC disabled")
+0a576d2dfcc6 ("dmaengine: bcm2835-dma: Use vchan_terminate_vdesc() instead of desc_free")
+67ee5b1dfe12 ("clk: sunxi-ng: a33: Add offset and minimum value for DDR1 PLL N factor")
+9294024e21e3 ("ARM: DRA7: hwmod_data: Prevent wait_target_disable error for usb_otg_ss")
+
+I'm not sure the best way to report the specific issues with those, or
+why there have been so many arm32/64-related build issues lately. Let me
+know if you want more details.
+
+Dan
