@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750969AbeCTD75 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 23:59:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47304 "EHLO
+        id S1752188AbeCTEAK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 00:00:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48446 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751650AbeCTD7r (ORCPT
+        with ESMTP id S1751105AbeCTEAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 23:59:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3684660FF6
+        Tue, 20 Mar 2018 00:00:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50A9B60F94
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,9 +19,9 @@ To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         absahu@codeaurora.org, marc.zyngier@arm.com
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v3 06/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
-Date: Tue, 20 Mar 2018 09:28:49 +0530
-Message-Id: <1521518336-5467-7-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v3 08/13] ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
+Date: Tue, 20 Mar 2018 09:28:51 +0530
+Message-Id: <1521518336-5467-9-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
 References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
@@ -30,47 +30,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Add the common data for all dk07 based boards.
+
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi | 83 +++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b59e99b..4f209fb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -747,6 +747,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-apq8084-ifc6540.dtb \
- 	qcom-apq8084-mtp.dtb \
- 	qcom-ipq4019-ap.dk01.1-c1.dtb \
-+	qcom-ipq4019-ap.dk04.1-c1.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-msm8660-surf.dtb \
- 	qcom-msm8960-cdp.dtb \
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
 new file mode 100644
-index 0000000..871ac3f
+index 0000000..37a2ea8
 --- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
-@@ -0,0 +1,20 @@
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+@@ -0,0 +1,83 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+#include "qcom-ipq4019-ap.dk04.1.dtsi"
++#include "qcom-ipq4019.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
 +
 +/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C1";
++	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1";
++	compatible = "qcom,ipq4019";
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x20000000>; /* 512MB */
++	};
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		rsvd1@87000000 {
++			/* Reserved for other subsystem */
++			reg = <0x87000000 0x500000>;
++			no-map;
++		};
++
++		wifi_dump@87500000 {
++			reg = <0x87500000 0x600000>;
++			no-map;
++		};
++
++		rsvd2@87B00000 {
++			/* Reserved for other subsystem */
++			reg = <0x87B00000 0x500000>;
++			no-map;
++		};
++	};
 +
 +	soc {
++		pinctrl@1000000 {
++			serial_0_pins: serial0_pinmux {
++				mux {
++					pins = "gpio16", "gpio17";
++					function = "blsp_uart0";
++					bias-disable;
++				};
++			};
++
++			i2c_0_pins: i2c_0_pinmux {
++				mux {
++					pins = "gpio20", "gpio21";
++					function = "blsp_i2c0";
++					bias-disable;
++				};
++			};
++		};
++
++		serial@78af000 {
++			pinctrl-0 = <&serial_0_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++
++		blsp_dma: dma@7884000 {
++			status = "ok";
++		};
++
++		i2c_0: i2c@78b7000 { /* BLSP1 QUP2 */
++			pinctrl-0 = <&i2c_0_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++
 +		qpic_bam: dma@7984000 {
 +			status = "ok";
 +		};
 +
 +		nand: qpic-nand@79b0000 {
-+			pinctrl-0 = <&nand_pins>;
-+			pinctrl-names = "default";
 +			status = "ok";
 +		};
 +	};
