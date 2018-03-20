@@ -1,73 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeCTPBm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:01:42 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:45829 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeCTPBj (ORCPT
+        id S1751458AbeCTPEX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:04:23 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39349 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbeCTPEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:01:39 -0400
-X-Google-Smtp-Source: AG47ELsdGw7Pr8t1rzeyZaVXzfOmeZmrGkdD2fvU23SK+JeOWcXiAIaSOL4y044QEwGWiuVByIhIXFXqjAGR42Bln5M=
+        Tue, 20 Mar 2018 11:04:20 -0400
+X-Google-Smtp-Source: AG47ELttRQ7/wgCY9IIJ5+jHL4Hxu99eY2SKTdEQniJdgRSPQcRnGm7kfkhyTUlWU+zqahlEd1NIIQ==
+Subject: Re: [PATCH -next] drm/meson: Fix potential NULL dereference in
+ meson_drv_bind_master()
+To: Wei Yongjun <weiyongjun1@huawei.com>, David Airlie <airlied@linux.ie>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1521555630-29284-1-git-send-email-weiyongjun1@huawei.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <4cad8099-dbb8-d12c-9ce8-b64688222bd7@baylibre.com>
+Date: Tue, 20 Mar 2018 16:04:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1521305041-18181-1-git-send-email-kyle@spiers.me>
-References: <1521305041-18181-1-git-send-email-kyle@spiers.me>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 20 Mar 2018 16:01:38 +0100
-Message-ID: <CAOi1vP-Fjy4JsSn+kRbGBJ2uPsNXEZRVirHbSf5Tden62jWtHA@mail.gmail.com>
-Subject: Re: [PATCH v3] rbd: Remove VLA usage
-To: Kyle Spiers <kyle@spiers.me>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1521555630-29284-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 5:44 PM, Kyle Spiers <kyle@spiers.me> wrote:
->
-> As part of the effort to remove VLAs from the kernel[1], this moves
-> the literal values into the stack array calculation instead of using a
-> variable for the sizing. The resulting size can be found from
-> sizeof(buf).
->
-> [1] https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Kyle Spiers <kyle@spiers.me>
+On 20/03/2018 15:20, Wei Yongjun wrote:
+> platform_get_resource_byname() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> a bit later in the code.
+> 
+> This is detected by Coccinelle semantic patch.
+> 
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> 
+> res = platform_get_resource_byname(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res == NULL
+> e = devm_ioremap(e1, res->start, e2);
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/block/rbd.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 8e40da0..46893e0 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
->  {
->         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
->         struct rbd_client_id cid = rbd_get_cid(rbd_dev);
-> -       int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
-> -       char buf[buf_size];
-> +       char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
-> +       int buf_size = sizeof(buf);
->         void *p = buf;
->
->         dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
-> @@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct rbd_device *rbd_dev,
->                                      u64 notify_id, u64 cookie, s32 *result)
->  {
->         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-> -       int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
-> -       char buf[buf_size];
-> +       char buf[4 + CEPH_ENCODING_START_BLK_LEN];
-> +       int buf_size = sizeof(buf);
->         int ret;
->
->         if (result) {
-
-Applied.
-
+>  drivers/gpu/drm/meson/meson_drv.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+> index 3baceb7..32b1a6c 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -197,6 +197,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>  	priv->io_base = regs;
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+> +	if (!res)
+> +		return -EINVAL;
+>  	/* Simply ioremap since it may be a shared register zone */
+>  	regs = devm_ioremap(dev, res->start, resource_size(res));
+>  	if (!regs) {
+> @@ -213,6 +215,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>  	}
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
+> +	if (!res)
+> +		return -EINVAL;
+>  	/* Simply ioremap since it may be a shared register zone */
+>  	regs = devm_ioremap(dev, res->start, resource_size(res));
+>  	if (!regs) {
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> 
 Thanks,
 
-                Ilya
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
