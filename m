@@ -1,138 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeCTSvM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 14:51:12 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50342 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeCTSvK (ORCPT
+        id S1751521AbeCTSvU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 14:51:20 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:51552 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751424AbeCTSvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 14:51:10 -0400
-X-Google-Smtp-Source: AG47ELsGnjQflLLWmBiKi+Atq+iN6laE05korcr/MqToxz58PtDaK2UE85hztTZ1LT9E5E5Fz/A6wQ==
-Date: Tue, 20 Mar 2018 21:51:06 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: ebiederm@xmission.com, xemul@virtuozzo.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pidns: simpler allocation of pid_* caches
-Message-ID: <20180320185106.GA325@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        Tue, 20 Mar 2018 14:51:16 -0400
+X-Google-Smtp-Source: AG47ELuJ2PGJF6iOtVRazgOyTW5lXZhfaVmoDX4P3hxB7s6evcBG/PurOQT5F9JfhjSgOtNqdO0/tA==
+From: valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To: Liran Alon <LIRAN.ALON@ORACLE.COM>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, idan.brown@ORACLE.COM,
+        yuval.shaia@ORACLE.COM
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info only when crossing netns
+In-Reply-To: <5AB13953.3000606@ORACLE.COM>
+References: <5AB12A0E.2060704@ORACLE.COM> <20180320.120036.1999626754164343704.davem@davemloft.net> <5AB132C5.5010806@ORACLE.COM> <20180320.123401.2138083793709750726.davem@davemloft.net>
+ <5AB13953.3000606@ORACLE.COM>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1521571867_3137P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Tue, 20 Mar 2018 14:51:07 -0400
+Message-ID: <55538.1521571867@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Those pid_* caches are created on demand when a process advances to the new
-level of pid namespace. Which means pointers are stable, write only and
-thus can be packed into an array instead of spreading them over and using
-lists(!) to find them.
+--==_Exmh_1521571867_3137P
+Content-Type: text/plain; charset=us-ascii
 
-Both first and subsequent clone/unshare(CLONE_NEWPID) become faster.
+On Tue, 20 Mar 2018 18:39:47 +0200, Liran Alon said:
+> What is your opinion in regards if it's OK to put the flag enabling this
+> "fix" in /proc/sys/net/core? Do you think it's sufficient?
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Umm.. *which* /proc/sys/net/core?  These could differ for things that
+are in different namespaces.  Or are you proposing one systemwide
+global value (which also gets "interesting" if it's writable inside a
+container and changes the behavior a different container sees...)
 
- kernel/pid_namespace.c |   67 +++++++++++++++++--------------------------------
- 1 file changed, 24 insertions(+), 43 deletions(-)
 
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -23,55 +23,39 @@
- #include <linux/sched/signal.h>
- #include <linux/idr.h>
- 
--struct pid_cache {
--	int nr_ids;
--	char name[16];
--	struct kmem_cache *cachep;
--	struct list_head list;
--};
--
--static LIST_HEAD(pid_caches_lh);
- static DEFINE_MUTEX(pid_caches_mutex);
- static struct kmem_cache *pid_ns_cachep;
-+/* MAX_PID_NS_LEVEL is needed for limiting size of 'struct pid' */
-+#define MAX_PID_NS_LEVEL 32
-+/* Write once array, filled from the beginning. */
-+static struct kmem_cache *pid_cache[MAX_PID_NS_LEVEL];
- 
- /*
-  * creates the kmem cache to allocate pids from.
-- * @nr_ids: the number of numerical ids this pid will have to carry
-+ * @level: pid namespace level
-  */
- 
--static struct kmem_cache *create_pid_cachep(int nr_ids)
-+static struct kmem_cache *create_pid_cachep(unsigned int level)
- {
--	struct pid_cache *pcache;
--	struct kmem_cache *cachep;
--
-+	/* Level 0 is init_pid_ns.pid_cachep */
-+	struct kmem_cache **pkc = &pid_cache[level - 1];
-+	struct kmem_cache *kc;
-+	char name[4 + 10 + 1];
-+	unsigned int len;
-+
-+	kc = READ_ONCE(*pkc);
-+	if (kc)
-+		return kc;
-+
-+	snprintf(name, sizeof(name), "pid_%u", level + 1);
-+	len = sizeof(struct pid) + level * sizeof(struct upid);
- 	mutex_lock(&pid_caches_mutex);
--	list_for_each_entry(pcache, &pid_caches_lh, list)
--		if (pcache->nr_ids == nr_ids)
--			goto out;
--
--	pcache = kmalloc(sizeof(struct pid_cache), GFP_KERNEL);
--	if (pcache == NULL)
--		goto err_alloc;
--
--	snprintf(pcache->name, sizeof(pcache->name), "pid_%d", nr_ids);
--	cachep = kmem_cache_create(pcache->name,
--			sizeof(struct pid) + (nr_ids - 1) * sizeof(struct upid),
--			0, SLAB_HWCACHE_ALIGN, NULL);
--	if (cachep == NULL)
--		goto err_cachep;
--
--	pcache->nr_ids = nr_ids;
--	pcache->cachep = cachep;
--	list_add(&pcache->list, &pid_caches_lh);
--out:
-+	/* Name collision forces to do allocation under mutex. */
-+	if (!*pkc)
-+		*pkc = kmem_cache_create(name, len, 0, SLAB_HWCACHE_ALIGN, 0);
- 	mutex_unlock(&pid_caches_mutex);
--	return pcache->cachep;
--
--err_cachep:
--	kfree(pcache);
--err_alloc:
--	mutex_unlock(&pid_caches_mutex);
--	return NULL;
-+	/* current can fail, but someone else can succeed. */
-+	return READ_ONCE(*pkc);
- }
- 
- static void proc_cleanup_work(struct work_struct *work)
-@@ -80,9 +64,6 @@ static void proc_cleanup_work(struct work_struct *work)
- 	pid_ns_release_proc(ns);
- }
- 
--/* MAX_PID_NS_LEVEL is needed for limiting size of 'struct pid' */
--#define MAX_PID_NS_LEVEL 32
--
- static struct ucounts *inc_pid_namespaces(struct user_namespace *ns)
- {
- 	return inc_ucount(ns, current_euid(), UCOUNT_PID_NAMESPACES);
-@@ -119,7 +100,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 
- 	idr_init(&ns->idr);
- 
--	ns->pid_cachep = create_pid_cachep(level + 1);
-+	ns->pid_cachep = create_pid_cachep(level);
- 	if (ns->pid_cachep == NULL)
- 		goto out_free_idr;
- 
+--==_Exmh_1521571867_3137P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWrFYG40DS38y7CIcAQJL5Af+JvWAyw/rPHQdMa+n+LZhoLmEtp7FNEsB
++QXUcxO5XeuSecJbg0SpPPRh5KcWy2VNY3kjq4yjqFtSSrXmTR0atJ7Oi0DTyRlF
+r4H6NM1CtTNaqlS6khWKqesccLL7thUYNiP5ckD2pYCMu3iCdRbp+y0RFiNFa9vS
+yDWFz9cAThQM8tu3L9RW5PdKn44WDzOmf0WXrhvTEpU6HOQWBj8aZzUSLz14Q2Jy
+KSCjpVbD3sqZEqcmFt+N7UckpP4G360k1KNeekjqsVf3FeKgnrg8+SxQ+Cb914xL
+38t8eX1Ot3dMwBUYqnUUB5rwVdu0jQM4zpWgIUgG9ylP20RUgiOFXQ==
+=dHhk
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1521571867_3137P--
