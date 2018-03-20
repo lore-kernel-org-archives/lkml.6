@@ -1,48 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeCTPf7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:35:59 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:25975 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeCTPf4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:35:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w2KFZlj2028566
-X-Nifty-SrcIP: [209.85.217.174]
-X-Google-Smtp-Source: AG47ELsqeU9TgQgTh+uSQHm/vfTKHvI1cZ188FYrK+ZS4SFZVZWDZlgERsJ3yEhH3r2Vj7F+dulUqibuJlpQ65qDcF8=
+        id S1751545AbeCTPig (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:38:36 -0400
+Received: from linode.aoot.com ([69.164.194.13]:56860 "EHLO linode.aoot.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeCTPie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:38:34 -0400
+From: "Steve Wise" <swise@opengridcomputing.com>
+To: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "'Sinan Kaya'" <okaya@codeaurora.org>
+Cc: <linux-rdma@vger.kernel.org>, <timur@codeaurora.org>,
+        <sulrich@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>, <linux-kernel@vger.kernel.org>
+References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org> <1521514068-8856-5-git-send-email-okaya@codeaurora.org> <20180320145159.GG19744@ziepe.ca> 
+In-Reply-To: 
+Subject: RE: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Tue, 20 Mar 2018 10:38:33 -0500
+Message-ID: <3d9b01d3c061$8173d890$845b89b0$@opengridcomputing.com>
 MIME-Version: 1.0
-In-Reply-To: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 21 Mar 2018 00:35:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASq5MML3PRSB+mze3zgHEq11--31nKsaP0qG2hN6tEi_A@mail.gmail.com>
-Message-ID: <CAK7LNASq5MML3PRSB+mze3zgHEq11--31nKsaP0qG2hN6tEi_A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] kbuild: various fix, clean-up, improvements of CONFIG_TRIM_UNUSED_KSYMS
-To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc: Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQJnohsAzCjMC8iCAg840eHfO7WHuQE8ydHJAazdTfQB/pHyGaKKPMXg
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-16 16:37 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->
-> Masahiro Yamada (7):
->   kbuild: clear LDFLAGS in the top Makefile
->   kbuild: remove wrong 'touch' in adjust_autoksyms.sh
->   kbuild: move 'scripts' target below
->   kbuild: restore touching autoksyms.h to the top Makefile
->   kbuild: move CONFIG_TRIM_UNUSED_KSYMS code unneeded for external
->     module
->   kbuild: move include/config/ksym/* to include/ksym/*
->   kbuild: link vmlinux only once for CONFIG_TRIM_UNUSED_KSYMS
->
+> > On Mon, Mar 19, 2018 at 10:47:46PM -0400, Sinan Kaya wrote:
+> > > Code includes wmb() followed by writel(). writel() already has a
+barrier
+> on
+> > > some architectures like arm64.
+> > >
+> > > This ends up CPU observing two barriers back to back before executing
+> > the
+> > > register write.
+> > >
+> > > Since code already has an explicit barrier call, changing writel() to
+> > > writel_relaxed().
+> > >
+> > > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> > >  drivers/infiniband/hw/cxgb4/t4.h | 14 +++++++-------
+> > >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/drivers/infiniband/hw/cxgb4/t4.h
+> > b/drivers/infiniband/hw/cxgb4/t4.h
+> > > index 8369c7c..6e5658a 100644
+> > > +++ b/drivers/infiniband/hw/cxgb4/t4.h
+> > > @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst,
+> u64
+> > *src)
+> > >  	int count = 8;
+> > >
+> > >  	while (count) {
+> > > -		writeq(*src, dst);
+> > > +		writeq_relaxed(*src, dst);
+> > >  		src++;
+> > >  		dst++;
+> > >  		count--;
+> >
+> > This is another case where writes can be re-ordered.. IIRC dst is WC
+> > BAR memory, so the NIC should tolerate re-ordering, but Steve will
+> > have to ack this.
+> >
+> 
+> Yes, this is WC BAR memory.  The goal is that pio_copy() will enable
+write-
+> combining this into a single 64B pci-e transaction.
+> 
 
-Series, applied to linux-kbuild.
 
--- 
-Best Regards
-Masahiro Yamada
+I'd like to see the PPC issue resolved...but
+
+Acked-by: Steve Wise <swise@opengridcomputing.com>
