@@ -1,55 +1,134 @@
 Return-Path: <pratik.jain0509@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521546078; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521546862; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZgNsC/6SyV0t3YLJTo2RDEqi4gDyTyxLLG5F1OBKfI5UmmXanKKCuFkF7zc5u8dRr6
-         +YFKnQh33isFr0h1glooVeGJuDYE0nbBmXEyfduLV52JNFVlEur0md8olyaH4waolNbu
-         29jp+YGDpqwyHN3LoLbIj+23t+MWSY4tE5A68FFDWuX3M3gFzv5DIdkShB/4brFuPL4R
-         3uESdXsWc+Dp9+b5Yq4aEkbF77gtXDrUAFH2r7oi7c/dg8TDc+TOqp13KSx08oA+wHep
-         a0nEwIFLw0WXPxIUm+atv4PmtUkKmzOctC6H8bwOlZLkEk7L8ErU+ed38mrOyfh5zzLp
-         ES3A==
+        b=uSHBtltcHjZ9foU3lLGcB7d4bi+Yef2DRwfOQEnYRvMD167qNTAoU+B9tvTDaJkLBc
+         iaO1teIe00YvoLackfyeOxdivypB22ojkALXcLZOWb3cZi9ivPICPOdUWnOzIwd/QWtm
+         2iwVHS6b0tO+eoqtgk1Dp8GV9NAWCxJpk3FTvFbwty1epanAs3uqlrFindhMcC4fuAGb
+         H8z9Zwx+JbO8A8XLrh2saIMrP8MsRC9w/dGsnis4CQxVJUK+9aVo1lTcNBCinTNP+bLq
+         dYb0hdxWKtn131iyqJU1RmWQDZeS1zGZ9QA3C4zyFMnGayNM/FqIRCHu71z227sAMzkU
+         rYvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=0VC8yznMOOJognLL8ZPnjEoPVqEqxrMV+MbqZb8gd4U=;
-        b=IsJMA9rmhsBO8ujc76crwRJJNO0eRGjbI4DSIQ8M6ia+VOzJQP+NwdYCqm7KCqnjc+
-         Aq76/IZuGgWq+7eeCCatP9TgYbuLnlifu62iQSZEyktciIq9IlD3RL668trZGXPzBKFF
-         /9uKpoW/rOh67uit6BRJ9D/J+Xm68BbuY8f/kn9a7PxEOAoPWRcLpVWDy7A+XQ0kyNpL
-         IrEmCNMDASE5PB5v+p4PgPnqrfKvB7PXp+iLNcPjZ0p1lwUvwzVMrUxNZM92n5YagdZD
-         P26luvVa1X8JDaaUfn3yz/kaigOmT5HXMq0iIWET7axC2V1Xx1A2WqB6kaW5jURwPKVw
-         rh1Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=bVmbjnH8wkTLnd0XH14FUOrTwre9W8YtbCCXiOivN58=;
+        b=vWIu+CP4E9x71mFiS5QLFNqO85DIXhaFAoNDyokOPXPjJq2aUbAJ2d3r9o5n7NCuu4
+         aBSdVKIPD7SWch08fitqwsFLkTvWaQViYEHUsmFtonIU+jJRe0r9EBnJFV7hUvF8x2CY
+         iHhtcZsTgtU2WNkgkrLLrWZZ8nt1mSejUc7BRDPExqYXt1Zj9DLbm2vM9Q9+OMcc9wbL
+         Y8Nl66RpOGEV/QzePSvJW9eqrTy2Qd8D351iVQ6gHDEy8aDr0ZrUtToA2FuGx+jqH7uA
+         jd5K2QvhZhy/40xDsCdhoyOqlRT/X5NVGPKuMIkh8ki8pIOE+Z9piDgPxo5uS3N7Y2Qo
+         /GTw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IP8Wsj7G;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pJLksgqU;
        spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IP8Wsj7G;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pJLksgqU;
        spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELsf+3Fb77m4CWbr5/PaHn2ejas3n6fTJ1lKcXmjNiHlbKGJhzw0vUSmLgA2jMmJzjMZKJ1JVg==
-Date: Tue, 20 Mar 2018 17:11:11 +0530
+X-Google-Smtp-Source: AG47ELtOEiJGkL+QkEHWNlo+SETA8QQ1KfArZXUD5VFuiNgDIZbjK+MjlEalwijZmLvyRgvZyj4SRg==
 From: Pratik Jain <pratik.jain0509@gmail.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: arnaud.patard@rtp-net.org, devel@driverdev.osuosl.org,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
-Message-ID: <20180320114111.GA18734@archlinux>
-References: <20180320083549.6795-1-pratik.jain0509@gmail.com>
- <20180320112053.zxudtqeemedogcel@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320112053.zxudtqeemedogcel@mwanda>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+To: arnaud.patard@rtp-net.org
+Cc: linux-kernel@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	gregkh@linuxfoundation.org,
+	Pratik Jain <pratik.jain0509@gmail.com>
+Subject: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
+Date: Tue, 20 Mar 2018 17:24:13 +0530
+Message-Id: <20180320115413.20561-1-pratik.jain0509@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180320114111.GA18734@archlinux>
+References: <20180320114111.GA18734@archlinux>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595445043191954085?=
-X-GMAIL-MSGID: =?utf-8?q?1595456701458509823?=
+X-GMAIL-MSGID: =?utf-8?q?1595457523454608273?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-You got a valid point about `++i` and `i++`. But I still feel
-that it is less complicated than previous one. I am explicitly
-saying(in first loop) that we are skipping some values to get
-to a specific index. Apart from that, we can avoid unncessary
-wrapping and indentation. Logic becomes much more explicit if
-broken down to two loops.
+Refactored the function `XGIfb_search_refresh_rate` by removing a level
+of `if...else` block nesting. Removed unnecessary parantheses.
+
+Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
+---
+ drivers/staging/xgifb/XGI_main_26.c | 61 +++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
+index 10107de0119a..7bbc12f3146f 100644
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@ -544,41 +544,44 @@ static u8 XGIfb_search_refresh_rate(struct xgifb_video_info *xgifb_info,
+ 	yres = XGIbios_mode[xgifb_info->mode_idx].yres;
+ 
+ 	xgifb_info->rate_idx = 0;
+-	while ((XGIfb_vrate[i].idx != 0) && (XGIfb_vrate[i].xres <= xres)) {
+-		if ((XGIfb_vrate[i].xres == xres) &&
+-		    (XGIfb_vrate[i].yres == yres)) {
+-			if (XGIfb_vrate[i].refresh == rate) {
++	
++	// Skip values with less xres
++	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres < xres)
++		i++;
++
++	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres <= xres) {
++		if (XGIfb_vrate[i].yres != yres) {
++			i++;
++			continue;
++		}
++		if (XGIfb_vrate[i].refresh == rate) {
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
++		} else if (XGIfb_vrate[i].refresh > rate) {
++			if (XGIfb_vrate[i].refresh - rate <= 3) {
++				pr_debug("Adjusting rate from %d up to %d\n",
++					rate, XGIfb_vrate[i].refresh);
+ 				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
+-			} else if (XGIfb_vrate[i].refresh > rate) {
+-				if ((XGIfb_vrate[i].refresh - rate) <= 3) {
+-					pr_debug("Adjusting rate from %d up to %d\n",
+-						 rate, XGIfb_vrate[i].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i].refresh;
+-				} else if (((rate - XGIfb_vrate[i - 1].refresh)
+-						<= 2) && (XGIfb_vrate[i].idx
+-						!= 1)) {
+-					pr_debug("Adjusting rate from %d down to %d\n",
+-						 rate,
+-						 XGIfb_vrate[i - 1].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i - 1].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i - 1].refresh;
+-				}
+-				break;
+-			} else if ((rate - XGIfb_vrate[i].refresh) <= 2) {
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i].refresh;
++			} else if ((rate - XGIfb_vrate[i - 1].refresh <= 2)
++					&& (XGIfb_vrate[i].idx != 1)) {
+ 				pr_debug("Adjusting rate from %d down to %d\n",
+-					 rate, XGIfb_vrate[i].refresh);
+-				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
++					rate, XGIfb_vrate[i - 1].refresh);
++				xgifb_info->rate_idx = XGIfb_vrate[i - 1].idx;
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i - 1].refresh;
+ 			}
++			break;
++		} else if (rate - XGIfb_vrate[i].refresh <= 2) {
++			pr_debug("Adjusting rate from %d down to %d\n",
++				rate, XGIfb_vrate[i].refresh);
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
+ 		}
+ 		i++;
+ 	}
++
+ 	if (xgifb_info->rate_idx > 0)
+ 		return xgifb_info->rate_idx;
+ 	pr_info("Unsupported rate %d for %dx%d\n",
+-- 
+2.16.2
