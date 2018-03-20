@@ -1,347 +1,161 @@
-Return-Path: <heikki.krogerus@linux.intel.com>
-X-Google-Smtp-Source: AG47ELvDagE22MxrNuBTR9kuSK4CovbFwrtb9ojTsgEzWnt0H4QfuBNA7TwHLAqEqFozQHhZqPvh
-ARC-Seal: i=1; a=rsa-sha256; t=1521550641; cv=none;
-        d=google.com; s=arc-20160816;
-        b=diJ5ZsqiN6IT7J9ZWq1lu1UbVbP1vcUcJNHWBpn5nkzN2uxeXI1jbs1gm6XlEZOQX3
-         z1Nuv1mjY547Au7HpNMLh+jFafKnh0hiPFR8f1SkOOK5u/K2ew1PJ8sUAPOhIPtHWKgk
-         Z0PL2A4RJL/V/7+zQVFCtsQTTeqwnmbtxVAAL5mcyOlx8+fitCzWd176aG0l3hT7W2Mu
-         wWyPkDnNPtDuI60pnOTkDyf2qDBCJSJdn6KU1ZETW4/eFTa+NEZUEGZ1MgY2GMITYVo3
-         KWbQjJaO2TFj/XN1Ne1AFmj9/LUDo2hT6jrM/W7c9EPjOW+/9i0QIYAmzF5AoYLvPZns
-         XekQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=CAFxkDKNbZisVBlgbw+JSXCOyxQkS11dACa8uecO0cE=;
-        b=nhUdCFqgecBGJQPl0Ikn9JPSrr4jGpdd4w+HPOHRJlT24vv/SQ7enKgd6wN2IW1cS1
-         aL3z6tjFjx1EK3wHOh/i0nNjW5hP6pOQqkO12VBdrav9utkkl30ZnckF8bpZVXPeeUqk
-         LE7IeKZgN50mo2NR40WawYWuJkqpbRfH5G49zb1iU3RRmBwgAVCUaCqZ7zqAEIdAhkCN
-         HzntAVbF8may8h6nyHQ5tgMKLWw+ExIEqbDOZlw6LdQ29xYFmu1IiXluUQGecXIbk2D7
-         9YZpJqysmDLV0ZON/XJap3sKHp/usNboA87NenTbnWTwknJqwC0c2Ys85Z+XPlwN4KNa
-         2dqQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
-   d="scan'208";a="39592493"
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jun Li <jun.li@nxp.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v9 01/12] drivers: base: Unified device connection lookup
-Date: Tue, 20 Mar 2018 15:57:02 +0300
-Message-Id: <20180320125713.85465-2-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
-References: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-341551-1521518881-2-3100286090267015407
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521518880; b=cYPZQw4Stian2ydWvIAhrJGgzs2iRs7pMUUMstTVtJs0Pw3
+    fBRT8Eck1pmxO2sh+AVkAloqHGY3AAkIZ2rMMBanPpnVXlA2QDlye+bKE1p60n9N
+    vnuwGmjqHpmA9E+gzphmFASrRdG3hQTJw40nnHjymCMeBt5nLfQa/4HQiER1VeD4
+    G14W2ugoNdim0dc/9E85tKhpDsHHnxlwXMR4E3UWLUvFnDkREK4/y0lIPGQceuKa
+    WW1ANptYIroiWRidPsxs11LKdDTQ5WSjhYMr/5PmcYXGYq3XRPsH1n2B7oH6EUHd
+    hq4THfaikGrDBfsL8qOiEeFcVXQwhWPs8GERxXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521518880; bh=VZVEWO52wE61vwe9wyGVcP0oMY
+    bln9Ad3dKCKiDsr2E=; b=qp6tbwhx+kRYqwxsfm9oZx/fwLoEnuIQ2DpGKsmjgX
+    7/wDncDDK5jNoimfeeIqAhLozYg7xUSJa8DuZT4r/ERzAcB3EkHmNH7JIV/y2Gn7
+    cV3m9sJDxYKV5vDpnn9Z7+jzo29XjHXjknmMWfuNAXAN2GgGhxoJNhOl3yaeMRs/
+    KMcY+d0ylaixQjre9KznBZsN5nJXN2Hs6Kanazs2NrsXfgp6botRZi6vYAazFhXU
+    WQI4sRhNz1NLLA2VDrAl6ISnmWwSI+goJBfEJZRjPqaA50lmKODhSZnMcOle5/dP
+    gr/QqMj4ItTxGSe25JXj4tdBMjEccNmc5Biptzqc+6Yw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b=BS4LWqS+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=endlessm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mX+Ui2wy;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=endlessm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdeijecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofhsphejsedttdertdertddtnecuhfhrohhmpeffrghnihgvlhcuffhrrghkvgcuoegurhgrkhgvsegvnhgulhgvshhsmhdrtghomheqnecuffhomhgrihhnpegvnhgulhgvshhsmhdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpuddvhedrvddvjedrudehkedrudejieenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeolhhinhhugidquhhssgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepieeiieeinecuvehluhhsthgvrhfuihiivgephe
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b=BS4LWqS+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=endlessm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mX+Ui2wy;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=endlessm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdeijecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofhsphejsedttdertdertddtnecuhfhrohhmpeffrghnihgvlhcuffhrrghkvgcuoegurhgrkhgvsegvnhgulhgvshhsmhdrtghomheqnecuffhomhgrihhnpegvnhgulhgvshhsmhdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvtdelrddufedvrddukedtrdeijedpuddvhedrvddvjedrudehkedrudejieenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeolhhinhhugidquhhssgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepieeiieeinecuvehluhhsthgvrhfuihiivgephe
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751549AbeCTEHp (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 00:07:45 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41066 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeCTEHn (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 20 Mar 2018 00:07:43 -0400
+X-Google-Smtp-Source: AG47ELsqnouB8xOvA0Q5UU+jadmuv1PMkr96DJXHv2q/znBzi9RD2ysqY78d57FrvSO8qYhklldBxw==
+From: Daniel Drake <drake@endlessm.com>
+To: rjw@rjwysocki.net, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, chiu@endlessm.com, mathias.nyman@intel.com,
+        linux-usb@vger.kernel.org
+Subject: [PATCH v2] ACPI / PM: allow deeper wakeup power states with no _SxD nor _SxW
+Date: Tue, 20 Mar 2018 12:07:35 +0800
+Message-Id: <20180320040735.13025-1-drake@endlessm.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593820906030657716?=
-X-GMAIL-MSGID: =?utf-8?q?1595461485373556910?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Several frameworks - clk, gpio, phy, pmw, etc. - maintain
-lookup tables for describing connections and provide custom
-API for handling them. This introduces a single generic
-lookup table and API for the connections.
+acpi_dev_pm_get_state() is used to determine the range of allowable
+device power states when going into S3 suspend. This is implemented
+by executing the _S3D and _S3W ACPI methods.
 
-The motivation for this commit is centralizing the
-connection lookup, but the goal is to ultimately extract the
-connection descriptions also from firmware by using the
-fwnode_graph_* functions and other mechanisms that are
-available.
+Linux follows the ACPI spec behaviour in that when _S3D is implemented
+and _S3W is not, Linux will not go into a power state deeper than the one
+returned by _S3D for a wakeup-enabled device.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+However, this same logic is being applied to the case when neither
+_S3D nor _S3W are present, and the result is that this function
+decides that the device must stay in D0 (fully on) state.
+
+This is breaking USB wakeups on Asus V222GA and Acer XC-830. _S3D and
+_S3W are not present, so the USB controller is left in the D0 running
+state during S3, and hence it is unable to generate a PME# wake event.
+
+The ACPI spec is unclear on which power states are permissable for
+wakeup-enabled devices when both _S3D and _S3W are missing.
+However, USB wakeups work fine on these platforms under Windows, where
+device manager shows that they are using D3 device state for the USB
+controller in S3.
+
+I assume that the "max = min" clamping done by the code here is
+specifically written for the _S3D but no _S3W case. By making the
+code true to those conditions, avoiding them on these platforms,
+the controller will be put into D3 state and USB wakeups start working.
+
+Additionally I feel that this change makes the code more directly
+mirror the wording of the ACPI spec and it's associated lack of clarity.
+
+Thanks to Mathias Nyman for pointing us in the right direction.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Link: http://lkml.kernel.org/r/CAB4CAwf_k-WsF3zL4epm9TKAOu0h=Bv1XhXV_gY3bziOo_NPKA@mail.gmail.com
+
+https://phabricator.endlessm.com/T21410
 ---
-Changes in v9
-- Now really stop using rcu.
-- Decalaring the bus types as extern so we don't have to include the header
-  files.
 
-Changes in v8:
-- No longer using rcu.
+Notes:
+    This should be considered for Linux 4.17 to give it a decent amount
+    of testing time before release.
+    
+    v2: fix unused variable warning
 
-Changes in v7:
-- API naming improvements suggested by Greg
-- Prototypes to device.h, also suggested by Greg
-- I removed the DEVCON() macro as it was not used yet and it needs to be
-  rewritten
+ drivers/acpi/device_pm.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Changes in v6:
--Fix data and match arguments being swapped in __device_find_connection()
- call in device_find_connection() (as noticed by Jun Li)
-
-Changes in v5:
--Add missing documentation for @list struct devcon member
-
-Changes in v4:
--Add Andy's Reviewed-by
-
-Changes in v3:
--Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
-
-Changes in v2:
--Add a (struct devcon) cast to the DEVCON() macro
----
- Documentation/driver-api/device_connection.rst |  43 ++++++++
- drivers/base/Makefile                          |   3 +-
- drivers/base/devcon.c                          | 136 +++++++++++++++++++++++++
- include/linux/device.h                         |  22 ++++
- 4 files changed, 203 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/driver-api/device_connection.rst
- create mode 100644 drivers/base/devcon.c
-
-diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-new file mode 100644
-index 000000000000..affbc5566ab0
---- /dev/null
-+++ b/Documentation/driver-api/device_connection.rst
-@@ -0,0 +1,43 @@
-+==================
-+Device connections
-+==================
-+
-+Introduction
-+------------
-+
-+Devices often have connections to other devices that are outside of the direct
-+child/parent relationship. A serial or network communication controller, which
-+could be a PCI device, may need to be able to get a reference to its PHY
-+component, which could be attached for example to the I2C bus. Some device
-+drivers need to be able to control the clocks or the GPIOs for their devices,
-+and so on.
-+
-+Device connections are generic descriptions of any type of connection between
-+two separate devices.
-+
-+Device connections alone do not create a dependency between the two devices.
-+They are only descriptions which are not tied to either of the devices directly.
-+A dependency between the two devices exists only if one of the two endpoint
-+devices requests a reference to the other. The descriptions themselves can be
-+defined in firmware (not yet supported) or they can be built-in.
-+
-+Usage
-+-----
-+
-+Device connections should exist before device ``->probe`` callback is called for
-+either endpoint device in the description. If the connections are defined in
-+firmware, this is not a problem. It should be considered if the connection
-+descriptions are "built-in", and need to be added separately.
-+
-+The connection description consists of the names of the two devices with the
-+connection, i.e. the endpoints, and unique identifier for the connection which
-+is needed if there are multiple connections between the two devices.
-+
-+After a description exists, the devices in it can request reference to the other
-+endpoint device, or they can request the description itself.
-+
-+API
-+---
-+
-+.. kernel-doc:: drivers/base/devcon.c
-+   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index f261143fafbf..888725ad59f7 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   driver.o class.o platform.o \
- 			   cpu.o firmware.o init.o map.o devres.o \
- 			   attribute_container.o transport_class.o \
--			   topology.o container.o property.o cacheinfo.o
-+			   topology.o container.o property.o cacheinfo.o \
-+			   devcon.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
- obj-y			+= power/
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-new file mode 100644
-index 000000000000..d427e806cd73
---- /dev/null
-+++ b/drivers/base/devcon.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * Device connections
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ */
-+
-+#include <linux/device.h>
-+
-+static DEFINE_MUTEX(devcon_lock);
-+static LIST_HEAD(devcon_list);
-+
-+/**
-+ * device_connection_find_match - Find physical connection to a device
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and another
-+ * device. @match will be used to convert the connection description to data the
-+ * caller is expecting to be returned.
-+ */
-+void *device_connection_find_match(struct device *dev, const char *con_id,
-+			       void *data,
-+			       void *(*match)(struct device_connection *con,
-+					      int ep, void *data))
-+{
-+	const char *devname = dev_name(dev);
-+	struct device_connection *con;
-+	void *ret = NULL;
-+	int ep;
-+
-+	if (!match)
-+		return NULL;
-+
-+	mutex_lock(&devcon_lock);
-+
-+	list_for_each_entry(con, &devcon_list, list) {
-+		ep = match_string(con->endpoint, 2, devname);
-+		if (ep < 0)
-+			continue;
-+
-+		if (con_id && strcmp(con->id, con_id))
-+			continue;
-+
-+		ret = match(con, !ep, data);
-+		if (ret)
-+			break;
-+	}
-+
-+	mutex_unlock(&devcon_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(device_connection_find_match);
-+
-+extern struct bus_type platform_bus_type;
-+extern struct bus_type pci_bus_type;
-+extern struct bus_type i2c_bus_type;
-+extern struct bus_type spi_bus_type;
-+
-+static struct bus_type *generic_match_buses[] = {
-+	&platform_bus_type,
-+#ifdef CONFIG_PCI
-+	&pci_bus_type,
-+#endif
-+#ifdef CONFIG_I2C
-+	&i2c_bus_type,
-+#endif
-+#ifdef CONFIG_SPI_MASTER
-+	&spi_bus_type,
-+#endif
-+	NULL,
-+};
-+
-+/* This tries to find the device from the most common bus types by name. */
-+static void *generic_match(struct device_connection *con, int ep, void *data)
-+{
-+	struct bus_type *bus;
-+	struct device *dev;
-+
-+	for (bus = generic_match_buses[0]; bus; bus++) {
-+		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
-+		if (dev)
-+			return dev;
-+	}
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the other device to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * device_connection_find - Find two devices connected together
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and
-+ * another device. On success returns handle to the device that is connected
-+ * to @dev, with the reference count for the found device incremented. Returns
-+ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
-+ * connection was found but the other device has not been enumerated yet.
-+ */
-+struct device *device_connection_find(struct device *dev, const char *con_id)
-+{
-+	return device_connection_find_match(dev, con_id, NULL, generic_match);
-+}
-+EXPORT_SYMBOL_GPL(device_connection_find);
-+
-+/**
-+ * device_connection_add - Register a connection description
-+ * @con: The connection description to be registered
-+ */
-+void device_connection_add(struct device_connection *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_add_tail(&con->list, &devcon_list);
-+	mutex_unlock(&devcon_lock);
-+}
-+EXPORT_SYMBOL_GPL(device_connection_add);
-+
-+/**
-+ * device_connections_remove - Unregister connection description
-+ * @con: The connection description to be unregistered
-+ */
-+void device_connection_remove(struct device_connection *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_del(&con->list);
-+	mutex_unlock(&devcon_lock);
-+}
-+EXPORT_SYMBOL_GPL(device_connection_remove);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index e81fcea5d8a0..0059b99e1f25 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -730,6 +730,28 @@ struct device_dma_parameters {
- 	unsigned long segment_boundary_mask;
- };
+diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+index c4d0a1c912f0..3d96e4da2d98 100644
+--- a/drivers/acpi/device_pm.c
++++ b/drivers/acpi/device_pm.c
+@@ -543,6 +543,7 @@ static int acpi_dev_pm_get_state(struct device *dev, struct acpi_device *adev,
+ 	unsigned long long ret;
+ 	int d_min, d_max;
+ 	bool wakeup = false;
++	bool has_sxd = false;
+ 	acpi_status status;
  
-+/**
-+ * struct device_connection - Device Connection Descriptor
-+ * @endpoint: The names of the two devices connected together
-+ * @id: Unique identifier for the connection
-+ * @list: List head, private, for internal use only
-+ */
-+struct device_connection {
-+	const char		*endpoint[2];
-+	const char		*id;
-+	struct list_head	list;
-+};
+ 	/*
+@@ -581,6 +582,10 @@ static int acpi_dev_pm_get_state(struct device *dev, struct acpi_device *adev,
+ 			else
+ 				return -ENODATA;
+ 		}
 +
-+void *device_connection_find_match(struct device *dev, const char *con_id,
-+				void *data,
-+				void *(*match)(struct device_connection *con,
-+					       int ep, void *data));
++		if (status == AE_OK)
++			has_sxd = true;
 +
-+struct device *device_connection_find(struct device *dev, const char *con_id);
-+
-+void device_connection_add(struct device_connection *con);
-+void device_connection_remove(struct device_connection *con);
-+
- /**
-  * enum device_link_state - Device link states.
-  * @DL_STATE_NONE: The presence of the drivers is not being tracked.
+ 		d_min = ret;
+ 		wakeup = device_may_wakeup(dev) && adev->wakeup.flags.valid
+ 			&& adev->wakeup.sleep_state >= target_state;
+@@ -599,7 +604,11 @@ static int acpi_dev_pm_get_state(struct device *dev, struct acpi_device *adev,
+ 		method[3] = 'W';
+ 		status = acpi_evaluate_integer(handle, method, NULL, &ret);
+ 		if (status == AE_NOT_FOUND) {
+-			if (target_state > ACPI_STATE_S0)
++			/* No _SxW. In this case, the ACPI spec says that we
++			 * must not go into any power state deeper than the
++			 * value returned from _SxD.
++			 */
++			if (has_sxd && target_state > ACPI_STATE_S0)
+ 				d_max = d_min;
+ 		} else if (ACPI_SUCCESS(status) && ret <= ACPI_STATE_D3_COLD) {
+ 			/* Fall back to D3cold if ret is not a valid state. */
 -- 
-2.16.2
+2.14.1
+
