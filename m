@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752284AbeCTCrW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:47:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42102 "EHLO
+        id S1752348AbeCTCr2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:47:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42002 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751501AbeCTCmq (ORCPT
+        with ESMTP id S1751637AbeCTCmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:42:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6BCD760C5F
+        Mon, 19 Mar 2018 22:42:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 550DA60C67
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -16,9 +16,9 @@ Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 05/17] ixgbevf: keep writel() closer to wmb()
-Date: Mon, 19 Mar 2018 22:42:20 -0400
-Message-Id: <1521513753-7325-6-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v4 03/17] igbvf: eliminate duplicate barriers on weakly-ordered archs
+Date: Mon, 19 Mar 2018 22:42:18 -0400
+Message-Id: <1521513753-7325-4-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521513753-7325-1-git-send-email-okaya@codeaurora.org>
 References: <1521513753-7325-1-git-send-email-okaya@codeaurora.org>
@@ -28,53 +28,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove ixgbevf_write_tail() in favor of moving writel() close to
-wmb().
+Code includes wmb() followed by writel(). writel() already has a barrier
+on some architectures like arm64.
+
+This ends up CPU observing two barriers back to back before executing the
+register write.
+
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/igbvf/netdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-index f695242..11e893e 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-@@ -244,11 +244,6 @@ static inline u16 ixgbevf_desc_unused(struct ixgbevf_ring *ring)
- 	return ((ntc > ntu) ? 0 : ring->count) + ntc - ntu - 1;
- }
- 
--static inline void ixgbevf_write_tail(struct ixgbevf_ring *ring, u32 value)
--{
--	writel(value, ring->tail);
--}
--
- #define IXGBEVF_RX_DESC(R, i)	\
- 	(&(((union ixgbe_adv_rx_desc *)((R)->desc))[i]))
- #define IXGBEVF_TX_DESC(R, i)	\
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 9b3d43d..6bf778a 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -659,7 +659,7 @@ static void ixgbevf_alloc_rx_buffers(struct ixgbevf_ring *rx_ring,
+diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
+index 4214c15..edb1c34 100644
+--- a/drivers/net/ethernet/intel/igbvf/netdev.c
++++ b/drivers/net/ethernet/intel/igbvf/netdev.c
+@@ -251,7 +251,7 @@ static void igbvf_alloc_rx_buffers(struct igbvf_ring *rx_ring,
  		 * such as IA-64).
- 		 */
+ 		*/
  		wmb();
--		ixgbevf_write_tail(rx_ring, i);
-+		writel(i, rx_ring->tail);
+-		writel(i, adapter->hw.hw_addr + rx_ring->tail);
++		writel_relaxed(i, adapter->hw.hw_addr + rx_ring->tail);
  	}
  }
  
-@@ -3644,7 +3644,7 @@ static void ixgbevf_tx_map(struct ixgbevf_ring *tx_ring,
+@@ -2297,7 +2297,7 @@ static inline void igbvf_tx_queue_adv(struct igbvf_adapter *adapter,
+ 
+ 	tx_ring->buffer_info[first].next_to_watch = tx_desc;
  	tx_ring->next_to_use = i;
- 
- 	/* notify HW of packet */
--	ixgbevf_write_tail(tx_ring, i);
-+	writel(i, tx_ring->tail);
- 
- 	return;
- dma_error:
+-	writel(i, adapter->hw.hw_addr + tx_ring->tail);
++	writel_relaxed(i, adapter->hw.hw_addr + tx_ring->tail);
+ 	/* we need this if more than one processor can write to our tail
+ 	 * at a time, it synchronizes IO on IA64/Altix systems
+ 	 */
 -- 
 2.7.4
