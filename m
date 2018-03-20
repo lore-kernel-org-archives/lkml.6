@@ -1,91 +1,96 @@
-Return-Path: <ben.hutchings@codethink.co.uk>
-X-Google-Smtp-Source: AIpwx48oAItJECYrg+gWifb+OqkgZEwUCd6AG2BfhVKVVg68huAea9vHZc/uFXJt54ASTzrSgq1i
-ARC-Seal: i=1; a=rsa-sha256; t=1522337337; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Hx10BnFNElVkMWtI0OQKUUGKdUkWm1C03cPvj9+76C19/GO3fdIs1oBhQSJmACyxVa
-         15cTB5pEdLbAOjicnCcP/9RuvJD9SP02zpOHCbyAQc2OT2EoaPPDhiAeR7Xx4wMYsonR
-         /6toKo5/uPz5WH8pVABjtkSLY7nMuZ39/lrI4WPbDMDMv0fKPThGJuDTxq4V5ePu3PEy
-         htTEygTu9DxbtH4mBNuz86clg9ycr+g2VrPwd/rLiX+rM8LwMMXfIGHuYbkWR2TAJXKo
-         jnXSKI6suwXhYUJPxuerS5PLbsFpSRug6oj3IdHb8j8lnuqThZHgL9+ztup4tCT3eEFy
-         gxxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=6rCXdko5t3ZURWbi1KHMrobriuPn5Gjf0uYhpl5XrcY=;
-        b=e7r8vKtTYevgp2lD50ExKEDMqpeD4+Nqb3W0NDn8gc2pjf8NOBtwvLwicbEFLoyn6t
-         UdpbSLpqOOV0tB60hbKAac3rdziU5BGIT4xdYjSjGcKHdupoXTobe2Ad5PSQ7gJ1pX8l
-         zEzukkYCnrH+iL1GpqJSd+ki+OTVsEXr4YnR9KHvP59Zn8DEbgWT1fLaxQS1NuQRe8i8
-         h7f+X3K2lsAGZjKJPt99OC6+RgbYlQvkssbgPVUWBrT8ySbs9NxMTSJDmcNAnqzHKQ78
-         lXwIccLQBkkoCurEFzP1gfktTeVL2SWiSJvFSjuZl2wSqv0QkNdltI61iLaotMdo9dog
-         zcmA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Message-ID: <1522337334.2654.14.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 009/134] PCI/MSI: Stop disabling MSI/MSI-X in
- pci_device_shutdown()
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Alex Williamson
- <alex.williamson@redhat.com>, David Arcari <darcari@redhat.com>, Myron
- Stowe <mstowe@redhat.com>, Lukas Wunner <lukas@wunner.de>,  Keith Busch
- <keith.busch@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- Sasha Levin <alexander.levin@microsoft.com>
-Date: Thu, 29 Mar 2018 16:28:54 +0100
-In-Reply-To: <20180319171850.444128621@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-716958-1521532230-2-7770605227772477287
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521532229; b=ARTv7M5EQyB3rbbIcEoBAbtIy9/30gyQOvsMJ+KeYsaV+8+
+    cgAlUCGICMSzz1Sk451Lpps2PKsTFwLy1mUj7bAJCEla6LarIm4fUaHk5GXc+sPZ
+    sUNRMgwnlaIc8gJgjwpSh3oq4ltLCHE8QcNVl9y5m6NA8VkRqDH9H4Epnaa2gw9y
+    6+ntGpVOp0QsynBAXq4buvKu3R+4egH8+eQcPcVvEyb8Fy7lx5DGybF94gVIR+9Y
+    eZ3df+7ydkM51NIIlydG3AhpQ80heW07Z9J03c/3/KbEzlrYhObS6pBP+fTpMCyK
+    0kTuMxPB0bl85XGxTGkTs2d5h7GltxTIoMKzFvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521532229; bh=V+TxFC/4kwMVUdfCFRqfp61tzA
+    5hE6/XGWcamELOtow=; b=qEfkKhvqOSfUXXc2HB64bfl/EDDRoq8uspRMUvibUm
+    LVKTP+SI0866/w6Pv3VGmzrTaYmHaiVeCB1ERN068GdMGOZmjt7igF2MaFroRKdV
+    rbkKOwqrzllFYWD8HlCpOWMvCE3bA1RPNmBvKzodCZgVwmw/OeYrZrI/XebW0c22
+    i/hQaWItfnJxaG3M9PMZ47hx/ovqq52xkI6C4pXL7m4ZQdcd36YNtFQvSXE4Icql
+    OtDR4B2RAxav6+h7kvAhrl8fc4KstBZrOtnxe/A7DF8ptBg9qea33bkJpo3jJK4w
+    AN00fyQieGBhD9VTHCkzjUzbqmilCvcZSc1IN6AvK0wQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751805AbeCTHu0 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 03:50:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40492 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751826AbeCTHuO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 20 Mar 2018 03:50:14 -0400
+Date: Tue, 20 Mar 2018 08:50:12 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 000/134] 4.4.123-stable review
+Message-ID: <20180320075012.GB10034@kroah.com>
 References: <20180319171849.024066323@linuxfoundation.org>
-	 <20180319171850.444128621@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595390574168988527?=
-X-GMAIL-MSGID: =?utf-8?q?1596286395787190534?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-03-19 at 19:04 +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Mar 19, 2018 at 07:04:43PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.123 release.
+> There are 134 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> ------------------
+> Responses should be made by Wed Mar 21 17:18:04 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> From: Prarit Bhargava <prarit@redhat.com>
-> 
-> 
-> [ Upstream commit fda78d7a0ead144f4b2cdb582dcba47911f4952c ]
-[...]
-> The MSI disabling code was added by d52877c7b1af ("pci/irq: let
-> pci_device_shutdown to call pci_msi_shutdown v2") because a driver left MSI
-> enabled and kdump failed because the kexeced kernel wasn't prepared to
-> receive the MSI interrupts.
-> 
-> Subsequent commits 1851617cd2da ("PCI/MSI: Disable MSI at enumeration even
-> if kernel doesn't support MSI")
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 
-This went into 4.2 and hasn't been backported.
-
-> and  e80e7edc55ba ("PCI/MSI: Initialize MSI capability for all
-> architectures")
-
-This went into 4.5 and hasn't been backported.
-
-> changed the kexeced kernel to disable all MSIs itself so it no longer
-> depends on the crashed kernel to clean up after itself.
-[...]
-
-So I think 3.18-stable and 4.4-stable will need backports of the later
-changes in order for this to work properly.
-
-Ben.
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+-rc2 is out to fix a build error that was in -rc1:
+ 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc2.gz
