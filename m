@@ -1,127 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751667AbeCTPao (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:30:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54258 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeCTPai (ORCPT
+        id S1751650AbeCTPc6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:32:58 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:43340 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeCTPc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:30:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96807602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
- weakly-ordered archs
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
- <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
- <20180320144801.GE19744@ziepe.ca>
- <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
- <20180320152043.GK19744@ziepe.ca>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <dbfd4127-d6d5-eccc-4b7b-0ea3bf51a699@codeaurora.org>
-Date: Tue, 20 Mar 2018 10:30:34 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320152043.GK19744@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 20 Mar 2018 11:32:57 -0400
+X-Google-Smtp-Source: AG47ELufaWiKhYL1j8P9cnT7DSFqPzT/8ZL5LhlveJGy14hEADEhc6T1WwVqruIYp3T9L9Wm5FL4wQ==
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: boris.brezillon@free-electrons.com
+Cc: richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        maxime.ripard@free-electrons.com, alexandre.belloni@free-electrons.com,
+        rainyfeeling@outlook.com, miquel.raynal@free-electrons.com,
+        nicolas.ferre@microchip.com,
+        Arushi Singhal <arushisinghal19971997@gmail.com>
+Subject: [PATCH v2 1/2] mtd: maps: Remove print after allocation failure
+Date: Tue, 20 Mar 2018 21:01:24 +0530
+Message-Id: <1521559885-10523-1-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/2018 10:20 AM, Jason Gunthorpe wrote:
-> On Tue, Mar 20, 2018 at 10:00:49AM -0500, Sinan Kaya wrote:
->> On 3/20/2018 9:48 AM, Jason Gunthorpe wrote:
->>> On Mon, Mar 19, 2018 at 10:47:43PM -0400, Sinan Kaya wrote:
->>>> Code includes wmb() followed by writel(). writel() already has a barrier on
->>>> some architectures like arm64.
->>>>
->>>> This ends up CPU observing two barriers back to back before executing the
->>>> register write.
->>>>
->>>> Since code already has an explicit barrier call, changing writel() to
->>>> writel_relaxed().
->>>>
->>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>>>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
->>>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->>>> index 8329ec6..4a6b981 100644
->>>> +++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->>>> @@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
->>>>  
->>>>  	/* ring CMDQ DB */
->>>>  	wmb();
->>>> -	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->>>> -	       rcfw->cmdq_bar_reg_prod_off);
->>>> -	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->>>> -	       rcfw->cmdq_bar_reg_trig_off);
->>>> +	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->>>> +		       rcfw->cmdq_bar_reg_prod_off);
->>>> +	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->>>> +		       rcfw->cmdq_bar_reg_trig_off);
->>>
->>> Woah, this may not be safe..
->>>
->>> The definition of writel_relaxed() is that it is fully unordered, so
->>> the above two writes may change order now. Broadcom guys would have to
->>> ack if that it is OK or not for their hardware.
->>>
->>> In general this is not an OK approach for a mechanical
->>> conversion.. Only the first writel can be convereted.
->>>
->>> You need to check all your patches to make sure there are no
->>> subsequent writel's in the places touched.
->>
->> I paid special attention to this one and went to check the barriers
->> document. According to the document, writes (whether it is relaxed or not)
->> are always observed by the HW inorder with respect to each other.
-> 
-> Oh interesting, that document got revised to make writel_relaxed less
-> relaxed a few years ago, didn't know that. Thanks.
-> 
-> However, this is still not OK, the full code is:
-> 
->         /* ring CMDQ DB */
->         wmb();
->         writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->                rcfw->cmdq_bar_reg_prod_off);
->         writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->                rcfw->cmdq_bar_reg_trig_off);
-> done:
->         spin_unlock_irqrestore(&cmdq->lock, flags);
-> 
-> 
-> And the definition of _relaxed allows the writes to order outside the
-> spinlock region, which is very likely to be wrong in this driver.
-> 
-> I'm not sure adding a mmiowb() just to use a writel_relaxed is any
-> sort of win though?
+The prints after [k|v][m|z|c]alloc() functions are not needed, because
+in case of failure, allocator will print their internal error prints
+anyway.
 
-I'd prefer this. 
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+changes in v2
+* Prefered
+if (!map) {
+	map = kmalloc();
+        if (!map)
+		err;
+}
 
-mmiowb() on ARM64 is empty. mmiowb() guarantees that code also works for PPC too.
+than
 
-I'll switch to this instead so it works for everybody.
+if (!map)
+	map = kmalloc();
+if (!map)
+	err
 
-> 
-> Jason
-> 
+ drivers/mtd/maps/amd76xrom.c  | 6 ++----
+ drivers/mtd/maps/ck804xrom.c  | 8 +++-----
+ drivers/mtd/maps/esb2rom.c    | 7 +++----
+ drivers/mtd/maps/ichxrom.c    | 6 ++----
+ drivers/mtd/maps/sun_uflash.c | 4 +---
+ drivers/mtd/maps/vmu-flash.c  | 3 ---
+ 6 files changed, 11 insertions(+), 23 deletions(-)
 
-
+diff --git a/drivers/mtd/maps/amd76xrom.c b/drivers/mtd/maps/amd76xrom.c
+index 26de0a1..406a8d3 100644
+--- a/drivers/mtd/maps/amd76xrom.c
++++ b/drivers/mtd/maps/amd76xrom.c
+@@ -188,10 +188,8 @@ static int amd76xrom_init_one(struct pci_dev *pdev,
+ 
+ 		if (!map) {
+ 			map = kmalloc(sizeof(*map), GFP_KERNEL);
+-		}
+-		if (!map) {
+-			printk(KERN_ERR MOD_NAME ": kmalloc failed");
+-			goto out;
++			if (!map)
++				goto out;
+ 		}
+ 		memset(map, 0, sizeof(*map));
+ 		INIT_LIST_HEAD(&map->list);
+diff --git a/drivers/mtd/maps/ck804xrom.c b/drivers/mtd/maps/ck804xrom.c
+index 584962e..7377623 100644
+--- a/drivers/mtd/maps/ck804xrom.c
++++ b/drivers/mtd/maps/ck804xrom.c
+@@ -216,12 +216,10 @@ static int __init ck804xrom_init_one(struct pci_dev *pdev,
+ 		unsigned long offset;
+ 		int i;
+ 
+-		if (!map)
+-			map = kmalloc(sizeof(*map), GFP_KERNEL);
+-
+ 		if (!map) {
+-			printk(KERN_ERR MOD_NAME ": kmalloc failed");
+-			goto out;
++			map = kmalloc(sizeof(*map), GFP_KERNEL);
++			if (!map)
++				goto out;
+ 		}
+ 		memset(map, 0, sizeof(*map));
+ 		INIT_LIST_HEAD(&map->list);
+diff --git a/drivers/mtd/maps/esb2rom.c b/drivers/mtd/maps/esb2rom.c
+index da9f6d7..2c63ecd 100644
+--- a/drivers/mtd/maps/esb2rom.c
++++ b/drivers/mtd/maps/esb2rom.c
+@@ -276,11 +276,10 @@ static int __init esb2rom_init_one(struct pci_dev *pdev,
+ 		unsigned long offset;
+ 		int i;
+ 
+-		if (!map)
+-			map = kmalloc(sizeof(*map), GFP_KERNEL);
+ 		if (!map) {
+-			printk(KERN_ERR MOD_NAME ": kmalloc failed");
+-			goto out;
++			map = kmalloc(sizeof(*map), GFP_KERNEL);
++			if (!map)
++				goto out;
+ 		}
+ 		memset(map, 0, sizeof(*map));
+ 		INIT_LIST_HEAD(&map->list);
+diff --git a/drivers/mtd/maps/ichxrom.c b/drivers/mtd/maps/ichxrom.c
+index 1888c5b..cacef9d 100644
+--- a/drivers/mtd/maps/ichxrom.c
++++ b/drivers/mtd/maps/ichxrom.c
+@@ -212,10 +212,8 @@ static int __init ichxrom_init_one(struct pci_dev *pdev,
+ 
+ 		if (!map) {
+ 			map = kmalloc(sizeof(*map), GFP_KERNEL);
+-		}
+-		if (!map) {
+-			printk(KERN_ERR MOD_NAME ": kmalloc failed");
+-			goto out;
++			if (!map)
++				goto out;
+ 		}
+ 		memset(map, 0, sizeof(*map));
+ 		INIT_LIST_HEAD(&map->list);
+diff --git a/drivers/mtd/maps/sun_uflash.c b/drivers/mtd/maps/sun_uflash.c
+index 1e73bba..80a253c 100644
+--- a/drivers/mtd/maps/sun_uflash.c
++++ b/drivers/mtd/maps/sun_uflash.c
+@@ -62,10 +62,8 @@ int uflash_devinit(struct platform_device *op, struct device_node *dp)
+ 	}
+ 
+ 	up = kzalloc(sizeof(struct uflash_dev), GFP_KERNEL);
+-	if (!up) {
+-		printk(KERN_ERR PFX "Cannot allocate struct uflash_dev\n");
++	if (!up)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* copy defaults and tweak parameters */
+ 	memcpy(&up->map, &uflash_map_templ, sizeof(uflash_map_templ));
+diff --git a/drivers/mtd/maps/vmu-flash.c b/drivers/mtd/maps/vmu-flash.c
+index 6b223cf..a76a5ff 100644
+--- a/drivers/mtd/maps/vmu-flash.c
++++ b/drivers/mtd/maps/vmu-flash.c
+@@ -130,9 +130,6 @@ static int maple_vmu_read_block(unsigned int num, unsigned char *buf,
+ 	if (!pcache->buffer) {
+ 		pcache->buffer = kmalloc(card->blocklen, GFP_KERNEL);
+ 		if (!pcache->buffer) {
+-			dev_err(&mdev->dev, "VMU at (%d, %d) - read fails due"
+-				" to lack of memory\n", mdev->port,
+-				mdev->unit);
+ 			error = -ENOMEM;
+ 			goto outB;
+ 		}
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
