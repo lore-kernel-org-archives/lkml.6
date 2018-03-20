@@ -1,117 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753327AbeCTMaQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:30:16 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48636 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753084AbeCTM2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:28:02 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Vincent Palatin <vpalatin@chromium.org>
-Subject: [PATCH v4 2/8] mfd: cros_ec: free IRQ automatically
-Date: Tue, 20 Mar 2018 13:27:45 +0100
-Message-Id: <20180320122751.14019-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180320122751.14019-1-enric.balletbo@collabora.com>
-References: <20180320122751.14019-1-enric.balletbo@collabora.com>
+        id S1753153AbeCTMdN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:33:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:14990 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752781AbeCTMdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 08:33:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
+   d="scan'208";a="29602119"
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v1 0/3] perf/core: expose thread context switch out event type
+ to user space
+Organization: Intel Corp.
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <4857e3ba-a42f-a9a2-2668-91ca9b44727c@linux.intel.com>
+Date: Tue, 20 Mar 2018 15:33:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Palatin <vpalatin@chromium.org>
 
-Free the IRQ we might have requested when removing the cros_ec device,
-so we can unload and reload the driver properly.
+Implementation of exposing context-switch-out type event as a part 
+of PERF_RECORD_SWITCH[_CPU_WIDE] record.
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Vincent Palatin <vpalatin@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Introduced types of events assumed to be:
+a) preempt: when task->state == TASK_RUNNING
+b) yield: !preempt, encoding is done using new bit 
+   PERF_RECORD_MISC_SWITCH_OUT_YIELD like this:
+   
+   event_header->misc &= 
+	PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+
+Perf tool report and script commands output has been extended to decode 
+new yield bit and the updated output looks like in the examples below.
+
+The documentation has been updated to mention yield switch out events 
+and its decoding symbols in perf script output.
+
+The changes have been manually tested on Fedora 27 with the patched kernel:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+
+perf report -D -i system-wide.perf: 
+
+0x2646c0 [0x30]: event: 15
+.
+. ... raw event: size 48 bytes
+.  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
+.  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
+.  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
+
+7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
+
+perf script --show-switch-events -F +misc -I -i system-wide.perf:
+
+amplxe-perf  7680 [007] Sy    15663.273156: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
+migration/5    39 [005] K     15663.273157:
+
 ---
-
-Changes in v4:
-- [2/8] Add Acked-by Lee Jones.
-
-Changes in v3:
-- [2/8] Add Acked-by Vincent Palatin.
-- [2/8] Add Reviewed-by Andy Shevchenko.
-
-Changes in v2:
-- [2/8] Remove the free_irq in cros_ec_remove.
-
- drivers/mfd/cros_ec.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 74780f2964a1..ea8aa704b61e 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -119,9 +119,9 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	}
- 
- 	if (ec_dev->irq) {
--		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
--					   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
--					   "chromeos-ec", ec_dev);
-+		err = devm_request_threaded_irq(dev, ec_dev->irq, NULL,
-+				ec_irq_thread, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+				"chromeos-ec", ec_dev);
- 		if (err) {
- 			dev_err(dev, "Failed to request IRQ %d: %d",
- 				ec_dev->irq, err);
-@@ -135,7 +135,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		dev_err(dev,
- 			"Failed to register Embedded Controller subdevice %d\n",
- 			err);
--		goto fail_mfd;
-+		return err;
- 	}
- 
- 	if (ec_dev->max_passthru) {
-@@ -153,7 +153,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 			dev_err(dev,
- 				"Failed to register Power Delivery subdevice %d\n",
- 				err);
--			goto fail_mfd;
-+			return err;
- 		}
- 	}
- 
-@@ -162,7 +162,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		if (err) {
- 			mfd_remove_devices(dev);
- 			dev_err(dev, "Failed to register sub-devices\n");
--			goto fail_mfd;
-+			return err;
- 		}
- 	}
- 
-@@ -180,11 +180,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	cros_ec_acpi_install_gpe_handler(dev);
- 
- 	return 0;
--
--fail_mfd:
--	if (ec_dev->irq)
--		free_irq(ec_dev->irq, ec_dev);
--	return err;
- }
- EXPORT_SYMBOL(cros_ec_register);
- 
-@@ -194,9 +189,6 @@ int cros_ec_remove(struct cros_ec_device *ec_dev)
- 
- 	cros_ec_acpi_remove_gpe_handler();
- 
--	if (ec_dev->irq)
--		free_irq(ec_dev->irq, ec_dev);
--
- 	return 0;
- }
- EXPORT_SYMBOL(cros_ec_remove);
--- 
-2.16.2
+ Alexey Budankov (3):
+	perf/core: store context switch out type into Perf trace
+	perf report: extend raw dump (-D) out with switch out event type
+	perf script: extend misc field decoding with switch out event type
+  
+ include/uapi/linux/perf_event.h          |  5 +++++
+ kernel/events/core.c                     |  4 +++-
+ tools/include/uapi/linux/perf_event.h    |  5 +++++
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ tools/perf/util/event.c                  |  4 +++-
+ 6 files changed, 29 insertions(+), 11 deletions(-)
