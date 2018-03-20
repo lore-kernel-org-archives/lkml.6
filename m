@@ -1,277 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752387AbeCTIwQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:52:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:37152 "EHLO foss.arm.com"
+        id S1752345AbeCTIxs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:53:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:51134 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752019AbeCTIwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:52:09 -0400
-Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
-To: Paul Cercueil <paul@crapouillou.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>
-Cc: James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-5-paul@crapouillou.net>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
-Date: Tue, 20 Mar 2018 08:52:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180317232901.14129-5-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1751988AbeCTIxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:53:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,334,1517904000";
+   d="scan'208";a="184360742"
+From: Aaron Lu <aaron.lu@intel.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v2 0/4] Eliminate zone->lock contention for will-it-scale/page_fault1 and parallel free
+Date: Tue, 20 Mar 2018 16:54:48 +0800
+Message-Id: <20180320085452.24641-1-aaron.lu@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/18 23:28, Paul Cercueil wrote:
-> Add documentation about how to properly use the Ingenic TCU
-> (Timer/Counter Unit) drivers from devicetree.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
->  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
->  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
->  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
->  4 files changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> 
->  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
->  added content.
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> new file mode 100644
-> index 000000000000..471d27078599
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> @@ -0,0 +1,42 @@
-> +Ingenic SoC TCU binding
-> +
-> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
-> +channels, each one having its own clock, that can be started and stopped,
-> +reparented, and reclocked.
-> +
-> +Required properties:
-> +- compatible : One of:
-> +  * ingenic,jz4740-tcu-clocks,
-> +  * ingenic,jz4770-tcu-clocks,
-> +  * ingenic,jz4780-tcu-clocks.
-> +- clocks : List of phandle & clock specifiers for clocks external to the TCU.
-> +  The "pclk", "rtc" and "ext" clocks should be provided.
-> +- clock-names : List of name strings for the external clocks.
-> +- #clock-cells: Should be 1.
-> +  Clock consumers specify this argument to identify a clock. The valid values
-> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_clk: clocks@10 {
-> +			compatible = "ingenic,jz4740-tcu-clocks";
-> +			reg = <0x10 0xff0>;
-> +
-> +			clocks = <&ext>, <&rtc>, <&pclk>;
-> +			clock-names = "ext", "rtc", "pclk";
-> +
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..7f3af2da77cd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> @@ -0,0 +1,39 @@
-> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
-> +
-> +Required properties:
-> +
-> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
-> +  * ingenic,jz4740-tcu-intc
-> +  * ingenic,jz4770-tcu-intc
-> +  * ingenic,jz4780-tcu-intc
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +  interrupt source. The value shall be 1.
-> +- interrupt-parent : phandle of the interrupt controller.
-> +- interrupts : Specifies the interrupt the controller is connected to.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_irq: interrupt-controller@20 {
-> +			compatible = "ingenic,jz4740-tcu-intc";
-> +			reg = <0x20 0x20>;
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +
-> +			interrupt-parent = <&intc>;
-> +			interrupts = <15>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..5742c3f21550
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
-> @@ -0,0 +1,56 @@
-> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
-> +----------------------------------------------------------
-> +
-> +For a description of the TCU hardware and drivers, have a look at
-> +Documentation/mips/ingenic-tcu.txt.
-> +
-> +The TCU is implemented as a parent node, whose role is to create the
-> +regmap, and child nodes for the various drivers listed in the aforementioned
-> +document.
+This series is meant to improve zone->lock scalability for order 0 pages.
+With will-it-scale/page_fault1 workload, on a 2 sockets Intel Skylake
+server with 112 CPUs, CPU spend 80% of its time spinning on zone->lock.
+Perf profile shows the most time consuming part under zone->lock is the
+cache miss on "struct page", so here I'm trying to avoid those cache
+misses.
 
-You're describing the Linux driver here. Please stick to a description
-of the HW.
+Patch 1/4 adds some wrapper functions for page to be added/removed
+into/from buddy and doesn't have functionality changes.
 
-> +
-> +Required properties:
-> +
-> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
+Patch 2/4 skip doing merge for order 0 pages to avoid cache misses on
+buddy's "struct page". On a 2 sockets Intel Skylake, this has very good
+effect on free path for will-it-scale/page_fault1 full load in that it
+reduced zone->lock contention on free path from 35% to 1.1%. Also, it
+shows good result on parallel free(*) workload by reducing zone->lock
+contention from 90% to almost zero(lru lock increased from almost 0 to
+90% though).
 
-Without any provision for an SoC version? Seems bold...
+Patch 3/4 deals with allocation path zone->lock contention by not
+touching pages on free_list one by one inside zone->lock. Together with
+patch 2/4, zone->lock contention is entirely eliminated for
+will-it-scale/page_fault1 full load, though this patch adds some
+overhead to manage cluster on free path and it has some bad effects on
+parallel free workload in that it increased zone->lock contention from
+almost 0 to 25%.
 
-> +- reg: Should be the offset/length value corresponding to the TCU registers
-> +- #address-cells: Should be <1>;
-> +- #size-cells: Should be <1>;
-> +- ranges: Should be one range for the full TCU registers area
-> +
-> +Accepted children nodes:
-> +- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+Patch 4/4 is an optimization in free path due to cluster operation. It
+decreased the number of times add_to_cluster() has to be called and
+restored performance for parallel free workload by reducing zone->lock's
+contention to almost 0% again.
 
-It is slightly confusing that you have 3 files named ingenic,tcu.txt.
-How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
-binding for the timer)?
+The good thing about this patchset is, it eliminated zone->lock
+contention for will-it-scale/page_fault1 and parallel free on big
+servers(contention shifted to lru_lock). The bad thing are:
+ - it added some overhead in compaction path where it will do merging
+   for those merge-skipped order 0 pages;
+ - it is unfriendly to high order page allocation since we do not do
+   merging for order 0 pages now.
 
-> +
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_irq: interrupt-controller@20 {
-> +			compatible = "ingenic,jz4740-tcu-intc";
-> +			reg = <0x20 0x20>;
-> +			...
-> +		};
-> +
-> +		tcu_clk: clocks@10 {
-> +			compatible = "ingenic,jz4740-tcu-clocks";
-> +			reg = <0x10 0xff0>;
-> +			...
-> +		};
-> +
-> +		tcu_timer: timer@10 {
-> +			compatible = "ingenic,jz4740-tcu";
-> +			reg = <0x10 0xff0>;
-> +			...
-> +		};
-> +	};
-> +};
-> +
-> +For more information about the children node, refer to the documents listed
-> +above in the "Accepted children nodes" section.
-> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..f910b7e96783
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> @@ -0,0 +1,41 @@
-> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
-> +---------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
-> +  * ingenic,jz4740-tcu
-> +  * ingenic,jz4770-tcu
-> +  * ingenic,jz4780-tcu
-> +- interrupt-parent : phandle of the TCU interrupt controller.
-> +- interrupts : Specifies the interrupts the controller is connected to.
-> +- clocks : List of phandle & clock specifiers for the TCU clocks.
-> +- clock-names : List of name strings for the TCU clocks.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_timer: timer@10 {
-> +			compatible = "ingenic,jz4740-tcu";
-> +			reg = <0x10 0xff0>;
-> +
-> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
-> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
-> +			clock-names = "timer0", "timer1", "timer2", "timer3",
-> +						  "timer4", "timer5", "timer6", "timer7";
-> +
-> +			interrupt-parent = <&tcu_irq>;
-> +			interrupts = <0 1 2 3 4 5 6 7>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> 
+To see how much effect it has on compaction, mmtests/stress-highalloc is
+used on a Desktop machine with 8 CPUs and 4G memory.
+(mmtests/stress-highalloc: make N copies of kernel tree and start
+building them to consume almost all memory with reclaimable file page
+cache. These file page cache will not be returned to buddy so effectively
+makes it a worst case for high order page workload. Then after 5 minutes,
+start allocating X order-9 pages to see how well compaction works).
 
-Thanks,
+With a delay of 100ms between allocations:
+kernel   success_rate  average_time_of_alloc_one_hugepage
+base           58%       3.95927e+06 ns
+patch2/4       58%       5.45935e+06 ns
+patch4/4       57%       6.59174e+06 ns
 
-	M.
+With a delay of 1ms between allocations:
+kernel   success_rate  average_time_of_alloc_one_hugepage
+base           53%       3.17362e+06 ns
+patch2/4       44%       2.31637e+06 ns
+patch4/4       59%       2.73029e+06 ns
+
+If we compare patch4/4's result with base, it performed OK I think.
+This is probably due to compaction is a heavy job so the added overhead
+doesn't affect much.
+
+To see how much effect it has on workload that uses hugepage, I did the
+following test on a 2 sockets Intel Skylake with 112 CPUs/64G memory:
+1 Break all high order pages by starting a program that consumes almost
+  all memory with anonymous pages and then exit. This is used to create
+  an extreme bad case for this patchset compared to vanilla that always
+  does merging;
+2 Start 56 processes of will-it-scale/page_fault1 that use hugepages
+  through calling madvise(MADV_HUGEPAGE). To make things worse for this
+  patchset, start another 56 processes of will-it-scale/page_fault1 that
+  uses order 0 pages to continually cause trouble for the 56 THP users.
+  Let them run for 5 minutes.
+
+Score result(higher is better):
+
+kernel      order0           THP
+base        1522246        10540254
+patch2/4    5266247 +246%   3309816 -69%
+patch4/4    2234073 +47%    9610295 -8.8%
+
+TBH, I'm not sure if the way I tried above is good enough to expose the
+problem of this patchset. So if you have any thoughts on this patchset,
+please feel free to let me know, thanks.
+
+(*) Parallel free is a workload that I used to see how well parallel
+freeing a large VMA can be. I tested this on a 4 sockets Intel Skylake
+machine with 768G memory. The test program starts by doing a 512G anon
+memory allocation with mmap() and then exit to see how fast it can exit.
+The parallel is implemented inside kernel and has been posted before:
+http://lkml.kernel.org/r/1489568404-7817-1-git-send-email-aaron.lu@intel.com
+
+A branch is maintained here in case someone wants to give it a try:
+https://github.com/aaronlu/linux zone_lock_rfc_v2
+
+v2:
+Rewrote allocation path optimization, compaction could happen now and no
+crashes that I'm aware of.
+
+v1 is here:
+https://lkml.kernel.org/r/20180205053013.GB16980@intel.com
+
+Aaron Lu (4):
+  mm/page_alloc: use helper functions to add/remove a page to/from buddy
+  mm/__free_one_page: skip merge for order-0 page unless compaction
+    failed
+  mm/rmqueue_bulk: alloc without touching individual page structure
+  mm/free_pcppages_bulk: reduce overhead of cluster operation on free
+    path
+
+ Documentation/vm/struct_page_field |  10 +
+ include/linux/mm_types.h           |   3 +
+ include/linux/mmzone.h             |  35 +++
+ mm/compaction.c                    |  17 +-
+ mm/internal.h                      |  61 +++++
+ mm/page_alloc.c                    | 488 +++++++++++++++++++++++++++++++++----
+ 6 files changed, 563 insertions(+), 51 deletions(-)
+ create mode 100644 Documentation/vm/struct_page_field
+
 -- 
-Jazz is not dead. It just smells funny...
+2.14.3
