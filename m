@@ -1,192 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCTTWH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:22:07 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:43348 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751600AbeCTTWF (ORCPT
+        id S1751541AbeCTTYM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 15:24:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39444 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeCTTYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:22:05 -0400
-From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com
+        Tue, 20 Mar 2018 15:24:10 -0400
+Subject: Re: [PATCH v5 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To: Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org, pbonzini@redhat.com, jgross@suse.com
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        roger.pau@citrix.com, boris.ostrovsky@oracle.com, rkrcmar@redhat.com,
-        maran.wilson@oracle.com
-Subject: [PATCH v5 7/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-Date: Tue, 20 Mar 2018 12:21:20 -0700
-Message-Id: <1521573680-17633-1-git-send-email-maran.wilson@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de, thomas.lendacky@amd.com,
+        luto@kernel.org, dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com
 References: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=7 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+ <1521573486-17304-1-git-send-email-maran.wilson@oracle.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cb065150-0035-abf0-1d38-99011e4b4605@infradead.org>
+Date: Tue, 20 Mar 2018 12:23:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1521573486-17304-1-git-send-email-maran.wilson@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For certain applications it is desirable to rapidly boot a KVM virtual
-machine. In cases where legacy hardware and software support within the
-guest is not needed, Qemu should be able to boot directly into the
-uncompressed Linux kernel binary without the need to run firmware.
+Hi,
 
-There already exists an ABI to allow this for Xen PVH guests and the ABI
-is supported by Linux and FreeBSD:
+On 03/20/2018 12:18 PM, Maran Wilson wrote:
+> In order to pave the way for hypervisors other then Xen to use the PVH
 
-   https://xenbits.xen.org/docs/unstable/misc/pvh.html
+                                                 than
 
-This patch enables Qemu to use that same entry point for booting KVM
-guests.
+> entry point for VMs, we need to factor the PVH entry code into Xen specific
+> and hypervisor agnostic components. The first step in doing that, is to
+> create a new config option for PVH entry that can be enabled
+> independently from CONFIG_XEN.
+> 
+> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+> ---
+>  arch/x86/Kconfig          | 7 +++++++
+>  arch/x86/kernel/head_64.S | 4 ++--
+>  arch/x86/xen/Kconfig      | 3 ++-
+>  3 files changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index eb7f43f23521..58831320b5d2 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -791,6 +791,13 @@ config KVM_GUEST
+>  	  underlying device model, the host provides the guest with
+>  	  timing infrastructure such as time of day, and system time
+>  
+> +config PVH
+> +	bool "Support for running PVH guests"
+> +	def_bool n
 
-Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/Kbuild                   |  2 +-
- arch/x86/Kconfig                  |  8 ++++++++
- arch/x86/platform/pvh/Makefile    |  4 ++--
- arch/x86/platform/pvh/enlighten.c | 43 +++++++++++++++++++++++++++++----------
- 4 files changed, 43 insertions(+), 14 deletions(-)
+You don't need two (2) "bool"s here. And 'n' is already the default, so just
+drop the second line.
 
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index 2089e4414300..c625f57472f7 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -7,7 +7,7 @@ obj-$(CONFIG_KVM) += kvm/
- # Xen paravirtualization support
- obj-$(CONFIG_XEN) += xen/
- 
--obj-$(CONFIG_XEN_PVH) += platform/pvh/
-+obj-$(CONFIG_PVH) += platform/pvh/
- 
- # Hyper-V paravirtualization support
- obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58831320b5d2..74ad956ee0f6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -798,6 +798,14 @@ config PVH
- 	  This option enables the PVH entry point for guest virtual machines
- 	  as specified in the x86/HVM direct boot ABI.
- 
-+config KVM_GUEST_PVH
-+	bool "Support for running as a KVM PVH guest"
-+	depends on KVM_GUEST
-+	select PVH
-+	---help---
-+	  This option enables starting KVM guests via the PVH entry point as
-+	  specified in the x86/HVM direct boot ABI.
-+
- config KVM_DEBUG_FS
- 	bool "Enable debug information for KVM Guests in debugfs"
- 	depends on KVM_GUEST && DEBUG_FS
-diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
-index 9fd25efcd2a3..5dec5067c9fb 100644
---- a/arch/x86/platform/pvh/Makefile
-+++ b/arch/x86/platform/pvh/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- OBJECT_FILES_NON_STANDARD_head.o := y
- 
--obj-$(CONFIG_XEN_PVH) += enlighten.o
--obj-$(CONFIG_XEN_PVH) += head.o
-+obj-$(CONFIG_PVH) += enlighten.o
-+obj-$(CONFIG_PVH) += head.o
-diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index 347ecb1860d5..433f586d8302 100644
---- a/arch/x86/platform/pvh/enlighten.c
-+++ b/arch/x86/platform/pvh/enlighten.c
-@@ -7,6 +7,9 @@
- #include <asm/hypervisor.h>
- #include <asm/e820/api.h>
- 
-+#include <asm/xen/interface.h>
-+#include <asm/xen/hypercall.h>
-+
- #include <xen/interface/memory.h>
- #include <xen/interface/hvm/start_info.h>
- 
-@@ -34,11 +37,28 @@ void __init __weak mem_map_via_hcall(struct boot_params *ptr __maybe_unused)
- 	BUG();
- }
- 
--static void __init init_pvh_bootparams(void)
-+static void __init init_pvh_bootparams(bool xen_guest)
- {
- 	memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
- 
--	mem_map_via_hcall(&pvh_bootparams);
-+	if ((pvh_start_info.version > 0) && (pvh_start_info.memmap_entries)) {
-+		struct hvm_memmap_table_entry *ep;
-+		int i;
-+
-+		ep = __va(pvh_start_info.memmap_paddr);
-+		pvh_bootparams.e820_entries = pvh_start_info.memmap_entries;
-+
-+		for (i = 0; i < pvh_bootparams.e820_entries ; i++, ep++) {
-+			pvh_bootparams.e820_table[i].addr = ep->addr;
-+			pvh_bootparams.e820_table[i].size = ep->size;
-+			pvh_bootparams.e820_table[i].type = ep->type;
-+		}
-+	} else if (xen_guest) {
-+		mem_map_via_hcall(&pvh_bootparams);
-+	} else {
-+		/* Non-xen guests are not supported by version 0 */
-+		BUG();
-+	}
- 
- 	if (pvh_bootparams.e820_entries < E820_MAX_ENTRIES_ZEROPAGE - 1) {
- 		pvh_bootparams.e820_table[pvh_bootparams.e820_entries].addr =
-@@ -69,7 +89,7 @@ static void __init init_pvh_bootparams(void)
- 	 * environment (i.e. hardware_subarch 0).
- 	 */
- 	pvh_bootparams.hdr.version = 0x212;
--	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
-+	pvh_bootparams.hdr.type_of_loader = ((xen_guest ? 0x9 : 0xb) << 4) | 0;
- }
- 
- /*
-@@ -82,13 +102,10 @@ void __init __weak xen_pvh_init(void)
- 	BUG();
- }
- 
--/*
-- * When we add support for other hypervisors like Qemu/KVM, this routine can
-- * selectively invoke the appropriate initialization based on guest type.
-- */
--static void hypervisor_specific_init(void)
-+static void hypervisor_specific_init(bool xen_guest)
- {
--	xen_pvh_init();
-+	if (xen_guest)
-+		xen_pvh_init();
- }
- 
- /*
-@@ -97,13 +114,17 @@ static void hypervisor_specific_init(void)
-  */
- void __init xen_prepare_pvh(void)
- {
-+
-+	u32 msr = xen_cpuid_base();
-+	bool xen_guest = !!msr;
-+
- 	if (pvh_start_info.magic != XEN_HVM_START_MAGIC_VALUE) {
- 		xen_raw_printk("Error: Unexpected magic value (0x%08x)\n",
- 				pvh_start_info.magic);
- 		BUG();
- 	}
- 
--	hypervisor_specific_init();
-+	hypervisor_specific_init(xen_guest);
- 
--	init_pvh_bootparams();
-+	init_pvh_bootparams(xen_guest);
- }
+> +	---help---
+> +	  This option enables the PVH entry point for guest virtual machines
+> +	  as specified in the x86/HVM direct boot ABI.
+> +
+>  config KVM_DEBUG_FS
+>  	bool "Enable debug information for KVM Guests in debugfs"
+>  	depends on KVM_GUEST && DEBUG_FS
+
+
 -- 
-2.16.1
+~Randy
