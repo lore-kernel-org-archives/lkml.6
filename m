@@ -1,87 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCTJbK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:31:10 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56132 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751633AbeCTJbG (ORCPT
+        id S1752249AbeCTJcR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:32:17 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41713 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752184AbeCTJcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:31:06 -0400
-X-Google-Smtp-Source: AG47ELv7SlCf2VCiDcGp3XS3QchgrIqU83usuysdsIYbxnAVbGQCC/fuwIbsccUOoYoK0Wvs/a3/sQ==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] ARM: dts: db600c: add support to pcie refclk
-Date: Tue, 20 Mar 2018 09:28:40 +0000
-Message-Id: <20180320092840.4600-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Tue, 20 Mar 2018 05:32:16 -0400
+Subject: Re: [RESEND PATCH v1 6/6] i2c: i2c-stm32f7: Implement I2C recovery
+ mechanism
+From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
+ <1520852023-27083-7-git-send-email-pierre-yves.mordret@st.com>
+ <20180317204720.mclh4jw5owobbtww@ninjato>
+ <2672947b-46b2-7bd7-ac13-501db8bde72b@st.com>
+Message-ID: <fdc16b28-3aab-1d37-3c93-40ed371bfd4f@st.com>
+Date: Tue, 20 Mar 2018 10:31:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <2672947b-46b2-7bd7-ac13-501db8bde72b@st.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hi Wolfram,
 
-This patch adds support to external pcie refclk.
+I do believe there is a misunderstanding of this recovery mechanism at my end.
+I intends to solve a problem where my I2C was stall but not the slave.
+Thus if bus is busy I reset the IP.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm/boot/dts/qcom-apq8064-db600c.dts | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Looking at the recovery API, this recovery is for slave and nothing else with my
+case. Therefore I think I have to get move this reset out of recovery API.
+Please correct me whether I'm wrong
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064-db600c.dts b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-index 50151ef6e912..7587088c122f 100644
---- a/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-+++ b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-@@ -45,6 +45,18 @@
- 
- 	};
- 
-+	clocks {
-+		compatible = "simple-bus";
-+		pcie_refclk: pcie-refclk {
-+			pinctrl-0 = <&pcie_pins>;
-+			pinctrl-names = "default";
-+			compatible = "gpio-gate-clock";
-+	                clocks = <&rpmcc 27>;
-+			#clock-cells = <0>;
-+			enable-gpios = <&pm8921_gpio 22 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -140,6 +152,16 @@
- 
- 		qcom,ssbi@500000 {
- 			pmic@0 {
-+				gpio@150 {
-+					pcie_pins: pcie_pins {
-+						pios {
-+							pins = "gpio22";
-+							function = "normal";
-+							power-source = <PM8921_GPIO_VPH>;
-+						};
-+					};
-+				};
-+
- 				mpps@50 {
- 					pcie_perst: pcie-perst {
- 						pinconf {
-@@ -439,6 +461,11 @@
- 			pinctrl-0 = <&pcie_perst>;
- 			pinctrl-names = "default";
- 			perst-gpio = <&pm8921_mpps 1 GPIO_ACTIVE_LOW>;
-+			clocks = <&gcc PCIE_A_CLK>,
-+				 <&gcc PCIE_H_CLK>,
-+				 <&gcc PCIE_PHY_REF_CLK>,
-+				 <&pcie_refclk>;
-+			clock-names = "core", "iface", "phy", "ref";
- 		};
- 
- 		/* OTG */
--- 
-2.16.2
+Slave Recovery mechanism is another story to implement in our platform since we
+have to deal with GPIOs.
+
+Let me know
+Regards
+
+On 03/19/2018 09:51 AM, Pierre Yves MORDRET wrote:
+> Yes. Recovery mechanism is triggered whenever a busy line is detected.
+> This busy state can be checked by sw when either SDA or SCL is low: a bit is set
+> by Hw for this purpose.
+> On busy state I2C is reconfigured and lines are released the time of recovery.
+> 
+> Regards
+> On 03/17/2018 09:47 PM, Wolfram Sang wrote:
+>> On Mon, Mar 12, 2018 at 11:53:43AM +0100, Pierre-Yves MORDRET wrote:
+>>> Feature prevents I2C lock-ups. Mechanism resets I2C state machine
+>>> and releases SCL/SDA signals but preserves I2C registers.
+>>
+>> Does it release SDA when held down by the slave? Because that is what
+>> the recovery mechanism is for.
+>>
