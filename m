@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeCTGb2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:31:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57209 "EHLO
+        id S1752218AbeCTGbq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:31:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53243 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeCTGb0 (ORCPT
+        with ESMTP id S1751706AbeCTGbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:31:26 -0400
-Date: Mon, 19 Mar 2018 23:31:14 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-qagoy2dmbjpc9gdnaj0r3mml@git.kernel.org>
-Cc: dsahern@gmail.com, adrian.hunter@intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, jolsa@kernel.org,
-        yao.jin@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
-        wangnan0@huawei.com, acme@redhat.com
-Reply-To: namhyung@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        dsahern@gmail.com, adrian.hunter@intel.com, acme@redhat.com,
-        wangnan0@huawei.com, hpa@zytor.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, jolsa@kernel.org
+        Tue, 20 Mar 2018 02:31:44 -0400
+Date: Mon, 19 Mar 2018 23:30:20 -0700
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-c192524e6fe8a4bd18f2549f9556b81ed9e05a86@git.kernel.org>
+Cc: jolsa@kernel.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        mingo@kernel.org, dsahern@gmail.com, hpa@zytor.com,
+        peterz@infradead.org, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, acme@redhat.com
+Reply-To: tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, leo.yan@linaro.org, hpa@zytor.com,
+        peterz@infradead.org, dsahern@gmail.com, mingo@kernel.org,
+        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180312152406.10141-1-jolsa@kernel.org>
+References: <20180312152406.10141-1-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Use asprintf when formatting objdump
- command line
-Git-Commit-ID: 6810158d526e483868e519befff407b91e76b3db
+Subject: [tip:perf/core] perf machine: Fix mmap name setup
+Git-Commit-ID: c192524e6fe8a4bd18f2549f9556b81ed9e05a86
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,117 +36,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6810158d526e483868e519befff407b91e76b3db
-Gitweb:     https://git.kernel.org/tip/6810158d526e483868e519befff407b91e76b3db
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 14 Mar 2018 10:34:11 -0300
+Commit-ID:  c192524e6fe8a4bd18f2549f9556b81ed9e05a86
+Gitweb:     https://git.kernel.org/tip/c192524e6fe8a4bd18f2549f9556b81ed9e05a86
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Mon, 12 Mar 2018 16:24:06 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:56:38 -0300
+CommitDate: Fri, 16 Mar 2018 13:56:25 -0300
 
-perf annotate: Use asprintf when formatting objdump command line
+perf machine: Fix mmap name setup
 
-We were using a local buffer with an arbitrary size, that would have to
-get increased to avoid truncation as warned by gcc 8:
+Leo reported broken -k option behavior. The reason is that we used
+symbol_conf.vmlinux_name as a source for mmap event name, but in fact
+it's a vmlinux path.
 
-  util/annotate.c: In function 'symbol__disassemble':
-  util/annotate.c:1488:4: error: '%s' directive output may be truncated writing up to 4095 bytes into a region of size between 3966 and 8086 [-Werror=format-truncation=]
-      "%s %s%s --start-address=0x%016" PRIx64
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  util/annotate.c:1498:20:
-      symfs_filename, symfs_filename);
-                      ~~~~~~~~~~~~~~
-  util/annotate.c:1490:50: note: format string is defined here
-      " -l -d %s %s -C \"%s\" 2>/dev/null|grep -v \"%s:\"|expand",
-                                                  ^~
-  In file included from /usr/include/stdio.h:861,
-                   from util/color.h:5,
-                   from util/sort.h:8,
-                   from util/annotate.c:14:
-  /usr/include/bits/stdio2.h:67:10: note: '__builtin___snprintf_chk' output 116 or more bytes (assuming 8331) into a destination of size 8192
-     return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          __bos (__s), __fmt, __va_arg_pack ());
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Moving the symbol_conf.vmlinux_name check for both host and guest to the
+proper place and out of the machine__set_mmap_name function.
 
-So switch to asprintf, that will make sure enough space is available.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+Reported-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-qagoy2dmbjpc9gdnaj0r3mml@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: commit ("8c7f1bb37b29 perf machine: Move kernel mmap name into struct machine")
+Link: http://lkml.kernel.org/r/20180312152406.10141-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ tools/perf/util/machine.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index bc3302da702b..ddad87f34a68 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1427,7 +1427,7 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 43fbbee409ec..2eca8478e24f 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -50,21 +50,13 @@ static void machine__threads_init(struct machine *machine)
+ 
+ static int machine__set_mmap_name(struct machine *machine)
  {
- 	struct map *map = args->map;
- 	struct dso *dso = map->dso;
--	char command[PATH_MAX * 2];
-+	char *command;
- 	FILE *file;
- 	char symfs_filename[PATH_MAX];
- 	struct kcore_extract kce;
-@@ -1468,7 +1468,7 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 		strcpy(symfs_filename, tmp);
- 	}
+-	if (machine__is_host(machine)) {
+-		if (symbol_conf.vmlinux_name)
+-			machine->mmap_name = strdup(symbol_conf.vmlinux_name);
+-		else
+-			machine->mmap_name = strdup("[kernel.kallsyms]");
+-	} else if (machine__is_default_guest(machine)) {
+-		if (symbol_conf.default_guest_vmlinux_name)
+-			machine->mmap_name = strdup(symbol_conf.default_guest_vmlinux_name);
+-		else
+-			machine->mmap_name = strdup("[guest.kernel.kallsyms]");
+-	} else {
+-		if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
+-			 machine->pid) < 0)
+-			machine->mmap_name = NULL;
+-	}
++	if (machine__is_host(machine))
++		machine->mmap_name = strdup("[kernel.kallsyms]");
++	else if (machine__is_default_guest(machine))
++		machine->mmap_name = strdup("[guest.kernel.kallsyms]");
++	else if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
++			  machine->pid) < 0)
++		machine->mmap_name = NULL;
  
--	snprintf(command, sizeof(command),
-+	err = asprintf(&command,
- 		 "%s %s%s --start-address=0x%016" PRIx64
- 		 " --stop-address=0x%016" PRIx64
- 		 " -l -d %s %s -C \"%s\" 2>/dev/null|grep -v \"%s:\"|expand",
-@@ -1481,12 +1481,17 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 		 symbol_conf.annotate_src ? "-S" : "",
- 		 symfs_filename, symfs_filename);
- 
-+	if (err < 0) {
-+		pr_err("Failure allocating memory for the command to run\n");
-+		goto out_remove_tmp;
-+	}
-+
- 	pr_debug("Executing: %s\n", command);
- 
- 	err = -1;
- 	if (pipe(stdout_fd) < 0) {
- 		pr_err("Failure creating the pipe to run %s\n", command);
--		goto out_remove_tmp;
-+		goto out_free_command;
- 	}
- 
- 	pid = fork();
-@@ -1513,7 +1518,7 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 		 * If we were using debug info should retry with
- 		 * original binary.
- 		 */
--		goto out_remove_tmp;
-+		goto out_free_command;
- 	}
- 
- 	nline = 0;
-@@ -1541,6 +1546,8 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 
- 	fclose(file);
- 	err = 0;
-+out_free_command:
-+	free(command);
- out_remove_tmp:
- 	close(stdout_fd[0]);
- 
-@@ -1554,7 +1561,7 @@ out:
- 
- out_close_stdout:
- 	close(stdout_fd[1]);
--	goto out_remove_tmp;
-+	goto out_free_command;
+ 	return machine->mmap_name ? 0 : -ENOMEM;
  }
+@@ -794,9 +786,15 @@ static struct dso *machine__get_kernel(struct machine *machine)
+ 	struct dso *kernel;
  
- static void calc_percent(struct sym_hist *hist,
+ 	if (machine__is_host(machine)) {
++		if (symbol_conf.vmlinux_name)
++			vmlinux_name = symbol_conf.vmlinux_name;
++
+ 		kernel = machine__findnew_kernel(machine, vmlinux_name,
+ 						 "[kernel]", DSO_TYPE_KERNEL);
+ 	} else {
++		if (symbol_conf.default_guest_vmlinux_name)
++			vmlinux_name = symbol_conf.default_guest_vmlinux_name;
++
+ 		kernel = machine__findnew_kernel(machine, vmlinux_name,
+ 						 "[guest.kernel]",
+ 						 DSO_TYPE_GUEST_KERNEL);
