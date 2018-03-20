@@ -1,51 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeCTLd3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:33:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51161 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751913AbeCTLd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:33:28 -0400
-Date: Tue, 20 Mar 2018 12:33:26 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: jglisse@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 3/4] mm/hmm: HMM should have a callback before MM is
- destroyed
-Message-ID: <20180320113326.GJ23100@dhcp22.suse.cz>
-References: <20180315183700.3843-1-jglisse@redhat.com>
- <20180315183700.3843-4-jglisse@redhat.com>
- <20180315154829.89054bfd579d03097b0f6457@linux-foundation.org>
+        id S1752855AbeCTLhF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:37:05 -0400
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:42878 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeCTLhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:37:03 -0400
+X-Google-Smtp-Source: AG47ELvd64ZWgER36Xx6puWPIGOB4tHe2PR1x36I/0W5311/z3fefVnNC3bbfXYyQKArGYOUytw8HAGiGnlYUjiyyRI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315154829.89054bfd579d03097b0f6457@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180307160430.yjkhlhyenpzk37pr@dell>
+References: <20180226102606.15093-1-enric.balletbo@collabora.com>
+ <20180226102606.15093-6-enric.balletbo@collabora.com> <20180307160430.yjkhlhyenpzk37pr@dell>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Tue, 20 Mar 2018 12:37:01 +0100
+Message-ID: <CAFqH_52XJ=21GKf3xbwYQRbzMhE5FCzf3_rDZ0hhg3cYPHPDiQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] mfd: cros_ec_dev: Register cros_ec_accel_legacy
+ driver as a subdevice.
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>, kernel@collabora.com,
+        Gwendal Grignou <gwendal@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2KBbCxx004662
 
-On Thu 15-03-18 15:48:29, Andrew Morton wrote:
-> On Thu, 15 Mar 2018 14:36:59 -0400 jglisse@redhat.com wrote:
-> 
-> > From: Ralph Campbell <rcampbell@nvidia.com>
-> > 
-> > The hmm_mirror_register() function registers a callback for when
-> > the CPU pagetable is modified. Normally, the device driver will
-> > call hmm_mirror_unregister() when the process using the device is
-> > finished. However, if the process exits uncleanly, the struct_mm
-> > can be destroyed with no warning to the device driver.
-> 
-> The changelog doesn't tell us what the runtime effects of the bug are. 
-> This makes it hard for me to answer the "did Jerome consider doing
-> cc:stable" question.
+Hi Lee,
 
-There is no upstream user of this code IIRC, so does it make sense to
-mark anything for stable trees?
--- 
-Michal Hocko
-SUSE Labs
+2018-03-07 17:04 GMT+01:00 Lee Jones <lee.jones@linaro.org>:
+> On Mon, 26 Feb 2018, Enric Balletbo i Serra wrote:
+>
+>> With this patch, the cros_ec_ctl driver will register the legacy
+>> accelerometer driver (named cros_ec_accel_legacy) if it fails to
+>> register sensors through the usual path cros_ec_sensors_register().
+>> This legacy device is present on Chromebook devices with older EC
+>> firmware only supporting deprecated EC commands (Glimmer based devices).
+>>
+>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> ---
+>>
+>> Changes in v3:
+>> - [5/8] Add the Reviewed-by Andy Shevchenko.
+>>
+>> Changes in v2:
+>> - [5/8] Add the Reviewed-by Gwendal.
+>>
+>>  drivers/mfd/cros_ec_dev.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
+>>
+>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+>> index 33fe1b439ee2..fd7f0068fb45 100644
+>> --- a/drivers/mfd/cros_ec_dev.c
+>> +++ b/drivers/mfd/cros_ec_dev.c
+>> @@ -389,6 +389,63 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+>>       kfree(msg);
+>>  }
+>>
+>> +#define CROS_EC_SENSOR_LEGACY_NUM 2
+>> +static struct mfd_cell cros_ec_accel_legacy_cells[CROS_EC_SENSOR_LEGACY_NUM];
+>> +
+>> +static void cros_ec_accel_legacy_register(struct cros_ec_dev *ec)
+>> +{
+>> +     struct cros_ec_device *ec_dev = ec->ec_dev;
+>> +     u8 status;
+>> +     int i, ret;
+>> +     struct cros_ec_sensor_platform
+>> +             sensor_platforms[CROS_EC_SENSOR_LEGACY_NUM];
+>
+> I wish I had seen this struct before.  Yuk!
+>
+> Why do you even need to know what 'number' the sensor is?
+>
+>> +     /*
+>> +      * EC that need legacy support are the main EC, directly connected to
+>
+> Nit: "ECs" or "needs".  If you choose "needs" you need to s/are/is/ as
+> well.
+>
+>> +      * the AP.
+>> +      */
+>> +     if (ec->cmd_offset != 0)
+>> +             return;
+>> +
+>> +     /*
+>> +      * Check if EC supports direct memory reads and if EC has
+>> +      * accelerometers.
+>> +      */
+>> +     if (!ec_dev->cmd_readmem)
+>> +             return;
+>> +
+>> +     ret = ec_dev->cmd_readmem(ec_dev, EC_MEMMAP_ACC_STATUS, 1, &status);
+>> +     if (ret < 0) {
+>
+> Is ret > 0 valid?
+>
+
+Yes, ret > 0 is valid.
+
+>> +             dev_warn(ec->dev, "EC does not support direct reads.\n");
+>> +             return;
+>> +     }
+>> +
+>> +     /* Check if EC has accelerometers. */
+>> +     if (!(status & EC_MEMMAP_ACC_STATUS_PRESENCE_BIT)) {
+>> +             dev_info(ec->dev, "EC does not have accelerometers.\n");
+>> +             return;
+>> +     }
+>> +
+>> +     /*
+>> +      * Register 2 accelerometers
+>> +      */
+>> +     for (i = 0; i < CROS_EC_SENSOR_LEGACY_NUM; i++) {
+>> +             cros_ec_accel_legacy_cells[i].name = "cros-ec-accel-legacy";
+>> +             sensor_platforms[i].sensor_num = i;
+>> +             cros_ec_accel_legacy_cells[i].id = i;
+>> +             cros_ec_accel_legacy_cells[i].platform_data =
+>> +                     &sensor_platforms[i];
+>> +             cros_ec_accel_legacy_cells[i].pdata_size =
+>> +                     sizeof(struct cros_ec_sensor_platform);
+>
+> There is no dynamic information here.
+>
+> I'd rather you did this all statically.
+>
+
+Ok, I will create a static mfd_cell struct.
+
+>> +     }
+>> +     ret = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
+>> +                           cros_ec_accel_legacy_cells,
+>> +                           CROS_EC_SENSOR_LEGACY_NUM,
+>
+> ARRAY_SIZE() is less fragile.
+>
+
+Ack.
+
+>> +                           NULL, 0, NULL);
+>> +     if (ret)
+>> +             dev_err(ec_dev->dev, "failed to add EC sensors\n");
+>> +}
+>> +
+>>  static const struct mfd_cell cros_ec_rtc_cell = {
+>>       .name = "cros-ec-rtc",
+>>  };
+>> @@ -440,6 +497,9 @@ static int ec_device_probe(struct platform_device *pdev)
+>>       /* check whether this EC is a sensor hub. */
+>>       if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+>>               cros_ec_sensors_register(ec);
+>> +     else
+>> +             /* Workaroud for older EC firmware */
+>> +             cros_ec_accel_legacy_register(ec);
+>>
+>>       /* check whether this EC instance has RTC host command support */
+>>       if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
+>
+> --
+> Lee Jones
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+
+Thanks for the review. I'll prepare a new version of this patchset.
+   Enric
