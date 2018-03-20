@@ -1,89 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeCTQXh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 12:23:37 -0400
-Received: from foss.arm.com ([217.140.101.70]:42598 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751712AbeCTQXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:23:32 -0400
-Date: Tue, 20 Mar 2018 16:23:27 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
-        iommu@lists.linux-foundation.org,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 12/14] dma-direct: handle the memory encryption bit in
- common code
-Message-ID: <20180320162327.4cixyuhqc62bfh3n@armageddon.cambridge.arm.com>
-References: <20180319103826.12853-1-hch@lst.de>
- <20180319103826.12853-13-hch@lst.de>
- <dd05dd14-9969-7985-826e-f440c3fc4c08@arm.com>
- <20180319152442.GA27915@lst.de>
- <5316b479-7e75-d62f-6b17-b6bece55187c@arm.com>
- <20180319154832.GD14916@arm.com>
- <20180319160343.GA29002@lst.de>
- <20180319180141.w5o6lhknhd6q7ktq@armageddon.cambridge.arm.com>
- <20180319194930.GA3255@lst.de>
+        id S1751583AbeCTQZJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 12:25:09 -0400
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:38356 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeCTQZH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 12:25:07 -0400
+X-Google-Smtp-Source: AG47ELuxmsNX5/2vSiEx4nQoHyhH1W1W55CakmROtNJUpDCVlp4mc3x0LObdfWBEt5HVJO8cbeNphJFwhoni5zwrWes=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319194930.GA3255@lst.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87ina6ntx0.fsf_-_@xmission.com>
+References: <cover.1512741134.git.dongsu@kinvolk.io> <878tbmf5vl.fsf@xmission.com>
+ <87po4rz4ui.fsf_-_@xmission.com> <87r2p287i8.fsf_-_@xmission.com> <87ina6ntx0.fsf_-_@xmission.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 20 Mar 2018 17:25:06 +0100
+Message-ID: <CAOssrKebhX-nm06RAwep8HUUV4QpsAa=ZOgxdRyP=WF9p-=4Tw@mail.gmail.com>
+Subject: Re: [PATCH v9 0/4] fuse: mounts from non-init user namespaces
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 08:49:30PM +0100, Christoph Hellwig wrote:
-> On Mon, Mar 19, 2018 at 06:01:41PM +0000, Catalin Marinas wrote:
-> > I don't particularly like maintaining an arm64-specific dma-direct.h
-> > either but arm64 seems to be the only architecture that needs to
-> > potentially force a bounce when cache_line_size() > ARCH_DMA_MINALIGN
-> > and the device is non-coherent.
-> 
-> mips is another likely candidate, see all the recent drama about
-> dma_get_alignmet().  And I'm also having major discussion about even
-> exposing the cache line size architecturally for RISC-V, so changes
-> are high it'll have to deal with this mess sooner or later as they
-> probably can't agree on a specific cache line size.
+On Thu, Mar 8, 2018 at 10:23 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> This patchset builds on the work by Donsu Park and Seth Forshee and is
+> reduced to the set of patches that just affect fuse.  The non-fuse
+> vfs patches are far enough along we can ignore them except possibly for the
+> question of when does FS_USERNS_MOUNT get set in fuse_fs_type.
+>
+> Fuse with a block device has been left as an exercise for a later time.
+>
+> Since v5 I changed the core of this patchset around as the previous
+> patches were showing signs of bitrot.  Some important explanations were
+> missing, some important functionality was missing, and xattr handling
+> was completely absent.
+>
+> Since v6 I have:
+> - Removed the failure case from fuse_get_req_nofail_nopages that I
+>   added.
+> - Updated fuse to always to use posix_acl_access_xattr_handler, and
+>   posix_acl_default_xattr_handler, by teaching fuse to set
+>   ACL_DONT_CACHE when FUSE_POSIX_ACL is not set.
+>
+> Since v7 I have:
+> - Rethought and reworked how I am unifying the cached and the non-cached
+>   posix acl case so the code is cleaner and simpler.
+>   - I have dropped enhancements to caching negative acls when
+>     fc->no_getxattr is set.
+>   - Removed the need to wrap forget_all_cached_acls in fuse.
+> - Reorder the patches so the posix acl work comes first
+>
+> Since v8 I have:
+> - Dropped and postponed the unification of the uncached and the cached
+>   posix acls case.  The code is not hard but tricky enough it needs
+>   to be considered on it's own on it's own merits.
+>
+> Miklos can you take a look and see what you think?
+>
+> Miklos if you could pick these up I would appreciate it.  If not I can
+> merge these through the userns tree.
 
-On Arm, the cache line size varies between 32 and 128 on publicly
-available hardware (and I wouldn't exclude higher numbers at some
-point). In addition, the cache line size has a different meaning in the
-DMA context, we call it "cache writeback granule" on Arm which is
-greater than or equal the minimum cache line size.
+Thank you Eric for moving this along.  Patches pushed to:
 
-So the aim is to have L1_CACHE_BYTES small enough for acceptable
-performance numbers and ARCH_DMA_MINALIGN the maximum from a correctness
-perspective (the latter is defined by some larger cache lines in L2/L3).
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
 
-To make things worse, there is no clear definition in the generic kernel
-on what cache_line_size() means and the default definition returns
-L1_CACHE_BYTES. On arm64, we define it to the hardware's cache
-writeback granule (CWG), if available, with a fallback on
-ARCH_DMA_MINALIGN. The network layer, OTOH, seems to assume that
-SMP_CACHE_BYTES is sufficient for DMA alignment (L1_CACHE_BYTES in
-arm64's case).
+I did just one modification to "fuse: Fail all requests with invalid
+uids or gids": instead of zeroing out the context for the nofail case,
+continue to use the "_munged" variants. I don't think this hurts and
+is better for backward compatibility (I guess the only relevant use
+would be for debugging output, but we don't want to regress even for
+that if not necessary).
 
-> > As I said above, adding a check in swiotlb.c for
-> > !is_device_dma_coherent(dev) && (ARCH_DMA_MINALIGN < cache_line_size())
-> > feels too architecture specific.
-> 
-> And what exactly is architecture specific about that?  It is a totally
-> generic concept, which at this point also seems entirely theoretical
-> based on the previous mail in this thread.
-
-The concept may be generic but the kernel macros/functions used here
-aren't. is_device_dma_coherent() is only defined on arm and arm64. The
-relation between ARCH_DMA_MINALIGN, L1_CACHE_BYTES and cache_line_size()
-seems to be pretty ad-hoc. ARCH_DMA_MINALIGN is also only defined for
-some architectures and, while there is dma_get_cache_alignment() which
-returns this constant, it doesn't seem to be used much.
-
-I'm all for fixing this in a generic way but I think we first need
-swiotlb.c to become aware of non-cache-coherent DMA devices.
-
--- 
-Catalin
+Thanks,
+Miklos
