@@ -1,70 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeCTPKn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:10:43 -0400
-Received: from linode.aoot.com ([69.164.194.13]:56808 "EHLO linode.aoot.com"
+        id S1751653AbeCTPLT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:11:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39613 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751022AbeCTPKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:10:41 -0400
-From: "Steve Wise" <swise@opengridcomputing.com>
-To: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "'Sinan Kaya'" <okaya@codeaurora.org>
-Cc: <linux-rdma@vger.kernel.org>, <timur@codeaurora.org>,
-        <sulrich@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>, <linux-kernel@vger.kernel.org>
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org> <1521514068-8856-5-git-send-email-okaya@codeaurora.org> <20180320145159.GG19744@ziepe.ca>
-In-Reply-To: <20180320145159.GG19744@ziepe.ca>
-Subject: RE: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
-Date: Tue, 20 Mar 2018 10:10:40 -0500
-Message-ID: <3d6801d3c05d$9c35f630$d4a1e290$@opengridcomputing.com>
+        id S1751128AbeCTPLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:11:18 -0400
+Date: Tue, 20 Mar 2018 16:11:15 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 4/6] mm/vmscan: remove redundant current_may_throttle()
+ check
+Message-ID: <20180320151115.GY23100@dhcp22.suse.cz>
+References: <20180315164553.17856-1-aryabinin@virtuozzo.com>
+ <20180315164553.17856-4-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQJnohsAzCjMC8iCAg840eHfO7WHuQE8ydHJAazdTfSimiloYA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315164553.17856-4-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Mon, Mar 19, 2018 at 10:47:46PM -0400, Sinan Kaya wrote:
-> > Code includes wmb() followed by writel(). writel() already has a barrier
-on
-> > some architectures like arm64.
-> >
-> > This ends up CPU observing two barriers back to back before executing
-> the
-> > register write.
-> >
-> > Since code already has an explicit barrier call, changing writel() to
-> > writel_relaxed().
-> >
-> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> >  drivers/infiniband/hw/cxgb4/t4.h | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/hw/cxgb4/t4.h
-> b/drivers/infiniband/hw/cxgb4/t4.h
-> > index 8369c7c..6e5658a 100644
-> > +++ b/drivers/infiniband/hw/cxgb4/t4.h
-> > @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64
-> *src)
-> >  	int count = 8;
-> >
-> >  	while (count) {
-> > -		writeq(*src, dst);
-> > +		writeq_relaxed(*src, dst);
-> >  		src++;
-> >  		dst++;
-> >  		count--;
-> 
-> This is another case where writes can be re-ordered.. IIRC dst is WC
-> BAR memory, so the NIC should tolerate re-ordering, but Steve will
-> have to ack this.
-> 
+On Thu 15-03-18 19:45:51, Andrey Ryabinin wrote:
+> Only kswapd can have non-zero nr_immediate, and current_may_throttle() is
+> always true for kswapd (PF_LESS_THROTTLE bit is never set) thus it's
+> enough to check stat.nr_immediate only.
 
-Yes, this is WC BAR memory.  The goal is that pio_copy() will enable
-write-combining this into a single 64B pci-e transaction.
+OK, so this is a result of some code evolution. We used to check for
+dirty pages as well. But then b738d764652d ("Don't trigger congestion
+wait on dirty-but-not-writeout pages") removed the nr_unqueued_dirty ==
+nr_taken part. I was wondering whether we still have the
+PF_LESS_THROTTLE protection in place but then noticed that we still have
+	if (!sc->hibernation_mode && !current_is_kswapd() &&
+	    current_may_throttle())
+		wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
+
+in place, so good.
+
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/vmscan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 0d5ab312a7f4..a8f6e4882e00 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1806,7 +1806,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+>  		 * that pages are cycling through the LRU faster than
+>  		 * they are written so also forcibly stall.
+>  		 */
+> -		if (stat.nr_immediate && current_may_throttle())
+> +		if (stat.nr_immediate)
+>  			congestion_wait(BLK_RW_ASYNC, HZ/10);
+>  	}
+>  
+> -- 
+> 2.16.1
+
+-- 
+Michal Hocko
+SUSE Labs
