@@ -1,73 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751758AbeCTJMG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:12:06 -0400
-Received: from mout.perfora.net ([74.208.4.197]:54289 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751607AbeCTJME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:12:04 -0400
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, Stefan Agner <stefan@agner.ch>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Subject: [PATCH v2] drm/tegra: dc: use correct format array for Tegra124.
-Date: Tue, 20 Mar 2018 10:11:44 +0100
-Message-Id: <20180320091144.22421-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.3
-X-Provags-ID: V03:K0:MyT1Zu12BNAlARzx44MJaLTDmoQoJFn9JAvuqiI9mcg1yYgzF3Z
- B067Ee3O/XWq6Vqym1u8YbRS31j4zyEEwS7KykFNwN1aE1eBycslsLA19gE4TuYKWoru9Vw
- W39Nwo++QfCeqq1p0mIBuM6nkkohR8JnHuMDu6g/6d1Xy8+/g15htc5YU9J1qL3hFyvqVlK
- D6zcZWxcsr05Y7NJPF6Tg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8J4+ZGsL7DY=:E0/RdOQR2DQnJCguuJXgXG
- J7ATWe+fJcfJsJ6xOgqH0ODQY6grjnQumVBML1Nd32bOHrjBf7GD61T7Qg3C0njZGJIV7laJ+
- 5is/0Znje3KsZuxlbQPs8qtEzoFqslwPiCtCuS4C68fGQAI6WVP22NBY5kF48ZjGDbO2Ul23k
- l6fID8CyfVB3UvFAGlseR4lOlxqR6Fx8i7akI4KWVChGTcaym+iqJYM3N4h7isBVQrrYzFZ6L
- S8EzyChKDIlYh+xVNpurgXR6Ey2iiWd2ot2lZScuoCfQbUvnWUnHyAkEF6rhomMPGFgfGiHBX
- q7Dm64/OueibxGaR5z1GE1sr/6DwQyPTOE4ZqNp9Sjk17/2gdHPbeZ17THKvQjy0jUHLbzFeA
- OgnmOOg+6XsP66CZUHJIHmAJXL/kg88Ghw5N0H9Z3RuqxXgb3FUL7gt2qZSZdnj9G0A4hqbvS
- l7YofRVTVQSuXUEBDPvKhpF4fDFoUpv04B1sxYsUSmYrU8QmgtZ3NyW+kEhkoPYOw9lTGo4rd
- q9OkEP8vs5BVytngq/SQZA5aOST8bHMSftI+QDAfmWSQcWyWUSMDbzuWAoQ/OYRq4RnWpAo8O
- T6eDMLgsL8GABuuvnZtj5RfDsn6A4kWzbFlVocn6LChYDGd7Ppu3WeUcvx//hD/wBzUf4KFCv
- 16FttBKcL8cFpkQLxf67fwCrD2Sja+gscCo2ujdwZJ/hBmzlDMZ7GPGeRQqR4bkUThwFWjOdR
- RsblMJi0EsQ3LqqLmwNJiOAbc0eUExuewlEMQw==
+        id S1751902AbeCTJRl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:17:41 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37532 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751402AbeCTJRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:17:40 -0400
+Date: Tue, 20 Mar 2018 09:17:35 +0000
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+To: Gaku Inami <gaku.inami.xh@renesas.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
+        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric
+ capacity systems
+Message-ID: <20180320091735.GN4589@e105550-lin.cambridge.arm.com>
+References: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
+ <OSBPR01MB1800210FC368705EAADA27C4A2AB0@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB1800210FC368705EAADA27C4A2AB0@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+Hi,
 
-Use tegra124_(primary|overlay)_formats for Tegra124.
+On Tue, Mar 20, 2018 at 05:30:00AM +0000, Gaku Inami wrote:
+> Hi
+> 
+> > -----Original Message-----
+> > From: Morten Rasmussen [mailto:morten.rasmussen@arm.com]
+> > Sent: Thursday, March 15, 2018 11:47 PM
+> > To: peterz@infradead.org; mingo@redhat.com
+> > Cc: valentin.schneider@arm.com; dietmar.eggemann@arm.com; vincent.guittot@linaro.org; Gaku Inami
+> > <gaku.inami.xh@renesas.com>; linux-kernel@vger.kernel.org; Morten Rasmussen <morten.rasmussen@arm.com>
+> > Subject: [PATCHv2 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric capacity systems
+> [snip]
+> > 
+> > The patches have been tested on:
+> >    1. Arm Juno (r0): 2+4 Cortex A57/A53
+> >    2. Hikey960: 4+4 Cortex A73/A53
+> > 
+> 
+> I have tested this on our R-Car again and it works well. In addition,
+> I confirmed that this patch-set also brings performance improvement to
+> other benchmarks(e.g. memory load latency in LMbench). You can add:
+> 
+> Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
+> 
+> The patches have been tested on:
+>    3. Renesas R-Car H3 : 4+4 Cortex A57/A53
+> 
+> Results:
+> Single runs with completion time of each task
+> R-Car H3 (tip)
+>     total time:                          0.9435s
+>     total time:                          0.9952s
+>     total time:                          1.3511s
+>     total time:                          1.6747s
+> 
+> R-Car H3 (misfit)
+>     total time:                          0.9387s
+>     total time:                          0.9280s
+>     total time:                          0.9616s
+>     total time:                          0.9934s
+> 
+> 10 run summary (tracking longest running task for each run)
+> 	R-Car H3
+> 	avg	max
+> tip     1.6737  1.6758
+> misfit  0.9980  1.0409
 
-Fixes: 511c7023cf23 ("drm/tegra: dc: Support more formats")
+Thanks a lot for testing again.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v2:
-- re-based on top of today's next
-- added my ACK
-
- drivers/gpu/drm/tegra/dc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 71152776b04c..e0ea5a46ecc9 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2015,9 +2015,9 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- 	.coupled_pm = false,
- 	.has_nvdisplay = false,
- 	.num_primary_formats = ARRAY_SIZE(tegra124_primary_formats),
--	.primary_formats = tegra114_primary_formats,
-+	.primary_formats = tegra124_primary_formats,
- 	.num_overlay_formats = ARRAY_SIZE(tegra124_overlay_formats),
--	.overlay_formats = tegra114_overlay_formats,
-+	.overlay_formats = tegra124_overlay_formats,
- 	.modifiers = tegra124_modifiers,
- };
- 
--- 
-2.14.3
+Morten
