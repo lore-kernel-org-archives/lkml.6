@@ -1,176 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeCTHHo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:07:44 -0400
-Received: from mout.gmx.net ([212.227.15.18]:53615 "EHLO mout.gmx.net"
+        id S1751422AbeCTHL3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:11:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbeCTHHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:07:42 -0400
+        id S1750949AbeCTHLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:11:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E32217D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AG47ELtihikgxrN3/LTKrFfIWbGihAl+xmJvKroQcbmnkIX8j+bwPQXBd55z9zlVHzjH40cPUl8uR2G/MD2HEV20Q5M=
 MIME-Version: 1.0
-Message-ID: <trinity-f09d5d8a-6967-4254-88db-cf7ea9270afe-1521529654015@3c-app-mailcom-bs12>
-From: "Chengguang Xu" <cgxu519@gmx.com>
-To: "Chengguang Xu" <cgxu519@gmx.com>
-Cc: =?UTF-8?Q?=E7=8E=8B=E5=85=83=E8=89=AF?=
-        <yuanliang.wyl@alibaba-inc.com>,
-        miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
+In-Reply-To: <12dfaefb-fd79-7a1d-2676-307d4e28b7e1@samsung.com>
+References: <CGME20180319102927epcas1p12d4a070d0a7125db9424990b997c01c8@epcas1p1.samsung.com>
+ <20180318153512.8343-1-krzk@kernel.org> <9bb639c3-f4e9-3a1e-61e8-a34fcfd0a344@samsung.com>
+ <CAJKOXPcBesWpBoq07XbE1j3F1_N5dAWMTRkv8SN=tSMEm1q0iQ@mail.gmail.com> <12dfaefb-fd79-7a1d-2676-307d4e28b7e1@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 20 Mar 2018 08:11:21 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPe1_g3XoVSorXRAsLB532TCxoSi-GAgm5Ve9-PxkM3OKw@mail.gmail.com>
+Message-ID: <CAJKOXPe1_g3XoVSorXRAsLB532TCxoSi-GAgm5Ve9-PxkM3OKw@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: samsung: Mark unused Odroid compatibles as deprecated
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file
- status
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 Mar 2018 08:07:34 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <trinity-46014179-644f-4087-8f6b-614fa55fca2a-1521528270006@3c-app-mailcom-bs12>
-References: <1521525830-88382-1-git-send-email-yuanliang.wyl@alibaba-inc.com>
- <trinity-46014179-644f-4087-8f6b-614fa55fca2a-1521528270006@3c-app-mailcom-bs12>
-Content-Transfer-Encoding: 8BIT
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:hCO17BgoAsECe0qbdA1lp6taTawx4wI6rrqIPquei/V
- 4RMOQCaCDE9tVO2TBeS0nJU4UMdjrOnv9YO+6HUzXt+o00Zg5g
- I8ZRnnQz+bysXnWVAWbdyaf2soVQYTs3z/R4VwgZ0LNZUfzEg2
- mXoD68UCCoPSadNFICFDajk3doC8/aT9bqvVnIOP/Hj3/RBLHS
- 5F1p8JwW/oMDRnm8dc0S9MScTNmi/lMjPKMDsXId9U+Nkm7Xn9
- WEjQfBbO0zr06a2D9vNN2XHS86F61mBWDOH7JIoJpbHtXbHsVd C5mQHM=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:4w4SK8leZds=:nHOzr6uMGlcedV5Bnm0WGC
- 3lsNnVZdkCIJ3sLOGatXrtsUf6z7IP8aLu8VNbfqHKYE0hIi+8Gr5vs7Kt63Bf53GxOtnrOXK
- 0E8TkU9fmFfJwg7pCgXZ8JDt/XHXKVG33h0rdL2RiB2cBA+MWtpO1JGgsqEmz4N0kqdVPAVhX
- Ax7f/njhiJlX8rG6aHrnyk141WBvLrIyB/ukIpTZKpX69ulRADIFtw2GD0P7cS5is/ggDRdSz
- ZqcQUFyuDcEU5mBACCMKsX4FbzW6DWf2uxIC4LjDwgIw0GjNF17xjxo+ftz9jGlu/R9K/vuVX
- lEPHX88YYGMLEjEe5Arrgf/6DIzauHvtBSXYKGGaHzn1KRxfAbMooQpqTvJzkeb1OsuLSxGMd
- wuCbGkDHew88aZVu+PkpuwvrhBIa8FzbZZkydHWyUzGJS5fJi8TK6gTCxA/r0J29619blu2CU
- 9xfciBQYxGqoLeYDNDYo9n9lV4GY6VlxOGC4HRCJ/3Ov3PnY36A/
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yuanliang,
-
-Can you try ext4 or xfs(with ftype=1) as underlying fs? 
-It seems the phenomenon that I met on xfs(with ftype=0) as underlying fs.
-Thanks,
-Chengguang.
-
-
-> Sent: Tuesday, March 20, 2018 at 2:44 PM
-> From: "Chengguang Xu" <cgxu519@gmx.com>
-> To: 王元良 <yuanliang.wyl@alibaba-inc.com>
-> Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
-> Subject: Re: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
+On Mon, Mar 19, 2018 at 4:14 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 03/19/2018 11:56 AM, Krzysztof Kozlowski wrote:
+>> On Mon, Mar 19, 2018 at 11:29 AM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> On 03/18/2018 04:35 PM, Krzysztof Kozlowski wrote:
+>>>> Compatible for XU4 audio is not being used.  Instead the board uses the
+>>>> same compatible as XU3.  The devices are now just compatible so they
+>>>> should use the same value.  Mark "hardkernel,odroid-xu4-audio" as being
+>>>> deprecated so in this future could be removed to limit useless
+>>>> properties.
+>>>
+>>> It doesn't feel right to obsolete the "hardkernel,odroid-xu4-audio"
+>>> compatible, there is significant difference between XU3 and XU4 - there
+>>> is no audio CODEC on XU4, this board only supports audio over HDMI interface.
+>>> XU4 could be compatible with XU3, but not the other way around.
+>>> It just happens we have other DT properties that help to handle such HW
+>>> design difference.
+>>
+>> The compatible does not describe physical differences. It does not
+>> mean that devices are the same. In this case they are just coming from
+>> the same family and they operate the same, from the bindings
+>> perspective.
 >
-> Hi Yuanliang,
-> 
-> Can you explain how to reproduce it? and what filesystem do you use as underlying fs?
-> 
-> 
-> > Sent: Tuesday, March 20, 2018 at 2:03 PM
-> > From: 王元良 <yuanliang.wyl@alibaba-inc.com>
-> > To: miklos@szeredi.hu
-> > Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 王元良 <yuanliang.wyl@alibaba-inc.com>
-> > Subject: [PATCH] fs/overlayfs: Drop dentry cache to prevent unknown file status
-> >
-> > When the dentry cache is not destroyed, statfs will
-> > take unknown status '?'
-> > Undestroyed cache dentry also caused new file creating fails
-> > 
-> > Drop it using d_delete may be a choice
-> > 
-> > [root@host /]
-> > Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> > Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache
-> > fast
-> > Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> > Cleaning up everything
-> > Cleaning up list of best yumcache
-> > Cleaning up list of fastest mirrors
-> > 
-> > [root@host /]
-> > Loaded plugins: bestyumcache, branch, fastestmirror, langpacks
-> > Cleaning repos: xxx.base.x86_64 ops.x.noarch ops.x.x86_64
-> > Cleaning up everything
-> > Cleaning up list of best yumcache
-> > Traceback (most recent call last):
-> >     File "/usr/bin/yum", line 29, in <module>
-> >     yummain.user_main(sys.argv[1:], exit_code=True)
-> >     File "/usr/share/yum-cli/yummain.py", line 365, in user_main
-> >     errcode = main(args)
-> >     File "/usr/share/yum-cli/yummain.py", line 174, in main
-> >     result, resultmsgs = base.doCommands()
-> >     File "/usr/share/yum-cli/cli.py", line 573, in doCommands
-> >     return self.yum_cli_commands[self.basecmd].doCommand(self,
-> > 	    self.basecmd, self.extcmds)
-> > 	   File "/usr/share/yum-cli/yumcommands.py", line
-> >     1475, in doCommand
-> >     return base.cleanCli(extcmds)
-> >     File "/usr/share/yum-cli/cli.py", line 1666, in
-> >     cleanCli
-> >     self.plugins.run('clean')
-> >     File
-> >     "/usr/lib/python2.7/site-packages/yum/plugins.py", line 188, in run
-> >     func(conduitcls(self, self.base, conf, **kwargs))
-> >     File "/usr/lib/yum-plugins/branch.py", line 65, in clean_hook
-> >     os.remove(os.path.join(root,filespath))
-> >     OSError: [Errno 2] No such file or directory:
-> > 	      '/var/cache/yum/x86_64/x/xxxx.noarch.stable/
-> > 	     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2'
-> > 
-> > [root@host /]
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/
-> >     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2:
-> >     No such file or directory
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/cachecookie:
-> >     No such file or directory
-> >     ls: cannot access
-> >     /var/cache/yum/x86_64/x/xxxx.noarch.stable/repomd.xml:
-> >     No such file or directory
-> >     total 0
-> >     ?????????? ? ?    ?     ?            ?
-> >     b49e49b87d17818d799363091c7a01dde83b421d-primary.sqlite.bz2
-> >     ?????????? ? ?    ?     ?            ?
-> >     cachecookie
-> >     drwxr-xr-x 1 root root 30 Mar 15 16:12 gen
-> >     drwxr-xr-x 2 root root  6 Jan 31 13:13
-> >     packages
-> >     ?????????? ? ?    ?     ?            ?
-> >     repomd.xml
-> > 
-> > Signed-off-by: Yuanliang Wang <yuanliang.wyl@alibaba-inc.com>
-> > ---
-> >  fs/overlayfs/super.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index e7c8ac4..f9343d3 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -380,9 +380,15 @@ static int ovl_dentry_weak_revalidate(struct dentry *dentry, unsigned int flags)
-> >  	return ret;
-> >  }
-> >  
-> > +static int ovl_dentry_delete(const struct dentry *dentry)
-> > +{
-> > +	return 1;
-> > +}
-> > +
-> >  static const struct dentry_operations ovl_dentry_operations = {
-> >  	.d_release = ovl_dentry_release,
-> >  	.d_real = ovl_d_real,
-> > +	.d_delete = ovl_dentry_delete,
-> >  };
-> >  
-> >  static const struct dentry_operations ovl_reval_dentry_operations = {
-> > -- 
-> > 1.8.3.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> From the ePAPR 'compatible' string definition you cited, the compatible
+> string is supposed to indicate programming model of a device, for the purpose
+> of matching a driver.
+
+Yes, you're correct, it refers to programming model. Although later
+you will find second explanation (chapter 4): "The compatible property
+of a device node describes the specific binding (or bindings) to which
+the node complies.".
+
+> I thought the programming model refers to the driver's
+> SW interfaces used to control the hardware, rather than only to a particular
+> DT binding design. And XU4 is not compatible with XU3 from device programming
+> perspective.
+
+The programming models of XU4 and XU3 audio components, to which we
+refer now and which are implemented/used, are the same. I mean not the
+same in general, but how we use them. The used subset of each is the
+same. Therefore the binding and the driver do not distinguish any
+differences (like codec).
+
+>> The XU4 binding is not being used. Adding a compatible which is not
+>> used in the moment of adding is a proof that this compatible is not
+>> needed. It is just a duplicate. There is no point of adding
+>> duplicates.
 >
+> I disagree it is just an unnecessary duplicate, I think dts for XU4 could
+> fixed instead of dropping that compatible from the binding.
+
+You know, there is nothing to fix - changing the compatible to XU4
+will not change anything. The executed code will be exactly the
+same...
+
+>>> Moreover, only XU4 is still in production and should be in few more years [1],
+>>> others are obsoleted now.
+>>
+>> It is not a problem. Whether device is manufactured or not, does not
+>> reflect what bindings we are using. Deprecated XU4 compatible does not
+>> mean that XU4 itself is deprecated. Just this compatible should not be
+>> used for new DTS.
+>
+>>> So I think we should keep at least these 2 compatible strings:
+>>>
+>>> - "hardkernel,odroid-xu3-audio" - for boards with audio CODEC,
+>>> - "hardkernel,odroid-xu4-audio" - for boards without audio CODEC,
+>>>    supporting only HDMI interface.
+>>
+>> Yeah, and then we inflate this list into X, X2, U3, HC1 and all others
+>> which are the same. And then we should add XU3-lite (it is different
+>> device). This goes to some nonsense. Compatible is not for each device
+>> but for family even though there are differences between specific
+>> devices.
+>
+> You are not listening, I refer only to major audio subsystem differences.
+> It would have been:
+>
+>  - "hardkernel,odroid-xu3-audio" for: U2, U3, X, X2, XU, XU3, XU3-Lite
+>  - "hardkernel,odroid-xu4-audio" for: XU4
+>
+> But if you insist on only one compatible I'm not going to argue further,
+> you will be responsible for this. :)
+
+Ah, I read too fast and missed that point. Actually that is nice
+consensus in this case.
+
+Best regards,
+Krzysztof
