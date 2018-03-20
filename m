@@ -1,78 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752610AbeCTJws (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:52:48 -0400
-Received: from www.zeus03.de ([194.117.254.33]:46600 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752597AbeCTJwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:52:44 -0400
-Date: Tue, 20 Mar 2018 10:52:42 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1 2/6] i2c: i2c-stm32f7: Add slave support
-Message-ID: <20180320095242.tedafu5wphsx55qx@katana>
-References: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
- <1520852023-27083-3-git-send-email-pierre-yves.mordret@st.com>
- <20180317205109.gocf5wemtjkyomct@ninjato>
- <5a3c5b21-bc66-ce73-a997-f686ecc275f3@st.com>
+        id S1752463AbeCTJz2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:55:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33014 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeCTJzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:55:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EE3460591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, robh+dt@kernel.org, mark.rutland@arm.com,
+        franky.lin@broadcom.com, hante.meuleman@broadcom.com,
+        chi-hsien.lin@cypress.com, wright.feng@cypress.com,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+        <20180319014032.9394-3-alexey.roslyakov@gmail.com>
+        <5AAF838D.2030105@broadcom.com>
+        <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+        <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+        <5AB044C0.9060701@broadcom.com>
+Date: Tue, 20 Mar 2018 11:55:16 +0200
+In-Reply-To: <5AB044C0.9060701@broadcom.com> (Arend van Spriel's message of
+        "Tue, 20 Mar 2018 00:16:16 +0100")
+Message-ID: <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5jxnagqpgmadd775"
-Content-Disposition: inline
-In-Reply-To: <5a3c5b21-bc66-ce73-a997-f686ecc275f3@st.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arend van Spriel <arend.vanspriel@broadcom.com> writes:
 
---5jxnagqpgmadd775
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>>> If I get it right, you mean something like this:
+>>>
+>>> mmc3: mmc@1c12000 {
+>>> ...
+>>>          broken-sg-support;
+>>>          sd-head-align = 4;
+>>>          sd-sgentry-align = 512;
+>>>
+>>>          brcmf: wifi@1 {
+>>>                  ...
+>>>          };
+>>> };
+>>>
+>>> Where dt: bindings documentation for these entries should reside?
+>>> In generic MMC bindings? Well, this is the very special case and
+>>> mmc-linux maintainer will unlikely to accept these changes.
+>>> Also, extra kernel code modification might be required. It could make
+>>> quite trivial change much more complex.
+>>
+>> If the MMC maintainers are not copied on this patch series, it will
+>> likely be hard for them to identify this patch series and chime in...
+>
+> The main question is whether this is indeed a "very special case" as
+> Alexey claims it to be or that it is likely to be applicable to other
+> device and host combinations as you are suggesting.
+>
+> If these properties are imposed by the host or host controller it
+> would make sense to have these in the mmc bindings.
 
+BTW, last year we were discussing something similar (I mean related to
+alignment requirements) with ath10k SDIO patches and at the time the
+patch submitter was proposing to have a bounce buffer in ath10k to
+workaround that. I don't remember the details anymore, they are on the
+ath10k mailing list archive if anyone is curious to know, but I would
+not be surprised if they are similar as here. So there might be a need
+to solve this in a generic way (but not sure of course as I haven't
+checked the details).
 
-> I do believe the hw can support it, even it looks odd to me having the same I2C
-> in slave and master mode at the same time.
-
-I2C is multi-master, so it is perfectly valid for a device to be master
-and slave. I do have seen designs making use of that more than once.
-
-> Nevertheless the driver is devised to support either master or slave more but
-> not at the same time.
-
-Why should we limit ourselves here? Also, why should we have an
-unnecessary configuration option?
-
-Unless the HW is broken and does not support it, I usually don't accept
-slave-only solutions. If the needs for master and slave arises later,
-this is hard to refactor and better done properly right away.
-
-Is it so hard? Usually you have irqs for master and for slave seperated,
-so you can code things quite orthogonal. Check de20d1857dd6 ("i2c: rcar:
-add slave support") as an example.
-
-
---5jxnagqpgmadd775
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqw2eoACgkQFA3kzBSg
-KbYyDRAAjXCW/pmeZcMJjdvfYFoNwGZsP22j3BZeEZItjKNlwS5wh8dXRqCHxHkZ
-XY3c0gph1dMRtw8hvKZwVKhX6s4rQkDs2o7QaNgI1rvgm5i8iZQo23sAjvrsC2cm
-FKjavVHfwXwarR5Va/5AzZCFHCCPjXt4hKO/7Fs3FbpCi/aw+T2D0q9EUQp6V+f1
-ifdzbBKwSaxF3QVSCNRlwQ2s++MU5jq0iwAKB/CWKrFzJ3sZkimIvRdugQ/0PpyG
-7gGTon6SCIZNHv68zGX2Iv4FiNmhJCBc2jEjXnUr0eVw/wh0R5guL9Yg+XJe67uT
-bGVODYb4p/jD4myVy9WGll2DwJhCltHcl+wE/+3TFd+vr2pghsgN0UL9SIhOM+R2
-1R9U1a1puIBK5HFTwJTVH3531+2QopOojneoHI9zsjBCpt6Sr0yYZdf8NWP9jk3e
-+boQuEfr4dUnVazCPpyKwaM5EsdWn4pEysmcCqnePgFd7MVXQ5sB2njx8PA5VEi2
-Lhje8MmjKuj7LImLZvp6mEyU5C3V6pBnFNueWKuAxGCHTxSzS+PYq+gAUPLVXUXb
-fAeouu4ttp3xgURU9Oeq38hAqZjbWYpmriq9ktMOvrZK6NMNp3ncK198qmuZXr7x
-WxAo04uSBia+ydp8rklNY27v0PH2ZAfCeXTNL6wRPSJkM6HjxDI=
-=CXbC
------END PGP SIGNATURE-----
-
---5jxnagqpgmadd775--
+-- 
+Kalle Valo
