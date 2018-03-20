@@ -1,81 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeCTCwA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:52:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751881AbeCTCuY (ORCPT
+        id S1752462AbeCTCxS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:53:18 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44945 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751512AbeCTCmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:50:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D25546110A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-scsi@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Adaptec OEM Raid Solutions <aacraid@adaptec.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/7] scsi: dpt_i2o: eliminate duplicate barriers on weakly-ordered archs
-Date: Mon, 19 Mar 2018 22:50:03 -0400
-Message-Id: <1521514207-10695-4-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
-References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
+        Mon, 19 Mar 2018 22:42:42 -0400
+X-ME-Sender: <xms:IXWwWuCpor4U93lyHjBUHO0zUeT9_jSL6t_eff9ZB2e_BrlUM5CrfQ>
+Subject: Re: [PATCH] autofs4: Use wait_event_killable
+To: David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>
+References: <20180319191609.23880-1-willy@infradead.org>
+ <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
+From: Ian Kent <raven@themaw.net>
+Message-ID: <daecdffe-b768-9c69-8609-b899ddde720c@themaw.net>
+Date: Tue, 20 Mar 2018 10:42:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes barrier() followed by writel(). writel() already has a
-barrier
-on some architectures like arm64.
+On 20/03/18 03:25, David Rientjes wrote:
+> On Mon, 19 Mar 2018, Matthew Wilcox wrote:
+> 
+>> diff --git a/fs/autofs4/waitq.c b/fs/autofs4/waitq.c
+>> index a0c57c37fa21..c160e9b3aa0f 100644
+>> --- a/fs/autofs4/waitq.c
+>> +++ b/fs/autofs4/waitq.c
+>> @@ -19,9 +19,6 @@
+>>   */
+>>  static autofs_wqt_t autofs4_next_wait_queue = 1;
+>>  
+>> -/* These are the signals we allow interrupting a pending mount */
+>> -#define SHUTDOWN_SIGS	(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGQUIT))
+>> -
+>>  void autofs4_catatonic_mode(struct autofs_sb_info *sbi)
+>>  {
+>>  	struct autofs_wait_queue *wq, *nwq;
+>> @@ -486,29 +483,7 @@ int autofs4_wait(struct autofs_sb_info *sbi,
+>>  	 * wq->name.name is NULL iff the lock is already released
+>>  	 * or the mount has been made catatonic.
+>>  	 */
+>> -	if (wq->name.name) {
+>> -		/* Block all but "shutdown" signals while waiting */
+>> -		unsigned long shutdown_sigs_mask;
+>> -		unsigned long irqflags;
+>> -		sigset_t oldset;
+>> -
+>> -		spin_lock_irqsave(&current->sighand->siglock, irqflags);
+>> -		oldset = current->blocked;
+>> -		shutdown_sigs_mask = SHUTDOWN_SIGS & ~oldset.sig[0];
+>> -		siginitsetinv(&current->blocked, shutdown_sigs_mask);
+>> -		recalc_sigpending();
+>> -		spin_unlock_irqrestore(&current->sighand->siglock, irqflags);
+>> -
+>> -		wait_event_interruptible(wq->queue, wq->name.name == NULL);
+>> -
+>> -		spin_lock_irqsave(&current->sighand->siglock, irqflags);
+>> -		current->blocked = oldset;
+>> -		recalc_sigpending();
+>> -		spin_unlock_irqrestore(&current->sighand->siglock, irqflags);
+>> -	} else {
+>> -		pr_debug("skipped sleeping\n");
+>> -	}
+>> -
+>> +	wait_event_killable(wq->queue, wq->name.name == NULL);
+>>  	status = wq->status;
+>>  
+>>  	/*
+> 
+> I understand converting the wait_event_interruptible() to 
+> wait_event_killable(), but why was the above wait_event_interruptible() 
+> only called when wq->name.name != NULL?  
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
+The code pre-dates my involvement in autofs too.
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+I always thought it was because wq->name.name can become NULL before
+the wait is reached. Such as if the user space daemon manages to invoke
+autofs4_wait_release() before the wait call.
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/scsi/dpt_i2o.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+And if the autofs mount is made catatonic before the wait is reached
+wq->name.name will be set to NULL and wake up called for each waiter
+so that doesn't seem to require the if conditional either.
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index fd172b0..3c1e64a 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1300,7 +1300,7 @@ static s32 adpt_i2o_post_this(adpt_hba* pHba, u32* data, int len)
- 	wmb();
- 
- 	//post message
--	writel(m, pHba->post_port);
-+	writel_relaxed(m, pHba->post_port);
- 	wmb();
- 
- 	return 0;
-@@ -1390,7 +1390,7 @@ static s32 adpt_i2o_reset_hba(adpt_hba* pHba)
- 
- 	memcpy_toio(pHba->msg_addr_virt+m, msg, sizeof(msg));
- 	wmb();
--	writel(m, pHba->post_port);
-+	writel_relaxed(m, pHba->post_port);
- 	wmb();
- 
- 	while(*status == 0){
-@@ -2797,7 +2797,7 @@ static s32 adpt_send_nop(adpt_hba*pHba,u32 m)
- 	writel( 0,&msg[2]);
- 	wmb();
- 
--	writel(m, pHba->post_port);
-+	writel_relaxed(m, pHba->post_port);
- 	wmb();
- 	return 0;
- }
--- 
-2.7.4
+Both of these cases to fit with what Matthew has already said and I
+can't think of any others.
+
+There may have been other reasons at some point, a lot has changed
+over (a long) time.
+
+Ian
