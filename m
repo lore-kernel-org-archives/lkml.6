@@ -1,249 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751861AbeCTXgJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:36:09 -0400
-Received: from smtp.polymtl.ca ([132.207.4.11]:53753 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751390AbeCTXgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:36:07 -0400
-Date: Tue, 20 Mar 2018 23:35:46 +0000
-Message-ID: <20180320233546.Horde.R7YJoHwgHhxvd5TuazyH3GI@www.imp.polymtl.ca>
-From: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] ftrace: support boot level tracing
-References: <1521570176.31676.3.camel@polymtl.ca>
- <20180320180104.70e3eacd@gandalf.local.home>
-In-Reply-To: <20180320180104.70e3eacd@gandalf.local.home>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Poly-FromMTA: (horde5.polymtl.ca [132.207.4.156]) at Tue, 20 Mar 2018 23:35:46 +0000
+        id S1751877AbeCTXtk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:49:40 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:41991 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751744AbeCTXtf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:49:35 -0400
+X-Google-Smtp-Source: AG47ELsAuOOfPXSq27jV885eBrnT9P6kRjOJAvkuWGSyg76vtudZN72uRHkd3uv+na2cSEbwhgFgdA==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] block, bfq: keep peak_rate estimation within range
+ 1..2^32-1
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <38320074-d1e6-96bc-e832-e535efc07e81@yandex-team.ru>
+Date: Wed, 21 Mar 2018 07:49:30 +0800
+Cc: linux-block <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Message-Id: <E810B04D-CEC3-4D98-A52A-08509E7CE417@linaro.org>
+References: <152025413365.161046.7757556276366364549.stgit@buzz>
+ <FE5352B7-CAFC-466C-BA07-F1B7427AA309@linaro.org>
+ <ff761610-4a37-f239-a491-cf2a04c44574@yandex-team.ru>
+ <E9AC28A6-848D-420F-8DAB-8B1FC709BA38@linaro.org>
+ <38320074-d1e6-96bc-e832-e535efc07e81@yandex-team.ru>
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2KNnleH018990
 
 
-Steven Rostedt <rostedt@goodmis.org> a écrit :
 
-> On Tue, 20 Mar 2018 14:22:56 -0400
-> Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca> wrote:
->
-> Would something like this work for you?
+> Il giorno 20 mar 2018, alle ore 15:41, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
+> 
+> On 20.03.2018 06:00, Paolo Valente wrote:
+>>> Il giorno 19 mar 2018, alle ore 14:28, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
+>>> 
+>>> On 19.03.2018 09:03, Paolo Valente wrote:
+>>>>> Il giorno 05 mar 2018, alle ore 04:48, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
+>>>>> 
+>>>>> Rate should never overflow or become zero because it is used as divider.
+>>>>> This patch accumulates it with saturation.
+>>>>> 
+>>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>>>> ---
+>>>>> block/bfq-iosched.c |    8 +++++---
+>>>>> 1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>> 
+>>>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>>>>> index aeca22d91101..a236c8d541b5 100644
+>>>>> --- a/block/bfq-iosched.c
+>>>>> +++ b/block/bfq-iosched.c
+>>>>> @@ -2546,7 +2546,8 @@ static void bfq_reset_rate_computation(struct bfq_data *bfqd,
+>>>>> 
+>>>>> static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
+>>>>> {
+>>>>> -	u32 rate, weight, divisor;
+>>>>> +	u32 weight, divisor;
+>>>>> +	u64 rate;
+>>>>> 
+>>>>> 	/*
+>>>>> 	 * For the convergence property to hold (see comments on
+>>>>> @@ -2634,9 +2635,10 @@ static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
+>>>>> 	 */
+>>>>> 	bfqd->peak_rate *= divisor-1;
+>>>>> 	bfqd->peak_rate /= divisor;
+>>>>> -	rate /= divisor; /* smoothing constant alpha = 1/divisor */
+>>>>> +	do_div(rate, divisor);	/* smoothing constant alpha = 1/divisor */
+>>>>> 
+>>>>> -	bfqd->peak_rate += rate;
+>>>>> +	/* rate should never overlow or become zero */
+>>>> It is bfqd->peak_rate that is used as a divider, and bfqd->peak_rate doesn't risk to be zero even if the variable 'rate' is zero here.
+>>>> So I guess the reason why you consider the possibility that bfqd->peak_rate becomes zero is because of an overflow when summing 'rate'. But, according to my calculations, this should be impossible with devices with sensible speeds.
+>>>> These are the reasons why I decided I could make it with a 32-bit variable, without any additional clamping. Did I make any mistake in my evaluation?
+>>> 
+>>> According to Murphy's law this is inevitable..
+>>> 
+>> Yep.  Actually Murphy has been even clement this time, by making the
+>> failure occur to a kernel expert :)
+>>> I've seen couple division by zero crashes in bfq_wr_duration.
+>>> Unfortunately logs weren't recorded.
+>>> 
+>>>> Anyway, even if I made some mistake about the maximum possible value of the device rate, and the latter may be too high for bfqd->peak_rate to contain it, then I guess the right solution would not be to clamp the actual rate to U32_MAX, but to move bfqd->peak_rate to 64 bits. Or am I missing something else?
+>>>>>> +	bfqd->peak_rate = clamp_t(u64, rate + bfqd->peak_rate, 1, U32_MAX);
+>>> 
+>>> 32-bit should be enough and better for division.
+>>> My patch makes sure it never overflows/underflows.
+>>> That's cheaper than full 64-bit/64-bit division.
+>>> Anyway 64-bit speed could overflow too. =)
+>>> 
+>> I see your point.  Still, if the mistake is not in sizing, then you
+>> bumped into some odd bug.  In this respect, I don't like much the idea
+>> of sweeping the dust under the carpet.  So, let me ask you for a
+>> little bit more help.  With your patch applied, and thus with no risk
+>> of crashes, what about adding, right before your clamp_t, something
+>> like:
+>> if (!bfqd->peak_rate)
+>> 	pr_crit(<dump of all the variables involved in updating bfqd->peak_rate>);
+>> Once the failure shows up (Murphy permitting), we might have hints to
+>> the bug causing it.
+>> Apart from that, I have no problem with patches that make bfq more
+>> robust, even in a sort of black-box way.
+> 
+> This rate estimator is already works as a black-box with smoothing and
+> low-pass filter inside.
 
-Yes this is working great. I have also instrumented console and security
-initcalls, I used your previous patch, changes are below.
+Actually, it is just what you say: a low-pass filter, which works by
+deflating two non-null quantities (the previous and the current rate
+rate), by and adding these quantities to each other (to get the new
+estimated rate).  In addition to being larger than 0, both quantities
+are much lower than U32_MAX, so this computation should never yield
+zero because of an overflow. 
 
-> +	trace_initcall_level("pre_smp_initcalls");
+Even some occasional zeros read for the sampled rate (because of the
+suspicion you express below), cannot lead to a null estimated rate.
+In fact, this is a low-pass filter, meant to cut off occasional
+spurious values.
 
-This should be "early" I guess : trace_initcall_level("ealry");
+I'm insisting on this part, just because, maybe, you say that it "acts
+as a black-box" because there is something more, which I'm overlooking
+here, and maybe the bug is exactly in the part I'm overlooking.  But,
+if this is not the case, I'll just stop now for this point.
 
+> It has limitations thus this is ok to declare
+> range of expected\sane results.
+> 
 
-output of : trace_event=initcall_level
+Correct, but if the odd value you cut off is a random value that
+follows from a bug (and I see no other possibility, in view of the
+above arguments), then the result may still be completely wrong.  For
+example:
+- the device may have a rate of, say, 200 MB/s
+- the computation of the new estimated rate yields 0
+- you limit this result to ~0 MB/s but >0 MB/s; this avoids division
+errors, but still leaves you with a completely wrong rate, and a
+consequently inconsistent behavior of the scheduler
 
-[    0.327032]   <idle>-0       0.... 89576us : initcall_level: level=console
-[    0.327454]   <idle>-0       0.... 135819us : initcall_level:  
-level=security
-[    0.327887] swapper/-1       0.... 261166us : initcall_level: level=early
-[    0.328306] swapper/-1       0.... 265248us : initcall_level: level=early
-[    0.328742] swapper/-1       0.... 267969us : initcall_level: level=core
-[    0.329158] swapper/-1       0.... 270111us : initcall_level:  
-level=postcore
-[    0.329590] swapper/-1       0.... 271111us : initcall_level: level=arch
-[    0.330007] swapper/-1       0.... 272217us : initcall_level: level=subsys
-[    0.330429] swapper/-1       0.... 316236us : initcall_level: level=fs
-[    0.330833] swapper/-1       0.... 340523us : initcall_level: level=device
-[    0.331254] swapper/-1       0.... 388737us : initcall_level: level=late
+> It would be nice to show estimated rate in sysfs to let user
+> diagnose whenever it is wrong for a long period of time.
 
-PATCH with security and console instrumented
+Absolutely.  This is actually already shown indirectly, through the
+budget_max parameter, which is the number of sectors served at peak
+rate during slice_sync.
 
----
-  include/trace/events/boot.h | 66  
-+++++++++++++++++++++++++++++++++++++++++++++
-  init/main.c                 |  7 +++++
-  kernel/printk/printk.c      |  7 ++++-
-  security/security.c         |  8 +++++-
-  4 files changed, 86 insertions(+), 2 deletions(-)
-  create mode 100644 include/trace/events/boot.h
+> Printing message all the time even ratelimited is a wrong idea.
+> If this should never happens - WARN_ONCE is more than enough.
+> 
 
-diff --git a/include/trace/events/boot.h b/include/trace/events/boot.h
-new file mode 100644
-index 000000000000..ba0272a95813
---- /dev/null
-+++ b/include/trace/events/boot.h
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM boot
-+
-+#if !defined(_TRACE_BOOT_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_BOOT_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(initcall_level,
-+
-+        TP_PROTO(const char *level),
-+
-+        TP_ARGS(level),
-+
-+        TP_STRUCT__entry(
-+                __string(level, level)
-+        ),
-+
-+        TP_fast_assign(
-+                __assign_str(level, level);
-+        ),
-+
-+        TP_printk("level=%s", __get_str(level))
-+);
-+
-+TRACE_EVENT(initcall_start,
-+
-+        TP_PROTO(initcall_t func),
-+
-+        TP_ARGS(func),
-+
-+        TP_STRUCT__entry(
-+                __field(initcall_t, func)
-+        ),
-+
-+        TP_fast_assign(
-+                __entry->func = func;
-+        ),
-+
-+        TP_printk("func=%pS", __entry->func)
-+);
-+
-+TRACE_EVENT(initcall_finish,
-+
-+        TP_PROTO(initcall_t func, int ret),
-+
-+        TP_ARGS(func, ret),
-+
-+        TP_STRUCT__entry(
-+                __field(initcall_t,        func)
-+                __field(int,                ret)
-+        ),
-+
-+        TP_fast_assign(
-+                __entry->func = func;
-+                __entry->ret = ret;
-+        ),
-+
-+        TP_printk("func=%pS ret=%d", __entry->func, __entry->ret)
-+);
-+
-+#endif /* if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ) */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-\ No newline at end of file
-diff --git a/init/main.c b/init/main.c
-index 969eaf140ef0..765189b3a92e 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -97,6 +97,9 @@
-  #include <asm/sections.h>
-  #include <asm/cacheflush.h>
+I'm sorry, I was totally unclear here.  My proposal for you is:
+since this failure does occur in your system, please add, temporarily, the
+printing of all involved values *all the times*, so that you can track down
+the bug, and fix the actual problem leading to this division by zero.
 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/boot.h>
-+
-  static int kernel_init(void *);
+What do you think?
 
-  extern void init_IRQ(void);
-@@ -827,10 +830,12 @@ int __init_or_module do_one_initcall(initcall_t fn)
-  	if (initcall_blacklisted(fn))
-  		return -EPERM;
+> I suspect crashes might be caused by bumpy timer which was affected by smi/nmi from mce.
 
-+	trace_initcall_start(fn);
-  	if (initcall_debug)
-  		ret = do_one_initcall_debug(fn);
-  	else
-  		ret = fn();
-+	trace_initcall_finish(fn, ret);
+Yep.  The problem is that, for the estimated rate to go to zero, a
+null value must be sampled for several consecutive times.
 
-  	msgbuf[0] = 0;
+> I'll try to find evidence.
 
-@@ -895,6 +900,7 @@ static void __init do_initcall_level(int level)
-  		   level, level,
-  		   NULL, &repair_env_string);
+Getting to the bottom of this would be really great.
 
-+	trace_initcall_level(initcall_level_names[level]);
-  	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
-  		do_one_initcall(*fn);
-  }
-@@ -929,6 +935,7 @@ static void __init do_pre_smp_initcalls(void)
-  {
-  	initcall_t *fn;
+Looking forward to your findings,
+Paolo
 
-+	trace_initcall_level(initcall_level_names[0]);
-  	for (fn = __initcall_start; fn < __initcall0_start; fn++)
-  		do_one_initcall(*fn);
-  }
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index f274fbef821d..0f10cfd1588e 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -52,6 +52,7 @@
-  #include <linux/uaccess.h>
-  #include <asm/sections.h>
-
-+#include <trace/events/boot.h>
-  #define CREATE_TRACE_POINTS
-  #include <trace/events/printk.h>
-
-@@ -2781,6 +2782,7 @@ EXPORT_SYMBOL(unregister_console);
-   */
-  void __init console_init(void)
-  {
-+	int ret;
-  	initcall_t *call;
-
-  	/* Setup the default TTY line discipline. */
-@@ -2791,8 +2793,11 @@ void __init console_init(void)
-  	 * inform about problems etc..
-  	 */
-  	call = __con_initcall_start;
-+	trace_initcall_level("console");
-  	while (call < __con_initcall_end) {
--		(*call)();
-+		trace_initcall_start((*call));
-+		ret = (*call)();
-+		trace_initcall_finish((*call), ret);
-  		call++;
-  	}
-  }
-diff --git a/security/security.c b/security/security.c
-index 1cd8526cb0b7..9de51d599bb4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -30,6 +30,8 @@
-  #include <linux/string.h>
-  #include <net/flow.h>
-
-+#include <trace/events/boot.h>
-+
-  #define MAX_LSM_EVM_XATTR	2
-
-  /* Maximum number of letters for an LSM name string */
-@@ -45,10 +47,14 @@ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-
-  static void __init do_security_initcalls(void)
-  {
-+	int ret;
-  	initcall_t *call;
-  	call = __security_initcall_start;
-+	trace_initcall_level("security");
-  	while (call < __security_initcall_end) {
--		(*call) ();
-+		trace_initcall_start((*call));
-+		ret = (*call) ();
-+		trace_initcall_finish((*call), ret);
-  		call++;
-  	}
-  }
--- 
+> 
+>> Thanks a lot,
+>> Paolo
+>>> 
+>>>>> 	update_thr_responsiveness_params(bfqd);
+>>>>> 
+>>>>> reset_computation:
