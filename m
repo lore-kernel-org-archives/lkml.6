@@ -1,55 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeCTOSn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:18:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44904 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750828AbeCTOSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:18:41 -0400
-Date: Tue, 20 Mar 2018 15:13:54 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Harald Geyer <harald@ccbib.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
- laptop
-Message-ID: <20180320141353.zmzq4e5652rsp4ye@flea>
-References: <20180315162510.11669-1-harald@ccbib.org>
- <20180315162510.11669-6-harald@ccbib.org>
- <20180318202251.5gpv6sblfr4edxmj@flea>
- <E1exwhF-0000Qw-4g@stardust.g4.wien.funkfeuer.at>
+        id S1751402AbeCTOYJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:24:09 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35423 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750991AbeCTOYH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:24:07 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.02444233|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BNZf0PH_1521555831;
+Date: Tue, 20 Mar 2018 22:23:51 +0800
+From: Guo Ren <ren_guo@c-sky.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 19/19] irqchip: add irq-nationalchip.c and irq-csky.c
+Message-ID: <20180320142350.GA13892@guoren>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <62e687d3eb67505aa6f4d4d01ce268fd432bf58e.1521399976.git.ren_guo@c-sky.com>
+ <alpine.DEB.2.21.1803191417140.2010@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <E1exwhF-0000Qw-4g@stardust.g4.wien.funkfeuer.at>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <alpine.DEB.2.21.1803191417140.2010@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 04:27:36PM +0100, Harald Geyer wrote:
-> > together with all the patches but the
-> > PWM (so I had to drop the backlight node as well).
-> >
-> > Please coordinate with Andre about who should send the PWM support.
+Hi Thomas,
+
+On Mon, Mar 19, 2018 at 02:30:42PM +0100, Thomas Gleixner wrote:
+> > +static struct irq_chip ck_irq_chip = {
+> > +	.name		= "csky_intc_v1",
+> > +	.irq_mask	= ck_irq_mask,
+> > +	.irq_unmask	= ck_irq_unmask,
+> > +};
 > 
-> Seems the patch got broken because only the backlight node but not the
-> pwm node was removed. Anyway, since Andre has already sent an updated
-> version of his series, maybe just revert the broken patch, merge his
-> series and then apply the original teres-i patch again?
+> Please use the generic interrupt chip infrastructure for this.
+Ok, I will learn it.
 
-Unfortunately, there's dependencies on the PWM driver itself, and the
-maintainer hasn't replied yet.
+> > +static unsigned int ck_get_irqno(void)
+> > +{
+> > +	unsigned int temp;
+> 
+> newline between declaration and code.
+Ok
 
-Maxime
+> > +	temp = __raw_readl(CK_VA_INTC_ISR);
+> > +	return temp & 0x3f;
+> > +};
+> > +
+> > +static int __init
+> > +__intc_init(struct device_node *np, struct device_node *parent, bool ave)
+> 
+> What is 'ave'?
+Ave means the irq-controller works on auto-vector-handler mode, it will
+cause 10 exception number and it need read intc-reg to get irq-num.
 
--- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> No magic numbers. Please use proper defines.
+Ok
+
+> > +	else
+> > +		__raw_writel( 0x0, CK_VA_INTC_ICR);
+> > +	/*
+> > +	 * csky irq ctrl has 64 sources.
+> > +	 */
+> > +	#define INTC_IRQS 64
+> 
+> No defines in code.
+Ok
+
+> 
+> > +	for (i=0; i<INTC_IRQS; i=i+4)
+> 
+> checkpatch.pl would have told you what's wrong with the above
+Ok, Thx
+
+> > +		__raw_writel((i+3)|((i+2)<<8)|((i+1)<<16)|(i<<24),
+> 
+> Eew. Tons of magic numbers and a unreadable coding style. Please use an
+> inline function with proper comments to calculate that value
+Ok
+
+> > +				CK_VA_INTC_SOURCE + i);
+> > +
+> > +	root_domain = irq_domain_add_legacy(np, INTC_IRQS, 0, 0, &ck_irq_ops, NULL);
+> > +	if (!root_domain)
+> > +		panic("root irq domain not available\n");
+> > +
+> > +	irq_set_default_host(root_domain);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int __init
+> > +intc_init(struct device_node *np, struct device_node *parent)
+> > +{
+> > +
+> 
+> Stray newline
+I'll remove, Thx.
+
+> > +	return __intc_init(np, parent, false);
+> > +}
+> > +IRQCHIP_DECLARE(csky_intc_v1, "csky,intc-v1", intc_init);
+> > +
+> > +/*
+> > + * use auto vector exceptions 10 for interrupt.
+> > + */
+> > +static int __init
+> > +intc_init_ave(struct device_node *np, struct device_node *parent)
+> > +{
+> > +	return __intc_init(np, parent, true);
+> 
+> Why is that 'ave' thing not a property of device tree?
+I'll change it to a property.
+
+> > +struct irq_chip nc_irq_chip = {
+> > +	.name =		"nationalchip_intc_v1",
+> > +	.irq_mask =	nc_irq_mask,
+> > +	.irq_unmask =	nc_irq_unmask,
+> > +	.irq_enable =	nc_irq_en,
+> > +	.irq_disable =	nc_irq_dis,
+> > +};
+> 
+> Again. This all can use the generic interrupt chip.
+I'll learn the generic interrupt chip.
+
+> > +inline int ff1_64(unsigned int hi, unsigned int lo)
+> 
+> What on earth means ff1_64?
+Find the first high bit '1' of the reg :P
+
+> > +	asm volatile(
+> > +		"ff1 %0\n"
+> > +		:"=r"(lo)
+> > +		:"r"(lo)
+> > +		:
+> > +	);
+> 
+> So you want to decode the interrupt number from a bitfield. What's wrong
+> with ffs()?
+There is no wrong with ffs(). Ok, I will use the ffs().
+
+> > +	if( lo != 32 )
+> > +		result = 31-lo;
+> 
+> Why is this subtracted?
+ff1 find from high bit, so we need reverse it to get the right num.
+> That code makes no sense w/o comments.
+Sorry, I will add.
+
+> > +	else if( hi != 32 ) result = 31-hi + 32;
+> > +	else {
+> > +		printk("nc_get_irqno error hi:%x, lo:%x.\n", hi, lo);
+> > +		result = NR_IRQS;
+> > +	}
+> 
+> Pleas use braces consistently.
+Ok
+
+> > +unsigned int nc_get_irqno(void)
+> 
+> static?
+Yes
+
+> Same comments as for the other variant.
+Ok
+
+Best Regards
+  Guo Ren
