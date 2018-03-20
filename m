@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753485AbeCTNOJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:14:09 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6657 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753246AbeCTNOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:14:05 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] phy: stm32: fix using 0 as NULL pointer warnings
-Date: Tue, 20 Mar 2018 13:19:42 +0000
-Message-ID: <1521551982-154471-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1753488AbeCTNOh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:14:37 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33938 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753019AbeCTNOc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:14:32 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Frank.Rowand@sony.com, David Airlie <airlied@linux.ie>,
+        niklas.soderlund+renesas@ragnatech.se,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
+Date: Tue, 20 Mar 2018 15:15:37 +0200
+Message-ID: <8748007.hiNNEuVPPY@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAK8P3a0kEqZ265bG+S7JWgR47A_H2QjAT_+v+AKrFab+wN6AQg@mail.gmail.com>
+References: <20180315153730.3798004-1-arnd@arndb.de> <ED290C750E1B324E972B0017C9D4BAB06479C421@USCULXMSG01.am.sony.com> <CAK8P3a0kEqZ265bG+S7JWgR47A_H2QjAT_+v+AKrFab+wN6AQg@mail.gmail.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+Hi Arnd,
 
-drivers/phy/st/phy-stm32-usbphyc.c:331:42: warning:
- Using plain integer as NULL pointer
-drivers/phy/st/phy-stm32-usbphyc.c:344:52: warning:
- Using plain integer as NULL pointer
+On Friday, 16 March 2018 10:25:25 EET Arnd Bergmann wrote:
+> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
+> > On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
+> >> The *.dtb and *.dtb.S files get removed by 'make' during the build
+> >> process,
+> >> and later seem to be missed during the 'modpost' stage:
+> >> 
+> >> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
+> >> WARNING: could not open
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
+> >> directory
+> >> 
+> >> As a workaround, this adds all those files to the 'extra-y' target list,
+> >> but that's really ugly. Any ideas for a better fix?
+> > 
+> > Does this work for you (untested, but the way it is done in
+> > drivers/of/unittest-data/Makefile):
+> > 
+> > .PRECIOUS: \
+> > 
+> >         $(obj)/%.dtb.S \
+> >         $(obj)/%.dtb
+> 
+> Yes, that works and looks much better than my version.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/phy/st/phy-stm32-usbphyc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you for your patch, and sorry for breaking the build. Do you plan to 
+submit a new version based on Frank's approach ?
 
-diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
-index bc4e78a..48d4086 100644
---- a/drivers/phy/st/phy-stm32-usbphyc.c
-+++ b/drivers/phy/st/phy-stm32-usbphyc.c
-@@ -328,7 +328,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 	if (IS_ERR(usbphyc->base))
- 		return PTR_ERR(usbphyc->base);
- 
--	usbphyc->clk = devm_clk_get(dev, 0);
-+	usbphyc->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(usbphyc->clk)) {
- 		ret = PTR_ERR(usbphyc->clk);
- 		dev_err(dev, "clk get failed: %d\n", ret);
-@@ -341,7 +341,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	usbphyc->rst = devm_reset_control_get(dev, 0);
-+	usbphyc->rst = devm_reset_control_get(dev, NULL);
- 	if (!IS_ERR(usbphyc->rst)) {
- 		reset_control_assert(usbphyc->rst);
- 		udelay(2);
+-- 
+Regards,
+
+Laurent Pinchart
