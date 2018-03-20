@@ -1,45 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeCTQeF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 12:34:05 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:56830 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeCTQeD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:34:03 -0400
-Date: Tue, 20 Mar 2018 12:34:01 -0400 (EDT)
-Message-Id: <20180320.123401.2138083793709750726.davem@davemloft.net>
-To: LIRAN.ALON@ORACLE.COM
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        idan.brown@ORACLE.COM, yuval.shaia@ORACLE.COM
-Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
- only when crossing netns
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <5AB132C5.5010806@ORACLE.COM>
-References: <5AB12A0E.2060704@ORACLE.COM>
-        <20180320.120036.1999626754164343704.davem@davemloft.net>
-        <5AB132C5.5010806@ORACLE.COM>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751870AbeCTQea (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 12:34:30 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56147 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751310AbeCTQdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 12:33:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,336,1517904000";
+   d="scan'208";a="35388159"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
+ FS/GS updated by ptracer
+Thread-Topic: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
+ FS/GS updated by ptracer
+Thread-Index: AQHTv61cgKpKrSnds0atXlLhYuaZSaPZns+A//+jdIA=
+Date: Tue, 20 Mar 2018 16:33:35 +0000
+Message-ID: <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
+In-Reply-To: <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.b.0.180311
+x-originating-ip: [10.254.178.80]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AE90764316240C4E8F468758B981D642@intel.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KGYWgf025689
 
-From: Liran Alon <LIRAN.ALON@ORACLE.COM>
-Date: Tue, 20 Mar 2018 18:11:49 +0200
+On 3/20/18, 08:05, "Andy Lutomirski" <luto@kernel.org> wrote:
+> I've also suggested something like this myself, but this approach is
+> far more complicated than the older approach.  Was there something
+> that the old approach would break?  If so, what?
+Sorry, I don't know your suggestion. Can you elaborate your suggestion?
+  
+>> +               /*
+>> +                * %fs setting goes to reload its base, when tracee
+>> +                * resumes without FSGSBASE (legacy). Here with FSGSBASE
+>> +                * FS base is (manually) fetched from GDT/LDT when needed.
+>> +                */
+>> +               else if (static_cpu_has(X86_FEATURE_FSGSBASE) &&
+>> +                        (value != 0) && (task->thread.fsindex != value))
+>> +                       task->thread.fsbase = task_seg_base(task, value);
 
-> 1. Do we want to make a flag for every bug that is user-space visible?
-> I think there is place for consideration on a per-case basis. I still
-> don't see how a user can utilize this behaviour. He is basically
-> loosing information (skb->mark) without this patch.
+> The comment above should explain why you're checking this particular
+> condition.  I find the fsindex != value check to be *very* surprising.
+>  On a real CPU, writing some nonzero value to %fs does the same thing
+>  regardless of what the old value of %fs was.
 
-And maybe people trying to work in this situation have added code to
-get the mark set some other way, or to validate that it is in fact
-zero after passing through, which we would break with this change.
+With FSGSBASE, when both index and base are not changed, base will
+be (always) fetched from GDT/LDT. This is not thought as legacy behavior 
+we need to support, AFAIK.
 
-If it's set to zero now, it's reasonable to expect it to be zero.
+> This is_fully_covered thing is IMO overcomplicated.  Why not just make
+> a separate helper set_fsgs_index_and_base() and have putregs() call it
+> when both are set at once?
 
-By changing it to non-zero, different rules and routes will match
-and this for sure has potential to break things.
+Using helper function here is exactly what I did at first. I thought this
+tag is simple enough and straightforward at the end. But I'm open to
+factor it out.
+ 
