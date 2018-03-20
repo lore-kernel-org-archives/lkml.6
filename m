@@ -1,107 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeCTIu2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:50:28 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36936 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751408AbeCTIuX (ORCPT
+        id S1752317AbeCTIwL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:52:11 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51698 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbeCTIwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:50:23 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180320085020euoutp02ab316b843cdd4dd3075e04e4d55545f7~dlMR334191109511095euoutp02M
-X-AuditID: cbfec7f5-f95739c0000028a9-6c-5ab0cb4bdf28
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH v2] crypto: doc - clarify hash callbacks state machine
-To: =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Message-id: <d036a7ef-d900-4858-b821-05c50b2b739e@partner.samsung.com>
-Date: Tue, 20 Mar 2018 09:50:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-In-reply-to: <20180320075612.22719-1-horia.geanta@nxp.com>
-Content-language: en-US
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djP87repzdEGTy/q2mxccZ6VosnB9oZ
-        Leacb2Gx6H4lY/Hh/GEmi/v3fjJZLGxbwmJxedccNgcOjy0rbzJ5bDug6rG4bzKrx8Z3O5g8
-        +rasYvT4vEkugC2KyyYlNSezLLVI3y6BK+PDxJ/sBct5KqZdZG9gvMLZxcjJISFgInFn92m2
-        LkYuDiGBFYwSPct3M0M4nxklPp5rZYapOjtpNztEYhmjxO8zj9lBErwCghI/Jt9jAbGZBTQl
-        XnyZxAJR9IxR4sqlX0BzOTiEBbwkWvrtQWpEBDYySnzvFgSpYRaYzCjxuG0/2CA2AXOJR9vP
-        MEEMdZPY9r2LDcRmEVCV+LzqKNgCUYEIiYVTnzKC2JwCVhI7Z0xhhlgsLtHcehPqCHmJg1ee
-        s0BcfZtN4t9UFwjbReLW2m5WCFtY4tXxLewQtozE5cndUPXlEpu2rAX7UkKggVFizfsmRoiE
-        tcTh4xdZIRbwSUzaNp0Z5DEJAV6JjjYhiBIPidY3h5ggbEeJHRsugZULCexhlNh6xGMCo9ws
-        pPCahRRes5C8MAvJCwsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJpnT/45/3cG4
-        70/SIUYBDkYlHl6NO+ujhFgTy4orcw8xSnAwK4nwqkdviBLiTUmsrEotyo8vKs1JLT7EKM3B
-        oiTOG6dRFyUkkJ5YkpqdmlqQWgSTZeLglGpgtF1k6HW1yudvTszGn0uW9SeXGN5hefl6/6yG
-        yCVTql7/Dvqr9PpxLMeEjVUMcwQy5rdfdJzJ9GfjbC/+E6XcK9esbsz4Zr97naf4ggppz6cb
-        cnmusmmc4pXQfXRgHmfsfh7PSOO5a6q1Z9sn3N8YwFzryLXxk79dzYWnBxNW+Up1XT/l4bTH
-        QomlOCPRUIu5qDgRAMwB6GwuAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xy7repzdEGRy6z2KxccZ6VosnB9oZ
-        Leacb2Gx6H4lY/Hh/GEmi/v3fjJZLGxbwmJxedccNgcOjy0rbzJ5bDug6rG4bzKrx8Z3O5g8
-        +rasYvT4vEkugC2KyyYlNSezLLVI3y6BK+PDxJ/sBct5KqZdZG9gvMLZxcjJISFgInF20m72
-        LkYuDiGBJYwS7zZ9ZARJ8AoISvyYfI+li5GDg1lAXWLKlFyImmeMEucO/WACiQsLeEm09NuD
-        xEUENjJK/G67BjaIWWAio8TDP2+gpu5hlGie8J4VZCqbgLnEo+1nmCA2uEls+97FBmKzCKhK
-        fF51lAXEFhWIkOhcOR/M5hSwktg5YwoziM0sIC7R3HqTBcKWlzh45TnLBEaBWUiOnYVw7Cwk
-        HbOQdCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRGAvbjv3csoOx613wIUYBDkYlHl6N
-        O+ujhFgTy4orcw8xSnAwK4nwqkdviBLiTUmsrEotyo8vKs1JLT7EKM3BoiTOe96gMkpIID2x
-        JDU7NbUgtQgmy8TBKdXA2BUmxxysLvJqv9VsWffi64f919ibKX5RK37THXd22ofi8osxChvF
-        Fb76luedKllwYNKnWq+3t+88yDhqFvOdLTytZ9l81wfis71m3Lih5xnG0xlxrFaj7OOeyYz3
-        3X4lPbhw++q9teKSmqKZnut0VgWVfRc6FSq/b4F4gWH/qWvF+e63Jt7JVGIpzkg01GIuKk4E
-        AI6+bRmBAgAA
-X-CMS-MailID: 20180320085019eucas1p1f1d0f113a7659add81f22d9bf126b044
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180320075741epcas5p3a7c026ba8644e54478955afcb6091023
-X-RootMTR: 20180320075741epcas5p3a7c026ba8644e54478955afcb6091023
-References: <20180305103945.3517-1-horia.geanta@nxp.com>
-        <CGME20180320075741epcas5p3a7c026ba8644e54478955afcb6091023@epcas5p3.samsung.com>
-        <20180320075612.22719-1-horia.geanta@nxp.com>
+        Tue, 20 Mar 2018 04:52:06 -0400
+X-Google-Smtp-Source: AG47ELvZvl/nuAJ/u43jbOYzcex0IyIr9IIEdct8T6QgLdJt8Yyn0ekV/IuVy8b+E9Xn8ZKXwxbdmQ==
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Intel Graphics Development <intel-gfx@lists.freedesktop.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] input/psmouse: Don't hold the mutex while calling ->disconnect
+Date: Tue, 20 Mar 2018 09:51:58 +0100
+Message-Id: <20180320085158.1954-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+At least trackpoint_disconnect wants to remove some sysfs files, and
+we can't remove sysfs files while holding psmouse_mutex:
 
+======================================================
+WARNING: possible circular locking dependency detected
+4.16.0-rc5-g613eb885b69e-drmtip_1+ #1 Tainted: G     U
+------------------------------------------------------
+kworker/0:3/102 is trying to acquire lock:
+ (kn->count#130){++++}, at: [<000000009679748b>] kernfs_remove_by_name_ns+0x3b/0x80
 
-On 20.03.2018 08:56, Horia Geantă wrote:
-> Add a note that it is perfectly legal to "abandon" a request object:
-> - call .init() and then (as many times) .update()
-> - _not_ call any of .final(), .finup() or .export() at any point in
->   future
-> 
-> Link: https://lkml.kernel.org/r/20180222114741.GA27631@gondor.apana.org.au
-> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-> ---
->  Documentation/crypto/devel-algos.rst | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/crypto/devel-algos.rst b/Documentation/crypto/devel-algos.rst
-> index 66f50d32dcec..c45c6f400dbd 100644
-> --- a/Documentation/crypto/devel-algos.rst
-> +++ b/Documentation/crypto/devel-algos.rst
-> @@ -236,6 +236,14 @@ when used from another part of the kernel.
->                                 |
->                                 '---------------> HASH2
->  
-> +Note that it is perfectly legal to "abandon" a request object:
-> +- call .init() and then (as many times) .update()
-> +- _not_ call any of .final(), .finup() or .export() at any point in future
-> +
-> +In other words implementations should mind the resource allocation and clean-up.
-> +No resources related to request objects should remain allocated after a call
--- ^^^^^^^^^^^^
-> +to .init() or .update(), since there might be no chance to free them.
+but task is already holding lock:
+ (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
 
-is it for crypto api  users or for drivers ?
+which lock already depends on the new lock.
 
-the creator of request context is responsible for alloc and destroy,
-so why there are no chance of free ?
+the existing dependency chain (in reverse order) is:
 
+-> #1 (psmouse_mutex){+.+.}:
+       psmouse_attr_set_helper+0x28/0x140
+       kernfs_fop_write+0xfe/0x180
+       __vfs_write+0x1e/0x130
+       vfs_write+0xbd/0x1b0
+       SyS_write+0x40/0xa0
+       do_syscall_64+0x65/0x1a0
+       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+-> #0 (kn->count#130){++++}:
+       __kernfs_remove+0x243/0x2b0
+       kernfs_remove_by_name_ns+0x3b/0x80
+       remove_files.isra.0+0x2b/0x60
+       sysfs_remove_group+0x38/0x80
+       sysfs_remove_groups+0x24/0x40
+       trackpoint_disconnect+0x2c/0x50
+       psmouse_disconnect+0x8f/0x160
+       serio_disconnect_driver+0x28/0x40
+       serio_driver_remove+0xc/0x10
+       device_release_driver_internal+0x15b/0x230
+       serio_handle_event+0x1c8/0x260
+       process_one_work+0x215/0x620
+       worker_thread+0x48/0x3a0
+       kthread+0xfb/0x130
+       ret_from_fork+0x3a/0x50
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(psmouse_mutex);
+                               lock(kn->count#130);
+                               lock(psmouse_mutex);
+  lock(kn->count#130);
+
+ *** DEADLOCK ***
+
+6 locks held by kworker/0:3/102:
+ #0:  ((wq_completion)"events_long"){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
+ #1:  (serio_event_work){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
+ #2:  (serio_mutex){+.+.}, at: [<00000000c8a49847>] serio_handle_event+0x23/0x260
+ #3:  (&dev->mutex){....}, at: [<00000000b55eee75>] device_release_driver_internal+0x2f/0x230
+ #4:  (&serio->drv_mutex){+.+.}, at: [<000000009719f997>] serio_disconnect_driver+0x16/0x40
+ #5:  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
+
+stack backtrace:
+CPU: 0 PID: 102 Comm: kworker/0:3 Tainted: G     U           4.16.0-rc5-g613eb885b69e-drmtip_1+ #1
+Hardware name: LENOVO 74591P0/74591P0, BIOS 6DET28WW (1.05 ) 07/30/2008
+Workqueue: events_long serio_handle_event
+Call Trace:
+ dump_stack+0x5f/0x86
+ print_circular_bug.isra.18+0x1d0/0x2c0
+ __lock_acquire+0x14ae/0x1b60
+ ? kernfs_remove_by_name_ns+0x20/0x80
+ ? lock_acquire+0xaf/0x200
+ lock_acquire+0xaf/0x200
+ ? kernfs_remove_by_name_ns+0x3b/0x80
+ __kernfs_remove+0x243/0x2b0
+ ? kernfs_remove_by_name_ns+0x3b/0x80
+ ? kernfs_name_hash+0xd/0x70
+ ? kernfs_find_ns+0x7e/0x100
+ kernfs_remove_by_name_ns+0x3b/0x80
+ remove_files.isra.0+0x2b/0x60
+ sysfs_remove_group+0x38/0x80
+ sysfs_remove_groups+0x24/0x40
+ trackpoint_disconnect+0x2c/0x50
+ psmouse_disconnect+0x8f/0x160
+ serio_disconnect_driver+0x28/0x40
+ serio_driver_remove+0xc/0x10
+ device_release_driver_internal+0x15b/0x230
+ serio_handle_event+0x1c8/0x260
+ process_one_work+0x215/0x620
+ worker_thread+0x48/0x3a0
+ ? _raw_spin_unlock_irqrestore+0x4c/0x60
+ kthread+0xfb/0x130
+ ? process_one_work+0x620/0x620
+ ? _kthread_create_on_node+0x30/0x30
+ ret_from_fork+0x3a/0x50
+
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/input/mouse/psmouse-base.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
+index 8ac9e03c05b4..6e09a5d6e58a 100644
+--- a/drivers/input/mouse/psmouse-base.c
++++ b/drivers/input/mouse/psmouse-base.c
+@@ -1467,8 +1467,10 @@ static void psmouse_disconnect(struct serio *serio)
+ 		psmouse_deactivate(parent);
+ 	}
+ 
++	mutex_unlock(&psmouse_mutex);
+ 	if (psmouse->disconnect)
+ 		psmouse->disconnect(psmouse);
++	mutex_lock(&psmouse_mutex);
+ 
+ 	if (parent && parent->pt_deactivate)
+ 		parent->pt_deactivate(parent);
 -- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+2.16.2
