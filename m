@@ -1,95 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeCTUaC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:30:02 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:33777 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeCTUaA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:30:00 -0400
-X-Google-Smtp-Source: AG47ELtEDFZSMtJqmTLU3j6I3IHR2WgaXo9tZCz3m+ZUPrGyJRME3boRlawRI11+4fbtiPsk3LoMIQ==
-Date: Tue, 20 Mar 2018 13:29:57 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: "Li,Rongqing" <lirongqing@baidu.com>,
+        id S1751542AbeCTUgn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:36:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:61660 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751464AbeCTUgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:36:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,337,1517904000";
+   d="scan'208";a="27415035"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "x86@kernel.org" <x86@kernel.org>
+CC: "luto@kernel.org" <luto@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH=5D_mm=2Fmemcontrol=2Ec=3A_speed_up_to_force_empty_a_memory_cgroup?=
-In-Reply-To: <20180320083950.GD23100@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.20.1803201327060.167205@chino.kir.corp.google.com>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com> <20180319085355.GQ23100@dhcp22.suse.cz> <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com> <20180319103756.GV23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com> <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com> <20180320083950.GD23100@dhcp22.suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Topic: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Index: AQHTv61aFYaSukXqZEajMVMtZoAMNaPZTkgAgACk+4D//5LngA==
+Date: Tue, 20 Mar 2018 20:36:38 +0000
+Message-ID: <F3D173B5-3C01-430B-9EF0-471DDC5A4DBF@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
+ <eb30911b621144fe92e77fd2d9da7efe@AcuMS.aculab.com>
+ <191d8212-6740-3131-1653-d057f522843c@zytor.com>
+In-Reply-To: <191d8212-6740-3131-1653-d057f522843c@zytor.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.b.0.180311
+x-originating-ip: [10.254.179.146]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <92873EC0C656E846A8E8FB1079D23366@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KKanhA011439
 
-On Tue, 20 Mar 2018, Michal Hocko wrote:
-
-> > > > > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
-> > > > > stack of try_to_free_mem_cgroup_pages is too long, increase the
-> > > > > nr_to_reclaim can reduce times of calling
-> > > > > function[do_try_to_free_pages, shrink_zones, hrink_node ]
-> > > > >
-> > > > > mem_cgroup_resize_limit
-> > > > > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
-> > > > > --->SWAP_CLUSTER_MAX),
-> > > > >    ---> do_try_to_free_pages
-> > > > >      ---> shrink_zones
-> > > > >       --->shrink_node
-> > > > >        ---> shrink_node_memcg
-> > > > >          ---> shrink_list          <-------loop will happen in this place
-> > > > [times=1024/32]
-> > > > >            ---> shrink_page_list
-> > > > 
-> > > > Can you actually measure this to be the culprit. Because we should rethink
-> > > > our call path if it is too complicated/deep to perform well.
-> > > > Adding arbitrary batch sizes doesn't sound like a good way to go to me.
-> > > 
-> > > Ok, I will try
-> > > 
-> > 
-> > Looping in mem_cgroup_resize_limit(), which takes memcg_limit_mutex on 
-> > every iteration which contends with lowering limits in other cgroups (on 
-> > our systems, thousands), calling try_to_free_mem_cgroup_pages() with less 
-> > than SWAP_CLUSTER_MAX is lame.
-> 
-> Well, if the global lock is a bottleneck in your deployments then we
-> can come up with something more clever. E.g. per hierarchy locking
-> or even drop the lock for the reclaim altogether. If we reclaim in
-> SWAP_CLUSTER_MAX then the potential over-reclaim risk quite low when
-> multiple users are shrinking the same (sub)hierarchy.
-> 
-
-I don't believe this to be a bottleneck if nr_pages is increased in 
-mem_cgroup_resize_limit().
-
-> > It would probably be best to limit the 
-> > nr_pages to the amount that needs to be reclaimed, though, rather than 
-> > over reclaiming.
-> 
-> How do you achieve that? The charging path is not synchornized with the
-> shrinking one at all.
-> 
-
-The point is to get a better guess at how many pages, up to 
-SWAP_CLUSTER_MAX, that need to be reclaimed instead of 1.
-
-> > If you wanted to be invasive, you could change page_counter_limit() to 
-> > return the count - limit, fix up the callers that look for -EBUSY, and 
-> > then use max(val, SWAP_CLUSTER_MAX) as your nr_pages.
-> 
-> I am not sure I understand
-> 
-
-Have page_counter_limit() return the number of pages over limit, i.e. 
-count - limit, since it compares the two anyway.  Fix up existing callers 
-and then clamp that value to SWAP_CLUSTER_MAX in 
-mem_cgroup_resize_limit().  It's a more accurate guess than either 1 or 
-1024.
+> I would prefer calling it something like FIND_PERCPU_BASE or something like that.
+Thanks for the suggestion.
+Chang
