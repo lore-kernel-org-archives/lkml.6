@@ -1,97 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751861AbeCTUOX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52076 "EHLO mail.kernel.org"
+        id S1751895AbeCTUOp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeCTUOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:14:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53CDF21770
+        id S1751343AbeCTUOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:14:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31BA217D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v2 2/2] sparc/PCI: Stop reserving System ROM and Video ROM
- in PCI space
+Date: Tue, 20 Mar 2018 15:14:34 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>,
-        Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Yinghai Lu <yinghai@kernel.org>, David Ahern <david.ahern@oracle.com>,
-        TJ <linux@iam.tj>, David Airlie <airlied@linux.ie>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, sparclinux@vger.kernel.org
-Date: Tue, 20 Mar 2018 15:14:17 -0500
-Message-ID: <152157685713.167463.4236364024847068642.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152157662729.167463.14127576964193645242.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152157662729.167463.14127576964193645242.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+To: David Miller <davem@davemloft.net>
+Cc: khalid.aziz@oracle.com, sparclinux@vger.kernel.org,
+        linux-pci@vger.kernel.org, yinghai@kernel.org,
+        linux-kernel@vger.kernel.org, david.ahern@oracle.com, linux@iam.tj,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        alex.williamson@redhat.com
+Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
+Message-ID: <20180320201434.GB137590@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180319171140.GA52750@bhelgaas-glaptop.roam.corp.google.com>
+ <20180319.142831.793002554436316260.davem@davemloft.net>
+ <20180319193854.GI77194@bhelgaas-glaptop.roam.corp.google.com>
+ <20180319.193341.105600714432834778.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319.193341.105600714432834778.davem@davemloft.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Mar 19, 2018 at 07:33:41PM -0400, David Miller wrote:
+> From: Bjorn Helgaas <helgaas@kernel.org>
+> Date: Mon, 19 Mar 2018 14:38:54 -0500
+> 
+> > I'd be happy to remove both.  But I wonder how X init works on
+> > sparc.
+> 
+> It's been many years since I worked on this, but I think it
+> mapped and used the PCI ROM resource for this.
 
-Previously, pci_register_legacy_regions() reserved PCI address space under
-every PCI host bridge for the System ROM and the Video ROM, but these
-regions are not part of PCI address space.
-
-Previously, pci_register_legacy_regions() reserved the following areas of
-PCI address space under every PCI host bridge:
-
-  [bus 0xa0000-0xbffff]    Video RAM area (VGA frame buffer)
-  [bus 0xc0000-0xc7fff]    Video ROM
-  [bus 0xf0000-0xfffff]    System ROM
-
-It does need to reserve the [bus 0xa0000-0xbffff] region (at least if
-there's a possibility of a VGA device below the bridge) because VGA devices
-can respond to that even if they don't describe it with a BAR.
-
-But the Video ROM and System ROM areas don't seem necessary because they
-are not areas that legacy PCI devices respond to.
-
-They appear to be copied from x86, where they describe areas of system
-memory that depend on BIOS conventions.  On x86, BIOS copies the option ROM
-of the primary VGA device to RAM at 0xc0000, and the 0xf0000-0xfffff region
-is reserved for the motherboard BIOS.  Neither of these things applies to
-sparc.
-
-Stop reserving the System ROM and Video ROM regions in PCI space.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- arch/sparc/kernel/pci_common.c |   20 --------------------
- 1 file changed, 20 deletions(-)
-
-diff --git a/arch/sparc/kernel/pci_common.c b/arch/sparc/kernel/pci_common.c
-index 14fa74f90fdb..38d46bcc8634 100644
---- a/arch/sparc/kernel/pci_common.c
-+++ b/arch/sparc/kernel/pci_common.c
-@@ -344,26 +344,6 @@ static void pci_register_legacy_regions(struct resource *io_res,
- 	p->end = p->start + 0x1ffffUL;
- 	p->flags = IORESOURCE_BUSY;
- 	request_resource(mem_res, p);
--
--	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	p->name = "System ROM";
--	p->start = mem_res->start + 0xf0000UL;
--	p->end = p->start + 0xffffUL;
--	p->flags = IORESOURCE_BUSY;
--	request_resource(mem_res, p);
--
--	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	p->name = "Video ROM";
--	p->start = mem_res->start + 0xc0000UL;
--	p->end = p->start + 0x7fffUL;
--	p->flags = IORESOURCE_BUSY;
--	request_resource(mem_res, p);
- }
- 
- static void pci_register_iommu_region(struct pci_pbm_info *pbm)
+Thanks, I posted a v2 series that removes the System ROM and Video ROM
+areas completely.
