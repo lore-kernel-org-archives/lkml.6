@@ -1,77 +1,264 @@
-Return-Path: <jgross@suse.com>
-X-Google-Smtp-Source: AG47ELvbt+aHdUirSfM887Z7BUc0pfpwfDYyDkNUzcEsBYVW8WurMgKuuyEe/hFjM/YErx5Jz6G6
-ARC-Seal: i=1; a=rsa-sha256; t=1519888908; cv=none;
-        d=google.com; s=arc-20160816;
-        b=lYKbP1pvAXkA9Wajyda3sRfD+EoSx7U5GNOaqNisQtNWUfMjO/LxGAFfDal81x49Ff
-         xMHX/bZpDQ7qEbqRGyesC8ejdG32ZVelFWyW+4K0zl+hA6dxXN+OtHNYDFQlkvJZ3q0U
-         KIVIw6d+D0YCWwb8xULqGPbgSsgi5qriyOXNRH3gt6Pg8t+hLDcItSbZBfn563IK+Ck3
-         vAQlKF14da6zaRUCPUBASK+Z1qpB6YfsJ/mREWDtMK4UPNy1ed/FdYzN4yVipxAXpDyr
-         /9NkRiRKc2mwvaDuu7kxNQrXoxwnKYUqpIh0QCRSVRm3g/N5KBY9kw9MCB68mIVO0bxZ
-         JJNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=DCMJGxAr1N8A9z9t8QpGpIUuvNEwG335OVa2ABvJtso=;
-        b=Ih/gDRyy6/rz9cb2S4ZJKcOgLzgt9EF2soIifi5E9wYuttWwlfzBd/RwyDGr9ASIeu
-         uYrNa4AD4WwfZR5kCiRnbxLGMozvOwvy6bHYFQ79p4CvCSgsc7MGwqZeqikSTGjFrrkI
-         ai56WLb94D3Gkc4MTN7vp/4G5qrpDHwp53ME/zn983YaKAbx+Klwe/0mKbX0NaxLZdL0
-         ZqM4bLKce/554qgXzbXgwGVB5Dnl7Axc+ShzHIpvZImd6tSY1hVkGCl/Ozes7z/5kp7B
-         oNvK9bchHj2F+K/QULrPiiKHSqspXysEotFRzSP70WYR+ayz6121+1b4I6t1J6spZbf0
-         dCuA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jgross@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=jgross@suse.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jgross@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=jgross@suse.com
-Subject: Re: [RFC PATCH v4 5/7] xen/pvh: Move Xen code for getting mem map via
- hcall out of common file
-To: Maran Wilson <maran.wilson@oracle.com>, pbonzini@redhat.com,
- boris.ostrovsky@oracle.com, roger.pau@citrix.com, andrew.cooper3@citrix.com,
- hch@infradead.org, JBeulich@suse.com, x86@kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rkrcmar@redhat.com,
- jpoimboe@redhat.com, bp@suse.de, kirill.shutemov@linux.intel.com,
- thomas.lendacky@amd.com, luto@kernel.org, dave.hansen@linux.intel.com,
- davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
- linus.walleij@linaro.org, rdunlap@infradead.org
-References: <1519842483-8887-1-git-send-email-maran.wilson@oracle.com>
- <1519842483-8887-6-git-send-email-maran.wilson@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <7095f9f1-c8b5-acae-44b4-4699a1e67c69@suse.com>
-Date: Thu, 1 Mar 2018 08:21:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2043643-1521572842-2-15996973384167673133
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521572841; b=s2CnyXdTig4MaDB8HAqK80LVObbwP8uUts10CXtkPxGayWk
+    8Ggnxw6nfxeKSCscxIqvLtpurR5iNE0enC1De3fZGt4ndK1RmOJc/Rz/DXgY6tIK
+    YasKEUhBgbcVtGDSaTHFjgP0+g8Z71LGR518xJUHNCqL7wDupnCT2k+4+ZbdOB2g
+    WUzW3hK9XgG5AAgFOqTavJlJ3oBr8dizWHGZNw2+ShTbKeWa2SjiLyCEDd0QP/UZ
+    DaPBWU5k1I28+uoSow/rniEx3CT87D1pj26KJEOCfC4iBspt5lh86pCz+9guMx8B
+    IVi1SEcDJauvGWq5dHEXkzMSfmAld7lOlXniv2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521572841; bh=6o4uEB2BvlLAq7zTTIcLRRSqeQ
+    70eueiVJwCH87v0+0=; b=PhlEOZrGobtIr2QjRImJsFY/hk10UC090bN/YntOzO
+    LgeZA10la8zrudDkHPpPUUPtHr4bakBOeyZ3PeMYAVKHA89tmMVp/HQr//BBK1hw
+    O2ItDlGqR3WNfj/kroxQLPQhnkn8dUMWcK11msF8bWs+aRkKUlOmMfVtoINZ2oA7
+    CZ/qqBmDEJg+jxkKtZ7v7POsixvsOlwb6nlNTv9Nj9C33DpVc4z/0AjMswfO6AlA
+    2zSQewRWV45tnyl1tGo8YCuSaSmlC9TAbC0XKn/KbLlFjTYAEMvucBc656jo7NH5
+    WMQ5ASkAeBmtoUGvJTJabv2lkn8OcDA1KurFn5cXSiVg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751317AbeCTTHS (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 15:07:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56373 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751310AbeCTTHR (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 20 Mar 2018 15:07:17 -0400
+Date: Tue, 20 Mar 2018 11:55:03 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: akpm@linux-foundation.org
+Cc: mhocko@kernel.org, mtk.manpages@gmail.com,
+        robert.kettler@outlook.com, manfred@colorfullife.com,
+        ebiederm@xmission.com, keescook@chromium.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v2 0/3] sysvipc: introduce STAT_ANY commands
+Message-ID: <20180320185503.nimh3htpprbg7nth@linux-n805>
+References: <20180215162458.10059-1-dave@stgolabs.net>
 MIME-Version: 1.0
-In-Reply-To: <1519842483-8887-6-git-send-email-maran.wilson@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180215162458.10059-1-dave@stgolabs.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593670431984970161?=
-X-GMAIL-MSGID: =?utf-8?q?1593719032478911102?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 28/02/18 19:28, Maran Wilson wrote:
-> We need to refactor PVH entry code so that support for other hypervisors
-> like Qemu/KVM can be added more easily.
-> 
-> The original design for PVH entry in Xen guests relies on being able to
-> obtain the memory map from the hypervisor using a hypercall. When we
-> extend the PVH entry ABI to support other hypervisors like Qemu/KVM,
-> a new mechanism will be added that allows the guest to get the memory
-> map without needing to use hypercalls.
-> 
-> For Xen guests, the hypercall approach will still be supported. In
-> preparation for adding support for other hypervisors, we can move the
-> code that uses hypercalls into the Xen specific file. This will allow us
-> to compile kernels in the future without CONFIG_XEN that are still capable
-> of being booted as a Qemu/KVM guest via the PVH entry point.
-> 
-> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+On Thu, 15 Feb 2018, Davidlohr Bueso wrote:
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+>Once (if) merged, I will submit the necesary manpage updates. But I'm
+>thinking something like:
+
+Hi Michael, here are the updated manpage entries. As always, please feel
+free to modify the descriptions as you see fit.
+
+Thanks,
+Davidlohr
 
 
-Juergen
+------------8<----------------------------------------------------------
+[PATCH] sysvipc: add *_STAT_ANY command descriptions
+
+The *ctl syscall descriptions have been updated to reflect the
+new commands in msg queues, semaphores and shmem.
+
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ man2/msgctl.2 | 20 +++++++++++++++++---
+ man2/semctl.2 | 19 ++++++++++++++++++-
+ man2/shmctl.2 | 17 +++++++++++++++--
+ 3 files changed, 50 insertions(+), 6 deletions(-)
+
+diff --git a/man2/msgctl.2 b/man2/msgctl.2
+index df74c750457a..31b1a1f12fb0 100644
+--- a/man2/msgctl.2
++++ b/man2/msgctl.2
+@@ -33,6 +33,7 @@
+ .\"	Language and formatting clean-ups
+ .\"	Added msqid_ds and ipc_perm structure definitions
+ .\" 2005-08-02, mtk: Added IPC_INFO, MSG_INFO, MSG_STAT descriptions
++.\" 2018-03-20, dbueso: Added MSG_STAT_ANY description.
+ .\"
+ .TH MSGCTL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -222,10 +223,23 @@ Return a
+ structure as for
+ .BR IPC_STAT .
+ However, the
+-.I msqid
++.I msgid
+ argument is not a queue identifier, but instead an index into
+ the kernel's internal array that maintains information about
+ all message queues on the system.
++.TP
++.BR MSG_STAT_ANY " (Linux-specific)"
++Return a
++.I msqid_ds
++structure as for
++.BR MSG_STAT .
++However, the
++.I msg_perm.mode
++is not checked for read access for
++.IR msqid ,
++resembing the behaviour of
++/proc/sysvipc/msg.
++.PP
+ .SH RETURN VALUE
+ On success,
+ .BR IPC_STAT ,
+@@ -241,10 +255,10 @@ operation returns the index of the highest used entry in the
+ kernel's internal array recording information about all
+ message queues.
+ (This information can be used with repeated
+-.B MSG_STAT
++.B MSG_STAT or MSG_STAT_ANY
+ operations to obtain information about all queues on the system.)
+ A successful
+-.B MSG_STAT
++.B MSG_STAT or MSG_STAT_ANY
+ operation returns the identifier of the queue whose index was given in
+ .IR msqid .
+ .PP
+diff --git a/man2/semctl.2 b/man2/semctl.2
+index 02930d2c74ae..0ebe0434c05f 100644
+--- a/man2/semctl.2
++++ b/man2/semctl.2
+@@ -37,6 +37,7 @@
+ .\"	Rewrote semun text
+ .\"	Added semid_ds and ipc_perm structure definitions
+ .\" 2005-08-02, mtk: Added IPC_INFO, SEM_INFO, SEM_STAT descriptions.
++.\" 2018-03-20, dbueso: Added SEM_STAT_ANY description.
+ .\"
+ .TH SEMCTL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -240,6 +241,17 @@ argument is not a semaphore identifier, but instead an index into
+ the kernel's internal array that maintains information about
+ all semaphore sets on the system.
+ .TP
++.BR SEM_STAT_ANY " (Linux-specific)"
++Return a
++.I seminfo
++structure containing the same information as for
++.BR SEM_STAT .
++However, the
++.I sem_perm.mode
++is not checked for read access for
++.IR semid ,
++resembing the behaviour of
++/proc/sysvipc/sem.
+ .B GETALL
+ Return
+ .B semval
+@@ -367,7 +379,7 @@ the index of the highest used entry in the
+ kernel's internal array recording information about all
+ semaphore sets.
+ (This information can be used with repeated
+-.B SEM_STAT
++.B SEM_STAT or SEM_STAT_ANY
+ operations to obtain information about all semaphore sets on the system.)
+ .TP
+ .B SEM_INFO
+@@ -377,6 +389,10 @@ as for
+ .B SEM_STAT
+ the identifier of the semaphore set whose index was given in
+ .IR semid .
++.TP
++.B SEM_STAT_ANY
++as for
++.BR SEM_STAT .
+ .PP
+ All other
+ .I cmd
+@@ -397,6 +413,7 @@ has one of the values
+ .BR GETZCNT ,
+ .BR IPC_STAT ,
+ .BR SEM_STAT ,
++.BR SEM_STAT_ANY ,
+ .BR SETALL ,
+ or
+ .B SETVAL
+diff --git a/man2/shmctl.2 b/man2/shmctl.2
+index 7bb503999941..42c47d9f4350 100644
+--- a/man2/shmctl.2
++++ b/man2/shmctl.2
+@@ -41,6 +41,7 @@
+ .\" 2005-04-25, mtk -- noted aberrant Linux behavior w.r.t. new
+ .\"	attaches to a segment that has already been marked for deletion.
+ .\" 2005-08-02, mtk: Added IPC_INFO, SHM_INFO, SHM_STAT descriptions.
++.\" 2018-03-20, dbueso: Added SHM_STAT_ANY description.
+ .\"
+ .TH SHMCTL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -242,6 +243,18 @@ However, the
+ argument is not a segment identifier, but instead an index into
+ the kernel's internal array that maintains information about
+ all shared memory segments on the system.
++.TP
++.BR SHM_STAT_ANY " (Linux-specific)"
++Return a
++.I shmid_ds
++structure as for
++.BR SHM_STAT .
++However, the
++.I shm_perm.mode
++is not checked for read access for
++.IR shmid ,
++resembing the behaviour of
++/proc/sysvipc/shm.
+ .PP
+ The caller can prevent or allow swapping of a shared
+ memory segment with the following \fIcmd\fP values:
+@@ -287,7 +300,7 @@ operation returns the index of the highest used entry in the
+ kernel's internal array recording information about all
+ shared memory segments.
+ (This information can be used with repeated
+-.B SHM_STAT
++.B SHM_STAT or SHM_STAT_ANY
+ operations to obtain information about all shared memory segments
+ on the system.)
+ A successful
+@@ -328,7 +341,7 @@ isn't accessible.
+ \fIshmid\fP is not a valid identifier, or \fIcmd\fP
+ is not a valid command.
+ Or: for a
+-.B SHM_STAT
++.B SHM_STAT or SHM_STAT_ANY
+ operation, the index value specified in
+ .I shmid
+ referred to an array slot that is currently unused.
+-- 
+2.13.6
+
