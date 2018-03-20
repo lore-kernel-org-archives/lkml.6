@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751472AbeCTTtM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:49:12 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52422 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeCTTtH (ORCPT
+        id S1751499AbeCTT5F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 15:57:05 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38121 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeCTT5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:49:07 -0400
-X-Google-Smtp-Source: AG47ELtKoGMePrpr7vtmtVWJhfypa7/sEbVYDiltIj1kXzGNd0u0l/Uln2YdW4/5rj73yPKhHDFXBA==
-Subject: Re: [PATCH] modify one dead link
-To: Sergei Trofimovich <slyfox@gentoo.org>
-Cc: corbet@lwn.net, yamada.masahiro@socionext.com, tony.luck@intel.com,
-        bjorn.forsman@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180320145422.24331-1-mudongliangabcd@gmail.com>
- <20180320194203.205c6c60@sf>
+        Tue, 20 Mar 2018 15:57:01 -0400
+X-Google-Smtp-Source: AG47ELuOHOsNntEYmGN1Yy2U6typzJzMcaJE+JbOd5PKpwlPXovdm8V5u0NU+1jqP7flD+qe11zLkw==
 From: Dongliang Mu <mudongliangabcd@gmail.com>
-Message-ID: <285f442d-c4ad-93be-c3c0-ad04c37f21f8@gmail.com>
-Date: Tue, 20 Mar 2018 15:49:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320194203.205c6c60@sf>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+To: corbet@lwn.net, yamada.masahiro@socionext.com, slyfox@gentoo.org,
+        tony.luck@intel.com, bjorn.forsman@gmail.com,
+        mudongliangabcd@gmail.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fix one dead link in ia64/xen.txt
+Date: Tue, 20 Mar 2018 15:56:58 -0400
+Message-Id: <20180320195658.17498-1-mudongliangabcd@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ Documentation/ia64/xen.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-On 03/20/2018 03:42 PM, Sergei Trofimovich wrote:
-> On Tue, 20 Mar 2018 10:54:22 -0400
-> Dongliang Mu <mudongliangabcd@gmail.com> wrote:
->
->> -    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
->> +    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable
->>       # cd xen-unstable.hg
->>       # hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
-> You will need to fix a 'cd' as well:
->      cd xen-unstable
-I will modify that problem. Then resubmit the patch.
-
-Thanks.
->   
-> Otherwise looks good.
->
+diff --git a/Documentation/ia64/xen.txt b/Documentation/ia64/xen.txt
+index a12c74ce2773..464d4c29b8b5 100644
+--- a/Documentation/ia64/xen.txt
++++ b/Documentation/ia64/xen.txt
+@@ -26,8 +26,8 @@ Getting and Building Xen and Dom0
+     DomainU OS  : RHEL5
+ 
+  1. Download source
+-    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
+-    # cd xen-unstable.hg
++    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable
++    # cd xen-unstable
+     # hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
+ 
+  2. # make world
+-- 
+2.16.2
