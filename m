@@ -1,66 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeCTDMM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 23:12:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46052 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbeCTDMJ (ORCPT
+        id S1751736AbeCTDMl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 23:12:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40698 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeCTDMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 23:12:09 -0400
-Date: Mon, 19 Mar 2018 20:12:02 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mon, 19 Mar 2018 23:12:39 -0400
+To: Colin King <colin.king@canonical.com>
+Cc: qla2xxx-upstream@qlogic.com,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] autofs4: Use wait_event_killable
-Message-ID: <20180320031202.GA22556@bombadil.infradead.org>
-References: <20180319191609.23880-1-willy@infradead.org>
- <7dae3cc8-bad1-ec18-bcf1-ae91a87f74fa@themaw.net>
+Subject: Re: [PATCH] scsi: qla2xxx: fix spelling mistake: "existant" -> "existent"
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180319105341.487-1-colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 23:11:32 -0400
+In-Reply-To: <20180319105341.487-1-colin.king@canonical.com> (Colin King's
+        message of "Mon, 19 Mar 2018 10:53:41 +0000")
+Message-ID: <yq1muz31lwb.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7dae3cc8-bad1-ec18-bcf1-ae91a87f74fa@themaw.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=396
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200006
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 09:58:59AM +0800, Ian Kent wrote:
-> On 20/03/18 03:16, Matthew Wilcox wrote:
-> > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > This playing with signals to allow only fatal signals appears to predate
-> > the introduction of wait_event_killable(), and I'm fairly sure that
-> > wait_event_killable is what was meant to happen here.
-> 
-> Predates is an understatement, this is really, really old code.
-> Do I need to forward this to Al or Andrew?
 
-Looks like Andrew usually picks these up directly.  Here's the line
-he'll want:
+Colin,
 
-Link: http://lkml.kernel.org/r/20180319191609.23880-1-willy@infradead.org
+> Trivial fix to spelling mistake in debug message text
 
-> > Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> Signed-off-by: Ian Kent <raven@themaw.net>
+Applied to 4.17/scsi-queue.
 
-
-> > +	wait_event_killable(wq->queue, wq->name.name == NULL);
-> 
-> The wait event code looks like this will wake up on most any unmasked signal.
-> But my assumption is that TASK_KILLABLE tasks are only forwarded specific
-> signals ...
-> 
-> Is that right or am I missing something?
-
-The signal code is gnarly.  As far as I can decipher it, a fatal
-signal is always turned into SIGKILL (in complete_signal()), and the
-task is woken.  For a task sleeping in TASK_KILLABLE, signal_wake_up()
-passes TASK_WAKEKILL to signal_wake_up_state() if the signal is SIGKILL.
-TASK_KILLABLE sets (TASK_WAKEKILL | TASK_UNINTERRUPTIBLE) so it will be
-woken in order to die.
-
-If the signal being sent isn't sig_fatal(), then we don't wake the task.
-The signal will still be in the pending set, so it can notice when
-exiting to userspace, but it won't be woken.
+-- 
+Martin K. Petersen	Oracle Linux Engineering
