@@ -1,124 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeCTHQM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:16:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
+        id S1751630AbeCTHQ2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:16:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55756 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750828AbeCTHQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:16:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2E62177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751586AbeCTHQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:16:27 -0400
+Date: Tue, 20 Mar 2018 08:16:24 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
+Message-ID: <20180320071624.GB23100@dhcp22.suse.cz>
+References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, mark.rutland@arm.com, mturquette@baylibre.com,
-        robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
-Message-ID: <152153016749.254778.17294370002590376536@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
-Date: Tue, 20 Mar 2018 00:16:07 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:52)
-> diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
-> new file mode 100644
-> index 000000000000..5a9b1e3f3571
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-s900.c
-> @@ -0,0 +1,690 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// OWL S900 SoC clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+On Mon 19-03-18 14:10:05, David Rientjes wrote:
+> Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+> madvised allocations") changed the page allocator to no longer detect thp
+> allocations based on __GFP_NORETRY.
+> 
+> It did not, however, modify the mem cgroup try_charge() path to avoid oom
+> kill for either khugepaged collapsing or thp faulting.  It is never
+> expected to oom kill a process to allocate a hugepage for thp; reclaim is
+> governed by the thp defrag mode and MADV_HUGEPAGE, but allocations (and
+> charging) should fallback instead of oom killing processes.
 
-Is this include used?
+For some reason I thought that the charging path simply bails out for
+costly orders - effectively the same thing as for the global OOM killer.
+But we do not. Is there any reason to not do that though? Why don't we
+simply do
 
-> +
-> +#include "owl-common.h"
-> +#include "owl-composite.h"
-> +#include "owl-divider.h"
-> +#include "owl-factor.h"
-> +#include "owl-fixed-factor.h"
-> +#include "owl-gate.h"
-> +#include "owl-mux.h"
-> +#include "owl-pll.h"
-> +#include "owl-s900.h"
-> +
-> +#include <dt-bindings/clock/actions,s900-cmu.h>
-> +
-> +static struct clk_pll_table clk_audio_pll_table[] = {
-> +       {0, 45158400}, {1, 49152000},
-> +       {0, 0},
-> +};
-> +
-> +static struct clk_pll_table clk_edp_pll_table[] = {
-> +       {0, 810000000}, {1, 1350000000}, {2, 2700000000},
 
-Please put spaces around brackets.
-
-> +       {0, 0},
-> +};
-> +
-> +/* pll clocks */
-> +static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL, 24000000, 9, 0, 8, 5, 107, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL, 24000000, 8, 0, 8, 5, 45, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL, 6000000, 8, 0, 8, 4, 100, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk", CMU_DISPLAYPLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk", CMU_ASSISTPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk", CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
-> +static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK, 0, 9, 0, 2, 0, 0, clk_edp_pll_table, CLK_IGNORE_UNUSED);
-> +
-> +static const char *cpu_clk_mux_p[] = { "losc", "hosc", "core_pll_clk", };
-> +static const char *dev_clk_p[] = { "hosc", "dev_pll_clk", };
-> diff --git a/drivers/clk/actions/owl-s900.h b/drivers/clk/actions/owl-s900.h
-> new file mode 100644
-> index 000000000000..d0c10594e518
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-s900.h
-> @@ -0,0 +1,61 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// OWL S900 SoC clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +#ifndef _OWL_S900_H_
-> +#define _OWL_S900_H_
-
-I'd prefer this file contents go inside the one C file that uses it so
-we can quickly reference the offsets without going to another file.
-
-> +
-> +#define CMU_COREPLL            (0x0000)
-> +#define CMU_DEVPLL             (0x0004)
-> +#define CMU_DDRPLL             (0x0008)
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d1a917b5b7b7..08accbcd1a18 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+ 
+ static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+ {
+-	if (!current->memcg_may_oom)
++	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return;
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+-- 
+Michal Hocko
+SUSE Labs
