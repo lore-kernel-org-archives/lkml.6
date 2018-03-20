@@ -1,111 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeCUBFb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:05:31 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:36913 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751405AbeCUBF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:05:29 -0400
-Date: Tue, 20 Mar 2018 20:05:27 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] Bluetooth: Remove VLA usage in aes_cmac
-Message-ID: <20180321010527.GA16616@embeddedor.com>
+        id S1751542AbeCUBLG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:11:06 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751343AbeCUBLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:11:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
+   d="scan'208";a="39779324"
+From: Luwei Kang <luwei.kang@intel.com>
+To: kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
+        joro@8bytes.org, Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v6 00/11] Intel Processor Trace virtualization enabling
+Date: Tue, 20 Mar 2018 19:21:47 +0800
+Message-Id: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.24.133
-X-Source-L: No
-X-Exim-ID: 1eySC0-001gCM-Hd
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-24-133.static.axtel.net (embeddedor) [187.162.24.133]:24189
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA and replace it
-with dynamic memory allocation instead.
+Hi All,
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-or a security flaw. Also, in general, as code evolves it is easy to
-lose track of how big a VLA can get. Thus, we can end up having runtime
-failures that are hard to debug.
+Here is a patch-series which adding Processor Trace enabling in KVM guest. You can get It's software developer manuals from:
+https://software.intel.com/sites/default/files/managed/c5/15/architecture-instruction-set-extensions-programming-reference.pdf
+In Chapter 5 INTEL PROCESSOR TRACE: VMX IMPROVEMENTS.
 
-Also, fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+Introduction:
+Intel Processor Trace (Intel PT) is an extension of Intel Architecture that captures information about software execution using dedicated hardware facilities that cause only minimal performance perturbation to the software being traced. Details on the Intel PT infrastructure and trace capabilities can be found in the Intel 64 and IA-32 Architectures Software Developer’s Manual, Volume 3C.
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
-Changes in v2:
- - Fix memory leak in previous patch.
+The suite of architecture changes serve to simplify the process of virtualizing Intel PT for use by a guest software. There are two primary elements to this new architecture support for VMX support improvements made for Intel PT.
+1. Addition of a new guest IA32_RTIT_CTL value field to the VMCS.
+  — This serves to speed and simplify the process of disabling trace on VM exit, and restoring it on VM entry.
+2. Enabling use of EPT to redirect PT output.
+  — This enables the VMM to elect to virtualize the PT output buffer using EPT. In this mode, the CPU will treat PT output addresses as Guest Physical Addresses (GPAs) and translate them using EPT. This means that Intel PT output reads (of the ToPA table) and writes (of trace output) can cause EPT violations, and other output events.
 
- net/bluetooth/smp.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+Processor Trace virtualization can be work in one of 3 possible modes by set new option "pt_mode". Default value is system mode.
+ a. system-wide: trace both host/guest and output to host buffer;
+ b. host-only: only trace host and output to host buffer;
+ c. host-guest: trace host/guest simultaneous and output to their respective buffer.
 
-diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index a2ddae2..0fa7035 100644
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -173,7 +173,7 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 		    size_t len, u8 mac[16])
- {
- 	uint8_t tmp[16], mac_msb[16], msg_msb[CMAC_MSG_MAX];
--	SHASH_DESC_ON_STACK(desc, tfm);
-+	struct shash_desc *shash;
- 	int err;
- 
- 	if (len > CMAC_MSG_MAX)
-@@ -184,8 +184,13 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 		return -EINVAL;
- 	}
- 
--	desc->tfm = tfm;
--	desc->flags = 0;
-+	shash = kzalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
-+			GFP_KERNEL);
-+	if (!shash)
-+		return -ENOMEM;
-+
-+	shash->tfm = tfm;
-+	shash->flags = 0;
- 
- 	/* Swap key and message from LSB to MSB */
- 	swap_buf(k, tmp, 16);
-@@ -197,11 +202,13 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 	err = crypto_shash_setkey(tfm, tmp, 16);
- 	if (err) {
- 		BT_ERR("cipher setkey failed: %d", err);
-+		kfree(shash);
- 		return err;
- 	}
- 
--	err = crypto_shash_digest(desc, msg_msb, len, mac_msb);
--	shash_desc_zero(desc);
-+	err = crypto_shash_digest(shash, msg_msb, len, mac_msb);
-+	shash_desc_zero(shash);
-+	kfree(shash);
- 	if (err) {
- 		BT_ERR("Hash computation error %d", err);
- 		return err;
+>From V5:
+ - rename the function from pt_cap_get_ex() to __pt_cap_get();
+ - replace the most of function from vmx_pt_supported() to "pt_mode == PT_MODE_HOST_GUEST"(or !=).
+
+>From V4:
+ - add data check when setting the value of MSR_IA32_RTIT_CTL;
+ - Invoke new interface to set the intercept of MSRs read/write after "MSR bitmap per-vcpu" patches.
+
+>From V3:
+ - change default mode to SYSTEM mode;
+ - add a new patch to move PT out of scattered features;
+ - add a new fucntion kvm_get_pt_addr_cnt() to get the number of address ranges;
+ - add a new function vmx_set_rtit_ctl() to set the value of guest RTIT_CTL, GUEST_IA32_RTIT_CTL and MSRs intercept.
+
+>From v2:
+ - replace *_PT_SUPPRESS_PIP to *_PT_CONCEAL_PIP;
+ - clean SECONDARY_EXEC_PT_USE_GPA, VM_EXIT_CLEAR_IA32_RTIT_CTL and VM_ENTRY_LOAD_IA32_RTIT_CTL in SYSTEM mode. These bits must be all set or all clean;
+ - move processor tracing out of scattered features;
+ - add a new function to enable/disable intercept MSRs read/write;
+ - add all Intel PT MSRs read/write and disable intercept when PT is enabled in guest;
+ - disable Intel PT and enable intercept MSRs when L1 guest VMXON;
+ - performance optimization.
+   In Host only mode. we just need to save host RTIT_CTL before vm-entry and restore host RTIT_CTL after vm-exit;
+   In HOST_GUEST mode. we need to save and restore all MSRs only when PT has enabled in guest.
+ - use XSAVES/XRESTORES implement context switch.
+   Haven't implementation in this version and still in debuging. will make a separate patch work on this.
+
+>From v1:
+ - remove guest-only mode because guest-only mode can be covered by host-guest mode;
+ - always set "use GPA for processor tracing" in secondary execution control if it can be;
+ - trap RTIT_CTL read/write. Forbid write this msr when VMXON in L1 hypervisor.
+
+Chao Peng (8):
+  perf/x86/intel/pt: Move Intel-PT MSR bit definitions to a public
+    header
+  perf/x86/intel/pt: Change pt_cap_get() to a public function
+  KVM: x86: Add Intel Processor Trace virtualization mode
+  KVM: x86: Add Intel Processor Trace cpuid emulation
+  KVM: x86: Add Intel processor trace context for each vcpu
+  KVM: x86: Implement Intel Processor Trace context switch
+  KVM: x86: Implement Intel Processor Trace MSRs read/write
+  KVM: x86: Set intercept for Intel PT MSRs
+
+Luwei Kang (3):
+  perf/x86/intel/pt: Introduce a new function to get the capability of
+    Intel PT
+  KVM: x86: Introduce a function to initialize the PT configuration
+  KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
+
+ arch/x86/events/intel/pt.c       |  16 +-
+ arch/x86/events/intel/pt.h       |  58 ------
+ arch/x86/include/asm/intel_pt.h  |  40 ++++
+ arch/x86/include/asm/kvm_host.h  |   1 +
+ arch/x86/include/asm/msr-index.h |  38 ++++
+ arch/x86/include/asm/vmx.h       |   8 +
+ arch/x86/kvm/cpuid.c             |  22 ++-
+ arch/x86/kvm/svm.c               |   6 +
+ arch/x86/kvm/vmx.c               | 412 ++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c               |  33 +++-
+ 10 files changed, 565 insertions(+), 69 deletions(-)
+
 -- 
-2.7.4
+1.8.3.1
