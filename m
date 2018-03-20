@@ -1,50 +1,70 @@
-Return-Path: <john3909@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521933502; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dqZCapgueKjqpGP1vZEQG/OzfLzrkg69mU6l85R6GMgWhaN89SfluVsQOuMr+2b0ic
-         hPNZQW5+YUjWWZAJrKoStph3BAGv7sKwpkKvNjH6jhki7lbs+a16Ok/N+yPv8U3s3WPk
-         nBkg2IHK+LhzB/HQMegMAFoqRbouW3JBT7Tzdbb3THh9HNW7miKl1qmf/4b1bsSsLzJd
-         c+t+4U5tuTAPA1qe5HTZiWD2uw2MPgDj6lLggTeP3B8ZXUYk+c8RGvFREtNWP+89kgvu
-         BiPCqruHx88PKRaIaY7wPBbVecLfO24saSEg44zhJC+V4JvZbEI3iqgz3jBNf2mFj1Gt
-         +4pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:dkim-signature:arc-authentication-results;
-        bh=pDOTnxHinUar1KFgRhcUAjZ58c6fZIEFLnvM4n9KnUQ=;
-        b=Nux8noApSa4ptqMDxlzP79gHd9ObfwM5yKVG4PY7KVBOZ85x/dtJWNzNMjF+ISuLrm
-         OgDKZDbi16xBFyKZdxTOykCOn9Zpk6lsfblzeUQ5pDEETzyxRLZaXuY32cVJdngtiY5s
-         PrUDZTZRzgCyNgqY2ozgrVYGiLwCoot1o2aIpL00+zDqg4T1EawdETzGMX8QdhaY1QfY
-         yn6T4KhL8BVaO66oi99OHRstsp9MZ5ZxcR5b73hT9p8epSbZWs0ONT3m9leVR0ajsEgf
-         NqCsuzvaWYjOvWLpMgMu/sgUmjPCqAUtlldwiy+4ui5X0G6wbFyWqpVfPy7SSDs4dSoE
-         cDyQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HHQqidL/;
-       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HHQqidL/;
-       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELsT5joVWPlqDw0ryLx6DlPU01wIfwxCs1MK7m61J/oYlFmos5pFoY62x73OYFrH2Ouh74lyGg==
-From: John Syne <john3909@gmail.com>
-Message-Id: <F9946A8D-5D19-4D2E-8CED-665E645D7B1A@gmail.com>
-Content-Type: multipart/alternative;
-	boundary="Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0"
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-463642-1521525460-2-17188292915176454893
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521525458; b=fBfFo3xls+P/JQNCfhBWqQ0DRIT4ZOMMmW1MhTULI26FUIW
+    6nT0747A7mjVrwhO5IWUfHqY1rh1A5Y2T+RA+Trw6yFpJtEPgVh1ljRtxC1fOEJT
+    1omGy+TkgiAWgC1wuDQR6qpxNfHpQHgkpsrXdnSF6ggAEEzv6xukPr8RnhEJqWim
+    xhnyKzkFGmmy753WWgieI+Ze5N8VxM5I2qVq8S2b11smwjPM85ASER5N65m3Dq2M
+    ZE/Al7tsNr6keO00zl1X/KJTq5wkgl9EyCTfAuf2/qlTPcBrUO7V2zoNBhCS4uhG
+    lFRcwI7WIOolawU+6FdbYDBgvpNJTmsI8cYhRCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:subject:from:in-reply-to
+    :date:message-id:references:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521525458; bh=v
+    kgsqSLpF2JtDzrFRjmcvbSNnWB2IHM/eimKhC1ne8I=; b=B6p5EodsIu/pHnBHj
+    O3AHq+q1N0TO6G6o8xTl6m64Cf5yQddjcrbTjrgPHoHsK1hvcM5WwpSOE8LTY6B/
+    YmBrVJjsT7Km8ek77J1gM1btsqwqp8GlOerP2KuISfFhRINVIUMCL5seiaB3McRH
+    nqVkwWgCO7lRiHXClMYtCJCeZAMMtM8VLZflW4ddwCnYr6SYKFAr8Yfixb3D7a8C
+    PJVgeIpC3FtH5z0sZREorufS8gOE0tGN5hSCZlJNV2BKkuLdmOAsBAzKFakPcOhH
+    uNnDBi7CihB8LEkkUYSgwaTr7vvxKcOkX3egBpb5H62ysK2ZwOHvQHv+KoQ6WBZg
+    A54VQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qf5+Zb0U x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dkbKIkKq;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qf5+Zb0U x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dkbKIkKq;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELvN5ygzsuc5mD8ITi0+YPXgtbFq8v5mGc8yjOTa0fdyZHRdW+oX2I/QIJz+6+eqMOrCMYCFFw==
 Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: meter ABI: (was Re: [PATCH v2 1/3] staging:iio:meter: Replaces
  IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR)
-Date: Sat, 24 Mar 2018 16:18:15 -0700
-In-Reply-To: <20180324151829.7d03ad15@archlinux>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- devel@driverdev.osuosl.org,
- Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Hartmut Knaack <knaack.h@gmx.de>,
- daniel.baluta@nxp.com
-To: Jonathan Cameron <jic23@kernel.org>
+From: John Syne <john3909@gmail.com>
+In-Reply-To: <20180318122312.0d395367@archlinux>
+Date: Mon, 19 Mar 2018 22:57:16 -0700
+Message-Id: <C4AC18E6-E89B-4915-9B71-09EFC09B490D@gmail.com>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180307200730.08ed3c2f@archlinux>
@@ -54,1367 +74,770 @@ References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180317203037.1093cc11@archlinux>
  <A8E3184B-765B-4730-A076-C3FCF487EAE3@gmail.com>
  <20180318122312.0d395367@archlinux>
- <F6FE75D3-5289-4675-9345-F46CABEFA99E@gmail.com>
- <20180324151829.7d03ad15@archlinux>
+To: Jonathan Cameron <jic23@kernel.org>
 X-Mailer: Apple Mail (2.3445.5.20)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
+ daniel.baluta@nxp.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595278152164006674?=
-X-GMAIL-MSGID: =?utf-8?q?1595862944735921062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-Hi Jonathan,
-
-I have attached a CSV version of this table below. Hopefully that will =
-make things easier for you.
-
-Register	IIO Attribute	Device Tree or Code	Direction	=
-type	Index	Modifier	Info Mask
-AIGAIN	in_current0_phaseA_scale		in	current	0	=
-phaseA	scale
-AVGAIN	in_voltage0_phaseA_scale		in	voltage	0	=
-phaseA	scale
-BIGAIN	in_current0_phaseB_scale		in	current	0	=
-phaseB	scale
-BVGAIN	in_voltage0_phaseB_scale		in	voltage	0	=
-phaseB	scale
-CIGAIN	in_current0_phaseC_scale		in	current	0	=
-phaseC	scale
-CVGAIN	in_voltage0_phaseC_scale		in	voltage	0	=
-phaseC	scale
-NIGAIN	in_current0_neutral_scale		in	current	0	=
-neutral	scale
-AIRMSOS	in_current0_phaseA_rms_offset		in	current	0	=
-phaseA	offset
-AVRMSOS	in_voltage0_phaseA_rms_offset		in	voltage	0	=
-phaseA	offset
-BIRMSOS	in_current0_phaseB_rms_offset		in	current	0	=
-phaseB	offset
-BVRMSOS	in_voltage0_phaseB_rms_offset		in	voltage	0	=
-phaseB	offset
-CIRMSOS	in_current0_phaseC_rms_offset		in	current	0	=
-phaseC	offset
-CVRMSOS	in_voltage0_phaseC_rms_offset		in	voltage	0	=
-phaseC	offset
-NIRMSOS	in_current0_neutral_rms_offset		in	current	0	=
-neutral	offset
-AVAGAIN	in_powerapparent0_phaseA_scale		in	powerapparent	=
-0	phaseA	scale
-BVAGAIN	in_powerapparent0_phaseB_scale		in	powerapparent	=
-0	phaseB	scale
-CVAGAIN	in_powerapparent0_phaseC_scale		in	powerapparent	=
-0	phaseC	scale
-AWGAIN	in_power0_phaseA_scale		in	power	0	phaseA	=
-scale
-AWATTOS	in_power0_phaseA_offset		in	power	0	phaseA	=
-offset
-BWGAIN	in_power0_phaseB_scale		in	power	0	phaseB	=
-scale
-BWATTOS	in_power0_phaseB_offset		in	power	0	phaseB	=
-offset
-CWGAIN	in_power0_PhaseC_scale		in	power	0	phaseC	=
-scale
-CWATTOS	in_power0_phaseC_offset		in	power	0	phaseC	=
-offset
-AVARGAIN	in_powerreactive0_phaseA_scale		in	=
-powerreactive	0	phaseA	scale
-AVAROS	in_powerreactive0_phaseA_offset		in	powerreactive	=
-0	phaseA	offset
-BVARGAIN	in_powerreactive0_phaseB_scale		in	=
-powerreactive	0	phaseB	scale
-BVAROS	in_powerreactive0_phaseB_offset		in	powerreactive	=
-0	phaseB	offset
-CVARGAIN	in_powerreactive0_phaseC_scale		in	=
-powerreactive	0	phaseC	scale
-CVAROS	in_powerreactive0_phaseC_offset		in	powerreactive	=
-0	phaseC	offset
-AFWGAIN	in_power0_phaseA_fundamental_scale		in	power	=
-0	phaseA_fundamental	scale
-AFWATTOS	in_power0_phaseA_fundamental_offset		in	=
-power	0	phaseA_fundamental	offset
-BFWGAIN	in_power0_phaseB_fundamental_scale		in	power	=
-0	phaseB_fundamental	scale
-BFWATTOS	in_power0_phaseB_fundamental_offset		in	=
-power	0	phaseB_fundamental	offset
-CFWGAIN	in_power0_phaseC_fundamental_scale		in	power	=
-0	phaseC_fundamental	scale
-CFWATTOS	in_power0_phaseC_fundamental_offset		in	=
-power	0	phaseC_fundamental	offset
-AFVARGAIN	in_powerreactive0_phaseA_fundamental_scale		=
-in	powerreactive	0	phaseA_fundamental	scale
-AFVAROS	in_powerreactive0_phaseA_fundamental_offset		in	=
-powerreactive	0	phaseA_fundamental	offset
-BFVARGAIN	in_powerreactive0_phaseB_fundamental_scale		=
-in	powerreactive	0	phaseB_fundamental	scale
-BFVAROS	in_powerreactive0_phaseB_fundamental_offset		in	=
-powerreactive	0	phaseB_fundamental	offset
-CFVARGAIN	in_powerreactive0_phaseC_fundamental_scale		=
-in	powerreactive	0	phaseC_fundamental	scale
-CFVAROS	in_powerreactive0_phaseC_fundamental_offset		in	=
-powerreactive	0	phaseC_fundamental	offset
-VATHR1	VATHR1	DT				=09
-VATHR0	VATHR0	DT				=09
-WTHR1	WTHR1	DT				=09
-WTHR0	WTHR0	DT				=09
-VARTHR1	VARTHR1	DT				=09
-VARTHR0	VARTHR0	DT				=09
-Reserved	Reserved					=09
-VANOLOAD	VANOLOAD	DT				=09
-APNOLOAD	APNOLOAD	DT				=09
-VLEVEL	VLEVEL	DT				=09
-DICOEFF	DICOEFF	DT				=09
-HPFDIS	HPFDIS	DT				=09
-ISUMLVL	ISUMLVL	DT	in			=09
-ISUM	in_current0_phaseA&phaseB&phaseC_sum		in	current	=
-0	phaseA&phaseB&phaseC	sum
-AIRMS	in_current0_phaseA_rms_raw		in	current	0	=
-phaseA_rms	raw
-AVRMS	in_voltage0_phaseA_rms_raw		in	voltage	0	=
-phaseA_rms	raw
-BIRMS	in_current0_phaseB_rms_raw		in	current	0	=
-phaseB_rms	raw
-BVRMS	in_voltage0_phaseB_rms_raw		in	voltage	0	=
-phaseB_rms	raw
-CIRMS	in_current0_phaseC_rms_raw		in	current	0	=
-phaseC_rms	raw
-CVRMS	in_voltage0_phaseC_rms_raw		in	voltage	0	=
-phaseC_rms	raw
-NIRMS	in_current0_neutral_rms_raw		in	current	0	=
-neutral_rms	raw
-Run		Code	in			=09
-AWATTHR	in_energy0_phaseA_raw_raw		in	energy	0	=
-phaseA	raw
-BWATTHR	in_energy0_phaseB_raw_raw		in	energy	0	=
-phaseB	raw
-CWATTHR	in_energy0_phaseC_raw_raw		in	energy	0	=
-phaseC	raw
-AFWATTHR	in_energy0_phaseA_fundamental_raw		in	=
-energy	0	phaseA_fundamental	raw
-BFWATTHR	in_energy0_phaseB_fundamental_raw		in	=
-energy	0	phaseB_fundamental	raw
-CFWATTHR	in_energy0_phaseC_fundamental_raw		in	=
-energy	0	phaseC_fundamental	raw
-AVARHR	in_energyreactive0_phaseA_raw		in	energyreactive	=
-0	phaseA	raw
-BVARHR	in_energyreactive0_phaseB_raw		in	energyreactive	=
-0	phaseB	raw
-CVARHR	in_energyreactive0_phaseC_raw		in	energyreactive	=
-0	phaseC	raw
-AFVARHR	in_energyreactive0_phaseA_fundamental_raw		in	=
-energyreactive	0	phaseA_fundamental	raw
-BFVARHR	in_energyreactive0_phaseB_fundamental_raw		in	=
-energyreactive	0	phaseB_fundamental	raw
-CFVARHR	in_energyreactive0_phaseC_fundamental_raw		in	=
-energyreactive	0	phaseC_fundamental	raw
-AVAHR	in_energyapparent0_phaseA_raw		in	energyapparent	=
-0	phaseA	raw
-BVAHR	in_energyapparent0_phaseB_raw		in	energyapparent	=
-0	phaseB	raw
-CVAHR	in_energyapparent0_phaseC_raw		in	energyapparent	=
-0	phaseC	raw
-IPEAK	in_current0_peak		in	current	0		=
-peak
-VPEAK	in_voltage0_peak		in	voltage	0		=
-peak
-STATUS0		event				=09
-STATUS1		event				=09
-AIMAV	in_current0_phaseA_mav_raw		in	current		=
-phaseA_mav	raw
-BIMAV	in_current0_phaseB_mav_raw		in	current		=
-phaseB_mav	raw
-CIMAV	in_current0_phaseC_mav_raw		in	current		=
-phaseC_mav	raw
-OILVL	OILVL	DT				=09
-OVLVL	OVLVL	DT				=09
-SAGLVL	SAGLVL	DT				=09
-MASK0	in_mask0_raw		in	mask	0		raw
-MASK1	in_mask1_raw		in	mask	1		raw
-IAWV	in_current0_phaseA_instantaneous					=
-=09
-IBWV	in_current0_phaseB_instantaneous					=
-=09
-ICWV	in_current0_phaseC_instantaneous					=
-=09
-INWV	in_current0_phaseN_instantaneous					=
-=09
-VAWV	in_voltage0_phaseA_instantaneous					=
-=09
-VBWV	in_voltage0_phaseB_instantaneous					=
-=09
-VCWV	in_voltage0_phaseC_instantaneous					=
-=09
-AWATT	in_power0_phaseA_instantaneous					=09=
-
-BWATT	in_power0_phaseB_instantaneous					=09=
-
-CWATT	in_power0_phaseC_instantaneous					=09=
-
-AVAR	in_powerreactive0_phaseA_instantaneous					=
-=09
-BVAR	in_powerreactive0_phaseB_instantaneous					=
-=09
-CVAR	in_powerreactive0_phaseC_instantaneous					=
-=09
-AVA	in_powerapparent0_phaseA_instantaneous					=
-=09
-BVA	in_powerapparent0_phaseB_instantaneous					=
-=09
-CVA	in_powerappatent0_phaseC_instantaneous					=
-=09
-CHECKSUM	CHECKSUM	Code				=09
-VNOM	VNOM	DT				=09
-PHSTATUS		event				=09
-ANGLE0	ANGLE0	DT				=09
-ANGLE1	ANGLE1	DT				=09
-ANGLE2	ANGLE2	DT				=09
-Reserved						=09
-PERIOD	in_period_raw		in	period			raw
-PHNOLOAD		event				=09
-LINECYC	in_count0_cycle_raw		in	count	0	cycle	=
-raw
-ZXTOUT	ZXTOUT	DT				=09
-COMPMODE	COMPMODE	DT				=09
-Gain	Gain	DT				=09
-CFMODE	CFMODE	DT				=09
-CF1DEN	CF1DEN	DT				=09
-CF2DEN	CF2DEN	DT				=09
-CF3DEN	CF3DEN	DT				=09
-APHCAL	APHCAL	DT				=09
-BPHCAL	BPHCAL	DT				=09
-CPHCAL	CPHCAL	DT				=09
-PHSIGN	PHSIGN	DT				=09
-CONFIG	CONFIG	DT				=09
-MMODE	MMODE	DT				=09
-ACCMODE	ACCMODE	DT				=09
-LCYCMODE	LCYCMODE	DT				=09
-PEAKCYC	PEAKCYC	DT				=09
-SAGCYC	SAGCYC	DT				=09
-CFCYC	CFCYC	DT				=09
-HSDC_CFG	HSDC_CFG	DT				=09
-Version	in_version_raw		in	version			raw
-Reserved		DT				=09
-LPOILVL	LPOILVL	DT				=09
-CONFIG2	CONFIG2	DT				=09
-
-
-
-Regards,
-John
-
-
-
-
-
-
---Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0
-Content-Type: multipart/mixed;
-	boundary="Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04"
-
-
---Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html;
-	charset=us-ascii
-
-<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
-charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
--webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
-class=3D"">Hi Jonathan,</div><div class=3D""><br class=3D""></div><div =
-class=3D"">I have attached a CSV version of this table below. Hopefully =
-that will make things easier for you.</div><div class=3D""><br =
-class=3D""></div><div class=3D"">Register<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>IIO Attribute<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>Device =
-Tree or Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Direction<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>type<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Index<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Modifier<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Info Mask</div><div class=3D"">AIGAIN<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	</span>in_current0_phaseA_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AVGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_voltage0_phaseA_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BIGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_current0_phaseB_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BVGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_voltage0_phaseB_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CIGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_current0_phaseC_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CVGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_voltage0_phaseC_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">NIGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_current0_neutral_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>neutral<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AIRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseA_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">AVRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseA_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">BIRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseB_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">BVRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseB_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">CIRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseC_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">CVRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseC_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">NIRMSOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_neutral_rms_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>neutral<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">AVAGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerapparent0_phaseA_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BVAGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerapparent0_phaseB_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CVAGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerapparent0_phaseC_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_phaseA_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_phaseA_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">BWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_phaseB_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_phaseB_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">CWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_PhaseC_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_power0_phaseC_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">AVARGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseA_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseA_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">BVARGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseB_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseB_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">CVARGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseC_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseC_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">AFWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseA_fundamental_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>scale</div><div =
-class=3D"">AFWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseA_fundamental_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>offset</div><div =
-class=3D"">BFWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseB_fundamental_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>scale</div><div =
-class=3D"">BFWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseB_fundamental_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>offset</div><div =
-class=3D"">CFWGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseC_fundamental_scale<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>scale</div><div =
-class=3D"">CFWATTOS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseC_fundamental_offset<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>offset</div><div =
-class=3D"">AFVARGAIN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseA_fundamental_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">AFVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseA_fundamental_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">BFVARGAIN<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseB_fundamental_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">BFVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseB_fundamental_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">CFVARGAIN<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseC_fundamental_scale<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>scale</div><div class=3D"">CFVAROS<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseC_fundamental_offset<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>powerreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>offset</div><div class=3D"">VATHR1<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>VATHR1<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">VATHR0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>VATHR0<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">WTHR1<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>WTHR1<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">					=
-</span></div><div class=3D"">WTHR0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>WTHR0<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">					=
-</span></div><div class=3D"">VARTHR1<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>VARTHR1<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">VARTHR0<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	</span>VARTHR0<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">Reserved<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Reserved<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-					</span></div><div =
-class=3D"">VANOLOAD<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>VANOLOAD<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">APNOLOAD<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>APNOLOAD<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">VLEVEL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>VLEVEL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">DICOEFF<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DICOEFF<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">HPFDIS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>HPFDIS<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">ISUMLVL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>ISUMLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-		</span></div><div class=3D"">ISUM<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseA&amp;phaseB&amp;phaseC_sum<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA&amp;phaseB&amp;phaseC<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>sum</div><div class=3D"">AIRMS<span=
- class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseA_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">AVRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_voltage0_phaseA_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">BIRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseB_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">BVRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_voltage0_phaseB_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">CIRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseC_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">CVRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_voltage0_phaseC_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">NIRMS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_neutral_rms_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>neutral_rms<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>raw</div><div class=3D"">Run<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-		</span></div><div class=3D"">AWATTHR<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_energy0_phaseA_raw_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">BWATTHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_energy0_phaseB_raw_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">CWATTHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_energy0_phaseC_raw_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">AFWATTHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energy0_phaseA_fundamental_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>raw</div><div =
-class=3D"">BFWATTHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energy0_phaseB_fundamental_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>raw</div><div =
-class=3D"">CFWATTHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energy0_phaseC_fundamental_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>raw</div><div =
-class=3D"">AVARHR<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>in_energyreactive0_phaseA_raw<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">BVARHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyreactive0_phaseB_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">CVARHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyreactive0_phaseC_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">AFVARHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyreactive0_phaseA_fundamental_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">BFVARHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyreactive0_phaseB_fundamental_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">CFVARHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyreactive0_phaseC_fundamental_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyreactive<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC_fundamental<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">AVAHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyapparent0_phaseA_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">BVAHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyapparent0_phaseB_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseB<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">CVAHR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_energyapparent0_phaseC_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>energyapparent<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>phaseC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">IPEAK<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_current0_peak<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>peak</div><div class=3D"">VPEAK<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_voltage0_peak<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>peak</div><div class=3D"">STATUS0<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>event<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">STATUS1<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">		</span>event<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">AIMAV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_current0_phaseA_mav_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>phaseA_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">BIMAV<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseB_mav_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>phaseB_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">CIMAV<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_current0_phaseC_mav_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>phaseC_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
-	</span>raw</div><div class=3D"">OILVL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>OILVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">OVLVL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>OVLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">SAGLVL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>SAGLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">MASK0<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_mask0_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>mask<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>0<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>raw</div><div class=3D"">MASK1<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>in_mask1_raw<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>mask<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>1<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>raw</div><div class=3D"">IAWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">IBWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">ICWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">INWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_current0_phaseN_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">VAWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">VBWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">VCWV<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_voltage0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">AWATT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">BWATT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">CWATT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_power0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">						=
-</span></div><div class=3D"">AVAR<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseA_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">BVAR<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseB_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">CVAR<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_powerreactive0_phaseC_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">AVA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_powerapparent0_phaseA_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">BVA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_powerapparent0_phaseB_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">CVA<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_powerappatent0_phaseC_instantaneous<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-		</span></div><div class=3D"">CHECKSUM<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>CHECKSUM<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">VNOM<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>VNOM<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">PHSTATUS<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>event<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">ANGLE0<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>ANGLE0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">ANGLE1<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>ANGLE1<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">ANGLE2<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>ANGLE2<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">Reserved<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-			</span></div><div class=3D"">PERIOD<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_period_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>period<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-	</span>raw</div><div class=3D"">PHNOLOAD<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>event<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">LINECYC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_count0_cycle_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>count<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>cycle<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>raw</div><div class=3D"">ZXTOUT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>ZXTOUT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">COMPMODE<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>COMPMODE<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">Gain<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>Gain<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CFMODE<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CFMODE<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CF1DEN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CF1DEN<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CF2DEN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CF2DEN<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CF3DEN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CF3DEN<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">APHCAL<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>APHCAL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">BPHCAL<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>BPHCAL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CPHCAL<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CPHCAL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">PHSIGN<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>PHSIGN<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">CONFIG<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>CONFIG<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">MMODE<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>MMODE<span class=3D"Apple-tab-span"=
- style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">					=
-</span></div><div class=3D"">ACCMODE<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">	</span>ACCMODE<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">				=
-	</span></div><div class=3D"">LCYCMODE<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>LCYCMODE<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">PEAKCYC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>PEAKCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">SAGCYC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>SAGCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">CFCYC<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>CFCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">HSDC_CFG<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>HSDC_CFG<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">Version<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>in_version_raw<span class=3D"Apple-tab-span" =
-style=3D"white-space:pre">		</span>in<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>version<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-	</span>raw</div><div class=3D"">Reserved<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">LPOILVL<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>LPOILVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D"">CONFIG2<span =
-class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>CONFIG2<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
-</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
-			</span></div><div class=3D""><br =
-class=3D"webkit-block-placeholder"></div><div =
-class=3D""></div></body></html>=
-
---Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
-Content-Disposition: attachment;
-	filename="ADE7878-ABI-Table 1.csv"
-Content-Type: text/csv;
-	x-unix-mode=0644;
-	name="ADE7878-ABI-Table 1.csv"
-Content-Transfer-Encoding: quoted-printable
-
-Register,IIO Attribute,Device Tree or =
-Code,Direction,type,Index,Modifier,Info Mask=0D
-AIGAIN,in_current0_phaseA_scale,,in,current,0,phaseA,scale=0D
-AVGAIN,in_voltage0_phaseA_scale,,in,voltage,0,phaseA,scale=0D
-BIGAIN,in_current0_phaseB_scale,,in,current,0,phaseB,scale=0D
-BVGAIN,in_voltage0_phaseB_scale,,in,voltage,0,phaseB,scale=0D
-CIGAIN,in_current0_phaseC_scale,,in,current,0,phaseC,scale=0D
-CVGAIN,in_voltage0_phaseC_scale,,in,voltage,0,phaseC,scale=0D
-NIGAIN,in_current0_neutral_scale,,in,current,0,neutral,scale=0D
-AIRMSOS,in_current0_phaseA_rms_offset,,in,current,0,phaseA,offset=0D
-AVRMSOS,in_voltage0_phaseA_rms_offset,,in,voltage,0,phaseA,offset=0D
-BIRMSOS,in_current0_phaseB_rms_offset,,in,current,0,phaseB,offset=0D
-BVRMSOS,in_voltage0_phaseB_rms_offset,,in,voltage,0,phaseB,offset=0D
-CIRMSOS,in_current0_phaseC_rms_offset,,in,current,0,phaseC,offset=0D
-CVRMSOS,in_voltage0_phaseC_rms_offset,,in,voltage,0,phaseC,offset=0D
-NIRMSOS,in_current0_neutral_rms_offset,,in,current,0,neutral,offset=0D
-AVAGAIN,in_powerapparent0_phaseA_scale,,in,powerapparent,0,phaseA,scale=0D=
-
-BVAGAIN,in_powerapparent0_phaseB_scale,,in,powerapparent,0,phaseB,scale=0D=
-
-CVAGAIN,in_powerapparent0_phaseC_scale,,in,powerapparent,0,phaseC,scale=0D=
-
-AWGAIN,in_power0_phaseA_scale,,in,power,0,phaseA,scale=0D
-AWATTOS,in_power0_phaseA_offset,,in,power,0,phaseA,offset=0D
-BWGAIN,in_power0_phaseB_scale,,in,power,0,phaseB,scale=0D
-BWATTOS,in_power0_phaseB_offset,,in,power,0,phaseB,offset=0D
-CWGAIN,in_power0_PhaseC_scale,,in,power,0,phaseC,scale=0D
-CWATTOS,in_power0_phaseC_offset,,in,power,0,phaseC,offset=0D
-AVARGAIN,in_powerreactive0_phaseA_scale,,in,powerreactive,0,phaseA,scale=0D=
-
-AVAROS,in_powerreactive0_phaseA_offset,,in,powerreactive,0,phaseA,offset=0D=
-
-BVARGAIN,in_powerreactive0_phaseB_scale,,in,powerreactive,0,phaseB,scale=0D=
-
-BVAROS,in_powerreactive0_phaseB_offset,,in,powerreactive,0,phaseB,offset=0D=
-
-CVARGAIN,in_powerreactive0_phaseC_scale,,in,powerreactive,0,phaseC,scale=0D=
-
-CVAROS,in_powerreactive0_phaseC_offset,,in,powerreactive,0,phaseC,offset=0D=
-
-=
-AFWGAIN,in_power0_phaseA_fundamental_scale,,in,power,0,phaseA_fundamental,=
-scale=0D
-=
-AFWATTOS,in_power0_phaseA_fundamental_offset,,in,power,0,phaseA_fundamenta=
-l,offset=0D
-=
-BFWGAIN,in_power0_phaseB_fundamental_scale,,in,power,0,phaseB_fundamental,=
-scale=0D
-=
-BFWATTOS,in_power0_phaseB_fundamental_offset,,in,power,0,phaseB_fundamenta=
-l,offset=0D
-=
-CFWGAIN,in_power0_phaseC_fundamental_scale,,in,power,0,phaseC_fundamental,=
-scale=0D
-=
-CFWATTOS,in_power0_phaseC_fundamental_offset,,in,power,0,phaseC_fundamenta=
-l,offset=0D
-=
-AFVARGAIN,in_powerreactive0_phaseA_fundamental_scale,,in,powerreactive,0,p=
-haseA_fundamental,scale=0D
-=
-AFVAROS,in_powerreactive0_phaseA_fundamental_offset,,in,powerreactive,0,ph=
-aseA_fundamental,offset=0D
-=
-BFVARGAIN,in_powerreactive0_phaseB_fundamental_scale,,in,powerreactive,0,p=
-haseB_fundamental,scale=0D
-=
-BFVAROS,in_powerreactive0_phaseB_fundamental_offset,,in,powerreactive,0,ph=
-aseB_fundamental,offset=0D
-=
-CFVARGAIN,in_powerreactive0_phaseC_fundamental_scale,,in,powerreactive,0,p=
-haseC_fundamental,scale=0D
-=
-CFVAROS,in_powerreactive0_phaseC_fundamental_offset,,in,powerreactive,0,ph=
-aseC_fundamental,offset=0D
-VATHR1,VATHR1,DT,,,,,=0D
-VATHR0,VATHR0,DT,,,,,=0D
-WTHR1,WTHR1,DT,,,,,=0D
-WTHR0,WTHR0,DT,,,,,=0D
-VARTHR1,VARTHR1,DT,,,,,=0D
-VARTHR0,VARTHR0,DT,,,,,=0D
-Reserved,Reserved,,,,,,=0D
-VANOLOAD,VANOLOAD,DT,,,,,=0D
-APNOLOAD,APNOLOAD,DT,,,,,=0D
-VLEVEL,VLEVEL,DT,,,,,=0D
-DICOEFF,DICOEFF,DT,,,,,=0D
-HPFDIS,HPFDIS,DT,,,,,=0D
-ISUMLVL,ISUMLVL,DT,in,,,,=0D
-=
-ISUM,in_current0_phaseA&phaseB&phaseC_sum,,in,current,0,phaseA&phaseB&phas=
-eC,sum=0D
-AIRMS,in_current0_phaseA_rms_raw,,in,current,0,phaseA_rms,raw=0D
-AVRMS,in_voltage0_phaseA_rms_raw,,in,voltage,0,phaseA_rms,raw=0D
-BIRMS,in_current0_phaseB_rms_raw,,in,current,0,phaseB_rms,raw=0D
-BVRMS,in_voltage0_phaseB_rms_raw,,in,voltage,0,phaseB_rms,raw=0D
-CIRMS,in_current0_phaseC_rms_raw,,in,current,0,phaseC_rms,raw=0D
-CVRMS,in_voltage0_phaseC_rms_raw,,in,voltage,0,phaseC_rms,raw=0D
-NIRMS,in_current0_neutral_rms_raw,,in,current,0,neutral_rms,raw=0D
-Run,,Code,in,,,,=0D
-AWATTHR,in_energy0_phaseA_raw_raw,,in,energy,0,phaseA,raw=0D
-BWATTHR,in_energy0_phaseB_raw_raw,,in,energy,0,phaseB,raw=0D
-CWATTHR,in_energy0_phaseC_raw_raw,,in,energy,0,phaseC,raw=0D
-=
-AFWATTHR,in_energy0_phaseA_fundamental_raw,,in,energy,0,phaseA_fundamental=
-,raw=0D
-=
-BFWATTHR,in_energy0_phaseB_fundamental_raw,,in,energy,0,phaseB_fundamental=
-,raw=0D
-=
-CFWATTHR,in_energy0_phaseC_fundamental_raw,,in,energy,0,phaseC_fundamental=
-,raw=0D
-AVARHR,in_energyreactive0_phaseA_raw,,in,energyreactive,0,phaseA,raw=0D
-BVARHR,in_energyreactive0_phaseB_raw,,in,energyreactive,0,phaseB,raw=0D
-CVARHR,in_energyreactive0_phaseC_raw,,in,energyreactive,0,phaseC,raw=0D
-=
-AFVARHR,in_energyreactive0_phaseA_fundamental_raw,,in,energyreactive,0,pha=
-seA_fundamental,raw=0D
-=
-BFVARHR,in_energyreactive0_phaseB_fundamental_raw,,in,energyreactive,0,pha=
-seB_fundamental,raw=0D
-=
-CFVARHR,in_energyreactive0_phaseC_fundamental_raw,,in,energyreactive,0,pha=
-seC_fundamental,raw=0D
-AVAHR,in_energyapparent0_phaseA_raw,,in,energyapparent,0,phaseA,raw=0D
-BVAHR,in_energyapparent0_phaseB_raw,,in,energyapparent,0,phaseB,raw=0D
-CVAHR,in_energyapparent0_phaseC_raw,,in,energyapparent,0,phaseC,raw=0D
-IPEAK,in_current0_peak,,in,current,0,,peak=0D
-VPEAK,in_voltage0_peak,,in,voltage,0,,peak=0D
-STATUS0,,event,,,,,=0D
-STATUS1,,event,,,,,=0D
-AIMAV,in_current0_phaseA_mav_raw,,in,current,,phaseA_mav,raw=0D
-BIMAV,in_current0_phaseB_mav_raw,,in,current,,phaseB_mav,raw=0D
-CIMAV,in_current0_phaseC_mav_raw,,in,current,,phaseC_mav,raw=0D
-OILVL,OILVL,DT,,,,,=0D
-OVLVL,OVLVL,DT,,,,,=0D
-SAGLVL,SAGLVL,DT,,,,,=0D
-MASK0,in_mask0_raw,,in,mask,0,,raw=0D
-MASK1,in_mask1_raw,,in,mask,1,,raw=0D
-IAWV,in_current0_phaseA_instantaneous,,,,,,=0D
-IBWV,in_current0_phaseB_instantaneous,,,,,,=0D
-ICWV,in_current0_phaseC_instantaneous,,,,,,=0D
-INWV,in_current0_phaseN_instantaneous,,,,,,=0D
-VAWV,in_voltage0_phaseA_instantaneous,,,,,,=0D
-VBWV,in_voltage0_phaseB_instantaneous,,,,,,=0D
-VCWV,in_voltage0_phaseC_instantaneous,,,,,,=0D
-AWATT,in_power0_phaseA_instantaneous,,,,,,=0D
-BWATT,in_power0_phaseB_instantaneous,,,,,,=0D
-CWATT,in_power0_phaseC_instantaneous,,,,,,=0D
-AVAR,in_powerreactive0_phaseA_instantaneous,,,,,,=0D
-BVAR,in_powerreactive0_phaseB_instantaneous,,,,,,=0D
-CVAR,in_powerreactive0_phaseC_instantaneous,,,,,,=0D
-AVA,in_powerapparent0_phaseA_instantaneous,,,,,,=0D
-BVA,in_powerapparent0_phaseB_instantaneous,,,,,,=0D
-CVA,in_powerappatent0_phaseC_instantaneous,,,,,,=0D
-CHECKSUM,CHECKSUM,Code,,,,,=0D
-VNOM,VNOM,DT,,,,,=0D
-PHSTATUS,,event,,,,,=0D
-ANGLE0,ANGLE0,DT,,,,,=0D
-ANGLE1,ANGLE1,DT,,,,,=0D
-ANGLE2,ANGLE2,DT,,,,,=0D
-Reserved,,,,,,,=0D
-PERIOD,in_period_raw,,in,period,,,raw=0D
-PHNOLOAD,,event,,,,,=0D
-LINECYC,in_count0_cycle_raw,,in,count,0,cycle,raw=0D
-ZXTOUT,ZXTOUT,DT,,,,,=0D
-COMPMODE,COMPMODE,DT,,,,,=0D
-Gain,Gain,DT,,,,,=0D
-CFMODE,CFMODE,DT,,,,,=0D
-CF1DEN,CF1DEN,DT,,,,,=0D
-CF2DEN,CF2DEN,DT,,,,,=0D
-CF3DEN,CF3DEN,DT,,,,,=0D
-APHCAL,APHCAL,DT,,,,,=0D
-BPHCAL,BPHCAL,DT,,,,,=0D
-CPHCAL,CPHCAL,DT,,,,,=0D
-PHSIGN,PHSIGN,DT,,,,,=0D
-CONFIG,CONFIG,DT,,,,,=0D
-MMODE,MMODE,DT,,,,,=0D
-ACCMODE,ACCMODE,DT,,,,,=0D
-LCYCMODE,LCYCMODE,DT,,,,,=0D
-PEAKCYC,PEAKCYC,DT,,,,,=0D
-SAGCYC,SAGCYC,DT,,,,,=0D
-CFCYC,CFCYC,DT,,,,,=0D
-HSDC_CFG,HSDC_CFG,DT,,,,,=0D
-Version,in_version_raw,,in,version,,,raw=0D
-Reserved,,DT,,,,,=0D
-LPOILVL,LPOILVL,DT,,,,,=0D
-CONFIG2,CONFIG2,DT,,,,,=
-
---Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html;
-	charset=us-ascii
-
-<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
-charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
--webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
-class=3D""></div><div class=3D"">
-<div style=3D"color: rgb(0, 0, 0); font-family: Helvetica; font-size: =
-12px; font-style: normal; font-variant-caps: normal; font-weight: =
-normal; letter-spacing: normal; orphans: auto; text-align: start; =
-text-indent: 0px; text-transform: none; white-space: normal; widows: =
-auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
--webkit-text-stroke-width: 0px; word-wrap: break-word; =
--webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
-class=3D""><br class=3D"Apple-interchange-newline">Regards,</div><div =
-class=3D"">John</div><div class=3D""><br class=3D""></div><div =
-class=3D""><br class=3D""></div></div><br =
-class=3D"Apple-interchange-newline" style=3D"color: rgb(0, 0, 0); =
-font-family: Helvetica; font-size: 12px; font-style: normal; =
-font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
-orphans: auto; text-align: start; text-indent: 0px; text-transform: =
-none; white-space: normal; widows: auto; word-spacing: 0px; =
--webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;"><br =
-class=3D"Apple-interchange-newline">
-
-</div>
-<div><br class=3D""></div></body></html>=
-
---Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04--
-
---Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0--
+SGkgSm9uYXRoYW4sCgpUaGFuayB5b3UgZm9yIGFsbCB5b3VyIGhhcmQgd29yay4gWW91ciBmZWVk
+YmFjayBpcyByZWFsbHkgaGVscGZ1bC4gSeKAmW0gc3VycHJpc2VkIHRoYXQgbm8gb25lIGZyb20g
+QW5hbG9nIERldmljZSBoYXMgb2ZmZXJlZCBhbnkgc3VnZ2VzdGlvbnMuCgpBbnl3YXksIHBsZWFz
+ZSBzZWUgbXkgY29tbWVudHMgaW5saW5lIGJlbG93CgpSZWdhcmRzLApKb2huCgoKCgoKPiBPbiBN
+YXIgMTgsIDIwMTgsIGF0IDU6MjMgQU0sIEpvbmF0aGFuIENhbWVyb24gPGppYzIzQGtlcm5lbC5v
+cmc+IHdyb3RlOgo+IAo+IE9uIFNhdCwgMTcgTWFyIDIwMTggMjM6MTE6NDUgLTA3MDAKPiBKb2hu
+IFN5bmUgPGpvaG4zOTA5QGdtYWlsLmNvbT4gd3JvdGU6Cj4gCj4+IEhpIEpvbmF0aGFuLAo+IEhp
+IEpvaG4gYW5kIEFsbCwKPiAKPiBJJ2QgbG92ZSB0byBnZXQgc29tZSBhZGRpdGlvbmFsIGlucHV0
+IG9uIHRoaXMgZnJvbSBhbnlvbmUgaW50ZXJlc3RlZC4KPiBUaGVyZSBhcmUgYSBsb3Qgb2Ygd2Vp
+cmQgYW5kIHdvbmRlcmZ1bCBkZXJpdmVkIHF1YW50aXRpZXMgaW4gYW4gZW5lcmd5Cj4gbWV0ZXIg
+YW5kIGl0IHNlZW1zIHdlIG5lZWQgdG8gbWFrZSBzb21lIGZ1bmRhbWVudGFsIGNoYW5nZXMgdG8g
+c3VwcG9ydAo+IHRoZW0gLSBpbmNsdWRpbmcgcG90ZW50aWFsbHkgYSB1c2Vyc3BhY2UgYnJlYWtp
+bmcgY2hhbmdlIHRvIHRoZSBldmVudAo+IGNvZGUgZGVzY3JpcHRpb24uCj4gCj4+IAo+PiBIZXJl
+IGlzIHRoZSBjb21wbGV0ZSBsaXN0IG9mIHJlZ2lzdGVycyBmb3IgdGhlIEFERTc4Nzggd2hpY2gg
+SSBjb3BpZWQgZnJvbSB0aGUgZGF0YSBzaGVldC4gSSBhZGRlZCBhIGNvbHVtbiDigJxJSU8gQXR0
+cmlidXRl4oCdIHdoaWNoIEkgaG9wZSBmb2xsb3dzIHlvdXIgSUlPIEFCSS4gUGxlYXNlIG1ha2Ug
+YW55IGNoYW5nZXMgeW91IGZlZWwgYXJlIGluY29ycmVjdC4gQlRXLCB0aGVyZSBhcmUgc2V2ZXJh
+bCByZWdpc3RlcnMgdGhhdCBjYW5ub3QgYmUgZ2VuZXJhbGl6ZWQgYW5kIGFyZSB1c2VkIHB1cmVs
+eSBmb3IgY2hpcCBjb25maWd1cmF0aW9uLiBJIHRoaW5rIHdlIHNob3VsZCBhZGQgYSBuZXcgbmFt
+aW5nIGNvbnZlbnRpb24sIG5hbWVseSB7cmVnaXN0ZXJ9X3s8Y2hpcC1yZWdpc3Rlci1uYW1lPn0u
+IEFsc28sIEkgc2VlIGluIHRoZSBzeXNfYnVzX2lpbyBkb2MKPj4gaW5fYWNjZWxfeF9wZWFrX3Jh
+dwo+PiAKPj4gc28gc2hvdWxkbuKAmXQgdGhlIHBoYXNlIGJlIHJlcHJlc2VudGVkIGFzIGZvbGxv
+d3M6Cj4+IAo+PiBpbl9jdXJyZW50X0Ffc2NhbGUKPiBJJ20gc3RpbGwgY29uZnVzZWQuICBXaGF0
+IGRvZXMgQSByZXByZXNlbnQgaGVyZT8gIEkgYXNzdW1lZCB0aGF0IHdhcyBhIHdpbGQKPiBjYXJk
+IGZvciB0aGUgY2hhbm5lbCBudW1iZXIgYmVmb3JlIGJ1dCBjbGVhcmx5IG5vdC4KPiAKPiBBaCwg
+eW91IGFyZSBsYWJlbGxpbmcgdGhlIDMgc2VwYXJhdGUgcGhhc2VzIGFzIEEsIEIgYW5kIEMuIEht
+bS4KPiBJIGd1ZXNzIHRoZXkgc29ydCBvZiBsb29rIGxpa2UgYXhpcywgYW5kIHNvcnQgb2YgbGlr
+ZSBpbmRlcGVuZGVudCBjaGFubmVscy4KPiBTbyBjb3VsZCBiZSBpbmRleGVkIG9yIGRvbmUgdmlh
+IG1vZGlmaWVycyBkZXBlbmRpbmcgb24gaG93IHlvdSBsb29rIGF0IGl0LgpJbiBtZXRlcmluZyB0
+ZXJtaW5vbG9neSwgdGhlIHRocmVlIHBoYXNlcyBhcmUgY29tbW9ubHkgcmVmZXJyZWQgdG8gYXMg
+UkVELCBHUkVFTiwgQkxVRSBvciBQaGFzZUEsIFBoYXNlQiwgUGhhc2VDIGFuZCBOZXV0cmFsLiBB
+bmFsb2cgRGV2aWNlcyB1c2VzIHRoZSBBQkNOIG5vbWVuY2xhdHVyZSBzbyBhbnlvbmUgdXNpbmcg
+dGhpcyBkcml2ZXIgd2lsbCBwcm9iYWJseSBoYXZlIHJlZmVyZW5jZWQgdGhlIEFuYWxvZyBEZXZp
+Y2VzIGRhdGFzaGVldCBzbyB0aGlzIHRlcm1pbm9sb2d5IHNob3VsZCBiZSBmYW1pbGlhci4gCj4g
+Cj4gSG1tLiBXaXRoIG5ldXRyYWwgaW4gdGhlcmUgYXMgd2VsbCBJIGd1ZXNzIHdlIG5lZWQgdG8g
+bWFrZSB0aGVtCj4gbW9kaWZpZXJzIChidXQgbWlnaHQgY2hhbmdlIG15IG1pbmQgbGF0ZXIgOykK
+PiAKPiBQYXJ0aWN1bGFybHkgYXMgd2UgYXJlIHVzaW5nIHRoZSB0aGUgbW9kaWZpZXIgZm9yIFJN
+UyB1bmRlciB0aGUgcHJldmlvdXMKPiBwbGFuLi4uIEl0IGFwcGVhcnMgd2Ugc2hvdWxkIHRyZWF0
+IHRoYXQgaW5zdGVhZCBsaWtlIHdlIGRpZCBmb3IgcGVhawo+IGFuZCBkbyBpdCBhcyBhbiBhZGRp
+dGlvbmFsIGluZm8gbWFzayBlbGVtZW50LiAgVGhlIHByb2JsZW0gd2l0aCBkb2luZyB0aGF0Cj4g
+b24gYSBjb250aW51b3VzIG1lYXN1cmVtZW50IGlzIHRoYXQgd2UgY2FuJ3QgdHJlYXQgaXQgYXMg
+YSBjaGFubmVsIHRvCj4gYmUgb3V0cHV0IHRocm91Z2ggdGhlIGJ1ZmZlcmVkIGludGVyZmFjZS4K
+SeKAmXZlIGNoYW5nZWQgdGhlIGxheW91dCBvZiB0aGUgc3ByZWFkc2hlZXQgdG8gYnJlYWtvdXQg
+dGhlIERpcmVjdGlvbiwgVHlwZSwgSW5kZXgsIE1vZGlmaWVyIGFuZCBJbmZvIE1hc2sgdG8gbWFr
+ZSBzdXJlIHRoZXJlIGlzIG5vIG1pc3MtdW5kZXJzdGFuZGluZyBhbmQgd2lsbCBoZWxwIGlkZW50
+aWZ5IGFsbCB0aGUgaXRlbXMgd2UgbmVlZCB0byBhZGQuCgpUaGUgQURFNzg3OCBjaGFubmVscyB0
+aGF0IHdpbGwgdXNlIHRoZSBidWZmZXIgYXJlIElBV1YsIFZBV1YsIElCV1YsIFZCV1YsIElDV1Ys
+IFZDV1YsIElOV1YsIEFWQSwgQlZBLCBDVkEsIEFXQVRULCBCV0FUVCwgQ1dBVFQsIEFWQVIsIEJW
+QVIsIGFuZCBDVkFSLiBTbyBJIGd1ZXNzIHdlIGhhdmUgdG8gYWRkIGFuIGluZGV4CgpBZGRyZXNz
+IFJlZ2lzdGVyIAlJSU8gQXR0cmlidXRlCQkJCQkJCURpcglUeXBlCQlJbmRleCAJTW9kaWZpZXIJ
+SW5mbyBNYXNrCVIvVwlCaXQJCUJpdCBMZW5ndGgJVHlwZQlEZWZhdWx0CURlc2NyaXB0aW9uIAoJ
+CQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJTGVuZ3RoIAlEdXJpbmcgQ29tbQkJCVZhbHVlCQoweEU1
+MEMJSUFXVglpbl9jdXJyZW50MF9waGFzZUFfaW5zdGFudGFuZW91cwkJaW4JY3VycmVudAkJCTAJ
+cGhhc2VBCWluc3RhbnRhbmVvdXMJUgkyNAkJMzIgU0UJCVMJCU4vQQkJSW5zdGFudGFuZW91cyB2
+YWx1ZSBvZiBQaGFzZSBBIGN1cnJlbnQuCjB4RTUwRAlJQldWCWluX2N1cnJlbnQxX3BoYXNlQl9p
+bnN0YW50YW5lb3VzCQlpbgljdXJyZW50CQkJMQlwaGFzZUIJaW5zdGFudGFuZW91cwlSCTI0CQkz
+MiBTRQkJUwkJTi9BCQlJbnN0YW50YW5lb3VzIHZhbHVlIG9mIFBoYXNlIEIgY3VycmVudC4KMHhF
+NTBFCUlDV1YJaW5fY3VycmVudDJfcGhhc2VDX2luc3RhbnRhbmVvdXMJCWluCWN1cnJlbnQJCQky
+CXBoYXNlQwlpbnN0YW50YW5lb3VzCVIJMjQJCTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMg
+dmFsdWUgb2YgUGhhc2UgQyBjdXJyZW50LgoweEU1MEYJSU5XVglpbl9jdXJyZW50M19waGFzZU5f
+aW5zdGFudGFuZW91cwkJaW4JY3VycmVudAkJCTMJbmV1dHJhbAlpbnN0YW50YW5lb3VzCVIJMjQJ
+CTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMgdmFsdWUgb2YgbmV1dHJhbCBjdXJyZW50IChB
+REU3ODY4IGFuZCBBREU3ODc4IG9ubHkpLgoweEU1MTAJVkFXVglpbl92b2x0YWdlNF9waGFzZUFf
+aW5zdGFudGFuZW91cwkJaW4Jdm9sdGFnZQkJCTQJcGhhc2VBCWluc3RhbnRhbmVvdXMJUgkyNAkJ
+MzIgU0UJCVMJCU4vQQkJSW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBBIHZvbHRhZ2UuCjB4
+RTUxMQlWQldWCWluX3ZvbHRhZ2U1X3BoYXNlQl9pbnN0YW50YW5lb3VzCQlpbgl2b2x0YWdlCQkJ
+NQlwaGFzZUIJaW5zdGFudGFuZW91cwlSCTI0CQkzMiBTRQkJUwkJTi9BCQlJbnN0YW50YW5lb3Vz
+IHZhbHVlIG9mIFBoYXNlIEIgdm9sdGFnZS4KMHhFNTEyCVZDV1YJaW5fdm9sdGFnZTZfcGhhc2VD
+X2luc3RhbnRhbmVvdXMJCWluCXZvbHRhZ2UJCQk2CXBoYXNlQwlpbnN0YW50YW5lb3VzCVIJMjQJ
+CTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMgdmFsdWUgb2YgUGhhc2UgQyB2b2x0YWdlLgow
+eEU1MTMJQVdBVFQJaW5fcG93ZXI3X3BoYXNlQV9pbnN0YW50YW5lb3VzCQkJaW4JcG93ZXIJCQk3
+CXBoYXNlQQlpbnN0YW50YW5lb3VzCVIJMjQJCTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMg
+dmFsdWUgb2YgUGhhc2UgQSB0b3RhbCBhY3RpdmUgcG93ZXIuCjB4RTUxNAlCV0FUVAlpbl9wb3dl
+cjhfcGhhc2VCX2luc3RhbnRhbmVvdXMJCQlpbglwb3dlcgkJCTgJcGhhc2VCCWluc3RhbnRhbmVv
+dXMJUgkyNAkJMzIgU0UJCVMJCU4vQQkJSW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBCIHRv
+dGFsIGFjdGl2ZSBwb3dlci4KMHhFNTE1CUNXQVRUCWluX3Bvd2VyOV9waGFzZUNfaW5zdGFudGFu
+ZW91cwkJCWluCXBvd2VyCQkJOQlwaGFzZUMJaW5zdGFudGFuZW91cwlSCTI0CQkzMiBTRQkJUwkJ
+Ti9BCQlJbnN0YW50YW5lb3VzIHZhbHVlIG9mIFBoYXNlIEMgdG90YWwgYWN0aXZlIHBvd2VyLgow
+eEU1MTYJQVZBUglpbl9wb3dlcnJlYWN0aXZlMTBfcGhhc2VBX2luc3RhbnRhbmVvdXMJaW4JcG93
+ZXJyZWFjdGl2ZQkJMTAJcGhhc2VBCWluc3RhbnRhbmVvdXMJUgkyNAkJMzIgU0UJCVMJCU4vQQkJ
+SW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBBIHRvdGFsIHJlYWN0aXZlIHBvd2VyIChBREU3
+ODU4LCBBREU3ODY4LCBhbmQgQURFNzg3OCBvbmx5KS4KMHhFNTE3CUJWQVIJaW5fcG93ZXJyZWFj
+dGl2ZTExX3BoYXNlQl9pbnN0YW50YW5lb3VzCWluCXBvd2VycmVhY3RpdmUJCTExCXBoYXNlQglp
+bnN0YW50YW5lb3VzCVIJMjQJCTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMgdmFsdWUgb2Yg
+UGhhc2UgQiB0b3RhbCByZWFjdGl2ZSBwb3dlciAoQURFNzg1OCwgQURFNzg2OCwgYW5kIEFERTc4
+Nzggb25seSkuCjB4RTUxOAlDVkFSCWluX3Bvd2VycmVhY3RpdmUxMl9waGFzZUNfaW5zdGFudGFu
+ZW91cwlpbglwb3dlcnJlYWN0aXZlCQkxMglwaGFzZUMJaW5zdGFudGFuZW91cwlSCTI0CQkzMiBT
+RQkJUwkJTi9BCQlJbnN0YW50YW5lb3VzIHZhbHVlIG9mIFBoYXNlIEMgdG90YWwgcmVhY3RpdmUg
+cG93ZXIgKEFERTc4NTgsIEFERTc4NjgsIGFuZCBBREU3ODc4IG9ubHkpLgoweEU1MTkJQVZBCQlp
+bl9wb3dlcmFwcGFyZW50MTNfcGhhc2VBX2luc3RhbnRhbmVvdXMJaW4JcG93ZXJhcHBhcmVudAkx
+MwlwaGFzZUEJaW5zdGFudGFuZW91cwlSCTI0CQkzMiBTRQkJUwkJTi9BCQlJbnN0YW50YW5lb3Vz
+IHZhbHVlIG9mIFBoYXNlIEEgYXBwYXJlbnQgcG93ZXIuCjB4RTUxQQlCVkEJCWluX3Bvd2VyYXBw
+YXJlbnQxNF9waGFzZUJfaW5zdGFudGFuZW91cwlpbglwb3dlcmFwcGFyZW50CTE0CXBoYXNlQglp
+bnN0YW50YW5lb3VzCVIJMjQJCTMyIFNFCQlTCQlOL0EJCUluc3RhbnRhbmVvdXMgdmFsdWUgb2Yg
+UGhhc2UgQiBhcHBhcmVudCBwb3dlci4KMHhFNTFCCUNWQQkJaW5fcG93ZXJhcHBhdGVudDE1X3Bo
+YXNlQ19pbnN0YW50YW5lb3VzCWluCXBvd2VyYXBwYXJlbnQJMTUJcGhhc2VDCWluc3RhbnRhbmVv
+dXMJUgkyNAkJMzIgU0UJCVMJCU4vQQkJSW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBDIGFw
+cGFyZW50IHBvd2VyLgoKVGhlIEFERTkwMDAgY2hhbm5lbHMgdGhhdCB1c2UgdGhlIGJ1ZmZlciBh
+cmUgSUEsIFZBLCBJQiwgVkIsIElDLCBWQyBhbmQgSU4KPiAKPiBTbyBhZ2FpbiB3ZSBoYXZlIHJ1
+biBvdXQgb2Ygc3BhY2UuIEl0J3MgaW5jcmVhc2luZ2x5IGxvb2tpbmcgbGlrZSB3ZSBuZWVkCj4g
+cm9vbSBmb3IgYW5vdGhlciBmaWVsZCBpbiB0aGUgZXZlbnRzIC0gdG8gY2xlYW5seSByZXByZXNl
+bnQgY29tcHV0ZWQgdmFsdWVzLgo+IAo+IEhtbS4gV2hhdCBpcyB0aGUgY3VycmVudCB1c2FnZT8g
+LSBpdCdzIGJlZW4gYSB3aGlsZSBzbyBJIGhhZCB0byBnbwo+IGxvb2sgaW4gdGhlIGhlYWRlci4K
+PiAKPiAwLTE1IENoYW5uZWwgKGxvdHMgb2YgY2hhbm5lbHMpCj4gMzEtMTYgQ2hhbm5lbCAyICAo
+MzYgbW9kaWZpZXJzIC0gbG90cyBvZiBjaGFubmVscykKPiA0Ny0zMiBDaGFubmVsIFR5cGUgKDMx
+IHVzZWQgc28gZmFyIC0gdGhpcyBsb29rcyBtb3N0IGxpa2VseSB0byBydW4gb3V0IG9mCj4gc3Bh
+Y2UgaW4gdGhlIGxvbmcgcnVuIHNvIGxlYXZlIHRoaXMgb25lIGFsb25lKS4KPiA1NC00OCBFdmVu
+dCBEaXJlY3Rpb24gKDQgdXNlZCkKPiA1NSBEaWZmZXJlbnRpYWwgICgxOiBjaGFubmVsIDIgYXMg
+ZGlmZmVyZW50aWFsIHBhaXIgMDogYXMgYSBtb2RpZmllcikKPiA2My01NiBFdmVudCBUeXBlICg2
+IHVzZWQpCj4gCj4gU28gSSB0aGluayB3ZSBjYW4gcGluY2ggYml0IDUzIGFzIGFub3RoZXIgZmxh
+ZyB0byBpbmRpY2F0ZSB3ZSBoYXZlCj4gYSBjb21wdXRlZCB2YWx1ZSBvciBwb3NzaWJseSBiaXQg
+NjMgYXMgZXZlbnQgdHlwZXMgYXJlIGZldyBhbmQKPiBmYXIgYmV0d2VlbiBhcyB3ZWxsLgo+IAo+
+IFByb2JhYmx5IHJlYXNvbmFibGUgdG8gYXNzdW1lIHdlIG5ldmVyIGhhdmUgMTYgYml0cyB3b3J0
+aAo+IG9mIGNoYW5uZWxzIGFuZCBjb21wdXRlZCBjaGFubmVscyBhdCB0aGUgc2FtZSB0aW1lPwo+
+IEhlbmNlIEkgdGhpbmsgd2UgY2FuIHN0ZWFsIGJpdHMgb2ZmIHRoZSB0b3Agb2YgQ2hhbm5lbC4K
+PiBIb3cgbWFueSBkbyB3ZSBuZWVkPyAgTm90IHN1cmUgdW5mb3J0dW5hdGVseSBidXQgZmVlbHMg
+bGlrZQo+IDggc2hvdWxkIGJlIHBsZW50eS4KV2hlbiB5b3Ugc3BlYWsgb2YgQ2hhbm5lbHMgaGVy
+ZSwgYXJlIHlvdSByZWZlcnJpbmcgdG8gbWVhc3VyZW1lbnRzIHRoYXQgd2lsbCB1c2UgdGhlIGJ1
+ZmZlcj8gRXZlbiB3aGVuIGNvdW50aW5nIGFsbCB0aGUgSUlPIGF0dHJpYnV0ZXMsIHRoZSBBREU5
+MDAwIGhhcyA0NjIgcmVnaXN0ZXJzLCBhbmQgbm90IGFsbCBvZiB0aG9zZSB3b3VsZCBiZSBkZWZp
+bmVkIGFzIGF0dHJpYnV0ZXMuIEkgdGhpbmsgOCBCaXRzIHNob3VsZCBiZSBtb3JlIHRoYW4gZW5v
+dWdoLgo+IAo+IFRoZSBvdGhlciBlbGVtZW50IG9mIHRoaXMgaXMgd2UgYWRkIGEgbmV3IGZpZWxk
+IHRvIGlpb19jaGFuX3NwZWMKPiB0byBjb250YWluICdkZXJpdmVkX3R5cGUnIG9yIHNvbWV0aGlu
+ZyBsaWtlIHRoYXQgd2hpY2ggaGFzCj4gcm1zIGFuZCBzdW0gc3F1YXJlZCBldGMuIE92ZXIgdGlt
+ZSB3ZSBjYW4gbW92ZSBzb21lIG9mIHRob3NlCj4gZnJvbSB0aGUgbW9kaWZpZXJzIGFuZCBmcmVl
+IHVwIGEgZmV3IGVudGlyZXMgdGhlcmUuCj4gU28gbW9kaWZpZXIgbWlnaHQgYmUgIlggYW5kIFkg
+YW5kIFoiIHdpdGggYSBkZXJpdmVkX3R5cGUgb2YgCj4gc3VtX3NxdWFyZWQgdG8gZ2l2ZSBleGlz
+dGluZyBzdW1fc3F1YXJlZF94X3lfeiBidXQgbm8KPiBydXNoIG9uIHRoYXQuCj4gCj4gQW55aG93
+IHNvIG5vdyB3ZSBoYXZlIGFuIGV4dHJhIGVsZW1lbnQgdG8gcGxheSB0aGF0IHdpbGwgcmVzdWx0
+Cj4gaW4gYSBkaWZmZXJlbnQgY2hhbm5lbC4KPiAKPiBXaGlsc3QgaGVyZSB3ZSBzaG91bGQgdGhp
+bmsgYWJvdXQgYW55IG90aGVyIG1vZHMgbmVlZGVkIHRvCj4gdGhhdCBldmVudCBzdHJ1Y3R1cmUu
+ICBJdCBpcyBhIGxpdHRsZSB1bmZvcnR1bmF0ZSB0aGF0IHRoaXMKPiB3aWxsIGJlIGEgYnJlYWtp
+bmcgY2hhbmdlIGZvciBhbnkgb2xkIHVzZXJzcGFjZSBjb2RlIHBsYXlpbmcKPiB3aXRoIG5ldyBk
+cml2ZXJzIGJ1dCBpdCBjYW4ndCBiZSBoZWxwZWQgYXMgd2UgZGlkbid0IGhhdmUKPiByZXNlcnZl
+ZCB2YWx1ZXMgaW4gdGhlIG9yaWdpbmFsIGRlZmluaXRpb24gKG9vcHMpLgo+IAo+IEF0IHNvbWVw
+b2ludCB3ZSBtYXkgbmVlZCB0byBhZGQgdGhlICdzaGFyZWQgYnkgZGVyaXZlZF92YWx1ZScKPiBp
+bmZvIG1hc2sgYnV0IEkgdGhpbmsgd2UgY2FuIGlnbm9yZSB0aGF0IGZvciBub3cgKHNlZW1zCj4g
+bW9kZXJhdGVseSB1bmxpa2VseSB0byBoYXZlIGFueXRoaW5nIGluIGl0ISkKPj4gCj4+IEJ1dCBm
+b3Igbm93LCBJIGZvbGxvd2VkIHlvdXIgaW5zdHJ1Y3Rpb25zIGZyb20geW91ciByZXBseS4KPj4g
+Cj4+IEFmdGVyIGZpbmFsaXppbmcgdGhpcyBvbmUsIEkgd2lsbCB3b3JrIG9uIHRoZSBBREU5MDAw
+LCB3aGljaCBhcyB3YXkgbW9yZSByZWdpc3RlcnMgOy0pCj4+IAo+PiBPbmNlIHdlIGNhbiBhZ3Jl
+ZSBvbiB0aGUgcmVnaXN0ZXIgbmFtaW5nLCBJIHdpbGwgdXBkYXRlIHRoZSBBREU3ODU0IGRyaXZl
+ciBmb3IgUm9kcmlnbywgd2hpY2ggd2lsbCBnbyBhIGxvbmcgd2F5IHRvIGdldHRpbmcgaXQgb3V0
+IG9mIHN0YWdpbmcuCj4gSSdsbCBlZGl0IHRvIGZpdCB3aXRoIG5ldyBzY2hlbWUgYW5kIGluc2Vy
+dCBpbmRleGVzIHdoaWNoIEkgdGhpbmsgd291bGQgYmUKPiBwcmVmZXJyZWQgdGhvdWdoIG9wdGlv
+bmFsIHVuZGVyIHRoZSBBQkkgYXMgd2Ugb25seSBoYXZlIG9uZSBvZiBlYWNoIHR5cGUvCj4+IAo+
+PiBBZGRyZXNzCVJlZ2lzdGVyCUlJTyBBdHRyaWJ1dGUJUi9XCUJpdCBMZW5ndGgJQml0IExlbmd0
+aCBEdXJpbmcgQ29tbXVuaWNhdGlvbnMJVHlwZQlEZWZhdWx0IFZhbHVlCURlc2NyaXB0aW9uCj4+
+IDB4NDM4MAlBSUdBSU4JaW5fY3VycmVudDBfcGhhc2VBX3NjYWxlCVIvVwkyNAkzMiBaUFNFCVMJ
+MHgwMDAwMDAJUGhhc2UgQSBjdXJyZW50IGdhaW4gYWRqdXN0Lgo+IEEsIEIsIEMsIE4gYXJlbid0
+IG9idmlvdXMgdG8gdGhlIGxheSByZWFkZXIgc28gSSBzdWdnZXN0IHdlIGJ1cm4gYSBmZXcgY2hh
+cmFjdGVycyBhbmQgc3RpY2sgcGhhc2UgaW4gZm9yIEFCQyBhbmQganVzdCBoYXZlIG5ldXRyYWwg
+Zm9yCj4gdGhlIG5ldXRyYWwgb25lLiBOb3Qgc3VyZSBhYm91dCBjYXBpdGFsaXphdGlvbiBvciBu
+b3QgdGhvdWdoLgo+IAo+PiAweDQzODEJQVZHQUlOCWluX3ZvbHRhZ2UwX3BoYXNlQV9zY2FsZQlS
+L1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEEgdm9sdGFnZSBnYWluIGFkanVzdC4KPj4g
+MHg0MzgyCUJJR0FJTglpbl9jdXJyZW50MF9waGFzZUJfc2NhbGUJUi9XCTI0CTMyIFpQU0UJUwkw
+eDAwMDAwMAlQaGFzZSBCIGN1cnJlbnQgZ2FpbiBhZGp1c3QuCj4+IDB4NDM4MwlCVkdBSU4JaW5f
+dm9sdGFnZTBfcGhhc2VCX3NjYWxlCVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJUGhhc2UgQiB2
+b2x0YWdlIGdhaW4gYWRqdXN0Lgo+PiAweDQzODQJQ0lHQUlOCWluX2N1cnJlbnQwX3BoYXNlQ19z
+Y2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMgY3VycmVudCBnYWluIGFkanVz
+dC4KPj4gMHg0Mzg1CUNWR0FJTglpbl92b2x0YWdlMF9waGFzZUNfc2NhbGUJUi9XCTI0CTMyIFpQ
+U0UJUwkweDAwMDAwMAlQaGFzZSBDIHZvbHRhZ2UgZ2FpbiBhZGp1c3QuCj4+IDB4NDM4NglOSUdB
+SU4JaW5fY3VycmVudDBfbmV1dHJhbF9zY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCU5l
+dXRyYWwgY3VycmVudCBnYWluIGFkanVzdCAoQURFNzg2OCBhbmQgQURFNzg3OCBvbmx5KS4KPj4g
+MHg0Mzg3CUFJUk1TT1MJaW5fY3VycmVudDBfcGhhc2VBX3Jtc19vZmZzZXQJUi9XCTI0CTMyIFpQ
+U0UJUwkweDAwMDAwMAlQaGFzZSBBIGN1cnJlbnQgcm1zIG9mZnNldC4KPj4gMHg0Mzg4CUFWUk1T
+T1MJaW5fdm9sdGFnZTBfcGhhc2VBX3Jtc19vZmZzZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAw
+MAlQaGFzZSBBIHZvbHRhZ2Ugcm1zIG9mZnNldC4KPj4gMHg0Mzg5CUJJUk1TT1MJaW5fY3VycmVu
+dDBfcGhhc2VCX3Jtc19vZmZzZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBCIGN1
+cnJlbnQgcm1zIG9mZnNldC4KPj4gMHg0MzhBCUJWUk1TT1MJaW5fdm9sdGFnZTBfcGhhc2VCX3Jt
+c19vZmZzZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBCIHZvbHRhZ2Ugcm1zIG9m
+ZnNldC4KPj4gMHg0MzhCCUNJUk1TT1MJaW5fY3VycmVudDBfcGhhc2VDX3Jtc19vZmZzZXQJUi9X
+CTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBDIGN1cnJlbnQgcm1zIG9mZnNldC4KPj4gMHg0
+MzhDCUNWUk1TT1MJaW5fdm9sdGFnZTBfcGhhc2VDX3Jtc19vZmZzZXQJUi9XCTI0CTMyIFpQU0UJ
+UwkweDAwMDAwMAlQaGFzZSBDIHZvbHRhZ2Ugcm1zIG9mZnNldC4KPj4gMHg0MzhECU5JUk1TT1MJ
+aW5fY3VycmVudDBfbmV1dHJhbF9ybXNfb2Zmc2V0CVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJ
+TmV1dHJhbCBjdXJyZW50IHJtcyBvZmZzZXQgKEFERTc4NjggYW5kIEFERTc4Nzggb25seSkuCj4+
+IDB4NDM4RQlBVkFHQUlOCWluX3Bvd2VyYXBwYXJlbnQwX3BoYXNlQV9zY2FsZQlSL1cJMjQJMzIg
+WlBTRQlTCTB4MDAwMDAwCVBoYXNlIEEgYXBwYXJlbnQgcG93ZXIgZ2FpbiBhZGp1c3QuCj4+IDB4
+NDM4RglCVkFHQUlOCWluX3Bvd2VyYXBwYXJlbnQwX3BoYXNlQl9zY2FsZQlSL1cJMjQJMzIgWlBT
+RQlTCTB4MDAwMDAwCVBoYXNlIEIgYXBwYXJlbnQgcG93ZXIgZ2FpbiBhZGp1c3QuCj4+IDB4NDM5
+MAlDVkFHQUlOCWluX3Bvd2VyYXBwYXJlbnQwX3BoYXNlQ19zY2FsZQlSL1cJMjQJMzIgWlBTRQlT
+CTB4MDAwMDAwCVBoYXNlIEMgYXBwYXJlbnQgcG93ZXIgZ2FpbiBhZGp1c3QuCj4+IDB4NDM5MQlB
+V0dBSU4JaW5fcG93ZXIwX3BoYXNlQV9zY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBo
+YXNlIEEgdG90YWwgYWN0aXZlIHBvd2VyIGdhaW4gYWRqdXN0Lgo+PiAweDQzOTIJQVdBVFRPUwlp
+bl9wb3dlcjBfcGhhc2VBX29mZnNldAlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEEg
+dG90YWwgYWN0aXZlIHBvd2VyIG9mZnNldCBhZGp1c3QuCj4+IDB4NDM5MwlCV0dBSU4JaW5fcG93
+ZXIwX3BoYXNlQl9zY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEIgdG90YWwg
+YWN0aXZlIHBvd2VyIGdhaW4gYWRqdXN0Lgo+PiAweDQzOTQJQldBVFRPUwlpbl9wb3dlcjBfcGhh
+c2VCX29mZnNldAlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEIgdG90YWwgYWN0aXZl
+IHBvd2VyIG9mZnNldCBhZGp1c3QuCj4+IDB4NDM5NQlDV0dBSU4JaW5fcG93ZXIwX1BoYXNlQ19z
+Y2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMgdG90YWwgYWN0aXZlIHBvd2Vy
+IGdhaW4gYWRqdXN0Lgo+PiAweDQzOTYJQ1dBVFRPUwlpbl9wb3dlcjBfcGhhc2VDX29mZnNldAlS
+L1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMgdG90YWwgYWN0aXZlIHBvd2VyIG9mZnNl
+dCBhZGp1c3QuCj4+IDB4NDM5NwlBVkFSR0FJTglpbl9wb3dlcnJlYWN0aXZlMF9waGFzZUFfc2Nh
+bGUJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBBIHRvdGFsIHJlYWN0aXZlIHBvd2Vy
+IGdhaW4gYWRqdXN0IChBREU3ODU4LCBBREU3ODY4LCBhbmQgQURFNzg3OCkuCj4+IDB4NDM5OAlB
+VkFST1MJaW5fcG93ZXJyZWFjdGl2ZTBfcGhhc2VBX29mZnNldAlSL1cJMjQJMzIgWlBTRQlTCTB4
+MDAwMDAwCVBoYXNlIEEgdG90YWwgcmVhY3RpdmUgcG93ZXIgb2Zmc2V0IGFkanVzdCAoQURFNzg1
+OCwgQURFNzg2OCwgYW5kIEFERTc4NzgpLgo+PiAweDQzOTkJQlZBUkdBSU4JaW5fcG93ZXJyZWFj
+dGl2ZTBfcGhhc2VCX3NjYWxlCVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJUGhhc2UgQiB0b3Rh
+bCByZWFjdGl2ZSBwb3dlciBnYWluIGFkanVzdCAoQURFNzg1OCwgQURFNzg2OCwgYW5kIEFERTc4
+NzgpLgo+PiAweDQzOUEJQlZBUk9TCWluX3Bvd2VycmVhY3RpdmUwX3BoYXNlQl9vZmZzZXQJUi9X
+CTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBCIHRvdGFsIHJlYWN0aXZlIHBvd2VyIG9mZnNl
+dCBhZGp1c3QgKEFERTc4NTgsIEFERTc4NjgsIGFuZCBBREU3ODc4KS4KPj4gMHg0MzlCCUNWQVJH
+QUlOCWluX3Bvd2VycmVhY3RpdmUwX3BoYXNlQ19zY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAw
+MDAwCVBoYXNlIEMgdG90YWwgcmVhY3RpdmUgcG93ZXIgZ2FpbiBhZGp1c3QgKEFERTc4NTgsIEFE
+RTc4NjgsIGFuZCBBREU3ODc4KS4KPj4gMHg0MzlDCUNWQVJPUwlpbl9wb3dlcnJlYWN0aXZlMF9w
+aGFzZUNfb2Zmc2V0CVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJUGhhc2UgQyB0b3RhbCByZWFj
+dGl2ZSBwb3dlciBvZmZzZXQgYWRqdXN0IChBREU3ODU4LCBBREU3ODY4LCBhbmQgQURFNzg3OCku
+Cj4+IDB4NDM5RAlBRldHQUlOCWluX3Bvd2VyMF9waGFzZUFfZnVuZGFtZW50YWxfc2NhbGUJUi9X
+CTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBBIGZ1bmRhbWVudGFsIGFjdGl2ZSBwb3dlciBn
+YWluIGFkanVzdC4gTG9jYXRpb24gcmVzZXJ2ZWQgZm9yIEFERTc4NTQsIEFERTc4NTgsIGFuZCBB
+REU3ODY4Lgo+IEhtbS4gZnVuZGFtZW50YWwgaXMgdGhlIG9kZGl0eSBoZXJlLiAgSSBoZXJlIGJl
+Y2F1c2UgIGl0IGlzIHNvcnQgb2YgYSBkZXJpdmVkIHZhbHVlCj4gYW5kIHNvcnQgb2YgYSBmaWx0
+ZXIgYXBwbGllZC4gIENhbiBpdCBiZSBzZW5zaWJsZSBjb21iaW5lZCB3aXRoIFJNUz8gcHJvYmFi
+bHkgbm90IGJ1dAo+IGl0IGNhbiBiZSBjb21iaW5lZCB3aXRoIHBlYWsgZm9yIGV4YW1wbGUgKHdo
+aWNoIEknZCBhbHNvIGlkZWFsbHkgbW92ZSBpbnRvCj4gdGhlIGRlcml2ZWQgcmVwcmVzZW50YXRp
+b24uKS4KSW5jbHVkZXMgb25seSB0aGUgbWVhc3VyZW1lbnQgc3BlY3RydW0gYXQgNTBIeiBvciA2
+MEh6IGFuZCBkb2VzIG5vdCBpbmNsdWRlIGhhcm1vbmljLiAKCj4gCj4+IDB4NDM5RQlBRldBVFRP
+Uwlpbl9wb3dlcjBfcGhhc2VBX2Z1bmRhbWVudGFsX29mZnNldAlSL1cJMjQJMzIgWlBTRQlTCTB4
+MDAwMDAwCVBoYXNlIEEgZnVuZGFtZW50YWwgYWN0aXZlIHBvd2VyIG9mZnNldCBhZGp1c3QuIExv
+Y2F0aW9uIHJlc2VydmVkIGZvciBBREU3ODU0LCBBREU3ODU4LCBhbmQgQURFNzg2OC4KPj4gMHg0
+MzlGCUJGV0dBSU4JaW5fcG93ZXIwX3BoYXNlQl9mdW5kYW1lbnRhbF9zY2FsZQlSL1cJMjQJMzIg
+WlBTRQlTCTB4MDAwMDAwCVBoYXNlIEIgZnVuZGFtZW50YWwgYWN0aXZlIHBvd2VyIGdhaW4gYWRq
+dXN0IChBREU3ODc4IG9ubHkpLgo+PiAweDQzQTAJQkZXQVRUT1MJaW5fcG93ZXIwX3BoYXNlQl9m
+dW5kYW1lbnRhbF9vZmZzZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBCIGZ1bmRh
+bWVudGFsIGFjdGl2ZSBwb3dlciBvZmZzZXQgYWRqdXN0IChBREU3ODc4IG9ubHkpLgo+PiAweDQz
+QTEJQ0ZXR0FJTglpbl9wb3dlcjBfcGhhc2VDX2Z1bmRhbWVudGFsX3NjYWxlCVIvVwkyNAkzMiBa
+UFNFCVMJMHgwMDAwMDAJUGhhc2UgQyBmdW5kYW1lbnRhbCBhY3RpdmUgcG93ZXIgZ2FpbiBhZGp1
+c3QuCj4+IDB4NDNBMglDRldBVFRPUwlpbl9wb3dlcjBfcGhhc2VDX2Z1bmRhbWVudGFsX29mZnNl
+dAlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMgZnVuZGFtZW50YWwgYWN0aXZlIHBv
+d2VyIG9mZnNldCBhZGp1c3QgKEFERTc4Nzggb25seSkuCj4+IDB4NDNBMwlBRlZBUkdBSU4JaW5f
+cG93ZXJyZWFjdGl2ZTBfcGhhc2VBX2Z1bmRhbWVudGFsX3NjYWxlCVIvVwkyNAkzMiBaUFNFCVMJ
+MHgwMDAwMDAJUGhhc2UgQSBmdW5kYW1lbnRhbCByZWFjdGl2ZSBwb3dlciBnYWluIGFkanVzdCAo
+QURFNzg3OCBvbmx5KS4KPj4gMHg0M0E0CUFGVkFST1MJaW5fcG93ZXJyZWFjdGl2ZTBfcGhhc2VB
+X2Z1bmRhbWVudGFsX29mZnNldAlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEEgZnVu
+ZGFtZW50YWwgcmVhY3RpdmUgcG93ZXIgb2Zmc2V0IGFkanVzdCAoQURFNzg3OCBvbmx5KS4KPj4g
+MHg0M0E1CUJGVkFSR0FJTglpbl9wb3dlcnJlYWN0aXZlMF9waGFzZUJfZnVuZGFtZW50YWxfc2Nh
+bGUJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBCIGZ1bmRhbWVudGFsIHJlYWN0aXZl
+IHBvd2VyIGdhaW4gYWRqdXN0IChBREU3ODc4IG9ubHkpLgo+PiAweDQzQTYJQkZWQVJPUwlpbl9w
+b3dlcnJlYWN0aXZlMF9waGFzZUJfZnVuZGFtZW50YWxfb2Zmc2V0CVIvVwkyNAkzMiBaUFNFCVMJ
+MHgwMDAwMDAJUGhhc2UgQiBmdW5kYW1lbnRhbCByZWFjdGl2ZSBwb3dlciBvZmZzZXQgYWRqdXN0
+IChBREU3ODc4IG9ubHkpLgo+PiAweDQzQTcJQ0ZWQVJHQUlOCWluX3Bvd2VycmVhY3RpdmUwX3Bo
+YXNlQ19mdW5kYW1lbnRhbF9zY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMg
+ZnVuZGFtZW50YWwgcmVhY3RpdmUgcG93ZXIgZ2FpbiBhZGp1c3QgKEFERTc4Nzggb25seSkuCj4+
+IDB4NDNBOAlDRlZBUk9TCWluX3Bvd2VycmVhY3RpdmUwX3BoYXNlQ19mdW5kYW1lbnRhbF9vZmZz
+ZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBDIGZ1bmRhbWVudGFsIHJlYWN0aXZl
+IHBvd2VyIG9mZnNldCBhZGp1c3QgKEFERTc4Nzggb25seSkuCj4+IDB4NDNBOQlWQVRIUjEJcmVn
+aWlzdGVyX1ZBVEhSMQlSL1cJMjQJMzIgWlAJVQkweDAwMDAwMAlNb3N0IHNpZ25pZmljYW50IDI0
+IGJpdHMgb2YgVkFUSFJbNDc6MF0gdGhyZXNob2xkIHVzZWQgaW4gcGhhc2UgYXBwYXJlbnQgcG93
+ZXIgZGF0YXBhdGguCj4gRG8gbm90IGV4cG9zZSB0aGVzZSB0byB1c2Vyc3BhY2UuIFdoeSB3b3Vs
+ZCBpdCBjYXJlPwpCcmlsbGlhbnQsIHllcyB0aGVzZSBzaG91bGQgYmUgbW92ZWQgdGhlIHRoZSBE
+ZXZpY2VUcmVlIChEVCkKPiAKPj4gMHg0M0FBCVZBVEhSMAlyZWdpc3Rlcl9WQVRIUjAJUi9XCTI0
+CTMyIFpQCVUJMHgwMDAwMDAJTGVzcyBzaWduaWZpY2FudCAyNCBiaXRzIG9mIFZBVEhSWzQ3OjBd
+IHRocmVzaG9sZCB1c2VkIGluIHBoYXNlIGFwcGFyZW50IHBvd2VyIGRhdGFwYXRoLgo+PiAweDQz
+QUIJV1RIUjEJcmVnaXN0ZXJfV1RIUjEJUi9XCTI0CTMyIFpQCVUJMHgwMDAwMDAJTW9zdCBzaWdu
+aWZpY2FudCAyNCBiaXRzIG9mIFdUSFJbNDc6MF0gdGhyZXNob2xkIHVzZWQgaW4gcGhhc2UgdG90
+YWwvZnVuZGFtZW50YWwgYWN0aXZlIHBvd2VyIGRhdGFwYXRoLgo+PiAweDQzQUMJV1RIUjAJcmVn
+aXN0ZXJfV1RIUjAJUi9XCTI0CTMyIFpQCVUJMHgwMDAwMDAJTGVzcyBzaWduaWZpY2FudCAyNCBi
+aXRzIG9mIFdUSFJbNDc6MF0gdGhyZXNob2xkIHVzZWQgaW4gcGhhc2UgdG90YWwvZnVuZGFtZW50
+YWwgYWN0aXZlIHBvd2VyIGRhdGFwYXRoLgo+PiAweDQzQUQJVkFSVEhSMQlyZWdpc3Rlcl9WQVJU
+SFIxCVIvVwkyNAkzMiBaUAlVCTB4MDAwMDAwCU1vc3Qgc2lnbmlmaWNhbnQgMjQgYml0cyBvZiBW
+QVJUSFJbNDc6MF0gdGhyZXNob2xkIHVzZWQgaW4gcGhhc2UgdG90YWwvZnVuZGFtZW50YWwgcmVh
+Y3RpdmUgcG93ZXIgZGF0YXBhdGggKEFERTc4NTgsIEFERTc4NjgsIGFuZCBBREU3ODc4KS4KPj4g
+MHg0M0FFCVZBUlRIUjAJcmVnaXN0ZXJfVkFSVEhSMAlSL1cJMjQJMzIgWlAJVQkweDAwMDAwMAlM
+ZXNzIHNpZ25pZmljYW50IDI0IGJpdHMgb2YgVkFSVEhSWzQ3OjBdIHRocmVzaG9sZCB1c2VkIGlu
+IHBoYXNlIHRvdGFsL2Z1bmRhbWVudGFsIHJlYWN0aXZlIHBvd2VyIGRhdGFwYXRoIChBREU3ODU4
+LCBBREU3ODY4LCBhbmQgQURFNzg3OCkuCj4+IDB4NDNBRglSZXNlcnZlZAkJTi9BNAlOL0E0CU4v
+QTQJTi9BNAkweDAwMDAwMAlUaGlzIG1lbW9yeSBsb2NhdGlvbiBzaG91bGQgYmUga2VwdCBhdCAw
+eDAwMDAwMCBmb3IgcHJvcGVyIG9wZXJhdGlvbi4KPj4gMHg0M0IwCVZBTk9MT0FECXJlZ2lzdGVy
+X1ZBTk9MT0FECVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAwCU5vIGxvYWQgdGhyZXNob2xkIGlu
+IHRoZSBhcHBhcmVudCBwb3dlciBkYXRhcGF0aC4KPiBUaGlzIG9uZSBpcyBraW5kIG9mIGFuIGV2
+ZW50IHBhcmFtZXRlciwgYnV0IG9uZSB0aGF0IGNvbnRyb2xzIGludGVybmFsIGNyZWVwIHByZXZl
+bnRpb24uCj4gVGhpcyB3aWxsIGJlIGEgZHJpdmVyIHNwZWNpZmljIGF0dHIgSSB0aGluayBmb3Ig
+bm93LiBXZSBtYXkgYWRkIGl0IHRvIGluZm9fbWFzawo+IGxhdGVyIGlmIHdlIGdldCBsb3RzIG9m
+IG1ldGVyIGRyaXZlcnMuIAo+IFNvbWV0aGluZyBsaWtlCj4gaW5fcG93ZXIwX25vX2xvYWRfdGhy
+ZXNoIHRob3VnaCBJIGhhdmVuJ3QgcmVhbGx5IHRob3VnaHQgYWJvdXQgaXQgb3IgbG9va2VkCj4g
+Zm9yIHNpbWlsYXIgcHJlY2VkZW5jZS4KQWdhaW4sIHRoaXMgaXMgc29tZXRoaW5nIHRoYXQgd291
+bGQgYmUgc2V0IGFuZCBuZXZlciBjaGFuZ2VkLCBzbyBJIHRoaW5rIHRoaXMgc2hvdWxkIGJlIG1v
+dmVkIHRvIERULgo+IAo+IAo+PiAweDQzQjEJQVBOT0xPQUQJcmVnaXN0ZXJfQVBOT0xPQUQJUi9X
+CTI0CTMyIFpQU0UJUwkweDAwMDAwMDAJTm8gbG9hZCB0aHJlc2hvbGQgaW4gdGhlIHRvdGFsL2Z1
+bmRhbWVudGFsIGFjdGl2ZSBwb3dlciBkYXRhcGF0aC4KPiBpbl9hY3RpdmVwb3dlcjBfbm9fbG9h
+ZF90aHJlc2gKRFQKPj4gMHg0M0IyCVZBUk5PTE9BRAlyZWdpc3Rlcl9WQVJOT0xPQUQJUi9XCTI0
+CTMyIFpQU0UJUwkweDAwMDAwMDAJTm8gbG9hZCB0aHJlc2hvbGQgaW4gdGhlIHRvdGFsL2Z1bmRh
+bWVudGFsIHJlYWN0aXZlIHBvd2VyIGRhdGFwYXRoLiBMb2NhdGlvbiByZXNlcnZlZCBmb3IgQURF
+Nzg1NC4KPiBpbl9yZWFjdGl2cG93ZXIwX25vX2xvYWRfdGhyZXNoCkRUCj4gCj4+IDB4NDNCMwlW
+TEVWRUwJcmVnaXN0ZXJfVkxFVkVMCVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJUmVnaXN0ZXIg
+dXNlZCBpbiB0aGUgYWxnb3JpdGhtIHRoYXQgY29tcHV0ZXMgdGhlIGZ1bmRhbWVudGFsIGFjdGl2
+ZSBhbmQgcmVhY3RpdmUgcG93ZXJzIChBREU3ODc4IG9ubHkpLgo+IFRoaXMgb25lIGxvb2tzIGxp
+a2UgYSBjaGFyYWN0ZXJpc3RpYyBvZiB0aGUgY2lyY3VpdCBhdHRhY2hlZC4gIFNvIHNob3VsZCBi
+ZSBkZXZpY2V0cmVlCj4gb3Igc2ltaWxhciBhbmQgbm90IGV4cG9zZWQgdG8gdXNlcnNwYWNlLgpE
+VAo+IAo+PiAweDQzQjUJRElDT0VGRglyZWdpc3Rlcl9ESUNPRUZGCVIvVwkyNAkzMiBaUFNFCVMJ
+MHgwMDAwMDAwCVJlZ2lzdGVyIHVzZWQgaW4gdGhlIGRpZ2l0YWwgaW50ZWdyYXRvciBhbGdvcml0
+aG0uIElmIHRoZSBpbnRlZ3JhdG9yIGlzIHR1cm5lZCBvbiwgaXQgbXVzdCBiZSBzZXQgYXQgMHhG
+RjgwMDAuIEluIHByYWN0aWNlLCBpdCBpcyB0cmFuc21pdHRlZCBhcyAweEZGRjgwMDAuCj4gbm8g
+dXNlcnNwYWNlIGludGVyZmFjZS4KRFQKPiAKPj4gMHg0M0I2CUhQRkRJUwlyZWdpc3Rlcl9IUEZE
+SVMJUi9XCTI0CTMyIFpQCVUJMHgwMDAwMDAJRGlzYWJsZXMvZW5hYmxlcyB0aGUgSFBGIGluIHRo
+ZSBjdXJyZW50IGRhdGFwYXRoIChzZWUgVGFibGUgMzQpLgo+IFdlIGhhdmUgY29udHJvbHMgZm9y
+IGhpZ2ggcGFzcyBmaWx0ZXJzLCB5b3UnbGwgbmVlZCB0byBtYXAgb24gdG8gdGhlbS4KPiBEaXNh
+YmxlIGlzIHVzdWFsbHkgc2V0dGluZyAzREIgcG9pbnQgdG8gMCBJSVJDLgpEVAo+IAo+PiAweDQz
+QjgJSVNVTUxWTAlyZWdpc3Rlcl9JU1VNTFZMCVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJVGhy
+ZXNob2xkIHVzZWQgaW4gY29tcGFyaXNvbiBiZXR3ZWVuIHRoZSBzdW0gb2YgcGhhc2UgY3VycmVu
+dHMgYW5kIHRoZSBuZXV0cmFsIGN1cnJlbnQgKEFERTc4NjggYW5kIEFERTc4Nzggb25seSkuCj4g
+VGhpcyBpcyBhbiBldmVudCB0aHJlc2hvbGQgc28gbmVlZHMgdG8gbWFwIHRvIHRoZSBldmVudHMg
+aW5mcmFzdHJ1Y3R1cmUKPiBhcyBiZXN0IHdlIGNhbi4gIEl0J3MgYWN0dWFsbHkgYSBwYWluIHRv
+IGRlc2NyaWJlIHNvIG1heSBiZSBkZXZpY2Ugc3BlY2lmaWMgQUJJLgpEVC4gSeKAmW0gbm90IHN1
+cmUgd2h5IHRoaXMgd291bGQgYmUgbWFwcGVkIHRvIHRoZSBldmVudHMgaW5mcmFzdHJ1Y3R1cmU/
+IFRoZXJlIGlzIG5vIGV2ZW50IGdlbmVyYXRlZCBieSB0aGlzIHJlZ2lzdGVyLgo+IAo+PiAweDQz
+QkYJSVNVTQlyZWdpc3Rlcl9JU1VNCVIJMjgJMzIgWlAJUwlOL0E0CVN1bSBvZiBJQVdWLCBJQldW
+LCBhbmQgSUNXViByZWdpc3RlcnMgKEFERTc4NjggYW5kIEFERTc4Nzggb25seSkuCj4gU28gdGhp
+cyB3b3VsZCBiZSB1c2luZyBhIG1vZGlmaWVyIGZvciBBYW5kQmFuZEMgcGhhc2VzIChzaW1pbGFy
+IHRvIHRoZSBYYW5kWWFuWiBvbmVzIGZvciBtZW1zIGRldmljZXMgYW5kCj4gYSBkZXJpdmVkIHZh
+bHVlIG9mIHN1bSBJIHRoaW5rIFNvIHdvdWxkIGxvb2sgc29tZXRoaW5nIGxpa2UuCj4gaW5fY3Vy
+cmVudDBfcGhhc2VBJnBoYXNlQiZwaGFzZUNfc3VtIGFuZCB5ZXQgYW5vdGhlciBjaGFubmVsCj4g
+Cj4+IDB4NDNDMAlBSVJNUwlpbl9jdXJyZW50MF9waGFzZUFfcm1zCVIJMjQJMzIgWlAJUwlOL0E0
+CVBoYXNlIEEgY3VycmVudCBybXMgdmFsdWUuCj4+IDB4NDNDMQlBVlJNUwlpbl92b2x0YWdlMF9w
+aGFzZUFfcm1zCVIJMjQJMzIgWlAJUwlOL0E0CVBoYXNlIEEgdm9sdGFnZSBybXMgdmFsdWUuCj4+
+IDB4NDNDMglCSVJNUwlpbl9jdXJyZW50MF9waGFzZUJfcm1zCVIJMjQJMzIgWlAJUwlOL0E0CVBo
+YXNlIEIgY3VycmVudCBybXMgdmFsdWUuCj4+IDB4NDNDMwlCVlJNUwlpbl92b2x0YWdlMF9waGFz
+ZUJfcm1zCVIJMjQJMzIgWlAJUwlOL0E0CVBoYXNlIEIgdm9sdGFnZSBybXMgdmFsdWUuCj4+IDB4
+NDNDNAlDSVJNUwlpbl9jdXJyZW50MF9waGFzZUNfcm1zCVIJMjQJMzIgWlAJUwlOL0E0CVBoYXNl
+IEMgY3VycmVudCBybXMgdmFsdWUuCj4+IDB4NDNDNQlDVlJNUwlpbl92b2x0YWdlMF9waGFzZUNf
+cm1zCVIJMjQJMzIgWlAJUwlOL0E0CVBoYXNlIEMgdm9sdGFnZSBybXMgdmFsdWUuCj4+IDB4NDND
+NglOSVJNUwlpbl9jdXJyZW50MF9uZXV0cmFsX3JtcwlSCTI0CTMyIFpQCVMJTi9BNAlOZXV0cmFs
+IGN1cnJlbnQgcm1zIHZhbHVlIChBREU3ODY4IGFuZCBBREU3ODc4IG9ubHkpLgo+PiAweEUyMjgJ
+UnVuCXJlZ2lzdGVyX1J1bglSL1cJMTYJMTYJVQkweDAwMDAJUnVuIHJlZ2lzdGVyIHN0YXJ0cyBh
+bmQgc3RvcHMgdGhlIERTUC4gU2VlIHRoZSBEaWdpdGFsIFNpZ25hbCBQcm9jZXNzb3Igc2VjdGlv
+biBmb3IgbW9yZSBkZXRhaWxzLgo+IE5vdCBleHBvc2VkIHRvIHVzZXJzcGFjZS4KRFQKPiAKPj4g
+MHhFNDAwCUFXQVRUSFIJaW5fZW5lcmd5MF9waGFzZUFfcmF3CVIJMzIJMzIJUwkweDAwMDAwMDAw
+CVBoYXNlIEEgdG90YWwgYWN0aXZlIGVuZXJneSBhY2N1bXVsYXRpb24uCj4+IDB4RTQwMQlCV0FU
+VEhSCWluX2VuZXJneTBfcGhhc2VCX3JhdwlSCTMyCTMyCVMJMHgwMDAwMDAwMAlQaGFzZSBCIHRv
+dGFsIGFjdGl2ZSBlbmVyZ3kgYWNjdW11bGF0aW9uLgo+PiAweEU0MDIJQ1dBVFRIUglpbl9lbmVy
+Z3kwX3BoYXNlQ19yYXcJUgkzMgkzMglTCTB4MDAwMDAwMDAJUGhhc2UgQyB0b3RhbCBhY3RpdmUg
+ZW5lcmd5IGFjY3VtdWxhdGlvbi4KPj4gMHhFNDAzCUFGV0FUVEhSCWluX2VuZXJneTBfcGhhc2VB
+X2Z1bmRhbWVudGFsX3JhdwlSCTMyCTMyCVMJMHgwMDAwMDAwMAlQaGFzZSBBIGZ1bmRhbWVudGFs
+IGFjdGl2ZSBlbmVyZ3kgYWNjdW11bGF0aW9uIChBREU3ODc4IG9ubHkpLgo+PiAweEU0MDQJQkZX
+QVRUSFIJaW5fZW5lcmd5MF9waGFzZUJfZnVuZGFtZW50YWxfcmF3CVIJMzIJMzIJUwkweDAwMDAw
+MDAwCVBoYXNlIEIgZnVuZGFtZW50YWwgYWN0aXZlIGVuZXJneSBhY2N1bXVsYXRpb24gKEFERTc4
+Nzggb25seSkuCj4+IDB4RTQwNQlDRldBVFRIUglpbl9lbmVyZ3kwX3BoYXNlQ19mdW5kYW1lbnRh
+bF9yYXcJUgkzMgkzMglTCTB4MDAwMDAwMDAJUGhhc2UgQyBmdW5kYW1lbnRhbCBhY3RpdmUgZW5l
+cmd5IGFjY3VtdWxhdGlvbiAoQURFNzg3OCBvbmx5KS4KPj4gMHhFNDA2CUFWQVJIUglpbl9lbmVy
+Z3lyZWFjdGl2ZTBfcGhhc2VBX3JhdwlSCTMyCTMyCVMJMHgwMDAwMDAwMAlQaGFzZSBBIHRvdGFs
+IHJlYWN0aXZlIGVuZXJneSBhY2N1bXVsYXRpb24gKEFERTc4NTgsIEFERTc4NjgsIGFuZCBBREU3
+ODc4IG9ubHkpLgo+PiAweEU0MDcJQlZBUkhSCWluX2VuZXJneXJlYWN0aXZlMF9waGFzZUJfcmF3
+CVIJMzIJMzIJUwkweDAwMDAwMDAwCVBoYXNlIEIgdG90YWwgcmVhY3RpdmUgZW5lcmd5IGFjY3Vt
+dWxhdGlvbiAoQURFNzg1OCwgQURFNzg2OCwgYW5kIEFERTc4Nzggb25seSkuCj4+IDB4RTQwOAlD
+VkFSSFIJaW5fZW5lcmd5cmVhY3RpdmUwX3BoYXNlQ19yYXcJUgkzMgkzMglTCTB4MDAwMDAwMDAJ
+UGhhc2UgQyB0b3RhbCByZWFjdGl2ZSBlbmVyZ3kgYWNjdW11bGF0aW9uIChBREU3ODU4LCBBREU3
+ODY4LCBhbmQgQURFNzg3OCBvbmx5KS4KPj4gMHhFNDA5CUFGVkFSSFIJaW5fZW5lcmd5cmVhY3Rp
+dmUwX3BoYXNlQV9mdW5kYW1lbnRhbF9yYXcJUgkzMgkzMglTCTB4MDAwMDAwMDAJUGhhc2UgQSBm
+dW5kYW1lbnRhbCByZWFjdGl2ZSBlbmVyZ3kgYWNjdW11bGF0aW9uIChBREU3ODc4IG9ubHkpLgo+
+PiAweEU0MEEJQkZWQVJIUglpbl9lbmVyZ3lyZWFjdGl2ZTBfcGhhc2VCX2Z1bmRhbWVudGFsX3Jh
+dwlSCTMyCTMyCVMJMHgwMDAwMDAwMAlQaGFzZSBCIGZ1bmRhbWVudGFsIHJlYWN0aXZlIGVuZXJn
+eSBhY2N1bXVsYXRpb24gKEFERTc4Nzggb25seSkuCj4+IDB4RTQwQglDRlZBUkhSCWluX2VuZXJn
+eXJlYWN0aXZlMF9waGFzZUNfZnVuZGFtZW50YWxfcmF3CVIJMzIJMzIJUwkweDAwMDAwMDAwCVBo
+YXNlIEMgZnVuZGFtZW50YWwgcmVhY3RpdmUgZW5lcmd5IGFjY3VtdWxhdGlvbiAoQURFNzg3OCBv
+bmx5KS4KPj4gMHhFNDBDCUFWQUhSCWluX2VuZXJneWFwcGFyZW50MF9waGFzZUFfcmF3CVIJMzIJ
+MzIJUwkweDAwMDAwMDAwCVBoYXNlIEEgYXBwYXJlbnQgZW5lcmd5IGFjY3VtdWxhdGlvbi4KPj4g
+MHhFNDBECUJWQUhSCWluX2VuZXJneWFwcGFyZW50MF9waGFzZUJfcmF3CVIJMzIJMzIJUwkweDAw
+MDAwMDAwCVBoYXNlIEIgYXBwYXJlbnQgZW5lcmd5IGFjY3VtdWxhdGlvbi4KPj4gMHhFNDBFCUNW
+QUhSCWluX2VuZXJneWFwcGFyZW50MF9waGFzZUNfcmF3CVIJMzIJMzIJUwkweDAwMDAwMDAwCVBo
+YXNlIEMgYXBwYXJlbnQgZW5lcmd5IGFjY3VtdWxhdGlvbi4KPj4gMHhFNTAwCUlQRUFLCWluX2N1
+cnJlbnQwX3BlYWsJUgkzMgkzMglVCU4vQQlDdXJyZW50IHBlYWsgcmVnaXN0ZXIuIFNlZSBGaWd1
+cmUgNTAgYW5kIFRhYmxlIDM1IGZvciBkZXRhaWxzIGFib3V0IGl0cyBjb21wb3NpdGlvbi4KPiBP
+aCBnb29keS4gSSBoYXZlIG5vIGlkZWEgaG93IHdlIGV4cG9zZSB0aGUgd2hpY2ggcGhhc2UgZWxl
+bWVudCBvZiB0aGlzCj4gY2xlYW5seS4gIE9uZSBvcHRpb24gSSBzdXBwb3NlIGlzIHRvIGhhdmUg
+aW5fY3VycmVudDBfcGhhc2VBX3BlYWsgZXRjCj4gYW5kIGhhdmUgYWxsIGJ1dCB0aGUgY3VycmVu
+dCBwZWFrIHJldHVybiBhbiBlcnJvciB3aGVuIHJlYWQ/IEl0IGlzIGEgYml0Cj4gbmFzdHkgYnV0
+IG9ubHkgc28gbXVjaCB3ZSBjYW4gZG8gYW5kIGtlZXAgd2l0aCBhIGNvbnNpc3RlbnQgaW50ZXJm
+YWNlLgo+IAo+PiAweEU1MDEJVlBFQUsJaW5fdm9sdGFnZV9wZWFrCVIJMzIJMzIJVQlOL0EJVm9s
+dGFnZSBwZWFrIHJlZ2lzdGVyLiBTZWUgRmlndXJlIDUwIGFuZCBUYWJsZSAzNiBmb3IgZGV0YWls
+cyBhYm91dCBpdHMgY29tcG9zaXRpb24uCj4gU2FtZSBhcyBwZWFrLgo+IAo+PiAweEU1MDIJU1RB
+VFVTMAlyZWdpc3Rlcl9TVEFUVVMwCVIvVwkzMgkzMglVCU4vQQlJbnRlcnJ1cHQgU3RhdHVzIFJl
+Z2lzdGVyIDAuIFNlZSBUYWJsZSAzNy4KPj4gMHhFNTAzCVNUQVRVUzEJcmVnaXN0ZXJfU1RBVFVT
+MQlSL1cJMzIJMzIJVQlOL0EJSW50ZXJydXB0IFN0YXR1cyBSZWdpc3RlciAxLiBTZWUgVGFibGUg
+MzguCj4gTm8gdXNlcnNwYWNlIGludGVyZmFjZSBleGNlcHQgdmlhIGV2ZW50cyBpbnRlcmZhY2Ug
+b3IgZXJyb3IgcmVwb3J0cy4KSXNu4oCZdCB0aGlzIHRpZWQgdG8gdGhlIGV2ZW50IGZyYW1ld29y
+az8gTXkgdGhpbmtpbmcgaXMgdGhlIHVzZXIgaW50ZXJmYWNlIHNob3VsZCBiZSBub3RpZmllZCB3
+aGVuIGNlcnRhaW4gY29uZGl0aW9ucyBvY2N1ci4KPiAKPj4gMHhFNTA0CUFJTUFWCWluX2N1cnJl
+bnRBX21hdglSCTIwCTMyIFpQCVUJTi9BCVBoYXNlIEEgY3VycmVudCBtZWFuIGFic29sdXRlIHZh
+bHVlIGNvbXB1dGVkIGR1cmluZyBQU00wIGFuZCBQU00xIG1vZGVzIChBREU3ODY4IGFuZCBBREU3
+ODc4IG9ubHkpLgo+IFByb2JhYmx5IGEgbG9uZ2VyIG5hbWUgYXMgbWF2IGlzIGNyeXB0aWMuCj4g
+aW5fY3VycmVudDBfcGhhc2VBX21lYW5hYnNfcmF3IC0gaXQgY291bGQgaGF2ZSBhIHNjYWxlIGFu
+ZCBhbGwgc29ydHMgb2YgZnVuLgo+IFNvIEkgdGhpbmsgdGhpcyBuZWVkcyB0byBiZSB1c2luZyB0
+aGUgbmV3IGRlcml2ZWQgaW5mcmFzdHJ1Y3R1cmUgcHJvcG9zZWQgaGVyZQo+IHJhdGhlciB0aGFu
+IGJlaW5nIGFuIGluZm9fbWFzayBlbGVtZW50LgpUaGUgc2FtZSB3YXkgYSBrbm93bGVkZ2VhYmxl
+IHBlcnNvbiB1bmRlcnN0YW5kcyB3aGF0IFJNUyBtZWFucywgc28gdGhleSBzaG91bGQgYWxzbyB1
+bmRlcnN0YW5kIHdoYXQgTUFWIG1lYW5zLiAKPiAKPj4gMHhFNTA1CUJJTUFWCWluX2N1cnJlbnRC
+X21hdglSCTIwCTMyIFpQCVUJTi9BCVBoYXNlIEIgY3VycmVudCBtZWFuIGFic29sdXRlIHZhbHVl
+IGNvbXB1dGVkIGR1cmluZyBQU00wIGFuZCBQU00xIG1vZGVzIChBREU3ODY4IGFuZCBBREU3ODc4
+IG9ubHkpLgo+PiAweEU1MDYJQ0lNQVYJaW5fY3VycmVudENfbWF2CVIJMjAJMzIgWlAJVQlOL0EJ
+UGhhc2UgQyBjdXJyZW50IG1lYW4gYWJzb2x1dGUgdmFsdWUgY29tcHV0ZWQgZHVyaW5nIFBTTTAg
+YW5kIFBTTTEgbW9kZXMgKEFERTc4NjggYW5kIEFERTc4Nzggb25seSkuCj4+IDB4RTUwNwlPSUxW
+TAlyZWdpc3Rlcl9PSUxWTAlSL1cJMjQJMzIgWlAJVQkweEZGRkZGRglPdmVyY3VycmVudCB0aHJl
+c2hvbGQuCj4+IDB4RTUwOAlPVkxWTAlyZWdpc3Rlcl9PVkxWTAlSL1cJMjQJMzIgWlAJVQkweEZG
+RkZGRglPdmVydm9sdGFnZSB0aHJlc2hvbGQuCj4gVGhlc2UgcHJlc3VtYWJseSByZXN1bHQgaW4g
+aW50ZXJydXB0cz8gKEknbSBydW5uaW5nIG91dCBvZiB0aW1lIHNvIG5vdCBjaGVja2luZykKPiBJ
+biB3aGljaCBjYXNlIHN0YW5kYXJkIGV2ZW50IGludGVyZmFjZSBzaG91bGQgd29yay4KPiAKPj4g
+MHhFNTA5CVNBR0xWTAlyZWdpc3Rlcl9TQUdMVkwJUi9XCTI0CTMyIFpQCVUJMHgwMDAwMDAJVm9s
+dGFnZSBTQUcgbGV2ZWwgdGhyZXNob2xkLgo+IFRoYXQncyBhbm90aGVyIGV2ZW50IEkgdGhpbmvi
+gKYgCkFnYWluLCB0aGlzIGlzIG9ubHkgc2V0dGluZyB0aGUgdGhyZXNob2xkLCBub3QgZ2VuZXJh
+dGluZyBhbnkgZXZlbnQuIAo+IAo+PiAweEU1MEEJTUFTSzAJcmVnaXN0ZXJfTUFTSzAJUi9XCTMy
+CTMyCVUJMHgwMDAwMDAwMAlJbnRlcnJ1cHQgRW5hYmxlIFJlZ2lzdGVyIDAuIFNlZSBUYWJsZSAz
+OS4KPj4gMHhFNTBCCU1BU0sxCXJlZ2lzdGVyX01BU0sxCVIvVwkzMgkzMglVCTB4MDAwMDAwMDAJ
+SW50ZXJydXB0IEVuYWJsZSBSZWdpc3RlciAxLiBTZWUgVGFibGUgNDAuCj4gCj4+IDB4RTUwQwlJ
+QVdWCWluX2N1cnJlbnRBX2luc3RhbnRhbmVvdXMJUgkyNAkzMiBTRQlTCU4vQQlJbnN0YW50YW5l
+b3VzIHZhbHVlIG9mIFBoYXNlIEEgY3VycmVudC4KPj4gMHhFNTBECUlCV1YJaW5fY3VycmVudEJf
+aW5zdGFudGFuZW91cwlSCTI0CTMyIFNFCVMJTi9BCUluc3RhbnRhbmVvdXMgdmFsdWUgb2YgUGhh
+c2UgQiBjdXJyZW50Lgo+PiAweEU1MEUJSUNXVglpbl9jdXJyZW50Q19pbnN0YW50YW5lb3VzCVIJ
+MjQJMzIgU0UJUwlOL0EJSW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBDIGN1cnJlbnQuCj4+
+IDB4RTUwRglJTldWCWluX2N1cnJlbnROX2luc3RhbnRhbmVvdXMJUgkyNAkzMiBTRQlTCU4vQQlJ
+bnN0YW50YW5lb3VzIHZhbHVlIG9mIG5ldXRyYWwgY3VycmVudCAoQURFNzg2OCBhbmQgQURFNzg3
+OCBvbmx5KS4KPj4gMHhFNTEwCVZBV1YJaW5fdm9sdGFnZUFfaW5zdGFudGFuZW91cwlSCTI0CTMy
+IFNFCVMJTi9BCUluc3RhbnRhbmVvdXMgdmFsdWUgb2YgUGhhc2UgQSB2b2x0YWdlLgo+PiAweEU1
+MTEJVkJXVglpbl92b2x0YWdlQl9pbnN0YW50YW5lb3VzCVIJMjQJMzIgU0UJUwlOL0EJSW5zdGFu
+dGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBCIHZvbHRhZ2UuCj4+IDB4RTUxMglWQ1dWCWluX3ZvbHRh
+Z2VDX2luc3RhbnRhbmVvdXMJUgkyNAkzMiBTRQlTCU4vQQlJbnN0YW50YW5lb3VzIHZhbHVlIG9m
+IFBoYXNlIEMgdm9sdGFnZS4KPiBPSywgdGhpcyBpcyBnZXR0aW5nIHNpbGx5LiAgSSBwcmVzdW1l
+IHRoaXMgbWVhbnMgdGhlIHZhbHVlcyBhYm92ZSBhcmUgZmlsdGVyZWQgYW5kIHRoZXNlCj4gYXJl
+bid0PyAgSWYgc28geW91IG5lZWQgdG8gaGF2ZSBjaGFubmVscyBmb3IgYm90aCBhbmQgZGlmZmVy
+ZW50IGZpbHRlciB2YWx1ZXMuClRoZXNlIGFyZSB0aGUgYWN0dWFsIHNhbXBsZXMgZnJvbSB0aGUg
+QURDIGFuZCBub3QgYSBjYWxjdWxhdGVkIG1lYXN1cmVtZW50IG92ZXIgMTAvMTIgY3ljbGVzLiBU
+aGVzZSBhcmUgdGhlIHNhbXBsZXMgdGhhdCBhcmUgcGxhY2VkIGluIHRoZSBidWZmZXIuCj4gCj4+
+IDB4RTUxMwlBV0FUVAlpbl9wb3dlckFfaW5zdGFudGFuZW91cwlSCTI0CTMyIFNFCVMJTi9BCUlu
+c3RhbnRhbmVvdXMgdmFsdWUgb2YgUGhhc2UgQSB0b3RhbCBhY3RpdmUgcG93ZXIuCj4+IDB4RTUx
+NAlCV0FUVAlpbl9wb3dlckJfaW5zdGFudGFuZW91cwlSCTI0CTMyIFNFCVMJTi9BCUluc3RhbnRh
+bmVvdXMgdmFsdWUgb2YgUGhhc2UgQiB0b3RhbCBhY3RpdmUgcG93ZXIuCj4+IDB4RTUxNQlDV0FU
+VAlpbl9wb3dlckNfaW5zdGFudGFuZW91cwlSCTI0CTMyIFNFCVMJTi9BCUluc3RhbnRhbmVvdXMg
+dmFsdWUgb2YgUGhhc2UgQyB0b3RhbCBhY3RpdmUgcG93ZXIuCj4+IDB4RTUxNglBVkFSCWluX3Bv
+d2VycmVhY3RpdmVBX2luc3RhbnRhbmVvdXMJUgkyNAkzMiBTRQlTCU4vQQlJbnN0YW50YW5lb3Vz
+IHZhbHVlIG9mIFBoYXNlIEEgdG90YWwgcmVhY3RpdmUgcG93ZXIgKEFERTc4NTgsIEFERTc4Njgs
+IGFuZCBBREU3ODc4IG9ubHkpLgo+PiAweEU1MTcJQlZBUglpbl9wb3dlcnJlYWN0aXZlQl9pbnN0
+YW50YW5lb3VzCVIJMjQJMzIgU0UJUwlOL0EJSW5zdGFudGFuZW91cyB2YWx1ZSBvZiBQaGFzZSBC
+IHRvdGFsIHJlYWN0aXZlIHBvd2VyIChBREU3ODU4LCBBREU3ODY4LCBhbmQgQURFNzg3OCBvbmx5
+KS4KPj4gMHhFNTE4CUNWQVIJaW5fcG93ZXJyZWFjdGl2ZUNfaW5zdGFudGFuZW91cwlSCTI0CTMy
+IFNFCVMJTi9BCUluc3RhbnRhbmVvdXMgdmFsdWUgb2YgUGhhc2UgQyB0b3RhbCByZWFjdGl2ZSBw
+b3dlciAoQURFNzg1OCwgQURFNzg2OCwgYW5kIEFERTc4Nzggb25seSkuCj4+IDB4RTUxOQlBVkEJ
+aW5fcG93ZXJhcHBhcmVudEFfaW5zdGFudGFuZW91cwlSCTI0CTMyIFNFCVMJTi9BCUluc3RhbnRh
+bmVvdXMgdmFsdWUgb2YgUGhhc2UgQSBhcHBhcmVudCBwb3dlci4KPj4gMHhFNTFBCUJWQQlpbl9w
+b3dlcmFwcGFyZW50Ql9pbnN0YW50YW5lb3VzCVIJMjQJMzIgU0UJUwlOL0EJSW5zdGFudGFuZW91
+cyB2YWx1ZSBvZiBQaGFzZSBCIGFwcGFyZW50IHBvd2VyLgo+PiAweEU1MUIJQ1ZBCWluX3Bvd2Vy
+YXBwYXRlbnRDX2luc3RhbnRhbmVvdXMJUgkyNAkzMiBTRQlTCU4vQQlJbnN0YW50YW5lb3VzIHZh
+bHVlIG9mIFBoYXNlIEMgYXBwYXJlbnQgcG93ZXIuCj4gU2FtZSBmb3IgYWxsIG9mIHRoZXNlLgo+
+IAo+PiAweEU1MUYJQ0hFQ0tTVU0JcmVnaXN0ZXJfQ0hFQ0tTVU0JUgkzMgkzMglVCTB4MzM2NjY3
+ODcJQ2hlY2tzdW0gdmVyaWZpY2F0aW9uLiBTZWUgdGhlIENoZWNrc3VtIFJlZ2lzdGVyIHNlY3Rp
+b24gZm9yIGRldGFpbHMuCj4gTm90IGV4cG9zZWQgdG8gdXNlcnNwYWNlLgpZZWFoLCB0aGlzIGlz
+IG9ubHkgdXNlZCB0byBjaGVjayB0aGUgY29tbXVuaWNhdGlvbiBmb3IgZXJyb3JzLgo+IAo+PiAw
+eEU1MjAJVk5PTQlpbl92b2x0YWdlX3Jtc19ub21pbmFsCVIvVwkyNAkzMiBaUAlTCTB4MDAwMDAw
+CU5vbWluYWwgcGhhc2Ugdm9sdGFnZSBybXMgdXNlZCBpbiB0aGUgYWx0ZXJuYXRpdmUgY29tcHV0
+YXRpb24gb2YgdGhlIGFwcGFyZW50IHBvd2VyLiBXaGVuIHRoZSBWTk9NeEVOIGJpdCBpcyBzZXQs
+IHRoZSBhcHBsaWVkIHZvbHRhZ2UgaW5wdXQgaW4gdGhlIGNvcnJlc3BvbmRpbmcgcGhhc2UgaXMg
+aWdub3JlZCBhbmQgYWxsIGNvcnJlc3BvbmRpbmcgcm1zIHZvbHRhZ2UgaW5zdGFuY2VzIGFyZSBy
+ZXBsYWNlZCBieSB0aGUgdmFsdWUgaW4gdGhlIFZOT00gcmVnaXN0ZXIuCj4gV2h5IHdvdWxkIHRo
+aXMgYmUgZG9uZT8gIFNvdW5kcyBsaWtlIHNvbWV0aGluZyB0aGF0IGlzIGEgY2lyY3VpdCBkZXNp
+Z24gdGltZQo+IGRlY2lzaW9uIHNvIGEgam9iIGZvciBEVCB0byBtZS4KWWVhaCwgSSBhZ3JlZS4K
+PiAKPj4gMHhFNjAwCVBIU1RBVFVTCWluX2N1cnJlbnRfcGhhc2VfcGVhawlSCTE2CTE2CVUJTi9B
+CVBoYXNlIHBlYWsgcmVnaXN0ZXIuIFNlZSBUYWJsZSA0MS4KPj4gMHhFNjAxCUFOR0xFMAlyZWdp
+c3Rlcl9BTkdMRTAJUgkxNgkxNglVCU4vQQlUaW1lIERlbGF5IDAuIFNlZSB0aGUgVGltZSBJbnRl
+cnZhbCBCZXR3ZWVuIFBoYXNlcyBzZWN0aW9uIGZvciBkZXRhaWxzLgo+PiAweEU2MDIJQU5HTEUx
+CXJlZ2lzdGVyX0FOR0xFMQlSCTE2CTE2CVUJTi9BCVRpbWUgRGVsYXkgMS4gU2VlIHRoZSBUaW1l
+IEludGVydmFsIEJldHdlZW4gUGhhc2VzIHNlY3Rpb24gZm9yIGRldGFpbHMuCj4+IDB4RTYwMwlB
+TkdMRTIJcmVnaXN0ZXJfQU5HTEUyCVIJMTYJMTYJVQlOL0EJVGltZSBEZWxheSAyLiBTZWUgdGhl
+IFRpbWUgSW50ZXJ2YWwgQmV0d2VlbiBQaGFzZXMgc2VjdGlvbiBmb3IgZGV0YWlscy4KPiBIbW0u
+IE1vcmUgZnVuLiAgVGhlc2UgYXJlIGRlcml2ZWQgdmFsdWVzIGJldHdlZW4gdG8gcGhhc2UgbWVh
+c3VyZW1lbnRzLiAKPiBUaGUgcGhhc2UgYXMgYSBtb2RpZmllciBmYWxscyBkb3duIGEgYml0IGhl
+cmUgLSBpZiB3ZSBoYWQganVzdCB0cmVhdGVkCj4gdGhlbSBhcyBjaGFubmVscyB3ZSBjb3VsZCBo
+YXZlIGRvbmUgdGhpcyBhIGRpZmZlcmVudGlhbCBhbmdsZSBjaGFubmVsLgo+IFJpZ2h0IG5vdyBJ
+J20gbm90IHN1cmUgaG93IHdlIGRvIHRoaXMsIGNvdWxkIGRvIGl0IGFzIGEgZGVyaXZlZCB2YWx1
+ZXMgc28gc29tZXRoaW5nIGxpa2UKPiBpbl9hbmdsZTBfcGhhc2VBJnBoYXNlQl9kaWZmX3JhdyBl
+dGMgYnV0IHRoYXQgZmVlbHMgb2RkLgo+IFRoaXMgb25lIG5lZWRzIG1vcmUgdGhvdWdodC4KPiAK
+Pj4gMHhFNjA0IHRvIDB4RTYwNglSZXNlcnZlZAkJCQkJCQlUaGVzZSBhZGRyZXNzZXMgc2hvdWxk
+IG5vdCBiZSB3cml0dGVuIGZvciBwcm9wZXIgb3BlcmF0aW9uLgo+PiAweEU2MDcJUEVSSU9ECXJl
+Z2lzdGVyX1BFUklPRAlSCTE2CTE2CVUJTi9BCU5ldHdvcmsgbGluZSBwZXJpb2QuCj4gU3VwZXJm
+aWNpYWxseSB0aGlzIHNvdW5kcyBsaWtlIGEgY2hhbm5lbCBmcmVlIGVsZW1lbnQgc28gc2hhcmVk
+X2J5X2FsbC4KPiAKPj4gMHhFNjA4CVBITk9MT0FECXJlZ2lzdGVyX1BITk9MT0FECVIJMTYJMTYJ
+VQlOL0EJUGhhc2Ugbm8gbG9hZCByZWdpc3Rlci4gU2VlIFRhYmxlIDQyLgo+IEhtbS4gU28gdGhp
+cyBpcyBraW5kIG9mIGEgc2V0IG9mIGV2ZW50cyB3aXRoIGJ1dCB3aXRob3V0IEkgdGhpbmsgYW4g
+aW50ZXJydXB0Lgo+IE9kZC4KPiAKPj4gMHhFNjBDCUxJTkVDWUMJcmVnaXN0ZXJfTElORUNZQwlS
+L1cJMTYJMTYJVQkweEZGRkYJTGluZSBjeWNsZSBhY2N1bXVsYXRpb24gbW9kZSBjb3VudC4KPiBp
+bl9jb3VudDBfcmF3IHByb2JhYmx5IHRob3VnaCBpdCdzIGEgYml0IG9mIGEgc3RyZXRjaC4KPiAK
+Pj4gMHhFNjBECVpYVE9VVAlyZWdpc3Rlcl9aWFRPVVQJUi9XCTE2CTE2CVUJMHhGRkZGCVplcm8t
+Y3Jvc3NpbmcgdGltZW91dCBjb3VudC4KPiBUaGlzIGlzIGdvaW5nIHRvIGJlIGFub3RoZXIgdG9w
+IGxldmVsIG9uZSBJIHRoaW5rIGFuZCBkZXZpY2Ugc3BlY2lmaWMgZm9yIG5vdy4KPiAKPj4gMHhF
+NjBFCUNPTVBNT0RFCXJlZ2lzdGVyX0NPTVBNT0RFCVIvVwkxNgkxNglVCTB4MDFGRglDb21wdXRh
+dGlvbi1tb2RlIHJlZ2lzdGVyLiBTZWUgVGFibGUgNDMuCj4gSWYgdGhlcmUgaXMgc3R1ZmYgdG8g
+Y29udHJvbCBpbiBoZXJlIGl0IG5lZWQgYnJlYWtpbmcgb3V0Lgo+IAo+PiAweEU2MEYJR2Fpbgly
+ZWdpc3Rlcl9HYWluCVIvVwkxNgkxNglVCTB4MDAwMAlQR0EgZ2FpbnMgYXQgQURDIGlucHV0cy4g
+U2VlIFRhYmxlIDQ0Lgo+IE9oIGdvb2R5IGFub3RoZXIgc2NhbGUgdmFsdWUuIE5lZWRzIGJyZWFr
+aW5nIHVwIGludG8gc2VwYXJhdGUgY29udHJvbHMuCj4gRG8gdGhlc2UgZGlyZWN0bHkgZWZmZWN0
+IHRoZSBtZWFzdXJlZCBvdXRwdXQgdm9sdGFnZSBldGM/IElmIHRoZXkgZG8gdGhlbgo+IEknbSBu
+b3Qgc3VyZSBob3cgdG8gc2VwYXJhdGUgdGhlIHR3byBnYWlucywgdGhlcmUgb3VnaHQgdG8gYmUg
+YSAncmlnaHQnCj4gYW5zd2VyLiAgSWYgdGhpcyBpcyBhYm91dCBtYXRjaGluZyB0byB0aGUgY2ly
+Y3VpdCBwcmVzZW50IHRoZW4gdGhleQo+IHNob3VsZCBwcm9iYWJseSBiZSBjb21pbmcgZnJvbSBE
+VCBvciBzaW1pbGxhci4KPiAKPiAKPj4gMHhFNjEwCUNGTU9ERQlyZWdpc3Rlcl9DRk1PREUJUi9X
+CTE2CTE2CVUJMHgwRTg4CUNGeCBjb25maWd1cmF0aW9uIHJlZ2lzdGVyLiBTZWUgVGFibGUgNDUu
+Cj4+IDB4RTYxMQlDRjFERU4JcmVnaXN0ZXJfQ0YxREVOCVIvVwkxNgkxNglVCTB4MDAwMAlDRjEg
+ZGVub21pbmF0b3IuCj4+IDB4RTYxMglDRjJERU4JcmVnaXN0ZXJfQ0YyREVOCVIvVwkxNgkxNglV
+CTB4MDAwMAlDRjIgZGVub21pbmF0b3IuCj4+IDB4RTYxMwlDRjNERU4JcmVnaXN0ZXJfQ0YzREVO
+CVIvVwkxNgkxNglVCTB4MDAwMAlDRjMgZGVub21pbmF0b3IuCj4gQXJlIHRoZXNlIHRoaW5ncyB0
+aGF0IHNob3VsZCBiZSBpbiBEVD8gIExvb2sgdmVyeSBxdWlja2x5IGxpa2UgdGhleSBhcmUgdG9k
+byB3aXRoIG90aGVyIGNpcmN1aXRzIG5lYXJieS4KQWdyZWVkCj4gCj4+IDB4RTYxNAlBUEhDQUwJ
+cmVnaXN0ZXJfQVBIQ0FMCVIvVwkxMAkxNiBaUAlTCTB4MDAwMAlQaGFzZSBjYWxpYnJhdGlvbiBv
+ZiBQaGFzZSBBLiBTZWUgVGFibGUgNDYuCj4+IDB4RTYxNQlCUEhDQUwJcmVnaXN0ZXJfQlBIQ0FM
+CVIvVwkxMAkxNiBaUAlTCTB4MDAwMAlQaGFzZSBjYWxpYnJhdGlvbiBvZiBQaGFzZSBCLiBTZWUg
+VGFibGUgNDYuCj4+IDB4RTYxNglDUEhDQUwJcmVnaXN0ZXJfX0NQSENBTAlSL1cJMTAJMTYgWlAJ
+UwkweDAwMDAJUGhhc2UgY2FsaWJyYXRpb24gb2YgUGhhc2UgQy4gU2VlIFRhYmxlIDQ2Lgo+IEkn
+bSBub3QgYWN0dWFsbHkgc3VyZSBob3cgeW91IHdvdWxkIHNldCB0aGVzZS4gIFBlciBjaXJjdWl0
+IGRlc2lnbj8KVGhlcmUgc2hvdWxkIGJlIHNvbWUgYmFzZSBjYWxpYnJhdGlvbiBzdG9yZWQgaW4g
+RFQgYW5kIGZpbmUgdHVuZWQgY2FsaWJyYXRpb24gc3RvcmVkIGluIGFuIElOSSBmaWxlIG9yIGN1
+c3RvbSBlZXByb20gb2YgbnZyYW0uIAo+IAo+PiAweEU2MTcJUEhTSUdOCXJlZ2lzdGVyX1BIU0lH
+TglSCTE2CTE2CVUJTi9BCVBvd2VyIHNpZ24gcmVnaXN0ZXIuIFNlZSBUYWJsZSA0Ny4KPj4gMHhF
+NjE4CUNPTkZJRwlyZWdpc3Rlcl9DT05GSUcJUi9XCTE2CTE2CVUJMHgwMDAwCUFERTc4NzggY29u
+ZmlndXJhdGlvbiByZWdpc3Rlci4gU2VlIFRhYmxlIDQ4Lgo+PiAweEU3MDAJTU1PREUJcmVnaXN0
+ZXJfX01NT0RFCVIvVwk4CTgJVQkweDFDCU1lYXN1cmVtZW50IG1vZGUgcmVnaXN0ZXIuIFNlZSBU
+YWJsZSA0OS4KPj4gMHhFNzAxCUFDQ01PREUJcmVnaXN0ZXJfX0FDQ01PREUJUi9XCTgJOAlVCTB4
+MDAJQWNjdW11bGF0aW9uIG1vZGUgcmVnaXN0ZXIuIFNlZSBUYWJsZSA1MC4KPj4gMHhFNzAyCUxD
+WUNNT0RFCXJlZ2lzdGVyX0xDWUNNT0RFCVIvVwk4CTgJVQkweDc4CUxpbmUgYWNjdW11bGF0aW9u
+IG1vZGUgYmVoYXZpb3IuIFNlZSBUYWJsZSA1Mi4KQWxsIHRvIERUCj4+IDB4RTcwMwlQRUFLQ1lD
+CXJlZ2lzdGVyX1BFQUtDWUMJUi9XCTgJOAlVCTB4MDAJUGVhayBkZXRlY3Rpb24gaGFsZiBsaW5l
+IGN5Y2xlcy4KPj4gMHhFNzA0CVNBR0NZQwlyZWdpc3Rlcl9TQUdDWUMJUi9XCTgJOAlVCTB4MDAJ
+U0FHIGRldGVjdGlvbiBoYWxmIGxpbmUgY3ljbGVzLgo+IFNvbWUgb2YgdGhlc2UgYXJlIGV2ZW50
+IGNvbnRyb2xzLiBNYXAgdGhlbSBhcyBzdWNoLgpBZ3JlZWQKPiAKPj4gMHhFNzA1CUNGQ1lDCXJl
+Z2lzdGVyX0NGQ1lDCVIvVwk4CTgJVQkweDAxCU51bWJlciBvZiBDRiBwdWxzZXMgYmV0d2VlbiB0
+d28gY29uc2VjdXRpdmUgZW5lcmd5IGxhdGNoZXMuIFNlZSB0aGUgU3luY2hyb25pemluZyBFbmVy
+Z3kgUmVnaXN0ZXJzIHdpdGggQ0Z4IE91dHB1dHMgc2VjdGlvbi4KPj4gMHhFNzA2CUhTRENfQ0ZH
+CXJlZ2lzdGVyX0hTRENfQ0ZHCVIvVwk4CTgJVQkweDAwCUhTREMgY29uZmlndXJhdGlvbiByZWdp
+c3Rlci4gU2VlIFRhYmxlIDUzLgpEVAo+PiAweEU3MDcJVmVyc2lvbglyZWdpc3Rlcl9WZXJzaW9u
+CVIJOAk4CVUJCVZlcnNpb24gb2YgZGllLgpNaWdodCB3YW50IHRvIGV4cG9zZSB0aGlzIHRvIFVz
+ZXIgU3BhY2UgYXMgdGhlcmUgY291bGQgYmUgZGlmZmVyZW5jZXMgYmV0d2VlbiBkaWUgdmVyc2lv
+bgppbl92ZXJzaW9uMF9yYXcKPj4gMHhFQkZGCVJlc2VydmVkCQkJOAk4CQkJVGhpcyBhZGRyZXNz
+IGNhbiBiZSB1c2VkIGluIG1hbmlwdWxhdGluZyB0aGUgU1MvSFNBIHBpbiB3aGVuIFNQSSBpcyBj
+aG9zZW4gYXMgdGhlIGFjdGl2ZSBwb3J0LiBTZWUgdGhlIFNlcmlhbCBJbnRlcmZhY2VzIHNlY3Rp
+b24gZm9yIGRldGFpbHMuCj4+IDB4RUMwMAlMUE9JTFZMCXJlZ2lzdGVyX0xQT0lMVkwJUi9XCTgJ
+OAlVCTB4MDcJIk92ZXJjdXJyZW50IHRocmVzaG9sZCB1c2VkIGR1cmluZyBQU00yIG1vZGUgKEFE
+RTc4NjggYW5kIEFERTc4NzgKPj4gb25seSkuIFNlZSBUYWJsZSA1NCBpbiB3aGljaCB0aGUgcmVn
+aXN0ZXIgaXMgZGV0YWlsZWQuIgo+PiAweEVDMDEJQ09ORklHMglyZWdpc3Rlcl9DT05GSUcyCVIv
+Vwk4CTgJVQkweDAwCUNvbmZpZ3VyYXRpb24gcmVnaXN0ZXIgdXNlZCBkdXJpbmcgUFNNMSBtb2Rl
+LiBTZWUgVGFibGUgNTUuCkFsbCB0byBEVAo+IAo+IEFzIHlvdSBjYW4gZ3Vlc3MgSSB3YXMgcnVu
+bmluZyBvdXQgb2Ygc3RhbWluYSB0b3dhcmRzIHRoZSBlbmQgb2YgdGhhdC4KPiAKPiBJJ20gbm90
+IHRvdGFsbHkgc3VyZSBvZiB0aGUgYW5zd2VyIEkgcHJvdmlkZWQuIEl0IG1heSB0YWtlIHNvbWUg
+bW9yZSB0aG91Z2h0Lgo+IElkZWFsbHkgc29tZSBvdGhlcnMgd2lsbCBnaXZlIGlucHV0IG9uIHRo
+aXMgcXVlc3Rpb24uCgpUaGFuayB5b3UgYWdhaW4gZm9yIGFsbCB5b3VyIGZlZWRiYWNrLiBJ4oCZ
+bGwgZ2VuZXJhdGUgYSBuZXcgbGlzdCBhbmQgc2VuZCBpdCBuZXh0LgoKUmVnYXJkcywKSm9obgo+
+IAo+IEpvbmF0aGFuCj4+IAo+PiBSZWdhcmRzLAo+PiBKb2huCj4+IAo+PiAKPj4gCj4+IAo+PiAK
+Pj4+IE9uIE1hciAxNywgMjAxOCwgYXQgMTozMCBQTSwgSm9uYXRoYW4gQ2FtZXJvbiA8amljMjNA
+a2VybmVsLm9yZz4gd3JvdGU6Cj4+PiAKPj4+IE9uIFdlZCwgMTQgTWFyIDIwMTggMjM6MTI6MDIg
+LTA3MDAKPj4+IEpvaG4gU3luZSA8am9objM5MDlAZ21haWwuY29tPiB3cm90ZToKPj4+IAo+Pj4+
+IEhpIEpvbmF0aGFuLAo+Pj4+IAo+Pj4+IEkgaGF2ZSBiZWVuIGxvb2tpbmcgYXQgdGhlIElJTyBB
+QkkgZG9jcyBhbmQgaWYgSSB1bmRlcnN0YW5kCj4+Pj4gY29ycmVjdGx5LCB0aGUgaWRlYSBpcyB0
+byB1c2UgY29uc2lzdGVudCBuYW1pbmcgY29udmVudGlvbnM/IFNvIGZvcgo+Pj4+IGV4YW1wbGUs
+IGxvb2tpbmcgYXQgdGhlIEFERTc4NTQgZGF0YXNoZWV0LCB0aGUgbmFtaW5nIG1hdGNoaW5nIHRo
+ZQo+Pj4+IEFERTc4NTQgcmVnaXN0ZXJzIHdvdWxkIGJlIGFzIGZvbGxvd3M6ICAKPj4+IAo+Pj4g
+V2VsY29tZSB0byBvbmUgb2YgdGhlIGJpZyByZWFzb25zIG5vIG9uZSB0aWRpZWQgdGhlc2UgZHJp
+dmVycwo+Pj4gdXAgb3JpZ2luYWxseS4gIFN0aWxsIHdlIGhhdmUgbW92ZWQgb24gc29tZXdoYXQg
+c2luY2UgdGhlbgo+Pj4gc28gc2ltaWxhciBjaXJjdW1zdGFuY2VzIGhhdmUgY29tZSB1cCBpbiBv
+dGhlciB0eXBlcyBvZiBzZW5zb3IuCj4+PiAKPj4+PiAKPj4+PiB7ZGlyZWN0aW9ufV97dHlwZX1f
+e2luZGV4fV97bW9kaWZpZXJ9X3tpbmZvX21hc2t9Cj4+Pj4gCj4+Pj4gQUlHQUlOCS0JSW5fY3Vy
+cmVudF9hX2dhaW4gIAo+Pj4gT3RoZXIgdGhhbiB0aGUgZmFjdCB0aGF0IGdhaW4gaXNuJ3QgYW4g
+QUJJIGVsZW1lbnQgYW5kIHRoYXQgaW5kZXgKPj4+IGRvZXNuJ3QgaGF2ZQo+Pj4gXyBiZWZvcmUg
+aXQgdGhhdCBpcyByaWdodC4KPj4+IGluX3ZvbHRhZ2VBX3NjYWxlCj4+PiAKPj4+IFRoYXQgd2Fz
+IGEgd2VpcmQgcXVpcmsgYSBsb25nIHRpbWUgYmFjayB3aGljaCB3ZSBzaG91bGQgcHJvYmFibHkK
+Pj4+IG5vdCBoYXZlIGRvbmUgKGNvcGllZCBpdCBmcm9tIGh3bW9uKQo+Pj4gCj4+Pj4gQVZHQUlO
+CS0JaW5fdm9sdGFnZV9hX2dhaW4KPj4+PiBCSUdBSU4JLQlpbl9jdXJyZW50X2JfZ2Fpbgo+Pj4+
+IEJWR0FJTgktCWluX3ZvbHRhZ2VfYl9nYWluCj4+Pj4g4oCUCj4+Pj4gSG93IGRvIHdlIHJlcHJl
+c2VudCB0aGUgcm1zIGFuZCBvZmZzZXQKPj4+PiBBSVJNU09TCS0JaW5fY3VycmVudF9hX3Jtc29m
+ZnNldAo+Pj4+IEFWUk1TT1MJLQlpbl92b2x0YWdlX2Ffcm1zb2Zmc2V0ICAKPj4+IAo+Pj4gUmln
+aHQgbm93IHdlIGNhbid0IHVuZm9ydHVuYXRlbHkgdGhvdWdoIHRoaXMgb25lIGlzIGVhc2llciB0
+byBmaXguCj4+PiBXZSBhbHJlYWR5IGhhdmUgbW9kaWZpZXJzIGZvciBtdWx0aSBheGlzIGRldmlj
+ZXMgZG9pbmcgc3VtX3NxdWFyZWQKPj4+IHNvIGFkZCBvbmUgb2YgdGhvc2UgZm9yIHJvb3RfbWVh
+bl9zcXVhcmUgLSB0aGlzIG9uZSBpcyB3ZWxsIGtub3duCj4+PiBlbm91Z2ggdGhhdCBybXMgaXMg
+ZmluZSBpbiB0aGUgc3RyaW5nLgo+Pj4gCj4+PiBJdCdzIGEgZWZmZWN0aXZlbHkgYSBkaWZmZXJl
+bnQgY2hhbm5lbCBiZSBpdCBvbmUgZGVyaXZlZCBmcm9tIGEgc2ltcGxlCj4+PiBvbmUuICBUaGlz
+IGlzIGdvaW5nIHRvIGdldCB0cmlja3kgaG93ZXZlciBhcyB3ZSB3b3VsZCBub3JtYWxseSB1c2UK
+Pj4+IG1vZGlmaWVyIHRvIHNwZWNpYWxpc2UgYSBjaGFubmVsIHR5cGUgLSB0aG91Z2h0cyBvbiB0
+aGlzIGJlbG93Lgo+Pj4gCj4+Pj4g4oCUCj4+Pj4gSGVyZSBJIGRvbuKAmXQgdW5kZXJzdGFuZCBo
+b3cgdG8gcmVwcmVzZW50IGJvdGggdGhlIHBoYXNlIGFuZCB0aGUgYWN0aXZlL3JlYWN0aXZlL2Fw
+cGFyZW50IHBvd2VyIGNvbXBvbmVudHMuIERvIHdlIGNvbWJpbmUgdGhlIHBoYXNlIGFuZCBxdWFk
+cmF0dXJlIHBhcnQgbGlrZSB0aGlzCj4+Pj4gQVZBR0FJTgkJLQlpbl9wb3dlcl9hX2dhaW4JCQkJ
+LyogYXBwYXJlbnQgcG93ZXIgKi8KPj4+PiDigJQKPj4+PiBBV0dBSU4JCS0JaW5fcG93ZXJfYWlf
+Z2FpbgkJCQkvKiBhY3RpdmUgcG93ZXIgKi8gIAo+Pj4gQW5kIHRoYXQgaXMgdGhlIHByb2JsZW0u
+ICBIb3cgZG8gd2UgcmVwcmVzZW50IHRoZSB2YXJpb3VzIHBvd2VyIHR5cGVzLgo+Pj4gSG1tLiBX
+ZSBjb3VsZCBkbyBpdCB3aXRoIG1vZGlmaWVycyBidXQgYWJvdmUgd2Ugc2hvdyB0aGF0IHdlIGhh
+dmUgYWxyZWFkeSB1c2VkIHRoZW0uCj4+PiAKPj4+IEl0IHdvdWxkIGJlIGVhc3kgZW5vdWdoIHRv
+IGFkZCB5ZXQgYW5vdGhlciBmaWVsZCB0byB0aGUgY2hhbm5lbCBzcGVjIHRvIHNwZWNpZnkKPj4+
+IHRoaXMgYnV0IHRoZXJlIGlzIGEgcHJvYmxlbSAtIEV2ZW50cy4gIFRoZSBldmVudCBmb3JtYXQg
+aXMgYWxyZWFkeSBwcmV0dHkgZnVsbAo+Pj4gc28gd2hlcmUgZG8gd2UgcHV0IHRoaXMgZXh0cmEg
+ZWxlbWVudCBpZiB3ZSBuZWVkIHRvIGRlZmluZSBhIGNoYW5uZWwgc2VwYXJhdGVkCj4+PiBvbmx5
+IGJ5IGl0Lgo+Pj4gCj4+PiBPbmUgdGhvdWdodCBpcyB3ZSBjb3VsZCBpbnN0ZWFkIGRlZmluZSB0
+aGVzZSBhcyBkaWZmZXJlbnQgdG9wIGxldmVsCj4+PiBJSU9fQ0hBTl9UWVBFUyBpbiBhIHNpbWls
+YXIgZmFzaGlvbiB0byB3ZSBkbyBmb3IgcmVsYXRpdmUgaHVtaWRpdHkgdnMKPj4+IHRoZSBwcm9w
+b3NlZCBhYnNvbHV0ZSBodW1pZGl0eS4KPj4+IAo+Pj4gaW5fcG93ZXJyZWFjdGl2ZUFfc2NhbGUK
+Pj4+IGluX3Bvd2VyYWN0aXZjZUFfc2NhbGUKPj4+IChvciBpbl9wb3dlcnJlYWxBX3NjYWxlIHRv
+IG1hdGNoIHdpdGggd2hhdCBJIGdvdCB0YXVnaHQgeWVhcnMgYWdvPykKPj4+IAo+Pj4gSSBwcmVz
+dW1lIHdlIGtlZXAgaW5fcG93ZXJBX3NjYWxlIGV0YyBmb3IgdGhlIGFwcGFyZW50IHBvd2VyIGFu
+ZAo+Pj4gbW9kaWZ5IGFueSBkb2NzIHRvIG1ha2UgdGhhdCBjbGVhci4KPj4+IAo+Pj4+IOKAlAo+
+Pj4+IEFWQVJHQUlOCS0JaW5fcG93ZXJfYXFfZ2FpbgkJCQkvKiByZWFjdGl2ZSBwb3dlciAqLwo+
+Pj4+IOKAlAo+Pj4+IE5vdyBoZXJlIGl0IGJlY29tZXMgbW9yZSBjb21wbGljYXRlZC4gTm90IHN1
+cmUgaG93IHRoaXMgZ2V0cyBoYW5kbGVkLiAKPj4+PiBBRldBVFRPUwktCWluX3Bvd2VyX2FfYWN0
+aXZlL2Z1bmRhbWVudGFsL29mZnNldCAgCj4+PiBZZWFoLCBzb21lIG9mIHRoZXNlIGFyZSBnZXR0
+aW5nIG9kZC4KPj4+IElmIEkgcmVhZCB0aGlzIGNvcnJlY3RseSB0aGlzIGlzIHRoZSBhY3RpdmUg
+cG93ZXIgZXN0aW1hdGUgYmFzZWQgb24gb25seQo+Pj4gdGhlIGZ1bmRhbWVudGFsIGZyZXF1ZW5j
+eSAtIHNvIG5vIGhhcm1vbmljcz8KPj4+IAo+Pj4gSG1tLiAgVGhpcyB0aGVuIGJlY29tZXMgYSBz
+ZXBhcmF0ZSBjaGFubmVsIHdpdGggYWRkaXRpb25hbCBwcm9wZXJ0aWVzCj4+PiBzcGVjaWZ5aW5n
+IGl0IGlzIG9ubHkgdGhlIGZ1bmRhbWVudGFsLiAgVGhpcyBmZWVscyBhIGJpdCBsaWtlIGEgZmls
+dGVyCj4+PiBiZSBpdCBhbiB1bnVzdWFsIG9uZT8gIE1pZ2h0IGp1c3QgYmUgbmVjZXNzYXJ5IHRv
+IGFkZCBhIF9mdW5kYW1lbnRhbF9vbmx5Cj4+PiBlbGVtZW50IG9uIHRoZSBlbmQgKHdvdWxkIGJl
+IGluZm9fbWFzayBpZiB0aGlzIGlzIGNvbW1vbiBlbm91Z2ggdG8KPj4+IGp1c3RpZnkgdGhhdCBy
+YXRoZXIgdGhhbiB1c2luZyB0aGUgZXh0ZW5kZWQgbWV0aG9kcyB0byBkZWZpbmUgaXQuKS4KPj4+
+IAo+Pj4gCj4+Pj4g4oCUCj4+Pj4gQVdBVFRIUgktCWluX2VuZXJneV9haV9hY2N1bXVsYXRpb24g
+IAo+Pj4gR3JlYXQsIGp1c3Qgd2hlbiBJIHRob3VnaHQgd2UgaGFkIGdvbmUgZmFyIGVub3VnaCB0
+aGV5IGRlZmluZSByZWFjdGl2ZQo+Pj4gZW5lcmd5IHdoaWNoIGlzIHByZXN1bWFibHkgcm91Z2hs
+eSB0aGUgc2FtZSBhcyByZWFjdGl2ZXBvd2VyICogdGltZT8KPj4+IEluIHRoYXQgY2FzZSB3ZSBu
+ZWVkIHR5cGVzIGZvciB0aGF0IGFzIHdlbGwuCj4+PiBpbl9lbmVyZ3lyZWFjdGl2ZUFfKgo+Pj4g
+aW5fZW5lcmd5YWN0aXZlQV8qCj4+PiAKPj4+PiDigJQKPj4+PiBBVkFSSFIJCS0JaW5fZW5lcmd5
+X2FxX2FjY3VtdWxhdGlvbgo+Pj4+IOKAlAo+Pj4+IElQRUFLCQktCWluX2N1cnJlbnRfcGVhayAg
+Cj4+PiBUaGF0IG9uZSBpcyBlYXN5IGFzIHdlIGhhdmUgYW4gaW5mb19tYXNrIGVsZW1lbnQgZm9y
+IHBlYWsgYW5kIG9uZQo+Pj4gZm9yIHBlYWtfc2NhbGUgdGhhdCBoYXMgYWx3YXlzIGJlZW4gYSBi
+aXQgb2RkIGJ1dCB3YXMgbmVlZGVkIHNvbWV3aGVyZS4KPj4+IAo+Pj4+IOKAlAo+Pj4+IAo+Pj4+
+IEnigJlsbCBsZWF2ZSBpdCB0aGVyZSwgYmVjYXVzZSB0aGVyZSBhcmUgc29tZSBldmVuIG1vcmUg
+Y29tcGxpY2F0ZWQgcmVnaXN0ZXIgbmFtaW5nIGlzc3Vlcy4gIAo+Pj4gU29tZXRoaW5nIHRvIGxv
+b2sgZm9yd2FyZCB0by4gIEdhaCwgSSBhbHdheXMgaGF0ZWQgcG93ZXIgZW5naW5lZXJpbmcKPj4+
+IHRob3VnaCBJIHRhdWdodCBpdCB2ZXJ5IGJyaWVmbHkgKEkgcmVhbGx5IHBpdHkgdGhvc2Ugc3R1
+ZGVudHMgOigKPj4+IAo+Pj4gSm9uYXRoYW4KPj4+IAo+Pj4+IAo+Pj4+IFJlZ2FyZHMsCj4+Pj4g
+Sm9obgo+Pj4+IAo+Pj4+IAo+Pj4+IAo+Pj4+IAo+Pj4+IAo+Pj4+PiBPbiBNYXIgMTAsIDIwMTgs
+IGF0IDc6MTAgQU0sIEpvbmF0aGFuIENhbWVyb24gPGppYzIzQGtlcm5lbC5vcmc+IHdyb3RlOgo+
+Pj4+PiAKPj4+Pj4gT24gVGh1LCA4IE1hciAyMDE4IDIxOjM3OjMzIC0wMzAwCj4+Pj4+IFJvZHJp
+Z28gU2lxdWVpcmEgPHJvZHJpZ29zaXF1ZWlyYW1lbG9AZ21haWwuY29tPiB3cm90ZToKPj4+Pj4g
+Cj4+Pj4+PiBPbiAwMy8wNywgSm9uYXRoYW4gQ2FtZXJvbiB3cm90ZTogICAgCj4+Pj4+Pj4gT24g
+VHVlLCA2IE1hciAyMDE4IDIxOjQzOjQ3IC0wMzAwCj4+Pj4+Pj4gUm9kcmlnbyBTaXF1ZWlyYSA8
+cm9kcmlnb3NpcXVlaXJhbWVsb0BnbWFpbC5jb20+IHdyb3RlOgo+Pj4+Pj4+IAo+Pj4+Pj4+PiBU
+aGUgbWFjcm8gSUlPX0RFVl9BVFRSX0NIX09GRiBpcyBhIHdyYXBwZXIgZm9yIElJT19ERVZJQ0Vf
+QVRUUiwgd2l0aCBhCj4+Pj4+Pj4+IHRpbnkgY2hhbmdlIGluIHRoZSBuYW1lIGRlZmluaXRpb24u
+IFRoaXMgZXh0cmEgbWFjcm8gZG9lcyBub3QgaW1wcm92ZQo+Pj4+Pj4+PiB0aGUgcmVhZGFiaWxp
+dHkgYW5kIGFsc28gY3JlYXRlcyBzb21lIGNoZWNrcGF0Y2ggZXJyb3JzLgo+Pj4+Pj4+PiAKPj4+
+Pj4+Pj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgY2hlY2twYXRjaC5wbCBlcnJvcnM6Cj4+Pj4+Pj4+
+IAo+Pj4+Pj4+PiBzdGFnaW5nL2lpby9tZXRlci9hZGU3NzUzLmM6MzkxOiBFUlJPUjogVXNlIDQg
+ZGlnaXQgb2N0YWwgKDA3NzcpIG5vdAo+Pj4+Pj4+PiBkZWNpbWFsIHBlcm1pc3Npb25zCj4+Pj4+
+Pj4+IHN0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTMuYzozOTU6IEVSUk9SOiBVc2UgNCBkaWdpdCBv
+Y3RhbCAoMDc3Nykgbm90Cj4+Pj4+Pj4+IGRlY2ltYWwgcGVybWlzc2lvbnMKPj4+Pj4+Pj4gc3Rh
+Z2luZy9paW8vbWV0ZXIvYWRlNzc1OS5jOjMzMTogRVJST1I6IFVzZSA0IGRpZ2l0IG9jdGFsICgw
+Nzc3KSBub3QKPj4+Pj4+Pj4gZGVjaW1hbCBwZXJtaXNzaW9ucwo+Pj4+Pj4+PiBzdGFnaW5nL2lp
+by9tZXRlci9hZGU3NzU5LmM6MzM1OiBFUlJPUjogVXNlIDQgZGlnaXQgb2N0YWwgKDA3NzcpIG5v
+dAo+Pj4+Pj4+PiBkZWNpbWFsIHBlcm1pc3Npb25zCj4+Pj4+Pj4+IAo+Pj4+Pj4+PiBTaWduZWQt
+b2ZmLWJ5OiBSb2RyaWdvIFNpcXVlaXJhIDxyb2RyaWdvc2lxdWVpcmFtZWxvQGdtYWlsLmNvbT4g
+ICAgICAKPj4+Pj4+PiAKPj4+Pj4+PiBIbW0uIEkgd29uZGVyZWQgYSBiaXQgYWJvdXQgdGhpcyBv
+bmUuIEl0J3MgYSBjb3JyZWN0IHBhdGNoIGluIG9mCj4+Pj4+Pj4gaXRzZWxmIGJ1dCB0aGUgaW50
+ZXJmYWNlIGluIHF1ZXN0aW9uIGRvZXNuJ3QgZXZlbiB2YWd1ZWx5IGNvbmZvcm0KPj4+Pj4+PiB0
+byBhbnkgb2YgZGVmaW5lZCBJSU8gQUJJLiAgQW55aG93LCBpdCdzIHN0aWxsIGFuZCBpbXByb3Zl
+bWVudCBzbwo+Pj4+Pj4+IEknbGwgdGFrZSBpdC4gICAgICAKPj4+Pj4+IAo+Pj4+Pj4gSSBhbSBu
+b3Qgc3VyZSBpZiBJIHVuZGVyc3Rvb2QgdGhlIGNvbW1lbnQgYWJvdXQgdGhlIEFCSS4gVGhlIG1l
+dGVyCj4+Pj4+PiBpbnRlcmZhY2UgaXMgd3JvbmcgYmVjYXVzZSBpdCB1c2VzIHRoaW5ncyBsaWtl
+IElJT19ERVZJQ0VfQVRUUj8gSXQKPj4+Pj4+IHNob3VsZCB1c2UgaWlvX2luZm8gdG9nZXRoZXIg
+d2l0aCAqd3JpdGVfcmF3IGFuZCAqcmVhZF9yYXcuIFJpZ2h0PyBJcyBpdAo+Pj4+Pj4gdGhlIEFC
+SSBwcm9ibGVtIHRoYXQgeW91IHJlZmVyPyAgICAKPj4+Pj4gVGhlIEFCSSBpcyBhYm91dCB0aGUg
+dXNlcnNwYWNlIGludGVyZmFjZSBvZiBJSU8uICBJdCBpcyBkZWZpbmVkCj4+Pj4+IGluIERvY3Vt
+ZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtYnVzLWlpbyoKPj4+Pj4gU28gdGhpcyBkb2N1bWVu
+dHMgdGhlIG5hbWluZyBvZiBzeXNmcyBhdHRyaWJ1dGVzIGFuZCAobW9yZSBvciBsZXNzKQo+Pj4+
+PiBkZXNjcmliZXMgYSBjb25zaXN0ZW50IGludGVyZmFjZSB0byB1c2Vyc3BhY2UgYWNyb3NzIGxv
+dHMgb2YgZGlmZmVyZW50Cj4+Pj4+IHR5cGVzIG9mIGRldmljZXMuCj4+Pj4+IAo+Pj4+PiBBIGxv
+dCBvZiB0aGVzZSBvbGRlciBkcml2ZXJzIGluIHN0YWdpbmcgaW52b2x2ZSBhIGdvb2QgZGVhbCBv
+ZiBBQkkgdGhhdAo+Pj4+PiB3YXMgbm90IHJldmlld2VkIG9yIGRpc2N1c3NlZC4gIFRoYXQgaXMg
+b25lIG9mIHRoZSBiaWdnZXN0IHJlYXNvbnMgd2UKPj4+Pj4gZGlkbid0IHRha2UgdGhlbSBvdXQg
+b2Ygc3RhZ2luZyBpbiB0aGUgZmlyc3QgcGxhY2UuCj4+Pj4+IAo+Pj4+PiBJbiBvcmRlciBmb3Ig
+Z2VuZXJpYyB1c2Vyc3BhY2UgcHJvZ3JhbXMgdG8gaGF2ZSBhbnkgaWRlYSB3aGF0IHRvIGRvCj4+
+Pj4+IHdpdGggdGhlc2UgZGV2aWNlcyB0aGlzIGFsbCBuZWVkcyB0byBiZSBmaXhlZC4KPj4+Pj4g
+Cj4+Pj4+IFRoZXJlIG1heSB3ZWxsIGJlIGNhc2VzIHdoZXJlIHdlIG5lZWQgdG8gZXhwYW5kIHRo
+ZSBleGlzdGluZyBBQkkgdG8KPj4+Pj4gY292ZXIgbmV3IHRoaW5ncy4gICBUaGF0J3MgZmluZSwg
+YnV0IGl0IGhhcyB0byBiZSBkb25lIHdpdGggZnVsbAo+Pj4+PiByZXZpZXcgb2YgdGhlIHJlbGV2
+YW50IGRvY3VtZW50YXRpb24gcGF0Y2hlcy4KPj4+Pj4gCj4+Pj4+IEluY2lkZW50YWxseSBpZiB5
+b3Ugd2FudCBhbiBlYXN5IGRyaXZlciB0byB3b3JrIG9uIG1vdmluZyBvdXQgb2Ygc3RhZ2luZwo+
+Pj4+PiB0aGVuIGZpcnN0IHRoaW5nIHRvIGRvIGlzIHRvIGNvbXBhcmUgd2hhdCBpdCBzaG93cyB0
+byB1c2Vyc3BhY2Ugd2l0aCB0aGVzZQo+Pj4+PiBkb2NzLiAgSWYgaXQncyB0b3RhbGx5IGRpZmZl
+cmVudCB0aGVuIHlvdSBoYXZlIGEgYmlnIGpvYiBvbiB5b3VyIGhhbmRzCj4+Pj4+IGFzIG9mdGVu
+IEFCSSBjYW4gdGFrZSBhIGxvdCBvZiBkaXNjdXNzaW9uIGFuZCBhIGxvbmcgdGltZSB0byBlc3Rh
+Ymxpc2gKPj4+Pj4gYSBjb25zZW5zdXMuCj4+Pj4+IAo+Pj4+PiBKb25hdGhhbgo+Pj4+PiAKPj4+
+Pj4gCj4+Pj4+PiAKPj4+Pj4+IFRoYW5rcyA6KQo+Pj4+Pj4gCj4+Pj4+Pj4gQXBwbGllZCB0byB0
+aGUgdG9ncmVnIGJyYW5jaCBvZiBpaW8uZ2l0IGFuZCBwdXNoZWQgb3V0IGFzIHRlc3RpbmcKPj4+
+Pj4+PiBmb3IgdGhlIGF1dG9idWlsZGVycyB0byBwbGF5IHdpdGggaXQuCj4+Pj4+Pj4gCj4+Pj4+
+Pj4gSSBhbHNvIGFkZGVkIHRoZSByZW1vdmFsIG9mIHRoZSBoZWFkZXIgZGVmaW5lIHdoaWNoIGlz
+IG5vCj4+Pj4+Pj4gbG9uZ2VyIHVzZWQuCj4+Pj4+Pj4gCj4+Pj4+Pj4gUGxlYXNlIG5vdGUsIGZv
+bGxvd2luZyBkaXNjdXNzaW9ucyB3aXRoIE1pY2hhZWwsIEkgYW0gZ29pbmcgdG8gc2VuZAo+Pj4+
+Pj4+IGFuIGVtYWlsIGFubm91bmNpbmcgYW4gaW50ZW50IHRvIGRyb3AgdGhlc2UgbWV0ZXIgZHJp
+dmVycyBuZXh0Cj4+Pj4+Pj4gY3ljbGUgdW5sZXNzIHNvbWVvbmUgY2FuIHByb3ZpZGUgdGVzdGlu
+ZyBmb3IgYW55IGF0dGVtcHQgdG8KPj4+Pj4+PiBtb3ZlIHRoZW0gb3V0IG9mIHN0YWdpbmcuICBJ
+J20gc3RpbGwgdGFraW5nIHBhdGNoZXMgb24gdGhlIGJhc2lzCj4+Pj4+Pj4gdGhhdCAnbWlnaHQn
+IGhhcHBlbiAtIGJ1dCBJIHdvdWxkbid0IGZvY3VzIG9uIHRoZXNlIHVudGlsIHdlCj4+Pj4+Pj4g
+aGF2ZSBzb21lIGNlcnRhaW50eSBvbiB3aGV0aGVyIHRoZXkgd2lsbCBiZSBhcm91bmQgbG9uZyB0
+ZXJtIQo+Pj4+Pj4+IAo+Pj4+Pj4+IEpvbmF0aGFuCj4+Pj4+Pj4gCj4+Pj4+Pj4+IC0tLQo+Pj4+
+Pj4+PiBkcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTMuYyB8IDE4ICsrKysrKysrKyst
+LS0tLS0tLQo+Pj4+Pj4+PiBkcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTkuYyB8IDE4
+ICsrKysrKysrKystLS0tLS0tLQo+Pj4+Pj4+PiAyIGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlv
+bnMoKyksIDE2IGRlbGV0aW9ucygtKQo+Pj4+Pj4+PiAKPj4+Pj4+Pj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1My5jIGIvZHJpdmVycy9zdGFnaW5nL2lpby9t
+ZXRlci9hZGU3NzUzLmMKPj4+Pj4+Pj4gaW5kZXggYzQ0ZWI1NzdkYzM1Li4yNzVlOGRmZmY4MzYg
+MTAwNjQ0Cj4+Pj4+Pj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1My5j
+Cj4+Pj4+Pj4+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1My5jCj4+Pj4+
+Pj4+IEBAIC0zODgsMTQgKzM4OCwxNiBAQCBzdGF0aWMgSUlPX0RFVl9BVFRSX1ZQRVJJT0QoMDQ0
+NCwKPj4+Pj4+Pj4gCQlhZGU3NzUzX3JlYWRfMTZiaXQsCj4+Pj4+Pj4+IAkJTlVMTCwKPj4+Pj4+
+Pj4gCQlBREU3NzUzX1BFUklPRCk7Cj4+Pj4+Pj4+IC1zdGF0aWMgSUlPX0RFVl9BVFRSX0NIX09G
+RigxLCAwNjQ0LAo+Pj4+Pj4+PiAtCQlhZGU3NzUzX3JlYWRfOGJpdCwKPj4+Pj4+Pj4gLQkJYWRl
+Nzc1M193cml0ZV84Yml0LAo+Pj4+Pj4+PiAtCQlBREU3NzUzX0NIMU9TKTsKPj4+Pj4+Pj4gLXN0
+YXRpYyBJSU9fREVWX0FUVFJfQ0hfT0ZGKDIsIDA2NDQsCj4+Pj4+Pj4+IC0JCWFkZTc3NTNfcmVh
+ZF84Yml0LAo+Pj4+Pj4+PiAtCQlhZGU3NzUzX3dyaXRlXzhiaXQsCj4+Pj4+Pj4+IC0JCUFERTc3
+NTNfQ0gyT1MpOwo+Pj4+Pj4+PiArCj4+Pj4+Pj4+ICtzdGF0aWMgSUlPX0RFVklDRV9BVFRSKGNo
+b2ZmXzEsIDA2NDQsCj4+Pj4+Pj4+ICsJCQlhZGU3NzUzX3JlYWRfOGJpdCwKPj4+Pj4+Pj4gKwkJ
+CWFkZTc3NTNfd3JpdGVfOGJpdCwKPj4+Pj4+Pj4gKwkJCUFERTc3NTNfQ0gxT1MpOwo+Pj4+Pj4+
+PiArCj4+Pj4+Pj4+ICtzdGF0aWMgSUlPX0RFVklDRV9BVFRSKGNob2ZmXzIsIDA2NDQsCj4+Pj4+
+Pj4+ICsJCQlhZGU3NzUzX3JlYWRfOGJpdCwKPj4+Pj4+Pj4gKwkJCWFkZTc3NTNfd3JpdGVfOGJp
+dCwKPj4+Pj4+Pj4gKwkJCUFERTc3NTNfQ0gyT1MpOwo+Pj4+Pj4+PiAKPj4+Pj4+Pj4gc3RhdGlj
+IGludCBhZGU3NzUzX3NldF9pcnEoc3RydWN0IGRldmljZSAqZGV2LCBib29sIGVuYWJsZSkKPj4+
+Pj4+Pj4gewo+Pj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2lpby9tZXRlci9h
+ZGU3NzU5LmMgYi9kcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTkuYwo+Pj4+Pj4+PiBp
+bmRleCAxZGVjYjJiOGFmYWIuLmMwNzhiNzcwZmE1MyAxMDA2NDQKPj4+Pj4+Pj4gLS0tIGEvZHJp
+dmVycy9zdGFnaW5nL2lpby9tZXRlci9hZGU3NzU5LmMKPj4+Pj4+Pj4gKysrIGIvZHJpdmVycy9z
+dGFnaW5nL2lpby9tZXRlci9hZGU3NzU5LmMKPj4+Pj4+Pj4gQEAgLTMyOCwxNCArMzI4LDE2IEBA
+IHN0YXRpYyBJSU9fREVWX0FUVFJfQUNUSVZFX1BPV0VSX0dBSU4oMDY0NCwKPj4+Pj4+Pj4gCQlh
+ZGU3NzU5X3JlYWRfMTZiaXQsCj4+Pj4+Pj4+IAkJYWRlNzc1OV93cml0ZV8xNmJpdCwKPj4+Pj4+
+Pj4gCQlBREU3NzU5X0FQR0FJTik7Cj4+Pj4+Pj4+IC1zdGF0aWMgSUlPX0RFVl9BVFRSX0NIX09G
+RigxLCAwNjQ0LAo+Pj4+Pj4+PiAtCQlhZGU3NzU5X3JlYWRfOGJpdCwKPj4+Pj4+Pj4gLQkJYWRl
+Nzc1OV93cml0ZV84Yml0LAo+Pj4+Pj4+PiAtCQlBREU3NzU5X0NIMU9TKTsKPj4+Pj4+Pj4gLXN0
+YXRpYyBJSU9fREVWX0FUVFJfQ0hfT0ZGKDIsIDA2NDQsCj4+Pj4+Pj4+IC0JCWFkZTc3NTlfcmVh
+ZF84Yml0LAo+Pj4+Pj4+PiAtCQlhZGU3NzU5X3dyaXRlXzhiaXQsCj4+Pj4+Pj4+IC0JCUFERTc3
+NTlfQ0gyT1MpOwo+Pj4+Pj4+PiArCj4+Pj4+Pj4+ICtzdGF0aWMgSUlPX0RFVklDRV9BVFRSKGNo
+b2ZmXzEsIDA2NDQsCj4+Pj4+Pj4+ICsJCQlhZGU3NzU5X3JlYWRfOGJpdCwKPj4+Pj4+Pj4gKwkJ
+CWFkZTc3NTlfd3JpdGVfOGJpdCwKPj4+Pj4+Pj4gKwkJCUFERTc3NTlfQ0gxT1MpOwo+Pj4+Pj4+
+PiArCj4+Pj4+Pj4+ICtzdGF0aWMgSUlPX0RFVklDRV9BVFRSKGNob2ZmXzIsIDA2NDQsCj4+Pj4+
+Pj4+ICsJCQlhZGU3NzU5X3JlYWRfOGJpdCwKPj4+Pj4+Pj4gKwkJCWFkZTc3NTlfd3JpdGVfOGJp
+dCwKPj4+Pj4+Pj4gKwkJCUFERTc3NTlfQ0gyT1MpOwo+Pj4+Pj4+PiAKPj4+Pj4+Pj4gc3RhdGlj
+IGludCBhZGU3NzU5X3NldF9pcnEoc3RydWN0IGRldmljZSAqZGV2LCBib29sIGVuYWJsZSkKPj4+
+Pj4+Pj4geyAgICAgIAo+Pj4+Pj4+IAo+Pj4+Pj4gLS0KPj4+Pj4+IFRvIHVuc3Vic2NyaWJlIGZy
+b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1paW8iIGluCj4+
+Pj4+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
+Pj4+Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpv
+cmRvbW8taW5mby5odG1sICAgIAo+Pj4+PiAKPj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KPj4+Pj4gZGV2ZWwgbWFpbGluZyBsaXN0Cj4+Pj4+IGRl
+dmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKPj4+Pj4gaHR0cDovL2RyaXZlcmRldi5saW51eGRy
+aXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsICAgIAo+Pj4+
+IAo+Pj4gCj4+IAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZGV2ZWwgbWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0
+cDovL2RyaXZlcmRldi5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+dmVyZGV2LWRldmVsCg==
