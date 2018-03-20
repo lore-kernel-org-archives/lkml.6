@@ -1,118 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751553AbeCTPIW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:08:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeCTPIT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:08:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 675026021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
- weakly-ordered archs
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
- <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
- <20180320144801.GE19744@ziepe.ca>
- <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <3e6cfa25-6b9f-24ff-499a-6df2740b658b@codeaurora.org>
-Date: Tue, 20 Mar 2018 10:08:16 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751673AbeCTPIl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:08:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751128AbeCTPIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:08:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D25621736
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: clean up with F2FS_BLK_ALIGN
+Date: Tue, 20 Mar 2018 23:08:29 +0800
+Message-Id: <20180320150830.2630-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/2018 10:00 AM, Sinan Kaya wrote:
-> On 3/20/2018 9:48 AM, Jason Gunthorpe wrote:
->> On Mon, Mar 19, 2018 at 10:47:43PM -0400, Sinan Kaya wrote:
->>> Code includes wmb() followed by writel(). writel() already has a barrier on
->>> some architectures like arm64.
->>>
->>> This ends up CPU observing two barriers back to back before executing the
->>> register write.
->>>
->>> Since code already has an explicit barrier call, changing writel() to
->>> writel_relaxed().
->>>
->>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
->>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->>> index 8329ec6..4a6b981 100644
->>> +++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->>> @@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
->>>  
->>>  	/* ring CMDQ DB */
->>>  	wmb();
->>> -	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->>> -	       rcfw->cmdq_bar_reg_prod_off);
->>> -	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->>> -	       rcfw->cmdq_bar_reg_trig_off);
->>> +	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->>> +		       rcfw->cmdq_bar_reg_prod_off);
->>> +	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->>> +		       rcfw->cmdq_bar_reg_trig_off);
->>
->> Woah, this may not be safe..
->>
->> The definition of writel_relaxed() is that it is fully unordered, so
->> the above two writes may change order now. Broadcom guys would have to
->> ack if that it is OK or not for their hardware.
->>
->> In general this is not an OK approach for a mechanical
->> conversion.. Only the first writel can be convereted.
->>
->> You need to check all your patches to make sure there are no
->> subsequent writel's in the places touched.
-> 
-> I paid special attention to this one and went to check the barriers
-> document. According to the document, writes (whether it is relaxed or not)
-> are always observed by the HW inorder with respect to each other.
-> It just doesn't guarantee anything above writel_relaxed() to be observed.
-> Since we already have a wmb(), this is taken care of. 
-> 
-> If somebody wants things to be observed after register write, there should
-> have been a wmb() or mmiowb() afterwards.
+From: Chao Yu <yuchao0@huawei.com>
 
-Never mind, it will break some architectures. I'll only change the first one.
+Clean up F2FS_BYTES_TO_BLK(x + F2FS_BLKSIZE - 1) with F2FS_BLK_ALIGN(x).
 
- (1) On some systems, I/O stores are not strongly ordered across all CPUs, and
-     so for _all_ general drivers locks should be used and mmiowb() must be
-     issued prior to unlocking the critical section.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c | 3 +--
+ fs/f2fs/node.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
- (2) If the accessor functions are used to refer to an I/O memory window with
-     relaxed memory access properties, then _mandatory_ memory barriers are
-     required to enforce ordering. 
-
-
-> 
-> 
->>
->> Jason
->>
-> 
-> 
-
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ee88058acd63..8068b015ece5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -573,7 +573,6 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
+ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	unsigned int blocksize = inode->i_sb->s_blocksize;
+ 	struct dnode_of_data dn;
+ 	pgoff_t free_from;
+ 	int count = 0, err = 0;
+@@ -582,7 +581,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 
+ 	trace_f2fs_truncate_blocks_enter(inode, from);
+ 
+-	free_from = (pgoff_t)F2FS_BYTES_TO_BLK(from + blocksize - 1);
++	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
+ 
+ 	if (free_from >= sbi->max_file_blocks)
+ 		goto free_partial;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f7886b46478d..ecfc2465da9b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2581,8 +2581,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 	if (!enabled_nat_bits(sbi, NULL))
+ 		return 0;
+ 
+-	nm_i->nat_bits_blocks = F2FS_BYTES_TO_BLK((nat_bits_bytes << 1) + 8 +
+-						F2FS_BLKSIZE - 1);
++	nm_i->nat_bits_blocks = F2FS_BLK_ALIGN((nat_bits_bytes << 1) + 8);
+ 	nm_i->nat_bits = f2fs_kzalloc(sbi,
+ 			nm_i->nat_bits_blocks << F2FS_BLKSIZE_BITS, GFP_KERNEL);
+ 	if (!nm_i->nat_bits)
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.16.2.17.g38e79b1fd
