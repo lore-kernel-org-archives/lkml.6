@@ -1,99 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751524AbeCTUFp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:05:45 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40374 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeCTUFm (ORCPT
+        id S1751583AbeCTUGu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:06:50 -0400
+Received: from mail-yw0-f182.google.com ([209.85.161.182]:39361 "EHLO
+        mail-yw0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeCTUGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:05:42 -0400
-X-Google-Smtp-Source: AG47ELsv+Ws8jlvjoAGc/MmndT5nbTE4eBBZiQtVqUj8looDdFbaCDCcS5U/Qb6M2gxR6qTT2Wk7cyruYr0TT+ARjZs=
+        Tue, 20 Mar 2018 16:06:47 -0400
+X-Google-Smtp-Source: AG47ELuSupgtnU++WZ36wZJnKnyT3TmH6sRv6enRE3+007MgzjfiLLbt7EMBDFGHK1EZS/0wU07juw==
+Date: Tue, 20 Mar 2018 13:06:43 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] workqueue: fix the comments of nr_idle
+Message-ID: <20180320200643.GM519464@devbig577.frc2.facebook.com>
+References: <20180320092406.13078-1-jiangshanlai@gmail.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <3a001779ec9c295adc515d9170cde6e3ae8762fb.1521005283.git.rgb@redhat.com>
-References: <cover.1521005283.git.rgb@redhat.com> <3a001779ec9c295adc515d9170cde6e3ae8762fb.1521005283.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 20 Mar 2018 16:05:39 -0400
-Message-ID: <CAHC9VhRsNknSgikKF24SdS5bKT_hokKRn2rsFvJ9jon7tiSoPw@mail.gmail.com>
-Subject: Re: [PATCH ghak21 V3 1/2] audit: remove path param from link denied function
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320092406.13078-1-jiangshanlai@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 1:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> In commit 45b578fe4c3cade6f4ca1fc934ce199afd857edc
-> ("audit: link denied should not directly generate PATH record")
-> the need for the struct path *link parameter was removed.
-> Remove the now useless struct path argument.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c            | 2 +-
->  include/linux/audit.h | 6 ++----
->  kernel/audit.c        | 3 +--
->  3 files changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 9cc91fb..50d2533 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
->         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
->                 return 0;
->
-> -       audit_log_link_denied("linkat", link);
-> +       audit_log_link_denied("linkat");
->         return -EPERM;
->  }
->
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index af410d9..75d5b03 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
->                                              const struct path *path);
->  extern void                audit_log_key(struct audit_buffer *ab,
->                                           char *key);
-> -extern void                audit_log_link_denied(const char *operation,
-> -                                                 const struct path *link);
-> +extern void                audit_log_link_denied(const char *operation);
->  extern void                audit_log_lost(const char *message);
->
->  extern int audit_log_task_context(struct audit_buffer *ab);
-> @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
->  { }
->  static inline void audit_log_key(struct audit_buffer *ab, char *key)
->  { }
-> -static inline void audit_log_link_denied(const char *string,
-> -                                        const struct path *link)
-> +static inline void audit_log_link_denied(const char *string)
->  { }
->  static inline int audit_log_task_context(struct audit_buffer *ab)
->  {
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 3f2f143..e8bf8d7 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2308,9 +2308,8 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
->  /**
->   * audit_log_link_denied - report a link restriction denial
->   * @operation: specific link operation
-> - * @link: the path that triggered the restriction
->   */
-> -void audit_log_link_denied(const char *operation, const struct path *link)
-> +void audit_log_link_denied(const char *operation)
->  {
->         struct audit_buffer *ab;
+On Tue, Mar 20, 2018 at 05:24:05PM +0800, Lai Jiangshan wrote:
+> Since the worker rebinding behavior was refactored, there is
+> no idle worker off the idle_list now. The comment is outdated
+> and can be just removed.
+> 
+> It also groups nr_workers and nr_idle together.
+> 
+> Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
 
-*sigh*
+Applied to wq/for-4.17.
 
-You forgot to update may_follow_link().
+Thanks.
 
 -- 
-paul moore
-www.paul-moore.com
+tejun
