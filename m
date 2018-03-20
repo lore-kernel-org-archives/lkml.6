@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeCTGav (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:30:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52287 "EHLO
+        id S1752151AbeCTGa7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:30:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50623 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751697AbeCTGas (ORCPT
+        with ESMTP id S1751697AbeCTGa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:30:48 -0400
-Date: Mon, 19 Mar 2018 23:29:27 -0700
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-5eab5a7ee032acaab3da8fc95a3614fec14687ac@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        jolsa@kernel.org, acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
-        peterz@infradead.org, dsahern@gmail.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org,
-        dsahern@gmail.com, peterz@infradead.org, acme@redhat.com,
-        hpa@zytor.com, alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        jolsa@kernel.org
-In-Reply-To: <20180312094313.18738-3-jolsa@kernel.org>
-References: <20180312094313.18738-3-jolsa@kernel.org>
+        Tue, 20 Mar 2018 02:30:56 -0400
+Date: Mon, 19 Mar 2018 23:30:47 -0700
+From: tip-bot for Sandipan Das <tipbot@zytor.com>
+Message-ID: <tip-10f354a36f9a9aa1b8bffe0abc1cd43822a85bcd@git.kernel.org>
+Cc: acme@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        sandipan@linux.vnet.ibm.com, jolsa@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, hpa@zytor.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, acme@redhat.com, naveen.n.rao@linux.vnet.ibm.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org,
+        sandipan@linux.vnet.ibm.com, jolsa@kernel.org, mingo@kernel.org
+In-Reply-To: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
+References: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf llvm: Display eBPF compiling command in debug
- output
-Git-Commit-ID: 5eab5a7ee032acaab3da8fc95a3614fec14687ac
+Subject: [tip:perf/core] perf test: Fix exit code for
+ record+probe_libc_inet_pton.sh
+Git-Commit-ID: 10f354a36f9a9aa1b8bffe0abc1cd43822a85bcd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,75 +34,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5eab5a7ee032acaab3da8fc95a3614fec14687ac
-Gitweb:     https://git.kernel.org/tip/5eab5a7ee032acaab3da8fc95a3614fec14687ac
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 12 Mar 2018 10:43:02 +0100
+Commit-ID:  10f354a36f9a9aa1b8bffe0abc1cd43822a85bcd
+Gitweb:     https://git.kernel.org/tip/10f354a36f9a9aa1b8bffe0abc1cd43822a85bcd
+Author:     Sandipan Das <sandipan@linux.vnet.ibm.com>
+AuthorDate: Mon, 12 Mar 2018 18:14:50 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:56:12 -0300
+CommitDate: Fri, 16 Mar 2018 13:56:31 -0300
 
-perf llvm: Display eBPF compiling command in debug output
+perf test: Fix exit code for record+probe_libc_inet_pton.sh
 
-In addition to template, display also the real compile command line with
-all the variables substituted.
+This fixes record+probe_libc_inet_pton.sh from always exiting with code
+0 and making the test pass even if the perf script output does not match
+the expected pattern.
 
-  llvm compiling command template: $CLANG_EXEC -D__KERNEL__ -D__NR_CPUS__=$NR_CPUS ...
-  llvm compiling command : /usr/bin/clang -D__KERNEL__ -D__NR_CPUS__=24 -DLINUX_VERSION_CODE=0x41000 ...
+The issue can be observed if this test is run with the verbose flags as
+shown below:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180312094313.18738-3-jolsa@kernel.org
+  60: probe libc's inet_pton & backtrace it with ping       :
+  ...
+  ping 19602 [006] 16988.413767: probe_libc:inet_pton: (7fff9a2c42e8)
+  1842e8 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+  130db4 getaddrinfo (/usr/lib64/libc-2.26.so)
+
+  FAIL: expected backtrace entry 3 ".*\(.*/bin/ping.*\)$" got ""
+  test child finished with 0
+  ...
+  probe libc's inet_pton & backtrace it with ping: Ok
+
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
+Link: http://lkml.kernel.org/r/20180312124450.30371-1-sandipan@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/llvm-utils.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
-index 4952b429caa7..1cca0a2fa641 100644
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -433,6 +433,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
- 	char serr[STRERR_BUFSIZE];
- 	char *kbuild_dir = NULL, *kbuild_include_opts = NULL;
- 	const char *template = llvm_param.clang_bpf_cmd_template;
-+	char *command_echo, *command_out;
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 52c3ee701a89..1ecc1f0ff84a 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -47,7 +47,10 @@ trace_libc_inet_pton_backtrace() {
+ 		[ -z "${expected[$idx]}" ] && break
+ 	done
  
- 	if (path[0] != '-' && realpath(path, abspath) == NULL) {
- 		err = errno;
-@@ -487,6 +488,16 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
- 		      (path[0] == '-') ? path : abspath);
+-	rm -f $file
++	# If any statements are executed from this point onwards,
++	# the exit code of the last among these will be reflected
++	# in err below. If the exit code is 0, the test will pass
++	# even if the perf script output does not match.
+ }
  
- 	pr_debug("llvm compiling command template: %s\n", template);
-+
-+	if (asprintf(&command_echo, "echo -n \"%s\"", template) < 0)
-+		goto errout;
-+
-+	err = read_from_pipe(command_echo, (void **) &command_out, NULL);
-+	if (err)
-+		goto errout;
-+
-+	pr_debug("llvm compiling command : %s\n", command_out);
-+
- 	err = read_from_pipe(template, &obj_buf, &obj_buf_sz);
- 	if (err) {
- 		pr_err("ERROR:\tunable to compile %s\n", path);
-@@ -497,6 +508,8 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
- 		goto errout;
- 	}
- 
-+	free(command_echo);
-+	free(command_out);
- 	free(kbuild_dir);
- 	free(kbuild_include_opts);
- 
-@@ -509,6 +522,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
- 		*p_obj_buf_sz = obj_buf_sz;
- 	return 0;
- errout:
-+	free(command_echo);
- 	free(kbuild_dir);
- 	free(kbuild_include_opts);
- 	free(obj_buf);
+ # Check for IPv6 interface existence
