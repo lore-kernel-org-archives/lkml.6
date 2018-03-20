@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeCUBN6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:13:58 -0400
+        id S1752194AbeCUBO0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:14:26 -0400
 Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751798AbeCUBLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:11:23 -0400
+        id S1751472AbeCUBLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:11:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="39779377"
+   d="scan'208";a="39779334"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, Chao Peng <chao.p.peng@linux.intel.com>,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v6 07/11] KVM: x86: Implement Intel Processor Trace context switch
-Date: Tue, 20 Mar 2018 19:21:54 +0800
-Message-Id: <1521544918-31084-8-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v6 01/11] perf/x86/intel/pt: Move Intel-PT MSR bit definitions to a public header
+Date: Tue, 20 Mar 2018 19:21:48 +0800
+Message-Id: <1521544918-31084-2-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
 References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
@@ -29,109 +29,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Load/Store Intel processor trace register in context switch.
-MSR IA32_RTIT_CTL is loaded/stored automatically from VMCS.
-In HOST mode, we just need to restore the status of IA32_RTIT_CTL.
-In HOST_GUEST mode, we need load/resore PT MSRs only when PT is
-enabled in guest.
+Intel Processor Trace virtualization enabling in guest need
+to use these MSR bits, so move them to public header msr-index.h.
+Introduce RTIT_CTL_FABRIC_EN and sync the definitions to
+latest spec.
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/x86/events/intel/pt.c       |  4 ++--
+ arch/x86/events/intel/pt.h       | 37 -------------------------------------
+ arch/x86/include/asm/msr-index.h | 37 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+), 39 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 940df0e..34bcb30 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2187,6 +2187,55 @@ static unsigned long segment_base(u16 selector)
- }
- #endif
- 
-+static inline void pt_load_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	wrmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	wrmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		wrmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static inline void pt_save_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	rdmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	rdmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		rdmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static void pt_guest_enter(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		wrmsrl(MSR_IA32_RTIT_CTL, 0);
-+		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+	}
-+}
-+
-+static void pt_guest_exit(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+	}
-+
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+}
-+
- static void vmx_save_host_state(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -5912,6 +5961,13 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
- 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
- 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
- 	}
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		memset(&vmx->pt_desc, 0, sizeof(vmx->pt_desc));
-+		/* Bit[6~0] are forced to 1, writes are ignored. */
-+		vmx->pt_desc.guest.output_mask = 0x7F;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+	}
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 81fd41d..6d6dd4f 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -271,7 +271,7 @@ static int __init pt_pmu_hw_init(void)
+ 	return ret;
  }
  
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -9632,6 +9688,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	    vcpu->arch.pkru != vmx->host_pkru)
- 		__write_pkru(vcpu->arch.pkru);
+-#define RTIT_CTL_CYC_PSB (RTIT_CTL_CYCLEACC	| \
++#define RTIT_CTL_CYC_PSB (RTIT_CTL_CYC_EN	| \
+ 			  RTIT_CTL_CYC_THRESH	| \
+ 			  RTIT_CTL_PSB_FREQ)
  
-+	pt_guest_enter(vmx);
-+
- 	atomic_switch_perf_msrs(vmx);
+@@ -293,7 +293,7 @@ static int __init pt_pmu_hw_init(void)
  
- 	vmx_arm_hv_timer(vcpu);
-@@ -9811,6 +9869,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 				  | (1 << VCPU_EXREG_CR3));
- 	vcpu->arch.regs_dirty = 0;
+ #define PT_CONFIG_MASK (RTIT_CTL_TRACEEN	| \
+ 			RTIT_CTL_TSC_EN		| \
+-			RTIT_CTL_DISRETC	| \
++			RTIT_CTL_DIS_RETC	| \
+ 			RTIT_CTL_BRANCH_EN	| \
+ 			RTIT_CTL_CYC_PSB	| \
+ 			RTIT_CTL_MTC		| \
+diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
+index 0eb41d0..0050ca1 100644
+--- a/arch/x86/events/intel/pt.h
++++ b/arch/x86/events/intel/pt.h
+@@ -20,43 +20,6 @@
+ #define __INTEL_PT_H__
  
-+	pt_guest_exit(vmx);
-+
- 	/*
- 	 * eager fpu is enabled if PKEY is supported and CR4 is switched
- 	 * back on host, so it is safe to read guest PKRU from current
+ /*
+- * PT MSR bit definitions
+- */
+-#define RTIT_CTL_TRACEEN		BIT(0)
+-#define RTIT_CTL_CYCLEACC		BIT(1)
+-#define RTIT_CTL_OS			BIT(2)
+-#define RTIT_CTL_USR			BIT(3)
+-#define RTIT_CTL_PWR_EVT_EN		BIT(4)
+-#define RTIT_CTL_FUP_ON_PTW		BIT(5)
+-#define RTIT_CTL_CR3EN			BIT(7)
+-#define RTIT_CTL_TOPA			BIT(8)
+-#define RTIT_CTL_MTC_EN			BIT(9)
+-#define RTIT_CTL_TSC_EN			BIT(10)
+-#define RTIT_CTL_DISRETC		BIT(11)
+-#define RTIT_CTL_PTW_EN			BIT(12)
+-#define RTIT_CTL_BRANCH_EN		BIT(13)
+-#define RTIT_CTL_MTC_RANGE_OFFSET	14
+-#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
+-#define RTIT_CTL_CYC_THRESH_OFFSET	19
+-#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
+-#define RTIT_CTL_PSB_FREQ_OFFSET	24
+-#define RTIT_CTL_PSB_FREQ      		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
+-#define RTIT_CTL_ADDR0_OFFSET		32
+-#define RTIT_CTL_ADDR0      		(0x0full << RTIT_CTL_ADDR0_OFFSET)
+-#define RTIT_CTL_ADDR1_OFFSET		36
+-#define RTIT_CTL_ADDR1      		(0x0full << RTIT_CTL_ADDR1_OFFSET)
+-#define RTIT_CTL_ADDR2_OFFSET		40
+-#define RTIT_CTL_ADDR2      		(0x0full << RTIT_CTL_ADDR2_OFFSET)
+-#define RTIT_CTL_ADDR3_OFFSET		44
+-#define RTIT_CTL_ADDR3      		(0x0full << RTIT_CTL_ADDR3_OFFSET)
+-#define RTIT_STATUS_FILTEREN		BIT(0)
+-#define RTIT_STATUS_CONTEXTEN		BIT(1)
+-#define RTIT_STATUS_TRIGGEREN		BIT(2)
+-#define RTIT_STATUS_BUFFOVF		BIT(3)
+-#define RTIT_STATUS_ERROR		BIT(4)
+-#define RTIT_STATUS_STOPPED		BIT(5)
+-
+-/*
+  * Single-entry ToPA: when this close to region boundary, switch
+  * buffers to avoid losing data.
+  */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 53d5b1b..2211087 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -106,7 +106,43 @@
+ #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
+ 
+ #define MSR_IA32_RTIT_CTL		0x00000570
++#define RTIT_CTL_TRACEEN		BIT(0)
++#define RTIT_CTL_CYC_EN			BIT(1)
++#define RTIT_CTL_OS			BIT(2)
++#define RTIT_CTL_USR			BIT(3)
++#define RTIT_CTL_PWR_EVT_EN		BIT(4)
++#define RTIT_CTL_FUP_ON_PTW		BIT(5)
++#define RTIT_CTL_FABRIC_EN		BIT(6)
++#define RTIT_CTL_CR3_FILTER		BIT(7)
++#define RTIT_CTL_TOPA			BIT(8)
++#define RTIT_CTL_MTC_EN			BIT(9)
++#define RTIT_CTL_TSC_EN			BIT(10)
++#define RTIT_CTL_DIS_RETC		BIT(11)
++#define RTIT_CTL_PTW_EN			BIT(12)
++#define RTIT_CTL_BRANCH_EN		BIT(13)
++#define RTIT_CTL_MTC_RANGE_OFFSET	14
++#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
++#define RTIT_CTL_CYC_THRESH_OFFSET	19
++#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
++#define RTIT_CTL_PSB_FREQ_OFFSET	24
++#define RTIT_CTL_PSB_FREQ		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
++#define RTIT_CTL_ADDR0_OFFSET		32
++#define RTIT_CTL_ADDR0			(0x0full << RTIT_CTL_ADDR0_OFFSET)
++#define RTIT_CTL_ADDR1_OFFSET		36
++#define RTIT_CTL_ADDR1			(0x0full << RTIT_CTL_ADDR1_OFFSET)
++#define RTIT_CTL_ADDR2_OFFSET		40
++#define RTIT_CTL_ADDR2			(0x0full << RTIT_CTL_ADDR2_OFFSET)
++#define RTIT_CTL_ADDR3_OFFSET		44
++#define RTIT_CTL_ADDR3			(0x0full << RTIT_CTL_ADDR3_OFFSET)
+ #define MSR_IA32_RTIT_STATUS		0x00000571
++#define RTIT_STATUS_FILTEREN		BIT(0)
++#define RTIT_STATUS_CONTEXTEN		BIT(1)
++#define RTIT_STATUS_TRIGGEREN		BIT(2)
++#define RTIT_STATUS_BUFFOVF		BIT(3)
++#define RTIT_STATUS_ERROR		BIT(4)
++#define RTIT_STATUS_STOPPED		BIT(5)
++#define RTIT_STATUS_BYTECNT_OFFSET	32
++#define RTIT_STATUS_BYTECNT		(0x1ffffull << RTIT_STATUS_BYTECNT_OFFSET)
+ #define MSR_IA32_RTIT_ADDR0_A		0x00000580
+ #define MSR_IA32_RTIT_ADDR0_B		0x00000581
+ #define MSR_IA32_RTIT_ADDR1_A		0x00000582
+@@ -115,6 +151,7 @@
+ #define MSR_IA32_RTIT_ADDR2_B		0x00000585
+ #define MSR_IA32_RTIT_ADDR3_A		0x00000586
+ #define MSR_IA32_RTIT_ADDR3_B		0x00000587
++#define MSR_IA32_RTIT_ADDR_COUNT	8
+ #define MSR_IA32_RTIT_CR3_MATCH		0x00000572
+ #define MSR_IA32_RTIT_OUTPUT_BASE	0x00000560
+ #define MSR_IA32_RTIT_OUTPUT_MASK	0x00000561
 -- 
 1.8.3.1
