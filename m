@@ -1,73 +1,77 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-986160-1521540260-2-9901683154259454777
+X-Cyrus-Session-Id: sloti22d1t05-2022467-1521570063-2-16285018407682916770
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521540259; b=W19moE1Pm7d9DazVqhjNFcLIQIsrxYjbCy3xwKypVO4ipgr
-    fGMy9JUStXyLISUkOSAv9zWIceefvBd/aWGzlYWg0jWrJTqYWLcMgfQetzDWAc/t
-    geKeTKFQHa6lC/WeE4BBkPT0Jh13s6PKf6SDYLkjipA0+J6yoadIMeZdZFbYWKnJ
-    wx3mq1nHckIos+mJxlW3DhmAqPXH4J1xphJHho2q4vu7FNQqO98fXYPWl1RzSxAb
-    YpYcingoAblUZ7zk9nI+r1Q+bgzh1FdQyqHwKM3omGyI8PwwdXHwtoZA0xI0fMCb
-    b3tZD53bg8ohXfrnANzy6orPnpUwvbYl1UGHJ1g==
+    t=1521570062; b=Mp68j7h4BDFhENVVFHBiobVKZ9iHubzU02E9LEqnlFcj1eZ
+    VMSVHQhvjASFe/cJZTeo2hJZwYhfmXNmabLD1G31AbAG+ZmQIrUsmrorLY3Kq4Xx
+    P9+QwKV9oK8d7poYlyyuKzNCS09VdCRHNVxppI+NFl/Szc6Ofr8QLlM1j2Qc9TRT
+    M3WtP+Z7cfw+7YVesa6zNKfqGFw+rpfgMYOI9hePrLQP4ohK4VczeZ6EB6WuRoWM
+    LioQ+NCYL5R6yUjv+jsGhn66smK5Qt65JxViL1NZQyNICnFiey0NdtTGBzQIxME5
+    Y6oulhpKRt8eRupy3oUD9RcQXNhnOedQiHji6Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521540259; bh=/
-    0Om8q3werVxZbCN4J8334IyHEHiYXbKRKNd8CRnPb8=; b=Dm1cKgYMIq7svqOfz
-    UFF8Pn4msWrHWI2DPXn5ruJzDO5g0BY6CeM5bcUcBjQB9J9iar7uSGKbFLzNDaHO
-    YfsttIh49uWr84KyMhH8lxhgojTcksqgUS4n/jLTmU3XXmYRtIh2Isvr0QVPEbHJ
-    1XbBEQpaSTpeBH97NFncjP01gQdM/VSi8eivmFU3HsXJTf22MMfN5h2gxsABA2mx
-    YneW9X4Be1Rigx23XbRNlGTpwDUBrftKbUU623zmsvrwCg+5kmMAS/6kk2g0jS29
-    wugkVGDvmmyvU1FwPD7PcjBS1D3Zi6gvFOnuTX8nZ7yphQX2xydmPROKfWU2O0KH
-    /hNEQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qOT/zv+z x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    :content-transfer-encoding:sender; s=arctest; t=1521570062; bh=U
+    aFaeCCt0WIWbSUPDfo8Lcxr/GsR8laLsAxYrxu4iEM=; b=YWi73SgMQQdH0JXQ1
+    Y0gBQVk6eB0HGRXG3ArLz0hvWC3WAz13euoiwHqpGy3eg+ZQ3WCAS0RINDooDsoQ
+    6L+5tcTCtzADMtcyWBx+3GK8AOkTxT5oBhK5s6I4/gbvFW2+JsH4NjNA7eM+0cZ8
+    ybJ7ORxaah+MpQZKZqyoxbh6vLg9d0MmD0DR09zHnJMvK+y19TixV3kj6QdCG4Fm
+    /if8p4xdT+m3hAMjrrDu84NQd+LG1zPJfx7pT4WPwy1L9P9afppPkd3EzDjqzlnw
+    Ild/jKz5OiRT4ceQd+4LWxAknkzZiDBBmR/eOltk9l6CDB526hn7PF5jp9LPJQXx
+    nlKBg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=acQHTQcj;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qOT/zv+z x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=acQHTQcj;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELumy88xSEAojA/8eB6lXpBCboCr18V7tlSQv1PT4alJlbk0XVkYJ+mY1s3raKLBoZtM49z8UWjNKI7z9mezVIA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1DF821851
+Authentication-Results: mail.kernel.org;
+ dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org;
+ spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AG47ELuPEw1U5SGpC1c7MLCA+xY+KsGl/UJneDtjd9CKzfpX1E32HeRTPE23hL6CXeiftC4Q4L94hNfihL6dQj//Fdo=
 MIME-Version: 1.0
-In-Reply-To: <CANk1AXR3sv2=G-KsQh1p0rdcvy-3XZs6qVy5EMbcAMS6OSVzeQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdU-0VOs6MYrCaCrtRfBqGgaQfox1AgbExNNcYxVC6Uh-Q@mail.gmail.com>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
  <1521208314-4783-7-git-send-email-geert@linux-m68k.org>
  <CANk1AXR3sv2=G-KsQh1p0rdcvy-3XZs6qVy5EMbcAMS6OSVzeQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Mar 2018 11:04:09 +0100
-X-Google-Sender-Auth: 9_BBDWtk2KvxqXY7sjqxkaL7gYI
-Message-ID: <CAMuHMdU-0VOs6MYrCaCrtRfBqGgaQfox1AgbExNNcYxVC6Uh-Q@mail.gmail.com>
+ <CAMuHMdU-0VOs6MYrCaCrtRfBqGgaQfox1AgbExNNcYxVC6Uh-Q@mail.gmail.com>
+From: Alan Tull <atull@kernel.org>
+Date: Tue, 20 Mar 2018 13:20:11 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRve3asPTufFYe=C_YPfyGwDpXxOWYZbWDq2bAnVkj00A@mail.gmail.com>
+Message-ID: <CANk1AXRve3asPTufFYe=C_YPfyGwDpXxOWYZbWDq2bAnVkj00A@mail.gmail.com>
 Subject: Re: [PATCH v2 06/21] fpga: Remove depends on HAS_DMA in case of
  platform dependency
-To: Alan Tull <atull@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -123,61 +127,75 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Alan,
+On Tue, Mar 20, 2018 at 5:04 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-On Mon, Mar 19, 2018 at 5:06 PM, Alan Tull <atull@kernel.org> wrote:
-> On Fri, Mar 16, 2018 at 8:51 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> This essentially removes this commit
->
-> commit 1c8cb409491403036919dd1c6b45013dc8835a44
-> Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> Date:   Wed Aug 3 13:45:46 2016 -0700
->
->     drivers/fpga/Kconfig: fix build failure
->
->     While building m32r allmodconfig the build is failing with the error:
->
->       ERROR: "bad_dma_ops" [drivers/fpga/zynq-fpga.ko] undefined!
->
->     Xilinx Zynq FPGA is using DMA but there was no dependency while
->     building.
->
->     Link: http://lkml.kernel.org/r/1464346526-13913-1-git-send-email-sudipm.mukherjee@gmail.com
->     Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
->     Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
->     Cc: Alan Tull <atull@opensource.altera.com>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Hi Geert,
 
-Yes it does. The major change is that the first (core) series introduces
-all needed dummies to do successful compile-testing on NO_DMA=y platforms.
-
->> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
->> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
->> In most cases this other symbol is an architecture or platform specific
->> symbol, or PCI.
+> Hi Alan,
+>
+> On Mon, Mar 19, 2018 at 5:06 PM, Alan Tull <atull@kernel.org> wrote:
+>> On Fri, Mar 16, 2018 at 8:51 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>> This essentially removes this commit
 >>
->> Generic symbols and drivers without platform dependencies keep their
->> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
->> cannot work anyway.
+>> commit 1c8cb409491403036919dd1c6b45013dc8835a44
+>> Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+>> Date:   Wed Aug 3 13:45:46 2016 -0700
 >>
->> This simplifies the dependencies, and allows to improve compile-testing.
+>>     drivers/fpga/Kconfig: fix build failure
 >>
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Reviewed-by: Mark Brown <broonie@kernel.org>
->> Acked-by: Robin Murphy <robin.murphy@arm.com>
+>>     While building m32r allmodconfig the build is failing with the error:
+>>
+>>       ERROR: "bad_dma_ops" [drivers/fpga/zynq-fpga.ko] undefined!
+>>
+>>     Xilinx Zynq FPGA is using DMA but there was no dependency while
+>>     building.
+>>
+>>     Link: http://lkml.kernel.org/r/1464346526-13913-1-git-send-email-sudipm.mukherjee@gmail.com
+>>     Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+>>     Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+>>     Cc: Alan Tull <atull@opensource.altera.com>
+>>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> Yes it does. The major change is that the first (core) series introduces
+> all needed dummies to do successful compile-testing on NO_DMA=y platforms.
 
-Gr{oetje,eeting}s,
+OK yes, I looked at the first patch that does the fix.  Looks good.
+Thanks for doing this.
 
-                        Geert
+>
+>>> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+>>> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+>>> In most cases this other symbol is an architecture or platform specific
+>>> symbol, or PCI.
+>>>
+>>> Generic symbols and drivers without platform dependencies keep their
+>>> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+>>> cannot work anyway.
+>>>
+>>> This simplifies the dependencies, and allows to improve compile-testing.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>>> Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Alan Tull <atull@kernel.org>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
+Alan
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
