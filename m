@@ -1,65 +1,55 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AG47ELt6RD6QXbPpjj+y/0C4w9WbtIC0NdH0lYNGhuLzQrSWrJHmvrIhgo/5+cg4eafOVEfdn97z
-ARC-Seal: i=1; a=rsa-sha256; t=1521544869; cv=none;
+Return-Path: <pratik.jain0509@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521546078; cv=none;
         d=google.com; s=arc-20160816;
-        b=t1PKT9uEiAcqVv9kr6MaIH/BnIHlrmbICLNi2QhDphv529vlhV93sO/lPHjU4o1xvC
-         ddEhjmlEEq3j0t0ow8K6YdXj9h5Ugq8A60n1y0A/rK4a9QT8Zhn2t4oGgpswnZDb/BDU
-         kt1E2QuyLjqme4fYt8vaPR/RyDNzscK+8FEZx/oUZ5axQGetjIpD7IwE7+N+X477AsE/
-         ap1rzn1ULJF/B3Yz95eCwGvNZnQUeXmYkIiF8j2MwnOpJFVTQ9J3fSrovcyQ+qn+fWM0
-         YCGeICCOkumot5pe+WRHBZj+VbwLtpOqPlopoKP1XvCU88Fqiiha1qqcMC9nKBCOHdKo
-         cjKg==
+        b=ZgNsC/6SyV0t3YLJTo2RDEqi4gDyTyxLLG5F1OBKfI5UmmXanKKCuFkF7zc5u8dRr6
+         +YFKnQh33isFr0h1glooVeGJuDYE0nbBmXEyfduLV52JNFVlEur0md8olyaH4waolNbu
+         29jp+YGDpqwyHN3LoLbIj+23t+MWSY4tE5A68FFDWuX3M3gFzv5DIdkShB/4brFuPL4R
+         3uESdXsWc+Dp9+b5Yq4aEkbF77gtXDrUAFH2r7oi7c/dg8TDc+TOqp13KSx08oA+wHep
+         a0nEwIFLw0WXPxIUm+atv4PmtUkKmzOctC6H8bwOlZLkEk7L8ErU+ed38mrOyfh5zzLp
+         ES3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=I819Igx50aPY5yB1F/TuPtoDfMlJAC+puWUMKWfZMig=;
-        b=SWILRrghKSOzYhnoiiTFsgEQNGZsBVuwS4/Ut8ocGVTC21a91cnXqoTmyw/tr4ittL
-         kIJA9xVeNeHBgosMk+x3EYTpXIih6adK/iS9/j6ngF/UWTLGgEpMV7u/7EYDWSwKsqn9
-         QZPqa1GmaU0GrFecn4aF3WAAxSYl8jeffw3DH7/YeB7bab9++omLYMHWo+xUmFeFwynr
-         SY9QTuQiLaQBRdX7UCLJtcfbAGBXp/m4wl0rHCy8P0zZrtkRN5IiYEgu8o+++CTKvrkt
-         Om15cb+RFA2XO7dPFq4vfAB7pPskzsIOT+bgRGRGcdlMbnaKynfKYrIQokdjpUQ+Eu7c
-         AmVg==
+        bh=0VC8yznMOOJognLL8ZPnjEoPVqEqxrMV+MbqZb8gd4U=;
+        b=IsJMA9rmhsBO8ujc76crwRJJNO0eRGjbI4DSIQ8M6ia+VOzJQP+NwdYCqm7KCqnjc+
+         Aq76/IZuGgWq+7eeCCatP9TgYbuLnlifu62iQSZEyktciIq9IlD3RL668trZGXPzBKFF
+         /9uKpoW/rOh67uit6BRJ9D/J+Xm68BbuY8f/kn9a7PxEOAoPWRcLpVWDy7A+XQ0kyNpL
+         IrEmCNMDASE5PB5v+p4PgPnqrfKvB7PXp+iLNcPjZ0p1lwUvwzVMrUxNZM92n5YagdZD
+         P26luvVa1X8JDaaUfn3yz/kaigOmT5HXMq0iIWET7axC2V1Xx1A2WqB6kaW5jURwPKVw
+         rh1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=HpdcE/ya;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IP8Wsj7G;
+       spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=HpdcE/ya;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Tue, 20 Mar 2018 14:20:53 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Pratik Jain <pratik.jain0509@gmail.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IP8Wsj7G;
+       spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELsf+3Fb77m4CWbr5/PaHn2ejas3n6fTJ1lKcXmjNiHlbKGJhzw0vUSmLgA2jMmJzjMZKJ1JVg==
+Date: Tue, 20 Mar 2018 17:11:11 +0530
+From: Pratik Jain <pratik.jain0509@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: arnaud.patard@rtp-net.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
-Message-ID: <20180320112053.zxudtqeemedogcel@mwanda>
+Message-ID: <20180320114111.GA18734@archlinux>
 References: <20180320083549.6795-1-pratik.jain0509@gmail.com>
+ <20180320112053.zxudtqeemedogcel@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180320083549.6795-1-pratik.jain0509@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=507
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+In-Reply-To: <20180320112053.zxudtqeemedogcel@mwanda>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595445043191954085?=
-X-GMAIL-MSGID: =?utf-8?q?1595455433220449950?=
+X-GMAIL-MSGID: =?utf-8?q?1595456701458509823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I'm trying to review this, but I feel like this makes it slightly more
-complicated for no reason.  Why break it up into two loops?
-
-> -		i++;
-> +		++i;
-
-These are equivalent, so you should default to accepting the original
-author's style.  Otherwise the next person to touch this code will just
-change it back and we get into a cycle of pointless changes.
-
-regards,
-dan carpenter
+You got a valid point about `++i` and `i++`. But I still feel
+that it is less complicated than previous one. I am explicitly
+saying(in first loop) that we are skipping some values to get
+to a specific index. Apart from that, we can avoid unncessary
+wrapping and indentation. Logic becomes much more explicit if
+broken down to two loops.
