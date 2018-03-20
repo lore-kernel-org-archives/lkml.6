@@ -1,89 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751650AbeCTPvk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:51:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50892 "EHLO
+        id S1751963AbeCTPwF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:52:05 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50910 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeCTPve (ORCPT
+        with ESMTP id S1751402AbeCTPvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:51:34 -0400
+        Tue, 20 Mar 2018 11:51:35 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: lee.jones@linaro.org, bleung@chromium.org
 Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
         gwendal@chromium.org, linux-kernel@vger.kernel.org,
         Olof Johansson <olof@lixom.net>
-Subject: [PATCH v3 0/6] platform/chrome: cros_ec debugfs and sysfs updates
-Date: Tue, 20 Mar 2018 16:51:19 +0100
-Message-Id: <20180320155125.3046-1-enric.balletbo@collabora.com>
+Subject: [PATCH v3 1/6] platform/chrome: cros_ec_sysfs: Modify error handling
+Date: Tue, 20 Mar 2018 16:51:20 +0100
+Message-Id: <20180320155125.3046-2-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180320155125.3046-1-enric.balletbo@collabora.com>
+References: <20180320155125.3046-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Gwendal Grignou <gwendal@chromium.org>
 
-This is a third patchset that introduces some cros_ec debugfs and sysfs
-updates. Some patches were send before but never merged and some others
-are new.
+When accessing a sysfs attribute, if the EC command fails, -EPROTO is
+now returned instead of an error message as it is unlikely an app is
+parsing the error message to do something meaningful.
+Also, this patch makes use of cros_ec_cmd_xfer_status() instead of
+cros_ec_cmd_xfer() so an error message is printed in the syslog.
 
-First patch was already sent [1] but did not receive feedback so I am
-resending it. Needs to go through platform/chrome tree and can be
-picked without dependencies.
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Patches 2 to 4 are cleanups of current code, basically is the
-implementation of the changes suggested by Andy Shevchenko on the first
-series. Again these must go through platform/chrome tree.
+Changes in v3: None
+Changes in v2: None
 
-In Patch 5 I added a missing define, so now this patch can be picked
-without any dependency, although now needs the ack from mfd and
-platform/chrome maintainer as touches both sub-systems.
+ drivers/platform/chrome/cros_ec_sysfs.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-Finally, patch 6 was already sent [2] but now needed to be reworked due
-the split of the cros_ec_devs in two parts [3]. This patch touches
-platform/chrome and mfd so we will probably need an immutable branch.
-This version also include a fix found by Gwendal.
-
-Best regards,
-  Enric
-
-Changes in v3:
-- [2/6] Add Reviewed-by Andy Shevchenko
-- [3/6] Add Reviewed-by Andy Shevchenko
-- [4/6] Add Reviewed-by Andy Shevchenko
-- [5/6] Add EC_USB_PD_MAX_PORTS define to avoid interdependencies.
-- [5/6] Add Reviewed-by Andy Shevchenko
-- [6/6] Add Reviewed-by Andy Shevchenko
-- [6/6] Fix the code that has_kb_wake_angle in cros_ec_sensors_register().
-
-Changes in v2:
-- [2/6] Add a new define to get the cros_ec_dev.
-- [3/6] Use DEVICE_ATTR variants.
-- [4/6] Use octal permissions.
-- [5/6] Drop unrelated changes.
-- [6/6] Use DEVICE_ATTR_RW variant.
-- [6/6] Use one line when fits in 80 characters.
-- [6/6] Use the previous defined to_cros_ec_dev
-
-Enric Balletbo i Serra (3):
-  platform/chrome: cros_ec_sysfs: introduce to_cros_ec_dev define.
-  platform/chrome: cros_ec_sysfs: use permission-specific DEVICE_ATTR
-    variants
-  platform/chrome: cros_ec_debugfs: Use octal permissions '0444'
-
-Gwendal Grignou (2):
-  platform/chrome: cros_ec_sysfs: Modify error handling
-  platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake
-    lid angle
-
-Shawn Nematbakhsh (1):
-  platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
-
- drivers/mfd/cros_ec_dev.c                 |  29 +++---
- drivers/platform/chrome/cros_ec_debugfs.c |  76 +++++++++++++++-
- drivers/platform/chrome/cros_ec_sysfs.c   | 141 +++++++++++++++++++++---------
- include/linux/mfd/cros_ec.h               |   2 +
- include/linux/mfd/cros_ec_commands.h      |   3 +
- 5 files changed, 193 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index da0a719d32f7..c03621e523a3 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -114,15 +114,9 @@ static ssize_t store_ec_reboot(struct device *dev,
+ 	msg->command = EC_CMD_REBOOT_EC + ec->cmd_offset;
+ 	msg->outsize = sizeof(*param);
+ 	msg->insize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
+-	if (ret < 0) {
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
++	if (ret < 0)
+ 		count = ret;
+-		goto exit;
+-	}
+-	if (msg->result != EC_RES_SUCCESS) {
+-		dev_dbg(ec->dev, "EC result %d\n", msg->result);
+-		count = -EINVAL;
+-	}
+ exit:
+ 	kfree(msg);
+ 	return count;
+@@ -150,17 +144,11 @@ static ssize_t show_ec_version(struct device *dev,
+ 	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
+ 	msg->insize = sizeof(*r_ver);
+ 	msg->outsize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+ 	if (ret < 0) {
+ 		count = ret;
+ 		goto exit;
+ 	}
+-	if (msg->result != EC_RES_SUCCESS) {
+-		count = scnprintf(buf, PAGE_SIZE,
+-				  "ERROR: EC returned %d\n", msg->result);
+-		goto exit;
+-	}
+-
+ 	r_ver = (struct ec_response_get_version *)msg->data;
+ 	/* Strings should be null-terminated, but let's be sure. */
+ 	r_ver->version_string_ro[sizeof(r_ver->version_string_ro) - 1] = '\0';
+@@ -255,14 +243,9 @@ static ssize_t show_ec_flashinfo(struct device *dev,
+ 	msg->command = EC_CMD_FLASH_INFO + ec->cmd_offset;
+ 	msg->insize = sizeof(*resp);
+ 	msg->outsize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+ 	if (ret < 0)
+ 		goto exit;
+-	if (msg->result != EC_RES_SUCCESS) {
+-		ret = scnprintf(buf, PAGE_SIZE,
+-				"ERROR: EC returned %d\n", msg->result);
+-		goto exit;
+-	}
+ 
+ 	resp = (struct ec_response_flash_info *)msg->data;
+ 
 -- 
 2.16.2
