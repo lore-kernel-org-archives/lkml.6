@@ -1,148 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeCTLRI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:17:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48309 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeCTLRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:17:06 -0400
-Date: Tue, 20 Mar 2018 04:16:34 -0700
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-578ae447e7e5d78c90ac40a06406c1741f79ba96@git.kernel.org>
-Cc: hpa@zytor.com, peterz@infradead.org, liwang@redhat.com,
-        torvalds@linux-foundation.org, jbaron@akamai.com,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, bp@suse.de,
-        tglx@linutronix.de, mingo@kernel.org
-Reply-To: torvalds@linux-foundation.org, jbaron@akamai.com, hpa@zytor.com,
-        peterz@infradead.org, liwang@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, bp@suse.de,
-        jpoimboe@redhat.com
-In-Reply-To: <7121e6e595374f06616c505b6e690e275c0054d1.1521483452.git.jpoimboe@redhat.com>
-References: <7121e6e595374f06616c505b6e690e275c0054d1.1521483452.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] jump_label: Disable jump labels in __exit code
-Git-Commit-ID: 578ae447e7e5d78c90ac40a06406c1741f79ba96
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752843AbeCTLRf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:17:35 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:56148 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751913AbeCTLRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:17:32 -0400
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH] x86/speculation: Fill the RSB on context switch also on
+ non-IBPB CPUs
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>, Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, thomas.lendacky@amd.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
+Date: Tue, 20 Mar 2018 12:17:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  578ae447e7e5d78c90ac40a06406c1741f79ba96
-Gitweb:     https://git.kernel.org/tip/578ae447e7e5d78c90ac40a06406c1741f79ba96
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Mon, 19 Mar 2018 13:18:57 -0500
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Mar 2018 08:57:17 +0100
+If we run on a CPU that does not have IBPB support RSB entries from one
+userspace process can influence 'ret' target prediction in another
+userspace process after a context switch.
 
-jump_label: Disable jump labels in __exit code
+Since it is unlikely that existing RSB entries from the previous task match
+the new task call stack we can use the existing unconditional
+RSB-filling-on-context-switch infrastructure to protect against such
+userspace-to-userspace attacks.
 
-With the following commit:
+This patch brings a change in behavior only for the following CPU types:
+* Intel pre-Skylake CPUs without updated microcode,
+* AMD Family 15h model >60h, Family 17h CPUs without updated microcode.
 
-  333522447063 ("jump_label: Explicitly disable jump labels in __init code")
+Other CPU types either already do the RSB filling on context switch for
+other reasons or do support IBPB for more complete userspace-to-userspace
+protection.
 
-... we explicitly disabled jump labels in __init code, so they could be
-detected and not warned about in the following commit:
-
-  dc1dd184c2f0 ("jump_label: Warn on failed jump_label patching attempt")
-
-In-kernel __exit code has the same issue.  It's never used, so it's
-freed along with the rest of initmem.  But jump label entries in __exit
-code aren't explicitly disabled, so we get the following warning when
-enabling pr_debug() in __exit code:
-
-  can't patch jump_label at dmi_sysfs_exit+0x0/0x2d
-  WARNING: CPU: 0 PID: 22572 at kernel/jump_label.c:376 __jump_label_update+0x9d/0xb0
-
-Fix the warning by disabling all jump labels in initmem (which includes
-both __init and __exit code).
-
-Reported-and-tested-by: Li Wang <liwang@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: dc1dd184c2f0 ("jump_label: Warn on failed jump_label patching attempt")
-Link: http://lkml.kernel.org/r/7121e6e595374f06616c505b6e690e275c0054d1.1521483452.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 ---
- include/linux/jump_label.h | 4 ++--
- init/main.c                | 2 +-
- kernel/jump_label.c        | 7 ++++---
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index 2168cc6b8b30..b46b541c67c4 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -151,7 +151,7 @@ extern struct jump_entry __start___jump_table[];
- extern struct jump_entry __stop___jump_table[];
- 
- extern void jump_label_init(void);
--extern void jump_label_invalidate_init(void);
-+extern void jump_label_invalidate_initmem(void);
- extern void jump_label_lock(void);
- extern void jump_label_unlock(void);
- extern void arch_jump_label_transform(struct jump_entry *entry,
-@@ -199,7 +199,7 @@ static __always_inline void jump_label_init(void)
- 	static_key_initialized = true;
- }
- 
--static inline void jump_label_invalidate_init(void) {}
-+static inline void jump_label_invalidate_initmem(void) {}
- 
- static __always_inline bool static_key_false(struct static_key *key)
- {
-diff --git a/init/main.c b/init/main.c
-index 969eaf140ef0..21efbf6ace93 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1001,7 +1001,7 @@ static int __ref kernel_init(void *unused)
- 	/* need to finish all async __init code before freeing the memory */
- 	async_synchronize_full();
- 	ftrace_free_init_mem();
--	jump_label_invalidate_init();
-+	jump_label_invalidate_initmem();
- 	free_initmem();
- 	mark_readonly();
- 	system_state = SYSTEM_RUNNING;
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index e7214093dcd1..01ebdf1f9f40 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -16,6 +16,7 @@
- #include <linux/jump_label_ratelimit.h>
- #include <linux/bug.h>
- #include <linux/cpu.h>
-+#include <asm/sections.h>
- 
- #ifdef HAVE_JUMP_LABEL
- 
-@@ -421,15 +422,15 @@ void __init jump_label_init(void)
- 	cpus_read_unlock();
- }
- 
--/* Disable any jump label entries in __init code */
--void __init jump_label_invalidate_init(void)
-+/* Disable any jump label entries in __init/__exit code */
-+void __init jump_label_invalidate_initmem(void)
- {
- 	struct jump_entry *iter_start = __start___jump_table;
- 	struct jump_entry *iter_stop = __stop___jump_table;
- 	struct jump_entry *iter;
- 
- 	for (iter = iter_start; iter < iter_stop; iter++) {
--		if (init_kernel_text(iter->code))
-+		if (init_section_contains((void *)(unsigned long)iter->code, 1))
- 			iter->code = 0;
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index bfca937bdcc3..777bae86e159 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -280,8 +280,11 @@ static void __init spectre_v2_select_mitigation(void)
+ 	/*
+ 	 * If neither SMEP nor PTI are available, there is a risk of
+ 	 * hitting userspace addresses in the RSB after a context switch
+-	 * from a shallow call stack to a deeper one. To prevent this fill
+-	 * the entire RSB, even when using IBRS.
++	 * from a shallow call stack to a deeper one.
++	 * Also, if the CPU does not have IBPB support then one userspace
++	 * process can influence 'ret' target prediction for another
++	 * userspace process.
++	 * To prevent this fill the entire RSB, even when using IBRS.
+ 	 *
+ 	 * Skylake era CPUs have a separate issue with *underflow* of the
+ 	 * RSB, when they will predict 'ret' targets from the generic BTB.
+@@ -290,7 +293,8 @@ static void __init spectre_v2_select_mitigation(void)
+ 	 * switch is required.
+ 	 */
+ 	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
+-	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
++	     !boot_cpu_has(X86_FEATURE_SMEP)) ||
++	     !boot_cpu_has(X86_FEATURE_IBPB) || is_skylake_era()) {
+ 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
  	}
- }
