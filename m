@@ -1,130 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeCTTPO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:15:14 -0400
-Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:15072
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751186AbeCTTPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:15:11 -0400
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        Shubhrajyoti Datta <shubhraj@xilinx.com>,
-        Rajan Vaja <RAJANV@xilinx.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Thread-Topic: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Thread-Index: AQHTsONzi5kT5xZmx0aJGWwSpBvQuKPCd+2AgALw7dCAACyGAIAI+snwgAls8ICAAZo/sA==
-Date: Tue, 20 Mar 2018 19:15:05 +0000
-Message-ID: <DM2PR0201MB0767673F4B956454260B67ECB8AB0@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
- <1519856861-31384-3-git-send-email-jollys@xilinx.com>
- <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
- <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
- <DM2PR0201MB0767FFBAECF3A0B30251DBB8B8D20@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <152148383577.242365.14896728603053993045@swboyd.mtv.corp.google.com>
-In-Reply-To: <152148383577.242365.14896728603053993045@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com;
-x-originating-ip: [149.199.62.254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM2PR0201MB0592;7:um0P65JQdDMjeKXpQQ1XSHepwQyVgo/koTDqXRUxxkBcPghwPVG3h3YTlmQXZnG5USIzzn2RqHEVyjM0a3H9yNqWawL77Iu/7jip3gl9vm2kkSQc+992PRDbmZD7JPIyr2+ZWIbXHpPfSy2vvbBwQQfxup51InvAToTuEj2t/v6HPwLzxx+A5xkEffhYFjHu4LSsGWrObiUHXPYmF0T2t4E4T0g0ZCgZ4x9lMit4b5qqIcUpCYB5RrhZtY4zrlLw
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(346002)(376002)(39860400002)(377424004)(13464003)(189003)(199004)(81166006)(33656002)(7736002)(106356001)(25786009)(8676002)(99286004)(68736007)(2900100001)(93886005)(229853002)(2950100002)(3280700002)(2906002)(4326008)(6246003)(102836004)(478600001)(8936002)(14454004)(5660300001)(110136005)(76176011)(186003)(66066001)(305945005)(72206003)(74316002)(81156014)(6506007)(5250100002)(54906003)(97736004)(26005)(105586002)(53546011)(6436002)(7696005)(3846002)(53936002)(316002)(9686003)(55016002)(3660700001)(86362001)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0201MB0592;H:DM2PR0201MB0767.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3979a874-4a4e-411d-2de8-08d58e96e34e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM2PR0201MB0592;
-x-ms-traffictypediagnostic: DM2PR0201MB0592:
-x-microsoft-antispam-prvs: <DM2PR0201MB0592848D5A71949C4266C26AB8AB0@DM2PR0201MB0592.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM2PR0201MB0592;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0201MB0592;
-x-forefront-prvs: 061725F016
-x-microsoft-antispam-message-info: vXYhs8voLHKL3r8E9+HK/iRRigJ/XGtZjADOU1GiJa+0O82wMo9r+rw/D110G/SP07iMmqgmFmfCop7fyp9OzfzWNuXEDzA6jaHXMvlWzghqrZum/OPGafVs4honw6eyS4U45bBTEJCWJpLXvFsjjDF76mISjPSvZI+ZbKnU3Ev7KvwRekFqccAUxdcM4nmjdXxu3usymijwP4tMF0YaTYakA7J4IO2qAT9t7Ko4TQ30tO5qkkHuB/K7MRaj2iLA7CSN7hh7XYRzy9jjdwSsvSRiUEVlLc+afimI/DHwFnFpljH8uOKg5oWB9EBgR6zwyK+7KPGbiVoR1dhNFtEz1Q==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751625AbeCTTSy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 15:18:54 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:33900 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeCTTSw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 15:18:52 -0400
+X-Google-Smtp-Source: AG47ELui4QL8FvuE1fiu1pxYH63J2juN5U1+i5OZ6ytF8ZLFD9QmIBoPWD8yOKjQnqT9RlfcT63EDg==
+Date: Tue, 20 Mar 2018 20:18:47 +0100
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>
+Cc: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v5 0/4] new driver for Valve Steam Controller
+Message-ID: <20180320191847.GA23020@casa>
+References: <20180311195842.5551-1-rodrigorivascosta@gmail.com>
+ <CAM4jgCq5UT0SBKA1DMfsAKd8R+yn0ViPr0U-iE8-tWjgA9hTTQ@mail.gmail.com>
+ <20180312205158.GB21621@casa>
+ <CAO-hwJJqDM5Y7t-hpZ_s7EzjVki00ME7fd_7iUWcgaTZ9o906g@mail.gmail.com>
+ <20180315210659.GA16037@casa>
+ <1c75c511-eada-585e-297f-e90feb17ac8c@valvesoftware.com>
+ <20180319200813.GA18746@casa>
+ <CAM4jgCpNptQz4nP1u0pcBo5fYXJxpxyR4j2U5YBCY2xiev0wug@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3979a874-4a4e-411d-2de8-08d58e96e34e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2018 19:15:05.0552
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0201MB0592
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM4jgCpNptQz4nP1u0pcBo5fYXJxpxyR4j2U5YBCY2xiev0wug@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KJFQPr021767
 
-Hi Rob and Stephan,
-
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@kernel.org]
-> Sent: Monday, March 19, 2018 11:24 AM
-> To: Jolly Shah <JOLLYS@xilinx.com>; Rob Herring <robh@kernel.org>
-> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; mturquette@baylibre.com; sboyd@codeaurora.org;
-> michal.simek@xilinx.com; Shubhrajyoti Datta <shubhraj@xilinx.com>; Rajan
-> Vaja <RAJANV@xilinx.com>; linux-clk@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
-> driver
-> 
-> Quoting Jolly Shah (2018-03-13 11:39:13)
-> > Hi Rob,
-> > >
-> > > What is the interface to the "platform management controller"?
-> > > Because you have no registers, I'm guessing a firmware interface? If
-> > > so, then just define the firmware node as a clock provider.
+On Mon, Mar 19, 2018 at 10:06:09PM +0100, Clément VUCHENER wrote:
+> 2018-03-19 21:08 GMT+01:00 Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>:
+> > On Sat, Mar 17, 2018 at 02:54:07PM -0700, Pierre-Loup A. Griffais wrote:
 > >
-> > Yes it is firmware interface. Along with clocks, firmware interface also controls
-> power and pinctrl operations as major.
-> > I am not sure if I understand you correctly. Do you suggest to register clocks
-> through Firmware driver or just use firmware DT node as clock provider and
-> clock driver DT node can reference clocks from FW node to register same?
+> > Now, what I would really want is a review by Valve of my set-lizard function:
+> >
+> > static void steam_set_lizard_mode(struct steam_device *steam, bool enabled)
+> > {
+> >         if (enabled) {
+> >                 steam_send_report_byte(steam, 0x8e); //enable mouse
+> >                 steam_send_report_byte(steam, 0x85); //enable esc, enter and cursor keys
+> >         } else {
+> >                 steam_send_report_byte(steam, 0x81); //disable esc, enter and cursor keys
+> >                 steam_write_register(steam, 0x08, 0x07); //disable mouse (cmd: 0x87)
+> >         }
+> > }
+> >
+> > While it works, I find its asymmetry quite uncanny. I'm afraid that some
+> > of these are there for a side effect, this is not their real purpose.
+> > Could you give me a hint about this?
+> >
 > 
-> I would suggest making the firmware driver register the clks and act as the clk
-> provider. Not sure what Rob wants.
+> If I remember correctly, you can also enable the mouse with "87 03 08
+> 00 00". But that do not explain the asymmetry or why there are two
+> ways of doing it. I always found it weird that the "enable" value was
+> 0x0000 and the "disable" value 0x0007.
 
-Firmware driver just provides API interface and doesnâ€™t actually control the clocks. Along with clocks, it provides interface for power and pinmux control also. Shall we register clocks/pins/power domains in FW driver or follow something like scpi as below and keep registration separate? 
+This works fine, thanks. IMO, it is better than command 0x8e.
+ I also found that register 0x07 controls the cursor keys emulation:
+  * 87 03 07 07 00: disable
+  * 87 03 07 03 00: enable (03 or 03
+  * 87 03 07 00 00: set "joystick mode" (?)
 
-zynqmp_firmware  {
-		compatible = "xlnx,zynqmp-firmware";
-		method = "smc";
-		
-		zynqmp_clk: zynqmp_clk {
-				compatible = "xlnx,zynqmp-clk";
-				#clock-cells = <1>;
-				clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>
-				clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk"
-		};
-		
-		zynqmp-genpd: zynqmp-genpd {
-				compatible = "xlnx,zynqmp-genpd";
-				...
-		};
-		zynqmp-pinctrl: zynqmp-pinctrl {
-                			compatible = "xlnx,zynqmp-pinctrl";
-			                ...
-        		};
-	};
+But I cannot find a similar register to disable the enter/esc keys, for
+that I still need commands 0x85 and 0x81. 
 
-Thanks,
-Jolly Shah
+Can you tell me if there is a register to configure the enter/esc
+emulation? That would be nice, because I could enable disable the lizard
+mode with a single report: (87 09 07 07 00 08 07 00 xx 07 00).
+
+Thanks.
+Rodrigo
