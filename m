@@ -1,174 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751402AbeCTOYJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:24:09 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35423 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750991AbeCTOYH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:24:07 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.02444233|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BNZf0PH_1521555831;
-Date: Tue, 20 Mar 2018 22:23:51 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 19/19] irqchip: add irq-nationalchip.c and irq-csky.c
-Message-ID: <20180320142350.GA13892@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <62e687d3eb67505aa6f4d4d01ce268fd432bf58e.1521399976.git.ren_guo@c-sky.com>
- <alpine.DEB.2.21.1803191417140.2010@nanos.tec.linutronix.de>
+        id S1751501AbeCTO01 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:26:27 -0400
+Received: from muru.com ([72.249.23.125]:60962 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750991AbeCTO00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:26:26 -0400
+Date: Tue, 20 Mar 2018 07:26:23 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Roger Quadros <rogerq@ti.com>
+Cc: linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: am43xx: Enable dual-role mode for USB1
+Message-ID: <20180320142623.GV5799@atomide.com>
+References: <1521198703-27352-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803191417140.2010@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1521198703-27352-1-git-send-email-rogerq@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On Mon, Mar 19, 2018 at 02:30:42PM +0100, Thomas Gleixner wrote:
-> > +static struct irq_chip ck_irq_chip = {
-> > +	.name		= "csky_intc_v1",
-> > +	.irq_mask	= ck_irq_mask,
-> > +	.irq_unmask	= ck_irq_unmask,
-> > +};
+* Roger Quadros <rogerq@ti.com> [180316 04:12]:
+> USB1 port is micro-AB type and can function as peripheral
+> as well as host. Enable dual-role mode for USB1.
 > 
-> Please use the generic interrupt chip infrastructure for this.
-Ok, I will learn it.
-
-> > +static unsigned int ck_get_irqno(void)
-> > +{
-> > +	unsigned int temp;
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+> Tony,
 > 
-> newline between declaration and code.
-Ok
+> The USB driver side patches are already in Felipe's next branch.
 
-> > +	temp = __raw_readl(CK_VA_INTC_ISR);
-> > +	return temp & 0x3f;
-> > +};
-> > +
-> > +static int __init
-> > +__intc_init(struct device_node *np, struct device_node *parent, bool ave)
-> 
-> What is 'ave'?
-Ave means the irq-controller works on auto-vector-handler mode, it will
-cause 10 exception number and it need read intc-reg to get irq-num.
+Thanks applying into omap-for-v4.17/dt.
 
-> No magic numbers. Please use proper defines.
-Ok
+Regards,
 
-> > +	else
-> > +		__raw_writel( 0x0, CK_VA_INTC_ICR);
-> > +	/*
-> > +	 * csky irq ctrl has 64 sources.
-> > +	 */
-> > +	#define INTC_IRQS 64
-> 
-> No defines in code.
-Ok
-
-> 
-> > +	for (i=0; i<INTC_IRQS; i=i+4)
-> 
-> checkpatch.pl would have told you what's wrong with the above
-Ok, Thx
-
-> > +		__raw_writel((i+3)|((i+2)<<8)|((i+1)<<16)|(i<<24),
-> 
-> Eew. Tons of magic numbers and a unreadable coding style. Please use an
-> inline function with proper comments to calculate that value
-Ok
-
-> > +				CK_VA_INTC_SOURCE + i);
-> > +
-> > +	root_domain = irq_domain_add_legacy(np, INTC_IRQS, 0, 0, &ck_irq_ops, NULL);
-> > +	if (!root_domain)
-> > +		panic("root irq domain not available\n");
-> > +
-> > +	irq_set_default_host(root_domain);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __init
-> > +intc_init(struct device_node *np, struct device_node *parent)
-> > +{
-> > +
-> 
-> Stray newline
-I'll remove, Thx.
-
-> > +	return __intc_init(np, parent, false);
-> > +}
-> > +IRQCHIP_DECLARE(csky_intc_v1, "csky,intc-v1", intc_init);
-> > +
-> > +/*
-> > + * use auto vector exceptions 10 for interrupt.
-> > + */
-> > +static int __init
-> > +intc_init_ave(struct device_node *np, struct device_node *parent)
-> > +{
-> > +	return __intc_init(np, parent, true);
-> 
-> Why is that 'ave' thing not a property of device tree?
-I'll change it to a property.
-
-> > +struct irq_chip nc_irq_chip = {
-> > +	.name =		"nationalchip_intc_v1",
-> > +	.irq_mask =	nc_irq_mask,
-> > +	.irq_unmask =	nc_irq_unmask,
-> > +	.irq_enable =	nc_irq_en,
-> > +	.irq_disable =	nc_irq_dis,
-> > +};
-> 
-> Again. This all can use the generic interrupt chip.
-I'll learn the generic interrupt chip.
-
-> > +inline int ff1_64(unsigned int hi, unsigned int lo)
-> 
-> What on earth means ff1_64?
-Find the first high bit '1' of the reg :P
-
-> > +	asm volatile(
-> > +		"ff1 %0\n"
-> > +		:"=r"(lo)
-> > +		:"r"(lo)
-> > +		:
-> > +	);
-> 
-> So you want to decode the interrupt number from a bitfield. What's wrong
-> with ffs()?
-There is no wrong with ffs(). Ok, I will use the ffs().
-
-> > +	if( lo != 32 )
-> > +		result = 31-lo;
-> 
-> Why is this subtracted?
-ff1 find from high bit, so we need reverse it to get the right num.
-> That code makes no sense w/o comments.
-Sorry, I will add.
-
-> > +	else if( hi != 32 ) result = 31-hi + 32;
-> > +	else {
-> > +		printk("nc_get_irqno error hi:%x, lo:%x.\n", hi, lo);
-> > +		result = NR_IRQS;
-> > +	}
-> 
-> Pleas use braces consistently.
-Ok
-
-> > +unsigned int nc_get_irqno(void)
-> 
-> static?
-Yes
-
-> Same comments as for the other variant.
-Ok
-
-Best Regards
-  Guo Ren
+Tony
