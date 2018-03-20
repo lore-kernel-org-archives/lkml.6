@@ -1,32 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeCTG0v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:26:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47759 "EHLO
+        id S1752060AbeCTG1D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:27:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38927 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751521AbeCTG0s (ORCPT
+        with ESMTP id S1751521AbeCTG0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:26:48 -0400
-Date: Mon, 19 Mar 2018 23:26:16 -0700
-From: tip-bot for John Garry <tipbot@zytor.com>
-Message-ID: <tip-3d4caec1600e0bf34600a7b700599a20df03629e@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, hpa@zytor.com, namhyung@kernel.org,
-        john.garry@huawei.com, will.deacon@arm.com, tglx@linutronix.de,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        mingo@kernel.org, jolsa@redhat.com, ganapatrao.kulkarni@cavium.com,
-        wcohen@redhat.com, acme@redhat.com, zhangshaokun@hisilicon.com
-Reply-To: alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        will.deacon@arm.com, namhyung@kernel.org, john.garry@huawei.com,
-        hpa@zytor.com, mingo@kernel.org, ganapatrao.kulkarni@cavium.com,
-        jolsa@redhat.com, ak@linux.intel.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, zhangshaokun@hisilicon.com,
-        acme@redhat.com, wcohen@redhat.com
-In-Reply-To: <1520506716-197429-12-git-send-email-john.garry@huawei.com>
-References: <1520506716-197429-12-git-send-email-john.garry@huawei.com>
+        Tue, 20 Mar 2018 02:26:54 -0400
+Date: Mon, 19 Mar 2018 23:26:43 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-fca32340a5e8b896f57d41fd94b8b1701df25eb1@git.kernel.org>
+Cc: brueckner@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        schwidefsky@de.ibm.com, tglx@linutronix.de, mingo@kernel.org,
+        acme@redhat.com, heiko.carstens@de.ibm.com, hpa@zytor.com,
+        tmricht@linux.vnet.ibm.com
+Reply-To: brueckner@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        schwidefsky@de.ibm.com, acme@redhat.com, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, tmricht@linux.vnet.ibm.com,
+        heiko.carstens@de.ibm.com
+In-Reply-To: <20180308145735.64717-1-tmricht@linux.vnet.ibm.com>
+References: <20180308145735.64717-1-tmricht@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events arm64: add HiSilicon hip08 JSON
- file
-Git-Commit-ID: 3d4caec1600e0bf34600a7b700599a20df03629e
+Subject: [tip:perf/core] perf stat: Fix core dump when flag T is used
+Git-Commit-ID: fca32340a5e8b896f57d41fd94b8b1701df25eb1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -39,171 +35,119 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3d4caec1600e0bf34600a7b700599a20df03629e
-Gitweb:     https://git.kernel.org/tip/3d4caec1600e0bf34600a7b700599a20df03629e
-Author:     John Garry <john.garry@huawei.com>
-AuthorDate: Thu, 8 Mar 2018 18:58:36 +0800
+Commit-ID:  fca32340a5e8b896f57d41fd94b8b1701df25eb1
+Gitweb:     https://git.kernel.org/tip/fca32340a5e8b896f57d41fd94b8b1701df25eb1
+Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
+AuthorDate: Thu, 8 Mar 2018 15:57:35 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:54:59 -0300
+CommitDate: Fri, 16 Mar 2018 13:55:29 -0300
 
-perf vendor events arm64: add HiSilicon hip08 JSON file
+perf stat: Fix core dump when flag T is used
 
-This patch adds the HiSilicon hip08 JSON file. This platform follows the
-ARMv8 recommended IMPLEMENTATION DEFINED events, where applicable.
+Executing command 'perf stat -T -- ls' dumps core on x86 and s390.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: William Cohen <wcohen@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1520506716-197429-12-git-send-email-john.garry@huawei.com
+Here is the call back chain (done on x86):
+
+ # gdb ./perf
+ ....
+ (gdb) r stat -T -- ls
+...
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff56d1963 in vasprintf () from /lib64/libc.so.6
+(gdb) where
+ #0  0x00007ffff56d1963 in vasprintf () from /lib64/libc.so.6
+ #1  0x00007ffff56ae484 in asprintf () from /lib64/libc.so.6
+ #2  0x00000000004f1982 in __parse_events_add_pmu (parse_state=0x7fffffffd580,
+    list=0xbfb970, name=0xbf3ef0 "cpu",
+    head_config=0xbfb930, auto_merge_stats=false) at util/parse-events.c:1233
+ #3  0x00000000004f1c8e in parse_events_add_pmu (parse_state=0x7fffffffd580,
+    list=0xbfb970, name=0xbf3ef0 "cpu",
+    head_config=0xbfb930) at util/parse-events.c:1288
+ #4  0x0000000000537ce3 in parse_events_parse (_parse_state=0x7fffffffd580,
+    scanner=0xbf4210) at util/parse-events.y:234
+ #5  0x00000000004f2c7a in parse_events__scanner (str=0x6b66c0
+    "task-clock,{instructions,cycles,cpu/cycles-t/,cpu/tx-start/}",
+    parse_state=0x7fffffffd580, start_token=258) at util/parse-events.c:1673
+ #6  0x00000000004f2e23 in parse_events (evlist=0xbe9990, str=0x6b66c0
+    "task-clock,{instructions,cycles,cpu/cycles-t/,cpu/tx-start/}", err=0x0)
+    at util/parse-events.c:1713
+ #7  0x000000000044e137 in add_default_attributes () at builtin-stat.c:2281
+ #8  0x000000000044f7b5 in cmd_stat (argc=1, argv=0x7fffffffe3b0) at
+    builtin-stat.c:2828
+ #9  0x00000000004c8b0f in run_builtin (p=0xab01a0 <commands+288>, argc=4,
+    argv=0x7fffffffe3b0) at perf.c:297
+ #10 0x00000000004c8d7c in handle_internal_command (argc=4,
+    argv=0x7fffffffe3b0) at perf.c:349
+ #11 0x00000000004c8ece in run_argv (argcp=0x7fffffffe20c,
+   argv=0x7fffffffe200) at perf.c:393
+ #12 0x00000000004c929c in main (argc=4, argv=0x7fffffffe3b0) at perf.c:537
+(gdb)
+
+It turns out that a NULL pointer is referenced. Here are the
+function calls:
+
+  ...
+  cmd_stat()
+  +---> add_default_attributes()
+	+---> parse_events(evsel_list, transaction_attrs, NULL);
+	             3rd parameter set to NULL
+
+Function parse_events(xx, xx, struct parse_events_error *err) dives
+into a bison generated scanner and creates
+parser state information for it first:
+
+   struct parse_events_state parse_state = {
+                .list   = LIST_HEAD_INIT(parse_state.list),
+                .idx    = evlist->nr_entries,
+                .error  = err,   <--- NULL POINTER !!!
+                .evlist = evlist,
+        };
+
+Now various functions inside the bison scanner are called to end up in
+__parse_events_add_pmu(struct parse_events_state *parse_state, ..) with
+first parameter being a pointer to above structure definition.
+
+Now the PMU event name is not found (because being executed in a VM) and
+this function tries to create an error message with
+
+   asprintf(&parse_state->error.str, ....)
+
+which references a NULL pointer and dumps core.
+
+Fix this by providing a pointer to the necessary error information
+instead of NULL. Technically only the else part is needed to avoid the
+core dump, just lets be safe...
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180308145735.64717-1-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 122 +++++++++++++++++++++
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |   1 +
- 2 files changed, 123 insertions(+)
+ tools/perf/builtin-stat.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
-new file mode 100644
-index 000000000000..9f0f15d15f75
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
-@@ -0,0 +1,122 @@
-+[
-+    {
-+        "ArchStdEvent": "L1D_CACHE_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WB_VICTIM",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WB_CLEAN",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_INVAL",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WB_VICTIM",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WB_CLEAN",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_INVAL",
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache prefetch access count",
-+        "EventCode": "0x102e",
-+        "EventName": "L1I_CACHE_PRF",
-+        "BriefDescription": "L1I cache prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache miss due to prefetch access count",
-+        "EventCode": "0x102f",
-+        "EventName": "L1I_CACHE_PRF_REFILL",
-+        "BriefDescription": "L1I cache miss due to prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Instruction queue is empty",
-+        "EventCode": "0x1043",
-+        "EventName": "IQ_IS_EMPTY",
-+        "BriefDescription": "Instruction queue is empty",
-+    },
-+    {
-+        "PublicDescription": "Instruction fetch stall cycles",
-+        "EventCode": "0x1044",
-+        "EventName": "IF_IS_STALL",
-+        "BriefDescription": "Instruction fetch stall cycles",
-+    },
-+    {
-+        "PublicDescription": "Instructions can receive, but not send",
-+        "EventCode": "0x2014",
-+        "EventName": "FETCH_BUBBLE",
-+        "BriefDescription": "Instructions can receive, but not send",
-+    },
-+    {
-+        "PublicDescription": "Prefetch request from LSU",
-+        "EventCode": "0x6013",
-+        "EventName": "PRF_REQ",
-+        "BriefDescription": "Prefetch request from LSU",
-+    },
-+    {
-+        "PublicDescription": "Hit on prefetched data",
-+        "EventCode": "0x6014",
-+        "EventName": "HIT_ON_PRF",
-+        "BriefDescription": "Hit on prefetched data",
-+    },
-+    {
-+        "PublicDescription": "Cycles of that the number of issuing micro operations are less than 4",
-+        "EventCode": "0x7001",
-+        "EventName": "EXE_STALL_CYCLE",
-+        "BriefDescription": "Cycles of that the number of issue ups are less than 4",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+        "EventCode": "0x7004",
-+        "EventName": "MEM_STALL_ANYLOAD",
-+        "BriefDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+        "EventCode": "0x7006",
-+        "EventName": "MEM_STALL_L1MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+        "EventCode": "0x7007",
-+        "EventName": "MEM_STALL_L2MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+    },
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index cf14e23b6404..8f11aeb003a9 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -14,3 +14,4 @@
- #Family-model,Version,Filename,EventType
- 0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
-+0x00000000480fd010,v1,hisilicon/hip08,core
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 0fa9ea3a6d92..f5c454855908 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2331,11 +2331,16 @@ static int add_default_attributes(void)
+ 		return 0;
+ 
+ 	if (transaction_run) {
++		struct parse_events_error errinfo;
++
+ 		if (pmu_have_event("cpu", "cycles-ct") &&
+ 		    pmu_have_event("cpu", "el-start"))
+-			err = parse_events(evsel_list, transaction_attrs, NULL);
++			err = parse_events(evsel_list, transaction_attrs,
++					   &errinfo);
+ 		else
+-			err = parse_events(evsel_list, transaction_limited_attrs, NULL);
++			err = parse_events(evsel_list,
++					   transaction_limited_attrs,
++					   &errinfo);
+ 		if (err) {
+ 			fprintf(stderr, "Cannot set up transaction events\n");
+ 			return -1;
