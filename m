@@ -1,111 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751499AbeCTHPm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:15:42 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42473 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbeCTHPj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:15:39 -0400
-X-Google-Smtp-Source: AG47ELtrhkxaxSGQvQO/dtxHVlUG58DmbeTfw4OxBVOw9XmDY+ZgYJgmQEIVUY9ySUfDu42frChQGUzrILnBV99Q3YM=
+        id S1751546AbeCTHQM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750828AbeCTHQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:16:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2E62177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180317232901.14129-3-paul@crapouillou.net>
-References: <20180110224838.16711-2-paul@crapouillou.net> <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-3-paul@crapouillou.net>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 20 Mar 2018 08:15:17 +0100
-X-Google-Sender-Auth: UFPmw-6P91LGHTGy6O_ZOTdyfJo
-Message-ID: <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU clocks
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        afaerber@suse.de, mark.rutland@arm.com, mturquette@baylibre.com,
+        robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Message-ID: <152153016749.254778.17294370002590376536@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
+Date: Tue, 20 Mar 2018 00:16:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-Two things:
-
-On Sun, Mar 18, 2018 at 12:28 AM, Paul Cercueil <paul@crapouillou.net> wrote:
-> This header provides clock numbers for the ingenic,tcu
-> DT binding.
-
-I have tested the whole series on my Creator CI20 with success, using:
-
-+ tcu@10002000 {
-+ compatible = "ingenic,jz4780-tcu";
-+ reg = <0x10002000 0x140>;
-+
-+ interrupt-parent = <&intc>;
-+ interrupts = <27 26 25>;
-+ };
-
-
-So:
-
-Tested-by: Mathieu Malaterre <malat@debian.org>
-
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
->
->  v2: Use SPDX identifier for the license
->  v3: No change
->  v4: No change
->
-> diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:52)
+> diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
 > new file mode 100644
-> index 000000000000..179815d7b3bb
+> index 000000000000..5a9b1e3f3571
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/ingenic,tcu.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * This header provides clock numbers for the ingenic,tcu DT binding.
-> + */
+> +++ b/drivers/clk/actions/owl-s900.c
+> @@ -0,0 +1,690 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL S900 SoC clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > +
-> +#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-> +#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-> +
-> +#define JZ4740_CLK_TIMER0      0
-> +#define JZ4740_CLK_TIMER1      1
-> +#define JZ4740_CLK_TIMER2      2
-> +#define JZ4740_CLK_TIMER3      3
-> +#define JZ4740_CLK_TIMER4      4
-> +#define JZ4740_CLK_TIMER5      5
-> +#define JZ4740_CLK_TIMER6      6
-> +#define JZ4740_CLK_TIMER7      7
-> +#define JZ4740_CLK_WDT         8
-> +#define JZ4740_CLK_LAST                JZ4740_CLK_WDT
-> +
-> +#define JZ4770_CLK_OST         9
-> +#define JZ4770_CLK_LAST                JZ4770_CLK_OST
-> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
 
-When working on JZ4780 support, I always struggle to read those kind
-of #define. Since this is a new patch would you mind changing
-s/JZ4740/JZ47XX/ in your header ?
+Is this include used?
 
-Thanks for your work on JZ !
+> +
+> +#include "owl-common.h"
+> +#include "owl-composite.h"
+> +#include "owl-divider.h"
+> +#include "owl-factor.h"
+> +#include "owl-fixed-factor.h"
+> +#include "owl-gate.h"
+> +#include "owl-mux.h"
+> +#include "owl-pll.h"
+> +#include "owl-s900.h"
+> +
+> +#include <dt-bindings/clock/actions,s900-cmu.h>
+> +
+> +static struct clk_pll_table clk_audio_pll_table[] = {
+> +       {0, 45158400}, {1, 49152000},
+> +       {0, 0},
+> +};
+> +
+> +static struct clk_pll_table clk_edp_pll_table[] = {
+> +       {0, 810000000}, {1, 1350000000}, {2, 2700000000},
 
-> +#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
-> --
-> 2.11.0
->
->
+Please put spaces around brackets.
+
+> +       {0, 0},
+> +};
+> +
+> +/* pll clocks */
+> +static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL, 24000000, 9, 0, 8, 5, 107, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL, 24000000, 8, 0, 8, 5, 45, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL, 6000000, 8, 0, 8, 4, 100, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk", CMU_DISPLAYPLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk", CMU_ASSISTPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk", CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
+> +static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK, 0, 9, 0, 2, 0, 0, clk_edp_pll_table, CLK_IGNORE_UNUSED);
+> +
+> +static const char *cpu_clk_mux_p[] = { "losc", "hosc", "core_pll_clk", };
+> +static const char *dev_clk_p[] = { "hosc", "dev_pll_clk", };
+> diff --git a/drivers/clk/actions/owl-s900.h b/drivers/clk/actions/owl-s900.h
+> new file mode 100644
+> index 000000000000..d0c10594e518
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-s900.h
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL S900 SoC clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#ifndef _OWL_S900_H_
+> +#define _OWL_S900_H_
+
+I'd prefer this file contents go inside the one C file that uses it so
+we can quickly reference the offsets without going to another file.
+
+> +
+> +#define CMU_COREPLL            (0x0000)
+> +#define CMU_DEVPLL             (0x0004)
+> +#define CMU_DDRPLL             (0x0008)
