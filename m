@@ -1,11 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-317056-1521781725-2-3863308988038880208
+X-Cyrus-Session-Id: sloti22d1t05-488525-1521525536-2-17335976385017170500
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enrosk.us-ascii, BAYES_USED global,
-  SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -13,24 +12,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521781724; b=iKSK4SfloPWLP+WyceNQkkEK/zNv2+vmIS7oxQIxhRcDjMy
-    cjd3cXKvOGBDZAlRBaQ9ySVg/jbXo+hL6AQOYSO4zOQRDEFGvPUawd9XwV+o7SnM
-    sjmbwwZqq50NgtAtx4k6XIhApPEWmkmrJkHxDVcC6XrZvuCPvsqXoWIMbH8Jl+63
-    nK2/sjlh+DZ7lXpg2o1thBFoFm2btgA1hu6uSKWEFHw3ZYA7VJLh6UAKVfv/W8ep
-    h89OXyKMl09ADzAgtUrmNMAslDJWT7sz5cGpljb8++xaBYgSJIAhNrYCestyZ4vb
-    VOsH3Dd2y7it/3lt8DTFL0Oc1TD0YQdOuA+Ed+w==
+    t=1521525535; b=L/k9wY85eBfGWET0TuEjDVTn4duedTOB3vIotiymwtTN7Sl
+    MyImtkMSDl97IQF7jz+wIMsdNLF0VdNWMhqBFKWlhXG4S6e82NKfE6+97Exq7NfF
+    ILGQ7W0E608paVrWBvuZx9mzYp2biZA9EVQrFf/z0nEgLNuzQqEcCbkBc09/fYyG
+    p92U8ZV2xVKtdrn1LohXgSCOIDyDUzI7YtRan3zRdPjfD1ouiaMzfxhpalPH2OIC
+    maw0J+Jio6PZ/qV68cI5Hq1OHmACwz+eRvh/ePvpQgmt0Se6DlxN5r6NktSXXwDK
+    Mjzmq95b77jDc5XPx7ekPgrYJ3ezLWZb5wQ5vXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521781724; bh=E
-    V5M0J8SwLfiILCN8M6jc7gCN+0X7b7twnQ2+Nz8wgk=; b=Fcz59b06z6Fp1OXBb
-    q2AG5xxbN0YuJ/9I2YSFwasPHNJvww4rzlbtFUWBMIx+zEiFXA0+K9DS0NuLLrnc
-    8ybdNynoQcIeJff7R2ofUXlIdjb6oi3ODPzX09aJt0g2Zi9eS+jmiZPTAtlbAYe9
-    rs2qUDa2FpYXz/StI+PUuxrl8E3eBOSw31yzbdLfrxQFLTHLI7E2pFUa2INfzrg+
-    hxHF6xnpR7N5EpHGuFQwh4Cbyj6ZyaUoUnU8W7uBm1Xx8rSDb8m+7Sk323eM9B9P
-    2VXNCREk5kpPqBAwDB62gfvLOL2MiJ3dLXZdcxlTlLnWWHMNbGt2HpOWnJeJ0rAV
-    7MEcA==
+    :content-transfer-encoding:sender; s=arctest; t=1521525535; bh=b
+    YjAsodE4ALk4o6/1OVWx2MFx2QWqQe8nURzncI2ZcI=; b=UZdy7ZIKeV5BZI1cC
+    4rTRa0TrLtdkMX0I75LHTwi4RdQGFS16C6kDYeNZ7Yeb9x3uurxxVPDVdhA79woo
+    cAW79pgTaNpVqEqQIjCxI5Qrq22LDlUQ8geBQZf7aKAofmgP616wMrYmE3XC3xc2
+    ELqyFhecID25IvHcvuEZZik41CvlAdcf5LLQ9O1cdzdE/XXlB1l9GsP45xvy1LxT
+    Fx6j8GzqLU6GhmjKW8KNBgybE68XnR29DnwbehsqHtxmD+OPAiaufPdmf0URbQYL
+    BlKLMXbJ9a3FgPcuocI8BmL9S/j77vFMW+njVyRfyk7fB/yIu7bATn2sJxXieNDB
+    2E30g==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
@@ -57,30 +56,30 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 2/7] staging: ks7010: Fix lines over 80 characters due to
- comments.
-Date: Thu, 22 Mar 2018 22:07:40 -0700
-Message-Id: <20180323050745.28903-2-quytelda@tamalin.org>
+Subject: [PATCH 6/6] staging: ks7010: Factor out repeated request
+ initialization code.
+Date: Mon, 19 Mar 2018 22:58:15 -0700
+Message-Id: <20180320055815.32651-6-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180323050745.28903-1-quytelda@tamalin.org>
-References: <20180322172014.GA6801@kroah.com>
- <20180323050745.28903-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:7g7rwKStJKgoWKctekKYPefHq6SDXTL2fCuBzXjsk+PSSKw7MSl
- 5zf5gVsctXH8yILv8yKsUIV23rjmsy5PWq1FqppvVpwfWIUhG8XVp24cUABvgs8CGPBK5DZ
- hdfEfNVMYny0OUVqF8/K8LgpgIG1XJ7twNdrobUCp6JqoDns3gOU50MUXCM2kys/4p5fQ34
- 5dRrjDLWGDzQsejKyk/zA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OAr6S3alsok=:RefvV79mZ7t+DvRTdyHdxp
- xGaY6gzdrNyl9aFt3RapKTuYSsIhPkT9R7gyGv2DZ+lN3utl/nqFB4AmT94Xrh+hPRWDqV/yu
- 7Uwa11+wESoufle/da+hqFEiGGDX/Ge+jdo6EUo2+LcT5+jEWdfj37JFSm3eByEfxkxLX1aBp
- vK2QjLxI1FQtS2O46p8jhUKhGmYub8smVLU13TFkjmk1Abq37kerAKaMJFJX8+VfUkqdcvrZO
- nEj9ccInSOUo6vQKHEmf66WpKb5pKLxoh2M7sW3d30mZ87Aj1HieBDSOPBdBu3P2M6CMgxEH6
- DgoTRd4/6GnXDwSCfWMKEwit9DcrmJ96OjPZEQnq0Jz+qIjv04SU1kM2ekqHt2SurOLF4v6Hc
- SD1n2elwx5Xmhi5VB/wDoq0mWyb1CLy7FzDdvGlVj6LiJipcT+Kav3INoYu0xZkoVPTQhJrot
- eVVCHPxS7fBAyof8af9tLQ4WB67FCGRQYcNouUym6Xv0hMTbopSiC1GE8Ii4PUmvtAUG/Ic1r
- wYGalXZlC4rGj470u/S4zWKSloZh9jy2TrQoLZLM1jvAm4IV6wtxUy4DaLhJajEjp6o2q21/X
- mhTnQrENk90Y9zQPCkjgVdZ8AS6nXnQQY1+IwwDyrAfc2KFTM35tQHTCRWmBAkMExiQpSLA6Y
- yFvCum9veKdJKny58q6t1qwLqTZDXoVJiK6NiD7+8OKg07hxk4bAm6Eqr2NBkJyNUR2/YDAQq
- PzTN9QA3OM1FllQRr/EygrRXkm0lWMG7jueQPw==
+In-Reply-To: <20180320055815.32651-1-quytelda@tamalin.org>
+References: <20180319185125.GA13209@kroah.com>
+ <20180320055815.32651-1-quytelda@tamalin.org>
+X-Provags-ID: V03:K0:cPTKj6Psih1RpbjkSh7DHqrByWfRPWAjfYNw+fIw2L8snuctjrF
+ A/sK85urnzu3d0EnITjsXgztuERyZkhq915YcQqMGOq1y90xSOJPLGJhoOW9OS12/IieBSD
+ gxK28Q2reqENCq/yY4An99hb5vnxGIDb0iCWjjFnVfpS/2MgGMMJTSRIzheAqMupO+zO8nm
+ /KKiTYlK7+QcMuNbvOF6w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:owzFVOep5e0=:NlbCYJFgwabQMgbqMs+GJ9
+ eIX9zSeLUtRXdwRyYdA5PKxHqhlqQ0P6cZAcJ+2Po5LBTqxssfhudwybZ45t2EsDLMpNKfJbv
+ 0AOQ3DqBEEN68s9EB/S+E+gbnsIF7aK+LxboEsl97BCwUUifSpfocO0NEWoi5n+4vjQfcHR7S
+ D6uyWZZ6WovYMQxeDnKZkzCuuFaFVBwfPNIqGWoPs8ymMySRho03yhD85z74atEHYf+YZffz2
+ r8rP00haD79s/EkKVJ1SzE6gAbbjBLn+SYfH0vXi28XLPzNAvtyOB8akjWPBA0TXi25LEf8eM
+ 6R+5aJelEa0sytvE5GTddvgv9tRpbnWtQQJlW70CRtBkMMfnGFu3u5UJJPgqe2HX7L/jQALhq
+ f5ScYxyTlDJ/NHRLrmkPE53r+xXl0M5033RtyUpZxvyXNFmlGSOgN0SfYlwa0SY2NnT4pDVuR
+ dqZBrbWGlTb43Jiw5XVjwLmYfGt9gx3YxTkQNFlJpcfqEcuyOnQ3MoKR+C6ZlsUafyPuM9GOC
+ 6ljQnB3qMfc3u9eM5GQ9g+Qg82QvN0yZEPRSf6cR4cuK9YLP5+tWxBSWiMS5JXuWvKKyfkA2z
+ jtTqhZLDQI/AAs88FIPyVx5fpPMTBIWfdoLx+1IIhBzwJHY9xlMkTZA4mJEGGTTqvgxPD6X+R
+ 3x/n1+0fXs5TDG+ya/bSiISKylOqo4sQPNEHn1sq/GIXVfhln7fioy1tMfU8K6ffEM1AlbDNu
+ ExWhjNRlymPBPxH8qJX5ZCsPNUwHtswaNiUP0g==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -102,74 +101,124 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are several instances where comments are spaced so far to the
-right they cause the line to go over the 80 character limit.  Move
-these comments to above the statements they describe instead.
+The code to initialize various different types of request structs
+is repeated multiple times.  Factor this code out into a macro
+called INIT_REQUEST.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c | 55 +++++++++++---------------------------
+ 1 file changed, 16 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 534cca95bfb9..653f6aae3420 100644
+index 6fc2c3647908..3e5016aad029 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -277,7 +277,8 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
- 			memcpy(ap->rsn_ie.body, bp + 2, ap->rsn_ie.size);
- 			break;
- 		case WLAN_EID_VENDOR_SPECIFIC: /* WPA */
--			if (memcmp(bp + 2, CIPHER_ID_WPA_WEP40, 4) == 0) { /* WPA OUI check */
-+			/* WPA OUI check */
-+			if (memcmp(bp + 2, CIPHER_ID_WPA_WEP40, 4) == 0) {
- 				ap->wpa_ie.id = *bp;
- 				if (*(bp + 1) <= RSN_IE_BODY_MAX)
- 					ap->wpa_ie.size = *(bp + 1);
-@@ -469,13 +470,16 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 		netdev_dbg(priv->net_dev, "NETBEUI/NetBIOS rx_ind_size=%d\n",
- 			   rx_ind_size);
+@@ -40,6 +40,17 @@ static inline unsigned int cnt_smeqbody(struct ks_wlan_private *priv)
  
--		skb_put_data(skb, priv->rxp, 12);	/* 8802/FDDI MAC copy */
-+		/* 8802/FDDI MAC copy */
-+		skb_put_data(skb, priv->rxp, 12);
+ #define KS_WLAN_MEM_FLAG (GFP_ATOMIC)
  
--		temp[0] = (((rx_ind_size - 12) >> 8) & 0xff);	/* NETBEUI size add */
-+		/* NETBEUI size add */
-+		temp[0] = (((rx_ind_size - 12) >> 8) & 0xff);
- 		temp[1] = ((rx_ind_size - 12) & 0xff);
- 		skb_put_data(skb, temp, 2);
++#define INIT_REQUEST(pp, priv)
++{(
++	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
++	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
++	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
++	pp->rate_set.size = priv->reg.rate_set.size;
++	pp->capability = ks_wlan_cap(priv);
++	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
++	       priv->reg.rate_set.size);
++)}
++
+ static
+ inline u8 get_BYTE(struct ks_wlan_private *priv)
+ {
+@@ -1412,14 +1423,7 @@ void hostif_ps_adhoc_set_request(struct ks_wlan_private *priv)
+ 	if (!pp)
+ 		return;
  
--		skb_put_data(skb, priv->rxp + 12, rx_ind_size - 14);	/* copy after Type */
-+		/* copy after Type */
-+		skb_put_data(skb, priv->rxp + 12, rx_ind_size - 14);
+-	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+-	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+-	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
+-	pp->channel = cpu_to_le16((uint16_t)(priv->reg.channel));
+-	pp->rate_set.size = priv->reg.rate_set.size;
+-	pp->capability = ks_wlan_cap(priv);
+-	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
+-	       priv->reg.rate_set.size);
++	INIT_REQUEST(pp, priv);
  
- 		aa1x_hdr = (struct ieee802_1x_hdr *)(priv->rxp + 14);
- 		break;
-@@ -1090,8 +1094,8 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 		return 0;
- 	}
+ 	/* send to device request */
+ 	ps_confirm_wait_inc(priv);
+@@ -1437,16 +1441,9 @@ void hostif_infrastructure_set_request(struct ks_wlan_private *priv)
+ 	if (!pp)
+ 		return;
  
--	/* for PowerSave */
--	if (atomic_read(&priv->psstatus.status) == PS_SNOOZE) {	/* power save wakeup */
-+	/* power save wakeup */
-+	if (atomic_read(&priv->psstatus.status) == PS_SNOOZE) {
- 		if (!netif_queue_stopped(priv->net_dev))
- 			netif_stop_queue(priv->net_dev);
- 	}
-@@ -1163,11 +1167,12 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	}
+-	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+-	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+-	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
+-
+-	pp->rate_set.size = priv->reg.rate_set.size;
+-	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
+-	       priv->reg.rate_set.size);
++	INIT_REQUEST(pp, priv);
+ 	pp->ssid.size = priv->reg.ssid.size;
+ 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
+-	pp->capability = ks_wlan_cap(priv);
+ 	pp->beacon_lost_count =
+ 	    cpu_to_le16((uint16_t)(priv->reg.beacon_lost_count));
+ 	pp->auth_type = cpu_to_le16((uint16_t)(priv->reg.authenticate_type));
+@@ -1486,16 +1483,9 @@ static void hostif_infrastructure_set2_request(struct ks_wlan_private *priv)
+ 	if (!pp)
+ 		return;
  
- 	if (priv->wpa.rsn_enabled && priv->wpa.key[0].key_len) {
-+		/* no encryption */
- 		if (eth_proto == ETH_P_PAE &&
- 		    priv->wpa.key[1].key_len == 0 &&
- 		    priv->wpa.key[2].key_len == 0 &&
- 		    priv->wpa.key[3].key_len == 0) {
--			pp->auth_type = cpu_to_le16((uint16_t)TYPE_AUTH);	/* no encryption */
-+			pp->auth_type = cpu_to_le16((uint16_t)TYPE_AUTH);
- 		} else {
- 			if (priv->wpa.pairwise_suite == IW_AUTH_CIPHER_TKIP) {
- 				MichaelMICFunction(&michael_mic,
+-	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+-	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+-	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
+-
+-	pp->rate_set.size = priv->reg.rate_set.size;
+-	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
+-	       priv->reg.rate_set.size);
++	INIT_REQUEST(pp, priv);
+ 	pp->ssid.size = priv->reg.ssid.size;
+ 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
+-	pp->capability = ks_wlan_cap(priv);
+ 	pp->beacon_lost_count =
+ 	    cpu_to_le16((uint16_t)(priv->reg.beacon_lost_count));
+ 	pp->auth_type = cpu_to_le16((uint16_t)(priv->reg.authenticate_type));
+@@ -1538,16 +1528,9 @@ void hostif_adhoc_set_request(struct ks_wlan_private *priv)
+ 	if (!pp)
+ 		return;
+ 
+-	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+-	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+-	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
+-	pp->channel = cpu_to_le16((uint16_t)(priv->reg.channel));
+-	pp->rate_set.size = priv->reg.rate_set.size;
+-	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
+-	       priv->reg.rate_set.size);
++	INIT_REQUEST(pp, priv);
+ 	pp->ssid.size = priv->reg.ssid.size;
+ 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
+-	pp->capability = ks_wlan_cap(priv);
+ 
+ 	/* send to device request */
+ 	ps_confirm_wait_inc(priv);
+@@ -1565,15 +1548,9 @@ void hostif_adhoc_set2_request(struct ks_wlan_private *priv)
+ 	if (!pp)
+ 		return;
+ 
+-	pp->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+-	pp->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+-	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
+-	pp->rate_set.size = priv->reg.rate_set.size;
+-	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
+-	       priv->reg.rate_set.size);
++	INIT_REQUEST(pp, priv);
+ 	pp->ssid.size = priv->reg.ssid.size;
+ 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
+-	pp->capability = ks_wlan_cap(priv);
+ 
+ 	pp->channel_list.body[0] = priv->reg.channel;
+ 	pp->channel_list.size = 1;
 -- 
 2.16.2
 
