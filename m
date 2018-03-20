@@ -1,131 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753568AbeCTNA4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:00:56 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33895 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753212AbeCTNAw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:00:52 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Tue, 20 Mar 2018 15:01:57 +0200
-Message-ID: <3127791.hHqCBynxiV@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1521213399-31947-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org> <1521213399-31947-4-git-send-email-jacopo+renesas@jmondi.org>
+        id S1753360AbeCTNE3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:04:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4455 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753090AbeCTNE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:04:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
+   d="scan'208";a="26032403"
+Subject: [PATCH v1 1/3] perf/core: store context switch out type into Perf
+ trace
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <4857e3ba-a42f-a9a2-2668-91ca9b44727c@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <99ab3682-4e41-6b97-22dc-e80e9f311e83@linux.intel.com>
+Date: Tue, 20 Mar 2018 16:04:21 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <4857e3ba-a42f-a9a2-2668-91ca9b44727c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Store thread context-switch-out event type into Perf trace as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] records.
 
-Thank you for the patch.
+Introduced types of switch-out events assumed to be 
+a) preempt: task->state == TASK_RUNNING and b) yield: !preempt;
 
-On Friday, 16 March 2018 17:16:39 EET Jacopo Mondi wrote:
-> The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-> decoder, connected to the on-chip LVDS encoder output on one side
-> and to HDMI encoder ADV7511w on the other one.
-> 
-> As the decoder does not need any configuration it has been so-far
-> omitted from DTS. Now that a driver is available, describe it in DT
-> as well.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+New yield event type is encoded using special 
+PERF_RECORD_MISC_SWITCH_OUT_YIELD bit extending PERF_RECORD_MISC_SWITCH_OUT 
+meaning traditional preemption switch out event:
 
-The patch looks OK to me, but I think it should be squashed with Niklas' patch 
-that added display HDMI output support to the V3M Eagle DT.
+    misc &= PERF_RECORD_MISC_SWITCH_OUT | PERF_RECORD_MISC_SWITCH_OUT_YIELD
+	
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ include/uapi/linux/perf_event.h       | 5 +++++
+ kernel/events/core.c                  | 4 +++-
+ tools/include/uapi/linux/perf_event.h | 5 +++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-> ---
-> 
-> List of patch dependencies, as of renesas-drivers-2018-03-13-v4.16-rc5:
-> 
-> - [PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
->    which includes DU, LVDS and FCPD enablement from:
->   [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
-> - [PATCH v4] v4l: vsp1: Fix video output on R8A77970
-> 
-> Patches to be applied on top of
-> "arm64: dts: renesas: eagle: add HDMI output using the ADV7511W"
-> 
-> Thanks
->    j
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 ++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index c0fd144..69f43b8
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> @@ -42,6 +42,33 @@
->  			};
->  		};
->  	};
-> +
-> +	thc63lvd1024: lvds-decoder {
-> +		compatible = "thine,thc63lvd1024";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				thc63lvd1024_in_0: endpoint {
-> +					remote-endpoint = <&lvds0_out>;
-> +				};
-> +			};
-> +
-> +			port@2{
-> +				reg = <2>;
-> +
-> +				thc63lvd1024_out_2: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +
-> +			};
-> +
-> +		};
-> +	};
->  };
-> 
->  &avb {
-> @@ -98,7 +125,7 @@
->  			port@0 {
->  				reg = <0>;
->  				adv7511_in: endpoint {
-> -					remote-endpoint = <&lvds0_out>;
-> +					remote-endpoint = <&thc63lvd1024_out_2>;
->  				};
->  			};
-> 
-> @@ -152,8 +179,8 @@
-> 
->  	ports {
->  		port@1 {
-> -			endpoint {
-> -				remote-endpoint = <&adv7511_in>;
-> +			lvds0_out: endpoint {
-> +				remote-endpoint = <&thc63lvd1024_in_0>;
->  			};
->  		};
->  	};
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 6f873503552d..0339c829cda5 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -654,6 +654,11 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread explicitly yielded cpu due to
++ * a call of some synchronization API e.g. futex system call
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_YIELD	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 57898102847f..1faa6dde090c 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7216,6 +7216,8 @@ static void perf_event_switch(struct task_struct *task,
+ 			      struct task_struct *next_prev, bool sched_in)
+ {
+ 	struct perf_switch_event switch_event;
++	__u16 switch_type = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT |
++		(task->state == TASK_RUNNING ? 0 : PERF_RECORD_MISC_SWITCH_OUT_YIELD);
+ 
+ 	/* N.B. caller checks nr_switch_events != 0 */
+ 
+@@ -7225,7 +7227,7 @@ static void perf_event_switch(struct task_struct *task,
+ 		.event_id	= {
+ 			.header = {
+ 				/* .type */
+-				.misc = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT,
++				.misc = switch_type,
+ 				/* .size */
+ 			},
+ 			/* .next_prev_pid */
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 6f873503552d..0339c829cda5 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -654,6 +654,11 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread explicitly yielded cpu due to
++ * a call of some synchronization API e.g. futex system call
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_YIELD	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
