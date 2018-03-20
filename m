@@ -1,150 +1,277 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752317AbeCTIwL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:52:11 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51698 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751408AbeCTIwG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:52:06 -0400
-X-Google-Smtp-Source: AG47ELvZvl/nuAJ/u43jbOYzcex0IyIr9IIEdct8T6QgLdJt8Yyn0ekV/IuVy8b+E9Xn8ZKXwxbdmQ==
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Intel Graphics Development <intel-gfx@lists.freedesktop.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] input/psmouse: Don't hold the mutex while calling ->disconnect
-Date: Tue, 20 Mar 2018 09:51:58 +0100
-Message-Id: <20180320085158.1954-1-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.16.2
+        id S1752387AbeCTIwQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:52:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:37152 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752019AbeCTIwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:52:09 -0400
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
+To: Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
+Date: Tue, 20 Mar 2018 08:52:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180317232901.14129-5-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At least trackpoint_disconnect wants to remove some sysfs files, and
-we can't remove sysfs files while holding psmouse_mutex:
+On 17/03/18 23:28, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
+>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
+>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
+>  4 files changed, 178 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> 
+>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>  added content.
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> new file mode 100644
+> index 000000000000..471d27078599
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> @@ -0,0 +1,42 @@
+> +Ingenic SoC TCU binding
+> +
+> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
+> +channels, each one having its own clock, that can be started and stopped,
+> +reparented, and reclocked.
+> +
+> +Required properties:
+> +- compatible : One of:
+> +  * ingenic,jz4740-tcu-clocks,
+> +  * ingenic,jz4770-tcu-clocks,
+> +  * ingenic,jz4780-tcu-clocks.
+> +- clocks : List of phandle & clock specifiers for clocks external to the TCU.
+> +  The "pclk", "rtc" and "ext" clocks should be provided.
+> +- clock-names : List of name strings for the external clocks.
+> +- #clock-cells: Should be 1.
+> +  Clock consumers specify this argument to identify a clock. The valid values
+> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&ext>, <&rtc>, <&pclk>;
+> +			clock-names = "ext", "rtc", "pclk";
+> +
+> +			#clock-cells = <1>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..7f3af2da77cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> @@ -0,0 +1,39 @@
+> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
+> +  * ingenic,jz4740-tcu-intc
+> +  * ingenic,jz4770-tcu-intc
+> +  * ingenic,jz4780-tcu-intc
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +  interrupt source. The value shall be 1.
+> +- interrupt-parent : phandle of the interrupt controller.
+> +- interrupts : Specifies the interrupt the controller is connected to.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <15>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..5742c3f21550
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> @@ -0,0 +1,56 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+> +----------------------------------------------------------
+> +
+> +For a description of the TCU hardware and drivers, have a look at
+> +Documentation/mips/ingenic-tcu.txt.
+> +
+> +The TCU is implemented as a parent node, whose role is to create the
+> +regmap, and child nodes for the various drivers listed in the aforementioned
+> +document.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.16.0-rc5-g613eb885b69e-drmtip_1+ #1 Tainted: G     U
-------------------------------------------------------
-kworker/0:3/102 is trying to acquire lock:
- (kn->count#130){++++}, at: [<000000009679748b>] kernfs_remove_by_name_ns+0x3b/0x80
+You're describing the Linux driver here. Please stick to a description
+of the HW.
 
-but task is already holding lock:
- (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
+> +
+> +Required properties:
+> +
+> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
 
-which lock already depends on the new lock.
+Without any provision for an SoC version? Seems bold...
 
-the existing dependency chain (in reverse order) is:
+> +- reg: Should be the offset/length value corresponding to the TCU registers
+> +- #address-cells: Should be <1>;
+> +- #size-cells: Should be <1>;
+> +- ranges: Should be one range for the full TCU registers area
+> +
+> +Accepted children nodes:
+> +- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 
--> #1 (psmouse_mutex){+.+.}:
-       psmouse_attr_set_helper+0x28/0x140
-       kernfs_fop_write+0xfe/0x180
-       __vfs_write+0x1e/0x130
-       vfs_write+0xbd/0x1b0
-       SyS_write+0x40/0xa0
-       do_syscall_64+0x65/0x1a0
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+It is slightly confusing that you have 3 files named ingenic,tcu.txt.
+How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
+binding for the timer)?
 
--> #0 (kn->count#130){++++}:
-       __kernfs_remove+0x243/0x2b0
-       kernfs_remove_by_name_ns+0x3b/0x80
-       remove_files.isra.0+0x2b/0x60
-       sysfs_remove_group+0x38/0x80
-       sysfs_remove_groups+0x24/0x40
-       trackpoint_disconnect+0x2c/0x50
-       psmouse_disconnect+0x8f/0x160
-       serio_disconnect_driver+0x28/0x40
-       serio_driver_remove+0xc/0x10
-       device_release_driver_internal+0x15b/0x230
-       serio_handle_event+0x1c8/0x260
-       process_one_work+0x215/0x620
-       worker_thread+0x48/0x3a0
-       kthread+0xfb/0x130
-       ret_from_fork+0x3a/0x50
+> +
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
+> +			...
+> +		};
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +			...
+> +		};
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
+> +			...
+> +		};
+> +	};
+> +};
+> +
+> +For more information about the children node, refer to the documents listed
+> +above in the "Accepted children nodes" section.
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..f910b7e96783
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,41 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+> +---------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+> +  * ingenic,jz4740-tcu
+> +  * ingenic,jz4770-tcu
+> +  * ingenic,jz4780-tcu
+> +- interrupt-parent : phandle of the TCU interrupt controller.
+> +- interrupts : Specifies the interrupts the controller is connected to.
+> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+> +- clock-names : List of name strings for the TCU clocks.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+> +						  "timer4", "timer5", "timer6", "timer7";
+> +
+> +			interrupt-parent = <&tcu_irq>;
+> +			interrupts = <0 1 2 3 4 5 6 7>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> 
 
-other info that might help us debug this:
+Thanks,
 
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(psmouse_mutex);
-                               lock(kn->count#130);
-                               lock(psmouse_mutex);
-  lock(kn->count#130);
-
- *** DEADLOCK ***
-
-6 locks held by kworker/0:3/102:
- #0:  ((wq_completion)"events_long"){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
- #1:  (serio_event_work){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
- #2:  (serio_mutex){+.+.}, at: [<00000000c8a49847>] serio_handle_event+0x23/0x260
- #3:  (&dev->mutex){....}, at: [<00000000b55eee75>] device_release_driver_internal+0x2f/0x230
- #4:  (&serio->drv_mutex){+.+.}, at: [<000000009719f997>] serio_disconnect_driver+0x16/0x40
- #5:  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
-
-stack backtrace:
-CPU: 0 PID: 102 Comm: kworker/0:3 Tainted: G     U           4.16.0-rc5-g613eb885b69e-drmtip_1+ #1
-Hardware name: LENOVO 74591P0/74591P0, BIOS 6DET28WW (1.05 ) 07/30/2008
-Workqueue: events_long serio_handle_event
-Call Trace:
- dump_stack+0x5f/0x86
- print_circular_bug.isra.18+0x1d0/0x2c0
- __lock_acquire+0x14ae/0x1b60
- ? kernfs_remove_by_name_ns+0x20/0x80
- ? lock_acquire+0xaf/0x200
- lock_acquire+0xaf/0x200
- ? kernfs_remove_by_name_ns+0x3b/0x80
- __kernfs_remove+0x243/0x2b0
- ? kernfs_remove_by_name_ns+0x3b/0x80
- ? kernfs_name_hash+0xd/0x70
- ? kernfs_find_ns+0x7e/0x100
- kernfs_remove_by_name_ns+0x3b/0x80
- remove_files.isra.0+0x2b/0x60
- sysfs_remove_group+0x38/0x80
- sysfs_remove_groups+0x24/0x40
- trackpoint_disconnect+0x2c/0x50
- psmouse_disconnect+0x8f/0x160
- serio_disconnect_driver+0x28/0x40
- serio_driver_remove+0xc/0x10
- device_release_driver_internal+0x15b/0x230
- serio_handle_event+0x1c8/0x260
- process_one_work+0x215/0x620
- worker_thread+0x48/0x3a0
- ? _raw_spin_unlock_irqrestore+0x4c/0x60
- kthread+0xfb/0x130
- ? process_one_work+0x620/0x620
- ? _kthread_create_on_node+0x30/0x30
- ret_from_fork+0x3a/0x50
-
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/input/mouse/psmouse-base.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-index 8ac9e03c05b4..6e09a5d6e58a 100644
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -1467,8 +1467,10 @@ static void psmouse_disconnect(struct serio *serio)
- 		psmouse_deactivate(parent);
- 	}
- 
-+	mutex_unlock(&psmouse_mutex);
- 	if (psmouse->disconnect)
- 		psmouse->disconnect(psmouse);
-+	mutex_lock(&psmouse_mutex);
- 
- 	if (parent && parent->pt_deactivate)
- 		parent->pt_deactivate(parent);
+	M.
 -- 
-2.16.2
+Jazz is not dead. It just smells funny...
