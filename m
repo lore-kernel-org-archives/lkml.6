@@ -1,46 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753530AbeCTNXB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:23:01 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56906 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753246AbeCTNW4 (ORCPT
+        id S1753557AbeCTN3R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:29:17 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33962 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753501AbeCTN3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:22:56 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1387036|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BNX7NYp_1521552158;
-Date: Tue, 20 Mar 2018 21:22:38 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 14/19] csky: Misc headers
-Message-ID: <20180320132237.GA11611@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <9cb4cf158b8c73325dc524cba8d575e41647131f.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a15wbEmejpiokATLW=Cwe-XHZEdgU8fNQY-opjbjuU3-w@mail.gmail.com>
- <20180320033654.GA21731@guoren>
- <CAK8P3a1TokZ_odmBFy5FWCLp2ExF+uYR2X_pn-MSPbuM26MZ2w@mail.gmail.com>
+        Tue, 20 Mar 2018 09:29:09 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        it+linux-media@molgen.mpg.de
+Subject: Re: uvcvideo: Unknown video format,00000032-0002-0010-8000-00aa00389b71
+Date: Tue, 20 Mar 2018 15:30:14 +0200
+Message-ID: <6647791.pjJyibMGYG@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
+References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1TokZ_odmBFy5FWCLp2ExF+uYR2X_pn-MSPbuM26MZ2w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 03:54:53PM +0800, Arnd Bergmann wrote:
-> We generally assume that any upstream kernel ABI cannot be changed, so this
-> has to be changed before the code gets merged upstream.
+Hi Paul,
+
+On Tuesday, 20 March 2018 14:20:14 EET Paul Menzel wrote:
+> Dear Linux folks,
 > 
-> You can obviously maintain the old and the new ABI in parallel for a while,
-> until the libc supports the new ABI, but you can't do that in the patches
-> you send for integration.
 > 
-> This is more important for the list of system calls, but when you change
-> the ABI, it should be changed all at once.
-Ok, follow the rules. I will modify uclibc-ng and glibc now.
+> On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
+> 
+> ```
+> [    2.338094] calling  uvc_init+0x0/0x1000 [uvcvideo] @ 295
+> [    2.338569] calling  iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt] @ 280
+> [    2.338570] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
+> [    2.338713] iTCO_wdt: Found a Intel PCH TCO device (Version=4,
+> TCOBASE=0x0400)
+> [    2.338755] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
+> (0bda:58f4)
+> [    2.338827] iTCO_wdt: initialized. heartbeat=30 sec (nowayout=0)
+> [    2.338851] initcall iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt]
+> returned 0 after 271 usecs
+> [    2.340669] uvcvideo 1-5:1.0: Entity type for entity Extension 4 was
+> not initialized!
+> [    2.340670] uvcvideo 1-5:1.0: Entity type for entity Extension 7 was
+> not initialized!
+> [    2.340672] uvcvideo 1-5:1.0: Entity type for entity Processing 2 was
+> not initialized!
+> [    2.340673] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was not
+> initialized!
+> [    2.340736] input: Integrated_Webcam_HD: Integrate as
+> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
+> [    2.341447] uvcvideo: Unknown video format
+> 00000032-0002-0010-8000-00aa00389b71
+> [    2.341450] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
+> (0bda:58f4)
+> [    2.343371] uvcvideo: Unable to create debugfs 1-2 directory.
+> [    2.343420] uvcvideo 1-5:1.2: Entity type for entity Extension 10 was
+> not initialized!
+> [    2.343422] uvcvideo 1-5:1.2: Entity type for entity Extension 12 was
+> not initialized!
+> [    2.343423] uvcvideo 1-5:1.2: Entity type for entity Processing 9 was
+> not initialized!
+> [    2.343424] uvcvideo 1-5:1.2: Entity type for entity Camera 11 was
+> not initialized!
+> [    2.343472] input: Integrated_Webcam_HD: Integrate as
+> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.2/input/input10
+> [    2.343496] usbcore: registered new interface driver uvcvideo
+> [    2.343496] USB Video Class driver (1.1.1)
+> [    2.343501] initcall uvc_init+0x0/0x1000 [uvcvideo] returned 0 after
+> 5275 usecs
+> ```
+> 
+> Please tell me, what I can do to improve the situation.
+
+Some vendors routinely implement new formats without bothering to send a patch 
+for the uvcvideo driver. It would be easy to do so, but it requires knowing 
+which format is meant by the GUID. Most format GUIDs are of the form 
+32595559-0000-0010-8000-00aa00389b71 that starts with a 4CC, but that's not 
+the case here.
+
+Could you send me the output of
+
+lsusb -v -d 0bda:58f4
+
+running as root if possible ?
+
+-- 
+Regards,
+
+Laurent Pinchart
