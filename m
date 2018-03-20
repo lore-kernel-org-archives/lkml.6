@@ -1,44 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeCTMdW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:33:22 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37836 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753160AbeCTMdP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:33:15 -0400
-X-Google-Smtp-Source: AG47ELvf2NmrvhMTdPF1LuH7iajxot91NwwtPwdBI7MhOJqS3GCfK8w7d+Y7Kg04J/rz5zGy6weAtg==
-From: Masanari Iida <standby24x7@gmail.com>
-To: broonie@kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc: Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH] linux-next: ASoC: mediatek: mt2701: Fix a typo in printk
-Date: Tue, 20 Mar 2018 21:33:09 +0900
-Message-Id: <20180320123309.12333-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.16.2.520.gd0db9edba005
+        id S1753291AbeCTMdd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:33:33 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3066 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753273AbeCTMda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 08:33:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
+   d="scan'208";a="209781522"
+From: kan.liang@intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: acme@kernel.org, eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@intel.com>
+Subject: [PATCH V7 7/8] perf/x86/intel/uncore: Expose uncore_pmu_event functions
+Date: Tue, 20 Mar 2018 05:32:44 -0700
+Message-Id: <1521549165-6216-7-git-send-email-kan.liang@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521549165-6216-1-git-send-email-kan.liang@intel.com>
+References: <1521549165-6216-1-git-send-email-kan.liang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a spelling typo in printk
+From: Kan Liang <kan.liang@intel.com>
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+Some uncore has custom pmu. For custom pmu, it does not need to
+customize everything. For example, it only needs to customize init()
+function for client IMC uncore. Other functions like
+add()/del()/start()/stop()/read() can use generic code.
+
+Expose the uncore_pmu_event_add/del/start/stop functions.
+
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
 ---
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-index f7e0702d92f8..f2eb4c7f94e8 100644
---- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-+++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-@@ -343,7 +343,7 @@ static int mt2701_btmrg_hw_params(struct snd_pcm_substream *substream,
- 	stream_fs = params_rate(params);
+No changes since V6.
+
+ arch/x86/events/intel/uncore.c | 8 ++++----
+ arch/x86/events/intel/uncore.h | 4 ++++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 0a6f697..15b0737 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -451,7 +451,7 @@ static int uncore_assign_events(struct intel_uncore_box *box, int assign[], int
+ 	return ret ? -EINVAL : 0;
+ }
  
- 	if ((stream_fs != 8000) && (stream_fs != 16000)) {
--		dev_err(afe->dev, "%s() btmgr not supprt this stream_fs %d\n",
-+		dev_err(afe->dev, "%s() btmgr not support this stream_fs %d\n",
- 			__func__, stream_fs);
- 		return -EINVAL;
+-static void uncore_pmu_event_start(struct perf_event *event, int flags)
++void uncore_pmu_event_start(struct perf_event *event, int flags)
+ {
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+ 	int idx = event->hw.idx;
+@@ -491,7 +491,7 @@ static void uncore_pmu_event_start(struct perf_event *event, int flags)
  	}
+ }
+ 
+-static void uncore_pmu_event_stop(struct perf_event *event, int flags)
++void uncore_pmu_event_stop(struct perf_event *event, int flags)
+ {
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -528,7 +528,7 @@ static void uncore_pmu_event_stop(struct perf_event *event, int flags)
+ 	}
+ }
+ 
+-static int uncore_pmu_event_add(struct perf_event *event, int flags)
++int uncore_pmu_event_add(struct perf_event *event, int flags)
+ {
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -600,7 +600,7 @@ static int uncore_pmu_event_add(struct perf_event *event, int flags)
+ 	return 0;
+ }
+ 
+-static void uncore_pmu_event_del(struct perf_event *event, int flags)
++void uncore_pmu_event_del(struct perf_event *event, int flags)
+ {
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+ 	int i;
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index eb02653..c9e1e0b 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -467,6 +467,10 @@ struct intel_uncore_box *uncore_pmu_to_box(struct intel_uncore_pmu *pmu, int cpu
+ u64 uncore_msr_read_counter(struct intel_uncore_box *box, struct perf_event *event);
+ void uncore_pmu_start_hrtimer(struct intel_uncore_box *box);
+ void uncore_pmu_cancel_hrtimer(struct intel_uncore_box *box);
++void uncore_pmu_event_start(struct perf_event *event, int flags);
++void uncore_pmu_event_stop(struct perf_event *event, int flags);
++int uncore_pmu_event_add(struct perf_event *event, int flags);
++void uncore_pmu_event_del(struct perf_event *event, int flags);
+ void uncore_pmu_event_read(struct perf_event *event);
+ void uncore_perf_event_update(struct intel_uncore_box *box, struct perf_event *event);
+ struct event_constraint *
 -- 
-2.16.2.520.gd0db9edba005
+2.7.4
