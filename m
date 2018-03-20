@@ -1,92 +1,234 @@
-Return-Path: <dietmar.eggemann@arm.com>
-X-Google-Smtp-Source: AG47ELse114KTEIC9G3LuJstPuVVARMyez5UYjkZWKxuRHPkk/16uxbxaI3l1XtIzqQue+uk6OXQ
-ARC-Seal: i=1; a=rsa-sha256; t=1521539050; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tuRBP7dBSu07zRx6i2YKjlqxb4aJ/3JaEPq6+ie7KFmo6UB9HY8M/ddeeopJWb37cm
-         So6MfExQUcGn544H2u5wzOygG8tX9ctFBQoJpH3F4WyYZttyTVrnXrIS9I72/6YZF27a
-         4lzNOD/VMeNw7Hoqu6B45O7VJag2aCSZn+SCZd/pX/frddwIHD+n0v6EI0K3bZqPZwER
-         zQyqkQBxaSexyYZVyj5UjxBeeED5pt1QzyfFaRYXjLh0onJFPTPu50zxUD8+ZhJd/1ge
-         XhaNHT4IXwwsfaNhiveob4PE/5mYgsjeFDn5o6zCRGJKTLWBg5tfUqSvj/Rny4Owaztw
-         7sGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=z2eGD7sMS6n2Xu0+PF0ObPLSE0/fOQUVp8lL2WPm55M=;
-        b=O6GxGdVGpShumvsMu1bHh6W8KhAA18oRfopopVAm5LyoEDwobSSpqrV1KdcY56w+Wn
-         R7yZ+dpDNOx0X2iJinKdA+UX1PJ45stPd1K7glcCl5vtM5OtA9g6XIKrIsXGI/SHjl0L
-         Jw+rrl+y4gVywIMQ3dSlXjoluc51q6MvrIVcEn1hk3Igi0HWFoygc9HJOH8fq07LVfO9
-         aNeeJNVfeBdv4UT+q14faq4OTvJLR1QKOCcI6i/FNEiCYnAlHJwbnZSbS0lLy9w0CEKm
-         4bRbbwS7meHa/L+3QRr26YNCYSzl5xEkaESlxbNo8zp/XweRjbJe6K2TTH3TC52WBoNz
-         mT1w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Quentin Perret <quentin.perret@arm.com>,
-	Thara Gopinath <thara.gopinath@linaro.org>
-Cc: linux-pm@vger.kernel.org,
-	Morten Rasmussen <morten.rasmussen@arm.com>,
-	Chris Redpath <chris.redpath@arm.com>,
-	Patrick Bellasi <patrick.bellasi@arm.com>,
-	Valentin Schneider <valentin.schneider@arm.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Todd Kjos <tkjos@google.com>,
-	Joel Fernandes <joelaf@google.com>
-Subject: [RFC PATCH 1/6] sched/fair: Create util_fits_capacity()
-Date: Tue, 20 Mar 2018 09:43:07 +0000
-Message-Id: <20180320094312.24081-2-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180320094312.24081-1-dietmar.eggemann@arm.com>
-References: <20180320094312.24081-1-dietmar.eggemann@arm.com>
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2440679-1521583544-2-5081418750216299614
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521583543; b=h5lpJDXnrZOvJEb3zHLX0R6lpeRhiaza/9dWY9VwVupFlXk
+    yZ1ThBdz8IfU9xaBz5VxgWNXxnsqXAtXh6Db1aUvCAv3Xv6bRawMEj30X2flBnEH
+    o/MRO36GtYtn95V1u9fby8CRQyd0lvdiHAQlWcRBKjQFeVsmQINmzSY/0dtHYjmR
+    g97IMk9XlN87yMfbc6/OwzPtuKKSw31ak+IKM+3wo4MO+WrGcJvo8yi4d+kbAqfj
+    ejiel2OIcRQPj4DpY/lwWT/tc/g62kUMN1BaQ6khSMsgjN76DPWDf+LlGaVYpzCV
+    zPPqhSpBMq2eYYE2hHxA7jqzXrxX0dB821aezCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521583543; bh=TXQPvSNWWvOhgEEFvdwR5dRIPa
+    laAtibAXjy9E+3U8A=; b=HObiN8c7pg09MKRHgBeErMMQZycodSNaJiRHs84z27
+    YFjTDEjHULcy9lms7i0GTvyD2QQBj51A4Hp9B6x5m/Hph10BKwcSfKFV0kFd471q
+    i/JMr9nTvev4FP+A8kHXbDf+kZk27TcWov77xGvlw1Ty0FhfWRTl28gHfPuBY4io
+    OQTqooOa6LN1bpaRppRl4F8lFnBMAc32GgSA0qd1pZTsOFfO1xAdbCSu1ZKocyNZ
+    Ly78j89dcL4w0p3SbMpKJTynB2SizJ8X+5+z/JDiFVbgboKJnqgfuZxVZnmndRGM
+    uczWMgOqq2lgdSHBcLRecfUUnUG78WMTL4pz8Sms9usQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=Fu+Gb7Pv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aqyYh0mv;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=Fu+Gb7Pv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aqyYh0mv;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751533AbeCTWFl (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 18:05:41 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37538 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeCTWFj (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:05:39 -0400
+X-Google-Smtp-Source: AG47ELuuxhl9MdWXjp8vwwY4VSEEUqk8U4rMNSje6p8rirnRySGOm7HLPg/IH3xYRHpGsxG8Wlvc6A==
+From: Daniel Kurtz <djkurtz@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>
+Cc: adurbin@chromium.org, linux-kernel@vger.kernel.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES)
+Subject: [PATCH v5] earlycon: Use a pointer table to fix __earlycon_table stride
+Date: Tue, 20 Mar 2018 16:05:36 -0600
+Message-Id: <20180320220536.20245-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595449331370136556?=
-X-GMAIL-MSGID: =?utf-8?q?1595449331370136556?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The functionality that a given utilization fits into a given capacity
-is factored out into a separate function.
+Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") tried to fix
+__earlycon_table stride by forcing the earlycon_id struct alignment to 32
+and asking the linker to 32-byte align the __earlycon_table symbol.  This
+fix was based on commit 07fca0e57fca92 ("tracing: Properly align linker
+defined symbols") which tried a similar fix for the tracing subsystem.
 
-Currently it is only used in wake_cap() but will be re-used to figure
-out if a cpu or a scheduler group is over-utilized.
+However, this fix doesn't quite work because there is no guarantee that
+gcc will place structures packed into an array format.  In fact, gcc 4.9
+chooses to 64-byte align these structs by inserting additional padding
+between the entries because it has no clue that they are supposed to be in
+an array.  If we are unlucky, the linker will assign symbol
+"__earlycon_table" to a 32-byte aligned address which does not correspond
+to the 64-byte aligned contents of section "__earlycon_table".
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To address this same problem, the fix to the tracing system was
+subsequently re-implemented using a more robust table of pointers approach
+by commits:
+ 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with pointer array")
+ 654986462939 ("tracepoints: Fix section alignment using pointer array")
+ e4a9ea5ee7c8 ("tracing: Replace trace_event struct array with pointer array")
+
+Let's use this same "array of pointers to structs" approach for
+EARLYCON_TABLE.
+
+Fixes: 99492c39f39f ("earlycon: Fix __earlycon_table stride")
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Suggested-by: Aaron Durbin <adurbin@chromium.org>
 ---
- kernel/sched/fair.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Changes since v2:
+ * Use __initconst instead of __initdata to avoid h8300 and alpha kbuild errors
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3582117e1580..bf7b485ddf60 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6374,6 +6374,11 @@ static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
- 	return (util >= capacity) ? capacity : util;
- }
+Changes since v3:
+ * Fixed typos in commit message
+
+Changes since v4:
+ * removed Change-Id: from commit message
+
+ drivers/of/fdt.c                  |  7 +++++--
+ drivers/tty/serial/earlycon.c     |  6 ++++--
+ include/asm-generic/vmlinux.lds.h |  2 +-
+ include/linux/serial_core.h       | 21 ++++++++++++++-------
+ 4 files changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 84aa9d676375..6da20b9688f7 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -942,7 +942,7 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 	int offset;
+ 	const char *p, *q, *options = NULL;
+ 	int l;
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 	const void *fdt = initial_boot_params;
  
-+static inline int util_fits_capacity(unsigned long util, unsigned long capacity)
-+{
-+	return capacity * 1024 > util * capacity_margin;
-+}
+ 	offset = fdt_path_offset(fdt, "/chosen");
+@@ -969,7 +969,10 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 		return 0;
+ 	}
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
 +
- /*
-  * Disable WAKE_AFFINE in the case where task @p doesn't fit in the
-  * capacity of either the waking CPU @cpu or the previous CPU @prev_cpu.
-@@ -6395,7 +6400,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- 	/* Bring task utilization in sync with prev_cpu */
- 	sync_entity_load_avg(&p->se);
+ 		if (!match->compatible[0])
+ 			continue;
  
--	return min_cap * 1024 < task_util(p) * capacity_margin;
-+	return !util_fits_capacity(task_util(p), min_cap);
- }
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a24278380fec..22683393a0f2 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -169,7 +169,7 @@ static int __init register_earlycon(char *buf, const struct earlycon_id *match)
+  */
+ int __init setup_earlycon(char *buf)
+ {
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
  
- /*
+ 	if (!buf || !buf[0])
+ 		return -EINVAL;
+@@ -177,7 +177,9 @@ int __init setup_earlycon(char *buf)
+ 	if (early_con.flags & CON_ENABLED)
+ 		return -EALREADY;
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
+ 		size_t len = strlen(match->name);
+ 
+ 		if (strncmp(buf, match->name, len))
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 1ab0e520d6fc..e17de55c2542 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -179,7 +179,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() STRUCT_ALIGN();			\
++#define EARLYCON_TABLE() . = ALIGN(8);				\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 KEEP(*(__earlycon_table))		\
+ 			 VMLINUX_SYMBOL(__earlycon_table_end) = .;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index b32df49a3bd5..c4219b9cbb70 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -351,10 +351,10 @@ struct earlycon_id {
+ 	char	name[16];
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-} __aligned(32);
++};
+ 
+-extern const struct earlycon_id __earlycon_table[];
+-extern const struct earlycon_id __earlycon_table_end[];
++extern const struct earlycon_id *__earlycon_table[];
++extern const struct earlycon_id *__earlycon_table_end[];
+ 
+ #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
+ #define EARLYCON_USED_OR_UNUSED	__used
+@@ -362,12 +362,19 @@ extern const struct earlycon_id __earlycon_table_end[];
+ #define EARLYCON_USED_OR_UNUSED	__maybe_unused
+ #endif
+ 
+-#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
+-	static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name)	\
+-	     EARLYCON_USED_OR_UNUSED __section(__earlycon_table)	\
++#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)		\
++	static const struct earlycon_id unique_id			\
++	     EARLYCON_USED_OR_UNUSED __initconst			\
+ 		= { .name = __stringify(_name),				\
+ 		    .compatible = compat,				\
+-		    .setup = fn  }
++		    .setup = fn  };					\
++	static const struct earlycon_id EARLYCON_USED_OR_UNUSED		\
++		__section(__earlycon_table)				\
++		* const __PASTE(__p, unique_id) = &unique_id
++
++#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
++	_OF_EARLYCON_DECLARE(_name, compat, fn,				\
++			     __UNIQUE_ID(__earlycon_##_name))
+ 
+ #define EARLYCON_DECLARE(_name, fn)	OF_EARLYCON_DECLARE(_name, "", fn)
+ 
 -- 
-2.11.0
+2.16.2.804.g6dcf76e118-goog
+
