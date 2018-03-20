@@ -1,124 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753765AbeCTNr1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:47:27 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:35048 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753745AbeCTNrV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:47:21 -0400
-X-Google-Smtp-Source: AG47ELvVLW6I2n6dE+0PDh33OFLdc/DIngxJ+7PzPVPfxduKqYTqPnaydEYuKOW6pZgNbLFGVKNlpw==
-Date: Tue, 20 Mar 2018 14:47:16 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, xen-devel@lists.xenproject.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Gustavo Padovan <gustavo@padovan.org>, Juergen Gross <jgross@suse.com>,
-        boris.ostrovsky@oracle.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-Subject: Re: [PATCH RESEND v2 1/2] drm/xen-front: Add support for Xen PV
- display frontend
-Message-ID: <20180320134715.GT14155@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-References: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
- <1520958066-22875-2-git-send-email-andr2000@gmail.com>
- <20180316082330.GF25297@phenom.ffwll.local>
- <b466004a-821e-60b7-787b-526e10a67505@gmail.com>
- <20180319135141.GK14155@phenom.ffwll.local>
- <0808bf3b-7301-cc28-1cb5-40a4c8aad5cc@gmail.com>
- <CAKMK7uFrCt026VfjyKA1TS6XcP=s4S-RX0hxtLXL53OmdjgHfw@mail.gmail.com>
- <7c4e0f8f-9ec0-e38b-7b37-264241df4ba5@gmail.com>
+        id S1753508AbeCTNu0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:50:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:42662 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753227AbeCTNuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:50:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
+   d="scan'208";a="26042033"
+Date: Tue, 20 Mar 2018 21:50:20 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [RFC PATCH v2 1/4] mm/page_alloc: use helper functions to
+ add/remove a page to/from buddy
+Message-ID: <20180320135019.GA2033@intel.com>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-2-aaron.lu@intel.com>
+ <d9121a55-411e-37e0-2080-00b860612cc8@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c4e0f8f-9ec0-e38b-7b37-264241df4ba5@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <d9121a55-411e-37e0-2080-00b860612cc8@suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 01:58:01PM +0200, Oleksandr Andrushchenko wrote:
-> On 03/19/2018 05:28 PM, Daniel Vetter wrote:
-> > There should be no difference between immediate removal and delayed
-> > removal of the drm_device from the xenbus pov. The lifetimes of the
-> > front-end (drm_device) and backend (the xen bus thing) are entirely
-> > decoupled:
-> Well, they are not decoupled for simplicity of handling,
-> please see below
+On Tue, Mar 20, 2018 at 12:35:46PM +0100, Vlastimil Babka wrote:
+> On 03/20/2018 09:54 AM, Aaron Lu wrote:
+> > There are multiple places that add/remove a page into/from buddy,
+> > introduce helper functions for them.
 > > 
-> > So for case 2 you only have 1 case:
+> > This also makes it easier to add code when a page is added/removed
+> > to/from buddy.
 > > 
-> > - drm_dev_unplug
-> > - tear down the entire xenbus backend completely
-> > - all xenbus access will be caught with drm_dev_entre/exit (well right
-> > now drm_dev_is_unplugged) checks, including any access to your private
-> > drm_device data
-> > - once drm_device->open_count == 0 the core will tear down the
-> > drm_device instance and call your optional drm_driver->release
-> > callback.
+> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> > ---
+> >  mm/page_alloc.c | 65 ++++++++++++++++++++++++++++++++++-----------------------
+> >  1 file changed, 39 insertions(+), 26 deletions(-)
 > > 
-> > So past drm_dev_unplug the drm_device is in zombie state and the only
-> > thing that will happen is a) it rejects all ioctls and anything else
-> > userspace might ask it to do and b) gets releases once the last
-> > userspace reference is gone.
-> I have re-worked the driver with this in mind [1]
-> So, I now use drm_dev_unplug and destroy the DRM device
-> on drm_driver.release.
-> In context of unplug work I also merged xen_drm_front_drv.c and
-> xen_drm_front.c as these are too coupled together now.
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 3db9cfb2265b..3cdf1e10d412 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -736,12 +736,41 @@ static inline void set_page_order(struct page *page, unsigned int order)
+> >  	__SetPageBuddy(page);
+> >  }
+> >  
+> > +static inline void add_to_buddy_common(struct page *page, struct zone *zone,
+> > +					unsigned int order, int mt)
+> > +{
+> > +	set_page_order(page, order);
+> > +	zone->free_area[order].nr_free++;
 > 
-> Could you please take a look and tell me if this is what you mean?
+> The 'mt' parameter seems unused here. Otherwise
+
+An right, forgot to remove it...
+
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Thanks!
+
+> 
+> > +}
+> > +
+> > +static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+> > +					unsigned int order, int mt)
+> > +{
+> > +	add_to_buddy_common(page, zone, order, mt);
+> > +	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
+> > +}
+> > +
+> > +static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
+> > +					unsigned int order, int mt)
+> > +{
+> > +	add_to_buddy_common(page, zone, order, mt);
+> > +	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
+> > +}
+> > +
+> >  static inline void rmv_page_order(struct page *page)
+> >  {
+> >  	__ClearPageBuddy(page);
+> >  	set_page_private(page, 0);
+> >  }
+> >  
+> > +static inline void remove_from_buddy(struct page *page, struct zone *zone,
+> > +					unsigned int order)
+> > +{
+> > +	list_del(&page->lru);
+> > +	zone->free_area[order].nr_free--;
+> > +	rmv_page_order(page);
+> > +}
+> > +
+> >  /*
+> >   * This function checks whether a page is free && is the buddy
+> >   * we can do coalesce a page and its buddy if
+> > @@ -845,13 +874,10 @@ static inline void __free_one_page(struct page *page,
+> >  		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
+> >  		 * merge with it and move up one order.
+> >  		 */
+> > -		if (page_is_guard(buddy)) {
+> > +		if (page_is_guard(buddy))
+> >  			clear_page_guard(zone, buddy, order, migratetype);
+> > -		} else {
+> > -			list_del(&buddy->lru);
+> > -			zone->free_area[order].nr_free--;
+> > -			rmv_page_order(buddy);
+> > -		}
+> > +		else
+> > +			remove_from_buddy(buddy, zone, order);
+> >  		combined_pfn = buddy_pfn & pfn;
+> >  		page = page + (combined_pfn - pfn);
+> >  		pfn = combined_pfn;
+> > @@ -883,8 +909,6 @@ static inline void __free_one_page(struct page *page,
+> >  	}
+> >  
+> >  done_merging:
+> > -	set_page_order(page, order);
+> > -
+> >  	/*
+> >  	 * If this is not the largest possible page, check if the buddy
+> >  	 * of the next-highest order is free. If it is, it's possible
+> > @@ -901,15 +925,12 @@ static inline void __free_one_page(struct page *page,
+> >  		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
+> >  		if (pfn_valid_within(buddy_pfn) &&
+> >  		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
+> > -			list_add_tail(&page->lru,
+> > -				&zone->free_area[order].free_list[migratetype]);
+> > -			goto out;
+> > +			add_to_buddy_tail(page, zone, order, migratetype);
+> > +			return;
+> >  		}
+> >  	}
+> >  
+> > -	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
+> > -out:
+> > -	zone->free_area[order].nr_free++;
+> > +	add_to_buddy_head(page, zone, order, migratetype);
+> >  }
+> >  
+> >  /*
+> > @@ -1731,9 +1752,7 @@ static inline void expand(struct zone *zone, struct page *page,
+> >  		if (set_page_guard(zone, &page[size], high, migratetype))
+> >  			continue;
+> >  
+> > -		list_add(&page[size].lru, &area->free_list[migratetype]);
+> > -		area->nr_free++;
+> > -		set_page_order(&page[size], high);
+> > +		add_to_buddy_head(&page[size], zone, high, migratetype);
+> >  	}
+> >  }
+> >  
+> > @@ -1877,9 +1896,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
+> >  							struct page, lru);
+> >  		if (!page)
+> >  			continue;
+> > -		list_del(&page->lru);
+> > -		rmv_page_order(page);
+> > -		area->nr_free--;
+> > +		remove_from_buddy(page, zone, current_order);
+> >  		expand(zone, page, order, current_order, area, migratetype);
+> >  		set_pcppage_migratetype(page, migratetype);
+> >  		return page;
+> > @@ -2795,9 +2812,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
+> >  	}
+> >  
+> >  	/* Remove page from free list */
+> > -	list_del(&page->lru);
+> > -	zone->free_area[order].nr_free--;
+> > -	rmv_page_order(page);
+> > +	remove_from_buddy(page, zone, order);
+> >  
+> >  	/*
+> >  	 * Set the pageblock if the isolated page is at least half of a
+> > @@ -7886,9 +7901,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+> >  		pr_info("remove from free list %lx %d %lx\n",
+> >  			pfn, 1 << order, end_pfn);
+> >  #endif
+> > -		list_del(&page->lru);
+> > -		rmv_page_order(page);
+> > -		zone->free_area[order].nr_free--;
+> > +		remove_from_buddy(page, zone, order);
+> >  		for (i = 0; i < (1 << order); i++)
+> >  			SetPageReserved((page+i));
+> >  		pfn += (1 << order);
 > > 
-> > If the backend comes up again, you create a _new_ drm_device instance
-> > (while the other one is still in the process of eventually getting
-> > released).
-> We only have a single xenbus instance, so this way I'll need
-> to handle list of such zombies. For that reason I prefer to
-> wait until the DRM device is destroyed, telling the backend
-> to hold on until then (via going into XenbusStateReconfiguring state).
-
-Why exactly do you need to keep track of your drm_devices from the xenbus?
-Once unplugged, there should be no connection with the "hw" for your
-device, in neither direction. Maybe I need to look again, but this still
-smells funny and not like something you should ever do.
-
-> Another drawback of such approach is that I'll have different
-> minors at run-time, e.g. card0, card1, etc.
-> For software which has /dev/dri/card0 hardcoded it may be a problem.
-> But this is minor, IMO
-
-Fix userspace :-)
-
-But yeah unlikely this is a problem, hotplugging is fairly old thing.
-
-> > In short, your driver code should never have a need to look at
-> > drm_device->open_count. I hope this explains it a bit better.
-> > -Daniel
-> > 
-> Yes, you are correct: at [1] I am not touching drm_device->open_count
-> anymore and everything just happens synchronously
-
-> [1] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v3
-
-Please just resend, makes it easier to comment inline.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> 
