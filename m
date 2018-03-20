@@ -1,27 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752434AbeCTCsQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:48:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56248 "EHLO
+        id S1751925AbeCTCtl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:49:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56062 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeCTCsG (ORCPT
+        with ESMTP id S1751014AbeCTCsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:48:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7275F60C54
+        Mon, 19 Mar 2018 22:48:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00F3A60FA9
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: linux-rdma@vger.kernel.org, timur@codeaurora.org,
         sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
+        Sinan Kaya <okaya@codeaurora.org>, Steve Wise <swise@chelsio.com>,
         Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/6] RDMA/qedr: eliminate duplicate barriers on weakly-ordered archs #2
-Date: Mon, 19 Mar 2018 22:47:48 -0400
-Message-Id: <1521514068-8856-7-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Mon, 19 Mar 2018 22:47:46 -0400
+Message-Id: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
 References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
@@ -31,8 +29,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel() in multiple places. writel()
-already has a barrier on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
 This ends up CPU observing two barriers back to back before executing the
 register write.
@@ -42,30 +40,59 @@ writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/infiniband/hw/qedr/verbs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/cxgb4/t4.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-index ccd55f4..db60360 100644
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -860,7 +860,7 @@ static void doorbell_cq(struct qedr_cq *cq, u32 cons, u8 flags)
- 	wmb();
- 	cq->db.data.agg_flags = flags;
- 	cq->db.data.value = cpu_to_le32(cons);
--	writeq(cq->db.raw, cq->db_addr);
-+	writeq_relaxed(cq->db.raw, cq->db_addr);
+diff --git a/drivers/infiniband/hw/cxgb4/t4.h b/drivers/infiniband/hw/cxgb4/t4.h
+index 8369c7c..6e5658a 100644
+--- a/drivers/infiniband/hw/cxgb4/t4.h
++++ b/drivers/infiniband/hw/cxgb4/t4.h
+@@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64 *src)
+ 	int count = 8;
  
- 	/* Make sure write would stick */
- 	mmiowb();
-@@ -3338,7 +3338,7 @@ int qedr_post_recv(struct ib_qp *ibqp, struct ib_recv_wr *wr,
+ 	while (count) {
+-		writeq(*src, dst);
++		writeq_relaxed(*src, dst);
+ 		src++;
+ 		dst++;
+ 		count--;
+@@ -477,15 +477,15 @@ static inline void t4_ring_sq_db(struct t4_wq *wq, u16 inc, union t4_wr *wqe)
+ 				 (u64 *)wqe);
+ 		} else {
+ 			pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
+-			writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
+-			       wq->sq.bar2_va + SGE_UDB_KDOORBELL);
++			writel_relaxed(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
++				       wq->sq.bar2_va + SGE_UDB_KDOORBELL);
+ 		}
  
- 		qp->rq.db_data.data.value++;
+ 		/* Flush user doorbell area writes. */
+ 		wmb();
+ 		return;
+ 	}
+-	writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
++	writel_relaxed(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
+ }
  
--		writel(qp->rq.db_data.raw, qp->rq.db);
-+		writel_relaxed(qp->rq.db_data.raw, qp->rq.db);
+ static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
+@@ -502,15 +502,15 @@ static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
+ 				 (void *)wqe);
+ 		} else {
+ 			pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
+-			writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
+-			       wq->rq.bar2_va + SGE_UDB_KDOORBELL);
++			writel_relaxed(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
++				       wq->rq.bar2_va + SGE_UDB_KDOORBELL);
+ 		}
  
- 		/* Make sure write sticks */
- 		mmiowb();
+ 		/* Flush user doorbell area writes. */
+ 		wmb();
+ 		return;
+ 	}
+-	writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
++	writel_relaxed(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
+ }
+ 
+ static inline int t4_wq_in_error(struct t4_wq *wq)
 -- 
 2.7.4
