@@ -1,161 +1,228 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2440679-1521584813-2-3154466837170814213
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2440679-1521583345-2-3965424212523799553
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='name', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521584813; b=im6ix1VjvbeirtHqo6flnVnIL+gIUaGTbNHeOSmeWicBoFk
-    /bJ37KjTcq2x6hgIs4X165IhmxaTY886HpJHeoLaA6p2nVUmYT/j/vt+ktqFdG8J
-    fC6l9IOSR7vOm6vxYflyy8D9j2oe6Hcl7mVlbxfAGaCdrt+vY0wgQQm2+AY9fO1e
-    8CytJlmaMD2GTFAwyaDLRcpuS3rdfdxxpUWPBxqqKfFDt4yYLF8zviHCRYDwdPVg
-    kMxzZomV50/pkhOVokXhbBNW2WlKIYUC9uDgc/kUfVip2QFCkyHAGOtpILr5MRsM
-    oOuvxkwwS7g3G0uGwd+Dy0Tuo/EqBSIf77FGwkA==
+    t=1521583344; b=Bao0+mPyZpRJFbfaK5sGw00dgysrDHLYiqHyaGAprgL1gdX
+    aOW3jxbT6FoXf7wEraEEsbMyvAsx5Jc9KuJnoORVkDtVH45Hl4jsA9x7UOjnAwCF
+    M0hxsCMlW7McOspUVMTTueK6vwJXOGDdf0QOCEbouArMy3RmL7lxyN6r+byV2L1c
+    0aqKnJwRbhO//j9epPexDbZQ25FUwB7wkyJr2RIYc7432eElZHM7fQGr6vEmRSMN
+    MUVHGtVAQDnhAHXfaKDOsxUwXLxU4F+O7V2qOnGDhh7Uwa26522QaIucQSH16Hqd
+    1BGNOZdegFL0o/xNUpzdh/EXfg+JoMyHkKcYEaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:in-reply-to
-    :references:message-id:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1521584813; bh=pdpMWKVTzj38p6/9ozySrmqvuVT
-    WFbqZ10jhTPHevG8=; b=Uq2Rx8bFWY5iCPvBmsCmpKanR0dNwuLxem5OMiVBjLu
-    fPy2q/qDhOc6lLtjZzRAyqdtx3w6AY2cdY/8KeROtyeecC993wCQ948hUE3jiH/j
-    8aMIwDvtJQGcMpYDbgTfQPxxFA1S+imvhLIuO2W9OMKevALYJbHach2RzQPKcNME
-    IARkek9BjHVSo79CfWIb2eXt3HiWwAm1IO25Na6b4wcnw03+PITY2T4Kc840UzEc
-    dX6T7cs0cKcuApPSxl+CypEU9XecLxeyEaXAsRH6dE300HFcnA0MOfPjIAXzAS6A
-    YpFH7uEQzT3X0KRybMvu7Sfikg2wbXnXlkSv5e1E3jA==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521583344; bh=oxG0Zf18R2u3MeyDJGmXCcerXG
+    LSPp7ApKHcjZlAF48=; b=kRwbJN9QmGNxTKzQx9d+H3peeq3DT4ZV21/5UVs4SZ
+    8uoJ+V925MhnqRLBFlDD3tti4MvzMSeyhX3v51lKuQwICkE277mpXbCkxePQG9Mx
+    3SmedFu9xul1fge+XmY489D5T1PxVrn7BLbu6zC/vKHpgaELIqcD2bvuO076/vh8
+    M7MxCqdp7o/43Xd3NoadBHYLxLPfPqC2CSO+FBjcklkMLX5twFEXPv6oxa0SjB0G
+    GhI4OPurvlPRA60+pE898ZZ6zF5/Kcq5nwPSt5ajMxcVm/Piemge//zisiQsjQ6k
+    lUnyNP+goB9IZtam/jXEXicm15Xi7aAj3nnjh0Vgi9tA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=PBHO4vtb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=brown.name header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qf+8dHow;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=PBHO4vtb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=brown.name header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qf+8dHow;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neil@brown.name>
-To: hariprasath.elango@gmail.com, blogic@openwrt.org,
- gregkh@linuxfoundation.org
-Date: Wed, 21 Mar 2018 09:26:33 +1100
-Subject: Re: [PATCH] staging: mt7621-gpio: remove redundant owner assignments
- of drivers
-In-Reply-To: <20180320074558.7851-1-hariprasath.elango@gmail.com>
-References: <20180320074558.7851-1-hariprasath.elango@gmail.com>
-Message-ID: <87d0zy8jty.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- HariPrasath Elango <hariprasath.elango@gmail.com>
-Content-Type: multipart/mixed; boundary="===============0454499809870187429=="
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751666AbeCTWCJ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 18:02:09 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:38838 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751458AbeCTWCI (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:02:08 -0400
+X-Google-Smtp-Source: AG47ELvlROPArCEc3JzRUzn13JHyoVR4wLzgS3EHPEyQPUyuJvCqn30j+qby9t26BKZYFE2cSFDvww==
+From: Daniel Kurtz <djkurtz@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>
+Cc: adurbin@chromium.org, linux-kernel@vger.kernel.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES)
+Subject: [PATCH v3] earlycon: Use a pointer table to fix __earlycon_table stride
+Date: Tue, 20 Mar 2018 16:02:02 -0600
+Message-Id: <20180320220202.18464-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---===============0454499809870187429==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") tried to fix
+__earlycon_table stride by forcing the earlycon_id struct alignment to 32
+and asking the linker to 32-byte align the __earlycon_table symbol.  This
+fix was based on commit 07fca0e57fca92 ("tracing: Properly align linker
+defined symbols") which tried a similar fix for the tracing subsystem.
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+However, this fix doesn't quite work because there is no guarantee that
+gcc will place structures packed into an array format.  In fact, gcc 4.9
+chooses to 64-byte align these structs by inserting additional padding
+between the entries because it has no clue that they are supposed to be in
+an array.  If we are unlucky, the linker will assign symbol
+"__earlycon_table" to a 32-byte aligned address which does not correpsond
+to the 64-byte alignbed contents of section "__earlycon_table".
 
-On Tue, Mar 20 2018, hariprasath.elango@gmail.com wrote:
+To address this same problem, the fix to the tracing system was
+subsequently re-implemented using a more robust table of pointers approach
+by commits:
+ 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with pointer array")
+ 654986462939 ("tracepoints: Fix section alignment using pointer array")
+ e4a9ea5ee7c8 ("tracing: Replace trace_event struct array with pointer array")
 
-> From: HariPrasath Elango <hariprasath.elango@gmail.com>
->
-> Remove the reduntant owner initialization from this platform driver as
-> the platform_driver_register() takes care of it.
->
-> Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
-> ---
->  drivers/staging/mt7621-gpio/gpio-mt7621.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/staging/mt7621-gpio/gpio-mt7621.c b/drivers/staging/=
-mt7621-gpio/gpio-mt7621.c
-> index 5c57abe..830d429 100644
-> --- a/drivers/staging/mt7621-gpio/gpio-mt7621.c
-> +++ b/drivers/staging/mt7621-gpio/gpio-mt7621.c
-> @@ -339,7 +339,6 @@ static struct platform_driver mediatek_gpio_driver =
-=3D {
->  	.probe =3D mediatek_gpio_probe,
->  	.driver =3D {
->  		.name =3D "mt7621_gpio",
-> -		.owner =3D THIS_MODULE,
->  		.of_match_table =3D mediatek_gpio_match,
->  	},
->  };
-> --=20
-> 2.10.0.GIT
+Let's use this same "array of pointers to structs" approach for
+EARLYCON_TABLE.
 
-Reviewed-by: NeilBrown <neil@brown.name>
+Fixes: 99492c39f39f ("earlycon: Fix __earlycon_table stride")
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Suggested-by: Aaron Durbin <adurbin@chromium.org>
+---
+Changes since v2:
+ * Use __initconst instead of __initdata to avoid h8300 and alpha kbuild errors
 
-Thanks,
-NeilBrown
+ drivers/of/fdt.c                  |  7 +++++--
+ drivers/tty/serial/earlycon.c     |  6 ++++--
+ include/asm-generic/vmlinux.lds.h |  2 +-
+ include/linux/serial_core.h       | 21 ++++++++++++++-------
+ 4 files changed, 24 insertions(+), 12 deletions(-)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 84aa9d676375..6da20b9688f7 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -942,7 +942,7 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 	int offset;
+ 	const char *p, *q, *options = NULL;
+ 	int l;
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 	const void *fdt = initial_boot_params;
+ 
+ 	offset = fdt_path_offset(fdt, "/chosen");
+@@ -969,7 +969,10 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 		return 0;
+ 	}
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
++
+ 		if (!match->compatible[0])
+ 			continue;
+ 
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a24278380fec..22683393a0f2 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -169,7 +169,7 @@ static int __init register_earlycon(char *buf, const struct earlycon_id *match)
+  */
+ int __init setup_earlycon(char *buf)
+ {
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 
+ 	if (!buf || !buf[0])
+ 		return -EINVAL;
+@@ -177,7 +177,9 @@ int __init setup_earlycon(char *buf)
+ 	if (early_con.flags & CON_ENABLED)
+ 		return -EALREADY;
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
+ 		size_t len = strlen(match->name);
+ 
+ 		if (strncmp(buf, match->name, len))
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 1ab0e520d6fc..e17de55c2542 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -179,7 +179,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() STRUCT_ALIGN();			\
++#define EARLYCON_TABLE() . = ALIGN(8);				\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 KEEP(*(__earlycon_table))		\
+ 			 VMLINUX_SYMBOL(__earlycon_table_end) = .;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index b32df49a3bd5..c4219b9cbb70 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -351,10 +351,10 @@ struct earlycon_id {
+ 	char	name[16];
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-} __aligned(32);
++};
+ 
+-extern const struct earlycon_id __earlycon_table[];
+-extern const struct earlycon_id __earlycon_table_end[];
++extern const struct earlycon_id *__earlycon_table[];
++extern const struct earlycon_id *__earlycon_table_end[];
+ 
+ #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
+ #define EARLYCON_USED_OR_UNUSED	__used
+@@ -362,12 +362,19 @@ extern const struct earlycon_id __earlycon_table_end[];
+ #define EARLYCON_USED_OR_UNUSED	__maybe_unused
+ #endif
+ 
+-#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
+-	static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name)	\
+-	     EARLYCON_USED_OR_UNUSED __section(__earlycon_table)	\
++#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)		\
++	static const struct earlycon_id unique_id			\
++	     EARLYCON_USED_OR_UNUSED __initconst			\
+ 		= { .name = __stringify(_name),				\
+ 		    .compatible = compat,				\
+-		    .setup = fn  }
++		    .setup = fn  };					\
++	static const struct earlycon_id EARLYCON_USED_OR_UNUSED		\
++		__section(__earlycon_table)				\
++		* const __PASTE(__p, unique_id) = &unique_id
++
++#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
++	_OF_EARLYCON_DECLARE(_name, compat, fn,				\
++			     __UNIQUE_ID(__earlycon_##_name))
+ 
+ #define EARLYCON_DECLARE(_name, fn)	OF_EARLYCON_DECLARE(_name, "", fn)
+ 
+-- 
+2.16.2.804.g6dcf76e118-goog
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqxipkACgkQOeye3VZi
-gbnClxAAmctzovi5++15bv1g90IeyuNY4EnTLqpM2yfTwPRvTqID9lkvn52zWQV5
-F/6EbMYYQCTugyBkK5GJ7/9TFva1QI1NS3FSraPw3RFwWXe2ouoI1A1DAddJRFGL
-iF8l2Yn6MA/5NgzsTE9ubHev85a40HFqKDuyrpJhvCBqjQgswYmsySoBaoj+WApo
-FNPsCt9AtviGd1bNOFShk/TzzXPy5P4QE/7A6ZupeS49fSz0YGkD4trerY0kqUtq
-MRStE+yKFildzm40hts9YdqHYICTG29jHb8bz95eJFABOIauJwd+feVmiR+RNahl
-4gh5es+J8TL3Pk009+XJVggzOI6mCTD+kCcbpgcyRMbtdZrNDLVUTRbDs6ux01FM
-rx2ivzEuJl3N23IV1Ets8pYlqMyAXammMSokEoHVNATgDKgYmRdoM7wnFsyTU+OU
-uyTHgQkAWKEUGAqhMK1Omyjyekcj46NTJScgJotsi1Lz4rWGSfQ5dXrpmAOx4BK+
-bjM3MzIPwngwDehouynt8x9WJI72ftOYzbBQXM7OBD1GBEN9i/uq44VFIIuvWKQV
-+fNPwJPBBuBlRp0PkJQJEf3WYFi4kVUrOwvufFvtTU7cGFFi7j97sUN910WyXBvR
-Bx5eOEuBmyya7I4J/WTFsK7H+OyoK89y9YVAOFXsvBXjF89t15M=
-=f3O9
------END PGP SIGNATURE-----
---=-=-=--
-
---===============0454499809870187429==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============0454499809870187429==--
