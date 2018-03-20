@@ -1,62 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752405AbeCTIh6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:37:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39070 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeCTIh4 (ORCPT
+        id S1752339AbeCTIiv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:38:51 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33990 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751790AbeCTIir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:37:56 -0400
-X-Google-Smtp-Source: AG47ELuLszeCAWqKkl1gvSVxFSUWUHzCC4wU84dLDPuZvQvf4AI0ObBf3sH279Mg8MXlwJtLwZuwYA==
-Date: Tue, 20 Mar 2018 09:37:51 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, x86@kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: use generic dma-direct and swiotlb code for x86 V3
-Message-ID: <20180320083751.nrpt64dsmpqbhzc6@gmail.com>
-References: <20180319103826.12853-1-hch@lst.de>
- <20180319152737.GK1110@char.us.oracle.com>
- <20180319152840.GA28041@lst.de>
+        Tue, 20 Mar 2018 04:38:47 -0400
+Date: Tue, 20 Mar 2018 09:38:38 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@kernel.org>
+cc: David Laight <David.Laight@ACULAB.COM>,
+        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+In-Reply-To: <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+Message-ID: <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com> <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de> <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de> <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319152840.GA28041@lst.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Christoph Hellwig <hch@lst.de> wrote:
-
-> On Mon, Mar 19, 2018 at 11:27:37AM -0400, Konrad Rzeszutek Wilk wrote:
-> > On Mon, Mar 19, 2018 at 11:38:12AM +0100, Christoph Hellwig wrote:
-> > > Hi all,
-> > > 
-> > > this series switches the x86 code the the dma-direct implementation
-> > > for direct (non-iommu) dma and the generic swiotlb ops.  This includes
-> > > getting rid of the special ops for the AMD memory encryption case and
-> > > the STA2x11 SOC.  The generic implementations are based on the x86
-> > > code, so they provide the same functionality.
-> > 
-> > I need to test this on my baremertal and Xen setup - and I lost your
-> > git repo URL - any chance you mention point out to me so I can
-> > kick of a build?
+On Tue, 20 Mar 2018, Ingo Molnar wrote:
+> * Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> git://git.infradead.org/users/hch/misc.git dma-direct-x86
+> > > Useful also for code that needs AVX-like registers to do things like CRCs.
+> > 
+> > x86/crypto/ has a lot of AVX optimized code.
+> 
+> Yeah, that's true, but the crypto code is processing fundamentally bigger blocks 
+> of data, which amortizes the cost of using kernel_fpu_begin()/_end().
 
-Btw., what's the upstreaming route for these patches?
+Correct.
 
-While it's a multi-arch series it's all pretty x86-heavy as well so we can host it 
-in -tip (in tip:core/dma or such), but feel free to handle it yourself as well:
+> So assuming the target driver will only load on modern FPUs I *think* it should 
+> actually be possible to do something like (pseudocode):
+> 
+> 	vmovdqa %ymm0, 40(%rsp)
+> 	vmovdqa %ymm1, 80(%rsp)
+> 
+> 	...
+> 	# use ymm0 and ymm1
+> 	...
+> 
+> 	vmovdqa 80(%rsp), %ymm1
+> 	vmovdqa 40(%rsp), %ymm0
+> 
+> ... without using the heavy XSAVE/XRSTOR instructions.
+> 
+> Note that preemption probably still needs to be disabled and possibly there are 
+> other details as well, but there should be no 'heavy' FPU operations.
 
-  Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Emphasis on should :)
+
+> I think this should still preserve all user-space FPU state and shouldn't muck up 
+> any 'weird' user-space FPU state (such as pending exceptions, legacy x87 running 
+> code, NaN registers or weird FPU control word settings) we might have interrupted 
+> either.
+> 
+> But I could be wrong, it should be checked whether this sequence is safe. 
+> Worst-case we might have to save/restore the FPU control and tag words - but those 
+> operations should still be much faster than a full XSAVE/XRSTOR pair.
+
+Fair enough.
+
+> So I do think we could do more in this area to improve driver performance, if the 
+> code is correct and if there's actual benchmarks that are showing real benefits.
+
+If it's about hotpath performance I'm all for it, but the use case here is
+a debug facility...
+
+And if we go down that road then we want a AVX based memcpy()
+implementation which is runtime conditional on the feature bit(s) and
+length dependent. Just slapping a readqq() at it and use it in a loop does
+not make any sense.
 
 Thanks,
 
-	Ingo
+	tglx
