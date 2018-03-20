@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753576AbeCTNIh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:08:37 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45632 "EHLO mga04.intel.com"
+        id S1753519AbeCTNIZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:08:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42748 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753552AbeCTNIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:08:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
-   d="scan'208";a="213218635"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Cc: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>, linux-scsi@vger.kernel.org,
+        id S1753493AbeCTNIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:08:21 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
         linux-kernel@vger.kernel.org,
-        Szymon Mielczarek <szymonx.mielczarek@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alex Lemberg <Alex.Lemberg@sandisk.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH V3 0/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
-Date: Tue, 20 Mar 2018 15:07:37 +0200
-Message-Id: <1521551258-4027-1-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v6 6/6] MAINTAINERS: Add entry for Microsemi MIPS SoCs
+Date: Tue, 20 Mar 2018 14:08:01 +0100
+Message-Id: <20180320130801.9247-7-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
+References: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Add myself as a maintainer for the Microsemi MIPS SoCs.
 
-Here is V3, now re-based on top of patch "scsi: ufs: sysfs:reworking of the
-rpm_lvl and spm_lvl entries".
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Michał Potomski has previously sent a patch for Auto-Hibernate, but this
-patch is slightly different, based on the latest ufs-sysfs changes, it also
-takes care to restore auto-hibernate during resume, and otherwise avoids
-updating the register if the device is runtime suspended.  Also a default
-value of 150ms is set.
-
-
-Changes in V3:
-
-	Return -EOPNOTSUPP from auto_hibern8_show() if Auto-Hibernate
-	is not supported.
-
-Changes in V2:
-
-	Re-based on top of (yet to be applied) patch "scsi: ufs: sysfs:
-	reworking of the rpm_lvl and spm_lvl entries"
-
-
-Adrian Hunter (1):
-      scsi: ufs: Add support for Auto-Hibernate Idle Timer
-
- Documentation/ABI/testing/sysfs-driver-ufs | 15 ++++++
- drivers/scsi/ufs/ufs-sysfs.c               | 77 ++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                  | 26 ++++++++++
- drivers/scsi/ufs/ufshcd.h                  |  3 ++
- drivers/scsi/ufs/ufshci.h                  |  7 +++
- 5 files changed, 128 insertions(+)
-
-
-Regards
-Adrian
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3bdc260e36b7..14ce8b290fea 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9156,6 +9156,15 @@ S:	Maintained
+ F:	drivers/usb/misc/usb251xb.c
+ F:	Documentation/devicetree/bindings/usb/usb251xb.txt
+ 
++MICROSEMI MIPS SOCS
++M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
++L:	linux-mips@linux-mips.org
++S:	Maintained
++F:	arch/mips/generic/board-ocelot.c
++F:	arch/mips/configs/generic/board-ocelot.config
++F:	arch/mips/boot/dts/mscc/
++F:	Documentation/devicetree/bindings/mips/mscc.txt
++
+ MICROSEMI SMART ARRAY SMARTPQI DRIVER (smartpqi)
+ M:	Don Brace <don.brace@microsemi.com>
+ L:	esc.storagedev@microsemi.com
+-- 
+2.16.2
