@@ -1,95 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeCTPA7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:00:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38960 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751786AbeCTPA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751826AbeCTPA4 (ORCPT <rfc822;w@1wt.eu>);
         Tue, 20 Mar 2018 11:00:56 -0400
-Date: Tue, 20 Mar 2018 16:00:54 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 2/6] mm/vmscan: Update stale comments
-Message-ID: <20180320150054.GX23100@dhcp22.suse.cz>
-References: <20180315164553.17856-1-aryabinin@virtuozzo.com>
- <20180315164553.17856-2-aryabinin@virtuozzo.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57616 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeCTPAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:00:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D72C6021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
+References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
+ <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
+ <20180320144801.GE19744@ziepe.ca>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
+Date: Tue, 20 Mar 2018 10:00:49 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315164553.17856-2-aryabinin@virtuozzo.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180320144801.GE19744@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-03-18 19:45:49, Andrey Ryabinin wrote:
-> Update some comments that become stale since transiton from per-zone
-> to per-node reclaim.
+On 3/20/2018 9:48 AM, Jason Gunthorpe wrote:
+> On Mon, Mar 19, 2018 at 10:47:43PM -0400, Sinan Kaya wrote:
+>> Code includes wmb() followed by writel(). writel() already has a barrier on
+>> some architectures like arm64.
+>>
+>> This ends up CPU observing two barriers back to back before executing the
+>> register write.
+>>
+>> Since code already has an explicit barrier call, changing writel() to
+>> writel_relaxed().
+>>
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+>> index 8329ec6..4a6b981 100644
+>> +++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+>> @@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
+>>  
+>>  	/* ring CMDQ DB */
+>>  	wmb();
+>> -	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+>> -	       rcfw->cmdq_bar_reg_prod_off);
+>> -	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+>> -	       rcfw->cmdq_bar_reg_trig_off);
+>> +	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+>> +		       rcfw->cmdq_bar_reg_prod_off);
+>> +	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+>> +		       rcfw->cmdq_bar_reg_trig_off);
 > 
-> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/vmscan.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> Woah, this may not be safe..
 > 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 4390a8d5be41..6d74b12099bd 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -926,7 +926,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  			(PageSwapCache(page) && (sc->gfp_mask & __GFP_IO));
->  
->  		/*
-> -		 * The number of dirty pages determines if a zone is marked
-> +		 * The number of dirty pages determines if a node is marked
->  		 * reclaim_congested which affects wait_iff_congested. kswapd
->  		 * will stall and start writing pages if the tail of the LRU
->  		 * is all dirty unqueued pages.
-> @@ -1764,7 +1764,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  	 * as there is no guarantee the dirtying process is throttled in the
->  	 * same way balance_dirty_pages() manages.
->  	 *
-> -	 * Once a zone is flagged ZONE_WRITEBACK, kswapd will count the number
-> +	 * Once a node is flagged PGDAT_WRITEBACK, kswapd will count the number
->  	 * of pages under pages flagged for immediate reclaim and stall if any
->  	 * are encountered in the nr_immediate check below.
->  	 */
-> @@ -1791,7 +1791,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  	 */
->  	if (sane_reclaim(sc)) {
->  		/*
-> -		 * Tag a zone as congested if all the dirty pages scanned were
-> +		 * Tag a node as congested if all the dirty pages scanned were
->  		 * backed by a congested BDI and wait_iff_congested will stall.
->  		 */
->  		if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
-> @@ -1812,7 +1812,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  	}
->  
->  	/*
-> -	 * Stall direct reclaim for IO completions if underlying BDIs or zone
-> +	 * Stall direct reclaim for IO completions if underlying BDIs and node
->  	 * is congested. Allow kswapd to continue until it starts encountering
->  	 * unqueued dirty pages or cycling through the LRU too quickly.
->  	 */
-> @@ -3808,7 +3808,7 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
->  
->  	if (node_pagecache_reclaimable(pgdat) > pgdat->min_unmapped_pages) {
->  		/*
-> -		 * Free memory by calling shrink zone with increasing
-> +		 * Free memory by calling shrink node with increasing
->  		 * priorities until we have enough memory freed.
->  		 */
->  		do {
-> -- 
-> 2.16.1
+> The definition of writel_relaxed() is that it is fully unordered, so
+> the above two writes may change order now. Broadcom guys would have to
+> ack if that it is OK or not for their hardware.
+> 
+> In general this is not an OK approach for a mechanical
+> conversion.. Only the first writel can be convereted.
+> 
+> You need to check all your patches to make sure there are no
+> subsequent writel's in the places touched.
+
+I paid special attention to this one and went to check the barriers
+document. According to the document, writes (whether it is relaxed or not)
+are always observed by the HW inorder with respect to each other.
+It just doesn't guarantee anything above writel_relaxed() to be observed.
+Since we already have a wmb(), this is taken care of. 
+
+If somebody wants things to be observed after register write, there should
+have been a wmb() or mmiowb() afterwards.
+
+
+> 
+> Jason
+> 
+
 
 -- 
-Michal Hocko
-SUSE Labs
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
