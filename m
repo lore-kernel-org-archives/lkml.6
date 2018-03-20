@@ -1,77 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751728AbeCTRKD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 13:10:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:43360 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbeCTRKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:10:01 -0400
-Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
- laptop
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Harald Geyer <harald@ccbib.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        info@olimex.com
-References: <20180315162510.11669-1-harald@ccbib.org>
- <20180315162510.11669-6-harald@ccbib.org>
- <20180318202251.5gpv6sblfr4edxmj@flea>
- <E1exwhF-0000Qw-4g@stardust.g4.wien.funkfeuer.at>
- <20180320141353.zmzq4e5652rsp4ye@flea>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <0288a32a-bbbf-20ca-2ebf-6fc8e82168df@arm.com>
-Date: Tue, 20 Mar 2018 17:09:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320141353.zmzq4e5652rsp4ye@flea>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1751674AbeCTRLt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 13:11:49 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35776 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751320AbeCTRLr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 13:11:47 -0400
+X-Google-Smtp-Source: AG47ELvMwJQd5sh5C02R9zb0F7lkiGooFswuIj/DiI37iPz+UFW06SXlJOhzkh4n0ToNwzXfS/0f6w==
+Date: Tue, 20 Mar 2018 10:11:46 -0700 (PDT)
+X-Google-Original-Date: Tue, 20 Mar 2018 09:34:31 PDT (-0700)
+Subject: Re: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <cover.1521103167.git.zong@andestech.com>
+CC: albert@sifive.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, zong@andestech.com, zongbox@gmail.com,
+        greentime@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: zong@andestech.com
+Message-ID: <mhng-381d004e-2fbd-4012-9ccc-e845dd5396c0@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 15 Mar 2018 01:50:40 PDT (-0700), zong@andestech.com wrote:
+> These patches resolve the some issues of loadable module.
+>   - symbol out of ranges
+>   - unknown relocation types
+>
+> The reference of external variable and function symbols
+> cannot exceed 32-bit offset ranges in kernel module.
+> The module only can work on the 32-bit OS or the 64-bit
+> OS with sv32 virtual addressing.
+>
+> These patches will generate the .got, .got.plt and
+> .plt sections during loading module, let it can refer
+> to the symbol which locate more than 32-bit offset.
+> These sections depend on the relocation types:
+>  - R_RISCV_GOT_HI20
+>  - R_RISCV_CALL_PLT
+>
+> These patches also support more relocation types
+>  - R_RISCV_CALL
+>  - R_RISCV_HI20
+>  - R_RISCV_LO12_I
+>  - R_RISCV_LO12_S
+>  - R_RISCV_RVC_BRANCH
+>  - R_RISCV_RVC_JUMP
+>  - R_RISCV_ALIGN
+>  - R_RISCV_ADD32
+>  - R_RISCV_SUB32
+>
+> This is the list of testing modules:
+> # lsmod
+> btrfs 7876158 0 - Live 0xffffffd00745d000
+> ramoops 90806 0 - Live 0xffffffd0024b8000
+> lzo 10554 0 - Live 0xffffffd002050000
+> zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+> zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+> zram 101300 0 - Live 0xffffffd0021b8000
+> xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+> xor 33246 1 btrfs, Live 0xffffffd002042000
+> xfs 4395343 0 - Live 0xffffffd00399e000
+> tun 252041 0 - Live 0xffffffd0038e0000
+> test_user_copy 5265 0 - Live 0xffffffd003783000
+> test_static_keys 19606 0 - Live 0xffffffd003717000
+> test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+> test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+> test_module 1557 0 - Live 0xffffffd003646000
+> test_kmod 49100 0 - Live 0xffffffd0035f2000
+> test_bpf 1599301 0 - Live 0xffffffd003000000
+> test_bitmap 4403 0 - Live 0xffffffd002dd8000
+> reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+> raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+> netdevsim 65401 0 - Live 0xffffffd002910000
+>
+> Signed-off-by: Zong Li <zong@andestech.com>
+> ---
+> Change in v2:
+>  - Add compile option 'mno-relax' for build kernel module
+>  - Just fail on ALIGN type, this is unexpected type with mno-relax.
+>
+> Zong Li (11):
+>   RISC-V: Add sections of PLT and GOT for kernel module
+>   RISC-V: Add section of GOT.PLT for kernel module
+>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>   RISC-V: Support CALL relocation type in kernel module
+>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>   RISC-V: Support ALIGN relocation type in kernel module
+>   RISC-V: Support ADD32 relocation type in kernel module
+>   RISC-V: Support SUB32 relocation type in kernel module
+>   RISC-V: Enable module support in defconfig
+>   RISC-V: Add definition of relocation types
+>
+>  arch/riscv/Kconfig                  |   5 +
+>  arch/riscv/Makefile                 |   5 +
+>  arch/riscv/configs/defconfig        |   2 +
+>  arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
+>  arch/riscv/include/uapi/asm/elf.h   |   7 ++
+>  arch/riscv/kernel/Makefile          |   1 +
+>  arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
+>  arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
+>  arch/riscv/kernel/module.lds        |   8 ++
+>  9 files changed, 470 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/module.h
+>  create mode 100644 arch/riscv/kernel/module-sections.c
+>  create mode 100644 arch/riscv/kernel/module.lds
 
-On 20/03/18 14:13, Maxime Ripard wrote:
-> On Mon, Mar 19, 2018 at 04:27:36PM +0100, Harald Geyer wrote:
->>> together with all the patches but the
->>> PWM (so I had to drop the backlight node as well).
->>>
->>> Please coordinate with Andre about who should send the PWM support.
->>
->> Seems the patch got broken because only the backlight node but not the
->> pwm node was removed. Anyway, since Andre has already sent an updated
->> version of his series, maybe just revert the broken patch, merge his
->> series and then apply the original teres-i patch again?
-> 
-> Unfortunately, there's dependencies on the PWM driver itself, and the
-> maintainer hasn't replied yet.
-
-But those dependencies are purely "administrative", not technical,
-aren't they? As the existing driver worked already with the DT changes,
-it's just the listing of the compatible strings in the binding doc that
-is missing? IIRC we added those later on in the past already.
-
-So I think it's safe to merge them independently:
-"[PATCH v2 1/4] pwm: sun4i: drop unused .has_rdy member" and
-"[PATCH v2 2/4] pwm: sun4i: simplify controller mapping" are
-PWM fixes and go via Thierry, I guess.
-
-"[PATCH v2 3/4] dt-bindings: pwm: sunxi: add new compatible strings" is
-just Documentation of existing behaviour, and independent from 1/4 and 2/4.
-
-"[PATCH v2 4/4] dts: sunxi: A64: Add PWM controllers" just "softly"
-depends on the introduction of the compatible strings in 3/4, but has no
-real technical dependency. It can go in any time on its own without
-breaking the build or functionality.
-
-Or am I too sloppy here?
-
-Cheers,
-Andre.
+Thanks!  I've added this to our for-next branch, so it should start to get a
+bit more testing soon.  I've had a bit of the flu and am therefor a bit out of
+it, so I'll try to look closer before the next merge window.
