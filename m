@@ -1,82 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeCTJRl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:17:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37532 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751402AbeCTJRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:17:40 -0400
-Date: Tue, 20 Mar 2018 09:17:35 +0000
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Gaku Inami <gaku.inami.xh@renesas.com>
-Cc: "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
-        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric
- capacity systems
-Message-ID: <20180320091735.GN4589@e105550-lin.cambridge.arm.com>
-References: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
- <OSBPR01MB1800210FC368705EAADA27C4A2AB0@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+        id S1751931AbeCTJTX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:19:23 -0400
+Received: from mga14.intel.com ([192.55.52.115]:52338 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751022AbeCTJTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:19:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,334,1517904000";
+   d="scan'208";a="35292429"
+Subject: Re: [PATCH 0/3] mmc: add support for sdhci 4.0
+To: Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <2291348c-7338-f335-88b8-10dc308e7f22@intel.com>
+Date: Tue, 20 Mar 2018 11:18:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB1800210FC368705EAADA27C4A2AB0@OSBPR01MB1800.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/03/18 10:36, Chunyan Zhang wrote:
+>>From the SD host controller version 4.0 on, SDHCI implementation either
+> is version 3 compatible or version 4 mode. This patch-set covers those
+> changes which are common for SDHCI 4.0 version, regardless of whether
+> they are used with SD or eMMC storage devices.
 
-On Tue, Mar 20, 2018 at 05:30:00AM +0000, Gaku Inami wrote:
-> Hi
-> 
-> > -----Original Message-----
-> > From: Morten Rasmussen [mailto:morten.rasmussen@arm.com]
-> > Sent: Thursday, March 15, 2018 11:47 PM
-> > To: peterz@infradead.org; mingo@redhat.com
-> > Cc: valentin.schneider@arm.com; dietmar.eggemann@arm.com; vincent.guittot@linaro.org; Gaku Inami
-> > <gaku.inami.xh@renesas.com>; linux-kernel@vger.kernel.org; Morten Rasmussen <morten.rasmussen@arm.com>
-> > Subject: [PATCHv2 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric capacity systems
-> [snip]
-> > 
-> > The patches have been tested on:
-> >    1. Arm Juno (r0): 2+4 Cortex A57/A53
-> >    2. Hikey960: 4+4 Cortex A73/A53
-> > 
-> 
-> I have tested this on our R-Car again and it works well. In addition,
-> I confirmed that this patch-set also brings performance improvement to
-> other benchmarks(e.g. memory load latency in LMbench). You can add:
-> 
-> Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
-> 
-> The patches have been tested on:
->    3. Renesas R-Car H3 : 4+4 Cortex A57/A53
-> 
-> Results:
-> Single runs with completion time of each task
-> R-Car H3 (tip)
->     total time:                          0.9435s
->     total time:                          0.9952s
->     total time:                          1.3511s
->     total time:                          1.6747s
-> 
-> R-Car H3 (misfit)
->     total time:                          0.9387s
->     total time:                          0.9280s
->     total time:                          0.9616s
->     total time:                          0.9934s
-> 
-> 10 run summary (tracking longest running task for each run)
-> 	R-Car H3
-> 	avg	max
-> tip     1.6737  1.6758
-> misfit  0.9980  1.0409
+Why use v4 mode?
 
-Thanks a lot for testing again.
+What driver is using v4 mode?  Can you also post those changes?
 
-Morten
+Are you planning on adding UHS-II support also?
+
+> 
+> Chunyan Zhang (3):
+>   mmc: sdhci: add sd host v4 mode
+>   mmc: sdhci: made changes for System Address register of SDMA
+>   mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
+> 
+>  drivers/mmc/host/sdhci.c | 66 +++++++++++++++++++++++++++++++++++++-----------
+>  drivers/mmc/host/sdhci.h | 29 +++++++++++++++++----
+>  2 files changed, 75 insertions(+), 20 deletions(-)
+> 
