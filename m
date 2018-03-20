@@ -1,83 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751644AbeCTX02 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:26:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35804 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeCTX0Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:26:24 -0400
-Date: Wed, 21 Mar 2018 00:26:21 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.14.28-rt23
-Message-ID: <20180320232620.jp4yglglk64jnztd@linutronix.de>
+        id S1751963AbeCTX1I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:27:08 -0400
+Received: from ozlabs.org ([103.22.144.67]:52777 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751864AbeCTX05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:26:57 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 21 Mar 2018 10:26:18 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Brown <matthew.brown.dev@gmail.com>
+Subject: linux-next: manual merge of the powerpc tree with the asm-generic
+ tree
+Message-ID: <20180321102618.4b46f1b4@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TFT4Q.A+2o0jDHqMgMsW+KA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm pleased to announce the v4.14.28-rt23 patch set. 
+Hi all,
 
-Changes since v4.14.28-rt22:
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-  - The RCU boosting code could enable interrupts too early which could
-    lead to a deadlock. Reported by Roosen Henri, fixed by Boqun Feng.
+  lib/raid6/test/Makefile
 
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
+between commit:
 
-The delta patch against v4.14.28-rt22 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/incr/patch-4.14.28-rt22-rt23.patch.xz
+  fa523d54a7eb ("raid: remove tile specific raid6 implementation")
 
-You can get this release via the git tree at:
+from the asm-generic tree and commit:
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.14.28-rt23
+  751ba79cc552 ("lib/raid6/altivec: Add vpermxor implementation for raid6 Q=
+ syndrome")
 
-The RT patch against v4.14.28 can be found here:
+from the powerpc tree.
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/older/patch-4.14.28-rt23.patch.xz
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-The split quilt queue is available at:
+--=20
+Cheers,
+Stephen Rothwell
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/older/patches-4.14.28-rt23.tar.xz
+diff --cc lib/raid6/test/Makefile
+index fabc477b1417,5050e270c06b..000000000000
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@@ -45,12 -45,17 +45,14 @@@ else ifeq ($(HAS_NEON),yes
+          CFLAGS +=3D -DCONFIG_KERNEL_MODE_NEON=3D1
+  else
+          HAS_ALTIVEC :=3D $(shell printf '\#include <altivec.h>\nvector in=
+t a;\n' |\
+-                          gcc -c -x c - >&/dev/null && \
+-                          rm ./-.o && echo yes)
++                          gcc -c -x c - >/dev/null && rm ./-.o && echo yes)
+          ifeq ($(HAS_ALTIVEC),yes)
+-                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o
++                 CFLAGS +=3D -I../../../arch/powerpc/include
++                 CFLAGS +=3D -DCONFIG_ALTIVEC
++                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o \
++                         vpermxor1.o vpermxor2.o vpermxor4.o vpermxor8.o
+          endif
+  endif
+ -ifeq ($(ARCH),tilegx)
+ -OBJS +=3D tilegx8.o
+ -endif
+ =20
+  .c.o:
+  	$(CC) $(CFLAGS) -c -o $@ $<
+@@@ -117,7 -137,8 +131,7 @@@ tables.c: mktable
+  	./mktables > tables.c
+ =20
+  clean:
+- 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.=
+c raid6test
++ 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c vpermxor*.c neo=
+n*.c tables.c raid6test
+ -	rm -f tilegx*.c
+ =20
+  spotless: clean
+  	rm -f *~
 
-Sebastian
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 838c8a6f662c..0cb716ba3be0 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -2206,11 +2206,12 @@ void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
- {
- 	DEFINE_WAKE_Q(wake_q);
- 	DEFINE_WAKE_Q(wake_sleeper_q);
-+	unsigned long flags;
- 	bool postunlock;
- 
--	raw_spin_lock_irq(&lock->wait_lock);
-+	raw_spin_lock_irqsave(&lock->wait_lock, flags);
- 	postunlock = __rt_mutex_futex_unlock(lock, &wake_q, &wake_sleeper_q);
--	raw_spin_unlock_irq(&lock->wait_lock);
-+	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
- 
- 	if (postunlock)
- 		rt_mutex_postunlock(&wake_q, &wake_sleeper_q);
-diff --git a/localversion-rt b/localversion-rt
-index c29508d21914..9a218ca23053 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt22
-+-rt23
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmJoACgkQAVBC80lX
+0GychAf8DhcRUr84maMuU87eiGD0vPno6tdlBjG5Ssr9udvsirhDssuRzktRxRXN
+AFz8v3wQlm8HRVprTHrXNfsxAhApAtN6TejsslV0UeNDtIsG7dFrPX/OGo9UvNh3
+BnIc1s1dYyjh/jJlA+aZC5bCjlk7JVtEIEwqnxYjUBL7dgnraYVMUkKseiD/BmhZ
+N2bSnFSJIb3OJUqqQnC+/QEM0WMb0OWWGmDY23+GF4Y2Psnkz3oLJzmvNJkMQ574
+oAyCc5L7vwGzCMW2hpW0QVZW2IwvDkXri13fu4frVsJPCYRW1jDwdF5Nl3uIQbxY
+2HGBG6pO07KD0LCknZfj7TZGPekhpQ==
+=gxRa
+-----END PGP SIGNATURE-----
+
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA--
