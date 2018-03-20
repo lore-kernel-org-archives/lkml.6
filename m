@@ -1,200 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCTVd3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 17:33:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751961AbeCTVdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 17:33:24 -0400
-Date: Tue, 20 Mar 2018 15:33:23 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
-Subject: Re: [PATCH] vfio iommu type1: improve memory pinning process for
- raw PFN mapping
-Message-ID: <20180320153323.41c58c19@t450s.home>
-In-Reply-To: <7F93BB33-4ABF-468F-8814-78DE9D23FA08@linux.alibaba.com>
-References: <7F93BB33-4ABF-468F-8814-78DE9D23FA08@linux.alibaba.com>
+        id S1751670AbeCTVfk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 17:35:40 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44864 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeCTVfj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 17:35:39 -0400
+Subject: Re: [PATCH] mm/hugetlb: prevent hugetlb VMA to be misaligned
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>, mhocko@kernel.org,
+        Dan Williams <dan.j.williams@intel.com>
+References: <1521566754-30390-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <86240c1a-d1f1-0f03-855e-c5196762ec0a@oracle.com>
+Message-ID: <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
+Date: Tue, 20 Mar 2018 14:35:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <86240c1a-d1f1-0f03-855e-c5196762ec0a@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018 10:30:24 +0800
-"Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com> wrote:
+On 03/20/2018 02:26 PM, Mike Kravetz wrote:
+> Thanks Laurent!
+> 
+> This bug was introduced by 31383c6865a5.  Dan's changes for 31383c6865a5
+> seem pretty straight forward.  It simply replaces an explicit check when
+> splitting a vma to a new vm_ops split callout.  Unfortunately, mappings
+> created via shmget/shmat have their vm_ops replaced.  Therefore, this
+> split callout is never made.
+> 
+> The shm vm_ops do indirectly call the original vm_ops routines as needed.
+> Therefore, I would suggest a patch something like the following instead.
+> If we move forward with the patch, we should include Laurent's BUG output
+> and perhaps test program in the commit message.
 
-> When using vfio to pass through a PCIe device (e.g. a GPU card) that
-> has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
-> pinning because PFNs of PCI BAR are not backed by struct page, and
-> the corresponding VMA has flag VM_PFNMAP.
-> 
-> With this change, when pinning a region which is a raw PFN mapping,
-> it can skip unnecessary user memory pinning process, and thus, can
-> significantly improve VM's boot up time when passing through devices
-> via VFIO. In my test on a Xeon E5 2.6GHz, the time mapping a 16GB
-> BAR was reduced from about 0.4s to 1.5us.
-> 
-> Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
->  1 file changed, 14 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 45657e2b1ff7..0658f35318b8 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->  {
->         unsigned long pfn = 0;
->         long ret, pinned = 0, lock_acct = 0;
-> -       bool rsvd;
->         dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
-> 
->         /* This code path is only user initiated */
-> @@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->         if (ret)
->                 return ret;
-> 
-> +       if (is_invalid_reserved_pfn(*pfn_base)) {
-> +               struct vm_area_struct *vma;
-> +               down_read(&current->mm->mmap_sem);
-> +               vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
-> +               pinned = min(npage, (long)vma_pages(vma));
-> +               up_read(&current->mm->mmap_sem);
-> +               return pinned;
-> +       }
-> +
->         pinned++;
-> -       rsvd = is_invalid_reserved_pfn(*pfn_base);
-> 
->         /*
->          * Reserved pages aren't counted against the user, externally pinned
->          * pages are already counted against the user.
->          */
-> -       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +       if (!vfio_find_vpfn(dma, iova)) {
->                 if (!lock_cap && current->mm->locked_vm + 1 > limit) {
->                         put_pfn(*pfn_base, dma->prot);
->                         pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-> @@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->                 if (ret)
->                         break;
-> 
-> -               if (pfn != *pfn_base + pinned ||
-> -                   rsvd != is_invalid_reserved_pfn(pfn)) {
-> +               if (pfn != *pfn_base + pinned) {
->                         put_pfn(pfn, dma->prot);
->                         break;
->                 }
-> 
-> -               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +               if (!vfio_find_vpfn(dma, iova)) {
->                         if (!lock_cap &&
->                             current->mm->locked_vm + lock_acct + 1 > limit) {
->                                 put_pfn(pfn, dma->prot);
-> @@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> 
->  unpin_out:
->         if (ret) {
-> -               if (!rsvd) {
-> -                       for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> -                               put_pfn(pfn, dma->prot);
-> -               }
-> +               for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> +                       put_pfn(pfn, dma->prot);
-> 
->                 return ret;
->         }
+Sorry, patch in previous mail was a mess
 
-Hi Jason,
+>From 7a19414319c7937fd2757c27f936258f16c1f61d Mon Sep 17 00:00:00 2001
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Date: Tue, 20 Mar 2018 13:56:57 -0700
+Subject: [PATCH] shm: add split function to shm_vm_ops
 
-Something is wrong with your mail setup, the patch looks normal above,
-but when I view the source or save it to try to apply it, the diff is
-corrupt, as below.  It looks like maybe you're pasting the patch into
-your mailer and it's wrapping lines (ending with '=') and actual '='
-are replaced with '=3D' and tabs are converted to spaces.  Please fix
-your mailer and resend.  Thanks,
+The split function was added to vm_operations_struct to determine
+if a mapping can be split.  This was mostly for device-dax and
+hugetlbfs mappings which have specific alignment constraints.
 
-Alex
+mappings initiated via shmget/shmat have their original vm_ops
+overwritten with shm_vm_ops.  shm_vm_ops functions will call back
+to the original vm_ops if needed.  Add such a split function.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c =
-b/drivers/vfio/vfio_iommu_type1.c
-index 45657e2b1ff7..0658f35318b8 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-*dma, unsigned long vaddr,
- {
-        unsigned long pfn =3D 0;
-        long ret, pinned =3D 0, lock_acct =3D 0;
--       bool rsvd;
-        dma_addr_t iova =3D vaddr - dma->vaddr + dma->iova;
+Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct)
+Reported by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ ipc/shm.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-        /* This code path is only user initiated */
-@@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-*dma, unsigned long vaddr,
-        if (ret)
-                return ret;
-
-+       if (is_invalid_reserved_pfn(*pfn_base)) {
-+               struct vm_area_struct *vma;
-+               down_read(&current->mm->mmap_sem);
-+               vma =3D find_vma_intersection(current->mm, vaddr, vaddr =
-+ 1);
-+               pinned =3D min(npage, (long)vma_pages(vma));
-+               up_read(&current->mm->mmap_sem);
-+               return pinned;
-+       }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 7acda23430aa..50e88fc060b1 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -386,6 +386,17 @@ static int shm_fault(struct vm_fault *vmf)
+ 	return sfd->vm_ops->fault(vmf);
+ }
+ 
++static int shm_split(struct vm_area_struct *vma, unsigned long addr)
++{
++	struct file *file = vma->vm_file;
++	struct shm_file_data *sfd = shm_file_data(file);
 +
-        pinned++;
--       rsvd =3D is_invalid_reserved_pfn(*pfn_base);
-
-        /*
-         * Reserved pages aren't counted against the user, externally =
-pinned
-         * pages are already counted against the user.
-         */
--       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+       if (!vfio_find_vpfn(dma, iova)) {
-                if (!lock_cap && current->mm->locked_vm + 1 > limit) {
-                        put_pfn(*pfn_base, dma->prot);
-                        pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", =
-__func__,
-@@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-*dma, unsigned long vaddr,
-                if (ret)
-                        break;
-
--               if (pfn !=3D *pfn_base + pinned ||
--                   rsvd !=3D is_invalid_reserved_pfn(pfn)) {
-+               if (pfn !=3D *pfn_base + pinned) {
-                        put_pfn(pfn, dma->prot);
-                        break;
-                }
-
--               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+               if (!vfio_find_vpfn(dma, iova)) {
-                        if (!lock_cap &&
-                            current->mm->locked_vm + lock_acct + 1 > =
-limit) {
-                                put_pfn(pfn, dma->prot);
-@@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-*dma, unsigned long vaddr,
-
- unpin_out:
-        if (ret) {
--               if (!rsvd) {
--                       for (pfn =3D *pfn_base ; pinned ; pfn++, =
-pinned--)
--                               put_pfn(pfn, dma->prot);
--               }
-+               for (pfn =3D *pfn_base ; pinned ; pfn++, pinned--)
-+                       put_pfn(pfn, dma->prot);
-
-                return ret;
-        }
---
++	if (sfd->vm_ops && sfd->vm_ops->split)
++		return sfd->vm_ops->split(vma, addr);
++
++	return 0;
++}
++
+ #ifdef CONFIG_NUMA
+ static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+ {
+@@ -510,6 +521,7 @@ static const struct vm_operations_struct shm_vm_ops = {
+ 	.open	= shm_open,	/* callback for a new vm-area open */
+ 	.close	= shm_close,	/* callback for when the vm-area is released */
+ 	.fault	= shm_fault,
++	.split	= shm_split,
+ #if defined(CONFIG_NUMA)
+ 	.set_policy = shm_set_policy,
+ 	.get_policy = shm_get_policy,
+-- 
 2.13.6
