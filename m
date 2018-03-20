@@ -1,77 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751656AbeCTC2I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:28:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38202 "EHLO mx1.redhat.com"
+        id S1751498AbeCTC36 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:29:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38252 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751589AbeCTC2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:28:04 -0400
-Date: Mon, 19 Mar 2018 21:28:03 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH 2/2] x86/unwind: Make CONFIG_UNWINDER_ORC=y the default
- in kconfig for 64-bit
-Message-ID: <20180320022803.i46ixerodrhzzewd@treble>
-References: <20171013052544.euk7yawni47lhmdq@gmail.com>
- <9b1237bbe7244ed9cdf8db2dcb1253e37e1c341e.1507924831.git.jpoimboe@redhat.com>
- <20180319185732.GD37438@google.com>
- <20180319192910.wfbi656bxkrlurgf@treble>
- <20180319203130.GE37438@google.com>
- <20180319212053.e77dc3vmemfazt3b@treble>
- <20180319232255.GF37438@google.com>
+        id S1750969AbeCTC34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:29:56 -0400
+Subject: Re: [PATCH] ptr_ring: fix build
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+References: <1521506496-455194-1-git-send-email-mst@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <62a7a572-bba8-0beb-9a4a-1a4b80b244e4@redhat.com>
+Date: Tue, 20 Mar 2018 10:29:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180319232255.GF37438@google.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <1521506496-455194-1-git-send-email-mst@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 04:22:55PM -0700, Matthias Kaehlcke wrote:
-> > Here's a (surprisingly easy) fix for this particular issue, though I'd
-> > be shocked if there weren't a bunch more issues lurking elsewhere.  Let
-> > me know how it goes.
-> 
-> Thanks for having a look, this fixes the vast majority of warnings in
-> a defconfig build!
 
-Wow.  Consider me shocked :-)
 
-> The remaining warnings are:
-> 
-> arch/x86/mm/pti.o: warning: objtool: pti_init() falls through to next
-> function pti_user_pagetable_walk_pmd()
-> s/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
-> fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
-> fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
-> fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
-> fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls through to next function fops_u8_open()
+On 2018年03月20日 08:41, Michael S. Tsirkin wrote:
+> Fixes after recent use of kvmalloc
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>   tools/virtio/ringtest/ptr_ring.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/tools/virtio/ringtest/ptr_ring.c b/tools/virtio/ringtest/ptr_ring.c
+> index 477899c..2d566fb 100644
+> --- a/tools/virtio/ringtest/ptr_ring.c
+> +++ b/tools/virtio/ringtest/ptr_ring.c
+> @@ -17,6 +17,8 @@
+>   #define likely(x)    (__builtin_expect(!!(x), 1))
+>   #define ALIGN(x, a) (((x) + (a) - 1) / (a) * (a))
+>   #define SIZE_MAX        (~(size_t)0)
+> +#define KMALLOC_MAX_SIZE SIZE_MAX
+> +#define BUG_ON(x) assert(x)
+>   
+>   typedef pthread_spinlock_t  spinlock_t;
+>   
+> @@ -57,6 +59,9 @@ static void kfree(void *p)
+>   		free(p);
+>   }
+>   
+> +#define kvmalloc_array kmalloc_array
+> +#define kvfree kfree
+> +
+>   static void spin_lock_init(spinlock_t *lock)
+>   {
+>   	int r = pthread_spin_init(lock, 0);
 
-These all seem to be related to some weirdness with the UD2 instruction,
-not necessarily an objtool issue per se.
-
-Any chance this fixes some of the warnings?  If not, I can try to build
-with clang and look a little deeper.
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c63601..315a8757b565 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -124,7 +124,12 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- # define ASM_UNREACHABLE
- #endif
- #ifndef unreachable
--# define unreachable() do { annotate_reachable(); do { } while (1); } while (0)
-+#define unreachable() \
-+	do {					\
-+		annotate_unreachable();		\
-+		barrier_before_unreachable();	\
-+		__builtin_unreachable();	\
-+	} while (0)
- #endif
- 
- /*
+Acked-by: Jason Wang <jasowang@redhat.com>
