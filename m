@@ -1,45 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeCTHS5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        id S1751583AbeCTHW6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:22:58 -0400
+Received: from verein.lst.de ([213.95.11.211]:35747 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750828AbeCTHSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:18:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5AE2177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751308AbeCTHW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:22:57 -0400
+Date: Tue, 20 Mar 2018 08:22:55 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Michael Neuling <mikey@neuling.org>
+Cc: Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: Fix NULL ptr deref in EEH code
+Message-ID: <20180320072255.GA15059@lst.de>
+References: <20180320002242.10416-1-mikey@neuling.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-        Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f25eb71c-efd9-f842-1a98-76c86b03a34a@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        mark.rutland@arm.com
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
- <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
- <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
- <f25eb71c-efd9-f842-1a98-76c86b03a34a@topic.nl>
-Message-ID: <152153033462.254778.17337398489852735308@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Tue, 20 Mar 2018 00:18:54 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320002242.10416-1-mikey@neuling.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mike Looijmans (2018-03-20 00:15:36)
-> Thanks, found them on patchwork, somehow they didn't end up in my mailbox.
-> 
-> Comments are clear, will incorporate them, I only have trouble with your 
-> remark on the DT documentation "Can this reference stuff go to the bottom of 
-> this document?". I copied the style from the other documents in the same 
-> directory, I'm slightly puzzled about where the reference part should go now.
-> 
-> 
+On Tue, Mar 20, 2018 at 11:22:42AM +1100, Michael Neuling wrote:
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index b6f43b738f..404b346e3c 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2626,6 +2626,9 @@ static pci_ers_result_t nvme_error_detected(struct pci_dev *pdev,
+>  {
+>  	struct nvme_dev *dev = pci_get_drvdata(pdev);
+>  
+> +	if (!dev)
+> +		return PCI_ERS_RESULT_NEED_RESET;
 
-Ok. It's fine either way.
+This implies the method has been called before ->probe has been finished
+or after ->remove has been called.  That would be fundamentally racy
+and needs to be fixed in the PCI layer, not papered over in drivers.
