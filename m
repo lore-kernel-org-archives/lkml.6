@@ -1,103 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753569AbeCTNzp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:55:45 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43035 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753227AbeCTNzm (ORCPT
+        id S1753672AbeCTNzx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:55:53 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34089 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753227AbeCTNzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:55:42 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.02447012|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01542;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BNYE2-u_1521554125;
-Date: Tue, 20 Mar 2018 21:55:25 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 16/19] csky: Device tree
-Message-ID: <20180320135524.GA12296@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <b86f173b8333cb6cc1c7e32ec2ab1e38fae4ecf8.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a3uoiXRk0azD=LU033M3-FGr8e=HgUErDXuVMwvLWa6Gw@mail.gmail.com>
+        Tue, 20 Mar 2018 09:55:47 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] drm: bridge: panel: allow override of the bus format
+Date: Tue, 20 Mar 2018 15:56:52 +0200
+Message-ID: <7015227.p44CVkfgjM@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180317221525.18534-3-peda@axentia.se>
+References: <20180317221525.18534-1-peda@axentia.se> <20180317221525.18534-3-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3uoiXRk0azD=LU033M3-FGr8e=HgUErDXuVMwvLWa6Gw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi Peter,
 
-On Mon, Mar 19, 2018 at 11:28:03PM +0800, Arnd Bergmann wrote:
-> Please add a changelog text to each patch, and send patches that add
-> .dts files or
-> binding documents to the devicetree mailing list.
-Ok
+Thank you for the patch.
 
-> It is usually better for an SoC based board to split the SoC specific into a
-> separate .dtsi file that gets included by the board .dts file.
-Ok
-
-> > +/ {
-> > +       model = "Nationalchip gx6605s ck610";
-> > +       compatible = "nationalchip,gx6605s,ck610";
+On Sunday, 18 March 2018 00:15:24 EET Peter Rosin wrote:
+> Useful if the bridge does some kind of conversion of the bus format.
 > 
-> Is ck610 the name of the CPU core? The general convention is to have the
-> top-level "compatible" property list first the name of the board, then the
-> name of the soc, but not the name of the CPU core.
-Yes, ck610 is a cpu core of abiv1. and I will change it like this:
-	model = "Zhuxian-sword gx6605s Development Board";
-	compatible = "zhuxian-sword,gx6605s";
-ref: https://c-sky.github.io/docs/gx6605s.html
-
-> Here you should list the specific type of CPU in the compatible property and
-> document the binding for that string in the Documentations/devicetree/bindings
-> hierarchy. Without a binding, the 'ccr' and 'hint' properties make no sense.
-Sorry, I forget remove the cpu region. It's no use now.
-
-> If there is any chance that you could have SMP systems in the future, it
-> would be better to start with #address-cells=<1>, with appropriate reg
-> properties.
-Ok
-
-> Each node with a register property also needs the address in the
-> node name, e.g. "interrupt-controller@500000"
-Ok
-
-> Try building the dtb file with 'make W=1' to get warnings about
-> when you got that wrong.
-Thx
-
-> > +               timer0 {
-> > +                       compatible = "nationalchip,timer-v1";
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/gpu/drm/bridge/panel.c | 22 +++++++++++++++++++++-
+>  include/drm/drm_bridge.h       |  1 +
+>  2 files changed, 22 insertions(+), 1 deletion(-)
 > 
-> This should be "timer@400"
-Ok
-
-> Also, each device node should have a binding documentation
-> to explain the binding associated with that "compatible"
-> string.
-Ok, I will add them.
-
-> > +               ohci0: ohci-hcd0 {
-> The names here should be "usb@...", not "ehci-hcd"
-Ok
-
-> > +       chosen {
-> > +               bootargs = "console=ttyS0,115200 rdinit=/sbin/init root=/dev/ram0";
-> > +       };
+> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
+> index 6d99d4a3beb3..ccef0283ff41 100644
+> --- a/drivers/gpu/drm/bridge/panel.c
+> +++ b/drivers/gpu/drm/bridge/panel.c
+> @@ -22,6 +22,7 @@ struct panel_bridge {
+>  	struct drm_connector connector;
+>  	struct drm_panel *panel;
+>  	u32 connector_type;
+> +	u32 bus_format;
+>  };
 > 
-> The bootargs should not be in the dts file normally, they should come from the
-> boot loader.
-I want to keep bootargs in dts, because the bootloader only pass the dtb to kernel. 
+>  static inline struct panel_bridge *
+> @@ -40,8 +41,15 @@ static int panel_bridge_connector_get_modes(struct
+> drm_connector *connector) {
+>  	struct panel_bridge *panel_bridge =
+>  		drm_connector_to_panel_bridge(connector);
+> +	int ret;
+> +
+> +	ret = drm_panel_get_modes(panel_bridge->panel);
+> +
+> +	if (panel_bridge->bus_format)
+> +		drm_display_info_set_bus_formats(&connector->display_info,
+> +						 &panel_bridge->bus_format, 1);
 
-> For the console, use the "stdout-path" property.
-Ok
+While I agree with the problem statement and, to some extent, the DT bindings, 
+I don't think this is the right implementation. You've correctly noted that 
+display controller shouldn't blindly use the formats reported by the panel 
+through the connector formats, and that hacking the panel driver to override 
+the formats isn't a good idea, so I wouldn't override the formats reported by 
+the connector. I would instead extend the drm_bridge API to report formats at 
+bridge inputs. This would be more generic and allow each bridge to configure 
+itself according to the next bridge in the chain.
 
-Best Regards
-  Guo Ren
+I'm not sure whether this API extension should be in the form of a new bridge 
+function, or if the formats should be stored in the drm_bridge structure 
+directly as done for connectors in the display info structure. I'm tempted by 
+the former, but I'm open to discussions.
+
+> -	return drm_panel_get_modes(panel_bridge->panel);
+> +	return ret;
+>  }
+> 
+>  static const struct drm_connector_helper_funcs
+> @@ -203,6 +211,18 @@ void drm_panel_bridge_remove(struct drm_bridge *bridge)
+> }
+>  EXPORT_SYMBOL(drm_panel_bridge_remove);
+> 
+> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
+> bus_format) +{
+> +	struct panel_bridge *panel_bridge;
+> +
+> +	if (!bridge)
+> +		return;
+> +
+> +	panel_bridge = drm_bridge_to_panel_bridge(bridge);
+> +	panel_bridge->bus_format = bus_format;
+> +}
+> +EXPORT_SYMBOL(drm_panel_bridge_set_bus_format);
+> +
+>  static void devm_drm_panel_bridge_release(struct device *dev, void *res)
+>  {
+>  	struct drm_bridge **bridge = res;
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 682d01ba920c..81903b92f187 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -268,6 +268,7 @@ void drm_bridge_enable(struct drm_bridge *bridge);
+>  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+>  					u32 connector_type);
+>  void drm_panel_bridge_remove(struct drm_bridge *bridge);
+> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
+> bus_format);
+> struct drm_bridge *devm_drm_panel_bridge_add(struct device
+> *dev,
+>  					     struct drm_panel *panel,
+>  					     u32 connector_type);
+
+-- 
+Regards,
+
+Laurent Pinchart
