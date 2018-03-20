@@ -1,78 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeCTJIK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:08:10 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:51757 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbeCTJIG (ORCPT
+        id S1752486AbeCTJIe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:08:34 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7144 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752436AbeCTJIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:08:06 -0400
-X-Google-Smtp-Source: AG47ELtNTDJEwFbhYYVgkAr9MgIbY7m4R4z2OYweWBIHMeVI1vrAbOBPVDFPT2x5el+nXuRtNw+WmA==
-Date: Tue, 20 Mar 2018 10:08:02 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Laight <David.Laight@ACULAB.COM>,
-        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Message-ID: <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
+        Tue, 20 Mar 2018 05:08:32 -0400
+Subject: Re: [RESEND PATCH v1] i2c: i2c-stm32f7: fix no check on returned
+ setup
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <8271066c-e8c3-839c-e099-c7c406331c2c@st.com>
+Date: Tue, 20 Mar 2018 10:08:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pierre-Yves
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> > So I do think we could do more in this area to improve driver performance, if the 
-> > code is correct and if there's actual benchmarks that are showing real benefits.
+On 03/12/2018 01:53 PM, Pierre-Yves MORDRET wrote:
+> Before assigning returned setup structure check if not null
 > 
-> If it's about hotpath performance I'm all for it, but the use case here is
-> a debug facility...
+> Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> ---
+>    Version history:
+>       v1:
+>           * Initial
+> ---
+> ---
+>   drivers/i2c/busses/i2c-stm32f7.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> And if we go down that road then we want a AVX based memcpy()
-> implementation which is runtime conditional on the feature bit(s) and
-> length dependent. Just slapping a readqq() at it and use it in a loop does
-> not make any sense.
+> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+> index b445b3b..16c7d77 100644
+> --- a/drivers/i2c/busses/i2c-stm32f7.c
+> +++ b/drivers/i2c/busses/i2c-stm32f7.c
+> @@ -888,6 +888,10 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	setup = of_device_get_match_data(&pdev->dev);
+> +	if (!setup) {
+> +		dev_err(&pdev->dev, "Can't get device data\n");
+> +		goto clk_free;
 
-Yeah, so generic memcpy() replacement is only feasible I think if the most 
-optimistic implementation is actually correct:
+You have to fill "ret" with error statement before go to "clk_free"
 
- - if no preempt disable()/enable() is required
+> +	}
 
- - if direct access to the AVX[2] registers does not disturb legacy FPU state in 
-   any fashion
-
- - if direct access to the AVX[2] registers cannot raise weird exceptions or have
-   weird behavior if the FPU control word is modified to non-standard values by 
-   untrusted user-space
-
-If we have to touch the FPU tag or control words then it's probably only good for 
-a specialized API.
-
-Thanks,
-
-	Ingo
+>   	i2c_dev->setup = *setup;
+>   
+>   	ret = device_property_read_u32(i2c_dev->dev, "i2c-scl-rising-time-ns",
+> 
