@@ -1,136 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeCTHlb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:41:31 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:45863 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751269AbeCTHl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:41:27 -0400
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: Re: [PATCH] block, bfq: keep peak_rate estimation within range
- 1..2^32-1
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <152025413365.161046.7757556276366364549.stgit@buzz>
- <FE5352B7-CAFC-466C-BA07-F1B7427AA309@linaro.org>
- <ff761610-4a37-f239-a491-cf2a04c44574@yandex-team.ru>
- <E9AC28A6-848D-420F-8DAB-8B1FC709BA38@linaro.org>
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <38320074-d1e6-96bc-e832-e535efc07e81@yandex-team.ru>
-Date: Tue, 20 Mar 2018 10:41:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1751897AbeCTHo5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:44:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:25166 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751659AbeCTHo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:44:56 -0400
+Subject: Re: [PATCH 2/2] powerpc/mm: Trace tlbia instruction
+To: Balbir Singh <bsingharora@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <4ffd3d6143f991615ffe07f43952cbc62163d319.1521452718.git.christophe.leroy@c-s.fr>
+ <cccc5b8516ce8cb57bedf2c51cf67f9a2ca95242.1521452718.git.christophe.leroy@c-s.fr>
+ <20180320094320.03ae264d@balbir.ozlabs.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <2aac79d5-6cf8-cd65-79b9-68839c537474@c-s.fr>
+Date: Tue, 20 Mar 2018 08:44:54 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <E9AC28A6-848D-420F-8DAB-8B1FC709BA38@linaro.org>
+In-Reply-To: <20180320094320.03ae264d@balbir.ozlabs.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.03.2018 06:00, Paolo Valente wrote:
-> 
-> 
->> Il giorno 19 mar 2018, alle ore 14:28, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
->>
->> On 19.03.2018 09:03, Paolo Valente wrote:
->>>> Il giorno 05 mar 2018, alle ore 04:48, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
->>>>
->>>> Rate should never overflow or become zero because it is used as divider.
->>>> This patch accumulates it with saturation.
->>>>
->>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->>>> ---
->>>> block/bfq-iosched.c |    8 +++++---
->>>> 1 file changed, 5 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
->>>> index aeca22d91101..a236c8d541b5 100644
->>>> --- a/block/bfq-iosched.c
->>>> +++ b/block/bfq-iosched.c
->>>> @@ -2546,7 +2546,8 @@ static void bfq_reset_rate_computation(struct bfq_data *bfqd,
->>>>
->>>> static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
->>>> {
->>>> -	u32 rate, weight, divisor;
->>>> +	u32 weight, divisor;
->>>> +	u64 rate;
->>>>
->>>> 	/*
->>>> 	 * For the convergence property to hold (see comments on
->>>> @@ -2634,9 +2635,10 @@ static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
->>>> 	 */
->>>> 	bfqd->peak_rate *= divisor-1;
->>>> 	bfqd->peak_rate /= divisor;
->>>> -	rate /= divisor; /* smoothing constant alpha = 1/divisor */
->>>> +	do_div(rate, divisor);	/* smoothing constant alpha = 1/divisor */
->>>>
->>>> -	bfqd->peak_rate += rate;
->>>> +	/* rate should never overlow or become zero */
->>> It is bfqd->peak_rate that is used as a divider, and bfqd->peak_rate doesn't risk to be zero even if the variable 'rate' is zero here.
->>> So I guess the reason why you consider the possibility that bfqd->peak_rate becomes zero is because of an overflow when summing 'rate'. But, according to my calculations, this should be impossible with devices with sensible speeds.
->>> These are the reasons why I decided I could make it with a 32-bit variable, without any additional clamping. Did I make any mistake in my evaluation?
->>
->> According to Murphy's law this is inevitable..
->>
-> 
-> Yep.  Actually Murphy has been even clement this time, by making the
-> failure occur to a kernel expert :)
-> 
->> I've seen couple division by zero crashes in bfq_wr_duration.
->> Unfortunately logs weren't recorded.
->>
->>> Anyway, even if I made some mistake about the maximum possible value of the device rate, and the latter may be too high for bfqd->peak_rate to contain it, then I guess the right solution would not be to clamp the actual rate to U32_MAX, but to move bfqd->peak_rate to 64 bits. Or am I missing something else?
->>>>> +	bfqd->peak_rate = clamp_t(u64, rate + bfqd->peak_rate, 1, U32_MAX);
->>
->> 32-bit should be enough and better for division.
->> My patch makes sure it never overflows/underflows.
->> That's cheaper than full 64-bit/64-bit division.
->> Anyway 64-bit speed could overflow too. =)
->>
-> 
-> I see your point.  Still, if the mistake is not in sizing, then you
-> bumped into some odd bug.  In this respect, I don't like much the idea
-> of sweeping the dust under the carpet.  So, let me ask you for a
-> little bit more help.  With your patch applied, and thus with no risk
-> of crashes, what about adding, right before your clamp_t, something
-> like:
-> 
-> if (!bfqd->peak_rate)
-> 	pr_crit(<dump of all the variables involved in updating bfqd->peak_rate>);
-> 
-> Once the failure shows up (Murphy permitting), we might have hints to
-> the bug causing it.
-> 
-> Apart from that, I have no problem with patches that make bfq more
-> robust, even in a sort of black-box way.
 
-This rate estimator is already works as a black-box with smoothing and
-low-pass filter inside. It has limitations thus this is ok to declare
-range of expected\sane results.
 
-It would be nice to show estimated rate in sysfs to let user
-diagnose whenever it is wrong for a long period of time.
-Printing message all the time even ratelimited is a wrong idea.
-If this should never happens - WARN_ONCE is more than enough.
-
-I suspect crashes might be caused by bumpy timer which was affected by smi/nmi from mce.
-I'll try to find evidence.
-
+Le 19/03/2018 à 23:43, Balbir Singh a écrit :
+> On Mon, 19 Mar 2018 11:32:40 +0100 (CET)
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 > 
-> Thanks a lot,
-> Paolo
-> 
+>> Add a trace point for tlbia (Translation Lookaside Buffer Invalidate
+>> All) instruction.
 >>
->>>> 	update_thr_responsiveness_params(bfqd);
->>>>
->>>> reset_computation:
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/include/asm/trace.h | 15 +++++++++++++++
+>>   arch/powerpc/mm/mmu_decl.h       |  2 ++
+>>   2 files changed, 17 insertions(+)
+>>
+>> diff --git a/arch/powerpc/include/asm/trace.h b/arch/powerpc/include/asm/trace.h
+>> index 33f3b479138b..d1d63b173dd7 100644
+>> --- a/arch/powerpc/include/asm/trace.h
+>> +++ b/arch/powerpc/include/asm/trace.h
+>> @@ -202,6 +202,21 @@ TRACE_EVENT(tlbie,
+>>   		__entry->r)
+>>   );
+>>   
+>> +TRACE_EVENT(tlbia,
+>> +
+>> +	TP_PROTO(unsigned long lpid),
+>> +	TP_ARGS(lpid),
+>> +	TP_STRUCT__entry(
+>> +		__field(unsigned long, lpid)
+>> +		),
+>> +
+>> +	TP_fast_assign(
+>> +		__entry->lpid = lpid;
+>> +		),
+>> +
+>> +	TP_printk("lpid=%ld", __entry->lpid)
+>> +);
 > 
+> 
+> Do we want to call this lpid?
+> 
+
+Should we can it rs in consistence with tlbie trace ? Or just pid ?
+Allthough it is not an argument used by tlbia, I think it is good to 
+keep a trace of it to keep track of the reason why tlbia is called.
+
+Christophe
