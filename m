@@ -1,92 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751515AbeCTRAP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 13:00:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59501 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeCTRAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:00:14 -0400
-Date: Tue, 20 Mar 2018 14:00:03 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To: Yonghong Song <yhs@fb.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH] test_bpf: Fix testing with CONFIG_BPF_JIT_ALWAYS_ON=y on
- other arches
-Message-ID: <20180320170001.GC3632@calabresa>
-References: <20180320125851.19650-1-cascardo@canonical.com>
- <4a497245-1864-3036-074e-107134e4b9b5@fb.com>
+        id S1751689AbeCTRAg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 13:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751600AbeCTRAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 13:00:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E9C21770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Tue, 20 Mar 2018 18:00:29 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Pavel Machek <pavel@ucw.cz>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+References: <20180318220418.GA22880@amd>
+ <20180320140322.GU5799@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="h2rsqwc3fc3jdhpb"
 Content-Disposition: inline
-In-Reply-To: <4a497245-1864-3036-074e-107134e4b9b5@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180320140322.GU5799@atomide.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 09:05:15AM -0700, Yonghong Song wrote:
-> 
-> 
-> On 3/20/18 5:58 AM, Thadeu Lima de Souza Cascardo wrote:
-> > Function bpf_fill_maxinsns11 is designed to not be able to be JITed on
-> > x86_64. So, it fails when CONFIG_BPF_JIT_ALWAYS_ON=y, and
-> > commit 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when
-> > CONFIG_BPF_JIT_ALWAYS_ON=y") makes sure that failure is detected on that
-> > case.
-> > 
-> > However, it does not fail on other architectures, which have a different
-> > JIT compiler design. So, test_bpf has started to fail to load on those.
-> 
-> Here, you mentioned that it did not fail on other architectures. Have you
-> verified all of them or just looked through the algorithm.
 
->From our testing, I know at least I get an UNEXPECTED_PASS on arm64, arm, s390x
-and ppc64le. i386 doesn't have JIT, so it doesn't have
-CONFIG_BPF_JIT_ALWAYS_ON=y.
+--h2rsqwc3fc3jdhpb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Could you give a little bit details about other architectures are okay while
-> x86 is not? Maybe, x86 JIT can be improved some how?
+Hi,
 
-As the comment on that functions says:
+On Tue, Mar 20, 2018 at 07:03:22AM -0700, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180318 22:05]:
+> > I have the phone, I have safestrap installed, kexec seems to work
+> > (crashes my system). But I can't get any output from the new kernel.
+> >=20
+> > All the howtos assume serial connection, but I don't yet have
+> > that. I'm really bad at soldering. IIRC display should work in the
+> > latest kernels, maybe with some patches?
+>=20
+> Yeah display related stuff is half merged in Linux next, backlight
+> needs some binding changes from what I remember. I think the
+> minimal set is something like this against v4.16-rc:
 
-        /* Hits 70 passes on x86_64, so cannot get JITed there. */
+I have an updated lm355x backlight driver almost ready, that uses
+an updated binding scheme and exposes the keyboard backlight
+using the LED subsystem.
 
-And looking at x86_64 JIT compiler, you will notice it's looping trying to
-minimize the size of the code, limited to 10 passes. If it does not converge,
-it goes back to the non-JIT code.
+> backlight: add TI LMU backlight driver
+> drm/omap: add framedone interrupt support
+> drm/omap: add manual update detection helper
+> drm/omap: add support for manually updated displays
+>=20
+> Then also audio support is also half merged and need few patches
+> if you check the mailing list archives for cpcap codec related
+> patches.
 
-That's not the case on powerpc or arm, that do not do multiple passes. sparc
-seem to do 3 passes, but does not seem to go back to non-JIT code.
+I just noticed, that I missed Rob gave his Acked-by to the binding
+already. I will prepare a PATCHv6 with the MFD changes this week.
 
-Cascardo.
+> Maybe get somebody to help you locally with the debug cable
+> soldering? :)
 
-> 
-> Thanks!
-> 
-> > 
-> > After this fix, test_bpf loads fine on both x86_64 and ppc64el.
-> > 
-> > Fixes: 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when CONFIG_BPF_JIT_ALWAYS_ON=y")
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-> > ---
-> >   lib/test_bpf.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-> > index 2efb213716faa..3e9335493fe49 100644
-> > --- a/lib/test_bpf.c
-> > +++ b/lib/test_bpf.c
-> > @@ -5467,7 +5467,7 @@ static struct bpf_test tests[] = {
-> >   	{
-> >   		"BPF_MAXINSNS: Jump, gap, jump, ...",
-> >   		{ },
-> > -#ifdef CONFIG_BPF_JIT_ALWAYS_ON
-> > +#if defined(CONFIG_BPF_JIT_ALWAYS_ON) && defined(CONFIG_X86)
-> >   		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
-> >   #else
-> >   		CLASSIC | FLAG_NO_DATA,
-> > 
+I suppose people from your hackerspace can help you. It's really
+easy to do. Soldering can be avoided btw. You can just use a pair
+of scissors to cut a USB -> Micro USB cable and use a knife to remove
+isolation. Then screw each of the 4 wires into a terminal strip.
+There are USB-TTL adapters available, that have an attached cable.
+If you also cut the connector from such a cable and connect it to
+the other side of the terminal strip you are done. No soldering
+involved ;)
+
+> > Could someone give me .config and git hash that works for him? Once I
+> > get working display I should be able to continue easily. I'd really
+> > like to get voice calls working...
+>=20
+> You want to use omapdrm, below is what I'm using with loadable
+> modules with Linux next based on omap2plus_defconfig. It has some
+> extra debug options enabled too that you might want to ignore,
+> I'll try to send the defconfig related patches out too.
+>=20
+> Basically you need the CONFIG_MFD_TI_LMU, CONFIG_DRM_OMAP and
+> CONFIG_DRM_OMAP_PANEL_DSI_CM related options.
+>=20
+> > I took a brief look through dts, and I did not find anything that
+> > could be easily used for debugging. (It seems that capslock LED and
+> > keyboard backlight is not yet supported? Also volume down  seems to be
+> > supported but not volume up, funny).
+>=20
+> Oh I thought we had all the LEDs mapped already? Volume down is
+> on the internal keypad, then volume up is on a GPIO controller.
+> I guess to allow chords for the bootloader.
+
+The keyboard backlight and lcd backlight are controlled by LM3552,
+that's the driver mentioned above. The other LEDs (status rgb,
+shift/capslock, and the android button backlight) are working.
+
+-- Sebastian
+
+--h2rsqwc3fc3jdhpb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqxPicACgkQ2O7X88g7
++prAhw/+LueUAayBXeuRRczS13EfMl9j2C6h5IVP48qAJ7UvLeMgJ1Vn8MjnbGxy
+lDsJbs39dlBi5BsiIGsYLIL06qqa5PGGS2RphWex3wtLUvJdXKCOBGe6yzZ/F73k
+6GXXZcXxElzQr0eetfGBbRZzIPn/gM2IML/64dvrvq7vPVOuwsQ3L/C5dtlHV4Iz
+QZmrIqQXSHmj9zr9elWtugI4z0+t/Dzo/IpK+mmf/ivUs+XMSAZzE3ZXEg7MJqZh
+ocqji6POjq7JnbpKpDdo1tcIWPR7yYP9X0XtIIwC68hYmil6kvp5eADqxy24Tffh
+l+dyHJz0UCM0JNPZoR1za7qz3HHaSRyAqo49dxTPo35Au6sQWDdx7iELaU9VM3Uu
+n95ELiQ80Audanz33NF6hnMEn6OILzDtw8bKkLRcyYncaY2LBI3SyzXsN99I6Jvh
+oqomH3xZws5H/8mTydWIugFdIZf00zo+qOZwsQuWyXZNFic5yhJ6K9tlRHqZYudb
+OFmQ4W1NyiOLR2xXc1pBF/L/NYS5xbJLZblSSBtNw8yTZ5ASBsxhFDd7E6kweVdo
+x0HJoeKBvouJxrSzqkSiOmFx/YZtdB23dntfqks9dG+z6k6+BFtpMhQ/vRN3WB7S
+uz/440yw125oF8FCsbLYCqu/CpyNSNcX3gb5/w8hukHx4hL6K64=
+=eVWY
+-----END PGP SIGNATURE-----
+
+--h2rsqwc3fc3jdhpb--
