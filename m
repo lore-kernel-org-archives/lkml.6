@@ -1,145 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753066AbeCTLG6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:06:58 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:4898 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752850AbeCTLFW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:05:22 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38002755"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <corbet@lwn.net>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <hpa@zytor.com>,
-        <peterz@infradead.org>, Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH 5/5] acpi/processor: Make the acpi_duplicate_processor_id() static
-Date: Tue, 20 Mar 2018 19:04:32 +0800
-Message-ID: <20180320110432.28127-6-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: A18A448AE76A.A1A72
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        id S1752842AbeCTLFR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:05:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53430 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752753AbeCTLFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:05:07 -0400
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 6/7] HID: multitouch: do not set HID_QUIRK_NO_INIT_REPORTS
+Date: Tue, 20 Mar 2018 12:04:50 +0100
+Message-Id: <20180320110451.16582-7-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
+References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The acpi_duplicate_processor_id() is only called in acpi_processor_get_info(),
-So move it in front of acpi_processor_get_info() and make it static.
+It is set by default now, so there is no point setting it in the driver
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/acpi/acpi_processor.c | 62 +++++++++++++++++++++----------------------
- include/linux/acpi.h          |  3 ---
- 2 files changed, 31 insertions(+), 34 deletions(-)
+ drivers/hid/hid-multitouch.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index db5bdb59639c..03ec7690710c 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -229,6 +229,37 @@ static inline int acpi_processor_hotadd_init(struct acpi_processor *pr)
- }
- #endif /* CONFIG_ACPI_HOTPLUG_CPU */
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 03d00e477d0e..639c44fc0691 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -380,7 +380,6 @@ static const struct attribute_group mt_attribute_group = {
  
-+/* The number of the unique processor IDs */
-+static int nr_unique_ids __initdata;
-+
-+/* The number of the duplicate processor IDs */
-+static int nr_duplicate_ids;
-+
-+/* Used to store the unique processor IDs */
-+static int unique_processor_ids[] __initdata = {
-+	[0 ... NR_CPUS - 1] = -1,
-+};
-+
-+/* Used to store the duplicate processor IDs */
-+static int duplicate_processor_ids[] = {
-+	[0 ... NR_CPUS - 1] = -1,
-+};
-+
-+static bool acpi_duplicate_processor_id(int proc_id)
-+{
-+	int i;
-+
-+	/*
-+	 * Compare the proc_id with duplicate IDs, if the proc_id is already
-+	 * in the duplicate IDs, return true, otherwise, return false.
-+	 */
-+	for (i = 0; i < nr_duplicate_ids; i++) {
-+		if (duplicate_processor_ids[i] == proc_id)
-+			return true;
-+	}
-+	return false;
-+}
-+
- static int acpi_processor_get_info(struct acpi_device *device)
+ static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
  {
- 	union acpi_object object = { 0 };
-@@ -579,22 +610,6 @@ static struct acpi_scan_handler processor_container_handler = {
- 	.attach = acpi_processor_container_attach,
- };
+-	struct mt_device *td = hid_get_drvdata(hdev);
+ 	int ret;
+ 	u32 size = hid_report_len(report);
+ 	u8 *buf;
+@@ -389,7 +388,7 @@ static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
+ 	 * Do not fetch the feature report if the device has been explicitly
+ 	 * marked as non-capable.
+ 	 */
+-	if (td->initial_quirks & HID_QUIRK_NO_INIT_REPORTS)
++	if (hdev->quirks & HID_QUIRK_NO_INIT_REPORTS)
+ 		return;
  
--/* The number of the unique processor IDs */
--static int nr_unique_ids __initdata;
--
--/* The number of the duplicate processor IDs */
--static int nr_duplicate_ids;
--
--/* Used to store the unique processor IDs */
--static int unique_processor_ids[] __initdata = {
--	[0 ... NR_CPUS - 1] = -1,
--};
--
--/* Used to store the duplicate processor IDs */
--static int duplicate_processor_ids[] = {
--	[0 ... NR_CPUS - 1] = -1,
--};
--
- static void __init processor_validated_ids_update(int proc_id)
- {
- 	int i;
-@@ -682,21 +697,6 @@ static void __init acpi_processor_check_duplicates(void)
- 						NULL, NULL);
- }
+ 	buf = hid_alloc_report_buf(report, GFP_KERNEL);
+@@ -1471,21 +1470,6 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	 */
+ 	hdev->quirks |= HID_QUIRK_MULTI_INPUT;
  
--bool acpi_duplicate_processor_id(int proc_id)
--{
--	int i;
--
 -	/*
--	 * compare the proc_id with duplicate IDs, if the proc_id is already
--	 * in the duplicate IDs, return true, otherwise, return false.
+-	 * Some multitouch screens do not like to be polled for input
+-	 * reports. Fortunately, the Win8 spec says that all touches
+-	 * should be sent during each report, making the initialization
+-	 * of input reports unnecessary. For Win7 devices, well, let's hope
+-	 * they will still be happy (this is only be a problem if a touch
+-	 * was already there while probing the device).
+-	 *
+-	 * In addition some touchpads do not behave well if we read
+-	 * all feature reports from them. Instead we prevent
+-	 * initial report fetching and then selectively fetch each
+-	 * report we are interested in.
 -	 */
--	for (i = 0; i < nr_duplicate_ids; i++) {
--		if (duplicate_processor_ids[i] == proc_id)
--			return true;
--	}
--	return false;
--}
+-	hdev->quirks |= HID_QUIRK_NO_INIT_REPORTS;
 -
- void __init acpi_processor_init(void)
- {
- 	acpi_processor_check_duplicates();
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 968173ec2726..dd4591dc1eb3 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -285,9 +285,6 @@ static inline bool invalid_phys_cpuid(phys_cpuid_t phys_id)
- 	return phys_id == PHYS_CPUID_INVALID;
- }
+ 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
  
--/* Validate the processor object's proc_id */
--bool acpi_duplicate_processor_id(int proc_id);
--
- #ifdef CONFIG_ACPI_HOTPLUG_CPU
- /* Arch dependent functions for cpu hotplug support */
- int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id,
+ 	ret = hid_parse(hdev);
 -- 
 2.14.3
