@@ -1,115 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeCTLFL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:05:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52476 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752785AbeCTLFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:05:06 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 5/7] HID: core: remove the need for HID_QUIRK_NO_EMPTY_INPUT
-Date: Tue, 20 Mar 2018 12:04:49 +0100
-Message-Id: <20180320110451.16582-6-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
-References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
+        id S1752868AbeCTLFX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:05:23 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:7319 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752839AbeCTLFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:05:18 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="38002749"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <corbet@lwn.net>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>, <hpa@zytor.com>,
+        <peterz@infradead.org>, Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH 1/5] x86/smpboot: Add the missing description of possible_cpus
+Date: Tue, 20 Mar 2018 19:04:28 +0800
+Message-ID: <20180320110432.28127-2-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
+References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 5261648AE76B.AF586
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no real point of registering an empty input node.
-This should be default, but given some drivers need the blank input
-node to set it up during input_configured, we need to postpone
-the check for hidinput_has_been_populated().
+Kernel uses the possible_cpus in command line to reset the possible_cpus bits
+in cpu_possible_map. It doesn't be recorded in the kernel-parameters.txt
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Add its description in this document, also replace the wrong option additional_cpus
+with possible_cpus in cpu-gotplug-spec.
+
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
- drivers/hid/hid-asus.c       |  3 +--
- drivers/hid/hid-input.c      | 10 +++++-----
- drivers/hid/hid-multitouch.c |  1 -
- drivers/hid/hid-uclogic.c    |  1 -
- include/linux/hid.h          |  2 +-
- 5 files changed, 7 insertions(+), 10 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 5 +++++
+ Documentation/x86/x86_64/cpu-hotplug-spec       | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index d92f8aa2876b..88a5672f42cd 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -646,8 +646,7 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		 * All functionality is on a single HID interface and for
- 		 * userspace the touchpad must be a separate input_dev.
- 		 */
--		hdev->quirks |= HID_QUIRK_MULTI_INPUT |
--				HID_QUIRK_NO_EMPTY_INPUT;
-+		hdev->quirks |= HID_QUIRK_MULTI_INPUT;
- 		drvdata->tp = &asus_t100chi_tp;
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1d1d53f85ddd..34f8a5f04e63 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2832,6 +2832,11 @@
+ 			variables need be pre-allocated for later physical cpu
+ 			hot plugging.
  
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index d86398755b0d..6836a856c243 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1657,16 +1657,16 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 	}
- 
- 	list_for_each_entry_safe(hidinput, next, &hid->inputs, list) {
--		if ((hid->quirks & HID_QUIRK_NO_EMPTY_INPUT) &&
--		    !hidinput_has_been_populated(hidinput)) {
-+		if (drv->input_configured &&
-+		    drv->input_configured(hid, hidinput))
-+			goto out_unwind;
++	possible_cpus=	[s390,x86_64] Use this to set hotpluggable cpus.
++			This option sets possible_cpus bits in cpu_possible_map.
++			Thus keeping the numbers of bits set constant even if
++			the machine gets rebooted.
 +
-+		if (!hidinput_has_been_populated(hidinput)) {
- 			/* no need to register an input device not populated */
- 			hidinput_cleanup_hidinput(hid, hidinput);
- 			continue;
- 		}
+ 	nr_uarts=	[SERIAL] maximum number of UARTs to be registered.
  
--		if (drv->input_configured &&
--		    drv->input_configured(hid, hidinput))
--			goto out_unwind;
- 		if (input_register_device(hidinput->input))
- 			goto out_unwind;
- 		hidinput->registered = true;
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 520cb5e2c5c3..03d00e477d0e 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1470,7 +1470,6 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	 * device.
- 	 */
- 	hdev->quirks |= HID_QUIRK_MULTI_INPUT;
--	hdev->quirks |= HID_QUIRK_NO_EMPTY_INPUT;
+ 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
+diff --git a/Documentation/x86/x86_64/cpu-hotplug-spec b/Documentation/x86/x86_64/cpu-hotplug-spec
+index 3c23e0587db3..d218bc0bdaaa 100644
+--- a/Documentation/x86/x86_64/cpu-hotplug-spec
++++ b/Documentation/x86/x86_64/cpu-hotplug-spec
+@@ -16,6 +16,6 @@ it should have its LAPIC Enabled bit set to 0. Linux will use the number
+ of disabled LAPICs to compute the maximum number of future CPUs.
  
- 	/*
- 	 * Some multitouch screens do not like to be polled for input
-diff --git a/drivers/hid/hid-uclogic.c b/drivers/hid/hid-uclogic.c
-index e3e6e5c893cc..56b196d60041 100644
---- a/drivers/hid/hid-uclogic.c
-+++ b/drivers/hid/hid-uclogic.c
-@@ -946,7 +946,6 @@ static int uclogic_probe(struct hid_device *hdev,
- 	 * than the pen, so use QUIRK_MULTI_INPUT for all tablets.
- 	 */
- 	hdev->quirks |= HID_QUIRK_MULTI_INPUT;
--	hdev->quirks |= HID_QUIRK_NO_EMPTY_INPUT;
- 
- 	/* Allocate and assign driver data */
- 	drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 3ad758dc285c..8da3e1f48195 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -338,7 +338,7 @@ struct hid_item {
- #define HID_QUIRK_BADPAD			BIT(5)
- #define HID_QUIRK_MULTI_INPUT			BIT(6)
- #define HID_QUIRK_HIDINPUT_FORCE		BIT(7)
--#define HID_QUIRK_NO_EMPTY_INPUT		BIT(8)
-+/* BIT(8) reserved for backward compatibility, was HID_QUIRK_NO_EMPTY_INPUT */
- /* BIT(9) reserved for backward compatibility, was NO_INIT_INPUT_REPORTS */
- #define HID_QUIRK_ALWAYS_POLL			BIT(10)
- #define HID_QUIRK_SKIP_OUTPUT_REPORTS		BIT(16)
+ In the worst case the user can overwrite this choice using a command line
+-option (additional_cpus=...), but it is recommended to supply the correct
++option (possible_cpus=...), but it is recommended to supply the correct
+ number (or a reasonable approximation of it, with erring towards more not less)
+ in the MADT to avoid manual configuration.
 -- 
 2.14.3
