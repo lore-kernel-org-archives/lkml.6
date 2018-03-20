@@ -1,76 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751018AbeCTUnu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:43:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751390AbeCTUnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:43:46 -0400
-Subject: Re: [PATCH v5 2/2] cpuset: Add cpuset.flags control knob to v2
-To: Tejun Heo <tj@kernel.org>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-References: <1521148842-15486-1-git-send-email-longman@redhat.com>
- <1521148842-15486-3-git-send-email-longman@redhat.com>
- <20180319162654.GR2943022@devbig577.frc2.facebook.com>
- <8e553b7e-cab6-1b5d-9110-cc5770ae16c4@redhat.com>
- <cbe9b852-80b6-8341-b51c-4d754d00ce53@redhat.com>
- <20180320202247.GQ519464@devbig577.frc2.facebook.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <066acb95-3140-904d-f599-84c1f94ad27c@redhat.com>
-Date: Tue, 20 Mar 2018 16:43:44 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180320202247.GQ519464@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        id S1751512AbeCTUuT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:50:19 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50189 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeCTUuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:50:16 -0400
+X-Google-Smtp-Source: AG47ELtoMYwQfnK1YcLxwob6z8rl3p6O66SX7RTO3h0Bya+yTNZvHQP8woi41UXZoDHrhdZ/yXYtag==
+Message-ID: <1521579013.2686.83.camel@arista.com>
+Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
+From: Dmitry Safonov <dima@arista.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Date: Tue, 20 Mar 2018 20:50:13 +0000
+In-Reply-To: <20180315152828.GA11365@8bytes.org>
+References: <20180215191729.15777-1-dima@arista.com>
+         <20180315134649.skh2aukcmg5ud74y@8bytes.org>
+         <1521123183.2686.7.camel@arista.com> <20180315142253.GC5259@8bytes.org>
+         <1521124490.2686.16.camel@arista.com> <1521124920.2686.20.camel@arista.com>
+         <20180315152828.GA11365@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/20/2018 04:22 PM, Tejun Heo wrote:
-> Hello, Waiman.
->
-> On Tue, Mar 20, 2018 at 04:12:25PM -0400, Waiman Long wrote:
->> After some thought, I am planning to impose the following additional
->> constraints on how sched_load_balance works in v2.
->>
->> 1) sched_load_balance will be made hierarchical, the child will inherit
->> the flag from its parent.
->> 2) cpu_exclusive will be implicitly associated with sched_load_balance.
->> IOW, sched_load_balance => !cpu_exclusive, and !sched_load_balance =>
->> cpu_exclusive.
->> 3) sched_load_balance cannot be 1 on a child if it is 0 on the parent.
->>
->> With these changes, sched_load_balance will have to be set by the parent
->> and so will not be delegatable. Please let me know your thought on that.
-> So, for configurations, we usually don't let them interact across
-> hierarchy because that can lead to configurations surprise-changing
-> and delegated children locking the parent into the current config.
->
-> This case could be different and as long as we always guarantee that
-> an ancestor isn't limited by its descendants in what it can configure,
-> it should be okay (e.g. an ancestor should always be able to turn on
-> sched_load_balance regardless of how the descendants are configured).
+On Thu, 2018-03-15 at 16:28 +0100, Joerg Roedel wrote:
+> On Thu, Mar 15, 2018 at 02:42:00PM +0000, Dmitry Safonov wrote:
+> > But even with loop-limit we will need ratelimit each printk()
+> > *also*.
+> > Otherwise loop-limit will be based on time spent printing, not on
+> > anything else..
+> > The patch makes sense even with loop-limit in my opinion.
+> 
+> Looks like I mis-read your patch, somehow it looked to me as if you
+> replace all 'ratelimited' usages with a call to __ratelimit(), but
+> you
+> just move 'ratelimited' into the loop, which actually makes sense.
 
-Yes, I will do some testing to make sure that a descendant won't be able
-to affect how the ancestors can behave.
+So, is it worth to apply the patch?
 
-> Hmmm... can you explain why sched_load_balance needs to behave this
-> way?
+> But still, this alone is no proper fix for the soft-lockups you are
+> seeing.
 
-It boils down to the fact that it doesn't make sense to have a CPU in an
-isolated cpuset to participate in load balancing in another cpuset as
-Mike has said before. It is especially true in a parent-child
-relationship where a delegatee can escape CPU isolation by re-enabling
-sched_load_balance in a child cpuset.
+Hmm, but this fixes my softlockup issue, because it's about time spent
+in printk() inside irq-disabled section, rather about exiting the dmar-
+clearing loop.
+And on my hw doesn't make any difference to limit loop or not because
+clearing a fault is much faster than hw could generate a new fault.
+ITOW, it fixes the softlockup for me and the loop-related lockup can't
+happen on hw I have (so it's the other issue, [possible?] on other hw).
 
-Cheers,
-Longman
+-- 
+Thanks,
+             Dmitry
