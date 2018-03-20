@@ -1,110 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753452AbeCTNMx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:12:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56540 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753019AbeCTNMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:12:51 -0400
-Message-ID: <1521551568.16848.5.camel@redhat.com>
-Subject: Re: linux-next on x60: network manager often complains "network is
- disabled" after resume
-From: Dan Williams <dcbw@redhat.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Woody Suwalski <terraluna977@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Netdev list <netdev@vger.kernel.org>
-Date: Tue, 20 Mar 2018 08:12:48 -0500
-In-Reply-To: <20180320080334.GA31772@amd>
-References: <20180318104023.GA10392@amd>
-         <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
-         <20180319092106.GA5683@amd> <1521474008.20208.2.camel@redhat.com>
-         <20180319173356.GA28462@amd> <1521481549.20208.8.camel@redhat.com>
-         <20180320080334.GA31772@amd>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753451AbeCTNN6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:13:58 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:42296 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753246AbeCTNN4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:13:56 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0244424|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04486;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BNWmsMt_1521551626;
+Date: Tue, 20 Mar 2018 21:13:46 +0800
+From: Guo Ren <ren_guo@c-sky.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 15/19] csky: Build infrastructure
+Message-ID: <20180320131342.GA31542@guoren>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
+ <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-03-20 at 09:03 +0100, Pavel Machek wrote:
-> On Mon 2018-03-19 12:45:49, Dan Williams wrote:
-> > On Mon, 2018-03-19 at 18:33 +0100, Pavel Machek wrote:
-> > > On Mon 2018-03-19 10:40:08, Dan Williams wrote:
-> > > > On Mon, 2018-03-19 at 10:21 +0100, Pavel Machek wrote:
-> > > > > On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
-> > > > > > Pavel Machek wrote:
-> > > > > > > Hi!
-> > > > > > > 
-> > > > > > > With recent linux-next, after resume networkmanager often
-> > > > > > > claims
-> > > > > > > that
-> > > > > > > "network is disabled". Sometimes suspend/resume clears
-> > > > > > > that.
-> > > > > > > 
-> > > > > > > Any ideas? Does it work for you?
-> > > > > > > 								
-> > > > > > > 	
-> > > > > > > Pavel
-> > > > > > 
-> > > > > > Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
-> > > > > 
-> > > > > Thanks for testing... but yes, 4.16 should be ok. If not
-> > > > > fixed,
-> > > > > problem will appear in 4.17-rc1.
-> > > > 
-> > > > Where does the complaint occur?  In the GUI, or with nmcli, or
-> > > > somewhere else?  Also, what's the output of "nmcli dev" after
-> > > > resume?
-> > > 
-> > > In the GUI. I click in place where I'd select access point, and
-> > > menu
-> > > does not show up, telling me that "network is disabled".
-> > 
-> > Ok, what does 'nmcli dev' and 'nmcli radio' show?
-> 
-> Broken state.
-> 
-> pavel@amd:~$ nmcli dev
-> DEVICE  TYPE      STATE        CONNECTION
-> eth1    ethernet  unavailable  --
-> lo      loopback  unmanaged    --
-> wlan0   wifi      unmanaged    --
+Hi arnd,
 
-If the state is "unmanaged" on resume, that would indicate a problem
-with sleep/wake and likely not a kernel network device issue.
+On Mon, Mar 19, 2018 at 11:45:23PM +0800, Arnd Bergmann wrote:
+> > +       select ARCH_WANT_IPC_PARSE_VERSION
+> 
+> Drop ipc_parse_version here, it's only for old architectures.
+>
+I will remove it.
 
-We should probably move this discussion to the NM lists to debug
-further.  Before you suspend, run "nmcli gen log level trace" to turn
-on full debug logging, then reproduce the issue, and send a pointer to
-those logs (scrubbed for anything you consider sensitive) to the NM
-mailing list.
+> > +       select HAVE_OPROFILE
+> > +       select HAVE_PERF_EVENTS
+> 
+> Do you still need oprofile when you have perf?
+I'll remove HAVE_OPROFILE and arch/csky/oprofile.
 
-Dan
+> > +       select MODULES_USE_ELF_REL if MODULES
+> > +       select MODULES_USE_ELF_RELA if MODULES
+> 
+> You should only need one of these two.
+Yes, I will keep RELA and current csky-gcc only give .rela section.
 
-> pavel@amd:~$ nmcli radio
-> WIFI-HW  WIFI     WWAN-HW  WWAN
-> enabled  enabled  enabled  enabled
-> pavel@amd:~$ uname -a
-> Linux amd 4.16.0-rc5-next-20180314+ #31 SMP Thu Mar 15 14:27:19 CET
-> 2018 i686 GNU/Linux
+> > +       select OLD_SIGACTION
+> > +       select OLD_SIGSUSPEND3
 > 
-> Let me suspend/resume. I was lucky and got it into working state:
+> These should not be needed.
+Ok, remove them.
+
+> > +config CPU_HAS_TLBI
+> > +       bool
+> > +       default n
 > 
-> pavel@amd:~$ nmcli dev
-> DEVICE  TYPE      STATE        CONNECTION
-> wlan0   wifi      connected    openwireless.org
-> eth1    ethernet  unavailable  --
-> lo      loopback  unmanaged    --
-> pavel@amd:~$ nmcli radio
-> WIFI-HW  WIFI     WWAN-HW  WWAN
-> enabled  enabled  enabled  enabled
-> paveamd:~$
+> 'default n' is redundant and can be dropped.
+Ok
+
+> > +config GENERIC_CALIBRATE_DELAY
+> > +       bool
+> > +       default y
 > 
-> Best regards,
-> 									
-> Pavel
+> Does your architecture provide a reliable high-reslution clocksource?
+> If yes, you
+> could use that for the delay, rather than a calibrated loop.
+Currently, all boards have clocksource drivers and the reslution is depend on SOC.
+I'll try to remove it.
+
+> > +       select HIGHMEM
+> > +       select CPU_HAS_TLBI
+> > +       select CPU_HAS_CACHEV2
+> > +endchoice
 > 
+> Why select 'HIGHMEM' based on the CPU type? You should only need it
+> when you have more than 1GB of RAM, and it can be a performance
+> problem when it's enabled without need.
+OK, I'll give a HIGHMEM option.
+ 
+> Usually the kernel should allow multiple CPU types to be selected
+> together, or ask for a "minimum architecture" level to be selected
+> by allow newer cores to be used as a superset.
+No, I need keep them seperate.
+
+> > +config CPU_TLB_SIZE
+> > +       int
+> > +       default "128"   if(CPU_CK610 || CPU_CK807 || CPU_CK810)
+> > +       default "1024"  if(CPU_CK860)
+> > +
+> > +config L1_CACHE_SHIFT
+> > +       int
+> > +       default "4"     if(CPU_CK610)
+> > +       default "5"     if(CPU_CK807 || CPU_CK810)
+> > +       default "6"     if(CPU_CK860)
+> 
+> I think you then need to reverse the order of the list here: When e.g. CK860
+> and CK810 are both enabled, L1_CACHE_SHIFT should be the largest
+> possible size.
+No, I use L1_CACHE_SHIFT to determine the size of cache_line.
+When I flush cache for a range of memory, I need the size to loop flush cache line.
+
+> > +config SSEG0_BASE
+> > +       hex "Direct mapping physical address"
+> > +       default 0x0
+> > +       help
+> > +         There are MSAx regs can be used to change the base physical address
+> > +         of direct mapping. The default base physical address is 0x0.
+> > +
+> > +config RAM_BASE
+> > +       hex "DRAM base address offset from SSEG0_BASE, it must be the same with dts memory."
+> > +       default 0x08000000
+> 
+> To allow one kernel to run on multiple boards, it's better to detect
+> these two at runtime.
+CK-CPUs have a mips-like direct-mapping, and I use the macros to calculate the virtual-addr 
+in headers.
+
+> > +config CSKY_NR_IRQS
+> > +       int "NR_IRQS to max virtual interrupt numbers of the whole system"
+> > +       range 64 8192
+> > +       default "128"
+> > +endmenu
+> 
+> This should no longer be needed, with the IRQ domain code, any number
+> of interrupts
+> can be used without noticeable overhead.
+Not I use it, some of our users need it to expand the GPIO irqs. Because
+they don't use irq domain code properly. I move it to Kconfig.debug, OK?
+
+> Make it either
+> 
+>             def_bool y
+> 
+> or
+> 
+>            bool
+>            default y
+OK
+
+> > +config CSKY_BUILTIN_DTB
+> > +       bool "Use kernel builtin dtb"
+> > +       default n
+> > +
+> > +config CSKY_BUILTIN_DTB_NAME
+> > +       string "kernel builtin dtb name"
+> > +       depends on CSKY_BUILTIN_DTB
+> 
+> It's generally better not to use a builtin dtb, but use the bootloader
+> to pass a dtb.
+> 
+> If you need to support existing bootloaders, the best way is to allow
+> appending the dtb to the kernel.
+Most of our boards use bootloader to pass the dtb, but Hangzhou
+Nationalchip want dtb compiled in the vmlinux. So I keep it in
+Kconfig.debug.
+
+> > +ifeq ($(VERSION)_$(PATCHLEVEL), 4_9)
+> > +COMPAT_KERNEL_4_9 = -DCOMPAT_KERNEL_4_9
+> > +endif
+> 
+> Should not be needed
+May I keep it? It's a very internal macro for arch/csky and I can
+maintain the linux-4.9 together.
+
+
+> > +KBUILD_CFLAGS +=       -ffreestanding \
+> 
+> -ffreestanding usually results in worse code and should not be needed
+OK, remove it.
+
+> > +                       -fno-tree-dse \
+> > +                       -pipe \
+> > +                       -Wno-uninitialized \
+> 
+> For -Wno-uninitialized, better fix the bugs properly. Can you explain
+> why you want
+It will mask some warnings :P, and I will remove it.
+
+> -fno-tree-dse?
+This is from "gcc-4.5 compile linux-4.7" and it will cause wrong code without
+-fno-tree-dse for list.h. Now we use gcc-6.3, so I will try to remove it.
+
+> > +++ b/arch/csky/abiv1/Makefile
+> > @@ -0,0 +1,8 @@
+> > +obj-y +=       src/bswapdi.o
+> > +obj-y +=       src/bswapsi.o
+> > +obj-y +=       src/cacheflush.o
+> > +obj-y +=       src/memcpy.o
+> > +obj-y +=       src/mmap.o
+> > +
+> > +obj-$(CONFIG_CPU_NEED_SOFTALIGN) +=    src/alignment.o
+> 
+> Better not use subdirectories like that.
+Ok, I will change them like this:
+  obj-y +=	bswapdi.o
+  obj-y +=	bswapsi.o
+  ...
+
+> Can you explain why you need the alignement fixups?
+For abiv1 ck610 couldn't handle the unalignment address access, so we
+need soft-alignment exception to fixup. There is no problem in abiv2 cpus.
+
+Best Regards
+  Guo Ren
