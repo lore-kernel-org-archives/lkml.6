@@ -1,34 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751911AbeCTHxg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:53:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33900 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeCTHxd (ORCPT
+        id S1751970AbeCTHy7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:54:59 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54897 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751524AbeCTHyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:53:33 -0400
-Date: Tue, 20 Mar 2018 08:53:21 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: kbuild test robot <fengguang.wu@intel.com>
-cc: Palmer Dabbelt <palmer@sifive.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, tipbuild@zytor.com
-Subject: Re: [tip:irq/core 12/13] drivers/irqchip/irq-vic.c:295:2: error:
- implicit declaration of function 'set_handle_irq'; did you mean
- 'vic_handle_irq'?
-In-Reply-To: <201803200516.SWlP9b4m%fengguang.wu@intel.com>
-Message-ID: <alpine.DEB.2.21.1803200852590.6506@nanos.tec.linutronix.de>
-References: <201803200516.SWlP9b4m%fengguang.wu@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Mar 2018 03:54:55 -0400
+X-Google-Smtp-Source: AIpwx48E0qdrfFhX1sN0oohCnouXMHAZcWUuz3Edlc0YAEbRonF555oHeRWVgfTHv4lOjt44fbDv9kn5XqSRsajTQmc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180320033654.GA21731@guoren>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <9cb4cf158b8c73325dc524cba8d575e41647131f.1521399976.git.ren_guo@c-sky.com>
+ <CAK8P3a15wbEmejpiokATLW=Cwe-XHZEdgU8fNQY-opjbjuU3-w@mail.gmail.com> <20180320033654.GA21731@guoren>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 20 Mar 2018 15:54:53 +0800
+X-Google-Sender-Auth: DwwX2tflWREKVrr63BuXBXMHsho
+Message-ID: <CAK8P3a1TokZ_odmBFy5FWCLp2ExF+uYR2X_pn-MSPbuM26MZ2w@mail.gmail.com>
+Subject: Re: [PATCH 14/19] csky: Misc headers
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018, kbuild test robot wrote:
+On Tue, Mar 20, 2018 at 11:36 AM, Guo Ren <ren_guo@c-sky.com> wrote:
+> Hi Arnd,
+>
+> On Tue, Mar 20, 2018 at 12:11:24AM +0800, Arnd Bergmann wrote:
+>> On Mon, Mar 19, 2018 at 3:51 AM, Guo Ren <ren_guo@c-sky.com> wrote:
+>> > +++ b/arch/csky/include/uapi/asm/fcntl.h
+>> > @@ -0,0 +1,13 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+>> > +#ifndef __ASM_CSKY_FCNTL_H
+>> > +#define __ASM_CSKY_FCNTL_H
+>> > +
+>> > +#define O_DIRECTORY    040000
+>> > +#define O_NOFOLLOW     0100000
+>> > +#define O_DIRECT       0200000
+>> > +#define O_LARGEFILE    0400000
+>> > +
+>> > +#include <asm-generic/fcntl.h>
+>>
+>> This should just use the generic file without overrides: Please don't diverge
+>> from the generic syscall ABI.
+>>
+>
+> It's a stupid copy from arm/include/uapi/asm/fcntl.h and the csky/bits/fcntl.h
+> in uclibc-ng and glibc are also defined with:
+>
+> #define __O_DIRECTORY    040000 /* Must be a directory.  */
+> #define __O_NOFOLLOW    0100000 /* Do not follow links.  */
+> #define __O_DIRECT      0200000 /* Direct disk access.  */
+> #define __O_LARGEFILE   0400000
+>
+> So may I keep it for a while?
+> (I will let glibc uclibc-ng csky/bits/fcntl.h include the linux/uapi/asm/fcntl.h
+> first.)
 
-> Hi Palmer,
-> 
-> FYI, the error/warning still remains.
+We generally assume that any upstream kernel ABI cannot be changed, so this
+has to be changed before the code gets merged upstream.
 
-Zapped the commit as well...
+You can obviously maintain the old and the new ABI in parallel for a while,
+until the libc supports the new ABI, but you can't do that in the patches
+you send for integration.
+
+This is more important for the list of system calls, but when you change
+the ABI, it should be changed all at once.
+
+           Arnd
