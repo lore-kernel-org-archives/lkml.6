@@ -1,23 +1,23 @@
 Return-Path: <heikki.krogerus@linux.intel.com>
-X-Google-Smtp-Source: AG47ELuUo5P4AKjix5hp5eOnDy5rnAfLquiE+ozkQGqkbL+Pd6BqihcUXFZcUOu1NgksZZBVXYWM
-ARC-Seal: i=1; a=rsa-sha256; t=1521550658; cv=none;
+X-Google-Smtp-Source: AG47ELvEJiL7pWEGiXX+th5ky9cAAkHUcEMNsivyLW1aPVbMHrtWOjjNh8SyguKMWAomPo0rFA6F
+ARC-Seal: i=1; a=rsa-sha256; t=1521550655; cv=none;
         d=google.com; s=arc-20160816;
-        b=bUP4t5pIqXNoXvP88XnkFa0bnT7YV57E5GKBWtWSz5jyW0xYQidDW6WsohNBN8NZVl
-         AMu7UbmnvqTvwKNeGWG0TGC9GU6q5Bn/JOGSseIpFeS5F6oKdIpLr7DOxUE2kzYHLSH7
-         Edg6FWdkDOr4jolwcCGb2VrUBLUmXmZh0hcSp5ABWyrLw3DcBLdSVZL19NFUKRIkrsuV
-         4r8w5lGpoTg+lO8IDXfArrLZ2G4O61orGGo19pDxWnVbpDTdsJ/6eHR0Adxu2190OXau
-         N70itM2ii2M1xPkCRdd04ZLeKstumyVxhpJXrL233wHJyJn8tplWxIFCTV/3Em18jXvb
-         eD9Q==
+        b=PUJuQJl2F115Sxjd/l+hUIPD9N3YHMF4iZzyz1uebDbT/KmkKUx3ocm5s0hfYEllKo
+         KPmIrDndh0waWzP7DBENlP/bDe9n7VjjfgP/UMwRO/NpHY98wLX4pFsuM+vouJry4YJ9
+         d/FCFIdtxewKS8xpOBTvNAFurVNzmcA3LmwHUy0z9VQYtU1kjvlBWpYjp2sziT9A/nmH
+         TEZ87LCcSzPBO7nUnnSRrZb6EqypWl+w2AaNFXbDyhFpueXlWkWAVyu3GbEHvBH1zrLw
+         /uEZY7p+uyHnHEaPw+bv/wOuV6mbmELEGsAg6hAxrGqdeL3UEt7pDXIKkXGFNeEkWvsk
+         MrEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=2OGW0rIQjrYM9jfmyxmiJLAJYGjqciXkQ+doQr4BR9o=;
-        b=UNh7vhpYRTKabtlLO61jWeBzEUtE13Ekves+a/HdAcOTCpHzkdtxmFBgK+zMJH72ow
-         BnO0JUOOUVK5AR6CyIKUIQrNyX0hXELe0ejeVTOgoKD9ol7UPcRbxEcFYGtS0/3fS+W/
-         qjOL9JqIDllBKyNVHjJg2Xu7hw2oDyqW4nGNp+5SDBpFpn6SxgCP70t7YPKxvlTDRu85
-         A4XauuisSer35EgQbtPSNRqCbAAvbbAK8jhTY3hh12+7E+3qkUUREYWoqDTvyUJdtwSv
-         KHVRPfgaC547+GaogmMvHjItRy2ePd3RJ6NcL10TUKYEiXggehpvNH0DdgjqNDhCpysT
-         NdLw==
+        bh=qRN5UpPttYl0sPiwOTDxZFhUSzjPtBGMxDs7HHDdNrs=;
+        b=SEhxENaKIuSJork4yma7PCcVO38qdxxirCkNlXYFMSc2QeCa6okSATOfk6WlldC8Ob
+         DKTatvQagzGs8/IJ7G+ameVQ9wcJAwNhgZhLUxOe+uu3lDrKQ0f/eT8Ctp25aHUlXUS+
+         5yiPnSxvqlQoqQaeQjGHpfAqAe5PUiqserVy61JkLsjxsrmEqLjuWn/uWw3ayX6r5ACj
+         dEYzbflnLGDaPvDoD0VYi6w8kwTax1r/TzWTDyZie8MCwVCX5fGF/aZ7vGCUmAA7GQjH
+         JcH3eTRmgWEpvn7PEpkTb2yLdBB8nhAYBXIS+ZgvSLV6aZKBzdmng7WaaqFMBSbQP2A1
+         eE+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
-   d="scan'208";a="39592543"
+   d="scan'208";a="39592529"
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Hans de Goede <hdegoede@redhat.com>
@@ -40,23 +40,37 @@ Cc: Darren Hart <dvhart@infradead.org>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v9 06/12] usb: typec: tcpm: Use new Type-C switch/mux and usb-role-switch functions
-Date: Tue, 20 Mar 2018 15:57:07 +0300
-Message-Id: <20180320125713.85465-7-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v9 05/12] usb: typec: tcpm: Set USB role switch to device mode when configured as such
+Date: Tue, 20 Mar 2018 15:57:06 +0300
+Message-Id: <20180320125713.85465-6-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
 References: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595461503874063368?=
-X-GMAIL-MSGID: =?utf-8?q?1595461503874063368?=
+X-GMAIL-THRID: =?utf-8?q?1595461499846526210?=
+X-GMAIL-MSGID: =?utf-8?q?1595461499846526210?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-Remove the unused (not implemented anywhere) tcpc_mux_dev abstraction
-and replace it with calling the new typec_set_orientation,
-usb_role_switch_set and typec_set_mode functions.
+Setting the mux to MUX_NONE and the switch to USB_SWITCH_DISCONNECT when
+the data-role is device is not correct. Plenty of devices support
+operating as USB device through a (separate) USB device controller.
+
+We really need 2 different versions of USB_SWITCH_CONNECT,
+USB_SWITCH_CONNECT_HOST and USB_SWITCH_DEVICE. Rather then modifying the
+tcpc_usb_switch enum for this, simply remove it and switch to the
+usb_role enum which provides exactly this, this will save use needing to
+convert betweent the 2 enums when calling an usb-role-switch driver later.
+
+Besides switching to the usb_role type, this commit also actually sets the
+mux to TYPEC_MUX_USB and the switch to USB_ROLE_DEVICE instead of setting
+both to none when the data-role is device.
+
+This commit also makes tcpm_reset_port() call tcpm_mux_set(port,
+TYPEC_MUX_NONE, USB_ROLE_NONE) so that the mux and switch
+do _not_ stay in their last mode after a detach.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
@@ -72,188 +86,112 @@ Changes in v3:
 Changes in v2:
 -Added Heikki's Reviewed-by
 ---
- drivers/usb/typec/Kconfig           |  1 +
- drivers/usb/typec/fusb302/fusb302.c |  1 -
- drivers/usb/typec/tcpm.c            | 46 ++++++++++++++++++++++++++++---------
- include/linux/usb/tcpm.h            | 10 --------
- 4 files changed, 36 insertions(+), 22 deletions(-)
+ drivers/usb/typec/tcpm.c | 22 +++++++++++-----------
+ include/linux/usb/tcpm.h |  8 ++------
+ 2 files changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-index bcb2744c5977..a2a0684e7c82 100644
---- a/drivers/usb/typec/Kconfig
-+++ b/drivers/usb/typec/Kconfig
-@@ -48,6 +48,7 @@ if TYPEC
- config TYPEC_TCPM
- 	tristate "USB Type-C Port Controller Manager"
- 	depends on USB
-+	select USB_ROLE_SWITCH
- 	help
- 	  The Type-C Port Controller Manager provides a USB PD and USB Type-C
- 	  state machine for use with Type-C Port Controllers.
-diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
-index 82bf7c0ed53c..703617129067 100644
---- a/drivers/usb/typec/fusb302/fusb302.c
-+++ b/drivers/usb/typec/fusb302/fusb302.c
-@@ -1239,7 +1239,6 @@ static void init_tcpc_dev(struct tcpc_dev *fusb302_tcpc_dev)
- 	fusb302_tcpc_dev->set_roles = tcpm_set_roles;
- 	fusb302_tcpc_dev->start_drp_toggling = tcpm_start_drp_toggling;
- 	fusb302_tcpc_dev->pd_transmit = tcpm_pd_transmit;
--	fusb302_tcpc_dev->mux = NULL;
- }
- 
- static const char * const cc_polarity_name[] = {
 diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index 2519b0d17f1f..677d12138dbd 100644
+index 62e710bb6367..2519b0d17f1f 100644
 --- a/drivers/usb/typec/tcpm.c
 +++ b/drivers/usb/typec/tcpm.c
-@@ -20,6 +20,7 @@
- #include <linux/usb/pd.h>
- #include <linux/usb/pd_bdo.h>
- #include <linux/usb/pd_vdo.h>
-+#include <linux/usb/role.h>
- #include <linux/usb/tcpm.h>
- #include <linux/usb/typec.h>
- #include <linux/workqueue.h>
-@@ -176,6 +177,7 @@ struct tcpm_port {
- 	struct typec_port *typec_port;
- 
- 	struct tcpc_dev	*tcpc;
-+	struct usb_role_switch *role_sw;
- 
- 	enum typec_role vconn_role;
- 	enum typec_role pwr_role;
-@@ -604,18 +606,25 @@ void tcpm_pd_transmit_complete(struct tcpm_port *port,
+@@ -604,15 +604,15 @@ void tcpm_pd_transmit_complete(struct tcpm_port *port,
  EXPORT_SYMBOL_GPL(tcpm_pd_transmit_complete);
  
  static int tcpm_mux_set(struct tcpm_port *port, enum tcpc_mux_mode mode,
--			enum usb_role usb_role)
-+			enum usb_role usb_role,
-+			enum typec_orientation orientation)
+-			enum tcpc_usb_switch config)
++			enum usb_role usb_role)
  {
--	int ret = 0;
-+	int ret;
+ 	int ret = 0;
  
--	tcpm_log(port, "Requesting mux mode %d, usb-role %d, polarity %d",
--		 mode, usb_role, port->polarity);
-+	tcpm_log(port, "Requesting mux mode %d, usb-role %d, orientation %d",
-+		 mode, usb_role, orientation);
+-	tcpm_log(port, "Requesting mux mode %d, config %d, polarity %d",
+-		 mode, config, port->polarity);
++	tcpm_log(port, "Requesting mux mode %d, usb-role %d, polarity %d",
++		 mode, usb_role, port->polarity);
  
--	if (port->tcpc->mux)
--		ret = port->tcpc->mux->set(port->tcpc->mux, mode, usb_role,
--					   port->polarity);
-+	ret = typec_set_orientation(port->typec_port, orientation);
-+	if (ret)
-+		return ret;
+ 	if (port->tcpc->mux)
+-		ret = port->tcpc->mux->set(port->tcpc->mux, mode, config,
++		ret = port->tcpc->mux->set(port->tcpc->mux, mode, usb_role,
+ 					   port->polarity);
  
--	return ret;
-+	if (port->role_sw) {
-+		ret = usb_role_switch_set_role(port->role_sw, usb_role);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return typec_set_mode(port->typec_port, mode);
- }
- 
- static int tcpm_set_polarity(struct tcpm_port *port,
-@@ -728,15 +737,21 @@ static int tcpm_set_attached_state(struct tcpm_port *port, bool attached)
+ 	return ret;
+@@ -728,14 +728,15 @@ static int tcpm_set_attached_state(struct tcpm_port *port, bool attached)
  static int tcpm_set_roles(struct tcpm_port *port, bool attached,
  			  enum typec_role role, enum typec_data_role data)
  {
-+	enum typec_orientation orientation;
- 	enum usb_role usb_role;
++	enum usb_role usb_role;
  	int ret;
  
-+	if (port->polarity == TYPEC_POLARITY_CC1)
-+		orientation = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		orientation = TYPEC_ORIENTATION_REVERSE;
-+
  	if (data == TYPEC_HOST)
- 		usb_role = USB_ROLE_HOST;
+-		ret = tcpm_mux_set(port, TYPEC_MUX_USB,
+-				   TCPC_USB_SWITCH_CONNECT);
++		usb_role = USB_ROLE_HOST;
  	else
- 		usb_role = USB_ROLE_DEVICE;
- 
--	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role);
-+	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role, orientation);
+-		ret = tcpm_mux_set(port, TYPEC_MUX_NONE,
+-				   TCPC_USB_SWITCH_DISCONNECT);
++		usb_role = USB_ROLE_DEVICE;
++
++	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role);
  	if (ret < 0)
  		return ret;
  
-@@ -2029,7 +2044,8 @@ static int tcpm_src_attach(struct tcpm_port *port)
+@@ -2028,7 +2029,7 @@ static int tcpm_src_attach(struct tcpm_port *port)
  out_disable_pd:
  	port->tcpc->set_pd_rx(port->tcpc, false);
  out_disable_mux:
--	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
-+	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE,
-+		     TYPEC_ORIENTATION_NONE);
+-	tcpm_mux_set(port, TYPEC_MUX_NONE, TCPC_USB_SWITCH_DISCONNECT);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
  	return ret;
  }
  
-@@ -2073,7 +2089,8 @@ static void tcpm_reset_port(struct tcpm_port *port)
+@@ -2072,6 +2073,7 @@ static void tcpm_reset_port(struct tcpm_port *port)
  	tcpm_init_vconn(port);
  	tcpm_set_current_limit(port, 0, 0);
  	tcpm_set_polarity(port, TYPEC_POLARITY_CC1);
--	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
-+	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE,
-+		     TYPEC_ORIENTATION_NONE);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
  	tcpm_set_attached_state(port, false);
  	port->try_src_count = 0;
  	port->try_snk_count = 0;
-@@ -3653,6 +3670,12 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	port->partner_desc.identity = &port->partner_ident;
- 	port->port_type = tcpc->config->type;
- 
-+	port->role_sw = usb_role_switch_get(port->dev);
-+	if (IS_ERR(port->role_sw)) {
-+		err = PTR_ERR(port->role_sw);
-+		goto out_destroy_wq;
-+	}
-+
- 	port->typec_port = typec_register_port(port->dev, &port->typec_caps);
- 	if (IS_ERR(port->typec_port)) {
- 		err = PTR_ERR(port->typec_port);
-@@ -3688,6 +3711,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	return port;
- 
- out_destroy_wq:
-+	usb_role_switch_put(port->role_sw);
- 	destroy_workqueue(port->wq);
- 	return ERR_PTR(err);
+@@ -2122,8 +2124,6 @@ static int tcpm_snk_attach(struct tcpm_port *port)
+ static void tcpm_snk_detach(struct tcpm_port *port)
+ {
+ 	tcpm_detach(port);
+-
+-	/* XXX: (Dis)connect SuperSpeed mux? */
  }
+ 
+ static int tcpm_acc_attach(struct tcpm_port *port)
 diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
-index 3e8bdaa5085a..f0d839daeaea 100644
+index 5a5e1d8c5b65..3e8bdaa5085a 100644
 --- a/include/linux/usb/tcpm.h
 +++ b/include/linux/usb/tcpm.h
-@@ -16,7 +16,6 @@
+@@ -16,6 +16,7 @@
  #define __LINUX_USB_TCPM_H
  
  #include <linux/bitops.h>
--#include <linux/usb/role.h>
++#include <linux/usb/role.h>
  #include <linux/usb/typec.h>
  #include "pd.h"
  
-@@ -113,14 +112,6 @@ enum tcpc_mux_mode {
- 			  TCPC_MUX_DP_ENABLED,
+@@ -98,11 +99,6 @@ struct tcpc_config {
+ 	const struct typec_altmode_desc *alt_modes;
  };
  
--struct tcpc_mux_dev {
--	int (*set)(struct tcpc_mux_dev *dev, enum tcpc_mux_mode mux_mode,
--		   enum usb_role usb_role,
--		   enum typec_cc_polarity polarity);
--	bool dfp_only;
--	void *priv_data;
+-enum tcpc_usb_switch {
+-	TCPC_USB_SWITCH_CONNECT,
+-	TCPC_USB_SWITCH_DISCONNECT,
 -};
 -
- /**
-  * struct tcpc_dev - Port configuration and callback functions
-  * @config:	Pointer to port configuration
-@@ -172,7 +163,6 @@ struct tcpc_dev {
- 	int (*try_role)(struct tcpc_dev *dev, int role);
- 	int (*pd_transmit)(struct tcpc_dev *dev, enum tcpm_transmit_type type,
- 			   const struct pd_message *msg);
--	struct tcpc_mux_dev *mux;
- };
+ /* Mux state attributes */
+ #define TCPC_MUX_USB_ENABLED		BIT(0)	/* USB enabled */
+ #define TCPC_MUX_DP_ENABLED		BIT(1)	/* DP enabled */
+@@ -119,7 +115,7 @@ enum tcpc_mux_mode {
  
- struct tcpm_port;
+ struct tcpc_mux_dev {
+ 	int (*set)(struct tcpc_mux_dev *dev, enum tcpc_mux_mode mux_mode,
+-		   enum tcpc_usb_switch usb_config,
++		   enum usb_role usb_role,
+ 		   enum typec_cc_polarity polarity);
+ 	bool dfp_only;
+ 	void *priv_data;
 -- 
 2.16.2
