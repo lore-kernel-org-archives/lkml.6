@@ -1,58 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751521AbeCTUxx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:53:53 -0400
-Received: from ozlabs.org ([103.22.144.67]:54779 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeCTUxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:53:50 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 07:52:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Michal Simek <monstr@monstr.eu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-bys missing for commit in the microblaze
- tree
-Message-ID: <20180321075251.49f3c1a3@canb.auug.org.au>
+        id S1751499AbeCTU4Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:56:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36410 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751334AbeCTU4X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:56:23 -0400
+Subject: Re: [PATCH v5 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To: Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org, pbonzini@redhat.com, jgross@suse.com
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de, thomas.lendacky@amd.com,
+        luto@kernel.org, dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com
+References: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
+ <1521573486-17304-1-git-send-email-maran.wilson@oracle.com>
+ <cb065150-0035-abf0-1d38-99011e4b4605@infradead.org>
+From: Maran Wilson <maran.wilson@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <60e2784f-262a-3aae-3e4f-4f47cb431eee@oracle.com>
+Date: Tue, 20 Mar 2018 13:55:31 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/28FJYb+O/=ncxtGW+1aCB0/"; protocol="application/pgp-signature"
+In-Reply-To: <cb065150-0035-abf0-1d38-99011e4b4605@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/28FJYb+O/=ncxtGW+1aCB0/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/20/2018 12:23 PM, Randy Dunlap wrote:
+> Hi,
+>
+> On 03/20/2018 12:18 PM, Maran Wilson wrote:
+>> In order to pave the way for hypervisors other then Xen to use the PVH
+>                                                   than
+>
+>> entry point for VMs, we need to factor the PVH entry code into Xen specific
+>> and hypervisor agnostic components. The first step in doing that, is to
+>> create a new config option for PVH entry that can be enabled
+>> independently from CONFIG_XEN.
+>>
+>> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+>> ---
+>>   arch/x86/Kconfig          | 7 +++++++
+>>   arch/x86/kernel/head_64.S | 4 ++--
+>>   arch/x86/xen/Kconfig      | 3 ++-
+>>   3 files changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index eb7f43f23521..58831320b5d2 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -791,6 +791,13 @@ config KVM_GUEST
+>>   	  underlying device model, the host provides the guest with
+>>   	  timing infrastructure such as time of day, and system time
+>>   
+>> +config PVH
+>> +	bool "Support for running PVH guests"
+>> +	def_bool n
+> You don't need two (2) "bool"s here. And 'n' is already the default, so just
+> drop the second line.
+>
+>> +	---help---
+>> +	  This option enables the PVH entry point for guest virtual machines
+>> +	  as specified in the x86/HVM direct boot ABI.
+>> +
+>>   config KVM_DEBUG_FS
+>>   	bool "Enable debug information for KVM Guests in debugfs"
+>>   	depends on KVM_GUEST && DEBUG_FS
+>
 
-Hi Michal,
+Hi Randy,
 
-Commit
+Will make both changes.
 
-  39a21eefea04 ("MICROBLAZE")
-
-is missing any Signed-off-bys.  In fact, it is a very strange commit
-message.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/28FJYb+O/=ncxtGW+1aCB0/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxdKMACgkQAVBC80lX
-0GySbwf/Y/2V6/Tyh7gO1zeo0Biknc4/0YZz5RHsjrm/WQ9u5NBkF0RV+rRnr5dQ
-PcttnYRDI0Gz+IVVTd08fIFkPGhVSH7jU9FwQPn3Xkh/QPUcaQFj/wMdQVlv/XKq
-SiDcMz9y7rE9DQWgJhyvpAWO5xzSoUUuUQRJ1p2PELPoQePkVbU1kC3zZUC7EDDD
-4FkOuFuNPmXA+3ghevW/wha+fOMBLwCeLw/J4dF3ghN5ybnN/XVvQjDlJtchPDx7
-fCPhiICT71y+ZW4Ut88tJB/5LhL2g83jSFHf5Ni9GqgBEDURyzdZIMVwJAROqg7t
-Emo/GCM/dCCLLD6RfeuNUibIY4sHTA==
-=I8Va
------END PGP SIGNATURE-----
-
---Sig_/28FJYb+O/=ncxtGW+1aCB0/--
+Thanks,
+-Maran
