@@ -1,82 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeCTIhV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:37:21 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37598 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752277AbeCTIgu (ORCPT
+        id S1752405AbeCTIh6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:37:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39070 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752019AbeCTIh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:36:50 -0400
-X-Google-Smtp-Source: AG47ELsV/dBjjXVq9jsZ/PyLzBfUzhaysEwbVZ7XzscqTV2sA+kLMI15mV6iqjKgVITH2IjSC1oF3A==
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 2/3] mmc: sdhci: made changes for SDMA System Address register
-Date: Tue, 20 Mar 2018 16:36:25 +0800
-Message-Id: <1521534986-21907-3-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org>
+        Tue, 20 Mar 2018 04:37:56 -0400
+X-Google-Smtp-Source: AG47ELuLszeCAWqKkl1gvSVxFSUWUHzCC4wU84dLDPuZvQvf4AI0ObBf3sH279Mg8MXlwJtLwZuwYA==
+Date: Tue, 20 Mar 2018 09:37:51 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, x86@kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: use generic dma-direct and swiotlb code for x86 V3
+Message-ID: <20180320083751.nrpt64dsmpqbhzc6@gmail.com>
+References: <20180319103826.12853-1-hch@lst.de>
+ <20180319152737.GK1110@char.us.oracle.com>
+ <20180319152840.GA28041@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319152840.GA28041@lst.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the SD host controller specification version 4.10, when
-Host Version 4 is enabled, SDMA uses ADMA System Address register
-(05Fh-058h) instead of using SDMA System Address register to
-support both 32-bit and 64-bit addressing.
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+* Christoph Hellwig <hch@lst.de> wrote:
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index da4d91e..748a3a3 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -805,6 +805,7 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- {
- 	u8 ctrl;
-+	u32 reg;
- 	struct mmc_data *data = cmd->data;
- 
- 	if (sdhci_data_line_cmd(cmd))
-@@ -894,8 +895,10 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 					     SDHCI_ADMA_ADDRESS_HI);
- 		} else {
- 			WARN_ON(sg_cnt != 1);
-+			reg = host->v4_mode ? SDHCI_ADMA_ADDRESS :
-+				SDHCI_DMA_ADDRESS;
- 			sdhci_writel(host, sdhci_sdma_address(host),
--				     SDHCI_DMA_ADDRESS);
-+				     reg);
- 		}
- 	}
- 
-@@ -2721,6 +2724,7 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 		 */
- 		if (intmask & SDHCI_INT_DMA_END) {
- 			u32 dmastart, dmanow;
-+			u32 reg;
- 
- 			dmastart = sdhci_sdma_address(host);
- 			dmanow = dmastart + host->data->bytes_xfered;
-@@ -2733,7 +2737,9 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 			host->data->bytes_xfered = dmanow - dmastart;
- 			DBG("DMA base 0x%08x, transferred 0x%06x bytes, next 0x%08x\n",
- 			    dmastart, host->data->bytes_xfered, dmanow);
--			sdhci_writel(host, dmanow, SDHCI_DMA_ADDRESS);
-+			reg = host->v4_mode ? SDHCI_ADMA_ADDRESS :
-+				SDHCI_DMA_ADDRESS;
-+			sdhci_writel(host, dmanow, reg);
- 		}
- 
- 		if (intmask & SDHCI_INT_DATA_END) {
--- 
-2.7.4
+> On Mon, Mar 19, 2018 at 11:27:37AM -0400, Konrad Rzeszutek Wilk wrote:
+> > On Mon, Mar 19, 2018 at 11:38:12AM +0100, Christoph Hellwig wrote:
+> > > Hi all,
+> > > 
+> > > this series switches the x86 code the the dma-direct implementation
+> > > for direct (non-iommu) dma and the generic swiotlb ops.  This includes
+> > > getting rid of the special ops for the AMD memory encryption case and
+> > > the STA2x11 SOC.  The generic implementations are based on the x86
+> > > code, so they provide the same functionality.
+> > 
+> > I need to test this on my baremertal and Xen setup - and I lost your
+> > git repo URL - any chance you mention point out to me so I can
+> > kick of a build?
+> 
+> git://git.infradead.org/users/hch/misc.git dma-direct-x86
+
+Btw., what's the upstreaming route for these patches?
+
+While it's a multi-arch series it's all pretty x86-heavy as well so we can host it 
+in -tip (in tip:core/dma or such), but feel free to handle it yourself as well:
+
+  Reviewed-by: Ingo Molnar <mingo@kernel.org>
+
+Thanks,
+
+	Ingo
