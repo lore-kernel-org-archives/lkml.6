@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeCTGaE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:30:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59391 "EHLO
+        id S1752053AbeCTGav (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:30:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52287 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbeCTGaD (ORCPT
+        with ESMTP id S1751697AbeCTGas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:30:03 -0400
-Date: Mon, 19 Mar 2018 23:29:54 -0700
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-26e4711fc8352252f474a02429d7495652c4aef7@git.kernel.org>
-Cc: tmricht@linux.vnet.ibm.com, brueckner@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
-        schwidefsky@de.ibm.com, hpa@zytor.com, tglx@linutronix.de,
-        heiko.carstens@de.ibm.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, heiko.carstens@de.ibm.com,
-        acme@redhat.com, schwidefsky@de.ibm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, brueckner@linux.vnet.ibm.com,
-        tmricht@linux.vnet.ibm.com
-In-Reply-To: <20180312103807.45069-2-tmricht@linux.vnet.ibm.com>
-References: <20180312103807.45069-2-tmricht@linux.vnet.ibm.com>
+        Tue, 20 Mar 2018 02:30:48 -0400
+Date: Mon, 19 Mar 2018 23:29:27 -0700
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-5eab5a7ee032acaab3da8fc95a3614fec14687ac@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
+        peterz@infradead.org, dsahern@gmail.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org,
+        dsahern@gmail.com, peterz@infradead.org, acme@redhat.com,
+        hpa@zytor.com, alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        jolsa@kernel.org
+In-Reply-To: <20180312094313.18738-3-jolsa@kernel.org>
+References: <20180312094313.18738-3-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Make function perf_stat_evsel_id_init
- static
-Git-Commit-ID: 26e4711fc8352252f474a02429d7495652c4aef7
+Subject: [tip:perf/core] perf llvm: Display eBPF compiling command in debug
+ output
+Git-Commit-ID: 5eab5a7ee032acaab3da8fc95a3614fec14687ac
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,52 +36,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  26e4711fc8352252f474a02429d7495652c4aef7
-Gitweb:     https://git.kernel.org/tip/26e4711fc8352252f474a02429d7495652c4aef7
-Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
-AuthorDate: Mon, 12 Mar 2018 11:38:07 +0100
+Commit-ID:  5eab5a7ee032acaab3da8fc95a3614fec14687ac
+Gitweb:     https://git.kernel.org/tip/5eab5a7ee032acaab3da8fc95a3614fec14687ac
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Mon, 12 Mar 2018 10:43:02 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:56:17 -0300
+CommitDate: Fri, 16 Mar 2018 13:56:12 -0300
 
-perf stat: Make function perf_stat_evsel_id_init static
+perf llvm: Display eBPF compiling command in debug output
 
-Function perf_stat_evsel_id_init() has global linkage but is only used
-in util/stat.c. Make it static.
+In addition to template, display also the real compile command line with
+all the variables substituted.
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180312103807.45069-2-tmricht@linux.vnet.ibm.com
+  llvm compiling command template: $CLANG_EXEC -D__KERNEL__ -D__NR_CPUS__=$NR_CPUS ...
+  llvm compiling command : /usr/bin/clang -D__KERNEL__ -D__NR_CPUS__=24 -DLINUX_VERSION_CODE=0x41000 ...
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180312094313.18738-3-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat.c | 2 +-
- tools/perf/util/stat.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ tools/perf/util/llvm-utils.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 32235657c1ac..a0061e0b0fad 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -92,7 +92,7 @@ static const char *id_str[PERF_STAT_EVSEL_ID__MAX] = {
- };
- #undef ID
+diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
+index 4952b429caa7..1cca0a2fa641 100644
+--- a/tools/perf/util/llvm-utils.c
++++ b/tools/perf/util/llvm-utils.c
+@@ -433,6 +433,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 	char serr[STRERR_BUFSIZE];
+ 	char *kbuild_dir = NULL, *kbuild_include_opts = NULL;
+ 	const char *template = llvm_param.clang_bpf_cmd_template;
++	char *command_echo, *command_out;
  
--void perf_stat_evsel_id_init(struct perf_evsel *evsel)
-+static void perf_stat_evsel_id_init(struct perf_evsel *evsel)
- {
- 	struct perf_stat_evsel *ps = evsel->stats;
- 	int i;
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 2f44e386a0e8..8f56ba4fd258 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -128,8 +128,6 @@ bool __perf_evsel_stat__is(struct perf_evsel *evsel,
- #define perf_stat_evsel__is(evsel, id) \
- 	__perf_evsel_stat__is(evsel, PERF_STAT_EVSEL_ID__ ## id)
+ 	if (path[0] != '-' && realpath(path, abspath) == NULL) {
+ 		err = errno;
+@@ -487,6 +488,16 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		      (path[0] == '-') ? path : abspath);
  
--void perf_stat_evsel_id_init(struct perf_evsel *evsel);
--
- extern struct runtime_stat rt_stat;
- extern struct stats walltime_nsecs_stats;
+ 	pr_debug("llvm compiling command template: %s\n", template);
++
++	if (asprintf(&command_echo, "echo -n \"%s\"", template) < 0)
++		goto errout;
++
++	err = read_from_pipe(command_echo, (void **) &command_out, NULL);
++	if (err)
++		goto errout;
++
++	pr_debug("llvm compiling command : %s\n", command_out);
++
+ 	err = read_from_pipe(template, &obj_buf, &obj_buf_sz);
+ 	if (err) {
+ 		pr_err("ERROR:\tunable to compile %s\n", path);
+@@ -497,6 +508,8 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		goto errout;
+ 	}
  
++	free(command_echo);
++	free(command_out);
+ 	free(kbuild_dir);
+ 	free(kbuild_include_opts);
+ 
+@@ -509,6 +522,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		*p_obj_buf_sz = obj_buf_sz;
+ 	return 0;
+ errout:
++	free(command_echo);
+ 	free(kbuild_dir);
+ 	free(kbuild_include_opts);
+ 	free(obj_buf);
