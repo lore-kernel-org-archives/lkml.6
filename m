@@ -1,107 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeCTDSI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 23:18:08 -0400
-Received: from akagi.fsij.org ([217.70.189.144]:38116 "EHLO akagi.fsij.org"
+        id S1751758AbeCTDTY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 23:19:24 -0400
+Received: from mga05.intel.com ([192.55.52.43]:19276 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751548AbeCTDQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 23:16:53 -0400
-From: NIIBE Yutaka <gniibe@fsij.org>
-To: linux-kernel@vger.kernel.org
-Cc: gniibe@fsij.org
-Subject: [PATCH 3/4] signal/x86: Move nosig handling at the end of exit_to_usermode_loop.
-Date: Tue, 20 Mar 2018 11:38:56 +0900
-Message-Id: <20180320023857.1885-4-gniibe@fsij.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180320023857.1885-1-gniibe@fsij.org>
-References: <20180320023857.1885-1-gniibe@fsij.org>
+        id S1751069AbeCTDTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 23:19:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,333,1517904000";
+   d="scan'208";a="29471790"
+Message-ID: <1521515960.2284.1.camel@intel.com>
+Subject: Re: [PATCH V4] thermal: Add cooling device's statistics in sysfs
+From: Zhang Rui <rui.zhang@intel.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Date: Tue, 20 Mar 2018 11:19:20 +0800
+In-Reply-To: <20180320013836.hiu6oy3smwmk35tp@vireshk-mac-ubuntu>
+References: <6e557b90950723065d49c9a545146ce31d7dc6e1.1516096153.git.viresh.kumar@linaro.org>
+         <1520924571.3766.8.camel@intel.com> <1521014472.2087.32.camel@intel.com>
+         <20180314081426.GG15832@vireshk-i7>
+         <20180320013836.hiu6oy3smwmk35tp@vireshk-mac-ubuntu>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Handling of restarting a system call for nosig should be done after
-all possible calls of do_signal, to see if it's actually delivering
-signal(s) or not.
+On 二, 2018-03-20 at 09:38 +0800, Viresh Kumar wrote:
+> On 14-03-18, 13:44, Viresh Kumar wrote:
+> > 
+> > I got those warnings as well, and I quietly ignored them :)
+> > 
+> > I ignored the renaming part for the sake of consistency. The other
+> > existing
+> > routines for similar purpose are named as:
+> > 
+> > thermal_cooling_device_type_show
+> > thermal_cooling_device_max_state_show
+> > thermal_cooling_device_cur_state_show
+> > thermal_cooling_device_cur_state_store
+> > 
+> > for me it made more sense to follow that naming convention. And I
+> > didn't use the
+> > _RO and _WO variants for the same reason.
+> > 
+> > Now here is what I propose now:
+> > 
+> > - You apply this patch as-is and ignore the warning.
+> > 
+> > - I will send few patches on top of that to do:
+> >   - renaming of all such routines to shorter versions.
+> >   - Use the _RO or _WO variants of the macro everywhere.
+> > 
+> > What do you say ?
+> @Zhang: Can you please share the way you want this to get merged ?
+> And if the
+> above is fine with you ?
+> 
+yes, it works for me.
+I will apply the patch later today.
 
-Before this change, restarting a system call for nosig may be followed
-by a call of handle_signal which would try to change the system call
-returning -EINTR instead, but it is too late to do so.
-
-Signed-off-by: NIIBE Yutaka <gniibe@fsij.org>
----
- arch/x86/entry/common.c       | 6 +++++-
- arch/x86/include/asm/signal.h | 2 +-
- arch/x86/kernel/signal.c      | 6 +++---
- 3 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 74f6eee15179..38e0939c0aeb 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -137,6 +137,8 @@ static long syscall_trace_enter(struct pt_regs *regs)
- 
- static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- {
-+	int nosig = 0;
-+
- 	/*
- 	 * In order to return to user mode, we need to have IRQs off with
- 	 * none of EXIT_TO_USERMODE_LOOP_FLAGS set.  Several of these flags
-@@ -159,7 +161,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- 
- 		/* deal with pending signal delivery */
- 		if (cached_flags & _TIF_SIGPENDING)
--			do_signal(regs);
-+			nosig |= do_signal(regs);
- 
- 		if (cached_flags & _TIF_NOTIFY_RESUME) {
- 			clear_thread_flag(TIF_NOTIFY_RESUME);
-@@ -177,6 +179,8 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- 		if (!(cached_flags & EXIT_TO_USERMODE_LOOP_FLAGS))
- 			break;
- 	}
-+	if (nosig)
-+		nosig_restart_syscall(regs);
- }
- 
- /* Called with IRQs disabled. */
-diff --git a/arch/x86/include/asm/signal.h b/arch/x86/include/asm/signal.h
-index 6517df6d9938..31e68266c2f6 100644
---- a/arch/x86/include/asm/signal.h
-+++ b/arch/x86/include/asm/signal.h
-@@ -35,7 +35,7 @@ typedef sigset_t compat_sigset_t;
- #endif /* __ASSEMBLY__ */
- #include <uapi/asm/signal.h>
- #ifndef __ASSEMBLY__
--extern void do_signal(struct pt_regs *regs);
-+extern int do_signal(struct pt_regs *regs);
- extern void nosig_restart_syscall(struct pt_regs *regs);
- 
- #define __ARCH_HAS_SA_RESTORER
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index e709b54a01b8..57576988a01f 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -803,17 +803,17 @@ static inline unsigned long get_nr_restart_syscall(const struct pt_regs *regs)
-  * want to handle. Thus you cannot kill init even with a SIGKILL even by
-  * mistake.
-  */
--void do_signal(struct pt_regs *regs)
-+int do_signal(struct pt_regs *regs)
- {
- 	struct ksignal ksig;
- 
- 	if (get_signal(&ksig)) {
- 		/* Whee! Actually deliver the signal.  */
- 		handle_signal(&ksig, regs);
--		return;
-+		return 0;
- 	}
- 
--	nosig_restart_syscall(regs);
-+	return 1;
- }
- 
- void nosig_restart_syscall(struct pt_regs *regs)
--- 
-2.11.0
+thanks,
+rui
