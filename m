@@ -1,94 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753557AbeCTN3R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:29:17 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33962 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753501AbeCTN3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:29:09 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        it+linux-media@molgen.mpg.de
-Subject: Re: uvcvideo: Unknown video format,00000032-0002-0010-8000-00aa00389b71
-Date: Tue, 20 Mar 2018 15:30:14 +0200
-Message-ID: <6647791.pjJyibMGYG@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
-References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
+        id S1753544AbeCTNcR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:32:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59526 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753344AbeCTNaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:30:16 -0400
+Date: Tue, 20 Mar 2018 14:30:10 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+In-Reply-To: <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+Message-ID: <alpine.LSU.2.21.1803201425090.1312@pobox.suse.cz>
+References: <20180307082039.10196-1-pmladek@suse.com> <20180307082039.10196-6-pmladek@suse.com> <20180313224613.sdkdkcvhpqv54s6c@treble> <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz> <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
 
-On Tuesday, 20 March 2018 14:20:14 EET Paul Menzel wrote:
-> Dear Linux folks,
+> > I don't know, does anybody really care about this case (patching on top
+> > of a disabled patch)?  It just adds to the crazy matrix of possible
+> > scenarios we have to keep in our heads, which means more bugs, for very
+> > little (hypothetical) gain.
+> 
+> It depends if the we remove the replaced patches or not. If they are
+> removed then replacing disabled patches is rather trivial from both
+> coding and understanding side.
+
+I agree. Since we already have the code, there is no point not to have the 
+feature. It is not that complicated after all.
+ 
+> I am going to add this as a separate patch as well. Let's discuss
+> it with the code.
 > 
 > 
-> On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
+> > > White the atomic replace could make things easier for both developers
+> > > and users.
+> > 
+> > I agree that atomic replace is a useful feature and I'm not arguing
+> > against it, so maybe I missed your point?
 > 
-> ```
-> [    2.338094] calling  uvc_init+0x0/0x1000 [uvcvideo] @ 295
-> [    2.338569] calling  iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt] @ 280
-> [    2.338570] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
-> [    2.338713] iTCO_wdt: Found a Intel PCH TCO device (Version=4,
-> TCOBASE=0x0400)
-> [    2.338755] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
-> (0bda:58f4)
-> [    2.338827] iTCO_wdt: initialized. heartbeat=30 sec (nowayout=0)
-> [    2.338851] initcall iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt]
-> returned 0 after 271 usecs
-> [    2.340669] uvcvideo 1-5:1.0: Entity type for entity Extension 4 was
-> not initialized!
-> [    2.340670] uvcvideo 1-5:1.0: Entity type for entity Extension 7 was
-> not initialized!
-> [    2.340672] uvcvideo 1-5:1.0: Entity type for entity Processing 2 was
-> not initialized!
-> [    2.340673] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was not
-> initialized!
-> [    2.340736] input: Integrated_Webcam_HD: Integrate as
-> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
-> [    2.341447] uvcvideo: Unknown video format
-> 00000032-0002-0010-8000-00aa00389b71
-> [    2.341450] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
-> (0bda:58f4)
-> [    2.343371] uvcvideo: Unable to create debugfs 1-2 directory.
-> [    2.343420] uvcvideo 1-5:1.2: Entity type for entity Extension 10 was
-> not initialized!
-> [    2.343422] uvcvideo 1-5:1.2: Entity type for entity Extension 12 was
-> not initialized!
-> [    2.343423] uvcvideo 1-5:1.2: Entity type for entity Processing 9 was
-> not initialized!
-> [    2.343424] uvcvideo 1-5:1.2: Entity type for entity Camera 11 was
-> not initialized!
-> [    2.343472] input: Integrated_Webcam_HD: Integrate as
-> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.2/input/input10
-> [    2.343496] usbcore: registered new interface driver uvcvideo
-> [    2.343496] USB Video Class driver (1.1.1)
-> [    2.343501] initcall uvc_init+0x0/0x1000 [uvcvideo] returned 0 after
-> 5275 usecs
-> ```
+> Your suggestion allows easier code but it reduces the advantages of
+> the atomic replace feature. We would achieve almost the same results
+> with a normal livepatch where the functions behave like in
+> the original code.
 > 
-> Please tell me, what I can do to improve the situation.
+> Also removing replaced patches can be seen as a clean up after
+> each patch. It might be more code but the target system might be
+> easier to debug. Also we do not need to mind about various
+> disable scenarios.
 
-Some vendors routinely implement new formats without bothering to send a patch 
-for the uvcvideo driver. It would be easy to do so, but it requires knowing 
-which format is meant by the GUID. Most format GUIDs are of the form 
-32595559-0000-0010-8000-00aa00389b71 that starts with a 4CC, but that's not 
-the case here.
+I agree with this as well.
 
-Could you send me the output of
+Yes, it was a bit painful to review, but I was quite content with the 
+result. I don't want to go halfway and be stuck with NOPs when it is 
+not complicated to remove them completely after the transition. It'd be 
+odd in my opinion.
 
-lsusb -v -d 0bda:58f4
-
-running as root if possible ?
-
--- 
 Regards,
-
-Laurent Pinchart
+Miroslav
