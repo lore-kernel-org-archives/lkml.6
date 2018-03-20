@@ -1,137 +1,119 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-540544-1520347323-2-5455294082508172487
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520347323; b=FOCsEXLPufIgNlaFzkNh4mC3/Yo1HbN8lU2KQLKmghSwPF1
-    0wCpb6npADOEmAJQz8mu3BrsLUdbBF4I5SYk294orxwYAs7UGct5s6nTHeVYccyQ
-    uLxjfVVcz43bTmJBml00SPetejthC0CsgnOol4zu+YKLThbiosFUqoLTHH+OwVp6
-    XyZTNAxyTlCqF1GV17L4K13YFl3cxabTHQkE53BgFvuqdDvi+mFwO0snG6VQtU7A
-    PqQ1ZrtlCFw59cfXsQHieBiw6b8cCKKfP5yJpMEZCFKe29Ns1rTD7TT+uLDmfcda
-    NBX4e34o2/scl+vl4iNSy2XrRLRiRHppqf+qZvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520347323; bh=CQRcwUZh8+R4DVCEJ64l07Z5qpe7SWy2UQ+Gu8
-    n88G8=; b=V+L7GOxCQeWfXFiUh4gH7ZLDICP7iOA+vAGIgbnqjNlnkt9vNM5IwL
-    m2m7RRDFX9lr60Lwty7g95A+GN4Xc8qKMboFyO5d9mA1AB5nWwRCwL8zshPANzoZ
-    LBY12cGfrNCPnLTPUck9/dBDlIt9hLq5ESJJ162ZKT5tOlfXDSgKQFFpEb3RxPDW
-    gZH3z5liBLj4Ac3aqZ0AvQ253S0K+X4r/q3KpZJVs6kN8i4AU7k4pJBPBVarR0xh
-    Y2GD5bHzeRBmxneT1pgC6Wu39g4bkr73lTRSAkCEwDdWKZym9kJGG6oQLy9NBxqS
-    yOky62H84Pa1/IbbY5C/fngPwbNtVTBQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933128AbeCFOlN (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Mar 2018 09:41:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932801AbeCFOlK (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:41:10 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4C621796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AG47ELu5wCdGzMt0+dbm6uLekVMg4crQNJd12rqscGuCpMbZZXrCjahtpwQFc2Fxl4b4up5cOx3uBsiIAsOhF1w2pAw=
-MIME-Version: 1.0
-In-Reply-To: <ae4c741e-d5aa-4a8c-4029-1dff6bef2cdd@arm.com>
-References: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
- <1519897899-8577-2-git-send-email-amelie.delaunay@st.com> <20180306015743.uazy4e5quil2ijy2@rob-hp-laptop>
- <ae4c741e-d5aa-4a8c-4029-1dff6bef2cdd@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 6 Mar 2018 08:40:48 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
-Message-ID: <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
+Return-Path: <amelie.delaunay@st.com>
+X-Google-Smtp-Source: AG47ELuxaEoGmECG2HdTUcL4nZaNdxgvxCnBtbjhFPUVAe821QrCJv7UB+RurV+Ks5g3GB0YP70v
+ARC-Seal: i=1; a=rsa-sha256; t=1521537052; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ULLNzrQLbBDQ+8a9QUYK2Mo6bW0LvT5GM536tGwrln7p3IqK+sD0I62/3bRNgBhE5O
+         hqNe9zKYBagwq8IhEJogQqmwcxYPFkQP3zhi+uS05VRMCpwfVrGOc7fi8VD+yXi0ToYR
+         JS0tCx6Bvl84thIKW0IcECZc3RPZWvmvXKeYsqM1z0KPIxLkKHVTAswSbDUY8aUjf0Mh
+         nlmq/+1S45gJOITQ77xQXkk9rklBZ1SAsbpFOv8tRouEqyxAPz+erSO72RcLGeXRC6Gk
+         cVCeSZqV1s0YNSv8diLBYboaAQtIUquMv9itueg3UGSBJc4Pu3H/o3y0ubVe3pWz+XLY
+         KMuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:content-id:user-agent
+         :content-language:accept-language:in-reply-to:references:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=NtwjvY/33gfROngkXrclcqlDBIfigwxje79thbNWfmA=;
+        b=lXF5w8Dt52CzuoWIL4QBA4zsQg7Eme2k/is+XWD806udtm4lBBEMocLhaIAyPPDc1C
+         FcCmdHz7275lefOXEAujugxP6fF8XUu1C5MzmChBfxSMQAY/2BetnZFv8S5QDb1yuxnf
+         q2HypEtw9bMigEZ2PnJ9xzoaFWYR7XS7o5UnVDQmHgn9KWNkhktzavhDmB7VHEynrTPN
+         DViSJpXENAJkSiug0hgyZJgEYCRWl6POnbyOwQFtDwfU09IOSCqM+hjf/flbWNh/0I9p
+         Hkx/KfgmOPpy3/t1XD/odEvCmhW/cDBRwsECkIb/JE6zoFvnCWqwJiah0ImN/XlOomg1
+         1A2Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Rob Herring <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Alan Stern
+	<stern@rowland.harvard.edu>, Roger Quadros <rogerq@ti.com>,
+        Felipe Balbi
+	<felipe.balbi@linux.intel.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated
+ list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v4 1/2] dt-bindings: usb: ehci: add optional external vbus
  supply property
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Amelie Delaunay <amelie.delaunay@st.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Roger Quadros <rogerq@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Thread-Topic: [PATCH v4 1/2] dt-bindings: usb: ehci: add optional external
+ vbus supply property
+Thread-Index: AQHTsULphq1wm4Q97EiORpkn5P5TKaPCab6AgADMZYCAAAjPAIAVpGQA
+Date: Tue, 20 Mar 2018 09:10:38 +0000
+Message-ID: <e3370b8d-2398-b4c0-c57c-978abd75c0f2@st.com>
+References: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
+ <1519897899-8577-2-git-send-email-amelie.delaunay@st.com>
+ <20180306015743.uazy4e5quil2ijy2@rob-hp-laptop>
+ <ae4c741e-d5aa-4a8c-4029-1dff6bef2cdd@arm.com>
+ <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <78844BF5406B594585633567020A4221@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_03:,,
+ signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593728540425341885?=
+X-GMAIL-MSGID: =?utf-8?q?1595447235973512134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 8:09 AM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 06/03/18 01:57, Rob Herring wrote:
->>
->> On Thu, Mar 01, 2018 at 10:51:38AM +0100, Amelie Delaunay wrote:
->>>
->>> On some boards, especially when vbus supply requires large current,
->>> and the charge pump on the PHY isn't enough, an external vbus power
->>> switch
->>> per port may be used.
->>> Add portN_vbus-supply property to usb-ehci bindings. As the number of
->>> ports
->>> depends on the ehci controller, and the port on which an external vbus
->>> supply depends on the platform, <portN> is used to make it generic.
->>>
->>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->>> ---
->>>   Documentation/devicetree/bindings/usb/usb-ehci.txt | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/usb-ehci.txt
->>> b/Documentation/devicetree/bindings/usb/usb-ehci.txt
->>> index 3efde12..cd576db 100644
->>> --- a/Documentation/devicetree/bindings/usb/usb-ehci.txt
->>> +++ b/Documentation/devicetree/bindings/usb/usb-ehci.txt
->>> @@ -19,6 +19,7 @@ Optional properties:
->>>    - phys : phandle + phy specifier pair
->>>    - phy-names : "usb"
->>>    - resets : phandle + reset specifier pair
->>> + - portN_vbus-supply : phandle of regulator supplying vbus for port N
->>
->>
->> Just make this an array with the index being the port (and drop
->> "portN_").
->
->
-> Does that still work if there is an external supply for port 1 but none for
-> port 0? I believe that was brought up as a possibility before.
-
-Yes, if you use 0 or -1 to skip over an index.
-
-Really, this should go in the connector node instead because Vbus is
-supplied to the connector, not the host controller. The connector
-binding is on its way into mainline.
-
-Rob
+DQoNCk9uIDAzLzA2LzIwMTggMDM6NDAgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBUdWUs
+IE1hciA2LCAyMDE4IGF0IDg6MDkgQU0sIFJvYmluIE11cnBoeSA8cm9iaW4ubXVycGh5QGFybS5j
+b20+IHdyb3RlOg0KPj4gT24gMDYvMDMvMTggMDE6NTcsIFJvYiBIZXJyaW5nIHdyb3RlOg0KPj4+
+DQo+Pj4gT24gVGh1LCBNYXIgMDEsIDIwMTggYXQgMTA6NTE6MzhBTSArMDEwMCwgQW1lbGllIERl
+bGF1bmF5IHdyb3RlOg0KPj4+Pg0KPj4+PiBPbiBzb21lIGJvYXJkcywgZXNwZWNpYWxseSB3aGVu
+IHZidXMgc3VwcGx5IHJlcXVpcmVzIGxhcmdlIGN1cnJlbnQsDQo+Pj4+IGFuZCB0aGUgY2hhcmdl
+IHB1bXAgb24gdGhlIFBIWSBpc24ndCBlbm91Z2gsIGFuIGV4dGVybmFsIHZidXMgcG93ZXINCj4+
+Pj4gc3dpdGNoDQo+Pj4+IHBlciBwb3J0IG1heSBiZSB1c2VkLg0KPj4+PiBBZGQgcG9ydE5fdmJ1
+cy1zdXBwbHkgcHJvcGVydHkgdG8gdXNiLWVoY2kgYmluZGluZ3MuIEFzIHRoZSBudW1iZXIgb2YN
+Cj4+Pj4gcG9ydHMNCj4+Pj4gZGVwZW5kcyBvbiB0aGUgZWhjaSBjb250cm9sbGVyLCBhbmQgdGhl
+IHBvcnQgb24gd2hpY2ggYW4gZXh0ZXJuYWwgdmJ1cw0KPj4+PiBzdXBwbHkgZGVwZW5kcyBvbiB0
+aGUgcGxhdGZvcm0sIDxwb3J0Tj4gaXMgdXNlZCB0byBtYWtlIGl0IGdlbmVyaWMuDQo+Pj4+DQo+
+Pj4+IFNpZ25lZC1vZmYtYnk6IEFtZWxpZSBEZWxhdW5heSA8YW1lbGllLmRlbGF1bmF5QHN0LmNv
+bT4NCj4+Pj4gLS0tDQo+Pj4+ICAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91
+c2IvdXNiLWVoY2kudHh0IHwgMSArDQo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
+bigrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL3VzYi91c2ItZWhjaS50eHQNCj4+Pj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvdXNiL3VzYi1laGNpLnR4dA0KPj4+PiBpbmRleCAzZWZkZTEyLi5jZDU3NmRiIDEw
+MDY0NA0KPj4+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3Vz
+Yi1laGNpLnR4dA0KPj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+dXNiL3VzYi1laGNpLnR4dA0KPj4+PiBAQCAtMTksNiArMTksNyBAQCBPcHRpb25hbCBwcm9wZXJ0
+aWVzOg0KPj4+PiAgICAgLSBwaHlzIDogcGhhbmRsZSArIHBoeSBzcGVjaWZpZXIgcGFpcg0KPj4+
+PiAgICAgLSBwaHktbmFtZXMgOiAidXNiIg0KPj4+PiAgICAgLSByZXNldHMgOiBwaGFuZGxlICsg
+cmVzZXQgc3BlY2lmaWVyIHBhaXINCj4+Pj4gKyAtIHBvcnROX3ZidXMtc3VwcGx5IDogcGhhbmRs
+ZSBvZiByZWd1bGF0b3Igc3VwcGx5aW5nIHZidXMgZm9yIHBvcnQgTg0KPj4+DQo+Pj4NCj4+PiBK
+dXN0IG1ha2UgdGhpcyBhbiBhcnJheSB3aXRoIHRoZSBpbmRleCBiZWluZyB0aGUgcG9ydCAoYW5k
+IGRyb3ANCj4+PiAicG9ydE5fIikuDQo+Pg0KPj4NCj4+IERvZXMgdGhhdCBzdGlsbCB3b3JrIGlm
+IHRoZXJlIGlzIGFuIGV4dGVybmFsIHN1cHBseSBmb3IgcG9ydCAxIGJ1dCBub25lIGZvcg0KPj4g
+cG9ydCAwPyBJIGJlbGlldmUgdGhhdCB3YXMgYnJvdWdodCB1cCBhcyBhIHBvc3NpYmlsaXR5IGJl
+Zm9yZS4NCj4gDQo+IFllcywgaWYgeW91IHVzZSAwIG9yIC0xIHRvIHNraXAgb3ZlciBhbiBpbmRl
+eC4NCj4gDQo+IFJlYWxseSwgdGhpcyBzaG91bGQgZ28gaW4gdGhlIGNvbm5lY3RvciBub2RlIGlu
+c3RlYWQgYmVjYXVzZSBWYnVzIGlzDQo+IHN1cHBsaWVkIHRvIHRoZSBjb25uZWN0b3IsIG5vdCB0
+aGUgaG9zdCBjb250cm9sbGVyLiBUaGUgY29ubmVjdG9yDQo+IGJpbmRpbmcgaXMgb24gaXRzIHdh
+eSBpbnRvIG1haW5saW5lLg0KPiANCj4gUm9iDQo+IA0KDQpOb3Qgc3VyZSB0byBjYXRjaCB3aGF0
+IHlvdSBtZWFuIGJ5ICJtYWtlIHRoaXMgYW4gYXJyYXkiIGJlY2F1c2UgDQpyZWd1bGF0b3IgZnJh
+bWV3b3JrIGltcG9zZXMgPG5hbWU+LXN1cHBseTogcGhhbmRsZSB0byB0aGUgcmVndWxhdG9yIG5v
+ZGUuDQoNCkkgbWF5IGhhdmUgbWlzc2VkIHNvbWV0aGluZyBhcm91bmQgcmVndWxhdG9yIGNvbnN1
+bWVycyBtYW5hZ2VtZW50ID8NCg0KRG8geW91IG1lYW50IHNvbWV0aGluZyBsaWtlDQp2YnVzLXN1
+cHBseSA9IDwmcmVnX3BvcnQwICZyZWdfcG9ydDE+Ow0Kb3IgaW4gY2FzZSB0aGVyZSBpcyBhbiBl
+eHRlcm5hbCBzdXBwbHkgZm9yIHBvcnQgMSBidXQgbm9uZSBmb3IgcG9ydCAwDQp2YnVzLXN1cHBs
+eSA9IDwtMSAmcmVnX3BvcnQxPjsNCj8NCklmIHllcywgYSBuZXcgQVBJIGlzIG5lZWRlZCBpbiBy
+ZWd1bGF0b3IgZnJhbWV3b3JrIHRvIGdldCBhbiBhcnJheSBvZiANCnJlZ3VsYXRvcnMgPw0KDQoN
+ClJlZ2FyZHMsDQpBbWVsaWU=
