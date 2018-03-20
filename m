@@ -1,56 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeCTPYH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:24:07 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46832 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeCTPYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:24:05 -0400
-X-Google-Smtp-Source: AG47ELvqOekICeeO1kRY01idekjtQ5u1tmGEsxzP22G91yHA2VkrnaA6Xfz/NWo6ACEMh8iJzj3p8w==
-Date: Tue, 20 Mar 2018 09:23:59 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
- weakly-ordered archs
-Message-ID: <20180320152359.GL19744@ziepe.ca>
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
- <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
- <20180320144801.GE19744@ziepe.ca>
- <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
- <3e6cfa25-6b9f-24ff-499a-6df2740b658b@codeaurora.org>
+        id S1751502AbeCTPZx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:25:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40598 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeCTPZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:25:52 -0400
+Date: Tue, 20 Mar 2018 16:25:50 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 5/6] mm/vmscan: Don't change pgdat state on base of a
+ single LRU list state.
+Message-ID: <20180320152550.GZ23100@dhcp22.suse.cz>
+References: <20180315164553.17856-1-aryabinin@virtuozzo.com>
+ <20180315164553.17856-5-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3e6cfa25-6b9f-24ff-499a-6df2740b658b@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180315164553.17856-5-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 10:08:16AM -0500, Sinan Kaya wrote:
+On Thu 15-03-18 19:45:52, Andrey Ryabinin wrote:
+> We have separate LRU list for each memory cgroup. Memory reclaim iterates
+> over cgroups and calls shrink_inactive_list() every inactive LRU list.
+> Based on the state of a single LRU shrink_inactive_list() may flag
+> the whole node as dirty,congested or under writeback. This is obviously
+> wrong and hurtful. It's especially hurtful when we have possibly
+> small congested cgroup in system. Than *all* direct reclaims waste time
+> by sleeping in wait_iff_congested().
 
-> Never mind, it will break some architectures. I'll only change the first one.
+I assume you have seen this in real workloads. Could you be more
+specific about how you noticed the problem?
+
+> Sum reclaim stats across all visited LRUs on node and flag node as dirty,
+> congested or under writeback based on that sum. This only fixes the
+> problem for global reclaim case. Per-cgroup reclaim will be addressed
+> separately by the next patch.
 > 
->  (1) On some systems, I/O stores are not strongly ordered across all CPUs, and
->      so for _all_ general drivers locks should be used and mmiowb() must be
->      issued prior to unlocking the critical section.
+> This change will also affect systems with no memory cgroups. Reclaimer
+> now makes decision based on reclaim stats of the both anon and file LRU
+> lists. E.g. if the file list is in congested state and get_scan_count()
+> decided to reclaim some anon pages, reclaimer will start shrinking
+> anon without delay in wait_iff_congested() like it was before. It seems
+> to be a reasonable thing to do. Why waste time sleeping, before reclaiming
+> anon given that we going to try to reclaim it anyway?
 
-I think the kernel could do well to have a spin_unlock_mmiowb()
-function. We have this patern quite a bit.
+Well, if we have few anon pages in the mix then we stop throttling the
+reclaim, I am afraid. I am worried this might get us kswapd hogging CPU
+problems back.
 
-Arches like x86 can just make it == spin_unlock, while PPC and ARM can
-add their extra barriers.
+[...]
+> @@ -2513,6 +2473,9 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  		};
+>  		unsigned long node_lru_pages = 0;
+>  		struct mem_cgroup *memcg;
+> +		struct reclaim_stat stat = {};
+> +
+> +		sc->stat = &stat;
+>  
+>  		nr_reclaimed = sc->nr_reclaimed;
+>  		nr_scanned = sc->nr_scanned;
+> @@ -2579,6 +2542,58 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  		if (sc->nr_reclaimed - nr_reclaimed)
+>  			reclaimable = true;
+>  
+> +		/*
+> +		 * If reclaim is isolating dirty pages under writeback, it implies
+> +		 * that the long-lived page allocation rate is exceeding the page
+> +		 * laundering rate. Either the global limits are not being effective
+> +		 * at throttling processes due to the page distribution throughout
+> +		 * zones or there is heavy usage of a slow backing device. The
+> +		 * only option is to throttle from reclaim context which is not ideal
+> +		 * as there is no guarantee the dirtying process is throttled in the
+> +		 * same way balance_dirty_pages() manages.
+> +		 *
+> +		 * Once a node is flagged PGDAT_WRITEBACK, kswapd will count the number
+> +		 * of pages under pages flagged for immediate reclaim and stall if any
+> +		 * are encountered in the nr_immediate check below.
+> +		 */
+> +		if (stat.nr_writeback && stat.nr_writeback == stat.nr_taken)
+> +			set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+> +
+> +		/*
+> +		 * Legacy memcg will stall in page writeback so avoid forcibly
+> +		 * stalling here.
+> +		 */
+> +		if (sane_reclaim(sc)) {
+> +			/*
+> +			 * Tag a node as congested if all the dirty pages scanned were
+> +			 * backed by a congested BDI and wait_iff_congested will stall.
+> +			 */
+> +			if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
+> +				set_bit(PGDAT_CONGESTED, &pgdat->flags);
+> +
+> +			/* Allow kswapd to start writing pages during reclaim. */
+> +			if (stat.nr_unqueued_dirty == stat.nr_taken)
+> +				set_bit(PGDAT_DIRTY, &pgdat->flags);
+> +
+> +			/*
+> +			 * If kswapd scans pages marked marked for immediate
+> +			 * reclaim and under writeback (nr_immediate), it implies
+> +			 * that pages are cycling through the LRU faster than
+> +			 * they are written so also forcibly stall.
+> +			 */
+> +			if (stat.nr_immediate)
+> +				congestion_wait(BLK_RW_ASYNC, HZ/10);
+> +		}
+> +
+> +		/*
+> +		 * Stall direct reclaim for IO completions if underlying BDIs and node
+> +		 * is congested. Allow kswapd to continue until it starts encountering
+> +		 * unqueued dirty pages or cycling through the LRU too quickly.
+> +		 */
+> +		if (!sc->hibernation_mode && !current_is_kswapd() &&
+> +		    current_may_throttle())
+> +			wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
+> +
+>  	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+>  					 sc->nr_scanned - nr_scanned, sc));
 
-Then we can safely and efficiently use _realxed within such a
-spinlock region.
-
-Jason
+Why didn't you put the whole thing after the loop?
+-- 
+Michal Hocko
+SUSE Labs
