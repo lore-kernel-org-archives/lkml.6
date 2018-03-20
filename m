@@ -1,75 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753449AbeCTNjB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:39:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753170AbeCTNjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:39:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642E021716
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 20 Mar 2018 10:38:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jan-Oliver Kaiser <janno@mpi-sws.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, milian.wolff@kdab.com
-Subject: Re: `perf report` about 1000x(!) slower in linux 4.15
-Message-ID: <20180320133851.GB3784@kernel.org>
-References: <c6aa77d0-3d0c-bd03-aaa9-f1c33eff277f@mpi-sws.org>
+        id S1753483AbeCTNmz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:42:55 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55286 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753256AbeCTNmx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:42:53 -0400
+X-Google-Smtp-Source: AG47ELu5eMyvldaBb6ZpsT0gxp6owapWugSaMEW9Y13yuojHjXAVwmYGZ8VGJ1R0S19zJuGM34PzOw==
+Subject: Re: [PATCH v2] venus: vdec: fix format enumeration
+To: Alexandre Courbot <acourbot@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180319093229.76253-1-acourbot@chromium.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <35d51db4-bbca-e76a-abff-ed74172a5fe2@linaro.org>
+Date: Tue, 20 Mar 2018 15:42:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6aa77d0-3d0c-bd03-aaa9-f1c33eff277f@mpi-sws.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180319093229.76253-1-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 20, 2018 at 12:57:29PM +0100, Jan-Oliver Kaiser escreveu:
-> After upgrading my system to linux 4.15 (from 4.14), `perf report` became
-> unusably slow. I estimate a decrease in performance by a factor of
-> 100x-1000x. Some 21M perf.data files take about 30 seconds in the
-> "Processing events" step.  `git bisect` points to
- 
-> commit d8a88dd243a170a226aba33e7c53704db2f82aa6 (HEAD, refs/bisect/bad)
-> Author: Milian Wolff <milian.wolff@kdab.com>
->     perf util: Enable handling of inlined frames by default
- 
-> The slowdown can be worked around with `--no-inline`. If the slowdown is
-> expected, I would suggest reverting the default setting here or maybe
-> printing a warning if a lot of time is spent on this feature.
- 
-> Do you need any additional information about my system or the recorded data
-> I am looking at?
+Hi Alex,
 
-Can you try with the latest perf tool? 
+Thanks!
 
-[acme@jouet perf]$ make perf-tarxz-src-pkg ; ls -la perf-4*
-  TAR
-  PERF_VERSION = 4.16.rc6.gecd380
--rw-rw-r--. 1 acme acme 1323568 Mar 20 10:30 perf-4.16.0-rc6.tar.xz
-[acme@jouet perf]$
+On 03/19/2018 11:32 AM, Alexandre Courbot wrote:
+> find_format_by_index() stops enumerating formats as soon as the index
+> matches, and returns NULL if venus_helper_check_codec() finds out that
+> the format is not supported. This prevents formats to be properly
+> enumerated if a non-supported format is present, as the enumeration will
+> end with it.
+> 
+> Fix this by moving the call to venus_helper_check_codec() into the loop,
+> and keep enumerating when it fails.
+> 
+> Fixes: 29f0133ec6 media: venus: use helper function to check supported codecs
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 13 +++++++------
+>  drivers/media/platform/qcom/venus/venc.c | 13 +++++++------
+>  2 files changed, 14 insertions(+), 12 deletions(-)
 
-With a recently checked out kernel sources, or, as a convenience, I'm
-pushing this to:
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-  http://vger.kernel.org/~acme/perf/perf-4.16.0-rc6.tar.xz
-
-You just expand it and then:
-
-[acme@jouet tmp]$ tar xf perf-4.16.0-rc6.tar.xz 
-[acme@jouet tmp]$ cd perf-4.16.0-rc6/
-[acme@jouet perf-4.16.0-rc6]$ make -C tools/perf install-bin
-
-
-And check if the problem is present there as well.
-
-If it is, please tell us what is your distro, the output of:
-
-perf report --header-only
-
-Thanks,
-
-- Arnaldo
+-- 
+regards,
+Stan
