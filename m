@@ -1,221 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeCTWEx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:04:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45948 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751390AbeCTWEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:04:47 -0400
-Date: Tue, 20 Mar 2018 16:04:45 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
-Subject: Re: [PATCH] vfio iommu type1: improve memory pinning process for
- raw PFN mapping
-Message-ID: <20180320160445.4cb838cc@t450s.home>
-In-Reply-To: <20180320153323.41c58c19@t450s.home>
-References: <7F93BB33-4ABF-468F-8814-78DE9D23FA08@linux.alibaba.com>
-        <20180320153323.41c58c19@t450s.home>
+        id S1751610AbeCTWHM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:07:12 -0400
+Received: from www62.your-server.de ([213.133.104.62]:38322 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeCTWHK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:07:10 -0400
+Subject: Re: [PATCH] test_bpf: Fix testing with CONFIG_BPF_JIT_ALWAYS_ON=y on
+ other arches
+To: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+References: <20180320125851.19650-1-cascardo@canonical.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <46037c83-d612-63f7-00d2-d37a35ca4fe7@iogearbox.net>
+Date: Tue, 20 Mar 2018 23:07:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180320125851.19650-1-cascardo@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018 15:33:23 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+On 03/20/2018 01:58 PM, Thadeu Lima de Souza Cascardo wrote:
+> Function bpf_fill_maxinsns11 is designed to not be able to be JITed on
+> x86_64. So, it fails when CONFIG_BPF_JIT_ALWAYS_ON=y, and
+> commit 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when
+> CONFIG_BPF_JIT_ALWAYS_ON=y") makes sure that failure is detected on that
+> case.
+> 
+> However, it does not fail on other architectures, which have a different
+> JIT compiler design. So, test_bpf has started to fail to load on those.
+> 
+> After this fix, test_bpf loads fine on both x86_64 and ppc64el.
+> 
+> Fixes: 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when CONFIG_BPF_JIT_ALWAYS_ON=y")
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-> On Mon, 19 Mar 2018 10:30:24 +0800
-> "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com> wrote:
-> 
-> > When using vfio to pass through a PCIe device (e.g. a GPU card) that
-> > has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
-> > pinning because PFNs of PCI BAR are not backed by struct page, and
-> > the corresponding VMA has flag VM_PFNMAP.
-> > 
-> > With this change, when pinning a region which is a raw PFN mapping,
-> > it can skip unnecessary user memory pinning process, and thus, can
-> > significantly improve VM's boot up time when passing through devices
-> > via VFIO. In my test on a Xeon E5 2.6GHz, the time mapping a 16GB
-> > BAR was reduced from about 0.4s to 1.5us.
-> > 
-> > Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
-> >  1 file changed, 14 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > index 45657e2b1ff7..0658f35318b8 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> >  {
-> >         unsigned long pfn = 0;
-> >         long ret, pinned = 0, lock_acct = 0;
-> > -       bool rsvd;
-> >         dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
-> > 
-> >         /* This code path is only user initiated */
-> > @@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> >         if (ret)
-> >                 return ret;
-> > 
-> > +       if (is_invalid_reserved_pfn(*pfn_base)) {
-> > +               struct vm_area_struct *vma;
-> > +               down_read(&current->mm->mmap_sem);
-> > +               vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
-> > +               pinned = min(npage, (long)vma_pages(vma));
-> > +               up_read(&current->mm->mmap_sem);
-> > +               return pinned;
-> > +       }
-> > +
-> >         pinned++;
-> > -       rsvd = is_invalid_reserved_pfn(*pfn_base);
-> > 
-> >         /*
-> >          * Reserved pages aren't counted against the user, externally pinned
-> >          * pages are already counted against the user.
-> >          */
-> > -       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> > +       if (!vfio_find_vpfn(dma, iova)) {
-> >                 if (!lock_cap && current->mm->locked_vm + 1 > limit) {
-> >                         put_pfn(*pfn_base, dma->prot);
-> >                         pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-> > @@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> >                 if (ret)
-> >                         break;
-> > 
-> > -               if (pfn != *pfn_base + pinned ||
-> > -                   rsvd != is_invalid_reserved_pfn(pfn)) {
-> > +               if (pfn != *pfn_base + pinned) {
-> >                         put_pfn(pfn, dma->prot);
-> >                         break;
-> >                 }
-> > 
-> > -               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> > +               if (!vfio_find_vpfn(dma, iova)) {
-> >                         if (!lock_cap &&
-> >                             current->mm->locked_vm + lock_acct + 1 > limit) {
-> >                                 put_pfn(pfn, dma->prot);
-> > @@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> > 
-> >  unpin_out:
-> >         if (ret) {
-> > -               if (!rsvd) {
-> > -                       for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> > -                               put_pfn(pfn, dma->prot);
-> > -               }
-> > +               for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> > +                       put_pfn(pfn, dma->prot);
-> > 
-> >                 return ret;
-> >         }  
-> 
-> Hi Jason,
-> 
-> Something is wrong with your mail setup, the patch looks normal above,
-> but when I view the source or save it to try to apply it, the diff is
-> corrupt, as below.  It looks like maybe you're pasting the patch into
-> your mailer and it's wrapping lines (ending with '=') and actual '='
-> are replaced with '=3D' and tabs are converted to spaces.  Please fix
-> your mailer and resend.  Thanks,
-
-Actually, it's even a little more strange, the copies I received via
-the kvm and lkml mailing lists don't have the line wrapping and
-character conversion, but the tab to space conversion is still there,
-which is what caused me to suspect a copy-paste into the mailer.
-Between the headers, I see the direct copy has:
-
-Content-Transfer-Encoding: quoted-printable
-
-While the list copy has:
-
-Content-Transfer-Encoding: 8BIT
-
-Perhaps the list is automatically fixing some part of the problem.
-Thanks,
-
-Alex
-
-> diff --git a/drivers/vfio/vfio_iommu_type1.c =
-> b/drivers/vfio/vfio_iommu_type1.c
-> index 45657e2b1ff7..0658f35318b8 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-> *dma, unsigned long vaddr,
->  {
->         unsigned long pfn =3D 0;
->         long ret, pinned =3D 0, lock_acct =3D 0;
-> -       bool rsvd;
->         dma_addr_t iova =3D vaddr - dma->vaddr + dma->iova;
-> 
->         /* This code path is only user initiated */
-> @@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-> *dma, unsigned long vaddr,
->         if (ret)
->                 return ret;
-> 
-> +       if (is_invalid_reserved_pfn(*pfn_base)) {
-> +               struct vm_area_struct *vma;
-> +               down_read(&current->mm->mmap_sem);
-> +               vma =3D find_vma_intersection(current->mm, vaddr, vaddr =
-> + 1);
-> +               pinned =3D min(npage, (long)vma_pages(vma));
-> +               up_read(&current->mm->mmap_sem);
-> +               return pinned;
-> +       }
-> +
->         pinned++;
-> -       rsvd =3D is_invalid_reserved_pfn(*pfn_base);
-> 
->         /*
->          * Reserved pages aren't counted against the user, externally =
-> pinned
->          * pages are already counted against the user.
->          */
-> -       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +       if (!vfio_find_vpfn(dma, iova)) {
->                 if (!lock_cap && current->mm->locked_vm + 1 > limit) {
->                         put_pfn(*pfn_base, dma->prot);
->                         pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", =
-> __func__,
-> @@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-> *dma, unsigned long vaddr,
->                 if (ret)
->                         break;
-> 
-> -               if (pfn !=3D *pfn_base + pinned ||
-> -                   rsvd !=3D is_invalid_reserved_pfn(pfn)) {
-> +               if (pfn !=3D *pfn_base + pinned) {
->                         put_pfn(pfn, dma->prot);
->                         break;
->                 }
-> 
-> -               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +               if (!vfio_find_vpfn(dma, iova)) {
->                         if (!lock_cap &&
->                             current->mm->locked_vm + lock_acct + 1 > =
-> limit) {
->                                 put_pfn(pfn, dma->prot);
-> @@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma =
-> *dma, unsigned long vaddr,
-> 
->  unpin_out:
->         if (ret) {
-> -               if (!rsvd) {
-> -                       for (pfn =3D *pfn_base ; pinned ; pfn++, =
-> pinned--)
-> -                               put_pfn(pfn, dma->prot);
-> -               }
-> +               for (pfn =3D *pfn_base ; pinned ; pfn++, pinned--)
-> +                       put_pfn(pfn, dma->prot);
-> 
->                 return ret;
->         }
-> --
-> 2.13.6
-> 
-> 
+Yep, agree. Applied to bpf tree, thanks Thadeu!
