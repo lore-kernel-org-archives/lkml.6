@@ -1,130 +1,161 @@
-Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521619856; cv=none;
+Return-Path: <dev@g0hl1n.net>
+X-Google-Smtp-Source: AG47ELuTNgxouB0rW9HGNwMwXxYx+SwE8f3e1Zzv7N8ahIvBC+JNuOZqHBTVN0uTdiUJZg/TJQDI
+ARC-Seal: i=1; a=rsa-sha256; t=1521541066; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZSQLiM3hU0rfdP5NeGt5e4lo7Hw1ZZQS3iqgM5hdpHaDPazlSmS5aOtR6iaM2RW8sC
-         sNeb4VGH+j2CiFPVBTf4jwzfSqYPky7gGL6Zt/qk3I1Vq3AIDSXK/gO7MTEXR7lbAUwz
-         4DKTI6nHCXyXNWUphnrbdkdVgDBRjYu8LxCyPJN5G1daNE9qlRc23ql3CVMAV31wZLBa
-         8ZIPaX/MqUgkzUZE2L4nSou3XAYTwJKkmwPmmPO4kkKtndrYX7MmRHi953ELvkS7B/Xi
-         +q364H6MsrkRC7Tqkts+LDpd6ry7BMbuX4jMPwcMoZNYHvzMcs3lryTSfRqyS1a63FWA
-         KcaQ==
+        b=pT/anwISch/6+/i6AnfbyE72Cj2r6vx+482FH8OM/NZfU3zQB92h3ZAB8mKX1imhMd
+         aflUuG4J5/ym0LpWSilkw1MbyMQtCtqL/Fw7GNoOzF4UdlwelUc9eal226AGNdpqO19B
+         k1Qxo0VuZ1rBB9jbV3Ge61wCxFhggGO6Ey2Ui4qxfWIPT8W146nDRJAnIpQhUjQ6Be5J
+         d4ToBlWNdzkpAaW4tXrbcyiLohZKbpS9eMhaBRKEKDCZsp4UbzyLnEMHXhEA4ew87UXl
+         cSf9YlVo2r4shWonSPDrRaJMr+KMjbVNqlG6N5S96UkSPvWsG0ASGEJ/vBIf1BCRhQer
+         tl/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=RABvO65frYI8v2NwjIigZ+5RwFAonwVr7w9ovXuZHJA=;
-        b=gel82xBCe0nYs1Pr0nS+L6GIyGFQsxWR8nDV3GKWthnG7ORSaHrWGQVoSYRMR6lvkk
-         fKI2gtkmjnxe+0Ri44FygXRBhp+a4AqR2mBq0Fa44TTVnt78kWHAPwkv2eP/M9s6XcYv
-         dyHlg7iwbv4/Jg+lukOBJDVVh94fjZKDIhMx1XnYvkOnKlJzXr1AX9igiaPPafi4pg68
-         ++3G/c40OyySXGngDbJgHi3BrBi5k6ZtJYBZm2XX/I5MJGSYLlVEZW5ZMP2c+x/b73Sn
-         i/629MX4ylwgKzKZfB1uB2FwIlG7ss5IARaq2OZDmIAVuwwYY7GWVerQaZ6RtfT5aOkn
-         hNNg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=k4fqDmPnG0M/4+OL0GA0fJMzQig/KgOeMOsDIowxG/8=;
+        b=zQsvEYlHmrBbRJ2Nt6niCePade4p3JZ70/7Q/k3ZwJhDBRDsytvNFoRq+LDjk7witc
+         f/2Ij3ywI6uYekpGnY5nEDPZaVInK5RPqTs0Cebmn+m7nQcMOcmjZWNTO26XilOzrfHH
+         g9DXHxcSH8aiqwwBQjtsKL+/okt0xDyzcVokaJ7cxdFYFy5GpSbbs9GV/l9KaqbbKE45
+         Tg3nx4uHXBT7FeNZSgVuwN+T63jzWuk2FjKgX2lrTaTr9QA6QI9J3QHYGQ1bUTjJ7H+F
+         oPytIzfMNXOJbWw0Dot43RZi5pQz6V/9TdCIyWeagOCYvUDBFrfmWXPKvJg05kIbXjrU
+         8zvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hR3gniP3;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=neutral (google.com: 109.237.142.238 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hR3gniP3;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELs9nWrCPrIAgj9ROK6T84t6hMj1hs0pw5jaxYJZVI2VSb2B9jMGPHDpn93sXL1ZimAoohPZxA==
-From: Jia He <hejianet@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will.deacon@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	AKASHI Takahiro <takahiro.akashi@linaro.org>,
-	Gioh Kim <gi-oh.kim@profitbricks.com>,
-	Steven Sistare <steven.sistare@oracle.com>,
-	Daniel Vacek <neelx@redhat.com>,
-	Eugeniu Rosca <erosca@de.adit-jv.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	James Morse <james.morse@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Steve Capper <steve.capper@arm.com>,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kemi Wang <kemi.wang@intel.com>,
-	Petr Tesarik <ptesarik@suse.com>,
-	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Nikolay Borisov <nborisov@suse.com>,
-	Jia He <hejianet@gmail.com>,
-	Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH 3/4] arm64: introduce pfn_valid_region()
-Date: Wed, 21 Mar 2018 01:09:55 -0700
-Message-Id: <1521619796-3846-4-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521619796-3846-1-git-send-email-hejianet@gmail.com>
-References: <1521619796-3846-1-git-send-email-hejianet@gmail.com>
+       spf=neutral (google.com: 109.237.142.238 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
+X-Spam-DCC: : 
+From: Richard Leitner <dev@g0hl1n.net>
+To: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	stern@rowland.harvard.edu,
+	linux@roeck-us.net,
+	mathias.nyman@linux.intel.com,
+	johan@kernel.org,
+	felipe.balbi@linux.intel.com,
+	ekorenevsky@gmail.com,
+	peter.chen@nxp.com,
+	drake@endlessm.com,
+	joe@perches.com,
+	Richard Leitner <richard.leitner@skidata.com>
+Subject: [PATCH v4] usb: core: introduce per-port over-current counters
+Date: Tue, 20 Mar 2018 11:17:13 +0100
+Message-Id: <20180320101713.5650-1-dev@g0hl1n.net>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595534062221218011?=
-X-GMAIL-MSGID: =?utf-8?q?1595534062221218011?=
+X-GMAIL-THRID: =?utf-8?q?1595451444613956744?=
+X-GMAIL-MSGID: =?utf-8?q?1595451444613956744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the preparation for further optimizing in early_pfn_valid
-on arm64.
+From: Richard Leitner <richard.leitner@skidata.com>
 
-Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+For some userspace applications information on the number of
+over-current conditions at specific USB hub ports is relevant.
+
+In our case we have a series of USB hardware (using the cp210x driver)
+which communicates using a proprietary protocol. These devices sometimes
+trigger an over-current situation on some hubs. In case of such an
+over-current situation the USB devices offer an interface for reducing
+the max used power. As these conditions are quite rare and imply
+performance reductions of the device we don't want to reduce the max
+power always.
+
+Therefore give user-space applications the possibility to react
+adequately by introducing an over_current_counter in the usb port struct
+which is exported via sysfs.
+
+Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 ---
- arch/arm64/include/asm/page.h |  3 ++-
- arch/arm64/mm/init.c          | 19 ++++++++++++++++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+Changes v4:
+	- reintroduce forgotten Changelog
+Changes v3:
+	- Improve sysfs file description as recommended by greg k-h
+Changes v2:
+	- rename oc_count to over_current_count
+	- add entry to Documentation/ABI
+	- add detailled description to commit message
+---
+ Documentation/ABI/testing/sysfs-bus-usb | 10 ++++++++++
+ drivers/usb/core/hub.c                  |  4 +++-
+ drivers/usb/core/hub.h                  |  1 +
+ drivers/usb/core/port.c                 | 10 ++++++++++
+ 4 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-index 60d02c8..da2cba3 100644
---- a/arch/arm64/include/asm/page.h
-+++ b/arch/arm64/include/asm/page.h
-@@ -38,7 +38,8 @@ extern void clear_page(void *to);
- typedef struct page *pgtable_t;
+diff --git a/Documentation/ABI/testing/sysfs-bus-usb b/Documentation/ABI/testing/sysfs-bus-usb
+index 0bd731cbb50c..c702c78f24d8 100644
+--- a/Documentation/ABI/testing/sysfs-bus-usb
++++ b/Documentation/ABI/testing/sysfs-bus-usb
+@@ -189,6 +189,16 @@ Description:
+ 		The file will read "hotplug", "wired" and "not used" if the
+ 		information is available, and "unknown" otherwise.
  
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
--extern int pfn_valid(unsigned long);
-+extern int pfn_valid(unsigned long pfn);
-+extern int pfn_valid_region(unsigned long pfn, int *last_idx);
- #endif
++What:		/sys/bus/usb/devices/.../(hub interface)/portX/over_current_count
++Date:		February 2018
++Contact:	Richard Leitner <richard.leitner@skidata.com>
++Description:
++		Most hubs are able to detect over-current situations on their
++		ports and report them to the kernel. This attribute is to expose
++		the number of over-current situation occurred on a specific port
++		to user space. This file will contain an unsigned 32 bit value
++		which wraps to 0 after its maximum is reached.
++
+ What:		/sys/bus/usb/devices/.../(hub interface)/portX/usb3_lpm_permit
+ Date:		November 2015
+ Contact:	Lu Baolu <baolu.lu@linux.intel.com>
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index c5c1f6cf3228..6f779b518e75 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5104,8 +5104,10 @@ static void port_event(struct usb_hub *hub, int port1)
  
- #include <asm/memory.h>
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 00e7b90..1d9842e 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -290,7 +290,24 @@ int pfn_valid(unsigned long pfn)
- 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
+ 	if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
+ 		u16 status = 0, unused;
++		port_dev->over_current_count++;
+ 
+-		dev_dbg(&port_dev->dev, "over-current change\n");
++		dev_dbg(&port_dev->dev, "over-current change #%u\n",
++			port_dev->over_current_count);
+ 		usb_clear_port_feature(hdev, port1,
+ 				USB_PORT_FEAT_C_OVER_CURRENT);
+ 		msleep(100);	/* Cool down */
+diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
+index 2a700ccc868c..78d7f4dad618 100644
+--- a/drivers/usb/core/hub.h
++++ b/drivers/usb/core/hub.h
+@@ -100,6 +100,7 @@ struct usb_port {
+ 	unsigned int is_superspeed:1;
+ 	unsigned int usb3_lpm_u1_permit:1;
+ 	unsigned int usb3_lpm_u2_permit:1;
++	u32 over_current_count;
+ };
+ 
+ #define to_usb_port(_dev) \
+diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+index 1a01e9ad3804..6979bde87d31 100644
+--- a/drivers/usb/core/port.c
++++ b/drivers/usb/core/port.c
+@@ -41,6 +41,15 @@ static ssize_t connect_type_show(struct device *dev,
  }
- EXPORT_SYMBOL(pfn_valid);
--#endif
-+
-+int pfn_valid_region(unsigned long pfn, int *last_idx)
-+{
-+	struct memblock_type *type = &memblock.memory;
-+
-+	if (*last_idx != -1 && pfn < PFN_DOWN(type->regions[*last_idx].base
-+					+ type->regions[*last_idx].size))
-+		return !memblock_is_nomap(&memblock.memory.regions[*last_idx]);
-+
-+	*last_idx = memblock_search_pfn_regions(pfn);
-+
-+	if (*last_idx == -1)
-+		return false;
-+
-+	return !memblock_is_nomap(&memblock.memory.regions[*last_idx]);
-+}
-+EXPORT_SYMBOL(pfn_valid_region);
-+#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+ static DEVICE_ATTR_RO(connect_type);
  
- #ifndef CONFIG_SPARSEMEM
- static void __init arm64_memory_present(void)
++static ssize_t over_current_count_show(struct device *dev,
++				       struct device_attribute *attr, char *buf)
++{
++	struct usb_port *port_dev = to_usb_port(dev);
++
++	return sprintf(buf, "%u\n", port_dev->over_current_count);
++}
++static DEVICE_ATTR_RO(over_current_count);
++
+ static ssize_t usb3_lpm_permit_show(struct device *dev,
+ 			      struct device_attribute *attr, char *buf)
+ {
+@@ -109,6 +118,7 @@ static DEVICE_ATTR_RW(usb3_lpm_permit);
+ 
+ static struct attribute *port_dev_attrs[] = {
+ 	&dev_attr_connect_type.attr,
++	&dev_attr_over_current_count.attr,
+ 	NULL,
+ };
+ 
 -- 
-2.7.4
+2.11.0
