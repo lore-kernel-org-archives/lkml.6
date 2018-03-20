@@ -1,117 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753125AbeCTLJY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:09:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53075 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeCTLJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:09:21 -0400
-Date: Tue, 20 Mar 2018 04:08:31 -0700
-From: tip-bot for Patrick Bellasi <tipbot@zytor.com>
-Message-ID: <tip-a07630b8b2c16f82fd5b71d890079f4dd7599c1d@git.kernel.org>
-Cc: juri.lelli@redhat.com, joelaf@google.com, patrick.bellasi@arm.com,
-        peterz@infradead.org, morten.rasmussen@arm.com, tglx@linutronix.de,
-        tkjos@android.com, torvalds@linux-foundation.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        smuckle@google.com, rafael.j.wysocki@intel.com, mingo@kernel.org,
-        dietmar.eggemann@arm.com, pjt@google.com, viresh.kumar@linaro.org,
-        hpa@zytor.com
-Reply-To: patrick.bellasi@arm.com, tglx@linutronix.de,
-        morten.rasmussen@arm.com, tkjos@android.com, peterz@infradead.org,
-        juri.lelli@redhat.com, joelaf@google.com, dietmar.eggemann@arm.com,
-        mingo@kernel.org, pjt@google.com, rafael.j.wysocki@intel.com,
-        hpa@zytor.com, viresh.kumar@linaro.org, torvalds@linux-foundation.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        smuckle@google.com
-In-Reply-To: <20180309095245.11071-4-patrick.bellasi@arm.com>
-References: <20180309095245.11071-4-patrick.bellasi@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/cpufreq/schedutil: Use util_est for OPP
- selection
-Git-Commit-ID: a07630b8b2c16f82fd5b71d890079f4dd7599c1d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752786AbeCTLFG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:05:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752753AbeCTLFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:05:01 -0400
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 2/7] HID: multitouch: remove dead zones of Razer Blade Stealth
+Date: Tue, 20 Mar 2018 12:04:46 +0100
+Message-Id: <20180320110451.16582-3-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
+References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a07630b8b2c16f82fd5b71d890079f4dd7599c1d
-Gitweb:     https://git.kernel.org/tip/a07630b8b2c16f82fd5b71d890079f4dd7599c1d
-Author:     Patrick Bellasi <patrick.bellasi@arm.com>
-AuthorDate: Fri, 9 Mar 2018 09:52:44 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Mar 2018 08:11:08 +0100
+The Razer Blade Stealth detects palms too aggressively and this creates
+a dead zone around the touchpad. Users like being able to use their
+entire touchpad, so we should probably not filter out the "palm" events
+from the device and report them as regular touches, leaving the palm
+detection up to the upper stack
 
-sched/cpufreq/schedutil: Use util_est for OPP selection
+Link: https://bugs.freedesktop.org/show_bug.cgi?id=105409
 
-When schedutil looks at the CPU utilization, the current PELT value for
-that CPU is returned straight away. In certain scenarios this can have
-undesired side effects and delays on frequency selection.
-
-For example, since the task utilization is decayed at wakeup time, a
-long sleeping big task newly enqueued does not add immediately a
-significant contribution to the target CPU. This introduces some latency
-before schedutil will be able to detect the best frequency required by
-that task.
-
-Moreover, the PELT signal build-up time is a function of the current
-frequency, because of the scale invariant load tracking support. Thus,
-starting from a lower frequency, the utilization build-up time will
-increase even more and further delays the selection of the actual
-frequency which better serves the task requirements.
-
-In order to reduce these kind of latencies, we integrate the usage
-of the CPU's estimated utilization in the sugov_get_util function.
-
-This allows to properly consider the expected utilization of a CPU which,
-for example, has just got a big task running after a long sleep period.
-Ultimately this allows to select the best frequency to run a task
-right after its wake-up.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steve Muckle <smuckle@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Todd Kjos <tkjos@android.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: http://lkml.kernel.org/r/20180309095245.11071-4-patrick.bellasi@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- kernel/sched/sched.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/hid/hid-multitouch.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 22909ffc04fb..c3deaee7a7a2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2163,6 +2163,13 @@ static inline unsigned long cpu_util_dl(struct rq *rq)
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index fc80a9bf3e39..520cb5e2c5c3 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -184,6 +184,7 @@ static void mt_post_parse(struct mt_device *td);
+ #define MT_CLS_ASUS				0x010b
+ #define MT_CLS_VTL				0x0110
+ #define MT_CLS_GOOGLE				0x0111
++#define MT_CLS_RAZER_BLADE_STEALTH		0x0112
  
- static inline unsigned long cpu_util_cfs(struct rq *rq)
- {
--	return rq->cfs.avg.util_avg;
-+	unsigned long util = READ_ONCE(rq->cfs.avg.util_avg);
+ #define MT_DEFAULT_MAXCONTACT	10
+ #define MT_MAX_MAXCONTACT	250
+@@ -326,6 +327,13 @@ static struct mt_class mt_classes[] = {
+ 			MT_QUIRK_SLOT_IS_CONTACTID |
+ 			MT_QUIRK_HOVERING
+ 	},
++	{ .name = MT_CLS_RAZER_BLADE_STEALTH,
++		.quirks = MT_QUIRK_ALWAYS_VALID |
++			MT_QUIRK_IGNORE_DUPLICATES |
++			MT_QUIRK_HOVERING |
++			MT_QUIRK_CONTACT_CNT_ACCURATE |
++			MT_QUIRK_WIN8_PTP_BUTTONS,
++	},
+ 	{ }
+ };
+ 
+@@ -1792,6 +1800,11 @@ static const struct hid_device_id mt_devices[] = {
+ 		MT_USB_DEVICE(USB_VENDOR_ID_QUANTA,
+ 			USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3001) },
+ 
++	/* Razer touchpads */
++	{ .driver_data = MT_CLS_RAZER_BLADE_STEALTH,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_SYNAPTICS, 0x8323) },
 +
-+	if (sched_feat(UTIL_EST)) {
-+		util = max_t(unsigned long, util,
-+			     READ_ONCE(rq->cfs.avg.util_est.enqueued));
-+	}
-+
-+	return util;
- }
- #endif
+ 	/* Stantum panels */
+ 	{ .driver_data = MT_CLS_CONFIDENCE,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_STANTUM_STM,
+-- 
+2.14.3
