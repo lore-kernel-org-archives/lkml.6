@@ -1,22 +1,23 @@
 Return-Path: <dietmar.eggemann@arm.com>
-X-Google-Smtp-Source: AG47ELtQX23RsRRq0IBfc+su0TyLKOGOeEnIr/GyrRkJ8+m3COjJUGIhMAwahA4ixRPxOpfPko+L
-ARC-Seal: i=1; a=rsa-sha256; t=1521539047; cv=none;
+X-Google-Smtp-Source: AG47ELuNB3G0MXsp4EHzIER4pMMX1FVLvNL5oogz4Zx1RPecW8nEn0m6PLMIDlsUbpYZMA7v4jlM
+ARC-Seal: i=1; a=rsa-sha256; t=1521539052; cv=none;
         d=google.com; s=arc-20160816;
-        b=JHVoZWS2A5LGPSUynn5iXYgE75F/uq1BbX0qF1EAXhcGTVg7yPhTvghRdNuuR2P0nL
-         sL4ipcJJNgC7r6hJnHWrljGl8BjKWmm5mw/Sw+WGHpNT/lPMUCFpUtVF6dyUxAaUjn+6
-         QmGrVMCa9eGhev8EGKA6fNtqHMcQlM/vgDMwhxiq5mPhuWX29GZdtYShQlaYJ7q+EBX/
-         uch+WtsWd4lQk1yndmSDAHQx6vhUoGRyjswAmVPfsAqI+6dvdWSJRinLtQshvy/ckYTw
-         mwDQ9IJPkXBOxe8FSvGw29RW8SDdkLjpXZwKrdwkxbRMgW+7v0jkUymzkku17n+Bo7Mi
-         By1Q==
+        b=n9VzNyx1Lf5wp7vTBUBD9KgZbLs1p4g0SZVW2SX2a1YXb/e68jhy8u/1kgEdooKo8F
+         IUts5/rCFyd9YeQx+UGj5ypZsnX1mVvmUdIsU7NQhsPoMdRpVyuW7UfYRNjODXW9RmlH
+         sMb1pj/UnmLcoXgj1QtDi0y0y1eJFXb24YqI1aXPVRS9rpTs3nnkthYxvjdNL3REaSJt
+         HrPe7cQPlpY+wD+sBz696ROEPGiIGMTZNqV02zWMWSMJR32y/wy76aNhYjSaVIwnOd3f
+         AfP2Ppywgg75/Me12fGlqY0kcc2M59JMF58voa/xcHsJdyAQiZLlhimBP3Ibzv0uDcr7
+         a8IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=ClwWW8GvXiPTDI97AyxX90Z1e+0HrKGX2Vdlz1boagE=;
-        b=W6damQd85KfMWkqb0g6u8B84vz30BFX1JCYWA0W6B6QhG8MkWIX+JVKJwUf7GKxe55
-         1GfYVRzBHy8FaHSAM8bsQJ4jwdmvRM6POsopQA7jwc7WN0rpNNkYV/aaUAQou2/KWuY4
-         RctzGs+wb76PAe/ZRLFnGc6t6zjC7JgC3MTgraZm/4vkjblYMlvBvichTtb3+sJ/zXQI
-         eYlxewOReB0BX8CgzyVF1NvecQmYCccDhcZtZLX0jiwLGtu+PGzjwmmVohU/F2ZGcV/X
-         KTUvKldcU+8UH7tzswxGEQdafQZrdAz7ythCAlCKihn/vTY6khpWdF5dw88IkdMSxIVT
-         j1Lw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=0v9atM0N8QITDBdWv4vQWhjuy5CIlb1pbiV5JPK0SMc=;
+        b=dBZr9FLuo0ywWp7sYe0b8+LoqojEN3sHdhU45vLnAZ8AFpo58qFSvt1mvmKUu+1FFl
+         Af8zvGzNzAGbDYcCys5LhkSOn2sN4kgSYYsuVXpCicUxmekE0i3SlZxynWt4ia7FnG3Z
+         lGWENOQh6Oy258eoIRzodLC99Bv0KrFxiBTlpzqkmn/cVO8QYwYfiZuBfuA7PjYQ8MOw
+         x0CXy7Ef0JStEst+BXKIjAnR2dT3K7txk9+XbSRWJ1379A8JfnY4vwAlPB2g6VfJ5h7f
+         S8j6lNcm26p7LKdKAsEzDs7Y4mbqvNSV8fQmM1JxT/KLvhcJ9eV1+7E1xWMr8L7rvoCZ
+         693Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
 Authentication-Results: mx.google.com;
@@ -37,208 +38,318 @@ Cc: linux-pm@vger.kernel.org,
 	Viresh Kumar <viresh.kumar@linaro.org>,
 	Todd Kjos <tkjos@google.com>,
 	Joel Fernandes <joelaf@google.com>
-Subject: [RFC PATCH 0/6] Energy Aware Scheduling
-Date: Tue, 20 Mar 2018 09:43:06 +0000
-Message-Id: <20180320094312.24081-1-dietmar.eggemann@arm.com>
+Subject: [RFC PATCH 2/6] sched: Introduce energy models of CPUs
+Date: Tue, 20 Mar 2018 09:43:08 +0000
+Message-Id: <20180320094312.24081-3-dietmar.eggemann@arm.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180320094312.24081-1-dietmar.eggemann@arm.com>
+References: <20180320094312.24081-1-dietmar.eggemann@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595449328218141298?=
-X-GMAIL-MSGID: =?utf-8?q?1595449328218141298?=
+X-GMAIL-THRID: =?utf-8?q?1595449333969249680?=
+X-GMAIL-MSGID: =?utf-8?q?1595449333969249680?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-1. Overview
+From: Quentin Perret <quentin.perret@arm.com>
 
-The Energy Aware Scheduler (EAS) based on Morten Rasmussen's posting on
-LKML [1] is currently part of the AOSP Common Kernel and runs on
-today's smartphones with Arm's big.LITTLE CPUs.
-Based on the experience gained over the last two and a half years in
-product development, we propose an energy model based task placement
-for CPUs with asymmetric core capacities (e.g. Arm big.LITTLE or
-DynamIQ), to align with the EAS adopted by the AOSP Common Kernel. We
-have developed a simplified energy model, based on the physical
-active power/performance curve of each core type using existing SoC
-power/performance data already known to the kernel. The energy model
-is used to select the most energy-efficient CPU to place each task,
-taking utilization into account.
+The energy consumption of each CPU in the system is modeled with a list
+of values representing its dissipated power and compute capacity at each
+available Operating Performance Point (OPP). These values are derived
+from existing information in the kernel (currently used by the thermal
+subsystem) and don't require the introduction of new platform-specific
+tunables. The energy model is also provided with a simple representation
+of all frequency domains as cpumasks, hence enabling the scheduler to be
+aware of dependencies between CPUs. The data required to build the energy
+model is provided by the OPP library which enables an abstract view of
+the platform from the scheduler. The new data structures holding these
+models and the routines to populate them are stored in
+kernel/sched/energy.c.
 
-1.1 Energy Model
+For the sake of simplicity, it is assumed in the energy model that all
+CPUs in a frequency domain share the same micro-architecture. As long as
+this assumption is correct, the energy models of different CPUs belonging
+to the same frequency domain are equal. Hence, this commit builds only one
+energy model per frequency domain, and links all relevant CPUs to it in
+order to save time and memory. If needed for future hardware platforms,
+relaxing this assumption should imply relatively simple modifications in
+the code but a significantly higher algorithmic complexity.
 
-A CPU with asymmetric core capacities features cores with significantly
-different energy and performance characteristics. As the configurations
-can vary greatly from one SoC to another, designing an energy-efficient
-scheduling heuristic that performs well on a broad spectrum of platforms
-appears to be particularly hard.
-This proposal attempts to solve this issue by providing the scheduler
-with an energy model of the platform which enables energy impact
-estimation of scheduling decisions in a generic way. The energy model is
-kept very simple as it represents only the active power of CPUs at all
-available P-states and relies on existing data in the kernel (only used
-by the thermal subsystem so far).
-This proposal does not include the power consumption of C-states and
-cluster-level resources which were originally introduced in [1] since
-firstly, their impact on task placement decisions appears to be
-neglectible on modern asymmetric platforms and secondly, they require
-additional infrastructure and data (e.g new DT entries).
-The scheduler is also informed of the span of frequency domains, hence
-enabling an accurate accounting of the energy costs of frequency
-changes. This appears to be especially important for future Arm CPU
-topologies (DynamIQ) where the span of scheduling domains can be
-different from the span of frequency domains.
+As it appears that energy-aware scheduling really makes a difference on
+heterogeneous systems (e.g. big.LITTLE platforms), it is restricted to
+systems having:
 
-1.2 Overutilization/Tipping Point
+   1. SD_ASYM_CPUCAPACITY flag set
+   2. Dynamic Voltage and Frequency Scaling (DVFS) is enabled
+   3. Available power estimates for the OPPs of all possible CPUs
 
-The primary job for the task scheduler is to deliver the highest
-possible throughput with minimal latency. With increasing utilization
-the opportunities to save energy for the scheduler become rarer. There
-must be spare CPU time available to place tasks based on utilization
-in an energy-aware fashion, i.e. to pack tasks on energy-efficient CPUs
-with unnecessary constraining of the task throughput. This spare CPU
-time decreases towards zero when the utilization of the system rises.  
-To cope with this situation, we introduce the concept of overutilization
-in order to enable/disable EAS depending on system utilization.
-The point in which a system switches from being not overutilized to
-being overutilized or vice versa is called the tipping point. A per
-sched domain tipping point indicator implementation is introduced here.
+Moreover, the scheduler is notified of the energy model availability
+using a static key in order to minimize the overhead on non-energy-aware
+systems.
 
-1.3 Wakeup path
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-On a system which has an energy model, the energy-aware wakeup path
-trumps affine and capacity based wake up in case the lowest sched
-domain of the task's previous CPU is not overutilized. The energy-aware
-algorithm tries to find a new target CPU among the CPUs of the highest
-non-overutilized domain which includes previous and current CPU, for
-which the placement of the task would contribute a minimum on energy
-consumption. The energy model is only enabled on CPUs with asymmetric
-core capacities (SD_ASYM_CPUCAPACITY). These systems typically have
-less than or equal 8 cores.
+---
+This patch depends on additional infrastructure being merged in the OPP
+core. As this infrastructure can also be useful for other clients, the
+related patches have been posted separately [1].
 
-2. Tests
-
-Two fundamentally different tests were executed. Firstly the energy
-test case shows the impact on energy consumption this patch-set has
-using a synthetic set of tasks. Secondly the performance test case
-provides the conventional hackbench metric numbers.
-
-The tests run on two arm64 big.LITTLE platforms: Hikey960 (4xA73 +
-4xA53) and Juno r0 (2xA57 + 4xA53).
-
-Base kernel is tip/sched/core (4.16-rc4), with some Hikey960 and
-Juno specific patches, the SD_ASYM_CPUCAPACITY flag set at DIE sched
-domain level for arm64 and schedutil as cpufreq governor [2].
-
-2.1 Energy test case
-
-10 iterations of between 10 and 50 periodic rt-app tasks (16ms period,
-5% duty-cycle) for 30 seconds with energy measurement. Unit is Joules.
-The goal is to save energy, so lower is better.
-
-2.1.1 Hikey960
-
-Energy is measured with an ACME Cape on an instrumented board. Numbers
-include consumption of big and little CPUs, LPDDR memory, GPU and most
-of the other small components on the board. They do not include
-consumption of the radio chip (turned-off anyway) and external
-connectors.
-
-+----------+-----------------+------------------------+
-|          | Without patches | With patches           |
-+----------+---------+-------+-----------------+------+ 
-| Tasks nb | Mean   | RSD*   | Mean            | RSD* |
-+----------+---------+-------+-----------------+------+
-|       10 |   41.50 |  1.1% |  37.43 (-9.81%) | 2.0% |
-|       20 |   55.51 |  0.7% |  50.74 (-8.59%) | 1.5% |
-|       30 |   75.39 |  0.4% |  70.36 (-6.67%) | 7.3% |
-|       40 |   95.82 |  0.3% |  89.90 (-6.18%) | 1.5% |
-|       50 |  121.53 |  0.9% | 112.61 (-7.34%) | 0.9% |
-+----------+---------+-------+-----------------+------+
-
-2.1.2 Juno r0
-
-Energy is measured with the onboard energy meter. Numbers include
-consumption of big and little CPUs.
-
-+----------+-----------------+------------------------+
-|          | Without patches | With patches           |
-+----------+--------+--------+-----------------+------+
-| Tasks nb | Mean   | RSD*   | Mean            | RSD* |
-+----------+--------+--------+-----------------+------+
-|       10 |  11.52 |  1.1%  |  7.67 (-33.42%) | 2.8% |
-|       20 |  19.25 |  0.9%  | 13.39 (-30.44%) | 1.8% |
-|       30 |  28.73 |  1.3%  | 21.85 (-31.49%) | 0.6% |
-|       40 |  37.58 |  0.9%  | 31.40 (-16.44%) | 0.4% |
-|       50 |  47.24 |  0.6%  | 45.37 ( -3.96%) | 0.6% |
-+----------+--------+--------+-----------------+------+
-
-2.2 Performance test case
-
-30 iterations of perf bench sched messaging --pipe --thread --group G
---loop L with G=[1 2 4 8] and L=50000 (Hikey960)/16000 (Juno r0).
-
-2.2.1 Hikey960
-
-The impact of thermal capping was mitigated thanks to a heatsink, a
-fan, and a 10 sec delay between two successive executions.
-
-+----------------+-----------------+------------------------+
-|                | Without patches | With patches           |
-+--------+-------+---------+-------+----------------+-------+
-| Groups | Tasks | Mean    | RSD*  | Mean           | RSD*  |
-+--------+-------+---------+-------+----------------+-------+
-|      1 |    40 |    8.01 | 1.70% |  8.16 (+1.90%) | 1.79% |
-|      2 |    80 |   15.59 | 0.76% | 15.79 (+1.33%) | 0.92% |
-|      4 |   160 |   32.23 | 0.70% | 32.46 (+0.72%) | 0.55% |
-|      8 |   320 |   66.93 | 0.46% | 67.40 (+0.69%) | 0.37% |
-+--------+-------+---------+-------+----------------+-------+
-
-2.2.2 Juno r0
-
-+----------------+-----------------+------------------------+
-|                | Without patches | With patches           |
-+--------+-------+---------+-------+----------------+-------+
-| Groups | Tasks | Mean    | RSD*  | Mean           | RSD*  |
-+--------+-------+---------+-------+----------------+-------+
-|      1 |    40 |    8.37 | 0.12% |  8.33 ( 0.00%) | 0.08% |
-|      2 |    80 |   14.63 | 0.12% | 14.49 (-0.01%) | 0.14% |
-|      4 |   160 |   27.17 | 0.14% | 26.80 (-0.01%) | 0.14% |
-|      8 |   320 |   52.50 | 0.25% | 51.54 (-0.02%) | 0.23% |
-+--------+-------+---------+-------+----------------+-------+
-
-*RSD: Relative Standard Deviation (std dev / mean)
-
-3. Dependencies
-
-This series depends on additional infrastructure being merged in the
-OPP core. As this infrastructure can also be useful for other clients,
-the related patches have been posted separately [3].
-
-[1] https://lkml.org/lkml/2015/7/7/754
-[2] http://www.linux-arm.org/git?p=linux-de.git;a=shortlog;h=refs/heads/upstream/eas_v1_base
-[3] https://marc.info/?l=linux-pm&m=151635516419249&w=2
-
-Dietmar Eggemang (1):
-  sched/fair: Create util_fits_capacity()
-
-Quentin Perret (4):
-  sched: Introduce energy models of CPUs
-  sched/fair: Introduce an energy estimation helper function
-  sched/fair: Select an energy-efficient CPU on task wake-up
-  drivers: base: arch_topology.c: Enable EAS for arm/arm64 platforms
-
-Thara Gopinath (1):
-  sched: Add over-utilization/tipping point indicator
-
- drivers/base/arch_topology.c   |   2 +
- include/linux/sched/energy.h   |  31 ++++++
- include/linux/sched/topology.h |   1 +
- kernel/sched/Makefile          |   2 +-
- kernel/sched/energy.c          | 190 ++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c            | 226 +++++++++++++++++++++++++++++++++++++++--
- kernel/sched/sched.h           |   1 +
- kernel/sched/topology.c        |  12 +--
- 8 files changed, 449 insertions(+), 16 deletions(-)
+[1] https://marc.info/?l=linux-pm&m=151635516419249&w=2
+---
+ include/linux/sched/energy.h |  31 +++++++
+ kernel/sched/Makefile        |   2 +-
+ kernel/sched/energy.c        | 190 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 222 insertions(+), 1 deletion(-)
  create mode 100644 include/linux/sched/energy.h
  create mode 100644 kernel/sched/energy.c
 
+diff --git a/include/linux/sched/energy.h b/include/linux/sched/energy.h
+new file mode 100644
+index 000000000000..b4f43564ffe4
+--- /dev/null
++++ b/include/linux/sched/energy.h
+@@ -0,0 +1,31 @@
++#ifndef _LINUX_SCHED_ENERGY_H
++#define _LINUX_SCHED_ENERGY_H
++
++#ifdef CONFIG_SMP
++struct capacity_state {
++	unsigned long cap;	/* compute capacity */
++	unsigned long power;	/* power consumption at this compute capacity */
++};
++
++struct sched_energy_model {
++	int nr_cap_states;
++	struct capacity_state *cap_states;
++};
++
++struct freq_domain {
++	struct list_head next;
++	cpumask_t span;
++};
++
++extern struct sched_energy_model ** __percpu energy_model;
++extern struct static_key_false sched_energy_present;
++extern struct list_head freq_domains;
++#define for_each_freq_domain(fdom) \
++			list_for_each_entry(fdom, &freq_domains, next)
++
++void init_sched_energy(void);
++#else
++static inline void init_sched_energy(void) { }
++#endif
++
++#endif
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index d9a02b318108..912972ad4dbc 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
+ obj-y += idle.o fair.o rt.o deadline.o
+ obj-y += wait.o wait_bit.o swait.o completion.o
+ 
+-obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o
++obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o energy.o
+ obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
+ obj-$(CONFIG_SCHEDSTATS) += stats.o
+ obj-$(CONFIG_SCHED_DEBUG) += debug.o
+diff --git a/kernel/sched/energy.c b/kernel/sched/energy.c
+new file mode 100644
+index 000000000000..4662c993e096
+--- /dev/null
++++ b/kernel/sched/energy.c
+@@ -0,0 +1,190 @@
++/*
++ * Released under the GPLv2 only.
++ * SPDX-License-Identifier: GPL-2.0
++ *
++ * Energy-aware scheduling models
++ *
++ * Copyright (C) 2018, Arm Ltd.
++ * Written by: Quentin Perret, Arm Ltd.
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ */
++
++#define pr_fmt(fmt) "sched-energy: " fmt
++
++#include <linux/sched/topology.h>
++#include <linux/sched/energy.h>
++#include <linux/pm_opp.h>
++
++#include "sched.h"
++
++DEFINE_STATIC_KEY_FALSE(sched_energy_present);
++struct sched_energy_model ** __percpu energy_model;
++
++/*
++ * A copy of the cpumasks representing the frequency domains is kept private
++ * to the scheduler. They are stacked in a dynamically allocated linked list
++ * as we don't know how many frequency domains the system has.
++ */
++LIST_HEAD(freq_domains);
++
++#ifdef CONFIG_PM_OPP
++static struct sched_energy_model *build_energy_model(int cpu)
++{
++	unsigned long cap_scale = arch_scale_cpu_capacity(NULL, cpu);
++	unsigned long cap, freq, power, max_freq = ULONG_MAX;
++	unsigned long opp_eff, prev_opp_eff = ULONG_MAX;
++	struct sched_energy_model *em = NULL;
++	struct device *cpu_dev;
++	struct dev_pm_opp *opp;
++	int opp_cnt, i;
++
++	cpu_dev = get_cpu_device(cpu);
++	if (!cpu_dev) {
++		pr_err("CPU%d: Failed to get device\n", cpu);
++		return NULL;
++	}
++
++	opp_cnt = dev_pm_opp_get_opp_count(cpu_dev);
++	if (opp_cnt <= 0) {
++		pr_err("CPU%d: Failed to get # of available OPPs.\n", cpu);
++		return NULL;
++	}
++
++	opp = dev_pm_opp_find_freq_floor(cpu_dev, &max_freq);
++	if (IS_ERR(opp)) {
++		pr_err("CPU%d: Failed to get max frequency.\n", cpu);
++		return NULL;
++	}
++
++	dev_pm_opp_put(opp);
++	if (!max_freq) {
++		pr_err("CPU%d: Found null max frequency.\n", cpu);
++		return NULL;
++	}
++
++	em = kzalloc(sizeof(*em), GFP_KERNEL);
++	if (!em)
++		return NULL;
++
++	em->cap_states = kcalloc(opp_cnt, sizeof(*em->cap_states), GFP_KERNEL);
++	if (!em->cap_states)
++		goto free_em;
++
++	for (i = 0, freq = 0; i < opp_cnt; i++, freq++) {
++		opp = dev_pm_opp_find_freq_ceil(cpu_dev, &freq);
++		if (IS_ERR(opp)) {
++			pr_err("CPU%d: Failed to get OPP %d.\n", cpu, i+1);
++			goto free_cs;
++		}
++
++		power = dev_pm_opp_get_power(opp);
++		dev_pm_opp_put(opp);
++		if (!power || !freq)
++			goto free_cs;
++
++		cap = freq * cap_scale / max_freq;
++		em->cap_states[i].power = power;
++		em->cap_states[i].cap = cap;
++
++		/*
++		 * The capacity/watts efficiency ratio should decrease as the
++		 * frequency grows on sane platforms. If not, warn the user
++		 * that some high OPPs are more power efficient than some
++		 * of the lower ones.
++		 */
++		opp_eff = (cap << 20) / power;
++		if (opp_eff >= prev_opp_eff)
++			pr_warn("CPU%d: cap/pwr: OPP%d > OPP%d\n", cpu, i, i-1);
++		prev_opp_eff = opp_eff;
++	}
++
++	em->nr_cap_states = opp_cnt;
++	return em;
++
++free_cs:
++	kfree(em->cap_states);
++free_em:
++	kfree(em);
++	return NULL;
++}
++
++static void free_energy_model(void)
++{
++	struct sched_energy_model *em;
++	struct freq_domain *tmp, *pos;
++	int cpu;
++
++	list_for_each_entry_safe(pos, tmp, &freq_domains, next) {
++		cpu = cpumask_first(&(pos->span));
++		em = *per_cpu_ptr(energy_model, cpu);
++		if (em) {
++			kfree(em->cap_states);
++			kfree(em);
++		}
++
++		list_del(&(pos->next));
++		kfree(pos);
++	}
++
++	free_percpu(energy_model);
++}
++
++void init_sched_energy(void)
++{
++	struct freq_domain *fdom;
++	struct sched_energy_model *em;
++	struct device *cpu_dev;
++	int cpu, ret, fdom_cpu;
++
++	/* Energy Aware Scheduling is used for asymmetric systems only. */
++	if (!lowest_flag_domain(smp_processor_id(), SD_ASYM_CPUCAPACITY))
++		return;
++
++	energy_model = alloc_percpu(struct sched_energy_model *);
++	if (!energy_model)
++		goto exit_fail;
++
++	for_each_possible_cpu(cpu) {
++		if (*per_cpu_ptr(energy_model, cpu))
++			continue;
++
++		/* Keep a copy of the sharing_cpus mask */
++		fdom = kzalloc(sizeof(struct freq_domain), GFP_KERNEL);
++		if (!fdom)
++			goto free_em;
++
++		cpu_dev = get_cpu_device(cpu);
++		ret = dev_pm_opp_get_sharing_cpus(cpu_dev, &(fdom->span));
++		if (ret)
++			goto free_em;
++		list_add(&(fdom->next), &freq_domains);
++
++		/*
++		 * Build the energy model of one CPU, and link it to all CPUs
++		 * in its frequency domain. This should be correct as long as
++		 * they share the same micro-architecture.
++		 */
++		fdom_cpu = cpumask_first(&(fdom->span));
++		em = build_energy_model(fdom_cpu);
++		if (!em)
++			goto free_em;
++
++		for_each_cpu(fdom_cpu, &(fdom->span))
++			*per_cpu_ptr(energy_model, fdom_cpu) = em;
++	}
++
++	static_branch_enable(&sched_energy_present);
++
++	pr_info("Energy Aware Scheduling started.\n");
++	return;
++free_em:
++	free_energy_model();
++exit_fail:
++	pr_err("Energy Aware Scheduling initialization failed.\n");
++}
++#else
++void init_sched_energy(void) {}
++#endif
 -- 
 2.11.0
