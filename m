@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeCTCuh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:50:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35646 "EHLO
+        id S1752454AbeCTCvU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:51:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35826 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeCTCu1 (ORCPT
+        with ESMTP id S1750888AbeCTCub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:50:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4727061112
+        Mon, 19 Mar 2018 22:50:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94E3960FF7
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: linux-scsi@vger.kernel.org, timur@codeaurora.org,
         sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, QLogic-Storage-Upstream@qlogic.com,
+        Sinan Kaya <okaya@codeaurora.org>, Brian King <brking@us.ibm.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/7] scsi: bnx2i: Eliminate duplicate barriers on weakly-ordered archs
-Date: Mon, 19 Mar 2018 22:50:06 -0400
-Message-Id: <1521514207-10695-7-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v4 5/7] scsi: ipr: Eliminate duplicate barriers on weakly-ordered archs
+Date: Mon, 19 Mar 2018 22:50:05 -0400
+Message-Id: <1521514207-10695-6-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
 References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
@@ -37,26 +37,39 @@ on some architectures like arm64.
 This ends up CPU observing two barriers back to back before executing the
 register write.
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+Since code already has an explicit barrier call, changing writeX() to
+writeX_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/scsi/bnx2i/bnx2i_hwi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ipr.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/bnx2i/bnx2i_hwi.c b/drivers/scsi/bnx2i/bnx2i_hwi.c
-index 8f03a86..075735b 100644
---- a/drivers/scsi/bnx2i/bnx2i_hwi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
-@@ -278,7 +278,7 @@ static void bnx2i_ring_sq_dbell(struct bnx2i_conn *bnx2i_conn, int count)
- 		sq_db->prod_idx = ep->qp.sq_prod_idx;
- 		bnx2i_ring_577xx_doorbell(bnx2i_conn);
- 	} else
--		writew(count, ep->qp.ctx_base + CNIC_SEND_DOORBELL);
-+		writew_relaxed(count, ep->qp.ctx_base + CNIC_SEND_DOORBELL);
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index e07dd99..209adac 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -762,9 +762,9 @@ static void ipr_mask_and_clear_interrupts(struct ipr_ioa_cfg *ioa_cfg,
  
- 	mmiowb(); /* flush posted PCI writes */
- }
+ 	/* Set interrupt mask to stop all new interrupts */
+ 	if (ioa_cfg->sis64)
+-		writeq(~0, ioa_cfg->regs.set_interrupt_mask_reg);
++		writeq_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+ 	else
+-		writel(~0, ioa_cfg->regs.set_interrupt_mask_reg);
++		writel_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+ 
+ 	/* Clear any pending interrupts */
+ 	if (ioa_cfg->sis64)
+@@ -8435,7 +8435,8 @@ static int ipr_reset_enable_ioa(struct ipr_cmnd *ipr_cmd)
+ 	wmb();
+ 	if (ioa_cfg->sis64) {
+ 		/* Set the adapter to the correct endian mode. */
+-		writel(IPR_ENDIAN_SWAP_KEY, ioa_cfg->regs.endian_swap_reg);
++		writel_relaxed(IPR_ENDIAN_SWAP_KEY,
++			       ioa_cfg->regs.endian_swap_reg);
+ 		int_reg = readl(ioa_cfg->regs.endian_swap_reg);
+ 	}
+ 
 -- 
 2.7.4
