@@ -1,46 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751502AbeCTVEr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 17:04:47 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:60312 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbeCTVEp (ORCPT
+        id S1751522AbeCTVNG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 17:13:06 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47330 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeCTVNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 17:04:45 -0400
-Date: Tue, 20 Mar 2018 17:04:41 -0400 (EDT)
-Message-Id: <20180320.170441.1570889987094445930.davem@davemloft.net>
-To: helgaas@kernel.org
-Cc: khalid.aziz@oracle.com, yinghai@kernel.org, david.ahern@oracle.com,
-        linux@iam.tj, airlied@linux.ie, alex.williamson@redhat.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: Sparc 64-bit resource fixups
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <152157662729.167463.14127576964193645242.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152157662729.167463.14127576964193645242.stgit@bhelgaas-glaptop.roam.corp.google.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Tue, 20 Mar 2018 17:13:01 -0400
+Message-ID: <5AB17953.5000609@ORACLE.COM>
+Date: Tue, 20 Mar 2018 23:12:51 +0200
+From: Liran Alon <LIRAN.ALON@ORACLE.COM>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Thunderbird/24.5.0
+MIME-Version: 1.0
+To: valdis.kletnieks@vt.edu
+CC: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, idan.brown@ORACLE.COM,
+        yuval.shaia@ORACLE.COM
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+References: <5AB12A0E.2060704@ORACLE.COM> <20180320.120036.1999626754164343704.davem@davemloft.net> <5AB132C5.5010806@ORACLE.COM> <20180320.123401.2138083793709750726.davem@davemloft.net> <5AB13953.3000606@ORACLE.COM> <55538.1521571867@turing-police.cc.vt.edu>
+In-Reply-To: <55538.1521571867@turing-police.cc.vt.edu>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=745
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Tue, 20 Mar 2018 15:14:01 -0500
 
-> These are from an old series from Yinghai [1] that fix some issues on
-> sparc64.  The v1 posting is at [2].
-> 
-> [1] https://lkml.kernel.org/r/20170421050500.13957-1-yinghai@kernel.org
-> [2] https://lkml.kernel.org/r/20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com
-> 
-> Changes from v1:
-> - In v1, I reserved the "Video ROM" and "System ROM" regions from system
->   memory, not from the PCI bus address space.  In v2, I removed those
->   reservations completely because they seem to be copied from x86 and are
->   not applicable on sparc.
 
-For the series:
+On 20/03/18 20:51, valdis.kletnieks@vt.edu wrote:
+> On Tue, 20 Mar 2018 18:39:47 +0200, Liran Alon said:
+>> What is your opinion in regards if it's OK to put the flag enabling this
+>> "fix" in /proc/sys/net/core? Do you think it's sufficient?
+>
+> Umm.. *which* /proc/sys/net/core?  These could differ for things that
+> are in different namespaces.  Or are you proposing one systemwide
+> global value (which also gets "interesting" if it's writable inside a
+> container and changes the behavior a different container sees...)
+>
 
-Acked-by: David S. Miller <davem@davemloft.net>
+I'm indeed proposing an opt-in system-wide global value.
+I think it is the simplest approach to fix the issue at
+hand here while maintaining backwards-compatibility.
+
+I'm open to suggestions to where that system-wide
+global value should be.
+
+It must be a system-wide global value if we are not going
+with the per-netdev flag approach as this system-wide global flag
+should control how a skb is travelled between different netns.
+So it doesn't belong to any one single netns.
