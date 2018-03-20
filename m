@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-143482-1521511550-2-7701381239446947006
+X-Cyrus-Session-Id: sloti22d1t05-25021-1521511313-2-17810780383226719149
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521511550; b=borkiUzJszPrJANhv0gSMMYBOcBQ/WHU16QHuK9xdYanRz9
-    VXfCGW2xxhAFFM/M4IxKOMFTonL2QRbGwgsJLfGAgKCjdbfqMbLgdjpmx+Odu5Xo
-    DSCrPGMnkcUcqQVrrauodxvGs/q74bisiixb9ELnjwELBR+bBVyJbKBUamwUZRqx
-    aln28Sxwb1E8mKRUp+UGeFsy5Fmj7DaLjB9blewTg2mMHsyNIXixI1RohNeAMh79
-    Y8P5FglIpwAh7NVFdVaZhVuqKvunnDQd4Tw/xcK20Fo8sZSxWmB+kfgHE0XBWhxC
-    A0QfI6UDyw8cH85XPqkNCtLqAu6B8qdtmzDIE8A==
+    t=1521511313; b=ECtM47bS658FWIa2M//7gAbQHMZRNm2G7KUK85V0us/ACfx
+    TtBdaSZPCXKsPriVv6DMXUxTxG3guATyXpNsxXLNDktDS+o8TDeZfTn14jOnBzqI
+    5eIYaQwNDPtwSLY3EcPzsZ0CKtoecOPfDYI1km7qDRztUA+5KMfHsT/zZCkuPxIe
+    fdB3tcdytLNCp1kLj46i3GwGHm2lK3jJ/fyryyQiJoJWHMXh3g5sBvubUTezG6Dj
+    0AxPV0XRf5x2PEf9jHsWm93mz/XYjbSo4QiH3eStdfZ7ZueuuoQ/hL4Kk3N3kPRA
+    IO9shC278Swpm5orrBYvyFr1QQzk1M2la80h4uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521511550; bh=+C6flAU2MCDi3cZ34E9/mlM6vlYqTieUExkEmDn3OuE=; b=k
-    9WXVCLu5GYFCJFwBil7TyrxQFWIgaoFKj5FjPICaEgJtofHazSVuRBEVG61K4lgP
-    9GOwD5gSeZIXIipIKJVS2MYYFdQJe1wgJW0ieV491exlnz/cJwaPeEPwRL+8isv4
-    +4PVokKzNMc0fkQ5Ay1MToBEWX3FlWMr3/c6M31/YFIklYMXhS1UOYBOtabp4kYh
-    APaVY5F3gAzmNrSfhyBh+byChMzFZaDB3S0gmeO4/4u7PAPf/81vkmXZTPeiUATk
-    /YWwq6dDsYznEUFf6+EDQOPt1eCfR4ejrwfaprd/n47D/uLMz4h3mukefVKOsnO3
-    h4Np0nr+x2ZFS27RDVs6w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    1521511313; bh=DbLzConcB/wmanEPKc2FYyfbc8eEkeU4uEzaBIyGhns=; b=A
+    rLmiC3a3+dQVHVQOMgUMAez/iYkSqsiRKSLIDPoe+4ubxTsU3tCML70GxfrsHWof
+    hNTWHQLa1IiKTjvS5IaAyGvBNT7/8PuDB8RirN9to5QGX91QfegvsMKpWO6WAnSB
+    F0JGe1vsOok98wKbru5K7hTOClVgFDTzSmzbp0q22jXVEwuaw87tsosG/w/AoZW3
+    KEQ4TJO42XyXAHailjkxux8Qt1ki8GyNgS57NxCrgYmoIl/j2MQXRmqCVBshzIMS
+    ZfgDQ7hhgX82oWq7BT/ZlblHRMsavUF6VixumzbLoru8IjwsCe0faWfUvowDoXZ0
+    zAC7bTOydMCWFHxoEnNGg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,8 +39,8 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgfgshhpjeesthekredttddtjeenucfhrhhomhepjhhglhhishhsvgesrhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpieeirddukeejrddvfeefrdejfeenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvddvfeenucevlhhushhtvghrufhiiigvpedt
-Authentication-Results: mx5.messagingengine.com;
+    x-vs=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgfgshhpjeesthekredttddtjeenucfhrhhomhepjhhglhhishhsvgesrhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpieeirddukeejrddvfeefrdejfeenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudehheenucevlhhushhtvghrufhiiigvpedvle
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -49,27 +49,26 @@ Authentication-Results: mx5.messagingengine.com;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgfgshhpjeesthekredttddtjeenucfhrhhomhepjhhglhhishhsvgesrhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpieeirddukeejrddvfeefrdejfeenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeefvddvfeenucevlhhushhtvghrufhiiigvpedt
+    x-vs=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgfgshhpjeesthekredttddtjeenucfhrhhomhepjhhglhhishhsvgesrhgvughhrghtrdgtohhmnecukfhppedvtdelrddufedvrddukedtrdeijedpieeirddukeejrddvfeefrdejfeenucfrrghrrghmpehinhgvthepvddtledrudefvddrudektddrieejpdhhvghlohepvhhgvghrrdhkvghrnhgvlhdrohhrghdpmhgrihhlfhhrohhmpeeoshhtrggslhgvqdhofihnvghrsehvghgvrhdrkhgvrhhnvghlrdhorhhgqecuuefqffgjpeekuefkvffokffogfcuuffkkgfgpeegudehheenucevlhhushhtvghrufhiiigvpedvle
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751680AbeCTCFX (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 22:05:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45756 "EHLO mx1.redhat.com"
+        id S1752108AbeCTCAw (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Mar 2018 22:00:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752087AbeCTCAp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:00:45 -0400
+        id S1752041AbeCTCAm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:00:42 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        stable@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 05/15] mm/hmm: hmm_pfns_bad() was accessing wrong struct
-Date: Mon, 19 Mar 2018 22:00:27 -0400
-Message-Id: <20180320020038.3360-6-jglisse@redhat.com>
+        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>
+Subject: [PATCH 02/15] mm/hmm: fix header file if/else/endif maze v2
+Date: Mon, 19 Mar 2018 22:00:24 -0400
+Message-Id: <20180320020038.3360-3-jglisse@redhat.com>
 In-Reply-To: <20180320020038.3360-1-jglisse@redhat.com>
 References: <20180320020038.3360-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -83,32 +82,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-The private field of mm_walk struct point to an hmm_vma_walk struct and
-not to the hmm_range struct desired. Fix to get proper struct pointer.
+The #if/#else/#endif for IS_ENABLED(CONFIG_HMM) were wrong. Because
+of this after multiple include there was multiple definition of both
+hmm_mm_init() and hmm_mm_destroy() leading to build failure if HMM
+was enabled (CONFIG_HMM set).
+
+Changed since v1:
+  - Fix the maze when CONFIG_HMM is disabled not just when it is
+    disabled. This fix bot build failure.
+  - Improved commit message.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
 Cc: stable@vger.kernel.org
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
 Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
 ---
- mm/hmm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/hmm.h | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 667944630dc9..f5631e1a7319 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -312,7 +312,8 @@ static int hmm_pfns_bad(unsigned long addr,
- 			unsigned long end,
- 			struct mm_walk *walk)
- {
--	struct hmm_range *range = walk->private;
-+	struct hmm_vma_walk *hmm_vma_walk = walk->private;
-+	struct hmm_range *range = hmm_vma_walk->range;
- 	hmm_pfn_t *pfns = range->pfns;
- 	unsigned long i;
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 325017ad9311..36dd21fe5caf 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -498,23 +498,16 @@ struct hmm_device {
+ struct hmm_device *hmm_device_new(void *drvdata);
+ void hmm_device_put(struct hmm_device *hmm_device);
+ #endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
+-#endif /* IS_ENABLED(CONFIG_HMM) */
  
+ /* Below are for HMM internal use only! Not to be used by device driver! */
+-#if IS_ENABLED(CONFIG_HMM_MIRROR)
+ void hmm_mm_destroy(struct mm_struct *mm);
+ 
+ static inline void hmm_mm_init(struct mm_struct *mm)
+ {
+ 	mm->hmm = NULL;
+ }
+-#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+-static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+-static inline void hmm_mm_init(struct mm_struct *mm) {}
+-#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+-
+-
+ #else /* IS_ENABLED(CONFIG_HMM) */
+ static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+ static inline void hmm_mm_init(struct mm_struct *mm) {}
++#endif /* IS_ENABLED(CONFIG_HMM) */
+ #endif /* LINUX_HMM_H */
 -- 
 2.14.3
