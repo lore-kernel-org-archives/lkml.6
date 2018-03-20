@@ -1,51 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeCTJYP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:24:15 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41652 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeCTJYM (ORCPT
+        id S1752052AbeCTJYk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:24:40 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42949 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751607AbeCTJYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:24:12 -0400
-X-Google-Smtp-Source: AG47ELue7wnuzDzzt/C3cPLa06jF4lomWQH9254XObBXhF2wG9odJVnRDeU0mbxskVE1wserL/kpVQ==
+        Tue, 20 Mar 2018 05:24:39 -0400
+X-Google-Smtp-Source: AG47ELvoUDg3HqC+NjzQdFlSM/6qelo7oDvt+B+dkV+U809j3FrTjpD1OW2O4lfvkn+BJb+FLY64SQ==
 From: Lai Jiangshan <jiangshanlai@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH] workqueue: fix the comments of nr_idle
-Date: Tue, 20 Mar 2018 17:24:05 +0800
-Message-Id: <20180320092406.13078-1-jiangshanlai@gmail.com>
+Subject: [PATCH] workqueue: remove the comment about the old manager_arb mutex
+Date: Tue, 20 Mar 2018 17:24:32 +0800
+Message-Id: <20180320092432.13141-1-jiangshanlai@gmail.com>
 X-Mailer: git-send-email 2.14.3 (Apple Git-98)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the worker rebinding behavior was refactored, there is
-no idle worker off the idle_list now. The comment is outdated
-and can be just removed.
-
-It also groups nr_workers and nr_idle together.
+The manager_arb mutex doesn't exist any more.
 
 Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
 ---
- kernel/workqueue.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/workqueue.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index bb9a519cbf50..19785a092026 100644
+index 19785a092026..698b6f1ecddd 100644
 --- a/kernel/workqueue.c
 +++ b/kernel/workqueue.c
-@@ -153,10 +153,9 @@ struct worker_pool {
- 	unsigned long		watchdog_ts;	/* L: watchdog timestamp */
+@@ -165,7 +165,6 @@ struct worker_pool {
+ 	DECLARE_HASHTABLE(busy_hash, BUSY_WORKER_HASH_ORDER);
+ 						/* L: hash of busy workers */
  
- 	struct list_head	worklist;	/* L: list of pending works */
--	int			nr_workers;	/* L: total number of workers */
- 
--	/* nr_idle includes the ones off idle_list for rebinding */
--	int			nr_idle;	/* L: currently idle ones */
-+	int			nr_workers;	/* L: total number of workers */
-+	int			nr_idle;	/* L: currently idle workers */
- 
- 	struct list_head	idle_list;	/* X: list of idle workers */
- 	struct timer_list	idle_timer;	/* L: worker idle timeout */
+-	/* see manage_workers() for details on the two manager mutexes */
+ 	struct worker		*manager;	/* L: purely informational */
+ 	struct mutex		attach_mutex;	/* attach/detach exclusion */
+ 	struct list_head	workers;	/* A: attached workers */
 -- 
 2.14.3 (Apple Git-98)
