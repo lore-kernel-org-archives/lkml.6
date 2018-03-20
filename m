@@ -1,107 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751531AbeCTWvs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:51:48 -0400
-Received: from ozlabs.org ([103.22.144.67]:51417 "EHLO ozlabs.org"
+        id S1751589AbeCTWzW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:55:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43894 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbeCTWvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:51:46 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 09:50:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: linux-next: manual merge of the arm64 tree with the asm-generic
- tree
-Message-ID: <20180321095047.3aee181e@canb.auug.org.au>
+        id S1751317AbeCTWzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 18:55:19 -0400
+Date: Tue, 20 Mar 2018 16:55:14 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [PATCH v5 0/7] vfio/type1: Add support for valid iova list
+ management
+Message-ID: <20180320165514.0f4cd556@t450s.home>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19108585F@SHSMSX101.ccr.corp.intel.com>
+References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19108585F@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xBNHTtxHG4m6.K59ZtSdJPi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 19 Mar 2018 08:28:32 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-Hi all,
+> > From: Shameer Kolothum
+> > Sent: Friday, March 16, 2018 12:35 AM
+> > 
+> > This series introduces an iova list associated with a vfio
+> > iommu. The list is kept updated taking care of iommu apertures,
+> > and reserved regions. Also this series adds checks for any conflict
+> > with existing dma mappings whenever a new device group is attached to
+> > the domain.
+> > 
+> > User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
+> > ioctl capability chains. Any dma map request outside the valid iova
+> > range will be rejected.  
+> 
+> GET_INFO is done at initialization time which is good for cold attached
+> devices. If a hotplugged device may cause change of valid iova ranges
+> at run-time, then there could be potential problem (which however is
+> difficult for user space or orchestration stack to figure out in advance)
+> Can we do some extension like below to make hotplug case cleaner?
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Let's be clear what we mean by hotplug here, as I see it, the only
+relevant hotplug would be a physical device, hot added to the host,
+which becomes a member of an existing, in-use IOMMU group.  If, on the
+other hand, we're talking about hotplug related to the user process,
+there's nothing asynchronous about that.  For instance in the QEMU
+case, QEMU must add the group to the container, at which point it can
+evaluate the new iova list and remove the group from the container if
+it doesn't like the result.  So what would be a case of the available
+iova list for a group changing as a result of adding a device?
 
-  include/uapi/asm-generic/siginfo.h
+> - An interface allowing user space to request VFIO rejecting further 
+> attach_group if doing so may cause iova range change. e.g. Qemu can 
+> do such request once completing initial GET_INFO;
 
-between commit:
+For the latter case above, it seems unnecessary, QEMU can revert the
+attach, we're only promising that the attach won't interfere with
+existing mappings.  For the host hotplug case, the user has no control,
+the new device is a member of the iommu group and therefore necessarily
+becomes a part of container.  I imagine there are plenty of other holes
+in this scenario already.
+ 
+> - or an event notification to user space upon change of valid iova
+> ranges when attaching a new device at run-time. It goes one step 
+> further - even attach may cause iova range change, it may still
+> succeed as long as Qemu hasn't allocated any iova in impacted 
+> range
 
-  0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally=
-")
+Same as above, in the QEMU hotplug case, the user is orchestrating the
+adding of the group to the container, they can then check the iommu
+info on their own and determine what, if any, changes are relevant to
+them, knowing that the addition would not succeed if any current
+mappings where affected.  In the host case, a notification would be
+required, but we'd first need to identify exactly how the iova list can
+change asynchronous to the user doing anything.  Thanks,
 
-from the asm-generic tree and commit:
-
-  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
-ions")
-
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/asm-generic/siginfo.h
-index 5528cdb0b54a,4b3520bf67ba..000000000000
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@@ -202,12 -219,18 +202,13 @@@ typedef struct siginfo=20
-  #define FPE_FLTRES	6	/* floating point inexact result */
-  #define FPE_FLTINV	7	/* floating point invalid operation */
-  #define FPE_FLTSUB	8	/* subscript out of range */
- -#ifdef __frv__
- -# define FPE_MDAOVF	9	/* media overflow */
- -#endif
- -#ifdef __ia64__
- -# define __FPE_DECOVF	9	/* decimal overflow */
- -# define __FPE_DECDIV	10	/* decimal division by zero */
- -# define __FPE_DECERR	11	/* packed decimal error */
- -# define __FPE_INVASC	12	/* invalid ASCII digit */
- -# define __FPE_INVDEC	13	/* invalid decimal digit */
- -#endif
- +#define __FPE_DECOVF	9	/* decimal overflow */
- +#define __FPE_DECDIV	10	/* decimal division by zero */
- +#define __FPE_DECERR	11	/* packed decimal error */
- +#define __FPE_INVASC	12	/* invalid ASCII digit */
- +#define __FPE_INVDEC	13	/* invalid decimal digit */
-- #define NSIGFPE		13
-+ #define FPE_FLTUNK	14	/* undiagnosed floating-point exception */
-+ #define NSIGFPE		14
- =20
-  /*
-   * SIGSEGV si_codes
-
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxkEcACgkQAVBC80lX
-0GybuQf8CE9hVBIuyWFTpYLEZWAU3/U80XmAyL8dyzgNtoYt1QbPbFLApWZOtBL1
-clRYXy3I6+o/wmRCQK5eaMzbWHSrNlmpCbHLI0C9tLGrugsuDtUJBQ4UR2UZqUxj
-So4I/XKXu+9CO/f72aK5/Pct6aT+DOQV0trzGEgNUlD07QfRhAQ7kHF83Oi6N4cZ
-haZFJEstrk8+KCBaqgCy4R2ZFL1HN8V2G1+XVCBWFlGxQdYZU2R3B/KLUVFGxkHL
-0DEl5N2ybbqNAwuda0Xf+uMdz83Agkyb94n5qQLvKvseigTd4qHURgdQxe+7rDaN
-/F9/RSlhehVSFz93iXZ5HxAzvMSuBw==
-=4WZn
------END PGP SIGNATURE-----
-
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi--
+Alex
