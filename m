@@ -1,87 +1,232 @@
-Return-Path: <djkurtz@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521866989; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gEp10JTHfJshNychDtP639Z+YU9ftwjoK5v5qCSd/PCA+67aWvlM4UhDCd05L4UX5O
-         NhXXTHIaiqoJiodBUFiGtiYoEepB3edxJCYuH3dWGvP8es6wHCYGz9gQ4UOlPSlVAnG8
-         xSQXYRicvokJKA0O6Xu7E5lXNkgY2mDYlIwfYSvkIcLh9hbVz3PxrtoWz1FWxpY4E3IK
-         uXDAPVUvH4gHyPlrSIS/XROwitrKwHnIxExlxpnCpVMG3TccGS52Imdt5rgCmPkZRxBO
-         jNjQayXCm12DYmrssuPaaMPaC8grg0oQI18gofm/zR/+Q72jb5ufLkih+XJTRjeKGyIz
-         ARpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=LEhDUWOMeWqr33+KXDtJ0TZ7P9aDgZfhXJxPX4a1D5I=;
-        b=e+7ju4XZpVj/pYIXc5iFbO6kt42nCUY42ciNGYzHeSjyGpUeydbT3LAczY/jfXhA34
-         XeCImg9iCyPChc1JBPY0T9yxe83e7hHThrOYNNqQ220pY3fFdvBg5cm91i6OSxPeGdum
-         AB8keLZuB+PfcS6M5adI2BUpU0mmBuvFfH/WzIagMG1p2EBB+NZT8la293fblGLmER15
-         7V7VohdvPIK9zWx72Cj5lcuo2XWxWfuYRh+ryy1CQsetmaCsFkNNZbcZRNO5O4lJZknH
-         FAeKkUuVKud4Gs8sQ1WxdnDImAGG2GBixcrxyceoDA/AISpHfKeL2eJJ6MKyzunlsIVW
-         61RQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=mMwbCylQ;
-       spf=pass (google.com: domain of djkurtz@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=djkurtz@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=mMwbCylQ;
-       spf=pass (google.com: domain of djkurtz@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=djkurtz@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AG47ELvCVlbBTf7eIRrNZt/LqHmWMxgRIk2/CuRhVVBk0X3qGnnHsoIc55NebcMepmn0JGg/iHJXBwnKOnXVUumbiPc=
-MIME-Version: 1.0
-References: <20180320175712.201572-1-djkurtz@chromium.org> <20180323133448.GA3434@kroah.com>
-In-Reply-To: <20180323133448.GA3434@kroah.com>
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1907187-1521568651-2-12475711530428552473
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521568650; b=rSwVcqMkvjYQjC4fiBHeiidbkjta1awfYuTqPE6IkVafVsv
+    yaTMmUlGB103GHzM3l/TSjvDhZ1RwX3TWzmqA4xT67soZt195alLNt3DQHa4+Qzc
+    rdPv/fLK4/6ZwEJcKLkA+SfStl6uB1OyRLJV/jUWWy5sY0vDJxOyX6aLayi0BmVi
+    6gl4E2sTTBVFFubomL4IOSu/ibZARViY622EBZjPyb9ARUXb/N8wZUuKSzgmAghc
+    4RbRKXyHQ2yrz67shw3cwKC9NtIFJJrlqef3g3W53a1Ag5xD7PajdKt60y8zrR0J
+    iTtO/CDxJRmWwCm6qCba6lMM4zK2mERDAfyBVRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521568650;
+    bh=xAelWkPWl8F6EjltTxb7CwoD79zMtaejx0bi1o+gIT4=; b=g/jszzS8j/cc
+    W6Weu0+HxL3/FX/jWXxWjHxBN5T0V60WNzXx7n1t9en9dgZcZp/coCISGAzI6xRs
+    s7VNIodNmLz5jwPrP7h/8RMsU9ozQmsZTqb4LJmRakPYnQpTbLR19m5PChqXo5jc
+    NR4pMa1JsD0VGkNTOae9ZqDkdZQCYmvjNsv2OCNk8+n3gQREB2eONgZCiIz+S2i1
+    B18Fi1dx1RhwNt/DU+WWJ0O76a4S3jWkfMQUtZXUlc7W5oiuQN6nE7tAMjN1DFB9
+    4ACtAq7mKs4VTXS0M+H9X8mSJnzRjAyfzzPLGJyDpXv8XTVEBforGQrxF8D3ZBZP
+    M53iv6LQrQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=mZenFBvg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mVWhLNio;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=mZenFBvg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mVWhLNio;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751269AbeCTR52 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Mar 2018 13:57:28 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:46878 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeCTR5W (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 20 Mar 2018 13:57:22 -0400
+X-Google-Smtp-Source: AG47ELtrx3aKkj7YJZNMejtWKXAPN8LDMI0MCbh3bWZmRkcgGjKixabYKV5hChzOXrhzPXX7fh4YkA==
 From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Sat, 24 Mar 2018 04:49:35 +0000
-Message-ID: <CAGS+omBxftY6t9dWE3FHuhhN75ayfALJUjatCAR8JKudLNOx0g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Fix __earlycon_table stride... again
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: mka@chromium.org, Guenter Roeck <groeck@chromium.org>, adurbin@chromium.org,
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>
+Cc: adurbin@chromium.org, linux-kernel@vger.kernel.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES)
+Subject: [PATCH v2 2/2] earlycon: Use a pointer table to fix __earlycon_table stride
+Date: Tue, 20 Mar 2018 11:57:12 -0600
+Message-Id: <20180320175712.201572-3-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180320175712.201572-1-djkurtz@chromium.org>
+References: <20180320175712.201572-1-djkurtz@chromium.org>
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595480358475048954?=
-X-GMAIL-MSGID: =?utf-8?q?1595793199546663698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 7:34 AM Greg Kroah-Hartman <
-gregkh@linuxfoundation.org> wrote:
+Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") tried to fix
+__earlycon_table stride by forcing the earlycon_id struct alignment to 32
+and asking the linker to 32-byte align the __earlycon_table symbol.  This
+fix was based on commit 07fca0e57fca92 ("tracing: Properly align linker
+defined symbols") which tried a similar fix for the tracing subsystem.
 
-> On Tue, Mar 20, 2018 at 11:57:10AM -0600, Daniel Kurtz wrote:
-> > The __earlycon_table lives in a special "__earlycon_table" section.  The
-> > contents of this table are added using some macros that deposit
-individual
-> > struct earlycon_id entries into this section.  The linker then defines
-a symbol
-> > __earlycon_table that is supposed to contain the addresss of the first
-of these
-> > entries.  The code in earlycon.c and fdt.c then tries to access the
-memory
-> > pointed to by __earlycon_table as an array of struct earlycon_id
-entries.
-> >
-> > Unfortunately, the compiler doesn't always place the entries such that
-they
-> > are an array.  Let's fix that.
-> >
-> > Patch 1 of the series is a fix that should hopefully fix a kbuild error
-that
-> > seems to be triggered by Patch 2.
+However, this fix doesn't quite work because there is no guarantee that
+gcc will place structures packed into an array format.  In fact, gcc 4.9
+chooses to 64-byte align these structs by inserting additional padding
+between the entries because it has no clue that they are supposed to be in
+an array.  If we are unlucky, the linker will assign symbol
+"__earlycon_table" to a 32-byte aligned address which does not correpsond
+to the 64-byte alignbed contents of section "__earlycon_table".
 
-> Doesn't seem like that worked :(
+To address this same problem, the fix to the tracing system was
+subsequently re-implemented using a more robust table of pointers approach
+by commits:
+ 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with pointer array")
+ 654986462939 ("tracepoints: Fix section alignment using pointer array")
+ e4a9ea5ee7c8 ("tracing: Replace trace_event struct array with pointer array")
 
-> And I have a bunch of different versions of this patch in my to-review
-> queue, and I can't figure out which is the "latest" one.
+Let's use this same "array of pointers to structs" approach for
+EARLYCON_TABLE.
 
-> Can you resend it, after getting the build error fixed, so I know which
-> to attempt to apply?
+Fixes: 99492c39f39f ("earlycon: Fix __earlycon_table stride")
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Suggested-by: Aaron Durbin <adurbin@chromium.org>
+---
+Changes since v1:
+ * added Suggested-by and Fixes, and reworded the commit message per Randy. 
 
-Please take Patch Set v5 (fixes kbuild errors and commit message typos):
-https://patchwork.kernel.org/patch/10298043/
+ drivers/of/fdt.c                  |  7 +++++--
+ drivers/tty/serial/earlycon.c     |  6 ++++--
+ include/asm-generic/vmlinux.lds.h |  2 +-
+ include/linux/serial_core.h       | 21 ++++++++++++++-------
+ 4 files changed, 24 insertions(+), 12 deletions(-)
 
-thanks,
--djk
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 84aa9d676375..6da20b9688f7 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -942,7 +942,7 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 	int offset;
+ 	const char *p, *q, *options = NULL;
+ 	int l;
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 	const void *fdt = initial_boot_params;
+ 
+ 	offset = fdt_path_offset(fdt, "/chosen");
+@@ -969,7 +969,10 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 		return 0;
+ 	}
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
++
+ 		if (!match->compatible[0])
+ 			continue;
+ 
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a24278380fec..22683393a0f2 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -169,7 +169,7 @@ static int __init register_earlycon(char *buf, const struct earlycon_id *match)
+  */
+ int __init setup_earlycon(char *buf)
+ {
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 
+ 	if (!buf || !buf[0])
+ 		return -EINVAL;
+@@ -177,7 +177,9 @@ int __init setup_earlycon(char *buf)
+ 	if (early_con.flags & CON_ENABLED)
+ 		return -EALREADY;
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
+ 		size_t len = strlen(match->name);
+ 
+ 		if (strncmp(buf, match->name, len))
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 1ab0e520d6fc..e17de55c2542 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -179,7 +179,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() STRUCT_ALIGN();			\
++#define EARLYCON_TABLE() . = ALIGN(8);				\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 KEEP(*(__earlycon_table))		\
+ 			 VMLINUX_SYMBOL(__earlycon_table_end) = .;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index b32df49a3bd5..93b7add47087 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -351,10 +351,10 @@ struct earlycon_id {
+ 	char	name[16];
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-} __aligned(32);
++};
+ 
+-extern const struct earlycon_id __earlycon_table[];
+-extern const struct earlycon_id __earlycon_table_end[];
++extern const struct earlycon_id *__earlycon_table[];
++extern const struct earlycon_id *__earlycon_table_end[];
+ 
+ #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
+ #define EARLYCON_USED_OR_UNUSED	__used
+@@ -362,12 +362,19 @@ extern const struct earlycon_id __earlycon_table_end[];
+ #define EARLYCON_USED_OR_UNUSED	__maybe_unused
+ #endif
+ 
+-#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
+-	static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name)	\
+-	     EARLYCON_USED_OR_UNUSED __section(__earlycon_table)	\
++#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)		\
++	static const struct earlycon_id unique_id			\
++	     EARLYCON_USED_OR_UNUSED __initdata				\
+ 		= { .name = __stringify(_name),				\
+ 		    .compatible = compat,				\
+-		    .setup = fn  }
++		    .setup = fn  };					\
++	static const struct earlycon_id EARLYCON_USED_OR_UNUSED		\
++		__section(__earlycon_table)				\
++		* const __PASTE(__p, unique_id) = &unique_id
++
++#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
++	_OF_EARLYCON_DECLARE(_name, compat, fn,				\
++			     __UNIQUE_ID(__earlycon_##_name))
+ 
+ #define EARLYCON_DECLARE(_name, fn)	OF_EARLYCON_DECLARE(_name, "", fn)
+ 
+-- 
+2.16.2.804.g6dcf76e118-goog
 
-
-> thanks,
-
-> greg k-h
