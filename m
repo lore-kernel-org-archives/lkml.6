@@ -1,119 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753473AbeCTNUn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:20:43 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:46872 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753019AbeCTNUk (ORCPT
+        id S1753439AbeCTNWS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:22:18 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35415 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753328AbeCTNWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:20:40 -0400
-X-Google-Smtp-Source: AG47ELtRcbmS2NNPtHrMYTkDqK1LAGAYoLpRGeT59cLkhHgNTi2UO5et3jfvWpaqUTgueyipDhBCqw==
-Subject: Re: [PATCH 2/3] i2c: mux: pca9541: namespace cleanup
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Ken Chen <chen.kenyy@inventec.com>,
-        joel@jms.id.au, linux-i2c@vger.kernel.org
-References: <20180320061909.5775-1-chen.kenyy@inventec.com>
- <20180320093200.19179-1-peda@axentia.se>
- <20180320093200.19179-3-peda@axentia.se>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e92c5457-20fd-1e6e-ab59-5ff53e647e89@roeck-us.net>
-Date: Tue, 20 Mar 2018 06:20:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320093200.19179-3-peda@axentia.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 20 Mar 2018 09:22:15 -0400
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH -next] phy: stm32: fix using 0 as NULL pointer warnings
+Thread-Topic: [PATCH -next] phy: stm32: fix using 0 as NULL pointer warnings
+Thread-Index: AQHTwE1T9yxYqAvzE0W136BfJWtbMqPZC24A
+Date: Tue, 20 Mar 2018 13:21:48 +0000
+Message-ID: <3d799714-6e2c-658e-b1f2-def58584c356@st.com>
+References: <1521551982-154471-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521551982-154471-1-git-send-email-weiyongjun1@huawei.com>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CC214E7B1144D74BA445EB99CD1545CE@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KDMOpW013045
 
-On 03/20/2018 02:31 AM, Peter Rosin wrote:
-> In preparation for PCA9641 support, convert the mybus and busoff macros
-> to functions, and in the process prefix them with pca9541_. Also prefix
-> remaining chip specific macros with PCA9541_.
+
+
+On 03/20/2018 02:19 PM, Wei Yongjun wrote:
+> Fixes the following sparse warnings:
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> drivers/phy/st/phy-stm32-usbphyc.c:331:42: warning:
+>   Using plain integer as NULL pointer
+> drivers/phy/st/phy-stm32-usbphyc.c:344:52: warning:
+>   Using plain integer as NULL pointer
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->   drivers/i2c/muxes/i2c-mux-pca9541.c | 26 +++++++++++++++++++-------
->   1 file changed, 19 insertions(+), 7 deletions(-)
+>   drivers/phy/st/phy-stm32-usbphyc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
-> index ad168125d23d..47685eb4e0e9 100644
-> --- a/drivers/i2c/muxes/i2c-mux-pca9541.c
-> +++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
-> @@ -59,10 +59,8 @@
->   #define PCA9541_ISTAT_MYTEST	BIT(6)
->   #define PCA9541_ISTAT_NMYTEST	BIT(7)
+> diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
+> index bc4e78a..48d4086 100644
+> --- a/drivers/phy/st/phy-stm32-usbphyc.c
+> +++ b/drivers/phy/st/phy-stm32-usbphyc.c
+> @@ -328,7 +328,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(usbphyc->base))
+>   		return PTR_ERR(usbphyc->base);
 >   
-> -#define BUSON		(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
-> -#define MYBUS		(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
-> -#define mybus(x)	(!((x) & MYBUS) || ((x) & MYBUS) == MYBUS)
-> -#define busoff(x)	(!((x) & BUSON) || ((x) & BUSON) == BUSON)
-> +#define PCA9541_BUSON	(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
-> +#define PCA9541_MYBUS	(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
+> -	usbphyc->clk = devm_clk_get(dev, 0);
+> +	usbphyc->clk = devm_clk_get(dev, NULL);
+>   	if (IS_ERR(usbphyc->clk)) {
+>   		ret = PTR_ERR(usbphyc->clk);
+>   		dev_err(dev, "clk get failed: %d\n", ret);
+> @@ -341,7 +341,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
+>   		return ret;
+>   	}
 >   
->   /* arbitration timeouts, in jiffies */
->   #define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
-> @@ -93,6 +91,20 @@ static const struct of_device_id pca9541_of_match[] = {
->   MODULE_DEVICE_TABLE(of, pca9541_of_match);
->   #endif
->   
-> +static int pca9541_mybus(int ctl)
-
-bool ?
-
-> +{
-> +	if (!(ctl & PCA9541_MYBUS))
-> +		return 1;
-
-true ?
-
-> +	return (ctl & PCA9541_MYBUS) == PCA9541_MYBUS;
-> +}
-> +
-> +static int pca9541_busoff(int ctl)
-
-bool ?
-
-> +{
-> +	if (!(ctl & PCA9541_BUSON))
-> +		return 1;
-
-true ?
-
-> +	return (ctl & PCA9541_BUSON) == PCA9541_BUSON;
-> +}
-> +
->   /*
->    * Write to chip register. Don't use i2c_transfer()/i2c_smbus_xfer()
->    * as they will try to lock the adapter a second time.
-> @@ -181,7 +193,7 @@ static void pca9541_release_bus(struct i2c_client *client)
->   	int reg;
->   
->   	reg = pca9541_reg_read(client, PCA9541_CONTROL);
-> -	if (reg >= 0 && !busoff(reg) && mybus(reg))
-> +	if (reg >= 0 && !pca9541_busoff(reg) && pca9541_mybus(reg))
->   		pca9541_reg_write(client, PCA9541_CONTROL,
->   				  (reg & PCA9541_CTL_NBUSON) >> 1);
->   }
-> @@ -233,7 +245,7 @@ static int pca9541_arbitrate(struct i2c_client *client)
->   	if (reg < 0)
->   		return reg;
->   
-> -	if (busoff(reg)) {
-> +	if (pca9541_busoff(reg)) {
->   		int istat;
->   		/*
->   		 * Bus is off. Request ownership or turn it on unless
-> @@ -258,7 +270,7 @@ static int pca9541_arbitrate(struct i2c_client *client)
->   			 */
->   			data->select_timeout = SELECT_DELAY_LONG * 2;
->   		}
-> -	} else if (mybus(reg)) {
-> +	} else if (pca9541_mybus(reg)) {
->   		/*
->   		 * Bus is on, and we own it. We are done with acquisition.
->   		 * Reset NTESTON and BUSINIT, then return success.
+> -	usbphyc->rst = devm_reset_control_get(dev, 0);
+> +	usbphyc->rst = devm_reset_control_get(dev, NULL);
+>   	if (!IS_ERR(usbphyc->rst)) {
+>   		reset_control_assert(usbphyc->rst);
+>   		udelay(2);
 > 
+
+Reviewed-by: Amelie Delaunay <amelie.delaunay@st.com>
+
+Thanks,
+Amelie
