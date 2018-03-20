@@ -1,72 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751416AbeCTOPO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:15:14 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6253 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750888AbeCTOPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:15:12 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/meson: Fix potential NULL dereference in meson_drv_bind_master()
-Date: Tue, 20 Mar 2018 14:20:30 +0000
-Message-ID: <1521555630-29284-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1751343AbeCTOSn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:18:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44904 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750828AbeCTOSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:18:41 -0400
+Date: Tue, 20 Mar 2018 15:13:54 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Harald Geyer <harald@ccbib.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
+Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
+ laptop
+Message-ID: <20180320141353.zmzq4e5652rsp4ye@flea>
+References: <20180315162510.11669-1-harald@ccbib.org>
+ <20180315162510.11669-6-harald@ccbib.org>
+ <20180318202251.5gpv6sblfr4edxmj@flea>
+ <E1exwhF-0000Qw-4g@stardust.g4.wien.funkfeuer.at>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <E1exwhF-0000Qw-4g@stardust.g4.wien.funkfeuer.at>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_resource_byname() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-a bit later in the code.
+On Mon, Mar 19, 2018 at 04:27:36PM +0100, Harald Geyer wrote:
+> > together with all the patches but the
+> > PWM (so I had to drop the backlight node as well).
+> >
+> > Please coordinate with Andre about who should send the PWM support.
+> 
+> Seems the patch got broken because only the backlight node but not the
+> pwm node was removed. Anyway, since Andre has already sent an updated
+> version of his series, maybe just revert the broken patch, merge his
+> series and then apply the original teres-i patch again?
 
-This is detected by Coccinelle semantic patch.
+Unfortunately, there's dependencies on the PWM driver itself, and the
+maintainer hasn't replied yet.
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
+Maxime
 
-res = platform_get_resource_byname(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res == NULL
-e = devm_ioremap(e1, res->start, e2);
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/meson/meson_drv.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 3baceb7..32b1a6c 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -197,6 +197,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	priv->io_base = regs;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
-+	if (!res)
-+		return -EINVAL;
- 	/* Simply ioremap since it may be a shared register zone */
- 	regs = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!regs) {
-@@ -213,6 +215,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	}
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
-+	if (!res)
-+		return -EINVAL;
- 	/* Simply ioremap since it may be a shared register zone */
- 	regs = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!regs) {
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
