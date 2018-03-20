@@ -1,883 +1,681 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753807AbeCTODV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:03:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34242 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753610AbeCTOCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:02:32 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v6 7/7] x86/kvm: use Enlightened VMCS when running on Hyper-V
-Date: Tue, 20 Mar 2018 15:02:11 +0100
-Message-Id: <20180320140211.7600-8-vkuznets@redhat.com>
-In-Reply-To: <20180320140211.7600-1-vkuznets@redhat.com>
-References: <20180320140211.7600-1-vkuznets@redhat.com>
+        id S1753830AbeCTODh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:03:37 -0400
+Received: from muru.com ([72.249.23.125]:60918 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753810AbeCTOD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:03:29 -0400
+Date: Tue, 20 Mar 2018 07:03:22 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180320140322.GU5799@atomide.com>
+References: <20180318220418.GA22880@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="OwLcNYc0lM97+oe1"
+Content-Disposition: inline
+In-Reply-To: <20180318220418.GA22880@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enlightened VMCS is just a structure in memory, the main benefit
-besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
-mask: we tell the underlying hypervisor which fields were modified
-since VMEXIT so there's no need to inspect them all.
 
-Tight CPUID loop test shows significant speedup:
-Before: 18890 cycles
-After: 8304 cycles
+--OwLcNYc0lM97+oe1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Static key is being used to avoid performance penalty for non-Hyper-V
-deployments.
+* Pavel Machek <pavel@ucw.cz> [180318 22:05]:
+> Hi!
+> 
+> I have the phone, I have safestrap installed, kexec seems to work
+> (crashes my system). But I can't get any output from the new kernel.
+> 
+> All the howtos assume serial connection, but I don't yet have
+> that. I'm really bad at soldering. IIRC display should work in the
+> latest kernels, maybe with some patches?
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
----
-Changes since v5:
-- add 'const' to struct evmcs_field *evmcs_field [kbuild test robot]
-- move KVM_EVMCS_VERSION definition outside of #ifdef [kbuild test robot]
----
- arch/x86/kvm/vmx.c       | 301 +++++++++++++++++++++++++++++++++++++++++--
- arch/x86/kvm/vmx_evmcs.h | 324 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 615 insertions(+), 10 deletions(-)
- create mode 100644 arch/x86/kvm/vmx_evmcs.h
+Yeah display related stuff is half merged in Linux next, backlight
+needs some binding changes from what I remember. I think the
+minimal set is something like this against v4.16-rc:
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 051dab74e4e9..f2f56a11ec39 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -53,9 +53,11 @@
- #include <asm/mmu_context.h>
- #include <asm/microcode.h>
- #include <asm/nospec-branch.h>
-+#include <asm/mshyperv.h>
- 
- #include "trace.h"
- #include "pmu.h"
-+#include "vmx_evmcs.h"
- 
- #define __ex(x) __kvm_handle_fault_on_reboot(x)
- #define __ex_clear(x, reg) \
-@@ -1000,6 +1002,169 @@ static const u32 vmx_msr_index[] = {
- 	MSR_EFER, MSR_TSC_AUX, MSR_STAR,
- };
- 
-+DEFINE_STATIC_KEY_FALSE(enable_evmcs);
-+
-+#define current_evmcs ((struct hv_enlightened_vmcs *)this_cpu_read(current_vmcs))
-+
-+#define KVM_EVMCS_VERSION 1
-+
-+#if IS_ENABLED(CONFIG_HYPERV)
-+static bool __read_mostly enlightened_vmcs = true;
-+module_param(enlightened_vmcs, bool, 0444);
-+
-+static inline void evmcs_write64(unsigned long field, u64 value)
-+{
-+	u16 clean_field;
-+	int offset = get_evmcs_offset(field, &clean_field);
-+
-+	if (offset < 0)
-+		return;
-+
-+	*(u64 *)((char *)current_evmcs + offset) = value;
-+
-+	current_evmcs->hv_clean_fields &= ~clean_field;
-+}
-+
-+static inline void evmcs_write32(unsigned long field, u32 value)
-+{
-+	u16 clean_field;
-+	int offset = get_evmcs_offset(field, &clean_field);
-+
-+	if (offset < 0)
-+		return;
-+
-+	*(u32 *)((char *)current_evmcs + offset) = value;
-+	current_evmcs->hv_clean_fields &= ~clean_field;
-+}
-+
-+static inline void evmcs_write16(unsigned long field, u16 value)
-+{
-+	u16 clean_field;
-+	int offset = get_evmcs_offset(field, &clean_field);
-+
-+	if (offset < 0)
-+		return;
-+
-+	*(u16 *)((char *)current_evmcs + offset) = value;
-+	current_evmcs->hv_clean_fields &= ~clean_field;
-+}
-+
-+static inline u64 evmcs_read64(unsigned long field)
-+{
-+	int offset = get_evmcs_offset(field, NULL);
-+
-+	if (offset < 0)
-+		return 0;
-+
-+	return *(u64 *)((char *)current_evmcs + offset);
-+}
-+
-+static inline u32 evmcs_read32(unsigned long field)
-+{
-+	int offset = get_evmcs_offset(field, NULL);
-+
-+	if (offset < 0)
-+		return 0;
-+
-+	return *(u32 *)((char *)current_evmcs + offset);
-+}
-+
-+static inline u16 evmcs_read16(unsigned long field)
-+{
-+	int offset = get_evmcs_offset(field, NULL);
-+
-+	if (offset < 0)
-+		return 0;
-+
-+	return *(u16 *)((char *)current_evmcs + offset);
-+}
-+
-+static void evmcs_load(u64 phys_addr)
-+{
-+	struct hv_vp_assist_page *vp_ap =
-+		hv_get_vp_assist_page(smp_processor_id());
-+
-+	vp_ap->current_nested_vmcs = phys_addr;
-+	vp_ap->enlighten_vmentry = 1;
-+}
-+
-+static void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
-+{
-+	/*
-+	 * Enlightened VMCSv1 doesn't support these:
-+	 *
-+	 *	POSTED_INTR_NV                  = 0x00000002,
-+	 *	GUEST_INTR_STATUS               = 0x00000810,
-+	 *	APIC_ACCESS_ADDR		= 0x00002014,
-+	 *	POSTED_INTR_DESC_ADDR           = 0x00002016,
-+	 *	EOI_EXIT_BITMAP0                = 0x0000201c,
-+	 *	EOI_EXIT_BITMAP1                = 0x0000201e,
-+	 *	EOI_EXIT_BITMAP2                = 0x00002020,
-+	 *	EOI_EXIT_BITMAP3                = 0x00002022,
-+	 */
-+	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_POSTED_INTR;
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &=
-+		~SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &=
-+		~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &=
-+		~SECONDARY_EXEC_APIC_REGISTER_VIRT;
-+
-+	/*
-+	 *	GUEST_PML_INDEX			= 0x00000812,
-+	 *	PML_ADDRESS			= 0x0000200e,
-+	 */
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_PML;
-+
-+	/*	VM_FUNCTION_CONTROL             = 0x00002018, */
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_VMFUNC;
-+
-+	/*
-+	 *	EPTP_LIST_ADDRESS               = 0x00002024,
-+	 *	VMREAD_BITMAP                   = 0x00002026,
-+	 *	VMWRITE_BITMAP                  = 0x00002028,
-+	 */
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_SHADOW_VMCS;
-+
-+	/*
-+	 *	TSC_MULTIPLIER                  = 0x00002032,
-+	 */
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_TSC_SCALING;
-+
-+	/*
-+	 *	PLE_GAP                         = 0x00004020,
-+	 *	PLE_WINDOW                      = 0x00004022,
-+	 */
-+	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
-+
-+	/*
-+	 *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
-+	 */
-+	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_VMX_PREEMPTION_TIMER;
-+
-+	/*
-+	 *      GUEST_IA32_PERF_GLOBAL_CTRL     = 0x00002808,
-+	 *      HOST_IA32_PERF_GLOBAL_CTRL      = 0x00002c04,
-+	 */
-+	vmcs_conf->vmexit_ctrl &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
-+	vmcs_conf->vmentry_ctrl &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
-+
-+	/*
-+	 * Currently unsupported in KVM:
-+	 *	GUEST_IA32_RTIT_CTL		= 0x00002814,
-+	 */
-+}
-+#else /* !IS_ENABLED(CONFIG_HYPERV) */
-+static inline void evmcs_write64(unsigned long field, u64 value) {}
-+static inline void evmcs_write32(unsigned long field, u32 value) {}
-+static inline void evmcs_write16(unsigned long field, u16 value) {}
-+static inline u64 evmcs_read64(unsigned long field) { return 0; }
-+static inline u32 evmcs_read32(unsigned long field) { return 0; }
-+static inline u16 evmcs_read16(unsigned long field) { return 0; }
-+static inline void evmcs_load(u64 phys_addr) {}
-+static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
-+#endif /* IS_ENABLED(CONFIG_HYPERV) */
-+
- static inline bool is_exception_n(u32 intr_info, u8 vector)
- {
- 	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VECTOR_MASK |
-@@ -1473,6 +1638,9 @@ static void vmcs_load(struct vmcs *vmcs)
- 	u64 phys_addr = __pa(vmcs);
- 	u8 error;
- 
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_load(phys_addr);
-+
- 	asm volatile (__ex(ASM_VMX_VMPTRLD_RAX) "; setna %0"
- 			: "=qm"(error) : "a"(&phys_addr), "m"(phys_addr)
- 			: "cc", "memory");
-@@ -1646,18 +1814,24 @@ static __always_inline unsigned long __vmcs_readl(unsigned long field)
- static __always_inline u16 vmcs_read16(unsigned long field)
- {
- 	vmcs_check16(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_read16(field);
- 	return __vmcs_readl(field);
- }
- 
- static __always_inline u32 vmcs_read32(unsigned long field)
- {
- 	vmcs_check32(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_read32(field);
- 	return __vmcs_readl(field);
- }
- 
- static __always_inline u64 vmcs_read64(unsigned long field)
- {
- 	vmcs_check64(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_read64(field);
- #ifdef CONFIG_X86_64
- 	return __vmcs_readl(field);
- #else
-@@ -1668,6 +1842,8 @@ static __always_inline u64 vmcs_read64(unsigned long field)
- static __always_inline unsigned long vmcs_readl(unsigned long field)
- {
- 	vmcs_checkl(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_read64(field);
- 	return __vmcs_readl(field);
- }
- 
-@@ -1691,18 +1867,27 @@ static __always_inline void __vmcs_writel(unsigned long field, unsigned long val
- static __always_inline void vmcs_write16(unsigned long field, u16 value)
- {
- 	vmcs_check16(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write16(field, value);
-+
- 	__vmcs_writel(field, value);
- }
- 
- static __always_inline void vmcs_write32(unsigned long field, u32 value)
- {
- 	vmcs_check32(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write32(field, value);
-+
- 	__vmcs_writel(field, value);
- }
- 
- static __always_inline void vmcs_write64(unsigned long field, u64 value)
- {
- 	vmcs_check64(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write64(field, value);
-+
- 	__vmcs_writel(field, value);
- #ifndef CONFIG_X86_64
- 	asm volatile ("");
-@@ -1713,6 +1898,9 @@ static __always_inline void vmcs_write64(unsigned long field, u64 value)
- static __always_inline void vmcs_writel(unsigned long field, unsigned long value)
- {
- 	vmcs_checkl(field);
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write64(field, value);
-+
- 	__vmcs_writel(field, value);
- }
- 
-@@ -1720,6 +1908,9 @@ static __always_inline void vmcs_clear_bits(unsigned long field, u32 mask)
- {
-         BUILD_BUG_ON_MSG(__builtin_constant_p(field) && ((field) & 0x6000) == 0x2000,
- 			 "vmcs_clear_bits does not support 64-bit fields");
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write32(field, evmcs_read32(field) & ~mask);
-+
- 	__vmcs_writel(field, __vmcs_readl(field) & ~mask);
- }
- 
-@@ -1727,6 +1918,9 @@ static __always_inline void vmcs_set_bits(unsigned long field, u32 mask)
- {
-         BUILD_BUG_ON_MSG(__builtin_constant_p(field) && ((field) & 0x6000) == 0x2000,
- 			 "vmcs_set_bits does not support 64-bit fields");
-+	if (static_branch_unlikely(&enable_evmcs))
-+		return evmcs_write32(field, evmcs_read32(field) | mask);
-+
- 	__vmcs_writel(field, __vmcs_readl(field) | mask);
- }
- 
-@@ -3596,6 +3790,14 @@ static int hardware_enable(void)
- 	if (cr4_read_shadow() & X86_CR4_VMXE)
- 		return -EBUSY;
- 
-+	/*
-+	 * This can happen if we hot-added a CPU but failed to allocate
-+	 * VP assist page for it.
-+	 */
-+	if (static_branch_unlikely(&enable_evmcs) &&
-+	    !hv_get_vp_assist_page(cpu))
-+		return -EFAULT;
-+
- 	INIT_LIST_HEAD(&per_cpu(loaded_vmcss_on_cpu, cpu));
- 	INIT_LIST_HEAD(&per_cpu(blocked_vcpu_on_cpu, cpu));
- 	spin_lock_init(&per_cpu(blocked_vcpu_on_cpu_lock, cpu));
-@@ -3829,7 +4031,12 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
- 	vmcs_conf->size = vmx_msr_high & 0x1fff;
- 	vmcs_conf->order = get_order(vmcs_conf->size);
- 	vmcs_conf->basic_cap = vmx_msr_high & ~0x1fff;
--	vmcs_conf->revision_id = vmx_msr_low;
-+
-+	/* KVM supports Enlightened VMCS v1 only */
-+	if (static_branch_unlikely(&enable_evmcs))
-+		vmcs_conf->revision_id = KVM_EVMCS_VERSION;
-+	else
-+		vmcs_conf->revision_id = vmx_msr_low;
- 
- 	vmcs_conf->pin_based_exec_ctrl = _pin_based_exec_control;
- 	vmcs_conf->cpu_based_exec_ctrl = _cpu_based_exec_control;
-@@ -3837,6 +4044,9 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
- 	vmcs_conf->vmexit_ctrl         = _vmexit_control;
- 	vmcs_conf->vmentry_ctrl        = _vmentry_control;
- 
-+	if (static_branch_unlikely(&enable_evmcs))
-+		evmcs_sanitize_exec_ctrls(vmcs_conf);
-+
- 	cpu_has_load_ia32_efer =
- 		allow_1_setting(MSR_IA32_VMX_ENTRY_CTLS,
- 				VM_ENTRY_LOAD_IA32_EFER)
-@@ -8784,7 +8994,8 @@ static void dump_vmcs(void)
- 	pr_err("DebugCtl = 0x%016llx  DebugExceptions = 0x%016lx\n",
- 	       vmcs_read64(GUEST_IA32_DEBUGCTL),
- 	       vmcs_readl(GUEST_PENDING_DBG_EXCEPTIONS));
--	if (vmentry_ctl & VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL)
-+	if (cpu_has_load_perf_global_ctrl &&
-+	    vmentry_ctl & VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL)
- 		pr_err("PerfGlobCtl = 0x%016llx\n",
- 		       vmcs_read64(GUEST_IA32_PERF_GLOBAL_CTRL));
- 	if (vmentry_ctl & VM_ENTRY_LOAD_BNDCFGS)
-@@ -8820,7 +9031,8 @@ static void dump_vmcs(void)
- 		pr_err("EFER = 0x%016llx  PAT = 0x%016llx\n",
- 		       vmcs_read64(HOST_IA32_EFER),
- 		       vmcs_read64(HOST_IA32_PAT));
--	if (vmexit_ctl & VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL)
-+	if (cpu_has_load_perf_global_ctrl &&
-+	    vmexit_ctl & VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL)
- 		pr_err("PerfGlobCtl = 0x%016llx\n",
- 		       vmcs_read64(HOST_IA32_PERF_GLOBAL_CTRL));
- 
-@@ -9397,7 +9609,7 @@ static void vmx_arm_hv_timer(struct kvm_vcpu *vcpu)
- static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
--	unsigned long cr3, cr4;
-+	unsigned long cr3, cr4, evmcs_rsp;
- 
- 	/* Record the guest's net vcpu time for enforced NMI injections. */
- 	if (unlikely(!enable_vnmi &&
-@@ -9463,6 +9675,10 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
-+
-+	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
-+		(unsigned long)&current_evmcs->host_rsp : 0;
-+
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -9471,15 +9687,21 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 		"cmp %%" _ASM_SP ", %c[host_rsp](%0) \n\t"
- 		"je 1f \n\t"
- 		"mov %%" _ASM_SP ", %c[host_rsp](%0) \n\t"
-+		/* Avoid VMWRITE when Enlightened VMCS is in use */
-+		"test %%" _ASM_SI ", %%" _ASM_SI " \n\t"
-+		"jz 2f \n\t"
-+		"mov %%" _ASM_SP ", (%%" _ASM_SI ") \n\t"
-+		"jmp 1f \n\t"
-+		"2: \n\t"
- 		__ex(ASM_VMX_VMWRITE_RSP_RDX) "\n\t"
- 		"1: \n\t"
- 		/* Reload cr2 if changed */
- 		"mov %c[cr2](%0), %%" _ASM_AX " \n\t"
- 		"mov %%cr2, %%" _ASM_DX " \n\t"
- 		"cmp %%" _ASM_AX ", %%" _ASM_DX " \n\t"
--		"je 2f \n\t"
-+		"je 3f \n\t"
- 		"mov %%" _ASM_AX", %%cr2 \n\t"
--		"2: \n\t"
-+		"3: \n\t"
- 		/* Check if vmlaunch of vmresume is needed */
- 		"cmpl $0, %c[launched](%0) \n\t"
- 		/* Load guest registers.  Don't clobber flags. */
-@@ -9548,7 +9770,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 		".global vmx_return \n\t"
- 		"vmx_return: " _ASM_PTR " 2b \n\t"
- 		".popsection"
--	      : : "c"(vmx), "d"((unsigned long)HOST_RSP),
-+	      : : "c"(vmx), "d"((unsigned long)HOST_RSP), "S"(evmcs_rsp),
- 		[launched]"i"(offsetof(struct vcpu_vmx, __launched)),
- 		[fail]"i"(offsetof(struct vcpu_vmx, fail)),
- 		[host_rsp]"i"(offsetof(struct vcpu_vmx, host_rsp)),
-@@ -9573,10 +9795,10 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 		[wordsize]"i"(sizeof(ulong))
- 	      : "cc", "memory"
- #ifdef CONFIG_X86_64
--		, "rax", "rbx", "rdi", "rsi"
-+		, "rax", "rbx", "rdi"
- 		, "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
- #else
--		, "eax", "ebx", "edi", "esi"
-+		, "eax", "ebx", "edi"
- #endif
- 	      );
- 
-@@ -9604,6 +9826,11 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
- 
-+	/* All fields are clean at this point */
-+	if (static_branch_unlikely(&enable_evmcs))
-+		current_evmcs->hv_clean_fields |=
-+			HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
-+
- 	/* MSR_IA32_DEBUGCTLMSR is zeroed on vmexit. Restore it if needed */
- 	if (vmx->host_debugctlmsr)
- 		update_debugctlmsr(vmx->host_debugctlmsr);
-@@ -12419,7 +12646,38 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 
- static int __init vmx_init(void)
- {
--	int r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
-+	int r;
-+
-+#if IS_ENABLED(CONFIG_HYPERV)
-+	/*
-+	 * Enlightened VMCS usage should be recommended and the host needs
-+	 * to support eVMCS v1 or above. We can also disable eVMCS support
-+	 * with module parameter.
-+	 */
-+	if (enlightened_vmcs &&
-+	    ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED &&
-+	    (ms_hyperv.nested_features & HV_X64_ENLIGHTENED_VMCS_VERSION) >=
-+	    KVM_EVMCS_VERSION) {
-+		int cpu;
-+
-+		/* Check that we have assist pages on all online CPUs */
-+		for_each_online_cpu(cpu) {
-+			if (!hv_get_vp_assist_page(cpu)) {
-+				enlightened_vmcs = false;
-+				break;
-+			}
-+		}
-+
-+		if (enlightened_vmcs) {
-+			pr_info("KVM: vmx: using Hyper-V Enlightened VMCS\n");
-+			static_branch_enable(&enable_evmcs);
-+		}
-+	} else {
-+		enlightened_vmcs = false;
-+	}
-+#endif
-+
-+	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
-                      __alignof__(struct vcpu_vmx), THIS_MODULE);
- 	if (r)
- 		return r;
-@@ -12440,6 +12698,29 @@ static void __exit vmx_exit(void)
- #endif
- 
- 	kvm_exit();
-+
-+#if IS_ENABLED(CONFIG_HYPERV)
-+	if (static_branch_unlikely(&enable_evmcs)) {
-+		int cpu;
-+		struct hv_vp_assist_page *vp_ap;
-+		/*
-+		 * Reset everything to support using non-enlightened VMCS
-+		 * access later (e.g. when we reload the module with
-+		 * enlightened_vmcs=0)
-+		 */
-+		for_each_online_cpu(cpu) {
-+			vp_ap =	hv_get_vp_assist_page(cpu);
-+
-+			if (!vp_ap)
-+				continue;
-+
-+			vp_ap->current_nested_vmcs = 0;
-+			vp_ap->enlighten_vmentry = 0;
-+		}
-+
-+		static_branch_disable(&enable_evmcs);
-+	}
-+#endif
- }
- 
- module_init(vmx_init)
-diff --git a/arch/x86/kvm/vmx_evmcs.h b/arch/x86/kvm/vmx_evmcs.h
-new file mode 100644
-index 000000000000..210a884090ad
---- /dev/null
-+++ b/arch/x86/kvm/vmx_evmcs.h
-@@ -0,0 +1,324 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __KVM_X86_VMX_EVMCS_H
-+#define __KVM_X86_VMX_EVMCS_H
-+
-+#include <asm/hyperv-tlfs.h>
-+
-+#define ROL16(val, n) ((u16)(((u16)(val) << (n)) | ((u16)(val) >> (16 - (n)))))
-+#define EVMCS1_OFFSET(x) offsetof(struct hv_enlightened_vmcs, x)
-+#define EVMCS1_FIELD(number, name, clean_field)[ROL16(number, 6)] = \
-+		{EVMCS1_OFFSET(name), clean_field}
-+
-+struct evmcs_field {
-+	u16 offset;
-+	u16 clean_field;
-+};
-+
-+static const struct evmcs_field vmcs_field_to_evmcs_1[] = {
-+	/* 64 bit rw */
-+	EVMCS1_FIELD(GUEST_RIP, guest_rip,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(GUEST_RSP, guest_rsp,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC),
-+	EVMCS1_FIELD(GUEST_RFLAGS, guest_rflags,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC),
-+	EVMCS1_FIELD(HOST_IA32_PAT, host_ia32_pat,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_IA32_EFER, host_ia32_efer,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_CR0, host_cr0,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_CR3, host_cr3,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_CR4, host_cr4,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_IA32_SYSENTER_ESP, host_ia32_sysenter_esp,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_IA32_SYSENTER_EIP, host_ia32_sysenter_eip,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_RIP, host_rip,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(IO_BITMAP_A, io_bitmap_a,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP),
-+	EVMCS1_FIELD(IO_BITMAP_B, io_bitmap_b,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP),
-+	EVMCS1_FIELD(MSR_BITMAP, msr_bitmap,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP),
-+	EVMCS1_FIELD(GUEST_ES_BASE, guest_es_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_CS_BASE, guest_cs_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_SS_BASE, guest_ss_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_DS_BASE, guest_ds_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_FS_BASE, guest_fs_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GS_BASE, guest_gs_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_LDTR_BASE, guest_ldtr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_TR_BASE, guest_tr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GDTR_BASE, guest_gdtr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_IDTR_BASE, guest_idtr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(TSC_OFFSET, tsc_offset,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2),
-+	EVMCS1_FIELD(VIRTUAL_APIC_PAGE_ADDR, virtual_apic_page_addr,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2),
-+	EVMCS1_FIELD(VMCS_LINK_POINTER, vmcs_link_pointer,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_IA32_DEBUGCTL, guest_ia32_debugctl,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_IA32_PAT, guest_ia32_pat,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_IA32_EFER, guest_ia32_efer,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_PDPTR0, guest_pdptr0,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_PDPTR1, guest_pdptr1,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_PDPTR2, guest_pdptr2,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_PDPTR3, guest_pdptr3,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_PENDING_DBG_EXCEPTIONS, guest_pending_dbg_exceptions,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_SYSENTER_ESP, guest_sysenter_esp,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_SYSENTER_EIP, guest_sysenter_eip,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(CR0_GUEST_HOST_MASK, cr0_guest_host_mask,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(CR4_GUEST_HOST_MASK, cr4_guest_host_mask,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(CR0_READ_SHADOW, cr0_read_shadow,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(CR4_READ_SHADOW, cr4_read_shadow,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(GUEST_CR0, guest_cr0,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(GUEST_CR3, guest_cr3,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(GUEST_CR4, guest_cr4,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(GUEST_DR7, guest_dr7,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR),
-+	EVMCS1_FIELD(HOST_FS_BASE, host_fs_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(HOST_GS_BASE, host_gs_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(HOST_TR_BASE, host_tr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(HOST_GDTR_BASE, host_gdtr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(HOST_IDTR_BASE, host_idtr_base,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(HOST_RSP, host_rsp,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER),
-+	EVMCS1_FIELD(EPT_POINTER, ept_pointer,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_XLAT),
-+	EVMCS1_FIELD(GUEST_BNDCFGS, guest_bndcfgs,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(XSS_EXIT_BITMAP, xss_exit_bitmap,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2),
-+
-+	/* 64 bit read only */
-+	EVMCS1_FIELD(GUEST_PHYSICAL_ADDRESS, guest_physical_address,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(EXIT_QUALIFICATION, exit_qualification,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	/*
-+	 * Not defined in KVM:
-+	 *
-+	 * EVMCS1_FIELD(0x00006402, exit_io_instruction_ecx,
-+	 *		HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE);
-+	 * EVMCS1_FIELD(0x00006404, exit_io_instruction_esi,
-+	 *		HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE);
-+	 * EVMCS1_FIELD(0x00006406, exit_io_instruction_esi,
-+	 *		HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE);
-+	 * EVMCS1_FIELD(0x00006408, exit_io_instruction_eip,
-+	 *		HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE);
-+	 */
-+	EVMCS1_FIELD(GUEST_LINEAR_ADDRESS, guest_linear_address,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+
-+	/*
-+	 * No mask defined in the spec as Hyper-V doesn't currently support
-+	 * these. Future proof by resetting the whole clean field mask on
-+	 * access.
-+	 */
-+	EVMCS1_FIELD(VM_EXIT_MSR_STORE_ADDR, vm_exit_msr_store_addr,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(VM_EXIT_MSR_LOAD_ADDR, vm_exit_msr_load_addr,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(VM_ENTRY_MSR_LOAD_ADDR, vm_entry_msr_load_addr,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(CR3_TARGET_VALUE0, cr3_target_value0,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(CR3_TARGET_VALUE1, cr3_target_value1,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(CR3_TARGET_VALUE2, cr3_target_value2,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(CR3_TARGET_VALUE3, cr3_target_value3,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+
-+	/* 32 bit rw */
-+	EVMCS1_FIELD(TPR_THRESHOLD, tpr_threshold,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(GUEST_INTERRUPTIBILITY_INFO, guest_interruptibility_info,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC),
-+	EVMCS1_FIELD(CPU_BASED_VM_EXEC_CONTROL, cpu_based_vm_exec_control,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC),
-+	EVMCS1_FIELD(EXCEPTION_BITMAP, exception_bitmap,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EXCPN),
-+	EVMCS1_FIELD(VM_ENTRY_CONTROLS, vm_entry_controls,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_ENTRY),
-+	EVMCS1_FIELD(VM_ENTRY_INTR_INFO_FIELD, vm_entry_intr_info_field,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT),
-+	EVMCS1_FIELD(VM_ENTRY_EXCEPTION_ERROR_CODE,
-+		     vm_entry_exception_error_code,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT),
-+	EVMCS1_FIELD(VM_ENTRY_INSTRUCTION_LEN, vm_entry_instruction_len,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT),
-+	EVMCS1_FIELD(HOST_IA32_SYSENTER_CS, host_ia32_sysenter_cs,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(PIN_BASED_VM_EXEC_CONTROL, pin_based_vm_exec_control,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP1),
-+	EVMCS1_FIELD(VM_EXIT_CONTROLS, vm_exit_controls,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP1),
-+	EVMCS1_FIELD(SECONDARY_VM_EXEC_CONTROL, secondary_vm_exec_control,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP1),
-+	EVMCS1_FIELD(GUEST_ES_LIMIT, guest_es_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_CS_LIMIT, guest_cs_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_SS_LIMIT, guest_ss_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_DS_LIMIT, guest_ds_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_FS_LIMIT, guest_fs_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GS_LIMIT, guest_gs_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_LDTR_LIMIT, guest_ldtr_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_TR_LIMIT, guest_tr_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GDTR_LIMIT, guest_gdtr_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_IDTR_LIMIT, guest_idtr_limit,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_ES_AR_BYTES, guest_es_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_CS_AR_BYTES, guest_cs_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_SS_AR_BYTES, guest_ss_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_DS_AR_BYTES, guest_ds_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_FS_AR_BYTES, guest_fs_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GS_AR_BYTES, guest_gs_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_LDTR_AR_BYTES, guest_ldtr_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_TR_AR_BYTES, guest_tr_ar_bytes,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_ACTIVITY_STATE, guest_activity_state,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+	EVMCS1_FIELD(GUEST_SYSENTER_CS, guest_sysenter_cs,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1),
-+
-+	/* 32 bit read only */
-+	EVMCS1_FIELD(VM_INSTRUCTION_ERROR, vm_instruction_error,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(VM_EXIT_REASON, vm_exit_reason,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(VM_EXIT_INTR_INFO, vm_exit_intr_info,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(VM_EXIT_INTR_ERROR_CODE, vm_exit_intr_error_code,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(IDT_VECTORING_INFO_FIELD, idt_vectoring_info_field,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(IDT_VECTORING_ERROR_CODE, idt_vectoring_error_code,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(VM_EXIT_INSTRUCTION_LEN, vm_exit_instruction_len,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+	EVMCS1_FIELD(VMX_INSTRUCTION_INFO, vmx_instruction_info,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE),
-+
-+	/* No mask defined in the spec (not used) */
-+	EVMCS1_FIELD(PAGE_FAULT_ERROR_CODE_MASK, page_fault_error_code_mask,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(PAGE_FAULT_ERROR_CODE_MATCH, page_fault_error_code_match,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(CR3_TARGET_COUNT, cr3_target_count,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(VM_EXIT_MSR_STORE_COUNT, vm_exit_msr_store_count,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(VM_EXIT_MSR_LOAD_COUNT, vm_exit_msr_load_count,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+	EVMCS1_FIELD(VM_ENTRY_MSR_LOAD_COUNT, vm_entry_msr_load_count,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-+
-+	/* 16 bit rw */
-+	EVMCS1_FIELD(HOST_ES_SELECTOR, host_es_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_CS_SELECTOR, host_cs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_SS_SELECTOR, host_ss_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_DS_SELECTOR, host_ds_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_FS_SELECTOR, host_fs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_GS_SELECTOR, host_gs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(HOST_TR_SELECTOR, host_tr_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1),
-+	EVMCS1_FIELD(GUEST_ES_SELECTOR, guest_es_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_CS_SELECTOR, guest_cs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_SS_SELECTOR, guest_ss_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_DS_SELECTOR, guest_ds_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_FS_SELECTOR, guest_fs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_GS_SELECTOR, guest_gs_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_LDTR_SELECTOR, guest_ldtr_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(GUEST_TR_SELECTOR, guest_tr_selector,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2),
-+	EVMCS1_FIELD(VIRTUAL_PROCESSOR_ID, virtual_processor_id,
-+		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_XLAT),
-+};
-+
-+static __always_inline int get_evmcs_offset(unsigned long field,
-+					    u16 *clean_field)
-+{
-+	unsigned int index = ROL16(field, 6);
-+	const struct evmcs_field *evmcs_field;
-+
-+	if (unlikely(index >= ARRAY_SIZE(vmcs_field_to_evmcs_1))) {
-+		WARN_ONCE(1, "KVM: accessing unsupported EVMCS field %lx\n",
-+			  field);
-+		return -ENOENT;
-+	}
-+
-+	evmcs_field = &vmcs_field_to_evmcs_1[index];
-+
-+	if (clean_field)
-+		*clean_field = evmcs_field->clean_field;
-+
-+	return evmcs_field->offset;
-+}
-+
-+#undef ROL16
-+
-+#endif /* __KVM_X86_VMX_EVMCS_H */
--- 
-2.14.3
+backlight: add TI LMU backlight driver
+drm/omap: add framedone interrupt support
+drm/omap: add manual update detection helper
+drm/omap: add support for manually updated displays
+
+Then also audio support is also half merged and need few patches
+if you check the mailing list archives for cpcap codec related
+patches.
+
+Maybe get somebody to help you locally with the debug cable
+soldering? :)
+
+> Could someone give me .config and git hash that works for him? Once I
+> get working display I should be able to continue easily. I'd really
+> like to get voice calls working...
+
+You want to use omapdrm, below is what I'm using with loadable
+modules with Linux next based on omap2plus_defconfig. It has some
+extra debug options enabled too that you might want to ignore,
+I'll try to send the defconfig related patches out too.
+
+Basically you need the CONFIG_MFD_TI_LMU, CONFIG_DRM_OMAP and
+CONFIG_DRM_OMAP_PANEL_DSI_CM related options.
+
+> I took a brief look through dts, and I did not find anything that
+> could be easily used for debugging. (It seems that capslock LED and
+> keyboard backlight is not yet supported? Also volume down  seems to be
+> supported but not volume up, funny).
+
+Oh I thought we had all the LEDs mapped already? Volume down is
+on the internal keypad, then volume up is on a GPIO controller.
+I guess to allow chords for the bootloader.
+
+Regards,
+
+Tony
+
+
+--OwLcNYc0lM97+oe1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline; filename=defconfig-d4
+
+# CONFIG_LOCALVERSION_AUTO is not set
+CONFIG_KERNEL_LZMA=y
+CONFIG_SYSVIPC=y
+CONFIG_POSIX_MQUEUE=y
+CONFIG_AUDIT=y
+CONFIG_NO_HZ=y
+CONFIG_HIGH_RES_TIMERS=y
+CONFIG_BSD_PROCESS_ACCT=y
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+CONFIG_LOG_BUF_SHIFT=16
+CONFIG_CGROUPS=y
+CONFIG_MEMCG=y
+CONFIG_MEMCG_SWAP=y
+CONFIG_BLK_CGROUP=y
+CONFIG_CGROUP_SCHED=y
+CONFIG_CFS_BANDWIDTH=y
+CONFIG_RT_GROUP_SCHED=y
+CONFIG_CGROUP_FREEZER=y
+CONFIG_CPUSETS=y
+CONFIG_CGROUP_DEVICE=y
+CONFIG_CGROUP_CPUACCT=y
+CONFIG_CGROUP_PERF=y
+CONFIG_NAMESPACES=y
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_EXPERT=y
+CONFIG_SLAB=y
+CONFIG_PROFILING=y
+CONFIG_OPROFILE=y
+CONFIG_KPROBES=y
+CONFIG_MODULES=y
+CONFIG_MODULE_FORCE_LOAD=y
+CONFIG_MODULE_UNLOAD=y
+CONFIG_MODULE_FORCE_UNLOAD=y
+CONFIG_MODVERSIONS=y
+CONFIG_MODULE_SRCVERSION_ALL=y
+# CONFIG_BLK_DEV_BSG is not set
+CONFIG_PARTITION_ADVANCED=y
+CONFIG_ARCH_MULTI_V6=y
+CONFIG_POWER_AVS_OMAP=y
+CONFIG_POWER_AVS_OMAP_CLASS3=y
+CONFIG_OMAP_RESET_CLOCKS=y
+CONFIG_ARCH_OMAP2=y
+CONFIG_ARCH_OMAP3=y
+CONFIG_ARCH_OMAP4=y
+CONFIG_SOC_OMAP5=y
+CONFIG_SOC_AM33XX=y
+CONFIG_SOC_AM43XX=y
+CONFIG_SOC_DRA7XX=y
+CONFIG_ARM_THUMBEE=y
+CONFIG_ARM_ERRATA_411920=y
+CONFIG_PCI=y
+CONFIG_PCI_MSI=y
+CONFIG_PCI_DRA7XX_EP=y
+CONFIG_PCI_ENDPOINT=y
+CONFIG_PCI_ENDPOINT_CONFIGFS=y
+CONFIG_PCI_EPF_TEST=m
+CONFIG_SMP=y
+CONFIG_NR_CPUS=2
+CONFIG_CMA=y
+CONFIG_SECCOMP=y
+CONFIG_ZBOOT_ROM_TEXT=0x0
+CONFIG_ZBOOT_ROM_BSS=0x0
+CONFIG_ARM_APPENDED_DTB=y
+CONFIG_ARM_ATAG_DTB_COMPAT=y
+CONFIG_CMDLINE="root=/dev/mmcblk0p2 rootwait console=ttyO2,115200"
+CONFIG_KEXEC=y
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+CONFIG_CPU_FREQ_GOV_USERSPACE=y
+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+CONFIG_CPUFREQ_DT=m
+# CONFIG_ARM_OMAP2PLUS_CPUFREQ is not set
+CONFIG_ARM_TI_CPUFREQ=y
+CONFIG_CPU_IDLE=y
+CONFIG_KERNEL_MODE_NEON=y
+CONFIG_BINFMT_MISC=y
+CONFIG_PM_DEBUG=y
+CONFIG_NET=y
+CONFIG_PACKET=y
+CONFIG_UNIX=y
+CONFIG_XFRM_USER=y
+CONFIG_NET_KEY=y
+CONFIG_NET_KEY_MIGRATE=y
+CONFIG_INET=y
+CONFIG_IP_MULTICAST=y
+CONFIG_IP_PNP=y
+CONFIG_IP_PNP_DHCP=y
+CONFIG_IP_PNP_BOOTP=y
+CONFIG_IP_PNP_RARP=y
+CONFIG_NETFILTER=y
+CONFIG_PHONET=m
+CONFIG_CAN=m
+CONFIG_CAN_C_CAN=m
+CONFIG_CAN_C_CAN_PLATFORM=m
+CONFIG_BT=m
+CONFIG_BT_RFCOMM=m
+CONFIG_BT_RFCOMM_TTY=y
+CONFIG_BT_BNEP=m
+CONFIG_BT_BNEP_MC_FILTER=y
+CONFIG_BT_BNEP_PROTO_FILTER=y
+CONFIG_BT_HIDP=m
+CONFIG_BT_HCIBTUSB=m
+CONFIG_BT_HCIBTSDIO=m
+CONFIG_BT_HCIUART=m
+CONFIG_BT_HCIUART_NOKIA=m
+CONFIG_BT_HCIUART_BCSP=y
+CONFIG_BT_HCIUART_LL=y
+CONFIG_BT_HCIUART_3WIRE=y
+CONFIG_BT_HCIUART_BCM=y
+CONFIG_BT_HCIBCM203X=m
+CONFIG_BT_HCIBPA10X=m
+CONFIG_BT_HCIBFUSB=m
+CONFIG_BT_HCIVHCI=m
+CONFIG_BT_MRVL=m
+CONFIG_BT_MRVL_SDIO=m
+CONFIG_AF_RXRPC=m
+CONFIG_RXKAD=y
+CONFIG_CFG80211=m
+CONFIG_MAC80211=m
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_DMA_CMA=y
+CONFIG_OMAP_OCP2SCP=y
+CONFIG_CONNECTOR=m
+CONFIG_MTD=y
+CONFIG_MTD_CMDLINE_PARTS=y
+CONFIG_MTD_BLOCK=y
+CONFIG_MTD_OOPS=y
+CONFIG_MTD_CFI=y
+CONFIG_MTD_CFI_INTELEXT=y
+CONFIG_MTD_PHYSMAP=y
+CONFIG_MTD_PHYSMAP_OF=y
+CONFIG_MTD_M25P80=m
+CONFIG_MTD_ONENAND=y
+CONFIG_MTD_ONENAND_VERIFY_WRITE=y
+CONFIG_MTD_ONENAND_OMAP2=y
+CONFIG_MTD_NAND=y
+CONFIG_MTD_NAND_ECC_BCH=y
+CONFIG_MTD_NAND_OMAP2=y
+CONFIG_MTD_NAND_OMAP_BCH=y
+CONFIG_MTD_SPI_NOR=m
+CONFIG_MTD_UBI=y
+CONFIG_BLK_DEV_LOOP=y
+CONFIG_BLK_DEV_RAM=y
+CONFIG_BLK_DEV_RAM_SIZE=16384
+CONFIG_SENSORS_TSL2550=m
+CONFIG_SRAM=y
+CONFIG_PCI_ENDPOINT_TEST=m
+CONFIG_EEPROM_AT24=m
+CONFIG_BLK_DEV_SD=y
+CONFIG_SCSI_SCAN_ASYNC=y
+CONFIG_ATA=y
+CONFIG_SATA_AHCI_PLATFORM=y
+CONFIG_AHCI_DM816=m
+CONFIG_NETDEVICES=y
+# CONFIG_NET_VENDOR_ARC is not set
+# CONFIG_NET_CADENCE is not set
+# CONFIG_NET_VENDOR_BROADCOM is not set
+# CONFIG_NET_VENDOR_CIRRUS is not set
+CONFIG_DM9000=y
+# CONFIG_NET_VENDOR_FARADAY is not set
+# CONFIG_NET_VENDOR_HISILICON is not set
+# CONFIG_NET_VENDOR_INTEL is not set
+# CONFIG_NET_VENDOR_MARVELL is not set
+CONFIG_KS8851=y
+CONFIG_KS8851_MLL=y
+# CONFIG_NET_VENDOR_MICROCHIP is not set
+# CONFIG_NET_VENDOR_NATSEMI is not set
+# CONFIG_NET_VENDOR_QUALCOMM is not set
+# CONFIG_NET_VENDOR_SAMSUNG is not set
+# CONFIG_NET_VENDOR_SEEQ is not set
+CONFIG_SMC91X=y
+CONFIG_SMSC911X=y
+# CONFIG_NET_VENDOR_STMICRO is not set
+CONFIG_TI_DAVINCI_EMAC=y
+CONFIG_TI_CPSW=y
+CONFIG_TI_CPTS=y
+# CONFIG_NET_VENDOR_VIA is not set
+# CONFIG_NET_VENDOR_WIZNET is not set
+CONFIG_AT803X_PHY=y
+CONFIG_DP83848_PHY=y
+CONFIG_DP83867_PHY=y
+CONFIG_MICREL_PHY=y
+CONFIG_SMSC_PHY=y
+CONFIG_PPP=m
+CONFIG_PPP_BSDCOMP=m
+CONFIG_PPP_DEFLATE=m
+CONFIG_PPP_FILTER=y
+CONFIG_PPP_MPPE=m
+CONFIG_PPP_MULTILINK=y
+CONFIG_PPPOE=m
+CONFIG_PPP_ASYNC=m
+CONFIG_PPP_SYNC_TTY=m
+CONFIG_USB_USBNET=m
+CONFIG_USB_NET_SMSC75XX=m
+CONFIG_USB_NET_SMSC95XX=m
+CONFIG_USB_ALI_M5632=y
+CONFIG_USB_AN2720=y
+CONFIG_USB_EPSON2888=y
+CONFIG_USB_KC2190=y
+CONFIG_USB_NET_QMI_WWAN=m
+CONFIG_USB_CDC_PHONET=m
+CONFIG_LIBERTAS=m
+CONFIG_LIBERTAS_USB=m
+CONFIG_LIBERTAS_SDIO=m
+CONFIG_LIBERTAS_DEBUG=y
+CONFIG_MWIFIEX=m
+CONFIG_MWIFIEX_SDIO=m
+CONFIG_MWIFIEX_USB=m
+CONFIG_WL12XX=m
+CONFIG_WL18XX=m
+CONFIG_WLCORE_SPI=m
+CONFIG_WLCORE_SDIO=m
+CONFIG_INPUT_MOUSEDEV=m
+CONFIG_INPUT_JOYDEV=m
+CONFIG_INPUT_EVDEV=m
+CONFIG_KEYBOARD_ATKBD=m
+CONFIG_KEYBOARD_GPIO=m
+CONFIG_KEYBOARD_MATRIX=m
+CONFIG_KEYBOARD_OMAP4=m
+CONFIG_KEYBOARD_TWL4030=m
+# CONFIG_INPUT_MOUSE is not set
+CONFIG_INPUT_TOUCHSCREEN=y
+CONFIG_TOUCHSCREEN_ADS7846=m
+CONFIG_TOUCHSCREEN_ATMEL_MXT=m
+CONFIG_TOUCHSCREEN_EDT_FT5X06=m
+CONFIG_TOUCHSCREEN_TI_AM335X_TSC=m
+CONFIG_TOUCHSCREEN_PIXCIR=m
+CONFIG_TOUCHSCREEN_TSC2004=m
+CONFIG_TOUCHSCREEN_TSC2005=m
+CONFIG_TOUCHSCREEN_TSC2007=m
+CONFIG_INPUT_MISC=y
+CONFIG_INPUT_CPCAP_PWRBUTTON=m
+CONFIG_INPUT_TPS65218_PWRBUTTON=m
+CONFIG_INPUT_TWL4030_PWRBUTTON=m
+CONFIG_INPUT_UINPUT=m
+CONFIG_INPUT_PALMAS_PWRBUTTON=m
+CONFIG_INPUT_PWM_VIBRA=m
+CONFIG_SERIO=m
+# CONFIG_LEGACY_PTYS is not set
+CONFIG_N_GSM=m
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_NR_UARTS=32
+CONFIG_SERIAL_8250_RUNTIME_UARTS=6
+CONFIG_SERIAL_8250_EXTENDED=y
+CONFIG_SERIAL_8250_MANY_PORTS=y
+CONFIG_SERIAL_8250_SHARE_IRQ=y
+CONFIG_SERIAL_8250_DETECT_IRQ=y
+CONFIG_SERIAL_8250_RSA=y
+CONFIG_SERIAL_8250_OMAP=y
+CONFIG_SERIAL_OF_PLATFORM=y
+CONFIG_SERIAL_OMAP=y
+CONFIG_SERIAL_OMAP_CONSOLE=y
+CONFIG_SERIAL_DEV_BUS=y
+CONFIG_SERIAL_DEV_CTRL_MDM6600=m
+CONFIG_I2C_CHARDEV=y
+CONFIG_SPI=y
+CONFIG_SPI_OMAP24XX=y
+CONFIG_SPI_TI_QSPI=m
+CONFIG_HSI=m
+CONFIG_OMAP_SSI=m
+CONFIG_SSI_PROTOCOL=m
+CONFIG_PINCTRL_SINGLE=y
+CONFIG_DEBUG_GPIO=y
+CONFIG_GPIO_SYSFS=y
+CONFIG_GPIO_PCA953X=m
+CONFIG_GPIO_PCF857X=y
+CONFIG_GPIO_LP87565=y
+CONFIG_GPIO_PALMAS=y
+CONFIG_GPIO_TWL4030=y
+CONFIG_W1=m
+CONFIG_HDQ_MASTER_OMAP=m
+CONFIG_W1_SLAVE_THERM=m
+CONFIG_W1_SLAVE_SMEM=m
+CONFIG_W1_SLAVE_DS2405=m
+CONFIG_W1_SLAVE_DS2408=m
+CONFIG_W1_SLAVE_DS2413=m
+CONFIG_W1_SLAVE_DS2406=m
+CONFIG_W1_SLAVE_DS2423=m
+CONFIG_W1_SLAVE_DS2805=m
+CONFIG_W1_SLAVE_DS2431=m
+CONFIG_W1_SLAVE_DS2433=m
+CONFIG_W1_SLAVE_DS2433_CRC=y
+CONFIG_W1_SLAVE_DS2438=m
+CONFIG_W1_SLAVE_DS2760=m
+CONFIG_W1_SLAVE_DS2780=m
+CONFIG_W1_SLAVE_DS2781=m
+CONFIG_W1_SLAVE_DS28E04=m
+CONFIG_W1_SLAVE_DS28E17=m
+CONFIG_POWER_AVS=y
+CONFIG_POWER_RESET=y
+CONFIG_POWER_RESET_GPIO=y
+CONFIG_BATTERY_BQ27XXX=m
+CONFIG_CHARGER_ISP1704=m
+CONFIG_CHARGER_TWL4030=m
+CONFIG_CHARGER_BQ2415X=m
+CONFIG_CHARGER_BQ24190=m
+CONFIG_CHARGER_BQ24735=m
+CONFIG_HWMON=m
+CONFIG_SENSORS_GPIO_FAN=m
+CONFIG_SENSORS_LM75=m
+CONFIG_SENSORS_TMP102=m
+CONFIG_THERMAL=m
+CONFIG_THERMAL_GOV_FAIR_SHARE=y
+CONFIG_THERMAL_GOV_USER_SPACE=y
+CONFIG_CPU_THERMAL=y
+CONFIG_TI_SOC_THERMAL=m
+CONFIG_TI_THERMAL=y
+CONFIG_OMAP4_THERMAL=y
+CONFIG_OMAP5_THERMAL=y
+CONFIG_DRA752_THERMAL=y
+CONFIG_WATCHDOG=y
+CONFIG_OMAP_WATCHDOG=m
+CONFIG_TWL4030_WATCHDOG=m
+CONFIG_MFD_CPCAP=y
+CONFIG_MFD_TI_AM335X_TSCADC=m
+CONFIG_MFD_TI_LMU=m
+CONFIG_MFD_PALMAS=y
+CONFIG_MFD_TPS65217=y
+CONFIG_MFD_TI_LP873X=y
+CONFIG_MFD_TI_LP87565=y
+CONFIG_MFD_TPS65218=y
+CONFIG_MFD_TPS65910=y
+CONFIG_TWL6040_CORE=y
+CONFIG_REGULATOR_CPCAP=y
+CONFIG_REGULATOR_GPIO=y
+CONFIG_REGULATOR_LM363X=m
+CONFIG_REGULATOR_LP872X=y
+CONFIG_REGULATOR_LP873X=y
+CONFIG_REGULATOR_LP87565=y
+CONFIG_REGULATOR_PALMAS=y
+CONFIG_REGULATOR_PBIAS=y
+CONFIG_REGULATOR_TI_ABB=y
+CONFIG_REGULATOR_TPS62360=m
+CONFIG_REGULATOR_TPS65023=y
+CONFIG_REGULATOR_TPS6507X=y
+CONFIG_REGULATOR_TPS65217=y
+CONFIG_REGULATOR_TPS65218=y
+CONFIG_REGULATOR_TPS65910=y
+CONFIG_REGULATOR_TWL4030=y
+CONFIG_RC_CORE=m
+CONFIG_LIRC=y
+CONFIG_RC_DEVICES=y
+CONFIG_IR_SPI=m
+CONFIG_IR_RX51=m
+CONFIG_IR_GPIO_TX=m
+CONFIG_IR_PWM_TX=m
+CONFIG_MEDIA_SUPPORT=m
+CONFIG_MEDIA_CAMERA_SUPPORT=y
+CONFIG_MEDIA_CEC_SUPPORT=y
+CONFIG_MEDIA_CONTROLLER=y
+CONFIG_VIDEO_V4L2_SUBDEV_API=y
+CONFIG_V4L_PLATFORM_DRIVERS=y
+CONFIG_VIDEO_OMAP3=m
+CONFIG_CEC_PLATFORM_DRIVERS=y
+# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+CONFIG_VIDEO_TVP5150=m
+CONFIG_DRM=m
+CONFIG_DRM_OMAP=m
+CONFIG_OMAP5_DSS_HDMI=y
+CONFIG_OMAP2_DSS_SDI=y
+CONFIG_OMAP2_DSS_DSI=y
+CONFIG_DRM_OMAP_ENCODER_OPA362=m
+CONFIG_DRM_OMAP_ENCODER_TFP410=m
+CONFIG_DRM_OMAP_ENCODER_TPD12S015=m
+CONFIG_DRM_OMAP_CONNECTOR_DVI=m
+CONFIG_DRM_OMAP_CONNECTOR_HDMI=m
+CONFIG_DRM_OMAP_CONNECTOR_ANALOG_TV=m
+CONFIG_DRM_OMAP_PANEL_DPI=m
+CONFIG_DRM_OMAP_PANEL_DSI_CM=m
+CONFIG_DRM_OMAP_PANEL_SONY_ACX565AKM=m
+CONFIG_DRM_OMAP_PANEL_LGPHILIPS_LB035Q02=m
+CONFIG_DRM_OMAP_PANEL_SHARP_LS037V7DW01=m
+CONFIG_DRM_OMAP_PANEL_TPO_TD028TTEC1=m
+CONFIG_DRM_OMAP_PANEL_TPO_TD043MTEA1=m
+CONFIG_DRM_OMAP_PANEL_NEC_NL8048HL11=m
+CONFIG_DRM_TILCDC=m
+CONFIG_FB=y
+CONFIG_FIRMWARE_EDID=y
+CONFIG_FB_MODE_HELPERS=y
+CONFIG_FB_TILEBLITTING=y
+CONFIG_LCD_CLASS_DEVICE=y
+CONFIG_LCD_PLATFORM=y
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+CONFIG_BACKLIGHT_GENERIC=m
+CONFIG_BACKLIGHT_PWM=m
+CONFIG_BACKLIGHT_PANDORA=m
+CONFIG_BACKLIGHT_TI_LMU=m
+CONFIG_BACKLIGHT_GPIO=m
+CONFIG_FRAMEBUFFER_CONSOLE=y
+CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+CONFIG_LOGO=y
+CONFIG_SOUND=m
+CONFIG_SND=m
+CONFIG_SND_OSSEMUL=y
+CONFIG_SND_MIXER_OSS=m
+CONFIG_SND_PCM_OSS=m
+CONFIG_SND_VERBOSE_PRINTK=y
+CONFIG_SND_DEBUG=y
+CONFIG_SND_USB_AUDIO=m
+CONFIG_SND_SOC=m
+CONFIG_SND_EDMA_SOC=m
+CONFIG_SND_AM33XX_SOC_EVM=m
+CONFIG_SND_OMAP_SOC=m
+CONFIG_SND_OMAP_SOC_HDMI_AUDIO=m
+CONFIG_SND_OMAP_SOC_OMAP_TWL4030=m
+CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=m
+CONFIG_SND_OMAP_SOC_OMAP3_PANDORA=m
+CONFIG_SND_SOC_CPCAP=m
+CONFIG_SND_SIMPLE_CARD=m
+CONFIG_SND_AUDIO_GRAPH_CARD=m
+CONFIG_HID_GENERIC=m
+CONFIG_USB_HIDDEV=y
+CONFIG_USB_KBD=m
+CONFIG_USB_MOUSE=m
+CONFIG_USB=m
+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+CONFIG_USB_MON=m
+CONFIG_USB_XHCI_HCD=m
+CONFIG_USB_EHCI_HCD=m
+CONFIG_USB_OHCI_HCD=m
+CONFIG_USB_ACM=m
+CONFIG_USB_STORAGE=m
+CONFIG_USB_MUSB_HDRC=m
+CONFIG_USB_MUSB_TUSB6010=m
+CONFIG_USB_MUSB_OMAP2PLUS=m
+CONFIG_USB_MUSB_AM35X=m
+CONFIG_USB_MUSB_DSPS=m
+CONFIG_USB_INVENTRA_DMA=y
+CONFIG_USB_TI_CPPI41_DMA=y
+CONFIG_USB_TUSB_OMAP_DMA=y
+CONFIG_USB_DWC3=m
+CONFIG_USB_SERIAL=m
+CONFIG_USB_SERIAL_GENERIC=y
+CONFIG_USB_SERIAL_SIMPLE=m
+CONFIG_USB_SERIAL_FTDI_SIO=m
+CONFIG_USB_SERIAL_PL2303=m
+CONFIG_USB_TEST=m
+CONFIG_NOP_USB_XCEIV=m
+CONFIG_AM335X_PHY_USB=m
+CONFIG_TWL6030_USB=m
+CONFIG_USB_GADGET=m
+CONFIG_USB_GADGET_DEBUG=y
+CONFIG_USB_GADGET_DEBUG_FILES=y
+CONFIG_USB_GADGET_DEBUG_FS=y
+CONFIG_USB_CONFIGFS=m
+CONFIG_USB_CONFIGFS_SERIAL=y
+CONFIG_USB_CONFIGFS_ACM=y
+CONFIG_USB_CONFIGFS_OBEX=y
+CONFIG_USB_CONFIGFS_NCM=y
+CONFIG_USB_CONFIGFS_ECM=y
+CONFIG_USB_CONFIGFS_ECM_SUBSET=y
+CONFIG_USB_CONFIGFS_RNDIS=y
+CONFIG_USB_CONFIGFS_EEM=y
+CONFIG_USB_CONFIGFS_PHONET=y
+CONFIG_USB_CONFIGFS_MASS_STORAGE=y
+CONFIG_USB_CONFIGFS_F_LB_SS=y
+CONFIG_USB_CONFIGFS_F_FS=y
+CONFIG_USB_CONFIGFS_F_UAC1=y
+CONFIG_USB_CONFIGFS_F_UAC2=y
+CONFIG_USB_CONFIGFS_F_MIDI=y
+CONFIG_USB_CONFIGFS_F_HID=y
+CONFIG_USB_ZERO=m
+CONFIG_USB_G_NOKIA=m
+CONFIG_MMC=y
+CONFIG_SDIO_UART=y
+CONFIG_MMC_SDHCI=y
+CONFIG_MMC_SDHCI_PLTFM=y
+CONFIG_MMC_OMAP=y
+CONFIG_MMC_OMAP_HS=y
+CONFIG_MMC_SDHCI_OMAP=y
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=m
+CONFIG_LEDS_CPCAP=m
+CONFIG_LEDS_GPIO=m
+CONFIG_LEDS_PCA963X=m
+CONFIG_LEDS_PWM=m
+CONFIG_LEDS_TRIGGERS=y
+CONFIG_LEDS_TRIGGER_TIMER=m
+CONFIG_LEDS_TRIGGER_ONESHOT=m
+CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+CONFIG_LEDS_TRIGGER_BACKLIGHT=m
+CONFIG_LEDS_TRIGGER_CPU=y
+CONFIG_LEDS_TRIGGER_GPIO=m
+CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_DRV_DS1307=m
+CONFIG_RTC_DRV_M41T80=m
+CONFIG_RTC_DRV_TWL92330=y
+CONFIG_RTC_DRV_TWL4030=m
+CONFIG_RTC_DRV_PALMAS=m
+CONFIG_RTC_DRV_OMAP=m
+CONFIG_RTC_DRV_CPCAP=m
+CONFIG_DMADEVICES=y
+CONFIG_DMA_OMAP=y
+CONFIG_TI_EDMA=y
+CONFIG_OMAP_IOMMU=y
+CONFIG_REMOTEPROC=m
+CONFIG_OMAP_REMOTEPROC=m
+CONFIG_WKUP_M3_RPROC=m
+CONFIG_SOC_TI=y
+CONFIG_AMX3_PM=m
+CONFIG_WKUP_M3_IPC=m
+CONFIG_EXTCON_PALMAS=m
+CONFIG_EXTCON_USB_GPIO=m
+CONFIG_TI_EMIF=m
+CONFIG_TI_EMIF_SRAM=m
+CONFIG_IIO=m
+CONFIG_IIO_SW_DEVICE=m
+CONFIG_IIO_SW_TRIGGER=m
+CONFIG_IIO_ST_ACCEL_3AXIS=m
+CONFIG_CPCAP_ADC=m
+CONFIG_TI_AM335X_ADC=m
+CONFIG_BMP280=m
+CONFIG_PWM=y
+CONFIG_PWM_OMAP_DMTIMER=m
+CONFIG_PWM_TIECAP=m
+CONFIG_PWM_TIEHRPWM=m
+CONFIG_PWM_TWL=m
+CONFIG_PWM_TWL_LED=m
+CONFIG_RESET_CONTROLLER=y
+CONFIG_PHY_CPCAP_USB=m
+CONFIG_PHY_MAPPHONE_MDM6600=m
+CONFIG_PHY_DM816X_USB=m
+CONFIG_OMAP_USB2=m
+CONFIG_TI_PIPE3=y
+CONFIG_TWL4030_USB=m
+CONFIG_EXT2_FS=y
+CONFIG_EXT3_FS=y
+CONFIG_FANOTIFY=y
+CONFIG_QUOTA=y
+CONFIG_QFMT_V2=y
+CONFIG_AUTOFS4_FS=m
+CONFIG_FUSE_FS=m
+CONFIG_CUSE=m
+CONFIG_MSDOS_FS=y
+CONFIG_VFAT_FS=y
+CONFIG_TMPFS=y
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_JFFS2_FS=y
+CONFIG_JFFS2_SUMMARY=y
+CONFIG_JFFS2_FS_XATTR=y
+CONFIG_JFFS2_COMPRESSION_OPTIONS=y
+CONFIG_JFFS2_LZO=y
+CONFIG_JFFS2_RUBIN=y
+CONFIG_UBIFS_FS=y
+CONFIG_CRAMFS=y
+CONFIG_PSTORE=y
+CONFIG_PSTORE_CONSOLE=y
+CONFIG_PSTORE_PMSG=y
+CONFIG_PSTORE_FTRACE=y
+CONFIG_PSTORE_RAM=y
+CONFIG_NFS_FS=y
+CONFIG_NFS_V3_ACL=y
+CONFIG_NFS_V4=y
+CONFIG_ROOT_NFS=y
+CONFIG_NLS_CODEPAGE_437=y
+CONFIG_NLS_ISO8859_1=y
+CONFIG_PRINTK_TIME=y
+CONFIG_DEBUG_INFO=y
+CONFIG_DEBUG_INFO_SPLIT=y
+CONFIG_DEBUG_INFO_DWARF4=y
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_SCHEDSTATS=y
+CONFIG_PROVE_LOCKING=y
+CONFIG_DEBUG_LOCKDEP=y
+CONFIG_DEBUG_ATOMIC_SLEEP=y
+# CONFIG_DEBUG_BUGVERBOSE is not set
+CONFIG_FUNCTION_TRACER=y
+CONFIG_FUNCTION_PROFILER=y
+CONFIG_SECURITY=y
+CONFIG_CRYPTO_MICHAEL_MIC=y
+CONFIG_ARM_CRYPTO=y
+CONFIG_CRYPTO_SHA1_ARM_NEON=m
+CONFIG_CRYPTO_SHA256_ARM=m
+CONFIG_CRYPTO_SHA512_ARM=m
+CONFIG_CRYPTO_AES_ARM=m
+CONFIG_CRYPTO_AES_ARM_BS=m
+CONFIG_CRYPTO_GHASH_ARM_CE=m
+CONFIG_CRYPTO_CHACHA20_NEON=m
+CONFIG_CRC_CCITT=y
+CONFIG_CRC_T10DIF=y
+CONFIG_CRC_ITU_T=y
+CONFIG_CRC7=y
+CONFIG_LIBCRC32C=y
+CONFIG_FONTS=y
+CONFIG_FONT_8x8=y
+CONFIG_FONT_8x16=y
+
+--OwLcNYc0lM97+oe1--
