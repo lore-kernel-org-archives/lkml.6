@@ -1,118 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935391AbeCTAud convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 20:50:33 -0400
-Received: from mx.socionext.com ([202.248.49.38]:13824 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934310AbeCTAuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 20:50:32 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-References: <20180319012158.26411-1-suzuki.katsuhiro@socionext.com> <CAK7LNAQ__FYvJdvxPhzazyi4fSCwkMzCWGVVjy5FKfOp+-hfcg@mail.gmail.com>
-In-Reply-To: <CAK7LNAQ__FYvJdvxPhzazyi4fSCwkMzCWGVVjy5FKfOp+-hfcg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: uniphier: add syscon property for UniPhier sound system
-Date: Tue, 20 Mar 2018 09:50:26 +0900
-Message-ID: <000001d3bfe5$700b96a0$5022c3e0$@socionext.com>
+        id S964849AbeCTAv4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 20:51:56 -0400
+Received: from mail-pl0-f44.google.com ([209.85.160.44]:35955 "EHLO
+        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933411AbeCTAvx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 20:51:53 -0400
+X-Google-Smtp-Source: AG47ELuZVqUmx/FzvrP4lSJp6B2yrRsWHTn9E2hz0gp1I5rcQQ3stwRLqkBtkG+BAiVlijORQePs5A==
+Date: Mon, 19 Mar 2018 17:51:48 -0700
+From: Benson Leung <bleung@google.com>
+To: Salvatore Bellizzi <lkml@seppia.net>
+Cc: linux-kernel@vger.kernel.org, bleung@chromium.org, olof@lixom.net,
+        linuxbugs@vittgam.net, bleung@google.com
+Subject: Re: [RESEND][PATCH] platform/chrome: cros_ec_lpc: Add support for
+ Google devices using custom coreboot firmware
+Message-ID: <20180320005148.GB57573@decatoncale.mtv.corp.google.com>
+References: <cros-ec-patch-20180307@mail.seppia.net>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHTvyCuNy3eRnP45UWnGwTt5cZSeqPXCfAAgAFCL2A=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
+Content-Disposition: inline
+In-Reply-To: <cros-ec-patch-20180307@mail.seppia.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yamada-san,
 
-Thank you for reviewing.
+--V0207lvV8h4k8FAm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Salvatore,
 
-> -----Original Message-----
-> From: Masahiro Yamada [mailto:yamada.masahiro@socionext.com]
-> Sent: Monday, March 19, 2018 11:36 PM
-> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
-> Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>;
-> devicetree@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi
-> Brar <jaswinder.singh@linaro.org>; Linux Kernel Mailing List
-> <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH] arm64: dts: uniphier: add syscon property for UniPhier sound
-> system
-> 
-> 2018-03-19 10:21 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> > This patch adds syscon property for specifying soc-glue core into
-> > device-tree of LD11/LD20 SoC.
-> >
-> > Currently, soc-glue core is used for changing the state of S/PDIF
-> > signal output pin to signal output state or Hi-Z state.
-> >
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> > ---
-> >  arch/arm/boot/dts/uniphier-pxs2.dtsi             | 4 +++-
-> 
-> 
-> Please split PXs2 changes into a different patch.
-> 
-> 
-> >  arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 4 +++-
-> >  arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 4 +++-
-> >  3 files changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> > index 595045441c9c..c72c0a123c87 100644
-> > --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> > +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> > @@ -243,6 +243,8 @@
-> >                         resets = <&sys_rst 40>;
-> >                         #sound-dai-cells = <1>;
-> >
-> > +                       socionext,syscon = <&sg>;
-> 
-> 
-> Remove unneeded blank line between properties.
-> 
-> 
-> > +
-> >                         i2s_port0: port@0 {
-> >                                 i2s_hdmi: endpoint {
-> >                                 };
-> > @@ -418,7 +420,7 @@
-> >                         };
-> >                 };
-> >
-> > -               soc-glue@5f800000 {
-> > +               sg: soc-glue@5f800000 {
-> >                         compatible = "socionext,uniphier-pxs2-soc-glue",
-> >                                      "simple-mfd", "syscon";
-> >                         reg = <0x5f800000 0x2000>;
-> 
-> 
-> Could you use 'soc_glue', please?
-> I saw a conflict between 'sg' and 'soc_glue' among Socionext engineers
-> and I prefer the latter.
+On Wed, Mar 07, 2018 at 02:56:43PM +0100, Salvatore Bellizzi wrote:
+> This patch adds generic device information to the DMI table of
+> the cros_ec_lpc driver, needed for Chromebooks/boxes using a
+> custom coreboot firmware.
+>=20
+> The DMI info would not contain "Google_*" as BIOS version string,
+> instead the system vendor string would still be "GOOGLE", so this
+> seems to be a reasonable match for every Chromebook/box running
+> a custom firmware.
+>=20
+> Signed-off-by: Salvatore Bellizzi <lkml@seppia.net>
+> Signed-off-by: Vittorio Gambaletta <linuxbugs@vittgam.net>
 
-I see, I'll fix and send v2 series.
+Applied for v4.17.
 
+Thanks!
+Benson
 
-Regards,
---
-Katsuhiro Suzuki
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
 
+--V0207lvV8h4k8FAm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqwWyEACgkQHwn1ewov
+5lgt+Q/7B54BqwPP1sGa0E69wxU7ViJ+x6YkGIUMWIMiuW+DE1SdttZAz0w2q94k
+w0JXh6qp3PH5lh2aomTE4AMcmAD411DAOWVQYBg5cyP0IdheZKDpfnYdyYCDh3yY
+6N70UQmJZsPDrTO+v8mHLBuMbK0kxK4422/1OVXiEMc11A9mEQqZfOShHtayR32w
+85QYEW3g/4G+QJX5KsVOhxj2oz/HWi4LpA19/BwaBeekUxg0HGifGy9W02XN1joU
+pZUSDnJJA8GMZzix1Kb1jBNTP00W2lFifwmripXAATxyjILTmzJuxPId6rjDi/g1
++whWhs5HZ/0Wz1cK526prDfhY1l/ZuI2eYd1yXT++KwGHcB+OeoOfg9foa8ULQNT
+POTtpw6FdIq34bPoG7Z9v9MY5G33mvoE0qhEtn/0d37VRKoFDdcSTQeufhEzulQM
+3IDvap/ybtXo5SBtN+4FjIsWIikcDIuaGwoQ647vze7hpJRyiFp0Yk6RttopSHOS
+mrGreP5LVoyb2ilFaYihovlYAMnhfBd3iRqDWrKPbjKgiXALFPnt0Lck8OZNwr0s
+xI0KSl6PTNyWD+6s2qpsz7g6y4GAc3VBnPnwRGGWQCACHVuVfr3gZsGF20d7iuQQ
+iJqTcV8HZ3R3eNm3J1wiEtyp/czKRwq23FswcTgT1G2XVQCHo5Q=
+=Vjtx
+-----END PGP SIGNATURE-----
+
+--V0207lvV8h4k8FAm--
