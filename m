@@ -1,218 +1,300 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752014AbeCTGVb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:21:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36115 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeCTGV2 (ORCPT
+        id S1751951AbeCTGVQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:21:16 -0400
+Received: from hub02.inventec.com ([218.32.67.167]:55964 "EHLO
+        mail.inventec.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751416AbeCTGUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:21:28 -0400
-Date: Mon, 19 Mar 2018 23:20:55 -0700
-From: tip-bot for Kim Phillips <tipbot@zytor.com>
-Message-ID: <tip-744e9a91cf898bf027dbe65cc61a5d7565335cba@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        namhyung@kernel.org, acme@redhat.com, jean.pihet@linaro.org,
-        tglx@linutronix.de, mingo@kernel.org, chansen3@cisco.com,
-        kim.phillips@arm.com
-Reply-To: kim.phillips@arm.com, chansen3@cisco.com, mingo@kernel.org,
-        tglx@linutronix.de, jean.pihet@linaro.org, namhyung@kernel.org,
-        acme@redhat.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        peterz@infradead.org
-In-Reply-To: <20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com>
-References: <20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools arm64: Add libdw DWARF post unwind
- support for ARM64
-Git-Commit-ID: 744e9a91cf898bf027dbe65cc61a5d7565335cba
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 20 Mar 2018 02:20:54 -0400
+X-Google-Smtp-Source: AG47ELuP5x5YBjKjk2Z8FYEF9PvsJPN0Wj5PBDtnMEfF+CkfZN/ZxEfQQMqSZQq884x3qisYJCVOFQ==
+From: Ken Chen <chen.kenyy@inventec.com>
+To: <linux@roeck-us.net>, <wsa@the-dreams.de>, <peda@axentia.se>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Ken Chen <chen.kenyy@inventec.com>, <joel@jms.id.au>
+Subject: [PATCH linux dev-4.16 v2] i2c: muxes: pca9641: new driver
+Date: Tue, 20 Mar 2018 14:19:09 +0800
+Message-ID: <20180320061909.5775-1-chen.kenyy@inventec.com>
+X-Mailer: git-send-email 2.9.3
+X-DNSRBL: 
+X-MAIL: IEC1-MSE-FE1.inventec.com w2K6GQbQ002080
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  744e9a91cf898bf027dbe65cc61a5d7565335cba
-Gitweb:     https://git.kernel.org/tip/744e9a91cf898bf027dbe65cc61a5d7565335cba
-Author:     Kim Phillips <kim.phillips@arm.com>
-AuthorDate: Thu, 8 Mar 2018 21:10:30 -0600
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:53:46 -0300
+Signed-off-by: Ken Chen <chen.kenyy@inventec.com>
 
-perf tools arm64: Add libdw DWARF post unwind support for ARM64
-
-Based on prior work:
-
-  https://lkml.org/lkml/2014/5/6/395
-
-and on how other arches add libdw unwind support.  Includes support for
-running the unwind test, e.g., on a system with only elfutils' libdw
-0.170, the test now runs, and successfully:
-
-  $ ./perf test unwind
-  56: Test dwarf unwind                 : Ok
-
-Originally-by: Jean Pihet <jean.pihet@linaro.org>
-Reported-by: Christian Hansen <chansen3@cisco.com>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config                 |  2 +-
- tools/perf/arch/arm64/include/arch-tests.h | 12 ++++++
- tools/perf/arch/arm64/tests/Build          |  2 +
- tools/perf/arch/arm64/tests/arch-tests.c   | 16 ++++++++
- tools/perf/arch/arm64/util/Build           |  1 +
- tools/perf/arch/arm64/util/unwind-libdw.c  | 60 ++++++++++++++++++++++++++++++
- 6 files changed, 92 insertions(+), 1 deletion(-)
+v1->v2
+- Merged PCA9641 code into i2c-mux-pca9541.c
+- Modified title
+- Add PCA9641 detect function
+---
+ drivers/i2c/muxes/i2c-mux-pca9541.c | 184 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 174 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 89cb2a36b8ff..98ff73648b51 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -75,7 +75,7 @@ endif
- # Disable it on all other architectures in case libdw unwind
- # support is detected in system. Add supported architectures
- # to the check.
--ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm powerpc s390))
-+ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc s390))
-   NO_LIBDW_DWARF_UNWIND := 1
- endif
+diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
+index 6a39ada..493f947 100644
+--- a/drivers/i2c/muxes/i2c-mux-pca9541.c
++++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
+@@ -1,5 +1,5 @@
+ /*
+- * I2C multiplexer driver for PCA9541 bus master selector
++ * I2C multiplexer driver for PCA9541/PCA9641 bus master selector
+  *
+  * Copyright (c) 2010 Ericsson AB.
+  *
+@@ -26,8 +26,8 @@
+ #include <linux/slab.h>
  
-diff --git a/tools/perf/arch/arm64/include/arch-tests.h b/tools/perf/arch/arm64/include/arch-tests.h
-new file mode 100644
-index 000000000000..90ec4c8cb880
---- /dev/null
-+++ b/tools/perf/arch/arm64/include/arch-tests.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef ARCH_TESTS_H
-+#define ARCH_TESTS_H
-+
-+#ifdef HAVE_DWARF_UNWIND_SUPPORT
-+struct thread;
-+struct perf_sample;
-+#endif
-+
-+extern struct test arch_tests[];
-+
-+#endif
-diff --git a/tools/perf/arch/arm64/tests/Build b/tools/perf/arch/arm64/tests/Build
-index b30eff9bcc83..883c57ff0c08 100644
---- a/tools/perf/arch/arm64/tests/Build
-+++ b/tools/perf/arch/arm64/tests/Build
-@@ -1,2 +1,4 @@
- libperf-y += regs_load.o
- libperf-y += dwarf-unwind.o
-+
-+libperf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm64/tests/arch-tests.c b/tools/perf/arch/arm64/tests/arch-tests.c
-new file mode 100644
-index 000000000000..5b1543c98022
---- /dev/null
-+++ b/tools/perf/arch/arm64/tests/arch-tests.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <string.h>
-+#include "tests/tests.h"
-+#include "arch-tests.h"
-+
-+struct test arch_tests[] = {
-+#ifdef HAVE_DWARF_UNWIND_SUPPORT
-+	{
-+		.desc = "DWARF unwind",
-+		.func = test__dwarf_unwind,
-+	},
-+#endif
-+	{
-+		.func = NULL,
-+	},
-+};
-diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-index c0b8dfef98ba..68f8a8eb3ad0 100644
---- a/tools/perf/arch/arm64/util/Build
-+++ b/tools/perf/arch/arm64/util/Build
-@@ -2,6 +2,7 @@ libperf-y += header.o
- libperf-y += sym-handling.o
- libperf-$(CONFIG_DWARF)     += dwarf-regs.o
- libperf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
-+libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
+ /*
+- * The PCA9541 is a bus master selector. It supports two I2C masters connected
+- * to a single slave bus.
++ * The PCA9541/PCA9641 is a bus master selector. It supports two I2C masters 
++ * connected to a single slave bus.
+  *
+  * Before each bus transaction, a master has to acquire bus ownership. After the
+  * transaction is complete, bus ownership has to be released. This fits well
+@@ -58,11 +58,43 @@
+ #define PCA9541_ISTAT_MYTEST	(1 << 6)
+ #define PCA9541_ISTAT_NMYTEST	(1 << 7)
  
- libperf-$(CONFIG_AUXTRACE) += ../../arm/util/pmu.o \
- 			      ../../arm/util/auxtrace.o \
-diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
-new file mode 100644
-index 000000000000..7623d85e77f3
---- /dev/null
-+++ b/tools/perf/arch/arm64/util/unwind-libdw.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <elfutils/libdwfl.h>
-+#include "../../util/unwind-libdw.h"
-+#include "../../util/perf_regs.h"
-+#include "../../util/event.h"
++#define PCA9641_ID		0x00
++#define PCA9641_ID_MAGIC	0x38
 +
-+bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
++#define PCA9641_CONTROL		0x01
++#define PCA9641_STATUS		0x02
++#define PCA9641_TIME		0x03
++
++#define PCA9641_CTL_LOCK_REQ		BIT(0)
++#define PCA9641_CTL_LOCK_GRANT		BIT(1)
++#define PCA9641_CTL_BUS_CONNECT		BIT(2)
++#define PCA9641_CTL_BUS_INIT		BIT(3)
++#define PCA9641_CTL_SMBUS_SWRST		BIT(4)
++#define PCA9641_CTL_IDLE_TIMER_DIS	BIT(5)
++#define PCA9641_CTL_SMBUS_DIS		BIT(6)
++#define PCA9641_CTL_PRIORITY		BIT(7)
++
++#define PCA9641_STS_OTHER_LOCK		BIT(0)
++#define PCA9641_STS_BUS_INIT_FAIL	BIT(1)
++#define PCA9641_STS_BUS_HUNG		BIT(2)
++#define PCA9641_STS_MBOX_EMPTY		BIT(3)
++#define PCA9641_STS_MBOX_FULL		BIT(4)
++#define PCA9641_STS_TEST_INT		BIT(5)
++#define PCA9641_STS_SCL_IO		BIT(6)
++#define PCA9641_STS_SDA_IO		BIT(7)
++
++#define PCA9641_RES_TIME	0x03
++
+ #define BUSON		(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
+ #define MYBUS		(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
+ #define mybus(x)	(!((x) & MYBUS) || ((x) & MYBUS) == MYBUS)
+ #define busoff(x)	(!((x) & BUSON) || ((x) & BUSON) == BUSON)
+ 
++#define BUSOFF(x, y)	(!((x) & PCA9641_CTL_LOCK_GRANT) && \
++			!((y) & PCA9641_STS_OTHER_LOCK))
++#define other_lock(x)	((x) & PCA9641_STS_OTHER_LOCK)
++#define lock_grant(x)	((x) & PCA9641_CTL_LOCK_GRANT)
++
+ /* arbitration timeouts, in jiffies */
+ #define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
+ #define ARB2_TIMEOUT	(HZ / 4)	/* 250 ms until acquisition failure */
+@@ -79,6 +111,7 @@ struct pca9541 {
+ 
+ static const struct i2c_device_id pca9541_id[] = {
+ 	{"pca9541", 0},
++	{"pca9641", 1},
+ 	{}
+ };
+ 
+@@ -87,6 +120,7 @@ MODULE_DEVICE_TABLE(i2c, pca9541_id);
+ #ifdef CONFIG_OF
+ static const struct of_device_id pca9541_of_match[] = {
+ 	{ .compatible = "nxp,pca9541" },
++	{ .compatible = "nxp,pca9641" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, pca9541_of_match);
+@@ -328,6 +362,125 @@ static int pca9541_release_chan(struct i2c_mux_core *muxc, u32 chan)
+ }
+ 
+ /*
++ * Arbitration management functions
++ */
++static void pca9641_release_bus(struct i2c_client *client)
 +{
-+	struct unwind_info *ui = arg;
-+	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
-+
-+#define REG(r) ({						\
-+	Dwarf_Word val = 0;					\
-+	perf_reg_value(&val, user_regs, PERF_REG_ARM64_##r);	\
-+	val;							\
-+})
-+
-+	dwarf_regs[0]  = REG(X0);
-+	dwarf_regs[1]  = REG(X1);
-+	dwarf_regs[2]  = REG(X2);
-+	dwarf_regs[3]  = REG(X3);
-+	dwarf_regs[4]  = REG(X4);
-+	dwarf_regs[5]  = REG(X5);
-+	dwarf_regs[6]  = REG(X6);
-+	dwarf_regs[7]  = REG(X7);
-+	dwarf_regs[8]  = REG(X8);
-+	dwarf_regs[9]  = REG(X9);
-+	dwarf_regs[10] = REG(X10);
-+	dwarf_regs[11] = REG(X11);
-+	dwarf_regs[12] = REG(X12);
-+	dwarf_regs[13] = REG(X13);
-+	dwarf_regs[14] = REG(X14);
-+	dwarf_regs[15] = REG(X15);
-+	dwarf_regs[16] = REG(X16);
-+	dwarf_regs[17] = REG(X17);
-+	dwarf_regs[18] = REG(X18);
-+	dwarf_regs[19] = REG(X19);
-+	dwarf_regs[20] = REG(X20);
-+	dwarf_regs[21] = REG(X21);
-+	dwarf_regs[22] = REG(X22);
-+	dwarf_regs[23] = REG(X23);
-+	dwarf_regs[24] = REG(X24);
-+	dwarf_regs[25] = REG(X25);
-+	dwarf_regs[26] = REG(X26);
-+	dwarf_regs[27] = REG(X27);
-+	dwarf_regs[28] = REG(X28);
-+	dwarf_regs[29] = REG(X29);
-+	dwarf_regs[30] = REG(LR);
-+	dwarf_regs[31] = REG(SP);
-+
-+	if (!dwfl_thread_state_registers(thread, 0, PERF_REG_ARM64_MAX,
-+					 dwarf_regs))
-+		return false;
-+
-+	dwarf_pc = REG(PC);
-+	dwfl_thread_state_register_pc(thread, dwarf_pc);
-+
-+	return true;
++	pca9541_reg_write(client, PCA9641_CONTROL, 0);
 +}
++
++/*
++ * Channel arbitration
++ *
++ * Return values:
++ *  <0: error
++ *  0 : bus not acquired
++ *  1 : bus acquired
++ */
++static int pca9641_arbitrate(struct i2c_client *client)
++{
++	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
++	struct pca9541 *data = i2c_mux_priv(muxc);
++	int reg_ctl, reg_sts;
++
++	reg_ctl = pca9541_reg_read(client, PCA9641_CONTROL);
++	if (reg_ctl < 0)
++		return reg_ctl;
++	reg_sts = pca9541_reg_read(client, PCA9641_STATUS);
++
++	if (BUSOFF(reg_ctl, reg_sts)) {
++		/*
++		 * Bus is off. Request ownership or turn it on unless
++		 * other master requested ownership.
++		 */
++		reg_ctl |= PCA9641_CTL_LOCK_REQ;
++		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
++		reg_ctl = pca9541_reg_read(client, PCA9641_CONTROL);
++
++		if (lock_grant(reg_ctl)) {
++			/*
++			 * Other master did not request ownership,
++			 * or arbitration timeout expired. Take the bus.
++			 */
++			reg_ctl |= PCA9641_CTL_BUS_CONNECT
++					| PCA9641_CTL_LOCK_REQ;
++			pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
++			data->select_timeout = SELECT_DELAY_SHORT;
++
++			return 1;
++		} else {
++			/*
++			 * Other master requested ownership.
++			 * Set extra long timeout to give it time to acquire it.
++			 */
++			data->select_timeout = SELECT_DELAY_LONG * 2;
++		}
++	} else if (lock_grant(reg_ctl)) {
++		/*
++		 * Bus is on, and we own it. We are done with acquisition.
++		 */
++		reg_ctl |= PCA9641_CTL_BUS_CONNECT | PCA9641_CTL_LOCK_REQ;
++		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
++
++		return 1;
++	} else if (other_lock(reg_sts)) {
++		/*
++		 * Other master owns the bus.
++		 * If arbitration timeout has expired, force ownership.
++		 * Otherwise request it.
++		 */
++		data->select_timeout = SELECT_DELAY_LONG;
++		reg_ctl |= PCA9641_CTL_LOCK_REQ;
++		pca9541_reg_write(client, PCA9641_CONTROL, reg_ctl);
++	}
++	return 0;
++}
++
++static int pca9641_select_chan(struct i2c_mux_core *muxc, u32 chan)
++{
++	struct pca9541 *data = i2c_mux_priv(muxc);
++	struct i2c_client *client = data->client;
++	int ret;
++	unsigned long timeout = jiffies + ARB2_TIMEOUT;
++		/* give up after this time */
++
++	data->arb_timeout = jiffies + ARB_TIMEOUT;
++		/* force bus ownership after this time */
++
++	do {
++		ret = pca9641_arbitrate(client);
++		if (ret)
++			return ret < 0 ? ret : 0;
++
++		if (data->select_timeout == SELECT_DELAY_SHORT)
++			udelay(data->select_timeout);
++		else
++			msleep(data->select_timeout / 1000);
++	} while (time_is_after_eq_jiffies(timeout));
++
++	return -ETIMEDOUT;
++}
++
++static int pca9641_release_chan(struct i2c_mux_core *muxc, u32 chan)
++{
++	struct pca9541 *data = i2c_mux_priv(muxc);
++	struct i2c_client *client = data->client;
++
++	pca9641_release_bus(client);
++	return 0;
++}
++
++static int pca9641_detect_id(struct i2c_client *client)
++{
++	int reg;
++
++	reg = pca9541_reg_read(client, PCA9641_ID);
++	if (reg == PCA9641_ID_MAGIC)
++		return 1;
++	else
++		return 0;
++}
++/*
+  * I2C init/probing/exit functions
+  */
+ static int pca9541_probe(struct i2c_client *client,
+@@ -339,34 +492,45 @@ static int pca9541_probe(struct i2c_client *client,
+ 	struct pca9541 *data;
+ 	int force;
+ 	int ret;
++	int detect_id;
+ 
+ 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE_DATA))
+ 		return -ENODEV;
+ 
++	detect_id = pca9641_detect_id(client);
+ 	/*
+ 	 * I2C accesses are unprotected here.
+ 	 * We have to lock the adapter before releasing the bus.
+ 	 */
+-	i2c_lock_adapter(adap);
+-	pca9541_release_bus(client);
+-	i2c_unlock_adapter(adap);
+-
++	if (detect_id == 0) {
++		i2c_lock_adapter(adap);
++		pca9541_release_bus(client);
++		i2c_unlock_adapter(adap);
++	} else {
++		i2c_lock_adapter(adap);
++		pca9641_release_bus(client);
++		i2c_unlock_adapter(adap);
++	}
+ 	/* Create mux adapter */
+ 
+ 	force = 0;
+ 	if (pdata)
+ 		force = pdata->modes[0].adap_id;
+-	muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
++	if (detect_id == 0) {
++		muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
+ 			     I2C_MUX_ARBITRATOR,
+ 			     pca9541_select_chan, pca9541_release_chan);
++	} else {
++		muxc = i2c_mux_alloc(adap, &client->dev, 1, sizeof(*data),
++			     I2C_MUX_ARBITRATOR,
++			     pca9641_select_chan, pca9641_release_chan);
++	}
+ 	if (!muxc)
+ 		return -ENOMEM;
+ 
+ 	data = i2c_mux_priv(muxc);
+ 	data->client = client;
+-
+ 	i2c_set_clientdata(client, muxc);
+-
+ 	ret = i2c_mux_add_adapter(muxc, force, 0, 0);
+ 	if (ret)
+ 		return ret;
+-- 
+2.9.3
