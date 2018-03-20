@@ -1,216 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753540AbeCTNI3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:08:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42753 "EHLO mail.bootlin.com"
+        id S1753597AbeCTNIm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:08:42 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45632 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753499AbeCTNIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:08:22 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
+        id S1753556AbeCTNIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:08:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
+   d="scan'208";a="213218641"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v6 5/6] MIPS: generic: Add support for Microsemi Ocelot
-Date: Tue, 20 Mar 2018 14:08:00 +0100
-Message-Id: <20180320130801.9247-6-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
-References: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
+        Szymon Mielczarek <szymonx.mielczarek@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alex Lemberg <Alex.Lemberg@sandisk.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH V3 1/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
+Date: Tue, 20 Mar 2018 15:07:38 +0200
+Message-Id: <1521551258-4027-2-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521551258-4027-1-git-send-email-adrian.hunter@intel.com>
+References: <1521551258-4027-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce support for the MIPS based Microsemi Ocelot SoCs.
+UFS host controllers may support an autonomous power management feature
+called the Auto-Hibernate Idle Timer. The timer is set to the number of
+microseconds of idle time before the UFS host controller will autonomously
+put the link into Hibernate state. That will save power at the expense of
+increased latency. Any access to the host controller interface registers
+will automatically put the link out of Hibernate state. So once configured,
+the feature is transparent to the driver.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Expose the Auto-Hibernate Idle Timer value via SysFS to allow users to
+choose between power efficiency or lower latency. Set a default value of
+150 ms.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- arch/mips/Makefile                            |  4 ++
- arch/mips/configs/generic/board-ocelot.config | 35 ++++++++++++
- arch/mips/generic/Kconfig                     | 16 ++++++
- arch/mips/generic/Makefile                    |  1 +
- arch/mips/generic/board-ocelot.c              | 78 +++++++++++++++++++++++++++
- 5 files changed, 134 insertions(+)
- create mode 100644 arch/mips/configs/generic/board-ocelot.config
- create mode 100644 arch/mips/generic/board-ocelot.c
+ Documentation/ABI/testing/sysfs-driver-ufs | 14 ++++++
+ drivers/scsi/ufs/ufs-sysfs.c               | 76 ++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c                  | 26 ++++++++++
+ drivers/scsi/ufs/ufshcd.h                  |  3 ++
+ drivers/scsi/ufs/ufshci.h                  |  7 +++
+ 5 files changed, 126 insertions(+)
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index d1ca839c3981..d2882244cf1f 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -543,6 +543,10 @@ generic_defconfig:
- # now that the boards have been converted to use the generic kernel they are
- # wrappers around the generic rules above.
- #
-+.PHONY: ocelot_defconfig
-+ocelot_defconfig:
-+	$(Q)$(MAKE) -f $(srctree)/Makefile 32r2el_defconfig BOARDS=ocelot
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index 83735f79e572..016724ec26d5 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -1,3 +1,17 @@
++What:		/sys/bus/*/drivers/ufshcd/*/auto_hibern8
++Date:		March 2018
++Contact:	linux-scsi@vger.kernel.org
++Description:
++		This file contains the auto-hibernate idle timer setting of a
++		UFS host controller. A value of '0' means auto-hibernate is not
++		enabled. Otherwise the value is the number of microseconds of
++		idle time before the UFS host controller will autonomously put
++		the link into hibernate state. That will save power at the
++		expense of increased latency. Note that the hardware supports
++		10-bit values with a power-of-ten multiplier which allows a
++		maximum value of 102300000. Refer to the UFS Host Controller
++		Interface specification for more details.
 +
- .PHONY: sead3_defconfig
- sead3_defconfig:
- 	$(Q)$(MAKE) -f $(srctree)/Makefile 32r2el_defconfig BOARDS=sead-3
-diff --git a/arch/mips/configs/generic/board-ocelot.config b/arch/mips/configs/generic/board-ocelot.config
-new file mode 100644
-index 000000000000..aa815761d85e
---- /dev/null
-+++ b/arch/mips/configs/generic/board-ocelot.config
-@@ -0,0 +1,35 @@
-+# require CONFIG_CPU_MIPS32_R2=y
-+
-+CONFIG_LEGACY_BOARD_OCELOT=y
-+
-+CONFIG_MTD=y
-+CONFIG_MTD_CMDLINE_PARTS=y
-+CONFIG_MTD_BLOCK=y
-+CONFIG_MTD_M25P80=y
-+CONFIG_MTD_NAND=y
-+CONFIG_MTD_NAND_PLATFORM=y
-+CONFIG_MTD_SPI_NOR=y
-+CONFIG_MTD_UBI=y
-+
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_RAM=y
-+
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_OF_PLATFORM=y
-+
-+CONFIG_GPIO_SYSFS=y
-+
-+CONFIG_I2C=y
-+CONFIG_I2C_CHARDEV=y
-+CONFIG_I2C_MUX=y
-+
-+CONFIG_SPI=y
-+CONFIG_SPI_BITBANG=y
-+CONFIG_SPI_DESIGNWARE=y
-+CONFIG_SPI_SPIDEV=y
-+
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_OCELOT_RESET=y
-+
-+CONFIG_MAGIC_SYSRQ=y
-diff --git a/arch/mips/generic/Kconfig b/arch/mips/generic/Kconfig
-index 2ff3b17bfab1..ba9b2c8cce68 100644
---- a/arch/mips/generic/Kconfig
-+++ b/arch/mips/generic/Kconfig
-@@ -27,6 +27,22 @@ config LEGACY_BOARD_SEAD3
- 	  Enable this to include support for booting on MIPS SEAD-3 FPGA-based
- 	  development boards, which boot using a legacy boot protocol.
+ What:		/sys/bus/platform/drivers/ufshcd/*/device_descriptor/device_type
+ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index 4ff9e0b7eba1..8d9332bb7d0c 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -3,6 +3,7 @@
  
-+comment "MSCC Ocelot doesn't work with SEAD3 enabled"
-+	depends on LEGACY_BOARD_SEAD3
-+
-+config LEGACY_BOARD_OCELOT
-+	bool "Support MSCC Ocelot boards"
-+	depends on LEGACY_BOARD_SEAD3=n
-+	select LEGACY_BOARDS
-+	select MSCC_OCELOT
-+
-+config MSCC_OCELOT
-+	bool
-+	select GPIOLIB
-+	select MSCC_OCELOT_IRQ
-+	select SYS_HAS_EARLY_PRINTK
-+	select USE_GENERIC_EARLY_PRINTK_8250
-+
- comment "FIT/UHI Boards"
+ #include <linux/err.h>
+ #include <linux/string.h>
++#include <linux/bitfield.h>
+ #include <asm/unaligned.h>
  
- config FIT_IMAGE_FDT_BOSTON
-diff --git a/arch/mips/generic/Makefile b/arch/mips/generic/Makefile
-index 5c31e0c4697d..d03a36f869a4 100644
---- a/arch/mips/generic/Makefile
-+++ b/arch/mips/generic/Makefile
-@@ -14,5 +14,6 @@ obj-y += proc.o
+ #include "ufs.h"
+@@ -117,12 +118,86 @@ static ssize_t spm_target_link_state_show(struct device *dev,
+ 				ufs_pm_lvl_states[hba->spm_lvl].link_state));
+ }
  
- obj-$(CONFIG_YAMON_DT_SHIM)		+= yamon-dt.o
- obj-$(CONFIG_LEGACY_BOARD_SEAD3)	+= board-sead3.o
-+obj-$(CONFIG_LEGACY_BOARD_OCELOT)	+= board-ocelot.o
- obj-$(CONFIG_KEXEC)			+= kexec.o
- obj-$(CONFIG_VIRT_BOARD_RANCHU)		+= board-ranchu.o
-diff --git a/arch/mips/generic/board-ocelot.c b/arch/mips/generic/board-ocelot.c
-new file mode 100644
-index 000000000000..06d92fb37769
---- /dev/null
-+++ b/arch/mips/generic/board-ocelot.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Microsemi MIPS SoC support
-+ *
-+ * Copyright (c) 2017 Microsemi Corporation
-+ */
-+#include <asm/machine.h>
-+#include <asm/prom.h>
-+
-+#define DEVCPU_GCB_CHIP_REGS_CHIP_ID	0x71070000
-+#define CHIP_ID_PART_ID			GENMASK(27, 12)
-+
-+#define OCELOT_PART_ID			(0x7514 << 12)
-+
-+#define UART_UART			0x70100000
-+
-+static __init bool ocelot_detect(void)
++static void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit)
 +{
-+	u32 rev;
-+	int idx;
++	unsigned long flags;
 +
-+	/* Look for the TLB entry set up by redboot before trying to use it */
-+	write_c0_entryhi(DEVCPU_GCB_CHIP_REGS_CHIP_ID);
-+	mtc0_tlbw_hazard();
-+	tlb_probe();
-+	tlb_probe_hazard();
-+	idx = read_c0_index();
-+	if (idx < 0)
-+		return 0;
++	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
++		return;
 +
-+	/* A TLB entry exists, lets assume its usable and check the CHIP ID */
-+	rev = __raw_readl((void __iomem *)DEVCPU_GCB_CHIP_REGS_CHIP_ID);
++	spin_lock_irqsave(hba->host->host_lock, flags);
++	if (hba->ahit == ahit)
++		goto out_unlock;
++	hba->ahit = ahit;
++	if (!pm_runtime_suspended(hba->dev))
++		ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
++out_unlock:
++	spin_unlock_irqrestore(hba->host->host_lock, flags);
++}
 +
-+	if ((rev & CHIP_ID_PART_ID) != OCELOT_PART_ID)
-+		return 0;
++/* Convert Auto-Hibernate Idle Timer register value to microseconds */
++static int ufshcd_ahit_to_us(u32 ahit)
++{
++	int timer = FIELD_GET(UFSHCI_AHIBERN8_TIMER_MASK, ahit);
++	int scale = FIELD_GET(UFSHCI_AHIBERN8_SCALE_MASK, ahit);
 +
-+	/* Copy command line from bootloader early for Initrd detection */
-+	if (fw_arg0 < 10 && (fw_arg1 & 0xFFF00000) == 0x80000000) {
-+		unsigned int prom_argc = fw_arg0;
-+		const char **prom_argv = (const char **)fw_arg1;
++	for (; scale > 0; --scale)
++		timer *= UFSHCI_AHIBERN8_SCALE_FACTOR;
 +
-+		if (prom_argc > 1 && strlen(prom_argv[1]) > 0)
-+			/* ignore all built-in args if any f/w args given */
-+			strcpy(arcs_cmdline, prom_argv[1]);
++	return timer;
++}
++
++/* Convert microseconds to Auto-Hibernate Idle Timer register value */
++static u32 ufshcd_us_to_ahit(unsigned int timer)
++{
++	unsigned int scale;
++
++	for (scale = 0; timer > UFSHCI_AHIBERN8_TIMER_MASK; ++scale)
++		timer /= UFSHCI_AHIBERN8_SCALE_FACTOR;
++
++	return FIELD_PREP(UFSHCI_AHIBERN8_TIMER_MASK, timer) |
++	       FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, scale);
++}
++
++static ssize_t auto_hibern8_show(struct device *dev,
++				 struct device_attribute *attr, char *buf)
++{
++	struct ufs_hba *hba = dev_get_drvdata(dev);
++
++	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
++		return -EOPNOTSUPP;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", ufshcd_ahit_to_us(hba->ahit));
++}
++
++static ssize_t auto_hibern8_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf, size_t count)
++{
++	struct ufs_hba *hba = dev_get_drvdata(dev);
++	unsigned int timer;
++
++	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
++		return -EOPNOTSUPP;
++
++	if (kstrtouint(buf, 0, &timer))
++		return -EINVAL;
++
++	if (timer > UFSHCI_AHIBERN8_MAX)
++		return -EINVAL;
++
++	ufshcd_auto_hibern8_update(hba, ufshcd_us_to_ahit(timer));
++
++	return count;
++}
++
+ static DEVICE_ATTR_RW(rpm_lvl);
+ static DEVICE_ATTR_RO(rpm_target_dev_state);
+ static DEVICE_ATTR_RO(rpm_target_link_state);
+ static DEVICE_ATTR_RW(spm_lvl);
+ static DEVICE_ATTR_RO(spm_target_dev_state);
+ static DEVICE_ATTR_RO(spm_target_link_state);
++static DEVICE_ATTR_RW(auto_hibern8);
+ 
+ static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
+ 	&dev_attr_rpm_lvl.attr,
+@@ -131,6 +206,7 @@ static ssize_t spm_target_link_state_show(struct device *dev,
+ 	&dev_attr_spm_lvl.attr,
+ 	&dev_attr_spm_target_dev_state.attr,
+ 	&dev_attr_spm_target_link_state.attr,
++	&dev_attr_auto_hibern8.attr,
+ 	NULL
+ };
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 3abcd31646eb..facee2b97926 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -41,6 +41,7 @@
+ #include <linux/devfreq.h>
+ #include <linux/nls.h>
+ #include <linux/of.h>
++#include <linux/bitfield.h>
+ #include "ufshcd.h"
+ #include "ufs_quirks.h"
+ #include "unipro.h"
+@@ -3708,6 +3709,18 @@ static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba)
+ 	return ret;
+ }
+ 
++static void ufshcd_auto_hibern8_enable(struct ufs_hba *hba)
++{
++	unsigned long flags;
++
++	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT) || !hba->ahit)
++		return;
++
++	spin_lock_irqsave(hba->host->host_lock, flags);
++	ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
++	spin_unlock_irqrestore(hba->host->host_lock, flags);
++}
++
+  /**
+  * ufshcd_init_pwr_info - setting the POR (power on reset)
+  * values in hba power info
+@@ -6307,6 +6320,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 	/* UniPro link is active now */
+ 	ufshcd_set_link_active(hba);
+ 
++	/* Enable Auto-Hibernate if configured */
++	ufshcd_auto_hibern8_enable(hba);
++
+ 	ret = ufshcd_verify_dev_init(hba);
+ 	if (ret)
+ 		goto out;
+@@ -7391,6 +7407,10 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+ 
+ 	/* Schedule clock gating in case of no access to UFS device yet */
+ 	ufshcd_release(hba);
++
++	/* Enable Auto-Hibernate if configured */
++	ufshcd_auto_hibern8_enable(hba);
++
+ 	goto out;
+ 
+ set_old_link_state:
+@@ -7834,6 +7854,12 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 						UFS_SLEEP_PWR_MODE,
+ 						UIC_LINK_HIBERN8_STATE);
+ 
++	/* Set the default auto-hiberate idle timer value to 150 ms */
++	if (hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT) {
++		hba->ahit = FIELD_PREP(UFSHCI_AHIBERN8_TIMER_MASK, 150) |
++			    FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, 3);
 +	}
 +
-+	return 1;
-+}
+ 	/* Hold auto suspend until async scan completes */
+ 	pm_runtime_get_sync(dev);
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index deb3c5d382e9..8110dcd04d22 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -531,6 +531,9 @@ struct ufs_hba {
+ 	struct device_attribute spm_lvl_attr;
+ 	int pm_op_in_progress;
+ 
++	/* Auto-Hibernate Idle Timer register value */
++	u32 ahit;
 +
-+static void __init ocelot_earlyprintk_init(void)
-+{
-+	void __iomem *uart_base;
+ 	struct ufshcd_lrb *lrb;
+ 	unsigned long lrb_in_use;
+ 
+diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
+index 1a1b5d9fe514..bb5d9c7f3353 100644
+--- a/drivers/scsi/ufs/ufshci.h
++++ b/drivers/scsi/ufs/ufshci.h
+@@ -86,6 +86,7 @@ enum {
+ enum {
+ 	MASK_TRANSFER_REQUESTS_SLOTS		= 0x0000001F,
+ 	MASK_TASK_MANAGEMENT_REQUEST_SLOTS	= 0x00070000,
++	MASK_AUTO_HIBERN8_SUPPORT		= 0x00800000,
+ 	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
+ 	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
+ 	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
+@@ -119,6 +120,12 @@ enum {
+ #define MANUFACTURE_ID_MASK	UFS_MASK(0xFFFF, 0)
+ #define PRODUCT_ID_MASK		UFS_MASK(0xFFFF, 16)
+ 
++/* AHIT - Auto-Hibernate Idle Timer */
++#define UFSHCI_AHIBERN8_TIMER_MASK		GENMASK(9, 0)
++#define UFSHCI_AHIBERN8_SCALE_MASK		GENMASK(12, 10)
++#define UFSHCI_AHIBERN8_SCALE_FACTOR		10
++#define UFSHCI_AHIBERN8_MAX			(1023 * 100000)
 +
-+	uart_base = ioremap_nocache(UART_UART, 0x20);
-+	setup_8250_early_printk_port((unsigned long)uart_base, 2, 50000);
-+}
-+
-+static void __init ocelot_late_init(void)
-+{
-+	ocelot_earlyprintk_init();
-+}
-+
-+static __init const void *ocelot_fixup_fdt(const void *fdt,
-+					   const void *match_data)
-+{
-+	/* This has to be done so late because ioremap needs to work */
-+	late_time_init = ocelot_late_init;
-+
-+	return fdt;
-+}
-+
-+extern char __dtb_ocelot_pcb123_begin[];
-+
-+MIPS_MACHINE(ocelot) = {
-+	.fdt = __dtb_ocelot_pcb123_begin,
-+	.fixup_fdt = ocelot_fixup_fdt,
-+	.detect = ocelot_detect,
-+};
+ /*
+  * IS - Interrupt Status - 20h
+  */
 -- 
-2.16.2
+1.9.1
