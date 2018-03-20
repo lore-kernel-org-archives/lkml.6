@@ -1,297 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeCTJfx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:35:53 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38072 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeCTJfu (ORCPT
+        id S1752368AbeCTJg2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:36:28 -0400
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:37614 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751870AbeCTJgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:35:50 -0400
-X-Google-Smtp-Source: AG47ELsbP3jfrborrmMF4/ouN4VxY0dc5BbLdxIdTqlK+1TE4Aa9eiwK41fi2u3bITA2cOFOAnbAC5YOcMkBQxKKUfc=
+        Tue, 20 Mar 2018 05:36:25 -0400
+Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 23.129.64.102
+Date: Tue, 20 Mar 2018 10:36:04 +0100
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Scott Bauer <scott.bauer@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/11] block: sed-opal: ioctl for writing to shadow mbr
+Message-ID: <20180320093604.qge2sdnc5jrud6kg@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <9f94be9c32887aacdcba75bd6a3902d0350eb987.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <20180319195224.GA3380@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <5AB0CE6B.2050109@broadcom.com>
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
- <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
- <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
- <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
- <CALFoz4aaEshpmyCxzut1t6cqSOSee4YP6vsi5G4Eei9m8hkZ3A@mail.gmail.com> <5AB0CE6B.2050109@broadcom.com>
-From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
-Date: Tue, 20 Mar 2018 16:35:48 +0700
-Message-ID: <CALFoz4bug5h=p_FFFf_Xa=yBibkepY7H6spAUg4+zFLhX9tgUA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Kalle Valo <kvalo@codeaurora.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319195224.GA3380@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arend,
+On Mon, Mar 19, 2018 at 08:52:24PM +0100, Christoph Hellwig wrote:
+> On Mon, Mar 19, 2018 at 07:36:50PM +0100, Jonas Rabenstein wrote:
+> > Allow modification of the shadow mbr. If the shadow mbr is not marked as
+> > done, this data will be presented read only as the device content. Only
+> > after marking the shadow mbr as done and unlocking a locking range the
+> > actual content is accessible.
+> 
+> I hate doing this as an ioctls.  Can we make this a sysfs binary file
+> so that people can use dd or cat to write the shadow mbr?
+I already thought about providing a sysfs interface for all that instead
+of using ioctls. But as I am pretty new to kernel programming I do not
+have all the required insight. Especially, as writing the mbr requires
+the sed-opal password I am unsure how a clean sysfs interface to provide
+the password together with a simple dd would look like.
+Moreover I already have a patch that changes the 'void *data' argument
+to setup_opal_dev to a kobject pointer. As far as I know, this is the
+first step to get into the sysfs hierarchy. But as I do not have access
+to an NVMe drive and have no idea about its implementation, this change
+works only for the scsi side.
+In other words, if someone could hint me in the right direction, I would
+be glad to (re)implement the ioctl interface for sysfs. Moreover, this
+would allow to export some additional information like the current state
+of the device (is it looke, is sed-opal enabled, whats the current state
+of mbr, etc.).
 
-Agreed. Let's dismiss these patches.
-Now I'm curious if I can get the information about DMA SG limitations
-from MMC layer, I'll try to figure out something.
-
-BTW, my specific setup (with default alignments) triggers kernel panic
-(I see brcm_* in backtrace). It's better if I create separate email
-chain for the issue.
-
-Thanks,
-  Alex.
-
-On 20 March 2018 at 16:03, Arend van Spriel
-<arend.vanspriel@broadcom.com> wrote:
-> On 3/20/2018 8:58 AM, Alexey Roslyakov wrote:
->>
->> Arend,
->>
->>> Also I am not sure if the broken-sg-support is still needed. We added
->>> that for omap_hsmmc, but that has since changed to scatter-gather emulation
->>> so it might not be needed anymore.
->>
->> I can confirm it doesn't impact wifi performance in case of rk3288+ap6335.
->>
->> But I still have to set settings->bus.sdio.sd_head_align = 4 and
->> settings->bus.sdio.sd_sgentry_align = 512, otherwise
->> brcmf_sdiod_sglist_rw fails:
->>
->>    974.888452] net_ratelimit: 8 callbacks suppressed
->> [  974.888457] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed
->> -84
->> [  974.901527] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes
->> failed: -5
->> [  974.910248] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
->> [  975.018041] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed
->> -84
->> [  975.025833] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes
->> failed: -5
->> [  975.033634] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
->> [  975.033924] dwmmc_rockchip ff0d0000.dwmmc: Unexpected command
->> timeout, state 0
->> [  975.049209] brcmfmac: brcmf_sdio_readframes: RXHEADER FAILED: -84
->> [  975.056034] brcmfmac: brcmf_sdio_rxfail: abort command, terminate
->> frame, send NAK
->> [  975.068367] brcmfmac: brcmf_sdio_hdparse: HW header length too long
->> [  975.075379] brcmfmac: brcmf_sdio_rxfail: terminate frame
->
->
-> Hi Alex,
->
-> Thanks for checking. In your case I think you do not need sd_head_align as
-> it will default to either 4 or 8:
->
-> #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> #define ALIGNMENT  8
-> #else
-> #define ALIGNMENT  4
-> #endif
->
-> I am not saying you should not be needing this. When it comes to DT people
-> are often tempted to accommodate a driver solution especially when such a
-> solution is already in place. However, DT is a hardware description and
-> these do not describe the wifi device. They are applicable to the wifi
-> device because it is a limitation of the host controller and as such should
-> be described in the DT binding of the host controller.
->
-> Regards,
-> Arend
->
->
->> Regards,
->>    Alex
->>
->> On 20 March 2018 at 06:16, Arend van Spriel
->> <arend.vanspriel@broadcom.com> wrote:
->>>
->>> + Uffe
->>>
->>> On 3/19/2018 6:55 PM, Florian Fainelli wrote:
->>>>
->>>>
->>>> On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
->>>>>
->>>>>
->>>>> Hi Arend,
->>>>> I appreciate your response. In my opinion, it has nothing to do with
->>>>> SDIO host, because it defines "quirks" in the driver itself.
->>>>
->>>>
->>>>
->>>> It is not clear to me from your patch series whether the problem is
->>>> that:
->>>>
->>>> - the SDIO device has a specific alignment requirements, which would be
->>>> either a SDIO device driver limitation/issue or maybe the underlying
->>>> hardware device/firmware requiring that
->>>>
->>>> - the SDIO host controller used is not capable of coping nicely with
->>>> these said limitations
->>>>
->>>> It seems to me like what you are doing here is a) applicable to possibly
->>>> more SDIO devices and host combinations, and b) should likely be done at
->>>> the layer between the host and device, such that it is available to more
->>>> combinations.
->>>
->>>
->>>
->>> Indeed. That was my thought exactly and I can not imagine Uffe would push
->>> back on that reasoning.
->>>
->>>>> If I get it right, you mean something like this:
->>>>>
->>>>> mmc3: mmc@1c12000 {
->>>>> ...
->>>>>           broken-sg-support;
->>>>>           sd-head-align = 4;
->>>>>           sd-sgentry-align = 512;
->>>>>
->>>>>           brcmf: wifi@1 {
->>>>>                   ...
->>>>>           };
->>>>> };
->>>>>
->>>>> Where dt: bindings documentation for these entries should reside?
->>>>> In generic MMC bindings? Well, this is the very special case and
->>>>> mmc-linux maintainer will unlikely to accept these changes.
->>>>> Also, extra kernel code modification might be required. It could make
->>>>> quite trivial change much more complex.
->>>>
->>>>
->>>>
->>>> If the MMC maintainers are not copied on this patch series, it will
->>>> likely be hard for them to identify this patch series and chime in...
->>>
->>>
->>>
->>> The main question is whether this is indeed a "very special case" as
->>> Alexey
->>> claims it to be or that it is likely to be applicable to other device and
->>> host combinations as you are suggesting.
->>>
->>> If these properties are imposed by the host or host controller it would
->>> make
->>> sense to have these in the mmc bindings.
->>>
->>>>>
->>>>>> Also I am not sure if the broken-sg-support is still needed. We added
->>>>>> that for omap_hsmmc, but that has since changed to scatter-gather
->>>>>> emulation
->>>>>> so it might not be needed anymore.
->>>>>
->>>>>
->>>>>
->>>>> I've experienced the problem with rk3288 (dw-mmc host) and sdio
->>>>> settings like above solved it.
->>>>> Frankly, I haven't investigated any deeper which one of the settings
->>>>> helped in my case yet...
->>>>> I will try to get rid of broken-sg-support first and let you know if
->>>>> it does make any difference.
->>>
->>>
->>>
->>> Are you using some chromebook. I have some lying around here so I could
->>> also
->>> look into it. What broadcom chipset do you have?
->>>
->>> Regards,
->>> Arend
->>>
->>>
->>>>> All the best,
->>>>>     Alex.
->>>>>
->>>>> On 19 March 2018 at 16:31, Arend van Spriel
->>>>> <arend.vanspriel@broadcom.com> wrote:
->>>>>>
->>>>>>
->>>>>> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> In case if the host has higher align requirements for SG items, allow
->>>>>>> setting device-specific aligns for scatterlist items.
->>>>>>>
->>>>>>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
->>>>>>> ---
->>>>>>>
->>>>>>> Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>>>>>> | 5
->>>>>>> +++++
->>>>>>>     1 file changed, 5 insertions(+)
->>>>>>>
->>>>>>> diff --git
->>>>>>>
->>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>>>>>>
->>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>>>>>> index 86602f264dce..187b8c1b52a7 100644
->>>>>>> ---
->>>>>>>
->>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>>>>>> +++
->>>>>>>
->>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
->>>>>>> @@ -17,6 +17,11 @@ Optional properties:
->>>>>>>           When not specified the device will use in-band SDIO
->>>>>>> interrupts.
->>>>>>>      - interrupt-names : name of the out-of-band interrupt, which
->>>>>>> must
->>>>>>> be
->>>>>>> set
->>>>>>>           to "host-wake".
->>>>>>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO
->>>>>>> host
->>>>>>> +       controller has higher align requirement than 32 bytes for
->>>>>>> each
->>>>>>> +       scatterlist item.
->>>>>>> + - brcm,sd-head-align : alignment requirement for start of data
->>>>>>> buffer.
->>>>>>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
->>>>>>> entry.
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Hi Alexey,
->>>>>>
->>>>>> Thanks for the patch. However, the problem with these is that they are
->>>>>> characterizing the host controller and not the wireless device. So
->>>>>> from
->>>>>> device tree perspective , which is to describe the hardware, these
->>>>>> properties should be SDIO host controller properties. Also I am not
->>>>>> sure
->>>>>> if
->>>>>> the broken-sg-support is still needed. We added that for omap_hsmmc,
->>>>>> but
->>>>>> that has since changed to scatter-gather emulation so it might not be
->>>>>> needed
->>>>>> anymore.
->>>>>>
->>>>>> Regards,
->>>>>> Arend
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>
->>>>
->>>
->>
->>
->>
->
-
-
-
--- 
-With best regards,
-  Alexey Roslyakov
-Email: alexey.roslyakov@gmail.com
+- Jonas
