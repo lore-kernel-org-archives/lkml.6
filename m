@@ -1,74 +1,119 @@
-Return-Path: <joe@perches.com>
-X-Google-Smtp-Source: AG47ELskATXFeRBAoybUK3Ze5ALPjR1mGGqw55iHgxdwIU8sPGLiw4U+gGuwg1HG6aJad298Tasd
-ARC-Seal: i=1; a=rsa-sha256; t=1521577959; cv=none;
-        d=google.com; s=arc-20160816;
-        b=t1EcLXS56gNhCcB0EVws++hAmFvn6Qy1YsYlGYYMZUIDLhMM2Gqf3GCwkEarUDjsyX
-         M6UMkPljHrEoXnjSamAcU2Xi2mQGPyG04H2ArsolxMoFhMfkaRpHJC4isBLPLs16fgsm
-         KprcmGvOXQSAQZB8v2TqeyZG2b8ZwEGU0QoJprdHG1jBAMzcOJhSMncxT31KUCHFLuSk
-         eAYUjEHwyl/4oG9Yahwc4U+o/2sDEcRu1KTmhYBkgvQA+MhD+F9oqAjxoRAU0VULqW/V
-         Get/SDqrOpivTYLzHnBblXImCkoPPsHWdipTkSia9OjaVFjjYVggNrEPKAQbZTyeOPOt
-         NGvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=kGTiyybuvBwa4pIvTcTX7+MjPTzkTiq0pxFKEos7poY=;
-        b=nzULoegMFMZU1D6I9wiBRboI+rUa/v3B+IP4A2eaCEX9f6uL6X4d/GMq/T3Q3L9RZZ
-         HZFQBPgXR67BIRHM/WoHcw9uh8xG+rxtTie9aCUa+bx6L2c9tGxML2L53Ov9cYhm6PBc
-         T8a/hJ/WzBchXZ6SSURGqKS9UPfgVBAJZdoPccuvs7VcYRVMcR9WnNL1ON0yE2HWrEL8
-         yS+KPKn+71Ii9hQ5wPUaMt4U2EbnXqthctiM5jBtQbmTdpq2dE6+GbutfjNYnmzBofUi
-         qz5ECjD1A4s0xhEoTzVMI9Lja0vhEMUvHPaJZVkO/0HVtZuz3iqJfr0vHms+IKn2gevw
-         +OZA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 216.40.44.173 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 216.40.44.173 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:966:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:4321:4385:5007:6119:6742:7903:8957:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12438:12740:12760:12895:13069:13095:13311:13357:13439:14181:14659:14721:21080:21433:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: coat43_8b3e9fde6db00
-X-Filterd-Recvd-Size: 1818
-Message-ID: <1521577955.12047.26.camel@perches.com>
-Subject: Re: [v2 PATCH 5/5] Staging:rtl8723bs clean spaces
-From: Joe Perches <joe@perches.com>
-To: Paul McQuade <paulmcquad@gmail.com>
-Cc: gregkh@linuxfoundation.org, davem@davemloft.net,
- stephen@networkplumber.org,  Linyu.Yuan@alcatel-sbell.com.cn,
- Larry.Finger@lwfinger.net,  keescook@chromium.org, hdegoede@redhat.com,
- johannes.berg@intel.com,  colin.king@canonical.com,
- arvind.yadav.cs@gmail.com, arnd@arndb.de,  devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 20 Mar 2018 13:32:35 -0700
-In-Reply-To: <20180320202622.13339-5-paulmcquad@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2173734-1521577611-2-8726377407902953762
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521577611; b=mNnabuCWQQ3nsUUk3RLip3uyxiird5K30qXSZ6GEz45PfZP
+    3yrr3zEaQPrmM8vsoSWFOyegQH2DwAI7tldCoSGOaCwjqAJLIOTNQ5Ya0f/iRhUX
+    j75RgQ6m4+weK3nyGXWMZicxNAjVl5rnK+vOw4I/MFL2/eQ3dRVuaulv45YCM15a
+    Fs82KfKjPRIhaPgSayrgAednl3IDoknecjMxDVMzNYmICOYBKZGjvZUQ8fEhzsgg
+    9xsLyMBdlhggq7k6b3oQk6DC7KOYo9a4pYdyH6YlDRlA9RdP4WLaOG6DL6E/2Rzj
+    dfVfhXjTZYaLAtbEa3HGIZkFSj1+LJPtuGlMMcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521577611; bh=v
+    8HzYrlkPgiFkAdXT8UjbBP0FTgSv3g6+iFDcqNQ0hA=; b=fJSl1SpW+6m7vkAGt
+    SezmjxA31BV2IBDpZRcIscylO0GsYuKp5PGNV7AqohZZX2jI8Rvy8GBK6v7B0S6a
+    OA9v0LfR3TPnWtFqQGHIvKlseUAe1Y0l8yvETFLajRBKxUr+TrI1LkqqGbzrBlBd
+    Hq5AekD0PDyZixsCupEahn1tSoguz3VU73/SOUznwb16vxKXXyNs12/ctmqXoI0m
+    3eldXlXDfIed6VomaJfl5S1elL2EaEBAqdNd+hBjkz6Hsy6VpCdBiGgZWe81h5u7
+    HTlZtpOhqWKt0NYaNceEqN9yX/FOy59MDPejop6xsn0JBrFHRgHkpib/4XhAiB2G
+    ZMf1g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=srtq+fOv x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p5zlFDep;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=15 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=srtq+fOv x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p5zlFDep;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=15 state=0
+X-ME-VSCategory: clean
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELvatEXIi/jlSWTEbCSezqABxFCB21HRr+gGSP+My0Y1qzIQGB80yaS/S1EfTI0hASNaekBIBQ==
+From: Paul McQuade <paulmcquad@gmail.com>
+To: paulmcquad@gmail.com
+Subject: [v2 PATCH 4/5] Staging:rtl8723bs:Add blank line after declaration
+Date: Tue, 20 Mar 2018 20:26:21 +0000
+Message-Id: <20180320202622.13339-4-paulmcquad@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180320202622.13339-1-paulmcquad@gmail.com>
 References: <20180320202622.13339-1-paulmcquad@gmail.com>
-	 <20180320202622.13339-5-paulmcquad@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, keescook@chromium.org, johannes.berg@intel.com,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ Linyu.Yuan@alcatel-sbell.com.cn, hdegoede@redhat.com, arnd@arndb.de,
+ arvind.yadav.cs@gmail.com, colin.king@canonical.com, davem@davemloft.net,
+ Larry.Finger@lwfinger.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595489757959780796?=
-X-GMAIL-MSGID: =?utf-8?q?1595490130404950440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-03-20 at 20:26 +0000, Paul McQuade wrote:
-> Used checkpatch.pl to clean up spaces around if and for statements
-> to make it easier to read
+missing a blank line after declaration checkpatch warnings.
+Issue found by checkpatch.pl
 
-Perhaps the commit message can be made clearer.
+Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
+---
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I think this is technically correct, but it would
-be nicer to describe these changes as moving braces
-to the more common kernel-style locations.
+diff --git a/drivers/staging/rtl8723bs/os_dep/recv_linux.c b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
+index 117fda4fa1bf..b43e24c3a23a 100644
+--- a/drivers/staging/rtl8723bs/os_dep/recv_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
+@@ -43,6 +43,7 @@ void rtw_os_recv_resource_free(struct recv_priv *precvpriv)
+ {
+ 	sint i;
+ 	union recv_frame *precvframe;
++
+ 	precvframe = (union recv_frame*) precvpriv->precv_frame_buf;
+ 
+ 	for (i = 0; i < NR_RECVFRAME; i++)
+-- 
+2.16.2
 
-> diff --git a/drivers/staging/rtl8723bs/os_dep/recv_linux.c b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-[]
-> @@ -20,8 +20,7 @@
->  
->  void rtw_os_free_recvframe(union recv_frame *precvframe)
->  {
-> -	if (precvframe->u.hdr.pkt)
-> -	{
-> +	if (precvframe->u.hdr.pkt) {
->  		dev_kfree_skb_any(precvframe->u.hdr.pkt);/* free skb by driver */
->  
->  		precvframe->u.hdr.pkt = NULL;
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
