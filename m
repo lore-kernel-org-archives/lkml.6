@@ -1,199 +1,532 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeCTGZH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:25:07 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:39774 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751330AbeCTGZD (ORCPT
+        id S1752112AbeCTGZY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:25:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55129 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeCTGZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:25:03 -0400
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: hl@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: hl@rock-chips.com
-X-UNIQUE-TAG: <921359daadcd313cf18e3c8d0db72d7f>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v4 1/3] drm/panel: refactor INNOLUX P079ZCA panel driver
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>
-References: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
- <CACvgo50UGi97RYQkYLMmVNKcfi39BSVVKkxHnLTvsEks737+-Q@mail.gmail.com>
- <e750ef11-0a56-07c4-af91-fee0be6e1019@rock-chips.com>
- <CACvgo52G=-QRtseOFLWeh+RT6pEUAgVVJd-i6LPQJTEOnU+CrA@mail.gmail.com>
-From: hl <hl@rock-chips.com>
-Message-ID: <577e35f7-b7ca-ca97-1391-f5759e81254e@rock-chips.com>
-Date: Tue, 20 Mar 2018 14:24:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 20 Mar 2018 02:25:19 -0400
+Date: Mon, 19 Mar 2018 23:24:47 -0700
+From: tip-bot for John Garry <tipbot@zytor.com>
+Message-ID: <tip-360b7b03afee042d71ab54ba6ea55daf53edf538@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        john.garry@huawei.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, ganapatrao.kulkarni@cavium.com, mingo@kernel.org,
+        tglx@linutronix.de, acme@redhat.com, namhyung@kernel.org,
+        peterz@infradead.org, wcohen@redhat.com, will.deacon@arm.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org, ganapatrao.kulkarni@cavium.com,
+        wcohen@redhat.com, peterz@infradead.org, acme@redhat.com,
+        namhyung@kernel.org, will.deacon@arm.com, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, john.garry@huawei.com, hpa@zytor.com
+In-Reply-To: <1520506716-197429-9-git-send-email-john.garry@huawei.com>
+References: <1520506716-197429-9-git-send-email-john.garry@huawei.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf vendor events arm64: Add
+ armv8-recommended.json
+Git-Commit-ID: 360b7b03afee042d71ab54ba6ea55daf53edf538
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CACvgo52G=-QRtseOFLWeh+RT6pEUAgVVJd-i6LPQJTEOnU+CrA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Emil,
+Commit-ID:  360b7b03afee042d71ab54ba6ea55daf53edf538
+Gitweb:     https://git.kernel.org/tip/360b7b03afee042d71ab54ba6ea55daf53edf538
+Author:     John Garry <john.garry@huawei.com>
+AuthorDate: Thu, 8 Mar 2018 18:58:33 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 16 Mar 2018 13:54:41 -0300
 
+perf vendor events arm64: Add armv8-recommended.json
 
-On Monday, March 19, 2018 09:09 PM, Emil Velikov wrote:
-> On 15 March 2018 at 02:35, hl <hl@rock-chips.com> wrote:
->> Hi Emil,
->>
->>
->>
->> On Wednesday, March 14, 2018 08:02 PM, Emil Velikov wrote:
->>> Hi Lin,
->>>
->>> On 14 March 2018 at 09:12, Lin Huang <hl@rock-chips.com> wrote:
->>>> From: huang lin <hl@rock-chips.com>
->>>>
->>>> Refactor Innolux P079ZCA panel driver, let it support
->>>> multi panel.
->>>>
->>>> Change-Id: If89be5e56dba8cb498e2d50c1bbeb0e8016123a2
->>>> Signed-off-by: Lin Huang <hl@rock-chips.com>
->>>> ---
->>>> Changes in v2:
->>>> - Change regulator property name to meet the panel datasheet
->>>> Changes in v3:
->>>> - this patch only refactor P079ZCA panel to support multi panel, support
->>>> P097PFG panel in another patch
->>>> Changes in v4:
->>>> - Modify the patch which suggest by Thierry
->>>>
->>> Thanks for splitting this up. I think there's another piece that fell
->>> through the cracks.
->>> I'm not deeply familiar with the driver, so just sharing some quick notes.
->>>
->>>
->>>>    struct innolux_panel {
->>>>           struct drm_panel base;
->>>>           struct mipi_dsi_device *link;
->>>> +       const struct panel_desc *desc;
->>>>
->>>>           struct backlight_device *backlight;
->>>> -       struct regulator *supply;
->>>> +       struct regulator *vddi;
->>>> +       struct regulator *avdd;
->>>> +       struct regulator *avee;
->>> These two seem are new addition, as opposed to a dummy refactor.
->>> Are they optional, does one need them for the existing panel (separate
->>> patch?) or only for the new one (squash with the new panel code)?
->>>
->>>
->>>>           struct gpio_desc *enable_gpio;
->>>>
->>>>           bool prepared;
->>>> @@ -77,9 +93,9 @@ static int innolux_panel_unprepare(struct drm_panel
->>>> *panel)
->>>>           /* T8: 80ms - 1000ms */
->>>>           msleep(80);
->>>>
->>>> -       err = regulator_disable(innolux->supply);
->>>> -       if (err < 0)
->>>> -               return err;
->>> Good call on dropping the early return here.
->>>
->>>
->>>> @@ -207,19 +248,28 @@ static const struct drm_panel_funcs
->>>> innolux_panel_funcs = {
->>>> -       innolux->supply = devm_regulator_get(dev, "power");
->>>> -       if (IS_ERR(innolux->supply))
->>>> -               return PTR_ERR(innolux->supply);
->>>> +       innolux = devm_kzalloc(dev, sizeof(*innolux), GFP_KERNEL);
->>>> +       if (!innolux)
->>>> +               return -ENOMEM;
->>>> +
->>>> +       innolux->desc = desc;
->>>> +       innolux->vddi = devm_regulator_get(dev, "power");
->>>> +       innolux->avdd = devm_regulator_get(dev, "avdd");
->>>> +       innolux->avee = devm_regulator_get(dev, "avee");
->>>>
->>> AFAICT devm_regulator_get returns a pointer which is unsuitable to be
->>> passed into regulator_{enable,disable}.
->>> Hence, the IS_ERR check should stay. If any of the regulators are
->>> optional, you want to call regulator_{enable,disable} only as
->>> applicable.
->>
->> devm_regulator_get() will use dummy_regulator if there not regulator pass to
->> driver, so it not affect regulator_{enable, disable}.
-> One of us is getting confused here:
-> devm_regulator_get does not _use_ a regulator, it returns a pointer to
-> a regulator, right?
->
-> According to the 4.16-rc6 codebase - one error
-> returns a ERR_PTR [1].
-devm_regulator_get() will not reurn a ERR_PTR,  it will pass NORMAL_GET 
-mode to
-_regulator_get() when you call devm_regulator_get(), and with following 
-code:
+Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
 
+The JSON is copied from ARMv8 architecture reference manual, available
+here:
 
-rdev = regulator_dev_lookup(dev, id);
-     if (IS_ERR(rdev)) {
-.....
-......
-     switch (get_type) {
-         case NORMAL_GET:
-             /*
-              * Assume that a regulator is physically present and
-              * enabled, even if it isn't hooked up, and just
-              * provide a dummy.
-              */
-             dev_warn(dev,
-                  "%s supply %s not found, using dummy regulator\n",
-                  devname, id);
-             rdev = dummy_regulator_rdev;
-             get_device(&rdev->dev);
-             break;
-...
-...
-}
-....
-regulator = create_regulator(rdev, dev, id);
-...
+	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
 
-it wil get a dummy_regulator for it.
+Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxarm@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
+ 1 file changed, 452 insertions(+)
 
-
-
-> With the pointer dereferenced in regulator_enable [2], without a
-> IS_ERR check, hence thing will go boom(?)
->
->> These three regulator are
->> optional,
->> the p079zca will use "power" and ,
->> so i think it better not to check ERR here.
->>
-> What should happen if p079zca is missing "power" or p097pgf - "avdd" and "avee"?
-> Obviously the latter two should be introduced with the p097pgf support.
-i think it need dts to make sure configure the power node correct, if 
-missing
-"power" node fo p079zca or "avdd" "avee" node for p097pgf, the panel can
-not work, but do not affcet other driver, the kernel do not crash(as i 
-explain before and i also test it).
->
-> HTH
-> Emil
->
-> [1] https://elixir.bootlin.com/linux/v4.16-rc6/source/drivers/regulator/devres.c#L27
-> [2] https://elixir.bootlin.com/linux/v4.16-rc6/source/drivers/regulator/core.c#L2189
->
->
->
+diff --git a/tools/perf/pmu-events/arch/arm64/armv8-recommended.json b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+new file mode 100644
+index 000000000000..6328828c018c
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+@@ -0,0 +1,452 @@
++[
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, read",
++        "EventCode": "0x40",
++        "EventName": "L1D_CACHE_RD",
++        "BriefDescription": "L1D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, write",
++        "EventCode": "0x41",
++        "EventName": "L1D_CACHE_WR",
++        "BriefDescription": "L1D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, read",
++        "EventCode": "0x42",
++        "EventName": "L1D_CACHE_REFILL_RD",
++        "BriefDescription": "L1D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, write",
++        "EventCode": "0x43",
++        "EventName": "L1D_CACHE_REFILL_WR",
++        "BriefDescription": "L1D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, inner",
++        "EventCode": "0x44",
++        "EventName": "L1D_CACHE_REFILL_INNER",
++        "BriefDescription": "L1D cache refill, inner"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, outer",
++        "EventCode": "0x45",
++        "EventName": "L1D_CACHE_REFILL_OUTER",
++        "BriefDescription": "L1D cache refill, outer"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache Write-Back, victim",
++        "EventCode": "0x46",
++        "EventName": "L1D_CACHE_WB_VICTIM",
++        "BriefDescription": "L1D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 1 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x47",
++        "EventName": "L1D_CACHE_WB_CLEAN",
++        "BriefDescription": "L1D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache invalidate",
++        "EventCode": "0x48",
++        "EventName": "L1D_CACHE_INVAL",
++        "BriefDescription": "L1D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, read",
++        "EventCode": "0x4C",
++        "EventName": "L1D_TLB_REFILL_RD",
++        "BriefDescription": "L1D tlb refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, write",
++        "EventCode": "0x4D",
++        "EventName": "L1D_TLB_REFILL_WR",
++        "BriefDescription": "L1D tlb refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
++        "EventCode": "0x4E",
++        "EventName": "L1D_TLB_RD",
++        "BriefDescription": "L1D tlb access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
++        "EventCode": "0x4F",
++        "EventName": "L1D_TLB_WR",
++        "BriefDescription": "L1D tlb access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, read",
++        "EventCode": "0x50",
++        "EventName": "L2D_CACHE_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, write",
++        "EventCode": "0x51",
++        "EventName": "L2D_CACHE_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, read",
++        "EventCode": "0x52",
++        "EventName": "L2D_CACHE_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, write",
++        "EventCode": "0x53",
++        "EventName": "L2D_CACHE_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache Write-Back, victim",
++        "EventCode": "0x56",
++        "EventName": "L2D_CACHE_WB_VICTIM",
++        "BriefDescription": "L2D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 2 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x57",
++        "EventName": "L2D_CACHE_WB_CLEAN",
++        "BriefDescription": "L2D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache invalidate",
++        "EventCode": "0x58",
++        "EventName": "L2D_CACHE_INVAL",
++        "BriefDescription": "L2D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, read",
++        "EventCode": "0x5c",
++        "EventName": "L2D_TLB_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, write",
++        "EventCode": "0x5d",
++        "EventName": "L2D_TLB_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, read",
++        "EventCode": "0x5e",
++        "EventName": "L2D_TLB_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, write",
++        "EventCode": "0x5f",
++        "EventName": "L2D_TLB_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Bus access read",
++        "EventCode": "0x60",
++        "EventName": "BUS_ACCESS_RD",
++        "BriefDescription": "Bus access read"
++   },
++   {
++        "PublicDescription": "Bus access write",
++        "EventCode": "0x61",
++        "EventName": "BUS_ACCESS_WR",
++        "BriefDescription": "Bus access write"
++   }
++   {
++        "PublicDescription": "Bus access, Normal, Cacheable, Shareable",
++        "EventCode": "0x62",
++        "EventName": "BUS_ACCESS_SHARED",
++        "BriefDescription": "Bus access, Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, not Normal, Cacheable, Shareable",
++        "EventCode": "0x63",
++        "EventName": "BUS_ACCESS_NOT_SHARED",
++        "BriefDescription": "Bus access, not Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, Normal",
++        "EventCode": "0x64",
++        "EventName": "BUS_ACCESS_NORMAL",
++        "BriefDescription": "Bus access, Normal"
++   }
++   {
++        "PublicDescription": "Bus access, peripheral",
++        "EventCode": "0x65",
++        "EventName": "BUS_ACCESS_PERIPH",
++        "BriefDescription": "Bus access, peripheral"
++   }
++   {
++        "PublicDescription": "Data memory access, read",
++        "EventCode": "0x66",
++        "EventName": "MEM_ACCESS_RD",
++        "BriefDescription": "Data memory access, read"
++   }
++   {
++        "PublicDescription": "Data memory access, write",
++        "EventCode": "0x67",
++        "EventName": "MEM_ACCESS_WR",
++        "BriefDescription": "Data memory access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access, read",
++        "EventCode": "0x68",
++        "EventName": "UNALIGNED_LD_SPEC",
++        "BriefDescription": "Unaligned access, read"
++   }
++   {
++        "PublicDescription": "Unaligned access, write",
++        "EventCode": "0x69",
++        "EventName": "UNALIGNED_ST_SPEC",
++        "BriefDescription": "Unaligned access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access",
++        "EventCode": "0x6a",
++        "EventName": "UNALIGNED_LDST_SPEC",
++        "BriefDescription": "Unaligned access"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, LDREX or LDX",
++        "EventCode": "0x6c",
++        "EventName": "LDREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, LDREX or LDX"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX pass",
++        "EventCode": "0x6d",
++        "EventName": "STREX_PASS_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX pass"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX fail",
++        "EventCode": "0x6e",
++        "EventName": "STREX_FAIL_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX fail"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX",
++        "EventCode": "0x6f",
++        "EventName": "STREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load",
++        "EventCode": "0x70",
++        "EventName": "LD_SPEC",
++        "BriefDescription": "Operation speculatively executed, load"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, store"
++        "EventCode": "0x71",
++        "EventName": "ST_SPEC",
++        "BriefDescription": "Operation speculatively executed, store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load or store",
++        "EventCode": "0x72",
++        "EventName": "LDST_SPEC",
++        "BriefDescription": "Operation speculatively executed, load or store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, integer data processing",
++        "EventCode": "0x73",
++        "EventName": "DP_SPEC",
++        "BriefDescription": "Operation speculatively executed, integer data processing"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Advanced SIMD instruction",
++        "EventCode": "0x74",
++        "EventName": "ASE_SPEC",
++        "BriefDescription": "Operation speculatively executed, Advanced SIMD instruction",
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, floating-point instruction",
++        "EventCode": "0x75",
++        "EventName": "VFP_SPEC",
++        "BriefDescription": "Operation speculatively executed, floating-point instruction"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, software change of the PC",
++        "EventCode": "0x76",
++        "EventName": "PC_WRITE_SPEC",
++        "BriefDescription": "Operation speculatively executed, software change of the PC"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Cryptographic instruction",
++        "EventCode": "0x77",
++        "EventName": "CRYPTO_SPEC",
++        "BriefDescription": "Operation speculatively executed, Cryptographic instruction"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, immediate branch"
++        "EventCode": "0x78",
++        "EventName": "BR_IMMED_SPEC",
++        "BriefDescription": "Branch speculatively executed, immediate branch"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, procedure return"
++        "EventCode": "0x79",
++        "EventName": "BR_RETURN_SPEC",
++        "BriefDescription": "Branch speculatively executed, procedure return"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, indirect branch"
++        "EventCode": "0x7a",
++        "EventName": "BR_INDIRECT_SPEC",
++        "BriefDescription": "Branch speculatively executed, indirect branch"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, ISB"
++        "EventCode": "0x7c",
++        "EventName": "ISB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, ISB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DSB"
++        "EventCode": "0x7d",
++        "EventName": "DSB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DSB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DMB"
++        "EventCode": "0x7e",
++        "EventName": "DMB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DMB"
++   }
++   {
++        "PublicDescription": "Exception taken, Other synchronous"
++        "EventCode": "0x81",
++        "EventName": "EXC_UNDEF",
++        "BriefDescription": "Exception taken, Other synchronous"
++   }
++   {
++        "PublicDescription": "Exception taken, Supervisor Call"
++        "EventCode": "0x82",
++        "EventName": "EXC_SVC",
++        "BriefDescription": "Exception taken, Supervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort"
++        "EventCode": "0x83",
++        "EventName": "EXC_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort and SError"
++        "EventCode": "0x84",
++        "EventName": "EXC_DABORT",
++        "BriefDescription": "Exception taken, Data Abort and SError"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ"
++        "EventCode": "0x86",
++        "EventName": "EXC_IRQ",
++        "BriefDescription": "Exception taken, IRQ"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ"
++        "EventCode": "0x87",
++        "EventName": "EXC_FIQ",
++        "BriefDescription": "Exception taken, FIQ"
++   }
++   {
++        "PublicDescription": "Exception taken, Secure Monitor Call"
++        "EventCode": "0x88",
++        "EventName": "EXC_SMC",
++        "BriefDescription": "Exception taken, Secure Monitor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Hypervisor Call"
++        "EventCode": "0x8a",
++        "EventName": "EXC_HVC",
++        "BriefDescription": "Exception taken, Hypervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort not taken locally"
++        "EventCode": "0x8b",
++        "EventName": "EXC_TRAP_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort or SError not taken locally"
++        "EventCode": "0x8c",
++        "EventName": "EXC_TRAP_DABORT",
++        "BriefDescription": "Exception taken, Data Abort or SError not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Other traps not taken locally"
++        "EventCode": "0x8d",
++        "EventName": "EXC_TRAP_OTHER",
++        "BriefDescription": "Exception taken, Other traps not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ not taken locally"
++        "EventCode": "0x8e",
++        "EventName": "EXC_TRAP_IRQ",
++        "BriefDescription": "Exception taken, IRQ not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ not taken locally"
++        "EventCode": "0x8f",
++        "EventName": "EXC_TRAP_FIQ",
++        "BriefDescription": "Exception taken, FIQ not taken locally"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Load-Acquire"
++        "EventCode": "0x90",
++        "EventName": "RC_LD_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Load-Acquire"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Store-Release"
++        "EventCode": "0x91",
++        "EventName": "RC_ST_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Store-Release"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, read"
++        "EventCode": "0xa0",
++        "EventName": "L3D_CACHE_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, write"
++        "EventCode": "0xa1",
++        "EventName": "L3D_CACHE_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, read"
++        "EventCode": "0xa2",
++        "EventName": "L3D_CACHE_REFILL_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, write"
++        "EventCode": "0xa3",
++        "EventName": "L3D_CACHE_REFILL_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++        "EventCode": "0xa6",
++        "EventName": "L3D_CACHE_WB_VICTIM",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++        "EventCode": "0xa7",
++        "EventName": "L3D_CACHE_WB_CLEAN",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, invalidate"
++        "EventCode": "0xa8",
++        "EventName": "L3D_CACHE_INVAL",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, invalidate"
++   }
++]
