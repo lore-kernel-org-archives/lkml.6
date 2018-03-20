@@ -1,35 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751738AbeCTPQC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:16:02 -0400
-Received: from verein.lst.de ([213.95.11.211]:37679 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751694AbeCTPQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:16:01 -0400
-Date: Tue, 20 Mar 2018 16:16:00 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Konrad Rzeszutek Wilk <konrad@darnok.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
-        iommu@lists.linux-foundation.org,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: use generic dma-direct and swiotlb code for x86 V3
-Message-ID: <20180320151600.GA23920@lst.de>
-References: <20180319103826.12853-1-hch@lst.de> <20180319152737.GK1110@char.us.oracle.com> <20180319152840.GA28041@lst.de> <20180320083751.nrpt64dsmpqbhzc6@gmail.com> <20180320084412.GA16337@lst.de> <20180320090351.2qnwcsauhodrqxdj@gmail.com> <CAPbh3rspsGE3i=WzxC4DL=EDTEbhVZVb29j-fyhAXZRwk=Xncg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPbh3rspsGE3i=WzxC4DL=EDTEbhVZVb29j-fyhAXZRwk=Xncg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1751522AbeCTPRo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:17:44 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:33222 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751317AbeCTPRm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:17:42 -0400
+X-Google-Smtp-Source: AG47ELv0PRV8Kl1gh3FQTP+MKtsra61OW8FWbZ+8r8GyvFaHb7oBWuaQWkUIlFcJA2YmUIn8jUXNuA==
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From: valdis.kletnieks@vt.edu
+To: Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: linux-next: ip6tables *broken* - last base chain position %u doesn't match underflow %u (hook %u
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1521559052_3137P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Tue, 20 Mar 2018 11:17:33 -0400
+Message-ID: <24374.1521559053@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 11:25:21AM +0000, Konrad Rzeszutek Wilk wrote:
-> Are you testing with swiotlb=force?
+--==_Exmh_1521559052_3137P
+Content-Type: text/plain; charset=us-ascii
 
-I've done swiotlb=force testing with earlier versions, and otherwise
-relied on a VM with more the 4gb of memory and emulated devices
-without 64-bit capability.
+(Resending because I haven't heard anything)
+
+Am hitting an issue with this commit:
+
+commit 0d7df906a0e78079a02108b06d32c3ef2238ad25
+Author: Florian Westphal <fw@strlen.de>
+Date:   Tue Feb 27 19:42:37 2018 +0100
+
+    netfilter: x_tables: ensure last rule in base chain matches underflow/policy
+
+This trips on my system:
+
+[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
+
+More annoyingly, the return value means that ip6tables aren't initialized
+so there's no firewall protection.  (In other words, this:
+
+    If a (syzkaller generated) ruleset doesn't have the underflow/policy
+    stored as the last rule in the base chain, then iptables will abort()
+    because it doesn't find the chain policy.
+
+ends up meaning iptables aborts anyhow.
+
+My iptables isn't syzkaller generated - it's mostly crufty vi-generated. ;)
+
+Messages generated as I tried to build smaller tables to narrow down the problem:
+(not sure where it gets the numbers from, as I reduced it from 50 lines down to 3
+and no real correlation to the tables I was trying to load - in particular the numbers
+went up once and remained unchanged once, even though between each try I was
+whacking out another 5-10 lines...)
+
+[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
+[ 1897.914828] ip6_tables: last base chain position 928 doesn't match underflow 1136 (hook 1)
+[ 1954.032735] ip6_tables: last base chain position 720 doesn't match underflow 928 (hook 1)
+[ 2021.813719] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
+[ 2035.044103] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
+[ 2060.594412] ip6_tables: last base chain position 616 doesn't match underflow 824 (hook 1)
+
+I finally got /etc/sysconfig/ip6tables down to this:
+
+# Generated by ip6tables-save v1.6.2 on Thu Mar  8 08:20:04 2018
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [208207395:46346275671]
+[120166037:34218429901] -A INPUT -i lo+ -j ACCEPT
+[129329499:129691207309] -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+[0:0] -A INPUT -j DROP
+COMMIT
+# Completed on Thu Mar  8 08:20:04 2018
+
+About as minimal as it can get. :)
+
+Any ideas?
+
+--==_Exmh_1521559052_3137P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWrEmDI0DS38y7CIcAQLzAwgAlhtB13eQiTQ8QENuFumubqrRXhgHiX21
+VkOB5eUtOtFgX/SAUEkjL211jNLcG5oHaEZoUG3FPT9BAZelmSvEwTCFwP6wiNal
+99C6Eoa+S315H6PAjfaYFRqI/XQB6Z9Bpd61qgLotWUJa4fLwDeO9/DidmP4zAEg
+vBIZr/hjCKmx/3Cd3t8nPs5I9WtvwCOvXRbkNqESxuNjQlVg5jfC6Zq2mOa0WoQz
+8kJNbA0iAI9W5JkZ76RZwAG+/MkG621gV8+M2m/xXckDsaEzmAI6kfi+o9hK0TQ7
+3XlrBWYbCHS73eczyV9wqUttfm3CTLppR+ZOCR6d/FhzA08f0uC4gg==
+=pwTj
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1521559052_3137P--
