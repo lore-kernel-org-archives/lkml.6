@@ -1,63 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeCTOqW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:46:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38466 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751105AbeCTOqS (ORCPT
+        id S1751667AbeCTOsF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:48:05 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:55238 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeCTOsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:46:18 -0400
-From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, shannon.nelson@oracle.com,
-        nagarathnam.muthusamy@oracle.com, nick.alcock@oracle.com,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH sparc-next] sparc: Make auxiliary vectors for ADI available on 32-bit as well
-Date: Tue, 20 Mar 2018 08:46:02 -0600
-Message-Id: <20180320144602.16535-1-khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.11.0
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+        Tue, 20 Mar 2018 10:48:00 -0400
+Date: Tue, 20 Mar 2018 10:47:59 -0400 (EDT)
+Message-Id: <20180320.104759.796804827689233281.davem@davemloft.net>
+To: liran.alon@oracle.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        idan.brown@oracle.com, yuval.shaia@oracle.com
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
+References: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c6202ca764ac ("sparc64: Add auxiliary vectors to report
-platform ADI properties") adds auxiliary vectors to report ADI
-capabilities on sparc64 platform only. This needs to be uniform
-across 64-bit and 32-bit. This patch makes the same vectors
-available on 32-bit as well.
+From: Liran Alon <liran.alon@oracle.com>
+Date: Tue, 13 Mar 2018 17:07:22 +0200
 
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Khalid Aziz <khalid@gonehiking.org>
----
- arch/sparc/include/uapi/asm/auxvec.h | 4 ----
- 1 file changed, 4 deletions(-)
+> Before this commit, dev_forward_skb() always cleared packet's
+> per-network-namespace info. Even if the packet doesn't cross
+> network namespaces.
 
-diff --git a/arch/sparc/include/uapi/asm/auxvec.h b/arch/sparc/include/uapi/asm/auxvec.h
-index f9937ccfcd99..ab8780fb9df1 100644
---- a/arch/sparc/include/uapi/asm/auxvec.h
-+++ b/arch/sparc/include/uapi/asm/auxvec.h
-@@ -3,7 +3,6 @@
- 
- #define AT_SYSINFO_EHDR		33
- 
--#ifdef CONFIG_SPARC64
- /* Avoid overlap with other AT_* values since they are consolidated in
-  * glibc and any overlaps can cause problems
-  */
-@@ -12,8 +11,5 @@
- #define AT_ADI_UEONADI	50
- 
- #define AT_VECTOR_SIZE_ARCH	4
--#else
--#define AT_VECTOR_SIZE_ARCH	1
--#endif
- 
- #endif /* !(__ASMSPARC_AUXVEC_H) */
--- 
-2.11.0
+There was a lot of discussion about this patch.
+
+Particularly whether it could potentially break current
+users or not.
+
+If this is resolved and the patch should still be applied,
+please repost and the folks involved in this dicussion should
+add their ACKs.
+
+Thanks.
