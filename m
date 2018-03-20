@@ -1,255 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeCTScY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 14:32:24 -0400
-Received: from smtp.polymtl.ca ([132.207.4.11]:34763 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeCTScS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 14:32:18 -0400
-Message-ID: <1521570176.31676.3.camel@polymtl.ca>
-Subject: [RFC PATCH] ftrace: support boot level tracing
-From: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To: rostedt@goodmis.org
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        anis.benbachir@gmail.com
-Date: Tue, 20 Mar 2018 14:22:56 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1ubuntu1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Poly-FromMTA: (dyn44.dorsal.polymtl.ca [132.207.72.44]) at Tue, 20 Mar 2018 18:22:56 +0000
+        id S1751781AbeCTSgA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 14:36:00 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:42274 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeCTSf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 14:35:57 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Ben Greear <greearb@candelatech.com>
+Cc: Liran Alon <LIRAN.ALON@ORACLE.COM>, shmulik.ladkani@gmail.com,
+        netdev@vger.kernel.org, mrv@mojatatu.com, daniel@iogearbox.net,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        yuval.shaia@ORACLE.COM, idan.brown@ORACLE.COM
+References: <0d84d286-9965-45cb-93c8-379ca1b2441e@default>
+        <87tvta67gl.fsf@xmission.com> <5AB13A86.9010607@ORACLE.COM>
+        <d031d870-27c0-3fde-7ab8-bf65f6c9d910@candelatech.com>
+Date: Tue, 20 Mar 2018 13:35:00 -0500
+In-Reply-To: <d031d870-27c0-3fde-7ab8-bf65f6c9d910@candelatech.com> (Ben
+        Greear's message of "Tue, 20 Mar 2018 10:07:47 -0700")
+Message-ID: <87lgem38a3.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1eyM6z-00085x-Gj;;;mid=<87lgem38a3.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.121.173;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+emzsOfcleYedGI/zYIzRn9dwpCmA/pFU=
+X-SA-Exim-Connect-IP: 97.119.121.173
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4439]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_04 7+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Ben Greear <greearb@candelatech.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 615 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.9 (0.5%), b_tie_ro: 1.99 (0.3%), parse: 1.31 (0.2%),
+        extract_message_metadata: 30 (4.9%), get_uri_detail_list: 2.8 (0.5%),
+        tests_pri_-1000: 14 (2.3%), tests_pri_-950: 2.7 (0.4%), tests_pri_-900: 1.87
+        (0.3%), tests_pri_-400: 36 (5.9%), check_bayes: 34 (5.6%), b_tokenize: 12
+        (1.9%), b_tok_get_all: 8 (1.2%), b_comp_prob: 4.5 (0.7%), b_tok_touch_all: 7
+        (1.1%), b_finish: 0.76 (0.1%), tests_pri_0: 512 (83.2%),
+        check_dkim_signature: 0.83 (0.1%), check_dkim_adsp: 6 (1.0%), tests_pri_500:
+        8 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info only when crossing netns
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve.
+Ben Greear <greearb@candelatech.com> writes:
 
-Initcall's tracing support have been recently added to ftrace, which enables 
-detecting latencies within each initcall function. The main concern here is,
-enabling initcall's tracing (which is fine-grained) will add a lots of overhead
-during boot-up. So with boot level tracing we can get the overall picture, with
-low overhead, then we can use function tracing with filters to dig into more
-specific path. 
+> On 03/20/2018 09:44 AM, Liran Alon wrote:
+>>
+>>
+>> On 20/03/18 18:24, ebiederm@xmission.com wrote:
+>>>
+>>> I don't believe the current behavior is a bug.
+>>>
+>>> I looked through the history.  Basically skb_scrub_packet
+>>> started out as the scrubbing needed for crossing network
+>>> namespaces.
+>>>
+>>> Then tunnels which needed 90% of the functionality started
+>>> calling it, with the xnet flag added.  Because the tunnels
+>>> needed to preserve their historic behavior.
+>>>
+>>> Then dev_forward_skb started calling skb_scrub_packet.
+>>>
+>>> A veth pair is supposed to give the same behavior as a cross-over
+>>> cable plugged into two local nics.  A cross over cable won't
+>>> preserve things like the skb mark.  So I don't see why anyone would
+>>> expect a veth pair to preserve the mark.
+>>
+>> I disagree with this argument.
+>>
+>> I think that a skb crossing netns is what simulates a real packet
+>> crossing physical computers. Following your argument, why would
+>> skb->mark should be preserved when crossing netdevs on same netns via
+>> routing? But this does today preserve skb->mark.
+>>
+>> Therefore, I do think that skb->mark should conceptually only be
+>> scrubbed when crossing netns. Regardless of the netdev used to cross
+>> it.
+>
+> It should be scrubbed in VETH as well.  That is one way to make virtual routers.  Possibly
+> the newer VRF features will give another better way to do it, but you should not break
+> things that used to work.
+>
+> Now, if you want to add a new feature that allows one to configure the kernel (or VETH) for
+> a new behavior, then that might be something to consider.
+>
+>>> Right now I don't see the point of handling packets that don't cross
+>>> network namespace boundaries specially, other than to preserve backwards
+>>> compatibility.
+>
+> Well, backwards compat is a big deal all by itself!
 
-This is an example of boot level sequence, with the first initcall and the last
-initcall that were retrieved dynamically at runtime:
+Absolutely agreed.
 
-0,console,  first=con_init,			last=univ8250_console_init
-1,security, first=selinux_init,			last=integrity_iintcache_init
-2,early,    first=trace_init_flags_sys_exit,	last=initialize_ptr_random
-3,pure,     first=ipc_ns_init,			last=net_ns_init
-4,core,     first=xen_pvh_gnttab_setup,		last=__gnttab_init
-5,postcore, first=irq_sysfs_init,		last=kobject_uevent_init
-6,arch,     first=bts_init,			last=pci_arch_init
-7,subsys,   first=init_vdso,			last=watchdog_init
-8,fs, 	    first=nmi_warning_debugfs,		last=acpi_reserve_resources
-9,rootfs,   first=populate_rootfs,		last=ir_dev_scope_init
-10,device,  first=ia32_binfmt_init,		last=mcheck_init_device
-11,late,    first=tboot_late_init,		last=regulator_init_complete
-
-To make it properly work, the idea is to register at boot time function based 
-events on the first and the last initcall of each boot level.
-
-The created events will be recycled when the last sequence is reached. 
-
-This patch is only a proof of concept, I didn't use function based events 
-mechanism, I only changed the first and last initcalls to point to some
-handlers, which worked fine, but need to changed:
-+	(*first_initcall_fn) = trace_bootlevel_start_handler;
-+	(*last_initcall_fn) = trace_bootlevel_end_handler;
-
-I made this patch to get some feedbacks, and to know if this could be an
-interresting feature to have in ftrace ?
-
-
-Trace example when enabling boot level tracing along with function tracing:
-[    0.367507] : trace_bootlevel_start_handler: Start console boot level <----
-[    0.368240] : con_init <-console_init
-...
-[    0.371869] : xen_cons_init <-console_init
-[    0.372409] : univ8250_console_init <-trace_bootlevel_end_handler
-[    0.373116] : trace_bootlevel_end_handler: End console boot level <----
-...
-[    0.385005] : security_init <-start_kernel
-[    0.385550] : trace_bootlevel_start_handler: Start security boot level <----
-[    0.386291] : selinux_init <-security_init
-[    0.386831] : smack_init <-security_init
-[    0.387358] : tomoyo_init <-security_init
-[    0.387893] : apparmor_init <-security_init
-[    0.390694] : integrity_iintcache_init <-trace_bootlevel_end_handler
-[    0.391418] : trace_bootlevel_end_handler: End security boot level <----
-...
-[    0.455924] : trace_bootlevel_start_handler: Start early boot level <----
-[    0.456659] : intel_pmu_init <-init_hw_perf_events
-[    0.457299] : p6_pmu_init <-intel_pmu_init
-[    0.457851] : numachip_system_init <-do_one_initcall
-...
-
-Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
----
- kernel/trace/Makefile          |   1 +
- kernel/trace/trace_bootlevel.c | 137 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 138 insertions(+)
- create mode 100644 kernel/trace/trace_bootlevel.c
-
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index e2538c7638d4..46fbf0ab81d9 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_RING_BUFFER) += ring_buffer.o
- obj-$(CONFIG_RING_BUFFER_BENCHMARK) += ring_buffer_benchmark.o
- 
- obj-$(CONFIG_TRACING) += trace.o
-+obj-$(CONFIG_TRACING) += trace_bootlevel.o
- obj-$(CONFIG_TRACING) += trace_output.o
- obj-$(CONFIG_TRACING) += trace_seq.o
- obj-$(CONFIG_TRACING) += trace_stat.o
-diff --git a/kernel/trace/trace_bootlevel.c b/kernel/trace/trace_bootlevel.c
-new file mode 100644
-index 000000000000..fa83b5ca0749
---- /dev/null
-+++ b/kernel/trace/trace_bootlevel.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Tracing Boot levels : console, security, early, ... etc.
-+ *
-+ * Copyright (c) 2018-2019 Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-+ */
-+#include <linux/init.h>
-+#include <asm/setup.h>
-+#include "trace.h"
-+
-+#define MAX_LEVELS_SIZE 12
-+
-+struct bootlevel {
-+	int level;
-+	initcall_t first_fn;
-+	initcall_t last_fn;
-+};
-+
-+static int current_level __initdata;
-+static struct bootlevel bootlevels[MAX_LEVELS_SIZE] __initdata;
-+
-+/*
-+ * Keep these in sync with initcalls in include/linux/init.h
-+ */
-+extern initcall_t __con_initcall_start[], __con_initcall_end[];
-+extern initcall_t __security_initcall_start[], __security_initcall_end[];
-+extern initcall_t __initcallrootfs_start[];
-+extern initcall_t __initcall_start[];
-+extern initcall_t __initcall0_start[];
-+extern initcall_t __initcall1_start[];
-+extern initcall_t __initcall2_start[];
-+extern initcall_t __initcall3_start[];
-+extern initcall_t __initcall4_start[];
-+extern initcall_t __initcall5_start[];
-+extern initcall_t __initcall6_start[];
-+extern initcall_t __initcall7_start[];
-+extern initcall_t __initcall_end[];
-+
-+static initcall_t *initcall_levels[] __initdata = {
-+	__initcall_start,		/* early	*/
-+	__initcall0_start,		/* pure		*/
-+	__initcall1_start,		/* core		*/
-+	__initcall2_start,		/* postcore	*/
-+	__initcall3_start,		/* arch		*/
-+	__initcall4_start,		/* subsys	*/
-+	__initcall5_start,		/* fs		*/
-+	__initcallrootfs_start,	/* rootfs	*/
-+	__initcall6_start,		/* device	*/
-+	__initcall7_start,		/* late		*/
-+	__initcall_end,
-+};
-+/*
-+ * This is the runtime order of boot levels
-+ */
-+static char *bootlevel_names[] __initdata = {
-+	"console",
-+	"security",
-+	"early",
-+	"pure",
-+	"core",
-+	"postcore",
-+	"arch",
-+	"subsys",
-+	"fs",
-+	"rootfs",
-+	"device",
-+	"late"
-+};
-+
-+static __init int notrace trace_bootlevel_start_handler(void)
-+{
-+	initcall_t initcall;
-+
-+	if (current_level < 0 || current_level > MAX_LEVELS_SIZE)
-+		return 1;
-+
-+	initcall = bootlevels[current_level].first_fn;
-+
-+	trace_printk("Start %s boot level\n", bootlevel_names[current_level]);
-+
-+	return (initcall) ();
-+}
-+
-+static __init int notrace trace_bootlevel_end_handler(void)
-+{
-+	int ret;
-+	initcall_t initcall;
-+
-+	if (current_level < 0 || current_level > MAX_LEVELS_SIZE)
-+		return 1;
-+
-+	initcall = bootlevels[current_level].last_fn;
-+	ret = (initcall) ();
-+
-+	trace_printk("End %s boot level\n", bootlevel_names[current_level]);
-+
-+	current_level++;
-+
-+	return ret;
-+}
-+
-+static void __init set_bootlevel_probe(int level, initcall_t *first_initcall_fn,
-+	initcall_t *last_initcall_fn)
-+{
-+	if (level < 0 || level > MAX_LEVELS_SIZE)
-+		return;
-+
-+	bootlevels[level].level = level;
-+	bootlevels[level].first_fn = *first_initcall_fn;
-+	bootlevels[level].last_fn = *last_initcall_fn;
-+
-+	/* TODO: this mechanism should be replaced by function event probe */
-+	(*first_initcall_fn) = trace_bootlevel_start_handler;
-+	(*last_initcall_fn) = trace_bootlevel_end_handler;
-+}
-+
-+static int __init set_trace_bootlevel(char *str)
-+{
-+	int i, level;
-+
-+	level = 0;
-+	current_level = 0;
-+
-+	set_bootlevel_probe(level++, __con_initcall_start,
-+		__con_initcall_end-1);
-+	set_bootlevel_probe(level++, __security_initcall_start,
-+		__security_initcall_end-1);
-+
-+	for (i = 0; i < ARRAY_SIZE(initcall_levels) - 1; i++) {
-+		set_bootlevel_probe(level, initcall_levels[i], initcall_levels[i+1]-1);
-+		level++;
-+	}
-+
-+	return 1;
-+}
-+__setup("trace_bootlevel", set_trace_bootlevel);
--- 
-2.11.0
+Eric
