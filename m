@@ -1,46 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966225AbeCTAxr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 20:53:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58406 "EHLO mail.kernel.org"
+        id S966268AbeCTA75 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 20:59:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933455AbeCTAxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 20:53:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F0821737
+        id S935431AbeCTA7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 20:59:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9015D21737
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        afaerber@suse.de, mark.rutland@arm.com, mturquette@baylibre.com,
+        robh+dt@kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
-        David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
-Message-ID: <152150722338.254778.4743967512266809482@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
+Message-ID: <152150759188.254778.1766919298343763795@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: =?utf-8?q?Re=3A_=5BPATCH_v8_00/42=5D_ARM=3A_davinci=3A_convert_to_common_?=
- =?utf-8?q?clock_framework=E2=80=8B?=
-Date: Mon, 19 Mar 2018 17:53:43 -0700
+Subject: Re: [PATCH v5 01/12] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Mon, 19 Mar 2018 17:59:51 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting David Lechner (2018-03-15 19:52:16)
-> This series converts mach-davinci to use the common clock framework.
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:41)
+> Add Actions Semi S900 clock bindings.
 > 
-> The series works like this, the first 19 patches create new clock drivers
-> using the common clock framework. There are basically 3 groups of clocks -
-> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
-> unique init data, which is the reason for so many patches.
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Should I apply the first 19 patches to clk tree? Looking over them
-nothing stands out except for your self comment about the bad
-reviewed-by tag which I can remove.
+Applied to clk-next
