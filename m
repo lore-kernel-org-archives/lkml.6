@@ -1,84 +1,403 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeCTMzi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:55:38 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36302 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbeCTMzf (ORCPT
+        id S1753523AbeCTM7G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:59:06 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33874 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753508AbeCTM7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:55:35 -0400
-Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Joao Martins <joao.m.martins@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org
-References: <20180315142205.15839-1-joao.m.martins@oracle.com>
- <bbf536dc-3c3d-8a25-47e8-7fd52850835d@oracle.com>
- <d14d48ab-9ba1-c70c-4d46-cd9c7c862add@oracle.com>
- <CAJZ5v0ipVHsjEBJuj3Lz6iRSVasv8d2YY0qjz1SFaCK+zDP=Xw@mail.gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <5561dd0a-2483-7084-ad88-f277473bd93f@oracle.com>
-Date: Tue, 20 Mar 2018 08:56:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 20 Mar 2018 08:59:02 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+Date: Tue, 20 Mar 2018 15:00:06 +0200
+Message-ID: <2013431.yq1szSm9OZ@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org> <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0ipVHsjEBJuj3Lz6iRSVasv8d2YY0qjz1SFaCK+zDP=Xw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2KCx9fG012859
 
-On 03/20/2018 05:41 AM, Rafael J. Wysocki wrote:
-> On Fri, Mar 16, 2018 at 2:57 PM, Joao Martins <joao.m.martins@oracle.com> wrote:
->> On 03/15/2018 03:45 PM, Boris Ostrovsky wrote:
->>> On 03/15/2018 10:22 AM, Joao Martins wrote:
->>>> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
->>>> changing only the acpi_id. For processors which P-state coordination type
->>>> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
->>>> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
->>>>
->>>> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
->>>> this will have some unintended side effects. Effectively, it will look at
->>>> the P-state domain existence and *if it already exists* it will skip the
->>>> acpi-cpufreq initialization and thus inherit the policy from the first CPU
->>>> in the cpufreq domain. This will finally lead to the original cpu not
->>>> changing target freq to P0 other than the first in the domain. Which will
->>>> make turbo boost not getting enabled (e.g. for 'performance' governor) for
->>>> all cpus.
->>>>
->>>> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
->>>> processors and thus always uploading the correct info to Xen. We export
->>>> acpi_processor_get_psd() for that this purpose, but change signature
->>>> to not assume an existent of acpi_processor given that ACPI isn't creating
->>>> an acpi_processor for non-dom0 CPUs.
->>>>
->>>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
->>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>
->> Thanks!
->>
->> I suppose what's remaining is review (or ack) from ACPI folks on the interface
->> changes made to acpi_processor_get_psd().
-> There you go:
->
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Do you want to route this via Xen?
+Hi Jacopo,
 
+Thank you for the patch.
 
-Sure, I'll queue it for 4.17
+On Friday, 16 March 2018 17:16:38 EET Jacopo Mondi wrote:
+> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> output converter.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/gpu/drm/bridge/Kconfig        |   6 +
+>  drivers/gpu/drm/bridge/Makefile       |   1 +
+>  drivers/gpu/drm/bridge/thc63lvd1024.c | 255 +++++++++++++++++++++++++++++++
+>  3 files changed, 262 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
 
-Thanks.
--boris
+I'm aware that you started with a generic driver and then moved to a chip-
+specific driver and that it caused issues. I however believe it was a good 
+design, but we can make the driver generic later when a second similar chip 
+will need to be supported.
+
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index 3b99d5a..5815a20 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -92,6 +92,12 @@ config DRM_SII9234
+>  	  It is an I2C driver, that detects connection of MHL bridge
+>  	  and starts encapsulation of HDMI signal.
+> 
+> +config DRM_THINE_THC63LVD1024
+> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+> +	depends on OF
+> +	---help---
+> +	  Thine THC63LVD1024 LVDS/parallel converter driver.
+> +
+>  config DRM_TOSHIBA_TC358767
+>  	tristate "Toshiba TC358767 eDP bridge"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/bridge/Makefile
+> b/drivers/gpu/drm/bridge/Makefile index 373eb28..fd90b16 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+>  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+>  obj-$(CONFIG_DRM_SII902X) += sii902x.o
+>  obj-$(CONFIG_DRM_SII9234) += sii9234.o
+> +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+>  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+>  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+>  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> b/drivers/gpu/drm/bridge/thc63lvd1024.c new file mode 100644
+> index 0000000..02a54c2
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> @@ -0,0 +1,255 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
+> + *
+> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> + */
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_bridge.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +enum {
+
+Please name the enumeration.
+
+> +	THC63_LVDS_IN0,
+> +	THC63_LVDS_IN1,
+> +	THC63_DIGITAL_OUT0,
+> +	THC63_DIGITAL_OUT1,
+
+Strictly speaking LVDS is digital too. Maybe THC63_RGB_OUT* ?
+
+> +};
+> +
+> +static const char * const thc63_reg_names[] = {
+> +	"vcc", "lvcc", "pvcc", "cvcc",
+> +};
+> +
+> +struct thc63_dev {
+> +	struct device *dev;
+> +
+> +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
+> +
+> +	struct gpio_desc *pdwn;
+> +	struct gpio_desc *oe;
+> +
+> +	struct drm_bridge bridge;
+> +	struct drm_bridge *next;
+> +};
+> +
+> +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
+> +{
+> +	return container_of(bridge, struct thc63_dev, bridge);
+> +}
+> +
+> +static int thc63_attach(struct drm_bridge *bridge)
+> +{
+> +	struct thc63_dev *thc63 = to_thc63(bridge);
+> +
+> +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
+> +}
+> +
+> +static void thc63_enable(struct drm_bridge *bridge)
+> +{
+> +	struct thc63_dev *thc63 = to_thc63(bridge);
+> +	struct regulator *vcc;
+> +	int i;
+> + 
+> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+> +		vcc = thc63->vccs[i];
+> +		if (!vcc)
+> +			continue;
+> +
+> +		if (regulator_enable(vcc))
+
+You can operate on thc63->vccs[i] directly without a local variable, here and 
+below in the functions that handle regulators.
+
+> +			goto error_vcc_enable;
+> +	}
+
+I thought about proposing usage of the regulators bulk API but it doesn't 
+support optional regulators :-( If you agree with my proposal to make all 
+regulators mandatory, please consider the bulk API to simplify power supply 
+handling. If on the other hand you agree with my proposal to keep the vcc 
+supply only, it won't matter.
+
+> +	if (thc63->pdwn)
+> +		gpiod_set_value(thc63->pdwn, 0);
+> +
+> +	if (thc63->oe)
+> +		gpiod_set_value(thc63->oe, 1);
+> +
+> +	return;
+> +
+> +error_vcc_enable:
+> +	dev_err(thc63->dev, "Failed to enable regulator %s\n",
+> +		thc63_reg_names[i]);
+
+I'd move the error message right before the goto.
+
+> +	for (i = i - 1; i >= 0; i--) {
+> +		vcc = thc63->vccs[i];
+> +		if (!vcc)
+> +			continue;
+> +
+> +		regulator_disable(vcc);
+> +	}
+> +}
+> +
+> +static void thc63_disable(struct drm_bridge *bridge)
+> +{
+> +	struct thc63_dev *thc63 = to_thc63(bridge);
+> +	struct regulator *vcc;
+> +	int i;
+> +
+> +	if (thc63->oe)
+> +		gpiod_set_value(thc63->oe, 0);
+> +
+> +	if (thc63->pdwn)
+> +		gpiod_set_value(thc63->pdwn, 1);
+> +
+> +	for (i = ARRAY_SIZE(thc63->vccs) - 1; i >= 0; i--) {
+> +		vcc = thc63->vccs[i];
+> +		if (!vcc)
+> +			continue;
+> +
+> +		if (regulator_disable(vcc))
+> +			dev_dbg(thc63->dev,
+> +				"Failed to disable regulator %s\n",
+> +				thc63_reg_names[i]);
+> +	}
+> +}
+> +
+> +struct drm_bridge_funcs thc63_bridge_func = {
+
+static const
+
+> +	.attach	= thc63_attach,
+> +	.enable = thc63_enable,
+> +	.disable = thc63_disable,
+> +};
+> +
+> +static int thc63_parse_dt(struct thc63_dev *thc63)
+> +{
+> +	struct device_node *thc63_out;
+> +	struct device_node *remote;
+> +	int ret = 0;
+> +
+> +	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
+> +						  THC63_DIGITAL_OUT0, -1);
+> +	if (!thc63_out) {
+> +		dev_err(thc63->dev, "Missing endpoint in Port@%u\n",
+> +			THC63_DIGITAL_OUT0);
+> +		return -ENODEV;
+> +	}
+> +
+> +	remote = of_graph_get_remote_port_parent(thc63_out);
+
+	of_node_put(thc63_out);
+
+here, it will simplify error handling.
+
+> +	if (!remote) {
+> +		dev_err(thc63->dev, "Endpoint in Port@%u unconnected\n",
+> +			THC63_DIGITAL_OUT0);
+> +		ret = -ENODEV;
+> +		goto error_put_out_node;
+> +	}
+> +
+> +	if (!of_device_is_available(remote)) {
+> +		dev_err(thc63->dev, "Port@%u remote endpoint is disabled\n",
+> +			THC63_DIGITAL_OUT0);
+> +		ret = -ENODEV;
+> +		goto error_put_remote_node;
+> +	}
+> +
+> +	thc63->next = of_drm_find_bridge(remote);
+> +	if (!thc63->next)
+> +		ret = -EPROBE_DEFER;
+
+You can add a return 0 here (and a goto in the previous check. Going through 
+error labels in the non-error case is confusing. As a result you can avoid 
+initializing ret to 0.
+
+> +error_put_remote_node:
+> +	of_node_put(remote);
+> +error_put_out_node:
+> +	of_node_put(thc63_out);
+> +
+> +	return ret;
+> +}
+> +
+> +static int thc63_gpio_init(struct thc63_dev *thc63)
+> +{
+> +	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> +	if (IS_ERR(thc63->oe)) {
+> +		dev_err(thc63->dev, "Unable to get \"oe-gpios\"\n");
+
+You can add the error code to the message, it could be helpful.
+
+> +		return PTR_ERR(thc63->oe);
+> +	}
+> +
+> +	thc63->pdwn = devm_gpiod_get_optional(thc63->dev, "pdwn",
+> +					      GPIOD_OUT_HIGH);
+> +	if (IS_ERR(thc63->pdwn)) {
+> +		dev_err(thc63->dev, "Unable to get \"pdwn-gpios\"\n");
+
+Same here.
+
+> +		return PTR_ERR(thc63->pdwn);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int thc63_regulator_init(struct thc63_dev *thc63)
+> +{
+> +	struct regulator **reg;
+> +	int i;
+
+i is never negative, you can make it an unsigned int.
+
+> +	reg = &thc63->vccs[0];
+> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
+> +		*reg = devm_regulator_get_optional(thc63->dev,
+> +						   thc63_reg_names[i]);
+> +		if (IS_ERR(*reg)) {
+> +			if (PTR_ERR(*reg) == -EPROBE_DEFER)
+> +				return -EPROBE_DEFER;
+> +			*reg = NULL;
+> +		}
+> +	}
+
+Wouldn't the following be simpler ?
+
+	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+		struct regulator *reg;
+
+		reg = devm_regulator_get_optional(thc63->dev,
+						   thc63_reg_names[i]);
+		if (IS_ERR(reg)) {
+			if (PTR_ERR(reg) == -EPROBE_DEFER)
+				return -EPROBE_DEFER;
+			reg = NULL;
+		}
+
+		thc63->vccs[i] = reg;
+	}
+
+> +	return 0;
+> +}
+> +
+> +static int thc63_probe(struct platform_device *pdev)
+> +{
+> +	struct thc63_dev *thc63;
+> +	int ret;
+> +
+> +	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
+> +	if (!thc63)
+> +		return -ENOMEM;
+> +
+> +	thc63->dev = &pdev->dev;
+> +	platform_set_drvdata(pdev, thc63);
+> +
+> +	ret = thc63_regulator_init(thc63);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = thc63_gpio_init(thc63);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = thc63_parse_dt(thc63);
+> +	if (ret)
+> +		return ret;
+> +
+> +	thc63->bridge.driver_private = thc63;
+> +	thc63->bridge.of_node = pdev->dev.of_node;
+> +	thc63->bridge.funcs = &thc63_bridge_func;
+> +
+> +	drm_bridge_add(&thc63->bridge);
+> +
+> +	return 0;
+> +}
+> +
+> +static int thc63_remove(struct platform_device *pdev)
+> +{
+> +	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
+> +
+> +	drm_bridge_remove(&thc63->bridge);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id thc63_match[] = {
+> +	{ .compatible = "thine,thc63lvd1024", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, thc63_match);
+> +
+> +static struct platform_driver thc63_driver = {
+> +	.probe	= thc63_probe,
+> +	.remove	= thc63_remove,
+> +	.driver	= {
+> +		.name		= "thc63lvd1024",
+> +		.of_match_table	= thc63_match,
+> +	},
+> +};
+> +module_platform_driver(thc63_driver);
+> +
+> +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
+> +MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
+> +MODULE_LICENSE("GPL v2");
+
+-- 
+Regards,
+
+Laurent Pinchart
