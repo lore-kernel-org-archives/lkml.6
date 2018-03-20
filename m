@@ -1,56 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeCTIcj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:32:39 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33973 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeCTIch (ORCPT
+        id S1752137AbeCTIdo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:33:44 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34072 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbeCTIdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:32:37 -0400
-Date: Tue, 20 Mar 2018 09:32:35 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "H.J. Lu" <hjl.tools@gmail.com>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH] x86: Don't build vDSO with $(RETPOLINE_CFLAGS)
- -DRETPOLINE
-In-Reply-To: <CAMe9rOoa81MC=oFW3coLuxha0pp6qdZowYR_o_my=n7ZXjVu=g@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1803200912580.6506@nanos.tec.linutronix.de>
-References: <CAMe9rOoa81MC=oFW3coLuxha0pp6qdZowYR_o_my=n7ZXjVu=g@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 20 Mar 2018 04:33:40 -0400
+X-Google-Smtp-Source: AG47ELuH91Rp3dSjghlu/z5XBfUXd5pJAV/647sNQI+GZe14inqwc+a48QZOzHUeeNjLrc5ng61e+Q==
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] clk: cs2000: set pm_ops in hibernate-compatible way
+Date: Tue, 20 Mar 2018 11:33:23 +0300
+Message-Id: <20180320083323.23289-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-H.J.
+Use SET_LATE_SYSTEM_SLEEP_PM_OPS() macro instead of direct assignment to
+.resume_early field.
 
-On Mon, 19 Mar 2018, H.J. Lu wrote:
+This fixes initialization of CS2000 in restore from hibernation in case
+of kernel used to load image did not initialize CS2000 while kernel
+being restored had CS2000 initialized.
 
-Could you please send patches inline so reply has the patch in it for
-review comments?
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/clk/clk-cs2000-cp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> vDSO code runs in userspace.  Don't compile it with retpoline.
-
-I think this is a dangerous generalization. Just because code runs in user
-space does not mean that it does not have to be compiled with retpoline.
-
-You very much need retpolines in user space to prevent certain types of
-inter process attacks. And disabling it in the VDSO gives a nice
-predictable vector once the compiler decides to use a indirect jump table
-for the clockid switch case.
-
-So we rather keep retpoline enabled and let the build fail so we can
-inspect why the compiler decided to convert something to indirect branches
-and either annotate the function if it's not dangerous or modify the code
-in a way that indirect branches are avoided.
-
-The VDSO clock_gettime() implementation is one of the hottest code pathes
-so we really have to think about it. Adding retpolines is going to hurt,
-but just blindly dismissing them is wrong.
-
-Thanks,
-
-	tglx
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index e8ea81c30f0c..c58019750b7e 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -549,7 +549,7 @@ static int cs2000_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops cs2000_pm_ops = {
+-	.resume_early	= cs2000_resume,
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(NULL, cs2000_resume)
+ };
+ 
+ static struct i2c_driver cs2000_driver = {
+-- 
+2.11.0
