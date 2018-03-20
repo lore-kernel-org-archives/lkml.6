@@ -1,90 +1,48 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1308309-1521548255-5-12486597565969720756
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521548255; b=anWHUyvGYOuSwomYV3uFYPLudcK4ShJJQFa7VWqJhG2RKGw
-    VdfHxjUDSZl151GFqV1YFdK+uKHACsIJcOngnayNbQCo0WTEhUAcXliQns3+0Oss
-    j6KnayFtOTE1bKIpHjOP0JEmY91qP86z75Uu9T6xG/LFPbhTzSzG4CpdQ3OVBatP
-    PFllLTDePGV7Mf+j9iiwhA2b+QGCtd7g/J9c3acLWElxhMHD625+oHvqbYr7zBEI
-    N8ChmJk0A2ix7wxfsIupMcHYdzR/Aq07/DJG71gcoxghs74XIBMGaUK1K39VmRh4
-    1lwUkyNl2NGAjoQYLkXYbE1klwq8B6CWwXrsytQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521548255; bh=j
-    2uKNmyyjUBVwfkAS0kLWjcZLuJ3emeGD6DZ+Sg6Cr8=; b=l7laxnbJ4NHiSWyCt
-    yAiEWCu7JweL2SUWw3yVQ6WLceE9MWpGD2tyaWsCcDiTWiaffgXZKuvk4Vbn7beI
-    izIDP0LYnt2riKMAUN9t6GKZk2bvjnp0RQMdMup44IAxyribMMp+EQRq9tnb3Z0Y
-    o2tVqTZQaXiZyi/MZ9DdYyiremTv3WE3ZTl6r/NZPhnBsR44hRVhOQ5Ci/gZ+Fea
-    Rgb9O9M5aPU8WhvN0oMqsRh3cCo9JAxLizD9Fd1HbWyWhySqnlVDqaJimutCwPjD
-    W7/ZrD1T29CFC2dIGGtQd/WqYFczTnvWkrbDgRg0V5rHFddyUZbfVUX1iOtTTkhD
-    Eg6AQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iX4CdoE4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oPtGsoG0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iX4CdoE4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oPtGsoG0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELvy/I4lThc/deX4BsB0Ltt855yk0HUN0i0qKpsAJpTEv+f/epoc9RUDz+Bo3RHNUvxVTtckJQ==
+Return-Path: <hariprasath.elango@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521546253; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kDJmElF0SqxDCykpnIq8Osp4OZojSiXga4nP9LIk1QGXesF5GnCy8qEDkFbxd9gEPS
+         RlJ2+Weq8a9RxFXk1cJ/cXDi+vlvE5C00jKqOzoJsnR1HdaKGDd1hJFA5st3uVbCA59x
+         yUY+9u5oXWQiEZ+fMuHnwiVh9o94wzFm9pJralPWUjhIvwIlr/cXgGpQEK2wKAXw6Y/i
+         dC0yinGCTZbRjw/6wzNflbIO24X5OkFUbLFmFOzdNaRIKSd6FniSlfWLQP4voAzjuzDN
+         SKO8TaD8dnOvHUrjbT60yRxu+BderwAS8z2uuCh5d7yKgH+gAtdjKBNPUPLuD6q37Jp4
+         mGzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=mvc/czDxJoE3A4GK7VdQ7LPGsKxQrxAVJDSLk2ytUWk=;
+        b=soBBZW4vo3DRnoB0dwmrGXbESim+1DrI4S5xTWDSzep9V8ywqyHZqw7fUZjl2Ktzue
+         IFVP3SbRIrYzNg3G50MwoA4wqQRf/SQ5xG2tiA/VwKRtR49MqkWD6XCvDQW1Sr+r0hgz
+         DnSTjzZqp0DqPeV0HpuTeLaS/5wcoGdMk8QnOi0Sus0nP9WKV4gyfVmq+KWJf28Ns7Tu
+         EdCcpWL7HRVLyiENwF0i/RVvuARa8pvmCopzU8HV6yoWHSKETeiz7OhdFGlyMe8eGa1v
+         ZnU5JarMxtTX8P+NN2igQUUlM5IbO8WE1VOSNJhOTdGsXtnT9oOqK0sGrPJTAV38dj+L
+         TlxA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ezmCb7Bz;
+       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ezmCb7Bz;
+       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELtJvLBM/RXoXCHxLJ7sDDirJJVXE8rSfbDZmcoZUtlEh2CttqQpa1xMqhY5tgE5ZQu81iEkqw==
 From: hariprasath.elango@gmail.com
-To: aditya.shankar@microchip.com, gregkh@linuxfoundation.org,
- ganesh.krishna@microchip.com, dan.carpenter@oracle.com
-Subject: [PATCHv3] staging: wilc1000: replace switch statement by simple if
- condition
-Date: Tue, 20 Mar 2018 17:44:49 +0530
-Message-Id: <20180320121450.4599-1-hariprasath.elango@gmail.com>
+To: aditya.shankar@microchip.com,
+	gregkh@linuxfoundation.org,
+	ganesh.krishna@microchip.com,
+	dan.carpenter@oracle.com
+Cc: gehariprasath@gmail.com,
+	HariPrasath Elango <hariprasath.elango@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2] staging: wilc1000: replace switch statement by simple if condition
+Date: Tue, 20 Mar 2018 17:13:31 +0530
+Message-Id: <20180320114331.4084-1-hariprasath.elango@gmail.com>
 X-Mailer: git-send-email 2.10.0.GIT
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- HariPrasath Elango <hariprasath.elango@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594917172280071605?=
+X-GMAIL-MSGID: =?utf-8?q?1595456883721819850?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,10 +53,6 @@ by a simple if condition
 
 Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
 ---
- changes since v3:
-	*rebase on latest code
-	*missed revision history in v2
-
  drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
@@ -124,8 +78,3 @@ index 9d8d5d0..730d64f 100644
  	curr_channel = nw_info->ch;
 -- 
 2.10.0.GIT
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
