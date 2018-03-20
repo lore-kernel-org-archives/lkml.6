@@ -1,204 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeCTDsj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 23:48:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44988 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751581AbeCTDsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 23:48:37 -0400
-Date: Tue, 20 Mar 2018 11:48:28 +0800
-From: Baoquan He <bhe@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, herbert@gondor.apana.org.au,
-        ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
-        julien.thierry@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        dhowells@redhat.com, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
-        bauerman@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, davem@davemloft.net,
-        vgoyal@redhat.com
-Subject: Re: [PATCH v8 01/13] resource: add walk_system_ram_res_rev()
-Message-ID: <20180320034828.GB2514@localhost.localdomain>
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
- <20180222111732.23051-2-takahiro.akashi@linaro.org>
- <20180223083619.GA4433@dhcp-128-65.nay.redhat.com>
- <20180320014318.GA2514@localhost.localdomain>
- <20180320031253.bwxat2dr3sns5uj4@dragonfly>
+        id S1751646AbeCTD6s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 23:58:48 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:26525 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeCTD6n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 23:58:43 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2K3wRix022236
+X-Nifty-SrcIP: [209.85.217.176]
+X-Google-Smtp-Source: AG47ELtEmFGJgqSN0sRQZghSGDVH0o3EPGjOYgRmpG5iMZ1uUjxSwIIxKYjikxgXhcnNZi7WqQVVeRhugPqurf/u9Ww=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320031253.bwxat2dr3sns5uj4@dragonfly>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180318221737.GA25547@example.com>
+References: <1520934968-30406-1-git-send-email-yamada.masahiro@socionext.com> <20180318221737.GA25547@example.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 20 Mar 2018 12:57:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASu48Gbe0Ch6f1t235xA2Nhxdz3fN1-ht07xst636+mgg@mail.gmail.com>
+Message-ID: <CAK7LNASu48Gbe0Ch6f1t235xA2Nhxdz3fN1-ht07xst636+mgg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] kconfig: warn unmet direct dependency of tristate
+ symbols selected by y
+To: Eugeniu Rosca <roscaeugeniu@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Petr Vorel <petr.vorel@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/20/18 at 12:12pm, AKASHI Takahiro wrote:
-> Baoquan,
-> 
-> On Tue, Mar 20, 2018 at 09:43:18AM +0800, Baoquan He wrote:
-> > On 02/23/18 at 04:36pm, Dave Young wrote:
-> > > Hi AKASHI,
-> > > 
-> > > On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
-> > > > This function, being a variant of walk_system_ram_res() introduced in
-> > > > commit 8c86e70acead ("resource: provide new functions to walk through
-> > > > resources"), walks through a list of all the resources of System RAM
-> > > > in reversed order, i.e., from higher to lower.
-> > > > 
-> > > > It will be used in kexec_file implementation on arm64.
-> > > 
-> > > I remember there was an old discussion about this, it should be added
-> > > in patch log why this is needed.
-> > 
-> > It's used to load kernel/initrd at the top of system RAM, and this is
-> > consistent with user space kexec behaviour.
-> > 
-> > In x86 64, Vivek didn't do like this since there's no reverse iomem
-> > resource iterating function, he just chose a match RAM region bottom up,
-> > then put kernel/initrd top down in the found RAM region. This is
-> > different than kexec_tools utility. I am considering to change resource
-> > sibling as double list, seems AKASHI's way is easier to be accepted by
-> > people. So I will use this one to change x86 64 code.
-> > 
-> > Hi AKASHI,
-> > 
-> > About arm64 kexec_file patches, will you post recently? Or any other
-> > plan?
-> 
-> A short answer is yes, but my new version won't include this specific patch.
-> So please feel free to add it to your own patch set if you want.
-> 
-> The reason that I'm going to remove it is that we will make a modification
-> on /proc/iomem due to a bug fixing and then we will have to have our own 
-> "walking" routine.
+2018-03-19 7:17 GMT+09:00 Eugeniu Rosca <roscaeugeniu@gmail.com>:
+> Hi Masahiro,
+>
+> On Tue, Mar 13, 2018 at 06:56:07PM +0900, Masahiro Yamada wrote:
+>> Commit 246cf9c26bf1 ("kbuild: Warn on selecting symbols with unmet
+>> direct dependencies") forcibly promoted ->dir_dep.tri to yes from mod.
+>> So, the unmet direct dependencies of tristate symbols are not reported.
+>>
+>> [Test Case]
+>>
+>>   config MODULES
+>>           def_bool y
+>>           option modules
+>>
+>>   config A
+>>           def_bool y
+>>           select B
+>>
+>>   config B
+>>           tristate "B"
+>>           depends on m
+>>
+>> This causes unmet dependency because 'B' is forced 'y' ignoring
+>> 'depends on m'.  This should be warned.
+>>
+>> On the other hand, the following case ('B' is bool) should not be
+>> warned, so 'depends on m' for bool symbols should be naturally treated
+>> as 'depends on y'.
+>>
+>> [Test Case2 (not unmet dependency)]
+>>
+>>   config MODULES
+>>           def_bool y
+>>           option modules
+>>
+>>   config A
+>>           def_bool y
+>>           select B
+>>
+>>   config B
+>>           bool "B"
+>>           depends on m
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> Changes in v4:
+>>   - newly added
+>>
+>>
+>>  scripts/kconfig/symbol.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+>> index 0f7eba7..def860b 100644
+>> --- a/scripts/kconfig/symbol.c
+>> +++ b/scripts/kconfig/symbol.c
+>> @@ -243,7 +243,7 @@ static void sym_calc_visibility(struct symbol *sym)
+>>       tri = yes;
+>>       if (sym->dir_dep.expr)
+>>               tri = expr_calc_value(sym->dir_dep.expr);
+>> -     if (tri == mod)
+>> +     if (sym->type == S_BOOLEAN && tri == mod)
+>
+> This seems to be very close to one of the issues fixed in the old
+> v2.6.5 commit 5a87d187fce1 ("[PATCH] config: choice fix") accessible at
+> https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?h=5a87d187fce1
+>
+> IMHO you could probably use (not tested!):
+> +       if (tri == mod && sym_get_type(sym) == S_BOOLEAN)
+>
+> instead of
+> +       if (sym->type == S_BOOLEAN && tri == mod)
+>
+> to be consistent with the rest of sym_calc_visibility().
 
-I see. Saw your post about the /proc/iomem issue and discussions.
 
-Then I will add this patch in and post a patchset.
+I tested it, and probably OK.
 
-Thanks
-Baoquan
+I will squash the diff.
 
-> 
-> 
-> > Thanks
-> > Baoquan
-> > 
-> > > 
-> > > > 
-> > > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > > > ---
-> > > >  include/linux/ioport.h |  3 +++
-> > > >  kernel/resource.c      | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  2 files changed, 60 insertions(+)
-> > > > 
-> > > > diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-> > > > index da0ebaec25f0..f12d95fe038b 100644
-> > > > --- a/include/linux/ioport.h
-> > > > +++ b/include/linux/ioport.h
-> > > > @@ -277,6 +277,9 @@ extern int
-> > > >  walk_system_ram_res(u64 start, u64 end, void *arg,
-> > > >  		    int (*func)(struct resource *, void *));
-> > > >  extern int
-> > > > +walk_system_ram_res_rev(u64 start, u64 end, void *arg,
-> > > > +			int (*func)(struct resource *, void *));
-> > > > +extern int
-> > > >  walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start, u64 end,
-> > > >  		    void *arg, int (*func)(struct resource *, void *));
-> > > >  
-> > > > diff --git a/kernel/resource.c b/kernel/resource.c
-> > > > index e270b5048988..bdaa93407f4c 100644
-> > > > --- a/kernel/resource.c
-> > > > +++ b/kernel/resource.c
-> > > > @@ -23,6 +23,8 @@
-> > > >  #include <linux/pfn.h>
-> > > >  #include <linux/mm.h>
-> > > >  #include <linux/resource_ext.h>
-> > > > +#include <linux/string.h>
-> > > > +#include <linux/vmalloc.h>
-> > > >  #include <asm/io.h>
-> > > >  
-> > > >  
-> > > > @@ -486,6 +488,61 @@ int walk_mem_res(u64 start, u64 end, void *arg,
-> > > >  				     arg, func);
-> > > >  }
-> > > >  
-> > > > +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
-> > > > +				int (*func)(struct resource *, void *))
-> > > > +{
-> > > > +	struct resource res, *rams;
-> > > > +	int rams_size = 16, i;
-> > > > +	int ret = -1;
-> > > > +
-> > > > +	/* create a list */
-> > > > +	rams = vmalloc(sizeof(struct resource) * rams_size);
-> > > > +	if (!rams)
-> > > > +		return ret;
-> > > > +
-> > > > +	res.start = start;
-> > > > +	res.end = end;
-> > > > +	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-> > > > +	i = 0;
-> > > > +	while ((res.start < res.end) &&
-> > > > +		(!find_next_iomem_res(&res, IORES_DESC_NONE, true))) {
-> > > > +		if (i >= rams_size) {
-> > > > +			/* re-alloc */
-> > > > +			struct resource *rams_new;
-> > > > +			int rams_new_size;
-> > > > +
-> > > > +			rams_new_size = rams_size + 16;
-> > > > +			rams_new = vmalloc(sizeof(struct resource)
-> > > > +							* rams_new_size);
-> > > > +			if (!rams_new)
-> > > > +				goto out;
-> > > > +
-> > > > +			memcpy(rams_new, rams,
-> > > > +					sizeof(struct resource) * rams_size);
-> > > > +			vfree(rams);
-> > > > +			rams = rams_new;
-> > > > +			rams_size = rams_new_size;
-> > > > +		}
-> > > > +
-> > > > +		rams[i].start = res.start;
-> > > > +		rams[i++].end = res.end;
-> > > > +
-> > > > +		res.start = res.end + 1;
-> > > > +		res.end = end;
-> > > > +	}
-> > > > +
-> > > > +	/* go reverse */
-> > > > +	for (i--; i >= 0; i--) {
-> > > > +		ret = (*func)(&rams[i], arg);
-> > > > +		if (ret)
-> > > > +			break;
-> > > > +	}
-> > > > +
-> > > > +out:
-> > > > +	vfree(rams);
-> > > > +	return ret;
-> > > > +}
-> > > > +
-> > > >  #if !defined(CONFIG_ARCH_HAS_WALK_MEMORY)
-> > > >  
-> > > >  /*
-> > > > -- 
-> > > > 2.16.2
-> > > > 
-> > > 
-> > > Thanks
-> > > Dave
-> > > 
-> > > _______________________________________________
-> > > kexec mailing list
-> > > kexec@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/kexec
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+Thanks.
+
+
+
+
+> Also, since after this commit there will be a great amount of symmetry
+> between how dirdep/revdep/weak-revdep are calculated inside
+> sym_calc_visibility(), somebody could probably unify the implementations
+> in future (not subject of this patch).
+>
+>>               tri = yes;
+>>       if (sym->dir_dep.tri != tri) {
+>>               sym->dir_dep.tri = tri;
+>> @@ -414,7 +414,7 @@ void sym_calc_value(struct symbol *sym)
+>>                               }
+>>                       }
+>>               calc_newval:
+>> -                     if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
+>> +                     if (sym->dir_dep.tri < sym->rev_dep.tri) {
+>
+> Looks good.
+>
+>>                               struct expr *e;
+>>                               e = expr_simplify_unmet_dep(sym->rev_dep.expr,
+>>                                   sym->dir_dep.expr);
+>> --
+>> 2.7.4
+>>
+>
+> Best regards,
+> Eugeniu.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
