@@ -1,41 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753353AbeCTMv0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:51:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35456 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753170AbeCTMvT (ORCPT
+        id S1753240AbeCTMzi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:55:38 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36302 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753091AbeCTMzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:51:19 -0400
-Date: Tue, 20 Mar 2018 13:51:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mulix@mulix.org, thomas.lendacky@amd.com, dwmw2@infradead.org,
-        mingo@kernel.org, torvalds@linux-foundation.org, joro@8bytes.org,
-        linux-kernel@vger.kernel.org, hch@lst.de, konrad.wilk@oracle.com,
-        jdmason@kudzu.us, tglx@linutronix.de, hpa@zytor.com
-Cc: linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/pti] x86/cpu: Remove the CONFIG_X86_PPRO_FENCE=y quirk
-Message-ID: <20180320125102.GT4043@hirez.programming.kicks-ass.net>
-References: <20180319103826.12853-2-hch@lst.de>
- <tip-5927145efd5de71976e62e2822511b13014d7e56@git.kernel.org>
+        Tue, 20 Mar 2018 08:55:35 -0400
+Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Joao Martins <joao.m.martins@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org
+References: <20180315142205.15839-1-joao.m.martins@oracle.com>
+ <bbf536dc-3c3d-8a25-47e8-7fd52850835d@oracle.com>
+ <d14d48ab-9ba1-c70c-4d46-cd9c7c862add@oracle.com>
+ <CAJZ5v0ipVHsjEBJuj3Lz6iRSVasv8d2YY0qjz1SFaCK+zDP=Xw@mail.gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <5561dd0a-2483-7084-ad88-f277473bd93f@oracle.com>
+Date: Tue, 20 Mar 2018 08:56:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-5927145efd5de71976e62e2822511b13014d7e56@git.kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAJZ5v0ipVHsjEBJuj3Lz6iRSVasv8d2YY0qjz1SFaCK+zDP=Xw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 04:04:49AM -0700, tip-bot for Christoph Hellwig wrote:
+On 03/20/2018 05:41 AM, Rafael J. Wysocki wrote:
+> On Fri, Mar 16, 2018 at 2:57 PM, Joao Martins <joao.m.martins@oracle.com> wrote:
+>> On 03/15/2018 03:45 PM, Boris Ostrovsky wrote:
+>>> On 03/15/2018 10:22 AM, Joao Martins wrote:
+>>>> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
+>>>> changing only the acpi_id. For processors which P-state coordination type
+>>>> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
+>>>> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
+>>>>
+>>>> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
+>>>> this will have some unintended side effects. Effectively, it will look at
+>>>> the P-state domain existence and *if it already exists* it will skip the
+>>>> acpi-cpufreq initialization and thus inherit the policy from the first CPU
+>>>> in the cpufreq domain. This will finally lead to the original cpu not
+>>>> changing target freq to P0 other than the first in the domain. Which will
+>>>> make turbo boost not getting enabled (e.g. for 'performance' governor) for
+>>>> all cpus.
+>>>>
+>>>> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
+>>>> processors and thus always uploading the correct info to Xen. We export
+>>>> acpi_processor_get_psd() for that this purpose, but change signature
+>>>> to not assume an existent of acpi_processor given that ACPI isn't creating
+>>>> an acpi_processor for non-dom0 CPUs.
+>>>>
+>>>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>
+>> Thanks!
+>>
+>> I suppose what's remaining is review (or ack) from ACPI folks on the interface
+>> changes made to acpi_processor_get_psd().
+> There you go:
+>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Do you want to route this via Xen?
 
-> x86/cpu: Remove the CONFIG_X86_PPRO_FENCE=y quirk
-> 
-> There were only a few Pentium Pro multiprocessors systems where this
-> errata applied. They are more than 20 years old now, and we've slowly
-> dropped places which put the workarounds in and discouraged anyone
-> from enabling the workaround.
-> 
-> Get rid of it for good.
 
-Hoorah!! x86 is back to pure TSO.
+Sure, I'll queue it for 4.17
+
+Thanks.
+-boris
