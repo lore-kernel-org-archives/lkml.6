@@ -1,136 +1,117 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AG47ELs0vQEGIzd7+euo+89lgiv59nowO5L8H7HwHyJp3sveC9sDeV1WwaYHzWYba3K6Y27yc/qy
-ARC-Seal: i=1; a=rsa-sha256; t=1521062685; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AG47ELv+fsJTjPZgm1mr90oAdUPo/q1GuX30czg6J3hkmgpJVrnGX2aO73mg1iPDu0xIQXBH5El2
+ARC-Seal: i=1; a=rsa-sha256; t=1521552572; cv=none;
         d=google.com; s=arc-20160816;
-        b=ClkLiaFRaC2QIMNiTVrJ4Go2/2tpXBg0HM5JbSqlzxDiyF+7eyleQ9EmcFUF4tx72H
-         QpqCBy+XJhwONZZ0A8I6XeUm3AkKWOdul9COG+ME3tYuUWFBNNqCny30GJb4C1Krdo76
-         muElbsaerEsRK5eaWmKczyWxcaEAWIIdMJ4wll5xPluTwtqBW/dMUn2nnLmGgeEvlAtG
-         iJuiQcIoToFcyCgb8v6j/8lh01AuM8CwB6DUBOBsuxHeRGvsS/kT4rFOgNtBE9jUb+Ol
-         FNpfdRM1C2qWml9QdxJppYEsBTeIdD1X+50bddhD2g4sVkc23cIdlV4EJYD+Bu54d9uk
-         biwA==
+        b=VOxS4ZT2ch+wgE8ANjXoV6vSInIqaeYgj9hc81JWguU3OPIPqDIpdcEFzngvvhHBeZ
+         xDGyzdkJ4DJyWFtz6xPfeBSThB0d4acdFIOoG1sDfzdORfJgppjf8SYR8e8OR0RQSH/u
+         x4DkUoWQJliOUF9U2CyFvfcDrcx6bEW+RH6xJw2ePKYgVRNw7d9OKna3PCXoEDdFjV05
+         E/dnTsbZi0eEIxZAbEx/sDALoor/Fu05iyfqrxT4zTosEVahw2deqw9JE831dK/8EwO5
+         8tsdCvmU5RnzwdvVwhSeUudfvp5sNyavLJx2R7wtWcm4pwjkOV7bQt/6lAqMC+8Dp8VN
+         wJ1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:arc-authentication-results;
-        bh=B5qzjWN9UQ2C7V+XsVBkf6bIVSb2DgjD0/HgBQHoIHY=;
-        b=NrvmQCqL5RLI/w00eyo6NugyFkdY8EdNMSnnIJmCHHBoAw2nCR5Q0kx2oAGWc9NjO7
-         9JfMjky1CY+4o7aauloDDX5VYJv6rVlnc51NpDCeE1DGWFLcZmHaTqTcNGR79O+llnWF
-         eQGJ4YgfCMY9C+zfFD7Wjg47hECJ7buYgx2UN4D2MlLJZu9cbBf+slRl3E8tGC7btDI0
-         AeJ9SFa2qcUJuAhksNWhcJa43QMd6sCmOz/qYn/LU6wTrk/vtpHj4NlLYoLJcJgUtj34
-         nWxHm0wid649eQ0IGnpiMYBBr01HthJczjRDX85UD/segzDVtrdGHU/9X020g1we4dAe
-         sbyw==
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=odj4bzSzVlx/H+ZH0a19J37EKF5K4OVpicr4r4Us18s=;
+        b=o7bVuIqemSxRwmdLf8NxejMPDjlQbsORH3n43RvRi6KFTpi3ocIy+lsn5LgFRXZPUi
+         LQnzlClShQm6JsYXsm3LOUN3eCF/iJbZB0DM9Yf7GQy3BmXhFafcESi4/L1ko6kPS8sT
+         qC2WbOSl6cMo0Rc63zKLoTnkCi33dNmkXJt33unlm/Ft8/P2LvsmlZzywMiMb8ZeihiM
+         x0ATeeOnjc+2mraW/kbnEarYGg8uTq6TzxclYbluPmr9fNdop0GAddgzIWEjh4MhIqEU
+         NnUY6aIfKmv9Kdvv4+VQmV60O5hMMpfgO7IrPgCIJEAChSY9+UZHB1Tt0UVz5Oau0kII
+         l+8g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Message-Id: <20180314212030.668321222@linutronix.de>
-User-Agent: quilt/0.63-1
-Date: Wed, 14 Mar 2018 22:15:19 +0100
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [patch 4/4] genirq: Add missing SPDX identifiers
-References: <20180314211515.429128440@linutronix.de>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Tue, 20 Mar 2018 06:29:24 -0700
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-f3f59fbc54b76945ebc92772bd86f60728205da3@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, mingo@kernel.org, pombredanne@nexb.com,
+        hpa@zytor.com
+Reply-To: pombredanne@nexb.com, hpa@zytor.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de
+In-Reply-To: <20180314212030.668321222@linutronix.de>
+References: <20180314212030.668321222@linutronix.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq: Remove license boilerplate/references
+Git-Commit-ID: f3f59fbc54b76945ebc92772bd86f60728205da3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=genirq--Add-missing-SPDX-identifiers.patch
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594949826755527282?=
-X-GMAIL-MSGID: =?utf-8?q?1594949826755527282?=
+X-GMAIL-THRID: =?utf-8?q?1595463510277302739?=
+X-GMAIL-MSGID: =?utf-8?q?1595463510277302739?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These files do not contain a license reference and were not updated in the
-initial SPDX conversion because the license was deduced by the scanners via
-EXPORT_SYMBOL_GPL as GPL2.0 only.
+Commit-ID:  f3f59fbc54b76945ebc92772bd86f60728205da3
+Gitweb:     https://git.kernel.org/tip/f3f59fbc54b76945ebc92772bd86f60728205da3
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Tue, 20 Mar 2018 14:17:04 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 20 Mar 2018 14:23:28 +0100
 
-Add the missing GPL-2.0 identifiers.
+genirq: Remove license boilerplate/references
+
+Now that SPDX identifiers are in place, remove the boilerplate or
+references.
+
+The change in timings.c has been acked by the author.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Link: https://lkml.kernel.org/r/20180314212030.668321222@linutronix.de
 ---
- kernel/irq/chip.c         |    1 +
- kernel/irq/devres.c       |    1 +
- kernel/irq/dummychip.c    |    1 +
- kernel/irq/generic-chip.c |    1 +
- kernel/irq/handle.c       |    1 +
- kernel/irq/ipi.c          |    1 +
- kernel/irq/irqdesc.c      |    1 +
- kernel/irq/irqdomain.c    |    2 ++
- kernel/irq/manage.c       |    1 +
- kernel/irq/pm.c           |    1 +
- 10 files changed, 11 insertions(+)
+ kernel/irq/debugfs.c |  7 ++-----
+ kernel/irq/timings.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
---- a/kernel/irq/devres.c
-+++ b/kernel/irq/devres.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- #include <linux/module.h>
- #include <linux/interrupt.h>
- #include <linux/device.h>
---- a/kernel/irq/dummychip.c
-+++ b/kernel/irq/dummychip.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
---- a/kernel/irq/generic-chip.c
-+++ b/kernel/irq/generic-chip.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Library implementing the most common irq chip callback functions
-  *
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
---- a/kernel/irq/ipi.c
-+++ b/kernel/irq/ipi.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2015 Imagination Technologies Ltd
-  * Author: Qais Yousef <qais.yousef@imgtec.com>
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
+index c8cc6ce9c1c3..4dadeb3d6666 100644
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -1,9 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright 2017 Thomas Gleixner <tglx@linutronix.de>
+- *
+- * This file is licensed under the GPL V2.
+- */
++// Copyright 2017 Thomas Gleixner <tglx@linutronix.de>
 +
- #define pr_fmt(fmt)  "irq: " fmt
- 
- #include <linux/acpi.h>
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-  * Copyright (C) 2005-2006 Thomas Gleixner
---- a/kernel/irq/pm.c
-+++ b/kernel/irq/pm.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
-  *
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
+ #include <linux/uaccess.h>
+diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
+index 223d47937c48..1e4cb63a5c82 100644
+--- a/kernel/irq/timings.c
++++ b/kernel/irq/timings.c
+@@ -1,12 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) 2016, Linaro Ltd - Daniel Lezcano <daniel.lezcano@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- */
++// Copyright (C) 2016, Linaro Ltd - Daniel Lezcano <daniel.lezcano@linaro.org>
++
+ #include <linux/kernel.h>
+ #include <linux/percpu.h>
+ #include <linux/slab.h>
