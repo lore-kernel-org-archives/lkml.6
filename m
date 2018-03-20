@@ -1,144 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeCTLSo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:18:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54673 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752803AbeCTLSb (ORCPT
+        id S1753100AbeCTLS7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:18:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752799AbeCTLSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:18:31 -0400
-Date: Tue, 20 Mar 2018 04:18:06 -0700
-From: tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-c917e0f259908e75bd2a65877e25f9d90c22c848@git.kernel.org>
-Cc: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-        vincent.weaver@maine.edu, songliubraving@fb.com, acme@redhat.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, kernel-team@fb.com, eranian@google.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com, ephiepark@fb.com
-Reply-To: mingo@kernel.org, vincent.weaver@maine.edu, songliubraving@fb.com,
-        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, ephiepark@fb.com, jolsa@redhat.com,
-        eranian@google.com, kernel-team@fb.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-In-Reply-To: <20180312165943.1057894-1-songliubraving@fb.com>
-References: <20180312165943.1057894-1-songliubraving@fb.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/cgroup: Fix child event counting bug
-Git-Commit-ID: c917e0f259908e75bd2a65877e25f9d90c22c848
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 20 Mar 2018 07:18:53 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 20 Mar 2018 19:18:20 +0800
+From: cang@codeaurora.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        mgautam@codeaurora.org, kishon@ti.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] phy: Add QMP phy based UFS phy support for sdm845.
+In-Reply-To: <d64f9f24-4475-f99a-702e-c94dae89d889@codeaurora.org>
+References: <20180320074318.9640-1-cang@codeaurora.org>
+ <d64f9f24-4475-f99a-702e-c94dae89d889@codeaurora.org>
+Message-ID: <2e10d950dacfe1a079d69ec0ad5276b2@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c917e0f259908e75bd2a65877e25f9d90c22c848
-Gitweb:     https://git.kernel.org/tip/c917e0f259908e75bd2a65877e25f9d90c22c848
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Mon, 12 Mar 2018 09:59:43 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Mar 2018 08:58:47 +0100
+On 2018-03-20 18:07, Vivek Gautam wrote:
+> Hi Can,
+> 
+> 
+> On 3/20/2018 1:13 PM, Can Guo wrote:
+>> Add UFS PHY support to make SDM845 UFS work with common PHY framework.
+>> 
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> ---
+> 
+> Thanks for the patch.
+> Can you please include the dt binding documentation in this patch
+> series and may be base it on Manu's patch for dt binding doc [1].
+> Please create a separate patch for binding documentation.
+> 
+> [1]
+> http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
+> 
+> Thanks
+> Vivek
+> 
 
-perf/cgroup: Fix child event counting bug
+Thank you Vivek, shall re-send the patch with the dt bindings change as 
+a patch series for you to review.
 
-When a perf_event is attached to parent cgroup, it should count events
-for all children cgroups:
-
-   parent_group   <---- perf_event
-     \
-      - child_group  <---- process(es)
-
-However, in our tests, we found this perf_event cannot report reliable
-results. Here is an example case:
-
-  # create cgroups
-  mkdir -p /sys/fs/cgroup/p/c
-  # start perf for parent group
-  perf stat -e instructions -G "p"
-
-  # on another console, run test process in child cgroup:
-  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
-
-  # after the test process is done, stop perf in the first console shows
-
-       <not counted>      instructions              p
-
-The instruction should not be "not counted" as the process runs in the
-child cgroup.
-
-We found this is because perf_event->cgrp and cpuctx->cgrp are not
-identical, thus perf_event->cgrp are not updated properly.
-
-This patch fixes this by updating perf_cgroup properly for ancestor
-cgroup(s).
-
-Reported-by: Ephraim Park <ephiepark@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <jolsa@redhat.com>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/events/core.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4b838470fac4..709a55b9ad97 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -724,9 +724,15 @@ static inline void __update_cgrp_time(struct perf_cgroup *cgrp)
- 
- static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
- {
--	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
--	if (cgrp_out)
--		__update_cgrp_time(cgrp_out);
-+	struct perf_cgroup *cgrp = cpuctx->cgrp;
-+	struct cgroup_subsys_state *css;
-+
-+	if (cgrp) {
-+		for (css = &cgrp->css; css; css = css->parent) {
-+			cgrp = container_of(css, struct perf_cgroup, css);
-+			__update_cgrp_time(cgrp);
-+		}
-+	}
- }
- 
- static inline void update_cgrp_time_from_event(struct perf_event *event)
-@@ -754,6 +760,7 @@ perf_cgroup_set_timestamp(struct task_struct *task,
- {
- 	struct perf_cgroup *cgrp;
- 	struct perf_cgroup_info *info;
-+	struct cgroup_subsys_state *css;
- 
- 	/*
- 	 * ctx->lock held by caller
-@@ -764,8 +771,12 @@ perf_cgroup_set_timestamp(struct task_struct *task,
- 		return;
- 
- 	cgrp = perf_cgroup_from_task(task, ctx);
--	info = this_cpu_ptr(cgrp->info);
--	info->timestamp = ctx->timestamp;
-+
-+	for (css = &cgrp->css; css; css = css->parent) {
-+		cgrp = container_of(css, struct perf_cgroup, css);
-+		info = this_cpu_ptr(cgrp->info);
-+		info->timestamp = ctx->timestamp;
-+	}
- }
- 
- static DEFINE_PER_CPU(struct list_head, cgrp_cpuctx_list);
+>>   drivers/phy/qualcomm/phy-qcom-qmp.c | 120 
+>> +++++++++++++++++++++++++++++++++++-
+>>   drivers/phy/qualcomm/phy-qcom-qmp.h |   8 +++
+>>   2 files changed, 126 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
+>> b/drivers/phy/qualcomm/phy-qcom-qmp.c
+>> index 6470c5d..aeb2377 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+>> @@ -156,6 +156,11 @@ enum qphy_reg_layout {
+>>   	[QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x170,
+>>   };
+>>   +static const unsigned int sdm845_ufsphy_regs_layout[] = {
+>> +	[QPHY_START_CTRL]		= 0x00,
+>> +	[QPHY_PCS_READY_STATUS]		= 0x168,
+>> +};
+>> +
+>>   static const struct qmp_phy_init_tbl msm8996_pcie_serdes_tbl[] = {
+>>   	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x1c),
+>>   	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
+>> @@ -490,6 +495,74 @@ enum qphy_reg_layout {
+>>   	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
+>>   };
+>>   +static const struct qmp_phy_init_tbl sdm845_ufsphy_serdes_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x02),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x0f),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0xd5),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL, 0x20),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x01),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_CTRL, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x04),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x05),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL1, 0xff),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL2, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xda),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0xff),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x0c),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE1, 0x98),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE1, 0x06),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE1, 0x16),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE1, 0x36),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1, 0x3f),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE1, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE1, 0xc1),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE1, 0x00),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE1, 0x32),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE1, 0x0f),
+>> +
+>> +	/* Rate B */
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x44),
+>> +};
+>> +
+>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_tx_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x06),
+>> +};
+>> +
+>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_rx_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_LVL, 0x24),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x0f),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1e),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_INTERFACE_MODE, 0x40),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_TERM_BW, 0x5b),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x06),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x04),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x1d),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF, 0x04),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER, 0x04),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN, 0x04),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x81),
+>> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x80),
+>> +};
+>> +
+>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_pcs_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_DOWN_CONTROL, 0x01),
+>> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
+>> +};
+>> +
+>>   /* struct qmp_phy_cfg - per-PHY initialization config */
+>>   struct qmp_phy_cfg {
+>>   	/* phy-type - PCIE/UFS/USB */
+>> @@ -540,6 +613,9 @@ struct qmp_phy_cfg {
+>>   	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
+>>   	unsigned int tx_b_lane_offset;
+>>   	unsigned int rx_b_lane_offset;
+>> +
+>> +	/* true, if PCS block has a separate SW_RESET register */
+>> +	bool has_sw_rst;
+>>   };
+>>     /**
+>> @@ -636,6 +712,10 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	"aux", "cfg_ahb", "ref", "com_aux",
+>>   };
+>>   +static const char * const sdm845_ufs_phy_clk_l[] = {
+>> +	"ref_clk", "ref_aux_clk",
+>> +};
+>> +
+>>   /* list of resets */
+>>   static const char * const msm8996_pciephy_reset_l[] = {
+>>   	"phy", "common", "cfg",
+>> @@ -650,6 +730,10 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	"vdda-phy", "vdda-pll",
+>>   };
+>>   +static const char * const sdm845_phy_vreg_l[] = {
+>> +	"vdda-phy", "vdda-pll",
+>> +};
+>> +
+>>   static const struct qmp_phy_cfg msm8996_pciephy_cfg = {
+>>   	.type			= PHY_TYPE_PCIE,
+>>   	.nlanes			= 3,
+>> @@ -679,6 +763,7 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	.has_pwrdn_delay	= true,
+>>   	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
+>>   	.pwrdn_delay_max	= POWER_DOWN_DELAY_US_MAX,
+>> +	.has_sw_rst		= true,
+>>   };
+>>     static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
+>> @@ -704,6 +789,7 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	.start_ctrl		= SERDES_START | PCS_START,
+>>   	.pwrdn_ctrl		= SW_PWRDN,
+>>   	.mask_pcs_ready		= PHYSTATUS,
+>> +	.has_sw_rst		= true,
+>>   };
+>>     /* list of resets */
+>> @@ -740,6 +826,7 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	.has_pwrdn_delay	= true,
+>>   	.pwrdn_delay_min	= 995,		/* us */
+>>   	.pwrdn_delay_max	= 1005,		/* us */
+>> +	.has_sw_rst		= true,
+>>   };
+>>     static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
+>> @@ -772,6 +859,30 @@ static inline void qphy_clrbits(void __iomem 
+>> *base, u32 offset, u32 val)
+>>   	.has_phy_dp_com_ctrl	= true,
+>>   	.tx_b_lane_offset	= 0x400,
+>>   	.rx_b_lane_offset	= 0x400,
+>> +	.has_sw_rst		= true,
+>> +};
+>> +
+>> +static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
+>> +	.type			= PHY_TYPE_UFS,
+>> +	.nlanes			= 2,
+>> +
+>> +	.serdes_tbl		= sdm845_ufsphy_serdes_tbl,
+>> +	.serdes_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_serdes_tbl),
+>> +	.tx_tbl			= sdm845_ufsphy_tx_tbl,
+>> +	.tx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_tx_tbl),
+>> +	.rx_tbl			= sdm845_ufsphy_rx_tbl,
+>> +	.rx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_rx_tbl),
+>> +	.pcs_tbl		= sdm845_ufsphy_pcs_tbl,
+>> +	.pcs_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_pcs_tbl),
+>> +	.clk_list		= sdm845_ufs_phy_clk_l,
+>> +	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
+>> +	.vreg_list		= sdm845_phy_vreg_l,
+>> +	.num_vregs		= ARRAY_SIZE(sdm845_phy_vreg_l),
+>> +	.regs			= sdm845_ufsphy_regs_layout,
+>> +
+>> +	.start_ctrl		= SERDES_START,
+>> +	.pwrdn_ctrl		= SW_PWRDN,
+>> +	.mask_pcs_ready		= PCS_READY,
+>>   };
+>>     static void qcom_qmp_phy_configure(void __iomem *base,
+>> @@ -998,7 +1109,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
+>>   		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+>>     	/* Pull PHY out of reset state */
+>> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>> +	if (cfg->has_sw_rst)
+>> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>>   	if (cfg->has_phy_dp_com_ctrl)
+>>   		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
+>>   @@ -1036,7 +1148,8 @@ static int qcom_qmp_phy_exit(struct phy *phy)
+>>   	clk_disable_unprepare(qphy->pipe_clk);
+>>     	/* PHY reset */
+>> -	qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>> +	if (cfg->has_sw_rst)
+>> +		qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>>     	/* stop SerDes and Phy-Coding-Sublayer */
+>>   	qphy_clrbits(qphy->pcs, cfg->regs[QPHY_START_CTRL], 
+>> cfg->start_ctrl);
+>> @@ -1383,6 +1496,9 @@ int qcom_qmp_phy_create(struct device *dev, 
+>> struct device_node *np, int id)
+>>   	}, {
+>>   		.compatible = "qcom,qmp-v3-usb3-phy",
+>>   		.data = &qmp_v3_usb3phy_cfg,
+>> +	}, {
+>> +		.compatible = "qcom,sdm845-qmp-ufs-phy",
+>> +		.data = &sdm845_ufsphy_cfg,
+>>   	},
+>>   	{ },
+>>   };
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h 
+>> b/drivers/phy/qualcomm/phy-qcom-qmp.h
+>> index d1c6905..ea4b4dc 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
+>> @@ -184,6 +184,8 @@
+>>   #define QSERDES_V3_COM_VCO_TUNE2_MODE0			0x0f8
+>>   #define QSERDES_V3_COM_VCO_TUNE1_MODE1			0x0fc
+>>   #define QSERDES_V3_COM_VCO_TUNE2_MODE1			0x100
+>> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL1		0x104
+>> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL2		0x108
+>>   #define QSERDES_V3_COM_VCO_TUNE_TIMER1			0x11c
+>>   #define QSERDES_V3_COM_VCO_TUNE_TIMER2			0x120
+>>   #define QSERDES_V3_COM_CLK_SELECT			0x138
+>> @@ -211,8 +213,13 @@
+>>   /* Only for QMP V3 PHY - RX registers */
+>>   #define QSERDES_V3_RX_UCDR_SO_GAIN_HALF			0x00c
+>>   #define QSERDES_V3_RX_UCDR_SO_GAIN			0x014
+>> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF		0x024
+>> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER		0x028
+>> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN			0x02c
+>>   #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN		0x030
+>>   #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE	0x034
+>> +#define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW		0x03c
+>> +#define QSERDES_V3_RX_UCDR_PI_CONTROLS			0x044
+>>   #define QSERDES_V3_RX_RX_TERM_BW			0x07c
+>>   #define QSERDES_V3_RX_RX_EQ_GAIN2_LSB			0x0c8
+>>   #define QSERDES_V3_RX_RX_EQ_GAIN2_MSB			0x0cc
+>> @@ -272,6 +279,7 @@
+>>   #define QPHY_V3_PCS_FLL_CNT_VAL_L			0x0cc
+>>   #define QPHY_V3_PCS_FLL_CNT_VAL_H_TOL			0x0d0
+>>   #define QPHY_V3_PCS_FLL_MAN_CODE			0x0d4
+>> +#define QPHY_V3_PCS_MULTI_LANE_CTRL1			0x1c4
+>>   #define QPHY_V3_PCS_RX_SIGDET_LVL			0x1d8
+>>     /* Only for QMP V3 PHY - PCS_MISC registers */
