@@ -1,67 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751782AbeCTOtE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:49:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34694 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751499AbeCTOs4 (ORCPT
+        id S1751657AbeCTOtu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:49:50 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38571 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbeCTOtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:48:56 -0400
-X-Google-Smtp-Source: AG47ELuB+dIMRCvXn7CgmraSUPgBJjX21Inh06ou2AFUn/lcynXs+t9Fjk8rM9al4p2ots2D8JnBXQ==
-Date: Tue, 20 Mar 2018 08:48:51 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] IB/mlx4: Eliminate duplicate barriers on
- weakly-ordered archs
-Message-ID: <20180320144851.GF19744@ziepe.ca>
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
- <1521514068-8856-3-git-send-email-okaya@codeaurora.org>
+        Tue, 20 Mar 2018 10:49:46 -0400
+X-Google-Smtp-Source: AG47ELuWopuUF9SAZ4s3P3q/oVMx8ycungF5+v2SEUbKbRPCBfOvyMBfAqsddefge2YML+kGCCJkRSZOaoG0nKKO8xA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521514068-8856-3-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <6952f7b4-2ce8-670e-88b0-7951c4203f56@canonical.com>
+References: <20180319133310.4251-1-colin.king@canonical.com>
+ <5AB0E3D5.6090301@easystack.cn> <6952f7b4-2ce8-670e-88b0-7951c4203f56@canonical.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 20 Mar 2018 15:49:45 +0100
+Message-ID: <CAOi1vP9RrbuWJHndAEfu5NyEZYLQAQZ-ew1pqkXwPDpvX2Ej8w@mail.gmail.com>
+Subject: Re: [PATCH] rbd: fix spelling mistake: "reregisteration" -> "re-registration"
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 10:47:44PM -0400, Sinan Kaya wrote:
-> Code includes wmb() followed by writel(). writel() already has a barrier on
-> some architectures like arm64.
-> 
-> This ends up CPU observing two barriers back to back before executing the
-> register write.
-> 
-> Since code already has an explicit barrier call, changing writel() to
-> writel_relaxed().
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> ---
->  drivers/infiniband/hw/mlx4/qp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Mar 20, 2018 at 11:39 AM, Colin Ian King
+<colin.king@canonical.com> wrote:
+> On 20/03/18 10:35, Dongsheng Yang wrote:
+>> Hi Colin,
+>>
+>> On 03/19/2018 09:33 PM, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> Trivial fix to spelling mistake in rdb_warn message text
+>>>
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>   drivers/block/rbd.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>>> index 1e03b04819c8..7b97240ff15e 100644
+>>> --- a/drivers/block/rbd.c
+>>> +++ b/drivers/block/rbd.c
+>>> @@ -3887,7 +3887,7 @@ static void rbd_reregister_watch(struct
+>>> work_struct *work)
+>>>         ret = rbd_dev_refresh(rbd_dev);
+>>>       if (ret)
+>>> -        rbd_warn(rbd_dev, "reregisteration refresh failed: %d", ret);
+>>> +        rbd_warn(rbd_dev, "re-registrationrefresh failed: %d", ret);
+>>
+>> Hmmm, I am not sure is that a spelling mistake, because the function
+>> name is rbd_reregister_watch().
+>
+> OK, well reregisteration should be reregistration then.
 
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+I went ahead and applied the change to "reregistration".
 
-> diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-> index f045491..74b27b0 100644
-> --- a/drivers/infiniband/hw/mlx4/qp.c
-> +++ b/drivers/infiniband/hw/mlx4/qp.c
-> @@ -3880,8 +3880,8 @@ int mlx4_ib_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
->  		 */
->  		wmb();
->  
-> -		writel(qp->doorbell_qpn,
-> -		       to_mdev(ibqp->device)->uar_map + MLX4_SEND_DOORBELL);
-> +		writel_relaxed(qp->doorbell_qpn,
-> +			to_mdev(ibqp->device)->uar_map + MLX4_SEND_DOORBELL);
->  
->  		/*
->  		 * Make sure doorbells don't leak out of SQ spinlock
-> -- 
-> 2.7.4
-> 
+Thanks,
+
+                Ilya
