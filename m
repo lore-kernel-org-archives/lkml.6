@@ -1,43 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752263AbeCTIoO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:44:14 -0400
-Received: from verein.lst.de ([213.95.11.211]:36051 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751774AbeCTIoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:44:13 -0400
-Date: Tue, 20 Mar 2018 09:44:12 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, x86@kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        id S1752166AbeCTIth (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:49:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40852 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeCTItf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:49:35 -0400
+Date: Tue, 20 Mar 2018 09:49:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liu, Changcheng" <changcheng.liu@intel.com>
+Cc: tglx@linutronix.de, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
         linux-kernel@vger.kernel.org
-Subject: Re: use generic dma-direct and swiotlb code for x86 V3
-Message-ID: <20180320084412.GA16337@lst.de>
-References: <20180319103826.12853-1-hch@lst.de> <20180319152737.GK1110@char.us.oracle.com> <20180319152840.GA28041@lst.de> <20180320083751.nrpt64dsmpqbhzc6@gmail.com>
+Subject: Re: [PATCH] x86/ioapic: don't use unstable TSC to detect timer IRQ
+Message-ID: <20180320084929.GP4043@hirez.programming.kicks-ass.net>
+References: <20180320084255.GA187704@sofia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180320083751.nrpt64dsmpqbhzc6@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180320084255.GA187704@sofia>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 09:37:51AM +0100, Ingo Molnar wrote:
-> > git://git.infradead.org/users/hch/misc.git dma-direct-x86
-> 
-> Btw., what's the upstreaming route for these patches?
-> 
-> While it's a multi-arch series it's all pretty x86-heavy as well so we can host it 
-> in -tip (in tip:core/dma or such), but feel free to handle it yourself as well:
-> 
->   Reviewed-by: Ingo Molnar <mingo@kernel.org>
+On Tue, Mar 20, 2018 at 04:42:55PM +0800, Liu, Changcheng wrote:
+> In rare case, the TSC is every unstable or can't sync with
+> real time hardware clock. 
 
-Either way is fine with me.  The dma-mapping tree is pretty light this
-cycles, so I don't expect any conflicts.  If you want it feel free to grab
-it, otherwise I'll queue it up.
+However did you manage that? Please provide _FAR_ more details.
+
+> diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+> index cf5d53c..dcfc5b9 100644
+> --- a/arch/x86/include/asm/tsc.h
+> +++ b/arch/x86/include/asm/tsc.h
+> @@ -17,6 +17,7 @@ typedef unsigned long long cycles_t;
+>  
+>  extern unsigned int cpu_khz;
+>  extern unsigned int tsc_khz;
+> +extern int tsc_unstable;
+>  
+>  extern void disable_TSC(void);
+>  
+> diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+> index 7c55387..0809ec6 100644
+> --- a/arch/x86/kernel/apic/io_apic.c
+> +++ b/arch/x86/kernel/apic/io_apic.c
+> @@ -1643,7 +1643,7 @@ static int __init timer_irq_works(void)
+>  	local_save_flags(flags);
+>  	local_irq_enable();
+>  
+> -	if (boot_cpu_has(X86_FEATURE_TSC))
+> +	if (boot_cpu_has(X86_FEATURE_TSC) && !tsc_unstable)
+>  		delay_with_tsc();
+>  	else
+>  		delay_without_tsc();
+> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+> index fb43027..27b1bae 100644
+> --- a/arch/x86/kernel/tsc.c
+> +++ b/arch/x86/kernel/tsc.c
+> @@ -36,7 +36,8 @@ EXPORT_SYMBOL(tsc_khz);
+>  /*
+>   * TSC can be unstable due to cpufreq or due to unsynced TSCs
+>   */
+> -static int __read_mostly tsc_unstable;
+> +int __read_mostly tsc_unstable;
+> +EXPORT_SYMBOL(tsc_unstable);
+>  
+>  /* native_sched_clock() is called before tsc_init(), so
+>     we must start with the TSC soft disabled to prevent
+
+No, absolutely not. Even when the TSC is normally deemed unstable, which
+typically means it is not sync'ed between cores, it is still perfectly
+suitable to be used for delay loops.
