@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751697AbeCUBLL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:11:11 -0400
+        id S1752015AbeCUBLj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:11:39 -0400
 Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751557AbeCUBLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:11:07 -0400
+        id S1751943AbeCUBLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:11:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="39779343"
+   d="scan'208";a="39779415"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, Chao Peng <chao.p.peng@linux.intel.com>,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v6 02/11] perf/x86/intel/pt: Change pt_cap_get() to a public function
-Date: Tue, 20 Mar 2018 19:21:49 +0800
-Message-Id: <1521544918-31084-3-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v6 10/11] KVM: x86: Set intercept for Intel PT MSRs
+Date: Tue, 20 Mar 2018 19:21:57 +0800
+Message-Id: <1521544918-31084-11-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
 References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
@@ -29,120 +29,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Change pt_cap_get() to a public function so that KVM can access it.
-Introduce new capablility PT_CAP_output_subsys to support
-of output to Trace Transport subsystem.
+Disable interrcept Intel PT MSRs only when Intel PT is
+enabled in guest. But MSR_IA32_RTIT_CTL will alway be
+intercept.
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/events/intel/pt.c      |  4 +++-
- arch/x86/events/intel/pt.h      | 21 ---------------------
- arch/x86/include/asm/intel_pt.h | 24 ++++++++++++++++++++++++
- 3 files changed, 27 insertions(+), 22 deletions(-)
+ arch/x86/kvm/vmx.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 6d6dd4f..d89dd8c 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -68,6 +68,7 @@
- 	PT_CAP(topa_output,		0, CPUID_ECX, BIT(0)),
- 	PT_CAP(topa_multiple_entries,	0, CPUID_ECX, BIT(1)),
- 	PT_CAP(single_range_output,	0, CPUID_ECX, BIT(2)),
-+	PT_CAP(output_subsys,		0, CPUID_ECX, BIT(3)),
- 	PT_CAP(payloads_lip,		0, CPUID_ECX, BIT(31)),
- 	PT_CAP(num_address_ranges,	1, CPUID_EAX, 0x3),
- 	PT_CAP(mtc_periods,		1, CPUID_EAX, 0xffff0000),
-@@ -75,7 +76,7 @@
- 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
- };
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 0334100..27185da 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -941,6 +941,7 @@ static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
+ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
+ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
+ 							  u32 msr, int type);
++static void pt_set_intercept_for_msr(struct vcpu_vmx *vmx, bool flag);
  
--static u32 pt_cap_get(enum pt_capabilities cap)
-+u32 pt_cap_get(enum pt_capabilities cap)
- {
- 	struct pt_cap_desc *cd = &pt_caps[cap];
- 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
-@@ -83,6 +84,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
- 
- 	return (c & cd->mask) >> shift;
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+ static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+@@ -3765,6 +3766,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 			vmx_rtit_ctl_check(vcpu, data))
+ 			return 1;
+ 		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
++		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
+ 		vmx->pt_desc.guest.ctl = data;
+ 		break;
+ 	case MSR_IA32_RTIT_STATUS:
+@@ -5554,6 +5556,24 @@ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
+ 	vmx->msr_bitmap_mode = mode;
  }
-+EXPORT_SYMBOL_GPL(pt_cap_get);
  
- static ssize_t pt_cap_show(struct device *cdev,
- 			   struct device_attribute *attr,
-diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
-index 0050ca1..269e15a 100644
---- a/arch/x86/events/intel/pt.h
-+++ b/arch/x86/events/intel/pt.h
-@@ -45,30 +45,9 @@ struct topa_entry {
- 	u64	rsvd4	: 16;
- };
- 
--#define PT_CPUID_LEAVES		2
--#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
--
- /* TSC to Core Crystal Clock Ratio */
- #define CPUID_TSC_LEAF		0x15
- 
--enum pt_capabilities {
--	PT_CAP_max_subleaf = 0,
--	PT_CAP_cr3_filtering,
--	PT_CAP_psb_cyc,
--	PT_CAP_ip_filtering,
--	PT_CAP_mtc,
--	PT_CAP_ptwrite,
--	PT_CAP_power_event_trace,
--	PT_CAP_topa_output,
--	PT_CAP_topa_multiple_entries,
--	PT_CAP_single_range_output,
--	PT_CAP_payloads_lip,
--	PT_CAP_num_address_ranges,
--	PT_CAP_mtc_periods,
--	PT_CAP_cycle_thresholds,
--	PT_CAP_psb_periods,
--};
--
- struct pt_pmu {
- 	struct pmu		pmu;
- 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index b523f51..2de4db0 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -2,10 +2,34 @@
- #ifndef _ASM_X86_INTEL_PT_H
- #define _ASM_X86_INTEL_PT_H
- 
-+#define PT_CPUID_LEAVES		2
-+#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
++static void pt_set_intercept_for_msr(struct vcpu_vmx *vmx, bool flag)
++{
++	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
++	u32 i;
 +
-+enum pt_capabilities {
-+	PT_CAP_max_subleaf = 0,
-+	PT_CAP_cr3_filtering,
-+	PT_CAP_psb_cyc,
-+	PT_CAP_ip_filtering,
-+	PT_CAP_mtc,
-+	PT_CAP_ptwrite,
-+	PT_CAP_power_event_trace,
-+	PT_CAP_topa_output,
-+	PT_CAP_topa_multiple_entries,
-+	PT_CAP_single_range_output,
-+	PT_CAP_output_subsys,
-+	PT_CAP_payloads_lip,
-+	PT_CAP_num_address_ranges,
-+	PT_CAP_mtc_periods,
-+	PT_CAP_cycle_thresholds,
-+	PT_CAP_psb_periods,
-+};
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_STATUS,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_OUTPUT_BASE,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_OUTPUT_MASK,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_CR3_MATCH,
++							MSR_TYPE_RW, flag);
++	for (i = 0; i < vmx->pt_desc.range_cnt; i++)
++		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_ADDR0_A + i,
++							MSR_TYPE_RW, flag);
++}
 +
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
- void cpu_emergency_stop_pt(void);
-+extern u32 pt_cap_get(enum pt_capabilities cap);
- #else
- static inline void cpu_emergency_stop_pt(void) {}
-+static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
- #endif
- 
- #endif /* _ASM_X86_INTEL_PT_H */
+ static bool vmx_get_enable_apicv(struct kvm_vcpu *vcpu)
+ {
+ 	return enable_apicv;
 -- 
 1.8.3.1
