@@ -1,98 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeCTPJ6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:09:58 -0400
-Received: from smtp-out6.electric.net ([192.162.217.187]:53574 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeCTPJ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:09:56 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Andy Lutomirski'" <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: RE: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Topic: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Index: AQHTv43TjMVMzNQoikSg1VH837bpVaPXnqXggAAJp4CAAAH+gIABjnG2gAAB3qA=
-Date: Tue, 20 Mar 2018 15:10:39 +0000
-Message-ID: <c1eac43cd8e143d09477a34ed6de6302@AcuMS.aculab.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <CALCETrVMF140-XZLi9nARPeAmyi8QRRzLRm6SSpB0BkAUSGakg@mail.gmail.com>
-In-Reply-To: <CALCETrVMF140-XZLi9nARPeAmyi8QRRzLRm6SSpB0BkAUSGakg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        id S1751343AbeCTPKn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:10:43 -0400
+Received: from linode.aoot.com ([69.164.194.13]:56808 "EHLO linode.aoot.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751022AbeCTPKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 11:10:41 -0400
+From: "Steve Wise" <swise@opengridcomputing.com>
+To: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "'Sinan Kaya'" <okaya@codeaurora.org>
+Cc: <linux-rdma@vger.kernel.org>, <timur@codeaurora.org>,
+        <sulrich@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>, <linux-kernel@vger.kernel.org>
+References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org> <1521514068-8856-5-git-send-email-okaya@codeaurora.org> <20180320145159.GG19744@ziepe.ca>
+In-Reply-To: <20180320145159.GG19744@ziepe.ca>
+Subject: RE: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Tue, 20 Mar 2018 10:10:40 -0500
+Message-ID: <3d6801d3c05d$9c35f630$d4a1e290$@opengridcomputing.com>
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQJnohsAzCjMC8iCAg840eHfO7WHuQE8ydHJAazdTfSimiloYA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KFA42N021052
 
-From: Andy Lutomirski
-> Sent: 20 March 2018 14:57
-...
-> I'd rather see us finally finish the work that Rik started to rework
-> this differently.  I'd like kernel_fpu_begin() to look like:
+> On Mon, Mar 19, 2018 at 10:47:46PM -0400, Sinan Kaya wrote:
+> > Code includes wmb() followed by writel(). writel() already has a barrier
+on
+> > some architectures like arm64.
+> >
+> > This ends up CPU observing two barriers back to back before executing
+> the
+> > register write.
+> >
+> > Since code already has an explicit barrier call, changing writel() to
+> > writel_relaxed().
+> >
+> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> >  drivers/infiniband/hw/cxgb4/t4.h | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/infiniband/hw/cxgb4/t4.h
+> b/drivers/infiniband/hw/cxgb4/t4.h
+> > index 8369c7c..6e5658a 100644
+> > +++ b/drivers/infiniband/hw/cxgb4/t4.h
+> > @@ -457,7 +457,7 @@ static inline void pio_copy(u64 __iomem *dst, u64
+> *src)
+> >  	int count = 8;
+> >
+> >  	while (count) {
+> > -		writeq(*src, dst);
+> > +		writeq_relaxed(*src, dst);
+> >  		src++;
+> >  		dst++;
+> >  		count--;
 > 
-> if (test_thread_flag(TIF_NEED_FPU_RESTORE)) {
->   return; // we're already okay.  maybe we need to check
-> in_interrupt() or something, though?
-> } else {
->   XSAVES/XSAVEOPT/XSAVE;
->   set_thread_flag(TIF_NEED_FPU_RESTORE):
-> }
+> This is another case where writes can be re-ordered.. IIRC dst is WC
+> BAR memory, so the NIC should tolerate re-ordering, but Steve will
+> have to ack this.
 > 
-> and kernel_fpu_end() does nothing at all.
 
-I guess it might need to set (clear?) the CFLAGS bit for a process
-that isn't using the fpu at all - which seems a sensible feature.
- 
-> We take the full performance hit for a *single* kernel_fpu_begin() on
-> an otherwise short syscall or interrupt, but there's no additional
-> cost for more of them or for long-enough-running things that we
-> schedule in the middle.
-
-It might be worth adding a parameter to kernel_fpu_begin() to indicate
-which registers are needed, and a return value to say what has been
-granted.
-Then a driver could request AVX2 (for example) and use a fallback path
-if the register set isn't available (for any reason).
-A call from an ISR could always fail.
-
-> As I remember, the main hangup was that this interacts a bit oddly
-> with PKRU, but that's manageable.
-
-WTF PKRU ??
-
-	Dvaid
+Yes, this is WC BAR memory.  The goal is that pio_copy() will enable
+write-combining this into a single 64B pci-e transaction.
