@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCUBL2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:11:28 -0400
+        id S1752181AbeCUBN1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:13:27 -0400
 Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751629AbeCUBLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:11:10 -0400
+        id S1751832AbeCUBL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:11:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="39779351"
+   d="scan'208";a="39779397"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v6 03/11] perf/x86/intel/pt: Introduce a new function to get the capability of Intel PT
-Date: Tue, 20 Mar 2018 19:21:50 +0800
-Message-Id: <1521544918-31084-4-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v6 08/11] KVM: x86: Introduce a function to initialize the PT configuration
+Date: Tue, 20 Mar 2018 19:21:55 +0800
+Message-Id: <1521544918-31084-9-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
 References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
@@ -26,58 +26,101 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of the guest CPUID information may different with
-host(some bits may mask off in guest) so introduce a new
-function to get the capability of Intel PT.
+Initialize the Intel PT configuration when cpuid update.
+Include cpuid inforamtion, rtit_ctl bit mask and the number of
+address ranges.
 
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/events/intel/pt.c      | 10 ++++++++--
- arch/x86/include/asm/intel_pt.h |  2 ++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index d89dd8c..c66eb90 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -76,14 +76,20 @@
- 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
- };
- 
--u32 pt_cap_get(enum pt_capabilities cap)
-+u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap)
- {
- 	struct pt_cap_desc *cd = &pt_caps[cap];
--	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
-+	u32 c = caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
- 	unsigned int shift = __ffs(cd->mask);
- 
- 	return (c & cd->mask) >> shift;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 34bcb30..5166d72 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10191,6 +10191,71 @@ static void nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)
+ #undef cr4_fixed1_update
  }
-+EXPORT_SYMBOL_GPL(__pt_cap_get);
-+
-+u32 pt_cap_get(enum pt_capabilities cap)
+ 
++static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
 +{
-+	return __pt_cap_get(pt_pmu.caps, cap);
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct kvm_cpuid_entry2 *best = NULL;
++	int i;
++
++	for (i = 0; i < PT_CPUID_LEAVES; i++) {
++		best = kvm_find_cpuid_entry(vcpu, 0x14, i);
++		if (!best)
++			return;
++		vmx->pt_desc.caps[CPUID_EAX + i*PT_CPUID_REGS_NUM] = best->eax;
++		vmx->pt_desc.caps[CPUID_EBX + i*PT_CPUID_REGS_NUM] = best->ebx;
++		vmx->pt_desc.caps[CPUID_ECX + i*PT_CPUID_REGS_NUM] = best->ecx;
++		vmx->pt_desc.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM] = best->edx;
++	}
++
++	/* Get the number of configurable Address Ranges for filtering */
++	vmx->pt_desc.range_cnt = __pt_cap_get(vmx->pt_desc.caps,
++						PT_CAP_num_address_ranges);
++
++	/* Clear the no dependency bits */
++	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
++			RTIT_CTL_USR | RTIT_CTL_TSC_EN | RTIT_CTL_DIS_RETC);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_CR3_FILTER;
++
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[1]=1 CYCEn, CycThresh and
++	 * PSBFreq can be set
++	 */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_psb_cyc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_CYC_EN |
++			RTIT_CTL_CYC_THRESH | RTIT_CTL_PSB_FREQ);
++
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[3]=1 MTCEn BranchEn and
++	 * MTCFreq can be set
++	 */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_mtc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_MTC_EN |
++			RTIT_CTL_BRANCH_EN | RTIT_CTL_MTC_RANGE);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[4]=1 FUPonPTW and PTWEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_ptwrite))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_FUP_ON_PTW |
++						RTIT_CTL_PTW_EN);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[5]=1 PwrEvEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_power_event_trace))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_PWR_EVT_EN;
++
++	/* If CPUID.(EAX=14H,ECX=0):ECX[0]=1 ToPA can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_topa_output))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_TOPA;
++	/* If CPUID.(EAX=14H,ECX=0):ECX[3]=1 FabircEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_output_subsys))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_FABRIC_EN;
++
++	/* unmask address range configure area */
++	for (i = 0; i < vmx->pt_desc.range_cnt; i++)
++		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i*4));
 +}
- EXPORT_SYMBOL_GPL(pt_cap_get);
++
+ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+@@ -10209,6 +10274,10 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
  
- static ssize_t pt_cap_show(struct device *cdev,
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index 2de4db0..3a4f524 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -27,9 +27,11 @@ enum pt_capabilities {
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
- void cpu_emergency_stop_pt(void);
- extern u32 pt_cap_get(enum pt_capabilities cap);
-+extern u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap);
- #else
- static inline void cpu_emergency_stop_pt(void) {}
- static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
-+static u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap) { return 0; }
- #endif
+ 	if (nested_vmx_allowed(vcpu))
+ 		nested_vmx_cr_fixed1_bits_update(vcpu);
++
++	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
++		guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
++		update_intel_pt_cfg(vcpu);
+ }
  
- #endif /* _ASM_X86_INTEL_PT_H */
+ static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
 -- 
 1.8.3.1
