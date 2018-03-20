@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751728AbeCTTUD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:20:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58850 "EHLO
+        id S1751799AbeCTTUh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 15:20:37 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59312 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751677AbeCTTT6 (ORCPT
+        with ESMTP id S1751343AbeCTTUf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:19:58 -0400
+        Tue, 20 Mar 2018 15:20:35 -0400
 From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, bp@suse.de, thomas.lendacky@amd.com,
-        luto@kernel.org, dave.hansen@linux.intel.com, roger.pau@citrix.com,
-        rkrcmar@redhat.com, maran.wilson@oracle.com
-Subject: [PATCH v5 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
-Date: Tue, 20 Mar 2018 12:18:06 -0700
-Message-Id: <1521573486-17304-1-git-send-email-maran.wilson@oracle.com>
+To: x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        jgross@suse.com
+Cc: boris.ostrovsky@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, roger.pau@citrix.com, rkrcmar@redhat.com,
+        maran.wilson@oracle.com
+Subject: [PATCH v5 3/7] xen/pvh: Create a new file for Xen specific PVH code
+Date: Tue, 20 Mar 2018 12:19:44 -0700
+Message-Id: <1521573586-17463-1-git-send-email-maran.wilson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
 References: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
@@ -31,73 +29,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to pave the way for hypervisors other then Xen to use the PVH
-entry point for VMs, we need to factor the PVH entry code into Xen specific
-and hypervisor agnostic components. The first step in doing that, is to
-create a new config option for PVH entry that can be enabled
-independently from CONFIG_XEN.
+We need to refactor PVH entry code so that support for other hypervisors
+like Qemu/KVM can be added more easily.
+
+The first step in that direction is to create a new file that will
+eventually hold the Xen specific routines.
 
 Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
 ---
- arch/x86/Kconfig          | 7 +++++++
- arch/x86/kernel/head_64.S | 4 ++--
- arch/x86/xen/Kconfig      | 3 ++-
- 3 files changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/platform/pvh/enlighten.c |  5 ++---
+ arch/x86/xen/Makefile             |  1 +
+ arch/x86/xen/enlighten_pvh.c      | 10 ++++++++++
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/xen/enlighten_pvh.c
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index eb7f43f23521..58831320b5d2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -791,6 +791,13 @@ config KVM_GUEST
- 	  underlying device model, the host provides the guest with
- 	  timing infrastructure such as time of day, and system time
+diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
+index 436c4f003e17..74c0a711ebe7 100644
+--- a/arch/x86/platform/pvh/enlighten.c
++++ b/arch/x86/platform/pvh/enlighten.c
+@@ -16,10 +16,9 @@
+ /*
+  * PVH variables.
+  *
+- * xen_pvh and pvh_bootparams need to live in data segment since they
+- * are used after startup_{32|64}, which clear .bss, are invoked.
++ * pvh_bootparams needs to live in the data segment since it is
++ * used after startup_{32|64}, which clear .bss, are invoked.
+  */
+-bool xen_pvh __attribute__((section(".data"))) = 0;
+ struct boot_params pvh_bootparams __attribute__((section(".data")));
  
-+config PVH
-+	bool "Support for running PVH guests"
-+	def_bool n
-+	---help---
-+	  This option enables the PVH entry point for guest virtual machines
-+	  as specified in the x86/HVM direct boot ABI.
+ struct hvm_start_info pvh_start_info;
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index f1b850607212..ae5c6f1f0fe0 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -20,6 +20,7 @@ obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
+ obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
+ obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
+ 						p2m.o enlighten_pv.o mmu_pv.o
++obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
+ 
+ obj-$(CONFIG_EVENT_TRACING) += trace.o
+ 
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+new file mode 100644
+index 000000000000..c5409c1f259f
+--- /dev/null
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -0,0 +1,10 @@
++#include <linux/types.h>
 +
- config KVM_DEBUG_FS
- 	bool "Enable debug information for KVM Guests in debugfs"
- 	depends on KVM_GUEST && DEBUG_FS
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 0f545b3cf926..fc9f678c6413 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -41,7 +41,7 @@
- 
- #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
- 
--#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
-+#if defined(CONFIG_XEN_PV) || defined(CONFIG_PVH)
- PGD_PAGE_OFFSET = pgd_index(__PAGE_OFFSET_BASE)
- PGD_START_KERNEL = pgd_index(__START_KERNEL_map)
- #endif
-@@ -387,7 +387,7 @@ NEXT_PAGE(early_dynamic_pgts)
- 
- 	.data
- 
--#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
-+#if defined(CONFIG_XEN_PV) || defined(CONFIG_PVH)
- NEXT_PGD_PAGE(init_top_pgt)
- 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
- 	.org    init_top_pgt + PGD_PAGE_OFFSET*8, 0
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index f605825a04ab..021c8591c3c0 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -77,8 +77,9 @@ config XEN_DEBUG_FS
- 	  Enabling this option may incur a significant performance overhead.
- 
- config XEN_PVH
--	bool "Support for running as a PVH guest"
-+	bool "Support for running as a Xen PVH guest"
- 	depends on XEN && XEN_PVHVM && ACPI
- 	# Pre-built page tables are not ready to handle 5-level paging.
- 	depends on !X86_5LEVEL
-+	select PVH
- 	def_bool n
++/*
++ * PVH variables.
++ *
++ * The variable xen_pvh needs to live in the data segment since it is used
++ * after startup_{32|64} is invoked, which will clear the .bss segment.
++ */
++bool xen_pvh __attribute__((section(".data"))) = 0;
++
 -- 
 2.16.1
