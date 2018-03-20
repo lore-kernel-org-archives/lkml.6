@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751731AbeCTWdQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 18:33:16 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35220 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751889AbeCTWcB (ORCPT
+        id S1752097AbeCTWdq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 18:33:46 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44870 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeCTWb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 18:32:01 -0400
-X-Google-Smtp-Source: AG47ELu8gMhc7/qtJGGtzljHusbE8LpdHK+0k1HVOGcOV807iLPtOIqt8bQgftLLW7P9D8r2SNe4gw==
+        Tue, 20 Mar 2018 18:31:56 -0400
+X-Google-Smtp-Source: AG47ELvxg7MNE2ghItGTnaG9GiDFwvd6ZoU+LvxjTuw8mARkseIsEvXY6R227xFkho9VKuOEi41hqg==
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>
 Cc: Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/14] Input: atmel_mxt_ts - remove platform data support
-Date: Tue, 20 Mar 2018 15:31:38 -0700
-Message-Id: <20180320223138.234724-15-dmitry.torokhov@gmail.com>
+Subject: [PATCH v2 10/14] platform/chrome: chromeos_laptop - use I2C notifier to create devices
+Date: Tue, 20 Mar 2018 15:31:34 -0700
+Message-Id: <20180320223138.234724-11-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 In-Reply-To: <20180320223138.234724-1-dmitry.torokhov@gmail.com>
 References: <20180320223138.234724-1-dmitry.torokhov@gmail.com>
@@ -22,365 +22,455 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that there are no users of custom Atmel platform data, and everyone
-has switched to the generic device properties, we can remove support for
-the platform data.
+Instead of using platform device and deferrals to handle the case when i2C
+adapters appear late in the game, and not handling device unbinding all
+that well, let's switch to using I2C bus notifier to get told when a new
+I2C adapter appears in the system, and attempt to add appropriate devices
+at that time.
 
-Acked-by: Nick Dyer <nick@shmanahar.org>
+In case when we have 2 Designware adapters in the system (Acer C720),
+instead of counting and hoping they get enumerate din the right order,
+let's switch to using their PCI devids (slot/function) that should be
+stable.
+
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- MAINTAINERS                                |   1 -
- drivers/input/touchscreen/atmel_mxt_ts.c   | 130 +++++++++------------
- include/linux/platform_data/atmel_mxt_ts.h |  31 -----
- 3 files changed, 55 insertions(+), 107 deletions(-)
- delete mode 100644 include/linux/platform_data/atmel_mxt_ts.h
+ drivers/platform/chrome/chromeos_laptop.c | 247 +++++++++-------------
+ 1 file changed, 102 insertions(+), 145 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 205c8fc12a9c0..4442559713ea4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2394,7 +2394,6 @@ T:	git git://github.com/ndyer/linux.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/input/atmel,maxtouch.txt
- F:	drivers/input/touchscreen/atmel_mxt_ts.c
--F:	include/linux/platform_data/atmel_mxt_ts.h
- 
- ATMEL SAMA5D2 ADC DRIVER
- M:	Ludovic Desroches <ludovic.desroches@microchip.com>
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 799d2ac35787b..5d9699fe1b55a 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -23,10 +23,10 @@
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
--#include <linux/platform_data/atmel_mxt_ts.h>
- #include <linux/input/mt.h>
+diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform/chrome/chromeos_laptop.c
+index d6d2bc6f3aaf0..e5015dfaa81ec 100644
+--- a/drivers/platform/chrome/chromeos_laptop.c
++++ b/drivers/platform/chrome/chromeos_laptop.c
+@@ -12,6 +12,7 @@
+ #include <linux/input.h>
  #include <linux/interrupt.h>
- #include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/slab.h>
- #include <linux/gpio/consumer.h>
- #include <linux/property.h>
-@@ -269,12 +269,16 @@ static const struct v4l2_file_operations mxt_video_fops = {
- 	.poll = vb2_fop_poll,
- };
+ #include <linux/module.h>
++#include <linux/pci.h>
+ #include <linux/platform_device.h>
  
-+enum mxt_suspend_mode {
-+	MXT_SUSPEND_DEEP_SLEEP	= 0,
-+	MXT_SUSPEND_T9_CTRL	= 1,
-+};
-+
- /* Each client has this additional data */
- struct mxt_data {
- 	struct i2c_client *client;
- 	struct input_dev *input_dev;
- 	char phys[64];		/* device physical location */
--	const struct mxt_platform_data *pdata;
- 	struct mxt_object *object_table;
- 	struct mxt_info info;
- 	unsigned int irq;
-@@ -326,6 +330,9 @@ struct mxt_data {
- 	/* for config update handling */
- 	struct completion crc_completion;
+ #define ATMEL_TP_I2C_ADDR	0x4b
+@@ -23,14 +24,11 @@
+ #define ISL_ALS_I2C_ADDR	0x44
+ #define TAOS_ALS_I2C_ADDR	0x29
  
-+	u32 *t19_keymap;
-+	unsigned int t19_num_keys;
-+
- 	enum mxt_suspend_mode suspend_mode;
- };
- 
-@@ -745,15 +752,14 @@ static int mxt_write_object(struct mxt_data *data,
- static void mxt_input_button(struct mxt_data *data, u8 *message)
- {
- 	struct input_dev *input = data->input_dev;
--	const struct mxt_platform_data *pdata = data->pdata;
- 	int i;
- 
--	for (i = 0; i < pdata->t19_num_keys; i++) {
--		if (pdata->t19_keymap[i] == KEY_RESERVED)
-+	for (i = 0; i < data->t19_num_keys; i++) {
-+		if (data->t19_keymap[i] == KEY_RESERVED)
- 			continue;
- 
- 		/* Active-low switch */
--		input_report_key(input, pdata->t19_keymap[i],
-+		input_report_key(input, data->t19_keymap[i],
- 				 !(message[1] & BIT(i)));
- 	}
- }
-@@ -761,7 +767,7 @@ static void mxt_input_button(struct mxt_data *data, u8 *message)
- static void mxt_input_sync(struct mxt_data *data)
- {
- 	input_mt_report_pointer_emulation(data->input_dev,
--					  data->pdata->t19_num_keys);
-+					  data->t19_num_keys);
- 	input_sync(data->input_dev);
- }
- 
-@@ -1861,7 +1867,6 @@ static void mxt_input_close(struct input_dev *dev);
- static void mxt_set_up_as_touchpad(struct input_dev *input_dev,
- 				   struct mxt_data *data)
- {
--	const struct mxt_platform_data *pdata = data->pdata;
- 	int i;
- 
- 	input_dev->name = "Atmel maXTouch Touchpad";
-@@ -1875,15 +1880,14 @@ static void mxt_set_up_as_touchpad(struct input_dev *input_dev,
- 	input_abs_set_res(input_dev, ABS_MT_POSITION_Y,
- 			  MXT_PIXELS_PER_MM);
- 
--	for (i = 0; i < pdata->t19_num_keys; i++)
--		if (pdata->t19_keymap[i] != KEY_RESERVED)
-+	for (i = 0; i < data->t19_num_keys; i++)
-+		if (data->t19_keymap[i] != KEY_RESERVED)
- 			input_set_capability(input_dev, EV_KEY,
--					     pdata->t19_keymap[i]);
-+					     data->t19_keymap[i]);
- }
- 
- static int mxt_initialize_input_device(struct mxt_data *data)
- {
--	const struct mxt_platform_data *pdata = data->pdata;
- 	struct device *dev = &data->client->dev;
- 	struct input_dev *input_dev;
- 	int error;
-@@ -1949,7 +1953,7 @@ static int mxt_initialize_input_device(struct mxt_data *data)
- 	}
- 
- 	/* If device has buttons we assume it is a touchpad */
--	if (pdata->t19_num_keys) {
-+	if (data->t19_num_keys) {
- 		mxt_set_up_as_touchpad(input_dev, data);
- 		mt_flags |= INPUT_MT_POINTER;
- 	} else {
-@@ -2923,51 +2927,42 @@ static void mxt_input_close(struct input_dev *dev)
- 	mxt_stop(data);
- }
- 
--static const struct mxt_platform_data *
--mxt_parse_device_properties(struct i2c_client *client)
-+static int mxt_parse_device_properties(struct mxt_data *data)
- {
- 	static const char keymap_property[] = "linux,gpio-keymap";
--	struct mxt_platform_data *pdata;
-+	struct device *dev = &data->client->dev;
- 	u32 *keymap;
- 	int n_keys;
- 	int error;
- 
--	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata)
--		return ERR_PTR(-ENOMEM);
+-#define MAX_I2C_DEVICE_DEFERRALS	5
 -
--	if (device_property_present(&client->dev, keymap_property)) {
--		n_keys = device_property_read_u32_array(&client->dev,
--							keymap_property,
-+	if (device_property_present(dev, keymap_property)) {
-+		n_keys = device_property_read_u32_array(dev, keymap_property,
- 							NULL, 0);
- 		if (n_keys <= 0) {
- 			error = n_keys < 0 ? n_keys : -EINVAL;
--			dev_err(&client->dev,
--				"invalid/malformed '%s' property: %d\n",
-+			dev_err(dev, "invalid/malformed '%s' property: %d\n",
- 				keymap_property, error);
--			return ERR_PTR(error);
-+			return error;
+ static const char *i2c_adapter_names[] = {
+ 	"SMBus I801 adapter",
+ 	"i915 gmbus vga",
+ 	"i915 gmbus panel",
+ 	"Synopsys DesignWare I2C adapter",
+-	"Synopsys DesignWare I2C adapter",
+ };
+ 
+ /* Keep this enum consistent with i2c_adapter_names */
+@@ -38,15 +36,7 @@ enum i2c_adapter_type {
+ 	I2C_ADAPTER_SMBUS = 0,
+ 	I2C_ADAPTER_VGADDC,
+ 	I2C_ADAPTER_PANEL,
+-	I2C_ADAPTER_DESIGNWARE_0,
+-	I2C_ADAPTER_DESIGNWARE_1,
+-};
+-
+-enum i2c_peripheral_state {
+-	UNPROBED = 0,
+-	PROBED,
+-	TIMEDOUT,
+-	FAILED,
++	I2C_ADAPTER_DESIGNWARE,
+ };
+ 
+ struct i2c_peripheral {
+@@ -54,10 +44,9 @@ struct i2c_peripheral {
+ 	unsigned short alt_addr;
+ 	const char *dmi_name;
+ 	enum i2c_adapter_type type;
++	u32 pci_devid;
+ 
+-	enum i2c_peripheral_state state;
+ 	struct i2c_client *client;
+-	int tries;
+ };
+ 
+ #define MAX_I2C_PERIPHERALS 4
+@@ -69,19 +58,12 @@ struct chromeos_laptop {
+ static struct chromeos_laptop *cros_laptop;
+ 
+ static struct i2c_client *
+-chromes_laptop_instantiate_i2c_device(int bus,
++chromes_laptop_instantiate_i2c_device(struct i2c_adapter *adapter,
+ 				      struct i2c_board_info *info,
+ 				      unsigned short alt_addr)
+ {
+-	struct i2c_adapter *adapter;
+-	struct i2c_client *client = NULL;
+ 	const unsigned short addr_list[] = { info->addr, I2C_CLIENT_END };
+-
+-	adapter = i2c_get_adapter(bus);
+-	if (!adapter) {
+-		pr_err("failed to get i2c adapter %d\n", bus);
+-		return NULL;
+-	}
++	struct i2c_client *client;
+ 
+ 	/*
+ 	 * Add the i2c device. If we can't detect it at the primary
+@@ -102,126 +84,103 @@ chromes_laptop_instantiate_i2c_device(int bus,
+ 					      alt_addr_list, NULL);
+ 		if (dummy) {
+ 			pr_debug("%d-%02x is probed at %02x\n",
+-				 bus, info->addr, dummy->addr);
++				 adapter->nr, info->addr, dummy->addr);
+ 			i2c_unregister_device(dummy);
+ 			client = i2c_new_device(adapter, info);
  		}
- 
--		keymap = devm_kmalloc_array(&client->dev, n_keys, sizeof(u32),
-+		keymap = devm_kmalloc_array(dev, n_keys, sizeof(*keymap),
- 					    GFP_KERNEL);
- 		if (!keymap)
--			return ERR_PTR(-ENOMEM);
-+			return -ENOMEM;
- 
--		error = device_property_read_u32_array(&client->dev,
--						       keymap_property,
-+		error = device_property_read_u32_array(dev, keymap_property,
- 						       keymap, n_keys);
- 		if (error) {
--			dev_err(&client->dev,
--				"failed to parse '%s' property: %d\n",
-+			dev_err(dev, "failed to parse '%s' property: %d\n",
- 				keymap_property, error);
--			return ERR_PTR(error);
-+			return error;
- 		}
- 
--		pdata->t19_keymap = keymap;
--		pdata->t19_num_keys = n_keys;
-+		data->t19_keymap = keymap;
-+		data->t19_num_keys = n_keys;
  	}
  
--	return pdata;
+ 	if (!client)
+-		pr_notice("failed to register device %d-%02x\n",
+-			  bus, info->addr);
++		pr_debug("failed to register device %d-%02x\n",
++			 adapter->nr, info->addr);
+ 	else
+-		pr_debug("added i2c device %d-%02x\n", bus, info->addr);
++		pr_debug("added i2c device %d-%02x\n",
++			 adapter->nr, info->addr);
+ 
+-	i2c_put_adapter(adapter);
+ 	return client;
+ }
+ 
+-struct i2c_lookup {
+-	const char *name;
+-	int instance;
+-	int n;
+-};
+-
+-static int __find_i2c_adap(struct device *dev, void *data)
++static bool chromeos_laptop_match_adapter_devid(struct device *dev, u32 devid)
+ {
+-	struct i2c_lookup *lookup = data;
+-	static const char *prefix = "i2c-";
+-	struct i2c_adapter *adapter;
++	struct pci_dev *pdev;
+ 
+-	if (strncmp(dev_name(dev), prefix, strlen(prefix)) != 0)
+-		return 0;
+-	adapter = to_i2c_adapter(dev);
+-	if (strncmp(adapter->name, lookup->name, strlen(lookup->name)) == 0 &&
+-	    lookup->n++ == lookup->instance)
+-		return 1;
+-	return 0;
+-}
++	if (!dev_is_pci(dev))
++		return false;
+ 
+-static int find_i2c_adapter_num(enum i2c_adapter_type type)
+-{
+-	struct device *dev = NULL;
+-	struct i2c_adapter *adapter;
+-	struct i2c_lookup lookup;
+-
+-	memset(&lookup, 0, sizeof(lookup));
+-	lookup.name = i2c_adapter_names[type];
+-	lookup.instance = (type == I2C_ADAPTER_DESIGNWARE_1) ? 1 : 0;
+-
+-	/* find the adapter by name */
+-	dev = bus_find_device(&i2c_bus_type, NULL, &lookup, __find_i2c_adap);
+-	if (!dev) {
+-		/* Adapters may appear later. Deferred probing will retry */
+-		pr_notice("i2c adapter %s not found on system.\n",
+-			  lookup.name);
+-		return -ENODEV;
+-	}
+-	adapter = to_i2c_adapter(dev);
+-	return adapter->nr;
++	pdev = to_pci_dev(dev);
++	return devid == PCI_DEVID(pdev->bus->number, pdev->devfn);
+ }
+ 
+-static int chromeos_laptop_add_peripheral(struct i2c_peripheral *i2c_dev)
++static void chromeos_laptop_check_adapter(struct i2c_adapter *adapter)
+ {
+-	struct i2c_client *client;
+-	int bus;
++	struct i2c_peripheral *i2c_dev;
++	int i;
+ 
+-	/*
+-	 * Check that the i2c adapter is present.
+-	 * -EPROBE_DEFER if missing as the adapter may appear much
+-	 * later.
+-	 */
+-	bus = find_i2c_adapter_num(i2c_dev->type);
+-	if (bus < 0)
+-		return bus == -ENODEV ? -EPROBE_DEFER : bus;
+-
+-	client = chromes_laptop_instantiate_i2c_device(bus,
+-						       &i2c_dev->board_info,
+-						       i2c_dev->alt_addr);
+-	if (!client) {
+-		/*
+-		 * Set -EPROBE_DEFER a limited num of times
+-		 * if device is not successfully added.
+-		 */
+-		if (++i2c_dev->tries < MAX_I2C_DEVICE_DEFERRALS) {
+-			return -EPROBE_DEFER;
+-		} else {
+-			/* Ran out of tries. */
+-			pr_notice("ran out of tries for device.\n");
+-			i2c_dev->state = TIMEDOUT;
+-			return -EIO;
+-		}
+-	}
++	for (i = 0; i < MAX_I2C_PERIPHERALS; i++) {
++		i2c_dev = &cros_laptop->i2c_peripherals[i];
+ 
+-	i2c_dev->client = client;
+-	i2c_dev->state = PROBED;
++		/* No more peripherals */
++		if (!i2c_dev->board_info.addr)
++			break;
+ 
+-	return 0;
++		/* Skip devices already created */
++		if (i2c_dev->client)
++			continue;
++
++		if (strncmp(adapter->name, i2c_adapter_names[i2c_dev->type],
++			    strlen(i2c_adapter_names[i2c_dev->type])))
++			continue;
++
++		if (i2c_dev->pci_devid &&
++		    !chromeos_laptop_match_adapter_devid(adapter->dev.parent,
++							 i2c_dev->pci_devid)) {
++			continue;
++		}
++
++		i2c_dev->client =
++			chromes_laptop_instantiate_i2c_device(adapter,
++							&i2c_dev->board_info,
++							i2c_dev->alt_addr);
++	}
+ }
+ 
+-static int chromeos_laptop_probe(struct platform_device *pdev)
++static void chromeos_laptop_detach_i2c_client(struct i2c_client *client)
+ {
+ 	struct i2c_peripheral *i2c_dev;
+ 	int i;
+-	int ret = 0;
+ 
+ 	for (i = 0; i < MAX_I2C_PERIPHERALS; i++) {
+ 		i2c_dev = &cros_laptop->i2c_peripherals[i];
+ 
+-		/* No more peripherals. */
+-		if (!i2c_dev->board_info.addr)
+-			break;
+-
+-		if (i2c_dev->state != UNPROBED)
+-			continue;
++		if (i2c_dev->client == client)
++			i2c_dev->client = NULL;
++	}
++}
+ 
+-		if (chromeos_laptop_add_peripheral(i2c_dev) == -EPROBE_DEFER)
+-			ret = -EPROBE_DEFER;
++static int chromeos_laptop_i2c_notifier_call(struct notifier_block *nb,
++					     unsigned long action, void *data)
++{
++	struct device *dev = data;
++
++	switch (action) {
++	case BUS_NOTIFY_ADD_DEVICE:
++		if (dev->type == &i2c_adapter_type)
++			chromeos_laptop_check_adapter(to_i2c_adapter(dev));
++		break;
++
++	case BUS_NOTIFY_REMOVED_DEVICE:
++		if (dev->type == &i2c_client_type)
++			chromeos_laptop_detach_i2c_client(to_i2c_client(dev));
++		break;
+ 	}
+ 
+-	return ret;
 +	return 0;
  }
  
- #ifdef CONFIG_ACPI
-@@ -3050,25 +3045,12 @@ static const struct dmi_system_id mxt_dmi_table[] = {
- 	{ }
++static struct notifier_block chromeos_laptop_i2c_notifier = {
++	.notifier_call = chromeos_laptop_i2c_notifier_call,
++};
++
+ static struct chromeos_laptop samsung_series_5_550 = {
+ 	.i2c_peripherals = {
+ 		/* Touchpad. */
+@@ -322,7 +281,7 @@ static struct chromeos_laptop hp_chromebook_14 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
+ 		},
+ 	},
  };
+@@ -336,7 +295,7 @@ static struct chromeos_laptop dell_chromebook_11 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
+ 		},
+ 		/* Elan Touchpad option. */
+ 		{
+@@ -345,7 +304,7 @@ static struct chromeos_laptop dell_chromebook_11 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
+ 		},
+ 	},
+ };
+@@ -359,7 +318,7 @@ static struct chromeos_laptop toshiba_cb35 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
+ 		},
+ 	},
+ };
+@@ -401,7 +360,8 @@ static struct chromeos_laptop acer_c720 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "touchscreen",
+-			.type		= I2C_ADAPTER_DESIGNWARE_1,
++			.type		= I2C_ADAPTER_DESIGNWARE,
++			.pci_devid	= PCI_DEVID(0, PCI_DEVFN(0x15, 0x2)),
+ 			.alt_addr	= ATMEL_TS_I2C_BL_ADDR,
+ 		},
+ 		/* Touchpad. */
+@@ -411,7 +371,8 @@ static struct chromeos_laptop acer_c720 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
++			.pci_devid	= PCI_DEVID(0, PCI_DEVFN(0x15, 0x1)),
+ 		},
+ 		/* Elan Touchpad option. */
+ 		{
+@@ -420,7 +381,8 @@ static struct chromeos_laptop acer_c720 = {
+ 				.flags		= I2C_CLIENT_WAKE,
+ 			},
+ 			.dmi_name	= "trackpad",
+-			.type		= I2C_ADAPTER_DESIGNWARE_0,
++			.type		= I2C_ADAPTER_DESIGNWARE,
++			.pci_devid	= PCI_DEVID(0, PCI_DEVFN(0x15, 0x1)),
+ 		},
+ 		/* Light Sensor. */
+ 		{
+@@ -428,7 +390,8 @@ static struct chromeos_laptop acer_c720 = {
+ 				I2C_BOARD_INFO("isl29018", ISL_ALS_I2C_ADDR),
+ 			},
+ 			.dmi_name	= "lightsensor",
+-			.type		= I2C_ADAPTER_DESIGNWARE_1,
++			.type		= I2C_ADAPTER_DESIGNWARE,
++			.pci_devid	= PCI_DEVID(0, PCI_DEVFN(0x15, 0x2)),
+ 		},
+ 	},
+ };
+@@ -546,14 +509,16 @@ static const struct dmi_system_id chromeos_laptop_dmi_table[] __initconst = {
+ };
+ MODULE_DEVICE_TABLE(dmi, chromeos_laptop_dmi_table);
  
--static int mxt_acpi_probe(struct i2c_client *client)
-+static int mxt_prepare_acpi_properties(struct i2c_client *client)
- {
- 	struct acpi_device *adev;
- 	const struct dmi_system_id *system_id;
- 	const struct mxt_acpi_platform_data *acpi_pdata;
+-static struct platform_device *cros_platform_device;
++static int __init chromeos_laptop_scan_adapter(struct device *dev, void *data)
++{
++	struct i2c_adapter *adapter;
  
--	/*
--	 * Ignore ACPI devices representing bootloader mode.
--	 *
--	 * This is a bit of a hack: Google Chromebook BIOS creates ACPI
--	 * devices for both application and bootloader modes, but we are
--	 * interested in application mode only (if device is in bootloader
--	 * mode we'll end up switching into application anyway). So far
--	 * application mode addresses were all above 0x40, so we'll use it
--	 * as a threshold.
--	 */
--	if (client->addr < 0x40)
--		return -ENXIO;
--
- 	adev = ACPI_COMPANION(&client->dev);
- 	if (!adev)
- 		return -ENOENT;
-@@ -3104,24 +3086,12 @@ static int mxt_acpi_probe(struct i2c_client *client)
- 	return 0;
- }
- #else
--static int mxt_acpi_probe(struct i2c_client *client)
-+static int mxt_prepare_acpi_properties(struct i2c_client *client)
- {
- 	return -ENOENT;
- }
- #endif
- 
--static const struct mxt_platform_data *
--mxt_get_platform_data(struct i2c_client *client)
--{
--	const struct mxt_platform_data *pdata;
--
--	pdata = dev_get_platdata(&client->dev);
--	if (pdata)
--		return pdata;
--
--	return mxt_parse_device_properties(client);
--}
--
- static const struct dmi_system_id chromebook_T9_suspend_dmi[] = {
- 	{
- 		.matches = {
-@@ -3140,16 +3110,20 @@ static const struct dmi_system_id chromebook_T9_suspend_dmi[] = {
- static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- {
- 	struct mxt_data *data;
--	const struct mxt_platform_data *pdata;
- 	int error;
- 
--	error = mxt_acpi_probe(client);
--	if (error && error != -ENOENT)
--		return error;
--
--	pdata = mxt_get_platform_data(client);
--	if (IS_ERR(pdata))
--		return PTR_ERR(pdata);
-+	/*
-+	 * Ignore ACPI devices representing bootloader mode.
-+	 *
-+	 * This is a bit of a hack: Google Chromebook BIOS creates ACPI
-+	 * devices for both application and bootloader modes, but we are
-+	 * interested in application mode only (if device is in bootloader
-+	 * mode we'll end up switching into application anyway). So far
-+	 * application mode addresses were all above 0x40, so we'll use it
-+	 * as a threshold.
-+	 */
-+	if (ACPI_COMPANION(&client->dev) && client->addr < 0x40)
-+		return -ENXIO;
- 
- 	data = devm_kzalloc(&client->dev, sizeof(struct mxt_data), GFP_KERNEL);
- 	if (!data)
-@@ -3159,7 +3133,6 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		 client->adapter->nr, client->addr);
- 
- 	data->client = client;
--	data->pdata = pdata;
- 	data->irq = client->irq;
- 	i2c_set_clientdata(client, data);
- 
-@@ -3170,6 +3143,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	data->suspend_mode = dmi_check_system(chromebook_T9_suspend_dmi) ?
- 		MXT_SUSPEND_T9_CTRL : MXT_SUSPEND_DEEP_SLEEP;
- 
-+	error = mxt_prepare_acpi_properties(client);
-+	if (error && error != -ENOENT)
-+		return error;
+-static struct platform_driver cros_platform_driver = {
+-	.driver = {
+-		.name = "chromeos_laptop",
+-	},
+-	.probe = chromeos_laptop_probe,
+-};
++	adapter = i2c_verify_adapter(dev);
++	if (adapter)
++		chromeos_laptop_check_adapter(adapter);
 +
-+	error = mxt_parse_device_properties(data);
-+	if (error)
++	return 0;
++}
+ 
+ static int __init chromeos_laptop_get_irq_from_dmi(const char *dmi_name)
+ {
+@@ -602,7 +567,7 @@ chromeos_laptop_prepare(const struct dmi_system_id *id)
+ static int __init chromeos_laptop_init(void)
+ {
+ 	const struct dmi_system_id *dmi_id;
+-	int ret;
++	int error;
+ 
+ 	dmi_id = dmi_first_match(chromeos_laptop_dmi_table);
+ 	if (!dmi_id) {
+@@ -616,27 +581,20 @@ static int __init chromeos_laptop_init(void)
+ 	if (IS_ERR(cros_laptop))
+ 		return PTR_ERR(cros_laptop);
+ 
+-	ret = platform_driver_register(&cros_platform_driver);
+-	if (ret)
+-		return ret;
+-
+-	cros_platform_device = platform_device_alloc("chromeos_laptop", -1);
+-	if (!cros_platform_device) {
+-		ret = -ENOMEM;
+-		goto fail_platform_device1;
++	error = bus_register_notifier(&i2c_bus_type,
++				      &chromeos_laptop_i2c_notifier);
++	if (error) {
++		pr_err("failed to register i2c bus notifier: %d\n", error);
 +		return error;
-+
- 	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
- 						   "reset", GPIOD_OUT_LOW);
- 	if (IS_ERR(data->reset_gpio)) {
-@@ -3179,8 +3160,7 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
  	}
  
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
--					  NULL, mxt_interrupt,
--					  pdata->irqflags | IRQF_ONESHOT,
-+					  NULL, mxt_interrupt, IRQF_ONESHOT,
- 					  client->name, data);
- 	if (error) {
- 		dev_err(&client->dev, "Failed to register interrupt\n");
-@@ -3300,7 +3280,7 @@ MODULE_DEVICE_TABLE(i2c, mxt_id);
- static struct i2c_driver mxt_driver = {
- 	.driver = {
- 		.name	= "atmel_mxt_ts",
--		.of_match_table = of_match_ptr(mxt_of_match),
-+		.of_match_table = mxt_of_match,
- 		.acpi_match_table = ACPI_PTR(mxt_acpi_id),
- 		.pm	= &mxt_pm_ops,
- 	},
-diff --git a/include/linux/platform_data/atmel_mxt_ts.h b/include/linux/platform_data/atmel_mxt_ts.h
-deleted file mode 100644
-index 695035a8d7fb9..0000000000000
---- a/include/linux/platform_data/atmel_mxt_ts.h
-+++ /dev/null
-@@ -1,31 +0,0 @@
--/*
-- * Atmel maXTouch Touchscreen driver
-- *
-- * Copyright (C) 2010 Samsung Electronics Co.Ltd
-- * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
+-	ret = platform_device_add(cros_platform_device);
+-	if (ret)
+-		goto fail_platform_device2;
++	/*
++	 * Scan adapters that have been registered before we installed
++	 * the notifier to make sure we do not miss any devices.
++	 */
++	i2c_for_each_dev(NULL, chromeos_laptop_scan_adapter);
+ 
+ 	return 0;
 -
--#ifndef __LINUX_PLATFORM_DATA_ATMEL_MXT_TS_H
--#define __LINUX_PLATFORM_DATA_ATMEL_MXT_TS_H
--
--#include <linux/types.h>
--
--enum mxt_suspend_mode {
--	MXT_SUSPEND_DEEP_SLEEP	= 0,
--	MXT_SUSPEND_T9_CTRL	= 1,
--};
--
--/* The platform data for the Atmel maXTouch touchscreen driver */
--struct mxt_platform_data {
--	unsigned long irqflags;
--	u8 t19_num_keys;
--	const unsigned int *t19_keymap;
--	enum mxt_suspend_mode suspend_mode;
--};
--
--#endif /* __LINUX_PLATFORM_DATA_ATMEL_MXT_TS_H */
+-fail_platform_device2:
+-	platform_device_put(cros_platform_device);
+-fail_platform_device1:
+-	platform_driver_unregister(&cros_platform_driver);
+-	return ret;
+ }
+ 
+ static void __exit chromeos_laptop_exit(void)
+@@ -644,8 +602,7 @@ static void __exit chromeos_laptop_exit(void)
+ 	struct i2c_peripheral *i2c_dev;
+ 	int i;
+ 
+-	platform_device_unregister(cros_platform_device);
+-	platform_driver_unregister(&cros_platform_driver);
++	bus_unregister_notifier(&i2c_bus_type, &chromeos_laptop_i2c_notifier);
+ 
+ 	for (i = 0; i < MAX_I2C_PERIPHERALS; i++) {
+ 		i2c_dev = &cros_laptop->i2c_peripherals[i];
+@@ -654,7 +611,7 @@ static void __exit chromeos_laptop_exit(void)
+ 		if (!i2c_dev->board_info.type)
+ 			break;
+ 
+-		if (i2c_dev->state == PROBED)
++		if (i2c_dev->client)
+ 			i2c_unregister_device(i2c_dev->client);
+ 	}
+ }
 -- 
 2.16.2.804.g6dcf76e118-goog
