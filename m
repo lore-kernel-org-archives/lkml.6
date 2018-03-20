@@ -1,41 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeCTMNg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 08:13:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39084 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeCTMNb (ORCPT
+        id S1753167AbeCTMOh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 08:14:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752980AbeCTMOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:13:31 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 20 Mar 2018 08:13:30 -0400
-From: okaya@codeaurora.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-scsi@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Adaptec OEM Raid Solutions <aacraid@adaptec.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] scsi: dpt_i2o: eliminate duplicate barriers on
- weakly-ordered archs
-In-Reply-To: <20180320102304.GA21265@infradead.org>
-References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
- <1521514207-10695-4-git-send-email-okaya@codeaurora.org>
- <20180320102304.GA21265@infradead.org>
-Message-ID: <fe8fe164a7b3c4372c3e12d43a6e48c2@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Tue, 20 Mar 2018 08:14:35 -0400
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, minchan@kernel.org,
+        kirill.shutemov@linux.intel.com, linux-mm@kvack.org, hughd@google.com,
+        borntraeger@de.ibm.com, gerald.schaefer@de.ibm.com
+Subject: [PATCH v3 1/1] mm/ksm: fix interaction with THP
+Date: Tue, 20 Mar 2018 13:14:29 +0100
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18032012-0020-0000-0000-0000040747B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032012-0021-0000-0000-0000429B611D
+Message-Id: <1521548069-24758-1-git-send-email-imbrenda@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803200143
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-20 06:23, Christoph Hellwig wrote:
-> This is a basically unmaintained driver for historic hardware, and not 
-> the
-> right place for micro-optimizations.
+This patch fixes a corner case for KSM. When two pages belong or
+belonged to the same transparent hugepage, and they should be merged,
+KSM fails to split the page, and therefore no merging happens.
 
-Sure, I can drop this on the next version.
+This bug can be reproduced by:
+* making sure ksm is running (in case disabling ksmtuned)
+* enabling transparent hugepages
+* allocating a THP-aligned 1-THP-sized buffer
+  e.g. on amd64: posix_memalign(&p, 1<<21, 1<<21)
+* filling it with the same values
+  e.g. memset(p, 42, 1<<21)
+* performing madvise to make it mergeable
+  e.g. madvise(p, 1<<21, MADV_MERGEABLE)
+* waiting for KSM to perform a few scans
+
+The expected outcome is that the all the pages get merged (1 shared and
+the rest sharing); the actual outcome is that no pages get merged (1
+unshared and the rest volatile)
+
+The reason of this behaviour is that we increase the reference count
+once for both pages we want to merge, but if they belong to the same
+hugepage (or compound page), the reference counter used in both cases
+is the one of the head of the compound page.
+This means that split_huge_page will find a value of the reference
+counter too high and will fail.
+
+This patch solves this problem by testing if the two pages to merge
+belong to the same hugepage when attempting to merge them. If so, the
+hugepage is split safely. This means that the hugepage is not split if
+not necessary.
+
+Co-authored-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+---
+ mm/ksm.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 293721f..da777a9 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2082,8 +2082,22 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
+ 	tree_rmap_item =
+ 		unstable_tree_search_insert(rmap_item, page, &tree_page);
+ 	if (tree_rmap_item) {
++		bool split;
++
+ 		kpage = try_to_merge_two_pages(rmap_item, page,
+ 						tree_rmap_item, tree_page);
++		/*
++		 * If both pages we tried to merge belong to the same compound
++		 * page, then we actually ended up increasing the reference
++		 * count of the same compound page twice, and split_huge_page
++		 * failed.
++		 * Here we set a flag if that happened, and we use it later to
++		 * try split_huge_page again. Since we call put_page right
++		 * afterwards, the reference count will be correct and
++		 * split_huge_page should succeed.
++		 */
++		split = PageTransCompound(page)
++			&& compound_head(page) == compound_head(tree_page);
+ 		put_page(tree_page);
+ 		if (kpage) {
+ 			/*
+@@ -2110,6 +2124,20 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
+ 				break_cow(tree_rmap_item);
+ 				break_cow(rmap_item);
+ 			}
++		} else if (split) {
++			/*
++			 * We are here if we tried to merge two pages and
++			 * failed because they both belonged to the same
++			 * compound page. We will split the page now, but no
++			 * merging will take place.
++			 * We do not want to add the cost of a full lock; if
++			 * the page is locked, it is better to skip it and
++			 * perhaps try again later.
++			 */
++			if (!trylock_page(page))
++				return;
++			split_huge_page(page);
++			unlock_page(page);
+ 		}
+ 	}
+ }
+-- 
+2.7.4
