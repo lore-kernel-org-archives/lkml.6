@@ -1,296 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752527AbeCTIym (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:54:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:51134 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752397AbeCTIxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:53:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,334,1517904000";
-   d="scan'208";a="184360762"
-From: Aaron Lu <aaron.lu@intel.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0 page unless compaction failed
-Date: Tue, 20 Mar 2018 16:54:50 +0800
-Message-Id: <20180320085452.24641-3-aaron.lu@intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180320085452.24641-1-aaron.lu@intel.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
+        id S1752359AbeCTI5E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:57:04 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:34472 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751790AbeCTI5B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:57:01 -0400
+Date: Tue, 20 Mar 2018 09:56:32 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [RFC PATCH 4/6] mm: provide generic compat_sys_readahead()
+ implementation
+Message-ID: <20180320085632.GB30383@light.dominikbrodowski.net>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net>
+ <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk>
+ <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com>
+ <20180319232342.GX30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319232342.GX30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running will-it-scale/page_fault1 process mode workload on a 2 sockets
-Intel Skylake server showed severe lock contention of zone->lock, as
-high as about 80%(42% on allocation path and 35% on free path) CPU
-cycles are burnt spinning. With perf, the most time consuming part inside
-that lock on free path is cache missing on page structures, mostly on
-the to-be-freed page's buddy due to merging.
+On Mon, Mar 19, 2018 at 11:23:42PM +0000, Al Viro wrote:
+> static inline long C_S_moron(int, loff_t, size_t);
+> long compat_SyS_moron(long a0, long a1, long a2, long a3, long a4, long a5, long a6)
+> {
+> 	return C_S_moron((__force int)a0,
+> 		  (__force loff_t)(((u64)a2 << 32)|a1),
+> 		  (__force size_t)a3);
+> }
+> static inline long C_S_moron(int fd, loff_t offset, size_t count)
+> {
+> 	whatever body you had for it
+> }
+> 
+> That - from
+> COMPAT_SYSCALL_DEFINE3(moron, int, fd, loff_t, offset, size_t, count)
+> {
+> 	whatever body you had for it
+> }
+> 
+> We can use similar machinery for SYSCALL_DEFINE itself, so that
+> SyS_moron() would be defined with (long, long, long, long, long, long)
+> as arguments and not (long, long long, long) as we have now.
 
-One way to avoid this overhead is not do any merging at all for order-0
-pages. With this approach, the lock contention for zone->lock on free
-path dropped to 1.1% but allocation side still has as high as 42% lock
-contention. In the meantime, the dropped lock contention on free side
-doesn't translate to performance increase, instead, it's consumed by
-increased lock contention of the per node lru_lock(rose from 5% to 37%)
-and the final performance slightly dropped about 1%.
+That would be great, as it would allow to use a struct pt_regs * based
+syscall calling convention on i386 as well, and not only on x86-64, right?
 
-Though performance dropped a little, it almost eliminated zone lock
-contention on free path and it is the foundation for the next patch
-that eliminates zone lock contention for allocation path.
+> It's not impossible to do.  It won't be pretty, but that use of local
+> enums allows to avoid unbearably long expansions.
+> 
+> Benefits:
+> 	* all SyS... wrappers (i.e. the thing that really ought to
+> go into syscall tables) have the same type.
+> 	* we could have SYSCALL_DEFINE produce a trivial compat
+> wrapper, have explicit COMPAT_SYSCALL_DEFINE discard that thing
+> and populate the compat syscall table *entirely* with compat_SyS_...,
+> letting the linker sort it out.  That way we don't need to keep
+> track of what can use native and what needs compat in each compat
+> table on biarch.
+> 	* s390 compat wrappers would disappear with that approach.
+> 	* we could even stop generating sys_... aliases - if
+> syscall table is generated by slapping SyS_... or compat_SyS_...
+> on the name given there, we don't need to _have_ those sys_...
+> things at all.  All SyS_... would have the same type, so the pile
+> in syscalls.h would not be needed - we could generate the externs
+> at the same time we generate the syscall table.
+> 
+> And yes, it's a high-squick approach.  I know and I'm not saying
+> it's a good idea.  OTOH, to quote the motto of philosophers and
+> shell game operators, "there's something in it"...
 
-A new document file called "struct_page_filed" is added to explain
-the newly reused field in "struct page".
+... and getting rid of all in-kernel calls to sys_*() is needed as
+groundwork for that. So I'll continue to do that "mindless" conversion
+first. On top of that, three things (which are mostly orthogonal to each
+other) can be done:
 
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
----
- Documentation/vm/struct_page_field |  5 +++
- include/linux/mm_types.h           |  1 +
- mm/compaction.c                    | 13 +++++-
- mm/internal.h                      | 27 ++++++++++++
- mm/page_alloc.c                    | 89 +++++++++++++++++++++++++++++++++-----
- 5 files changed, 122 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/vm/struct_page_field
+1) ptregs system call conversion for x86-64
 
-diff --git a/Documentation/vm/struct_page_field b/Documentation/vm/struct_page_field
-new file mode 100644
-index 000000000000..1ab6c19ccc7a
---- /dev/null
-+++ b/Documentation/vm/struct_page_field
-@@ -0,0 +1,5 @@
-+buddy_merge_skipped:
-+Used to indicate this page skipped merging when added to buddy. This
-+field only makes sense if the page is in Buddy and is order zero.
-+It's a bug if any higher order pages in Buddy has this field set.
-+Shares space with index.
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index fd1af6b9591d..7edc4e102a8e 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -91,6 +91,7 @@ struct page {
- 		pgoff_t index;		/* Our offset within mapping. */
- 		void *freelist;		/* sl[aou]b first free object */
- 		/* page_deferred_list().prev	-- second tail page */
-+		bool buddy_merge_skipped; /* skipped merging when added to buddy */
- 	};
- 
- 	union {
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 2c8999d027ab..fb9031fdca41 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -776,8 +776,19 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		 * potential isolation targets.
- 		 */
- 		if (PageBuddy(page)) {
--			unsigned long freepage_order = page_order_unsafe(page);
-+			unsigned long freepage_order;
- 
-+			/*
-+			 * If this is a merge_skipped page, do merge now
-+			 * since high-order pages are needed. zone lock
-+			 * isn't taken for the merge_skipped check so the
-+			 * check could be wrong but the worst case is we
-+			 * lose a merge opportunity.
-+			 */
-+			if (page_merge_was_skipped(page))
-+				try_to_merge_page(page);
-+
-+			freepage_order = page_order_unsafe(page);
- 			/*
- 			 * Without lock, we cannot be sure that what we got is
- 			 * a valid page order. Consider only values in the
-diff --git a/mm/internal.h b/mm/internal.h
-index e6bd35182dae..2bfbaae2d835 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -538,4 +538,31 @@ static inline bool is_migrate_highatomic_page(struct page *page)
- }
- 
- void setup_zone_pageset(struct zone *zone);
-+
-+static inline bool page_merge_was_skipped(struct page *page)
-+{
-+	return page->buddy_merge_skipped;
-+}
-+
-+void try_to_merge_page(struct page *page);
-+
-+#ifdef CONFIG_COMPACTION
-+static inline bool can_skip_merge(struct zone *zone, int order)
-+{
-+	/* Compaction has failed in this zone, we shouldn't skip merging */
-+	if (zone->compact_considered)
-+		return false;
-+
-+	/* Only consider no_merge for order 0 pages */
-+	if (order)
-+		return false;
-+
-+	return true;
-+}
-+#else /* CONFIG_COMPACTION */
-+static inline bool can_skip_merge(struct zone *zone, int order)
-+{
-+	return false;
-+}
-+#endif  /* CONFIG_COMPACTION */
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3cdf1e10d412..eb78014dfbde 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -730,6 +730,16 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
- 				unsigned int order, int migratetype) {}
- #endif
- 
-+static inline void set_page_merge_skipped(struct page *page)
-+{
-+	page->buddy_merge_skipped = true;
-+}
-+
-+static inline void clear_page_merge_skipped(struct page *page)
-+{
-+	page->buddy_merge_skipped = false;
-+}
-+
- static inline void set_page_order(struct page *page, unsigned int order)
- {
- 	set_page_private(page, order);
-@@ -739,6 +749,13 @@ static inline void set_page_order(struct page *page, unsigned int order)
- static inline void add_to_buddy_common(struct page *page, struct zone *zone,
- 					unsigned int order, int mt)
- {
-+	/*
-+	 * Always clear buddy_merge_skipped when added to buddy because
-+	 * buddy_merge_skipped shares space with index and index could
-+	 * be used as migratetype for PCP pages.
-+	 */
-+	clear_page_merge_skipped(page);
-+
- 	set_page_order(page, order);
- 	zone->free_area[order].nr_free++;
- }
-@@ -769,6 +786,7 @@ static inline void remove_from_buddy(struct page *page, struct zone *zone,
- 	list_del(&page->lru);
- 	zone->free_area[order].nr_free--;
- 	rmv_page_order(page);
-+	clear_page_merge_skipped(page);
- }
- 
- /*
-@@ -839,7 +857,7 @@ static inline int page_is_buddy(struct page *page, struct page *buddy,
-  * -- nyc
-  */
- 
--static inline void __free_one_page(struct page *page,
-+static inline void do_merge(struct page *page,
- 		unsigned long pfn,
- 		struct zone *zone, unsigned int order,
- 		int migratetype)
-@@ -851,16 +869,6 @@ static inline void __free_one_page(struct page *page,
- 
- 	max_order = min_t(unsigned int, MAX_ORDER, pageblock_order + 1);
- 
--	VM_BUG_ON(!zone_is_initialized(zone));
--	VM_BUG_ON_PAGE(page->flags & PAGE_FLAGS_CHECK_AT_PREP, page);
--
--	VM_BUG_ON(migratetype == -1);
--	if (likely(!is_migrate_isolate(migratetype)))
--		__mod_zone_freepage_state(zone, 1 << order, migratetype);
--
--	VM_BUG_ON_PAGE(pfn & ((1 << order) - 1), page);
--	VM_BUG_ON_PAGE(bad_range(zone, page), page);
--
- continue_merging:
- 	while (order < max_order - 1) {
- 		buddy_pfn = __find_buddy_pfn(pfn, order);
-@@ -933,6 +941,61 @@ static inline void __free_one_page(struct page *page,
- 	add_to_buddy_head(page, zone, order, migratetype);
- }
- 
-+void try_to_merge_page(struct page *page)
-+{
-+	unsigned long pfn, buddy_pfn, flags;
-+	struct page *buddy;
-+	struct zone *zone;
-+
-+	/*
-+	 * No need to do merging if buddy is not free.
-+	 * zone lock isn't taken so this could be wrong but worst case
-+	 * is we lose a merge opportunity.
-+	 */
-+	pfn = page_to_pfn(page);
-+	buddy_pfn = __find_buddy_pfn(pfn, 0);
-+	buddy = page + (buddy_pfn - pfn);
-+	if (!PageBuddy(buddy))
-+		return;
-+
-+	zone = page_zone(page);
-+	spin_lock_irqsave(&zone->lock, flags);
-+	/* Verify again after taking the lock */
-+	if (likely(PageBuddy(page) && page_merge_was_skipped(page) &&
-+		   PageBuddy(buddy))) {
-+		int mt = get_pageblock_migratetype(page);
-+
-+		remove_from_buddy(page, zone, 0);
-+		do_merge(page, pfn, zone, 0, mt);
-+	}
-+	spin_unlock_irqrestore(&zone->lock, flags);
-+}
-+
-+static inline void __free_one_page(struct page *page,
-+		unsigned long pfn,
-+		struct zone *zone, unsigned int order,
-+		int migratetype)
-+{
-+	VM_BUG_ON(!zone_is_initialized(zone));
-+	VM_BUG_ON_PAGE(page->flags & PAGE_FLAGS_CHECK_AT_PREP, page);
-+
-+	VM_BUG_ON(migratetype == -1);
-+	if (likely(!is_migrate_isolate(migratetype)))
-+		__mod_zone_freepage_state(zone, 1 << order, migratetype);
-+
-+	VM_BUG_ON_PAGE(pfn & ((1 << order) - 1), page);
-+	VM_BUG_ON_PAGE(bad_range(zone, page), page);
-+
-+	if (can_skip_merge(zone, order)) {
-+		add_to_buddy_head(page, zone, 0, migratetype);
-+		set_page_merge_skipped(page);
-+		return;
-+	}
-+
-+	do_merge(page, pfn, zone, order, migratetype);
-+}
-+
-+
- /*
-  * A bad page could be due to a number of fields. Instead of multiple branches,
-  * try and check multiple fields with one check. The caller must do a detailed
-@@ -1183,8 +1246,10 @@ static void free_pcppages_bulk(struct zone *zone, int count,
- 			 * can be offset by reduced memory latency later. To
- 			 * avoid excessive prefetching due to large count, only
- 			 * prefetch buddy for the last pcp->batch nr of pages.
-+			 *
-+			 * If merge can be skipped, no need to prefetch buddy.
- 			 */
--			if (count > pcp->batch)
-+			if (can_skip_merge(zone, 0) || count > pcp->batch)
- 				continue;
- 			pfn = page_to_pfn(page);
- 			buddy_pfn = __find_buddy_pfn(pfn, 0);
--- 
-2.14.3
+   Original implementation by Linus exists; needs a bit of tweaking
+   but should be doable soon. Need to double-check it does the right
+   thing for IA32_EMULATION, though.
+
+2) re-work initramfs etc. code to not use in-kernel equivalents of
+   syscalls, but operate on the VFS level instead.
+
+3) re-work SYSCALL_DEFINEx() / COMPAT_SYSCALL_DEFINEx() based on
+   your suggestions.
+
+Does that sound sensible?
+
+Thanks,
+	Dominik
