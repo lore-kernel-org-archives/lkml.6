@@ -1,151 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753638AbeCTNdC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:33:02 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:59336 "EHLO
+        id S1753684AbeCTNdQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:33:16 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:10888 "EHLO
         stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753361AbeCTNbb (ORCPT
+        with ESMTP id S1753663AbeCTNdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:31:31 -0400
-Date: Tue, 20 Mar 2018 19:00:11 +0530
+        Tue, 20 Mar 2018 09:33:11 -0400
+Date: Tue, 20 Mar 2018 19:02:07 +0530
 From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
         "davem@davemloft.net" <davem@davemloft.net>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
         Ganesh GR <ganeshgr@chelsio.com>,
         Nirranjan Kirubaharan <nirranjan@chelsio.com>,
         Indranil Choudhury <indranil@chelsio.com>
-Subject: Re: [RFC v2 0/2] kernel: add support to collect hardware logs in
- crash recovery kernel
-Message-ID: <20180320133010.GA25574@chelsio.com>
-References: <1521198725-13463-1-git-send-email-rahul.lakkireddy@chelsio.com>
- <20180319075555.GA22955@chelsio.com>
- <20180319082211.6651b45a@xeon-e3>
+Subject: Re: [RFC PATCH 2/3] x86/io: implement 256-bit IO read and write
+Message-ID: <20180320133206.GB25574@chelsio.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180319082211.6651b45a@xeon-e3>
+In-Reply-To: <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, March 03/19/18, 2018 at 20:52:11 +0530, Stephen Hemminger wrote:
-> On Mon, 19 Mar 2018 13:25:56 +0530
-> Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> wrote:
+On Monday, March 03/19/18, 2018 at 20:13:10 +0530, Thomas Gleixner wrote:
+> On Mon, 19 Mar 2018, Rahul Lakkireddy wrote:
 > 
-> > On Friday, March 03/16/18, 2018 at 16:42:03 +0530, Rahul Lakkireddy wrote:
-> > > On production servers running variety of workloads over time, kernel
-> > > panic can happen sporadically after days or even months. It is
-> > > important to collect as much debug logs as possible to root cause
-> > > and fix the problem, that may not be easy to reproduce. Snapshot of
-> > > underlying hardware/firmware state (like register dump, firmware
-> > > logs, adapter memory, etc.), at the time of kernel panic will be very
-> > > helpful while debugging the culprit device driver.
-> > > 
-> > > This series of patches add new generic framework that enable device
-> > > drivers to collect device specific snapshot of the hardware/firmware
-> > > state of the underlying device in the crash recovery kernel. In crash
-> > > recovery kernel, the collected logs are exposed via /proc/crashdd/
-> > > directory, which is copied by user space scripts for post-analysis.
-> > > 
-> > > A kernel module crashdd is newly added. In crash recovery kernel,
-> > > crashdd exposes /proc/crashdd/ directory containing device specific
-> > > hardware/firmware logs.
-> > > 
-> > > The sequence of actions done by device drivers to append their device
-> > > specific hardware/firmware logs to /proc/crashdd/ directory are as
-> > > follows:
-> > > 
-> > > 1. During probe (before hardware is initialized), device drivers
-> > > register to the crashdd module (via crashdd_add_dump()), with
-> > > callback function, along with buffer size and log name needed for
-> > > firmware/hardware log collection.
-> > > 
-> > > 2. Crashdd creates a driver's directory under /proc/crashdd/<driver>.
-> > > Then, it allocates the buffer with requested size and invokes the
-> > > device driver's registered callback function.
-> > > 
-> > > 3. Device driver collects all hardware/firmware logs into the buffer
-> > > and returns control back to crashdd.
-> > > 
-> > > 4. Crashdd exposes the buffer as a file via
-> > > /proc/crashdd/<driver>/<dump_file>.
-> > > 
-> > > 5. User space script (/usr/lib/kdump/kdump-lib-initramfs.sh) copies
-> > > the entire /proc/crashdd/ directory to /var/crash/ directory.
-> > > 
-> > > Patch 1 adds crashdd module to allow drivers to register callback to
-> > > collect the device specific hardware/firmware logs.  The module also
-> > > exports /proc/crashdd/ directory containing the hardware/firmware logs.
-> > > 
-> > > Patch 2 shows a cxgb4 driver example using the API to collect
-> > > hardware/firmware logs in crash recovery kernel, before hardware is
-> > > initialized.  The logs for the devices are made available under
-> > > /proc/crashdd/cxgb4/ directory.
-> > > 
-> > > Suggestions and feedback will be much appreciated.
-> > > 
-> > > Thanks,
-> > > Rahul
-> > > 
-> > > RFC v1: https://www.spinics.net/lists/netdev/msg486562.html
-> > > 
-> > > ---
-> > > v2:
-> > > - Added new crashdd module that exports /proc/crashdd/ containing
-> > >   driver's registered hardware/firmware logs in patch 1.
-> > > - Replaced the API to allow drivers to register their hardware/firmware
-> > >   log collect routine in crash recovery kernel in patch 1.
-> > > - Updated patch 2 to use the new API in patch 1.
-> > > 
-> > > Rahul Lakkireddy (2):
-> > >   proc/crashdd: add API to collect hardware dump in second kernel
-> > >   cxgb4: collect hardware dump in second kernel
-> > > 
-> > >  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
-> > >  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 +++
-> > >  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
-> > >  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  12 ++
-> > >  fs/proc/Kconfig                                  |  11 +
-> > >  fs/proc/Makefile                                 |   1 +
-> > >  fs/proc/crashdd.c                                | 263 +++++++++++++++++++++++
-> > >  include/linux/crashdd.h                          |  43 ++++
-> > >  8 files changed, 362 insertions(+)
-> > >  create mode 100644 fs/proc/crashdd.c
-> > >  create mode 100644 include/linux/crashdd.h
-> > > 
-> > > -- 
-> > > 2.14.1
-> > >   
-> > 
-> > Does anyone have any comments with this approach?  If there are no
-> > comments, then I'll re-spin this RFC to Patch series.
-> > 
-> > Thanks,
-> > Rahul
+> > Use VMOVDQU AVX CPU instruction when available to do 256-bit
+> > IO read and write.
 > 
-> This does look like it gives useful data, but it is not clear that this can
-> not already be done with existing API's or small extensions.
+> That's not what the patch does. See below.
 > 
-> Introducing a new /proc interface and one that is mostly device specific is
-> unlikely to be greeted with a warm reception by the current Linux kernel community.
+> > Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+> > Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
 > 
-> For example, getting firmware logs seems like something more related to
-> ethtool or sysfs.
+> That Signed-off-by chain is wrong....
+> 
+> > +#ifdef CONFIG_AS_AVX
+> > +#include <asm/fpu/api.h>
+> > +
+> > +static inline u256 __readqq(const volatile void __iomem *addr)
+> > +{
+> > +	u256 ret;
+> > +
+> > +	kernel_fpu_begin();
+> > +	asm volatile("vmovdqu %0, %%ymm0" :
+> > +		     : "m" (*(volatile u256 __force *)addr));
+> > +	asm volatile("vmovdqu %%ymm0, %0" : "=m" (ret));
+> > +	kernel_fpu_end();
+> > +	return ret;
+> 
+> You _cannot_ assume that the instruction is available just because
+> CONFIG_AS_AVX is set. The availability is determined by the runtime
+> evaluated CPU feature flags, i.e. X86_FEATURE_AVX.
+> 
 
-The /proc/crashdd/ is only exposed in 2nd (crash recovery) kernel.
-This is similar to /proc/vmcore.  Since vmcore is exported via
-/proc/ interface, I've exported the device specific logs also via
-/proc/crashdd/.
+Ok.  Will add boot_cpu_has(X86_FEATURE_AVX) check as well.
 
-I can change to sysfs if that is the preferred approach.  Does
-/sys/crashdd/ sound good?
+> Aside of that I very much doubt that this is faster than 4 consecutive
+> 64bit reads/writes as you have the full overhead of
+> kernel_fpu_begin()/end() for each access.
+> 
+> You did not provide any numbers for this so its even harder to
+> determine.
+> 
+
+Sorry about that.  Here are the numbers with and without this series.
+
+When reading up to 2 GB on-chip memory via MMIO, the time taken:
+
+Without Series        With Series
+(64-bit read)         (256-bit read)
+
+52 seconds            26 seconds
+
+As can be seen, we see good improvement with doing 256-bits at a
+time.
+
+> As far as I can tell the code where you are using this is a debug
+> facility. What's the point? Debug is hardly a performance critical problem.
+> 
+
+On High Availability Server, the logs of the failing system must be
+collected as quickly as possible.  So, we're concerned with the amount
+of time taken to collect our large on-chip memory.  We see improvement
+in doing 256-bit reads at a time.
 
 Thanks,
 Rahul
