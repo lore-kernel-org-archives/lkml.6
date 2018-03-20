@@ -1,165 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeCTCCY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:02:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37502 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752077AbeCTCAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:00:47 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 10/15] mm/hmm: do not differentiate between empty entry or missing directory v2
-Date: Mon, 19 Mar 2018 22:00:32 -0400
-Message-Id: <20180320020038.3360-11-jglisse@redhat.com>
-In-Reply-To: <20180320020038.3360-1-jglisse@redhat.com>
-References: <20180320020038.3360-1-jglisse@redhat.com>
+        id S1752502AbeCTCDb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:03:31 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43277 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752470AbeCTCDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:03:22 -0400
+X-Google-Smtp-Source: AG47ELsbYllxPuE+2LYzjnpO1hdehBSgUD1d9xEKhgyCJ3VLWN65OcncXo35elsevYeJ+RC8C6IGxQ==
+Subject: Re: [PATCH 06/14] platform/chrome: chromeos_laptop - introduce
+ pr_fmt()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>
+Cc: Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-7-dmitry.torokhov@gmail.com>
+From: Benson Leung <bleung@google.com>
+Organization: Google
+Message-ID: <9d03df01-9a98-e149-65f8-d0f5064e2e0a@google.com>
+Date: Mon, 19 Mar 2018 19:03:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180312190907.174301-7-dmitry.torokhov@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="gAIdBU5mNZwQ4v8U3CrZDjV0Ozg51LwSB"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--gAIdBU5mNZwQ4v8U3CrZDjV0Ozg51LwSB
+Content-Type: multipart/mixed; boundary="I5r1uHUwWenXTddwodCYnDULylCskHGz7";
+ protected-headers="v1"
+From: Benson Leung <bleung@google.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>
+Cc: Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
+ linux-kernel@vger.kernel.org
+Message-ID: <9d03df01-9a98-e149-65f8-d0f5064e2e0a@google.com>
+Subject: Re: [PATCH 06/14] platform/chrome: chromeos_laptop - introduce
+ pr_fmt()
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-7-dmitry.torokhov@gmail.com>
+In-Reply-To: <20180312190907.174301-7-dmitry.torokhov@gmail.com>
 
-There is no point in differentiating between a range for which there
-is not even a directory (and thus entries) and empty entry (pte_none()
-or pmd_none() returns true).
+--I5r1uHUwWenXTddwodCYnDULylCskHGz7
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
-Simply drop the distinction ie remove HMM_PFN_EMPTY flag and merge now
-duplicate hmm_vma_walk_hole() and hmm_vma_walk_clear() functions.
 
-Changed since v1:
-  - Improved comments
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
----
- include/linux/hmm.h |  8 +++-----
- mm/hmm.c            | 45 +++++++++++++++------------------------------
- 2 files changed, 18 insertions(+), 35 deletions(-)
+On 03/12/2018 12:08 PM, Dmitry Torokhov wrote:
+> Define pr_fmt() to standardize driver messages.
+>=20
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 54d684fe3b90..cf283db22106 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -84,7 +84,6 @@ struct hmm;
-  * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
-  * HMM_PFN_WRITE: CPU page table has write permission set
-  * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
-- * HMM_PFN_EMPTY: corresponding CPU page table entry is pte_none()
-  * HMM_PFN_SPECIAL: corresponding CPU page table entry is special; i.e., the
-  *      result of vm_insert_pfn() or vm_insert_page(). Therefore, it should not
-  *      be mirrored by a device, because the entry will never have HMM_PFN_VALID
-@@ -94,10 +93,9 @@ struct hmm;
- #define HMM_PFN_VALID (1 << 0)
- #define HMM_PFN_WRITE (1 << 1)
- #define HMM_PFN_ERROR (1 << 2)
--#define HMM_PFN_EMPTY (1 << 3)
--#define HMM_PFN_SPECIAL (1 << 4)
--#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 5)
--#define HMM_PFN_SHIFT 6
-+#define HMM_PFN_SPECIAL (1 << 3)
-+#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 4)
-+#define HMM_PFN_SHIFT 5
- 
- /*
-  * hmm_pfn_to_page() - return struct page pointed to by a valid HMM pfn
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 2df69a95c5ab..52204037ad84 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -324,6 +324,16 @@ static void hmm_pfns_clear(uint64_t *pfns,
- 		*pfns = 0;
- }
- 
-+/*
-+ * hmm_vma_walk_hole() - handle a range lacking valid pmd or pte(s)
-+ * @start: range virtual start address (inclusive)
-+ * @end: range virtual end address (exclusive)
-+ * @walk: mm_walk structure
-+ * Returns: 0 on success, -EAGAIN after page fault, or page fault error
-+ *
-+ * This function will be called whenever pmd_none() or pte_none() returns true,
-+ * or whenever there is no page directory covering the virtual address range.
-+ */
- static int hmm_vma_walk_hole(unsigned long addr,
- 			     unsigned long end,
- 			     struct mm_walk *walk)
-@@ -333,31 +343,6 @@ static int hmm_vma_walk_hole(unsigned long addr,
- 	uint64_t *pfns = range->pfns;
- 	unsigned long i;
- 
--	hmm_vma_walk->last = addr;
--	i = (addr - range->start) >> PAGE_SHIFT;
--	for (; addr < end; addr += PAGE_SIZE, i++) {
--		pfns[i] = HMM_PFN_EMPTY;
--		if (hmm_vma_walk->fault) {
--			int ret;
--
--			ret = hmm_vma_do_fault(walk, addr, &pfns[i]);
--			if (ret != -EAGAIN)
--				return ret;
--		}
--	}
--
--	return hmm_vma_walk->fault ? -EAGAIN : 0;
--}
--
--static int hmm_vma_walk_clear(unsigned long addr,
--			      unsigned long end,
--			      struct mm_walk *walk)
--{
--	struct hmm_vma_walk *hmm_vma_walk = walk->private;
--	struct hmm_range *range = hmm_vma_walk->range;
--	uint64_t *pfns = range->pfns;
--	unsigned long i;
--
- 	hmm_vma_walk->last = addr;
- 	i = (addr - range->start) >> PAGE_SHIFT;
- 	for (; addr < end; addr += PAGE_SIZE, i++) {
-@@ -416,10 +401,10 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
- 			goto again;
- 		if (pmd_protnone(pmd))
--			return hmm_vma_walk_clear(start, end, walk);
-+			return hmm_vma_walk_hole(start, end, walk);
- 
- 		if (write_fault && !pmd_write(pmd))
--			return hmm_vma_walk_clear(start, end, walk);
-+			return hmm_vma_walk_hole(start, end, walk);
- 
- 		pfn = pmd_pfn(pmd) + pte_index(addr);
- 		flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
-@@ -438,7 +423,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		pfns[i] = 0;
- 
- 		if (pte_none(pte)) {
--			pfns[i] = HMM_PFN_EMPTY;
-+			pfns[i] = 0;
- 			if (hmm_vma_walk->fault)
- 				goto fault;
- 			continue;
-@@ -489,8 +474,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 
- fault:
- 		pte_unmap(ptep);
--		/* Fault all pages in range */
--		return hmm_vma_walk_clear(start, end, walk);
-+		/* Fault any virtual address we were ask to fault */
-+		return hmm_vma_walk_hole(start, end, walk);
- 	}
- 	pte_unmap(ptep - 1);
- 
--- 
-2.14.3
+Applied to my working branch for atmel_mxt_ts + chromeos_laptop.c for
+v4.17. Thanks!
+
+> ---
+>  drivers/platform/chrome/chromeos_laptop.c | 31 ++++++++++-------------=
+
+>  1 file changed, 14 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platfo=
+rm/chrome/chromeos_laptop.c
+> index 0a43f1833de3f..08ce7a105e768 100644
+> --- a/drivers/platform/chrome/chromeos_laptop.c
+> +++ b/drivers/platform/chrome/chromeos_laptop.c
+> @@ -4,6 +4,8 @@
+>  // Copyright (C) 2012 Google, Inc.
+>  // Author: Benson Leung <bleung@chromium.org>
+> =20
+> +#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/dmi.h>
+>  #include <linux/i2c.h>
+>  #include <linux/platform_data/atmel_mxt_ts.h>
+> @@ -139,15 +141,12 @@ static struct i2c_client *__add_probed_i2c_device=
+(
+>  	if (name) {
+>  		dmi_dev =3D dmi_find_device(DMI_DEV_TYPE_DEV_ONBOARD, name, NULL);
+>  		if (!dmi_dev) {
+> -			pr_err("%s failed to dmi find device %s.\n",
+> -			       __func__,
+> -			       name);
+> +			pr_err("failed to dmi find device %s\n", name);
+>  			return NULL;
+>  		}
+>  		dev_data =3D (struct dmi_dev_onboard *)dmi_dev->device_data;
+>  		if (!dev_data) {
+> -			pr_err("%s failed to get data from dmi for %s.\n",
+> -			       __func__, name);
+> +			pr_err("failed to get data from dmi for %s\n", name);
+>  			return NULL;
+>  		}
+>  		info->irq =3D dev_data->instance;
+> @@ -155,7 +154,7 @@ static struct i2c_client *__add_probed_i2c_device(
+> =20
+>  	adapter =3D i2c_get_adapter(bus);
+>  	if (!adapter) {
+> -		pr_err("%s failed to get i2c adapter %d.\n", __func__, bus);
+> +		pr_err("failed to get i2c adapter %d\n", bus);
+>  		return NULL;
+>  	}
+> =20
+> @@ -174,19 +173,18 @@ static struct i2c_client *__add_probed_i2c_device=
+(
+>  		dummy =3D i2c_new_probed_device(adapter, &dummy_info,
+>  					      alt_addr_list, NULL);
+>  		if (dummy) {
+> -			pr_debug("%s %d-%02x is probed at %02x\n",
+> -				  __func__, bus, info->addr, dummy->addr);
+> +			pr_debug("%d-%02x is probed at %02x\n",
+> +				 bus, info->addr, dummy->addr);
+>  			i2c_unregister_device(dummy);
+>  			client =3D i2c_new_device(adapter, info);
+>  		}
+>  	}
+> =20
+>  	if (!client)
+> -		pr_notice("%s failed to register device %d-%02x\n",
+> -			  __func__, bus, info->addr);
+> +		pr_notice("failed to register device %d-%02x\n",
+> +			  bus, info->addr);
+>  	else
+> -		pr_debug("%s added i2c device %d-%02x\n",
+> -			 __func__, bus, info->addr);
+> +		pr_debug("added i2c device %d-%02x\n", bus, info->addr);
+> =20
+>  	i2c_put_adapter(adapter);
+>  	return client;
+> @@ -227,7 +225,7 @@ static int find_i2c_adapter_num(enum i2c_adapter_ty=
+pe type)
+>  	dev =3D bus_find_device(&i2c_bus_type, NULL, &lookup, __find_i2c_adap=
+);
+>  	if (!dev) {
+>  		/* Adapters may appear later. Deferred probing will retry */
+> -		pr_notice("%s: i2c adapter %s not found on system.\n", __func__,
+> +		pr_notice("i2c adapter %s not found on system.\n",
+>  			  lookup.name);
+>  		return -ENODEV;
+>  	}
+> @@ -349,7 +347,7 @@ static int setup_tsl2563_als(enum i2c_adapter_type =
+type)
+>  static int __init chromeos_laptop_dmi_matched(const struct dmi_system_=
+id *id)
+>  {
+>  	cros_laptop =3D (void *)id->driver_data;
+> -	pr_debug("DMI Matched %s.\n", id->ident);
+> +	pr_debug("DMI Matched %s\n", id->ident);
+> =20
+>  	/* Indicate to dmi_scan that processing is done. */
+>  	return 1;
+> @@ -392,8 +390,7 @@ static int chromeos_laptop_probe(struct platform_de=
+vice *pdev)
+>  				ret =3D -EPROBE_DEFER;
+>  			} else {
+>  				/* Ran out of tries. */
+> -				pr_notice("%s: Ran out of tries for device.\n",
+> -					  __func__);
+> +				pr_notice("ran out of tries for device.\n");
+>  				i2c_dev->state =3D TIMEDOUT;
+>  			}
+>  		} else {
+> @@ -600,7 +597,7 @@ static int __init chromeos_laptop_init(void)
+>  	int ret;
+> =20
+>  	if (!dmi_check_system(chromeos_laptop_dmi_table)) {
+> -		pr_debug("%s unsupported system.\n", __func__);
+> +		pr_debug("unsupported system\n");
+>  		return -ENODEV;
+>  	}
+> =20
+>=20
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+
+--I5r1uHUwWenXTddwodCYnDULylCskHGz7--
+
+--gAIdBU5mNZwQ4v8U3CrZDjV0Ozg51LwSB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqwa+YACgkQHwn1ewov
+5li1yw//fpiFJpzxwwlnYcxyFG8oBdP0ZgwKwS1Idl/RkrIhGZnj+6pRz87YUFnm
+fr5p3Gp0+aOI3BDosxlDXHzZCNAhQXV8dh6X+hTmX+72E4JQGukpDtw/5kYyFuQm
++MzRGoJ1idHRzbagzT2GWvsfPwfmbV6fpPmU2un6zyD34Lp+8IHsbUIOi4RCp/kU
+ZMtQcMXTvfabWBhRMkDscT67V0tBT3AX+eIRyMbp3aeWzy4HLh322207mehd39Ld
+oLQqpiDOzbvBhkiosay429Pt1Sj7fc7WTB+yTCQeBAUY3lh4FY4iUQcONnokZlYz
+Ozk4yTrxiNNHcBDW03/WyEMwAwfKOKACezIbODg+zqx/zkJHs/IzNujUT+NpNbf5
+mEd3Af9vkFHTIxFKohVQZ+jpCtQU+iAvzxntxCyr/OmK+Tgzohwro5Xn9LnvgKND
+hfYEp942sMTFHODPZ+le1Z5RqBSKrWQuTEi0ZNMQCkpHAsAr/UQRJV/2/1bRCgR0
+7UfSipulzRfZtv7x+4rPz5aNhPZtg9kHXnEqWqCqJAufznjaAaqWk531NL7t9Q+V
+mCBO9Y6d6RPprLd2yMZVcz5D0iGzyLS69t1A19XD82sty52ahT3y9GD3+GOSpqTM
+wC0bfu/+Ntm+fzXvi9Vq6LspwOqse+jS3BQORj5Pyd6O6MEd58E=
+=Ot7l
+-----END PGP SIGNATURE-----
+
+--gAIdBU5mNZwQ4v8U3CrZDjV0Ozg51LwSB--
