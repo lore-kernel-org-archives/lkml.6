@@ -1,45 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751499AbeCTT5F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:57:05 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38121 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeCTT5B (ORCPT
+        id S1751524AbeCTUFp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:05:45 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40374 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbeCTUFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:57:01 -0400
-X-Google-Smtp-Source: AG47ELuOHOsNntEYmGN1Yy2U6typzJzMcaJE+JbOd5PKpwlPXovdm8V5u0NU+1jqP7flD+qe11zLkw==
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-To: corbet@lwn.net, yamada.masahiro@socionext.com, slyfox@gentoo.org,
-        tony.luck@intel.com, bjorn.forsman@gmail.com,
-        mudongliangabcd@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fix one dead link in ia64/xen.txt
-Date: Tue, 20 Mar 2018 15:56:58 -0400
-Message-Id: <20180320195658.17498-1-mudongliangabcd@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Tue, 20 Mar 2018 16:05:42 -0400
+X-Google-Smtp-Source: AG47ELsv+Ws8jlvjoAGc/MmndT5nbTE4eBBZiQtVqUj8looDdFbaCDCcS5U/Qb6M2gxR6qTT2Wk7cyruYr0TT+ARjZs=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <3a001779ec9c295adc515d9170cde6e3ae8762fb.1521005283.git.rgb@redhat.com>
+References: <cover.1521005283.git.rgb@redhat.com> <3a001779ec9c295adc515d9170cde6e3ae8762fb.1521005283.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 20 Mar 2018 16:05:39 -0400
+Message-ID: <CAHC9VhRsNknSgikKF24SdS5bKT_hokKRn2rsFvJ9jon7tiSoPw@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V3 1/2] audit: remove path param from link denied function
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
----
- Documentation/ia64/xen.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Mar 14, 2018 at 1:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> In commit 45b578fe4c3cade6f4ca1fc934ce199afd857edc
+> ("audit: link denied should not directly generate PATH record")
+> the need for the struct path *link parameter was removed.
+> Remove the now useless struct path argument.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/namei.c            | 2 +-
+>  include/linux/audit.h | 6 ++----
+>  kernel/audit.c        | 3 +--
+>  3 files changed, 4 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 9cc91fb..50d2533 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
+>         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+>                 return 0;
+>
+> -       audit_log_link_denied("linkat", link);
+> +       audit_log_link_denied("linkat");
+>         return -EPERM;
+>  }
+>
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index af410d9..75d5b03 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
+>                                              const struct path *path);
+>  extern void                audit_log_key(struct audit_buffer *ab,
+>                                           char *key);
+> -extern void                audit_log_link_denied(const char *operation,
+> -                                                 const struct path *link);
+> +extern void                audit_log_link_denied(const char *operation);
+>  extern void                audit_log_lost(const char *message);
+>
+>  extern int audit_log_task_context(struct audit_buffer *ab);
+> @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
+>  { }
+>  static inline void audit_log_key(struct audit_buffer *ab, char *key)
+>  { }
+> -static inline void audit_log_link_denied(const char *string,
+> -                                        const struct path *link)
+> +static inline void audit_log_link_denied(const char *string)
+>  { }
+>  static inline int audit_log_task_context(struct audit_buffer *ab)
+>  {
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 3f2f143..e8bf8d7 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2308,9 +2308,8 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
+>  /**
+>   * audit_log_link_denied - report a link restriction denial
+>   * @operation: specific link operation
+> - * @link: the path that triggered the restriction
+>   */
+> -void audit_log_link_denied(const char *operation, const struct path *link)
+> +void audit_log_link_denied(const char *operation)
+>  {
+>         struct audit_buffer *ab;
 
-diff --git a/Documentation/ia64/xen.txt b/Documentation/ia64/xen.txt
-index a12c74ce2773..464d4c29b8b5 100644
---- a/Documentation/ia64/xen.txt
-+++ b/Documentation/ia64/xen.txt
-@@ -26,8 +26,8 @@ Getting and Building Xen and Dom0
-     DomainU OS  : RHEL5
- 
-  1. Download source
--    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
--    # cd xen-unstable.hg
-+    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable
-+    # cd xen-unstable
-     # hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
- 
-  2. # make world
+*sigh*
+
+You forgot to update may_follow_link().
+
 -- 
-2.16.2
+paul moore
+www.paul-moore.com
