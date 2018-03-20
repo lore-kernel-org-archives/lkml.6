@@ -1,7 +1,32 @@
-Date: Tue, 20 Mar 2018 09:30:55 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: akpm@linux-foundation.org, cantabile.desu@gmail.com, kubakici@wp.pl,
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AG47ELuucIsz79OXmuzTiRKKp8xcLklQYnuhvYQUvY7RFfSACT9Hs+kmGcT/LC1q0WFtiMttap1w
+ARC-Seal: i=1; a=rsa-sha256; t=1521567252; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EFEUr3AtQje0i68UZSpOXxtZx/RkGQMeFSCLEet+zjin+1j2ssQpoRGb2Gy4X+UfSO
+         exHDvLFYrRME7/OIsvsCVIkEZWzPMYvcjWku179yGnWAak9dl2+RJOoM/TDJQ0U8hz7I
+         9+mRJA7jew/2SFyQG0RtcnleBlCCUrt4ty3RqUwGOOBJZQFTKry+dBgVh0bBQNEbWP7G
+         mZ3HbUM1qSyqek2z5qXb0luneKpFB36WstEOONnwWtQPkKXqWh3xaUMVf5IB6V7KLW60
+         TNTmiTSGtyNN/dyv5CKJ7awtPYuWNXECDuVfoIvn9asX7xyyrXFOpE9evTealNrt93/U
+         Hjaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=sp0UfhZ8KDjRlvvJ+qDZ9k9gn6SMh/La4P/ZxYDt+4Q=;
+        b=hKkOcv79nTNgLKYzJE1TMBhgaW7RKTaR3BlOwfgPa6HN04OzK4pBalbUQ5BUlV50ju
+         mQdVUqYuk1e/9gHJRAl8DoyWtD3R5XGFKKsRlrk7tFWDLZTENqoXCwJM1zdi1XkY3VQh
+         2uSAnVkWThpZXGMiOBVUDXYymBhgOoRGfL8iS9VNUqZxL6OYWQniBgNBiWwNx8qyx+Lg
+         QSRicq9Jk1iahjFTPaBgS936jksckLroe91cNhyETelX7wBeWmEg70/efFhicFkrIZRR
+         KZeqQVIRDWyontLE4mXxCDwYTJakaQrBf5KVqe5EPjPiW9rqwocX1fkeb2YAe6osf4D0
+         W7HA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Date: Tue, 20 Mar 2018 17:34:09 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, akpm@linux-foundation.org,
+	cantabile.desu@gmail.com, kubakici@wp.pl,
 	linux-wireless@vger.kernel.org, keescook@chromium.org,
 	shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
 	dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
@@ -14,102 +39,42 @@ Cc: akpm@linux-foundation.org, cantabile.desu@gmail.com, kubakici@wp.pl,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v3 19/20] firmware: add request_firmware_cache() to help
  with cache on reboot
-Message-ID: <20180320083055.GA21640@kroah.com>
+Message-ID: <20180320173409.GD4449@wotan.suse.de>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
  <20180310141501.2214-20-mcgrof@kernel.org>
+ <20180320083055.GA21640@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180310141501.2214-20-mcgrof@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180320083055.GA21640@kroah.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594560438545867805?=
+X-GMAIL-MSGID: =?utf-8?q?1595478903769905449?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 10, 2018 at 06:15:00AM -0800, Luis R. Rodriguez wrote:
-> Some devices have an optimization in place to enable the firmware to
-> be retaineed during a system reboot, so after reboot the device can skip
-> requesting and loading the firmware. This can save up to 1s in load
-> time. The mt7601u 802.11 device happens to be such a device.
+On Tue, Mar 20, 2018 at 09:30:55AM +0100, Greg KH wrote:
+> On Sat, Mar 10, 2018 at 06:15:00AM -0800, Luis R. Rodriguez wrote:
+> > +EXPORT_SYMBOL_GPL(request_firmware_cache);
 > 
-> When these devices retain the firmware on a reboot and then suspend
-> they can miss looking for the firmware on resume. To help with this we
-> need a way to cache the firmware when such an optimization has taken
-> place.
-> 
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> ---
->  .../driver-api/firmware/request_firmware.rst       | 14 +++++++++++++
->  drivers/base/firmware_loader/main.c                | 24 ++++++++++++++++++++++
->  include/linux/firmware.h                           |  3 +++
->  3 files changed, 41 insertions(+)
-> 
-> diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
-> index cc0aea880824..b554f4338859 100644
-> --- a/Documentation/driver-api/firmware/request_firmware.rst
-> +++ b/Documentation/driver-api/firmware/request_firmware.rst
-> @@ -44,6 +44,20 @@ request_firmware_nowait
->  .. kernel-doc:: drivers/base/firmware_class.c
->     :functions: request_firmware_nowait
->  
-> +Special optimizations on reboot
-> +===============================
-> +
-> +Some devices have an optimization in place to enable the firmware to be
-> +retained during system reboot. When such optimizations are used the driver
-> +author must ensure the firmware is still available on resume from suspend,
-> +this can be done with request_firmware_cache() insted of requesting for the
-> +firmare to be loaded.
-> +
-> +request_firmware_cache()
-> +-----------------------
-> +.. kernel-doc:: drivers/base/firmware_class.c
-> +   :functions: request_firmware_load
-> +
->  request firmware API expected driver use
->  ========================================
->  
-> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> index 2913bb0e5e7b..04bf853f60e9 100644
-> --- a/drivers/base/firmware_loader/main.c
-> +++ b/drivers/base/firmware_loader/main.c
-> @@ -656,6 +656,30 @@ int request_firmware_direct(const struct firmware **firmware_p,
->  }
->  EXPORT_SYMBOL_GPL(request_firmware_direct);
->  
-> +/**
-> + * request_firmware_cache: - cache firmware for suspend so resume can use it
-> + * @name: name of firmware file
-> + * @device: device for which firmware should be cached for
-> + *
-> + * There are some devices with an optimization that enables the device to not
-> + * require loading firmware on system reboot. This optimization may still
-> + * require the firmware present on resume from suspend. This routine can be
-> + * used to ensure the firmware is present on resume from suspend in these
-> + * situations. This helper is not compatible with drivers which use
-> + * request_firmware_into_buf() or request_firmware_nowait() with no uevent set.
-> + **/
-> +int request_firmware_cache(struct device *device, const char *name)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&fw_lock);
-> +	ret = fw_add_devm_name(device, name);
-> +	mutex_unlock(&fw_lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(request_firmware_cache);
+> I know you are just following the existing naming scheme, but please
+> let's not continue the problem here.  Can you prefix all of the firmware
+> exported symbols with "firmware_", and then the verb.  So this would be
+> "firmware_request_cache",
 
-I know you are just following the existing naming scheme, but please
-let's not continue the problem here.  Can you prefix all of the firmware
-exported symbols with "firmware_", and then the verb.  So this would be
-"firmware_request_cache", and the older function would be
-"firmware_request_direct".
+Sure.
 
-I've stopped here in the patch series, applying the others now, so feel
-free to rebase and resend what I've missed, and the minor fixups for the
-prior patches.
+>  and the older function would be
+> "firmware_request_direct".
 
-thanks,
+Sure, so you want to also rename the old exported symbols, and add a macro
+or static inline to enable use of the older names?
 
-greg k-h
+> I've stopped here in the patch series, applying the others now, so feel
+> free to rebase and resend what I've missed, and the minor fixups for the
+> prior patches.
+
+Sure thing.
+
+   Luis
