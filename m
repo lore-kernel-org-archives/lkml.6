@@ -1,101 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752462AbeCTCxS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:53:18 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44945 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751512AbeCTCmm (ORCPT
+        id S1751402AbeCTDAU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 23:00:20 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40408 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeCTDAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:42:42 -0400
-X-ME-Sender: <xms:IXWwWuCpor4U93lyHjBUHO0zUeT9_jSL6t_eff9ZB2e_BrlUM5CrfQ>
-Subject: Re: [PATCH] autofs4: Use wait_event_killable
-To: David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>
-References: <20180319191609.23880-1-willy@infradead.org>
- <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
-From: Ian Kent <raven@themaw.net>
-Message-ID: <daecdffe-b768-9c69-8609-b899ddde720c@themaw.net>
-Date: Tue, 20 Mar 2018 10:42:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803191218210.114201@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 19 Mar 2018 23:00:17 -0400
+X-Google-Smtp-Source: AG47ELt49S4xHvh84pIqS+HpI0FuDPXUQ2tu6LUDtdFaIcXwImNYP07c8zm9w0SN8BpceIDj/7a4hg==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] block, bfq: keep peak_rate estimation within range
+ 1..2^32-1
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <ff761610-4a37-f239-a491-cf2a04c44574@yandex-team.ru>
+Date: Tue, 20 Mar 2018 11:00:11 +0800
+Cc: linux-block <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Message-Id: <E9AC28A6-848D-420F-8DAB-8B1FC709BA38@linaro.org>
+References: <152025413365.161046.7757556276366364549.stgit@buzz>
+ <FE5352B7-CAFC-466C-BA07-F1B7427AA309@linaro.org>
+ <ff761610-4a37-f239-a491-cf2a04c44574@yandex-team.ru>
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2K30T2G029046
 
-On 20/03/18 03:25, David Rientjes wrote:
-> On Mon, 19 Mar 2018, Matthew Wilcox wrote:
+
+
+> Il giorno 19 mar 2018, alle ore 14:28, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
 > 
->> diff --git a/fs/autofs4/waitq.c b/fs/autofs4/waitq.c
->> index a0c57c37fa21..c160e9b3aa0f 100644
->> --- a/fs/autofs4/waitq.c
->> +++ b/fs/autofs4/waitq.c
->> @@ -19,9 +19,6 @@
->>   */
->>  static autofs_wqt_t autofs4_next_wait_queue = 1;
->>  
->> -/* These are the signals we allow interrupting a pending mount */
->> -#define SHUTDOWN_SIGS	(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGQUIT))
->> -
->>  void autofs4_catatonic_mode(struct autofs_sb_info *sbi)
->>  {
->>  	struct autofs_wait_queue *wq, *nwq;
->> @@ -486,29 +483,7 @@ int autofs4_wait(struct autofs_sb_info *sbi,
->>  	 * wq->name.name is NULL iff the lock is already released
->>  	 * or the mount has been made catatonic.
->>  	 */
->> -	if (wq->name.name) {
->> -		/* Block all but "shutdown" signals while waiting */
->> -		unsigned long shutdown_sigs_mask;
->> -		unsigned long irqflags;
->> -		sigset_t oldset;
->> -
->> -		spin_lock_irqsave(&current->sighand->siglock, irqflags);
->> -		oldset = current->blocked;
->> -		shutdown_sigs_mask = SHUTDOWN_SIGS & ~oldset.sig[0];
->> -		siginitsetinv(&current->blocked, shutdown_sigs_mask);
->> -		recalc_sigpending();
->> -		spin_unlock_irqrestore(&current->sighand->siglock, irqflags);
->> -
->> -		wait_event_interruptible(wq->queue, wq->name.name == NULL);
->> -
->> -		spin_lock_irqsave(&current->sighand->siglock, irqflags);
->> -		current->blocked = oldset;
->> -		recalc_sigpending();
->> -		spin_unlock_irqrestore(&current->sighand->siglock, irqflags);
->> -	} else {
->> -		pr_debug("skipped sleeping\n");
->> -	}
->> -
->> +	wait_event_killable(wq->queue, wq->name.name == NULL);
->>  	status = wq->status;
->>  
->>  	/*
+> On 19.03.2018 09:03, Paolo Valente wrote:
+>>> Il giorno 05 mar 2018, alle ore 04:48, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
+>>> 
+>>> Rate should never overflow or become zero because it is used as divider.
+>>> This patch accumulates it with saturation.
+>>> 
+>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>> ---
+>>> block/bfq-iosched.c |    8 +++++---
+>>> 1 file changed, 5 insertions(+), 3 deletions(-)
+>>> 
+>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>>> index aeca22d91101..a236c8d541b5 100644
+>>> --- a/block/bfq-iosched.c
+>>> +++ b/block/bfq-iosched.c
+>>> @@ -2546,7 +2546,8 @@ static void bfq_reset_rate_computation(struct bfq_data *bfqd,
+>>> 
+>>> static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
+>>> {
+>>> -	u32 rate, weight, divisor;
+>>> +	u32 weight, divisor;
+>>> +	u64 rate;
+>>> 
+>>> 	/*
+>>> 	 * For the convergence property to hold (see comments on
+>>> @@ -2634,9 +2635,10 @@ static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
+>>> 	 */
+>>> 	bfqd->peak_rate *= divisor-1;
+>>> 	bfqd->peak_rate /= divisor;
+>>> -	rate /= divisor; /* smoothing constant alpha = 1/divisor */
+>>> +	do_div(rate, divisor);	/* smoothing constant alpha = 1/divisor */
+>>> 
+>>> -	bfqd->peak_rate += rate;
+>>> +	/* rate should never overlow or become zero */
+>> It is bfqd->peak_rate that is used as a divider, and bfqd->peak_rate doesn't risk to be zero even if the variable 'rate' is zero here.
+>> So I guess the reason why you consider the possibility that bfqd->peak_rate becomes zero is because of an overflow when summing 'rate'. But, according to my calculations, this should be impossible with devices with sensible speeds.
+>> These are the reasons why I decided I could make it with a 32-bit variable, without any additional clamping. Did I make any mistake in my evaluation?
 > 
-> I understand converting the wait_event_interruptible() to 
-> wait_event_killable(), but why was the above wait_event_interruptible() 
-> only called when wq->name.name != NULL?  
+> According to Murphy's law this is inevitable..
+> 
 
-The code pre-dates my involvement in autofs too.
+Yep.  Actually Murphy has been even clement this time, by making the
+failure occur to a kernel expert :)
 
-I always thought it was because wq->name.name can become NULL before
-the wait is reached. Such as if the user space daemon manages to invoke
-autofs4_wait_release() before the wait call.
+> I've seen couple division by zero crashes in bfq_wr_duration.
+> Unfortunately logs weren't recorded.
+> 
+>> Anyway, even if I made some mistake about the maximum possible value of the device rate, and the latter may be too high for bfqd->peak_rate to contain it, then I guess the right solution would not be to clamp the actual rate to U32_MAX, but to move bfqd->peak_rate to 64 bits. Or am I missing something else?
+> >>> +	bfqd->peak_rate = clamp_t(u64, rate + bfqd->peak_rate, 1, U32_MAX);
+> 
+> 32-bit should be enough and better for division.
+> My patch makes sure it never overflows/underflows.
+> That's cheaper than full 64-bit/64-bit division.
+> Anyway 64-bit speed could overflow too. =)
+> 
 
-And if the autofs mount is made catatonic before the wait is reached
-wq->name.name will be set to NULL and wake up called for each waiter
-so that doesn't seem to require the if conditional either.
+I see your point.  Still, if the mistake is not in sizing, then you
+bumped into some odd bug.  In this respect, I don't like much the idea
+of sweeping the dust under the carpet.  So, let me ask you for a
+little bit more help.  With your patch applied, and thus with no risk
+of crashes, what about adding, right before your clamp_t, something
+like:
 
-Both of these cases to fit with what Matthew has already said and I
-can't think of any others.
+if (!bfqd->peak_rate)
+	pr_crit(<dump of all the variables involved in updating bfqd->peak_rate>);
 
-There may have been other reasons at some point, a lot has changed
-over (a long) time.
+Once the failure shows up (Murphy permitting), we might have hints to
+the bug causing it.
 
-Ian
+Apart from that, I have no problem with patches that make bfq more
+robust, even in a sort of black-box way.
+
+Thanks a lot,
+Paolo
+
+> 
+>>> 	update_thr_responsiveness_params(bfqd);
+>>> 
+>>> reset_computation:
