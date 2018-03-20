@@ -1,50 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeCTG2M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:28:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53455 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751508AbeCTG2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:28:11 -0400
-Subject: Re: [PATCH] x86/xen: Delay get_cpu_cap until stack canary is
- established
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jason Andryuk <jandryuk@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180319165804.10636-1-jandryuk@gmail.com>
- <0726a193-6ce9-e835-9eef-01c56680d30a@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <6d73d847-9f33-7dce-2f60-33481bb4776e@suse.com>
-Date: Tue, 20 Mar 2018 07:28:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752156AbeCTG2Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:28:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43087 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeCTG2U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 02:28:20 -0400
+Date: Mon, 19 Mar 2018 23:28:05 -0700
+From: tip-bot for Martin Vuille <tipbot@zytor.com>
+Message-ID: <tip-3d20c6246690219881786de10d2dda93f616d0ac@git.kernel.org>
+Cc: namhyung@kernel.org, adrian.hunter@intel.com, jpmv27@aim.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, jolsa@kernel.org,
+        wangnan0@huawei.com, tglx@linutronix.de, dsahern@gmail.com,
+        hpa@zytor.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, jolsa@kernel.org, wangnan0@huawei.com,
+        dsahern@gmail.com, hpa@zytor.com, mingo@kernel.org,
+        namhyung@kernel.org, jpmv27@aim.com, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com
+In-Reply-To: <20180211212420.18388-1-jpmv27@aim.com>
+References: <20180211212420.18388-1-jpmv27@aim.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf unwind: Unwind with libdw doesn't take symfs
+ into account
+Git-Commit-ID: 3d20c6246690219881786de10d2dda93f616d0ac
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <0726a193-6ce9-e835-9eef-01c56680d30a@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/03/18 23:22, Boris Ostrovsky wrote:
-> On 03/19/2018 12:58 PM, Jason Andryuk wrote:
->> Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
->> call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
-> 
-> s/This is works/This works/
-> 
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> 
-> Do we still need 4f277295e54?
+Commit-ID:  3d20c6246690219881786de10d2dda93f616d0ac
+Gitweb:     https://git.kernel.org/tip/3d20c6246690219881786de10d2dda93f616d0ac
+Author:     Martin Vuille <jpmv27@aim.com>
+AuthorDate: Sun, 11 Feb 2018 16:24:20 -0500
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 16 Mar 2018 13:55:51 -0300
 
-I'd rather keep it in order to avoid nasty problems in case something
-changes. After all we are trying to do an initialization in C code
-which should be done in assembly before entering the C part. Doing this
-properly for 32-bit pv-kernels would be rather difficult, but this is no
-reason to drop the correct solution for the 64-bit case.
+perf unwind: Unwind with libdw doesn't take symfs into account
 
+Path passed to libdw for unwinding doesn't include symfs path
+if specified, so unwinding fails because ELF file is not found.
 
-Juergen
+Similar to unwinding with libunwind, pass symsrc_filename instead
+of long_name. If there is no symsrc_filename, fallback to long_name.
+
+Signed-off-by: Martin Vuille <jpmv27@aim.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20180211212420.18388-1-jpmv27@aim.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/unwind-libdw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 1e9c974faf67..8e969f28cc59 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -50,7 +50,7 @@ static int __report_module(struct addr_location *al, u64 ip,
+ 
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+-				      dso->long_name, -1, al->map->start,
++				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
+ 				      false);
+ 
+ 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
