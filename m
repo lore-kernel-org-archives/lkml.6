@@ -1,307 +1,358 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753016AbeCTLrn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:47:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52082 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCTLrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:47:40 -0400
-Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-To: Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-3-aaron.lu@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <7b1988e9-7d50-d55e-7590-20426fb257af@suse.cz>
-Date: Tue, 20 Mar 2018 12:45:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320085452.24641-3-aaron.lu@intel.com>
-Content-Type: text/plain; charset=utf-8
+        id S1752891AbeCTL4Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:56:25 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:49022 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeCTL4U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 07:56:20 -0400
+X-IronPort-AV: E=Sophos;i="5.48,335,1517846400";
+   d="scan'208";a="74644443"
+From: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Szymon Mielczarek <szymonx.mielczarek@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alex Lemberg <Alex.Lemberg@wdc.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: RE: [PATCH V2 1/1] scsi: ufs: Add support for Auto-Hibernate Idle
+ Timer
+Thread-Topic: [PATCH V2 1/1] scsi: ufs: Add support for Auto-Hibernate Idle
+ Timer
+Thread-Index: AQHTv1ien8Q4vfnkhUuoRwGpeXdfpqPZAI+Q
+Date: Tue, 20 Mar 2018 11:56:15 +0000
+Message-ID: <MWHPR04MB113751510AF964BF944455C59AAB0@MWHPR04MB1137.namprd04.prod.outlook.com>
+References: <1521446478-12656-1-git-send-email-adrian.hunter@intel.com>
+ <1521446478-12656-2-git-send-email-adrian.hunter@intel.com>
+In-Reply-To: <1521446478-12656-2-git-send-email-adrian.hunter@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Stanislav.Nijnikov@wdc.com;
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0881;20:3ZbcLNY1pLJ+XxznN9HTjVEO0ieLFU6do/G+bFoMMlEJZTw9JA0hqqoTn2hG6wctPUn5kBUzvKqvZ7B3UP0b98WPotsDzX4o5K5681PIKoSPqrFLE5b39ahCqw8A4x2uzjHd6X2cuTqAyNJrWG9EF50tdhM9zAvIQdvUhxLyEyk=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: aa3aeffe-6556-4f56-6a1c-08d58e5995ab
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0881;
+x-ms-traffictypediagnostic: MWHPR04MB0881:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB08812CD0661A158BF38BAB099AAB0@MWHPR04MB0881.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(104084551191319)(146099531331640)(7411616537696)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501244)(52105095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR04MB0881;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0881;
+x-forefront-prvs: 061725F016
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(366004)(376002)(39380400002)(50944005)(13464003)(189003)(199004)(2900100001)(59450400001)(66066001)(53936002)(6246003)(478600001)(81156014)(72206003)(3280700002)(25786009)(6116002)(3846002)(106356001)(39060400002)(2906002)(4326008)(186003)(5250100002)(8676002)(74316002)(6506007)(110136005)(54906003)(105586002)(7416002)(33656002)(102836004)(305945005)(53546011)(55016002)(26005)(9686003)(2950100002)(229853002)(7736002)(316002)(5660300001)(6436002)(8936002)(68736007)(14454004)(81166006)(76176011)(97736004)(99286004)(7696005)(575784001)(86362001)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0881;H:MWHPR04MB1137.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: CFVZg+eT9LHGvoYAc82t01ufqAt8wE+v3QGfsU99c9v57EW5KQ20vX+0zZGbOHyGMnbNM06SM8tqiSLa/e4gsica4eeNXhITS78zX+1MNJcpS3C8srWTt436UWPb6VYiaZb3HqlPTNJ8GWxXg5V55dnsmhNJMgOlevK5CnNxM8q7OH4dh/nP9OoUR4Tjh+o4UT4PcIRkAB47pf/qEumJrSj2DicymJJYSeFIang9/2EFRhCs/KT/mvm+9xdq0i+scBQCjJ8BnnChotmLXEaLZn31/qsaR2wb8xtIklCvYnCGCjPC8c3JKPusPmoXaEuAhiZAy/cHP2xQkjqJNcw9jg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa3aeffe-6556-4f56-6a1c-08d58e5995ab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2018 11:56:15.5815
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0881
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2KBuZKT008623
 
-On 03/20/2018 09:54 AM, Aaron Lu wrote:
-> Running will-it-scale/page_fault1 process mode workload on a 2 sockets
-> Intel Skylake server showed severe lock contention of zone->lock, as
-> high as about 80%(42% on allocation path and 35% on free path) CPU
-> cycles are burnt spinning. With perf, the most time consuming part inside
-> that lock on free path is cache missing on page structures, mostly on
-> the to-be-freed page's buddy due to merging.
 
-But why, with all the prefetching in place?
 
-> One way to avoid this overhead is not do any merging at all for order-0
-> pages. With this approach, the lock contention for zone->lock on free
-> path dropped to 1.1% but allocation side still has as high as 42% lock
-> contention. In the meantime, the dropped lock contention on free side
-> doesn't translate to performance increase, instead, it's consumed by
-> increased lock contention of the per node lru_lock(rose from 5% to 37%)
-> and the final performance slightly dropped about 1%.
+> -----Original Message-----
+> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
+> Sent: Monday, March 19, 2018 10:01 AM
+> To: Vinayak Holikatti <vinholikatti@gmail.com>; Martin K. Petersen
+> <martin.petersen@oracle.com>; James E.J. Bottomley
+> <jejb@linux.vnet.ibm.com>
+> Cc: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>; Jaegeuk Kim
+> <jaegeuk@kernel.org>; Bart Van Assche <Bart.VanAssche@wdc.com>; linux-
+> scsi@vger.kernel.org; linux-kernel@vger.kernel.org; Szymon Mielczarek
+> <szymonx.mielczarek@intel.com>; Alim Akhtar
+> <alim.akhtar@samsung.com>; Alex Lemberg <Alex.Lemberg@wdc.com>;
+> Vivek Gautam <vivek.gautam@codeaurora.org>
+> Subject: [PATCH V2 1/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
 > 
-> Though performance dropped a little, it almost eliminated zone lock
-> contention on free path and it is the foundation for the next patch
-> that eliminates zone lock contention for allocation path.
-
-Not thrilled about such disruptive change in the name of a
-microbenchmark :/ Shouldn't normally the pcplists hide the overhead?
-If not, wouldn't it make more sense to turn zone->lock into a range lock?
-
-> A new document file called "struct_page_filed" is added to explain
-> the newly reused field in "struct page".
-
-Sounds rather ad-hoc for a single field, I'd rather document it via
-comments.
-
-> Suggested-by: Dave Hansen <dave.hansen@intel.com>
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> UFS host controllers may support an autonomous power management
+> feature called the Auto-Hibernate Idle Timer. The timer is set to the number
+> of microseconds of idle time before the UFS host controller will
+> autonomously put the link into Hibernate state. That will save power at the
+> expense of increased latency. Any access to the host controller interface
+> registers will automatically put the link out of Hibernate state. So once
+> configured, the feature is transparent to the driver.
+> 
+> Expose the Auto-Hibernate Idle Timer value via SysFS to allow users to
+> choose between power efficiency or lower latency. Set a default value of
+> 150 ms.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > ---
->  Documentation/vm/struct_page_field |  5 +++
->  include/linux/mm_types.h           |  1 +
->  mm/compaction.c                    | 13 +++++-
->  mm/internal.h                      | 27 ++++++++++++
->  mm/page_alloc.c                    | 89 +++++++++++++++++++++++++++++++++-----
->  5 files changed, 122 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/vm/struct_page_field
+>  Documentation/ABI/testing/sysfs-driver-ufs | 15 ++++++
+>  drivers/scsi/ufs/ufs-sysfs.c               | 77
+> ++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                  | 26 ++++++++++
+>  drivers/scsi/ufs/ufshcd.h                  |  3 ++
+>  drivers/scsi/ufs/ufshci.h                  |  7 +++
+>  5 files changed, 128 insertions(+)
 > 
-> diff --git a/Documentation/vm/struct_page_field b/Documentation/vm/struct_page_field
-> new file mode 100644
-> index 000000000000..1ab6c19ccc7a
-> --- /dev/null
-> +++ b/Documentation/vm/struct_page_field
-> @@ -0,0 +1,5 @@
-> +buddy_merge_skipped:
-> +Used to indicate this page skipped merging when added to buddy. This
-> +field only makes sense if the page is in Buddy and is order zero.
-> +It's a bug if any higher order pages in Buddy has this field set.
-> +Shares space with index.
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index fd1af6b9591d..7edc4e102a8e 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -91,6 +91,7 @@ struct page {
->  		pgoff_t index;		/* Our offset within mapping. */
->  		void *freelist;		/* sl[aou]b first free object */
->  		/* page_deferred_list().prev	-- second tail page */
-> +		bool buddy_merge_skipped; /* skipped merging when added to buddy */
->  	};
->  
->  	union {
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 2c8999d027ab..fb9031fdca41 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -776,8 +776,19 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->  		 * potential isolation targets.
->  		 */
->  		if (PageBuddy(page)) {
-> -			unsigned long freepage_order = page_order_unsafe(page);
-> +			unsigned long freepage_order;
->  
-> +			/*
-> +			 * If this is a merge_skipped page, do merge now
-> +			 * since high-order pages are needed. zone lock
-> +			 * isn't taken for the merge_skipped check so the
-> +			 * check could be wrong but the worst case is we
-> +			 * lose a merge opportunity.
-> +			 */
-> +			if (page_merge_was_skipped(page))
-> +				try_to_merge_page(page);
+> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs
+> b/Documentation/ABI/testing/sysfs-driver-ufs
+> index 83735f79e572..a4142329cc34 100644
+> --- a/Documentation/ABI/testing/sysfs-driver-ufs
+> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
+> @@ -1,3 +1,18 @@
+> +What:		/sys/bus/*/drivers/ufshcd/*/auto_hibern8
+> +Date:		February 2018
+> +Contact:	linux-scsi@vger.kernel.org
+> +Description:
+> +		This file contains the auto-hibernate idle timer setting of a
+> +		UFS host controller. A value of '-1' means auto-hibernate is
+> not
+> +		supported. A value of '0' means auto-hibernate is not
+> enabled.
+> +		Otherwise the value is the number of microseconds of idle
+> time
+> +		before the UFS host controller will autonomously put the link
+> +		into hibernate state. That will save power at the expense of
+> +		increased latency. Note that the hardware supports 10-bit
+> values
+> +		with a power-of-ten multiplier which allows a maximum
+> value of
+> +		102300000. Refer to the UFS Host Controller Interface
+> +		specification for more details.
 > +
-> +			freepage_order = page_order_unsafe(page);
->  			/*
->  			 * Without lock, we cannot be sure that what we got is
->  			 * a valid page order. Consider only values in the
-> diff --git a/mm/internal.h b/mm/internal.h
-> index e6bd35182dae..2bfbaae2d835 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -538,4 +538,31 @@ static inline bool is_migrate_highatomic_page(struct page *page)
+>  What:
+> 	/sys/bus/platform/drivers/ufshcd/*/device_descriptor/device_type
+>  Date:		February 2018
+>  Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c index
+> 4ff9e0b7eba1..17ad661b1cb5 100644
+> --- a/drivers/scsi/ufs/ufs-sysfs.c
+> +++ b/drivers/scsi/ufs/ufs-sysfs.c
+> @@ -3,6 +3,7 @@
+> 
+>  #include <linux/err.h>
+>  #include <linux/string.h>
+> +#include <linux/bitfield.h>
+>  #include <asm/unaligned.h>
+> 
+>  #include "ufs.h"
+> @@ -117,12 +118,87 @@ static ssize_t spm_target_link_state_show(struct
+> device *dev,
+>  				ufs_pm_lvl_states[hba-
+> >spm_lvl].link_state));
 >  }
->  
->  void setup_zone_pageset(struct zone *zone);
+> 
+> +static void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit) {
+> +	unsigned long flags;
 > +
-> +static inline bool page_merge_was_skipped(struct page *page)
-> +{
-> +	return page->buddy_merge_skipped;
+> +	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
+> +		return;
+> +
+> +	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	if (hba->ahit == ahit)
+> +		goto out_unlock;
+> +	hba->ahit = ahit;
+> +	if (!pm_runtime_suspended(hba->dev))
+> +		ufshcd_writel(hba, hba->ahit,
+> REG_AUTO_HIBERNATE_IDLE_TIMER);
+> +out_unlock:
+> +	spin_unlock_irqrestore(hba->host->host_lock, flags); }
+> +
+> +/* Convert Auto-Hibernate Idle Timer register value to microseconds */
+> +static int ufshcd_ahit_to_us(u32 ahit) {
+> +	int timer = FIELD_GET(UFSHCI_AHIBERN8_TIMER_MASK, ahit);
+> +	int scale = FIELD_GET(UFSHCI_AHIBERN8_SCALE_MASK, ahit);
+> +
+> +	for (; scale > 0; --scale)
+> +		timer *= UFSHCI_AHIBERN8_SCALE_FACTOR;
+> +
+> +	return timer;
 > +}
 > +
-> +void try_to_merge_page(struct page *page);
+> +/* Convert microseconds to Auto-Hibernate Idle Timer register value */
+> +static u32 ufshcd_us_to_ahit(unsigned int timer) {
+> +	unsigned int scale;
 > +
-> +#ifdef CONFIG_COMPACTION
-> +static inline bool can_skip_merge(struct zone *zone, int order)
+> +	for (scale = 0; timer > UFSHCI_AHIBERN8_TIMER_MASK; ++scale)
+> +		timer /= UFSHCI_AHIBERN8_SCALE_FACTOR;
+> +
+> +	return FIELD_PREP(UFSHCI_AHIBERN8_TIMER_MASK, timer) |
+> +	       FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, scale); }
+> +
+> +static ssize_t auto_hibern8_show(struct device *dev,
+> +				 struct device_attribute *attr, char *buf) {
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	int timer = -1;
+> +
+> +	if (hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT)
+> +		timer = ufshcd_ahit_to_us(hba->ahit);
+I think it's better to return EOPNOTSUPP when the feature is not supported than to show "-1".
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", timer); }
+> +
+> +static ssize_t auto_hibern8_store(struct device *dev,
+> +				  struct device_attribute *attr,
+> +				  const char *buf, size_t count)
 > +{
-> +	/* Compaction has failed in this zone, we shouldn't skip merging */
-> +	if (zone->compact_considered)
-> +		return false;
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	unsigned int timer;
 > +
-> +	/* Only consider no_merge for order 0 pages */
-> +	if (order)
-> +		return false;
+> +	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
+> +		return -EOPNOTSUPP;
 > +
-> +	return true;
-> +}
-> +#else /* CONFIG_COMPACTION */
-> +static inline bool can_skip_merge(struct zone *zone, int order)
-> +{
-> +	return false;
-> +}
-> +#endif  /* CONFIG_COMPACTION */
->  #endif	/* __MM_INTERNAL_H */
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3cdf1e10d412..eb78014dfbde 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -730,6 +730,16 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
->  				unsigned int order, int migratetype) {}
->  #endif
->  
-> +static inline void set_page_merge_skipped(struct page *page)
-> +{
-> +	page->buddy_merge_skipped = true;
+> +	if (kstrtouint(buf, 0, &timer))
+> +		return -EINVAL;
+> +
+> +	if (timer > UFSHCI_AHIBERN8_MAX)
+> +		return -EINVAL;
+> +
+> +	ufshcd_auto_hibern8_update(hba, ufshcd_us_to_ahit(timer));
+> +
+> +	return count;
 > +}
 > +
-> +static inline void clear_page_merge_skipped(struct page *page)
-> +{
-> +	page->buddy_merge_skipped = false;
-> +}
-> +
->  static inline void set_page_order(struct page *page, unsigned int order)
->  {
->  	set_page_private(page, order);
-> @@ -739,6 +749,13 @@ static inline void set_page_order(struct page *page, unsigned int order)
->  static inline void add_to_buddy_common(struct page *page, struct zone *zone,
->  					unsigned int order, int mt)
->  {
-> +	/*
-> +	 * Always clear buddy_merge_skipped when added to buddy because
-> +	 * buddy_merge_skipped shares space with index and index could
-> +	 * be used as migratetype for PCP pages.
-> +	 */
-> +	clear_page_merge_skipped(page);
-> +
->  	set_page_order(page, order);
->  	zone->free_area[order].nr_free++;
+>  static DEVICE_ATTR_RW(rpm_lvl);
+>  static DEVICE_ATTR_RO(rpm_target_dev_state);
+>  static DEVICE_ATTR_RO(rpm_target_link_state);
+>  static DEVICE_ATTR_RW(spm_lvl);
+>  static DEVICE_ATTR_RO(spm_target_dev_state);
+>  static DEVICE_ATTR_RO(spm_target_link_state);
+> +static DEVICE_ATTR_RW(auto_hibern8);
+> 
+>  static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
+>  	&dev_attr_rpm_lvl.attr,
+> @@ -131,6 +207,7 @@ static ssize_t spm_target_link_state_show(struct
+> device *dev,
+>  	&dev_attr_spm_lvl.attr,
+>  	&dev_attr_spm_target_dev_state.attr,
+>  	&dev_attr_spm_target_link_state.attr,
+> +	&dev_attr_auto_hibern8.attr,
+>  	NULL
+>  };
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
+> 3abcd31646eb..facee2b97926 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -41,6 +41,7 @@
+>  #include <linux/devfreq.h>
+>  #include <linux/nls.h>
+>  #include <linux/of.h>
+> +#include <linux/bitfield.h>
+>  #include "ufshcd.h"
+>  #include "ufs_quirks.h"
+>  #include "unipro.h"
+> @@ -3708,6 +3709,18 @@ static int ufshcd_uic_hibern8_exit(struct ufs_hba
+> *hba)
+>  	return ret;
 >  }
-> @@ -769,6 +786,7 @@ static inline void remove_from_buddy(struct page *page, struct zone *zone,
->  	list_del(&page->lru);
->  	zone->free_area[order].nr_free--;
->  	rmv_page_order(page);
-> +	clear_page_merge_skipped(page);
->  }
->  
+> 
+> +static void ufshcd_auto_hibern8_enable(struct ufs_hba *hba) {
+> +	unsigned long flags;
+> +
+> +	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT) || !hba-
+> >ahit)
+> +		return;
+> +
+> +	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
+> +	spin_unlock_irqrestore(hba->host->host_lock, flags); }
+> +
+>   /**
+>   * ufshcd_init_pwr_info - setting the POR (power on reset)
+>   * values in hba power info
+> @@ -6307,6 +6320,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>  	/* UniPro link is active now */
+>  	ufshcd_set_link_active(hba);
+> 
+> +	/* Enable Auto-Hibernate if configured */
+> +	ufshcd_auto_hibern8_enable(hba);
+> +
+>  	ret = ufshcd_verify_dev_init(hba);
+>  	if (ret)
+>  		goto out;
+> @@ -7391,6 +7407,10 @@ static int ufshcd_resume(struct ufs_hba *hba,
+> enum ufs_pm_op pm_op)
+> 
+>  	/* Schedule clock gating in case of no access to UFS device yet */
+>  	ufshcd_release(hba);
+> +
+> +	/* Enable Auto-Hibernate if configured */
+> +	ufshcd_auto_hibern8_enable(hba);
+> +
+>  	goto out;
+> 
+>  set_old_link_state:
+> @@ -7834,6 +7854,12 @@ int ufshcd_init(struct ufs_hba *hba, void
+> __iomem *mmio_base, unsigned int irq)
+>  						UFS_SLEEP_PWR_MODE,
+>  						UIC_LINK_HIBERN8_STATE);
+> 
+> +	/* Set the default auto-hiberate idle timer value to 150 ms */
+> +	if (hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT) {
+> +		hba->ahit = FIELD_PREP(UFSHCI_AHIBERN8_TIMER_MASK,
+> 150) |
+> +			    FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, 3);
+> +	}
+> +
+>  	/* Hold auto suspend until async scan completes */
+>  	pm_runtime_get_sync(dev);
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h index
+> deb3c5d382e9..8110dcd04d22 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -531,6 +531,9 @@ struct ufs_hba {
+>  	struct device_attribute spm_lvl_attr;
+>  	int pm_op_in_progress;
+> 
+> +	/* Auto-Hibernate Idle Timer register value */
+> +	u32 ahit;
+> +
+>  	struct ufshcd_lrb *lrb;
+>  	unsigned long lrb_in_use;
+> 
+> diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h index
+> 1a1b5d9fe514..bb5d9c7f3353 100644
+> --- a/drivers/scsi/ufs/ufshci.h
+> +++ b/drivers/scsi/ufs/ufshci.h
+> @@ -86,6 +86,7 @@ enum {
+>  enum {
+>  	MASK_TRANSFER_REQUESTS_SLOTS		= 0x0000001F,
+>  	MASK_TASK_MANAGEMENT_REQUEST_SLOTS	= 0x00070000,
+> +	MASK_AUTO_HIBERN8_SUPPORT		= 0x00800000,
+>  	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
+>  	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
+>  	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
+> @@ -119,6 +120,12 @@ enum {
+>  #define MANUFACTURE_ID_MASK	UFS_MASK(0xFFFF, 0)
+>  #define PRODUCT_ID_MASK		UFS_MASK(0xFFFF, 16)
+> 
+> +/* AHIT - Auto-Hibernate Idle Timer */
+> +#define UFSHCI_AHIBERN8_TIMER_MASK		GENMASK(9, 0)
+> +#define UFSHCI_AHIBERN8_SCALE_MASK		GENMASK(12, 10)
+> +#define UFSHCI_AHIBERN8_SCALE_FACTOR		10
+> +#define UFSHCI_AHIBERN8_MAX			(1023 * 100000)
+> +
 >  /*
-> @@ -839,7 +857,7 @@ static inline int page_is_buddy(struct page *page, struct page *buddy,
->   * -- nyc
+>   * IS - Interrupt Status - 20h
 >   */
->  
-> -static inline void __free_one_page(struct page *page,
-> +static inline void do_merge(struct page *page,
->  		unsigned long pfn,
->  		struct zone *zone, unsigned int order,
->  		int migratetype)
-> @@ -851,16 +869,6 @@ static inline void __free_one_page(struct page *page,
->  
->  	max_order = min_t(unsigned int, MAX_ORDER, pageblock_order + 1);
->  
-> -	VM_BUG_ON(!zone_is_initialized(zone));
-> -	VM_BUG_ON_PAGE(page->flags & PAGE_FLAGS_CHECK_AT_PREP, page);
-> -
-> -	VM_BUG_ON(migratetype == -1);
-> -	if (likely(!is_migrate_isolate(migratetype)))
-> -		__mod_zone_freepage_state(zone, 1 << order, migratetype);
-> -
-> -	VM_BUG_ON_PAGE(pfn & ((1 << order) - 1), page);
-> -	VM_BUG_ON_PAGE(bad_range(zone, page), page);
-> -
->  continue_merging:
->  	while (order < max_order - 1) {
->  		buddy_pfn = __find_buddy_pfn(pfn, order);
-> @@ -933,6 +941,61 @@ static inline void __free_one_page(struct page *page,
->  	add_to_buddy_head(page, zone, order, migratetype);
->  }
->  
-> +void try_to_merge_page(struct page *page)
-> +{
-> +	unsigned long pfn, buddy_pfn, flags;
-> +	struct page *buddy;
-> +	struct zone *zone;
-> +
-> +	/*
-> +	 * No need to do merging if buddy is not free.
-> +	 * zone lock isn't taken so this could be wrong but worst case
-> +	 * is we lose a merge opportunity.
-> +	 */
-> +	pfn = page_to_pfn(page);
-> +	buddy_pfn = __find_buddy_pfn(pfn, 0);
-> +	buddy = page + (buddy_pfn - pfn);
-> +	if (!PageBuddy(buddy))
-> +		return;
-> +
-> +	zone = page_zone(page);
-> +	spin_lock_irqsave(&zone->lock, flags);
-> +	/* Verify again after taking the lock */
-> +	if (likely(PageBuddy(page) && page_merge_was_skipped(page) &&
-> +		   PageBuddy(buddy))) {
-> +		int mt = get_pageblock_migratetype(page);
-> +
-> +		remove_from_buddy(page, zone, 0);
-> +		do_merge(page, pfn, zone, 0, mt);
-> +	}
-> +	spin_unlock_irqrestore(&zone->lock, flags);
-> +}
-> +
-> +static inline void __free_one_page(struct page *page,
-> +		unsigned long pfn,
-> +		struct zone *zone, unsigned int order,
-> +		int migratetype)
-> +{
-> +	VM_BUG_ON(!zone_is_initialized(zone));
-> +	VM_BUG_ON_PAGE(page->flags & PAGE_FLAGS_CHECK_AT_PREP, page);
-> +
-> +	VM_BUG_ON(migratetype == -1);
-> +	if (likely(!is_migrate_isolate(migratetype)))
-> +		__mod_zone_freepage_state(zone, 1 << order, migratetype);
-> +
-> +	VM_BUG_ON_PAGE(pfn & ((1 << order) - 1), page);
-> +	VM_BUG_ON_PAGE(bad_range(zone, page), page);
-> +
-> +	if (can_skip_merge(zone, order)) {
-> +		add_to_buddy_head(page, zone, 0, migratetype);
-> +		set_page_merge_skipped(page);
-> +		return;
-> +	}
-> +
-> +	do_merge(page, pfn, zone, order, migratetype);
-> +}
-> +
-> +
->  /*
->   * A bad page could be due to a number of fields. Instead of multiple branches,
->   * try and check multiple fields with one check. The caller must do a detailed
-> @@ -1183,8 +1246,10 @@ static void free_pcppages_bulk(struct zone *zone, int count,
->  			 * can be offset by reduced memory latency later. To
->  			 * avoid excessive prefetching due to large count, only
->  			 * prefetch buddy for the last pcp->batch nr of pages.
-> +			 *
-> +			 * If merge can be skipped, no need to prefetch buddy.
->  			 */
-> -			if (count > pcp->batch)
-> +			if (can_skip_merge(zone, 0) || count > pcp->batch)
->  				continue;
->  			pfn = page_to_pfn(page);
->  			buddy_pfn = __find_buddy_pfn(pfn, 0);
-> 
+> --
+> 1.9.1
+Please fix all checkpatch errors.
+Regards
+Stas
