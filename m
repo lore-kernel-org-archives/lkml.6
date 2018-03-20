@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeCTGSV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:18:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56087 "EHLO
+        id S1751916AbeCTGSu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:18:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50431 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeCTGSP (ORCPT
+        with ESMTP id S1751548AbeCTGSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:18:15 -0400
-Date: Mon, 19 Mar 2018 23:17:53 -0700
+        Tue, 20 Mar 2018 02:18:47 -0400
+Date: Mon, 19 Mar 2018 23:18:25 -0700
 From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-8fab7843a15078814764e01c303d175c92b500c1@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, dsahern@gmail.com,
-        tglx@linutronix.de, jolsa@kernel.org, mingo@kernel.org,
-        namhyung@kernel.org, jmario@redhat.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org
-Reply-To: peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        acme@redhat.com, jmario@redhat.com, mingo@kernel.org,
-        namhyung@kernel.org, jolsa@kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, dsahern@gmail.com
-In-Reply-To: <20180309101442.9224-5-jolsa@kernel.org>
-References: <20180309101442.9224-5-jolsa@kernel.org>
+Message-ID: <tip-3773138828b38f3f1364ef318cd876b16182388a@git.kernel.org>
+Cc: jolsa@kernel.org, peterz@infradead.org, hpa@zytor.com,
+        dsahern@gmail.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org,
+        acme@redhat.com
+Reply-To: alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        jmario@redhat.com, dsahern@gmail.com, hpa@zytor.com,
+        peterz@infradead.org, jolsa@kernel.org, acme@redhat.com,
+        namhyung@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180309101442.9224-6-jolsa@kernel.org>
+References: <20180309101442.9224-6-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf c2c record: Record physical addresses in
- samples
-Git-Commit-ID: 8fab7843a15078814764e01c303d175c92b500c1
+Subject: [tip:perf/core] perf c2c report: Make calc_width work with struct
+ c2c_hist_entry
+Git-Commit-ID: 3773138828b38f3f1364ef318cd876b16182388a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,19 +37,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8fab7843a15078814764e01c303d175c92b500c1
-Gitweb:     https://git.kernel.org/tip/8fab7843a15078814764e01c303d175c92b500c1
+Commit-ID:  3773138828b38f3f1364ef318cd876b16182388a
+Gitweb:     https://git.kernel.org/tip/3773138828b38f3f1364ef318cd876b16182388a
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 9 Mar 2018 11:14:37 +0100
+AuthorDate: Fri, 9 Mar 2018 11:14:38 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:52:57 -0300
+CommitDate: Fri, 16 Mar 2018 13:53:05 -0300
 
-perf c2c record: Record physical addresses in samples
+perf c2c report: Make calc_width work with struct c2c_hist_entry
 
-We are going to display NUMA node information in following patches. For
-this we need to have physical address data in the sample.
-
-Adding --phys-data as a default option for perf c2c record.
+We are going to calculate tje column width based on the struct
+c2c_hist_entry data, so making calc_width to work with struct
+c2c_hist_entry.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -56,44 +56,51 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Joe Mario <jmario@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180309101442.9224-5-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180309101442.9224-6-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-c2c.txt | 2 +-
- tools/perf/builtin-c2c.c              | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/builtin-c2c.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
-index 822414235170..095aebdc5bb7 100644
---- a/tools/perf/Documentation/perf-c2c.txt
-+++ b/tools/perf/Documentation/perf-c2c.txt
-@@ -116,7 +116,7 @@ and calls standard perf record command.
- Following perf record options are configured by default:
- (check perf record man page for details)
- 
--  -W,-d,--sample-cpu
-+  -W,-d,--phys-data,--sample-cpu
- 
- Unless specified otherwise with '-e' option, following events are monitored by
- default:
 diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 98d243fa0c06..95765a1db903 100644
+index 95765a1db903..43ce55550c9d 100644
 --- a/tools/perf/builtin-c2c.c
 +++ b/tools/perf/builtin-c2c.c
-@@ -2704,7 +2704,7 @@ static int perf_c2c__record(int argc, const char **argv)
- 	argc = parse_options(argc, argv, options, record_mem_usage,
- 			     PARSE_OPT_KEEP_UNKNOWN);
+@@ -1839,20 +1839,24 @@ static inline int valid_hitm_or_store(struct hist_entry *he)
+ 	return has_hitm || c2c_he->stats.store;
+ }
  
--	rec_argc = argc + 10; /* max number of arguments */
-+	rec_argc = argc + 11; /* max number of arguments */
- 	rec_argv = calloc(rec_argc + 1, sizeof(char *));
- 	if (!rec_argv)
- 		return -1;
-@@ -2720,6 +2720,7 @@ static int perf_c2c__record(int argc, const char **argv)
- 		rec_argv[i++] = "-W";
+-static void calc_width(struct hist_entry *he)
++static void calc_width(struct c2c_hist_entry *c2c_he)
+ {
+ 	struct c2c_hists *c2c_hists;
  
- 	rec_argv[i++] = "-d";
-+	rec_argv[i++] = "--phys-data";
- 	rec_argv[i++] = "--sample-cpu";
+-	c2c_hists = container_of(he->hists, struct c2c_hists, hists);
+-	hists__calc_col_len(&c2c_hists->hists, he);
++	c2c_hists = container_of(c2c_he->he.hists, struct c2c_hists, hists);
++	hists__calc_col_len(&c2c_hists->hists, &c2c_he->he);
+ }
  
- 	for (j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
+ static int filter_cb(struct hist_entry *he)
+ {
++	struct c2c_hist_entry *c2c_he;
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++
+ 	if (c2c.show_src && !he->srcline)
+ 		he->srcline = hist_entry__get_srcline(he);
+ 
+-	calc_width(he);
++	calc_width(c2c_he);
+ 
+ 	if (!valid_hitm_or_store(he))
+ 		he->filtered = HIST_FILTER__C2C;
+@@ -1869,7 +1873,7 @@ static int resort_cl_cb(struct hist_entry *he)
+ 	c2c_he = container_of(he, struct c2c_hist_entry, he);
+ 	c2c_hists = c2c_he->hists;
+ 
+-	calc_width(he);
++	calc_width(c2c_he);
+ 
+ 	if (display && c2c_hists) {
+ 		static unsigned int idx;
