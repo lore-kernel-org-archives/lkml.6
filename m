@@ -1,95 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751416AbeCTE0X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 00:26:23 -0400
-Received: from mout.gmx.net ([212.227.15.18]:58959 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeCTE0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 00:26:20 -0400
-Message-ID: <1521519941.24215.2.camel@gmx.de>
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-From: Mike Galbraith <efault@gmx.de>
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Date: Tue, 20 Mar 2018 05:25:41 +0100
-In-Reply-To: <a334a234-3e87-a9a7-9589-8476fecb4149@redhat.com>
-References: <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
-         <1520619426.27998.18.camel@gmx.de>
-         <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
-         <1520624424.27998.76.camel@gmx.de>
-         <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
-         <20180309221736.GB5926@hirez.programming.kicks-ass.net>
-         <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
-         <1520653648.12749.20.camel@gmx.de>
-         <20180314195711.GD2943022@devbig577.frc2.facebook.com>
-         <1521082141.7100.1.camel@gmx.de>
-         <20180319153413.GO2943022@devbig577.frc2.facebook.com>
-         <1521492550.16869.1.camel@gmx.de>
-         <a334a234-3e87-a9a7-9589-8476fecb4149@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:VM1t3E95PZHGr+bysSU2O2GLczFVYwZWolEXaV0BPzLIKtLyH6K
- EcuUHpGyDWkJ3+RmlQScq0YrRHvyJkC0uZetDcR+oO6B/GUckgXn8PmuzBuJnKT6Rwzc8Ez
- rPwSP59szbnM4GRQy/UnA6en5vOb+ze2OBQHbBx9fLgxAk/CZElwoak5apE9Vc3jk2Nthdb
- 36v+ULUJCSxv6ARg4maeQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:b2c1fpsRohQ=:lW50M50nFR6nJxupSmY2m4
- G6fE0Ndr4NVxMtk+NrhFQsIr3AbOWTH7JrIV+TxQpihlMRlMWdnJMA5h1/KtZlT6fcuGvy6oK
- BcI6V1gMsqxF+Fjiau828d3aDE4GSLGKMxQjAugBWirGsHFzYr7n0egHFQBCe0HMAuXkVottW
- wyY1/1OwQ9/I82OYJPA32YZx7s8T4aj+MM/BcI8eeEaIOd/z4hxZF3QLkIwtcEz9GmXLE9tUm
- 6r8ZiW+gYaY6mRzAq4orE9epPGzRAhk6XiJH2jUopDRkis9kIFU6Ml7r8BEYK2Sc5Lvb5olPV
- fCZqjfk0hfsUTFT55AJS+n0HqXI5S4MRTRonSOqecJ6cQOAMw9Hb29SBMEH5RrTUPAPMFy+G/
- S2XRONczGTRRaAPzDTqUNvT2zR4JsittJ4hb0c+o2J9DinzPhKpE0xEH0z7rb6KozKr7UY9rK
- W6SQGbB82nl4jscz1EijcyvPo1Ziktld1XJx9ZI65tjK/ewZ+DNFlkb8XS4aETnEZJzvMe7Pm
- mF/771ylaXYVMzuTl+cC3yaIZ+a6/M97OZzlSKPDXGrC5+TlyQnDCTBchtoEkEKH2jioGLlMy
- fj3OZbYSmZQ4ITYRryIJqZre/fumWm1BXjoqE4NYZG5tRFsSS2KoohQP9n677hQWWpDeJ3H/4
- KWIsBoDAu2q1JntxDzRrCDTFobozpFvc5yX6Lj3nOmKDXJ7wNau1xNjM4p5/NqyS0t2sbuoYL
- 8NG9nVMe3CIqUEFVQF+WhUOohB6hT5E3eEVrvlK2Rh0gMbtgEL3Sr631vNXG7d7krDOXEDo0i
- hNXgE674OJ6d/Lmx06x8pMKDkg0SB5bvSWbAwmtKRTZgJmSqI4=
+        id S1751531AbeCTE0w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 00:26:52 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34622 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeCTE0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 00:26:49 -0400
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v2] virtio_balloon: export hugetlb page allocation counts
+From: Jonathan Helman <jonathan.helman@oracle.com>
+In-Reply-To: <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+Date: Mon, 19 Mar 2018 21:26:41 -0700
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+Message-Id: <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
+References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+ <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8837 signatures=668693
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200006
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2K4Qw62001408
 
-On Mon, 2018-03-19 at 17:41 -0400, Waiman Long wrote:
-> On 03/19/2018 04:49 PM, Mike Galbraith wrote:
-> > On Mon, 2018-03-19 at 08:34 -0700, Tejun Heo wrote:
-> >> Hello, Mike.
-> >>
-> >> On Thu, Mar 15, 2018 at 03:49:01AM +0100, Mike Galbraith wrote:
-> >>> Under the hood v2 details are entirely up to you.  My input ends at
-> >>> please don't leave dynamic partitioning standing at the dock when v2
-> >>> sails.
-> >> So, this isn't about implementation details but about what the
-> >> interface achieves - ie, what's the actual function?  The only thing I
-> >> can see is blocking the entity which is configuring the hierarchy from
-> >> making certain configs.  While that might be useful in some specific
-> >> use cases, it seems to miss the bar for becoming its own kernel
-> >> feature.  After all, nothing prevents the same entity from clearing
-> >> the exlusive bit and making the said changes.
-> > Yes, privileged contexts can maliciously or stupidly step all over one
-> > other no matter what you do (finite resource), but oxymoron creation
-> > (CPUs simultaneously balanced and isolated) should be handled.  If one
-> > context can allocate a set overlapping a set another context intends to
-> > or already has detached from scheduler domains, both are screwed.
-> >
-> > 	-Mike
+
+> On Mar 19, 2018, at 7:31 PM, Jason Wang <jasowang@redhat.com> wrote:
 > 
-> The allocations of CPUs to child cgroups should be controlled by the
-> parent cgroup. It is the parent's fault if some CPUs are in both
-> balanced and isolated cgroups.
 > 
-> How about we don't allow turning off scheduling if the CPUs aren't
-> exclusive from the parent's perspective? So you can't create an isolated
-> cgroup if the CPUs aren't exclusive. Will this be a good enough compromise?
+> 
+> On 2018年03月20日 06:14, Jonathan Helman wrote:
+>> Export the number of successful and failed hugetlb page
+>> allocations via the virtio balloon driver. These 2 counts
+>> come directly from the vm_events HTLB_BUDDY_PGALLOC and
+>> HTLB_BUDDY_PGALLOC_FAIL.
+>> 
+>> Signed-off-by: Jonathan Helman <jonathan.helman@oracle.com>
+> 
+> Reviewed-by: Jason Wang <jasowang@redhat.com>
 
-Sure.  The kernel need only ensure its own sanity.  Userspace conflicts
-are more or less a non-issue.  In practice, all players but one will
-have been constrained or eliminated prior to any partitioning.
+Thanks.
 
-	-Mike
+> 
+>> ---
+>>  drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>  include/uapi/linux/virtio_balloon.h | 4 +++-
+>>  2 files changed, 9 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+>> index dfe5684..6b237e3 100644
+>> --- a/drivers/virtio/virtio_balloon.c
+>> +++ b/drivers/virtio/virtio_balloon.c
+>> @@ -272,6 +272,12 @@ static unsigned int update_balloon_stats(struct virtio_balloon *vb)
+>>  				pages_to_bytes(events[PSWPOUT]));
+>>  	update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, events[PGMAJFAULT]);
+>>  	update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, events[PGFAULT]);
+>> +#ifdef CONFIG_HUGETLB_PAGE
+>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>> +		    events[HTLB_BUDDY_PGALLOC]);
+>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>> +		    events[HTLB_BUDDY_PGALLOC_FAIL]);
+>> +#endif
+>>  #endif
+>>  	update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>  				pages_to_bytes(i.freeram));
+>> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+>> index 4e8b830..40297a3 100644
+>> --- a/include/uapi/linux/virtio_balloon.h
+>> +++ b/include/uapi/linux/virtio_balloon.h
+>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>  #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
+>>  #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in /proc */
+>>  #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>> -#define VIRTIO_BALLOON_S_NR       8
+>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page allocations */
+>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
+>> +#define VIRTIO_BALLOON_S_NR       10
+>>    /*
+>>   * Memory statistics structure.
+> 
+> Not for this patch, but it looks to me that exporting such nr through uapi is fragile.
+
+Sorry, can you explain what you mean here?
+
+Jon
+
+> 
+> Thanks
