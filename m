@@ -1,102 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751826AbeCTPA4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 11:00:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57616 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeCTPAx (ORCPT
+        id S1751730AbeCTPBm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 11:01:42 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45829 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751343AbeCTPBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:00:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D72C6021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v4 1/6] RDMA/bnxt_re: Eliminate duplicate barriers on
- weakly-ordered archs
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
- <1521514068-8856-2-git-send-email-okaya@codeaurora.org>
- <20180320144801.GE19744@ziepe.ca>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <d31c062b-5629-62b8-c291-c656e23c6f82@codeaurora.org>
-Date: Tue, 20 Mar 2018 10:00:49 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 20 Mar 2018 11:01:39 -0400
+X-Google-Smtp-Source: AG47ELsdGw7Pr8t1rzeyZaVXzfOmeZmrGkdD2fvU23SK+JeOWcXiAIaSOL4y044QEwGWiuVByIhIXFXqjAGR42Bln5M=
 MIME-Version: 1.0
-In-Reply-To: <20180320144801.GE19744@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1521305041-18181-1-git-send-email-kyle@spiers.me>
+References: <1521305041-18181-1-git-send-email-kyle@spiers.me>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 20 Mar 2018 16:01:38 +0100
+Message-ID: <CAOi1vP-Fjy4JsSn+kRbGBJ2uPsNXEZRVirHbSf5Tden62jWtHA@mail.gmail.com>
+Subject: Re: [PATCH v3] rbd: Remove VLA usage
+To: Kyle Spiers <kyle@spiers.me>
+Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "Tobin C. Harding" <me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/2018 9:48 AM, Jason Gunthorpe wrote:
-> On Mon, Mar 19, 2018 at 10:47:43PM -0400, Sinan Kaya wrote:
->> Code includes wmb() followed by writel(). writel() already has a barrier on
->> some architectures like arm64.
->>
->> This ends up CPU observing two barriers back to back before executing the
->> register write.
->>
->> Since code already has an explicit barrier call, changing writel() to
->> writel_relaxed().
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->> index 8329ec6..4a6b981 100644
->> +++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
->> @@ -181,10 +181,10 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
->>  
->>  	/* ring CMDQ DB */
->>  	wmb();
->> -	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->> -	       rcfw->cmdq_bar_reg_prod_off);
->> -	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->> -	       rcfw->cmdq_bar_reg_trig_off);
->> +	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
->> +		       rcfw->cmdq_bar_reg_prod_off);
->> +	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
->> +		       rcfw->cmdq_bar_reg_trig_off);
-> 
-> Woah, this may not be safe..
-> 
-> The definition of writel_relaxed() is that it is fully unordered, so
-> the above two writes may change order now. Broadcom guys would have to
-> ack if that it is OK or not for their hardware.
-> 
-> In general this is not an OK approach for a mechanical
-> conversion.. Only the first writel can be convereted.
-> 
-> You need to check all your patches to make sure there are no
-> subsequent writel's in the places touched.
+On Sat, Mar 17, 2018 at 5:44 PM, Kyle Spiers <kyle@spiers.me> wrote:
+>
+> As part of the effort to remove VLAs from the kernel[1], this moves
+> the literal values into the stack array calculation instead of using a
+> variable for the sizing. The resulting size can be found from
+> sizeof(buf).
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kyle Spiers <kyle@spiers.me>
+> ---
+>  drivers/block/rbd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 8e40da0..46893e0 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
+>  {
+>         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+>         struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+> -       int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
+> -       char buf[buf_size];
+> +       char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
+> +       int buf_size = sizeof(buf);
+>         void *p = buf;
+>
+>         dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
+> @@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct rbd_device *rbd_dev,
+>                                      u64 notify_id, u64 cookie, s32 *result)
+>  {
+>         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+> -       int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
+> -       char buf[buf_size];
+> +       char buf[4 + CEPH_ENCODING_START_BLK_LEN];
+> +       int buf_size = sizeof(buf);
+>         int ret;
+>
+>         if (result) {
 
-I paid special attention to this one and went to check the barriers
-document. According to the document, writes (whether it is relaxed or not)
-are always observed by the HW inorder with respect to each other.
-It just doesn't guarantee anything above writel_relaxed() to be observed.
-Since we already have a wmb(), this is taken care of. 
+Applied.
 
-If somebody wants things to be observed after register write, there should
-have been a wmb() or mmiowb() afterwards.
+Thanks,
 
-
-> 
-> Jason
-> 
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+                Ilya
