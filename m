@@ -1,271 +1,306 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeCTJt0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:49:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52206 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752228AbeCTJtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:49:20 -0400
-Date: Tue, 20 Mar 2018 17:49:07 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
-Message-ID: <20180320094907.GA8838@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
- <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
- <20180309152556.0ccf3cb1@ThinkPad>
- <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
- <20180315073422.GA1876@dhcp-128-65.nay.redhat.com>
- <20180315111341.6faa90e8@ThinkPad>
- <20180316064102.GA26732@dhcp-128-65.nay.redhat.com>
- <20180320103955.13d83ef9@ThinkPad>
+        id S1752612AbeCTJtY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:49:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58412 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752244AbeCTJtR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:49:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBBDC60390
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org,
+        robh+dt@kernel.org, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, will.deacon@arm.com, robdclark@gmail.com,
+        tfiga@chromium.org, sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-4-vivek.gautam@codeaurora.org>
+ <77ed3675-0af0-b36a-5f76-b920d7a4c8e0@arm.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <3e25955c-c6a6-9ca0-3c77-ae5c133d3c10@codeaurora.org>
+Date: Tue, 20 Mar 2018 15:19:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320103955.13d83ef9@ThinkPad>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <77ed3675-0af0-b36a-5f76-b920d7a4c8e0@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
-On 03/20/18 at 10:39am, Philipp Rudo wrote:
-> Hi Dave,
-> 
-> sorry for the late answer.
-> 
-> 
-> On Fri, 16 Mar 2018 14:41:02 +0800
-> Dave Young <dyoung@redhat.com> wrote:
-> 
-> > On 03/15/18 at 11:13am, Philipp Rudo wrote:
-> > > Hi Dave,
-> > > 
-> > > On Thu, 15 Mar 2018 15:34:22 +0800
-> > > Dave Young <dyoung@redhat.com> wrote:
-> > >   
-> > > > On 03/12/18 at 03:40pm, Dave Young wrote:  
-> > > > > Hi Philipp,
-> > > > > On 03/09/18 at 03:25pm, Philipp Rudo wrote:    
-> > > > > > Hi Dave,
-> > > > > > 
-> > > > > > On Fri, 9 Mar 2018 13:19:40 +0800
-> > > > > > Dave Young <dyoung@redhat.com> wrote:
-> > > > > >     
-> > > > > > > Hi Philipp,
-> > > > > > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:    
-> > > > > > > > 
-> > > > > > > > Hi everybody
-> > > > > > > > 
-> > > > > > > > following the discussion with Dave and AKASHI, here are the common code
-> > > > > > > > patches extracted from my recent patch set (Add kexec_file_load support to
-> > > > > > > > s390) [1]. The patches were extracted to allow upstream integration together
-> > > > > > > > with AKASHI's common code patches before the arch code gets adjusted to the
-> > > > > > > > new base.
-> > > > > > > > 
-> > > > > > > > The reason for this series is to prepare common code for adding
-> > > > > > > > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
-> > > > > > > > field during purgatory load. In detail this series contains:
-> > > > > > > > 
-> > > > > > > > Patch #1&2: Minor cleanups/fixes.
-> > > > > > > > 
-> > > > > > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> > > > > > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> > > > > > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> > > > > > > > depending on the section. With these patches the section address will be
-> > > > > > > > calculated verbosely and sh_offset will contain the offset of the section
-> > > > > > > > in the stripped purgatory binary (purgatory_buf).
-> > > > > > > > 
-> > > > > > > > Patch #10: Allows architectures to set the purgatory load address. This
-> > > > > > > > patch is important for s390 as the kernel and purgatory have to be loaded
-> > > > > > > > to fixed addresses. In current code this is impossible as the purgatory
-> > > > > > > > load is opaque to the architecture.
-> > > > > > > > 
-> > > > > > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
-> > > > > > > > directory to allow reuse in other architectures.
-> > > > > > > > 
-> > > > > > > > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
-> > > > > > > > requested changes only affected s390 code). Please note that I had to touch
-> > > > > > > > arch code for x86 and power a little. In theory this should not change the
-> > > > > > > > behavior but I don't have a way to test it. Cross-compiling with
-> > > > > > > > defconfig [2] works fine for both.
-> > > > > > > > 
-> > > > > > > > Thanks
-> > > > > > > > Philipp
-> > > > > > > > 
-> > > > > > > > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
-> > > > > > > > [2] On x86 with the orc unwinder and stack validation turned off. objtool
-> > > > > > > >     SEGFAULTs on s390...
-> > > > > > > > 
-> > > > > > > > Philipp Rudo (11):
-> > > > > > > >   kexec_file: Silence compile warnings
-> > > > > > > >   kexec_file: Remove checks in kexec_purgatory_load
-> > > > > > > >   kexec_file: Make purgatory_info->ehdr const
-> > > > > > > >   kexec_file: Search symbols in read-only kexec_purgatory
-> > > > > > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-> > > > > > > >   kexec_file: Split up __kexec_load_puragory
-> > > > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-> > > > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-> > > > > > > >   kexec_file: Remove mis-use of sh_offset field
-> > > > > > > >   kexec_file: Allow archs to set purgatory load address
-> > > > > > > >   kexec_file: Move purgatories sha256 to common code
-> > > > > > > > 
-> > > > > > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
-> > > > > > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
-> > > > > > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
-> > > > > > > >  arch/x86/purgatory/Makefile                    |   3 +
-> > > > > > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
-> > > > > > > >  include/linux/kexec.h                          |  38 +--
-> > > > > > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
-> > > > > > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
-> > > > > > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
-> > > > > > > >  9 files changed, 244 insertions(+), 271 deletions(-)
-> > > > > > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> > > > > > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > > > > > > > 
-> > > > > > > > -- 
-> > > > > > > > 2.13.5
-> > > > > > > >       
-> > > > > > > 
-> > > > > > > I did a test on x86, but it failed:
-> > > > > > > [   15.636489] kexec: Undefined symbol: memcpy
-> > > > > > > [   15.636496] kexec-bzImage64: Loading purgatory failed
-> > > > > > > [   33.603356] kexec: Undefined symbol: memcpy
-> > > > > > > [   33.603362] kexec-bzImage64: Loading purgatory failed
-> > > > > > > 
-> > > > > > > I think this relates to the sha256 splitting patch.    
-> > > > > > 
-> > > > > > I looked into this a little closer and i think i understood what happens. 
-> > > > > > 
-> > > > > > There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
-> > > > > > in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
-> > > > > > switching to linux/string.h there is no more definition for it. Leaving us with
-> > > > > > 
-> > > > > > $ readelf -s purgatory.ro
-> > > > > > [...]
-> > > > > >  45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
-> > > > > > [...]
-> > > > > > 
-> > > > > > To solve this problem I see two possibilities (example patches are at the end of
-> > > > > > the mail):
-> > > > > > 
-> > > > > > 1) Have arch dependent includes in lib/sha256.c
-> > > > > > 2) Add makefile magic so memcpy is defined
-> > > > > > 
-> > > > > > With both solutions the resulting purgatory.ro looks good. However both
-> > > > > > solutions aren't perfect. For example in 2) i had too mix the linux/string.h
-> > > > > > header with arch/x86/boot/string.c, because lib/string.c has too many
-> > > > > > dependencies and does not compile in the purgatory. On the other hand having
-> > > > > > arch dependent includes isn't that nice either ...
-> > > > > > 
-> > > > > > What's your opinion on this?    
-> > > > > 
-> > > > > Looks like it is a mess, maybe the 1st one is better although it is also
-> > > > > ugly.  Ccing Ingo see if he has some idea about this.     
-> > > > 
-> > > > Maybe something like below is better if no other idea:
-> > > > 
-> > > > diff --git a/arch/x86/boot/string_builtin.c b/arch/x86/boot/string_builtin.c
-> > > > new file mode 100644
-> > > > index 000000000000..9099f949fb41
-> > > > --- /dev/null
-> > > > +++ b/arch/x86/boot/string_builtin.c
-> > > > @@ -0,0 +1,11 @@
-> > > > +#include <linux/types.h>
-> > > > +
-> > > > +void *memcpy(void *dst, const void *src, size_t len)
-> > > > +{
-> > > > +	return __builtin_memcpy(dst, src, len);
-> > > > +}
-> > > > +
-> > > > +void *memset(void *dst, int c, size_t len)
-> > > > +{
-> > > > +	return __builtin_memset(dst, c, len);
-> > > > +}
-> > > > diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
-> > > > index d886b1fa36f0..e12c78fcd59f 100644
-> > > > --- a/arch/x86/purgatory/string.c
-> > > > +++ b/arch/x86/purgatory/string.c
-> > > > @@ -11,3 +11,4 @@
-> > > >   */
-> > > > 
-> > > >  #include "../boot/string.c"
-> > > > +#include "../boot/string_builtin.c"  
-> > > 
-> > > Looks like a good idea to me. Just to be sure, with this suggestion
-> > > lib/sha256.c stays unchanged, i.e. it includes linux/string.h?  
-> > 
-> > Yes, I assumed so, one thing is I noticed linux/string.h uses __kernel_size_t, but
-> > the boot/string.h use _size_t.
-> 
-> I don't think the __kernel_size_t vs. _size_t is a problem. When I make gcc's
-> intermediate file 
-> 
-> 	$ make /arch/x86/purgatory/string.i
-> 
-> the type doesn't change with and without my patches. In both cases size_t is
-> defined as
-> 
-> 	size_t -> __kernel_size_t -> __kernel_ulong_t -> unsigned long
-> 
-> So (at least for now) we are safe.
-> 
-> > > 
-> > > The only thing I don't really like is adding the extra boot/string.builtin.c
-> > > file. For my taste adding the two functions directly to purgatory/string.c would
-> > > be nicer. However in the end it's "not my problem".  
-> > 
-> > string.c is also included in boot/compressed/string.c which defines its
-> > own version of memcpy.  And in the boot/compressed/string.c version it
-> > calls warn() which is a special function for decompressor used only.
-> > I'm not sure how to merge them with one string.c now.
-> 
-> That's why i suggested to put the two functions into _purgatory_/string.c. In
-> the end the file would read
-> 
-> ---
-> $ cat arch/x86/purgatory/string.c
-> /*
->  * Simple string functions.
->  *
->  * Copyright (C) 2014 Red Hat Inc.
->  *
->  * Author:
->  *       Vivek Goyal <vgoyal@redhat.com>
->  *
->  * This source code is licensed under the GNU General Public License,
->  * Version 2.  See the file COPYING for more details.
->  */
-> 
-> #include <linux/types.h>
-> 
-> #include "../boot/string.c"
-> 
-> void *memcpy(void *dst, const void *src, size_t len)
-> {
-> 	return __builtin_memcpy(dst, src, len);
-> }
-> 
-> void *memset(void *dst, int c, size_t len)
-> {
-> 	return __builtin_memset(dst, c, len);
-> }
-> ---
-> 
-> Of course it would be even nicer having them in boot/string.c. But as you
-> already mentioned that would require a larger cleanup and should be done by
-> somebody with more experience on x86.
+Hi Robin,
 
-Ok, I got your points, your proposal looks good to me if no better choice.
 
-Thanks
-Dave
+On 3/14/2018 11:16 PM, Robin Murphy wrote:
+> On 13/03/18 08:55, Vivek Gautam wrote:
+>> From: Sricharan R <sricharan@codeaurora.org>
+>>
+>> The smmu device probe/remove and add/remove master device callbacks
+>> gets called when the smmu is not linked to its master, that is without
+>> the context of the master device. So calling runtime apis in those 
+>> places
+>> separately.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> [vivek: Cleanup pm runtime calls]
+>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>> ---
+>>   drivers/iommu/arm-smmu.c | 95 
+>> ++++++++++++++++++++++++++++++++++++++++++++----
+>>   1 file changed, 87 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index d5873d545024..56a04ae80bf3 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -268,6 +268,20 @@ static struct arm_smmu_option_prop 
+>> arm_smmu_options[] = {
+>>       { 0, NULL},
+>>   };
+>>   +static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
+>> +{
+>> +    if (pm_runtime_enabled(smmu->dev))
+>> +        return pm_runtime_get_sync(smmu->dev);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
+>> +{
+>> +    if (pm_runtime_enabled(smmu->dev))
+>> +        pm_runtime_put(smmu->dev);
+>> +}
+>> +
+>>   static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain 
+>> *dom)
+>>   {
+>>       return container_of(dom, struct arm_smmu_domain, domain);
+>> @@ -913,11 +927,15 @@ static void 
+>> arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>       struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>> -    int irq;
+>> +    int ret, irq;
+>>         if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
+>>           return;
+>>   +    ret = arm_smmu_rpm_get(smmu);
+>> +    if (ret < 0)
+>> +        return;
+>> +
+>>       /*
+>>        * Disable the context bank and free the page tables before 
+>> freeing
+>>        * it.
+>> @@ -932,6 +950,8 @@ static void 
+>> arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>>         free_io_pgtable_ops(smmu_domain->pgtbl_ops);
+>>       __arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
+>> +
+>> +    arm_smmu_rpm_put(smmu);
+>>   }
+>>     static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
+>> @@ -1213,10 +1233,15 @@ static int arm_smmu_attach_dev(struct 
+>> iommu_domain *domain, struct device *dev)
+>>           return -ENODEV;
+>>         smmu = fwspec_smmu(fwspec);
+>> +
+>> +    ret = arm_smmu_rpm_get(smmu);
+>> +    if (ret < 0)
+>> +        return ret;
+>> +
+>>       /* Ensure that the domain is finalised */
+>>       ret = arm_smmu_init_domain_context(domain, smmu);
+>>       if (ret < 0)
+>> -        return ret;
+>> +        goto rpm_put;
+>>         /*
+>>        * Sanity check the domain. We don't support domains across
+>> @@ -1230,29 +1255,47 @@ static int arm_smmu_attach_dev(struct 
+>> iommu_domain *domain, struct device *dev)
+>>       }
+>>         /* Looks ok, so add the device to the domain */
+>> -    return arm_smmu_domain_add_master(smmu_domain, fwspec);
+>> +    ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
+>> +
+>> +rpm_put:
+>> +    arm_smmu_rpm_put(smmu);
+>> +    return ret;
+>>   }
+>>     static int arm_smmu_map(struct iommu_domain *domain, unsigned 
+>> long iova,
+>>               phys_addr_t paddr, size_t size, int prot)
+>>   {
+>>       struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>> +    struct arm_smmu_device *smmu = smmu_domain->smmu;
+>
+> Nit: please use arm_smmu_domain for ops as well (as it was before 
+> 523d7423e21b), or consistently elide it for smmu - the mixture of both 
+> methods is just a horrible mess (here and in unmap).
+
+Sure, will make it consistent for arm_smmu_device (in both places - 
+map/unmap)
+
+      struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
+
+>
+>> +    int ret;
+>>         if (!ops)
+>>           return -ENODEV;
+>>   -    return ops->map(ops, iova, paddr, size, prot);
+>> +    arm_smmu_rpm_get(smmu);
+>> +    ret = ops->map(ops, iova, paddr, size, prot);
+>> +    arm_smmu_rpm_put(smmu);
+>> +
+>> +    return ret;
+>>   }
+>>     static size_t arm_smmu_unmap(struct iommu_domain *domain, 
+>> unsigned long iova,
+>>                    size_t size)
+>>   {
+>>       struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>> +    struct arm_smmu_device *smmu = smmu_domain->smmu;
+>> +    size_t ret;
+>>         if (!ops)
+>>           return 0;
+>>   -    return ops->unmap(ops, iova, size);
+>> +    arm_smmu_rpm_get(smmu);
+>> +    ret = ops->unmap(ops, iova, size);
+>> +    arm_smmu_rpm_put(smmu);
+>> +
+>> +    return ret;
+>>   }
+>>     static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+>> @@ -1407,14 +1450,22 @@ static int arm_smmu_add_device(struct device 
+>> *dev)
+>>       while (i--)
+>>           cfg->smendx[i] = INVALID_SMENDX;
+>>   +    ret = arm_smmu_rpm_get(smmu);
+>> +    if (ret < 0)
+>> +        goto out_cfg_free;
+>> +
+>>       ret = arm_smmu_master_alloc_smes(dev);
+>
+> Nit: it would be easier to just do the rpm_put here; then you don't 
+> need to mess with the cleanup path.
+
+Sure, will do that. It will be cleaner.
+
+>
+>>       if (ret)
+>> -        goto out_cfg_free;
+>> +        goto out_rpm_put;
+>>         iommu_device_link(&smmu->iommu, dev);
+>>   +    arm_smmu_rpm_put(smmu);
+>> +
+>>       return 0;
+>>   +out_rpm_put:
+>> +    arm_smmu_rpm_put(smmu);
+>>   out_cfg_free:
+>>       kfree(cfg);
+>>   out_free:
+>> @@ -1427,7 +1478,7 @@ static void arm_smmu_remove_device(struct 
+>> device *dev)
+>>       struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+>>       struct arm_smmu_master_cfg *cfg;
+>>       struct arm_smmu_device *smmu;
+>> -
+>> +    int ret;
+>>         if (!fwspec || fwspec->ops != &arm_smmu_ops)
+>>           return;
+>> @@ -1435,8 +1486,15 @@ static void arm_smmu_remove_device(struct 
+>> device *dev)
+>>       cfg  = fwspec->iommu_priv;
+>>       smmu = cfg->smmu;
+>>   +    ret = arm_smmu_rpm_get(smmu);
+>> +    if (ret < 0)
+>> +        return;
+>> +
+>>       iommu_device_unlink(&smmu->iommu, dev);
+>>       arm_smmu_master_free_smes(fwspec);
+>> +
+>> +    arm_smmu_rpm_put(smmu);
+>> +
+>>       iommu_group_remove_device(dev);
+>>       kfree(fwspec->iommu_priv);
+>>       iommu_fwspec_free(dev);
+>> @@ -2124,6 +2182,8 @@ static int arm_smmu_device_probe(struct 
+>> platform_device *pdev)
+>>           smmu->irqs[i] = irq;
+>>       }
+>>   +    platform_set_drvdata(pdev, smmu);
+>> +
+>>       err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
+>>       if (err)
+>>           return err;
+>> @@ -2132,6 +2192,19 @@ static int arm_smmu_device_probe(struct 
+>> platform_device *pdev)
+>>       if (err)
+>>           return err;
+>>   +    /*
+>> +     * We want to avoid touching dev->power.lock in fastpaths unless
+>> +     * it's really going to do something useful - pm_runtime_enabled()
+>> +     * can serve as an ideal proxy for that decision. So, conditionally
+>> +     * enable pm_runtime.
+>> +     */
+>> +    if (dev->pm_domain)
+>> +        pm_runtime_enable(dev);
+>> +
+>> +    err = arm_smmu_rpm_get(smmu);
+>> +    if (err < 0)
+>> +        return err;
+>> +
+>>       err = arm_smmu_device_cfg_probe(smmu);
+>>       if (err)
+>>           return err;
+>> @@ -2173,10 +2246,11 @@ static int arm_smmu_device_probe(struct 
+>> platform_device *pdev)
+>>           return err;
+>>       }
+>>   -    platform_set_drvdata(pdev, smmu);
+>>       arm_smmu_device_reset(smmu);
+>>       arm_smmu_test_smr_masks(smmu);
+>>   +    arm_smmu_rpm_put(smmu);
+>> +
+>>       /*
+>>        * For ACPI and generic DT bindings, an SMMU will be probed before
+>>        * any device which might need it, so we want the bus ops in place
+>> @@ -2212,8 +2286,13 @@ static int arm_smmu_device_remove(struct 
+>> platform_device *pdev)
+>>       if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
+>>           dev_err(&pdev->dev, "removing device with active domains!\n");
+>>   +    arm_smmu_rpm_get(smmu);
+>>       /* Turn the thing off */
+>>       writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+>> +    arm_smmu_rpm_put(smmu);
+>> +
+>> +    if (pm_runtime_enabled(smmu->dev))
+>> +        pm_runtime_disable(smmu->dev);
+>>         clk_bulk_unprepare(smmu->num_clks, smmu->clks);
+>
+> I don't know how runtime and system PM interact - does the reset in 
+> arm_smmu_pm_resume need special treatment as well, or is the device 
+> guaranteed to be powered up at that point by other means?
+
+So, as Tomasz wrote, we should be okay with this.
+Thanks.
+
+regards
+Vivek
+>
+> Robin.
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
