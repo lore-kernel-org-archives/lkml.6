@@ -1,201 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeCTNu0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:50:26 -0400
-Received: from mga02.intel.com ([134.134.136.20]:42662 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753227AbeCTNuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:50:25 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
-   d="scan'208";a="26042033"
-Date: Tue, 20 Mar 2018 21:50:20 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [RFC PATCH v2 1/4] mm/page_alloc: use helper functions to
- add/remove a page to/from buddy
-Message-ID: <20180320135019.GA2033@intel.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-2-aaron.lu@intel.com>
- <d9121a55-411e-37e0-2080-00b860612cc8@suse.cz>
+        id S1753583AbeCTNvZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:51:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41480 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753324AbeCTNvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:51:22 -0400
+Subject: Re: [PATCH v5 1/2] cpuset: Enable cpuset controller in default
+ hierarchy
+To: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+References: <1521148842-15486-1-git-send-email-longman@redhat.com>
+ <1521148842-15486-2-git-send-email-longman@redhat.com>
+ <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <1881c1da-56ec-d76b-b736-fd0919737ec6@redhat.com>
+Date: Tue, 20 Mar 2018 09:51:20 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9121a55-411e-37e0-2080-00b860612cc8@suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 12:35:46PM +0100, Vlastimil Babka wrote:
-> On 03/20/2018 09:54 AM, Aaron Lu wrote:
-> > There are multiple places that add/remove a page into/from buddy,
-> > introduce helper functions for them.
-> > 
-> > This also makes it easier to add code when a page is added/removed
-> > to/from buddy.
-> > 
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> > ---
-> >  mm/page_alloc.c | 65 ++++++++++++++++++++++++++++++++++-----------------------
-> >  1 file changed, 39 insertions(+), 26 deletions(-)
-> > 
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 3db9cfb2265b..3cdf1e10d412 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -736,12 +736,41 @@ static inline void set_page_order(struct page *page, unsigned int order)
-> >  	__SetPageBuddy(page);
-> >  }
-> >  
-> > +static inline void add_to_buddy_common(struct page *page, struct zone *zone,
-> > +					unsigned int order, int mt)
-> > +{
-> > +	set_page_order(page, order);
-> > +	zone->free_area[order].nr_free++;
-> 
-> The 'mt' parameter seems unused here. Otherwise
+On 03/19/2018 11:59 AM, Tejun Heo wrote:
+> Hello, Waiman.
+>
+> This looks great.  A couple nitpicks below.
+>
+>> +     5-3. Cpuset
+>> +       5.3-1. Cpuset Interface Files
+> Can we put cpuset below pid?  It feels weird to break up cpu, memory
+> and io as they represent the three major resources and are in a
+> similar fashion.
+Sure. I will move it down below pid.
 
-An right, forgot to remove it...
+>> +  cpuset.effective_cpus
+>> +	A read-only multiple values file which exists on non-root
+>> +	cgroups.
+>> +
+>> +	It lists the onlined CPUs that are actually allowed to be
+>> +	used by tasks within the current cgroup. It is a subset of
+>> +	"cpuset.cpus".  Its value will be affected by CPU hotplug
+>> +	events.
+> Can we do cpuset.cpus.availble which lists the cpus available to the
+> cgroup instead of the eventual computed mask for the cgroup?  That'd
+> be more useful as it doesn't lose the information by and'ing what's
+> available with the cgroup's mask and it's trivial to determine the
+> effective from the two masks.
 
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+I don't get what you want here. cpus is the cpuset's cpus_allowed mask.
+effective_cpus is the effective_cpus mask. When you say cpus available
+to the cgroup, do you mean the cpu_online_mask or the list of cpus from
+the parent? Or do you just want to change the name to cpus.available
+instead of effective_cpus?
 
-Thanks!
+>> +  cpuset.effective_mems
+>> +	A read-only multiple values file which exists on non-root
+>> +	cgroups.
+>> +
+>> +	It lists the onlined memory nodes that are actually allowed
+>> +	to be used by tasks within the current cgroup.  It is a subset
+>> +	of "cpuset.mems".  Its value will be affected by memory nodes
+>> +	hotplug events.
+> Ditto.
+>
+>> +static struct cftype dfl_files[] = {
+>> +	{
+>> +		.name = "cpus",
+>> +		.seq_show = cpuset_common_seq_show,
+>> +		.write = cpuset_write_resmask,
+>> +		.max_write_len = (100U + 6 * NR_CPUS),
+>> +		.private = FILE_CPULIST,
+>> +	},
+> Is it missing CFTYPE_NOT_ON_ROOT?  Other files too.
 
-> 
-> > +}
-> > +
-> > +static inline void add_to_buddy_head(struct page *page, struct zone *zone,
-> > +					unsigned int order, int mt)
-> > +{
-> > +	add_to_buddy_common(page, zone, order, mt);
-> > +	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
-> > +}
-> > +
-> > +static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
-> > +					unsigned int order, int mt)
-> > +{
-> > +	add_to_buddy_common(page, zone, order, mt);
-> > +	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
-> > +}
-> > +
-> >  static inline void rmv_page_order(struct page *page)
-> >  {
-> >  	__ClearPageBuddy(page);
-> >  	set_page_private(page, 0);
-> >  }
-> >  
-> > +static inline void remove_from_buddy(struct page *page, struct zone *zone,
-> > +					unsigned int order)
-> > +{
-> > +	list_del(&page->lru);
-> > +	zone->free_area[order].nr_free--;
-> > +	rmv_page_order(page);
-> > +}
-> > +
-> >  /*
-> >   * This function checks whether a page is free && is the buddy
-> >   * we can do coalesce a page and its buddy if
-> > @@ -845,13 +874,10 @@ static inline void __free_one_page(struct page *page,
-> >  		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
-> >  		 * merge with it and move up one order.
-> >  		 */
-> > -		if (page_is_guard(buddy)) {
-> > +		if (page_is_guard(buddy))
-> >  			clear_page_guard(zone, buddy, order, migratetype);
-> > -		} else {
-> > -			list_del(&buddy->lru);
-> > -			zone->free_area[order].nr_free--;
-> > -			rmv_page_order(buddy);
-> > -		}
-> > +		else
-> > +			remove_from_buddy(buddy, zone, order);
-> >  		combined_pfn = buddy_pfn & pfn;
-> >  		page = page + (combined_pfn - pfn);
-> >  		pfn = combined_pfn;
-> > @@ -883,8 +909,6 @@ static inline void __free_one_page(struct page *page,
-> >  	}
-> >  
-> >  done_merging:
-> > -	set_page_order(page, order);
-> > -
-> >  	/*
-> >  	 * If this is not the largest possible page, check if the buddy
-> >  	 * of the next-highest order is free. If it is, it's possible
-> > @@ -901,15 +925,12 @@ static inline void __free_one_page(struct page *page,
-> >  		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
-> >  		if (pfn_valid_within(buddy_pfn) &&
-> >  		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
-> > -			list_add_tail(&page->lru,
-> > -				&zone->free_area[order].free_list[migratetype]);
-> > -			goto out;
-> > +			add_to_buddy_tail(page, zone, order, migratetype);
-> > +			return;
-> >  		}
-> >  	}
-> >  
-> > -	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
-> > -out:
-> > -	zone->free_area[order].nr_free++;
-> > +	add_to_buddy_head(page, zone, order, migratetype);
-> >  }
-> >  
-> >  /*
-> > @@ -1731,9 +1752,7 @@ static inline void expand(struct zone *zone, struct page *page,
-> >  		if (set_page_guard(zone, &page[size], high, migratetype))
-> >  			continue;
-> >  
-> > -		list_add(&page[size].lru, &area->free_list[migratetype]);
-> > -		area->nr_free++;
-> > -		set_page_order(&page[size], high);
-> > +		add_to_buddy_head(&page[size], zone, high, migratetype);
-> >  	}
-> >  }
-> >  
-> > @@ -1877,9 +1896,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
-> >  							struct page, lru);
-> >  		if (!page)
-> >  			continue;
-> > -		list_del(&page->lru);
-> > -		rmv_page_order(page);
-> > -		area->nr_free--;
-> > +		remove_from_buddy(page, zone, current_order);
-> >  		expand(zone, page, order, current_order, area, migratetype);
-> >  		set_pcppage_migratetype(page, migratetype);
-> >  		return page;
-> > @@ -2795,9 +2812,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
-> >  	}
-> >  
-> >  	/* Remove page from free list */
-> > -	list_del(&page->lru);
-> > -	zone->free_area[order].nr_free--;
-> > -	rmv_page_order(page);
-> > +	remove_from_buddy(page, zone, order);
-> >  
-> >  	/*
-> >  	 * Set the pageblock if the isolated page is at least half of a
-> > @@ -7886,9 +7901,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
-> >  		pr_info("remove from free list %lx %d %lx\n",
-> >  			pfn, 1 << order, end_pfn);
-> >  #endif
-> > -		list_del(&page->lru);
-> > -		rmv_page_order(page);
-> > -		zone->free_area[order].nr_free--;
-> > +		remove_from_buddy(page, zone, order);
-> >  		for (i = 0; i < (1 << order); i++)
-> >  			SetPageReserved((page+i));
-> >  		pfn += (1 << order);
-> > 
-> 
+Right, I will set CFTYPE_NOT_ON_ROOT to "cpus" and "mems" as we are not
+supposed to change them in the root. The effective_cpus and
+effective_mems will be there in the root to show what are available.
+
+Cheers,
+Longman
