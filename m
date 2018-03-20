@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751771AbeCTXCx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:02:53 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:35260 "EHLO
+        id S1751861AbeCTXDY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:03:24 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:34872 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751552AbeCTXCV (ORCPT
+        with ESMTP id S1751405AbeCTXCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:02:21 -0400
+        Tue, 20 Mar 2018 19:02:19 -0400
 From: Stefan Agner <stefan@agner.ch>
 To: linux@armlinux.org.uk, ard.biesheuvel@linaro.org, arnd@arndb.de
 Cc: nicolas.pitre@linaro.org, marc.zyngier@arm.com,
@@ -14,9 +14,9 @@ Cc: nicolas.pitre@linaro.org, marc.zyngier@arm.com,
         Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 5/5] ARM: add support for building ARM kernel with clang
-Date: Wed, 21 Mar 2018 00:02:06 +0100
-Message-Id: <20180320230206.25289-6-stefan@agner.ch>
+Subject: [PATCH 2/5] efi/libstub/arm: add support for building with clang
+Date: Wed, 21 Mar 2018 00:02:03 +0100
+Message-Id: <20180320230206.25289-3-stefan@agner.ch>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180320230206.25289-1-stefan@agner.ch>
 References: <20180320230206.25289-1-stefan@agner.ch>
@@ -24,42 +24,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use cc-options call for compiler options which are not available
-in clang. With this patch an ARMv7 multi platform kernel can be
-successfully build using clang (tested with version 5.0.1).
+Use cc-options call for -mno-single-pic-base since the option is
+not available in clang. LLVM/clang always assumes a fixed
+displacement between text/data and hence uses PC relative
+addressing.
 
-Based-on-patches-by: Behan Webster <behanw@converseincode.com>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/Makefile                 | 2 +-
- arch/arm/boot/compressed/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/efi/libstub/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index e9e3fde3c657..20e9fee1ccc5 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -39,7 +39,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-mno-unaligned-access)
- endif
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index 7b3ba40f0745..2bf69cca0d87 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -13,7 +13,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
  
- ifeq ($(CONFIG_FRAME_POINTER),y)
--KBUILD_CFLAGS	+=-fno-omit-frame-pointer -mapcs -mno-sched-prolog
-+KBUILD_CFLAGS	+=-fno-omit-frame-pointer $(call cc-option,-mapcs,) $(call cc-option,-mno-sched-prolog,)
- endif
+ cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+ cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+-				   -fno-builtin -fpic -mno-single-pic-base
++				   -fno-builtin -fpic \
++				   $(call cc-option,-mno-single-pic-base,)
  
- ifeq ($(CONFIG_CPU_BIG_ENDIAN),y)
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index 45a6b9b7af2a..6a5c4ac97703 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -113,7 +113,7 @@ CFLAGS_fdt_ro.o := $(nossp_flags)
- CFLAGS_fdt_rw.o := $(nossp_flags)
- CFLAGS_fdt_wip.o := $(nossp_flags)
+ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
  
--ccflags-y := -fpic -mno-single-pic-base -fno-builtin -I$(obj)
-+ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin -I$(obj)
- asflags-y := -DZIMAGE
- 
- # Supply kernel BSS size to the decompressor via a linker symbol.
 -- 
 2.16.2
