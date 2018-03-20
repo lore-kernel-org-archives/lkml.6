@@ -1,119 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeCTCuC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:50:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55974 "EHLO
+        id S1752183AbeCTCu0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:50:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35142 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeCTCsA (ORCPT
+        with ESMTP id S1751857AbeCTCuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:48:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F36E6610D5
+        Mon, 19 Mar 2018 22:50:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0165A60FEE
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-rdma@vger.kernel.org, timur@codeaurora.org,
+To: linux-scsi@vger.kernel.org, timur@codeaurora.org,
         sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Faisal Latif <faisal.latif@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/6] RDMA/i40iw: Eliminate duplicate barriers on weakly-ordered archs
-Date: Mon, 19 Mar 2018 22:47:45 -0400
-Message-Id: <1521514068-8856-4-git-send-email-okaya@codeaurora.org>
+        Sinan Kaya <okaya@codeaurora.org>, Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        esc.storagedev@microsemi.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/7] scsi: hpsa: Eliminate duplicate barriers on weakly-ordered archs
+Date: Mon, 19 Mar 2018 22:50:01 -0400
+Message-Id: <1521514207-10695-2-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
-References: <1521514068-8856-1-git-send-email-okaya@codeaurora.org>
+In-Reply-To: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
+References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier on
-some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a
+barrier on some architectures like arm64.
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
-
-Create a new wrapper function with relaxed write operator. Use the new
-wrapper when a write is following a wmb().
+This ends up CPU observing two barriers back to back before executing
+the register write.
 
 Since code already has an explicit barrier call, changing writel() to
 writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_ctrl.c  |  6 ++++--
- drivers/infiniband/hw/i40iw/i40iw_osdep.h |  1 +
- drivers/infiniband/hw/i40iw/i40iw_uk.c    |  2 +-
- drivers/infiniband/hw/i40iw/i40iw_utils.c | 11 +++++++++++
- 4 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/scsi/hpsa.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-index c74fd33..47f473e 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-@@ -706,9 +706,11 @@ static void i40iw_sc_ccq_arm(struct i40iw_sc_cq *ccq)
- 	wmb();       /* make sure shadow area is updated before arming */
- 
- 	if (ccq->dev->is_pf)
--		i40iw_wr32(ccq->dev->hw, I40E_PFPE_CQARM, ccq->cq_uk.cq_id);
-+		i40iw_wr32_relaxed(ccq->dev->hw, I40E_PFPE_CQARM,
-+				   ccq->cq_uk.cq_id);
- 	else
--		i40iw_wr32(ccq->dev->hw, I40E_VFPE_CQARM1, ccq->cq_uk.cq_id);
-+		i40iw_wr32_relaxed(ccq->dev->hw, I40E_VFPE_CQARM1,
-+				   ccq->cq_uk.cq_id);
- }
- 
- /**
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_osdep.h b/drivers/infiniband/hw/i40iw/i40iw_osdep.h
-index f27be3e..e06f4b9 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_osdep.h
-+++ b/drivers/infiniband/hw/i40iw/i40iw_osdep.h
-@@ -213,5 +213,6 @@ void i40iw_hw_stats_start_timer(struct i40iw_sc_vsi *vsi);
- void i40iw_hw_stats_stop_timer(struct i40iw_sc_vsi *vsi);
- #define i40iw_mmiowb() mmiowb()
- void i40iw_wr32(struct i40iw_hw *hw, u32 reg, u32 value);
-+void i40iw_wr32_relaxed(struct i40iw_hw *hw, u32 reg, u32 value);
- u32  i40iw_rd32(struct i40iw_hw *hw, u32 reg);
- #endif				/* _I40IW_OSDEP_H_ */
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_uk.c b/drivers/infiniband/hw/i40iw/i40iw_uk.c
-index 8afa5a6..7f0ebed 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_uk.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_uk.c
-@@ -723,7 +723,7 @@ static void i40iw_cq_request_notification(struct i40iw_cq_uk *cq,
- 
- 	wmb(); /* make sure WQE is populated before valid bit is set */
- 
--	writel(cq->cq_id, cq->cqe_alloc_reg);
-+	writel_relaxed(cq->cq_id, cq->cqe_alloc_reg);
- }
- 
- /**
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_utils.c b/drivers/infiniband/hw/i40iw/i40iw_utils.c
-index ddc1056..99aa6f8 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_utils.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_utils.c
-@@ -125,6 +125,17 @@ inline void i40iw_wr32(struct i40iw_hw *hw, u32 reg, u32 value)
- }
- 
- /**
-+ * i40iw_wr32_relaxed - write 32 bits to hw register without ordering
-+ * @hw: hardware information including registers
-+ * @reg: register offset
-+ * @value: vvalue to write to register
-+ */
-+inline void i40iw_wr32_relaxed(struct i40iw_hw *hw, u32 reg, u32 value)
-+{
-+	writel_relaxed(value, hw->hw_addr + reg);
-+}
-+
-+/**
-  * i40iw_rd32 - read a 32 bit hw register
-  * @hw: hardware information including registers
-  * @reg: register offset
+diff --git a/drivers/scsi/hpsa.h b/drivers/scsi/hpsa.h
+index 018f980..c7d7e6a 100644
+--- a/drivers/scsi/hpsa.h
++++ b/drivers/scsi/hpsa.h
+@@ -599,7 +599,7 @@ static unsigned long SA5_ioaccel_mode1_completed(struct ctlr_info *h, u8 q)
+ 		 * but with current driver design this is easiest.
+ 		 */
+ 		wmb();
+-		writel((q << 24) | rq->current_entry, h->vaddr +
++		writel_relaxed((q << 24) | rq->current_entry, h->vaddr +
+ 				IOACCEL_MODE1_CONSUMER_INDEX);
+ 		atomic_dec(&h->commands_outstanding);
+ 	}
 -- 
 2.7.4
