@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753472AbeCTNIR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:08:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42729 "EHLO mail.bootlin.com"
+        id S1753624AbeCTNJe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:09:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42745 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753205AbeCTNIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:08:14 -0400
+        id S1753091AbeCTNIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:08:16 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
 Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
         linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v6 1/6] dt-bindings: Add vendor prefix for Microsemi Corporation
-Date: Tue, 20 Mar 2018 14:07:56 +0100
-Message-Id: <20180320130801.9247-2-alexandre.belloni@bootlin.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v6 4/6] MIPS: mscc: add ocelot PCB123 device tree
+Date: Tue, 20 Mar 2018 14:07:59 +0100
+Message-Id: <20180320130801.9247-5-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
 References: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
@@ -21,26 +22,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Microsemi Corporation provides semiconductor and system solutions for
-aerospace & defense, communications, data center and industrial markets.
+Add a device tree for the Microsemi Ocelot PCB123 evaluation board.
 
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/boot/dts/mscc/Makefile          |  2 ++
+ arch/mips/boot/dts/mscc/ocelot_pcb123.dts | 27 +++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb123.dts
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index ae850d6c0ad3..ffc959ef53e9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -224,6 +224,7 @@ motorola	Motorola, Inc.
- moxa	Moxa Inc.
- mpl	MPL AG
- mqmaker	mqmaker Inc.
-+mscc	Microsemi Corporation
- msi	Micro-Star International Co. Ltd.
- mti	Imagination Technologies Ltd. (formerly MIPS Technologies Inc.)
- multi-inno	Multi-Inno Technology Co.,Ltd
+diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
+index dd08e63a10ba..c51164537c02 100644
+--- a/arch/mips/boot/dts/mscc/Makefile
++++ b/arch/mips/boot/dts/mscc/Makefile
+@@ -1 +1,3 @@
++dtb-$(CONFIG_LEGACY_BOARD_OCELOT)	+= ocelot_pcb123.dtb
++
+ obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+new file mode 100644
+index 000000000000..29d6414f8886
+--- /dev/null
++++ b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/* Copyright (c) 2017 Microsemi Corporation */
++
++/dts-v1/;
++
++#include "ocelot.dtsi"
++
++/ {
++	compatible = "mscc,ocelot-pcb123", "mscc,ocelot";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0e000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart2 {
++	status = "okay";
++};
 -- 
 2.16.2
