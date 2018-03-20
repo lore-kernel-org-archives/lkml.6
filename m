@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeCTJlS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:41:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34118 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751459AbeCTJlR (ORCPT
+        id S1752452AbeCTJlx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:41:53 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:38841 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752015AbeCTJlu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:41:17 -0400
-Date: Tue, 20 Mar 2018 10:41:08 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@kernel.org>
-cc: David Laight <David.Laight@ACULAB.COM>,
-        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-In-Reply-To: <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
-Message-ID: <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com> <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de> <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de> <20180320082651.jmxvvii2xvmpyr2s@gmail.com> <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de> <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Mar 2018 05:41:50 -0400
+X-Google-Smtp-Source: AG47ELuyKKUsiU+ho/SN7dzPjKJ4BNQ9J/dxXEIUxf7dd9f5FzsypwWRlUxFGnyANWLxGMYRvcXE5NaqaFImYTaPqus=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <d14d48ab-9ba1-c70c-4d46-cd9c7c862add@oracle.com>
+References: <20180315142205.15839-1-joao.m.martins@oracle.com>
+ <bbf536dc-3c3d-8a25-47e8-7fd52850835d@oracle.com> <d14d48ab-9ba1-c70c-4d46-cd9c7c862add@oracle.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 20 Mar 2018 10:41:49 +0100
+X-Google-Sender-Auth: QsMOgOH5wDSEgkLWV5ClT6CmsSY
+Message-ID: <CAJZ5v0ipVHsjEBJuj3Lz6iRSVasv8d2YY0qjz1SFaCK+zDP=Xw@mail.gmail.com>
+Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
+To: Joao Martins <joao.m.martins@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018, Ingo Molnar wrote:
-> * Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > > So I do think we could do more in this area to improve driver performance, if the 
-> > > code is correct and if there's actual benchmarks that are showing real benefits.
-> > 
-> > If it's about hotpath performance I'm all for it, but the use case here is
-> > a debug facility...
-> > 
-> > And if we go down that road then we want a AVX based memcpy()
-> > implementation which is runtime conditional on the feature bit(s) and
-> > length dependent. Just slapping a readqq() at it and use it in a loop does
-> > not make any sense.
-> 
-> Yeah, so generic memcpy() replacement is only feasible I think if the most 
-> optimistic implementation is actually correct:
-> 
->  - if no preempt disable()/enable() is required
-> 
->  - if direct access to the AVX[2] registers does not disturb legacy FPU state in 
->    any fashion
-> 
->  - if direct access to the AVX[2] registers cannot raise weird exceptions or have
->    weird behavior if the FPU control word is modified to non-standard values by 
->    untrusted user-space
-> 
-> If we have to touch the FPU tag or control words then it's probably only good for 
-> a specialized API.
+On Fri, Mar 16, 2018 at 2:57 PM, Joao Martins <joao.m.martins@oracle.com> wrote:
+> On 03/15/2018 03:45 PM, Boris Ostrovsky wrote:
+>> On 03/15/2018 10:22 AM, Joao Martins wrote:
+>>> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
+>>> changing only the acpi_id. For processors which P-state coordination type
+>>> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
+>>> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
+>>>
+>>> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
+>>> this will have some unintended side effects. Effectively, it will look at
+>>> the P-state domain existence and *if it already exists* it will skip the
+>>> acpi-cpufreq initialization and thus inherit the policy from the first CPU
+>>> in the cpufreq domain. This will finally lead to the original cpu not
+>>> changing target freq to P0 other than the first in the domain. Which will
+>>> make turbo boost not getting enabled (e.g. for 'performance' governor) for
+>>> all cpus.
+>>>
+>>> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
+>>> processors and thus always uploading the correct info to Xen. We export
+>>> acpi_processor_get_psd() for that this purpose, but change signature
+>>> to not assume an existent of acpi_processor given that ACPI isn't creating
+>>> an acpi_processor for non-dom0 CPUs.
+>>>
+>>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>>
+>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>
+> Thanks!
+>
+> I suppose what's remaining is review (or ack) from ACPI folks on the interface
+> changes made to acpi_processor_get_psd().
 
-I did not mean to have a general memcpy replacement. Rather something like
-magic_memcpy() which falls back to memcpy when AVX is not usable or the
-length does not justify the AVX stuff at all.
+There you go:
 
-Thanks,
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-	tglx
+Do you want to route this via Xen?
