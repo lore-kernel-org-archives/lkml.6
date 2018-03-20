@@ -1,114 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751701AbeCTO5b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 10:57:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59162 "EHLO mail.kernel.org"
+        id S1751626AbeCTO6e convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 10:58:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751578AbeCTO51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:57:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D222421834
+        id S1750888AbeCTO6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 10:58:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDE421838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx485qK1IAmFz1MNAuKOX9ZXq8hQNWK/pFt2sxDBpMYcYu1D9SwtlBAU994XBXdPGMQA7ZfY4OY4+8axytfxoZug=
+X-Google-Smtp-Source: AIpwx49eWw9VmrUrXxOQXux2OP99e85alzXPza7PLhd6Zkx6jjMswh+Xr9lpbQFuxBa83G4gBXFVQFsmGPJaDXpowm8=
 MIME-Version: 1.0
-In-Reply-To: <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com> <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+In-Reply-To: <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com> <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
 From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 20 Mar 2018 14:57:05 +0000
-X-Gmail-Original-Message-ID: <CALCETrVMF140-XZLi9nARPeAmyi8QRRzLRm6SSpB0BkAUSGakg@mail.gmail.com>
-Message-ID: <CALCETrVMF140-XZLi9nARPeAmyi8QRRzLRm6SSpB0BkAUSGakg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        David Laight <David.Laight@aculab.com>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>,
-        Rik van Riel <riel@redhat.com>
+Date: Tue, 20 Mar 2018 14:58:08 +0000
+X-Gmail-Original-Message-ID: <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+Message-ID: <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases on paranoid_entry
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: X86 ML <x86@kernel.org>, Andrew Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 8:26 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> On Mar 19, 2018, at 10:49 AM, Chang S. Bae <chang.seok.bae@intel.com> wrote:
 >
-> * Thomas Gleixner <tglx@linutronix.de> wrote:
+> When FSGSBASE is enabled, SWAPGS needs if and only if (current)
+> GS base is not the kernel's.
 >
->> > Useful also for code that needs AVX-like registers to do things like CRCs.
->>
->> x86/crypto/ has a lot of AVX optimized code.
->
-> Yeah, that's true, but the crypto code is processing fundamentally bigger blocks
-> of data, which amortizes the cost of using kernel_fpu_begin()/_end().
->
-> kernel_fpu_begin()/_end() is a pretty heavy operation because it does a full FPU
-> save/restore via the XSAVE[S] and XRSTOR[S] instructions, which can easily copy a
-> thousand bytes around! So kernel_fpu_begin()/_end() is probably a non-starter for
-> something small, like a single 256-bit or 512-bit word access.
->
-> But there's actually a new thing in modern kernels: we got rid of (most of) lazy
-> save/restore FPU code, our new x86 FPU model is very "direct" with no FPU faults
-> taken normally.
->
-> So assuming the target driver will only load on modern FPUs I *think* it should
-> actually be possible to do something like (pseudocode):
->
->         vmovdqa %ymm0, 40(%rsp)
->         vmovdqa %ymm1, 80(%rsp)
->
->         ...
->         # use ymm0 and ymm1
->         ...
->
->         vmovdqa 80(%rsp), %ymm1
->         vmovdqa 40(%rsp), %ymm0
->
+> FSGSBASE instructions allow user to write any value on GS base;
+> even negative. Sign check on the current GS base is not
+> sufficient. Fortunately, reading GS base is fast. Kernel GS
+> base is also known from the offset table with the CPU number.
 
-I think this kinda sorts works, but only kinda sorta:
+The original version of these patches (mine and Andi’s) didn’t have
+this comparison, didn’t need RDMSR, and didn’t allow malicious user
+programs to cause the kernel to run decently large chunks of code with
+the reverse of the expected GS convention. Why did you change it?
 
- - I'm a bit worried about newer CPUs where, say, a 256-bit vector
-operation will implicitly clear the high 768 bits of the regs.  (IIRC
-that's how it works for the new VEX stuff.)
-
- - This code will cause XINUSE to be set, which is user-visible and
-may have performance and correctness effects.  I think the kernel may
-already have some but where it occasionally sets XINUSE on its own,
-and this caused problems for rr in the past.  This might not be a
-total showstopper, but it's odd.
-
-I'd rather see us finally finish the work that Rik started to rework
-this differently.  I'd like kernel_fpu_begin() to look like:
-
-if (test_thread_flag(TIF_NEED_FPU_RESTORE)) {
-  return; // we're already okay.  maybe we need to check
-in_interrupt() or something, though?
-} else {
-  XSAVES/XSAVEOPT/XSAVE;
-  set_thread_flag(TIF_NEED_FPU_RESTORE):
-}
-
-and kernel_fpu_end() does nothing at all.
-
-We take the full performance hit for a *single* kernel_fpu_begin() on
-an otherwise short syscall or interrupt, but there's no additional
-cost for more of them or for long-enough-running things that we
-schedule in the middle.
-
-As I remember, the main hangup was that this interacts a bit oddly
-with PKRU, but that's manageable.
-
---Andy
+I really really don't like having a corner case like this that can and
+will be triggered by malicious user code but that is hard to write a
+self-test for because it involves guessing a 64-bit magic number.
+Untestable corner cases in the x86 entry code are bad.
