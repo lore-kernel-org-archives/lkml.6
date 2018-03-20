@@ -1,81 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751688AbeCTQa4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 12:30:56 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39490 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751348AbeCTQay (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:30:54 -0400
-X-Google-Smtp-Source: AG47ELshc8RvcB76KXpybavB6RckyvIv/0YSOVsP/VQCoIPGQbPC2rdPbSAZ25gp3+c4dVL4eVMvZyL1muda9Q+H54A=
-MIME-Version: 1.0
-In-Reply-To: <D7FA4547-4FA6-46EC-99D7-F08ACCD3F13D@informatik.uni-hamburg.de>
-References: <D7FA4547-4FA6-46EC-99D7-F08ACCD3F13D@informatik.uni-hamburg.de>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Tue, 20 Mar 2018 09:30:12 -0700
-Message-ID: <CAOFm3uH1Nw3x6-T1yTMkoX2tpxiwjnerAXDh-WEpyFNROFwAYw@mail.gmail.com>
-Subject: Re: [PATCH 1/5 v4] add compression algorithm zBeWalgo
-To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        id S1751481AbeCTQds (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 12:33:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:8967 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeCTQdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 12:33:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,336,1517904000";
+   d="scan'208";a="35388172"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
-        ngupta@vflare.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Topic: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases
+ on paranoid_entry
+Thread-Index: AQHTv61aFYaSukXqZEajMVMtZoAMNaPZnPEA//+lWwA=
+Date: Tue, 20 Mar 2018 16:33:42 +0000
+Message-ID: <B96DA962-6278-4FDE-A8C6-020E789CE67F@intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+In-Reply-To: <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.b.0.180311
+x-originating-ip: [10.254.178.80]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <998024BA004D1B458EDC0043B50CBF81@intel.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2KGXsuO025666
 
-Hi Benjamin,
+On 3/20/18, 07:58, "Andy Lutomirski" <luto@kernel.org> wrote:
+ 
+>> On Mar 19, 2018, at 10:49 AM, Chang S. Bae <chang.seok.bae@intel.com> wrote:
+>>
+>> When FSGSBASE is enabled, SWAPGS needs if and only if (current)
+>> GS base is not the kernel's.
+>>
+>> FSGSBASE instructions allow user to write any value on GS base;
+>> even negative. Sign check on the current GS base is not
+>> sufficient. Fortunately, reading GS base is fast. Kernel GS
+>> base is also known from the offset table with the CPU number.
+    
+> The original version of these patches (mine and Andi’s) didn’t have
+>  this comparison, didn’t need RDMSR, and didn’t allow malicious user
+>  programs to cause the kernel to run decently large chunks of code with
+>  the reverse of the expected GS convention. Why did you change it?
+    
+>    I really really don't like having a corner case like this that can and
+>    will be triggered by malicious user code but that is hard to write a
+>    self-test for because it involves guessing a 64-bit magic number.
+>    Untestable corner cases in the x86 entry code are bad.
 
-On Tue, Mar 20, 2018 at 7:04 AM, Benjamin Warnke
-<4bwarnke@informatik.uni-hamburg.de> wrote:
-> zBeWalgo is a completely new algorithm - Currently it is not published
-> somewhere else right now, googleing it would not show up any results. The
-> following section describes how the algorithm works.
-
-<snip>
-
-> diff --git a/lib/zbewalgo/zbewalgo.c b/lib/zbewalgo/zbewalgo.c
-> new file mode 100644
-> index 000000000..ef922bc27
-> --- /dev/null
-> +++ b/lib/zbewalgo/zbewalgo.c
-> @@ -0,0 +1,723 @@
-> +/*
-> + * Copyright (c) 2018 Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License version 2 as published by
-> + * the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along with
-> + * this program.
-> + *
-
-Would you mind using SPDX ids [1] instead of this fine boilerplate
-here and throughout your patches?
-
-<snip>
-
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("zBeWalgo Compression Algorithm");
-
-Here your MODULE_LICENSE does not match your top level license. See
-module.h [2] for a description of values: GPL would mean "GNU Public
-License v2 or later" whereas your top level license (best expressed
-with SPDX) would mean GPL-2.0 and no other version. To avoid
-confusion, you would need to state the same thing in the
-MODULE_LICENSE and your SPDX tags.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/module.h#n175
--- 
-Cordially
-Philippe Ombredanne
+Originally, I took it. But since it keeps kernel GS base on the (IST) stack,
+it is thought as fragile [1] AFAIK. If you really don't like this "comparison"
+then GS base can be written (unconditionally) while the original GS
+base stitched (like the original approach did) IMO.
+    
+[1] https://marc.info/?l=linux-kernel&m=151725088506036&w=3
