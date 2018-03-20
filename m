@@ -1,69 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752910AbeCTLFe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 07:05:34 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:43692 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752848AbeCTLFV (ORCPT
+        id S1752934AbeCTLFi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 07:05:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40627 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752873AbeCTLF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 07:05:21 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38002754"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <corbet@lwn.net>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <hpa@zytor.com>,
-        <peterz@infradead.org>, Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH 4/5] acpi/processor: Fix the return value of acpi_processor_ids_walk()
-Date: Tue, 20 Mar 2018 19:04:31 +0800
-Message-ID: <20180320110432.28127-5-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
+        Tue, 20 Mar 2018 07:05:26 -0400
+Date: Tue, 20 Mar 2018 04:03:47 -0700
+From: "tip-bot for H.J. Lu" <tipbot@zytor.com>
+Message-ID: <tip-e3d03598e8ae7d195af5d3d049596dec336f569f@git.kernel.org>
+Cc: jgross@suse.com, mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        andy.shevchenko@gmail.com, ebiederm@xmission.com,
+        keescook@chromium.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        hjl.tools@gmail.com, peterz@infradead.org
+Reply-To: keescook@chromium.org, hpa@zytor.com, ebiederm@xmission.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        andy.shevchenko@gmail.com, jgross@suse.com,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org,
+        peterz@infradead.org, hjl.tools@gmail.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <CAMe9rOp4_=_8twdpTyAP2DhONOCeaTOsniJLoppzhoNptL8xzA@mail.gmail.com>
+References: <CAMe9rOp4_=_8twdpTyAP2DhONOCeaTOsniJLoppzhoNptL8xzA@mail.gmail.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/build/64: Force the linker to use 2MB page size
+Git-Commit-ID: e3d03598e8ae7d195af5d3d049596dec336f569f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 99A094D0EFFC.A2FB5
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI driver should make sure all the processor IDs in their ACPI Namespace
-are unique for CPU hotplug. the driver performs a depth-first walk of the
-namespace tree and calls the acpi_processor_ids_walk().
+Commit-ID:  e3d03598e8ae7d195af5d3d049596dec336f569f
+Gitweb:     https://git.kernel.org/tip/e3d03598e8ae7d195af5d3d049596dec336f569f
+Author:     H.J. Lu <hjl.tools@gmail.com>
+AuthorDate: Mon, 19 Mar 2018 13:57:46 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Mar 2018 08:03:03 +0100
 
-But, the acpi_processor_ids_walk() will return true if one processor is
-checked, that cause the walk break after walking pass the first processor.
+x86/build/64: Force the linker to use 2MB page size
 
-Repace the value with AE_OK which is the standard acpi_status value.
+Binutils 2.31 will enable -z separate-code by default for x86 to avoid
+mixing code pages with data to improve cache performance as well as
+security.  To reduce x86-64 executable and shared object sizes, the
+maximum page size is reduced from 2MB to 4KB.  But x86-64 kernel must
+be aligned to 2MB.  Pass -z max-page-size=0x200000 to linker to force
+2MB page size regardless of the default page size used by linker.
 
-Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
+Tested with Linux kernel 4.15.6 on x86-64.
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/CAMe9rOp4_%3D_8twdpTyAP2DhONOCeaTOsniJLoppzhoNptL8xzA@mail.gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/acpi/acpi_processor.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/Makefile | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..db5bdb59639c 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -663,11 +663,11 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
- 	}
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 498c1b812300..1c4d012550ec 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -223,6 +223,15 @@ KBUILD_CFLAGS += $(cfi) $(cfi-sigframe) $(cfi-sections) $(asinstr) $(avx_instr)
  
- 	processor_validated_ids_update(uid);
--	return true;
-+	return AE_OK;
+ LDFLAGS := -m elf_$(UTS_MACHINE)
  
- err:
- 	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
-+	return AE_OK;
- 
- }
- 
--- 
-2.14.3
++#
++# The 64-bit kernel must be aligned to 2MB.  Pass -z max-page-size=0x200000 to
++# the linker to force 2MB page size regardless of the default page size used
++# by the linker.
++#
++ifdef CONFIG_X86_64
++LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
++endif
++
+ # Speed up the build
+ KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
