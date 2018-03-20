@@ -1,88 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeCTUHj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 16:07:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58705 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCTUHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:07:36 -0400
-Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases on
- paranoid_entry
-To: David Laight <David.Laight@ACULAB.COM>,
-        "'Chang S. Bae'" <chang.seok.bae@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Cc: "luto@kernel.org" <luto@kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "markus.t.metzger@intel.com" <markus.t.metzger@intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "ravi.v.shankar@intel.com" <ravi.v.shankar@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
- <eb30911b621144fe92e77fd2d9da7efe@AcuMS.aculab.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <191d8212-6740-3131-1653-d057f522843c@zytor.com>
-Date: Tue, 20 Mar 2018 13:07:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751514AbeCTUKm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 16:10:42 -0400
+Received: from mail-yb0-f174.google.com ([209.85.213.174]:33185 "EHLO
+        mail-yb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeCTUKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:10:40 -0400
+X-Google-Smtp-Source: AG47ELv+OENGhze4IVNjNndsY4+9fXctfKejsy05MpYs8PHzAdwyKdWApT0DxNUPyUQuPatqPZH49w==
+Date: Tue, 20 Mar 2018 13:10:29 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v5 1/2] cpuset: Enable cpuset controller in default
+ hierarchy
+Message-ID: <20180320201029.GO519464@devbig577.frc2.facebook.com>
+References: <1521148842-15486-1-git-send-email-longman@redhat.com>
+ <1521148842-15486-2-git-send-email-longman@redhat.com>
+ <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
+ <1881c1da-56ec-d76b-b736-fd0919737ec6@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <eb30911b621144fe92e77fd2d9da7efe@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1881c1da-56ec-d76b-b736-fd0919737ec6@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/20/18 03:16, David Laight wrote:
-> From: Chang S. Bae
->> Sent: 19 March 2018 17:49
-> ...
->> When FSGSBASE is enabled, SWAPGS needs if and only if (current)
->> GS base is not the kernel's.
->>
->> FSGSBASE instructions allow user to write any value on GS base;
->> even negative. Sign check on the current GS base is not
->> sufficient. Fortunately, reading GS base is fast. Kernel GS
->> base is also known from the offset table with the CPU number.
-> ...
+Hello, Waiman.
+
+On Tue, Mar 20, 2018 at 09:51:20AM -0400, Waiman Long wrote:
+> >> +	It lists the onlined CPUs that are actually allowed to be
+> >> +	used by tasks within the current cgroup. It is a subset of
+> >> +	"cpuset.cpus".  Its value will be affected by CPU hotplug
+> >> +	events.
+> > Can we do cpuset.cpus.availble which lists the cpus available to the
+> > cgroup instead of the eventual computed mask for the cgroup?  That'd
+> > be more useful as it doesn't lose the information by and'ing what's
+> > available with the cgroup's mask and it's trivial to determine the
+> > effective from the two masks.
 > 
-> Use code might want to put a negative value into GSBASE.
-> While it is normal to put a valid address into GSBASE there
-> is no reason why the code can't put an offset into GSBASE,
-> in which case it might be negative.
-> 
-> Yes, I know you can't put arbitrary 64bit values into GSBASE.
-> But the difference between 2 user pointers will always be valid.
-> 
+> I don't get what you want here. cpus is the cpuset's cpus_allowed mask.
+> effective_cpus is the effective_cpus mask. When you say cpus available
+> to the cgroup, do you mean the cpu_online_mask or the list of cpus from
+> the parent? Or do you just want to change the name to cpus.available
+> instead of effective_cpus?
 
-You don't have a choice: you can't control what userspace puts in there.
- Anything that depends on a specific value is inherently unsafe.
+The available cpus from the parent, where the effective is AND between
+cpuset.available and cpuset.cpus of the cgroup, so that the user can
+see what's available for the cgroup unfiltered by cpuset.cpus.
 
-But we also don't need swapgs when we have rdgsbase/wrgsbase available.
-We can indeed just unconditionally save it (via rdgsbase) into the stack
-frame and wrgsbase the correct percpu value.  In that case it might be
-necessary in order to avoid insane complexity to also save/restore the
-gs selector.
+> Right, I will set CFTYPE_NOT_ON_ROOT to "cpus" and "mems" as we are not
+> supposed to change them in the root. The effective_cpus and
+> effective_mems will be there in the root to show what are available.
 
-Is it going to be faster?  *Probably* not as swapgs is designed to be
-fast; it does, however, eliminate the need to RDMSR/WRMSR inside the
-kernel task switch as the user space gsbase will simply live on the
-stack.  (This is assuming we do this unconditionally on every method of
-kernel entry, including non-paranoid.  I'm not sure if we ever care
-about the userspace GS/GSBASE inside a paranoid handler, but if we do it
-would be rather messy to find if we do this conditionally.
+So, we can do that in the future but let's not do that for now.  It's
+the same problem we have for basically everything else and we've
+stayed away from replicating the information in the root cgroup.  This
+might change in the future but if we do that let's do that
+consistently.
 
-Now...
+Thanks.
 
-+	ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase",	\
-+		"RDGSBASE %rdx", X86_FEATURE_FSGSBASE
-+	READ_KERNEL_GSBASE %rax
-
-READ_KERNEL_GSBASE here seems like a Really Bad Name[TM] for this macro,
-since it seems to imply reading MSR_KERNEL_GS_BASE, rather than finding
-the current percpu offset.  I would prefer calling it something like
-FIND_PERCPU_BASE or something like that.
-
-	-hpa
+-- 
+tejun
