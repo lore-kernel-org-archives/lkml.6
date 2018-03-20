@@ -1,26 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeCTCnu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:43:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44562 "EHLO
+        id S1752099AbeCTCn3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:43:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43726 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeCTCn2 (ORCPT
+        with ESMTP id S1751925AbeCTCnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:43:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5E76E60F6D
+        Mon, 19 Mar 2018 22:43:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 916B561111
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Netanel Belgazal <netanel@amazon.com>,
-        Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tobias Klauser <tklauser@distanz.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 17/17] net: ena: Eliminate duplicate barriers on weakly-ordered archs
-Date: Mon, 19 Mar 2018 22:42:32 -0400
-Message-Id: <1521513753-7325-18-git-send-email-okaya@codeaurora.org>
+        Santosh Raspatur <santosh@chelsio.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 13/17] net: cxgb3: Eliminate duplicate barriers on weakly-ordered archs
+Date: Mon, 19 Mar 2018 22:42:28 -0400
+Message-Id: <1521513753-7325-14-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521513753-7325-1-git-send-email-okaya@codeaurora.org>
 References: <1521513753-7325-1-git-send-email-okaya@codeaurora.org>
@@ -30,111 +27,96 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes barrier() followed by writel(). writel() already has a
-barrier
-on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
 This ends up CPU observing two barriers back to back before executing the
 register write.
 
 Create a new wrapper function with relaxed write operator. Use the new
-wrapper when a write is following a barrier().
-
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+wrapper when a write is following a wmb().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c     |  6 ++++--
- drivers/net/ethernet/amazon/ena/ena_eth_com.h | 22 ++++++++++++++++++++--
- drivers/net/ethernet/amazon/ena/ena_netdev.c  |  4 ++--
- 3 files changed, 26 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb3/adapter.h |  7 +++++++
+ drivers/net/ethernet/chelsio/cxgb3/sge.c     | 19 ++++++++++---------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index bf2de52..b6e628f 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -631,7 +631,8 @@ static u32 ena_com_reg_bar_read32(struct ena_com_dev *ena_dev, u16 offset)
- 	 */
- 	wmb();
- 
--	writel(mmio_read_reg, ena_dev->reg_bar + ENA_REGS_MMIO_REG_READ_OFF);
-+	writel_relaxed(mmio_read_reg,
-+		       ena_dev->reg_bar + ENA_REGS_MMIO_REG_READ_OFF);
- 
- 	for (i = 0; i < timeout; i++) {
- 		if (read_resp->req_id == mmio_read->seq_num)
-@@ -1826,7 +1827,8 @@ void ena_com_aenq_intr_handler(struct ena_com_dev *dev, void *data)
- 
- 	/* write the aenq doorbell after all AENQ descriptors were read */
- 	mb();
--	writel((u32)aenq->head, dev->reg_bar + ENA_REGS_AENQ_HEAD_DB_OFF);
-+	writel_relaxed((u32)aenq->head,
-+		       dev->reg_bar + ENA_REGS_AENQ_HEAD_DB_OFF);
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/adapter.h b/drivers/net/ethernet/chelsio/cxgb3/adapter.h
+index 087ff0f..0e21e66 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/adapter.h
++++ b/drivers/net/ethernet/chelsio/cxgb3/adapter.h
+@@ -281,6 +281,13 @@ static inline void t3_write_reg(struct adapter *adapter, u32 reg_addr, u32 val)
+ 	writel(val, adapter->regs + reg_addr);
  }
  
- int ena_com_dev_reset(struct ena_com_dev *ena_dev,
-diff --git a/drivers/net/ethernet/amazon/ena/ena_eth_com.h b/drivers/net/ethernet/amazon/ena/ena_eth_com.h
-index 2f76572..09ef7cd 100644
---- a/drivers/net/ethernet/amazon/ena/ena_eth_com.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_eth_com.h
-@@ -107,7 +107,8 @@ static inline int ena_com_sq_empty_space(struct ena_com_io_sq *io_sq)
- 	return io_sq->q_depth - 1 - cnt;
- }
- 
--static inline int ena_com_write_sq_doorbell(struct ena_com_io_sq *io_sq)
-+static inline int ena_com_write_sq_doorbell(struct ena_com_io_sq *io_sq,
-+					    bool relaxed)
- {
- 	u16 tail;
- 
-@@ -116,7 +117,24 @@ static inline int ena_com_write_sq_doorbell(struct ena_com_io_sq *io_sq)
- 	pr_debug("write submission queue doorbell for queue: %d tail: %d\n",
- 		 io_sq->qid, tail);
- 
--	writel(tail, io_sq->db_addr);
-+	if (relaxed)
-+		writel_relaxed(tail, io_sq->db_addr);
-+	else
-+		writel(tail, io_sq->db_addr);
-+
-+	return 0;
++static inline void t3_write_reg_relaxed(struct adapter *adapter, u32 reg_addr,
++					u32 val)
++{
++	CH_DBG(adapter, MMIO, "setting register 0x%x to 0x%x\n", reg_addr, val);
++	writel_relaxed(val, adapter->regs + reg_addr);
 +}
 +
-+static inline int ena_com_write_sq_doorbell_rel(struct ena_com_io_sq *io_sq)
-+{
-+	u16 tail;
-+
-+	tail = io_sq->tail;
-+
-+	pr_debug("write submission queue doorbell for queue: %d tail: %d\n",
-+		 io_sq->qid, tail);
-+
-+	writel_relaxed(tail, io_sq->db_addr);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 6975150..0530201 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -556,7 +556,7 @@ static int ena_refill_rx_bufs(struct ena_ring *rx_ring, u32 num)
- 		 * issue a doorbell
- 		 */
+ static inline struct port_info *adap2pinfo(struct adapter *adap, int idx)
+ {
+ 	return netdev_priv(adap->port[idx]);
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/sge.c b/drivers/net/ethernet/chelsio/cxgb3/sge.c
+index e988caa..0baab06 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/sge.c
+@@ -487,7 +487,8 @@ static inline void ring_fl_db(struct adapter *adap, struct sge_fl *q)
+ 	if (q->pend_cred >= q->credits / 4) {
+ 		q->pend_cred = 0;
  		wmb();
--		ena_com_write_sq_doorbell(rx_ring->ena_com_io_sq);
-+		ena_com_write_sq_doorbell(rx_ring->ena_com_io_sq, true);
+-		t3_write_reg(adap, A_SG_KDOORBELL, V_EGRCNTX(q->cntxt_id));
++		t3_write_reg_relaxed(adap, A_SG_KDOORBELL,
++				     V_EGRCNTX(q->cntxt_id));
  	}
+ }
  
- 	rx_ring->next_to_use = next_to_use;
-@@ -2151,7 +2151,7 @@ static netdev_tx_t ena_start_xmit(struct sk_buff *skb, struct net_device *dev)
+@@ -1058,8 +1059,8 @@ static inline void check_ring_tx_db(struct adapter *adap, struct sge_txq *q)
+ 	}
+ #else
+ 	wmb();			/* write descriptors before telling HW */
+-	t3_write_reg(adap, A_SG_KDOORBELL,
+-		     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
++	t3_write_reg_relaxed(adap, A_SG_KDOORBELL,
++			     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
+ #endif
+ }
  
- 	if (netif_xmit_stopped(txq) || !skb->xmit_more) {
- 		/* trigger the dma engine */
--		ena_com_write_sq_doorbell(tx_ring->ena_com_io_sq);
-+		ena_com_write_sq_doorbell(tx_ring->ena_com_io_sq, false);
- 		u64_stats_update_begin(&tx_ring->syncp);
- 		tx_ring->tx_stats.doorbells++;
- 		u64_stats_update_end(&tx_ring->syncp);
+@@ -1510,8 +1511,8 @@ static int ctrl_xmit(struct adapter *adap, struct sge_txq *q,
+ 	}
+ 	spin_unlock(&q->lock);
+ 	wmb();
+-	t3_write_reg(adap, A_SG_KDOORBELL,
+-		     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
++	t3_write_reg_relaxed(adap, A_SG_KDOORBELL,
++			     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
+ 	return NET_XMIT_SUCCESS;
+ }
+ 
+@@ -1554,8 +1555,8 @@ static void restart_ctrlq(unsigned long data)
+ 
+ 	spin_unlock(&q->lock);
+ 	wmb();
+-	t3_write_reg(qs->adap, A_SG_KDOORBELL,
+-		     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
++	t3_write_reg_relaxed(qs->adap, A_SG_KDOORBELL,
++			     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
+ }
+ 
+ /*
+@@ -1793,8 +1794,8 @@ again:	reclaim_completed_tx(adap, q, TX_RECLAIM_CHUNK);
+ #endif
+ 	wmb();
+ 	if (likely(written))
+-		t3_write_reg(adap, A_SG_KDOORBELL,
+-			     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
++		t3_write_reg_relaxed(adap, A_SG_KDOORBELL,
++				     F_SELEGRCNTX | V_EGRCNTX(q->cntxt_id));
+ }
+ 
+ /**
 -- 
 2.7.4
