@@ -1,93 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753583AbeCTNvZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:51:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41480 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753324AbeCTNvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:51:22 -0400
-Subject: Re: [PATCH v5 1/2] cpuset: Enable cpuset controller in default
- hierarchy
-To: Tejun Heo <tj@kernel.org>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-References: <1521148842-15486-1-git-send-email-longman@redhat.com>
- <1521148842-15486-2-git-send-email-longman@redhat.com>
- <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1881c1da-56ec-d76b-b736-fd0919737ec6@redhat.com>
-Date: Tue, 20 Mar 2018 09:51:20 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1753625AbeCTNv2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:51:28 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34061 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753395AbeCTNvX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:51:23 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 1/3] dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+Date: Tue, 20 Mar 2018 15:52:28 +0200
+Message-ID: <4505095.GfTyCNF5lz@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180317221525.18534-2-peda@axentia.se>
+References: <20180317221525.18534-1-peda@axentia.se> <20180317221525.18534-2-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180319155937.GQ2943022@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 11:59 AM, Tejun Heo wrote:
-> Hello, Waiman.
->
-> This looks great.  A couple nitpicks below.
->
->> +     5-3. Cpuset
->> +       5.3-1. Cpuset Interface Files
-> Can we put cpuset below pid?  It feels weird to break up cpu, memory
-> and io as they represent the three major resources and are in a
-> similar fashion.
-Sure. I will move it down below pid.
+Hi Peter,
 
->> +  cpuset.effective_cpus
->> +	A read-only multiple values file which exists on non-root
->> +	cgroups.
->> +
->> +	It lists the onlined CPUs that are actually allowed to be
->> +	used by tasks within the current cgroup. It is a subset of
->> +	"cpuset.cpus".  Its value will be affected by CPU hotplug
->> +	events.
-> Can we do cpuset.cpus.availble which lists the cpus available to the
-> cgroup instead of the eventual computed mask for the cgroup?  That'd
-> be more useful as it doesn't lose the information by and'ing what's
-> available with the cgroup's mask and it's trivial to determine the
-> effective from the two masks.
+Thank you for the patch.
 
-I don't get what you want here. cpus is the cpuset's cpus_allowed mask.
-effective_cpus is the effective_cpus mask. When you say cpus available
-to the cgroup, do you mean the cpu_online_mask or the list of cpus from
-the parent? Or do you just want to change the name to cpus.available
-instead of effective_cpus?
+On Sunday, 18 March 2018 00:15:23 EET Peter Rosin wrote:
+> Start list of actual chips compatible with "lvds-encoder".
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  .../devicetree/bindings/display/bridge/lvds-transmitter.txt       | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> index fd39ad34c383..9d09190d9210 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> @@ -24,6 +24,11 @@ Required properties:
+> 
+>  - compatible: Must be "lvds-encoder"
+> 
+> +	      Known actual chips (these should still use "lvds-encoder" as a
+> +	      fallback compatible) include:
+> +
+> +	      "ti,ds90c185"
 
->> +  cpuset.effective_mems
->> +	A read-only multiple values file which exists on non-root
->> +	cgroups.
->> +
->> +	It lists the onlined memory nodes that are actually allowed
->> +	to be used by tasks within the current cgroup.  It is a subset
->> +	of "cpuset.mems".  Its value will be affected by memory nodes
->> +	hotplug events.
-> Ditto.
->
->> +static struct cftype dfl_files[] = {
->> +	{
->> +		.name = "cpus",
->> +		.seq_show = cpuset_common_seq_show,
->> +		.write = cpuset_write_resmask,
->> +		.max_write_len = (100U + 6 * NR_CPUS),
->> +		.private = FILE_CPULIST,
->> +	},
-> Is it missing CFTYPE_NOT_ON_ROOT?  Other files too.
+The wording sounds a bit strange to me. How about
 
-Right, I will set CFTYPE_NOT_ON_ROOT to "cpus" and "mems" as we are not
-supposed to change them in the root. The effective_cpus and
-effective_mems will be there in the root to show what are available.
+ - compatible: Must be one or more of the following
+   - "ti,ds90c185" for the TI DS90C185 FPD-Link Serializer
+   - "lvds-encoder" for a generic LVDS encoder device
 
-Cheers,
-Longman
+   When compatible with the generic version nodes must list the
+   device-specific version corresponding to the device first
+   followed by the generic version.
+
+>  Required nodes:
+> 
+>  This device has two video ports. Their connections are modeled using the OF
+
+-- 
+Regards,
+
+Laurent Pinchart
