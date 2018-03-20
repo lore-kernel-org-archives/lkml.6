@@ -1,81 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751736AbeCTRf4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 13:35:56 -0400
-Received: from smtprelay0095.hostedemail.com ([216.40.44.95]:34082 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751334AbeCTRfw (ORCPT
+        id S1751626AbeCTRp5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 13:45:57 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:45729 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751472AbeCTRpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 13:35:52 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:800:960:968:973:988:989:1260:1345:1437:1534:1541:1711:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3352:3653:3865:3867:3868:3871:4321:4605:5007:6119:6261:8603:9592:10004:10848:11026:11473:11658:11914:12043:12296:12555:12679:12895:13069:13311:13357:14181:14384:14394:14721:21080:21433:21451:21627:30054:30090,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: nerve58_32c1c4a0d804c
-X-Filterd-Recvd-Size: 2707
-From: Joe Perches <joe@perches.com>
-To: linux-kernel@vger.kernel.org
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] netfilter: ipset: Use is_zero_ether_addr instead of static and memcmp
-Date: Tue, 20 Mar 2018 10:35:47 -0700
-Message-Id: <687a4edaed07441681d3bfe3b63aa4feb55b9d61.1521567319.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Tue, 20 Mar 2018 13:45:54 -0400
+X-Google-Smtp-Source: AG47ELsdgsuAEkg3rQg5kSMCf4WMIoD9Rf0A0byeAUeVJvmGGzaKeZOI3sKbckKUwUr0MamAzImniw==
+Message-ID: <1521567951.20523.81.camel@ndufresne.ca>
+Subject: Re: uvcvideo: Unknown video
+ format,00000032-0002-0010-8000-00aa00389b71
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        it+linux-media@molgen.mpg.de
+Date: Tue, 20 Mar 2018 13:45:51 -0400
+In-Reply-To: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
+References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-XxsJtPCcylfXbLgEZfh4"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To make the test a bit clearer and to reduce object size a little.
 
-Miscellanea:
+--=-XxsJtPCcylfXbLgEZfh4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-o remove now unnecessary static const array
+Le mardi 20 mars 2018 =C3=A0 13:20 +0100, Paul Menzel a =C3=A9crit :
+> Dear Linux folks,
+>=20
+>=20
+> On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
+>=20
+> ```
+> [    2.338094] calling  uvc_init+0x0/0x1000 [uvcvideo] @ 295
+> [    2.338569] calling  iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt] @ 280
+> [    2.338570] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
+> [    2.338713] iTCO_wdt: Found a Intel PCH TCO device (Version=3D4,
+> TCOBASE=3D0x0400)
+> [    2.338755] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD=20
+> (0bda:58f4)
+> [    2.338827] iTCO_wdt: initialized. heartbeat=3D30 sec (nowayout=3D0)
+> [    2.338851] initcall iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt]=20
+> returned 0 after 271 usecs
+> [    2.340669] uvcvideo 1-5:1.0: Entity type for entity Extension 4 was=
+=20
+> not initialized!
+> [    2.340670] uvcvideo 1-5:1.0: Entity type for entity Extension 7 was=
+=20
+> not initialized!
+> [    2.340672] uvcvideo 1-5:1.0: Entity type for entity Processing 2 was=
+=20
+> not initialized!
+> [    2.340673] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was not
+> initialized!
+> [    2.340736] input: Integrated_Webcam_HD: Integrate as
+> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
+> [    2.341447] uvcvideo: Unknown video format
+> 00000032-0002-0010-8000-00aa00389b71
 
-$ size ip_set_hash_mac.o*
-   text	   data	    bss	    dec	    hex	filename
-  22822	   4619	     64	  27505	   6b71	ip_set_hash_mac.o.allyesconfig.new
-  22932	   4683	     64	  27679	   6c1f	ip_set_hash_mac.o.allyesconfig.old
-  10443	   1040	      0	  11483	   2cdb	ip_set_hash_mac.o.defconfig.new
-  10507	   1040	      0	  11547	   2d1b	ip_set_hash_mac.o.defconfig.old
+While the 0002 is suspicious, this is pretty close to a color format.
+I've recently come across of similar format using D3DFORMAT instead of
+GUID. According to the vendor*, this camera module includes an infrared
+camera (340x340), so I suspect this is to specify the format it
+outputs. A good guess to start with would be that this is
+D3DFMT_X8L8V8U8 (0x32). To test it, you could map this
+V4L2_PIX_FMT_YUV32/xRGB and see if the driver is happy with the buffer
+size. Then render it to make sure it looks some image of some sort. A
+new format will need to be defined as this format is in the wrong
+order, and is ambiguous (it may mean AYUV or xYUV). I'm not sure if we
+need specific formats to differentiate infrared data from YUV images,
+need to be discussed.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- net/netfilter/ipset/ip_set_hash_mac.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+*https://dustinweb.azureedge.net/media/338953/xps-13-9370.pdf
 
-diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
-index 8f004edad396..f9d5a2a1e3d0 100644
---- a/net/netfilter/ipset/ip_set_hash_mac.c
-+++ b/net/netfilter/ipset/ip_set_hash_mac.c
-@@ -72,9 +72,6 @@ hash_mac4_data_next(struct hash_mac4_elem *next,
- #define IP_SET_PROTO_UNDEF
- #include "ip_set_hash_gen.h"
- 
--/* Zero valued element is not supported */
--static const unsigned char invalid_ether[ETH_ALEN] = { 0 };
--
- static int
- hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	       const struct xt_action_param *par,
-@@ -93,7 +90,7 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 		return -EINVAL;
- 
- 	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
--	if (memcmp(e.ether, invalid_ether, ETH_ALEN) == 0)
-+	if (is_zero_ether_addr(e.ether))
- 		return -EINVAL;
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
- }
-@@ -118,7 +115,7 @@ hash_mac4_uadt(struct ip_set *set, struct nlattr *tb[],
- 	if (ret)
- 		return ret;
- 	ether_addr_copy(e.ether, nla_data(tb[IPSET_ATTR_ETHER]));
--	if (memcmp(e.ether, invalid_ether, ETH_ALEN) == 0)
-+	if (is_zero_ether_addr(e.ether))
- 		return -IPSET_ERR_HASH_ELEM;
- 
- 	return adtfn(set, &e, &ext, &ext, flags);
--- 
-2.15.0
+> [    2.341450] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD=20
+> (0bda:58f4)
+> [    2.343371] uvcvideo: Unable to create debugfs 1-2 directory.
+> [    2.343420] uvcvideo 1-5:1.2: Entity type for entity Extension 10 was=
+=20
+> not initialized!
+> [    2.343422] uvcvideo 1-5:1.2: Entity type for entity Extension 12 was=
+=20
+> not initialized!
+> [    2.343423] uvcvideo 1-5:1.2: Entity type for entity Processing 9 was=
+=20
+> not initialized!
+> [    2.343424] uvcvideo 1-5:1.2: Entity type for entity Camera 11 was=20
+> not initialized!
+> [    2.343472] input: Integrated_Webcam_HD: Integrate as
+> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.2/input/input10
+> [    2.343496] usbcore: registered new interface driver uvcvideo
+> [    2.343496] USB Video Class driver (1.1.1)
+> [    2.343501] initcall uvc_init+0x0/0x1000 [uvcvideo] returned 0 after=
+=20
+> 5275 usecs
+> ```
+>=20
+> Please tell me, what I can do to improve the situation.
+>=20
+>=20
+> Kind regards,
+>=20
+> Paul
+>=20
+--=-XxsJtPCcylfXbLgEZfh4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCWrFIzwAKCRBxUwItrAao
+HGHkAJ0dp7XgD4FjP/0lWNevuyBdAPGCHQCgqop+mh7gbX5UtVbU96+i/qEEn94=
+=BxYR
+-----END PGP SIGNATURE-----
+
+--=-XxsJtPCcylfXbLgEZfh4--
