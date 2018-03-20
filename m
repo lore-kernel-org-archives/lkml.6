@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752667AbeCTJpd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:45:33 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43208 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752555AbeCTJp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:45:27 -0400
-Subject: Re: [RESEND PATCH v1 6/6] i2c: i2c-stm32f7: Implement I2C recovery
- mechanism
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
- <1520852023-27083-7-git-send-email-pierre-yves.mordret@st.com>
- <20180317204720.mclh4jw5owobbtww@ninjato>
- <2672947b-46b2-7bd7-ac13-501db8bde72b@st.com>
- <fdc16b28-3aab-1d37-3c93-40ed371bfd4f@st.com>
- <20180320094216.ugietqyerdowq4c4@katana>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <4a1aa386-21dc-12a2-b2b5-6e25586ffc79@st.com>
-Date: Tue, 20 Mar 2018 10:45:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752447AbeCTJri (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:47:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38000 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751512AbeCTJrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:47:36 -0400
+Date: Tue, 20 Mar 2018 09:47:44 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Shanker Donthineni <shankerd@codeaurora.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Christoffer Dall <cdall@kernel.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Thomas Speier <tspeier@codeaurora.org>
+Subject: Re: [PATCH v2] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
+ hardening
+Message-ID: <20180320094744.GA24986@arm.com>
+References: <1520269603-2900-1-git-send-email-shankerd@codeaurora.org>
+ <861sgx5wb6.wl-marc.zyngier@arm.com>
+ <fed53181-db58-9f48-0c5b-7eebe9eb9b10@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180320094216.ugietqyerdowq4c4@katana>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fed53181-db58-9f48-0c5b-7eebe9eb9b10@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your quick answer
+On Mon, Mar 19, 2018 at 06:30:16PM +0000, Marc Zyngier wrote:
+> On 06/03/18 10:32, Marc Zyngier wrote:
+> > On Mon, 05 Mar 2018 17:06:43 +0000,
+> > Shanker Donthineni wrote:
+> >>
+> >> The function SMCCC_ARCH_WORKAROUND_1 was introduced as part of SMC
+> >> V1.1 Calling Convention to mitigate CVE-2017-5715. This patch uses
+> >> the standard call SMCCC_ARCH_WORKAROUND_1 for Falkor chips instead
+> >> of Silicon provider service ID 0xC2001700.
+> >>
+> >> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> >> ---
+> >> Chnages since v1:
+> >>   - Trivial change in cpucaps.h (refresh after removing ARM64_HARDEN_BP_POST_GUEST_EXIT)
+> >>
+> >>  arch/arm64/include/asm/cpucaps.h |  5 ++--
+> >>  arch/arm64/include/asm/kvm_asm.h |  2 --
+> >>  arch/arm64/kernel/bpi.S          |  8 ------
+> >>  arch/arm64/kernel/cpu_errata.c   | 55 ++++++++++++++--------------------------
+> >>  arch/arm64/kvm/hyp/entry.S       | 12 ---------
+> >>  arch/arm64/kvm/hyp/switch.c      | 10 --------
+> >>  6 files changed, 21 insertions(+), 71 deletions(-)
+> > 
+> > Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+> > 
+> > Will/Catalin, if you want to take it via the arm64 tree, that's fine
+> > by me.
+> 
+> Please allow me to change my mind. This is going to conflict horribly
+> with the VHE rework and the HYP randomization patches.
+> 
+> I'll take it via the KVM tree, which will make everyone's life a lot easier.
 
-On 03/20/2018 10:42 AM, Wolfram Sang wrote:
-> Hi,
-> 
->> Looking at the recovery API, this recovery is for slave and nothing else with my
->> case. Therefore I think I have to get move this reset out of recovery API.
-> 
-> Yes, you are correct. You need a custom function, this is totally driver
-> specific.
+Sure; if you need it:
 
-OK !
-> 
->> Slave Recovery mechanism is another story to implement in our platform since we
->> have to deal with GPIOs.
-> 
-> For that, the recovery infrastructure in the core has lots of helpers
-> for you.
-> 
-Yeah. This is what I saw nonetheless the main trouble is to setup SCL/SDA into
-GPIO. Not that easy. but feasible of course.
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-BTW I will rework my driver.
+You'll probably want to comment out the ARM64_HARDEN_BP_POST_GUEST_EXIT
+capability for now to avoid silly conflicts in -next. I can remove and
+renumber at -rc1.
 
-Thanks.
-
-> Regards,
-> 
->    Wolfram
-> 
+Will
