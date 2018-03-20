@@ -1,50 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCTXZB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:25:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54486 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbeCTXY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:24:58 -0400
-Date: Tue, 20 Mar 2018 16:24:53 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: Mario Limonciello <mario.limonciello@dell.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: drivers/platform/x86/dell-smbios-smm.c:99: undefined reference
- to `dcdbas_smi_request'
-Message-ID: <20180320232453.GA24376@fury>
-References: <201803201222.K37oCZ9Z%fengguang.wu@intel.com>
+        id S1751892AbeCTXZV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:25:21 -0400
+Received: from mleia.com ([178.79.152.223]:59290 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751472AbeCTXZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:25:20 -0400
+Subject: Re: [PATCH 1/3] i2c: mux: pca9541: use the BIT macro
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@the-dreams.de>,
+        Ken Chen <chen.kenyy@inventec.com>, joel@jms.id.au,
+        linux-i2c@vger.kernel.org
+References: <20180320061909.5775-1-chen.kenyy@inventec.com>
+ <20180320093200.19179-1-peda@axentia.se>
+ <20180320093200.19179-2-peda@axentia.se>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <025a81f2-ee99-0052-ad39-e13c7aae5217@mleia.com>
+Date: Wed, 21 Mar 2018 01:25:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201803201222.K37oCZ9Z%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180320093200.19179-2-peda@axentia.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20180320_232519_469871_3C81C9E5 
+X-CRM114-Status: UNSURE (   6.85  )
+X-CRM114-Notice: Please train this message. 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 12:47:24PM +0800, kbuild test robot wrote:
-> Hi Mario,
+On 03/20/2018 11:31 AM, Peter Rosin wrote:
+> Because it looks nice!
 > 
-> FYI, the error/warning still remains.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   1b5f3ba415fe4cf8b8b39c8d104ed44cde330658
-> commit: 25d47027e1003546bfd8964b4423cb39bc2d53e9 platform/x86: dell-smbios: Link all dell-smbios-* modules together
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-For completeness:
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
 
-This is a known warning at this commit, which is addressed in future commits now
-merged, specifically:
-
-75073a64a98c platform/x86: dell-smbios: Resolve dependency error on ACPI_WMI
-32d7b19bad96 platform/x86: dell-smbios: Resolve dependency error on DCDBAS
-329d58b890be platform/x86: Allow for SMBIOS backend defaults
-
-Thanks,
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+--
+With best wishes,
+Vladimir
