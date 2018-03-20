@@ -1,29 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752043AbeCTGV4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:21:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41035 "EHLO
+        id S1751912AbeCTGWb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:22:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53733 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeCTGUu (ORCPT
+        with ESMTP id S1751689AbeCTGWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:20:50 -0400
-Date: Mon, 19 Mar 2018 23:20:26 -0700
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-03d9fcb701340de3446b4ff4ddb9f5407d1412f5@git.kernel.org>
-Cc: acme@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        dsahern@gmail.com, jolsa@kernel.org, hpa@zytor.com, jmario@redhat.com
-Reply-To: hpa@zytor.com, jmario@redhat.com, jolsa@kernel.org,
-        dsahern@gmail.com, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
-        peterz@infradead.org
-In-Reply-To: <20180309101442.9224-10-jolsa@kernel.org>
-References: <20180309101442.9224-10-jolsa@kernel.org>
+        Tue, 20 Mar 2018 02:22:24 -0400
+Date: Mon, 19 Mar 2018 23:21:50 -0700
+From: tip-bot for John Garry <tipbot@zytor.com>
+Message-ID: <tip-931ef5dc5c18717d24e5b8d8a968e35638508051@git.kernel.org>
+Cc: acme@redhat.com, zhangshaokun@hisilicon.com, jolsa@kernel.org,
+        tglx@linutronix.de, ganapatrao.kulkarni@cavium.com,
+        namhyung@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, mingo@kernel.org,
+        john.garry@huawei.com, hpa@zytor.com, wcohen@redhat.com,
+        will.deacon@arm.com, alexander.shishkin@linux.intel.com
+Reply-To: tglx@linutronix.de, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, peterz@infradead.org, mingo@kernel.org,
+        ak@linux.intel.com, linux-kernel@vger.kernel.org,
+        john.garry@huawei.com, hpa@zytor.com, will.deacon@arm.com,
+        wcohen@redhat.com, alexander.shishkin@linux.intel.com, acme@redhat.com,
+        zhangshaokun@hisilicon.com, jolsa@kernel.org
+In-Reply-To: <1520506716-197429-3-git-send-email-john.garry@huawei.com>
+References: <1520506716-197429-3-git-send-email-john.garry@huawei.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf c2c report: Add cacheline address count column
-Git-Commit-ID: 03d9fcb701340de3446b4ff4ddb9f5407d1412f5
+Subject: [tip:perf/core] perf vendor events: Fix error code in json_events()
+Git-Commit-ID: 931ef5dc5c18717d24e5b8d8a968e35638508051
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,153 +39,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  03d9fcb701340de3446b4ff4ddb9f5407d1412f5
-Gitweb:     https://git.kernel.org/tip/03d9fcb701340de3446b4ff4ddb9f5407d1412f5
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 9 Mar 2018 11:14:42 +0100
+Commit-ID:  931ef5dc5c18717d24e5b8d8a968e35638508051
+Gitweb:     https://git.kernel.org/tip/931ef5dc5c18717d24e5b8d8a968e35638508051
+Author:     John Garry <john.garry@huawei.com>
+AuthorDate: Thu, 8 Mar 2018 18:58:27 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Mar 2018 13:53:38 -0300
+CommitDate: Fri, 16 Mar 2018 13:54:03 -0300
 
-perf c2c report: Add cacheline address count column
+perf vendor events: Fix error code in json_events()
 
-Adding the 'PA cnt' column grouped under data cacheline address.
+When EXPECT macro fails an assertion, the error code is not properly set
+after the first loop of tokens in function json_events().
 
-It shows how many times the physical addresses changed for the hist
-entry. It does not show the number of different physical addresses for
-entry, because we don't store those. We only track the number of times
-we got different address than we currently hold, which is not expensive
-and gives similar info.
+This is because err is set to the return value from func function
+pointer call, which must be 0 to continue to loop, yet it is not reset
+for for each loop. I assume that this was not the intention, so change
+the code so err is set appropriately in EXPECT macro itself.
 
-  $ perf c2c report --stdio
+In addition to this, the indention in EXPECT macro is tidied. The
+current indention alludes that the 2 statements following the if
+statement are in the body, which is not true.
 
-  #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----
-  # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt
-  # .....  ..................  ....  ......  .......  .......  .......  .......  .......
-  #
-        0  0xffff9ad56dca0a80     0       9       10    7.69%        2        2        0
-        1  0xffff9ad56dce0a80     0       9        9    7.69%        2        2        0
-        2  0xffff9ad37659ad80     0       1        2    3.85%        1        1        0
-
-  ...
-
-  #        ----- HITM -----  -- Store Refs --  --------- Data address ---------
-  #   Num      Rmt      Lcl   L1 Hit  L1 Miss              Offset  Node  PA cnt      Pid
-  # .....  .......  .......  .......  .......  ..................  ....  ......  .......
-  #
-    -------------------------------------------------------------
-        0        0        2        3        0  0xffff9ad56dca0a80
-    -------------------------------------------------------------
-             0.00%    0.00%   33.33%    0.00%                 0x0     0       1     2510
-             0.00%    0.00%   33.33%    0.00%                 0x4     0       1     2476
-             0.00%    0.00%   33.33%    0.00%                0x20     0       1        0
-             0.00%  100.00%    0.00%    0.00%                0x38     0       1        0
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Joe Mario <jmario@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180309101442.9224-10-jolsa@kernel.org
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxarm@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-3-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+ tools/perf/pmu-events/jevents.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index a6336e4e2850..2126bfbcb385 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -507,6 +507,17 @@ dcacheline_node_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 	return scnprintf(hpp->buf, hpp->size, "%*s", width, c2c_he->nodestr);
- }
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 9e0a21e74a67..edff989fbcea 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -249,9 +249,10 @@ static const char *field_to_perf(struct map *table, char *map, jsmntok_t *val)
+ 	jsmntok_t *loc = (t);					\
+ 	if (!(t)->start && (t) > tokens)			\
+ 		loc = (t) - 1;					\
+-		pr_err("%s:%d: " m ", got %s\n", fn,		\
+-			json_line(map, loc),			\
+-			json_name(t));				\
++	pr_err("%s:%d: " m ", got %s\n", fn,			\
++	       json_line(map, loc),				\
++	       json_name(t));					\
++	err = -EIO;						\
+ 	goto out_free;						\
+ } } while (0)
  
-+static int
-+dcacheline_node_count(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-+		      struct hist_entry *he)
-+{
-+	struct c2c_hist_entry *c2c_he;
-+	int width = c2c_width(fmt, hpp, he->hists);
-+
-+	c2c_he = container_of(he, struct c2c_hist_entry, he);
-+	return scnprintf(hpp->buf, hpp->size, "%*lu", width, c2c_he->paddr_cnt);
-+}
-+
- static int offset_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 			struct hist_entry *he)
+@@ -416,7 +417,7 @@ int json_events(const char *fn,
+ 		      char *metric_name, char *metric_group),
+ 	  void *data)
  {
-@@ -1252,7 +1263,7 @@ cl_idx_empty_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 	}
- 
- static struct c2c_dimension dim_dcacheline = {
--	.header		= HEADER_SPAN("--- Cacheline ----", "Address", 1),
-+	.header		= HEADER_SPAN("--- Cacheline ----", "Address", 2),
- 	.name		= "dcacheline",
- 	.cmp		= dcacheline_cmp,
- 	.entry		= dcacheline_entry,
-@@ -1267,10 +1278,18 @@ static struct c2c_dimension dim_dcacheline_node = {
- 	.width		= 4,
- };
- 
--static struct c2c_header header_offset_tui = HEADER_SPAN("-----", "Off", 1);
-+static struct c2c_dimension dim_dcacheline_count = {
-+	.header		= HEADER_LOW("PA cnt"),
-+	.name		= "dcacheline_count",
-+	.cmp		= empty_cmp,
-+	.entry		= dcacheline_node_count,
-+	.width		= 6,
-+};
-+
-+static struct c2c_header header_offset_tui = HEADER_SPAN("-----", "Off", 2);
- 
- static struct c2c_dimension dim_offset = {
--	.header		= HEADER_SPAN("--- Data address -", "Offset", 1),
-+	.header		= HEADER_SPAN("--- Data address -", "Offset", 2),
- 	.name		= "offset",
- 	.cmp		= offset_cmp,
- 	.entry		= offset_entry,
-@@ -1605,6 +1624,7 @@ static struct c2c_dimension dim_dcacheline_num_empty = {
- static struct c2c_dimension *dimensions[] = {
- 	&dim_dcacheline,
- 	&dim_dcacheline_node,
-+	&dim_dcacheline_count,
- 	&dim_offset,
- 	&dim_offset_node,
- 	&dim_iaddr,
-@@ -2496,7 +2516,8 @@ static int ui_quirks(void)
- 
- 	/* Fix the zero line for dcacheline column. */
- 	buf = fill_line("Cacheline", dim_dcacheline.width +
--				     dim_dcacheline_node.width + 2);
-+				     dim_dcacheline_node.width +
-+				     dim_dcacheline_count.width + 4);
- 	if (!buf)
- 		return -ENOMEM;
- 
-@@ -2504,7 +2525,8 @@ static int ui_quirks(void)
- 
- 	/* Fix the zero line for offset column. */
- 	buf = fill_line(nodestr, dim_offset.width +
--			      dim_offset_node.width + 2);
-+			         dim_offset_node.width +
-+				 dim_dcacheline_count.width + 4);
- 	if (!buf)
- 		return -ENOMEM;
- 
-@@ -2626,7 +2648,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
- 		"percent_lcl_hitm,"
- 		"percent_stores_l1hit,"
- 		"percent_stores_l1miss,"
--		"offset,offset_node,",
-+		"offset,offset_node,dcacheline_count,",
- 		add_pid   ? "pid," : "",
- 		add_tid   ? "tid," : "",
- 		add_iaddr ? "iaddr," : "",
-@@ -2789,6 +2811,7 @@ static int perf_c2c__report(int argc, const char **argv)
- 			"cl_idx,"
- 			"dcacheline,"
- 			"dcacheline_node,"
-+			"dcacheline_count,"
- 			"tot_recs,"
- 			"percent_hitm,"
- 			"tot_hitm,lcl_hitm,rmt_hitm,"
+-	int err = -EIO;
++	int err;
+ 	size_t size;
+ 	jsmntok_t *tokens, *tok;
+ 	int i, j, len;
