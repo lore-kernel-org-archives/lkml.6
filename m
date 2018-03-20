@@ -1,86 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751656AbeCTXbA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:31:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:36280 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeCTXa6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:30:58 -0400
-Date: Tue, 20 Mar 2018 23:30:46 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Stefan Agner <stefan@agner.ch>
-Cc: ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
-        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
-        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] bus: arm-cci: use asm unreachable
-Message-ID: <20180320233046.GL2743@n2100.armlinux.org.uk>
-References: <20180320230206.25289-1-stefan@agner.ch>
- <20180320230206.25289-2-stefan@agner.ch>
+        id S1751670AbeCTXes (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 19:34:48 -0400
+Received: from ozlabs.org ([103.22.144.67]:60209 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751515AbeCTXer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 19:34:47 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 21 Mar 2018 10:34:08 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>
+Subject: linux-next: manual merge of the sparc-next tree with the arm64 tree
+Message-ID: <20180321103408.49e62310@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320230206.25289-2-stefan@agner.ch>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xelN5VzTy5GEMv40EPAOBoo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 12:02:02AM +0100, Stefan Agner wrote:
-> Mixing asm and C code is not recommended in a naked function by
-> gcc and leads to an error when using clang:
->   drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
->   function is not supported
->         unreachable();
->         ^
-> 
-> Instead of using the unreachable() macro use the assember variant
-> ASM_UNREACHABLE.  This will no longer emit __builtin_unreachable(),
-> but since the function is naked and its return type is void it seems
-> not to have aversive effects.
+--Sig_/xelN5VzTy5GEMv40EPAOBoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think that unreachable() there is rather silly - this function
-*does* return, and the comments say as much.  Just delete the silly
-"unreachable()", there's no need to put an ASM_UNREACHABLE in there.
+Hi David,
 
-The function is not declared as not returning, and nothing in this
-file uses it anyway - it's called from the mcpm code, which also
-_does_ expect this function to return (if it doesn't, then we're
-basically saying the CPU that called it is dead.)
+Today's linux-next merge of the sparc-next tree got a conflict in:
 
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/bus/arm-cci.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-> index 5426c04fe24b..ee9da86fec47 100644
-> --- a/drivers/bus/arm-cci.c
-> +++ b/drivers/bus/arm-cci.c
-> @@ -2084,6 +2084,7 @@ asmlinkage void __naked cci_enable_port_for_self(void)
->  
->  "	mov	r0, #0 \n"
->  "	bx	lr \n"
-> +	ASM_UNREACHABLE
->  
->  "	.align	2 \n"
->  "5:	.word	cpu_port - . \n"
-> @@ -2103,8 +2104,6 @@ asmlinkage void __naked cci_enable_port_for_self(void)
->  	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
->  	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
->  	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
-> -
-> -	unreachable();
->  }
->  
->  /**
-> -- 
-> 2.16.2
-> 
+  arch/x86/kernel/signal_compat.c
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+between commit:
+
+  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
+ions")
+
+from the arm64 tree and commit:
+
+  d84bb709aa4a ("signals, sparc: Add signal codes for ADI violations")
+
+from the sparc-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/signal_compat.c
+index d2884e951bb5,838a4dc90a6d..000000000000
+--- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@@ -26,8 -26,8 +26,8 @@@ static inline void signal_compat_build_
+  	 * new fields are handled in copy_siginfo_to_user32()!
+  	 */
+  	BUILD_BUG_ON(NSIGILL  !=3D 11);
+ -	BUILD_BUG_ON(NSIGFPE  !=3D 13);
+ +	BUILD_BUG_ON(NSIGFPE  !=3D 14);
+- 	BUILD_BUG_ON(NSIGSEGV !=3D 4);
++ 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
+  	BUILD_BUG_ON(NSIGBUS  !=3D 5);
+  	BUILD_BUG_ON(NSIGTRAP !=3D 4);
+  	BUILD_BUG_ON(NSIGCHLD !=3D 6);
+
+--Sig_/xelN5VzTy5GEMv40EPAOBoo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmnAACgkQAVBC80lX
+0GxDbQf+Ln9ODONtb5cYvaYlHsL+eBUbncVaSG/WGwAhuNOhwg1YP9FPlNEleOvX
+89zlt3y65wi3B+QgRP7MGh4FxCWJLLlhILbrNpfFYYZETpGnZUemFnluqnlX+Hcx
+faPBcHv01sPuVhN0dWQGMAFQmav4duTDSs6wwD9UaZq05wPCJqw55bdkMbGV54rw
+yOZbXEiPyWQw3EeKgm+oMKT0JxnLdvCpp7y/xY80jEY0NhHeVJ2Oz4rBIRVQHwBa
+ZNAoSZlgmZnk/cJFcz/GXZpUBb2sqWOg8Ju2mMvSJ2SWLgqpDDs/erH5pb+e7c0A
+iJxTMh9FWB72fw7pgzyW6m0lwYpSXA==
+=XtU2
+-----END PGP SIGNATURE-----
+
+--Sig_/xelN5VzTy5GEMv40EPAOBoo--
