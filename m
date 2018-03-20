@@ -1,128 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751550AbeCTCgD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:36:03 -0400
-Received: from mx.socionext.com ([202.248.49.38]:15573 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750882AbeCTCgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:36:01 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Mark Brown'" <broonie@kernel.org>,
-        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: <alsa-devel@alsa-project.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180314123900.19505-1-suzuki.katsuhiro@socionext.com> <20180314162609.GV2186@sirena.org.uk> <001101d3bf39$6e3933c0$4aab9b40$@socionext.com> <20180320011216.GN2186@sirena.org.uk>
-In-Reply-To: <20180320011216.GN2186@sirena.org.uk>
-Subject: Re: [PATCH] ASoC: uniphier: evea: add switch for changing source of line-in
-Date: Tue, 20 Mar 2018 11:35:56 +0900
-Message-ID: <001d01d3bff4$2cef92e0$86ceb8a0$@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHTu5FuzEJuYhG2tk6R1XBNqubmsKPPVE6AgAdyUOCAAPxXAIAAnAaA
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+        id S1751429AbeCTCma (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:42:30 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42516 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeCTCm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:42:28 -0400
+X-Google-Smtp-Source: AG47ELvbSy0JZVjdhN3jr9faYfu1v7cVBOCIPxske7ewQfBIW7qfgm+jEiuBbuuU5zbN2UrSz0tHeg==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        erick.chen@spreadtrum.com, baolin.wang@linaro.org
+Subject: [PATCH 1/2] spi: sprd: Simplify the transfer function
+Date: Tue, 20 Mar 2018 10:42:13 +0800
+Message-Id: <e458e920e9a425dfa23f13cf55b2fbcd7081997f.1521512297.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+We can move the hardware spinlock protection into the ADI read/write
+functions to simplify the sprd_adi_transfer_one() function. Moreover
+this optimization can also help to access PMIC without considering
+the hardware spinlock using sprd_adi_read/write() functions.
 
-> -----Original Message-----
-> From: Mark Brown [mailto:broonie@kernel.org]
-> Sent: Tuesday, March 20, 2018 10:12 AM
-> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
-> Cc: alsa-devel@alsa-project.org; Masami Hiramatsu
-<masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] ASoC: uniphier: evea: add switch for changing source of
-line-in
-> 
-> On Mon, Mar 19, 2018 at 01:19:10PM +0900, Katsuhiro Suzuki wrote:
-> 
-> > > I'll apply for now but this should really be a DAPM control so that we
-> > > can power down things connected to the disconnected line inputs when
-> > > recording.
-> 
-> > Thanks a lot for your suggestion. I tried to change the implementation to
-DAPM
-> > control as follows:
-> 
-> > I can see the value of ALINSW1 register at 'Line In 1 Mux',0 using
-> >   amixer get 'Line In 1 Mux',0
-> 
-> > But I can't change the value.
-> >   amixer set 'Line In 1 Mux',0 LIN2
-> >   Simple mixer control 'Line In 1 Mux',0
-> >     Capabilities: enum
-> >     Items: 'LIN1' 'LIN2' 'LIN3'
-> >     Item0: 'LIN1'
-> 
-> > Would you tell me what is wrong...
-> 
-> Ugh, I *have* run into that before but I can't remember what triggers it
-> and your code doesn't have any mistakes I can spot.  Unfortunately I'm
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/spi/spi-sprd-adi.c |   64 ++++++++++++++++++++++++--------------------
+ 1 file changed, 35 insertions(+), 29 deletions(-)
 
-Thank you for reviewing.
-
-
-> at Linaro Connect this week and don't have a test system I can poke at
-> with me to remind myself, and I'm still travelling next week
-> unfortunately.
-> 
-
-I see, no problem. Have a nice trip!
-
-
-> I'd add some trace to the set code path to make sure everything is being
-> called as expected.  It's somemthing really small that's hard to make a
-> warning for in the code IIRC.
-
-I traced some DAPM codes. The 'get' function as follows:
-
-int snd_soc_dapm_get_enum_double(struct snd_kcontrol *kcontrol,
-        struct snd_ctl_elem_value *ucontrol)
-{
-        //...
-
-        mutex_lock_nested(&card->dapm_mutex, SND_SOC_DAPM_CLASS_RUNTIME);
-        if (e->reg != SND_SOC_NOPM && dapm_kcontrol_is_powered(kcontrol)) {
-                int ret = soc_dapm_read(dapm, e->reg, &reg_val);
-
-The soc_dapm_read() reads real value of register. It's simple.
-
-
-But 'put' function is mysterious for me...
-
-int snd_soc_dapm_put_enum_double(struct snd_kcontrol *kcontrol,
-        struct snd_ctl_elem_value *ucontrol)
-{
-        //...
-
-        change = dapm_kcontrol_set_value(kcontrol, val);
-
-        if (e->reg != SND_SOC_NOPM)
-                reg_change = soc_dapm_test_bits(dapm, e->reg, mask, val);
-
-dapm_kcontrol_set_value() has stored value into dapm_kcontrol_data. And 
-soc_dapm_test_bits() has just checked value of a register and returned need 
-update or not. It seems anyone does not update a register in this function.
-
-I tried to change soc_dapm_test_bits() -> soc_dapm_update_bits(), so I can 
-change value of register using amixer. But I feel this change was wrong. And I 
-found dapm_seq_run_coalesced() calls soc_dapm_update_bits(). Unfortunately 
-this function has not been called even if I run amixer.
-
-Anyway, I'll continue to study about DAPM codes.
-
-
-Regards,
---
-Katsuhiro Suzuki
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index eb82b94..b89b09d 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -123,7 +123,17 @@ static int sprd_adi_fifo_is_full(struct sprd_adi *sadi)
+ static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
+ {
+ 	int read_timeout = ADI_READ_TIMEOUT;
++	unsigned long flags;
+ 	u32 val, rd_addr;
++	int ret;
++
++	ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
++					  ADI_HWSPINLOCK_TIMEOUT,
++					  &flags);
++	if (ret) {
++		dev_err(sadi->dev, "get the hw lock failed\n");
++		return ret;
++	}
+ 
+ 	/*
+ 	 * Set the physical register address need to read into RD_CMD register,
+@@ -147,7 +157,8 @@ static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
+ 
+ 	if (read_timeout == 0) {
+ 		dev_err(sadi->dev, "ADI read timeout\n");
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -161,21 +172,35 @@ static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
+ 	if (rd_addr != (reg_paddr & REG_ADDR_LOW_MASK)) {
+ 		dev_err(sadi->dev, "read error, reg addr = 0x%x, val = 0x%x\n",
+ 			reg_paddr, val);
+-		return -EIO;
++		ret = -EIO;
++		goto out;
+ 	}
+ 
+ 	*read_val = val & RD_VALUE_MASK;
+-	return 0;
++
++out:
++	hwspin_unlock_irqrestore(sadi->hwlock, &flags);
++	return ret;
+ }
+ 
+-static int sprd_adi_write(struct sprd_adi *sadi, unsigned long reg, u32 val)
++static int sprd_adi_write(struct sprd_adi *sadi, u32 reg_paddr, u32 val)
+ {
++	unsigned long reg = sprd_adi_to_vaddr(sadi, reg_paddr);
+ 	u32 timeout = ADI_FIFO_DRAIN_TIMEOUT;
++	unsigned long flags;
+ 	int ret;
+ 
++	ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
++					  ADI_HWSPINLOCK_TIMEOUT,
++					  &flags);
++	if (ret) {
++		dev_err(sadi->dev, "get the hw lock failed\n");
++		return ret;
++	}
++
+ 	ret = sprd_adi_drain_fifo(sadi);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	/*
+ 	 * we should wait for write fifo is empty before writing data to PMIC
+@@ -192,10 +217,12 @@ static int sprd_adi_write(struct sprd_adi *sadi, unsigned long reg, u32 val)
+ 
+ 	if (timeout == 0) {
+ 		dev_err(sadi->dev, "write fifo is full\n");
+-		return -EBUSY;
++		ret = -EBUSY;
+ 	}
+ 
+-	return 0;
++out:
++	hwspin_unlock_irqrestore(sadi->hwlock, &flags);
++	return ret;
+ }
+ 
+ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
+@@ -203,7 +230,6 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
+ 				 struct spi_transfer *t)
+ {
+ 	struct sprd_adi *sadi = spi_controller_get_devdata(ctlr);
+-	unsigned long flags, virt_reg;
+ 	u32 phy_reg, val;
+ 	int ret;
+ 
+@@ -214,16 +240,7 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
+ 		if (ret)
+ 			return ret;
+ 
+-		ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
+-						  ADI_HWSPINLOCK_TIMEOUT,
+-						  &flags);
+-		if (ret) {
+-			dev_err(sadi->dev, "get the hw lock failed\n");
+-			return ret;
+-		}
+-
+ 		ret = sprd_adi_read(sadi, phy_reg, &val);
+-		hwspin_unlock_irqrestore(sadi->hwlock, &flags);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -241,19 +258,8 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
+ 		if (ret)
+ 			return ret;
+ 
+-		virt_reg = sprd_adi_to_vaddr(sadi, phy_reg);
+ 		val = *p;
+-
+-		ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
+-						  ADI_HWSPINLOCK_TIMEOUT,
+-						  &flags);
+-		if (ret) {
+-			dev_err(sadi->dev, "get the hw lock failed\n");
+-			return ret;
+-		}
+-
+-		ret = sprd_adi_write(sadi, virt_reg, val);
+-		hwspin_unlock_irqrestore(sadi->hwlock, &flags);
++		ret = sprd_adi_write(sadi, phy_reg, val);
+ 		if (ret)
+ 			return ret;
+ 	} else {
+-- 
+1.7.9.5
