@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752476AbeCTJcn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:32:43 -0400
-Received: from mail-eopbgr00100.outbound.protection.outlook.com ([40.107.0.100]:45367
+        id S1752511AbeCTJcu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:32:50 -0400
+Received: from mail-eopbgr00131.outbound.protection.outlook.com ([40.107.0.131]:60830
         "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752415AbeCTJch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:32:37 -0400
+        id S1752431AbeCTJcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:32:43 -0400
 From: Peter Rosin <peda@axentia.se>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Guenter Roeck <linux@roeck-us.net>,
         Wolfram Sang <wsa@the-dreams.de>, Ken Chen <chen.kenyy@inventec.com>,
         joel@jms.id.au, linux-i2c@vger.kernel.org
-Subject: [PATCH 2/3] i2c: mux: pca9541: namespace cleanup
-Date: Tue, 20 Mar 2018 10:31:59 +0100
-Message-Id: <20180320093200.19179-3-peda@axentia.se>
+Subject: [PATCH 3/3] i2c: mux: pca9541: prepare for PCA9641 support
+Date: Tue, 20 Mar 2018 10:32:00 +0100
+Message-Id: <20180320093200.19179-4-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180320093200.19179-1-peda@axentia.se>
 References: <20180320061909.5775-1-chen.kenyy@inventec.com>
@@ -26,48 +26,48 @@ X-ClientProxiedBy: VI1PR0502CA0029.eurprd05.prod.outlook.com
  (2603:10a6:803:1::42) To DB6PR0202MB2776.eurprd02.prod.outlook.com
  (2603:10a6:4:a8::22)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7d151e15-7917-4c1b-4d0d-08d58e458391
+X-MS-Office365-Filtering-Correlation-Id: 18b92142-38af-4cc3-5045-08d58e4586be
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2776;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;3:5CNW8tl2Pm38EtHK60bl0YUThjxg5jNg0pki/tmIPY73j4/j2gHrGpxnC/ekkn/a5+xYXRzC9YwGjCuCBppCRFpoWtydthZHveNQzNTEfIBVQ940cu+8tc447FCX5IUofg+01MIRZPemjS2IGJPFYpxY2PmL27dM+HogCL10uHp60bjnlZ1mH2HQmbEDaPIB+Y+eIg/uFFupX1GFeDHGeNkg96V6wUW2qf1+Remep4bjHoqQN49G9r44eu6echy9;25:uVmkIBJa0Wf+R0MCzmzKev5ISNzOIMdzsvW7AjTo1g51PFh3IBzGQrJy4sD50hi/bWlGlKArjxpEtSnsH4d3Nf2byOnuDhtFQnq5785s1DAdczaPY2wdNhtdl2KxJhFFo0daGWIdplSgYHl3D+R81oprYfNAt5RoRqxmg3coiFq3153x2U3n8gkHsHl4pMpgTRkjZv2yi+HdoTKko1QXeJlgJ7qMIQXfoaJPSssLdJuwUlU5FoVRUBX1oFwarD7cBCHT897Kdk9oILGpIAC3Qx8Or+C/Xcruzz9uNoNGbAXiMBFGLyslEOw5dE2MMrJ6hngU3NNH00bM450A6G7ILg==;31:M3vLpbv6kgNnH++44Wlv9uWeXkT3gUQnmRWACtazMmUZyRBN9G8ksP6SK7N9lOYRo21rWj7rcP0wzYGUfFVKPHl4eYk1/NWPK9rwU21hOL6AcEGqrorVsjodBlFBN43CHJY1gNp2aV0enExwdjwyUkfdlsNHy8ZGOKqpQuAr+DtfJmCGfmqyyIqImpc2K0MnsyySnsoehtV0xk0y1RQxPYnhgz9y+smF+HetOxLgEfI=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;3:7VSC4K8X0xYOH16usYVhWLv6hobawDAyDTZtRBM2xaWGV2SyMKKrj66la6MZ2rwGqTlq/7lcl2tfcRreW1xg9cfW+mHeohakw3eWOfvl0Hn1ZXzryj81h2z5QpZaI2LCk4a3/jsOmw/brEURLS79xoPY7aobbFvaWpCeK2BlI4CAxL9OthCYW9pTHZDhcjSzb1NkLnUnhSRg6v/MrFF/82Qi0i+4g/dMNo/KLDzOl7zMCuPtdi3q4hToxUX5MqIt;25:dmbSDFbS3kt5prbPA2/lwiiBVlNpq3TpjN3D1FXgD+h4M+jI7pWx0ytIAPAdafuAKHwLxdTg8hM28/tFDnlx7sJeRIiYj0WN8MJEC1z7IM7YSy7/E+HQowZUHvAK8S0E9PyiskeYB3i15aHHbN6aLsgsioJY8yA0Vb1XUFQr2nHCRpHwC+1iiP/OGY0Lqn4Ys2imlErc8blvA60jWstaOBp1jgTqQGGz9fbvez921YDzEknMMyt9viaM9qIkf7sWMTksgD1qQD7WyKWN8+WPLJbm3PB7E8ID31PiBoOWpwG8wFXbw/6BrxhDkbjOyJPINslVuqjZAV2h91nkgvbL2w==;31:TUaUq+W6wyxZFAr2/JET/edMI78v+r8EssGDNYOg9NgiOEPn8hhn+4vvnW9YCoZ+TPBhDYqcD3pdrnRGxxjuqFIfyrm29O+e8Cz7NZX8eVJ5c1r7cbP7/WAwSTpMkd8BfLCWEdDJvBYmM8rEDX+lJzA1zImIhQAr6dvbE/cLGq1nwVYuWrII0VAEWUGDr90A2UBVca8jVoRQiylP5WC+Gl3L6w1HKSlyUWuxSypf/vI=
 X-MS-TrafficTypeDiagnostic: DB6PR0202MB2776:
-X-Microsoft-Antispam-PRVS: <DB6PR0202MB2776CF82218331E46BE1B668BCAB0@DB6PR0202MB2776.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DB6PR0202MB2776173264C0A0D9871C8639BCAB0@DB6PR0202MB2776.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(60795455431006);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231221)(944501309)(52105095)(3002001)(93006095)(93001095)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6072148)(6043046)(201708071742011);SRVR:DB6PR0202MB2776;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2776;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;4:fWqGXXt9TR2sY/ASzF4MbrG374tDkh0cZ6eOqF3ztBGeQMDRi8nGfszo8Q/r1RslgEpetT4MyMascIguu3FjURQ42nPUefVLDNwdxzqd/BZ81n75npCuCxvT0cuL6twC0IOT72sTMbZCLlvMRk+IahNqoquYF/KKwyuU2FR6THGyoPEPwdZ7s6Y+wckNpXlR+0OZl5tpyY1W0i8zJ8zk3tjsA4Wp8cOUx4PwGhICgW2lFNfMGoPNRa6TV7RWroTr9dNbzGGpYhMIMyU7PzWGLGkCwk5b21/sZJfANTOLVzX975BLUtZuKMiOlfyqflWp
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;4:9MJJrCIi6yrCElLe6esqBI5zBqnLpYefa5Xlrph4uZ8cCmjniv86VxW5naBt3MdFXzuCw3f7gOZ4W66KbcBD0i3reDbwJDPF3Awf6ggfuI+aofdov4gnvGttJ+DA/iM3l22rLY7//1C4K8VLzjGIDkq8nTHap1gTPhQNNZg1QmIrICmAQKfN5FDGiXzN1ch4e7Go9JtTtvFxQ2V3wpHJU4B13Hip7THoDFPsGOLHz4mYWEHlpaVS9WkZgMIxIEdkVHdszbFx6hSI16kkSSMtNrE23/s9kHE2hlNSLbQkx/RTPaOnsGZt+gBh0TsnVQ5J
 X-Forefront-PRVS: 061725F016
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39840400004)(39380400002)(346002)(396003)(199004)(189003)(8936002)(16586007)(54906003)(478600001)(81166006)(2351001)(6346003)(3846002)(2361001)(25786009)(76176011)(106356001)(8676002)(81156014)(51416003)(86362001)(6506007)(26005)(575784001)(316002)(386003)(186003)(16526019)(50226002)(53936002)(59450400001)(36756003)(68736007)(47776003)(4326008)(97736004)(5660300001)(66066001)(6486002)(6512007)(305945005)(50466002)(7736002)(2906002)(48376002)(1076002)(6116002)(2950100002)(6666003)(52116002)(6916009)(74482002)(105586002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2776;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2776;23:uZh3uGqI2WKUoWGO8igxIEWwyjSM/bpJkaYrOZV?=
- =?us-ascii?Q?YjmRy5bi7kdie2OQXDwRaoVreLjSYHWMrHxGNNdUnCuUQpXEZyowMQr6XV3q?=
- =?us-ascii?Q?ITKjlp879KIxXHZ+cNE8AIM72WR9IyuLLdAyOp/1EUm1qcs10YcalLu69NBs?=
- =?us-ascii?Q?gjw07Zgurrk8PUxOLh6+jRUofnmEOPGxc0tVbyRLJwJSE1aOf+bJMvUXmFEC?=
- =?us-ascii?Q?Zvw/YlQvyYZSidJwgbE96lsK3iiCX2o4e23SKDC5rEnK1t9QOEyGTytWQe1A?=
- =?us-ascii?Q?P1koIYpTP1GDSy6BrmwsCjbRsyusSDSbw+K8LD0PAv768XKQOZd2OmvJgqgS?=
- =?us-ascii?Q?ErzGthiZX6tprl6UorUMi9nrg/HvWkeiB0/32qovKqdJtZI2rxYM6dNOH2hc?=
- =?us-ascii?Q?HNbG0YDFSpz3Hb9eKZVnGbMOuR5v3ASIXpFcGIYNiCxqtw5t+sMSWe8UUoiz?=
- =?us-ascii?Q?FmXBNI+phEsGq1MvJuqpALDy/8WDtIri88iDnET1WrCQVNPNsHGNShCP+Lix?=
- =?us-ascii?Q?2xG5C6EqYn54BTfYwmBSrrtL1bmmK3fDCZW/Cx+7qCchl799stWl+tRww62Q?=
- =?us-ascii?Q?s7g+rUF4rFaID1EZ8luV1sWmX6UExTpPHli2/h3wARclWue329DbOLzr9qp4?=
- =?us-ascii?Q?Ki6k209sE0QPsNB/eC7JiE4gn0Fi91nQRZg3iUk8XyO2dlkLKoZ5uuak1QNK?=
- =?us-ascii?Q?/GwRxYyGDa6OzSd9u6t215lSbtruyMM3FnBrSfkcCeZOWQbQQ3WIedkvRSIe?=
- =?us-ascii?Q?tD6HiOgF111uEq3mazGl5X6Cd4mN9NJAeaDqIdhxdWLFqK+aZxLGrerqdy3Z?=
- =?us-ascii?Q?JqTd1slFa5rTTUgTSMZjoW0fFrkGan5FAt8NXUclrMRsVrLd8H9zEXbX0rFI?=
- =?us-ascii?Q?LzK7s3gF2IEOu+VDjOAjBYZZUQ7loap5jAC6HDdihJgh6GSRPGXA8rBG2/0s?=
- =?us-ascii?Q?6HZOE+6FnV4EDbEe5BXqOlo5QC1phqh/g4W095rn+pAgtWsMGRbmdX/S5aIn?=
- =?us-ascii?Q?Fsm993ygd8iR4QoZi4OhCgtx69rYNfBLj9V170NHJcxphgtQoY5PYT8n5HHv?=
- =?us-ascii?Q?gl94s60px5hgQCX3fdTNTaR+LalbPFtisqa+K9+R1GTbiVj0BZudJMODKX27?=
- =?us-ascii?Q?t+Fy9zueHNKnP4n+miqwE6b3HzxA3dIe+o2pi/73T8EESc7qtu4scGjoDKTx?=
- =?us-ascii?Q?Cv199tOwR9c89eXykiEhri47LQCEEnYjoFmQ/Woe2Ot/CuzPAv2+iMTJ4tva?=
- =?us-ascii?Q?LlyQAo+2JHS26EdgUsq28RttV5P6IgcfOBWvDyLWP8I8+5l3J4wNIzoAD55k?=
- =?us-ascii?Q?QaQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: gWQdZcMkxwtINHdWOMdMABY3mD433MXN9IBiT0Ok4y1TmgvtKZ8RfxeC+4hkIvSMqXGWdFo9KggAIfGmfCVyY/gNW1vv4N3W7Xy+UdgqYGU62sBpsUzBBWL2HBo1iM/RVjiPdvo1W6S5LGliiBf5jAj5I/kj+oT8Pw5NO0LUT9X6QOWUivXr4/cZNBOvW8Sj
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;6:I9k5v1PVV5IZ4Pwds1Bi0/MZy6z8VJXz8OE8ax0rD1mDo8hgbPnS2RXxVGJbgr0x7V7uZO1xXiUQhC0MvpLupEdMAChF/7gCcFn8xCRDwugxZXR+HoEf4mcZyVN6CnKnPU0ofskHX4Dixhbnm5K4zMHppmeHU9XKAqH7gR4cbydnaVnmtLrjmIWcp4yrfFp8pRttJtpSFSfr0r0iTjHpPLdMZEqAl+4hfYt/3tHVvyRI7dasw7s/E25GWvnH/n8tsX8OSOTJP976gaL6z7FXdnh8KdiJEz/To2VTixUta3nrcfY/658oMeojEBnTIId+05bvENBbpeAXi8eDLmr0D19CF2cAG0JN2594Xe53Knk=;5:j/a956EuyyqjjOCPwt2GRzixlX1j/0osraIpeY2Cg6d8omtZov5HuPVPRgjtrLG2Eh4mfOZY8dOgTGivFEshEEEtA72NfXQmySM1neKy1t/wsgwuiw0wcetjZh2BH3FeAzLMm0ZKUA/jFVXK/R9MMn+tr8GkFgzh1NZDBMNic14=;24:6utbib01DN41GKn8PdSt9TCvII9IJY5bXavXgMrbm5X0iMKaDWDcQJZQ6Nu6sarWMxqkw7wIytNOxM/LIpODLoMWu7Xusrba0gHRSyCbmYo=;7:BQddYGipKyaupfru6YdTEiHFTFTFMmJGJDzmfhQ7i8V+Z8SFKjIjN1Af/Jl0axZJD1LA6suJDxzLhHFgJPRdwWjeFCpHrxQrIxe1vEL09jB9aWVBXKBruir8M6idaAi5+8K7Jk8zjMpnSE/Zk7+DChtSWGdUfo6cBGvJ8Je1/6g7peHl1S3uvrnL0AtvQqQXhUS8FgjoudqYZqTrjGsMjdS9Rclzq71pVQP8R179D1BjAyBnNPcBhfcBXfiMvMru
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2776;23:EyCJrXXrguiZ29uTKRXWBwbrjVTk2PnDDTXWxFm?=
+ =?us-ascii?Q?OnF5Xt4q6G67wpJWL0qugMicx+Iisb8+6IgiPBAsj1m4OtLv6HrHmez3dKa5?=
+ =?us-ascii?Q?k6yfQNpE/Kr/9sFd1VNN7pb1HiuaKGOgBp8tGdpSEfdpFzsckA+lYY1q7fKF?=
+ =?us-ascii?Q?pyaHC7ajyd8+P2j4jMD/hjS7zhjEPySpwscSiocinRv0rGRD7HFf/dVTntcM?=
+ =?us-ascii?Q?EL8y56ftiQnpyOQXxsgJAaa+TzBgM00SgWHlb94X4asPtYss/kHkO9irRiXz?=
+ =?us-ascii?Q?5ICBDkl7DPcrUy6pIfdCrnGK6diIgDUN80dmrus5kd+w7JepYylTZmZX9Vv0?=
+ =?us-ascii?Q?jFy91/Wx+vAmC+53Qwg9xBa3aESEp/v2mZDWOQKi50zNZMva//k+vuwJBKVW?=
+ =?us-ascii?Q?HBmja80obi+dQN8gdMu8cgBZPvvpvZHitxANfuRR7b1u8ZA9MbGpvkEzCMLF?=
+ =?us-ascii?Q?54xen2CM9x3Lugnx9k6Yh4RZV3cP9qphTstqdRrhh82SVUgf+FimYeIVFVUG?=
+ =?us-ascii?Q?TLK35saoe/NsCDEo+1F2qJsLtz3FiL4szNE4WXiAMjODEAejrQKQdT38C/bB?=
+ =?us-ascii?Q?fKnpCbquD/G/LLTaWu03PDuK4s9Gsc6iwyqizxP97R8brv/T1x6rK7a0zXjE?=
+ =?us-ascii?Q?Sa577L3O2R8/5gAxOykzBQhHxDP2z/0ga9oURphnKHQYTKEJYieNqJ1TLqCB?=
+ =?us-ascii?Q?S3ZUnkmN1Z53QwrWkPpcJS+lkxciU6wkczit5XMdDc8SKipN0kyReFHYoY62?=
+ =?us-ascii?Q?ukOWXlVoZLirytHGypcdTnGUGJMsyjH2cv1kolJfx9rlHcryYd2bqykByZUh?=
+ =?us-ascii?Q?7+kc05ebxM67um8nIU3h961Pe555byZ/eV6QrH6WieBNIqBUlaNsTv2kCkLs?=
+ =?us-ascii?Q?xcoxeT6L8Lt1Nj2gigKuQXS5xG1O1sPfEvRiDcI7blqmiFygMJVyouxqN+70?=
+ =?us-ascii?Q?YyAcHSi66wQ1YqwcZ8AofBERDo93Eb4ReRzruX0UkMXVR4dylXNdYYbdFozz?=
+ =?us-ascii?Q?daGfatPEc2XBx6zrPfr+9C5EwKMZvL8dRAMbFvpZ3grEqSoYQRn9oIbmTbdk?=
+ =?us-ascii?Q?jYYWSieKim+/8Iem0xka4FxmYDri7Kx6kaw1IVNRxTcUVsICsbviy9e64E3Z?=
+ =?us-ascii?Q?bxNJctBENvr+Ek6ae/VSseyplhAfTnZU4jfdiGQGez+LshqoOXvw5Kl1QxyM?=
+ =?us-ascii?Q?JLf2qeAdexOl3qIKLaGMg2oteesA5xYCyNkLsuq2RgbvIZBsYrBNAuvj3uYe?=
+ =?us-ascii?Q?6cQYtYhmCLMVLcoDwKDkLPwfKoX/P4ntTXL0A72KA77utAEWVP3BkvGh50dZ?=
+ =?us-ascii?Q?z0w=3D=3D?=
+X-Microsoft-Antispam-Message-Info: IujXv5QWPYvq51ZHu4/tz4WFM3VYFS0StBzAeKsUr031T0NR5zn60b837h6JqZO3pdUbtXv2AHBiMPp78YAyfs/S7oi0weaCvyPdrAihbcc3IA0THvdPuKHJWkX2DxK7mdB4uSbORGsHHBdC7Sw3DIWFEIQQtY15srEW721Xofds3mrMQVuCTd+3r0cAi2Jc
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2776;6:6D4C+21VwGWgCBoOv3PuDK0bfO0HGRknR9xq5uv/YJKp/YX3YbtQ8yY3udblAFdk5e3ts27ewuX1pHcDJy27H5HzNcUt4ceTA0hxhRjFGbH1XbamHelgZGiWV+TGZR7sAYE6IFvy6uUAma270NqC3w4uKRzItx5HJ1+/lqflKawVwXC8sZFyAklN1MIm/wfcAr/422Y5Xu4q72yBgbNLe3SoVvLBzB9rbxUlGW7ObXd1H3wXh3HbF44FYcsGVrXWsN283zapwzUrApTKQDTcuPRedBYjK49Iyu/1QR542+FrmuhnqZrx/yTR1LVXRBJyAB6euMk/pywd3/Nd9SbQE5MZ+Eme/d+jVwglehmuTRg=;5:ZA2E8ormcm4tcy2vzyjDd7fRc7whpGTpn/Y3I8G1umr1D9dRdWlhoy2vYDi1RirwZNVEWW0yuWqyiQITxZPrQPNA7v3dhn4UCnXuzoU97lk69UqKu1jPb2gQbTjrnWcGztBttQAzmGpgx/l2dPTfo5/AbBiMkEFSL08ZMRO4ZFM=;24:gO7oTDAEvoh9dP2CHl3wRGF7lUzSpXbzgYRPxul41370eOkJ7RKJT8yT7K6mc2IUzhztDn4uD1oYtU7z7gp3dzwsIT4I6Dt+P/MJakRcyzw=;7:tbqVmJtIJa54TyvnpcFPGwstb+uB3mN/NAB0cxqC9eQCha2MatIh09a/V6+6wSf0osaw1JY2S4eJbAw+ZF5QbeAedLNOWqqscri3oHp3D3kr1JPgCcGaA2pgSLTOL1A6ZcGeeP2ZfKEyQQpmohNJDXi/PvKQoqyIsfbvPrbdb9utIqjMmkiW6t9VSvP05FpYMG6dZ44ighrcRquBDcak/MiMgecvdyQBULwJIsOaH/Im8zYM3eO6kYu3vbeQf7X9
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2018 09:32:34.1674 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d151e15-7917-4c1b-4d0d-08d58e458391
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2018 09:32:39.8706 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18b92142-38af-4cc3-5045-08d58e4586be
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2776
@@ -75,79 +75,141 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for PCA9641 support, convert the mybus and busoff macros
-to functions, and in the process prefix them with pca9541_. Also prefix
-remaining chip specific macros with PCA9541_.
+Make the arbitrate and release_bus implementation chip specific.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/i2c/muxes/i2c-mux-pca9541.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/i2c/muxes/i2c-mux-pca9541.c | 62 +++++++++++++++++++++++++++----------
+ 1 file changed, 45 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
-index ad168125d23d..47685eb4e0e9 100644
+index 47685eb4e0e9..cac629e36bf8 100644
 --- a/drivers/i2c/muxes/i2c-mux-pca9541.c
 +++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
-@@ -59,10 +59,8 @@
- #define PCA9541_ISTAT_MYTEST	BIT(6)
- #define PCA9541_ISTAT_NMYTEST	BIT(7)
+@@ -23,6 +23,7 @@
+ #include <linux/i2c-mux.h>
+ #include <linux/jiffies.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/platform_data/pca954x.h>
+ #include <linux/slab.h>
  
--#define BUSON		(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
--#define MYBUS		(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
--#define mybus(x)	(!((x) & MYBUS) || ((x) & MYBUS) == MYBUS)
--#define busoff(x)	(!((x) & BUSON) || ((x) & BUSON) == BUSON)
-+#define PCA9541_BUSON	(PCA9541_CTL_BUSON | PCA9541_CTL_NBUSON)
-+#define PCA9541_MYBUS	(PCA9541_CTL_MYBUS | PCA9541_CTL_NMYBUS)
+@@ -70,26 +71,22 @@
+ #define SELECT_DELAY_SHORT	50
+ #define SELECT_DELAY_LONG	1000
  
- /* arbitration timeouts, in jiffies */
- #define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
-@@ -93,6 +91,20 @@ static const struct of_device_id pca9541_of_match[] = {
- MODULE_DEVICE_TABLE(of, pca9541_of_match);
- #endif
+-struct pca9541 {
+-	struct i2c_client *client;
+-	unsigned long select_timeout;
+-	unsigned long arb_timeout;
++enum chip_name {
++	pca9541,
+ };
  
-+static int pca9541_mybus(int ctl)
-+{
-+	if (!(ctl & PCA9541_MYBUS))
-+		return 1;
-+	return (ctl & PCA9541_MYBUS) == PCA9541_MYBUS;
-+}
+-static const struct i2c_device_id pca9541_id[] = {
+-	{"pca9541", 0},
+-	{}
++struct chip_desc {
++	int (*arbitrate)(struct i2c_client *client);
++	void (*release_bus)(struct i2c_client *client);
+ };
+ 
+-MODULE_DEVICE_TABLE(i2c, pca9541_id);
++struct pca9541 {
++	const struct chip_desc *chip;
+ 
+-#ifdef CONFIG_OF
+-static const struct of_device_id pca9541_of_match[] = {
+-	{ .compatible = "nxp,pca9541" },
+-	{}
++	struct i2c_client *client;
++	unsigned long select_timeout;
++	unsigned long arb_timeout;
+ };
+-MODULE_DEVICE_TABLE(of, pca9541_of_match);
+-#endif
+ 
+ static int pca9541_mybus(int ctl)
+ {
+@@ -318,7 +315,7 @@ static int pca9541_select_chan(struct i2c_mux_core *muxc, u32 chan)
+ 		/* force bus ownership after this time */
+ 
+ 	do {
+-		ret = pca9541_arbitrate(client);
++		ret = data->chip->arbitrate(client);
+ 		if (ret)
+ 			return ret < 0 ? ret : 0;
+ 
+@@ -336,10 +333,32 @@ static int pca9541_release_chan(struct i2c_mux_core *muxc, u32 chan)
+ 	struct pca9541 *data = i2c_mux_priv(muxc);
+ 	struct i2c_client *client = data->client;
+ 
+-	pca9541_release_bus(client);
++	data->chip->release_bus(client);
+ 	return 0;
+ }
+ 
++static const struct chip_desc chips[] = {
++	[pca9541] = {
++		.arbitrate = pca9541_arbitrate,
++		.release_bus = pca9541_release_bus,
++	},
++};
 +
-+static int pca9541_busoff(int ctl)
-+{
-+	if (!(ctl & PCA9541_BUSON))
-+		return 1;
-+	return (ctl & PCA9541_BUSON) == PCA9541_BUSON;
-+}
++static const struct i2c_device_id pca9541_id[] = {
++	{ "pca9541", pca9541 },
++	{}
++};
++
++MODULE_DEVICE_TABLE(i2c, pca9541_id);
++
++#ifdef CONFIG_OF
++static const struct of_device_id pca9541_of_match[] = {
++	{ .compatible = "nxp,pca9541", .data = &chips[pca9541] },
++	{}
++};
++MODULE_DEVICE_TABLE(of, pca9541_of_match);
++#endif
 +
  /*
-  * Write to chip register. Don't use i2c_transfer()/i2c_smbus_xfer()
-  * as they will try to lock the adapter a second time.
-@@ -181,7 +193,7 @@ static void pca9541_release_bus(struct i2c_client *client)
- 	int reg;
+  * I2C init/probing/exit functions
+  */
+@@ -348,6 +367,8 @@ static int pca9541_probe(struct i2c_client *client,
+ {
+ 	struct i2c_adapter *adap = client->adapter;
+ 	struct pca954x_platform_data *pdata = dev_get_platdata(&client->dev);
++	const struct of_device_id *match;
++	const struct chip_desc *chip;
+ 	struct i2c_mux_core *muxc;
+ 	struct pca9541 *data;
+ 	int force;
+@@ -356,12 +377,18 @@ static int pca9541_probe(struct i2c_client *client,
+ 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE_DATA))
+ 		return -ENODEV;
  
- 	reg = pca9541_reg_read(client, PCA9541_CONTROL);
--	if (reg >= 0 && !busoff(reg) && mybus(reg))
-+	if (reg >= 0 && !pca9541_busoff(reg) && pca9541_mybus(reg))
- 		pca9541_reg_write(client, PCA9541_CONTROL,
- 				  (reg & PCA9541_CTL_NBUSON) >> 1);
- }
-@@ -233,7 +245,7 @@ static int pca9541_arbitrate(struct i2c_client *client)
- 	if (reg < 0)
- 		return reg;
++	match = of_match_device(of_match_ptr(pca9541_of_match), &client->dev);
++	if (match)
++		chip = of_device_get_match_data(&client->dev);
++	else
++		chip = &chips[id->driver_data];
++
+ 	/*
+ 	 * I2C accesses are unprotected here.
+ 	 * We have to lock the adapter before releasing the bus.
+ 	 */
+ 	i2c_lock_adapter(adap);
+-	pca9541_release_bus(client);
++	chip->release_bus(client);
+ 	i2c_unlock_adapter(adap);
  
--	if (busoff(reg)) {
-+	if (pca9541_busoff(reg)) {
- 		int istat;
- 		/*
- 		 * Bus is off. Request ownership or turn it on unless
-@@ -258,7 +270,7 @@ static int pca9541_arbitrate(struct i2c_client *client)
- 			 */
- 			data->select_timeout = SELECT_DELAY_LONG * 2;
- 		}
--	} else if (mybus(reg)) {
-+	} else if (pca9541_mybus(reg)) {
- 		/*
- 		 * Bus is on, and we own it. We are done with acquisition.
- 		 * Reset NTESTON and BUSINIT, then return success.
+ 	/* Create mux adapter */
+@@ -376,6 +403,7 @@ static int pca9541_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	data = i2c_mux_priv(muxc);
++	data->chip = chip;
+ 	data->client = client;
+ 
+ 	i2c_set_clientdata(client, muxc);
 -- 
 2.11.0
