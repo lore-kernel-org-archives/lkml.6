@@ -1,179 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753715AbeCTNwp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 09:52:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43944 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753281AbeCTNw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:52:29 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] irqchip: Add a driver for the Microsemi Ocelot controller
-Date: Tue, 20 Mar 2018 14:52:15 +0100
-Message-Id: <20180320135215.4921-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180320135215.4921-1-alexandre.belloni@bootlin.com>
-References: <20180320135215.4921-1-alexandre.belloni@bootlin.com>
+        id S1753776AbeCTNxb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 09:53:31 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:12119 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753424AbeCTNx0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 09:53:26 -0400
+Subject: =?UTF-8?Q?Re:_[PATCH_v8_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Stephen Boyd <sboyd@kernel.org>, David Lechner <david@lechnology.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <152150722338.254778.4743967512266809482@swboyd.mtv.corp.google.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4d6cc890-e948-6784-82bf-dac196804c07@ti.com>
+Date: Tue, 20 Mar 2018 19:22:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <152150722338.254778.4743967512266809482@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Microsemi Ocelot SoC has a pretty simple IRQ controller in its ICPU
-block. Add a driver for it.
+Hi Stephen,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/irqchip/Kconfig           |   5 ++
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-mscc-ocelot.c | 109 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 115 insertions(+)
- create mode 100644 drivers/irqchip/irq-mscc-ocelot.c
+On Tuesday 20 March 2018 06:23 AM, Stephen Boyd wrote:
+> Quoting David Lechner (2018-03-15 19:52:16)
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 19 patches create new clock drivers
+>> using the common clock framework. There are basically 3 groups of clocks -
+>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+>> unique init data, which is the reason for so many patches.
+> 
+> Should I apply the first 19 patches to clk tree? Looking over them
+> nothing stands out except for your self comment about the bad
+> reviewed-by tag which I can remove.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index d913aec85109..0270797765f9 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -286,6 +286,11 @@ config IRQ_MXS
- 	select IRQ_DOMAIN
- 	select STMP_DEVICE
- 
-+config MSCC_OCELOT_IRQ
-+	bool
-+	select IRQ_DOMAIN
-+	select GENERIC_IRQ_CHIP
-+
- config MVEBU_GICP
- 	bool
- 
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index d27e3e3619e0..63d7bb434c33 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -72,6 +72,7 @@ obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
- obj-$(CONFIG_INGENIC_IRQ)		+= irq-ingenic.o
- obj-$(CONFIG_IMX_GPCV2)			+= irq-imx-gpcv2.o
- obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
-+obj-$(CONFIG_MSCC_OCELOT_IRQ)		+= irq-mscc-ocelot.o
- obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
- obj-$(CONFIG_MVEBU_ICU)			+= irq-mvebu-icu.o
- obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
-diff --git a/drivers/irqchip/irq-mscc-ocelot.c b/drivers/irqchip/irq-mscc-ocelot.c
-new file mode 100644
-index 000000000000..c2cf46758a59
---- /dev/null
-+++ b/drivers/irqchip/irq-mscc-ocelot.c
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Microsemi Ocelot IRQ controller driver
-+ *
-+ * License: Dual MIT/GPL
-+ * Copyright (c) 2017 Microsemi Corporation
-+ */
-+#include <linux/bitops.h>
-+#include <linux/irq.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/interrupt.h>
-+
-+#define ICPU_CFG_INTR_INTR_STICKY	0x10
-+#define ICPU_CFG_INTR_INTR_ENA		0x18
-+#define ICPU_CFG_INTR_INTR_ENA_CLR	0x1c
-+#define ICPU_CFG_INTR_INTR_ENA_SET	0x20
-+#define ICPU_CFG_INTR_DST_INTR_IDENT(x)	(0x38 + 0x4 * (x))
-+#define ICPU_CFG_INTR_INTR_TRIGGER(x)	(0x5c + 0x4 * (x))
-+
-+#define OCELOT_NR_IRQ 24
-+
-+static void ocelot_irq_unmask(struct irq_data *data)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(data);
-+	unsigned int mask = data->mask;
-+	u32 val;
-+
-+	irq_gc_lock(gc);
-+	val = irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(0)) |
-+	      irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(1));
-+	if ((val & mask) == 0)
-+		irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_STICKY);
-+
-+	*ct->mask_cache &= ~mask;
-+	irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_ENA_SET);
-+	irq_gc_unlock(gc);
-+}
-+
-+static void ocelot_irq_handler(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irq_domain *d = irq_desc_get_handler_data(desc);
-+	struct irq_chip_generic *gc = irq_get_domain_generic_chip(d, 0);
-+	u32 reg = irq_reg_readl(gc, ICPU_CFG_INTR_DST_INTR_IDENT(0));
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while (reg) {
-+		u32 hwirq = __fls(reg);
-+
-+		generic_handle_irq(irq_find_mapping(d, hwirq));
-+		reg &= ~(BIT(hwirq));
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int __init ocelot_irq_init(struct device_node *node,
-+				  struct device_node *parent)
-+{
-+	struct irq_domain *domain;
-+	struct irq_chip_generic *gc;
-+	int parent_irq, ret;
-+
-+	domain = irq_domain_add_linear(node, OCELOT_NR_IRQ,
-+				       &irq_generic_chip_ops, NULL);
-+	if (!domain) {
-+		pr_err("%s: unable to add irq domain\n", node->name);
-+		return -ENOMEM;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(domain, OCELOT_NR_IRQ, 1,
-+					     "icpu", handle_level_irq,
-+					     0, 0, 0);
-+	if (ret) {
-+		pr_err("%s: unable to alloc irq domain gc\n", node->name);
-+		return ret;
-+	}
-+
-+	gc = irq_get_domain_generic_chip(domain, 0);
-+	gc->reg_base = of_iomap(node, 0);
-+	if (!gc->reg_base) {
-+		pr_err("%s: unable to map resource\n", node->name);
-+		return -ENOMEM;
-+	}
-+
-+	gc->chip_types[0].regs.ack = ICPU_CFG_INTR_INTR_STICKY;
-+	gc->chip_types[0].regs.mask = ICPU_CFG_INTR_INTR_ENA_CLR;
-+	gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
-+	gc->chip_types[0].chip.irq_unmask = ocelot_irq_unmask;
-+
-+	irq_reg_writel(gc, 0, ICPU_CFG_INTR_INTR_ENA); /* Mask all */
-+	irq_reg_writel(gc, 0xffffffff, ICPU_CFG_INTR_INTR_STICKY); /* Ack pending */
-+
-+	parent_irq = irq_of_parse_and_map(node, 0);
-+	if (!parent_irq)
-+		return -EINVAL;
-+
-+	irq_set_chained_handler_and_data(parent_irq, ocelot_irq_handler,
-+					 domain);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ocelot_icpu, "mscc,ocelot-icpu-intr", ocelot_irq_init);
--- 
-2.16.2
+I think it will be a good idea to go ahead merge the drivers/clk/ parts
+for v4.17.
+
+I have been traveling, and have not been able to review this version.
+But I have closely reviewed previous versions. If there really are
+issues, I am sure we can get follow-on patches to fix those.
+
+But getting these into v4.17 will enable platform parts to come in
+easily into v4.18
+
+Thanks,
+Sekhar
