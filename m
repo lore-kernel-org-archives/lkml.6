@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751600AbeCTGH7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 02:07:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50970 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751269AbeCTGH4 (ORCPT
+        id S1751628AbeCTGLO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 02:11:14 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:42833 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeCTGLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 02:07:56 -0400
-X-UUID: b6b4201d53734789b1c996bce842dda7-20180320
-Message-ID: <1521526068.13313.8.camel@mtksdaap41>
-Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date: Tue, 20 Mar 2018 14:07:48 +0800
-In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 20 Mar 2018 02:11:08 -0400
+X-Google-Smtp-Source: AG47ELsP5FmLpyxFlAG1blf/73CF8LYNgDsXK4HKXxNqJcxOpp68/K/ukVmG0wvMc6JiQCvUKEqR/0tJkwTvO8zZNBk=
 MIME-Version: 1.0
-X-MTK: N
+From: Satish Baddipadige <satish.baddipadige@broadcom.com>
+Date: Tue, 20 Mar 2018 11:41:06 +0530
+Message-ID: <CA+oDAx8CCW8rUfdqSZJpKFzHUBocY_Q1xbJXB0y8qa6qP0iUAg@mail.gmail.com>
+Subject: Re: NETDEV WATCHDOG: eth0 (tg3): transmit queue 0 timed out
+To: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Prashant Sreedharan <prashant@broadcom.com>,
+        Michael Chan <mchan@broadcom.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000aa7e280567d1f0df"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
-> This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
-> Basically, all changes are for the ECO design change of MT2712.
-> 
-> changes since v1:
-> - Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
-> 
-Hi Matthias & Stephen,
+--000000000000aa7e280567d1f0df
+Content-Type: text/plain; charset="UTF-8"
 
-Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
-and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
-dts: add clock device nodes of MT2712). Does there any problem remain or
-it cause some problems? Many thanks.
-> Weiyi Lu (5):
->   dt-bindings: soc: update MT2712 power dt-bindings
->   soc: mediatek: update power domain data of MT2712
->   dt-bindings: clock: add clocks for MT2712
->   arm64: dts: add clock device nodes of MT2712
->   clk: mediatek: update clock driver of MT2712
-> 
->  arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 28 +++++++++++++
->  drivers/clk/mediatek/clk-mt2712.c         | 69 ++++++++++++++++++++++++-------
->  drivers/soc/mediatek/mtk-scpsys.c         | 42 ++++++++++++++++++-
->  include/dt-bindings/clock/mt2712-clk.h    | 12 +++++-
->  include/dt-bindings/power/mt2712-power.h  |  3 ++
->  5 files changed, 136 insertions(+), 18 deletions(-)
-> 
+On Wed, Feb 28, 2018 at 7:40 PM, Siva Reddy Kallam
+<siva.kallam@broadcom.com> wrote:
+> On Sat, Feb 24, 2018 at 3:48 PM, Borislav Petkov <bp@alien8.de> wrote:
+>> Hi,
+>>
+>> this didn't happen before but after 4.16-rc1 my tg3 nic stops for
+>> whatever reason and the connection to the machine is dead. It didn't show
+>> anything in dmesg until today.
+>>
+>> The IO pagefaults look like it is trying to access something it
+>> shouldn't and maybe that's why it times out.
+>>
+>> It triggers pretty quickly so I'd call it a reliable reproducer and thus
+>> I can test patches... :-)
+>>
+>> Thx.
+> Thanks for reporting this. Somehow, this mail moved to my spam folder.
+> Hence, delay in response.
+> Looks like this is similar to below issue and it was reported some time back.
+> https://www.spinics.net/lists/netdev/msg482757.html
+> We are actively working on this. We will soon provide you an update on this.
+
+Hi Borislav,
+
+Can you please test the attached patch?
+
+Thanks,
+Satish
+
+--000000000000aa7e280567d1f0df
+Content-Type: application/octet-stream; name="tg3_5762_clock_override.patch"
+Content-Disposition: attachment; filename="tg3_5762_clock_override.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jez9g8bi0
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2Jyb2FkY29tL3RnMy5jIGIvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vdGczLmMKaW5kZXggZjI1OTM5Ny4uZDI3MzM3ZCAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vdGczLmMKKysrIGIvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vdGczLmMKQEAgLTkwMTAsNiArOTAxMCw3IEBAIHN0YXRp
+YyB2b2lkIHRnM19vdmVycmlkZV9jbGsoc3RydWN0IHRnMyAqdHApCiAKIAlzd2l0Y2ggKHRnM19h
+c2ljX3Jldih0cCkpIHsKIAljYXNlIEFTSUNfUkVWXzU3MTc6CisJY2FzZSBBU0lDX1JFVl81NzYy
+OgogCQl2YWwgPSB0cjMyKFRHM19DUE1VX0NMQ0tfT1JJREVfRU5BQkxFKTsKIAkJdHczMihURzNf
+Q1BNVV9DTENLX09SSURFX0VOQUJMRSwgdmFsIHwKIAkJICAgICBURzNfQ1BNVV9NQUNfT1JJREVf
+RU5BQkxFKTsKQEAgLTkwMzEsNiArOTAzMiw3IEBAIHN0YXRpYyB2b2lkIHRnM19yZXN0b3JlX2Ns
+ayhzdHJ1Y3QgdGczICp0cCkKIAogCXN3aXRjaCAodGczX2FzaWNfcmV2KHRwKSkgewogCWNhc2Ug
+QVNJQ19SRVZfNTcxNzoKKwljYXNlIEFTSUNfUkVWXzU3NjI6CiAJCXZhbCA9IHRyMzIoVEczX0NQ
+TVVfQ0xDS19PUklERV9FTkFCTEUpOwogCQl0dzMyKFRHM19DUE1VX0NMQ0tfT1JJREVfRU5BQkxF
+LAogCQkgICAgIHZhbCAmIH5URzNfQ1BNVV9NQUNfT1JJREVfRU5BQkxFKTsK
+--000000000000aa7e280567d1f0df--
