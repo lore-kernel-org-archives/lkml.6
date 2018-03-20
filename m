@@ -1,100 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeCTI7l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:59:41 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52095 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752138AbeCTI7g (ORCPT
+        id S1752457AbeCTJAi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:00:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34052 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751790AbeCTJAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:59:36 -0400
-X-Google-Smtp-Source: AG47ELsE6E5rjoC1NJNFoLWiDfJtmAEHsCTtcc8Prg17gHalCTQ1Ozu5qaAZ9JRcIVePxVBXsUohPA==
-Date: Tue, 20 Mar 2018 09:59:32 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips <linux-mips@linux-mips.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [RFC PATCH 4/6] mm: provide generic compat_sys_readahead()
- implementation
-Message-ID: <20180320085932.xnwkpiz5gpegnw5d@gmail.com>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
- <20180318161056.5377-5-linux@dominikbrodowski.net>
- <20180318174014.GR30522@ZenIV.linux.org.uk>
- <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
- <20180318181848.GU30522@ZenIV.linux.org.uk>
- <20180319042300.GW30522@ZenIV.linux.org.uk>
- <20180319092920.tbh2xwkruegshzqe@gmail.com>
- <20180319232342.GX30522@ZenIV.linux.org.uk>
+        Tue, 20 Mar 2018 05:00:36 -0400
+Date: Tue, 20 Mar 2018 10:00:09 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Liu, Changcheng" <changcheng.liu@intel.com>
+cc: hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/ioapic: don't use unstable TSC to detect timer IRQ
+In-Reply-To: <20180320084255.GA187704@sofia>
+Message-ID: <alpine.DEB.2.21.1803200956580.6506@nanos.tec.linutronix.de>
+References: <20180320084255.GA187704@sofia>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319232342.GX30522@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 20 Mar 2018, Liu, Changcheng wrote:
 
-* Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> In rare case, the TSC is every unstable or can't sync with
+> real time hardware clock.
 
-> > For example this attempt at creating a new system call:
-> > 
-> >   SYSCALL_DEFINE3(moron, int, fd, loff_t, offset, size_t, count)
-> > 
-> > ... would translate into something like:
-> > 
-> > 	.name = "moron", .pattern = "WWW", .type = "int",    .size = 4,
-> > 	.name = NULL,                      .type = "loff_t", .size = 8,
-> > 	.name = NULL,                      .type = "size_t", .size = 4,
-> > 	.name = NULL,                      .type = NULL,     .size = 0,     /* end of parameter list */
-> > 
-> > i.e. "WDW". The build-time constraint checker could then warn about:
-> > 
-> >   # error: System call "moron" uses invalid 'WWW' argument mapping for a 'WDW' sequence
-> >   #        please avoid long-long arguments or use 'SYSCALL_DEFINE3_WDW()' instead
-> 
-> ... if you do 32bit build.
+What does that mean?
 
-Yeah - but the checking tool could do a 32-bit sizing of the types and thus the 
-checks would work on all arches and on all bitness settings.
+> After setting "tsc=unstable" in command line, system should use
+> delay_without_tsc to detect timer IRQ. Or system could panic as shown in
+> below log:
 
-I don't think doing part of this in CPP is a good idea:
+tsc=unstable has nothing to do with TSC being usable for delay loops unless
+your TSC is completely broken. Please explain more detailed in which way
+this TSC is defect in the hardware. Aside of that is this production
+hardware or some experimental silicon?
 
- - It won't be able to do the full range of checks
+> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+> index fb43027..27b1bae 100644
+> --- a/arch/x86/kernel/tsc.c
+> +++ b/arch/x86/kernel/tsc.c
+> @@ -36,7 +36,8 @@ EXPORT_SYMBOL(tsc_khz);
+>  /*
+>   * TSC can be unstable due to cpufreq or due to unsynced TSCs
+>   */
+> -static int __read_mostly tsc_unstable;
+> +int __read_mostly tsc_unstable;
+> +EXPORT_SYMBOL(tsc_unstable);
 
- - Wrappers should IMHO be trivial and open coded as much as possible - not hidden
-   inside several layers of macros.
-
- - There should be a penalty for newly introduced, badly designed system call
-   ABIs, while most CPP variants I can think of will just make bad but solvable 
-   decisions palatable, AFAICS.
-
-I.e. I think the way out of this would be two steps:
-
- 1) for new system calls: hard-enforce the highest quality at the development
-    stage and hard-reject crap. No new 6-parameter system calls or badly ordered
-    arguments. The tool would also check new extensions to existing system calls, 
-    i.e. no more "add a crappy 4th argument to an existing system call that works 
-    on x86 but hurts MIPS".
-
- 2) for old legacies: cleanly open code all our existing legacies and weird
-    wrappers. No new muck will be added to it so the line count does not matter.
-
-... is there anything I'm missing?
+Even if we decided to do that, there is no need to export that symbol ever.
 
 Thanks,
 
-	Ingo
+	tglx
