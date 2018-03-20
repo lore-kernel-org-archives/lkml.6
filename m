@@ -1,219 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeCTJtG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 05:49:06 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:59851 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbeCTJsv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 05:48:51 -0400
-Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
- timeout value
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-References: <20180307132020.30951-1-kishon@ti.com>
- <20180307132020.30951-8-kishon@ti.com>
- <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
- <47752066-aeda-87bc-6928-1a9b80f1c45c@ti.com>
- <49210daa-b593-4b34-abf5-be81580723bc@intel.com>
- <29f640ac-b155-41c6-cf3f-8c66e1b300f1@ti.com>
- <1905d25f-d16d-50b1-54b0-35807d801a12@intel.com>
- <dacb62d3-086d-27a7-85cf-94916ce464b5@ti.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <27e92e28-08b4-42b1-e4ef-32fa8ac785dc@ti.com>
-Date: Tue, 20 Mar 2018 15:18:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S1752635AbeCTJt0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 05:49:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52206 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752228AbeCTJtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 05:49:20 -0400
+Date: Tue, 20 Mar 2018 17:49:07 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
+Message-ID: <20180320094907.GA8838@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+ <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
+ <20180309152556.0ccf3cb1@ThinkPad>
+ <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
+ <20180315073422.GA1876@dhcp-128-65.nay.redhat.com>
+ <20180315111341.6faa90e8@ThinkPad>
+ <20180316064102.GA26732@dhcp-128-65.nay.redhat.com>
+ <20180320103955.13d83ef9@ThinkPad>
 MIME-Version: 1.0
-In-Reply-To: <dacb62d3-086d-27a7-85cf-94916ce464b5@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320103955.13d83ef9@ThinkPad>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
-
-On Monday 19 March 2018 03:49 PM, Kishon Vijay Abraham I wrote:
-> Hi Adrian,
+Hi Philipp,
+On 03/20/18 at 10:39am, Philipp Rudo wrote:
+> Hi Dave,
 > 
-> On Monday 19 March 2018 03:30 PM, Adrian Hunter wrote:
->> On 19/03/18 11:20, Kishon Vijay Abraham I wrote:
->>> Hi Adrian,
->>>
->>> On Friday 16 March 2018 07:51 PM, Adrian Hunter wrote:
->>>> On 16/03/18 08:29, Kishon Vijay Abraham I wrote:
->>>>> Hi,
->>>>>
->>>>> On Thursday 15 March 2018 06:43 PM, Adrian Hunter wrote:
->>>>>> On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
->>>>>>> sdhci has a 10 second timeout to catch devices that stop responding.
->>>>>>> Instead of programming 10 second arbitrary value, calculate the total time
->>>>>>> it would take for the entire transfer to happen and program the timeout
->>>>>>> value accordingly.
->>>>>>>
->>>>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>>>>> ---
->>>>>>>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
->>>>>>>  drivers/mmc/host/sdhci.h | 10 ++++++++++
->>>>>>>  2 files changed, 50 insertions(+), 7 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>>>>>> index 1dd117cbeb6e..baab67bfa39b 100644
->>>>>>> --- a/drivers/mmc/host/sdhci.c
->>>>>>> +++ b/drivers/mmc/host/sdhci.c
->>>>>>> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
->>>>>>>  		return sg_dma_address(host->data->sg);
->>>>>>>  }
->>>>>>>  
->>>>>>> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
->>>>>>> +				  struct mmc_command *cmd,
->>>>>>> +				  unsigned int target_timeout)
->>>>>>> +{
->>>>>>> +	struct mmc_data *data = cmd->data;
->>>>>>> +	struct mmc_host *mmc = host->mmc;
->>>>>>> +	u64 transfer_time;
->>>>>>> +	struct mmc_ios *ios = &mmc->ios;
->>>>>>> +	unsigned char bus_width = 1 << ios->bus_width;
->>>>>>> +	unsigned int blksz;
->>>>>>> +	unsigned int freq;
->>>>>>> +
->>>>>>> +	if (data) {
->>>>>>> +		blksz = data->blksz;
->>>>>>> +		freq = host->mmc->actual_clock ? : host->clock;
->>>>>>> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
->>>>>>> +		do_div(transfer_time, freq);
->>>>>>> +		/* multiply by '2' to account for any unknowns */
->>>>>>> +		transfer_time = transfer_time * 2;
->>>>>>> +		/* calculate timeout for the entire data */
->>>>>>> +		host->data_timeout = (data->blocks * ((target_timeout *
->>>>>>> +						       NSEC_PER_USEC) +
->>>>>>> +						       transfer_time));
->>>>>>
->>>>>> (target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
->>>>>> for timeouts greater than about 4 seconds.
->>>>>>
->>>>>>> +	} else {
->>>>>>> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>>>>>
->>>>>> Need to allow for target_timeout == 0 so:
->>>>>>
->>>>>> 	if (host->data_timeout)
->>>>>> 		host->data_timeout += MMC_CMD_TRANSFER_TIME;
->>>>>>
->>>>>>> +}
->>>>>>> +
->>>>>>>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>>>>>  {
->>>>>>>  	u8 count;
->>>>>>> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>>>>>  		if (count >= 0xF)
->>>>>>>  			break;
->>>>>>>  	}
->>>>>>> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
->>>>>>
->>>>>> If you make the changes I suggest for patch 6, then this would
->>>>>> move sdhci_calc_sw_timeout() into sdhci_set_timeout().
->>>>>>
->>>>>> I suggest you factor out the target_timeout calculation e.g.
->>>>>>
->>>>>> static unsigned int sdhci_target_timeout(struct sdhci_host *host,
->>>>>> 					 struct mmc_command *cmd,
->>>>>> 					 struct mmc_data *data)
->>>>>> {
->>>>>> 	unsigned int target_timeout;
->>>>>>
->>>>>> 	/* timeout in us */
->>>>>> 	if (!data)
->>>>>> 		target_timeout = cmd->busy_timeout * 1000;
->>>>>> 	else {
->>>>>> 		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
->>>>>> 		if (host->clock && data->timeout_clks) {
->>>>>> 			unsigned long long val;
->>>>>>
->>>>>> 			/*
->>>>>> 			 * data->timeout_clks is in units of clock cycles.
->>>>>> 			 * host->clock is in Hz.  target_timeout is in us.
->>>>>> 			 * Hence, us = 1000000 * cycles / Hz.  Round up.
->>>>>> 			 */
->>>>>> 			val = 1000000ULL * data->timeout_clks;
->>>>>> 			if (do_div(val, host->clock))
->>>>>> 				target_timeout++;
->>>>>> 			target_timeout += val;
->>>>>> 		}
->>>>>> 	}
->>>>>>
->>>>>> 	return target_timeout;
->>>>>> }
->>>>>>
->>>>>> And call it from sdhci_calc_sw_timeout()
->>>>>>
->>>>>>>  
->>>>>>>  	return count;
->>>>>>>  }
->>>>>>> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>>>>>  		mdelay(1);
->>>>>>>  	}
->>>>>>>  
->>>>>>> -	timeout = jiffies;
->>>>>>> -	if (!cmd->data && cmd->busy_timeout > 9000)
->>>>>>> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
->>>>>>> -	else
->>>>>>> -		timeout += 10 * HZ;
->>>>>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
->>>>>>> -
->>>>>>>  	host->cmd = cmd;
->>>>>>>  	if (sdhci_data_line_cmd(cmd)) {
->>>>>>>  		WARN_ON(host->data_cmd);
->>>>>>> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>>>>>>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
->>>>>>>  		flags |= SDHCI_CMD_DATA;
->>>>>>>  
->>>>>>> +	timeout = jiffies;
->>>>>>> +	if (host->data_timeout > 0) {
->>>>>>
->>>>>> This can be just:
->>>>>>
->>>>>> 	if (host->data_timeout) {
->>>>>>
->>>>>>> +		timeout += nsecs_to_jiffies(host->data_timeout);
->>>>>>> +		host->data_timeout = 0;
->>>>>>
->>>>>> It would be better to initialize host->data_timeout = 0 at the top of
->>>>>> sdhci_prepare_data().
->>>>>>
->>>>>> Also still need:
->>>>>>
->>>>>> 	else if (!cmd->data && cmd->busy_timeout > 9000) {
->>>>>> 		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
->>>>>
->>>>> sdhci_calc_sw_timeout should have calculated the timeout for this case too no?
->>>>
->>>> Yes, but I was thinking you would only calculate when it was needed.
->>>
->>> I feel since we would have anyways calculated data_timeout, we should use that
->>> instead unless you see a problem with that.
->>
->> I would prefer not to calculate data_timeout when a hardware timeout is
->> being used.
->>
+> sorry for the late answer.
 > 
-> That differs from what I had thought. This patch tries to program a relatively
-> accurate SW timeout value (for data_timer) irrespective of whether hardware
-> timeout is used or not. This only tries to change the 10 Sec SW timeout value
-> programmed for all data transfer commands.
+> 
+> On Fri, 16 Mar 2018 14:41:02 +0800
+> Dave Young <dyoung@redhat.com> wrote:
+> 
+> > On 03/15/18 at 11:13am, Philipp Rudo wrote:
+> > > Hi Dave,
+> > > 
+> > > On Thu, 15 Mar 2018 15:34:22 +0800
+> > > Dave Young <dyoung@redhat.com> wrote:
+> > >   
+> > > > On 03/12/18 at 03:40pm, Dave Young wrote:  
+> > > > > Hi Philipp,
+> > > > > On 03/09/18 at 03:25pm, Philipp Rudo wrote:    
+> > > > > > Hi Dave,
+> > > > > > 
+> > > > > > On Fri, 9 Mar 2018 13:19:40 +0800
+> > > > > > Dave Young <dyoung@redhat.com> wrote:
+> > > > > >     
+> > > > > > > Hi Philipp,
+> > > > > > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:    
+> > > > > > > > 
+> > > > > > > > Hi everybody
+> > > > > > > > 
+> > > > > > > > following the discussion with Dave and AKASHI, here are the common code
+> > > > > > > > patches extracted from my recent patch set (Add kexec_file_load support to
+> > > > > > > > s390) [1]. The patches were extracted to allow upstream integration together
+> > > > > > > > with AKASHI's common code patches before the arch code gets adjusted to the
+> > > > > > > > new base.
+> > > > > > > > 
+> > > > > > > > The reason for this series is to prepare common code for adding
+> > > > > > > > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
+> > > > > > > > field during purgatory load. In detail this series contains:
+> > > > > > > > 
+> > > > > > > > Patch #1&2: Minor cleanups/fixes.
+> > > > > > > > 
+> > > > > > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+> > > > > > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+> > > > > > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+> > > > > > > > depending on the section. With these patches the section address will be
+> > > > > > > > calculated verbosely and sh_offset will contain the offset of the section
+> > > > > > > > in the stripped purgatory binary (purgatory_buf).
+> > > > > > > > 
+> > > > > > > > Patch #10: Allows architectures to set the purgatory load address. This
+> > > > > > > > patch is important for s390 as the kernel and purgatory have to be loaded
+> > > > > > > > to fixed addresses. In current code this is impossible as the purgatory
+> > > > > > > > load is opaque to the architecture.
+> > > > > > > > 
+> > > > > > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
+> > > > > > > > directory to allow reuse in other architectures.
+> > > > > > > > 
+> > > > > > > > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
+> > > > > > > > requested changes only affected s390 code). Please note that I had to touch
+> > > > > > > > arch code for x86 and power a little. In theory this should not change the
+> > > > > > > > behavior but I don't have a way to test it. Cross-compiling with
+> > > > > > > > defconfig [2] works fine for both.
+> > > > > > > > 
+> > > > > > > > Thanks
+> > > > > > > > Philipp
+> > > > > > > > 
+> > > > > > > > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
+> > > > > > > > [2] On x86 with the orc unwinder and stack validation turned off. objtool
+> > > > > > > >     SEGFAULTs on s390...
+> > > > > > > > 
+> > > > > > > > Philipp Rudo (11):
+> > > > > > > >   kexec_file: Silence compile warnings
+> > > > > > > >   kexec_file: Remove checks in kexec_purgatory_load
+> > > > > > > >   kexec_file: Make purgatory_info->ehdr const
+> > > > > > > >   kexec_file: Search symbols in read-only kexec_purgatory
+> > > > > > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+> > > > > > > >   kexec_file: Split up __kexec_load_puragory
+> > > > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+> > > > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+> > > > > > > >   kexec_file: Remove mis-use of sh_offset field
+> > > > > > > >   kexec_file: Allow archs to set purgatory load address
+> > > > > > > >   kexec_file: Move purgatories sha256 to common code
+> > > > > > > > 
+> > > > > > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+> > > > > > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+> > > > > > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+> > > > > > > >  arch/x86/purgatory/Makefile                    |   3 +
+> > > > > > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
+> > > > > > > >  include/linux/kexec.h                          |  38 +--
+> > > > > > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+> > > > > > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
+> > > > > > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+> > > > > > > >  9 files changed, 244 insertions(+), 271 deletions(-)
+> > > > > > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> > > > > > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > > > > > > > 
+> > > > > > > > -- 
+> > > > > > > > 2.13.5
+> > > > > > > >       
+> > > > > > > 
+> > > > > > > I did a test on x86, but it failed:
+> > > > > > > [   15.636489] kexec: Undefined symbol: memcpy
+> > > > > > > [   15.636496] kexec-bzImage64: Loading purgatory failed
+> > > > > > > [   33.603356] kexec: Undefined symbol: memcpy
+> > > > > > > [   33.603362] kexec-bzImage64: Loading purgatory failed
+> > > > > > > 
+> > > > > > > I think this relates to the sha256 splitting patch.    
+> > > > > > 
+> > > > > > I looked into this a little closer and i think i understood what happens. 
+> > > > > > 
+> > > > > > There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
+> > > > > > in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
+> > > > > > switching to linux/string.h there is no more definition for it. Leaving us with
+> > > > > > 
+> > > > > > $ readelf -s purgatory.ro
+> > > > > > [...]
+> > > > > >  45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
+> > > > > > [...]
+> > > > > > 
+> > > > > > To solve this problem I see two possibilities (example patches are at the end of
+> > > > > > the mail):
+> > > > > > 
+> > > > > > 1) Have arch dependent includes in lib/sha256.c
+> > > > > > 2) Add makefile magic so memcpy is defined
+> > > > > > 
+> > > > > > With both solutions the resulting purgatory.ro looks good. However both
+> > > > > > solutions aren't perfect. For example in 2) i had too mix the linux/string.h
+> > > > > > header with arch/x86/boot/string.c, because lib/string.c has too many
+> > > > > > dependencies and does not compile in the purgatory. On the other hand having
+> > > > > > arch dependent includes isn't that nice either ...
+> > > > > > 
+> > > > > > What's your opinion on this?    
+> > > > > 
+> > > > > Looks like it is a mess, maybe the 1st one is better although it is also
+> > > > > ugly.  Ccing Ingo see if he has some idea about this.     
+> > > > 
+> > > > Maybe something like below is better if no other idea:
+> > > > 
+> > > > diff --git a/arch/x86/boot/string_builtin.c b/arch/x86/boot/string_builtin.c
+> > > > new file mode 100644
+> > > > index 000000000000..9099f949fb41
+> > > > --- /dev/null
+> > > > +++ b/arch/x86/boot/string_builtin.c
+> > > > @@ -0,0 +1,11 @@
+> > > > +#include <linux/types.h>
+> > > > +
+> > > > +void *memcpy(void *dst, const void *src, size_t len)
+> > > > +{
+> > > > +	return __builtin_memcpy(dst, src, len);
+> > > > +}
+> > > > +
+> > > > +void *memset(void *dst, int c, size_t len)
+> > > > +{
+> > > > +	return __builtin_memset(dst, c, len);
+> > > > +}
+> > > > diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
+> > > > index d886b1fa36f0..e12c78fcd59f 100644
+> > > > --- a/arch/x86/purgatory/string.c
+> > > > +++ b/arch/x86/purgatory/string.c
+> > > > @@ -11,3 +11,4 @@
+> > > >   */
+> > > > 
+> > > >  #include "../boot/string.c"
+> > > > +#include "../boot/string_builtin.c"  
+> > > 
+> > > Looks like a good idea to me. Just to be sure, with this suggestion
+> > > lib/sha256.c stays unchanged, i.e. it includes linux/string.h?  
+> > 
+> > Yes, I assumed so, one thing is I noticed linux/string.h uses __kernel_size_t, but
+> > the boot/string.h use _size_t.
+> 
+> I don't think the __kernel_size_t vs. _size_t is a problem. When I make gcc's
+> intermediate file 
+> 
+> 	$ make /arch/x86/purgatory/string.i
+> 
+> the type doesn't change with and without my patches. In both cases size_t is
+> defined as
+> 
+> 	size_t -> __kernel_size_t -> __kernel_ulong_t -> unsigned long
+> 
+> So (at least for now) we are safe.
+> 
+> > > 
+> > > The only thing I don't really like is adding the extra boot/string.builtin.c
+> > > file. For my taste adding the two functions directly to purgatory/string.c would
+> > > be nicer. However in the end it's "not my problem".  
+> > 
+> > string.c is also included in boot/compressed/string.c which defines its
+> > own version of memcpy.  And in the boot/compressed/string.c version it
+> > calls warn() which is a special function for decompressor used only.
+> > I'm not sure how to merge them with one string.c now.
+> 
+> That's why i suggested to put the two functions into _purgatory_/string.c. In
+> the end the file would read
+> 
+> ---
+> $ cat arch/x86/purgatory/string.c
+> /*
+>  * Simple string functions.
+>  *
+>  * Copyright (C) 2014 Red Hat Inc.
+>  *
+>  * Author:
+>  *       Vivek Goyal <vgoyal@redhat.com>
+>  *
+>  * This source code is licensed under the GNU General Public License,
+>  * Version 2.  See the file COPYING for more details.
+>  */
+> 
+> #include <linux/types.h>
+> 
+> #include "../boot/string.c"
+> 
+> void *memcpy(void *dst, const void *src, size_t len)
+> {
+> 	return __builtin_memcpy(dst, src, len);
+> }
+> 
+> void *memset(void *dst, int c, size_t len)
+> {
+> 	return __builtin_memset(dst, c, len);
+> }
+> ---
+> 
+> Of course it would be even nicer having them in boot/string.c. But as you
+> already mentioned that would require a larger cleanup and should be done by
+> somebody with more experience on x86.
 
-IMHO since we calculate the worst case timeout value we should be using that
-for all cases where we are able to calculate the timeout value so that we don't
-give a too high or too low timeout value. Let me know If this sounds okay to you.
+Ok, I got your points, your proposal looks good to me if no better choice.
 
 Thanks
-Kishon
+Dave
