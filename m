@@ -1,107 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeCTCNW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:13:22 -0400
-Received: from mail-db5eur01on0084.outbound.protection.outlook.com ([104.47.2.84]:49888
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751014AbeCTCNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:13:18 -0400
-From: Anson Huang <anson.huang@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: imx7d-pinfunc: update sai select input value
-Thread-Topic: [PATCH] ARM: dts: imx7d-pinfunc: update sai select input value
-Thread-Index: AQHTv0b+K0O1n16tGEO5LlocERjcUqPYXxqAgAAD8lA=
-Date: Tue, 20 Mar 2018 02:13:14 +0000
-Message-ID: <AM3PR04MB1315B6C5A16ACC2C7D709C71F5AB0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1521429281-23394-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5A0fA2h_T__vFzGXPzrzKZJuMyiRLRvNag43Xffif1EZQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5A0fA2h_T__vFzGXPzrzKZJuMyiRLRvNag43Xffif1EZQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1476;7:1RlcSv26V8LaiKJ7G+EhIuzWOzfA4kn4dfYO0GR31RTPjNtEHLZ3F04jo4j+a73+RfWRBvGpkmcHhkXMcHuGbDLFtwHWtS/jChQ+H4Fnz3+CpPRN/NMfiibmSDXYWcWs9BoNxt42dnxXSiGC+WZhMJYFEBV/u6QC952ehKtUzC763Da6q8lSW170i884aoep+T0KQzgFVihpb0ygMHkQlNribAYjo7q215R3C8uVjXAgsmaJqilNoIjpcLiDCqqr
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a8febaef-194e-4a33-07de-08d58e08239a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1476;
-x-ms-traffictypediagnostic: AM3PR04MB1476:
-x-microsoft-antispam-prvs: <AM3PR04MB14762ADD53E41B506CECD99DF5AB0@AM3PR04MB1476.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501244)(52105095)(6055026)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:AM3PR04MB1476;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1476;
-x-forefront-prvs: 061725F016
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(39860400002)(346002)(366004)(396003)(199004)(189003)(13464003)(76176011)(316002)(4326008)(54906003)(25786009)(6246003)(7696005)(53936002)(59450400001)(9686003)(55016002)(5660300001)(229853002)(305945005)(2900100001)(99286004)(74316002)(97736004)(186003)(7736002)(3280700002)(3660700001)(6506007)(478600001)(39060400002)(26005)(5250100002)(53546011)(8936002)(14454004)(2906002)(6916009)(86362001)(2950100002)(81166006)(81156014)(106356001)(66066001)(8676002)(6116002)(3846002)(6436002)(33656002)(15650500001)(68736007)(1411001)(105586002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1476;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: 2roJafNbH+gk43fVmp6b1VKc/dOTzwDjNTWyHY7OL9HIVgtYAhBw41HYzMi8b/KCc3+wwCWnT0tyzHMegdL5ikMLVZyAYlbwoa3ny83sE50XUuKpfiY956bli8yelEpZuoNlal2wsLSLDUGQjj3JolrLi9K9lc3LNmzD/B1+a9eWuESVrpMd/xpAE9tWvM+m+M1TCD8uvuMzRjD4m7fJBDW9EKdjDL8Yaw09//hhUYogLKy1DA/ngu+N1QWshmb/7/Pd5Ln7ZQMwKuDVJN68KF0wgDnH8AEXqzhmCu633+g9vJ/aLSSYiGp5vMGGfHorT1nJMzu2BI7WJ4qFumfjAw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751751AbeCTCOs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:14:48 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39285 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeCTCOl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:14:41 -0400
+X-Google-Smtp-Source: AG47ELvDSkQZL+ZZ9ktxlddZ27PV/dGRHAEJXINn5FMrM94MM1R4Yegx0geCo4Bk82ua9ZhsjwgHpA==
+Subject: Re: [PATCH 07/14] platform/chrome: chromeos_laptop - factor out
+ getting IRQ from DMI
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>
+Cc: Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-8-dmitry.torokhov@gmail.com>
+From: Benson Leung <bleung@google.com>
+Organization: Google
+Message-ID: <b0457b4a-2e0d-41e1-66fe-6fdb7a00f2db@google.com>
+Date: Mon, 19 Mar 2018 19:14:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8febaef-194e-4a33-07de-08d58e08239a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2018 02:13:15.0191
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1476
+In-Reply-To: <20180312190907.174301-8-dmitry.torokhov@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="dlYvHaRRrc5YvWWytugZMlflSDdlVTHnF"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2K2DUSf024628
 
-Hi, Fabio
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--dlYvHaRRrc5YvWWytugZMlflSDdlVTHnF
+Content-Type: multipart/mixed; boundary="LuTV1qYJ0OIWxQXsPAp0Q2i2uV9IXLSGd";
+ protected-headers="v1"
+From: Benson Leung <bleung@google.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>
+Cc: Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
+ linux-kernel@vger.kernel.org
+Message-ID: <b0457b4a-2e0d-41e1-66fe-6fdb7a00f2db@google.com>
+Subject: Re: [PATCH 07/14] platform/chrome: chromeos_laptop - factor out
+ getting IRQ from DMI
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-8-dmitry.torokhov@gmail.com>
+In-Reply-To: <20180312190907.174301-8-dmitry.torokhov@gmail.com>
 
-Anson Huang
-Best Regards!
+--LuTV1qYJ0OIWxQXsPAp0Q2i2uV9IXLSGd
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
 
-> -----Original Message-----
-> From: Fabio Estevam [mailto:festevam@gmail.com]
-> Sent: Tuesday, March 20, 2018 9:58 AM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
-> <kernel@pengutronix.de>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
-> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
-> Russell King - ARM Linux <linux@armlinux.org.uk>; S.j. Wang
-> <shengjiu.wang@nxp.com>; dl-linux-imx <linux-imx@nxp.com>; moderated
-> list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
-> <linux-arm-kernel@lists.infradead.org>; open list:OPEN FIRMWARE AND
-> FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>; linux-kernel
-> <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH] ARM: dts: imx7d-pinfunc: update sai select input value
-> 
-> Hi Anson,
-> 
-> On Mon, Mar 19, 2018 at 12:14 AM, Anson Huang <Anson.Huang@nxp.com>
-> wrote:
-> > Update SAI select input daisy chain value according to Reference
-> > Manual.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> 
-> Could you please clarify the authorship of this patch? Is this yours or from
-> Shengjiu Wang?
-> 
-> If it is from Shengjiu Wang then his name should appear in the From field and his
-> Signed-off-by tag should appear first and yours should go after it.
- 
-The original patch is from Shengjiu wang in our internal tree, I modify the commit
-message, yes, I miss changing the from field, resent the V2 patch. Thanks.
 
-Anson. 
+On 03/12/2018 12:09 PM, Dmitry Torokhov wrote:
+> This will make code instantiating I2C device a bit clearer.
+>=20
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Applied to my working branch for atmel_mxt_ts + chromeos_laptop.c for
+v4.17. Thanks!
+
+> ---
+>  drivers/platform/chrome/chromeos_laptop.c | 35 +++++++++++++++--------=
+
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platfo=
+rm/chrome/chromeos_laptop.c
+> index 08ce7a105e768..96e962ff38e87 100644
+> --- a/drivers/platform/chrome/chromeos_laptop.c
+> +++ b/drivers/platform/chrome/chromeos_laptop.c
+> @@ -120,36 +120,47 @@ static struct i2c_board_info atmel_1664s_device =3D=
+ {
+>  	.flags		=3D I2C_CLIENT_WAKE,
+>  };
+> =20
+> +static int chromeos_laptop_get_irq_from_dmi(const char *dmi_name)
+> +{
+> +	const struct dmi_device *dmi_dev;
+> +	const struct dmi_dev_onboard *dev_data;
+> +
+> +	dmi_dev =3D dmi_find_device(DMI_DEV_TYPE_DEV_ONBOARD, dmi_name, NULL)=
+;
+> +	if (!dmi_dev) {
+> +		pr_err("failed to find DMI device '%s'\n", dmi_name);
+> +		return -ENOENT;
+> +	}
+> +
+> +	dev_data =3D dmi_dev->device_data;
+> +	if (!dev_data) {
+> +		pr_err("failed to get data from DMI for '%s'\n", dmi_name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return dev_data->instance;
+> +}
+> +
+>  static struct i2c_client *__add_probed_i2c_device(
+>  		const char *name,
+>  		int bus,
+>  		struct i2c_board_info *info,
+>  		const unsigned short *alt_addr_list)
+>  {
+> -	const struct dmi_device *dmi_dev;
+> -	const struct dmi_dev_onboard *dev_data;
+>  	struct i2c_adapter *adapter;
+>  	struct i2c_client *client =3D NULL;
+>  	const unsigned short addr_list[] =3D { info->addr, I2C_CLIENT_END };
+> =20
+>  	if (bus < 0)
+>  		return NULL;
+> +
+>  	/*
+>  	 * If a name is specified, look for irq platform information stashed
+>  	 * in DMI_DEV_TYPE_DEV_ONBOARD by the Chrome OS custom system firmwar=
+e.
+>  	 */
+>  	if (name) {
+> -		dmi_dev =3D dmi_find_device(DMI_DEV_TYPE_DEV_ONBOARD, name, NULL);
+> -		if (!dmi_dev) {
+> -			pr_err("failed to dmi find device %s\n", name);
+> -			return NULL;
+> -		}
+> -		dev_data =3D (struct dmi_dev_onboard *)dmi_dev->device_data;
+> -		if (!dev_data) {
+> -			pr_err("failed to get data from dmi for %s\n", name);
+> +		info->irq =3D chromeos_laptop_get_irq_from_dmi(name);
+> +		if (info->irq < 0)
+>  			return NULL;
+> -		}
+> -		info->irq =3D dev_data->instance;
+>  	}
+> =20
+>  	adapter =3D i2c_get_adapter(bus);
+>=20
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+
+--LuTV1qYJ0OIWxQXsPAp0Q2i2uV9IXLSGd--
+
+--dlYvHaRRrc5YvWWytugZMlflSDdlVTHnF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqwbo4ACgkQHwn1ewov
+5liAJxAAhK9G+ughWguu1MaoJd81d1qH8MkSyswBd/HwauytNMWhvuFPyT5Pwi3y
+45yzmbiaEX6cD/aaVWbrRb0o+bCIzaZpUlNmGAu48jCOgUipqgNXtS0MJxZrebVr
+qRfitl9d6lzA/2ZTStsLxVsJHRVxzLkP2Y6yanIabQI3HQnaYpBZWDvCe3lr71t+
+93s3cKsuzSFnC7sbL+61nMkKh515oYI1LWTCJuic4iy//j2R/s5dKepqT5PaZmJN
+CaEVJlIRMBEg0YFLci3TCnlyDqdHEJIe5lhNtUISB13cxT8STaKxZyOZ9gmF7zGs
+eGUkroKLEghEDz2K98gF+JVidCkirT2YZB0QK8OYZ7p3RDX26CRnn+HuKTCh8Rk3
+AK7zZ6Vjosyw3qFugosmwb9hRLeM7JX+0qPpCPVgm/5MC40JxYVzmCOx+CkWRSAI
+kID8FO5qjtuvcgw2bd4k6hpaMn5IuENnDy4s+04B1GhFsQxplSxVERuhRs09DX34
+QRPd6h9/1gLGxcvq0jp0HTUCojG9L+kRsSabf95iLPsAtUEiBeYMY6ubiPhHl4Tm
+BVIwTyY7t93+skg2BpUwmCHEcqUr10pyTXU3b20d0AN7Q4Kv7FzN+0Az8Mfrpx1r
+qhQrvGEPA4S3sT8K9Bkb2tJhIwnv0JZW8ngDuk7Nn5ZPBqOHfjw=
+=hfra
+-----END PGP SIGNATURE-----
+
+--dlYvHaRRrc5YvWWytugZMlflSDdlVTHnF--
