@@ -1,115 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751778AbeCTCOv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Mar 2018 22:14:51 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38466 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeCTCOk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Mar 2018 22:14:40 -0400
-X-Google-Smtp-Source: AG47ELu++n5JCqgwWMYBrZLctlNYGJeH9AAC44UbC2SlbrT0huFovMmGYpodg/dPNRpP2QU5a34RyA==
-Subject: Re: [PATCH] rpmsg: glink: Use spinlock in tx path
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, Chris Lew <clew@codeaurora.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <572c1691-cb6d-773b-a9e9-19ad1da079a5@linaro.org>
-Date: Tue, 20 Mar 2018 10:14:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1751656AbeCTC2I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Mar 2018 22:28:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38202 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751589AbeCTC2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:28:04 -0400
+Date: Mon, 19 Mar 2018 21:28:03 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH 2/2] x86/unwind: Make CONFIG_UNWINDER_ORC=y the default
+ in kconfig for 64-bit
+Message-ID: <20180320022803.i46ixerodrhzzewd@treble>
+References: <20171013052544.euk7yawni47lhmdq@gmail.com>
+ <9b1237bbe7244ed9cdf8db2dcb1253e37e1c341e.1507924831.git.jpoimboe@redhat.com>
+ <20180319185732.GD37438@google.com>
+ <20180319192910.wfbi656bxkrlurgf@treble>
+ <20180319203130.GE37438@google.com>
+ <20180319212053.e77dc3vmemfazt3b@treble>
+ <20180319232255.GF37438@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180319232255.GF37438@google.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 14/02/18 03:04, Bjorn Andersson wrote:
-> Switch the tx_lock to a spinlock we allow clients to use rpmsg_trysend()
-> from atomic context.
+On Mon, Mar 19, 2018 at 04:22:55PM -0700, Matthias Kaehlcke wrote:
+> > Here's a (surprisingly easy) fix for this particular issue, though I'd
+> > be shocked if there weren't a bunch more issues lurking elsewhere.  Let
+> > me know how it goes.
 > 
-> In order to allow clients to sleep while waiting for space in the FIFO
-> we release the lock temporarily around the delay; which should be
-> replaced by sending a READ_NOTIF and waiting for the remote to signal
-> us that space has been made available.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+> Thanks for having a look, this fixes the vast majority of warnings in
+> a defconfig build!
 
-with ret set to 0 in qcom_glink_tx()
+Wow.  Consider me shocked :-)
 
-Tested-by: Srinivas kandagatla <srinivas.kandagatla@linaro.org>
+> The remaining warnings are:
+> 
+> arch/x86/mm/pti.o: warning: objtool: pti_init() falls through to next
+> function pti_user_pagetable_walk_pmd()
+> s/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
+> fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
+> fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
+> fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
+> fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls through to next function fops_u8_open()
 
->   drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++------
->   1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index e0f31ed096a5..6e950e9afa82 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -113,7 +113,7 @@ struct qcom_glink {
->   	spinlock_t rx_lock;
->   	struct list_head rx_queue;
->   
-> -	struct mutex tx_lock;
-> +	spinlock_t tx_lock;
->   
->   	spinlock_t idr_lock;
->   	struct idr lcids;
-> @@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   			 const void *data, size_t dlen, bool wait)
->   {
->   	unsigned int tlen = hlen + dlen;
-> +	unsigned long flags;
->   	int ret;
->   
->   	/* Reject packets that are too big */
->   	if (tlen >= glink->tx_pipe->length)
->   		return -EINVAL;
->   
-> -	ret = mutex_lock_interruptible(&glink->tx_lock);
-> -	if (ret)
-> -		return ret;
-> +	spin_lock_irqsave(&glink->tx_lock, flags);
->   
->   	while (qcom_glink_tx_avail(glink) < tlen) {
->   		if (!wait) {
-> @@ -304,7 +303,12 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   			goto out;
->   		}
->   
-> +		/* Wait without holding the tx_lock */
-> +		spin_unlock_irqrestore(&glink->tx_lock, flags);
-> +
->   		usleep_range(10000, 15000);
-> +
-> +		spin_lock_irqsave(&glink->tx_lock, flags);
->   	}
->   
->   	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
-> @@ -313,7 +317,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   	mbox_client_txdone(glink->mbox_chan, 0);
->   
->   out:
-> -	mutex_unlock(&glink->tx_lock);
-> +	spin_unlock_irqrestore(&glink->tx_lock, flags);
->   
->   	return ret;
->   }
-> @@ -1567,7 +1571,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
->   	glink->features = features;
->   	glink->intentless = intentless;
->   
-> -	mutex_init(&glink->tx_lock);
-> +	spin_lock_init(&glink->tx_lock);
->   	spin_lock_init(&glink->rx_lock);
->   	INIT_LIST_HEAD(&glink->rx_queue);
->   	INIT_WORK(&glink->rx_work, qcom_glink_work);
-> 
+These all seem to be related to some weirdness with the UD2 instruction,
+not necessarily an objtool issue per se.
+
+Any chance this fixes some of the warnings?  If not, I can try to build
+with clang and look a little deeper.
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c63601..315a8757b565 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -124,7 +124,12 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ # define ASM_UNREACHABLE
+ #endif
+ #ifndef unreachable
+-# define unreachable() do { annotate_reachable(); do { } while (1); } while (0)
++#define unreachable() \
++	do {					\
++		annotate_unreachable();		\
++		barrier_before_unreachable();	\
++		__builtin_unreachable();	\
++	} while (0)
+ #endif
+ 
+ /*
