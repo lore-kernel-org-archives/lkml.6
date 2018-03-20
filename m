@@ -1,72 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeCTQpa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 12:45:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:45016 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeCTQpY (ORCPT
+        id S1752140AbeCTQqD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 12:46:03 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56882 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeCTQnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:45:24 -0400
-Message-ID: <5AB13A86.9010607@ORACLE.COM>
-Date: Tue, 20 Mar 2018 18:44:54 +0200
-From: Liran Alon <LIRAN.ALON@ORACLE.COM>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Thunderbird/24.5.0
+        Tue, 20 Mar 2018 12:43:43 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFT][PATCH v7 8/8] cpuidle: menu: Avoid selecting shallow states with stopped tick
+Date: Tue, 20 Mar 2018 16:47:09 +0100
+Message-ID: <2317533.DCFkBeZAbT@aspire.rjw.lan>
+In-Reply-To: <2390019.oHdSGtR3EE@aspire.rjw.lan>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan>
 MIME-Version: 1.0
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-CC: shmulik.ladkani@gmail.com, netdev@vger.kernel.org, mrv@mojatatu.com,
-        daniel@iogearbox.net, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, yuval.shaia@ORACLE.COM,
-        idan.brown@ORACLE.COM
-Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
- only when crossing netns
-References: <0d84d286-9965-45cb-93c8-379ca1b2441e@default> <87tvta67gl.fsf@xmission.com>
-In-Reply-To: <87tvta67gl.fsf@xmission.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+If the scheduler tick has been stopped already and the governor
+selects a shallow idle state, the CPU can spend a long time in that
+state if the selection is based on an inaccurate prediction of idle
+time.  That effect turns out to be relevant, so it needs to be
+mitigated.
 
-On 20/03/18 18:24, ebiederm@xmission.com wrote:
->
-> I don't believe the current behavior is a bug.
->
-> I looked through the history.  Basically skb_scrub_packet
-> started out as the scrubbing needed for crossing network
-> namespaces.
->
-> Then tunnels which needed 90% of the functionality started
-> calling it, with the xnet flag added.  Because the tunnels
-> needed to preserve their historic behavior.
->
-> Then dev_forward_skb started calling skb_scrub_packet.
->
-> A veth pair is supposed to give the same behavior as a cross-over
-> cable plugged into two local nics.  A cross over cable won't
-> preserve things like the skb mark.  So I don't see why anyone would
-> expect a veth pair to preserve the mark.
+To that end, modify the menu governor to discard the result of the
+idle time prediction if the tick is stopped and the predicted idle
+time is less than the tick period length, unless the tick timer is
+going to expire soon.
 
-I disagree with this argument.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-I think that a skb crossing netns is what simulates a real packet 
-crossing physical computers. Following your argument, why would 
-skb->mark should be preserved when crossing netdevs on same netns via 
-routing? But this does today preserve skb->mark.
+v5 -> v7:
+  * Rebase on top of the new [5-7/8].
 
-Therefore, I do think that skb->mark should conceptually only be 
-scrubbed when crossing netns. Regardless of the netdev used to cross it.
+Note that the problem tackled here may be addressed in a couple of other
+ways in principle.
 
->
-> Right now I don't see the point of handling packets that don't cross
-> network namespace boundaries specially, other than to preserve backwards
-> compatibility.
->
-> Eric
->
+---
+ drivers/cpuidle/governors/menu.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -352,13 +352,28 @@ static int menu_select(struct cpuidle_dr
+ 	 */
+ 	data->predicted_us = min(data->predicted_us, expected_interval);
+ 
+-	/*
+-	 * Use the performance multiplier and the user-configurable
+-	 * latency_req to determine the maximum exit latency.
+-	 */
+-	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+-	if (latency_req > interactivity_req)
+-		latency_req = interactivity_req;
++	if (tick_nohz_tick_stopped()) {
++		/*
++		 * If the tick is already stopped, the cost of possible short
++		 * idle duration misprediction is much higher, because the CPU
++		 * may be stuck in a shallow idle state for a long time as a
++		 * result of it.  In that case say we might mispredict and try
++		 * to force the CPU into a state for which we would have stopped
++		 * the tick, unless the tick timer is going to expire really
++		 * soon anyway.
++		 */
++		if (data->predicted_us < TICK_USEC)
++			data->predicted_us = min_t(unsigned int, TICK_USEC,
++						   ktime_to_us(delta_next));
++	} else {
++		/*
++		 * Use the performance multiplier and the user-configurable
++		 * latency_req to determine the maximum exit latency.
++		 */
++		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
++		if (latency_req > interactivity_req)
++			latency_req = interactivity_req;
++	}
+ 
+ 	expected_interval = data->predicted_us;
+ 	/*
