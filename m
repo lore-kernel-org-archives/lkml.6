@@ -1,114 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751662AbeCTSAN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 14:00:13 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52501 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751408AbeCTSAL (ORCPT
+        id S1751801AbeCTSB2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 14:01:28 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37823 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeCTSB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 14:00:11 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [Correction][RFT][PATCH v7 3/8] sched: idle: Do not stop the tick before cpuidle_idle_call()
-Date: Tue, 20 Mar 2018 19:00:37 +0100
-Message-ID: <8465308.mkr1foup4p@aspire.rjw.lan>
-In-Reply-To: <5325267.FN4F6lrTUU@aspire.rjw.lan>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <5325267.FN4F6lrTUU@aspire.rjw.lan>
+        Tue, 20 Mar 2018 14:01:26 -0400
+X-Google-Smtp-Source: AG47ELu5WMQhRdA52HcPK33gm0E0iNgtvYf4VfqimX8rkp6sIrk3l9WWWGJJIvanefWnIB8jB66fldLserlo3JZlsyk=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com> <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 20 Mar 2018 11:01:25 -0700
+X-Google-Sender-Auth: Eov2ollkCb-bBgt2F9K9CeixDYI
+Message-ID: <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        David Laight <David.Laight@aculab.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Mar 20, 2018 at 1:26 AM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> So assuming the target driver will only load on modern FPUs I *think* it should
+> actually be possible to do something like (pseudocode):
+>
+>         vmovdqa %ymm0, 40(%rsp)
+>         vmovdqa %ymm1, 80(%rsp)
+>
+>         ...
+>         # use ymm0 and ymm1
+>         ...
+>
+>         vmovdqa 80(%rsp), %ymm1
+>         vmovdqa 40(%rsp), %ymm0
+>
+> ... without using the heavy XSAVE/XRSTOR instructions.
 
-Make cpuidle_idle_call() decide whether or not to stop the tick.
+No. The above is buggy. It may *work*, but it won't work in the long run.
 
-First, the cpuidle_enter_s2idle() path deals with the tick (and with
-the entire timekeeping for that matter) by itself and it doesn't need
-the tick to be stopped beforehand.
+Pretty much every single vector extension has traditionally meant that
+touching "old" registers breaks any new register use. Even if you save
+the registers carefully like in your example code, it will do magic
+and random things to the "future extended" version.
 
-Second, to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, it will be
-necessary to change the ordering of cpuidle_select() with respect
-to tick_nohz_idle_stop_tick().  To prepare for that, put a
-tick_nohz_idle_stop_tick() call in the same branch in which
-cpuidle_select() is called.
+So I absolutely *refuse* to have anything to do with the vector unit.
+You can only touch it in the kernel if you own it entirely (ie that
+"kernel_fpu_begin()/_end()" thing). Anything else is absolutely
+guaranteed to cause problems down the line.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+And even if you ignore that "maintenance problems down the line" issue
+("we can fix them when they happen") I don't want to see games like
+this, because I'm pretty sure it breaks the optimized xsave by tagging
+the state as being dirty.
 
-The correct patch this time.
+So no. Don't use vector stuff in the kernel. It's not worth the pain.
 
----
- kernel/sched/idle.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+The *only* valid use is pretty much crypto, and even there it has had
+issues. Benchmarks use big arrays and/or dense working sets etc to
+"prove" how good the vector version is, and then you end up in
+situations where it's used once per fairly small packet for an
+interrupt, and it's actually much worse than doing it by hand.
 
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -146,13 +146,15 @@ static void cpuidle_idle_call(void)
- 	}
- 
- 	/*
--	 * Tell the RCU framework we are entering an idle section,
--	 * so no more rcu read side critical sections and one more
-+	 * The RCU framework needs to be told that we are entering an idle
-+	 * section, so no more rcu read side critical sections and one more
- 	 * step to the grace period
- 	 */
--	rcu_idle_enter();
- 
- 	if (cpuidle_not_available(drv, dev)) {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		default_idle_call();
- 		goto exit_idle;
- 	}
-@@ -169,16 +171,26 @@ static void cpuidle_idle_call(void)
- 
- 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
- 		if (idle_should_enter_s2idle()) {
-+			rcu_idle_enter();
-+
- 			entered_state = cpuidle_enter_s2idle(drv, dev);
- 			if (entered_state > 0) {
- 				local_irq_enable();
- 				goto exit_idle;
- 			}
-+
-+			rcu_idle_exit();
- 		}
- 
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
-@@ -245,7 +257,6 @@ static void do_idle(void)
- 			tick_nohz_idle_restart_tick();
- 			cpu_idle_poll();
- 		} else {
--			tick_nohz_idle_stop_tick();
- 			cpuidle_idle_call();
- 		}
- 		arch_cpu_idle_exit();
+               Linus
