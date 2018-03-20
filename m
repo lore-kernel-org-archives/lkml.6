@@ -1,22 +1,23 @@
 Return-Path: <heikki.krogerus@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtYj70UnfxuYmb7I5HZm/lTTzvIVUhBevg0IMvzAwi89z4j2mvMV3yWPTpMTAsH22t/PK/B
-ARC-Seal: i=1; a=rsa-sha256; t=1521550638; cv=none;
+X-Google-Smtp-Source: AG47ELvCiH+9jHbd1b44Fh1JAU4KmEJt0cYK1wH7FHIDA9Rfawx7xXfDFAa1RI9L+80UOxefnFkE
+ARC-Seal: i=1; a=rsa-sha256; t=1521550679; cv=none;
         d=google.com; s=arc-20160816;
-        b=t0s+aqj+MUu5n5kKiCzd/w3PfaU7QRY43KQYlC+3GGp32h96fDBvO+yqHOtEIx8sUt
-         +aILppEJ0W1F4zw5adv17xPHOvLRhA3mJeYxRvhWxiyYURk1deciA7MrkZ3cv7YA0LIR
-         hWkLmrPXep1sIwKL4gSUk529m6RH9Ob5Idszq8OqLnZGISdPL/buPoB42S+r11Np0bd7
-         urFzmYiay2JOcFZECl1Qt+f6EaF6GChhfAiZeRiCClxUCoyXfRb5eS/5bU8LAUGgniOR
-         t9D8IXaWwdpBnr+p0CuX2Xh/eshz1n/EAXTcmSOOYePAvgU/Y04uT47MKds+n9lPkxCd
-         AGyg==
+        b=PL7poQ7NSC602v8lDDWlk5bnX8d7vs1oZMenotfZuIgUdpPiRAGDrbGwNDpFZSge8o
+         qaWJmw2ULgok06k8fl++WGJ3y9Hr60N5J4a7ewX4Q0lNziOzMds08HGIzVVLeeBKOv/B
+         C1dFLvXaYospwy/sYaByd/fdN4AJg+0eWjzxfjhpVJB+sZQGjUJO00u+L0vTFfvlxIqH
+         g2c4W6B6zV7HPS9fo7UvcZN9lcq6BZggrr5zFXGuEsQZIaIIYrqPMC3693Me/l0usL8h
+         E39y7ohavLowvVx7TQKvG6sPPNePWHyQGWlzV7E9z9AwoznoMu+2s1tMWhyGpGeRmoiU
+         fHGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=S7xw7gWDfjPY/jitVUolZ4S1g93cNPUF+y4Gx6Y8ACE=;
-        b=Nh1rGAXIQNkA/yWDH9EIqChgob1LkOaGfAQly6W4hqdki6+UHAzZKR1rEByLjbhuyZ
-         7RcB0iJU6I/bbxRgZkhCPgGxVlPTd8pRGHw/khBeHEX0v+C/tm9PhOceRo8QFGEihZP3
-         XqxZ5KDnn9qN5Xm12YPpGNtWpNQKOn49wglHKvkg8RY2tHuJWR80H+RHQZgqClRFQ8US
-         F4HGFza+zEyaDahbxpUWUyvTeTTMTAMJWdvLG1QXSKVUIRmdiBZtHLTiDqLma0RNSTfP
-         l2bGTyXWWGoFzmSnXXTKP4qiR4Jrp3OLkc1gig5eH16QIeiX7cl3YEP3Fwa/Deeov5z6
-         yJLw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=Mq580pgbakI8XtfhRGVY+M/cBhyyxEuiR9LDhjagQU0=;
+        b=xqlu9/P0cSauWJDQEbo3YQLJ7kJ0/7p1dfj++ExwZUdwtLXoZBo7ZBZFN/ZQ0RmRmZ
+         9ai8lfYi7vOi0GRCyzeMQ6XqDCnruHPe9VIL/J1OpQBBAbq26ustOupgRa8fCw3HU03C
+         T8PUtx/3F0ef3KNBoATknS082shP1Jzu9e7lqh6VsnXH2an6WcxWDB1X+VFbRjQRtIl2
+         MOBeVirFcIiuI0v+d0fvP3g6uXJFBY7VYMwmrSxcV7unJQkEsPj5F/L02CWw4Uuv/3+E
+         4k+vODWkGBByub7EBC5jkfeUpVic97AT5VzRa/A/UwlAnGuNeSO3n5ZTIUf8njHsRpiR
+         JDgA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -25,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,335,1517904000";
-   d="scan'208";a="39592487"
+   d="scan'208";a="39592644"
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Hans de Goede <hdegoede@redhat.com>
@@ -39,161 +40,351 @@ Cc: Darren Hart <dvhart@infradead.org>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v9 00/12] USB Type-C device-connection, mux and switch support
-Date: Tue, 20 Mar 2018 15:57:01 +0300
-Message-Id: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v9 12/12] extcon: axp288: Set USB role where necessary
+Date: Tue, 20 Mar 2018 15:57:13 +0300
+Message-Id: <20180320125713.85465-13-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
+References: <20180320125713.85465-1-heikki.krogerus@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595461482181745904?=
-X-GMAIL-MSGID: =?utf-8?q?1595461482181745904?=
+X-GMAIL-THRID: =?utf-8?q?1595461525847082609?=
+X-GMAIL-MSGID: =?utf-8?q?1595461525847082609?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: Hans de Goede <hdegoede@redhat.com>
 
-This is version 9 of Hans' an my series introducing support for USB muxes, and
-generic device connection handling. The last version have been mostly about
-getting the first patch introducing the device connection handling right.
+The AXP288 BC1.2 charger detection / extcon code may seem like a strange
+place to add code to control the USB role-switch on devices with an AXP288,
+but there are 2 reasons to do this inside the axp288 extcon code:
 
-Check vesion 8 from here:
-https://lkml.org/lkml/2018/3/14/428
+1) On many devices the USB role is controlled by ACPI AML code, but the AML
+   code only switches between the host and none roles, because of Windows
+   not really using device mode. To make device mode work we need to toggle
+   between the none/device roles based on Vbus presence, and the axp288
+   extcon gets interrupts on Vbus insertion / removal.
 
-Here is the original cover-letter of v1:
+2) In order for our BC1.2 charger detection to work properly the role
+   mux must be properly set to device mode before we do the detection.
 
-Some devices with an USB Type-C connector have a bunch of muxes
-behind that connector which need to be controlled by the kernel (rather
-then having them controlled by firmware as on most devices).
+Also note the Kconfig help-text / obsolete depends on USB_PHY which are
+remnants from older never upstreamed code also controlling the mux from
+the axp288 extcon code.
 
-Quite a while back I submitted a patch-series to tie together these muxes
-and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
-framework. But the way I used the mux framework went against what it was
-designed for, so in the end that series got nowhere.
+This commit also adds code to get notifications from the INT3496 extcon
+device, which is used on some devices to notify the kernel about id-pin
+changes instead of them being handled through AML code.
 
-Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
-recently been working on solving the same problem for some boards he is
-doing hardware-enablement for.
+This fixes:
+-Device mode not working on most CHT devices with an AXP288
+-Host mode not working on devices with an INT3496 ACPI device
+-Charger-type misdetection (always SDP) on devices with an INT3496 when the
+ USB role (always) gets initialized as host
 
-Heikki has come up with a number of infrastructure patches for this.
-The first one is a new device-connection framework. This solves the
-problem of describing non bus device-links on x86 in what in my experience
-with this problematic area is a really nice simple, clean and *generic*
-way. This could for example in the near future also replace the custom
-lookup code in the pwm subsys and the custom pwm_add_table() /
-pwm_remove_table() functions.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+Changes in v4:
+-Add Andy's Reviewed-by
 
-The other 3 patches add a framework for the different type of Type-C /
-USB "muxes".
+Changes in v2:
+-Add depends on X86 to Kconfig (the AXP288 PMIC is only used on X86)
+-Use new acpi_dev_get_first_match_name() helper to get the INT3496 device-name
+-Add Heikki's Reviewed-by
+---
+ drivers/extcon/Kconfig         |   3 +-
+ drivers/extcon/extcon-axp288.c | 176 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 170 insertions(+), 9 deletions(-)
 
-Heikki and I have gone through a number of iterations of these patches
-together and we believe these are now ready for merging. Since merging
-infrastructure patches without users is not done and Heikki's own use-case
-for these is not yet ready for merging, the rest of this series consists
-of patches by me to make the Type-C connector found on some Cherry Trail
-devices (finally) be able to actually work as an USB port and not just
-a charge port.
-
-The last patch uses the new usb-role-switch framework to also do proper
-devcie / host switching on CHT devices with a USB micro AB connector.
-This is also a big feature for CHT users, because before this they had
-to do a reboot to get an OTG-host cable recognized (on some devices).
-
-Part of this series is an usb-role-switch driver for the role-switch
-found inside the xhci controller on e.g. CHT devices, this is currently
-implemented as the generic xhci controller instantiating a platform
-child-device for this, since this really is a separate chunk of HW
-which happens to sit in the XHCI mmio space. This approach may not be
-universally liked, given that in this new series the role-switch driver
-is much smaller and does not have any external deps anymore we could
-just integrate it into the xhci code if that is preferred.
-
-About merging this series (once everything is reviewed, etc.), there are
-quite some interdependencies in it esp. a lot of the patches depend on
-the first patch. Luckily patches 1-10 all apply to subsystems which are
-maintained by Greg (most to the USB subsys). Which just leaves patches
-11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
-for the platform/x86 and extcon maintainers to merge once this is done?
-
-Regards,
-
-Hans
-
-
-Hans de Goede (7):
-  usb: typec: tcpm: Set USB role switch to device mode when configured
-    as such
-  usb: typec: tcpm: Use new Type-C switch/mux and usb-role-switch
-    functions
-  xhci: Add Intel extended cap / otg phy mux handling
-  usb: roles: Add Intel xHCI USB role switch driver
-  usb: typec: driver for Pericom PI3USB30532 Type-C cross switch
-  platform/x86: intel_cht_int33fe: Add device connections for the Type-C
-    port
-  extcon: axp288: Set USB role where necessary
-
-Heikki Krogerus (4):
-  drivers: base: Unified device connection lookup
-  usb: typec: API for controlling USB Type-C Multiplexers
-  usb: common: Small class for USB role switches
-  usb: typec: Separate the definitions for data and power roles
-
-Mathias Nyman (1):
-  xhci: Add option to get next extended capability in list by passing id
-    = 0
-
- Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
- Documentation/driver-api/device_connection.rst |  43 ++++
- Documentation/driver-api/usb/typec.rst         |  73 +++++-
- MAINTAINERS                                    |  12 +
- drivers/base/Makefile                          |   3 +-
- drivers/base/devcon.c                          | 136 +++++++++++
- drivers/extcon/Kconfig                         |   3 +-
- drivers/extcon/extcon-axp288.c                 | 176 +++++++++++++-
- drivers/platform/x86/intel_cht_int33fe.c       |  24 ++
- drivers/usb/Kconfig                            |   5 +
- drivers/usb/Makefile                           |   2 +
- drivers/usb/common/Makefile                    |   1 +
- drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
- drivers/usb/host/Makefile                      |   2 +-
- drivers/usb/host/xhci-ext-caps.c               |  90 ++++++++
- drivers/usb/host/xhci-ext-caps.h               |   7 +-
- drivers/usb/host/xhci-pci.c                    |   5 +
- drivers/usb/host/xhci.h                        |   2 +
- drivers/usb/roles/Kconfig                      |  14 ++
- drivers/usb/roles/Makefile                     |   1 +
- drivers/usb/roles/intel-xhci-usb-role-switch.c | 192 ++++++++++++++++
- drivers/usb/typec/Kconfig                      |   3 +
- drivers/usb/typec/Makefile                     |   2 +
- drivers/usb/typec/{typec.c => class.c}         | 124 ++++++++--
- drivers/usb/typec/fusb302/fusb302.c            |   2 +-
- drivers/usb/typec/mux.c                        | 191 ++++++++++++++++
- drivers/usb/typec/mux/Kconfig                  |  10 +
- drivers/usb/typec/mux/Makefile                 |   3 +
- drivers/usb/typec/mux/pi3usb30532.c            | 178 +++++++++++++++
- drivers/usb/typec/tcpm.c                       |  63 +++--
- drivers/usb/typec/tps6598x.c                   |  26 ++-
- drivers/usb/typec/typec_wcove.c                |   1 +
- drivers/usb/typec/ucsi/ucsi.c                  |  13 +-
- include/linux/device.h                         |  22 ++
- include/linux/usb/role.h                       |  53 +++++
- include/linux/usb/tcpm.h                       |  15 +-
- include/linux/usb/typec.h                      |  28 ++-
- include/linux/usb/typec_mux.h                  |  55 +++++
- 38 files changed, 1812 insertions(+), 94 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
- create mode 100644 Documentation/driver-api/device_connection.rst
- create mode 100644 drivers/base/devcon.c
- create mode 100644 drivers/usb/common/roles.c
- create mode 100644 drivers/usb/host/xhci-ext-caps.c
- create mode 100644 drivers/usb/roles/Kconfig
- create mode 100644 drivers/usb/roles/Makefile
- create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
- rename drivers/usb/typec/{typec.c => class.c} (93%)
- create mode 100644 drivers/usb/typec/mux.c
- create mode 100644 drivers/usb/typec/mux/Kconfig
- create mode 100644 drivers/usb/typec/mux/Makefile
- create mode 100644 drivers/usb/typec/mux/pi3usb30532.c
- create mode 100644 include/linux/usb/role.h
- create mode 100644 include/linux/usb/typec_mux.h
-
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index a7bca4207f44..de15bf55895b 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -30,7 +30,8 @@ config EXTCON_ARIZONA
+ 
+ config EXTCON_AXP288
+ 	tristate "X-Power AXP288 EXTCON support"
+-	depends on MFD_AXP20X && USB_PHY
++	depends on MFD_AXP20X && USB_SUPPORT && X86
++	select USB_ROLE_SWITCH
+ 	help
+ 	  Say Y here to enable support for USB peripheral detection
+ 	  and USB MUX switching by X-Power AXP288 PMIC.
+diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+index 3ec4c715e240..a983708b77a6 100644
+--- a/drivers/extcon/extcon-axp288.c
++++ b/drivers/extcon/extcon-axp288.c
+@@ -1,6 +1,7 @@
+ /*
+  * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
+  *
++ * Copyright (c) 2017-2018 Hans de Goede <hdegoede@redhat.com>
+  * Copyright (C) 2015 Intel Corporation
+  * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+  *
+@@ -14,6 +15,7 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+@@ -25,6 +27,11 @@
+ #include <linux/extcon-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/axp20x.h>
++#include <linux/usb/role.h>
++#include <linux/workqueue.h>
++
++#include <asm/cpu_device_id.h>
++#include <asm/intel-family.h>
+ 
+ /* Power source status register */
+ #define PS_STAT_VBUS_TRIGGER		BIT(0)
+@@ -97,9 +104,19 @@ struct axp288_extcon_info {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct regmap_irq_chip_data *regmap_irqc;
++	struct usb_role_switch *role_sw;
++	struct work_struct role_work;
+ 	int irq[EXTCON_IRQ_END];
+ 	struct extcon_dev *edev;
++	struct extcon_dev *id_extcon;
++	struct notifier_block id_nb;
+ 	unsigned int previous_cable;
++	bool vbus_attach;
++};
++
++static const struct x86_cpu_id cherry_trail_cpu_ids[] = {
++	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_AIRMONT, X86_FEATURE_ANY },
++	{}
+ };
+ 
+ /* Power up/down reason string array */
+@@ -137,20 +154,74 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+ 	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+ }
+ 
+-static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
++/*
++ * The below code to control the USB role-switch on devices with an AXP288
++ * may seem out of place, but there are 2 reasons why this is the best place
++ * to control the USB role-switch on such devices:
++ * 1) On many devices the USB role is controlled by AML code, but the AML code
++ *    only switches between the host and none roles, because of Windows not
++ *    really using device mode. To make device mode work we need to toggle
++ *    between the none/device roles based on Vbus presence, and this driver
++ *    gets interrupts on Vbus insertion / removal.
++ * 2) In order for our BC1.2 charger detection to work properly the role
++ *    mux must be properly set to device mode before we do the detection.
++ */
++
++/* Returns the id-pin value, note pulled low / false == host-mode */
++static bool axp288_get_id_pin(struct axp288_extcon_info *info)
+ {
+-	int ret, stat, cfg, pwr_stat;
+-	u8 chrg_type;
+-	unsigned int cable = info->previous_cable;
+-	bool vbus_attach = false;
++	enum usb_role role;
++
++	if (info->id_extcon)
++		return extcon_get_state(info->id_extcon, EXTCON_USB_HOST) <= 0;
++
++	/* We cannot access the id-pin, see what mode the AML code has set */
++	role = usb_role_switch_get_role(info->role_sw);
++	return role != USB_ROLE_HOST;
++}
++
++static void axp288_usb_role_work(struct work_struct *work)
++{
++	struct axp288_extcon_info *info =
++		container_of(work, struct axp288_extcon_info, role_work);
++	enum usb_role role;
++	bool id_pin;
++	int ret;
++
++	id_pin = axp288_get_id_pin(info);
++	if (!id_pin)
++		role = USB_ROLE_HOST;
++	else if (info->vbus_attach)
++		role = USB_ROLE_DEVICE;
++	else
++		role = USB_ROLE_NONE;
++
++	ret = usb_role_switch_set_role(info->role_sw, role);
++	if (ret)
++		dev_err(info->dev, "failed to set role: %d\n", ret);
++}
++
++static bool axp288_get_vbus_attach(struct axp288_extcon_info *info)
++{
++	int ret, pwr_stat;
+ 
+ 	ret = regmap_read(info->regmap, AXP288_PS_STAT_REG, &pwr_stat);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "failed to read vbus status\n");
+-		return ret;
++		return false;
+ 	}
+ 
+-	vbus_attach = (pwr_stat & PS_STAT_VBUS_VALID);
++	return !!(pwr_stat & PS_STAT_VBUS_VALID);
++}
++
++static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
++{
++	int ret, stat, cfg;
++	u8 chrg_type;
++	unsigned int cable = info->previous_cable;
++	bool vbus_attach = false;
++
++	vbus_attach = axp288_get_vbus_attach(info);
+ 	if (!vbus_attach)
+ 		goto no_vbus;
+ 
+@@ -201,6 +272,12 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+ 		info->previous_cable = cable;
+ 	}
+ 
++	if (info->role_sw && info->vbus_attach != vbus_attach) {
++		info->vbus_attach = vbus_attach;
++		/* Setting the role can take a while */
++		queue_work(system_long_wq, &info->role_work);
++	}
++
+ 	return 0;
+ 
+ dev_det_ret:
+@@ -210,6 +287,18 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+ 	return ret;
+ }
+ 
++static int axp288_extcon_id_evt(struct notifier_block *nb,
++				unsigned long event, void *param)
++{
++	struct axp288_extcon_info *info =
++		container_of(nb, struct axp288_extcon_info, id_nb);
++
++	/* We may not sleep and setting the role can take a while */
++	queue_work(system_long_wq, &info->role_work);
++
++	return NOTIFY_OK;
++}
++
+ static irqreturn_t axp288_extcon_isr(int irq, void *data)
+ {
+ 	struct axp288_extcon_info *info = data;
+@@ -231,10 +320,20 @@ static void axp288_extcon_enable(struct axp288_extcon_info *info)
+ 					BC_GLOBAL_RUN, BC_GLOBAL_RUN);
+ }
+ 
++static void axp288_put_role_sw(void *data)
++{
++	struct axp288_extcon_info *info = data;
++
++	cancel_work_sync(&info->role_work);
++	usb_role_switch_put(info->role_sw);
++}
++
+ static int axp288_extcon_probe(struct platform_device *pdev)
+ {
+ 	struct axp288_extcon_info *info;
+ 	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
++	struct device *dev = &pdev->dev;
++	const char *name;
+ 	int ret, i, pirq;
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+@@ -245,9 +344,33 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 	info->regmap = axp20x->regmap;
+ 	info->regmap_irqc = axp20x->regmap_irqc;
+ 	info->previous_cable = EXTCON_NONE;
++	INIT_WORK(&info->role_work, axp288_usb_role_work);
++	info->id_nb.notifier_call = axp288_extcon_id_evt;
+ 
+ 	platform_set_drvdata(pdev, info);
+ 
++	info->role_sw = usb_role_switch_get(dev);
++	if (IS_ERR(info->role_sw))
++		return PTR_ERR(info->role_sw);
++	if (info->role_sw) {
++		ret = devm_add_action_or_reset(dev, axp288_put_role_sw, info);
++		if (ret)
++			return ret;
++
++		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
++		if (name) {
++			info->id_extcon = extcon_get_extcon_dev(name);
++			if (!info->id_extcon)
++				return -EPROBE_DEFER;
++
++			dev_info(dev, "controlling USB role\n");
++		} else {
++			dev_info(dev, "controlling USB role based on Vbus presence\n");
++		}
++	}
++
++	info->vbus_attach = axp288_get_vbus_attach(info);
++
+ 	axp288_extcon_log_rsi(info);
+ 
+ 	/* Initialize extcon device */
+@@ -289,6 +412,19 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (info->id_extcon) {
++		ret = devm_extcon_register_notifier_all(dev, info->id_extcon,
++							&info->id_nb);
++		if (ret)
++			return ret;
++	}
++
++	/* Make sure the role-sw is set correctly before doing BC detection */
++	if (info->role_sw) {
++		queue_work(system_long_wq, &info->role_work);
++		flush_work(&info->role_work);
++	}
++
+ 	/* Start charger cable type detection */
+ 	axp288_extcon_enable(info);
+ 
+@@ -308,8 +444,32 @@ static struct platform_driver axp288_extcon_driver = {
+ 		.name = "axp288_extcon",
+ 	},
+ };
+-module_platform_driver(axp288_extcon_driver);
++
++static struct device_connection axp288_extcon_role_sw_conn = {
++	.endpoint[0] = "axp288_extcon",
++	.endpoint[1] = "intel_xhci_usb_sw-role-switch",
++	.id = "usb-role-switch",
++};
++
++static int __init axp288_extcon_init(void)
++{
++	if (x86_match_cpu(cherry_trail_cpu_ids))
++		device_connection_add(&axp288_extcon_role_sw_conn);
++
++	return platform_driver_register(&axp288_extcon_driver);
++}
++module_init(axp288_extcon_init);
++
++static void __exit axp288_extcon_exit(void)
++{
++	if (x86_match_cpu(cherry_trail_cpu_ids))
++		device_connection_remove(&axp288_extcon_role_sw_conn);
++
++	platform_driver_unregister(&axp288_extcon_driver);
++}
++module_exit(axp288_extcon_exit);
+ 
+ MODULE_AUTHOR("Ramakrishna Pallala <ramakrishna.pallala@intel.com>");
++MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
+ MODULE_DESCRIPTION("X-Powers AXP288 extcon driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.16.2
