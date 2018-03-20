@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752443AbeCTIxx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:53:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:51134 "EHLO mga14.intel.com"
+        id S1752481AbeCTIyD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:54:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:51143 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751988AbeCTIxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:53:48 -0400
+        id S1752385AbeCTIx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:53:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,334,1517904000";
-   d="scan'208";a="184360751"
+   d="scan'208";a="184360782"
 From: Aaron Lu <aaron.lu@intel.com>
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -22,9 +22,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@techsingularity.net>,
         Matthew Wilcox <willy@infradead.org>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [RFC PATCH v2 1/4] mm/page_alloc: use helper functions to add/remove a page to/from buddy
-Date: Tue, 20 Mar 2018 16:54:49 +0800
-Message-Id: <20180320085452.24641-2-aaron.lu@intel.com>
+Subject: [RFC PATCH v2 4/4] mm/free_pcppages_bulk: reduce overhead of cluster operation on free path
+Date: Tue, 20 Mar 2018 16:54:52 +0800
+Message-Id: <20180320085452.24641-5-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180320085452.24641-1-aaron.lu@intel.com>
 References: <20180320085452.24641-1-aaron.lu@intel.com>
@@ -32,151 +32,136 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are multiple places that add/remove a page into/from buddy,
-introduce helper functions for them.
+After "no_merge for order 0", the biggest overhead in free path for
+order 0 pages is now add_to_cluster(). As pages are freed one by one,
+it caused frequent operation of add_to_cluster().
 
-This also makes it easier to add code when a page is added/removed
-to/from buddy.
+Ideally, if only one migratetype pcp list has pages to free and
+count=pcp->batch in free_pcppages_bulk(), we can avoid calling
+add_to_cluster() one time per page but adding them in one go as
+a single cluster. Let's call this ideal case as single_mt and
+single_mt_unmovable represents when only unmovable pcp list has
+pages and count in free_pcppages_bulk() equals to pcp->batch.
+Ditto for single_mt_movable and single_mt_reclaimable.
+
+I added some counters to see how often this ideal case is. On my
+desktop, after boot:
+
+free_pcppages_bulk:	6268
+single_mt:		3885 (62%)
+
+free_pcppages_bulk means the number of time this function gets called.
+single_mt means number of times when only one pcp migratetype list has
+pages to be freed and count=pcp->batch.
+
+single_mt can be further devided into the following 3 cases:
+single_mt_unmovable:	 263 (4%)
+single_mt_movable:	2566 (41%)
+single_mt_reclaimable:	1056 (17%)
+
+After kbuild with a distro kconfig:
+
+free_pcppages_bulk:	9100508
+single_mt:		8440310 (93%)
+
+Again, single_mt can be further devided:
+single_mt_unmovable:	    290 (0%)
+single_mt_movable:	8435483 (92.75%)
+single_mt_reclaimable:	   4537 (0.05%)
+
+Considering capturing the case of single_mt_movable requires fewer
+lines of code and it is the most often ideal case, I think capturing
+this case alone is enough.
+
+This optimization brings zone->lock contention down from 25% to
+almost zero again using the parallel free workload.
 
 Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
- mm/page_alloc.c | 65 ++++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 39 insertions(+), 26 deletions(-)
+ mm/page_alloc.c | 46 ++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 42 insertions(+), 4 deletions(-)
 
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3db9cfb2265b..3cdf1e10d412 100644
+index ac93833a2877..ad15e4ef99d6 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -736,12 +736,41 @@ static inline void set_page_order(struct page *page, unsigned int order)
- 	__SetPageBuddy(page);
+@@ -1281,6 +1281,36 @@ static bool bulkfree_pcp_prepare(struct page *page)
  }
+ #endif /* CONFIG_DEBUG_VM */
  
-+static inline void add_to_buddy_common(struct page *page, struct zone *zone,
-+					unsigned int order, int mt)
++static inline bool free_cluster_pages(struct zone *zone, struct list_head *list,
++				      int mt, int count)
 +{
-+	set_page_order(page, order);
-+	zone->free_area[order].nr_free++;
++	struct cluster *c;
++	struct page *page, *n;
++
++	if (!can_skip_merge(zone, 0))
++		return false;
++
++	if (count != this_cpu_ptr(zone->pageset)->pcp.batch)
++		return false;
++
++	c = new_cluster(zone, count, list_first_entry(list, struct page, lru));
++	if (unlikely(!c))
++		return false;
++
++	list_for_each_entry_safe(page, n, list, lru) {
++		set_page_order(page, 0);
++		set_page_merge_skipped(page);
++		page->cluster = c;
++		list_add(&page->lru, &zone->free_area[0].free_list[mt]);
++	}
++
++	INIT_LIST_HEAD(list);
++	zone->free_area[0].nr_free += count;
++	__mod_zone_page_state(zone, NR_FREE_PAGES, count);
++
++	return true;
 +}
 +
-+static inline void add_to_buddy_head(struct page *page, struct zone *zone,
-+					unsigned int order, int mt)
-+{
-+	add_to_buddy_common(page, zone, order, mt);
-+	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
-+}
-+
-+static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
-+					unsigned int order, int mt)
-+{
-+	add_to_buddy_common(page, zone, order, mt);
-+	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
-+}
-+
- static inline void rmv_page_order(struct page *page)
+ /*
+  * Frees a number of pages from the PCP lists
+  * Assumes all pages on list are in same zone, and of same order.
+@@ -1295,9 +1325,9 @@ static bool bulkfree_pcp_prepare(struct page *page)
+ static void free_pcppages_bulk(struct zone *zone, int count,
+ 					struct per_cpu_pages *pcp)
  {
- 	__ClearPageBuddy(page);
- 	set_page_private(page, 0);
- }
+-	int migratetype = 0;
+-	int batch_free = 0;
+-	bool isolated_pageblocks;
++	int migratetype = MIGRATE_MOVABLE;
++	int batch_free = 0, saved_count = count;
++	bool isolated_pageblocks, single_mt = false;
+ 	struct page *page, *tmp;
+ 	LIST_HEAD(head);
  
-+static inline void remove_from_buddy(struct page *page, struct zone *zone,
-+					unsigned int order)
-+{
-+	list_del(&page->lru);
-+	zone->free_area[order].nr_free--;
-+	rmv_page_order(page);
-+}
+@@ -1319,8 +1349,11 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 		} while (list_empty(list));
+ 
+ 		/* This is the only non-empty list. Free them all. */
+-		if (batch_free == MIGRATE_PCPTYPES)
++		if (batch_free == MIGRATE_PCPTYPES) {
+ 			batch_free = count;
++			if (batch_free == saved_count)
++				single_mt = true;
++		}
+ 
+ 		do {
+ 			unsigned long pfn, buddy_pfn;
+@@ -1359,9 +1392,14 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 	spin_lock(&zone->lock);
+ 	isolated_pageblocks = has_isolate_pageblock(zone);
+ 
++	if (!isolated_pageblocks && single_mt)
++		free_cluster_pages(zone, &head, migratetype, saved_count);
 +
- /*
-  * This function checks whether a page is free && is the buddy
-  * we can do coalesce a page and its buddy if
-@@ -845,13 +874,10 @@ static inline void __free_one_page(struct page *page,
- 		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
- 		 * merge with it and move up one order.
- 		 */
--		if (page_is_guard(buddy)) {
-+		if (page_is_guard(buddy))
- 			clear_page_guard(zone, buddy, order, migratetype);
--		} else {
--			list_del(&buddy->lru);
--			zone->free_area[order].nr_free--;
--			rmv_page_order(buddy);
--		}
-+		else
-+			remove_from_buddy(buddy, zone, order);
- 		combined_pfn = buddy_pfn & pfn;
- 		page = page + (combined_pfn - pfn);
- 		pfn = combined_pfn;
-@@ -883,8 +909,6 @@ static inline void __free_one_page(struct page *page,
- 	}
- 
- done_merging:
--	set_page_order(page, order);
--
  	/*
- 	 * If this is not the largest possible page, check if the buddy
- 	 * of the next-highest order is free. If it is, it's possible
-@@ -901,15 +925,12 @@ static inline void __free_one_page(struct page *page,
- 		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
- 		if (pfn_valid_within(buddy_pfn) &&
- 		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
--			list_add_tail(&page->lru,
--				&zone->free_area[order].free_list[migratetype]);
--			goto out;
-+			add_to_buddy_tail(page, zone, order, migratetype);
-+			return;
- 		}
- 	}
- 
--	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
--out:
--	zone->free_area[order].nr_free++;
-+	add_to_buddy_head(page, zone, order, migratetype);
- }
- 
- /*
-@@ -1731,9 +1752,7 @@ static inline void expand(struct zone *zone, struct page *page,
- 		if (set_page_guard(zone, &page[size], high, migratetype))
- 			continue;
- 
--		list_add(&page[size].lru, &area->free_list[migratetype]);
--		area->nr_free++;
--		set_page_order(&page[size], high);
-+		add_to_buddy_head(&page[size], zone, high, migratetype);
- 	}
- }
- 
-@@ -1877,9 +1896,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
- 							struct page, lru);
- 		if (!page)
- 			continue;
--		list_del(&page->lru);
--		rmv_page_order(page);
--		area->nr_free--;
-+		remove_from_buddy(page, zone, current_order);
- 		expand(zone, page, order, current_order, area, migratetype);
- 		set_pcppage_migratetype(page, migratetype);
- 		return page;
-@@ -2795,9 +2812,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 	}
- 
- 	/* Remove page from free list */
--	list_del(&page->lru);
--	zone->free_area[order].nr_free--;
--	rmv_page_order(page);
-+	remove_from_buddy(page, zone, order);
- 
- 	/*
- 	 * Set the pageblock if the isolated page is at least half of a
-@@ -7886,9 +7901,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		pr_info("remove from free list %lx %d %lx\n",
- 			pfn, 1 << order, end_pfn);
- #endif
--		list_del(&page->lru);
--		rmv_page_order(page);
--		zone->free_area[order].nr_free--;
-+		remove_from_buddy(page, zone, order);
- 		for (i = 0; i < (1 << order); i++)
- 			SetPageReserved((page+i));
- 		pfn += (1 << order);
+ 	 * Use safe version since after __free_one_page(),
+ 	 * page->lru.next will not point to original list.
++	 *
++	 * If free_cluster_pages() succeeds, head will be an empty list here.
+ 	 */
+ 	list_for_each_entry_safe(page, tmp, &head, lru) {
+ 		int mt = get_pcppage_migratetype(page);
 -- 
 2.14.3
