@@ -1,85 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751522AbeCTTgu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 15:36:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751320AbeCTTgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 15:36:47 -0400
-Date: Tue, 20 Mar 2018 15:36:43 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Patrik Torstensson <totte@google.com>,
-        Eric Biggers <ebiggers@google.com>
-Cc: gkaiser@google.com, linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        samitolvanen@google.com, Alasdair Kergon <agk@redhat.com>,
-        paulcrowley@google.com
-Subject: Re: Add an option to dm-verity to validate hashes at most once
-Message-ID: <20180320193643.GA11080@redhat.com>
-References: <20180306231456.210504-1-totte@google.com>
- <20180314190957.GB183724@google.com>
+        id S1751578AbeCTTkC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 15:40:02 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37482 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751458AbeCTTj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 15:39:59 -0400
+X-Google-Smtp-Source: AG47ELt13Er7PmLn0eFD9AVELoU+GMwaaLFREBfQ3oBeZdse8SK4to+71Z9+BWc4bEl1pRD46XHvZw==
+Date: Tue, 20 Mar 2018 12:39:57 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH 2/2] x86/unwind: Make CONFIG_UNWINDER_ORC=y the default
+ in kconfig for 64-bit
+Message-ID: <20180320193957.GG37438@google.com>
+References: <20171013052544.euk7yawni47lhmdq@gmail.com>
+ <9b1237bbe7244ed9cdf8db2dcb1253e37e1c341e.1507924831.git.jpoimboe@redhat.com>
+ <20180319185732.GD37438@google.com>
+ <20180319192910.wfbi656bxkrlurgf@treble>
+ <20180319203130.GE37438@google.com>
+ <20180319212053.e77dc3vmemfazt3b@treble>
+ <20180319232255.GF37438@google.com>
+ <20180320022803.i46ixerodrhzzewd@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180314190957.GB183724@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180320022803.i46ixerodrhzzewd@treble>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14 2018 at  3:09pm -0400,
-Eric Biggers <ebiggers@google.com> wrote:
+El Mon, Mar 19, 2018 at 09:28:03PM -0500 Josh Poimboeuf ha dit:
 
-> Hi Patrik,
-> 
-> On Tue, Mar 06, 2018 at 03:14:56PM -0800, Patrik Torstensson wrote:
-> > Add an option to dm-verity to validate hashes at most once
-> > to allow platforms that is CPU/memory contraint to be
-> > protected by dm-verity against offline attacks.
+> On Mon, Mar 19, 2018 at 04:22:55PM -0700, Matthias Kaehlcke wrote:
+> > > Here's a (surprisingly easy) fix for this particular issue, though I'd
+> > > be shocked if there weren't a bunch more issues lurking elsewhere.  Let
+> > > me know how it goes.
 > > 
-> > The option introduces a bitset that is used to check if
-> > a block has been validated before or not. A block can
-> > be validated more than once as there is no thread protection
-> > for the bitset.
+> > Thanks for having a look, this fixes the vast majority of warnings in
+> > a defconfig build!
+> 
+> Wow.  Consider me shocked :-)
+> 
+> > The remaining warnings are:
 > > 
-> > This patch has been developed and tested on entry-level
-> > Android Go devices.
-> > 
-> > Signed-off-by: Patrik Torstensson <totte@google.com>
-> > ---
-> >  drivers/md/dm-verity-target.c | 58 +++++++++++++++++++++++++++++++++--
-> >  drivers/md/dm-verity.h        |  1 +
-> >  2 files changed, 56 insertions(+), 3 deletions(-)
+> > arch/x86/mm/pti.o: warning: objtool: pti_init() falls through to next
+> > function pti_user_pagetable_walk_pmd()
+> > s/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
+> > fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
+> > fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
+> > fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
+> > fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls through to next function fops_u8_open()
 > 
-> The new option needs to be documented in Documentation/device-mapper/verity.txt,
-> including a description of what the option does as well as how it affects the
-> security properties of dm-verity.  There should also be a mention of why the
-> option applies to data blocks but not hash blocks, assuming that's intentional.
+> These all seem to be related to some weirdness with the UD2 instruction,
+> not necessarily an objtool issue per se.
 > 
-> verity_status() also needs to be updated to show the new option, otherwise it
-> will not be visible via the DM_TABLE_STATUS ioctl ('dmsetup table' on the
-> command line).
+> Any chance this fixes some of the warnings?  If not, I can try to build
+> with clang and look a little deeper.
 > 
-> Also the minor version number in the struct target_type needs to be incremented,
-> so that userspace can determine whether the option is supported.
-> 
-> >  
-> >  	for (b = 0; b < io->n_blocks; b++) {
-> >  		int r;
-> > +		sector_t cur_block = io->block + b;
-> >  		struct ahash_request *req = verity_io_hash_req(v, io);
-> >  
-> > +		if (v->validated_blocks &&
-> > +		    likely(test_bit(cur_block, v->validated_blocks))) {
-> > +			verity_bv_skip_block(v, io, &io->iter);
-> > +			continue;
-> > +		}
-> > +
-> >  		r = verity_hash_for_block(v, io, io->block + b,
-> 
-> Can you replace 'io->block + b' with 'cur_block' here as well?
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index ab4711c63601..315a8757b565 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -124,7 +124,12 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+>  # define ASM_UNREACHABLE
+>  #endif
+>  #ifndef unreachable
+> -# define unreachable() do { annotate_reachable(); do { } while (1); } while (0)
+> +#define unreachable() \
+> +	do {					\
+> +		annotate_unreachable();		\
+> +		barrier_before_unreachable();	\
+> +		__builtin_unreachable();	\
+> +	} while (0)
+>  #endif
 
-Patrik, any chance you could act on Eric's review feedback and post v2
-of this patch (assuming you still have a need for it)?
-
-Thanks,
-Mike
+Thanks, unfortunately negative on this one, all the warnings are still
+generated.
