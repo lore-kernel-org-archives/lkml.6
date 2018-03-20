@@ -1,82 +1,133 @@
-Return-Path: <sfr@canb.auug.org.au>
-X-Google-Smtp-Source: AG47ELuWGL/t+v/a6qi1wrlpH5kzzW7zi41tvryrjyN/RFJq//kZgSReRWKPJMowV9Z5HParqBfU
-ARC-Seal: i=1; a=rsa-sha256; t=1521628743; cv=none;
+Return-Path: <pratik.jain0509@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521534960; cv=none;
         d=google.com; s=arc-20160816;
-        b=mZ3ArL9kVZ1aKbuL24kOG+lUsKmUENo+m9SjBx6l1fnOHXJ9EZXNaE8z2g0fjBCGEg
-         zd90YJu0pXHz/RCwT72KRvVx8vv7elM4+jksOOF8v9tH4T/gGVadXZZBDfShjcZgwxSI
-         leYCGPAKHxLlt+hXzBrCa9t2kZ/WdOVZrE4olodieuMpbpsBFJ6b9jjwF8rodkkOHpub
-         mtFNLi/AoNvXcMAs39xl4mYRbcrmgudWUEtFRyyJin0zLMujRhjMRJ4qBk5zFU01kuFZ
-         YdLfAk80/3YYuiTCO9MjwbIdndxOx7DlJIvTETeZJJcpIUSbkooEFl+omv5Tp84ISy8S
-         9Dcw==
+        b=oaWrCkLIayXoMA4y/cI7q270kYbOXlJNKZjbQnVP1bR+iuO+MN5RjozHilo5GlERqq
+         8g6Y72whc746acmvh0ksY5a7Psu5XRsw1pKgUXgZkgvdM3xOqRPJBI1usYqSweuaE2Ng
+         MvGXdl3O6tBzj05MwFjPkbVxT9FXDAwQsi7cslMLJjkSwmjFByPBNNSM0x1SGWCwmrOg
+         k1DhBpcFolQ8+bm+cIIH0NVmLF/bP/dI3Mox6zm1tyHAfGV0M3vqEeeZF/JbYj5x4ryT
+         O1jNjN/L5rj43c2Ryh0s/OS8Zhn84B2pSk8XnCnmMwPk1DICrgyIhBIZkLfHEnQY4eRK
+         tVcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
-         :date:dkim-signature:arc-authentication-results;
-        bh=sCqlU0vHSQBXCUExV/exPvmEtXYfQTimLdExv1/E034=;
-        b=BWf1xX1ouLz3wNymF3Sd/piHUl6E1PnK+5ZrUe/elJ1SGQaZOlO5u7FA6rCo2xIM6R
-         ARE6E26KxgM6Wl/0m3iF9Ypasof4dlw69LlMWB1Srix32fufba9VgyUT9jzpI2pXADgD
-         fi0ztKRpon7Rj0RBPfJsAj4zu4k+mDDYpmqHYaiWeZyoR2pgGSgG1Lx74ilEbPuxo1BI
-         liZBmgQNFfuvGCONDDILYsnf//yQ4uFx9iDD6uuzB1BXS4v2kkRMFqlGbwSQzySm/nOi
-         sfHYRcxh7oOXUd1I3lJUtkrdm2W4lY8vARUl2wKLNmf4rlBpHA4/m3UNAkNqt1pRlvNK
-         leEw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=xEMrbHJt0TH9RNvzHLFDtOZKiVUX/9zpY5KNfHTTzmM=;
+        b=DJk6kaF8cnfRKgj+AQ1/5KqvdoEFPmhzXm7yzCPMQYyqF5x9t3XyMW/Oe3Xm+pX4D8
+         QNgNjGOw7Kjk1Kpyacvipk9l87qiKiv2uyVox8Ejxmf89Yud8LgwO7A6ymchVsh2d8Bm
+         +DmE4bJflr6P8EjbtPAXN5ajiMSfcBu+sUFstAcAch6TdLhPJ+1L0AvUroM2QXSejIs3
+         yyA/TTDjBMjGMnskr+MGTFxI2+McNkBXN8sB0cDAvm0USkj0RGHmcDNrWqfnVwIup5OA
+         nURDhRuKs5oJUhre+xhcv0PV9OXD06iFcdASe2HgN+elJpZu6DO1/Q7swdpmxo+rPwU1
+         rOcw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=Ang1Dl0h;
-       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HFaNS0S8;
+       spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=Ang1Dl0h;
-       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 21:38:22 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List
- <linux-next@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Message-ID: <20180321213822.31f8c0c8@canb.auug.org.au>
-In-Reply-To: <20180321100208.GA18281@kroah.com>
-References: <20180321191727.4d421df3@canb.auug.org.au>
-	<20180321100208.GA18281@kroah.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3WvXyeN2DsCsY8ydzGIVpN0"; protocol="application/pgp-signature"
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HFaNS0S8;
+       spf=pass (google.com: domain of pratik.jain0509@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pratik.jain0509@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELt0dvtkgeKsu1V5lvL/Xzabjoi4ZFrYWaY/jo2S62KvpPgVIYOR5ira6NtQMbVA2tKsGcQ14Q==
+From: Pratik Jain <pratik.jain0509@gmail.com>
+To: arnaud.patard@rtp-net.org
+Cc: linux-kernel@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	gregkh@linuxfoundation.org,
+	Pratik Jain <pratik.jain0509@gmail.com>
+Subject: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
+Date: Tue, 20 Mar 2018 14:05:49 +0530
+Message-Id: <20180320083549.6795-1-pratik.jain0509@gmail.com>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595534562081381621?=
-X-GMAIL-MSGID: =?utf-8?q?1595543381068996457?=
+X-GMAIL-THRID: =?utf-8?q?1595445043191954085?=
+X-GMAIL-MSGID: =?utf-8?q?1595445043191954085?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Refactored the function `XGIfb_search_refresh_rate` by removing a level
+of `if...else` block nesting. Removed unnecessary parantheses.
 
-Hi Greg,
+Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
+---
+ drivers/staging/xgifb/XGI_main_26.c | 63 +++++++++++++++++++------------------
+ 1 file changed, 33 insertions(+), 30 deletions(-)
 
-On Wed, 21 Mar 2018 11:02:08 +0100 Greg Kroah-Hartman <gregkh@linuxfoundati=
-on.org> wrote:
->
-> Patch is now queued up, thanks.
-
-Excellent.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqyNh4ACgkQAVBC80lX
-0GwUjQf/fqv5gWqizAo2LJFX2g+3obauUPYG77/OBJsKnYo5nM4h0ttDZNZpVQFU
-YsYSrrlZe3d96O4psV/C5hFNKc7je9aQeNhuV4UnROFyjWCOjoM/f5qiShsUtGBU
-78sw6SZNLNjbi2EIJ0XN4e+y6X8o7ZSX0+pX0G9ENQYaLKwFPFprdFLPTvqc7S9/
-1VymLhyBZB0zY8HKSBdVlwF3KVp92ycvhia8R8K+rMR2HzvrsQDK15/c8IHHyYQA
-1jh4uucdivennLw4Dxc+1OB49YiJz27kaemOHWbukTX6xybgTt0zBPdJdM0AYOI/
-N+p4hF0vXsFB5W0JzwIDhE0h/UASCA==
-=GqTN
------END PGP SIGNATURE-----
-
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0--
+diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
+index 10107de0119a..ef9a726cd35d 100644
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@ -544,41 +544,44 @@ static u8 XGIfb_search_refresh_rate(struct xgifb_video_info *xgifb_info,
+ 	yres = XGIbios_mode[xgifb_info->mode_idx].yres;
+ 
+ 	xgifb_info->rate_idx = 0;
+-	while ((XGIfb_vrate[i].idx != 0) && (XGIfb_vrate[i].xres <= xres)) {
+-		if ((XGIfb_vrate[i].xres == xres) &&
+-		    (XGIfb_vrate[i].yres == yres)) {
+-			if (XGIfb_vrate[i].refresh == rate) {
++	
++	// Skip values with less xres
++	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres < xres)
++		++i;
++
++	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres <= xres) {
++		if (XGIfb_vrate[i].yres != yres) {
++			++i;
++			continue;
++		}
++		if (XGIfb_vrate[i].refresh == rate) {
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
++		} else if (XGIfb_vrate[i].refresh > rate) {
++			if (XGIfb_vrate[i].refresh - rate <= 3) {
++				pr_debug("Adjusting rate from %d up to %d\n",
++					rate, XGIfb_vrate[i].refresh);
+ 				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
+-			} else if (XGIfb_vrate[i].refresh > rate) {
+-				if ((XGIfb_vrate[i].refresh - rate) <= 3) {
+-					pr_debug("Adjusting rate from %d up to %d\n",
+-						 rate, XGIfb_vrate[i].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i].refresh;
+-				} else if (((rate - XGIfb_vrate[i - 1].refresh)
+-						<= 2) && (XGIfb_vrate[i].idx
+-						!= 1)) {
+-					pr_debug("Adjusting rate from %d down to %d\n",
+-						 rate,
+-						 XGIfb_vrate[i - 1].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i - 1].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i - 1].refresh;
+-				}
+-				break;
+-			} else if ((rate - XGIfb_vrate[i].refresh) <= 2) {
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i].refresh;
++			} else if ((rate - XGIfb_vrate[i - 1].refresh <= 2)
++					&& (XGIfb_vrate[i].idx != 1)) {
+ 				pr_debug("Adjusting rate from %d down to %d\n",
+-					 rate, XGIfb_vrate[i].refresh);
+-				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
++					rate, XGIfb_vrate[i - 1].refresh);
++				xgifb_info->rate_idx = XGIfb_vrate[i - 1].idx;
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i - 1].refresh;
+ 			}
++			break;
++		} else if (rate - XGIfb_vrate[i].refresh <= 2) {
++			pr_debug("Adjusting rate from %d down to %d\n",
++				rate, XGIfb_vrate[i].refresh);
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
+ 		}
+-		i++;
++		++i;
+ 	}
++
+ 	if (xgifb_info->rate_idx > 0)
+ 		return xgifb_info->rate_idx;
+ 	pr_info("Unsupported rate %d for %dx%d\n",
+-- 
+2.16.2
