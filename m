@@ -1,84 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeCTH5U (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 03:57:20 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40036 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751527AbeCTH5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:57:18 -0400
-Subject: Re: [PATCH 1/2] powerpc/mm: Add missing tracepoint for tlbie
-To: Balbir Singh <bsingharora@gmail.com>,
-        Kumar Gala <galak@kernel.crashing.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <4ffd3d6143f991615ffe07f43952cbc62163d319.1521452718.git.christophe.leroy@c-s.fr>
- <20180320093940.56144adf@balbir.ozlabs.ibm.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <b619699e-319b-4c45-7dce-3c74d88d0379@c-s.fr>
-Date: Tue, 20 Mar 2018 08:57:15 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752004AbeCTH6o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 03:58:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37735 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751396AbeCTH6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:58:41 -0400
+X-Google-Smtp-Source: AG47ELtYawM31m7Bx9dVwVCsnMPQq37hZW4TEHiUU6Z+M4QRkQMpILN9N5pUHHRvz00TrsKs6WtY0KKawmZu5c7JfW0=
 MIME-Version: 1.0
-In-Reply-To: <20180320093940.56144adf@balbir.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5AB044C0.9060701@broadcom.com>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+ <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
+From: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+Date: Tue, 20 Mar 2018 14:58:38 +0700
+Message-ID: <CALFoz4aaEshpmyCxzut1t6cqSOSee4YP6vsi5G4Eei9m8hkZ3A@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Kalle Valo <kvalo@codeaurora.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arend,
 
+>Also I am not sure if the broken-sg-support is still needed. We added that for omap_hsmmc, but that has since changed to scatter-gather emulation so it might not be needed anymore.
+I can confirm it doesn't impact wifi performance in case of rk3288+ap6335.
 
-Le 19/03/2018 à 23:39, Balbir Singh a écrit :
-> On Mon, 19 Mar 2018 11:32:38 +0100 (CET)
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
->> commit 0428491cba927 ("powerpc/mm: Trace tlbie(l) instructions")
->> added tracepoints for tlbie calls, but _tlbil_va() was forgotten
+But I still have to set settings->bus.sdio.sd_head_align = 4 and
+settings->bus.sdio.sd_sgentry_align = 512, otherwise
+brcmf_sdiod_sglist_rw fails:
+
+  974.888452] net_ratelimit: 8 callbacks suppressed
+[  974.888457] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed -84
+[  974.901527] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes failed: -5
+[  974.910248] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
+[  975.018041] brcmfmac: brcmf_sdiod_sglist_rw: CMD53 sg block read failed -84
+[  975.025833] brcmfmac: brcmf_sdio_rxglom: glom read of 6144 bytes failed: -5
+[  975.033634] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame
+[  975.033924] dwmmc_rockchip ff0d0000.dwmmc: Unexpected command
+timeout, state 0
+[  975.049209] brcmfmac: brcmf_sdio_readframes: RXHEADER FAILED: -84
+[  975.056034] brcmfmac: brcmf_sdio_rxfail: abort command, terminate
+frame, send NAK
+[  975.068367] brcmfmac: brcmf_sdio_hdparse: HW header length too long
+[  975.075379] brcmfmac: brcmf_sdio_rxfail: terminate frame
+
+Regards,
+  Alex
+
+On 20 March 2018 at 06:16, Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+> + Uffe
+>
+> On 3/19/2018 6:55 PM, Florian Fainelli wrote:
 >>
->> Fixes: 0428491cba927 ("powerpc/mm: Trace tlbie(l) instructions")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/mm/mmu_decl.h | 2 ++
->>   1 file changed, 2 insertions(+)
+>> On 03/19/2018 07:10 AM, Alexey Roslyakov wrote:
+>>>
+>>> Hi Arend,
+>>> I appreciate your response. In my opinion, it has nothing to do with
+>>> SDIO host, because it defines "quirks" in the driver itself.
 >>
->> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
->> index 57fbc554c785..b9991e0c61a2 100644
->> --- a/arch/powerpc/mm/mmu_decl.h
->> +++ b/arch/powerpc/mm/mmu_decl.h
->> @@ -21,6 +21,7 @@
->>   #include <linux/mm.h>
->>   #include <asm/tlbflush.h>
->>   #include <asm/mmu.h>
->> +#include <asm/trace.h>
->>   
->>   #ifdef CONFIG_PPC_MMU_NOHASH
->>   
->> @@ -56,6 +57,7 @@ static inline void _tlbil_va(unsigned long address, unsigned int pid,
->>   			     unsigned int tsize, unsigned int ind)
->>   {
->>   	asm volatile ("tlbie %0; sync" : : "r" (address) : "memory");
->> +	trace_tlbie(pid, 0, address, 0, 0, 0, 0);
-> 
-> 
-> I did not really cover a whole lot of NOHASH, any idea why its
-> called tlbil_va and not _tlbie_va?
+>>
+>> It is not clear to me from your patch series whether the problem is that:
+>>
+>> - the SDIO device has a specific alignment requirements, which would be
+>> either a SDIO device driver limitation/issue or maybe the underlying
+>> hardware device/firmware requiring that
+>>
+>> - the SDIO host controller used is not capable of coping nicely with
+>> these said limitations
+>>
+>> It seems to me like what you are doing here is a) applicable to possibly
+>> more SDIO devices and host combinations, and b) should likely be done at
+>> the layer between the host and device, such that it is available to more
+>> combinations.
+>
+>
+> Indeed. That was my thought exactly and I can not imagine Uffe would push
+> back on that reasoning.
+>
+>>> If I get it right, you mean something like this:
+>>>
+>>> mmc3: mmc@1c12000 {
+>>> ...
+>>>          broken-sg-support;
+>>>          sd-head-align = 4;
+>>>          sd-sgentry-align = 512;
+>>>
+>>>          brcmf: wifi@1 {
+>>>                  ...
+>>>          };
+>>> };
+>>>
+>>> Where dt: bindings documentation for these entries should reside?
+>>> In generic MMC bindings? Well, this is the very special case and
+>>> mmc-linux maintainer will unlikely to accept these changes.
+>>> Also, extra kernel code modification might be required. It could make
+>>> quite trivial change much more complex.
+>>
+>>
+>> If the MMC maintainers are not copied on this patch series, it will
+>> likely be hard for them to identify this patch series and chime in...
+>
+>
+> The main question is whether this is indeed a "very special case" as Alexey
+> claims it to be or that it is likely to be applicable to other device and
+> host combinations as you are suggesting.
+>
+> If these properties are imposed by the host or host controller it would make
+> sense to have these in the mmc bindings.
+>
+>>>
+>>>> Also I am not sure if the broken-sg-support is still needed. We added
+>>>> that for omap_hsmmc, but that has since changed to scatter-gather emulation
+>>>> so it might not be needed anymore.
+>>>
+>>>
+>>> I've experienced the problem with rk3288 (dw-mmc host) and sdio
+>>> settings like above solved it.
+>>> Frankly, I haven't investigated any deeper which one of the settings
+>>> helped in my case yet...
+>>> I will try to get rid of broken-sg-support first and let you know if
+>>> it does make any difference.
+>
+>
+> Are you using some chromebook. I have some lying around here so I could also
+> look into it. What broadcom chipset do you have?
+>
+> Regards,
+> Arend
+>
+>
+>>> All the best,
+>>>    Alex.
+>>>
+>>> On 19 March 2018 at 16:31, Arend van Spriel
+>>> <arend.vanspriel@broadcom.com> wrote:
+>>>>
+>>>> On 3/19/2018 2:40 AM, Alexey Roslyakov wrote:
+>>>>>
+>>>>>
+>>>>> In case if the host has higher align requirements for SG items, allow
+>>>>> setting device-specific aligns for scatterlist items.
+>>>>>
+>>>>> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
+>>>>> ---
+>>>>>    Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>> | 5
+>>>>> +++++
+>>>>>    1 file changed, 5 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>> index 86602f264dce..187b8c1b52a7 100644
+>>>>> ---
+>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>> +++
+>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm43xx-fmac.txt
+>>>>> @@ -17,6 +17,11 @@ Optional properties:
+>>>>>          When not specified the device will use in-band SDIO
+>>>>> interrupts.
+>>>>>     - interrupt-names : name of the out-of-band interrupt, which must
+>>>>> be
+>>>>> set
+>>>>>          to "host-wake".
+>>>>> + - brcm,broken-sg-support : boolean flag to indicate that the SDIO
+>>>>> host
+>>>>> +       controller has higher align requirement than 32 bytes for each
+>>>>> +       scatterlist item.
+>>>>> + - brcm,sd-head-align : alignment requirement for start of data
+>>>>> buffer.
+>>>>> + - brcm,sd-sgentry-align : length alignment requirement for each sg
+>>>>> entry.
+>>>>
+>>>>
+>>>>
+>>>> Hi Alexey,
+>>>>
+>>>> Thanks for the patch. However, the problem with these is that they are
+>>>> characterizing the host controller and not the wireless device. So from
+>>>> device tree perspective , which is to describe the hardware, these
+>>>> properties should be SDIO host controller properties. Also I am not sure
+>>>> if
+>>>> the broken-sg-support is still needed. We added that for omap_hsmmc, but
+>>>> that has since changed to scatter-gather emulation so it might not be
+>>>> needed
+>>>> anymore.
+>>>>
+>>>> Regards,
+>>>> Arend
+>>>
+>>>
+>>>
+>>>
+>>
+>>
+>
 
-Seems it comes from 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ba3418b8b1c85ee1771c63f1dd12041614e56ff
 
-Kumar ?
 
-> 
-> The first field is really the lpid and should be 0 for non-virtualized
-> systems. Can I recommend that we rs field for pid and the rb field for
-> address? so effectively something like
-
-Yes having the address in rb is expected since it is the name of the 
-only field tlbie has in the 32bits instruction set.
-
-Yes I can use rb for the pid.
-
-Christophe
+-- 
+With best regards,
+  Alexey Roslyakov
+Email: alexey.roslyakov@gmail.com
