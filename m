@@ -1,52 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeCTIJB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 04:09:01 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33310 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeCTIIz (ORCPT
+        id S1752130AbeCTIJg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 04:09:36 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:57753 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeCTIJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:08:55 -0400
-Date: Tue, 20 Mar 2018 09:08:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 1/2] sched/debug: fix per-task line continuation for
- console
-Message-ID: <20180320080852.GM4043@hirez.programming.kicks-ass.net>
-References: <1521484555-8620-1-git-send-email-joe.lawrence@redhat.com>
- <1521484555-8620-2-git-send-email-joe.lawrence@redhat.com>
- <20180319201723.GK4043@hirez.programming.kicks-ass.net>
- <6b826ab1-c6a4-244e-ace6-d735b415a268@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b826ab1-c6a4-244e-ace6-d735b415a268@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 20 Mar 2018 04:09:33 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 3/4] Bluetooth: trailing statements
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180319113222.6725-3-paulmcquad@gmail.com>
+Date: Tue, 20 Mar 2018 09:09:31 +0100
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <49319155-4ADA-4913-8177-B4E2AE1D83EA@holtmann.org>
+References: <20180319113222.6725-1-paulmcquad@gmail.com>
+ <20180319113222.6725-3-paulmcquad@gmail.com>
+To: Paul McQuade <paulmcquad@gmail.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 04:43:28PM -0400, Joe Lawrence wrote:
-> On 03/19/2018 04:17 PM, Peter Zijlstra wrote:
+Hi Paul,
 
-> I don't have the commit offhand that changed the printk behavior, but
-> from observation:
-
-4bcc595ccd80 ("printk: reinstate KERN_CONT for printing continuation lines")
-
-and thereabout I think.
-
-> > Does pr_cont("\n") DTRT? it seems like something weird.
-> > 
+> trailing statements should be on next line
 > 
-> Yeah, pr_cont() is kind of a hack.  It will terminate a line if that's
-> the first newline, but as demonstrated above, I don't think it likes
-> extra newline chars.
+> Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
+> ---
+> drivers/bluetooth/hci_ll.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+> index 1b4417a623a4..06d859d82de8 100644
+> --- a/drivers/bluetooth/hci_ll.c
+> +++ b/drivers/bluetooth/hci_ll.c
+> @@ -567,7 +567,8 @@ static int read_local_version(struct hci_dev *hdev)
+> 	version = le16_to_cpu(ver->lmp_subver);
+> 
+> out:
+> -	if (err) bt_dev_err(hdev, "Failed to read TI version info: %d", err);
+> +	if (err)
+> +	bt_dev_err(hdev, "Failed to read TI version info: %d", err);
 
-Fair enough I suppose, just a bit weird.
+actually this needs to be indented one further since it is the action of the if clause.
 
-> A better fix would be to marshal the text into temp buffer then dump it
-> out.  Dunno if you prefer that kind of churn for these stats.
+Regards
 
-Yeah, not worth it, simple is better here.
+Marcel
