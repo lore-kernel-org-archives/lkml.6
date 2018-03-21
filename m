@@ -1,114 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeCUSQT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:16:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751416AbeCUSQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:16:18 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM client quit v2
-Date: Wed, 21 Mar 2018 14:16:14 -0400
-Message-Id: <20180321181614.9968-1-jglisse@redhat.com>
-In-Reply-To: <20180320020038.3360-5-jglisse@redhat.com>
-References: <20180320020038.3360-5-jglisse@redhat.com>
+        id S1752636AbeCUSPh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:15:37 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38133 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeCUSPe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 14:15:34 -0400
+X-Google-Smtp-Source: AG47ELuvwwPRYrwjfZsm0plzlGbNagYJbCPs+GfuCgdUHKFmRkYA+wIoaux1T0IlYh9piwty8dZUKvEEBdCE5RpkU8U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321074634.dzpyjz3ia46snodh@gmail.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com> <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com> <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
+ <20180321074634.dzpyjz3ia46snodh@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Mar 2018 11:15:32 -0700
+X-Google-Sender-Auth: Sq0edLDRaZQ8jmfOFGtImab0SOA
+Message-ID: <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        David Laight <David.Laight@aculab.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+On Wed, Mar 21, 2018 at 12:46 AM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> So I added a bit of instrumentation and the current state of things is that on
+> 64-bit x86 every single task has an initialized FPU, every task has the exact
+> same, fully filled in xfeatures (XINUSE) value:
 
-This code was lost in translation at one point. This properly call
-mmu_notifier_unregister_no_release() once last user is gone. This
-fix the zombie mm_struct as without this patch we do not drop the
-refcount we have on it.
+Bah. Your CPU is apparently some old crud that barely has AVX. Of
+course all those features are enabled.
 
-Changed since v1:
-  - close race window between a last mirror unregistering and a new
-    mirror registering, which could have lead to use after free()
-    kind of bug
+> Note that this is with an AVX (128-bit) supporting CPU:
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
----
- mm/hmm.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+That's weak even by modern standards.
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 6088fa6ed137..f75aa8df6e97 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -222,13 +222,24 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
- 	if (!mm || !mirror || !mirror->ops)
- 		return -EINVAL;
- 
-+again:
- 	mirror->hmm = hmm_register(mm);
- 	if (!mirror->hmm)
- 		return -ENOMEM;
- 
- 	down_write(&mirror->hmm->mirrors_sem);
--	list_add(&mirror->list, &mirror->hmm->mirrors);
--	up_write(&mirror->hmm->mirrors_sem);
-+	if (mirror->hmm->mm == NULL) {
-+		/*
-+		 * A racing hmm_mirror_unregister() is about to destroy the hmm
-+		 * struct. Try again to allocate a new one.
-+		 */
-+		up_write(&mirror->hmm->mirrors_sem);
-+		mirror->hmm = NULL;
-+		goto again;
-+	} else {
-+		list_add(&mirror->list, &mirror->hmm->mirrors);
-+		up_write(&mirror->hmm->mirrors_sem);
-+	}
- 
- 	return 0;
- }
-@@ -244,10 +255,30 @@ EXPORT_SYMBOL(hmm_mirror_register);
- void hmm_mirror_unregister(struct hmm_mirror *mirror)
- {
- 	struct hmm *hmm = mirror->hmm;
-+	bool should_unregister = false;
-+	struct mm_struct *mm;
-+
-+	if (list_empty(&mirror->list))
-+		return;
- 
- 	down_write(&hmm->mirrors_sem);
- 	list_del_init(&mirror->list);
-+	should_unregister = list_empty(&hmm->mirrors);
-+	mm = hmm->mm;
-+	hmm->mm = NULL;
- 	up_write(&hmm->mirrors_sem);
-+
-+	if (!should_unregister || mm == NULL)
-+		return;
-+
-+	spin_lock(&mm->page_table_lock);
-+	if (mm->hmm == hmm) {
-+		mm->hmm = NULL;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+
-+	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
-+	kfree(hmm);
- }
- EXPORT_SYMBOL(hmm_mirror_unregister);
- 
--- 
-2.14.3
+I have MPX bounds and MPX CSR on my old Skylake.
+
+And the real worry is things like AVX-512 etc, which is exactly when
+things like "save and restore one ymm register" will quite likely
+clear the upper bits of the zmm register.
+
+And yes, we can have some statically patched code that takes that into
+account, and saves the whole zmm register when AVX512 is on, but the
+whole *point* of the dynamic XSAVES thing is actually that Intel wants
+to be able enable new user-space features without having to wait for
+OS support. Literally. That's why and how it was designed.
+
+And saving a couple of zmm registers is actually pretty hard. They're
+big. Do you want to allocate 128 bytes of stack space, preferably
+64-byte aligned, for a save area? No. So now it needs to be some kind
+of per-thread (or maybe per-CPU, if we're willing to continue to not
+preempt) special save area too.
+
+And even then, it doesn't solve the real worry of "maybe there will be
+odd interactions with future extensions that we don't even know of".
+
+All this to do a 32-byte PIO access, with absolutely zero data right
+now on what the win is?
+
+Yes, yes, I can find an Intel white-paper that talks about setting WC
+and then using xmm and ymm instructions to write a single 64-byte
+burst over PCIe, and I assume that is where the code and idea came
+from. But I don't actually see any reason why a burst of 8 regular
+quad-word bytes wouldn't cause a 64-byte burst write too.
+
+So right now this is for _one_ odd rdma controller, with absolutely
+_zero_ performance numbers, and a very high likelihood that it does
+not matter in the least.
+
+And if there are some atomicity concerns ("we need to guarantee a
+single atomic access for race conditions with the hardware"), they are
+probably bogus and misplaced anyway, since
+
+ (a) we can't guarantee that AVX2 exists in the first place
+
+ (b) we can't guarantee that %ymm register write will show up on any
+bus as a single write transaction anyway
+
+So as far as I can tell, there are basically *zero* upsides, and a lot
+of potential downsides.
+
+                Linus
