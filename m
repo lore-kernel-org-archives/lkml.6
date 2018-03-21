@@ -1,170 +1,185 @@
-Date: Wed, 14 Mar 2018 12:54:17 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Ooi, Joyce" <joyce.ooi@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	Ong Hean Loong <hean.loong.ong@intel.com>,
-	Yves Vandervennet <yves.vandervennet@intel.com>
-Subject: Re: [PATCH] drivers/misc: Add Intel interrupt latency counter driver
-Message-ID: <20180314115417.GB25368@kroah.com>
-References: <1521026710-24811-1-git-send-email-joyce.ooi@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521026710-24811-1-git-send-email-joyce.ooi@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-223322-1521648858-2-6277538825748531740
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521648857; b=SY2yh/2m5oWry5/57Nwmo1DvQMfogud492HrEFZ6PfuzoH1
+    ZuL6SwZ7uATulfEtTtiAkGAwX24Ojmd1MQhO9IMoBNdJGr0i6Iesvoi3ahgho/8B
+    Dcbw7Z2fO8kk0t/GcZQw6UbZC/xYstVgNRBsktUCpGgQ9IMr0eGuDpss0L18DMmR
+    NMxTfx5ajjcxy0TCeyrL5ZJXAZVy7CHSd0z68L4vgOpNBVyfw7GfA2zssS5R2cED
+    n5xwnmlb9q3TkUnS+wDSDoxWkryex8g2MYvB0+dmzuldKVDVw3GppBokBuTwLQ9+
+    TATXvFZDA7s1P9dycDwkTiLL4Yf/iar7Vtw7Yow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521648857;
+    bh=YyHFmH8NLLpx4oecmnng8mvI/WVX9oW1qbpdu1iBLUc=; b=sWCH9h8Pcab/
+    LNksTmH5p/1Aku/T31JuhzIscWXSTXQOGeeEeQGCV7MLLPgLor+byhKceHUb1CrD
+    dRfYCzGkGMm6mb6rwr9tMdtQpWioWLx7x1Pwpvx6MDK2tVZnlbAHZRxl9Orq7A6/
+    VSAqzwFwet674rVtRQsirp/8W0hGSEw3Pl9v9dhnCiDsQNyJyQQ4je6SMzyEtvHP
+    0vhKaSiNfTVH5d+iS1xKyJVDw54lbX4qmSGt0LhEWFMoIIu4NoZEOygra1Qa+pXN
+    cAHov0scm3ZuZbDd96UB5yp3UbSi/XnTgIT0/w5+NyDKIOun3jPkDcklBb7xmxWp
+    upx/U4+3Lg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=aBvGNVM1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=aBvGNVM1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752437AbeCUQOO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 12:14:14 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:56390 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752028AbeCUQON (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Mar 2018 12:14:13 -0400
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
+Subject: [PATCH v2] shm: add split function to shm_vm_ops
+Date: Wed, 21 Mar 2018 09:13:14 -0700
+Message-Id: <20180321161314.7711-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
+References: <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 07:25:10PM +0800, Ooi, Joyce wrote:
-> Adding Intel interrupt latency counter driver support. This driver works
-> together with the Intel interrupt latency driver soft IP to measure the
-> time from the interrupt being asserted to the execution of the interrupt
-> service routine. This driver and soft ip supports for both edge and level
-> interrupt.
-> 
-> Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
+If System V shmget/shmat operations are used to create a hugetlbfs
+backed mapping, it is possible to munmap part of the mapping and
+split the underlying vma such that it is not huge page aligned.
+This will untimately result in the following BUG:
 
-Why has no one else from Intel reviewed this and signed-off on the
-patch?  Please always do that, don't make me do Intel-internal-review :)
+kernel BUG at /build/linux-jWa1Fv/linux-4.15.0/mm/hugetlb.c:3310!
+Oops: Exception in kernel mode, sig: 5 [#1]
+LE SMP NR_CPUS=2048 NUMA PowerNV
+Modules linked in: kcm nfc af_alg caif_socket caif phonet fcrypt
+		8<--8<--8<--8< snip 8<--8<--8<--8<
+CPU: 18 PID: 43243 Comm: trinity-subchil Tainted: G         C  E
+4.15.0-10-generic #11-Ubuntu
+NIP:  c00000000036e764 LR: c00000000036ee48 CTR: 0000000000000009
+REGS: c000003fbcdcf810 TRAP: 0700   Tainted: G         C  E
+(4.15.0-10-generic)
+MSR:  9000000000029033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24002222  XER:
+20040000
+CFAR: c00000000036ee44 SOFTE: 1
+GPR00: c00000000036ee48 c000003fbcdcfa90 c0000000016ea600 c000003fbcdcfc40
+GPR04: c000003fd9858950 00007115e4e00000 00007115e4e10000 0000000000000000
+GPR08: 0000000000000010 0000000000010000 0000000000000000 0000000000000000
+GPR12: 0000000000002000 c000000007a2c600 00000fe3985954d0 00007115e4e00000
+GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+GPR20: 00000fe398595a94 000000000000a6fc c000003fd9858950 0000000000018554
+GPR24: c000003fdcd84500 c0000000019acd00 00007115e4e10000 c000003fbcdcfc40
+GPR28: 0000000000200000 00007115e4e00000 c000003fbc9ac600 c000003fd9858950
+NIP [c00000000036e764] __unmap_hugepage_range+0xa4/0x760
+LR [c00000000036ee48] __unmap_hugepage_range_final+0x28/0x50
+Call Trace:
+[c000003fbcdcfa90] [00007115e4e00000] 0x7115e4e00000 (unreliable)
+[c000003fbcdcfb50] [c00000000036ee48]
+__unmap_hugepage_range_final+0x28/0x50
+[c000003fbcdcfb80] [c00000000033497c] unmap_single_vma+0x11c/0x190
+[c000003fbcdcfbd0] [c000000000334e14] unmap_vmas+0x94/0x140
+[c000003fbcdcfc20] [c00000000034265c] exit_mmap+0x9c/0x1d0
+[c000003fbcdcfce0] [c000000000105448] mmput+0xa8/0x1d0
+[c000003fbcdcfd10] [c00000000010fad0] do_exit+0x360/0xc80
+[c000003fbcdcfdd0] [c0000000001104c0] do_group_exit+0x60/0x100
+[c000003fbcdcfe10] [c000000000110584] SyS_exit_group+0x24/0x30
+[c000003fbcdcfe30] [c00000000000b184] system_call+0x58/0x6c
+Instruction dump:
+552907fe e94a0028 e94a0408 eb2a0018 81590008 7f9c5036 0b090000 e9390010
+7d2948f8 7d2a2838 0b0a0000 7d293038 <0b090000> e9230086 2fa90000 419e0468
+---[ end trace ee88f958a1c62605 ]---
 
-> ---
->  .../misc/intel-interrupt-latency-counter.txt       |   49 ++++
->  drivers/misc/intel_ilc.c                           |  299 ++++++++++++++++++++
->  2 files changed, 348 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/misc/intel-interrupt-latency-counter.txt
->  create mode 100644 drivers/misc/intel_ilc.c
-> 
-> diff --git a/Documentation/devicetree/bindings/misc/intel-interrupt-latency-counter.txt b/Documentation/devicetree/bindings/misc/intel-interrupt-latency-counter.txt
-> new file mode 100644
-> index 0000000..9955550
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/intel-interrupt-latency-counter.txt
+This bug was introduced by commit 31383c6865a5 ("mm, hugetlbfs:
+introduce ->split() to vm_operations_struct").  A split function
+was added to vm_operations_struct to determine if a mapping can
+be split.  This was mostly for device-dax and hugetlbfs mappings
+which have specific alignment constraints.
 
-You forgot to cc: the correct device tree people :(
+Mappings initiated via shmget/shmat have their original vm_ops
+overwritten with shm_vm_ops.  shm_vm_ops functions will call back
+to the original vm_ops if needed.  Add such a split function to
+shm_vm_ops.
 
-> --- /dev/null
-> +++ b/drivers/misc/intel_ilc.c
-> @@ -0,0 +1,299 @@
-> +/*
-> + * Copyright (C) 2018 Intel Corporation. All rights reserved
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along with
-> + * this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
+Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reported by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: stable@vger.kernel.org
+---
+Changes in v2
+  * Updated commit message
+  * Cc stable
 
-Please just use the SPDX single line for this, as documented in the
-kernel Documentation/ directory.
+ ipc/shm.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> +
-> +#include <linux/device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kfifo.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sysfs.h>
-> +
-> +#define DRV_NAME			"intel_ilc"
-> +#define	CTRL_REG			0x80
-> +#define FREQ_REG			0x84
-> +#define	STP_REG				0x88
-> +#define VLD_REG				0x8C
-> +#define	ILC_MAX_PORTS		32
-> +#define ILC_FIFO_DEFAULT	32
-> +#define ILC_ENABLE			0x01
-> +#define	CHAR_SIZE			10
-> +#define POLL_INTERVAL		1
-> +#define GET_PORT_COUNT(_val)		((_val & 0x7C) >> 2)
-> +#define GET_VLD_BIT(_val, _offset)	(((_val) >> _offset) & 0x1)
-> +
-> +struct intel_ilc {
-> +	struct platform_device	*pdev;
-> +	void __iomem			*regs;
-> +	unsigned int			port_count;
-> +	unsigned int			irq;
-> +	unsigned int			channel_offset;
-> +	unsigned int			interrupt_channels[ILC_MAX_PORTS];
-> +	struct kfifo			kfifos[ILC_MAX_PORTS];
-> +	struct device_attribute dev_attr[ILC_MAX_PORTS];
-> +	struct delayed_work     ilc_work;
-> +	char					sysfs[ILC_MAX_PORTS][CHAR_SIZE];
-> +	u32						fifo_depth;
-> +};
-> +
-> +static int ilc_irq_lookup(struct intel_ilc *ilc, int irq)
-> +{
-> +	int i;
-> +	for (i = 0; i < ilc->port_count; i++) {
-> +		if (irq == platform_get_irq(ilc->pdev, i))
-> +			return i;
-> +	}
-> +	return -EPERM;
-> +}
-> +
-> +static ssize_t ilc_show_counter(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	int ret, i, id, fifo_len;
-> +	unsigned int fifo_buf[ILC_MAX_PORTS];
-> +	char	temp[10];
-> +	struct  intel_ilc *ilc = dev_get_drvdata(dev);
-> +
-> +	fifo_len = 0;
-> +	ret = kstrtouint(attr->attr.name, 0, &id);
-> +
-> +	for (i = 0; i < ilc->port_count; i++) {
-> +		if (id == (ilc->interrupt_channels[i])) {
-> +			/*Check for kfifo length*/
-> +			fifo_len = kfifo_len(&ilc->kfifos[i])
-> +				/sizeof(unsigned int);
-> +			if (fifo_len <= 0) {
-> +				dev_info(&ilc->pdev->dev, "Fifo for interrupt %s is empty\n",
-> +					attr->attr.name);
-
-dev_err()?  What can someone do with this information?
-
-> +			return 0;
-> +			}
-
-Are you sure you ran checkpatch.pl on this code before sending it out?
-Please do so.
-
-> +			/*Read from kfifo*/
-> +			ret = kfifo_out(&ilc->kfifos[i], &fifo_buf,
-> +				kfifo_len(&ilc->kfifos[i]));
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < fifo_len; i++) {
-> +		sprintf(temp, "%u\n", fifo_buf[i]);
-> +		strcat(buf, temp);
-> +	}
-
-sysfs is "one value per file", which I don't think you are doing here :(
-
-Again, go get internal review of your code, this just makes me really
-grumpy as you have access to resources that not many others do, yet you
-do not take advantage of it and force the community to do their work for
-them :(
-
-Also, you forgot Documentation/ABI/ entries for all of your new sysfs
-files, which are requried.
-
-Please do all of this and then resend, and I'm going to require multiple
-signed-off-by: lines from other Intel developers before I will accept
-this.
-
-thanks,
-
-greg k-h
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 4643865e9171..93e0e3a4d009 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -386,6 +386,17 @@ static int shm_fault(struct vm_fault *vmf)
+ 	return sfd->vm_ops->fault(vmf);
+ }
+ 
++static int shm_split(struct vm_area_struct *vma, unsigned long addr)
++{
++	struct file *file = vma->vm_file;
++	struct shm_file_data *sfd = shm_file_data(file);
++
++	if (sfd->vm_ops && sfd->vm_ops->split)
++		return sfd->vm_ops->split(vma, addr);
++
++	return 0;
++}
++
+ #ifdef CONFIG_NUMA
+ static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+ {
+@@ -510,6 +521,7 @@ static const struct vm_operations_struct shm_vm_ops = {
+ 	.open	= shm_open,	/* callback for a new vm-area open */
+ 	.close	= shm_close,	/* callback for when the vm-area is released */
+ 	.fault	= shm_fault,
++	.split	= shm_split,
+ #if defined(CONFIG_NUMA)
+ 	.set_policy = shm_set_policy,
+ 	.get_policy = shm_get_policy,
+-- 
+2.13.6
