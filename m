@@ -1,64 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751806AbeCUJic (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:38:32 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43254 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeCUJia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:38:30 -0400
-X-Google-Smtp-Source: AG47ELul47a6GEo1O899kVwSlfgcW3Y94/+eOn4iZYbJ1aJPkHdiRnDXxTI2kkVyk4+Z0ck04nhaGy3X+dK0J1zTlUU=
+        id S1751662AbeCUJk1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:40:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751405AbeCUJkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:40:25 -0400
+Subject: Re: [RFC PATCH 0/3] Salted build ids via linker sections
+To: Laura Abbott <labbott@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        mjw@fedoraproject.org, "H . J . Lu" <hjl.tools@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
+        Cary Coutant <ccoutant@gmail.com>
+References: <20180321014635.29113-1-labbott@redhat.com>
+From: Nick Clifton <nickc@redhat.com>
+Organization: Red Hat
+Message-ID: <00fd0e10-2c64-7a19-dd01-ec1a4440933d@redhat.com>
+Date: Wed, 21 Mar 2018 09:40:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180321095047.3aee181e@canb.auug.org.au>
-References: <20180321095047.3aee181e@canb.auug.org.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 21 Mar 2018 17:38:28 +0800
-X-Google-Sender-Auth: dJnAhPljMYBWMn8kcpcQ-0Nsscs
-Message-ID: <CAK8P3a1Njy=PWw+V0bc06z9VU-wPqGn1W8e1Lvc_hkb5A5UPLw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with the asm-generic tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180321014635.29113-1-labbott@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 6:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm64 tree got a conflict in:
->
->   include/uapi/asm-generic/siginfo.h
->
-> between commit:
->
->   0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally")
->
-> from the asm-generic tree and commit:
->
->   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exceptions")
->
-> from the arm64 tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi Laura,
 
->  +#define __FPE_INVDEC  13      /* invalid decimal digit */
-> - #define NSIGFPE               13
-> + #define FPE_FLTUNK    14      /* undiagnosed floating-point exception */
-> + #define NSIGFPE               14
+> This is an implementation of the counter proposal. If an environment variable
+> is set, that value gets added as a .comment section to the necessary binaries.
 
-The merge looks correct to me. I'm still rebasing my asm-generic tree
-to integrate incoming Acks, so I think we're stuck with this one for a
-bit.
+This is not really my purview but ... can I just say that I really do not like
+using environment variables to control build behaviour.  It makes reproducing a
+build much harder.  Especially when you are trying to reproduce a bug report from
+a user who does not even know that the environment variable exits.
 
-        Arnd
+Cheers
+  Nick
