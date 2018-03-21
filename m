@@ -1,253 +1,276 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeCUC3G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:29:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45182 "EHLO mail.kernel.org"
+        id S1752303AbeCUC3K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:29:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751481AbeCUCV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751843AbeCUCV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 22:21:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3632183A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061AD21834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022125.143851826@goodmis.org>
+Message-Id: <20180321022124.968684143@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:21:04 -0400
+Date: Tue, 20 Mar 2018 22:21:03 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 12/46] tracing: Add per-element variable support to tracing_map
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>
+Subject: [for-next][PATCH 11/46] tracing: Add hist trigger timestamp support
 References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0012-tracing-Add-per-element-variable-support-to-tracing_.patch
+Content-Disposition: inline; filename=0011-tracing-Add-hist-trigger-timestamp-support.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-In order to allow information to be passed between trace events, add
-support for per-element variables to tracing_map.  This provides a
-means for histograms to associate a value or values with an entry when
-it's saved or updated, and retrieved by a subsequent event occurrences.
+Add support for a timestamp event field.  This is actually a 'pseudo-'
+event field in that it behaves like it's part of the event record, but
+is really part of the corresponding ring buffer event.
 
-Variables can be set using tracing_map_set_var() and read using
-tracing_map_read_var().  tracing_map_var_set() returns true or false
-depending on whether or not the variable has been set or not, which is
-important for event-matching applications.
+To make use of the timestamp field, users can specify
+"common_timestamp" as a field name for any histogram.  Note that this
+doesn't make much sense on its own either as either a key or value,
+but needs to be supported even so, since follow-on patches will add
+support for making use of this field in time deltas.  The
+common_timestamp 'field' is not a bona fide event field - so you won't
+find it in the event description - but rather it's a synthetic field
+that can be used like a real field.
 
-tracing_map_read_var_once() reads the variable and resets it to the
-'unset' state, implementing read-once variables, which are also
-important for event-matching uses.
+Note that the use of this field requires the ring buffer be put into
+'absolute timestamp' mode, which saves the complete timestamp for each
+event rather than an offset.  This mode will be enabled if and only if
+a histogram makes use of the "common_timestamp" field.
 
-Link: http://lkml.kernel.org/r/7fa001108252556f0c6dd9d63145eabfe3370d1a.1516069914.git.tom.zanussi@linux.intel.com
+Link: http://lkml.kernel.org/r/97afbd646ed146e26271f3458b4b33e16d7817c2.1516069914.git.tom.zanussi@linux.intel.com
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Baohong Liu <baohong.liu@intel.com>
+[kasan use-after-free fix]
+Signed-off-by: Vedang Patel <vedang.patel@intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/tracing_map.c | 108 +++++++++++++++++++++++++++++++++++++++++++++
- kernel/trace/tracing_map.h |  11 +++++
- 2 files changed, 119 insertions(+)
+ kernel/trace/trace_events_hist.c | 94 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 71 insertions(+), 23 deletions(-)
 
-diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
-index f47a4d54bcf0..5cadb1b8b5fe 100644
---- a/kernel/trace/tracing_map.c
-+++ b/kernel/trace/tracing_map.c
-@@ -66,6 +66,73 @@ u64 tracing_map_read_sum(struct tracing_map_elt *elt, unsigned int i)
- 	return (u64)atomic64_read(&elt->fields[i].sum);
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index e4368bb7ba30..a793f8c04830 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -89,6 +89,12 @@ static u64 hist_field_log2(struct hist_field *hist_field, void *event,
+ 	return (u64) ilog2(roundup_pow_of_two(val));
  }
  
-+/**
-+ * tracing_map_set_var - Assign a tracing_map_elt's variable field
-+ * @elt: The tracing_map_elt
-+ * @i: The index of the given variable associated with the tracing_map_elt
-+ * @n: The value to assign
-+ *
-+ * Assign n to variable i associated with the specified tracing_map_elt
-+ * instance.  The index i is the index returned by the call to
-+ * tracing_map_add_var() when the tracing map was set up.
-+ */
-+void tracing_map_set_var(struct tracing_map_elt *elt, unsigned int i, u64 n)
++static u64 hist_field_timestamp(struct hist_field *hist_field, void *event,
++				struct ring_buffer_event *rbe)
 +{
-+	atomic64_set(&elt->vars[i], n);
-+	elt->var_set[i] = true;
++	return ring_buffer_event_time_stamp(rbe);
 +}
 +
-+/**
-+ * tracing_map_var_set - Return whether or not a variable has been set
-+ * @elt: The tracing_map_elt
-+ * @i: The index of the given variable associated with the tracing_map_elt
-+ *
-+ * Return true if the variable has been set, false otherwise.  The
-+ * index i is the index returned by the call to tracing_map_add_var()
-+ * when the tracing map was set up.
-+ */
-+bool tracing_map_var_set(struct tracing_map_elt *elt, unsigned int i)
-+{
-+	return elt->var_set[i];
-+}
-+
-+/**
-+ * tracing_map_read_var - Return the value of a tracing_map_elt's variable field
-+ * @elt: The tracing_map_elt
-+ * @i: The index of the given variable associated with the tracing_map_elt
-+ *
-+ * Retrieve the value of the variable i associated with the specified
-+ * tracing_map_elt instance.  The index i is the index returned by the
-+ * call to tracing_map_add_var() when the tracing map was set
-+ * up.
-+ *
-+ * Return: The variable value associated with field i for elt.
-+ */
-+u64 tracing_map_read_var(struct tracing_map_elt *elt, unsigned int i)
-+{
-+	return (u64)atomic64_read(&elt->vars[i]);
-+}
-+
-+/**
-+ * tracing_map_read_var_once - Return and reset a tracing_map_elt's variable field
-+ * @elt: The tracing_map_elt
-+ * @i: The index of the given variable associated with the tracing_map_elt
-+ *
-+ * Retrieve the value of the variable i associated with the specified
-+ * tracing_map_elt instance, and reset the variable to the 'not set'
-+ * state.  The index i is the index returned by the call to
-+ * tracing_map_add_var() when the tracing map was set up.  The reset
-+ * essentially makes the variable a read-once variable if it's only
-+ * accessed using this function.
-+ *
-+ * Return: The variable value associated with field i for elt.
-+ */
-+u64 tracing_map_read_var_once(struct tracing_map_elt *elt, unsigned int i)
-+{
-+	elt->var_set[i] = false;
-+	return (u64)atomic64_read(&elt->vars[i]);
-+}
-+
- int tracing_map_cmp_string(void *val_a, void *val_b)
- {
- 	char *a = val_a;
-@@ -170,6 +237,28 @@ int tracing_map_add_sum_field(struct tracing_map *map)
- 	return tracing_map_add_field(map, tracing_map_cmp_atomic64);
- }
+ #define DEFINE_HIST_FIELD_FN(type)					\
+ 	static u64 hist_field_##type(struct hist_field *hist_field,	\
+ 				     void *event,			\
+@@ -135,6 +141,7 @@ enum hist_field_flags {
+ 	HIST_FIELD_FL_SYSCALL		= 1 << 7,
+ 	HIST_FIELD_FL_STACKTRACE	= 1 << 8,
+ 	HIST_FIELD_FL_LOG2		= 1 << 9,
++	HIST_FIELD_FL_TIMESTAMP		= 1 << 10,
+ };
  
-+/**
-+ * tracing_map_add_var - Add a field describing a tracing_map var
-+ * @map: The tracing_map
-+ *
-+ * Add a var to the map and return the index identifying it in the map
-+ * and associated tracing_map_elts.  This is the index used for
-+ * instance to update a var for a particular tracing_map_elt using
-+ * tracing_map_update_var() or reading it via tracing_map_read_var().
-+ *
-+ * Return: The index identifying the var in the map and associated
-+ * tracing_map_elts, or -EINVAL on error.
-+ */
-+int tracing_map_add_var(struct tracing_map *map)
-+{
-+	int ret = -EINVAL;
-+
-+	if (map->n_vars < TRACING_MAP_VARS_MAX)
-+		ret = map->n_vars++;
-+
-+	return ret;
-+}
-+
- /**
-  * tracing_map_add_key_field - Add a field describing a tracing_map key
-  * @map: The tracing_map
-@@ -280,6 +369,11 @@ static void tracing_map_elt_clear(struct tracing_map_elt *elt)
- 		if (elt->fields[i].cmp_fn == tracing_map_cmp_atomic64)
- 			atomic64_set(&elt->fields[i].sum, 0);
+ struct hist_trigger_attrs {
+@@ -159,6 +166,7 @@ struct hist_trigger_data {
+ 	struct trace_event_file		*event_file;
+ 	struct hist_trigger_attrs	*attrs;
+ 	struct tracing_map		*map;
++	bool				enable_timestamps;
+ };
  
-+	for (i = 0; i < elt->map->n_vars; i++) {
-+		atomic64_set(&elt->vars[i], 0);
-+		elt->var_set[i] = false;
-+	}
-+
- 	if (elt->map->ops && elt->map->ops->elt_clear)
- 		elt->map->ops->elt_clear(elt);
- }
-@@ -306,6 +400,8 @@ static void tracing_map_elt_free(struct tracing_map_elt *elt)
- 	if (elt->map->ops && elt->map->ops->elt_free)
- 		elt->map->ops->elt_free(elt);
- 	kfree(elt->fields);
-+	kfree(elt->vars);
-+	kfree(elt->var_set);
- 	kfree(elt->key);
- 	kfree(elt);
- }
-@@ -333,6 +429,18 @@ static struct tracing_map_elt *tracing_map_elt_alloc(struct tracing_map *map)
- 		goto free;
+ static const char *hist_field_name(struct hist_field *field,
+@@ -173,6 +181,8 @@ static const char *hist_field_name(struct hist_field *field,
+ 		field_name = field->field->name;
+ 	else if (field->flags & HIST_FIELD_FL_LOG2)
+ 		field_name = hist_field_name(field->operands[0], ++level);
++	else if (field->flags & HIST_FIELD_FL_TIMESTAMP)
++		field_name = "common_timestamp";
+ 
+ 	if (field_name == NULL)
+ 		field_name = "";
+@@ -440,6 +450,12 @@ static struct hist_field *create_hist_field(struct ftrace_event_field *field,
+ 		goto out;
  	}
  
-+	elt->vars = kcalloc(map->n_vars, sizeof(*elt->vars), GFP_KERNEL);
-+	if (!elt->vars) {
-+		err = -ENOMEM;
-+		goto free;
++	if (flags & HIST_FIELD_FL_TIMESTAMP) {
++		hist_field->fn = hist_field_timestamp;
++		hist_field->size = sizeof(u64);
++		goto out;
 +	}
 +
-+	elt->var_set = kcalloc(map->n_vars, sizeof(*elt->var_set), GFP_KERNEL);
-+	if (!elt->var_set) {
-+		err = -ENOMEM;
-+		goto free;
+ 	if (WARN_ON_ONCE(!field))
+ 		goto out;
+ 
+@@ -517,10 +533,15 @@ static int create_val_field(struct hist_trigger_data *hist_data,
+ 		}
+ 	}
+ 
+-	field = trace_find_event_field(file->event_call, field_name);
+-	if (!field || !field->size) {
+-		ret = -EINVAL;
+-		goto out;
++	if (strcmp(field_name, "common_timestamp") == 0) {
++		flags |= HIST_FIELD_FL_TIMESTAMP;
++		hist_data->enable_timestamps = true;
++	} else {
++		field = trace_find_event_field(file->event_call, field_name);
++		if (!field || !field->size) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 	}
+ 
+ 	hist_data->fields[val_idx] = create_hist_field(field, flags);
+@@ -615,16 +636,22 @@ static int create_key_field(struct hist_trigger_data *hist_data,
+ 			}
+ 		}
+ 
+-		field = trace_find_event_field(file->event_call, field_name);
+-		if (!field || !field->size) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
++		if (strcmp(field_name, "common_timestamp") == 0) {
++			flags |= HIST_FIELD_FL_TIMESTAMP;
++			hist_data->enable_timestamps = true;
++			key_size = sizeof(u64);
++		} else {
++			field = trace_find_event_field(file->event_call, field_name);
++			if (!field || !field->size) {
++				ret = -EINVAL;
++				goto out;
++			}
+ 
+-		if (is_string_field(field))
+-			key_size = MAX_FILTER_STR_VAL;
+-		else
+-			key_size = field->size;
++			if (is_string_field(field))
++				key_size = MAX_FILTER_STR_VAL;
++			else
++				key_size = field->size;
++		}
+ 	}
+ 
+ 	hist_data->fields[key_idx] = create_hist_field(field, flags);
+@@ -820,6 +847,9 @@ static int create_tracing_map_fields(struct hist_trigger_data *hist_data)
+ 
+ 			if (hist_field->flags & HIST_FIELD_FL_STACKTRACE)
+ 				cmp_fn = tracing_map_cmp_none;
++			else if (!field)
++				cmp_fn = tracing_map_cmp_num(hist_field->size,
++							     hist_field->is_signed);
+ 			else if (is_string_field(field))
+ 				cmp_fn = tracing_map_cmp_string;
+ 			else
+@@ -1215,7 +1245,11 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
+ {
+ 	const char *field_name = hist_field_name(hist_field, 0);
+ 
+-	seq_printf(m, "%s", field_name);
++	if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
++		seq_puts(m, "common_timestamp");
++	else if (field_name)
++		seq_printf(m, "%s", field_name);
++
+ 	if (hist_field->flags) {
+ 		const char *flags_str = get_hist_field_flags(hist_field);
+ 
+@@ -1266,27 +1300,25 @@ static int event_hist_trigger_print(struct seq_file *m,
+ 
+ 	for (i = 0; i < hist_data->n_sort_keys; i++) {
+ 		struct tracing_map_sort_key *sort_key;
++		unsigned int idx;
+ 
+ 		sort_key = &hist_data->sort_keys[i];
++		idx = sort_key->field_idx;
++
++		if (WARN_ON(idx >= TRACING_MAP_FIELDS_MAX))
++			return -EINVAL;
+ 
+ 		if (i > 0)
+ 			seq_puts(m, ",");
+ 
+-		if (sort_key->field_idx == HITCOUNT_IDX)
++		if (idx == HITCOUNT_IDX)
+ 			seq_puts(m, "hitcount");
+-		else {
+-			unsigned int idx = sort_key->field_idx;
+-
+-			if (WARN_ON(idx >= TRACING_MAP_FIELDS_MAX))
+-				return -EINVAL;
+-
++		else
+ 			hist_field_print(m, hist_data->fields[idx]);
+-		}
+ 
+ 		if (sort_key->descending)
+ 			seq_puts(m, ".descending");
+ 	}
+-
+ 	seq_printf(m, ":size=%u", (1 << hist_data->map->map_bits));
+ 
+ 	if (data->filter_str)
+@@ -1454,6 +1486,10 @@ static bool hist_trigger_match(struct event_trigger_data *data,
+ 			return false;
+ 		if (key_field->offset != key_field_test->offset)
+ 			return false;
++		if (key_field->size != key_field_test->size)
++			return false;
++		if (key_field->is_signed != key_field_test->is_signed)
++			return false;
+ 	}
+ 
+ 	for (i = 0; i < hist_data->n_sort_keys; i++) {
+@@ -1536,6 +1572,9 @@ static int hist_register_trigger(char *glob, struct event_trigger_ops *ops,
+ 
+ 	update_cond_flag(file);
+ 
++	if (hist_data->enable_timestamps)
++		tracing_set_time_stamp_abs(file->tr, true);
++
+ 	if (trace_event_trigger_enable_disable(file, 1) < 0) {
+ 		list_del_rcu(&data->list);
+ 		update_cond_flag(file);
+@@ -1570,17 +1609,26 @@ static void hist_unregister_trigger(char *glob, struct event_trigger_ops *ops,
+ 
+ 	if (unregistered && test->ops->free)
+ 		test->ops->free(test->ops, test);
++
++	if (hist_data->enable_timestamps) {
++		if (unregistered)
++			tracing_set_time_stamp_abs(file->tr, false);
 +	}
-+
- 	tracing_map_elt_init_fields(elt);
+ }
  
- 	if (map->ops && map->ops->elt_alloc) {
-diff --git a/kernel/trace/tracing_map.h b/kernel/trace/tracing_map.h
-index de57887c0670..053eb92b2d31 100644
---- a/kernel/trace/tracing_map.h
-+++ b/kernel/trace/tracing_map.h
-@@ -10,6 +10,7 @@
- #define TRACING_MAP_VALS_MAX		3
- #define TRACING_MAP_FIELDS_MAX		(TRACING_MAP_KEYS_MAX + \
- 					 TRACING_MAP_VALS_MAX)
-+#define TRACING_MAP_VARS_MAX		16
- #define TRACING_MAP_SORT_KEYS_MAX	2
+ static void hist_unreg_all(struct trace_event_file *file)
+ {
+ 	struct event_trigger_data *test, *n;
++	struct hist_trigger_data *hist_data;
  
- typedef int (*tracing_map_cmp_fn_t) (void *val_a, void *val_b);
-@@ -137,6 +138,8 @@ struct tracing_map_field {
- struct tracing_map_elt {
- 	struct tracing_map		*map;
- 	struct tracing_map_field	*fields;
-+	atomic64_t			*vars;
-+	bool				*var_set;
- 	void				*key;
- 	void				*private_data;
- };
-@@ -192,6 +195,7 @@ struct tracing_map {
- 	int				key_idx[TRACING_MAP_KEYS_MAX];
- 	unsigned int			n_keys;
- 	struct tracing_map_sort_key	sort_key;
-+	unsigned int			n_vars;
- 	atomic64_t			hits;
- 	atomic64_t			drops;
- };
-@@ -241,6 +245,7 @@ tracing_map_create(unsigned int map_bits,
- extern int tracing_map_init(struct tracing_map *map);
- 
- extern int tracing_map_add_sum_field(struct tracing_map *map);
-+extern int tracing_map_add_var(struct tracing_map *map);
- extern int tracing_map_add_key_field(struct tracing_map *map,
- 				     unsigned int offset,
- 				     tracing_map_cmp_fn_t cmp_fn);
-@@ -260,7 +265,13 @@ extern int tracing_map_cmp_none(void *val_a, void *val_b);
- 
- extern void tracing_map_update_sum(struct tracing_map_elt *elt,
- 				   unsigned int i, u64 n);
-+extern void tracing_map_set_var(struct tracing_map_elt *elt,
-+				unsigned int i, u64 n);
-+extern bool tracing_map_var_set(struct tracing_map_elt *elt, unsigned int i);
- extern u64 tracing_map_read_sum(struct tracing_map_elt *elt, unsigned int i);
-+extern u64 tracing_map_read_var(struct tracing_map_elt *elt, unsigned int i);
-+extern u64 tracing_map_read_var_once(struct tracing_map_elt *elt, unsigned int i);
-+
- extern void tracing_map_set_field_descr(struct tracing_map *map,
- 					unsigned int i,
- 					unsigned int key_offset,
+ 	list_for_each_entry_safe(test, n, &file->triggers, list) {
+ 		if (test->cmd_ops->trigger_type == ETT_EVENT_HIST) {
++			hist_data = test->private_data;
+ 			list_del_rcu(&test->list);
+ 			trace_event_trigger_enable_disable(file, 0);
+ 			update_cond_flag(file);
++			if (hist_data->enable_timestamps)
++				tracing_set_time_stamp_abs(file->tr, false);
+ 			if (test->ops->free)
+ 				test->ops->free(test->ops, test);
+ 		}
 -- 
 2.15.1
