@@ -1,92 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751744AbeCUJwD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:52:03 -0400
-Received: from mail1.med.uni-goettingen.de ([134.76.103.230]:32138 "EHLO
-        mail1.med.uni-goettingen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751464AbeCUJwA (ORCPT
+        id S1751548AbeCUJ5z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:57:55 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38925 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeCUJ5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:52:00 -0400
-From: "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
-To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: detecting integer constant expressions in macros
-Thread-Topic: detecting integer constant expressions in macros
-Thread-Index: AQHTwJiwGR/EgJUmakKV29wYTwhXcaPZrsMAgAARXwCAAAWUAIAAnNEA
-Date: Wed, 21 Mar 2018 09:51:55 +0000
-Message-ID: <1521625914.3034.1.camel@med.uni-goettingen.de>
-References: <1521584015.31174.3.camel@med.uni-goettingen.de>
-         <CA+55aFyRgq7hbmxK9471xY-eja4X=gKHSjF4Q+a0FJjxVB1TYQ@mail.gmail.com>
-         <1521591040.508.2.camel@med.uni-goettingen.de>
-         <CA+55aFyfW7kA_72vNifyxBV7gc_fkKjVC3j1WBJzx1R3GpApOQ@mail.gmail.com>
-In-Reply-To: <CA+55aFyfW7kA_72vNifyxBV7gc_fkKjVC3j1WBJzx1R3GpApOQ@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [134.76.125.21]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <266536CD73102A4B9776A31B3D435A48@ads.local.med.uni-goettingen.de>
+        Wed, 21 Mar 2018 05:57:51 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Frank.Rowand@sony.com, David Airlie <airlied@linux.ie>,
+        niklas.soderlund+renesas@ragnatech.se,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
+Date: Wed, 21 Mar 2018 11:58:57 +0200
+Message-ID: <2654454.izifTNoijI@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAK8P3a2zoGCi2k8gy5QZ0Ddn1pZGMmMAWusdq7c=x_SJ9Lq3LA@mail.gmail.com>
+References: <20180315153730.3798004-1-arnd@arndb.de> <8748007.hiNNEuVPPY@avalon> <CAK8P3a2zoGCi2k8gy5QZ0Ddn1pZGMmMAWusdq7c=x_SJ9Lq3LA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2L9q9a0029159
 
+Hi Arnd,
 
-
-Am Dienstag, den 20.03.2018, 17:30 -0700 schrieb Linus Torvalds:
-> On Tue, Mar 20, 2018 at 5:10 PM, Uecker, Martin
-> <Martin.Uecker@med.uni-goettingen.de> wrote:
-
+On Wednesday, 21 March 2018 09:38:35 EET Arnd Bergmann wrote:
+> On Tue, Mar 20, 2018 at 9:15 PM, Laurent Pinchart wrote:
+> > On Friday, 16 March 2018 10:25:25 EET Arnd Bergmann wrote:
+> >> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
+> >>> On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
+> >>>> The *.dtb and *.dtb.S files get removed by 'make' during the build
+> >>>> process, and later seem to be missed during the 'modpost' stage:
+> >>>> 
+> >>>> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
+> >>>> WARNING: could not open
+> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
+> >>>> directory
+> >>>> 
+> >>>> As a workaround, this adds all those files to the 'extra-y' target
+> >>>> list, but that's really ugly. Any ideas for a better fix?
+> >>> 
+> >>> Does this work for you (untested, but the way it is done in
+> >>> drivers/of/unittest-data/Makefile):
+> >>> 
+> >>> .PRECIOUS: \
+> >>>         $(obj)/%.dtb.S \
+> >>>         $(obj)/%.dtb
+> >> 
+> >> Yes, that works and looks much better than my version.
+> > 
+> > Thank you for your patch, and sorry for breaking the build. Do you plan to
+> > submit a new version based on Frank's approach ?
 > 
-> > But one could also use __builtin_types_compatible_p instead.
-> 
-> That might be the right approach, even if I like how it only used
-> standard C (although _disgusting_ standard C) without it apart from
-> the small issue of sizeof(void)
-> 
-> So something like
-> 
->   #define __is_constant(a) \
->         __builtin_types_compatible_p(int *, typeof(1 ? ((void*)((a) *
-> 0l)) : (int*)1 ) )
-> 
-> if I counted the parentheses right..
+> I'm currently at Linaro Connect and won't be able to send a tested patch
+> before mid next week. If you want it earlier, feel free to apply that patch
+> with my original description and 'Reported-by: Arnd Bergmann
+> <arnd@arndb.de>'.
 
-This seems to work fine on all recent compilers. Sadly, it
-produces false positives on 4.4.7 and earlier when
-tested on godbolt.org
+I was about to do so, but realized I can't reproduce the problem here. If you 
+don't mind I'll let you submit a v2. Alternatively I can work on it if you 
+give me instruction to reproduce the issue.
 
-Surprisingly, the MAX macro as defined below still seems
-to do the right thing with respect to avoiding the VLA
-even on the old compilers.
+-- 
+Regards,
 
-I am probably missing something... or there are two
-compiler bugs cancelling out, or the __builting_choose_expr
-changes things.
-
-Martin
-
-My test code:
-
-#define ICE_P(x) (__builtin_types_compatible_p(int*, __typeof__(1 ?
-((void*)((x) * 0l)) : (int*)1)))
-
-#define SIMPLE_MAX(a, b) ((a) > (b) ? (a) : (b))
-#define SAFE_MAX(a, b) ({ __typeof(a) _a = (a); __typeof(b) _b = (b);
-SIMPLE_MAX(_a, _b); })
-#define MAX(a, b) (__builtin_choose_expr(ICE_P(a) && ICE_P(b),
-SIMPLE_MAX(a, b), SAFE_MAX(a, b)))
-
-
-
-int foo(int x)
-{
-    int a[MAX(3, 4)];
-    //int a[MAX(3, x)];
-    //int a[SAFE_MAX(3, 4)];
-    //return ICE_P(MAX(3, 4));
-    return ICE_P(MAX(3, x));
-}
+Laurent Pinchart
