@@ -1,95 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeCUSGC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:06:02 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57354 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751548AbeCUSGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:06:01 -0400
-Subject: Re: Why two irq chips for MSI
-To: valmiki <valmikibow@gmail.com>, linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>
-References: <81eb7191-1c5c-ad27-2714-9563e4ef7c68@gmail.com>
- <adf13928-d1da-e8af-5b32-efc199ac6ba9@arm.com>
- <a0cd800b-f20f-64f3-c3b3-7f0c193c2b16@gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <3c4b764a-17ae-8309-094b-cf441a132d21@arm.com>
-Date: Wed, 21 Mar 2018 18:05:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <a0cd800b-f20f-64f3-c3b3-7f0c193c2b16@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        id S1752675AbeCUSHR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:07:17 -0400
+Received: from mga18.intel.com ([134.134.136.126]:25924 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752454AbeCUSHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 14:07:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,340,1517904000";
+   d="scan'208";a="26403894"
+Message-ID: <1521655629.23017.84.camel@linux.intel.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <swboyd@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org
+Date: Wed, 21 Mar 2018 20:07:09 +0200
+In-Reply-To: <20180321165848.89751-4-swboyd@chromium.org>
+References: <20180321165848.89751-1-swboyd@chromium.org>
+         <20180321165848.89751-4-swboyd@chromium.org>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/03/18 17:38, valmiki wrote:
->> On 21/03/18 17:12, valmiki wrote:
->>> Hi,
->>>
->>> In most of the RP drivers, why two irq chips are being used for MSI ?
->>>
->>> One at irq_domain_set_info (which uses irq_compose_msi_msg and
->>> irq_set_affinity methods) and another being registered with struct
->>> msi_domain_info (which uses irq_mask/irq_unmask methods).
->>>
->>> When will each chip be used w.r.t to virq ?
->>
->> A simple way to think of it is that you have two pieces of HW involved:
->> an end-point that generates an interrupt, and a controller that receives it.
->>
->> Transpose this to the kernel view of things: one chip implements the PCI
->> MSI, with the PCI semantics attached to it (how to program the
->> payload/doorbell into the end-point, for example). The other implements
->> the MSI controller part of it, talking to the HW that deals with the
->> interrupt.
->>
->> Does it makes sense? Admittedly, this is not always that simple, but
->> that the general approach.
->>
-> Thanks Marc. Yes got a good picture now.
-> So the one which implements PCI semantics has irq_set_affinity, which is 
-> being invoked at request_irq. Why most of the drivers have this as dummy 
-> with return 0 ?
+On Wed, 2018-03-21 at 09:58 -0700, Stephen Boyd wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Some qcom platforms make some GPIOs or pins unavailable for use
+> by non-secure operating systems, and thus reading or writing the
+> registers for those pins will cause access control issues and
+> reset the device. With a DT/ACPI property to describe the set of
+> pins that are available for use, parse the available pins and set
+> the irq valid bits for gpiolib to know what to consider 'valid'.
+> This should avoid any issues with gpiolib. Furthermore, implement
+> the pinmux_ops::request function so that pinmux can also make
+> sure to not use pins that are unavailable.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-It depends.
+Hmm...
 
-In general, the irqchip implementing set_affinity is the one talking to
-the MSI controller directly.
+> +static int msm_pinmux_request(struct pinctrl_dev *pctldev, unsigned
+> offset)
+> +{
+> +	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> +	struct gpio_chip *chip = &pctrl->chip;
+> +
+> +	if (gpiochip_line_is_valid(chip, offset))
+> +		return 0;
+> +
+> +	return -EINVAL;
 
-A lot of drivers don't implement it because they are multiplexing a
-number of MSIs on a single interrupt. The consequence is that you cannot
-change the affinity of a single MSI without affecting them all.
+Perhaps traditional pattern
 
-HW that is build this way makes it impossible to implement one of the
-main feature of MSIs, which is to have per-cpu interrupts. Oh well. They
-probably also miss on the "MSI as a memory barrier" semantics...
+if (!...)
+ return -EINVAL;
 
-Decent HW doesn't do any multiplexing, and thus can very easily
-implement set_affinity.
+return 0;
 
-The other model (which x86 is using, for example), is to have one
-doorbell per CPU. In this model, changing affinity is just a matter of
-changing the doorbell address.
+?
 
-> Does setting affinity to MSI needs any support from GIC?
+> +}
 
-Absolutely. If using GICv2m, you need to change the affinity at the
-distributor level. With GICv3 and the ITS, you need to emit a MOVI
-command to target another redistributor.
+>  	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
+> -	seq_printf(s, " %s", pulls[pull]);
+> +	seq_printf(s, " %s\n", pulls[pull]);
 
-> Setting affinity can be achieved only with hardware support ?
+I had commented this once, but you ignored by some reason.
 
-See above. It depends which signalling model you're using, and how well
-it has been implemented.
+I would rather just move 
+ seq_puts(s, "\n");
+here.
 
-Thanks,
+The rationale behind, besides making diff more neat, is to reduce
+possible burden in the future if someone would like to squeeze more data
+in between.
 
-	M.
+> +		tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
+
+sizeof(*tmp) ?
+
+> +		if (!tmp)
+> +			return -ENOMEM;
+
 -- 
-Jazz is not dead. It just smells funny...
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
