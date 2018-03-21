@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753277AbeCUUIE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:08:04 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38583 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753021AbeCUUH6 (ORCPT
+        id S1753258AbeCUUR7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:17:59 -0400
+Received: from mail-pl0-f43.google.com ([209.85.160.43]:40867 "EHLO
+        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752954AbeCUURw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:07:58 -0400
-X-Google-Smtp-Source: AG47ELtpFehlWRZjAQKR/W73e9pdK87e3ypHLbjpbZIdaPY4h8Fp7uIdWavmiMn+wY1VGAZL2pcpzg==
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Masaki Ota <masaki.ota@jp.alps.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: alps - Report pressure of v3 and v7 trackstick
-Date: Wed, 21 Mar 2018 21:07:36 +0100
-Message-Id: <20180321200736.32406-1-pali.rohar@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 21 Mar 2018 16:17:52 -0400
+X-Google-Smtp-Source: AG47ELtpWJN4njv2GR9m7fYL6DcoXgeJUlK6uSuifFpEZV9fasiUoAhcgD6N/q4pmwZAjXJL9hdAmA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: Linus Walleij <linus.walleij@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180321165848.89751-4-swboyd@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180321165848.89751-1-swboyd@chromium.org>
+ <20180321165848.89751-4-swboyd@chromium.org>
+Message-ID: <152166346979.154352.7302935269984897659@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be requested
+Date: Wed, 21 Mar 2018 13:17:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2LKIMdf000585
 
-ALPS v3 and v7 packet formats reports trackstick pressure. This information
-is already parsed in unused "z" variable.
+Quoting Stephen Boyd (2018-03-21 09:58:48)
+> +       ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
+> +       if (ret > 0 && ret < max_gpios) {
+> +               u16 *tmp;
+> +
+> +               len = ret;
+> +               tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
+> +               if (!tmp)
+> +                       return -ENOMEM;
+> +
+> +               ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp,
+> +                                                    len);
+> +               if (ret < 0) {
+> +                       dev_err(pctrl->dev, "could not read list of GPIOs\n");
+> +                       kfree(tmp);
+> +                       return ret;
+> +               }
+> +
+> +               bitmap_zero(chip->valid_mask, max_gpios);
+> +               for (i = 0; i < len; i++)
+> +                       set_bit(tmp[i], chip->valid_mask);
 
-ALPS SS4 S2 devices already reports trackstick pressure as ABS_PRESSURE
-attribute, therefore reports pressure in the same way also for v3 and v7.
-
-This patch also updates parsing v3 pressure information, it is also stored
-in 7 bits.
-
-Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
----
- drivers/input/mouse/alps.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
-index 010c1bcdb06d..0a9e6a3a2f9f 100644
---- a/drivers/input/mouse/alps.c
-+++ b/drivers/input/mouse/alps.c
-@@ -139,11 +139,11 @@ static const struct alps_model_info alps_model_data[] = {
- };
- 
- static const struct alps_protocol_info alps_v3_protocol_data = {
--	ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT
-+	ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
- };
- 
- static const struct alps_protocol_info alps_v3_rushmore_data = {
--	ALPS_PROTO_V3_RUSHMORE, 0x8f, 0x8f, ALPS_DUALPOINT
-+	ALPS_PROTO_V3_RUSHMORE, 0x8f, 0x8f, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
- };
- 
- static const struct alps_protocol_info alps_v4_protocol_data = {
-@@ -155,7 +155,7 @@ static const struct alps_protocol_info alps_v5_protocol_data = {
- };
- 
- static const struct alps_protocol_info alps_v7_protocol_data = {
--	ALPS_PROTO_V7, 0x48, 0x48, ALPS_DUALPOINT
-+	ALPS_PROTO_V7, 0x48, 0x48, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
- };
- 
- static const struct alps_protocol_info alps_v8_protocol_data = {
-@@ -583,7 +583,7 @@ static void alps_process_trackstick_packet_v3(struct psmouse *psmouse)
- 
- 	x = (s8)(((packet[0] & 0x20) << 2) | (packet[1] & 0x7f));
- 	y = (s8)(((packet[0] & 0x10) << 3) | (packet[2] & 0x7f));
--	z = (packet[4] & 0x7c) >> 2;
-+	z = packet[4] & 0x7c;
- 
- 	/*
- 	 * The x and y values tend to be quite large, and when used
-@@ -595,6 +595,7 @@ static void alps_process_trackstick_packet_v3(struct psmouse *psmouse)
- 
- 	input_report_rel(dev, REL_X, x);
- 	input_report_rel(dev, REL_Y, -y);
-+	input_report_abs(dev, ABS_PRESSURE, z);
- 
- 	/*
- 	 * Most ALPS models report the trackstick buttons in the touchpad
-@@ -1118,6 +1119,7 @@ static void alps_process_trackstick_packet_v7(struct psmouse *psmouse)
- 
- 	input_report_rel(dev2, REL_X, (char)x);
- 	input_report_rel(dev2, REL_Y, -((char)y));
-+	input_report_abs(dev2, ABS_PRESSURE, z);
- 
- 	input_report_key(dev2, BTN_LEFT, left);
- 	input_report_key(dev2, BTN_RIGHT, right);
--- 
-2.11.0
+This leaks tmp too.. I'll fix that in v4 and resend tomorrow if there
+aren't more comments.
