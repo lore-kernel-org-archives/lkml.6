@@ -1,68 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeCUBLt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:11:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751996AbeCUBLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:11:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="39779443"
-From: Luwei Kang <luwei.kang@intel.com>
-To: kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v6 11/11] KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
-Date: Tue, 20 Mar 2018 19:21:58 +0800
-Message-Id: <1521544918-31084-12-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
-References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+        id S1752099AbeCUBMC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:12:02 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:56311 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeCUBL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:11:56 -0400
+X-Google-Smtp-Source: AIpwx49hujae1BEO1DT3+QiMA0ur1AngmtlUi/xUqBGIe7L5QOOxA7p/9H1epbXNyexbTE1eUS46lQ==
+Subject: Re: linux-next on x60: network manager often complains "network is
+ disabled" after resume
+From: Woody Suwalski <terraluna977@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Netdev list <netdev@vger.kernel.org>
+References: <20180318104023.GA10392@amd>
+ <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com> <20180319092106.GA5683@amd>
+ <6e43123a-5227-96c4-a1f5-4416bdb5b0db@gmail.com>
+Message-ID: <c7d96582-e2e6-d9c8-1140-3f1dab836132@gmail.com>
+Date: Tue, 20 Mar 2018 21:11:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
+ SeaMonkey/2.49.2
+MIME-Version: 1.0
+In-Reply-To: <6e43123a-5227-96c4-a1f5-4416bdb5b0db@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Intel Processor Trace do not support tracing in L1 guest
-VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
-on these type of processors, execution of the VMXON instruction will
-clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
-causes a general-protection exception (#GP).
+Woody Suwalski wrote:
+> Pavel Machek wrote:
+>> On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
+>>> Pavel Machek wrote:
+>>>> Hi!
+>>>>
+>>>> With recent linux-next, after resume networkmanager often claims that
+>>>> "network is disabled". Sometimes suspend/resume clears that.
+>>>>
+>>>> Any ideas? Does it work for you?
+>>>>                                     Pavel
+>>> Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
+>> Thanks for testing... but yes, 4.16 should be ok. If not fixed,
+>> problem will appear in 4.17-rc1.
+>>
+> Works here OK. Tried ~10 suspends, all restarted OK.
+> kernel next-20180320
+> nmcli shows that Wifi always connects OK
+>
+> Woody
+>
+Contrary, it just happened to me on a 64-bit build 4.16-rc5 on T440.
+I think that Dan's suspicion is correct - it is a snafu in the PM: 
+trying to hibernate results in a message:
+Failed to hibernate system via logind: There's already a shutdown or 
+sleep operation in progress.
 
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/kvm/vmx.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+And ps shows "Ds /lib/systemd/systemd-sleep suspend"...
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 27185da..77a28f3 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3763,7 +3763,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		break;
- 	case MSR_IA32_RTIT_CTL:
- 		if ((pt_mode != PT_MODE_HOST_GUEST) ||
--			vmx_rtit_ctl_check(vcpu, data))
-+			vmx_rtit_ctl_check(vcpu, data) ||
-+			vmx->nested.vmxon)
- 			return 1;
- 		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
- 		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
-@@ -7869,6 +7870,12 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	if (ret)
- 		return ret;
- 
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		vmx->pt_desc.guest.ctl = 0;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+		pt_set_intercept_for_msr(vmx, 1);
-+	}
-+
- 	nested_vmx_succeed(vcpu);
- 	return kvm_skip_emulated_instruction(vcpu);
- }
--- 
-1.8.3.1
+Woody
