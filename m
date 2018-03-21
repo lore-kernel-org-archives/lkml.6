@@ -1,148 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeCUK7E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 06:59:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6254 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751405AbeCUK7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 06:59:02 -0400
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-To: William Cohen <wcohen@redhat.com>,
-        Ganapatrao Kulkarni <gklkml16@gmail.com>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
- <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
- <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
- <2a84ec0e-dc8c-7e2e-64e5-4ea48ba6da49@redhat.com>
- <5b918449-b7b1-dbe1-e6e2-46486116dc65@huawei.com>
- <6bfce413-0fb8-e89c-7400-0704f29f236e@redhat.com>
-CC: <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>, <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Ingo Molnar <mingo@redhat.com>, <jnair@caviumnetworks.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, <linux-arm-kernel@lists.infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <7b85a13a-b9e9-a6d7-ec8f-75630eb7c537@huawei.com>
-Date: Wed, 21 Mar 2018 10:58:35 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <6bfce413-0fb8-e89c-7400-0704f29f236e@redhat.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1751835AbeCULDe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:03:34 -0400
+Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:53402 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751737AbeCULD1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 07:03:27 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:973:981:988:989:1260:1345:1437:1534:1541:1711:1730:1747:1777:1792:1978:1981:2194:2199:2393:2553:2559:2562:3138:3139:3140:3141:3142:3352:3865:3866:3867:4605:5007:6119:6261:7903:8603:10004:10848:11026:11473:11658:11914:12043:12296:12438:12555:12895:13069:13311:13357:14181:14384:14394:14721:21080:21433:21627:30054:30075:30090,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: pest50_1dd7825961f5e
+X-Filterd-Recvd-Size: 2468
+From: Joe Perches <joe@perches.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] bridge: netfilter: ebt_stp: Use generic functions for comparisons
+Date: Wed, 21 Mar 2018 04:03:22 -0700
+Message-Id: <c22b7398816c4533a65ff57aaa44629729fc7254.1521630169.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/03/2018 02:37, William Cohen wrote:
-> On 03/15/2018 12:47 PM, John Garry wrote:
->> On 15/03/2018 15:53, William Cohen wrote:
->>> On 03/07/2018 11:14 PM, Ganapatrao Kulkarni wrote:
->>>> On Thu, Mar 8, 2018 at 12:01 AM, William Cohen <wcohen@redhat.com> wrote:
->>>>> On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
->>>>>> Hi Will Cohen,
->>>>>>
->>>>>> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
->>>>>> <acme@kernel.org> wrote:
->>>>>>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
->>>>>>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
->>>>>>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
->>>>>>>>> to enable JSON events for B0.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>>>>>
->>>>>>> Ganapatrao, can you please take this in consideration and if agreeing
->>>>>>> send a v2 patch?
->>>>>>>
->>>>>>> With that I can add an Acked-by: wcohen, Right?
->>>>>>>
->>>>>>> - Arnaldo
->>>>>>>>> ---
->>>>>>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
->>>>>>>>>  1 file changed, 1 insertion(+)
->>>>>>>>>
->>>>>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>>> index e61c9ca..93c5d14 100644
->>>>>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>>> @@ -13,4 +13,5 @@
->>>>>>>>>  #
->>>>>>>>>  #Family-model,Version,Filename,EventType
->>>>>>>>>  0x00000000420f5160,v1,cavium,core
->>>>>>>>> +0x00000000430f0af0,v1,cavium,core
->>>>>>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
->>>>>>>>>
->>>>>>>>
->>>>>>>> Hi,
->>>>>>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
->>>>>>
->>>>>> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
->>>>>> are ignored/dont-care.
->>>>>
->>>>> Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
->>>>
->>>> It is same for arm64 too, there is no need to add an entry for every
->>>> revision change,  need to add when part number changes.
->>>> This patch is not intended to add entry for revision change, the fact
->>>> of the matter is that, there  is complete MIDR change (vulcan to
->>>> thunderx2) in B0.
->>>> as per current arm64
->>>> implementation(.tools/perf/arch/arm64/util/header.c), it is not
->>>> required to have any dontcare marking in mapfile for revision/variant
->>>> bits.
->>>>
->>>> thanks
->>>> Ganapat
->>>
->>> Hi Ganapat,
->>>
->>> Would it make more sense to pass the MIDR value unmodified and then use regular expressions in mapfile.csv to match the values?  If an event on a particular processor revision is broken or unusable it can be excluded from the list of events with a corrected list of events.  There certainly have been errata listing events that do not work on specific revisions of armv8 processor implementations.
->>>
->>
->> Then there are vendors who do not always properly implemenent MIDR or IIDRs (people who live in glass houses...).
->>
->> Btw, topic originally discussed here:
->> https://lkml.org/lkml/2017/5/2/113
->>
->> Thanks,
->> John
->>
->>> -Will
->
-> Hi John,
->
-> Attached is a patch that leaves the MIDR value unmodified and uses regular expressions in the mapfile.csv instead to ignore those bits.  I have verified that the changes work on ARM Cortex a53 processor.  Does it look reasonable?
->
+Instead of unnecessary const declarations, use the generic functions to
+save a little object space.
 
-Hi Will,
+$ size net/bridge/netfilter/ebt_stp.o*
+   text	   data	    bss	    dec	    hex	filename
+   1250	    144	      0	   1394	    572	net/bridge/netfilter/ebt_stp.o.new
+   1344	    144	      0	   1488	    5d0	net/bridge/netfilter/ebt_stp.o.old
 
-This looks ok.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ net/bridge/netfilter/ebt_stp.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Personally I find the regular expression in the cpuid slightly difficult 
-to read. I mean, for example, for the revision digit we are using a 
-12-char regular expression in place, which warps the cpuid string length.
-
-BTW, can you also update the pmu events README to mention that posix 
-regular expressions in the CPUID are acceptable?
-
-Thanks,
-John
-
-> -Will Cohen
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+diff --git a/net/bridge/netfilter/ebt_stp.c b/net/bridge/netfilter/ebt_stp.c
+index 3140eb912d7e..47ba98db145d 100644
+--- a/net/bridge/netfilter/ebt_stp.c
++++ b/net/bridge/netfilter/ebt_stp.c
+@@ -153,8 +153,6 @@ ebt_stp_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_stp_info *info = par->matchinfo;
+-	const u8 bridge_ula[6] = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x00};
+-	const u8 msk[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	const struct ebt_entry *e = par->entryinfo;
+ 
+ 	if (info->bitmask & ~EBT_STP_MASK || info->invflags & ~EBT_STP_MASK ||
+@@ -162,8 +160,8 @@ static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
+ 		return -EINVAL;
+ 	/* Make sure the match only receives stp frames */
+ 	if (!par->nft_compat &&
+-	    (!ether_addr_equal(e->destmac, bridge_ula) ||
+-	     !ether_addr_equal(e->destmsk, msk) ||
++	    (!ether_addr_equal(e->destmac, eth_stp_addr) ||
++	     !is_broadcast_ether_addr(e->destmsk) ||
+ 	     !(e->bitmask & EBT_DESTMAC)))
+ 		return -EINVAL;
+ 
+-- 
+2.15.0
