@@ -1,159 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeCUSE5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:04:57 -0400
-Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:59045 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752512AbeCUSE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:04:56 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:152:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3872:4225:4250:4321:4605:5007:6119:7875:7903:10004:10400:10848:11026:11232:11473:11658:11914:12048:12296:12438:12681:12740:12895:13141:13161:13229:13230:13894:14093:14096:14097:14659:14721:21080:21324:21433:21451:21627:30012:30046:30054:30080:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: voice66_47dc40e384d16
-X-Filterd-Recvd-Size: 3899
-Message-ID: <1521655492.7999.13.camel@perches.com>
-Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-From: Joe Perches <joe@perches.com>
-To: Paolo Pisati <p.pisati@gmail.com>, Alan Tull <atull@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 21 Mar 2018 11:04:52 -0700
-In-Reply-To: <1521653726-24625-3-git-send-email-p.pisati@gmail.com>
-References: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
-         <1521653726-24625-3-git-send-email-p.pisati@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752623AbeCUSGC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:06:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57354 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751548AbeCUSGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 14:06:01 -0400
+Subject: Re: Why two irq chips for MSI
+To: valmiki <valmikibow@gmail.com>, linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>
+References: <81eb7191-1c5c-ad27-2714-9563e4ef7c68@gmail.com>
+ <adf13928-d1da-e8af-5b32-efc199ac6ba9@arm.com>
+ <a0cd800b-f20f-64f3-c3b3-7f0c193c2b16@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <3c4b764a-17ae-8309-094b-cf441a132d21@arm.com>
+Date: Wed, 21 Mar 2018 18:05:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <a0cd800b-f20f-64f3-c3b3-7f0c193c2b16@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-21 at 18:35 +0100, Paolo Pisati wrote:
-> This patch adds support to the FPGA manager for programming
-> MachXO2 device’s internal flash memory, via slave SPI.
+On 21/03/18 17:38, valmiki wrote:
+>> On 21/03/18 17:12, valmiki wrote:
+>>> Hi,
+>>>
+>>> In most of the RP drivers, why two irq chips are being used for MSI ?
+>>>
+>>> One at irq_domain_set_info (which uses irq_compose_msi_msg and
+>>> irq_set_affinity methods) and another being registered with struct
+>>> msi_domain_info (which uses irq_mask/irq_unmask methods).
+>>>
+>>> When will each chip be used w.r.t to virq ?
+>>
+>> A simple way to think of it is that you have two pieces of HW involved:
+>> an end-point that generates an interrupt, and a controller that receives it.
+>>
+>> Transpose this to the kernel view of things: one chip implements the PCI
+>> MSI, with the PCI semantics attached to it (how to program the
+>> payload/doorbell into the end-point, for example). The other implements
+>> the MSI controller part of it, talking to the HW that deals with the
+>> interrupt.
+>>
+>> Does it makes sense? Admittedly, this is not always that simple, but
+>> that the general approach.
+>>
+> Thanks Marc. Yes got a good picture now.
+> So the one which implements PCI semantics has irq_set_affinity, which is 
+> being invoked at request_irq. Why most of the drivers have this as dummy 
+> with return 0 ?
 
-style trivia:
+It depends.
 
-> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
-[]
-> +static int get_status(struct spi_device *spi, unsigned long *status)
-> +{
-> +	struct spi_message msg;
-> +	struct spi_transfer rx, tx;
-> +	u8 cmd[] = LSC_READ_STATUS;
+In general, the irqchip implementing set_affinity is the one talking to
+the MSI controller directly.
 
-static const u8 cmd[]
-here and everywhere else as all the tx_buf assignments 
-of cmd are to const void *
+A lot of drivers don't implement it because they are multiplexing a
+number of MSIs on a single interrupt. The consequence is that you cannot
+change the affinity of a single MSI without affecting them all.
 
-> +	int ret;
-> +
-> +	memset(&rx, 0, sizeof(rx));
-> +	memset(&tx, 0, sizeof(tx));
-> +	tx.tx_buf = cmd;
+HW that is build this way makes it impossible to implement one of the
+main feature of MSIs, which is to have per-cpu interrupts. Oh well. They
+probably also miss on the "MSI as a memory barrier" semantics...
 
-[]
+Decent HW doesn't do any multiplexing, and thus can very easily
+implement set_affinity.
 
-> +#ifdef DEBUG
-> +static void dump_status_reg(unsigned long *status)
-> +{
+The other model (which x86 is using, for example), is to have one
+doorbell per CPU. In this model, changing affinity is just a matter of
+changing the doorbell address.
 
-Instead of multiple declarations of dump_status_reg
-it's frequently nicer to use a style like
+> Does setting affinity to MSI needs any support from GIC?
 
-static void debug_func(args...)
-{
-#ifdef DEBUG
-	[code...]
-#endif
-}
+Absolutely. If using GICv2m, you need to change the affinity at the
+distributor level. With GICv3 and the ITS, you need to emit a MOVI
+command to target another redistributor.
 
-so if function arguments ever need to be changed
-it's only required to be changed in one spot and
-not multiply compilation tested with and without
-the DEBUG definition
+> Setting affinity can be achieved only with hardware support ?
 
-> +	char *ferr;
-> +
-> +	switch (get_err(status)) {
-> +	case ENOERR:
-> +		ferr = "No Error";
-> +		break;
-> +	case EID:
-> +		ferr = "ID ERR";
-> +		break;
-> +	case ECMD:
-> +		ferr = "CMD ERR";
-> +		break;
-> +	case ECRC:
-> +		ferr = "CRC ERR";
-> +		break;
-> +	case EPREAM:
-> +		ferr = "Preamble ERR";
-> +		break;
-> +	case EABRT:
-> +		ferr = "Abort ERR";
-> +		break;
-> +	case EOVERFL:
-> +		ferr = "Overflow ERR";
-> +		break;
-> +	case ESDMEOF:
-> +		ferr = "SDM EOF";
-> +		break;
-> +	default:
-> +		ferr = "Default switch case";
-> +	}
+See above. It depends which signalling model you're using, and how well
+it has been implemented.
 
-It's frequently nicer to use a static function
-for these enum -> string conversions like:
+Thanks,
 
-static const char *get_err_string(unsigned long err)
-{
-	switch (err) {
-	case ENOERR:	return "No Error";
-	case EID:	return "ID ERR";
-	case ECMD:	return "CMD ERR";
-	[...]
-	}
-	return "default switch case";
-}
-
-> +	pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
-> +	       *status, test_bit(DONE, status), test_bit(ENAB, status),
-> +	       test_bit(BUSY, status), test_bit(FAIL, status),
-> +		   test_bit(DVER, status), ferr);
-
-So instead of ferr, this could use
-	get_err_string(*status)
-
-And please try to keep a consistent alignment for
-indentation of multiple line statements
-
-> +}
-> +#else
-> +static void dump_status_reg(unsigned long *status) {}
-> +#endif
-> +
-> +static int wait_until_not_busy(struct spi_device *spi)
-> +{
-> +	unsigned long status;
-> +	int ret, loop = 0;
-> +
-> +	do {
-> +		ret = get_status(spi, &status);
-> +		if (ret)
-> +			break;
-> +		if (++loop >= MACHXO2_MAX_BUSY_LOOP) {
-> +			ret = -EBUSY;
-> +			break;
-> +		}
-> +	} while (test_bit(BUSY, &status));
-> +
-> +	return ret;
-> +}
-
-Direct returns are OK and would shorten the function
-line count.
+	M.
+-- 
+Jazz is not dead. It just smells funny...
