@@ -1,79 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753376AbeCUU6Q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:58:16 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:45812 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753254AbeCUU6L (ORCPT
+        id S1753436AbeCUU7y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:59:54 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36596 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753210AbeCUU7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:58:11 -0400
-X-Google-Smtp-Source: AG47ELsQW1/B4ZFw5bqg6VcwJVMoG6frHTqNny9rlTbUlUV1O0AgmyYCh4OkLxO8bVevHYMs+e26z+L42vzbpIarVUg=
-MIME-Version: 1.0
-In-Reply-To: <F4F10894-B101-4E46-A39D-7F09DEF2207D@informatik.uni-hamburg.de>
-References: <D7FA4547-4FA6-46EC-99D7-F08ACCD3F13D@informatik.uni-hamburg.de>
- <CAOFm3uH1Nw3x6-T1yTMkoX2tpxiwjnerAXDh-WEpyFNROFwAYw@mail.gmail.com> <F4F10894-B101-4E46-A39D-7F09DEF2207D@informatik.uni-hamburg.de>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Wed, 21 Mar 2018 13:57:30 -0700
-Message-ID: <CAOFm3uEpDh1jp1+ODzR=TFH0uq08LL2qjqrMLOe+_jE+4Sw_og@mail.gmail.com>
-Subject: Re: [PATCH 1/5 v4] add compression algorithm zBeWalgo
-To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
-        Nitin Gupta <ngupta@vflare.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Mar 2018 16:59:51 -0400
+X-Google-Smtp-Source: AG47ELsbENAwMmro4AZHm24DOWJyWHf+0n2rzYYwQ8QBrdP8mWq4ZL2l9cqDPzWF19NVcs83HjJQTA==
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Date: Wed, 21 Mar 2018 21:59:28 +0100
+Message-Id: <20180321205928.22240-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Benjamin,
+From: Michal Hocko <mhocko@suse.com>
 
-On Wed, Mar 21, 2018 at 12:32 AM, Benjamin Warnke
-<4bwarnke@informatik.uni-hamburg.de> wrote:
-> Ok, I will use
->
-> /* SPDX-License-Identifier: GPL-2.0 */
-> /*
->  * Copyright (c) 2018 Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-> ...
->
-> at the top of my files instead of that boilerplate text. And
->
-> MODULE_LICENSE("GPL");
->
-> at the bottom of the module-files.
+David has noticed that THP memcg charge can trigger the oom killer
+since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+madvised allocations"). We have used an explicit __GFP_NORETRY
+previously which ruled the OOM killer automagically.
 
-<snip>
->
-> I used the file "crypto/lz4.c" - since it is a compression algorithm too - as an example of how to format the licensing text.
-> Unfortunately there is the same 'error'.
-> I fixed this error in all of my files in all patches.
+Memcg charge path should be semantically compliant with the allocation
+path and that means that if we do not trigger the OOM killer for costly
+orders which should do the same in the memcg charge path as well.
+Otherwise we are forcing callers to distinguish the two and use
+different gfp masks which is both non-intuitive and bug prone. Not to
+mention the maintenance burden.
 
-Actually to be consistent if you want to use GPL-2-0 (and not "or
-later") you should use:
+Teach mem_cgroup_oom to bail out on costly order requests to fix the THP
+issue as well as any other costly OOM eligible allocations to be added
+in future.
 
-1. at the top, for a c. file:
-// SPDX-License-Identifier: GPL-2.0
+Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+Reported-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
 
-or for a .h file:
-/* SPDX-License-Identifier: GPL-2.0 */
+Hi,
+this is an alternative patch to [1]. I strongly believe that using
+different gfp masks for the allocation and memcg charging is to be
+avoided as much as possible. There doesn't seem to be any good reason
+why THP charges should be an exception here.
 
-The doc explains it all. Including the comment style (a topic that has
-been discussed also on list quite bit: Linus had the final word there)
+I would be tempted to mark this for stable even though we haven't seen
+any unexpected memcg OOM killer reports since 4.8 which is quite some
+time.
 
-2. and in your MODULE_LICENSE macro:
+[1] http://lkml.kernel.org/r/alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com
 
-MODULE_LICENSE("GPL v2");
+ mm/memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-.... because a MODULE_LICENSE("GPL"); would mean GPL-2.0+ (e.g. or any
-later version) and this would not match your top level license tag.
-
-I know this may seem confusing, but there is little hope we can change
-the MODULE_LICENSE tags that are used by many external module loaders.
-Comments in module.h explain it all.
-
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d1a917b5b7b7..08accbcd1a18 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+ 
+ static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+ {
+-	if (!current->memcg_may_oom)
++	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return;
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
 -- 
-Cordially
-Philippe Ombredanne
+2.16.2
