@@ -1,92 +1,102 @@
-Return-Path: <hariprasath.elango@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521631004; cv=none;
+Return-Path: <David.Laight@aculab.com>
+X-Google-Smtp-Source: AG47ELt37SaLlAjtAAaStbXQAVnwPc7iXNld8PsUiumkL1gzcnQlQBmDgzE9Uji+f4jq7a02SVCy
+ARC-Seal: i=1; a=rsa-sha256; t=1521632832; cv=none;
         d=google.com; s=arc-20160816;
-        b=vppCBqx7L3Vct2YIYq7mTiEemYNatAspC3plz0LiT2xvwh3GbDvba08HewxdC3hcGt
-         0RdSCiEwQCygioSAPphHaf3Z+8N0hZvZ7xKs0sm5H9MG2J7vBoa1ERIFs7Q/3rSizxxW
-         FN7orG+Zh5NTutYrTRVBh6vPmibM4CaIN1uL3yfpkEDrHvxtaovJLzPgcMouDMciTeZp
-         Wi1ar96vw9nJ7W9g9bRZ9fQR9SollUdhtCYGCO4rBEV6lZu6jo6Y5/5pAHRvPfx9NGW4
-         6rvgBm0FdERvKnDeWaue5fw+lpse9MCg7QsKRS3YPjCNqkUnZD+C3xpJhRoUisK5jn3w
-         BiKg==
+        b=Zo1ZLcDhRT/3OLgbFcZiTDL8G4jHyiLDRfhpfHFJndGyHuM8dEEPEzlsyMZJgwVHAq
+         dsGKh5TIWUN8nToz8ALRbHFeIscIFp0WLBOkqp7KePrgJeS/CybmNq9PqJsSWZ2JjXQJ
+         oimhurttbUp6wTBSW+eDp6ynKLapLg+IEWWgezpnVAX8eAjGdnX8DXbOQJeSrTTYS5qN
+         fNvGi8wjLydHKf8N9w8Ks+9KUACHjd+8pnVmT4rBJwarlZVk6jxavtwCTXLyjEyQVQn8
+         YdZWKNJP+acHlyiTKWG60/QoOwqObAfUp4PqcU8Ya3rNoVGKg+VDKpRhea3rdnmSnDCV
+         TCyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=eulO39E4Ky49awq/FnHraOvH9YntX/ea+TqNY6VKfbY=;
-        b=j9exPt7lyUm1nM3Xv5vuY8o90meqazf1TrdZh2r23LR52RwFWMYaRS8C6OoRI9mj4g
-         unSfLuxgmQFri9A3kU4C4i+s+6p6ikjfSXMZj2yqpINXopq6UWoRgKCVqpXq2mLSRqa5
-         mvad7/zHcXGT+I0vzLukoX585Mb6uCPLnaJL+lftmJHFrP+QmC4mSUWcblutCB3eSqeY
-         Akj6/lpbOVkBO4K3ForyJwXFz2punF8LB1FVHtbhtexgIwIXlRV1eOmSPTDuXr2LvYuf
-         AiyNpQJ3dTeY7FJUsm4hqmfhasx4VsUJJ36F3Kb/ePu9AkEyQibz2jV1av3OF2VRmycF
-         b1Ew==
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=42tiAbZ3wfgkykPIgaLMCVRH0MQbuGel8bxxsybUj3U=;
+        b=jyITo1M67Umknqk89/tS3yYrExLj8gs1hH7eWZWiSF0U7+L3JDIrrvY5f932am2qzI
+         /hIzIoNkkRRzBSJz9+HMTeFoAreLQO9WBeND2DYyreQCzyNBjV7r4aLWSoTPrKMgAKSf
+         1M/CM9hMYMnHnVsQ1ZQKH6NR1HX6JCTpyCGb3qCKPnO+5Tsz8mtiBRPzafTJqF45Vvu7
+         XSU0eKkxyjXkIAmY9aS9Z/C+y+UcyO90iiUgxg5PAc/t2C8mmjRxoIj6RVyDEJf6SNGi
+         9yLTNjaq/sj/6C2/d88EENMLP71bMOeiXA86bCiCfjNA0nZTok54NfQD0zLm+cc2sImr
+         J+QQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jujT6jGT;
-       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.217.192 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jujT6jGT;
-       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELseQld/4qLy+Eg0IjQz1AtmKbxMUN7X8dIMg3YGjFSm5IaRGi1egudY4YTJySEfRb8iBFymqA==
-From: hariprasath.elango@gmail.com
-To: ruxandra.radulescu@nxp.com,
-	gregkh@linuxfoundation.org
-Cc: gehariprasath@gmail.com,
-	HariPrasath Elango <hariprasath.elango@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	devel@driverdev.osuosl.org
-Subject: [PATCH] staging: fsl-dpaa2: replace simple switch case by if statement
-Date: Wed, 21 Mar 2018 16:46:04 +0530
-Message-Id: <20180321111604.9902-1-hariprasath.elango@gmail.com>
-X-Mailer: git-send-email 2.10.0.GIT
+       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.217.192 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'hariprasath.elango@gmail.com'" <hariprasath.elango@gmail.com>,
+	"ruxandra.radulescu@nxp.com" <ruxandra.radulescu@nxp.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "gehariprasath@gmail.com" <gehariprasath@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Subject: RE: [PATCH] staging: fsl-dpaa2: replace simple switch case by if
+ statement
+Thread-Topic: [PATCH] staging: fsl-dpaa2: replace simple switch case by if
+ statement
+Thread-Index: AQHTwQY99HFy4WEVM0a+/SD9vn9jDqPakoWQ
+Date: Wed, 21 Mar 2018 11:48:08 +0000
+Message-ID: <faa92f0e20fc44019ee0b64b04413d69@AcuMS.aculab.com>
+References: <20180321111604.9902-1-hariprasath.elango@gmail.com>
+In-Reply-To: <20180321111604.9902-1-hariprasath.elango@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595545752605466743?=
-X-GMAIL-MSGID: =?utf-8?q?1595545752605466743?=
+X-GMAIL-MSGID: =?utf-8?q?1595547669004458074?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: HariPrasath Elango <hariprasath.elango@gmail.com>
+From: > hariprasath.elango@gmail.com
+> Sent: 21 March 2018 11:16
+> From: HariPrasath Elango <hariprasath.elango@gmail.com>
+>=20
+> Replace a couple of simple switch cases by if condition
 
-Replace a couple of simple switch cases by if condition
+Why?
+In principle extra 'case' might be needed in the future.
 
-Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
----
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+...
+> diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c b/drivers=
+/staging/fsl-
+> dpaa2/ethernet/dpaa2-ethtool.c
+> index 070a3f2..fb517cb 100644
+> --- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+> +++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+> @@ -171,8 +171,7 @@ static void dpaa2_eth_get_strings(struct net_device *=
+netdev, u32 stringset,
+>  	u8 *p =3D data;
+>  	int i;
+>=20
+> -	switch (stringset) {
+> -	case ETH_SS_STATS:
+> +	if (stringset =3D=3D ETH_SS_STATS) {
+>  		for (i =3D 0; i < DPAA2_ETH_NUM_STATS; i++) {
+>  			strlcpy(p, dpaa2_ethtool_stats[i], ETH_GSTRING_LEN);
+>  			p +=3D ETH_GSTRING_LEN;
+> @@ -181,18 +180,16 @@ static void dpaa2_eth_get_strings(struct net_device=
+ *netdev, u32 stringset,
+>  			strlcpy(p, dpaa2_ethtool_extras[i], ETH_GSTRING_LEN);
+>  			p +=3D ETH_GSTRING_LEN;
+>  		}
+> -		break;
+>  	}
+>  }
+...
 
-diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-index 070a3f2..fb517cb 100644
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-@@ -171,8 +171,7 @@ static void dpaa2_eth_get_strings(struct net_device *netdev, u32 stringset,
- 	u8 *p = data;
- 	int i;
- 
--	switch (stringset) {
--	case ETH_SS_STATS:
-+	if (stringset == ETH_SS_STATS) {
- 		for (i = 0; i < DPAA2_ETH_NUM_STATS; i++) {
- 			strlcpy(p, dpaa2_ethtool_stats[i], ETH_GSTRING_LEN);
- 			p += ETH_GSTRING_LEN;
-@@ -181,18 +180,16 @@ static void dpaa2_eth_get_strings(struct net_device *netdev, u32 stringset,
- 			strlcpy(p, dpaa2_ethtool_extras[i], ETH_GSTRING_LEN);
- 			p += ETH_GSTRING_LEN;
- 		}
--		break;
- 	}
- }
- 
- static int dpaa2_eth_get_sset_count(struct net_device *net_dev, int sset)
- {
--	switch (sset) {
--	case ETH_SS_STATS: /* ethtool_get_stats(), ethtool_get_drvinfo() */
-+	if (sset == ETH_SS_STATS)
-+		/* ethtool_get_stats(), ethtool_get_drvinfo() */
- 		return DPAA2_ETH_NUM_STATS + DPAA2_ETH_NUM_EXTRA_STATS;
--	default:
-+	else
- 		return -EOPNOTSUPP;
--	}
- }
- 
- /** Fill in hardware counters, as returned by MC.
--- 
-2.10.0.GIT
+	David
