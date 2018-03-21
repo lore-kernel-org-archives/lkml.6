@@ -1,140 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeCUDjH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 23:39:07 -0400
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:43700 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751774AbeCUDjD (ORCPT
+        id S1751481AbeCUEKH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 00:10:07 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:36274 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750750AbeCUEKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 23:39:03 -0400
-X-Google-Smtp-Source: AG47ELs3cloEfeycHxQWQFNXpY7EAKzo3iWvItywUv5WfvR713c6a3jmvi3WKOfv9v1Ui2Xp7+rg4w==
-Message-ID: <1521603539.27691.5.camel@ndufresne.ca>
-Subject: Re: uvcvideo: Unknown video
- format,00000032-0002-0010-8000-00aa00389b71
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        it+linux-media@molgen.mpg.de
-Date: Tue, 20 Mar 2018 23:38:59 -0400
-In-Reply-To: <15529671.DGPDy3yHsE@avalon>
-References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de>
-         <1521567951.20523.81.camel@ndufresne.ca> <15529671.DGPDy3yHsE@avalon>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 21 Mar 2018 00:10:04 -0400
+Date: Wed, 21 Mar 2018 05:10:02 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: kishon@ti.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lorenzo.pieralisi@arm.com
+Subject: Re: [PATCH v4 0/5] PCI endpoint 64-bit BAR fixes
+Message-ID: <20180321041001.GA29527@axis.com>
+References: <20180308133331.19464-1-niklas.cassel@axis.com>
+ <20180319165234.GA12486@e107981-ln.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180319165234.GA12486@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mardi 20 mars 2018 à 20:04 +0200, Laurent Pinchart a écrit :
-> Hi Nicolas,
-> 
-> On Tuesday, 20 March 2018 19:45:51 EET Nicolas Dufresne wrote:
-> > Le mardi 20 mars 2018 à 13:20 +0100, Paul Menzel a écrit :
-> > > Dear Linux folks,
-> > > 
-> > > 
-> > > On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
-> > > 
-> > > ```
-> > > [    2.338094] calling  uvc_init+0x0/0x1000 [uvcvideo] @ 295
-> > > [    2.338569] calling  iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt] @ 280
-> > > [    2.338570] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
-> > > [    2.338713] iTCO_wdt: Found a Intel PCH TCO device (Version=4,
-> > > TCOBASE=0x0400)
-> > > [    2.338755] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
-> > > (0bda:58f4)
-> > > [    2.338827] iTCO_wdt: initialized. heartbeat=30 sec (nowayout=0)
-> > > [    2.338851] initcall iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt]
-> > > returned 0 after 271 usecs
-> > > [    2.340669] uvcvideo 1-5:1.0: Entity type for entity Extension 4 was
-> > > not initialized!
-> > > [    2.340670] uvcvideo 1-5:1.0: Entity type for entity Extension 7 was
-> > > not initialized!
-> > > [    2.340672] uvcvideo 1-5:1.0: Entity type for entity Processing 2 was
-> > > not initialized!
-> > > [    2.340673] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was not
-> > > initialized!
-> > > [    2.340736] input: Integrated_Webcam_HD: Integrate as
-> > > /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
-> > > [    2.341447] uvcvideo: Unknown video format
-> > > 00000032-0002-0010-8000-00aa00389b71
+On Mon, Mar 19, 2018 at 04:52:34PM +0000, Lorenzo Pieralisi wrote:
+> On Thu, Mar 08, 2018 at 02:33:25PM +0100, Niklas Cassel wrote:
+> > PCI endpoint fixes to improve the way 64-bit BARs are handled.
 > > 
-> > While the 0002 is suspicious, this is pretty close to a color format.
-> > I've recently come across of similar format using D3DFORMAT instead of
-> > GUID. According to the vendor*, this camera module includes an infrared
-> > camera (340x340), so I suspect this is to specify the format it
-> > outputs. A good guess to start with would be that this is
-> > D3DFMT_X8L8V8U8 (0x32).
-> 
-> Isn't 0x32 D3DFMT_L8, not D3DFMT_X8L8V8U8 ?
-
-You are right, sorry about that, I totally miss-translate. It felt
-weird. This is much more likely yes. So maybe it's the same mapping
-(but with the -00002- instead) as what I added for the HoloLense
-Camera.
-> 
-> > To test it, you could map this
-> > V4L2_PIX_FMT_YUV32/xRGB and see if the driver is happy with the buffer
-> > size.
-> 
-> VideoStreaming Interface Descriptor:
->         bLength                            30
->         bDescriptorType                    36
->         bDescriptorSubtype                  5 (FRAME_UNCOMPRESSED)
->         bFrameIndex                         1
->         bmCapabilities                   0x00
->           Still image unsupported
->         wWidth                            340
->         wHeight                           340
->         dwMinBitRate                 55488000
->         dwMaxBitRate                 55488000
->         dwMaxVideoFrameBufferSize      115600
->         dwDefaultFrameInterval         166666
->         bFrameIntervalType                  1
->         dwFrameInterval( 0)            166666
-> 
-> 340*340 is 115600, so this should be a 8-bit format.
-
-Indeed, that matches.
-
-> 
-> > Then render it to make sure it looks some image of some sort. A
-> > new format will need to be defined as this format is in the wrong
-> > order, and is ambiguous (it may mean AYUV or xYUV). I'm not sure if we
-> > need specific formats to differentiate infrared data from YUV images,
-> > need to be discussed.
-> 
-> If the format is indeed D3DFMT_L8, it should map to V4L2_PIX_FMT_GREY (8-bit 
-> luminance). I suspect the camera transmits a depth map though.
-
-I wonder if we should think of a way to tell userspace this is fnfrared
-data rather then black and white ?
-
-> 
-> > *https://dustinweb.azureedge.net/media/338953/xps-13-9370.pdf
 > > 
-> > > [    2.341450] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
-> > > (0bda:58f4)
-> > > [    2.343371] uvcvideo: Unable to create debugfs 1-2 directory.
-> > > [    2.343420] uvcvideo 1-5:1.2: Entity type for entity Extension 10 was
-> > > not initialized!
-> > > [    2.343422] uvcvideo 1-5:1.2: Entity type for entity Extension 12 was
-> > > not initialized!
-> > > [    2.343423] uvcvideo 1-5:1.2: Entity type for entity Processing 9 was
-> > > not initialized!
-> > > [    2.343424] uvcvideo 1-5:1.2: Entity type for entity Camera 11 was
-> > > not initialized!
-> > > [    2.343472] input: Integrated_Webcam_HD: Integrate as
-> > > /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.2/input/input10
-> > > [    2.343496] usbcore: registered new interface driver uvcvideo
-> > > [    2.343496] USB Video Class driver (1.1.1)
-> > > [    2.343501] initcall uvc_init+0x0/0x1000 [uvcvideo] returned 0 after
-> > > 5275 usecs
-> > > ```
-> > > 
-> > > Please tell me, what I can do to improve the situation.
+> > There are still future improvements that could be made:
+> > 
+> > pci-epf-test.c always allocates space for
+> > 6 BARs, even when using 64-bit BARs (which
+> > really only requires us to allocate 3 BARs).
+> > 
+> > pcitest.sh will print "NOT OKAY" for BAR1,
+> > BAR3, and BAR5 when using 64-bit BARs.
+> > This could probably be improved to say
+> > something like "N/A (64-bit BAR)".
+> > 
+> > Niklas Cassel (5):
+> >   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
+> >   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
+> >     properly
+> >   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
+> >     properly
+> >   PCI: endpoint: Make pci_epc_set_bar() return the BAR width that was
+> >     set-up
+> >   misc: pci_endpoint_test: Handle 64-bit BARs properly
+> > 
+> >  drivers/misc/pci_endpoint_test.c              | 12 +++++++-----
+> >  drivers/pci/cadence/pcie-cadence-ep.c         |  2 +-
+> >  drivers/pci/dwc/pcie-designware-ep.c          | 22 ++++++++++++++++++----
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 22 +++++++++++++++-------
+> >  4 files changed, 41 insertions(+), 17 deletions(-)
 > 
+> Niklas,
 > 
+> I am fine with the series but I'd need Kishon ACKs (and Greg's for the
+> last patch), I am ready to queue them then.
+
+
+Hello Kishon,
+
+could you please have a look at this series?
+
+
+Kind regards,
+Niklas
