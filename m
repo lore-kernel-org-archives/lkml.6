@@ -1,105 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754244AbeCUXTw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:19:52 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15127 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754071AbeCUXTv (ORCPT
+        id S1754200AbeCUXSA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:18:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754161AbeCUXR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:19:51 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 21 Mar 2018 16:19:51 -0700
-Subject: Re: [PATCH 15/15] mm/hmm: use device driver encoding for HMM pfn v2
-To: Jerome Glisse <jglisse@redhat.com>
-CC: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180320020038.3360-1-jglisse@redhat.com>
- <20180320020038.3360-16-jglisse@redhat.com>
- <0a46cec4-3c39-bc2c-90f5-da33981cb8f2@nvidia.com>
- <20180321155228.GD3214@redhat.com>
-X-Nvconfidentiality: public
-From: John Hubbard <jhubbard@nvidia.com>
-Message-ID: <98aaf798-12e4-ac52-3913-4fced8a28ce3@nvidia.com>
-Date: Wed, 21 Mar 2018 16:19:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180321155228.GD3214@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+        Wed, 21 Mar 2018 19:17:56 -0400
+Subject: Re: [PATCH v6 06/12] integrity: Introduce
+ asymmetric_sig_has_known_key()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date: Wed, 21 Mar 2018 19:17:45 -0400
+In-Reply-To: <20180316203837.10174-7-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+         <20180316203837.10174-7-bauerman@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032123-0040-0000-0000-00000443EF70
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032123-0041-0000-0000-000020E71538
+Message-Id: <1521674265.3848.220.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803210264
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 08:52 AM, Jerome Glisse wrote:
-> On Tue, Mar 20, 2018 at 09:39:27PM -0700, John Hubbard wrote:
->> On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
->>> From: Jérôme Glisse <jglisse@redhat.com>
+On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
+> IMA will only look for a modsig if the xattr sig references a key which is
+> not in the expected kernel keyring. To that end, introduce
+> asymmetric_sig_has_known_key().
 > 
-> [...]
+> The logic of extracting the key used in the xattr sig is factored out from
+> asymmetric_verify() so that it can be used by the new function.
 > 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-<snip>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
->>
->> Let's just keep it simple, and go back to the bitmap flags!
+> ---
+>  security/integrity/digsig_asymmetric.c | 44 +++++++++++++++++++++++++---------
+>  security/integrity/integrity.h         |  8 +++++++
+>  2 files changed, 41 insertions(+), 11 deletions(-)
 > 
-> This simplify nouveau code and it is the reason why i did that patch.
-> I am sure it can simplify NVidia uvm code, i can look into it if you
-> want to give pointers. Idea here is that HMM can fill array with some-
-> thing that match device driver internal format and avoid the conversion
-> step from HMM format to driver format (saving CPU cycles and memory
-> doing so). I am open to alternative that give the same end result.
+> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+> index ab6a029062a1..241647970c19 100644
+> --- a/security/integrity/digsig_asymmetric.c
+> +++ b/security/integrity/digsig_asymmetric.c
+> @@ -79,26 +79,48 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+>  	return key;
+>  }
 > 
-> [Just because code is worth 2^32 words :)
+> -int asymmetric_verify(struct key *keyring, const char *sig,
+> -		      int siglen, const char *data, int datalen)
+> +static struct key *asymmetric_key_from_sig(struct key *keyring, const char *sig,
+> +					   int siglen)
+>  {
+> -	struct public_key_signature pks;
+> -	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+> -	struct key *key;
+> -	int ret = -ENOMEM;
+> +	const struct signature_v2_hdr *hdr = (struct signature_v2_hdr *) sig;
 > 
-> Without this patch:
->     int nouveau_do_fault(..., ulong addr, unsigned npages, ...)
->     {
->         uint64_t *hmm_pfns, *nouveau_pfns;
+>  	if (siglen <= sizeof(*hdr))
+> -		return -EBADMSG;
+> +		return ERR_PTR(-EBADMSG);
 > 
->         hmm_pfns = kmalloc(sizeof(uint64_t) * npages, GFP_KERNEL);
->         nouveau_pfns = kmalloc(sizeof(uint64_t) * npages, GFP_KERNEL);
->         hmm_vma_fault(..., hmm_pfns, ...);
+>  	siglen -= sizeof(*hdr);
 > 
->         for (i = 0; i < npages; ++i) {
->             nouveau_pfns[i] = nouveau_pfn_from_hmm_pfn(hmm_pfns[i]);
->         }
->         ...
->     }
+>  	if (siglen != be16_to_cpu(hdr->sig_size))
+> -		return -EBADMSG;
+> +		return ERR_PTR(-EBADMSG);
 > 
-> With this patch:
->     int nouveau_do_fault(..., ulong addr, unsigned npages, ...)
->     {
->         uint64_t *nouveau_pfns;
+>  	if (hdr->hash_algo >= HASH_ALGO__LAST)
+> -		return -ENOPKG;
+> +		return ERR_PTR(-ENOPKG);
+> +
+> +	return request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
+> +}
+> +
+> +bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
+> +				  int siglen)
+> +{
+> +	struct key *key;
+> +
+> +	key = asymmetric_key_from_sig(keyring, sig, siglen);
+> +	if (IS_ERR_OR_NULL(key))
+> +		return false;
+> +
+> +	key_put(key);
+> +
+> +	return true;
+> +}
+> +
+> +int asymmetric_verify(struct key *keyring, const char *sig,
+> +		      int siglen, const char *data, int datalen)
+> +{
+> +	struct public_key_signature pks;
+> +	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+> +	struct key *key;
+> +	int ret = -ENOMEM;
 > 
->         nouveau_pfns = kmalloc(sizeof(uint64_t) * npages, GFP_KERNEL);
->         hmm_vma_fault(..., nouveau_pfns, ...);
+> -	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
+> +	key = asymmetric_key_from_sig(keyring, sig, siglen);
+>  	if (IS_ERR(key))
+>  		return PTR_ERR(key);
 > 
->         ...
->     }
+> @@ -109,7 +131,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+>  	pks.digest = (u8 *)data;
+>  	pks.digest_size = datalen;
+>  	pks.s = hdr->sig;
+> -	pks.s_size = siglen;
+> +	pks.s_size = siglen - sizeof(*hdr);
+>  	ret = verify_signature(key, &pks);
+>  	key_put(key);
+>  	pr_debug("%s() = %d\n", __func__, ret);
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 2d245f44ca26..4c381b992e11 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -179,12 +179,20 @@ static inline int integrity_init_keyring(const unsigned int id)
+>  #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+>  int asymmetric_verify(struct key *keyring, const char *sig,
+>  		      int siglen, const char *data, int datalen);
+> +bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
+> +				  int siglen);
+>  #else
+>  static inline int asymmetric_verify(struct key *keyring, const char *sig,
+>  				    int siglen, const char *data, int datalen)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +
+> +static inline bool asymmetric_sig_has_known_key(struct key *keyring,
+> +						const char *sig, int siglen)
+> +{
+> +	return false;
+> +}
+>  #endif
 > 
-> Benefit from this patch is quite obvious to me. Down the road with bit
-> more integration between HMM and IOMMU/DMA this can turn into something
-> directly ready for hardware consumptions.
+>  #ifdef CONFIG_IMA_LOAD_X509
 > 
-> Note that you could argue that i can convert nouveau to use HMM format
-> but this would not work, first because it requires a lot of changes in
-> nouuveau, second because HMM do not have all the flags needed by the
-> drivers (nor does HMM need them). HMM being the helper here, i feel it
-> is up to HMM to adapt to drivers than the other way around.]
-> 
-
-OK, if this simplifies Nouveau and potentially other drivers, then I'll 
-drop my earlier objections! Thanks for explaining what's going on, in detail.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
