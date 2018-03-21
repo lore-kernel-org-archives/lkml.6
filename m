@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeCUTYC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:24:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35868 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753265AbeCUTXv (ORCPT
+        id S1753587AbeCUTb2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:31:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57608 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753340AbeCUTYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:23:51 -0400
+        Wed, 21 Mar 2018 15:24:09 -0400
 From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -21,16 +21,16 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 10/32] docs/vm: idle_page_tracking.txt: convert to ReST format
-Date: Wed, 21 Mar 2018 21:22:26 +0200
+Subject: [PATCH 14/32] docs/vm: overcommit-accounting: convert to ReST format
+Date: Wed, 21 Mar 2018 21:22:30 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18032119-0040-0000-0000-00000443E0AB
+x-cbid: 18032119-0020-0000-0000-00000407E60F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032119-0041-0000-0000-000020E705C9
-Message-Id: <1521660168-14372-11-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18032119-0021-0000-0000-0000429C06BB
+Message-Id: <1521660168-14372-15-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -44,113 +44,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- Documentation/vm/idle_page_tracking.txt | 55 +++++++++++++++++++++------------
- 1 file changed, 36 insertions(+), 19 deletions(-)
+ Documentation/vm/overcommit-accounting | 107 ++++++++++++++++++---------------
+ 1 file changed, 57 insertions(+), 50 deletions(-)
 
-diff --git a/Documentation/vm/idle_page_tracking.txt b/Documentation/vm/idle_page_tracking.txt
-index 85dcc3b..9cbe6f8 100644
---- a/Documentation/vm/idle_page_tracking.txt
-+++ b/Documentation/vm/idle_page_tracking.txt
-@@ -1,4 +1,11 @@
--MOTIVATION
-+.. _idle_page_tracking:
+diff --git a/Documentation/vm/overcommit-accounting b/Documentation/vm/overcommit-accounting
+index cbfaaa6..0dd54bb 100644
+--- a/Documentation/vm/overcommit-accounting
++++ b/Documentation/vm/overcommit-accounting
+@@ -1,80 +1,87 @@
++.. _overcommit_accounting:
 +
-+==================
-+Idle Page Tracking
-+==================
++=====================
++Overcommit Accounting
++=====================
 +
-+Motivation
-+==========
+ The Linux kernel supports the following overcommit handling modes
  
- The idle page tracking feature allows to track which memory pages are being
- accessed by a workload and which are idle. This information can be useful for
-@@ -8,10 +15,14 @@ or deciding where to place the workload within a compute cluster.
+-0	-	Heuristic overcommit handling. Obvious overcommits of
+-		address space are refused. Used for a typical system. It
+-		ensures a seriously wild allocation fails while allowing
+-		overcommit to reduce swap usage.  root is allowed to 
+-		allocate slightly more memory in this mode. This is the 
+-		default.
++0
++	Heuristic overcommit handling. Obvious overcommits of address
++	space are refused. Used for a typical system. It ensures a
++	seriously wild allocation fails while allowing overcommit to
++	reduce swap usage.  root is allowed to allocate slightly more
++	memory in this mode. This is the default.
  
- It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
+-1	-	Always overcommit. Appropriate for some scientific
+-		applications. Classic example is code using sparse arrays
+-		and just relying on the virtual memory consisting almost
+-		entirely of zero pages.
++1
++	Always overcommit. Appropriate for some scientific
++	applications. Classic example is code using sparse arrays and
++	just relying on the virtual memory consisting almost entirely
++	of zero pages.
  
--USER API
-+.. _user_api:
+-2	-	Don't overcommit. The total address space commit
+-		for the system is not permitted to exceed swap + a
+-		configurable amount (default is 50%) of physical RAM.
+-		Depending on the amount you use, in most situations
+-		this means a process will not be killed while accessing
+-		pages but will receive errors on memory allocation as
+-		appropriate.
++2
++	Don't overcommit. The total address space commit for the
++	system is not permitted to exceed swap + a configurable amount
++	(default is 50%) of physical RAM.  Depending on the amount you
++	use, in most situations this means a process will not be
++	killed while accessing pages but will receive errors on memory
++	allocation as appropriate.
  
--The idle page tracking API is located at /sys/kernel/mm/page_idle. Currently,
--it consists of the only read-write file, /sys/kernel/mm/page_idle/bitmap.
-+User API
-+========
+-		Useful for applications that want to guarantee their
+-		memory allocations will be available in the future
+-		without having to initialize every page.
++	Useful for applications that want to guarantee their memory
++	allocations will be available in the future without having to
++	initialize every page.
+ 
+-The overcommit policy is set via the sysctl `vm.overcommit_memory'.
++The overcommit policy is set via the sysctl ``vm.overcommit_memory``.
+ 
+-The overcommit amount can be set via `vm.overcommit_ratio' (percentage)
+-or `vm.overcommit_kbytes' (absolute value).
++The overcommit amount can be set via ``vm.overcommit_ratio`` (percentage)
++or ``vm.overcommit_kbytes`` (absolute value).
+ 
+ The current overcommit limit and amount committed are viewable in
+-/proc/meminfo as CommitLimit and Committed_AS respectively.
++``/proc/meminfo`` as CommitLimit and Committed_AS respectively.
+ 
+ Gotchas
+--------
++=======
+ 
+ The C language stack growth does an implicit mremap. If you want absolute
+-guarantees and run close to the edge you MUST mmap your stack for the 
++guarantees and run close to the edge you MUST mmap your stack for the
+ largest size you think you will need. For typical stack usage this does
+ not matter much but it's a corner case if you really really care
+ 
+-In mode 2 the MAP_NORESERVE flag is ignored. 
++In mode 2 the MAP_NORESERVE flag is ignored.
+ 
+ 
+ How It Works
+-------------
++============
+ 
+ The overcommit is based on the following rules
+ 
+ For a file backed map
+-	SHARED or READ-only	-	0 cost (the file is the map not swap)
+-	PRIVATE WRITABLE	-	size of mapping per instance
++	| SHARED or READ-only	-	0 cost (the file is the map not swap)
++	| PRIVATE WRITABLE	-	size of mapping per instance
+ 
+-For an anonymous or /dev/zero map
+-	SHARED			-	size of mapping
+-	PRIVATE READ-only	-	0 cost (but of little use)
+-	PRIVATE WRITABLE	-	size of mapping per instance
++For an anonymous or ``/dev/zero`` map
++	| SHARED			-	size of mapping
++	| PRIVATE READ-only	-	0 cost (but of little use)
++	| PRIVATE WRITABLE	-	size of mapping per instance
+ 
+ Additional accounting
+-	Pages made writable copies by mmap
+-	shmfs memory drawn from the same pool
++	| Pages made writable copies by mmap
++	| shmfs memory drawn from the same pool
+ 
+ Status
+-------
+-
+-o	We account mmap memory mappings
+-o	We account mprotect changes in commit
+-o	We account mremap changes in size
+-o	We account brk
+-o	We account munmap
+-o	We report the commit status in /proc
+-o	Account and check on fork
+-o	Review stack handling/building on exec
+-o	SHMfs accounting
+-o	Implement actual limit enforcement
++======
 +
-+The idle page tracking API is located at ``/sys/kernel/mm/page_idle``.
-+Currently, it consists of the only read-write file,
-+``/sys/kernel/mm/page_idle/bitmap``.
++*	We account mmap memory mappings
++*	We account mprotect changes in commit
++*	We account mremap changes in size
++*	We account brk
++*	We account munmap
++*	We report the commit status in /proc
++*	Account and check on fork
++*	Review stack handling/building on exec
++*	SHMfs accounting
++*	Implement actual limit enforcement
  
- The file implements a bitmap where each bit corresponds to a memory page. The
- bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
-@@ -19,8 +30,9 @@ mapped to bit #i%64 of array element #i/64, byte order is native. When a bit is
- set, the corresponding page is idle.
- 
- A page is considered idle if it has not been accessed since it was marked idle
--(for more details on what "accessed" actually means see the IMPLEMENTATION
--DETAILS section). To mark a page idle one has to set the bit corresponding to
-+(for more details on what "accessed" actually means see the :ref:`Implementation
-+Details <impl_details>` section).
-+To mark a page idle one has to set the bit corresponding to
- the page by writing to the file. A value written to the file is OR-ed with the
- current bitmap value.
- 
-@@ -30,9 +42,9 @@ page types (e.g. SLAB pages) an attempt to mark a page idle is silently ignored,
- and hence such pages are never reported idle.
- 
- For huge pages the idle flag is set only on the head page, so one has to read
--/proc/kpageflags in order to correctly count idle huge pages.
-+``/proc/kpageflags`` in order to correctly count idle huge pages.
- 
--Reading from or writing to /sys/kernel/mm/page_idle/bitmap will return
-+Reading from or writing to ``/sys/kernel/mm/page_idle/bitmap`` will return
- -EINVAL if you are not starting the read/write on an 8-byte boundary, or
- if the size of the read/write is not a multiple of 8 bytes. Writing to
- this file beyond max PFN will return -ENXIO.
-@@ -41,21 +53,25 @@ That said, in order to estimate the amount of pages that are not used by a
- workload one should:
- 
-  1. Mark all the workload's pages as idle by setting corresponding bits in
--    /sys/kernel/mm/page_idle/bitmap. The pages can be found by reading
--    /proc/pid/pagemap if the workload is represented by a process, or by
--    filtering out alien pages using /proc/kpagecgroup in case the workload is
--    placed in a memory cgroup.
-+    ``/sys/kernel/mm/page_idle/bitmap``. The pages can be found by reading
-+    ``/proc/pid/pagemap`` if the workload is represented by a process, or by
-+    filtering out alien pages using ``/proc/kpagecgroup`` in case the workload
-+    is placed in a memory cgroup.
- 
-  2. Wait until the workload accesses its working set.
- 
-- 3. Read /sys/kernel/mm/page_idle/bitmap and count the number of bits set. If
--    one wants to ignore certain types of pages, e.g. mlocked pages since they
--    are not reclaimable, he or she can filter them out using /proc/kpageflags.
-+ 3. Read ``/sys/kernel/mm/page_idle/bitmap`` and count the number of bits set.
-+    If one wants to ignore certain types of pages, e.g. mlocked pages since they
-+    are not reclaimable, he or she can filter them out using
-+    ``/proc/kpageflags``.
-+
-+See Documentation/vm/pagemap.txt for more information about
-+``/proc/pid/pagemap``, ``/proc/kpageflags``, and ``/proc/kpagecgroup``.
- 
--See Documentation/vm/pagemap.txt for more information about /proc/pid/pagemap,
--/proc/kpageflags, and /proc/kpagecgroup.
-+.. _impl_details:
- 
--IMPLEMENTATION DETAILS
-+Implementation Details
-+======================
- 
- The kernel internally keeps track of accesses to user memory pages in order to
- reclaim unreferenced pages first on memory shortage conditions. A page is
-@@ -77,7 +93,8 @@ When a dirty page is written to swap or disk as a result of memory reclaim or
- exceeding the dirty memory limit, it is not marked referenced.
- 
- The idle memory tracking feature adds a new page flag, the Idle flag. This flag
--is set manually, by writing to /sys/kernel/mm/page_idle/bitmap (see the USER API
-+is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` (see the
-+:ref:`User API <user_api>`
- section), and cleared automatically whenever a page is referenced as defined
- above.
- 
+ To Do
+------
+-o	Account ptrace pages (this is hard)
++=====
++*	Account ptrace pages (this is hard)
 -- 
 2.7.4
