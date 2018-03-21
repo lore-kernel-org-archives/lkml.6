@@ -1,144 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751541AbeCUGID (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 02:08:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:47396 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751317AbeCUGIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 02:08:02 -0400
-X-UUID: e14c575aa01c46be98a7a3af3705fd9a-20180321
-Message-ID: <1521612477.12038.4.camel@mtkswgap22>
-Subject: Re: update vruntime incorrectly When use rt_mutex
-From: Kathleen Chang <yt.chang@mediatek.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <mingo@redhat.com>, <matthias.bgg@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <Jonathan.JMChen@mediatek.com>,
-        <wsd_upstream@mediatek.com>, Matt Fleming <matt@codeblueprint.co.uk>,
-        <En-Ron.Chang@mediatek.com>
-Date: Wed, 21 Mar 2018 14:07:57 +0800
-In-Reply-To: <1521611526.11277.2.camel@mtkswgap22>
-References: <1521099370.7712.4.camel@mtkswgap22>
-         <20180316095113.GA4064@hirez.programming.kicks-ass.net>
-         <1521611526.11277.2.camel@mtkswgap22>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1751539AbeCUG1q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 02:27:46 -0400
+Received: from ozlabs.org ([103.22.144.67]:43921 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751317AbeCUG1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 02:27:41 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 21 Mar 2018 17:26:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the userns tree with the fuse tree
+Message-ID: <20180321172658.45b892a3@canb.auug.org.au>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iy/.I4KvP.Gk.uKk1+ldxAv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-21 at 13:52 +0800, Kathleen Chang wrote:
->  
-> 
-> On Fri, 2018-03-16 at 10:51 +0100, Peter Zijlstra wrote:
-> > On Thu, Mar 15, 2018 at 03:36:10PM +0800, Kathleen Chang wrote:
-> > > hi,  
-> > > 
-> > > We found the vruntime might update incorrectly when use rt_mutex.
-> > 
-> > That's nice, on what kernel?
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel-4.9 
-> > 
-> > Also, your email is very hard to make sense of.
-> > 
-> > > <<abnormal case>>
-> > > When the Task is waking, update vruntime incorrectly.
-> > > 1.  When there is a CFS task (A) hold  rt_mutex_lock and the state is
-> > > TASK_WAKING (on_rq=0),  a RT task (B) want to hold this rt_mutex_lock.
-> > > Update vruntime incorrectly.
-> > > 
-> > >   RT task (B)
-> > >      rt_mutex_setprio  (cfs->RT)  ->  Task is waking , and update
-> > > vruntime
-> > > 
-> > >        queued = task_on_rq_queued(p); // task is waking, queued=0
-> > >        running = task_current(rq, p);
-> > >        if (queued)      /*   don't update vruntime here!   */
-> > >                 dequeue_task(rq, p, queue_flag);                      
-> > >        if (running)
-> > >                 put_prev_task(rq, p);
-> > >        
-> > >        check_class_changed(rq, p, prev_class, oldprio);   -> 
-> > >                 switched_from_fair -> 
-> > >                       detach_task_cfs_rq  
-> > >           ( due to task is waking, and bypass
-> > > vruntime-=cfs_rq.min_vruntime) 
-> > > 
-> > > static void detach_task_cfs_rq(struct task_struct *p)
-> > > {
-> > >         struct sched_entity *se = &p->se;
-> > >         struct cfs_rq *cfs_rq = cfs_rq_of(se);
-> > > 
-> > >         if (!vruntime_normalized(p)) {   // return 1, then p->state is
-> > > TASK_WAKING
-> > >                 /*
-> > >                  * Fix up our vruntime so that the current sleep doesn't
-> > >                  * cause 'unlimited' sleep bonus.
-> > >                  */
-> > >                 place_entity(cfs_rq, se, 0);
-> > >                 check_vruntime(8, se, cfs_rq->min_vruntime);
-> > >                 se->vruntime -= cfs_rq->min_vruntime;
-> > 
-> > So here we subtract min_vruntime,
-> 
+Hi all,
 
-When the p->state is TASK_WAKING, vruntime_normlized will return 1 
-and if(!vruntime_normalized(p)) will be 0
+Today's linux-next merge of the userns tree got a conflict in:
 
-in this case, doesn't subtract min_vruntime. 
+  fs/fuse/dev.c
 
-> 
-> 
-> > 
-> > >                 se->normalized = true;
-> > 
-> > this doesn't exist.. which makes me wonder what you're looking at,
-> > 
-> > >         }
-> > > 
-> > >         detach_entity_cfs_rq(se);
-> > > }
-> > > 
-> > > // when p->state is TASK_WAKING, the task's vruntime is normalized 
-> > > static inline bool vruntime_normalized(struct task_struct *p)
-> > > {
-> > > .....
-> > >         if (!se->sum_exec_runtime || p->state == TASK_WAKING)
-> > >                 return true;
-> > > 
-> > > }
-> > > 
-> > > 2.  When the task (A) which holds the rt_muex_lock unlock the
-> > > rt_mutex_lock.
-> > >      Task (A) must be on_rq=1 
-> > > 
-> > >     rt_mutex_setprio (RT->CFS)     
-> > >        if (queued)
-> > >                 enqueue_task(rq, p, queue_flag);    );     
-> > >                     /* vruntime += cfs_rq.min_vruntime */
-> > 
-> > And here we're adding min_vruntime.
-> > 
-> > >        if (running)
-> > >                 set_curr_task(rq, p);
-> > > 
-> > >     that result in vruntime accumulates
-> > 
-> > So what exactly is the problem?
-> > 
+between commits:
 
-When the p->state is TASK_WAKING,  detach_task_cfs_rq doesn't subtract
-min_vruntime and adding min_vruntime in  enqueue_task, 
+  dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_d=
+o_read")
+  c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+  8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
 
+from the fuse tree and commits:
 
-That result in vruntime accumulates to a extreme large number.  
+  dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_d=
+o_read")
+  c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+  8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
 
+from the userns tree.
 
+These commits seem to have been rebased in the fuse tree on top of
 
->  
-> 
+  3b7008b226f3 ("fuse: return -ECONNABORTED on /dev/fuse read after abort")
+
+and modified a bit.
+
+I fixed it up (I used the fuse tree version, but please come to
+some arrangement about which is correct) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqx+zIACgkQAVBC80lX
+0Gzwsgf9EePQMmSSMJ67jqC2T5H/txCLpHUvXWjkyhKIEmilQzlo2Vl0lCC521eH
+Q1sa6kf2rINNOhis0HAE5vtvJYGqUI9DQCGtHRM/TbxilemM0zt41xaIQB9Fg7MZ
+ESkDhFnsKQMUin3FKjoM2f537BOw8Fy6Lb1up2IJlAH2mNuGTrQ0QigPlBzzFvwx
+GIm5fnog5vy86O2H1qkEf2U+9iR8uOU1NH2Ad7nKtQ/PQ8BV0gRkULG5uuayPinU
+otrFKTbLk5Znm2Fpr1+8chf1aqOtdJCZCgR4HCYakdN6Cqb8bHhvUIx394B8z2Ai
+M4N7MaHx+2rNwgTHkUQfQ3/BxSZzsA==
+=PK/j
+-----END PGP SIGNATURE-----
+
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv--
