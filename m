@@ -1,44 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeCUI0h (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:26:37 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:40995 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeCUI0d (ORCPT
+        id S1751912AbeCUIak (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:30:40 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:50108 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751658AbeCUIai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:26:33 -0400
-X-Google-Smtp-Source: AG47ELv2G48lVH7SB6KZaFtgFKjF1ssR4fczsnBgz4dE5O9QWIuoTujMouF/gszjJVncFcoYzKxKiQ==
-Date: Wed, 21 Mar 2018 17:26:28 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Nick Terrell <terrelln@fb.com>,
-        Maninder Singh <maninder1.s@samsung.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, minchan@kernel.org,
-        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, akpm@linux-foundation.org,
-        colin.king@canonical.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
-        a.sahrawat@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
- length.
-Message-ID: <20180321082628.GB2746@jagdpanzerIV>
-References: <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcas5p2.samsung.com>
- <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
+        Wed, 21 Mar 2018 04:30:38 -0400
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <vinod.koul@intel.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <dan.j.williams@intel.com>
+Subject: [PATCH] dmaengine: edma: Check the memory allocation for the memcpy dma device
+Date: Wed, 21 Mar 2018 10:30:22 +0200
+Message-ID: <20180321083022.32616-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC-ing Nick
+If the allocation fails then disable the memcpy support.
 
-Nick, can you take a look?
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ drivers/dma/edma.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Message-IDs:
-lkml.kernel.org/r/1521607242-3968-1-git-send-email-maninder1.s@samsung.com
-lkml.kernel.org/r/1521607242-3968-2-git-send-email-maninder1.s@samsung.com
+diff --git a/drivers/dma/edma.c b/drivers/dma/edma.c
+index 5b197473106b..519e69e81fca 100644
+--- a/drivers/dma/edma.c
++++ b/drivers/dma/edma.c
+@@ -1899,6 +1899,11 @@ static void edma_dma_init(struct edma_cc *ecc, bool legacy_mode)
+ 
+ 	if (memcpy_channels) {
+ 		m_ddev = devm_kzalloc(ecc->dev, sizeof(*m_ddev), GFP_KERNEL);
++		if (!m_ddev) {
++			dev_warn(ecc->dev, "memcpy is disabled due to OoM\n");
++			memcpy_channels = NULL;
++			goto ch_setup;
++		}
+ 		ecc->dma_memcpy = m_ddev;
+ 
+ 		dma_cap_zero(m_ddev->cap_mask);
+@@ -1926,6 +1931,7 @@ static void edma_dma_init(struct edma_cc *ecc, bool legacy_mode)
+ 		dev_info(ecc->dev, "memcpy is disabled\n");
+ 	}
+ 
++ch_setup:
+ 	for (i = 0; i < ecc->num_channels; i++) {
+ 		struct edma_chan *echan = &ecc->slave_chans[i];
+ 		echan->ch_num = EDMA_CTLR_CHAN(ecc->id, i);
+-- 
+Peter
 
-	-ss
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
