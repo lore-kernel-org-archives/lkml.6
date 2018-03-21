@@ -1,89 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeCUIWf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:22:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46308 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751458AbeCUIWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:22:31 -0400
-Date: Wed, 21 Mar 2018 09:22:28 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
-Message-ID: <20180321082228.GC23100@dhcp22.suse.cz>
-References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
- <20180320071624.GB23100@dhcp22.suse.cz>
- <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com>
+        id S1751945AbeCUIWx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:22:53 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:46495 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751863AbeCUIWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:22:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Wed, 21 Mar 2018 09:22:47 +0100
+From: Stefan Agner <stefan@agner.ch>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
+        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] bus: arm-cci: use asm unreachable
+In-Reply-To: <20180320233046.GL2743@n2100.armlinux.org.uk>
+References: <20180320230206.25289-1-stefan@agner.ch>
+ <20180320230206.25289-2-stefan@agner.ch>
+ <20180320233046.GL2743@n2100.armlinux.org.uk>
+Message-ID: <23ba28a09df84e723cd38bfc16dfca56@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-03-18 13:25:23, David Rientjes wrote:
-> On Tue, 20 Mar 2018, Michal Hocko wrote:
+On 21.03.2018 00:30, Russell King - ARM Linux wrote:
+> On Wed, Mar 21, 2018 at 12:02:02AM +0100, Stefan Agner wrote:
+>> Mixing asm and C code is not recommended in a naked function by
+>> gcc and leads to an error when using clang:
+>>   drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
+>>   function is not supported
+>>         unreachable();
+>>         ^
+>>
+>> Instead of using the unreachable() macro use the assember variant
+>> ASM_UNREACHABLE.  This will no longer emit __builtin_unreachable(),
+>> but since the function is naked and its return type is void it seems
+>> not to have aversive effects.
 > 
-> > > Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-> > > madvised allocations") changed the page allocator to no longer detect thp
-> > > allocations based on __GFP_NORETRY.
-> > > 
-> > > It did not, however, modify the mem cgroup try_charge() path to avoid oom
-> > > kill for either khugepaged collapsing or thp faulting.  It is never
-> > > expected to oom kill a process to allocate a hugepage for thp; reclaim is
-> > > governed by the thp defrag mode and MADV_HUGEPAGE, but allocations (and
-> > > charging) should fallback instead of oom killing processes.
-> > 
-> > For some reason I thought that the charging path simply bails out for
-> > costly orders - effectively the same thing as for the global OOM killer.
-> > But we do not. Is there any reason to not do that though? Why don't we
-> > simply do
-> > 
+> I think that unreachable() there is rather silly - this function
+> *does* return, and the comments say as much.  Just delete the silly
+> "unreachable()", there's no need to put an ASM_UNREACHABLE in there.
 > 
-> I'm not sure of the expectation of high-order memcg charging without 
-> __GFP_NORETRY,
-
-It should be semantically compatible with the allocation path.
-
-> I only know that khugepaged can now cause memcg oom kills 
-> when trying to collapse memory, and then subsequently found that the same 
-> situation exists for faulting instead of falling back to small pages.
-
-And that is clearly a bug because page allocator doesn't oom kill while
-the memcg charge does for the same gfp flag. That should be fixed.
-
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index d1a917b5b7b7..08accbcd1a18 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
-> >  
-> >  static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
-> >  {
-> > -	if (!current->memcg_may_oom)
-> > +	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
-> >  		return;
-> >  	/*
-> >  	 * We are in the middle of the charge context here, so we
+> The function is not declared as not returning, and nothing in this
+> file uses it anyway - it's called from the mcpm code, which also
+> _does_ expect this function to return (if it doesn't, then we're
+> basically saying the CPU that called it is dead.)
 > 
-> That may make sense as an additional patch, but for thp allocations we 
-> don't want to retry reclaim nr_retries times anyway; we want the old 
-> behavior of __GFP_NORETRY before commit 2516035499b9.
 
-Why? Allocation and the charge path should use the same gfp mask unless
-there is a strong reason for it. If you have one then please mention it
-in the changelog.
+Hm, that makes sense. Will just drop unreachable() in the next revision.
 
-> So the above would be a follow-up patch that wouldn't replace mine.
+Thanks for reviewing!
 
-Unless there is a strong reason to use different gfp mask for the
-allocation and the charge then your fix is actually wrong.
--- 
-Michal Hocko
-SUSE Labs
+--
+Stefan
+
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  drivers/bus/arm-cci.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+>> index 5426c04fe24b..ee9da86fec47 100644
+>> --- a/drivers/bus/arm-cci.c
+>> +++ b/drivers/bus/arm-cci.c
+>> @@ -2084,6 +2084,7 @@ asmlinkage void __naked cci_enable_port_for_self(void)
+>>
+>>  "	mov	r0, #0 \n"
+>>  "	bx	lr \n"
+>> +	ASM_UNREACHABLE
+>>
+>>  "	.align	2 \n"
+>>  "5:	.word	cpu_port - . \n"
+>> @@ -2103,8 +2104,6 @@ asmlinkage void __naked cci_enable_port_for_self(void)
+>>  	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
+>>  	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
+>>  	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
+>> -
+>> -	unreachable();
+>>  }
+>>
+>>  /**
+>> --
+>> 2.16.2
+>>
