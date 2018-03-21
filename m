@@ -1,129 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751820AbeCULLS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:11:18 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35534 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbeCULLN (ORCPT
+        id S1751861AbeCULLp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:11:45 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:19533 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751719AbeCULLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:11:13 -0400
-X-Google-Smtp-Source: AG47ELsSlRPXgMdsMybzJT1aRQojKMukpxkgsIA8HPbiCKStpVlb2r59Moj9PzqIM57UWgN11qsaj2uXDhnW5ZqX+6M=
-MIME-Version: 1.0
-In-Reply-To: <1521587979.23626.117.camel@codethink.co.uk>
-References: <20180316152259.964532775@linuxfoundation.org> <20180316152303.262268098@linuxfoundation.org>
- <20180316225537.GA5989@anatevka.americas.hpqcorp.net> <20180318101416.GD13276@kroah.com>
- <1521587979.23626.117.camel@codethink.co.uk>
-From: =?UTF-8?B?546L6YeR5rWm?= <jinpuwang@gmail.com>
-Date: Wed, 21 Mar 2018 12:11:10 +0100
-Message-ID: <CAD9gYJLVS2UVUgqsaJynNjeUcg9oDxhPX26narY6eXW_2kwPAA@mail.gmail.com>
-Subject: Re: [PATCH 4.4 29/63] watchdog: hpwdt: fix unused variable warning
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "v3.14+, only the raid10 part" <stable@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@iguana.be>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Mar 2018 07:11:42 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180321111139epoutp014237da7e2369ede8171f89e8c8b431da~d6w9Ftxux0514905149epoutp01T
+X-AuditID: b6c32a49-025ff70000001122-2c-5ab23deb8cfc
+From: Maninder Singh <maninder1.s@samsung.com>
+To: linux@armlinux.org.uk, dustinb@codeaurora.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+Subject: [PATCH v2] arm/stacktrace: stop unwinding after an invalid address.
+Date: Wed, 21 Mar 2018 16:40:45 +0530
+Message-Id: <1521630645-46715-1-git-send-email-maninder1.s@samsung.com>
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTcRTH+e1udzdrcZtmp0k2LvSHwubu2PQuXA8SWyVhT2hR66K/1HJ3
+        496ZGVSWZWFZ2eMfcxRYlgaZjyxmQk2yxDDMspf0fr+oZtKDqF2v0X/fc76f8+BwKEL/RmOg
+        CoQAFgW+kCFj1G2dScmm985mt+VAnYHra8fc6z21JNf8fEDD9YdqSC58pANxncfK1dyjD+dV
+        XLg7iGZRrv6BPsLVv69S5Wo5sdW1r7UBuSLNidkaN07Px3wuFo1YyPHlFgh5TmbBEs8cjz3V
+        wppYB5fGGAXei51MRla2KbOgMLoJY9zAFxZFU9m8JDEpM9JFX1EAG/N9UsDJrGRZq5m1pJmt
+        VqvZZl813WqPImtwft3wXa3/JLXxdtcgKkXbtBWIooC2we8XEypQDKWn2xEEh1pRBRoTDb4i
+        uNibphjDCHrOPiRkQy6oCh8lFaMDwZ7gIbUSDCE4+Xk/KVMkbYaG0CW1rONoFpre1SMZIujr
+        CL5f+KGSjVg6C0K1H0YgNT0NSkvvaGWto+fCzcflamVcInR3HdLIxUBvIyG4f6dKWTwDjjws
+        UZhYeHetVatoA0Q+dZAKX4Zg8PQ3QgkOI/gafDradSY8uXd15AIEnQSNoRQl7YSD4cgIQtDj
+        ofLXi9FZOthdrleQabDj/jmNohMg8uXLaEcX3GupRIqeDb0PbmnkUj29CjpfFh9AidX/Zx1H
+        qAFNxn7Jm4clu58VcLFZ4r1SkZBnzvF5m9HIlyXPu4iqe7PCiKYQM07HxTe59Rp+g1TiDSOg
+        CCZO1xaJpnS5fMkmLPo8YlEhlsLIHr1lFWGYmOOL/qwQ8LA2h8WWmprGWiwOGzNJN3tRhltP
+        5/EBvB5jPxb/1amoMYZSFOdY+Ky2ONF4rCl9kcodE7t83eR427kLV47SY3WmZZMGk1f0iTdO
+        oZ/fEmLHi2/Lznz+2BPKTBIckczyqTtIjaFsVy0/0L2p6vLeofo/9a9CO7Xb+5cmHITGejSf
+        3lvTVeJL9xs3/yj7KK3eMmW4raWiZ/HalomeBtOssC9rKL6aUUv5PJtMiBL/FzkWpDR7AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LZdlhJXveV7aYog92txhYXd6daPO9ezGax
+        6fE1VovLu+awWRyaupfR4vD8NhaLe2+2MlkcOjmX0YHD4/K1i8wel/t6mTw2L6n36NuyitHj
+        8ya5ANYoLpuU1JzMstQifbsEroxl366zFyzlqLhy7A5jA2MjexcjJ4eEgInExEOz2UBsIYHd
+        jBK7j1tDxKUlfv57zwJhC0us/PccqJ4LqOYTo0TXq6lgCTYBPYlVu/aA2SICxhKHP3xlBili
+        FjjHKLG96wAjSEJYwEdi1+I3YEUsAqoSDQ1XwTbzCrhLnL/fBrVBTuLkscmsExh5FjAyrGKU
+        TC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECA4mLc0djJeXxB9iFOBgVOLhnSCxMUqINbGs
+        uDL3EKMEB7OSCO+2z0Ah3pTEyqrUovz4otKc1OJDjNIcLErivE/zjkUKCaQnlqRmp6YWpBbB
+        ZJk4OKUaGMNn6FWYVAe/6N4xwT8sZP/n756JyauOL7tQ6LIn8Zuvxq0LAnyya1vvhy9+fe1N
+        CvNduV5bfrc/b6onfg3w2BsWKmPa4Htm9qy08Oz7wpkVy5mzGTrOh93hkkj87SX3eKrRPalt
+        8n/X3OiVPjTzYMMzrnZuwxfiV1esF1/nLi97ejvHdFad90osxRmJhlrMRcWJAIdo0NAiAgAA
+X-CMS-MailID: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+X-RootMTR: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+References: <CGME20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9@epcas5p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-21 0:19 GMT+01:00 Ben Hutchings <ben.hutchings@codethink.co.uk>:
-> On Sun, 2018-03-18 at 11:14 +0100, Greg Kroah-Hartman wrote:
->> On Fri, Mar 16, 2018 at 04:55:37PM -0600, Jerry Hoemann wrote:
->> >
->> > Greg,
->> >
->> > Sorry, if I'm missing something, but I see 3 patches for
->> > hpwdt queued up for 4.4:
->> >
->> >     queue-4.4/watchdog-hpwdt-fix-unused-variable-warning.patch
->> >     queue-4.4/watchdog-hpwdt-smbios-check.patch
->> >     queue-4.4/watchdog-hpwdt-check-source-of-nmi.patch
->> >
->> >
->> > Shouldn't there also be a 4.4 patch for
->> >
->> >     commit 2b3d89b402b085b08498e896c65267a145bed486
->> >     watchdog: hpwdt: Remove legacy NMI sourcing.
->> >
->> > As there was for 4.15, 4.14, and 4.9?
->>
->> It does not apply to the 4.4.y kernel branch.  If you feel it should be
->> there, please provide a working backport.
->>
->> > commit 2b3d89b40 is the Spectre related patch.
->>
->> If you look closely, not many Spectre-related patches are merged into
->> 4.4.y as no one has taken the time to do the backporting.  I thought
->> someone was working on this, but odds are they just moved to 4.9.y or
->> 4.14.y as everyone really should if they care about these issues with
->> their platforms.
->>
->> So if you care about Spectre, I strongly recommend using 4.14.y or
->> newer.
->
-> I think you have most of the Spectre stuff aside from microcode
-> supported fixes.  These are still missing on the 4.4 branch though:
->
-> 8fa80c503b48 nospec: Move array_index_nospec() parameter checking into separate macro
-> 1d91c1d2c80c nospec: Kill array_index_nospec_mask_check()
->
-> I think there may also be some extra uaccess functions that didn't get
-> the nospec treatment.
->
-> I'll probably look into backporting the microcode stuff to the older
-> branches (4.4, then 3.16 and 3.2) at some point.
->
-> Ben.
->
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
->
-Hi, Ben,
+This patch stops unwinding backtrace in case address does not
+belong to kernel address like below:-
 
-It will be great, if you can backport spectre fixes into 4.4, I'm
-happy to test your port.
-The patch list I gathered when I did porting to 4.4:
-d3eba77440 x86/cpufeatures: Add CPUID_7_EDX CPUID leaf
-40532f65cc x86/cpufeatures: Add Intel feature bits for Speculatio
-c26a6bea26 x86/cpufeatures: Add AMD feature bits for Speculation
- Control
-af57d43c908 x86/msr: Add definitions for new speculation control
-a8799fd14d x86/pti: Do not enable PTI on CPUs which are not
- vulnerable to Meltdown
-6c5e49150a x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early
- Spectre v2 microcodes
-31fd9eda7f6 x86/speculation: Add basic IBPB (Indirect Branch
- Prediction Barrier) support
-77b3b3ee238 x86/cpufeatures: Clean up Spectre v2 related CPUID
- flags
-77d1424d2fb x86/retpoline: Simplify vmexit_fill_RSB()
-d7f8d17406d x86/entry/64: Remove the SYSCALL64 fast path
-572e509178 x86/entry/64: Push extra regs right away
-e06d7bfb223 x86: Introduce __uaccess_begin_nospec() and
- uaccess_try_nospec
-ae75f83e79 x86/usercopy: Replace open coded stac/clac with
- __uaccess_{begin, end}
-065eae4be83 x86/uaccess: Use __uaccess_begin_nospec() and
- uaccess_try_nospec
-cda6b6074cc6f9 x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature
- bits on Intel
-4b234a253e52 x86/pti: Mark constant arrays as __initconst
-b7649e1776706 KVM: nVMX: mark vmcs12 pages dirty on L2 exit
-46e24dfc2df KVM: nVMX: Eliminate vmcs02 pool
-ff546f9d83d3 KVM: VMX: introduce alloc_loaded_vmcs
-6236b782eba37 KVM: VMX: make MSR bitmaps per-VCPU
-7013129a403 KVM/x86: Add IBPB support
-755502f810c6 KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
-e5a83419c957 KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-fc00dde96099a1 KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+....
+__do_fault+0x4c/0xa8
+handle_mm_fault+0xb74/0x11c0
+do_page_fault+0x29c/0x38c
+do_DataAbort+0x40/0xb8
+__dabt_usr+0x44/0x60
+0xb6748ea4
+^^^^^^^^
 
-commit id is from linux-4.9.y
+So this patch discards last junk entry.
 
-Might be more due to dependency.
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+---
+v1->v2: https://lkml.org/lkml/2017/10/24/378
+(take care of IRQ taken in SVC mode)
 
-Thanks,
-Jack Wang
+ arch/arm/kernel/stacktrace.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/kernel/stacktrace.c b/arch/arm/kernel/stacktrace.c
+index a56e7c8..1aadffc 100644
+--- a/arch/arm/kernel/stacktrace.c
++++ b/arch/arm/kernel/stacktrace.c
+@@ -92,6 +92,9 @@ static int save_trace(struct stackframe *frame, void *d)
+ 
+ 	regs = (struct pt_regs *)frame->sp;
+ 
++	if (!__kernel_text_address(regs->ARM_pc))
++		return 1;
++
+ 	trace->entries[trace->nr_entries++] = regs->ARM_pc;
+ 
+ 	return trace->nr_entries >= trace->max_entries;
+-- 
+1.9.1
