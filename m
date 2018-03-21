@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELscresoiO1pNVccCxPootWFVSCmXupaESTdx56DBeBxhN5yFxl1US9lMPxEJctCiuAHchvG
+X-Google-Smtp-Source: AG47ELvL9L84M/yqA1t70rVoFHTDLG1nUk1x5QerUh/BkyXTzpzU7DeAhmy3bs2zz1gEdJpPefu/
 ARC-Seal: i=1; a=rsa-sha256; t=1521650277; cv=none;
         d=google.com; s=arc-20160816;
-        b=KoNc5j2FWiEGd/yEncASf5wJe7DTPJjLAT4DOByiBGT4moBQ3GWwWo4YJXCRFC4NES
-         p4udsknCwRPvJHKBneK5eFgpg4VKhJUKNeM6AKf4I0XEqT0J7cRGZP6D25BdAF8SBc0q
-         IyhNoetMx3Bduszz9KX74OXFowpzecXbEpT19iz5+A+EIOCuEMasW2pNty7H6ZcQ+rm3
-         tB5XKwtX1yAPVZLe3xkwvIjMihTwdljIYsrtXhydvs4HGNiR3wxXCDmR7jpAwK7v/3VU
-         hyNSpabYAB/2u3cEubuS/d0BQLWq9FgMYdqucoVlGmbnG8h4/H7ottKfX3YiTmIrdH43
-         DrAA==
+        b=n+CXFQtvo9QAetO8FCafm3Eiollk5/DvFWLDv+Jn/Zv56kcoXsaH1gQj+sURLru2UH
+         v39RLYcNvu82niwdKS/M3Gr3nE9XhQFT3aS8mIJJQM/WPY02SxrDzYA5XJwHkh3I2thl
+         4l2DNkcxdrHlm70g6M3fwC37lsieN7O/4txy1qDRU22WZhbuEfAdi09bJH7hiFtNdiG0
+         hKqyEwOMVQOMGVA5mFqK5Ur0RCszp3iYutwC0jZhRxSs6QJ+rAu7vYNRQ3ns2gjYPD+R
+         eg5IovZ3vPiZZ0/5PRw5TzSvFCOspVrOGTvvsdbOkGKtLsVycXr/ZYksqYMgnY1twhgh
+         NfGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=subject:references:in-reply-to:message-id:date:cc:to:from
          :arc-authentication-results;
-        bh=RLdGUMLKpu6r8zQJf0H5Dr0BYHcxSWwJxV8ioOO48Wc=;
-        b=Xu/xeDPl/SPE/fxct/UKZ7ghPQhcmcY/19waAbA9Qzrnp6UGP0jqS1+5fd4jWh2Mrx
-         OdUw7XPzJotg0RvsbHFWqxS2JoJCdqHxoy8LNF9/i4RX0LKCW1W+ZJrmbLGEMjtiGvGl
-         qpyPlT8FYQiRZ0VC1pstqd1RXjqISOuansvS9Fs2tgBHYSBXvJt2oM+zHayTAEva7iru
-         ijYSmk9F0wd5Zl8Lr1lgun7DvBL45ZnSQol9WydoLpQnnLqfeStRhBE5byQJWDyXImdI
-         scJ8hZ31fe3eXSsKttj/x4215wa2FLpvDUiXGY+38ucrHI56zDCHYnfm48nEYPYDc34d
-         inCw==
+        bh=ZResSvF71S4b9JnFuePZhxuGdTdkgn2/HrjfNWEuCO4=;
+        b=Q0v8/ISIvUYd6H6xBptHtaiBLFOx+wnmPG/MgPiy/tTgmut86m3Ew+drq7/KHU9IwQ
+         hLm8yto7VIurqIpBt8IR6ExGFq0xndEkEB44n/c9yzEvGkKRsV6/MnPf6eOhXCUkaCC8
+         lBU2r3OWhcj2xmHPYyFyh7+T87lWRnqPjF8zQl/nHbqT2Y1PXaHiy6ya2jOKfQjasbpM
+         f7e0V3GC7qUIcwrStm1otCzxvcyGZ2Lep7+RPNVritCToMLdOqd5uNwAss7qp3NIU4mQ
+         BmdQptRUJzPDXHHYGyZptG7qeK91f74RuxIVb9WOTi5q6whvHPdb9yFoqOQcIhULPeal
+         9fDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -32,193 +32,68 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
 	Logan Gunthorpe <logang@deltatee.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Date: Wed, 21 Mar 2018 10:37:42 -0600
-Message-Id: <20180321163745.12286-8-logang@deltatee.com>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Suresh Warrier <warrier@linux.vnet.ibm.com>,
+	"Oliver O'Halloran" <oohall@gmail.com>
+Date: Wed, 21 Mar 2018 10:37:39 -0600
+Message-Id: <20180321163745.12286-5-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180321163745.12286-1-logang@deltatee.com>
 References: <20180321163745.12286-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, hch@lst.de, gnomes@lxorguk.ukuu.org.uk
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, warrier@linux.vnet.ibm.com, andy.shevchenko@gmail.com, npiggin@gmail.com, oohall@gmail.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v13 07/10] io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
+Subject: [PATCH v13 04/10] powerpc: io.h: move iomap.h include so that it can use readq/writeq defs
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595565961518870565?=
-X-GMAIL-MSGID: =?utf-8?q?1595565961518870565?=
+X-GMAIL-THRID: =?utf-8?q?1595565960977950848?=
+X-GMAIL-MSGID: =?utf-8?q?1595565960977950848?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds generic io{read|write}64[be]{_lo_hi|_hi_lo} macros if
-they are not already defined by the architecture. (As they are provided
-by the generic iomap library).
-
-The patch also points io{read|write}64[be] to the variant specified by the
-header name.
-
-This is because new drivers are encouraged to use ioreadXX, et al instead
-of readX[1], et al -- and mixing ioreadXX with readq is pretty ugly.
-
-[1] LDD3: section 9.4.2
+Subsequent patches in this series makes use of the readq and writeq
+defines in iomap.h. However, as is, they get missed on the powerpc
+platform seeing the include comes before the define. This patch
+moves the include down to fix this.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
+Cc: "Oliver O'Halloran" <oohall@gmail.com>
 ---
- include/linux/io-64-nonatomic-hi-lo.h | 64 +++++++++++++++++++++++++++++++++++
- include/linux/io-64-nonatomic-lo-hi.h | 64 +++++++++++++++++++++++++++++++++++
- 2 files changed, 128 insertions(+)
+ arch/powerpc/include/asm/io.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/io-64-nonatomic-hi-lo.h b/include/linux/io-64-nonatomic-hi-lo.h
-index 862d786a904f..ae21b72cce85 100644
---- a/include/linux/io-64-nonatomic-hi-lo.h
-+++ b/include/linux/io-64-nonatomic-hi-lo.h
-@@ -55,4 +55,68 @@ static inline void hi_lo_writeq_relaxed(__u64 val, volatile void __iomem *addr)
- #define writeq_relaxed hi_lo_writeq_relaxed
- #endif
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index 422f99cf9924..af074923d598 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -33,8 +33,6 @@ extern struct pci_dev *isa_bridge_pcidev;
+ #include <asm/mmu.h>
+ #include <asm/ppc_asm.h>
  
-+#ifndef ioread64_hi_lo
-+#define ioread64_hi_lo ioread64_hi_lo
-+static inline u64 ioread64_hi_lo(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	high = ioread32(addr + sizeof(u32));
-+	low = ioread32(addr);
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64_hi_lo
-+#define iowrite64_hi_lo iowrite64_hi_lo
-+static inline void iowrite64_hi_lo(u64 val, void __iomem *addr)
-+{
-+	iowrite32(val >> 32, addr + sizeof(u32));
-+	iowrite32(val, addr);
-+}
-+#endif
-+
-+#ifndef ioread64be_hi_lo
-+#define ioread64be_hi_lo ioread64be_hi_lo
-+static inline u64 ioread64be_hi_lo(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	high = ioread32be(addr);
-+	low = ioread32be(addr + sizeof(u32));
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64be_hi_lo
-+#define iowrite64be_hi_lo iowrite64be_hi_lo
-+static inline void iowrite64be_hi_lo(u64 val, void __iomem *addr)
-+{
-+	iowrite32be(val >> 32, addr);
-+	iowrite32be(val, addr + sizeof(u32));
-+}
-+#endif
-+
-+#ifndef ioread64
-+#define ioread64_is_nonatomic
-+#define ioread64 ioread64_hi_lo
-+#endif
-+
-+#ifndef iowrite64
-+#define iowrite64_is_nonatomic
-+#define iowrite64 iowrite64_hi_lo
-+#endif
-+
-+#ifndef ioread64be
-+#define ioread64be_is_nonatomic
-+#define ioread64be ioread64be_hi_lo
-+#endif
-+
-+#ifndef iowrite64be
-+#define iowrite64be_is_nonatomic
-+#define iowrite64be iowrite64be_hi_lo
-+#endif
-+
- #endif	/* _LINUX_IO_64_NONATOMIC_HI_LO_H_ */
-diff --git a/include/linux/io-64-nonatomic-lo-hi.h b/include/linux/io-64-nonatomic-lo-hi.h
-index d042e7bb5adb..faaa842dbdb9 100644
---- a/include/linux/io-64-nonatomic-lo-hi.h
-+++ b/include/linux/io-64-nonatomic-lo-hi.h
-@@ -55,4 +55,68 @@ static inline void lo_hi_writeq_relaxed(__u64 val, volatile void __iomem *addr)
- #define writeq_relaxed lo_hi_writeq_relaxed
+-#include <asm-generic/iomap.h>
+-
+ #ifdef CONFIG_PPC64
+ #include <asm/paca.h>
  #endif
+@@ -663,6 +661,8 @@ static inline void name at					\
+ #define writel_relaxed(v, addr)	writel(v, addr)
+ #define writeq_relaxed(v, addr)	writeq(v, addr)
  
-+#ifndef ioread64_lo_hi
-+#define ioread64_lo_hi ioread64_lo_hi
-+static inline u64 ioread64_lo_hi(void __iomem *addr)
-+{
-+	u32 low, high;
++#include <asm-generic/iomap.h>
 +
-+	low = ioread32(addr);
-+	high = ioread32(addr + sizeof(u32));
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64_lo_hi
-+#define iowrite64_lo_hi iowrite64_lo_hi
-+static inline void iowrite64_lo_hi(u64 val, void __iomem *addr)
-+{
-+	iowrite32(val, addr);
-+	iowrite32(val >> 32, addr + sizeof(u32));
-+}
-+#endif
-+
-+#ifndef ioread64be_lo_hi
-+#define ioread64be_lo_hi ioread64be_lo_hi
-+static inline u64 ioread64be_lo_hi(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	low = ioread32be(addr + sizeof(u32));
-+	high = ioread32be(addr);
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64be_lo_hi
-+#define iowrite64be_lo_hi iowrite64be_lo_hi
-+static inline void iowrite64be_lo_hi(u64 val, void __iomem *addr)
-+{
-+	iowrite32be(val, addr + sizeof(u32));
-+	iowrite32be(val >> 32, addr);
-+}
-+#endif
-+
-+#ifndef ioread64
-+#define ioread64_is_nonatomic
-+#define ioread64 ioread64_lo_hi
-+#endif
-+
-+#ifndef iowrite64
-+#define iowrite64_is_nonatomic
-+#define iowrite64 iowrite64_lo_hi
-+#endif
-+
-+#ifndef ioread64be
-+#define ioread64be_is_nonatomic
-+#define ioread64be ioread64be_lo_hi
-+#endif
-+
-+#ifndef iowrite64be
-+#define iowrite64be_is_nonatomic
-+#define iowrite64be iowrite64be_lo_hi
-+#endif
-+
- #endif	/* _LINUX_IO_64_NONATOMIC_LO_HI_H_ */
+ #ifdef CONFIG_PPC32
+ #define mmiowb()
+ #else
 -- 
 2.11.0
