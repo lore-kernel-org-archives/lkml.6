@@ -1,152 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeCUASd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 20:18:33 -0400
-Received: from www62.your-server.de ([213.133.104.62]:60527 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbeCUASc (ORCPT
+        id S1751661AbeCUAUZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 20:20:25 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:41891 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeCUAUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 20:18:32 -0400
-From: Daniel Borkmann <daniel@iogearbox.net>
-To: torvalds@linux-foundation.org
-Cc: ast@kernel.org, psodagud@codeaurora.org, netdev@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>, Chenbo Feng <fengc@google.com>,
-        Richard Smith <richard-llvm@metafoo.co.uk>,
-        Chandler Carruth <chandlerc@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: disable clang's default use of -fmerge-all-constants
-Date: Wed, 21 Mar 2018 01:18:24 +0100
-Message-Id: <20180321001824.8395-1-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.9.5
-X-Authenticated-Sender: daniel@iogearbox.net
+        Tue, 20 Mar 2018 20:20:23 -0400
+X-Google-Smtp-Source: AG47ELudkl6kDBhOq/nJuk7DVWlq5rpAy+O3N/5TKxFnz0EVzG0DS0jRIBuI6Ga+zMSG15CFmTiF/A==
+Date: Tue, 20 Mar 2018 17:20:22 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Stefan Agner <stefan@agner.ch>, ard.biesheuvel@linaro.org,
+        arnd@arndb.de, nicolas.pitre@linaro.org, marc.zyngier@arm.com,
+        behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] ARM: add support for building ARM kernel with clang
+Message-ID: <20180321002022.GH37438@google.com>
+References: <20180320230206.25289-1-stefan@agner.ch>
+ <20180320230206.25289-6-stefan@agner.ch>
+ <20180320231832.GK2743@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180320231832.GK2743@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prasad reported that he has seen crashes in BPF subsystem with netd
-on Android with arm64 in the form of (note, the taint is unrelated):
+El Tue, Mar 20, 2018 at 11:18:33PM +0000 Russell King - ARM Linux ha dit:
 
-  [ 4134.721483] Unable to handle kernel paging request at virtual address 800000001
-  [ 4134.820925] Mem abort info:
-  [ 4134.901283]   Exception class = DABT (current EL), IL = 32 bits
-  [ 4135.016736]   SET = 0, FnV = 0
-  [ 4135.119820]   EA = 0, S1PTW = 0
-  [ 4135.201431] Data abort info:
-  [ 4135.301388]   ISV = 0, ISS = 0x00000021
-  [ 4135.359599]   CM = 0, WnR = 0
-  [ 4135.470873] user pgtable: 4k pages, 39-bit VAs, pgd = ffffffe39b946000
-  [ 4135.499757] [0000000800000001] *pgd=0000000000000000, *pud=0000000000000000
-  [ 4135.660725] Internal error: Oops: 96000021 [#1] PREEMPT SMP
-  [ 4135.674610] Modules linked in:
-  [ 4135.682883] CPU: 5 PID: 1260 Comm: netd Tainted: G S      W       4.14.19+ #1
-  [ 4135.716188] task: ffffffe39f4aa380 task.stack: ffffff801d4e0000
-  [ 4135.731599] PC is at bpf_prog_add+0x20/0x68
-  [ 4135.741746] LR is at bpf_prog_inc+0x20/0x2c
-  [ 4135.751788] pc : [<ffffff94ab7ad584>] lr : [<ffffff94ab7ad638>] pstate: 60400145
-  [ 4135.769062] sp : ffffff801d4e3ce0
-  [...]
-  [ 4136.258315] Process netd (pid: 1260, stack limit = 0xffffff801d4e0000)
-  [ 4136.273746] Call trace:
-  [...]
-  [ 4136.442494] 3ca0: ffffff94ab7ad584 0000000060400145 ffffffe3a01bf8f8 0000000000000006
-  [ 4136.460936] 3cc0: 0000008000000000 ffffff94ab844204 ffffff801d4e3cf0 ffffff94ab7ad584
-  [ 4136.479241] [<ffffff94ab7ad584>] bpf_prog_add+0x20/0x68
-  [ 4136.491767] [<ffffff94ab7ad638>] bpf_prog_inc+0x20/0x2c
-  [ 4136.504536] [<ffffff94ab7b5d08>] bpf_obj_get_user+0x204/0x22c
-  [ 4136.518746] [<ffffff94ab7ade68>] SyS_bpf+0x5a8/0x1a88
+> On Wed, Mar 21, 2018 at 12:02:06AM +0100, Stefan Agner wrote:
+> > Use cc-options call for compiler options which are not available
+> > in clang. With this patch an ARMv7 multi platform kernel can be
+> > successfully build using clang (tested with version 5.0.1).
+> > 
+> > Based-on-patches-by: Behan Webster <behanw@converseincode.com>
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Android's netd was basically pinning the uid cookie BPF map in BPF
-fs (/sys/fs/bpf/traffic_cookie_uid_map) and later on retrieving it
-again resulting in above panic. Issue is that the map was wrongly
-identified as a prog! Above kernel was compiled with clang 4.0,
-and it turns out that clang decided to merge the bpf_prog_iops and
-bpf_map_iops into a single memory location, such that the two i_ops
-could then not be distinguished anymore.
+Great to see your work on bringing clang support for 32-bit ARM
+upstream!
 
-Reason for this miscompilation is that clang has the more aggressive
--fmerge-all-constants enabled by default. In fact, clang source code
-has a comment about it in lib/AST/ExprConstant.cpp on why it is okay
-to do so:
+> > ---
+> >  arch/arm/Makefile                 | 2 +-
+> >  arch/arm/boot/compressed/Makefile | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> > index e9e3fde3c657..20e9fee1ccc5 100644
+> > --- a/arch/arm/Makefile
+> > +++ b/arch/arm/Makefile
+> > @@ -39,7 +39,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-mno-unaligned-access)
+> >  endif
+> >  
+> >  ifeq ($(CONFIG_FRAME_POINTER),y)
+> > -KBUILD_CFLAGS	+=-fno-omit-frame-pointer -mapcs -mno-sched-prolog
+> > +KBUILD_CFLAGS	+=-fno-omit-frame-pointer $(call cc-option,-mapcs,) $(call cc-option,-mno-sched-prolog,)
+> 
+> Some of these options here are to ensure that we generate the following
+> code, so we can backtrace:
+> 
+> 	mov	ip, sp
+> 	stmfd	sp!, {fp, ip, lr, pc}
+> 	sub	fp, ip, #4
+> 
+> If clang isn't producing that code at the start of functions with
+> CONFIG_FRAME_POINTER=y, then backtracing will not work, and arguably
+> CONFIG_FRAME_POINTER=y is useless there.  In that circumstance, it's
+> probably better to fail so the user can configure something more
+> debuggable, rather than having the kernel potentially producing
+> undebuggable oopses.
 
-  Pointers with different bases cannot represent the same object.
-  (Note that clang defaults to -fmerge-all-constants, which can
-  lead to inconsistent results for comparisons involving the address
-  of a constant; this generally doesn't matter in practice.)
+Which option in particular is important to generate the above code for
+backstracing?
 
-The issue never appeared with gcc however, since gcc does not enable
--fmerge-all-constants by default and even *explicitly* states in
-it's option description that using this flag results in non-conforming
-behavior, quote from man gcc:
+According to the gcc doc -mapcs(-frame) is deprecated.
 
-  Languages like C or C++ require each variable, including multiple
-  instances of the same variable in recursive calls, to have distinct
-  locations, so using this option results in non-conforming behavior.
+For -mno-sched-prolog the doc says:
 
-There are also various clang bug reports open on that matter [1],
-where clang developers acknowledge the non-conforming behavior,
-and refer to disabling it with -fno-merge-all-constants. But even
-if this gets fixed in clang today, there are already users out there
-that triggered this. Thus, fix this issue by explicitly adding
--fno-merge-all-constants to the kernel's Makefile to generically
-disable this optimization, since potentially other places in the
-kernel could subtly break as well.
+"Prevent the reordering of instructions in the function prologue, or
+the merging of those instruction with the instructions in the
+function’s body. This means that all functions start with a
+recognizable set of instructions (or in fact one of a choice from a
+small set of different function prologues), and this information can
+be used to locate the start of functions inside an executable piece of
+code. The default is -msched-prolog."
 
-Note, there is also a flag called -fmerge-constants (not supported
-by clang), which is more conservative and only applies to strings
-and it's enabled in gcc's -O/-O2/-O3/-Os optimization levels. In
-gcc's code, the two flags -fmerge-{all-,}constants share the same
-variable internally, so when disabling it via -fno-merge-all-constants,
-then we really don't merge any const data (e.g. strings), and text
-size increases with gcc (14,927,214 -> 14,942,646 for vmlinux.o).
+Thanks
 
-  $ gcc -fverbose-asm -O2 foo.c -S -o foo.S
-    -> foo.S lists -fmerge-constants under options enabled
-  $ gcc -fverbose-asm -O2 -fno-merge-all-constants foo.c -S -o foo.S
-    -> foo.S doesn't list -fmerge-constants under options enabled
-  $ gcc -fverbose-asm -O2 -fno-merge-all-constants -fmerge-constants foo.c -S -o foo.S
-    -> foo.S lists -fmerge-constants under options enabled
-
-Thus, as a workaround we need to set both -fno-merge-all-constants
-*and* -fmerge-constants in the Makefile in order for text size to
-stay as is.
-
-  [1] https://bugs.llvm.org/show_bug.cgi?id=18538
-
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Chenbo Feng <fengc@google.com>
-Cc: Richard Smith <richard-llvm@metafoo.co.uk>
-Cc: Chandler Carruth <chandlerc@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Tested-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
----
- [ Hi Linus, feel free to take this fix directly if you want.
-   Alternatively, we could route it via bpf tree. Thanks a
-   lot for your feedback! ]
-
- Makefile | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/Makefile b/Makefile
-index c4322de..af07bf5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -826,6 +826,15 @@ KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
- # disable invalid "can't wrap" optimizations for signed / pointers
- KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
- 
-+# clang sets -fmerge-all-constants by default as optimization, but this
-+# is non-conforming behavior for C and in fact breaks the kernel, so we
-+# need to disable it here generally.
-+KBUILD_CFLAGS	+= $(call cc-option,-fno-merge-all-constants)
-+
-+# for gcc -fno-merge-all-constants disables everything, but it is fine
-+# to have actual conforming behavior enabled.
-+KBUILD_CFLAGS	+= $(call cc-option,-fmerge-constants)
-+
- # Make sure -fstack-check isn't enabled (like gentoo apparently did)
- KBUILD_CFLAGS  += $(call cc-option,-fno-stack-check,)
- 
--- 
-2.9.5
+Matthias
