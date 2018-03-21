@@ -1,359 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeCUNDa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 09:03:30 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50486 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCUNDZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 09:03:25 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v7.2 5/8] cpuidle: Return nohz hint from cpuidle_select()
-Date: Wed, 21 Mar 2018 14:03:51 +0100
-Message-ID: <2313989.EXUHJuTSS6@aspire.rjw.lan>
-In-Reply-To: <1635957.yuHkCe9oyz@aspire.rjw.lan>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan>
+        id S1751911AbeCUNIf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 09:08:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44417 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751694AbeCUNIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 09:08:34 -0400
+Date: Wed, 21 Mar 2018 14:08:33 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+Message-ID: <20180321130833.GM23100@dhcp22.suse.cz>
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed 21-03-18 05:31:19, Yang Shi wrote:
+> When running some mmap/munmap scalability tests with large memory (i.e.
+> > 300GB), the below hung task issue may happen occasionally.
+> 
+> INFO: task ps:14018 blocked for more than 120 seconds.
+>        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> message.
+>  ps              D    0 14018      1 0x00000004
+>   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>  Call Trace:
+>   [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>   [<ffffffff817159e6>] schedule+0x36/0x80
+>   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>   [<ffffffff81717db0>] down_read+0x20/0x40
+>   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>   [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>   [<ffffffff81242266>] vfs_read+0x96/0x130
+>   [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> 
+> It is because munmap holds mmap_sem from very beginning to all the way
+> down to the end, and doesn't release it in the middle. When unmapping
+> large mapping, it may take long time (take ~18 seconds to unmap 320GB
+> mapping with every single page mapped on an idle machine).
 
-Add a new pointer argument to cpuidle_select() and to the ->select
-cpuidle governor callback to allow a boolean value indicating
-whether or not the tick should be stopped before entering the
-selected state to be returned from there.
+Yes, this definitely sucks. One way to work that around is to split the
+unmap to two phases. One to drop all the pages. That would only need
+mmap_sem for read and then tear down the mapping with the mmap_sem for
+write. This wouldn't help for parallel mmap_sem writers but those really
+need a different approach (e.g. the range locking).
 
-Make the ladder governor ignore that pointer (to preserve its
-current behavior) and make the menu governor return 'false" through
-it if:
- (1) the idle exit latency is constrained at 0, or
- (2) the selected state is a polling one, or
- (3) the expected idle period duration is within the tick period
-     range.
+> Since unmapping does't require any atomicity, so here unmap large
 
-In addition to that, the correction factor computations in the menu
-governor need to take the possibility that the tick may not be
-stopped into account to avoid artificially small correction factor
-values.  To that end, add a mechanism to record tick wakeups, as
-suggested by Peter Zijlstra, and use it to modify the menu_reflect()
-behavior when tick wakeup occurs.  Namely, if the CPU is woken up by
-the tick and the return value of tick_nohz_get_sleep_length() is not
-within the tick boundary, the predicted idle duration is likely too
-short, so make menu_reflect() try to compensate for that by bumping
-up the correction factor with a (sufficiently large) constant value.
-
-Since the value returned through the new argument pointer of
-cpuidle_select() is not used by its caller yet, this change by
-itself is not expected to alter the functionality of the code.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This fixes the bug in the v7.1 of patch [5/8] (and in the original v7 of it
-for that matter) by which tick wakeups occurring for tick_nohz_get_sleep_length()
-return values within the tick boundary were treated in a special way
-incorrectly.
-
-It doesn't run menu_update() on tick wakeups occurring when the return
-value of tick_nohz_get_sleep_length() is not within the tick boundary, but
-simply bumps up the correction factor alone then.
-
->From the theoretical standpoint this is my favorite version of patch [5/8]
-so far, as there's a clear (to me at least) reason for all of the changes.
-Of course, the constant value used for bumping up the correction factor in
-menu_reflect() is a matter of speculation at this point, but this is the
-only remaining sort of moving part I can see.  And it can be adjusted later. :-)
-
-Still, the theory needs to meet practice and we'll see what comes out of that ...
-
-Thanks!
-
----
- drivers/cpuidle/cpuidle.c          |   10 +++++-
- drivers/cpuidle/governors/ladder.c |    3 +
- drivers/cpuidle/governors/menu.c   |   57 +++++++++++++++++++++++++++++++++----
- include/linux/cpuidle.h            |    8 +++--
- include/linux/tick.h               |    2 +
- kernel/sched/idle.c                |    4 +-
- kernel/time/tick-sched.c           |   20 ++++++++++++
- 7 files changed, 92 insertions(+), 12 deletions(-)
-
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -135,7 +135,8 @@ extern bool cpuidle_not_available(struct
- 				  struct cpuidle_device *dev);
- 
- extern int cpuidle_select(struct cpuidle_driver *drv,
--			  struct cpuidle_device *dev);
-+			  struct cpuidle_device *dev,
-+			  bool *stop_tick);
- extern int cpuidle_enter(struct cpuidle_driver *drv,
- 			 struct cpuidle_device *dev, int index);
- extern void cpuidle_reflect(struct cpuidle_device *dev, int index);
-@@ -167,7 +168,7 @@ static inline bool cpuidle_not_available
- 					 struct cpuidle_device *dev)
- {return true; }
- static inline int cpuidle_select(struct cpuidle_driver *drv,
--				 struct cpuidle_device *dev)
-+				 struct cpuidle_device *dev, bool *stop_tick)
- {return -ENODEV; }
- static inline int cpuidle_enter(struct cpuidle_driver *drv,
- 				struct cpuidle_device *dev, int index)
-@@ -250,7 +251,8 @@ struct cpuidle_governor {
- 					struct cpuidle_device *dev);
- 
- 	int  (*select)		(struct cpuidle_driver *drv,
--					struct cpuidle_device *dev);
-+					struct cpuidle_device *dev,
-+					bool *stop_tick);
- 	void (*reflect)		(struct cpuidle_device *dev, int index);
- };
- 
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -188,13 +188,15 @@ static void cpuidle_idle_call(void)
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		bool stop_tick = true;
-+
- 		tick_nohz_idle_stop_tick();
- 		rcu_idle_enter();
- 
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
--		next_state = cpuidle_select(drv, dev);
-+		next_state = cpuidle_select(drv, dev, &stop_tick);
- 		entered_state = call_cpuidle(drv, dev, next_state);
- 		/*
- 		 * Give the governor an opportunity to reflect on the outcome
-Index: linux-pm/drivers/cpuidle/cpuidle.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/cpuidle.c
-+++ linux-pm/drivers/cpuidle/cpuidle.c
-@@ -272,12 +272,18 @@ int cpuidle_enter_state(struct cpuidle_d
-  *
-  * @drv: the cpuidle driver
-  * @dev: the cpuidle device
-+ * @stop_tick: indication on whether or not to stop the tick
-  *
-  * Returns the index of the idle state.  The return value must not be negative.
-+ *
-+ * The memory location pointed to by @stop_tick is expected to be written the
-+ * 'false' boolean value if the scheduler tick should not be stopped before
-+ * entering the returned state.
-  */
--int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-+int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-+		   bool *stop_tick)
- {
--	return cpuidle_curr_governor->select(drv, dev);
-+	return cpuidle_curr_governor->select(drv, dev, stop_tick);
- }
- 
- /**
-Index: linux-pm/drivers/cpuidle/governors/ladder.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/ladder.c
-+++ linux-pm/drivers/cpuidle/governors/ladder.c
-@@ -63,9 +63,10 @@ static inline void ladder_do_selection(s
-  * ladder_select_state - selects the next state to enter
-  * @drv: cpuidle driver
-  * @dev: the CPU
-+ * @dummy: not used
-  */
- static int ladder_select_state(struct cpuidle_driver *drv,
--				struct cpuidle_device *dev)
-+			       struct cpuidle_device *dev, bool *dummy)
- {
- 	struct ladder_device *ldev = this_cpu_ptr(&ladder_devices);
- 	struct device *device = get_cpu_device(dev->cpu);
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -279,8 +279,10 @@ again:
-  * menu_select - selects the next idle state to enter
-  * @drv: cpuidle driver containing state data
-  * @dev: the CPU
-+ * @stop_tick: indication on whether or not to stop the tick
-  */
--static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-+static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-+		       bool *stop_tick)
- {
- 	struct menu_device *data = this_cpu_ptr(&menu_devices);
- 	struct device *device = get_cpu_device(dev->cpu);
-@@ -303,8 +305,10 @@ static int menu_select(struct cpuidle_dr
- 		latency_req = resume_latency;
- 
- 	/* Special case when user has set very strict latency requirement */
--	if (unlikely(latency_req == 0))
-+	if (unlikely(latency_req == 0)) {
-+		*stop_tick = false;
- 		return 0;
-+	}
- 
- 	/* determine the expected residency time, round up */
- 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
-@@ -354,6 +358,7 @@ static int menu_select(struct cpuidle_dr
- 	if (latency_req > interactivity_req)
- 		latency_req = interactivity_req;
- 
-+	expected_interval = data->predicted_us;
- 	/*
- 	 * Find the idle state with the lowest power while satisfying
- 	 * our constraints.
-@@ -369,15 +374,30 @@ static int menu_select(struct cpuidle_dr
- 			idx = i; /* first enabled state */
- 		if (s->target_residency > data->predicted_us)
- 			break;
--		if (s->exit_latency > latency_req)
-+		if (s->exit_latency > latency_req) {
-+			/*
-+			 * If we break out of the loop for latency reasons, use
-+			 * the target residency of the selected state as the
-+			 * expected idle duration so that the tick is retained
-+			 * as long as that target residency is low enough.
-+			 */
-+			expected_interval = drv->states[idx].target_residency;
- 			break;
--
-+		}
- 		idx = i;
- 	}
- 
- 	if (idx == -1)
- 		idx = 0; /* No states enabled. Must use 0. */
- 
-+	/*
-+	 * Don't stop the tick if the selected state is a polling one or if the
-+	 * expected idle duration is shorter than the tick period length.
-+	 */
-+	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	    expected_interval < TICK_USEC)
-+		*stop_tick = false;
-+
- 	data->last_state_idx = idx;
- 
- 	return data->last_state_idx;
-@@ -396,7 +416,34 @@ static void menu_reflect(struct cpuidle_
- 	struct menu_device *data = this_cpu_ptr(&menu_devices);
- 
- 	data->last_state_idx = index;
--	data->needs_update = 1;
-+	/*
-+	 * Tick wakeups occurring when the tick_nohz_get_sleep_length() return
-+	 * value is within the tick boundary should be treated as regular ones,
-+	 * as the nohz code itself doesn't stop the tick then.
-+	 */
-+	if (tick_nohz_idle_got_tick() && data->next_timer_us > TICK_USEC) {
-+		unsigned int new_factor = data->correction_factor[data->bucket];
-+
-+		/*
-+		 * Only update the correction factor, don't update the repeating
-+		 * pattern data to avoid polluting it with the tick period
-+		 * length which is a design artifact here.
-+		 */
-+		new_factor -= new_factor / DECAY;
-+		/*
-+		 * The nohz code said that there wouldn't be any wakeups
-+		 * within the tick boundary (if the tick wasn't stopped), but
-+		 * menu_select() had a differing opinion.  Yet, the CPU was
-+		 * woken up by the tick, so menu_select() was not quite right.
-+		 * Try to make it do a better job next time by bumping up the
-+		 * correction factor.  Use 0.75 * RESOLUTION (which is easy
-+		 * enough to get) that should work fine on the average.
-+		 */
-+		new_factor += RESOLUTION / 2 + RESOLUTION / 4;
-+		data->correction_factor[data->bucket] = new_factor;
-+	} else {
-+		data->needs_update = 1;
-+	}
- }
- 
- /**
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -991,6 +991,20 @@ void tick_nohz_irq_exit(void)
- }
- 
- /**
-+ * tick_nohz_idle_got_tick - Check whether or not the tick handler has run
-+ */
-+bool tick_nohz_idle_got_tick(void)
-+{
-+	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-+
-+	if (ts->inidle > 1) {
-+		ts->inidle = 1;
-+		return true;
-+	}
-+	return false;
-+}
-+
-+/**
-  * tick_nohz_get_sleep_length - return the length of the current sleep
-  *
-  * Called from power state control code with interrupts disabled
-@@ -1101,6 +1115,9 @@ static void tick_nohz_handler(struct clo
- 	struct pt_regs *regs = get_irq_regs();
- 	ktime_t now = ktime_get();
- 
-+	if (ts->inidle)
-+		ts->inidle = 2;
-+
- 	dev->next_event = KTIME_MAX;
- 
- 	tick_sched_do_timer(now);
-@@ -1198,6 +1215,9 @@ static enum hrtimer_restart tick_sched_t
- 	struct pt_regs *regs = get_irq_regs();
- 	ktime_t now = ktime_get();
- 
-+	if (ts->inidle)
-+		ts->inidle = 2;
-+
- 	tick_sched_do_timer(now);
- 
- 	/*
-Index: linux-pm/include/linux/tick.h
-===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -119,6 +119,7 @@ extern void tick_nohz_idle_restart_tick(
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
-+extern bool tick_nohz_idle_got_tick(void);
- extern ktime_t tick_nohz_get_sleep_length(void);
- extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
-@@ -139,6 +140,7 @@ static inline void tick_nohz_idle_stop_t
- static inline void tick_nohz_idle_restart_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
-+static inline bool tick_nohz_idle_got_tick(void) { return false; }
- 
- static inline ktime_t tick_nohz_get_sleep_length(void)
- {
+How come? Could you be more specific why? Once you drop the lock the
+address space might change under your feet and you might be unmapping a
+completely different vma. That would require userspace doing nasty
+things of course (e.g. MAP_FIXED) but I am worried that userspace really
+depends on mmap/munmap atomicity these days.
+-- 
+Michal Hocko
+SUSE Labs
