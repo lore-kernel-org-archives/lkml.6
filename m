@@ -1,112 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeCUPVv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:21:51 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33029 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752380AbeCUPVt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:21:49 -0400
-X-Google-Smtp-Source: AG47ELvvmIp41EIKV14zTEo0VkY6a/L1CkBlhZUO33SDv+ivDvxEmQHaWyjHhN4PqIl/17MKPdDdUrInBgM0jTNNG9Q=
+        id S1752695AbeCUPWc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:22:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54822 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752200AbeCUPWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:22:31 -0400
+Date: Wed, 21 Mar 2018 15:22:27 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com, shankerd@codeaurora.org
+Subject: Re: [PATCH v4 21/22] arm64: Delay enabling hardware DBM feature
+Message-ID: <20180321152226.GD16308@e103592.cambridge.arm.com>
+References: <20180313115120.17256-1-suzuki.poulose@arm.com>
+ <20180313115120.17256-22-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20dd27aecaac4a158acecb9dbb5365327f0696ec.1521620371.git.rgb@redhat.com>
-References: <cover.1521620371.git.rgb@redhat.com> <20dd27aecaac4a158acecb9dbb5365327f0696ec.1521620371.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Mar 2018 11:21:46 -0400
-Message-ID: <CAHC9VhT8EqQ4BXnm8D2XGurSY0-JF8L0hfrWdpmcWaaDPUHKdw@mail.gmail.com>
-Subject: Re: [PATCH ghak21 V4 1/2] audit: remove path param from link denied function
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313115120.17256-22-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 4:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> In commit 45b578fe4c3cade6f4ca1fc934ce199afd857edc
-> ("audit: link denied should not directly generate PATH record")
-> the need for the struct path *link parameter was removed.
-> Remove the now useless struct path argument.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c            | 4 ++--
->  include/linux/audit.h | 6 ++----
->  kernel/audit.c        | 3 +--
->  3 files changed, 5 insertions(+), 8 deletions(-)
+On Tue, Mar 13, 2018 at 11:51:19AM +0000, Suzuki K Poulose wrote:
+> We enable hardware DBM bit in a capable CPU, very early in the
+> boot via __cpu_setup. This doesn't give us a flexibility of
+> optionally disable the feature, as the clearing the bit
+> is a bit costly as the TLB can cache the settings. Instead,
+> we delay enabling the feature until the CPU is brought up
+> into the kernel. We use the feature capability mechanism
+> to handle it.
+> 
+> The hardware DBM is a non-conflicting feature. i.e, the kernel
+> can safely run with a mix of CPUs with some using the feature
+> and the others don't. So, it is safe for a late CPU to have
+> this capability and enable it, even if the active CPUs don't.
+> 
+> To get this handled properly by the infrastructure, we
+> unconditionally set the capability and only enable it
+> on CPUs which really have the feature. Also, we print the
+> feature detection from the "matches" call back to make sure
+> we don't mislead the user when none of the CPUs could use the
+> feature.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Dave Martin <dave.martin@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Fourth times the charm ... merged.
+[...]
 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 9cc91fb..e3682bb 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -945,7 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
->         if (nd->flags & LOOKUP_RCU)
->                 return -ECHILD;
->
-> -       audit_log_link_denied("follow_link", &nd->stack[0].link);
-> +       audit_log_link_denied("follow_link");
->         return -EACCES;
->  }
->
-> @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
->         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
->                 return 0;
->
-> -       audit_log_link_denied("linkat", link);
-> +       audit_log_link_denied("linkat");
->         return -EPERM;
->  }
->
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index af410d9..75d5b03 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
->                                              const struct path *path);
->  extern void                audit_log_key(struct audit_buffer *ab,
->                                           char *key);
-> -extern void                audit_log_link_denied(const char *operation,
-> -                                                 const struct path *link);
-> +extern void                audit_log_link_denied(const char *operation);
->  extern void                audit_log_lost(const char *message);
->
->  extern int audit_log_task_context(struct audit_buffer *ab);
-> @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
->  { }
->  static inline void audit_log_key(struct audit_buffer *ab, char *key)
->  { }
-> -static inline void audit_log_link_denied(const char *string,
-> -                                        const struct path *link)
-> +static inline void audit_log_link_denied(const char *string)
->  { }
->  static inline int audit_log_task_context(struct audit_buffer *ab)
->  {
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 3f2f143..e8bf8d7 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2308,9 +2308,8 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
->  /**
->   * audit_log_link_denied - report a link restriction denial
->   * @operation: specific link operation
-> - * @link: the path that triggered the restriction
->   */
-> -void audit_log_link_denied(const char *operation, const struct path *link)
-> +void audit_log_link_denied(const char *operation)
->  {
->         struct audit_buffer *ab;
->
-> --
-> 1.8.3.1
->
-
-
-
--- 
-paul moore
-www.paul-moore.com
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
