@@ -1,75 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753406AbeCUUbn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:31:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60878 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753087AbeCUUbj (ORCPT
+        id S1753426AbeCUUck (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:32:40 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36471 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753006AbeCUUca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:31:39 -0400
-Date: Wed, 21 Mar 2018 21:31:37 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
-Subject: Re: 4.16-rc5 on Motorola Droid 4
-Message-ID: <20180321203137.GA23637@amd>
-References: <20180318220418.GA22880@amd>
- <20180320140322.GU5799@atomide.com>
- <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+        Wed, 21 Mar 2018 16:32:30 -0400
+X-Google-Smtp-Source: AG47ELumR1gpDjOEwi9mybjOjAS1Uw6aCpOXQg7E2JzI+Qugupdn4OxwTaixZZz/QiNu5k24Pks+RIiI1lIuh15WwzQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Mar 2018 13:32:29 -0700
+X-Google-Sender-Auth: w4kaDeqdEJLsWPz8PZQHEv_0A-I
+Message-ID: <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
+Subject: Re: syzbot dashboard
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 21, 2018 at 9:11 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> syzkaller/syzbot dashboard is now live at:
+> https://syzkaller.appspot.com
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, this may well be the thing that makes syzbot reports useful, if
+they point to an external report instead of sending an absolutely huge
+illegible email that nobody can read.
 
-Hi!
+That said, I do think it needs some better summarizing still.
 
-> > Maybe get somebody to help you locally with the debug cable
-> > soldering? :)
->=20
-> I suppose people from your hackerspace can help you. It's really
-> easy to do. Soldering can be avoided btw. You can just use a pair
-> of scissors to cut a USB -> Micro USB cable and use a knife to remove
-> isolation. Then screw each of the 4 wires into a terminal strip.
-> There are USB-TTL adapters available, that have an attached cable.
-> If you also cut the connector from such a cable and connect it to
-> the other side of the terminal strip you are done. No soldering
-> involved ;)
+For example, landing on that front page and then going "Hmm, let's
+look at that first report", I click on that
 
-Hm. How big no-no is connecting USB-TTL adapter to D+/D- pins? Because
-that's what I could do "easily" and seems to work ;-).
+    [upstream] BUG: corrupted list in remove_wait_queue
 
-								Pavel
-							=09
+thing, and get to
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+    https://syzkaller.appspot.com/bug?id=c11299b410c0feaf0d861c64bcb3a67a639d17a6
 
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+fine. That page itself doesn't actually tell me really anything at all, though.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+So I go to the first thing I see, click "log" and I get 6500 lines of
+basically line noise.
 
-iEYEARECAAYFAlqywSkACgkQMOfwapXb+vIpVgCfZPvfOkG+K38fIky6WCLZeUJE
-/F8AoJY42jl/mj9Vaal2iOvU2FdlhTt0
-=PGR+
------END PGP SIGNATURE-----
+Ok, so the real thing is under "report", which actually looks pretty legible.
 
---OXfL5xGRrasGEqWY--
+Looking at a few other of those things, I get the same feeling. Can
+you put one copy of the "report" in the main page for a bug? I assume
+they are all slightly different, but there must be some commonality to
+them that you group the syzcaller bugs by, and giving one of those
+legible reports (with all the nice filename and line information and
+basic register state) would likely be a good thing.
+
+At that point, *if* a report has a reproducer, then sending reminders
+to people with "this still happens, here's a link to the syzkaller
+page for this report" might be much better received than the old huge
+and very-hard-to-read emails.
+
+The reminder might well want to have that legible and short "report"
+in it too, so that people can just look at that to tell "is this
+relevant for me" particularly if they perhaps already fixed it?
+
+(I only looked at a handful of reports, but the ones I looked at all
+seemed reasonable - maybe some are less so?)
+
+           Linus
