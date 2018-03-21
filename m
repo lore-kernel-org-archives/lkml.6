@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3666841-1521628175-2-2370826726055599783
+X-Cyrus-Session-Id: sloti22d1t05-3734533-1521628184-2-4215779079648308798
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,26 +12,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521628174; b=FaJVqnuA+23/IFWrHeIynGERgPtpybNcVqWgSL0YH9MWAro
-    dtyHK1GRtMKYZoGmBbkg9aHv51KhG9GxJoK7+o352qc/PmBa6tB3A1RKlqfKWEP0
-    R/tSvem9++vqC/uaHBlH2c9xu8/hBCwzbEbj6cSHH7DB3/6vztjfo5CKcdvRZXbD
-    Iy1FtRegyeHuq4XzeE74Ui6pIt+OX54Wa0/YxbBv0MgQ0aPfiBE73KpCSDxqEjHu
-    xj/syduslV5Texr4UvRqCoouaScMhlSakM6T+tEnQtQCpFckDpVqEqDf7vsxVgHd
-    Qdpl/VL/vbWNLUD+pkyR5K6GEVmH8kdAia+fCOw==
+    t=1521628183; b=OctlKE+10IJWlMLNSZF1iVlbBWSFTzS3WXdn+/SSIt3PRtH
+    u9BEV5KYvxH35Fy+jksp2ysCrL0a/EkQTouJ5N4Ey4qBZudhscpRSldaUATqIwxx
+    CRFsmZ/3up3oWDKHWycBHq5QEXYOzi3b3l9a92QEbctcfsTTFRAtK87HyKDxOJUt
+    GYh+YpMrerVKvoWaGy12uylp4O7nFVms4iHkzv4Lo4++/2f8gGGzyRb5x3viSci5
+    iSYxzSOikOzu3g+WR5C3SYRYbilqo4j57XZbm28XVH78+xDfQT3Dgm9P25VBnLWD
+    Mr5DrISxs9a1Hzz00u7c8YqWcz3D4sNp6nb8alw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521628174; bh=n
-    jPTtZXifYrFBpohr3OI8NinYoDA0sFC1tKxa1KLLl8=; b=Dfql+H7SWBBj4s1n+
-    GxT5vAuYlbvNUcGrfJ8lgKQLSffCvYNgHTuIZabkkOS85No5SOZHTuCZxX9jM/lI
-    rGoJ8G2gWhzSYVrXG4GwHCv61+IH4uzJrHqt/q7OF4Oa3HVZlXgVsOt6HEvP9dPA
-    CXXmhDi8saCZZMLhS7VnwapOQ9934IYzBVtV7HjHFxXlHQhl8vQ4AkfBP4h02Kd3
-    2tLoj9DXLqpDWHZ59bhSLGnqdVvD28QBzll89UF3yzigKVrRMuecZWMQBjYTYasQ
-    SeyZWB5fpA18N36lA4t8DnecYOR+nhTo/f2qA6y/VN5crkngARgDDJ1lj8BJEH1U
-    J8XFw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=SPx02r3E x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521628183; bh=c
+    GRkz36Up80r7dUq1FQmCs2Z+ZPJcX33KvcVbS69gkA=; b=sJIzhovuRk/vw6/pZ
+    DXiOx6Ct6GiqP8SD5qJH3ShmUOR10TGcZfkvRZz/WBo4yTlSLuxwh29qIiFkiPwj
+    edjLDiiR9TsBaR9FZB9XVJTGpUtv/oaQyAUirpUO5mL4rLvl83dS626EUwasRZjH
+    B/8LB2XLt7ZZfaftlm5gMgrYgy5PcJORqzrnIbc2svoPANTaYvGZSG7t9GhL7jV3
+    YW20WG/vYLsidmKC8xy67oaTa08UWKZxqS5hCo5CUdUhxPqRkKY7xSzZL4JjlMzi
+    5BBCx/OIxPVH5l29HrIr9UawoxZFVgsEOoUeRe1wleMU86+R7SGRc9Vna+cguVXL
+    bY1RQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=WlbLElG/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
@@ -40,9 +40,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=SPx02r3E x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=WlbLElG/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
@@ -56,10 +56,12 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Brian Masney <masneyb@onstation.org>
 To: jic23@kernel.org,
 	linux-iio@vger.kernel.org
-Subject: [PATCH 00/11] staging: iio: tsl2x7x: staging cleanups
-Date: Wed, 21 Mar 2018 06:29:01 -0400
-Message-Id: <20180321102912.5130-1-masneyb@onstation.org>
+Subject: [PATCH 11/11] staging: iio: tsl2x7x: add copyright
+Date: Wed, 21 Mar 2018 06:29:12 -0400
+Message-Id: <20180321102912.5130-12-masneyb@onstation.org>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180321102912.5130-1-masneyb@onstation.org>
+References: <20180321102912.5130-1-masneyb@onstation.org>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -82,65 +84,36 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Here is another set of staging cleanups for the tsl2x7x driver. The
-driver is about ready to move out of staging. I want to test a few other
-things first before submitting a patch to move the driver out of
-staging.
+Add Brian Masney's copyright and to the list of module authors for all
+of the staging cleanups. This patch also update's Jon Brenner's current
+work email address since AMS now owns TAOS.
 
-High-level changes in this series:
-- Interrupts and IIO events now work properly
-. Split out interrupt and persistence variables into separate ALS and
-  proximity variables to improve code readability.
-- Simplify code, remove unnecessary code, and improve code readability.
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+ drivers/staging/iio/light/tsl2x7x.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-# How to test the interrupts
-
-cd /sys/bus/iio/devices/iio:device0
-
-echo 0 > events/in_intensity0_thresh_falling_value
-echo 512 > events/in_intensity0_thresh_rising_value
-echo 1 > events/in_intensity0_thresh_rising_en
-
-# proximity0 already has threshold range at [0,512]
-echo 1 > events/in_proximity0_thresh_rising_en
-
-Run iio_event_monitor tsl2772 and verify that events are sent properly.
-
-Question: Should I use in_intensity0_thresh_either_en instead of
-in_intensity0_thresh_{rising,falling}_en? The same goes for the
-proximity0. This is the current contents of the events/ directory:
-
-in_intensity0_thresh_either_period
-in_intensity0_thresh_falling_en
-in_intensity0_thresh_falling_value
-in_intensity0_thresh_rising_en
-in_intensity0_thresh_rising_value
-in_proximity0_thresh_either_period
-in_proximity0_thresh_falling_en
-in_proximity0_thresh_falling_value
-in_proximity0_thresh_rising_en
-in_proximity0_thresh_rising_value
-
-Brian Masney (11):
-  staging: iio: tsl2x7x: remove unnecessary code
-  staging: iio: tsl2x7x: correct interrupt handler trigger
-  staging: iio: tsl2x7x: no need to clear interrupt flag when getting
-    lux
-  staging: iio: tsl2x7x: simplify tsl2x7x_prox_cal()
-  staging: iio: tsl2x7x: split out als and prox interrupt settings
-  staging: iio: tsl2x7x: make logging consistent and correct newlines
-  staging: iio: tsl2x7x: split out als and prox persistence settings
-  staging: iio: tsl2x7x: remove unused variables from tsl2x7x_get_lux()
-  staging: iio: tsl2x7x: remove ch0 and ch1 variables from
-    tsl2x7x_get_lux()
-  staging: iio: tsl2x7x: put local variables in reverse Christmas tree
-    order
-  staging: iio: tsl2x7x: add copyright
-
- drivers/staging/iio/light/tsl2x7x.c | 300 ++++++++++--------------------------
- drivers/staging/iio/light/tsl2x7x.h |  16 +-
- 2 files changed, 91 insertions(+), 225 deletions(-)
-
+diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
+index 5f78664d2b0e..77a81d75af4f 100644
+--- a/drivers/staging/iio/light/tsl2x7x.c
++++ b/drivers/staging/iio/light/tsl2x7x.c
+@@ -3,6 +3,7 @@
+  * and proximity detection (prox) within the TAOS TSL2X7X family of devices.
+  *
+  * Copyright (c) 2012, TAOS Corporation.
++ * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -1744,6 +1745,7 @@ static struct i2c_driver tsl2x7x_driver = {
+ 
+ module_i2c_driver(tsl2x7x_driver);
+ 
+-MODULE_AUTHOR("J. August Brenner<jbrenner@taosinc.com>");
++MODULE_AUTHOR("J. August Brenner <Jon.Brenner@ams.com>");
++MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
+ MODULE_DESCRIPTION("TAOS tsl2x7x ambient and proximity light sensor driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.14.3
 
