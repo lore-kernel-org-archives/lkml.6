@@ -1,11 +1,11 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3621199-1521624324-2-1286366412377789185
+X-Cyrus-Session-Id: sloti22d1t05-3666841-1521625867-2-16361790138526727516
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -14,65 +14,58 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521624324; b=JSsrFUWpO6+sPkTv3lAq18idu6Lo+wRY0H2BDpi7EiWT71O
-    /gyhV59RQPeonFcvtqUj3Qcss2uhJZ7bt3XHEugW1PN08qddkdK+n7MgkUkzE8w1
-    vvAECoXA/zA65bGK9EeMDnfs+srEG2AmBceM+RV6h5OG3C2XA4lkZZ1rTpZas7o4
-    MEzvuizA7EuY7FUwFZAycK+v5CrupGbTQFa01KtPPaqANmKc5j5talt4o2h9/Irj
-    slsBbrYdCMwQt2BWdcYF5IJRObKBYMRiHwt1r+Iwt7msf//5SfP3YDlFW3G0Yju/
-    TmVb+MwcQ3fgHKwEARU07Za8Z3k2S2vPeqX/ZCg==
+    t=1521625866; b=ne+bfunJ6W7U5WGAlqf9IQehYcdxB36UOjBpIuaig3kupCn
+    xuQhTQmMNLTvfH5Rm+6WQl99KCEc5lx/2uZEjcx+nMqSFJFMkKPY4bPm0YhNxquA
+    XWzxX/RVaR6ZYnAyXcCTQrUlFg8QnRjN90ZBvxZ3Z3I3Xsa9QAbP6fRowZSOaNeD
+    X/9cJvhV7NSVFQADjqcN3tOBjiTH3CjByRM7xAOlSw86q9F5zk1ASS6QstNSgheG
+    +ZtU500DdrgwJ8toXUWMLcFPWy5TMdtfH1quM78KpWLPCJH9NW4JxWzr4k4KZ6J0
+    TPkiZi5bB55URp/GEDTzhthkvBWT1dp5zkWiclA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521624324; bh=t
-    kKeqjYwyfzlQR/O+1E353Pu45H3SnKx/43Lv+ynhKo=; b=O/CZK4wj+EsU2Sd+l
-    HK9iZa2ZEIeghBOCmoySHD7qD20vdwRrN8f/YdqZ814GqfwPPPZqkXNSWVt2BPz5
-    tR9N5YwOlJQ3veeqarTk7enkaArgc5RYAtVsxV4AiU6XAlOSl4ZO/w9iiY1gSiMc
-    sCgkhR5nwkdkJITlyrTl5/PfE39EtgQHodtFGQwAexZ/CSwYv3xaYw4RLUfCB3YM
-    5s3YgTEfd1ITGQyLvQ/uSxWJC2OuUpxkzBgB4qCkWKeugfNXCrU4hzad0/uZlNAK
-    XKdabkv4oNC3s2P0ETooAlZwNBSw4SeNwfjC8J9AnbKG5bbunhp6i5CQAPYpXtqu
-    n5V/g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=YSYAQaf0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521625866; bh=0
+    wDxGz7t0VD8ipyvYhSKWkyLllf3IJiDxW8psBXC4LU=; b=G8bmoCIZwM6h4l+iD
+    lYUnuExyU7CU3aV7Ho0150OfZGVHLT2d/qXc3P9MrjDai/6rs2plXHjKtIvC+u2W
+    FmI2GqL+5HILjFzqgCa3pvUvjufXBQKYJwj9HD3VglHXO/srpYfaueJbNcXEkyfl
+    P6Dr2ewZVE6RI9Gn/Qlxd/cH8GdYo8guJ4bC4KegibU0TAp0W+Amg+61RuHFrHz0
+    L6yW3q+yGVa2SU1DnPTE5R36STWBkmgD/QzQxOtm51AAlxGP43nj0y5SSJeXoKHi
+    8YHgFqN7STZkRWTx2D6/D3Sf+yM9mthVPM6wJUkcm/7bB9O3kgjSAj89mQsWwWcA
+    eWD3Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hZJszEBO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J26r4ZfH;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=YSYAQaf0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hZJszEBO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J26r4ZfH;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 21 Mar 2018 12:24:58 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Pratik Jain <pratik.jain0509@gmail.com>
-Subject: Re: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
-Message-ID: <20180321092458.76v5jujepp2inmov@mwanda>
-References: <20180320120344.fyhw4iry4xrtxjpu@mwanda>
- <20180320140232.26096-1-pratik.jain0509@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180320140232.26096-1-pratik.jain0509@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838
- signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+X-Google-Smtp-Source: AG47ELvjUzav9hb7hXaUSnJcCnR8jDeJbn0xMtZo01JPiPmIVz0j8CknJPTYh50lVyGmbVmouclqXw==
+From: Pratik Jain <pratik.jain0509@gmail.com>
+To: arnaud.patard@rtp-net.org
+Subject: [PATCH] Staging: xgifb: XGI_main_26.c: Refactored the function
+Date: Wed, 21 Mar 2018 15:20:43 +0530
+Message-Id: <20180321095043.16369-1-pratik.jain0509@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180321092458.76v5jujepp2inmov@mwanda>
+References: <20180321092458.76v5jujepp2inmov@mwanda>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -84,7 +77,8 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, arnaud.patard@rtp-net.org
+ linux-kernel@vger.kernel.org, Pratik Jain <pratik.jain0509@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -93,43 +87,93 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 07:32:32PM +0530, Pratik Jain wrote:
-> Refactored the function `XGIfb_search_refresh_rate` by removing a level
-> of `if...else` block nesting. Removed unnecessary parantheses.
-> 
-> Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
-> ---
->  drivers/staging/xgifb/XGI_main_26.c | 59 +++++++++++++++++++------------------
->  1 file changed, 30 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
-> index 10107de0119a..aee969aab681 100644
-> --- a/drivers/staging/xgifb/XGI_main_26.c
-> +++ b/drivers/staging/xgifb/XGI_main_26.c
-> @@ -544,41 +544,42 @@ static u8 XGIfb_search_refresh_rate(struct xgifb_video_info *xgifb_info,
->  	yres = XGIbios_mode[xgifb_info->mode_idx].yres;
->  
->  	xgifb_info->rate_idx = 0;
-> -	while ((XGIfb_vrate[i].idx != 0) && (XGIfb_vrate[i].xres <= xres)) {
-> -		if ((XGIfb_vrate[i].xres == xres) &&
-> -		    (XGIfb_vrate[i].yres == yres)) {
-> -			if (XGIfb_vrate[i].refresh == rate) {
-> +
-> +	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres <= xres) {
-> +		/* Skip values with xres or yres less than specified */
-> +		if ((XGIfb_vrate[i].yres != yres) ||
-> +		    (XGIfb_vrate[i].xres < xres)) {
+Refactored the function `XGIfb_search_refresh_rate` by removing a level
+of `if...else` block nesting. Removed unnecessary parantheses. Removed
+potential bug of array underflow.
 
-Both < and != are equivalent, but to me != feels more obvious.  With !=
-the opposite of that is *always* == so that's obvious just by looking at
-it.  But with < you have to look at the lines before so you have to
-remember more stuff to understand the code.
+Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
+---
+ drivers/staging/xgifb/XGI_main_26.c | 59 +++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
-The other thing is that != xres matches nicely with != yres.  Otherwise
-I sort of assume from looking at it that != and < are different things.
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
+index 10107de0119a..eca0b50f0df6 100644
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@ -544,41 +544,42 @@ static u8 XGIfb_search_refresh_rate(struct xgifb_video_info *xgifb_info,
+ 	yres = XGIbios_mode[xgifb_info->mode_idx].yres;
+ 
+ 	xgifb_info->rate_idx = 0;
+-	while ((XGIfb_vrate[i].idx != 0) && (XGIfb_vrate[i].xres <= xres)) {
+-		if ((XGIfb_vrate[i].xres == xres) &&
+-		    (XGIfb_vrate[i].yres == yres)) {
+-			if (XGIfb_vrate[i].refresh == rate) {
++
++	while (XGIfb_vrate[i].idx != 0 && XGIfb_vrate[i].xres <= xres) {
++		/* Skip values with xres or yres less than specified */
++		if ((XGIfb_vrate[i].yres != yres) ||
++		    (XGIfb_vrate[i].xres != xres)) {
++			i++;
++			continue;
++		}
++		if (XGIfb_vrate[i].refresh == rate) {
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
++		} else if (XGIfb_vrate[i].refresh > rate) {
++			if (XGIfb_vrate[i].refresh - rate <= 3) {
++				pr_debug("Adjusting rate from %d up to %d\n",
++					rate, XGIfb_vrate[i].refresh);
+ 				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
+-			} else if (XGIfb_vrate[i].refresh > rate) {
+-				if ((XGIfb_vrate[i].refresh - rate) <= 3) {
+-					pr_debug("Adjusting rate from %d up to %d\n",
+-						 rate, XGIfb_vrate[i].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i].refresh;
+-				} else if (((rate - XGIfb_vrate[i - 1].refresh)
+-						<= 2) && (XGIfb_vrate[i].idx
+-						!= 1)) {
+-					pr_debug("Adjusting rate from %d down to %d\n",
+-						 rate,
+-						 XGIfb_vrate[i - 1].refresh);
+-					xgifb_info->rate_idx =
+-						XGIfb_vrate[i - 1].idx;
+-					xgifb_info->refresh_rate =
+-						XGIfb_vrate[i - 1].refresh;
+-				}
+-				break;
+-			} else if ((rate - XGIfb_vrate[i].refresh) <= 2) {
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i].refresh;
++			} else if ((XGIfb_vrate[i].idx != 1) &&
++				   (rate - XGIfb_vrate[i - 1].refresh <= 2)) {
+ 				pr_debug("Adjusting rate from %d down to %d\n",
+-					 rate, XGIfb_vrate[i].refresh);
+-				xgifb_info->rate_idx = XGIfb_vrate[i].idx;
+-				break;
++					rate, XGIfb_vrate[i - 1].refresh);
++				xgifb_info->rate_idx = XGIfb_vrate[i - 1].idx;
++				xgifb_info->refresh_rate =
++					XGIfb_vrate[i - 1].refresh;
+ 			}
++			break;
++		} else if (rate - XGIfb_vrate[i].refresh <= 2) {
++			pr_debug("Adjusting rate from %d down to %d\n",
++				rate, XGIfb_vrate[i].refresh);
++			xgifb_info->rate_idx = XGIfb_vrate[i].idx;
++			break;
+ 		}
+ 		i++;
+ 	}
++
+ 	if (xgifb_info->rate_idx > 0)
+ 		return xgifb_info->rate_idx;
+ 	pr_info("Unsupported rate %d for %dx%d\n",
+-- 
+2.16.2
 
 _______________________________________________
 devel mailing list
