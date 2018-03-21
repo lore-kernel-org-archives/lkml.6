@@ -1,90 +1,99 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuvRxC5i0MIMXW9UT2HjB3DRV/8kWcDSGAh+JVXE/Kl0aCFNqXD/PkpnLj77Au0bGNj1QN3
-ARC-Seal: i=1; a=rsa-sha256; t=1521484150; cv=none;
+Return-Path: <ruslan.bilovol@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521590644; cv=none;
         d=google.com; s=arc-20160816;
-        b=qrWhOkb7B8Q/s2WnOqymzrMXDPJlZEqEJTrx+NhzfJ9Il70HR+ldLdFy/DFWheRUcw
-         Cau2adZ+7KGadjvq9kYpzOzYHnNiqyRHsySRe7NcnYczBoKolNXNjl6J/TQtewGd6rrg
-         8TfziRA6+bMCs1GpQtiNgPuqgUotAxabN04iahWZIFNbf0Di37JSxRkIx34Y+ny1wlqg
-         JsK3zVLDIc3qbcXaelSdWuQNZl5HaR8XLmQaKJA12NFIcICmgb2qprroVh9PmLiaPzg4
-         /HpQa0/wB+1X+oTTskR2H74pp4wnJFwRVvP7nAGHtRFA6LKAAyGwhnJF9Q6ILvTz75eV
-         GA6g==
+        b=BvYR/+U7FvI44BgC5sYCD+dcXC+cOZyyxqqilyaaYDexEtXvT6iI4nBPPlZptc0ASI
+         Pb75h3ZpKKnF7HLTJmQLHwHz3jNBlmYLIwaGPpch3PEm6tGaziNGnviNG1DH2hFFJYW2
+         1o/mRLkk9A/ELWxuwq6bMI/IF0v8apbpVa83AO69JeRfSXxjunujOGeLm8BX2txfFhEC
+         ORKdjHWWFnZ+83wOMKlRI+CtlID3/R1M4FcG6jyLJWbmL+0C82C0w/e+no8KfIhbCuX3
+         GATY7+ZYkTORE9sc5aJhinZD3yBBXfJOzQ5+HipJp3H+W2UZ8JfwnsyQ+tuaaJZNVIrr
+         v83A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=e69HBkDdIt5p9yONILBB9oMUBP6hr0NTTij5dgTBkCY=;
-        b=h641LCkzHDIY97HR587IcgMabNfFvD24q2ww/vUUVZGKS7eDjihIaIKBP91VlG9U8Z
-         qo66oTlVUJ3ct3hZJmp7cTso/yF9z6B/Rkw+rOhz3ReleTtDfyZCzY2x8yWkU7KxmEyB
-         aW8FvCmP03NaooYGekVnZfQ8IRbx/gmqXlgQcOkg04/pxVI/mIOGI5o8KmghrqFP241f
-         KfdkIxHxbQwao089Gte6YpmvgnyAGHQWWuy/jEvKn7wk8dTc6Yzss6i7j783jkVcEROr
-         c3gGvSy3oFoK/MOOw4NWw/WBE8L3DMdLfvUZuL2Skwe0mykPlE2aDeJ+BOk3nEqG9C0I
-         5ZGw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=JRx4Jp8Xc92eteaB4nqDQ2klvNzvpfUeEKA1qvWcFrY=;
+        b=RvaRdoePTDHg3psVifhT4shAPUeYbIsz91imGX+3gHag0SQkZ7Me5teZy25EVcL9dW
+         COXm2cLw4gX1/7iTQgakPO12JaxwmcBI6CFYsl9jlSj97HivXFyvYm2iZdJEtbX2JkwH
+         fI6kP2+c1phmR+4IV+VqDlk2wecSBjt/AvlnmEm2mHjcxabAUa1pnBRUdx4+BLTG/IaI
+         QdiraWsG3vyPWNIYoTYbILllW7SmYD7w0wIwQB+9Q+oNscEgwFKmED0cnEhZGUWIzsT4
+         FFKhsWr4WOvNf0r2VXsoaioy6sLyln6LFyW9Eo787vyaRIKLxZCKSJPPMP23bkZiHqdb
+         IAIw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZVPO4gs6;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Kai Huang <kai.huang@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	linux-mm@kvack.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 01/41] x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
-Date: Mon, 19 Mar 2018 19:08:01 +0100
-Message-Id: <20180319180732.281721047@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180319180732.195217948@linuxfoundation.org>
-References: <20180319180732.195217948@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZVPO4gs6;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELs7/iSePmwGQyqPhutqIoM5eT6fAKF1P9FyPQzSqgDVNapfCDkO2yPVoDrVWqW71yUMD94GoA==
+From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+To: Takashi Iwai <tiwai@suse.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Jorge <jorge.sanjuan@codethink.co.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] USB Audio Device Class 3.0 support
+Date: Wed, 21 Mar 2018 02:03:58 +0200
+Message-Id: <1521590639-31383-1-git-send-email-ruslan.bilovol@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595391764772366077?=
-X-GMAIL-MSGID: =?utf-8?q?1595391764772366077?=
+X-GMAIL-THRID: =?utf-8?q?1595503431762584574?=
+X-GMAIL-MSGID: =?utf-8?q?1595503431762584574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Takashi,
 
-------------------
+This patch adds initial USB Audio Device Class 3.0 [1]
+support to the ALSA that we discussed at ELCE.
 
-From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+The patch was tested with UAC3 gadget [2] that I posted
+to USB mailing list before. It is good for working with
+BADD device which implements such topologies like
+BAIF (Basic Audio Input Functions), BAOF (Basic Audio
+Output Functions) or compbination of both.
 
-commit 1da961d72ab0cfbe8b7c26cba731dc2bb6b9494b upstream.
+UAC3 spec has changed descriptors laout and many other
+codes comparing to UAC2 spec, thus making reuse of existing
+sources impossible or quite complex.
 
-CPUID.0x7.0x0:ECX[13] indicates whether CPU supports Intel Total Memory
-Encryption.
+There are still many areas of improvement, as this patch
+doesn't have UAC3 Mixer Unit support nor some new features
+like Power Management
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kai Huang <kai.huang@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180305162610.37510-2-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I tested this with BeagleBone Black as UAC3 gadget device.
 
----
- arch/x86/include/asm/cpufeatures.h |    1 +
- 1 file changed, 1 insertion(+)
+[1] http://www.usb.org/developers/docs/devclass_docs/USB_Audio_v3.0.zip
+[2] http://www.spinics.net/lists/linux-usb/msg162482.html
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -314,6 +314,7 @@
- #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
- #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
- #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
-+#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
- #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
- #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
- #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+v3 changes:
+ - dropped audioformat quirks patch (already accepted)
+ - addressed coding style requested changes
+
+v2 changes:
+ - moved audioformat quirks to quirks.c
+ - addressed many comments from Pierre-Louis Bossart
+ - reorganized audio-v3.h
+ - added more UAC3 channel relationship definitions
+
+
+Ruslan Bilovol (1):
+  ALSA: usb: initial USB Audio Device Class 3.0 support
+
+ include/linux/usb/audio-v2.h   |   4 +-
+ include/linux/usb/audio-v3.h   | 395 +++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/usb/audio.h |   1 +
+ sound/usb/card.c               |   7 +-
+ sound/usb/card.h               |   2 +-
+ sound/usb/clock.c              | 228 +++++++++++++++++++++---
+ sound/usb/clock.h              |   4 +-
+ sound/usb/format.c             |  91 ++++++++--
+ sound/usb/format.h             |   6 +-
+ sound/usb/mixer.c              | 337 +++++++++++++++++++++++------------
+ sound/usb/stream.c             | 365 +++++++++++++++++++++++++++++++++----
+ 11 files changed, 1246 insertions(+), 194 deletions(-)
+ create mode 100644 include/linux/usb/audio-v3.h
+
+-- 
+1.9.1
