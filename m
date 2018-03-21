@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeCUDUp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 23:20:45 -0400
-Received: from mail-db5eur01on0052.outbound.protection.outlook.com ([104.47.2.52]:36757
+        id S1752060AbeCUDUy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 23:20:54 -0400
+Received: from mail-db5eur01on0048.outbound.protection.outlook.com ([104.47.2.48]:8362
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751833AbeCUDUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 23:20:35 -0400
+        id S1751883AbeCUDUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 23:20:39 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com;
 From: Dong Aisheng <aisheng.dong@nxp.com>
@@ -16,10 +16,10 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux@armlinux.org.uk, linux-fbdev@vger.kernel.org, linux-imx@nxp.com,
         sboyd@kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
-Date: Wed, 21 Mar 2018 11:19:48 +0800
-Message-Id: <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH V2 2/4] clk: add new APIs to operate on all available clocks
+Date: Wed, 21 Mar 2018 11:19:49 +0800
+Message-Id: <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
 References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
@@ -31,45 +31,45 @@ X-ClientProxiedBy: KL1PR0302CA0002.apcprd03.prod.outlook.com
  (2a01:111:e400:9425::28)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e06d26b5-f539-4ab7-b717-08d58edab427
+X-MS-Office365-Filtering-Correlation-Id: a78da958-1e90-473a-45aa-08d58edab701
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DBXPR04MB320;
-X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;3:YIy+F9+2ejBy8U9g1RQ381cKJvdt4csOXl1XFJwH1frOAvrG0d0YQBklubV+1l9ZLDeJ12iNYaxRTUPDTS9sQWD/860hL7X3wWgot7fE6hq4bzCPmtt7daqktF/RALcrUOvRWHWaEs/DTRAyG4zr3Hg4jy3yZ8smUcbZ8HMx/qINtvdfzcGEKnbuuekax4X4Escx/7L5R1gZ3T6kp5WnOWGLp/RZ3Q25olt6/PjSvCEy0+ksPF2Ak52H4yOmlaBu;25:C9Ta9YP8CWHXj7NAw/+d8rl167tjje4ZKMt8se/vfSinksRRf1p9YGey3+qje3AhduPhllocSss5CBgRP8bJijlmVKf41Xs0n40CyNm9PtRB7rk7QC9fUi+Reoii6Lzi+b96zVwcFgOZiB9/ChVrwQy+3fA6OMpYCRuujLkKL/UsOekNp5Y9FhLxW6nQ23CmoL6M5Onq9gqfymzPQ+AVwpNlh5DcDMNoOqylBRQI9sM/lmb83CELqVrE76RV9BpOtaPnJaGwWENY6K1o8Vvdlbu2p+dRw5Fyi6mEV1Aw2gBIxl4zj1nWygxjMic1Xr5chTaxQyNYah6ImmlY/AXnqA==;31:ppa2Lk5n63o1Doa4BcwRNZNpl7RG3FFCfOeJrjnAzQFjPA0xDToDbNmvkLJzBjufkjXB5/MdidOddaljdradyw5OL/88bKq400dTgmRHg0o3d7zgDYeqXj3kTOYipnZBRIMmaeEsF2eULxMvOjqYY/uVn5vW6Wmv33Jxkihrjb091obYZbwS+l9EFodBntbrLhYwTwxCmbcrFq0XWFkwi8nahAJ9BNtIK9O4rvcijlk=
+X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;3:B4Fsq0XrKALkK1VXu9KuUAehOh3mastCzaZerBONpREPGj/6/DzmkXVoc4X8OWtJM9x72fbZ6vdLlz1LagxzgD6nx0LP2/Zh1nfiIQEVkVLLwwopeWdOJcNlOwwi9VJS10Zzszl2KJ7FDcLdCeDAcUSWsv8ylPoa0Imq9JYXC3w71mlPSMFP1MjGv6NjDyzIWMQfGIzo1SQb95WmVM0HeP0XXY0UdWZvMfcB0+wMPdVU+hnFr6HgEAbxRiz9J6Av;25:urBNEmG0hDS4WckekwJfM/ZCwiaQdw+c+KxjqmWCHT5DvYl3SbbUcQmgeAJM3XuQVIkU+XIws1MFq1t/LiFHUd2i18Hr8Gi2LtS5LnE9AojH3nEGiYfcVwAtGblDtLZZpDERek2CvPuzG9TBZlxUBPf58p55jB8EJFjJR7TaduvrY4W4jFNFpf3MyW/bzLyKFKswHfMlDMVD6o4odObVJzrOQdXRcMFc4tbc8BhGUJEVl2EPSDCG3f0t3ITnBB3vAjjLqKE5ax2l0bqFpSmN5nxbxHhbhbmseRNrCUhVAFkUB3CCOXill/znOUOJNaXq60cgBpJuDWS6Lee6tN4mlw==;31:1VNX1AEVpccafCfDdxGQk/pU+Sy54u4mFA9dpx4Fs9vlooAlfhqWGX3VNa9iQcxz4XCxNNcmqTCxAsomgXC+urs5Wd8S+sita12x0/VO2FwVbEYwCtNowl0Nk4bdpKgOcQEqBo0nzpzVkJMxBiTRsZeoMe/QW7R9tSzkc2q4mQ8HGtUMYQ4ejI1bS0WPIM0TxXa3AGEs21I673aLucykCzCiiGuLJfsBeUr94z752Rg=
 X-MS-TrafficTypeDiagnostic: DBXPR04MB320:
-X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;20:e96x/+K598yR4Mjkpy6tWXkSf1U2YjBC3jf4gqwgw0ZOdN5tEK4R2OWTtENbEObGEVD8+lXPH9tAUjpCtj4WRGqjKm28W9lKyWYPZa3dRz+987syiIydm6BkKrL2ktbRgYttZIUSD9+nCfSB4wC8Zvjs6xCs9B7DqWigbQdPO9zVkRR9v5PqfCllg+IGINi3/9OWHQ5hnyw+OyKhsiI0JGxkBn5tMr2X5s2sdHbAkxj9lijsCmQjUUQgC0R9d3Q+2jpORqqPSHOvZrU5FP1ZbvWLaFzcXaqn/1cHIAcWZ4LYrDehuMYnAAfZtOQK9qPYFaA6JXYakbWVq6vSQSW4DQn2WYaRHRyqg7RR5Wi+gTsfYIBv9vBKXwseoRrKJ23dRcCVaV9VkRsi43XUfubTmZgcX8dcZM4Qjjk5UCgg6KZdMHm+jDHy6D53ntwgDzZMXPFaXcScPn+QSVLJc05KatOGQ46DOOq8RY4htn6nOPrazjzGosMqU11B9+vM+ljP;4:7O7aIbYY/TWPy+J4wxS/AO4odYlcCmKXQeb8++VtblBTd8itaQmxAf+5TG4p7SKOqe6L5G3keJJ9k4LDcby/IvTdddEHzf4FrnB7lBFsD/lMzP+GQW8zTAy8TPt0eAKCVAxrdajSOrY/0/nEzMtofIzXey4CCn8CTSuvSPWB5zV3peSAxVQfddK6uaBlToU3+m2SN3/i68hOPC+AO2BdRTcXpsIEyQqFySHpxbDseDBfuCZ7iCq5GNTeDS10NZ5pltrQdLeVM8yeBigtOMuBG/dMzPXvompyqkkoU6TVKPpMrcYMFxxdkhRH5CmGP0Nd
-X-Microsoft-Antispam-PRVS: <DBXPR04MB320DDF421EAB3C46A3E48F180AA0@DBXPR04MB320.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;20:NKJtLH4rwU+Ive+lwwWt4Nl83khzK7U2QJdpP2yeAW+tufLvY1Op0bjBgMZEdTsjdJNh2Jw9yWQ847E2HDryR07+52YvD0lNXJBaoF0LqpIokcbPN+ejJJPaZCVPkLI1Qq2Zjdb3DEWu9SfTTexxhqkDYD/DSwVbebeUH91DvpKupRWYdv4wvy6Avwbq+ii11QEo13CiPV8biaQJRrAjneozF9keO9nuKmxMAU47fLYCBeqSQVs5oe0CnyE2IQv424GqdTc/JB4SuS3K5LSR5qXR+NAu2ICcu1CHz5mtHd0NJmfUm32nsemBLjhWTPSRRfEFSArZSvHvy5H/+EZhvBZvq8OoZoyK+J8P1L6Tb/pRnqZCRnhfky8dqf5VcvJM9TqRgO9jERpRdFo8IsTKmgxP2Sw8UPOaL5x0+7guP2Hal9T0ysl7GskI32l13uxF/H7/lt9vVZL36sZclMCAo/Juiw+Idt4gDmSfoB0ozrCgCT2f9clutf6PJi1t4DiW;4:TcPPsYYE5KmNJ/rDWtFlh2oORFwUEwUW5NuzeLvyvdpKArgZ+Owz2dNBN9stl02YlL2iBZy2Ks3BHoVI+/cjNW925asnf3Tl3QABy+O4IAk9MWq+29zV1qZNzXlLpjMGpxN5NK712ozNTw9QkCrRoPchCZmugMTMyXzw2jQhr7VNarRfC4DOx9qA2VI1yfFhDoKSdlwiPcrzxKvl5/ORkpOetEivxmwFSgxJmWlTjInP1RJ4GkJtgSMvCidqOxuSCEA+LdTppH5WD+LbwLMiANMhJwJ3gQK5TfeqXKzws7hmFuT3EpQ7DKbDl/9HDgbi
+X-Microsoft-Antispam-PRVS: <DBXPR04MB32051D352BA03F6604B295580AA0@DBXPR04MB320.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501318)(52105095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DBXPR04MB320;BCL:0;PCL:0;RULEID:;SRVR:DBXPR04MB320;
 X-Forefront-PRVS: 0618E4E7E1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(396003)(346002)(376002)(39860400002)(199004)(189003)(6512007)(47776003)(53936002)(186003)(66066001)(50226002)(54906003)(105586002)(16526019)(478600001)(68736007)(25786009)(106356001)(4326008)(6666003)(2361001)(6916009)(16586007)(2906002)(97736004)(2351001)(316002)(6486002)(36756003)(8676002)(305945005)(2950100002)(386003)(6506007)(3846002)(7736002)(6116002)(5660300001)(7416002)(81156014)(50466002)(48376002)(81166006)(26005)(8936002)(51416003)(52116002)(76176011)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBXPR04MB320;H:b29396-OptiPlex-7040.ap.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DBXPR04MB320;23:msuu3HKPfMzChsa0HqE0AOUzyBNNlt8mL/jnJ8QBSq?=
- =?us-ascii?Q?JU2EJyIpNPNdM3ataJY2pZrWznjYWeVs5eRiboRqFdim9zazPQ+aoERy6vgB?=
- =?us-ascii?Q?f6mIfZ0d/peKMnDgsZkVJ3PN/J93ViB6EG3nEez0k0oenGn5OPE7ESMoqJbP?=
- =?us-ascii?Q?SJcusazViGhz4I48o3710GTcyJXM+fjNQ6oMLlzEpp1R8Zqf2S6/qMTKi7vx?=
- =?us-ascii?Q?cu0la0BjDjnkJcYRrBSoQfg92xFEazGFOUMcmwEIwasVWkwt2lhv8OkpX7ja?=
- =?us-ascii?Q?VIp32aPUaIXYQyY2xCJPElWiiEdclNjMRBFGdLHLBq7MTq/WZ1iHzmsDCCSB?=
- =?us-ascii?Q?lDT3fNX9dyZ9AqVVXSCjOj+OpzdgC9xne6mFxmA8lIp+CxenFMzsNgILcAY4?=
- =?us-ascii?Q?KDHYzDgeA6DaAGtLlJz5WyJgzoLv/Bt89HBmMTr6nju0hHQvH3pa0+C09K7B?=
- =?us-ascii?Q?CEGms1wNmgVNEpG+avADBP9PiYqkEDxjGkjFU0U515ZCpk0ra6Bx4rybQkli?=
- =?us-ascii?Q?I9XgLFqi//VJoRx2Kb0x/mvM1zrUelZcEP1Dvy0Du7FSys+BKxAY6YlqBOow?=
- =?us-ascii?Q?KWUx1964MIuoZQOMFJ8EYQLWnOwq7KvnMUcTAXFqMQQl/cRjxewF/jMlc0MW?=
- =?us-ascii?Q?pw8ssiO4plyGCKXtrKh0GBI84NkBcetojzkyuMjLni10dqZCVnSIA8F4H5Xl?=
- =?us-ascii?Q?j+9xdjAYgxWc6BRVoT5hRlSbMoOfdYMZVlMn5/dUNhy5rSNB2piHDV30C7BN?=
- =?us-ascii?Q?6Ai75OfpNb46uxVyDt/YYRx+cMpbwxBlh3yp0n+JqsJznlxUB2v9yw+EC5yh?=
- =?us-ascii?Q?jCT5nTUSrKQzNlA1IMNKdL22O/mAHg6jek7nb4zl0ZzWvC1A2MMkfGFKOTNe?=
- =?us-ascii?Q?urRGS43U9ov7RJxoHVQuEerQE4ah8r7CEoQo1aHuDdWlVIS+5T/rv860Z+kS?=
- =?us-ascii?Q?yGD0Z30hGcqZVaNhG02CGo3P613jrqiEs1IYtSKTRV0bMEKuvxrSUvbK/2Bm?=
- =?us-ascii?Q?8YDwC610xse7uuCAtZd5WQS/KlcWZWVlxxXQRklkxR8+Ouro8f42ed7SKeIS?=
- =?us-ascii?Q?+eMohkOIT/CD7wJJDcbocfIycV4jtiMc4lrQCfPtOg9mDUfhKIxWtqygC+dM?=
- =?us-ascii?Q?dX9V1vvBNzLg7wEfcJ7yQJ4uNInpZhvNU5uTatg5patvm/AFqhZouqsCmin0?=
- =?us-ascii?Q?2oGZuGb7ytF5I=3D?=
-X-Microsoft-Antispam-Message-Info: vF8tb7v/58r4GFfsoDAj6FEfXbZmGEAsZtyQyprdKTWz+Xr+iT8VHmrh/bDlXzBVMUTusb0x3GD+k4eaOVWK7Bd2ypmWOyUIry+LoRdrQ7pTYF9+f3mjydoEoliyatFAySZPmsCmigh30tRUp7tsXZwwJ7CG0/+j4BSdUP3la93XJqzS9ynftRpC1vPjbUm+
-X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;6:jTTBfVdDC/HgGfS1DBaZHr3eFG2Stxh5ra257JxrjtRO4P9noWi5dWhCFAGA5eI17jGikr+8FZteYnAQfPel5Jqsb02TtrIENKiW+zzq1hvy+ozHmq3Wc+E7LcT1LZmFtGlo+7OT//lgQSqAVBlwAf2Ny31TDFhXAolZBdXnmL+JMYmFCEOe/hF+StaadvWYa4RI+RI0y4WMZlI8TB+wnZA6uZY44SvNwXBcAlGzatBOQG/prrqC3NzCESBC1XwdEMAB6h9TxIvcFhER7uFp+/uRVFtBgxrbbTg8dPapJVfdBkoAmy/sOy0Om8T7dNZWgO/jVWFu5oFGy4pYMnVD85JjGJZ21jG/NGBK6cQim4Q=;5:BvfHgNcZ6UnI94btpFk/Kz43F4A6T2ajR8KqbOVrucUU+k4oxRmXy0wioe+ZQxAC2+cJksxR2oCQ6Q+blqHyT9M8k2BfTFrKXGDT3z6y3jqWbhxKrA605/ETcnGq/W4Au3giz6IIzA4TKj6J67azVej/FDMFn0+2nioEkO++2uU=;24:btn4HHMgVNl2OBGpjBP7WWQaVKw8rLdbS1zuQu2T3eu186R4qIjbDX/fiuFnzGBvvlf7ooAANu7A4h/sxTVgua1cDPZiDwYbbVrVxQSmajA=;7:CYMGLFm748Bco3MOwh5hfbu5Dhwxy4Fei/C0HWiquzVIdWnKoXgi/SSVlqqTmQ1jPzul+L8QTIeDzKXDpRYnHtQPn6voW1aRw9C1HN7T5dyO5i2O5rb+ANAZnwiCpy+dxKFHUO4SJEEO9Hi0xwov3XsX994KyRrhYqDRhZBTE6Pj4wLubvQkbrwxY8/ip4CqU5JToQeBWuEcSoOMcCnpWu6Lfb5dXbBTGdC4D0Wu6+5PkbDCb0hh5qLUSEh4PKaj
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(396003)(346002)(376002)(39860400002)(199004)(189003)(6512007)(47776003)(53936002)(186003)(66066001)(50226002)(54906003)(105586002)(16526019)(478600001)(68736007)(25786009)(106356001)(4326008)(6666003)(2361001)(6916009)(16586007)(2906002)(97736004)(2351001)(316002)(6486002)(36756003)(8676002)(305945005)(2950100002)(59450400001)(386003)(6506007)(3846002)(7736002)(6116002)(5660300001)(7416002)(81156014)(50466002)(48376002)(81166006)(26005)(8936002)(51416003)(52116002)(76176011)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBXPR04MB320;H:b29396-OptiPlex-7040.ap.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DBXPR04MB320;23:LlAvtikE33K9AuFnwBrr1b3MNiOhPfOoj9CoUrQYCx?=
+ =?us-ascii?Q?VTcbfXKtJzf5tcIfFNLhqHjZiECJy29tEb9OPGyXVfsLxNwSzTI99OOookpc?=
+ =?us-ascii?Q?TcN/UL7myzJjCye6qwr2bykZH/jdTVhOH8HCX5KlW18nTgXpjj4S9fuXXMi3?=
+ =?us-ascii?Q?qtk9VhE+n4toMIdkCnS34ltQAWutgeTQNDGCdYHAFNGH8UmWWmwd1d2QAOdj?=
+ =?us-ascii?Q?CssWM+ZZhUVEQazcc/f3klPIehXS5DNEkuC4mv37dK90U0l6AQ7q2sCwMWdt?=
+ =?us-ascii?Q?fIFEA8myMnOkhHTn921j3dsxOxm6BrLPg6uDS6VL158GM/QRlewPTdSpS/LF?=
+ =?us-ascii?Q?Q5zXrOSaksfATMKkSSAd4Vy8A3Ghor7FP6ze5EnHfSeip+eUzE/hBKljfYQR?=
+ =?us-ascii?Q?E2uXeNQNLE188sWTNtHJyEkgwX/wpgSrTRbZEE45ScJU3OEJIqTTsqG6X2xS?=
+ =?us-ascii?Q?z1h3lbOlTbFtCtW5Unnk1LakcySOP7pA+V0tDGEVK74ZF2wn/OMUbhRavMRq?=
+ =?us-ascii?Q?lpfB20d5F7Ml3nj4api6CkkEAG9KnNZLVbf93MInNq3F3nHilSDeXzZjBu18?=
+ =?us-ascii?Q?FUx4f7fj7cwatrPSzFZsVvuDHLaTua8DpTBdC/d1vcx7PHJc7BY54W0KvNRA?=
+ =?us-ascii?Q?ddFVqBPgO7gxYaU3HiIJTA1XX0TDqBwn4htqfxQOyl1wGGx+8zZnjAMpjfQE?=
+ =?us-ascii?Q?/hPg80Thwzz8cI7pvaiT8O2Js6STjVYoAOS74B0e0QiYj7qbVifrBZyvc4eW?=
+ =?us-ascii?Q?MGKmQ00/y6E1B2GfdXwNuF2NyETn+gcaM/mpMqFmFowFUpFV9PsPyako0L5l?=
+ =?us-ascii?Q?30XjWc0EqIrFHl84qTfHKf59ESRtaO2qDTwNtA87dd59VXAjQilqN9BvHkVd?=
+ =?us-ascii?Q?ui7OCyNZ+vp2I+8w0/OJ04yOgoKEbMLW1oAO9VoHSLYNrpIK0usNMoFCwhPA?=
+ =?us-ascii?Q?yICl8+9n+gfnKLK4iYrPw1mCJDcnzAytERaFEKLBxT1ZF2a+oKQKy555wYRD?=
+ =?us-ascii?Q?+KIxM2RxD8E3RREIjCnM0GGuXonaiArONh2b+gPCxTgxNnXJm+4jyV13Io7l?=
+ =?us-ascii?Q?TIfAHzvqQQ6zsaaxo6HKMZiOmKyVB1fz5vzjVmm4Y6gR/WdmxTaSZpsVktwQ?=
+ =?us-ascii?Q?o0EUEWA53T20PmmBJQJccJ5bF11wsEhwCuEjnveqmyoyhNRYPAKQn5B0NOcB?=
+ =?us-ascii?Q?NdSjlZD5I3wcZeJRb7urOL5kOrsv5WuXSU?=
+X-Microsoft-Antispam-Message-Info: 8YDu5qj4OakyISNdstqMZD964R8ZC79CXM1ITrPwKyw1WGxNk2RJT9fFyemr3W1CAjk4I/XraZN00Dd60p/Hov5HZ0rSoTyArFZTGVRcz4EhIJslodsT1B1d3KqATBb9k9Fw0WFo7T9cbNMVRB4JPUQHBPkR7Ix64zWQl+N/JnX9xni1wNdrPC8hZm+pfWlc
+X-Microsoft-Exchange-Diagnostics: 1;DBXPR04MB320;6:zcFjU9kheD0v6dLxHkiJK6SSSZvNRexrVt49ZCFON9hpNHNrDFQ70+3CXENyD0P6W2IoM+vlJVQiowuaBOgjNayjDfpGBAdAMHlvim2nk+KWRZNUs4fm9FuwRl/NX6+vVztly+yeHckkCWqAkJFQz0MV73YgjF/J/nwAKtb52vXm4tRGM/VBrdEYXN53E2bFmofDhveB+I5O9AcK8sIlF1IyUZ3CwkUBSIIEikHv9UEhxiF9uxqRBb05DefPrdcY3NAwehpfODvIEtfnEHv806SwUsDV7o5wF7j7uswrpB61kOsZINkqbxVHy/T30+hQmB5+jSpruQ6DFVC3oqZKV1lhso8Mhg1tekereulBKcQ=;5:AP8rQEtOkbxRMPAJfkBF2X3EDUJ/qivD0ARkdrA6RpavrM2iSMYiQsXQ5rHOB+uWqmxhkDtYrW8jKQ3HBMN8ML+M17Ri2OAqcv9xDLgSXSBp7m8ixQ3nf21x4xYakqLED2q6iPkVGlRax/chnua6i+7BYn2wPFThPtmPBiMoEXM=;24:bVQ4oHVBbaNo/tLFFDxJAeRRCtUJD723akL3ziQKbzKa961Mw6JK/Xch7XAm4uUPO4NFVv7teUxCmef9Tldbo3dzuSf9q4uxhgJPtOSqzHU=;7:hpTScac0a3iibzUbxITQB7pWJTWYbvAKZGS78YHQU/5DT8KGCN1hA76ipl1QeKpHIr9mZhELhnIcEi+E2mx8ii8+iJNs6FdDZbMhq5iT1vZR+MhKnszXvq1tCJr6SBP5S0zcqh4pqtwmD10j+BA5HKNJWSYBWloctj9BdPdz5BYRqcVv9LlOYbkOo8l/c+RNOtfpzs3wos8yuDv7lkc4LkHGQcYVk+JsfGXo5fsKTSSHwjI78wGRs7581o277Eiw
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2018 03:20:27.9622
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2018 03:20:32.4465
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e06d26b5-f539-4ab7-b717-08d58edab427
+X-MS-Exchange-CrossTenant-Network-Message-Id: a78da958-1e90-473a-45aa-08d58edab701
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBXPR04MB320
@@ -77,63 +77,182 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'clock-names' property is optional in DT, so of_clk_bulk_get() is
-introduced here to handle this for DT users without 'clock-names'
-specified. Later clk_bulk_get_all() will be implemented on top of
-it and this API will be kept private until someone proves they need
-it because they don't have a struct device pointer.
+This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
+to users who just want to handle all available clocks from device tree
+without need to know the detailed clock information likes clock numbers
+and names. This is useful in writing some generic drivers to handle clock
+part.
 
 Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Reported-by: Shawn Guo <shawnguo@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/clk-bulk.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+v1->v2:
+ * make of_clk_bulk_get_all private
+ * add clk_bulk_get/put_all
+---
+ drivers/clk/clk-bulk.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 98 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4c10456..4b357b2 100644
+index 4b357b2..3293c6b 100644
 --- a/drivers/clk/clk-bulk.c
 +++ b/drivers/clk/clk-bulk.c
-@@ -19,6 +19,38 @@
+@@ -17,9 +17,11 @@
+  */
+ 
  #include <linux/clk.h>
++#include <linux/clk-provider.h>
  #include <linux/device.h>
  #include <linux/export.h>
-+#include <linux/of.h>
+ #include <linux/of.h>
++#include <linux/slab.h>
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+@@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(of_clk_bulk_get);
 +
-+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-+static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-+					struct clk_bulk_data *clks)
++static int __must_check of_clk_bulk_get_all(struct device_node *np,
++					    struct clk_bulk_data **clks)
 +{
++	struct clk_bulk_data *clk_bulk;
++	int num_clks;
 +	int ret;
-+	int i;
 +
-+	for (i = 0; i < num_clks; i++)
-+		clks[i].clk = NULL;
++	num_clks = of_clk_get_parent_count(np);
++	if (!num_clks)
++		return 0;
 +
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].clk = of_clk_get(np, i);
-+		if (IS_ERR(clks[i].clk)) {
-+			ret = PTR_ERR(clks[i].clk);
-+			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
-+			       np, i, ret);
-+			clks[i].clk = NULL;
-+			goto err;
-+		}
++	clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
++	if (!clk_bulk)
++		return -ENOMEM;
++
++	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
++	if (ret) {
++		kfree(clk_bulk);
++		return ret;
 +	}
 +
-+	return 0;
++	*clks = clk_bulk;
 +
-+err:
-+	clk_bulk_put(i, clks);
-+
-+	return ret;
++	return num_clks;
 +}
-+EXPORT_SYMBOL(of_clk_bulk_get);
-+#endif
++#else
++static int __must_check of_clk_bulk_get_all(struct device_node *np,
++					    struct clk_bulk_data **clks)
++{
++	return -ENOENT;
++}
+ #endif
  
  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+@@ -90,6 +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ }
+ EXPORT_SYMBOL(clk_bulk_get);
+ 
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
++{
++	if (IS_ERR_OR_NULL(clks))
++		return;
++
++	clk_bulk_put(num_clks, clks);
++
++	kfree(clks);
++}
++EXPORT_SYMBOL(clk_bulk_put_all);
++
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks)
++{
++	struct device_node *np = dev_of_node(dev);
++
++	if (!np)
++		return 0;
++
++	return of_clk_bulk_get_all(np, clks);
++}
++EXPORT_SYMBOL(clk_bulk_get_all);
++
+ #ifdef CONFIG_HAVE_CLK_PREPARE
+ 
+ /**
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0dbd088..a76fdff 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -279,7 +279,26 @@ struct clk *clk_get(struct device *dev, const char *id);
+  */
+ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 			      struct clk_bulk_data *clks);
+-
++/**
++ * clk_bulk_get_all - lookup and obtain all available references to clock
++ *		      producer.
++ * @dev: device for clock "consumer"
++ * @clks: pointer to the clk_bulk_data table of consumer
++ *
++ * This helper function allows drivers to get all clk consumers in one
++ * operation. If any of the clk cannot be acquired then any clks
++ * that were obtained will be freed before returning to the caller.
++ *
++ * Returns a positive value for the number of clocks obtained while the
++ * clock references are stored in the clk_bulk_data table in @clks field.
++ * Returns 0 if there're none and a negative value if something failed.
++ *
++ * Drivers must assume that the clock source is not enabled.
++ *
++ * clk_bulk_get should not be called from within interrupt context.
++ */
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks);
+ /**
+  * devm_clk_bulk_get - managed get multiple clk consumers
+  * @dev: device for clock "consumer"
+@@ -455,6 +474,19 @@ void clk_put(struct clk *clk);
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
+ 
+ /**
++ * clk_bulk_put_all - "free" all the clock source
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Note: drivers must ensure that all clk_bulk_enable calls made on this
++ * clock source are balanced by clk_bulk_disable calls prior to calling
++ * this function.
++ *
++ * clk_bulk_put_all should not be called from within interrupt context.
++ */
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_put	- "free" a managed clock source
+  * @dev: device used to acquire the clock
+  * @clk: clock source acquired with devm_clk_get()
+@@ -609,6 +641,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 	return 0;
+ }
+ 
++static inline int __must_check clk_bulk_get_all(struct device *dev,
++					 struct clk_bulk_data **clks)
++{
++	return 0;
++}
++
+ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
  {
+ 	return NULL;
+@@ -630,6 +668,8 @@ static inline void clk_put(struct clk *clk) {}
+ 
+ static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
+ 
++static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
++
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
+ 
 -- 
 2.7.4
