@@ -1,292 +1,195 @@
-Return-Path: <dietmar.eggemann@arm.com>
-X-Google-Smtp-Source: AIpwx4+ALs5HJaqtu12NywQk5Bc87XT44Pl0IvDuLzskpAfZ9PVK4B+KDZ4z4qX/Z7h6kAGoot0u
-ARC-Seal: i=1; a=rsa-sha256; t=1522103210; cv=none;
+Return-Path: <quentin.perret@arm.com>
+X-Google-Smtp-Source: AG47ELuPHNms9ofTaOhITxdSRsTGvXg4xrNnaU6y6ZH77K7zv0+hXUVLrV8IOy5BoiHwQT4iSvI2
+ARC-Seal: i=1; a=rsa-sha256; t=1521593133; cv=none;
         d=google.com; s=arc-20160816;
-        b=I+Q24a9TEbpRQ28gVGPxZ0yzH3x2NHsv/j4UURuYVmvOAq7o7X6o262Oyu2WgKEsiv
-         o6FtixuUMCWW3sbBNvFJxIaZUC2QRp4NMbFS5p3W/yWON7cJgA73u+VIQfGB1UKtuzkp
-         U0UFPGVWkvY6cem6RzyObguJcFZv1qPrmGliuM6XACfKzpU9TcY0JJRjiV+TNdEd0GsN
-         eU0Exf1+htFrNUqg6YRLu7FJdhiiK91cPh1Okr8kJpViYzJmjfMymwyFNuegcZOvN8WP
-         MJOlxOPftTUPEezdtsHZbDJuIlSLVK3pKxBddz2x/tA+oitBli1XcxM2LVAUUHXm1In6
-         32BQ==
+        b=l+O1B80lvw7nxAdMpDet+/R7sEonSrjOVYInRS21ezs+n0QpOCHZ/xqvPeBrBaadDj
+         MKue+OqAJWtRLfNFOU1KWo/j4T3qRthW/B4tPM2xWLZmyyLAdflMzGHtmU9EVLjXUqy/
+         RGuMdb6p8Py+J+4p/yjSwVHPj8AdP0jfQe73udPQOZYVpmz3Io6STk2UQ38C6OqkwKzC
+         Eo7TkbNqjv87NT3mLtLtcAo9VwfwjW838toGAPFzeRczF7h0iDtpqKT4ZGCI5Lv+jMdG
+         xpxJ2yHHxVUTOLFOGR5NX+tkdZnGuBoKiC9jVuZej2A+ePM7mjWsfkut1d/78GXFJQn0
+         TmmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=TjqGDunUmqGRKKlemixhq2nXFMe1t+AOjErXNRN6E1c=;
-        b=pTHxk3Yz33UoAvgJK0Rbh15C2vzl87FrrAtIhAD/sGSF4JnVdPX0K5v8u78g0iQ4Cb
-         0dCrIDvkvr9XIi6W1ZQQwfpPmmD+diUJOfMm+3Fg1e1ZQCAsVVIy7VXL+vKQxtHwkSKb
-         8eIB49cuhifvQ680U8K4j5wzTLMz2oMYIuTrmugt38HlWpAFAbvqpnMXslbjrdRVxI+3
-         cU1+QYvRms7xP4gXKJ/Cwm9UCFemuvJc0CNjVtJJyQT5p8qOUWdMV6Z0+BlCtaIj+L3x
-         nTdrGsXOUQIlWjIEScgUN4w0I8yNfRS9CqELMe7H1qKK77EvhJJSFGQXfTDiv0Xa+PPO
-         VH2w==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=ZsJbtR0Dok6b0TAsk1S7R/HVBjQ8H0geFmsfzFLSoRw=;
+        b=ZrYaP4747Mt2tRUKg7hdc0THp+0sfuPEG7UJ7y3NYGNS3LbW4WMk5aphxUFtp7Cx2/
+         Kmp34tvdr7TxNgkK2FnGGRopRIfBBLnKxfH7/MBDcM832i4k2nCdxc4yZ3I1JsYvCBTB
+         QcpidcDED8E0itvlqkWgfOQtLjoPEwleyESIVA8nVBZFk8okLw3xzNCeqXqqOzbVXnnZ
+         1Ab+xpqhYEAUyX9w90MGawDsouA8ED8w75XANZ/N1FLyan89IVnWIp6B7+kFkY6A8kwV
+         uITPABS/zBku6vP08a0lVyPHSpS8dunmH1g6WY3sJQLkyxjvpEGENmUvyX5B493C4mQR
+         NOYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
+       spf=pass (google.com: domain of quentin.perret@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=quentin.perret@arm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
+       spf=pass (google.com: domain of quentin.perret@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=quentin.perret@arm.com
+Date: Wed, 21 Mar 2018 00:45:22 +0000
+From: Quentin Perret <quentin.perret@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thara Gopinath <thara.gopinath@linaro.org>,
+	linux-pm@vger.kernel.org,
+	Morten Rasmussen <morten.rasmussen@arm.com>,
+	Chris Redpath <chris.redpath@arm.com>,
+	Patrick Bellasi <patrick.bellasi@arm.com>,
+	Valentin Schneider <valentin.schneider@arm.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Todd Kjos <tkjos@google.com>, Joel Fernandes <joelaf@google.com>
 Subject: Re: [RFC PATCH 2/6] sched: Introduce energy models of CPUs
-To: Quentin Perret <quentin.perret@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Thara Gopinath <thara.gopinath@linaro.org>, linux-pm@vger.kernel.org,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Chris Redpath <chris.redpath@arm.com>,
- Patrick Bellasi <patrick.bellasi@arm.com>,
- Valentin Schneider <valentin.schneider@arm.com>,
- "Rafael J . Wysocki" <rjw@rjwysocki.net>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Todd Kjos <tkjos@google.com>,
- Joel Fernandes <joelaf@google.com>
+Message-ID: <20180321004521.GA3174@queper01-VirtualBox>
 References: <20180320094312.24081-1-dietmar.eggemann@arm.com>
  <20180320094312.24081-3-dietmar.eggemann@arm.com>
  <20180320095215.GB23359@kroah.com>
- <20180325134548.GA1344@queper01-VirtualBox>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <ab194f83-85eb-4bec-feea-5fbe5d5b20f5@arm.com>
-Date: Tue, 27 Mar 2018 00:26:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180325134548.GA1344@queper01-VirtualBox>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320095215.GB23359@kroah.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595449333969249680?=
-X-GMAIL-MSGID: =?utf-8?q?1596040895798925315?=
+X-GMAIL-MSGID: =?utf-8?q?1595506041765011848?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/25/2018 03:48 PM, Quentin Perret wrote:
-> On Tuesday 20 Mar 2018 at 10:52:15 (+0100), Greg Kroah-Hartman wrote:
->> On Tue, Mar 20, 2018 at 09:43:08AM +0000, Dietmar Eggemann wrote:
->>> From: Quentin Perret <quentin.perret@arm.com>
+On Tuesday 20 Mar 2018 at 10:52:15 (+0100), Greg Kroah-Hartman wrote:
+> On Tue, Mar 20, 2018 at 09:43:08AM +0000, Dietmar Eggemann wrote:
+> > From: Quentin Perret <quentin.perret@arm.com>
+> > 
+> > The energy consumption of each CPU in the system is modeled with a list
+> > of values representing its dissipated power and compute capacity at each
+> > available Operating Performance Point (OPP). These values are derived
+> > from existing information in the kernel (currently used by the thermal
+> > subsystem) and don't require the introduction of new platform-specific
+> > tunables. The energy model is also provided with a simple representation
+> > of all frequency domains as cpumasks, hence enabling the scheduler to be
+> > aware of dependencies between CPUs. The data required to build the energy
+> > model is provided by the OPP library which enables an abstract view of
+> > the platform from the scheduler. The new data structures holding these
+> > models and the routines to populate them are stored in
+> > kernel/sched/energy.c.
+> > 
+> > For the sake of simplicity, it is assumed in the energy model that all
+> > CPUs in a frequency domain share the same micro-architecture. As long as
+> > this assumption is correct, the energy models of different CPUs belonging
+> > to the same frequency domain are equal. Hence, this commit builds only one
+> > energy model per frequency domain, and links all relevant CPUs to it in
+> > order to save time and memory. If needed for future hardware platforms,
+> > relaxing this assumption should imply relatively simple modifications in
+> > the code but a significantly higher algorithmic complexity.
+> > 
+> > As it appears that energy-aware scheduling really makes a difference on
+> > heterogeneous systems (e.g. big.LITTLE platforms), it is restricted to
+> > systems having:
+> > 
+> >    1. SD_ASYM_CPUCAPACITY flag set
+> >    2. Dynamic Voltage and Frequency Scaling (DVFS) is enabled
+> >    3. Available power estimates for the OPPs of all possible CPUs
+> > 
+> > Moreover, the scheduler is notified of the energy model availability
+> > using a static key in order to minimize the overhead on non-energy-aware
+> > systems.
+> > 
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> > Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > 
+> > ---
+> > This patch depends on additional infrastructure being merged in the OPP
+> > core. As this infrastructure can also be useful for other clients, the
+> > related patches have been posted separately [1].
+> > 
+> > [1] https://marc.info/?l=linux-pm&m=151635516419249&w=2
+> > ---
+> >  include/linux/sched/energy.h |  31 +++++++
+> >  kernel/sched/Makefile        |   2 +-
+> >  kernel/sched/energy.c        | 190 +++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 222 insertions(+), 1 deletion(-)
+> >  create mode 100644 include/linux/sched/energy.h
+> >  create mode 100644 kernel/sched/energy.c
+> > 
+> > diff --git a/include/linux/sched/energy.h b/include/linux/sched/energy.h
+> > new file mode 100644
+> > index 000000000000..b4f43564ffe4
+> > --- /dev/null
+> > +++ b/include/linux/sched/energy.h
+> > @@ -0,0 +1,31 @@
+> > +#ifndef _LINUX_SCHED_ENERGY_H
+> > +#define _LINUX_SCHED_ENERGY_H
 > 
-> [...]
+> No copyright or license info?  Not good :(
 > 
->>> +#ifdef CONFIG_PM_OPP
->>
->> #ifdefs go in .h files, not .c files, right?
->>
+> > --- /dev/null
+> > +++ b/kernel/sched/energy.c
+> > @@ -0,0 +1,190 @@
+> > +/*
+> > + * Released under the GPLv2 only.
+> > + * SPDX-License-Identifier: GPL-2.0
 > 
-> So, after looking into this, my suggestion would be to: 1) remove the
-> #ifdef CONFIG_PM_OPP from energy.c entirely; 2) make sure
-> init_sched_energy() is stubbed properly for !CONFIG_SMP and
-> !CONFIG_PM_OPP in include/linux/sched/energy.h; 3) relocate the global
-> variables (energy_model, freq_domains, ...) to fair.c; and 4) modify
-> kernel/sched/Makefile with something like:
+> Please read the documentation for the SPDX lines on how to do them
+> correctly.  Newer versions of checkpatch.pl will catch this, but that is
+> in linux-next for the moment.
 > 
-> ifeq ($(CONFIG_PM_OPP),y)
-> obj-$(CONFIG_SMP) += energy.o
-> endif
+> And once you have the SPDX line, the "Released under..." line is not
+> needed.
 > 
-> That way, energy.c is not compiled if not needed by the arch, and the
-> ifdef are kept within header files and Makefiles.
 > 
-> Would that work ?
+> > + *
+> > + * Energy-aware scheduling models
+> > + *
+> > + * Copyright (C) 2018, Arm Ltd.
+> > + * Written by: Quentin Perret, Arm Ltd.
+> > + *
+> > + * This file is subject to the terms and conditions of the GNU General Public
+> > + * License.  See the file "COPYING" in the main directory of this archive
+> > + * for more details.
+> 
+> This paragraph is not needed at all.
 
-Could we extend this idea a little bit further and leave the global
-variables in energy.c? Normally, all energy interfaces could be
-declared or stubbed in energy.h.
+Right, I will fix all the licence issues and add one to the new header
+file. I took example on existing files a while ago when I first wrote
+the patches and forgot to update them later on. Sorry about that.
 
-We could hide the access to energy_model, sched_energy_present and
-freq_domains behind functions.
+> 
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "sched-energy: " fmt
+> > +
+> > +#include <linux/sched/topology.h>
+> > +#include <linux/sched/energy.h>
+> > +#include <linux/pm_opp.h>
+> > +
+> > +#include "sched.h"
+> > +
+> > +DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+> > +struct sched_energy_model ** __percpu energy_model;
+> > +
+> > +/*
+> > + * A copy of the cpumasks representing the frequency domains is kept private
+> > + * to the scheduler. They are stacked in a dynamically allocated linked list
+> > + * as we don't know how many frequency domains the system has.
+> > + */
+> > +LIST_HEAD(freq_domains);
+> 
+> global variable?  If so, please prefix it with something more unique
+> than "freq_".
 
-It would be nice to provide also find_energy_efficient_cpu() in energy.c
-but it uses itself a lot of fair.c stuff and we do want to avoid function
-calls in the wakeup path, right?
+Will do.
 
-Boot-tested on juno r0 (CONFIG_SMP=y and CONFIG_PM_OPP=y). Build-tested on
-i386 (CONFIG_SMP and CONFIG_PM_OPP not set), arm multi_v5_defconfig (CONFIG_SMP
-not set and CONFIG_PM_OPP=y).
+> 
+> > +#ifdef CONFIG_PM_OPP
+> 
+> #ifdefs go in .h files, not .c files, right?
 
-in energy.h:
+Yes good point. Actually, I might be able to tweak only kernel/sched/Makefile
+to ensure we have CONFIG_PM_OPP. I will look into it.
 
-#ifdef CONFIG_SMP
-#ifdef CONFIG_PM_OPP
-static inline struct capacity_state *find_cap_state(int cpu, unsigned long util)
-{
-    ...
-}
-static inline bool sched_energy_enabled(void)
-{
-   ...
-}
-static inline struct list_head *get_freq_domains(void)
-{
-   ...
-}
-#endif
-#endif
+> 
+> thanks,
+> 
+> greg k-h
 
-#if !defined(CONFIG_SMP) || !defined(CONFIG_PM_OPP)
-static inline struct capacity_state *find_cap_state(int cpu, unsigned long util) { return false; }
-static inline struct list_head *get_freq_domains(void) { return NULL; }
-static inline struct capacity_state *
-find_cap_state(int cpu, unsigned long util) { return NULL; }
-static inline void init_sched_energy(void) { }
-#endif
-
-#define for_each_freq_domain(fdom) \
-		list_for_each_entry(fdom, get_freq_domains(), next)
-
---->8---
-
-diff --git a/include/linux/sched/energy.h b/include/linux/sched/energy.h
-index b4f43564ffe4..5aad03ec5b30 100644
---- a/include/linux/sched/energy.h
-+++ b/include/linux/sched/energy.h
-@@ -20,12 +20,49 @@ struct freq_domain {
- extern struct sched_energy_model ** __percpu energy_model;
- extern struct static_key_false sched_energy_present;
- extern struct list_head freq_domains;
--#define for_each_freq_domain(fdom) \
--                       list_for_each_entry(fdom, &freq_domains, next)
- 
--void init_sched_energy(void);
--#else
--static inline void init_sched_energy(void) { }
-+#ifdef CONFIG_PM_OPP
-+static inline bool sched_energy_enabled(void)
-+{
-+       return static_branch_unlikely(&sched_energy_present);
-+}
-+
-+static inline struct list_head *get_freq_domains(void)
-+{
-+       return &freq_domains;
-+}
-+
-+static inline
-+struct capacity_state *find_cap_state(int cpu, unsigned long util)
-+{
-+       struct sched_energy_model *em = *per_cpu_ptr(energy_model, cpu);
-+       struct capacity_state *cs = NULL;
-+       int i;
-+
-+       util += util >> 2;
-+
-+       for (i = 0; i < em->nr_cap_states; i++) {
-+               cs = &em->cap_states[i];
-+               if (cs->cap >= util)
-+                       break;
-+       }
-+
-+       return cs;
-+}
-+
-+extern void init_sched_energy(void);
- #endif
-+#endif /* CONFIG_SMP */
- 
-+#if !defined(CONFIG_SMP) || !defined(CONFIG_PM_OPP)
-+static inline bool sched_energy_enabled(void) { return false; }
-+static inline struct list_head *get_freq_domains(void) { return NULL; }
-+static inline struct capacity_state *
-+find_cap_state(int cpu, unsigned long util) { return NULL; }
-+static inline void init_sched_energy(void) { }
- #endif
-+
-+#define for_each_freq_domain(fdom) \
-+                       list_for_each_entry(fdom, get_freq_domains(), next)
-+
-+#endif /* _LINUX_SCHED_ENERGY_H */
-diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-index 912972ad4dbc..e34bec3ae353 100644
---- a/kernel/sched/Makefile
-+++ b/kernel/sched/Makefile
-@@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
- obj-y += idle.o fair.o rt.o deadline.o
- obj-y += wait.o wait_bit.o swait.o completion.o
- 
--obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o energy.o
-+obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o
- obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
- obj-$(CONFIG_SCHEDSTATS) += stats.o
- obj-$(CONFIG_SCHED_DEBUG) += debug.o
-@@ -29,3 +29,6 @@ obj-$(CONFIG_CPU_FREQ) += cpufreq.o
- obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
- obj-$(CONFIG_MEMBARRIER) += membarrier.o
- obj-$(CONFIG_CPU_ISOLATION) += isolation.o
-+ifeq ($(CONFIG_PM_OPP),y)
-+       obj-$(CONFIG_SMP) += energy.o
-+endif
-diff --git a/kernel/sched/energy.c b/kernel/sched/energy.c
-index 4662c993e096..1de8226943b9 100644
---- a/kernel/sched/energy.c
-+++ b/kernel/sched/energy.c
-@@ -30,7 +30,6 @@ struct sched_energy_model ** __percpu energy_model;
-  */
- LIST_HEAD(freq_domains);
- 
--#ifdef CONFIG_PM_OPP
- static struct sched_energy_model *build_energy_model(int cpu)
- {
-        unsigned long cap_scale = arch_scale_cpu_capacity(NULL, cpu);
-@@ -185,6 +184,3 @@ void init_sched_energy(void)
- exit_fail:
-        pr_err("Energy Aware Scheduling initialization failed.\n");
- }
--#else
--void init_sched_energy(void) {}
--#endif
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 65a1bead0773..b3e6a2656b68 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6456,27 +6456,6 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
-        return !util_fits_capacity(task_util(p), min_cap);
- }
- 
--static struct capacity_state *find_cap_state(int cpu, unsigned long util)
--{
--       struct sched_energy_model *em = *per_cpu_ptr(energy_model, cpu);
--       struct capacity_state *cs = NULL;
--       int i;
--
--       /*
--        * As the goal is to estimate the OPP reached for a specific util
--        * value, mimic the behaviour of schedutil with a 1.25 coefficient
--        */
--       util += util >> 2;
--
--       for (i = 0; i < em->nr_cap_states; i++) {
--               cs = &em->cap_states[i];
--               if (cs->cap >= util)
--                       break;
--       }
--
--       return cs;
--}
--
- static unsigned long compute_energy(struct task_struct *p, int dst_cpu)
- {
-        unsigned long util, fdom_max_util;
-@@ -6557,7 +6536,7 @@ static inline bool wake_energy(struct task_struct *p, int prev_cpu)
- {
-        struct sched_domain *sd;
- 
--       if (!static_branch_unlikely(&sched_energy_present))
-+       if (!sched_energy_enabled())
-                return false;
- 
-        sd = rcu_dereference_sched(cpu_rq(prev_cpu)->sd);
-@@ -9252,8 +9231,7 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
-                }
-                max_cost += sd->max_newidle_lb_cost;
- 
--               if (static_branch_unlikely(&sched_energy_present) &&
--                   !sd_overutilized(sd))
-+               if (sched_energy_enabled() && !sd_overutilized(sd))
-                        continue;
- 
-                if (!(sd->flags & SD_LOAD_BALANCE))
-@@ -9823,8 +9801,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
-                        break;
-                }
- 
--               if (static_branch_unlikely(&sched_energy_present) &&
--                   !sd_overutilized(sd))
-+               if (sched_energy_enabled() && !sd_overutilized(sd))
-                        continue;
- 
-                if (sd->flags & SD_BALANCE_NEWIDLE) {
+Thanks,
+Quentin
