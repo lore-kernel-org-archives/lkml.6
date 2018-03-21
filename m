@@ -1,129 +1,306 @@
-Return-Path: <nipun.gupta@nxp.com>
-X-Google-Smtp-Source: AG47ELvjIK5iznFby920juDvdXsev4rduS8tLthVYsN20+TOYIXtThPGchYxiN6aFFvrdbTxOD/0
-ARC-Seal: i=1; a=rsa-sha256; t=1521617386; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OQEZCiUIPwkfkOsGQ+As/GwAYzrgIhQuICNsB0soWKjQft3X6jvA1KmuuU+0LhnQ6y
-         f8t3iAgCdn+2JZPzmOTp5MwiB9uEIniWDGoJfWg8ynaH603w/ujpMCkKFucWVOXSRUwO
-         uOs6R4Ob2FFfcdasr1DF3oYd4XAqFVYeasw+9VA30WFrNILzZeXZ3l5kwZkxjOcVjSiu
-         FYCsSMFuDNlKJFUdfDVXVLj5/sb5k52pHut3XfSQ1tCxBh18Zx3Aalq4Wtil1PuHcmOx
-         iZbRXnRmmNFYf0Z+ZEEpukumnLMD2f2Ij80QtjV0sqXXJ1Csc8FrL9bN6BlkNCH7D9JG
-         F9lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=/3cvl8Dj6CeRBTZfzzzlBHM+JJYAyDXPY73/cCqd9tA=;
-        b=EEg8TaDLFOT8sjJnNokJrAmUIzrXwhjClkV9XULG57lG1vMURc97qtkUJGi967lr5i
-         MdTpDxp3X99NDfCnqmVKRm5RjrcMKYQzf+S4fbVylW40ln3nEjsZpcsDyahcCXOpKpfF
-         ybTLMUrIfzXkbsSpHPVUgV+i82IOQWb8IQulTkYj9P06f4LCHiD23GlRGPvMhrIAnLlv
-         bzrT0Hd5lspJyDP/fECAzjSg3iz1HDZ51/eggZ67pMMALdLiKCQLDZ9KaLfjmdB0WZrb
-         iiuZ9iay/xo6FOFB3PTjU1f0nv5wZSqbs2kqG4xaGnsPsU9LCWBYRyKX6r0sjxHG2WA6
-         nmqQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=YI8ciR2i;
-       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.72 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=YI8ciR2i;
-       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.72 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
-From: Nipun Gupta <nipun.gupta@nxp.com>
-To: Bharat Bhushan <bharat.bhushan@nxp.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "m.szyprowski@samsung.com"
-	<m.szyprowski@samsung.com>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>, "zajec5@gmail.com"
-	<zajec5@gmail.com>, "andy.gross@linaro.org" <andy.gross@linaro.org>,
-	"david.brown@linaro.org" <david.brown@linaro.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "frowand.list@gmail.com" <frowand.list@gmail.com>,
-	"jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>, "johan@kernel.org"
-	<johan@kernel.org>, "msuchanek@suse.de" <msuchanek@suse.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Leo Li
-	<leoyang.li@nxp.com>
-Subject: RE: [PATCH v2 1/2] dma-mapping: move dma configuration to bus
+Date: Wed, 21 Mar 2018 10:29:54 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Nipun Gupta <nipun.gupta@nxp.com>
+Cc: robin.murphy@arm.com, hch@lst.de, linux@armlinux.org.uk,
+	m.szyprowski@samsung.com, bhelgaas@google.com, zajec5@gmail.com,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	dan.j.williams@intel.com, vinod.koul@intel.com,
+	thierry.reding@gmail.com, robh+dt@kernel.org,
+	frowand.list@gmail.com, jarkko.sakkinen@linux.intel.com,
+	rafael.j.wysocki@intel.com, dmitry.torokhov@gmail.com,
+	johan@kernel.org, msuchanek@suse.de, linux-kernel@vger.kernel.org,
+	iommu@lists.linux-foundation.org, linux-wireless@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, bharat.bhushan@nxp.com,
+	leoyang.li@nxp.com
+Subject: Re: [PATCH v2 1/2] dma-mapping: move dma configuration to bus
  infrastructure
-Thread-Topic: [PATCH v2 1/2] dma-mapping: move dma configuration to bus
- infrastructure
-Thread-Index: AQHTwOGuh4ghPV/yzkyrY/8xyV2sSKPaSBKAgAACAZA=
-Date: Wed, 21 Mar 2018 07:29:38 +0000
-Message-ID: <HE1PR0401MB24254A28553F17384BC9F785E6AA0@HE1PR0401MB2425.eurprd04.prod.outlook.com>
+Message-ID: <20180321092954.GS14085@kroah.com>
 References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
  <1521615323-4752-1-git-send-email-nipun.gupta@nxp.com>
- <AM5PR0401MB254503027680DE6A23355D909AAA0@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-In-Reply-To: <AM5PR0401MB254503027680DE6A23355D909AAA0@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2459;7:ylF548+7nkmOh0cJ32Do9cpF6TL3/KiscRlfNd5goJLJRBpxolJ4snZKH63Rl3n5BEfzKl3N1IMkQ+l5GT4zunRpXMwi5cThjjai/pY23NK9KUm3A1YqGnWK5UpJgdskyjfeHOSaXGAyAajl48GMQAkaa016mdkXQMHnywxsLDVH3C+XhBhEBdpPmOkL3kdByDSsYCbKDj/urVs1woeiAhXXzXkiejKmqZ57SRfbysaSlKKlJXT99oHK6PiNFC9N
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e9eb292a-daf9-46d6-47d9-08d58efd817a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2459;
-x-ms-traffictypediagnostic: HE1PR0401MB2459:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nipun.gupta@nxp.com;
-x-microsoft-antispam-prvs: <HE1PR0401MB2459EEB220C0C9E617875500E6AA0@HE1PR0401MB2459.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231221)(944501320)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:HE1PR0401MB2459;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2459;
-x-forefront-prvs: 0618E4E7E1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(366004)(346002)(39860400002)(13464003)(189003)(199004)(2201001)(7696005)(33656002)(25786009)(110136005)(3280700002)(6506007)(76176011)(105586002)(66066001)(54906003)(3660700001)(6116002)(99286004)(6246003)(106356001)(102836004)(9686003)(4326008)(26005)(2501003)(2950100002)(3846002)(53936002)(2906002)(14454004)(74316002)(8936002)(39060400002)(5660300001)(7416002)(2900100001)(81156014)(68736007)(7736002)(86362001)(305945005)(6436002)(55016002)(478600001)(316002)(8676002)(5250100002)(81166006)(229853002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2459;H:HE1PR0401MB2425.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: U9ixWp02lw2wyaDrq937z6N/B9zs4NrK0pcrFWmoj0Qk6Hey1e9OWCnToeDiiUesGfZhfT18QzcUioYOjmbKNzxJm+CGaub676U1y/bWZI59Q/4CSYl5tMpXyaNbziDGSoWMVV7FJypBCzCAdE2O95wRHMNjLLUt7C/f9pWCfJnwnpD9HVudQXKmMetHsrSSoRf6gbdAHPMyvAxKvshqJha8Aw++pVC43hrbB8XwwWtVElU3wnQkZz9Yq6h3K4BFnxvf7iKViln3FxvXvyhcFa4Br3i2UxArrd8eXgcmaHMqp1eAdWILxSz9KPMrRotT7TSrCXTC1RR7F4w/4xnqVg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9eb292a-daf9-46d6-47d9-08d58efd817a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2018 07:29:39.0281
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2459
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594746017210545974?=
-X-GMAIL-MSGID: =?utf-8?q?1595531472723073679?=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521615323-4752-1-git-send-email-nipun.gupta@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, Mar 21, 2018 at 12:25:22PM +0530, Nipun Gupta wrote:
+> It's bus specific aspect to map a given device on the bus and
+> relevant firmware description of its DMA configuration.
+> So, this change introduces '/dma_configure/' as bus callback
+> giving flexibility to busses for implementing its own dma
+> configuration function.
+> 
+> The change eases the addition of new busses w.r.t. adding the dma
+> configuration functionality.
+> 
+> This patch also updates the PCI, Platform, ACPI and host1x bus to
+> use new introduced callbacks.
+> 
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+> ---
+>  - The patches are based on the comments on:
+>    https://patchwork.kernel.org/patch/10259087/
+> 
+> Changes in v2:
+>   - Do not have dma_deconfigure callback
+>   - Have '/dma_common_configure/' API to provide a common DMA
+>     configuration which can be used by busses if it suits them.
+>   - Platform and ACPI bus to use '/dma_common_configure/' in
+>     '/dma_configure/' callback.
+>   - Updated commit message
+>   - Updated pci_dma_configure API with changes suggested by Robin
+> 
+>  drivers/amba/bus.c          |  7 +++++++
+>  drivers/base/dma-mapping.c  | 35 +++++++++++++++--------------------
+>  drivers/base/platform.c     |  6 ++++++
+>  drivers/gpu/host1x/bus.c    |  9 +++++++++
+>  drivers/pci/pci-driver.c    | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/device.h      |  4 ++++
+>  include/linux/dma-mapping.h |  1 +
+>  7 files changed, 74 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> index 594c228..2fa1e8b 100644
+> --- a/drivers/amba/bus.c
+> +++ b/drivers/amba/bus.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/sizes.h>
+>  #include <linux/limits.h>
+>  #include <linux/clk/clk-conf.h>
+> +#include <linux/dma-mapping.h>
+>  
+>  #include <asm/irq.h>
+>  
+> @@ -171,6 +172,11 @@ static int amba_pm_runtime_resume(struct device *dev)
+>  }
+>  #endif /* CONFIG_PM */
+>  
+> +static int amba_dma_configure(struct device *dev)
+> +{
+> +	return dma_common_configure(dev);
+> +}
+> +
+>  static const struct dev_pm_ops amba_pm = {
+>  	.suspend	= pm_generic_suspend,
+>  	.resume		= pm_generic_resume,
+> @@ -194,6 +200,7 @@ struct bus_type amba_bustype = {
+>  	.dev_groups	= amba_dev_groups,
+>  	.match		= amba_match,
+>  	.uevent		= amba_uevent,
+> +	.dma_configure	= amba_dma_configure,
+>  	.pm		= &amba_pm,
+>  	.force_dma	= true,
+>  };
+> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+> index 3b11835..48f9af0 100644
+> --- a/drivers/base/dma-mapping.c
+> +++ b/drivers/base/dma-mapping.c
+> @@ -331,38 +331,33 @@ void dma_common_free_remap(void *cpu_addr, size_t size, unsigned long vm_flags)
+>  #endif
+>  
+>  /*
+> - * Common configuration to enable DMA API use for a device
+> + * Common configuration to enable DMA API use for a device.
+> + * A bus can use this function in its 'dma_configure' callback, if
+> + * suitable for the bus.
+>   */
+> -#include <linux/pci.h>
+> -
+> -int dma_configure(struct device *dev)
+> +int dma_common_configure(struct device *dev)
+>  {
+> -	struct device *bridge = NULL, *dma_dev = dev;
+>  	enum dev_dma_attr attr;
+>  	int ret = 0;
+>  
+> -	if (dev_is_pci(dev)) {
+> -		bridge = pci_get_host_bridge_device(to_pci_dev(dev));
+> -		dma_dev = bridge;
+> -		if (IS_ENABLED(CONFIG_OF) && dma_dev->parent &&
+> -		    dma_dev->parent->of_node)
+> -			dma_dev = dma_dev->parent;
+> -	}
+> -
+> -	if (dma_dev->of_node) {
+> -		ret = of_dma_configure(dev, dma_dev->of_node);
+> -	} else if (has_acpi_companion(dma_dev)) {
+> -		attr = acpi_get_dma_attr(to_acpi_device_node(dma_dev->fwnode));
+> +	if (dev->of_node) {
+> +		ret = of_dma_configure(dev, dev->of_node);
+> +	} else if (has_acpi_companion(dev)) {
+> +		attr = acpi_get_dma_attr(to_acpi_device_node(dev->fwnode));
+>  		if (attr != DEV_DMA_NOT_SUPPORTED)
+>  			ret = acpi_dma_configure(dev, attr);
+>  	}
+>  
+> -	if (bridge)
+> -		pci_put_host_bridge_device(bridge);
+> -
+>  	return ret;
+>  }
+>  
+> +int dma_configure(struct device *dev)
+> +{
+> +	if (dev->bus->dma_configure)
+> +		return dev->bus->dma_configure(dev);
+> +
+> +	return 0;
+> +}
+>  void dma_deconfigure(struct device *dev)
 
+Empty line after this new function?  Sorry, couldn't help it :)
 
-> -----Original Message-----
-> From: Bharat Bhushan
-> Sent: Wednesday, March 21, 2018 12:49
+>  {
+>  	of_dma_deconfigure(dev);
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index f1bf7b3..d2d5891 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -1130,6 +1130,11 @@ int platform_pm_restore(struct device *dev)
+>  
+>  #endif /* CONFIG_HIBERNATE_CALLBACKS */
+>  
+> +static int platform_dma_configure(struct device *dev)
+> +{
+> +	return dma_common_configure(dev);
+> +}
+> +
+>  static const struct dev_pm_ops platform_dev_pm_ops = {
+>  	.runtime_suspend = pm_generic_runtime_suspend,
+>  	.runtime_resume = pm_generic_runtime_resume,
+> @@ -1141,6 +1146,7 @@ struct bus_type platform_bus_type = {
+>  	.dev_groups	= platform_dev_groups,
+>  	.match		= platform_match,
+>  	.uevent		= platform_uevent,
+> +	.dma_configure	= platform_dma_configure,
+>  	.pm		= &platform_dev_pm_ops,
+>  	.force_dma	= true,
+>  };
+> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> index 88a3558..fa9896d 100644
+> --- a/drivers/gpu/host1x/bus.c
+> +++ b/drivers/gpu/host1x/bus.c
+> @@ -314,6 +314,14 @@ static int host1x_device_match(struct device *dev, struct device_driver *drv)
+>  	return strcmp(dev_name(dev), drv->name) == 0;
+>  }
+>  
+> +static int host1x_dma_configure(struct device *dev)
+> +{
+> +	if (dev->of_node)
+> +		return of_dma_configure(dev, dev->of_node);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct dev_pm_ops host1x_device_pm_ops = {
+>  	.suspend = pm_generic_suspend,
+>  	.resume = pm_generic_resume,
+> @@ -326,6 +334,7 @@ static int host1x_device_match(struct device *dev, struct device_driver *drv)
+>  struct bus_type host1x_bus_type = {
+>  	.name = "host1x",
+>  	.match = host1x_device_match,
+> +	.dma_configure	= host1x_dma_configure,
+>  	.pm = &host1x_device_pm_ops,
+>  	.force_dma = true,
+>  };
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 3bed6be..b473a4c 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -18,6 +18,8 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/suspend.h>
+>  #include <linux/kexec.h>
+> +#include <linux/of_device.h>
+> +#include <linux/acpi.h>
+>  #include "pci.h"
+>  
+>  struct pci_dynid {
+> @@ -1522,6 +1524,35 @@ static int pci_bus_num_vf(struct device *dev)
+>  	return pci_num_vf(to_pci_dev(dev));
+>  }
+>  
+> +/**
+> + * pci_dma_configure - Setup DMA configuration
+> + * @dev: ptr to dev structure
+> + *
+> + * Function to update PCI devices's DMA configuration using the same
+> + * info from the OF node or ACPI node of host bridge's parent (if any).
+> + */
+> +static int pci_dma_configure(struct device *dev)
+> +{
+> +	struct device *bridge;
+> +	enum dev_dma_attr attr;
+> +	int ret = 0;
+> +
+> +	bridge = pci_get_host_bridge_device(to_pci_dev(dev));
+> +
+> +	if (IS_ENABLED(CONFIG_OF) && bridge->parent &&
+> +	    bridge->parent->of_node) {
+> +		ret = of_dma_configure(dev, bridge->parent->of_node);
+> +	} else if (has_acpi_companion(bridge)) {
+> +		attr = acpi_get_dma_attr(to_acpi_device_node(bridge->fwnode));
+> +		if (attr != DEV_DMA_NOT_SUPPORTED)
+> +			ret = acpi_dma_configure(dev, attr);
+> +	}
+> +
+> +	pci_put_host_bridge_device(bridge);
+> +
+> +	return ret;
+> +}
+> +
+>  struct bus_type pci_bus_type = {
+>  	.name		= "pci",
+>  	.match		= pci_bus_match,
+> @@ -1534,6 +1565,7 @@ struct bus_type pci_bus_type = {
+>  	.drv_groups	= pci_drv_groups,
+>  	.pm		= PCI_PM_OPS_PTR,
+>  	.num_vf		= pci_bus_num_vf,
+> +	.dma_configure	= pci_dma_configure,
+>  	.force_dma	= true,
+>  };
+>  EXPORT_SYMBOL(pci_bus_type);
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index b093405..1832d90 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -88,6 +88,8 @@ extern int __must_check bus_create_file(struct bus_type *,
+>   * @resume:	Called to bring a device on this bus out of sleep mode.
+>   * @num_vf:	Called to find out how many virtual functions a device on this
+>   *		bus supports.
+> + * @dma_configure:	Called to setup DMA configuration on a device on
+> +			this bus.
+>   * @pm:		Power management operations of this bus, callback the specific
+>   *		device driver's pm-ops.
+>   * @iommu_ops:  IOMMU specific operations for this bus, used to attach IOMMU
+> @@ -130,6 +132,8 @@ struct bus_type {
+>  
+>  	int (*num_vf)(struct device *dev);
+>  
+> +	int (*dma_configure)(struct device *dev);
+> +
+>  	const struct dev_pm_ops *pm;
+>  
+>  	const struct iommu_ops *iommu_ops;
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index eb9eab4..c15986b 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -761,6 +761,7 @@ void *dma_mark_declared_memory_occupied(struct device *dev,
+>  }
+>  #endif /* CONFIG_HAVE_GENERIC_DMA_COHERENT */
+>  
+> +int dma_common_configure(struct device *dev);
+>  #ifdef CONFIG_HAS_DMA
 
-> >
-> > +int dma_configure(struct device *dev)
-> > +{
-> > +	if (dev->bus->dma_configure)
-> > +		return dev->bus->dma_configure(dev);
->=20
-> What if dma_common_configure() is called in case "bus->dma_configure" is
-> not defined?
->=20
-> Thanks
-> -Bharat
+Blank line after the new function declaration?
 
-I think it is cleaner for bus to call '/dma_common_configure/' rather
-than this been called implicitly, but Robin/Christoph can comment
-better on this.
+Other than those very minor things, nice job, this looks good:
 
-Thanks,
-Nipun
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
