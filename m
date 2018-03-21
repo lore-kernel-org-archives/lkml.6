@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753516AbeCUTaD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:30:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59960 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753391AbeCUTY3 (ORCPT
+        id S1753492AbeCUTaf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:30:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41936 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753378AbeCUTYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:24:29 -0400
+        Wed, 21 Mar 2018 15:24:23 -0400
 From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -21,20 +21,20 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 18/32] docs/vm: page_migration: convert to ReST format
-Date: Wed, 21 Mar 2018 21:22:34 +0200
+Subject: [PATCH 17/32] docs/vm: pagemap.txt: convert to ReST format
+Date: Wed, 21 Mar 2018 21:22:33 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18032119-0040-0000-0000-000004258214
+x-cbid: 18032119-0044-0000-0000-0000053E7346
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032119-0041-0000-0000-000026288779
-Message-Id: <1521660168-14372-19-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18032119-0045-0000-0000-0000287D78E9
+Message-Id: <1521660168-14372-18-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1803210221
@@ -44,220 +44,247 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- Documentation/vm/page_migration | 149 +++++++++++++++++++++-------------------
- 1 file changed, 77 insertions(+), 72 deletions(-)
+ Documentation/vm/pagemap.txt | 164 +++++++++++++++++++++++--------------------
+ 1 file changed, 89 insertions(+), 75 deletions(-)
 
-diff --git a/Documentation/vm/page_migration b/Documentation/vm/page_migration
-index 0478ae2..07b67a8 100644
---- a/Documentation/vm/page_migration
-+++ b/Documentation/vm/page_migration
-@@ -1,5 +1,8 @@
-+.. _page_migration:
+diff --git a/Documentation/vm/pagemap.txt b/Documentation/vm/pagemap.txt
+index eafcefa..bd6d717 100644
+--- a/Documentation/vm/pagemap.txt
++++ b/Documentation/vm/pagemap.txt
+@@ -1,13 +1,16 @@
+-pagemap, from the userspace perspective
+----------------------------------------
++.. _pagemap:
 +
-+==============
- Page migration
----------------
-+==============
++======================================
++pagemap from the Userspace Perspective
++======================================
  
- Page migration allows the moving of the physical location of pages between
- nodes in a numa system while the process is running. This means that the
-@@ -20,7 +23,7 @@ Page migration functions are provided by the numactl package by Andi Kleen
- (a version later than 0.9.3 is required. Get it from
- ftp://oss.sgi.com/www/projects/libnuma/download/). numactl provides libnuma
- which provides an interface similar to other numa functionality for page
--migration.  cat /proc/<pid>/numa_maps allows an easy review of where the
-+migration.  cat ``/proc/<pid>/numa_maps`` allows an easy review of where the
- pages of a process are located. See also the numa_maps documentation in the
- proc(5) man page.
+ pagemap is a new (as of 2.6.25) set of interfaces in the kernel that allow
+ userspace programs to examine the page tables and related information by
+-reading files in /proc.
++reading files in ``/proc``.
  
-@@ -56,8 +59,8 @@ description for those trying to use migrate_pages() from the kernel
- (for userspace usage see the Andi Kleen's numactl package mentioned above)
- and then a low level description of how the low level details work.
+ There are four components to pagemap:
  
--A. In kernel use of migrate_pages()
-------------------------------------
-+In kernel use of migrate_pages()
-+================================
+- * /proc/pid/pagemap.  This file lets a userspace process find out which
++ * ``/proc/pid/pagemap``.  This file lets a userspace process find out which
+    physical frame each virtual page is mapped to.  It contains one 64-bit
+    value for each virtual page, containing the following data (from
+    fs/proc/task_mmu.c, above pagemap_read):
+@@ -37,24 +40,24 @@ There are four components to pagemap:
+    determine which areas of memory are actually mapped and llseek to
+    skip over unmapped regions.
  
- 1. Remove pages from the LRU.
+- * /proc/kpagecount.  This file contains a 64-bit count of the number of
++ * ``/proc/kpagecount``.  This file contains a 64-bit count of the number of
+    times each page is mapped, indexed by PFN.
  
-@@ -78,8 +81,8 @@ A. In kernel use of migrate_pages()
-    the new page for each page that is considered for
-    moving.
+- * /proc/kpageflags.  This file contains a 64-bit set of flags for each
++ * ``/proc/kpageflags``.  This file contains a 64-bit set of flags for each
+    page, indexed by PFN.
  
--B. How migrate_pages() works
------------------------------
-+How migrate_pages() works
-+=========================
- 
- migrate_pages() does several passes over its list of pages. A page is moved
- if all references to a page are removable at the time. The page has
-@@ -142,8 +145,8 @@ Steps:
- 20. The new page is moved to the LRU and can be scanned by the swapper
-     etc again.
- 
--C. Non-LRU page migration
---------------------------
-+Non-LRU page migration
-+======================
- 
- Although original migration aimed for reducing the latency of memory access
- for NUMA, compaction who want to create high-order page is also main customer.
-@@ -164,89 +167,91 @@ migration path.
- If a driver want to make own pages movable, it should define three functions
- which are function pointers of struct address_space_operations.
- 
--1. bool (*isolate_page) (struct page *page, isolate_mode_t mode);
-+1. ``bool (*isolate_page) (struct page *page, isolate_mode_t mode);``
- 
--What VM expects on isolate_page function of driver is to return *true*
--if driver isolates page successfully. On returing true, VM marks the page
--as PG_isolated so concurrent isolation in several CPUs skip the page
--for isolation. If a driver cannot isolate the page, it should return *false*.
-+   What VM expects on isolate_page function of driver is to return *true*
-+   if driver isolates page successfully. On returing true, VM marks the page
-+   as PG_isolated so concurrent isolation in several CPUs skip the page
-+   for isolation. If a driver cannot isolate the page, it should return *false*.
- 
--Once page is successfully isolated, VM uses page.lru fields so driver
--shouldn't expect to preserve values in that fields.
-+   Once page is successfully isolated, VM uses page.lru fields so driver
-+   shouldn't expect to preserve values in that fields.
- 
--2. int (*migratepage) (struct address_space *mapping,
--		struct page *newpage, struct page *oldpage, enum migrate_mode);
-+2. ``int (*migratepage) (struct address_space *mapping,``
-+|	``struct page *newpage, struct page *oldpage, enum migrate_mode);``
- 
--After isolation, VM calls migratepage of driver with isolated page.
--The function of migratepage is to move content of the old page to new page
--and set up fields of struct page newpage. Keep in mind that you should
--indicate to the VM the oldpage is no longer movable via __ClearPageMovable()
--under page_lock if you migrated the oldpage successfully and returns
--MIGRATEPAGE_SUCCESS. If driver cannot migrate the page at the moment, driver
--can return -EAGAIN. On -EAGAIN, VM will retry page migration in a short time
--because VM interprets -EAGAIN as "temporal migration failure". On returning
--any error except -EAGAIN, VM will give up the page migration without retrying
--in this time.
-+   After isolation, VM calls migratepage of driver with isolated page.
-+   The function of migratepage is to move content of the old page to new page
-+   and set up fields of struct page newpage. Keep in mind that you should
-+   indicate to the VM the oldpage is no longer movable via __ClearPageMovable()
-+   under page_lock if you migrated the oldpage successfully and returns
-+   MIGRATEPAGE_SUCCESS. If driver cannot migrate the page at the moment, driver
-+   can return -EAGAIN. On -EAGAIN, VM will retry page migration in a short time
-+   because VM interprets -EAGAIN as "temporal migration failure". On returning
-+   any error except -EAGAIN, VM will give up the page migration without retrying
-+   in this time.
- 
--Driver shouldn't touch page.lru field VM using in the functions.
-+   Driver shouldn't touch page.lru field VM using in the functions.
- 
--3. void (*putback_page)(struct page *);
-+3. ``void (*putback_page)(struct page *);``
- 
--If migration fails on isolated page, VM should return the isolated page
--to the driver so VM calls driver's putback_page with migration failed page.
--In this function, driver should put the isolated page back to the own data
--structure.
-+   If migration fails on isolated page, VM should return the isolated page
-+   to the driver so VM calls driver's putback_page with migration failed page.
-+   In this function, driver should put the isolated page back to the own data
-+   structure.
- 
- 4. non-lru movable page flags
- 
--There are two page flags for supporting non-lru movable page.
-+   There are two page flags for supporting non-lru movable page.
- 
--* PG_movable
-+   * PG_movable
- 
--Driver should use the below function to make page movable under page_lock.
-+     Driver should use the below function to make page movable under page_lock::
- 
- 	void __SetPageMovable(struct page *page, struct address_space *mapping)
- 
--It needs argument of address_space for registering migration family functions
--which will be called by VM. Exactly speaking, PG_movable is not a real flag of
--struct page. Rather than, VM reuses page->mapping's lower bits to represent it.
-+     It needs argument of address_space for registering migration
-+     family functions which will be called by VM. Exactly speaking,
-+     PG_movable is not a real flag of struct page. Rather than, VM
-+     reuses page->mapping's lower bits to represent it.
- 
-+::
- 	#define PAGE_MAPPING_MOVABLE 0x2
- 	page->mapping = page->mapping | PAGE_MAPPING_MOVABLE;
- 
--so driver shouldn't access page->mapping directly. Instead, driver should
--use page_mapping which mask off the low two bits of page->mapping under
--page lock so it can get right struct address_space.
+-   The flags are (from fs/proc/page.c, above kpageflags_read):
 -
--For testing of non-lru movable page, VM supports __PageMovable function.
--However, it doesn't guarantee to identify non-lru movable page because
--page->mapping field is unified with other variables in struct page.
--As well, if driver releases the page after isolation by VM, page->mapping
--doesn't have stable value although it has PAGE_MAPPING_MOVABLE
--(Look at __ClearPageMovable). But __PageMovable is cheap to catch whether
--page is LRU or non-lru movable once the page has been isolated. Because
--LRU pages never can have PAGE_MAPPING_MOVABLE in page->mapping. It is also
--good for just peeking to test non-lru movable pages before more expensive
--checking with lock_page in pfn scanning to select victim.
--
--For guaranteeing non-lru movable page, VM provides PageMovable function.
--Unlike __PageMovable, PageMovable functions validates page->mapping and
--mapping->a_ops->isolate_page under lock_page. The lock_page prevents sudden
--destroying of page->mapping.
--
--Driver using __SetPageMovable should clear the flag via __ClearMovablePage
--under page_lock before the releasing the page.
--
--* PG_isolated
--
--To prevent concurrent isolation among several CPUs, VM marks isolated page
--as PG_isolated under lock_page. So if a CPU encounters PG_isolated non-lru
--movable page, it can skip it. Driver doesn't need to manipulate the flag
--because VM will set/clear it automatically. Keep in mind that if driver
--sees PG_isolated page, it means the page have been isolated by VM so it
--shouldn't touch page.lru field.
--PG_isolated is alias with PG_reclaim flag so driver shouldn't use the flag
--for own purpose.
-+     so driver shouldn't access page->mapping directly. Instead, driver should
-+     use page_mapping which mask off the low two bits of page->mapping under
-+     page lock so it can get right struct address_space.
+-     0. LOCKED
+-     1. ERROR
+-     2. REFERENCED
+-     3. UPTODATE
+-     4. DIRTY
+-     5. LRU
+-     6. ACTIVE
+-     7. SLAB
+-     8. WRITEBACK
+-     9. RECLAIM
++   The flags are (from ``fs/proc/page.c``, above kpageflags_read):
 +
-+     For testing of non-lru movable page, VM supports __PageMovable function.
-+     However, it doesn't guarantee to identify non-lru movable page because
-+     page->mapping field is unified with other variables in struct page.
-+     As well, if driver releases the page after isolation by VM, page->mapping
-+     doesn't have stable value although it has PAGE_MAPPING_MOVABLE
-+     (Look at __ClearPageMovable). But __PageMovable is cheap to catch whether
-+     page is LRU or non-lru movable once the page has been isolated. Because
-+     LRU pages never can have PAGE_MAPPING_MOVABLE in page->mapping. It is also
-+     good for just peeking to test non-lru movable pages before more expensive
-+     checking with lock_page in pfn scanning to select victim.
-+
-+     For guaranteeing non-lru movable page, VM provides PageMovable function.
-+     Unlike __PageMovable, PageMovable functions validates page->mapping and
-+     mapping->a_ops->isolate_page under lock_page. The lock_page prevents sudden
-+     destroying of page->mapping.
-+
-+     Driver using __SetPageMovable should clear the flag via __ClearMovablePage
-+     under page_lock before the releasing the page.
-+
-+   * PG_isolated
-+
-+     To prevent concurrent isolation among several CPUs, VM marks isolated page
-+     as PG_isolated under lock_page. So if a CPU encounters PG_isolated non-lru
-+     movable page, it can skip it. Driver doesn't need to manipulate the flag
-+     because VM will set/clear it automatically. Keep in mind that if driver
-+     sees PG_isolated page, it means the page have been isolated by VM so it
-+     shouldn't touch page.lru field.
-+     PG_isolated is alias with PG_reclaim flag so driver shouldn't use the flag
-+     for own purpose.
++    0. LOCKED
++    1. ERROR
++    2. REFERENCED
++    3. UPTODATE
++    4. DIRTY
++    5. LRU
++    6. ACTIVE
++    7. SLAB
++    8. WRITEBACK
++    9. RECLAIM
+     10. BUDDY
+     11. MMAP
+     12. ANON
+@@ -72,98 +75,108 @@ There are four components to pagemap:
+     24. ZERO_PAGE
+     25. IDLE
  
- Christoph Lameter, May 8, 2006.
- Minchan Kim, Mar 28, 2016.
+- * /proc/kpagecgroup.  This file contains a 64-bit inode number of the
++ * ``/proc/kpagecgroup``.  This file contains a 64-bit inode number of the
+    memory cgroup each page is charged to, indexed by PFN. Only available when
+    CONFIG_MEMCG is set.
+ 
+ Short descriptions to the page flags:
+-
+- 0. LOCKED
+-    page is being locked for exclusive access, eg. by undergoing read/write IO
+-
+- 7. SLAB
+-    page is managed by the SLAB/SLOB/SLUB/SLQB kernel memory allocator
+-    When compound page is used, SLUB/SLQB will only set this flag on the head
+-    page; SLOB will not flag it at all.
+-
+-10. BUDDY
++=====================================
++
++0 - LOCKED
++   page is being locked for exclusive access, eg. by undergoing read/write IO
++7 - SLAB
++   page is managed by the SLAB/SLOB/SLUB/SLQB kernel memory allocator
++   When compound page is used, SLUB/SLQB will only set this flag on the head
++   page; SLOB will not flag it at all.
++10 - BUDDY
+     a free memory block managed by the buddy system allocator
+     The buddy system organizes free memory in blocks of various orders.
+     An order N block has 2^N physically contiguous pages, with the BUDDY flag
+     set for and _only_ for the first page.
+-
+-15. COMPOUND_HEAD
+-16. COMPOUND_TAIL
++15 - COMPOUND_HEAD
+     A compound page with order N consists of 2^N physically contiguous pages.
+     A compound page with order 2 takes the form of "HTTT", where H donates its
+     head page and T donates its tail page(s).  The major consumers of compound
+     pages are hugeTLB pages (Documentation/vm/hugetlbpage.txt), the SLUB etc.
+     memory allocators and various device drivers. However in this interface,
+     only huge/giga pages are made visible to end users.
+-17. HUGE
++16 - COMPOUND_TAIL
++    A compound page tail (see description above).
++17 - HUGE
+     this is an integral part of a HugeTLB page
+-
+-19. HWPOISON
++19 - HWPOISON
+     hardware detected memory corruption on this page: don't touch the data!
+-
+-20. NOPAGE
++20 - NOPAGE
+     no page frame exists at the requested address
+-
+-21. KSM
++21 - KSM
+     identical memory pages dynamically shared between one or more processes
+-
+-22. THP
++22 - THP
+     contiguous pages which construct transparent hugepages
+-
+-23. BALLOON
++23 - BALLOON
+     balloon compaction page
+-
+-24. ZERO_PAGE
++24 - ZERO_PAGE
+     zero page for pfn_zero or huge_zero page
+-
+-25. IDLE
++25 - IDLE
+     page has not been accessed since it was marked idle (see
+     Documentation/vm/idle_page_tracking.txt). Note that this flag may be
+     stale in case the page was accessed via a PTE. To make sure the flag
+-    is up-to-date one has to read /sys/kernel/mm/page_idle/bitmap first.
+-
+-    [IO related page flags]
+- 1. ERROR     IO error occurred
+- 3. UPTODATE  page has up-to-date data
+-              ie. for file backed page: (in-memory data revision >= on-disk one)
+- 4. DIRTY     page has been written to, hence contains new data
+-              ie. for file backed page: (in-memory data revision >  on-disk one)
+- 8. WRITEBACK page is being synced to disk
+-
+-    [LRU related page flags]
+- 5. LRU         page is in one of the LRU lists
+- 6. ACTIVE      page is in the active LRU list
+-18. UNEVICTABLE page is in the unevictable (non-)LRU list
+-                It is somehow pinned and not a candidate for LRU page reclaims,
+-		eg. ramfs pages, shmctl(SHM_LOCK) and mlock() memory segments
+- 2. REFERENCED  page has been referenced since last LRU list enqueue/requeue
+- 9. RECLAIM     page will be reclaimed soon after its pageout IO completed
+-11. MMAP        a memory mapped page
+-12. ANON        a memory mapped page that is not part of a file
+-13. SWAPCACHE   page is mapped to swap space, ie. has an associated swap entry
+-14. SWAPBACKED  page is backed by swap/RAM
++    is up-to-date one has to read ``/sys/kernel/mm/page_idle/bitmap`` first.
++
++IO related page flags
++---------------------
++
++1 - ERROR
++   IO error occurred
++3 - UPTODATE
++   page has up-to-date data
++   ie. for file backed page: (in-memory data revision >= on-disk one)
++4 - DIRTY
++   page has been written to, hence contains new data
++   ie. for file backed page: (in-memory data revision >  on-disk one)
++8 - WRITEBACK
++   page is being synced to disk
++
++LRU related page flags
++----------------------
++
++5 - LRU
++   page is in one of the LRU lists
++6 - ACTIVE
++   page is in the active LRU list
++18 - UNEVICTABLE
++   page is in the unevictable (non-)LRU list It is somehow pinned and
++   not a candidate for LRU page reclaims, eg. ramfs pages,
++   shmctl(SHM_LOCK) and mlock() memory segments
++2 - REFERENCED
++   page has been referenced since last LRU list enqueue/requeue
++9 - RECLAIM
++   page will be reclaimed soon after its pageout IO completed
++11 - MMAP
++   a memory mapped page
++12 - ANON
++   a memory mapped page that is not part of a file
++13 - SWAPCACHE
++   page is mapped to swap space, ie. has an associated swap entry
++14 - SWAPBACKED
++   page is backed by swap/RAM
+ 
+ The page-types tool in the tools/vm directory can be used to query the
+ above flags.
+ 
+-Using pagemap to do something useful:
++Using pagemap to do something useful
++====================================
+ 
+ The general procedure for using pagemap to find out about a process' memory
+ usage goes like this:
+ 
+- 1. Read /proc/pid/maps to determine which parts of the memory space are
++ 1. Read ``/proc/pid/maps`` to determine which parts of the memory space are
+     mapped to what.
+  2. Select the maps you are interested in -- all of them, or a particular
+     library, or the stack or the heap, etc.
+- 3. Open /proc/pid/pagemap and seek to the pages you would like to examine.
++ 3. Open ``/proc/pid/pagemap`` and seek to the pages you would like to examine.
+  4. Read a u64 for each page from pagemap.
+- 5. Open /proc/kpagecount and/or /proc/kpageflags.  For each PFN you just
+-    read, seek to that entry in the file, and read the data you want.
++ 5. Open ``/proc/kpagecount`` and/or ``/proc/kpageflags``.  For each PFN you
++    just read, seek to that entry in the file, and read the data you want.
+ 
+ For example, to find the "unique set size" (USS), which is the amount of
+ memory that a process is using that is not shared with any other process,
+@@ -171,7 +184,8 @@ you can go through every map in the process, find the PFNs, look those up
+ in kpagecount, and tally up the number of pages that are only referenced
+ once.
+ 
+-Other notes:
++Other notes
++===========
+ 
+ Reading from any of the files will return -EINVAL if you are not starting
+ the read on an 8-byte boundary (e.g., if you sought an odd number of bytes
 -- 
 2.7.4
